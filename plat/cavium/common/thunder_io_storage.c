@@ -44,8 +44,10 @@
 /* IO devices */
 static const io_dev_connector_t *fip_dev_con;
 static uintptr_t fip_dev_handle;
-static const io_dev_connector_t *blk_dev_con;
-static uintptr_t blk_dev_handle;
+static const io_dev_connector_t *spi_dev_con;
+static uintptr_t spi_dev_handle;
+static const io_dev_connector_t *emmc_dev_con;
+static uintptr_t emmc_dev_handle;
 
 static const io_block_spec_t fip_block_spec = {
 	.offset	= 0x580000,
@@ -115,7 +117,6 @@ static const io_uuid_spec_t nt_fw_cert_uuid_spec = {
 
 
 static int open_fip(const uintptr_t spec);
-static int open_blk(const uintptr_t spec);
 
 struct plat_io_policy {
 	uintptr_t *dev_handle;
@@ -125,11 +126,6 @@ struct plat_io_policy {
 
 /* By default, ARM platforms load images from the FIP */
 static const struct plat_io_policy policies[] = {
-	[FIP_IMAGE_ID] = {
-		&blk_dev_handle,
-		(uintptr_t)&fip_block_spec,
-		open_blk
-	},
 	[BL2_IMAGE_ID] = {
 		&fip_dev_handle,
 		(uintptr_t)&bl2_uuid_spec,
@@ -229,16 +225,33 @@ static int open_fip(const uintptr_t spec)
 }
 
 
-static int open_blk(const uintptr_t spec)
+static int open_spi(const uintptr_t spec)
 {
 	int result;
 	uintptr_t local_image_handle;
 
-	result = io_dev_init(blk_dev_handle, (uintptr_t)NULL);
+	result = io_dev_init(spi_dev_handle, (uintptr_t)NULL);
 	if (result == 0) {
-		result = io_open(blk_dev_handle, spec, &local_image_handle);
+		result = io_open(spi_dev_handle, spec, &local_image_handle);
 		if (result == 0) {
-			VERBOSE("Using SPI or (e)MMC\n");
+			VERBOSE("Using SPI\n");
+			io_close(local_image_handle);
+		}
+	}
+	return result;
+}
+
+
+static int open_emmc(const uintptr_t spec)
+{
+	int result;
+	uintptr_t local_image_handle;
+
+	result = io_dev_init(emmc_dev_handle, (uintptr_t)NULL);
+	if (result == 0) {
+		result = io_open(emmc_dev_handle, spec, &local_image_handle);
+		if (result == 0) {
+			VERBOSE("Using (e)MMC\n");
 			io_close(local_image_handle);
 		}
 	}
@@ -248,19 +261,14 @@ static int open_blk(const uintptr_t spec)
 
 void thunder_io_setup(void)
 {
-	int io_result, boot_medium;
-	cavm_gpio_strap_t gpio_strap;
-
+	int io_result;
 	io_result = register_io_dev_fip(&fip_dev_con);
 	assert(io_result == 0);
 
-	gpio_strap.u = CSR_READ_PA(0, CAVM_GPIO_STRAP);
-	boot_medium = (gpio_strap.u) & 0x7;
+	io_result = register_io_dev_spi(&spi_dev_con);
+	assert(io_result == 0);
 
-	if (boot_medium == 0x5)
-		io_result = register_io_dev_spi(&blk_dev_con);
-	else
-		io_result = register_io_dev_emmc(&blk_dev_con);
+	io_result = register_io_dev_emmc(&emmc_dev_con);
 	assert(io_result == 0);
 
 	/* Open connections to devices and cache the handles */
@@ -268,12 +276,56 @@ void thunder_io_setup(void)
 				&fip_dev_handle);
 	assert(io_result == 0);
 
-	io_result = io_dev_open(blk_dev_con, (uintptr_t)NULL,
-				&blk_dev_handle);
+	io_result = io_dev_open(spi_dev_con, (uintptr_t)NULL,
+				&spi_dev_handle);
+	assert(io_result == 0);
+
+	io_result = io_dev_open(emmc_dev_con, (uintptr_t)NULL,
+				&emmc_dev_handle);
 	assert(io_result == 0);
 
 	/* Ignore improbable errors in release builds */
 	(void)io_result;
+}
+
+int plat_get_fip_source(uintptr_t *dev_handle, uintptr_t *image_spec)
+{
+	int result, boot_medium;
+	cavm_gpio_strap_t gpio_strap;
+	const char *medium;
+
+	int (*check)(const uintptr_t spec);
+	uintptr_t handle;
+	uintptr_t spec;
+
+	gpio_strap.u = CSR_READ_PA(0, CAVM_GPIO_STRAP);
+	boot_medium = (gpio_strap.u) & 0x7;
+
+	if (boot_medium == 0x5) { /* SPI */
+		handle = spi_dev_handle;
+		spec = (uintptr_t)&fip_block_spec;
+		check = open_spi;
+		medium = "SPI";
+	} else if (boot_medium == 0x02 || boot_medium == 0x03) { /* (e)MMC */
+		handle = emmc_dev_handle;
+		spec = (uintptr_t)&fip_block_spec;
+		check = open_emmc;
+		medium = "MMC";
+	} else {
+		ERROR("Boot medium %d not supported!\n", boot_medium);
+		while(1);
+	}
+
+	result = check(spec);
+	if (result == 0) {
+		*image_spec = spec;
+		*dev_handle = handle;
+	} else {
+		ERROR("FIP not found on medium %s\n", medium);
+		result = -ENOENT;
+	}
+
+	return result;
 }
 
 /* Return an IO device handle and specification which can be used to access
@@ -285,6 +337,9 @@ int plat_get_image_source(unsigned int image_id, uintptr_t *dev_handle,
 	const struct plat_io_policy *policy;
 
 	assert(image_id < ARRAY_SIZE(policies));
+
+	if (image_id == FIP_IMAGE_ID)
+		return plat_get_fip_source(dev_handle, image_spec);
 
 	policy = &policies[image_id];
 	result = policy->check(policy->image_spec);
