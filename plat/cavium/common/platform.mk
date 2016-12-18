@@ -21,6 +21,7 @@ PLAT_BL_COMMON_SOURCES	:=	drivers/arm/pl011/pl011_console.S		\
 BL1_SOURCES		+=	bl31/aarch64/crash_reporting.S			\
 				drivers/cavium/thunder_spi.c			\
 				drivers/io/io_fip.c				\
+				drivers/io/io_memmap.c				\
 				drivers/io/io_storage.c				\
 				lib/cpus/aarch64/thunder.S			\
 				plat/cavium/common/aarch64/thunder_helpers.S	\
@@ -29,6 +30,7 @@ BL1_SOURCES		+=	bl31/aarch64/crash_reporting.S			\
 
 BL2_SOURCES		+=	drivers/cavium/thunder_spi.c			\
 				drivers/io/io_fip.c				\
+				drivers/io/io_memmap.c				\
 				drivers/io/io_storage.c				\
 				plat/cavium/common/bl2_thunder_setup.c		\
 				plat/cavium/common/thunder_ecam.c		\
