@@ -20,13 +20,9 @@
 					PLATFORM_NODE_COUNT)
 #define PLAT_MAX_PWR_LVL		MPIDR_AFFLVL2
 
-#ifdef T81
-#define THUNDER_MIDR			0x430F0A20
-#elif defined T83
-#define THUNDER_MIDR			0x430F0A30
-#elif defined T88
-#define THUNDER_MIDR			0x430F0A10
-#endif
+#define THUNDER81_MIDR			0x430F0A20
+#define THUNDER83_MIDR			0x430F0A30
+#define THUNDER88_MIDR			0x430F0A10
 
 /*******************************************************************************
  * Platform power states

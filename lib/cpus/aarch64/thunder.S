@@ -20,4 +20,6 @@ func thunder_cpu_reg_dump
 	ret
 endfunc thunder_cpu_reg_dump
 
-declare_cpu_ops thunder, THUNDER_MIDR
+declare_cpu_ops thunder, THUNDER81_MIDR
+declare_cpu_ops thunder, THUNDER83_MIDR
+declare_cpu_ops thunder, THUNDER88_MIDR
