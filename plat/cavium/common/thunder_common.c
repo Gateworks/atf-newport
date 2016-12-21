@@ -39,7 +39,8 @@ static void plat_add_mmio_common(void)
 	/* Do not use add_map_record here, it will round size up */
 	attr = MT_MEMORY | MT_RO | MT_SECURE;
 
-	mmap_add_region((unsigned long)fdt_ptr, (unsigned long)fdt_ptr,
+	if (fdt_ptr != (void *)~0)
+		mmap_add_region((unsigned long)fdt_ptr, (unsigned long)fdt_ptr,
 			TZDRAM_SIZE - (unsigned long)fdt_ptr,
 			attr);
 
