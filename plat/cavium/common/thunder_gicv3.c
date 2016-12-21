@@ -15,6 +15,7 @@
 #include <platform.h>
 #include "../../../drivers/arm/gic/v3/gicv3_private.h"
 
+#if IMAGE_BL31
 /* The GICv3 driver only needs to be initialized in EL3 */
 uintptr_t rdistif_base_addrs[PLATFORM_CORE_COUNT];
 
@@ -25,7 +26,6 @@ static const unsigned int g1s_interrupt_array[] = {
 
 /* Array of Group0 interrupts to be configured by the gic driver */
 static const unsigned int g0_interrupt_array[] = {
-//	PLAT_ARM_G0_IRQS
 	THUNDER_IRQ_GPIO_PWR_S,
 	THUNDER_IRQ_GTI_WDOG,
 };
@@ -40,6 +40,7 @@ static gicv3_driver_data_t thunder_gic_data = {
 	.rdistif_base_addrs = rdistif_base_addrs,
 	.mpidr_to_core_pos = thunder_calc_core_pos,
 };
+#endif
 
 void thunder_gic_driver_init(void)
 {
