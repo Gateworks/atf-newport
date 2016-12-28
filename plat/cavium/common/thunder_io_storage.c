@@ -35,15 +35,11 @@
 #include <io_fip.h>
 #include <io_spi.h>
 #include <io_mmc.h>
-#include <io_memmap.h>
 #include <io_storage.h>
 #include <platform_def.h>
 #include <string.h>
 
 #include <cavm-arch.h>
-
-#define FIP_NAME "fip.bin"
-#define ROMFS_NAME "ROM-FS"
 
 /* IO devices */
 static const io_dev_connector_t *fip_dev_con;
@@ -52,10 +48,8 @@ static const io_dev_connector_t *spi_dev_con;
 static uintptr_t spi_dev_handle;
 static const io_dev_connector_t *emmc_dev_con;
 static uintptr_t emmc_dev_handle;
-static const io_dev_connector_t *memmap_dev_con;
-static uintptr_t memmap_dev_handle;
 
-static io_block_spec_t fip_block_spec = {
+static const io_block_spec_t fip_block_spec = {
 	.offset	= 0x580000,
 };
 
@@ -265,23 +259,6 @@ static int open_emmc(const uintptr_t spec)
 }
 
 
-static int open_memmap(const uintptr_t spec)
-{
-	int result;
-	uintptr_t local_image_handle;
-
-	result = io_dev_init(memmap_dev_handle, (uintptr_t)NULL);
-	if (result == 0) {
-		result = io_open(memmap_dev_handle, spec, &local_image_handle);
-		if (result == 0) {
-			VERBOSE("Using image from RAM\n");
-			io_close(local_image_handle);
-		}
-	}
-	return result;
-}
-
-
 void thunder_io_setup(void)
 {
 	int io_result;
@@ -292,9 +269,6 @@ void thunder_io_setup(void)
 	assert(io_result == 0);
 
 	io_result = register_io_dev_emmc(&emmc_dev_con);
-	assert(io_result == 0);
-
-	io_result = register_io_dev_memmap(&memmap_dev_con);
 	assert(io_result == 0);
 
 	/* Open connections to devices and cache the handles */
@@ -310,61 +284,8 @@ void thunder_io_setup(void)
 				&emmc_dev_handle);
 	assert(io_result == 0);
 
-	io_result = io_dev_open(memmap_dev_con, (uintptr_t)NULL,
-				&memmap_dev_handle);
-	assert(io_result == 0);
-
 	/* Ignore improbable errors in release builds */
 	(void)io_result;
-}
-
-static uint16_t read_le16(const uint8_t *p)
-{
-	return ((((uint16_t) p[0]) << 0) |
-		(((uint16_t) p[1]) << 8));
-}
-
-static uint32_t read_le32(const uint8_t *p)
-{
-	return ((((uint32_t) p[0]) << 0) |
-		(((uint32_t) p[1]) << 8) |
-		(((uint32_t) p[2]) << 16) |
-		(((uint32_t) p[3]) << 24));
-}
-
-/* BDK HEADER (important part):
- * 0x00: jump instruction
- * 0x04: length of the image
- *
- * ROM-FS HEADER:
- * 0x00: "ROM-FS"
- * 0x06: file name length
- * 0x08: data length
- * 0x0c: file name
- * 0x0c + file_name: data
- */
-static void plat_fill_fip_memmap_spec(void)
-{
-	size_t fip_name_len = strlen(FIP_NAME);
-	/* We start from BDK image loaded */
-	const uint8_t *ptr = (uint8_t *)0;
-
-	ptr += read_le32(ptr + 4);
-	while (memcmp(ptr, ROMFS_NAME, strlen(ROMFS_NAME)) == 0) {
-		uint16_t fname_length = read_le16(ptr + 0x06);
-		uint32_t fdata_length = read_le32(ptr + 0x08);
-		const char *fname_ptr = (const char *)(ptr + 0x0c);
-		const uint8_t *fdata_ptr = ptr + 0x0c + fname_length;
-
-		if (fname_length == fip_name_len &&
-		    strncasecmp(FIP_NAME, fname_ptr, fip_name_len) == 0) {
-			fip_block_spec.offset = (size_t)fdata_ptr;
-			return;
-		}
-		ptr = fdata_ptr + fdata_length;
-	}
-	ERROR("Could not find FIP image!!\n");
-	fip_block_spec.offset = 0;
 }
 
 int plat_get_fip_source(uintptr_t *dev_handle, uintptr_t *image_spec)
@@ -372,24 +293,15 @@ int plat_get_fip_source(uintptr_t *dev_handle, uintptr_t *image_spec)
 	int result, boot_medium;
 	cavm_gpio_strap_t gpio_strap;
 	const char *medium;
-	cavm_rst_boot_t rst_boot;
 
 	int (*check)(const uintptr_t spec);
 	uintptr_t handle;
 	uintptr_t spec;
 
-	rst_boot.u = CSR_READ_PA(0, CAVM_RST_BOOT);
-
 	gpio_strap.u = CSR_READ_PA(0, CAVM_GPIO_STRAP);
 	boot_medium = (gpio_strap.u) & 0x7;
 
-	if (rst_boot.s.rboot) { /* Remote boot */
-		plat_fill_fip_memmap_spec();
-		handle = memmap_dev_handle;
-		spec = (uintptr_t)&fip_block_spec;
-		check = open_memmap;
-		medium = "memmap";
-	} else if (boot_medium == 0x5) { /* SPI */
+	if (boot_medium == 0x5) { /* SPI */
 		handle = spi_dev_handle;
 		spec = (uintptr_t)&fip_block_spec;
 		check = open_spi;
