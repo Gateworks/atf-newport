@@ -163,6 +163,9 @@ int sdmmc_rw_data(int write, unsigned int addr, int size, uintptr_t buf, int buf
 	blk_cnt = round_size / mmc_drv.sector_size;
 	offset  = addr % mmc_drv.sector_size;
 
+	if ((size % mmc_drv.sector_size) + offset > 512)
+		blk_cnt++;
+
 	while (blk_cnt > 0) {
 		blks = (blk_cnt > 8) ? 8 : blk_cnt;
 
