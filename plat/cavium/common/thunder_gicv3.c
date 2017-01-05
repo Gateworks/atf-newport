@@ -19,13 +19,9 @@
 /* The GICv3 driver only needs to be initialized in EL3 */
 uintptr_t rdistif_base_addrs[PLATFORM_CORE_COUNT];
 
-/* Array of Group1 secure interrupts to be configured by the gic driver */
-static const unsigned int g1s_interrupt_array[] = {
-	THUNDER_IRQ_SEC_PHY_TIMER,
-};
-
 /* Array of Group0 interrupts to be configured by the gic driver */
 static const unsigned int g0_interrupt_array[] = {
+	THUNDER_IRQ_SEC_PHY_TIMER,
 	THUNDER_IRQ_GPIO_PWR_S,
 	THUNDER_IRQ_GTI_WDOG,
 };
@@ -33,9 +29,9 @@ static const unsigned int g0_interrupt_array[] = {
 static gicv3_driver_data_t thunder_gic_data = {
 	/* gicd_base and gicr_base are setup later */
 	.g0_interrupt_num = ARRAY_SIZE(g0_interrupt_array),
-	.g1s_interrupt_num = ARRAY_SIZE(g1s_interrupt_array),
+	.g1s_interrupt_num = 0,
 	.g0_interrupt_array = g0_interrupt_array,
-	.g1s_interrupt_array = g1s_interrupt_array,
+	.g1s_interrupt_array = NULL,
 	.rdistif_num = PLATFORM_CORE_COUNT,
 	.rdistif_base_addrs = rdistif_base_addrs,
 	.mpidr_to_core_pos = thunder_calc_core_pos,
