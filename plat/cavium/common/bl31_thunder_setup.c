@@ -42,6 +42,7 @@
 #include <thunder_private.h>
 #include <thunder_dt.h>
 #include <debug.h>
+#include <timers.h>
 
 /*******************************************************************************
  * Declarations of linker defined symbols which will help us find the layout
@@ -156,6 +157,7 @@ void bl31_platform_setup()
 	thunder_el3_irq_init();
 	thunder_gic_driver_init();
 	thunder_gic_init();
+	timers_init();
 
 	/* Intialize the power controller */
 	thunder_pwrc_setup();
