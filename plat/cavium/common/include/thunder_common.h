@@ -19,6 +19,11 @@ int thunder_get_lmc_per_node(void);
 
 int thunder_get_num_ecams_per_node(void);
 
+int thunder_get_sata_count(void);
+int thunder_sata_to_gser(int ctrlr);
+int thunder_sata_to_lane(int ctrlr);
+int thunder_get_max_sata_gser(void);
+
 void add_map_record(unsigned long addr, unsigned long size, mmap_attr_t attr);
 
 #endif /* __THUDNER_COMMON_H__ */

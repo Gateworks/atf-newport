@@ -11,6 +11,37 @@ int thunder_get_num_ecams_per_node(void)
 	return 1;
 }
 
+int thunder_get_sata_count(void)
+{
+	return 2;
+}
+
+/* Return the highest GSER number, which can be configured as SATA */
+int thunder_get_max_sata_gser(void)
+{
+	return 6;
+}
+
+/*
+ * SATA to GSER mapping
+ * SATA(0-1) --- GSER3
+ */
+int thunder_sata_to_gser(int ctrlr)
+{
+	if (ctrlr > 1)
+		return -1;
+
+	return 3;
+}
+
+int thunder_sata_to_lane(int ctrlr)
+{
+	if (ctrlr > 1)
+		return -1;
+
+	return ctrlr % 2;
+}
+
 void plat_add_mmio_node(unsigned long node)
 {
 	unsigned long attr;
@@ -80,4 +111,10 @@ void plat_add_mmio_node(unsigned long node)
 	add_map_record(CSR_PA(node, CAVM_ECAMX_PF_BAR2(0)), CAVM_ECAMX_PF_BAR2_SIZE, attr);
 
 	add_map_record(CSR_PA(node, CAVM_SLIX_PF_BAR0(0)), CAVM_SLIX_PF_BAR0_SIZE, attr);
+
+	for (i = 0; i < 2; ++i)
+	{
+		add_map_record(CSR_PA(node, CAVM_SATAX_PF_BAR0(i)),
+			       CAVM_SATAX_PF_BAR0_SIZE, attr);
+	}
 }

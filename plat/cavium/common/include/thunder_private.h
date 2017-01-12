@@ -55,6 +55,7 @@ void thunder_signal_shutdown(void);
 int thunder_pwrc_setup(void);
 void thunder_twsi_send(unsigned int node, unsigned int twsi_num,
 			uint16_t addr, const uint8_t *buffer, size_t size);
+void sata_ipm_quirk(void);
 
 int spi_nor_init(void);
 int spi_nor_rw_data(int write, unsigned long addr, int size, void *buf, int buf_size);

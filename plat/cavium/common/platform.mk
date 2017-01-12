@@ -49,6 +49,7 @@ BL31_SOURCES		+=	drivers/arm/gic/common/gic_common.c		\
 				plat/cavium/common/thunder_gicv3.c		\
 				plat/cavium/common/thunder_pm.c			\
 				plat/cavium/common/thunder_pwrc.c		\
+				plat/cavium/common/thunder_sata.c		\
 				plat/cavium/common/thunder_svc.c		\
 				plat/cavium/common/thunder_timers.c		\
 				plat/cavium/common/thunder_topology.c		\

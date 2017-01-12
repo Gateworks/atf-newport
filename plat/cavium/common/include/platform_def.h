@@ -24,6 +24,10 @@
 #define THUNDER83_MIDR			0x430F0A30
 #define THUNDER88_MIDR			0x430F0A10
 
+/* SATA-related definitions */
+#define MAX_SATA_CONTROLLERS		16
+#define MAX_SATA_GSER			8
+
 /*******************************************************************************
  * Platform power states
  ******************************************************************************/
