@@ -477,8 +477,8 @@ static void init_pem(int node, uint64_t config_base, uint64_t config_size)
 		for (i = 0; i < table_size; i++) {
 			*(uint64_t *) vector_base = (i % 2) ? CAVM_GICD_CLRSPI_NSR : CAVM_GICD_SETSPI_NSR;
 			vector_base += 8;
-			if (i >= 4 && i < 12)
-				msg = ((i - 4) / 2) + PEM_INTBASE_IRQ +
+			if (i >= CAVM_PEM_INT_VEC_E_INTA && i < CAVM_PEM_INT_VEC_E_INT_SUM)
+				msg = ((i - CAVM_PEM_INT_VEC_E_INTA) / 2) + PEM_INTBASE_IRQ +
 					(24 * node) + (4 * vsec_ctl.s.inst_num);
 			else
 				msg = 0x100000000ull;	/* Masked */
