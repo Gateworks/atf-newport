@@ -130,8 +130,6 @@ void bl31_early_platform_setup(bl31_params_t *from_bl2,
 	if (from_bl2->bl32_ep_info)
 		bl32_image_ep_info = *from_bl2->bl32_ep_info;
 	bl33_image_ep_info = *from_bl2->bl33_ep_info;
-
-	thunder_cpu_setup();
 }
 
 static void thunder_el3_irq_init(void)

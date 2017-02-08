@@ -201,6 +201,8 @@ void thunder_pwr_domain_on_finish(const psci_power_state_t *target_state)
 
 	/* Program the gic per-cpu distributor or re-distributor interface */
 	gicv3_cpuif_enable(plat_my_core_pos());
+
+	thunder_cpu_setup();
 }
 
 /*******************************************************************************
