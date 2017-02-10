@@ -24,8 +24,10 @@
 
 static uint64_t sata_base[PLATFORM_MAX_NODES][MAX_SATA_CONTROLLERS];
 static uint64_t gser_base[PLATFORM_MAX_NODES][MAX_SATA_GSER];
+#if 0
 static uint8_t sata_state_count[PLATFORM_MAX_NODES][MAX_SATA_CONTROLLERS];
 static char last_sata_state[PLATFORM_MAX_NODES][MAX_SATA_CONTROLLERS];
+#endif
 
 static int timer_hd;
 
@@ -69,6 +71,7 @@ static int sata_drive_check_power_management(int node, int sata)
  *
  * @return Zero, unused
  */
+#if 0
 static int sata_drive_check_detect_failure(int node, int sata)
 {
 	union cavm_satax_uahc_p0_cmd cmd;
@@ -245,6 +248,7 @@ detected:
 	return 0;
 
 }
+#endif
 
 static int timer_cb(int hd)
 {
@@ -256,8 +260,12 @@ static int timer_cb(int hd)
 			if (sata_base[node][i] == 0)
 				continue;
 			sata_drive_check_power_management(node, i);
+			/*
+			The following two calls are disabled till we find
+			a solution for all T81/T83 platforms.
 			sata_drive_check_detect_failure(node, i);
 			sata_drive_check_unplug_failure(node, i);
+			*/
 		}
 	}
 	return 0;
