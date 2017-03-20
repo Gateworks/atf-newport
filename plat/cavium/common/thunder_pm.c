@@ -68,23 +68,6 @@ static void thunder_power_domain_on_finish_common(const psci_power_state_t *targ
 	/* Get the mpidr for this cpu */
 	mpidr = read_mpidr_el1();
 
-	/* Perform the common cluster specific operations */
-	if (target_state->pwr_domain_state[MPIDR_AFFLVL1] ==
-					THUNDER_STATE_OFF) {
-		/*
-		 * This CPU might have woken up whilst the cluster was
-		 * attempting to power down. In this case the FVP power
-		 * controller will have a pending cluster power off request
-		 * which needs to be cleared by writing to the PPONR register.
-		 * This prevents the power controller from interpreting a
-		 * subsequent entry of this cpu into a simple wfi as a power
-		 * down request.
-		 */
-		thunder_pwrc_write_pponr(mpidr);
-
-		/* Enable coherency if this cluster was off */
-	}
-
 	/*
 	 * Clear PWKUPR.WEN bit to ensure interrupts do not interfere
 	 * with a cpu power down unless the bit is set again
