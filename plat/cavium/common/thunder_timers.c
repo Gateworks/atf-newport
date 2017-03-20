@@ -16,6 +16,7 @@
 #include <interrupt_mgmt.h>
 #include <stdio.h>
 #include <thunder_private.h>
+#include <delay_timer.h>
 
 #undef DEBUG_TIMERS
 
@@ -173,9 +174,27 @@ void plat_timer_set_period(int timer_id, uint64_t period)
 	}
 }
 
+static uint32_t plat_get_timer_value(void)
+{
+	/* Generic delay timer implementation expects the timer to be a down
+	 * counter. We apply bitwise NOT operator to the tick values returned
+	 * by read_cntpct_el0() to simulate the down counter. */
+	volatile uint64_t count = CSR_READ_PA(0, CAVM_RST_REF_CNTR);
+
+	return count;
+}
+
+static timer_ops_t plat_timer_ops;
+
 int plat_timers_init(void)
 {
 	plat_timer_enable(ARCH_SECURE_TIMER_ID, 0);
+
+	plat_timer_ops.get_timer_value	= plat_get_timer_value;
+	plat_timer_ops.clk_mult		= 1;
+	plat_timer_ops.clk_div		= 50;
+
+	timer_init(&plat_timer_ops);
 
 	/* return number of available hw counters */
 	return 1;
