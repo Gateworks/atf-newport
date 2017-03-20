@@ -13,6 +13,10 @@ inside flash please refer to Cavium's flash layout document [1].
 
 (...) MAX_RAM_ADDR
 |
+|  NS DMA memory
+|
+-- MAX_RAM_ADDR - 0x100000
+|
 |
 |  _BL33_ non-trusted firmware
 |

@@ -202,6 +202,7 @@ void bl31_platform_setup()
  ******************************************************************************/
 void bl31_plat_arch_setup()
 {
+	uintptr_t ns_dma_memory_base = thunder_dram_size_node(0) - NS_DMA_MEMORY_SIZE;
 	mmap_add_region(BL31_RO_BASE, BL31_RO_BASE,
 			BL31_END - BL31_RO_BASE,
 			MT_MEMORY | MT_RW | MT_SECURE);
@@ -218,6 +219,10 @@ void bl31_plat_arch_setup()
 			BL31_COHERENT_RAM_LIMIT - BL31_COHERENT_RAM_BASE,
 			MT_MEMORY | MT_RW | MT_SECURE);
 #endif
+
+	mmap_add_region(ns_dma_memory_base, ns_dma_memory_base,
+			NS_DMA_MEMORY_SIZE,
+			MT_DEVICE | MT_RW | MT_NS);
 
 	plat_add_mmio_map();
 
