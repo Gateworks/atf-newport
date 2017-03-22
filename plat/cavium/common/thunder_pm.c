@@ -286,12 +286,18 @@ int thunder_validate_power_state(unsigned int power_state,
  ******************************************************************************/
 int thunder_validate_ns_entrypoint(uintptr_t entrypoint)
 {
+	int i;
+	unsigned node_count = thunder_get_node_count();
+	uint64_t dram_end = 0;
+
+	for (i = 0; i < node_count; i++)
+		dram_end += thunder_dram_size_node(i);
+
 	/*
 	 * Check if the non secure entrypoint lies within the non
 	 * secure DRAM.
 	 */
-	if ((entrypoint >= NS_IMAGE_BASE) && (entrypoint <
-			(NS_IMAGE_BASE + NS_IMAGE_MAX_SIZE)))
+	if ((entrypoint >= NS_IMAGE_BASE) && (entrypoint < (dram_end - 1)))
 		return PSCI_E_SUCCESS;
 
 	return PSCI_E_INVALID_ADDRESS;
