@@ -509,29 +509,47 @@ static void init_pem(int node, uint64_t config_base, uint64_t config_size)
 void init_gti(int node, uint64_t config_base, uint64_t config_size)
 {
 	struct pcie_config *pconfig = (struct pcie_config *)config_base;
-	uint8_t cap_pointer;
+	int i;
+	uint8_t cap_pointer, bir = 0;
 	uint16_t table_size = 0;
-	uint8_t bir = 0;
+	uint64_t vector_base = 0, msg = 0;
 
 	debug_io("GTI NODE(%d) init called config_base:%lx size:%lx\n", node,
 		 config_base, config_size);
 	cap_pointer = pconfig->cap_pointer;
 	print_config_space(pconfig);
 
-	uint32_t *sctl = (uint32_t *) (config_base + CAVM_PCCPF_XXX_VSEC_SCTL);
-	debug_io("setting secure/phys @%p\n", (void *)sctl);
-	*sctl |= 3;
 	enable_msix(config_base, cap_pointer, &table_size, &bir);
 
 	/* initialise MSI-X Vector table */
 	if (table_size) {
-		uint64_t vector_base = pconfig->baseaddress_reg[bir] & ~0xf;
-		vector_base |= ((uint64_t) pconfig->baseaddress_reg[bir + 1] << 32);
+		vector_base = get_bar_val(pconfig, bir);
 		debug_io("table_size :%x bir:%1x \n", table_size, bir);
 		debug_io("MSI-X vector base:%lx\n", vector_base);
 	}
 
-	/* populate MSI-X Vector table elsewhere */
+	/* configure interrupt vectors */
+	for (i = 0; i < table_size; i++) {
+		if (i < CAVM_GTI_INT_VEC_E_TX_TIMESTAMP)
+			*(uint64_t *) vector_base = (i % 2) ?
+			    CAVM_GICD_CLRSPI_NSR : CAVM_GICD_SETSPI_NSR;
+		else
+			*(uint64_t *) vector_base = CAVM_GICD_SETSPI_NSR;
+		vector_base += 8;
+		if (i == CAVM_GTI_INT_VEC_E_WATCHDOG ||
+		    i == CAVM_GTI_INT_VEC_E_WATCHDOG_CLEAR) {
+			msg = GTI_WDOG_IRQ;
+		} else {
+			msg = 0x100000000ULL; /* Masked */
+		}
+		*(uint64_t *) vector_base = msg;
+		vector_base += 8;
+		debug_io
+		    ("GTI NODE(%d): Vector:%d address :%lx irq:%u\n",
+		     node, i,
+		     (i % 2) ? CAVM_GICD_CLRSPI_NSR : CAVM_GICD_SETSPI_NSR,
+		     msg);
+	}
 }
 
 /*

@@ -33,15 +33,17 @@
 #define GPIO_PWR_S_IRQ		0x21
 #define KEY_POWER_IRQ		GPIO_PWR_NS_IRQ
 
+/*
+ * TWSI-1 Secure IRQ for CLST events
+ */
+#define TWSI_1_S_IRQ		0x22
+
 #define UAA0_IRQ		0x25
 #define UAA1_IRQ		0x26
 #define UAA2_IRQ		0x27
 #define UAA3_IRQ		0x28
 
-/*
- * TWSI-1 Secure IRQ for CLST events
- */
-#define TWSI_1_S_IRQ		0x22
+#define GTI_WDOG_IRQ		0x29
 
 /*
  * 4 irq per PEM (INTA, INTB, INTC, INTD)
@@ -74,9 +76,6 @@
 #define SMMU6_CONTEXT_IRQ	0x71
 #define SMMU7_GLOBAL_IRQ	0x72
 #define SMMU7_CONTEXT_IRQ	0x73
-
-/* Watchdog IRQs assigned dynamically from here up */
-#define GTI_IRQ0		0x74
 
 #define SMMU_GLOBAL_VECTOR_OFFSET 0x1000
 #define SMMU_NUM_CONTEXTS	0x80
