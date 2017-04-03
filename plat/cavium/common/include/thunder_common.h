@@ -27,6 +27,7 @@
 #define T81PARTNUM 0xA2
 #define T83PARTNUM 0xA3
 #define T98PARTNUM 0xB1
+#define T93PARTNUM 0xB2
 
 int thunder_get_lmc_per_node(void);
 
