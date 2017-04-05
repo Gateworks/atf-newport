@@ -34,3 +34,8 @@ declare_cpu_ops thunder, THUNDER88_MIDR, \
 	thunder_reset_func, \
 	thunder_core_pwr_dwn, \
 	thunder_cluster_pwr_dwn
+
+declare_cpu_ops thunder, THUNDER93_MIDR, \
+	thunder_reset_func, \
+	thunder_core_pwr_dwn, \
+	thunder_cluster_pwr_dwn
