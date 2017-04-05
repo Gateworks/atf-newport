@@ -17,6 +17,7 @@
 #include <arch.h>
 #include <common_def.h>
 #include <tbbr_img_def.h>
+#include <xlat_tables.h>
 
 /*******************************************************************************
  * Generic platform constants
@@ -83,7 +84,8 @@
  * Platform specific page table and MMU setup constants
  ******************************************************************************/
 #define ADDR_SPACE_SIZE_SHIFT		48
-#define ADDR_SPACE_SIZE			(1ull << ADDR_SPACE_SIZE_SHIFT)
+#define PLAT_VIRT_ADDR_SPACE_SIZE	(1ull << ADDR_SPACE_SIZE_SHIFT)
+#define PLAT_PHY_ADDR_SPACE_SIZE	(1ull << ADDR_SPACE_SIZE_SHIFT)
 #define MAX_XLAT_TABLES			48
 #define MAX_MMAP_REGIONS		256
 

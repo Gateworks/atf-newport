@@ -20,6 +20,17 @@ func thunder_cpu_reg_dump
 	ret
 endfunc thunder_cpu_reg_dump
 
-declare_cpu_ops thunder, THUNDER81_MIDR
-declare_cpu_ops thunder, THUNDER83_MIDR
-declare_cpu_ops thunder, THUNDER88_MIDR
+declare_cpu_ops thunder, THUNDER81_MIDR, \
+	thunder_reset_func, \
+	thunder_core_pwr_dwn, \
+	thunder_cluster_pwr_dwn
+
+declare_cpu_ops thunder, THUNDER83_MIDR, \
+	thunder_reset_func, \
+	thunder_core_pwr_dwn, \
+	thunder_cluster_pwr_dwn
+
+declare_cpu_ops thunder, THUNDER88_MIDR, \
+	thunder_reset_func, \
+	thunder_core_pwr_dwn, \
+	thunder_cluster_pwr_dwn

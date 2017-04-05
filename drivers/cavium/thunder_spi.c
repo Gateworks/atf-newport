@@ -36,8 +36,6 @@ typedef struct {
 
 static file_state_t current_file = { 0 };
 
-#define MIN(x, y) (((x) < (y)) ? (x) : (y))
-
 #define	SPI_CS_HIGH		0x04			/* CS active high */
 #define	SPI_LSB_FIRST	0x08			/* per-word bits-on-wire */
 #define	SPI_3WIRE		0x10			/* SI/SO signals shared */

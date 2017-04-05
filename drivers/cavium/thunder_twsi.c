@@ -234,9 +234,6 @@ int twsi_wait(unsigned int node, unsigned int twsi_num)
 	return timeout;
 }
 
-#define MIN(x, y) ((x) < (y) ? (x) : (y))
-#define MAX(x, y) ((x) > (y) ? (x) : (y))
-
 void thunder_twsi_send(unsigned int node, unsigned int twsi_num,
 			uint16_t addr, const uint8_t *buffer, size_t size)
 {

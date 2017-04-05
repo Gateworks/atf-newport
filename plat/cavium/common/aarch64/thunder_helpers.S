@@ -108,7 +108,7 @@ endfunc plat_secondary_cold_boot_setup
 	 * ---------------------------------------------
 	 */
 func plat_crash_console_init
-	mov_imm	x0, 0x87E024000000
+	mov_imm	x0, 0x87E028000000
 	mov_imm	x1, 7273800
 	mov_imm	x2, 115200
 	b	console_core_init
@@ -122,7 +122,7 @@ endfunc plat_crash_console_init
 	 * ---------------------------------------------
 	 */
 func plat_crash_console_putc
-	mov_imm	x1, 0x87E024000000
+	mov_imm	x1, 0x87E028000000
 	b	console_core_putc
 endfunc plat_crash_console_putc
 

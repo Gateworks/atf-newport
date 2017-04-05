@@ -25,7 +25,7 @@ gic_regs: .asciz "icc_ctlr", "icc_hppir0", "icc_hppir1", ""
 	 * taken in BL31.
 	 * ---------------------------------------------
 	 */
-	.macro plat_print_gic_regs
+	.macro plat_crash_print_regs
 	mrs	x8, ICC_CTLR_EL3
 	mrs	x9, ICC_HPPIR0_EL1
 	mrs	x10, ICC_HPPIR1_EL1

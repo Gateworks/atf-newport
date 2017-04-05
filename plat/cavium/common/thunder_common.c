@@ -27,7 +27,7 @@ unsigned long plat_get_ns_image_entrypoint(void)
 }
 
 
-uint64_t plat_get_syscnt_freq(void)
+uint64_t plat_get_syscnt_freq2(void)
 {
 	return THUNDER_SYSCNT_FREQ * 1000 * 1000;
 }

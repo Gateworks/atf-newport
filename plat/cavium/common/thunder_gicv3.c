@@ -26,7 +26,6 @@
 #include <gic_common.h>
 #include <gicv3.h>
 #include <platform.h>
-#include "../../../drivers/arm/gic/v3/gicv3_private.h"
 
 #if IMAGE_BL31
 /* The GICv3 driver only needs to be initialized in EL3 */
