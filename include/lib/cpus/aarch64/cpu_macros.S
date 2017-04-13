@@ -199,7 +199,7 @@ CPU_OPS_SIZE = .
 #endif
 #endif
 
-#if defined(IMAGE_BL31) && CRASH_REPORTING
+#if ((IMAGE_BL31 || IMAGE_BL1) && CRASH_REPORTING)
 	.quad \_name\()_cpu_reg_dump
 #endif
 	.endm
