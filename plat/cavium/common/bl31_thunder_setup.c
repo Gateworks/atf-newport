@@ -190,3 +190,10 @@ void bl31_plat_arch_setup()
 
 	enable_mmu_el3(0);
 }
+
+void bl31_plat_runtime_setup(void)
+{
+#ifndef DEBUG
+	console_uninit();
+#endif
+}
