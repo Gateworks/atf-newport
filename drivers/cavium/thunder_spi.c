@@ -67,7 +67,12 @@ int spi_config(uint64_t spi_clk, uint32_t mode, int cpol, int cpha, int cs)
 	union cavm_mpi_cfg mpi_cfg;
 
 	rst_boot.u = CSR_READ_PA(current_file.node, CAVM_RST_BOOT);
-	mpi_cfg.u = CSR_READ_PA(current_file.node, CAVM_MPI_CFG);
+	if (CAVIUM_IS_MODEL(CAVIUM_CN8XXX))
+		mpi_cfg.u = CSR_READ_PA(current_file.node, CAVM_MPI_CFG);
+	else if (CAVIUM_IS_MODEL(CAVIUM_CN9XXX))
+		mpi_cfg.u = CSR_READ_PA(current_file.node, CAVM_MPIX_CFG(cs));
+	else
+		return -1;
 	sclk = PLL_REF_CLK * rst_boot.s.pnr_mul;
 
 	switch (cs) {
@@ -93,8 +98,12 @@ int spi_config(uint64_t spi_clk, uint32_t mode, int cpol, int cpha, int cs)
 	mpi_cfg.s.idlelo = cpha != cpol;
 	mpi_cfg.s.cslate = cpha;
 	mpi_cfg.s.enable = 1;
-	CSR_WRITE_PA(current_file.node, CAVM_MPI_CFG, mpi_cfg.u);
-
+	if (CAVIUM_IS_MODEL(CAVIUM_CN8XXX))
+		CSR_WRITE_PA(current_file.node, CAVM_MPI_CFG, mpi_cfg.u);
+	else if (CAVIUM_IS_MODEL(CAVIUM_CN9XXX))
+		CSR_WRITE_PA(current_file.node, CAVM_MPIX_CFG(cs), mpi_cfg.u);
+	else
+		return -1;
 	return 0;
 }
 
@@ -109,7 +118,12 @@ int spi_xfer(unsigned char *dout, unsigned char *din, int len, int cs, int last_
 
 		if (dout) {
 			for (i = 0; i < size; i++) {
-				CSR_WRITE_PA(current_file.node, CAVM_MPI_DATX(i), *dout++);
+				if (CAVIUM_IS_MODEL(CAVIUM_CN8XXX))
+					CSR_WRITE_PA(current_file.node, CAVM_MPI_DATX(i), *dout++);
+				else if (CAVIUM_IS_MODEL(CAVIUM_CN9XXX))
+					CSR_WRITE_PA(current_file.node, CAVM_MPIX_DATX(cs, i), *dout++);
+				else
+					return -1;
 			}
 		}
 
@@ -123,16 +137,30 @@ int spi_xfer(unsigned char *dout, unsigned char *din, int len, int cs, int last_
 
 		mpi_tx.s.txnum = dout ? size : 0;
 		mpi_tx.s.totnum = size;
-		CSR_WRITE_PA(current_file.node, CAVM_MPI_TX, mpi_tx.u);
-
+		if (CAVIUM_IS_MODEL(CAVIUM_CN8XXX))
+			CSR_WRITE_PA(current_file.node, CAVM_MPI_TX, mpi_tx.u);
+		else if (CAVIUM_IS_MODEL(CAVIUM_CN9XXX))
+			CSR_WRITE_PA(current_file.node, CAVM_MPIX_TX(cs), mpi_tx.u);
+		else
+			return -1;
 		/* Wait for tx/rx to complete */
 		do {
-			mpi_sts.u = CSR_READ_PA(current_file.node, CAVM_MPI_STS);
+			if (CAVIUM_IS_MODEL(CAVIUM_CN8XXX))
+				mpi_sts.u = CSR_READ_PA(current_file.node, CAVM_MPI_STS);
+			else if (CAVIUM_IS_MODEL(CAVIUM_CN9XXX))
+				mpi_sts.u = CSR_READ_PA(current_file.node, CAVM_MPIX_STS(cs));
+			else
+				return -1;
 		} while (mpi_sts.s.busy != 0);
 
 		if (din) {
 			for (i = 0; i < size; i++) {
-				*din++ = CSR_READ_PA(current_file.node, CAVM_MPI_DATX(i));
+				if (CAVIUM_IS_MODEL(CAVIUM_CN8XXX))
+					*din++ = CSR_READ_PA(current_file.node, CAVM_MPI_DATX(i));
+				else if (CAVIUM_IS_MODEL(CAVIUM_CN9XXX))
+					*din++ = CSR_READ_PA(current_file.node, CAVM_MPIX_DATX(cs, i));
+				else
+					return -1;
 			}
 		}
 	}
