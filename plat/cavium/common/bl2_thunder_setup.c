@@ -199,7 +199,6 @@ void bl2_early_platform_setup(meminfo_t *mem_layout,
 void bl2_platform_setup(void)
 {
 	thunder_fill_board_details(1);
-	thunder_gti_init();
 
 	/*
 	 * Do initial security configuration to allow DRAM/device access.
