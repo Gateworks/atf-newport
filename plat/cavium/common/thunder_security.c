@@ -91,7 +91,7 @@ struct l2c_region l2c_map [] = {
 	},
 };
 
-void thunder_security_setup(void)
+void cn8xxx_security_setup(void)
 {
 	unsigned node_count = thunder_get_node_count();
 	union cavm_l2c_asc_regionx_attr l2c_asc_attr;
@@ -101,7 +101,6 @@ void thunder_security_setup(void)
 
 	while (region->node < node_count) {
 		dram_end = thunder_dram_size_node(region->node) - 1;
-
 		if (region->end > dram_end)
 			region->end = dram_end;
 
@@ -133,4 +132,67 @@ void thunder_security_setup(void)
 	VERBOSE("Flushing IC\n");
 	asm volatile("ic iallu\n"
 		     "isb\n");
+}
+
+void cn9xxx_security_setup(void)
+{
+	unsigned node_count = thunder_get_node_count();
+	union cavm_ccs_asc_regionx_attr ccs_asc_attr;
+	struct l2c_region *region = l2c_map;
+	uint64_t dram_end;
+
+	while (region->node < node_count) {
+		dram_end = thunder_dram_size_node(region->node) - 1;
+		if (region->end > dram_end)
+			region->end = dram_end;
+
+		CSR_WRITE_PA(region->node, CAVM_CCS_ASC_REGIONX_START(region->number), region->start);
+		CSR_WRITE_PA(region->node, CAVM_CCS_ASC_REGIONX_END(region->number), region->end);
+
+		ccs_asc_attr.u = CSR_READ_PA(region->node, CAVM_CCS_ASC_REGIONX_ATTR(region->number));
+		switch (ccs_asc_attr.s.lmc_mode) {
+			case 0:
+				/* Set first LMC to access this region */
+				ccs_asc_attr.s.lmc_mask = 0x1;
+				break;
+			case 2:
+				ccs_asc_attr.s.lmc_mask = 0x3;
+				break;
+			case 3:
+				ccs_asc_attr.s.lmc_mask = 0x7;
+				break;
+		}
+
+		ccs_asc_attr.s.s_en  = region->secure;
+		ccs_asc_attr.s.ns_en = !region->secure;
+
+		CSR_WRITE_PA(region->node, CAVM_CCS_ASC_REGIONX_ATTR(region->number), ccs_asc_attr.u);
+
+		INFO("Mark memory region %d at node %d:: %lx to %lx as %ssecure (%lx)\n",
+			region->number, region->node,
+			CSR_READ_PA(region->node, CAVM_CCS_ASC_REGIONX_START(region->number)),
+			CSR_READ_PA(region->node, CAVM_CCS_ASC_REGIONX_END(region->number)),
+			region->secure ? "" : "non-",
+			CSR_READ_PA(region->node, CAVM_CCS_ASC_REGIONX_ATTR(region->number)));
+
+		region++;
+	}
+
+	VERBOSE("Flushing L1C\n");
+	dcsw_op_all(DCCISW);
+
+	VERBOSE("Flushing L2C\n");
+	l2c_flush();
+
+	VERBOSE("Flushing IC\n");
+	asm volatile("ic iallu\n"
+		     "isb\n");
+}
+
+void thunder_security_setup(void)
+{
+	if (CAVIUM_IS_MODEL(CAVIUM_CN8XXX))
+		cn8xxx_security_setup();
+	else if (CAVIUM_IS_MODEL(CAVIUM_CN9XXX))
+		cn9xxx_security_setup();
 }
