@@ -35,6 +35,12 @@ struct ecam_platform_defs {
 	int (*get_max_bus)(int ecam_id);
 	uint64_t (*get_config_addr)(int node, int ecam_id);
 	uint64_t (*get_config_size)(int node, int ecam_id);
+	void (*enable_bus)(int node, int ecam, int bus);
+	void (*disable_bus)(int node, int ecam, int bus);
+	void (*enable_dev)(int node, int ecam, int dev);
+	void (*disable_dev)(int node, int ecam, int dev);
+	void (*enable_func)(int node, int ecam, int func);
+	void (*disable_func)(int node, int ecam, int func);
 	int (*disable_device_on_bus)(int node, int bus);
 };
 
