@@ -545,7 +545,7 @@ void init_gti(int node, uint64_t config_base, uint64_t config_size)
 		*(uint64_t *) vector_base = msg;
 		vector_base += 8;
 		debug_io
-		    ("GTI NODE(%d): Vector:%d address :%lx irq:%u\n",
+		    ("GTI NODE(%d): Vector:%d address :%lx irq:%lu\n",
 		     node, i,
 		     (i % 2) ? CAVM_GICD_CLRSPI_NSR : CAVM_GICD_SETSPI_NSR,
 		     msg);
@@ -582,91 +582,6 @@ static void find_and_call_init(int node, int devid, int vendor_id, uint64_t base
 		}
 		i++;
 	}
-}
-
-static inline void disable_bus(int node, int ecam, int bus)
-{
-	union cavm_ecamx_busx_sdis bus_sdis;
-
-	/* disable bus */
-	bus_sdis.u = CSR_READ_PA(node, CAVM_ECAMX_BUSX_SDIS(ecam, bus));
-	bus_sdis.s.sec = 1;
-	CSR_WRITE_PA(node, CAVM_ECAMX_BUSX_SDIS(ecam, bus), bus_sdis.u);
-	debug_io("disable_bus %d:%d:%d\n", node, ecam, bus);
-}
-
-static inline void enable_bus(int node, int ecam, int bus)
-{
-	union cavm_ecamx_busx_sdis bus_sdis;
-	union cavm_ecamx_busx_nsdis bus_nsdis;
-
-	/* enable bus */
-	bus_sdis.u = CSR_READ_PA(node, CAVM_ECAMX_BUSX_SDIS(ecam, bus));
-	bus_sdis.s.sec = 0;
-	bus_sdis.s.dis = 0;
-	CSR_WRITE_PA(node, CAVM_ECAMX_BUSX_SDIS(ecam, bus), bus_sdis.u);
-
-	bus_nsdis.u = CSR_READ_PA(node, CAVM_ECAMX_BUSX_NSDIS(ecam, bus));
-	bus_nsdis.s.dis = 0;
-	CSR_WRITE_PA(node, CAVM_ECAMX_BUSX_NSDIS(ecam, bus), bus_nsdis.u);
-
-	debug_io("enable_bus %d:%d:%d\n", node, ecam, bus);
-}
-
-static inline void disable_dev(int node, int ecam, int dev)
-{
-	union cavm_ecamx_devx_sdis dev_sdis;
-
-	/* disable device */
-	dev_sdis.u = CSR_READ_PA(node, CAVM_ECAMX_DEVX_SDIS(ecam, dev));
-	dev_sdis.s.sec = 1;
-	CSR_WRITE_PA(node, CAVM_ECAMX_DEVX_SDIS(ecam, dev), dev_sdis.u);
-	debug_io("disable_dev %d:%d:%02x\n", node, ecam, (unsigned)dev);
-}
-
-static inline void enable_dev(int node, int ecam, int dev)
-{
-	union cavm_ecamx_devx_sdis dev_sdis;
-	union cavm_ecamx_devx_nsdis dev_nsdis;
-
-	/* enable device */
-	dev_sdis.u = CSR_READ_PA(node, CAVM_ECAMX_DEVX_SDIS(ecam, dev));
-	dev_sdis.s.sec = 0;
-	dev_sdis.s.dis = 0;
-	CSR_WRITE_PA(node, CAVM_ECAMX_DEVX_SDIS(ecam, dev), dev_sdis.u);
-
-	dev_nsdis.u = CSR_READ_PA(node, CAVM_ECAMX_DEVX_NSDIS(ecam, dev));
-	dev_nsdis.s.dis = 0;
-	CSR_WRITE_PA(node, CAVM_ECAMX_DEVX_NSDIS(ecam, dev), dev_nsdis.u);
-
-	debug_io("enable_dev %d:%d:%02x\n", node, ecam, (unsigned)dev);
-}
-
-static inline void disable_func(int node, int ecam, int func)
-{
-	union cavm_ecamx_rslx_sdis rsl_sdis;
-	/* disable function */
-	rsl_sdis.u = CSR_READ_PA(node, CAVM_ECAMX_RSLX_SDIS(ecam, func));
-	rsl_sdis.s.sec = 1;
-	CSR_WRITE_PA(node, CAVM_ECAMX_RSLX_SDIS(ecam, func), rsl_sdis.u);
-	debug_io("disable_func %d:%d:%02x\n", node, ecam, (unsigned)func);
-}
-
-static inline void enable_func(int node, int ecam, int func)
-{
-	union cavm_ecamx_rslx_sdis rsl_sdis;
-	union cavm_ecamx_rslx_nsdis rsl_nsdis;
-	/* enable function */
-	rsl_sdis.u = CSR_READ_PA(node, CAVM_ECAMX_RSLX_SDIS(ecam, func));
-	rsl_sdis.s.sec = 0;
-	rsl_sdis.s.dis = 0;
-	CSR_WRITE_PA(node, CAVM_ECAMX_RSLX_SDIS(ecam, func), rsl_sdis.u);
-
-	rsl_nsdis.u = CSR_READ_PA(node, CAVM_ECAMX_RSLX_NSDIS(ecam, func));
-	rsl_nsdis.s.dis = 0;
-	CSR_WRITE_PA(node, CAVM_ECAMX_RSLX_NSDIS(ecam, func), rsl_nsdis.u);
-
-	debug_io("enable_func %d:%d:%02x\n", node, ecam, (unsigned)func);
 }
 
 static inline int skip_bus(int node, int ecam, int bus)
@@ -718,13 +633,13 @@ static inline int walk_through_functions(int node, int ecam,
 				cavm_write32(config_base + sizeof(struct pcie_config) * prev_ns_func +
 					     CAVM_PCCPF_XXX_VSEC_CTL, vsec_ctl.u);
 
-				enable_func(node, ecam, func);
+				ecam_devices_ops.enable_func(node, ecam, func);
 				prev_ns_func = func;
 			} else {
-				disable_func(node, ecam, func);
+				ecam_devices_ops.disable_func(node, ecam, func);
 			}
 		} else {
-			disable_func(node, ecam, func);
+			ecam_devices_ops.disable_func(node, ecam, func);
 		}
 		pconfig++; /* skip to next function */
 	}
@@ -753,11 +668,11 @@ static inline int walk_through_devices(int node, int ecam,
 					   pconfig->vendor_id, (uint64_t) pconfig,
 					   sizeof(struct pcie_config));
 			if (devs->ns_visible)
-				enable_dev(node, ecam, dev);
+				ecam_devices_ops.enable_dev(node, ecam, dev);
 			else
-				disable_dev(node, ecam, dev);
+				ecam_devices_ops.disable_dev(node, ecam, dev);
 		} else {
-			disable_dev(node, ecam, dev);
+			ecam_devices_ops.disable_dev(node, ecam, dev);
 		}
 		pconfig += 8;	//skip to next device
 	}
@@ -790,7 +705,6 @@ int init_thunder_io(int node_count)
 			    ecam_devices_ops.get_config_addr(node, ecam_id);
 			ecam_size =
 			    ecam_devices_ops.get_config_size(node, ecam_id);
-
 			pconfig = (struct pcie_config *)ecam_base;
 
 			while ((uint64_t) pconfig <
@@ -799,9 +713,9 @@ int init_thunder_io(int node_count)
 				config_base = (uint64_t) pconfig;
 				bus = (config_base >> 20) & 0xffUL;
 				if (skip_bus(node, offset_ecams, bus)) {
-					disable_bus(node, ecam_id, bus);
+					ecam_devices_ops.disable_bus(node, ecam_id, bus);
 				} else {
-					enable_bus(node, ecam_id, bus);
+					ecam_devices_ops.enable_bus(node, ecam_id, bus);
 					if (is_rsl_bus(ecam_id, bus))
 						walk_through_functions(node,
 								       ecam_id,

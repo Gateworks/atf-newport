@@ -22,6 +22,14 @@
 #include "thunder_dt.h"
 #include "thunder_ecam.h"
 
+#define DEBUG_ATF_PLAT_ECAM 0
+
+#ifdef DEBUG_ATF_PLAT_ECAM
+#define debug_plat_ecam printf
+#else
+#define debug_plat_ecam(x,...);
+#endif
+
 /* Probe for disabling TWSI busses from PCI scan */
 static int ecam_probe_twsi(int node, unsigned long arg)
 {
@@ -263,12 +271,103 @@ static uint64_t cn83xx_get_config_size(int node, int ecam)
 	return thunder_get_ecam_config_size(node, ecam);
 }
 
+static inline void cn83xx_disable_bus(int node, int ecam, int bus)
+{
+	union cavm_ecamx_busx_sdis bus_sdis;
+
+	/* disable bus */
+	bus_sdis.u = CSR_READ_PA(node, CAVM_ECAMX_BUSX_SDIS(ecam, bus));
+	bus_sdis.s.sec = 1;
+	CSR_WRITE_PA(node, CAVM_ECAMX_BUSX_SDIS(ecam, bus), bus_sdis.u);
+	debug_plat_ecam("disable_bus %d:%d:%d\n", node, ecam, bus);
+}
+
+static inline void cn83xx_enable_bus(int node, int ecam, int bus)
+{
+	union cavm_ecamx_busx_sdis bus_sdis;
+	union cavm_ecamx_busx_nsdis bus_nsdis;
+
+	/* enable bus */
+	bus_sdis.u = CSR_READ_PA(node, CAVM_ECAMX_BUSX_SDIS(ecam, bus));
+	bus_sdis.s.sec = 0;
+	bus_sdis.s.dis = 0;
+	CSR_WRITE_PA(node, CAVM_ECAMX_BUSX_SDIS(ecam, bus), bus_sdis.u);
+
+	bus_nsdis.u = CSR_READ_PA(node, CAVM_ECAMX_BUSX_NSDIS(ecam, bus));
+	bus_nsdis.s.dis = 0;
+	CSR_WRITE_PA(node, CAVM_ECAMX_BUSX_NSDIS(ecam, bus), bus_nsdis.u);
+
+	debug_plat_ecam("enable_bus %d:%d:%d\n", node, ecam, bus);
+}
+
+static inline void cn83xx_disable_dev(int node, int ecam, int dev)
+{
+	union cavm_ecamx_devx_sdis dev_sdis;
+
+	/* disable device */
+	dev_sdis.u = CSR_READ_PA(node, CAVM_ECAMX_DEVX_SDIS(ecam, dev));
+	dev_sdis.s.sec = 1;
+	CSR_WRITE_PA(node, CAVM_ECAMX_DEVX_SDIS(ecam, dev), dev_sdis.u);
+	debug_plat_ecam("disable_dev %d:%d:%02x\n", node, ecam, (unsigned)dev);
+}
+
+static inline void cn83xx_enable_dev(int node, int ecam, int dev)
+{
+	union cavm_ecamx_devx_sdis dev_sdis;
+	union cavm_ecamx_devx_nsdis dev_nsdis;
+
+	/* enable device */
+	dev_sdis.u = CSR_READ_PA(node, CAVM_ECAMX_DEVX_SDIS(ecam, dev));
+	dev_sdis.s.sec = 0;
+	dev_sdis.s.dis = 0;
+	CSR_WRITE_PA(node, CAVM_ECAMX_DEVX_SDIS(ecam, dev), dev_sdis.u);
+
+	dev_nsdis.u = CSR_READ_PA(node, CAVM_ECAMX_DEVX_NSDIS(ecam, dev));
+	dev_nsdis.s.dis = 0;
+	CSR_WRITE_PA(node, CAVM_ECAMX_DEVX_NSDIS(ecam, dev), dev_nsdis.u);
+
+	debug_plat_ecam("enable_dev %d:%d:%02x\n", node, ecam, (unsigned)dev);
+}
+
+static inline void cn83xx_disable_func(int node, int ecam, int func)
+{
+	union cavm_ecamx_rslx_sdis rsl_sdis;
+	/* disable function */
+	rsl_sdis.u = CSR_READ_PA(node, CAVM_ECAMX_RSLX_SDIS(ecam, func));
+	rsl_sdis.s.sec = 1;
+	CSR_WRITE_PA(node, CAVM_ECAMX_RSLX_SDIS(ecam, func), rsl_sdis.u);
+	debug_plat_ecam("disable_func %d:%d:%02x\n", node, ecam, (unsigned)func);
+}
+
+static inline void cn83xx_enable_func(int node, int ecam, int func)
+{
+	union cavm_ecamx_rslx_sdis rsl_sdis;
+	union cavm_ecamx_rslx_nsdis rsl_nsdis;
+	/* enable function */
+	rsl_sdis.u = CSR_READ_PA(node, CAVM_ECAMX_RSLX_SDIS(ecam, func));
+	rsl_sdis.s.sec = 0;
+	rsl_sdis.s.dis = 0;
+	CSR_WRITE_PA(node, CAVM_ECAMX_RSLX_SDIS(ecam, func), rsl_sdis.u);
+
+	rsl_nsdis.u = CSR_READ_PA(node, CAVM_ECAMX_RSLX_NSDIS(ecam, func));
+	rsl_nsdis.s.dis = 0;
+	CSR_WRITE_PA(node, CAVM_ECAMX_RSLX_NSDIS(ecam, func), rsl_nsdis.u);
+
+	debug_plat_ecam("enable_func %d:%d:%02x\n", node, ecam, (unsigned)func);
+}
+
 const struct ecam_platform_defs ecam_devices_ops = {
 	.soc_type = T83PARTNUM,
 	.get_dev_idx = cn83xx_get_dev_idx,
 	.get_max_bus = cn83xx_get_max_bus,
 	.get_config_addr = cn83xx_get_config_addr,
 	.get_config_size = cn83xx_get_config_size,
+	.enable_bus = cn83xx_enable_bus,
+	.disable_bus = cn83xx_disable_bus,
+	.enable_dev = cn83xx_enable_dev,
+	.disable_dev = cn83xx_disable_dev,
+	.enable_func = cn83xx_enable_func,
+	.disable_func = cn83xx_disable_func,
 	.disable_device_on_bus = cn83xx_disable_device_on_bus,
 };
 
