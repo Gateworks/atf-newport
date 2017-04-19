@@ -52,6 +52,8 @@ uint64_t thunder_dram_size_node(unsigned node)
 		return 0x80000000; /* 2G for T81 */
 	else if (!strcmp(bfdt.board_model, "asim-cn83xx"))
 		return 0x40000000; /* 1G for T83 */
+	else if (!strcmp(bfdt.board_model, "asim-cn93xx"))
+		return 0x80000000; /* 2G for T93 */
 
 	lmc_per_node = thunder_get_lmc_per_node();
 	if (lmc_per_node < 0) {
