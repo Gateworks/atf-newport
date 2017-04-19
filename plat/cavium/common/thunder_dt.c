@@ -194,7 +194,7 @@ uint64_t thunder_get_ecam_config_addr(int node, int ecam)
         const void *fdt = fdt_ptr;
         int offset = 0, dt_node, ret = 0, len;
         uint64_t val = 0, range = 0;
-        uint64_t addr = CSR_PA(0, CAVM_ECAMX_PF_BAR2(ecam));
+        uint64_t addr = CSR_PA(0, CAVM_ECAM_PF_BAR2(ecam));
         const char *nodename;
         char name[32], *socname;
         const uint32_t *prop;
@@ -248,7 +248,7 @@ uint64_t thunder_get_ecam_config_size(int node, int ecam)
         const void *fdt = fdt_ptr;
         int offset = 0, dt_node, ret = 0, len;
         uint64_t val = 0;
-        uint64_t addr = CSR_PA(0, CAVM_ECAMX_PF_BAR2(ecam));
+        uint64_t addr = CSR_PA(0, CAVM_ECAM_PF_BAR2(ecam));
         const char *nodename;
         char name[32], *socname;
         const uint32_t *prop;

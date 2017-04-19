@@ -78,7 +78,7 @@ void plat_add_mmio_node(unsigned long node)
 	add_map_record(CSR_PA(node, CAVM_MIO_EMM_PF_BAR0), CAVM_MIO_EMM_PF_BAR0_SIZE, attr);
 	add_map_record(CSR_PA(node, CAVM_MIO_FUS_BAR_E_MIO_FUS_PF_BAR0),
 		       CAVM_MIO_FUS_BAR_E_MIO_FUS_PF_BAR0_SIZE, attr);
-	add_map_record(CSR_PA(node, CAVM_MPI_PF_BAR0), CAVM_MPI_PF_BAR0_SIZE, attr);
+	add_map_record(CSR_PA(node, CAVM_MPI_PF_BAR0(0)), CAVM_MPI_PF_BAR0_SIZE, attr);
 	add_map_record(CSR_PA(node, CAVM_GIC_PF_BAR2), CAVM_GIC_PF_BAR2_SIZE, attr);
 	add_map_record(CSR_PA(node, CAVM_GIC_PF_BAR4), CAVM_GIC_PF_BAR4_SIZE, attr);
 #if TRUSTED_BOARD_BOOT
@@ -116,8 +116,8 @@ void plat_add_mmio_node(unsigned long node)
 	for (i = 0; i < 4; i++) {
 		add_map_record(CSR_PA(node, CAVM_PEMX_PF_BAR0(i)), CAVM_PEMX_PF_BAR0_SIZE, attr);
 
-		add_map_record(CSR_PA(node, CAVM_PEM_BAR_E_PEMX_PF_BAR4(i)),
-			       CAVM_PEM_BAR_E_PEMX_PF_BAR4_SIZE, attr);
+		add_map_record(CSR_PA(node, CAVM_PEMX_PF_BAR4(i)),
+			       CAVM_PEMX_PF_BAR4_SIZE, attr);
 	}
 
 	for (i = 0; i < 7; i++)
@@ -140,9 +140,9 @@ void plat_add_mmio_node(unsigned long node)
 	}
 
 	for (i = 0; i < 2; i++) {
-		add_map_record(CSR_PA(node, CAVM_ECAM_BAR_E_ECAMX_PF_BAR0(i)),
-			       CAVM_ECAM_BAR_E_ECAMX_PF_BAR0_SIZE, attr);
-		add_map_record(CSR_PA(node, CAVM_ECAMX_PF_BAR2(i)), CAVM_ECAMX_PF_BAR2_SIZE, attr);
+		add_map_record(CSR_PA(node, CAVM_ECAM_PF_BAR0(i)),
+			       CAVM_ECAM_PF_BAR0_SIZE, attr);
+		add_map_record(CSR_PA(node, CAVM_ECAM_PF_BAR2(i)), CAVM_ECAM_PF_BAR2_SIZE, attr);
 	}
 
 	add_map_record(CSR_PA(node, CAVM_SLIX_PF_BAR0(0)), CAVM_SLIX_PF_BAR0_SIZE, attr);
