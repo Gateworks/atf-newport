@@ -33,6 +33,7 @@
  */
 
 #include <sys/cdefs.h>
+#include <sys/ctype.h>
 #include <string.h>
 
 int

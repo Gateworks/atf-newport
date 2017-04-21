@@ -136,7 +136,7 @@ SECTIONS
      * Its base address should be 16-byte aligned for better performance of the
      * zero-initialization code.
      */
-    .bss : ALIGN(16) {
+    .bss . : ALIGN(16) {
         __BSS_START__ = .;
         *(.bss*)
         *(COMMON)

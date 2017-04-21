@@ -73,7 +73,7 @@ CPU_ERRATA_PRINTED:
 #endif
 #endif
 
-#if defined(IMAGE_BL31) && CRASH_REPORTING
+#if (defined(IMAGE_BL31) || defined(IMAGE_BL1)) && CRASH_REPORTING
 CPU_REG_DUMP: /* cpu specific register dump for crash reporting */
 	.space  8
 #endif
