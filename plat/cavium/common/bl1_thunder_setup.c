@@ -73,8 +73,36 @@ void bl1_plat_arch_setup(void)
 	set_secondary_cpu_jump_addr(BL1_RW_BASE);
 }
 
+void bl1_platform_print_chip_id(void)
+{
+	const void *fdt = fdt_ptr;
+	const char *uid;
+	char uid_prop[21];
+	int offset, len;
+
+	offset = fdt_path_offset(fdt, "/cavium,bdk");
+	if (offset < 0) {
+		INFO("WARNING: FDT node not found\n");
+		return;
+	}
+	snprintf(uid_prop, sizeof(uid_prop), "CHIP-UNIQUE-ID.NODE%d",
+		 cavm_numa_local());
+	uid = fdt_getprop(fdt, offset, uid_prop, &len);
+	if (uid) {
+		if (!strncmp(uid, "00000000000000000000", 20))
+			NOTICE("CHIP UniqueID not set\n");
+		else
+			NOTICE("CHIP UniqueID = %s\n", uid);
+
+	} else {
+		INFO("WARNING: No CHIP-Unique-ID is found\n");
+		NOTICE("CHIP UniqueID not set\n");
+	}
+}
+
 void bl1_platform_setup(void)
 {
+	bl1_platform_print_chip_id();
 	thunder_fill_board_details(1);
 
         /* Initialise the IO layer and register platform IO devices */
