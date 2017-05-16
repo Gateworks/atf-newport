@@ -15,7 +15,7 @@
 #define __THUNDER_PRIVATE_H
 
 #pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-pedantic"
+#pragma GCC diagnostic ignored "-Wpedantic"
 #include "cavm-arch.h"
 #pragma GCC diagnostic pop
 
