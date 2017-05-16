@@ -32,6 +32,7 @@
 #include <arch_helpers.h>
 #include <assert.h>
 #include <bl_common.h>
+#include <desc_image_load.h>
 #include <console.h>
 #include <platform.h>
 #include <platform_def.h>
@@ -86,6 +87,53 @@ extern unsigned char **bl2_el_change_mem_ptr;
 static meminfo_t bl2_tzram_layout __aligned(CACHE_WRITEBACK_GRANULE)
 		__attribute((section("tzfw_coherent_mem")));
 
+#if LOAD_IMAGE_V2
+
+int bl2_plat_handle_post_image_load(unsigned int image_id)
+{
+	int err = 0;
+	unsigned long el_status;
+	unsigned int mode;
+	bl_mem_params_node_t *bl_mem_params = get_bl_mem_params_node(image_id);
+	assert(bl_mem_params);
+
+	switch (image_id) {
+#ifdef AARCH64
+	case BL32_IMAGE_ID:
+		bl_mem_params->ep_info.spsr = 0;
+		break;
+#endif
+
+	case BL33_IMAGE_ID:
+		/* Figure out what mode we enter the non-secure world in */
+		el_status = read_id_aa64pfr0_el1() >> ID_AA64PFR0_EL2_SHIFT;
+		el_status &= ID_AA64PFR0_ELX_MASK;
+
+		if (el_status)
+			mode = MODE_EL2;
+		else
+			mode = MODE_EL1;
+		/* BL33 expects to receive the primary CPU MPID (through r0) */
+		bl_mem_params->ep_info.args.arg0 = 0xffff & read_mpidr();
+		bl_mem_params->ep_info.spsr = SPSR_64(mode, MODE_SP_ELX, DISABLE_ALL_EXCEPTIONS);
+		break;
+
+#ifdef SCP_BL2_BASE
+	case SCP_BL2_IMAGE_ID:
+		/* The subsequent handling of SCP_BL2 is platform specific */
+		err = plat_arm_bl2_handle_scp_bl2(&bl_mem_params->image_info);
+		if (err) {
+			WARN("Failure in platform-specific handling of SCP_BL2 image.\n");
+		}
+		break;
+#endif
+	}
+
+	return err;
+}
+
+#else /* LOAD_IMAGE_V2 */
+
 /*******************************************************************************
  * This structure represents the superset of information that is passed to
  * BL31, e.g. while passing control to it from BL2, bl31_params
@@ -103,6 +151,71 @@ typedef struct bl2_to_bl31_params_mem {
 
 static bl2_to_bl31_params_mem_t bl31_params_mem;
 
+#endif /* LOAD_IMAGE_V2 */
+
+/*******************************************************************************
+ * BL1 has passed the extents of the trusted SRAM that should be visible to BL2
+ * in x0. This memory layout is sitting at the base of the free trusted SRAM.
+ * Copy it to a safe loaction before its reclaimed by later BL2 functionality.
+ ******************************************************************************/
+void bl2_early_platform_setup(meminfo_t *mem_layout,
+				void *plat_params_from_bl1)
+{
+	/* Initialize the console to provide early debug support */
+	console_init(CSR_PA(0, CAVM_UAAX_PF_BAR0(0)), 0, 0);
+
+	/* Setup the BL2 memory layout */
+	bl2_tzram_layout = *mem_layout;
+
+	fdt_ptr = plat_params_from_bl1;
+}
+
+/*******************************************************************************
+ * Perform platform specific setup. For now just initialize the memory location
+ * to use for passing arguments to BL31.
+ ******************************************************************************/
+void bl2_platform_setup(void)
+{
+	thunder_fill_board_details(1);
+	thunder_gti_init();
+
+	/*
+	 * Do initial security configuration to allow DRAM/device access.
+	 */
+	thunder_security_setup();
+
+	/* Enumerate devices on ECAMs */
+	init_thunder_io(1);
+
+        /* Initialise the IO layer and register platform IO devices */
+        thunder_io_setup();
+}
+
+/*******************************************************************************
+ * Perform the very early platform specific architectural setup here. At the
+ * moment this is only intializes the mmu in a quick and dirty way.
+ ******************************************************************************/
+void bl2_plat_arch_setup()
+{
+	mmap_add_region(bl2_tzram_layout.total_base, bl2_tzram_layout.total_base,
+			bl2_tzram_layout.total_size,
+			MT_MEMORY | MT_RW | MT_SECURE);
+	mmap_add_region(BL2_RO_BASE, BL2_RO_BASE,
+			BL2_RO_LIMIT - BL2_RO_BASE,
+			MT_MEMORY | MT_RO | MT_SECURE);
+#if USE_COHERENT_MEM
+	mmap_add_region(BL2_COHERENT_RAM_BASE, BL2_COHERENT_RAM_BASE,
+			BL2_COHERENT_RAM_LIMIT - BL2_COHERENT_RAM_BASE,
+			MT_MEMORY | MT_RW | MT_SECURE);
+#endif
+
+	plat_add_mmio_map();
+
+	init_xlat_tables();
+
+	enable_mmu_el1(0);
+}
+
 /*******************************************************************************
  * Reference to structures which holds the arguments which need to be passed
  * to BL31
@@ -112,6 +225,8 @@ meminfo_t *bl2_plat_sec_mem_layout(void)
 {
 	return &bl2_tzram_layout;
 }
+
+#if !LOAD_IMAGE_V2
 
 /*******************************************************************************
  * This function assigns a pointer to the memory that the platform has kept
@@ -178,75 +293,11 @@ struct entry_point_info *bl2_plat_get_bl31_ep_info(void)
 	return &bl31_params_mem.bl31_ep_info;
 }
 
-/*******************************************************************************
- * BL1 has passed the extents of the trusted SRAM that should be visible to BL2
- * in x0. This memory layout is sitting at the base of the free trusted SRAM.
- * Copy it to a safe loaction before its reclaimed by later BL2 functionality.
- ******************************************************************************/
-void bl2_early_platform_setup(meminfo_t *mem_layout,
-				void *plat_params_from_bl1)
-{
-	/* Initialize the console to provide early debug support */
-	console_init(CSR_PA(0, CAVM_UAAX_PF_BAR0(0)), 0, 0);
-
-	/* Setup the BL2 memory layout */
-	bl2_tzram_layout = *mem_layout;
-
-	fdt_ptr = plat_params_from_bl1;
-}
-
-/*******************************************************************************
- * Perform platform specific setup. For now just initialize the memory location
- * to use for passing arguments to BL31.
- ******************************************************************************/
-void bl2_platform_setup(void)
-{
-	thunder_fill_board_details(1);
-	thunder_gti_init();
-
-	/*
-	 * Do initial security configuration to allow DRAM/device access.
-	 */
-	thunder_security_setup();
-
-	/* Enumerate devices on ECAMs */
-	init_thunder_io(1);
-
-        /* Initialise the IO layer and register platform IO devices */
-        thunder_io_setup();
-}
-
 /* Flush the TF params and the TF plat params */
 void bl2_plat_flush_bl31_params(void)
 {
 	flush_dcache_range((unsigned long)&bl31_params_mem,
 			sizeof(bl2_to_bl31_params_mem_t));
-}
-
-
-/*******************************************************************************
- * Perform the very early platform specific architectural setup here. At the
- * moment this is only intializes the mmu in a quick and dirty way.
- ******************************************************************************/
-void bl2_plat_arch_setup()
-{
-	mmap_add_region(bl2_tzram_layout.total_base, bl2_tzram_layout.total_base,
-			bl2_tzram_layout.total_size,
-			MT_MEMORY | MT_RW | MT_SECURE);
-	mmap_add_region(BL2_RO_BASE, BL2_RO_BASE,
-			BL2_RO_LIMIT - BL2_RO_BASE,
-			MT_MEMORY | MT_RO | MT_SECURE);
-#if USE_COHERENT_MEM
-	mmap_add_region(BL2_COHERENT_RAM_BASE, BL2_COHERENT_RAM_BASE,
-			BL2_COHERENT_RAM_LIMIT - BL2_COHERENT_RAM_BASE,
-			MT_MEMORY | MT_RW | MT_SECURE);
-#endif
-
-	plat_add_mmio_map();
-
-	init_xlat_tables();
-
-	enable_mmu_el1(0);
 }
 
 /*******************************************************************************
@@ -357,4 +408,5 @@ void bl2_plat_get_bl32_meminfo(meminfo_t *bl32_meminfo)
 	bl32_meminfo->free_size =
 			(TSP_SEC_MEM_BASE + TSP_SEC_MEM_SIZE) - BL32_BASE;
 }
-#endif
+#endif /* BL32_BASE */
+#endif /* LOAD_IMAGE_V2 */

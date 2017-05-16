@@ -23,6 +23,8 @@
  * Generic platform constants
  ******************************************************************************/
 
+#define ARM_BL31_PLAT_PARAM_VAL		0x0f1e2d3c4b5a6978ULL
+
 /* Size of cacheable stacks */
 #define PLATFORM_STACK_SIZE		0x1000
 

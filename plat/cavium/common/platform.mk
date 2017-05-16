@@ -79,3 +79,9 @@ PL011_GENERIC_UART	:=	1
 ERROR_DEPRECATED	:=	1
 
 CTX_INCLUDE_AARCH32_REGS	:=	0
+
+ifeq (${LOAD_IMAGE_V2},1)
+    BL2_SOURCES		+=	common/desc_image_load.c				\
+				plat/cavium/common/aarch64/thunder_bl2_mem_params_desc.c\
+				plat/cavium/common/thunder_image_load.c
+endif

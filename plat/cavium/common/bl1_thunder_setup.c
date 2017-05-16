@@ -111,8 +111,6 @@ void bl1_platform_setup(void)
 
 void bl1_early_platform_setup(void)
 {
-	const size_t bl1_size = BL1_RAM_LIMIT - BL1_RAM_BASE;
-
 	thunder_cpu_setup();
 
 	/* Do it here. Later this region will be mapped as RO. */
@@ -126,16 +124,18 @@ void bl1_early_platform_setup(void)
 	bl1_tzram_layout.total_size = TZDRAM_SIZE;
 
 	/* Calculate how much RAM BL1 is using and how much remains free */
+#if !LOAD_IMAGE_V2
 	bl1_tzram_layout.free_base = TZDRAM_BASE;
 	bl1_tzram_layout.free_size = TZDRAM_SIZE;
 	reserve_mem(&bl1_tzram_layout.free_base,
 		    &bl1_tzram_layout.free_size,
 		    BL1_RAM_BASE,
-		    bl1_size);
+		    BL1_RAM_LIMIT - BL1_RAM_BASE);
 	reserve_mem(&bl1_tzram_layout.free_base,
 		    &bl1_tzram_layout.free_size,
 		    0,
 		    BL31_BASE);
+#endif
 }
 
 void bl1_plat_set_ep_info(unsigned int image_id,
