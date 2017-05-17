@@ -91,9 +91,8 @@ entry_point_info_t *bl31_plat_get_next_image_ep_info(uint32_t type)
 	if (type == NON_SECURE)
 		return &bl33_image_ep_info;
 
-	if (type == SECURE)
-		return &bl32_image_ep_info;
-
+	/* Currently Cavium platforms does not support BL32 image,
+	 * for SECURE type image return NULL */
 	return NULL;
 }
 

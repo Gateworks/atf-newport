@@ -120,9 +120,6 @@
 #define TSP_IRQ_SEC_PHY_TIMER		29
 #define TSP_SEC_MEM_BASE		TZDRAM_BASE
 #define TSP_SEC_MEM_SIZE		TZDRAM_SIZE
-#define BL32_LIMIT			BL31_BASE
-#define BL32_MAX_SIZE			(0x00070000 + MAX_XLAT_TABLES * PAGE_SIZE)
-#define BL32_BASE			(BL32_LIMIT - BL32_MAX_SIZE)
 
 /* Load address of BL33 in the ThunderX port */
 #ifdef PLAT_t83
