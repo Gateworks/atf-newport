@@ -94,10 +94,14 @@ int bl2_plat_handle_post_image_load(unsigned int image_id)
 	int err = 0;
 	unsigned long el_status;
 	unsigned int mode;
+	uintptr_t bl33_fdt_address;
 	bl_mem_params_node_t *bl_mem_params = get_bl_mem_params_node(image_id);
 	assert(bl_mem_params);
 
 	switch (image_id) {
+	case BL31_IMAGE_ID:
+		bl_mem_params->ep_info.args.arg1 = (unsigned long)fdt_ptr;
+		break;
 #ifdef AARCH64
 	case BL32_IMAGE_ID:
 		bl_mem_params->ep_info.spsr = 0;
@@ -116,6 +120,24 @@ int bl2_plat_handle_post_image_load(unsigned int image_id)
 		/* BL33 expects to receive the primary CPU MPID (through r0) */
 		bl_mem_params->ep_info.args.arg0 = 0xffff & read_mpidr();
 		bl_mem_params->ep_info.spsr = SPSR_64(mode, MODE_SP_ELX, DISABLE_ALL_EXCEPTIONS);
+
+		bl33_fdt_address = bl_mem_params->image_info.image_base + bl_mem_params->image_info.image_size;
+		VERBOSE("BL33: Image base: %lx, Image size: %d\n",
+			bl_mem_params->image_info.image_base, bl_mem_params->image_info.image_size);
+		VERBOSE("BL33: FDT address: %lx, FDT size: %d\n",
+			bl33_fdt_address, fdt_totalsize(fdt_ptr));
+
+		memcpy((void *)bl33_fdt_address, fdt_ptr, fdt_totalsize(fdt_ptr));
+
+		/*
+		 * Flush data to PoC ,because when booting
+		 * to BL33 caches will be turned off
+		 */
+		flush_dcache_range(bl33_fdt_address, fdt_totalsize(bl33_fdt_address));
+
+		/* Pass FDT address to BL33 */
+		bl_mem_params->ep_info.args.arg1 = bl33_fdt_address;
+
 		break;
 
 #ifdef SCP_BL2_BASE
