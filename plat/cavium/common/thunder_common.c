@@ -114,17 +114,10 @@ void thunder_cpu_setup(void)
 	set_bit(cvmctl_el1, 41);   /* Enable next line prefetcher. */
 	set_bit(cvmctl_el1, 40);   /* Enable delta prefetcher. */
 
-	switch (MIDR_PARTNUM(midr)) {
-	case T81PARTNUM:
-		set_bit(cvmmemctl1_el1, 3);	/* Enable LMTST */
-		set_bit(cvmmemctl1_el1, 4);	/* Enable SSO/PKO addr region */
-		set_bit(cvmmemctl1_el1, 6);	/* Enable SSO switch tag */
-		break;
-	case T83PARTNUM:
+	if (MIDR_PARTNUM(midr) == T83PARTNUM) {
 		set_bit(cvmmemctl1_el1, 3);	/* Enable LMTST */
 		set_bit(cvmmemctl1_el1, 4);	/* Enable SSO/PKO addr region */
 		unset_bit(cvmmemctl1_el1, 6);	/* Disable SSO switch tag */
-		break;
 	}
 
 	/* Fix up defaults from the BDK which is broken and violates the ARM ARM. */
