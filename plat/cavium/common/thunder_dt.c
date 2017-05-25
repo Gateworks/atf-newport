@@ -41,9 +41,31 @@ static void print_board_variables()
 		bfdt.gpio_shutdown_ctl_in);
 	INFO("GPIO Shutdown pin OUT = 0x%x\n",
 		bfdt.gpio_shutdown_ctl_out);
+#if TRUSTED_BOARD_BOOT
+	INFO("TRUST-ROT-ADDR = 0x%lx\n",
+		bfdt.trust_rot_addr);
+	INFO("TRUST-BSSK-ADDR = 0x%lx\n",
+		bfdt.trust_bssk_addr);
+#endif
 	INFO("======================\n");
 
 }
+
+#if TRUSTED_BOARD_BOOT
+static uint64_t thunder_fdt_get_uint64(const void *fdt, int offset, const char *property, int base)
+{
+	const char *name;
+	int len;
+
+	name = fdt_getprop(fdt, offset, property, &len);
+	if (!name) {
+		WARN("No %s is found\n", property);
+		return -1;
+	} else {
+		return (uint64_t)strtol(name, NULL, base);
+	}
+}
+#endif
 
 static int thunder_fdt_get(const void *fdt, int offset, const char *property, int base)
 {
@@ -125,7 +147,27 @@ int thunder_fill_board_details(int info)
 	if (bfdt.gpio_shutdown_ctl_out != -1)
 		bfdt.gpio_shutdown_ctl_out &= 0xff;
 
+#if TRUSTED_BOARD_BOOT
+	/* Configuration for Trusted Board Boot received from BDK.
+	 * For more information, please refer to bdk-trusted-boot.pdf file
+	 * in BDK source repository. */
+	bfdt.trust_rot_addr = thunder_fdt_get_uint64(fdt, offset, "TRUST-ROT-ADDR", 16);
 
+	/* If either thunder_fdt_get_uint64 returned -1 (property not found) or
+	 * 0 (property found, but set to 0 indicates non-secure boot), stop secure booting */
+	if (bfdt.trust_rot_addr == 0 || bfdt.trust_rot_addr == -1) {
+		printf("ERROR: No TRUST-ROT-ADDR in DTS, trusted boot failed\n");
+		return -1;
+	}
+
+	bfdt.trust_bssk_addr = thunder_fdt_get_uint64(fdt, offset, "TRUST-BSSK-ADDR", 16);
+
+	/* If either thunder_fdt_get_uint64 returned -1 (property not found) or
+	 * 0 (property found, but set to 0 indicates non-secure boot), print warning */
+	if (bfdt.trust_bssk_addr == 0 || bfdt.trust_rot_addr == -1)
+		printf("WARNING: No TRUST-BSSK-ADDR in DTS, ATF will be unable to decrypt images\n");
+		//TODO: After adding support for encrypting/decrypting images, return error here
+#endif
 	if (info)
 		print_board_variables();
 
