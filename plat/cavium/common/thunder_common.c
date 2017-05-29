@@ -14,8 +14,13 @@
 #include <arch.h>
 #include <platform_def.h>
 #include <xlat_tables.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <libfdt.h>
 #include <thunder_private.h>
 #include <thunder_common.h>
+
+#define TRUST_ROT_ADDR_SIZE		0x1000
 
 extern void plat_add_mmio_node(unsigned long node);
 
@@ -80,6 +85,45 @@ void  set_secondary_cpu_jump_addr(unsigned int bl1_base)
        CSR_WRITE_PA(0, CAVM_MIO_BOOT_AP_JUMP, bl1_base);
 }
 
+#if TRUSTED_BOARD_BOOT
+/* This function maps memory regions from DTS used
+ * for secure boot purposes. It's Cavium platform-specific,
+ * since we pass the TRUST-ROT-ADDR, TRUST-BSSK-ADDR and TRUST-CSIB
+ * from BDK to ATF via BDK's DTS property.
+ */
+void thunder_mmap_trust(void)
+{
+	unsigned long attr;
+	const void *fdt = fdt_ptr;
+	const char *name;
+	uint64_t trust_rot_addr;
+	int offset, len;
+
+	offset = fdt_path_offset(fdt, "/cavium,bdk");
+	if (offset < 0) {
+		printf("ERROR: FDT node not found, trusted boot failed\n");
+		return;
+	}
+
+	name = fdt_getprop(fdt, offset, "TRUST-ROT-ADDR", &len);
+	if (name) {
+		trust_rot_addr = (uint64_t)strtol(name, NULL, 16);
+		if (trust_rot_addr != 0) {
+			attr = MT_MEMORY | MT_RO | MT_SECURE;
+			mmap_add_region(trust_rot_addr, trust_rot_addr,
+					TRUST_ROT_ADDR_SIZE, attr);
+		} else {
+			printf("ERROR: Booting securely without soft/hard blowing ROTPK.\n \
+				Trusted boot failed\n");
+			return;
+		}
+	} else {
+		printf("ERROR: TRUST-ROT-ADDR not found, trusted boot failed\n");
+		return;
+	}
+}
+#endif
+
 void plat_add_mmio_map()
 {
 	unsigned long node, node_count;
@@ -89,6 +133,9 @@ void plat_add_mmio_map()
 	node_count = thunder_get_node_count();
 	for (node = 0; node < node_count; node++)
 		plat_add_mmio_node(node);
+#if TRUSTED_BOARD_BOOT
+	thunder_mmap_trust();
+#endif
 }
 
 #define set_bit(reg, bit) reg |= (1ULL<<(bit))
