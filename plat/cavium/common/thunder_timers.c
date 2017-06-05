@@ -32,9 +32,9 @@ static hw_timer_isr_t timer_isr;
 
 static void cntps_enable(int enable)
 {
-	volatile uint32_t ctl;
+	uint32_t ctl;
 
-	__asm__ volatile ("mrs %0, cntps_ctl_el1" : "=r" (ctl));
+	__asm__ volatile ("mrs %[ctl], cntps_ctl_el1" : [ctl] "=r" (ctl));
 
 	if (enable) {
 		/* enable timer with masked interrupts */
@@ -45,20 +45,20 @@ static void cntps_enable(int enable)
 	}
 
 	/* write ctl value */
-	__asm__ volatile ("msr cntps_ctl_el1, %0" : "=r" (ctl));
+	__asm__ volatile ("msr cntps_ctl_el1, %[ctl]" :: [ctl] "r" (ctl));
 }
 
 /* max period is over 18e10 seconds */
-void cntps_set_period(volatile uint64_t period)
+void cntps_set_period(uint64_t period)
 {
-	volatile uint64_t timer_status;
+	uint64_t timer_status;
 
 	/* read current timer counter value */
-	__asm__ volatile ("mrs %0, cntpct_el0" : "=r" (timer_status));
+	__asm__ volatile ("mrs %[stat], cntpct_el0" : [stat] "=r" (timer_status));
 
 	period += timer_status;
 
-	__asm__ volatile ("msr cntps_cval_el1, %0" : "=r" (period));
+	__asm__ volatile ("msr cntps_cval_el1, %[period]" :: [period] "r" (period));
 }
 
 uint64_t cntps_ms_to_ticks(uint32_t time)
@@ -66,7 +66,7 @@ uint64_t cntps_ms_to_ticks(uint32_t time)
 	uint32_t cnt_freq; /* in Hz */
 
 	/* gather counter frequency */
-	__asm__ volatile("mrs %0, cntfrq_el0" : "=r" (cnt_freq));
+	__asm__ volatile("mrs %[freq], cntfrq_el0" : [freq] "=r" (cnt_freq));
 
 	return((cnt_freq / 1000) * time);
 }
@@ -80,7 +80,7 @@ uint64_t plat_timer_irq_handler(uint32_t id, uint32_t flags, void *cookie)
 #ifdef DEBUG_TIMERS
 	uint64_t cval1, cval2;
 
-	__asm__ volatile("mrs %0, cntpct_el0" : "=r" (cval1));
+	__asm__ volatile("mrs %[val], cntpct_el0" : [val] "=r" (cval1));
 #endif
 
 	/* map GIC IRQ ID to proper timer ID */
@@ -98,7 +98,7 @@ uint64_t plat_timer_irq_handler(uint32_t id, uint32_t flags, void *cookie)
 		timer_isr(timer_id);
 
 #ifdef DEBUG_TIMERS
-	__asm__ volatile("mrs %0, cntpct_el0" : "=r" (cval2));
+	__asm__ volatile("mrs %[val], cntpct_el0" : [val] "=r" (cval2));
 	printf("%s: COUNT diff  %ld\n", __func__, cval2 - cval1);
 #endif
 
