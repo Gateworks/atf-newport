@@ -12,6 +12,7 @@ typedef struct _timer_t {
 	int is_created;
 	int is_started;
 	uint64_t period; /* in ticks */
+	uint32_t fire_in;
 	timer_kind_t type;
 	timer_callback_t cb;
 } timer_data;

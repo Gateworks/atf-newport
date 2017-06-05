@@ -26,7 +26,9 @@
 #define debug_printf(...)
 #endif
 
-static hw_timer_isr_t timer_isr;
+static uint64_t curr_period;
+static uint32_t timer_enabled;
+static hw_timer_isr_t timer_isr = NULL;
 
 /* Secure architectural physical counter methods */
 
@@ -71,31 +73,32 @@ uint64_t cntps_ms_to_ticks(uint32_t time)
 	return((cnt_freq / 1000) * time);
 }
 
+static uint64_t cntps_get_remaining(void)
+{
+	uint64_t timer_status, period;
+
+	/* read current timer counter value */
+	__asm__ volatile ("mrs %[stat], cntpct_el0" : [stat] "=r" (timer_status));
+
+	/* read programmed value */
+	__asm__ volatile ("mrs %[period], cntps_cval_el1" : [period] "=r" (period));
+
+	return (period - timer_status);
+}
+
 /* Platform timers API */
 
 uint64_t plat_timer_irq_handler(uint32_t id, uint32_t flags, void *cookie)
 {
-	int timer_id;
-
 #ifdef DEBUG_TIMERS
 	uint64_t cval1, cval2;
 
 	__asm__ volatile("mrs %[val], cntpct_el0" : [val] "=r" (cval1));
 #endif
 
-	/* map GIC IRQ ID to proper timer ID */
-	switch (id) {
-	case THUNDER_IRQ_SEC_PHY_TIMER:
-		timer_id = ARCH_SECURE_TIMER_ID;
-		break;
-	default:
-		printf("Unknown timer IRQ ID!\n");
-		return 1;
-	}
-
 	/* call registered handler */
 	if (timer_isr != NULL)
-		timer_isr(timer_id);
+		timer_isr();
 
 #ifdef DEBUG_TIMERS
 	__asm__ volatile("mrs %[val], cntpct_el0" : [val] "=r" (cval2));
@@ -105,73 +108,57 @@ uint64_t plat_timer_irq_handler(uint32_t id, uint32_t flags, void *cookie)
 	return 0;
 }
 
-int plat_timer_register_irq(int timer_id, hw_timer_isr_t isr)
+int plat_timer_register_irq(hw_timer_isr_t isr)
 {
 	uint32_t flags = 0;
 	int rc = 0;
 
-	switch (timer_id) {
-	case ARCH_SECURE_TIMER_ID:
-		timer_isr = isr;
+	timer_isr = isr;
 
-		set_interrupt_rm_flag(flags, SECURE);
-		rc = register_interrupt_handler(INTR_TYPE_EL3,
-				THUNDER_IRQ_SEC_PHY_TIMER,
-				plat_timer_irq_handler);
-		if (rc) {
-			printf("err %d while registering ARCH_PHYS_TIMER "
-			       "secure interrupt handler\n", rc);
-			return rc;
-		}
-		break;
-	default:
-		printf("timers: ERROR: timer with ID %d is not supported\n",
-		       timer_id);
-		rc = -1;
-		break;
+	set_interrupt_rm_flag(flags, SECURE);
+	rc = register_interrupt_handler(INTR_TYPE_EL3,
+			THUNDER_IRQ_SEC_PHY_TIMER,
+			plat_timer_irq_handler);
+	if (rc) {
+		printf("err %d while registering ARCH_PHYS_TIMER "
+		       "secure interrupt handler\n", rc);
+		return rc;
 	}
 
 	return rc;
 }
 
-void plat_timer_enable(int timer_id, int enable)
+void plat_timer_enable(int enable)
 {
 	debug_printf("%s(%d, %d)\n", __func__, timer_id, enable);
 
-	switch (timer_id) {
-	case ARCH_SECURE_TIMER_ID:
-		cntps_enable(enable);
-		break;
-	default:
-		printf("timers: ERROR: timer with ID %d is not supported\n",
-		       timer_id);
-		return;
-	}
+	/* Set saved period just before enabling timer */
+	if (enable)
+		cntps_set_period(curr_period);
+	timer_enabled = enable;
+	cntps_enable(enable);
 }
 
-uint64_t plat_timer_ms_to_ticks(int timer_id, uint32_t time)
+uint64_t plat_timer_ms_to_ticks(uint32_t time)
 {
-	switch (timer_id) {
-	case ARCH_SECURE_TIMER_ID:
-		return cntps_ms_to_ticks(time);
-	default:
-		printf("timers: ERROR: timer with ID %d is not supported\n",
-		       timer_id);
-		return -1;
-	}
+	return cntps_ms_to_ticks(time);
 }
 
-void plat_timer_set_period(int timer_id, uint64_t period)
+uint64_t plat_timer_get_remainig()
 {
-	switch (timer_id) {
-	case ARCH_SECURE_TIMER_ID:
-		cntps_set_period(period);
-		break;
-	default:
-		printf("timers: ERROR: timer with ID %d is not supported\n",
-		       timer_id);
-		break;
-	}
+	if (timer_enabled)
+		return UINT64_MAX;
+
+	return cntps_get_remaining();
+}
+
+void plat_timer_set_period(uint64_t period)
+{
+	debug_printf("plat_timer_set_period(%d, %lu)\n", timer_id, period);
+
+	cntps_set_period(period);
+	/* Store new period to program counter while enabling it */
+	curr_period = period;
 }
 
 static uint32_t plat_get_timer_value(void)
@@ -188,7 +175,7 @@ static timer_ops_t plat_timer_ops;
 
 int plat_timers_init(void)
 {
-	plat_timer_enable(ARCH_SECURE_TIMER_ID, 0);
+	plat_timer_enable(0);
 
 	plat_timer_ops.get_timer_value	= plat_get_timer_value;
 	plat_timer_ops.clk_mult		= 1;

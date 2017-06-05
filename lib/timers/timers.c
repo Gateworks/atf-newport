@@ -21,40 +21,72 @@
 /* Array of timers */
 timer_data timers[TM_MAX_TIMERS];
 
-/* Number of timers registered by platform */
-unsigned int timer_cnt;
+/* HW timer period in ticks */
+uint64_t hw_timer_period = UINT64_MAX;
 
 /* Global spinlock to protect timer structures */
 spinlock_t tm_lock;
 
-static void hw_timer_isr(int id)
+static int num_started_timers = 0;
+
+static void hw_timer_set_period(uint32_t ticks) {
+	hw_timer_period = ticks;
+	plat_timer_set_period(ticks);
+}
+
+static void hw_timer_isr(void)
 {
+	uint64_t min_time = UINT64_MAX;
+
 	debug_printf("timer ISR:\n");
 
-
-	plat_timer_enable(id, 0);
+	/* Disable timer interrupt */
+	plat_timer_enable(0);
 
 	spin_lock(&tm_lock);
+	for (int i = 0; i < TM_MAX_TIMERS; i++) {
+		if (timers[i].is_started) {
+			if (timers[i].fire_in <= hw_timer_period) {
+				/*
+				 * Disable before calling callback function,
+				 * timer may be reenabled.
+				 */
+				if (timers[i].type == TM_ONE_SHOT) {
+					timers[i].is_started = 0;
+					num_started_timers--;
+					if (num_started_timers == 0) {
+						plat_timer_enable(0);
+					}
+				}
 
-	/*
-	 * Disable before calling callback function,
-	 * because timer may be reenabled
-	 */
-	if (timers[id].type == TM_ONE_SHOT)
-		timers[id].is_started = 0;
+				spin_unlock(&tm_lock);
+				timers[i].cb(i);
+				spin_lock(&tm_lock);
+				/*
+				 * Timer can be modified in callback, but only set_timer_period
+				 * and timer_start are allowed, even delete will not hurt
+				 * if a timer is deleted or stopped and it has minimal
+				 * time... we just get extra ISR.
+				 */
+				timers[i].fire_in = timers[i].period;
+			} else {
+				timers[i].fire_in -= hw_timer_period;
+			}
 
+			/* Calculate time for the next ISR */
+			if (timers[i].is_started && (min_time > timers[i].fire_in)) {
+				min_time = timers[i].fire_in;
+			}
+		}
+	}
 	spin_unlock(&tm_lock);
+	if (min_time != UINT64_MAX) {
+		hw_timer_set_period(min_time);
+	}
 
-	/* Call registered function */
-	timers[id].cb(id);
-
-	/* Set new period */
-	if (timers[id].type == TM_PERIODIC)
-		plat_timer_set_period(id, timers[id].period);
-
-	/* Reenable timer */
-	if (timers[id].is_started == 1)
-		plat_timer_enable(id, 1);
+	/* Reenable timer with new value */
+	if (num_started_timers > 1)
+	plat_timer_enable(1);
 }
 
 /*
@@ -74,22 +106,21 @@ int timer_create(timer_kind_t type, uint32_t period, timer_callback_t cb)
 
 	spin_lock(&tm_lock);
 
-	for (i = 0; i < timer_cnt; i++) {
+	for (i = 0; i < TM_MAX_TIMERS; i++) {
 		if (timers[i].is_created)
 			continue;
 		timers[i].is_created = 1;
 		timers[i].is_started = 0;
-		timers[i].period = plat_timer_ms_to_ticks(i, period);
+		timers[i].period = plat_timer_ms_to_ticks(period);
 		timers[i].type = type;
 		timers[i].cb = cb;
-		plat_timer_register_irq(i, hw_timer_isr);
 
 		debug_printf("TIMER: %s hd=%d\n", __func__, i);
 
 		spin_unlock(&tm_lock);
 		return i;
 	}
-	ERROR("TIMER: No timers available!\n");
+	ERROR("TIMER: No more handles available!\n");
 
 	spin_unlock(&tm_lock);
 	return -1;
@@ -116,15 +147,20 @@ int timer_start(int hd)
 	}
 
 	timers[hd].is_started = 1;
+	num_started_timers++;
 
+	/* Need shorter timeout or HW timer is not running at all */
+	if (plat_timer_get_remainig() > timers[hd].period) {
+		timers[hd].fire_in = timers[hd].period;
+		hw_timer_set_period(timers[hd].period);
+	} else {
+		timers[hd].fire_in = (timers[hd].period -
+				     plat_timer_get_remainig());
+	}
+	if (num_started_timers == 1) {
+		plat_timer_enable(1);
+	}
 	spin_unlock(&tm_lock);
-
-	/* Set calculated period */
-	plat_timer_set_period(hd, timers[hd].period);
-
-	/* Enable timer */
-	plat_timer_enable(hd, 1);
-
 
 	return 0;
 }
@@ -137,7 +173,9 @@ int timer_stop(int hd)
 
 	if (timers[hd].is_started) {
 		timers[hd].is_started = 0;
-		plat_timer_enable(hd, 0);
+		num_started_timers--;
+		if (num_started_timers == 0)
+			plat_timer_enable(0);
 		spin_unlock(&tm_lock);
 		return 0;
 	}
@@ -162,7 +200,7 @@ int timer_set_period(int hd, uint32_t period)
 
 	/* Can modify only stopped one-shot timer */
 	if (!timers[hd].is_started && timers[hd].type == TM_ONE_SHOT) {
-		timers[hd].period = plat_timer_ms_to_ticks(hd, period);
+		timers[hd].period = plat_timer_ms_to_ticks(period);
 	} else {
 		spin_unlock(&tm_lock);
 		return -1;
@@ -178,16 +216,8 @@ int timer_set_period(int hd, uint32_t period)
  */
 int timers_init(void)
 {
-	timer_cnt = plat_timers_init();
-	if (timer_cnt == 0) {
-		WARN("No timers available on platform!\n");
-		return -1;
-	}
-	if (timer_cnt > TM_MAX_TIMERS)
-		timer_cnt = TM_MAX_TIMERS;
-
-	debug_printf("TIMER: %s registered %d timers\n", __func__, timer_cnt);
-
-	return 0;
+	debug_printf("TIMER: %s\n", __func__);
+	plat_timers_init();
+	return plat_timer_register_irq(hw_timer_isr);
 }
 

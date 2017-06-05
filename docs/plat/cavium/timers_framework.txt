@@ -17,7 +17,7 @@ framework consist of two main parts:
  - Timers library - frontend of framework, which makes use of hardware exposed
    by lower level drivers and provides API for developers.
  - Platform timers driver - backend of framework, which consist of hardware
-   drivers, directly operating on real devices. In the same time, this layer
+   driver, directly operating on real device. In the same time, this layer
    exposes all functions required by timers library to work correctly.
 
 
@@ -122,48 +122,41 @@ API exposed for _timers library_ consist of following:
 
 -> int plat_timers_init(void)
 /*
- * Performs configuration of all HW timers and returns number of available
- * timers on platform.
+ * Performs configuration of HW timer.
  * Params_in: N/A
- * Return value: timers_count - number of available HW timers on platform
+ * Return value: 0 on success
  */
 
--> void plat_timer_set_period(int timer_id, uint64_t period)
+-> void plat_timer_set_period(uint64_t period)
 /*
- * Set interval for timer with timer_id to specified number of ticks.
- * Params_in: timer_id - ID of HW timer common for timers framework
- *            period   - Number of timer's ticks to be programmed for next
+ * Set interval for HW timer to specified number of ticks.
+ * Params_in: period   - Number of timer's ticks to be programmed for next
  *                       interval
  * Return value: N/A
  */
 
--> uint64_t plat_timer_ms_to_ticks(int timer_id, uint32_t time)
+-> uint64_t plat_timer_ms_to_ticks(uint32_t time)
 /*
- * Method for transforming number of ms to specified timers' ticks count.
- * Params_in: timer_id - ID of HW timer common for timers framework
- *            time     - Number of miliseconds to be transformed
+ * Method for transforming number of ms to timers' ticks count.
+ * Params_in: time     - Number of miliseconds to be transformed
  * Return value: tick_count - number of timers' ticks corresponding to provided
  *                            time in ms
  *               -1 on failure
  */
 
--> void plat_timer_enable(int timer_id, int enable)
+-> void plat_timer_enable(int enable)
 /*
- * Enable or disable HW timer with timer_id.
- * Params_in: timer_id - ID of HW timer common for timers framework
- *            enable   - Boolean value which indicate 1 - enable timer or
+ * Enable or disable HW timer.
+ * Params_in: enable   - Boolean value which indicate 1 - enable timer or
  *                       0 - disable timer
  * Return value: N/A
  */
 
--> int plat_timer_register_irq(int timer_id, hw_timer_isr_t isr)
+-> int plat_timer_register_irq(hw_timer_isr_t isr)
 /*
- * Allows to register interrupt service routine for timer with timer_id. It must
- * perform configuration of interrupts controller. In most cases, driver will
- * register internal service routine, not isr provided from timers library,
- * because it must perform proper HW_TIMER_ID to TIMER_ENTITY_ID mapping.
- * Params_in: timer_id - ID of HW timer common for timers framework
- *            isr      - Pointer to interrupt service routine which should be
+ * Allows to register interrupt service routine for hw timer. It must
+ * perform configuration of interrupts controller.
+ * Params_in: isr      - Pointer to interrupt service routine which should be
  *                       invoked when interrupt from timer is signalled
  * Return value: 0  on success
  *               -1 on failure
@@ -173,12 +166,4 @@ API exposed for _timers library_ consist of following:
 Porting guide
 -------------
 When adding support for new HW timer, one has to implement every method
-described in paragraph "Platform timers driver API" and remember about following
-issues:
- - TIMER_ID used by _timers library_ is int number starting from 0 and lineary
-   added for next timers' entities and equal one should be used inside platform
-   timers driver
- - Correct mapping between GIC_IRQ_ID and TIMER_ID is platform driver layer
-   responsibility
- - Interrupt service routine registered by _timers library_ should be invoked on
-   every ivent, and TIMER_ID should be fed as first argument
+described in paragraph "Platform timers driver API".
