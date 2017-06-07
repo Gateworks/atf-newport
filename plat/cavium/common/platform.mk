@@ -85,3 +85,31 @@ ifeq (${LOAD_IMAGE_V2},1)
 				plat/cavium/common/aarch64/thunder_bl2_mem_params_desc.c\
 				plat/cavium/common/thunder_image_load.c
 endif
+
+ifeq (${SECURE_BOOT},1)
+    include drivers/auth/mbedtls/mbedtls_common.mk
+
+    ifeq (${ARM_ROTPK_LOCATION}, regs)
+        ARM_ROTPK_LOCATION_ID = ARM_ROTPK_REGS_ID
+    else
+        $(error "Unsupported ARM_ROTPK_LOCATION value '${ARM_ROTPK_LOCATION}'")
+    endif
+
+    KEY_ALG                := ecdsa
+    MBEDTLS_KEY_ALG        := ${KEY_ALG}
+    $(eval $(call add_define,ARM_ROTPK_LOCATION_ID))
+    PLAT_BL_COMMON_SOURCES += drivers/auth/auth_mod.c                              \
+                              drivers/auth/crypto_mod.c                            \
+                              drivers/auth/img_parser_mod.c                        \
+                              plat/cavium/common/thunder_tbbr_cot.c                \
+                              plat/cavium/common/thunder_trusted_boot.c
+
+    CRYPTO_LIB_MK := drivers/auth/mbedtls/mbedtls_crypto.mk
+    IMG_PARSER_LIB_MK := drivers/auth/mbedtls/mbedtls_x509.mk
+
+    $(info Including ${CRYPTO_LIB_MK})
+    include ${CRYPTO_LIB_MK}
+
+    $(info Including ${IMG_PARSER_LIB_MK})
+    include ${IMG_PARSER_LIB_MK}
+endif
