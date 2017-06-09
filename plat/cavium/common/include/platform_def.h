@@ -123,7 +123,11 @@
 #define BL32_BASE			(BL32_LIMIT - BL32_MAX_SIZE)
 
 /* Load address of BL33 in the ThunderX port */
+#ifdef PLAT_t83
+#define NS_IMAGE_BASE			0x002800000
+#else
 #define NS_IMAGE_BASE			0x000500000
+#endif
 #define NS_IMAGE_MAX_SIZE		(0x040000000 - NS_IMAGE_BASE)
 
 #define NS_DMA_MEMORY_SIZE		0x100000

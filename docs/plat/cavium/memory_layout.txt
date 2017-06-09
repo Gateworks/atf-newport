@@ -21,7 +21,7 @@ inside flash please refer to Cavium's flash layout document [1].
 |  _BL33_ non-trusted firmware
 |
 |
--- 0x500000
+-- 0x500000 (0x2800000 on T83)
 |
 |  Secure memory area
 |
