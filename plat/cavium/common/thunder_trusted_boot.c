@@ -25,6 +25,8 @@
 /* SHA256 algorithm */
 #define SHA256_BYTES			32
 
+#define FUSF_ROTPK_MAX			4
+
 /* ROTPK locations */
 #define ARM_ROTPK_REGS_ID		1
 #define ARM_ROTPK_DEVEL_RSA_ID		2
@@ -50,6 +52,46 @@ static const unsigned char rotpk_asn1_hdr[] = \
 		"\x00\x04";
 static const unsigned int rotpk_asn1_hdr_len = sizeof(rotpk_asn1_hdr) - 1;
 static unsigned char rotpk[sizeof(rotpk_asn1_hdr) - 1 + ROTPK_BYTES];
+
+unsigned int nv_ctr_val = 0;
+
+/*
+ * This function is used to verify if data received from TRUST-ROT-ADDR
+ * FDT property is actually the ROTPK.
+ *
+ * @param sha256                     - SHA256(ROTPK)
+ * @param len                        - length of SHA256(ROTPK) in bytes
+ *
+ * return                            - 0 if hash from FUSF_ROTPK matches
+ *                                     sha256_rotpk, -1 otherwise
+ */
+int thunder_verify_rotpk(const unsigned char * sha256, unsigned int len)
+{
+	union cavm_fusf_rotpkx fusf_rotpkx;
+	uint64_t hash[FUSF_ROTPK_MAX];
+	unsigned char *dst;
+	int i, j, rc = 0;
+
+	assert(sha256 != NULL);
+
+	dst = (unsigned char *)hash;
+	for (i = 0; i < FUSF_ROTPK_MAX; i++) {
+		/* Convert sha256 to FUSF_ROTPK format */
+		for (j = 0; j < 8; j++) {
+			*dst++ = sha256[8*i + j] & 0xFF;
+		}
+
+		/* Get hash value from FUSF_ROTPK */
+		fusf_rotpkx.u = CSR_READ_PA(0, CAVM_FUSF_ROTPKX(i));
+
+		/* Compare hashes */
+		if (fusf_rotpkx.s.dat != hash[i]) {
+			rc = -1;
+		}
+	}
+
+	return rc;
+}
 
 /*
  * Return the ROTPK hash in the following ASN.1 structure in DER format:
@@ -85,6 +127,15 @@ int plat_get_rotpk_info(void *cookie, void **key_ptr, unsigned int *key_len,
 
 	/* Copy memory from trust_rot_addr to global table indicated by ptr */
 	memcpy(ptr, (unsigned char *)bfdt.trust_rot_addr, ROTPK_BYTES);
+
+	/* Calculate the hash of ROTPK */
+	mbedtls_sha256(ptr, ROTPK_BYTES, rotpk_hash_der, 0);
+
+	/* Verify if the hash matches FUSF_ROTPK registers */
+	if (thunder_verify_rotpk(rotpk_hash_der, SHA256_BYTES) != 0) {
+		printf("ERROR:   Hash of ROTPK from FDT and hash from FUSF registers do not match\n");
+		return -1;
+	}
 
 	/* Convert ROTPK to big endian partly Qx/Qy */
 	words = 4;
