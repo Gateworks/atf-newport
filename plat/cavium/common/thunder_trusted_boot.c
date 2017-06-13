@@ -18,6 +18,7 @@
 #include <string.h>
 #include <stdio.h>
 #include "thunder_dt.h"
+#include "thunder_private.h"
 #include <mbedtls/sha256.h>
 
 #define ROTPK_BYTES			64
@@ -187,21 +188,26 @@ int plat_get_rotpk_info(void *cookie, void **key_ptr, unsigned int *key_len,
 int plat_get_nv_ctr(void *cookie, unsigned int *nv_ctr)
 {
 	const char *oid;
-	uint32_t *nv_ctr_addr;
+	union cavm_fusf_ctl fusf_ctl;
 
 	assert(cookie != NULL);
 	assert(nv_ctr != NULL);
 
 	oid = (const char *)cookie;
-	if (strcmp(oid, TRUSTED_FW_NVCOUNTER_OID) == 0) {
-		nv_ctr_addr = (uint32_t *)TFW_NVCTR_BASE;
-	} else if (strcmp(oid, NON_TRUSTED_FW_NVCOUNTER_OID) == 0) {
-		nv_ctr_addr = (uint32_t *)NTFW_CTR_BASE;
+
+	/* Cavium platform uses the same address for both counters */
+	if (strcmp(oid, TRUSTED_FW_NVCOUNTER_OID) == 0 ||
+	    strcmp(oid, NON_TRUSTED_FW_NVCOUNTER_OID) == 0) {
+		fusf_ctl.u = CSR_READ_PA(0, CAVM_FUSF_CTL);
+		nv_ctr_val = 0;
+		/* Convert value from rom_t_cnt to unsigned int */
+		if (fusf_ctl.s.rom_t_cnt)
+			nv_ctr_val = 32 - __builtin_clz(fusf_ctl.s.rom_t_cnt);
+
+		*nv_ctr = nv_ctr_val;
 	} else {
 		return 1;
 	}
-
-	*nv_ctr = (unsigned int)(*nv_ctr_addr);
 
 	return 0;
 }
