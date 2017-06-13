@@ -1,44 +1,26 @@
-/*
- * Copyright (c) 2015-2016, ARM Limited and Contributors. All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- *
- * Redistributions of source code must retain the above copyright notice, this
- * list of conditions and the following disclaimer.
- *
- * Redistributions in binary form must reproduce the above copyright notice,
- * this list of conditions and the following disclaimer in the documentation
- * and/or other materials provided with the distribution.
- *
- * Neither the name of ARM nor the names of its contributors may be used
- * to endorse or promote products derived from this software without specific
- * prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
- */
+/** @file
 
-#include <arm_def.h>
+  Copyright (c) 2017, Cavium Inc. All rights reserved.<BR>
+  This program and the accompanying materials
+  are licensed and made available under the terms and conditions of the BSD License
+  which accompanies this distribution.  The full text of the license may be found at
+  http://opensource.org/licenses/bsd-license.php
+
+  THE PROGRAM IS DISTRIBUTED UNDER THE BSD LICENSE ON AN "AS IS" BASIS,
+  WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
+
+**/
+
 #include <assert.h>
 #include <platform.h>
 #include <platform_oid.h>
 #include <stdint.h>
 #include <string.h>
+#include <stdio.h>
+#include "thunder_dt.h"
+#include <mbedtls/sha256.h>
 
-/* Weak definition may be overridden in specific platform */
-#pragma weak plat_match_rotpk
-#pragma weak plat_get_nv_ctr
-#pragma weak plat_set_nv_ctr
+#define ROTPK_BYTES			64
 
 /* SHA256 algorithm */
 #define SHA256_BYTES			32
@@ -57,13 +39,17 @@ static const unsigned char rotpk_hash_hdr[] =		\
 static const unsigned int rotpk_hash_hdr_len = sizeof(rotpk_hash_hdr) - 1;
 static unsigned char rotpk_hash_der[sizeof(rotpk_hash_hdr) - 1 + SHA256_BYTES];
 
-#if (ARM_ROTPK_LOCATION_ID == ARM_ROTPK_DEVEL_RSA_ID)
-static const unsigned char arm_devel_rotpk_hash[] =	\
-		"\xB0\xF3\x82\x09\x12\x97\xD8\x3A"	\
-		"\x37\x7A\x72\x47\x1B\xEC\x32\x73"	\
-		"\xE9\x92\x32\xE2\x49\x59\xF6\x5E"	\
-		"\x8B\x4A\x4A\x46\xD8\x22\x9A\xDA";
-#endif
+static const unsigned char rotpk_asn1_hdr[] = \
+		"\x30\x59" \
+		"\x30\x13" \
+		"\x06\x07" \
+		"\x2a\x86\x48\xce\x3d\x02\x01" \
+		"\x06\x08" \
+		"\x2a\x86\x48\xce\x3d\x03\x01\x07" \
+		"\x03\x42" \
+		"\x00\x04";
+static const unsigned int rotpk_asn1_hdr_len = sizeof(rotpk_asn1_hdr) - 1;
+static unsigned char rotpk[sizeof(rotpk_asn1_hdr) - 1 + ROTPK_BYTES];
 
 /*
  * Return the ROTPK hash in the following ASN.1 structure in DER format:
@@ -82,69 +68,59 @@ int plat_get_rotpk_info(void *cookie, void **key_ptr, unsigned int *key_len,
 			unsigned int *flags)
 {
 	uint8_t *dst;
+	unsigned int i, words;
+	uint64_t *src, tmp;
+	unsigned char *ptr;
 
 	assert(key_ptr != NULL);
 	assert(key_len != NULL);
 	assert(flags != NULL);
+	assert(bfdt.trust_rot_addr != 0);
 
-	/* Copy the DER header */
+	/* Copy the DER header of ROTPK into rotpk structure */
+	memcpy(rotpk, rotpk_asn1_hdr, rotpk_asn1_hdr_len);
+
+	/* Move the pointer a header_len forward */
+	ptr = &rotpk[rotpk_asn1_hdr_len];
+
+	/* Copy memory from trust_rot_addr to global table indicated by ptr */
+	memcpy(ptr, (unsigned char *)bfdt.trust_rot_addr, ROTPK_BYTES);
+
+	/* Convert ROTPK to big endian partly Qx/Qy */
+	words = 4;
+	src = (uint64_t *)bfdt.trust_rot_addr;
+	for (i = 0; i < words; i++) {
+		tmp = src[words - 1 - i];
+		*ptr++ = (unsigned char)((tmp >> 56) & 0xFF);
+		*ptr++ = (unsigned char)((tmp >> 48) & 0xFF);
+		*ptr++ = (unsigned char)((tmp >> 40) & 0xFF);
+		*ptr++ = (unsigned char)((tmp >> 32) & 0xFF);
+		*ptr++ = (unsigned char)((tmp >> 24) & 0xFF);
+		*ptr++ = (unsigned char)((tmp >> 16) & 0xFF);
+		*ptr++ = (unsigned char)((tmp >> 8) & 0xFF);
+		*ptr++ = (unsigned char)(tmp & 0xFF);
+	}
+	src = (uint64_t *)(bfdt.trust_rot_addr + ROTPK_BYTES/2);
+	for (i = 0; i < words; i++) {
+		tmp = src[words - 1 - i];
+		*ptr++ = (unsigned char)((tmp >> 56) & 0xFF);
+		*ptr++ = (unsigned char)((tmp >> 48) & 0xFF);
+		*ptr++ = (unsigned char)((tmp >> 40) & 0xFF);
+		*ptr++ = (unsigned char)((tmp >> 32) & 0xFF);
+		*ptr++ = (unsigned char)((tmp >> 24) & 0xFF);
+		*ptr++ = (unsigned char)((tmp >> 16) & 0xFF);
+		*ptr++ = (unsigned char)((tmp >> 8) & 0xFF);
+		*ptr++ = (unsigned char)(tmp & 0xFF);
+	}
+
+	/* Copy the DER header of ROTPK_HASH */
 	memcpy(rotpk_hash_der, rotpk_hash_hdr, rotpk_hash_hdr_len);
 	dst = (uint8_t *)&rotpk_hash_der[rotpk_hash_hdr_len];
 
-#if (ARM_ROTPK_LOCATION_ID == ARM_ROTPK_DEVEL_RSA_ID)
-	memcpy(dst, arm_devel_rotpk_hash, SHA256_BYTES);
-#elif (ARM_ROTPK_LOCATION_ID == ARM_ROTPK_REGS_ID)
-	uint32_t *src, tmp;
-	unsigned int words, i;
+	/* Finally, calculate SHA256 on ROTPK and store it in dst */
+	mbedtls_sha256(rotpk, sizeof(rotpk), dst, 0);
 
-	/*
-	 * Append the hash from Trusted Root-Key Storage registers. The hash has
-	 * not been written linearly into the registers, so we have to do a bit
-	 * of byte swapping:
-	 *
-	 *     0x00    0x04    0x08    0x0C    0x10    0x14    0x18    0x1C
-	 * +---------------------------------------------------------------+
-	 * | Reg0  | Reg1  | Reg2  | Reg3  | Reg4  | Reg5  | Reg6  | Reg7  |
-	 * +---------------------------------------------------------------+
-	 *  | ...                    ... |   | ...                   ...  |
-	 *  |       +--------------------+   |                    +-------+
-	 *  |       |                        |                    |
-	 *  +----------------------------+   +----------------------------+
-	 *          |                    |                        |       |
-	 *  +-------+                    |   +--------------------+       |
-	 *  |                            |   |                            |
-	 *  v                            v   v                            v
-	 * +---------------------------------------------------------------+
-	 * |                               |                               |
-	 * +---------------------------------------------------------------+
-	 *  0                           15  16                           31
-	 *
-	 * Additionally, we have to access the registers in 32-bit words
-	 */
-	words = SHA256_BYTES >> 3;
-
-	/* Swap bytes 0-15 (first four registers) */
-	src = (uint32_t *)TZ_PUB_KEY_HASH_BASE;
-	for (i = 0 ; i < words ; i++) {
-		tmp = src[words - 1 - i];
-		/* Words are read in little endian */
-		*dst++ = (uint8_t)((tmp >> 24) & 0xFF);
-		*dst++ = (uint8_t)((tmp >> 16) & 0xFF);
-		*dst++ = (uint8_t)((tmp >> 8) & 0xFF);
-		*dst++ = (uint8_t)(tmp & 0xFF);
-	}
-
-	/* Swap bytes 16-31 (last four registers) */
-	src = (uint32_t *)(TZ_PUB_KEY_HASH_BASE + SHA256_BYTES / 2);
-	for (i = 0 ; i < words ; i++) {
-		tmp = src[words - 1 - i];
-		*dst++ = (uint8_t)((tmp >> 24) & 0xFF);
-		*dst++ = (uint8_t)((tmp >> 16) & 0xFF);
-		*dst++ = (uint8_t)((tmp >> 8) & 0xFF);
-		*dst++ = (uint8_t)(tmp & 0xFF);
-	}
-#endif /* (ARM_ROTPK_LOCATION_ID == ARM_ROTPK_DEVEL_RSA_ID) */
-
+	/* Assign outputs */
 	*key_ptr = (void *)rotpk_hash_der;
 	*key_len = (unsigned int)sizeof(rotpk_hash_der);
 	*flags = ROTPK_IS_HASH;
