@@ -21,6 +21,8 @@
 #include <string.h>
 #include <debug.h>
 
+extern int thunder_dram_is_lmc_enabled(unsigned node, unsigned lmc);
+
 static inline uint32_t popcnt(uint64_t val)
 {
 	uint64_t x, x2 = val;
@@ -36,15 +38,6 @@ static inline uint32_t popcnt(uint64_t val)
 
 	/* The lower 8 bits hold the popcnt */
 	return x;  /* (7 significant bits) */
-}
-
-int thunder_dram_is_lmc_enabled(unsigned node, unsigned lmc)
-{
-	union cavm_lmcx_ddr_pll_ctl lmcx_ddr_pll_ctl;
-
-	lmcx_ddr_pll_ctl.u = CSR_READ_PA(node, CAVM_LMCX_DDR_PLL_CTL(lmc));
-
-	return lmcx_ddr_pll_ctl.s.reset_n;
 }
 
 uint64_t thunder_dram_size_node(unsigned node)

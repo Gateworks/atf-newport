@@ -57,6 +57,15 @@ int thunder_sata_to_lane(int ctrlr)
 	return ctrlr % 2;
 }
 
+int thunder_dram_is_lmc_enabled(unsigned node, unsigned lmc)
+{
+	union cavm_lmcx_ddr_pll_ctl lmcx_ddr_pll_ctl;
+
+	lmcx_ddr_pll_ctl.u = CSR_READ_PA(node, CAVM_LMCX_DDR_PLL_CTL(lmc));
+
+	return lmcx_ddr_pll_ctl.cn83xx.reset_n;
+}
+
 void plat_add_mmio_node(unsigned long node)
 {
 	unsigned long attr;
