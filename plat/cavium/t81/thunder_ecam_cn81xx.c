@@ -22,12 +22,10 @@
 #include "thunder_dt.h"
 #include "thunder_ecam.h"
 
-#define DEBUG_ATF_PLAT_ECAM 0
-
 #ifdef DEBUG_ATF_PLAT_ECAM
 #define debug_plat_ecam printf
 #else
-#define debug_plat_ecam(x,...);
+#define debug_plat_ecam(...) ((void) (0))
 #endif
 
 /* Probe for disabling TWSI busses from PCI scan */
