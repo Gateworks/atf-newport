@@ -95,8 +95,19 @@ ifeq (${SECURE_BOOT},1)
         $(error "Unsupported ARM_ROTPK_LOCATION value '${ARM_ROTPK_LOCATION}'")
     endif
 
+    # KEY_ALG and MBEDTLS_KEY_ALG are used for authentication purposes
     KEY_ALG                := ecdsa
     MBEDTLS_KEY_ALG        := ${KEY_ALG}
+
+    # CIPHER_TYPE that will be used to encrypt/decrypt images
+    # If not defied at build time, do not use encryption
+    ifneq (${CIPHER_TYPE},)
+        MBEDTLS_CIPHER_TYPE	   := ${CIPHER_TYPE}
+        CRYPTO_BOARD_BOOT	   := 1
+    else
+        CRYPTO_BOARD_BOOT	   := 0
+    endif
+
     $(eval $(call add_define,ARM_ROTPK_LOCATION_ID))
     PLAT_BL_COMMON_SOURCES += drivers/auth/auth_mod.c                              \
                               drivers/auth/crypto_mod.c                            \
