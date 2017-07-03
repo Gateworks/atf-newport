@@ -335,6 +335,7 @@ int plat_get_nv_ctr(void *cookie, unsigned int *nv_ctr);
 int plat_set_nv_ctr(void *cookie, unsigned int nv_ctr);
 int plat_set_nv_ctr2(void *cookie, const struct auth_img_desc_s *img_desc,
 		unsigned int nv_ctr);
+int plat_get_crypt_key(unsigned char **key, unsigned int *key_len);
 
 /*******************************************************************************
  * Secure Partitions functions
