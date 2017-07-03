@@ -71,6 +71,8 @@ void plat_add_mmio_node(unsigned long node)
 	add_map_record(CSR_PA(node, CAVM_GIC_PF_BAR2), CAVM_GIC_PF_BAR2_SIZE, attr);
 	add_map_record(CSR_PA(node, CAVM_GIC_PF_BAR4), CAVM_GIC_PF_BAR4_SIZE, attr);
 #if TRUSTED_BOARD_BOOT
+	add_map_record(CSR_PA(node, CAVM_KEY_BAR_E_KEY_PF_BAR2),
+		       CAVM_KEY_BAR_E_KEY_PF_BAR2_SIZE, (MT_DEVICE | MT_RO | MT_SECURE));
 	add_map_record(CSR_PA(node, CAVM_FUSF_BAR_E_FUSF_PF_BAR0),
 		       CAVM_FUSF_BAR_E_FUSF_PF_BAR0_SIZE, (MT_DEVICE | MT_RO | MT_SECURE));
 #endif
