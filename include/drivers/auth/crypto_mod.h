@@ -89,4 +89,6 @@ extern const crypto_lib_desc_t crypto_lib_desc;
 	const crypto_img_desc_t *const crypto_params_ptr = \
 		(const crypto_img_desc_t *const)&_crypto_params[0]
 
+extern const crypto_img_desc_t *const crypto_params_ptr;
+
 #endif /* __CRYPTO_MOD_H__ */
