@@ -36,6 +36,8 @@
   #error "ARM_ROTPK_LOCATION_ID not defined"
 #endif
 
+#define AES_KEY_BYTES			16
+
 static const unsigned char rotpk_hash_hdr[] =		\
 		"\x30\x31\x30\x0D\x06\x09\x60\x86\x48"	\
 		"\x01\x65\x03\x04\x02\x01\x05\x00\x04\x20";
@@ -53,6 +55,8 @@ static const unsigned char rotpk_asn1_hdr[] = \
 		"\x00\x04";
 static const unsigned int rotpk_asn1_hdr_len = sizeof(rotpk_asn1_hdr) - 1;
 static unsigned char rotpk[sizeof(rotpk_asn1_hdr) - 1 + ROTPK_BYTES];
+
+static unsigned char aes_key[AES_KEY_BYTES];
 
 unsigned int nv_ctr_val = 0;
 
@@ -223,4 +227,33 @@ int plat_get_nv_ctr(void *cookie, unsigned int *nv_ctr)
 int plat_set_nv_ctr(void *cookie, unsigned int nv_ctr)
 {
 	return 1;
+}
+
+/*
+ * Get the AES key stored at either FDT address or at FUSF_SSKX(0..1) registers
+ */
+int plat_get_crypt_key(unsigned char **key, unsigned int *key_len)
+{
+	unsigned char *ptr;
+	uint64_t ssk[2];
+	int i;
+
+	ptr = &aes_key[0];
+	if (bfdt.trust_key_addr != 0) {
+		/* Try to get the BSSK key */
+		memcpy(ptr, (unsigned char *)bfdt.trust_key_addr, AES_KEY_BYTES);
+	} else {
+		/*
+		 * Otherwise, copy content from FUSF_SSKX regs into aes_key.
+		 * SSK will be used to decrypt images.
+		 */
+		for (i = 0; i < 2; i++)
+			ssk[i] = CSR_READ_PA(0, CAVM_FUSF_SSKX(i));
+		memcpy(ptr, ssk, AES_KEY_BYTES);
+	}
+
+	/* Assign outputs */
+	*key = aes_key;
+	*key_len = (unsigned int)sizeof(aes_key);
+	return 0;
 }
