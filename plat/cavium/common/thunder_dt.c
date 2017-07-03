@@ -45,7 +45,7 @@ static void print_board_variables()
 	INFO("TRUST-ROT-ADDR = 0x%lx\n",
 		bfdt.trust_rot_addr);
 	INFO("TRUST-BSSK-ADDR = 0x%lx\n",
-		bfdt.trust_bssk_addr);
+		bfdt.trust_key_addr);
 #endif
 	INFO("======================\n");
 
@@ -60,7 +60,7 @@ static uint64_t thunder_fdt_get_uint64(const void *fdt, int offset, const char *
 	name = fdt_getprop(fdt, offset, property, &len);
 	if (!name) {
 		WARN("No %s is found\n", property);
-		return -1;
+		return 0;
 	} else {
 		return (uint64_t)strtol(name, NULL, base);
 	}
@@ -148,26 +148,41 @@ int thunder_fill_board_details(int info)
 		bfdt.gpio_shutdown_ctl_out &= 0xff;
 
 #if TRUSTED_BOARD_BOOT
-	/* Configuration for Trusted Board Boot received from BDK.
+	/*
+	 * Configuration for Trusted Board Boot received from BDK.
 	 * For more information, please refer to bdk-trusted-boot.pdf file
-	 * in BDK source repository. */
+	 * in BDK source repository.
+	 */
 	bfdt.trust_rot_addr = thunder_fdt_get_uint64(fdt, offset, "TRUST-ROT-ADDR", 16);
 
-	/* If either thunder_fdt_get_uint64 returned -1 (property not found) or
-	 * 0 (property found, but set to 0 indicates non-secure boot), stop secure booting */
+	/*
+	 * If either thunder_fdt_get_uint64 returned -1 (property not found) or
+	 * 0 (property found, but set to 0 indicates non-secure boot), stop secure booting
+	 */
 	if (bfdt.trust_rot_addr == 0 || bfdt.trust_rot_addr == -1) {
 		printf("ERROR: No TRUST-ROT-ADDR in DTS, trusted boot failed\n");
 		return -1;
 	}
 
-	bfdt.trust_bssk_addr = thunder_fdt_get_uint64(fdt, offset, "TRUST-BSSK-ADDR", 16);
+#if CRYPTO_BOARD_BOOT
+	/*
+	 * TRUST-BSSK-ADDR is set only when HUK parameter was passed to build system.
+	 * If so, it contains the address of BSSK key. Firstly, try to get BSSK
+	 */
+	bfdt.trust_key_addr = thunder_fdt_get_uint64(fdt, offset, "TRUST-BSSK-ADDR", 16);
 
-	/* If either thunder_fdt_get_uint64 returned -1 (property not found) or
-	 * 0 (property found, but set to 0 indicates non-secure boot), print warning */
-	if (bfdt.trust_bssk_addr == 0 || bfdt.trust_rot_addr == -1)
-		printf("WARNING: No TRUST-BSSK-ADDR in DTS, ATF will be unable to decrypt images\n");
-		//TODO: After adding support for encrypting/decrypting images, return error here
-#endif
+	/*
+	 * If either thunder_fdt_get_uint64 returned -1 (property not found) or
+	 * 0 (property found, but set to 0 indicates SSK), print info about it
+	 */
+	if (bfdt.trust_key_addr == 0 || bfdt.trust_rot_addr == -1) {
+		printf("INFO: No TRUST-BSSK-ADDR in DTS, images will be decrypted\n"
+		       "      with SSK key from FUSF_SSKX(0..1).\n");
+		bfdt.trust_key_addr = 0;
+	}
+#endif /* CRYPTO_BOARD_BOOT */
+
+#endif /* TRUSTED_BOARD_BOOT */
 	if (info)
 		print_board_variables();
 

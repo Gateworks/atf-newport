@@ -26,7 +26,7 @@ typedef struct board_fdt {
 	int gpio_shutdown_ctl_out;
 #if TRUSTED_BOARD_BOOT
 	uint64_t trust_rot_addr;
-	uint64_t trust_bssk_addr;
+	uint64_t trust_key_addr;
 #endif
 } board_fdt_t;
 
