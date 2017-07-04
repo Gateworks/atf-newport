@@ -93,7 +93,7 @@ struct ecam_device devs0_cn83xx[] = {
 	{0, 0,  4,   0, FALSE, NULL, 0}, /* GTI */
 	{0, 0,  6,   0, TRUE, NULL, 0}, /* GPIO */
 	{0, 0,  7,   0, TRUE, NULL, 0}, /* MPI */
-	{0, 0,  8,   0, FALSE, NULL, 0}, /* MIO_PTP */
+	{0, 0,  8,   0, TRUE, NULL, 0}, /* MIO_PTP */
 	{0, 0,  9,   0, TRUE, NULL, 0}, /* PCCBR_RNM */
 	{0, 0, 10,   0, TRUE, NULL, 0}, /* PCCBR_BCH */
 	{0, 0, 11,   0, TRUE, NULL, 0}, /* NDF */
