@@ -87,10 +87,10 @@ struct ecam_device devs_domain0_cn93xx[] = {
 	{0, 1, 0, 82, TRUE, NULL, 0},	/* LMC 2 */
 	{0, 1, 0, 88, TRUE, NULL, 0},	/* IOBN0 */
 	{0, 1, 0, 89, TRUE, NULL, 0},	/* IOBN1 */
-	{0, 1, 0, 96, TRUE, NULL, 0},	/* UAA 0 */
-	{0, 1, 0, 97, TRUE, NULL, 0},	/* UAA 1 */
-	{0, 1, 0, 98, TRUE, NULL, 0},	/* UAA 2 */
-	{0, 1, 0, 99, TRUE, NULL, 0},	/* UAA 3 */
+	{0, 1, 0, 96, FALSE, NULL, 0},	/* UAA 0 */
+	{0, 1, 0, 97, FALSE, NULL, 0},	/* UAA 1 */
+	{0, 1, 0, 98, FALSE, NULL, 0},	/* UAA 2 */
+	{0, 1, 0, 99, FALSE, NULL, 0},	/* UAA 3 */
 	{0, 1, 0, 100, TRUE, NULL, 0},	/* UAA 4 */
 	{0, 1, 0, 101, TRUE, NULL, 0},	/* UAA 5 */
 	{0, 1, 0, 102, TRUE, NULL, 0},	/* UAA 6 */

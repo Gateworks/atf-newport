@@ -350,6 +350,8 @@ static void init_uaa(int node, uint64_t config_base, uint64_t config_size)
 	uint64_t vector_base = 0;
 	int i, uaa_irq;
 	union cavm_pccpf_xxx_vsec_ctl vsec_ctl;
+	union cavm_pccpf_xxx_cmd cmd;
+
 	vsec_ctl.u = cavm_read32(config_base + CAVM_PCCPF_XXX_VSEC_CTL);
 
 	/* not intialising node1 uaa */
@@ -360,6 +362,13 @@ static void init_uaa(int node, uint64_t config_base, uint64_t config_size)
 
 	if (uaa_irq < 0)
 		return;
+
+	if ((cavm_read32(config_base + CAVM_PCCPF_XXX_SUBID)>>24) == 0xb2) {
+		/* enable bus master for uaa, not like 8xxx always en */
+		cmd.u = cavm_read32(config_base + CAVM_PCCPF_XXX_CMD);
+		cmd.s.me = 1;
+		cavm_write32(config_base + CAVM_PCCPF_XXX_CMD, cmd.u);
+	}
 
 	debug_io("UAA(%d) Node(%d) init called config_base:%lx size:%lx\n",
 		 vsec_ctl.s.inst_num, node, config_base, config_size);
