@@ -84,8 +84,8 @@ struct msix_cap {
     uint8_t cap_ID;
     uint8_t next_pointer;
     uint16_t messagecontrol;
-    uint32_t message_upper_address;
     uint32_t table_offset_and_bir;
+    uint32_t message_upper_address;
 
 }__attribute__((__packed__));
 
