@@ -22,6 +22,7 @@
 
 
 extern void plat_add_mmio_node(unsigned long node);
+extern unsigned thunder_get_node_count(void);
 
 void *fdt_ptr = (void *)~0;
 
@@ -63,16 +64,6 @@ static void plat_add_mmio_common(void)
 
 	attr = MT_MEMORY | MT_RW | MT_NS;
 	mmap_add_region(NS_IMAGE_BASE, NS_IMAGE_BASE, NS_IMAGE_MAX_SIZE, attr);
-}
-
-unsigned thunder_get_node_count(void)
-{
-	unsigned long node = cavm_numa_local();
-	union cavm_l2c_oci_ctl l2c_oci_ctl;
-
-	l2c_oci_ctl.u = CSR_READ_PA(node, CAVM_L2C_OCI_CTL);
-
-	return (l2c_oci_ctl.s.enaoci > 1) ? 2 : 1;
 }
 
 /*******************************************************************************

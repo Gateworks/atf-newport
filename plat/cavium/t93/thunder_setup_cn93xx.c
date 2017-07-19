@@ -55,6 +55,16 @@ int thunder_sata_to_lane(int ctrlr)
 	return ctrlr % 2;
 }
 
+unsigned thunder_get_node_count(void)
+{
+	unsigned long node = cavm_numa_local();
+	union cavm_ccs_ccpi_ctl ccs_ccpi_ctl;
+
+	ccs_ccpi_ctl.u = CSR_READ_PA(node, CAVM_CCS_CCPI_CTL);
+
+	return (ccs_ccpi_ctl.s.enaoci > 1) ? 2 : 1;
+}
+
 void plat_add_mmio_node(unsigned long node)
 {
 	unsigned long attr;

@@ -64,6 +64,16 @@ int thunder_dram_is_lmc_enabled(unsigned node, unsigned lmc)
 	return lmcx_ddr_pll_ctl.cn81xx.reset_n;
 }
 
+unsigned thunder_get_node_count(void)
+{
+	unsigned long node = cavm_numa_local();
+	union cavm_l2c_oci_ctl l2c_oci_ctl;
+
+	l2c_oci_ctl.u = CSR_READ_PA(node, CAVM_L2C_OCI_CTL);
+
+	return (l2c_oci_ctl.s.enaoci > 1) ? 2 : 1;
+}
+
 void plat_add_mmio_node(unsigned long node)
 {
 	unsigned long attr;
