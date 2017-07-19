@@ -561,6 +561,46 @@ void init_gti(int node, uint64_t config_base, uint64_t config_size)
 	}
 }
 
+static void init_iobn(int node, uint64_t config_base, uint64_t config_size)
+{
+	struct pcie_config *pconfig = (struct pcie_config *)config_base;
+	int i, iobn_nr;
+	int domain, bus, dev;
+	union cavm_pccpf_xxx_vsec_ctl vsec_ctl;
+	union cavm_ecamx_const ecamx_const;
+	union cavm_ecamx_domx_const domx_const;
+
+	vsec_ctl.u = cavm_read32(config_base + CAVM_PCCPF_XXX_VSEC_CTL);
+	iobn_nr = vsec_ctl.s.inst_num;
+
+	printf("IOBN(%d) NODE(%d) init called config_base:%lx size:%lx\n",
+		vsec_ctl.s.inst_num, node, config_base, config_size);
+
+	print_config_space(pconfig);
+
+	/*
+	 * Allow all IO units to access non-secure memory.
+	 * We can program secure devices later when they discovered.
+	 */
+	for (i = 0; i < 256; i++) {
+		CSR_WRITE_PA(node, CAVM_IOBNX_RSLX_STREAMS(iobn_nr,i), 0x3);
+	}
+
+	ecamx_const.u = CSR_READ_PA(node, CAVM_ECAMX_CONST(0));
+
+	for (domain = 0; domain < ecamx_const.s.domains; domain++) {
+		/* Domains may not be contiguous */
+		domx_const.u = CSR_READ_PA(node, CAVM_ECAMX_DOMX_CONST(0,domain));
+		if (domx_const.s.pres) {
+			for (bus = 0; bus < 256; bus++)
+				CSR_WRITE_PA(node, CAVM_IOBNX_DOMX_BUSX_STREAMS(iobn_nr, domain, bus), 0x3);
+			for (dev = 0; dev < 32; dev++)
+				if (domain != 1 && dev != 32)
+					CSR_WRITE_PA(node, CAVM_IOBNX_DOMX_DEVX_STREAMS(iobn_nr, domain, dev), 0x3);
+		}
+	}
+}
+
 /*
  *This is the callback structure that holds callback for 
  *different devices.
@@ -573,6 +613,7 @@ struct ecam_callback callbacks[] = {
 	{0xa012, 0x177d, init_twsi},
 	{0xa017, 0x177d, init_gti},
 	{0xa020, 0x177d, init_pem},
+	{0xa06b, 0x177d, init_iobn},
 	{0, 0, 0},		//no more callbacks
 };
 

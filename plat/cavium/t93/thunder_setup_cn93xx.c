@@ -29,6 +29,11 @@ int thunder_get_sata_count(void)
 	return 4;
 }
 
+int thunder_get_iobn_count(void)
+{
+	return 2;
+}
+
 /* Return the highest GSER number, which can be configured as SATA */
 int thunder_get_max_sata_gser(void)
 {
@@ -240,6 +245,12 @@ void plat_add_mmio_node(unsigned long node)
 	}
 
 	add_map_record(CSR_PA(node, CAVM_ROM_PF_BAR0), CAVM_ROM_PF_BAR0_SIZE, attr);
+
+	device_type_count = thunder_get_iobn_count();
+	for (i = 0; i < device_type_count; ++i) {
+		add_map_record(CSR_PA(node, CAVM_IOBN_BAR_E_IOBNX_PF_BAR0_CN9(i)), CAVM_IOBN_BAR_E_IOBNX_PF_BAR0_CN9_SIZE , attr);
+		add_map_record(CSR_PA(node, CAVM_IOBN_BAR_E_IOBNX_PF_BAR4(i)), CAVM_IOBN_BAR_E_IOBNX_PF_BAR4_SIZE, attr);
+	}
 }
 
 int plat_get_boot_type(int boot_type)
