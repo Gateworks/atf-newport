@@ -65,6 +65,27 @@ unsigned thunder_get_node_count(void)
 	return (ccs_ccpi_ctl.s.enaoci > 1) ? 2 : 1;
 }
 
+/*******************************************************************************
+ * Setup secondary CPU JUMP address from RESET
+ ******************************************************************************/
+void set_secondary_cpu_jump_addr(unsigned int bl1_base)
+{
+	/*
+	 * Assembly for ROM memory:
+	 *  d508711f        ic      ialluis
+	 *  d503201f        nop
+	 *  58000040        ldr     x0, 328 <branch_addr>
+	 *  d61f0000        br      x0
+	 *              branch_addr:
+	 * Memory is little endain, so 64 bit constants have the first
+	 * instruction in the low word
+	 */
+	CSR_WRITE_PA(0, CAVM_ROM_MEMX(0), 0xd503201fd508711f);
+	CSR_WRITE_PA(0, CAVM_ROM_MEMX(1), 0xd61f000058000040);
+	CSR_WRITE_PA(0, CAVM_ROM_MEMX(2), (uint64_t)bl1_base);
+}
+
+
 void plat_add_mmio_node(unsigned long node)
 {
 	unsigned long attr;

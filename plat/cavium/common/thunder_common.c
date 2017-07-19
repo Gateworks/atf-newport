@@ -31,7 +31,6 @@ unsigned long plat_get_ns_image_entrypoint(void)
 	return NS_IMAGE_BASE;
 }
 
-
 uint64_t plat_get_syscnt_freq2(void)
 {
 	return THUNDER_SYSCNT_FREQ * 1000 * 1000;
@@ -64,15 +63,6 @@ static void plat_add_mmio_common(void)
 
 	attr = MT_MEMORY | MT_RW | MT_NS;
 	mmap_add_region(NS_IMAGE_BASE, NS_IMAGE_BASE, NS_IMAGE_MAX_SIZE, attr);
-}
-
-/*******************************************************************************
- * Setup secondary CPU JUMP address from RESET
- ******************************************************************************/
-
-void  set_secondary_cpu_jump_addr(unsigned int bl1_base)
-{
-       CSR_WRITE_PA(0, CAVM_MIO_BOOT_AP_JUMP, bl1_base);
 }
 
 void plat_add_mmio_map()
