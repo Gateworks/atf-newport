@@ -19,10 +19,9 @@ int thunder_get_lmc_per_node(void)
 	return 3;
 }
 
-/* For T93, it's actually a domain */
 int thunder_get_num_ecams_per_node(void)
 {
-	return 3;
+	return 1;
 }
 
 int thunder_get_sata_count(void)
@@ -107,7 +106,7 @@ int thunder_get_mpi_count(void)
 
 int thunder_get_smmu_count(void)
 {
-	return 3;
+	return 1;
 }
 
 int thunder_get_twsi_count(void)
@@ -169,7 +168,6 @@ void plat_add_mmio_node(unsigned long node)
 		add_map_record(CSR_PA(node, CAVM_MPI_PF_BAR0(i)), CAVM_MPI_PF_BAR0_SIZE, attr);
 		add_map_record(CSR_PA(node, CAVM_MPI_PF_BAR4(i)), CAVM_MPI_PF_BAR0_SIZE, attr);
 	}
-	add_map_record(CSR_PA(node, CAVM_GIC_PF_BAR0), CAVM_GIC_PF_BAR0_SIZE, attr);
 	add_map_record(CSR_PA(node, CAVM_GIC_PF_BAR2), CAVM_GIC_PF_BAR2_SIZE, attr);
 	add_map_record(CSR_PA(node, CAVM_GIC_PF_BAR4), CAVM_GIC_PF_BAR4_SIZE, attr);
 

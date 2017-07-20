@@ -218,17 +218,10 @@ static inline void cn93xx_enable_bus(int node, int domain, int bus)
 {
 	union cavm_ecamx_domx_busx_permit bus_permit;
 
-	switch (domain) {
-		case 0:
-			domain = 0;
-			break;
-		case 1:
-			domain = 16;
-			break;
-		case 2:
-			domain = 32;
-			break;
-	}
+	debug_plat_ecam("enable_bus N%d:E%d:DOM%d:B%d\n", node, 0, domain, bus);
+
+	if (domain < 0 || domain > 2)
+		return;
 
 	/* enable bus */
 	bus_permit.u = CSR_READ_PA(node, CAVM_ECAMX_DOMX_BUSX_PERMIT(0, domain, bus));
@@ -244,17 +237,8 @@ static inline void cn93xx_disable_bus(int node, int domain, int bus)
 {
 	union cavm_ecamx_domx_busx_permit bus_permit;
 
-	switch (domain) {
-		case 0:
-			domain = 0;
-			break;
-		case 1:
-			domain = 16;
-			break;
-		case 2:
-			domain = 32;
-			break;
-	}
+	if (domain < 0 || domain > 2)
+		return;
 
 	/* disable bus */
 	bus_permit.u = CSR_READ_PA(node, CAVM_ECAMX_DOMX_BUSX_PERMIT(0, domain, bus));
@@ -270,17 +254,8 @@ static inline void cn93xx_enable_dev(int node, int domain, int dev)
 {
 	union cavm_ecamx_domx_devx_permit dev_permit;
 
-	switch (domain) {
-		case 0:
-			domain = 0;
-			break;
-		case 1:
-			domain = 16;
-			break;
-		case 2:
-			domain = 32;
-			break;
-	}
+	if (domain < 0 || domain > 2)
+		return;
 
 	/* enable dev */
 	dev_permit.u = CSR_READ_PA(node, CAVM_ECAMX_DOMX_DEVX_PERMIT(0, domain, dev));
@@ -296,17 +271,8 @@ static inline void cn93xx_disable_dev(int node, int domain, int dev)
 {
 	union cavm_ecamx_domx_devx_permit dev_permit;
 
-	switch (domain) {
-		case 0:
-			domain = 0;
-			break;
-		case 1:
-			domain = 16;
-			break;
-		case 2:
-			domain = 32;
-			break;
-	}
+	if (domain < 0 || domain > 2)
+		return;
 
 	/* disable dev */
 	dev_permit.u = CSR_READ_PA(node, CAVM_ECAMX_DOMX_DEVX_PERMIT(0, domain, dev));
@@ -322,17 +288,8 @@ static inline void cn93xx_enable_func(int node, int domain, int func)
 {
 	union cavm_ecamx_domx_rslx_permit rsl_permit;
 
-	switch (domain) {
-		case 0:
-			domain = 0;
-			break;
-		case 1:
-			domain = 16;
-			break;
-		case 2:
-			domain = 32;
-			break;
-	}
+	if (domain < 0 || domain > 2)
+		return;
 
 	/* enable func */
 	rsl_permit.u = CSR_READ_PA(node, CAVM_ECAMX_DOMX_RSLX_PERMIT(0, domain, func));
@@ -348,17 +305,8 @@ static inline void cn93xx_disable_func(int node, int domain, int func)
 {
 	union cavm_ecamx_domx_rslx_permit rsl_permit;
 
-	switch (domain) {
-		case 0:
-			domain = 0;
-			break;
-		case 1:
-			domain = 16;
-			break;
-		case 2:
-			domain = 32;
-			break;
-	}
+	if (domain < 0 || domain > 2)
+		return;
 
 	/* disable func */
 	rsl_permit.u = CSR_READ_PA(node, CAVM_ECAMX_DOMX_RSLX_PERMIT(0, domain, func));
