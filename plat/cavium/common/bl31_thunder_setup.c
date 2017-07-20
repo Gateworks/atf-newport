@@ -44,6 +44,7 @@
 #include <thunder_dt.h>
 #include <debug.h>
 #include <timers.h>
+#include <thunder_common.h>
 
 /*******************************************************************************
  * Declarations of linker defined symbols which will help us find the layout
@@ -75,6 +76,7 @@ extern unsigned long __COHERENT_RAM_END__;
 #define BL31_COHERENT_RAM_BASE (unsigned long)(&__COHERENT_RAM_START__)
 #define BL31_COHERENT_RAM_LIMIT (unsigned long)(&__COHERENT_RAM_END__)
 
+extern int plat_get_boot_type(int boot_mode);
 
 static entry_point_info_t bl33_image_ep_info, bl32_image_ep_info;
 
@@ -192,7 +194,7 @@ static void thunder_el3_irq_init(void)
  */
 static void thunder_configure_mmc_security(void)
 {
-	int boot_medium;
+	int boot_medium, boot_type;
 	uint64_t val;
 	uint64_t ssd_idx = CAVM_PCC_DEV_CON_E_MIO_EMM >> 5;
 	uint64_t emm_ssd_mask = (1ULL << (CAVM_PCC_DEV_CON_E_MIO_EMM & 0x1F));
@@ -201,8 +203,9 @@ static void thunder_configure_mmc_security(void)
 	gpio_strap.u = CSR_READ_PA(0, CAVM_GPIO_STRAP);
 	boot_medium = (gpio_strap.u) & 0x7;
 
+	boot_type = plat_get_boot_type(boot_medium);
 	/* If it isn't MMC boot, then nothing to do here */
-	if (boot_medium != 0x02 && boot_medium != 0x03)
+	if (boot_type != THUNDER_BOOT_EMMC)
 		return;
 
 	/*
@@ -227,7 +230,14 @@ void bl31_platform_setup()
 	thunder_gic_init();
 	timers_init();
 
-	sata_ipm_quirk();
+	/*
+	 * Apply SATA quirk only for CN8XXX family, maybe for
+	 * CN9XXX it won't be required. If yes, need to find
+	 * adequate GSERX registers for CN9XXXX
+	 */
+	if (CAVIUM_IS_MODEL(CAVIUM_CN8XXX)) {
+		sata_ipm_quirk();
+	}
 
 	/* Intialize the power controller */
 	thunder_pwrc_setup();
