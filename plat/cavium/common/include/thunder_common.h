@@ -29,6 +29,12 @@
 #define T98PARTNUM 0xB1
 #define T93PARTNUM 0xB2
 
+/* Boot type definitions */
+#define THUNDER_BOOT_UNSUPPORTED	1
+#define THUNDER_BOOT_REMOTE		10
+#define THUNDER_BOOT_SPI		11
+#define THUNDER_BOOT_EMMC		12
+
 int thunder_get_lmc_per_node(void);
 
 int thunder_get_num_ecams_per_node(void);

@@ -234,3 +234,20 @@ void plat_add_mmio_node(unsigned long node)
 
 	add_map_record(CSR_PA(node, CAVM_ROM_PF_BAR0), CAVM_ROM_PF_BAR0_SIZE, attr);
 }
+
+int plat_get_boot_type(int boot_type)
+{
+	int ret;
+
+	if (boot_type == 0x05) { /* Remote boot */
+		ret = THUNDER_BOOT_REMOTE;
+	} else if (boot_type == 0x02 || boot_type == 0x03) { /* SPI */
+		ret = THUNDER_BOOT_SPI;
+	} else if (boot_type == 0x00 || boot_type == 0x01) { /* (e)MMC */
+		ret = THUNDER_BOOT_EMMC;
+	} else {
+		ret = -THUNDER_BOOT_UNSUPPORTED;
+	}
+
+	return ret;
+}

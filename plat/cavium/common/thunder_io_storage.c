@@ -40,11 +40,14 @@
 #include <io_storage.h>
 #include <platform_def.h>
 #include <string.h>
+#include <thunder_common.h>
 
 #include <cavm-arch.h>
 
 #define FIP_NAME "fip.bin"
 #define ROMFS_NAME "ROM-FS"
+
+extern int plat_get_boot_type(int boot_type);
 
 /* IO devices */
 static const io_dev_connector_t *fip_dev_con;
@@ -373,36 +376,42 @@ int plat_get_fip_source(uintptr_t *dev_handle, uintptr_t *image_spec)
 	int result, boot_medium;
 	cavm_gpio_strap_t gpio_strap;
 	const char *medium;
-	cavm_rst_boot_t rst_boot;
+	int boot_type;
 
 	int (*check)(const uintptr_t spec);
 	uintptr_t handle;
 	uintptr_t spec;
 
-	rst_boot.u = CSR_READ_PA(0, CAVM_RST_BOOT);
-
 	gpio_strap.u = CSR_READ_PA(0, CAVM_GPIO_STRAP);
 	boot_medium = (gpio_strap.u) & 0x7;
 
-	if (rst_boot.s.rboot) { /* Remote boot */
-		plat_fill_fip_memmap_spec();
-		handle = memmap_dev_handle;
-		spec = (uintptr_t)&fip_block_spec;
-		check = open_memmap;
-		medium = "memmap";
-	} else if (boot_medium == 0x5) { /* SPI */
-		handle = spi_dev_handle;
-		spec = (uintptr_t)&fip_block_spec;
-		check = open_spi;
-		medium = "SPI";
-	} else if (boot_medium == 0x02 || boot_medium == 0x03) { /* (e)MMC */
-		handle = emmc_dev_handle;
-		spec = (uintptr_t)&fip_block_spec;
-		check = open_emmc;
-		medium = "MMC";
-	} else {
-		ERROR("Boot medium %d not supported!\n", boot_medium);
-		while(1);
+	/* Call platform method to get proper boot type */
+	boot_type = plat_get_boot_type(boot_medium);
+
+	switch (boot_type) {
+		case THUNDER_BOOT_REMOTE:
+			plat_fill_fip_memmap_spec();
+			handle = memmap_dev_handle;
+			spec = (uintptr_t)&fip_block_spec;
+			check = open_memmap;
+			medium = "memmap";
+			break;
+		case THUNDER_BOOT_SPI:
+			handle = spi_dev_handle;
+			spec = (uintptr_t)&fip_block_spec;
+			check = open_spi;
+			medium = "SPI";
+			break;
+		case THUNDER_BOOT_EMMC:
+			handle = emmc_dev_handle;
+			spec = (uintptr_t)&fip_block_spec;
+			check = open_emmc;
+			medium = "MMC";
+			break;
+		default:
+			ERROR("Boot medium: 0x%02x is not supported!\n",
+				boot_medium);
+			while(1);
 	}
 
 	result = check(spec);
