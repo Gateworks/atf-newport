@@ -62,11 +62,11 @@ int thunder_sata_to_lane(int ctrlr)
 
 int thunder_dram_is_lmc_enabled(unsigned node, unsigned lmc)
 {
-	union cavm_lmcx_ddr_pll_ctl lmcx_ddr_pll_ctl;
+	union cavm_lmcx_dll_ctl2 lmcx_dll_ctl2;
 
-	lmcx_ddr_pll_ctl.u = CSR_READ_PA(node, CAVM_LMCX_DDR_PLL_CTL(lmc));
+	lmcx_dll_ctl2.u = CSR_READ_PA(node, CAVM_LMCX_DLL_CTL2(lmc));
 
-	return lmcx_ddr_pll_ctl.cn83xx.reset_n;
+	return (lmcx_dll_ctl2.cn9.dreset ? 0 : 1);
 }
 
 unsigned thunder_get_node_count(void)
