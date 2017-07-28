@@ -563,6 +563,31 @@ void init_gti(int node, uint64_t config_base, uint64_t config_size)
 
 static void init_iobn(int node, uint64_t config_base, uint64_t config_size)
 {
+	int iobn_nr;
+	union cavm_pccpf_xxx_vsec_ctl vsec_ctl;
+	union cavm_iobnx_dis_ncbi_io iobn_dis_ncbi;
+
+	vsec_ctl.u = cavm_read32(config_base + CAVM_PCCPF_XXX_VSEC_CTL);
+	iobn_nr = vsec_ctl.s.inst_num;
+
+	debug_io("IOBN(%d) NODE(%d) init called config_base:%lx size:%lx\n",
+		vsec_ctl.s.inst_num, node, config_base, config_size);
+	/*
+	 * When booting in Trusted Mode the Boot ROM disables accesses originating
+	 * from SLI by setting IOBN0_DIS_NCBI_IO.SLI_OFF=1. We unset the bit here.
+	 * Ideally signed software has to clear this  bit if it wants to allow
+	 * external PCIe devices to do DMA.
+	 */
+	if(iobn_nr == 0) {
+		iobn_dis_ncbi.u = CSR_READ_PA(node, CAVM_IOBNX_DIS_NCBI_IO(iobn_nr));
+
+		iobn_dis_ncbi.s.sli_off = 0;
+		CSR_WRITE_PA(node, CAVM_IOBNX_DIS_NCBI_IO(iobn_nr), iobn_dis_ncbi.u);
+	}
+}
+
+static void init_iobn5(int node, uint64_t config_base, uint64_t config_size)
+{
 	struct pcie_config *pconfig = (struct pcie_config *)config_base;
 	int i, iobn_nr;
 	int domain, bus, dev;
@@ -573,7 +598,7 @@ static void init_iobn(int node, uint64_t config_base, uint64_t config_size)
 	vsec_ctl.u = cavm_read32(config_base + CAVM_PCCPF_XXX_VSEC_CTL);
 	iobn_nr = vsec_ctl.s.inst_num;
 
-	printf("IOBN(%d) NODE(%d) init called config_base:%lx size:%lx\n",
+	debug_io("IOBN(%d) NODE(%d) init called config_base:%lx size:%lx\n",
 		vsec_ctl.s.inst_num, node, config_base, config_size);
 
 	print_config_space(pconfig);
@@ -613,7 +638,8 @@ struct ecam_callback callbacks[] = {
 	{0xa012, 0x177d, init_twsi},
 	{0xa017, 0x177d, init_gti},
 	{0xa020, 0x177d, init_pem},
-	{0xa06b, 0x177d, init_iobn},
+	{0xa027, 0x177d, init_iobn},
+	{0xa06b, 0x177d, init_iobn5},
 	{0, 0, 0},		//no more callbacks
 };
 

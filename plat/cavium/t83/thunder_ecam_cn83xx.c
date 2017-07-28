@@ -145,8 +145,8 @@ struct ecam_device devs0_cn83xx[] = {
 
 	{0, 1 , 0,  80, TRUE, ecam_probe_lmc, 0}, /* LMC 0 */
 	{0, 1 , 0,  81, TRUE, ecam_probe_lmc, 1}, /* LMC 1 */
-	// 158 IOBN 0
-	// 159 IOBN 1
+	{0, 1,  0,  88, FALSE, NULL, 0}, /* IOBN 0 */
+	{0, 1,  0,  89, FALSE, NULL, 0}, /* IOBN 1 */
 	{0, 1 , 0,  96, TRUE, NULL, 0}, /* OCLA 0 */
 	{0, 1 , 0,  97, TRUE, NULL, 0}, /* OCLA 1 */
 	{0, 1 , 0,  98, TRUE, NULL, 0}, /* OCLA 2 */
