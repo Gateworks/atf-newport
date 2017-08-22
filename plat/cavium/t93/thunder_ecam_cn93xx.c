@@ -41,17 +41,20 @@ struct ecam_device devs_domain0_cn93xx[] = {
 	{0, 0, 9, 0, TRUE, NULL, 0},	/* RNM bridge */
 	{0, 0, 10, 0, TRUE, NULL, 0},	/* BCH bridge */
 	{0, 0, 11, 0, TRUE, NULL, 0},	/* NAND */
-	{0, 0, 12, 0, TRUE, NULL, 0},	/* CPT0 bridge */
-	{0, 0, 13, 0, TRUE, NULL, 0},	/* CPT1 bridge */
-	{0, 0, 14, 0, TRUE, NULL, 0},	/* RAD bridge */
+//	{0, 0, 12, 0, TRUE, NULL, 0},	/* CPT0 bridge */
+//	{0, 0, 13, 0, TRUE, NULL, 0},	/* CPT1 bridge */
+//	{0, 0, 14, 0, TRUE, NULL, 0},	/* RAD bridge */
 	{0, 0, 15, 0, TRUE, NULL, 0},	/* GPIO */
-	{0, 0, 16, 0, TRUE, NULL, 0},	/* SSO bridge */
-	{0, 0, 17, 0, TRUE, NULL, 0},	/* SSOW bridge */
-	{0, 0, 18, 0, TRUE, NULL, 0},	/* FPA bridge */
-	{0, 0, 19, 0, TRUE, NULL, 0},	/* TIM bridge */
+//	{0, 0, 16, 0, TRUE, NULL, 0},	/* SSO bridge */
+//	{0, 0, 17, 0, TRUE, NULL, 0},	/* SSOW bridge */
+//	{0, 0, 18, 0, TRUE, NULL, 0},	/* FPA bridge */
+//	{0, 0, 19, 0, TRUE, NULL, 0},	/* TIM bridge */
 	{0, 0, 20, 0, TRUE, NULL, 0},	/* DPI0 bridge */
 	{0, 0, 24, 0, TRUE, NULL, 0},	/* SLIRE 0 */
-	{0, 0, 28, 0, TRUE, NULL, 0},	/* AVS */
+	{0, 0, 26, 0, TRUE, NULL, 0},	/* CPC */
+	{0, 0, 28, 0, TRUE, NULL, 0},	/* XCP 0 */
+//	{0, 0, 29, 0, TRUE, NULL, 0},	/* XCP 1 */
+	{0, 0, 30, 0, TRUE, NULL, 0},	/* AVS */
 
 	/* Bus1, ARI functions */
 	{0, 1, 0, 0, TRUE, NULL, 0},	/* MRML */
@@ -65,7 +68,7 @@ struct ecam_device devs_domain0_cn93xx[] = {
 	{0, 1, 0, 10, TRUE, NULL, 0},	/* SGP */
 	{0, 1, 0, 11, TRUE, NULL, 0},	/* SMI */
 	{0, 1, 0, 12, TRUE, NULL, 0},	/* EMM */
-	{0, 1, 0, 13, TRUE, NULL, 0},	/* KEY */
+//	{0, 1, 0, 13, TRUE, NULL, 0},	/* KEY */
 	{0, 1, 0, 14, TRUE, NULL, 0},	/* BOOT BUS */
 	{0, 1, 0, 15, TRUE, NULL, 0},	/* PBUS */
 	{0, 1, 0, 32, TRUE, NULL, 0},	/* CCU 0 */
@@ -75,13 +78,13 @@ struct ecam_device devs_domain0_cn93xx[] = {
 	{0, 1, 0, 48, TRUE, NULL, 0},	/* MCC 0 */
 	{0, 1, 0, 49, TRUE, NULL, 0},	/* MCC 1 */
 	{0, 1, 0, 64, TRUE, NULL, 0},	/* MDC */
-	{0, 1, 0, 68, TRUE, NULL, 0},	/* TSN0 */
+	{0, 1, 0, 65, TRUE, NULL, 0},	/* BTS */
 	{0, 1, 0, 72, TRUE, NULL, 0},	/* TWSI 0 */
-	{0, 1, 0, 73, TRUE, NULL, 1},	/* TWSI 1 */
-	{0, 1, 0, 74, TRUE, NULL, 1},	/* TWSI 2 */
-	{0, 1, 0, 75, TRUE, NULL, 1},	/* TWSI 3 */
-	{0, 1, 0, 76, TRUE, NULL, 1},	/* TWSI 4 */
-	{0, 1, 0, 77, TRUE, NULL, 1},	/* TWSI 5 */
+	{0, 1, 0, 73, TRUE, NULL, 0},	/* TWSI 1 */
+	{0, 1, 0, 74, TRUE, NULL, 0},	/* TWSI 2 */
+	{0, 1, 0, 75, TRUE, NULL, 0},	/* TWSI 3 */
+	{0, 1, 0, 76, TRUE, NULL, 0},	/* TWSI 4 */
+	{0, 1, 0, 77, TRUE, NULL, 0},	/* TWSI 5 */
 	{0, 1, 0, 80, TRUE, NULL, 0},	/* LMC 0 */
 	{0, 1, 0, 81, TRUE, NULL, 0},	/* LMC 1 */
 	{0, 1, 0, 82, TRUE, NULL, 0},	/* LMC 2 */
@@ -96,10 +99,16 @@ struct ecam_device devs_domain0_cn93xx[] = {
 	{0, 1, 0, 102, TRUE, NULL, 0},	/* UAA 6 */
 	{0, 1, 0, 103, TRUE, NULL, 0},	/* UAA 7 */
 	{0, 1, 0, 104, TRUE, NULL, 0},	/* LBK 0 */
-	{0, 1, 0, 112, TRUE, NULL, 0},	/* PEM 0 */
-	{0, 1, 0, 113, TRUE, NULL, 1},	/* PEM 1 */
-	{0, 1, 0, 114, TRUE, NULL, 2},	/* PEM 2 */
-	{0, 1, 0, 115, TRUE, NULL, 2},	/* PEM 3 */
+	{0, 1, 0, 112, TRUE, NULL, 0},	/* TSN 0 */
+	{0, 1, 0, 113, TRUE, NULL, 0},	/* TSN 1 */
+	{0, 1, 0, 114, TRUE, NULL, 0},	/* TSN 2 */
+	{0, 1, 0, 115, TRUE, NULL, 0},	/* TSN 3 */
+	{0, 1, 0, 116, TRUE, NULL, 0},	/* TSN 4 */
+	{0, 1, 0, 117, TRUE, NULL, 0},	/* TSN 5 */
+	{0, 1, 0, 118, TRUE, NULL, 0},	/* TSN 6 */
+	{0, 1, 0, 119, TRUE, NULL, 0},	/* TSN 7 */
+	{0, 1, 0, 120, TRUE, NULL, 0},	/* TSN 8 */
+	{0, 1, 0, 121, TRUE, NULL, 0},	/* TSN 9 */
 	{0, 1, 0, 128, TRUE, NULL, 0},	/* CGX 0 */
 	{0, 1, 0, 129, TRUE, NULL, 2},	/* CGX 1 */
 	{0, 1, 0, 130, TRUE, NULL, 2},	/* CGX 2 */
@@ -108,11 +117,6 @@ struct ecam_device devs_domain0_cn93xx[] = {
 	{0, 1, 0, 146, TRUE, NULL, 0},	/* OCLA 2 */
 	{0, 1, 0, 147, TRUE, NULL, 0},	/* OCLA 3 */
 	{0, 1, 0, 148, TRUE, NULL, 0},	/* OCLA 4 */
-	{0, 1, 0, 149, TRUE, NULL, 0},	/* OCLA 5 */
-	{0, 1, 0, 150, TRUE, NULL, 0},	/* OCLA 6 */
-	{0, 1, 0, 151, TRUE, NULL, 0},	/* OCLA 7 */
-	{0, 1, 0, 152, TRUE, NULL, 0},	/* OCLA 8 */
-	{0, 1, 0, 153, TRUE, NULL, 0},	/* OCLA 9 */
 	{0, 1, 0, 240, TRUE, NULL, 0},	/* GSER 0 */
 	{0, 1, 0, 241, TRUE, NULL, 0},	/* GSER 1 */
 	{0, 1, 0, 242, TRUE, NULL, 0},	/* GSER 2 */
@@ -125,49 +129,52 @@ struct ecam_device devs_domain0_cn93xx[] = {
 	/* Other Bus # devices for Domain 0 */
 	{0, 3, 0, 0, TRUE, NULL, 0},	/* RNM */
 	{0, 4, 0, 0, TRUE, NULL, 0},	/* BCH */
-	{0, 5, 0, 0, TRUE, NULL, 0},	/* CPT 0 */
-	{0, 6, 0, 0, TRUE, NULL, 0},	/* CPT 1 */
-	{0, 7, 0, 0, TRUE, NULL, 0},	/* RAD */
-	{0, 8, 0, 0, TRUE, NULL, 0},	/* SSO */
-	{0, 9, 0, 0, TRUE, NULL, 0},	/* SSOW */
-	{0, 10, 0, 0, TRUE, NULL, 0},	/* FPA */
-	{0, 11, 0, 0, TRUE, NULL, 0},	/* TIM */
-	{0, 12, 0, 0, TRUE, NULL, 0},	/* DPI 0 */
+	{0, 5, 0, 0, TRUE, NULL, 0},	/* DPI 0 */
+//	{0, 6, 0, 0, TRUE, NULL, 0},	/* CPT 1 */
+//	{0, 7, 0, 0, TRUE, NULL, 0},	/* RAD */
+//	{0, 8, 0, 0, TRUE, NULL, 0},	/* SSO */
+//	{0, 9, 0, 0, TRUE, NULL, 0},	/* SSOW */
+//	{0, 10, 0, 0, TRUE, NULL, 0},	/* FPA */
+//	{0, 11, 0, 0, TRUE, NULL, 0},	/* TIM */
+//	{0, 12, 0, 0, TRUE, NULL, 0},	/* DPI 0 */
 
 	{-1, 0, 0, 0, 0, NULL, 0},
 };
 
 struct ecam_device devs_domain1_cn93xx[] = {
 	/* Ecam 0, Domain 1 */
-	{1, 0, 2, 0, TRUE, NULL, 0},	/* CPC */
-	{1, 0, 2, 1, TRUE, NULL, 0},	/* XPC 0 */
-	{1, 0, 2, 2, TRUE, NULL, 0},	/* XPC 2 */
 	{1, 0, 4, 0, TRUE, NULL, 0},	/* SATA 0 */
 	{1, 0, 5, 0, TRUE, NULL, 0},	/* SATA 1 */
 	{1, 0, 6, 0, TRUE, NULL, 0},	/* SATA 2 */
 	{1, 0, 7, 0, TRUE, NULL, 0},	/* SATA 3 */
-
+	{1, 0, 12, 0, TRUE, NULL, 0},	/* USBDRD 0 */
+	{1, 0, 13, 0, TRUE, NULL, 0},	/* USBDRD 1 */
+	{1, 0, 14, 0, TRUE, NULL, 0},	/* Bridge to bus 1 for ZIP */
+	{1, 0, 16, 0, TRUE, NULL, 0},	/* PEM 0 */
+	{1, 0, 17, 0, TRUE, NULL, 0},	/* PEM 1 */
+	{1, 0, 18, 0, TRUE, NULL, 0},	/* PEM 2 */
+	{1, 0, 19, 0, TRUE, NULL, 0},	/* PEM 3 */
 	{-1, 0, 0, 0, 0, NULL, 0},
 };
 
-struct ecam_device devs_domain7_cn93xx[] = {
-	/* Ecam 0, Domain 7 */
-	{7, 0, 0, 0, TRUE, NULL, 0},	/* RVU 0 bridge */
-	{7, 0, 1, 0, TRUE, NULL, 0},	/* RVU 1 bridge */
-	{7, 0, 2, 0, TRUE, NULL, 0},	/* RVU 2 bridge */
-	{7, 0, 3, 0, TRUE, NULL, 0},	/* RVU 3 bridge */
-	{7, 0, 4, 0, TRUE, NULL, 0},	/* RVU 4 bridge */
-	{7, 0, 5, 0, TRUE, NULL, 0},	/* RVU 5 bridge */
-	{7, 0, 6, 0, TRUE, NULL, 0},	/* RVU 6 bridge */
-	{7, 0, 7, 0, TRUE, NULL, 0},	/* RVU 7 bridge */
-	{7, 0, 8, 0, TRUE, NULL, 0},	/* RVU 8 bridge */
-	{7, 0, 9, 0, TRUE, NULL, 0},	/* RVU 9 bridge */
-	{7, 0, 10, 0, TRUE, NULL, 0},	/* RVU 10 bridge */
-	{7, 0, 11, 0, TRUE, NULL, 0},	/* RVU 11 bridge */
-	{7, 0, 12, 0, TRUE, NULL, 0},	/* RVU 12 bridge */
-	{7, 0, 13, 0, TRUE, NULL, 0},	/* RVU 13 bridge */
-	{7, 0, 14, 0, TRUE, NULL, 0},	/* RVU 14 bridge */
-	{7, 0, 15, 0, TRUE, NULL, 0},	/* RVU 15 bridge */
+struct ecam_device devs_domain2_cn93xx[] = {
+	/* Ecam 0, Domain 2 */
+	{2, 0, 0, 0, TRUE, NULL, 0},	/* RVU 0 bridge */
+	{2, 0, 1, 0, TRUE, NULL, 0},	/* RVU 1 bridge */
+	{2, 0, 2, 0, TRUE, NULL, 0},	/* RVU 2 bridge */
+	{2, 0, 3, 0, TRUE, NULL, 0},	/* RVU 3 bridge */
+	{2, 0, 4, 0, TRUE, NULL, 0},	/* RVU 4 bridge */
+	{2, 0, 5, 0, TRUE, NULL, 0},	/* RVU 5 bridge */
+	{2, 0, 6, 0, TRUE, NULL, 0},	/* RVU 6 bridge */
+	{2, 0, 7, 0, TRUE, NULL, 0},	/* RVU 7 bridge */
+	{2, 0, 8, 0, TRUE, NULL, 0},	/* RVU 8 bridge */
+	{2, 0, 9, 0, TRUE, NULL, 0},	/* RVU 9 bridge */
+	{2, 0, 10, 0, TRUE, NULL, 0},	/* RVU 10 bridge */
+	{2, 0, 11, 0, TRUE, NULL, 0},	/* RVU 11 bridge */
+	{2, 0, 12, 0, TRUE, NULL, 0},	/* RVU 12 bridge */
+	{2, 0, 13, 0, TRUE, NULL, 0},	/* RVU 13 bridge */
+	{2, 0, 14, 0, TRUE, NULL, 0},	/* RVU 14 bridge */
+	{2, 0, 15, 0, TRUE, NULL, 0},	/* RVU 15 bridge */
 
 	{-1, 0, 0, 0, 0, NULL, 0},
 };
@@ -187,9 +194,9 @@ static struct ecam_device *cn93xx_get_dev_idx(int node, int ecam)
 		devs = &devs_domain1_cn93xx[0];
 		debug_plat_ecam("returning domain1\n");
 		break;
-	case 7:
-		devs = &devs_domain7_cn93xx[0];
-		debug_plat_ecam("returning domain7\n");
+	case 2:
+		devs = &devs_domain2_cn93xx[0];
+		debug_plat_ecam("returning domain2\n");
 		break;
 	}
 
@@ -237,8 +244,8 @@ static inline void cn93xx_enable_bus(int node, int domain, int bus)
 		case 1:
 			domain = 1;
 			break;
-		case 7:
-			domain = 7;
+		case 2:
+			domain = 2;
 			break;
 		default:
 			debug_plat_ecam("Domain %d does not exist\n", domain);
@@ -266,8 +273,8 @@ static inline void cn93xx_disable_bus(int node, int domain, int bus)
 		case 1:
 			domain = 1;
 			break;
-		case 7:
-			domain = 7;
+		case 2:
+			domain = 2;
 			break;
 		default:
 			debug_plat_ecam("Domain %d does not exist\n", domain);
@@ -295,8 +302,8 @@ static inline void cn93xx_enable_dev(int node, int domain, int dev)
 		case 1:
 			domain = 1;
 			break;
-		case 7:
-			domain = 7;
+		case 2:
+			domain = 2;
 			break;
 		default:
 			debug_plat_ecam("Domain %d does not exist\n", domain);
@@ -324,8 +331,8 @@ static inline void cn93xx_disable_dev(int node, int domain, int dev)
 		case 1:
 			domain = 1;
 			break;
-		case 7:
-			domain = 7;
+		case 2:
+			domain = 2;
 			break;
 		default:
 			debug_plat_ecam("Domain %d does not exist\n", domain);
@@ -353,8 +360,8 @@ static inline void cn93xx_enable_func(int node, int domain, int func)
 		case 1:
 			domain = 1;
 			break;
-		case 7:
-			domain = 7;
+		case 2:
+			domain = 2;
 			break;
 		default:
 			debug_plat_ecam("Domain %d does not exist\n", domain);
@@ -382,8 +389,8 @@ static inline void cn93xx_disable_func(int node, int domain, int func)
 		case 1:
 			domain = 1;
 			break;
-		case 7:
-			domain = 7;
+		case 2:
+			domain = 2;
 			break;
 		default:
 			debug_plat_ecam("Domain %d does not exist\n", domain);
