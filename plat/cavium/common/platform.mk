@@ -37,7 +37,6 @@ BL1_SOURCES		+=	drivers/cavium/thunder_spi.c			\
 				drivers/io/io_memmap.c				\
 				drivers/io/io_storage.c				\
 				lib/cpus/aarch64/thunder.S			\
-				plat/cavium/common/aarch64/thunder_helpers.S	\
 				plat/cavium/common/bl1_thunder_setup.c		\
 
 BL2_SOURCES		+=	drivers/cavium/thunder_spi.c			\
@@ -55,7 +54,6 @@ BL31_SOURCES		+=	drivers/arm/gic/common/gic_common.c		\
 				drivers/delay_timer/delay_timer.c		\
 				lib/cpus/aarch64/thunder.S			\
 				lib/timers/timers.c				\
-				plat/cavium/common/aarch64/thunder_helpers.S	\
 				plat/cavium/common/bl31_thunder_setup.c		\
 				plat/cavium/common/thunder_gicv3.c		\
 				plat/cavium/common/thunder_pm.c			\

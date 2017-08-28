@@ -16,4 +16,8 @@ include plat/cavium/common/platform.mk
 
 PLAT_BL_COMMON_SOURCES	+=	plat/cavium/t93/thunder_setup_cn93xx.c		\
 
+BL1_SOURCES		+=	plat/cavium/t93/thunder_helpers.S		\
+
 BL2_SOURCES		+=	plat/cavium/t93/thunder_ecam_cn93xx.c		\
+
+BL31_SOURCES		+=	plat/cavium/t93/thunder_helpers.S		\
