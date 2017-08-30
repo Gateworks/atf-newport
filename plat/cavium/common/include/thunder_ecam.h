@@ -33,9 +33,9 @@
 
 #define ECAM_INVALID_PROD_ID	0xFF
 #define ECAM_INVALID_PCC_IDL_ID	ECAM_INVALID_PROD_ID
-#define ECAM_PCC_IDL_SHIFT	8
-#define ECAM_INVALID_DEV_ID	((ECAM_INVALID_PROD_ID << ECAM_PCC_IDL_SHIFT) |\
-				ECAM_INVALID_PCC_IDL_ID)
+#define ECAM_PROD_SHIFT		8
+#define ECAM_INVALID_DEV_ID	((ECAM_INVALID_PROD_ID << ECAM_PROD_SHIFT) | \
+					ECAM_INVALID_PCC_IDL_ID)
 
 /*
  * Structure for secure/non-secure settings
@@ -134,8 +134,8 @@ struct ecam_init_callback {
  * non-secure world or SCP/MCP.
  */
 struct secure_devices {
-	uint8_t prodid;
-	uint8_t devid;
+	int prodid;
+	int devid;
 };
 
 #endif

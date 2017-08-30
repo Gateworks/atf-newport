@@ -51,6 +51,7 @@ DEFINE_RENAME_SYSREG_RW_FUNCS(cvm_access_el3, AP_CVM_ACCESS_EL3)
 /* In Mhz */
 #define THUNDER_SYSCNT_FREQ	100ull
 
+void octeontx_pci_init(void);
 void plat_add_mmio_map(void);
 void thunder_io_setup(void);
 void thunder_security_setup(void);

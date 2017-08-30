@@ -14,44 +14,28 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
+#include <assert.h>
 #include <thunder_private.h>
 #include "thunder_common.h"
 #include "thunder_dt.h"
 #include "thunder_ecam.h"
 #include "thunder_io.h"
 
-#undef DEBUG_ATF_IO
-
-#ifdef DEBUG_ATF_IO
+#ifdef DEBUG_ATF_ECAM
 #define debug_io printf
 #else
 #define debug_io(x,...);
 #endif
 
-extern const struct ecam_platform_defs ecam_devices_ops;
+/*
+ * Platform methods defined in thunder_ecam_cnXXxx.c file
+ */
+extern const struct ecam_platform_defs plat_ops;
 
-static void fixup_ecam(struct ecam_device *devs, int node, int ecam)
-{
-	int valid;
-
-	if (!devs) {
-		printf("WARNING : valid devs not found node %d ecam %d\n", node,
-		       ecam);
-		return;
-	}
-
-	for (; devs->ecam_id >= 0; devs++) {
-		if (!devs->ns_visible)
-			continue;
-		valid = TRUE;
-		if (devs->probe_fn)
-			valid = devs->probe_fn(node, devs->probe_arg);
-		if (!valid) {
-			devs->ns_visible = FALSE;
-			continue;
-		}
-	}
-}
+/*
+ * Global ecam_device instance
+ */
+static struct ecam_device ecam_dev;
 
 static uint64_t get_bar_val(struct pcie_config *pconfig, int bar)
 {
@@ -98,31 +82,7 @@ static uint64_t get_bar_val(struct pcie_config *pconfig, int bar)
 	return ret;
 }
 
-static struct ecam_device *get_dev_idx(int node, int ecam, int bus, int dev,
-				       int func)
-{
-	int i = 0;
-	struct ecam_device *devs;
-
-	devs = ecam_devices_ops.get_dev_idx(node, ecam);
-
-	if (!devs) {
-		printf("WARNING : valid devs not found  node %d ecam %d\n",
-		       node, ecam);
-		return NULL;
-	}
-	while (devs[i].ecam_id >= 0) {
-		if (devs[i].ecam_id == ecam && devs[i].bus == bus &&
-		    devs[i].dev == dev && devs[i].fun == func)
-			return &devs[i];
-
-		i++;
-	}
-	return NULL;
-}
-
 #ifdef DEBUG_ATF_IO
-
 static void print_config_space(struct pcie_config *pconfig)
 {
 	int i;
@@ -211,7 +171,7 @@ static inline int smmu_get_irq(int node, int smmunr, int vectornr)
 	return -1;
 }
 
-void init_smmu(int node, uint64_t config_base, uint64_t config_size)
+static void init_smmu(int node, uint64_t config_base, uint64_t config_size)
 {
 	struct pcie_config *pconfig = (struct pcie_config *)config_base;
 	uint8_t cap_pointer = pconfig->cap_pointer;
@@ -300,9 +260,9 @@ static void init_gpio(int node, uint64_t config_base, uint64_t config_size)
 	 * this is highly specific to cn88xx pass 1.0
 	 * */
 	if (1 && table_size) {
-		printf("table_size :%x bir:%1x \n", table_size, bir);
+		debug_io("table_size :%x bir:%1x \n", table_size, bir);
 		vector_base = get_bar_val(pconfig, bir);
-		printf("MSI-X vector base:%lx\n", vector_base);
+		debug_io("MSI-X vector base:%lx\n", vector_base);
 
 		/* configure interrupt vectors first */
 		for (i = 0; i < table_size; i++) {
@@ -313,7 +273,7 @@ static void init_gpio(int node, uint64_t config_base, uint64_t config_size)
 				vector_base += 8;
 				*(uint64_t *) vector_base = GPIO_PWR_S_IRQ;
 				vector_base += 8;
-				printf("GPIO(%d)-NODE(%d): Vector:%d address :%lx irq:%d\n",
+				debug_io("GPIO(%d)-NODE(%d): Vector:%d address :%lx irq:%d\n",
 				       vsec_ctl.s.inst_num, node, i,
 				       (i % 2) ? CAVM_GICD_CLRSPI_SR : CAVM_GICD_SETSPI_SR,
 				       GPIO_PWR_S_IRQ);
@@ -435,9 +395,9 @@ static void init_twsi(int node, uint64_t config_base, uint64_t config_size)
 	 * this is highly specific to cn88xx pass 1.0
 	 */
 	if (1 && table_size) {
-		printf("table_size :%x bir:%1x \n", table_size, bir);
+		debug_io("table_size :%x bir:%1x \n", table_size, bir);
 		vector_base = get_bar_val(pconfig, bir);
-		printf("MSI-X vector base:%lx\n", vector_base);
+		debug_io("MSI-X vector base:%lx\n", vector_base);
 
 		/* configure interrupt vectors first */
 		for (i = 0; i < table_size; i++) {
@@ -456,16 +416,6 @@ static void init_twsi(int node, uint64_t config_base, uint64_t config_size)
 	}
 }
 
-/* Probe RST_CTLX for PEM usability. */
-static int ecam_probe_pem(int node, unsigned long arg)
-{
-	union cavm_rst_soft_prstx soft_prst;
-
-	soft_prst.u = CSR_READ_PA(node, CAVM_RST_SOFT_PRSTX(arg));
-
-	return soft_prst.s.soft_prst == 0;
-}
-
 static void init_pem(int node, uint64_t config_base, uint64_t config_size)
 {
 	struct pcie_config *pconfig = (struct pcie_config *)config_base;
@@ -477,9 +427,6 @@ static void init_pem(int node, uint64_t config_base, uint64_t config_size)
 	uint64_t msg;
 	union cavm_pccpf_xxx_vsec_ctl vsec_ctl;
 	vsec_ctl.u = cavm_read32(config_base + CAVM_PCCPF_XXX_VSEC_CTL);
-
-	if (!ecam_probe_pem(node, vsec_ctl.s.inst_num))
-		return;
 
 	debug_io("PEM(%d) Node(%d) init called config_base:%lx size:%lx\n",
 		 vsec_ctl.s.inst_num, node, config_base, config_size);
@@ -515,7 +462,7 @@ static void init_pem(int node, uint64_t config_base, uint64_t config_size)
 	}
 }
 
-void init_gti(int node, uint64_t config_base, uint64_t config_size)
+static void init_gti(int node, uint64_t config_base, uint64_t config_size)
 {
 	struct pcie_config *pconfig = (struct pcie_config *)config_base;
 	int i;
@@ -626,11 +573,10 @@ static void init_iobn5(int node, uint64_t config_base, uint64_t config_size)
 }
 
 /*
- *This is the callback structure that holds callback for 
- *different devices.
- *
+ * This is the callback structure that holds callback for
+ * different devices.
  */
-struct ecam_callback callbacks[] = {
+struct ecam_init_callback init_callbacks[] = {
 	{0xa008, 0x177d, init_smmu},
 	{0xa00a, 0x177d, init_gpio},
 	{0xa00f, 0x177d, init_uaa},
@@ -639,171 +585,236 @@ struct ecam_callback callbacks[] = {
 	{0xa020, 0x177d, init_pem},
 	{0xa027, 0x177d, init_iobn},
 	{0xa06b, 0x177d, init_iobn5},
-	{0, 0, 0},		//no more callbacks
+	{ECAM_INVALID_DEV_ID, 0, 0},	//no more callbacks
 };
 
-static void find_and_call_init(int node, int devid, int vendor_id, uint64_t base,
-			       uint64_t size)
+static inline int octeontx_bus_is_rsl(struct ecam_device *device)
+{
+	return (device->ecam == 0 && device->domain == 0 && device->bus == 1);
+}
+
+/*
+ * Initialize ECAM device structure
+ */
+static void octeontx_ecam_dev_init(struct ecam_device *device, unsigned node,
+				 unsigned ecam)
+{
+	device->base_addr = thunder_get_ecam_config_addr(node, ecam);
+	device->node = node;
+	device->ecam = ecam;
+}
+
+/*
+ * Method to use probe_callbacks structure defined in
+ * SoC-specific ECAM files to determine if given device should
+ * be hidden from non-secure world.
+ */
+static int octeontx_call_probe(int node, uint64_t pconfig)
+{
+	cavm_pccpf_xxx_id_t pccpf_id;
+	struct ecam_probe_callback *probe_callbacks;
+	int rc, i = 0;
+
+	probe_callbacks = plat_ops.get_probes();
+	if (!probe_callbacks)
+		return 1;
+
+	pccpf_id.u = cavm_read32(pconfig + CAVM_PCCPF_XXX_ID);
+
+	while (probe_callbacks[i].devid != ECAM_INVALID_DEV_ID) {
+		if (probe_callbacks[i].devid == pccpf_id.s.devid
+		    && probe_callbacks[i].vendor_id == pccpf_id.s.vendid) {
+			debug_io("'calling io_probe ... %lx\n",
+				 (uint64_t) probe_callbacks[i].io_probe);
+			rc = probe_callbacks[i].io_probe(node,
+					probe_callbacks[i].call_count);
+			probe_callbacks[i].call_count++;
+			return rc;
+		}
+		i++;
+	}
+
+	return 1;
+}
+
+/*
+ * Method to initialize given device if matched in init_callbacks definition. 
+ */
+static void octeontx_call_init(int node, uint64_t pconfig)
 {
 	int i = 0;
+	cavm_pccpf_xxx_id_t pccpf_id;
 
-	while (callbacks[i].io_init) {
-		if (callbacks[i].devid == devid
-		    && callbacks[i].vendor_id == vendor_id) {
-			debug_io("'calling init_io .. %lx\n",
-				 (uint64_t) callbacks[i].io_init);
-			callbacks[i].io_init(node, base, size);
-			//dont break allow multiple callbacks..so that inits can be specific
+	pccpf_id.u = cavm_read32(pconfig + CAVM_PCCPF_XXX_ID);
+
+	while (init_callbacks[i].devid != ECAM_INVALID_DEV_ID) {
+		if (init_callbacks[i].devid == pccpf_id.s.devid
+		    && init_callbacks[i].vendor_id == pccpf_id.s.vendid) {
+			debug_io("'calling io_init ... %lx\n",
+				 (uint64_t) init_callbacks[i].io_init);
+			init_callbacks[i].io_init(node, pconfig,
+						  sizeof(struct pcie_config));
 		}
 		i++;
 	}
 }
 
-static inline int skip_bus(int node, int ecam, int bus)
+static inline void octeontx_set_device_secure(struct ecam_device *device)
 {
-	if (ecam_devices_ops.disable_device_on_bus(node, bus))
-		return 1;
-	if (bus > ecam_devices_ops.get_max_bus(ecam))
-		return 1;
-	return 0;
+	if (octeontx_bus_is_rsl(device))
+		plat_ops.disable_func(device);
+	else
+		plat_ops.disable_dev(device);
 }
 
-static inline int is_rsl_bus(int ecam, int bus)
+static unsigned prev_ns_func = 0;
+static void octeontx_ari_capability(struct ecam_device *device)
 {
-	if (ecam == 0 && bus == 1)
-		return 1;
-	return 0;
+	cavm_pccpf_xxx_vsec_ctl_t vsec_ctl;
+	unsigned act_func;
+	uint64_t pconfig;
+
+	if (device->func == 0)
+		prev_ns_func = 0;
+
+	/* Store the actual function number */
+	act_func = device->func;
+
+	/* Read pconfig for previous, valid function */
+	device->func = prev_ns_func;
+	pconfig = plat_ops.get_dev_config(device);
+
+	/* Program ARI capability properly */
+	vsec_ctl.u = cavm_read32(pconfig + CAVM_PCCPF_XXX_VSEC_CTL);
+	vsec_ctl.s.nxtfn_ns = act_func;
+	cavm_write32(pconfig + CAVM_PCCPF_XXX_VSEC_CTL, vsec_ctl.u);
+
+	/* Update prev_ns_func value */
+	device->func = act_func;
+	prev_ns_func = device->func;
 }
 
-static unsigned prev_ns_func = 0; /* Hold number of last ns func */
-static inline int walk_through_functions(int node, int ecam,
-					 struct pcie_config *pconfig)
+static void octeontx_ecam_dev_enumerate(struct ecam_device *device)
 {
-	int i = 0;
-	int bus, dev, func;
-	uint64_t config_base;
-	struct ecam_device *devs;
-	union cavm_pccpf_xxx_vsec_ctl vsec_ctl;
+	uint64_t pconfig;
+	int rc;
 
-	config_base = (uint64_t) pconfig;
-
-	for (i = 0; i < 256; i++) {
-		bus = (((uint64_t) pconfig) >> 20) & 0xffUL;
-		dev = 0;
-		func = (((uint64_t) pconfig) >> 12) & 0xffUL;
-		devs = get_dev_idx(node, ecam, bus, dev, func);
-
-		if (devs && pconfig->devid != 0xffffUL
-		    && pconfig->vendor_id != 0xffffUL) {
-			find_and_call_init(node, pconfig->devid,
-					   pconfig->vendor_id, (uint64_t) pconfig,
-					   sizeof(struct pcie_config));
-
-			/* Program ARI capability of the previous device */
-			if (devs->ns_visible) {
-				vsec_ctl.u = cavm_read32(config_base +
-							 sizeof(struct pcie_config) * prev_ns_func +
-							 CAVM_PCCPF_XXX_VSEC_CTL);
-				vsec_ctl.s.nxtfn_ns = func;
-				cavm_write32(config_base + sizeof(struct pcie_config) * prev_ns_func +
-					     CAVM_PCCPF_XXX_VSEC_CTL, vsec_ctl.u);
-
-				ecam_devices_ops.enable_func(node, ecam, func);
-				prev_ns_func = func;
-			} else {
-				ecam_devices_ops.disable_func(node, ecam, func);
-			}
-		} else {
-			ecam_devices_ops.disable_func(node, ecam, func);
-		}
-		pconfig++; /* skip to next function */
+	/* Get address of the device */
+	pconfig = plat_ops.get_dev_config(device);
+	if (!pconfig) {
+		debug_io("%s: Unable to get config\n", __func__);
+		octeontx_set_device_secure(device);
+		return;
 	}
 
-	return 0;
-}
-
-static inline int walk_through_devices(int node, int ecam,
-				       struct pcie_config *pconfig)
-{
-	int i = 0;
-	int bus, dev, func;
-	uint64_t config_base;
-	struct ecam_device *devs;
-
-	for (i = 0; i < 32; i++) {
-		config_base = (uint64_t) pconfig;
-		bus = (config_base >> 20) & 0xffUL;
-		dev = (config_base >> 15) & 0x1fUL;
-		func = (config_base >> 12) & 0x7UL;
-		devs = get_dev_idx(node, ecam, bus, dev, func);
-
-		if (devs && pconfig->devid != 0xffffUL
-		    && pconfig->vendor_id != 0xffffUL) {
-			find_and_call_init(node, pconfig->devid,
-					   pconfig->vendor_id, (uint64_t) pconfig,
-					   sizeof(struct pcie_config));
-			if (devs->ns_visible)
-				ecam_devices_ops.enable_dev(node, ecam, dev);
-			else
-				ecam_devices_ops.disable_dev(node, ecam, dev);
-		} else {
-			ecam_devices_ops.disable_dev(node, ecam, dev);
-		}
-		pconfig += 8;	//skip to next device
+	/* Call platform-specific method for secure settings */
+	rc = plat_ops.get_secure_settings(device, pconfig);
+	if (!rc) {
+		debug_io("%s: Unable to get secure settings\n", __func__);
+		octeontx_set_device_secure(device);
+		return;
 	}
 
-	return 0;
+	/* Call probe function on device (if probe method exist) */
+	rc = octeontx_call_probe(device->node, pconfig);
+	if (!rc) {
+		debug_io("%s: Probe returned with rc=%d\n", __func__, rc);
+		octeontx_set_device_secure(device);
+		return;
+	}
+
+	/* Call init function on device */
+	octeontx_call_init(device->node, pconfig);
+
+	debug_io("%s: N%u:E%u:DOM%u:B%u:D%u:FUN%u\n"
+		 "pconfig: 0x%lx, secure:%u, scp:%u, mcp:%u\n",
+		 __func__, device->node, device->ecam, device->domain,
+		 device->bus, device->dev, device->func, pconfig,
+		 device->config.s.is_secure, device->config.s.is_scp_secure,
+		 device->config.s.is_mcp_secure);
+
+	/* For RSL bus, configure secure settings for function,
+	 * otherwise configure device */
+	if (octeontx_bus_is_rsl(device)) {
+		if (device->config.s.is_secure) {
+			plat_ops.disable_func(device);
+		} else {
+			octeontx_ari_capability(device);
+			plat_ops.enable_func(device);
+		}
+	} else {
+		if (device->config.s.is_secure) {
+			plat_ops.disable_dev(device);
+		} else {
+			plat_ops.enable_dev(device);
+		}
+	}
 }
 
-int init_thunder_io(int node_count)
+static void octeontx_bus_enumerate(struct ecam_device *device)
 {
-	int ecam_id = 0;
-	int bus, node, offset_ecams;
-	int ecams_per_node = thunder_get_num_ecams_per_node();
-	uint64_t config_base;
-	uint64_t ecam_base;
-	uint64_t ecam_size;
-	struct pcie_config *pconfig;
+	if (octeontx_bus_is_rsl(device)) {
+		for (device->func = 0;
+		     device->func < OCTEONTX_ECAM_MAX_FUNC;
+		     device->func++) {
+			device->dev = 0;
+			octeontx_ecam_dev_enumerate(device);
+		}
+	} else {
+		for (device->dev = 0;
+		     device->dev < OCTEONTX_ECAM_MAX_DEV;
+		     device->dev++) {
+			device->func = 0;
+			octeontx_ecam_dev_enumerate(device);
+		}
+	}
+}
 
-	/* Enumeration */
+static void octeontx_domain_setup(struct ecam_device *device)
+{
+	for (device->bus = 0;
+	     device->bus < OCTEONTX_ECAM_MAX_BUS;
+	     device->bus++) {
+		/* Disable buses that do not exist */
+		if (plat_ops.is_bus_disabled(device)) {
+			plat_ops.disable_bus(device);
+			continue;
+		}
+
+		plat_ops.enable_bus(device);
+		/* Skip enumeration of software defined buses */
+		if (plat_ops.skip_bus(device))
+			continue;
+
+		octeontx_bus_enumerate(device);
+	}
+}
+
+static void octeontx_ecam_setup(unsigned node, unsigned ecam)
+{
+	struct ecam_device *device = &ecam_dev;
+	unsigned domain_count;
+
+	octeontx_ecam_dev_init(device, node, ecam);
+	domain_count = plat_ops.get_domain_count(device);
+
+	for (device->domain = 0;
+	     device->domain < domain_count;
+	     device->domain++) {
+		if (!plat_ops.is_domain_present(device))
+			continue;
+		octeontx_domain_setup(device);
+	}
+}
+
+void octeontx_pci_init(void)
+{
+	unsigned node_count, ecam_count, node, ecam;
+
+	node_count = thunder_get_node_count();
 	for (node = 0; node < node_count; node++) {
-		for (ecam_id = 0; ecam_id < ecams_per_node; ecam_id++) {
-			fixup_ecam(ecam_devices_ops.get_dev_idx(node, ecam_id),
-				   node, ecam_id);
-
-			offset_ecams = (node * ecams_per_node) + ecam_id;
-
-			debug_io("starting Ecam(%d) of node %d offset_ecams %d scan..\n",
-				 ecam_id, node, offset_ecams);
-
-			ecam_base =
-			    ecam_devices_ops.get_config_addr(node, ecam_id);
-			ecam_size =
-			    ecam_devices_ops.get_config_size(node, ecam_id);
-			pconfig = (struct pcie_config *)ecam_base;
-
-			while ((uint64_t) pconfig <
-			       (ecam_base + ecam_size -
-				sizeof(struct pcie_config))) {
-				config_base = (uint64_t) pconfig;
-				bus = (config_base >> 20) & 0xffUL;
-				if (skip_bus(node, offset_ecams, bus)) {
-					ecam_devices_ops.disable_bus(node, ecam_id, bus);
-				} else {
-					ecam_devices_ops.enable_bus(node, ecam_id, bus);
-					if (is_rsl_bus(ecam_id, bus))
-						walk_through_functions(node,
-								       ecam_id,
-								       pconfig);
-					else if (bus == 0)
-						walk_through_devices(node,
-								     ecam_id,
-								     pconfig);
-				}
-				pconfig += 256;
-			}
-		}
+		ecam_count = plat_ops.get_ecam_count(node);
+		for (ecam = 0; ecam < ecam_count; ecam++)
+			octeontx_ecam_setup(node, ecam);
 	}
-
-	return 0;
 }
