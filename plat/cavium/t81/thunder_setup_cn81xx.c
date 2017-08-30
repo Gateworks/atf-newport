@@ -157,6 +157,10 @@ void plat_add_mmio_node(unsigned long node)
 		add_map_record(CSR_PA(node, CAVM_SATAX_PF_BAR0(i)),
 			       CAVM_SATAX_PF_BAR0_SIZE, attr);
 	}
+
+	for (i = 0; i < 2; ++i) {
+		add_map_record(CSR_PA(node, CAVM_IOBN_BAR_E_IOBNX_PF_BAR0_CN8(i)), CAVM_IOBN_BAR_E_IOBNX_PF_BAR0_CN8_SIZE , attr);
+	}
 }
 
 int plat_get_boot_type(int boot_type)
