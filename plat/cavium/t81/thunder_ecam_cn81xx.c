@@ -49,7 +49,7 @@ static int ecam_probe_sata(int node, unsigned long arg)
 {
 	union cavm_gserx_cfg cfg;
 
-	cfg.u = CSR_READ_PA(node, CAVM_GSERX_CFG(arg));
+	cfg.u = CSR_READ_PA(node, CAVM_GSERX_CFG(3));
 
 	return cfg.s.sata != 0;
 }
@@ -60,101 +60,82 @@ static int ecam_probe_bgx(int node, unsigned long arg)
 	union cavm_gserx_cfg cfg_dlm0;
 	union cavm_gserx_cfg cfg_dlm1;
 
-	/* On 81xx BGX is split across 2 DLMs, check both DLMs
+	/*
+	 * On 81xx BGX is split across 2 DLMs, check both DLMs
 	 * for marking BGX PCi device secure 
 	 */
+	arg = arg ? 2 : 0;
 	cfg_dlm0.u = CSR_READ_PA(node, CAVM_GSERX_CFG(arg));
 	cfg_dlm1.u = CSR_READ_PA(node, CAVM_GSERX_CFG(arg + 1));
 
 	return (cfg_dlm0.s.bgx || cfg_dlm1.s.bgx);
 }
 
-struct ecam_device devs0_cn81xx[] = {
-	{0, 0, 1, 0, TRUE, NULL, 0},	/* PCCBR_MRML */
-	{0, 0, 2, 0, FALSE, NULL, 0},	/* SMMU 0 */
-	{0, 0, 3, 0, FALSE, NULL, 0},	/* GIC */
-	{0, 0, 4, 0, FALSE, NULL, 0},	/* GTI */
-	{0, 0, 6, 0, TRUE, NULL, 0},	/* GPIO */
-	{0, 0, 7, 0, TRUE, NULL, 0},	/* MPI */
-	{0, 0, 8, 0, TRUE, NULL, 0},	/* MIO_PTP */
-	{0, 0, 9, 0, TRUE, NULL, 0},	/* RNM */
-	{0, 0, 10, 0, TRUE, NULL, 0},	/* BCH */
-	{0, 0, 11, 0, TRUE, NULL, 0},	/* NAND */
-	{0, 0, 12, 0, TRUE, NULL, 0},	/* CPT bridge */
-	{0, 0, 13, 0, TRUE, NULL, 0},	/* PCM */
-	{0, 0, 14, 0, TRUE, NULL, 0},	/* SLI */
-	{0, 0, 15, 0, TRUE, NULL, 0},	/* PCCBR_NIC */
-	{0, 0, 16, 0, TRUE, NULL, 0},	/* USB 0 */
-	{0, 0, 17, 0, TRUE, NULL, 0},	/* USB 1 */
-	{0, 0, 22, 0, TRUE, ecam_probe_sata, 3},	/* SATA 0 */
-	{0, 0, 23, 0, TRUE, ecam_probe_sata, 3},	/* SATA 1 */
-
-	/* Bus1, ARI functions */
-	{0, 1, 0, 0, TRUE, NULL, 0},	/* MRML */
-	{0, 1, 0, 1, TRUE, NULL, 0},	/* RST */
-	{0, 1, 0, 2, FALSE, NULL, 0},	/* DAP */
-	{0, 1, 0, 3, FALSE, NULL, 0},	/* FUS */
-	{0, 1, 0, 4, FALSE, NULL, 0},	/* FUSF */
-	{0, 1, 0, 9, FALSE, NULL, 0},	/* L2C */
-	{0, 1, 0, 10, FALSE, NULL, 0},	/* SGP */
-	{0, 1, 0, 11, TRUE, NULL, 0},	/* SMI */
-	{0, 1, 0, 12, TRUE, NULL, 0},	/* MIO_EMM */
-	{0, 1, 0, 13, FALSE, NULL, 0},	/* KEY */
-	{0, 1, 0, 14, FALSE, NULL, 0},	/* BOOT BUS */
-	{0, 1, 0, 15, TRUE, NULL, 0},	/* PBUS */
-	{0, 1, 0, 16, TRUE, NULL, 0},	/* XCV */
-	{0, 1, 0, 48, TRUE, NULL, 0},	/* L2C-TAD 0 */
-	{0, 1, 0, 56, TRUE, NULL, 0},	/* L2C-CBC 0 */
-	{0, 1, 0, 60, TRUE, NULL, 0},	/* L2C-MCI 0 */
-	{0, 1, 0, 64, FALSE, NULL, 0},	/* UAA 0 */
-	{0, 1, 0, 65, FALSE, NULL, 0},	/* UAA 1 */
-	{0, 1, 0, 66, FALSE, NULL, 0},	/* UAA 2 */
-	{0, 1, 0, 67, FALSE, NULL, 0},	/* UAA 3 */
-	{0, 1, 0, 72, TRUE, ecam_probe_twsi, 0},	/* TWSI 0 */
-	{0, 1, 0, 73, TRUE, ecam_probe_twsi, 1},	/* TWSI 1 */
-	{0, 1, 0, 80, TRUE, NULL, 0},	/* LMC 0 */
-	{0, 1, 0, 96, TRUE, NULL, 0},	/* OCLA 0 */
-	{0, 1, 0, 97, TRUE, NULL, 0},	/* OCLA 1 */
-	{0, 1, 0, 112, FALSE, ecam_probe_pem, 0},	/* PEM 0 */
-	{0, 1, 0, 113, FALSE, ecam_probe_pem, 1},	/* PEM 1 */
-	{0, 1, 0, 114, FALSE, ecam_probe_pem, 2},	/* PEM 2 */
-	{0, 1, 0, 128, TRUE, ecam_probe_bgx, 0},	/* BGX 0 */
-	{0, 1, 0, 129, TRUE, ecam_probe_bgx, 2},	/* BGX 1 */
-	{0, 1, 0, 144, TRUE, NULL, 0},	/* RGX0 */
-
-	{0, 2, 0, 0, TRUE, NULL, 0},	/* RNM */
-	{0, 3, 0, 0, TRUE, NULL, 0},	/* BCH */
-	{0, 4, 0, 0, TRUE, NULL, 0},	/* CPT0 */
-	{0, 5, 0, 0, TRUE, NULL, 0},	/* NIC0 */
-	{-1, 0, 0, 0, 0, NULL, 0},
+/*
+ * Map probe methods to appropriate DEVID.
+ */
+struct ecam_probe_callback probe_callbacks[] = {
+	{0xa012, 0x177d, ecam_probe_twsi, 0},
+	{0xa020, 0x177d, ecam_probe_pem, 0},
+	{0xa01c, 0x177d, ecam_probe_sata, 0},
+	{0xa026, 0x177d, ecam_probe_bgx, 0},
+	{ECAM_INVALID_DEV_ID, 0, 0, 0}
 };
 
-static struct ecam_device *cn81xx_get_dev_idx(int node, int ecam)
+/*
+ * Following device's BAR0 will be hidden
+ * from non-secure world.
+ */
+struct secure_devices secure_devs[] = {
+	{CAVM_PCC_PROD_E_GEN, CAVM_PCC_DEV_IDL_E_SMMU},
+	{CAVM_PCC_PROD_E_GEN, CAVM_PCC_DEV_IDL_E_GIC},
+	{CAVM_PCC_PROD_E_GEN, CAVM_PCC_DEV_IDL_E_GTI},
+	{CAVM_PCC_PROD_E_GEN, CAVM_PCC_DEV_IDL_E_L2C},
+	{CAVM_PCC_PROD_E_GEN, CAVM_PCC_DEV_IDL_E_SGP},
+	{CAVM_PCC_PROD_E_GEN, CAVM_PCC_DEV_IDL_E_DAP},
+	{CAVM_PCC_PROD_E_GEN, CAVM_PCC_DEV_IDL_E_MIO_FUS},
+	{CAVM_PCC_PROD_E_GEN, CAVM_PCC_DEV_IDL_E_FUSF},
+	{CAVM_PCC_PROD_E_GEN, CAVM_PCC_DEV_IDL_E_KEY},
+	{CAVM_PCC_PROD_E_GEN, CAVM_PCC_DEV_IDL_E_MIO_BOOT},
+	{CAVM_PCC_PROD_E_GEN, CAVM_PCC_DEV_IDL_E_UAA},
+	{CAVM_PCC_PROD_E_GEN, CAVM_PCC_DEV_IDL_E_PEM},
+	{CAVM_PCC_PROD_E_GEN, CAVM_PCC_DEV_IDL_E_IOBN},
+	{CAVM_PCC_PROD_E_GEN, CAVM_PCC_DEV_IDL_E_VRM},
+	{CAVM_PCC_PROD_E_GEN, CAVM_PCC_DEV_IDL_E_LBK},
+	{CAVM_PCC_PROD_E_GEN, CAVM_PCC_DEV_IDL_E_GSER},
+	{CAVM_PCC_PROD_E_CN81XX, CAVM_PCC_DEV_IDL_E_PCIERC},
+	{ECAM_INVALID_PROD_ID, ECAM_INVALID_PCC_IDL_ID}
+};
+
+static inline uint64_t cn81xx_get_dev_config(struct ecam_device *dev)
 {
-	int node_ecam = ecam | (node << 2);
-	struct ecam_device *devs = NULL;
+	uint64_t pconfig;
+	cavm_pccpf_xxx_id_t pccpf_id;
 
-	switch (node_ecam) {
-	case 0:
-		devs = &devs0_cn81xx[0];
-		break;
-	}
+	pconfig = (dev->base_addr |
+		  ((dev->bus << ECAM_BUS_SHIFT) & ECAM_BUS_MASK) |
+		  ((dev->dev << ECAM_DEV_SHIFT) & ECAM_DEV_MASK) |
+		  ((dev->func << ECAM_FUNC_SHIFT) & ECAM_FUNC_MASK));
 
-	return devs;
+	pccpf_id.u = cavm_read32(pconfig + CAVM_PCCPF_XXX_ID);
+	if (pccpf_id.s.vendid == 0xffff || pccpf_id.s.devid == 0xffff)
+		return 0;
+
+	return pconfig;
 }
 
-/* Check fuses to see if the device on bus is available
- * or not. If available return 0, else return -1
+/*
+ * This method is a quirk for CN80xx to disable CPT block
  */
-static int cn81xx_disable_device_on_bus(int node, int bus)
+static int cn81xx_quirk_cn80xx(struct ecam_device *dev)
 {
 	int i;
 	uint32_t fuse_cnt = 0;
 
 	/* Check if CPT block is available by reading the fuse */
-	if (bus == 4) {
+	if ((dev->ecam == 0) && (dev->domain == 0) && (dev->bus == 4)) {
 		for (i = 1665; i <= 1680; i++) {
-			fuse_cnt += thunder_fuse_read(node, i);
+			fuse_cnt += thunder_fuse_read(dev->node, i);
 		}
 
 		if (fuse_cnt == 16)
@@ -164,119 +145,212 @@ static int cn81xx_disable_device_on_bus(int node, int bus)
 	return 0;
 }
 
-int max_bus_cn81xx[] = { 6, 0, 1, 0 };
-
-static int cn81xx_get_max_bus(int ecam)
+static int cn81xx_is_bus_disabled(struct ecam_device *dev)
 {
-	return max_bus_cn81xx[ecam];
+	int rc = 0;
+
+	rc = cn81xx_quirk_cn80xx(dev);
+	if ((dev->ecam == 0) && (dev->bus > 5))
+		rc = 1;
+
+	return rc;
 }
 
-static uint64_t cn81xx_get_config_addr(int node, int ecam)
+static inline int cn81xx_skip_bus(struct ecam_device *dev)
 {
-	return thunder_get_ecam_config_addr(node, ecam);
+	return (dev->bus > 1);
 }
 
-static uint64_t cn81xx_get_config_size(int node, int ecam)
+static inline void cn81xx_disable_bus(struct ecam_device *dev)
 {
-	return thunder_get_ecam_config_size(node, ecam);
-}
-
-static inline void cn81xx_disable_bus(int node, int ecam, int bus)
-{
-	union cavm_ecamx_busx_sdis bus_sdis;
+	cavm_ecamx_busx_sdis_t bus_sdis;
 
 	/* disable bus */
-	bus_sdis.u = CSR_READ_PA(node, CAVM_ECAMX_BUSX_SDIS(ecam, bus));
+	bus_sdis.u = CSR_READ_PA(dev->node,
+				 CAVM_ECAMX_BUSX_SDIS(dev->ecam, dev->bus));
 	bus_sdis.s.sec = 1;
-	CSR_WRITE_PA(node, CAVM_ECAMX_BUSX_SDIS(ecam, bus), bus_sdis.u);
-	debug_plat_ecam("disable_bus %d:%d:%d\n", node, ecam, bus);
+	CSR_WRITE_PA(dev->node,
+		     CAVM_ECAMX_BUSX_SDIS(dev->ecam, dev->bus),
+		     bus_sdis.u);
+	debug_plat_ecam("disable_bus %d:%d:%d\n", dev->node, dev->ecam,
+			dev->bus);
 }
 
-static inline void cn81xx_enable_bus(int node, int ecam, int bus)
+static inline void cn81xx_enable_bus(struct ecam_device *dev)
 {
-	union cavm_ecamx_busx_sdis bus_sdis;
-	union cavm_ecamx_busx_nsdis bus_nsdis;
+	cavm_ecamx_busx_sdis_t bus_sdis;
+	cavm_ecamx_busx_nsdis_t bus_nsdis;
 
 	/* enable bus */
-	bus_sdis.u = CSR_READ_PA(node, CAVM_ECAMX_BUSX_SDIS(ecam, bus));
+	bus_sdis.u = CSR_READ_PA(dev->node,
+				 CAVM_ECAMX_BUSX_SDIS(dev->ecam, dev->bus));
 	bus_sdis.s.sec = 0;
 	bus_sdis.s.dis = 0;
-	CSR_WRITE_PA(node, CAVM_ECAMX_BUSX_SDIS(ecam, bus), bus_sdis.u);
+	CSR_WRITE_PA(dev->node,
+		     CAVM_ECAMX_BUSX_SDIS(dev->ecam, dev->bus),
+		     bus_sdis.u);
 
-	bus_nsdis.u = CSR_READ_PA(node, CAVM_ECAMX_BUSX_NSDIS(ecam, bus));
+	bus_nsdis.u = CSR_READ_PA(dev->node,
+				  CAVM_ECAMX_BUSX_NSDIS(dev->ecam, dev->bus));
 	bus_nsdis.s.dis = 0;
-	CSR_WRITE_PA(node, CAVM_ECAMX_BUSX_NSDIS(ecam, bus), bus_nsdis.u);
+	CSR_WRITE_PA(dev->node,
+		     CAVM_ECAMX_BUSX_NSDIS(dev->ecam, dev->bus),
+		     bus_nsdis.u);
 
-	debug_plat_ecam("enable_bus %d:%d:%d\n", node, ecam, bus);
+	debug_plat_ecam("enable_bus %d:%d:%d\n", dev->node, dev->ecam,
+			dev->bus);
 }
 
-static inline void cn81xx_disable_dev(int node, int ecam, int dev)
+static inline void cn81xx_disable_dev(struct ecam_device *dev)
 {
-	union cavm_ecamx_devx_sdis dev_sdis;
+	cavm_ecamx_devx_sdis_t dev_sdis;
 
 	/* disable device */
-	dev_sdis.u = CSR_READ_PA(node, CAVM_ECAMX_DEVX_SDIS(ecam, dev));
+	dev_sdis.u = CSR_READ_PA(dev->node,
+				 CAVM_ECAMX_DEVX_SDIS(dev->ecam, dev->dev));
 	dev_sdis.s.sec = 1;
-	CSR_WRITE_PA(node, CAVM_ECAMX_DEVX_SDIS(ecam, dev), dev_sdis.u);
-	debug_plat_ecam("disable_dev %d:%d:%02x\n", node, ecam, (unsigned)dev);
+	CSR_WRITE_PA(dev->node,
+		     CAVM_ECAMX_DEVX_SDIS(dev->ecam, dev->dev),
+		     dev_sdis.u);
+	debug_plat_ecam("disable_dev %d:%d:%02x\n", dev->node, dev->ecam,
+			dev->dev);
 }
 
-static inline void cn81xx_enable_dev(int node, int ecam, int dev)
+static inline void cn81xx_enable_dev(struct ecam_device *dev)
 {
-	union cavm_ecamx_devx_sdis dev_sdis;
-	union cavm_ecamx_devx_nsdis dev_nsdis;
+	cavm_ecamx_devx_sdis_t dev_sdis;
+	cavm_ecamx_devx_nsdis_t dev_nsdis;
 
 	/* enable device */
-	dev_sdis.u = CSR_READ_PA(node, CAVM_ECAMX_DEVX_SDIS(ecam, dev));
+	dev_sdis.u = CSR_READ_PA(dev->node,
+				 CAVM_ECAMX_DEVX_SDIS(dev->ecam, dev->dev));
 	dev_sdis.s.sec = 0;
 	dev_sdis.s.dis = 0;
-	CSR_WRITE_PA(node, CAVM_ECAMX_DEVX_SDIS(ecam, dev), dev_sdis.u);
+	CSR_WRITE_PA(dev->node,
+		     CAVM_ECAMX_DEVX_SDIS(dev->ecam, dev->dev),
+		     dev_sdis.u);
 
-	dev_nsdis.u = CSR_READ_PA(node, CAVM_ECAMX_DEVX_NSDIS(ecam, dev));
+	dev_nsdis.u = CSR_READ_PA(dev->node,
+				  CAVM_ECAMX_DEVX_NSDIS(dev->ecam, dev->dev));
 	dev_nsdis.s.dis = 0;
-	CSR_WRITE_PA(node, CAVM_ECAMX_DEVX_NSDIS(ecam, dev), dev_nsdis.u);
+	CSR_WRITE_PA(dev->node,
+		     CAVM_ECAMX_DEVX_NSDIS(dev->ecam, dev->dev),
+		     dev_nsdis.u);
 
-	debug_plat_ecam("enable_dev %d:%d:%02x\n", node, ecam, (unsigned)dev);
+	debug_plat_ecam("enable_dev %d:%d:%02x\n", dev->node, dev->ecam,
+			dev->dev);
 }
 
-static inline void cn81xx_disable_func(int node, int ecam, int func)
+static inline void cn81xx_disable_func(struct ecam_device *dev)
 {
-	union cavm_ecamx_rslx_sdis rsl_sdis;
+	cavm_ecamx_rslx_sdis_t rsl_sdis;
+
 	/* disable function */
-	rsl_sdis.u = CSR_READ_PA(node, CAVM_ECAMX_RSLX_SDIS(ecam, func));
+	rsl_sdis.u = CSR_READ_PA(dev->node,
+				 CAVM_ECAMX_RSLX_SDIS(dev->ecam, dev->func));
 	rsl_sdis.s.sec = 1;
-	CSR_WRITE_PA(node, CAVM_ECAMX_RSLX_SDIS(ecam, func), rsl_sdis.u);
-	debug_plat_ecam("disable_func %d:%d:%02x\n", node, ecam, (unsigned)func);
+	CSR_WRITE_PA(dev->node,
+		     CAVM_ECAMX_RSLX_SDIS(dev->ecam, dev->func),
+		     rsl_sdis.u);
+	debug_plat_ecam("disable_func %d:%d:%02x\n", dev->node, dev->ecam,
+			dev->func);
 }
 
-static inline void cn81xx_enable_func(int node, int ecam, int func)
+static inline void cn81xx_enable_func(struct ecam_device *dev)
 {
-	union cavm_ecamx_rslx_sdis rsl_sdis;
-	union cavm_ecamx_rslx_nsdis rsl_nsdis;
+	cavm_ecamx_rslx_sdis_t rsl_sdis;
+	cavm_ecamx_rslx_nsdis_t rsl_nsdis;
+
 	/* enable function */
-	rsl_sdis.u = CSR_READ_PA(node, CAVM_ECAMX_RSLX_SDIS(ecam, func));
+	rsl_sdis.u = CSR_READ_PA(dev->node,
+				 CAVM_ECAMX_RSLX_SDIS(dev->ecam, dev->func));
 	rsl_sdis.s.sec = 0;
 	rsl_sdis.s.dis = 0;
-	CSR_WRITE_PA(node, CAVM_ECAMX_RSLX_SDIS(ecam, func), rsl_sdis.u);
+	CSR_WRITE_PA(dev->node,
+		     CAVM_ECAMX_RSLX_SDIS(dev->ecam, dev->func),
+		     rsl_sdis.u);
 
-	rsl_nsdis.u = CSR_READ_PA(node, CAVM_ECAMX_RSLX_NSDIS(ecam, func));
+	rsl_nsdis.u = CSR_READ_PA(dev->node,
+				  CAVM_ECAMX_RSLX_NSDIS(dev->ecam, dev->func));
 	rsl_nsdis.s.dis = 0;
-	CSR_WRITE_PA(node, CAVM_ECAMX_RSLX_NSDIS(ecam, func), rsl_nsdis.u);
+	CSR_WRITE_PA(dev->node,
+		     CAVM_ECAMX_RSLX_NSDIS(dev->ecam, dev->func),
+		     rsl_nsdis.u);
 
-	debug_plat_ecam("enable_func %d:%d:%02x\n", node, ecam, (unsigned)func);
+	debug_plat_ecam("enable_func %d:%d:%02x\n", dev->node, dev->ecam,
+			dev->func);
 }
 
-const struct ecam_platform_defs ecam_devices_ops = {
+static inline int cn81xx_get_ecam_count(int node)
+{
+	cavm_ecamx_const_t ecam_const;
+
+	ecam_const.u = CSR_READ_PA(node, CAVM_ECAMX_CONST(0));
+
+	return ecam_const.s.ecams;
+}
+
+static int cn81xx_get_domain_count(struct ecam_device *dev)
+{
+	/*
+	 * In CN81xx ECAM topology, there're no domains.
+	 * To satisfy PCI scan, at least 1 domain needs to be present
+	 */
+	return 1;
+}
+
+static inline int cn81xx_is_domain_present(struct ecam_device *dev)
+{
+	/*
+	 * To satisfy proper PCI scan,
+	 * at least 1 domain needs to be present
+	 */
+	return (dev->domain == 0);
+}
+
+static int cn81xx_get_secure_settings(struct ecam_device *dev, uint64_t pconfig)
+{
+	cavm_pccpf_xxx_id_t pccpf_id;
+	int i = 0;
+
+	/* Get secure/non-secure setting */
+	pccpf_id.u = cavm_read32(pconfig + CAVM_PCCPF_XXX_ID);
+	debug_plat_ecam("%s: DeviceID=0x%04x\n", __func__, pccpf_id.s.devid);
+
+	dev->config.s.is_secure = 0;
+	while (secure_devs[i].devid != ECAM_INVALID_PCC_IDL_ID) {
+		if (((secure_devs[i].prodid << ECAM_PROD_SHIFT) |
+			secure_devs[i].devid) == pccpf_id.s.devid)
+			dev->config.s.is_secure = 1;
+		i++;
+	}
+
+	/* Set SCP/MCP to 0, as they don't exist on T81 */
+	dev->config.s.is_mcp_secure = 0;
+	dev->config.s.is_scp_secure = 0;
+
+	return 1;
+}
+
+struct ecam_probe_callback *cn81xx_get_probe_callbacks(void)
+{
+	return &probe_callbacks[0];
+}
+
+const struct ecam_platform_defs plat_ops = {
 	.soc_type = T81PARTNUM,
-	.get_dev_idx = cn81xx_get_dev_idx,
-	.get_max_bus = cn81xx_get_max_bus,
-	.get_config_addr = cn81xx_get_config_addr,
-	.get_config_size = cn81xx_get_config_size,
+	.get_ecam_count = cn81xx_get_ecam_count,
+	.get_domain_count = cn81xx_get_domain_count,
+	.is_domain_present = cn81xx_is_domain_present,
+	.get_secure_settings = cn81xx_get_secure_settings,
+	.get_dev_config = cn81xx_get_dev_config,
+	.get_probes = cn81xx_get_probe_callbacks,
+	.is_bus_disabled = cn81xx_is_bus_disabled,
+	.skip_bus = cn81xx_skip_bus,
 	.enable_bus = cn81xx_enable_bus,
 	.disable_bus = cn81xx_disable_bus,
 	.enable_dev = cn81xx_enable_dev,
 	.disable_dev = cn81xx_disable_dev,
 	.enable_func = cn81xx_enable_func,
-	.disable_func = cn81xx_disable_func,
-	.disable_device_on_bus = cn81xx_disable_device_on_bus,
+	.disable_func = cn81xx_disable_func
 };
