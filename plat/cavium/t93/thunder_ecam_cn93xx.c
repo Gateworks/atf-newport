@@ -28,395 +28,281 @@
 #define debug_plat_ecam(...) ((void) (0))
 #endif
 
-struct ecam_device devs_domain0_cn93xx[] = {
-	/* Ecam 0, Domain 0 */
-	{0, 0, 1, 0, TRUE, NULL, 0},	/* MRML bridge */
-	{0, 0, 2, 0, TRUE, NULL, 0},	/* AP bridge */
-	{0, 0, 3, 0, TRUE, NULL, 0},	/* SMMU 0 */
-	{0, 0, 4, 0, TRUE, NULL, 0},	/* GIC */
-	{0, 0, 5, 0, TRUE, NULL, 0},	/* GTI */
-	{0, 0, 6, 0, TRUE, NULL, 0},	/* MPI 0 */
-	{0, 0, 7, 0, TRUE, NULL, 0},	/* MPI 1 */
-	{0, 0, 8, 0, TRUE, NULL, 0},	/* MIO_PTP */
-	{0, 0, 9, 0, TRUE, NULL, 0},	/* RNM bridge */
-	{0, 0, 10, 0, TRUE, NULL, 0},	/* BCH bridge */
-	{0, 0, 11, 0, TRUE, NULL, 0},	/* NAND */
-//	{0, 0, 12, 0, TRUE, NULL, 0},	/* CPT0 bridge */
-//	{0, 0, 13, 0, TRUE, NULL, 0},	/* CPT1 bridge */
-//	{0, 0, 14, 0, TRUE, NULL, 0},	/* RAD bridge */
-	{0, 0, 15, 0, TRUE, NULL, 0},	/* GPIO */
-//	{0, 0, 16, 0, TRUE, NULL, 0},	/* SSO bridge */
-//	{0, 0, 17, 0, TRUE, NULL, 0},	/* SSOW bridge */
-//	{0, 0, 18, 0, TRUE, NULL, 0},	/* FPA bridge */
-//	{0, 0, 19, 0, TRUE, NULL, 0},	/* TIM bridge */
-	{0, 0, 20, 0, TRUE, NULL, 0},	/* DPI0 bridge */
-	{0, 0, 24, 0, TRUE, NULL, 0},	/* SLIRE 0 */
-	{0, 0, 26, 0, TRUE, NULL, 0},	/* CPC */
-	{0, 0, 28, 0, TRUE, NULL, 0},	/* XCP 0 */
-//	{0, 0, 29, 0, TRUE, NULL, 0},	/* XCP 1 */
-	{0, 0, 30, 0, TRUE, NULL, 0},	/* AVS */
-
-	/* Bus1, ARI functions */
-	{0, 1, 0, 0, TRUE, NULL, 0},	/* MRML */
-	{0, 1, 0, 1, TRUE, NULL, 0},	/* RST */
-	{0, 1, 0, 2, TRUE, NULL, 0},	/* DAP */
-	{0, 1, 0, 3, TRUE, NULL, 0},	/* FUS */
-	{0, 1, 0, 4, TRUE, NULL, 0},	/* FUSF */
-	{0, 1, 0, 7, TRUE, NULL, 0},	/* PSBM */
-	{0, 1, 0, 8, TRUE, NULL, 0},	/* NCSI */
-	{0, 1, 0, 9, TRUE, NULL, 0},	/* CCS */
-	{0, 1, 0, 10, TRUE, NULL, 0},	/* SGP */
-	{0, 1, 0, 11, TRUE, NULL, 0},	/* SMI */
-	{0, 1, 0, 12, TRUE, NULL, 0},	/* EMM */
-//	{0, 1, 0, 13, TRUE, NULL, 0},	/* KEY */
-	{0, 1, 0, 14, TRUE, NULL, 0},	/* BOOT BUS */
-	{0, 1, 0, 15, TRUE, NULL, 0},	/* PBUS */
-	{0, 1, 0, 32, TRUE, NULL, 0},	/* CCU 0 */
-	{0, 1, 0, 33, TRUE, NULL, 0},	/* CCU 1 */
-	{0, 1, 0, 34, TRUE, NULL, 0},	/* CCU 2 */
-	{0, 1, 0, 35, TRUE, NULL, 0},	/* CCU 3 */
-	{0, 1, 0, 48, TRUE, NULL, 0},	/* MCC 0 */
-	{0, 1, 0, 49, TRUE, NULL, 0},	/* MCC 1 */
-	{0, 1, 0, 64, TRUE, NULL, 0},	/* MDC */
-	{0, 1, 0, 65, TRUE, NULL, 0},	/* BTS */
-	{0, 1, 0, 72, TRUE, NULL, 0},	/* TWSI 0 */
-	{0, 1, 0, 73, TRUE, NULL, 0},	/* TWSI 1 */
-	{0, 1, 0, 74, TRUE, NULL, 0},	/* TWSI 2 */
-	{0, 1, 0, 75, TRUE, NULL, 0},	/* TWSI 3 */
-	{0, 1, 0, 76, TRUE, NULL, 0},	/* TWSI 4 */
-	{0, 1, 0, 77, TRUE, NULL, 0},	/* TWSI 5 */
-	{0, 1, 0, 80, TRUE, NULL, 0},	/* LMC 0 */
-	{0, 1, 0, 81, TRUE, NULL, 0},	/* LMC 1 */
-	{0, 1, 0, 82, TRUE, NULL, 0},	/* LMC 2 */
-	{0, 1, 0, 88, TRUE, NULL, 0},	/* IOBN0 */
-	{0, 1, 0, 89, TRUE, NULL, 0},	/* IOBN1 */
-	{0, 1, 0, 96, FALSE, NULL, 0},	/* UAA 0 */
-	{0, 1, 0, 97, FALSE, NULL, 0},	/* UAA 1 */
-	{0, 1, 0, 98, FALSE, NULL, 0},	/* UAA 2 */
-	{0, 1, 0, 99, FALSE, NULL, 0},	/* UAA 3 */
-	{0, 1, 0, 100, TRUE, NULL, 0},	/* UAA 4 */
-	{0, 1, 0, 101, TRUE, NULL, 0},	/* UAA 5 */
-	{0, 1, 0, 102, TRUE, NULL, 0},	/* UAA 6 */
-	{0, 1, 0, 103, TRUE, NULL, 0},	/* UAA 7 */
-	{0, 1, 0, 104, TRUE, NULL, 0},	/* LBK 0 */
-	{0, 1, 0, 112, TRUE, NULL, 0},	/* TSN 0 */
-	{0, 1, 0, 113, TRUE, NULL, 0},	/* TSN 1 */
-	{0, 1, 0, 114, TRUE, NULL, 0},	/* TSN 2 */
-	{0, 1, 0, 115, TRUE, NULL, 0},	/* TSN 3 */
-	{0, 1, 0, 116, TRUE, NULL, 0},	/* TSN 4 */
-	{0, 1, 0, 117, TRUE, NULL, 0},	/* TSN 5 */
-	{0, 1, 0, 118, TRUE, NULL, 0},	/* TSN 6 */
-	{0, 1, 0, 119, TRUE, NULL, 0},	/* TSN 7 */
-	{0, 1, 0, 120, TRUE, NULL, 0},	/* TSN 8 */
-	{0, 1, 0, 121, TRUE, NULL, 0},	/* TSN 9 */
-	{0, 1, 0, 128, TRUE, NULL, 0},	/* CGX 0 */
-	{0, 1, 0, 129, TRUE, NULL, 2},	/* CGX 1 */
-	{0, 1, 0, 130, TRUE, NULL, 2},	/* CGX 2 */
-	{0, 1, 0, 144, TRUE, NULL, 0},	/* OCLA 0 */
-	{0, 1, 0, 145, TRUE, NULL, 0},	/* OCLA 1 */
-	{0, 1, 0, 146, TRUE, NULL, 0},	/* OCLA 2 */
-	{0, 1, 0, 147, TRUE, NULL, 0},	/* OCLA 3 */
-	{0, 1, 0, 148, TRUE, NULL, 0},	/* OCLA 4 */
-	{0, 1, 0, 240, TRUE, NULL, 0},	/* GSER 0 */
-	{0, 1, 0, 241, TRUE, NULL, 0},	/* GSER 1 */
-	{0, 1, 0, 242, TRUE, NULL, 0},	/* GSER 2 */
-	{0, 1, 0, 243, TRUE, NULL, 0},	/* GSER 3 */
-	{0, 1, 0, 244, TRUE, NULL, 0},	/* GSER 4 */
-	{0, 1, 0, 245, TRUE, NULL, 0},	/* GSER 5 */
-	{0, 1, 0, 246, TRUE, NULL, 0},	/* GSER 6 */
-	{0, 1, 0, 247, TRUE, NULL, 0},	/* GSER 7 */
-
-	/* Other Bus # devices for Domain 0 */
-	{0, 3, 0, 0, TRUE, NULL, 0},	/* RNM */
-	{0, 4, 0, 0, TRUE, NULL, 0},	/* BCH */
-	{0, 5, 0, 0, TRUE, NULL, 0},	/* DPI 0 */
-//	{0, 6, 0, 0, TRUE, NULL, 0},	/* CPT 1 */
-//	{0, 7, 0, 0, TRUE, NULL, 0},	/* RAD */
-//	{0, 8, 0, 0, TRUE, NULL, 0},	/* SSO */
-//	{0, 9, 0, 0, TRUE, NULL, 0},	/* SSOW */
-//	{0, 10, 0, 0, TRUE, NULL, 0},	/* FPA */
-//	{0, 11, 0, 0, TRUE, NULL, 0},	/* TIM */
-//	{0, 12, 0, 0, TRUE, NULL, 0},	/* DPI 0 */
-
-	{-1, 0, 0, 0, 0, NULL, 0},
+struct ecam_probe_callback probe_callbacks[] = {
+	{ECAM_INVALID_DEV_ID, 0, 0, 0}
 };
 
-struct ecam_device devs_domain1_cn93xx[] = {
-	/* Ecam 0, Domain 1 */
-	{1, 0, 4, 0, TRUE, NULL, 0},	/* SATA 0 */
-	{1, 0, 5, 0, TRUE, NULL, 0},	/* SATA 1 */
-	{1, 0, 6, 0, TRUE, NULL, 0},	/* SATA 2 */
-	{1, 0, 7, 0, TRUE, NULL, 0},	/* SATA 3 */
-	{1, 0, 12, 0, TRUE, NULL, 0},	/* USBDRD 0 */
-	{1, 0, 13, 0, TRUE, NULL, 0},	/* USBDRD 1 */
-	{1, 0, 14, 0, TRUE, NULL, 0},	/* Bridge to bus 1 for ZIP */
-	{1, 0, 16, 0, TRUE, NULL, 0},	/* PEM 0 */
-	{1, 0, 17, 0, TRUE, NULL, 0},	/* PEM 1 */
-	{1, 0, 18, 0, TRUE, NULL, 0},	/* PEM 2 */
-	{1, 0, 19, 0, TRUE, NULL, 0},	/* PEM 3 */
-	{-1, 0, 0, 0, 0, NULL, 0},
-};
-
-struct ecam_device devs_domain2_cn93xx[] = {
-	/* Ecam 0, Domain 2 */
-	{2, 0, 0, 0, TRUE, NULL, 0},	/* RVU 0 bridge */
-	{2, 0, 1, 0, TRUE, NULL, 0},	/* RVU 1 bridge */
-	{2, 0, 2, 0, TRUE, NULL, 0},	/* RVU 2 bridge */
-	{2, 0, 3, 0, TRUE, NULL, 0},	/* RVU 3 bridge */
-	{2, 0, 4, 0, TRUE, NULL, 0},	/* RVU 4 bridge */
-	{2, 0, 5, 0, TRUE, NULL, 0},	/* RVU 5 bridge */
-	{2, 0, 6, 0, TRUE, NULL, 0},	/* RVU 6 bridge */
-	{2, 0, 7, 0, TRUE, NULL, 0},	/* RVU 7 bridge */
-	{2, 0, 8, 0, TRUE, NULL, 0},	/* RVU 8 bridge */
-	{2, 0, 9, 0, TRUE, NULL, 0},	/* RVU 9 bridge */
-	{2, 0, 10, 0, TRUE, NULL, 0},	/* RVU 10 bridge */
-	{2, 0, 11, 0, TRUE, NULL, 0},	/* RVU 11 bridge */
-	{2, 0, 12, 0, TRUE, NULL, 0},	/* RVU 12 bridge */
-	{2, 0, 13, 0, TRUE, NULL, 0},	/* RVU 13 bridge */
-	{2, 0, 14, 0, TRUE, NULL, 0},	/* RVU 14 bridge */
-	{2, 0, 15, 0, TRUE, NULL, 0},	/* RVU 15 bridge */
-
-	{-1, 0, 0, 0, 0, NULL, 0},
-};
-
-static struct ecam_device *cn93xx_get_dev_idx(int node, int ecam)
-{
-	debug_plat_ecam("Called cn93xx with N%d.E%d\n", node, ecam);
-	int node_ecam = ecam | (node << 2);
-	struct ecam_device *devs = NULL;
-
-	switch (node_ecam) {
-	case 0:
-		devs = &devs_domain0_cn93xx[0];
-		debug_plat_ecam("returning domain0\n");
-		break;
-	case 1:
-		devs = &devs_domain1_cn93xx[0];
-		debug_plat_ecam("returning domain1\n");
-		break;
-	case 2:
-		devs = &devs_domain2_cn93xx[0];
-		debug_plat_ecam("returning domain2\n");
-		break;
-	}
-
-	return devs;
-}
-
-/* Check fuses to see if the device on bus is available
- * or not. If available return 0, else return -1
+/*
+ * Following device's BAR0 will be hidden
+ * from non-secure world.
  */
-static int cn93xx_disable_device_on_bus(int node, int bus)
+struct secure_devices secure_devs[] = {
+	{CAVM_PCC_PROD_E_GEN, CAVM_PCC_DEV_IDL_E_SMMU},
+	{CAVM_PCC_PROD_E_GEN, CAVM_PCC_DEV_IDL_E_GIC},
+	{CAVM_PCC_PROD_E_GEN, CAVM_PCC_DEV_IDL_E_GTI},
+	{ECAM_INVALID_PROD_ID, ECAM_INVALID_PCC_IDL_ID}
+};
+
+/*
+ * Currently we're not hidding anything from SCP/MCP
+ */
+struct secure_devices secure_mcp_devs[] = {
+	{ECAM_INVALID_PROD_ID, ECAM_INVALID_PCC_IDL_ID}
+};
+
+struct secure_devices secure_scp_devs[] = {
+	{ECAM_INVALID_PROD_ID, ECAM_INVALID_PCC_IDL_ID}
+};
+
+static inline uint64_t cn93xx_get_dev_config(struct ecam_device *dev)
 {
-	/* TODO: CN9XXX has other fuse registers that are not yet
-	 * easy visible on HRM. Do not disable for now any devices on
-	 * specified bus */
-	return 0;
+	uint64_t pconfig;
+	cavm_pccpf_xxx_id_t pccpf_id;
+
+	pconfig = (dev->base_addr |
+		  ((dev->domain << ECAM_DOM_SHIFT) & ECAM_DOM_MASK) |
+		  ((dev->bus << ECAM_BUS_SHIFT) & ECAM_BUS_MASK) |
+		  ((dev->dev << ECAM_DEV_SHIFT) & ECAM_DEV_MASK) |
+		  ((dev->func << ECAM_FUNC_SHIFT) & ECAM_FUNC_MASK));
+
+	pccpf_id.u = cavm_read32(pconfig + CAVM_PCCPF_XXX_ID);
+	if (pccpf_id.s.vendid == 0xffff || pccpf_id.s.devid == 0xffff)
+		return 0;
+
+	return pconfig;
 }
 
-int max_bus_cn93xx[] = { 12, 1, 0, 0, 0, 0, 0, 1, 0 };
-
-static int cn93xx_get_max_bus(int ecam)
+static int cn93xx_is_bus_disabled(struct ecam_device *dev)
 {
-	return max_bus_cn93xx[ecam];
+	int rc = 0;
+
+	/* Skip enumeration for software-defined buses */
+	if (((dev->domain == 0) && (dev->bus > 12)) ||
+	    ((dev->domain > 0) && (dev->bus > 0)))
+		rc = 1;
+
+	return rc;
 }
 
-static uint64_t cn93xx_get_config_addr(int node, int ecam)
+static int cn93xx_skip_bus(struct ecam_device *dev)
 {
-	return thunder_get_ecam_config_addr(node, ecam);
+	return (dev->bus > 1);
 }
 
-static uint64_t cn93xx_get_config_size(int node, int ecam)
+static inline void cn93xx_enable_bus(struct ecam_device *dev)
 {
-	return thunder_get_ecam_config_size(node, ecam);
-}
-
-static inline void cn93xx_enable_bus(int node, int domain, int bus)
-{
-	union cavm_ecamx_domx_busx_permit bus_permit;
-
-	debug_plat_ecam("enable_bus N%d:E%d:DOM%d:B%d\n", node, 0, domain, bus);
-
-	switch (domain) {
-		case 0:
-			domain = 0;
-			break;
-		case 1:
-			domain = 1;
-			break;
-		case 2:
-			domain = 2;
-			break;
-		default:
-			debug_plat_ecam("Domain %d does not exist\n", domain);
-			return;
-	}
+	cavm_ecamx_domx_busx_permit_t bus_permit;
 
 	/* enable bus */
-	bus_permit.u = CSR_READ_PA(node, CAVM_ECAMX_DOMX_BUSX_PERMIT(0, domain, bus));
+	bus_permit.u = CSR_READ_PA(dev->node,
+				   CAVM_ECAMX_DOMX_BUSX_PERMIT(dev->ecam,
+				   dev->domain, dev->bus));
 	bus_permit.s.sec_dis = 0;
 	bus_permit.s.nsec_dis = 0;
 	bus_permit.s.xcp0_dis = 0;
 	bus_permit.s.xcp1_dis = 0;
-	CSR_WRITE_PA(node, CAVM_ECAMX_DOMX_BUSX_PERMIT(0, domain, bus), bus_permit.u);
-	debug_plat_ecam("enable_bus N%d:E%d:DOM%d:B%d\n", node, 0, domain, bus);
+	CSR_WRITE_PA(dev->node,
+		     CAVM_ECAMX_DOMX_BUSX_PERMIT(dev->ecam, dev->domain,
+		     dev->bus), bus_permit.u);
+	debug_plat_ecam("enable_bus N%d:E%d:DOM%d:B%d\n", dev->node, dev->ecam,
+			dev->domain, dev->bus);
 }
 
-static inline void cn93xx_disable_bus(int node, int domain, int bus)
+static inline void cn93xx_disable_bus(struct ecam_device *dev)
 {
-	union cavm_ecamx_domx_busx_permit bus_permit;
-
-	switch (domain) {
-		case 0:
-			domain = 0;
-			break;
-		case 1:
-			domain = 1;
-			break;
-		case 2:
-			domain = 2;
-			break;
-		default:
-			debug_plat_ecam("Domain %d does not exist\n", domain);
-			return;
-	}
+	cavm_ecamx_domx_busx_permit_t bus_permit;
 
 	/* disable bus */
-	bus_permit.u = CSR_READ_PA(node, CAVM_ECAMX_DOMX_BUSX_PERMIT(0, domain, bus));
+	bus_permit.u = CSR_READ_PA(dev->node,
+				   CAVM_ECAMX_DOMX_BUSX_PERMIT(dev->ecam,
+				   dev->domain, dev->bus));
 	bus_permit.s.sec_dis = 0;
 	bus_permit.s.nsec_dis = 1;
 	bus_permit.s.xcp0_dis = 0;
 	bus_permit.s.xcp1_dis = 0;
-	CSR_WRITE_PA(node, CAVM_ECAMX_DOMX_BUSX_PERMIT(0, domain, bus), bus_permit.u);
-	debug_plat_ecam("disable_bus N%d:E%d:DOM%d:B%d\n", node, 0, domain, bus);
+	CSR_WRITE_PA(dev->node,
+		     CAVM_ECAMX_DOMX_BUSX_PERMIT(dev->ecam, dev->domain,
+		     dev->bus), bus_permit.u);
+	debug_plat_ecam("disable_bus N%d:E%d:DOM%d:B%d\n", dev->node, dev->ecam,
+			dev->domain, dev->bus);
 }
 
-static inline void cn93xx_enable_dev(int node, int domain, int dev)
+static inline void cn93xx_enable_dev(struct ecam_device *dev)
 {
-	union cavm_ecamx_domx_devx_permit dev_permit;
-
-	switch (domain) {
-		case 0:
-			domain = 0;
-			break;
-		case 1:
-			domain = 1;
-			break;
-		case 2:
-			domain = 2;
-			break;
-		default:
-			debug_plat_ecam("Domain %d does not exist\n", domain);
-			return;
-	}
+	cavm_ecamx_domx_devx_permit_t dev_permit;
 
 	/* enable dev */
-	dev_permit.u = CSR_READ_PA(node, CAVM_ECAMX_DOMX_DEVX_PERMIT(0, domain, dev));
+	dev_permit.u = CSR_READ_PA(dev->node,
+				   CAVM_ECAMX_DOMX_DEVX_PERMIT(dev->ecam,
+				   dev->domain, dev->dev));
 	dev_permit.s.sec_dis = 0;
 	dev_permit.s.nsec_dis = 0;
-	dev_permit.s.xcp0_dis = 0;
-	dev_permit.s.xcp1_dis = 0;
-	CSR_WRITE_PA(node, CAVM_ECAMX_DOMX_DEVX_PERMIT(0, domain, dev), dev_permit.u);
-	debug_plat_ecam("enable_dev N%d:E%d:DOM%d:DEV%d\n", node, 0, domain, dev);
+	dev_permit.s.xcp0_dis = dev->config.s.is_scp_secure;
+	dev_permit.s.xcp1_dis = dev->config.s.is_mcp_secure;
+	CSR_WRITE_PA(dev->node,
+		     CAVM_ECAMX_DOMX_DEVX_PERMIT(dev->ecam, dev->domain,
+		     dev->dev), dev_permit.u);
+	debug_plat_ecam("enable_dev N%d:E%d:DOM%d:D%d\n", dev->node, dev->ecam,
+			dev->domain, dev->dev);
 }
 
-static inline void cn93xx_disable_dev(int node, int domain, int dev)
+static inline void cn93xx_disable_dev(struct ecam_device *dev)
 {
-	union cavm_ecamx_domx_devx_permit dev_permit;
+	cavm_ecamx_domx_devx_permit_t dev_permit;
 
-	switch (domain) {
-		case 0:
-			domain = 0;
-			break;
-		case 1:
-			domain = 1;
-			break;
-		case 2:
-			domain = 2;
-			break;
-		default:
-			debug_plat_ecam("Domain %d does not exist\n", domain);
-			return;
-	}
-
-	/* disable dev */
-	dev_permit.u = CSR_READ_PA(node, CAVM_ECAMX_DOMX_DEVX_PERMIT(0, domain, dev));
+	/* enable dev */
+	dev_permit.u = CSR_READ_PA(dev->node,
+				   CAVM_ECAMX_DOMX_DEVX_PERMIT(dev->ecam,
+				   dev->domain, dev->dev));
 	dev_permit.s.sec_dis = 0;
 	dev_permit.s.nsec_dis = 1;
-	dev_permit.s.xcp0_dis = 0;
-	dev_permit.s.xcp1_dis = 0;
-	CSR_WRITE_PA(node, CAVM_ECAMX_DOMX_DEVX_PERMIT(0, domain, dev), dev_permit.u);
-	debug_plat_ecam("disable_dev N%d:E%d:DOM%d:DEV%d\n", node, 0, domain, dev);
+	dev_permit.s.xcp0_dis = dev->config.s.is_scp_secure;
+	dev_permit.s.xcp1_dis = dev->config.s.is_mcp_secure;
+	CSR_WRITE_PA(dev->node,
+		     CAVM_ECAMX_DOMX_DEVX_PERMIT(dev->ecam, dev->domain,
+		     dev->dev), dev_permit.u);
+	debug_plat_ecam("disable_dev N%d:E%d:DOM%d:D%d\n", dev->node, dev->ecam,
+			dev->domain, dev->dev);
 }
 
-static inline void cn93xx_enable_func(int node, int domain, int func)
+static inline void cn93xx_enable_func(struct ecam_device *dev)
 {
-	union cavm_ecamx_domx_rslx_permit rsl_permit;
-
-	switch (domain) {
-		case 0:
-			domain = 0;
-			break;
-		case 1:
-			domain = 1;
-			break;
-		case 2:
-			domain = 2;
-			break;
-		default:
-			debug_plat_ecam("Domain %d does not exist\n", domain);
-			return;
-	}
+	cavm_ecamx_domx_rslx_permit_t rsl_permit;
 
 	/* enable func */
-	rsl_permit.u = CSR_READ_PA(node, CAVM_ECAMX_DOMX_RSLX_PERMIT(0, domain, func));
+	rsl_permit.u = CSR_READ_PA(dev->node,
+				   CAVM_ECAMX_DOMX_RSLX_PERMIT(dev->ecam,
+				   dev->domain, dev->func));
 	rsl_permit.s.sec_dis = 0;
 	rsl_permit.s.nsec_dis = 0;
-	rsl_permit.s.xcp0_dis = 0;
-	rsl_permit.s.xcp1_dis = 0;
-	CSR_WRITE_PA(node, CAVM_ECAMX_DOMX_RSLX_PERMIT(0, domain, func), rsl_permit.u);
-	debug_plat_ecam("enable_func N%d:E%d:DOM%d:F%d\n", node, 0, domain, func);
+	rsl_permit.s.xcp0_dis = dev->config.s.is_scp_secure;
+	rsl_permit.s.xcp1_dis = dev->config.s.is_mcp_secure;
+	CSR_WRITE_PA(dev->node,
+		     CAVM_ECAMX_DOMX_RSLX_PERMIT(dev->ecam, dev->domain,
+		     dev->func), rsl_permit.u);
+	debug_plat_ecam("enable_func N%d:E%d:DOM%d:F%d\n", dev->node,
+			dev->ecam, dev->domain, dev->func);
 }
 
-static inline void cn93xx_disable_func(int node, int domain, int func)
+static inline void cn93xx_disable_func(struct ecam_device *dev)
 {
-	union cavm_ecamx_domx_rslx_permit rsl_permit;
-
-	switch (domain) {
-		case 0:
-			domain = 0;
-			break;
-		case 1:
-			domain = 1;
-			break;
-		case 2:
-			domain = 2;
-			break;
-		default:
-			debug_plat_ecam("Domain %d does not exist\n", domain);
-			return;
-	}
+	cavm_ecamx_domx_rslx_permit_t rsl_permit;
 
 	/* disable func */
-	rsl_permit.u = CSR_READ_PA(node, CAVM_ECAMX_DOMX_RSLX_PERMIT(0, domain, func));
+	rsl_permit.u = CSR_READ_PA(dev->node,
+				   CAVM_ECAMX_DOMX_RSLX_PERMIT(dev->ecam,
+				   dev->domain, dev->func));
 	rsl_permit.s.sec_dis = 0;
 	rsl_permit.s.nsec_dis = 1;
-	rsl_permit.s.xcp0_dis = 0;
-	rsl_permit.s.xcp1_dis = 0;
-	CSR_WRITE_PA(node, CAVM_ECAMX_DOMX_RSLX_PERMIT(0, domain, func), rsl_permit.u);
-	debug_plat_ecam("disable_func N%d:E%d:DOM%d:F%d\n", node, 0, domain, func);
+	rsl_permit.s.xcp0_dis = dev->config.s.is_scp_secure;
+	rsl_permit.s.xcp1_dis = dev->config.s.is_mcp_secure;
+	CSR_WRITE_PA(dev->node,
+		     CAVM_ECAMX_DOMX_RSLX_PERMIT(dev->ecam, dev->domain,
+		     dev->func), rsl_permit.u);
+	debug_plat_ecam("disable_func N%d:E%d:DOM%d:F%d\n", dev->node,
+			dev->ecam, dev->domain, dev->func);
 }
-const struct ecam_platform_defs ecam_devices_ops = {
+
+static int cn93xx_get_ecam_count(int node)
+{
+	cavm_ecamx_const_t ecam_const;
+
+	ecam_const.u = CSR_READ_PA(node, CAVM_ECAMX_CONST(0));
+
+	return ecam_const.s.ecams;
+}
+
+static int cn93xx_get_domain_count(struct ecam_device *dev)
+{
+	cavm_ecamx_const_t ecam_const;
+
+	ecam_const.u = CSR_READ_PA(dev->node, CAVM_ECAMX_CONST(dev->ecam));
+
+	return ecam_const.s.domains;
+}
+
+static inline int cn93xx_is_domain_present(struct ecam_device *dev)
+{
+	cavm_ecamx_domx_const_t dom_const;
+
+	dom_const.u = CSR_READ_PA(dev->node,
+				  CAVM_ECAMX_DOMX_CONST(dev->ecam,
+				  dev->domain));
+
+	return (dom_const.s.pres && dom_const.s.permit);
+}
+
+static int cn93xx_get_secure_settings(struct ecam_device *dev, uint64_t pconfig)
+{
+	cavm_pccpf_xxx_id_t pccpf_id;
+	int i = 0;
+
+	/* Get secure/non-secure setting */
+	pccpf_id.u = cavm_read32(pconfig + CAVM_PCCPF_XXX_ID);
+	debug_plat_ecam("%s: DeviceID=0x%04x\n", __func__, pccpf_id.s.devid);
+
+	dev->config.s.is_secure = 0;
+	while (secure_devs[i].devid != ECAM_INVALID_PCC_IDL_ID) {
+		if (((secure_devs[i].prodid << ECAM_PROD_SHIFT) |
+			secure_devs[i].devid) == pccpf_id.s.devid)
+			dev->config.s.is_secure = 1;
+		i++;
+	}
+
+	i = 0;
+	dev->config.s.is_mcp_secure = 0;
+	while (secure_mcp_devs[i].devid != ECAM_INVALID_PCC_IDL_ID) {
+		if (((secure_mcp_devs[i].prodid << ECAM_PROD_SHIFT) |
+			secure_mcp_devs[i].devid) == pccpf_id.s.devid)
+			dev->config.s.is_mcp_secure = 1;
+		i++;
+	}
+
+	i = 0;
+	dev->config.s.is_scp_secure = 0;
+	while (secure_scp_devs[i].devid != ECAM_INVALID_PCC_IDL_ID) {
+		if (((secure_scp_devs[i].prodid << ECAM_PROD_SHIFT) |
+			secure_scp_devs[i].devid) == pccpf_id.s.devid)
+			dev->config.s.is_scp_secure = 1;
+		i++;
+	}
+
+	return 1;
+}
+
+static inline int cn93xx_domain_smmu_number(struct ecam_device *dev)
+{
+	cavm_ecamx_domx_const_t dom_const;
+
+	if (!cn93xx_is_domain_present(dev))
+		return -1;
+
+	dom_const.u = CSR_READ_PA(dev->node,
+				  CAVM_ECAMX_DOMX_CONST(dev->ecam,
+				  dev->domain));
+
+	return dom_const.s.smmu;
+}
+
+struct ecam_probe_callback *cn93xx_get_probe_callbacks(void)
+{
+	return &probe_callbacks[0];
+}
+
+const struct ecam_platform_defs plat_ops = {
 	.soc_type = T93PARTNUM,
-	.get_dev_idx = cn93xx_get_dev_idx,
-	.get_max_bus = cn93xx_get_max_bus,
-	.get_config_addr = cn93xx_get_config_addr,
-	.get_config_size = cn93xx_get_config_size,
+	.get_ecam_count = cn93xx_get_ecam_count,
+	.get_domain_count = cn93xx_get_domain_count,
+	.is_domain_present = cn93xx_is_domain_present,
+	.get_secure_settings = cn93xx_get_secure_settings,
+	.get_dev_config = cn93xx_get_dev_config,
+	.get_probes = cn93xx_get_probe_callbacks,
+	.is_bus_disabled = cn93xx_is_bus_disabled,
+	.skip_bus = cn93xx_skip_bus,
 	.enable_bus = cn93xx_enable_bus,
 	.disable_bus = cn93xx_disable_bus,
 	.enable_dev = cn93xx_enable_dev,
 	.disable_dev = cn93xx_disable_dev,
 	.enable_func = cn93xx_enable_func,
 	.disable_func = cn93xx_disable_func,
-	.disable_device_on_bus = cn93xx_disable_device_on_bus,
 };
