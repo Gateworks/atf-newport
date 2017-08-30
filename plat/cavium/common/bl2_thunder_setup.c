@@ -206,10 +206,10 @@ void bl2_platform_setup(void)
 	thunder_security_setup();
 
 	/* Enumerate devices on ECAMs */
-	init_thunder_io(1);
+	octeontx_pci_init();
 
-        /* Initialise the IO layer and register platform IO devices */
-        thunder_io_setup();
+	/* Initialise the IO layer and register platform IO devices */
+	thunder_io_setup();
 }
 
 /*******************************************************************************

@@ -115,6 +115,4 @@ struct pcie_config {
     int         res2[1008];  /* make it 4K boundary */
 } __attribute__((__packed__));
 
-int init_thunder_io();
-
 #endif
