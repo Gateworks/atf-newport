@@ -38,7 +38,6 @@ static const unsigned int g0_interrupt_array[] = {
 	THUNDER_IRQ_GTI_WDOG,
 };
 
-
 static gicv3_driver_data_t thunder_gic_data = {
 	/* gicd_base and gicr_base are setup later */
 	.g0_interrupt_num = ARRAY_SIZE(g0_interrupt_array),
@@ -48,7 +47,8 @@ static gicv3_driver_data_t thunder_gic_data = {
 	.rdistif_num = PLATFORM_CORE_COUNT,
 	.rdistif_base_addrs = rdistif_base_addrs,
 #ifndef PLAT_t93
-	/* can use the generic driver implementation
+	/*
+	 * can use the generic driver implementation
 	 * to obtain the core pos
 	 */
 	.mpidr_to_core_pos = thunder_calc_core_pos,
