@@ -18,7 +18,6 @@
 #include <cpu_macros.S>
 
 	/* Global functions */
-	.globl	plat_my_core_pos
 	.globl	plat_is_my_cpu_primary
 	.globl	plat_get_my_entrypoint
 	.globl	plat_secondary_cold_boot_setup
@@ -26,29 +25,7 @@
 	.globl	plat_crash_console_putc
 	.globl	platform_mem_init
 
-	.globl	thunder_calc_core_pos
 	.globl	thunder_sec_entry_point
-
-	/* -----------------------------------------------------
-	 * unsigned int plat_my_core_pos(void);
-	 *
-	 * result: CorePos = CoreId + (ClusterId << 4) + (NodeId << 6)
-	 * -----------------------------------------------------
-	 */
-func plat_my_core_pos
-	mrs	x0, mpidr_el1
-	b	thunder_calc_core_pos
-endfunc plat_my_core_pos
-
-func thunder_calc_core_pos
-	and	x1, x0, #MPIDR_CPU_MASK
-	orr	x1, x1, x0, LSR #4
-	and	x1, x1, #0x3f /* Cluster and Core ID */
-	ubfx	x0, x0, 16, 2 /* Node ID */
-	ldr	w2, =(PLATFORM_MAX_CLUSTERS_PER_NODE * PLATFORM_MAX_CPUS_PER_CLUSTER)
-	umaddl	x0, w0, w2, x1
-	ret
-endfunc thunder_calc_core_pos
 
 	/* -----------------------------------------------------
 	 * unsigned int plat_is_my_cpu_primary(void);

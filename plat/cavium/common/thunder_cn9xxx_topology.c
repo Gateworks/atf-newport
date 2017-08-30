@@ -14,9 +14,7 @@
 #include <arch.h>
 #include <platform_def.h>
 #include <psci.h>
-#include <thunder_private.h>
 
-#ifdef PLAT_t93
 static const unsigned char thunder_power_domain_tree_desc[] = {
 	/* No of root nodes */
 	PLATFORM_MAX_NODES,
@@ -28,22 +26,6 @@ static const unsigned char thunder_power_domain_tree_desc[] = {
 	PLATFORM_MAX_CPUS_PER_CLUSTER,
 	PLATFORM_MAX_CPUS_PER_CLUSTER,
 };
-#else
-static const unsigned char thunder_power_domain_tree_desc[] = {
-	/* No of root nodes */
-	PLATFORM_MAX_NODES,
-	/* No of clusters */
-	PLATFORM_MAX_CLUSTERS_PER_NODE,
-	PLATFORM_MAX_CLUSTERS_PER_NODE,
-	/* No of CPU cores */
-	PLATFORM_MAX_CPUS_PER_CLUSTER,
-	PLATFORM_MAX_CPUS_PER_CLUSTER,
-	PLATFORM_MAX_CPUS_PER_CLUSTER,
-	PLATFORM_MAX_CPUS_PER_CLUSTER,
-	PLATFORM_MAX_CPUS_PER_CLUSTER,
-	PLATFORM_MAX_CPUS_PER_CLUSTER,
-};
-#endif
 
 /*******************************************************************************
  * This function returns the Thunder default topology tree information.
@@ -61,7 +43,7 @@ const unsigned char *plat_get_power_domain_tree_desc(void)
  ******************************************************************************/
 int plat_core_pos_by_mpidr(u_register_t mpidr)
 {
-	unsigned int cluster_id, cpu_id, node_id, core = 0;
+	unsigned int node_id, cluster_id, cpu_id;
 
 	mpidr &= MPIDR_AFFINITY_MASK;
 
@@ -80,11 +62,6 @@ int plat_core_pos_by_mpidr(u_register_t mpidr)
 
 	if (cpu_id >= PLATFORM_MAX_CPUS_PER_CLUSTER)
 		return -1;
-	if (CAVIUM_IS_MODEL(CAVIUM_CN8XXX))
-		core = (cpu_id + (cluster_id << 4) + (node_id *
-			PLATFORM_MAX_CLUSTERS_PER_NODE *
-			PLATFORM_MAX_CPUS_PER_CLUSTER));
-	else if (CAVIUM_IS_MODEL(CAVIUM_CN9XXX))
-		core = (cpu_id * PLATFORM_MAX_CLUSTERS_PER_NODE) + cluster_id;
-	return core;
+
+	return ((cpu_id * PLATFORM_MAX_CLUSTERS_PER_NODE) + cluster_id);
 }
