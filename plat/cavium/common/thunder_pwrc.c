@@ -13,6 +13,7 @@
 
 #include <bakery_lock.h>
 #include <mmio.h>
+#include <platform.h>
 #include <thunder_pwrc.h>
 #include <thunder_private.h>
 #include <arch_helpers.h>
@@ -69,17 +70,10 @@ int thunder_wait_for_core(unsigned node)
 void thunder_pwrc_write_pponr(unsigned long mpidr)
 {
 	union cavm_rst_pp_reset pp_reset;
-	unsigned long node = 0, aff1_id, aff0_id, cavm_core_id = 0;
+	int node = ((mpidr >> MPIDR_AFF2_SHIFT) & MPIDR_AFFLVL_MASK);
+	unsigned long cavm_core_id = (unsigned long)(plat_core_pos_by_mpidr
+					((u_register_t)mpidr));
 
-	node = ((mpidr >> MPIDR_AFF2_SHIFT) & MPIDR_AFFLVL_MASK);
-	aff1_id = ((mpidr >> MPIDR_AFF1_SHIFT) & MPIDR_AFFLVL_MASK);
-	aff0_id = ((mpidr >> MPIDR_AFF0_SHIFT) & MPIDR_AFFLVL_MASK);
-
-	if (CAVIUM_IS_MODEL(CAVIUM_CN8XXX))
-		cavm_core_id = (aff1_id * 16) + aff0_id;
-	else if (CAVIUM_IS_MODEL(CAVIUM_CN9XXX))
-		cavm_core_id = (aff0_id * PLATFORM_MAX_CLUSTERS_PER_NODE) +
-				aff1_id;
 	pp_reset.u = CSR_READ_PA(node, CAVM_RST_PP_RESET);
 
 	if(!(pp_reset.u & (1ul << cavm_core_id))) {
