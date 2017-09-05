@@ -599,7 +599,7 @@ static inline int octeontx_bus_is_rsl(struct ecam_device *device)
 static void octeontx_ecam_dev_init(struct ecam_device *device, unsigned node,
 				 unsigned ecam)
 {
-	device->base_addr = thunder_get_ecam_config_addr(node, ecam);
+	device->base_addr = CSR_PA(node, CAVM_ECAM_PF_BAR2(ecam));
 	device->node = node;
 	device->ecam = ecam;
 }
