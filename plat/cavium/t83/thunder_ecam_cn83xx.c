@@ -62,7 +62,8 @@ static int ecam_probe_bgx(int node, unsigned long arg)
 
 	cfg_dlm1.u = 0;
 
-	/* On 83xx BGX is split across 2 DLMs, check both DLMs
+	/*
+	 * On 83xx BGX is split across 2 DLMs, check both DLMs
 	 * for marking BGX PCi device secure 
 	 */
 	switch (arg) {
@@ -92,280 +93,261 @@ static int ecam_probe_lmc(int node, unsigned long arg)
 	return thunder_dram_is_lmc_enabled(node, arg);
 }
 
-struct ecam_device devs0_cn83xx[] = {
-	{0, 0,  1,   0, TRUE, NULL, 0}, /* PCCBR_MRML */
-	{0, 0,  2,   0, FALSE, NULL, 0}, /* SMMU 0 */
-	{0, 0,  3,   0, FALSE, NULL, 0}, /* GIC */
-	{0, 0,  4,   0, FALSE, NULL, 0}, /* GTI */
-	{0, 0,  6,   0, TRUE, NULL, 0}, /* GPIO */
-	{0, 0,  7,   0, TRUE, NULL, 0}, /* MPI */
-	{0, 0,  8,   0, TRUE, NULL, 0}, /* MIO_PTP */
-	{0, 0,  9,   0, TRUE, NULL, 0}, /* PCCBR_RNM */
-	{0, 0, 10,   0, TRUE, NULL, 0}, /* PCCBR_BCH */
-	{0, 0, 11,   0, TRUE, NULL, 0}, /* NDF */
-	{0, 0, 12,   0, TRUE, NULL, 0}, /* PCCBR_CPT0 */
-	{0, 0, 13,   0, TRUE, NULL, 0}, /* PCCBR_CPT1 */
-	{0, 0, 14,   0, TRUE, NULL, 0}, /* PCCBR_RAD */
-	{0, 0, 16,   0, TRUE, NULL, 0}, /* PCCBR_SSO */
-	{0, 0, 17,   0, TRUE, NULL, 0}, /* PCCBR_SSOW */
-	{0, 0, 18,   0, TRUE, NULL, 0}, /* PCCBR_FPA */
-	{0, 0, 19,   0, TRUE, NULL, 0}, /* PCCBR_TIM */
-	{0, 0, 20,   0, TRUE, NULL, 0}, /* PCCBR_DPI0 */
-	{0, 1,  0,   0, TRUE, NULL, 0}, /* MRML */
-	{0, 1,  0,   1, TRUE, NULL, 0}, /* RST */
-	// 102 DAP
-	// 103 MIO_FUS
-	// 104 FUSF
-	{0, 1,  0,   5, TRUE, NULL, 0}, /* OCX */
-
-	// 108 NCSI
-	// 109 L2C
-	// 10A Serial GPIO
-	{0, 1,  0,  11, TRUE, NULL, 0}, /* SMI */
-	{0, 1,  0,  12, TRUE, NULL, 0}, /* MIO_EMM */
-	{0, 1,  0,  15, TRUE, NULL, 0}, /* PBUS */
-	// 10D KEY
-	// 10E MIO_BOOT
-	{0, 1 , 0,  48, TRUE, NULL, 0}, /* L2C-TAD 0 */
-	{0, 1 , 0,  49, TRUE, NULL, 0}, /* L2C-TAD 1 */
-	{0, 1 , 0,  50, TRUE, NULL, 0}, /* L2C-TAD 2 */
-	{0, 1 , 0,  51, TRUE, NULL, 0}, /* L2C-TAD 3 */
-	{0, 1 , 0,  56, TRUE, NULL, 0}, /* L2C-CBC 0 */
-	{0, 1 , 0,  57, TRUE, NULL, 0}, /* L2C-CBC 1 */
-	{0, 1 , 0,  60, TRUE, NULL, 0}, /* L2C-MCI 0 */
-	{0, 1 , 0,  61, TRUE, NULL, 0}, /* L2C-MCI 1 */
-	{0, 1 , 0,  62, TRUE, NULL, 0}, /* L2C-MCI 2 */
-
-	{0, 1,  0,  64, FALSE, NULL, 0}, /* UAA 0 */
-	{0, 1,  0,  65, FALSE, NULL, 0}, /* UAA 1 */
-	{0, 1,  0,  66, FALSE, NULL, 0}, /* UAA 2 */
-	{0, 1,  0,  67, FALSE, NULL, 0}, /* UAA 3 */
-	{0, 1 , 0,  72, TRUE, ecam_probe_twsi, 0}, /* TWSI 0 */
-	{0, 1 , 0,  73, TRUE, ecam_probe_twsi, 1}, /* TWSI 1 */
-
-	{0, 1 , 0,  80, TRUE, ecam_probe_lmc, 0}, /* LMC 0 */
-	{0, 1 , 0,  81, TRUE, ecam_probe_lmc, 1}, /* LMC 1 */
-	{0, 1,  0,  88, FALSE, NULL, 0}, /* IOBN 0 */
-	{0, 1,  0,  89, FALSE, NULL, 0}, /* IOBN 1 */
-	{0, 1 , 0,  96, TRUE, NULL, 0}, /* OCLA 0 */
-	{0, 1 , 0,  97, TRUE, NULL, 0}, /* OCLA 1 */
-	{0, 1 , 0,  98, TRUE, NULL, 0}, /* OCLA 2 */
-
-	{0, 1,  0, 104, TRUE, NULL, 0}, /* LBK0 */
-	{0, 1,  0, 105, TRUE, NULL, 0}, /* LBK1 */
-	{0, 1,  0, 106, TRUE, NULL, 0}, /* LBK2 */
-	{0, 1,  0, 107, TRUE, NULL, 0}, /* LBK3 */
-
-	{0, 1 , 0, 112, FALSE, ecam_probe_pem, 0}, /* PEM 0 */
-	{0, 1 , 0, 113, FALSE, ecam_probe_pem, 1}, /* PEM 1 */
-	{0, 1 , 0, 114, FALSE, ecam_probe_pem, 2}, /* PEM 2 */
-	{0, 1 , 0, 115, FALSE, ecam_probe_pem, 3}, /* PEM 3 */
-
-	{0, 1,  0, 128, TRUE, ecam_probe_bgx, 0}, /* BGX 0 */
-	{0, 1,  0, 129, TRUE, ecam_probe_bgx, 1}, /* BGX 1 */
-	{0, 1,  0, 130, TRUE, ecam_probe_bgx, 2}, /* BGX 2 */
-	{0, 1,  0, 131, TRUE, ecam_probe_bgx, 3}, /* BGX 3 */
-	// 1E0 GSER 0
-	// 1E1 GSER 1
-	// 1E2 GSER 2
-	// 1E3 GSER 3
-	// 1E4 GSER 4
-	// 1E5 GSER 5
-	// 1E6 GSER 6
-	// 1E7 GSER 7
-	// 1E8 GSER 8
-	// 1E9 GSER 9
-	// 1EA GSER 10
-	// 1EB GSER 11
-	// 1EC GSER 12
-	// 1ED GSER 13
-	{0, 2,  0,   0, TRUE, NULL, 0}, /* RNM */
-	{0, 3,  0,   0, TRUE, NULL, 0}, /* BCH */
-	{0, 4,  0,   0, TRUE, NULL, 0}, /* CPT0 */
-	{0, 5,  0,   0, TRUE, NULL, 0}, /* CPT1 */
-	{0, 6,  0,   0, TRUE, NULL, 0}, /* RAD */
-	{0, 7,  0,   0, TRUE, NULL, 0}, /* SSO */
-	{0, 8,  0,   0, TRUE, NULL, 0}, /* SSOW */
-	{0, 9,  0,   0, TRUE, NULL, 0}, /* FPA */
-	{0, 10,  0,   0, TRUE, NULL, 0}, /* TIM */
-	{0, 11,  0,   0, TRUE, NULL, 0}, /* DPI0 */
-
-	/*ECAM1*/
-
-	{1, 0,  1, 0, FALSE, NULL, 0}, /* SMMU 1 */
-	// 0, 2, 0 SLI 0
-	{1, 0,  4, 0, TRUE, ecam_probe_sata, 0}, /* SATA 0 */
-	{1, 0,  5, 0, TRUE, ecam_probe_sata, 1}, /* SATA 1 */
-	{1, 0,  6, 0, TRUE, ecam_probe_sata, 2}, /* SATA 2 */
-	{1, 0,  7, 0, TRUE, ecam_probe_sata, 3}, /* SATA 3 */
-	{1, 0,  8, 0, TRUE, ecam_probe_sata, 4}, /* SATA 4 */
-	{1, 0,  9, 0, TRUE, ecam_probe_sata, 5}, /* SATA 5 */
-	{1, 0, 12, 0, TRUE, NULL, 0}, /* USBDRD0 */
-	{1, 0, 13, 0, TRUE, NULL, 0}, /* USBDRD1 */
-	{1, 0, 16, 0, TRUE, NULL, 0}, /* PCCBR_NIC */
-	{1, 0, 17, 0, TRUE, NULL, 0}, /* PCCBR_PKI */
-	{1, 0, 18, 0, TRUE, NULL, 0}, /* PCCBR_PKO */
-	{1, 0, 19, 0, TRUE, NULL, 0}, /* PCCBR_ZIP */
-	{1, 0, 20, 0, TRUE, NULL, 0}, /* PCCBR_DDF0 */
-	{1, 1,  0, 0, TRUE, NULL, 0}, /* NIC */
-	{1, 2,  0, 0, TRUE, NULL, 0}, /* PKI */
-	{1, 3,  0, 0, TRUE, NULL, 0}, /* PKO */
-	{1, 4,  0, 0, TRUE, NULL, 0}, /* ZIP */
-	{1, 5,  0, 0, TRUE, NULL, 0}, /* DDF0 */
-	{-1, 0, 0, 0, 0, NULL, 0},
+struct ecam_probe_callback probe_callbacks[] = {
+	{0xa012, 0x177d, ecam_probe_twsi, 0},
+	{0xa020, 0x177d, ecam_probe_pem, 0},
+	{0xa01c, 0x177d, ecam_probe_sata, 0},
+	{0xa026, 0x177d, ecam_probe_bgx, 0},
+	{0xa022, 0x177d, ecam_probe_lmc, 0},
+	{ECAM_INVALID_DEV_ID, 0, 0, 0}
 };
 
-static struct ecam_device *cn83xx_get_dev_idx(int node, int ecam)
-{
-	int node_ecam = ecam | (node << 2);
-	struct ecam_device *devs = NULL;
+struct secure_devices secure_devs[] = {
+	{CAVM_PCC_PROD_E_GEN, CAVM_PCC_DEV_IDL_E_SMMU},
+	{CAVM_PCC_PROD_E_GEN, CAVM_PCC_DEV_IDL_E_GIC},
+	{CAVM_PCC_PROD_E_GEN, CAVM_PCC_DEV_IDL_E_GTI},
+	{CAVM_PCC_PROD_E_GEN, CAVM_PCC_DEV_IDL_E_L2C},
+	{CAVM_PCC_PROD_E_GEN, CAVM_PCC_DEV_IDL_E_SGP},
+	{CAVM_PCC_PROD_E_GEN, CAVM_PCC_DEV_IDL_E_DAP},
+	{CAVM_PCC_PROD_E_GEN, CAVM_PCC_DEV_IDL_E_MIO_FUS},
+	{CAVM_PCC_PROD_E_GEN, CAVM_PCC_DEV_IDL_E_FUSF},
+	{CAVM_PCC_PROD_E_GEN, CAVM_PCC_DEV_IDL_E_NCSI},
+	{CAVM_PCC_PROD_E_GEN, CAVM_PCC_DEV_IDL_E_KEY},
+	{CAVM_PCC_PROD_E_GEN, CAVM_PCC_DEV_IDL_E_MIO_BOOT},
+	{CAVM_PCC_PROD_E_GEN, CAVM_PCC_DEV_IDL_E_UAA},
+	{CAVM_PCC_PROD_E_GEN, CAVM_PCC_DEV_IDL_E_PEM},
+	{CAVM_PCC_PROD_E_GEN, CAVM_PCC_DEV_IDL_E_IOBN},
+	{CAVM_PCC_PROD_E_GEN, CAVM_PCC_DEV_IDL_E_LBK},
+	{CAVM_PCC_PROD_E_GEN, CAVM_PCC_DEV_IDL_E_GSER},
+	{CAVM_PCC_PROD_E_GEN, CAVM_PCC_DEV_IDL_E_SLIRE},
+	{CAVM_PCC_PROD_E_GEN, CAVM_PCC_DEV_IDL_E_VRM},
+	{CAVM_PCC_PROD_E_CN83XX, CAVM_PCC_DEV_IDL_E_PCIERC},
+	{ECAM_INVALID_PROD_ID, ECAM_INVALID_PCC_IDL_ID}
+};
 
-	switch (node_ecam) {
-	case 0:
-		devs = &devs0_cn83xx[0];
-		break;
-	case 1:
-		devs = &devs0_cn83xx[1];
-		break;
-	}
-	return devs;
+static inline uint64_t cn83xx_get_dev_config(struct ecam_device *dev)
+{
+	uint64_t pconfig;
+	cavm_pccpf_xxx_id_t pccpf_id;
+
+	pconfig = (dev->base_addr |
+		  ((dev->bus << ECAM_BUS_SHIFT) & ECAM_BUS_MASK) |
+		  ((dev->dev << ECAM_DEV_SHIFT) & ECAM_DEV_MASK) |
+		  ((dev->func << ECAM_FUNC_SHIFT) & ECAM_FUNC_MASK));
+
+	pccpf_id.u = cavm_read32(pconfig + CAVM_PCCPF_XXX_ID);
+	if (pccpf_id.s.vendid == 0xffff || pccpf_id.s.devid == 0xffff)
+		return 0;
+
+	return pconfig;
 }
 
-/* Check fuses to see if the device on bus is available
- * or not. If available return 0, else return -1
- */
-static int cn83xx_disable_device_on_bus(int node, int bus)
+static int cn83xx_is_bus_disabled(struct ecam_device *dev)
 {
-	int i;
-	uint32_t fuse_cnt = 0;
+	int rc = 0;
 
-	/* Check if CPT block is available by reading the fuse */
-	if (bus == 4) {
-		for (i = 1665; i <= 1680; i++) {
-			fuse_cnt += thunder_fuse_read(node, i);
-		}
+	if (((dev->ecam == 0) && (dev->bus > 11)) ||
+	    ((dev->ecam == 1) && (dev->bus > 5)))
+		rc = 1;
 
-		if (fuse_cnt == 16)
-			return 1;
-	}
-
-	return 0;
+	return rc;
 }
 
-int max_bus_cn83xx[] = { 11, 5};
-
-static int cn83xx_get_max_bus(int ecam)
+static inline int cn83xx_skip_bus(struct ecam_device *dev)
 {
-	return max_bus_cn83xx[ecam];
+	return (((dev->ecam == 1) && (dev->bus > 0)) || (dev->bus > 1));
 }
 
-static uint64_t cn83xx_get_config_addr(int node, int ecam)
+static inline void cn83xx_disable_bus(struct ecam_device *dev)
 {
-	return thunder_get_ecam_config_addr(node, ecam);
-}
-
-static uint64_t cn83xx_get_config_size(int node, int ecam)
-{
-	return thunder_get_ecam_config_size(node, ecam);
-}
-
-static inline void cn83xx_disable_bus(int node, int ecam, int bus)
-{
-	union cavm_ecamx_busx_sdis bus_sdis;
+	cavm_ecamx_busx_sdis_t bus_sdis;
 
 	/* disable bus */
-	bus_sdis.u = CSR_READ_PA(node, CAVM_ECAMX_BUSX_SDIS(ecam, bus));
+	bus_sdis.u = CSR_READ_PA(dev->node,
+				 CAVM_ECAMX_BUSX_SDIS(dev->ecam, dev->bus));
 	bus_sdis.s.sec = 1;
-	CSR_WRITE_PA(node, CAVM_ECAMX_BUSX_SDIS(ecam, bus), bus_sdis.u);
-	debug_plat_ecam("disable_bus %d:%d:%d\n", node, ecam, bus);
+	CSR_WRITE_PA(dev->node,
+		     CAVM_ECAMX_BUSX_SDIS(dev->ecam, dev->bus),
+		     bus_sdis.u);
+	debug_plat_ecam("disable_bus %d:%d:%d\n", dev->node, dev->ecam,
+			dev->bus);
 }
 
-static inline void cn83xx_enable_bus(int node, int ecam, int bus)
+static inline void cn83xx_enable_bus(struct ecam_device *dev)
 {
-	union cavm_ecamx_busx_sdis bus_sdis;
-	union cavm_ecamx_busx_nsdis bus_nsdis;
+	cavm_ecamx_busx_sdis_t bus_sdis;
+	cavm_ecamx_busx_nsdis_t bus_nsdis;
 
 	/* enable bus */
-	bus_sdis.u = CSR_READ_PA(node, CAVM_ECAMX_BUSX_SDIS(ecam, bus));
+	bus_sdis.u = CSR_READ_PA(dev->node,
+				 CAVM_ECAMX_BUSX_SDIS(dev->ecam, dev->bus));
 	bus_sdis.s.sec = 0;
 	bus_sdis.s.dis = 0;
-	CSR_WRITE_PA(node, CAVM_ECAMX_BUSX_SDIS(ecam, bus), bus_sdis.u);
+	CSR_WRITE_PA(dev->node,
+		     CAVM_ECAMX_BUSX_SDIS(dev->ecam, dev->bus),
+		     bus_sdis.u);
 
-	bus_nsdis.u = CSR_READ_PA(node, CAVM_ECAMX_BUSX_NSDIS(ecam, bus));
+	bus_nsdis.u = CSR_READ_PA(dev->node,
+				  CAVM_ECAMX_BUSX_NSDIS(dev->ecam, dev->bus));
 	bus_nsdis.s.dis = 0;
-	CSR_WRITE_PA(node, CAVM_ECAMX_BUSX_NSDIS(ecam, bus), bus_nsdis.u);
+	CSR_WRITE_PA(dev->node,
+		     CAVM_ECAMX_BUSX_NSDIS(dev->ecam, dev->bus),
+		     bus_nsdis.u);
 
-	debug_plat_ecam("enable_bus %d:%d:%d\n", node, ecam, bus);
+	debug_plat_ecam("enable_bus %d:%d:%d\n", dev->node, dev->ecam,
+			dev->bus);
 }
 
-static inline void cn83xx_disable_dev(int node, int ecam, int dev)
+static inline void cn83xx_disable_dev(struct ecam_device *dev)
 {
-	union cavm_ecamx_devx_sdis dev_sdis;
+	cavm_ecamx_devx_sdis_t dev_sdis;
 
 	/* disable device */
-	dev_sdis.u = CSR_READ_PA(node, CAVM_ECAMX_DEVX_SDIS(ecam, dev));
+	dev_sdis.u = CSR_READ_PA(dev->node,
+				 CAVM_ECAMX_DEVX_SDIS(dev->ecam, dev->dev));
 	dev_sdis.s.sec = 1;
-	CSR_WRITE_PA(node, CAVM_ECAMX_DEVX_SDIS(ecam, dev), dev_sdis.u);
-	debug_plat_ecam("disable_dev %d:%d:%02x\n", node, ecam, (unsigned)dev);
+	CSR_WRITE_PA(dev->node,
+		     CAVM_ECAMX_DEVX_SDIS(dev->ecam, dev->dev),
+		     dev_sdis.u);
+	debug_plat_ecam("disable_dev %d:%d:%02x\n", dev->node, dev->ecam,
+			dev->dev);
 }
 
-static inline void cn83xx_enable_dev(int node, int ecam, int dev)
+static inline void cn83xx_enable_dev(struct ecam_device *dev)
 {
-	union cavm_ecamx_devx_sdis dev_sdis;
-	union cavm_ecamx_devx_nsdis dev_nsdis;
+	cavm_ecamx_devx_sdis_t dev_sdis;
+	cavm_ecamx_devx_nsdis_t dev_nsdis;
 
 	/* enable device */
-	dev_sdis.u = CSR_READ_PA(node, CAVM_ECAMX_DEVX_SDIS(ecam, dev));
+	dev_sdis.u = CSR_READ_PA(dev->node,
+				 CAVM_ECAMX_DEVX_SDIS(dev->ecam, dev->dev));
 	dev_sdis.s.sec = 0;
 	dev_sdis.s.dis = 0;
-	CSR_WRITE_PA(node, CAVM_ECAMX_DEVX_SDIS(ecam, dev), dev_sdis.u);
+	CSR_WRITE_PA(dev->node,
+		     CAVM_ECAMX_DEVX_SDIS(dev->ecam, dev->dev),
+		     dev_sdis.u);
 
-	dev_nsdis.u = CSR_READ_PA(node, CAVM_ECAMX_DEVX_NSDIS(ecam, dev));
+	dev_nsdis.u = CSR_READ_PA(dev->node,
+				  CAVM_ECAMX_DEVX_NSDIS(dev->ecam, dev->dev));
 	dev_nsdis.s.dis = 0;
-	CSR_WRITE_PA(node, CAVM_ECAMX_DEVX_NSDIS(ecam, dev), dev_nsdis.u);
+	CSR_WRITE_PA(dev->node,
+		     CAVM_ECAMX_DEVX_NSDIS(dev->ecam, dev->dev),
+		     dev_nsdis.u);
 
-	debug_plat_ecam("enable_dev %d:%d:%02x\n", node, ecam, (unsigned)dev);
+	debug_plat_ecam("enable_dev %d:%d:%02x\n", dev->node, dev->ecam,
+			dev->dev);
 }
 
-static inline void cn83xx_disable_func(int node, int ecam, int func)
+static inline void cn83xx_disable_func(struct ecam_device *dev)
 {
-	union cavm_ecamx_rslx_sdis rsl_sdis;
+	cavm_ecamx_rslx_sdis_t rsl_sdis;
+
 	/* disable function */
-	rsl_sdis.u = CSR_READ_PA(node, CAVM_ECAMX_RSLX_SDIS(ecam, func));
+	rsl_sdis.u = CSR_READ_PA(dev->node,
+				 CAVM_ECAMX_RSLX_SDIS(dev->ecam, dev->func));
 	rsl_sdis.s.sec = 1;
-	CSR_WRITE_PA(node, CAVM_ECAMX_RSLX_SDIS(ecam, func), rsl_sdis.u);
-	debug_plat_ecam("disable_func %d:%d:%02x\n", node, ecam, (unsigned)func);
+	CSR_WRITE_PA(dev->node,
+		     CAVM_ECAMX_RSLX_SDIS(dev->ecam, dev->func),
+		     rsl_sdis.u);
+	debug_plat_ecam("disable_func %d:%d:%02x\n", dev->node, dev->ecam,
+			dev->func);
 }
 
-static inline void cn83xx_enable_func(int node, int ecam, int func)
+static inline void cn83xx_enable_func(struct ecam_device *dev)
 {
-	union cavm_ecamx_rslx_sdis rsl_sdis;
-	union cavm_ecamx_rslx_nsdis rsl_nsdis;
+	cavm_ecamx_rslx_sdis_t rsl_sdis;
+	cavm_ecamx_rslx_nsdis_t rsl_nsdis;
+
 	/* enable function */
-	rsl_sdis.u = CSR_READ_PA(node, CAVM_ECAMX_RSLX_SDIS(ecam, func));
+	rsl_sdis.u = CSR_READ_PA(dev->node,
+				 CAVM_ECAMX_RSLX_SDIS(dev->ecam, dev->func));
 	rsl_sdis.s.sec = 0;
 	rsl_sdis.s.dis = 0;
-	CSR_WRITE_PA(node, CAVM_ECAMX_RSLX_SDIS(ecam, func), rsl_sdis.u);
+	CSR_WRITE_PA(dev->node,
+		     CAVM_ECAMX_RSLX_SDIS(dev->ecam, dev->func),
+		     rsl_sdis.u);
 
-	rsl_nsdis.u = CSR_READ_PA(node, CAVM_ECAMX_RSLX_NSDIS(ecam, func));
+	rsl_nsdis.u = CSR_READ_PA(dev->node,
+				  CAVM_ECAMX_RSLX_NSDIS(dev->ecam, dev->func));
 	rsl_nsdis.s.dis = 0;
-	CSR_WRITE_PA(node, CAVM_ECAMX_RSLX_NSDIS(ecam, func), rsl_nsdis.u);
+	CSR_WRITE_PA(dev->node,
+		     CAVM_ECAMX_RSLX_NSDIS(dev->ecam, dev->func),
+		     rsl_nsdis.u);
 
-	debug_plat_ecam("enable_func %d:%d:%02x\n", node, ecam, (unsigned)func);
+	debug_plat_ecam("enable_func %d:%d:%02x\n", dev->node, dev->ecam,
+			dev->func);
 }
 
-const struct ecam_platform_defs ecam_devices_ops = {
+static inline int cn83xx_get_ecam_count(int node)
+{
+	cavm_ecamx_const_t ecam_const;
+
+	ecam_const.u = CSR_READ_PA(node, CAVM_ECAMX_CONST(0));
+
+	return ecam_const.s.ecams;
+}
+
+static int cn83xx_get_domain_count(struct ecam_device *dev)
+{
+	/*
+	 * In CN83xx ECAM topology, there're no domains.
+	 * To satisfy PCI scan, at least 1 domain needs to be present
+	 */
+	return 1;
+}
+
+static inline int cn83xx_is_domain_present(struct ecam_device *dev)
+{
+	/*
+	 * To satisfy proper PCI scan,
+	 * at least 1 domain needs to be present
+	 */
+	return (dev->domain == 0);
+}
+
+static int cn83xx_get_secure_settings(struct ecam_device *dev, uint64_t pconfig)
+{
+	cavm_pccpf_xxx_id_t pccpf_id;
+	int i = 0;
+
+	/* Get secure/non-secure setting */
+	pccpf_id.u = cavm_read32(pconfig + CAVM_PCCPF_XXX_ID);
+	debug_plat_ecam("%s: DeviceID=0x%04x\n", __func__, pccpf_id.s.devid);
+
+	dev->config.s.is_secure = 0;
+	while (secure_devs[i].devid != ECAM_INVALID_PCC_IDL_ID) {
+		if (((secure_devs[i].prodid << ECAM_PROD_SHIFT) |
+			secure_devs[i].devid) == pccpf_id.s.devid)
+			dev->config.s.is_secure = 1;
+		i++;
+	}
+
+	/* Set SCP/MCP to 0, as they don't exist on T83 */
+	dev->config.s.is_mcp_secure = 0;
+	dev->config.s.is_scp_secure = 0;
+
+	return 1;
+}
+
+struct ecam_probe_callback *cn83xx_get_probe_callbacks(void)
+{
+	return &probe_callbacks[0];
+}
+
+const struct ecam_platform_defs plat_ops = {
 	.soc_type = T83PARTNUM,
-	.get_dev_idx = cn83xx_get_dev_idx,
-	.get_max_bus = cn83xx_get_max_bus,
-	.get_config_addr = cn83xx_get_config_addr,
-	.get_config_size = cn83xx_get_config_size,
+	.get_ecam_count = cn83xx_get_ecam_count,
+	.get_domain_count = cn83xx_get_domain_count,
+	.is_domain_present = cn83xx_is_domain_present,
+	.get_secure_settings = cn83xx_get_secure_settings,
+	.get_dev_config = cn83xx_get_dev_config,
+	.get_probes = cn83xx_get_probe_callbacks,
+	.is_bus_disabled = cn83xx_is_bus_disabled,
+	.skip_bus = cn83xx_skip_bus,
 	.enable_bus = cn83xx_enable_bus,
 	.disable_bus = cn83xx_disable_bus,
 	.enable_dev = cn83xx_enable_dev,
 	.disable_dev = cn83xx_disable_dev,
 	.enable_func = cn83xx_enable_func,
-	.disable_func = cn83xx_disable_func,
-	.disable_device_on_bus = cn83xx_disable_device_on_bus,
+	.disable_func = cn83xx_disable_func
 };
-
