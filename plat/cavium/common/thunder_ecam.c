@@ -620,8 +620,7 @@ static void init_iobn5(int node, uint64_t config_base, uint64_t config_size)
 			for (bus = 0; bus < 256; bus++)
 				CSR_WRITE_PA(node, CAVM_IOBNX_DOMX_BUSX_STREAMS(iobn_nr, domain, bus), 0x3);
 			for (dev = 0; dev < 32; dev++)
-				if (domain != 1 && dev != 32)
-					CSR_WRITE_PA(node, CAVM_IOBNX_DOMX_DEVX_STREAMS(iobn_nr, domain, dev), 0x3);
+				CSR_WRITE_PA(node, CAVM_IOBNX_DOMX_DEVX_STREAMS(iobn_nr, domain, dev), 0x3);
 		}
 	}
 }
