@@ -86,7 +86,7 @@ void thunder_pwrc_write_pponr(unsigned long mpidr)
 		__asm("dsb ishst");
 		__asm("sev");
 		if(thunder_wait_for_core(node)) {
-			WARN("Failed to release core:%lu on node:%lu\n ",
+			WARN("Failed to release core:%lu on node:%d\n ",
 					cavm_core_id,node);
 			while(1);
 			return;
@@ -98,7 +98,7 @@ void thunder_pwrc_write_pponr(unsigned long mpidr)
 	__asm("dsb ishst");
 	__asm("sev");
 	if(thunder_wait_for_core(node)){
-		WARN("Failed to release core:%lu on node:%lu\n ",
+		WARN("Failed to release core:%lu on node:%d\n ",
 				cavm_core_id,node);
 	}
 }
