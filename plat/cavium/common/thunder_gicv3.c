@@ -33,8 +33,8 @@ uintptr_t rdistif_base_addrs[PLATFORM_CORE_COUNT];
 
 /* Array of Group0 interrupts to be configured by the gic driver */
 static const unsigned int g0_interrupt_array[] = {
-	IRQ_SEC_PHY_TIMER,
-	GPIO_PWR_S_IRQ
+	OCTEONTX_IRQ_SEC_PHY_TIMER,
+	OCTEONTX_GPIO_PWR_S_IRQ
 };
 
 static gicv3_driver_data_t thunder_gic_data = {

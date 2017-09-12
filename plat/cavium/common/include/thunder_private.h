@@ -51,6 +51,76 @@ DEFINE_RENAME_SYSREG_RW_FUNCS(cvm_access_el3, AP_CVM_ACCESS_EL3)
 /* In Mhz */
 #define THUNDER_SYSCNT_FREQ	100ull
 
+#define PCI_MSIX_CAP_ID		0x11
+
+/* Definitions of IRQ PPI (Per-Processor Interrupt) IDs (range 0x10 - 0x1f) */
+
+/* Secure physical generic timer IRQ */
+#define OCTEONTX_IRQ_SEC_PHY_TIMER	0x1d
+
+
+/* Definitions of IRQ SPI (Shared Peripheral Interrupt) IDs (range 0x20-0x9f) */
+
+/*
+ * OCTEONTX GPIO POWER IRQ for graceful shutdown.
+ * OCTEONTX_GPIO_PWR_S_IRQ: Secure IRQ that comes first as soon as GPIO
+ *                          is triggered
+ * OCTEONTX_GPIO_PWR_NS_IRQ: Non-Secure IRQ to kernel to initiate
+ *                           graceful shutdown
+ * OCTEONTX_KEY_POWER_IRQ: Firmware generated IRQ to signal KEY_POWER
+ *                         to non-secure software
+ */
+#define OCTEONTX_GPIO_PWR_NS_IRQ	0x20
+#define OCTEONTX_GPIO_PWR_S_IRQ		0x21
+#define OCTEONTX_KEY_POWER_IRQ		OCTEONTX_GPIO_PWR_NS_IRQ
+
+/* TWSI Secure interrupt for BMC events */
+#define OCTEONTX_TWSI_1_S_IRQ		0x22
+
+/* UAA interrupts */
+#define OCTEONTX_UAA0_IRQ		0x25
+#define OCTEONTX_UAA1_IRQ		0x26
+#define OCTEONTX_UAA2_IRQ		0x27
+#define OCTEONTX_UAA3_IRQ		0x28
+
+/* Watchdog interrupt */
+#define OCTEONTX_GTI_WDOG_IRQ		0x29
+
+/*
+ * 4 IRQs per PEM (INTA, INTB, INTC, INTD)
+ * 12 PEMs (6 per node)
+ * 0x30 (48) IRQs needed
+ */
+#define OCTEONTX_PEM_INTBASE_IRQ	0x30
+
+/* First available irq after PEM is 0x60 */
+
+/*
+ * SMMU 0..3 NODE0
+ * SMMU 4..7 NODE1
+ * Modify the below to change ths SMMU SPI's 
+ */
+#define OCTEONTX_SMMU0_GLOBAL_IRQ	0x64
+#define OCTEONTX_SMMU0_CONTEXT_IRQ	0x65
+#define OCTEONTX_SMMU1_GLOBAL_IRQ	0x66
+#define OCTEONTX_SMMU1_CONTEXT_IRQ	0x67
+#define OCTEONTX_SMMU2_GLOBAL_IRQ	0x68
+#define OCTEONTX_SMMU2_CONTEXT_IRQ	0x69
+#define OCTEONTX_SMMU3_GLOBAL_IRQ	0x6a
+#define OCTEONTX_SMMU3_CONTEXT_IRQ	0x6b
+#define OCTEONTX_SMMU4_GLOBAL_IRQ	0x6c
+#define OCTEONTX_SMMU4_CONTEXT_IRQ	0x6d
+#define OCTEONTX_SMMU5_GLOBAL_IRQ	0x6e
+#define OCTEONTX_SMMU5_CONTEXT_IRQ	0x6f
+#define OCTEONTX_SMMU6_GLOBAL_IRQ	0x70
+#define OCTEONTX_SMMU6_CONTEXT_IRQ	0x71
+#define OCTEONTX_SMMU7_GLOBAL_IRQ	0x72
+#define OCTEONTX_SMMU7_CONTEXT_IRQ	0x73
+
+#define OCTEONTX_SMMU_GLOBAL_VECTOR_OFFSET	0x1000
+#define OCTEONTX_SMMU_NUM_CONTEXTS		0x80
+
+
 void octeontx_pci_init(void);
 void plat_add_mmio_map(void);
 void thunder_io_setup(void);
@@ -93,72 +163,5 @@ static inline int thunder_fuse_read(int node, int fuse)
 {
 	return (thunder_fuse_read_byte(node, fuse >> 3) >> (fuse & 0x7)) & 1;
 }
-
-#define PCI_MSIX_CAP_ID		0x11
-
-/* Definitions of IRQ PPI (Per-Processor Interrupt) IDs (range 0x10 - 0x1f) */
-
-/* Secure physical generic timer IRQ */
-#define IRQ_SEC_PHY_TIMER	0x1d
-
-
-/* Definitions of IRQ SPI (Shared Peripheral Interrupt) IDs (range 0x20-0x9f) */
-
-/*
- * GPIO POWER IRQ for graceful shutdown.
- * GPIO_PWR_S_IRQ: Secure IRQ that comes first as soon as GPIO is triggered
- * GPIO_PWR_NS_IRQ: Non-Secure IRQ to kernel to initiate graceful shutdown
- * KEY_POWER_IRQ: Firmware generated IRQ to signal KEY_POWER to non-secure
- *                software
- */
-#define GPIO_PWR_NS_IRQ		0x20
-#define GPIO_PWR_S_IRQ		0x21
-#define KEY_POWER_IRQ		GPIO_PWR_NS_IRQ
-
-/* TWSI Secure interrupt for BMC events */
-#define TWSI_1_S_IRQ		0x22
-
-/* UAA interrupts */
-#define UAA0_IRQ		0x25
-#define UAA1_IRQ		0x26
-#define UAA2_IRQ		0x27
-#define UAA3_IRQ		0x28
-
-/* Watchdog interrupt */
-#define GTI_WDOG_IRQ		0x29
-
-/*
- * 4 IRQs per PEM (INTA, INTB, INTC, INTD)
- * 12 PEMs (6 per node)
- * 0x30 (48) IRQs needed
- */
-#define PEM_INTBASE_IRQ		0x30
-
-/* First available irq after PEM is 0x60 */
-
-/*
- * SMMU 0..3 NODE0
- * SMMU 4..7 NODE1
- * Modify the below to change ths SMMU SPI's 
- */
-#define SMMU0_GLOBAL_IRQ	0x64
-#define SMMU0_CONTEXT_IRQ	0x65
-#define SMMU1_GLOBAL_IRQ	0x66
-#define SMMU1_CONTEXT_IRQ	0x67
-#define SMMU2_GLOBAL_IRQ	0x68
-#define SMMU2_CONTEXT_IRQ	0x69
-#define SMMU3_GLOBAL_IRQ	0x6a
-#define SMMU3_CONTEXT_IRQ	0x6b
-#define SMMU4_GLOBAL_IRQ	0x6c
-#define SMMU4_CONTEXT_IRQ	0x6d
-#define SMMU5_GLOBAL_IRQ	0x6e
-#define SMMU5_CONTEXT_IRQ	0x6f
-#define SMMU6_GLOBAL_IRQ	0x70
-#define SMMU6_CONTEXT_IRQ	0x71
-#define SMMU7_GLOBAL_IRQ	0x72
-#define SMMU7_CONTEXT_IRQ	0x73
-
-#define SMMU_GLOBAL_VECTOR_OFFSET 0x1000
-#define SMMU_NUM_CONTEXTS	0x80
 
 #endif

@@ -135,40 +135,40 @@ static inline int smmu_get_irq(int node, int smmunr, int vectornr)
 {
 	int irq =
 	    (node * 8) + smmunr +
-	    ((vectornr < (SMMU_NUM_CONTEXTS * 2)) ? 0 : 4);
+	    ((vectornr < (OCTEONTX_SMMU_NUM_CONTEXTS * 2)) ? 0 : 4);
 	switch (irq) {
 	case 0:
-		return SMMU0_CONTEXT_IRQ;
+		return OCTEONTX_SMMU0_CONTEXT_IRQ;
 	case 1:
-		return SMMU1_CONTEXT_IRQ;
+		return OCTEONTX_SMMU1_CONTEXT_IRQ;
 	case 2:
-		return SMMU2_CONTEXT_IRQ;
+		return OCTEONTX_SMMU2_CONTEXT_IRQ;
 	case 3:
-		return SMMU3_CONTEXT_IRQ;
+		return OCTEONTX_SMMU3_CONTEXT_IRQ;
 	case 4:
-		return SMMU0_GLOBAL_IRQ;
+		return OCTEONTX_SMMU0_GLOBAL_IRQ;
 	case 5:
-		return SMMU1_GLOBAL_IRQ;
+		return OCTEONTX_SMMU1_GLOBAL_IRQ;
 	case 6:
-		return SMMU2_GLOBAL_IRQ;
+		return OCTEONTX_SMMU2_GLOBAL_IRQ;
 	case 7:
-		return SMMU3_GLOBAL_IRQ;
+		return OCTEONTX_SMMU3_GLOBAL_IRQ;
 	case 8:
-		return SMMU4_CONTEXT_IRQ;
+		return OCTEONTX_SMMU4_CONTEXT_IRQ;
 	case 9:
-		return SMMU5_CONTEXT_IRQ;
+		return OCTEONTX_SMMU5_CONTEXT_IRQ;
 	case 10:
-		return SMMU6_CONTEXT_IRQ;
+		return OCTEONTX_SMMU6_CONTEXT_IRQ;
 	case 11:
-		return SMMU7_CONTEXT_IRQ;
+		return OCTEONTX_SMMU7_CONTEXT_IRQ;
 	case 12:
-		return SMMU4_GLOBAL_IRQ;
+		return OCTEONTX_SMMU4_GLOBAL_IRQ;
 	case 13:
-		return SMMU5_GLOBAL_IRQ;
+		return OCTEONTX_SMMU5_GLOBAL_IRQ;
 	case 14:
-		return SMMU6_GLOBAL_IRQ;
+		return OCTEONTX_SMMU6_GLOBAL_IRQ;
 	case 15:
-		return SMMU7_GLOBAL_IRQ;
+		return OCTEONTX_SMMU7_GLOBAL_IRQ;
 
 	}
 	return -1;
@@ -274,12 +274,12 @@ static void init_gpio(int node, uint64_t config_base, uint64_t config_size)
 				*(uint64_t *) vector_base = ((i % 2) ? CAVM_GICD_CLRSPI_SR : CAVM_GICD_SETSPI_SR);	//enable SECVEC (bit 0)
 				//*(uint64_t *)vector_base = ((i%2)? CAVM_GICD_CLRSPI_NSR : CAVM_GICD_SETSPI_NSR) ; 
 				vector_base += 8;
-				*(uint64_t *) vector_base = GPIO_PWR_S_IRQ;
+				*(uint64_t *) vector_base = OCTEONTX_GPIO_PWR_S_IRQ;
 				vector_base += 8;
 				debug_io("GPIO(%d)-NODE(%d): Vector:%d address :%lx irq:%d\n",
 				       vsec_ctl.s.inst_num, node, i,
 				       (i % 2) ? CAVM_GICD_CLRSPI_SR : CAVM_GICD_SETSPI_SR,
-				       GPIO_PWR_S_IRQ);
+				       OCTEONTX_GPIO_PWR_S_IRQ);
 			} else {
 				vector_base += 0x10;
 			}
@@ -292,13 +292,13 @@ static inline int uaa_get_irq(int uaanr)
 {
 	switch (uaanr) {
 	case 0:
-		return UAA0_IRQ;
+		return OCTEONTX_UAA0_IRQ;
 	case 1:
-		return UAA1_IRQ;
+		return OCTEONTX_UAA1_IRQ;
 	case 2:
-		return UAA2_IRQ;
+		return OCTEONTX_UAA2_IRQ;
 	case 3:
-		return UAA3_IRQ;
+		return OCTEONTX_UAA3_IRQ;
 	default:
 		return -1;
 	}
@@ -407,12 +407,12 @@ static void init_twsi(int node, uint64_t config_base, uint64_t config_size)
 			*(uint64_t *) vector_base =
 			    (i % 2) ? CAVM_GICD_CLRSPI_SR : CAVM_GICD_SETSPI_SR;
 			vector_base += 8;
-			*(uint64_t *) vector_base = TWSI_1_S_IRQ;
+			*(uint64_t *) vector_base = OCTEONTX_TWSI_1_S_IRQ;
 			vector_base += 8;
 			debug_io("TWSI1(%d)-NODE(%d): Vector:%d address :%lx irq:%d\n",
 				 vsec_ctl.s.inst_num, node, i,
 				 ((i % 2) ? CAVM_GICD_CLRSPI_SR : CAVM_GICD_SETSPI_SR),
-				 TWSI_1_S_IRQ);
+				 OCTEONTX_TWSI_1_S_IRQ);
 
 		}
 
@@ -450,7 +450,7 @@ static void init_pem(int node, uint64_t config_base, uint64_t config_size)
 			*(uint64_t *) vector_base = (i % 2) ? CAVM_GICD_CLRSPI_NSR : CAVM_GICD_SETSPI_NSR;
 			vector_base += 8;
 			if (i >= CAVM_PEM_INT_VEC_E_INTA && i < CAVM_PEM_INT_VEC_E_INT_SUM)
-				msg = ((i - CAVM_PEM_INT_VEC_E_INTA) / 2) + PEM_INTBASE_IRQ +
+				msg = ((i - CAVM_PEM_INT_VEC_E_INTA) / 2) + OCTEONTX_PEM_INTBASE_IRQ +
 					(24 * node) + (4 * vsec_ctl.s.inst_num);
 			else
 				msg = 0x100000000ull;	/* Masked */
@@ -497,7 +497,7 @@ static void init_gti(int node, uint64_t config_base, uint64_t config_size)
 		vector_base += 8;
 		if (i == CAVM_GTI_INT_VEC_E_WATCHDOG ||
 		    i == CAVM_GTI_INT_VEC_E_WATCHDOG_CLEAR) {
-			msg = GTI_WDOG_IRQ;
+			msg = OCTEONTX_GTI_WDOG_IRQ;
 		} else {
 			msg = 0x100000000ULL; /* Masked */
 		}
