@@ -18,7 +18,6 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
-#include "thunder_io.h"
 #include "thunder_dt.h"
 #include "thunder_ecam.h"
 

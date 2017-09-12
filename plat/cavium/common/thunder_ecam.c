@@ -19,7 +19,6 @@
 #include "thunder_common.h"
 #include "thunder_dt.h"
 #include "thunder_ecam.h"
-#include "thunder_io.h"
 
 #undef DEBUG_ATF_ECAM
 

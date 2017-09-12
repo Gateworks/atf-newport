@@ -17,7 +17,6 @@
 #include <platform_tsp.h>
 #include <xlat_tables.h>
 #include <thunder_private.h>
-#include <thunder_io.h>
 
 
 /*

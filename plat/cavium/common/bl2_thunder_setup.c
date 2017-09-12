@@ -40,7 +40,6 @@
 #include <xlat_tables.h>
 #include <thunder_private.h>
 #include <thunder_dt.h>
-#include <thunder_io.h>
 #include <stdio.h>
 #include <debug.h>
 #include <libfdt.h>

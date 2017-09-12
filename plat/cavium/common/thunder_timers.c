@@ -117,7 +117,7 @@ int plat_timer_register_irq(hw_timer_isr_t isr)
 
 	set_interrupt_rm_flag(flags, SECURE);
 	rc = register_interrupt_handler(INTR_TYPE_EL3,
-			THUNDER_IRQ_SEC_PHY_TIMER,
+			IRQ_SEC_PHY_TIMER,
 			plat_timer_irq_handler);
 	if (rc) {
 		printf("err %d while registering ARCH_PHYS_TIMER "
