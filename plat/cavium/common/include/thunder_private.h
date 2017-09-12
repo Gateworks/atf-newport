@@ -130,10 +130,4 @@ static inline int thunder_fuse_read(int node, int fuse)
  */
 #define THUNDER_IRQ_SMMU_BASE	0x64
 
-
-/*
- * watchdog GTI irqs assigned from here
- */
-#define THUNDER_IRQ_GTI_WDOG	0x74
-
 #endif
