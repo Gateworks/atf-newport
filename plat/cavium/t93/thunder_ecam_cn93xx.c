@@ -37,9 +37,9 @@ struct ecam_probe_callback probe_callbacks[] = {
  * from non-secure world.
  */
 struct secure_devices secure_devs[] = {
-	{CAVM_PCC_PROD_E_GEN, CAVM_PCC_DEV_IDL_E_SMMU},
 	{CAVM_PCC_PROD_E_GEN, CAVM_PCC_DEV_IDL_E_GIC},
 	{CAVM_PCC_PROD_E_GEN, CAVM_PCC_DEV_IDL_E_GTI},
+	{CAVM_PCC_PROD_E_GEN, CAVM_PCC_DEV_IDL_E_UAA},
 	{ECAM_INVALID_PROD_ID, ECAM_INVALID_PCC_IDL_ID}
 };
 
@@ -76,9 +76,10 @@ static int cn93xx_is_bus_disabled(struct ecam_device *dev)
 {
 	int rc = 0;
 
-	/* Skip enumeration for software-defined buses */
+	/* Below buses does not exist in internal T93 topology */
 	if (((dev->domain == 0) && (dev->bus > 12)) ||
-	    ((dev->domain > 0) && (dev->bus > 0)))
+	    ((dev->domain == 1) && (dev->bus > 1))  ||
+	    ((dev->domain == 2) && (dev->bus > 16)))
 		rc = 1;
 
 	return rc;
@@ -86,7 +87,7 @@ static int cn93xx_is_bus_disabled(struct ecam_device *dev)
 
 static int cn93xx_skip_bus(struct ecam_device *dev)
 {
-	return (dev->bus > 1);
+	return 0;
 }
 
 static inline void cn93xx_enable_bus(struct ecam_device *dev)
