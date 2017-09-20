@@ -21,6 +21,8 @@
 #include "thunder_ecam.h"
 #include "thunder_io.h"
 
+#undef DEBUG_ATF_ECAM
+
 #ifdef DEBUG_ATF_ECAM
 #define debug_io printf
 #else
@@ -31,6 +33,8 @@
  * Platform methods defined in thunder_ecam_cnXXxx.c file
  */
 extern const struct ecam_platform_defs plat_ops;
+
+static struct ecam_device ecam_bridges[OCTEONTX_ECAM_MAX_DEV] = { 0 };
 
 /*
  * Global ecam_device instance
@@ -659,14 +663,6 @@ static void octeontx_call_init(int node, uint64_t pconfig)
 	}
 }
 
-static inline void octeontx_set_device_secure(struct ecam_device *device)
-{
-	if (octeontx_bus_is_rsl(device))
-		plat_ops.disable_func(device);
-	else
-		plat_ops.disable_dev(device);
-}
-
 static unsigned prev_ns_func = 0;
 static void octeontx_ari_capability(struct ecam_device *device)
 {
@@ -694,6 +690,17 @@ static void octeontx_ari_capability(struct ecam_device *device)
 	prev_ns_func = device->func;
 }
 
+static inline int octeontx_dev_is_bridge(uint64_t pconfig)
+{
+	cavm_pccpf_xxx_id_t pccpf_id;
+
+	pccpf_id.u = cavm_read32(pconfig + CAVM_PCCPF_XXX_ID);
+	if ((pccpf_id.s.devid & 0xff) == 0x02)
+		return 1;
+
+	return 0;
+}
+
 static void octeontx_ecam_dev_enumerate(struct ecam_device *device)
 {
 	uint64_t pconfig;
@@ -703,7 +710,6 @@ static void octeontx_ecam_dev_enumerate(struct ecam_device *device)
 	pconfig = plat_ops.get_dev_config(device);
 	if (!pconfig) {
 		debug_io("%s: Unable to get config\n", __func__);
-		octeontx_set_device_secure(device);
 		return;
 	}
 
@@ -711,7 +717,6 @@ static void octeontx_ecam_dev_enumerate(struct ecam_device *device)
 	rc = plat_ops.get_secure_settings(device, pconfig);
 	if (!rc) {
 		debug_io("%s: Unable to get secure settings\n", __func__);
-		octeontx_set_device_secure(device);
 		return;
 	}
 
@@ -719,7 +724,10 @@ static void octeontx_ecam_dev_enumerate(struct ecam_device *device)
 	rc = octeontx_call_probe(device->node, pconfig);
 	if (!rc) {
 		debug_io("%s: Probe returned with rc=%d\n", __func__, rc);
-		octeontx_set_device_secure(device);
+		if (octeontx_bus_is_rsl(device))
+			plat_ops.disable_func(device);
+		else
+			plat_ops.disable_dev(device);
 		return;
 	}
 
@@ -749,44 +757,94 @@ static void octeontx_ecam_dev_enumerate(struct ecam_device *device)
 			plat_ops.enable_dev(device);
 		}
 	}
+
+	debug_io("%s: pconfig: 0x%lx, value: 0x%x\n", __func__, pconfig,
+		cavm_read32(pconfig));
+
+	if (octeontx_dev_is_bridge(pconfig)) {
+		cavm_pccbr_xxx_bus_t sbus;
+
+		sbus.u = cavm_read32(pconfig + CAVM_PCCBR_XXX_BUS);
+		if (sbus.s.sbnum != 0 &&
+		    sbus.s.sbnum < OCTEONTX_ECAM_MAX_BUS) {
+			/* Add to brigdes list */
+			ecam_bridges[device->dev].bus = sbus.s.sbnum;
+			debug_io("Adding bridge=%d to list...\n",
+				  sbus.s.sbnum);
+		}
+	}
+}
+
+static void octeontx_rsl_enumerate(struct ecam_device *device)
+{
+	for (device->func = 0;
+	     device->func < OCTEONTX_ECAM_MAX_FUNC;
+	     device->func++) {
+		device->dev = 0;
+		octeontx_ecam_dev_enumerate(device);
+	}
+}
+
+static void octeontx_dev_on_bus_enumerate(struct ecam_device *device)
+{
+	for (device->dev = 0;
+	     device->dev < OCTEONTX_ECAM_MAX_DEV;
+	     device->dev++) {
+		device->func = 0;
+		octeontx_ecam_dev_enumerate(device);
+	}
 }
 
 static void octeontx_bus_enumerate(struct ecam_device *device)
 {
-	if (octeontx_bus_is_rsl(device)) {
-		for (device->func = 0;
-		     device->func < OCTEONTX_ECAM_MAX_FUNC;
-		     device->func++) {
-			device->dev = 0;
-			octeontx_ecam_dev_enumerate(device);
+	debug_io("%s: N%u:E%u:DOM%u:B%u\n",
+		 __func__, device->node, device->ecam, device->domain,
+		 device->bus);
+
+	plat_ops.enable_bus(device);
+
+	octeontx_dev_on_bus_enumerate(device);
+}
+
+static void octeontx_scan_bridge(struct ecam_device *device)
+{
+	int bridge;
+
+	for (bridge = 0; bridge < OCTEONTX_ECAM_MAX_DEV; bridge++) {
+		/* Disable buses that does not exist */
+		if (plat_ops.is_bus_disabled(device)) {
+			plat_ops.disable_bus(device);
+			return;
 		}
-	} else {
-		for (device->dev = 0;
-		     device->dev < OCTEONTX_ECAM_MAX_DEV;
-		     device->dev++) {
-			device->func = 0;
-			octeontx_ecam_dev_enumerate(device);
+		/* We've got bus bridge */
+		if (device->bus == ecam_bridges[bridge].bus) {
+			plat_ops.enable_bus(device);
+			if (plat_ops.skip_bus(device))
+				return;
+
+			if (octeontx_bus_is_rsl(device)) {
+				octeontx_rsl_enumerate(device);
+			} else {
+				octeontx_dev_on_bus_enumerate(device);
+			}
+
+			ecam_bridges[bridge].bus = 0;
+			continue;
 		}
 	}
 }
 
 static void octeontx_domain_setup(struct ecam_device *device)
 {
-	for (device->bus = 0;
+	/* Scan bus 0 for all bridges */
+	device->bus = 0;
+	octeontx_bus_enumerate(device);
+
+	/* Now go through all found bridges */
+	for (device->bus = 1;
 	     device->bus < OCTEONTX_ECAM_MAX_BUS;
 	     device->bus++) {
-		/* Disable buses that do not exist */
-		if (plat_ops.is_bus_disabled(device)) {
-			plat_ops.disable_bus(device);
-			continue;
-		}
-
-		plat_ops.enable_bus(device);
-		/* Skip enumeration of software defined buses */
-		if (plat_ops.skip_bus(device))
-			continue;
-
-		octeontx_bus_enumerate(device);
+		octeontx_scan_bridge(device);
 	}
 }
 
