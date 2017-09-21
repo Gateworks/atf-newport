@@ -85,8 +85,8 @@ static void hw_timer_isr(void)
 	}
 
 	/* Reenable timer with new value */
-	if (num_started_timers > 1)
-	plat_timer_enable(1);
+	if (num_started_timers >= 1)
+		plat_timer_enable(1);
 }
 
 /*
