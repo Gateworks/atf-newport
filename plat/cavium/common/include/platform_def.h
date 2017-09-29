@@ -102,8 +102,13 @@
 #define MAX_MMAP_REGIONS		256
 
 /* Location of trusted dram on the base thunder */
+#ifdef PLAT_t93
+#define TZDRAM_BASE			0x00000000
+#define TZDRAM_SIZE			0x01000000
+#else /* PLAT_t93 */
 #define TZDRAM_BASE			0x00000000
 #define TZDRAM_SIZE			0x00400000
+#endif /* PLAT_t93 */
 
 #define FDT_MAX_SIZE			0x20000
 #define FDT_BASE			(TZDRAM_BASE + TZDRAM_SIZE - FDT_MAX_SIZE)
@@ -139,13 +144,19 @@
 #define TSP_SEC_MEM_BASE		TZDRAM_BASE
 #define TSP_SEC_MEM_SIZE		TZDRAM_SIZE
 
-/* Load address of BL33 in the ThunderX port */
-#ifdef PLAT_t83
-#define NS_IMAGE_BASE			0x002800000
-#else
-#define NS_IMAGE_BASE			0x000500000
+/*
+ * Load address of BL33 in the ThunderX port.
+ * Depends of which platform do we use.
+ */
+#ifdef PLAT_t81
+#define NS_IMAGE_BASE			0x00500000
+#elif PLAT_t83
+#define NS_IMAGE_BASE			0x02800000
+#elif PLAT_t93
+#define NS_IMAGE_BASE			0x02000000
 #endif
-#define NS_IMAGE_MAX_SIZE		(0x040000000 - NS_IMAGE_BASE)
+
+#define NS_IMAGE_MAX_SIZE		(0x40000000 - NS_IMAGE_BASE)
 
 #define NS_DMA_MEMORY_SIZE		0x100000
 
