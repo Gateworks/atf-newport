@@ -19,6 +19,7 @@ PLAT_BL_COMMON_SOURCES	+=	plat/cavium/t81/thunder_setup_cn81xx.c			\
 BL1_SOURCES		+=	plat/cavium/common/aarch64/thunder_cn8xxx_helpers.S	\
 
 BL2_SOURCES		+=	plat/cavium/t81/thunder_ecam_cn81xx.c			\
+				plat/cavium/common/thunder_cn8xxx_security.c		\
 
 BL31_SOURCES		+=	plat/cavium/common/aarch64/thunder_cn8xxx_helpers.S	\
 				plat/cavium/common/thunder_cn8xxx_topology.c		\

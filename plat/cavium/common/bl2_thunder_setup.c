@@ -202,7 +202,7 @@ void bl2_platform_setup(void)
 	/*
 	 * Do initial security configuration to allow DRAM/device access.
 	 */
-	thunder_security_setup();
+	octeontx_security_setup();
 
 	/* Enumerate devices on ECAMs */
 	octeontx_pci_init();

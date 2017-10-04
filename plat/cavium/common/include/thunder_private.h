@@ -124,7 +124,7 @@ DEFINE_RENAME_SYSREG_RW_FUNCS(cvm_access_el3, AP_CVM_ACCESS_EL3)
 void octeontx_pci_init(void);
 void plat_add_mmio_map(void);
 void thunder_io_setup(void);
-void thunder_security_setup(void);
+void octeontx_security_setup(void);
 unsigned thunder_get_node_count(void);
 int thunder_dram_is_lmc_enabled(unsigned node, unsigned lmc);
 uint64_t thunder_dram_size_node(unsigned node);
@@ -144,6 +144,8 @@ int spi_nor_rw_data(int write, unsigned long addr, int size, void *buf, int buf_
 int spi_nor_erase_sect(uint32_t addr);
 
 void set_secondary_cpu_jump_addr(unsigned int bl1_base);
+
+void l2c_flush(void);
 
 static uint8_t thunder_fuse_read_byte(int node, int byte_addr)
 {

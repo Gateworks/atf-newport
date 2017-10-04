@@ -46,7 +46,6 @@ BL2_SOURCES		+=	drivers/cavium/thunder_spi.c			\
 				drivers/io/io_storage.c				\
 				plat/cavium/common/bl2_thunder_setup.c		\
 				plat/cavium/common/thunder_ecam.c		\
-				plat/cavium/common/thunder_security.c		\
 
 BL31_SOURCES		+=	drivers/arm/gic/common/gic_common.c		\
 				drivers/arm/gic/v3/gicv3_main.c			\
