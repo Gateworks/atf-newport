@@ -14,6 +14,7 @@
 #include <arch.h>
 #include <bl_common.h>
 #include <console.h>
+#include <platform.h>
 #include <platform_def.h>
 #include <tbbr_img_def.h>
 #include <xlat_tables.h>
@@ -22,6 +23,8 @@
 #include <thunder_dt.h>
 #include <libfdt.h>
 #include <debug.h>
+#include <assert.h>
+#include <bl1.h>
 
 #define BL1_RO_BASE (unsigned long)(&__RO_START__)
 #define BL1_RO_LIMIT (unsigned long)(&__RO_END__)
@@ -143,4 +146,56 @@ void bl1_plat_set_ep_info(unsigned int image_id,
 {
 	ep_info->args.arg2 = (unsigned long)fdt_ptr;
 
+}
+
+int bl1_plat_handle_post_image_load(unsigned int image_id)
+{
+	meminfo_t *bl2_tzram_layout;
+	meminfo_t *bl1_tzram_layout;
+	image_desc_t *image_desc;
+	entry_point_info_t *ep_info;
+
+	if (image_id != BL2_IMAGE_ID)
+		return 0;
+
+	/* Get the image descriptor */
+	image_desc = bl1_plat_get_image_desc(BL2_IMAGE_ID);
+	assert(image_desc != NULL);
+
+	/* Get the entry point info */
+	ep_info = &image_desc->ep_info;
+
+	/* Find out how much free trusted ram remains after BL1 load */
+	bl1_tzram_layout = bl1_plat_sec_mem_layout();
+
+	/*
+	 * Create a new layout of memory for BL2 as seen by BL1 i.e.
+	 * tell it the amount of total and free memory available.
+	 * This layout is created at the first free address visible
+	 * to BL2. BL2 will read the memory layout before using its
+	 * memory for other purposes.
+	 */
+#if LOAD_IMAGE_V2
+	/* Original ATF tries to put BL2 tzram layout at the start of the
+	 * memory, which overwrites BDK/images in case of remote loading
+	 * through PCIe.  Just place tzram layout in RAM segment of memory, BL2
+	 * will read it early enough, before setting MMU regions */
+	/*bl2_tzram_layout = (meminfo_t *) bl1_tzram_layout->total_base; */
+	static meminfo_t inram_bl2_tzram_layout;
+	bl2_tzram_layout = &inram_bl2_tzram_layout;
+#else
+	bl2_tzram_layout = (meminfo_t *) bl1_tzram_layout->free_base;
+#endif /* LOAD_IMAGE_V2 */
+
+#if !ERROR_DEPRECATED
+	bl1_init_bl2_mem_layout(bl1_tzram_layout, bl2_tzram_layout);
+#else
+	bl1_calc_bl2_mem_layout(bl1_tzram_layout, bl2_tzram_layout);
+#endif
+
+	ep_info->args.arg1 = (uintptr_t)bl2_tzram_layout;
+
+	VERBOSE("BL1: BL2 memory layout address = %p\n",
+		(void *) bl2_tzram_layout);
+	return 0;
 }
