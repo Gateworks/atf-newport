@@ -98,7 +98,11 @@
 #define ADDR_SPACE_SIZE_SHIFT		48
 #define PLAT_VIRT_ADDR_SPACE_SIZE	(1ull << ADDR_SPACE_SIZE_SHIFT)
 #define PLAT_PHY_ADDR_SPACE_SIZE	(1ull << ADDR_SPACE_SIZE_SHIFT)
+#ifdef PLAT_t93
+#define MAX_XLAT_TABLES			52
+#else
 #define MAX_XLAT_TABLES			48
+#endif
 #define MAX_MMAP_REGIONS		256
 
 /* Location of trusted dram on the base thunder */
