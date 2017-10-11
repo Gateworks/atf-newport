@@ -32,9 +32,9 @@
  * Platform methods defined in thunder_ecam_cnXXxx.c file
  */
 extern const struct ecam_platform_defs plat_ops;
-
 static struct ecam_device ecam_bridges[OCTEONTX_ECAM_MAX_DEV] = { 0 };
 
+extern void octeontx_rvu_init(void);
 /*
  * Global ecam_device instance
  */
@@ -575,6 +575,11 @@ static void init_iobn5(int node, uint64_t config_base, uint64_t config_size)
 	}
 }
 
+static void init_rvu(int node, uint64_t config_base, uint64_t config_size)
+{
+	octeontx_rvu_init();
+}
+
 /*
  * This is the callback structure that holds callback for
  * different devices.
@@ -588,6 +593,7 @@ struct ecam_init_callback init_callbacks[] = {
 	{0xa020, 0x177d, init_pem},
 	{0xa027, 0x177d, init_iobn},
 	{0xa06b, 0x177d, init_iobn5},
+	{0xa065, 0x177d, init_rvu},
 	{ECAM_INVALID_DEV_ID, 0, 0},	//no more callbacks
 };
 
