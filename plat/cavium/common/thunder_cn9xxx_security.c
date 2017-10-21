@@ -104,7 +104,7 @@ void octeontx_security_setup(void)
 	l2c_flush();
 
 	VERBOSE("Flushing IC\n");
-	asm volatile("ic iallu\n"
-		     "isb\n");
+	__asm__ volatile("ic iallu\n"
+			 "isb\n");
 }
 

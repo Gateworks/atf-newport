@@ -34,7 +34,7 @@ static hw_timer_isr_t timer_isr = NULL;
 
 static void cntps_enable(int enable)
 {
-	uint32_t ctl;
+	uint64_t ctl;
 
 	__asm__ volatile ("mrs %[ctl], cntps_ctl_el1" : [ctl] "=r" (ctl));
 
@@ -65,7 +65,7 @@ void cntps_set_period(uint64_t period)
 
 uint64_t cntps_ms_to_ticks(uint32_t time)
 {
-	uint32_t cnt_freq; /* in Hz */
+	uint64_t cnt_freq; /* in Hz */
 
 	/* gather counter frequency */
 	__asm__ volatile("mrs %[freq], cntfrq_el0" : [freq] "=r" (cnt_freq));
