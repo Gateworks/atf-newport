@@ -116,9 +116,14 @@ endif
 HOSTCC			:=	gcc
 export HOSTCC
 
-CC			:=	${CROSS_COMPILE}gcc
+ifneq (,$findstring(CLANG,${TOOLCHAIN}))
+        CC		:=	clang -target aarch64-linux-gnu
+        AS		:=	clang -target aarch64-linux-gnu -no-integrated-as
+else
+        CC		:=	${CROSS_COMPILE}gcc
+        AS		:=	${CROSS_COMPILE}gcc
+endif
 CPP			:=	${CROSS_COMPILE}cpp
-AS			:=	${CROSS_COMPILE}gcc
 AR			:=	${CROSS_COMPILE}ar
 LD			:=	${CROSS_COMPILE}ld
 OC			:=	${CROSS_COMPILE}objcopy
