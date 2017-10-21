@@ -32,7 +32,8 @@
  * Platform methods defined in thunder_ecam_cnXXxx.c file
  */
 extern const struct ecam_platform_defs plat_ops;
-static struct ecam_device ecam_bridges[OCTEONTX_ECAM_MAX_DEV] = { 0 };
+
+static struct ecam_device ecam_bridges[OCTEONTX_ECAM_MAX_DEV];
 
 /*
  * Global ecam_device instance
@@ -46,7 +47,7 @@ static uint64_t get_bar_val(struct pcie_config *pconfig, int bar)
 	uint64_t h, l, ret = 0;
 
 	do {
-		cap = *(uint32_t *) ((uint8_t *) pconfig + cap_offset);
+		cap = cavm_read32((uint8_t *) pconfig + cap_offset);
 		if ((cap & 0xff) == 0x14)
 			break;
 		cap_offset = (cap >> 8) & 0xfc;
@@ -58,15 +59,15 @@ static uint64_t get_bar_val(struct pcie_config *pconfig, int bar)
 
 		cap_offset += 4;
 		while (ne) {
-			uint32_t dw0 = *(uint32_t *) ((uint8_t *) pconfig + cap_offset + 0);
+			uint32_t dw0 = cavm_read32((uint8_t *) pconfig + cap_offset + 0);
 
 			es = dw0 & 7;
 			bei = (dw0 >> 4) & 0xf;
 			if (bei == bar) {
 				h = 0;
-				l = *(uint32_t *) ((uint8_t *) pconfig + cap_offset + 4);
+				l = cavm_read32((uint8_t *) pconfig + cap_offset + 4);
 				if (l & 2)
-					h = *(uint32_t *) ((uint8_t *) pconfig + cap_offset + 12);
+					h = cavm_read32((uint8_t *) pconfig + cap_offset + 12);
 				ret = (h << 32) | (l & ~0xfull);
 				break;
 			}
@@ -217,10 +218,9 @@ static void init_smmu(int node, uint64_t config_base, uint64_t config_size)
 
 		/* configure interrupt vectors first */
 		for (i = 0; i < table_size; i++) {
-			*(uint64_t *) vector_base =
-			    (i % 2) ? CAVM_GICD_CLRSPI_NSR : CAVM_GICD_SETSPI_NSR;
+			cavm_write64(vector_base, (i % 2) ? CAVM_GICD_CLRSPI_NSR : CAVM_GICD_SETSPI_NSR);
 			vector_base += 8;
-			*(uint64_t *) vector_base = smmu_get_irq(node, smmunr, i);
+			cavm_write64(vector_base, smmu_get_irq(node, smmunr, i));
 			vector_base += 8;
 			//debug_io("SMMU(%d) : Vector:%d address :%lx irq:%d\n",smmunr, i, 
 			//       ((i%2)? CAVM_GICD_CLRSPI_NSR : CAVM_GICD_SETSPI_NSR),smmu_get_irq(smmunr, i));
@@ -270,10 +270,10 @@ static void init_gpio(int node, uint64_t config_base, uint64_t config_size)
 		for (i = 0; i < table_size; i++) {
 			if (i == (48 + (gpio_pin * 2))
 			    || i == (49 + (gpio_pin * 2))) {
-				*(uint64_t *) vector_base = ((i % 2) ? CAVM_GICD_CLRSPI_SR : CAVM_GICD_SETSPI_SR);	//enable SECVEC (bit 0)
+				cavm_write64(vector_base, ((i % 2) ? CAVM_GICD_CLRSPI_SR : CAVM_GICD_SETSPI_SR));	//enable SECVEC (bit 0)
 				//*(uint64_t *)vector_base = ((i%2)? CAVM_GICD_CLRSPI_NSR : CAVM_GICD_SETSPI_NSR) ; 
 				vector_base += 8;
-				*(uint64_t *) vector_base = OCTEONTX_GPIO_PWR_S_IRQ;
+				cavm_write64(vector_base, OCTEONTX_GPIO_PWR_S_IRQ);
 				vector_base += 8;
 				debug_io("GPIO(%d)-NODE(%d): Vector:%d address :%lx irq:%d\n",
 				       vsec_ctl.s.inst_num, node, i,
@@ -348,11 +348,10 @@ static void init_uaa(int node, uint64_t config_base, uint64_t config_size)
 
 		/* configure interrupt vectors first */
 		for (i = 0; i < table_size; i++) {
-			*(uint64_t *) vector_base =
-			    (i % 2) ? CAVM_GICD_CLRSPI_NSR : CAVM_GICD_SETSPI_NSR;
+			cavm_write64(vector_base, (i % 2) ? CAVM_GICD_CLRSPI_NSR : CAVM_GICD_SETSPI_NSR);
 			vector_base += 8;
 			printf("\r"); /* Need to revisit and remove this workaround */
-			*(uint64_t *) vector_base = uaa_irq;
+			cavm_write64(vector_base, uaa_irq);
 			vector_base += 8;
 			debug_io("UAA(%d)-NODE(%d): Vector:%d address :%lx irq:%d\n",
 				 vsec_ctl.s.inst_num, node, i,
@@ -403,10 +402,9 @@ static void init_twsi(int node, uint64_t config_base, uint64_t config_size)
 
 		/* configure interrupt vectors first */
 		for (i = 0; i < table_size; i++) {
-			*(uint64_t *) vector_base =
-			    (i % 2) ? CAVM_GICD_CLRSPI_SR : CAVM_GICD_SETSPI_SR;
+			cavm_write64(vector_base, (i % 2) ? CAVM_GICD_CLRSPI_SR : CAVM_GICD_SETSPI_SR);
 			vector_base += 8;
-			*(uint64_t *) vector_base = OCTEONTX_TWSI_1_S_IRQ;
+			cavm_write64(vector_base, OCTEONTX_TWSI_1_S_IRQ);
 			vector_base += 8;
 			debug_io("TWSI1(%d)-NODE(%d): Vector:%d address :%lx irq:%d\n",
 				 vsec_ctl.s.inst_num, node, i,
@@ -446,14 +444,14 @@ static void init_pem(int node, uint64_t config_base, uint64_t config_size)
 
 		/* configure interrupt vectors first */
 		for (i = 0; i < table_size; i++) {
-			*(uint64_t *) vector_base = (i % 2) ? CAVM_GICD_CLRSPI_NSR : CAVM_GICD_SETSPI_NSR;
+			cavm_write64(vector_base, (i % 2) ? CAVM_GICD_CLRSPI_NSR : CAVM_GICD_SETSPI_NSR);
 			vector_base += 8;
 			if (i >= CAVM_PEM_INT_VEC_E_INTA && i < CAVM_PEM_INT_VEC_E_INT_SUM)
 				msg = ((i - CAVM_PEM_INT_VEC_E_INTA) / 2) + OCTEONTX_PEM_INTBASE_IRQ +
 					(24 * node) + (4 * vsec_ctl.s.inst_num);
 			else
 				msg = 0x100000000ull;	/* Masked */
-			*(uint64_t *) vector_base = msg;
+			cavm_write64(vector_base, msg);
 			vector_base += 8;
 			debug_io
 			    ("PEM(%d)-NODE(%d): Vector:%d address :%lx irq:%lu\n",
@@ -489,10 +487,9 @@ static void init_gti(int node, uint64_t config_base, uint64_t config_size)
 	/* configure interrupt vectors */
 	for (i = 0; i < table_size; i++) {
 		if (i < CAVM_GTI_INT_VEC_E_TX_TIMESTAMP)
-			*(uint64_t *) vector_base = (i % 2) ?
-			    CAVM_GICD_CLRSPI_NSR : CAVM_GICD_SETSPI_NSR;
+			cavm_write64(vector_base, (i % 2) ? CAVM_GICD_CLRSPI_NSR : CAVM_GICD_SETSPI_NSR);
 		else
-			*(uint64_t *) vector_base = CAVM_GICD_SETSPI_NSR;
+			cavm_write64(vector_base, CAVM_GICD_SETSPI_NSR);
 		vector_base += 8;
 		if (i == CAVM_GTI_INT_VEC_E_WATCHDOG ||
 		    i == CAVM_GTI_INT_VEC_E_WATCHDOG_CLEAR) {
@@ -500,7 +497,7 @@ static void init_gti(int node, uint64_t config_base, uint64_t config_size)
 		} else {
 			msg = 0x100000000ULL; /* Masked */
 		}
-		*(uint64_t *) vector_base = msg;
+		cavm_write64(vector_base, msg);
 		vector_base += 8;
 		debug_io
 		    ("GTI NODE(%d): Vector:%d address :%lx irq:%lu\n",
