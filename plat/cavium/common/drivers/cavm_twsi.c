@@ -185,6 +185,13 @@ static void twsi_stop(unsigned int node, unsigned int twsi_num)
 	twsi_write_ctl(node, twsi_num, twsi_ctl);
 }
 
+static void twsi_send_ack(unsigned int node, unsigned int twsi_num)
+{
+	uint8_t twsi_ctl = TWSI_CTL_AAK | TWSI_CTL_ENAB;
+
+	twsi_write_ctl(node, twsi_num, twsi_ctl);
+}
+
 void twsi_set_speed(unsigned int node, unsigned int twsi_num, unsigned int speed)
 {
 	union cavm_mio_twsx_sw_twsi twsi_sw;
@@ -268,6 +275,48 @@ void thunder_twsi_send(unsigned int node, unsigned int twsi_num,
 		twsi_wait(node, twsi_num);
 	}
 
+	twsi_stop(node, twsi_num);
+}
+
+void thunder_twsi_recv(unsigned int node, unsigned int twsi_num,
+	       uint16_t addr, uint8_t *buffer, size_t size)
+{
+	union cavm_mio_twsx_sw_twsi twsi_sw;
+
+	size_t curr = 0;
+
+	twsi_start(node, twsi_num);
+
+	twsi_wait(node, twsi_num);
+
+	twsi_sw.u = 0;
+	twsi_sw.s.op = 6;
+	twsi_sw.s.eop_ia = TWSI_DATA;
+	twsi_sw.s.data = (uint32_t) (addr << 1) | 1;
+
+	twsi_write_sw(node, twsi_num, twsi_sw);
+	twsi_enable(node, twsi_num);
+	twsi_wait(node, twsi_num);
+
+	if (size > 1)
+		twsi_send_ack(node, twsi_num);
+	else
+		twsi_enable(node, twsi_num);
+
+	while (curr < size) {
+		twsi_wait(node, twsi_num);
+		twsi_sw.u = 0;
+
+		twsi_sw.s.op = 6;
+		twsi_sw.s.eop_ia = TWSI_DATA;
+
+		buffer[curr++] = twsi_read_sw(node, twsi_num, twsi_sw);
+
+		if (size - 1 == curr)
+			twsi_enable(node, twsi_num);
+		else if (curr < size)
+			twsi_send_ack(node, twsi_num);
+	}
 	twsi_stop(node, twsi_num);
 }
 
