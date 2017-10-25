@@ -27,6 +27,7 @@ PLAT_BL_COMMON_SOURCES	:=	drivers/arm/pl011/aarch64/pl011_console.S	\
 				${LIBFDT_DIR}/fdt.c				\
 				${LIBFDT_DIR}/fdt_ro.c				\
 				${LIBFDT_DIR}/fdt_rw.c				\
+				${LIBFDT_DIR}/fdt_wip.c				\
 				plat/cavium/common/thunder_common.c		\
 				plat/cavium/common/thunder_dram.c		\
 				plat/cavium/common/thunder_dt.c			\
