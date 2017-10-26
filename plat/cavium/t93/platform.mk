@@ -20,6 +20,7 @@ BL1_SOURCES		+=	plat/cavium/common/aarch64/thunder_cn9xxx_helpers.S	\
 
 BL2_SOURCES		+=	plat/cavium/t93/thunder_ecam_cn93xx.c			\
 				plat/cavium/common/thunder_cn9xxx_security.c		\
+				plat/cavium/common/thunder_cn9xxx_rvu.c			\
 
 BL31_SOURCES		+=	plat/cavium/common/aarch64/thunder_cn9xxx_helpers.S	\
 				plat/cavium/common/thunder_cn9xxx_topology.c		\
