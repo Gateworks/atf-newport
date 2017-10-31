@@ -116,7 +116,7 @@ endif
 HOSTCC			:=	gcc
 export HOSTCC
 
-ifneq (,$findstring(CLANG,${TOOLCHAIN}))
+ifneq (,$(findstring(CLANG,${TOOLCHAIN})))
         CC		:=	clang -target aarch64-linux-gnu
         AS		:=	clang -target aarch64-linux-gnu -no-integrated-as
 else
