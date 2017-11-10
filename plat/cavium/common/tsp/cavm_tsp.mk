@@ -11,15 +11,8 @@
 #
 #**/
 
-# Include common thunder platform's makefile helper
-include plat/cavium/common/platform.mk
-
-PLAT_BL_COMMON_SOURCES	+=	plat/cavium/octeontx/t83/plat_cavm_setup.c	\
-
-BL1_SOURCES		+=	plat/cavium/octeontx/aarch64/plat_cavm_helpers.S	\
-
-BL2_SOURCES		+=	plat/cavium/octeontx/t83/plat_cavm_ecam.c	\
-				plat/cavium/octeontx/cavm_security.c		\
-
-BL31_SOURCES		+=	plat/cavium/octeontx/aarch64/plat_cavm_helpers.S	\
-				plat/cavium/octeontx/cavm_topology.c		\
+BL32_SOURCES		+=	plat/cavium/common/tsp/cavm_tsp_setup.c		\
+				plat/cavium/common/aarch64/cavm_helpers.S	\
+				plat/cavium/common/cavm_gicv3.c		\
+				plat/common/aarch64/platform_mp_stack.S		\
+				plat/common/plat_gicv3.c

@@ -14,13 +14,13 @@
 # Include common thunder platform's makefile helper
 include plat/cavium/common/platform.mk
 
-PLAT_BL_COMMON_SOURCES	+=	plat/cavium/octeontx2/t93/thunder_setup_cn93xx.c			\
+PLAT_BL_COMMON_SOURCES	+=	plat/cavium/octeontx2/t93/plat_cavm_setup.c		\
 
-BL1_SOURCES		+=	plat/cavium/common/aarch64/thunder_cn9xxx_helpers.S	\
+BL1_SOURCES		+=	plat/cavium/octeontx2/aarch64/plat_cavm_helpers.S	\
 
-BL2_SOURCES		+=	plat/cavium/octeontx2/t93/thunder_ecam_cn93xx.c			\
-				plat/cavium/common/thunder_cn9xxx_security.c		\
-				plat/cavium/common/thunder_cn9xxx_rvu.c			\
+BL2_SOURCES		+=	plat/cavium/octeontx2/t93/plat_cavm_ecam.c		\
+				plat/cavium/octeontx2/cavm_security.c		\
+				plat/cavium/octeontx2/cavm_rvu.c		\
 
-BL31_SOURCES		+=	plat/cavium/common/aarch64/thunder_cn9xxx_helpers.S	\
-				plat/cavium/common/thunder_cn9xxx_topology.c		\
+BL31_SOURCES		+=	plat/cavium/octeontx2/aarch64/plat_cavm_helpers.S	\
+				plat/cavium/octeontx2/cavm_topology.c		\
