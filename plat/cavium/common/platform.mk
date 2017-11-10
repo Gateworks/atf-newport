@@ -20,8 +20,8 @@ PLAT_INCLUDES		:=	-Icsr/include					\
 				-Iplat/cavium/common/include 			\
 
 PLAT_BL_COMMON_SOURCES	:=	drivers/arm/pl011/aarch64/pl011_console.S	\
-				drivers/cavium/thunder_mmc.c			\
-				drivers/cavium/thunder_twsi.c			\
+				plat/cavium/common/drivers/thunder_mmc.c			\
+				plat/cavium/common/drivers/thunder_twsi.c			\
 				lib/xlat_tables/xlat_tables_common.c		\
 				lib/xlat_tables/aarch64/xlat_tables.c		\
 				${LIBFDT_DIR}/fdt.c				\
@@ -33,7 +33,7 @@ PLAT_BL_COMMON_SOURCES	:=	drivers/arm/pl011/aarch64/pl011_console.S	\
 				plat/cavium/common/thunder_dt.c			\
 				plat/cavium/common/thunder_io_storage.c		\
 
-BL1_SOURCES		+=	drivers/cavium/thunder_spi.c			\
+BL1_SOURCES		+=	plat/cavium/common/drivers/thunder_spi.c			\
 				drivers/io/io_fip.c				\
 				drivers/io/io_memmap.c				\
 				drivers/io/io_storage.c				\
@@ -41,7 +41,7 @@ BL1_SOURCES		+=	drivers/cavium/thunder_spi.c			\
 				plat/cavium/common/aarch64/thunder_helpers.S 	\
 				plat/cavium/common/bl1_thunder_setup.c		\
 
-BL2_SOURCES		+=	drivers/cavium/thunder_spi.c			\
+BL2_SOURCES		+=	plat/cavium/common/drivers/thunder_spi.c			\
 				drivers/io/io_fip.c				\
 				drivers/io/io_memmap.c				\
 				drivers/io/io_storage.c				\
@@ -51,7 +51,7 @@ BL2_SOURCES		+=	drivers/cavium/thunder_spi.c			\
 BL31_SOURCES		+=	drivers/arm/gic/common/gic_common.c		\
 				drivers/arm/gic/v3/gicv3_main.c			\
 				drivers/arm/gic/v3/gicv3_helpers.c		\
-				drivers/cavium/thunder_spi.c			\
+				plat/cavium/common/drivers/thunder_spi.c			\
 				drivers/delay_timer/delay_timer.c		\
 				lib/cpus/aarch64/thunder.S			\
 				lib/timers/timers.c				\
