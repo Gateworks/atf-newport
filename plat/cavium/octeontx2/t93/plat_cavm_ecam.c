@@ -270,22 +270,6 @@ static int cn93xx_get_secure_settings(struct ecam_device *dev, uint64_t pconfig)
 	return 1;
 }
 
-#if 0
-static inline int cn93xx_domain_smmu_number(struct ecam_device *dev)
-{
-	cavm_ecamx_domx_const_t dom_const;
-
-	if (!cn93xx_is_domain_present(dev))
-		return -1;
-
-	dom_const.u = CSR_READ_PA(dev->node,
-				  CAVM_ECAMX_DOMX_CONST(dev->ecam,
-				  dev->domain));
-
-	return dom_const.s.smmu;
-}
-#endif
-
 struct ecam_probe_callback *cn93xx_get_probe_callbacks(void)
 {
 	return &probe_callbacks[0];
