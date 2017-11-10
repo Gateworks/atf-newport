@@ -32,7 +32,7 @@
  * 93xx has 16 PFs and 256 VFs whereas 99xx has 32 PFs and 512 VFs.
  */
 
-#define PF_MBOX_BASE	0x000000000
+#define PF_MBOX_BASE	RVU_MEM_BASE
 #define PF_MBOX_SIZE	0x000200000
 #define VF_MBOX_BASE	(PF_MBOX_BASE + PF_MBOX_SIZE)
 #define VF_MBOX_SIZE	0x002000000

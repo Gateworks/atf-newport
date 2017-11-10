@@ -114,6 +114,18 @@
 #define TZDRAM_SIZE			0x00400000
 #endif /* PLAT_t93 */
 
+/*
+ * Memory used for mailbox and RVU MSI-X
+ * Required size is 40M, but due to CCS_REGION memory
+ * granulation - minimum size of region is 16M need to
+ * reserve 48M of size for this purpose.
+ */
+#ifdef PLAT_t93
+#define RVU_MEM_BASE			(TZDRAM_BASE + TZDRAM_SIZE)
+#define RVU_MEM_SIZE			0x03000000
+#endif
+
+
 #define FDT_MAX_SIZE			0x20000
 #define FDT_BASE			(TZDRAM_BASE + TZDRAM_SIZE - FDT_MAX_SIZE)
 
@@ -157,7 +169,7 @@
 #elif PLAT_t83
 #define NS_IMAGE_BASE			0x02800000
 #elif PLAT_t93
-#define NS_IMAGE_BASE			0x02000000
+#define NS_IMAGE_BASE			0x04000000
 #endif
 
 #define NS_IMAGE_MAX_SIZE		(0x40000000 - NS_IMAGE_BASE)
