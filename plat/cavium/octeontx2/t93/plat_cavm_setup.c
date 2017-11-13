@@ -13,6 +13,7 @@
 
 #include <cavm_common.h>
 #include <cavm_private.h>
+#include <platform_def.h>
 
 int thunder_get_lmc_per_node(void)
 {
@@ -261,6 +262,14 @@ void plat_add_mmio_node(unsigned long node)
 	device_type_count = thunder_get_rvu_count();
 	for (i = 0; i < device_type_count; ++i)
 		add_map_record(CSR_PA(node, CAVM_RVU_PFX_VFX_BAR2(i, 0)), CAVM_RVU_PFX_VFX_BAR2_SIZE, attr);
+
+	/*
+	 * Shared memory configuration.
+	 * Map additional memory used by RVU.
+	 * Do not use add_map_record, it will round size up
+	 */
+	mmap_add_region(RVU_MEM_BASE, RVU_MEM_BASE,
+			RVU_MEM_SIZE, (MT_MEMORY | MT_RW | MT_NS));
 }
 
 /* FIXME : Add support to boot from SPI0 CS1, SPI1 CS0/1 */
