@@ -19,6 +19,11 @@
 #include <assert.h>
 #include <cavm_dt.h>
 
+#ifdef DEBUG_ATF_RVU
+#define debug_rvu printf
+#else
+#define debug_rvu(...) ((void) (0))
+#endif
 /*
  * Total 40MB of memory is reserved for mailbox and msix table.
  * First 34 MB is for mailbox(32 PFs + 512 VFs * 64KB mailbox
@@ -29,7 +34,7 @@
 
 #define PF_MBOX_BASE	0x000000000
 #define PF_MBOX_SIZE	0x000200000
-#define VF_MBOX_BASE	(PF_MBOX_SIZE + PF_MBOX_SIZE)
+#define VF_MBOX_BASE	(PF_MBOX_BASE + PF_MBOX_SIZE)
 #define VF_MBOX_SIZE	0x002000000
 #define PF_MSIX_BASE	(VF_MBOX_BASE + VF_MBOX_SIZE)
 #define VF_MSIX_OFFSET	0x10000
@@ -233,6 +238,26 @@ static int octeontx_get_max_rvu_pfs(void)
 	return priv_const.s.pfs;
 }
 
+static void dump_rvu_devs(void)
+{
+	int pf;
+
+	for (pf = 0; pf < octeontx_get_max_rvu_pfs(); pf++) {
+		debug_rvu("******************************************\n");
+		debug_rvu("PF%d: enable=%d, num_vfs=%d, first_hwvf=%d\n"
+			  "pf_num_msix_vec=%d, pf_res_ena=%d\n",
+			  pf, rvu_dev[pf].enable, rvu_dev[pf].num_vfs,
+			  rvu_dev[pf].first_hwvf, rvu_dev[pf].pf_num_msix_vec,
+			  rvu_dev[pf].pf_res_ena);
+		debug_rvu("PCI Settings:\n"
+			  "pf_devid=0x%x, vf_devid=0x%x, class_code=0x%x\n",
+			  rvu_dev[pf].pci.pf_devid, rvu_dev[pf].pci.vf_devid,
+			  rvu_dev[pf].pci.class_code);
+	}
+
+	debug_rvu("******************************************\n");
+}
+
 /* set mailbox memory*/
 static void mailbox_enable(void)
 {
@@ -260,11 +285,15 @@ static void config_rvu_pci(void)
 	int pf;
 
 	for (pf = 0; pf < octeontx_get_max_rvu_pfs(); pf++) {
+		/* Do not write default PCI DEVID values */
+		if (rvu_dev[pf].pci.pf_devid == CAVM_PCC_DEV_IDL_E_RVU &&
+		    rvu_dev[pf].pci.vf_devid == CAVM_PCC_DEV_IDL_E_RVU_VF)
+			continue;
+
 		pf_id_cfg.u = 0;
 		pf_id_cfg.s.class_code = rvu_dev[pf].pci.class_code;
 		pf_id_cfg.s.pf_devid = rvu_dev[pf].pci.pf_devid;
 		pf_id_cfg.s.vf_devid = rvu_dev[pf].pci.vf_devid;
-
 		CSR_WRITE_PA(0, CAVM_RVU_PRIV_PFX_ID_CFG(pf), pf_id_cfg.u);
 	}
 }
@@ -444,6 +473,7 @@ void octeontx_rvu_init(void)
 	int npalf_id = 0, nixlf_id = 0;
 
 	octeontx_init_rvu_from_fdt();
+	dump_rvu_devs();
 
 	for (pf = 0 ; pf < octeontx_get_max_rvu_pfs(); pf++) {
 		if (rvu_dev[pf].enable) {
