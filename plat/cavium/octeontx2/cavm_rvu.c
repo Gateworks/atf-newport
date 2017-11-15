@@ -27,7 +27,7 @@
 /*
  * Total 40MB of memory is reserved for mailbox and msix table.
  * First 34 MB is for mailbox(32 PFs + 512 VFs * 64KB mailbox
- * size). 64KB for PFs msix table(32 PFs * 128(MSIX entries)*entry
+ * size). 128KB for PFs msix table(32 PFs * 256(MSIX entries)*entry
  * size). 1MB for VFs msix table(512 VFs * 128 * MSIX entry size).
  * 93xx has 16 PFs and 256 VFs whereas 99xx has 32 PFs and 512 VFs.
  */
@@ -37,15 +37,17 @@
 #define VF_MBOX_BASE	(PF_MBOX_BASE + PF_MBOX_SIZE)
 #define VF_MBOX_SIZE	0x002000000
 #define PF_MSIX_BASE	(VF_MBOX_BASE + VF_MBOX_SIZE)
-#define VF_MSIX_OFFSET	0x10000
+#define VF_MSIX_OFFSET	0x20000
 
 #define DEVID_MASK	0xff
 #define CLASS_CODE_MASK	0xffffff
 #define RVU_CLASS_CODE	0x20000
 
-#define MAX_RVU_PFS	16
-
+#define MAX_RVU_PFS			16
+#define MAX_RVU_VFS_PER_PF		128
 #define SSO_TIM_TO_NPA_PFS_FACTOR	3/4
+#define RVU_MSIX_VEC_SIZE 		16
+#define RVU_DEFAULT_MSIX_VEC_PER_VF	128
 
 #define FALSE	0
 #define TRUE	1
@@ -91,7 +93,7 @@ static void octeontx_init_rvu_af(int *hwvf)
 {
 	rvu_dev[RVU_AF].enable = TRUE;
 	rvu_dev[RVU_AF].num_vfs = bfdt.rvu_config.admin_pf.num_rvu_vfs;
-	rvu_dev[RVU_AF].first_hwvf = *hwvf; /* Start with 0 */
+	rvu_dev[RVU_AF].first_hwvf = *hwvf;
 	rvu_dev[RVU_AF].pf_num_msix_vec = bfdt.rvu_config.admin_pf.num_msix_vec;
 	rvu_dev[RVU_AF].pf_res_ena = FALSE;
 	rvu_dev[RVU_AF].vf_res_ena = FALSE;
@@ -300,7 +302,7 @@ static void config_rvu_pci(int node)
 
 static void msix_enable(int node)
 {
-	uint32_t vf_msix_offset = VF_MSIX_OFFSET;
+	uint32_t pf_msix_offset = 0, vf_msix_offset = VF_MSIX_OFFSET;
 	int pf;
 
 	/* set AF MSIX table base*/
@@ -314,16 +316,24 @@ static void msix_enable(int node)
 	for (pf = 0; pf < octeontx_get_max_rvu_pfs(node); pf++) {
 		if (rvu_dev[pf].enable) {
 			union cavm_rvu_priv_pfx_msix_cfg pfx_msix_cfg;
-			//TODO: Get info from rvu_dev structure instead of hardcoded values.
-			//Validation is needed here.
 
+			/* Get the number of MSIX from rvu_dev array */
 			pfx_msix_cfg.u = 0;
-			pfx_msix_cfg.s.pf_msixt_offset = (0x800 * (pf & 0xf));
-			pfx_msix_cfg.s.pf_msixt_sizem1 = 0x7f;
+			pfx_msix_cfg.s.pf_msixt_offset = pf_msix_offset;
+			pfx_msix_cfg.s.pf_msixt_sizem1 = rvu_dev[pf].pf_num_msix_vec - 1;
+			pf_msix_offset += (rvu_dev[pf].pf_num_msix_vec * RVU_MSIX_VEC_SIZE);
+			/*
+			 * If such occurs, we're overlapping with VF base, should
+			 * never be reached since we're provisioning at most
+			 * 256 MSIX vectors per PF, so FDT gave us wrong setup.
+			 */
+			assert(pf_msix_offset < VF_MSIX_OFFSET);
+
 			if (rvu_dev[pf].num_vfs) {
 				pfx_msix_cfg.s.vf_msixt_offset = vf_msix_offset;
-				pfx_msix_cfg.s.vf_msixt_sizem1 = 0x7f;
-				vf_msix_offset = (vf_msix_offset + (rvu_dev[pf].num_vfs & 0x7f) * 0x800);
+				pfx_msix_cfg.s.vf_msixt_sizem1 = RVU_DEFAULT_MSIX_VEC_PER_VF - 1;
+				vf_msix_offset += ((rvu_dev[pf].num_vfs & MAX_RVU_VFS_PER_PF) *
+						   (RVU_DEFAULT_MSIX_VEC_PER_VF * RVU_MSIX_VEC_SIZE));
 			}
 			CSR_WRITE_PA(node, CAVM_RVU_PRIV_PFX_MSIX_CFG(pf), pfx_msix_cfg.u);
 		}
