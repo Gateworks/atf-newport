@@ -145,8 +145,8 @@ static int octeontx_parse_rvu_cgx(const void *fdt, int parentoffset)
 				 * set it to default value DEFAULT_VFS */
 				WARN("RVU: No num-msix-vec, using %d number of\n"
 				     "              MSIX for subnode %d under %s\n",
-				     DEFAULT_MSIX, lmac_id, cgx_name);
-				cgx->lmac_cfg[lmac_id].num_msix_vec = DEFAULT_MSIX;
+				     DEFAULT_MSIX_LMAC, lmac_id, cgx_name);
+				cgx->lmac_cfg[lmac_id].num_msix_vec = DEFAULT_MSIX_LMAC;
 			} else {
 				cgx->lmac_cfg[lmac_id].num_msix_vec = fdt32_to_cpu(*val);
 			}
@@ -264,8 +264,8 @@ static int octeontx_parse_sw_rvu(void *fdt, int parentoffset,
 	val = fdt_getprop(fdt, offset, "num-msix-vec", &len);
 	if (!val) {
 		WARN("RVU: No num-msix-vec, using %d number of MSIX\n"
-		     "              for node: %s\n", DEFAULT_MSIX, name);
-		bfdt.rvu_config.sw_pf[sw_rvu_pf].num_msix_vec = DEFAULT_MSIX;
+		     "              for node: %s\n", DEFAULT_MSIX_SW, name);
+		bfdt.rvu_config.sw_pf[sw_rvu_pf].num_msix_vec = DEFAULT_MSIX_SW;
 	} else {
 		bfdt.rvu_config.sw_pf[sw_rvu_pf].num_msix_vec = fdt32_to_cpu(*val);
 	}

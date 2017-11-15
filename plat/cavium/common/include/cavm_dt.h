@@ -30,8 +30,16 @@
 /* Default number of VFs for PF15 (CPT PF) */
 #define DEFAULT_CPT_PF15_VFS	64
 
-/* Default number of MSIX vectors per PF (non-admin) */
-#define DEFAULT_MSIX		128
+/* Default number of MSIX vectors for software
+ * provisioned (SSO_TIM/NPA) RVU PFs */
+#define DEFAULT_MSIX_SW		133
+
+/*
+ * Default number of MSIX vectors for LMAC RVU PFs, based on
+ * NPA_LF (66) + NIX_LF (131) + RVU_PF (13) = 210, which addresses
+ * the bare minimum configuration of NIX + NPA.
+ */
+#define DEFAULT_MSIX_LMAC	210
 
 /* Default number of MSIX vectors for AF PF */
 #define DEFAULT_MSIX_AF		133
