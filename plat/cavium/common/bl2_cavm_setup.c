@@ -207,10 +207,7 @@ void bl2_platform_setup(void)
 	 * Do initial security configuration to allow DRAM/device access.
 	 */
 	octeontx_security_setup();
-#if PLAT_t93
-	/* Initialise RVU */
-	octeontx_rvu_init();
-#endif
+
 	/* Enumerate devices on ECAMs */
 	octeontx_pci_init();
 

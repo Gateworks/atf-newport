@@ -122,7 +122,7 @@ DEFINE_RENAME_SYSREG_RW_FUNCS(cvm_access_el3, AP_CVM_ACCESS_EL3)
 
 
 void octeontx_pci_init(void);
-void octeontx_rvu_init(void);
+void octeontx_rvu_init(int node);
 void plat_add_mmio_map(void);
 void thunder_io_setup(void);
 void octeontx_security_setup(void);

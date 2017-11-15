@@ -31,6 +31,16 @@ struct ecam_probe_callback probe_callbacks[] = {
 	{ECAM_INVALID_DEV_ID, 0, 0, 0}
 };
 
+static void init_rvu(int node, uint64_t config_base, uint64_t config_size)
+{
+	octeontx_rvu_init(node);
+}
+
+struct ecam_init_callback plat_init_callbacks[] = {
+	{0xa065, 0x177d, init_rvu}, //0x65 - PCC_DEV_IDL_E::RVU_AF
+	{ECAM_INVALID_DEV_ID, 0, 0}
+};
+
 /*
  * Following device's BAR0 will be hidden
  * from non-secure world.
@@ -277,7 +287,7 @@ struct ecam_probe_callback *cn93xx_get_probe_callbacks(void)
 
 struct ecam_init_callback *cn93xx_get_init_callbacks(void)
 {
-	return NULL;
+	return &plat_init_callbacks[0];
 }
 
 const struct ecam_platform_defs plat_ops = {
