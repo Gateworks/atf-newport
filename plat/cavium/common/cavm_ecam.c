@@ -641,8 +641,9 @@ static int octeontx_call_probe(int node, uint64_t pconfig)
  */
 static void octeontx_call_init(int node, uint64_t pconfig)
 {
-	int i = 0;
+	struct ecam_init_callback *plat_init_callbacks;
 	cavm_pccpf_xxx_id_t pccpf_id;
+	int i = 0;
 
 	pccpf_id.u = cavm_read32(pconfig + CAVM_PCCPF_XXX_ID);
 
@@ -653,6 +654,23 @@ static void octeontx_call_init(int node, uint64_t pconfig)
 				 (uint64_t) init_callbacks[i].io_init);
 			init_callbacks[i].io_init(node, pconfig,
 						  sizeof(struct pcie_config));
+		}
+		i++;
+	}
+
+	/* Look for plat_init_callbacks */
+	plat_init_callbacks = plat_ops.get_plat_inits();
+	if (!plat_init_callbacks)
+		return;
+
+	i = 0;
+	while (plat_init_callbacks[i].devid != ECAM_INVALID_DEV_ID) {
+		if (plat_init_callbacks[i].devid == pccpf_id.s.devid
+		    && plat_init_callbacks[i].vendor_id == pccpf_id.s.vendid) {
+			debug_io("'calling plat_io_init ... %lx\n",
+				 (uint64_t) plat_init_callbacks[i].io_init);
+			plat_init_callbacks[i].io_init(node, pconfig,
+						sizeof(struct pcie_config));
 		}
 		i++;
 	}

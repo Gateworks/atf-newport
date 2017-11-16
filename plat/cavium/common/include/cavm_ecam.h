@@ -98,6 +98,7 @@ struct ecam_platform_defs {
 	int (*get_secure_settings)(struct ecam_device *dev, uint64_t pconfig);
 	uint64_t (*get_dev_config)(struct ecam_device *dev);
 	struct ecam_probe_callback *(*get_probes)(void);
+	struct ecam_init_callback *(*get_plat_inits)(void);
 	int (*is_bus_disabled)(struct ecam_device *dev);
 	int (*skip_bus)(struct ecam_device *dev);
 	void (*enable_bus)(struct ecam_device *dev);

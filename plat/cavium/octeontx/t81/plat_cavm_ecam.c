@@ -336,6 +336,11 @@ struct ecam_probe_callback *cn81xx_get_probe_callbacks(void)
 	return &probe_callbacks[0];
 }
 
+struct ecam_init_callback *cn81xx_get_init_callbacks(void)
+{
+	return NULL;
+}
+
 const struct ecam_platform_defs plat_ops = {
 	.soc_type = T81PARTNUM,
 	.get_ecam_count = cn81xx_get_ecam_count,
@@ -344,6 +349,7 @@ const struct ecam_platform_defs plat_ops = {
 	.get_secure_settings = cn81xx_get_secure_settings,
 	.get_dev_config = cn81xx_get_dev_config,
 	.get_probes = cn81xx_get_probe_callbacks,
+	.get_plat_inits = cn81xx_get_init_callbacks,
 	.is_bus_disabled = cn81xx_is_bus_disabled,
 	.skip_bus = cn81xx_skip_bus,
 	.enable_bus = cn81xx_enable_bus,
