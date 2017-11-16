@@ -137,7 +137,7 @@ static void octeontx_init_rvu_fixed(int *hwvf, int rvu, int bfdt_index, int has_
 	*hwvf += rvu_dev[rvu].num_vfs;
 }
 
-static void octeontx_init_rvu_lmac(int *hwvf, int rvu, cgx_info_t *cgx,
+static void octeontx_init_rvu_lmac(int *hwvf, int rvu, cgx_config_t *cgx,
 				   int lmac_id)
 {
 	rvu_dev[rvu].enable = TRUE;
@@ -156,7 +156,7 @@ static void octeontx_init_rvu_lmac(int *hwvf, int rvu, cgx_info_t *cgx,
 static void octeontx_init_rvu_from_fdt(void)
 {
 	int cgx_id, lmac_id, pf, uninit_pfs, sso_tim_pfs, npa_pfs, current_hwvf = 0;
-	cgx_info_t *cgx;
+	cgx_config_t *cgx;
 
 	/* Firstly, initialize fixed setup (PF0, PF13, PF14, PF15) */
 	/* Init RVU0 - AF (PF0) */
@@ -178,7 +178,7 @@ static void octeontx_init_rvu_from_fdt(void)
 	pf = RVU_CGX0_LMAC0;
 	uninit_pfs = 0;
 	for (cgx_id = 0; cgx_id < MAX_CGX; cgx_id++) {
-		cgx = &bfdt.rvu_config.cgx_pf[cgx_id];
+		cgx = &bfdt.cgx_cfg[cgx_id];
 		if (cgx->enable) {
 			for (lmac_id = 0; lmac_id < MAX_LMAC_PER_CGX; lmac_id++) {
 				if (cgx->lmac_cfg[lmac_id].enable) {
