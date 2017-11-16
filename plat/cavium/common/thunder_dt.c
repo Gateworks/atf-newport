@@ -96,11 +96,11 @@ static int octeontx_parse_rvu_cgx(const void *fdt, int parentoffset)
 {
 	int cgx_id, lmac_id, cgx_offset, numvfs = 0, lmac_offset, len;
 	const int *val;
-	cgx_config_t *cgx;
+	cgx_info_t *cgx;
 	char cgx_name[16];
 
 	for (cgx_id = 0; cgx_id < MAX_CGX; cgx_id++) {
-		cgx = &bfdt.cgx_cfg[cgx_id];
+		cgx = &bfdt.rvu_config.cgx_pf[cgx_id];
 		/* Construct cgx node name */
 		snprintf(cgx_name, sizeof(cgx_name), "cgx%d", cgx_id);
 		cgx_offset = fdt_subnode_offset(fdt, parentoffset, cgx_name);
