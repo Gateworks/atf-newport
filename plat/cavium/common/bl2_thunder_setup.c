@@ -134,8 +134,12 @@ int bl2_plat_handle_post_image_load(unsigned int image_id)
 		 */
 		flush_dcache_range(bl33_fdt_address, fdt_totalsize(bl33_fdt_address));
 
-		/* Pass FDT address to BL33 */
+		/* Pass FDT address and size to BL33 */
 		bl_mem_params->ep_info.args.arg1 = bl33_fdt_address;
+		bl_mem_params->ep_info.args.arg2 = fdt_totalsize(fdt_ptr);
+#ifdef AARCH64
+		bl_mem_params->ep_info.args.arg4 = mode;
+#endif
 
 		break;
 
@@ -399,8 +403,12 @@ void bl2_plat_set_bl33_ep_info(image_info_t *image,
 	 */
 	flush_dcache_range(bl33_fdt_address, fdt_totalsize(bl33_fdt_address));
 
-	/* Pass FDT address to BL33 */
+	/* Pass FDT address and size to BL33 */
 	bl33_ep_info->args.arg1 = bl33_fdt_address;
+	bl33_ep_info->args.arg2 = fdt_totalsize(fdt_ptr);
+#ifdef AARCH64
+	bl33_ep_info->args.arg4 = mode;
+#endif
 }
 
 /*******************************************************************************
