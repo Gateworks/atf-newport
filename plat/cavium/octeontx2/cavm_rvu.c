@@ -17,6 +17,7 @@
 #include <cavm_common.h>
 #include <platform.h>
 #include <assert.h>
+#include <debug.h>
 #include <cavm_dt.h>
 
 #ifdef DEBUG_ATF_RVU
@@ -160,10 +161,16 @@ static void octeontx_init_rvu_lmac(int *hwvf, int rvu, cgx_config_t *cgx,
 	*hwvf += rvu_dev[rvu].num_vfs;
 }
 
-static void octeontx_init_rvu_from_fdt(void)
+static int octeontx_init_rvu_from_fdt(void)
 {
 	int cgx_id, lmac_id, pf, uninit_pfs, sso_tim_pfs, npa_pfs, current_hwvf = 0;
 	cgx_config_t *cgx;
+
+	/* Check if FDT config is valid */
+	if (!bfdt.rvu_config.valid) {
+		ERROR("Invalid RVU configuration, skipping RVU init!.\n");
+		return -1;
+	}
 
 	/* Firstly, initialize fixed setup (PF0, PF13, PF14, PF15) */
 	/* Init RVU0 - AF (PF0) */
@@ -213,7 +220,7 @@ static void octeontx_init_rvu_from_fdt(void)
 	 * FACTOR, as discussed with ODP developers, is set to 3/4.
 	 */
 	if (!uninit_pfs)
-		return;
+		return 0;
 
 	sso_tim_pfs = uninit_pfs * SSO_TIM_TO_NPA_PFS_FACTOR;
 	npa_pfs = uninit_pfs - sso_tim_pfs;
@@ -228,6 +235,8 @@ static void octeontx_init_rvu_from_fdt(void)
 					SW_RVU_NPA_PF, FALSE);
 		npa_pfs--;
 	}
+
+	return 0;
 }
 
 /* returns max PFs supported by RVU */
@@ -480,10 +489,13 @@ static void reset_rvu_pf(int node, int pf)
 
 void octeontx_rvu_init(int node)
 {
-	int pf, hwvf, vf;
+	int pf, hwvf, vf, rc;
 	int npalf_id = 0, nixlf_id = 0;
 
-	octeontx_init_rvu_from_fdt();
+	rc = octeontx_init_rvu_from_fdt();
+	if (rc < 0)
+		return;
+
 	dump_rvu_devs(node);
 
 	for (pf = 0 ; pf < octeontx_get_max_rvu_pfs(node); pf++) {
