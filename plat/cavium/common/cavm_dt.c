@@ -282,6 +282,22 @@ static int octeontx_parse_sw_rvu(void *fdt, int parentoffset,
 	return bfdt.rvu_config.sw_pf[sw_rvu_pf].num_rvu_vfs;
 }
 
+static int octeontx_validate_num_vfs(int current_vfs, const char *node_name)
+{
+	/* Check if number of requested VFs (via DTB) does not exceed number
+	 * of Hardware VFs */
+	if (current_vfs > RVU_HWVFS) {
+		ERROR("RVU: Wrong FDT config. Tried to configure more\n"
+		       "              VFs (%d) than HWVFs (%d). Please edit\n"
+		       "              FDT and reflash the board.\n"
+		       "              Failed on %s\n", current_vfs,
+		       RVU_HWVFS, node_name);
+		return -1;
+	}
+
+	return 0;
+}
+
 static int octeontx_parse_rvu_config(void)
 {
 	void *fdt = fdt_ptr;
@@ -306,45 +322,57 @@ static int octeontx_parse_rvu_config(void)
 	}
 
 	/* Fill rvu_admin_pf_t structure */
-	rc = octeontx_parse_rvu_admin(fdt, offset, "rvu-admin@0");
+	rc = octeontx_parse_rvu_admin(fdt, offset, RVU_ADMIN_FDT_NODE);
 	if (rc < 0) {
 		WARN("RVU: Unable to fill PF0-ADMIN structure\n");
 		return -1;
-	} else {
-		/* Add number of VFs to fdt_vfs */
-		fdt_vfs += rc;
 	}
 
+	/* Update and validate number of currently requested VFs */
+	fdt_vfs += rc;
+	rc = octeontx_validate_num_vfs(fdt_vfs, RVU_ADMIN_FDT_NODE);
+	if (rc < 0)
+		return -1;
+
 	/* Fill rvu_sw_rvu_pf_t structure, start with SSO_TIM (PF13) */
-	rc = octeontx_parse_sw_rvu(fdt, offset, "rvu-sso-tim@0",
+	rc = octeontx_parse_sw_rvu(fdt, offset, RVU_SSO_TIM_FDT_NODE,
 				   SW_RVU_SSO_TIM_PF);
 	if (rc < 0) {
 		WARN("RVU: Unable to fill PF13-SSO_TIM structure\n");
 		return -1;
-	} else {
-		/* Add number of VFs to fdt_vfs */
-		fdt_vfs += rc;
 	}
 
+	/* Update and validate number of currently requested VFs */
+	fdt_vfs += rc;
+	rc = octeontx_validate_num_vfs(fdt_vfs, RVU_SSO_TIM_FDT_NODE);
+	if (rc < 0)
+		return -1;
+
 	/* Now parse NPA (PF14) */
-	rc = octeontx_parse_sw_rvu(fdt, offset, "rvu-npa@0", SW_RVU_NPA_PF);
+	rc = octeontx_parse_sw_rvu(fdt, offset, RVU_NPA_FDT_NODE, SW_RVU_NPA_PF);
 	if (rc < 0) {
 		WARN("RVU: Unable to fill PF14-NPA structure\n");
 		return -1;
-	} else {
-		/* Add number of VFs to fdt_vfs */
-		fdt_vfs += rc;
 	}
 
+	/* Update and validate number of currently requested VFs */
+	fdt_vfs += rc;
+	rc = octeontx_validate_num_vfs(fdt_vfs, RVU_NPA_FDT_NODE);
+	if (rc < 0)
+		return -1;
+
 	/* Finally, parse CPT (PF15) */
-	rc = octeontx_parse_sw_rvu(fdt, offset, "rvu-cpt@0", SW_RVU_CPT_PF);
+	rc = octeontx_parse_sw_rvu(fdt, offset, RVU_CPT_FDT_NODE, SW_RVU_CPT_PF);
 	if (rc < 0) {
 		WARN("RVU: Unable to fill PF15-CPT structure\n");
 		return -1;
-	} else {
-		/* Add number of VFs to fdt_vfs */
-		fdt_vfs += rc;
 	}
+
+	/* Update and validate number of currently requested VFs */
+	fdt_vfs += rc;
+	rc = octeontx_validate_num_vfs(fdt_vfs, RVU_CPT_FDT_NODE);
+	if (rc < 0)
+		return -1;
 
 	/* Look for mrml_bridge node */
 	offset = fdt_node_offset_by_compatible(fdt, soc_offset, "pci-bridge");
@@ -358,19 +386,13 @@ static int octeontx_parse_rvu_config(void)
 	if (rc < 0) {
 		WARN("RVU: Unable to fill CGX config properly\n");
 		return -1;
-	} else {
-		fdt_vfs += rc;
 	}
 
-	/* Check if number of requested VFs (via DTB) does not exceed number
-	 * of Hardware VFs */
-	if (fdt_vfs > RVU_HWVFS) {
-		ERROR("RVU: Wrong FDT config. Tried to configure more\n"
-		       "             VFs (%d) than HWVFs (%d). Please edit\n"
-		       "             FDT and reflash the board\n", fdt_vfs,
-		       RVU_HWVFS);
+	/* Update and validate number of currently requested VFs */
+	fdt_vfs += rc;
+	rc = octeontx_validate_num_vfs(fdt_vfs, "CGX subnodes configuration");
+	if (rc < 0)
 		return -1;
-	}
 
 	return 0;
 }
@@ -481,8 +503,7 @@ int thunder_fill_board_details(int info)
 #if PLAT_t93
 	config = octeontx_parse_rvu_config();
 	if (config < 0) {
-		printf("RVU: Invalid FDT configuration. Reflash firmware\n"
-		       "     built with DEBUG=1 flag for more information\n");
+		ERROR("RVU: Marking RVU configuration invalid!\n");
 		bfdt.rvu_config.valid = 0;
 	} else {
 		bfdt.rvu_config.valid = 1;

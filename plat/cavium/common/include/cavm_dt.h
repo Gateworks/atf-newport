@@ -44,6 +44,12 @@
 /* Default number of MSIX vectors for AF PF */
 #define DEFAULT_MSIX_AF		133
 
+/* RVU node names definitions */
+#define RVU_ADMIN_FDT_NODE	"rvu-admin@0"
+#define RVU_SSO_TIM_FDT_NODE	"rvu-sso-tim@0"
+#define RVU_NPA_FDT_NODE	"rvu-npa@0"
+#define RVU_CPT_FDT_NODE	"rvu-cpt@0"
+
 typedef struct rvu_sw_rvu_pf {
 	int num_rvu_vfs;
 	int num_msix_vec;
