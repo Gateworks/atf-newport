@@ -74,16 +74,16 @@ typedef union link_state {
 
 /* Define LMAC structure. */
 typedef struct cgx_lmac_config {
-	int lmacid;
+	/* below info to be filled by
+	 * FDT parser during boot time or mode
+	 * change
+	 */
 	int lane_to_sds;
 	int use_training;
-	int lmac_type;
-	int qlm_mode;
-	int qlm;
-	int link_up;
-	int enable;
-	link_state_t last_link;
-	/* for PHY mgmt */
+	int mode; /* octeontx_qlm_mode enum type */
+	int qlm; /* from BDK DT */
+	int qlm_lane_mode; /* from BDK DT */
+	int enable; 
 	int phy_mode; /* MAC or PHY mode for SGMII */
 	int sgmii_1000x_mode; /* SGMII or 1000x mode for SGMII */
 	int phy_present;
@@ -91,13 +91,16 @@ typedef struct cgx_lmac_config {
 	/* for RVU */
 	int num_rvu_vfs;
 	int num_msix_vec;
+	/* below info to be filled during run time 
+	 * by CGX driver
+	 */
+	int link_up;
+	link_state_t last_link;
 } cgx_lmac_config_t;
 
 typedef struct cgx_config {
-	int cgx_id;
 	int node;
 	int lmac_count;
-	uint64_t reg_base;
 	cgx_lmac_config_t lmac_cfg[MAX_LMAC_PER_CGX];
 	/* for RVU */
 	int enable;
