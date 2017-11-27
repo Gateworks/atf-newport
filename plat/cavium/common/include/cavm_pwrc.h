@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2013-2015, ARM Limited and Contributors. All rights reserved.
- * Copyright (c) 2016-2017, Cavium Inc. All rights reserved.<BR>
+ * Copyright (c) 2016-2018, Cavium Inc. All rights reserved.<BR>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -29,8 +29,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef __THUNDER_PWRC_H__
-#define __THUNDER_PWRC_H__
+#ifndef __CAVM_PWRC_H__
+#define __CAVM_PWRC_H__
 
 /* Thunder Power controller register offset etc */
 #define PPOFFR_OFF		0x0
@@ -75,4 +75,4 @@ unsigned int thunder_pwrc_get_cpu_wkr(unsigned long);
 
 #endif /*__ASSEMBLY__*/
 
-#endif /* __THUNDER_PWRC_H__ */
+#endif /* __CAVM_PWRC_H__ */

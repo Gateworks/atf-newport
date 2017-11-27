@@ -1,6 +1,6 @@
 #/** @file
 #
-#  Copyright (c) 2016-2017, Cavium Inc. All rights reserved.<BR>
+#  Copyright (c) 2016-2018, Cavium Inc. All rights reserved.<BR>
 #  This program and the accompanying materials
 #  are licensed and made available under the terms and conditions of the BSD License
 #  which accompanies this distribution.  The full text of the license may be found at
@@ -14,13 +14,18 @@
 # Include common thunder platform's makefile helper
 include plat/cavium/common/platform.mk
 
+PLAT_INCLUDES		+=	-Iplat/cavium/octeontx2/include			\
+				-Iplat/cavium/octeontx2/t93/include		\
+
 PLAT_BL_COMMON_SOURCES	+=	plat/cavium/octeontx2/t93/plat_cavm_setup.c		\
 				plat/cavium/octeontx2/cavm_security.c		\
 
-BL1_SOURCES		+=	plat/cavium/octeontx2/aarch64/plat_cavm_helpers.S	\
+BL1_SOURCES		+=	plat/cavium/octeontx2/aarch64/octeontx2_common.S	\
+				plat/cavium/octeontx2/aarch64/plat_cavm_helpers.S	\
 
 BL2_SOURCES		+=	plat/cavium/octeontx2/t93/plat_cavm_ecam.c		\
 				plat/cavium/octeontx2/cavm_rvu.c		\
 
-BL31_SOURCES		+=	plat/cavium/octeontx2/aarch64/plat_cavm_helpers.S	\
+BL31_SOURCES		+=	plat/cavium/octeontx2/aarch64/octeontx2_common.S	\
+				plat/cavium/octeontx2/aarch64/plat_cavm_helpers.S	\
 				plat/cavium/octeontx2/cavm_topology.c		\

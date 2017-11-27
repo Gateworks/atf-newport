@@ -1,6 +1,6 @@
 /** @file
 
-  Copyright (c) 2016-2017, Cavium Inc. All rights reserved.<BR>
+  Copyright (c) 2016-2018, Cavium Inc. All rights reserved.<BR>
   This program and the accompanying materials
   are licensed and made available under the terms and conditions of the BSD License
   which accompanies this distribution.  The full text of the license may be found at
@@ -36,13 +36,6 @@
 					PLATFORM_NODE_COUNT)
 #define PLAT_MAX_PWR_LVL		MPIDR_AFFLVL2
 
-#define THUNDER81_MIDR			0x430F0A20
-#define THUNDER83_MIDR			0x430F0A30
-#define THUNDER88_MIDR			0x430F0A10
-#define THUNDER93_MIDR			0x430F0B20
-
-#define CVM_PN_EL1			S3_0_C11_C4_2
-
 /* SATA-related definitions */
 #define MAX_SATA_CONTROLLERS		16
 #define MAX_SATA_GSER			8
@@ -55,16 +48,6 @@
 #define THUNDER_STATE_OFF		2
 #define PLAT_MAX_RET_STATE		THUNDER_STATE_RET
 #define PLAT_MAX_OFF_STATE		THUNDER_STATE_OFF
-
-#ifdef PLAT_t93
-#define PLATFORM_MAX_NODES		1
-#define PLATFORM_MAX_CLUSTERS_PER_NODE	4
-#define PLATFORM_CORE_PER_CLUSTER	6
-#else
-#define PLATFORM_MAX_NODES		2
-#define PLATFORM_MAX_CLUSTERS_PER_NODE	3
-#define PLATFORM_CORE_PER_CLUSTER	16
-#endif
 
 #define PLATFORM_NODE_COUNT		(PLATFORM_MAX_NODES)
 #define PLATFORM_CLUSTER_COUNT		(PLATFORM_MAX_NODES * \
@@ -98,33 +81,21 @@
 #define ADDR_SPACE_SIZE_SHIFT		48
 #define PLAT_VIRT_ADDR_SPACE_SIZE	(1ull << ADDR_SPACE_SIZE_SHIFT)
 #define PLAT_PHY_ADDR_SPACE_SIZE	(1ull << ADDR_SPACE_SIZE_SHIFT)
-#ifdef PLAT_t93
-#define MAX_XLAT_TABLES			52
-#else
-#define MAX_XLAT_TABLES			48
-#endif
+
 #define MAX_MMAP_REGIONS		256
 
-/* Location of trusted dram on the base thunder */
-#ifdef PLAT_t93
-#define TZDRAM_BASE			0x00000000
-#define TZDRAM_SIZE			0x01000000
-#else /* PLAT_t93 */
+#define NS_DMA_MEMORY_SIZE		0x100000
+
+
+#define PLATFORM_MAX_NODES		2
+#define PLATFORM_MAX_CLUSTERS_PER_NODE	3
+#define PLATFORM_CORE_PER_CLUSTER	16
+
+#define MAX_XLAT_TABLES			48
+
+/* Location of trusted dram on the base OcteonTX */
 #define TZDRAM_BASE			0x00000000
 #define TZDRAM_SIZE			0x00400000
-#endif /* PLAT_t93 */
-
-/*
- * Memory used for mailbox and RVU MSI-X
- * Required size is 40M, but due to CCS_REGION memory
- * granulation - minimum size of region is 16M need to
- * reserve 48M of size for this purpose.
- */
-#ifdef PLAT_t93
-#define RVU_MEM_BASE			(TZDRAM_BASE + TZDRAM_SIZE)
-#define RVU_MEM_SIZE			0x03000000
-#endif
-
 
 #define FDT_MAX_SIZE			0x20000
 #define FDT_BASE			(TZDRAM_BASE + TZDRAM_SIZE - FDT_MAX_SIZE)
@@ -160,27 +131,11 @@
 #define TSP_SEC_MEM_BASE		TZDRAM_BASE
 #define TSP_SEC_MEM_SIZE		TZDRAM_SIZE
 
-/*
- * Load address of BL33 in the ThunderX port.
- * Depends of which platform do we use.
- */
-#ifdef PLAT_t81
-#define NS_IMAGE_BASE			0x00500000
-#elif PLAT_t83
+/* Load address of BL33 in the OcteonTX port. */
 #define NS_IMAGE_BASE			0x02800000
-#elif PLAT_t93
-#define NS_IMAGE_BASE			0x04000000
-#endif
-
 #define NS_IMAGE_MAX_SIZE		(0x40000000 - NS_IMAGE_BASE)
 
-#define NS_DMA_MEMORY_SIZE		0x100000
-
 /* Number of TWSI interfaces */
-#ifdef PLAT_t93
-#define TWSI_NUM			6
-#else
 #define TWSI_NUM			2
-#endif
 
 #endif

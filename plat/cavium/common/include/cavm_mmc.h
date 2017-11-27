@@ -1,6 +1,6 @@
 /** @file
 
-    Copyright (c) 2016-2017, Cavium Inc. All rights reserved.<BR>
+    Copyright (c) 2016-2018, Cavium Inc. All rights reserved.<BR>
     This program and the accompanying materials
     are licensed and made available under the terms and conditions of the BSD License
     which accompanies this distribution.  The full text of the license may be found at
@@ -11,8 +11,8 @@
 
 **/
 
-#ifndef __THUNDER_MMC_H__
-#define __THUNDER_MMC_H__
+#ifndef __CAVM_MMC_H__
+#define __CAVM_MMC_H__
 
 #define MMC_READ	0
 #define MMC_WRITE	1
@@ -73,4 +73,4 @@
 int sdmmc_init();
 int sdmmc_rw_data(int write, unsigned long addr, int size, void *buf, int buf_size);
 
-#endif /* __THUNDER_MMC_H__ */
+#endif /* __CAVM_MMC_H__ */

@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2013-2014, ARM Limited and Contributors. All rights reserved.
- * Copyright (c) 2016-2017, Cavium Inc. All rights reserved.<BR>
+ * Copyright (c) 2016-2018, Cavium Inc. All rights reserved.<BR>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -40,11 +40,10 @@
 #include <interrupt_mgmt.h>
 #include <stddef.h>
 #include <xlat_tables.h>
-#include <cavm_private.h>
+#include <cavm_common.h>
 #include <cavm_dt.h>
 #include <debug.h>
 #include <timers.h>
-#include <cavm_common.h>
 
 /*******************************************************************************
  * Declarations of linker defined symbols which will help us find the layout

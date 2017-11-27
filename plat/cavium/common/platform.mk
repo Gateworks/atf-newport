@@ -1,6 +1,6 @@
 #/** @file
 #
-#  Copyright (c) 2016-2017, Cavium Inc. All rights reserved.<BR>
+#  Copyright (c) 2016-2018, Cavium Inc. All rights reserved.<BR>
 #  This program and the accompanying materials
 #  are licensed and made available under the terms and conditions of the BSD License
 #  which accompanies this distribution.  The full text of the license may be found at
@@ -37,7 +37,6 @@ BL1_SOURCES		+=	plat/cavium/common/drivers/cavm_spi.c		\
 				drivers/io/io_fip.c				\
 				drivers/io/io_memmap.c				\
 				drivers/io/io_storage.c				\
-				lib/cpus/aarch64/thunder.S			\
 				plat/cavium/common/aarch64/cavm_helpers.S 	\
 				plat/cavium/common/bl1_cavm_setup.c		\
 
@@ -53,7 +52,6 @@ BL31_SOURCES		+=	drivers/arm/gic/common/gic_common.c		\
 				drivers/arm/gic/v3/gicv3_helpers.c		\
 				plat/cavium/common/drivers/cavm_spi.c		\
 				drivers/delay_timer/delay_timer.c		\
-				lib/cpus/aarch64/thunder.S			\
 				lib/timers/timers.c				\
 				plat/cavium/common/aarch64/cavm_helpers.S 	\
 				plat/cavium/common/bl31_cavm_setup.c		\
