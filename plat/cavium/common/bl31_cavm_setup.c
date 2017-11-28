@@ -231,9 +231,7 @@ void bl31_platform_setup()
 	timers_init();
 
 	/*
-	 * Apply SATA quirk only for CN8XXX family, maybe for
-	 * CN9XXX it won't be required. If yes, need to find
-	 * adequate GSERX registers for CN9XXXX
+	 * Apply SATA quirk only for CN8XXX family
 	 */
 	if (CAVIUM_IS_MODEL(CAVIUM_CN8XXX)) {
 		sata_ipm_quirk();

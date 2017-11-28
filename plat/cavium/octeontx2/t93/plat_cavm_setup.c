@@ -42,22 +42,22 @@ int thunder_get_max_sata_gser(void)
 
 /*
  * SATA to GSER mapping
- * SATA(0-1) --- GSER3
+ * SATA(0-3) --- GSER4/GSER5
  */
 int thunder_sata_to_gser(int ctrlr)
 {
-	if (ctrlr > 1)
+	if (ctrlr > 3)
 		return -1;
 
-	return 3;
+	return ((ctrlr > 1) ? 4 : 5);
 }
 
 int thunder_sata_to_lane(int ctrlr)
 {
-	if (ctrlr > 1)
+	if (ctrlr > 3)
 		return -1;
 
-	return ctrlr % 2;
+	return ctrlr;
 }
 
 int thunder_dram_is_lmc_enabled(unsigned node, unsigned lmc)
@@ -121,7 +121,7 @@ int thunder_get_twsi_count(void)
 
 int thunder_get_cpt_count(void)
 {
-	return 2;
+	return 1;
 }
 
 int thunder_get_cgx_count(void)
@@ -263,6 +263,7 @@ void plat_add_mmio_node(unsigned long node)
 		add_map_record(CSR_PA(node, CAVM_RVU_PFX_VFX_BAR2(i, 0)), CAVM_RVU_PFX_VFX_BAR2_SIZE, attr);
 }
 
+/* FIXME : Add support to boot from SPI0 CS1, SPI1 CS0/1 */
 int plat_get_boot_type(int boot_type)
 {
 	int ret;
