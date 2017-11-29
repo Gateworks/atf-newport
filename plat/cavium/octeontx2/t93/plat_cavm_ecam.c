@@ -104,14 +104,14 @@ static inline void cn93xx_enable_bus(struct ecam_device *dev)
 	cavm_ecamx_domx_busx_permit_t bus_permit;
 
 	/* enable bus */
-	bus_permit.u = CSR_READ_PA(dev->node,
+	bus_permit.u = CSR_READ(dev->node,
 				   CAVM_ECAMX_DOMX_BUSX_PERMIT(dev->ecam,
 				   dev->domain, dev->bus));
 	bus_permit.s.sec_dis = 0;
 	bus_permit.s.nsec_dis = 0;
 	bus_permit.s.xcp0_dis = 0;
 	bus_permit.s.xcp1_dis = 0;
-	CSR_WRITE_PA(dev->node,
+	CSR_WRITE(dev->node,
 		     CAVM_ECAMX_DOMX_BUSX_PERMIT(dev->ecam, dev->domain,
 		     dev->bus), bus_permit.u);
 	debug_plat_ecam("enable_bus N%d:E%d:DOM%d:B%d\n", dev->node, dev->ecam,
@@ -123,14 +123,14 @@ static inline void cn93xx_disable_bus(struct ecam_device *dev)
 	cavm_ecamx_domx_busx_permit_t bus_permit;
 
 	/* disable bus */
-	bus_permit.u = CSR_READ_PA(dev->node,
+	bus_permit.u = CSR_READ(dev->node,
 				   CAVM_ECAMX_DOMX_BUSX_PERMIT(dev->ecam,
 				   dev->domain, dev->bus));
 	bus_permit.s.sec_dis = 0;
 	bus_permit.s.nsec_dis = 1;
 	bus_permit.s.xcp0_dis = 0;
 	bus_permit.s.xcp1_dis = 0;
-	CSR_WRITE_PA(dev->node,
+	CSR_WRITE(dev->node,
 		     CAVM_ECAMX_DOMX_BUSX_PERMIT(dev->ecam, dev->domain,
 		     dev->bus), bus_permit.u);
 	debug_plat_ecam("disable_bus N%d:E%d:DOM%d:B%d\n", dev->node, dev->ecam,
@@ -142,14 +142,14 @@ static inline void cn93xx_enable_dev(struct ecam_device *dev)
 	cavm_ecamx_domx_devx_permit_t dev_permit;
 
 	/* enable dev */
-	dev_permit.u = CSR_READ_PA(dev->node,
+	dev_permit.u = CSR_READ(dev->node,
 				   CAVM_ECAMX_DOMX_DEVX_PERMIT(dev->ecam,
 				   dev->domain, dev->dev));
 	dev_permit.s.sec_dis = 0;
 	dev_permit.s.nsec_dis = 0;
 	dev_permit.s.xcp0_dis = dev->config.s.is_scp_secure;
 	dev_permit.s.xcp1_dis = dev->config.s.is_mcp_secure;
-	CSR_WRITE_PA(dev->node,
+	CSR_WRITE(dev->node,
 		     CAVM_ECAMX_DOMX_DEVX_PERMIT(dev->ecam, dev->domain,
 		     dev->dev), dev_permit.u);
 	debug_plat_ecam("enable_dev N%d:E%d:DOM%d:D%d\n", dev->node, dev->ecam,
@@ -161,14 +161,14 @@ static inline void cn93xx_disable_dev(struct ecam_device *dev)
 	cavm_ecamx_domx_devx_permit_t dev_permit;
 
 	/* enable dev */
-	dev_permit.u = CSR_READ_PA(dev->node,
+	dev_permit.u = CSR_READ(dev->node,
 				   CAVM_ECAMX_DOMX_DEVX_PERMIT(dev->ecam,
 				   dev->domain, dev->dev));
 	dev_permit.s.sec_dis = 0;
 	dev_permit.s.nsec_dis = 1;
 	dev_permit.s.xcp0_dis = dev->config.s.is_scp_secure;
 	dev_permit.s.xcp1_dis = dev->config.s.is_mcp_secure;
-	CSR_WRITE_PA(dev->node,
+	CSR_WRITE(dev->node,
 		     CAVM_ECAMX_DOMX_DEVX_PERMIT(dev->ecam, dev->domain,
 		     dev->dev), dev_permit.u);
 	debug_plat_ecam("disable_dev N%d:E%d:DOM%d:D%d\n", dev->node, dev->ecam,
@@ -180,14 +180,14 @@ static inline void cn93xx_enable_func(struct ecam_device *dev)
 	cavm_ecamx_domx_rslx_permit_t rsl_permit;
 
 	/* enable func */
-	rsl_permit.u = CSR_READ_PA(dev->node,
+	rsl_permit.u = CSR_READ(dev->node,
 				   CAVM_ECAMX_DOMX_RSLX_PERMIT(dev->ecam,
 				   dev->domain, dev->func));
 	rsl_permit.s.sec_dis = 0;
 	rsl_permit.s.nsec_dis = 0;
 	rsl_permit.s.xcp0_dis = dev->config.s.is_scp_secure;
 	rsl_permit.s.xcp1_dis = dev->config.s.is_mcp_secure;
-	CSR_WRITE_PA(dev->node,
+	CSR_WRITE(dev->node,
 		     CAVM_ECAMX_DOMX_RSLX_PERMIT(dev->ecam, dev->domain,
 		     dev->func), rsl_permit.u);
 	debug_plat_ecam("enable_func N%d:E%d:DOM%d:F%d\n", dev->node,
@@ -199,14 +199,14 @@ static inline void cn93xx_disable_func(struct ecam_device *dev)
 	cavm_ecamx_domx_rslx_permit_t rsl_permit;
 
 	/* disable func */
-	rsl_permit.u = CSR_READ_PA(dev->node,
+	rsl_permit.u = CSR_READ(dev->node,
 				   CAVM_ECAMX_DOMX_RSLX_PERMIT(dev->ecam,
 				   dev->domain, dev->func));
 	rsl_permit.s.sec_dis = 0;
 	rsl_permit.s.nsec_dis = 1;
 	rsl_permit.s.xcp0_dis = dev->config.s.is_scp_secure;
 	rsl_permit.s.xcp1_dis = dev->config.s.is_mcp_secure;
-	CSR_WRITE_PA(dev->node,
+	CSR_WRITE(dev->node,
 		     CAVM_ECAMX_DOMX_RSLX_PERMIT(dev->ecam, dev->domain,
 		     dev->func), rsl_permit.u);
 	debug_plat_ecam("disable_func N%d:E%d:DOM%d:F%d\n", dev->node,
@@ -217,7 +217,7 @@ static int cn93xx_get_ecam_count(int node)
 {
 	cavm_ecamx_const_t ecam_const;
 
-	ecam_const.u = CSR_READ_PA(node, CAVM_ECAMX_CONST(0));
+	ecam_const.u = CSR_READ(node, CAVM_ECAMX_CONST(0));
 
 	return ecam_const.s.ecams;
 }
@@ -226,7 +226,7 @@ static int cn93xx_get_domain_count(struct ecam_device *dev)
 {
 	cavm_ecamx_const_t ecam_const;
 
-	ecam_const.u = CSR_READ_PA(dev->node, CAVM_ECAMX_CONST(dev->ecam));
+	ecam_const.u = CSR_READ(dev->node, CAVM_ECAMX_CONST(dev->ecam));
 
 	return ecam_const.s.domains;
 }
@@ -235,7 +235,7 @@ static inline int cn93xx_is_domain_present(struct ecam_device *dev)
 {
 	cavm_ecamx_domx_const_t dom_const;
 
-	dom_const.u = CSR_READ_PA(dev->node,
+	dom_const.u = CSR_READ(dev->node,
 				  CAVM_ECAMX_DOMX_CONST(dev->ecam,
 				  dev->domain));
 

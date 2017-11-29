@@ -73,14 +73,14 @@ void octeontx_security_setup(void)
 		if (region->end > dram_end)
 			region->end = dram_end;
 
-		CSR_WRITE_PA(region->node,
+		CSR_WRITE(region->node,
 			     CAVM_CCS_ASC_REGIONX_START(region->number),
 			     region->start);
-		CSR_WRITE_PA(region->node,
+		CSR_WRITE(region->node,
 			     CAVM_CCS_ASC_REGIONX_END(region->number),
 			     region->end);
 
-		ccs_asc_attr.u = CSR_READ_PA(region->node, CAVM_CCS_ASC_REGIONX_ATTR(region->number));
+		ccs_asc_attr.u = CSR_READ(region->node, CAVM_CCS_ASC_REGIONX_ATTR(region->number));
 		/*
 		 * For given memory region, grant access
 		 * to this region to all LMCs
@@ -91,16 +91,16 @@ void octeontx_security_setup(void)
 					  CAVM_CCS_LMC_MASK_LMC2;
 		ccs_asc_attr.s.s_en  = region->secure;
 		ccs_asc_attr.s.ns_en = !region->secure;
-		CSR_WRITE_PA(region->node,
+		CSR_WRITE(region->node,
 			     CAVM_CCS_ASC_REGIONX_ATTR(region->number),
 			     ccs_asc_attr.u);
 
 		INFO("Mark memory region %d at node %d:: %lx to %lx as %ssecure (%lx)\n",
 			region->number, region->node,
-			CSR_READ_PA(region->node, CAVM_CCS_ASC_REGIONX_START(region->number)),
-			CSR_READ_PA(region->node, CAVM_CCS_ASC_REGIONX_END(region->number)),
+			CSR_READ(region->node, CAVM_CCS_ASC_REGIONX_START(region->number)),
+			CSR_READ(region->node, CAVM_CCS_ASC_REGIONX_END(region->number)),
 			region->secure ? "" : "non-",
-			CSR_READ_PA(region->node, CAVM_CCS_ASC_REGIONX_ATTR(region->number)));
+			CSR_READ(region->node, CAVM_CCS_ASC_REGIONX_ATTR(region->number)));
 
 		region++;
 	}

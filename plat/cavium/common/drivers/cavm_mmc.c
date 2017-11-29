@@ -107,12 +107,12 @@ mio_emm_driver_t mmc_drv = { 0 };
 /* Wait for delay reference cycles */
 void wait(uint64_t delay)
 {
-	volatile uint64_t count = CSR_READ_PA(mmc_current_file.node, CAVM_RST_REF_CNTR);
+	volatile uint64_t count = CSR_READ(mmc_current_file.node, CAVM_RST_REF_CNTR);
 	uint64_t start = count;
 	uint64_t end = start + delay;
 
 	do {
-		count = CSR_READ_PA(mmc_current_file.node, CAVM_RST_REF_CNTR);
+		count = CSR_READ(mmc_current_file.node, CAVM_RST_REF_CNTR);
 	} while (count < end);
 }
 
@@ -127,10 +127,10 @@ union cavm_mio_emm_rsp_sts mio_emm_cmd(uint32_t cmd_idx, uint32_t ctype_xor, uin
 	cmd.s.rtype_xor = rtype_xor;
 	cmd.s.arg = arg;
 	cmd.s.cmd_idx = cmd_idx;
-	CSR_WRITE_PA(mmc_current_file.node, CAVM_MIO_EMM_CMD, cmd.u);
+	CSR_WRITE(mmc_current_file.node, CAVM_MIO_EMM_CMD, cmd.u);
 
 	do {
-		emm_rsp_sts.u = CSR_READ_PA(mmc_current_file.node, CAVM_MIO_EMM_RSP_STS);
+		emm_rsp_sts.u = CSR_READ(mmc_current_file.node, CAVM_MIO_EMM_RSP_STS);
 	} while (emm_rsp_sts.s.cmd_val);
 
 
@@ -165,13 +165,13 @@ int sdmmc_rw_data(int write, unsigned int addr, int size, uintptr_t buf, int buf
 				buf_size, size, round_size);
 	}
 
-	smmux_nscr0.u = CSR_READ_PA(mmc_current_file.node, CAVM_SMMUX_NSCR0(0));
+	smmux_nscr0.u = CSR_READ(mmc_current_file.node, CAVM_SMMUX_NSCR0(0));
 	smmux_nscr0.s.nscfg = 2;
-	CSR_WRITE_PA(mmc_current_file.node, CAVM_SMMUX_NSCR0(0), smmux_nscr0.u);
+	CSR_WRITE(mmc_current_file.node, CAVM_SMMUX_NSCR0(0), smmux_nscr0.u);
 
-	val = CSR_READ_PA(mmc_current_file.node, CAVM_SMMUX_SSDRX(0, ssd_idx));
+	val = CSR_READ(mmc_current_file.node, CAVM_SMMUX_SSDRX(0, ssd_idx));
 	val &= ~emm_ssd_mask;
-	CSR_WRITE_PA(mmc_current_file.node, CAVM_SMMUX_SSDRX(0, ssd_idx), val);
+	CSR_WRITE(mmc_current_file.node, CAVM_SMMUX_SSDRX(0, ssd_idx), val);
 
 	blk_cnt = round_size / mmc_drv.sector_size;
 	offset  = addr % mmc_drv.sector_size;
@@ -196,31 +196,31 @@ int sdmmc_rw_data(int write, unsigned int addr, int size, uintptr_t buf, int buf
 		mio_emm_dma.s.card_addr = addr / mmc_drv.sector_size;
 		mio_emm_dma.s.block_cnt = blks;
 
-		CSR_WRITE_PA(mmc_current_file.node, CAVM_MIO_EMM_DMA_ADR, tmp_buf);
-		CSR_WRITE_PA(mmc_current_file.node, CAVM_MIO_EMM_DMA_CFG, emm_dma_cfg.u);
-		CSR_WRITE_PA(mmc_current_file.node, CAVM_MIO_EMM_DMA, mio_emm_dma.u);
+		CSR_WRITE(mmc_current_file.node, CAVM_MIO_EMM_DMA_ADR, tmp_buf);
+		CSR_WRITE(mmc_current_file.node, CAVM_MIO_EMM_DMA_CFG, emm_dma_cfg.u);
+		CSR_WRITE(mmc_current_file.node, CAVM_MIO_EMM_DMA, mio_emm_dma.u);
 
 		do {
-			emm_rsp_sts.u = CSR_READ_PA(mmc_current_file.node, CAVM_MIO_EMM_RSP_STS);
+			emm_rsp_sts.u = CSR_READ(mmc_current_file.node, CAVM_MIO_EMM_RSP_STS);
 		} while (emm_rsp_sts.s.dma_val);
 
 		/* DMA error */
 		if (emm_rsp_sts.s.dma_pend) {
 			ERROR("sdmmc: DMA error\n");
 
-			mio_emm_dma.u = CSR_READ_PA(mmc_current_file.node, CAVM_MIO_EMM_DMA);
+			mio_emm_dma.u = CSR_READ(mmc_current_file.node, CAVM_MIO_EMM_DMA);
 			mio_emm_dma.s.dma_val = 1;
 			mio_emm_dma.s.dat_null = 1;
-			CSR_WRITE_PA(mmc_current_file.node, CAVM_MIO_EMM_DMA, mio_emm_dma.u);
+			CSR_WRITE(mmc_current_file.node, CAVM_MIO_EMM_DMA, mio_emm_dma.u);
 			do {
-				emm_rsp_sts.u = CSR_READ_PA(mmc_current_file.node, CAVM_MIO_EMM_RSP_STS);
+				emm_rsp_sts.u = CSR_READ(mmc_current_file.node, CAVM_MIO_EMM_RSP_STS);
 			} while (emm_rsp_sts.s.dma_val);
 
 			return -1;
 		}
 
 		do {
-			emm_dma_cfg.u = CSR_READ_PA(mmc_current_file.node, CAVM_MIO_EMM_DMA_CFG);
+			emm_dma_cfg.u = CSR_READ(mmc_current_file.node, CAVM_MIO_EMM_DMA_CFG);
 		} while (emm_dma_cfg.s.en);
 
 		blk_cnt -= blks;
@@ -258,43 +258,43 @@ int emmc_config()
 	mmc_drv.bus_id = 0;
 	mmc_drv.sector_size = MMC_SECTOR_SIZE;
 	/* Set bit 1 to use eMMC bus 0 */
-	CSR_WRITE_PA(mmc_current_file.node, CAVM_MIO_EMM_CFG, 0x1);
+	CSR_WRITE(mmc_current_file.node, CAVM_MIO_EMM_CFG, 0x1);
 
 #if 0
-	rst_boot.u = CSR_READ_PA(mmc_current_file.node, CAVM_RST_BOOT);
+	rst_boot.u = CSR_READ(mmc_current_file.node, CAVM_RST_BOOT);
 
 	/* Clear GPIO_BIT_CFG8[TX_OE] to disable power / enable reset */
 	//gpio_bit_cfgx.u = 0;
 	//gpio_bit_cfgx.s.tx_oe = 0;
-	//CSR_WRITE_PA(mmc_current_file.node,regs.gpio_base, GPIO_BIT_CFGX(8), gpio_bit_cfgx.u);
+	//CSR_WRITE(mmc_current_file.node,regs.gpio_base, GPIO_BIT_CFGX(8), gpio_bit_cfgx.u);
 	wait(200 * REF_FREQ);
-	val = (CSR_READ_PA(mmc_current_file.node, CAVM_GPIO_RX_DAT) >> 8) & 0x1;
+	val = (CSR_READ(mmc_current_file.node, CAVM_GPIO_RX_DAT) >> 8) & 0x1;
 
 	if (val)
-		CSR_WRITE_PA(mmc_current_file.node, CAVM_GPIO_TX_CLR, 1 << 8);
+		CSR_WRITE(mmc_current_file.node, CAVM_GPIO_TX_CLR, 1 << 8);
 	else
-		CSR_WRITE_PA(mmc_current_file.node, CAVM_GPIO_TX_SET, 1 << 8);
+		CSR_WRITE(mmc_current_file.node, CAVM_GPIO_TX_SET, 1 << 8);
 
 	gpio_bit_cfgx.u = 0;
 	gpio_bit_cfgx.s.tx_oe = 1;
-	CSR_WRITE_PA(mmc_current_file.node, CAVM_GPIO_BIT_CFGX(8), gpio_bit_cfgx.u);
+	CSR_WRITE(mmc_current_file.node, CAVM_GPIO_BIT_CFGX(8), gpio_bit_cfgx.u);
 
 	wait(2 * REF_FREQ);
 
 	/* Set bit 1 to use eMMC bus 0 */
-	CSR_WRITE_PA(mmc_current_file.node, CAVM_MIO_EMM_CFG, 0x1);
+	CSR_WRITE(mmc_current_file.node, CAVM_MIO_EMM_CFG, 0x1);
 
 	/* EMMC:(70)  Clear mio_emm_sts_mask.STS_MSK[31:8,6:0], Set Switch_ERR(<7>)
 	 * ignore errors except <7>
 	 */
-	CSR_WRITE_PA(mmc_current_file.node, CAVM_MIO_EMM_STS_MASK, 0x80);
+	CSR_WRITE(mmc_current_file.node, CAVM_MIO_EMM_STS_MASK, 0x80);
 
 	/* 400 KHz */
 	clock = (125 * rst_boot.s.pnr_mul + 1) >> 1;
 	emm_switch.u = 0;
 	emm_switch.s.power_class = 10;
 	emm_switch.s.clk_hi = emm_switch.s.clk_lo = clock;
-	CSR_WRITE_PA(mmc_current_file.node, CAVM_MIO_EMM_SWITCH, emm_switch.u);
+	CSR_WRITE(mmc_current_file.node, CAVM_MIO_EMM_SWITCH, emm_switch.u);
 
 	clock = (5 * rst_boot.s.pnr_mul + 3) >> 2;
 	emm_switch.s.clk_hi = emm_switch.s.clk_lo = clock;
@@ -302,7 +302,7 @@ int emmc_config()
 	emm_switch.s.bus_width = BUS_8_BIT;
 	wait(1.2 * REF_FREQ);
 
-	CSR_WRITE_PA(mmc_current_file.node, CAVM_MIO_EMM_WDOG, 0x400);
+	CSR_WRITE(mmc_current_file.node, CAVM_MIO_EMM_WDOG, 0x400);
 
 	// DO while loop
 	clock = (125 * rst_boot.s.pnr_mul + 1) >> 1;
@@ -311,7 +311,7 @@ int emmc_config()
 	//slow_switch.s.clk_hi = 0;
 	//slow_switch.s.clk_lo = clock;
 	slow_switch.s.clk_hi = slow_switch.s.clk_lo = clock;
-	CSR_WRITE_PA(mmc_current_file.node, CAVM_MIO_EMM_SWITCH, slow_switch.u);
+	CSR_WRITE(mmc_current_file.node, CAVM_MIO_EMM_SWITCH, slow_switch.u);
 
 	mio_emm_cmd(MMC_CMD_GO_IDLE_STATE, 0, 0, 0);
 	emm_rsp_sts = mio_emm_cmd(SD_CMD_SEND_IF_COND, 1, 2, 0x1aa);
@@ -327,7 +327,7 @@ int emmc_config()
 		return -1;
 	}
 
-	emm_rsp_lo = CSR_READ_PA(mmc_current_file.node, CAVM_MIO_EMM_RSP_LO);
+	emm_rsp_lo = CSR_READ(mmc_current_file.node, CAVM_MIO_EMM_RSP_LO);
 	/* SD card */
 	if ((emm_rsp_lo & (1UL << 39)) == 0) {
 		INFO("%s %d: error emm_rsp_lo = %lx\n", __func__, __LINE__, emm_rsp_lo);
@@ -342,14 +342,14 @@ int emmc_config()
 	mmc_drv.rca = (emm_rsp_lo >> 24) & 0xffff;
 	emm_rsp_sts = mio_emm_cmd(MMC_CMD_SELECT_CARD, 0, 0, mmc_drv.rca << 16);
 
-	CSR_WRITE_PA(mmc_current_file.node, CAVM_MIO_EMM_RCA, mmc_drv.rca);
+	CSR_WRITE(mmc_current_file.node, CAVM_MIO_EMM_RCA, mmc_drv.rca);
 
 	/* Switch to new bus width etc.
 	 * TODO: read the CSD register and config card properly
 	 */
 	mio_emm_cmd(MMC_CMD_APP_CMD, 0, 0, (mmc_drv.rca<<16));
 	emm_rsp_sts = mio_emm_cmd(MMC_CMD_SWITCH, 0, 0, mmc_drv.bus_width << 1);
-	emm_rsp_lo = CSR_READ_PA(mmc_current_file.node, CAVM_MIO_EMM_RSP_LO);
+	emm_rsp_lo = CSR_READ(mmc_current_file.node, CAVM_MIO_EMM_RSP_LO);
 
 	if (!emm_rsp_sts.s.rsp_timeout) {
 		if (!(emm_rsp_lo >> (8 + 5) & 1)			// APP_CMD
@@ -357,7 +357,7 @@ int emmc_config()
 				&& (emm_rsp_lo >> (8 + 19) & 1)){ 	// ERROR
 
 			emm_rsp_sts = mio_emm_cmd(MMC_CMD_SEND_STATUS, 0, 0, mmc_drv.rca << 16);
-			emm_rsp_lo = CSR_READ_PA(mmc_current_file.node, CAVM_MIO_EMM_RSP_LO);
+			emm_rsp_lo = CSR_READ(mmc_current_file.node, CAVM_MIO_EMM_RSP_LO);
 			if (!emm_rsp_sts.s.rsp_timeout) {
 
 				if ((emm_rsp_lo >> (8 + 31) & 1)		// OUT_OF_RANGE
@@ -371,11 +371,11 @@ int emmc_config()
 					emm_switch.s.clk_lo = clock;
 					emm_switch.s.power_class = 10;
 					emm_switch.s.switch_exe = 1;
-					CSR_WRITE_PA(mmc_current_file.node, CAVM_MIO_EMM_SWITCH, emm_switch.u);
+					CSR_WRITE(mmc_current_file.node, CAVM_MIO_EMM_SWITCH, emm_switch.u);
 					INFO("%s %d: emm_rsp_sts\n", __func__, __LINE__);
 
 					do {
-						emm_rsp_sts.u = CSR_READ_PA(mmc_current_file.node, CAVM_MIO_EMM_RSP_STS);
+						emm_rsp_sts.u = CSR_READ(mmc_current_file.node, CAVM_MIO_EMM_RSP_STS);
 					} while (emm_rsp_sts.s.switch_val);
 				}
 			}

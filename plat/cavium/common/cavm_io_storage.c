@@ -382,7 +382,7 @@ int plat_get_fip_source(uintptr_t *dev_handle, uintptr_t *image_spec)
 	uintptr_t handle;
 	uintptr_t spec;
 
-	gpio_strap.u = CSR_READ_PA(0, CAVM_GPIO_STRAP);
+	gpio_strap.u = CSR_READ(0, CAVM_GPIO_STRAP);
 	boot_medium = (gpio_strap.u) & 0x7;
 
 	/* Call platform method to get proper boot type */

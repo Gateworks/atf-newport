@@ -65,7 +65,7 @@ int thunder_dram_is_lmc_enabled(unsigned node, unsigned lmc)
 {
 	union cavm_lmcx_dll_ctl2 lmcx_dll_ctl2;
 
-	lmcx_dll_ctl2.u = CSR_READ_PA(node, CAVM_LMCX_DLL_CTL2(lmc));
+	lmcx_dll_ctl2.u = CSR_READ(node, CAVM_LMCX_DLL_CTL2(lmc));
 
 	return (lmcx_dll_ctl2.cn9.dreset ? 0 : 1);
 }
@@ -75,7 +75,7 @@ unsigned thunder_get_node_count(void)
 	unsigned long node = cavm_numa_local();
 	union cavm_ccs_ccpi_ctl ccs_ccpi_ctl;
 
-	ccs_ccpi_ctl.u = CSR_READ_PA(node, CAVM_CCS_CCPI_CTL);
+	ccs_ccpi_ctl.u = CSR_READ(node, CAVM_CCS_CCPI_CTL);
 
 	return (ccs_ccpi_ctl.s.enaoci > 1) ? 2 : 1;
 }
@@ -95,9 +95,9 @@ void set_secondary_cpu_jump_addr(unsigned int bl1_base)
 	 * Memory is little endain, so 64 bit constants have the first
 	 * instruction in the low word
 	 */
-	CSR_WRITE_PA(0, CAVM_ROM_MEMX(0), 0xd503201fd508711f);
-	CSR_WRITE_PA(0, CAVM_ROM_MEMX(1), 0xd61f000058000040);
-	CSR_WRITE_PA(0, CAVM_ROM_MEMX(2), (uint64_t)bl1_base);
+	CSR_WRITE(0, CAVM_ROM_MEMX(0), 0xd503201fd508711f);
+	CSR_WRITE(0, CAVM_ROM_MEMX(1), 0xd61f000058000040);
+	CSR_WRITE(0, CAVM_ROM_MEMX(2), (uint64_t)bl1_base);
 }
 
 int thunder_get_ccu_count(void)

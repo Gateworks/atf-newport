@@ -157,8 +157,8 @@ static uint8_t thunder_fuse_read_byte(int node, int byte_addr)
 	read_cmd.u = 0;
 	read_cmd.s.addr = byte_addr;
 	read_cmd.s.pend = 1;
-	CSR_WRITE_PA(node, CAVM_MIO_FUS_RCMD, read_cmd.u);
-	while ((read_cmd.u = CSR_READ_PA(node, CAVM_MIO_FUS_RCMD)) &&
+	CSR_WRITE(node, CAVM_MIO_FUS_RCMD, read_cmd.u);
+	while ((read_cmd.u = CSR_READ(node, CAVM_MIO_FUS_RCMD)) &&
 		read_cmd.s.pend) ;
 
 	return read_cmd.s.dat;

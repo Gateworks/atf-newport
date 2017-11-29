@@ -244,7 +244,7 @@ static int octeontx_get_max_rvu_pfs(int node)
 {
 	union cavm_rvu_priv_const priv_const;
 
-	priv_const.u = CSR_READ_PA(node, CAVM_RVU_PRIV_CONST);
+	priv_const.u = CSR_READ(node, CAVM_RVU_PRIV_CONST);
 
 	return priv_const.s.pfs;
 }
@@ -278,7 +278,7 @@ static void mailbox_enable(int node)
 
 	pf_bar4_addr.u = 0;
 	pf_bar4_addr.s.addr = PF_MBOX_BASE;
-	CSR_WRITE_PA(node, CAVM_RVU_AF_PF_BAR4_ADDR, pf_bar4_addr.u);
+	CSR_WRITE(node, CAVM_RVU_AF_PF_BAR4_ADDR, pf_bar4_addr.u);
 
 	for (pf = 0; pf < octeontx_get_max_rvu_pfs(node); pf++) {
 		if (rvu_dev[pf].enable && rvu_dev[pf].num_vfs) {
@@ -305,7 +305,7 @@ static void config_rvu_pci(int node)
 		pf_id_cfg.s.class_code = rvu_dev[pf].pci.class_code;
 		pf_id_cfg.s.pf_devid = rvu_dev[pf].pci.pf_devid;
 		pf_id_cfg.s.vf_devid = rvu_dev[pf].pci.vf_devid;
-		CSR_WRITE_PA(node, CAVM_RVU_PRIV_PFX_ID_CFG(pf), pf_id_cfg.u);
+		CSR_WRITE(node, CAVM_RVU_PRIV_PFX_ID_CFG(pf), pf_id_cfg.u);
 	}
 }
 
@@ -319,7 +319,7 @@ static void msix_enable(int node)
 
 	af_msix_cfg.u = 0;
 	af_msix_cfg.s.addr = PF_MSIX_BASE;
-	CSR_WRITE_PA(node, CAVM_RVU_AF_MSIXTR_BASE, af_msix_cfg.u);
+	CSR_WRITE(node, CAVM_RVU_AF_MSIXTR_BASE, af_msix_cfg.u);
 
 	/* set PF/VF msix table size and offset */
 	for (pf = 0; pf < octeontx_get_max_rvu_pfs(node); pf++) {
@@ -344,7 +344,7 @@ static void msix_enable(int node)
 				vf_msix_offset += ((rvu_dev[pf].num_vfs & MAX_RVU_VFS_PER_PF) *
 						   (RVU_DEFAULT_MSIX_VEC_PER_VF * RVU_MSIX_VEC_SIZE));
 			}
-			CSR_WRITE_PA(node, CAVM_RVU_PRIV_PFX_MSIX_CFG(pf), pfx_msix_cfg.u);
+			CSR_WRITE(node, CAVM_RVU_PRIV_PFX_MSIX_CFG(pf), pfx_msix_cfg.u);
 		}
 	}
 }
@@ -361,8 +361,8 @@ static inline void map_lf_to_vf(int node, int pf, int vf, int npalf_id,
 	nix_lf_cfg.s.pf_func = npa_lf_cfg.s.pf_func = (((pf & 0x3f) << 10)
 					| ((vf + 1) & 0x3ff));
 	nix_lf_cfg.s.slot = npa_lf_cfg.s.slot = 0;
-	CSR_WRITE_PA(node, CAVM_NPA_PRIV_LFX_CFG(npalf_id), npa_lf_cfg.u);
-	CSR_WRITE_PA(node, CAVM_NIXX_PRIV_LFX_CFG(0, nixlf_id), nix_lf_cfg.u);
+	CSR_WRITE(node, CAVM_NPA_PRIV_LFX_CFG(npalf_id), npa_lf_cfg.u);
+	CSR_WRITE(node, CAVM_NIXX_PRIV_LFX_CFG(0, nixlf_id), nix_lf_cfg.u);
 }
 
 /* set total VFs and HWVFs for PFs */
@@ -375,7 +375,7 @@ static void enable_rvu_pf(int node, int pf)
 	pf_cfg.s.ena = TRUE;
 	pf_cfg.s.nvf = rvu_dev[pf].num_vfs;
 	pf_cfg.s.first_hwvf = rvu_dev[pf].first_hwvf;
-	CSR_WRITE_PA(node, CAVM_RVU_PRIV_PFX_CFG(pf), pf_cfg.u);
+	CSR_WRITE(node, CAVM_RVU_PRIV_PFX_CFG(pf), pf_cfg.u);
 }
 
 static void disable_rvu_pf(int node, int pf)
@@ -387,7 +387,7 @@ static void disable_rvu_pf(int node, int pf)
 	pf_cfg.s.ena = 0;
 	pf_cfg.s.nvf = 0;
 	pf_cfg.s.first_hwvf = 0;
-	CSR_WRITE_PA(node, CAVM_RVU_PRIV_PFX_CFG(pf), pf_cfg.u);
+	CSR_WRITE(node, CAVM_RVU_PRIV_PFX_CFG(pf), pf_cfg.u);
 
 }
 /* Enable NPA for PF*/
@@ -398,13 +398,13 @@ static void pf_enable_npa(int node, int pf, int lf_id)
 
 	pf_npa_cfg.u = 0;
 	pf_npa_cfg.s.has_lf = 1;
-	CSR_WRITE_PA(node, CAVM_RVU_PRIV_PFX_NPA_CFG(pf), pf_npa_cfg.u);
+	CSR_WRITE(node, CAVM_RVU_PRIV_PFX_NPA_CFG(pf), pf_npa_cfg.u);
 
 	npa_lf_cfg.u = 0;
 	npa_lf_cfg.s.ena = 1;
 	npa_lf_cfg.s.pf_func = (((pf & 0x3f) << 10) | 0x0);
 	npa_lf_cfg.s.slot = 0;
-	CSR_WRITE_PA(node, CAVM_NPA_PRIV_LFX_CFG(lf_id), npa_lf_cfg.u);
+	CSR_WRITE(node, CAVM_NPA_PRIV_LFX_CFG(lf_id), npa_lf_cfg.u);
 }
 
 /* Enable NIX for PF*/
@@ -415,13 +415,13 @@ static void pf_enable_nix(int node, int pf, int lf_id)
 
 	pf_nix_cfg.u = 0;
 	pf_nix_cfg.s.has_lf = 1;
-	CSR_WRITE_PA(node, CAVM_RVU_PRIV_PFX_NIXX_CFG(pf, 0), pf_nix_cfg.u);
+	CSR_WRITE(node, CAVM_RVU_PRIV_PFX_NIXX_CFG(pf, 0), pf_nix_cfg.u);
 
 	nix_lf_cfg.u = 0;
 	nix_lf_cfg.s.ena = 1;
 	nix_lf_cfg.s.pf_func = (((pf & 0x3f) << 10) | 0x0);
 	nix_lf_cfg.s.slot = 0;
-	CSR_WRITE_PA(node, CAVM_NIXX_PRIV_LFX_CFG(0, lf_id), nix_lf_cfg.u);
+	CSR_WRITE(node, CAVM_NIXX_PRIV_LFX_CFG(0, lf_id), nix_lf_cfg.u);
 }
 
 /* Enable NIX and NPA for hwvf/VFs */
@@ -432,11 +432,11 @@ static void hwvf_enable_npa_nix(int node, int hwvf)
 
 	hwvf_npa_cfg.u = 0;
 	hwvf_npa_cfg.s.has_lf = 1;
-	CSR_WRITE_PA(node, CAVM_RVU_PRIV_HWVFX_NPA_CFG(hwvf), hwvf_npa_cfg.u);
+	CSR_WRITE(node, CAVM_RVU_PRIV_HWVFX_NPA_CFG(hwvf), hwvf_npa_cfg.u);
 
 	hwvf_nix_cfg.u = 0;
 	hwvf_nix_cfg.s.has_lf = 1;
-	CSR_WRITE_PA(node, CAVM_RVU_PRIV_HWVFX_NIXX_CFG(hwvf, 0), hwvf_nix_cfg.u);
+	CSR_WRITE(node, CAVM_RVU_PRIV_HWVFX_NIXX_CFG(hwvf, 0), hwvf_nix_cfg.u);
 }
 
 /* Reset all the resources before enabling PF */
@@ -453,38 +453,38 @@ static void reset_rvu_pf(int node, int pf)
 
 	cpt_cfg.u = 0;
 	cpt_cfg.s.num_lfs = 0;
-	CSR_WRITE_PA(node, CAVM_RVU_PRIV_PFX_CPTX_CFG(pf, 0), cpt_cfg.u);
+	CSR_WRITE(node, CAVM_RVU_PRIV_PFX_CPTX_CFG(pf, 0), cpt_cfg.u);
 
 	int_cfg.u = 0;
 	int_cfg.s.msix_offset = 0;
-	CSR_WRITE_PA(node, CAVM_RVU_PRIV_PFX_INT_CFG(pf), int_cfg.u);
+	CSR_WRITE(node, CAVM_RVU_PRIV_PFX_INT_CFG(pf), int_cfg.u);
 
 	msix_cfg.u = 0;
 	msix_cfg.s.pf_msixt_offset = 0;
 	msix_cfg.s.pf_msixt_sizem1 = 0;
 	msix_cfg.s.vf_msixt_offset = 0;
 	msix_cfg.s.vf_msixt_sizem1 = 0;
-	CSR_WRITE_PA(node, CAVM_RVU_PRIV_PFX_MSIX_CFG(pf), msix_cfg.u);
+	CSR_WRITE(node, CAVM_RVU_PRIV_PFX_MSIX_CFG(pf), msix_cfg.u);
 
 	nix_cfg.u = 0;
 	nix_cfg.s.has_lf = 0;
-	CSR_WRITE_PA(node, CAVM_RVU_PRIV_PFX_NIXX_CFG(pf, 0), nix_cfg.u);
+	CSR_WRITE(node, CAVM_RVU_PRIV_PFX_NIXX_CFG(pf, 0), nix_cfg.u);
 
 	npa_cfg.u = 0;
 	npa_cfg.s.has_lf = 0;
-	CSR_WRITE_PA(node, CAVM_RVU_PRIV_PFX_NPA_CFG(pf), npa_cfg.u);
+	CSR_WRITE(node, CAVM_RVU_PRIV_PFX_NPA_CFG(pf), npa_cfg.u);
 
 	sso_cfg.u = 0;
 	sso_cfg.s.num_lfs = 0;
-	CSR_WRITE_PA(node, CAVM_RVU_PRIV_PFX_SSO_CFG(pf), sso_cfg.u);
+	CSR_WRITE(node, CAVM_RVU_PRIV_PFX_SSO_CFG(pf), sso_cfg.u);
 
 	ssow_cfg.u = 0;
 	ssow_cfg.s.num_lfs = 0;
-	CSR_WRITE_PA(node, CAVM_RVU_PRIV_PFX_SSOW_CFG(pf), ssow_cfg.u);
+	CSR_WRITE(node, CAVM_RVU_PRIV_PFX_SSOW_CFG(pf), ssow_cfg.u);
 
 	tim_cfg.u = 0;
 	tim_cfg.s.num_lfs = 0;
-	CSR_WRITE_PA(node, CAVM_RVU_PRIV_PFX_TIM_CFG(pf), tim_cfg.u);
+	CSR_WRITE(node, CAVM_RVU_PRIV_PFX_TIM_CFG(pf), tim_cfg.u);
 }
 
 void octeontx_rvu_init(int node)

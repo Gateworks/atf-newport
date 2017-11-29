@@ -200,7 +200,7 @@ static void thunder_configure_mmc_security(void)
 	uint64_t emm_ssd_mask = (1ULL << (CAVM_PCC_DEV_CON_E_MIO_EMM & 0x1F));
 	cavm_gpio_strap_t gpio_strap;
 
-	gpio_strap.u = CSR_READ_PA(0, CAVM_GPIO_STRAP);
+	gpio_strap.u = CSR_READ(0, CAVM_GPIO_STRAP);
 	boot_medium = (gpio_strap.u) & 0x7;
 
 	boot_type = plat_get_boot_type(boot_medium);
@@ -212,9 +212,9 @@ static void thunder_configure_mmc_security(void)
 	 * Configure SMMU and mark MMC controller in NODE0
 	 * as acting for non-secure domain.
 	 */
-	val = CSR_READ_PA(0, CAVM_SMMUX_SSDRX(0, ssd_idx));
+	val = CSR_READ(0, CAVM_SMMUX_SSDRX(0, ssd_idx));
 	val |= emm_ssd_mask;
-	CSR_WRITE_PA(0, CAVM_SMMUX_SSDRX(0, ssd_idx), val);
+	CSR_WRITE(0, CAVM_SMMUX_SSDRX(0, ssd_idx), val);
 }
 
 /*******************************************************************************

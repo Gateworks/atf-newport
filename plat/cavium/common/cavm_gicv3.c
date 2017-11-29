@@ -67,9 +67,9 @@ void thunder_gic_driver_init(void)
 	/* ERRATUM GIC-28835 */
 	if (IS_THUNDER_PASS(read_midr(), T83PARTNUM, 1, 0)) {
 	        union cavm_gic_cfg_ctlr cfg_ctlr;
-	        cfg_ctlr.u = CSR_READ_PA(0, CAVM_GIC_CFG_CTLR);
+	        cfg_ctlr.u = CSR_READ(0, CAVM_GIC_CFG_CTLR);
 	        cfg_ctlr.s.dis_cpu_if_load_balancer = 1;
-	        CSR_WRITE_PA(0, CAVM_GIC_CFG_CTLR, cfg_ctlr.u);
+	        CSR_WRITE(0, CAVM_GIC_CFG_CTLR, cfg_ctlr.u);
 	}
 
 	thunder_gic_data.gicd_base = CSR_PA(0, CAVM_GIC_PF_BAR0);

@@ -196,12 +196,12 @@ static void init_smmu(int node, uint64_t config_base, uint64_t config_size)
 	for (int i = 0; i < 2048; i++) {
 		/* Only eMMC in SMMU0 is secure */
 		/*if (i == 8 && smmunr == 0) {
-			CSR_WRITE_PA((unsigned long)node,
+			CSR_WRITE((unsigned long)node,
 				     CAVM_SMMUX_SSDRX(smmunr, i), 0xffffcfff);
 			continue;
 		}*/
 
-		CSR_WRITE_PA((unsigned long)node, CAVM_SMMUX_SSDRX(smmunr, i),
+		CSR_WRITE((unsigned long)node, CAVM_SMMUX_SSDRX(smmunr, i),
 			     0xffffffff);
 	}
 
@@ -525,10 +525,10 @@ static void init_iobn(int node, uint64_t config_base, uint64_t config_size)
 	 * external PCIe devices to do DMA.
 	 */
 	if(iobn_nr == 0) {
-		iobn_dis_ncbi.u = CSR_READ_PA(node, CAVM_IOBNX_DIS_NCBI_IO(iobn_nr));
+		iobn_dis_ncbi.u = CSR_READ(node, CAVM_IOBNX_DIS_NCBI_IO(iobn_nr));
 
 		iobn_dis_ncbi.s.sli_off = 0;
-		CSR_WRITE_PA(node, CAVM_IOBNX_DIS_NCBI_IO(iobn_nr), iobn_dis_ncbi.u);
+		CSR_WRITE(node, CAVM_IOBNX_DIS_NCBI_IO(iobn_nr), iobn_dis_ncbi.u);
 	}
 }
 
@@ -554,19 +554,19 @@ static void init_iobn5(int node, uint64_t config_base, uint64_t config_size)
 	 * We can program secure devices later when they discovered.
 	 */
 	for (i = 0; i < 256; i++) {
-		CSR_WRITE_PA(node, CAVM_IOBNX_RSLX_STREAMS(iobn_nr,i), 0x3);
+		CSR_WRITE(node, CAVM_IOBNX_RSLX_STREAMS(iobn_nr,i), 0x3);
 	}
 
-	ecamx_const.u = CSR_READ_PA(node, CAVM_ECAMX_CONST(0));
+	ecamx_const.u = CSR_READ(node, CAVM_ECAMX_CONST(0));
 
 	for (domain = 0; domain < ecamx_const.s.domains; domain++) {
 		/* Domains may not be contiguous */
-		domx_const.u = CSR_READ_PA(node, CAVM_ECAMX_DOMX_CONST(0,domain));
+		domx_const.u = CSR_READ(node, CAVM_ECAMX_DOMX_CONST(0,domain));
 		if (domx_const.s.pres) {
 			for (bus = 0; bus < 256; bus++)
-				CSR_WRITE_PA(node, CAVM_IOBNX_DOMX_BUSX_STREAMS(iobn_nr, domain, bus), 0x3);
+				CSR_WRITE(node, CAVM_IOBNX_DOMX_BUSX_STREAMS(iobn_nr, domain, bus), 0x3);
 			for (dev = 0; dev < 32; dev++)
-				CSR_WRITE_PA(node, CAVM_IOBNX_DOMX_DEVX_STREAMS(iobn_nr, domain, dev), 0x3);
+				CSR_WRITE(node, CAVM_IOBNX_DOMX_DEVX_STREAMS(iobn_nr, domain, dev), 0x3);
 		}
 	}
 }

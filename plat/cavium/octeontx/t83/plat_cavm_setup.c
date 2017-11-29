@@ -61,7 +61,7 @@ int thunder_dram_is_lmc_enabled(unsigned node, unsigned lmc)
 {
 	union cavm_lmcx_dll_ctl2 lmcx_dll_ctl2;
 
-	lmcx_dll_ctl2.u = CSR_READ_PA(node, CAVM_LMCX_DLL_CTL2(lmc));
+	lmcx_dll_ctl2.u = CSR_READ(node, CAVM_LMCX_DLL_CTL2(lmc));
 
 	return (lmcx_dll_ctl2.cn8.dreset ? 0 : 1);
 }
@@ -71,7 +71,7 @@ unsigned thunder_get_node_count(void)
 	unsigned long node = cavm_numa_local();
 	union cavm_l2c_oci_ctl l2c_oci_ctl;
 
-	l2c_oci_ctl.u = CSR_READ_PA(node, CAVM_L2C_OCI_CTL);
+	l2c_oci_ctl.u = CSR_READ(node, CAVM_L2C_OCI_CTL);
 
 	return (l2c_oci_ctl.s.enaoci > 1) ? 2 : 1;
 }
@@ -81,7 +81,7 @@ unsigned thunder_get_node_count(void)
  ******************************************************************************/
 void set_secondary_cpu_jump_addr(unsigned int bl1_base)
 {
-       CSR_WRITE_PA(0, CAVM_MIO_BOOT_AP_JUMP, bl1_base);
+       CSR_WRITE(0, CAVM_MIO_BOOT_AP_JUMP, bl1_base);
 }
 
 void plat_add_mmio_node(unsigned long node)
@@ -177,7 +177,7 @@ int plat_get_boot_type(int boot_type)
 	cavm_rst_boot_t rst_boot;
 	int ret;
 
-	rst_boot.u = CSR_READ_PA(0, CAVM_RST_BOOT);
+	rst_boot.u = CSR_READ(0, CAVM_RST_BOOT);
 
 	if (rst_boot.s.rboot) { /* Remote boot */
 		ret = THUNDER_BOOT_REMOTE;
