@@ -276,8 +276,7 @@ static void mailbox_enable(int node)
 	static uint64_t vf_base = VF_MBOX_BASE;
 	union cavm_rvu_af_pf_bar4_addr pf_bar4_addr;
 
-	pf_bar4_addr.u = 0;
-	pf_bar4_addr.s.addr = PF_MBOX_BASE;
+	pf_bar4_addr.u = PF_MBOX_BASE;
 	CSR_WRITE(node, CAVM_RVU_AF_PF_BAR4_ADDR, pf_bar4_addr.u);
 
 	for (pf = 0; pf < octeontx_get_max_rvu_pfs(node); pf++) {
