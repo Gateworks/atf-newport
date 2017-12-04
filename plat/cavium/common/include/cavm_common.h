@@ -43,6 +43,8 @@ int thunder_get_sata_count(void);
 int thunder_sata_to_gser(int ctrlr);
 int thunder_sata_to_lane(int ctrlr);
 int thunder_get_max_sata_gser(void);
+int thunder_get_iobn_count(void);
+int plat_get_boot_type(int boot_mode);
 
 void add_map_record(unsigned long addr, unsigned long size, mmap_attr_t attr);
 

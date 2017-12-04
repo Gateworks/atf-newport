@@ -185,45 +185,18 @@ static void thunder_el3_irq_init(void)
 		printf("err %d on registering secure handler;\n", rc);
 }
 
-/*
- * While booting from MMC device, it was necessary to configure SMMU as to grant
- * access for eMMC controller to secure memory, where images were loaded. On
- * the other hand in order to keep MMC functional in non-secure world, we must
- * come back to initial settings. It is safe to do it here, because every
- * firmware image is loaded at this time.
- */
-static void thunder_configure_mmc_security(void)
-{
-	int boot_medium, boot_type;
-	uint64_t val;
-	uint64_t ssd_idx = CAVM_PCC_DEV_CON_E_MIO_EMM >> 5;
-	uint64_t emm_ssd_mask = (1ULL << (CAVM_PCC_DEV_CON_E_MIO_EMM & 0x1F));
-	cavm_gpio_strap_t gpio_strap;
-
-	gpio_strap.u = CSR_READ(0, CAVM_GPIO_STRAP);
-	boot_medium = (gpio_strap.u) & 0x7;
-
-	boot_type = plat_get_boot_type(boot_medium);
-	/* If it isn't MMC boot, then nothing to do here */
-	if (boot_type != THUNDER_BOOT_EMMC)
-		return;
-
-	/*
-	 * Configure SMMU and mark MMC controller in NODE0
-	 * as acting for non-secure domain.
-	 */
-	val = CSR_READ(0, CAVM_SMMUX_SSDRX(0, ssd_idx));
-	val |= emm_ssd_mask;
-	CSR_WRITE(0, CAVM_SMMUX_SSDRX(0, ssd_idx), val);
-}
-
 /*******************************************************************************
  * Initialize the gic, configure the CLCD and zero out variables needed by the
  * secondaries to boot up correctly.
  ******************************************************************************/
 void bl31_platform_setup()
 {
-	thunder_configure_mmc_security();
+	/*
+	 * In order to keep MMC functional in non-secure world, we must
+	 * make the device have access to non-secure memory. It is safe to
+	 * do it here, because every firmware image is loaded at this time.
+	 */
+	cavm_configure_mmc_security(0); /* non-secure */
 	thunder_fill_board_details(1);
 	thunder_el3_irq_init();
 	thunder_gic_driver_init();

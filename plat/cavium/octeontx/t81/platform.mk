@@ -15,11 +15,11 @@
 include plat/cavium/common/platform.mk
 
 PLAT_BL_COMMON_SOURCES	+=	plat/cavium/octeontx/t81/plat_cavm_setup.c	\
+				plat/cavium/octeontx/cavm_security.c		\
 
 BL1_SOURCES		+=	plat/cavium/octeontx/aarch64/plat_cavm_helpers.S	\
 
 BL2_SOURCES		+=	plat/cavium/octeontx/t81/plat_cavm_ecam.c	\
-				plat/cavium/octeontx/cavm_security.c		\
 
 BL31_SOURCES		+=	plat/cavium/octeontx/aarch64/plat_cavm_helpers.S	\
 				plat/cavium/octeontx/cavm_topology.c	\

@@ -23,7 +23,6 @@
 
 extern void plat_add_mmio_node(unsigned long node);
 extern unsigned thunder_get_node_count(void);
-extern int plat_get_boot_type(int boot_mode);
 
 void *fdt_ptr = (void *)~0;
 

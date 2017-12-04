@@ -143,14 +143,10 @@ int sdmmc_rw_data(int write, unsigned int addr, int size, uintptr_t buf, int buf
 	int blk_cnt, blks, offset, bytes;
 	int round_size;
 	uintptr_t tmp_buf = TZDRAM_BASE + 512;
-	uint64_t val;
-	uint64_t ssd_idx = CAVM_PCC_DEV_CON_E_MIO_EMM >> 5;
-	uint64_t emm_ssd_mask = (1ULL << (CAVM_PCC_DEV_CON_E_MIO_EMM & 0x1F));
 
 	union cavm_mio_emm_dma mio_emm_dma;
 	union cavm_mio_emm_dma_cfg emm_dma_cfg;
 	union cavm_mio_emm_rsp_sts emm_rsp_sts;
-	union cavm_smmux_nscr0 smmux_nscr0;
 
 	/* DMA engine address must be 64-bit aligned */
 	if (size == 0 || ((uintptr_t)buf & 0x7)) {
@@ -165,13 +161,7 @@ int sdmmc_rw_data(int write, unsigned int addr, int size, uintptr_t buf, int buf
 				buf_size, size, round_size);
 	}
 
-	smmux_nscr0.u = CSR_READ(mmc_current_file.node, CAVM_SMMUX_NSCR0(0));
-	smmux_nscr0.s.nscfg = 2;
-	CSR_WRITE(mmc_current_file.node, CAVM_SMMUX_NSCR0(0), smmux_nscr0.u);
-
-	val = CSR_READ(mmc_current_file.node, CAVM_SMMUX_SSDRX(0, ssd_idx));
-	val &= ~emm_ssd_mask;
-	CSR_WRITE(mmc_current_file.node, CAVM_SMMUX_SSDRX(0, ssd_idx), val);
+	cavm_configure_mmc_security(1); /* secure */
 
 	blk_cnt = round_size / mmc_drv.sector_size;
 	offset  = addr % mmc_drv.sector_size;

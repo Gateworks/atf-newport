@@ -11,12 +11,12 @@
 
 **/
 
+#include <stdio.h>
+#include <debug.h>
 #include <arch.h>
 #include <platform_def.h>
 #include <cavm_private.h>
-#include <stdio.h>
-#include <debug.h>
-
+#include <cavm_common.h>
 /*
  * Defines used for CN93xx to enable particular
  * LMC access to particular ASC_REGION
@@ -115,4 +115,81 @@ void octeontx_security_setup(void)
 	__asm__ volatile("ic iallu\n"
 			 "isb\n");
 }
+/*
+ * This function configures IOBN to grant access for eMMC controller
+ * to secure/non-secure memory based on input parameter passed
+ */
+void cavm_configure_mmc_security(int secure)
+{
+	int boot_medium, boot_type;
+	int node = cavm_numa_local();
+	/*
+	 * rsl_idx - PCC function number for the RSL device
+	 * (stream ID<7:0>)
+	 * bus_idx - Stream's bus number (stream_id<15:8>).
+	 */
+	uint64_t rsl_idx = CAVM_PCC_DEV_CON_E_MIO_EMM & 0xFF;
+	uint64_t bus_idx = (CAVM_PCC_DEV_CON_E_MIO_EMM >> 8) & 0xFF;
+	uint64_t domain_idx = (CAVM_PCC_DEV_CON_E_MIO_EMM >> 16) & 0xFF;
+	cavm_gpio_strap_t gpio_strap;
+	cavm_iobnx_rslx_streams_t iobn_rslx_stream;
+	cavm_iobnx_domx_busx_streams_t iobn_domx_busx_stream;
 
+	/* Check for MMC boot, if not return here */
+	gpio_strap.u = CSR_READ(node, CAVM_GPIO_STRAP);
+	boot_medium = (gpio_strap.u) & 0x7;
+
+	boot_type = plat_get_boot_type(boot_medium);
+	if (boot_type != THUNDER_BOOT_EMMC)
+		return;
+
+	for (int iobn_idx = 0; iobn_idx < thunder_get_iobn_count();
+				iobn_idx++) {
+		if (secure) {
+			/*
+			 * While booting from MMC device, it is
+			 * necessary to configure IOBN as to grant
+			 * access for eMMC controller to secure memory,
+			 * where images are loaded
+			 */
+			iobn_rslx_stream.u = CSR_READ(node,
+				CAVM_IOBNX_RSLX_STREAMS(iobn_idx,
+							rsl_idx));
+			iobn_rslx_stream.s.strm_nsec = 0;
+			iobn_rslx_stream.s.phys_nsec = 0;
+			CSR_WRITE(node, CAVM_IOBNX_RSLX_STREAMS(
+						iobn_idx, rsl_idx),
+						iobn_rslx_stream.u);
+
+			iobn_domx_busx_stream.u = CSR_READ(node,
+				CAVM_IOBNX_DOMX_BUSX_STREAMS(iobn_idx,
+				domain_idx, bus_idx));
+			iobn_domx_busx_stream.s.strm_nsec = 0;
+			iobn_domx_busx_stream.s.phys_nsec = 0;
+			CSR_WRITE(node, CAVM_IOBNX_DOMX_BUSX_STREAMS(
+				iobn_idx, domain_idx, bus_idx),
+				iobn_domx_busx_stream.u);
+		} else {
+			/*
+			 * Configure IOBN and mark MMC controller in
+			 * NODE0 as acting for non-secure domain.
+			 */
+			iobn_rslx_stream.u = CSR_READ(node,
+				CAVM_IOBNX_RSLX_STREAMS(
+					iobn_idx, rsl_idx));
+			iobn_rslx_stream.s.strm_nsec = 1;
+			iobn_rslx_stream.s.phys_nsec = 1;
+			CSR_WRITE(node, CAVM_IOBNX_RSLX_STREAMS(
+					iobn_idx, rsl_idx), iobn_rslx_stream.u);
+
+			iobn_domx_busx_stream.u = CSR_READ(node,
+				CAVM_IOBNX_DOMX_BUSX_STREAMS(iobn_idx,
+				domain_idx, bus_idx));
+			iobn_domx_busx_stream.s.strm_nsec = 1;
+			iobn_domx_busx_stream.s.phys_nsec = 1;
+			CSR_WRITE(node, CAVM_IOBNX_DOMX_BUSX_STREAMS(
+					iobn_idx, domain_idx, bus_idx),
+					iobn_domx_busx_stream.u);
+		}
+	}
+}
