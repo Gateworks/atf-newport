@@ -317,8 +317,7 @@ static void msix_enable(int node)
 	/* set AF MSIX table base*/
 	union cavm_rvu_af_msixtr_base af_msix_cfg;
 
-	af_msix_cfg.u = 0;
-	af_msix_cfg.s.addr = PF_MSIX_BASE;
+	af_msix_cfg.u = PF_MSIX_BASE;
 	CSR_WRITE(node, CAVM_RVU_AF_MSIXTR_BASE, af_msix_cfg.u);
 
 	/* set PF/VF msix table size and offset */
