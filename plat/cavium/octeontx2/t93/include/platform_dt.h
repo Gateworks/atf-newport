@@ -15,10 +15,14 @@
 #define _PLATFORM_DT_H_
 
 #define MAX_CGX			3
+
 #define MAX_LMAC_PER_CGX	4
 
 /* Total number of Hardware VFs */
-#define RVU_HWVFS		256
+#define MAX_RVU_HWVFS		256
+
+/* Maximum number of RVU VFs per PF */
+#define MAX_VFS_PER_PF		128
 
 /* Global, default number of VFs */
 #define DEFAULT_VFS		8

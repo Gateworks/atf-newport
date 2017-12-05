@@ -232,28 +232,47 @@ static long octeontx2_fdtbdk_get_num(const void *fdt_addr, const char *prop,
 }
 
 /**
- * octeontx2_parse_rvu_cgx - return number of assigned VFs
+ * octeontx2_handle_num_rvu_vfs - handle errors and report user about
+ * @req_vfs: requested (via FDT) number of VFs
+ * @default_vfs: default number of VFs
+ * @sum_vfs: already allocated HWVFs
+ * @name: node name
  *
- * @return: sum of number of VFs per given PHY node
+ * returns:
+ * 	Valid number (req_vfs/default_vfs/0) of VFs that can be configured
  */
-static int octeontx2_parse_rvu_cgx(void)
+static int octeontx2_handle_num_rvu_vfs(int req_vfs, int default_vfs,
+					int *sum_vfs, const char *name)
 {
-	int i, j;
-	int numvfs;
-	cgx_config_t *cgx;
-	cgx_lmac_config_t *lmac;
+	int hwvfs_left, ret = 0;
 
-	numvfs = 0;
-	for (i = 0; i < MAX_CGX; i++) {
-		cgx = &bfdt.cgx_cfg[i];
-		for (j = 0; j < cgx->lmac_count; j++) {
-			lmac = &cgx->lmac_cfg[j];
-			/* Increment number of assigned VFs */
-			numvfs += lmac->num_rvu_vfs;
+	hwvfs_left = MAX_RVU_HWVFS - *sum_vfs;
+	/* Check if requested num_rvu_vfs does not exceed
+	 * maximum number of VFs per PF and number of left HWVFs */
+	if ((req_vfs <= MAX_VFS_PER_PF) && (hwvfs_left >= req_vfs)) {
+		/* Valid config */
+		ret = req_vfs;
+	} else {
+		/* Print error, try fallback to default value */
+		WARN("RVU: Request to allocate more VFs (%d) than allowed\n"
+		     "              for node %s, trying fallback\n"
+		     "              to default (%d)\n",
+		     req_vfs, name, default_vfs);
+		/* Repeat check for default value */
+		if ((default_vfs <= MAX_VFS_PER_PF) && (hwvfs_left >= default_vfs)) {
+			WARN("RVU: Successful fallback to default VFs (%d)\n"
+			     "              for node %s\n",
+			     default_vfs, name);
+			ret = default_vfs;
+		} else {
+			/* Can't do more here, zeroing
+			 * number of VFs for this PF */
+			ERROR("RVU: Zeroing number of VFs for node %s\n", name);
+			ret = 0;
 		}
 	}
 
-	return numvfs;
+	return ret;
 }
 
 /**
@@ -261,14 +280,16 @@ static int octeontx2_parse_rvu_cgx(void)
  * @fdt: pointer to the device tree blob
  * @parentoffset: offset to parent node (ecam2)
  * @node: node name
+ * @sum_vfs: already allocated HWVFs
  *
  * returns:
- * 	On success, number of VFs from DTB on *name node, -1 otherwise
+ * 	0 on success, -1 otherwise
  */
-static int octeontx2_parse_rvu_admin(void *fdt, int parentoffset,
-				    const char *name)
+static int octeontx2_parse_rvu_admin(const void *fdt, int parentoffset,
+				    const char *name, int *sum_vfs)
 {
-	int offset, len;
+	int offset, len, req_vfs;
+	rvu_sw_rvu_pf_t *sw_pf;
 	const int *val;
 
 	/* Find offset of *name node */
@@ -278,38 +299,36 @@ static int octeontx2_parse_rvu_admin(void *fdt, int parentoffset,
 		return -1;
 	}
 
-	/* Get number of VFs from FDT */
-	val = fdt_getprop(fdt, offset, "num-rvu-vfs", &len);
-	if (!val) {
-		/* If there's no such property in FDT,
-		 * set it to default value DEFAULT_AF_PF0_VFS */
-		WARN("RVU: No num-rvu-vfs, using %d number of VFs\n"
-		     "              for node %s\n",
-		     DEFAULT_AF_PF0_VFS, name);
-		bfdt.rvu_config.admin_pf.num_rvu_vfs = DEFAULT_AF_PF0_VFS;
-	} else {
-		bfdt.rvu_config.admin_pf.num_rvu_vfs = fdt32_to_cpu(*val);
-	}
-
+	sw_pf = &bfdt.rvu_config.admin_pf;
 	/* Get number of MSIX */
 	val = fdt_getprop(fdt, offset, "num-msix-vec", &len);
 	if (!val) {
 		WARN("RVU: No num-msix-vec, using %d number of MSIX\n"
-		     "              for node: %s\n", DEFAULT_MSIX_AF, name);
-		bfdt.rvu_config.admin_pf.num_msix_vec = DEFAULT_MSIX_AF;
+		     "              for node %s\n", DEFAULT_MSIX_AF, name);
+		sw_pf->num_msix_vec = DEFAULT_MSIX_AF;
 	} else {
-		bfdt.rvu_config.admin_pf.num_msix_vec = fdt32_to_cpu(*val);
+		sw_pf->num_msix_vec = fdt32_to_cpu(*val);
 	}
 
-	/* Trim (replace with FDT_NOP tags) proper node from FDT */
-	//TODO: Uncomment it, causes hang on ASIM.
-/*	*val = fdt_del_node(fdt, offset);
-	if (*val < 0) {
-		ERROR("RVU: Unable to remove node %s from DTB", name);
-		return -1;
-	}*/
+	/* Get number of VFs from FDT */
+	val = fdt_getprop(fdt, offset, "num-rvu-vfs", &len);
+	if (!val) {
+		/* If there's no such property in FDT
+		 * try to assign default VFS */
+		WARN("RVU: No num-rvu-vfs property for node %s\n", name);
+		sw_pf->num_rvu_vfs = octeontx2_handle_num_rvu_vfs(DEFAULT_AF_PF0_VFS,
+					DEFAULT_AF_PF0_VFS, sum_vfs, name);
+	} else {
+		/* We've got that property, handle any errors with config */
+		req_vfs = fdt32_to_cpu(*val);
+		sw_pf->num_rvu_vfs = octeontx2_handle_num_rvu_vfs(req_vfs,
+					DEFAULT_AF_PF0_VFS, sum_vfs, name);
+	}
 
-	return bfdt.rvu_config.admin_pf.num_rvu_vfs;
+	/* Increment number of allocated HWVFs */
+	*sum_vfs += sw_pf->num_rvu_vfs;
+
+	return 0;
 }
 
 /**
@@ -318,18 +337,21 @@ static int octeontx2_parse_rvu_admin(void *fdt, int parentoffset,
  * @parentoffset: offset to parent node (ecam2)
  * @node: node name
  * @sw_rvu_pf: index enumerated by sw_rvu_pfs
+ * @sum_vfs: already allocated HWVFs
  *
  * returns:
- * 	On success, number of VFs from DTB on *name node, -1 otherwise
+ * 	0 on success, -1 otherwise
  */
-static int octeontx2_parse_sw_rvu(void *fdt, int parentoffset,
-				 const char *name, int sw_rvu_pf)
+static int octeontx2_parse_sw_rvu(const void *fdt, int parentoffset,
+				 const char *name, int sw_rvu_pf, int *sum_vfs)
 {
-	int offset, len;
+	int offset, len, req_vfs;
 	const int *val;
+	rvu_sw_rvu_pf_t *sw_pf;
 
-	assert(sw_rvu_pf > 0 || sw_rvu_pf < SW_RVU_MAX_PF);
+	assert(sw_rvu_pf >= 0 && sw_rvu_pf < SW_RVU_MAX_PF);
 
+	sw_pf = &bfdt.rvu_config.sw_pf[sw_rvu_pf];
 	/* Find offset of *name node */
 	offset = fdt_subnode_offset(fdt, parentoffset, name);
 	if (offset < 0) {
@@ -337,66 +359,49 @@ static int octeontx2_parse_sw_rvu(void *fdt, int parentoffset,
 		return -1;
 	}
 
-	/* Get number of VFs from FDT */
-	val = fdt_getprop(fdt, offset, "num-rvu-vfs", &len);
-	if (!val) {
-		WARN("RVU: No num-rvu-vfs, using %d number of VFs\n"
-		     "              for node %s\n", DEFAULT_VFS, name);
-		bfdt.rvu_config.sw_pf[sw_rvu_pf].num_rvu_vfs = DEFAULT_VFS;
-	} else {
-		bfdt.rvu_config.sw_pf[sw_rvu_pf].num_rvu_vfs = fdt32_to_cpu(*val);
-	}
-
 	/* Get number of MSIX */
 	val = fdt_getprop(fdt, offset, "num-msix-vec", &len);
 	if (!val) {
 		WARN("RVU: No num-msix-vec, using %d number of MSIX\n"
-		     "              for node: %s\n", DEFAULT_MSIX_SW, name);
-		bfdt.rvu_config.sw_pf[sw_rvu_pf].num_msix_vec = DEFAULT_MSIX_SW;
+		     "              for node %s\n", DEFAULT_MSIX_SW, name);
+		sw_pf->num_msix_vec = DEFAULT_MSIX_SW;
 	} else {
-		bfdt.rvu_config.sw_pf[sw_rvu_pf].num_msix_vec = fdt32_to_cpu(*val);
+		sw_pf->num_msix_vec = fdt32_to_cpu(*val);
 	}
 
-	/* Trim (replace with FDT_NOP tags) proper node from FDT */
-	//TODO: Uncomment it, causes hang on ASIM.
-/*	*val = fdt_del_node(fdt, offset);
-	if (val < 0) {
-		ERROR("RVU: Unable to remove node %s from DTB", name);
-		return -1;
-	}*/
-
-	/* On success, return number of VFs */
-	return bfdt.rvu_config.sw_pf[sw_rvu_pf].num_rvu_vfs;
-}
-
-static int octeontx2_validate_num_vfs(int current_vfs, const char *node_name)
-{
-	/* Check if number of requested VFs (via DTB) does not exceed number
-	 * of Hardware VFs */
-	if (current_vfs > RVU_HWVFS) {
-		ERROR("RVU: Wrong FDT config. Tried to configure more\n"
-		       "              VFs (%d) than HWVFs (%d). Please edit\n"
-		       "              FDT and reflash the board.\n"
-		       "              Failed on %s\n", current_vfs,
-		       RVU_HWVFS, node_name);
-		return -1;
+	/* Get number of VFs from FDT */
+	val = fdt_getprop(fdt, offset, "num-rvu-vfs", &len);
+	if (!val) {
+		/* If there's no such property in FDT
+		 * try to assign default VFS */
+		WARN("RVU: No num-rvu-vfs property for node %s\n", name);
+		sw_pf->num_rvu_vfs = octeontx2_handle_num_rvu_vfs(DEFAULT_VFS,
+					DEFAULT_VFS, sum_vfs, name);
+	} else {
+		/* We've got that property, handle any errors with config */
+		req_vfs = fdt32_to_cpu(*val);
+		sw_pf->num_rvu_vfs = octeontx2_handle_num_rvu_vfs(req_vfs,
+					DEFAULT_VFS, sum_vfs, name);
 	}
+
+	/* Increment number of allocated HWVFs */
+	*sum_vfs += sw_pf->num_rvu_vfs;
 
 	return 0;
 }
 
-static int octeontx2_parse_rvu_config(void)
+static void octeontx2_parse_rvu_config(const void *fdt, int *fdt_vfs)
 {
-	void *fdt = fdt_ptr;
-	int offset, rc, soc_offset, fdt_vfs;
+	int offset, rc, soc_offset;
 	char node_name[32];
 
-	/* Initial setup */
-	fdt_vfs = 0;
+	/* CGX configuration is already done on this step,
+	 * perform initial setup for other RVU-related nodes */
+	bfdt.rvu_config.valid = 0;
 	soc_offset = offset = fdt_path_offset(fdt, "/soc@0");
 	if (soc_offset < 0) {
 		ERROR("RVU: Unable to find soc@0 node\n");
-		return -1;
+		return;
 	}
 
 	/* Parse all subnodes of ECAM0, Domain2 */
@@ -405,84 +410,44 @@ static int octeontx2_parse_rvu_config(void)
 	offset = fdt_subnode_offset(fdt, soc_offset, node_name);
 	if (offset < 0) {
 		ERROR("RVU: Unable to find ecam2 node: %s\n", node_name);
-		return -1;
+		return;
 	}
 
 	/* Fill rvu_admin_pf_t structure */
-	rc = octeontx2_parse_rvu_admin(fdt, offset, RVU_ADMIN_FDT_NODE);
+	rc = octeontx2_parse_rvu_admin(fdt, offset, RVU_ADMIN_FDT_NODE, fdt_vfs);
 	if (rc < 0) {
 		WARN("RVU: Unable to fill PF0-ADMIN structure\n");
-		return -1;
+		return;
 	}
-
-	/* Update and validate number of currently requested VFs */
-	fdt_vfs += rc;
-	rc = octeontx2_validate_num_vfs(fdt_vfs, RVU_ADMIN_FDT_NODE);
-	if (rc < 0)
-		return -1;
 
 	/* Fill rvu_sw_rvu_pf_t structure, start with SSO_TIM (PF13) */
 	rc = octeontx2_parse_sw_rvu(fdt, offset, RVU_SSO_TIM_FDT_NODE,
-				   SW_RVU_SSO_TIM_PF);
+				    SW_RVU_SSO_TIM_PF, fdt_vfs);
 	if (rc < 0) {
 		WARN("RVU: Unable to fill PF13-SSO_TIM structure\n");
-		return -1;
+		return;
 	}
-
-	/* Update and validate number of currently requested VFs */
-	fdt_vfs += rc;
-	rc = octeontx2_validate_num_vfs(fdt_vfs, RVU_SSO_TIM_FDT_NODE);
-	if (rc < 0)
-		return -1;
 
 	/* Now parse NPA (PF14) */
-	rc = octeontx2_parse_sw_rvu(fdt, offset, RVU_NPA_FDT_NODE, SW_RVU_NPA_PF);
+	rc = octeontx2_parse_sw_rvu(fdt, offset, RVU_NPA_FDT_NODE,
+				    SW_RVU_NPA_PF, fdt_vfs);
 	if (rc < 0) {
 		WARN("RVU: Unable to fill PF14-NPA structure\n");
-		return -1;
+		return;
 	}
-
-	/* Update and validate number of currently requested VFs */
-	fdt_vfs += rc;
-	rc = octeontx2_validate_num_vfs(fdt_vfs, RVU_NPA_FDT_NODE);
-	if (rc < 0)
-		return -1;
 
 	/* Finally, parse CPT (PF15) */
-	rc = octeontx2_parse_sw_rvu(fdt, offset, RVU_CPT_FDT_NODE, SW_RVU_CPT_PF);
+	rc = octeontx2_parse_sw_rvu(fdt, offset, RVU_CPT_FDT_NODE,
+				    SW_RVU_CPT_PF, fdt_vfs);
 	if (rc < 0) {
 		WARN("RVU: Unable to fill PF15-CPT structure\n");
-		return -1;
+		return;
 	}
 
-	/* Update and validate number of currently requested VFs */
-	fdt_vfs += rc;
-	rc = octeontx2_validate_num_vfs(fdt_vfs, RVU_CPT_FDT_NODE);
-	if (rc < 0)
-		return -1;
-
-	/* Look for mrml_bridge node */
-	offset = fdt_node_offset_by_compatible(fdt, soc_offset, "pci-bridge");
-	if (offset < 0) {
-		ERROR("RVU: Unable to find mrml_bridge node\n");
-		return -1;
-	}
-
-	/* Fill cgx_info_t structure */
-	rc = octeontx2_parse_rvu_cgx();
-	if (rc <= 0) {
-		WARN("RVU: Unable to fill CGX config properly\n");
-		return -1;
-	}
-
-	/* Update and validate number of currently requested VFs */
-	fdt_vfs += rc;
-	rc = octeontx2_validate_num_vfs(fdt_vfs, "CGX subnodes configuration");
-	if (rc < 0)
-		return -1;
-
-	return 0;
+	/* Here we can mark FDT RVU config as valid */
+	bfdt.rvu_config.valid = 1;
 }
+
 
 static void octeontx2_boot_device_from_strapx(const int node)
 {
@@ -1181,14 +1146,15 @@ static int octeontx2_fill_cgx_struct(int node, int qlm, int lane, int mode_idx)
  *  - cavium,disable-autonegotiation
  */
 static void octeontx2_cgx_lmacs_check_linux(const void *fdt,
-		cgx_config_t *cgx, int cgx_idx, int cgx_offset)
+		cgx_config_t *cgx, int cgx_idx, int cgx_offset, int *fdt_vfs)
 {
 	int lmac_idx;
 	cgx_lmac_config_t *lmac;
-	char name[16];
+	char name[16], node_name[64];
 	const int *val;
 	int len;
 	int lmac_offset, phy_offset, sfp_offset;
+	int req_vfs;
 	phy_config_t *phy;
 	const char *str;
 
@@ -1239,23 +1205,33 @@ static void octeontx2_cgx_lmacs_check_linux(const void *fdt,
 					cgx_idx, lmac_idx);
 		}
 
-		/* Fill RVU if any. */
+		/* Construct the proper node name for error handling */
+		snprintf(node_name, sizeof(node_name), "%s/%s",
+			 fdt_get_name(fdt, cgx_offset, NULL),
+			 fdt_get_name(fdt, lmac_offset, NULL));
 		val = fdt_getprop(fdt, lmac_offset, "num-rvu-vfs", &len);
-		if (val)
-			lmac->num_rvu_vfs = fdt32_to_cpu(*val);
-		else {
-			WARN("N%d.CGX%d.LMAC%d: num-rvu-vfs not set, configuring %d number of VFs.\n",
-					cgx->node, cgx_idx, lmac_idx,
-					DEFAULT_VFS);
-			lmac->num_rvu_vfs = DEFAULT_VFS;
+		if (val) {
+			/* We've got that property, handle any errors with config */
+			req_vfs = fdt32_to_cpu(*val);
+			lmac->num_rvu_vfs = octeontx2_handle_num_rvu_vfs(req_vfs,
+						DEFAULT_VFS, fdt_vfs, node_name);
+		} else {
+			/* If there's no such property in FDT
+			 * try to assign default VFS */
+			WARN("RVU: No num-rvu-vfs property for node %s\n", name);
+			lmac->num_rvu_vfs = octeontx2_handle_num_rvu_vfs(DEFAULT_VFS,
+						DEFAULT_VFS, fdt_vfs, node_name);
 		}
+
+		/* Increment number of allocated HWVFs */
+		*fdt_vfs += lmac->num_rvu_vfs;
+
 		val = fdt_getprop(fdt, lmac_offset, "num-msix-vec", &len);
 		if (val)
 			lmac->num_msix_vec = fdt32_to_cpu(*val);
 		else {
 			WARN("N%d.CGX%d.LMAC%d: num-msix-vec not set, configuring %d number of MSIX.\n",
-					cgx->node, cgx_idx, lmac_idx,
-					DEFAULT_MSIX_LMAC);
+					cgx->node, cgx_idx, lmac_idx, DEFAULT_MSIX_LMAC);
 			lmac->num_msix_vec = DEFAULT_MSIX_LMAC;
 		}
 
@@ -1287,8 +1263,8 @@ static void octeontx2_cgx_check_linux(const void *fdt)
 {
 	int i;
 	cgx_config_t *cgx;
-	int offset;
-	int cgx_offset;
+	int offset, cgx_offset;
+	int fdt_vfs = 0;
 	char name[16];
 
 	offset = fdt_path_offset(fdt, "/soc@0");
@@ -1312,8 +1288,11 @@ static void octeontx2_cgx_check_linux(const void *fdt)
 			ERROR("DT: %s node present in the device tree\n", name);
 			continue;
 		}
-		octeontx2_cgx_lmacs_check_linux(fdt, cgx, i, cgx_offset);
+		octeontx2_cgx_lmacs_check_linux(fdt, cgx, i, cgx_offset, &fdt_vfs);
 	}
+
+	/* Parse RVU configuration */
+	octeontx2_parse_rvu_config(fdt, &fdt_vfs);
 }
 
 /* Assign all the possible MAC addresses to the LMAC initialized.
@@ -1456,12 +1435,6 @@ int plat_fill_board_details(int info)
 	}
 
 	octeontx2_fill_cgx_details(fdt);
-	rc = octeontx2_parse_rvu_config();
-	if (rc < 0) {
-		ERROR("RVU: Marking RVU configuration invalid!\n");
-		bfdt.rvu_config.valid = 0;
-	} else
-		bfdt.rvu_config.valid = 1;
 
 	if (info)
 		octeontx2_print_board_variables();
