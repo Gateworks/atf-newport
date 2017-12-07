@@ -50,10 +50,14 @@ uint64_t thunder_svc_smc_handler(uint32_t smc_fid,
 				 void *handle,
 				 uint64_t flags)
 {
+#if 0
 	unsigned int write;
 	uintptr_t offset, user_buf, size, xfer_len;
+#endif
 	int64_t ret = 0;
+#if 0
 	uint64_t buffer[512 / sizeof(uint64_t)];
+#endif
 
 	VERBOSE("ThunderX Service Call: 0x%x\n", smc_fid);
 
