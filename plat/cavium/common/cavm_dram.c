@@ -68,8 +68,8 @@ uint64_t thunder_dram_size_node(unsigned node)
 
 	/* Safenet for ASIM without configured DRAM size */
 	if (memsize == 0) {
-		ERROR("DRAM size for ASIM-platform not configured\n");
-		memsize = 4ull << 32;
+		ERROR("DRAM size for ASIM/EMUL-platform not configured\n");
+		memsize = 2ull << 30; //2GB to align with BDK
 	}
 
 	return memsize;
