@@ -71,7 +71,7 @@ uint64_t thunder_svc_smc_handler(uint32_t smc_fid,
 	case THUNDERX_SVC_VERSION:
 		/* Return the version of current implementation */
 		SMC_RET2(handle, THUNDERX_VERSION_MAJOR, THUNDERX_VERSION_MINOR);
-
+#if 0
 	case THUNDERX_NOR_WRITE:
 	case THUNDERX_NOR_READ:
 		spi_nor_init();
@@ -112,7 +112,7 @@ uint64_t thunder_svc_smc_handler(uint32_t smc_fid,
 		offset = x1;
 		ret = spi_nor_erase_sect(offset);
 		SMC_RET1(handle, ret);
-
+#endif
 	case THUNDERX_DRAM_SIZE:
 		ret = thunder_dram_size_node(x1);
 		WARN("DRAM size for %lx: %lx\n", x1, ret);
