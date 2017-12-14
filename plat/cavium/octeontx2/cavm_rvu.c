@@ -42,7 +42,8 @@
 
 #define DEVID_MASK	0xff
 #define CLASS_CODE_MASK	0xffffff
-#define RVU_CLASS_CODE	0x20000
+#define RVU_CLASS_CODE	0x020000
+#define CPT_CLASS_CODE	0x108000
 
 #define MAX_RVU_PFS			16
 #define MAX_RVU_VFS_PER_PF		128
@@ -138,7 +139,7 @@ static void octeontx_init_rvu_fixed(int *hwvf, int rvu, int bfdt_index, int has_
 			CAVM_PCC_DEV_IDL_E_SW_RVU_CPT_PF & DEVID_MASK;
 		rvu_dev[rvu].pci.vf_devid =
 			CAVM_PCC_DEV_IDL_E_SW_RVU_CPT_VF & DEVID_MASK;
-		rvu_dev[rvu].pci.class_code = RVU_CLASS_CODE & CLASS_CODE_MASK;
+		rvu_dev[rvu].pci.class_code = CPT_CLASS_CODE & CLASS_CODE_MASK;
 		break;
 	}
 	/* Increment already allocated HWVFs */
