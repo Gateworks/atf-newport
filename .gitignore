@@ -1,0 +1,7 @@
+build/
+tools/fip_create/
+tools/fiptool/fiptool
+tools/fiptool/fiptool.o
+tools/fiptool/firmware_image_package.h
+tools/fiptool/tbbr_config.o
+tools/fiptool/uuid.h
