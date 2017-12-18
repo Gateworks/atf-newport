@@ -296,11 +296,6 @@ static void config_rvu_pci(int node)
 	int pf;
 
 	for (pf = 0; pf < octeontx_get_max_rvu_pfs(node); pf++) {
-		/* Do not write default PCI DEVID values */
-		if (rvu_dev[pf].pci.pf_devid == CAVM_PCC_DEV_IDL_E_RVU &&
-		    rvu_dev[pf].pci.vf_devid == CAVM_PCC_DEV_IDL_E_RVU_VF)
-			continue;
-
 		pf_id_cfg.u = 0;
 		pf_id_cfg.s.class_code = rvu_dev[pf].pci.class_code;
 		pf_id_cfg.s.pf_devid = rvu_dev[pf].pci.pf_devid;
