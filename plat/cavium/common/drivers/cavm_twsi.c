@@ -98,6 +98,7 @@ enum {
 static uint64_t twsi_write_sw(unsigned int node, unsigned int twsi_num,
 			      union cavm_mio_twsx_sw_twsi twsi_sw)
 {
+	int timeout = 10000;
 	twsi_sw.s.r = 0;
 	twsi_sw.s.v = 1;
 
@@ -107,7 +108,7 @@ static uint64_t twsi_write_sw(unsigned int node, unsigned int twsi_num,
 
 	do {
 		twsi_sw.u = CSR_READ(node, CAVM_MIO_TWSX_SW_TWSI(twsi_num));
-	} while (twsi_sw.s.v != 0);
+	} while (timeout-- && (twsi_sw.s.v != 0));
 
 	return twsi_sw.u;
 }
@@ -115,6 +116,7 @@ static uint64_t twsi_write_sw(unsigned int node, unsigned int twsi_num,
 static uint64_t twsi_read_sw(unsigned int node, unsigned int twsi_num,
 			     union cavm_mio_twsx_sw_twsi twsi_sw)
 {
+	int timeout = 10000;
 	twsi_sw.s.r = 1;
 	twsi_sw.s.v = 1;
 
@@ -124,7 +126,7 @@ static uint64_t twsi_read_sw(unsigned int node, unsigned int twsi_num,
 
 	do {
 		twsi_sw.u = CSR_READ(node, CAVM_MIO_TWSX_SW_TWSI(twsi_num));
-	} while (twsi_sw.s.v != 0);
+	} while (timeout-- && (twsi_sw.s.v != 0));
 
 	return twsi_sw.u;
 }
