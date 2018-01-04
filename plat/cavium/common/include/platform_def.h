@@ -176,4 +176,11 @@
 
 #define NS_DMA_MEMORY_SIZE		0x100000
 
+/* Number of TWSI interfaces */
+#ifdef PLAT_t93
+#define TWSI_NUM			6
+#else
+#define TWSI_NUM			2
+#endif
+
 #endif

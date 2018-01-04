@@ -136,9 +136,9 @@ void thunder_gic_init(void);
 unsigned int thunder_calc_core_pos(unsigned long mpidr);
 void thunder_signal_shutdown(void);
 int thunder_pwrc_setup(void);
-void thunder_twsi_send(unsigned int node, unsigned int twsi_num,
+int thunder_twsi_send(unsigned int node, unsigned int twsi_num,
 			uint16_t addr, const uint8_t *buffer, size_t size);
-void thunder_twsi_recv(unsigned int node, unsigned int twsi_num,
+int thunder_twsi_recv(unsigned int node, unsigned int twsi_num,
 			uint16_t addr, uint8_t *buffer, size_t size);
 void sata_ipm_quirk(void);
 
