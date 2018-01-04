@@ -398,7 +398,7 @@ static int octeontx_parse_rvu_config(void)
 }
 #endif /* PLAT_t93 */
 
-int thunder_fill_board_details(int info)
+int cavm_fill_board_details(int info)
 {
 	const void *fdt = fdt_ptr;
 	const char *name;

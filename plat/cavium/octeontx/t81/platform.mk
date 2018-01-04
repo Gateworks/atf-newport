@@ -19,6 +19,7 @@ PLAT_INCLUDES		+=	-Iplat/cavium/octeontx/include			\
 
 PLAT_BL_COMMON_SOURCES	+=	plat/cavium/octeontx/t81/plat_cavm_setup.c	\
 				plat/cavium/octeontx/cavm_security.c		\
+				plat/cavium/octeontx/cavm_octeontx_dt.c		\
 
 BL1_SOURCES		+=	plat/cavium/octeontx/aarch64/octeontx_common.S	\
 				plat/cavium/octeontx/aarch64/plat_cavm_helpers.S	\

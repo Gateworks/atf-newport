@@ -106,7 +106,7 @@ void bl1_platform_print_chip_id(void)
 void bl1_platform_setup(void)
 {
 	bl1_platform_print_chip_id();
-	thunder_fill_board_details(1);
+	plat_fill_board_details(1);
 
         /* Initialise the IO layer and register platform IO devices */
         thunder_io_setup();

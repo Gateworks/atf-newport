@@ -14,6 +14,13 @@
 #ifndef _CAVM_DT_H_
 #define _CAVM_DT_H_
 
+typedef struct boot_device_conf {
+	int node;
+	int boot_type;
+	int controller;
+	int cs;
+} boot_device_conf_t;
+
 typedef struct board_fdt {
 	char board_model[64];
 	int bmc_boot_twsi_node;
@@ -28,9 +35,11 @@ typedef struct board_fdt {
 	uint64_t trust_rot_addr;
 	uint64_t trust_key_addr;
 #endif
+	boot_device_conf_t boot_dev;
 } board_fdt_t;
 
-int thunder_fill_board_details(int info);
+int plat_fill_board_details(int info);
+int cavm_fill_board_details(int info);
 
 extern board_fdt_t bfdt;
 #endif

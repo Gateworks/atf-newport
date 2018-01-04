@@ -86,6 +86,13 @@ typedef struct cgx_config {
 	int enable;
 } cgx_config_t;
 
+typedef struct boot_device_conf {
+	int node;
+	int boot_type;
+	int controller;
+	int cs;
+} boot_device_conf_t;
+
 typedef struct board_fdt {
 	char board_model[64];
 	int bmc_boot_twsi_node;
@@ -102,9 +109,11 @@ typedef struct board_fdt {
 #endif
 	rvu_config_t rvu_config;
 	cgx_config_t cgx_cfg[MAX_CGX];
+	boot_device_conf_t boot_dev;
 } board_fdt_t;
 
-int thunder_fill_board_details(int info);
+int cavm_fill_board_details(int info);
+int plat_fill_board_details(int info);
 
 extern board_fdt_t bfdt;
 #endif
