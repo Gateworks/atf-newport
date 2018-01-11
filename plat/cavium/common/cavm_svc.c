@@ -24,8 +24,10 @@
 
 #define PAR_EL1_F	(1 << 0)
 
+#if 0
 extern int spi_nor_init(void);
 extern int spi_nor_rw_data(int write, unsigned long addr, int size, void *buf, int buf_size);
+#endif
 
 /* Cavium OEM Service UUID */
 DEFINE_SVC_UUID(thunder_svc_uid,

@@ -62,8 +62,8 @@ static file_state_t current_file = { 0 };
 
 #define SPI_PAGE_SIZE			256
 
-int spi_config(uint64_t spi_clk, uint32_t mode, int cpol, int cpha,
-	       int spi_con, int cs)
+static int spi_config(uint64_t spi_clk, uint32_t mode, int cpol, int cpha,
+		      int spi_con, int cs)
 {
 	uint64_t sclk;
 	union cavm_rst_boot rst_boot;
@@ -110,8 +110,8 @@ int spi_config(uint64_t spi_clk, uint32_t mode, int cpol, int cpha,
 	return 0;
 }
 
-int spi_xfer(unsigned char *dout, unsigned char *din, int len, int spi_con,
-	     int cs, int last_data)
+static int spi_xfer(unsigned char *dout, unsigned char *din, int len,
+		    int spi_con, int cs, int last_data)
 {
 	union cavm_mpi_tx mpi_tx;
 	union cavm_mpi_sts mpi_sts;
@@ -197,6 +197,8 @@ static int spi_nor_read(uint8_t *buf, int buf_size, uint32_t addr,
 	return buf_size;
 }
 
+#if 0
+/* Methods used as helpers for SVC calls */
 static int spi_get_status(uint8_t *status, int spi_con, int cs)
 {
 	uint8_t cmd[1];
@@ -299,10 +301,10 @@ static int spi_nor_erase(uint32_t addr, int addr_len, int spi_con, int cs)
 
 	return 0;
 }
+#endif
 
-
-/* APIs to read from SPI NOR flash
- *
+/*
+ * APIs to read from SPI NOR flash
  */
 
 #define CONFIG_SPI_FREQUENCY	16000000
@@ -449,11 +451,11 @@ static const io_dev_connector_t spi_dev_connector = {
 	.dev_open = spi_dev_open
 };
 
+#if 0
 /*
  * Functions necessary for implementing nor read/write svc calls outside of
  * io_dev abstraction.
  */
-
 int spi_nor_init()
 {
 	current_file.node = cavm_numa_local();
@@ -490,6 +492,7 @@ int spi_nor_erase_sect(uint32_t addr)
 	return spi_nor_erase(addr, SPI_ADDRESSING_24BIT,
 			     bfdt.boot_dev.controller, bfdt.boot_dev.cs);
 }
+#endif
 
 /* Exported functions */
 
