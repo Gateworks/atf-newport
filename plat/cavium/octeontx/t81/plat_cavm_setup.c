@@ -161,23 +161,3 @@ void plat_add_mmio_node(unsigned long node)
 		add_map_record(CSR_PA(node, CAVM_IOBN_BAR_E_IOBNX_PF_BAR0_CN8(i)), CAVM_IOBN_BAR_E_IOBNX_PF_BAR0_CN8_SIZE , attr);
 	}
 }
-
-int plat_get_boot_type(int boot_type)
-{
-	cavm_rst_boot_t rst_boot;
-	int ret;
-
-	rst_boot.u = CSR_READ(0, CAVM_RST_BOOT);
-
-	if (rst_boot.s.rboot) { /* Remote boot */
-		ret = THUNDER_BOOT_REMOTE;
-	} else if (boot_type == 0x05) { /* SPI */
-		ret = THUNDER_BOOT_SPI;
-	} else if (boot_type == 0x02 || boot_type == 0x03) { /* (e)MMC */
-		ret = THUNDER_BOOT_EMMC;
-	} else {
-		ret = -THUNDER_BOOT_UNSUPPORTED;
-	}
-
-	return ret;
-}

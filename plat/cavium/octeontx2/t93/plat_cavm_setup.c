@@ -270,21 +270,3 @@ void plat_add_mmio_node(unsigned long node)
 	mmap_add_region(RVU_MEM_BASE, RVU_MEM_BASE,
 			RVU_MEM_SIZE, (MT_MEMORY | MT_RW | MT_NS));
 }
-
-/* FIXME : Add support to boot from SPI0 CS1, SPI1 CS0/1 */
-int plat_get_boot_type(int boot_type)
-{
-	int ret;
-
-	if (boot_type == 0x05) { /* Remote boot */
-		ret = THUNDER_BOOT_REMOTE;
-	} else if (boot_type == 0x02 || boot_type == 0x03) { /* SPI */
-		ret = THUNDER_BOOT_SPI;
-	} else if (boot_type == 0x00 || boot_type == 0x01) { /* (e)MMC */
-		ret = THUNDER_BOOT_EMMC;
-	} else {
-		ret = -THUNDER_BOOT_UNSUPPORTED;
-	}
-
-	return ret;
-}
