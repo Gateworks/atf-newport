@@ -16,6 +16,8 @@
 #include <arch.h>
 #include <platform_def.h>
 #include <cavm_common.h>
+#include <cavm_dt.h>
+
 /*
  * Defines used for CN93xx to enable particular
  * LMC access to particular ASC_REGION
@@ -120,7 +122,6 @@ void octeontx_security_setup(void)
  */
 void cavm_configure_mmc_security(int secure)
 {
-	int boot_medium, boot_type;
 	int node = cavm_numa_local();
 	/*
 	 * rsl_idx - PCC function number for the RSL device
@@ -130,16 +131,11 @@ void cavm_configure_mmc_security(int secure)
 	uint64_t rsl_idx = CAVM_PCC_DEV_CON_E_MIO_EMM & 0xFF;
 	uint64_t bus_idx = (CAVM_PCC_DEV_CON_E_MIO_EMM >> 8) & 0xFF;
 	uint64_t domain_idx = (CAVM_PCC_DEV_CON_E_MIO_EMM >> 16) & 0xFF;
-	cavm_gpio_strap_t gpio_strap;
 	cavm_iobnx_rslx_streams_t iobn_rslx_stream;
 	cavm_iobnx_domx_busx_streams_t iobn_domx_busx_stream;
 
 	/* Check for MMC boot, if not return here */
-	gpio_strap.u = CSR_READ(node, CAVM_GPIO_STRAP);
-	boot_medium = (gpio_strap.u) & 0x7;
-
-	boot_type = plat_get_boot_type(boot_medium);
-	if (boot_type != THUNDER_BOOT_EMMC)
+	if (bfdt.boot_dev.boot_type != THUNDER_BOOT_EMMC)
 		return;
 
 	for (int iobn_idx = 0; iobn_idx < thunder_get_iobn_count();

@@ -75,8 +75,6 @@ extern unsigned long __COHERENT_RAM_END__;
 #define BL31_COHERENT_RAM_BASE (unsigned long)(&__COHERENT_RAM_START__)
 #define BL31_COHERENT_RAM_LIMIT (unsigned long)(&__COHERENT_RAM_END__)
 
-extern int plat_get_boot_type(int boot_mode);
-
 static entry_point_info_t bl33_image_ep_info, bl32_image_ep_info;
 
 /*******************************************************************************

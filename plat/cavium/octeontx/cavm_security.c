@@ -16,6 +16,7 @@
 #include <arch.h>
 #include <platform_def.h>
 #include <cavm_common.h>
+#include <cavm_dt.h>
 
 struct l2c_region {
 	unsigned int  node;
@@ -101,20 +102,14 @@ void octeontx_security_setup(void)
  */
 void cavm_configure_mmc_security(int secure)
 {
-	int boot_medium, boot_type;
 	int node = cavm_numa_local();
 	uint64_t val;
 	uint64_t ssd_idx = CAVM_PCC_DEV_CON_E_MIO_EMM >> 5;
 	uint64_t emm_ssd_mask = (1ULL << (CAVM_PCC_DEV_CON_E_MIO_EMM & 0x1F));
 	union cavm_smmux_nscr0 smmux_nscr0;
-	cavm_gpio_strap_t gpio_strap;
 
 	/* Check for MMC boot, if not return here */
-	gpio_strap.u = CSR_READ(node, CAVM_GPIO_STRAP);
-	boot_medium = (gpio_strap.u) & 0x7;
-
-	boot_type = plat_get_boot_type(boot_medium);
-	if (boot_type != THUNDER_BOOT_EMMC)
+	if (bfdt.boot_dev.boot_type != THUNDER_BOOT_EMMC)
 		return;
 
 	val = CSR_READ(node, CAVM_SMMUX_SSDRX(0, ssd_idx));

@@ -41,13 +41,12 @@
 #include <platform_def.h>
 #include <string.h>
 #include <cavm_common.h>
+#include <cavm_dt.h>
 
 #include <cavm-arch.h>
 
 #define FIP_NAME "fip.bin"
 #define ROMFS_NAME "ROM-FS"
-
-extern int plat_get_boot_type(int boot_type);
 
 /* IO devices */
 static const io_dev_connector_t *fip_dev_con;
@@ -373,22 +372,14 @@ static void plat_fill_fip_memmap_spec(void)
 
 int plat_get_fip_source(uintptr_t *dev_handle, uintptr_t *image_spec)
 {
-	int result, boot_medium;
-	cavm_gpio_strap_t gpio_strap;
+	int result;
 	const char *medium;
-	int boot_type;
-
 	int (*check)(const uintptr_t spec);
 	uintptr_t handle;
 	uintptr_t spec;
 
-	gpio_strap.u = CSR_READ(0, CAVM_GPIO_STRAP);
-	boot_medium = (gpio_strap.u) & 0x7;
-
-	/* Call platform method to get proper boot type */
-	boot_type = plat_get_boot_type(boot_medium);
-
-	switch (boot_type) {
+	/* Check for boot type */
+	switch (bfdt.boot_dev.boot_type) {
 		case THUNDER_BOOT_REMOTE:
 			plat_fill_fip_memmap_spec();
 			handle = memmap_dev_handle;
@@ -410,7 +401,7 @@ int plat_get_fip_source(uintptr_t *dev_handle, uintptr_t *image_spec)
 			break;
 		default:
 			ERROR("Boot medium: 0x%02x is not supported!\n",
-				boot_medium);
+				bfdt.boot_dev.boot_type);
 			while(1);
 	}
 
