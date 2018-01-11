@@ -19,6 +19,7 @@
 #include <assert.h>
 #include <io_driver.h>
 #include <debug.h>
+#include <cavm_dt.h>
 
 #define PLL_REF_CLK 50000000	/* 50 MHz */
 
@@ -29,6 +30,7 @@ typedef struct {
 	 */
 	int		in_use;
 	unsigned	node;
+	unsigned	spi_con;
 	unsigned	cs;
 	size_t		file_pos;
 	size_t		offset_address;
@@ -60,7 +62,8 @@ static file_state_t current_file = { 0 };
 
 #define SPI_PAGE_SIZE			256
 
-int spi_config(uint64_t spi_clk, uint32_t mode, int cpol, int cpha, int cs)
+int spi_config(uint64_t spi_clk, uint32_t mode, int cpol, int cpha,
+	       int spi_con, int cs)
 {
 	uint64_t sclk;
 	union cavm_rst_boot rst_boot;
@@ -70,7 +73,7 @@ int spi_config(uint64_t spi_clk, uint32_t mode, int cpol, int cpha, int cs)
 	if (CAVIUM_IS_MODEL(CAVIUM_CN8XXX))
 		mpi_cfg.u = CSR_READ(current_file.node, CAVM_MPI_CFG);
 	else if (CAVIUM_IS_MODEL(CAVIUM_CN9XXX))
-		mpi_cfg.u = CSR_READ(current_file.node, CAVM_MPIX_CFG(cs));
+		mpi_cfg.u = CSR_READ(current_file.node, CAVM_MPIX_CFG(spi_con));
 	else
 		return -1;
 	sclk = PLL_REF_CLK * rst_boot.s.pnr_mul;
@@ -101,13 +104,14 @@ int spi_config(uint64_t spi_clk, uint32_t mode, int cpol, int cpha, int cs)
 	if (CAVIUM_IS_MODEL(CAVIUM_CN8XXX))
 		CSR_WRITE(current_file.node, CAVM_MPI_CFG, mpi_cfg.u);
 	else if (CAVIUM_IS_MODEL(CAVIUM_CN9XXX))
-		CSR_WRITE(current_file.node, CAVM_MPIX_CFG(cs), mpi_cfg.u);
+		CSR_WRITE(current_file.node, CAVM_MPIX_CFG(spi_con), mpi_cfg.u);
 	else
 		return -1;
 	return 0;
 }
 
-int spi_xfer(unsigned char *dout, unsigned char *din, int len, int cs, int last_data)
+int spi_xfer(unsigned char *dout, unsigned char *din, int len, int spi_con,
+	     int cs, int last_data)
 {
 	union cavm_mpi_tx mpi_tx;
 	union cavm_mpi_sts mpi_sts;
@@ -121,7 +125,7 @@ int spi_xfer(unsigned char *dout, unsigned char *din, int len, int cs, int last_
 				if (CAVIUM_IS_MODEL(CAVIUM_CN8XXX))
 					CSR_WRITE(current_file.node, CAVM_MPI_DATX(i), *dout++);
 				else if (CAVIUM_IS_MODEL(CAVIUM_CN9XXX))
-					CSR_WRITE(current_file.node, CAVM_MPIX_DATX(cs, i), *dout++);
+					CSR_WRITE(current_file.node, CAVM_MPIX_DATX(spi_con, i), *dout++);
 				else
 					return -1;
 			}
@@ -140,7 +144,7 @@ int spi_xfer(unsigned char *dout, unsigned char *din, int len, int cs, int last_
 		if (CAVIUM_IS_MODEL(CAVIUM_CN8XXX))
 			CSR_WRITE(current_file.node, CAVM_MPI_TX, mpi_tx.u);
 		else if (CAVIUM_IS_MODEL(CAVIUM_CN9XXX))
-			CSR_WRITE(current_file.node, CAVM_MPIX_TX(cs), mpi_tx.u);
+			CSR_WRITE(current_file.node, CAVM_MPIX_TX(spi_con), mpi_tx.u);
 		else
 			return -1;
 		/* Wait for tx/rx to complete */
@@ -148,7 +152,7 @@ int spi_xfer(unsigned char *dout, unsigned char *din, int len, int cs, int last_
 			if (CAVIUM_IS_MODEL(CAVIUM_CN8XXX))
 				mpi_sts.u = CSR_READ(current_file.node, CAVM_MPI_STS);
 			else if (CAVIUM_IS_MODEL(CAVIUM_CN9XXX))
-				mpi_sts.u = CSR_READ(current_file.node, CAVM_MPIX_STS(cs));
+				mpi_sts.u = CSR_READ(current_file.node, CAVM_MPIX_STS(spi_con));
 			else
 				return -1;
 		} while (mpi_sts.s.busy != 0);
@@ -158,7 +162,7 @@ int spi_xfer(unsigned char *dout, unsigned char *din, int len, int cs, int last_
 				if (CAVIUM_IS_MODEL(CAVIUM_CN8XXX))
 					*din++ = CSR_READ(current_file.node, CAVM_MPI_DATX(i));
 				else if (CAVIUM_IS_MODEL(CAVIUM_CN9XXX))
-					*din++ = CSR_READ(current_file.node, CAVM_MPIX_DATX(cs, i));
+					*din++ = CSR_READ(current_file.node, CAVM_MPIX_DATX(spi_con, i));
 				else
 					return -1;
 			}
@@ -168,7 +172,8 @@ int spi_xfer(unsigned char *dout, unsigned char *din, int len, int cs, int last_
 	return 0;
 }
 
-static int spi_nor_read(uint8_t *buf, int buf_size, uint32_t addr, int addr_len, int cs)
+static int spi_nor_read(uint8_t *buf, int buf_size, uint32_t addr,
+			int addr_len, int spi_con, int cs)
 {
 	uint8_t cmd[9];
 	int i;
@@ -183,30 +188,31 @@ static int spi_nor_read(uint8_t *buf, int buf_size, uint32_t addr, int addr_len,
 	for (i = 1; i <= (addr_len >> 3); i++)
 		cmd[i] = addr >> (addr_len - i * 8);
 
-	if (spi_xfer(cmd, NULL, (addr_len >> 3) + 1, cs, 0))
+	if (spi_xfer(cmd, NULL, (addr_len >> 3) + 1, spi_con, cs, 0))
 		return -1;
 
-	if (spi_xfer(NULL, buf, buf_size, cs, 1))
+	if (spi_xfer(NULL, buf, buf_size, spi_con, cs, 1))
 		return -1;
 
 	return buf_size;
 }
 
-static int spi_get_status(uint8_t *status, int cs)
+static int spi_get_status(uint8_t *status, int spi_con, int cs)
 {
 	uint8_t cmd[1];
 
 	cmd[0] = SPI_NOR_CMD_RDSR;
 
-	if (spi_xfer(cmd, NULL, 1, cs, 0))
+	if (spi_xfer(cmd, NULL, 1, spi_con, cs, 0))
 		return -1;
-	if (spi_xfer(NULL, status, 1, cs, 1))
+	if (spi_xfer(NULL, status, 1, spi_con, cs, 1))
 		return -1;
 
 	return 0;
 }
 
-static int spi_nor_write(void *buf, int buf_size, uint32_t addr, int addr_len, int cs, int fast)
+static int spi_nor_write(void *buf, int buf_size, uint32_t addr, int addr_len,
+			 int spi_con, int cs)
 {
 	uint8_t cmd[9];
 	uint8_t status;
@@ -224,7 +230,7 @@ static int spi_nor_write(void *buf, int buf_size, uint32_t addr, int addr_len, i
 
 		cmd[0] = SPI_NOR_CMD_WREN;
 
-		if (spi_xfer(cmd, NULL, 1, cs, 1))
+		if (spi_xfer(cmd, NULL, 1, spi_con, cs, 1))
 			return -1;
 
 		cmd[0] = SPI_NOR_CMD_PROGRAM;
@@ -232,14 +238,14 @@ static int spi_nor_write(void *buf, int buf_size, uint32_t addr, int addr_len, i
 		for (i = 1; i <= (addr_len >> 3); i++)
 			cmd[i] = addr >> (addr_len - i * 8);
 
-		if (spi_xfer(cmd, NULL, (addr_len >> 3) + 1, cs, 0))
+		if (spi_xfer(cmd, NULL, (addr_len >> 3) + 1, spi_con, cs, 0))
 			return -1;
 
-		if (spi_xfer(buf, NULL, len, cs, 1))
+		if (spi_xfer(buf, NULL, len, spi_con, cs, 1))
 			return -1;
 
 		do {
-			if (spi_get_status(&status, cs) < 0)
+			if (spi_get_status(&status, spi_con, cs) < 0)
 				return -1;
 		} while (status & SPI_STATUS_WIP);
 
@@ -251,13 +257,13 @@ static int spi_nor_write(void *buf, int buf_size, uint32_t addr, int addr_len, i
 
 	cmd[0] = SPI_NOR_CMD_WRDI;
 
-	if (spi_xfer(cmd, NULL, 1, cs, 1))
+	if (spi_xfer(cmd, NULL, 1, spi_con, cs, 1))
 		return -1;
 
 	return total;
 }
 
-static int spi_nor_erase(uint32_t addr, int addr_len, int cs, int fast)
+static int spi_nor_erase(uint32_t addr, int addr_len, int spi_con, int cs)
 {
 	uint8_t cmd[9];
 	uint8_t status;
@@ -270,7 +276,7 @@ static int spi_nor_erase(uint32_t addr, int addr_len, int cs, int fast)
 
 	cmd[0] = SPI_NOR_CMD_WREN;
 
-	if (spi_xfer(cmd, NULL, 1, cs, 1))
+	if (spi_xfer(cmd, NULL, 1, spi_con, cs, 1))
 		return -1;
 
 	cmd[0] = SPI_NOR_CMD_ERASE;
@@ -278,16 +284,16 @@ static int spi_nor_erase(uint32_t addr, int addr_len, int cs, int fast)
 	for (i = 1; i <= (addr_len >> 3); i++)
 		cmd[i] = addr >> (addr_len - i * 8);
 
-	if (spi_xfer(cmd, NULL, (addr_len >> 3) + 1, cs, 1))
+	if (spi_xfer(cmd, NULL, (addr_len >> 3) + 1, spi_con, cs, 1))
 		return -1;
 
 	cmd[0] = SPI_NOR_CMD_WRDI;
 
-	if (spi_xfer(cmd, NULL, 1, cs, 1))
+	if (spi_xfer(cmd, NULL, 1, spi_con, cs, 1))
 		return -1;
 
 	do {
-		if (spi_get_status(&status, cs))
+		if (spi_get_status(&status, spi_con, cs))
 			return -1;
 	} while (status & SPI_STATUS_WIP);
 
@@ -328,11 +334,13 @@ static int spi_block_open(io_dev_info_t *dev_info, const uintptr_t spec,
 		/* File cursor offset for seek and incremental reads etc. */
 		current_file.file_pos = 0;
 		current_file.offset_address = block_spec->offset;
-		current_file.cs = 0; // XXX
+		current_file.spi_con = bfdt.boot_dev.controller;
+		current_file.cs = bfdt.boot_dev.cs;
 		entity->info = (uintptr_t)&current_file;
 		current_file.node = cavm_numa_local();
 
-		return spi_config(CONFIG_SPI_FREQUENCY, 0, 0, 0, 0);
+		return spi_config(CONFIG_SPI_FREQUENCY, 0, 0, 0,
+				  current_file.spi_con, current_file.cs);
 	} else {
 		WARN("An SPI device is already active. Close first.\n");
 	}
@@ -375,7 +383,10 @@ static int spi_block_read(io_entity_t *entity, uintptr_t buffer,
 
 	fp = (file_state_t *)entity->info;
 
-	ret = spi_nor_read((void *)buffer, length, fp->offset_address + fp->file_pos, SPI_ADDRESSING_24BIT, fp->cs);
+	ret = spi_nor_read((void *)buffer, length,
+			   fp->offset_address + fp->file_pos,
+			   SPI_ADDRESSING_24BIT, fp->spi_con,
+			   fp->cs);
 	if (ret < 0)
 		return ret;
 
@@ -447,13 +458,13 @@ int spi_nor_init()
 {
 	current_file.node = cavm_numa_local();
 
-	spi_config(CONFIG_SPI_FREQUENCY, 0, 0, 0, 0);
+	spi_config(CONFIG_SPI_FREQUENCY, 0, 0, 0, bfdt.boot_dev.controller,
+		   bfdt.boot_dev.cs);
 	return 0;
 }
 
 int spi_nor_rw_data(int write, unsigned long addr, int size, void *buf, int buf_size)
 {
-	int cs = 0;
 	int ret;
 
 	if (buf_size < size) {
@@ -463,9 +474,11 @@ int spi_nor_rw_data(int write, unsigned long addr, int size, void *buf, int buf_
 	}
 
 	if (!write) {
-		ret = spi_nor_read(buf, size, addr, SPI_ADDRESSING_24BIT, cs);
+		ret = spi_nor_read(buf, size, addr, SPI_ADDRESSING_24BIT,
+				   bfdt.boot_dev.controller, bfdt.boot_dev.cs);
 	} else {
-		ret = spi_nor_write(buf, size, addr, SPI_ADDRESSING_24BIT, cs, 0);
+		ret = spi_nor_write(buf, size, addr, SPI_ADDRESSING_24BIT,
+				    bfdt.boot_dev.controller, bfdt.boot_dev.cs);
 	}
 
 	return ret;
@@ -473,10 +486,9 @@ int spi_nor_rw_data(int write, unsigned long addr, int size, void *buf, int buf_
 
 int spi_nor_erase_sect(uint32_t addr)
 {
-	int cs = 0;
 
-	return spi_nor_erase(addr, SPI_ADDRESSING_24BIT, cs, 0);
-
+	return spi_nor_erase(addr, SPI_ADDRESSING_24BIT,
+			     bfdt.boot_dev.controller, bfdt.boot_dev.cs);
 }
 
 /* Exported functions */
