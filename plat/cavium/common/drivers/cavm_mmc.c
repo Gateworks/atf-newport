@@ -20,6 +20,7 @@
 #include <assert.h>
 #include <io_driver.h>
 #include <debug.h>
+#include <cavm_dt.h>
 
 #include <io_mmc.h>
 
@@ -248,7 +249,7 @@ int emmc_config()
 	mmc_drv.bus_id = 0;
 	mmc_drv.sector_size = MMC_SECTOR_SIZE;
 	/* Set bit 1 to use eMMC bus 0 */
-	CSR_WRITE(mmc_current_file.node, CAVM_MIO_EMM_CFG, 0x1);
+	CSR_WRITE(mmc_current_file.node, CAVM_MIO_EMM_CFG, 1<<mmc_current_file.cs);
 
 #if 0
 	rst_boot.u = CSR_READ(mmc_current_file.node, CAVM_RST_BOOT);
@@ -403,7 +404,7 @@ static int emmc_block_open(io_dev_info_t *dev_info, const uintptr_t spec,
 		/* File cursor offset for seek and incremental reads etc. */
 		mmc_current_file.file_pos = 0;
 		mmc_current_file.offset_address = block_spec->offset;
-		mmc_current_file.cs = 0; // XXX
+		mmc_current_file.cs = bfdt.boot_dev.cs;
 
 		entity->info = (uintptr_t)&mmc_current_file;
 
