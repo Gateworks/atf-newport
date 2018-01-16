@@ -23,6 +23,7 @@
 #include <psci.h>
 #include <cavm_pwrc.h>
 #include <cavm_common.h>
+#include <cavm_dt.h>
 #undef GICD_SETSPI_NSR
 #undef GICD_CLRSPI_NSR
 #undef GICD_SETSPI_SR
@@ -31,6 +32,29 @@
 #undef GICD_IIDR
 #include <gicv3.h>
 
+static int cavm_signal_mcu(uint8_t signal)
+{
+	uint8_t data[2];
+	int rc;
+
+	if (bfdt.mcu_twsi.u == 0) {
+		ERROR("Incorrect MCU TWSI configuration\n");
+		return -1;
+	}
+
+	data[0] = bfdt.mcu_twsi.s.int_addr;
+	data[1] = signal;
+
+	rc = thunder_twsi_send(bfdt.mcu_twsi.s.node, bfdt.mcu_twsi.s.bus,
+			       bfdt.mcu_twsi.s.addr, data, sizeof(data));
+	if (rc) {
+		ERROR("Unable to send signal 0x%x to MCU, error 0x%x\n",
+		      signal, rc);
+		return -1;
+	}
+
+	return 0;
+}
 /*******************************************************************************
  * Function which implements the common FVP specific operations to power down a
  * cpu in response to a CPU_OFF or CPU_SUSPEND request.
@@ -215,9 +239,16 @@ void thunder_pwr_domain_suspend_finish(const psci_power_state_t *target_state)
  ******************************************************************************/
 static void __dead2 thunder_system_off(void)
 {
-	thunder_signal_shutdown();
-	ERROR("Thunder System Off: operation not handled.\n");
-	panic();
+	int rc;
+
+	rc = cavm_signal_mcu(OCTEONTX_MCU_SHUTDOWN_SIGNAL);
+	if (rc) {
+		ERROR("Cavium System Off: operation not handled.\n");
+		panic();
+	}
+
+	INFO("Cavium System Off: shutting down system...\n");
+	for(;;);
 }
 
 static void __dead2 thunder_system_reset(void)
