@@ -93,6 +93,16 @@ typedef struct boot_device_conf {
 	int cs;
 } boot_device_conf_t;
 
+typedef union mcu_twsi {
+	uint32_t u;
+	struct mcu_twsi_s {
+		uint32_t node		: 8; /* Node ID */
+		uint32_t int_addr	: 8; /* TWSI Internal Address */
+		uint32_t bus		: 8; /* TWSI bus */
+		uint32_t addr		: 8; /* TWSI slave address */
+	} s;
+} mcu_twsi_t;
+
 typedef struct board_fdt {
 	char board_model[64];
 	int bmc_boot_twsi_node;
@@ -110,6 +120,7 @@ typedef struct board_fdt {
 	rvu_config_t rvu_config;
 	cgx_config_t cgx_cfg[MAX_CGX];
 	boot_device_conf_t boot_dev;
+	mcu_twsi_t mcu_twsi;
 } board_fdt_t;
 
 int cavm_fill_board_details(int info);

@@ -463,6 +463,16 @@ int cavm_fill_board_details(int info)
 	if (bfdt.gpio_shutdown_ctl_out != -1)
 		bfdt.gpio_shutdown_ctl_out &= 0xff;
 
+	config = thunder_fdt_get(fdt, offset, "MCU-SHUTDOWN-TWSI-CONFIG", 16);
+	if (config != -1) {
+		bfdt.mcu_twsi.s.node = (config >> 24) & 0xff;
+		bfdt.mcu_twsi.s.int_addr = (config >> 16) & 0xff;
+		bfdt.mcu_twsi.s.bus = (config >> 8) & 0xff;
+		bfdt.mcu_twsi.s.addr = config & 0xff;
+	} else {
+		bfdt.mcu_twsi.u = 0;
+	}
+
 #if TRUSTED_BOARD_BOOT
 	/*
 	 * Configuration for Trusted Board Boot received from BDK.
