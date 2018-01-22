@@ -30,37 +30,6 @@
 #define PLL_REF_CLK		50000000	/* 50 MHz */
 #define TWSI_RECOVERY_UDELAY	9
 
-static int gpio_set_out (int pin)
-{
-	cavm_gpio_tx_set_t gpio_tx_set;
-	cavm_gpio_bit_cfgx_t gpio_bit_cfg;
-	unsigned long node = cavm_numa_local();
-
-	gpio_tx_set.u = 0;
-	gpio_tx_set.s.set = (1ULL << pin);
-	CSR_WRITE(node, CAVM_GPIO_TX_SET, gpio_tx_set.u);
-	gpio_bit_cfg.u = CSR_READ(node, CAVM_GPIO_BIT_CFGX(pin));
-	gpio_bit_cfg.s.tx_oe = 1;
-	gpio_bit_cfg.s.pin_sel = 0;
-	CSR_WRITE(node, CAVM_GPIO_BIT_CFGX(pin), gpio_bit_cfg.u);
-	return 0;
-}
-
-static int gpio_clr_out (int pin)
-{
-	cavm_gpio_bit_cfgx_t gpio_bit_cfg;
-	cavm_gpio_tx_clr_t gpio_tx_clr;
-	unsigned long node = cavm_numa_local();
-
-	gpio_tx_clr.u = 0;
-	gpio_tx_clr.s.clr = (1ULL << pin);
-	CSR_WRITE(node, CAVM_GPIO_TX_CLR, gpio_tx_clr.u);
-	gpio_bit_cfg.u = CSR_READ(node, CAVM_GPIO_BIT_CFGX(pin));
-	gpio_bit_cfg.s.pin_sel = 0;
-	gpio_bit_cfg.s.tx_oe = 1;
-	CSR_WRITE(node, CAVM_GPIO_BIT_CFGX(pin), gpio_bit_cfg.u);
-	return 0;
-}
 
 uint64_t tz_count(uint64_t x)
 {
@@ -452,33 +421,4 @@ int thunder_twsi_recv(unsigned int node, unsigned int twsi_num,
 
 	twsi_stop(node, twsi_num);
 	return 0;
-}
-
-void thunder_signal_shutdown(void)
-{
-	cavm_mio_twsx_sw_twsi_t twsi_sw;
-	volatile int	loop;
-	int boot_status_twsi = -1;
-	int shutdown_gpio = -1;
-	int node = cavm_numa_local();
-
-	boot_status_twsi = bfdt.bmc_boot_twsi_bus;
-	shutdown_gpio = bfdt.gpio_shutdown_ctl_out;
-
-	if (boot_status_twsi >= 0  && shutdown_gpio >=0) {
-		/* Write to TWSI register indicating boot status */
-		twsi_sw.u = CSR_READ(node, CAVM_MIO_TWSX_SW_TWSI(boot_status_twsi));
-		twsi_sw.u &= ~0xFFFFFFFFULL;
-		twsi_sw.s.data = 0x0F1;
-		twsi_sw.s.v = 1;
-		CSR_WRITE(node, CAVM_MIO_TWSX_SW_TWSI(boot_status_twsi), twsi_sw.u);
-		/* Assert GPIO to signal shutdown to BMC */
-		gpio_set_out(shutdown_gpio);
-		loop = 0xFFFF;
-		while(loop--){};
-		gpio_clr_out(shutdown_gpio);
-		loop = 0xFFFF;
-		while(loop--){};
-		gpio_set_out(shutdown_gpio);
-	}
 }

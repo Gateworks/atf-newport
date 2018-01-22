@@ -53,6 +53,7 @@ BL31_SOURCES		+=	drivers/arm/gic/common/gic_common.c		\
 				plat/cavium/common/drivers/cavm_spi.c		\
 				drivers/delay_timer/delay_timer.c		\
 				lib/timers/timers.c				\
+				plat/cavium/common/drivers/cavm_gpio.c		\
 				plat/cavium/common/aarch64/cavm_helpers.S 	\
 				plat/cavium/common/bl31_cavm_setup.c		\
 				plat/cavium/common/cavm_gicv3.c			\
