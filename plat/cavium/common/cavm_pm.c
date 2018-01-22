@@ -24,6 +24,7 @@
 #include <cavm_pwrc.h>
 #include <cavm_common.h>
 #include <cavm_dt.h>
+#include <cavm_gpio.h>
 #undef GICD_SETSPI_NSR
 #undef GICD_CLRSPI_NSR
 #undef GICD_SETSPI_SR
@@ -32,15 +33,24 @@
 #undef GICD_IIDR
 #include <gicv3.h>
 
+static void cavm_odm_shutdown(int shutdown_gpio)
+{
+	volatile int loop;
+
+	/* Assert GPIO to signal shutdown */
+	gpio_set_out(shutdown_gpio);
+	loop = 0xFFFF;
+	while(loop--){};
+	gpio_clr_out(shutdown_gpio);
+	loop = 0xFFFF;
+	while(loop--){};
+	gpio_set_out(shutdown_gpio);
+}
+
 static int cavm_signal_mcu(uint8_t signal)
 {
 	uint8_t data[2];
 	int rc;
-
-	if (bfdt.mcu_twsi.u == 0) {
-		ERROR("Incorrect MCU TWSI configuration\n");
-		return -1;
-	}
 
 	data[0] = bfdt.mcu_twsi.s.int_addr;
 	data[1] = signal;
@@ -55,6 +65,32 @@ static int cavm_signal_mcu(uint8_t signal)
 
 	return 0;
 }
+
+static void cavm_signal_shutdown(void)
+{
+	int rc;
+
+	/* Check for MCU structure */
+	if (bfdt.mcu_twsi.u != 0) {
+		/* We're on EBB, shutdown using MCU */
+		rc = cavm_signal_mcu(OCTEONTX_MCU_SHUTDOWN_SIGNAL);
+		if (!rc) {
+			INFO("Cavium System Off: shutting down system...\n");
+			for(;;);
+		} else {
+			ERROR("Cavium System Off: Unable to send shutdown to MCU\n");
+			panic();
+		}
+	/* Check for GPIO config */
+	} else if (bfdt.gpio_shutdown_ctl_out >= 0) {
+		/* We're on SFF board, shutdown using GPIO */
+		cavm_odm_shutdown(bfdt.gpio_shutdown_ctl_out);
+	} else {
+		ERROR("Cavium System Off: Incorrect shutdown configuration\n");
+		panic();
+	}
+}
+
 /*******************************************************************************
  * Function which implements the common FVP specific operations to power down a
  * cpu in response to a CPU_OFF or CPU_SUSPEND request.
@@ -239,16 +275,9 @@ void thunder_pwr_domain_suspend_finish(const psci_power_state_t *target_state)
  ******************************************************************************/
 static void __dead2 thunder_system_off(void)
 {
-	int rc;
-
-	rc = cavm_signal_mcu(OCTEONTX_MCU_SHUTDOWN_SIGNAL);
-	if (rc) {
-		ERROR("Cavium System Off: operation not handled.\n");
-		panic();
-	}
-
-	INFO("Cavium System Off: shutting down system...\n");
-	for(;;);
+	cavm_signal_shutdown();
+	/* Should never reach it */
+	panic();
 }
 
 static void __dead2 thunder_system_reset(void)
