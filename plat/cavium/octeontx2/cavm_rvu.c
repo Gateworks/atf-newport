@@ -418,36 +418,46 @@ static void reset_rvu_pf(int node, int pf)
 	CSR_WRITE(node, CAVM_RVU_PRIV_PFX_TIM_CFG(pf), tim_cfg.u);
 }
 
+static void init_rvu_lf(int node)
+{
+	int pf;
+
+	for (pf = 0; pf < octeontx_get_max_rvu_pfs(node); pf++) {
+		rvu_dev[pf].npalf_id = 0;
+		rvu_dev[pf].nixlf_id = 0;
+	}
+}
+
 void octeontx_rvu_init(int node)
 {
 	int pf, hwvf, vf, rc;
-	int npalf_id = 0, nixlf_id = 0;
 
 	rc = octeontx_init_rvu_from_fdt();
 	if (rc < 0)
 		return;
 
 	dump_rvu_devs(node);
+	init_rvu_lf(node);
 
 	for (pf = 0 ; pf < octeontx_get_max_rvu_pfs(node); pf++) {
 		if (rvu_dev[pf].enable) {
 			reset_rvu_pf(node, pf);
 			enable_rvu_pf(node, pf);
 			if (rvu_dev[pf].pf_res_ena) {
-				pf_enable_nix(node, pf, nixlf_id);
-				nixlf_id++;
-				pf_enable_npa(node, pf, npalf_id);
-				npalf_id++;
+				pf_enable_nix(node, pf, rvu_dev[pf].nixlf_id);
+				rvu_dev[pf].nixlf_id++;
+				pf_enable_npa(node, pf, rvu_dev[pf].npalf_id);
+				rvu_dev[pf].npalf_id++;
 			}
 
 			if (rvu_dev[pf].vf_res_ena) {
 				hwvf = rvu_dev[pf].first_hwvf;
 				for (vf = 0; vf < rvu_dev[pf].num_vfs; vf++) {
 					hwvf_enable_npa_nix(node, hwvf);
-					map_lf_to_vf(node, pf, vf, npalf_id,
-						     nixlf_id);
-					nixlf_id++;
-					npalf_id++;
+					map_lf_to_vf(node, pf, vf, rvu_dev[pf].npalf_id,
+						     rvu_dev[pf].nixlf_id);
+					rvu_dev[pf].nixlf_id++;
+					rvu_dev[pf].npalf_id++;
 					hwvf++;
 				}
 			}
