@@ -445,7 +445,10 @@ static int octeontx2_check_qlm_lmacs(int node, int cgx_idx,
 static int octeontx2_fill_cgx_struct(int node, int qlm, int lane, int mode_idx)
 {
 	cgx_config_t *cgx;
+	cgx_lmac_config_t *lmac;
+	int mode;
 	int cgx_idx;
+	int i;
 	int lcnt, lused;
 
 	if ((mode_idx < CAVM_QLM_MODE_SGMII_4X1) || (mode_idx > CAVM_QLM_MODE_USXGMII_2X1)) {
@@ -484,6 +487,53 @@ static int octeontx2_fill_cgx_struct(int node, int qlm, int lane, int mode_idx)
 				qlmmode_strmap[mode_idx].bdk_str);
 		return 0;
 	}
+
+	mode = qlmmode_strmap[mode_idx].mode;
+	/* Fill in the CGX/LMAC structures. */
+	cgx->node = node;
+	for (i = 0; i < lcnt; i++) {
+		lmac = &cgx->lmac_cfg[cgx->lmac_count];
+		lmac->lane_to_sds = -1;
+		lmac->mode = mode;
+		lmac->mode_idx = mode_idx;
+		lmac->qlm = qlm;
+		switch (mode) {
+		case CAVM_CGX_LMAC_TYPES_E_XAUI:
+		case CAVM_CGX_LMAC_TYPES_E_FORTYG_R:
+		case CAVM_CGX_LMAC_TYPES_E_HUNDREDG_R:
+			lmac->lane_to_sds = 0xe4;
+			break;
+		case CAVM_CGX_LMAC_TYPES_E_RXAUI:
+			if (lane % 2)
+				lmac->lane_to_sds = 0xe;
+			else
+				lmac->lane_to_sds = 0x4;
+			break;
+		default:
+			lmac->lane_to_sds = lane + i;
+			if (qlm == 5)
+				lmac->lane_to_sds += 2;
+			break;
+		}
+		switch (mode_idx) {
+		case CAVM_QLM_MODE_10G_KR_4X1:
+		case CAVM_QLM_MODE_10G_KR_2X1:
+		case CAVM_QLM_MODE_10G_KR_1X1:
+		case CAVM_QLM_MODE_40G_KR4_1X4:
+		case CAVM_QLM_MODE_25G_KR_4X1:
+		case CAVM_QLM_MODE_25G_KR_2X1:
+		case CAVM_QLM_MODE_50G_KR_2X2:
+		case CAVM_QLM_MODE_50G_KR_1X2:
+		case CAVM_QLM_MODE_100G_KR4_1X4:
+			lmac->use_training = 1;
+			break;
+		}
+
+		cgx->lmac_count++;
+		cgx->lmacs_used += lused;
+	}
+
+	cgx->enable = 1;
 
 	return (lcnt * lused);
 }
