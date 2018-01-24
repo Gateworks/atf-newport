@@ -123,6 +123,59 @@ static struct qlm_mode_strmap_s qlmmode_strmap[] = {
 	{-1, NULL, NULL}
 };
 
+/* Output information specific for OCTEONTX2, for now only CGX. */
+static void octeontx2_print_board_variables(void)
+{
+	int i, j;
+	cgx_config_t *cgx;
+	cgx_lmac_config_t *lmac;
+	phy_config_t *phy;
+
+	for (i = 0; i < MAX_CGX; i++) {
+		cgx = &bfdt.cgx_cfg[i];
+		INFO("N%d.CGX%d: lmac_count = %d\n", cgx->node, i,
+				cgx->lmac_count);
+		for (j = 0; j < cgx->lmac_count; j++) {
+			lmac = &cgx->lmac_cfg[j];
+			INFO("N%d.CGX%d.LMAC%d: mode = %s:%d, qlm = %d, lane_to_sds=0x%x\n",
+					cgx->node,
+					i,
+					j,
+					qlmmode_strmap[lmac->mode_idx].bdk_str,
+					lmac->mode,
+					lmac->qlm,
+					lmac->lane_to_sds);
+			INFO("\tnum_rvu_vfs=%d, num_msix_vec=%d, use_training=%d\n",
+					lmac->num_rvu_vfs,
+					lmac->num_msix_vec,
+					lmac->use_training);
+			if (lmac->phy_present) {
+				phy = &lmac->phy_config;
+				if (strlen(phy->phy_compatible)) {
+					INFO("\tPHY: mdio_bus=%d, phy_addr=0x%x, compatible=%s\n",
+							phy->mdio_bus,
+							phy->phy_addr,
+							phy->phy_compatible);
+				} else {
+					INFO("\tPHY: mdio_bus=%d, phy_addr=0x%x, compatible=NULL\n",
+							phy->mdio_bus,
+							phy->phy_addr);
+				}
+			} else {
+				INFO("\tPHY: NONE\n");
+			}
+			if ((lmac->mode == CAVM_CGX_LMAC_TYPES_E_SGMII) ||
+				(lmac->mode == CAVM_CGX_LMAC_TYPES_E_QSGMII)) {
+				INFO("\tphy_mode=%d, sgmii_1000x_mode=%d, autoneg_dis=%d\n",
+						lmac->phy_mode,
+						lmac->sgmii_1000x_mode,
+						lmac->autoneg_dis);
+			}
+			INFO("\tLMAC enable=%d\n", lmac->lmac_enable);
+		}
+	}
+}
+
 static void octeontx2_boot_device_from_strapx(const int node)
 {
 	cavm_gpio_strap_t gpio_strap;
@@ -380,6 +433,8 @@ int plat_fill_board_details(int info)
 	}
 
 	octeontx2_fill_cgx_details(fdt);
+	if (info)
+		octeontx2_print_board_variables();
 
 	return 0;
 }
