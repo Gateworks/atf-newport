@@ -176,6 +176,31 @@ static void octeontx2_print_board_variables(void)
 	}
 }
 
+static int octeontx2_fdt_get_int32(const void *fdt, const char *prop,
+					int node)
+{
+	const uint32_t *reg;
+	int val = 0;
+
+	reg = fdt_getprop(fdt, node, prop, NULL);
+	val = fdt32_to_cpu(*reg);
+
+	return val;
+}
+
+static int octeontx2_fdt_lookup_phandle(const void *fdt_addr, int offset,
+		const char *prop_name)
+{
+	const uint32_t *phandle;
+
+	phandle = fdt_getprop(fdt_addr, offset, prop_name, NULL);
+	if (phandle)
+		return fdt_node_offset_by_phandle(fdt_addr,
+					fdt32_to_cpu(*phandle));
+	else
+		return -FDT_ERR_NOTFOUND;
+}
+
 static void octeontx2_boot_device_from_strapx(const int node)
 {
 	cavm_gpio_strap_t gpio_strap;
@@ -292,6 +317,327 @@ static int octeontx2_parse_boot_device(const void *fdt, const int offset,
 	bfdt.boot_dev.cs = val;
 
 	return 0;
+}
+
+static int octeontx2_fdt_get_bus(const void *fdt, int offset,
+		int cgx_idx, int lmac_idx)
+{
+	int node, bus = -1;
+	uint32_t addr;
+	const char *nodename;
+	uint32_t i2c;
+
+	if (offset < 0)
+		return -1;
+
+	/* obtain parent node and get the name */
+	node = fdt_parent_offset(fdt, offset);
+	if (node < 0)
+		return -1;
+
+	nodename = fdt_get_name(fdt, node, NULL);
+
+	if (!strncmp(nodename, "mdio", 4)) {
+		INFO("CGX%d.LMAC%d: PHY is on MDIO bus\n", cgx_idx, lmac_idx);
+		addr = octeontx2_fdt_get_int32(fdt, "reg", node);
+		bus = (addr & (1 << 7)) ? 1 : 0;
+		INFO("CGX%d.LMAC%d: addr 0x%x bus %d\n",
+				cgx_idx, lmac_idx, addr, bus);
+	} else if (!strncmp(nodename, "i2c", 3)) {
+		INFO("CGX%d.LMAC%d: PHY is on I2C bus\n", cgx_idx, lmac_idx);
+		i2c = octeontx2_fdt_get_int32(fdt, "reg", node);
+		/* based on DEVFN for TWSI 0/1 */
+		bus = (i2c & (1 << 8)) ? 1 : 0;
+		INFO("CGX%d.LMAC%d: i2c 0x%x bus %d\n",
+				cgx_idx, lmac_idx, i2c, bus);
+	} else
+		WARN("CGX%d.LMAC%d: no compatible bus type for PHY\n",
+				cgx_idx, lmac_idx);
+
+	return bus;
+}
+
+static void octeontx2_fdt_get_i2c_bus_info(const void *fdt, int offset,
+		octeontx_i2c_info_t *i2c_info, int cgx_idx, int lmac_idx)
+{
+	int parent;
+
+	parent = fdt_parent_offset(fdt, offset);
+	if (parent < 0) {
+		ERROR("CGX%d.LMAC%d: couldn't find i2c type\n",
+				cgx_idx, lmac_idx);
+		return;
+	}
+
+	if (!fdt_node_check_compatible(fdt, parent,
+		"cavium,thunder-8890-twsi")) {
+		i2c_info->type = OCTEONTX_I2C_BUS_DEFAULT;
+		/* twsi bus */
+		i2c_info->bus  = octeontx2_fdt_get_bus(fdt, offset,
+				cgx_idx, lmac_idx);
+	} else if (!fdt_node_check_compatible(fdt, parent,
+				"nxp,pca9546")) {
+		INFO("CGX%d.LMAC%d: 9546 MUX\n", cgx_idx, lmac_idx);
+
+		i2c_info->is_mux = 0; /* PCA9546 is a switch */
+		i2c_info->type = OCTEONTX_I2C_MUX_PCA9546;
+		i2c_info->channel = octeontx2_fdt_get_int32(fdt, "reg",
+				offset);
+		i2c_info->addr = octeontx2_fdt_get_int32(fdt, "reg",
+				parent);
+		/* TWSI bus */
+		i2c_info->bus = octeontx2_fdt_get_bus(fdt,
+				parent, cgx_idx, lmac_idx);
+		INFO("CGX%d.LMAC%d: channel %d addr 0x%x bus %d\n",
+				cgx_idx, lmac_idx,
+				i2c_info->channel,
+				i2c_info->addr, i2c_info->bus);
+	} else
+		WARN("CGX%d.LMAC%d: couldn't find any valid MUX\n",
+				cgx_idx, lmac_idx);
+}
+
+static void octeontx2_fdt_gpio_get_info_by_phandle(const void *fdt, int offset,
+		const char *propname, octeontx_gpio_info_t *gpio_info,
+		int cgx_idx, int lmac_idx)
+{
+	int len;
+	const struct fdt_property *prop;
+	const uint32_t *data;
+	int phandle;
+
+	prop = fdt_get_property(fdt, offset, propname, &len);
+	if (!prop) {
+		WARN("CGX%d.LMAC%d: couldn't find %s property\n",
+				cgx_idx, lmac_idx, propname);
+		return;
+	}
+
+	if (len != 3 * sizeof(unsigned int)) {
+		ERROR("CGX%d.LMAC%d: %s property is of wrong format : must contain phandle, pin & flags\n",
+				cgx_idx, lmac_idx, propname);
+		return;
+	}
+
+	data = (const uint32_t *)prop->data;
+	phandle = fdt32_to_cpu(data[0]);
+	gpio_info->pin = fdt32_to_cpu(data[1]);
+	gpio_info->flags = fdt32_to_cpu(data[2]);
+
+	int node = fdt_node_offset_by_phandle(fdt, phandle);
+
+	if (!fdt_node_check_compatible(fdt, node,
+		"cavium,thunder-8890-gpio")) {
+		gpio_info->type = OCTEONTX_GPIO_PIN_DEFAULT;
+		/* handle this case later */
+	} else if (!fdt_node_check_compatible(fdt, node,
+			"nxp,pca9535")) {
+		INFO("CGX%d.LMAC%d: 9535 GPIO I2C Expander %d\n",
+				cgx_idx, lmac_idx,
+				gpio_info->pin);
+		gpio_info->type = OCTEONTX_GPIO_PIN_PCA9535;
+		gpio_info->num_pins = octeontx2_fdt_get_int32(fdt,
+				"ngpios", node);
+
+		gpio_info->i2c_addr = octeontx2_fdt_get_int32(fdt, "reg",
+				node);
+		octeontx2_fdt_get_i2c_bus_info(fdt, node, &gpio_info->i2c_info,
+				cgx_idx, lmac_idx);
+		INFO("CGX%d.LMAC%d: addr 0x%x bus %d num pins %d\n",
+				cgx_idx, lmac_idx,
+				gpio_info->i2c_addr, gpio_info->i2c_info.bus,
+				gpio_info->num_pins);
+	}
+}
+
+static void octeontx2_fdt_parse_vsc7224_reginit(const void *fdt, int offset,
+			octeontx_vsc7224_t *vsc7224, int cgx_idx, int lmac_idx)
+{
+	int i;
+	int len;
+	const uint32_t *reginit;
+
+	reginit = fdt_getprop(fdt, offset, "vitesse,reg-init", &len);
+	if (!reginit) {
+		WARN("CGX%d.LMAC%d: Cannot find \"vitesse,reg-init\" parameter.\n",
+				cgx_idx, lmac_idx);
+		return;
+	}
+	INFO("CGX%d.LMAC%d: \"vitesse,reg-init\" length_bytes = %d, length_words32 = %ld.\n",
+			cgx_idx, lmac_idx, len, len / sizeof(*reginit));
+	INFO("CGX%d.LMAC%d: output \"vitesse,reg-init\":\n",
+			cgx_idx, lmac_idx);
+	len = len / sizeof(*reginit) - 1;
+	for (i = 0; i < len; i += 2) {
+		INFO("CGX%d.LMAC%d: \t0x%x 0x%x\n", cgx_idx, lmac_idx,
+				fdt32_to_cpu(*(reginit + i)),
+				fdt32_to_cpu(*(reginit + i + 1)));
+	}
+}
+
+static void octeontx2_fdt_parse_vsc7224_channels(const void *fdt, int offset,
+			octeontx_vsc7224_t *vsc7224, int cgx_idx, int lmac_idx)
+{
+	int num_chan = 0, reg = 0, len = 0;
+	octeontx_vsc7224_chan_t *chan;
+	const uint32_t *tap_values;
+
+	/* walk through all channels */
+	do {
+		offset = fdt_node_offset_by_compatible(fdt, offset,
+					"vitesse,vsc7224-channel");
+		if (offset < 0) {
+			WARN("CGX%d.LMAC%d: no valid 7224 channels found\n",
+					cgx_idx, lmac_idx);
+			break;
+		}
+		reg = octeontx2_fdt_get_int32(fdt, "reg", offset);
+		if (reg < 0 || reg > 3) {
+			ERROR("CGX%d.LMAC%d: invalid channel, only 4 channels are valid\n",
+					cgx_idx, lmac_idx);
+			break;
+		}
+		chan = &vsc7224->channel[num_chan];
+
+		if (fdt_getprop(fdt, offset, "direction-tx", NULL) != NULL)
+			chan->is_tx = 1;
+		else
+			chan->is_tx = 0;
+
+		if (fdt_getprop(fdt, offset, "pretap-disable", NULL) != NULL)
+			chan->pretap_disable = 1;
+		else
+			chan->pretap_disable = 0;
+
+		if (fdt_getprop(fdt, offset, "posttap-disable", NULL) != NULL)
+			chan->posttap_disable = 1;
+		else
+			chan->posttap_disable = 0;
+
+		if (fdt_getprop(fdt, offset, "maintap-disable", NULL) != NULL)
+			chan->maintap_disable = 1;
+		else
+			chan->maintap_disable = 0;
+
+		tap_values = fdt_getprop(fdt, offset, "taps", &len);
+		if (!tap_values) {
+			WARN("CGX%d.LMAC%d: no taps defined for vsc7224 channel %d\n",
+					cgx_idx, lmac_idx, num_chan);
+			break;
+		}
+		if (len % 16) {
+			WARN("CGX%d.LMAC%d: tap values not defined in 16-bit format\n",
+					cgx_idx, lmac_idx);
+			break;
+		}
+		chan->num_taps = len/16;
+		INFO("CGX%d.LMAC%d: taps %d chan %d\n", cgx_idx, lmac_idx,
+				chan->num_taps, num_chan);
+
+		/* Read all the tap values */
+		for (int i = 0; i < chan->num_taps; i++) {
+			chan->taps[i].len =
+					fdt32_to_cpu(tap_values[i * 4 + 0]);
+			chan->taps[i].main_tap =
+					fdt32_to_cpu(tap_values[i * 4 + 1]);
+			chan->taps[i].pre_tap =
+					fdt32_to_cpu(tap_values[i * 4 + 2]);
+			chan->taps[i].post_tap =
+					fdt32_to_cpu(tap_values[i * 4 + 3]);
+			INFO("CGX%d.LMAC%d: tap %d: len: %d, main_tap: 0x%x, pre_tap:0x%x, post_tap: 0x%x\n",
+				cgx_idx, lmac_idx,
+				i, chan->taps[i].len,
+				chan->taps[i].main_tap,
+				chan->taps[i].pre_tap,
+				chan->taps[i].post_tap);
+		}
+
+		num_chan++;
+	} while (num_chan < 4);
+}
+
+static void octeontx2_fdt_parse_sfp_info(const void *fdt, int offset,
+		int cgx_idx, int lmac_idx)
+{
+	octeontx_i2c_info_t *i2c_info;
+	octeontx_gpio_info_t *mod_abs;
+	octeontx_sfp_info_t *sfp_info;
+	cgx_lmac_config_t *lmac;
+	int eeprom, parent;
+
+	lmac = &bfdt.cgx_cfg[cgx_idx].lmac_cfg[lmac_idx];
+	sfp_info = &lmac->phy_config.sfp_info;
+	i2c_info = &sfp_info->i2c_eeprom_info;
+	mod_abs = &sfp_info->mod_abs; /* for now, parse only mod abs */
+
+	if (fdt_node_check_compatible(fdt, offset, "sfp-slot"))
+		return;
+
+	sfp_info->name = fdt_get_name(fdt, offset, NULL);
+	INFO("CGX%d.LMAC%d: sfp_info->name %s\n",
+			cgx_idx, lmac_idx, sfp_info->name);
+
+	/* Parse EEPROM related I2C info */
+	eeprom = octeontx2_fdt_lookup_phandle(fdt, offset, "eeprom");
+	if (eeprom < 0) {
+		ERROR("CGX%d.LMAC%d: Couldn't find EEPROM info for SFP\n",
+				cgx_idx, lmac_idx);
+		return;
+	}
+
+	i2c_info->eeprom_addr = octeontx2_fdt_get_int32(fdt, "reg", eeprom);
+	parent = fdt_parent_offset(fdt, eeprom);
+
+	octeontx2_fdt_get_i2c_bus_info(fdt, parent, i2c_info, cgx_idx, lmac_idx);
+
+	/* Parse GPIO info for XFI-SFP interface */
+	octeontx2_fdt_gpio_get_info_by_phandle(fdt, offset, "detect", mod_abs,
+			cgx_idx, lmac_idx);
+}
+
+static void octeontx2_fdt_parse_vsc7224_info(const void *fdt,
+		octeontx_vsc7224_t *vsc7224, int cgx_idx, int lmac_idx)
+{
+	int offset = -1;
+	int parent = -1;
+	const uint32_t *reg;
+
+	offset = fdt_node_offset_by_compatible(fdt, offset,
+					"vitesse,vsc7224");
+
+	if (offset < 0) {
+		ERROR("CGX%d.LMAC%d: Cannot parse FDT info for VSC7224 phy.\n",
+				cgx_idx, lmac_idx);
+		return;
+	}
+
+	reg = fdt_getprop(fdt, offset, "reg", NULL);
+	vsc7224->i2c_addr = fdt32_to_cpu(*reg);
+	parent = fdt_parent_offset(fdt, offset);
+	octeontx2_fdt_get_i2c_bus_info(fdt, parent, &vsc7224->i2c_bus,
+			cgx_idx, lmac_idx);
+	vsc7224->name = fdt_get_name(fdt, offset, NULL);
+	INFO("CGX%d.LMAC%d: PHY name %s i2c_addr 0x%x\n",
+			cgx_idx, lmac_idx,
+			vsc7224->name, vsc7224->i2c_addr);
+
+	octeontx2_fdt_parse_vsc7224_reginit(fdt, offset, vsc7224,
+			cgx_idx, lmac_idx);
+
+	octeontx2_fdt_parse_vsc7224_channels(fdt, offset, vsc7224,
+			cgx_idx, lmac_idx);
+}
+
+static int octeontx2_fdt_get_phy_addr(const void *fdt, int phy_offset)
+{
+	const uint32_t *reg;
+	int addr = -1;
+
+	if (phy_offset < 0)
+		return -1;
+	reg = fdt_getprop(fdt, phy_offset, "reg", NULL);
+	addr = fdt32_to_cpu(*reg);
+	return addr;
 }
 
 /* Return number of lanes available for different QLMs. */
@@ -540,6 +886,7 @@ static int octeontx2_fill_cgx_struct(int node, int qlm, int lane, int mode_idx)
 
 /* Get the LMAC information from the Linux DT file. The following properties
  * are checked:
+ *  - phy-handle
  *  - num-rvu-vfs
  *  - num-msix-vec
  * SGMII/QSGMII only:
@@ -555,7 +902,9 @@ static void octeontx2_cgx_lmacs_check_linux(const void *fdt,
 	char name[16];
 	const int *val;
 	int len;
-	int lmac_offset;
+	int lmac_offset, phy_offset, sfp_offset;
+	phy_config_t *phy;
+	const char *str;
 
 	for (lmac_idx = 0; lmac_idx < cgx->lmac_count; lmac_idx++) {
 		lmac = &cgx->lmac_cfg[lmac_idx];
@@ -567,6 +916,41 @@ static void octeontx2_cgx_lmacs_check_linux(const void *fdt,
 			ERROR("CGX%d.LMAC%d: DT:%s not found in device tree\n",
 					cgx_idx, lmac_idx, name);
 			continue;
+		}
+
+		phy_offset = octeontx2_fdt_lookup_phandle(fdt,
+				lmac_offset, "phy-handle");
+		if (phy_offset > 0) {
+			lmac->phy_present = 1;
+			phy = &lmac->phy_config;
+			str = NULL;
+			str = (const char *)fdt_getprop(fdt, phy_offset,
+					"compatible", NULL);
+			if (!str) {
+				ERROR("ERROR: no compatible property in phy\n");
+			} else if (!strcmp(str, "vitesse,vsc7224")) {
+				octeontx_vsc7224_t *vsc;
+
+				strncpy(phy->phy_compatible, str, 64);
+				vsc = &lmac->phy_config.sfp_info.vsc7224;
+				octeontx2_fdt_parse_vsc7224_info(fdt, vsc,
+						cgx_idx, lmac_idx);
+			} else {
+				strncpy(phy->phy_compatible, str, 64);
+				phy->phy_addr =	octeontx2_fdt_get_phy_addr(fdt,
+						phy_offset);
+				phy->mdio_bus = octeontx2_fdt_get_bus(fdt,
+						phy_offset, cgx_idx,
+						lmac_idx);
+			}
+		}
+
+		/* Check for sfp-slot info */
+		sfp_offset = octeontx2_fdt_lookup_phandle(fdt,
+				lmac_offset, "sfp-slot");
+		if (sfp_offset > 0) {
+			octeontx2_fdt_parse_sfp_info(fdt, sfp_offset,
+					cgx_idx, lmac_idx);
 		}
 
 		/* Fill RVU if any. */
