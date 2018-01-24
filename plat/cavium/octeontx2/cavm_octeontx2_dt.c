@@ -330,6 +330,115 @@ static int octeontx2_get_cgx_idx(int qlm)
 	return idx;
 }
 
+/* This routine sets a number of LMACs to initialize and the size to use.
+ * For instance:
+ *  - SGMII_2X1: will initialize 2 LMACs and each LMAC will take only one
+ *  size
+ *  - XAUI_1X4: will initialize 1 LMAC and it will take all 4 space
+ */
+static void octeontx2_lmac_num_touse(int mode_idx, int *cnt, int *touse)
+{
+	*cnt = 0;
+	*touse = 0;
+	switch (mode_idx) {
+	case CAVM_QLM_MODE_SGMII_4X1:
+	case CAVM_QLM_MODE_XFI_4X1:
+	case CAVM_QLM_MODE_10G_KR_4X1:
+	case CAVM_QLM_MODE_QSGMII_4X1:
+	case CAVM_QLM_MODE_25G_4X1:
+	case CAVM_QLM_MODE_25G_KR_4X1:
+	case CAVM_QLM_MODE_USXGMII_4X1:
+		*cnt = 4;
+		*touse = 1;
+		break;
+	case CAVM_QLM_MODE_SGMII_2X1:
+	case CAVM_QLM_MODE_XFI_2X1:
+	case CAVM_QLM_MODE_10G_KR_2X1:
+	case CAVM_QLM_MODE_25G_2X1:
+	case CAVM_QLM_MODE_25G_KR_2X1:
+	case CAVM_QLM_MODE_USXGMII_2X1:
+		*cnt = 2;
+		*touse = 1;
+		break;
+	case CAVM_QLM_MODE_SGMII_1X1:
+	case CAVM_QLM_MODE_XFI_1X1:
+	case CAVM_QLM_MODE_10G_KR_1X1:
+		*cnt = 1;
+		*touse = 1;
+		break;
+	case CAVM_QLM_MODE_XAUI_1X4:
+	case CAVM_QLM_MODE_XLAUI_1X4:
+	case CAVM_QLM_MODE_40G_KR4_1X4:
+	case CAVM_QLM_MODE_100G_1X4:
+	case CAVM_QLM_MODE_100G_KR4_1X4:
+		*cnt = 1;
+		*touse = 4;
+		break;
+	case CAVM_QLM_MODE_RXAUI_2X2:
+	case CAVM_QLM_MODE_50G_2X2:
+	case CAVM_QLM_MODE_50G_KR_2X2:
+		*cnt = 2;
+		*touse = 2;
+		break;
+	case CAVM_QLM_MODE_RXAUI_1X2:
+	case CAVM_QLM_MODE_50G_1X2:
+	case CAVM_QLM_MODE_50G_KR_1X2:
+		*cnt = 1;
+		*touse = 2;
+		break;
+	}
+}
+
+/* Check if it is possible to configure LMAC in the current mode. Return
+ * 0 in case of success, otherwise return -1.
+ */
+static int octeontx2_check_qlm_lmacs(int node, int cgx_idx,
+		int qlm, int mode_idx, int lmac_need)
+{
+	int lmac_avail;
+	cgx_config_t *cgx;
+	cgx_lmac_config_t *lmac;
+	int i;
+
+	cgx = &bfdt.cgx_cfg[cgx_idx];
+	lmac_avail = MAX_LMAC_PER_CGX - cgx->lmacs_used;
+	if ((qlm == 3) || (qlm == 7)) {
+		/* Only QLM3 or QLM7 may be Ethernet, not both. */
+		for (i = 0; i < cgx->lmac_count; i++) {
+			lmac = &cgx->lmac_cfg[i];
+			if (lmac->qlm != qlm) {
+				WARN("N%d.CGX%d: Can't configure mode:%s. QLM%d is requested, but QLM%d is used.",
+						node, cgx_idx,
+						qlmmode_strmap[mode_idx].bdk_str,
+						qlm, lmac->qlm);
+				lmac_avail = 0;
+				break;
+			}
+		}
+	} else if ((qlm == 4) || (qlm == 5)) {
+		/* QLM4 and QLM5 does not support quad lane Ethernet
+		 * protocols. Only two lanes are available for each
+		 * QLM.
+		 */
+		lmac_avail = 2;
+		for (i = 0; i < cgx->lmac_count; i++) {
+			lmac = &cgx->lmac_cfg[i];
+			if (lmac->qlm == qlm)
+				lmac_avail--;
+		}
+	}
+
+	if (lmac_need > lmac_avail) {
+		WARN("N%d.CGX%d: Can't configure mode:%s. Requires %d free LMACs, but %d LMACs available on QLM%d.\n",
+				node, cgx_idx,
+				qlmmode_strmap[mode_idx].bdk_str,
+				lmac_need, lmac_avail, qlm);
+		return -1;
+	}
+
+	return 0;
+}
+
 /* Fill CGX structure, if possible.
  * Return the number of lanes used for initialization.
  */
@@ -337,6 +446,7 @@ static int octeontx2_fill_cgx_struct(int node, int qlm, int lane, int mode_idx)
 {
 	cgx_config_t *cgx;
 	int cgx_idx;
+	int lcnt, lused;
 
 	if ((mode_idx < CAVM_QLM_MODE_SGMII_4X1) || (mode_idx > CAVM_QLM_MODE_USXGMII_2X1)) {
 		INFO("N%d.QLM%d.LANE%d: not configured for CGX, skip.\n",
@@ -359,7 +469,23 @@ static int octeontx2_fill_cgx_struct(int node, int qlm, int lane, int mode_idx)
 		return 0;
 	}
 
-	return 0;
+	octeontx2_lmac_num_touse(mode_idx, &lcnt, &lused);
+	if (!lcnt || !lused) {
+		INFO("N%d.CGX%d: the %s mode doesn't require any LMAC initialization.\n",
+				node, cgx_idx,
+				qlmmode_strmap[mode_idx].bdk_str);
+		return 0;
+	}
+	if (octeontx2_check_qlm_lmacs(node, cgx_idx, qlm, mode_idx, lcnt * lused))
+		return 0;
+	if (lane % (lcnt * lused)) {
+		WARN("N%d.CGX%d.LANE%d: wrong LANE%d for the %s mode.\n",
+				node, cgx_idx, lane, lane,
+				qlmmode_strmap[mode_idx].bdk_str);
+		return 0;
+	}
+
+	return (lcnt * lused);
 }
 
 /* BDK fills the CAVM_GSERNX_LANEX_SCRATCH0 register with mode used by LANE.
