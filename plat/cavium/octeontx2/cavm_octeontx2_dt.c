@@ -73,6 +73,56 @@ typedef union
 	} s;
 } cavm_qlm_state_lane_t;
 
+struct qlm_mode_strmap_s {
+	int mode;
+	char *bdk_str;
+	char *linux_str;
+};
+
+static struct qlm_mode_strmap_s qlmmode_strmap[] = {
+	/* These modes are defined to have a 1 to 1 reflection from the
+	 * QLM/LANE mode to the array index.
+	 */
+	{-1, "DISABLED", NULL},
+	{-1, "PCIE_1X1", NULL},
+	{-1, "PCIE_1X2", NULL},
+	{-1, "PCIE_1X4", NULL},
+	{-1, "PCIE_1X8", NULL},
+	{-1, "PCIE_1X16", NULL},
+	{-1, "SATA_4X1", NULL},
+	{-1, "SATA_2X1", NULL},
+	/* CGX/LMAC types. */
+	{CAVM_CGX_LMAC_TYPES_E_SGMII, "SGMII_4X1", "sgmii"},
+	{CAVM_CGX_LMAC_TYPES_E_SGMII, "SGMII_2X1", "sgmii"},
+	{CAVM_CGX_LMAC_TYPES_E_SGMII, "SGMII_1X1", "sgmii"},
+	{CAVM_CGX_LMAC_TYPES_E_XAUI, "XAUI_1X4", "xaui"},
+	{CAVM_CGX_LMAC_TYPES_E_RXAUI, "RXAUI_2X2", "rxaui"},
+	{CAVM_CGX_LMAC_TYPES_E_RXAUI, "RXAUI_1X2", "rxaui"},
+	{-1, "OCI", NULL}, /* Not supported for now. */
+	{CAVM_CGX_LMAC_TYPES_E_TENG_R, "XFI_4X1", "xfi"},
+	{CAVM_CGX_LMAC_TYPES_E_TENG_R, "XFI_2X1", "xfi"},
+	{CAVM_CGX_LMAC_TYPES_E_TENG_R, "XFI_1X1", "xfi"},
+	{CAVM_CGX_LMAC_TYPES_E_FORTYG_R, "XLAUI_1X4", "xlaui"},
+	{CAVM_CGX_LMAC_TYPES_E_TENG_R, "10G_KR_4X1", "10g_kr"},
+	{CAVM_CGX_LMAC_TYPES_E_TENG_R, "10G_KR_2X1", "10g_kr"},
+	{CAVM_CGX_LMAC_TYPES_E_TENG_R, "10G_KR_1X1", "10g_kr"},
+	{CAVM_CGX_LMAC_TYPES_E_FORTYG_R, "40G_KR4_1X4", "40g_kr"},
+	{CAVM_CGX_LMAC_TYPES_E_QSGMII, "QSGMII_4X1", "qsgmii"},
+	{CAVM_CGX_LMAC_TYPES_E_TWENTYFIVEG_R, "25G_4X1", "25g"},
+	{CAVM_CGX_LMAC_TYPES_E_TWENTYFIVEG_R, "25G_2X1", "25g"},
+	{CAVM_CGX_LMAC_TYPES_E_FIFTYG_R, "50G_2X2", "50g"},
+	{CAVM_CGX_LMAC_TYPES_E_FIFTYG_R, "50G_1X2", "50g"},
+	{CAVM_CGX_LMAC_TYPES_E_HUNDREDG_R, "100G_1X4", "100g"},
+	{CAVM_CGX_LMAC_TYPES_E_TWENTYFIVEG_R, "25G_KR_4X1", "25g"},
+	{CAVM_CGX_LMAC_TYPES_E_TWENTYFIVEG_R, "25G_KR_2X1", "25g"},
+	{CAVM_CGX_LMAC_TYPES_E_FIFTYG_R, "50G_KR_2X2", "50g"},
+	{CAVM_CGX_LMAC_TYPES_E_FIFTYG_R, "50G_KR_1X2", "50g"},
+	{CAVM_CGX_LMAC_TYPES_E_HUNDREDG_R, "100G_KR4_1X4", "100g"},
+	{CAVM_CGX_LMAC_TYPES_E_USXGMII, "USXGMII_4X1", "usgxgmii"},
+	{CAVM_CGX_LMAC_TYPES_E_USXGMII, "USXGMII_2X1", "usgxgmii"},
+	{-1, NULL, NULL}
+};
+
 static void octeontx2_boot_device_from_strapx(const int node)
 {
 	cavm_gpio_strap_t gpio_strap;
@@ -281,9 +331,10 @@ static void octeontx2_fill_cgx_details(const void *fdt)
 			gser_base = CSR_PA(node_idx, CAVM_GSERX_PF_BAR0(qlm_idx));
 			for (lane_idx = 0; lane_idx < lnum; lane_idx++) {
 				qlm_state.u = CSR_READ(gser_base, CAVM_GSERNX_LANEX_SCRATCHX(qlm_idx, lane_idx, 0));
-				INFO("N%d.QLM%d.LANE%d: mode=%d\n",
+				INFO("N%d.QLM%d.LANE%d: mode=%d:%s\n",
 						node_idx, qlm_idx, lane_idx,
-						qlm_state.s.mode);
+						qlm_state.s.mode,
+						qlmmode_strmap[qlm_state.s.mode].bdk_str);
 				linit = octeontx2_fill_cgx_struct(node_idx,
 						qlm_idx, lane_idx,
 						qlm_state.s.mode);
