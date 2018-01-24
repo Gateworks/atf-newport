@@ -21,6 +21,7 @@ PLAT_INCLUDES		:=	-Icsr/include					\
 
 PLAT_BL_COMMON_SOURCES	:=	drivers/arm/pl011/aarch64/pl011_console.S	\
 				plat/cavium/common/drivers/cavm_mmc.c		\
+				plat/cavium/common/cavm_twsi_core.c		\
 				plat/cavium/common/drivers/cavm_twsi.c		\
 				lib/xlat_tables/xlat_tables_common.c		\
 				lib/xlat_tables/aarch64/xlat_tables.c		\
