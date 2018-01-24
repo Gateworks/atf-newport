@@ -15,6 +15,7 @@
 #define _CAVM_DT_H_
 
 #include <platform_dt.h>
+#include <cavm_phy_mgmt.h>
 
 typedef struct rvu_sw_rvu_pf {
 	int num_rvu_vfs;
@@ -37,53 +38,47 @@ typedef struct rvu_config {
 typedef struct phy_config {
 	int phy_addr;
 	int mdio_bus;
-	int autoneg_dis;
 	char phy_compatible[64];
-	/* more to add - depending on the PHYs supported*/
+	octeontx_sfp_info_t sfp_info;
 } phy_config_t;
-
-typedef union link_state {
-	uint64_t u64;
-	struct {
-		uint64_t link_up:1;
-		uint64_t full_duplex:1;
-		uint64_t speed:4; /* octeontx_cgx_link_speed enum */
-		uint64_t reserved_20_63:44;
-	} s;
-} link_state_t;
 
 /* Define LMAC structure. */
 typedef struct cgx_lmac_config {
+	/* for RVU */
+	int num_rvu_vfs;
+	int num_msix_vec;
 	/* below info to be filled by
 	 * FDT parser during boot time or mode
 	 * change
 	 */
 	int lane_to_sds;
 	int use_training;
-	int mode; /* octeontx_qlm_mode enum type */
-	int qlm; /* from BDK DT */
-	int qlm_lane_mode; /* from BDK DT */
-	int enable; 
-	int phy_mode; /* MAC or PHY mode for SGMII */
-	int sgmii_1000x_mode; /* SGMII or 1000x mode for SGMII */
+	int mode;		/* octeontx_qlm_mode enum type */
+	int mode_idx;		/* helper field for the mode mapping */
+	int qlm;		/* from BDK DT */
+	/* NOTE: when this bit is set, it doesn't necessarily
+	 * mean the link is up until the user sends LINK UP command
+	 */
+	int lmac_enable;
+	int phy_mode;		/* MAC or PHY mode for SGMII */
+	int sgmii_1000x_mode;	/* SGMII or 1000x mode for SGMII */
 	int phy_present;
+	int autoneg_dis;
+	uint8_t local_mac_address[6];
 	phy_config_t phy_config;
-	/* for RVU */
-	int num_rvu_vfs;
-	int num_msix_vec;
-	/* below info to be filled during run time 
+	/* below info to be filled during run time
 	 * by CGX driver
 	 */
-	int link_up;
-	link_state_t last_link;
+	octeontx_phy_link_state_t link_status;
 } cgx_lmac_config_t;
 
 typedef struct cgx_config {
-	int node;
-	int lmac_count;
-	cgx_lmac_config_t lmac_cfg[MAX_LMAC_PER_CGX];
+	uint32_t node:4;
+	uint32_t lmac_count:4;
+	uint32_t lmacs_used:4;
 	/* for RVU */
-	int enable;
+	uint32_t enable:1;
+	cgx_lmac_config_t lmac_cfg[MAX_LMAC_PER_CGX];
 } cgx_config_t;
 
 typedef struct boot_device_conf {

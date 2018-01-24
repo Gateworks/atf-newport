@@ -133,7 +133,7 @@ static int octeontx_init_rvu_from_fdt(void)
 		cgx = &bfdt.cgx_cfg[cgx_id];
 		if (cgx->enable) {
 			for (lmac_id = 0; lmac_id < MAX_LMAC_PER_CGX; lmac_id++) {
-				if (cgx->lmac_cfg[lmac_id].enable) {
+				if (cgx->lmac_cfg[lmac_id].lmac_enable) {
 					octeontx_init_rvu_lmac(&current_hwvf,
 							       pf, cgx,
 							       lmac_id);
