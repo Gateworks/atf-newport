@@ -85,85 +85,25 @@ static int thunder_fdt_get(const void *fdt, int offset, const char *property, in
 
 #if PLAT_t93
 /**
- * octeontx_parse_rvu_cgx - fill cgx_info_t structure of rvu_config
- * @fdt: pointer to the device tree blob
- * @parentoffset: offset to parent node (ecam0)
+ * octeontx_parse_rvu_cgx - return number of assigned VFs
  *
- * returns:
- * 	On success, sum of number of VFs per given PHY node, -1 otherwise
+ * @return: sum of number of VFs per given PHY node
  */
-static int octeontx_parse_rvu_cgx(const void *fdt, int parentoffset)
+static int octeontx_parse_rvu_cgx(void)
 {
-	int cgx_id, lmac_id, cgx_offset, numvfs = 0, lmac_offset, len;
-	const int *val;
+	int i, j;
+	int numvfs;
 	cgx_config_t *cgx;
-	char cgx_name[16];
+	cgx_lmac_config_t *lmac;
 
-	for (cgx_id = 0; cgx_id < MAX_CGX; cgx_id++) {
-		cgx = &bfdt.cgx_cfg[cgx_id];
-		/* Construct cgx node name */
-		snprintf(cgx_name, sizeof(cgx_name), "cgx@%d", cgx_id);
-		cgx_offset = fdt_subnode_offset(fdt, parentoffset, cgx_name);
-		if (cgx_offset < 0) {
-			/*
-			 * Could not find given cgx node, disable
-			 * CGX and all LMACs
-			 */
-			cgx->enable = 0;
-			for (lmac_id = 0; lmac_id < MAX_LMAC_PER_CGX; lmac_id++)
-				cgx->lmac_cfg[lmac_id].enable = 0;
-			continue;
-		}
-
-		INFO("RVU: %s node found, parsing LMACs..\n", cgx_name);
-		cgx->enable = 1;
-
-		/*
-		 * BDK already trimmed redundant FDT nodes and left here
-		 * at most 4 subnodes.
-		 */
-		lmac_id = 0;
-		fdt_for_each_subnode(lmac_offset, fdt, cgx_offset) {
-			/* Get number of VFs from FDT for given LMAC */
-			val = fdt_getprop(fdt, lmac_offset, "num-rvu-vfs", &len);
-			if (!val) {
-				/* If there's no such property in FDT,
-				 * set it to default value DEFAULT_VFS */
-				WARN("RVU: No num-rvu-vfs, using %d number of\n"
-				     "              VFs for subnode %d under %s\n",
-				     DEFAULT_VFS, lmac_id, cgx_name);
-				cgx->lmac_cfg[lmac_id].num_rvu_vfs = DEFAULT_VFS;
-			} else {
-				cgx->lmac_cfg[lmac_id].num_rvu_vfs = fdt32_to_cpu(*val);
-			}
-
-			/* Get number of MSIX */
-			val = fdt_getprop(fdt, lmac_offset,
-					      "num-msix-vec", &len);
-			if (!val) {
-				/* If there's no such property in FDT,
-				 * set it to default value DEFAULT_VFS */
-				WARN("RVU: No num-msix-vec, using %d number of\n"
-				     "              MSIX for subnode %d under %s\n",
-				     DEFAULT_MSIX_LMAC, lmac_id, cgx_name);
-				cgx->lmac_cfg[lmac_id].num_msix_vec = DEFAULT_MSIX_LMAC;
-			} else {
-				cgx->lmac_cfg[lmac_id].num_msix_vec = fdt32_to_cpu(*val);
-			}
-
+	numvfs = 0;
+	for (i = 0; i < MAX_CGX; i++) {
+		cgx = &bfdt.cgx_cfg[i];
+		for (j = 0; j < cgx->lmac_count; j++) {
+			lmac = &cgx->lmac_cfg[j];
 			/* Increment number of assigned VFs */
-			numvfs += cgx->lmac_cfg[lmac_id].num_rvu_vfs;
-
-			/* Enable LMAC */
-			cgx->lmac_cfg[lmac_id].enable = 1;
-			lmac_id++;
+			numvfs += lmac->num_rvu_vfs;
 		}
-
-		/* Now, disable all other LMACs */
-		for (; lmac_id < MAX_LMAC_PER_CGX; lmac_id++) {
-			cgx->lmac_cfg[lmac_id].enable = 0;
-		}
-
 	}
 
 	return numvfs;
@@ -382,7 +322,7 @@ static int octeontx_parse_rvu_config(void)
 	}
 
 	/* Fill cgx_info_t structure */
-	rc = octeontx_parse_rvu_cgx(fdt, offset);
+	rc = octeontx_parse_rvu_cgx();
 	if (rc < 0) {
 		WARN("RVU: Unable to fill CGX config properly\n");
 		return -1;
