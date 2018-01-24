@@ -538,9 +538,118 @@ static int octeontx2_fill_cgx_struct(int node, int qlm, int lane, int mode_idx)
 	return (lcnt * lused);
 }
 
+/* Get the LMAC information from the Linux DT file. The following properties
+ * are checked:
+ *  - num-rvu-vfs
+ *  - num-msix-vec
+ * SGMII/QSGMII only:
+ *  - cavium,sgmii-mac-phy-mode
+ *  - cavium,sgmii-mac-1000x-mode
+ *  - cavium,disable-autonegotiation
+ */
+static void octeontx2_cgx_lmacs_check_linux(const void *fdt,
+		cgx_config_t *cgx, int cgx_idx, int cgx_offset)
+{
+	int lmac_idx;
+	cgx_lmac_config_t *lmac;
+	char name[16];
+	const int *val;
+	int len;
+	int lmac_offset;
+
+	for (lmac_idx = 0; lmac_idx < cgx->lmac_count; lmac_idx++) {
+		lmac = &cgx->lmac_cfg[lmac_idx];
+		snprintf(name, sizeof(name), "%s@%d%d",
+				qlmmode_strmap[lmac->mode_idx].linux_str,
+				cgx_idx, lmac_idx);
+		lmac_offset = fdt_subnode_offset(fdt, cgx_offset, name);
+		if (lmac_offset < 0) {
+			ERROR("CGX%d.LMAC%d: DT:%s not found in device tree\n",
+					cgx_idx, lmac_idx, name);
+			continue;
+		}
+
+		/* Fill RVU if any. */
+		val = fdt_getprop(fdt, lmac_offset, "num-rvu-vfs", &len);
+		if (val)
+			lmac->num_rvu_vfs = fdt32_to_cpu(*val);
+		else {
+			WARN("N%d.CGX%d.LMAC%d: num-rvu-vfs not set, configuring %d number of VFs.\n",
+					cgx->node, cgx_idx, lmac_idx,
+					DEFAULT_VFS);
+			lmac->num_rvu_vfs = DEFAULT_VFS;
+		}
+		val = fdt_getprop(fdt, lmac_offset, "num-msix-vec", &len);
+		if (val)
+			lmac->num_msix_vec = fdt32_to_cpu(*val);
+		else {
+			WARN("N%d.CGX%d.LMAC%d: num-msix-vec not set, configuring %d number of MSIX.\n",
+					cgx->node, cgx_idx, lmac_idx,
+					DEFAULT_MSIX_LMAC);
+			lmac->num_msix_vec = DEFAULT_MSIX_LMAC;
+		}
+
+		/* Fields only for the SGMII/QSGMII LMAC types. */
+		if ((lmac->mode == CAVM_CGX_LMAC_TYPES_E_SGMII) ||
+				(lmac->mode == CAVM_CGX_LMAC_TYPES_E_QSGMII)) {
+			val = fdt_getprop(fdt, lmac_offset,
+					"cavium,sgmii-mac-phy-mode", &len);
+			if (val)
+				lmac->phy_mode = 1;
+			val = fdt_getprop(fdt, lmac_offset,
+					"cavium,sgmii-mac-1000x-mode", &len);
+			if (val)
+				lmac->sgmii_1000x_mode = 1;
+			val = fdt_getprop(fdt, lmac_offset,
+					"cavium,disable-autonegotiation",
+					&len);
+			if (val)
+				lmac->autoneg_dis = 1;
+		}
+
+		/* Enable LMAC */
+		lmac->lmac_enable = 1;
+	}
+}
+
+/* Main routine to parse the CGX information from the Linux DT file. */
+static void octeontx2_cgx_check_linux(const void *fdt)
+{
+	int i;
+	cgx_config_t *cgx;
+	int offset;
+	int cgx_offset;
+	char name[16];
+
+	offset = fdt_path_offset(fdt, "/soc@0");
+	if (offset < 0) {
+		ERROR("DT: Can't find CGX information in the Linux DT.\n");
+		return;
+	}
+	offset = fdt_node_offset_by_compatible(fdt, offset, "pci-bridge");
+	if (offset < 0) {
+		ERROR("DT: Unable to find mrml_bridge node.\n");
+		return;
+	}
+
+	for (i = 0; i < MAX_CGX; i++) {
+		cgx = &bfdt.cgx_cfg[i];
+		snprintf(name, sizeof(name), "cgx@%d", i);
+		if (!cgx->lmac_count)
+			continue;
+		cgx_offset = fdt_subnode_offset(fdt, offset, name);
+		if (cgx_offset < 0) {
+			ERROR("DT: %s node present in the device tree\n", name);
+			continue;
+		}
+		octeontx2_cgx_lmacs_check_linux(fdt, cgx, i, cgx_offset);
+	}
+}
+
 /* BDK fills the CAVM_GSERNX_LANEX_SCRATCH0 register with mode used by LANE.
  * The routine goes through all the NODE/QLM/LANE sets and initializes
  * CGX/LMAC, if any.
+ * After it the Linux DT file is used to get other information for CGX.
  */
 static void octeontx2_fill_cgx_details(const void *fdt)
 {
@@ -576,6 +685,8 @@ static void octeontx2_fill_cgx_details(const void *fdt)
 			}
 		}
 	}
+
+	octeontx2_cgx_check_linux(fdt);
 }
 
 int plat_fill_board_details(int info)
