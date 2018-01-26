@@ -15,6 +15,7 @@
 #include <debug.h>
 #include <libfdt.h>
 #include <stdlib.h>
+#include <assert.h>
 #include <cavm_dt.h>
 #include <cavm_common.h>
 
@@ -199,6 +200,259 @@ static int octeontx2_fdt_lookup_phandle(const void *fdt_addr, int offset,
 					fdt32_to_cpu(*phandle));
 	else
 		return -FDT_ERR_NOTFOUND;
+}
+
+/**
+ * octeontx2_parse_rvu_cgx - return number of assigned VFs
+ *
+ * @return: sum of number of VFs per given PHY node
+ */
+static int octeontx2_parse_rvu_cgx(void)
+{
+	int i, j;
+	int numvfs;
+	cgx_config_t *cgx;
+	cgx_lmac_config_t *lmac;
+
+	numvfs = 0;
+	for (i = 0; i < MAX_CGX; i++) {
+		cgx = &bfdt.cgx_cfg[i];
+		for (j = 0; j < cgx->lmac_count; j++) {
+			lmac = &cgx->lmac_cfg[j];
+			/* Increment number of assigned VFs */
+			numvfs += lmac->num_rvu_vfs;
+		}
+	}
+
+	return numvfs;
+}
+
+/**
+ * octeontx2_parse_rvu_admin - fill rvu_admin_pf_t structure of rvu_config
+ * @fdt: pointer to the device tree blob
+ * @parentoffset: offset to parent node (ecam2)
+ * @node: node name
+ *
+ * returns:
+ * 	On success, number of VFs from DTB on *name node, -1 otherwise
+ */
+static int octeontx2_parse_rvu_admin(void *fdt, int parentoffset,
+				    const char *name)
+{
+	int offset, len;
+	const int *val;
+
+	/* Find offset of *name node */
+	offset = fdt_subnode_offset(fdt, parentoffset, name);
+	if (offset < 0) {
+		WARN("RVU: No %s node in FDT\n", name);
+		return -1;
+	}
+
+	/* Get number of VFs from FDT */
+	val = fdt_getprop(fdt, offset, "num-rvu-vfs", &len);
+	if (!val) {
+		/* If there's no such property in FDT,
+		 * set it to default value DEFAULT_AF_PF0_VFS */
+		WARN("RVU: No num-rvu-vfs, using %d number of VFs\n"
+		     "              for node %s\n",
+		     DEFAULT_AF_PF0_VFS, name);
+		bfdt.rvu_config.admin_pf.num_rvu_vfs = DEFAULT_AF_PF0_VFS;
+	} else {
+		bfdt.rvu_config.admin_pf.num_rvu_vfs = fdt32_to_cpu(*val);
+	}
+
+	/* Get number of MSIX */
+	val = fdt_getprop(fdt, offset, "num-msix-vec", &len);
+	if (!val) {
+		WARN("RVU: No num-msix-vec, using %d number of MSIX\n"
+		     "              for node: %s\n", DEFAULT_MSIX_AF, name);
+		bfdt.rvu_config.admin_pf.num_msix_vec = DEFAULT_MSIX_AF;
+	} else {
+		bfdt.rvu_config.admin_pf.num_msix_vec = fdt32_to_cpu(*val);
+	}
+
+	/* Trim (replace with FDT_NOP tags) proper node from FDT */
+	//TODO: Uncomment it, causes hang on ASIM.
+/*	*val = fdt_del_node(fdt, offset);
+	if (*val < 0) {
+		ERROR("RVU: Unable to remove node %s from DTB", name);
+		return -1;
+	}*/
+
+	return bfdt.rvu_config.admin_pf.num_rvu_vfs;
+}
+
+/**
+ * octeontx2_parse_sw_rvu - fill rvu_sw_pf_t structure of rvu_config
+ * @fdt: pointer to the device tree blob
+ * @parentoffset: offset to parent node (ecam2)
+ * @node: node name
+ * @sw_rvu_pf: index enumerated by sw_rvu_pfs
+ *
+ * returns:
+ * 	On success, number of VFs from DTB on *name node, -1 otherwise
+ */
+static int octeontx2_parse_sw_rvu(void *fdt, int parentoffset,
+				 const char *name, int sw_rvu_pf)
+{
+	int offset, len;
+	const int *val;
+
+	assert(sw_rvu_pf > 0 || sw_rvu_pf < SW_RVU_MAX_PF);
+
+	/* Find offset of *name node */
+	offset = fdt_subnode_offset(fdt, parentoffset, name);
+	if (offset < 0) {
+		WARN("RVU: No %s node in FDT\n", name);
+		return -1;
+	}
+
+	/* Get number of VFs from FDT */
+	val = fdt_getprop(fdt, offset, "num-rvu-vfs", &len);
+	if (!val) {
+		WARN("RVU: No num-rvu-vfs, using %d number of VFs\n"
+		     "              for node %s\n", DEFAULT_VFS, name);
+		bfdt.rvu_config.sw_pf[sw_rvu_pf].num_rvu_vfs = DEFAULT_VFS;
+	} else {
+		bfdt.rvu_config.sw_pf[sw_rvu_pf].num_rvu_vfs = fdt32_to_cpu(*val);
+	}
+
+	/* Get number of MSIX */
+	val = fdt_getprop(fdt, offset, "num-msix-vec", &len);
+	if (!val) {
+		WARN("RVU: No num-msix-vec, using %d number of MSIX\n"
+		     "              for node: %s\n", DEFAULT_MSIX_SW, name);
+		bfdt.rvu_config.sw_pf[sw_rvu_pf].num_msix_vec = DEFAULT_MSIX_SW;
+	} else {
+		bfdt.rvu_config.sw_pf[sw_rvu_pf].num_msix_vec = fdt32_to_cpu(*val);
+	}
+
+	/* Trim (replace with FDT_NOP tags) proper node from FDT */
+	//TODO: Uncomment it, causes hang on ASIM.
+/*	*val = fdt_del_node(fdt, offset);
+	if (val < 0) {
+		ERROR("RVU: Unable to remove node %s from DTB", name);
+		return -1;
+	}*/
+
+	/* On success, return number of VFs */
+	return bfdt.rvu_config.sw_pf[sw_rvu_pf].num_rvu_vfs;
+}
+
+static int octeontx2_validate_num_vfs(int current_vfs, const char *node_name)
+{
+	/* Check if number of requested VFs (via DTB) does not exceed number
+	 * of Hardware VFs */
+	if (current_vfs > RVU_HWVFS) {
+		ERROR("RVU: Wrong FDT config. Tried to configure more\n"
+		       "              VFs (%d) than HWVFs (%d). Please edit\n"
+		       "              FDT and reflash the board.\n"
+		       "              Failed on %s\n", current_vfs,
+		       RVU_HWVFS, node_name);
+		return -1;
+	}
+
+	return 0;
+}
+
+static int octeontx2_parse_rvu_config(void)
+{
+	void *fdt = fdt_ptr;
+	int offset, rc, soc_offset, fdt_vfs;
+	char node_name[32];
+
+	/* Initial setup */
+	fdt_vfs = 0;
+	soc_offset = offset = fdt_path_offset(fdt, "/soc@0");
+	if (soc_offset < 0) {
+		ERROR("RVU: Unable to find soc@0 node\n");
+		return -1;
+	}
+
+	/* Parse all subnodes of ECAM0, Domain2 */
+	snprintf(node_name, sizeof(node_name), "pci@%llx",
+		(CSR_PA(0, CAVM_ECAM_PF_BAR2(0)) | (2 << 28)));
+	offset = fdt_subnode_offset(fdt, soc_offset, node_name);
+	if (offset < 0) {
+		ERROR("RVU: Unable to find ecam2 node: %s\n", node_name);
+		return -1;
+	}
+
+	/* Fill rvu_admin_pf_t structure */
+	rc = octeontx2_parse_rvu_admin(fdt, offset, RVU_ADMIN_FDT_NODE);
+	if (rc < 0) {
+		WARN("RVU: Unable to fill PF0-ADMIN structure\n");
+		return -1;
+	}
+
+	/* Update and validate number of currently requested VFs */
+	fdt_vfs += rc;
+	rc = octeontx2_validate_num_vfs(fdt_vfs, RVU_ADMIN_FDT_NODE);
+	if (rc < 0)
+		return -1;
+
+	/* Fill rvu_sw_rvu_pf_t structure, start with SSO_TIM (PF13) */
+	rc = octeontx2_parse_sw_rvu(fdt, offset, RVU_SSO_TIM_FDT_NODE,
+				   SW_RVU_SSO_TIM_PF);
+	if (rc < 0) {
+		WARN("RVU: Unable to fill PF13-SSO_TIM structure\n");
+		return -1;
+	}
+
+	/* Update and validate number of currently requested VFs */
+	fdt_vfs += rc;
+	rc = octeontx2_validate_num_vfs(fdt_vfs, RVU_SSO_TIM_FDT_NODE);
+	if (rc < 0)
+		return -1;
+
+	/* Now parse NPA (PF14) */
+	rc = octeontx2_parse_sw_rvu(fdt, offset, RVU_NPA_FDT_NODE, SW_RVU_NPA_PF);
+	if (rc < 0) {
+		WARN("RVU: Unable to fill PF14-NPA structure\n");
+		return -1;
+	}
+
+	/* Update and validate number of currently requested VFs */
+	fdt_vfs += rc;
+	rc = octeontx2_validate_num_vfs(fdt_vfs, RVU_NPA_FDT_NODE);
+	if (rc < 0)
+		return -1;
+
+	/* Finally, parse CPT (PF15) */
+	rc = octeontx2_parse_sw_rvu(fdt, offset, RVU_CPT_FDT_NODE, SW_RVU_CPT_PF);
+	if (rc < 0) {
+		WARN("RVU: Unable to fill PF15-CPT structure\n");
+		return -1;
+	}
+
+	/* Update and validate number of currently requested VFs */
+	fdt_vfs += rc;
+	rc = octeontx2_validate_num_vfs(fdt_vfs, RVU_CPT_FDT_NODE);
+	if (rc < 0)
+		return -1;
+
+	/* Look for mrml_bridge node */
+	offset = fdt_node_offset_by_compatible(fdt, soc_offset, "pci-bridge");
+	if (offset < 0) {
+		ERROR("RVU: Unable to find mrml_bridge node\n");
+		return -1;
+	}
+
+	/* Fill cgx_info_t structure */
+	rc = octeontx2_parse_rvu_cgx();
+	if (rc <= 0) {
+		WARN("RVU: Unable to fill CGX config properly\n");
+		return -1;
+	}
+
+	/* Update and validate number of currently requested VFs */
+	fdt_vfs += rc;
+	rc = octeontx2_validate_num_vfs(fdt_vfs, "CGX subnodes configuration");
+	if (rc < 0)
+		return -1;
+
+	return 0;
 }
 
 static void octeontx2_boot_device_from_strapx(const int node)
@@ -1104,6 +1358,13 @@ int plat_fill_board_details(int info)
 	}
 
 	octeontx2_fill_cgx_details(fdt);
+	rc = octeontx2_parse_rvu_config();
+	if (rc < 0) {
+		ERROR("RVU: Marking RVU configuration invalid!\n");
+		bfdt.rvu_config.valid = 0;
+	} else
+		bfdt.rvu_config.valid = 1;
+
 	if (info)
 		octeontx2_print_board_variables();
 
