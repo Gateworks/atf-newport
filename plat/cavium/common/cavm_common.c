@@ -168,3 +168,16 @@ void l2c_flush(void)
 		}
 	}
 }
+
+void plat_error_handler(int err_code)
+{
+#if TRUSTED_BOARD_BOOT
+	/* Handle platform-specific secure boot failure cause */
+	cavm_rst_boot_t rst_boot;
+
+	rst_boot.u = CSR_READ(0, CAVM_RST_BOOT);
+	rst_boot.s.dis_huk = 1;
+	CSR_WRITE(0, CAVM_RST_BOOT, rst_boot.u);
+#endif
+	for(;;);
+}
