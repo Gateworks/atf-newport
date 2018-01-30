@@ -150,6 +150,13 @@ static void octeontx2_print_board_variables(void)
 					lmac->num_rvu_vfs,
 					lmac->num_msix_vec,
 					lmac->use_training);
+			INFO("\tMAC=%x:%x:%x:%x:%x:%x\n",
+					lmac->local_mac_address[0],
+					lmac->local_mac_address[1],
+					lmac->local_mac_address[2],
+					lmac->local_mac_address[3],
+					lmac->local_mac_address[4],
+					lmac->local_mac_address[5]);
 			if (lmac->phy_present) {
 				phy = &lmac->phy_config;
 				if (strlen(phy->phy_compatible)) {
@@ -200,6 +207,28 @@ static int octeontx2_fdt_lookup_phandle(const void *fdt_addr, int offset,
 					fdt32_to_cpu(*phandle));
 	else
 		return -FDT_ERR_NOTFOUND;
+}
+
+/* Return numeric representation of the BDK field required. Return -1, if such
+ * field isn't defined. Note that -1 can be value for the field.
+ */
+static long octeontx2_fdtbdk_get_num(const void *fdt_addr, const char *prop,
+		int base)
+{
+	long ret;
+	int offset;
+	const char *buf;
+	int len;
+
+	offset = fdt_path_offset(fdt_addr, "/cavium,bdk");
+	buf = fdt_getprop(fdt_addr, offset, prop, &len);
+	if (!buf) {
+		INFO("No %s option is set in BDK.\n", prop);
+		return -1;
+	}
+	ret = strtol(buf, NULL, base);
+
+	return ret;
 }
 
 /**
@@ -1284,6 +1313,71 @@ static void octeontx2_cgx_check_linux(const void *fdt)
 	}
 }
 
+/* Assign all the possible MAC addresses to the LMAC initialized.
+ * This is made according to the values from the BDK DT file:
+ *   BOARD-MAC-ADDRESS-NUM
+ *   BOARD-MAC-ADDRESS
+ * First "N" LMACs will be configured. Remaining interfaces will be
+ * initialized with zeros.
+ */
+static void octeontx2_cgx_assign_mac(const void *fdt)
+{
+	int cgx_idx, lmac_idx;
+	cgx_config_t *cgx;
+	cgx_lmac_config_t *lmac;
+	int mac_num;
+	int override;
+	long mac;
+
+	/* Parse BDK DT file, to find variables to set MAC address:
+	 *   BOARD-MAC-ADDRESS-NUM
+	 *   BOARD-MAC-ADDRESS-NUM-OVERRIDE
+	 *   BOARD-MAC-ADDRESS
+	 */
+	mac_num = octeontx2_fdtbdk_get_num(fdt, "BOARD-MAC-ADDRESS-NUM", 10);
+	INFO("BOARD-MAC-ADDRESS-NUM=%d\n", mac_num);
+	override = octeontx2_fdtbdk_get_num(fdt, "BOARD-MAC-ADDRESS-NUM-OVERRIDE", 10);
+	if (override >= 0) {
+		INFO("Override number of MAC to set=%d.\n", override);
+		mac_num = override;
+	}
+	if (mac_num <= 0) {
+		INFO("No MAC addresses should be set.\n");
+		return;
+	}
+	mac = octeontx2_fdtbdk_get_num(fdt, "BOARD-MAC-ADDRESS", 16);
+	INFO("BOARD-MAC-ADDRESS=%lx\n", mac);
+	if (mac == -1) {
+		INFO("Base MAC address is not defined.\n");
+		return;
+	}
+
+	/* Initialize N first LMACs with the MAC address. */
+	for (cgx_idx = 0; cgx_idx < MAX_CGX; cgx_idx++) {
+		cgx = &bfdt.cgx_cfg[cgx_idx];
+		for (lmac_idx = 0; lmac_idx < cgx->lmac_count; lmac_idx++) {
+			lmac = &cgx->lmac_cfg[lmac_idx];
+			if (!lmac->lmac_enable)
+				continue;
+			lmac->local_mac_address[0] = (mac >> 40) & 0xff;
+			lmac->local_mac_address[1] = (mac >> 32) & 0xff;
+			lmac->local_mac_address[2] = (mac >> 24) & 0xff;
+			lmac->local_mac_address[3] = (mac >> 16) & 0xff;
+			lmac->local_mac_address[4] = (mac >> 8) & 0xff;
+			lmac->local_mac_address[5] = mac & 0xff;
+			mac++;
+			mac_num--;
+			/* If there are no free LMACs, then just return
+			 * from the routine.
+			 */
+			if (!mac_num) {
+				INFO("All free MAC addresses are assigned.\n");
+				return;
+			}
+		}
+	}
+}
+
 /* BDK fills the CAVM_GSERNX_LANEX_SCRATCH0 register with mode used by LANE.
  * The routine goes through all the NODE/QLM/LANE sets and initializes
  * CGX/LMAC, if any.
@@ -1325,6 +1419,7 @@ static void octeontx2_fill_cgx_details(const void *fdt)
 	}
 
 	octeontx2_cgx_check_linux(fdt);
+	octeontx2_cgx_assign_mac(fdt);
 }
 
 int plat_fill_board_details(int info)
