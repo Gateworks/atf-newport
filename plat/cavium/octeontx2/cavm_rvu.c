@@ -137,7 +137,7 @@ static int octeontx_init_rvu_from_fdt(void)
 					octeontx_init_rvu_lmac(&current_hwvf,
 							       pf, cgx,
 							       lmac_id);
-					assert(current_hwvf < MAX_RVU_HWVFS);
+					assert(current_hwvf <= MAX_RVU_HWVFS);
 					pf++;
 				} else {
 					/* Increment number of not
