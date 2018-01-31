@@ -1133,7 +1133,10 @@ static int octeontx2_fill_cgx_struct(int node, int qlm, int lane, int mode_idx)
 			lmac->lane_to_sds = 0xe4;
 			break;
 		case CAVM_CGX_LMAC_TYPES_E_RXAUI:
-			if (lane % 2)
+			/* The RXAUI mode is always using a double lane. So
+			 * the lane value can be 0 or 2.
+			 */
+			if (lane == 2)
 				lmac->lane_to_sds = 0xe;
 			else
 				lmac->lane_to_sds = 0x4;
