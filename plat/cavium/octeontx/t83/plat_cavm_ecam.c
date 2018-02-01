@@ -11,13 +11,14 @@
 #
 #**/
 
+#include <platform_def.h>
+#include <cavm_common.h>
+
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
-#include <cavm_ecam.h>
-#include <cavm_common.h>
 #include <cavm_dt.h>
-#include <platform_def.h>
+#include <cavm_ecam.h>
 
 #ifdef DEBUG_ATF_PLAT_ECAM
 #define debug_plat_ecam printf
