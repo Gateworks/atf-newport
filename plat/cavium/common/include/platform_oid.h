@@ -10,8 +10,8 @@
   WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 
 **/
-#ifndef __CAVM_SVC_H__
-#define __CAVM_SVC_H__
+#ifndef __PLATFORM_OID_H__
+#define __PLATFORM_OID_H__
 
 #include "../../../../include/plat/arm/board/common/board_arm_oid.h"
 
@@ -20,5 +20,5 @@
  * (Provided by included header)
  */
 
-#endif /* __CAVM_SVC_H__ */
+#endif /* __PLATFORM_OID_H__ */
 
