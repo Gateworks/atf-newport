@@ -85,6 +85,16 @@ reloc_end:
 	 */
 	bl	bl1_main
 
+	/*
+	 * Apply errata #30471 - AP_HCR_EL2[BSU].
+	 * No need to keep the previous state of AP_HCR_EL2[BSU]
+	 * since not yet configured by KVM/Xen.
+	 * In future when we'll support runtime switching to S-BL1,
+	 * (not only for the BL2 image, as done now),
+	 * it will be required to save context of HCR_EL2[BSU].
+	 */
+	bl	errata_30471
+
 	/* --------------------------------------------------
 	 * Do the transition to next boot image.
 	 * --------------------------------------------------
@@ -102,3 +112,17 @@ copy_loop:
 	cbnz    x2, copy_loop
 	ret
 endfunc copy_data
+
+func errata_30471
+	mrs	x23, S3_0_C0_C0_0
+	ldr	x24, =0x00F00F00 //Mask for pass 1.x, T81/T83
+	and	x23, x23, x24
+	cmp	x23, #0x00000A00 //If pass 1.x, T81/T83
+	b.ne	invalid_pass
+	mrs	x23, HCR_EL2
+	bic	x23, x23, #HCR_BSU0_BIT
+	bic	x23, x23, #HCR_BSU1_BIT
+	msr	HCR_EL2, x23
+invalid_pass:
+	ret
+endfunc errata_30471
