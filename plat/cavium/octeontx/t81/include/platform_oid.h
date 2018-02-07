@@ -13,7 +13,7 @@
 #ifndef __PLATFORM_OID_H__
 #define __PLATFORM_OID_H__
 
-#include "../../../../include/plat/arm/board/common/board_arm_oid.h"
+#include "../../../../../include/plat/arm/board/common/board_arm_oid.h"
 
 /*
  * Required platform OIDs
