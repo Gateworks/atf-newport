@@ -60,6 +60,10 @@ static void plat_add_mmio_common(void)
 			TZDRAM_SIZE - (unsigned long)fdt_ptr,
 			attr);
 
+	/* Map BFDT structure */
+	attr = MT_MEMORY | MT_RW | MT_SECURE;
+	mmap_add_region(BOARD_CFG_BASE, BOARD_CFG_BASE, BOARD_CFG_MAX_SIZE, attr);
+
 	attr = MT_MEMORY | MT_RW | MT_NS;
 	mmap_add_region(NS_IMAGE_BASE, NS_IMAGE_BASE, NS_IMAGE_MAX_SIZE, attr);
 }
