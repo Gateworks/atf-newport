@@ -178,6 +178,9 @@ ifneq ($(PIE_FOUND),)
 TF_CFLAGS		+=	-fno-PIE
 endif
 
+LDFLAGS			+=	--fatal-warnings -O1
+LDFLAGS			+=	--gc-sections
+
 TF_LDFLAGS		+=	--fatal-warnings -O1
 TF_LDFLAGS		+=	--gc-sections
 TF_LDFLAGS		+=	$(TF_LDFLAGS_$(ARCH))

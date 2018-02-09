@@ -142,7 +142,7 @@ DECLARE_RT_SVC(
 		thunder_svc,
 		OEN_OEM_START,
 		OEN_OEM_END,
-		SMC_TYPE_STD,
+		SMC_TYPE_YIELD,
 		thunder_svc_setup,
 		thunder_svc_smc_handler
 );
