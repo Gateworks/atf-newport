@@ -93,9 +93,9 @@ ifeq (${SECURE_BOOT},1)
         $(error "Unsupported ARM_ROTPK_LOCATION value '${ARM_ROTPK_LOCATION}'")
     endif
 
-    # KEY_ALG and MBEDTLS_KEY_ALG are used for authentication purposes
+    # KEY_ALG and TF_MBEDTLS_KEY_ALG are used for authentication purposes
     KEY_ALG                := ecdsa
-    MBEDTLS_KEY_ALG        := ${KEY_ALG}
+    TF_MBEDTLS_KEY_ALG     := ${KEY_ALG}
 
     # CIPHER_TYPE that will be used to encrypt/decrypt images
     # If not defied at build time, do not use encryption
