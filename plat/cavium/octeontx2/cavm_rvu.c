@@ -31,9 +31,9 @@ static struct rvu_device rvu_dev[MAX_RVU_PFS];
 static void octeontx_init_rvu_af(int *hwvf)
 {
 	rvu_dev[RVU_AF].enable = TRUE;
-	rvu_dev[RVU_AF].num_vfs = bfdt.rvu_config.admin_pf.num_rvu_vfs;
+	rvu_dev[RVU_AF].num_vfs = bfdt->rvu_config.admin_pf.num_rvu_vfs;
 	rvu_dev[RVU_AF].first_hwvf = *hwvf;
-	rvu_dev[RVU_AF].pf_num_msix_vec = bfdt.rvu_config.admin_pf.num_msix_vec;
+	rvu_dev[RVU_AF].pf_num_msix_vec = bfdt->rvu_config.admin_pf.num_msix_vec;
 	rvu_dev[RVU_AF].pf_res_ena = FALSE;
 	rvu_dev[RVU_AF].vf_res_ena = FALSE;
 	rvu_dev[RVU_AF].pci.pf_devid = CAVM_PCC_DEV_IDL_E_RVU_AF & DEVID_MASK;
@@ -48,7 +48,7 @@ static void octeontx_init_rvu_fixed(int *hwvf, int rvu, int bfdt_index, int has_
 	rvu_sw_rvu_pf_t *sw_pf;
 
 	assert(bfdt_index < SW_RVU_MAX_PF);
-	sw_pf = &bfdt.rvu_config.sw_pf[bfdt_index];
+	sw_pf = &(bfdt->rvu_config.sw_pf[bfdt_index]);
 
 	rvu_dev[rvu].enable = TRUE;
 	rvu_dev[rvu].num_vfs = has_vfs ? sw_pf->num_rvu_vfs : 0;
@@ -105,7 +105,7 @@ static int octeontx_init_rvu_from_fdt(void)
 	cgx_config_t *cgx;
 
 	/* Check if FDT config is valid */
-	if (!bfdt.rvu_config.valid) {
+	if (!(bfdt->rvu_config.valid)) {
 		ERROR("Invalid RVU configuration, skipping RVU init!.\n");
 		return -1;
 	}
@@ -130,7 +130,7 @@ static int octeontx_init_rvu_from_fdt(void)
 	pf = RVU_CGX0_LMAC0;
 	uninit_pfs = 0;
 	for (cgx_id = 0; cgx_id < MAX_CGX; cgx_id++) {
-		cgx = &bfdt.cgx_cfg[cgx_id];
+		cgx = &(bfdt->cgx_cfg[cgx_id]);
 		if (cgx->enable) {
 			for (lmac_id = 0; lmac_id < MAX_LMAC_PER_CGX; lmac_id++) {
 				if (cgx->lmac_cfg[lmac_id].lmac_enable) {

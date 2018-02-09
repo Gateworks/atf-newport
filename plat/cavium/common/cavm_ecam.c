@@ -239,7 +239,7 @@ static void init_gpio(int node, uint64_t config_base, uint64_t config_size)
 	union cavm_pccpf_xxx_vsec_ctl vsec_ctl;
 	vsec_ctl.u = cavm_read32(config_base + CAVM_PCCPF_XXX_VSEC_CTL);
 	//int gpio_pin = GPIO_PWR_PIN;
-	int gpio_pin = bfdt.gpio_shutdown_ctl_in;
+	int gpio_pin = bfdt->gpio_shutdown_ctl_in;
 
 	if (gpio_pin < 0)
 		return;
@@ -380,7 +380,7 @@ static void init_twsi(int node, uint64_t config_base, uint64_t config_size)
 
 	debug_io("Using TWSI func = 0x%x\n", devfn);
 
-	if ((devfn & 0x7) != bfdt.bmc_boot_twsi_bus)
+	if ((devfn & 0x7) != bfdt->bmc_boot_twsi_bus)
 		return;
 
 	debug_io("setting secure/phys @%p\n", (void *)sctl);

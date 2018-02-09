@@ -133,7 +133,7 @@ static void octeontx2_print_board_variables(void)
 	phy_config_t *phy;
 
 	for (i = 0; i < MAX_CGX; i++) {
-		cgx = &bfdt.cgx_cfg[i];
+		cgx = &(bfdt->cgx_cfg[i]);
 		INFO("N%d.CGX%d: lmac_count = %d\n", cgx->node, i,
 				cgx->lmac_count);
 		for (j = 0; j < cgx->lmac_count; j++) {
@@ -299,7 +299,7 @@ static int octeontx2_parse_rvu_admin(const void *fdt, int parentoffset,
 		return -1;
 	}
 
-	sw_pf = &bfdt.rvu_config.admin_pf;
+	sw_pf = &(bfdt->rvu_config.admin_pf);
 	/* Get number of MSIX */
 	val = fdt_getprop(fdt, offset, "num-msix-vec", &len);
 	if (!val) {
@@ -351,7 +351,7 @@ static int octeontx2_parse_sw_rvu(const void *fdt, int parentoffset,
 
 	assert(sw_rvu_pf >= 0 && sw_rvu_pf < SW_RVU_MAX_PF);
 
-	sw_pf = &bfdt.rvu_config.sw_pf[sw_rvu_pf];
+	sw_pf = &(bfdt->rvu_config.sw_pf[sw_rvu_pf]);
 	/* Find offset of *name node */
 	offset = fdt_subnode_offset(fdt, parentoffset, name);
 	if (offset < 0) {
@@ -397,7 +397,7 @@ static void octeontx2_parse_rvu_config(const void *fdt, int *fdt_vfs)
 
 	/* CGX configuration is already done on this step,
 	 * perform initial setup for other RVU-related nodes */
-	bfdt.rvu_config.valid = 0;
+	bfdt->rvu_config.valid = 0;
 	soc_offset = offset = fdt_path_offset(fdt, "/soc@0");
 	if (soc_offset < 0) {
 		ERROR("RVU: Unable to find soc@0 node\n");
@@ -445,7 +445,7 @@ static void octeontx2_parse_rvu_config(const void *fdt, int *fdt_vfs)
 	}
 
 	/* Here we can mark FDT RVU config as valid */
-	bfdt.rvu_config.valid = 1;
+	bfdt->rvu_config.valid = 1;
 }
 
 
@@ -454,47 +454,47 @@ static void octeontx2_boot_device_from_strapx(const int node)
 	cavm_gpio_strap_t gpio_strap;
 	int boot_medium;
 
-	bfdt.boot_dev.node = node;
+	bfdt->boot_dev.node = node;
 
 	gpio_strap.u = CSR_READ(0, CAVM_GPIO_STRAP);
 	boot_medium = (gpio_strap.u) & 0x7;
 
 	switch (boot_medium) {
 		case CAVM_RST_BOOT_METHOD_E_REMOTE_CN9:
-			bfdt.boot_dev.boot_type = THUNDER_BOOT_REMOTE;
+			bfdt->boot_dev.boot_type = THUNDER_BOOT_REMOTE;
 			break;
 		case CAVM_RST_BOOT_METHOD_E_SPI0_CS0:
-			bfdt.boot_dev.boot_type = THUNDER_BOOT_SPI;
-			bfdt.boot_dev.controller = 0;
-			bfdt.boot_dev.cs = 0;
+			bfdt->boot_dev.boot_type = THUNDER_BOOT_SPI;
+			bfdt->boot_dev.controller = 0;
+			bfdt->boot_dev.cs = 0;
 			break;
 		case CAVM_RST_BOOT_METHOD_E_SPI0_CS1:
-			bfdt.boot_dev.boot_type = THUNDER_BOOT_SPI;
-			bfdt.boot_dev.controller = 0;
-			bfdt.boot_dev.cs = 1;
+			bfdt->boot_dev.boot_type = THUNDER_BOOT_SPI;
+			bfdt->boot_dev.controller = 0;
+			bfdt->boot_dev.cs = 1;
 			break;
 		case CAVM_RST_BOOT_METHOD_E_SPI1_CS0:
-			bfdt.boot_dev.boot_type = THUNDER_BOOT_SPI;
-			bfdt.boot_dev.controller = 1;
-			bfdt.boot_dev.cs = 0;
+			bfdt->boot_dev.boot_type = THUNDER_BOOT_SPI;
+			bfdt->boot_dev.controller = 1;
+			bfdt->boot_dev.cs = 0;
 			break;
 		case CAVM_RST_BOOT_METHOD_E_SPI1_CS1:
-			bfdt.boot_dev.boot_type = THUNDER_BOOT_SPI;
-			bfdt.boot_dev.controller = 1;
-			bfdt.boot_dev.cs = 1;
+			bfdt->boot_dev.boot_type = THUNDER_BOOT_SPI;
+			bfdt->boot_dev.controller = 1;
+			bfdt->boot_dev.cs = 1;
 			break;
 		case CAVM_RST_BOOT_METHOD_E_EMMC_CS0:
-			bfdt.boot_dev.boot_type = THUNDER_BOOT_EMMC;
-			bfdt.boot_dev.controller = 0;
-			bfdt.boot_dev.cs = 0;
+			bfdt->boot_dev.boot_type = THUNDER_BOOT_EMMC;
+			bfdt->boot_dev.controller = 0;
+			bfdt->boot_dev.cs = 0;
 			break;
 		case CAVM_RST_BOOT_METHOD_E_EMMC_CS1:
-			bfdt.boot_dev.boot_type = THUNDER_BOOT_EMMC;
-			bfdt.boot_dev.controller = 0;
-			bfdt.boot_dev.cs = 1;
+			bfdt->boot_dev.boot_type = THUNDER_BOOT_EMMC;
+			bfdt->boot_dev.controller = 0;
+			bfdt->boot_dev.cs = 1;
 			break;
 		default:
-			bfdt.boot_dev.boot_type = -THUNDER_BOOT_UNSUPPORTED;
+			bfdt->boot_dev.boot_type = -THUNDER_BOOT_UNSUPPORTED;
 			break;
 	}
 }
@@ -506,7 +506,7 @@ static int octeontx2_parse_boot_device(const void *fdt, const int offset,
 	const char *name;
 	int len, val;
 
-	bfdt.boot_dev.node = node;
+	bfdt->boot_dev.node = node;
 
 	snprintf(boot_device, sizeof(boot_device), "BOOT-DEVICE.N%d", node);
 	name = fdt_getprop(fdt, offset, boot_device, &len);
@@ -528,10 +528,10 @@ static int octeontx2_parse_boot_device(const void *fdt, const int offset,
 	else
 		val = -THUNDER_BOOT_UNSUPPORTED;
 
-	bfdt.boot_dev.boot_type = val;
+	bfdt->boot_dev.boot_type = val;
 
 	/* Get boot controller (only for SPI) */
-	if (bfdt.boot_dev.boot_type == THUNDER_BOOT_SPI) {
+	if (bfdt->boot_dev.boot_type == THUNDER_BOOT_SPI) {
 		if (!strncmp("SPI0", boot_device, 4))
 			val = 0;
 		else if (!strncmp("SPI1", boot_device, 4))
@@ -542,11 +542,11 @@ static int octeontx2_parse_boot_device(const void *fdt, const int offset,
 		val = -1;
 	}
 
-	bfdt.boot_dev.controller = val;
+	bfdt->boot_dev.controller = val;
 
 	/* Get chip select used to boot (EMMC and SPI) */
-	if (bfdt.boot_dev.boot_type == THUNDER_BOOT_SPI ||
-	    bfdt.boot_dev.boot_type == THUNDER_BOOT_EMMC) {
+	if (bfdt->boot_dev.boot_type == THUNDER_BOOT_SPI ||
+	    bfdt->boot_dev.boot_type == THUNDER_BOOT_EMMC) {
 		cs = strchr(boot_device, '_');
 		if (!cs) {
 			val = -1;
@@ -562,7 +562,7 @@ static int octeontx2_parse_boot_device(const void *fdt, const int offset,
 		val = -1;
 	}
 
-	bfdt.boot_dev.cs = val;
+	bfdt->boot_dev.cs = val;
 
 	return 0;
 }
@@ -813,7 +813,7 @@ static void octeontx2_fdt_parse_sfp_info(const void *fdt, int offset,
 	cgx_lmac_config_t *lmac;
 	int eeprom, parent;
 
-	lmac = &bfdt.cgx_cfg[cgx_idx].lmac_cfg[lmac_idx];
+	lmac = &(bfdt->cgx_cfg[cgx_idx].lmac_cfg[lmac_idx]);
 	sfp_info = &lmac->phy_config.sfp_info;
 	i2c_info = &sfp_info->i2c_eeprom_info;
 	mod_abs = &sfp_info->mod_abs; /* for now, parse only mod abs */
@@ -994,7 +994,7 @@ static int octeontx2_check_qlm_lmacs(int node, int cgx_idx,
 	cgx_lmac_config_t *lmac;
 	int i;
 
-	cgx = &bfdt.cgx_cfg[cgx_idx];
+	cgx = &(bfdt->cgx_cfg[cgx_idx]);
 	lmac_avail = MAX_LMAC_PER_CGX - cgx->lmacs_used;
 	if ((qlm == 3) || (qlm == 7)) {
 		/* Only QLM3 or QLM7 may be Ethernet, not both. */
@@ -1059,7 +1059,7 @@ static int octeontx2_fill_cgx_struct(int node, int qlm, int lane, int mode_idx)
 	}
 	INFO("N%d.CGX%d: Configure QLM%d Lane%d\n", node, cgx_idx, qlm, lane);
 
-	cgx = &bfdt.cgx_cfg[cgx_idx];
+	cgx = &(bfdt->cgx_cfg[cgx_idx]);
 	if (cgx->lmac_count >= MAX_LMAC_PER_CGX) {
 		WARN("N%d.CGX%d: already configured, not configuring QLM%d, Lane%d\n",
 				node, cgx_idx, qlm, lane);
@@ -1279,7 +1279,7 @@ static void octeontx2_cgx_check_linux(const void *fdt)
 	}
 
 	for (i = 0; i < MAX_CGX; i++) {
-		cgx = &bfdt.cgx_cfg[i];
+		cgx = &(bfdt->cgx_cfg[i]);
 		snprintf(name, sizeof(name), "cgx@%d", i);
 		if (!cgx->lmac_count)
 			continue;
@@ -1336,7 +1336,7 @@ static void octeontx2_cgx_assign_mac(const void *fdt)
 
 	/* Initialize N first LMACs with the MAC address. */
 	for (cgx_idx = 0; cgx_idx < MAX_CGX; cgx_idx++) {
-		cgx = &bfdt.cgx_cfg[cgx_idx];
+		cgx = &(bfdt->cgx_cfg[cgx_idx]);
 		for (lmac_idx = 0; lmac_idx < cgx->lmac_count; lmac_idx++) {
 			lmac = &cgx->lmac_cfg[lmac_idx];
 			if (!lmac->lmac_enable)
@@ -1408,6 +1408,13 @@ int plat_fill_board_details(int info)
 {
 	const void *fdt = fdt_ptr;
 	int offset, rc, node;
+
+	/*
+	 * Check if board_cfg_t fits in the memory region reserved
+	 * for board_cfg_t structure to make sure we do not modify
+	 * not-preserved memory.
+	 */
+	assert(sizeof(board_fdt_t) < (BOARD_CFG_MAX_SIZE - BOARD_CFG_BASE));
 
 	rc = cavm_fill_board_details(info);
 	if (rc) {

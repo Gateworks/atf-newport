@@ -52,5 +52,6 @@ typedef struct board_fdt {
 int plat_fill_board_details(int info);
 int cavm_fill_board_details(int info);
 
-extern board_fdt_t bfdt;
+extern board_fdt_t *bfdt;
+
 #endif

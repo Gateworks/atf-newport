@@ -404,7 +404,7 @@ static int emmc_block_open(io_dev_info_t *dev_info, const uintptr_t spec,
 		/* File cursor offset for seek and incremental reads etc. */
 		mmc_current_file.file_pos = 0;
 		mmc_current_file.offset_address = block_spec->offset;
-		mmc_current_file.cs = bfdt.boot_dev.cs;
+		mmc_current_file.cs = bfdt->boot_dev.cs;
 
 		entity->info = (uintptr_t)&mmc_current_file;
 

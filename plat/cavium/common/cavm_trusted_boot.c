@@ -122,7 +122,7 @@ int plat_get_rotpk_info(void *cookie, void **key_ptr, unsigned int *key_len,
 	assert(key_ptr != NULL);
 	assert(key_len != NULL);
 	assert(flags != NULL);
-	assert(bfdt.trust_rot_addr != 0);
+	assert(bfdt->trust_rot_addr != 0);
 
 	/* Copy the DER header of ROTPK into rotpk structure */
 	memcpy(rotpk, rotpk_asn1_hdr, rotpk_asn1_hdr_len);
@@ -131,7 +131,7 @@ int plat_get_rotpk_info(void *cookie, void **key_ptr, unsigned int *key_len,
 	ptr = &rotpk[rotpk_asn1_hdr_len];
 
 	/* Copy memory from trust_rot_addr to global table indicated by ptr */
-	memcpy(ptr, (unsigned char *)bfdt.trust_rot_addr, ROTPK_BYTES);
+	memcpy(ptr, (unsigned char *)bfdt->trust_rot_addr, ROTPK_BYTES);
 
 	/* Calculate the hash of ROTPK */
 	mbedtls_sha256(ptr, ROTPK_BYTES, rotpk_hash_der, 0);
@@ -144,7 +144,7 @@ int plat_get_rotpk_info(void *cookie, void **key_ptr, unsigned int *key_len,
 
 	/* Convert ROTPK to big endian partly Qx/Qy */
 	words = 4;
-	src = (uint64_t *)bfdt.trust_rot_addr;
+	src = (uint64_t *)bfdt->trust_rot_addr;
 	for (i = 0; i < words; i++) {
 		tmp = src[words - 1 - i];
 		*ptr++ = (unsigned char)((tmp >> 56) & 0xFF);
@@ -156,7 +156,7 @@ int plat_get_rotpk_info(void *cookie, void **key_ptr, unsigned int *key_len,
 		*ptr++ = (unsigned char)((tmp >> 8) & 0xFF);
 		*ptr++ = (unsigned char)(tmp & 0xFF);
 	}
-	src = (uint64_t *)(bfdt.trust_rot_addr + ROTPK_BYTES/2);
+	src = (uint64_t *)(bfdt->trust_rot_addr + ROTPK_BYTES/2);
 	for (i = 0; i < words; i++) {
 		tmp = src[words - 1 - i];
 		*ptr++ = (unsigned char)((tmp >> 56) & 0xFF);
@@ -239,9 +239,9 @@ int plat_get_crypt_key(unsigned char **key, unsigned int *key_len)
 	int i;
 
 	ptr = &aes_key[0];
-	if (bfdt.trust_key_addr != 0) {
+	if (bfdt->trust_key_addr != 0) {
 		/* Try to get the BSSK key */
-		memcpy(ptr, (unsigned char *)bfdt.trust_key_addr, AES_KEY_BYTES);
+		memcpy(ptr, (unsigned char *)bfdt->trust_key_addr, AES_KEY_BYTES);
 	} else {
 		/*
 		 * Otherwise, copy content from FUSF_SSKX regs into aes_key.

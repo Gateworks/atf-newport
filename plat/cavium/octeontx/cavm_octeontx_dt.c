@@ -15,6 +15,7 @@
 #include <debug.h>
 #include <libfdt.h>
 #include <stdlib.h>
+#include <assert.h>
 #include <cavm_dt.h>
 #include <cavm_common.h>
 
@@ -44,10 +45,10 @@ static void octeontx_boot_device_from_strapx(const int node)
 	}
 
 	/* Fill boot_dev structure */
-	bfdt.boot_dev.node = node;
-	bfdt.boot_dev.boot_type = ret;
-	bfdt.boot_dev.controller = 0;
-	bfdt.boot_dev.cs = 0;
+	bfdt->boot_dev.node = node;
+	bfdt->boot_dev.boot_type = ret;
+	bfdt->boot_dev.controller = 0;
+	bfdt->boot_dev.cs = 0;
 }
 
 static int octeontx_parse_boot_device(const void *fdt, const int offset,
@@ -57,7 +58,7 @@ static int octeontx_parse_boot_device(const void *fdt, const int offset,
 	const char *name;
 	int len, val;
 
-	bfdt.boot_dev.node = node;
+	bfdt->boot_dev.node = node;
 
 	snprintf(boot_device, sizeof(boot_device), "BOOT-DEVICE.N%d", node);
 	name = fdt_getprop(fdt, offset, boot_device, &len);
@@ -79,9 +80,9 @@ static int octeontx_parse_boot_device(const void *fdt, const int offset,
 	else
 		val = -THUNDER_BOOT_UNSUPPORTED;
 
-	bfdt.boot_dev.boot_type = val;
-	bfdt.boot_dev.controller = 0;
-	bfdt.boot_dev.cs = 0;
+	bfdt->boot_dev.boot_type = val;
+	bfdt->boot_dev.controller = 0;
+	bfdt->boot_dev.cs = 0;
 
 	return 0;
 }
@@ -90,6 +91,13 @@ int plat_fill_board_details(int info)
 {
 	const void *fdt = fdt_ptr;
 	int offset, rc, node;
+
+	/*
+	 * Check if board_cfg_t fits in the memory region reserved
+	 * for board_cfg_t structure to make sure we do not modify
+	 * not-preserved memory.
+	 */
+	assert(sizeof(board_fdt_t) < (BOARD_CFG_MAX_SIZE - BOARD_CFG_BASE));
 
 	rc = cavm_fill_board_details(info);
 	if (rc) {

@@ -336,8 +336,8 @@ static int spi_block_open(io_dev_info_t *dev_info, const uintptr_t spec,
 		/* File cursor offset for seek and incremental reads etc. */
 		current_file.file_pos = 0;
 		current_file.offset_address = block_spec->offset;
-		current_file.spi_con = bfdt.boot_dev.controller;
-		current_file.cs = bfdt.boot_dev.cs;
+		current_file.spi_con = bfdt->boot_dev.controller;
+		current_file.cs = bfdt->boot_dev.cs;
 		entity->info = (uintptr_t)&current_file;
 		current_file.node = cavm_numa_local();
 
@@ -460,8 +460,8 @@ int spi_nor_init()
 {
 	current_file.node = cavm_numa_local();
 
-	spi_config(CONFIG_SPI_FREQUENCY, 0, 0, 0, bfdt.boot_dev.controller,
-		   bfdt.boot_dev.cs);
+	spi_config(CONFIG_SPI_FREQUENCY, 0, 0, 0, bfdt->boot_dev.controller,
+		   bfdt->boot_dev.cs);
 	return 0;
 }
 
@@ -477,10 +477,10 @@ int spi_nor_rw_data(int write, unsigned long addr, int size, void *buf, int buf_
 
 	if (!write) {
 		ret = spi_nor_read(buf, size, addr, SPI_ADDRESSING_24BIT,
-				   bfdt.boot_dev.controller, bfdt.boot_dev.cs);
+				   bfdt->boot_dev.controller, bfdt->boot_dev.cs);
 	} else {
 		ret = spi_nor_write(buf, size, addr, SPI_ADDRESSING_24BIT,
-				    bfdt.boot_dev.controller, bfdt.boot_dev.cs);
+				    bfdt->boot_dev.controller, bfdt->boot_dev.cs);
 	}
 
 	return ret;
@@ -490,7 +490,7 @@ int spi_nor_erase_sect(uint32_t addr)
 {
 
 	return spi_nor_erase(addr, SPI_ADDRESSING_24BIT,
-			     bfdt.boot_dev.controller, bfdt.boot_dev.cs);
+			     bfdt->boot_dev.controller, bfdt->boot_dev.cs);
 }
 #endif
 

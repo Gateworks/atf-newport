@@ -29,7 +29,7 @@
 /* Probe for disabling TWSI busses from PCI scan */
 static int ecam_probe_twsi(int node, unsigned long arg)
 {
-	return (bfdt.bmc_boot_twsi_bus != arg);
+	return (bfdt->bmc_boot_twsi_bus != arg);
 }
 
 /* Probe RST_CTLX for PEM usability. */
