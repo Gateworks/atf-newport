@@ -56,8 +56,6 @@ struct rvu_device {
 	int pf_res_ena; /* Enable npa/nix to PF */
 	int vf_res_ena; /* Enable npa/nix to VFs */
 	pci_config_t pci; /* PCI configuration */
-	int npalf_id;
-	int nixlf_id;
 };
 
 typedef enum {
