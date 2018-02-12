@@ -114,6 +114,15 @@ else
         LOG_LEVEL	:=	20
 endif
 
+# Describe branch/rev
+ifeq ($(shell test -d .git;echo $$?),0)
+    # Using git
+    BUILD_REV := $(shell git describe --always --dirty)
+    BUILD_BRANCH := $(shell git describe --all)
+    #BUILD_STRING=${BUILD_BRANCH}_g${BUILD_REV}
+    BUILD_STRING=${BUILD_REV}
+endif
+
 # Default build string (git branch and commit)
 ifeq (${BUILD_STRING},)
         BUILD_STRING	:=	OCTEONTX_SDK_6_2_0_build_26
