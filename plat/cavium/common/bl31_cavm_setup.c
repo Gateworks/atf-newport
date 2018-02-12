@@ -193,7 +193,6 @@ void bl31_platform_setup()
 	 * make the device have access to non-secure memory. It is safe to
 	 * do it here, because every firmware image is loaded at this time.
 	 */
-	plat_fill_board_details(1);
 	cavm_configure_mmc_security(0); /* non-secure */
 	thunder_el3_irq_init();
 	thunder_gic_driver_init();
