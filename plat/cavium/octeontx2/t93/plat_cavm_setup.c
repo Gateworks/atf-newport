@@ -340,6 +340,10 @@ void plat_add_mmio_node(unsigned long node)
 	add_map_record(CSR_PA(node, CAVM_RVU_PF_BAR0(0) +
 				CAVM_RVU_BLOCK_ADDR_E_NPA * CAVM_RVU_PF_BAR0_SIZE),
 				CAVM_RVU_PF_BAR0_SIZE, attr);
+
+	add_map_record(CSR_PA(node, CAVM_SMI_BAR_E_SMI_PF_BAR0_CN9),
+				CAVM_SMI_BAR_E_SMI_PF_BAR0_CN9_SIZE, attr);
+
 	/*
 	 * Shared memory configuration.
 	 * Map additional memory used by RVU.
