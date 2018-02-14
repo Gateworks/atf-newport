@@ -32,6 +32,7 @@ PLAT_BL_COMMON_SOURCES	:=	drivers/arm/pl011/aarch64/pl011_console.S	\
 				plat/cavium/common/cavm_common.c		\
 				plat/cavium/common/cavm_dram.c			\
 				plat/cavium/common/cavm_dt.c			\
+				plat/cavium/common/drivers/cavm_smi.c		\
 				plat/cavium/common/cavm_io_storage.c		\
 
 BL1_SOURCES		+=	plat/cavium/common/drivers/cavm_spi.c		\
