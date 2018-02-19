@@ -418,6 +418,26 @@ static void reset_rvu_pf(int node, int pf)
 	CSR_WRITE(node, CAVM_RVU_PRIV_PFX_TIM_CFG(pf), tim_cfg.u);
 }
 
+/* Returns max LFs supported by NPA */
+int octeontx2_get_max_npa_lfs(int node)
+{
+	cavm_npa_af_const_t npa_af_const;
+
+	npa_af_const.u = CSR_READ(node, CAVM_NPA_AF_CONST);
+
+	return npa_af_const.s.lfs;
+}
+
+/* Returns max LFs supported by NIX */
+int octeontx2_get_max_nix_lfs(int node, int nix)
+{
+	cavm_nixx_af_const2_t nixx_af_const2;
+
+	nixx_af_const2.u = CSR_READ(node, CAVM_NIXX_AF_CONST2(nix));
+
+	return nixx_af_const2.s.lfs;
+}
+
 void octeontx_rvu_init(int node)
 {
 	int pf, hwvf, vf, rc;
@@ -443,6 +463,13 @@ void octeontx_rvu_init(int node)
 			if (rvu_dev[pf].vf_res_ena) {
 				hwvf = rvu_dev[pf].first_hwvf;
 				for (vf = 0; vf < rvu_dev[pf].num_vfs; vf++) {
+					if (npalf_id >= octeontx2_get_max_npa_lfs(node) ||
+					    nixlf_id >= octeontx2_get_max_nix_lfs(node, 0)) {
+						debug_rvu("RVU: Lack of LFs of NIX and NPA\n"
+							  "     for PF=%d, VF=%d\n", pf, vf);
+						break;
+					}
+
 					hwvf_enable_npa_nix(node, hwvf);
 					map_lf_to_vf(node, pf, vf, npalf_id,
 						     nixlf_id);
