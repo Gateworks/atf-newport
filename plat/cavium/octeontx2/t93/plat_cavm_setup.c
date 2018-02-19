@@ -173,6 +173,23 @@ void plat_add_mmio_node(unsigned long node)
 		       CAVM_FUS_BAR_E_FUS_PF_BAR0_SIZE, attr);
 	add_map_record(CSR_PA(node, CAVM_FUSF_BAR_E_FUSF_PF_BAR0),
 		       CAVM_FUSF_BAR_E_FUSF_PF_BAR0_SIZE, attr);
+#if TRUSTED_BOARD_BOOT
+	/*
+	 * BDK uses CPC RAM memory as key memory.
+	 * This is indicated by storing the ROTPK at TRUST-ROT-ADDR,
+	 * which is in range of CPC_RAM_MEMX. Map CPC RAM as MT_RO
+	 * to allow read of ROTPK provided by BDK
+	 */
+	cavm_cpc_const_t cpc_const;
+	int cpc_ram_size;
+
+	/* Calculate CPC RAM size based on a number of 16KB memory regions */
+	cpc_const.u = CSR_READ(node, CAVM_CPC_CONST);
+	cpc_ram_size = cpc_const.s.mem_regions * 0x4000;
+
+	add_map_record(CSR_PA(node, CAVM_CPC_RAM_MEMX(0)),
+		       cpc_ram_size, (MT_DEVICE | MT_RO | MT_SECURE));
+#endif
 
 	device_type_count = thunder_get_mpi_count();
 	for (i = 0; i < device_type_count; i++) {
