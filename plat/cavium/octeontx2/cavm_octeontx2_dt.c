@@ -196,6 +196,31 @@ static int octeontx2_fdt_get_int32(const void *fdt, const char *prop,
 	return val;
 }
 
+static uint64_t octeontx2_fdt_get_uint64(const void *fdt, const char *prop,
+					int offset)
+{
+	const uint32_t *reg;
+	uint64_t val = 0;
+
+	reg = fdt_getprop(fdt, offset, prop, NULL);
+	if (!reg) {
+		WARN("%s: cannot find reg property for prop %s\n",
+				 __func__, prop);
+		return -1;
+	}
+	/* To read the 64-bit property from DT, 8-byte aligned
+	 * address is required as SCTLR_EL1/EL3(aa) - alignment
+	 * check enable bit is set. Ex:MDIO address is 64-bit and
+	 * fdt_getprop() might not return 8 byte aligned addr.
+	 * to avoid alignment fault, the below code does 2 32-bit
+	 * reads to obtain 64-bit addr.
+	 */
+	val = (uint64_t)fdt32_to_cpu(reg[0]) << 32;
+	val |= fdt32_to_cpu(reg[1]);
+
+	return val;
+}
+
 static int octeontx2_fdt_lookup_phandle(const void *fdt_addr, int offset,
 		const char *prop_name)
 {
@@ -571,7 +596,7 @@ static int octeontx2_fdt_get_bus(const void *fdt, int offset,
 		int cgx_idx, int lmac_idx)
 {
 	int node, bus = -1;
-	uint32_t addr;
+	uint64_t mdio;
 	const char *nodename;
 	uint32_t i2c;
 
@@ -587,10 +612,10 @@ static int octeontx2_fdt_get_bus(const void *fdt, int offset,
 
 	if (!strncmp(nodename, "mdio", 4)) {
 		INFO("CGX%d.LMAC%d: PHY is on MDIO bus\n", cgx_idx, lmac_idx);
-		addr = octeontx2_fdt_get_int32(fdt, "reg", node);
-		bus = (addr & (1 << 7)) ? 1 : 0;
-		INFO("CGX%d.LMAC%d: addr 0x%x bus %d\n",
-				cgx_idx, lmac_idx, addr, bus);
+		mdio = octeontx2_fdt_get_uint64(fdt, "reg", node);
+		bus = (mdio & (1 << 7)) ? 1 : 0;
+		INFO("CGX%d.LMAC%d: mdio 0x%lx bus %d\n",
+				cgx_idx, lmac_idx, mdio, bus);
 	} else if (!strncmp(nodename, "i2c", 3)) {
 		INFO("CGX%d.LMAC%d: PHY is on I2C bus\n", cgx_idx, lmac_idx);
 		i2c = octeontx2_fdt_get_int32(fdt, "reg", node);
