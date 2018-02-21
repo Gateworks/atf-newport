@@ -78,6 +78,11 @@ uint64_t thunder_svc_smc_handler(uint32_t smc_fid,
 	case THUNDERX_PUTC:
 		putchar(x1);
 		SMC_RET0(handle);
+#ifdef PLAT_t93
+	case THUNDERX_DISABLE_RVU_LFS:
+		ret = octeontx2_clear_lf_to_pf_mapping(x1);
+		SMC_RET1(handle, ret);
+#endif
 	default:
 		WARN("Unimplemented ThunderX Service Call: 0x%x \n", smc_fid);
 		SMC_RET1(handle, SMC_UNK);
