@@ -35,7 +35,6 @@ static void octeontx_init_rvu_af(int *hwvf)
 	rvu_dev[RVU_AF].first_hwvf = *hwvf;
 	rvu_dev[RVU_AF].pf_num_msix_vec = bfdt->rvu_config.admin_pf.num_msix_vec;
 	rvu_dev[RVU_AF].pf_res_ena = FALSE;
-	rvu_dev[RVU_AF].vf_res_ena = FALSE;
 	rvu_dev[RVU_AF].pci.pf_devid = CAVM_PCC_DEV_IDL_E_RVU_AF & DEVID_MASK;
 	rvu_dev[RVU_AF].pci.vf_devid = CAVM_PCC_DEV_IDL_E_RVU_VF & DEVID_MASK;
 	rvu_dev[RVU_AF].pci.class_code = RVU_CLASS_CODE & CLASS_CODE_MASK;
@@ -55,7 +54,6 @@ static void octeontx_init_rvu_fixed(int *hwvf, int rvu, int bfdt_index, int has_
 	rvu_dev[rvu].first_hwvf = has_vfs ? *hwvf : 0;
 	rvu_dev[rvu].pf_num_msix_vec = sw_pf->num_msix_vec;
 	rvu_dev[rvu].pf_res_ena = FALSE;
-	rvu_dev[rvu].vf_res_ena = FALSE;
 	switch (bfdt_index) {
 	case SW_RVU_SSO_TIM_PF:
 		rvu_dev[rvu].pci.pf_devid =
@@ -91,7 +89,6 @@ static void octeontx_init_rvu_lmac(int *hwvf, int rvu, cgx_config_t *cgx,
 	rvu_dev[rvu].first_hwvf = *hwvf;
 	rvu_dev[rvu].pf_num_msix_vec = cgx->lmac_cfg[lmac_id].num_msix_vec;
 	rvu_dev[rvu].pf_res_ena = TRUE;
-	rvu_dev[rvu].vf_res_ena = FALSE;
 	rvu_dev[rvu].pci.pf_devid = CAVM_PCC_DEV_IDL_E_RVU & DEVID_MASK;
 	rvu_dev[rvu].pci.vf_devid = CAVM_PCC_DEV_IDL_E_RVU_VF & DEVID_MASK;
 	rvu_dev[rvu].pci.class_code = RVU_CLASS_CODE & CLASS_CODE_MASK;
@@ -280,22 +277,6 @@ static void msix_enable(int node)
 	}
 }
 
-/* Map NPA/NIX LF to rvu VFs */
-static inline void map_lf_to_vf(int node, int pf, int vf, int npalf_id,
-				int nixlf_id)
-{
-	union cavm_nixx_priv_lfx_cfg nix_lf_cfg;
-	union cavm_npa_priv_lfx_cfg npa_lf_cfg;
-
-	nix_lf_cfg.u = npa_lf_cfg.u = 0;
-	nix_lf_cfg.s.ena = npa_lf_cfg.s.ena = 1;
-	nix_lf_cfg.s.pf_func = npa_lf_cfg.s.pf_func = (((pf & 0x3f) << 10)
-					| ((vf + 1) & 0x3ff));
-	nix_lf_cfg.s.slot = npa_lf_cfg.s.slot = 0;
-	CSR_WRITE(node, CAVM_NPA_PRIV_LFX_CFG(npalf_id), npa_lf_cfg.u);
-	CSR_WRITE(node, CAVM_NIXX_PRIV_LFX_CFG(0, nixlf_id), nix_lf_cfg.u);
-}
-
 /* set total VFs and HWVFs for PFs */
 static void enable_rvu_pf(int node, int pf)
 {
@@ -353,21 +334,6 @@ static void pf_enable_nix(int node, int pf, int lf_id)
 	nix_lf_cfg.s.pf_func = (((pf & 0x3f) << 10) | 0x0);
 	nix_lf_cfg.s.slot = 0;
 	CSR_WRITE(node, CAVM_NIXX_PRIV_LFX_CFG(0, lf_id), nix_lf_cfg.u);
-}
-
-/* Enable NIX and NPA for hwvf/VFs */
-static void hwvf_enable_npa_nix(int node, int hwvf)
-{
-	union cavm_rvu_priv_hwvfx_npa_cfg  hwvf_npa_cfg;
-	union cavm_rvu_priv_hwvfx_nixx_cfg hwvf_nix_cfg;
-
-	hwvf_npa_cfg.u = 0;
-	hwvf_npa_cfg.s.has_lf = 1;
-	CSR_WRITE(node, CAVM_RVU_PRIV_HWVFX_NPA_CFG(hwvf), hwvf_npa_cfg.u);
-
-	hwvf_nix_cfg.u = 0;
-	hwvf_nix_cfg.s.has_lf = 1;
-	CSR_WRITE(node, CAVM_RVU_PRIV_HWVFX_NIXX_CFG(hwvf, 0), hwvf_nix_cfg.u);
 }
 
 /* Reset all the resources before enabling PF */
@@ -440,7 +406,7 @@ int octeontx2_get_max_nix_lfs(int node, int nix)
 
 void octeontx_rvu_init(int node)
 {
-	int pf, hwvf, vf, rc;
+	int pf, rc;
 	int npalf_id = 0, nixlf_id = 0;
 
 	rc = octeontx_init_rvu_from_fdt();
@@ -458,25 +424,6 @@ void octeontx_rvu_init(int node)
 				nixlf_id++;
 				pf_enable_npa(node, pf, npalf_id);
 				npalf_id++;
-			}
-
-			if (rvu_dev[pf].vf_res_ena) {
-				hwvf = rvu_dev[pf].first_hwvf;
-				for (vf = 0; vf < rvu_dev[pf].num_vfs; vf++) {
-					if (npalf_id >= octeontx2_get_max_npa_lfs(node) ||
-					    nixlf_id >= octeontx2_get_max_nix_lfs(node, 0)) {
-						debug_rvu("RVU: Lack of LFs of NIX and NPA\n"
-							  "     for PF=%d, VF=%d\n", pf, vf);
-						break;
-					}
-
-					hwvf_enable_npa_nix(node, hwvf);
-					map_lf_to_vf(node, pf, vf, npalf_id,
-						     nixlf_id);
-					nixlf_id++;
-					npalf_id++;
-					hwvf++;
-				}
 			}
 		}
 		else 	/* Disable unused PFs */

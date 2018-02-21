@@ -54,7 +54,6 @@ struct rvu_device {
 	int first_hwvf;
 	int pf_num_msix_vec;
 	int pf_res_ena; /* Enable npa/nix to PF */
-	int vf_res_ena; /* Enable npa/nix to VFs */
 	pci_config_t pci; /* PCI configuration */
 };
 
