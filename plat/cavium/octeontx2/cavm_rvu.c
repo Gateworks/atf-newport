@@ -319,6 +319,19 @@ static void pf_enable_npa(int node, int pf, int lf_id)
 	CSR_WRITE(node, CAVM_NPA_PRIV_LFX_CFG(lf_id), npa_lf_cfg.u);
 }
 
+/* Disable NPA for PF */
+static void pf_disable_npa(int node, int pf, int lf_id)
+{
+	union cavm_rvu_priv_pfx_npa_cfg pf_npa_cfg;
+	union cavm_npa_priv_lfx_cfg npa_lf_cfg;
+
+	pf_npa_cfg.u = 0;
+	CSR_WRITE(node, CAVM_RVU_PRIV_PFX_NPA_CFG(pf), pf_npa_cfg.u);
+
+	npa_lf_cfg.u = 0;
+	CSR_WRITE(node, CAVM_NPA_PRIV_LFX_CFG(lf_id), npa_lf_cfg.u);
+}
+
 /* Enable NIX for PF*/
 static void pf_enable_nix(int node, int pf, int lf_id)
 {
@@ -334,6 +347,19 @@ static void pf_enable_nix(int node, int pf, int lf_id)
 	nix_lf_cfg.s.pf_func = (((pf & 0x3f) << 10) | 0x0);
 	nix_lf_cfg.s.slot = 0;
 	CSR_WRITE(node, CAVM_NIXX_PRIV_LFX_CFG(0, lf_id), nix_lf_cfg.u);
+}
+
+/* Disable NIX for PF */
+static void pf_disable_nix(int node, int nix, int pf, int lf_id)
+{
+	union cavm_rvu_priv_pfx_nixx_cfg pf_nix_cfg;
+	union cavm_nixx_priv_lfx_cfg nix_lf_cfg;
+
+	pf_nix_cfg.u = 0;
+	CSR_WRITE(node, CAVM_RVU_PRIV_PFX_NIXX_CFG(pf, nix), pf_nix_cfg.u);
+
+	nix_lf_cfg.u = 0;
+	CSR_WRITE(node, CAVM_NIXX_PRIV_LFX_CFG(nix, lf_id), nix_lf_cfg.u);
 }
 
 /* Reset all the resources before enabling PF */
@@ -385,7 +411,7 @@ static void reset_rvu_pf(int node, int pf)
 }
 
 /* Returns max LFs supported by NPA */
-int octeontx2_get_max_npa_lfs(int node)
+static int octeontx2_get_max_npa_lfs(int node)
 {
 	cavm_npa_af_const_t npa_af_const;
 
@@ -395,13 +421,31 @@ int octeontx2_get_max_npa_lfs(int node)
 }
 
 /* Returns max LFs supported by NIX */
-int octeontx2_get_max_nix_lfs(int node, int nix)
+static int octeontx2_get_max_nix_lfs(int node, int nix)
 {
 	cavm_nixx_af_const2_t nixx_af_const2;
 
 	nixx_af_const2.u = CSR_READ(node, CAVM_NIXX_AF_CONST2(nix));
 
 	return nixx_af_const2.s.lfs;
+}
+
+/* Exported functions */
+int octeontx2_clear_lf_to_pf_mapping(int node)
+{
+	int pf, lf;
+
+	for (pf = 0; pf < octeontx_get_max_rvu_pfs(node); pf++) {
+		for (lf = 0; lf < octeontx2_get_max_nix_lfs(node, 0); lf++) {
+			pf_disable_nix(node, 0, pf, lf);
+		}
+
+		for (lf = 0; lf < octeontx2_get_max_npa_lfs(node); lf++) {
+			pf_disable_npa(node, pf, lf);
+		}
+	}
+
+	return 0;
 }
 
 void octeontx_rvu_init(int node)
