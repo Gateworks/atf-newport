@@ -173,12 +173,6 @@ int thunder_twsi_recv(unsigned int node, unsigned int twsi_num,
 			uint16_t addr, uint8_t *buffer, size_t size);
 void sata_ipm_quirk(void);
 
-#if 0
-int spi_nor_init(void);
-int spi_nor_rw_data(int write, unsigned long addr, int size, void *buf, int buf_size);
-int spi_nor_erase_sect(uint32_t addr);
-#endif
-
 void cavm_configure_mmc_security(int secure);
 void set_secondary_cpu_jump_addr(unsigned int bl1_base);
 void l2c_flush(void);
