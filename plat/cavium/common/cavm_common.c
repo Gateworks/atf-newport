@@ -91,8 +91,10 @@ void thunder_cpu_setup(void)
 	cvmmemctl1_el1 = read_cvmmemctl1_el1();
 	midr = read_midr();
 
-	/* Enable CAS/CASP and v8.1 support for T93, disable for previous models. */
-	if (MIDR_PARTNUM(midr) == T93PARTNUM) {
+	/* Enable CAS/CASP and v8.1 support for T93 and T83, pass >1.0, disable for previous models. */
+	if (MIDR_PARTNUM(midr) == T93PARTNUM
+	    || (MIDR_PARTNUM(midr) == T83PARTNUM
+		&& !(IS_THUNDER_PASS(midr, T83PARTNUM, 1, 0)))) {
 		unset_bit(cvmctl_el1, 36);  /* Enable CAS */
 		unset_bit(cvmctl_el1, 37);  /* Enable CASP */
 	} else {
