@@ -132,45 +132,17 @@ static int enable_msix(uint64_t config_base, uint8_t cap_pointer, uint16_t * tab
 
 static inline int smmu_get_irq(int node, int smmunr, int vectornr)
 {
-	int irq =
-	    (node * 8) + smmunr +
-	    ((vectornr < (OCTEONTX_SMMU_NUM_CONTEXTS * 2)) ? 0 : 4);
-	switch (irq) {
-	case 0:
-		return OCTEONTX_SMMU0_CONTEXT_IRQ;
-	case 1:
-		return OCTEONTX_SMMU1_CONTEXT_IRQ;
-	case 2:
-		return OCTEONTX_SMMU2_CONTEXT_IRQ;
-	case 3:
-		return OCTEONTX_SMMU3_CONTEXT_IRQ;
-	case 4:
-		return OCTEONTX_SMMU0_GLOBAL_IRQ;
-	case 5:
-		return OCTEONTX_SMMU1_GLOBAL_IRQ;
-	case 6:
-		return OCTEONTX_SMMU2_GLOBAL_IRQ;
-	case 7:
-		return OCTEONTX_SMMU3_GLOBAL_IRQ;
-	case 8:
-		return OCTEONTX_SMMU4_CONTEXT_IRQ;
-	case 9:
-		return OCTEONTX_SMMU5_CONTEXT_IRQ;
-	case 10:
-		return OCTEONTX_SMMU6_CONTEXT_IRQ;
-	case 11:
-		return OCTEONTX_SMMU7_CONTEXT_IRQ;
-	case 12:
-		return OCTEONTX_SMMU4_GLOBAL_IRQ;
-	case 13:
-		return OCTEONTX_SMMU5_GLOBAL_IRQ;
-	case 14:
-		return OCTEONTX_SMMU6_GLOBAL_IRQ;
-	case 15:
-		return OCTEONTX_SMMU7_GLOBAL_IRQ;
+	int ret = -1;
 
+	switch (smmunr) {
+	case 0:
+		ret = (vectornr < OCTEONTX_SMMU_NUM_CONTEXTS * 2) ?
+			OCTEONTX_SMMU0_CONTEXT_IRQ + vectornr : OCTEONTX_SMMU0_GLOBAL_IRQ;
+	case 1:
+		ret = (vectornr < OCTEONTX_SMMU_NUM_CONTEXTS * 2) ?
+			OCTEONTX_SMMU1_CONTEXT_IRQ + vectornr : OCTEONTX_SMMU1_GLOBAL_IRQ;
 	}
-	return -1;
+	return ret;
 }
 
 static void init_smmu(int node, uint64_t config_base, uint64_t config_size)
