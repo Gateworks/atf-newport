@@ -766,11 +766,7 @@ static void octeontx_ecam_dev_enumerate(struct ecam_device *device)
 		if (device->config.s.is_secure) {
 			plat_ops.disable_dev(device);
 		} else {
-			if (device->domain == 1 && device->bus == 0 &&
-				(device->dev == 4 || device->dev == 5))
-				plat_ops.disable_dev(device);
-			else
-				plat_ops.enable_dev(device);
+			plat_ops.enable_dev(device);
 		}
 	}
 
