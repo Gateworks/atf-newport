@@ -42,14 +42,15 @@ int thunder_get_max_sata_gser(void)
 
 /*
  * SATA to GSER mapping
- * SATA(0-3) --- GSER4/GSER5
+ * SATA(0-1) --- DLM4
+ * SATA(2-3) --- DLM5
  */
 int thunder_sata_to_gser(int ctrlr)
 {
 	if (ctrlr > 3)
 		return -1;
 
-	return ((ctrlr > 1) ? 4 : 5);
+	return ((ctrlr > 1) ? 5 : 4);
 }
 
 int thunder_sata_to_lane(int ctrlr)
@@ -57,7 +58,7 @@ int thunder_sata_to_lane(int ctrlr)
 	if (ctrlr > 3)
 		return -1;
 
-	return ctrlr;
+	return ((ctrlr > 1) ? ctrlr - 2 : ctrlr);
 }
 
 int thunder_dram_is_lmc_enabled(unsigned node, unsigned lmc)
