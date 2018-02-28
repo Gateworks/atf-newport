@@ -18,6 +18,7 @@
 #include <stdint.h>
 #include <string.h>
 #include <cavm_ecam.h>
+#include <cavm_dt.h>
 
 #ifdef DEBUG_ATF_PLAT_ECAM
 #define debug_plat_ecam printf
@@ -25,7 +26,81 @@
 #define debug_plat_ecam(...) ((void) (0))
 #endif
 
+/* Probe GSERNX_LANE_SCRATCHX[] for SATA config */
+static int ecam_probe_sata(int node, unsigned long arg)
+{
+	cavm_qlm_state_lane_t qlm_state;
+	int qlm = 0, lane = 0;
+
+	debug_plat_ecam("%s arg %ld\n", __func__, arg);
+
+	qlm = thunder_sata_to_gser(arg);
+	lane = thunder_sata_to_lane(arg);
+
+	if ((qlm == -1) || (lane == -1))
+		return 0;
+
+	qlm_state.u = CSR_READ(node, CAVM_GSERNX_LANEX_SCRATCHX(qlm, lane, 0));
+	if ((qlm_state.s.mode == CAVM_QLM_MODE_SATA_4X1) ||
+		(qlm_state.s.mode == CAVM_QLM_MODE_SATA_2X1)) {
+		debug_plat_ecam("%s: SATA detected on qlm %d lane %d\n",
+			__func__, qlm, lane);
+		return 1;
+	}
+	return 0;
+}
+
+/* Probe GSERNX_LANE_SCRATCHX[] for CGX config */
+static int ecam_probe_cgx(int node, unsigned long arg)
+{
+	cavm_qlm_state_lane_t qlm_state;
+	int qlm = -1, qlm1 = -1, lnum = 0;
+
+	debug_plat_ecam("%s arg %ld\n", __func__, arg);
+
+	/* FIXME: cgx to qlm mapping.
+	 * CGX0 - QLM3 or QLM 7
+	 * CGX1 - DLM4 or DLM5 or DLM4 + 5
+	 * CGX2 - QLM6
+	 */
+	switch (arg) {
+	case 0:
+		qlm = 3;
+		qlm1 = 7;
+	break;
+	case 1:
+		qlm = 4;
+		qlm1 = 5;
+	break;
+	case 2:
+		qlm = 6;
+	break;
+	}
+
+	lnum = octeontx2_get_lane_num(qlm);
+	while (qlm != -1) {
+		for (int lane = 0; lane < lnum; lane++) {
+			qlm_state.u = CSR_READ(node,
+				CAVM_GSERNX_LANEX_SCRATCHX(qlm, lane, 0));
+			if ((qlm_state.s.mode >= CAVM_QLM_MODE_SGMII_4X1) &&
+				(qlm_state.s.mode <=
+					CAVM_QLM_MODE_USXGMII_2X1)) {
+				debug_plat_ecam("%s: CGX detected on qlm %d lane %d\n",
+					__func__, qlm, lane);
+				return 1;
+			}
+		}
+		if (arg == 2)
+			break;
+		qlm = qlm1;
+		qlm1 = -1;
+	};
+	return 0;
+}
+
 struct ecam_probe_callback probe_callbacks[] = {
+	{0xa084, 0x177d, ecam_probe_sata, 0}, /* SATA5 */
+	{0xa059, 0x177d, ecam_probe_cgx, 0},
 	{ECAM_INVALID_DEV_ID, 0, 0, 0}
 };
 
