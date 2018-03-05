@@ -1344,15 +1344,13 @@ static void octeontx2_fill_cgx_details(const void *fdt)
 	int lnum;
 	int linit;
 	cavm_qlm_state_lane_t qlm_state;
-	uint64_t gser_base;
 
 	nnum = thunder_get_node_count();
 	for (node_idx = 0; node_idx < nnum; node_idx++) {
 		for (qlm_idx = 3; qlm_idx <= 7; qlm_idx++) {
 			lnum = octeontx2_get_lane_num(qlm_idx);
-			gser_base = CSR_PA(node_idx, CAVM_GSERX_PF_BAR0(qlm_idx));
 			for (lane_idx = 0; lane_idx < lnum; lane_idx++) {
-				qlm_state.u = CSR_READ(gser_base, CAVM_GSERNX_LANEX_SCRATCHX(qlm_idx, lane_idx, 0));
+				qlm_state.u = CSR_READ(node_idx, CAVM_GSERNX_LANEX_SCRATCHX(qlm_idx, lane_idx, 0));
 				INFO("N%d.QLM%d.LANE%d: mode=%d:%s\n",
 						node_idx, qlm_idx, lane_idx,
 						qlm_state.s.mode,
