@@ -73,7 +73,7 @@ typedef enum {
 	RVU_CGX2_LMAC3,
 	RVU_SSO_TIM,
 	RVU_NPA,
-	RVU_CPT
+	RVU_PF15,	/* It is not fixed, can be changed via fuses */
 } rvu_device;
 
 #endif

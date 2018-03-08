@@ -98,7 +98,8 @@ static void octeontx_init_rvu_lmac(int *hwvf, int rvu, cgx_config_t *cgx,
 
 static int octeontx_init_rvu_from_fdt(void)
 {
-	int cgx_id, lmac_id, pf, uninit_pfs, sso_tim_pfs, npa_pfs, current_hwvf = 0;
+	int cgx_id, lmac_id, pf, current_hwvf = 0;
+	int uninit_pfs = 0, sso_tim_pfs, npa_pfs;
 	cgx_config_t *cgx;
 
 	/* Check if FDT config is valid */
@@ -119,13 +120,16 @@ static int octeontx_init_rvu_from_fdt(void)
 	octeontx_init_rvu_fixed(&current_hwvf, RVU_NPA,
 				SW_RVU_NPA_PF, TRUE);
 
-	/* Init RVU15 - CPT (PF15) */
-	octeontx_init_rvu_fixed(&current_hwvf, RVU_CPT,
+	if (bfdt->rvu_config.cpt_dis)
+		uninit_pfs = 1;
+	else {
+		/* Init RVU15 - as CPT if present */
+		octeontx_init_rvu_fixed(&current_hwvf, RVU_PF15,
 				SW_RVU_CPT_PF, TRUE);
+	}
 
 	/* Initialize CGX PF */
 	pf = RVU_CGX0_LMAC0;
-	uninit_pfs = 0;
 	for (cgx_id = 0; cgx_id < MAX_CGX; cgx_id++) {
 		cgx = &(bfdt->cgx_cfg[cgx_id]);
 		if (cgx->enable) {
@@ -160,12 +164,16 @@ static int octeontx_init_rvu_from_fdt(void)
 	sso_tim_pfs = uninit_pfs * SSO_TIM_TO_NPA_PFS_FACTOR;
 	npa_pfs = uninit_pfs - sso_tim_pfs;
 	while (sso_tim_pfs > 0) {
+		if (pf > RVU_CGX2_LMAC3)
+			pf = RVU_PF15;
 		octeontx_init_rvu_fixed(&current_hwvf, pf++,
 					SW_RVU_SSO_TIM_PF, FALSE);
 		sso_tim_pfs--;
 	}
 
 	while (npa_pfs > 0) {
+		if (pf > RVU_CGX2_LMAC3)
+			pf = RVU_PF15;
 		octeontx_init_rvu_fixed(&current_hwvf, pf++,
 					SW_RVU_NPA_PF, FALSE);
 		npa_pfs--;
@@ -283,7 +291,11 @@ static void enable_rvu_pf(int node, int pf)
 	union cavm_rvu_priv_pfx_cfg pf_cfg;
 
 	pf_cfg.u = 0;
-	pf_cfg.s.af_ena = (pf == RVU_AF || pf == RVU_CPT) ? TRUE : FALSE;
+	/* enable AF access when configuring the PF as AF or CPT */
+	if ((pf == RVU_AF) || ((pf == RVU_PF15) && !bfdt->rvu_config.cpt_dis))
+		pf_cfg.s.af_ena = TRUE;
+	else
+		pf_cfg.s.af_ena = FALSE;
 	pf_cfg.s.ena = TRUE;
 	pf_cfg.s.nvf = rvu_dev[pf].num_vfs;
 	pf_cfg.s.first_hwvf = rvu_dev[pf].first_hwvf;
@@ -374,9 +386,11 @@ static void reset_rvu_pf(int node, int pf)
 	union cavm_rvu_priv_pfx_ssow_cfg ssow_cfg;
 	union cavm_rvu_priv_pfx_tim_cfg tim_cfg;
 
-	cpt_cfg.u = 0;
-	cpt_cfg.s.num_lfs = 0;
-	CSR_WRITE(node, CAVM_RVU_PRIV_PFX_CPTX_CFG(pf, 0), cpt_cfg.u);
+	if (!bfdt->rvu_config.cpt_dis) {	/* CPT is present */
+		cpt_cfg.u = 0;
+		cpt_cfg.s.num_lfs = 0;
+		CSR_WRITE(node, CAVM_RVU_PRIV_PFX_CPTX_CFG(pf, 0), cpt_cfg.u);
+	}
 
 	int_cfg.u = 0;
 	int_cfg.s.msix_offset = 0;

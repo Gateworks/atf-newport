@@ -86,6 +86,7 @@ typedef enum {
 
 typedef struct rvu_config {
 	int valid;
+	int cpt_dis;	/* to indicate if CPT block is not present */
 	rvu_sw_rvu_pf_t admin_pf;
 	rvu_sw_rvu_pf_t sw_pf[SW_RVU_MAX_PF];
 } rvu_config_t;
