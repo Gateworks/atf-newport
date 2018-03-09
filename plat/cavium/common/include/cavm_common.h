@@ -153,6 +153,8 @@ int thunder_get_cpt_count(void);
 
 void add_map_record(unsigned long addr, unsigned long size, mmap_attr_t attr);
 
+int plat_fuse_read(int node, int fuse);
+
 void octeontx_pci_init(void);
 void octeontx_rvu_init(int node);
 void plat_add_mmio_map(void);

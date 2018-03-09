@@ -14,6 +14,26 @@
 #include <cavm_common.h>
 #include <platform_def.h>
 
+static int plat_fuse_read_byte(int node, int byte_addr)
+{
+	uint64_t fus_val;
+	/* read the cache register to obtain the fuse state
+	 * FUS_CACHEX() operates on 64-bit and indexed by
+	 * FUS_FUSE_NUM_E
+	 */
+	fus_val = CSR_READ(node, CAVM_FUS_CACHEX(byte_addr >> 3));
+	fus_val >>= (byte_addr & 7) << 3;
+	return fus_val & 0xFF;
+}
+
+/* fuse parameter should be one of the fuse enum - FUS_FUSE_NUM_E
+ * for which the value to be read
+ */
+int plat_fuse_read(int node, int fuse)
+{
+	return((plat_fuse_read_byte(node, fuse >> 3) >> (fuse & 0x7)) & 1);
+}
+
 int thunder_get_lmc_per_node(void)
 {
 	return 3;
