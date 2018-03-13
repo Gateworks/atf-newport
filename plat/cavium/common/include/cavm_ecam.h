@@ -88,7 +88,7 @@ struct ecam_device {
 /*
  * Callbacks structure which makes calling particular method common
  * for all SoCs (used in ECAM scan and enumeration). Definitions
- * of functions are stored in the SoC-specific directories (t81/t83/t93).
+ * of functions are stored in the SoC-specific directories (t81/t83/t93/f95).
  */
 struct ecam_platform_defs {
 	int soc_type;

@@ -11,33 +11,28 @@
 
 **/
 
-#ifndef __T93_PLAT_SETUP_H__
-#define __T93_PLAT_SETUP_H__
+#ifndef __F95_PLAT_SETUP_H__
+#define __F95_PLAT_SETUP_H__
 
 /*
- * Defines used for CN93xx to enable particular
+ * Defines used for CNF95xx to enable particular
  * LMC access to particular ASC_REGION
  */
 
 #define CAVM_CCS_LMC_MASK_LMC0	0x1
 #define CAVM_CCS_LMC_MASK_LMC1	0x2
-#define CAVM_CCS_LMC_MASK_LMC2	0x4
 
-/* 3 LMCs per node */
-#define CAVM_CCS_LMC_MODE	CAVM_CCS_LMC_MODE_E_STRIPE_3
-#define CAVM_CCS_LMC_MASK	(CAVM_CCS_LMC_MASK_LMC0 | CAVM_CCS_LMC_MASK_LMC1 | \
-					CAVM_CCS_LMC_MASK_LMC2)
+/* 2 LMCs per node */
+#define CAVM_CCS_LMC_MODE	CAVM_CCS_LMC_MODE_E_STRIPE_2
+#define CAVM_CCS_LMC_MASK	(CAVM_CCS_LMC_MASK_LMC0 | CAVM_CCS_LMC_MASK_LMC1)
 
-/* CPU topology tree description for T93 */
+/* CPU topology tree description for F95 */
 static const unsigned char cavm_power_domain_tree_desc[] = {
 	/* No of root nodes */
 	PLATFORM_MAX_NODES,
 	/* No of clusters */
 	PLATFORM_MAX_CLUSTERS_PER_NODE,
 	/* No of CPU cores */
-	PLATFORM_MAX_CPUS_PER_CLUSTER,
-	PLATFORM_MAX_CPUS_PER_CLUSTER,
-	PLATFORM_MAX_CPUS_PER_CLUSTER,
 	PLATFORM_MAX_CPUS_PER_CLUSTER,
 };
 

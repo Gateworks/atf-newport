@@ -15,16 +15,9 @@
 #include <debug.h>
 #include <arch.h>
 #include <platform_def.h>
+#include <platform_setup.h>
 #include <cavm_common.h>
 #include <cavm_dt.h>
-
-/*
- * Defines used for CN93xx to enable particular
- * LMC access to particular ASC_REGION
- */
-#define CAVM_CCS_LMC_MASK_LMC0	0x1
-#define CAVM_CCS_LMC_MASK_LMC1	0x2
-#define CAVM_CCS_LMC_MASK_LMC2	0x4
 
 struct ccs_region {
 	unsigned int  node;
@@ -86,10 +79,8 @@ void octeontx_security_setup(void)
 		 * For given memory region, grant access
 		 * to this region to all LMCs
 		 */
-		ccs_asc_attr.s.lmc_mode = CAVM_CCS_LMC_MODE_E_STRIPE_3;
-		ccs_asc_attr.s.lmc_mask = CAVM_CCS_LMC_MASK_LMC0 |
-					  CAVM_CCS_LMC_MASK_LMC1 |
-					  CAVM_CCS_LMC_MASK_LMC2;
+		ccs_asc_attr.s.lmc_mode = CAVM_CCS_LMC_MODE;
+		ccs_asc_attr.s.lmc_mask = CAVM_CCS_LMC_MASK;
 		ccs_asc_attr.s.s_en  = region->secure;
 		ccs_asc_attr.s.ns_en = !region->secure;
 		CSR_WRITE(region->node,

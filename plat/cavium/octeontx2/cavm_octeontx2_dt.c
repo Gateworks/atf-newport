@@ -944,29 +944,45 @@ static int octeontx2_check_qlm_lmacs(int node, int cgx_idx,
 
 	cgx = &(bfdt->cgx_cfg[cgx_idx]);
 	lmac_avail = MAX_LMAC_PER_CGX - cgx->lmacs_used;
-	if ((qlm == 3) || (qlm == 7)) {
-		/* Only QLM3 or QLM7 may be Ethernet, not both. */
-		for (i = 0; i < cgx->lmac_count; i++) {
-			lmac = &cgx->lmac_cfg[i];
-			if (lmac->qlm != qlm) {
-				WARN("N%d.CGX%d: Can't configure mode:%s. QLM%d is requested, but QLM%d is used.",
+
+	/* This code is based on QLM<->CGX mapping and fixed per SoC.
+	 * hence add model specific condition
+	 */
+	if (CAVIUM_IS_MODEL(CAVIUM_CN93XX)) {
+		if ((qlm == 3) || (qlm == 7)) {
+			/* Only QLM3 or QLM7 may be Ethernet, not both. */
+			for (i = 0; i < cgx->lmac_count; i++) {
+				lmac = &cgx->lmac_cfg[i];
+				if (lmac->qlm != qlm) {
+					WARN("N%d.CGX%d: Can't configure mode:%s. QLM%d is requested, but QLM%d is used.",
 						node, cgx_idx,
 						qlmmode_strmap[mode_idx].bdk_str,
 						qlm, lmac->qlm);
-				lmac_avail = 0;
-				break;
+					lmac_avail = 0;
+					break;
+				}
+			}
+		} else if ((qlm == 4) || (qlm == 5)) {
+			/* QLM4 and QLM5 does not support quad lane Ethernet
+			 * protocols. Only two lanes are available for each
+			 * QLM.
+			 */
+			lmac_avail = 2;
+			for (i = 0; i < cgx->lmac_count; i++) {
+				lmac = &cgx->lmac_cfg[i];
+				if (lmac->qlm == qlm)
+				lmac_avail--;
 			}
 		}
-	} else if ((qlm == 4) || (qlm == 5)) {
-		/* QLM4 and QLM5 does not support quad lane Ethernet
-		 * protocols. Only two lanes are available for each
-		 * QLM.
-		 */
-		lmac_avail = 2;
-		for (i = 0; i < cgx->lmac_count; i++) {
-			lmac = &cgx->lmac_cfg[i];
-			if (lmac->qlm == qlm)
+	} else if (CAVIUM_IS_MODEL(CAVIUM_CNF95XX)) {
+		/* Only 2 lanes are available for QLM3 in F95 */
+		if (qlm == 3) {
+			lmac_avail = 2;
+			for (i = 0; i < cgx->lmac_count; i++) {
+				lmac = &cgx->lmac_cfg[i];
+				if (lmac->qlm == qlm)
 				lmac_avail--;
+			}
 		}
 	}
 

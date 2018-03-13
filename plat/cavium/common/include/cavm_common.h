@@ -35,6 +35,7 @@
 #define T83PARTNUM 0xA3
 #define T98PARTNUM 0xB1
 #define T93PARTNUM 0xB2
+#define F95PARTNUM 0xB3
 
 /* Boot type definitions */
 #define THUNDER_BOOT_UNSUPPORTED	1

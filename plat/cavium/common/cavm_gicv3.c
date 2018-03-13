@@ -44,7 +44,7 @@ static gicv3_driver_data_t thunder_gic_data = {
 	.g1s_interrupt_array = NULL,
 	.rdistif_num = PLATFORM_CORE_COUNT,
 	.rdistif_base_addrs = rdistif_base_addrs,
-#ifndef PLAT_t93
+#if !defined(PLAT_t93) && !defined(PLAT_f95)
 	/*
 	 * can use the generic driver implementation
 	 * to obtain the core pos
