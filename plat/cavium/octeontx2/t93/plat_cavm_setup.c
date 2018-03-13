@@ -170,6 +170,39 @@ int thunder_get_rvu_count(void)
 	return 16;
 }
 
+/* Return number of lanes available for different QLMs. */
+int plat_get_max_lane_num(int qlm)
+{
+	if ((qlm == 4) || (qlm == 5))
+		return 2;
+	return 4;
+}
+
+/* Return the CGX<->QLM mapping */
+int plat_get_cgx_idx(int qlm)
+{
+	int idx;
+
+	switch (qlm) {
+	case 3:
+	case 7:
+		idx = 0;
+		break;
+	case 4:
+	case 5:
+		idx = 1;
+		break;
+	case 6:
+		idx = 2;
+		break;
+	default:
+		idx = -1;
+		break;
+	}
+
+	return idx;
+}
+
 void plat_add_mmio_node(unsigned long node)
 {
 	unsigned long attr;

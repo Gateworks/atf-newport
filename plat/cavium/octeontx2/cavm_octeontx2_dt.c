@@ -12,6 +12,7 @@
 **/
 
 #include <platform_def.h>
+#include <platform_setup.h>
 #include <debug.h>
 #include <libfdt.h>
 #include <stdlib.h>
@@ -871,42 +872,6 @@ static void octeontx2_fdt_parse_vsc7224_info(const void *fdt,
 			cgx_idx, lmac_idx);
 }
 
-/* Return number of lanes available for different QLMs. */
-int octeontx2_get_lane_num(int qlm)
-{
-	if ((qlm == 4) || (qlm == 5)) {
-		return 2;
-	}
-	return 4;
-}
-
-/* Return the CGX index in the cgx_cfg array based on the QLM value. If
- * there is no such QLM, then -1 will be returned.
- */
-static int octeontx2_get_cgx_idx(int qlm)
-{
-	int idx;
-
-	switch (qlm) {
-	case 3:
-	case 7:
-		idx = 0;
-		break;
-	case 4:
-	case 5:
-		idx = 1;
-		break;
-	case 6:
-		idx = 2;
-		break;
-	default:
-		idx = -1;
-		break;
-	}
-
-	return idx;
-}
-
 /* This routine sets a number of LMACs to initialize and the size to use.
  * For instance:
  *  - SGMII_2X1: will initialize 2 LMACs and each LMAC will take only one
@@ -1034,7 +999,7 @@ static int octeontx2_fill_cgx_struct(int node, int qlm, int lane, int mode_idx)
 		return 0;
 	}
 
-	cgx_idx = octeontx2_get_cgx_idx(qlm);
+	cgx_idx = plat_get_cgx_idx(qlm);
 	if ((cgx_idx < 0) || (cgx_idx >= MAX_CGX)) {
 		WARN("N%d.CGX: QLM%d cannot be configured for CGX.\n",
 				node, qlm);
@@ -1360,8 +1325,8 @@ static void octeontx2_fill_cgx_details(const void *fdt)
 
 	nnum = thunder_get_node_count();
 	for (node_idx = 0; node_idx < nnum; node_idx++) {
-		for (qlm_idx = 3; qlm_idx <= 7; qlm_idx++) {
-			lnum = octeontx2_get_lane_num(qlm_idx);
+		for (qlm_idx = 0; qlm_idx < thunder_get_gser_count(); qlm_idx++) {
+			lnum = plat_get_max_lane_num(qlm_idx);
 			for (lane_idx = 0; lane_idx < lnum; lane_idx++) {
 				qlm_state.u = CSR_READ(node_idx, CAVM_GSERNX_LANEX_SCRATCHX(qlm_idx, lane_idx, 0));
 				INFO("N%d.QLM%d.LANE%d: mode=%d:%s\n",

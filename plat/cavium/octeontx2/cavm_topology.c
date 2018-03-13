@@ -13,26 +13,15 @@
 
 #include <arch.h>
 #include <platform_def.h>
+#include <platform_setup.h>
 #include <psci.h>
-
-static const unsigned char thunder_power_domain_tree_desc[] = {
-	/* No of root nodes */
-	PLATFORM_MAX_NODES,
-	/* No of clusters */
-	PLATFORM_MAX_CLUSTERS_PER_NODE,
-	/* No of CPU cores */
-	PLATFORM_MAX_CPUS_PER_CLUSTER,
-	PLATFORM_MAX_CPUS_PER_CLUSTER,
-	PLATFORM_MAX_CPUS_PER_CLUSTER,
-	PLATFORM_MAX_CPUS_PER_CLUSTER,
-};
 
 /*******************************************************************************
  * This function returns the Thunder default topology tree information.
  ******************************************************************************/
 const unsigned char *plat_get_power_domain_tree_desc(void)
 {
-	return thunder_power_domain_tree_desc;
+	return cavm_power_domain_tree_desc;
 }
 
 /*******************************************************************************

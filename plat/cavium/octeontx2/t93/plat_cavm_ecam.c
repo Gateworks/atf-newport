@@ -12,6 +12,7 @@
 #**/
 
 #include <platform_def.h>
+#include <platform_setup.h>
 #include <cavm_common.h>
 
 #include <stdio.h>
@@ -77,7 +78,7 @@ static int ecam_probe_cgx(int node, unsigned long arg)
 	break;
 	}
 
-	lnum = octeontx2_get_lane_num(qlm);
+	lnum = plat_get_max_lane_num(qlm);
 	while (qlm != -1) {
 		for (int lane = 0; lane < lnum; lane++) {
 			qlm_state.u = CSR_READ(node,
