@@ -39,6 +39,9 @@
 #define RVU_MSIX_VEC_SIZE 		16
 #define RVU_DEFAULT_MSIX_VEC_PER_VF	128
 
+/* To be removed once added in CSRs */
+#define CAVM_PCC_DEV_IDL_E_SW_RVU_AF_VF	0xF8
+
 #define FALSE	0
 #define TRUE	1
 

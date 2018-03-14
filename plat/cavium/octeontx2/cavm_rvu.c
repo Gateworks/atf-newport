@@ -36,7 +36,7 @@ static void octeontx_init_rvu_af(int *hwvf)
 	rvu_dev[RVU_AF].pf_num_msix_vec = bfdt->rvu_config.admin_pf.num_msix_vec;
 	rvu_dev[RVU_AF].pf_res_ena = FALSE;
 	rvu_dev[RVU_AF].pci.pf_devid = CAVM_PCC_DEV_IDL_E_RVU_AF & DEVID_MASK;
-	rvu_dev[RVU_AF].pci.vf_devid = CAVM_PCC_DEV_IDL_E_RVU_VF & DEVID_MASK;
+	rvu_dev[RVU_AF].pci.vf_devid = CAVM_PCC_DEV_IDL_E_SW_RVU_AF_VF & DEVID_MASK;
 	rvu_dev[RVU_AF].pci.class_code = RVU_CLASS_CODE & CLASS_CODE_MASK;
 	/* Increment already allocated HWVFs */
 	*hwvf += rvu_dev[RVU_AF].num_vfs;
