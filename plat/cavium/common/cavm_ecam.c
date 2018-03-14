@@ -777,8 +777,7 @@ static void octeontx_ecam_dev_enumerate(struct ecam_device *device)
 		cavm_pccbr_xxx_bus_t sbus;
 
 		sbus.u = cavm_read32(pconfig + CAVM_PCCBR_XXX_BUS);
-		if (sbus.s.sbnum != 0 &&
-		    sbus.s.sbnum < OCTEONTX_ECAM_MAX_BUS) {
+		if (sbus.s.sbnum != 0) {
 			/* Add to brigdes list */
 			ecam_bridges[device->dev].bus = sbus.s.sbnum;
 			debug_io("Adding bridge=%d to list...\n",
