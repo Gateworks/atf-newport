@@ -140,7 +140,6 @@ union cavm_mio_emm_rsp_sts mio_emm_cmd(uint32_t cmd_idx, uint32_t ctype_xor, uin
 
 int sdmmc_rw_data(int write, unsigned int addr, int size, uintptr_t buf, int buf_size)
 {
-	int err = 0;
 	int blk_cnt, blks, offset, bytes;
 	int round_size;
 	uintptr_t tmp_buf = TZDRAM_BASE + 512;
@@ -230,7 +229,7 @@ int sdmmc_rw_data(int write, unsigned int addr, int size, uintptr_t buf, int buf
 		offset = 0; // make skip 0 as we don't need it next loop
 	}
 
-	return err ? 0 : buf_size;
+	return buf_size;
 }
 
 int emmc_config()
