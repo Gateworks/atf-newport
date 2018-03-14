@@ -498,5 +498,12 @@ void sata_ipm_quirk()
 	}
 
 	timer_hd = timer_create(TM_PERIODIC, SATA_POLL_INTERVAL, timer_cb);
-	timer_start(timer_hd);
+	if (timer_hd == -1) {
+		printf("ATF: N%d: can't create new timer\n",
+				node);
+	} else {
+		debug("ATF: N%d: timer id = %d created successfully\n",
+				node, timed_hd);
+		timer_start(timer_hd);
+	}
 }
