@@ -75,7 +75,7 @@ int thunder_twsi_send(unsigned int node, unsigned int twsi_num,
 
 		rc = twsi_read_status(node, twsi_num);
 		debug_twsi("N%d.TWSI%d: Status 0x%x\n",
-			   node, twsi_num, addr);
+			   node, twsi_num, rc);
 	}
 
 	twsi_stop(node, twsi_num);
