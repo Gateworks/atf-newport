@@ -162,7 +162,7 @@ void l2c_flush(void)
 
 	for (l2_way = 0; l2_way < ways; l2_way++) {
 		for (l2_set = 0; l2_set < sets; l2_set++) {
-			val = 128 * (l2_set + sets * (l2_way + (is_rtg * 16)));
+			val = (uint64_t)128 * (l2_set + sets * (l2_way + (is_rtg * 16)));
 			__asm__ volatile("sys #0,c11,C0,#5, %0\n" : : "r"(val));
 		}
 	}
