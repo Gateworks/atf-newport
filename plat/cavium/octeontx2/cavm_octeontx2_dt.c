@@ -130,12 +130,17 @@ static void octeontx2_print_board_variables(void)
 }
 
 static int octeontx2_fdt_get_int32(const void *fdt, const char *prop,
-					int node)
+					int offset)
 {
 	const uint32_t *reg;
 	int val = 0;
 
-	reg = fdt_getprop(fdt, node, prop, NULL);
+	reg = fdt_getprop(fdt, offset, prop, NULL);
+	if (!reg) {
+		WARN("%s: cannot find reg property for prop %s\n",
+				 __func__, prop);
+		return -1;
+	}
 	val = fdt32_to_cpu(*reg);
 
 	return val;
@@ -845,6 +850,11 @@ static void octeontx2_fdt_parse_vsc7224_info(const void *fdt,
 	}
 
 	reg = fdt_getprop(fdt, offset, "reg", NULL);
+	if (!reg) {
+		ERROR("CGX%d.LMAC%d: \"vitesse,vsc7224\" section doesn't contain the reg property.\n",
+				cgx_idx, lmac_idx);
+		return;
+	}
 	vsc7224->i2c_addr = fdt32_to_cpu(*reg);
 	parent = fdt_parent_offset(fdt, offset);
 	octeontx2_fdt_get_i2c_bus_info(fdt, parent, &vsc7224->i2c_bus,
@@ -859,18 +869,6 @@ static void octeontx2_fdt_parse_vsc7224_info(const void *fdt,
 
 	octeontx2_fdt_parse_vsc7224_channels(fdt, offset, vsc7224,
 			cgx_idx, lmac_idx);
-}
-
-static int octeontx2_fdt_get_phy_addr(const void *fdt, int phy_offset)
-{
-	const uint32_t *reg;
-	int addr = -1;
-
-	if (phy_offset < 0)
-		return -1;
-	reg = fdt_getprop(fdt, phy_offset, "reg", NULL);
-	addr = fdt32_to_cpu(*reg);
-	return addr;
 }
 
 /* Return number of lanes available for different QLMs. */
@@ -1174,8 +1172,8 @@ static void octeontx2_cgx_lmacs_check_linux(const void *fdt,
 						cgx_idx, lmac_idx);
 			} else {
 				strncpy(phy->phy_compatible, str, 64);
-				phy->phy_addr =	octeontx2_fdt_get_phy_addr(fdt,
-						phy_offset);
+				phy->phy_addr =	octeontx2_fdt_get_int32(fdt,
+						"reg", phy_offset);
 				phy->mdio_bus = octeontx2_fdt_get_bus(fdt,
 						phy_offset, cgx_idx,
 						lmac_idx);
