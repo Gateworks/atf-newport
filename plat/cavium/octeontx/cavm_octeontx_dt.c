@@ -25,7 +25,7 @@ static void octeontx_boot_device_from_strapx(const int node)
 	int boot_medium, ret;
 
 	gpio_strap.u = CSR_READ(0, CAVM_GPIO_STRAP);
-	boot_medium = (gpio_strap.u) & 0x7;
+	boot_medium = (gpio_strap.u) & 0xf;
 
 	switch (boot_medium) {
 		case CAVM_RST_BOOT_METHOD_E_REMOTE_CN8:
