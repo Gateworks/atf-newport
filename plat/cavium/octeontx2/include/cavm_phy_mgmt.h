@@ -252,16 +252,6 @@ typedef struct octeontx_sfp_info {
 	octeontx_vsc7224_t vsc7224;
 } octeontx_sfp_info_t;
 
-typedef union octeontx_phy_link_state {
-	uint64_t u64;
-	struct {
-		uint64_t link_up:1;
-		uint64_t full_duplex:1;
-		uint64_t speed:4;	/* cgx_link_speed enum */
-		uint64_t reserved:58;
-	} s;
-} octeontx_phy_link_state_t;
-
 typedef struct octeontx_phy_timer_mapping_s {
 	int node;
 	int cgx_idx;

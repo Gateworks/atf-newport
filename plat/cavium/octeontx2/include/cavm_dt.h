@@ -129,10 +129,6 @@ typedef struct cgx_lmac_config {
 	int autoneg_dis;
 	uint8_t local_mac_address[6];
 	phy_config_t phy_config;
-	/* below info to be filled during run time
-	 * by CGX driver
-	 */
-	octeontx_phy_link_state_t link_status;
 } cgx_lmac_config_t;
 
 typedef struct cgx_config {
