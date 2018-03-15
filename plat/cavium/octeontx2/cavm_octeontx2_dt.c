@@ -37,6 +37,7 @@ static struct qlm_mode_strmap_s qlmmode_strmap[] = {
 	{-1, "PCIE_1X16", NULL},
 	{-1, "SATA_4X1", NULL},
 	{-1, "SATA_2X1", NULL},
+	{-1, "OCI", NULL},
 	/* CGX/LMAC types. */
 	{CAVM_CGX_LMAC_TYPES_E_SGMII, "SGMII_4X1", "sgmii"},
 	{CAVM_CGX_LMAC_TYPES_E_SGMII, "SGMII_2X1", "sgmii"},
@@ -44,7 +45,6 @@ static struct qlm_mode_strmap_s qlmmode_strmap[] = {
 	{CAVM_CGX_LMAC_TYPES_E_XAUI, "XAUI_1X4", "xaui"},
 	{CAVM_CGX_LMAC_TYPES_E_RXAUI, "RXAUI_2X2", "rxaui"},
 	{CAVM_CGX_LMAC_TYPES_E_RXAUI, "RXAUI_1X2", "rxaui"},
-	{-1, "OCI", NULL}, /* Not supported for now. */
 	{CAVM_CGX_LMAC_TYPES_E_TENG_R, "XFI_4X1", "xfi"},
 	{CAVM_CGX_LMAC_TYPES_E_TENG_R, "XFI_2X1", "xfi"},
 	{CAVM_CGX_LMAC_TYPES_E_TENG_R, "XFI_1X1", "xfi"},
