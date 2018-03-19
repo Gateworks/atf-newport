@@ -21,6 +21,7 @@ PLAT_BL_COMMON_SOURCES	+=	plat/cavium/octeontx2/t93/plat_cavm_setup.c		\
 				plat/cavium/octeontx2/cavm_security.c		\
 				plat/cavium/octeontx2/cavm_octeontx2_dt.c	\
 				plat/cavium/octeontx2/cavm_cgx_intf.c		\
+				plat/cavium/octeontx2/cavm_cgx.c		\
 
 BL1_SOURCES		+=	plat/cavium/octeontx2/aarch64/octeontx2_common.S	\
 				plat/cavium/octeontx2/aarch64/plat_cavm_helpers.S	\
