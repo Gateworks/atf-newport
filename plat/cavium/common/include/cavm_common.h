@@ -159,6 +159,7 @@ int plat_fuse_read(int node, int fuse);
 
 void octeontx_pci_init(void);
 void octeontx_rvu_init(int node);
+int octeontx2_clear_lf_to_pf_mapping(int node);
 void plat_add_mmio_map(void);
 void thunder_io_setup(void);
 void octeontx_security_setup(void);
