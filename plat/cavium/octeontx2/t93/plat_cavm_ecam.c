@@ -20,6 +20,7 @@
 #include <string.h>
 #include <cavm_ecam.h>
 #include <cavm_dt.h>
+#include <cavm_cgx.h>
 
 #ifdef DEBUG_ATF_PLAT_ECAM
 #define debug_plat_ecam printf
@@ -100,8 +101,8 @@ static int ecam_probe_cgx(int node, unsigned long arg)
 }
 
 struct ecam_probe_callback probe_callbacks[] = {
-	{0xa084, 0x177d, ecam_probe_sata, 0}, /* SATA5 */
 	{0xa059, 0x177d, ecam_probe_cgx, 0},
+	{0xa084, 0x177d, ecam_probe_sata, 0}, /* SATA5 */
 	{ECAM_INVALID_DEV_ID, 0, 0, 0}
 };
 
@@ -110,8 +111,23 @@ static void init_rvu(int node, uint64_t config_base, uint64_t config_size)
 	octeontx_rvu_init(node);
 }
 
+static void init_cgx(int node, uint64_t config_base, uint64_t config_size)
+{
+	union cavm_pccpf_xxx_vsec_ctl vsec_ctl;
+	int cgx_id;
+
+	vsec_ctl.u = cavm_read32(config_base + CAVM_PCCPF_XXX_VSEC_CTL);
+	cgx_id = vsec_ctl.s.inst_num;
+
+	debug_plat_ecam("CGX(%d):NODE(%d) init config_base:%lx size:%lx\n",
+		vsec_ctl.s.inst_num, node, config_base, config_size);
+
+	cgx_hw_init(node, cgx_id);
+}
+
 struct ecam_init_callback plat_init_callbacks[] = {
-	{0xa065, 0x177d, init_rvu}, //0x65 - PCC_DEV_IDL_E::RVU_AF
+	{0xa059, 0x177d, init_cgx}, /* 0x59 - PCC_DEV_IDL_E::CGX */
+	{0xa065, 0x177d, init_rvu}, /* 0x65 - PCC_DEV_IDL_E::RVU_AF */
 	{ECAM_INVALID_DEV_ID, 0, 0}
 };
 
