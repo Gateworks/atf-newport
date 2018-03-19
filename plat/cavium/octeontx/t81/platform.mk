@@ -29,3 +29,4 @@ BL2_SOURCES		+=	plat/cavium/octeontx/t81/plat_cavm_ecam.c	\
 BL31_SOURCES		+=	plat/cavium/octeontx/aarch64/octeontx_common.S	\
 				plat/cavium/octeontx/aarch64/plat_cavm_helpers.S	\
 				plat/cavium/octeontx/cavm_topology.c		\
+				plat/cavium/octeontx/cavm_setup.c		\

@@ -182,6 +182,7 @@ void sata_ipm_quirk(void);
 void cavm_configure_mmc_security(int secure);
 void set_secondary_cpu_jump_addr(unsigned int bl1_base);
 void l2c_flush(void);
+void plat_cavm_setup(void);
 
 static uint8_t thunder_fuse_read_byte(int node, int byte_addr)
 {

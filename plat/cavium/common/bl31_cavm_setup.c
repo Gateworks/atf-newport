@@ -198,6 +198,11 @@ void bl31_platform_setup()
 	thunder_gic_driver_init();
 	thunder_gic_init();
 	timers_init();
+	/* This API is platform dependent. It can be any boot time
+	 * initialization that needs to be performed related to
+	 * firmware services provided in BL31
+	 */
+	plat_cavm_setup();
 
 	/*
 	 * Apply SATA quirk only for CN8XXX family
