@@ -13,6 +13,7 @@
 
 #include <cavm_common.h>
 #include <platform_def.h>
+#include <platform_setup.h>
 
 static int plat_fuse_read_byte(int node, int byte_addr)
 {
@@ -363,4 +364,16 @@ void plat_add_mmio_node(unsigned long node)
 	 */
 	mmap_add_region(RVU_MEM_BASE, RVU_MEM_BASE,
 			RVU_MEM_SIZE, (MT_MEMORY | MT_RW | MT_NS));
+}
+
+const uintptr_t plat_get_scmi_mbox_addr(int node)
+{
+	return CSR_PA(node, CAVM_CPC_RAM_MEMX(AP_SECURE0_TO_XCP_MBOX_OFFSET));
+}
+
+const uintptr_t plat_get_scmi_db_addr(int node)
+{
+	return CSR_PA(node, CAVM_XCPX_DEVX_XCP_MBOX(
+			    CAVM_CPC_XCP_MAP_E_SCP,
+			    CAVM_XCP_MBOX_DEV_E_AP_SECURE0));
 }

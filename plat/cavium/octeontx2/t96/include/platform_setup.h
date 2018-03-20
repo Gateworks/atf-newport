@@ -28,6 +28,48 @@
 #define CAVM_CCS_LMC_MASK	(CAVM_CCS_LMC_MASK_LMC0 | CAVM_CCS_LMC_MASK_LMC1 | \
 					CAVM_CCS_LMC_MASK_LMC2)
 
+/* SCMI related defines */
+
+/*
+ * Macros mapping the MPIDR Affinity levels to Cavium Platform Power levels. The
+ * power levels have a 1:1 mapping with the MPIDR affinity levels.
+ */
+#define CAVM_PWR_LVL0		MPIDR_AFFLVL0
+#define CAVM_PWR_LVL1		MPIDR_AFFLVL1
+#define CAVM_PWR_LVL2		MPIDR_AFFLVL2
+
+/*
+ *  Macros for local power states in Cavium platforms encoded by State-ID field
+ *  within the power-state parameter.
+ */
+
+/* Local power state for power domains in Run state. */
+#define CAVM_LOCAL_STATE_RUN	0
+/* Local power state for retention. Valid only for CPU power domains */
+#define CAVM_LOCAL_STATE_RET	1
+/* Local power state for OFF/power-down. Valid for CPU and cluster power
+   domains */
+#define CAVM_LOCAL_STATE_OFF	2
+
+/* System power domain at level 2, as currently implemented by Cavium platforms */
+#define CAVM_SYSTEM_PWR_DMN_LVL		CAVM_PWR_LVL2
+
+/* Macros to read the CAVM power domain state */
+#define CAVM_CORE_PWR_STATE(state)	(state)->pwr_domain_state[CAVM_PWR_LVL0]
+#define CAVM_CLUSTER_PWR_STATE(state)	(state)->pwr_domain_state[CAVM_PWR_LVL1]
+#define CAVM_SYSTEM_PWR_STATE(state)	\
+			((PLAT_MAX_PWR_LVL == CAVM_SYSTEM_PWR_DMN_LVL) ?\
+			(state)->pwr_domain_state[CAVM_SYSTEM_PWR_DMN_LVL] : 0)
+
+/* SCMI helper defines */
+#define AP_SECURE0_TO_XCP_MBOX_ADDR	0x58000
+#define AP_SECURE0_TO_XCP_MBOX_OFFSET	(AP_SECURE0_TO_XCP_MBOX_ADDR / 0x8)
+
+#define SCMI_AGENT_AP0_SECURE		(0)
+#define PLAT_SCMI_DB_MODIFY_MASK	(1 << SCMI_AGENT_AP0_SECURE)
+#define PLAT_SCMI_DB_PRESERVE_MASK	(~PLAT_SCMI_DB_MODIFY_MASK)
+
+
 /* CPU topology tree description for T96 */
 static const unsigned char cavm_power_domain_tree_desc[] = {
 	/* No of root nodes */
@@ -45,4 +87,8 @@ static const unsigned char cavm_power_domain_tree_desc[] = {
 int plat_get_max_lane_num(int qlm);
 int plat_get_cgx_idx(int qlm);
 
-#endif
+/* SCMI register configuration API */
+const uintptr_t plat_get_scmi_mbox_addr(int node);
+const uintptr_t plat_get_scmi_db_addr(int node);
+
+#endif /* __T93_PLAT_SETUP_H__ */
