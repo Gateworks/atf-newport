@@ -1,6 +1,6 @@
 /** @file
 
-  Copyright (c) 2017, Cavium Inc. All rights reserved.<BR>
+  Copyright (c) 2018, Cavium Inc. All rights reserved.<BR>
   This program and the accompanying materials
   are licensed and made available under the terms and conditions of the BSD License
   which accompanies this distribution.  The full text of the license may be found at
@@ -99,21 +99,315 @@ static void cgx_release_own_status(int node, int cgx_id, int lmac_id)
 			own_status, 0); /* released the ownership */
 }
 
+static void cgx_set_link_state(int node, int cgx_id, int lmac_id,
+					link_state_t *link, uint64_t err_type)
+{
+	union cgx_scratchx0 scratchx0;
+
+	INFO("%s %d:%d:%d link_up %d speed %d duplex %d err_type %ld\n",
+			__func__, node, cgx_id, lmac_id,
+			link->s.link_up, link->s.speed,
+			link->s.full_duplex, err_type);
+
+	scratchx0.u = CSR_READ(node, CAVM_CGXX_CMRX_SCRATCHX(
+					cgx_id, lmac_id, 0));
+	scratchx0.s.link_sts.link_up = link->s.link_up;
+	scratchx0.s.link_sts.speed = link->s.speed;
+	scratchx0.s.link_sts.full_duplex = link->s.full_duplex;
+	scratchx0.s.link_sts.err_type = err_type;
+	CSR_WRITE(node, CAVM_CGXX_CMRX_SCRATCHX(cgx_id, lmac_id, 0),
+				scratchx0.u);
+}
+
+static int cgx_link_change(int node, int cgx_id, int lmac_id,
+			link_state_t *link)
+{
+	int ret = 0;
+	cgx_lmac_config_t *lmac_cfg;
+
+	/* get the lmac type and based on lmac
+	 * type, change the link settings
+	 */
+	lmac_cfg = &bfdt->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
+
+	INFO("%s %d:%d:%d lmac_type %d\n", __func__, node, cgx_id,
+			lmac_id, lmac_cfg->mode);
+
+	if ((lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_SGMII) ||
+		(lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_QSGMII)) {
+		ret = cgx_sgmii_set_link_speed(node, cgx_id,
+						lmac_id, link);
+	} else if ((lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_XAUI) ||
+		(lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_RXAUI) ||
+		(lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_TENG_R) ||
+		(lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_FORTYG_R)) {
+		ret = cgx_xaui_set_link_up(node, cgx_id, lmac_id);
+	} else {
+		/* FIXME: handle new modes as well */
+	}
+
+	/* update the current link status along with any error type set */
+	cgx_set_link_state(node, cgx_id, lmac_id, link,
+		cgx_get_error_type(node, cgx_id, lmac_id));
+
+	return ret;
+}
+
+static int cgx_link_bringup(int node, int cgx_id, int lmac_id)
+{
+	cgx_lmac_config_t *lmac_cfg;
+	cgx_lmac_context_t *lmac_ctx;
+	link_state_t link = {0};
+	int count = 0;
+
+	/* get the lmac type and based on lmac
+	 * type, initialize SGMII/XAUI link
+	 */
+	lmac_cfg = &bfdt->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
+
+	INFO("%s %d:%d:%d lmac_type %d\n", __func__, node, cgx_id,
+			lmac_id, lmac_cfg->mode);
+
+	lmac_ctx = &lmac_context[node][cgx_id][lmac_id];
+	/* link_enable will be set when the LINK UP req is processed.
+	 * To avoid processing duplication of requests, check for it
+	 * and return the previous link status
+	 */
+	if (lmac_ctx->s.link_enable == 1) {
+		INFO("%s: Link status for %d:%d is already up\n",
+			__func__, cgx_id, lmac_id);
+		link.s.link_up = lmac_ctx->s.link_up;
+		link.s.full_duplex = lmac_ctx->s.full_duplex;
+		link.s.speed = lmac_ctx->s.speed;
+		cgx_set_link_state(node, cgx_id, lmac_id, &link,
+			cgx_get_error_type(node, cgx_id, lmac_id));
+		return 0;
+	}
+
+	if ((lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_SGMII) ||
+		(lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_QSGMII)) {
+		/* sequence if PHY is present:
+		 *	- get PHY status,
+		 *	- If link is up, init link and set speed
+		 *	- If link is not up, return error
+		 * sequence if PHY is not present(same if internal lbk enabled):
+		 *	- assign default link status,
+		 *	- init link and set speed
+		 */
+		if (lmac_ctx->s.lbk1_enable || !lmac_cfg->phy_present) {
+			link.s.link_up = 1;
+			link.s.full_duplex = 1;
+			link.s.speed = CGX_LINK_1G;
+		} else {
+			/* FIXME: interface with PHY management to get
+			 * the link status if phy is present. PHY management
+			 * firmware will provide link status info. Currently
+			 * not supported
+			 */
+		}
+		if (link.s.link_up == 1) {	/* link is up */
+			if (cgx_sgmii_set_link_up(node, cgx_id, lmac_id) != 0)
+				/* error occurred, skip further */
+				goto cgx_err;
+
+			if (cgx_sgmii_set_link_speed(node, cgx_id,
+						lmac_id, &link) != 0)
+				goto cgx_err;
+
+			/* SUCCESS case : update the link status and indicate
+			 * poll timer to start polling for the link
+			 */
+			lmac_ctx->s.link_up = link.s.link_up;
+			lmac_ctx->s.full_duplex = link.s.full_duplex;
+			lmac_ctx->s.speed = link.s.speed;
+			lmac_ctx->s.link_enable = 1;
+			cgx_set_link_state(node, cgx_id, lmac_id, &link, 0);
+
+			return 0;
+
+		} else {
+			/* if the link is not up, return error */
+			ERROR("%s : PHY link status is down for LMAC%d\n",
+				__func__, lmac_id);
+			cgx_set_error_type(node, cgx_id, lmac_id,
+				CGX_ERR_PHY_LINK_DOWN);
+			return -1;
+		}
+	} else if ((lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_XAUI) ||
+		(lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_RXAUI) ||
+		(lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_TENG_R) ||
+		(lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_FORTYG_R)) {
+
+		/* initialize the link, get the link status,
+		 * If link is up, check AN and perform training
+		 */
+		if (cgx_xaui_init_link(node, cgx_id, lmac_id) != 0) {
+			/* This API will fail only if there is PCS reset
+			 * error. Hence set error type with the LINK status
+			 * as down and return
+			 */
+			cgx_set_link_state(node, cgx_id, lmac_id, &link,
+				cgx_get_error_type(node, cgx_id, lmac_id));
+			return -1;
+		}
+
+		/* PHY not present, internal loopback case */
+		if (lmac_ctx->s.lbk1_enable || !lmac_cfg->phy_present) {
+			link.s.link_up = 1;
+			link.s.full_duplex = 1;
+			if (lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_FORTYG_R)
+				link.s.speed = CGX_LINK_40G;
+			else
+				link.s.speed = CGX_LINK_10G;
+		}
+retry_link:
+		if (cgx_xaui_set_link_up(node, cgx_id, lmac_id) == -1) {
+			/* if init link fails, retry */
+			if (count++ < 5) {
+				WARN("%s retrying link\n", __func__);
+				/* clear the error when retrying */
+				cgx_set_error_type(node, cgx_id, lmac_id, 0);
+				goto retry_link;
+			}
+		}
+
+		cgx_xaui_get_link(node, cgx_id, lmac_id, &link);
+		if (link.s.link_up == 1) {	/* link is up */
+			if (cgx_get_error_type(node, cgx_id, lmac_id) &
+						CGX_ERR_MASK)
+				goto cgx_err;
+			/* SUCCESS case : update the link status and indicate
+			 * poll timer to start polling for link
+			 */
+			lmac_ctx->s.link_up = link.s.link_up;
+			lmac_ctx->s.full_duplex = link.s.full_duplex;
+			lmac_ctx->s.speed = link.s.speed;
+			lmac_ctx->s.link_enable = 1;
+			cgx_set_link_state(node, cgx_id, lmac_id, &link, 0);
+			return 0;
+		} else {
+			/* link is down */
+			ERROR("%s: link status is down for LMAC%d\n",
+				__func__, lmac_id);
+			cgx_set_error_type(node, cgx_id, lmac_id,
+					CGX_ERR_PHY_LINK_DOWN);
+			return -1;
+		}
+	} else { /* FIXME : add support for new modes */
+		ERROR("%s LMAC%d mode %d not configured correctly,"
+			" cannot initialize link\n",
+			__func__, lmac_id, lmac_cfg->mode);
+		cgx_set_error_type(node, cgx_id, lmac_id,
+			CGX_ERR_LMAC_MODE_INVALID);
+		return -1;
+	}
+
+cgx_err:
+	/* If the link is up, but the CGX configuration failed, reach here
+	 * In that case, update the link status along with the error type
+	 * in lmac_context structure and the SCRATCHX CSRs and notify
+	 * poll timer to start polling for the link
+	 */
+	lmac_ctx->s.link_up = link.s.link_up;
+	lmac_ctx->s.full_duplex = link.s.full_duplex;
+	lmac_ctx->s.speed = link.s.speed;
+	cgx_set_link_state(node, cgx_id, lmac_id, &link,
+			cgx_get_error_type(node, cgx_id, lmac_id));
+
+	lmac_ctx->s.link_enable = 1;
+
+	return -1;
+}
+
+static int cgx_link_bringdown(int node, int cgx_id, int lmac_id)
+{
+	cgx_lmac_config_t *lmac_cfg;
+	cgx_lmac_context_t *lmac_ctx;
+	link_state_t link;
+
+	/* get the lmac type and based on lmac
+	 * type, bring down SGMII/XAUI link
+	 */
+	lmac_cfg = &bfdt->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
+	INFO("%s %d:%d:%d lmac_type %d\n", __func__, node,
+				cgx_id, lmac_id, lmac_cfg->mode);
+
+	lmac_ctx = &lmac_context[node][cgx_id][lmac_id];
+
+	/* link_enable will be cleared when the LINK DOWN req is processed
+	 * To avoid processing duplication of requests, check for it
+	 * and return the previous link status
+	 */
+	if (lmac_ctx->s.link_enable == 0) {
+		INFO("%s: Link status for %d:%d is already down\n",
+			__func__, cgx_id, lmac_id);
+		link.s.link_up = lmac_ctx->s.link_up;
+		link.s.full_duplex = lmac_ctx->s.full_duplex;
+		link.s.speed = lmac_ctx->s.speed;
+		cgx_set_link_state(node, cgx_id, lmac_id, &link,
+			cgx_get_error_type(node, cgx_id, lmac_id));
+		return 0;
+	}
+
+	if ((lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_SGMII) ||
+		(lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_QSGMII)) {
+		if (cgx_sgmii_set_link_down(node, cgx_id, lmac_id) != 0)
+			return -1;
+
+	} else if ((lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_XAUI) ||
+		(lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_RXAUI) ||
+		(lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_TENG_R) ||
+		(lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_FORTYG_R)) {
+		if (cgx_xaui_set_link_down(node, cgx_id, lmac_id) != 0)
+			return -1;
+
+	} else { /* FIXME : add support for new modes */
+		ERROR("%s LMAC%d mode %d not configured correctly"
+			" cannot bring down the link\n",
+			__func__, lmac_id, lmac_cfg->mode);
+		cgx_set_error_type(node, cgx_id, lmac_id,
+			CGX_ERR_LMAC_MODE_INVALID);
+		return -1;
+	}
+
+	/* link is brought down successfully. update the link
+	 * status and indicate poll timer to stop polling
+	 * for the link
+	 */
+	lmac_ctx->s.link_up = link.s.link_up = 0;
+	lmac_ctx->s.full_duplex = link.s.full_duplex = 0;
+	lmac_ctx->s.speed = link.s.speed = 0;
+	cgx_set_link_state(node, cgx_id, lmac_id, &link,
+			cgx_get_error_type(node, cgx_id, lmac_id));
+
+	lmac_ctx->s.link_enable = 0;
+
+	return 0;
+}
+
 /* Note : this function executes with lock acquired */
 static int cgx_process_requests(int node, int cgx_id, int lmac_id)
 {
 	int ret = 0;
+	int enable = 0; /* read from scratch1 - cmd_args */
 	int request_id = 0;
 	union cgx_scratchx0 scratchx0;
 	union cgx_scratchx1 scratchx1;
+	link_state_t new_link, link;
+	cgx_lmac_context_t *lmac_ctx;
 	cgx_lmac_config_t *lmac;
 
 	lmac = &bfdt->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
+	lmac_ctx = &lmac_context[node][cgx_id][lmac_id];
 
 	/* Read the command arguments from SCRATCHX(1) */
 	scratchx1.u = CSR_READ(node, CAVM_CGXX_CMRX_SCRATCHX(
 					cgx_id, lmac_id, 1));
 	request_id = scratchx1.s.cmd.id;
+	enable = scratchx1.s.cmd_args.enable;
+	new_link.s.link_up = scratchx1.s.lnk_args.link_up;
+	new_link.s.full_duplex = scratchx1.s.lnk_args.full_duplex;
+	new_link.s.speed = scratchx1.s.lnk_args.speed;
 
 	INFO("%s: %d:%d:%d request_id %d\n", __func__, node, cgx_id,
 				lmac_id, request_id);
@@ -126,25 +420,62 @@ static int cgx_process_requests(int node, int cgx_id, int lmac_id)
 
 	if (lmac->lmac_enable) {
 		switch (request_id) {
-		/* FIXME: add support for the commands */
 		case CGX_CMD_LINK_BRING_UP:
+			ret = cgx_link_bringup(node, cgx_id, lmac_id);
 			break;
 		case CGX_CMD_LINK_BRING_DOWN:
+			ret = cgx_link_bringdown(node, cgx_id, lmac_id);
 			break;
 		case CGX_CMD_LINK_STAT_CHANGE:
+			ret = cgx_link_change(node, cgx_id, lmac_id, &new_link);
 			break;
 		case CGX_CMD_INTF_SHUTDOWN:
+			cgx_fw_intf_shutdown();
 			break;
 		case CGX_CMD_INTERNAL_LBK:
+			lmac_ctx->s.lbk1_enable = enable;
+			cgx_set_internal_loopback(node, cgx_id, lmac_id,
+						enable);
 			break;
 		case CGX_CMD_EXTERNAL_LBK:
+			cgx_set_external_loopback(node, cgx_id, lmac_id,
+						enable);
 			break;
 		case CGX_CMD_GET_FW_VER:
+			scratchx0.u = 0;
+			scratchx0.s.ver.major_ver = CGX_FIRWARE_MAJOR_VER;
+			scratchx0.s.ver.minor_ver = CGX_FIRWARE_MINOR_VER;
+			CSR_WRITE(node, CAVM_CGXX_CMRX_SCRATCHX(
+					cgx_id, lmac_id, 0), scratchx0.u);
 			break;
 		case CGX_CMD_GET_LINK_STS:
+			CSR_WRITE(node, CAVM_CGXX_CMRX_SCRATCHX(
+					cgx_id, lmac_id, 0), 0); /* reset */
+			link.s.link_up = lmac_ctx->s.link_up;
+			link.s.full_duplex = lmac_ctx->s.full_duplex;
+			link.s.speed = lmac_ctx->s.speed;
+			cgx_set_link_state(node, cgx_id, lmac_id, &link,
+				lmac_ctx->s.error_type);
 			break;
 		case CGX_CMD_GET_MAC_ADDR:
+			scratchx0.u = 0;
+			scratchx0.s.mac_s.addr_0 = lmac->local_mac_address[0];
+			scratchx0.s.mac_s.addr_1 = lmac->local_mac_address[1];
+			scratchx0.s.mac_s.addr_2 = lmac->local_mac_address[2];
+			scratchx0.s.mac_s.addr_3 = lmac->local_mac_address[3];
+			scratchx0.s.mac_s.addr_4 = lmac->local_mac_address[4];
+			scratchx0.s.mac_s.addr_5 = lmac->local_mac_address[5];
+			INFO("%s mac_addr %x:%x:%x:%x:%x:%x\n",	__func__,
+					scratchx0.s.mac_s.addr_0,
+					scratchx0.s.mac_s.addr_1,
+					scratchx0.s.mac_s.addr_2,
+					scratchx0.s.mac_s.addr_3,
+					scratchx0.s.mac_s.addr_4,
+					scratchx0.s.mac_s.addr_5);
+			CSR_WRITE(node, CAVM_CGXX_CMRX_SCRATCHX(
+					cgx_id, lmac_id, 0), scratchx0.u);
 			break;
+		/* FIXME: add support for other commands */
 		default:
 			ERROR("%s: Invalid ID %d\n", __func__, request_id);
 			cgx_set_error_type(node, cgx_id, lmac_id,
@@ -417,6 +748,8 @@ void cgx_fw_intf_init(void)
  */
 void cgx_fw_intf_shutdown(void)
 {
+	cgx_lmac_context_t *lmac_ctx;
+
 	INFO("%s\n", __func__);
 
 	/* bring down all the links and clear all SCRATCHX
@@ -425,14 +758,15 @@ void cgx_fw_intf_shutdown(void)
 	for (int node = 0; node < PLATFORM_MAX_NODES; node++) {
 		for (int cgx = 0; cgx < MAX_CGX; cgx++) {
 			for (int lmac = 0; lmac < MAX_LMAC_PER_CGX; lmac++) {
-				/* FIXME:call the bring down link API
-				 * if link_enable is set for the link
-				 */
+				lmac_ctx = &lmac_context[node][cgx][lmac];
+				/* bring down the link if link_enable is set */
+				if (lmac_ctx->s.link_enable)
+					cgx_link_bringdown(node, cgx, lmac);
 				CSR_WRITE(node, CAVM_CGXX_CMRX_SCRATCHX(
 						cgx, lmac, 0), 0);
 				CSR_WRITE(node, CAVM_CGXX_CMRX_SCRATCHX(
 						cgx, lmac, 1), 0);
-				lmac_context[node][cgx][lmac].u64 = 0;
+				lmac_ctx->u64 = 0;
 			}
 		}
 		/* RVU specific: enable LF to PF mapping done
