@@ -89,3 +89,26 @@ void thunder_gic_init(void)
 	gicv3_cpuif_enable(plat_my_core_pos());
 }
 
+/******************************************************************************
+ * Cavium common helper to initialize the per-cpu redistributor interface in GICv3
+ *****************************************************************************/
+void cavm_gic_pcpu_init(void)
+{
+	gicv3_rdistif_init(plat_my_core_pos());
+}
+
+/******************************************************************************
+ * Cavium common helper to enable the GIC CPU interface
+ *****************************************************************************/
+void cavm_gic_cpuif_enable(void)
+{
+	gicv3_cpuif_enable(plat_my_core_pos());
+}
+
+/******************************************************************************
+ * Cavium common helper to disable the GIC CPU interface
+ *****************************************************************************/
+void cavm_gic_cpuif_disable(void)
+{
+	gicv3_cpuif_disable(plat_my_core_pos());
+}

@@ -31,7 +31,6 @@
 #undef GICD_CLRSPI_SR
 #undef GICD_TYPER
 #undef GICD_IIDR
-#include <gicv3.h>
 
 static void cavm_odm_shutdown(int shutdown_gpio)
 {
@@ -98,7 +97,7 @@ static void cavm_signal_shutdown(void)
 static void thunder_cpu_pwrdwn_common(void)
 {
 	/* Prevent interrupts from spuriously waking up this cpu */
-	gicv3_cpuif_disable(plat_my_core_pos());
+	cavm_gic_cpuif_disable();
 
 	/* Program the power controller to power off this cpu. */
 	thunder_pwrc_write_ppoffr(read_mpidr_el1());
@@ -240,10 +239,10 @@ void thunder_pwr_domain_on_finish(const psci_power_state_t *target_state)
 	thunder_power_domain_on_finish_common(target_state);
 
 	/* Enable the gic cpu interface */
-	gicv3_rdistif_init(plat_my_core_pos());
+	cavm_gic_pcpu_init();
 
 	/* Program the gic per-cpu distributor or re-distributor interface */
-	gicv3_cpuif_enable(plat_my_core_pos());
+	cavm_gic_cpuif_enable();
 
 	thunder_cpu_setup();
 }
@@ -267,7 +266,7 @@ void thunder_pwr_domain_suspend_finish(const psci_power_state_t *target_state)
 	thunder_power_domain_on_finish_common(target_state);
 
 	/* Enable the gic cpu interface */
-	gicv3_cpuif_enable(plat_my_core_pos());
+	cavm_gic_cpuif_enable();
 }
 
 /*******************************************************************************
