@@ -204,6 +204,31 @@ int plat_get_cgx_idx(int qlm)
 	return idx;
 }
 
+/*
+ * BDK uses CPC RAM memory as key memory.
+ * This is indicated by storing the ROTPK at TRUST-ROT-ADDR,
+ * which is in range of CPC_RAM_MEMX.
+ * Moreover, ATF needs to have access to SCP-AP Secure0 mailbox.
+ * Map required memory as MT_RW.
+ */
+void plat_map_cpc_mem(unsigned long node)
+{
+	cavm_cpc_const_t cpc_const;
+	unsigned long cpc_ram_size, attr;
+
+	/* Calculate CPC RAM size based on a number of 16KB memory regions */
+	cpc_const.u = CSR_READ(node, CAVM_CPC_CONST);
+	cpc_ram_size = cpc_const.s.mem_regions * 0x4000;
+
+	attr = MT_MEMORY | MT_RW | MT_SECURE;
+	add_map_record(CSR_PA(node, CAVM_CPC_RAM_MEMX(0)),
+		       cpc_ram_size, attr);
+
+	/* Map required XCP memory region for doorbell registers */
+	add_map_record(CSR_PA(node, CAVM_XCP_BAR_E_XCPX_PF_BAR0(CAVM_CPC_XCP_MAP_E_SCP)),
+		       CAVM_XCP_BAR_E_XCPX_PF_BAR0_SIZE, attr);
+}
+
 void plat_add_mmio_node(unsigned long node)
 {
 	unsigned long attr;
@@ -227,23 +252,6 @@ void plat_add_mmio_node(unsigned long node)
 		       CAVM_FUS_BAR_E_FUS_PF_BAR0_SIZE, attr);
 	add_map_record(CSR_PA(node, CAVM_FUSF_BAR_E_FUSF_PF_BAR0),
 		       CAVM_FUSF_BAR_E_FUSF_PF_BAR0_SIZE, attr);
-#if TRUSTED_BOARD_BOOT
-	/*
-	 * BDK uses CPC RAM memory as key memory.
-	 * This is indicated by storing the ROTPK at TRUST-ROT-ADDR,
-	 * which is in range of CPC_RAM_MEMX. Map CPC RAM as MT_RO
-	 * to allow read of ROTPK provided by BDK
-	 */
-	cavm_cpc_const_t cpc_const;
-	int cpc_ram_size;
-
-	/* Calculate CPC RAM size based on a number of 16KB memory regions */
-	cpc_const.u = CSR_READ(node, CAVM_CPC_CONST);
-	cpc_ram_size = cpc_const.s.mem_regions * 0x4000;
-
-	add_map_record(CSR_PA(node, CAVM_CPC_RAM_MEMX(0)),
-		       cpc_ram_size, (MT_DEVICE | MT_RO | MT_SECURE));
-#endif
 
 	device_type_count = thunder_get_mpi_count();
 	for (i = 0; i < device_type_count; i++) {
@@ -356,6 +364,8 @@ void plat_add_mmio_node(unsigned long node)
 
 	add_map_record(CSR_PA(node, CAVM_SMI_BAR_E_SMI_PF_BAR0_CN9),
 				CAVM_SMI_BAR_E_SMI_PF_BAR0_CN9_SIZE, attr);
+
+	plat_map_cpc_mem(node);
 
 	/*
 	 * Shared memory configuration.
