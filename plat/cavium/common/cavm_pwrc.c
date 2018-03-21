@@ -124,7 +124,7 @@ void thunder_pwrc_write_pcoffr(unsigned long mpidr)
 }
 
 /* Nothing else to do here apart from initializing the lock */
-int thunder_pwrc_setup(void)
+void cavm_pwrc_setup(void)
 {
-	return 0;
+	return;
 }
