@@ -23,6 +23,15 @@
 #include <cavm_cgx_intf.h>
 #include <cavm_cgx.h>
 
+/* define DEBUG_ATF_CGX_INTF to enable debug logs */
+#undef DEBUG_ATF_CGX_INTF
+
+#ifdef DEBUG_ATF_CGX_INTF
+#define debug_cgx_intf printf
+#else
+#define debug_cgx_intf(...) ((void) (0))
+#endif
+
 #define MAX_CGX_TIMERS 2
 
 static int cgx_timers[MAX_CGX_TIMERS];
@@ -35,14 +44,14 @@ static uint64_t cgx_get_error_type(int node, int cgx_id, int lmac_id)
 	cgx_lmac_context_t *lmac_ctx;
 
 	lmac_ctx = &lmac_context[node][cgx_id][lmac_id];
-	INFO("%s: %d:%d:%d error_type 0x%x\n", __func__, node, cgx_id, lmac_id,
+	debug_cgx_intf("%s: %d:%d:%d error_type 0x%x\n", __func__, node, cgx_id, lmac_id,
 				lmac_ctx->s.error_type);
 	return lmac_ctx->s.error_type;
 }
 
 static int cgx_trigger_interrupt(int node, int cgx_id, int lmac_id)
 {
-	INFO("%s %d:%d:%d\n", __func__, node, cgx_id, lmac_id);
+	debug_cgx_intf("%s %d:%d:%d\n", __func__, node, cgx_id, lmac_id);
 
 	/* Enable the interrupt bit each time before triggering
 	 * an interrupt. In case of Link down request, enable bit for
@@ -71,7 +80,7 @@ static int cgx_acquire_csr_lock(int node, int cgx_id, int lmac_id)
 	int timeout = 10; /* loop for few times but not infinitely */
 	cgx_lmac_context_t *lmac_ctx;
 
-	INFO("%s %d:%d:%d\n", __func__, node, cgx_id, lmac_id);
+	debug_cgx_intf("%s %d:%d:%d\n", __func__, node, cgx_id, lmac_id);
 
 	lmac_ctx = &lmac_context[node][cgx_id][lmac_id];
 
@@ -88,7 +97,7 @@ static int cgx_acquire_csr_lock(int node, int cgx_id, int lmac_id)
 
 static void cgx_release_csr_lock(int node, int cgx_id, int lmac_id)
 {
-	INFO("%s %d:%d:%d\n", __func__, node, cgx_id, lmac_id);
+	debug_cgx_intf("%s %d:%d:%d\n", __func__, node, cgx_id, lmac_id);
 	lmac_context[node][cgx_id][lmac_id].s.lock = 0;
 }
 
@@ -104,7 +113,7 @@ static void cgx_set_link_state(int node, int cgx_id, int lmac_id,
 {
 	union cgx_scratchx0 scratchx0;
 
-	INFO("%s %d:%d:%d link_up %d speed %d duplex %d err_type %ld\n",
+	debug_cgx_intf("%s %d:%d:%d link_up %d speed %d duplex %d err_type %ld\n",
 			__func__, node, cgx_id, lmac_id,
 			link->s.link_up, link->s.speed,
 			link->s.full_duplex, err_type);
@@ -130,7 +139,7 @@ static int cgx_link_change(int node, int cgx_id, int lmac_id,
 	 */
 	lmac_cfg = &bfdt->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
 
-	INFO("%s %d:%d:%d lmac_type %d\n", __func__, node, cgx_id,
+	debug_cgx_intf("%s %d:%d:%d lmac_type %d\n", __func__, node, cgx_id,
 			lmac_id, lmac_cfg->mode);
 
 	if ((lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_SGMII) ||
@@ -165,7 +174,7 @@ static int cgx_link_bringup(int node, int cgx_id, int lmac_id)
 	 */
 	lmac_cfg = &bfdt->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
 
-	INFO("%s %d:%d:%d lmac_type %d\n", __func__, node, cgx_id,
+	debug_cgx_intf("%s %d:%d:%d lmac_type %d\n", __func__, node, cgx_id,
 			lmac_id, lmac_cfg->mode);
 
 	lmac_ctx = &lmac_context[node][cgx_id][lmac_id];
@@ -174,7 +183,7 @@ static int cgx_link_bringup(int node, int cgx_id, int lmac_id)
 	 * and return the previous link status
 	 */
 	if (lmac_ctx->s.link_enable == 1) {
-		INFO("%s: Link status for %d:%d is already up\n",
+		debug_cgx_intf("%s: Link status for %d:%d is already up\n",
 			__func__, cgx_id, lmac_id);
 		link.s.link_up = lmac_ctx->s.link_up;
 		link.s.full_duplex = lmac_ctx->s.full_duplex;
@@ -329,7 +338,7 @@ static int cgx_link_bringdown(int node, int cgx_id, int lmac_id)
 	 * type, bring down SGMII/XAUI link
 	 */
 	lmac_cfg = &bfdt->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
-	INFO("%s %d:%d:%d lmac_type %d\n", __func__, node,
+	debug_cgx_intf("%s %d:%d:%d lmac_type %d\n", __func__, node,
 				cgx_id, lmac_id, lmac_cfg->mode);
 
 	lmac_ctx = &lmac_context[node][cgx_id][lmac_id];
@@ -339,7 +348,7 @@ static int cgx_link_bringdown(int node, int cgx_id, int lmac_id)
 	 * and return the previous link status
 	 */
 	if (lmac_ctx->s.link_enable == 0) {
-		INFO("%s: Link status for %d:%d is already down\n",
+		debug_cgx_intf("%s: Link status for %d:%d is already down\n",
 			__func__, cgx_id, lmac_id);
 		link.s.link_up = lmac_ctx->s.link_up;
 		link.s.full_duplex = lmac_ctx->s.full_duplex;
@@ -409,7 +418,7 @@ static int cgx_process_requests(int node, int cgx_id, int lmac_id)
 	new_link.s.full_duplex = scratchx1.s.lnk_args.full_duplex;
 	new_link.s.speed = scratchx1.s.lnk_args.speed;
 
-	INFO("%s: %d:%d:%d request_id %d\n", __func__, node, cgx_id,
+	debug_cgx_intf("%s: %d:%d:%d request_id %d\n", __func__, node, cgx_id,
 				lmac_id, request_id);
 
 	/* always reset the error bits when processing new
@@ -465,7 +474,7 @@ static int cgx_process_requests(int node, int cgx_id, int lmac_id)
 			scratchx0.s.mac_s.addr_3 = lmac->local_mac_address[3];
 			scratchx0.s.mac_s.addr_4 = lmac->local_mac_address[4];
 			scratchx0.s.mac_s.addr_5 = lmac->local_mac_address[5];
-			INFO("%s mac_addr %x:%x:%x:%x:%x:%x\n",	__func__,
+			debug_cgx_intf("%s mac_addr %x:%x:%x:%x:%x:%x\n",	__func__,
 					scratchx0.s.mac_s.addr_0,
 					scratchx0.s.mac_s.addr_1,
 					scratchx0.s.mac_s.addr_2,
@@ -540,7 +549,7 @@ static int cgx_handle_link_change(int node, int cgx_id, int lmac_id,
 	union cgx_scratchx0 cgx_scratch0;
 	cgx_lmac_context_t *lmac_ctx;
 
-	INFO("%s: %d:%d:%d\n", __func__, node, cgx_id, lmac_id);
+	debug_cgx_intf("%s: %d:%d:%d\n", __func__, node, cgx_id, lmac_id);
 
 	/* if the owner ship is available and lock is free, check
 	 * for the ack bit to be clear and post the command.
@@ -550,7 +559,7 @@ static int cgx_handle_link_change(int node, int cgx_id, int lmac_id,
 					cgx_id, lmac_id, 1));
 		cgx_scratch0.u = CSR_READ(node, CAVM_CGXX_CMRX_SCRATCHX(
 					cgx_id, lmac_id, 0));
-		INFO("%s, waiting for own %d and prev ack %d to be clear\n",
+		debug_cgx_intf("%s, waiting for own %d and prev ack %d to be clear\n",
 				__func__, cgx_scratch1.s.own_status,
 				cgx_scratch0.s.evt_sts.ack);
 		if ((!cgx_scratch1.s.own_status) &&
@@ -621,9 +630,9 @@ static int cgx_poll_for_link_cb(int timer)
 					 * return the default link status
 					 */
 					if (!lmac_cfg->phy_present) {
-						INFO("%s:%d:%d:%d PHY not present\t",
+						debug_cgx_intf("%s:%d:%d:%d PHY not present\t",
 							__func__, node, cgx, lmac);
-						INFO("link %d speed %d duplex %d\n",
+						debug_cgx_intf("link %d speed %d duplex %d\n",
 							lmac_ctx->s.link_up,
 							lmac_ctx->s.speed,
 						lmac_ctx->s.full_duplex);
@@ -632,7 +641,7 @@ static int cgx_poll_for_link_cb(int timer)
 					/* FIXME: to interface with PHY
 					 * management and get the link status
 					 */
-					INFO("%s:%d:%d:%d poll for link status\n",
+					debug_cgx_intf("%s:%d:%d:%d poll for link status\n",
 						__func__, node, cgx, lmac);
 					if ((lmac_ctx->s.link_up !=
 						link.s.link_up) ||
@@ -640,7 +649,7 @@ static int cgx_poll_for_link_cb(int timer)
 						link.s.full_duplex) ||
 						(lmac_ctx->s.speed !=
 						link.s.speed)) {
-						INFO("%s:%d:%d link changed\n",
+						debug_cgx_intf("%s:%d:%d link changed\n",
 							__func__, cgx, lmac);
 						cgx_handle_link_change(node,
 							cgx, lmac, &link);
@@ -719,7 +728,7 @@ void cgx_set_error_type(int node, int cgx_id, int lmac_id, uint64_t type)
 	cgx_lmac_context_t *lmac_ctx;
 
 	lmac_ctx = &lmac_context[node][cgx_id][lmac_id];
-	INFO("%s:%d:%d:%d type 0x%lx\n", __func__, node, cgx_id, lmac_id, type);
+	debug_cgx_intf("%s:%d:%d:%d type 0x%lx\n", __func__, node, cgx_id, lmac_id, type);
 
 	lmac_ctx->s.error_type = type;
 }
@@ -728,7 +737,7 @@ void cgx_set_error_type(int node, int cgx_id, int lmac_id, uint64_t type)
 /* This function should be called once during boot time */
 void cgx_fw_intf_init(void)
 {
-	INFO("%s\n", __func__);
+	debug_cgx_intf("%s\n", __func__);
 
 	/* start with 1 timer to handle & process CGX requests */
 	cgx_timers[0] = timer_create(TM_PERIODIC, 1000, cgx_handle_requests_cb);
@@ -750,7 +759,7 @@ void cgx_fw_intf_shutdown(void)
 {
 	cgx_lmac_context_t *lmac_ctx;
 
-	INFO("%s\n", __func__);
+	debug_cgx_intf("%s\n", __func__);
 
 	/* bring down all the links and clear all SCRATCHX
 	 * registers/context
