@@ -245,9 +245,9 @@ int emmc_config()
 	volatile unsigned long emm_rsp_lo;
 #endif
 
-	mmc_drv.bus_id = 0;
+	mmc_drv.bus_id = mmc_current_file.cs;
 	mmc_drv.sector_size = MMC_SECTOR_SIZE;
-	/* Set bit 1 to use eMMC bus 0 */
+	/* Set eMMC bus id bit according to the used CS */
 	CSR_WRITE(mmc_current_file.node, CAVM_MIO_EMM_CFG, 1<<mmc_current_file.cs);
 
 #if 0
