@@ -333,6 +333,13 @@ void plat_add_mmio_node(unsigned long node)
 	for (i = 0; i < device_type_count; ++i)
 		add_map_record(CSR_PA(node, CAVM_RVU_PFX_VFX_BAR2(i, 0)), CAVM_RVU_PFX_VFX_BAR2_SIZE, attr);
 
+	/* Add regions for NIX/NPA used in rvu init */
+	add_map_record(CSR_PA(node, CAVM_RVU_PF_BAR0(0) +
+				CAVM_RVU_BLOCK_ADDR_E_NIXX(0) * CAVM_RVU_PF_BAR0_SIZE),
+				CAVM_RVU_PF_BAR0_SIZE, attr);
+	add_map_record(CSR_PA(node, CAVM_RVU_PF_BAR0(0) +
+				CAVM_RVU_BLOCK_ADDR_E_NPA * CAVM_RVU_PF_BAR0_SIZE),
+				CAVM_RVU_PF_BAR0_SIZE, attr);
 	/*
 	 * Shared memory configuration.
 	 * Map additional memory used by RVU.
