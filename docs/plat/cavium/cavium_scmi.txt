@@ -1,0 +1,77 @@
+CAVIUM
+======
+
+ARM Trusted Firmware SCMI implementation
+=====================================
+
+Purpose of this document is to describe the ATF's SCMI generic driver port
+to plat/cavium directory.
+
+This file does not contain any information about System Control
+and Management Interface (SCMI) - for more information about SCMI,
+reader is obliged to get familiar with SCMI spec available at
+http://infocenter.arm.com/help/topic/com.arm.doc.den0056a/DEN0056A_System_Control_and_Management_Interface.pdf
+
+
+Overview
+-----------------
+
+CPC cluster (SCP/MCP) present on CN9xxx series is responsible for Power
+Management (which includes the shutdown/suspend/power/hotplug on given AP core)
+and System Power Management (which includes the shutdown/suspend/power
+on whole system).
+
+On CN8xxx series, the PSCI (Power State Coordination Interface) handlers
+in ATF were responsible for the above tasks. On CN9xxx series, PSCI handlers
+are attached to SCMI (which sends a request to CPC for required action).
+
+
+ATF<->SCP communication
+-----------------
+
+Current implementation assumes that ATF communicates only with SCP (System Control
+Processor) from the CPC cluster. There's no runtime communication between ATF and MCP.
+
+ATF communicates with SCP over dedicated mailboxes, which configuration contains:
+ - mailbox base address
+
+   This address is received from CN9xxx platform by calling method:
+
+   const uintptr_t plat_get_scmi_mbox_addr(int node)
+
+   for CN93xx, it returns the CPC_RAM_MEMX(0x58000).
+   The size of the mailbox used by ATF is 16KB.
+
+
+ - doorbell base address
+
+   This address is received from CN9xxx platform by calling method:
+
+   const uintptr_t plat_get_scmi_db_addr(int node)
+
+   for CN93xx, it returns the XCPX_DEVX_XCP_MBOX(0, 0),
+   First 0 is to indicate SCP, second to indicate doorbell register
+   (CAVM_XCP_MBOX_DEV_E_AP_SECURE0).
+
+
+ - doorbell preserve mask
+
+   This address is received from CN9xxx platform by define (in platform_setup header):
+
+   PLAT_SCMI_DB_PRESERVE_MASK
+
+
+ - doorbell modify mask
+
+   This address is received from CN9xxx platform by define (in platform_setup header):
+
+   PLAT_SCMI_DB_MODIFY_MASK
+
+
+Required mappings
+-----------------
+
+Due to required write permissions to mailbox and doorbell regions,
+Cavium ATF maps the following memory regions:
+ - CPC_RAM_MEMX with size based on CAVM_CPC_CONST memory regions
+ - XCP_PF_BAR0 with size of XCP_PF_BAR0_SIZE
