@@ -193,20 +193,38 @@ int plat_get_nv_ctr(void *cookie, unsigned int *nv_ctr)
 {
 	const char *oid;
 	union cavm_fusf_ctl fusf_ctl;
+	union cavm_fusf_swx fusf_swx;
 
 	assert(cookie != NULL);
 	assert(nv_ctr != NULL);
 
 	oid = (const char *)cookie;
 
-	/* Cavium platform uses the same address for both counters */
-	if (strcmp(oid, TRUSTED_FW_NVCOUNTER_OID) == 0 ||
-	    strcmp(oid, NON_TRUSTED_FW_NVCOUNTER_OID) == 0) {
+	/* Cavium platform uses FUSF_CTL for Trusted Counter */
+	if (strcmp(oid, TRUSTED_FW_NVCOUNTER_OID) == 0 ) {
 		fusf_ctl.u = CSR_READ(0, CAVM_FUSF_CTL);
 		nv_ctr_val = 0;
 		/* Convert value from rom_t_cnt to unsigned int */
 		if (fusf_ctl.s.rom_t_cnt)
 			nv_ctr_val = 32 - __builtin_clz(fusf_ctl.s.rom_t_cnt);
+
+		*nv_ctr = nv_ctr_val;
+	/* For Non-Trusted counter, use FUSF_SWX */
+	} else if (strcmp(oid, NON_TRUSTED_FW_NVCOUNTER_OID) == 0) {
+		/*
+		 * NonTrustedNvCounter is stored at
+		 * FUSF_SW(0)[63:32] and FUSF_SW(1)[63:0]
+		 * total 96 bits
+		 */
+		nv_ctr_val = 0;
+		fusf_swx.u = CSR_READ(0, CAVM_FUSF_SWX(0));
+		fusf_swx.s.dat >>= 32;
+		if (fusf_swx.s.dat)
+			nv_ctr_val = 64 - __builtin_clzl(fusf_swx.s.dat);
+
+		fusf_swx.u = CSR_READ(0, CAVM_FUSF_SWX(1));
+		if (fusf_swx.s.dat)
+			nv_ctr_val += (64 - __builtin_clzl(fusf_swx.s.dat));
 
 		*nv_ctr = nv_ctr_val;
 	} else {
