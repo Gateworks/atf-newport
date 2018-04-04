@@ -427,75 +427,95 @@ static int cgx_process_requests(int node, int cgx_id, int lmac_id)
 	if (request_id != CGX_CMD_GET_LINK_STS)
 		cgx_set_error_type(node, cgx_id, lmac_id, 0);
 
-	if (lmac->lmac_enable) {
+	/* some of the commands like below should be handled independent
+	 * of whether LMAC is enabled or not
+	 */
+	if ((request_id == CGX_CMD_INTF_SHUTDOWN) ||
+		(request_id == CGX_CMD_GET_FW_VER)) {
 		switch (request_id) {
-		case CGX_CMD_LINK_BRING_UP:
-			ret = cgx_link_bringup(node, cgx_id, lmac_id);
-			break;
-		case CGX_CMD_LINK_BRING_DOWN:
-			ret = cgx_link_bringdown(node, cgx_id, lmac_id);
-			break;
-		case CGX_CMD_LINK_STAT_CHANGE:
-			ret = cgx_link_change(node, cgx_id, lmac_id, &new_link);
-			break;
 		case CGX_CMD_INTF_SHUTDOWN:
 			cgx_fw_intf_shutdown();
-			break;
-		case CGX_CMD_INTERNAL_LBK:
-			lmac_ctx->s.lbk1_enable = enable;
-			cgx_set_internal_loopback(node, cgx_id, lmac_id,
-						enable);
-			break;
-		case CGX_CMD_EXTERNAL_LBK:
-			cgx_set_external_loopback(node, cgx_id, lmac_id,
-						enable);
-			break;
+			/* in case of shutdown, clear all other
+			 * bits and set only ack bit to indicate
+			 * to user request is processed (this bit
+			 * will be cleared by user)
+			 */
+			scratchx0.u = 0;
+			scratchx0.s.evt_sts.ack = 1; /* set ack */
+			CSR_WRITE(node, CAVM_CGXX_CMRX_SCRATCHX(
+				cgx_id, lmac_id, 0), scratchx0.u);
+			return 0;
 		case CGX_CMD_GET_FW_VER:
 			scratchx0.u = 0;
 			scratchx0.s.ver.major_ver = CGX_FIRWARE_MAJOR_VER;
 			scratchx0.s.ver.minor_ver = CGX_FIRWARE_MINOR_VER;
 			CSR_WRITE(node, CAVM_CGXX_CMRX_SCRATCHX(
-					cgx_id, lmac_id, 0), scratchx0.u);
-			break;
-		case CGX_CMD_GET_LINK_STS:
-			CSR_WRITE(node, CAVM_CGXX_CMRX_SCRATCHX(
-					cgx_id, lmac_id, 0), 0); /* reset */
-			link.s.link_up = lmac_ctx->s.link_up;
-			link.s.full_duplex = lmac_ctx->s.full_duplex;
-			link.s.speed = lmac_ctx->s.speed;
-			cgx_set_link_state(node, cgx_id, lmac_id, &link,
-				lmac_ctx->s.error_type);
-			break;
-		case CGX_CMD_GET_MAC_ADDR:
-			scratchx0.u = 0;
-			scratchx0.s.mac_s.addr_0 = lmac->local_mac_address[0];
-			scratchx0.s.mac_s.addr_1 = lmac->local_mac_address[1];
-			scratchx0.s.mac_s.addr_2 = lmac->local_mac_address[2];
-			scratchx0.s.mac_s.addr_3 = lmac->local_mac_address[3];
-			scratchx0.s.mac_s.addr_4 = lmac->local_mac_address[4];
-			scratchx0.s.mac_s.addr_5 = lmac->local_mac_address[5];
-			debug_cgx_intf("%s mac_addr %x:%x:%x:%x:%x:%x\n",	__func__,
-					scratchx0.s.mac_s.addr_0,
-					scratchx0.s.mac_s.addr_1,
-					scratchx0.s.mac_s.addr_2,
-					scratchx0.s.mac_s.addr_3,
-					scratchx0.s.mac_s.addr_4,
-					scratchx0.s.mac_s.addr_5);
-			CSR_WRITE(node, CAVM_CGXX_CMRX_SCRATCHX(
-					cgx_id, lmac_id, 0), scratchx0.u);
-			break;
-		/* FIXME: add support for other commands */
-		default:
-			ERROR("%s: Invalid ID %d\n", __func__, request_id);
-			cgx_set_error_type(node, cgx_id, lmac_id,
-				CGX_ERR_REQUEST_ID_INVALID);
+				cgx_id, lmac_id, 0), scratchx0.u);
 			break;
 		}
 	} else {
-		ERROR("%s: CGX%d LMAC%d is not enabled. Req %d ignored\n",
-			__func__, cgx_id, lmac_id, request_id);
-		cgx_set_error_type(node, cgx_id, lmac_id,
-				CGX_ERR_LMAC_NOT_ENABLED);
+		/* all the below commands should be processed only
+		 * when LMAC is enabled
+		 */
+		if (lmac->lmac_enable) {
+			switch (request_id) {
+			case CGX_CMD_LINK_BRING_UP:
+				ret = cgx_link_bringup(node, cgx_id, lmac_id);
+				break;
+			case CGX_CMD_LINK_BRING_DOWN:
+				ret = cgx_link_bringdown(node, cgx_id, lmac_id);
+				break;
+			case CGX_CMD_LINK_STAT_CHANGE:
+				ret = cgx_link_change(node, cgx_id, lmac_id, &new_link);
+				break;
+			case CGX_CMD_INTERNAL_LBK:
+				lmac_ctx->s.lbk1_enable = enable;
+				cgx_set_internal_loopback(node, cgx_id, lmac_id, enable);
+				break;
+			case CGX_CMD_EXTERNAL_LBK:
+				cgx_set_external_loopback(node, cgx_id, lmac_id,
+							enable);
+				break;
+			case CGX_CMD_GET_LINK_STS:
+				CSR_WRITE(node, CAVM_CGXX_CMRX_SCRATCHX(
+						cgx_id, lmac_id, 0), 0); /* reset */
+				link.s.link_up = lmac_ctx->s.link_up;
+				link.s.full_duplex = lmac_ctx->s.full_duplex;
+				link.s.speed = lmac_ctx->s.speed;
+				cgx_set_link_state(node, cgx_id, lmac_id, &link,
+					lmac_ctx->s.error_type);
+				break;
+			case CGX_CMD_GET_MAC_ADDR:
+				scratchx0.u = 0;
+				scratchx0.s.mac_s.addr_0 = lmac->local_mac_address[0];
+				scratchx0.s.mac_s.addr_1 = lmac->local_mac_address[1];
+				scratchx0.s.mac_s.addr_2 = lmac->local_mac_address[2];
+				scratchx0.s.mac_s.addr_3 = lmac->local_mac_address[3];
+				scratchx0.s.mac_s.addr_4 = lmac->local_mac_address[4];
+				scratchx0.s.mac_s.addr_5 = lmac->local_mac_address[5];
+				debug_cgx_intf("%s mac_addr %x:%x:%x:%x:%x:%x\n", __func__,
+						scratchx0.s.mac_s.addr_0,
+						scratchx0.s.mac_s.addr_1,
+						scratchx0.s.mac_s.addr_2,
+						scratchx0.s.mac_s.addr_3,
+						scratchx0.s.mac_s.addr_4,
+						scratchx0.s.mac_s.addr_5);
+				CSR_WRITE(node, CAVM_CGXX_CMRX_SCRATCHX(
+						cgx_id, lmac_id, 0), scratchx0.u);
+				break;
+			/* FIXME: add support for other commands */
+			default:
+				ERROR("%s: Invalid ID %d\n", __func__, request_id);
+				cgx_set_error_type(node, cgx_id, lmac_id,
+					CGX_ERR_REQUEST_ID_INVALID);
+				break;
+			}
+		} else {
+			ERROR("%s: CGX%d LMAC%d is not enabled. Req %d ignored\n",
+				__func__, cgx_id, lmac_id, request_id);
+			cgx_set_error_type(node, cgx_id, lmac_id,
+					CGX_ERR_LMAC_NOT_ENABLED);
+		}
 	}
 
 	/* update the event status either async or resp
