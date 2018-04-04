@@ -26,6 +26,17 @@
 #define CAVM_CCS_LMC_MODE	CAVM_CCS_LMC_MODE_E_STRIPE_2
 #define CAVM_CCS_LMC_MASK	(CAVM_CCS_LMC_MASK_LMC0 | CAVM_CCS_LMC_MASK_LMC1)
 
+/*
+ * The array mapping platform core position (implemented by plat_my_core_pos())
+ * to the SCMI power domain ID implemented by SCP.
+ *
+ * Right now it's pretty dummy, ATF defines PLAT_NUM_PWR_DOMAINS
+ * as CORES+CLUSTERS+NODES (for f95, it's 8).
+ * Right now use one PWR_DOMAIN per core.
+ */
+static const uint32_t plat_cavm_core_pos_to_scmi_dmn_id_map[PLATFORM_CORE_COUNT] = {
+				0, 1, 2, 3, 4, 5};
+
 /* CPU topology tree description for F95 */
 static const unsigned char cavm_power_domain_tree_desc[] = {
 	/* No of root nodes */
@@ -40,4 +51,4 @@ static const unsigned char cavm_power_domain_tree_desc[] = {
 int plat_get_max_lane_num(int qlm);
 int plat_get_cgx_idx(int qlm);
 
-#endif
+#endif /* __F95_PLAT_SETUP_H__ */

@@ -18,6 +18,39 @@
 #include <psci.h>
 #include <types.h>
 
+/* SCMI related defines */
+
+/*
+ * Macros mapping the MPIDR Affinity levels to Cavium Platform Power levels. The
+ * power levels have a 1:1 mapping with the MPIDR affinity levels.
+ */
+#define CAVM_PWR_LVL0		MPIDR_AFFLVL0
+#define CAVM_PWR_LVL1		MPIDR_AFFLVL1
+#define CAVM_PWR_LVL2		MPIDR_AFFLVL2
+
+/*
+ *  Macros for local power states in Cavium platforms encoded by State-ID field
+ *  within the power-state parameter.
+ */
+
+/* Local power state for power domains in Run state. */
+#define CAVM_LOCAL_STATE_RUN	0
+/* Local power state for retention. Valid only for CPU power domains */
+#define CAVM_LOCAL_STATE_RET	1
+/* Local power state for OFF/power-down. Valid for CPU and cluster power
+   domains */
+#define CAVM_LOCAL_STATE_OFF	2
+
+/* System power domain at level 2, as currently implemented by Cavium platforms */
+#define CAVM_SYSTEM_PWR_DMN_LVL		CAVM_PWR_LVL2
+
+/* Macros to read the CAVM power domain state */
+#define CAVM_CORE_PWR_STATE(state)	(state)->pwr_domain_state[CAVM_PWR_LVL0]
+#define CAVM_CLUSTER_PWR_STATE(state)	(state)->pwr_domain_state[CAVM_PWR_LVL1]
+#define CAVM_SYSTEM_PWR_STATE(state)	\
+			((PLAT_MAX_PWR_LVL == CAVM_SYSTEM_PWR_DMN_LVL) ?\
+			(state)->pwr_domain_state[CAVM_SYSTEM_PWR_DMN_LVL] : 0)
+
 /*
  * The SCMI power state enumeration for a power domain level
  */
