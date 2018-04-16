@@ -262,14 +262,14 @@ int cgx_sgmii_set_link_speed(int node, int cgx_id, int lmac_id,
 	/* Wait for GMX Tx/Rx to be idle */
 	if (cgx_poll_for_csr(node, CAVM_CGXX_GMP_GMI_PRTX_CFG(cgx_id, lmac_id),
 				CGX_GMP_TX_IDLE_MASK, 1)) {
-		ERROR("%s: %d:%d CGX GMP Tx not Idle\n",
+		debug_cgx("%s: %d:%d CGX GMP Tx not Idle\n",
 				__func__, cgx_id, lmac_id);
 		cgx_set_error_type(node, cgx_id, lmac_id, CGX_ERR_TX_NOT_IDLE);
 		return -1;
 	}
 	if (cgx_poll_for_csr(node,  CAVM_CGXX_GMP_GMI_PRTX_CFG(
 				cgx_id, lmac_id), CGX_GMP_RX_IDLE_MASK, 1)) {
-		ERROR("%s: %d:%d CGX GMP Rx not Idle\n",
+		debug_cgx("%s: %d:%d CGX GMP Rx not Idle\n",
 				__func__, cgx_id, lmac_id);
 		cgx_set_error_type(node, cgx_id, lmac_id, CGX_ERR_RX_NOT_IDLE);
 		return -1;
@@ -533,7 +533,7 @@ int cgx_sgmii_set_link_up(int node, int cgx_id, int lmac_id)
 	/* Wait till reset done */
 	if (cgx_poll_for_csr(node, CAVM_CGXX_GMP_PCS_MRX_CONTROL(cgx_id,
 				lmac_id), CGX_GMP_PCS_RESET_MASK, 0)) {
-		ERROR("%s: %d:%d PCS reset not completed\n",
+		debug_cgx("%s: %d:%d PCS reset not completed\n",
 				__func__, cgx_id, lmac_id);
 		cgx_set_error_type(node, cgx_id, lmac_id,
 				CGX_ERR_PCS_RESET_FAIL);
@@ -766,7 +766,7 @@ int cgx_xaui_set_link_up(int node, int cgx_id, int lmac_id)
 	/* bring the SPU out of reset */
 	if (cgx_poll_for_csr(node, CAVM_CGXX_SPUX_CONTROL1(cgx_id, lmac_id),
 			CGX_SPUX_RESET_MASK, 0)) {
-		ERROR("%s: %d:%d SPUX reset not completed\n",
+		debug_cgx("%s: %d:%d SPUX reset not completed\n",
 				__func__, cgx_id, lmac_id);
 		cgx_set_error_type(node, cgx_id, lmac_id,
 				CGX_ERR_SPUX_RESET_FAIL);
@@ -780,7 +780,7 @@ int cgx_xaui_set_link_up(int node, int cgx_id, int lmac_id)
 		(lmac->mode == CAVM_CGX_LMAC_TYPES_E_FORTYG_R)) {
 		if (cgx_poll_for_csr(node, CAVM_CGXX_SPUX_BR_STATUS1(cgx_id,
 				lmac_id), CGX_SPUX_BLK_LOCK_MASK, 1)) {
-			ERROR("%s: %d:%d: SPUX BLK LOCK not completed\n",
+			debug_cgx("%s: %d:%d: SPUX BLK LOCK not completed\n",
 					__func__, cgx_id, lmac_id);
 			cgx_set_error_type(node, cgx_id, lmac_id,
 					CGX_ERR_SPUX_BR_BLKLOCK_FAIL);
@@ -791,7 +791,7 @@ int cgx_xaui_set_link_up(int node, int cgx_id, int lmac_id)
 		(lmac->mode == CAVM_CGX_LMAC_TYPES_E_RXAUI)) {
 		if (cgx_poll_for_csr(node, CAVM_CGXX_SPUX_BX_STATUS(cgx_id,
 				lmac_id), CGX_SPUX_RX_ALIGN_MASK, 1)) {
-			ERROR("%s: %d:%d SPUX RX ALIGN not completed\n",
+			debug_cgx("%s: %d:%d SPUX RX ALIGN not completed\n",
 					__func__, cgx_id, lmac_id);
 			cgx_set_error_type(node, cgx_id, lmac_id,
 					CGX_ERR_SPUX_RX_ALIGN_FAIL);
@@ -810,7 +810,7 @@ int cgx_xaui_set_link_up(int node, int cgx_id, int lmac_id)
 	if (spux_status2.s.rcvflt) {
 		if (lmac->use_training)
 			cgx_restart_training(node, cgx_id, lmac_id);
-		ERROR("%s: %d:%d Receive Fault, retry training\n",
+		debug_cgx("%s: %d:%d Receive Fault, retry training\n",
 			__func__, cgx_id, lmac_id);
 		cgx_set_error_type(node, cgx_id, lmac_id,
 					CGX_ERR_SPUX_RX_FAULT);
@@ -820,7 +820,7 @@ int cgx_xaui_set_link_up(int node, int cgx_id, int lmac_id)
 	/* Wait for link to be OK and no faults */
 	if (cgx_poll_for_csr(node, CAVM_CGXX_SMUX_RX_CTL(cgx_id, lmac_id),
 				CGX_SMUX_RX_STATUS_MASK, 0)) {
-		ERROR("%s: %d:%d SMUX RX Link not OK\n",
+		debug_cgx("%s: %d:%d SMUX RX Link not OK\n",
 				__func__, cgx_id, lmac_id);
 		cgx_set_error_type(node, cgx_id, lmac_id,
 				CGX_ERR_SMUX_RX_LINK_NOT_OK);
@@ -830,7 +830,7 @@ int cgx_xaui_set_link_up(int node, int cgx_id, int lmac_id)
 	/* Wait for SMU Tx to be idle */
 	if (cgx_poll_for_csr(node, CAVM_CGXX_SMUX_CTRL(cgx_id, lmac_id),
 				CGX_SMUX_TX_IDLE_MASK, 0)) {
-		ERROR("%s: %d:%d SMUX Tx not Idle\n",
+		debug_cgx("%s: %d:%d SMUX Tx not Idle\n",
 				__func__, cgx_id, lmac_id);
 #if 0 /* temp for ASIM. these bits are not simulated */
 		cgx_set_error_type(node, cgx_id, lmac_id, CGX_ERR_TX_NOT_IDLE);
@@ -840,7 +840,7 @@ int cgx_xaui_set_link_up(int node, int cgx_id, int lmac_id)
 	/* Wait for SMU Rx to be idle */
 	if (cgx_poll_for_csr(node, CAVM_CGXX_SMUX_CTRL(cgx_id, lmac_id),
 				CGX_SMUX_RX_IDLE_MASK, 0)) {
-		ERROR("%s: %d:%d SMUX Rx not Idle\n",
+		debug_cgx("%s: %d:%d SMUX Rx not Idle\n",
 				__func__, cgx_id, lmac_id);
 #if 0 /* temp for ASIM. these bits are not simulated */
 		cgx_set_error_type(node, cgx_id, lmac_id, CGX_ERR_RX_NOT_IDLE);
@@ -851,7 +851,7 @@ int cgx_xaui_set_link_up(int node, int cgx_id, int lmac_id)
 	spux_status2.u = CSR_READ(node, CAVM_CGXX_SPUX_STATUS2(
 					cgx_id, lmac_id));
 	if (spux_status2.s.rcvflt) {
-		ERROR("%s: %d:%d Receive Fault\n",
+		debug_cgx("%s: %d:%d Receive Fault\n",
 				__func__, cgx_id, lmac_id);
 		cgx_set_error_type(node, cgx_id, lmac_id,
 					CGX_ERR_SPUX_RX_FAULT);
@@ -865,7 +865,7 @@ int cgx_xaui_set_link_up(int node, int cgx_id, int lmac_id)
 		rcv_lnk, 1);
 	if (cgx_poll_for_csr(node, CAVM_CGXX_SPUX_STATUS1(cgx_id, lmac_id),
 				CGX_SMUX_PCS_RCV_LINK_MASK, 1)) {
-		ERROR("%s: %d:%d SPU receive link down\n",
+		debug_cgx("%s: %d:%d SPU receive link down\n",
 				__func__, cgx_id, lmac_id);
 		cgx_set_error_type(node, cgx_id, lmac_id,
 				CGX_ERR_PCS_RECV_LINK_FAIL);
