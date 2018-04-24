@@ -136,7 +136,8 @@ static int cgx_xaui_hw_init(int node, int cgx_id, int lmac_id)
 
 	spux_mctrl.u = CSR_READ(node, CAVM_CGXX_SPUX_MISC_CONTROL(
 				cgx_id, lmac_id));
-	spux_mctrl.s.rx_packet_dis = 1;
+	/* Need to disable for ASIM */
+	/* spux_mctrl.s.rx_packet_dis = 1; */
 	/* Set interleaved running disparity for RXAUI */
 	if (lmac->mode == CAVM_CGX_LMAC_TYPES_E_RXAUI)
 		spux_mctrl.s.intlv_rdisp = 1;
