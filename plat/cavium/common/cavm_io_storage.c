@@ -59,7 +59,7 @@ static const io_dev_connector_t *memmap_dev_con;
 static uintptr_t memmap_dev_handle;
 
 static io_block_spec_t fip_block_spec = {
-	.offset	= 0x580000,
+	.offset	= 0x440000,
 };
 
 static const io_uuid_spec_t bl2_uuid_spec = {
