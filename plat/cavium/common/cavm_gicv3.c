@@ -44,10 +44,11 @@ static gicv3_driver_data_t thunder_gic_data = {
 	.g1s_interrupt_array = NULL,
 	.rdistif_num = PLATFORM_CORE_COUNT,
 	.rdistif_base_addrs = rdistif_base_addrs,
-#if !defined(PLAT_t93) && !defined(PLAT_f95)
+#if defined(PLAT_t83) || defined(PLAT_t81)
 	/*
-	 * can use the generic driver implementation
-	 * to obtain the core pos
+	 * T9X can use the generic driver implementation
+	 * to obtain the core pos and hence define it only
+	 * for T8X platforms
 	 */
 	.mpidr_to_core_pos = thunder_calc_core_pos,
 #endif
