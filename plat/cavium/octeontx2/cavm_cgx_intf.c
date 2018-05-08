@@ -798,11 +798,5 @@ void cgx_fw_intf_shutdown(void)
 				lmac_ctx->u64 = 0;
 			}
 		}
-		/* RVU specific: enable LF to PF mapping done
-		 * for NIX/NPA PFs. This is required for
-		 * networking support in u-boot/uefi.
-		 * clear them before booting to kernel
-		 */
-		octeontx2_clear_lf_to_pf_mapping(node);
 	}
 }
