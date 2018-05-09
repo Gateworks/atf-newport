@@ -155,6 +155,6 @@
 #define TWSI_NUM			6
 
 /* Signals used to communicate with MCU */
-#define OCTEONTX_MCU_SHUTDOWN_SIGNAL	0xA5
+#define OCTEONTX_MCU_SHUTDOWN_SIGNAL	0x96
 
 #endif
