@@ -110,7 +110,6 @@ static int cgx_sgmii_hw_init(int node, int cgx_id, int lmac_id)
 static int cgx_xaui_hw_init(int node, int cgx_id, int lmac_id)
 {
 	cgx_lmac_config_t *lmac;
-	cavm_cgxx_spux_misc_control_t spux_mctrl;
 	cavm_cgxx_smux_tx_append_t smux_tx_append;
 
 	debug_cgx("%s %d:%d:%d\n", __func__, node, cgx_id, lmac_id);
@@ -134,15 +133,12 @@ static int cgx_xaui_hw_init(int node, int cgx_id, int lmac_id)
 			CAVM_CGXX_SPUX_FEC_CONTROL(cgx_id, lmac_id),
 			fec_en, 0);
 
-	spux_mctrl.u = CSR_READ(node, CAVM_CGXX_SPUX_MISC_CONTROL(
-				cgx_id, lmac_id));
-	/* Need to disable for ASIM */
-	/* spux_mctrl.s.rx_packet_dis = 1; */
 	/* Set interleaved running disparity for RXAUI */
-	if (lmac->mode == CAVM_CGX_LMAC_TYPES_E_RXAUI)
-		spux_mctrl.s.intlv_rdisp = 1;
-	CSR_WRITE(node, CAVM_CGXX_SPUX_MISC_CONTROL(cgx_id, lmac_id),
-					spux_mctrl.u);
+	if (lmac->mode == CAVM_CGX_LMAC_TYPES_E_RXAUI) {
+		CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_spux_misc_control_t,
+			CAVM_CGXX_SPUX_MISC_CONTROL(cgx_id, lmac_id),
+			intlv_rdisp, 1);
+	}
 
 	/* Append FCS & pad to each packet */
 	smux_tx_append.u = CSR_READ(node, CAVM_CGXX_SMUX_TX_APPEND(
@@ -641,6 +637,11 @@ int cgx_xaui_init_link(int node, int cgx_id, int lmac_id)
 			CAVM_CGXX_CMRX_CONFIG(cgx_id, lmac_id),
 			enable, 0);
 
+	/* disable UXSGMII mode */
+	CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_spu_usxgmii_control_t,
+			CAVM_CGXX_SPU_USXGMII_CONTROL(cgx_id),
+			enable, 0);
+
 	/* low power enable */
 	CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_spux_control1_t,
 			CAVM_CGXX_SPUX_CONTROL1(cgx_id, lmac_id),
@@ -648,14 +649,25 @@ int cgx_xaui_init_link(int node, int cgx_id, int lmac_id)
 
 	CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_spux_misc_control_t,
 			CAVM_CGXX_SPUX_MISC_CONTROL(cgx_id, lmac_id),
-			rx_packet_dis, 1);
+			rx_packet_dis, 0);
 
-	/* clear all interrupts as number of them will occur
-	 * during bring up of a link
+	/* disable SMU/SPU interrupts as number of them
+	 * will occur during bring up of a link
+	 * first zero XXX_INT and disable interrupts via ENA_W1C per HRM
 	 */
-	CSR_WRITE(node, CAVM_CGXX_SMUX_RX_INT(cgx_id, lmac_id), 0);
-	CSR_WRITE(node, CAVM_CGXX_SMUX_TX_INT(cgx_id, lmac_id), 0);
-	CSR_WRITE(node, CAVM_CGXX_SPUX_INT(cgx_id, lmac_id), 0);
+	CSR_WRITE(node, CAVM_CGXX_SMUX_RX_INT(cgx_id, lmac_id),
+		CSR_READ(node, CAVM_CGXX_SMUX_RX_INT(cgx_id, lmac_id)));
+	CSR_WRITE(node, CAVM_CGXX_SMUX_TX_INT(cgx_id, lmac_id),
+		CSR_READ(node, CAVM_CGXX_SMUX_TX_INT(cgx_id, lmac_id)));
+	CSR_WRITE(node, CAVM_CGXX_SPUX_INT(cgx_id, lmac_id),
+		CSR_READ(node, CAVM_CGXX_SPUX_INT(cgx_id, lmac_id)));
+	CSR_WRITE(node, CAVM_CGXX_SMUX_RX_INT_ENA_W1C(cgx_id, lmac_id), ~0ULL);
+	CSR_WRITE(node, CAVM_CGXX_SMUX_TX_INT_ENA_W1C(cgx_id, lmac_id), ~0ULL);
+	CSR_WRITE(node, CAVM_CGXX_SPUX_INT_ENA_W1C(cgx_id, lmac_id), ~0ULL);
+
+	/* FIXME: if lmac type is UXSGMII, enable and configure
+	 * the lane rate type here
+	 */
 
 	/* enable link training, if applicable */
 	if (lmac->use_training) {
@@ -876,10 +888,6 @@ int cgx_xaui_set_link_up(int node, int cgx_id, int lmac_id)
 	/* FIXME: Clear out CGX error counters/bits */
 
 	/* enable Data Tx/Rx */
-	CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_spux_misc_control_t,
-			CAVM_CGXX_SPUX_MISC_CONTROL(cgx_id, lmac_id),
-			rx_packet_dis, 0);
-
 	cmr_config.u = CSR_READ(node, CAVM_CGXX_CMRX_CONFIG(
 				cgx_id, lmac_id));
 	cmr_config.s.data_pkt_rx_en = 1;
