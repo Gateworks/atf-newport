@@ -597,7 +597,7 @@ static int octeontx2_fdt_get_bus(const void *fdt, int offset,
 }
 
 static void octeontx2_fdt_get_i2c_bus_info(const void *fdt, int offset,
-		octeontx_i2c_info_t *i2c_info, int cgx_idx, int lmac_idx)
+		sfp_i2c_info_t *i2c_info, int cgx_idx, int lmac_idx)
 {
 	int parent;
 
@@ -610,7 +610,7 @@ static void octeontx2_fdt_get_i2c_bus_info(const void *fdt, int offset,
 
 	if (!fdt_node_check_compatible(fdt, parent,
 		"cavium,thunder-8890-twsi")) {
-		i2c_info->type = OCTEONTX_I2C_BUS_DEFAULT;
+		i2c_info->type = I2C_BUS_DEFAULT;
 		/* twsi bus */
 		i2c_info->bus  = octeontx2_fdt_get_bus(fdt, offset,
 				cgx_idx, lmac_idx);
@@ -619,7 +619,7 @@ static void octeontx2_fdt_get_i2c_bus_info(const void *fdt, int offset,
 		INFO("CGX%d.LMAC%d: 9546 MUX\n", cgx_idx, lmac_idx);
 
 		i2c_info->is_mux = 0; /* PCA9546 is a switch */
-		i2c_info->type = OCTEONTX_I2C_MUX_PCA9546;
+		i2c_info->type = I2C_MUX_PCA9546;
 		i2c_info->channel = octeontx2_fdt_get_int32(fdt, "reg",
 				offset);
 		i2c_info->addr = octeontx2_fdt_get_int32(fdt, "reg",
@@ -637,7 +637,7 @@ static void octeontx2_fdt_get_i2c_bus_info(const void *fdt, int offset,
 }
 
 static void octeontx2_fdt_gpio_get_info_by_phandle(const void *fdt, int offset,
-		const char *propname, octeontx_gpio_info_t *gpio_info,
+		const char *propname, sfp_gpio_info_t *gpio_info,
 		int cgx_idx, int lmac_idx)
 {
 	int len;
@@ -667,14 +667,14 @@ static void octeontx2_fdt_gpio_get_info_by_phandle(const void *fdt, int offset,
 
 	if (!fdt_node_check_compatible(fdt, node,
 		"cavium,thunder-8890-gpio")) {
-		gpio_info->type = OCTEONTX_GPIO_PIN_DEFAULT;
+		gpio_info->type = GPIO_PIN_DEFAULT;
 		/* handle this case later */
 	} else if (!fdt_node_check_compatible(fdt, node,
 			"nxp,pca9535")) {
 		INFO("CGX%d.LMAC%d: 9535 GPIO I2C Expander %d\n",
 				cgx_idx, lmac_idx,
 				gpio_info->pin);
-		gpio_info->type = OCTEONTX_GPIO_PIN_PCA9535;
+		gpio_info->type = GPIO_PIN_PCA9535;
 		gpio_info->num_pins = octeontx2_fdt_get_int32(fdt,
 				"ngpios", node);
 
@@ -690,7 +690,7 @@ static void octeontx2_fdt_gpio_get_info_by_phandle(const void *fdt, int offset,
 }
 
 static void octeontx2_fdt_parse_vsc7224_reginit(const void *fdt, int offset,
-			octeontx_vsc7224_t *vsc7224, int cgx_idx, int lmac_idx)
+			phy_vsc7224_t *vsc7224, int cgx_idx, int lmac_idx)
 {
 	int i;
 	int len;
@@ -715,10 +715,10 @@ static void octeontx2_fdt_parse_vsc7224_reginit(const void *fdt, int offset,
 }
 
 static void octeontx2_fdt_parse_vsc7224_channels(const void *fdt, int offset,
-			octeontx_vsc7224_t *vsc7224, int cgx_idx, int lmac_idx)
+			phy_vsc7224_t *vsc7224, int cgx_idx, int lmac_idx)
 {
 	int num_chan = 0, reg = 0, len = 0;
-	octeontx_vsc7224_chan_t *chan;
+	phy_vsc7224_chan_t *chan;
 	const uint32_t *tap_values;
 
 	/* walk through all channels */
@@ -798,14 +798,14 @@ static void octeontx2_fdt_parse_vsc7224_channels(const void *fdt, int offset,
 static void octeontx2_fdt_parse_sfp_info(const void *fdt, int offset,
 		int cgx_idx, int lmac_idx)
 {
-	octeontx_i2c_info_t *i2c_info;
-	octeontx_gpio_info_t *mod_abs;
-	octeontx_sfp_info_t *sfp_info;
+	sfp_i2c_info_t *i2c_info;
+	sfp_gpio_info_t *mod_abs;
+	sfp_slot_info_t *sfp_info;
 	cgx_lmac_config_t *lmac;
 	int eeprom, parent;
 
 	lmac = &(bfdt->cgx_cfg[cgx_idx].lmac_cfg[lmac_idx]);
-	sfp_info = &lmac->phy_config.sfp_info;
+	sfp_info = &lmac->sfp_info;
 	i2c_info = &sfp_info->i2c_eeprom_info;
 	mod_abs = &sfp_info->mod_abs; /* for now, parse only mod abs */
 
@@ -835,7 +835,7 @@ static void octeontx2_fdt_parse_sfp_info(const void *fdt, int offset,
 }
 
 static void octeontx2_fdt_parse_vsc7224_info(const void *fdt,
-		octeontx_vsc7224_t *vsc7224, int cgx_idx, int lmac_idx)
+		phy_vsc7224_t *vsc7224, int cgx_idx, int lmac_idx)
 {
 	int offset = -1;
 	int parent = -1;
@@ -1145,10 +1145,10 @@ static void octeontx2_cgx_lmacs_check_linux(const void *fdt,
 			if (!str) {
 				ERROR("ERROR: no compatible property in phy\n");
 			} else if (!strcmp(str, "vitesse,vsc7224")) {
-				octeontx_vsc7224_t *vsc;
+				phy_vsc7224_t *vsc;
 
 				strncpy(phy->phy_compatible, str, 64);
-				vsc = &lmac->phy_config.sfp_info.vsc7224;
+				vsc = &lmac->phy_config.vsc7224;
 				octeontx2_fdt_parse_vsc7224_info(fdt, vsc,
 						cgx_idx, lmac_idx);
 			} else {

@@ -102,7 +102,7 @@ typedef struct phy_config {
 	int phy_addr;
 	int mdio_bus;
 	char phy_compatible[64];
-	octeontx_sfp_info_t sfp_info;
+	phy_vsc7224_t vsc7224;
 } phy_config_t;
 
 /* Define LMAC structure. */
@@ -126,9 +126,11 @@ typedef struct cgx_lmac_config {
 	int phy_mode;		/* MAC or PHY mode for SGMII */
 	int sgmii_1000x_mode;	/* SGMII or 1000x mode for SGMII */
 	int phy_present;
+	int sfp_slot;
 	int autoneg_dis;
 	uint8_t local_mac_address[6];
 	phy_config_t phy_config;
+	sfp_slot_info_t sfp_info;
 } cgx_lmac_config_t;
 
 typedef struct cgx_config {
