@@ -42,6 +42,9 @@
 #define SCMI_SYS_PWR_STATE_GET_MSG_LEN		4
 #define SCMI_SYS_PWR_STATE_GET_RESP_LEN		12
 
+#define SCMI_CAVM_SHUTDOWN_CONFIG_MSG_LEN	12
+#define SCMI_CAVM_SHUTDOWN_CONFIG_RESP_LEN	8
+
 /* SCMI message header format bit field */
 #define SCMI_MSG_ID_SHIFT		0
 #define SCMI_MSG_ID_WIDTH		8
@@ -135,6 +138,7 @@
 /* Supported SCMI Protocol Versions */
 #define SCMI_PWR_DMN_PROTO_VER			MAKE_SCMI_VERSION(1, 0)
 #define SCMI_SYS_PWR_PROTO_VER			MAKE_SCMI_VERSION(1, 0)
+#define SCMI_CAVM_CONFIG_PROTO_VER		MAKE_SCMI_VERSION(1, 0)
 
 #define GET_SCMI_MAJOR_VER(ver)			(((ver) >> 16) & 0xffff)
 #define GET_SCMI_MINOR_VER(ver)			((ver) & 0xffff)
@@ -150,6 +154,7 @@
 /* SCMI Protocol identifiers */
 #define SCMI_PWR_DMN_PROTO_ID			0x11
 #define SCMI_SYS_PWR_PROTO_ID			0x12
+#define SCMI_CAVM_CONFIG_PROTO_ID		0xb0
 
 /* Mandatory messages IDs for all SCMI protocols */
 #define SCMI_PROTO_VERSION_MSG			0x0
@@ -163,6 +168,53 @@
 /* SCMI system power management protocol message IDs */
 #define SCMI_SYS_PWR_STATE_SET_MSG		0x3
 #define SCMI_SYS_PWR_STATE_GET_MSG		0x4
+
+/* SCMI custom Cavium configuration protocol message IDs */
+#define SCMI_CAVM_SHUTDOWN_CONFIG_MSG		0x4
+
+/* Helper structures for Cavium shutdown config command */
+#define SCMI_CAVM_SHUTDOWN_CONFIG_TYPE_NONE	0x0
+#define SCMI_CAVM_SHUTDOWN_CONFIG_TYPE_MCU	0x1
+#define SCMI_CAVM_SHUTDOWN_CONFIG_TYPE_ODM	0x2
+
+typedef union cavm_shutdown_config_type {
+	uint32_t u;
+	struct cavm_shutdown_config_type_s {
+#if __BYTE_ORDER == __BIG_ENDIAN
+		uint32_t type		: 2;
+		uint32_t reserved	: 30;
+#else
+		uint32_t reserved	: 30;
+		uint32_t type		: 2;
+#endif
+	} s;
+} cavm_shutdown_config_type_t;
+
+typedef union cavm_shutdown_config_data {
+	uint32_t u;
+	struct cavm_shutdown_config_mcu_s {
+#if __BYTE_ORDER == __BIG_ENDIAN
+		uint32_t node		: 8;
+		uint32_t int_addr	: 8;
+		uint32_t bus		: 8;
+		uint32_t addr		: 8;
+#else
+		uint32_t addr		: 8;
+		uint32_t bus		: 8;
+		uint32_t int_addr	: 8;
+		uint32_t node		: 8;
+#endif
+	} mcu_s;
+	struct cavm_shutdown_config_odm_s {
+#if __BYTE_ORDER == __BIG_ENDIAN
+		uint32_t gpio_shutdown	: 8;
+		uint32_t reserved	: 24;
+#else
+		uint32_t reserved	: 24;
+		uint32_t gpio_shutdown	: 8;
+#endif
+	} odm_s;
+} cavm_shutdown_config_data_t;
 
 /* Helper macros for system power management protocol commands */
 

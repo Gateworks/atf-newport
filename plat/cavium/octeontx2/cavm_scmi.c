@@ -16,6 +16,7 @@
 #include <debug.h>
 #include <cavm_scmi.h>
 #include <mmio.h>
+#include <cavm_dt.h>
 
 /*
  * Private helper function to get exclusive access to SCMI channel.
@@ -281,11 +282,75 @@ int scmi_sys_pwr_state_get(void *p, uint32_t *system_state)
 }
 
 /*
+ * API to set the SCMI Cavium shutdown configuration
+ */
+int scmi_cavm_shutdown_config(void *p, uint32_t board_type, uint32_t shutdown_data)
+{
+	mailbox_mem_t *mbx_mem;
+	int token = 0, ret;
+	scmi_channel_t *ch = (scmi_channel_t *)p;
+
+	validate_scmi_channel(ch);
+
+	scmi_get_channel(ch);
+
+	mbx_mem = (mailbox_mem_t *)(ch->info->scmi_mbx_mem);
+	mbx_mem->msg_header = SCMI_MSG_CREATE(SCMI_CAVM_CONFIG_PROTO_ID,
+			SCMI_CAVM_SHUTDOWN_CONFIG_MSG, token);
+	mbx_mem->len = SCMI_CAVM_SHUTDOWN_CONFIG_MSG_LEN;
+	mbx_mem->flags = SCMI_FLAG_RESP_POLL;
+	SCMI_PAYLOAD_ARG2(mbx_mem->payload, board_type, shutdown_data);
+
+	scmi_send_sync_command(ch);
+
+	/* Get the return values */
+	SCMI_PAYLOAD_RET_VAL1(mbx_mem->payload, ret);
+	assert(mbx_mem->len == SCMI_CAVM_SHUTDOWN_CONFIG_RESP_LEN);
+	assert(token == SCMI_MSG_GET_TOKEN(mbx_mem->msg_header));
+
+	scmi_put_channel(ch);
+
+	return ret;
+}
+
+/*
+ * Private helper to fill up proper structures for CAVM_SHUTDOWN_CONFIG
+ */
+static int scmi_fill_cavm_shutdown(cavm_shutdown_config_type_t *board_type,
+				   cavm_shutdown_config_data_t *data)
+{
+	/* Check for MCU structure */
+	if (bfdt->mcu_twsi.u != 0) {
+		/* Shutdown type is MCU, fill up structures accordingly */
+		board_type->s.type = SCMI_CAVM_SHUTDOWN_CONFIG_TYPE_MCU;
+		data->u = 0;
+		data->mcu_s.node = bfdt->mcu_twsi.s.node;
+		data->mcu_s.int_addr = bfdt->mcu_twsi.s.int_addr;
+		data->mcu_s.bus = bfdt->mcu_twsi.s.bus;
+		data->mcu_s.addr = bfdt->mcu_twsi.s.addr;
+	/* Check for GPIO config */
+	} else if (bfdt->gpio_shutdown_ctl_out >= 0) {
+		/* Shutdown type is ODM, fill up structures accordingly */
+		board_type->s.type = SCMI_CAVM_SHUTDOWN_CONFIG_TYPE_ODM;
+		data->u = 0;
+		data->odm_s.gpio_shutdown = bfdt->gpio_shutdown_ctl_out;
+	} else {
+		/* Shutdown configuration not available */
+		board_type->s.type = SCMI_CAVM_SHUTDOWN_CONFIG_TYPE_NONE;
+		data->u = 0;
+	}
+
+	return SCMI_E_SUCCESS;
+}
+
+/*
  * SCMI Driver initialization API. Returns initialized channel on success
  * or NULL on error. The return type is an opaque void pointer.
  */
 void *scmi_init(scmi_channel_t *ch)
 {
+	cavm_shutdown_config_type_t board_type;
+	cavm_shutdown_config_data_t shutdown_data;
 	uint32_t version;
 	int ret;
 
@@ -328,6 +393,36 @@ void *scmi_init(scmi_channel_t *ch)
 
 	VERBOSE("SCMI system power management protocol version 0x%x detected\n",
 						version);
+
+	/* Check for custom Cavium protocol */
+	ret = scmi_proto_version(ch, SCMI_CAVM_CONFIG_PROTO_ID, &version);
+	if (ret != SCMI_E_SUCCESS) {
+		WARN("SCMI Cavium config protocol version message failed");
+		goto error;
+	}
+
+	if (!is_scmi_version_compatible(SCMI_CAVM_CONFIG_PROTO_VER, version)) {
+		WARN("SCMI Cavium config protocol version 0x%x incompatible with driver version 0x%x",
+			version, SCMI_CAVM_CONFIG_PROTO_VER);
+		goto error;
+	}
+
+	VERBOSE("SCMI Cavium config protocol version 0x%x detected\n", version);
+
+	/* Fill up the shutdown structures */
+	ret = scmi_fill_cavm_shutdown(&board_type, &shutdown_data);
+	if (ret != SCMI_E_SUCCESS) {
+		WARN("SCMI: Incorrect shutdown config\n");
+		goto error;
+	}
+
+	/* Send actual data to SCP */
+	ret = scmi_cavm_shutdown_config(ch, board_type.u, shutdown_data.u);
+	if (ret != SCMI_E_SUCCESS) {
+		WARN("SCMI Cavium config protocol - unable to send shutdown config - returned %d\n",
+			ret);
+		goto error;
+	}
 
 	INFO("SCMI driver initialized\n");
 
