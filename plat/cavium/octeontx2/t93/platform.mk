@@ -20,6 +20,7 @@ PLAT_INCLUDES		+=	-Iplat/cavium/octeontx2/include			\
 PLAT_BL_COMMON_SOURCES	+=	plat/cavium/octeontx2/t93/plat_cavm_setup.c		\
 				plat/cavium/octeontx2/cavm_security.c		\
 				plat/cavium/octeontx2/cavm_octeontx2_dt.c	\
+				plat/cavium/octeontx2/cavm_phy_mgmt.c		\
 				plat/cavium/octeontx2/cavm_cgx_intf.c		\
 				plat/cavium/octeontx2/cavm_cgx.c		\
 

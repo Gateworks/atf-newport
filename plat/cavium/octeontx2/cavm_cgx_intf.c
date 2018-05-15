@@ -199,20 +199,21 @@ static int cgx_link_bringup(int node, int cgx_id, int lmac_id)
 		 *	- get PHY status,
 		 *	- If link is up, init link and set speed
 		 *	- If link is not up, return error
-		 * sequence if PHY is not present(same if internal lbk enabled):
+		 * sequence if PHY is not present(same when
+		 * 			internal lbk enabled/PHY mode):
 		 *	- assign default link status,
 		 *	- init link and set speed
 		 */
-		if (lmac_ctx->s.lbk1_enable || !lmac_cfg->phy_present) {
+		if ((lmac_ctx->s.lbk1_enable) || (!lmac_cfg->phy_present) ||
+				(lmac_cfg->phy_mode)) {
 			link.s.link_up = 1;
 			link.s.full_duplex = 1;
 			link.s.speed = CGX_LINK_1G;
 		} else {
-			/* FIXME: interface with PHY management to get
-			 * the link status if phy is present. PHY management
-			 * firmware will provide link status info. Currently
-			 * not supported
-			 */
+			/* Enable the SMI/MDIO bus if PHY is on MDIO */
+			cavm_phy_reset(node, cgx_id, lmac_id);
+			/* Get the link status */
+			cavm_get_phy_link_status(node, cgx_id, lmac_id, &link);
 		}
 		if (link.s.link_up == 1) {	/* link is up */
 			if (cgx_sgmii_set_link_up(node, cgx_id, lmac_id) != 0)
@@ -658,11 +659,12 @@ static int cgx_poll_for_link_cb(int timer)
 						lmac_ctx->s.full_duplex);
 						continue;
 					}
-					/* FIXME: to interface with PHY
-					 * management and get the link status
-					 */
+					/* if PHY is present */
 					debug_cgx_intf("%s:%d:%d:%d poll for link status\n",
 						__func__, node, cgx, lmac);
+					/* Get the link status */
+					cavm_get_phy_link_status(node, cgx,
+							lmac, &link);
 					if ((lmac_ctx->s.link_up !=
 						link.s.link_up) ||
 						(lmac_ctx->s.full_duplex !=
