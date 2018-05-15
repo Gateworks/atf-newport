@@ -29,8 +29,10 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef __CAVM_PWRC_H__
-#define __CAVM_PWRC_H__
+#ifndef __CAVM_LEGACY_PWRC_H__
+#define __CAVM_LEGACY_PWRC_H__
+
+#include <psci.h>
 
 /* Thunder Power controller register offset etc */
 #define PPOFFR_OFF		0x0
@@ -73,6 +75,10 @@ void thunder_pwrc_clr_wen(unsigned long);
 unsigned int thunder_pwrc_read_psysr(unsigned long);
 unsigned int thunder_pwrc_get_cpu_wkr(unsigned long);
 
+void cavm_legacy_pwrc_setup(void);
+int cavm_legacy_setup_psci_ops(uintptr_t sec_entrypoint,
+			       const plat_psci_ops_t **psci_ops);
+
 #endif /*__ASSEMBLY__*/
 
-#endif /* __CAVM_PWRC_H__ */
+#endif /* __CAVM_LEGACY_PWRC_H__ */

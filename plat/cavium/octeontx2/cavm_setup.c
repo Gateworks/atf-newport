@@ -18,6 +18,8 @@
 #include <cavm_cgx_intf.h>
 #include <cavm_cgx.h>
 #include <cavm_setup.h>
+#include <cavm_pwrc.h>
+#include <cavm_legacy_pwrc.h>
 
 /* Any SoC family specific setup
  * to be done in BL31 can be initialized
@@ -43,3 +45,30 @@ const uintptr_t plat_get_scmi_db_addr(int node)
 			    CAVM_CPC_XCP_MAP_E_SCP,
 			    CAVM_XCP_MBOX_DEV_E_AP_SECURE0));
 }
+
+extern void *scmi_handle;
+
+void plat_pwrc_setup(void)
+{
+	int rc;
+
+	/*
+	 * Try to initialize SCMI, in case of error,
+	 * fallback to legacy PM driver
+	 */
+	rc = cavm_pwrc_setup();
+	if (rc) {
+		cavm_legacy_pwrc_setup();
+	}
+}
+
+void plat_setup_psci_ops(uintptr_t sec_entrypoint,
+			 const plat_psci_ops_t **psci_ops)
+{
+	if (scmi_handle == NULL) {
+		cavm_legacy_setup_psci_ops(sec_entrypoint, psci_ops);
+	} else {
+		cavm_setup_psci_ops(sec_entrypoint, psci_ops);
+	}
+}
+

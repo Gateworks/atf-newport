@@ -212,7 +212,7 @@ void bl31_platform_setup()
 	}
 
 	/* Intialize the power controller */
-	cavm_pwrc_setup();
+	plat_pwrc_setup();
 }
 
 /*******************************************************************************

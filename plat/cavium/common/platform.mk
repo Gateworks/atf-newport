@@ -59,8 +59,8 @@ BL31_SOURCES		+=	drivers/arm/gic/common/gic_common.c		\
 				plat/cavium/common/aarch64/cavm_helpers.S 	\
 				plat/cavium/common/bl31_cavm_setup.c		\
 				plat/cavium/common/cavm_gicv3.c			\
-				plat/cavium/common/cavm_pm.c			\
-				plat/cavium/common/cavm_pwrc.c			\
+				plat/cavium/common/cavm_legacy_pm.c		\
+				plat/cavium/common/cavm_legacy_pwrc.c		\
 				plat/cavium/common/cavm_sata.c			\
 				plat/cavium/common/cavm_svc.c			\
 				plat/cavium/common/cavm_timers.c		\

@@ -15,6 +15,7 @@
 #include <stdio.h>
 #include <debug.h>
 #include <cavm_common.h>
+#include <cavm_legacy_pwrc.h>
 
 /* Any SoC family specific setup
  * to be done in BL31 can be initialized
@@ -28,4 +29,15 @@ void plat_cavm_setup(void)
 	/* FIXME: no functionality as of now,
 	 * added to make this API generic
 	 */
+}
+
+void plat_pwrc_setup(void)
+{
+	cavm_legacy_pwrc_setup();
+}
+
+void plat_setup_psci_ops(uintptr_t sec_entrypoint,
+			 const plat_psci_ops_t **psci_ops)
+{
+	cavm_legacy_setup_psci_ops(sec_entrypoint, psci_ops);
 }

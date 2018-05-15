@@ -327,6 +327,4 @@ static inline void validate_scmi_channel(scmi_channel_t *ch)
 	assert(ch->info && ch->info->scmi_mbx_mem);
 }
 
-
-
 #endif	/* __CAVM_SCMI_H__ */

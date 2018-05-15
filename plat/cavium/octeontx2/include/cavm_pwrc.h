@@ -70,4 +70,8 @@ void __dead2 cavm_scp_sys_reboot(void);
 
 const plat_psci_ops_t *plat_cavm_psci_override_pm_ops(plat_psci_ops_t *ops);
 
+int cavm_pwrc_setup(void);
+int cavm_setup_psci_ops(uintptr_t sec_entrypoint,
+			const plat_psci_ops_t **psci_ops);
+
 #endif /* __CAVM_PWRC_H__ */

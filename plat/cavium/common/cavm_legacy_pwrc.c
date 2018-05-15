@@ -14,7 +14,7 @@
 #include <bakery_lock.h>
 #include <mmio.h>
 #include <platform.h>
-#include <cavm_pwrc.h>
+#include <cavm_legacy_pwrc.h>
 #include <cavm_common.h>
 #include <arch_helpers.h>
 #include <debug.h>
@@ -124,7 +124,7 @@ void thunder_pwrc_write_pcoffr(unsigned long mpidr)
 }
 
 /* Nothing else to do here apart from initializing the lock */
-void cavm_pwrc_setup(void)
+void cavm_legacy_pwrc_setup(void)
 {
 	return;
 }

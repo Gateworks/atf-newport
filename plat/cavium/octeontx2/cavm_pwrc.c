@@ -21,6 +21,7 @@
 #include <string.h>
 #include <cavm_common.h>
 #include <cavm_scmi.h>
+#include <cavm_setup.h>
 
 /*
  * This file implements the SCP helper functions using SCMI protocol.
@@ -329,7 +330,7 @@ static int cavm_pwrc_init_scmi(int node, scmi_channel_plat_info_t *plat_scmi_inf
 	return 0;
 }
 
-void cavm_pwrc_setup(void)
+int cavm_pwrc_setup(void)
 {
 	/* Initialize platform SCMI config structure */
 	cavm_pwrc_init_scmi(0, &plat_cavm_scmi_plat_info);
@@ -338,9 +339,11 @@ void cavm_pwrc_setup(void)
 	scmi_channel.lock = &cavm_scmi_lock;
 	scmi_handle = scmi_init(&scmi_channel);
 	if (scmi_handle == NULL) {
-		ERROR("SCMI Initialization failed\n");
-		panic();
+		ERROR("SCMI Initialization failed, fallback to legacy PM\n");
+		return -1;
 	}
+
+	return 0;
 }
 
 /******************************************************************************

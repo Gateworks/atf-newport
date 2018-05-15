@@ -390,7 +390,7 @@ static void cavm_program_trusted_mailbox(uintptr_t address)
        *mailbox = address;
 }
 
-int plat_setup_psci_ops(uintptr_t sec_entrypoint,
+int cavm_setup_psci_ops(uintptr_t sec_entrypoint,
 				const plat_psci_ops_t **psci_ops)
 {
 	/* SCMI driver was already initalized here */
