@@ -18,6 +18,13 @@
 
 #define SFP_EEPROM_I2C_ADDR	0x50
 
+/* generic 802.3 clause types */
+typedef enum {
+	PHY_GENERIC_8023_NONE,
+	PHY_GENERIC_8023_C22,
+	PHY_GENERIC_8023_C45
+} phy_clause_t;
+
 /* From PCA9535PW data sheet. */
 #define GPIO_REG_PCA9535_IN(x)		((x < 8) ? 0 : 1)
 #define GPIO_REG_PCA9535_OUT(x)		((x < 8) ? 2 : 3)

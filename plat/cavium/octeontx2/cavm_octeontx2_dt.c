@@ -1141,23 +1141,38 @@ static void octeontx2_cgx_lmacs_check_linux(const void *fdt,
 			phy = &lmac->phy_config;
 			str = NULL;
 			str = (const char *)fdt_getprop(fdt, phy_offset,
-					"compatible", NULL);
+					"compatible", &len);
 			if (!str) {
 				ERROR("ERROR: no compatible property in phy\n");
-			} else if (!strcmp(str, "vitesse,vsc7224")) {
-				phy_vsc7224_t *vsc;
+			} else {
+				if (fdt_stringlist_contains(str, len,
+						"ethernet-phy-ieee802.3-c22")) {
+					phy->clause = PHY_GENERIC_8023_C22;
+					INFO("%s: %d:%d C22 compatible PHY str\n",
+						__func__, cgx_idx, lmac_idx);
+				} else if (fdt_stringlist_contains(str, len,
+						"ethernet-phy-ieee802.3-c45")) {
+					phy->clause = PHY_GENERIC_8023_C45;
+					INFO("%s: %d:%d C45 compatible PHY\n",
+						__func__, cgx_idx, lmac_idx);
+				} else
+					phy->clause = PHY_GENERIC_8023_NONE;
 
 				strncpy(phy->phy_compatible, str, 64);
-				vsc = &lmac->phy_config.vsc7224;
-				octeontx2_fdt_parse_vsc7224_info(fdt, vsc,
+
+				if (!strcmp(str, "vitesse,vsc7224")) {
+					phy_vsc7224_t *vsc;
+
+					vsc = &lmac->phy_config.vsc7224;
+					octeontx2_fdt_parse_vsc7224_info(fdt, vsc,
 						cgx_idx, lmac_idx);
-			} else {
-				strncpy(phy->phy_compatible, str, 64);
-				phy->phy_addr =	octeontx2_fdt_get_int32(fdt,
-						"reg", phy_offset);
-				phy->mdio_bus = octeontx2_fdt_get_bus(fdt,
-						phy_offset, cgx_idx,
-						lmac_idx);
+				} else {
+					phy->phy_addr =	octeontx2_fdt_get_int32(fdt,
+							"reg", phy_offset);
+					phy->mdio_bus = octeontx2_fdt_get_bus(fdt,
+							phy_offset, cgx_idx,
+							lmac_idx);
+				}
 			}
 		}
 
