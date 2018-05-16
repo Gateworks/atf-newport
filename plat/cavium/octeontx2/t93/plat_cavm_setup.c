@@ -333,12 +333,24 @@ void plat_add_mmio_node(unsigned long node)
 	for (i = 0; i < device_type_count; ++i)
 		add_map_record(CSR_PA(node, CAVM_RVU_PFX_VFX_BAR2(i, 0)), CAVM_RVU_PFX_VFX_BAR2_SIZE, attr);
 
-	/* Add regions for NIX/NPA used in rvu init */
+	/* Add regions for required for RVU init */
 	add_map_record(CSR_PA(node, CAVM_RVU_PF_BAR0(0) +
 				CAVM_RVU_BLOCK_ADDR_E_NIXX(0) * CAVM_RVU_PF_BAR0_SIZE),
 				CAVM_RVU_PF_BAR0_SIZE, attr);
 	add_map_record(CSR_PA(node, CAVM_RVU_PF_BAR0(0) +
 				CAVM_RVU_BLOCK_ADDR_E_NPA * CAVM_RVU_PF_BAR0_SIZE),
+				CAVM_RVU_PF_BAR0_SIZE, attr);
+	add_map_record(CSR_PA(node, CAVM_RVU_PF_BAR0(0) +
+				CAVM_RVU_BLOCK_ADDR_E_SSO * CAVM_RVU_PF_BAR0_SIZE),
+				CAVM_RVU_PF_BAR0_SIZE, attr);
+	add_map_record(CSR_PA(node, CAVM_RVU_PF_BAR0(0) +
+				CAVM_RVU_BLOCK_ADDR_E_SSOW * CAVM_RVU_PF_BAR0_SIZE),
+				CAVM_RVU_PF_BAR0_SIZE, attr);
+	add_map_record(CSR_PA(node, CAVM_RVU_PF_BAR0(0) +
+				CAVM_RVU_BLOCK_ADDR_E_TIM * CAVM_RVU_PF_BAR0_SIZE),
+				CAVM_RVU_PF_BAR0_SIZE, attr);
+	add_map_record(CSR_PA(node, CAVM_RVU_PF_BAR0(0) +
+				CAVM_RVU_BLOCK_ADDR_E_CPTX(0) * CAVM_RVU_PF_BAR0_SIZE),
 				CAVM_RVU_PF_BAR0_SIZE, attr);
 
 	add_map_record(CSR_PA(node, CAVM_SMI_BAR_E_SMI_PF_BAR0_CN9),

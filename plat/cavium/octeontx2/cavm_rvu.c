@@ -28,12 +28,60 @@
 
 static struct rvu_device rvu_dev[MAX_RVU_PFS];
 
+static inline int octeontx_get_msix_for_cpt(int node)
+{
+	union cavm_cptx_priv_lfx_int_cfg cpt_int_cfg;
+	int cpt = 0, lf = 0;
+
+	cpt_int_cfg.u = CSR_READ(node, CAVM_CPTX_PRIV_LFX_INT_CFG(cpt, lf));
+
+	return cpt_int_cfg.s.msix_size;
+}
+
+static inline int octeontx_get_msix_for_npa(int node)
+{
+	union cavm_npa_priv_lfx_int_cfg npa_int_cfg;
+	int lf = 0;
+
+	npa_int_cfg.u = CSR_READ(node, CAVM_NPA_PRIV_LFX_INT_CFG(lf));
+
+	return npa_int_cfg.s.msix_size;
+}
+
+static inline int octeontx_get_msix_for_sso_tim(int node)
+{
+	int lf = 0;
+	union cavm_tim_priv_lfx_int_cfg tim_int_cfg;
+	union cavm_sso_priv_lfx_hwgrp_int_cfg sso_int_cfg;
+	union cavm_ssow_priv_lfx_hws_int_cfg ssow_int_cfg;
+
+	tim_int_cfg.u = CSR_READ(node, CAVM_TIM_PRIV_LFX_INT_CFG(lf));
+	sso_int_cfg.u = CSR_READ(node, CAVM_SSO_PRIV_LFX_HWGRP_INT_CFG(lf));
+	ssow_int_cfg.u = CSR_READ(node, CAVM_SSOW_PRIV_LFX_HWS_INT_CFG(lf));
+
+	return (tim_int_cfg.s.msix_size +
+		ssow_int_cfg.s.msix_size +
+		sso_int_cfg.s.msix_size);
+}
+
+static inline int octeontx_get_msix_for_cgx(int node)
+{
+	int lf = 0, nix = 0;
+	union cavm_nixx_priv_lfx_int_cfg nixx_int_cfg;
+
+	nixx_int_cfg.u = CSR_READ(node, CAVM_NIXX_PRIV_LFX_INT_CFG(nix, lf));
+
+	return nixx_int_cfg.s.msix_size + octeontx_get_msix_for_npa(node);
+}
+
 static void octeontx_init_rvu_af(int *hwvf)
 {
 	rvu_dev[RVU_AF].enable = TRUE;
 	rvu_dev[RVU_AF].num_vfs = bfdt->rvu_config.admin_pf.num_rvu_vfs;
 	rvu_dev[RVU_AF].first_hwvf = *hwvf;
 	rvu_dev[RVU_AF].pf_num_msix_vec = bfdt->rvu_config.admin_pf.num_msix_vec;
+	rvu_dev[RVU_AF].vf_num_msix_vec = RVU_VF_INT_VEC_COUNT +
+					  octeontx_get_msix_for_cgx(0);
 	rvu_dev[RVU_AF].pf_res_ena = FALSE;
 	rvu_dev[RVU_AF].pci.pf_devid = CAVM_PCC_DEV_IDL_E_RVU_AF & DEVID_MASK;
 	rvu_dev[RVU_AF].pci.vf_devid = CAVM_PCC_DEV_IDL_E_SW_RVU_AF_VF & DEVID_MASK;
@@ -61,6 +109,9 @@ static void octeontx_init_rvu_fixed(int *hwvf, int rvu, int bfdt_index, int has_
 		rvu_dev[rvu].pci.vf_devid =
 			CAVM_PCC_DEV_IDL_E_SW_RVU_SSO_TIM_VF & DEVID_MASK;
 		rvu_dev[rvu].pci.class_code = RVU_CLASS_CODE & CLASS_CODE_MASK;
+		rvu_dev[rvu].vf_num_msix_vec = has_vfs ?
+					(RVU_VF_INT_VEC_COUNT +
+					octeontx_get_msix_for_sso_tim(0)) : 0;
 		break;
 	case SW_RVU_NPA_PF:
 		rvu_dev[rvu].pci.pf_devid =
@@ -68,6 +119,9 @@ static void octeontx_init_rvu_fixed(int *hwvf, int rvu, int bfdt_index, int has_
 		rvu_dev[rvu].pci.vf_devid =
 			CAVM_PCC_DEV_IDL_E_SW_RVU_NPA_VF & DEVID_MASK;
 		rvu_dev[rvu].pci.class_code = RVU_CLASS_CODE & CLASS_CODE_MASK;
+		rvu_dev[rvu].vf_num_msix_vec = has_vfs ?
+					(RVU_VF_INT_VEC_COUNT +
+					 octeontx_get_msix_for_npa(0)) : 0;
 		break;
 	case SW_RVU_CPT_PF:
 		rvu_dev[rvu].pci.pf_devid =
@@ -75,6 +129,9 @@ static void octeontx_init_rvu_fixed(int *hwvf, int rvu, int bfdt_index, int has_
 		rvu_dev[rvu].pci.vf_devid =
 			CAVM_PCC_DEV_IDL_E_SW_RVU_CPT_VF & DEVID_MASK;
 		rvu_dev[rvu].pci.class_code = CPT_CLASS_CODE & CLASS_CODE_MASK;
+		rvu_dev[rvu].vf_num_msix_vec = has_vfs ?
+					(RVU_VF_INT_VEC_COUNT +
+					 octeontx_get_msix_for_cpt(0)) : 0;
 		break;
 	}
 	/* Increment already allocated HWVFs */
@@ -88,6 +145,8 @@ static void octeontx_init_rvu_lmac(int *hwvf, int rvu, cgx_config_t *cgx,
 	rvu_dev[rvu].num_vfs = cgx->lmac_cfg[lmac_id].num_rvu_vfs;
 	rvu_dev[rvu].first_hwvf = *hwvf;
 	rvu_dev[rvu].pf_num_msix_vec = cgx->lmac_cfg[lmac_id].num_msix_vec;
+	rvu_dev[rvu].vf_num_msix_vec = RVU_VF_INT_VEC_COUNT +
+				       octeontx_get_msix_for_cgx(0);
 	rvu_dev[rvu].pf_res_ena = TRUE;
 	rvu_dev[rvu].pci.pf_devid = CAVM_PCC_DEV_IDL_E_RVU & DEVID_MASK;
 	rvu_dev[rvu].pci.vf_devid = CAVM_PCC_DEV_IDL_E_RVU_VF & DEVID_MASK;
@@ -246,10 +305,25 @@ static void config_rvu_pci(int node)
 	}
 }
 
-static void msix_enable(int node)
+static void msix_error_print_map(int node)
+{
+	int pf;
+
+	for (pf = 0; pf < octeontx_get_max_rvu_pfs(node); pf++) {
+		ERROR(" PF%d: num_pf_msix=%d, num_vfs=%d, total_vfs_msix=%d\n",
+			pf, rvu_dev[pf].pf_num_msix_vec, rvu_dev[pf].num_vfs,
+			rvu_dev[pf].vf_num_msix_vec);
+	}
+}
+
+static int msix_enable(int node)
 {
 	uint32_t pf_msix_offset = 0, vf_msix_offset = VF_MSIX_OFFSET;
-	int pf;
+	int pf, msix_conf_count = 0;
+	union cavm_rvu_priv_const priv_const;
+
+	/* Read contents of RVU_PRIV_CONST */
+	priv_const.u = CSR_READ(node, CAVM_RVU_PRIV_CONST);
 
 	/* set AF MSIX table base*/
 	union cavm_rvu_af_msixtr_base af_msix_cfg;
@@ -267,6 +341,9 @@ static void msix_enable(int node)
 			pfx_msix_cfg.s.pf_msixt_offset = pf_msix_offset;
 			pfx_msix_cfg.s.pf_msixt_sizem1 = rvu_dev[pf].pf_num_msix_vec - 1;
 			pf_msix_offset += (rvu_dev[pf].pf_num_msix_vec * RVU_MSIX_VEC_SIZE);
+			/* Increment number of already configured MSI-Xes */
+			msix_conf_count += rvu_dev[pf].pf_num_msix_vec;
+
 			/*
 			 * If such occurs, we're overlapping with VF base, should
 			 * never be reached since we're provisioning at most
@@ -276,13 +353,38 @@ static void msix_enable(int node)
 
 			if (rvu_dev[pf].num_vfs) {
 				pfx_msix_cfg.s.vf_msixt_offset = vf_msix_offset;
-				pfx_msix_cfg.s.vf_msixt_sizem1 = RVU_DEFAULT_MSIX_VEC_PER_VF - 1;
+				pfx_msix_cfg.s.vf_msixt_sizem1 =
+					rvu_dev[pf].vf_num_msix_vec - 1;
 				vf_msix_offset += ((rvu_dev[pf].num_vfs & MAX_RVU_VFS_PER_PF) *
-						   (RVU_DEFAULT_MSIX_VEC_PER_VF * RVU_MSIX_VEC_SIZE));
+						   (rvu_dev[pf].vf_num_msix_vec * RVU_MSIX_VEC_SIZE));
+				/*
+				 * Increment number of already
+				 * configured MSI-Xes
+				 */
+				msix_conf_count += ((rvu_dev[pf].num_vfs & MAX_RVU_VFS_PER_PF) *
+						    rvu_dev[pf].vf_num_msix_vec);
 			}
+
+			/*
+			 * Check if requested number of MSI-X does
+			 * not exceedes number of available MSI-X by HRM.
+			 * If such configuration is requested,
+			 * print error and not configure more PFs.
+			 * Return pf index which has invalid configuration.
+			 */
+			if (msix_conf_count > priv_const.s.max_msix) {
+				ERROR("Invalid RVU MSI-X configuration!\n");
+				ERROR("Disabling PFs (%d:%d)\n",
+				      pf, (octeontx_get_max_rvu_pfs(node) - 1));
+				msix_error_print_map(node);
+				return pf;
+			}
+
 			CSR_WRITE(node, CAVM_RVU_PRIV_PFX_MSIX_CFG(pf), pfx_msix_cfg.u);
 		}
 	}
+
+	return 0;
 }
 
 /* set total VFs and HWVFs for PFs */
@@ -488,7 +590,14 @@ void octeontx_rvu_init(int node)
 			disable_rvu_pf(node, pf);
 	}
 
-	msix_enable(node);
+	rc = msix_enable(node);
+	if (rc) {
+		for (pf = rc; pf < octeontx_get_max_rvu_pfs(node); pf++) {
+			disable_rvu_pf(node, pf);
+			reset_rvu_pf(node, pf);
+		}
+	}
+
 	mailbox_enable(node);
 	config_rvu_pci(node);
 }

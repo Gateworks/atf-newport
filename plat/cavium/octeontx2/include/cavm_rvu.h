@@ -37,7 +37,9 @@
 #define MAX_RVU_VFS_PER_PF		128
 #define SSO_TIM_TO_NPA_PFS_FACTOR	3/4
 #define RVU_MSIX_VEC_SIZE 		16
-#define RVU_DEFAULT_MSIX_VEC_PER_VF	128
+
+/* Number of MSI-X per VF */
+#define RVU_VF_INT_VEC_COUNT			1
 
 #define FALSE	0
 #define TRUE	1
@@ -53,6 +55,7 @@ struct rvu_device {
 	int num_vfs;
 	int first_hwvf;
 	int pf_num_msix_vec;
+	int vf_num_msix_vec;
 	int pf_res_ena; /* Enable npa/nix to PF */
 	pci_config_t pci; /* PCI configuration */
 };
