@@ -84,13 +84,14 @@ static void octeontx2_print_board_variables(void)
 				cgx->lmac_count);
 		for (j = 0; j < cgx->lmac_count; j++) {
 			lmac = &cgx->lmac_cfg[j];
-			INFO("N%d.CGX%d.LMAC%d: mode = %s:%d, qlm = %d, lane_to_sds=0x%x\n",
+			INFO("N%d.CGX%d.LMAC%d: mode = %s:%d, qlm = %d, lane = %d, lane_to_sds=0x%x\n",
 					cgx->node,
 					i,
 					j,
 					qlmmode_strmap[lmac->mode_idx].bdk_str,
 					lmac->mode,
 					lmac->qlm,
+					lmac->lane,
 					lmac->lane_to_sds);
 			INFO("\tnum_rvu_vfs=%d, num_msix_vec=%d, use_training=%d\n",
 					lmac->num_rvu_vfs,
@@ -1055,6 +1056,11 @@ static int octeontx2_fill_cgx_struct(int node, int qlm, int lane, int mode_idx)
 		lmac->mode = mode;
 		lmac->mode_idx = mode_idx;
 		lmac->qlm = qlm;
+		/* FIXME: Parser needs to fixed to pass the correct lane
+		 * as sent by BDK and to support mode configuration
+		 * based on any possible lane.
+		 */
+		lmac->lane = lane + i;
 		switch (mode) {
 		case CAVM_CGX_LMAC_TYPES_E_XAUI:
 		case CAVM_CGX_LMAC_TYPES_E_FORTYG_R:
