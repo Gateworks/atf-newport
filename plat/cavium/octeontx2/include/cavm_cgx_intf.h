@@ -52,6 +52,7 @@ enum cgx_link_speed {
 	CGX_LINK_40G,
 	CGX_LINK_50G,
 	CGX_LINK_100G,
+	CGX_LINK_MAX,
 };
 
 /* REQUEST ID types. Input to firmware */

@@ -31,6 +31,11 @@
 #define debug_cgx(...) ((void) (0))
 #endif
 
+/* table to map speed in Mbps with cgx_link_speed enum */
+static int cgx_link_speed_mbps[CGX_LINK_MAX] = {
+		0, 10, 100, 1000, 10000, 25000, 40000, 50000, 100000
+		};
+
 static int cgx_poll_for_csr(int node, uint64_t addr, uint64_t mask,
 					int poll_val)
 {
@@ -234,6 +239,60 @@ static void cgx_lmac_init(int node, int cgx_id, int lmac_id)
 	default:
 		break;
 	}
+}
+
+static int cgx_get_lane_speed(int node, int cgx_id, int lmac_id)
+{
+	cgx_lmac_config_t *lmac;
+	cavm_qlm_state_lane_t qlm_state;
+	int qlm, lane_id, lanes = 0, speed = 0;
+
+	lmac = &bfdt->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
+	qlm = lmac->qlm;
+	lane_id = lmac->lane;
+
+	debug_cgx("%s: cgx %d qlm %d lane %d\n", __func__, cgx_id,
+					qlm, lane_id);
+
+	qlm_state.u = CSR_READ(node, CAVM_GSERNX_LANEX_SCRATCHX(qlm,
+					lane_id, 0));
+
+	/* Ref : Table 38-1 of T9X HRM for encoding, lanes
+	 * baud rate based on LMAC type
+	 */
+	switch (lmac->mode) {
+	case CAVM_CGX_LMAC_TYPES_E_SGMII:
+	case CAVM_CGX_LMAC_TYPES_E_QSGMII:
+		/* Using 8b10b symbol encoding */
+		speed = (qlm_state.s.baud_mhz * 8 + 5) / 10;
+		lanes = 1;
+		break;
+	case CAVM_CGX_LMAC_TYPES_E_XAUI:
+		/* Using 8b10b symbol encoding */
+		speed = (qlm_state.s.baud_mhz * 8 + 5) / 10;
+		lanes = 4;
+		break;
+	case CAVM_CGX_LMAC_TYPES_E_RXAUI:
+		/* Using 8b10b symbol encoding */
+		speed = (qlm_state.s.baud_mhz * 8 + 5) / 10;
+		lanes = 2;
+		break;
+	case CAVM_CGX_LMAC_TYPES_E_TENG_R:
+		/* Using 64b66b symbol encoding */
+		speed = (qlm_state.s.baud_mhz * 64 + 33) / 66;
+		lanes = 1;
+		break;
+	case CAVM_CGX_LMAC_TYPES_E_FORTYG_R:
+		/* Using 64b66b symbol encoding */
+		speed = (qlm_state.s.baud_mhz * 64 + 33) / 66;
+		lanes = 4;
+		break;
+	/* FIXME: add support for new modes */
+	default:
+		break;
+	};
+	speed = speed * lanes;
+	return speed;
 }
 
 /* This API sets the speed for the link based on PHY status */
@@ -900,12 +959,10 @@ int cgx_xaui_set_link_up(int node, int cgx_id, int lmac_id)
 int cgx_xaui_get_link(int node, int cgx_id, int lmac_id,
 		link_state_t *result)
 {
-	cgx_lmac_config_t *lmac;
 	cavm_cgxx_spux_status1_t spux_status1;
 	cavm_cgxx_smux_tx_ctl_t smux_tx_ctl;
 	cavm_cgxx_smux_rx_ctl_t	smux_rx_ctl;
-
-	lmac = &bfdt->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
+	int speed = 0;
 
 	spux_status1.u = CSR_READ(node, CAVM_CGXX_SPUX_STATUS1(
 					cgx_id, lmac_id));
@@ -918,16 +975,15 @@ int cgx_xaui_get_link(int node, int cgx_id, int lmac_id,
 		/* link is up */
 		result->s.link_up = 1;
 		result->s.full_duplex = 1;
-		/* FIXME: get the clock info from GSERN for the
-		 * particular lane for the mapped QLM/DLM and
-		 * multiply by the number of lanes required
-		 * for the mode. Wait for HRM.
-		 * For now, return the default speed
-		 */
-		if (lmac->mode == CAVM_CGX_LMAC_TYPES_E_FORTYG_R)
-			result->s.speed = CGX_LINK_40G;
-		else
-			result->s.speed = CGX_LINK_10G;
+		speed = cgx_get_lane_speed(node, cgx_id, lmac_id);
+		result->s.speed = CGX_LINK_NONE;
+		/* obtain the speed enum based on the speed in Mbps */
+		for (int i = CGX_LINK_NONE; i < CGX_LINK_MAX; i++) {
+			if (speed == cgx_link_speed_mbps[i]) {
+				result->s.speed = i;
+				break;
+			}
+		}
 	} else {
 		/* link is down */
 		result->s.link_up = 0;
