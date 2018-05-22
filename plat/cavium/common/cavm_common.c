@@ -114,6 +114,8 @@ void thunder_cpu_setup(void)
 	if (MIDR_PARTNUM(midr) == T83PARTNUM) {
 		set_bit(cvmmemctl1_el1, 3); /* Enable LMTST */
 		set_bit(cvmmemctl1_el1, 4); /* Enable SSO/PKO addr region */
+		set_bit(cvmmemctl1_el1, 5); /* Trap any accesses to nonzero node id */
+
 		if (IS_THUNDER_PASS(midr, T83PARTNUM, 1, 0)) {
 			unset_bit(cvmmemctl1_el1, 6); /* Disable SSO switch tag */
 		} else {
@@ -123,6 +125,7 @@ void thunder_cpu_setup(void)
 		|| (MIDR_PARTNUM(midr) == F95PARTNUM)) {
 		set_bit(cvmmemctl1_el1, 3); /* Enable LMTST */
 		set_bit(cvmmemctl1_el1, 4); /* Enable SSO/PKO addr region */
+		set_bit(cvmmemctl1_el1, 5); /* Trap any accesses to nonzero node id */
 	}
 
 	/* Fix up defaults from the BDK which is broken and violates the ARM ARM. */
