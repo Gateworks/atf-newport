@@ -362,6 +362,7 @@ static void plat_fill_fip_memmap_spec(void)
 		if (fname_length == fip_name_len &&
 		    strncasecmp(FIP_NAME, fname_ptr, fip_name_len) == 0) {
 			fip_block_spec.offset = (size_t)fdata_ptr;
+			fip_block_spec.length = (size_t)fdata_length;
 			return;
 		}
 		ptr = fdata_ptr + fdata_length;
