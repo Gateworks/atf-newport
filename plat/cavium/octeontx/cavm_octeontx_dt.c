@@ -22,15 +22,23 @@
 static void octeontx_boot_device_from_strapx(const int node)
 {
 	cavm_gpio_strap_t gpio_strap;
+	cavm_rst_boot_t rst_boot;
 	int boot_medium, ret;
+
+	rst_boot.u = CSR_READ(0, CAVM_RST_BOOT);
+	if (rst_boot.s.rboot) {
+		/* Fill boot_dev structure */
+		bfdt->boot_dev.node = node;
+		bfdt->boot_dev.boot_type = THUNDER_BOOT_REMOTE;
+		bfdt->boot_dev.controller = 0;
+		bfdt->boot_dev.cs = 0;
+		return;
+	}
 
 	gpio_strap.u = CSR_READ(0, CAVM_GPIO_STRAP);
 	boot_medium = (gpio_strap.u) & 0xf;
 
 	switch (boot_medium) {
-		case CAVM_RST_BOOT_METHOD_E_REMOTE_CN8:
-			ret = THUNDER_BOOT_REMOTE;
-			break;
 		case CAVM_RST_BOOT_METHOD_E_SPI24:
 		case CAVM_RST_BOOT_METHOD_E_SPI32:
 			ret = THUNDER_BOOT_SPI;
