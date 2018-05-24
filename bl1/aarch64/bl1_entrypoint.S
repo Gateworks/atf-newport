@@ -47,12 +47,11 @@ reloc_loop:
 	stp     q0, q1, [x0], 32
 	b.gt    reloc_loop
 	dmb     sy
+	ic      ialluis
+	dsb     sy
 	ldr     x0, =reloc_end
 	br      x0
 reloc_end:
-	/* flush cache */
-	ic      ialluis
-
 	/* ---------------------------------------------------------------------
 	 * If the reset address is programmable then bl1_entrypoint() is
 	 * executed only on the cold boot path. Therefore, we can skip the warm
