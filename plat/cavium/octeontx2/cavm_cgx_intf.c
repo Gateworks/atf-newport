@@ -142,17 +142,24 @@ static int cgx_link_change(int node, int cgx_id, int lmac_id,
 	debug_cgx_intf("%s %d:%d:%d lmac_type %d\n", __func__, node, cgx_id,
 			lmac_id, lmac_cfg->mode);
 
-	if ((lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_SGMII) ||
-		(lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_QSGMII)) {
-		ret = cgx_sgmii_set_link_speed(node, cgx_id,
-						lmac_id, link);
-	} else if ((lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_XAUI) ||
-		(lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_RXAUI) ||
-		(lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_TENG_R) ||
-		(lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_FORTYG_R)) {
-		ret = cgx_xaui_set_link_up(node, cgx_id, lmac_id);
-	} else {
-		/* FIXME: handle new modes as well */
+	/* In case of link change from down -> up, do the necessary
+	 * HW configuration to initialize the link again. If the link
+	 * has changed from up -> down, just update the status. no HW
+	 * re-configuration is required.
+	 */
+	if (link->s.link_up) {
+		if ((lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_SGMII) ||
+			(lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_QSGMII)) {
+			ret = cgx_sgmii_set_link_speed(node, cgx_id,
+							lmac_id, link);
+		} else if ((lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_XAUI) ||
+			(lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_RXAUI) ||
+			(lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_TENG_R) ||
+			(lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_FORTYG_R)) {
+			ret = cgx_xaui_set_link_up(node, cgx_id, lmac_id);
+		} else {
+			/* FIXME: handle new modes as well */
+		}
 	}
 
 	/* update the current link status along with any error type set */

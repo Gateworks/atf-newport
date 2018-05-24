@@ -339,7 +339,11 @@ int cgx_sgmii_set_link_speed(int node, int cgx_id, int lmac_id,
 	pcs_miscx_ctl.u = CSR_READ(node, CAVM_CGXX_GMP_PCS_MISCX_CTL(
 				cgx_id, lmac_id));
 
-	/* Use GMXENO to force the link down*/
+	debug_cgx("%s: link %d duplex %d speed %d\n", __func__,
+				link->s.link_up, link->s.full_duplex,
+				link->s.speed);
+
+	/* Use GMXENO to force the link down */
 	if (link->s.link_up) {
 		pcs_miscx_ctl.s.gmxeno = 0;
 		/* change the duplex setting if the link is up */
