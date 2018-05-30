@@ -949,7 +949,7 @@ static int octeontx2_check_qlm_lmacs(int node, int cgx_idx,
 	/* This code is based on QLM<->CGX mapping and fixed per SoC.
 	 * hence add model specific condition
 	 */
-	if (CAVIUM_IS_MODEL(CAVIUM_CN93XX)) {
+	if (CAVIUM_IS_MODEL(CAVIUM_CN96XX)) {
 		if ((qlm == 3) || (qlm == 7)) {
 			/* Only QLM3 or QLM7 may be Ethernet, not both. */
 			for (i = 0; i < cgx->lmac_count; i++) {
