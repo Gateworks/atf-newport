@@ -11,11 +11,11 @@
 
 **/
 
-#ifndef __T93_PLAT_SETUP_H__
-#define __T93_PLAT_SETUP_H__
+#ifndef __T96_PLAT_SETUP_H__
+#define __T96_PLAT_SETUP_H__
 
 /*
- * Defines used for CN93xx to enable particular
+ * Defines used for CN96xx to enable particular
  * LMC access to particular ASC_REGION
  */
 
@@ -28,7 +28,7 @@
 #define CAVM_CCS_LMC_MASK	(CAVM_CCS_LMC_MASK_LMC0 | CAVM_CCS_LMC_MASK_LMC1 | \
 					CAVM_CCS_LMC_MASK_LMC2)
 
-/* CPU topology tree description for T93 */
+/* CPU topology tree description for T96 */
 static const unsigned char cavm_power_domain_tree_desc[] = {
 	/* No of root nodes */
 	PLATFORM_MAX_NODES,

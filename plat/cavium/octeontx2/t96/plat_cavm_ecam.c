@@ -153,7 +153,7 @@ struct secure_devices secure_scp_devs[] = {
 	{ECAM_INVALID_PROD_ID, ECAM_INVALID_PCC_IDL_ID}
 };
 
-static inline uint64_t cn93xx_get_dev_config(struct ecam_device *dev)
+static inline uint64_t cn96xx_get_dev_config(struct ecam_device *dev)
 {
 	uint64_t pconfig;
 	cavm_pccpf_xxx_id_t pccpf_id;
@@ -171,11 +171,11 @@ static inline uint64_t cn93xx_get_dev_config(struct ecam_device *dev)
 	return pconfig;
 }
 
-static int cn93xx_is_bus_disabled(struct ecam_device *dev)
+static int cn96xx_is_bus_disabled(struct ecam_device *dev)
 {
 	int rc = 0;
 
-	/* Below buses does not exist in internal T93 topology */
+	/* Below buses does not exist in internal T96 topology */
 	if (((dev->domain == 0) && (dev->bus > 12)) ||
 	    ((dev->domain == 1) && (dev->bus > 1))  ||
 	    ((dev->domain == 2) && (dev->bus > 16)))
@@ -184,12 +184,12 @@ static int cn93xx_is_bus_disabled(struct ecam_device *dev)
 	return rc;
 }
 
-static int cn93xx_skip_bus(struct ecam_device *dev)
+static int cn96xx_skip_bus(struct ecam_device *dev)
 {
 	return 0;
 }
 
-static inline void cn93xx_enable_bus(struct ecam_device *dev)
+static inline void cn96xx_enable_bus(struct ecam_device *dev)
 {
 	cavm_ecamx_domx_busx_permit_t bus_permit;
 
@@ -208,7 +208,7 @@ static inline void cn93xx_enable_bus(struct ecam_device *dev)
 			dev->domain, dev->bus);
 }
 
-static inline void cn93xx_disable_bus(struct ecam_device *dev)
+static inline void cn96xx_disable_bus(struct ecam_device *dev)
 {
 	cavm_ecamx_domx_busx_permit_t bus_permit;
 
@@ -227,7 +227,7 @@ static inline void cn93xx_disable_bus(struct ecam_device *dev)
 			dev->domain, dev->bus);
 }
 
-static inline void cn93xx_enable_dev(struct ecam_device *dev)
+static inline void cn96xx_enable_dev(struct ecam_device *dev)
 {
 	cavm_ecamx_domx_devx_permit_t dev_permit;
 
@@ -246,7 +246,7 @@ static inline void cn93xx_enable_dev(struct ecam_device *dev)
 			dev->domain, dev->dev);
 }
 
-static inline void cn93xx_disable_dev(struct ecam_device *dev)
+static inline void cn96xx_disable_dev(struct ecam_device *dev)
 {
 	cavm_ecamx_domx_devx_permit_t dev_permit;
 
@@ -265,7 +265,7 @@ static inline void cn93xx_disable_dev(struct ecam_device *dev)
 			dev->domain, dev->dev);
 }
 
-static inline void cn93xx_enable_func(struct ecam_device *dev)
+static inline void cn96xx_enable_func(struct ecam_device *dev)
 {
 	cavm_ecamx_domx_rslx_permit_t rsl_permit;
 
@@ -284,7 +284,7 @@ static inline void cn93xx_enable_func(struct ecam_device *dev)
 			dev->ecam, dev->domain, dev->func);
 }
 
-static inline void cn93xx_disable_func(struct ecam_device *dev)
+static inline void cn96xx_disable_func(struct ecam_device *dev)
 {
 	cavm_ecamx_domx_rslx_permit_t rsl_permit;
 
@@ -303,7 +303,7 @@ static inline void cn93xx_disable_func(struct ecam_device *dev)
 			dev->ecam, dev->domain, dev->func);
 }
 
-static int cn93xx_get_ecam_count(int node)
+static int cn96xx_get_ecam_count(int node)
 {
 	cavm_ecamx_const_t ecam_const;
 
@@ -312,7 +312,7 @@ static int cn93xx_get_ecam_count(int node)
 	return ecam_const.s.ecams;
 }
 
-static int cn93xx_get_domain_count(struct ecam_device *dev)
+static int cn96xx_get_domain_count(struct ecam_device *dev)
 {
 	cavm_ecamx_const_t ecam_const;
 
@@ -321,7 +321,7 @@ static int cn93xx_get_domain_count(struct ecam_device *dev)
 	return ecam_const.s.domains;
 }
 
-static inline int cn93xx_is_domain_present(struct ecam_device *dev)
+static inline int cn96xx_is_domain_present(struct ecam_device *dev)
 {
 	cavm_ecamx_domx_const_t dom_const;
 
@@ -332,7 +332,7 @@ static inline int cn93xx_is_domain_present(struct ecam_device *dev)
 	return (dom_const.s.pres && dom_const.s.permit);
 }
 
-static int cn93xx_get_secure_settings(struct ecam_device *dev, uint64_t pconfig)
+static int cn96xx_get_secure_settings(struct ecam_device *dev, uint64_t pconfig)
 {
 	cavm_pccpf_xxx_id_t pccpf_id;
 	int i = 0;
@@ -370,31 +370,31 @@ static int cn93xx_get_secure_settings(struct ecam_device *dev, uint64_t pconfig)
 	return 1;
 }
 
-struct ecam_probe_callback *cn93xx_get_probe_callbacks(void)
+struct ecam_probe_callback *cn96xx_get_probe_callbacks(void)
 {
 	return &probe_callbacks[0];
 }
 
-struct ecam_init_callback *cn93xx_get_init_callbacks(void)
+struct ecam_init_callback *cn96xx_get_init_callbacks(void)
 {
 	return &plat_init_callbacks[0];
 }
 
 const struct ecam_platform_defs plat_ops = {
-	.soc_type = T93PARTNUM,
-	.get_ecam_count = cn93xx_get_ecam_count,
-	.get_domain_count = cn93xx_get_domain_count,
-	.is_domain_present = cn93xx_is_domain_present,
-	.get_secure_settings = cn93xx_get_secure_settings,
-	.get_dev_config = cn93xx_get_dev_config,
-	.get_probes = cn93xx_get_probe_callbacks,
-	.get_plat_inits = cn93xx_get_init_callbacks,
-	.is_bus_disabled = cn93xx_is_bus_disabled,
-	.skip_bus = cn93xx_skip_bus,
-	.enable_bus = cn93xx_enable_bus,
-	.disable_bus = cn93xx_disable_bus,
-	.enable_dev = cn93xx_enable_dev,
-	.disable_dev = cn93xx_disable_dev,
-	.enable_func = cn93xx_enable_func,
-	.disable_func = cn93xx_disable_func,
+	.soc_type = T96PARTNUM,
+	.get_ecam_count = cn96xx_get_ecam_count,
+	.get_domain_count = cn96xx_get_domain_count,
+	.is_domain_present = cn96xx_is_domain_present,
+	.get_secure_settings = cn96xx_get_secure_settings,
+	.get_dev_config = cn96xx_get_dev_config,
+	.get_probes = cn96xx_get_probe_callbacks,
+	.get_plat_inits = cn96xx_get_init_callbacks,
+	.is_bus_disabled = cn96xx_is_bus_disabled,
+	.skip_bus = cn96xx_skip_bus,
+	.enable_bus = cn96xx_enable_bus,
+	.disable_bus = cn96xx_disable_bus,
+	.enable_dev = cn96xx_enable_dev,
+	.disable_dev = cn96xx_disable_dev,
+	.enable_func = cn96xx_enable_func,
+	.disable_func = cn96xx_disable_func,
 };

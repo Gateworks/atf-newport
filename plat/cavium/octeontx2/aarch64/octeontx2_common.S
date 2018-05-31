@@ -33,7 +33,7 @@ func octeontx2_cpu_reg_dump
 	ret
 endfunc octeontx2_cpu_reg_dump
 
-declare_cpu_ops octeontx2, OCTEONTX2_CN93XX_MIDR, \
+declare_cpu_ops octeontx2, OCTEONTX2_CN96XX_MIDR, \
 	octeontx2_reset_func, \
 	octeontx2_core_pwr_dwn, \
 	octeontx2_cluster_pwr_dwn

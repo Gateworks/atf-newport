@@ -34,7 +34,7 @@
 #define T81PARTNUM 0xA2
 #define T83PARTNUM 0xA3
 #define T98PARTNUM 0xB1
-#define T93PARTNUM 0xB2
+#define T96PARTNUM 0xB2
 #define F95PARTNUM 0xB3
 
 /* Boot type definitions */

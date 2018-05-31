@@ -19,7 +19,7 @@
  *   - 34MB is for mailbox(32 PFs + 512 VFs * 64KB mailbox size)
  *   - 128KB for PFs msix table(32 PFs * 256(MSIX entries) * entry * size).
  *   - 1MB for VFs msix table(512 VFs * 128 * MSIX entry size).
- * 93xx has 16 PFs and 256 VFs whereas 98xx has 32 PFs and 512 VFs.
+ * 96xx has 16 PFs and 256 VFs whereas 98xx has 32 PFs and 512 VFs.
  */
 #define PF_MBOX_BASE	RVU_MEM_BASE
 #define PF_MBOX_SIZE	0x000200000

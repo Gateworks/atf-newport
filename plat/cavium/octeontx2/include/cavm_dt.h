@@ -26,7 +26,7 @@ typedef enum {
 	CAVM_QLM_MODE_PCIE_1X2,		/* 1 PCIe, 2 lanes */
 	CAVM_QLM_MODE_PCIE_1X4,		/* 1 PCIe, 4 lanes */
 	CAVM_QLM_MODE_PCIE_1X8,		/* 1 PCIe, 8 lanes */
-	CAVM_QLM_MODE_PCIE_1X16,	/* 1 PCIe, 16 lanes (CN93XX) */
+	CAVM_QLM_MODE_PCIE_1X16,	/* 1 PCIe, 16 lanes (CN96XX) */
 	/* SATA modes  */
 	CAVM_QLM_MODE_SATA_4X1,		/* SATA, each lane independent (cn88xx) */
 	CAVM_QLM_MODE_SATA_2X1,		/* SATA, each lane independent (cn83xx) */
@@ -48,18 +48,18 @@ typedef enum {
 	CAVM_QLM_MODE_10G_KR_1X1,	/* 1 10GBASE-KR, single lane (cn80xx) */
 	CAVM_QLM_MODE_40G_KR4_1X4,	/* 1 40GBASE-KR4, 4 lanes each (cn88xx) */
 	CAVM_QLM_MODE_QSGMII_4X1,	/* QSGMII is 4 SGMII on one lane (cn81xx, cn83xx) */
-	CAVM_QLM_MODE_25G_4X1,		/* 25G, 1 lane each (CN93XX QLMs) */
-	CAVM_QLM_MODE_25G_2X1,		/* 25G, 1 lane each (CN93XX DLMs) */
-	CAVM_QLM_MODE_50G_2X2,		/* 50G, 2 lanes each (CN93XX QLMs) */
-	CAVM_QLM_MODE_50G_1X2,		/* 50G, 2 lanes each (CN93XX DLMs) */
-	CAVM_QLM_MODE_100G_1X4,		/* 100G, 4 lanes each (CN93XX) */
-	CAVM_QLM_MODE_25G_KR_4X1,	/* 25G-KR, 1 lane each (CN93XX QLMs) */
-	CAVM_QLM_MODE_25G_KR_2X1,	/* 25G-KR, 1 lane each (CN93XX DLMs) */
-	CAVM_QLM_MODE_50G_KR_2X2,	/* 50G-KR, 2 lanes each (CN93XX QLMs) */
-	CAVM_QLM_MODE_50G_KR_1X2,	/* 50G-KR, 2 lanes each (CN93XX DLMs) */
-	CAVM_QLM_MODE_100G_KR4_1X4,	/* 100G-KR4, 4 lanes each (CN93XX) */
-	CAVM_QLM_MODE_USXGMII_4X1,	/* USXGMII, 4 over 1 lane, 10M, 100M, 1G, 2.5G, 5G (CN93XX QLMs) */
-	CAVM_QLM_MODE_USXGMII_2X1,	/* USXGMII, 2 over 1 lane, 10M, 100M, 1G, 2.5G, 5G, 10G (CN93XX QLMs) */
+	CAVM_QLM_MODE_25G_4X1,		/* 25G, 1 lane each (CN96XX QLMs) */
+	CAVM_QLM_MODE_25G_2X1,		/* 25G, 1 lane each (CN96XX DLMs) */
+	CAVM_QLM_MODE_50G_2X2,		/* 50G, 2 lanes each (CN96XX QLMs) */
+	CAVM_QLM_MODE_50G_1X2,		/* 50G, 2 lanes each (CN96XX DLMs) */
+	CAVM_QLM_MODE_100G_1X4,		/* 100G, 4 lanes each (CN96XX) */
+	CAVM_QLM_MODE_25G_KR_4X1,	/* 25G-KR, 1 lane each (CN96XX QLMs) */
+	CAVM_QLM_MODE_25G_KR_2X1,	/* 25G-KR, 1 lane each (CN96XX DLMs) */
+	CAVM_QLM_MODE_50G_KR_2X2,	/* 50G-KR, 2 lanes each (CN96XX QLMs) */
+	CAVM_QLM_MODE_50G_KR_1X2,	/* 50G-KR, 2 lanes each (CN96XX DLMs) */
+	CAVM_QLM_MODE_100G_KR4_1X4,	/* 100G-KR4, 4 lanes each (CN96XX) */
+	CAVM_QLM_MODE_USXGMII_4X1,	/* USXGMII, 4 over 1 lane, 10M, 100M, 1G, 2.5G, 5G (CN96XX QLMs) */
+	CAVM_QLM_MODE_USXGMII_2X1,	/* USXGMII, 2 over 1 lane, 10M, 100M, 1G, 2.5G, 5G, 10G (CN96XX QLMs) */
 	CAVM_QLM_MODE_LAST,
 } cavm_qlm_modes_t;
 
