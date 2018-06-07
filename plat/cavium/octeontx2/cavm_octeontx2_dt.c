@@ -31,40 +31,28 @@ static struct qlm_mode_strmap_s qlmmode_strmap[] = {
 	 * QLM/LANE mode to the array index.
 	 */
 	{-1, "DISABLED", NULL},
-	{-1, "PCIE_1X1", NULL},
-	{-1, "PCIE_1X2", NULL},
-	{-1, "PCIE_1X4", NULL},
-	{-1, "PCIE_1X8", NULL},
-	{-1, "PCIE_1X16", NULL},
-	{-1, "SATA_4X1", NULL},
-	{-1, "SATA_2X1", NULL},
+	{-1, "PCIE_X1", NULL},
+	{-1, "PCIE_X2", NULL},
+	{-1, "PCIE_X4", NULL},
+	{-1, "PCIE_X8", NULL},
+	{-1, "PCIE_X16", NULL},
+	{-1, "SATA", NULL},
 	{-1, "OCI", NULL},
 	/* CGX/LMAC types. */
-	{CAVM_CGX_LMAC_TYPES_E_SGMII, "SGMII_4X1", "sgmii"},
-	{CAVM_CGX_LMAC_TYPES_E_SGMII, "SGMII_2X1", "sgmii"},
-	{CAVM_CGX_LMAC_TYPES_E_SGMII, "SGMII_1X1", "sgmii"},
-	{CAVM_CGX_LMAC_TYPES_E_XAUI, "XAUI_1X4", "xaui"},
-	{CAVM_CGX_LMAC_TYPES_E_RXAUI, "RXAUI_2X2", "rxaui"},
-	{CAVM_CGX_LMAC_TYPES_E_RXAUI, "RXAUI_1X2", "rxaui"},
-	{CAVM_CGX_LMAC_TYPES_E_TENG_R, "XFI_4X1", "xfi"},
-	{CAVM_CGX_LMAC_TYPES_E_TENG_R, "XFI_2X1", "xfi"},
-	{CAVM_CGX_LMAC_TYPES_E_TENG_R, "XFI_1X1", "xfi"},
-	{CAVM_CGX_LMAC_TYPES_E_FORTYG_R, "XLAUI_1X4", "xlaui"},
-	{CAVM_CGX_LMAC_TYPES_E_TENG_R, "10G_KR_4X1", "10g_kr"},
-	{CAVM_CGX_LMAC_TYPES_E_TENG_R, "10G_KR_2X1", "10g_kr"},
-	{CAVM_CGX_LMAC_TYPES_E_TENG_R, "10G_KR_1X1", "10g_kr"},
-	{CAVM_CGX_LMAC_TYPES_E_FORTYG_R, "40G_KR4_1X4", "40g_kr"},
-	{CAVM_CGX_LMAC_TYPES_E_QSGMII, "QSGMII_4X1", "qsgmii"},
-	{CAVM_CGX_LMAC_TYPES_E_TWENTYFIVEG_R, "25G_4X1", "25g"},
-	{CAVM_CGX_LMAC_TYPES_E_TWENTYFIVEG_R, "25G_2X1", "25g"},
-	{CAVM_CGX_LMAC_TYPES_E_FIFTYG_R, "50G_2X2", "50g"},
-	{CAVM_CGX_LMAC_TYPES_E_FIFTYG_R, "50G_1X2", "50g"},
-	{CAVM_CGX_LMAC_TYPES_E_HUNDREDG_R, "100G_1X4", "100g"},
-	{CAVM_CGX_LMAC_TYPES_E_TWENTYFIVEG_R, "25G_KR_4X1", "25g"},
-	{CAVM_CGX_LMAC_TYPES_E_TWENTYFIVEG_R, "25G_KR_2X1", "25g"},
-	{CAVM_CGX_LMAC_TYPES_E_FIFTYG_R, "50G_KR_2X2", "50g"},
-	{CAVM_CGX_LMAC_TYPES_E_FIFTYG_R, "50G_KR_1X2", "50g"},
-	{CAVM_CGX_LMAC_TYPES_E_HUNDREDG_R, "100G_KR4_1X4", "100g"},
+	{CAVM_CGX_LMAC_TYPES_E_SGMII, "SGMII", "sgmii"},
+	{CAVM_CGX_LMAC_TYPES_E_XAUI, "XAUI", "xaui"},
+	{CAVM_CGX_LMAC_TYPES_E_RXAUI, "RXAUI", "rxaui"},
+	{CAVM_CGX_LMAC_TYPES_E_TENG_R, "XFI", "xfi"},
+	{CAVM_CGX_LMAC_TYPES_E_FORTYG_R, "XLAUI", "xlaui"},
+	{CAVM_CGX_LMAC_TYPES_E_TENG_R, "10G_KR", "10g_kr"},
+	{CAVM_CGX_LMAC_TYPES_E_FORTYG_R, "40G_KR4", "40g_kr"},
+	{CAVM_CGX_LMAC_TYPES_E_QSGMII, "QSGMII", "qsgmii"},
+	{CAVM_CGX_LMAC_TYPES_E_TWENTYFIVEG_R, "25G", "25g"},
+	{CAVM_CGX_LMAC_TYPES_E_FIFTYG_R, "50G", "50g"},
+	{CAVM_CGX_LMAC_TYPES_E_HUNDREDG_R, "100G", "100g"},
+	{CAVM_CGX_LMAC_TYPES_E_TWENTYFIVEG_R, "25G_KR", "25g"},
+	{CAVM_CGX_LMAC_TYPES_E_FIFTYG_R, "50G_KR", "50g"},
+	{CAVM_CGX_LMAC_TYPES_E_HUNDREDG_R, "100G_KR4", "100g"},
 	{CAVM_CGX_LMAC_TYPES_E_USXGMII, "USXGMII_4X1", "usgxgmii"},
 	{CAVM_CGX_LMAC_TYPES_E_USXGMII, "USXGMII_2X1", "usgxgmii"},
 	{-1, NULL, NULL}
@@ -884,50 +872,36 @@ static void octeontx2_lmac_num_touse(int mode_idx, int *cnt, int *touse)
 	*cnt = 0;
 	*touse = 0;
 	switch (mode_idx) {
-	case CAVM_QLM_MODE_SGMII_4X1:
-	case CAVM_QLM_MODE_XFI_4X1:
-	case CAVM_QLM_MODE_10G_KR_4X1:
-	case CAVM_QLM_MODE_QSGMII_4X1:
-	case CAVM_QLM_MODE_25G_4X1:
-	case CAVM_QLM_MODE_25G_KR_4X1:
-	case CAVM_QLM_MODE_USXGMII_4X1:
-		*cnt = 4;
-		*touse = 1;
-		break;
-	case CAVM_QLM_MODE_SGMII_2X1:
-	case CAVM_QLM_MODE_XFI_2X1:
-	case CAVM_QLM_MODE_10G_KR_2X1:
-	case CAVM_QLM_MODE_25G_2X1:
-	case CAVM_QLM_MODE_25G_KR_2X1:
-	case CAVM_QLM_MODE_USXGMII_2X1:
-		*cnt = 2;
-		*touse = 1;
-		break;
-	case CAVM_QLM_MODE_SGMII_1X1:
-	case CAVM_QLM_MODE_XFI_1X1:
-	case CAVM_QLM_MODE_10G_KR_1X1:
+	case CAVM_QLM_MODE_SGMII:
+	case CAVM_QLM_MODE_XFI:
+	case CAVM_QLM_MODE_10G_KR:
+	case CAVM_QLM_MODE_25G:
+	case CAVM_QLM_MODE_25G_KR:
 		*cnt = 1;
 		*touse = 1;
 		break;
-	case CAVM_QLM_MODE_XAUI_1X4:
-	case CAVM_QLM_MODE_XLAUI_1X4:
-	case CAVM_QLM_MODE_40G_KR4_1X4:
-	case CAVM_QLM_MODE_100G_1X4:
-	case CAVM_QLM_MODE_100G_KR4_1X4:
+	case CAVM_QLM_MODE_XAUI:
+	case CAVM_QLM_MODE_XLAUI:
+	case CAVM_QLM_MODE_40G_KR4:
+	case CAVM_QLM_MODE_100G:
+	case CAVM_QLM_MODE_100G_KR4:
 		*cnt = 1;
 		*touse = 4;
 		break;
-	case CAVM_QLM_MODE_RXAUI_2X2:
-	case CAVM_QLM_MODE_50G_2X2:
-	case CAVM_QLM_MODE_50G_KR_2X2:
-		*cnt = 2;
-		*touse = 2;
-		break;
-	case CAVM_QLM_MODE_RXAUI_1X2:
-	case CAVM_QLM_MODE_50G_1X2:
-	case CAVM_QLM_MODE_50G_KR_1X2:
+	case CAVM_QLM_MODE_RXAUI:
+	case CAVM_QLM_MODE_50G:
+	case CAVM_QLM_MODE_50G_KR:
 		*cnt = 1;
 		*touse = 2;
+		break;
+	case CAVM_QLM_MODE_USXGMII_4X1:
+	case CAVM_QLM_MODE_QSGMII:
+		*cnt = 4;
+		*touse = 1;
+		break;
+	case CAVM_QLM_MODE_USXGMII_2X1:
+		*cnt = 2;
+		*touse = 1;
 		break;
 	}
 }
@@ -943,13 +917,18 @@ static int octeontx2_check_qlm_lmacs(int node, int cgx_idx,
 	cgx_lmac_config_t *lmac;
 	int i;
 
+	INFO("N%d:CGX%d: qlm = %d, mode_idx = %d, lmac_need = %d\n",
+			 node, cgx_idx, qlm, mode_idx, lmac_need);
 	cgx = &(bfdt->cgx_cfg[cgx_idx]);
 	lmac_avail = MAX_LMAC_PER_CGX - cgx->lmacs_used;
 
 	/* This code is based on QLM<->CGX mapping and fixed per SoC.
 	 * hence add model specific condition
 	 */
-	if (CAVIUM_IS_MODEL(CAVIUM_CN96XX)) {
+	if (mode_idx == CAVM_QLM_MODE_QSGMII) {
+		if (cgx->lmacs_used)
+			lmac_avail = cgx->lmacs_used;
+	} else if (CAVIUM_IS_MODEL(CAVIUM_CN96XX)) {
 		if ((qlm == 3) || (qlm == 7)) {
 			/* Only QLM3 or QLM7 may be Ethernet, not both. */
 			for (i = 0; i < cgx->lmac_count; i++) {
@@ -972,7 +951,7 @@ static int octeontx2_check_qlm_lmacs(int node, int cgx_idx,
 			for (i = 0; i < cgx->lmac_count; i++) {
 				lmac = &cgx->lmac_cfg[i];
 				if (lmac->qlm == qlm)
-				lmac_avail--;
+					lmac_avail--;
 			}
 		}
 	} else if (CAVIUM_IS_MODEL(CAVIUM_CNF95XX)) {
@@ -988,7 +967,7 @@ static int octeontx2_check_qlm_lmacs(int node, int cgx_idx,
 	}
 
 	if (lmac_need > lmac_avail) {
-		WARN("N%d.CGX%d: Can't configure mode:%s. Requires %d free LMACs, but %d LMACs available on QLM%d.\n",
+		WARN("N%d.CGX%d: Can't configure mode:%s. Requires %d LMACs, but %d LMACs available on QLM%d.\n",
 				node, cgx_idx,
 				qlmmode_strmap[mode_idx].bdk_str,
 				lmac_need, lmac_avail, qlm);
@@ -1010,7 +989,7 @@ static int octeontx2_fill_cgx_struct(int node, int qlm, int lane, int mode_idx)
 	int i;
 	int lcnt, lused;
 
-	if ((mode_idx < CAVM_QLM_MODE_SGMII_4X1) || (mode_idx > CAVM_QLM_MODE_USXGMII_2X1)) {
+	if ((mode_idx < CAVM_QLM_MODE_SGMII) || (mode_idx > CAVM_QLM_MODE_USXGMII_2X1)) {
 		INFO("N%d.QLM%d.LANE%d: not configured for CGX, skip.\n",
 				node, qlm, lane);
 		return 0;
@@ -1038,6 +1017,7 @@ static int octeontx2_fill_cgx_struct(int node, int qlm, int lane, int mode_idx)
 				qlmmode_strmap[mode_idx].bdk_str);
 		return 0;
 	}
+	INFO("N%d.CGX%d: mode_idx %d needs %d lanes, %d lmacs\n", node, cgx_idx, mode_idx, lused, lcnt); 
 	if (octeontx2_check_qlm_lmacs(node, cgx_idx, qlm, mode_idx, lcnt * lused))
 		return 0;
 	if (lane % (lcnt * lused)) {
@@ -1068,6 +1048,7 @@ static int octeontx2_fill_cgx_struct(int node, int qlm, int lane, int mode_idx)
 			lmac->lane_to_sds = 0xe4;
 			break;
 		case CAVM_CGX_LMAC_TYPES_E_RXAUI:
+		case CAVM_CGX_LMAC_TYPES_E_FIFTYG_R:
 			/* The RXAUI mode is always using a double lane. So
 			 * the lane value can be 0 or 2.
 			 */
@@ -1077,21 +1058,18 @@ static int octeontx2_fill_cgx_struct(int node, int qlm, int lane, int mode_idx)
 				lmac->lane_to_sds = 0x4;
 			break;
 		default:
-			lmac->lane_to_sds = lane + i;
-			if (qlm == 5)
+			lmac->lane_to_sds = lmac->lane;
+			if (CAVIUM_IS_MODEL(CAVIUM_CN96XX) && (qlm == 5))
 				lmac->lane_to_sds += 2;
 			break;
 		}
+
 		switch (mode_idx) {
-		case CAVM_QLM_MODE_10G_KR_4X1:
-		case CAVM_QLM_MODE_10G_KR_2X1:
-		case CAVM_QLM_MODE_10G_KR_1X1:
-		case CAVM_QLM_MODE_40G_KR4_1X4:
-		case CAVM_QLM_MODE_25G_KR_4X1:
-		case CAVM_QLM_MODE_25G_KR_2X1:
-		case CAVM_QLM_MODE_50G_KR_2X2:
-		case CAVM_QLM_MODE_50G_KR_1X2:
-		case CAVM_QLM_MODE_100G_KR4_1X4:
+		case CAVM_QLM_MODE_10G_KR:
+		case CAVM_QLM_MODE_40G_KR4:
+		case CAVM_QLM_MODE_25G_KR:
+		case CAVM_QLM_MODE_50G_KR:
+		case CAVM_QLM_MODE_100G_KR4:
 			lmac->use_training = 1;
 			break;
 		}
