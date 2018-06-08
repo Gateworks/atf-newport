@@ -58,9 +58,7 @@ static int ecam_probe_cgx(int node, unsigned long arg)
 		for (int lane = 0; lane < lnum; lane++) {
 			qlm_state.u = CSR_READ(node,
 				CAVM_GSERNX_LANEX_SCRATCHX(qlm, lane, 0));
-			if ((qlm_state.s.mode >= CAVM_QLM_MODE_SGMII_4X1) &&
-				(qlm_state.s.mode <=
-					CAVM_QLM_MODE_USXGMII_2X1)) {
+			if (qlm_state.s.cgx) {
 				debug_plat_ecam("%s: CGX detected on qlm %d lane %d\n",
 					__func__, qlm, lane);
 				return 1;
