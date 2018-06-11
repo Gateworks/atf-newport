@@ -31,11 +31,13 @@ static struct rvu_device rvu_dev[MAX_RVU_PFS];
 static inline int octeontx_get_msix_for_cpt(int node)
 {
 	union cavm_cptx_priv_lfx_int_cfg cpt_int_cfg;
+	union cavm_cptx_af_constants0 cpt_af_const0;
 	int cpt = 0, lf = 0;
 
 	cpt_int_cfg.u = CSR_READ(node, CAVM_CPTX_PRIV_LFX_INT_CFG(cpt, lf));
+	cpt_af_const0.u = CSR_READ(node, CAVM_CPTX_AF_CONSTANTS0(cpt));
 
-	return cpt_int_cfg.s.msix_size;
+	return (cpt_af_const0.s.lf * cpt_int_cfg.s.msix_size);
 }
 
 static inline int octeontx_get_msix_for_npa(int node)
