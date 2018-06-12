@@ -103,6 +103,20 @@ struct ecam_probe_callback probe_callbacks[] = {
 	{ECAM_INVALID_DEV_ID, 0, 0, 0}
 };
 
+static void init_gpio(int node, uint64_t config_base, uint64_t config_size)
+{
+	union cavm_pccpf_xxx_vsec_sctl vsec_sctl;
+
+	debug_plat_ecam("GPIO Node(%d) init called config_base:%lx size:%lx\n",
+			node, config_base, config_size);
+
+	/* Block can have mix of secure and non-secure MSI-X interrupts */
+	vsec_sctl.u = cavm_read32(config_base + CAVM_PCCPF_XXX_VSEC_SCTL);
+	vsec_sctl.cn9.msix_sec_en = 1;
+	vsec_sctl.cn9.msix_sec_phys = 1;
+	cavm_write32(config_base + CAVM_PCCPF_XXX_VSEC_SCTL, vsec_sctl.u);
+}
+
 static void init_rvu(int node, uint64_t config_base, uint64_t config_size)
 {
 	octeontx_rvu_init(node);
@@ -123,6 +137,7 @@ static void init_cgx(int node, uint64_t config_base, uint64_t config_size)
 }
 
 struct ecam_init_callback plat_init_callbacks[] = {
+	{0xa00a, 0x177d, init_gpio},
 	{0xa059, 0x177d, init_cgx}, /* 0x59 - PCC_DEV_IDL_E::CGX */
 	{0xa065, 0x177d, init_rvu}, /* 0x65 - PCC_DEV_IDL_E::RVU_AF */
 	{ECAM_INVALID_DEV_ID, 0, 0}
