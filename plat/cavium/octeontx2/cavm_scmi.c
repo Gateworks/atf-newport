@@ -12,6 +12,7 @@
 **/
 
 #include <arch_helpers.h>
+#include <string.h>
 #include <assert.h>
 #include <debug.h>
 #include <cavm_scmi.h>
@@ -353,6 +354,10 @@ void *scmi_init(scmi_channel_t *ch)
 	cavm_shutdown_config_data_t shutdown_data;
 	uint32_t version;
 	int ret;
+
+	/* Do not use SCMI on ASIM */
+	if (!strncmp(bfdt->board_model, "asim-", 5))
+		return NULL;
 
 	assert(ch && ch->info);
 	assert(ch->info->db_reg_addr);
