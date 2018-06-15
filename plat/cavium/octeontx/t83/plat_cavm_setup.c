@@ -11,7 +11,11 @@
 
 **/
 
+#include <debug.h>
+#include <platform_def.h>
 #include <cavm_common.h>
+#include <cavm_gpio.h>
+#include <cavm_dt.h>
 
 int thunder_get_lmc_per_node(void)
 {
@@ -168,5 +172,40 @@ void plat_add_mmio_node(unsigned long node)
 
 	for (i = 0; i < 2; ++i) {
 		add_map_record(CSR_PA(node, CAVM_IOBN_BAR_E_IOBNX_PF_BAR0_CN8(i)), CAVM_IOBN_BAR_E_IOBNX_PF_BAR0_CN8_SIZE , attr);
+	}
+}
+
+void plat_set_gpio_msix_vectors(int gpio_num, int irq_num, int enable)
+{
+	uint64_t vector_ptr;
+	int intr_pinx;
+
+	/* Get the offset of interrupt vector for that GPIO line */
+	intr_pinx = CAVM_GPIO_INT_VEC_E_INTR_PINX_CN83XX(gpio_num);
+
+	/* INTR_PINX vector address */
+	vector_ptr =  CAVM_GPIO_BAR_E_GPIO_PF_BAR4 + intr_pinx * 0x10 + 0x8;
+
+	if (enable) {
+		cavm_write64(vector_ptr, irq_num);
+
+		/* INTR_PINX_CLEAR vector */
+		vector_ptr += 0x10;
+		cavm_write64(vector_ptr, irq_num);
+	} else {
+		cavm_write64(vector_ptr, OCTEONTX_IRQ_GPIO_NSEC);
+
+		/* INTR_PINX_CLEAR vector */
+		vector_ptr += 0x10;
+		cavm_write64(vector_ptr, OCTEONTX_IRQ_GPIO_NSEC);
+	}
+}
+
+void plat_gpio_irq_setup(void)
+{
+	gpio_intercept_interrupts = bfdt->gpio_intercept_intr;
+	if (gpio_intercept_interrupts) {
+		if (cavm_register_gpio_handlers() < 0)
+			ERROR("Failed to register GPIO intercept handlers\n");
 	}
 }

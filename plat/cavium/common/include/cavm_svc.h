@@ -31,6 +31,11 @@
 /* no args */
 #define THUNDERX_NODE_COUNT		0x43000601
 
+/* X1 - gpio_num, X2 - sp, X3 - cpu, X4 - ttbr0 */
+#define THUNDERX_INSTALL_GPIO_INT	0x43000801
+/* X1 - gpio_num */
+#define THUNDERX_REMOVE_GPIO_INT	0x43000802
+
 /* x1 - character to print */
 #define THUNDERX_PUTC			0x43000a01
 
@@ -40,9 +45,9 @@
 #endif
 
 #if (!defined(PLAT_t81) && !defined(PLAT_t83))
-#define THUNDERX_NUM_CALLS		7
+#define THUNDERX_NUM_CALLS		9
 #else
-#define THUNDERX_NUM_CALLS		6
+#define THUNDERX_NUM_CALLS		8
 #endif
 
 #endif /* __THUNDER_SVC_H__ */

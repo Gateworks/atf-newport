@@ -141,6 +141,12 @@ DEFINE_RENAME_SYSREG_RW_FUNCS(cvm_access_el3, AP_CVM_ACCESS_EL3)
 #define OCTEONTX_SMMU_GLOBAL_VECTOR_OFFSET	0x1000
 #define OCTEONTX_SMMU_NUM_CONTEXTS		0x80
 
+/* Base SPI for GPIO interrupt to be handled in ATF */
+#define OCTEONTX_IRQ_GPIO_BASE		0x74
+#define OCTEONTX_IRQ_GPIO_COUNT		0x4
+/* Default SPI to be used by kernel GPIO driver when intercepting interrupts */
+#define OCTEONTX_IRQ_GPIO_NSEC		0x79
+
 int thunder_get_lmc_per_node(void);
 
 int thunder_get_num_ecams_per_node(void);

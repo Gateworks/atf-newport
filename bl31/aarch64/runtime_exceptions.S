@@ -97,6 +97,13 @@
 
 	cmp	x30, #EC_DABORT_LOWER_EL
 	b.eq	dabort_lower_el_handler
+	/* -----------------------------------------------------
+	 * The following code handles any synchronous exception
+	 * that is not an SMC.
+	 * Right now this only happens when EL0 ISR is returning
+	 * -----------------------------------------------------
+	 */
+	b el3_exit_wfi
 
 	/* Other kinds of synchronous exceptions are not handled */
 	ldr	x30, [sp, #CTX_GPREGS_OFFSET + CTX_GPREG_LR]

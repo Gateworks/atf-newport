@@ -39,7 +39,7 @@ static struct ecam_device ecam_bridges[OCTEONTX_ECAM_MAX_DEV];
  */
 static struct ecam_device ecam_dev;
 
-static uint64_t get_bar_val(struct pcie_config *pconfig, int bar)
+uint64_t get_bar_val(struct pcie_config *pconfig, int bar)
 {
 	uint32_t cap;
 	int cap_offset = pconfig->cap_pointer & 0xfc;
@@ -111,8 +111,8 @@ static inline void print_config_space(struct pcie_config *pconfig)
 }
 #endif
 
-static int enable_msix(uint64_t config_base, uint8_t cap_pointer, uint16_t * table_size,
-		       uint8_t * bir)
+int enable_msix(uint64_t config_base, uint8_t cap_pointer, uint16_t *table_size,
+		uint8_t *bir)
 {
 	struct msix_cap *msicap;
 	/* enable MSI-X */

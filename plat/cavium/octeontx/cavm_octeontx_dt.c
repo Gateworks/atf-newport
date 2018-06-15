@@ -11,11 +11,11 @@
 
 **/
 
-#include <platform_def.h>
 #include <debug.h>
 #include <libfdt.h>
 #include <stdlib.h>
 #include <assert.h>
+#include <platform_def.h>
 #include <cavm_dt.h>
 #include <cavm_common.h>
 
@@ -98,7 +98,7 @@ static int octeontx_parse_boot_device(const void *fdt, const int offset,
 int plat_fill_board_details(int info)
 {
 	const void *fdt = fdt_ptr;
-	int offset, rc, node;
+	int offset, len, rc, node;
 
 	/*
 	 * Check if board_cfg_t fits in the memory region reserved
@@ -130,6 +130,16 @@ int plat_fill_board_details(int info)
 	if (rc) {
 		INFO("Using GPIO_STRAPX register for boot device\n");
 		octeontx_boot_device_from_strapx(node);
+	}
+
+	offset = fdt_path_offset(fdt_ptr, OCTEONTX_GPIO_DT_PATH);
+	if (offset >= 0) {
+		if (fdt_getprop(fdt_ptr, offset, "interrupts", &len))
+			bfdt->gpio_intercept_intr = 1;
+		else
+			bfdt->gpio_intercept_intr = 0;
+	} else {
+		bfdt->gpio_intercept_intr = 0;
 	}
 
 	return 0;

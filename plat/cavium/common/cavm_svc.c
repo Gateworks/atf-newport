@@ -19,6 +19,7 @@
 #include <uuid.h>
 #include <string.h>
 #include <cavm_common.h>
+#include <cavm_gpio.h>
 #include <errno.h>
 #include <libfdt.h>
 
@@ -83,6 +84,13 @@ uint64_t thunder_svc_smc_handler(uint32_t smc_fid,
 		ret = octeontx2_clear_lf_to_pf_mapping(x1);
 		SMC_RET1(handle, ret);
 #endif
+	case THUNDERX_INSTALL_GPIO_INT:
+		ret = gpio_install_irq(x1, x2, x3, x4);
+		SMC_RET1(handle, ret);
+
+	case THUNDERX_REMOVE_GPIO_INT:
+		gpio_clear_irq(x1);
+		SMC_RET1(handle, 0);
 	default:
 		WARN("Unimplemented ThunderX Service Call: 0x%x \n", smc_fid);
 		SMC_RET1(handle, SMC_UNK);

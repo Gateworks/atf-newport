@@ -14,12 +14,14 @@
 #include <arch.h>
 #include <stdio.h>
 #include <debug.h>
+#include <platform_def.h>
 #include <cavm_common.h>
 #include <cavm_cgx_intf.h>
 #include <cavm_cgx.h>
 #include <cavm_setup.h>
 #include <cavm_pwrc.h>
 #include <cavm_legacy_pwrc.h>
+#include <cavm_gpio.h>
 
 /* Any SoC family specific setup
  * to be done in BL31 can be initialized
@@ -32,6 +34,9 @@ void plat_cavm_setup(void)
 {
 	/* Initialize CGX framework */
 	cgx_fw_intf_init();
+
+	/* setup gpio interrupt handling */
+	plat_gpio_irq_setup();
 }
 
 const uintptr_t plat_get_scmi_mbox_addr(int node)

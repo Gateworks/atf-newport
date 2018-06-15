@@ -145,4 +145,8 @@
 /* Signals used to communicate with MCU */
 #define OCTEONTX_MCU_SHUTDOWN_SIGNAL	0x96
 
+#define OCTEONTX_GPIO_DT_PATH		"/soc@0/pci@848000000000/gpio0@6,0"
+
+#define MAX_GPIO_INTERRUPTS		80
+
 #endif

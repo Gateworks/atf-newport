@@ -14,8 +14,10 @@
 #include <arch.h>
 #include <stdio.h>
 #include <debug.h>
+#include <platform_def.h>
 #include <cavm_common.h>
 #include <cavm_legacy_pwrc.h>
+#include <cavm_gpio.h>
 
 /* Any SoC family specific setup
  * to be done in BL31 can be initialized
@@ -26,9 +28,8 @@
  */
 void plat_cavm_setup(void)
 {
-	/* FIXME: no functionality as of now,
-	 * added to make this API generic
-	 */
+	/* setup gpio interrupt handling */
+	plat_gpio_irq_setup();
 }
 
 void plat_pwrc_setup(void)

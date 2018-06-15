@@ -161,3 +161,14 @@ void plat_add_mmio_node(unsigned long node)
 		add_map_record(CSR_PA(node, CAVM_IOBN_BAR_E_IOBNX_PF_BAR0_CN8(i)), CAVM_IOBN_BAR_E_IOBNX_PF_BAR0_CN8_SIZE , attr);
 	}
 }
+
+/* dummy functions to satisfy other platforms in this family */
+void plat_set_gpio_msix_vectors(int gpio_num, int irq_num, int enable)
+{
+
+}
+
+void plat_gpio_irq_setup(void)
+{
+
+}

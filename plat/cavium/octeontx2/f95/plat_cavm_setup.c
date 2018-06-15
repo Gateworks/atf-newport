@@ -10,10 +10,14 @@
   WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 
 **/
-
-#include <cavm_common.h>
+#include <debug.h>
+#include <platform.h>
 #include <platform_def.h>
 #include <platform_setup.h>
+#include <cavm_common.h>
+#include <cavm_gpio.h>
+
+static uint64_t msix_addr_save;
 
 int thunder_get_lmc_per_node(void)
 {
@@ -341,4 +345,50 @@ void plat_add_mmio_node(unsigned long node)
 	 */
 	mmap_add_region(RVU_MEM_BASE, RVU_MEM_BASE,
 			RVU_MEM_SIZE, (MT_MEMORY | MT_RW | MT_NS));
+}
+
+void plat_set_gpio_msix_vectors(int gpio_num, int irq_num, int enable)
+{
+	uint64_t vector_ptr;
+	int intr_pinx;
+
+	/* Get the offset of interrupt vector for that GPIO line */
+	intr_pinx = CAVM_GPIO_INT_VEC_E_INTR_PINX_CN9(gpio_num);
+
+	/* INTR_PINX vector address */
+	vector_ptr =  CAVM_GPIO_BAR_E_GPIO_PF_BAR4 + intr_pinx * 0x10;
+
+	if (enable) {
+		/* Save vector address so that it can be restored.
+		 * The value will be same for set and clear vectors so saving
+		 * once will suffice.
+		 */
+		msix_addr_save = cavm_read64(vector_ptr);
+		/* Enable SECVEC to make the vector secure */
+		cavm_write64(vector_ptr, CAVM_GICD_SETSPI_SR | 1);
+		vector_ptr += 0x8;
+		cavm_write64(vector_ptr, irq_num);
+
+		/* INTR_PINX_CLEAR vector */
+		vector_ptr += 0x8;
+		/* Enable SECVEC to make the vector secure */
+		cavm_write64(vector_ptr, CAVM_GICD_CLRSPI_SR | 1);
+		vector_ptr += 0x8;
+		cavm_write64(vector_ptr, irq_num);
+	} else {
+		/* Restore the vector address */
+		cavm_write64(vector_ptr, msix_addr_save);
+
+		/* INTR_PINX_CLEAR vector */
+		vector_ptr += 0x10;
+		cavm_write64(vector_ptr, msix_addr_save);
+	}
+}
+
+void plat_gpio_irq_setup(void)
+{
+	gpio_intercept_interrupts = 1;
+
+	if (cavm_register_gpio_handlers() < 0)
+		ERROR("Failed to register GPIO intercept handlers\n");
 }

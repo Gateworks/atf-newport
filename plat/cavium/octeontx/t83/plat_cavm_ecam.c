@@ -17,6 +17,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
+#include <libfdt.h>
 #include <cavm_dt.h>
 #include <cavm_ecam.h>
 
@@ -98,6 +99,66 @@ struct ecam_probe_callback probe_callbacks[] = {
 	{0xa026, 0x177d, ecam_probe_bgx, 0},
 	{0xa022, 0x177d, ecam_probe_lmc, 0},
 	{ECAM_INVALID_DEV_ID, 0, 0, 0}
+};
+
+static void init_gpio(int node, uint64_t config_base, uint64_t config_size)
+{
+	union cavm_pccpf_xxx_vsec_sctl vsec_sctl;
+	struct pcie_config *pconfig = (struct pcie_config *)config_base;
+	uint64_t vector_base;
+	int i, vector_skip;
+	uint16_t table_size = 0;
+	uint8_t cap_ptr = pconfig->cap_pointer;
+	uint8_t bir = 0;
+
+	/*
+	 * Check if we are intercepting interrupts of GPIO in ATF.
+	 * This is for a feature where ATF will intercept certain GPIO
+	 * interrupts and call a user space handler. It is done for low latency
+	 * interrupt handling requirement in the user space.
+	 *
+	 * Do not continue if not intercepting.
+	 */
+	if (!bfdt->gpio_intercept_intr)
+		return;
+
+	debug_plat_ecam("GPIO Node(%d) init called config_base:%lx size:%lx\n",
+			node, config_base, config_size);
+
+	/* Mark the MSI-X interrupts as physical */
+	vsec_sctl.u = cavm_read32(config_base + CAVM_PCCPF_XXX_VSEC_SCTL);
+	vsec_sctl.s.msix_phys = 1;
+	cavm_write32(config_base + CAVM_PCCPF_XXX_VSEC_SCTL, vsec_sctl.u);
+
+	enable_msix(config_base, cap_ptr, &table_size, &bir);
+
+	if (table_size) {
+		debug_plat_ecam("table_size: %x, bir:%1x\n", table_size, bir);
+		vector_base = get_bar_val(pconfig, bir);
+		debug_plat_ecam("MSI-X vector base:%lx\n", vector_base);
+
+		/* Skip the multicast interrupt vectors */
+		vector_skip = CAVM_GPIO_INT_VEC_E_INTR_PINX_CN83XX(0);
+		vector_base += vector_skip * 0x10;
+
+		for (i = vector_skip; i < table_size; i++) {
+			/* enable SECVEC (bit0) for each MSI-X vectors*/
+			cavm_write64(vector_base, ((i % 2) ?
+						CAVM_GICD_CLRSPI_NSR :
+						CAVM_GICD_SETSPI_NSR) | 1);
+			vector_base += 8;
+			cavm_write64(vector_base, OCTEONTX_IRQ_GPIO_NSEC);
+			vector_base += 8;
+		}
+	}
+}
+
+/*
+ * Callback for platform specific block initialization
+ */
+struct ecam_init_callback plat_init_callbacks[] = {
+	{0xa00a, 0x177d, init_gpio},
+	{ECAM_INVALID_DEV_ID, 0, 0}
 };
 
 struct secure_devices secure_devs[] = {
@@ -333,7 +394,7 @@ struct ecam_probe_callback *cn83xx_get_probe_callbacks(void)
 
 struct ecam_init_callback *cn83xx_get_init_callbacks(void)
 {
-	return NULL;
+	return &plat_init_callbacks[0];
 }
 
 const struct ecam_platform_defs plat_ops = {

@@ -41,6 +41,7 @@ typedef struct board_fdt {
 	int bmc_ipmi_twsi_addr;
 	int gpio_shutdown_ctl_in;
 	int gpio_shutdown_ctl_out;
+	int gpio_intercept_intr;
 #if TRUSTED_BOARD_BOOT
 	uint64_t trust_rot_addr;
 	uint64_t trust_key_addr;
