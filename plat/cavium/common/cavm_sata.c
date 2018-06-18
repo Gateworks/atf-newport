@@ -334,6 +334,7 @@ void sata_ipm_quirk()
 				 * Mark this controller unavailable.
 				 */
 				sata_hba[node][sata].ctrl_base = 0;
+				continue;
 			}
 
 			retry = 2;
