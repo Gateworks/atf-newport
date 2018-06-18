@@ -14,6 +14,7 @@
 #include <arch_helpers.h>
 #include <assert.h>
 #include <debug.h>
+#include <delay_timer.h>
 #include <cavm_scmi.h>
 #include <mmio.h>
 #include <cavm_dt.h>
@@ -58,7 +59,7 @@ void scmi_send_sync_command(scmi_channel_t *ch)
 
 	/* Wait for channel to be free */
 	while (!SCMI_IS_CHANNEL_FREE(mbx_mem->status))
-		;
+		udelay(1);
 
 	/*
 	 * Ensure that any read to the SCMI payload area is done after reading
