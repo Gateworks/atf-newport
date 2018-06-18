@@ -346,7 +346,7 @@ void sata_ipm_quirk()
 
 				ghc.u = CSR_READ(node, CAVM_SATAX_UAHC_GBL_GHC(sata));
 				ghc.s.hr = 1;
-				CSR_WRITE(node, CAVM_SATAX_UAHC_GBL_GHC(sata), cmd.u);
+				CSR_WRITE(node, CAVM_SATAX_UAHC_GBL_GHC(sata), ghc.u);
 
 				do {
 					ghc.u = CSR_READ(node, CAVM_SATAX_UAHC_GBL_GHC(sata));
