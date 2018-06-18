@@ -92,12 +92,14 @@
 
 /* Helper macros to check and write the channel status */
 #define SCMI_IS_CHANNEL_FREE(status)					\
-	(!!(((status) >> SCMI_CH_STATUS_FREE_SHIFT) & SCMI_CH_STATUS_FREE_MASK))
+	(!!(((mmio_read_32((uintptr_t)&status)) >> SCMI_CH_STATUS_FREE_SHIFT) & SCMI_CH_STATUS_FREE_MASK))
 
 #define SCMI_MARK_CHANNEL_BUSY(status)	do {				\
-		assert(SCMI_IS_CHANNEL_FREE(status));			\
-		(status) &= ~(SCMI_CH_STATUS_FREE_MASK <<		\
-				SCMI_CH_STATUS_FREE_SHIFT);		\
+		uint32_t (val) = mmio_read_32((uintptr_t)&status);	\
+		assert(SCMI_IS_CHANNEL_FREE(val));			\
+		(val) &= ~(SCMI_CH_STATUS_FREE_MASK <<			\
+			SCMI_CH_STATUS_FREE_SHIFT);			\
+		mmio_write_32((uintptr_t)&status, (val));		\
 	} while (0)
 
 /* Helper macros to copy arguments to the mailbox payload */
