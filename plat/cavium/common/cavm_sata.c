@@ -232,8 +232,7 @@ static int sata_drive_check_unplug_failure(int node, int sata)
 	CSR_WRITE(node, CAVM_GSERX_LANEX_LBERT_PAT_CFG(qlm, lane), 0);
 
 	/* Enable the pattern generator creating 8b/10b patterns of zeros */
-	lbert_cfg.u = CSR_READ(gser_base[node][qlm],
-			       CAVM_GSERX_LANEX_LBERT_CFG(qlm, lane));
+	lbert_cfg.u = CSR_READ(node, CAVM_GSERX_LANEX_LBERT_CFG(qlm, lane));
 	lbert_cfg.s.lbert_pg_width = 3;
 	lbert_cfg.s.lbert_pg_mode = 8;
 	lbert_cfg.s.lbert_pg_en = 1;
@@ -308,9 +307,6 @@ void sata_ipm_quirk()
 
 	node_cnt = thunder_get_node_count();
 	for (node = 0; node < node_cnt; node++) {
-		for (sata = 0; sata < thunder_get_max_sata_gser(); sata++)
-			gser_base[node][sata] = CSR_PA(node, CAVM_GSERX_PF_BAR0(sata));
-
 		for (sata = 0; sata < sata_ctrlr_count; sata++) {
 			gser = thunder_sata_to_gser(sata);
 

@@ -20,8 +20,6 @@
 #define SATA_SIG_ATAPI	0xEB140101
 #define SATA_SIG_SEMB	0xC33C0101
 
-static uint64_t gser_base[PLATFORM_MAX_NODES][MAX_SATA_GSER];
-
 struct sata_ctrlr {
 	uint64_t ctrl_base;
 	uint32_t gser_base;
