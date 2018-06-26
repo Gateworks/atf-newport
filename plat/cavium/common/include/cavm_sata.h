@@ -22,7 +22,6 @@
 
 struct sata_ctrlr {
 	uint64_t ctrl_base;
-	uint32_t gser_base;
 	uint32_t sig;
 	uint8_t  state_count;
 	uint8_t  last_state;
