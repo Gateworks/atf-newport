@@ -257,6 +257,10 @@ typedef union cavm_shutdown_config_data {
 #define SCMI_E_NOT_FOUND		-4
 #define SCMI_E_OUT_OF_RANGE		-5
 #define SCMI_E_BUSY			-6
+#define SCMI_E_COMMS_ERROR		-7
+#define SCMI_E_GENERIC_ERROR		-8
+#define SCMI_E_HARDWARE_ERROR		-9
+#define SCMI_E_PROTOCOL_ERROR		-10
 
 /*
  * Private data structure for representing the mailbox memory layout. Refer
