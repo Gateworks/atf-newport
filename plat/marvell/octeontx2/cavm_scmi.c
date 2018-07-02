@@ -12,6 +12,8 @@
 **/
 
 #include <arch_helpers.h>
+#include <string.h>
+#include <limits.h>
 #include <assert.h>
 #include <debug.h>
 #include <delay_timer.h>
@@ -38,6 +40,16 @@ void scmi_get_channel(scmi_channel_t *ch)
 void scmi_send_sync_command(scmi_channel_t *ch)
 {
 	mailbox_mem_t *mbx_mem = (mailbox_mem_t *)(ch->info->scmi_mbx_mem);
+	int tries_left = 300;
+
+	/*
+	 * ASIM environment needs much more time to process requests -
+	 * set tries_left to maximum possible value (basically not
+	 * handle timeouts). For other platforms, as per agreement with
+	 * SCP_BL1, 300us delay should be sufficient.
+	 */
+	if (!strncmp(bfdt->board_model, "asim-", 5))
+		tries_left = INT_MAX;
 
 	SCMI_MARK_CHANNEL_BUSY(mbx_mem->status);
 
@@ -58,7 +70,7 @@ void scmi_send_sync_command(scmi_channel_t *ch)
 	dmbsy();
 
 	/* Wait for channel to be free */
-	while (!SCMI_IS_CHANNEL_FREE(mbx_mem->status))
+	while (!SCMI_IS_CHANNEL_FREE(mbx_mem->status) && tries_left--)
 		udelay(1);
 
 	/*
@@ -67,6 +79,13 @@ void scmi_send_sync_command(scmi_channel_t *ch)
 	 * read invalid payload data
 	 */
 	dmbld();
+
+	if (tries_left <= 0) {
+		/* In case of SCP timeout, set return value to SCMI_E_GENERIC_ERROR */
+		mbx_mem->payload[0] = SCMI_E_GENERIC_ERROR;
+		WARN("Timeout waiting for SCP response, SCMI header: 0x%x\n",
+		     mbx_mem->msg_header);
+	}
 }
 
 /*
