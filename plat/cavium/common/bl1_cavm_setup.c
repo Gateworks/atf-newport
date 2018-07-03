@@ -148,7 +148,7 @@ void bl1_early_platform_setup(void)
 void bl1_plat_set_ep_info(unsigned int image_id,
 		entry_point_info_t *ep_info)
 {
-	ep_info->args.arg2 = (unsigned long)fdt_ptr;
+	ep_info->args.arg0 = (unsigned long)fdt_ptr;
 
 }
 

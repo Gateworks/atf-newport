@@ -172,6 +172,13 @@ void bl31_early_platform_setup(bl31_params_t *from_bl2,
 
 }
 
+
+void bl31_early_platform_setup2(u_register_t arg0, u_register_t arg1,
+				u_register_t arg2, u_register_t arg3)
+{
+	bl31_early_platform_setup((void *)arg0, (void *)arg1);
+}
+
 static void thunder_el3_irq_init(void)
 {
 	uint32_t flags;

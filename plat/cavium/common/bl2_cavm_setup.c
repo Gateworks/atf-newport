@@ -199,6 +199,13 @@ void bl2_early_platform_setup(meminfo_t *mem_layout,
 	fdt_ptr = plat_params_from_bl1;
 }
 
+void bl2_early_platform_setup2(u_register_t arg0, u_register_t arg1,
+				u_register_t arg2, u_register_t arg3)
+{
+	/* arg1 is a pointer to mem_layout, arg0 is a pointer to FDT */
+	bl2_early_platform_setup((void *)arg1, (void *)arg0);
+}
+
 /*******************************************************************************
  * Perform platform specific setup. For now just initialize the memory location
  * to use for passing arguments to BL31.
