@@ -14,6 +14,7 @@
 #include <arch.h>
 #include <bl_common.h>
 #include <console.h>
+#include <pl011.h>
 #include <platform.h>
 #include <platform_def.h>
 #include <tbbr_img_def.h>
@@ -44,6 +45,9 @@
 
 /* Data structure which holds the extents of the trusted DRAM for BL1*/
 static meminfo_t bl1_tzram_layout;
+
+/* Data structure for console initialization */
+static console_pl011_t console;
 
 meminfo_t *bl1_plat_sec_mem_layout(void)
 {
@@ -120,7 +124,7 @@ void bl1_early_platform_setup(void)
 	fdt_pack(fdt_ptr);
 
 	/* Initialize the console to provide early debug support */
-	console_init(CSR_PA(0, CAVM_UAAX_PF_BAR0(0)), 0, 0);
+	console_pl011_register(CSR_PA(0, CAVM_UAAX_PF_BAR0(0)), 0, 0, &console);
 
 	/* Allow BL1 to see the whole Trusted RAM */
 	bl1_tzram_layout.total_base = TZDRAM_BASE;

@@ -36,6 +36,7 @@
 #include <bl31.h>
 #include <console.h>
 #include <mmio.h>
+#include <pl011.h>
 #include <platform.h>
 #include <interrupt_mgmt.h>
 #include <stddef.h>
@@ -77,6 +78,9 @@ extern unsigned long __COHERENT_RAM_END__;
 
 static entry_point_info_t bl33_image_ep_info, bl32_image_ep_info;
 
+/* Data structure for console initialization */
+static console_pl011_t console;
+
 /*******************************************************************************
  * Return a pointer to the 'entry_point_info' structure of the next image for the
  * security state specified. BL33 corresponds to the non-secure image type
@@ -114,7 +118,7 @@ void bl31_early_platform_setup(bl31_params_t *from_bl2,
 				void *plat_params_from_bl2)
 #endif
 {
-	console_init(CSR_PA(0, CAVM_UAAX_PF_BAR0(0)), 0, 0);
+	console_pl011_register(CSR_PA(0, CAVM_UAAX_PF_BAR0(0)), 0, 0, &console);
 
 #if LOAD_IMAGE_V2
 	/*

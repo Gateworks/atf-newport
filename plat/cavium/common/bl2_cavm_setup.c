@@ -34,6 +34,7 @@
 #include <bl_common.h>
 #include <desc_image_load.h>
 #include <console.h>
+#include <pl011.h>
 #include <platform.h>
 #include <platform_def.h>
 #include <string.h>
@@ -85,6 +86,9 @@ extern unsigned char **bl2_el_change_mem_ptr;
 /* Data structure which holds the extents of the trusted SRAM for BL2 */
 static meminfo_t bl2_tzram_layout __aligned(CACHE_WRITEBACK_GRANULE)
 		__attribute((section("tzfw_coherent_mem")));
+
+/* Data structure for console initialization */
+static console_pl011_t console;
 
 #if LOAD_IMAGE_V2
 
@@ -187,7 +191,7 @@ void bl2_early_platform_setup(meminfo_t *mem_layout,
 				void *plat_params_from_bl1)
 {
 	/* Initialize the console to provide early debug support */
-	console_init(CSR_PA(0, CAVM_UAAX_PF_BAR0(0)), 0, 0);
+	console_pl011_register(CSR_PA(0, CAVM_UAAX_PF_BAR0(0)), 0, 0, &console);
 
 	/* Setup the BL2 memory layout */
 	bl2_tzram_layout = *mem_layout;
