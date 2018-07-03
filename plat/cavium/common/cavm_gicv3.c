@@ -25,27 +25,29 @@
 #include <gic_common.h>
 #include <gicv3.h>
 #include <platform.h>
+#include <interrupt_mgmt.h>
 
 #if IMAGE_BL31
 /* The GICv3 driver only needs to be initialized in EL3 */
 uintptr_t rdistif_base_addrs[PLATFORM_CORE_COUNT];
 
-/* Array of Group0 interrupts to be configured by the gic driver */
-static const unsigned int g0_interrupt_array[] = {
-	OCTEONTX_IRQ_SEC_PHY_TIMER,
-	OCTEONTX_GPIO_PWR_S_IRQ,
-	OCTEONTX_IRQ_GPIO_BASE,
-	OCTEONTX_IRQ_GPIO_BASE + 1,
-	OCTEONTX_IRQ_GPIO_BASE + 2,
-	OCTEONTX_IRQ_GPIO_BASE + 3,
+/*
+ * Array of interrupts to be configured by GIC driver
+ * Define G0/G1S interrupts via Interrupt type,
+ * one of INTR_TYPE_EL3, INTR_TYPE_S_EL1, INTR_TYPE_NS
+ */
+static const interrupt_prop_t interrupt_array[] = {
+	INTR_PROP_DESC(OCTEONTX_IRQ_SEC_PHY_TIMER, 0, INTR_TYPE_EL3, GIC_INTR_CFG_LEVEL),
+	INTR_PROP_DESC(OCTEONTX_GPIO_PWR_S_IRQ, 0, INTR_TYPE_EL3, GIC_INTR_CFG_LEVEL),
+	INTR_PROP_DESC(OCTEONTX_IRQ_GPIO_BASE, 0, INTR_TYPE_EL3, GIC_INTR_CFG_LEVEL),
+	INTR_PROP_DESC(OCTEONTX_IRQ_GPIO_BASE + 1, 0, INTR_TYPE_EL3, GIC_INTR_CFG_LEVEL),
+	INTR_PROP_DESC(OCTEONTX_IRQ_GPIO_BASE + 2, 0, INTR_TYPE_EL3, GIC_INTR_CFG_LEVEL),
+	INTR_PROP_DESC(OCTEONTX_IRQ_GPIO_BASE + 3, 0, INTR_TYPE_EL3, GIC_INTR_CFG_LEVEL)
 };
 
 static gicv3_driver_data_t thunder_gic_data = {
-	/* gicd_base and gicr_base are setup later */
-	.g0_interrupt_num = ARRAY_SIZE(g0_interrupt_array),
-	.g1s_interrupt_num = 0,
-	.g0_interrupt_array = g0_interrupt_array,
-	.g1s_interrupt_array = NULL,
+	.interrupt_props = interrupt_array,
+	.interrupt_props_num = ARRAY_SIZE(interrupt_array),
 	.rdistif_num = PLATFORM_CORE_COUNT,
 	.rdistif_base_addrs = rdistif_base_addrs,
 #if defined(PLAT_t83) || defined(PLAT_t81)
