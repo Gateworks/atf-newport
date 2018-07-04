@@ -32,14 +32,14 @@ struct ccs_region ccs_map [] = {
 		.node    = 0,
 		.number  = 0,
 		.start   = TZDRAM_BASE,
-		.end     = TZDRAM_BASE + TZDRAM_SIZE,
+		.end     = TZDRAM_BASE + TZDRAM_SIZE - 1,
 		.secure  = 1,
 	},
 	{
 		.node    = 0,
 		.number  = 1,
 		.start   = RVU_MEM_BASE,
-		.end     = RVU_MEM_BASE + RVU_MEM_SIZE,
+		.end     = RVU_MEM_BASE + RVU_MEM_SIZE - 1,
 		.secure  = 0,
 	},
 
@@ -90,7 +90,7 @@ void octeontx_security_setup(void)
 		INFO("Mark memory region %d at node %d:: %lx to %lx as %ssecure (%lx)\n",
 			region->number, region->node,
 			CSR_READ(region->node, CAVM_CCS_ASC_REGIONX_START(region->number)),
-			CSR_READ(region->node, CAVM_CCS_ASC_REGIONX_END(region->number)),
+			CSR_READ(region->node, CAVM_CCS_ASC_REGIONX_END(region->number)) | 0xffffff,
 			region->secure ? "" : "non-",
 			CSR_READ(region->node, CAVM_CCS_ASC_REGIONX_ATTR(region->number)));
 
