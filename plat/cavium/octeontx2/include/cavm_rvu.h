@@ -21,12 +21,12 @@
  *   - 1MB for VFs msix table(512 VFs * 128 * MSIX entry size).
  * 96xx has 16 PFs and 256 VFs whereas 98xx has 32 PFs and 512 VFs.
  */
-#define PF_MBOX_BASE	RVU_MEM_BASE
-#define PF_MBOX_SIZE	0x000200000
-#define VF_MBOX_BASE	(PF_MBOX_BASE + PF_MBOX_SIZE)
-#define VF_MBOX_SIZE	0x002000000
-#define PF_MSIX_BASE	(VF_MBOX_BASE + VF_MBOX_SIZE)
-#define VF_MSIX_OFFSET	0x20000
+#define PF_MBOX_BASE		RVU_MEM_BASE
+#define PF_MBOX_SIZE		0x000200000
+#define VF_MBOX_BASE		(PF_MBOX_BASE + PF_MBOX_SIZE)
+#define VF_MBOX_SIZE		0x002000000
+#define PF_MSIX_BASE		(VF_MBOX_BASE + VF_MBOX_SIZE)
+#define VF_MSIX_BASE_IDX_NUMBER	0x2000
 
 #define DEVID_MASK	0xff
 #define CLASS_CODE_MASK	0xffffff

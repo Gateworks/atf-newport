@@ -320,7 +320,7 @@ static void msix_error_print_map(int node)
 
 static int msix_enable(int node)
 {
-	uint32_t pf_msix_offset = 0, vf_msix_offset = VF_MSIX_OFFSET;
+	uint32_t pf_msix_offset = 0, vf_msix_offset = VF_MSIX_BASE_IDX_NUMBER;
 	int pf, msix_conf_count = 0;
 	union cavm_rvu_priv_const priv_const;
 
@@ -342,7 +342,7 @@ static int msix_enable(int node)
 			pfx_msix_cfg.u = 0;
 			pfx_msix_cfg.s.pf_msixt_offset = pf_msix_offset;
 			pfx_msix_cfg.s.pf_msixt_sizem1 = rvu_dev[pf].pf_num_msix_vec - 1;
-			pf_msix_offset += (rvu_dev[pf].pf_num_msix_vec * RVU_MSIX_VEC_SIZE);
+			pf_msix_offset += (rvu_dev[pf].pf_num_msix_vec);
 			/* Increment number of already configured MSI-Xes */
 			msix_conf_count += rvu_dev[pf].pf_num_msix_vec;
 
@@ -351,14 +351,14 @@ static int msix_enable(int node)
 			 * never be reached since we're provisioning at most
 			 * 256 MSIX vectors per PF, so FDT gave us wrong setup.
 			 */
-			assert(pf_msix_offset < VF_MSIX_OFFSET);
+			assert(pf_msix_offset < VF_MSIX_BASE_IDX_NUMBER);
 
 			if (rvu_dev[pf].num_vfs) {
 				pfx_msix_cfg.s.vf_msixt_offset = vf_msix_offset;
 				pfx_msix_cfg.s.vf_msixt_sizem1 =
 					rvu_dev[pf].vf_num_msix_vec - 1;
 				vf_msix_offset += ((rvu_dev[pf].num_vfs & MAX_RVU_VFS_PER_PF) *
-						   (rvu_dev[pf].vf_num_msix_vec * RVU_MSIX_VEC_SIZE));
+						   rvu_dev[pf].vf_num_msix_vec);
 				/*
 				 * Increment number of already
 				 * configured MSI-Xes
