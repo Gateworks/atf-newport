@@ -202,5 +202,56 @@ void cavm_configure_mmc_security(int secure);
 void set_secondary_cpu_jump_addr(unsigned int bl1_base);
 void l2c_flush(void);
 void plat_cavm_setup(void);
+unsigned int plat_get_rom_t_cnt(int node);
+
+/**
+ * Builds a bit mask given the required size in bits.
+ *
+ * @param bits   Number of bits in the mask
+ * @return The mask
+ */
+static inline uint64_t cavm_build_mask(uint64_t bits)
+{
+	if (bits == 64)
+		return -1;
+
+	return ~((~0x0ull) << bits);
+}
+
+/**
+ * Extract bits out of a number
+ *
+ * @param input  Number to extract from
+ * @param lsb    Starting bit, least significant (0-63)
+ * @param width  Width in bits (1-64)
+ *
+ * @return Extracted number
+ */
+static inline uint64_t cavm_bit_extract(uint64_t input, int lsb, int width)
+{
+    uint64_t result = input >> lsb;
+    result &= cavm_build_mask(width);
+    return result;
+}
+
+/**
+ * Insert bits into a number
+ *
+ * @param original Original data, before insert
+ * @param input    Data to insert
+ * @param lsb    Starting bit, least significant (0-63)
+ * @param width  Width in bits (1-64)
+ *
+ * @return Number with inserted bits
+ */
+static inline uint64_t cavm_bit_insert(uint64_t original, uint64_t input, int lsb, int width)
+{
+    uint64_t mask = cavm_build_mask(width);
+    uint64_t result = original & ~(mask << lsb);
+    result |= (input & mask) << lsb;
+    return result;
+}
+
+
 
 #endif /* __CAVM_COMMON_H__ */

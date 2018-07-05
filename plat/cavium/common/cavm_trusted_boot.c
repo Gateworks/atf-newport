@@ -192,7 +192,6 @@ int plat_get_rotpk_info(void *cookie, void **key_ptr, unsigned int *key_len,
 int plat_get_nv_ctr(void *cookie, unsigned int *nv_ctr)
 {
 	const char *oid;
-	union cavm_fusf_ctl fusf_ctl;
 	union cavm_fusf_swx fusf_swx;
 
 	assert(cookie != NULL);
@@ -202,12 +201,7 @@ int plat_get_nv_ctr(void *cookie, unsigned int *nv_ctr)
 
 	/* Cavium platform uses FUSF_CTL for Trusted Counter */
 	if (strcmp(oid, TRUSTED_FW_NVCOUNTER_OID) == 0 ) {
-		fusf_ctl.u = CSR_READ(0, CAVM_FUSF_CTL);
-		nv_ctr_val = 0;
-		/* Convert value from rom_t_cnt to unsigned int */
-		if (fusf_ctl.s.rom_t_cnt)
-			nv_ctr_val = 32 - __builtin_clz(fusf_ctl.s.rom_t_cnt);
-
+		nv_ctr_val = plat_get_rom_t_cnt(0);
 		*nv_ctr = nv_ctr_val;
 	/* For Non-Trusted counter, use FUSF_SWX */
 	} else if (strcmp(oid, NON_TRUSTED_FW_NVCOUNTER_OID) == 0) {

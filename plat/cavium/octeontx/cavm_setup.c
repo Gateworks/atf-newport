@@ -61,3 +61,40 @@ int plat_fuse_read(int node, int fuse)
 
 	return FUSE_GET_VAL(read_cmd.s.dat, fuse);
 }
+
+/*
+ * Get ROM_T_CNT value from the FUSF_RCMD
+ *
+ * Return: Value in 0-32 range
+ */
+unsigned int plat_get_rom_t_cnt(int node)
+{
+	cavm_fusf_rcmd_t read_cmd;
+	uint64_t dat;
+	uint32_t nv_count_val = 0;
+	unsigned int ret = 0;
+
+	read_cmd.u = 0;
+	/* In CN8XXX fuses take a byte address, not a 128 bit bank */
+	read_cmd.cn8.addr = CAVM_FUSF_FUSE_NUM_E_ROM_T_CNTX(0) >> 3;
+	read_cmd.cn8.addr_hi = CAVM_FUSF_FUSE_NUM_E_ROM_T_CNTX(0) >> 9;
+	read_cmd.s.pend = 1;
+	CSR_WRITE(node, CAVM_FUSF_RCMD, read_cmd.u);
+	do {
+		read_cmd.u = CSR_READ(node, CAVM_FUSF_RCMD);
+	} while (read_cmd.s.pend);
+
+	/*
+	 * FUSF_BNK_DATX contains all 128 fuses
+	 * in the bank associated with FUSF_RCMD[ADDR].
+	 * ROM_T_CNT is stored on FUSF_BNK_DATX(0)[63:32]
+	 */
+	dat = CSR_READ(node, CAVM_FUSF_BNK_DATX(0));
+	nv_count_val = cavm_bit_extract(dat, CAVM_FUSF_FUSE_NUM_E_ROM_T_CNTX(0), 32);
+
+	/* Convert value from rom_t_cnt to unsigned int */
+	if (nv_count_val)
+		ret = 32 - __builtin_clz(nv_count_val);
+
+	return ret;
+}
