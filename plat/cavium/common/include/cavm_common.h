@@ -69,6 +69,16 @@ DEFINE_RENAME_SYSREG_RW_FUNCS(cvm_access_el3, AP_CVM_ACCESS_EL3)
 	 (((midr) >> MIDR_VAR_SHIFT & MIDR_VAR_MASK) == (hi) - 1) &&	\
 	 (((midr) >> MIDR_REV_SHIFT & MIDR_REV_MASK) == (low)))
 
+/* Utils macro for fuses usage */
+#define FUSE_BIT_TO_BYTE_ADDR_SHIFT	0x3
+#define FUSE_BIT_TO_BYTE_ADDR(addr)	((addr) >> FUSE_BIT_TO_BYTE_ADDR_SHIFT)
+#define FUSE_HI_ADDR_SHIFT		0x8
+#define FUSE_HI_ADDR(addr)		((addr) >> FUSE_HI_ADDR_SHIFT)
+#define FUSE_BYTE_ADDR_MASK		0x7
+#define FUSE_BIT_SET			0x1
+#define FUSE_GET_VAL(dat, fuse)		(((uint8_t)dat) >> ((fuse) & FUSE_BYTE_ADDR_MASK) & FUSE_BIT_SET)
+
+
 /* In Mhz */
 #define THUNDER_SYSCNT_FREQ	100ull
 
@@ -192,24 +202,5 @@ void cavm_configure_mmc_security(int secure);
 void set_secondary_cpu_jump_addr(unsigned int bl1_base);
 void l2c_flush(void);
 void plat_cavm_setup(void);
-
-static uint8_t thunder_fuse_read_byte(int node, int byte_addr)
-{
-	union cavm_mio_fus_rcmd read_cmd;
-
-	read_cmd.u = 0;
-	read_cmd.s.addr = byte_addr;
-	read_cmd.s.pend = 1;
-	CSR_WRITE(node, CAVM_MIO_FUS_RCMD, read_cmd.u);
-	while ((read_cmd.u = CSR_READ(node, CAVM_MIO_FUS_RCMD)) &&
-		read_cmd.s.pend) ;
-
-	return read_cmd.s.dat;
-}
-
-static inline int thunder_fuse_read(int node, int fuse)
-{
-	return (thunder_fuse_read_byte(node, fuse >> 3) >> (fuse & 0x7)) & 1;
-}
 
 #endif /* __CAVM_COMMON_H__ */

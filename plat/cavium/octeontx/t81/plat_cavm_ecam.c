@@ -131,8 +131,10 @@ static int cn81xx_quirk_cn80xx(struct ecam_device *dev)
 
 	/* Check if CPT block is available by reading the fuse */
 	if ((dev->ecam == 0) && (dev->domain == 0) && (dev->bus == 4)) {
-		for (i = 1665; i <= 1680; i++) {
-			fuse_cnt += thunder_fuse_read(dev->node, i);
+		for (i = CPT_FUSED_FUSE_BASE_OFFSET;
+		     i < CPT_FUSED_FUSE_END_OFFSET;
+		     i++) {
+			fuse_cnt += plat_fuse_read(dev->node, i);
 		}
 
 		if (fuse_cnt == 16)

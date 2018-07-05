@@ -42,3 +42,22 @@ void plat_setup_psci_ops(uintptr_t sec_entrypoint,
 {
 	cavm_legacy_setup_psci_ops(sec_entrypoint, psci_ops);
 }
+
+/*
+ * Read a single fuse bit from MIO_FUS
+ */
+int plat_fuse_read(int node, int fuse)
+{
+	cavm_mio_fus_rcmd_t read_cmd;
+	int byte_addr = FUSE_BIT_TO_BYTE_ADDR(fuse);
+
+	read_cmd.u = 0;
+	read_cmd.s.addr = byte_addr;
+	read_cmd.s.addr_hi = FUSE_HI_ADDR(byte_addr);
+	read_cmd.s.pend = 1;
+	CSR_WRITE(node, CAVM_MIO_FUS_RCMD, read_cmd.u);
+	while ((read_cmd.u = CSR_READ(node, CAVM_MIO_FUS_RCMD)) &&
+		read_cmd.s.pend);
+
+	return FUSE_GET_VAL(read_cmd.s.dat, fuse);
+}

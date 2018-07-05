@@ -77,3 +77,20 @@ void plat_setup_psci_ops(uintptr_t sec_entrypoint,
 	}
 }
 
+/*
+ * fuse parameter should be one of the fuse enum - FUS_FUSE_NUM_E
+ * for which the value to be read
+ */
+int plat_fuse_read(int node, int fuse)
+{
+	uint64_t fus_val;
+	int byte_addr = FUSE_BIT_TO_BYTE_ADDR(fuse);
+
+	/* read the cache register to obtain the fuse state
+	 * FUS_CACHEX() operates on 64-bit and indexed by
+	 * FUS_FUSE_NUM_E
+	 */
+	fus_val = CSR_READ(node, CAVM_FUS_CACHEX(byte_addr >> 3));
+	fus_val >>= (byte_addr & 7) << 3;
+	return FUSE_GET_VAL(fus_val, fuse);
+}
