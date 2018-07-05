@@ -14,6 +14,8 @@
 # Include common thunder platform's makefile helper
 include plat/cavium/common/platform.mk
 
+ARM_ARCH_MINOR		:=	2
+
 PLAT_INCLUDES		+=	-Iplat/cavium/octeontx2/include			\
 				-Iplat/cavium/octeontx2/f95/include		\
 
