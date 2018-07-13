@@ -42,6 +42,15 @@
 /* software to wait ~1.75 ms when restarting training process as per HRM */
 #define CGX_SPUX_TRAINING_RESTART_DELAY 2000
 
+/* software to wait 10 ms to establish stable link */
+#define CGX_SPUX_BR_RCV_LINK_DELAY 10000
+
+/* MAX USXGMII types supported on CN9XXX */
+#define MAX_USXGMII_TYPES (CAVM_CGX_USXGMII_TYPE_E_QXGMII_10G + 1)
+
+/* MAX USXGMII rate types supported on CN9XXX */
+#define MAX_USXGMII_RATE_TYPES (CAVM_CGX_USXGMII_RATE_E_RSV_RATE + 1)
+
 /* Read-Modify-Write APIs for CGX CSRs */
 #define CAVM_MODIFY_CGX_CSR(node, type, csr, field, val)        \
 	do {                                                    \
@@ -65,6 +74,11 @@
 #define CGX_SMUX_TX_IDLE_MASK		1 << 1
 #define CGX_SMUX_RX_IDLE_MASK		1 << 0
 #define CGX_SMUX_PCS_RCV_LINK_MASK	1 << 1
+#define CGX_SPUX_AN_RESET_MASK		1 << 15
+#define CGX_SPUX_USX_AN_RESET_MASK	1 << 15
+#define CGX_SPUX_AN_LNK_MASK		1 << 11
+#define CGX_SPUX_USX_AN_LNK_MASK	1 << 19
+#define CGX_SPUX_RSFEC_ALGN_STS_MASK	1 << 8
 
 /* ERROR MASK based on cgx_err_type */
 #define CGX_ERR_MASK			0x3FF		/* 10 bits */
@@ -86,6 +100,20 @@ typedef union cgx_link_status {
 		uint64_t reserved:58;
 	} s;
 } link_state_t;
+
+/* USXGMII sub type/rate mapping */
+typedef struct usxgmii_type {
+	int baud_rate;
+	int lmacs_used;
+	int type;
+	int max_rate;	/* max rate allowed on a sub type */
+} usxgmii_type_t;
+
+typedef struct usxgmii_rate_map {
+	int speed;
+	int rate;
+	int speed_mbps;
+} usxgmii_rate_map_t;
 
 /* this structure will be used to maintain the current
  * link status and also lock mechanism to prevent simultaneous
@@ -120,6 +148,7 @@ typedef union cgx_lmac_context {
 	} s;
 } cgx_lmac_context_t;
 
+/* CGX driver APIs */
 void cgx_hw_init(int node, int cgx_id);
 int cgx_sgmii_set_link_speed(int node, int cgx_id, int lmac_id,
 			link_state_t *link);
@@ -135,6 +164,7 @@ int cgx_rx_equalization(int node, int cgx_id, int lmac_id);
 void cgx_set_internal_loopback(int node, int cgx_id, int lmac_id, int enable);
 void cgx_set_external_loopback(int node, int cgx_id, int lmac_id, int enable);
 void cgx_set_error_type(int node, int cgx_id, int lmac_id, uint64_t type);
+void cgx_get_link_state(int node, int cgx_id, int lmac_id, link_state_t *link);
 
 /* CGX FW interface APIs */
 void cgx_fw_intf_init(void);

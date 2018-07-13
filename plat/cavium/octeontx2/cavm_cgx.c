@@ -33,8 +33,32 @@
 
 /* table to map speed in Mbps with cgx_link_speed enum */
 static int cgx_link_speed_mbps[CGX_LINK_MAX] = {
-		0, 10, 100, 1000, 10000, 25000, 40000, 50000, 100000
-		};
+		0, 10, 100, 1000, 2500, 5000, 10000, 20000, 25000,
+		40000, 50000, 100000 };
+
+/* table to map USXGMII sub types with baud rate and number of LMACs */
+static usxgmii_type_t usxgmii_type[MAX_USXGMII_TYPES] = {
+	{2578, 1, CAVM_CGX_USXGMII_TYPE_E_SXGMII_2G, CAVM_CGX_USXGMII_RATE_E_RATE_2HG},
+	{5156, 1, CAVM_CGX_USXGMII_TYPE_E_SXGMII_5G, CAVM_CGX_USXGMII_RATE_E_RATE_5G},
+	{5156, 2, CAVM_CGX_USXGMII_TYPE_E_DXGMII_5G, CAVM_CGX_USXGMII_RATE_E_RATE_2HG},
+	{10312, 1, CAVM_CGX_USXGMII_TYPE_E_SXGMII_10G, CAVM_CGX_USXGMII_RATE_E_RATE_10G},
+	{10312, 2, CAVM_CGX_USXGMII_TYPE_E_DXGMII_10G, CAVM_CGX_USXGMII_RATE_E_RATE_5G},
+	{10312, 4, CAVM_CGX_USXGMII_TYPE_E_QXGMII_10G, CAVM_CGX_USXGMII_RATE_E_RATE_2HG},
+	{20625, 2, CAVM_CGX_USXGMII_TYPE_E_DXGMII_20G, CAVM_CGX_USXGMII_RATE_E_RATE_10G},
+	{20625, 4, CAVM_CGX_USXGMII_TYPE_E_QXGMII_20G, CAVM_CGX_USXGMII_RATE_E_RATE_5G},
+	};
+
+/* table to map the LINK_SPEED with USXGMII rate */
+static usxgmii_rate_map_t usxgmii_rate_map[MAX_USXGMII_RATE_TYPES] = {
+	{CGX_LINK_10M, CAVM_CGX_USXGMII_RATE_E_RATE_10M, 10},
+	{CGX_LINK_100M, CAVM_CGX_USXGMII_RATE_E_RATE_100M, 100},
+	{CGX_LINK_1G, CAVM_CGX_USXGMII_RATE_E_RATE_1G, 1000},
+	{CGX_LINK_2HG, CAVM_CGX_USXGMII_RATE_E_RATE_2HG, 2500},
+	{CGX_LINK_5G, CAVM_CGX_USXGMII_RATE_E_RATE_5G, 5000},
+	{CGX_LINK_10G, CAVM_CGX_USXGMII_RATE_E_RATE_10G, 10000},
+	{CGX_LINK_20G, CAVM_CGX_USXGMII_RATE_E_RATE_20G, 20000},
+	{CGX_LINK_NONE, CAVM_CGX_USXGMII_RATE_E_RSV_RATE, 0}
+};
 
 static int cgx_poll_for_csr(int node, uint64_t addr, uint64_t mask,
 					int poll_val)
@@ -131,8 +155,8 @@ static int cgx_xaui_hw_init(int node, int cgx_id, int lmac_id)
 		CAVM_CGXX_SMUX_TX_THRESH(cgx_id, lmac_id),
 		cnt, CGX_SMUX_TX_FIFO_WORDS);
 
-	/* FIXME: Disable forward error correction. should FEC
-	 * enable option to be provided for 10G/40G BASE-R?
+	/* Disable forward error correction by default. will enable
+	 * it later based on transceiver capability
 	 */
 	CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_spux_fec_control_t,
 			CAVM_CGXX_SPUX_FEC_CONTROL(cgx_id, lmac_id),
@@ -186,6 +210,66 @@ static void cgx_restart_training(int node, int cgx_id, int lmac_id)
 		train_restart, 1);
 }
 
+static int cgx_get_usxgmii_type(int node, int cgx_id, int lmac_id)
+{
+	int type = -1;
+	cgx_config_t *cgx;
+	cgx_lmac_config_t *lmac;
+	cavm_qlm_state_lane_t qlm_state;
+
+	cgx = &bfdt->cgx_cfg[cgx_id];
+	lmac = &cgx->lmac_cfg[lmac_id];
+
+	debug_cgx("%s: cgx %d qlm %d lane %d mode %d\n", __func__, cgx_id,
+					lmac->qlm, lmac->lane, lmac->mode);
+
+	qlm_state.u = CSR_READ(node, CAVM_GSERNX_LANEX_SCRATCHX(lmac->qlm,
+					lmac->lane, 0));
+	/* get the USXGMII type based on baud rate
+	 * and LMACs per CGX
+	 */
+	for (int i = 0; i < MAX_USXGMII_TYPES; i++) {
+		if ((usxgmii_type[i].baud_rate == qlm_state.s.baud_mhz) &&
+			(usxgmii_type[i].lmacs_used == cgx->lmacs_used)) {
+			type = usxgmii_type[i].type;
+			break;
+		}
+	}
+	debug_cgx("%s: USXGMII sub type %d\n", __func__, type);
+
+	if ((type < CAVM_CGX_USXGMII_TYPE_E_SXGMII_10G) &&
+			(type > CAVM_CGX_USXGMII_TYPE_E_QXGMII_10G)) {
+		/* FIXME: set to default 10G single port sub type */
+		type = CAVM_CGX_USXGMII_TYPE_E_SXGMII_10G;
+		WARN("%s: invalid USXGMII sub type %d\n", __func__, type);
+	}
+	return type;
+}
+
+static int cgx_get_usxgmii_rate_from_link_speed(int link_speed)
+{
+	int rate = CAVM_CGX_USXGMII_RATE_E_RSV_RATE;
+
+	for (int i = 0; i < MAX_USXGMII_RATE_TYPES; i++) {
+		if (usxgmii_rate_map[i].speed == link_speed)
+			rate = usxgmii_rate_map[i].rate;
+	}
+	debug_cgx("%s: speed %d, rate %d\n", __func__, link_speed, rate);
+	return rate;
+}
+
+static int cgx_get_usxgmii_speed_mbps_from_rate(int rate)
+{
+	int speed = CGX_LINK_NONE;
+
+	for (int i = 0; i < MAX_USXGMII_RATE_TYPES; i++) {
+		if (usxgmii_rate_map[i].rate == rate)
+			speed = usxgmii_rate_map[i].speed_mbps;
+	}
+	debug_cgx("%s: rate %d speed %d\n", __func__, rate, speed);
+	return speed;
+}
+
 /* This function initializes the CGX LMAC for
  * a particular mode
  */
@@ -193,6 +277,7 @@ static void cgx_lmac_init(int node, int cgx_id, int lmac_id)
 {
 	cgx_lmac_config_t *lmac;
 	cavm_cgxx_cmrx_config_t cmr_config;
+	cavm_cgxx_spu_usxgmii_control_t usxgmii_ctrl;
 
 	debug_cgx("%s %d:%d:%d\n", __func__, node, cgx_id, lmac_id);
 
@@ -207,6 +292,20 @@ static void cgx_lmac_init(int node, int cgx_id, int lmac_id)
 		return;
 	}
 
+	/* force on CGX clocks to ensure successful propagation of reset
+	 * when disabling the link
+	 */
+	CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_cmr_global_config_t,
+		CAVM_CGXX_CMR_GLOBAL_CONFIG(cgx_id), cgx_clk_enable, 1);
+
+	/* disable LMAC */
+	CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_cmrx_config_t,
+		CAVM_CGXX_CMRX_CONFIG(cgx_id, lmac_id), enable, 0);
+
+	/* release the force of clocks */
+	CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_cmr_global_config_t,
+		CAVM_CGXX_CMR_GLOBAL_CONFIG(cgx_id), cgx_clk_enable, 0);
+
 	/* program CGX_CMRX_CONFIG register with
 	 * lmac_type, lane_to_sds
 	 */
@@ -219,6 +318,20 @@ static void cgx_lmac_init(int node, int cgx_id, int lmac_id)
 	CSR_WRITE(node, CAVM_CGXX_CMRX_CONFIG(cgx_id, lmac_id),
 			cmr_config.u);
 
+	/* For USXGMII, lane_to_sds is
+	 * ignored. Instead SPU_USXGMII_CONTROL[SDS_ID]
+	 * should be programmed
+	 */
+	if (lmac->mode == CAVM_CGX_LMAC_TYPES_E_USXGMII) {
+		/* Program the lane and sub type */
+		usxgmii_ctrl.u = CSR_READ(node,
+					CAVM_CGXX_SPU_USXGMII_CONTROL(cgx_id));
+		usxgmii_ctrl.s.sds_id = lmac->lane;
+		usxgmii_ctrl.s.usxgmii_type = cgx_get_usxgmii_type(node,
+				cgx_id, lmac_id);
+		CSR_WRITE(node, CAVM_CGXX_SPU_USXGMII_CONTROL(cgx_id),
+					usxgmii_ctrl.u);
+	}
 	/* do one time initialization of CGX based on
 	 * the LMAC type. this function will be called
 	 * once during boot and whenever mode change
@@ -232,27 +345,32 @@ static void cgx_lmac_init(int node, int cgx_id, int lmac_id)
 	case CAVM_CGX_LMAC_TYPES_E_XAUI:
 	case CAVM_CGX_LMAC_TYPES_E_RXAUI:
 	case CAVM_CGX_LMAC_TYPES_E_TENG_R:
+	case CAVM_CGX_LMAC_TYPES_E_TWENTYFIVEG_R:
 	case CAVM_CGX_LMAC_TYPES_E_FORTYG_R:
+	case CAVM_CGX_LMAC_TYPES_E_FIFTYG_R:
+	case CAVM_CGX_LMAC_TYPES_E_HUNDREDG_R:
+	case CAVM_CGX_LMAC_TYPES_E_USXGMII:
 		cgx_xaui_hw_init(node, cgx_id, lmac_id);
 		break;
-	/* FIXME : add support for new modes*/
 	default:
+		ERROR("%s invalid mode %d\n", __func__, lmac->mode);
 		break;
 	}
 }
 
 static int cgx_get_lane_speed(int node, int cgx_id, int lmac_id)
 {
+	int qlm, lane_id, lanes = 0, speed = 0;
 	cgx_lmac_config_t *lmac;
 	cavm_qlm_state_lane_t qlm_state;
-	int qlm, lane_id, lanes = 0, speed = 0;
+	cavm_cgxx_spux_control1_t spux_ctrl1;
 
 	lmac = &bfdt->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
 	qlm = lmac->qlm;
 	lane_id = lmac->lane;
 
-	debug_cgx("%s: cgx %d qlm %d lane %d\n", __func__, cgx_id,
-					qlm, lane_id);
+	debug_cgx("%s: cgx %d qlm %d lane %d mode %d\n", __func__, cgx_id,
+					qlm, lane_id, lmac->mode);
 
 	qlm_state.u = CSR_READ(node, CAVM_GSERNX_LANEX_SCRATCHX(qlm,
 					lane_id, 0));
@@ -278,16 +396,36 @@ static int cgx_get_lane_speed(int node, int cgx_id, int lmac_id)
 		lanes = 2;
 		break;
 	case CAVM_CGX_LMAC_TYPES_E_TENG_R:
+	case CAVM_CGX_LMAC_TYPES_E_TWENTYFIVEG_R:
 		/* Using 64b66b symbol encoding */
 		speed = (qlm_state.s.baud_mhz * 64 + 33) / 66;
 		lanes = 1;
 		break;
+	case CAVM_CGX_LMAC_TYPES_E_FIFTYG_R:
+		/* Using 64b66b symbol encoding */
+		speed = (qlm_state.s.baud_mhz * 64 + 33) / 66;
+		lanes = 2;
+		break;
 	case CAVM_CGX_LMAC_TYPES_E_FORTYG_R:
+	case CAVM_CGX_LMAC_TYPES_E_HUNDREDG_R:
 		/* Using 64b66b symbol encoding */
 		speed = (qlm_state.s.baud_mhz * 64 + 33) / 66;
 		lanes = 4;
 		break;
-	/* FIXME: add support for new modes */
+	case CAVM_CGX_LMAC_TYPES_E_USXGMII:
+		/* for USXGMII, get the rate and return the corresponding
+		 * link speed.
+		 * FIXME : This is as per the info that CGX will
+		 * automatically autonegotiate if PHY's link speed will
+		 * be different. If this is not the case, PHY's link
+		 * speed needs to be read here
+		 */
+		spux_ctrl1.u = CSR_READ(node, CAVM_CGXX_SPUX_CONTROL1(
+					cgx_id, lmac_id));
+		speed = cgx_get_usxgmii_speed_mbps_from_rate(
+					spux_ctrl1.s.usxgmii_rate);
+		lanes = 1;
+		break;
 	default:
 		break;
 	};
@@ -423,8 +561,13 @@ static void cgx_set_autoneg(int node, int cgx_id, int lmac_id)
 
 	lmac = &bfdt->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
 
-	debug_cgx("%s: node=%d, cgx_id=%d, lmac_id=%d, mode=%d\n", __func__, node,
-				cgx_id, lmac_id, lmac->mode);
+	debug_cgx("%s: %d:%d:%d, mode=%d an=%d\n", __func__, node,
+				cgx_id, lmac_id, lmac->mode,
+				!lmac->autoneg_dis);
+
+	if (lmac->autoneg_dis) /* if AN is disabled, just return */
+		return;
+
 	switch (lmac->mode) {
 	case CAVM_CGX_LMAC_TYPES_E_SGMII:
 	case CAVM_CGX_LMAC_TYPES_E_QSGMII:
@@ -456,38 +599,145 @@ static void cgx_set_autoneg(int node, int cgx_id, int lmac_id)
 		break;
 	case CAVM_CGX_LMAC_TYPES_E_TENG_R:
 	case CAVM_CGX_LMAC_TYPES_E_FORTYG_R:
-		/* configure AN only for KR interfaces */
-		if (!lmac->use_training)
-			break;
+		/* enable AN */
 		CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_spux_an_control_t,
 				CAVM_CGXX_SPUX_AN_CONTROL(cgx_id, lmac_id),
 				an_en, 1);
 
 		/* program the negotiation parameters to be advertised */
+		/* reset to ZERO for all the fields in the ADV register and
+		 * program only the relevant
+		 */
+		CSR_WRITE(node, CAVM_CGXX_SPUX_AN_ADV(cgx_id, lmac_id), 0x0);
 		spux_an_adv.u = CSR_READ(node, CAVM_CGXX_SPUX_AN_ADV(
 						cgx_id, lmac_id));
-		/* disable extended next pages */
-		spux_an_adv.s.xnp_able = 0;
-		spux_an_adv.s.a40g_cr4 = 0;
-		spux_an_adv.s.a10g_kx4 = 0;
-		if (lmac->mode == CAVM_CGX_LMAC_TYPES_E_TENG_R)
+		if (lmac->mode == CAVM_CGX_LMAC_TYPES_E_TENG_R) {
 			spux_an_adv.s.a10g_kr = 1;
-		if (lmac->mode == CAVM_CGX_LMAC_TYPES_E_FORTYG_R)
-			spux_an_adv.s.a40g_kr4 = 1;
+			/* only BASE-R ability */
+			if (lmac->fec == CGX_FEC_BASE_R) {
+				spux_an_adv.s.fec_able = 1;
+				spux_an_adv.s.fec_req = 1;
+			}
+		} else if (lmac->mode == CAVM_CGX_LMAC_TYPES_E_FORTYG_R) {
+			if (lmac->use_training)
+				spux_an_adv.s.a40g_kr4 = 1;
+			else
+				spux_an_adv.s.a40g_cr4 = 1;
+			if (lmac->fec == CGX_FEC_BASE_R) {
+				/* only BASE-R ability */
+				spux_an_adv.s.fec_able = 1;
+				spux_an_adv.s.fec_req = 1;
+			}
+		}
+
 		CSR_WRITE(node, CAVM_CGXX_SPUX_AN_ADV(cgx_id, lmac_id),
 				spux_an_adv.u);
 
-		/* enable an_arb_link_chk_en if link training has to be
-		 * performed. if not, clear this bit
+		/* optionally set an_arb_link_chk_en. For CN9XXX pass 1, better
+		 * not to set it due to errata #34763
 		 */
 		CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_spux_an_control_t,
 				CAVM_CGXX_SPUX_AN_CONTROL(cgx_id, lmac_id),
-				an_arb_link_chk_en, lmac->use_training);
+				an_arb_link_chk_en, 0);
 		break;
 	/* FIXME: new modes to be supported */
 	default:
 		break;
 	}
+}
+
+static void cgx_set_fec(int node, int cgx_id, int lmac_id, fec_type_t fec)
+{
+	cgx_lmac_config_t *lmac;
+	int val = 0;
+
+	debug_cgx("%s %d:%d:%d fec type %d\n", __func__, node, cgx_id,
+							lmac_id, fec);
+
+	lmac = &bfdt->cgx_cfg[lmac_id].lmac_cfg[lmac_id];
+
+	if (!fec)
+		return; /* if FEC need not be enabled, just return; */
+
+	/* Enable FEC if desired for 10G, 25G, 40G, 50G, 100G BASE-R
+	 * & USXGMII modes
+	 *
+	 * Below table from HRM describes how to enable "fec_en" for each mode.
+	 * fec_en is 2-bits
+	 *
+	 * Bit 0 enables BASE-R FEC. Bit 1 enables RS-FEC (Reed-Solomon FEC).
+	 *
+	 *	Value     LMAC_TYPE         Comment
+	 *	-------   ---------------   ------------
+	 *	0x0       All BASE-R        No FEC
+	 *	0x1       25G_R, 50G_R,     BASE-R FEC enabled
+	 *	0x2       25G_R, 50G_R,     RS-FEC enabled
+	 *	0x3       25G_R, 50G_R,     UNDEFINED
+	 *	0x2,0x3   100G_R, USXGMII   RS-FEC enabled
+	 *	0x2       10G_R, 40G_R      No FEC. 10G_R, 40G_R may only use BASE-R FEC
+	 *	0x1,0x3   10G_R, 40G_R      BASE-R FEC
+	 *	0x1       100G_R            No FEC. 100G_R  may only use RS-FEC
+	 *
+	 */
+
+	switch (lmac->mode) {
+	case CAVM_CGX_LMAC_TYPES_E_TENG_R:
+	case CAVM_CGX_LMAC_TYPES_E_FORTYG_R:
+		val = 0x1;	/* only BASE-R FEC */
+		break;
+	case CAVM_CGX_LMAC_TYPES_E_TWENTYFIVEG_R:
+	case CAVM_CGX_LMAC_TYPES_E_FIFTYG_R:
+		if (fec == CGX_FEC_RS)
+			val = 0x2;
+		else if (fec == CGX_FEC_BASE_R)
+			val = 0x1;
+		break;
+	case CAVM_CGX_LMAC_TYPES_E_HUNDREDG_R:
+	case CAVM_CGX_LMAC_TYPES_E_USXGMII:
+		val = 0x2; /* Only RS-FEC */
+		break;
+	default:
+		val = 0x0;
+		break;
+	}
+
+	CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_spux_fec_control_t,
+				CAVM_CGXX_SPUX_FEC_CONTROL(cgx_id, lmac_id),
+				fec_en, val);
+}
+
+static int cgx_usxgmii_spux_reset(int node, int cgx_id, int lmac_id, int an_en)
+{
+	debug_cgx("%s %d:%d:%d\n", __func__, node, cgx_id, lmac_id);
+
+	if (an_en) { /* AN enabled case */
+		CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_spux_usx_an_control_t,
+			CAVM_CGXX_SPUX_USX_AN_CONTROL(cgx_id, lmac_id),
+			an_reset, 1);
+		if (cgx_poll_for_csr(node, CAVM_CGXX_SPUX_USX_AN_CONTROL(
+					cgx_id, lmac_id),
+					CGX_SPUX_USX_AN_RESET_MASK, 0)) {
+			ERROR("%s: %d:%d SPUX USXGMII AN reset not complete\n",
+					__func__, cgx_id, lmac_id);
+			cgx_set_error_type(node, cgx_id, lmac_id,
+				CGX_ERR_SPUX_USX_AN_RESET_FAIL);
+			return -1;
+		}
+	} else { /* AN disabled */
+		CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_spux_control1_t,
+			CAVM_CGXX_SPUX_CONTROL1(cgx_id, lmac_id),
+			reset, 1);
+
+		if (cgx_poll_for_csr(node, CAVM_CGXX_SPUX_CONTROL1(cgx_id,
+				lmac_id), CGX_SPUX_RESET_MASK, 0)) {
+			ERROR("%s: %d:%d SPUX reset not complete\n",
+					__func__, cgx_id, lmac_id);
+			cgx_set_error_type(node, cgx_id, lmac_id,
+				CGX_ERR_SPUX_RESET_FAIL);
+			return -1;
+		}
+	}
+	return 0;
 }
 
 /* This function sets MAC/PHY mode.
@@ -664,45 +914,87 @@ int cgx_sgmii_set_link_down(int node, int cgx_id, int lmac_id)
 			CAVM_CGXX_GMP_PCS_MRX_CONTROL(cgx_id, lmac_id),
 			pwr_dn, 1);
 
-	/* LMAC disable */
+	/* force on CGX clocks to ensure successful propagation of reset
+	 * when disabling the link
+	 */
+	CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_cmr_global_config_t,
+		CAVM_CGXX_CMR_GLOBAL_CONFIG(cgx_id), cgx_clk_enable, 1);
+
+	/* disable LMAC */
 	CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_cmrx_config_t,
-		CAVM_CGXX_CMRX_CONFIG(cgx_id, lmac_id),
-		enable, 0);
+		CAVM_CGXX_CMRX_CONFIG(cgx_id, lmac_id), enable, 0);
+
+	/* release the force of clocks */
+	CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_cmr_global_config_t,
+		CAVM_CGXX_CMR_GLOBAL_CONFIG(cgx_id), cgx_clk_enable, 0);
 
 	return 0;
 }
 
 int cgx_xaui_init_link(int node, int cgx_id, int lmac_id)
 {
+	int rate = 0, i;
+	cgx_config_t *cgx;
 	cgx_lmac_config_t *lmac;
 	cavm_cgxx_smux_tx_ctl_t smux_tx_ctl;
+	cavm_cgxx_spu_usxgmii_control_t usxgmii_ctrl;
+	link_state_t link;
 
 	debug_cgx("%s: %d:%d:%d\n", __func__, node, cgx_id, lmac_id);
 
-	lmac = &bfdt->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
+	cgx = &bfdt->cgx_cfg[cgx_id];
+	lmac = &cgx->lmac_cfg[lmac_id];
 
 	/* reset SPU */
-	CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_spux_control1_t,
-			CAVM_CGXX_SPUX_CONTROL1(cgx_id, lmac_id),
-			reset, 1);
+	if (lmac->mode == CAVM_CGX_LMAC_TYPES_E_USXGMII) {
+		/* For USXGMII mode, reset of LMACs should be done
+		 * for all LMACs in the CGX even if not used
+		 */
+		cgx_usxgmii_spux_reset(node, cgx_id, lmac_id,
+						!lmac->autoneg_dis);
 
-	if (cgx_poll_for_csr(node, CAVM_CGXX_SPUX_CONTROL1(cgx_id, lmac_id),
-			CGX_SPUX_RESET_MASK, 0)) {
-		ERROR("%s: %d:%d SPUX reset not complete\n",
-				__func__, cgx_id, lmac_id);
-		cgx_set_error_type(node, cgx_id, lmac_id,
-				CGX_ERR_SPUX_RESET_FAIL);
-		return -1;
+		/* if LMAC index matches the LMAC count in that CGX, the
+		 * remaining LMACs will be disabled and hence perform reset here
+		 * cases : USXGMII_1X1 or USXGMII_2X1
+		 */
+		if (lmac_id == (cgx->lmac_count - 1)) {
+			for (i = lmac_id; i < MAX_LMAC_PER_CGX; i++)
+				cgx_usxgmii_spux_reset(node, cgx_id, i,
+							!lmac->autoneg_dis);
+		}
+	} else { /* all other modes */
+		if (lmac->autoneg_dis)	{
+			CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_spux_control1_t,
+				CAVM_CGXX_SPUX_CONTROL1(cgx_id, lmac_id),
+				reset, 1);
+			if (cgx_poll_for_csr(node, CAVM_CGXX_SPUX_CONTROL1(
+					cgx_id, lmac_id),
+					CGX_SPUX_RESET_MASK, 0)) {
+				ERROR("%s: %d:%d SPUX reset not complete\n",
+					__func__, cgx_id, lmac_id);
+				cgx_set_error_type(node, cgx_id, lmac_id,
+					CGX_ERR_SPUX_RESET_FAIL);
+				return -1;
+			}
+		} else { /* AN enabled case, reset AN_CONTROL bit */
+			CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_spux_an_control_t,
+				CAVM_CGXX_SPUX_AN_CONTROL(cgx_id, lmac_id),
+				an_reset, 1);
+			if (cgx_poll_for_csr(node, CAVM_CGXX_SPUX_AN_CONTROL(
+					cgx_id, lmac_id),
+					CGX_SPUX_AN_RESET_MASK, 0)) {
+				ERROR("%s: %d:%d SPUX AN reset not complete\n",
+					__func__, cgx_id, lmac_id);
+				cgx_set_error_type(node, cgx_id, lmac_id,
+						CGX_ERR_SPUX_AN_RESET_FAIL);
+				return -1;
+			}
+		}
 	}
 
 	/* disable LMAC */
 	CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_cmrx_config_t,
 			CAVM_CGXX_CMRX_CONFIG(cgx_id, lmac_id),
-			enable, 0);
-
-	/* disable UXSGMII mode */
-	CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_spu_usxgmii_control_t,
-			CAVM_CGXX_SPU_USXGMII_CONTROL(cgx_id),
 			enable, 0);
 
 	/* low power enable */
@@ -728,12 +1020,15 @@ int cgx_xaui_init_link(int node, int cgx_id, int lmac_id)
 	CSR_WRITE(node, CAVM_CGXX_SMUX_TX_INT_ENA_W1C(cgx_id, lmac_id), ~0ULL);
 	CSR_WRITE(node, CAVM_CGXX_SPUX_INT_ENA_W1C(cgx_id, lmac_id), ~0ULL);
 
-	/* FIXME: if lmac type is UXSGMII, enable and configure
-	 * the lane rate type here
-	 */
-
 	/* enable link training, if applicable */
 	if (lmac->use_training) {
+		if (lmac->mode == CAVM_CGX_LMAC_TYPES_E_USXGMII) {
+			ERROR("%s: %d:%d UXSGMII doesn't support training\n",
+					__func__, cgx_id, lmac_id);
+			cgx_set_error_type(node, cgx_id, lmac_id,
+					CGX_ERR_TRAINING_FAIL);
+			return -1;
+		}
 		/* FIXME : not mentioned in HRM. Is this HW errata?
 		 * As per HRM, these registers will be cleared
 		 * before start of the traning. Why to explicitly clear them?
@@ -747,17 +1042,53 @@ int cgx_xaui_init_link(int node, int cgx_id, int lmac_id)
 		CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_spux_br_pmd_control_t,
 			CAVM_CGXX_SPUX_BR_PMD_CONTROL(cgx_id, lmac_id),
 			train_en, 1);
+		CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_spux_br_pmd_control_t,
+			CAVM_CGXX_SPUX_BR_PMD_CONTROL(cgx_id, lmac_id),
+			train_restart, 1);
 	}
 
-	/* configure and enable AN, if AN is desired. AN
-	 * to be enabled only for KR interfaces
+	/* FIXME: enable BASE-R FEC or RS-FEC if desired
+	 * determined by device tree & transceiver type
 	 */
-	if (lmac->use_training)
+	if (lmac->fec) /* if FEC needs to be enabled */
+		cgx_set_fec(node, cgx_id, lmac_id, lmac->fec);
+
+	/* configure and enable AN, if AN is desired */
+	if (!lmac->autoneg_dis)
 		cgx_set_autoneg(node, cgx_id, lmac_id);
 	else /* disable AN */
 		CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_spux_an_control_t,
 				CAVM_CGXX_SPUX_AN_CONTROL(cgx_id, lmac_id),
 				an_en, 0);
+
+	/* Program the rate type in case of USXGMII. rate type to be
+	 * obtained from PHY's link speed
+	 */
+	if (lmac->mode == CAVM_CGX_LMAC_TYPES_E_USXGMII) {
+		/* No PHY is not an option in case
+		 * of USXGMII. But this is for ASIM environment
+		 */
+		if (!lmac->phy_present) {
+			/* get the sub type to retrieve the MAX allowed rate */
+			usxgmii_ctrl.u = CSR_READ(node,
+					CAVM_CGXX_SPU_USXGMII_CONTROL(cgx_id));
+			/* configure the max allowed rate for the sub type */
+			for (i = 0; i < MAX_USXGMII_TYPES; i++) {
+				if (usxgmii_ctrl.s.usxgmii_type ==
+						usxgmii_type[i].type) {
+					rate = usxgmii_type[i].max_rate;
+					break;
+				}
+			}
+		} else {
+			/* PHY present case : get link speed to get the rate */
+			cgx_get_link_state(node, cgx_id, lmac_id, &link);
+			rate = cgx_get_usxgmii_rate_from_link_speed(link.s.speed);
+		}
+		CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_spux_control1_t,
+			CAVM_CGXX_SPUX_CONTROL1(cgx_id, lmac_id),
+			usxgmii_rate, rate);
+	}
 
 	/* keep the reset values for lane polarity. select deficit
 	 * idle count mode and unidirectional enable/disable
@@ -769,14 +1100,18 @@ int cgx_xaui_init_link(int node, int cgx_id, int lmac_id)
 			smux_tx_ctl.u);
 
 	/* bringup the SMU/SPU, enable LMAC */
-	CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_cmrx_config_t,
-			CAVM_CGXX_CMRX_CONFIG(cgx_id, lmac_id),
-			enable, 1);
-
 	CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_spux_control1_t,
 			CAVM_CGXX_SPUX_CONTROL1(cgx_id, lmac_id),
 			lo_pwr, 0);
 
+	CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_cmrx_config_t,
+			CAVM_CGXX_CMRX_CONFIG(cgx_id, lmac_id),
+			enable, 1);
+
+	if (lmac->mode == CAVM_CGX_LMAC_TYPES_E_USXGMII)
+		CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_spu_usxgmii_control_t,
+			CAVM_CGXX_SPU_USXGMII_CONTROL(cgx_id),
+			enable, 1);
 	return 0;
 }
 
@@ -786,32 +1121,44 @@ int cgx_xaui_set_link_up(int node, int cgx_id, int lmac_id)
 	cavm_cgxx_spux_an_control_t spux_an_ctl;
 	cavm_cgxx_spux_an_status_t spux_an_sts;
 	cavm_cgxx_spux_int_t spux_int;
+	cavm_cgxx_spux_status1_t spux_status1;
 	cavm_cgxx_spux_status2_t spux_status2;
 	cavm_cgxx_cmrx_config_t cmr_config;
+	cavm_cgxx_spux_br_status2_t br_status2;
 
 	debug_cgx("%s: %d:%d:%d\n", __func__, node, cgx_id, lmac_id);
 
 	lmac = &bfdt->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
 
 	/* check whether AN is complete, if AN is enabled */
-	spux_an_ctl.u = CSR_READ(node, CAVM_CGXX_SPUX_AN_CONTROL(
-					cgx_id, lmac_id));
-	if (spux_an_ctl.s.an_en) {
-		spux_an_sts.u = CSR_READ(node, CAVM_CGXX_SPUX_AN_STATUS(
-				cgx_id, lmac_id));
-		if (!spux_an_sts.s.an_complete) {
-			/* If AN is not complete, restart AN */
-			WARN("%s: %d:%d AN not complete : restarting\n",
-				__func__, cgx_id, lmac_id);
-			CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_spux_an_control_t,
-				CAVM_CGXX_SPUX_AN_CONTROL(cgx_id, lmac_id),
-				an_restart, 1);
-			cgx_set_error_type(node, cgx_id, lmac_id,
-				CGX_ERR_AN_CPT_FAIL);
-			return -1;
+	if (!lmac->autoneg_dis) {
+		spux_an_ctl.u = CSR_READ(node, CAVM_CGXX_SPUX_AN_CONTROL(
+						cgx_id, lmac_id));
+		if (spux_an_ctl.s.an_arb_link_chk_en) {
+			spux_an_sts.u = CSR_READ(node, CAVM_CGXX_SPUX_AN_STATUS(
+						cgx_id, lmac_id));
+			if (!spux_an_sts.s.an_complete) {
+				WARN("%s: %d:%d AN not complete\n",
+					__func__, cgx_id, lmac_id);
+				/* restart AN */
+				CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_spux_an_control_t,
+						CAVM_CGXX_SPUX_AN_CONTROL(cgx_id, lmac_id),
+						an_restart, 1);
+				cgx_set_error_type(node, cgx_id, lmac_id,
+						CGX_ERR_AN_CPT_FAIL);
+				return -1;
+			}
+		} else {
+			/* if arb_link_chk_en not enabled, SW need to intervene AN
+			 * process. poll for AN_LINK_GOOD state. It will be set when
+			 * HCD technology has negotiated with link partner
+			 * and perform HCD match
+			 * This is FIXME
+			 */
 		}
 	}
 
+	/* check training is complete if enabled */
 	if (lmac->use_training) {
 		spux_int.u = CSR_READ(node, CAVM_CGXX_SPUX_INT(
 				cgx_id, lmac_id));
@@ -825,9 +1172,7 @@ int cgx_xaui_set_link_up(int node, int cgx_id, int lmac_id)
 		}
 	} else {
 		/* Perform RX EQU for non-KR interfaces and for the link
-		 * speed >= 5Gbaud - XAUI/XLAUI/RXAUI/XFI.
-		 * FIXME: might not be needed here. will happen
-		 * one time during boot or during mode change
+		 * speed >= 10Gbaud - XAUI/XLAUI/XFI
 		 */
 		debug_cgx("%s: RX EQU mode %d\n", __func__, lmac->mode);
 		if (cgx_rx_equalization(node, cgx_id, lmac_id) == -1) {
@@ -853,7 +1198,11 @@ int cgx_xaui_set_link_up(int node, int cgx_id, int lmac_id)
 	 * alignment/block lock
 	 */
 	if ((lmac->mode == CAVM_CGX_LMAC_TYPES_E_TENG_R) ||
-		(lmac->mode == CAVM_CGX_LMAC_TYPES_E_FORTYG_R)) {
+		(lmac->mode == CAVM_CGX_LMAC_TYPES_E_TWENTYFIVEG_R) ||
+		(lmac->mode == CAVM_CGX_LMAC_TYPES_E_FORTYG_R) ||
+		(lmac->mode == CAVM_CGX_LMAC_TYPES_E_FIFTYG_R) ||
+		(lmac->mode == CAVM_CGX_LMAC_TYPES_E_HUNDREDG_R) ||
+		(lmac->mode == CAVM_CGX_LMAC_TYPES_E_USXGMII)) {
 		if (cgx_poll_for_csr(node, CAVM_CGXX_SPUX_BR_STATUS1(cgx_id,
 				lmac_id), CGX_SPUX_BLK_LOCK_MASK, 1)) {
 			debug_cgx("%s: %d:%d: SPUX BLK LOCK not completed\n",
@@ -862,6 +1211,21 @@ int cgx_xaui_set_link_up(int node, int cgx_id, int lmac_id)
 					CGX_ERR_SPUX_BR_BLKLOCK_FAIL);
 			return -1;
 		}
+
+		/* if RS-FEC is enabled, check the alignment status */
+		if (lmac->fec == CGX_FEC_RS) {
+			if (cgx_poll_for_csr(node, CAVM_CGXX_SPUX_RSFEC_STATUS(
+					cgx_id, lmac_id),
+					CGX_SPUX_RSFEC_ALGN_STS_MASK, 1)) {
+				debug_cgx("%s: %d:%d: SPUX RSFEC alignment not acquired\n",
+						__func__, cgx_id, lmac_id);
+				cgx_set_error_type(node, cgx_id, lmac_id,
+						CGX_ERR_SPUX_RSFEC_ALGN_FAIL);
+				return -1;
+			}
+		}
+
+		/* FIXME : check if marker lock achieved for 40G/50G/100G/USXGMII */
 
 	} else if ((lmac->mode == CAVM_CGX_LMAC_TYPES_E_XAUI) ||
 		(lmac->mode == CAVM_CGX_LMAC_TYPES_E_RXAUI)) {
@@ -948,7 +1312,57 @@ int cgx_xaui_set_link_up(int node, int cgx_id, int lmac_id)
 		return -1;
 	}
 
-	/* FIXME: Clear out CGX error counters/bits */
+	/* for BASE-R modes, to establish stable link,
+	 * FIXME : loop for 100ms the following sequence in a
+	 * interval of 5 ms - this is proven to be very reliable
+	 * for now, just check the ERR_BLKS and BER_CNT
+	 * after a delay of 10 ms
+	 */
+	if ((lmac->mode == CAVM_CGX_LMAC_TYPES_E_TENG_R) ||
+		(lmac->mode == CAVM_CGX_LMAC_TYPES_E_TWENTYFIVEG_R) ||
+		(lmac->mode == CAVM_CGX_LMAC_TYPES_E_FORTYG_R) ||
+		(lmac->mode == CAVM_CGX_LMAC_TYPES_E_FIFTYG_R) ||
+		(lmac->mode == CAVM_CGX_LMAC_TYPES_E_HUNDREDG_R) ||
+		(lmac->mode == CAVM_CGX_LMAC_TYPES_E_USXGMII)) {
+		udelay(CGX_SPUX_BR_RCV_LINK_DELAY); /* 10 ms wait */
+		spux_status1.u = CSR_READ(node, CAVM_CGXX_SPUX_STATUS1(
+					cgx_id, lmac_id));
+		if (!spux_status1.s.rcv_lnk) {
+			debug_cgx("%s: %d:%d SPU receive link down after 10 ms\n",
+					__func__, cgx_id, lmac_id);
+			cgx_set_error_type(node, cgx_id, lmac_id,
+					CGX_ERR_PCS_RECV_LINK_FAIL);
+			return -1;
+		}
+		/* check for latched_ber */
+		br_status2.u = CSR_READ(node, CAVM_CGXX_SPUX_BR_STATUS2(
+				cgx_id, lmac_id));
+		if (br_status2.s.latched_ber) {
+			debug_cgx("%s: %d:%d high bit-error rate latched\n",
+					__func__, cgx_id, lmac_id);
+			cgx_set_error_type(node, cgx_id, lmac_id,
+					CGX_ERR_SPUX_BER_FAIL);
+			return -1;
+		}
+		/* BER_CNT should be 0 for a stable link */
+		if (br_status2.s.ber_cnt) {
+			debug_cgx("%s: %d:%d bit-error-rate counter %d is high\n",
+					__func__, cgx_id, lmac_id,
+					br_status2.s.ber_cnt);
+			cgx_set_error_type(node, cgx_id, lmac_id,
+					CGX_ERR_SPUX_BER_FAIL);
+			return -1;
+		}
+		/* ERR_BLKS should be 0 for a stable link */
+		if (br_status2.s.err_blks) {
+			debug_cgx("%s: %d:%d errored-blocks counter %d is high\n",
+					__func__, cgx_id, lmac_id,
+					br_status2.s.err_blks);
+			cgx_set_error_type(node, cgx_id, lmac_id,
+					CGX_ERR_SPUX_BER_FAIL);
+			return -1;
+		}
+	}
 
 	/* enable Data Tx/Rx */
 	cmr_config.u = CSR_READ(node, CAVM_CGXX_CMRX_CONFIG(
@@ -980,6 +1394,7 @@ int cgx_xaui_get_link(int node, int cgx_id, int lmac_id,
 		result->s.link_up = 1;
 		result->s.full_duplex = 1;
 		speed = cgx_get_lane_speed(node, cgx_id, lmac_id);
+		debug_cgx("%s: speed obtained %d\n", __func__, speed);
 		result->s.speed = CGX_LINK_NONE;
 		/* obtain the speed enum based on the speed in Mbps */
 		for (int i = CGX_LINK_NONE; i < CGX_LINK_MAX; i++) {
@@ -999,10 +1414,15 @@ int cgx_xaui_get_link(int node, int cgx_id, int lmac_id,
 
 int cgx_xaui_set_link_down(int node, int cgx_id, int lmac_id)
 {
+	int usx_en = 0;
+	cgx_lmac_config_t *lmac;
 	cavm_cgxx_cmrx_rx_fifo_len_t rx_fifo_len;
 	cavm_cgxx_cmrx_tx_fifo_len_t tx_fifo_len;
+	cavm_cgxx_cmrx_config_t cmrx_config;
 
 	debug_cgx("%s %d:%d:%d\n", __func__, node, cgx_id, lmac_id);
+
+	lmac = &bfdt->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
 
 	/* Rx disable */
 	CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_cmrx_config_t,
@@ -1032,12 +1452,49 @@ int cgx_xaui_set_link_down(int node, int cgx_id, int lmac_id)
 			CAVM_CGXX_SPUX_CONTROL1(cgx_id, lmac_id),
 			lo_pwr, 1);
 
-	/* LMAC disable */
+	/* force on CGX clocks to ensure successful propagation of reset
+	 * when disabling the link
+	 */
+	CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_cmr_global_config_t,
+		CAVM_CGXX_CMR_GLOBAL_CONFIG(cgx_id), cgx_clk_enable, 1);
+
+	/* disable LMAC */
 	CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_cmrx_config_t,
-		CAVM_CGXX_CMRX_CONFIG(cgx_id, lmac_id),
-		enable, 0);
+		CAVM_CGXX_CMRX_CONFIG(cgx_id, lmac_id), enable, 0);
+
+	/* In case of USXGMII mode, also clear USXGMII enable only when
+	 * all LMACs configured in USXGMII mode are disabled
+	 */
+	if (lmac->mode == CAVM_CGX_LMAC_TYPES_E_USXGMII) {
+		for (int i = 0; i < MAX_LMAC_PER_CGX; i++) {
+			cmrx_config.u = CSR_READ(node, CAVM_CGXX_CMRX_CONFIG(
+						cgx_id, lmac_id));
+			/* if any of the LMACs are enabled, set usx_en */
+			if (cmrx_config.s.enable) {
+				usx_en = 1;
+				break;
+			}
+		}
+		if (!usx_en) {
+			debug_cgx("%s %d %d disable usxgmii\n", __func__, cgx_id, lmac_id);
+			CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_spu_usxgmii_control_t,
+				CAVM_CGXX_SPU_USXGMII_CONTROL(cgx_id),
+				enable, 0);
+		}
+	}
+
+	/* release the force of clocks */
+	CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_cmr_global_config_t,
+		CAVM_CGXX_CMR_GLOBAL_CONFIG(cgx_id), cgx_clk_enable, 0);
 
 	return 0;
+}
+
+void cgx_mode_change(int node, int cgx_id, int lmac_id, int new_mode,
+					int new_fec)
+{
+	/* FIXME */
+	debug_cgx("%s: %d:%d:%d\n", __func__, node, cgx_id, lmac_id);
 }
 
 /* FIXME : Waiting for GSERN HRM */
@@ -1064,7 +1521,11 @@ void cgx_set_internal_loopback(int node, int cgx_id, int lmac_id, int enable)
 	} else if ((lmac->mode == CAVM_CGX_LMAC_TYPES_E_XAUI) ||
 		(lmac->mode == CAVM_CGX_LMAC_TYPES_E_RXAUI) ||
 		(lmac->mode == CAVM_CGX_LMAC_TYPES_E_TENG_R) ||
-		(lmac->mode == CAVM_CGX_LMAC_TYPES_E_FORTYG_R)) {
+		(lmac->mode == CAVM_CGX_LMAC_TYPES_E_TWENTYFIVEG_R) ||
+		(lmac->mode == CAVM_CGX_LMAC_TYPES_E_FORTYG_R) ||
+		(lmac->mode == CAVM_CGX_LMAC_TYPES_E_FIFTYG_R) ||
+		(lmac->mode == CAVM_CGX_LMAC_TYPES_E_HUNDREDG_R) ||
+		(lmac->mode == CAVM_CGX_LMAC_TYPES_E_USXGMII)) {
 		CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_spux_control1_t,
 			CAVM_CGXX_SPUX_CONTROL1(cgx_id, lmac_id),
 			loopbck, enable);
@@ -1088,7 +1549,11 @@ void cgx_set_external_loopback(int node, int cgx_id, int lmac_id, int enable)
 	} else if ((lmac->mode == CAVM_CGX_LMAC_TYPES_E_XAUI) ||
 		(lmac->mode == CAVM_CGX_LMAC_TYPES_E_RXAUI) ||
 		(lmac->mode == CAVM_CGX_LMAC_TYPES_E_TENG_R) ||
-		(lmac->mode == CAVM_CGX_LMAC_TYPES_E_FORTYG_R)) {
+		(lmac->mode == CAVM_CGX_LMAC_TYPES_E_TWENTYFIVEG_R) ||
+		(lmac->mode == CAVM_CGX_LMAC_TYPES_E_FORTYG_R) ||
+		(lmac->mode == CAVM_CGX_LMAC_TYPES_E_FIFTYG_R) ||
+		(lmac->mode == CAVM_CGX_LMAC_TYPES_E_HUNDREDG_R) ||
+		(lmac->mode == CAVM_CGX_LMAC_TYPES_E_USXGMII)) {
 		CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_smux_ext_loopback_t,
 			CAVM_CGXX_SMUX_EXT_LOOPBACK(cgx_id, lmac_id),
 			en, enable);

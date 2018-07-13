@@ -155,10 +155,12 @@ static int cgx_link_change(int node, int cgx_id, int lmac_id,
 		} else if ((lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_XAUI) ||
 			(lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_RXAUI) ||
 			(lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_TENG_R) ||
-			(lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_FORTYG_R)) {
+			(lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_TWENTYFIVEG_R) ||
+			(lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_FORTYG_R) ||
+			(lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_FIFTYG_R) ||
+			(lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_HUNDREDG_R) ||
+			(lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_USXGMII)) {
 			ret = cgx_xaui_set_link_up(node, cgx_id, lmac_id);
-		} else {
-			/* FIXME: handle new modes as well */
 		}
 	}
 
@@ -253,30 +255,38 @@ static int cgx_link_bringup(int node, int cgx_id, int lmac_id)
 	} else if ((lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_XAUI) ||
 		(lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_RXAUI) ||
 		(lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_TENG_R) ||
-		(lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_FORTYG_R)) {
+		(lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_TWENTYFIVEG_R) ||
+		(lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_FORTYG_R) ||
+		(lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_FIFTYG_R) ||
+		(lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_HUNDREDG_R) ||
+		(lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_USXGMII)) {
 
+		/* For USXGMII, read the PHY link capabilities first */
+		if (lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_USXGMII) {
+			/* Get the link status from PHY */
+			if (lmac_cfg->phy_present) {
+				/* Enable the SMI/MDIO bus if PHY is on MDIO */
+				cavm_phy_reset(node, cgx_id, lmac_id);
+				/* Get the link status */
+				cavm_get_phy_link_status(node, cgx_id, lmac_id,
+								&link);
+				/* save the link status to program the rate */
+				cgx_set_link_state(node, cgx_id, lmac_id,
+					&link, 0);
+			}
+		}
 		/* initialize the link, get the link status,
 		 * If link is up, check AN and perform training
 		 */
 		if (cgx_xaui_init_link(node, cgx_id, lmac_id) != 0) {
-			/* This API will fail only if there is PCS reset
-			 * error. Hence set error type with the LINK status
-			 * as down and return
+			/* at this step, if there are errors, set error type
+			 * with the LINK status as down and return
 			 */
 			cgx_set_link_state(node, cgx_id, lmac_id, &link,
 				cgx_get_error_type(node, cgx_id, lmac_id));
 			return -1;
 		}
 
-		/* PHY not present, internal loopback case */
-		if (lmac_ctx->s.lbk1_enable || !lmac_cfg->phy_present) {
-			link.s.link_up = 1;
-			link.s.full_duplex = 1;
-			if (lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_FORTYG_R)
-				link.s.speed = CGX_LINK_40G;
-			else
-				link.s.speed = CGX_LINK_10G;
-		}
 retry_link:
 		if (cgx_xaui_set_link_up(node, cgx_id, lmac_id) == -1) {
 			/* if init link fails, retry */
@@ -374,11 +384,15 @@ static int cgx_link_bringdown(int node, int cgx_id, int lmac_id)
 	} else if ((lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_XAUI) ||
 		(lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_RXAUI) ||
 		(lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_TENG_R) ||
-		(lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_FORTYG_R)) {
+		(lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_TWENTYFIVEG_R) ||
+		(lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_FORTYG_R) ||
+		(lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_FIFTYG_R) ||
+		(lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_HUNDREDG_R) ||
+		(lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_USXGMII)) {
 		if (cgx_xaui_set_link_down(node, cgx_id, lmac_id) != 0)
 			return -1;
 
-	} else { /* FIXME : add support for new modes */
+	} else {
 		ERROR("%s LMAC%d mode %d not configured correctly"
 			" cannot bring down the link\n",
 			__func__, lmac_id, lmac_cfg->mode);
@@ -747,6 +761,19 @@ static int cgx_handle_requests_cb(int timer)
 		}
 	}
 	return 0;
+}
+
+void cgx_get_link_state(int node, int cgx_id, int lmac_id, link_state_t *link)
+{
+	union cgx_scratchx0 scratchx0;
+
+	debug_cgx_intf("%s:%d:%d:%d\n", __func__, node, cgx_id, lmac_id);
+
+	scratchx0.u = CSR_READ(node, CAVM_CGXX_CMRX_SCRATCHX(
+					cgx_id, lmac_id, 0));
+	link->s.link_up  = scratchx0.s.link_sts.link_up;
+	link->s.full_duplex = scratchx0.s.link_sts.speed;
+	link->s.full_duplex = scratchx0.s.link_sts.full_duplex;
 }
 
 /* this function to be called from any CGX function when major
