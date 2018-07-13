@@ -26,7 +26,7 @@ typedef enum {
 	CAVM_QLM_MODE_PCIE_1X2,		/* 1 PCIe, 2 lanes */
 	CAVM_QLM_MODE_PCIE_1X4,		/* 1 PCIe, 4 lanes */
 	CAVM_QLM_MODE_PCIE_1X8,		/* 1 PCIe, 8 lanes */
-	CAVM_QLM_MODE_PCIE_1X16,	/* 1 PCIe, 16 lanes (CN96XX) */
+	CAVM_QLM_MODE_PCIE_1X16,	/* 1 PCIe, 16 lanes (CN9XXX) */
 	/* SATA modes  */
 	CAVM_QLM_MODE_SATA,		/* SATA, each lane independent (cn88xx) */
 	/* CCPI / OCI modes */
@@ -40,14 +40,15 @@ typedef enum {
 	CAVM_QLM_MODE_10G_KR,		/* 4 10GBASE-KR, 1 lane each (cn88xx) */
 	CAVM_QLM_MODE_40G_KR4,		/* 1 40GBASE-KR4, 4 lanes each (cn88xx) */
 	CAVM_QLM_MODE_QSGMII,		/* QSGMII is 4 SGMII on one lane (cn81xx, cn83xx) */
-	CAVM_QLM_MODE_25G,		/* 25G, 1 lane each (CN96XX QLMs) */
-	CAVM_QLM_MODE_50G,		/* 50G, 2 lanes each (CN96XX QLMs) */
-	CAVM_QLM_MODE_100G,		/* 100G, 4 lanes each (CN96XX) */
-	CAVM_QLM_MODE_25G_KR,		/* 25G-KR, 1 lane each (CN96XX QLMs) */
-	CAVM_QLM_MODE_50G_KR,		/* 50G-KR, 2 lanes each (CN96XX QLMs) */
-	CAVM_QLM_MODE_100G_KR4,		/* 100G-KR4, 4 lanes each (CN96XX) */
-	CAVM_QLM_MODE_USXGMII_4X1,	/* USXGMII, 4 over 1 lane, 10M, 100M, 1G, 2.5G, 5G (CN96XX QLMs) */
-	CAVM_QLM_MODE_USXGMII_2X1,	/* USXGMII, 2 over 1 lane, 10M, 100M, 1G, 2.5G, 5G, 10G (CN96XX QLMs) */
+	CAVM_QLM_MODE_25G,		/* 25G, 1 lane each (CN9XXX QLMs) */
+	CAVM_QLM_MODE_50G,		/* 50G, 2 lanes each (CN9XXX QLMs) */
+	CAVM_QLM_MODE_100G,		/* 100G, 4 lanes each (CN9XXX) */
+	CAVM_QLM_MODE_25G_AN,		/* 25G-KR, 1 lane each (CN9XXX QLMs) */
+	CAVM_QLM_MODE_50G_AN,		/* 50G-KR, 2 lanes each (CN9XXX QLMs) */
+	CAVM_QLM_MODE_100G_AN,		/* 100G-KR4, 4 lanes each (CN9XXX) */
+	CAVM_QLM_MODE_USXGMII_4X1,	/* USXGMII, 4 over 1 lane, 10M, 100M, 1G, 2.5G, 5G (CN9XXX QLMs) */
+	CAVM_QLM_MODE_USXGMII_2X1,	/* USXGMII, 2 over 1 lane, 10M, 100M, 1G, 2.5G, 5G, 10G (CN9XXX QLMs) */
+	CAVM_QLM_MODE_USXGMII_1X1,	/* USXGMII, 1 over 1 lane, 10M, 100M, 1G, 2.5G, 5G, 10G, 20G (CN9XXX QLMs) */
 	CAVM_QLM_MODE_LAST,
 } cavm_qlm_modes_t;
 
@@ -119,6 +120,7 @@ typedef struct cgx_lmac_config {
 	int phy_present;
 	int sfp_slot;
 	int autoneg_dis;
+	fec_type_t fec;
 	uint8_t local_mac_address[6];
 	phy_config_t phy_config;
 	sfp_slot_info_t sfp_info;
@@ -128,6 +130,7 @@ typedef struct cgx_config {
 	uint32_t node:4;
 	uint32_t lmac_count:4;
 	uint32_t lmacs_used:4;
+	uint32_t usxgmii_mode:1; /* global - per CGX */
 	/* for RVU */
 	uint32_t enable:1;
 	cgx_lmac_config_t lmac_cfg[MAX_LMAC_PER_CGX];

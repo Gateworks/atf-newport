@@ -50,11 +50,12 @@ static struct qlm_mode_strmap_s qlmmode_strmap[] = {
 	{CAVM_CGX_LMAC_TYPES_E_TWENTYFIVEG_R, "25G", "25g"},
 	{CAVM_CGX_LMAC_TYPES_E_FIFTYG_R, "50G", "50g"},
 	{CAVM_CGX_LMAC_TYPES_E_HUNDREDG_R, "100G", "100g"},
-	{CAVM_CGX_LMAC_TYPES_E_TWENTYFIVEG_R, "25G_KR", "25g"},
-	{CAVM_CGX_LMAC_TYPES_E_FIFTYG_R, "50G_KR", "50g"},
-	{CAVM_CGX_LMAC_TYPES_E_HUNDREDG_R, "100G_KR4", "100g"},
-	{CAVM_CGX_LMAC_TYPES_E_USXGMII, "USXGMII_4X1", "usgxgmii"},
-	{CAVM_CGX_LMAC_TYPES_E_USXGMII, "USXGMII_2X1", "usgxgmii"},
+	{CAVM_CGX_LMAC_TYPES_E_TWENTYFIVEG_R, "25G_AN", "25g"},
+	{CAVM_CGX_LMAC_TYPES_E_FIFTYG_R, "50G_AN", "50g"},
+	{CAVM_CGX_LMAC_TYPES_E_HUNDREDG_R, "100G_AN", "100g"},
+	{CAVM_CGX_LMAC_TYPES_E_USXGMII, "USXGMII_4X1", "usxgmii"},
+	{CAVM_CGX_LMAC_TYPES_E_USXGMII, "USXGMII_2X1", "usxgmii"},
+	{CAVM_CGX_LMAC_TYPES_E_USXGMII, "USXGMII_1X1", "usxgmii"},
 	{-1, NULL, NULL}
 };
 
@@ -706,7 +707,7 @@ static void octeontx2_fdt_parse_vsc7224_reginit(const void *fdt, int offset,
 static void octeontx2_fdt_parse_vsc7224_channels(const void *fdt, int offset,
 			phy_vsc7224_t *vsc7224, int cgx_idx, int lmac_idx)
 {
-	int num_chan = 0, reg = 0, len = 0;
+	int num_chan = 0, reg = 0, len = 0, i;
 	phy_vsc7224_chan_t *chan;
 	const uint32_t *tap_values;
 
@@ -763,7 +764,7 @@ static void octeontx2_fdt_parse_vsc7224_channels(const void *fdt, int offset,
 				chan->num_taps, num_chan);
 
 		/* Read all the tap values */
-		for (int i = 0; i < chan->num_taps; i++) {
+		for (i = 0; i < chan->num_taps; i++) {
 			chan->taps[i].len =
 					fdt32_to_cpu(tap_values[i * 4 + 0]);
 			chan->taps[i].main_tap =
@@ -864,8 +865,8 @@ static void octeontx2_fdt_parse_vsc7224_info(const void *fdt,
 /* This routine sets a number of LMACs to initialize and the size to use.
  * For instance:
  *  - SGMII_2X1: will initialize 2 LMACs and each LMAC will take only one
- *  size
- *  - XAUI_1X4: will initialize 1 LMAC and it will take all 4 space
+ *  lane
+ *  - XAUI_1X4: will initialize 1 LMAC and it will take all 4 lanes
  */
 static void octeontx2_lmac_num_touse(int mode_idx, int *cnt, int *touse)
 {
@@ -876,7 +877,7 @@ static void octeontx2_lmac_num_touse(int mode_idx, int *cnt, int *touse)
 	case CAVM_QLM_MODE_XFI:
 	case CAVM_QLM_MODE_10G_KR:
 	case CAVM_QLM_MODE_25G:
-	case CAVM_QLM_MODE_25G_KR:
+	case CAVM_QLM_MODE_25G_AN:
 		*cnt = 1;
 		*touse = 1;
 		break;
@@ -884,13 +885,13 @@ static void octeontx2_lmac_num_touse(int mode_idx, int *cnt, int *touse)
 	case CAVM_QLM_MODE_XLAUI:
 	case CAVM_QLM_MODE_40G_KR4:
 	case CAVM_QLM_MODE_100G:
-	case CAVM_QLM_MODE_100G_KR4:
+	case CAVM_QLM_MODE_100G_AN:
 		*cnt = 1;
 		*touse = 4;
 		break;
 	case CAVM_QLM_MODE_RXAUI:
 	case CAVM_QLM_MODE_50G:
-	case CAVM_QLM_MODE_50G_KR:
+	case CAVM_QLM_MODE_50G_AN:
 		*cnt = 1;
 		*touse = 2;
 		break;
@@ -901,6 +902,10 @@ static void octeontx2_lmac_num_touse(int mode_idx, int *cnt, int *touse)
 		break;
 	case CAVM_QLM_MODE_USXGMII_2X1:
 		*cnt = 2;
+		*touse = 1;
+		break;
+	case CAVM_QLM_MODE_USXGMII_1X1:
+		*cnt = 1;
 		*touse = 1;
 		break;
 	}
@@ -961,7 +966,7 @@ static int octeontx2_check_qlm_lmacs(int node, int cgx_idx,
 			for (i = 0; i < cgx->lmac_count; i++) {
 				lmac = &cgx->lmac_cfg[i];
 				if (lmac->qlm == qlm)
-				lmac_avail--;
+					lmac_avail--;
 			}
 		}
 	}
@@ -983,13 +988,13 @@ static int octeontx2_check_qlm_lmacs(int node, int cgx_idx,
 static int octeontx2_fill_cgx_struct(int node, int qlm, int lane, int mode_idx)
 {
 	cgx_config_t *cgx;
-	cgx_lmac_config_t *lmac;
+	cgx_lmac_config_t *lmac, *temp_lmac;
 	int mode;
 	int cgx_idx;
-	int i;
+	int i, j;
 	int lcnt, lused;
 
-	if ((mode_idx < CAVM_QLM_MODE_SGMII) || (mode_idx > CAVM_QLM_MODE_USXGMII_2X1)) {
+	if ((mode_idx < CAVM_QLM_MODE_SGMII) || (mode_idx >= CAVM_QLM_MODE_LAST)) {
 		INFO("N%d.QLM%d.LANE%d: not configured for CGX, skip.\n",
 				node, qlm, lane);
 		return 0;
@@ -1007,6 +1012,28 @@ static int octeontx2_fill_cgx_struct(int node, int qlm, int lane, int mode_idx)
 	if (cgx->lmac_count >= MAX_LMAC_PER_CGX) {
 		WARN("N%d.CGX%d: already configured, not configuring QLM%d, Lane%d\n",
 				node, cgx_idx, qlm, lane);
+		return 0;
+	}
+
+	/* if CGX is configured in USXGMII mode, don't configure other modes
+	 * in the same CGX
+	 */
+	if (cgx->usxgmii_mode) {
+		WARN("N%d.CGX%d: is configured in USXGMII mode, cannot configure other modes\n",
+				node, cgx_idx);
+		return 0;
+	}
+
+	if (((mode_idx == CAVM_QLM_MODE_USXGMII_1X1) ||
+			(mode_idx == CAVM_QLM_MODE_USXGMII_2X1) ||
+			(mode_idx == CAVM_QLM_MODE_USXGMII_4X1)) &&
+			(cgx->lmac_count)) {
+		/* if LMACs in the same CGX for which USXGMII is configured,
+		 * are configured with different modes already, UXSGMII cannot be
+		 * configured
+		 */
+		WARN("N%d.CGX%d: cannot configure USXGMII for this CGX\n",
+				node, cgx_idx);
 		return 0;
 	}
 
@@ -1040,7 +1067,21 @@ static int octeontx2_fill_cgx_struct(int node, int qlm, int lane, int mode_idx)
 		 * as sent by BDK and to support mode configuration
 		 * based on any possible lane.
 		 */
-		lmac->lane = lane + i;
+		if (mode == CAVM_CGX_LMAC_TYPES_E_USXGMII) {
+			if (!cgx->usxgmii_mode) {
+				/* this is the first lane with USXGMII mode.
+				 * update one time all LMACs lane with the same
+				 * physical lane. physical SerDes lane to be
+				 * programmed in case of USXGMII mode instead
+				 * of lane_to_sds
+				 */
+				for (j = 0; j < MAX_LMAC_PER_CGX; j++) {
+					temp_lmac = &cgx->lmac_cfg[j];
+					temp_lmac->lane = lane;
+				}
+			}
+		} else
+			lmac->lane = lane + i;
 		switch (mode) {
 		case CAVM_CGX_LMAC_TYPES_E_XAUI:
 		case CAVM_CGX_LMAC_TYPES_E_FORTYG_R:
@@ -1067,10 +1108,22 @@ static int octeontx2_fill_cgx_struct(int node, int qlm, int lane, int mode_idx)
 		switch (mode_idx) {
 		case CAVM_QLM_MODE_10G_KR:
 		case CAVM_QLM_MODE_40G_KR4:
-		case CAVM_QLM_MODE_25G_KR:
-		case CAVM_QLM_MODE_50G_KR:
-		case CAVM_QLM_MODE_100G_KR4:
-			lmac->use_training = 1;
+			lmac->use_training = 1; /* FIXME: should be coming from SFP/QSFP */
+			break;
+		case CAVM_QLM_MODE_USXGMII_1X1:
+		case CAVM_QLM_MODE_USXGMII_2X1:
+		case CAVM_QLM_MODE_USXGMII_4X1:
+			cgx->usxgmii_mode = 1;	/* set USXGMII for this CGX */
+		case CAVM_QLM_MODE_XFI:
+		case CAVM_QLM_MODE_XLAUI:
+		case CAVM_QLM_MODE_RXAUI:
+		case CAVM_QLM_MODE_XAUI:
+		/* fixed speed option. consider as AN disabled cases */
+		case CAVM_QLM_MODE_25G:
+		case CAVM_QLM_MODE_50G:
+		case CAVM_QLM_MODE_100G:
+			/* FIXME : always disable AN for USXGMII for now */
+			lmac->autoneg_dis = 1;
 			break;
 		}
 
@@ -1079,6 +1132,12 @@ static int octeontx2_fill_cgx_struct(int node, int qlm, int lane, int mode_idx)
 	}
 
 	cgx->enable = 1;
+
+	/* if a QLM/DLM is configured as USXGMII (even if it uses 1 LMAC),
+	 * CGX may not be used by other lanes. Hence always return 4
+	 */
+	if (cgx->usxgmii_mode)
+		return 4;
 
 	return (lcnt * lused);
 }

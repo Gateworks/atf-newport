@@ -69,6 +69,13 @@
 /* ERROR MASK based on cgx_err_type */
 #define CGX_ERR_MASK			0x3FF		/* 10 bits */
 
+/* enum declaration for FEC */
+typedef enum cgx_fec_type {
+	CGX_FEC_NONE,
+	CGX_FEC_BASE_R,
+	CGX_FEC_RS
+} fec_type_t;
+
 /* structure declarations */
 typedef union cgx_link_status {
 	uint64_t u64;
