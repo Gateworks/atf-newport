@@ -38,6 +38,9 @@
 #define SSO_TIM_TO_NPA_PFS_FACTOR	3/4
 #define RVU_MSIX_VEC_SIZE 		16
 
+/* Number of AF interrupts consumed by PF0 */
+#define RVU_AF_INT_VEC_E_MSIX_SIZE	5
+
 /* Number of MSI-X per VF */
 #define RVU_VF_INT_VEC_COUNT			1
 

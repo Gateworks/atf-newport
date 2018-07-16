@@ -318,6 +318,76 @@ static void msix_error_print_map(int node)
 	}
 }
 
+/*
+ * Configure AF interrupt map at PF's MSI-X table.
+ */
+static void conf_msix_admin_blk_offset(int node)
+{
+	union cavm_rvu_priv_pfx_int_cfg af_int_cfg;
+	union cavm_nixx_priv_af_int_cfg nix_int_cfg;
+	union cavm_npa_priv_af_int_cfg npa_int_cfg;
+	union cavm_sso_priv_af_int_cfg sso_int_cfg;
+	union cavm_tim_priv_af_int_cfg tim_int_cfg;
+	union cavm_ndcx_priv_af_int_cfg ndc_int_cfg;
+	union cavm_cptx_priv_af_int_cfg	cpt_int_cfg;
+	int af_msix_used = 0, i = 0;
+
+	/*
+	 * AF interrupt vectors enumerated by RVU_AF_INT_VEC_E
+	 * have a fixed starting offset (0) in RVU PF(0)'s
+	 * MSI-X table, so just increment used MSI-X.
+	 * There's no register that holds AF_INT_VEC_E size.
+	 */
+	af_msix_used += RVU_AF_INT_VEC_E_MSIX_SIZE;
+
+	/* Configure RVU_PF_INT_VEC_E right next to RVU_AF */
+	af_int_cfg.u = CSR_READ(node, CAVM_RVU_PRIV_PFX_INT_CFG(0));
+	af_int_cfg.s.msix_offset = af_msix_used;
+	CSR_WRITE(node, CAVM_RVU_PRIV_PFX_INT_CFG(0), af_int_cfg.u);
+	af_msix_used += af_int_cfg.s.msix_size;
+
+	/*
+	 * Configure next blocks accordingly to the number
+	 * of MSI-X AF interrupts already consumed
+	 */
+	nix_int_cfg.u = CSR_READ(node, CAVM_NIXX_PRIV_AF_INT_CFG(0));
+	nix_int_cfg.s.msix_offset = af_msix_used;
+	CSR_WRITE(node, CAVM_NIXX_PRIV_AF_INT_CFG(0), nix_int_cfg.u);
+	af_msix_used += nix_int_cfg.s.msix_size;
+
+	npa_int_cfg.u = CSR_READ(node, CAVM_NPA_PRIV_AF_INT_CFG);
+	npa_int_cfg.s.msix_offset = af_msix_used;
+	CSR_WRITE(node, CAVM_NPA_PRIV_AF_INT_CFG, npa_int_cfg.u);
+	af_msix_used += npa_int_cfg.s.msix_size;
+
+	sso_int_cfg.u = CSR_READ(node, CAVM_SSO_PRIV_AF_INT_CFG);
+	sso_int_cfg.s.msix_offset = af_msix_used;
+	CSR_WRITE(node, CAVM_SSO_PRIV_AF_INT_CFG, sso_int_cfg.u);
+	af_msix_used += sso_int_cfg.s.msix_size;
+
+	tim_int_cfg.u = CSR_READ(node, CAVM_TIM_PRIV_AF_INT_CFG);
+	tim_int_cfg.s.msix_offset = af_msix_used;
+	CSR_WRITE(node, CAVM_TIM_PRIV_AF_INT_CFG, tim_int_cfg.u);
+	af_msix_used += tim_int_cfg.s.msix_size;
+
+	for (i = 0; i < 3; i++) {
+		ndc_int_cfg.u = CSR_READ(node, CAVM_NDCX_PRIV_AF_INT_CFG(i));
+		ndc_int_cfg.s.msix_offset = af_msix_used;
+		CSR_WRITE(node, CAVM_NDCX_PRIV_AF_INT_CFG(i), ndc_int_cfg.u);
+		af_msix_used += ndc_int_cfg.s.msix_size;
+	}
+
+	if (!bfdt->rvu_config.cpt_dis) {
+		cpt_int_cfg.u = CSR_READ(node, CAVM_CPTX_PRIV_AF_INT_CFG(0));
+		cpt_int_cfg.s.msix_offset = af_msix_used;
+		CSR_WRITE(node, CAVM_CPTX_PRIV_AF_INT_CFG(0), cpt_int_cfg.u);
+		af_msix_used += cpt_int_cfg.s.msix_size;
+	}
+
+	/* Sanity check for incorrect FDT setup */
+	assert(af_msix_used <= rvu_dev[0].pf_num_msix_vec);
+}
+
 static int msix_enable(int node)
 {
 	uint32_t pf_msix_offset = 0, vf_msix_offset = VF_MSIX_BASE_IDX_NUMBER;
@@ -332,6 +402,9 @@ static int msix_enable(int node)
 
 	af_msix_cfg.u = PF_MSIX_BASE;
 	CSR_WRITE(node, CAVM_RVU_AF_MSIXTR_BASE, af_msix_cfg.u);
+
+	/* Configure AF interrupt offsets at PF0 */
+	conf_msix_admin_blk_offset(node);
 
 	/* set PF/VF msix table size and offset */
 	for (pf = 0; pf < octeontx_get_max_rvu_pfs(node); pf++) {
