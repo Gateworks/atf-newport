@@ -395,8 +395,8 @@ static void enable_rvu_pf(int node, int pf)
 	union cavm_rvu_priv_pfx_cfg pf_cfg;
 
 	pf_cfg.u = 0;
-	/* enable AF access when configuring the PF as AF or CPT */
-	if ((pf == RVU_AF) || ((pf == RVU_PF15) && !bfdt->rvu_config.cpt_dis))
+	/* enable AF access when configuring the PF as AF */
+	if (pf == RVU_AF)
 		pf_cfg.s.af_ena = TRUE;
 	else
 		pf_cfg.s.af_ena = FALSE;
