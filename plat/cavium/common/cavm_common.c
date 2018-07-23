@@ -111,6 +111,10 @@ void thunder_cpu_setup(void)
 	set_bit(cvmctl_el1, 41);   /* Enable next line prefetcher. */
 	set_bit(cvmctl_el1, 40);   /* Enable delta prefetcher. */
 
+	/* Set cvm_ctl_el1[5] to workaround debug state execution in incorrect EL */
+	if (IS_THUNDER_PASS(midr, T96PARTNUM, 1, 0))
+		set_bit(cvmctl_el1, 5);
+
 	if (MIDR_PARTNUM(midr) == T83PARTNUM) {
 		set_bit(cvmmemctl1_el1, 3); /* Enable LMTST */
 		set_bit(cvmmemctl1_el1, 4); /* Enable SSO/PKO addr region */
