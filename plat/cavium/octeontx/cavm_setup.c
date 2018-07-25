@@ -73,6 +73,7 @@ unsigned int plat_get_rom_t_cnt(int node)
 	uint64_t dat;
 	uint32_t nv_count_val = 0;
 	unsigned int ret = 0;
+	cavm_fusf_ctl_t fusf_ctl;
 
 	read_cmd.u = 0;
 	/* In CN8XXX fuses take a byte address, not a 128 bit bank */
@@ -87,10 +88,20 @@ unsigned int plat_get_rom_t_cnt(int node)
 	/*
 	 * FUSF_BNK_DATX contains all 128 fuses
 	 * in the bank associated with FUSF_RCMD[ADDR].
-	 * ROM_T_CNT is stored on FUSF_BNK_DATX(0)[63:32]
+	 * ROM_T_CNT is stored on FUSF_BNK_DATX(0)[63:32].
 	 */
 	dat = CSR_READ(node, CAVM_FUSF_BNK_DATX(0));
 	nv_count_val = cavm_bit_extract(dat, CAVM_FUSF_FUSE_NUM_E_ROM_T_CNTX(0), 32);
+
+	/*
+	 * When there's no runtime update on BDK side,
+	 * FUSF_BNK_DATX returns 0x1 with no respect to
+	 * the actually soft blown value.
+	 * Read NV_CNT from FUSF_CTL and use bigger value.
+	 */
+	fusf_ctl.u = CSR_READ(node, CAVM_FUSF_CTL);
+	if (nv_count_val < fusf_ctl.s.rom_t_cnt)
+		nv_count_val = fusf_ctl.s.rom_t_cnt;
 
 	/* Convert value from rom_t_cnt to unsigned int */
 	if (nv_count_val)
