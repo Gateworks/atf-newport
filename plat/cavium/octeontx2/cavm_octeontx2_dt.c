@@ -1339,6 +1339,8 @@ static void octeontx2_cgx_assign_mac(const void *fdt)
 	 *   BOARD-MAC-ADDRESS
 	 */
 	mac_num = octeontx2_fdtbdk_get_num(fdt, "BOARD-MAC-ADDRESS-NUM", 10);
+	if (!mac_num)
+		mac_num = octeontx2_fdtbdk_get_num(fdt, "BOARD-MAC-ADDRESS-NUM", 16);
 	INFO("BOARD-MAC-ADDRESS-NUM=%d\n", mac_num);
 	override = octeontx2_fdtbdk_get_num(fdt, "BOARD-MAC-ADDRESS-NUM-OVERRIDE", 10);
 	if (override >= 0) {
