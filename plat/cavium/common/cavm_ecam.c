@@ -251,6 +251,7 @@ static void init_uaa(int node, uint64_t config_base, uint64_t config_size)
 	uint8_t bir = 0;
 	uint64_t vector_base = 0;
 	int i, uaa_irq;
+	uint32_t *sctl = (uint32_t *) (config_base + CAVM_PCCPF_XXX_VSEC_SCTL);
 	union cavm_pccpf_xxx_vsec_ctl vsec_ctl;
 	union cavm_pccpf_xxx_cmd cmd;
 
@@ -259,6 +260,12 @@ static void init_uaa(int node, uint64_t config_base, uint64_t config_size)
 	/* not intialising node1 uaa */
 	if (node)
 		return;
+
+	/* Bypass SMMU translation for MSIx delivery, since we pretend
+	 * UAA as non PCI device for non secure world
+	 */
+	*sctl |= 0x1;
+	debug_io("Marking MSIX for UAA as phys(SMMU bypass)\n");
 
 	uaa_irq = uaa_get_irq(vsec_ctl.s.inst_num);
 
