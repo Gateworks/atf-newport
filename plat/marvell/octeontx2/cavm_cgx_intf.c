@@ -677,7 +677,7 @@ static int cgx_poll_for_link_cb(int timer)
 						debug_cgx_intf("link %d speed %d duplex %d\n",
 							lmac_ctx->s.link_up,
 							lmac_ctx->s.speed,
-						lmac_ctx->s.full_duplex);
+							lmac_ctx->s.full_duplex);
 						continue;
 					}
 					/* if PHY is present */
@@ -793,7 +793,26 @@ void cgx_set_error_type(int node, int cgx_id, int lmac_id, uint64_t type)
 /* This function should be called once during boot time */
 void cgx_fw_intf_init(void)
 {
+	cgx_config_t *cgx_cfg;
+
 	debug_cgx_intf("%s\n", __func__);
+
+	/* for CGXs that are not configured by BDK to any mode,
+	 * CGX config CSRs needs to be configured correctly
+	 * as init callback will not be triggered for these
+	 * CGXs
+	 */
+	for (int node = 0; node < PLATFORM_MAX_NODES; node++) {
+		for (int cgx = 0; cgx < MAX_CGX; cgx++) {
+			cgx_cfg = &bfdt->cgx_cfg[cgx];
+			if (!cgx_cfg->enable)
+				/* if CGX is disabled, call this API
+				 * to initialize the config CSRs
+				 * with default value
+				 */
+				cgx_hw_init(node, cgx);
+		}
+	}
 
 	/* start with 1 timer to handle & process CGX requests */
 	cgx_timers[0] = timer_create(TM_PERIODIC, 1000, cgx_handle_requests_cb);
@@ -802,7 +821,6 @@ void cgx_fw_intf_init(void)
 	/* start 2nd timer to peridically poll for link status */
 	cgx_timers[1] = timer_create(TM_PERIODIC, 1000, cgx_poll_for_link_cb);
 	timer_start(cgx_timers[1]);
-
 }
 
 /* this function required to be called when booting to kernel

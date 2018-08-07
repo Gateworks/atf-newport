@@ -816,6 +816,8 @@ int cgx_sgmii_set_link_up(int node, int cgx_id, int lmac_id)
 	 * configure MRX_CONTROL CSR with default speed
 	 */
 	if (lmac->autoneg_dis) {
+		pcs_mrx_ctl.u = CSR_READ(node, CAVM_CGXX_GMP_PCS_MRX_CONTROL(
+						cgx_id, lmac_id));
 		pcs_mrx_ctl.s.an_en = 0;
 		pcs_mrx_ctl.s.spdlsb = 0;
 		pcs_mrx_ctl.s.spdmsb = 1;
@@ -1560,55 +1562,75 @@ void cgx_set_external_loopback(int node, int cgx_id, int lmac_id, int enable)
 	}
 }
 
-/* this function to be called for every CGX from
- * PCI scanning (CGX device enumeration)
+/* this function to be called for every CGX either from
+ * PCI scanning (CGX device enumeration) or
+ * during INTF initialization
  */
 void cgx_hw_init(int node, int cgx_id)
 {
 	int lmac_id;
 	cgx_config_t *cgx;
+	cavm_cgxx_cmrx_config_t cmr_config;
 
 	debug_cgx("%s: %d:%d\n", __func__, node, cgx_id);
 
 	cgx = &bfdt->cgx_cfg[cgx_id];
 
-	/* Retrieve the LMAC config from bfdt structure and loop
-	 * through them for lmac_count times and program the HW
-	 * for each LMAC
-	 */
-	for (lmac_id = 0; lmac_id < MAX_LMAC_PER_CGX; lmac_id++) {
-		if (cgx->lmac_cfg[lmac_id].lmac_enable)
-			cgx_lmac_init(node, cgx_id, lmac_id);
-		else
-			debug_cgx("%s LMAC%d not enabled\n", __func__, lmac_id);
+	if (cgx->enable) {
+		/* Retrieve the LMAC config from bfdt structure and loop
+		 * through them for lmac_count times and program the HW
+		 * for each LMAC
+		 */
+		for (lmac_id = 0; lmac_id < MAX_LMAC_PER_CGX; lmac_id++) {
+			if (cgx->lmac_cfg[lmac_id].lmac_enable)
+				cgx_lmac_init(node, cgx_id, lmac_id);
+			else
+				debug_cgx("%s LMAC%d not enabled\n", __func__, lmac_id);
 
-		/* FIXME: enable CMR INT for testing */
-		CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_cmrx_int_ena_w1s_t,
+			/* enable CMR INT for notifications to kernel cmds/evt */
+			CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_cmrx_int_ena_w1s_t,
 				CAVM_CGXX_CMRX_INT_ENA_W1S(cgx_id, lmac_id),
 				overflw, 1);
-	}
+		}
 
-	/* program the LMAC count (already updated by FDT parser)
-	 * for each CGX
-	 */
-	debug_cgx("%s lmac_count %d\n", __func__, cgx->lmac_count);
+		/* FCS setting */
+		CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_cmr_global_config_t,
+			CAVM_CGXX_CMR_GLOBAL_CONFIG(cgx_id), fcs_strip, 1);
 
-	CSR_WRITE(node, CAVM_CGXX_CMR_TX_LMACS(cgx_id),
-				cgx->lmac_count);
-	CSR_WRITE(node, CAVM_CGXX_CMR_RX_LMACS(cgx_id),
-				cgx->lmac_count);
-
-	/* FCS setting */
-	CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_cmr_global_config_t,
-		CAVM_CGXX_CMR_GLOBAL_CONFIG(cgx_id), fcs_strip, 1);
-
-	/* Set the backpressure and mask */
-	for (lmac_id = 0; lmac_id < cgx->lmac_count; lmac_id++) {
-		CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_cmr_chan_msk_and_t,
+		/* Set the backpressure and mask */
+		for (lmac_id = 0; lmac_id < cgx->lmac_count; lmac_id++) {
+			CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_cmr_chan_msk_and_t,
 					CAVM_CGXX_CMR_CHAN_MSK_AND(cgx_id),
 					msk_and,
 					((1ull << MAX_CHAN_PER_LMAC) - 1) <<
 					(lmac_id * MAX_CHAN_PER_LMAC));
+		}
+
+		/* program the LMAC count (already updated by FDT parser)
+		 * for each CGX
+		 */
+		debug_cgx("%s lmac_count %d\n", __func__, cgx->lmac_count);
+		CSR_WRITE(node, CAVM_CGXX_CMR_TX_LMACS(cgx_id),
+					cgx->lmac_count);
+		CSR_WRITE(node, CAVM_CGXX_CMR_RX_LMACS(cgx_id),
+					cgx->lmac_count);
+
+	} else {
+		/* if CGX not enabled, configure the number of LMACs
+		 * in CGX to be zero. configure the LMAC type as 0
+		 * and lane_to_sds with the reset value of 0xE4
+		 */
+		CSR_WRITE(node, CAVM_CGXX_CMR_TX_LMACS(cgx_id), 0);
+		CSR_WRITE(node, CAVM_CGXX_CMR_RX_LMACS(cgx_id), 0);
+
+		for (lmac_id = 0; lmac_id < MAX_LMAC_PER_CGX; lmac_id++) {
+			cmr_config.u = CSR_READ(node,  CAVM_CGXX_CMRX_CONFIG(
+					cgx_id, lmac_id));
+			cmr_config.s.lmac_type = 0;
+			cmr_config.s.lane_to_sds = 0xE4; /* reset value */
+			CSR_WRITE(node, CAVM_CGXX_CMRX_CONFIG(cgx_id, lmac_id),
+					cmr_config.u);
+		}
 	}
 }
 
