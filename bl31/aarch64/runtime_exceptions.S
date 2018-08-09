@@ -97,6 +97,16 @@
 
 	cmp	x30, #EC_DABORT_LOWER_EL
 	b.eq	dabort_lower_el_handler
+
+	/* -----------------------------------------------------
+	 * Handle Cavium-specific trap - synchronous data abort
+	 * with (as per ARM's ARM DDI0487B) EC = 0x1f, which
+	 * is IMPLEMENTATION_DEFINED
+	 * -----------------------------------------------------
+	 */
+	cmp	x30, #EC_CAVIUM_IO_TRAP
+	b.eq	cavm_io_trap_handler
+
 	/* -----------------------------------------------------
 	 * The following code handles any synchronous exception
 	 * that is not an SMC.

@@ -521,6 +521,7 @@
 #define EC_AARCH64_HVC			U(0x16)
 #define EC_AARCH64_SMC			U(0x17)
 #define EC_AARCH64_SYS			U(0x18)
+#define EC_CAVIUM_IO_TRAP		U(0x1f)
 #define EC_IABORT_LOWER_EL		U(0x20)
 #define EC_IABORT_CUR_EL		U(0x21)
 #define EC_PC_ALIGN			U(0x22)
@@ -532,6 +533,9 @@
 #define EC_SERROR			U(0x2f)
 
 #define EC_BITS(x)			(((x) >> ESR_EC_SHIFT) & ESR_EC_MASK)
+
+#define ESR_WNR_MASK			U(0x40)
+#define ESR_FAR_ELX_VALID_MASK		U(0x400)
 
 /* Reset bit inside the Reset management register for EL3 (RMR_EL3) */
 #define RMR_RESET_REQUEST_SHIFT 	U(0x1)
