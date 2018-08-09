@@ -24,6 +24,7 @@
 #include <cavm_legacy_pwrc.h>
 #include <cavm_gpio.h>
 #include <cavm_dt.h>
+#include <cavm_flr.h>
 
 /* Any SoC family specific setup
  * to be done in BL31 can be initialized
@@ -39,6 +40,9 @@ void plat_cavm_setup(void)
 
 	/* setup gpio interrupt handling */
 	plat_gpio_irq_setup();
+
+	/* Workaround for FLR handling on CN9xxx */
+	plat_flr_init();
 }
 
 const uintptr_t plat_get_scmi_mbox_addr(int node)
