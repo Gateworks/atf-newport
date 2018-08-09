@@ -157,6 +157,9 @@ DEFINE_RENAME_SYSREG_RW_FUNCS(cvm_access_el3, AP_CVM_ACCESS_EL3)
 /* Default SPI to be used by kernel GPIO driver when intercepting interrupts */
 #define OCTEONTX_IRQ_GPIO_NSEC		0x79
 
+#define set_bit(reg, bit) reg |= (1ULL<<(bit))
+#define unset_bit(reg, bit) reg &= ~(1ULL<<(bit))
+
 int thunder_get_lmc_per_node(void);
 
 int thunder_get_num_ecams_per_node(void);
@@ -203,6 +206,7 @@ void set_secondary_cpu_jump_addr(unsigned int bl1_base);
 void l2c_flush(void);
 void plat_cavm_setup(void);
 unsigned int plat_get_rom_t_cnt(int node);
+void plat_flr_init(void);
 
 /**
  * Builds a bit mask given the required size in bits.

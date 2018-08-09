@@ -19,6 +19,7 @@
 #include <libfdt.h>
 #include <cavm_common.h>
 
+#pragma weak plat_flr_init
 
 extern void plat_add_mmio_node(unsigned long node);
 extern unsigned thunder_get_node_count(void);
@@ -78,9 +79,6 @@ void plat_add_mmio_map()
 	for (node = 0; node < node_count; node++)
 		plat_add_mmio_node(node);
 }
-
-#define set_bit(reg, bit) reg |= (1ULL<<(bit))
-#define unset_bit(reg, bit) reg &= ~(1ULL<<(bit))
 
 void thunder_cpu_setup(void)
 {
@@ -196,4 +194,8 @@ void plat_error_handler(int err_code)
 	CSR_WRITE(0, CAVM_RST_BOOT, rst_boot.u);
 #endif
 	for(;;);
+}
+
+void plat_flr_init(void) {
+	return;
 }
