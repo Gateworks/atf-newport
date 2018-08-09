@@ -32,9 +32,11 @@ BL2_SOURCES		+=	plat/cavium/octeontx2/t96/plat_cavm_ecam.c		\
 				plat/cavium/octeontx2/cavm_rvu.c		\
 
 BL31_SOURCES		+=	plat/cavium/octeontx2/aarch64/octeontx2_common.S	\
+				plat/cavium/octeontx2/t96/plat_flr.S			\
 				plat/cavium/octeontx2/aarch64/plat_cavm_helpers.S	\
 				plat/cavium/octeontx2/cavm_topology.c		\
 				plat/cavium/octeontx2/cavm_rvu.c		\
 				plat/cavium/octeontx2/cavm_pm.c			\
 				plat/cavium/octeontx2/cavm_pwrc.c		\
 				plat/cavium/octeontx2/cavm_scmi.c		\
+				plat/cavium/octeontx2/cavm_flr.c		\
