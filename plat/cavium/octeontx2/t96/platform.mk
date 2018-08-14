@@ -14,6 +14,9 @@
 # Include common thunder platform's makefile helper
 include plat/cavium/common/platform.mk
 
+PLAT_XLAT_TABLES_DYNAMIC := 1
+$(eval $(call add_define,PLAT_XLAT_TABLES_DYNAMIC))
+
 PLAT_INCLUDES		+=	-Iplat/cavium/octeontx2/include			\
 				-Iplat/cavium/octeontx2/t96/include		\
 
