@@ -152,7 +152,7 @@ uint64_t gpio_irq_handler(uint32_t id, uint32_t flags, void *cookie)
 
 	/* For all mis-routed interrupts, clear interrupt and exit. */
 	if ((mapped_counter < 1) || (mapped_cpu != cpu)) {
-		ERROR("Mis-routed GPIO interrupt id 0x%x mapped cpu=%d but got intr on cpu=%ld\n",
+		ERROR("Mis-routed GPIO interrupt id 0x%x mapped cpu=%d but got intr on cpu=%lld\n",
 		      id, mapped_cpu, cpu);
 		return 0;
 	}
@@ -303,15 +303,15 @@ int gpio_install_irq(uint64_t gpio_num, uint64_t sp, uint64_t  cpu,
 		gpio_ints[gpio_num].sp = 0;
 		gpio_ints[gpio_num].cpu = 0;
 		gpio_ints[gpio_num].ttbr = 0;
-		ERROR("Can't install irq handlerfor gpio:%lu cpu:%lu\n",
+		ERROR("Can't install irq handlerfor gpio:%llu cpu:%llu\n",
 		       gpio_num, cpu);
 		__atomic_thread_fence(__ATOMIC_SEQ_CST);
 		/* Failure, this GPIO is free to be configured. */
 		__atomic_fetch_sub(&gpio_ints[gpio_num].in_use, 1,
 				   __ATOMIC_SEQ_CST);
 	} else {
-		INFO("Installed irq handler for gpio:%lu ttrb:%lx sp:%lx\n"
-		       "\tisr_base:%lx cpu:%lu tcr:%lx\n",
+		INFO("Installed irq handler for gpio:%llu ttrb:%llx sp:%llx\n"
+		       "\tisr_base:%llx cpu:%llu tcr:%llx\n",
 		       gpio_num, gpio_ints[gpio_num].ttbr,
 		       gpio_ints[gpio_num].sp,
 		       gpio_ints[gpio_num].isr_base, gpio_ints[gpio_num].cpu,
@@ -370,7 +370,7 @@ void gpio_clear_irq(uint64_t gpio_num)
 				   __ATOMIC_SEQ_CST);
 	/* Unlock */
 	__atomic_fetch_sub(&gpio_ints[gpio_num].lock, 1, __ATOMIC_SEQ_CST);
-	INFO("Removed irq handler for gpio:%lu\n", gpio_num);
+	INFO("Removed irq handler for gpio:%llu\n", gpio_num);
 }
 
 int octeontx_register_gpio_handlers(void)

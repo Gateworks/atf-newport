@@ -325,7 +325,7 @@ static void init_twsi(uint64_t config_base, uint64_t config_size)
 
 	debug_io("setting secure/phys @%p\n", (void *)sctl);
 	*sctl |= 3;
-	printf("TWSI1(%d) init called config_base:%lx size:%lx\n",
+	printf("TWSI1(%d) init called config_base:%llx size:%llx\n",
 	       vsec_ctl.s.inst_num, config_base, config_size);
 	print_config_space(pconfig);
 	enable_msix(config_base, cap_pointer, &table_size, &bir);

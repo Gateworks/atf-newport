@@ -163,7 +163,7 @@ uint64_t bphy_psm_irq_handler(uint32_t id, uint32_t flags, void *cookie)
 
 	/* For all mis-routed interrupts, clear interrupt and exit. */
 	if ((mapped_counter < 1) || (mapped_cpu != cpu)) {
-		ERROR("Mis-routed BPHY PSM interrupt id 0x%x mapped cpu=%d but got intr on cpu=%ld\n",
+		ERROR("Mis-routed BPHY PSM interrupt id 0x%x mapped cpu=%d but got intr on cpu=%lld\n",
 		      id, mapped_cpu, cpu);
 		return 0;
 	}
@@ -291,15 +291,15 @@ int bphy_psm_install_irq(uint64_t irq_num, uint64_t sp, uint64_t  cpu,
 		bphy_ints[irq_num].sp = 0;
 		bphy_ints[irq_num].cpu = 0;
 		bphy_ints[irq_num].ttbr = 0;
-		ERROR("Can't install irq handler for bphy psm:%lu cpu:%lu\n",
+		ERROR("Can't install irq handler for bphy psm:%llu cpu:%llu\n",
 		       irq_num, cpu);
 		__atomic_thread_fence(__ATOMIC_SEQ_CST);
 		/* Failure, this IRQ is free to be configured. */
 		__atomic_fetch_sub(&bphy_ints[irq_num].in_use, 1,
 				   __ATOMIC_SEQ_CST);
 	} else {
-		INFO("Installed irq handler for bphy psm:%lu ttrb:%lx sp:%lx\n"
-		       "\tisr_base:%lx cpu:%lu tcr:%lx\n",
+		INFO("Installed irq handler for bphy psm:%llu ttrb:%llx sp:%llx\n"
+		       "\tisr_base:%llx cpu:%llu tcr:%llx\n",
 		       irq_num, bphy_ints[irq_num].ttbr,
 		       bphy_ints[irq_num].sp,
 		       bphy_ints[irq_num].isr_base, bphy_ints[irq_num].cpu,
@@ -357,7 +357,7 @@ void bphy_psm_clear_irq(uint64_t irq_num)
 				   __ATOMIC_SEQ_CST);
 	/* Unlock */
 	__atomic_fetch_sub(&bphy_ints[irq_num].lock, 1, __ATOMIC_SEQ_CST);
-	INFO("Removed irq handler for bphy psm:%lu\n", irq_num);
+	INFO("Removed irq handler for bphy psm:%llu\n", irq_num);
 }
 
 int cavm_register_bphy_intr_handlers(void)

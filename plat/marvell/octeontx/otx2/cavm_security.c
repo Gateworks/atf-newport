@@ -72,7 +72,7 @@ void octeontx_security_setup(void)
 		ccs_asc_attr.s.ns_en = !region->secure;
 		CSR_WRITE(CAVM_CCS_ASC_REGIONX_ATTR(region->number), ccs_asc_attr.u);
 
-		VERBOSE("Mark memory region %d:: %lx to %lx as %ssecure (%lx)\n",
+		VERBOSE("Mark memory region %d:: %llx to %llx as %ssecure (%llx)\n",
 			region->number,
 			CSR_READ(CAVM_CCS_ASC_REGIONX_START(region->number)),
 			CSR_READ(CAVM_CCS_ASC_REGIONX_END(region->number)) | 0xffffff,

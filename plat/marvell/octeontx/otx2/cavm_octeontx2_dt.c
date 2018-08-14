@@ -641,7 +641,7 @@ static int octeontx2_fdt_get_bus(const void *fdt, int offset,
 		debug_dts("CGX%d.LMAC%d: PHY is on MDIO bus\n", cgx_idx, lmac_idx);
 		mdio = octeontx2_fdt_get_uint64(fdt, "reg", node);
 		bus = (mdio & (1 << 7)) ? 1 : 0;
-		debug_dts("CGX%d.LMAC%d: mdio 0x%lx bus %d\n",
+		debug_dts("CGX%d.LMAC%d: mdio 0x%llx bus %d\n",
 				cgx_idx, lmac_idx, mdio, bus);
 	} else if (!strncmp(nodename, "i2c", 3)) {
 		debug_dts("CGX%d.LMAC%d: PHY/SFP is on I2C bus\n", cgx_idx, lmac_idx);

@@ -250,8 +250,7 @@ static int do_alias(void *ctx_h, uintptr_t pa, uint64_t *mask, uint8_t *rt_id, u
 	if (w_flag) {
 		/* If it was write, the value to store is saved at Rt */
 		val = read_gp_reg(ctx_h, mask, rt_id);
-
-		INFO("%s: Write: addr=%p, val=0x%lx\n", __func__, pa_bar2, val);
+		INFO("%s: Write: addr=%p, val=0x%llx\n", __func__, pa_bar2, val);
 		*pa_bar2 = val;
 	} else {
 		/*
@@ -260,7 +259,7 @@ static int do_alias(void *ctx_h, uintptr_t pa, uint64_t *mask, uint8_t *rt_id, u
 		 * Write proper structure field at Rt.
 		 */
 		write_gp_reg(ctx_h, mask, rt_id, *pa_bar2);
-		INFO("%s: Read:  addr=0x%p, val=0x%lx\n",
+		INFO("%s: Read:  addr=0x%p, val=0x%llx\n",
 		     __func__, pa_bar2, (*pa_bar2 & *mask));
 	}
 
@@ -321,7 +320,7 @@ static int do_sel(void *ctx_h, uintptr_t pa, uint64_t *mask, uint8_t *rt_id, uin
 		/* If it was write, the value to store is saved at Rt */
 		blk_af_bar2_sel[blk_id].u = read_gp_reg(ctx_h, mask, rt_id);
 
-		INFO("%s: Write: blk_id=%d, blk_af_bar2_sel.u=0x%lx\n",
+		INFO("%s: Write: blk_id=%d, blk_af_bar2_sel.u=0x%llx\n",
 		     __func__, blk_id, (blk_af_bar2_sel[blk_id].u & *mask));
 	} else {
 		/*
@@ -330,7 +329,7 @@ static int do_sel(void *ctx_h, uintptr_t pa, uint64_t *mask, uint8_t *rt_id, uin
 		 * Write proper structure field at Rt.
 		 */
 		write_gp_reg(ctx_h, mask, rt_id, blk_af_bar2_sel[blk_id].u);
-		INFO("%s: Read: blk_id=%d, blk_af_bar2_sel_wa.u=0x%lx\n",
+		INFO("%s: Read: blk_id=%d, blk_af_bar2_sel_wa.u=0x%llx\n",
 		     __func__, blk_id, (blk_af_bar2_sel[blk_id].u & *mask));
 	}
 
@@ -371,7 +370,7 @@ static int update_rn(void *ctx_h, uint8_t *rn_id, int16_t *imm)
 	rn_val = read_gp_reg(ctx_h, &rn_mask, rn_id);
 	write_gp_reg(ctx_h, &rn_mask, rn_id, rn_val + *imm);
 
-	INFO("%s: rn_val=0x%lx, imm=0x%x, rn_val+imm=0x%lx\n",
+	INFO("%s: rn_val=0x%llx, imm=0x%x, rn_val+imm=0x%llx\n",
 		 __func__, rn_val, *imm, rn_val + *imm);
 	return 0;
 }
@@ -520,7 +519,7 @@ void octeontx_trap_handler(void *ctx_handle)
 	 * traps this bit is cleared, it's set for instruction traps.
 	 */
 	if (reg_el3 & ESR_FAR_ELX_NOT_VALID_MASK) {
-		ERROR("Invalid FAR_EL3, unable to get address that came from EL%lu\n",
+		ERROR("Invalid FAR_EL3, unable to get address that came from EL%llu\n",
 		      GET_EL(read_spsr_el3()));
 		panic();
 	}
@@ -529,7 +528,7 @@ void octeontx_trap_handler(void *ctx_handle)
 	reg_el3 = read_far_el3();
 	pa = virt_to_phys(reg_el3);
 	if (pa == 0) {
-		ERROR("Invalid PA 0x%lx from EL%lu\n", pa, GET_EL(read_spsr_el3()));
+		ERROR("Invalid PA 0x%llx from EL%llu\n", pa, GET_EL(read_spsr_el3()));
 		panic();
 	}
 
