@@ -17,7 +17,7 @@
 #include <arch.h>
 #include <common_def.h>
 #include <tbbr_img_def.h>
-#include <xlat_tables.h>
+#include <xlat_tables_v2.h>
 
 /*******************************************************************************
  * Generic platform constants

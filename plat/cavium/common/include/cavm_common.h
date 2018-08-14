@@ -15,7 +15,7 @@
 #define __CAVM_COMMON_H__
 
 #include <stdint.h>
-#include <xlat_tables.h>
+#include <xlat_tables_v2.h>
 #include <arch_helpers.h>
 #include <stddef.h>
 

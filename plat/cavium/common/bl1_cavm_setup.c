@@ -17,7 +17,7 @@
 #include <platform.h>
 #include <platform_def.h>
 #include <tbbr_img_def.h>
-#include <xlat_tables.h>
+#include <xlat_tables_v2.h>
 #include "../../../bl1/bl1_private.h"
 #include <cavm_common.h>
 #include <cavm_dt.h>

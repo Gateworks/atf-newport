@@ -15,7 +15,7 @@
 #include <console.h>
 #include <platform_def.h>
 #include <platform_tsp.h>
-#include <xlat_tables.h>
+#include <xlat_tables_v2.h>
 #include <thunder_private.h>
 
 

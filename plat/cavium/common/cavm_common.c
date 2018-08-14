@@ -13,7 +13,7 @@
 
 #include <arch.h>
 #include <platform_def.h>
-#include <xlat_tables.h>
+#include <xlat_tables_v2.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <libfdt.h>

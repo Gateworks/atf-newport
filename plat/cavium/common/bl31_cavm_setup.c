@@ -39,7 +39,7 @@
 #include <platform.h>
 #include <interrupt_mgmt.h>
 #include <stddef.h>
-#include <xlat_tables.h>
+#include <xlat_tables_v2.h>
 #include <cavm_common.h>
 #include <cavm_dt.h>
 #include <debug.h>

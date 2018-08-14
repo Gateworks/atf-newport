@@ -19,12 +19,12 @@ PLAT_INCLUDES		:=	-Icsr/include					\
 				-Iinclude/lib/stdlib				\
 				-Iplat/cavium/common/include 			\
 
+include lib/xlat_tables_v2/xlat_tables.mk
+
 PLAT_BL_COMMON_SOURCES	:=	drivers/arm/pl011/aarch64/pl011_console.S	\
 				plat/cavium/common/drivers/cavm_mmc.c		\
 				plat/cavium/common/cavm_twsi_core.c		\
 				plat/cavium/common/drivers/cavm_twsi.c		\
-				lib/xlat_tables/xlat_tables_common.c		\
-				lib/xlat_tables/aarch64/xlat_tables.c		\
 				${LIBFDT_DIR}/fdt.c				\
 				${LIBFDT_DIR}/fdt_ro.c				\
 				${LIBFDT_DIR}/fdt_rw.c				\
@@ -34,6 +34,7 @@ PLAT_BL_COMMON_SOURCES	:=	drivers/arm/pl011/aarch64/pl011_console.S	\
 				plat/cavium/common/cavm_dt.c			\
 				plat/cavium/common/drivers/cavm_smi.c		\
 				plat/cavium/common/cavm_io_storage.c		\
+				${XLAT_TABLES_LIB_SRCS}				\
 
 BL1_SOURCES		+=	plat/cavium/common/drivers/cavm_spi.c		\
 				drivers/io/io_fip.c				\
