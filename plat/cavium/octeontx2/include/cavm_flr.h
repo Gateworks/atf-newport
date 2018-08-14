@@ -19,6 +19,7 @@
 #define RVU_AF_BAR2_SEL			0x840009000000ll
 #define RVU_AF_BAR2_ALIAS		0x840009100000ll
 #define RVU_PF_FUNC_BAR2_BASE		0x840200000000ll
+#define RVU_PF_FUNC_BAR2_SIZE		0x100000ll
 
 /* Helper RVU definitions */
 #define RVU_AF_ADDR_S_BLK_SHIFT		ULL(28)
@@ -49,7 +50,8 @@
 #define RVU_PF_FUNC_S_FUNC_MASK		ULL(0x3ff)
 #define RVU_PF_FUNC_S_FUNC(x)		(((x) >> RVU_PF_FUNC_S_FUNC_SHIFT) & RVU_PF_FUNC_S_FUNC_MASK)
 
-#define RVU_PFX_FUNCX_BAR2(pf, func)	(((pf) << 36) | ((func) << 25))
+#define RVU_PFX_FUNCX(pf, func)		(((pf) << 36) | ((func) << 25))
+#define RVU_PFX_FUNCX_BAR2(pf, func)	(RVU_PF_FUNC_BAR2_BASE | RVU_PFX_FUNCX(pf, func))
 
 #define PAR_EL1_PA_SHIFT		ULL(12)
 #define PAR_EL1_PA_MASK			ULL(0xfffffffff)

@@ -73,7 +73,7 @@ static inline int is_flr_wa_applicable(void) {
 
 static int alias_handler(void *ctx_h, uintptr_t pa, uint64_t *mask, uint8_t *rt_id, uint8_t w_flag)
 {
-	int blk_id, lf_slot, addr;
+	int blk_id, lf_slot, addr, rc;
 	uint64_t *pa_bar2, pf, func;
 
 	assert(pa != 0);
@@ -108,12 +108,28 @@ static int alias_handler(void *ctx_h, uintptr_t pa, uint64_t *mask, uint8_t *rt_
 	addr = RVU_FUNC_ADDR_S_ADDR(pa);
 
 	/* Construct the BAR2 PA address based on the (blk)_AF_BAR2_SEL and PA */
-	pa_bar2 = (uint64_t *)(RVU_PF_FUNC_BAR2_BASE |
-		   RVU_PFX_FUNCX_BAR2(pf, func) |
+	pa_bar2 = (uint64_t *)(RVU_PFX_FUNCX_BAR2(pf, func) |
 		   (blk_id << RVU_AF_ADDR_S_BLK_SHIFT) |
 		   (lf_slot << RVU_FUNC_ADDR_S_LF_SLOT_SHIFT) |
 		   (addr << RVU_FUNC_ADDR_S_ADDR_SHIFT));
 
+	/*
+	 * Map dynamically given memory.
+	 * Exclude case for func != 0, which is already mapped
+	 * (required by earlier stage RVU code).
+	 * Consider mapping func == 0 dynamically for cavm_rvu.c purposes.
+	 */
+	if (func != 0) {
+		rc = mmap_add_dynamic_region(RVU_PFX_FUNCX_BAR2(pf, func),
+					     RVU_PFX_FUNCX_BAR2(pf, func),
+					     RVU_PF_FUNC_BAR2_SIZE,
+					     MT_DEVICE | MT_RW | MT_SECURE);
+		if (rc) {
+			ERROR("Unable to map memory rc=%d, addr=0x%llx, size=0x%llx\n",
+				rc, RVU_PFX_FUNCX_BAR2(pf, func), RVU_PF_FUNC_BAR2_SIZE);
+			return rc;
+		}
+	}
 
 	if (w_flag) {
 		/* If it was write, the value to store is saved at Rt */
@@ -130,6 +146,17 @@ static int alias_handler(void *ctx_h, uintptr_t pa, uint64_t *mask, uint8_t *rt_
 		write_gp_reg(ctx_h, mask, rt_id, *pa_bar2);
 		INFO("%s: Read:  addr=0x%p, val=0x%lx",
 		     __func__, pa_bar2, (*pa_bar2 & *mask));
+	}
+
+	/* Unmap this region */
+	if (func != 0) {
+		rc = mmap_remove_dynamic_region(RVU_PFX_FUNCX_BAR2(pf, func),
+						RVU_PF_FUNC_BAR2_SIZE);
+		if (rc) {
+			ERROR("Unable to remove mapped memory addr=0x%llx, size=0x%llx\n",
+				RVU_PFX_FUNCX_BAR2(pf, func), RVU_PF_FUNC_BAR2_SIZE);
+			return rc;
+		}
 	}
 
 	return 0;
