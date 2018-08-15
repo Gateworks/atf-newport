@@ -1401,7 +1401,7 @@ static void octeontx2_fill_cgx_details(const void *fdt)
 
 	nnum = thunder_get_node_count();
 	for (node_idx = 0; node_idx < nnum; node_idx++) {
-		for (qlm_idx = 0; qlm_idx < thunder_get_gser_count(); qlm_idx++) {
+		for (qlm_idx = thunder_get_gser_count() - 1; qlm_idx >= 0; qlm_idx--) {
 			lnum = plat_get_max_lane_num(qlm_idx);
 			for (lane_idx = 0; lane_idx < lnum; lane_idx++) {
 				qlm_state.u = CSR_READ(node_idx, CAVM_GSERNX_LANEX_SCRATCHX(qlm_idx, lane_idx, 0));
