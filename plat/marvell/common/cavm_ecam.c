@@ -664,12 +664,28 @@ static void octeontx_ecam_dev_enumerate(struct ecam_device *device)
 {
 	uint64_t pconfig;
 	int rc;
+	union cavm_pccpf_xxx_vsec_ctl vsec_ctl;
+	union cavm_pccpf_xxx_vsec_sctl vsec_sctl;
 
 	/* Get address of the device */
 	pconfig = plat_ops.get_dev_config(device);
 	if (!pconfig) {
 		debug_io("%s: Unable to get config\n", __func__);
 		return;
+	}
+
+	/* reset the PCCPF_XXX_VSEC_CTL[NXTFN_NS] and PCCPF_XXX_VSEC_SCTL
+	 * [NXTFN_S] with zero as BDK might have built the ARI chain
+	 * and needs to be reset before configuring it
+	 */
+	if (octeontx_bus_is_rsl(device)) {
+		debug_io("%s: reset NXTFN for ARI devices\n", __func__);
+		vsec_ctl.u = cavm_read32(pconfig + CAVM_PCCPF_XXX_VSEC_CTL);
+		vsec_ctl.s.nxtfn_ns = 0;
+		cavm_write32(pconfig + CAVM_PCCPF_XXX_VSEC_CTL, vsec_ctl.u);
+		vsec_sctl.u =  cavm_read32(pconfig + CAVM_PCCPF_XXX_VSEC_SCTL);
+		vsec_sctl.s.nxtfn_s = 0;
+		cavm_write32(pconfig + CAVM_PCCPF_XXX_VSEC_SCTL, vsec_sctl.u);
 	}
 
 	/* Call platform-specific method for secure settings */
