@@ -930,7 +930,8 @@ static int octeontx2_check_qlm_lmacs(int node, int cgx_idx,
 	/* This code is based on QLM<->CGX mapping and fixed per SoC.
 	 * hence add model specific condition
 	 */
-	if (mode_idx == CAVM_QLM_MODE_QSGMII) {
+	if ((mode_idx == CAVM_QLM_MODE_QSGMII)
+	    || (mode_idx == CAVM_QLM_MODE_USXGMII_4X1)) {
 		if (cgx->lmacs_used)
 			lmac_avail = cgx->lmacs_used;
 	} else if (CAVIUM_IS_MODEL(CAVIUM_CN96XX)) {
