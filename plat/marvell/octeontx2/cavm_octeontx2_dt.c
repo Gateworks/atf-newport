@@ -20,6 +20,15 @@
 #include <cavm_dt.h>
 #include <cavm_common.h>
 
+/* define DEBUG_ATF_DTS to enable debug logs */
+#undef DEBUG_ATF_DTS
+
+#ifdef DEBUG_ATF_DTS
+#define debug_dts printf
+#else
+#define debug_dts(...) ((void) (0))
+#endif
+
 struct qlm_mode_strmap_s {
 	int mode;
 	char *bdk_str;
@@ -69,11 +78,11 @@ static void octeontx2_print_board_variables(void)
 
 	for (i = 0; i < MAX_CGX; i++) {
 		cgx = &(bfdt->cgx_cfg[i]);
-		INFO("N%d.CGX%d: lmac_count = %d\n", cgx->node, i,
+		debug_dts("N%d.CGX%d: lmac_count = %d\n", cgx->node, i,
 				cgx->lmac_count);
 		for (j = 0; j < cgx->lmac_count; j++) {
 			lmac = &cgx->lmac_cfg[j];
-			INFO("N%d.CGX%d.LMAC%d: mode = %s:%d, qlm = %d, lane = %d, lane_to_sds=0x%x\n",
+			debug_dts("N%d.CGX%d.LMAC%d: mode = %s:%d, qlm = %d, lane = %d, lane_to_sds=0x%x\n",
 					cgx->node,
 					i,
 					j,
@@ -82,11 +91,11 @@ static void octeontx2_print_board_variables(void)
 					lmac->qlm,
 					lmac->lane,
 					lmac->lane_to_sds);
-			INFO("\tnum_rvu_vfs=%d, num_msix_vec=%d, use_training=%d\n",
+			debug_dts("\tnum_rvu_vfs=%d, num_msix_vec=%d, use_training=%d\n",
 					lmac->num_rvu_vfs,
 					lmac->num_msix_vec,
 					lmac->use_training);
-			INFO("\tMAC=%x:%x:%x:%x:%x:%x\n",
+			debug_dts("\tMAC=%x:%x:%x:%x:%x:%x\n",
 					lmac->local_mac_address[0],
 					lmac->local_mac_address[1],
 					lmac->local_mac_address[2],
@@ -96,26 +105,26 @@ static void octeontx2_print_board_variables(void)
 			if (lmac->phy_present) {
 				phy = &lmac->phy_config;
 				if (strlen(phy->phy_compatible)) {
-					INFO("\tPHY: mdio_bus=%d, phy_addr=0x%x, compatible=%s\n",
+					debug_dts("\tPHY: mdio_bus=%d, phy_addr=0x%x, compatible=%s\n",
 							phy->mdio_bus,
 							phy->phy_addr,
 							phy->phy_compatible);
 				} else {
-					INFO("\tPHY: mdio_bus=%d, phy_addr=0x%x, compatible=NULL\n",
+					debug_dts("\tPHY: mdio_bus=%d, phy_addr=0x%x, compatible=NULL\n",
 							phy->mdio_bus,
 							phy->phy_addr);
 				}
 			} else {
-				INFO("\tPHY: NONE\n");
+				debug_dts("\tPHY: NONE\n");
 			}
 			if ((lmac->mode == CAVM_CGX_LMAC_TYPES_E_SGMII) ||
 				(lmac->mode == CAVM_CGX_LMAC_TYPES_E_QSGMII)) {
-				INFO("\tphy_mode=%d, sgmii_1000x_mode=%d, autoneg_dis=%d\n",
+				debug_dts("\tphy_mode=%d, sgmii_1000x_mode=%d, autoneg_dis=%d\n",
 						lmac->phy_mode,
 						lmac->sgmii_1000x_mode,
 						lmac->autoneg_dis);
 			}
-			INFO("\tLMAC enable=%d\n", lmac->lmac_enable);
+			debug_dts("\tLMAC enable=%d\n", lmac->lmac_enable);
 		}
 	}
 }
@@ -189,7 +198,7 @@ static long octeontx2_fdtbdk_get_num(const void *fdt_addr, const char *prop,
 	offset = fdt_path_offset(fdt_addr, "/cavium,bdk");
 	buf = fdt_getprop(fdt_addr, offset, prop, &len);
 	if (!buf) {
-		INFO("No %s option is set in BDK.\n", prop);
+		debug_dts("No %s option is set in BDK.\n", prop);
 		return -1;
 	}
 	ret = strtol(buf, NULL, base);
@@ -421,7 +430,7 @@ static void octeontx2_parse_rvu_config(const void *fdt, int *fdt_vfs)
 			return;
 		}
 	} else { /* CPT not available */
-		INFO("RVU: CPT is disabled\n");
+		debug_dts("RVU: CPT is disabled\n");
 		bfdt->rvu_config.cpt_dis = 1;
 	}
 
@@ -567,17 +576,17 @@ static int octeontx2_fdt_get_bus(const void *fdt, int offset,
 	nodename = fdt_get_name(fdt, node, NULL);
 
 	if (!strncmp(nodename, "mdio", 4)) {
-		INFO("CGX%d.LMAC%d: PHY is on MDIO bus\n", cgx_idx, lmac_idx);
+		debug_dts("CGX%d.LMAC%d: PHY is on MDIO bus\n", cgx_idx, lmac_idx);
 		mdio = octeontx2_fdt_get_uint64(fdt, "reg", node);
 		bus = (mdio & (1 << 7)) ? 1 : 0;
-		INFO("CGX%d.LMAC%d: mdio 0x%lx bus %d\n",
+		debug_dts("CGX%d.LMAC%d: mdio 0x%lx bus %d\n",
 				cgx_idx, lmac_idx, mdio, bus);
 	} else if (!strncmp(nodename, "i2c", 3)) {
-		INFO("CGX%d.LMAC%d: PHY is on I2C bus\n", cgx_idx, lmac_idx);
+		debug_dts("CGX%d.LMAC%d: PHY is on I2C bus\n", cgx_idx, lmac_idx);
 		i2c = octeontx2_fdt_get_int32(fdt, "reg", node);
 		/* based on DEVFN for TWSI 0/1 */
 		bus = (i2c & (1 << 8)) ? 1 : 0;
-		INFO("CGX%d.LMAC%d: i2c 0x%x bus %d\n",
+		debug_dts("CGX%d.LMAC%d: i2c 0x%x bus %d\n",
 				cgx_idx, lmac_idx, i2c, bus);
 	} else
 		WARN("CGX%d.LMAC%d: no compatible bus type for PHY\n",
@@ -606,7 +615,7 @@ static void octeontx2_fdt_get_i2c_bus_info(const void *fdt, int offset,
 				cgx_idx, lmac_idx);
 	} else if (!fdt_node_check_compatible(fdt, parent,
 				"nxp,pca9546")) {
-		INFO("CGX%d.LMAC%d: 9546 MUX\n", cgx_idx, lmac_idx);
+		debug_dts("CGX%d.LMAC%d: 9546 MUX\n", cgx_idx, lmac_idx);
 
 		i2c_info->is_mux = 0; /* PCA9546 is a switch */
 		i2c_info->type = I2C_MUX_PCA9546;
@@ -617,7 +626,7 @@ static void octeontx2_fdt_get_i2c_bus_info(const void *fdt, int offset,
 		/* TWSI bus */
 		i2c_info->bus = octeontx2_fdt_get_bus(fdt,
 				parent, cgx_idx, lmac_idx);
-		INFO("CGX%d.LMAC%d: channel %d addr 0x%x bus %d\n",
+		debug_dts("CGX%d.LMAC%d: channel %d addr 0x%x bus %d\n",
 				cgx_idx, lmac_idx,
 				i2c_info->channel,
 				i2c_info->addr, i2c_info->bus);
@@ -661,7 +670,7 @@ static void octeontx2_fdt_gpio_get_info_by_phandle(const void *fdt, int offset,
 		/* handle this case later */
 	} else if (!fdt_node_check_compatible(fdt, node,
 			"nxp,pca9535")) {
-		INFO("CGX%d.LMAC%d: 9535 GPIO I2C Expander %d\n",
+		debug_dts("CGX%d.LMAC%d: 9535 GPIO I2C Expander %d\n",
 				cgx_idx, lmac_idx,
 				gpio_info->pin);
 		gpio_info->type = GPIO_PIN_PCA9535;
@@ -672,7 +681,7 @@ static void octeontx2_fdt_gpio_get_info_by_phandle(const void *fdt, int offset,
 				node);
 		octeontx2_fdt_get_i2c_bus_info(fdt, node, &gpio_info->i2c_info,
 				cgx_idx, lmac_idx);
-		INFO("CGX%d.LMAC%d: addr 0x%x bus %d num pins %d\n",
+		debug_dts("CGX%d.LMAC%d: addr 0x%x bus %d num pins %d\n",
 				cgx_idx, lmac_idx,
 				gpio_info->i2c_addr, gpio_info->i2c_info.bus,
 				gpio_info->num_pins);
@@ -692,13 +701,13 @@ static void octeontx2_fdt_parse_vsc7224_reginit(const void *fdt, int offset,
 				cgx_idx, lmac_idx);
 		return;
 	}
-	INFO("CGX%d.LMAC%d: \"vitesse,reg-init\" length_bytes = %d, length_words32 = %ld.\n",
+	debug_dts("CGX%d.LMAC%d: \"vitesse,reg-init\" length_bytes = %d, length_words32 = %ld.\n",
 			cgx_idx, lmac_idx, len, len / sizeof(*reginit));
-	INFO("CGX%d.LMAC%d: output \"vitesse,reg-init\":\n",
+	debug_dts("CGX%d.LMAC%d: output \"vitesse,reg-init\":\n",
 			cgx_idx, lmac_idx);
 	len = len / sizeof(*reginit) - 1;
 	for (i = 0; i < len; i += 2) {
-		INFO("CGX%d.LMAC%d: \t0x%x 0x%x\n", cgx_idx, lmac_idx,
+		debug_dts("CGX%d.LMAC%d: \t0x%x 0x%x\n", cgx_idx, lmac_idx,
 				fdt32_to_cpu(*(reginit + i)),
 				fdt32_to_cpu(*(reginit + i + 1)));
 	}
@@ -760,7 +769,7 @@ static void octeontx2_fdt_parse_vsc7224_channels(const void *fdt, int offset,
 			break;
 		}
 		chan->num_taps = len/16;
-		INFO("CGX%d.LMAC%d: taps %d chan %d\n", cgx_idx, lmac_idx,
+		debug_dts("CGX%d.LMAC%d: taps %d chan %d\n", cgx_idx, lmac_idx,
 				chan->num_taps, num_chan);
 
 		/* Read all the tap values */
@@ -773,7 +782,7 @@ static void octeontx2_fdt_parse_vsc7224_channels(const void *fdt, int offset,
 					fdt32_to_cpu(tap_values[i * 4 + 2]);
 			chan->taps[i].post_tap =
 					fdt32_to_cpu(tap_values[i * 4 + 3]);
-			INFO("CGX%d.LMAC%d: tap %d: len: %d, main_tap: 0x%x, pre_tap:0x%x, post_tap: 0x%x\n",
+			debug_dts("CGX%d.LMAC%d: tap %d: len: %d, main_tap: 0x%x, pre_tap:0x%x, post_tap: 0x%x\n",
 				cgx_idx, lmac_idx,
 				i, chan->taps[i].len,
 				chan->taps[i].main_tap,
@@ -803,7 +812,7 @@ static void octeontx2_fdt_parse_sfp_info(const void *fdt, int offset,
 		return;
 
 	sfp_info->name = fdt_get_name(fdt, offset, NULL);
-	INFO("CGX%d.LMAC%d: sfp_info->name %s\n",
+	debug_dts("CGX%d.LMAC%d: sfp_info->name %s\n",
 			cgx_idx, lmac_idx, sfp_info->name);
 
 	/* Parse EEPROM related I2C info */
@@ -851,7 +860,7 @@ static void octeontx2_fdt_parse_vsc7224_info(const void *fdt,
 	octeontx2_fdt_get_i2c_bus_info(fdt, parent, &vsc7224->i2c_bus,
 			cgx_idx, lmac_idx);
 	vsc7224->name = fdt_get_name(fdt, offset, NULL);
-	INFO("CGX%d.LMAC%d: PHY name %s i2c_addr 0x%x\n",
+	debug_dts("CGX%d.LMAC%d: PHY name %s i2c_addr 0x%x\n",
 			cgx_idx, lmac_idx,
 			vsc7224->name, vsc7224->i2c_addr);
 
@@ -922,7 +931,7 @@ static int octeontx2_check_qlm_lmacs(int node, int cgx_idx,
 	cgx_lmac_config_t *lmac;
 	int i;
 
-	INFO("N%d:CGX%d: qlm = %d, mode_idx = %d, lmac_need = %d\n",
+	debug_dts("N%d:CGX%d: qlm = %d, mode_idx = %d, lmac_need = %d\n",
 			 node, cgx_idx, qlm, mode_idx, lmac_need);
 	cgx = &(bfdt->cgx_cfg[cgx_idx]);
 	lmac_avail = MAX_LMAC_PER_CGX - cgx->lmacs_used;
@@ -996,7 +1005,7 @@ static int octeontx2_fill_cgx_struct(int node, int qlm, int lane, int mode_idx)
 	int lcnt, lused;
 
 	if ((mode_idx < CAVM_QLM_MODE_SGMII) || (mode_idx >= CAVM_QLM_MODE_LAST)) {
-		INFO("N%d.QLM%d.LANE%d: not configured for CGX, skip.\n",
+		debug_dts("N%d.QLM%d.LANE%d: not configured for CGX, skip.\n",
 				node, qlm, lane);
 		return 0;
 	}
@@ -1007,7 +1016,7 @@ static int octeontx2_fill_cgx_struct(int node, int qlm, int lane, int mode_idx)
 				node, qlm);
 		return 0;
 	}
-	INFO("N%d.CGX%d: Configure QLM%d Lane%d\n", node, cgx_idx, qlm, lane);
+	debug_dts("N%d.CGX%d: Configure QLM%d Lane%d\n", node, cgx_idx, qlm, lane);
 
 	cgx = &(bfdt->cgx_cfg[cgx_idx]);
 	if (cgx->lmac_count >= MAX_LMAC_PER_CGX) {
@@ -1040,12 +1049,12 @@ static int octeontx2_fill_cgx_struct(int node, int qlm, int lane, int mode_idx)
 
 	octeontx2_lmac_num_touse(mode_idx, &lcnt, &lused);
 	if (!lcnt || !lused) {
-		INFO("N%d.CGX%d: the %s mode doesn't require any LMAC initialization.\n",
+		debug_dts("N%d.CGX%d: the %s mode doesn't require any LMAC initialization.\n",
 				node, cgx_idx,
 				qlmmode_strmap[mode_idx].bdk_str);
 		return 0;
 	}
-	INFO("N%d.CGX%d: mode_idx %d needs %d lanes, %d lmacs\n", node, cgx_idx, mode_idx, lused, lcnt); 
+	debug_dts("N%d.CGX%d: mode_idx %d needs %d lanes, %d lmacs\n", node, cgx_idx, mode_idx, lused, lcnt); 
 	if (octeontx2_check_qlm_lmacs(node, cgx_idx, qlm, mode_idx, lcnt * lused))
 		return 0;
 	if (lane % (lcnt * lused)) {
@@ -1192,12 +1201,12 @@ static void octeontx2_cgx_lmacs_check_linux(const void *fdt,
 				if (fdt_stringlist_contains(str, len,
 						"ethernet-phy-ieee802.3-c22")) {
 					phy->clause = PHY_GENERIC_8023_C22;
-					INFO("%s: %d:%d C22 compatible PHY str\n",
+					debug_dts("%s: %d:%d C22 compatible PHY str\n",
 						__func__, cgx_idx, lmac_idx);
 				} else if (fdt_stringlist_contains(str, len,
 						"ethernet-phy-ieee802.3-c45")) {
 					phy->clause = PHY_GENERIC_8023_C45;
-					INFO("%s: %d:%d C45 compatible PHY\n",
+					debug_dts("%s: %d:%d C45 compatible PHY\n",
 						__func__, cgx_idx, lmac_idx);
 				} else
 					phy->clause = PHY_GENERIC_8023_NONE;
@@ -1342,20 +1351,20 @@ static void octeontx2_cgx_assign_mac(const void *fdt)
 	mac_num = octeontx2_fdtbdk_get_num(fdt, "BOARD-MAC-ADDRESS-NUM", 10);
 	if (!mac_num)
 		mac_num = octeontx2_fdtbdk_get_num(fdt, "BOARD-MAC-ADDRESS-NUM", 16);
-	INFO("BOARD-MAC-ADDRESS-NUM=%d\n", mac_num);
+	debug_dts("BOARD-MAC-ADDRESS-NUM=%d\n", mac_num);
 	override = octeontx2_fdtbdk_get_num(fdt, "BOARD-MAC-ADDRESS-NUM-OVERRIDE", 10);
 	if (override >= 0) {
-		INFO("Override number of MAC to set=%d.\n", override);
+		debug_dts("Override number of MAC to set=%d.\n", override);
 		mac_num = override;
 	}
 	if (mac_num <= 0) {
-		INFO("No MAC addresses should be set.\n");
+		debug_dts("No MAC addresses should be set.\n");
 		return;
 	}
 	mac = octeontx2_fdtbdk_get_num(fdt, "BOARD-MAC-ADDRESS", 16);
-	INFO("BOARD-MAC-ADDRESS=%lx\n", mac);
+	debug_dts("BOARD-MAC-ADDRESS=%lx\n", mac);
 	if (mac == -1) {
-		INFO("Base MAC address is not defined.\n");
+		debug_dts("Base MAC address is not defined.\n");
 		return;
 	}
 
@@ -1378,7 +1387,7 @@ static void octeontx2_cgx_assign_mac(const void *fdt)
 			 * from the routine.
 			 */
 			if (!mac_num) {
-				INFO("All free MAC addresses are assigned.\n");
+				debug_dts("All free MAC addresses are assigned.\n");
 				return;
 			}
 		}
@@ -1406,7 +1415,7 @@ static void octeontx2_fill_cgx_details(const void *fdt)
 			lnum = plat_get_max_lane_num(qlm_idx);
 			for (lane_idx = 0; lane_idx < lnum; lane_idx++) {
 				qlm_state.u = CSR_READ(node_idx, CAVM_GSERNX_LANEX_SCRATCHX(qlm_idx, lane_idx, 0));
-				INFO("N%d.QLM%d.LANE%d: mode=%d:%s\n",
+				debug_dts("N%d.QLM%d.LANE%d: mode=%d:%s\n",
 						node_idx, qlm_idx, lane_idx,
 						qlm_state.s.mode,
 						qlmmode_strmap[qlm_state.s.mode].bdk_str);
@@ -1459,7 +1468,7 @@ int plat_fill_board_details(int info)
 	node = 0;
 	rc = octeontx2_parse_boot_device(fdt, offset, node);
 	if (rc) {
-		INFO("Using GPIO_STRAPX register for boot device\n");
+		debug_dts("Using GPIO_STRAPX register for boot device\n");
 		octeontx2_boot_device_from_strapx(node);
 	}
 
