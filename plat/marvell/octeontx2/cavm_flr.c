@@ -109,7 +109,7 @@ static int alias_handler(void *ctx_h, uintptr_t pa, uint64_t *mask, uint8_t *rt_
 
 	/* Construct the BAR2 PA address based on the (blk)_AF_BAR2_SEL and PA */
 	pa_bar2 = (uint64_t *)(RVU_PFX_FUNCX_BAR2(pf, func) |
-		   (blk_id << RVU_AF_ADDR_S_BLK_SHIFT) |
+		   (blk_id << RVU_FUNC_ADDR_S_BLK_SHIFT) |
 		   (lf_slot << RVU_FUNC_ADDR_S_LF_SLOT_SHIFT) |
 		   (addr << RVU_FUNC_ADDR_S_ADDR_SHIFT));
 
