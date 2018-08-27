@@ -115,13 +115,13 @@ static int alias_handler(void *ctx_h, uintptr_t pa, uint64_t *mask, uint8_t *rt_
 
 	/*
 	 * Map dynamically given memory.
-	 * Exclude case for func != 0, which is already mapped
+	 * Exclude case for (func != 0 || blk_id != 0), which is already mapped
 	 * (required by earlier stage RVU code).
 	 * Consider mapping func == 0 dynamically for cavm_rvu.c purposes.
 	 */
-	if (func != 0) {
-		rc = mmap_add_dynamic_region(RVU_PFX_FUNCX_BAR2(pf, func),
-					     RVU_PFX_FUNCX_BAR2(pf, func),
+	if ((func != 0) || (blk_id != 0)) {
+		rc = mmap_add_dynamic_region((RVU_PFX_FUNCX_BAR2(pf, func) | (blk_id << RVU_FUNC_ADDR_S_BLK_SHIFT)),
+					     (RVU_PFX_FUNCX_BAR2(pf, func) | (blk_id << RVU_FUNC_ADDR_S_BLK_SHIFT)),
 					     RVU_PF_FUNC_BAR2_SIZE,
 					     MT_DEVICE | MT_RW | MT_SECURE);
 		if (rc) {
@@ -149,8 +149,8 @@ static int alias_handler(void *ctx_h, uintptr_t pa, uint64_t *mask, uint8_t *rt_
 	}
 
 	/* Unmap this region */
-	if (func != 0) {
-		rc = mmap_remove_dynamic_region(RVU_PFX_FUNCX_BAR2(pf, func),
+	if ((func != 0) || (blk_id != 0)) {
+		rc = mmap_remove_dynamic_region((RVU_PFX_FUNCX_BAR2(pf, func) | (blk_id << RVU_FUNC_ADDR_S_BLK_SHIFT)),
 						RVU_PF_FUNC_BAR2_SIZE);
 		if (rc) {
 			ERROR("Unable to remove mapped memory addr=0x%llx, size=0x%llx\n",
