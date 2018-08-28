@@ -67,14 +67,15 @@ static int spi_config(uint64_t spi_clk, uint32_t mode, int cpol, int cpha,
 {
 	uint64_t sclk;
 	union cavm_rst_boot rst_boot;
-	union cavm_mpi_cfg mpi_cfg;
+	union cavm_mpix_cfg mpi_cfg;
 
 	rst_boot.u = CSR_READ(current_file.node, CAVM_RST_BOOT);
 	if (CAVIUM_IS_MODEL(CAVIUM_CN8XXX))
 		mpi_cfg.u = CSR_READ(current_file.node, CAVM_MPI_CFG);
-	else if (CAVIUM_IS_MODEL(CAVIUM_CN9XXX))
+	else if (CAVIUM_IS_MODEL(CAVIUM_CN9XXX)) {
 		mpi_cfg.u = CSR_READ(current_file.node, CAVM_MPIX_CFG(spi_con));
-	else
+		mpi_cfg.s.legacy_dis = 0;
+	} else
 		return -1;
 	sclk = PLL_REF_CLK * rst_boot.s.pnr_mul;
 
