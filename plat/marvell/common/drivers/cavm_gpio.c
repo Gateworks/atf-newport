@@ -26,7 +26,6 @@
 #include <cavm_svc.h>
 #include <cavm_common.h>
 #include <cavm_gpio.h>
-#include <cavm_gicv3.h>
 
 #define SPSR_ISR	((1ULL << SPSR_E_SHIFT) | (3 << SPSR_AIF_SHIFT))
 #define SCR_ISR		(SCR_NS_BIT | SCR_TWE_BIT | SCR_TWI_BIT | SCR_RW_BIT)
@@ -204,8 +203,6 @@ uint64_t gpio_irq_handler(uint32_t id, uint32_t flags, void *cookie)
 
 static int setup_interrupt_entries(int gpio_num, int cpu, int enable)
 {
-	uint32_t val;
-	unsigned long long gic_affinity_val;
 	int i, select_irq = -1;
 
 	/*
@@ -234,20 +231,7 @@ static int setup_interrupt_entries(int gpio_num, int cpu, int enable)
 					el3_gpio_irqs[i].cpu = cpu;
 					el3_gpio_irqs[i].counter = 1;
 					select_irq = OCTEONTX_IRQ_GPIO_BASE + i;
-					gic_affinity_val =
-					gicd_irouter_val_from_mpidr(
-							 read_mpidr(), 0);
-					gicd_write_irouter(
-					   CSR_PA(0, CAVM_GIC_PF_BAR0),
-					   select_irq, gic_affinity_val);
-					/* configure SPI as edge */
-					val = gicd_read_icfgr(
-						CSR_PA(0, CAVM_GIC_PF_BAR0),
-						select_irq);
-					val |= (0x2 << ((select_irq % 16) * 2));
-					gicd_write_icfgr(
-						CSR_PA(0, CAVM_GIC_PF_BAR0),
-						select_irq, val);
+					gicv3_set_spi_routing(select_irq, GICV3_IRM_PE, read_mpidr());
 				}
 			}
 		}
