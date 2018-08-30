@@ -61,24 +61,25 @@
 	} while (0)
 
 /* Macros to define BIT masks for polling */
-#define CGX_GMP_TX_IDLE_MASK		1 << 13
-#define CGX_GMP_RX_IDLE_MASK		1 << 12
-#define CGX_GMP_PCS_RESET_MASK		1 << 15
-#define CGX_GMP_PCS_AN_CPT_MASK		1 << 5
-#define CGX_CMRX_RX_FIFO_LEN_MASK	1 << 14
-#define CGX_CMRX_TX_IDLE_MASK		1 << 14
-#define CGX_SPUX_RESET_MASK		1 << 15
-#define CGX_SPUX_BLK_LOCK_MASK		1 << 0
-#define CGX_SPUX_RX_ALIGN_MASK		1 << 12
-#define CGX_SMUX_RX_STATUS_MASK		3 << 0		/* Bit 0 & 1 */
-#define CGX_SMUX_TX_IDLE_MASK		1 << 1
-#define CGX_SMUX_RX_IDLE_MASK		1 << 0
-#define CGX_SMUX_PCS_RCV_LINK_MASK	1 << 1
-#define CGX_SPUX_AN_RESET_MASK		1 << 15
-#define CGX_SPUX_USX_AN_RESET_MASK	1 << 15
-#define CGX_SPUX_AN_LNK_MASK		1 << 11
-#define CGX_SPUX_USX_AN_LNK_MASK	1 << 19
-#define CGX_SPUX_RSFEC_ALGN_STS_MASK	1 << 8
+#define CGX_GMP_TX_IDLE_MASK		1ULL << 13
+#define CGX_GMP_RX_IDLE_MASK		1ULL << 12
+#define CGX_GMP_PCS_RESET_MASK		1ULL << 15
+#define CGX_GMP_PCS_AN_CPT_MASK		1ULL << 5
+#define CGX_CMRX_RX_FIFO_LEN_MASK	1ULL << 14
+#define CGX_CMRX_TX_IDLE_MASK		1ULL << 14
+#define CGX_SPUX_RESET_MASK		1ULL << 15
+#define CGX_SPUX_BLK_LOCK_MASK		1ULL
+#define CGX_SPUX_RX_ALIGN_MASK		1ULL << 12
+#define CGX_SMUX_RX_STATUS_MASK		((1ULL << 0) | (1ULL < 1))	/* Bit 0 & 1 */
+#define CGX_SMUX_TX_IDLE_MASK		1ULL << 1
+#define CGX_SMUX_RX_IDLE_MASK		1ULL
+#define CGX_SMUX_PCS_RCV_LINK_MASK	1ULL << 1
+#define CGX_SPUX_AN_RESET_MASK		1ULL << 15
+#define CGX_SPUX_USX_AN_RESET_MASK	1ULL << 15
+#define CGX_SPUX_AN_LNK_MASK		1ULL << 11
+#define CGX_SPUX_USX_AN_LNK_MASK	1ULL << 19
+#define CGX_SPUX_RSFEC_ALGN_STS_MASK	1ULL << 8
+#define CGX_SPUX_MARKER_LOCK_MASK	1ULL << 41
 
 /* ERROR MASK based on cgx_err_type */
 #define CGX_ERR_MASK			0x3FF		/* 10 bits */
