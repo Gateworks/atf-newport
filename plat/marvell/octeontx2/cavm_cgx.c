@@ -1568,6 +1568,13 @@ void cgx_set_internal_loopback(int node, int cgx_id, int lmac_id, int enable)
 	debug_cgx("%s: %d:%d:%d mode %d enable %d\n", __func__, node, cgx_id,
 				lmac_id, lmac->mode, enable);
 
+	/* Enable internal beat generation as GSERN's credit pulses are ignored
+	 * in internal loopback mode
+	 */
+	CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_cmrx_config_t,
+		CAVM_CGXX_CMRX_CONFIG(cgx_id, lmac_id),
+		int_beat_gen, enable);
+
 	if ((lmac->mode == CAVM_CGX_LMAC_TYPES_E_SGMII) || (lmac->mode ==
 			CAVM_CGX_LMAC_TYPES_E_QSGMII)) {
 		CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_gmp_pcs_mrx_control_t,
