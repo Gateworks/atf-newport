@@ -327,8 +327,11 @@ void cavm_trap_handler(void *ctx_handle)
 	/* Read write flag */
 	w_flag = !!(reg_el3 & ESR_WNR_MASK);
 
-	/* Check for FAR_EL3 validity */
-	if (!(reg_el3 & ESR_FAR_ELX_VALID_MASK)) {
+	/*
+	 * Check for FAR_EL3 validity, for physical address
+	 * traps this bit is cleared, it's set for instruction traps.
+	 */
+	if (reg_el3 & ESR_FAR_ELX_NOT_VALID_MASK) {
 		ERROR("Invalid FAR_EL3, unable to get address that came from EL%lu\n",
 		      GET_EL(read_spsr_el3()));
 		panic();

@@ -535,7 +535,7 @@
 #define EC_BITS(x)			(((x) >> ESR_EC_SHIFT) & ESR_EC_MASK)
 
 #define ESR_WNR_MASK			U(0x40)
-#define ESR_FAR_ELX_VALID_MASK		U(0x400)
+#define ESR_FAR_ELX_NOT_VALID_MASK	U(0x400)
 
 /* Reset bit inside the Reset management register for EL3 (RMR_EL3) */
 #define RMR_RESET_REQUEST_SHIFT 	U(0x1)
