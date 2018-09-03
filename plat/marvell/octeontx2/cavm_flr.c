@@ -71,6 +71,80 @@ static inline int is_flr_wa_applicable(void) {
 	return (OCTEONTX2_CN96XX_MIDR == midr);
 }
 
+static inline void virt_to_phys_el0(uintptr_t va)
+{
+	/*
+	 * Determine 1 stage vs 2 stage translation.
+	 * VTTBR_EL2 has to be set on given core for 2 stage translation.
+	 * PAR_EL1[47:12] stores the result.
+	 */
+	if (read_vttbr_el2() != 0)
+		__asm__ volatile ("at S12E0R, %[va]" : : [va] "r" (va));
+	else
+		__asm__ volatile ("at S1E0R, %[va]" : : [va] "r" (va));
+}
+
+static inline void virt_to_phys_el1(uintptr_t va)
+{
+	/*
+	 * Determine 1 stage vs 2 stage translation.
+	 * VTTBR_EL2 has to be set on given core for 2 stage translation.
+	 * PAR_EL1[47:12] stores the result.
+	 */
+	if (read_vttbr_el2() != 0)
+		__asm__ volatile ("at S12E1R, %[va]" : : [va] "r" (va));
+	else
+		__asm__ volatile ("at S1E1R, %[va]" : : [va] "r" (va));
+}
+
+static inline void virt_to_phys_el2(uintptr_t va)
+{
+	/*
+	 * In case of EL2, always perform Stage 1 translation.
+	 * PAR_EL1[47:12] stores the result.
+	 */
+	__asm__ volatile ("at S1E2R, %[va]" : : [va] "r" (va));
+}
+
+static uintptr_t virt_to_phys(uintptr_t va)
+{
+	uint64_t pa, par_el1;
+	int elx;
+
+	/* Determine from which EL exception came */
+	elx = GET_EL(read_spsr_el3());
+	switch (elx) {
+		case MODE_EL2:
+			virt_to_phys_el2(va);
+			break;
+		case MODE_EL1:
+			virt_to_phys_el1(va);
+			break;
+		case MODE_EL0:
+			virt_to_phys_el0(va);
+			break;
+		default:
+			ERROR("FLR handling: Unsupported va_to_pa translation from EL%d\n", elx);
+			return 0;
+        }
+
+	/* Ensure that translation was performed */
+	dmbst();
+
+        /* Handle incorrect translation */
+        par_el1 = read_par_el1();
+        if (PAR_EL1_F(par_el1)) {
+		ERROR("Unsuccessful address translation of VA=0x%lx from EL%d\n",
+			va, elx);
+                return 0;
+	}
+
+        /* Extract PAR_EL1_PA, concatenate with VA[11:0] */
+        pa = ((PAR_EL1_PA(par_el1) << PAR_EL1_PA_SHIFT) | VA_OFFSET(va));
+
+        return pa;
+}
+
 static int alias_handler(void *ctx_h, uintptr_t pa, uint64_t *mask, uint8_t *rt_id, uint8_t w_flag)
 {
 	int blk_id, lf_slot, addr, rc;
@@ -260,9 +334,9 @@ void cavm_trap_handler(void *ctx_handle)
 		panic();
 	}
 
-	/* FAR_EL3 stores PA, according to HW team feedback,
-	 * so there's no need for VA to PA translation */
-	pa = read_far_el3();
+	/* Convert VA to PA based on FAR_EL3 */
+	reg_el3 = read_far_el3();
+	pa = virt_to_phys(reg_el3);
 	if (pa == 0) {
 		ERROR("Invalid PA 0x%lx from EL%lu\n", pa, GET_EL(read_spsr_el3()));
 		panic();
