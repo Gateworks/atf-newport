@@ -29,8 +29,6 @@ typedef enum {
 	CAVM_QLM_MODE_PCIE_1X16,	/* 1 PCIe, 16 lanes (CN9XXX) */
 	/* SATA modes  */
 	CAVM_QLM_MODE_SATA,		/* SATA, each lane independent (cn88xx) */
-	/* CCPI / OCI modes */
-	CAVM_QLM_MODE_OCI,		/* OCI Multichip interconnect (cn88xx) */
 	/* BGX / CGX modes */
 	CAVM_QLM_MODE_SGMII,		/* SGMII, each lane independent (cn88xx) */
 	CAVM_QLM_MODE_XAUI,		/* 1 XAUI or DXAUI, 4 lanes (cn88xx), use gbaud to tell difference */
