@@ -50,49 +50,49 @@ uint64_t thunder_svc_smc_handler(uint32_t smc_fid,
 {
 	int64_t ret = 0;
 
-	VERBOSE("ThunderX Service Call: 0x%x\n", smc_fid);
+	VERBOSE("OcteonTX Service Call: 0x%x\n", smc_fid);
 
 	switch (smc_fid) {
-	case THUNDERX_SVC_CALL_COUNT:
+	case OCTEONTX_SVC_CALL_COUNT:
 		/*
 		 * Return the number of Service Calls.
 		 */
-		SMC_RET1(handle, THUNDERX_NUM_CALLS);
+		SMC_RET1(handle, OCTEONTX_NUM_CALLS);
 
-	case THUNDERX_SVC_UID:
+	case OCTEONTX_SVC_UID:
 		/* Return UID to the caller */
 		SMC_UUID_RET(handle, thunder_svc_uid);
 
-	case THUNDERX_SVC_VERSION:
+	case OCTEONTX_SVC_VERSION:
 		/* Return the version of current implementation */
-		SMC_RET2(handle, THUNDERX_VERSION_MAJOR, THUNDERX_VERSION_MINOR);
+		SMC_RET2(handle, OCTEONTX_VERSION_MAJOR, OCTEONTX_VERSION_MINOR);
 
-	case THUNDERX_DRAM_SIZE:
+	case OCTEONTX_DRAM_SIZE:
 		ret = thunder_dram_size_node(x1);
 		WARN("DRAM size for %lx: %lx\n", x1, ret);
 		SMC_RET1(handle, ret);
 
-	case THUNDERX_NODE_COUNT:
+	case OCTEONTX_NODE_COUNT:
 		ret = thunder_get_node_count();
 		SMC_RET1(handle, ret);
 
-	case THUNDERX_PUTC:
+	case OCTEONTX_PUTC:
 		putchar(x1);
 		SMC_RET0(handle);
 #if (!defined(PLAT_t81) && !defined(PLAT_t83))
-	case THUNDERX_DISABLE_RVU_LFS:
+	case OCTEONTX_DISABLE_RVU_LFS:
 		ret = octeontx2_clear_lf_to_pf_mapping(x1);
 		SMC_RET1(handle, ret);
 #endif
-	case THUNDERX_INSTALL_GPIO_INT:
+	case OCTEONTX_INSTALL_GPIO_INT:
 		ret = gpio_install_irq(x1, x2, x3, x4);
 		SMC_RET1(handle, ret);
 
-	case THUNDERX_REMOVE_GPIO_INT:
+	case OCTEONTX_REMOVE_GPIO_INT:
 		gpio_clear_irq(x1);
 		SMC_RET1(handle, 0);
 	default:
-		WARN("Unimplemented ThunderX Service Call: 0x%x \n", smc_fid);
+		WARN("Unimplemented OcteonTX Service Call: 0x%x \n", smc_fid);
 		SMC_RET1(handle, SMC_UNK);
 	}
 }
@@ -100,9 +100,9 @@ uint64_t thunder_svc_smc_handler(uint32_t smc_fid,
 /* Register Standard Service Calls as runtime service */
 DECLARE_RT_SVC(
 		thunder_svc,
-		OEN_OEM_START,
-		OEN_OEM_END,
-		SMC_TYPE_YIELD,
+		OEN_SIP_START,
+		OEN_SIP_END,
+		SMC_TYPE_FAST,
 		thunder_svc_setup,
 		thunder_svc_smc_handler
 );

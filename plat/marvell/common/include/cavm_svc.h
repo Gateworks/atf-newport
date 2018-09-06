@@ -16,38 +16,38 @@
 
 /* SMC function IDs for Standard Service queries */
 
-#define THUNDERX_SVC_CALL_COUNT	0x4300ff00
-#define THUNDERX_SVC_UID	0x4300ff01
+#define OCTEONTX_SVC_CALL_COUNT	0xc200ff00
+#define OCTEONTX_SVC_UID	0xc200ff01
 
-#define THUNDERX_SVC_VERSION	0x4300ff03
+#define OCTEONTX_SVC_VERSION	0xc200ff03
 
-/* ThunderX Service Calls version numbers */
-#define THUNDERX_VERSION_MAJOR	0x0
-#define THUNDERX_VERSION_MINOR	0x3
+/* OcteonTX Service Calls version numbers */
+#define OCTEONTX_VERSION_MAJOR	0x1
+#define OCTEONTX_VERSION_MINOR	0x0
 
 /* x1 - node number */
-#define THUNDERX_DRAM_SIZE		0x43000301
+#define OCTEONTX_DRAM_SIZE		0xc2000301
 
 /* no args */
-#define THUNDERX_NODE_COUNT		0x43000601
+#define OCTEONTX_NODE_COUNT		0xc2000601
 
 /* X1 - gpio_num, X2 - sp, X3 - cpu, X4 - ttbr0 */
-#define THUNDERX_INSTALL_GPIO_INT	0x43000801
+#define OCTEONTX_INSTALL_GPIO_INT	0xc2000801
 /* X1 - gpio_num */
-#define THUNDERX_REMOVE_GPIO_INT	0x43000802
+#define OCTEONTX_REMOVE_GPIO_INT	0xc2000802
 
 /* x1 - character to print */
-#define THUNDERX_PUTC			0x43000a01
+#define OCTEONTX_PUTC			0xc2000a01
 
 /* x1 - node number */
 #if (!defined(PLAT_t81) && !defined(PLAT_t83))
-#define THUNDERX_DISABLE_RVU_LFS	0x43000b01
+#define OCTEONTX_DISABLE_RVU_LFS	0xc2000b01
 #endif
 
 #if (!defined(PLAT_t81) && !defined(PLAT_t83))
-#define THUNDERX_NUM_CALLS		9
+#define OCTEONTX_NUM_CALLS		9
 #else
-#define THUNDERX_NUM_CALLS		8
+#define OCTEONTX_NUM_CALLS		8
 #endif
 
-#endif /* __THUNDER_SVC_H__ */
+#endif /* __CAVM_SVC_H__ */
