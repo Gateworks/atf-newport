@@ -192,7 +192,6 @@ void cavm_gic_pcpu_init(void);
 void cavm_gic_cpuif_enable(void);
 void cavm_gic_cpuif_disable(void);
 unsigned int thunder_calc_core_pos(unsigned long mpidr);
-void thunder_signal_shutdown(void);
 void plat_pwrc_setup(void);
 int thunder_twsi_send(unsigned int node, unsigned int twsi_num,
 			uint16_t addr, const uint8_t *buffer, size_t size);
