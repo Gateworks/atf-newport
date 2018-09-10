@@ -91,6 +91,9 @@ static void cavm_pwr_domain_on_finish(const psci_power_state_t *target_state)
 	/* Enable the gic cpu interface */
 	cavm_gic_cpuif_enable();
 
+	/* Apply erratas on secondary cores */
+	thunder_cpu_setup();
+
 	/* Init FLR for secondary cores */
 	plat_flr_init();
 }
