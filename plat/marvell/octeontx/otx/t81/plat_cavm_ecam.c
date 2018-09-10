@@ -29,13 +29,13 @@
 #endif
 
 /* Probe for disabling TWSI busses from PCI scan */
-static int ecam_probe_twsi(unsigned long arg)
+static int ecam_probe_twsi(unsigned long long arg)
 {
 	return (plat_octeontx_bcfg->bcfg.bmc_boot_twsi_bus != arg);
 }
 
 /* Probe RST_CTLX for PEM usability. */
-static int ecam_probe_pem(unsigned long arg)
+static int ecam_probe_pem(unsigned long long arg)
 {
 	union cavm_rst_soft_prstx soft_prst;
 
@@ -45,7 +45,7 @@ static int ecam_probe_pem(unsigned long arg)
 }
 
 /* Probe GSERX_CFG[SATA] for SATA usability. arg is the GSER number. */
-static int ecam_probe_sata(unsigned long arg)
+static int ecam_probe_sata(unsigned long long arg)
 {
 	union cavm_gserx_cfg cfg;
 
@@ -55,7 +55,7 @@ static int ecam_probe_sata(unsigned long arg)
 }
 
 /* Probe GSERX_CFG[BGX] for BGX usability. arg is the GSER number. */
-static int ecam_probe_bgx(unsigned long arg)
+static int ecam_probe_bgx(unsigned long long arg)
 {
 	union cavm_gserx_cfg cfg_dlm0;
 	union cavm_gserx_cfg cfg_dlm1;

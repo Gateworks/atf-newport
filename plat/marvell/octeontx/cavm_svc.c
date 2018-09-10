@@ -24,8 +24,6 @@
 #include <errno.h>
 #include <libfdt.h>
 
-#define PAR_EL1_F	(1 << 0)
-
 /* Cavium OEM Service UUID */
 DEFINE_SVC_UUID(octeontx_svc_uid,
 		0xcf98f46f, 0xfa9c, 0x4e5a, 0xa4, 0x3a,
@@ -40,14 +38,14 @@ static int32_t octeontx_svc_setup(void)
 /*
  * Top-level OEM Service SMC handler
  */
-uint64_t octeontx_svc_smc_handler(uint32_t smc_fid,
-				 uint64_t x1,
-				 uint64_t x2,
-				 uint64_t x3,
-				 uint64_t x4,
+uintptr_t octeontx_svc_smc_handler(uint32_t smc_fid,
+				 u_register_t x1,
+				 u_register_t x2,
+				 u_register_t x3,
+				 u_register_t x4,
 				 void *cookie,
 				 void *handle,
-				 uint64_t flags)
+				 u_register_t flags)
 {
 	int64_t ret = 0;
 

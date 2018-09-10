@@ -31,7 +31,7 @@
 #endif
 
 /* Probe GSERNX_LANE_SCRATCHX[] for CGX config */
-static int ecam_probe_cgx(unsigned long arg)
+static int ecam_probe_cgx(unsigned long long arg)
 {
 	octeontx_qlm_state_lane_t qlm_state;
 	int qlm = -1, lnum = 0;
