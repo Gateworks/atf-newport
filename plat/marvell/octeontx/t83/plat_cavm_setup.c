@@ -33,12 +33,6 @@ int thunder_get_sata_count(void)
 	return 6;
 }
 
-/* Return the highest GSER number, which can be configured as SATA */
-int thunder_get_max_sata_gser(void)
-{
-	return 3;
-}
-
 /*
  * SATA to GSER mapping
  * SATA(0-1) --- GSER4

@@ -167,7 +167,6 @@ int thunder_get_num_ecams_per_node(void);
 int thunder_get_sata_count(void);
 int thunder_sata_to_gser(int ctrlr);
 int thunder_sata_to_lane(int ctrlr);
-int thunder_get_max_sata_gser(void);
 int thunder_get_iobn_count(void);
 int thunder_get_cpt_count(void);
 int thunder_get_gser_count(void);

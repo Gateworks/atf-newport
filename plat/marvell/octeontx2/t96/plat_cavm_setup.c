@@ -40,12 +40,6 @@ int thunder_get_iobn_count(void)
 	return 2;
 }
 
-/* Return the highest GSER number, which can be configured as SATA */
-int thunder_get_max_sata_gser(void)
-{
-	return 5;
-}
-
 /*
  * SATA to GSER mapping
  * SATA(0-1) --- DLM4

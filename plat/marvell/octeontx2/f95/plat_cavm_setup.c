@@ -44,12 +44,6 @@ int thunder_get_iobn_count(void)
 	return 1;
 }
 
-/* Return the highest GSER number, which can be configured as SATA */
-int thunder_get_max_sata_gser(void)
-{
-	return 0;
-}
-
 /* No SATA on F95 */
 int thunder_sata_to_gser(int ctrlr)
 {
