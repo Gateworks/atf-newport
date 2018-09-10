@@ -20,19 +20,7 @@
 #include <debug.h>
 
 
-unsigned int thunder_pwrc_get_cpu_wkr(unsigned long mpidr)
-{
-	unsigned int rc = 0;
-	return rc;
-}
-
-unsigned int thunder_pwrc_read_psysr(unsigned long mpidr)
-{
-	unsigned int rc = 0;
-	return rc;
-}
-
-int thunder_wait_for_core(unsigned node)
+static int wait_for_core(unsigned node)
 {
 
 	int loop=10;
@@ -85,7 +73,7 @@ void thunder_pwrc_write_pponr(unsigned long mpidr)
 		CSR_WRITE(node, CAVM_RST_PP_RESET, pp_reset.u);
 		__asm("dsb ishst");
 		__asm("sev");
-		if(thunder_wait_for_core(node)) {
+		if(wait_for_core(node)) {
 			WARN("Failed to release core:%lu on node:%d\n ",
 					cavm_core_id,node);
 			while(1);
@@ -97,30 +85,10 @@ void thunder_pwrc_write_pponr(unsigned long mpidr)
 	CSR_WRITE(node, CAVM_RST_PP_RESET, pp_reset.u);
 	__asm("dsb ishst");
 	__asm("sev");
-	if(thunder_wait_for_core(node)){
+	if(wait_for_core(node)){
 		WARN("Failed to release core:%lu on node:%d\n ",
 				cavm_core_id,node);
 	}
-}
-
-void thunder_pwrc_write_ppoffr(unsigned long mpidr)
-{
-
-}
-
-void thunder_pwrc_set_wen(unsigned long mpidr)
-{
-
-}
-
-void thunder_pwrc_clr_wen(unsigned long mpidr)
-{
-
-}
-
-void thunder_pwrc_write_pcoffr(unsigned long mpidr)
-{
-
 }
 
 /* Nothing else to do here apart from initializing the lock */

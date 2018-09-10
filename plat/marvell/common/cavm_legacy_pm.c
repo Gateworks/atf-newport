@@ -90,48 +90,11 @@ static void cavm_signal_shutdown(void)
 	}
 }
 
-/*******************************************************************************
- * Function which implements the common FVP specific operations to power down a
- * cpu in response to a CPU_OFF or CPU_SUSPEND request.
- ******************************************************************************/
-static void thunder_cpu_pwrdwn_common(void)
-{
-	/* Prevent interrupts from spuriously waking up this cpu */
-	cavm_gic_cpuif_disable();
-
-	/* Program the power controller to power off this cpu. */
-	thunder_pwrc_write_ppoffr(read_mpidr_el1());
-}
-
-/*******************************************************************************
- * Function which implements the common FVP specific operations to power down a
- * cluster in response to a CPU_OFF or CPU_SUSPEND request.
- ******************************************************************************/
-static void thunder_cluster_pwrdwn_common(void)
-{
-	uint64_t mpidr = read_mpidr_el1();
-
-	/* Disable coherency if this cluster is to be turned off */
-
-	/* Program the power controller to turn the cluster off */
-	thunder_pwrc_write_pcoffr(mpidr);
-}
 
 static void thunder_power_domain_on_finish_common(const psci_power_state_t *target_state)
 {
-	unsigned long mpidr;
-
 	assert(target_state->pwr_domain_state[MPIDR_AFFLVL0] ==
 					THUNDER_STATE_OFF);
-
-	/* Get the mpidr for this cpu */
-	mpidr = read_mpidr_el1();
-
-	/*
-	 * Clear PWKUPR.WEN bit to ensure interrupts do not interfere
-	 * with a cpu power down unless the bit is set again
-	 */
-	thunder_pwrc_clr_wen(mpidr);
 }
 
 
@@ -158,16 +121,6 @@ void thunder_cpu_standby(plat_local_state_t cpu_state)
 int thunder_pwr_domain_on(u_register_t mpidr)
 {
 	int rc = PSCI_E_SUCCESS;
-	unsigned int psysr;
-
-	/*
-	 * Ensure that we do not cancel an inflight power off request for the
-	 * target cpu. That would leave it in a zombie wfi. Wait for it to power
-	 * off and then program the power controller to turn that CPU on.
-	 */
-	do {
-		psysr = thunder_pwrc_read_psysr(mpidr);
-	} while (psysr & PSYSR_AFF_L0);
 
 	thunder_pwrc_write_pponr(mpidr);
 	return rc;
@@ -181,18 +134,12 @@ void thunder_pwr_domain_off(const psci_power_state_t *target_state)
 {
 	assert(target_state->pwr_domain_state[MPIDR_AFFLVL0] ==
 					THUNDER_STATE_OFF);
-
 	/*
 	 * If execution reaches this stage then this power domain will be
-	 * suspended. Perform at least the cpu specific actions followed
-	 * by the cluster specific operations if applicable.
+	 * suspended. Prevent interrupts from spuriously waking up this cpu.
 	 */
-	thunder_cpu_pwrdwn_common();
 
-	if (target_state->pwr_domain_state[MPIDR_AFFLVL1] ==
-					THUNDER_STATE_OFF)
-		thunder_cluster_pwrdwn_common();
-
+	cavm_gic_cpuif_disable();
 }
 
 /*******************************************************************************
@@ -201,8 +148,6 @@ void thunder_pwr_domain_off(const psci_power_state_t *target_state)
  ******************************************************************************/
 void thunder_pwr_domain_suspend(const psci_power_state_t *target_state)
 {
-	unsigned long mpidr;
-
 	/*
 	 * FVP has retention only at cpu level. Just return
 	 * as nothing is to be done for retention.
@@ -214,19 +159,8 @@ void thunder_pwr_domain_suspend(const psci_power_state_t *target_state)
 	assert(target_state->pwr_domain_state[MPIDR_AFFLVL0] ==
 					THUNDER_STATE_OFF);
 
-	/* Get the mpidr for this cpu */
-	mpidr = read_mpidr_el1();
-
-	/* Program the power controller to enable wakeup interrupts. */
-	thunder_pwrc_set_wen(mpidr);
-
-	/* Perform the common cpu specific operations */
-	thunder_cpu_pwrdwn_common();
-
-	/* Perform the common cluster specific operations */
-	if (target_state->pwr_domain_state[MPIDR_AFFLVL1] ==
-					THUNDER_STATE_OFF)
-		thunder_cluster_pwrdwn_common();
+	/* Prevent interrupts from spuriously waking up this cpu */
+	cavm_gic_cpuif_disable();
 }
 
 /*******************************************************************************
