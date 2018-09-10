@@ -39,13 +39,11 @@ static int cgx_timers[MAX_CGX_TIMERS];
 static cgx_lmac_context_t
 		lmac_context[PLATFORM_MAX_NODES][MAX_CGX][MAX_LMAC_PER_CGX];
 
-static uint64_t cgx_get_error_type(int node, int cgx_id, int lmac_id)
+static int cgx_get_error_type(int node, int cgx_id, int lmac_id)
 {
 	cgx_lmac_context_t *lmac_ctx;
 
 	lmac_ctx = &lmac_context[node][cgx_id][lmac_id];
-	debug_cgx_intf("%s: %d:%d:%d error_type 0x%x\n", __func__, node, cgx_id, lmac_id,
-				lmac_ctx->s.error_type);
 	return lmac_ctx->s.error_type;
 }
 
@@ -80,8 +78,6 @@ static int cgx_acquire_csr_lock(int node, int cgx_id, int lmac_id)
 	int timeout = 10; /* loop for few times but not infinitely */
 	cgx_lmac_context_t *lmac_ctx;
 
-	debug_cgx_intf("%s %d:%d:%d\n", __func__, node, cgx_id, lmac_id);
-
 	lmac_ctx = &lmac_context[node][cgx_id][lmac_id];
 
 	do {
@@ -97,7 +93,6 @@ static int cgx_acquire_csr_lock(int node, int cgx_id, int lmac_id)
 
 static void cgx_release_csr_lock(int node, int cgx_id, int lmac_id)
 {
-	debug_cgx_intf("%s %d:%d:%d\n", __func__, node, cgx_id, lmac_id);
 	lmac_context[node][cgx_id][lmac_id].s.lock = 0;
 }
 
@@ -105,15 +100,15 @@ static void cgx_release_own_status(int node, int cgx_id, int lmac_id)
 {
 	CAVM_MODIFY_CGX_CSR(node, union cgx_scratchx1,
 			CAVM_CGXX_CMRX_SCRATCHX(cgx_id, lmac_id, 1),
-			own_status, 0); /* released the ownership */
+			own_status, CGX_OWN_NON_SECURE_SW); /* released the ownership */
 }
 
 static void cgx_set_link_state(int node, int cgx_id, int lmac_id,
-					link_state_t *link, uint64_t err_type)
+					link_state_t *link, int err_type)
 {
 	union cgx_scratchx0 scratchx0;
 
-	debug_cgx_intf("%s %d:%d:%d link_up %d speed %d duplex %d err_type %ld\n",
+	debug_cgx_intf("%s %d:%d:%d link_up %d speed %d duplex %d err_type %d\n",
 			__func__, node, cgx_id, lmac_id,
 			link->s.link_up, link->s.speed,
 			link->s.full_duplex, err_type);
@@ -128,16 +123,20 @@ static void cgx_set_link_state(int node, int cgx_id, int lmac_id,
 				scratchx0.u);
 }
 
-static int cgx_link_change(int node, int cgx_id, int lmac_id,
-			link_state_t *link)
+static int cgx_link_change_req(int node, int cgx_id, int lmac_id)
+
 {
-	int ret = 0;
+	int ret = 0, err_type = 0;
+	union cgx_scratchx0 scratchx0;
+	link_state_t link;
 	cgx_lmac_config_t *lmac_cfg;
+	cgx_lmac_context_t *lmac_ctx;
 
 	/* get the lmac type and based on lmac
 	 * type, change the link settings
 	 */
 	lmac_cfg = &bfdt->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
+	lmac_ctx = &lmac_context[node][cgx_id][lmac_id];
 
 	debug_cgx_intf("%s %d:%d:%d lmac_type %d\n", __func__, node, cgx_id,
 			lmac_id, lmac_cfg->mode);
@@ -147,11 +146,15 @@ static int cgx_link_change(int node, int cgx_id, int lmac_id,
 	 * has changed from up -> down, just update the status. no HW
 	 * re-configuration is required.
 	 */
-	if (link->s.link_up) {
+	link.s.link_up = lmac_ctx->s.link_up;
+	link.s.speed = lmac_ctx->s.speed;
+	link.s.full_duplex = lmac_ctx->s.full_duplex;
+
+	if (link.s.link_up) {
 		if ((lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_SGMII) ||
 			(lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_QSGMII)) {
 			ret = cgx_sgmii_set_link_speed(node, cgx_id,
-							lmac_id, link);
+							lmac_id, &link);
 		} else if ((lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_XAUI) ||
 			(lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_RXAUI) ||
 			(lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_TENG_R) ||
@@ -164,9 +167,31 @@ static int cgx_link_change(int node, int cgx_id, int lmac_id,
 		}
 	}
 
+	if (ret == -1) {
+		err_type = cgx_get_error_type(node, cgx_id, lmac_id);
+		WARN("%s: %d:%d CGX error %d during link change req\n",
+			__func__, cgx_id, lmac_id, err_type);
+	}
+
 	/* update the current link status along with any error type set */
-	cgx_set_link_state(node, cgx_id, lmac_id, link,
-		cgx_get_error_type(node, cgx_id, lmac_id));
+	cgx_set_link_state(node, cgx_id, lmac_id, &link, err_type);
+
+	/* update the event status to evt_sts struct to notify kernel */
+	scratchx0.u = CSR_READ(node, CAVM_CGXX_CMRX_SCRATCHX(
+					cgx_id, lmac_id, 0));
+	if (err_type & CGX_ERR_MASK)
+		scratchx0.s.evt_sts.stat = CGX_STAT_FAIL;
+	else
+		scratchx0.s.evt_sts.stat = CGX_STAT_SUCCESS;
+
+	scratchx0.s.evt_sts.id = CGX_EVT_LINK_CHANGE;
+	scratchx0.s.evt_sts.evt_type = CGX_EVT_ASYNC;
+	scratchx0.s.evt_sts.ack = 1; /* set ack */
+	CSR_WRITE(node, CAVM_CGXX_CMRX_SCRATCHX(
+				cgx_id, lmac_id, 0), scratchx0.u);
+
+	/* clear the link_change_req after handling it */
+	lmac_ctx->s.link_change_req = 0;
 
 	return ret;
 }
@@ -421,10 +446,10 @@ static int cgx_process_requests(int node, int cgx_id, int lmac_id)
 {
 	int ret = 0;
 	int enable = 0; /* read from scratch1 - cmd_args */
-	int request_id = 0;
+	int request_id = 0, err_type = 0;
 	union cgx_scratchx0 scratchx0;
 	union cgx_scratchx1 scratchx1;
-	link_state_t new_link, link;
+	link_state_t link;
 	cgx_lmac_context_t *lmac_ctx;
 	cgx_lmac_config_t *lmac;
 
@@ -436,10 +461,6 @@ static int cgx_process_requests(int node, int cgx_id, int lmac_id)
 					cgx_id, lmac_id, 1));
 	request_id = scratchx1.s.cmd.id;
 	enable = scratchx1.s.cmd_args.enable;
-	new_link.s.link_up = scratchx1.s.lnk_args.link_up;
-	new_link.s.full_duplex = scratchx1.s.lnk_args.full_duplex;
-	new_link.s.speed = scratchx1.s.lnk_args.speed;
-
 	debug_cgx_intf("%s: %d:%d:%d request_id %d\n", __func__, node, cgx_id,
 				lmac_id, request_id);
 
@@ -486,9 +507,6 @@ static int cgx_process_requests(int node, int cgx_id, int lmac_id)
 				break;
 			case CGX_CMD_LINK_BRING_DOWN:
 				ret = cgx_link_bringdown(node, cgx_id, lmac_id);
-				break;
-			case CGX_CMD_LINK_STAT_CHANGE:
-				ret = cgx_link_change(node, cgx_id, lmac_id, &new_link);
 				break;
 			case CGX_CMD_INTERNAL_LBK:
 				lmac_ctx->s.lbk1_enable = enable;
@@ -545,37 +563,26 @@ static int cgx_process_requests(int node, int cgx_id, int lmac_id)
 	 */
 	scratchx0.u = CSR_READ(node, CAVM_CGXX_CMRX_SCRATCHX(
 					cgx_id, lmac_id, 0));
-	if ((cgx_get_error_type(node, cgx_id, lmac_id)) &
-				CGX_ERR_MASK)
+	err_type = cgx_get_error_type(node, cgx_id, lmac_id);
+	if (err_type & CGX_ERR_MASK)
 		scratchx0.s.evt_sts.stat = CGX_STAT_FAIL;
 	else
 		scratchx0.s.evt_sts.stat = CGX_STAT_SUCCESS;
 
-	if (request_id == CGX_CMD_LINK_STAT_CHANGE) {
-		/* handle this case differently as this is not user submitted
-		 * request. It is from PHY obtained periodically
-		 * polling the link status. Notify to user there is change
-		 * in link status by setting event type as CGX_EVT_ASYNC
+	/* For all requests, update the command status, ID and
+	 * set event type
+	 */
+	scratchx0.s.evt_sts.id = request_id;
+	scratchx0.s.evt_sts.evt_type = CGX_EVT_CMD_RESP;
+	if ((request_id != CGX_CMD_LINK_BRING_UP) &&
+		(request_id != CGX_CMD_LINK_BRING_DOWN)) {
+		/* in case of LINK_UP/DOWN, error type is updated
+		 * as part of link status struct
 		 */
-		scratchx0.s.evt_sts.id = CGX_EVT_LINK_CHANGE;
-		scratchx0.s.evt_sts.evt_type = CGX_EVT_ASYNC;
-	} else {
-		/* For all other requests, update the command status, ID and
-		 * set event type
-		 */
-		scratchx0.s.evt_sts.id = request_id;
-		scratchx0.s.evt_sts.evt_type = CGX_EVT_CMD_RESP;
-		if ((request_id != CGX_CMD_LINK_BRING_UP) &&
-			(request_id != CGX_CMD_LINK_BRING_DOWN)) {
-			/* in case of LINK_UP/DOWN, error type is updated
-			 * as part of link status struct
-			 */
-			if ((cgx_get_error_type(node, cgx_id, lmac_id)) &
-							CGX_ERR_MASK)
-				scratchx0.s.err.type = cgx_get_error_type(
-					node, cgx_id, lmac_id);
-		}
+		if (err_type & CGX_ERR_MASK)
+			scratchx0.s.err.type = err_type;
 	}
+
 	scratchx0.s.evt_sts.ack = 1; /* set ack */
 	CSR_WRITE(node, CAVM_CGXX_CMRX_SCRATCHX(
 				cgx_id, lmac_id, 0), scratchx0.u);
@@ -587,32 +594,25 @@ static int cgx_handle_link_change(int node, int cgx_id, int lmac_id,
 			link_state_t *new_link)
 {
 	int timeout = 10; /* check the moderate val */;
-	union cgx_scratchx1 cgx_scratch1;
 	union cgx_scratchx0 cgx_scratch0;
 	cgx_lmac_context_t *lmac_ctx;
 
 	debug_cgx_intf("%s: %d:%d:%d\n", __func__, node, cgx_id, lmac_id);
 
-	/* if the owner ship is available and lock is free, check
-	 * for the ack bit to be clear and post the command.
-	 */
+	/* check for the ack bit to be clear and post the command */
 	do {
-		cgx_scratch1.u = CSR_READ(node, CAVM_CGXX_CMRX_SCRATCHX(
-					cgx_id, lmac_id, 1));
 		cgx_scratch0.u = CSR_READ(node, CAVM_CGXX_CMRX_SCRATCHX(
 					cgx_id, lmac_id, 0));
-		debug_cgx_intf("%s, waiting for own %d and prev ack %d to be clear\n",
-				__func__, cgx_scratch1.s.own_status,
-				cgx_scratch0.s.evt_sts.ack);
-		if ((!cgx_scratch1.s.own_status) &&
-				(!cgx_scratch0.s.evt_sts.ack))
+		debug_cgx_intf("%s, waiting for prev ack %d to be clear\n",
+				__func__, cgx_scratch0.s.evt_sts.ack);
+		if (!cgx_scratch0.s.evt_sts.ack)
 			break;
 		udelay(1);
 	} while (--timeout);
 
 	if (!timeout) {
-		/* not able to obtain the ownership of CSRs */
-		WARN("%s %d:%d Owner ship not free to post LINK CHANGE req\n",
+		/* prev ack not clear */
+		WARN("%s %d:%d Prev ack not clear to post LINK CHANGE req\n",
 			__func__, cgx_id, lmac_id);
 		return -1;
 	}
@@ -625,31 +625,14 @@ static int cgx_handle_link_change(int node, int cgx_id, int lmac_id,
 	}
 
 	lmac_ctx = &lmac_context[node][cgx_id][lmac_id];
-	/* post the command */
-	cgx_scratch1.u = CSR_READ(node, CAVM_CGXX_CMRX_SCRATCHX(
-				cgx_id, lmac_id, 1));
 
-	/* set the ownership to firmware and update the request ID */
-	cgx_scratch1.s.own_status = CGX_OWN_FIRMWARE;
-	cgx_scratch1.s.cmd.id = CGX_CMD_LINK_STAT_CHANGE;
+	/* post the command by setting link_change_req */
+	lmac_ctx->s.link_up = new_link->s.link_up;
+	lmac_ctx->s.speed = new_link->s.speed;
+	lmac_ctx->s.full_duplex = new_link->s.full_duplex;
+	lmac_ctx->s.link_change_req = 1;
 
-	/* pass the new link state as an argument and update the
-	 * link status in context structure when the request
-	 * is being submitted
-	 */
-	lmac_ctx->s.link_up = cgx_scratch1.s.lnk_args.link_up =
-				new_link->s.link_up;
-	lmac_ctx->s.speed = cgx_scratch1.s.lnk_args.speed =
-				new_link->s.speed;
-	lmac_ctx->s.full_duplex = cgx_scratch1.s.lnk_args.full_duplex =
-				new_link->s.full_duplex;
-
-	CSR_WRITE(node, CAVM_CGXX_CMRX_SCRATCHX(cgx_id, lmac_id, 1),
-					cgx_scratch1.u);
-	/* release the internal lock, but still maintain the own status
-	 * as FIRMWARE so that timer #2 can process the link
-	 * change command
-	 */
+	/* release the internal lock */
 	cgx_release_csr_lock(node, cgx_id, lmac_id);
 
 	return 0;
@@ -686,12 +669,17 @@ static int cgx_poll_for_link_cb(int timer)
 					/* Get the link status */
 					cavm_get_phy_link_status(node, cgx,
 							lmac, &link);
-					if ((lmac_ctx->s.link_up !=
+					/* if the prev link change is not handled
+					 * wait until it is handled as the reqs
+					 * are handled one at a time
+					 */
+					if ((!lmac_ctx->s.link_change_req) &&
+						((lmac_ctx->s.link_up !=
 						link.s.link_up) ||
 						(lmac_ctx->s.full_duplex !=
 						link.s.full_duplex) ||
 						(lmac_ctx->s.speed !=
-						link.s.speed)) {
+						link.s.speed))) {
 						debug_cgx_intf("%s:%d:%d link changed\n",
 							__func__, cgx, lmac);
 						cgx_handle_link_change(node,
@@ -709,6 +697,7 @@ static int cgx_handle_requests_cb(int timer)
 {
 	union cgx_scratchx1 scratch1;
 	union cgx_scratchx0 scratch0;
+	cgx_lmac_context_t *lmac_ctx;
 
 	/* Go through all active LMACs and check
 	 * if there are any new message requests by reading
@@ -721,18 +710,35 @@ static int cgx_handle_requests_cb(int timer)
 					CAVM_CGXX_CMRX_SCRATCHX(cgx, lmac, 1));
 				scratch0.u = CSR_READ(node,
 					CAVM_CGXX_CMRX_SCRATCHX(cgx, lmac, 0));
-				if (scratch1.s.own_status == CGX_OWN_FIRMWARE) {
-					/* acquire firmware internal lock */
-					if (cgx_acquire_csr_lock(node, cgx, lmac)
-							== -1) {
-						WARN("%s %d:%d lock not"
-						" obtained to process command,"
-						" wait for now\n",
-						 __func__, cgx, lmac);
-						/* skip to next LMAC */
-						continue;
-					}
+				lmac_ctx = &lmac_context[node][cgx][lmac];
 
+				/* acquire firmware internal lock */
+				if (cgx_acquire_csr_lock(node, cgx, lmac)
+						== -1) {
+					WARN("%s %d:%d lock not"
+					" obtained to process command,"
+					" wait for now\n",
+					 __func__, cgx, lmac);
+					/* skip to next LMAC */
+					continue;
+				}
+
+				/* first, check if link change event is
+				 * posted by timer #2 before handling
+				 * new requests post by non-secure SW
+				 */
+				if (lmac_ctx->s.link_change_req) {
+					debug_cgx_intf("%s: %d:%d link chng req\n",
+						__func__, cgx, lmac);
+					cgx_link_change_req(node, cgx, lmac);
+
+					/* trigger an interrupt to notify the event */
+					cgx_trigger_interrupt(node, cgx, lmac);
+				}
+				/* poll on ownership to be set as OWN_FW to
+				 * process any new requests
+				 */
+				if (scratch1.s.own_status == CGX_OWN_FIRMWARE) {
 					if (scratch0.s.evt_sts.ack) {
 						ERROR("%s Req ignored,"
 							" status not cleared\n",
@@ -753,10 +759,10 @@ static int cgx_handle_requests_cb(int timer)
 
 					/* trigger an interrupt before ret */
 					cgx_trigger_interrupt(node, cgx, lmac);
-
-					/* release firmware internal lock */
-					cgx_release_csr_lock(node, cgx, lmac);
 				}
+
+				/* release firmware internal lock */
+				cgx_release_csr_lock(node, cgx, lmac);
 			}
 		}
 	}
@@ -784,8 +790,6 @@ void cgx_set_error_type(int node, int cgx_id, int lmac_id, uint64_t type)
 	cgx_lmac_context_t *lmac_ctx;
 
 	lmac_ctx = &lmac_context[node][cgx_id][lmac_id];
-	debug_cgx_intf("%s:%d:%d:%d type 0x%lx\n", __func__, node, cgx_id, lmac_id, type);
-
 	lmac_ctx->s.error_type = type;
 }
 

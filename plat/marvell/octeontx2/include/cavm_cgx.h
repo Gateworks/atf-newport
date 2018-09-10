@@ -145,7 +145,9 @@ typedef union cgx_lmac_context {
 		uint64_t speed:4;
 		/* cgx_error_type */
 		uint64_t error_type:10;
-		uint64_t reserved:35;
+		/* link change request */
+		uint64_t link_change_req:1;
+		uint64_t reserved:34;
 	} s;
 } cgx_lmac_context_t;
 
