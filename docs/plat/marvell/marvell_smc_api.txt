@@ -1,50 +1,52 @@
-CAVIUM
+MARVELL
 ======
 
-ARM Trusted Firmware CAVIUM SMC interface
+ARM Trusted Firmware MARVELL SMC interface
 =========================================
 
-This document purpose is to describe Cavium-specific SMC runtime services, which
+This document purpose is to describe Marvell-specific SMC runtime services, which
 creates runtime interface for non-secure firmware/OS. Describing standard ARM
 PSCI services is out of the scope of this paper. More information about these
 can be found at [PSCI]. To read more about SMCs, there is specification called
 [SMC Calling Convention][SMCCC].
 
 
-Version 0.1
+Version 1.0
 -----------
-As for version 0.1, following Cavium's services are available:
+As for version 1.0, following Marvell's services are available:
 
-1. THUNDERX_SVC_CALL_COUNT
+1. OCTEONTX_SVC_CALL_COUNT
 
-  * SMC_FID: 0x4300ff00
+  * SMC_FID: 0xc200ff00
   * Input registers values:
     - x0: SMC_FID
   * Return value (x0):
     - Number of implemented Service Calls
   * Description:
-    This call returns number of currently implemented Cavium's runtime services.
+    This call returns number of currently implemented Marvell's runtime services.
+  * Supported platforms: T81, T83, F95, T96
 
-2. THUNDERX_SVC_UID
+2. OCTEONTX_SVC_UID
 
-  * SMC FID: 0x4300ff01
+  * SMC FID: 0xc200ff01
   * Input registers values:
     - x0: SMC_FID
   * Return value (x0):
-    - Cavium OEM Service UUID
+    - Marvell OEM Service UUID
   * Description:
-    This call returns Cavium OEM Service UUID
+    This call returns Marvell OEM Service UUID
+  * Supported platforms: T81, T83, F95, T96
 
-3. THUNDERX_SVC_VERSION
+3. OCTEONTX_SVC_VERSION
 
-  * SMC FID: 0x4300ff03
+  * SMC FID: 0xc200ff03
   * Input registers values:
     - x0: SMC_FID
   * Return value:
     - x0: SMC version 32-bit major number
     - x1: SMC version 32-bit minor number
   * Description:
-    This call returns major and minor version numbers of current Cavium runtime
+    This call returns major and minor version numbers of current Marvell runtime
     services implementation. Different major revision values indicates possibly
     incompatible SMC APIs. For two revisions, A and B, for which the major
     revision values are identical, if the minor revision value of revision B is
@@ -56,54 +58,11 @@ As for version 0.1, following Cavium's services are available:
     Minor revision number is incremented when:
     * Any SMC call is added
     * Backwards compatible changes are made to existing function arguments
+  * Supported platforms: T81, T83, F95, T96
 
-4. THUNDERX_NOR_READ
+4. OCTEONTX_DRAM_SIZE
 
-  * SMC FID: 0x43000111
-  * Input registers values:
-    - x0: SMC_FID
-    - x1: Offset within SPI device to read data from
-    - x2: Size (in bytes) of data to read
-    - x3: Address of caller's buffer to read data into
-  * Return value (x0):
-    - Number of bytes successfully read
-    - Error code in case of failure
-  * Description:
-    This call allows to read specified by caller amount of data from SPI flash
-    to caller's buffer.
-
-5. THUNDERX_NOR_WRITE
-
-  * SMC FID: 0x43000112
-  * Input registers values:
-    - x0: SMC_FID
-    - x1: Offset within SPI device to which data will be written
-    - x2: Size (in bytes) of data to write
-    - x3: Address of caller's buffer to write data from
-  * Return value (x0):
-    - Number of bytes successfully written
-    - Error code in case of failure
-  * Description:
-    This call allows to write specified by caller amount of data to SPI flash
-    from caller's buffer. It's caller responsibility to provide valid and big
-    enough buffer.
-
-6. THUNDERX_NOR_ERASE
-
-  * SMC FID: 0x43000113
-  * Input registers values:
-    - x0: SMC_FID
-    - x1: Offset within SPI device where sector will be erased
-  * Return value (x0):
-    - 0 in case of success
-    - Error code in case of failure
-  * Description:
-    This call allows to erase one sector of data from SPI flash beggining at
-    specified by caller offset.
-
-7. THUNDERX_DRAM_SIZE
-
-  * SMC FID: 0x43000301
+  * SMC FID: 0xc2000301
   * Input registers values:
     - x0: SMC_FID
     - x1: Number of NUMA node to check size of DRAM
@@ -111,20 +70,53 @@ As for version 0.1, following Cavium's services are available:
     - Return size of DRAM in bytes
   * Description:
     This call returns size of DRAM in bytes for specified by caller NUMA node.
+  * Supported platforms: T81, T83, F95, T96
 
-8. THUNDERX_NODE_COUNT
+5. OCTEONTX_NODE_COUNT
 
-  * SMC FID: 0x43000601
+  * SMC FID: 0xc2000601
   * Input registers values:
     - x0: SMC_FID
   * Return value (x0):
     - Number of NUMA nodes available in system
   * Description:
     This call returns number of NUMA nodes in system.
+  * Supported platforms: T81, T83, F95, T96
 
-9. THUNDERX_PUTC
+6. OCTEONTX_INSTALL_GPIO_INT
 
-  * SMC FID: 0x43000a01
+  * SMC FID: 0xc2000801
+  * Input registers values:
+    - x0: SMC_FID
+    - x1: gpio number
+    - x2: stack pointer
+    - x3: cpu
+    - x4: isr handler address
+  * Return value (x0):
+    - Non-zero value indicates that interrupt cannot be installed
+  * Description:
+    This call allows to enable interrupt for specified gpio number that will be
+    handled on selected cpu. Isr handler address is user space handler called on
+    interrupt. The handler will use specified stack pointer. In x0 register
+    the gpio number will be passed to the handler.
+  * Supported platforms: T83, F95, T96
+
+7. OCTEONTX_REMOVE_GPIO_INT
+
+  * SMC FID: 0xc2000802
+  * Input registers values:
+    - x0: SMC_FID
+    - x1: gpio number
+  * Return value (x0):
+    - Always zero
+  * Description:
+    This call allows to disable interrupt on specified gpio number that was
+    previously setup by OCTEONTX_INSTALL_GPIO_INT SMC.
+  * Supported platforms: T83, F95, T96
+
+8. OCTEONTX_PUTC
+
+  * SMC FID: 0xc2000a01
   * Input registers values:
     - x0: SMC_FID
     - x1: character to print
@@ -132,8 +124,22 @@ As for version 0.1, following Cavium's services are available:
   * Description:
     This call allows to put single character on console. It's especially useful
     for debug purposes.
+  * Supported platforms: T81, T83, F95, T96
+
+9. OCTEONTX_DISABLE_RVU_LFS
+
+  * SMC FID: 0xc2000b01
+  * Input registers values:
+    - x0: SMC_FID
+    - x1: node number
+  * Return value (x0):
+    - Always zero
+  * Description:
+    This call can be used to disable NPA/NIX LFs to PFs mapping configured by
+    ARM-TF. Node number is for scalability with future octeontx2 SoC revisions.
+  * Supported platforms: F95, T96
 
 - - - - - - - - - - - - - - - - - - - - -
 
-[PSCI]:    http://infocenter.arm.com/help/topic/com.arm.doc.den0022c/DEN0022C_Power_State_Coordination_Interface.pdf
-[SMCCC]:   http://infocenter.arm.com/help/topic/com.arm.doc.den0028a/index.html
+[PSCI]:    http://infocenter.arm.com/help/topic/com.arm.doc.den0022d/Power_State_Coordination_Interface_PDD_v1_1_DEN0022D.pdf
+[SMCCC]:   http://infocenter.arm.com/help/topic/com.arm.doc.den0028b/ARM_DEN0028B_SMC_Calling_Convention.pdf
