@@ -48,35 +48,6 @@
 #include <platform_def.h>
 #include <plat_cavm.h>
 
-/*******************************************************************************
- * Declarations of linker defined symbols which will help us find the layout
- * of trusted SRAM
- ******************************************************************************/
-extern unsigned long __RO_START__;
-extern unsigned long __RO_END__;
-
-extern unsigned long __COHERENT_RAM_START__;
-extern unsigned long __COHERENT_RAM_END__;
-
-/*
- * The next 2 constants identify the extents of the code & RO data region.
- * These addresses are used by the MMU setup code and therefore they must be
- * page-aligned.  It is the responsibility of the linker script to ensure that
- * __RO_START__ and __RO_END__ linker symbols refer to page-aligned addresses.
- */
-#define BL31_RO_BASE (unsigned long)(&__RO_START__)
-#define BL31_RO_LIMIT (unsigned long)(&__RO_END__)
-#define BL31_END (unsigned long)(&__BL31_END__)
-
-/*
- * The next 2 constants identify the extents of the coherent memory region.
- * These addresses are used by the MMU setup code and therefore they must be
- * page-aligned.  It is the responsibility of the linker script to ensure that
- * __COHERENT_RAM_START__ and __COHERENT_RAM_END__ linker symbols
- * refer to page-aligned addresses.
- */
-#define BL31_COHERENT_RAM_BASE (unsigned long)(&__COHERENT_RAM_START__)
-#define BL31_COHERENT_RAM_LIMIT (unsigned long)(&__COHERENT_RAM_END__)
 
 static entry_point_info_t bl33_image_ep_info, bl32_image_ep_info;
 
@@ -235,11 +206,11 @@ void bl31_platform_setup()
 void bl31_plat_arch_setup()
 {
 	uintptr_t ns_dma_memory_base = octeontx_dram_size() - NS_DMA_MEMORY_SIZE;
-	mmap_add_region(BL31_RO_BASE, BL31_RO_BASE,
-			BL31_END - BL31_RO_BASE,
+	mmap_add_region(BL_CODE_BASE, BL_CODE_BASE,
+			BL31_END - BL_CODE_BASE,
 			MT_MEMORY | MT_RW | MT_SECURE);
-	mmap_add_region(BL31_RO_BASE, BL31_RO_BASE,
-			BL31_RO_LIMIT - BL31_RO_BASE,
+	mmap_add_region(BL_CODE_BASE, BL_CODE_BASE,
+			BL_CODE_END - BL_CODE_BASE,
 			MT_MEMORY | MT_RO | MT_SECURE);
 
 	mmap_add_region(MAILBOX_BASE, MAILBOX_BASE,
@@ -247,8 +218,8 @@ void bl31_plat_arch_setup()
 			MT_MEMORY | MT_RW | MT_SECURE);
 
 #if USE_COHERENT_MEM
-	mmap_add_region(BL31_COHERENT_RAM_BASE, BL31_COHERENT_RAM_BASE,
-			BL31_COHERENT_RAM_LIMIT - BL31_COHERENT_RAM_BASE,
+	mmap_add_region(BL_COHERENT_RAM_BASE, BL_COHERENT_RAM_BASE,
+			BL_COHERENT_RAM_END - BL_COHERENT_RAM_BASE,
 			MT_MEMORY | MT_RW | MT_SECURE);
 #endif
 

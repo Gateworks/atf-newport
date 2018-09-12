@@ -45,40 +45,6 @@
 #include <debug.h>
 #include <libfdt.h>
 
-#define BL2_NOLOAD_BASE (unsigned long)(&__NOLOAD_START__)
-#define BL2_NOLOAD_LIMIT (unsigned long)(&__RW_END__)
-
-/*******************************************************************************
- * Declarations of linker defined symbols which will help us find the layout
- * of trusted SRAM
- ******************************************************************************/
-extern unsigned long __RO_START__;
-extern unsigned long __RO_END__;
-
-extern unsigned long __NOLOAD_START__;
-extern unsigned long __RW_END__;
-
-extern unsigned long __COHERENT_RAM_START__;
-extern unsigned long __COHERENT_RAM_END__;
-
-/*
- * The next 2 constants identify the extents of the code & RO data region.
- * These addresses are used by the MMU setup code and therefore they must be
- * page-aligned.  It is the responsibility of the linker script to ensure that
- * __RO_START__ and __RO_END__ linker symbols refer to page-aligned addresses.
- */
-#define BL2_RO_BASE (unsigned long)(&__RO_START__)
-#define BL2_RO_LIMIT (unsigned long)(&__RO_END__)
-
-/*
- * The next 2 constants identify the extents of the coherent memory region.
- * These addresses are used by the MMU setup code and therefore they must be
- * page-aligned.  It is the responsibility of the linker script to ensure that
- * __COHERENT_RAM_START__ and __COHERENT_RAM_END__ linker symbols refer to
- * page-aligned addresses.
- */
-#define BL2_COHERENT_RAM_BASE (unsigned long)(&__COHERENT_RAM_START__)
-#define BL2_COHERENT_RAM_LIMIT (unsigned long)(&__COHERENT_RAM_END__)
 
 /* Pointer to memory visible to both BL2 and BL31 for passing data */
 extern unsigned char **bl2_el_change_mem_ptr;
@@ -233,12 +199,12 @@ void bl2_plat_arch_setup()
 	mmap_add_region(bl2_tzram_layout.total_base, bl2_tzram_layout.total_base,
 			bl2_tzram_layout.total_size,
 			MT_MEMORY | MT_RW | MT_SECURE);
-	mmap_add_region(BL2_RO_BASE, BL2_RO_BASE,
-			BL2_RO_LIMIT - BL2_RO_BASE,
+	mmap_add_region(BL_CODE_BASE, BL_CODE_BASE,
+			BL_CODE_END - BL_CODE_BASE,
 			MT_MEMORY | MT_RO | MT_SECURE);
 #if USE_COHERENT_MEM
-	mmap_add_region(BL2_COHERENT_RAM_BASE, BL2_COHERENT_RAM_BASE,
-			BL2_COHERENT_RAM_LIMIT - BL2_COHERENT_RAM_BASE,
+	mmap_add_region(BL_COHERENT_RAM_BASE, BL_COHERENT_RAM_BASE,
+			BL_COHERENT_RAM_END - BL_COHERENT_RAM_BASE,
 			MT_MEMORY | MT_RW | MT_SECURE);
 #endif
 

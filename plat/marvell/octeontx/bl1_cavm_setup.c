@@ -30,21 +30,6 @@
 #include <cavm_scfg_bl1.h>
 #include <plat_cavm.h>
 
-#define BL1_RO_BASE (unsigned long)(&__RO_START__)
-#define BL1_RO_LIMIT (unsigned long)(&__RO_END__)
-
-#if USE_COHERENT_MEM
-/*
- * The next 2 constants identify the extents of the coherent memory region.
- * These addresses are used by the MMU setup code and therefore they must be
- * page-aligned.  It is the responsibility of the linker script to ensure that
- * __COHERENT_RAM_START__ and __COHERENT_RAM_END__ linker symbols refer to
- * page-aligned addresses.
- */
-#define BL1_COHERENT_RAM_BASE (unsigned long)(&__COHERENT_RAM_START__)
-#define BL1_COHERENT_RAM_LIMIT (unsigned long)(&__COHERENT_RAM_END__)
-#endif
-
 
 /* Data structure which holds the extents of the trusted DRAM for BL1*/
 static meminfo_t bl1_tzram_layout;
@@ -60,17 +45,17 @@ meminfo_t *bl1_plat_sec_mem_layout(void)
 void bl1_plat_arch_setup(void)
 {
 	mmap_add_region(bl1_tzram_layout.total_base, bl1_tzram_layout.total_base,
-			BL1_RO_BASE - bl1_tzram_layout.total_base,
+			BL_CODE_BASE - bl1_tzram_layout.total_base,
 			MT_MEMORY | MT_RW | MT_SECURE);
-	mmap_add_region(BL1_RO_BASE, BL1_RO_BASE,
-			BL1_RO_LIMIT - BL1_RO_BASE,
+	mmap_add_region(BL_CODE_BASE, BL_CODE_BASE,
+			BL_CODE_END - BL_CODE_BASE,
 			MT_MEMORY | MT_RO | MT_SECURE);
-	mmap_add_region(BL1_RO_LIMIT, BL1_RO_LIMIT,
-			bl1_tzram_layout.total_size - BL1_RO_LIMIT,
+	mmap_add_region(BL_CODE_END, BL_CODE_END,
+			bl1_tzram_layout.total_size - BL_CODE_END,
 			MT_MEMORY | MT_RW | MT_SECURE);
 #if USE_COHERENT_MEM
-	mmap_add_region(BL1_COHERENT_RAM_BASE, BL1_COHERENT_RAM_BASE,
-			BL1_COHERENT_RAM_LIMIT - BL1_COHERENT_RAM_BASE,
+	mmap_add_region(BL_COHERENT_RAM_BASE, BL_COHERENT_RAM_BASE,
+			BL_COHERENT_RAM_END - BL_COHERENT_RAM_BASE,
 			MT_MEMORY | MT_RW | MT_SECURE);
 #endif
 
