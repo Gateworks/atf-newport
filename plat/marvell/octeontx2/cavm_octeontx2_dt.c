@@ -942,7 +942,7 @@ static int octeontx2_check_qlm_lmacs(int node, int cgx_idx,
 	    || (mode_idx == CAVM_QLM_MODE_USXGMII_4X1)) {
 		if (cgx->lmacs_used)
 			lmac_avail = cgx->lmacs_used;
-	} else if (CAVIUM_IS_MODEL(CAVIUM_CN96XX)) {
+	} else if (cavm_is_model(OCTEONTX_CN96XX)) {
 		if ((qlm == 3) || (qlm == 7)) {
 			/* Only QLM3 or QLM7 may be Ethernet, not both. */
 			for (i = 0; i < cgx->lmac_count; i++) {
@@ -968,7 +968,7 @@ static int octeontx2_check_qlm_lmacs(int node, int cgx_idx,
 					lmac_avail--;
 			}
 		}
-	} else if (CAVIUM_IS_MODEL(CAVIUM_CNF95XX)) {
+	} else if (cavm_is_model(OCTEONTX_CNF95XX)) {
 		/* Only 2 lanes are available for QLM3 in F95 */
 		if (qlm == 3) {
 			lmac_avail = 2;
@@ -1109,7 +1109,7 @@ static int octeontx2_fill_cgx_struct(int node, int qlm, int lane, int mode_idx)
 			break;
 		default:
 			lmac->lane_to_sds = lmac->lane;
-			if (CAVIUM_IS_MODEL(CAVIUM_CN96XX) && (qlm == 5))
+			if (cavm_is_model(OCTEONTX_CN96XX) && (qlm == 5))
 				lmac->lane_to_sds += 2;
 			break;
 		}

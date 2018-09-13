@@ -70,9 +70,9 @@ static int spi_config(uint64_t spi_clk, uint32_t mode, int cpol, int cpha,
 	union cavm_mpix_cfg mpi_cfg;
 
 	rst_boot.u = CSR_READ(current_file.node, CAVM_RST_BOOT);
-	if (CAVIUM_IS_MODEL(CAVIUM_CN8XXX))
+	if (cavm_is_model(OCTEONTX_CN8XXX))
 		mpi_cfg.u = CSR_READ(current_file.node, CAVM_MPI_CFG);
-	else if (CAVIUM_IS_MODEL(CAVIUM_CN9XXX)) {
+	else if (cavm_is_model(OCTEONTX_CN9XXX)) {
 		mpi_cfg.u = CSR_READ(current_file.node, CAVM_MPIX_CFG(spi_con));
 		mpi_cfg.s.legacy_dis = 0;
 	} else
@@ -102,9 +102,9 @@ static int spi_config(uint64_t spi_clk, uint32_t mode, int cpol, int cpha,
 	mpi_cfg.s.idlelo = cpha != cpol;
 	mpi_cfg.s.cslate = cpha;
 	mpi_cfg.s.enable = 1;
-	if (CAVIUM_IS_MODEL(CAVIUM_CN8XXX))
+	if (cavm_is_model(OCTEONTX_CN8XXX))
 		CSR_WRITE(current_file.node, CAVM_MPI_CFG, mpi_cfg.u);
-	else if (CAVIUM_IS_MODEL(CAVIUM_CN9XXX))
+	else if (cavm_is_model(OCTEONTX_CN9XXX))
 		CSR_WRITE(current_file.node, CAVM_MPIX_CFG(spi_con), mpi_cfg.u);
 	else
 		return -1;
@@ -123,9 +123,9 @@ static int spi_xfer(unsigned char *dout, unsigned char *din, int len,
 
 		if (dout) {
 			for (i = 0; i < size; i++) {
-				if (CAVIUM_IS_MODEL(CAVIUM_CN8XXX))
+				if (cavm_is_model(OCTEONTX_CN8XXX))
 					CSR_WRITE(current_file.node, CAVM_MPI_DATX(i), *dout++);
-				else if (CAVIUM_IS_MODEL(CAVIUM_CN9XXX))
+				else if (cavm_is_model(OCTEONTX_CN9XXX))
 					CSR_WRITE(current_file.node, CAVM_MPIX_DATX(spi_con, i), *dout++);
 				else
 					return -1;
@@ -142,17 +142,17 @@ static int spi_xfer(unsigned char *dout, unsigned char *din, int len,
 
 		mpi_tx.s.txnum = dout ? size : 0;
 		mpi_tx.s.totnum = size;
-		if (CAVIUM_IS_MODEL(CAVIUM_CN8XXX))
+		if (cavm_is_model(OCTEONTX_CN8XXX))
 			CSR_WRITE(current_file.node, CAVM_MPI_TX, mpi_tx.u);
-		else if (CAVIUM_IS_MODEL(CAVIUM_CN9XXX))
+		else if (cavm_is_model(OCTEONTX_CN9XXX))
 			CSR_WRITE(current_file.node, CAVM_MPIX_TX(spi_con), mpi_tx.u);
 		else
 			return -1;
 		/* Wait for tx/rx to complete */
 		do {
-			if (CAVIUM_IS_MODEL(CAVIUM_CN8XXX))
+			if (cavm_is_model(OCTEONTX_CN8XXX))
 				mpi_sts.u = CSR_READ(current_file.node, CAVM_MPI_STS);
-			else if (CAVIUM_IS_MODEL(CAVIUM_CN9XXX))
+			else if (cavm_is_model(OCTEONTX_CN9XXX))
 				mpi_sts.u = CSR_READ(current_file.node, CAVM_MPIX_STS(spi_con));
 			else
 				return -1;
@@ -160,9 +160,9 @@ static int spi_xfer(unsigned char *dout, unsigned char *din, int len,
 
 		if (din) {
 			for (i = 0; i < size; i++) {
-				if (CAVIUM_IS_MODEL(CAVIUM_CN8XXX))
+				if (cavm_is_model(OCTEONTX_CN8XXX))
 					*din++ = CSR_READ(current_file.node, CAVM_MPI_DATX(i));
-				else if (CAVIUM_IS_MODEL(CAVIUM_CN9XXX))
+				else if (cavm_is_model(OCTEONTX_CN9XXX))
 					*din++ = CSR_READ(current_file.node, CAVM_MPIX_DATX(spi_con, i));
 				else
 					return -1;

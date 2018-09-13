@@ -375,7 +375,7 @@ void plat_set_gpio_msix_vectors(int gpio_num, int irq_num, int enable)
 	int intr_pinx;
 
 	/* Get the offset of interrupt vector for that GPIO line */
-	intr_pinx = CAVM_GPIO_INT_VEC_E_INTR_PINX_CN9(gpio_num);
+	intr_pinx = CAVM_GPIO_INT_VEC_E_INTR_PINX_CN96XX(gpio_num);
 
 	/* INTR_PINX vector address */
 	vector_ptr =  CAVM_GPIO_BAR_E_GPIO_PF_BAR4 + intr_pinx * 0x10;
