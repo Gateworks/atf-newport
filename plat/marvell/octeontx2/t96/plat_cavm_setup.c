@@ -72,7 +72,7 @@ int thunder_dram_is_lmc_enabled(unsigned node, unsigned lmc)
 
 	lmcx_dll_ctl2.u = CSR_READ(node, CAVM_LMCX_DLL_CTL2(lmc));
 
-	return (lmcx_dll_ctl2.cn9.dreset ? 0 : 1);
+	return (lmcx_dll_ctl2.cn96xx.dreset ? 0 : 1);
 }
 
 unsigned thunder_get_node_count(void)
