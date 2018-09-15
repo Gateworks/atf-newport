@@ -19,9 +19,13 @@
 
 static uint64_t msix_addr_save;
 
+/* F95 has 2 LMCs enabled, but 0 and 2 instances
+ * Hence return the count as 3 to support looping
+ * through the count and skipping 1
+ */
 int thunder_get_lmc_per_node(void)
 {
-	return 2;
+	return 3;
 }
 
 int thunder_get_num_ecams_per_node(void)
@@ -60,8 +64,11 @@ int thunder_dram_is_lmc_enabled(unsigned node, unsigned lmc)
 {
 	union cavm_lmcx_dll_ctl2 lmcx_dll_ctl2;
 
-	lmcx_dll_ctl2.u = CSR_READ(node, CAVM_LMCX_DLL_CTL2(lmc));
+	/* LMC 1 is not available on F95 */
+	if (lmc == 1)
+		return 0;
 
+	lmcx_dll_ctl2.u = CSR_READ(node, CAVM_LMCX_DLL_CTL2(lmc));
 	return lmcx_dll_ctl2.cnf95xx.dreset ? 0 : 1;
 }
 
@@ -240,11 +247,10 @@ void plat_add_mmio_node(unsigned long node)
 	add_map_record(CSR_PA(node, CAVM_GTI_PF_BAR0), CAVM_GTI_PF_BAR0_SIZE, attr);
 	add_map_record(CSR_PA(node, CAVM_GTI_PF_BAR4), CAVM_GTI_PF_BAR4_SIZE, attr);
 
-	device_type_count = thunder_get_lmc_per_node();
-	for (i = 0; i < device_type_count; i++) {
-		add_map_record(CSR_PA(node, CAVM_LMCX_PF_BAR0(i)), CAVM_LMCX_PF_BAR0_SIZE, attr);
-		add_map_record(CSR_PA(node, CAVM_LMCX_PF_BAR4(i)), CAVM_LMCX_PF_BAR4_SIZE, attr);
-	}
+	add_map_record(CSR_PA(node, CAVM_LMCX_PF_BAR0(0)), CAVM_LMCX_PF_BAR0_SIZE, attr);
+	add_map_record(CSR_PA(node, CAVM_LMCX_PF_BAR4(0)), CAVM_LMCX_PF_BAR4_SIZE, attr);
+	add_map_record(CSR_PA(node, CAVM_LMCX_PF_BAR0(2)), CAVM_LMCX_PF_BAR0_SIZE, attr);
+	add_map_record(CSR_PA(node, CAVM_LMCX_PF_BAR4(2)), CAVM_LMCX_PF_BAR4_SIZE, attr);
 
 	device_type_count = thunder_get_twsi_count();
 	for (i = 0; i < device_type_count; i++) {

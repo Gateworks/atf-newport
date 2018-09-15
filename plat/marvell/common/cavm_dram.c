@@ -58,7 +58,7 @@ uint64_t thunder_dram_size_node(unsigned node)
 		if (!thunder_dram_is_lmc_enabled(node, lmc))
 			continue;
 
-		lmcx_config.u = CSR_READ(CSR_PA(node, CAVM_LMCX_PF_BAR0(lmc)), CAVM_LMCX_CONFIG(lmc));
+		lmcx_config.u = CSR_READ(node, CAVM_LMCX_CONFIG(lmc));
 		num_ranks = popcnt(lmcx_config.s.init_status);
 		rank_size = 1ull << (28 + lmcx_config.s.pbank_lsb - lmcx_config.s.rank_ena);
 		memsize += rank_size * num_ranks;
