@@ -1561,6 +1561,7 @@ int cgx_rx_equalization(int node, int cgx_id, int lmac_id)
 
 void cgx_set_internal_loopback(int node, int cgx_id, int lmac_id, int enable)
 {
+	uint64_t midr;
 	cgx_lmac_config_t *lmac;
 
 	lmac = &bfdt->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
@@ -1588,6 +1589,18 @@ void cgx_set_internal_loopback(int node, int cgx_id, int lmac_id, int enable)
 		(lmac->mode == CAVM_CGX_LMAC_TYPES_E_FIFTYG_R) ||
 		(lmac->mode == CAVM_CGX_LMAC_TYPES_E_HUNDREDG_R) ||
 		(lmac->mode == CAVM_CGX_LMAC_TYPES_E_USXGMII)) {
+		midr = read_midr();
+		/* SW workaround for errata #35544:
+		 * SPU RX link doesn't come up in loopback mode
+		 * if it doesn't get valids from SERDES. Hence
+		 * set RX_EDET_SIGNAL_OK bit to use SERDES energy
+		 * detect as signal_OK.
+		 */
+		if (IS_THUNDER_PASS(midr, T96PARTNUM, 1, 0))
+			CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_spux_misc_control_t,
+				CAVM_CGXX_SPUX_MISC_CONTROL(cgx_id, lmac_id),
+				rx_edet_signal_ok, enable);
+
 		CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_spux_control1_t,
 			CAVM_CGXX_SPUX_CONTROL1(cgx_id, lmac_id),
 			loopbck, enable);
