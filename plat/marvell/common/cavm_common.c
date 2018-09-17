@@ -130,6 +130,10 @@ void thunder_cpu_setup(void)
 		set_bit(cvmmemctl1_el1, 5); /* Trap any accesses to nonzero node id */
 	}
 
+	if ((MIDR_PARTNUM(midr) == F95PARTNUM)) {
+		set_bit(cvmmemctl1_el1, 58); /* Enable 128-bit access to BPHY */
+	}
+
 	/* Fix up defaults from the BDK which is broken and violates the ARM ARM. */
 	unset_bit(cvmmemctl0_el1, 17); /* Don't reset timer on merge as that violates the ARM ARM. */
 	unset_bit(cvmmemctl0_el1, 18); /* Set Write-buffer timeout for NSH entries to 218 cycles. */
