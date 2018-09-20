@@ -46,6 +46,7 @@
 #include <debug.h>
 #include <timers.h>
 #include <cavm_utils.h>
+#include <platform_def.h>
 
 /*******************************************************************************
  * Declarations of linker defined symbols which will help us find the layout
@@ -119,7 +120,7 @@ void bl31_early_platform_setup(bl31_params_t *from_bl2,
 				void *plat_params_from_bl2)
 #endif
 {
-	console_pl011_register(CSR_PA(0, CAVM_UAAX_PF_BAR0(0)), 0, 0, &console);
+	console_pl011_register(CSR_PA(0, UAAX_PF_BAR0(0)), 0, 0, &console);
 
 #if LOAD_IMAGE_V2
 	/*

@@ -220,19 +220,19 @@ void plat_add_mmio_node(unsigned long node)
 	int i, device_type_count;
 
 	attr = MT_DEVICE | MT_RW | MT_SECURE;
-	add_map_record(CSR_PA(node, CAVM_RST_PF_BAR0), CAVM_RST_PF_BAR0_SIZE, attr);
-	add_map_record(CSR_PA(node, CAVM_RST_PF_BAR2), CAVM_RST_PF_BAR2_SIZE, attr);
-	add_map_record(CSR_PA(node, CAVM_RST_PF_BAR4), CAVM_RST_PF_BAR4_SIZE, attr);
+	add_map_record(CSR_PA(node, CAVM_RST_BAR_E_RST_PF_BAR0_CN9), CAVM_RST_BAR_E_RST_PF_BAR0_CN9_SIZE, attr);
+	add_map_record(CSR_PA(node, CAVM_RST_BAR_E_RST_PF_BAR2), CAVM_RST_BAR_E_RST_PF_BAR2_SIZE, attr);
+	add_map_record(CSR_PA(node, CAVM_RST_BAR_E_RST_PF_BAR4), CAVM_RST_BAR_E_RST_PF_BAR4_SIZE, attr);
 
 	device_type_count = thunder_get_ccu_count();
 	for (i = 0; i < device_type_count; i++) {
-		add_map_record(CSR_PA(node, CAVM_CCU_PF_BAR0(i)), CAVM_CCU_PF_BAR0_SIZE, attr);
-		add_map_record(CSR_PA(node, CAVM_CCU_PF_BAR4(i)), CAVM_CCU_PF_BAR4_SIZE, attr);
+		add_map_record(CSR_PA(node, CAVM_CCU_BAR_E_CCUX_PF_BAR0(i)), CAVM_CCU_BAR_E_CCUX_PF_BAR0_SIZE, attr);
+		add_map_record(CSR_PA(node, CAVM_CCU_BAR_E_CCUX_PF_BAR4(i)), CAVM_CCU_BAR_E_CCUX_PF_BAR4_SIZE, attr);
 	}
-	add_map_record(CSR_PA(node, CAVM_CCS_PF_BAR0), CAVM_CCS_PF_BAR0_SIZE, attr);
-	add_map_record(CSR_PA(node, CAVM_MIO_BOOT_PF_BAR0), CAVM_MIO_BOOT_PF_BAR0_SIZE, attr);
-	add_map_record(CSR_PA(node, CAVM_MIO_EMM_PF_BAR0), CAVM_MIO_EMM_PF_BAR0_SIZE, attr);
-	add_map_record(CSR_PA(node, CAVM_MIO_EMM_PF_BAR4), CAVM_MIO_EMM_PF_BAR4_SIZE, attr);
+	add_map_record(CSR_PA(node, CAVM_CCS_BAR_E_CCS_PF_BAR0), CAVM_CCS_BAR_E_CCS_PF_BAR0_SIZE, attr);
+	add_map_record(CSR_PA(node, CAVM_MIO_BOOT_BAR_E_MIO_BOOT_PF_BAR0), CAVM_MIO_BOOT_BAR_E_MIO_BOOT_PF_BAR0_SIZE, attr);
+	add_map_record(CSR_PA(node, CAVM_MIO_EMM_BAR_E_MIO_EMM_PF_BAR0_CN9), CAVM_MIO_EMM_BAR_E_MIO_EMM_PF_BAR0_CN9_SIZE, attr);
+	add_map_record(CSR_PA(node, CAVM_MIO_EMM_BAR_E_MIO_EMM_PF_BAR4), CAVM_MIO_EMM_BAR_E_MIO_EMM_PF_BAR4_SIZE, attr);
 	add_map_record(CSR_PA(node, CAVM_FUS_BAR_E_FUS_PF_BAR0),
 		       CAVM_FUS_BAR_E_FUS_PF_BAR0_SIZE, attr);
 	add_map_record(CSR_PA(node, CAVM_FUSF_BAR_E_FUSF_PF_BAR0),
@@ -240,49 +240,49 @@ void plat_add_mmio_node(unsigned long node)
 
 	device_type_count = thunder_get_mpi_count();
 	for (i = 0; i < device_type_count; i++) {
-		add_map_record(CSR_PA(node, CAVM_MPI_PF_BAR0(i)), CAVM_MPI_PF_BAR0_SIZE, attr);
-		add_map_record(CSR_PA(node, CAVM_MPI_PF_BAR4(i)), CAVM_MPI_PF_BAR0_SIZE, attr);
+		add_map_record(CSR_PA(node, CAVM_MPI_BAR_E_MPIX_PF_BAR0(i)), CAVM_MPI_BAR_E_MPIX_PF_BAR0_SIZE, attr);
+		add_map_record(CSR_PA(node, CAVM_MPI_BAR_E_MPIX_PF_BAR4(i)), CAVM_MPI_BAR_E_MPIX_PF_BAR4_SIZE, attr);
 	}
-	add_map_record(CSR_PA(node, CAVM_GIC_PF_BAR2), CAVM_GIC_PF_BAR2_SIZE, attr);
-	add_map_record(CSR_PA(node, CAVM_GIC_PF_BAR4), CAVM_GIC_PF_BAR4_SIZE, attr);
+	add_map_record(CSR_PA(node, CAVM_GIC_BAR_E_GIC_PF_BAR2), CAVM_GIC_BAR_E_GIC_PF_BAR2_SIZE, attr);
+	add_map_record(CSR_PA(node, GIC_PF_BAR4), GIC_PF_BAR4_SIZE, attr);
 
 	device_type_count = thunder_get_smmu_count();
 	for (i = 0; i < device_type_count; i++)
-		add_map_record(CSR_PA(node, CAVM_SMMUX_PF_BAR0(i)), CAVM_SMMUX_PF_BAR0_SIZE, attr);
+		add_map_record(CSR_PA(node, CAVM_SMMU_BAR_E_SMMUX_PF_BAR0_CN8(i)), CAVM_SMMU_BAR_E_SMMUX_PF_BAR0_CN8_SIZE, attr);
 
-	add_map_record(CSR_PA(node, CAVM_GTI_PF_BAR0), CAVM_GTI_PF_BAR0_SIZE, attr);
-	add_map_record(CSR_PA(node, CAVM_GTI_PF_BAR4), CAVM_GTI_PF_BAR4_SIZE, attr);
+	add_map_record(CSR_PA(node, CAVM_GTI_BAR_E_GTI_PF_BAR0_CN9), CAVM_GTI_BAR_E_GTI_PF_BAR0_CN9_SIZE, attr);
+	add_map_record(CSR_PA(node, CAVM_GTI_BAR_E_GTI_PF_BAR4_CN9), CAVM_GTI_BAR_E_GTI_PF_BAR4_CN9_SIZE, attr);
 
 	device_type_count = thunder_get_lmc_per_node();
 	for (i = 0; i < device_type_count; i++) {
-		add_map_record(CSR_PA(node, CAVM_LMCX_PF_BAR0(i)), CAVM_LMCX_PF_BAR0_SIZE, attr);
-		add_map_record(CSR_PA(node, CAVM_LMCX_PF_BAR4(i)), CAVM_LMCX_PF_BAR4_SIZE, attr);
+		add_map_record(CSR_PA(node, CAVM_LMC_BAR_E_LMCX_PF_BAR0(i)), CAVM_LMC_BAR_E_LMCX_PF_BAR0_SIZE, attr);
+		add_map_record(CSR_PA(node, CAVM_LMC_BAR_E_LMCX_PF_BAR4(i)), CAVM_LMC_BAR_E_LMCX_PF_BAR4_SIZE, attr);
 	}
 
 	device_type_count = thunder_get_twsi_count();
 	for (i = 0; i < device_type_count; i++) {
-		add_map_record(CSR_PA(node, CAVM_MIO_TWSX_PF_BAR0(i)), CAVM_MIO_TWSX_PF_BAR0_SIZE, attr);
-		add_map_record(CSR_PA(node, CAVM_MIO_TWSX_PF_BAR4(i)), CAVM_MIO_TWSX_PF_BAR4_SIZE, attr);
+		add_map_record(CSR_PA(node, CAVM_MIO_TWS_BAR_E_MIO_TWSX_PF_BAR0_CN9(i)), CAVM_MIO_TWS_BAR_E_MIO_TWSX_PF_BAR0_CN9_SIZE, attr);
+		add_map_record(CSR_PA(node, CAVM_MIO_TWS_BAR_E_MIO_TWSX_PF_BAR4(i)), CAVM_MIO_TWS_BAR_E_MIO_TWSX_PF_BAR4_SIZE, attr);
 	}
 
 	device_type_count = thunder_get_cpt_count();
 	for (i = 0; i < device_type_count; i++) {
-		add_map_record(CSR_PA(node, CAVM_CPT_PF_BAR0(i)), CAVM_CPT_PF_BAR0_SIZE, attr);
-		add_map_record(CSR_PA(node, CAVM_CPT_PF_BAR4(i)), CAVM_CPT_PF_BAR4_SIZE, attr);
-		add_map_record(CSR_PA(node, CAVM_CPT_VFX_BAR0(i, 0)), 64*CAVM_CPT_VFX_BAR0_SIZE, attr);
-		add_map_record(CSR_PA(node, CAVM_CPT_VFX_BAR4(i, 0)), 64*CAVM_CPT_VFX_BAR4_SIZE, attr);
+		add_map_record(CSR_PA(node, CAVM_CPT_BAR_E_CPTX_PF_BAR0(i)), CAVM_CPT_BAR_E_CPTX_PF_BAR0_SIZE, attr);
+		add_map_record(CSR_PA(node, CAVM_CPT_BAR_E_CPTX_PF_BAR4(i)), CAVM_CPT_BAR_E_CPTX_PF_BAR4_SIZE, attr);
+		add_map_record(CSR_PA(node, CAVM_CPT_BAR_E_CPTX_VFX_BAR0(i, 0)), 64*CAVM_CPT_BAR_E_CPTX_VFX_BAR0_SIZE, attr);
+		add_map_record(CSR_PA(node, CAVM_CPT_BAR_E_CPTX_VFX_BAR4(i, 0)), 64*CAVM_CPT_BAR_E_CPTX_VFX_BAR4_SIZE, attr);
 	}
 
 	device_type_count = thunder_get_cgx_count();
 	for (i = 0; i < device_type_count; i++) {
-		add_map_record(CSR_PA(node, CAVM_CGX_PF_BAR0(i)), CAVM_CGX_PF_BAR0_SIZE, attr);
-		add_map_record(CSR_PA(node, CAVM_CGX_PF_BAR4(i)), CAVM_CGX_PF_BAR4_SIZE, attr);
+		add_map_record(CSR_PA(node, CAVM_CGX_BAR_E_CGXX_PF_BAR0(i)), CAVM_CGX_BAR_E_CGXX_PF_BAR0_SIZE, attr);
+		add_map_record(CSR_PA(node, CAVM_CGX_BAR_E_CGXX_PF_BAR4(i)), CAVM_CGX_BAR_E_CGXX_PF_BAR4_SIZE, attr);
 	}
 
 	device_type_count = thunder_get_pem_count();
 	for (i = 0; i < device_type_count; i++) {
-		add_map_record(CSR_PA(node, CAVM_PEMX_PF_BAR0(i)), CAVM_PEMX_PF_BAR0_SIZE, attr);
-		add_map_record(CSR_PA(node, CAVM_PEMX_PF_BAR4(i)), CAVM_PEMX_PF_BAR4_SIZE, attr);
+		add_map_record(CSR_PA(node, CAVM_PEM_BAR_E_PEMX_PF_BAR0_CN9(i)), CAVM_PEM_BAR_E_PEMX_PF_BAR0_CN9_SIZE, attr);
+		add_map_record(CSR_PA(node, CAVM_PEM_BAR_E_PEMX_PF_BAR4_CN9(i)), CAVM_PEM_BAR_E_PEMX_PF_BAR4_CN9_SIZE, attr);
 	}
 
 	device_type_count = thunder_get_gser_count();
@@ -290,31 +290,31 @@ void plat_add_mmio_node(unsigned long node)
 		add_map_record(CSR_PA(node, CAVM_GSERN_BAR_E_GSERNX_PF_BAR0(i)),
 			       CAVM_GSERN_BAR_E_GSERNX_PF_BAR0_SIZE, attr);
 
-	add_map_record(CSR_PA(node, CAVM_DAP_PF_BAR0), CAVM_DAP_PF_BAR0_SIZE, attr);
-	add_map_record(CSR_PA(node, CAVM_DAP_PF_BAR2), CAVM_DAP_PF_BAR2_SIZE, attr);
-	add_map_record(CSR_PA(node, CAVM_GPIO_PF_BAR0), CAVM_GPIO_PF_BAR0_SIZE, attr);
-	add_map_record(CSR_PA(node, CAVM_GPIO_PF_BAR4), CAVM_GPIO_PF_BAR4_SIZE, attr);
+	add_map_record(CSR_PA(node, CAVM_DAP_BAR_E_DAP_PF_BAR0), CAVM_DAP_BAR_E_DAP_PF_BAR0_SIZE, attr);
+	add_map_record(CSR_PA(node, CAVM_DAP_BAR_E_DAP_PF_BAR2_CN9), CAVM_DAP_BAR_E_DAP_PF_BAR2_CN9_SIZE, attr);
+	add_map_record(CSR_PA(node, CAVM_GPIO_BAR_E_GPIO_PF_BAR0_CN9), CAVM_GPIO_BAR_E_GPIO_PF_BAR0_CN9_SIZE, attr);
+	add_map_record(CSR_PA(node, CAVM_GPIO_BAR_E_GPIO_PF_BAR4), CAVM_GPIO_BAR_E_GPIO_PF_BAR4_SIZE, attr);
 
 	device_type_count = thunder_get_uaa_count();
 	for (i = 0; i < device_type_count; i++) {
-		add_map_record(CSR_PA(node, CAVM_UAAX_PF_BAR0(i)), CAVM_UAAX_PF_BAR0_SIZE, attr);
-		add_map_record(CSR_PA(node, CAVM_UAAX_PF_BAR4(i)), CAVM_UAAX_PF_BAR4_SIZE, attr);
+		add_map_record(CSR_PA(node, UAAX_PF_BAR0(i)), CAVM_UAA_BAR_E_UAAX_PF_BAR0_CN9_SIZE, attr);
+		add_map_record(CSR_PA(node, CAVM_UAA_BAR_E_UAAX_PF_BAR4(i)), CAVM_UAA_BAR_E_UAAX_PF_BAR4_SIZE, attr);
 	}
 
 	device_type_count = thunder_get_num_ecams_per_node();
 	for (i = 0; i < device_type_count; i++) {
-		add_map_record(CSR_PA(node, CAVM_ECAM_PF_BAR0(i)), CAVM_ECAM_PF_BAR0_SIZE, attr);
-		add_map_record(CSR_PA(node, CAVM_ECAM_PF_BAR2(i)), CAVM_ECAM_PF_BAR2_SIZE, attr);
+		add_map_record(CSR_PA(node, CAVM_ECAM_BAR_E_ECAMX_PF_BAR0_CN9(i)), CAVM_ECAM_BAR_E_ECAMX_PF_BAR0_CN9_SIZE, attr);
+		add_map_record(CSR_PA(node, ECAM_PF_BAR2(i)), CAVM_ECAM_BAR_E_ECAMX_PF_BAR2_CN9_SIZE, attr);
 	}
 
 	device_type_count = thunder_get_sata_count();
 	for (i = 0; i < device_type_count; ++i)
 	{
-		add_map_record(CSR_PA(node, CAVM_SATAX_PF_BAR0(i)), CAVM_SATAX_PF_BAR0_SIZE, attr);
-		add_map_record(CSR_PA(node, CAVM_SATAX_PF_BAR2(i)), CAVM_SATAX_PF_BAR2_SIZE, attr);
+		add_map_record(CSR_PA(node, CAVM_SATA_BAR_E_SATAX_PF_BAR0(i)), CAVM_SATA_BAR_E_SATAX_PF_BAR0_SIZE, attr);
+		add_map_record(CSR_PA(node, CAVM_SATA_BAR_E_SATAX_PF_BAR2(i)), CAVM_SATA_BAR_E_SATAX_PF_BAR2_SIZE, attr);
 	}
 
-	add_map_record(CSR_PA(node, CAVM_ROM_PF_BAR0), CAVM_ROM_PF_BAR0_SIZE, attr);
+	add_map_record(CSR_PA(node, CAVM_ROM_BAR_E_ROM_PF_BAR0), CAVM_ROM_BAR_E_ROM_PF_BAR0_SIZE, attr);
 
 	device_type_count = thunder_get_iobn_count();
 	for (i = 0; i < device_type_count; ++i) {
@@ -322,39 +322,39 @@ void plat_add_mmio_node(unsigned long node)
 		add_map_record(CSR_PA(node, CAVM_IOBN_BAR_E_IOBNX_PF_BAR4(i)), CAVM_IOBN_BAR_E_IOBNX_PF_BAR4_SIZE, attr);
 	}
 
-	add_map_record(CSR_PA(node, CAVM_RVU_PF_BAR0(0)), CAVM_RVU_PF_BAR0_SIZE, attr);
+	add_map_record(CSR_PA(node, CAVM_RVU_BAR_E_RVU_PFX_BAR0(0)), CAVM_RVU_BAR_E_RVU_PFX_BAR0_SIZE, attr);
 	device_type_count = thunder_get_rvu_count();
 	for (i = 0; i < device_type_count; ++i)
-		add_map_record(CSR_PA(node, CAVM_RVU_PFX_VFX_BAR2(i, 0)), CAVM_RVU_PFX_VFX_BAR2_SIZE, attr);
+		add_map_record(CSR_PA(node, CAVM_RVU_BAR_E_RVU_PFX_FUNCX_BAR2(i, 0)), CAVM_RVU_BAR_E_RVU_PFX_FUNCX_BAR2_SIZE, attr);
 
 	/* Add regions for required for RVU init */
-	add_map_record(CSR_PA(node, CAVM_RVU_PF_BAR0(0) +
-				CAVM_RVU_BLOCK_ADDR_E_NIXX(0) * CAVM_RVU_PF_BAR0_SIZE),
-				CAVM_RVU_PF_BAR0_SIZE, attr);
-	add_map_record(CSR_PA(node, CAVM_RVU_PF_BAR0(0) +
-				CAVM_RVU_BLOCK_ADDR_E_NPA * CAVM_RVU_PF_BAR0_SIZE),
-				CAVM_RVU_PF_BAR0_SIZE, attr);
-	add_map_record(CSR_PA(node, CAVM_RVU_PF_BAR0(0) +
-				CAVM_RVU_BLOCK_ADDR_E_SSO * CAVM_RVU_PF_BAR0_SIZE),
-				CAVM_RVU_PF_BAR0_SIZE, attr);
-	add_map_record(CSR_PA(node, CAVM_RVU_PF_BAR0(0) +
-				CAVM_RVU_BLOCK_ADDR_E_SSOW * CAVM_RVU_PF_BAR0_SIZE),
-				CAVM_RVU_PF_BAR0_SIZE, attr);
-	add_map_record(CSR_PA(node, CAVM_RVU_PF_BAR0(0) +
-				CAVM_RVU_BLOCK_ADDR_E_TIM * CAVM_RVU_PF_BAR0_SIZE),
-				CAVM_RVU_PF_BAR0_SIZE, attr);
-	add_map_record(CSR_PA(node, CAVM_RVU_PF_BAR0(0) +
-				CAVM_RVU_BLOCK_ADDR_E_CPTX(0) * CAVM_RVU_PF_BAR0_SIZE),
-				CAVM_RVU_PF_BAR0_SIZE, attr);
-	add_map_record(CSR_PA(node, CAVM_RVU_PF_BAR0(0) +
-				CAVM_RVU_BLOCK_ADDR_E_NDCX(0) * CAVM_RVU_PF_BAR0_SIZE),
-				CAVM_RVU_PF_BAR0_SIZE, attr);
-	add_map_record(CSR_PA(node, CAVM_RVU_PF_BAR0(0) +
-				CAVM_RVU_BLOCK_ADDR_E_NDCX(1) * CAVM_RVU_PF_BAR0_SIZE),
-				CAVM_RVU_PF_BAR0_SIZE, attr);
-	add_map_record(CSR_PA(node, CAVM_RVU_PF_BAR0(0) +
-				CAVM_RVU_BLOCK_ADDR_E_NDCX(2) * CAVM_RVU_PF_BAR0_SIZE),
-				CAVM_RVU_PF_BAR0_SIZE, attr);
+	add_map_record(CSR_PA(node, CAVM_RVU_BAR_E_RVU_PFX_BAR0(0) +
+				CAVM_RVU_BLOCK_ADDR_E_NIXX(0) * CAVM_RVU_BAR_E_RVU_PFX_BAR0_SIZE),
+				CAVM_RVU_BAR_E_RVU_PFX_BAR0_SIZE, attr);
+	add_map_record(CSR_PA(node, CAVM_RVU_BAR_E_RVU_PFX_BAR0(0) +
+				CAVM_RVU_BLOCK_ADDR_E_NPA * CAVM_RVU_BAR_E_RVU_PFX_BAR0_SIZE),
+				CAVM_RVU_BAR_E_RVU_PFX_BAR0_SIZE, attr);
+	add_map_record(CSR_PA(node, CAVM_RVU_BAR_E_RVU_PFX_BAR0(0) +
+				CAVM_RVU_BLOCK_ADDR_E_SSO * CAVM_RVU_BAR_E_RVU_PFX_BAR0_SIZE),
+				CAVM_RVU_BAR_E_RVU_PFX_BAR0_SIZE, attr);
+	add_map_record(CSR_PA(node, CAVM_RVU_BAR_E_RVU_PFX_BAR0(0) +
+				CAVM_RVU_BLOCK_ADDR_E_SSOW * CAVM_RVU_BAR_E_RVU_PFX_BAR0_SIZE),
+				CAVM_RVU_BAR_E_RVU_PFX_BAR0_SIZE, attr);
+	add_map_record(CSR_PA(node, CAVM_RVU_BAR_E_RVU_PFX_BAR0(0) +
+				CAVM_RVU_BLOCK_ADDR_E_TIM * CAVM_RVU_BAR_E_RVU_PFX_BAR0_SIZE),
+				CAVM_RVU_BAR_E_RVU_PFX_BAR0_SIZE, attr);
+	add_map_record(CSR_PA(node, CAVM_RVU_BAR_E_RVU_PFX_BAR0(0) +
+				CAVM_RVU_BLOCK_ADDR_E_CPTX(0) * CAVM_RVU_BAR_E_RVU_PFX_BAR0_SIZE),
+				CAVM_RVU_BAR_E_RVU_PFX_BAR0_SIZE, attr);
+	add_map_record(CSR_PA(node, CAVM_RVU_BAR_E_RVU_PFX_BAR0(0) +
+				CAVM_RVU_BLOCK_ADDR_E_NDCX(0) * CAVM_RVU_BAR_E_RVU_PFX_BAR0_SIZE),
+				CAVM_RVU_BAR_E_RVU_PFX_BAR0_SIZE, attr);
+	add_map_record(CSR_PA(node, CAVM_RVU_BAR_E_RVU_PFX_BAR0(0) +
+				CAVM_RVU_BLOCK_ADDR_E_NDCX(1) * CAVM_RVU_BAR_E_RVU_PFX_BAR0_SIZE),
+				CAVM_RVU_BAR_E_RVU_PFX_BAR0_SIZE, attr);
+	add_map_record(CSR_PA(node, CAVM_RVU_BAR_E_RVU_PFX_BAR0(0) +
+				CAVM_RVU_BLOCK_ADDR_E_NDCX(2) * CAVM_RVU_BAR_E_RVU_PFX_BAR0_SIZE),
+				CAVM_RVU_BAR_E_RVU_PFX_BAR0_SIZE, attr);
 
 	add_map_record(CSR_PA(node, CAVM_SMI_BAR_E_SMI_PF_BAR0_CN9),
 				CAVM_SMI_BAR_E_SMI_PF_BAR0_CN9_SIZE, attr);

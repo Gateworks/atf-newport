@@ -79,8 +79,8 @@ void thunder_gic_driver_init(void)
 	        CSR_WRITE(0, CAVM_GIC_CFG_CTLR, cfg_ctlr.u);
 	}
 
-	thunder_gic_data.gicd_base = CSR_PA(0, CAVM_GIC_PF_BAR0);
-	thunder_gic_data.gicr_base = CSR_PA(0, CAVM_GIC_PF_BAR4);
+	thunder_gic_data.gicd_base = CSR_PA(0, CAVM_GIC_BAR_E_GIC_PF_BAR0);
+	thunder_gic_data.gicr_base = CSR_PA(0, GIC_PF_BAR4);
 	gicv3_driver_init(&thunder_gic_data);
 
 #endif

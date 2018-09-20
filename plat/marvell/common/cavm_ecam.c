@@ -19,6 +19,7 @@
 #include <cavm_dt.h>
 #include <cavm_ecam.h>
 #include <cavm_utils.h>
+#include <platform_def.h>
 
 #undef DEBUG_ATF_ECAM
 
@@ -394,8 +395,8 @@ static void init_pem(int node, uint64_t config_base, uint64_t config_size)
 		for (i = 0; i < table_size; i++) {
 			cavm_write64(vector_base, (i % 2) ? CAVM_GICD_CLRSPI_NSR : CAVM_GICD_SETSPI_NSR);
 			vector_base += 8;
-			if (i >= CAVM_PEM_INT_VEC_E_INTA && i < CAVM_PEM_INT_VEC_E_INT_SUM)
-				msg = ((i - CAVM_PEM_INT_VEC_E_INTA) / 2) + OCTEONTX_PEM_INTBASE_IRQ +
+			if (i >= PEM_INT_VEC_E_INTA && i < PEM_INT_VEC_E_INT_SUM)
+				msg = ((i - PEM_INT_VEC_E_INTA) / 2) + OCTEONTX_PEM_INTBASE_IRQ +
 					(24 * node) + (4 * vsec_ctl.s.inst_num);
 			else
 				msg = 0x100000000ull;	/* Masked */
@@ -545,7 +546,7 @@ static inline int octeontx_bus_is_rsl(struct ecam_device *device)
 static void octeontx_ecam_dev_init(struct ecam_device *device, unsigned node,
 				 unsigned ecam)
 {
-	device->base_addr = CSR_PA(node, CAVM_ECAM_PF_BAR2(ecam));
+	device->base_addr = CSR_PA(node, ECAM_PF_BAR2(ecam));
 	device->node = node;
 	device->ecam = ecam;
 }

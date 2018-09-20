@@ -319,7 +319,7 @@ void sata_ipm_quirk()
 				continue;
 			}
 
-			sata_hba[node][sata].ctrl_base = CSR_PA(node, CAVM_SATAX_PF_BAR0(sata));
+			sata_hba[node][sata].ctrl_base = CSR_PA(node, CAVM_SATA_BAR_E_SATAX_PF_BAR0(sata));
 
 			/* check if we are in SATA mode */
 			uctl_ctl.u = CSR_READ(node, CAVM_SATAX_UCTL_CTL(sata));

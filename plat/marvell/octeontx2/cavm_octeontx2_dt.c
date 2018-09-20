@@ -387,7 +387,7 @@ static void octeontx2_parse_rvu_config(const void *fdt, int *fdt_vfs)
 
 	/* Parse all subnodes of ECAM0, Domain2 */
 	snprintf(node_name, sizeof(node_name), "pci@%llx",
-		(CSR_PA(node, CAVM_ECAM_PF_BAR2(0)) | (2 << 28)));
+		(CSR_PA(node, ECAM_PF_BAR2(0)) | (2 << 28)));
 	offset = fdt_subnode_offset(fdt, soc_offset, node_name);
 	if (offset < 0) {
 		ERROR("RVU: Unable to find ecam2 node: %s\n", node_name);
