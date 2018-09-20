@@ -44,6 +44,7 @@
 #include <stdio.h>
 #include <debug.h>
 #include <libfdt.h>
+#include <cavm_utils.h>
 
 #define BL2_NOLOAD_BASE (unsigned long)(&__NOLOAD_START__)
 #define BL2_NOLOAD_LIMIT (unsigned long)(&__RW_END__)

@@ -16,6 +16,7 @@
 #include <cavm_common.h>
 #include <cavm_gpio.h>
 #include <cavm_dt.h>
+#include <cavm_utils.h>
 
 int thunder_get_lmc_per_node(void)
 {

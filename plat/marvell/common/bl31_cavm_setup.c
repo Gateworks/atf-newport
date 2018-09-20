@@ -45,6 +45,7 @@
 #include <cavm_dt.h>
 #include <debug.h>
 #include <timers.h>
+#include <cavm_utils.h>
 
 /*******************************************************************************
  * Declarations of linker defined symbols which will help us find the layout

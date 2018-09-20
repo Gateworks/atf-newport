@@ -17,7 +17,7 @@
 #include <platform_tsp.h>
 #include <xlat_tables_v2.h>
 #include <thunder_private.h>
-
+#include <cavm_utils.h>
 
 /*
  * The next 3 constants identify the extents of the code & RO data region and

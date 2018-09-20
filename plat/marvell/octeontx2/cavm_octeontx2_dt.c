@@ -19,6 +19,7 @@
 #include <assert.h>
 #include <cavm_dt.h>
 #include <cavm_common.h>
+#include <cavm_utils.h>
 
 /* define DEBUG_ATF_DTS to enable debug logs */
 #undef DEBUG_ATF_DTS

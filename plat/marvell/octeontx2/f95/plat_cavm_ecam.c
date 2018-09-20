@@ -21,6 +21,7 @@
 #include <cavm_ecam.h>
 #include <cavm_dt.h>
 #include <cavm_cgx.h>
+#include <cavm_utils.h>
 
 #ifdef DEBUG_ATF_PLAT_ECAM
 #define debug_plat_ecam printf

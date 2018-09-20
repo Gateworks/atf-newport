@@ -19,6 +19,7 @@
 #include <platform.h>
 #include <assert.h>
 #include <debug.h>
+#include <cavm_utils.h>
 
 #ifdef DEBUG_ATF_RVU
 #define debug_rvu printf

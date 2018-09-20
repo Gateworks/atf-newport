@@ -16,6 +16,7 @@
 #include <platform_setup.h>
 #include <cavm_common.h>
 #include <cavm_gpio.h>
+#include <cavm_utils.h>
 
 static uint64_t msix_addr_save;
 

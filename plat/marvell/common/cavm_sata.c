@@ -22,6 +22,7 @@
 #include <cavm_sata.h>
 #include <delay_timer.h>
 #include <string.h>
+#include <cavm_utils.h>
 
 #undef SATA_DEBUG
 

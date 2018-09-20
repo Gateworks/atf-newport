@@ -18,6 +18,7 @@
 #include <cavm_common.h>
 #include <cavm_dt.h>
 #include <cavm_ecam.h>
+#include <cavm_utils.h>
 
 #undef DEBUG_ATF_ECAM
 

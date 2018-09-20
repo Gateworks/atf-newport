@@ -26,6 +26,7 @@
 #include <debug.h>
 #include <assert.h>
 #include <bl1.h>
+#include <cavm_utils.h>
 
 #define BL1_RO_BASE (unsigned long)(&__RO_START__)
 #define BL1_RO_LIMIT (unsigned long)(&__RO_END__)
