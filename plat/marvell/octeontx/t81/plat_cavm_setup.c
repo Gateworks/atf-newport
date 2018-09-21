@@ -138,7 +138,6 @@ void plat_add_mmio_node(unsigned long node)
 		add_map_record(CSR_PA(node, CAVM_BGX_BAR_E_BGXX_PF_BAR0(i)), CAVM_BGX_BAR_E_BGXX_PF_BAR0_SIZE, attr);
 
 	add_map_record(CSR_PA(node, CAVM_DAP_BAR_E_DAP_PF_BAR0), CAVM_DAP_BAR_E_DAP_PF_BAR0_SIZE, attr);
-	add_map_record(CSR_PA(node, CAVM_CIM_CSR_BASE), CAVM_CIM_CSR_SIZE, attr);
 
 	add_map_record(CSR_PA(node, CAVM_GPIO_BAR_E_GPIO_PF_BAR0_CN8), CAVM_GPIO_BAR_E_GPIO_PF_BAR0_CN8_SIZE, attr);
 	add_map_record(CSR_PA(node, CAVM_GPIO_BAR_E_GPIO_PF_BAR4), CAVM_GPIO_BAR_E_GPIO_PF_BAR4_SIZE, attr);
