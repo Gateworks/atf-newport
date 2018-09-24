@@ -100,15 +100,6 @@
 #define TZDRAM_BASE			0x00000000
 #define TZDRAM_SIZE			0x01000000
 
-/*
- * Memory used for mailbox and RVU MSI-X
- * Required size is 40M, but due to CCS_REGION memory
- * granulation - minimum size of region is 16M need to
- * reserve 48M of size for this purpose.
- */
-#define RVU_MEM_BASE			(TZDRAM_BASE + TZDRAM_SIZE)
-#define RVU_MEM_SIZE			0x03000000
-
 #define FDT_MAX_SIZE			0x20000
 #define FDT_BASE			(TZDRAM_BASE + TZDRAM_SIZE - FDT_MAX_SIZE)
 
@@ -146,6 +137,13 @@
 #define TSP_IRQ_SEC_PHY_TIMER		29
 #define TSP_SEC_MEM_BASE		TZDRAM_BASE
 #define TSP_SEC_MEM_SIZE		TZDRAM_SIZE
+
+/*
+ * Memory used for mailbox and RVU MSI-X - placed
+ * at non-secure memory region, with size of 40M
+ */
+#define RVU_MEM_BASE			(TZDRAM_BASE + TZDRAM_SIZE)
+#define RVU_MEM_SIZE			0x02800000
 
 /* Load address of BL33 in the OcteonTX2 port. */
 #define NS_IMAGE_BASE			0x04000000

@@ -38,14 +38,7 @@ struct ccs_region ccs_map [] = {
 	},
 	{
 		.number  = 1,
-		.start   = RVU_MEM_BASE,
-		.end     = RVU_MEM_BASE + RVU_MEM_SIZE - 1,
-		.secure  = 0,
-	},
-
-	{
-		.number  = 2,
-		.start   = RVU_MEM_BASE + RVU_MEM_SIZE,
+		.start   = TZDRAM_BASE + TZDRAM_SIZE,
 		.end     = ~0UL,
 		.secure  = 0,
 	},
