@@ -444,7 +444,7 @@ void *scmi_init(scmi_channel_t *ch)
 		goto error;
 	}
 
-	INFO("SCMI driver initialized\n");
+	NOTICE("SCMI driver initialized\n");
 
 	return (void *)ch;
 
