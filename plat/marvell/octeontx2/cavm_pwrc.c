@@ -339,7 +339,7 @@ int cavm_pwrc_setup(void)
 	scmi_channel.lock = &cavm_scmi_lock;
 	scmi_handle = scmi_init(&scmi_channel);
 	if (scmi_handle == NULL) {
-		WARN("SCMI Initialization failed, fallback to legacy PM\n");
+		NOTICE("SCMI Initialization failed, fallback to legacy PM\n");
 		return -1;
 	}
 
