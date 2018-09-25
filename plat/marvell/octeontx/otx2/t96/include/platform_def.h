@@ -147,6 +147,18 @@
 #define SFP_SHMEM_BASE			(RVU_MEM_BASE + RVU_MEM_SIZE)
 #define SFP_SHMEM_SIZE			0x10000 /* 64KB to start with? */
 
+/*
+ * Memory reserved for NT_FW_CONFIG.
+ * Currently it's used only by MKEX profiles,
+ * 256KB are reserved for this puprose.
+ */
+#define NT_FW_CONFIG_BASE		(SFP_SHMEM_BASE + SFP_SHMEM_SIZE)
+#ifdef NT_FW_CONFIG
+#define NT_FW_CONFIG_LIMIT		0x40000
+#else
+#define NT_FW_CONFIG_LIMIT		0x0
+#endif
+
 /* Load address of BL33 in the OcteonTX2 port. */
 #define NS_IMAGE_BASE			0x04000000
 #define NS_IMAGE_MAX_SIZE		(0x40000000 - NS_IMAGE_BASE)
