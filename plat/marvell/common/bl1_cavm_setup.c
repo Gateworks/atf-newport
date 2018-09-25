@@ -112,7 +112,7 @@ void bl1_platform_print_chip_id(void)
 void bl1_platform_setup(void)
 {
 	bl1_platform_print_chip_id();
-	plat_fill_board_details(1);
+	octeontx_fill_board_details(1);
 
         /* Initialise the IO layer and register platform IO devices */
         octeontx_io_setup();

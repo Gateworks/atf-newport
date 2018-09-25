@@ -96,16 +96,10 @@ static int octeontx_parse_boot_device(const void *fdt, const int offset,
 	return 0;
 }
 
-int plat_fill_board_details(int info)
+int plat_octeontx_fill_board_details(void)
 {
 	const void *fdt = fdt_ptr;
 	int offset, len, rc, node;
-
-	rc = octeontx_fill_board_details(info);
-	if (rc) {
-		WARN("Processing common FDT failed\n");
-		return rc;
-	}
 
 	rc = fdt_check_header(fdt);
 	if (rc) {

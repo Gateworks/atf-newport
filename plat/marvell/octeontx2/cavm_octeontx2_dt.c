@@ -75,7 +75,7 @@ static struct qlm_mode_strmap_s qlmmode_strmap[] = {
 };
 
 /* Output information specific for OCTEONTX2, for now only CGX. */
-static void octeontx2_print_board_variables(void)
+void plat_octeontx_print_board_variables(void)
 {
 	int i, j;
 	cgx_config_t *cgx;
@@ -1451,16 +1451,10 @@ static void octeontx2_fill_cgx_details(const void *fdt)
 	octeontx2_cgx_assign_mac(fdt);
 }
 
-int plat_fill_board_details(int info)
+int plat_octeontx_fill_board_details(void)
 {
 	const void *fdt = fdt_ptr;
 	int offset, rc, node;
-
-	rc = octeontx_fill_board_details(info);
-	if (rc) {
-		WARN("Processing common FDT failed\n");
-		return rc;
-	}
 
 	rc = fdt_check_header(fdt);
 	if (rc) {
@@ -1482,9 +1476,6 @@ int plat_fill_board_details(int info)
 	}
 
 	octeontx2_fill_cgx_details(fdt);
-
-	if (info)
-		octeontx2_print_board_variables();
 
 	return 0;
 }

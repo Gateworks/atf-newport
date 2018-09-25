@@ -82,11 +82,17 @@ static int octeontx_fdt_get(const void *fdt, int offset, const char *property, i
 
 }
 
+WEAK int plat_octeontx_fill_board_details(void) {
+	return 0;
+}
+
+WEAK void plat_octeontx_print_board_variables(void) {}
+
 int octeontx_fill_board_details(int info)
 {
 	const void *fdt = fdt_ptr;
 	const char *name;
-	int offset, len, config;
+	int offset, len, config, rc;
 
 	if (fdt_check_header(fdt)) {
 		printf("WARNING: Invalid device tree\n");
@@ -194,8 +200,15 @@ int octeontx_fill_board_details(int info)
 
 #endif /* TRUSTED_BOARD_BOOT */
 
-	if (info)
-		print_board_variables();
+  rc = plat_octeontx_fill_board_details();
+	if (rc) {
+		WARN("Processing family FDT failed\n");
+		return rc;
+	}
 
+	if (info) {
+		print_board_variables();
+		plat_octeontx_print_board_variables();
+	}
 	return 0;
 }
