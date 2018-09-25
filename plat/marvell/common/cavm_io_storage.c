@@ -380,7 +380,7 @@ int plat_get_fip_source(uintptr_t *dev_handle, uintptr_t *image_spec)
 	uintptr_t spec;
 
 	/* Check for boot type */
-	switch (bfdt->boot_dev.boot_type) {
+	switch (plat_octeontx_bcfg->bcfg.boot_dev.boot_type) {
 		case OCTEONTX_BOOT_REMOTE:
 			plat_fill_fip_memmap_spec();
 			handle = memmap_dev_handle;
@@ -402,7 +402,7 @@ int plat_get_fip_source(uintptr_t *dev_handle, uintptr_t *image_spec)
 			break;
 		default:
 			ERROR("Boot medium: 0x%02x is not supported!\n",
-				bfdt->boot_dev.boot_type);
+				plat_octeontx_bcfg->bcfg.boot_dev.boot_type);
 			while(1);
 	}
 

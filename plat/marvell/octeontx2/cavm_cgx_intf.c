@@ -135,7 +135,7 @@ static int cgx_link_change_req(int node, int cgx_id, int lmac_id)
 	/* get the lmac type and based on lmac
 	 * type, change the link settings
 	 */
-	lmac_cfg = &bfdt->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
+	lmac_cfg = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
 	lmac_ctx = &lmac_context[node][cgx_id][lmac_id];
 
 	debug_cgx_intf("%s %d:%d:%d lmac_type %d\n", __func__, node, cgx_id,
@@ -206,7 +206,7 @@ static int cgx_link_bringup(int node, int cgx_id, int lmac_id)
 	/* get the lmac type and based on lmac
 	 * type, initialize SGMII/XAUI link
 	 */
-	lmac_cfg = &bfdt->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
+	lmac_cfg = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
 
 	debug_cgx_intf("%s %d:%d:%d lmac_type %d\n", __func__, node, cgx_id,
 			lmac_id, lmac_cfg->mode);
@@ -380,7 +380,7 @@ static int cgx_link_bringdown(int node, int cgx_id, int lmac_id)
 	/* get the lmac type and based on lmac
 	 * type, bring down SGMII/XAUI link
 	 */
-	lmac_cfg = &bfdt->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
+	lmac_cfg = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
 	debug_cgx_intf("%s %d:%d:%d lmac_type %d\n", __func__, node,
 				cgx_id, lmac_id, lmac_cfg->mode);
 
@@ -453,7 +453,7 @@ static int cgx_process_requests(int node, int cgx_id, int lmac_id)
 	cgx_lmac_context_t *lmac_ctx;
 	cgx_lmac_config_t *lmac;
 
-	lmac = &bfdt->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
+	lmac = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
 	lmac_ctx = &lmac_context[node][cgx_id][lmac_id];
 
 	/* Read the command arguments from SCRATCHX(1) */
@@ -648,7 +648,7 @@ static int cgx_poll_for_link_cb(int timer)
 	for (int node = 0; node < PLATFORM_MAX_NODES; node++) {
 		for (int cgx = 0; cgx < MAX_CGX; cgx++) {
 			for (int lmac = 0; lmac < MAX_LMAC_PER_CGX; lmac++) {
-				lmac_cfg = &bfdt->cgx_cfg[cgx].lmac_cfg[lmac];
+				lmac_cfg = &plat_octeontx_bcfg->cgx_cfg[cgx].lmac_cfg[lmac];
 				lmac_ctx = &lmac_context[node][cgx][lmac];
 				if (lmac_ctx->s.link_enable) {
 					/* check if PHY is present, if not
@@ -808,7 +808,7 @@ void cgx_fw_intf_init(void)
 	 */
 	for (int node = 0; node < PLATFORM_MAX_NODES; node++) {
 		for (int cgx = 0; cgx < MAX_CGX; cgx++) {
-			cgx_cfg = &bfdt->cgx_cfg[cgx];
+			cgx_cfg = &plat_octeontx_bcfg->cgx_cfg[cgx];
 			if (!cgx_cfg->enable)
 				/* if CGX is disabled, call this API
 				 * to initialize the config CSRs

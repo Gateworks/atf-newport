@@ -48,7 +48,7 @@ void scmi_send_sync_command(scmi_channel_t *ch)
 	 * handle timeouts). For other platforms, as per agreement with
 	 * SCP_BL1, 300us delay should be sufficient.
 	 */
-	if (!strncmp(bfdt->board_model, "asim-", 5))
+	if (!strncmp(plat_octeontx_bcfg->bcfg.board_model, "asim-", 5))
 		tries_left = INT_MAX;
 
 	SCMI_MARK_CHANNEL_BUSY(mbx_mem->status);
@@ -340,20 +340,20 @@ static int scmi_fill_octeontx_shutdown(octeontx_shutdown_config_type_t *board_ty
 				   octeontx_shutdown_config_data_t *data)
 {
 	/* Check for MCU structure */
-	if (bfdt->mcu_twsi.u != 0) {
+	if (plat_octeontx_bcfg->bcfg.mcu_twsi.u != 0) {
 		/* Shutdown type is MCU, fill up structures accordingly */
 		board_type->s.type = SCMI_CAVM_SHUTDOWN_CONFIG_TYPE_MCU;
 		data->u = 0;
-		data->mcu_s.node = bfdt->mcu_twsi.s.node;
-		data->mcu_s.int_addr = bfdt->mcu_twsi.s.int_addr;
-		data->mcu_s.bus = bfdt->mcu_twsi.s.bus;
-		data->mcu_s.addr = bfdt->mcu_twsi.s.addr;
+		data->mcu_s.node = plat_octeontx_bcfg->bcfg.mcu_twsi.s.node;
+		data->mcu_s.int_addr = plat_octeontx_bcfg->bcfg.mcu_twsi.s.int_addr;
+		data->mcu_s.bus = plat_octeontx_bcfg->bcfg.mcu_twsi.s.bus;
+		data->mcu_s.addr = plat_octeontx_bcfg->bcfg.mcu_twsi.s.addr;
 	/* Check for GPIO config */
-	} else if (bfdt->gpio_shutdown_ctl_out >= 0) {
+	} else if (plat_octeontx_bcfg->bcfg.gpio_shutdown_ctl_out >= 0) {
 		/* Shutdown type is ODM, fill up structures accordingly */
 		board_type->s.type = SCMI_CAVM_SHUTDOWN_CONFIG_TYPE_ODM;
 		data->u = 0;
-		data->odm_s.gpio_shutdown = bfdt->gpio_shutdown_ctl_out;
+		data->odm_s.gpio_shutdown = plat_octeontx_bcfg->bcfg.gpio_shutdown_ctl_out;
 	} else {
 		/* Shutdown configuration not available */
 		board_type->s.type = SCMI_CAVM_SHUTDOWN_CONFIG_TYPE_NONE;

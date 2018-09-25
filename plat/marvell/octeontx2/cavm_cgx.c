@@ -93,7 +93,7 @@ static int cgx_sgmii_hw_init(int node, int cgx_id, int lmac_id)
 	cgx_lmac_config_t *lmac;
 	cavm_cgxx_gmp_gmi_txx_append_t tx_append;
 
-	lmac = &bfdt->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
+	lmac = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
 
 	debug_cgx("%s: cgx_id = %d, lmac_id = %d\n", __func__, cgx_id, lmac_id);
 
@@ -146,7 +146,7 @@ static int cgx_xaui_hw_init(int node, int cgx_id, int lmac_id)
 
 	debug_cgx("%s %d:%d:%d\n", __func__, node, cgx_id, lmac_id);
 
-	lmac = &bfdt->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
+	lmac = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
 
 	/* Max packet size */
 	CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_smux_rx_jabber_t,
@@ -230,7 +230,7 @@ static int cgx_get_usxgmii_type(int node, int cgx_id, int lmac_id)
 	cgx_lmac_config_t *lmac;
 	octeontx_qlm_state_lane_t qlm_state;
 
-	cgx = &bfdt->cgx_cfg[cgx_id];
+	cgx = &plat_octeontx_bcfg->cgx_cfg[cgx_id];
 	lmac = &cgx->lmac_cfg[lmac_id];
 
 	debug_cgx("%s: cgx %d qlm %d lane %d mode %d\n", __func__, cgx_id,
@@ -295,7 +295,7 @@ static void cgx_lmac_init(int node, int cgx_id, int lmac_id)
 
 	debug_cgx("%s %d:%d:%d\n", __func__, node, cgx_id, lmac_id);
 
-	lmac = &bfdt->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
+	lmac = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
 
 	/* FDT parser should have updated the lmac mode by now.
 	 * check if mode is programmed, if not, return
@@ -384,7 +384,7 @@ static int cgx_get_lane_speed(int node, int cgx_id, int lmac_id)
 	octeontx_qlm_state_lane_t qlm_state;
 	cavm_cgxx_spux_control1_t spux_ctrl1;
 
-	lmac = &bfdt->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
+	lmac = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
 	qlm = lmac->qlm;
 	lane_id = lmac->lane;
 
@@ -578,7 +578,7 @@ static void cgx_set_autoneg(int node, int cgx_id, int lmac_id)
 	cavm_cgxx_gmp_pcs_sgmx_an_adv_t sgmx_an_adv;
 	cavm_cgxx_spux_an_adv_t spux_an_adv;
 
-	lmac = &bfdt->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
+	lmac = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
 
 	debug_cgx("%s: %d:%d:%d, mode=%d an=%d\n", __func__, node,
 				cgx_id, lmac_id, lmac->mode,
@@ -668,7 +668,7 @@ static void cgx_set_fec(int node, int cgx_id, int lmac_id, fec_type_t fec)
 	debug_cgx("%s %d:%d:%d fec type %d\n", __func__, node, cgx_id,
 							lmac_id, fec);
 
-	lmac = &bfdt->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
+	lmac = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
 
 	if (!fec)
 		return; /* if FEC need not be enabled, just return; */
@@ -764,7 +764,7 @@ static int cgx_sgmii_set_mode(int node, int cgx_id, int lmac_id)
 	cavm_cgxx_gmp_pcs_miscx_ctl_t pcs_miscx_ctl;
 	cavm_cgxx_gmp_pcs_mrx_control_t pcs_mrx_ctl;
 
-	lmac = &bfdt->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
+	lmac = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
 
 	debug_cgx("%s: %d:%d:%d mode %d AN enable %d\n",
 			__func__, node, cgx_id, lmac_id, lmac->mode,
@@ -819,7 +819,7 @@ int cgx_sgmii_set_link_up(int node, int cgx_id, int lmac_id)
 	cgx_lmac_config_t *lmac;
 	cavm_cgxx_gmp_pcs_mrx_control_t pcs_mrx_ctl;
 
-	lmac = &bfdt->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
+	lmac = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
 
 	debug_cgx("%s: %d:%d:%d mode %d AN enable %d\n",
 			__func__, node, cgx_id, lmac_id, lmac->mode,
@@ -958,7 +958,7 @@ int cgx_xaui_init_link(int node, int cgx_id, int lmac_id)
 	cavm_cgxx_spu_usxgmii_control_t usxgmii_ctrl;
 	link_state_t link;
 
-	cgx = &bfdt->cgx_cfg[cgx_id];
+	cgx = &plat_octeontx_bcfg->cgx_cfg[cgx_id];
 	lmac = &cgx->lmac_cfg[lmac_id];
 
 	debug_cgx("%s: %d:%d:%d mode %d AN enable %d training %d\n",
@@ -1161,7 +1161,7 @@ int cgx_xaui_set_link_up(int node, int cgx_id, int lmac_id)
 	cavm_cgxx_cmrx_config_t cmr_config;
 	cavm_cgxx_spux_br_status2_t br_status2;
 
-	lmac = &bfdt->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
+	lmac = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
 
 	debug_cgx("%s: %d:%d:%d mode %d AN enable %d training %d\n",
 			__func__, node, cgx_id, lmac_id, lmac->mode,
@@ -1477,7 +1477,7 @@ int cgx_xaui_set_link_down(int node, int cgx_id, int lmac_id)
 
 	debug_cgx("%s %d:%d:%d\n", __func__, node, cgx_id, lmac_id);
 
-	lmac = &bfdt->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
+	lmac = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
 
 	/* Rx disable */
 	CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_cmrx_config_t,
@@ -1564,7 +1564,7 @@ void cgx_set_internal_loopback(int node, int cgx_id, int lmac_id, int enable)
 	uint64_t midr;
 	cgx_lmac_config_t *lmac;
 
-	lmac = &bfdt->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
+	lmac = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
 
 	debug_cgx("%s: %d:%d:%d mode %d enable %d\n", __func__, node, cgx_id,
 				lmac_id, lmac->mode, enable);
@@ -1611,7 +1611,7 @@ void cgx_set_external_loopback(int node, int cgx_id, int lmac_id, int enable)
 {
 	cgx_lmac_config_t *lmac;
 
-	lmac = &bfdt->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
+	lmac = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
 
 	debug_cgx("%s: %d:%d:%d mode %d enable %d\n", __func__, node, cgx_id,
 				lmac_id, lmac->mode, enable);
@@ -1647,7 +1647,7 @@ void cgx_hw_init(int node, int cgx_id)
 
 	debug_cgx("%s: %d:%d\n", __func__, node, cgx_id);
 
-	cgx = &bfdt->cgx_cfg[cgx_id];
+	cgx = &plat_octeontx_bcfg->cgx_cfg[cgx_id];
 
 	if (cgx->enable) {
 		/* program the LMAC count (already updated by FDT parser)
@@ -1663,7 +1663,7 @@ void cgx_hw_init(int node, int cgx_id)
 		CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_cmr_global_config_t,
 			CAVM_CGXX_CMR_GLOBAL_CONFIG(cgx_id), fcs_strip, 1);
 
-		/* Retrieve the LMAC config from bfdt structure and loop
+		/* Retrieve the LMAC config from plat_octeontx_bcfg structure and loop
 		 * through them for lmac_count times and program the HW
 		 * for each LMAC
 		 */

@@ -31,7 +31,7 @@
 /* Probe for disabling TWSI busses from PCI scan */
 static int ecam_probe_twsi(int node, unsigned long arg)
 {
-	return (bfdt->bmc_boot_twsi_bus != arg);
+	return (plat_octeontx_bcfg->bcfg.bmc_boot_twsi_bus != arg);
 }
 
 /* Probe RST_CTLX for PEM usability. */
@@ -120,7 +120,7 @@ static void init_gpio(int node, uint64_t config_base, uint64_t config_size)
 	 *
 	 * Do not continue if not intercepting.
 	 */
-	if (!bfdt->gpio_intercept_intr)
+	if (!plat_octeontx_bcfg->gpio_intercept_intr)
 		return;
 
 	debug_plat_ecam("GPIO Node(%d) init called config_base:%lx size:%lx\n",

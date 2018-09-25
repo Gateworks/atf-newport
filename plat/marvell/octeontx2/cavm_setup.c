@@ -125,7 +125,7 @@ unsigned int plat_get_rom_t_cnt(int node)
 	} while (read_cmd.s.pend);
 
 	/* ASIM returns 0 on FUSF_RCMD accesses */
-	if (!strncmp(bfdt->board_model, "asim-", 5))
+	if (!strncmp(plat_octeontx_bcfg->bcfg.board_model, "asim-", 5))
 		dat = CSR_READ(node, CAVM_FUSF_CTL);
 	else
 		dat = CSR_READ(node, CAVM_FUSF_BNK_DATX(0));

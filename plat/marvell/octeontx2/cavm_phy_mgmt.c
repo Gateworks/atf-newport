@@ -197,7 +197,7 @@ int octeontx_get_phy_link_status(int node, int cgx_id, int lmac_id,
 	debug_nw_mgmt("%s: %d:%d:%d\n", __func__, node, cgx_id, lmac_id);
 
 	/* Get the LMAC type for each LMAC */
-	lmac = &bfdt->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
+	lmac = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
 
 	debug_nw_mgmt("%s: mode %d\n", __func__, lmac->mode);
 
@@ -250,7 +250,7 @@ void octeontx_phy_reset(int node, int cgx_id, int lmac_id)
 
 	debug_nw_mgmt("%s: %d:%d:%d\n", __func__, node, cgx_id, lmac_id);
 
-	phy = &bfdt->cgx_cfg[cgx_id].lmac_cfg[lmac_id].phy_config;
+	phy = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id].phy_config;
 
 	/* Enable the SMI/MDIO bus */
 	if (phy->mdio_bus != -1)

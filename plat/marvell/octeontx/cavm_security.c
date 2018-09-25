@@ -109,7 +109,7 @@ void octeontx_configure_mmc_security(int secure)
 	union cavm_smmux_nscr0 smmux_nscr0;
 
 	/* Check for MMC boot, if not return here */
-	if (bfdt->boot_dev.boot_type != OCTEONTX_BOOT_EMMC)
+	if (plat_octeontx_bcfg->bcfg.boot_dev.boot_type != OCTEONTX_BOOT_EMMC)
 		return;
 
 	val = CSR_READ(node, CAVM_SMMUX_SSDRX(0, ssd_idx));

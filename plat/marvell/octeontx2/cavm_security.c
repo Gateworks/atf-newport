@@ -126,7 +126,7 @@ void octeontx_configure_mmc_security(int secure)
 	cavm_iobnx_domx_busx_streams_t iobn_domx_busx_stream;
 
 	/* Check for MMC boot, if not return here */
-	if (bfdt->boot_dev.boot_type != OCTEONTX_BOOT_EMMC)
+	if (plat_octeontx_bcfg->bcfg.boot_dev.boot_type != OCTEONTX_BOOT_EMMC)
 		return;
 
 	for (int iobn_idx = 0; iobn_idx < plat_octeontx_get_iobn_count();

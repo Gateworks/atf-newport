@@ -17,6 +17,7 @@
 #include <platform_dt.h>
 #include <cavm_cgx.h>
 #include <cavm_phy_mgmt.h>
+#include <cavm_board_cfg.h>
 
 /* Define different QLM-MODE variants. These definitions based on the BDK code. */
 typedef enum {
@@ -139,47 +140,17 @@ typedef struct cgx_config {
 	cgx_lmac_config_t lmac_cfg[MAX_LMAC_PER_CGX];
 } cgx_config_t;
 
-typedef struct boot_device_conf {
-	int node;
-	int boot_type;
-	int controller;
-	int cs;
-} boot_device_conf_t;
+typedef struct plat_octeontx_board_cfg {
+	board_cfg_t bcfg;
 
-typedef union mcu_twsi {
-	uint32_t u;
-	struct mcu_twsi_s {
-		uint32_t node		: 8; /* Node ID */
-		uint32_t int_addr	: 8; /* TWSI Internal Address */
-		uint32_t bus		: 8; /* TWSI bus */
-		uint32_t addr		: 8; /* TWSI slave address */
-	} s;
-} mcu_twsi_t;
-
-typedef struct board_fdt {
-	char board_model[64];
-	int bmc_boot_twsi_node;
-	int bmc_boot_twsi_bus;
-	int bmc_boot_twsi_addr;
-	int bmc_ipmi_twsi_node;
-	int bmc_ipmi_twsi_bus;
-	int bmc_ipmi_twsi_addr;
-	int gpio_shutdown_ctl_in;
-	int gpio_shutdown_ctl_out;
-#if TRUSTED_BOARD_BOOT
-	uint64_t trust_rot_addr;
-	uint64_t trust_key_addr;
-#endif
 	rvu_config_t rvu_config;
 	cgx_config_t cgx_cfg[MAX_CGX];
-	boot_device_conf_t boot_dev;
-	mcu_twsi_t mcu_twsi;
-} board_fdt_t;
+} plat_octeontx_board_cfg_t;
 
 int octeontx_fill_board_details(int info);
 int plat_fill_board_details(int info);
 int octeontx2_get_lane_num(int qlm);
 
-extern board_fdt_t *bfdt;
+extern plat_octeontx_board_cfg_t *plat_octeontx_bcfg;
 
 #endif

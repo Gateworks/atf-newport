@@ -80,9 +80,9 @@ static inline int octeontx_get_msix_for_cgx(int node)
 static void octeontx_init_rvu_af(int *hwvf)
 {
 	rvu_dev[RVU_AF].enable = TRUE;
-	rvu_dev[RVU_AF].num_vfs = bfdt->rvu_config.admin_pf.num_rvu_vfs;
+	rvu_dev[RVU_AF].num_vfs = plat_octeontx_bcfg->rvu_config.admin_pf.num_rvu_vfs;
 	rvu_dev[RVU_AF].first_hwvf = *hwvf;
-	rvu_dev[RVU_AF].pf_num_msix_vec = bfdt->rvu_config.admin_pf.num_msix_vec;
+	rvu_dev[RVU_AF].pf_num_msix_vec = plat_octeontx_bcfg->rvu_config.admin_pf.num_msix_vec;
 	rvu_dev[RVU_AF].vf_num_msix_vec = RVU_VF_INT_VEC_COUNT +
 					  octeontx_get_msix_for_cgx(0);
 	rvu_dev[RVU_AF].pf_res_ena = FALSE;
@@ -96,9 +96,9 @@ static void octeontx_init_rvu_af(int *hwvf)
 static void octeontx_init_rvu_fixed(int *hwvf, int rvu, int bfdt_index, int has_vfs)
 {
 	rvu_sw_rvu_pf_t *sw_pf;
-
+//TODO: bfdt_index
 	assert(bfdt_index < SW_RVU_MAX_PF);
-	sw_pf = &(bfdt->rvu_config.sw_pf[bfdt_index]);
+	sw_pf = &(plat_octeontx_bcfg->rvu_config.sw_pf[bfdt_index]);
 
 	rvu_dev[rvu].enable = TRUE;
 	rvu_dev[rvu].num_vfs = has_vfs ? sw_pf->num_rvu_vfs : 0;
@@ -165,7 +165,7 @@ static int octeontx_init_rvu_from_fdt(void)
 	cgx_config_t *cgx;
 
 	/* Check if FDT config is valid */
-	if (!(bfdt->rvu_config.valid)) {
+	if (!(plat_octeontx_bcfg->rvu_config.valid)) {
 		ERROR("Invalid RVU configuration, skipping RVU init!.\n");
 		return -1;
 	}
@@ -182,7 +182,7 @@ static int octeontx_init_rvu_from_fdt(void)
 	octeontx_init_rvu_fixed(&current_hwvf, RVU_NPA,
 				SW_RVU_NPA_PF, TRUE);
 
-	if (bfdt->rvu_config.cpt_dis)
+	if (plat_octeontx_bcfg->rvu_config.cpt_dis)
 		uninit_pfs = 1;
 	else {
 		/* Init RVU15 - as CPT if present */
@@ -193,7 +193,7 @@ static int octeontx_init_rvu_from_fdt(void)
 	/* Initialize CGX PF */
 	pf = RVU_CGX0_LMAC0;
 	for (cgx_id = 0; cgx_id < MAX_CGX; cgx_id++) {
-		cgx = &(bfdt->cgx_cfg[cgx_id]);
+		cgx = &(plat_octeontx_bcfg->cgx_cfg[cgx_id]);
 		if (cgx->enable) {
 			for (lmac_id = 0; lmac_id < MAX_LMAC_PER_CGX; lmac_id++) {
 				if (cgx->lmac_cfg[lmac_id].lmac_enable) {
@@ -378,7 +378,7 @@ static void conf_msix_admin_blk_offset(int node)
 		af_msix_used += ndc_int_cfg.s.msix_size;
 	}
 
-	if (!bfdt->rvu_config.cpt_dis) {
+	if (!plat_octeontx_bcfg->rvu_config.cpt_dis) {
 		cpt_int_cfg.u = CSR_READ(node, CAVM_CPTX_PRIV_AF_INT_CFG(0));
 		cpt_int_cfg.s.msix_offset = af_msix_used;
 		CSR_WRITE(node, CAVM_CPTX_PRIV_AF_INT_CFG(0), cpt_int_cfg.u);
@@ -564,7 +564,7 @@ static void reset_rvu_pf(int node, int pf)
 	union cavm_rvu_priv_pfx_ssow_cfg ssow_cfg;
 	union cavm_rvu_priv_pfx_tim_cfg tim_cfg;
 
-	if (!bfdt->rvu_config.cpt_dis) {	/* CPT is present */
+	if (!plat_octeontx_bcfg->rvu_config.cpt_dis) {	/* CPT is present */
 		cpt_cfg.u = 0;
 		cpt_cfg.s.num_lfs = 0;
 		CSR_WRITE(node, CAVM_RVU_PRIV_PFX_CPTX_CFG(pf, 0), cpt_cfg.u);

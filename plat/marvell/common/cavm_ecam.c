@@ -330,7 +330,7 @@ static void init_twsi(int node, uint64_t config_base, uint64_t config_size)
 
 	debug_io("Using TWSI func = 0x%x\n", devfn);
 
-	if ((devfn & 0x7) != bfdt->bmc_boot_twsi_bus)
+	if ((devfn & 0x7) != plat_octeontx_bcfg->bcfg.bmc_boot_twsi_bus)
 		return;
 
 	debug_io("setting secure/phys @%p\n", (void *)sctl);

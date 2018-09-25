@@ -191,7 +191,7 @@ void plat_set_gpio_msix_vectors(int gpio_num, int irq_num, int enable)
 
 void plat_gpio_irq_setup(void)
 {
-	gpio_intercept_interrupts = bfdt->gpio_intercept_intr;
+	gpio_intercept_interrupts = plat_octeontx_bcfg->gpio_intercept_intr;
 	if (gpio_intercept_interrupts) {
 		if (octeontx_register_gpio_handlers() < 0)
 			ERROR("Failed to register GPIO intercept handlers\n");

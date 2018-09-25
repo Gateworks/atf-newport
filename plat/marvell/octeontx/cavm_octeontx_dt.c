@@ -19,6 +19,8 @@
 #include <cavm_dt.h>
 #include <cavm_common.h>
 
+plat_octeontx_board_cfg_t *plat_octeontx_bcfg = (void *)BOARD_CFG_BASE;
+
 static void octeontx_boot_device_from_strapx(const int node)
 {
 	cavm_gpio_strap_t gpio_strap;
@@ -28,10 +30,10 @@ static void octeontx_boot_device_from_strapx(const int node)
 	rst_boot.u = CSR_READ(0, CAVM_RST_BOOT);
 	if (rst_boot.s.rboot) {
 		/* Fill boot_dev structure */
-		bfdt->boot_dev.node = node;
-		bfdt->boot_dev.boot_type = OCTEONTX_BOOT_REMOTE;
-		bfdt->boot_dev.controller = 0;
-		bfdt->boot_dev.cs = 0;
+		plat_octeontx_bcfg->bcfg.boot_dev.node = node;
+		plat_octeontx_bcfg->bcfg.boot_dev.boot_type = OCTEONTX_BOOT_REMOTE;
+		plat_octeontx_bcfg->bcfg.boot_dev.controller = 0;
+		plat_octeontx_bcfg->bcfg.boot_dev.cs = 0;
 		return;
 	}
 
@@ -53,10 +55,10 @@ static void octeontx_boot_device_from_strapx(const int node)
 	}
 
 	/* Fill boot_dev structure */
-	bfdt->boot_dev.node = node;
-	bfdt->boot_dev.boot_type = ret;
-	bfdt->boot_dev.controller = 0;
-	bfdt->boot_dev.cs = 0;
+	plat_octeontx_bcfg->bcfg.boot_dev.node = node;
+	plat_octeontx_bcfg->bcfg.boot_dev.boot_type = ret;
+	plat_octeontx_bcfg->bcfg.boot_dev.controller = 0;
+	plat_octeontx_bcfg->bcfg.boot_dev.cs = 0;
 }
 
 static int octeontx_parse_boot_device(const void *fdt, const int offset,
@@ -66,7 +68,7 @@ static int octeontx_parse_boot_device(const void *fdt, const int offset,
 	const char *name;
 	int len, val;
 
-	bfdt->boot_dev.node = node;
+	plat_octeontx_bcfg->bcfg.boot_dev.node = node;
 
 	snprintf(boot_device, sizeof(boot_device), "BOOT-DEVICE.N%d", node);
 	name = fdt_getprop(fdt, offset, boot_device, &len);
@@ -88,9 +90,9 @@ static int octeontx_parse_boot_device(const void *fdt, const int offset,
 	else
 		val = -OCTEONTX_BOOT_UNSUPPORTED;
 
-	bfdt->boot_dev.boot_type = val;
-	bfdt->boot_dev.controller = 0;
-	bfdt->boot_dev.cs = 0;
+	plat_octeontx_bcfg->bcfg.boot_dev.boot_type = val;
+	plat_octeontx_bcfg->bcfg.boot_dev.controller = 0;
+	plat_octeontx_bcfg->bcfg.boot_dev.cs = 0;
 
 	return 0;
 }
@@ -101,11 +103,11 @@ int plat_fill_board_details(int info)
 	int offset, len, rc, node;
 
 	/*
-	 * Check if board_cfg_t fits in the memory region reserved
-	 * for board_cfg_t structure to make sure we do not modify
+	 * Check if plat_octeontx_board_cfg_t fits in the memory region reserved
+	 * for plat_octeontx_board_cfg_t structure to make sure we do not modify
 	 * not-preserved memory.
 	 */
-	assert(sizeof(board_fdt_t) < (BOARD_CFG_MAX_SIZE - BOARD_CFG_BASE));
+	assert(sizeof(plat_octeontx_board_cfg_t) < (BOARD_CFG_MAX_SIZE - BOARD_CFG_BASE));
 
 	rc = octeontx_fill_board_details(info);
 	if (rc) {
@@ -135,11 +137,11 @@ int plat_fill_board_details(int info)
 	offset = fdt_path_offset(fdt_ptr, OCTEONTX_GPIO_DT_PATH);
 	if (offset >= 0) {
 		if (fdt_getprop(fdt_ptr, offset, "interrupts", &len))
-			bfdt->gpio_intercept_intr = 1;
+			plat_octeontx_bcfg->gpio_intercept_intr = 1;
 		else
-			bfdt->gpio_intercept_intr = 0;
+			plat_octeontx_bcfg->gpio_intercept_intr = 0;
 	} else {
-		bfdt->gpio_intercept_intr = 0;
+		plat_octeontx_bcfg->gpio_intercept_intr = 0;
 	}
 
 	return 0;

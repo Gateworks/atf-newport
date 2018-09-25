@@ -51,11 +51,11 @@ static int octeontx_signal_mcu(uint8_t signal)
 	uint8_t data[2];
 	int rc;
 
-	data[0] = bfdt->mcu_twsi.s.int_addr;
+	data[0] = plat_octeontx_bcfg->bcfg.mcu_twsi.s.int_addr;
 	data[1] = signal;
 
-	rc = octeontx_twsi_send(bfdt->mcu_twsi.s.node, bfdt->mcu_twsi.s.bus,
-			       bfdt->mcu_twsi.s.addr, data, sizeof(data));
+	rc = octeontx_twsi_send(plat_octeontx_bcfg->bcfg.mcu_twsi.s.node, plat_octeontx_bcfg->bcfg.mcu_twsi.s.bus,
+			       plat_octeontx_bcfg->bcfg.mcu_twsi.s.addr, data, sizeof(data));
 	if (rc) {
 		ERROR("Unable to send signal 0x%x to MCU, error 0x%x\n",
 		      signal, rc);
@@ -70,7 +70,7 @@ static void octeontx_signal_shutdown(void)
 	int rc;
 
 	/* Check for MCU structure */
-	if (bfdt->mcu_twsi.u != 0) {
+	if (plat_octeontx_bcfg->bcfg.mcu_twsi.u != 0) {
 		/* We're on EBB, shutdown using MCU */
 		rc = octeontx_signal_mcu(OCTEONTX_MCU_SHUTDOWN_SIGNAL);
 		if (!rc) {
@@ -81,9 +81,9 @@ static void octeontx_signal_shutdown(void)
 			panic();
 		}
 	/* Check for GPIO config */
-	} else if (bfdt->gpio_shutdown_ctl_out >= 0) {
+	} else if (plat_octeontx_bcfg->bcfg.gpio_shutdown_ctl_out >= 0) {
 		/* We're on SFF board, shutdown using GPIO */
-		octeontx_odm_shutdown(bfdt->gpio_shutdown_ctl_out);
+		octeontx_odm_shutdown(plat_octeontx_bcfg->bcfg.gpio_shutdown_ctl_out);
 	} else {
 		ERROR("Cavium System Off: Incorrect shutdown configuration\n");
 		panic();
