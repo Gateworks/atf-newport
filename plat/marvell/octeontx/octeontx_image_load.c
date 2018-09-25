@@ -5,15 +5,7 @@
  * https://spdx.org/licenses
  */
 
-#include <bl_common.h>
 #include <desc_image_load.h>
-#include <platform.h>
-
-
-#pragma weak plat_flush_next_bl_params
-#pragma weak plat_get_bl_image_load_info
-#pragma weak plat_get_next_bl_params
-
 
 /*******************************************************************************
  * This function flushes the data structures so that they are visible
@@ -37,5 +29,8 @@ bl_load_info_t *plat_get_bl_image_load_info(void)
  ******************************************************************************/
 bl_params_t *plat_get_next_bl_params(void)
 {
-	return get_next_bl_params_from_mem_params_desc();
+	bl_params_t *next_bl_params = get_next_bl_params_from_mem_params_desc();
+
+	populate_next_bl_params_config(next_bl_params);
+	return next_bl_params;
 }

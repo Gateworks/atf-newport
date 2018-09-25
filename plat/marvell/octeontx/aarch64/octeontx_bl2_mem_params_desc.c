@@ -122,7 +122,25 @@ static bl_mem_params_node_t bl2_mem_params_descs[] = {
 # endif /* PRELOADED_BL33_BASE */
 
 	    .next_handoff_image_id = INVALID_IMAGE_ID,
+
+# ifdef NT_FW_CONFIG
+    },
+	/* Fill NT_FW_CONFIG related information, if present */
+    {
+	    .image_id = NT_FW_CONFIG_ID,
+	    SET_STATIC_PARAM_HEAD(ep_info, PARAM_IMAGE_BINARY,
+		    VERSION_2, entry_point_info_t, NON_SECURE | NON_EXECUTABLE),
+	    SET_STATIC_PARAM_HEAD(image_info, PARAM_IMAGE_BINARY,
+		    VERSION_2, image_info_t, 0),
+
+	    .image_info.image_base = NT_FW_CONFIG_BASE,
+	    .image_info.image_max_size = NT_FW_CONFIG_LIMIT - NT_FW_CONFIG_BASE,
+
+	    .next_handoff_image_id = INVALID_IMAGE_ID,
+
+# endif /* NT_FW_CONFIG */
     }
+
 #endif /* EL3_PAYLOAD_BASE */
 };
 
