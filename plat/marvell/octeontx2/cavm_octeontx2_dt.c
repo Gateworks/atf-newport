@@ -22,7 +22,6 @@
 
 /* define DEBUG_ATF_DTS to enable debug logs */
 #undef DEBUG_ATF_DTS
-#define DEBUG_ATF_DTS
 
 #ifdef DEBUG_ATF_DTS
 #define debug_dts printf
