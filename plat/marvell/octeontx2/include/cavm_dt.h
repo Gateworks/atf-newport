@@ -28,19 +28,23 @@ typedef enum {
 	CAVM_QLM_MODE_PCIE_1X8,		/* 1 PCIe, 8 lanes */
 	CAVM_QLM_MODE_PCIE_1X16,	/* 1 PCIe, 16 lanes (CN9XXX) */
 	/* SATA modes  */
-	CAVM_QLM_MODE_SATA,		/* SATA, each lane independent (cn88xx) */
+	CAVM_QLM_MODE_SATA,		/* SATA, each lane independent (cn81xx) */
 	/* BGX / CGX modes */
-	CAVM_QLM_MODE_SGMII,		/* SGMII, each lane independent (cn88xx) */
-	CAVM_QLM_MODE_XAUI,		/* 1 XAUI or DXAUI, 4 lanes (cn88xx), use gbaud to tell difference */
-	CAVM_QLM_MODE_RXAUI,		/* 2 RXAUI, 2 lanes each (cn88xx) */
-	CAVM_QLM_MODE_XFI,		/* 4 XFI, 1 lane each (cn88xx) */
-	CAVM_QLM_MODE_XLAUI,		/* 1 XLAUI, 4 lanes each (cn88xx) */
-	CAVM_QLM_MODE_10G_KR,		/* 4 10GBASE-KR, 1 lane each (cn88xx) */
-	CAVM_QLM_MODE_40G_KR4,		/* 1 40GBASE-KR4, 4 lanes each (cn88xx) */
+	CAVM_QLM_MODE_SGMII,		/* SGMII, each lane independent (cn81xx) */
 	CAVM_QLM_MODE_QSGMII,		/* QSGMII is 4 SGMII on one lane (cn81xx, cn83xx) */
-	CAVM_QLM_MODE_25G,		/* 25G, 1 lane each (CN9XXX QLMs) */
+	CAVM_QLM_MODE_XAUI,		/* 1 XAUI or DXAUI, 4 lanes (cn81xx), use gbaud to tell difference */
+	CAVM_QLM_MODE_RXAUI,		/* 2 RXAUI, 2 lanes each (cn81xx) */
+	CAVM_QLM_MODE_XFI,		/* 4 XFI, 1 lane each (cn81xx) */
+	CAVM_QLM_MODE_SFI,		/* 4 SFI, 1 lane each (cn93xx) */
+	CAVM_QLM_MODE_XLAUI,		/* 1 XLAUI, 4 lanes each (cn81xx) */
+	CAVM_QLM_MODE_XLAUI_C2M,	/* 1 XLAUI, 4 lanes each (cn81xx) */
+	CAVM_QLM_MODE_10G_KR,		/* 4 10GBASE-KR, 1 lane each (cn81xx) */
+	CAVM_QLM_MODE_40G_KR4,		/* 1 40GBASE-KR4, 4 lanes each (cn83xx) */
+	CAVM_QLM_MODE_25G_C2C,		/* 25G, 1 lane each (CN9XXX QLMs) */
+	CAVM_QLM_MODE_25G_C2M,		/* 25G, 1 lane each (CN9XXX QLMs) */
 	CAVM_QLM_MODE_50G,		/* 50G, 2 lanes each (CN9XXX QLMs) */
-	CAVM_QLM_MODE_100G,		/* 100G, 4 lanes each (CN9XXX) */
+	CAVM_QLM_MODE_CAUI_4_C2C,	/* 100G, 4 lanes each (CN9XXX) */
+	CAVM_QLM_MODE_CAUI_4_C2M,	/* 100G, 4 lanes each (CN9XXX) */
 	CAVM_QLM_MODE_25G_AN,		/* 25G-KR, 1 lane each (CN9XXX QLMs) */
 	CAVM_QLM_MODE_50G_AN,		/* 50G-KR, 2 lanes each (CN9XXX QLMs) */
 	CAVM_QLM_MODE_100G_AN,		/* 100G-KR4, 4 lanes each (CN9XXX) */
