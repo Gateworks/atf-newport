@@ -106,3 +106,11 @@ unsigned int plat_get_rom_t_cnt()
 
 	return ret;
 }
+
+#ifdef NT_FW_CONFIG
+void plat_octeontx_set_nt_fw_config_size(uint64_t nt_fw_config_size)
+{
+	/* Not used on CN8xxx */
+	return;
+}
+#endif

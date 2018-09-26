@@ -68,6 +68,9 @@ int bl2_plat_handle_post_image_load(unsigned int image_id)
 	unsigned int mode;
 	uintptr_t bl33_fdt_address;
 	bl_mem_params_node_t *bl_mem_params = get_bl_mem_params_node(image_id);
+#ifdef NT_FW_CONFIG
+	uint64_t nt_fw_config_size;
+#endif
 	assert(bl_mem_params);
 
 	switch (image_id) {
@@ -123,6 +126,15 @@ int bl2_plat_handle_post_image_load(unsigned int image_id)
 		if (err) {
 			WARN("Failure in platform-specific handling of SCP_BL2 image.\n");
 		}
+		break;
+#endif
+
+#ifdef NT_FW_CONFIG
+	/* If non-trusted firmware config is present, pass it's size at BL31 level */
+	case NT_FW_CONFIG_ID:
+		nt_fw_config_size = bl_mem_params->image_info.image_size;
+		bl_mem_params = get_bl_mem_params_node(BL31_IMAGE_ID);
+		bl_mem_params->ep_info.args.arg2 = nt_fw_config_size;
 		break;
 #endif
 	}

@@ -88,14 +88,19 @@ entry_point_info_t *bl31_plat_get_next_image_ep_info(uint32_t type)
  ******************************************************************************/
 #if LOAD_IMAGE_V2
 void bl31_early_platform_setup(void *from_bl2,
-				void *plat_params_from_bl2)
+				void *plat_params_from_bl2,
+				uint64_t nt_fw_config_size)
 #else
 void bl31_early_platform_setup(bl31_params_t *from_bl2,
-				void *plat_params_from_bl2)
+				void *plat_params_from_bl2,
+				uint64_t nt_fw_config_size)
 #endif
 {
 	console_pl011_register(UAAX_PF_BAR0(0), 0, 0, &console);
 
+#ifdef NT_FW_CONFIG
+	plat_octeontx_set_nt_fw_config_size(nt_fw_config_size);
+#endif
 #if LOAD_IMAGE_V2
 	/*
 	 * Check params passed from BL2 should not be NULL,
@@ -152,7 +157,7 @@ void bl31_early_platform_setup(bl31_params_t *from_bl2,
 void bl31_early_platform_setup2(u_register_t arg0, u_register_t arg1,
 				u_register_t arg2, u_register_t arg3)
 {
-	bl31_early_platform_setup((void *)arg0, (void *)arg1);
+	bl31_early_platform_setup((void *)arg0, (void *)arg1, (uint64_t)arg2);
 }
 
 static void octeontx_el3_irq_init(void)
