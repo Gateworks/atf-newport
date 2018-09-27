@@ -18,24 +18,25 @@ PLAT_INCLUDES		:=	-Icsr/include					\
 				-Iinclude/lib/libfdt 				\
 				-Iinclude/lib/stdlib				\
 				-Iplat/marvell/common/include 			\
+				-Iinclude/drivers/marvell				\
 
 include lib/xlat_tables_v2/xlat_tables.mk
 
 PLAT_BL_COMMON_SOURCES	:=	drivers/arm/pl011/aarch64/pl011_console.S	\
-				plat/marvell/common/drivers/cavm_mmc.c		\
+				drivers/marvell/cavm_mmc.c		\
 				plat/marvell/common/cavm_twsi_core.c		\
-				plat/marvell/common/drivers/cavm_twsi.c		\
+				drivers/marvell/cavm_twsi.c		\
 				${LIBFDT_DIR}/fdt.c				\
 				${LIBFDT_DIR}/fdt_ro.c				\
 				${LIBFDT_DIR}/fdt_rw.c				\
 				${LIBFDT_DIR}/fdt_wip.c				\
 				plat/marvell/common/cavm_common.c		\
 				plat/marvell/common/cavm_dram.c			\
-				plat/marvell/common/drivers/cavm_smi.c		\
+				drivers/marvell/cavm_smi.c		\
 				plat/marvell/common/cavm_io_storage.c		\
 				${XLAT_TABLES_LIB_SRCS}				\
 
-BL1_SOURCES		+=	plat/marvell/common/drivers/cavm_spi.c		\
+BL1_SOURCES		+=	drivers/marvell/cavm_spi.c		\
 				drivers/io/io_fip.c				\
 				drivers/io/io_memmap.c				\
 				drivers/io/io_storage.c				\
@@ -44,7 +45,7 @@ BL1_SOURCES		+=	plat/marvell/common/drivers/cavm_spi.c		\
 				plat/marvell/common/cavm_dt.c			\
 				plat/marvell/common/cavm_scfg.c			\
 
-BL2_SOURCES		+=	plat/marvell/common/drivers/cavm_spi.c		\
+BL2_SOURCES		+=	drivers/marvell/cavm_spi.c		\
 				drivers/io/io_fip.c				\
 				drivers/io/io_memmap.c				\
 				drivers/io/io_storage.c				\
@@ -54,10 +55,10 @@ BL2_SOURCES		+=	plat/marvell/common/drivers/cavm_spi.c		\
 BL31_SOURCES		+=	drivers/arm/gic/common/gic_common.c		\
 				drivers/arm/gic/v3/gicv3_main.c			\
 				drivers/arm/gic/v3/gicv3_helpers.c		\
-				plat/marvell/common/drivers/cavm_spi.c		\
+				drivers/marvell/cavm_spi.c		\
 				drivers/delay_timer/delay_timer.c		\
 				lib/timers/timers.c				\
-				plat/marvell/common/drivers/cavm_gpio.c		\
+				drivers/marvell/cavm_gpio.c		\
 				plat/marvell/common/aarch64/cavm_helpers.S 	\
 				plat/marvell/common/bl31_cavm_setup.c		\
 				plat/marvell/common/cavm_gicv3.c			\
