@@ -14,8 +14,8 @@
 #ifndef __CGX_INTF_H__
 #define __CGX_INTF_H__
 
-#define CGX_FIRWARE_MAJOR_VER		1
-#define CGX_FIRWARE_MINOR_VER		0
+#define CGX_FIRMWARE_MAJOR_VER		1
+#define CGX_FIRMWARE_MINOR_VER		0
 
 /* CGX error types. set for cmd response status as CGX_STAT_FAIL */
 enum cgx_error_type {

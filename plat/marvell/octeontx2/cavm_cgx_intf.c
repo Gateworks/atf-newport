@@ -490,8 +490,8 @@ static int cgx_process_requests(int node, int cgx_id, int lmac_id)
 			return 0;
 		case CGX_CMD_GET_FW_VER:
 			scratchx0.u = 0;
-			scratchx0.s.ver.major_ver = CGX_FIRWARE_MAJOR_VER;
-			scratchx0.s.ver.minor_ver = CGX_FIRWARE_MINOR_VER;
+			scratchx0.s.ver.major_ver = CGX_FIRMWARE_MAJOR_VER;
+			scratchx0.s.ver.minor_ver = CGX_FIRMWARE_MINOR_VER;
 			CSR_WRITE(node, CAVM_CGXX_CMRX_SCRATCHX(
 				cgx_id, lmac_id, 0), scratchx0.u);
 			break;
