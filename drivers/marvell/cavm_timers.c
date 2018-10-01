@@ -11,6 +11,8 @@
 
 **/
 
+/* Timer driver which implements hw_timers.h API for OcteonTX (CN8xxx and CN9xxx) */
+
 #include <bl_common.h>
 #include <interrupt_mgmt.h>
 #include <stdio.h>
@@ -51,7 +53,7 @@ static void cntps_enable(int enable)
 }
 
 /* max period is over 18e10 seconds */
-void cntps_set_period(uint64_t period)
+static void cntps_set_period(uint64_t period)
 {
 	uint64_t timer_status;
 
@@ -63,7 +65,7 @@ void cntps_set_period(uint64_t period)
 	__asm__ volatile ("msr cntps_cval_el1, %[period]" :: [period] "r" (period));
 }
 
-uint64_t cntps_ms_to_ticks(uint32_t time)
+static uint64_t cntps_ms_to_ticks(uint32_t time)
 {
 	uint64_t cnt_freq; /* in Hz */
 
