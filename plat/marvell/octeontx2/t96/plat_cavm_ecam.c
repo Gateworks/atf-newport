@@ -217,7 +217,7 @@ static int cn96xx_is_bus_disabled(struct ecam_device *dev)
 
 	/* Below buses does not exist in internal T96 topology */
 	if (((dev->domain == 0) && (dev->bus > 12)) ||
-	    ((dev->domain == 1) && (dev->bus > 1))  ||
+	    ((dev->domain == 1) && ((dev->bus > 1) && (dev->bus != 4)))  ||
 	    ((dev->domain == 2) && (dev->bus > 16)))
 		rc = 1;
 

@@ -788,7 +788,7 @@ static void octeontx_scan_bridge(struct ecam_device *device)
 		/* Disable buses that does not exist */
 		if (plat_ops.is_bus_disabled(device)) {
 			plat_ops.disable_bus(device);
-			return;
+			continue;
 		}
 		/* We've got bus bridge */
 		if (device->bus == ecam_bridges[bridge].bus) {
