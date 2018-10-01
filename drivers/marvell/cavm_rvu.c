@@ -10,6 +10,9 @@
   WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 
 **/
+
+/* RVU driver for OcteonTX2 */
+
 #include <stdio.h>
 #include <arch.h>
 #include <platform_def.h>

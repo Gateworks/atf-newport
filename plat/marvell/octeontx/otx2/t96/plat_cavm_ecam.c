@@ -23,6 +23,7 @@
 #include <cavm_octeontx_scfg.h>
 #include <cavm_cgx.h>
 #include <cavm_utils.h>
+#include <cavm_rvu.h>
 
 #ifdef DEBUG_ATF_PLAT_ECAM
 #define debug_plat_ecam printf
