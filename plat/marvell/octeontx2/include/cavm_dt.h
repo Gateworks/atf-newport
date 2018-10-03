@@ -42,7 +42,8 @@ typedef enum {
 	CAVM_QLM_MODE_40G_KR4,		/* 1 40GBASE-KR4, 4 lanes each (CN83xx) */
 	CAVM_QLM_MODE_25GAUI_C2C,	/* 25G chip-to-chip, 1 lane each (CN93XX QLMs) */
 	CAVM_QLM_MODE_25GAUI_C2M,	/* 25G chip-to-module, 1 lane each (CN93XX QLMs) */
-	CAVM_QLM_MODE_50G,		/* 50G, 2 lanes each (CN93XX QLMs) */
+	CAVM_QLM_MODE_50GAUI_2_C2C,	/* 50G chip to chip, 2 lanes each (CN93XX QLMs) */
+	CAVM_QLM_MODE_50GAUI_2_C2M,	/* 50G chip to module, 2 lanes each (CN93XX QLMs) */
 	CAVM_QLM_MODE_CAUI_4_C2C,	/* 100G chip-to-chip, 4 lanes each (CN93XX) */
 	CAVM_QLM_MODE_CAUI_4_C2M,	/* 100G chip-to-module, 4 lanes each (CN93XX) */
 	CAVM_QLM_MODE_25G_AN,		/* 25G max using auto-neg, 1 lane each (CN93XX QLMs) */
