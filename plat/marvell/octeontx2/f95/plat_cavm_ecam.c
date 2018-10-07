@@ -37,13 +37,13 @@ static int ecam_probe_cgx(int node, unsigned long arg)
 	debug_plat_ecam("%s arg %ld\n", __func__, arg);
 
 	/* FIXME: cgx to qlm mapping.
-	 * CGX0 - QLM0
+	 * CGX0 - QLM1
 	 * CGX1 - QLM2
 	 * CGX2 - DLM3
 	 */
 	switch (arg) {
 	case 0:
-		qlm = 0;
+		qlm = 1;
 		break;
 	case 1:
 		qlm = 2;

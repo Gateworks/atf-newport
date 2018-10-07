@@ -166,7 +166,7 @@ int plat_get_cgx_idx(int qlm)
 	int idx;
 
 	switch (qlm) {
-	case 0:
+	case 1:
 		idx = 0;
 		break;
 	case 2:
