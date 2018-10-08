@@ -36,6 +36,12 @@
 /* Min Packet Size */
 #define CGX_SMUX_MIN_PACKET_SIZE         (60 + 4)
 
+/* Recommended back pressure buffer depth to be 1/4th of FIFO size */
+#define CGX_BP_ON_MARK_SIZE_DIV		4
+
+/* Packet data depth is 128-bit and mark to be configured in multiple of 16 bytes */
+#define CGX_BP_PACKET_DATA_DEPTH	16
+
 /* delay to wait before reading the CSR again when polling */
 #define CGX_POLL_FOR_CSR_DELAY 10
 

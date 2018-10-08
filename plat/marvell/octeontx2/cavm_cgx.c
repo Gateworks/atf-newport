@@ -138,7 +138,6 @@ static int cgx_sgmii_hw_init(int node, int cgx_id, int lmac_id)
  */
 static int cgx_xaui_hw_init(int node, int cgx_id, int lmac_id)
 {
-	int rx_bytes_per_port;
 	cgx_lmac_config_t *lmac;
 	cavm_cgxx_smux_tx_append_t smux_tx_append;
 	cavm_cgxx_cmrx_rx_bp_on_t rx_bp_on;
@@ -186,12 +185,13 @@ static int cgx_xaui_hw_init(int node, int cgx_id, int lmac_id)
 	/* Program receive backpressure as recommended by HRM
 	 * The recommended value is 1/4th the size of the per-LMAC RX FIFO
 	 * size as determined by CGX()_CMR_RX_LMACS[LMACS].
+	 * Also, mark to be configured in mulitple of 16 bytes
 	 */
 	cgx_const.u = CSR_READ(node, CAVM_CGXX_CONST(cgx_id));
 	cmr_rx_lmacs.u = CSR_READ(node, CAVM_CGXX_CMR_RX_LMACS(cgx_id));
 	rx_bp_on.u = CSR_READ(node, CAVM_CGXX_CMRX_RX_BP_ON(cgx_id, lmac_id));
-	rx_bytes_per_port = ((cgx_const.s.rx_fifosz/cmr_rx_lmacs.s.lmacs)/4);
-	rx_bp_on.s.mark = rx_bytes_per_port;
+	rx_bp_on.s.mark = (cgx_const.s.rx_fifosz/(cmr_rx_lmacs.s.lmacs *
+				CGX_BP_ON_MARK_SIZE_DIV * CGX_BP_PACKET_DATA_DEPTH));
 	CSR_WRITE(node, CAVM_CGXX_CMRX_RX_BP_ON(cgx_id, lmac_id),
 			rx_bp_on.u);
 	return 0;
