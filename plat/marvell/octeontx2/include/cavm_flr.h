@@ -130,8 +130,8 @@ DEFINE_RENAME_SYSREG_RW_FUNCS(cvmtrapaddrena7_el3, AP_CVM_TRAPADDRENA_EL3(7))
 #define OPCODE_SIZE_4B			U(0x2)
 #define OPCODE_SIZE_8B			U(0x3)
 
-#define OPCODE_LD_ST_SHIFT		U(25)
-#define OPCODE_LD_ST_MASK		U(0x1d)
+#define OPCODE_LD_ST_SHIFT		U(10)
+#define OPCODE_LD_ST_MASK		U(0xf8000)
 /*
  * This value covers all of the following instruction sets:
  * Load/store register (unscaled immediate)
@@ -141,10 +141,32 @@ DEFINE_RENAME_SYSREG_RW_FUNCS(cvmtrapaddrena7_el3, AP_CVM_TRAPADDRENA_EL3(7))
  * Load/store register (register offset)
  * Load/store register (unsigned immediate)
  *
+ * exclude SIMD instructions
  * Basically, in most cases it'll be just LDR/STR
  */
-#define OPCODE_LD_ST_VAL		U(0x1c)
+#define OPCODE_LD_ST_VAL		U(0xe0000)
 #define OPCODE_LD_ST(x)			(((x) >> OPCODE_LD_ST_SHIFT) & OPCODE_LD_ST_MASK)
+
+#define OPCODE_LD_ST_POST_PRE_SHIFT	U(10)
+#define OPCODE_LD_ST_POST_PRE_MASK	U(0xfc001)
+/*
+ * This value covers all of the following instruction sets:
+ * Load/store register (immediate post-indexed)
+ * Load/store register (immediate pre-indexed)
+ * exclude SIMD instructions
+ */
+#define OPCODE_LD_ST_POST_PRE_VAL		U(0xe0001)
+#define OPCODE_LD_ST_POST_PRE(x)		(((x) >> OPCODE_LD_ST_POST_PRE_SHIFT) & OPCODE_LD_ST_POST_PRE_MASK)
+
+#define OPCODE_LD_ST_PRFM_SHIFT	U(10)
+#define OPCODE_LD_ST_PRFM_MASK	U(0x3e2000)
+/*
+ * This value covers instructions PRFUM and PRFM register offset
+ * and unsigned immediate variant.
+ */
+#define OPCODE_LD_ST_PRFM_VAL		U(0x3e2000)
+#define OPCODE_LD_ST_PRFM(x)		(((x) >> OPCODE_LD_ST_PRFM_SHIFT) & OPCODE_LD_ST_PRFM_MASK)
+
 
 enum rvu_block_addr_e {
 	BLKADDR_RVUM    = 0x0ULL,

@@ -275,12 +275,20 @@ static int sel_handler(void *ctx_h, uintptr_t pa, uint64_t *mask, uint8_t *rt_id
 
 static int validate_opcode(uint32_t opcode, uint64_t *size_mask, uint8_t *rt_offset)
 {
-
 	/*
 	 * Currently supported is LDx/STx instruction family.
 	 * TODO: Add support for LDx/STx PAIR/vector instructions.
 	 */
 	if (OPCODE_LD_ST(opcode) != OPCODE_LD_ST_VAL)
+		return -1;
+
+	if (OPCODE_LD_ST_PRFM(opcode) == OPCODE_LD_ST_PRFM_VAL)
+		return -1;
+
+	/*
+	 * TODO: Add support for post and pre indexed instructions.
+	 */
+	if (OPCODE_LD_ST_POST_PRE(opcode) == OPCODE_LD_ST_POST_PRE_VAL)
 		return -1;
 
 	/* Check for instruction size (applicable for LD/ST only) */
