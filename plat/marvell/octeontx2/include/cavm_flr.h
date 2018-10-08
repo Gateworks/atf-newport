@@ -140,6 +140,17 @@ DEFINE_RENAME_SYSREG_RW_FUNCS(cvmtrapaddrena7_el3, AP_CVM_TRAPADDRENA_EL3(7))
 #define OPCODE_PAIR_SIZE_8B		U(0x3)
 
 /*
+ * This field is valid for Load register (literal) set of instructions
+ */
+ #define OPCODE_LITERAL_SIZE_MASK		U(0x3)
+ #define OPCODE_LITERAL_SIZE_SHIFT		U(30)
+ #define OPCODE_LITERAL_SIZE(x)			(((x) >> OPCODE_LITERAL_SIZE_SHIFT) & OPCODE_LITERAL_SIZE_MASK)
+ #define OPCODE_LITERAL_SIZE_4B			U(0x0)
+ #define OPCODE_LITERAL_SIZE_8B			U(0x1)
+ #define OPCODE_LITERAL_SIZE_SIGNED_4B	U(0x2)
+ #define OPCODE_LITERAL_SIZE_PRFM		U(0x3)
+
+/*
  * This field is correct for all instructions from the following sets:
  * Load/store register (unscaled immediate)
  * Load/store register (immediate post-indexed)
@@ -220,6 +231,14 @@ DEFINE_RENAME_SYSREG_RW_FUNCS(cvmtrapaddrena7_el3, AP_CVM_TRAPADDRENA_EL3(7))
 #define OPCODE_PAIR_POST_PRE_VAL	U(0xa2000)
 #define OPCODE_PAIR_POST_PRE(x)		(((x) >> OPCODE_PAIR_POST_PRE_SHIFT) & OPCODE_PAIR_POST_PRE_MASK)
 
+#define OPCODE_LD_ST_LITERAL_SHIFT		U(10)
+#define OPCODE_LD_ST_LITERAL_MASK		U(0xf8000)
+/*
+ * This value covers Load register (literal) instructions
+ * exclude SIMD instructions
+ */
+#define OPCODE_LD_ST_LITERAL_VAL		U(0x60000)
+#define OPCODE_LD_ST_LITERAL(x)			(((x) >> OPCODE_LD_ST_LITERAL_SHIFT) & OPCODE_LD_ST_LITERAL_MASK)
 
 enum rvu_block_addr_e {
 	BLKADDR_RVUM    = 0x0ULL,

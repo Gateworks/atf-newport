@@ -423,6 +423,32 @@ static int validate_ld_st_pair(uint32_t opcode, uint64_t *size_mask, uint8_t *rt
 	return 0;
 }
 
+static int validate_ld_st_literal(uint32_t opcode, uint64_t *size_mask, uint8_t *rt_offset)
+{
+	/* Check for instruction size */
+	*size_mask = 0x0;
+	switch (OPCODE_LITERAL_SIZE(opcode)) {
+		case OPCODE_LITERAL_SIZE_4B:
+		case OPCODE_LITERAL_SIZE_SIGNED_4B:
+			*size_mask = UINT32_MAX;
+			break;
+		case OPCODE_LITERAL_SIZE_8B:
+			*size_mask = UINT64_MAX;
+			break;
+		case OPCODE_LITERAL_SIZE_PRFM:
+			/* Prefetch is not supported */
+			return -1;
+		default:
+			ERROR("Unsupported size mask=0x%x\n", OPCODE_SIZE(opcode));
+			return -1;
+	}
+
+	/* Extract RT register offset from opcode */
+	*rt_offset = OPCODE_RT(opcode);
+
+	return 0;
+}
+
 static int validate_opcode(uint32_t opcode, uint64_t *size_mask, uint8_t *rt_offset, uint8_t *rn_offset, uint8_t *rt2_offset, int16_t *imm)
 {
 	if (OPCODE_LD_ST(opcode) == OPCODE_LD_ST_VAL) {
@@ -432,6 +458,13 @@ static int validate_opcode(uint32_t opcode, uint64_t *size_mask, uint8_t *rt_off
 
 	if (OPCODE_LD_ST_PAIR(opcode) == OPCODE_LD_ST_PAIR_VAL)
 		return validate_ld_st_pair(opcode, size_mask, rt_offset, rn_offset, rt2_offset, imm);
+
+	if (OPCODE_LD_ST_LITERAL(opcode) == OPCODE_LD_ST_LITERAL_VAL) {
+		*rt2_offset = INVALID_REG_IDX;
+		*rn_offset = INVALID_REG_IDX;
+		*imm = 0;
+		return validate_ld_st_literal(opcode, size_mask, rt_offset);
+	}
 
 	/* Unsupported instruction */
 	return -1;
