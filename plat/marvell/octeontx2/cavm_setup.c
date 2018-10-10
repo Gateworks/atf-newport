@@ -19,7 +19,6 @@
 #include <cavm_common.h>
 #include <cavm_cgx_intf.h>
 #include <cavm_cgx.h>
-#include <cavm_setup.h>
 #include <cavm_pwrc.h>
 #include <cavm_legacy_pwrc.h>
 #include <cavm_gpio.h>
@@ -44,18 +43,6 @@ void plat_octeontx_setup(void)
 
 	/* Workaround for FLR handling on CN9xxx */
 	plat_flr_init();
-}
-
-const uintptr_t plat_get_scmi_mbox_addr()
-{
-	return CAVM_CPC_RAM_MEMX(AP_SECURE0_TO_XCP_MBOX_OFFSET);
-}
-
-const uintptr_t plat_get_scmi_db_addr()
-{
-	return CAVM_XCPX_DEVX_XCP_MBOX(
-			    CAVM_CPC_XCP_MAP_E_SCP,
-			    CAVM_XCP_MBOX_DEV_E_AP_SECURE0);
 }
 
 extern void *scmi_handle;

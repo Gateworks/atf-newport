@@ -71,6 +71,14 @@
 #define SCMI_PWR_STATE_SET_FLAG_SYNC	0
 #define SCMI_PWR_STATE_SET_FLAG_ASYNC	1
 
+/* SCMI helper defines */
+#define AP_SECURE0_TO_XCP_MBOX_ADDR	0x58000
+#define AP_SECURE0_TO_XCP_MBOX_OFFSET	(AP_SECURE0_TO_XCP_MBOX_ADDR / 0x8)
+
+#define SCMI_AGENT_AP0_SECURE		(0)
+#define PLAT_SCMI_DB_MODIFY_MASK	(1 << SCMI_AGENT_AP0_SECURE)
+#define PLAT_SCMI_DB_PRESERVE_MASK	(~PLAT_SCMI_DB_MODIFY_MASK)
+
 /*
  * Helper macro to create an SCMI message header given protocol, message id
  * and token.
@@ -321,6 +329,10 @@ int scmi_pwr_state_get(void *p, uint32_t domain_id, uint32_t *scmi_pwr_state);
  */
 int scmi_sys_pwr_state_set(void *p, uint32_t flags, uint32_t system_state);
 int scmi_sys_pwr_state_get(void *p, uint32_t *system_state);
+
+/* SCMI register configuration API */
+const uintptr_t plat_get_scmi_mbox_addr();
+const uintptr_t plat_get_scmi_db_addr();
 
 /* Private APIs for use within SCMI driver */
 void scmi_get_channel(scmi_channel_t *ch);

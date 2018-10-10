@@ -22,6 +22,18 @@
 #include <cavm_dt.h>
 #include <cavm_common.h>
 
+const uintptr_t plat_get_scmi_mbox_addr()
+{
+	return CAVM_CPC_RAM_MEMX(AP_SECURE0_TO_XCP_MBOX_OFFSET);
+}
+
+const uintptr_t plat_get_scmi_db_addr()
+{
+	return CAVM_XCPX_DEVX_XCP_MBOX(
+			    CAVM_CPC_XCP_MAP_E_SCP,
+			    CAVM_XCP_MBOX_DEV_E_AP_SECURE0);
+}
+
 /*
  * Private helper function to get exclusive access to SCMI channel.
  */
