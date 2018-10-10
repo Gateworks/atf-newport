@@ -25,33 +25,33 @@ include lib/xlat_tables_v2/xlat_tables.mk
 
 PLAT_BL_COMMON_SOURCES	:=	drivers/arm/pl011/aarch64/pl011_console.S	\
 				drivers/marvell/cavm_mmc.c		\
-				plat/marvell/common/cavm_twsi_core.c		\
+				plat/marvell/octeontx/cavm_twsi_core.c		\
 				drivers/marvell/cavm_twsi.c		\
 				${LIBFDT_DIR}/fdt.c				\
 				${LIBFDT_DIR}/fdt_ro.c				\
 				${LIBFDT_DIR}/fdt_rw.c				\
 				${LIBFDT_DIR}/fdt_wip.c				\
-				plat/marvell/common/cavm_common.c		\
-				plat/marvell/common/cavm_dram.c			\
+				plat/marvell/octeontx/cavm_common.c		\
+				plat/marvell/octeontx/cavm_dram.c			\
 				drivers/marvell/cavm_smi.c		\
-				plat/marvell/common/cavm_io_storage.c		\
+				plat/marvell/octeontx/cavm_io_storage.c		\
 				${XLAT_TABLES_LIB_SRCS}				\
 
 BL1_SOURCES		+=	drivers/marvell/cavm_spi.c		\
 				drivers/io/io_fip.c				\
 				drivers/io/io_memmap.c				\
 				drivers/io/io_storage.c				\
-				plat/marvell/common/aarch64/cavm_helpers.S 	\
-				plat/marvell/common/bl1_cavm_setup.c		\
-				plat/marvell/common/cavm_dt.c			\
-				plat/marvell/common/cavm_scfg.c			\
+				plat/marvell/octeontx/aarch64/cavm_helpers.S 	\
+				plat/marvell/octeontx/bl1_cavm_setup.c		\
+				plat/marvell/octeontx/cavm_dt.c			\
+				plat/marvell/octeontx/cavm_scfg.c	\
 
 BL2_SOURCES		+=	drivers/marvell/cavm_spi.c		\
 				drivers/io/io_fip.c				\
 				drivers/io/io_memmap.c				\
 				drivers/io/io_storage.c				\
-				plat/marvell/common/bl2_cavm_setup.c		\
-				plat/marvell/common/cavm_ecam.c			\
+				plat/marvell/octeontx/bl2_cavm_setup.c		\
+				plat/marvell/octeontx/cavm_ecam.c			\
 
 BL31_SOURCES		+=	drivers/arm/gic/common/gic_common.c		\
 				drivers/arm/gic/v3/gicv3_main.c			\
@@ -60,14 +60,14 @@ BL31_SOURCES		+=	drivers/arm/gic/common/gic_common.c		\
 				drivers/delay_timer/delay_timer.c		\
 				lib/timers/timers.c				\
 				drivers/marvell/cavm_gpio.c		\
-				plat/marvell/common/aarch64/cavm_helpers.S 	\
-				plat/marvell/common/bl31_cavm_setup.c		\
-				plat/marvell/common/cavm_gicv3.c			\
-				plat/marvell/common/cavm_legacy_pm.c		\
-				plat/marvell/common/cavm_legacy_pwrc.c		\
-				plat/marvell/common/cavm_sata.c			\
-				plat/marvell/common/cavm_svc.c			\
-				plat/marvell/common/cavm_timers.c		\
+				plat/marvell/octeontx/aarch64/cavm_helpers.S 	\
+				plat/marvell/octeontx/bl31_cavm_setup.c		\
+				plat/marvell/octeontx/cavm_gicv3.c			\
+				plat/marvell/octeontx/cavm_legacy_pm.c		\
+				plat/marvell/octeontx/cavm_legacy_pwrc.c		\
+				plat/marvell/octeontx/cavm_sata.c			\
+				plat/marvell/octeontx/cavm_svc.c			\
+				plat/marvell/octeontx/cavm_timers.c		\
 				plat/common/plat_psci_common.c			\
 				plat/common/plat_gicv3.c			\
 
@@ -89,8 +89,8 @@ CTX_INCLUDE_AARCH32_REGS	:=	0
 
 ifeq (${LOAD_IMAGE_V2},1)
     BL2_SOURCES		+=	common/desc_image_load.c				\
-				plat/marvell/common/aarch64/cavm_bl2_mem_params_desc.c	\
-				plat/marvell/common/cavm_image_load.c
+				plat/marvell/octeontx/aarch64/cavm_bl2_mem_params_desc.c	\
+				plat/marvell/octeontx/cavm_image_load.c
 endif
 
 ifeq (${SECURE_BOOT},1)
@@ -119,8 +119,8 @@ ifeq (${SECURE_BOOT},1)
     PLAT_BL_COMMON_SOURCES += drivers/auth/auth_mod.c                              \
                               drivers/auth/crypto_mod.c                            \
                               drivers/auth/img_parser_mod.c                        \
-                              plat/marvell/common/cavm_tbbr_cot.c                   \
-                              plat/marvell/common/cavm_trusted_boot.c
+                              plat/marvell/octeontx/cavm_tbbr_cot.c                   \
+                              plat/marvell/octeontx/cavm_trusted_boot.c
 
     CRYPTO_LIB_MK := drivers/auth/mbedtls/mbedtls_crypto.mk
     IMG_PARSER_LIB_MK := drivers/auth/mbedtls/mbedtls_x509.mk
