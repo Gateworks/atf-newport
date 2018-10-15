@@ -114,6 +114,8 @@ DEFINE_RENAME_SYSREG_RW_FUNCS(cvmtrapaddrena7_el3, AP_CVM_TRAPADDRENA_EL3(7))
 #define AP_CVM_TRAPOPC_EL3_REGSET_RVU_SEL	AP_CVM_TRAPOPC_EL3_REGSET4
 #define AP_CVM_TRAPOPC_EL3_REGSET_RVU_ALIAS	AP_CVM_TRAPOPC_EL3_REGSET5
 
+#define INVALID_REG_IDX			U(0xff)
+
 #define OPCODE_RT_MASK			U(0x1f)
 #define OPCODE_RT_SHIFT			U(0)
 #define OPCODE_RT(x)			(((x) >> OPCODE_RT_SHIFT) & OPCODE_RT_MASK)
@@ -121,6 +123,21 @@ DEFINE_RENAME_SYSREG_RW_FUNCS(cvmtrapaddrena7_el3, AP_CVM_TRAPADDRENA_EL3(7))
 #define OPCODE_RN_MASK			U(0x1f)
 #define OPCODE_RN_SHIFT			U(5)
 #define OPCODE_RN(x)			(((x) >> OPCODE_RN_SHIFT) & OPCODE_RN_MASK)
+
+/*
+ * This fields are valid for Load/store register pair instructions
+ */
+#define OPCODE_RT2_MASK			U(0x1f)
+#define OPCODE_RT2_SHIFT		U(10)
+#define OPCODE_RT2(x)			(((x) >> OPCODE_RT2_SHIFT) & OPCODE_RT2_MASK)
+
+#define OPCODE_IMM7_MASK		U(0x7f)
+#define OPCODE_IMM7_SHIFT		U(15)
+#define OPCODE_IMM7(x)			(((x) >> OPCODE_IMM7_SHIFT) & OPCODE_IMM7_MASK)
+
+#define OPCODE_PAIR_DW_BIT		(1 << 31)
+#define OPCODE_PAIR_SIZE_4B		U(0x2)
+#define OPCODE_PAIR_SIZE_8B		U(0x3)
 
 /*
  * This field is correct for all instructions from the following sets:
@@ -177,6 +194,31 @@ DEFINE_RENAME_SYSREG_RW_FUNCS(cvmtrapaddrena7_el3, AP_CVM_TRAPADDRENA_EL3(7))
  */
 #define OPCODE_LD_ST_PRFM_VAL		U(0x3e2000)
 #define OPCODE_LD_ST_PRFM(x)		(((x) >> OPCODE_LD_ST_PRFM_SHIFT) & OPCODE_LD_ST_PRFM_MASK)
+
+#define OPCODE_LD_ST_PAIR_SHIFT		U(10)
+#define OPCODE_LD_ST_PAIR_MASK		U(0xf8000)
+/*
+ * This value covers all of the following instruction sets:
+ * Load/store no-allocate pair (offset)
+ * Load/store register pair (post-indexed)
+ * Load/store register pair (offset)
+ * Load/store register pair (pre-indexed)
+ *
+ * exclude SIMD instructions
+ */
+#define OPCODE_LD_ST_PAIR_VAL		U(0xa0000)
+#define OPCODE_LD_ST_PAIR(x)		(((x) >> OPCODE_LD_ST_PAIR_SHIFT) & OPCODE_LD_ST_PAIR_MASK)
+
+#define OPCODE_PAIR_POST_PRE_SHIFT	U(10)
+#define OPCODE_PAIR_POST_PRE_MASK	U(0xfa000)
+/*
+ * This value covers all of the following instruction sets:
+ * Load/store register pair (post-indexed)
+ * Load/store register pair (pre-indexed)
+ * exclude SIMD instructions
+ */
+#define OPCODE_PAIR_POST_PRE_VAL	U(0xa2000)
+#define OPCODE_PAIR_POST_PRE(x)		(((x) >> OPCODE_PAIR_POST_PRE_SHIFT) & OPCODE_PAIR_POST_PRE_MASK)
 
 
 enum rvu_block_addr_e {

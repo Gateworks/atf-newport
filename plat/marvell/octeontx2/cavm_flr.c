@@ -161,7 +161,7 @@ static uintptr_t virt_to_phys(uintptr_t va)
         return pa;
 }
 
-static int alias_handler(void *ctx_h, uintptr_t pa, uint64_t *mask, uint8_t *rt_id, uint8_t w_flag)
+static int do_alias(void *ctx_h, uintptr_t pa, uint64_t *mask, uint8_t *rt_id, uint8_t w_flag)
 {
 	int blk_id, lf_slot, addr, rc;
 	uint64_t *pa_bar2, pf, func;
@@ -252,7 +252,29 @@ static int alias_handler(void *ctx_h, uintptr_t pa, uint64_t *mask, uint8_t *rt_
 	return 0;
 }
 
-static int sel_handler(void *ctx_h, uintptr_t pa, uint64_t *mask, uint8_t *rt_id, uint8_t w_flag)
+static int alias_handler(void *ctx_h, uintptr_t pa, uint64_t *mask, uint8_t *rt_id, uint8_t *rt2_id, uint8_t w_flag)
+{
+	int rc;
+
+	rc = do_alias(ctx_h, pa, mask, rt_id, w_flag);
+	if(rc) {
+		ERROR("Unable to handle %s PA=0x%lx\n", w_flag ? "write to" : "read from", pa);
+		return rc;
+	}
+
+	/* If it's not pair instruction, nothing to do here, simply return. */
+	if(*rt2_id == INVALID_REG_IDX)
+		return rc;
+
+	/* Load/store register pair are only in 8B and 4B variants */
+	pa += (*mask == UINT64_MAX) ? 8 : 4;
+	rc = do_alias(ctx_h, pa, mask, rt2_id, w_flag);
+	if(rc)
+		ERROR("Unable to handle %s PA=0x%lx for second register in pair\n", w_flag ? "write to" : "read from", pa);
+	return rc;
+}
+
+static int do_sel(void *ctx_h, uintptr_t pa, uint64_t *mask, uint8_t *rt_id, uint8_t w_flag)
 {
 	int blk_id;
 
@@ -289,32 +311,47 @@ static int sel_handler(void *ctx_h, uintptr_t pa, uint64_t *mask, uint8_t *rt_id
 	return 0;
 }
 
-static int update_rn(void *ctx_h, uint8_t *rn_id, int16_t *imm9)
+static int sel_handler(void *ctx_h, uintptr_t pa, uint64_t *mask, uint8_t *rt_id, uint8_t *rt2_id, uint8_t w_flag)
+{
+	int rc;
+
+	rc = do_sel(ctx_h, pa, mask, rt_id, w_flag);
+	if(rc) {
+		ERROR("Unable to handle %s PA=0x%lx\n", w_flag ? "write to" : "read from", pa);
+		return rc;
+	}
+
+	/* If it's not pair instruction, nothing to do here, simply return. */
+	if(*rt2_id == INVALID_REG_IDX)
+		return rc;
+
+	/* Load/store register pair are only in 8B and 4B variants */
+	pa += (*mask == UINT64_MAX) ? 8 : 4;
+	rc = do_sel(ctx_h, pa, mask, rt2_id, w_flag);
+	if(rc)
+		ERROR("Unable to handle %s PA=0x%lx for second register in pair\n", w_flag ? "write to" : "read from", pa);
+	return rc;
+}
+
+static int update_rn(void *ctx_h, uint8_t *rn_id, int16_t *imm)
 {
 	uint64_t rn_val, rn_mask = UINT64_MAX;
 
 	/* No need to update rn */
-	if (*imm9 == 0)
+	if (*imm == 0)
 		return 0;
 
 	/* Post and pre indexed load/store instructions add imm value to Rn */
 	rn_val = read_gp_reg(ctx_h, &rn_mask, rn_id);
-	write_gp_reg(ctx_h, &rn_mask, rn_id, rn_val + *imm9);
+	write_gp_reg(ctx_h, &rn_mask, rn_id, rn_val + *imm);
 
-	INFO("%s: rn_val=0x%lx, imm9=0x%x, rn_val+imm9=0x%lx\n",
-		 __func__, rn_val, *imm9, rn_val + *imm9);
+	INFO("%s: rn_val=0x%lx, imm=0x%x, rn_val+imm=0x%lx\n",
+		 __func__, rn_val, *imm, rn_val + *imm);
 	return 0;
 }
 
-static int validate_opcode(uint32_t opcode, uint64_t *size_mask, uint8_t *rt_offset, uint8_t *rn_offset, int16_t *imm9)
+static int validate_ld_st(uint32_t opcode, uint64_t *size_mask, uint8_t *rt_offset, uint8_t *rn_offset, int16_t *imm9)
 {
-	/*
-	 * Currently supported is LDx/STx instruction family.
-	 * TODO: Add support for LDx/STx PAIR/vector instructions.
-	 */
-	if (OPCODE_LD_ST(opcode) != OPCODE_LD_ST_VAL)
-		return -1;
-
 	if (OPCODE_LD_ST_PRFM(opcode) == OPCODE_LD_ST_PRFM_VAL)
 		return -1;
 
@@ -352,7 +389,7 @@ static int validate_opcode(uint32_t opcode, uint64_t *size_mask, uint8_t *rt_off
 		/* Extract imm9 from opcode */
 		*imm9 = sign_extend(OPCODE_IMM9(opcode), 9, UINT16_MAX);
 	} else {
-		// suppress uninitialized warning
+		/* suppress uninitialized warning */
 		*rn_offset = 0;
 		*imm9 = 0;
 	}
@@ -360,11 +397,51 @@ static int validate_opcode(uint32_t opcode, uint64_t *size_mask, uint8_t *rt_off
 	return 0;
 }
 
+static int validate_ld_st_pair(uint32_t opcode, uint64_t *size_mask, uint8_t *rt_offset, uint8_t *rn_offset, uint8_t *rt2_offset, int16_t *imm7)
+{
+	/* Load/store pair are defined only for word and double word */
+	int scale = opcode & OPCODE_PAIR_DW_BIT ? OPCODE_PAIR_SIZE_8B : OPCODE_PAIR_SIZE_4B;
+
+	/* Check for instruction size */
+	*size_mask = (scale == OPCODE_PAIR_SIZE_8B) ? UINT64_MAX : UINT32_MAX;
+
+	/* Extract RT registers offset from opcode */
+	*rt_offset = OPCODE_RT(opcode);
+	*rt2_offset = OPCODE_RT2(opcode);
+
+	if (OPCODE_PAIR_POST_PRE(opcode) == OPCODE_PAIR_POST_PRE_VAL) {
+		/* Extract RN register offset from opcode */
+		*rn_offset = OPCODE_RN(opcode);
+		/* Extract imm9 from opcode */
+		*imm7 = sign_extend(OPCODE_IMM7(opcode), 7, UINT16_MAX) << scale;
+	} else {
+		/* suppress uninitialized warning */
+		*rn_offset = 0;
+		*imm7 = 0;
+	}
+
+	return 0;
+}
+
+static int validate_opcode(uint32_t opcode, uint64_t *size_mask, uint8_t *rt_offset, uint8_t *rn_offset, uint8_t *rt2_offset, int16_t *imm)
+{
+	if (OPCODE_LD_ST(opcode) == OPCODE_LD_ST_VAL) {
+		*rt2_offset = INVALID_REG_IDX;
+		return validate_ld_st(opcode, size_mask, rt_offset, rn_offset, imm);
+	}
+
+	if (OPCODE_LD_ST_PAIR(opcode) == OPCODE_LD_ST_PAIR_VAL)
+		return validate_ld_st_pair(opcode, size_mask, rt_offset, rn_offset, rt2_offset, imm);
+
+	/* Unsupported instruction */
+	return -1;
+}
+
 void cavm_trap_handler(void *ctx_handle)
 {
 	uint64_t reg_el3, size_mask, pa;
-	int16_t imm9;
-	uint8_t rt_offset, rn_offset, w_flag;
+	int16_t imm;
+	uint8_t rt_offset, rn_offset, rt2_offset, w_flag;
 	int rc;
 
 	assert(ctx_handle != NULL);
@@ -399,7 +476,7 @@ void cavm_trap_handler(void *ctx_handle)
 
 	/* Extract and validate opcode */
 	reg_el3 = read_cvmtrapopc_el3();
-	rc = validate_opcode(CAVM_TRAPOPC_INSN(reg_el3), &size_mask, &rt_offset, &rn_offset, &imm9);
+	rc = validate_opcode(CAVM_TRAPOPC_INSN(reg_el3), &size_mask, &rt_offset, &rn_offset, &rt2_offset, &imm);
 	if (rc) {
 		ERROR("Unsupported opcode=0x%llx, please contact firmware team\n",
 		      CAVM_TRAPOPC_INSN(reg_el3));
@@ -412,10 +489,10 @@ void cavm_trap_handler(void *ctx_handle)
 	 */
 	switch (CAVM_TRAPOPC_REGSET(reg_el3)) {
 		case AP_CVM_TRAPOPC_EL3_REGSET_RVU_SEL:
-			rc = sel_handler(ctx_handle, pa, &size_mask, &rt_offset, w_flag);
+			rc = sel_handler(ctx_handle, pa, &size_mask, &rt_offset, &rt2_offset, w_flag);
 			break;
 		case AP_CVM_TRAPOPC_EL3_REGSET_RVU_ALIAS:
-			rc = alias_handler(ctx_handle, pa, &size_mask, &rt_offset, w_flag);
+			rc = alias_handler(ctx_handle, pa, &size_mask, &rt_offset, &rt2_offset, w_flag);
 			break;
 		default:
 			rc = -1;
@@ -423,11 +500,11 @@ void cavm_trap_handler(void *ctx_handle)
 	}
 
 	if (rc) {
-		ERROR("Unable to handle %s PA=0x%lx\n", w_flag ? "write to" : "read from", pa);
+		ERROR("FLR handler filed\n");
 		panic();
 	}
 
-	update_rn(ctx_handle, &rn_offset, &imm9);
+	update_rn(ctx_handle, &rn_offset, &imm);
 
 	return;
 }
