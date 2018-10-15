@@ -55,6 +55,22 @@ static inline void write_gp_reg(void *h, uint64_t *mask, uint8_t *r_id, uint64_t
 	write_ctx_reg(get_gpregs_ctx(h), (*r_id)*GP_REG_OFFSET, (val & *mask));
 }
 
+/*
+ * This function check bit number val_len in val. If it is one, then all bits
+ * after val_len are filed with 1, else bits after val_len are filed with 0.
+ */
+static inline uint64_t sign_extend(uint64_t val, uint8_t val_len, uint64_t mask)
+{
+	uint64_t extended_sign = mask & (~(0ull) << (val_len - 1));
+	if (val & (0x1 << (val_len - 1))) {
+		/* sign bit is 1. Set ones after sign. */
+		return val | extended_sign;
+	}
+
+	/* sign bit is 0. Set zeros after sign */
+	return val & (~extended_sign);
+}
+
 static inline int is_block_disabled(int blk_id)
 {
 	assert(blk_id >= 0 && (blk_id < (sizeof(block_map) / sizeof(struct blk_entry))));
@@ -273,7 +289,24 @@ static int sel_handler(void *ctx_h, uintptr_t pa, uint64_t *mask, uint8_t *rt_id
 	return 0;
 }
 
-static int validate_opcode(uint32_t opcode, uint64_t *size_mask, uint8_t *rt_offset)
+static int update_rn(void *ctx_h, uint8_t *rn_id, int16_t *imm9)
+{
+	uint64_t rn_val, rn_mask = UINT64_MAX;
+
+	/* No need to update rn */
+	if (*imm9 == 0)
+		return 0;
+
+	/* Post and pre indexed load/store instructions add imm value to Rn */
+	rn_val = read_gp_reg(ctx_h, &rn_mask, rn_id);
+	write_gp_reg(ctx_h, &rn_mask, rn_id, rn_val + *imm9);
+
+	INFO("%s: rn_val=0x%lx, imm9=0x%x, rn_val+imm9=0x%lx\n",
+		 __func__, rn_val, *imm9, rn_val + *imm9);
+	return 0;
+}
+
+static int validate_opcode(uint32_t opcode, uint64_t *size_mask, uint8_t *rt_offset, uint8_t *rn_offset, int16_t *imm9)
 {
 	/*
 	 * Currently supported is LDx/STx instruction family.
@@ -283,12 +316,6 @@ static int validate_opcode(uint32_t opcode, uint64_t *size_mask, uint8_t *rt_off
 		return -1;
 
 	if (OPCODE_LD_ST_PRFM(opcode) == OPCODE_LD_ST_PRFM_VAL)
-		return -1;
-
-	/*
-	 * TODO: Add support for post and pre indexed instructions.
-	 */
-	if (OPCODE_LD_ST_POST_PRE(opcode) == OPCODE_LD_ST_POST_PRE_VAL)
 		return -1;
 
 	/* Check for instruction size (applicable for LD/ST only) */
@@ -314,13 +341,30 @@ static int validate_opcode(uint32_t opcode, uint64_t *size_mask, uint8_t *rt_off
 	/* Extract RT register offset from opcode */
 	*rt_offset = OPCODE_RT(opcode);
 
+	/*
+	 * For post and pre indexed instruction there will be
+	 * need to update RN register, because both, post and pre indexed
+	 * instructions, cause side effects, which one of them is update RN.
+	 */
+	if (OPCODE_LD_ST_POST_PRE(opcode) == OPCODE_LD_ST_POST_PRE_VAL) {
+		/* Extract RN register offset from opcode */
+		*rn_offset = OPCODE_RN(opcode);
+		/* Extract imm9 from opcode */
+		*imm9 = sign_extend(OPCODE_IMM9(opcode), 9, UINT16_MAX);
+	} else {
+		// suppress uninitialized warning
+		*rn_offset = 0;
+		*imm9 = 0;
+	}
+
 	return 0;
 }
 
 void cavm_trap_handler(void *ctx_handle)
 {
 	uint64_t reg_el3, size_mask, pa;
-	uint8_t rt_offset, w_flag;
+	int16_t imm9;
+	uint8_t rt_offset, rn_offset, w_flag;
 	int rc;
 
 	assert(ctx_handle != NULL);
@@ -355,7 +399,7 @@ void cavm_trap_handler(void *ctx_handle)
 
 	/* Extract and validate opcode */
 	reg_el3 = read_cvmtrapopc_el3();
-	rc = validate_opcode(CAVM_TRAPOPC_INSN(reg_el3), &size_mask, &rt_offset);
+	rc = validate_opcode(CAVM_TRAPOPC_INSN(reg_el3), &size_mask, &rt_offset, &rn_offset, &imm9);
 	if (rc) {
 		ERROR("Unsupported opcode=0x%llx, please contact firmware team\n",
 		      CAVM_TRAPOPC_INSN(reg_el3));
@@ -382,6 +426,8 @@ void cavm_trap_handler(void *ctx_handle)
 		ERROR("Unable to handle %s PA=0x%lx\n", w_flag ? "write to" : "read from", pa);
 		panic();
 	}
+
+	update_rn(ctx_handle, &rn_offset, &imm9);
 
 	return;
 }

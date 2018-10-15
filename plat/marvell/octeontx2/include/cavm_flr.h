@@ -122,6 +122,17 @@ DEFINE_RENAME_SYSREG_RW_FUNCS(cvmtrapaddrena7_el3, AP_CVM_TRAPADDRENA_EL3(7))
 #define OPCODE_RN_SHIFT			U(5)
 #define OPCODE_RN(x)			(((x) >> OPCODE_RN_SHIFT) & OPCODE_RN_MASK)
 
+/*
+ * This field is correct for all instructions from the following sets:
+ * Load/store register (unscaled immediate)
+ * Load/store register (immediate post-indexed)
+ * Load/store register (unprivileged)
+ * Load/store register (immediate pre-indexed)
+ */
+#define OPCODE_IMM9_MASK		U(0x1ff)
+#define OPCODE_IMM9_SHIFT		U(12)
+#define OPCODE_IMM9(x)			(((x) >> OPCODE_IMM9_SHIFT) & OPCODE_IMM9_MASK)
+
 #define OPCODE_SIZE_MASK		U(0x3)
 #define OPCODE_SIZE_SHIFT		U(30)
 #define OPCODE_SIZE(x)			(((x) >> OPCODE_SIZE_SHIFT) & OPCODE_SIZE_MASK)
