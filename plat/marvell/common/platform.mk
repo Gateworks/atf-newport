@@ -17,7 +17,8 @@ PLAT_INCLUDES		:=	-Icsr/include					\
 				-Iinclude/common/tbbr				\
 				-Iinclude/lib/libfdt 				\
 				-Iinclude/lib/stdlib				\
-				-Iplat/marvell/common/include 			\
+				-Iinclude/plat/marvell/octeontx 			\
+				-Iinclude/plat/marvell/octeontx/aarch64 			\
 				-Iinclude/drivers/marvell				\
 
 include lib/xlat_tables_v2/xlat_tables.mk

@@ -16,7 +16,7 @@ include plat/marvell/common/platform.mk
 
 ARM_ARCH_MINOR		:=	2
 
-PLAT_INCLUDES		+=	-Iplat/marvell/octeontx2/include			\
+PLAT_INCLUDES		+=	-Iinclude/plat/marvell/octeontx/otx2			\
 				-Iplat/marvell/octeontx2/f95/include		\
 
 PLAT_BL_COMMON_SOURCES	+=	plat/marvell/octeontx2/f95/plat_cavm_setup.c		\

@@ -19,7 +19,7 @@ $(eval $(call add_define,PLAT_XLAT_TABLES_DYNAMIC))
 
 ARM_ARCH_MINOR		:=	2
 
-PLAT_INCLUDES		+=	-Iplat/marvell/octeontx2/include			\
+PLAT_INCLUDES		+=	-Iinclude/plat/marvell/octeontx/otx2			\
 				-Iplat/marvell/octeontx2/t96/include		\
 
 PLAT_BL_COMMON_SOURCES	+=	plat/marvell/octeontx2/t96/plat_cavm_setup.c		\

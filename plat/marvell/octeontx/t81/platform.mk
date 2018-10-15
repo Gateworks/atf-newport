@@ -14,7 +14,7 @@
 # Include common Marvell platform's makefile helper
 include plat/marvell/common/platform.mk
 
-PLAT_INCLUDES		+=	-Iplat/marvell/octeontx/include			\
+PLAT_INCLUDES		+=	-Iinclude/plat/marvell/octeontx/otx			\
 				-Iplat/marvell/octeontx/t81/include		\
 
 PLAT_BL_COMMON_SOURCES	+=	plat/marvell/octeontx/t81/plat_cavm_setup.c	\
