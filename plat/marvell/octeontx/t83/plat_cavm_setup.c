@@ -17,6 +17,9 @@
 #include <cavm_gpio.h>
 #include <cavm_dt.h>
 #include <cavm_utils.h>
+#include <cavm_plat_configuration.h>
+#include <plat_cavm.h>
+#include <cavm_fuse.h>
 
 /*
  * SATA to GSER mapping

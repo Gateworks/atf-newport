@@ -20,6 +20,7 @@
 #include <cavm_dt.h>
 #include <cavm_ecam.h>
 #include <cavm_utils.h>
+#include <cavm_fuse.h>
 
 #ifdef DEBUG_ATF_PLAT_ECAM
 #define debug_plat_ecam printf

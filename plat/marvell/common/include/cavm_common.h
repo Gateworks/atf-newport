@@ -160,15 +160,7 @@ DEFINE_RENAME_SYSREG_RW_FUNCS(cvm_access_el3, AP_CVM_ACCESS_EL3)
 #define set_bit(reg, bit) reg |= (1ULL<<(bit))
 #define unset_bit(reg, bit) reg &= ~(1ULL<<(bit))
 
-int plat_octeontx_sata_to_gser(int ctrlr);
-int plat_octeontx_sata_to_lane(int ctrlr);
-int plat_octeontx_get_iobn_count(void);
-int plat_octeontx_get_cpt_count(void);
-int plat_octeontx_get_gser_count(void);
-
 void add_map_record(unsigned long addr, unsigned long size, mmap_attr_t attr);
-
-int plat_fuse_read(int fuse);
 
 void octeontx_pci_init(void);
 void octeontx_rvu_init();
@@ -176,7 +168,7 @@ int octeontx2_clear_lf_to_pf_mapping();
 void plat_add_mmio_map(void);
 void octeontx_io_setup(void);
 void octeontx_security_setup(void);
-int plat_octeontx_is_lmc_enabled(unsigned lmc);
+
 uint64_t octeontx_dram_size();
 void octeontx_cpu_setup(void);
 extern void *fdt_ptr;
@@ -186,7 +178,7 @@ void octeontx_gic_pcpu_init(void);
 void octeontx_gic_cpuif_enable(void);
 void octeontx_gic_cpuif_disable(void);
 unsigned int octeontx_calc_core_pos(unsigned long mpidr);
-void plat_pwrc_setup(void);
+
 int octeontx_twsi_send(unsigned int twsi_num,
 			uint16_t addr, const uint8_t *buffer, size_t size);
 int octeontx_twsi_recv(unsigned int twsi_num,
@@ -194,10 +186,9 @@ int octeontx_twsi_recv(unsigned int twsi_num,
 void sata_ipm_quirk(void);
 
 void octeontx_configure_mmc_security(int secure);
-void set_secondary_cpu_jump_addr(unsigned int bl1_base);
+
 void l2c_flush(void);
-void plat_octeontx_setup(void);
-unsigned int plat_get_rom_t_cnt();
+
 void plat_flr_init(void);
 
 /**

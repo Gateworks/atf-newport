@@ -10,25 +10,10 @@
   WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 
 **/
-#include <cavm_common.h>
-#include <platform_setup.h>
-#include <cavm_octeontx_scfg.h>
-#include <cavm_scfg_bl1.h>
-#include <cavm_otx2_configuration.h>
 
-static void fill_qlm_max_lane_num(void)
-{
-	int qlm;
+#ifndef __CAVM_FUSE_H__
+#define __CAVM_FUSE_H__
 
-	for (qlm = 0; qlm < MAX_QLM; qlm++) {
-		plat_octeontx_scfg->qlm_max_lane_num[qlm] = plat_get_max_lane_num(qlm);
-	}
-}
+int plat_fuse_read(int fuse);
 
-int plat_octeontx_fill_soc_details(void)
-{
-	plat_octeontx_scfg->iobn_count = plat_octeontx_get_iobn_count();
-	fill_qlm_max_lane_num();
-
-	return 0;
-}
+#endif /* __CAVM_FUSE_SETUP_H__ */

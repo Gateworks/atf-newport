@@ -20,6 +20,7 @@
 #include <cavm_dt.h>
 #include <cavm_common.h>
 #include <mbedtls/sha256.h>
+#include <plat_cavm.h>
 
 #define ROTPK_BYTES			64
 

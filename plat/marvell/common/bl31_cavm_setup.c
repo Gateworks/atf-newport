@@ -46,6 +46,7 @@
 #include <debug.h>
 #include <timers.h>
 #include <platform_def.h>
+#include <plat_cavm.h>
 
 /*******************************************************************************
  * Declarations of linker defined symbols which will help us find the layout

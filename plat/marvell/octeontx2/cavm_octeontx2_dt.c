@@ -21,6 +21,7 @@
 #include <cavm_common.h>
 #include <cavm_board_cfg_bl1.h>
 #include <cavm_octeontx_scfg.h>
+#include <cavm_otx2_configuration.h>
 
 /* define DEBUG_ATF_DTS to enable debug logs */
 #undef DEBUG_ATF_DTS
