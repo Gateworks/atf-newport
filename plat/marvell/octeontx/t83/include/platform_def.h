@@ -28,7 +28,7 @@
 /* Size of cacheable stacks */
 #define PLATFORM_STACK_SIZE		0x1000
 
-#define THUNDER_PRIMARY_CPU		0x0
+#define OCTEONTX_PRIMARY_CPU		0x0
 
 /* Required platform porting definitions */
 #define PLAT_NUM_PWR_DOMAINS		(PLATFORM_CLUSTER_COUNT + \
@@ -43,11 +43,11 @@
 /*******************************************************************************
  * Platform power states
  ******************************************************************************/
-#define THUNDER_STATE_ON		0
-#define THUNDER_STATE_RET		1
-#define THUNDER_STATE_OFF		2
-#define PLAT_MAX_RET_STATE		THUNDER_STATE_RET
-#define PLAT_MAX_OFF_STATE		THUNDER_STATE_OFF
+#define OCTEONTX_STATE_ON		0
+#define OCTEONTX_STATE_RET		1
+#define OCTEONTX_STATE_OFF		2
+#define PLAT_MAX_RET_STATE		OCTEONTX_STATE_RET
+#define PLAT_MAX_OFF_STATE		OCTEONTX_STATE_OFF
 
 #define PLATFORM_NODE_COUNT		(PLATFORM_MAX_NODES)
 #define PLATFORM_CLUSTER_COUNT		(PLATFORM_MAX_NODES * \
@@ -56,7 +56,7 @@
 #define PLATFORM_CORE_COUNT		(PLATFORM_CLUSTER_COUNT * \
 						PLATFORM_CORE_PER_CLUSTER)
 
-/* Cavium ThunderX doesn't support AArch32 in EL1/2 */
+/* Marvell's OCTEONTX doesn't support AArch32 in EL1/2 */
 
 #define NO_AARCH32_EL2	1
 

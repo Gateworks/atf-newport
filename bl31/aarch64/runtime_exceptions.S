@@ -105,7 +105,7 @@
 	 * -----------------------------------------------------
 	 */
 	cmp	x30, #EC_CAVIUM_IO_TRAP
-	b.eq	cavm_io_trap_handler
+	b.eq	octeontx_io_trap_handler
 
 	/* -----------------------------------------------------
 	 * The following code handles any synchronous exception

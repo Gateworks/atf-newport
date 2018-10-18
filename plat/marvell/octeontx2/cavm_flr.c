@@ -470,7 +470,7 @@ static int validate_opcode(uint32_t opcode, uint64_t *size_mask, uint8_t *rt_off
 	return -1;
 }
 
-void cavm_trap_handler(void *ctx_handle)
+void octeontx_trap_handler(void *ctx_handle)
 {
 	uint64_t reg_el3, size_mask, pa;
 	int16_t imm;
@@ -545,7 +545,7 @@ void cavm_trap_handler(void *ctx_handle)
 void plat_flr_init(void)
 {
 	uint64_t trapaddr_el3, trapaddrena_el3;
-	cavm_trapctl_el3_t trapctl_el3;
+	octeontx_trapctl_el3_t trapctl_el3;
 
 	if (!is_flr_wa_applicable())
 		return;

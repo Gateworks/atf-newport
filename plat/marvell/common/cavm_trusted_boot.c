@@ -70,7 +70,7 @@ unsigned int nv_ctr_val = 0;
  * return                            - 0 if hash from FUSF_ROTPK matches
  *                                     sha256_rotpk, -1 otherwise
  */
-int thunder_verify_rotpk(const unsigned char * sha256, unsigned int len)
+static int octeontx_verify_rotpk(const unsigned char * sha256, unsigned int len)
 {
 	union cavm_fusf_rotpkx fusf_rotpkx;
 	uint64_t hash[FUSF_ROTPK_MAX];
@@ -137,7 +137,7 @@ int plat_get_rotpk_info(void *cookie, void **key_ptr, unsigned int *key_len,
 	mbedtls_sha256(ptr, ROTPK_BYTES, rotpk_hash_der, 0);
 
 	/* Verify if the hash matches FUSF_ROTPK registers */
-	if (thunder_verify_rotpk(rotpk_hash_der, SHA256_BYTES) != 0) {
+	if (octeontx_verify_rotpk(rotpk_hash_der, SHA256_BYTES) != 0) {
 		printf("ERROR:   Hash of ROTPK from FDT and hash from FUSF registers do not match\n");
 		return -1;
 	}

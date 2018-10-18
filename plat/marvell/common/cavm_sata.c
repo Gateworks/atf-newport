@@ -53,7 +53,7 @@ inline uint32_t lower_32(uintptr_t addr)
 
 
 /**
- * ThunderX has an issue where SATA drives may randomly drop out if power
+ * OCTEONTX has an issue where SATA drives may randomly drop out if power
  * management is enabled on two lanes of a half of a QLM. Force the SCTL[IPM]
  * bits to disable PARTIAL sleep and SLUMBER. We do this periodically in case
  * the OS tries to enable power management. We silently fix it so the OS doesn't
@@ -81,7 +81,7 @@ static int sata_drive_check_power_management(int node, int sata)
 }
 
 /**
- * ThunderX has an issue where drives may be detected and stuck
+ * OCTEONTX has an issue where drives may be detected and stuck
  * in busy after a SATA controller reset. Poll the drive status
  * to detect this, issuing a COMRESET as needed.
  *
@@ -165,7 +165,7 @@ static int sata_drive_check_detect_failure(int node, int sata)
 }
 
 /**
- * ThunderX has an issue where hot unplug of drives may not be detected.
+ * OCTEONTX has an issue where hot unplug of drives may not be detected.
  * Poll the SATA controller to detect and recover this condition.
  *
  * @param node   Node to check
@@ -185,8 +185,8 @@ static int sata_drive_check_unplug_failure(int node, int sata)
 	int i, lane, qlm;
 
 	/* Determine which GSER and lane this SATA connects to */
-	qlm = thunder_sata_to_gser(sata);
-	lane = thunder_sata_to_lane(sata);
+	qlm = plat_octeontx_sata_to_gser(sata);
+	lane = plat_octeontx_sata_to_lane(sata);
 	if (lane < 0 || qlm < 0)
 		return 0;
 
@@ -270,7 +270,7 @@ detected:
 static int timer_cb(int hd)
 {
 	int sata, node_cnt, node;
-	node_cnt = thunder_get_node_count();
+	node_cnt = plat_octeontx_get_node_count();
 
 	for (node = 0; node < node_cnt; node++) {
 		for (sata = 0; sata < sata_ctrlr_count; ++sata) {
@@ -299,17 +299,17 @@ void sata_ipm_quirk()
 	union cavm_satax_uahc_gbl_ghc ghc;
 	union cavm_satax_uahc_p0_ci ci;
 	union cavm_satax_uahc_p0_is is;
-	struct ahci_received_fis *ahci_rfis = (void *)(thunder_dram_size_node(0) - 0x2000);
-	struct ahci_command_list *ahci_cbl = (void *)(thunder_dram_size_node(0) - 0x3000);
-	struct ahci_command_fis *ahci_cfis = (void *)(thunder_dram_size_node(0) - 0x4000);
+	struct ahci_received_fis *ahci_rfis = (void *)(octeontx_dram_size_node(0) - 0x2000);
+	struct ahci_command_list *ahci_cbl = (void *)(octeontx_dram_size_node(0) - 0x3000);
+	struct ahci_command_fis *ahci_cfis = (void *)(octeontx_dram_size_node(0) - 0x4000);
 	int i, timeout, retry;
 
-	sata_ctrlr_count = thunder_get_sata_count();
+	sata_ctrlr_count = plat_octeontx_get_sata_count();
 
-	node_cnt = thunder_get_node_count();
+	node_cnt = plat_octeontx_get_node_count();
 	for (node = 0; node < node_cnt; node++) {
 		for (sata = 0; sata < sata_ctrlr_count; sata++) {
-			gser = thunder_sata_to_gser(sata);
+			gser = plat_octeontx_sata_to_gser(sata);
 
 			gser_cfg.u = CSR_READ(node, CAVM_GSERX_CFG(gser));
 			debug("CAVM_GSERX_CFG(%d): %lx\n", gser, gser_cfg.u);

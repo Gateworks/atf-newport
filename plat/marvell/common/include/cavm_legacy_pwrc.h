@@ -39,10 +39,10 @@
 /*******************************************************************************
  * Function & variable prototypes
  ******************************************************************************/
-void thunder_pwrc_write_pponr(unsigned long);
+void octeontx_legacy_pwrc_write_pponr(unsigned long);
 
-void cavm_legacy_pwrc_setup(void);
-int cavm_legacy_setup_psci_ops(uintptr_t sec_entrypoint,
+void octeontx_legacy_pwrc_setup(void);
+int octeontx_legacy_setup_psci_ops(uintptr_t sec_entrypoint,
 			       const plat_psci_ops_t **psci_ops);
 
 #endif /*__ASSEMBLY__*/

@@ -179,9 +179,9 @@
 #define SCMI_CAVM_SHUTDOWN_CONFIG_TYPE_MCU	0x1
 #define SCMI_CAVM_SHUTDOWN_CONFIG_TYPE_ODM	0x2
 
-typedef union cavm_shutdown_config_type {
+typedef union octeontx_shutdown_config_type {
 	uint32_t u;
-	struct cavm_shutdown_config_type_s {
+	struct octeontx_shutdown_config_type_s {
 #if __BYTE_ORDER == __BIG_ENDIAN
 		uint32_t type		: 2;
 		uint32_t reserved	: 30;
@@ -190,11 +190,11 @@ typedef union cavm_shutdown_config_type {
 		uint32_t type		: 2;
 #endif
 	} s;
-} cavm_shutdown_config_type_t;
+} octeontx_shutdown_config_type_t;
 
-typedef union cavm_shutdown_config_data {
+typedef union octeontx_shutdown_config_data {
 	uint32_t u;
-	struct cavm_shutdown_config_mcu_s {
+	struct octeontx_shutdown_config_mcu_s {
 #if __BYTE_ORDER == __BIG_ENDIAN
 		uint32_t node		: 8;
 		uint32_t int_addr	: 8;
@@ -207,7 +207,7 @@ typedef union cavm_shutdown_config_data {
 		uint32_t node		: 8;
 #endif
 	} mcu_s;
-	struct cavm_shutdown_config_odm_s {
+	struct octeontx_shutdown_config_odm_s {
 #if __BYTE_ORDER == __BIG_ENDIAN
 		uint32_t gpio_shutdown	: 8;
 		uint32_t reserved	: 24;
@@ -216,7 +216,7 @@ typedef union cavm_shutdown_config_data {
 		uint32_t gpio_shutdown	: 8;
 #endif
 	} odm_s;
-} cavm_shutdown_config_data_t;
+} octeontx_shutdown_config_data_t;
 
 /* Helper macros for system power management protocol commands */
 

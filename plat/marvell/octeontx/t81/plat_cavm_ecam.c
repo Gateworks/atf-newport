@@ -115,7 +115,7 @@ static inline uint64_t cn81xx_get_dev_config(struct ecam_device *dev)
 		  ((dev->dev << ECAM_DEV_SHIFT) & ECAM_DEV_MASK) |
 		  ((dev->func << ECAM_FUNC_SHIFT) & ECAM_FUNC_MASK));
 
-	pccpf_id.u = cavm_read32(pconfig + CAVM_PCCPF_XXX_ID);
+	pccpf_id.u = octeontx_read32(pconfig + CAVM_PCCPF_XXX_ID);
 	if (pccpf_id.s.vendid == 0xffff || pccpf_id.s.devid == 0xffff)
 		return 0;
 
@@ -314,7 +314,7 @@ static int cn81xx_get_secure_settings(struct ecam_device *dev, uint64_t pconfig)
 	int i = 0;
 
 	/* Get secure/non-secure setting */
-	pccpf_id.u = cavm_read32(pconfig + CAVM_PCCPF_XXX_ID);
+	pccpf_id.u = octeontx_read32(pconfig + CAVM_PCCPF_XXX_ID);
 	debug_plat_ecam("%s: DeviceID=0x%04x\n", __func__, pccpf_id.s.devid);
 
 	dev->config.s.is_secure = 0;

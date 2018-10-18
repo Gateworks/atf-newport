@@ -373,7 +373,7 @@ void gpio_clear_irq(uint64_t gpio_num)
 	INFO("Removed irq handler for gpio:%lu\n", gpio_num);
 }
 
-int cavm_register_gpio_handlers(void)
+int octeontx_register_gpio_handlers(void)
 {
 	int i, rc = 0;
 

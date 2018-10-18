@@ -51,7 +51,7 @@ typedef struct board_fdt {
 } board_fdt_t;
 
 int plat_fill_board_details(int info);
-int cavm_fill_board_details(int info);
+int octeontx_fill_board_details(int info);
 
 extern board_fdt_t *bfdt;
 

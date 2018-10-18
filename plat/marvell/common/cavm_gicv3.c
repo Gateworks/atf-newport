@@ -46,7 +46,7 @@ static const interrupt_prop_t interrupt_array[] = {
 	INTR_PROP_DESC(OCTEONTX_IRQ_GPIO_BASE + 3, 0, INTR_TYPE_EL3, GIC_INTR_CFG_EDGE)
 };
 
-static gicv3_driver_data_t thunder_gic_data = {
+static gicv3_driver_data_t octeontx_gic_data = {
 	.interrupt_props = interrupt_array,
 	.interrupt_props_num = ARRAY_SIZE(interrupt_array),
 	.rdistif_num = PLATFORM_CORE_COUNT,
@@ -57,12 +57,12 @@ static gicv3_driver_data_t thunder_gic_data = {
 	 * to obtain the core pos and hence define it only
 	 * for T8X platforms
 	 */
-	.mpidr_to_core_pos = thunder_calc_core_pos,
+	.mpidr_to_core_pos = octeontx_calc_core_pos,
 #endif
 };
 #endif
 
-void thunder_gic_driver_init(void)
+void octeontx_gic_driver_init(void)
 {
 	/*
 	 * The GICv3 driver is initialized in EL3 and does not need
@@ -72,24 +72,23 @@ void thunder_gic_driver_init(void)
 	 */
 #if IMAGE_BL31
 	/* ERRATUM GIC-28835 */
-	if (IS_THUNDER_PASS(read_midr(), T83PARTNUM, 1, 0)) {
+	if (IS_OCTEONTX_PASS(read_midr(), T83PARTNUM, 1, 0)) {
 	        union cavm_gic_cfg_ctlr cfg_ctlr;
 	        cfg_ctlr.u = CSR_READ(0, CAVM_GIC_CFG_CTLR);
 	        cfg_ctlr.s.dis_cpu_if_load_balancer = 1;
 	        CSR_WRITE(0, CAVM_GIC_CFG_CTLR, cfg_ctlr.u);
 	}
 
-	thunder_gic_data.gicd_base = CSR_PA(0, CAVM_GIC_BAR_E_GIC_PF_BAR0);
-	thunder_gic_data.gicr_base = CSR_PA(0, GIC_PF_BAR4);
-	gicv3_driver_init(&thunder_gic_data);
-
+	octeontx_gic_data.gicd_base = CSR_PA(0, CAVM_GIC_BAR_E_GIC_PF_BAR0);
+	octeontx_gic_data.gicr_base = CSR_PA(0, GIC_PF_BAR4);
+	gicv3_driver_init(&octeontx_gic_data);
 #endif
 }
 
 /******************************************************************************
  * ARM common helper to initialize the GIC. Only invoked by BL31
  *****************************************************************************/
-void thunder_gic_init(void)
+void octeontx_gic_init(void)
 {
 	gicv3_distif_init();
 	gicv3_rdistif_init(plat_my_core_pos());
@@ -99,7 +98,7 @@ void thunder_gic_init(void)
 /******************************************************************************
  * Cavium common helper to initialize the per-cpu redistributor interface in GICv3
  *****************************************************************************/
-void cavm_gic_pcpu_init(void)
+void octeontx_gic_pcpu_init(void)
 {
 	gicv3_rdistif_init(plat_my_core_pos());
 }
@@ -107,7 +106,7 @@ void cavm_gic_pcpu_init(void)
 /******************************************************************************
  * Cavium common helper to enable the GIC CPU interface
  *****************************************************************************/
-void cavm_gic_cpuif_enable(void)
+void octeontx_gic_cpuif_enable(void)
 {
 	gicv3_cpuif_enable(plat_my_core_pos());
 }
@@ -115,7 +114,7 @@ void cavm_gic_cpuif_enable(void)
 /******************************************************************************
  * Cavium common helper to disable the GIC CPU interface
  *****************************************************************************/
-void cavm_gic_cpuif_disable(void)
+void octeontx_gic_cpuif_disable(void)
 {
 	gicv3_cpuif_disable(plat_my_core_pos());
 }

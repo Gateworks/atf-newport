@@ -43,14 +43,14 @@ CASSERT(PLAT_MAX_PWR_LVL <= CAVM_SYSTEM_PWR_DMN_LVL,
  * Handler called when a power domain is about to be turned on. The
  * level and mpidr determine the affinity instance.
  ******************************************************************************/
-static int cavm_pwr_domain_on(u_register_t mpidr)
+static int octeontx_pwr_domain_on(u_register_t mpidr)
 {
-	cavm_scp_on(mpidr);
+	octeontx_scp_on(mpidr);
 
 	return PSCI_E_SUCCESS;
 }
 
-static void cavm_pwr_domain_on_finisher_common(
+static void octeontx_pwr_domain_on_finisher_common(
 		const psci_power_state_t *target_state)
 {
 	assert(CAVM_CORE_PWR_STATE(target_state) == CAVM_LOCAL_STATE_OFF);
@@ -78,21 +78,21 @@ static void cavm_pwr_domain_on_finisher_common(
  * care of it as part of cold boot or the first core awakened from system
  * suspend would have already initialized it.
  ******************************************************************************/
-static void cavm_pwr_domain_on_finish(const psci_power_state_t *target_state)
+static void octeontx_pwr_domain_on_finish(const psci_power_state_t *target_state)
 {
 	/* Assert that the system power domain need not be initialized */
 	assert(CAVM_SYSTEM_PWR_STATE(target_state) == CAVM_LOCAL_STATE_RUN);
 
-	cavm_pwr_domain_on_finisher_common(target_state);
+	octeontx_pwr_domain_on_finisher_common(target_state);
 
 	/* Program the gic per-cpu distributor or re-distributor interface */
-	cavm_gic_pcpu_init();
+	octeontx_gic_pcpu_init();
 
 	/* Enable the gic cpu interface */
-	cavm_gic_cpuif_enable();
+	octeontx_gic_cpuif_enable();
 
 	/* Apply erratas on secondary cores */
-	thunder_cpu_setup();
+	octeontx_cpu_setup();
 
 	/* Init FLR for secondary cores */
 	plat_flr_init();
@@ -100,14 +100,14 @@ static void cavm_pwr_domain_on_finish(const psci_power_state_t *target_state)
 
 /*******************************************************************************
  * Common function called while turning a cpu off or suspending it. It is called
- * from cavm_off() or cavm_suspend() when these functions in turn are called for
- * power domain at the highest power level which will be powered down. It
- * performs the actions common to the OFF and SUSPEND calls.
+ * from octeontx_off() or octeontx_suspend() when these functions in turn are 
+ * called for power domain at the highest power level which will be powered
+ * down. It performs the actions common to the OFF and SUSPEND calls.
  ******************************************************************************/
-static void cavm_power_down_common(const psci_power_state_t *target_state)
+static void octeontx_power_down_common(const psci_power_state_t *target_state)
 {
 	/* Prevent interrupts from spuriously waking up this cpu */
-	cavm_gic_cpuif_disable();
+	octeontx_gic_cpuif_disable();
 
 	/* Cluster is to be turned off, so disable coherency
 	 *
@@ -126,18 +126,18 @@ static void cavm_power_down_common(const psci_power_state_t *target_state)
  * Handler called when a power domain is about to be turned off. The
  * target_state encodes the power state that each level should transition to.
  ******************************************************************************/
-static void cavm_pwr_domain_off(const psci_power_state_t *target_state)
+static void octeontx_pwr_domain_off(const psci_power_state_t *target_state)
 {
 	assert(CAVM_CORE_PWR_STATE(target_state) == CAVM_LOCAL_STATE_OFF);
-	cavm_power_down_common(target_state);
-	cavm_scp_off(target_state);
+	octeontx_power_down_common(target_state);
+	octeontx_scp_off(target_state);
 }
 
 /*******************************************************************************
  * Handler called when a power domain is about to be suspended. The
  * target_state encodes the power state that each level should transition to.
  ******************************************************************************/
-static void cavm_pwr_domain_suspend(const psci_power_state_t *target_state)
+static void octeontx_pwr_domain_suspend(const psci_power_state_t *target_state)
 {
 	/*
 	 * Cavium SCP currently supports retention only at cpu level. Just return
@@ -147,8 +147,8 @@ static void cavm_pwr_domain_suspend(const psci_power_state_t *target_state)
 		return;
 
 	assert(CAVM_CORE_PWR_STATE(target_state) == CAVM_LOCAL_STATE_OFF);
-	cavm_power_down_common(target_state);
-	cavm_scp_suspend(target_state);
+	octeontx_power_down_common(target_state);
+	octeontx_scp_suspend(target_state);
 }
 
 /******************************************************************************
@@ -157,20 +157,20 @@ static void cavm_pwr_domain_suspend(const psci_power_state_t *target_state)
  * TODO: Unify the platform setup when waking up from cold boot and system
  * resume in arm_bl31_platform_setup().
  *****************************************************************************/
-static void cavm_system_pwr_domain_resume(void)
+static void octeontx_system_pwr_domain_resume(void)
 {
 	/* Assert system power domain is available on the platform */
 	assert(PLAT_MAX_PWR_LVL >= CAVM_PWR_LVL2);
 
 	/* Ported from bl31_platform_setup, may require alignment */
-	cavm_configure_mmc_security(0); /* non-secure */
+	octeontx_configure_mmc_security(0); /* non-secure */
 
 	/*TODO: Check if required here on HW, should not be
 	 *since it's persistent through the suspend */
-	//thunder_el3_irq_init();
+	//octeontx_el3_irq_init();
 
-	thunder_gic_driver_init();
-	thunder_gic_init();
+	octeontx_gic_driver_init();
+	octeontx_gic_init();
 	timers_init();
 }
 
@@ -181,7 +181,7 @@ static void cavm_system_pwr_domain_resume(void)
  * TODO: At the moment we reuse the on finisher and reinitialize the secure
  * context. Need to implement a separate suspend finisher.
  ******************************************************************************/
-static void cavm_pwr_domain_suspend_finish(
+static void octeontx_pwr_domain_suspend_finish(
 				const psci_power_state_t *target_state)
 {
 	/* Return as nothing is to be done on waking up from retention. */
@@ -190,31 +190,31 @@ static void cavm_pwr_domain_suspend_finish(
 
 	/* Perform system domain restore if woken up from system suspend */
 	if (CAVM_SYSTEM_PWR_STATE(target_state) == CAVM_LOCAL_STATE_OFF)
-		cavm_system_pwr_domain_resume();
+		octeontx_system_pwr_domain_resume();
 	else
 		/* Enable the gic cpu interface */
-		cavm_gic_cpuif_enable();
+		octeontx_gic_cpuif_enable();
 
-	cavm_pwr_domain_on_finisher_common(target_state);
+	octeontx_pwr_domain_on_finisher_common(target_state);
 }
 
 /*******************************************************************************
  * Handlers to shutdown/reboot the system
  ******************************************************************************/
-static void __dead2 cavm_system_off(void)
+static void __dead2 octeontx_system_off(void)
 {
-	cavm_scp_sys_shutdown();
+	octeontx_scp_sys_shutdown();
 }
 
-static void __dead2 cavm_system_reset(void)
+static void __dead2 octeontx_system_reset(void)
 {
-	cavm_scp_sys_reboot();
+	octeontx_scp_sys_reboot();
 }
 
 /*******************************************************************************
  * Handler called when the CPU power domain is about to enter standby.
  ******************************************************************************/
-static void cavm_cpu_standby(plat_local_state_t cpu_state)
+static void octeontx_cpu_standby(plat_local_state_t cpu_state)
 {
 	unsigned int scr;
 
@@ -243,7 +243,7 @@ static void cavm_cpu_standby(plat_local_state_t cpu_state)
 /*******************************************************************************
  * Handler called to return the 'req_state' for system suspend.
  ******************************************************************************/
-static void cavm_get_sys_suspend_power_state(psci_power_state_t *req_state)
+static void octeontx_get_sys_suspend_power_state(psci_power_state_t *req_state)
 {
 	unsigned int i;
 
@@ -260,15 +260,15 @@ static void cavm_get_sys_suspend_power_state(psci_power_state_t *req_state)
 /*******************************************************************************
  * Handler to query CPU/cluster power states from SCP
  ******************************************************************************/
-static int cavm_node_hw_state(u_register_t mpidr, unsigned int power_level)
+static int octeontx_node_hw_state(u_register_t mpidr, unsigned int power_level)
 {
-	return cavm_scp_get_power_state(mpidr, power_level);
+	return octeontx_scp_get_power_state(mpidr, power_level);
 }
 
 /*******************************************************************************
  * Internal helper to validate power state
  ******************************************************************************/
-static int cavm_helper_validate_power_state(unsigned int power_state,
+static int octeontx_helper_validate_power_state(unsigned int power_state,
 					    psci_power_state_t *req_state)
 {
 	int pstate = psci_get_pstate_type(power_state);
@@ -311,11 +311,11 @@ static int cavm_helper_validate_power_state(unsigned int power_state,
  * PSCI SYSTEM_SUSPEND API. PSCI CPU_SUSPEND request to system power domain
  * will be downgraded to the lower level.
  */
-static int cavm_validate_power_state(unsigned int power_state,
+static int octeontx_validate_power_state(unsigned int power_state,
 			    psci_power_state_t *req_state)
 {
 	int rc;
-	rc = cavm_helper_validate_power_state(power_state, req_state);
+	rc = octeontx_helper_validate_power_state(power_state, req_state);
 
 	/*
 	 * Ensure that the system power domain level is never suspended
@@ -328,15 +328,15 @@ static int cavm_validate_power_state(unsigned int power_state,
 
 /*
  * Custom `translate_power_state_by_mpidr` handler for Cavium. Unlike in the
- * `cavm_validate_power_state`, we do not downgrade the system power
+ * `octeontx_validate_power_state`, we do not downgrade the system power
  * domain level request in `power_state` as it will be used to query the
  * PSCI_STAT_COUNT/RESIDENCY at the system power domain level.
  */
-static int cavm_translate_power_state_by_mpidr(u_register_t mpidr,
+static int octeontx_translate_power_state_by_mpidr(u_register_t mpidr,
 		unsigned int power_state,
 		psci_power_state_t *output_state)
 {
-	return cavm_helper_validate_power_state(power_state, output_state);
+	return octeontx_helper_validate_power_state(power_state, output_state);
 }
 
 
@@ -344,14 +344,14 @@ static int cavm_translate_power_state_by_mpidr(u_register_t mpidr,
  * Cavium standard platform handler called to check the validity of the non secure
  * entrypoint.
  ******************************************************************************/
-static int cavm_validate_ns_entrypoint(uintptr_t entrypoint)
+static int octeontx_validate_ns_entrypoint(uintptr_t entrypoint)
 {
 	int i;
-	unsigned node_count = thunder_get_node_count();
+	unsigned node_count = plat_octeontx_get_node_count();
 	uint64_t dram_end = 0;
 
 	for (i = 0; i < node_count; i++)
-		dram_end += thunder_dram_size_node(i);
+		dram_end += octeontx_dram_size_node(i);
 
 	/*
 	 * Check if the non secure entrypoint lies within the non
@@ -367,20 +367,20 @@ static int cavm_validate_ns_entrypoint(uintptr_t entrypoint)
  * Export the platform handlers via plat_arm_psci_pm_ops. The Cavium
  * platform will take care of registering the handlers with PSCI.
  ******************************************************************************/
-plat_psci_ops_t plat_cavm_psci_pm_ops = {
-	.pwr_domain_on		= cavm_pwr_domain_on,
-	.pwr_domain_on_finish	= cavm_pwr_domain_on_finish,
-	.pwr_domain_off		= cavm_pwr_domain_off,
-	.cpu_standby		= cavm_cpu_standby,
-	.pwr_domain_suspend	= cavm_pwr_domain_suspend,
-	.pwr_domain_suspend_finish	= cavm_pwr_domain_suspend_finish,
-	.system_off		= cavm_system_off,
-	.system_reset		= cavm_system_reset,
-	.validate_power_state	= cavm_validate_power_state,
-	.validate_ns_entrypoint = cavm_validate_ns_entrypoint,
-	.translate_power_state_by_mpidr = cavm_translate_power_state_by_mpidr,
-	.get_node_hw_state	= cavm_node_hw_state,
-	.get_sys_suspend_power_state = cavm_get_sys_suspend_power_state
+plat_psci_ops_t plat_octeontx_psci_pm_ops = {
+	.pwr_domain_on		= octeontx_pwr_domain_on,
+	.pwr_domain_on_finish	= octeontx_pwr_domain_on_finish,
+	.pwr_domain_off		= octeontx_pwr_domain_off,
+	.cpu_standby		= octeontx_cpu_standby,
+	.pwr_domain_suspend	= octeontx_pwr_domain_suspend,
+	.pwr_domain_suspend_finish	= octeontx_pwr_domain_suspend_finish,
+	.system_off		= octeontx_system_off,
+	.system_reset		= octeontx_system_reset,
+	.validate_power_state	= octeontx_validate_power_state,
+	.validate_ns_entrypoint = octeontx_validate_ns_entrypoint,
+	.translate_power_state_by_mpidr = octeontx_translate_power_state_by_mpidr,
+	.get_node_hw_state	= octeontx_node_hw_state,
+	.get_sys_suspend_power_state = octeontx_get_sys_suspend_power_state
 };
 
 
@@ -389,14 +389,14 @@ plat_psci_ops_t plat_cavm_psci_pm_ops = {
  * from reset. This function assumes that the Trusted mail box base is within
  * the TZDRAM shared region
  ******************************************************************************/
-static void cavm_program_trusted_mailbox(uintptr_t address)
+static void octeontx_program_trusted_mailbox(uintptr_t address)
 {
        uintptr_t *mailbox = (void *) MAILBOX_BASE;
 
        *mailbox = address;
 }
 
-int cavm_setup_psci_ops(uintptr_t sec_entrypoint,
+int octeontx_setup_psci_ops(uintptr_t sec_entrypoint,
 				const plat_psci_ops_t **psci_ops)
 {
 	/* SCMI driver was already initalized here */
@@ -406,10 +406,10 @@ int cavm_setup_psci_ops(uintptr_t sec_entrypoint,
 	 * Probe the SCP for capabilities, override existing entries if
 	 * SCP does not support given ones
 	 */
-	*psci_ops = plat_cavm_psci_override_pm_ops(&plat_cavm_psci_pm_ops);
+	*psci_ops = plat_octeontx_psci_override_pm_ops(&plat_octeontx_psci_pm_ops);
 
 	/* Setup mailbox with entry point. */
-	cavm_program_trusted_mailbox(sec_entrypoint);
+	octeontx_program_trusted_mailbox(sec_entrypoint);
 
 	return 0;
 }

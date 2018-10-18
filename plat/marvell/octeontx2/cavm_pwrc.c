@@ -70,16 +70,16 @@ void *scmi_handle = NULL;
 static scmi_channel_t scmi_channel;
 
 /* Global platform SCMI info */
-scmi_channel_plat_info_t plat_cavm_scmi_plat_info;
+scmi_channel_plat_info_t plat_octeontx_scmi_plat_info;
 
 /* Create bakery lock instance for SCMI purposes */
-DEFINE_BAKERY_LOCK(cavm_scmi_lock);
+DEFINE_BAKERY_LOCK(octeontx_scmi_lock);
 
 /*
  * Helper function to suspend a CPU power domain and its parent power domains
  * if applicable.
  */
-void cavm_scp_suspend(const psci_power_state_t *target_state)
+void octeontx_scp_suspend(const psci_power_state_t *target_state)
 {
 	int lvl, ret;
 	uint32_t scmi_pwr_state = 0;
@@ -130,7 +130,7 @@ void cavm_scp_suspend(const psci_power_state_t *target_state)
 	SCMI_SET_PWR_STATE_MAX_PWR_LVL(scmi_pwr_state, lvl - 1);
 
 	ret = scmi_pwr_state_set(scmi_handle,
-		plat_cavm_core_pos_to_scmi_dmn_id_map[plat_my_core_pos()],
+		plat_octeontx_core_pos_to_scmi_dmn_id_map[plat_my_core_pos()],
 		scmi_pwr_state);
 
 	if (ret != SCMI_E_SUCCESS) {
@@ -144,7 +144,7 @@ void cavm_scp_suspend(const psci_power_state_t *target_state)
  * Helper function to turn off a CPU power domain and its parent power domains
  * if applicable.
  */
-void cavm_scp_off(const psci_power_state_t *target_state)
+void octeontx_scp_off(const psci_power_state_t *target_state)
 {
 	int lvl = 0, ret;
 	uint32_t scmi_pwr_state = 0;
@@ -170,7 +170,7 @@ void cavm_scp_off(const psci_power_state_t *target_state)
 	SCMI_SET_PWR_STATE_MAX_PWR_LVL(scmi_pwr_state, lvl - 1);
 
 	ret = scmi_pwr_state_set(scmi_handle,
-		plat_cavm_core_pos_to_scmi_dmn_id_map[plat_my_core_pos()],
+		plat_octeontx_core_pos_to_scmi_dmn_id_map[plat_my_core_pos()],
 		scmi_pwr_state);
 
 	if (ret != SCMI_E_QUEUED && ret != SCMI_E_SUCCESS) {
@@ -184,7 +184,7 @@ void cavm_scp_off(const psci_power_state_t *target_state)
  * Helper function to turn ON a CPU power domain and its parent power domains
  * if applicable.
  */
-void cavm_scp_on(u_register_t mpidr)
+void octeontx_scp_on(u_register_t mpidr)
 {
 	int lvl = 0, ret, core_pos;
 	uint32_t scmi_pwr_state = 0;
@@ -199,7 +199,7 @@ void cavm_scp_on(u_register_t mpidr)
 	assert(core_pos >= 0 && core_pos < PLATFORM_CORE_COUNT);
 
 	ret = scmi_pwr_state_set(scmi_handle,
-		plat_cavm_core_pos_to_scmi_dmn_id_map[core_pos],
+		plat_octeontx_core_pos_to_scmi_dmn_id_map[core_pos],
 		scmi_pwr_state);
 
 	if (ret != SCMI_E_QUEUED && ret != SCMI_E_SUCCESS) {
@@ -213,7 +213,7 @@ void cavm_scp_on(u_register_t mpidr)
  * Helper function to get the power state of a power domain node as reported
  * by the SCP.
  */
-int cavm_scp_get_power_state(u_register_t mpidr, unsigned int power_level)
+int octeontx_scp_get_power_state(u_register_t mpidr, unsigned int power_level)
 {
 	int ret, cpu_idx;
 	uint32_t scmi_pwr_state = 0, lvl_state;
@@ -230,7 +230,7 @@ int cavm_scp_get_power_state(u_register_t mpidr, unsigned int power_level)
 	assert(cpu_idx > -1);
 
 	ret = scmi_pwr_state_get(scmi_handle,
-		plat_cavm_core_pos_to_scmi_dmn_id_map[cpu_idx],
+		plat_octeontx_core_pos_to_scmi_dmn_id_map[cpu_idx],
 		&scmi_pwr_state);
 
 	if (ret != SCMI_E_SUCCESS) {
@@ -259,7 +259,7 @@ int cavm_scp_get_power_state(u_register_t mpidr, unsigned int power_level)
 /*
  * Helper function to shutdown the system via SCMI.
  */
-void __dead2 cavm_scp_sys_shutdown(void)
+void __dead2 octeontx_scp_sys_shutdown(void)
 {
 	int ret;
 
@@ -267,7 +267,7 @@ void __dead2 cavm_scp_sys_shutdown(void)
 	 * Disable GIC CPU interface to prevent pending interrupt from waking
 	 * up the AP from WFI.
 	 */
-	cavm_gic_cpuif_disable();
+	octeontx_gic_cpuif_disable();
 
 	/*
 	 * Issue SCMI command for SYSTEM_SHUTDOWN. First issue a graceful
@@ -290,7 +290,7 @@ void __dead2 cavm_scp_sys_shutdown(void)
 /*
  * Helper function to reset the system via SCMI.
  */
-void __dead2 cavm_scp_sys_reboot(void)
+void __dead2 octeontx_scp_sys_reboot(void)
 {
 	int ret;
 
@@ -298,7 +298,7 @@ void __dead2 cavm_scp_sys_reboot(void)
 	 * Disable GIC CPU interface to prevent pending interrupt from waking
 	 * up the AP from WFI.
 	 */
-	cavm_gic_cpuif_disable();
+	octeontx_gic_cpuif_disable();
 
 	/*
 	 * Issue SCMI command for SYSTEM_REBOOT. First issue a graceful
@@ -318,7 +318,7 @@ void __dead2 cavm_scp_sys_reboot(void)
 	panic();
 }
 
-static int cavm_pwrc_init_scmi(int node, scmi_channel_plat_info_t *plat_scmi_info)
+static int octeontx_pwrc_init_scmi(int node, scmi_channel_plat_info_t *plat_scmi_info)
 {
 	assert(plat_scmi_info);
 
@@ -330,13 +330,13 @@ static int cavm_pwrc_init_scmi(int node, scmi_channel_plat_info_t *plat_scmi_inf
 	return 0;
 }
 
-int cavm_pwrc_setup(void)
+int octeontx_pwrc_setup(void)
 {
 	/* Initialize platform SCMI config structure */
-	cavm_pwrc_init_scmi(0, &plat_cavm_scmi_plat_info);
+	octeontx_pwrc_init_scmi(0, &plat_octeontx_scmi_plat_info);
 
-	scmi_channel.info = &plat_cavm_scmi_plat_info;
-	scmi_channel.lock = &cavm_scmi_lock;
+	scmi_channel.info = &plat_octeontx_scmi_plat_info;
+	scmi_channel.lock = &octeontx_scmi_lock;
 	scmi_handle = scmi_init(&scmi_channel);
 	if (scmi_handle == NULL) {
 		NOTICE("SCMI Initialization failed, fallback to legacy PM\n");
@@ -351,7 +351,7 @@ int cavm_pwrc_setup(void)
  * the SCMI driver, query capability via SCMI and modify the PSCI capability
  * based on that.
  *****************************************************************************/
-const plat_psci_ops_t *plat_cavm_psci_override_pm_ops(plat_psci_ops_t *ops)
+const plat_psci_ops_t *plat_octeontx_psci_override_pm_ops(plat_psci_ops_t *ops)
 {
 	uint32_t msg_attr;
 	int ret;

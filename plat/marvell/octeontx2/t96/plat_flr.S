@@ -18,10 +18,10 @@
 #include <plat_macros.S>
 #include <context.h>
 
-	.global cavm_io_trap_handler
+	.global octeontx_io_trap_handler
 
 /* Main entry point for Cavium-specific trapping mechanism */
-func cavm_io_trap_handler
+func octeontx_io_trap_handler
 	/*
 	 * Mainline save_x18_to_x29_sp_el0 macro is defined
 	 * at runtime_exceptions.S, so platform code has to duplicate
@@ -75,8 +75,8 @@ func cavm_io_trap_handler
 	mov	sp, x12
 
 	/* Go to C trap handler and then immediately drop into el3_exit() */
-	bl	cavm_trap_handler
+	bl	octeontx_trap_handler
 
 	b	el3_exit
-endfunc cavm_io_trap_handler
+endfunc octeontx_io_trap_handler
 

@@ -285,7 +285,7 @@ static int open_memmap(const uintptr_t spec)
 }
 
 
-void thunder_io_setup(void)
+void octeontx_io_setup(void)
 {
 	int io_result;
 	io_result = register_io_dev_fip(&fip_dev_con);
@@ -381,20 +381,20 @@ int plat_get_fip_source(uintptr_t *dev_handle, uintptr_t *image_spec)
 
 	/* Check for boot type */
 	switch (bfdt->boot_dev.boot_type) {
-		case THUNDER_BOOT_REMOTE:
+		case OCTEONTX_BOOT_REMOTE:
 			plat_fill_fip_memmap_spec();
 			handle = memmap_dev_handle;
 			spec = (uintptr_t)&fip_block_spec;
 			check = open_memmap;
 			medium = "memmap";
 			break;
-		case THUNDER_BOOT_SPI:
+		case OCTEONTX_BOOT_SPI:
 			handle = spi_dev_handle;
 			spec = (uintptr_t)&fip_block_spec;
 			check = open_spi;
 			medium = "SPI";
 			break;
-		case THUNDER_BOOT_EMMC:
+		case OCTEONTX_BOOT_EMMC:
 			handle = emmc_dev_handle;
 			spec = (uintptr_t)&fip_block_spec;
 			check = open_emmc;

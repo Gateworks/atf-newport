@@ -30,7 +30,7 @@
 #endif
 
 /*
- * Platform methods defined in thunder_ecam_cnXXxx.c file
+ * Platform methods defined in plat_cavm_ecam.c file
  */
 extern const struct ecam_platform_defs plat_ops;
 
@@ -48,7 +48,7 @@ uint64_t get_bar_val(struct pcie_config *pconfig, int bar)
 	uint64_t h, l, ret = 0;
 
 	do {
-		cap = cavm_read32((uint8_t *) pconfig + cap_offset);
+		cap = octeontx_read32((uint8_t *) pconfig + cap_offset);
 		if ((cap & 0xff) == 0x14)
 			break;
 		cap_offset = (cap >> 8) & 0xfc;
@@ -60,15 +60,15 @@ uint64_t get_bar_val(struct pcie_config *pconfig, int bar)
 
 		cap_offset += 4;
 		while (ne) {
-			uint32_t dw0 = cavm_read32((uint8_t *) pconfig + cap_offset + 0);
+			uint32_t dw0 = octeontx_read32((uint8_t *) pconfig + cap_offset + 0);
 
 			es = dw0 & 7;
 			bei = (dw0 >> 4) & 0xf;
 			if (bei == bar) {
 				h = 0;
-				l = cavm_read32((uint8_t *) pconfig + cap_offset + 4);
+				l = octeontx_read32((uint8_t *) pconfig + cap_offset + 4);
 				if (l & 2)
-					h = cavm_read32((uint8_t *) pconfig + cap_offset + 12);
+					h = octeontx_read32((uint8_t *) pconfig + cap_offset + 12);
 				ret = (h << 32) | (l & ~0xfull);
 				break;
 			}
@@ -219,9 +219,9 @@ static void init_smmu(int node, uint64_t config_base, uint64_t config_size)
 
 		/* configure interrupt vectors first */
 		for (i = 0; i < table_size; i++) {
-			cavm_write64(vector_base, (i % 2) ? CAVM_GICD_CLRSPI_NSR : CAVM_GICD_SETSPI_NSR);
+			octeontx_write64(vector_base, (i % 2) ? CAVM_GICD_CLRSPI_NSR : CAVM_GICD_SETSPI_NSR);
 			vector_base += 8;
-			cavm_write64(vector_base, smmu_get_irq(node, smmunr, i));
+			octeontx_write64(vector_base, smmu_get_irq(node, smmunr, i));
 			vector_base += 8;
 			//debug_io("SMMU(%d) : Vector:%d address :%lx irq:%d\n",smmunr, i, 
 			//       ((i%2)? CAVM_GICD_CLRSPI_NSR : CAVM_GICD_SETSPI_NSR),smmu_get_irq(smmunr, i));
@@ -257,7 +257,7 @@ static void init_uaa(int node, uint64_t config_base, uint64_t config_size)
 	union cavm_pccpf_xxx_vsec_ctl vsec_ctl;
 	union cavm_pccpf_xxx_cmd cmd;
 
-	vsec_ctl.u = cavm_read32(config_base + CAVM_PCCPF_XXX_VSEC_CTL);
+	vsec_ctl.u = octeontx_read32(config_base + CAVM_PCCPF_XXX_VSEC_CTL);
 
 	/* not intialising node1 uaa */
 	if (node)
@@ -274,11 +274,11 @@ static void init_uaa(int node, uint64_t config_base, uint64_t config_size)
 	if (uaa_irq < 0)
 		return;
 
-	if ((cavm_read32(config_base + CAVM_PCCPF_XXX_SUBID)>>24) == 0xb2) {
+	if ((octeontx_read32(config_base + CAVM_PCCPF_XXX_SUBID)>>24) == 0xb2) {
 		/* enable bus master for uaa, not like 8xxx always en */
-		cmd.u = cavm_read32(config_base + CAVM_PCCPF_XXX_CMD);
+		cmd.u = octeontx_read32(config_base + CAVM_PCCPF_XXX_CMD);
 		cmd.s.me = 1;
-		cavm_write32(config_base + CAVM_PCCPF_XXX_CMD, cmd.u);
+		octeontx_write32(config_base + CAVM_PCCPF_XXX_CMD, cmd.u);
 	}
 
 	debug_io("UAA(%d) Node(%d) init called config_base:%lx size:%lx\n",
@@ -297,10 +297,10 @@ static void init_uaa(int node, uint64_t config_base, uint64_t config_size)
 
 		/* configure interrupt vectors first */
 		for (i = 0; i < table_size; i++) {
-			cavm_write64(vector_base, (i % 2) ? CAVM_GICD_CLRSPI_NSR : CAVM_GICD_SETSPI_NSR);
+			octeontx_write64(vector_base, (i % 2) ? CAVM_GICD_CLRSPI_NSR : CAVM_GICD_SETSPI_NSR);
 			vector_base += 8;
 			printf("\r"); /* Need to revisit and remove this workaround */
-			cavm_write64(vector_base, uaa_irq);
+			octeontx_write64(vector_base, uaa_irq);
 			vector_base += 8;
 			debug_io("UAA(%d)-NODE(%d): Vector:%d address :%lx irq:%d\n",
 				 vsec_ctl.s.inst_num, node, i,
@@ -322,7 +322,7 @@ static void init_twsi(int node, uint64_t config_base, uint64_t config_size)
 	uint32_t *sctl = (uint32_t *) (config_base + CAVM_PCCPF_XXX_VSEC_SCTL);
 	union cavm_pccpf_xxx_vsec_ctl vsec_ctl;
 
-	vsec_ctl.u = cavm_read32(config_base + CAVM_PCCPF_XXX_VSEC_CTL);
+	vsec_ctl.u = octeontx_read32(config_base + CAVM_PCCPF_XXX_VSEC_CTL);
 
 	/* not intialising node1 twsi */
 	if (node)
@@ -351,9 +351,9 @@ static void init_twsi(int node, uint64_t config_base, uint64_t config_size)
 
 		/* configure interrupt vectors first */
 		for (i = 0; i < table_size; i++) {
-			cavm_write64(vector_base, (i % 2) ? CAVM_GICD_CLRSPI_SR : CAVM_GICD_SETSPI_SR);
+			octeontx_write64(vector_base, (i % 2) ? CAVM_GICD_CLRSPI_SR : CAVM_GICD_SETSPI_SR);
 			vector_base += 8;
-			cavm_write64(vector_base, OCTEONTX_TWSI_1_S_IRQ);
+			octeontx_write64(vector_base, OCTEONTX_TWSI_1_S_IRQ);
 			vector_base += 8;
 			debug_io("TWSI1(%d)-NODE(%d): Vector:%d address :%lx irq:%d\n",
 				 vsec_ctl.s.inst_num, node, i,
@@ -375,7 +375,7 @@ static void init_pem(int node, uint64_t config_base, uint64_t config_size)
 	int i;
 	uint64_t msg;
 	union cavm_pccpf_xxx_vsec_ctl vsec_ctl;
-	vsec_ctl.u = cavm_read32(config_base + CAVM_PCCPF_XXX_VSEC_CTL);
+	vsec_ctl.u = octeontx_read32(config_base + CAVM_PCCPF_XXX_VSEC_CTL);
 
 	debug_io("PEM(%d) Node(%d) init called config_base:%lx size:%lx\n",
 		 vsec_ctl.s.inst_num, node, config_base, config_size);
@@ -393,14 +393,14 @@ static void init_pem(int node, uint64_t config_base, uint64_t config_size)
 
 		/* configure interrupt vectors first */
 		for (i = 0; i < table_size; i++) {
-			cavm_write64(vector_base, (i % 2) ? CAVM_GICD_CLRSPI_NSR : CAVM_GICD_SETSPI_NSR);
+			octeontx_write64(vector_base, (i % 2) ? CAVM_GICD_CLRSPI_NSR : CAVM_GICD_SETSPI_NSR);
 			vector_base += 8;
 			if (i >= PEM_INT_VEC_E_INTA && i < PEM_INT_VEC_E_INT_SUM)
 				msg = ((i - PEM_INT_VEC_E_INTA) / 2) + OCTEONTX_PEM_INTBASE_IRQ +
 					(24 * node) + (4 * vsec_ctl.s.inst_num);
 			else
 				msg = 0x100000000ull;	/* Masked */
-			cavm_write64(vector_base, msg);
+			octeontx_write64(vector_base, msg);
 			vector_base += 8;
 			debug_io
 			    ("PEM(%d)-NODE(%d): Vector:%d address :%lx irq:%lu\n",
@@ -436,9 +436,9 @@ static void init_gti(int node, uint64_t config_base, uint64_t config_size)
 	/* configure interrupt vectors */
 	for (i = 0; i < table_size; i++) {
 		if (i < CAVM_GTI_INT_VEC_E_TX_TIMESTAMP)
-			cavm_write64(vector_base, (i % 2) ? CAVM_GICD_CLRSPI_NSR : CAVM_GICD_SETSPI_NSR);
+			octeontx_write64(vector_base, (i % 2) ? CAVM_GICD_CLRSPI_NSR : CAVM_GICD_SETSPI_NSR);
 		else
-			cavm_write64(vector_base, CAVM_GICD_SETSPI_NSR);
+			octeontx_write64(vector_base, CAVM_GICD_SETSPI_NSR);
 		vector_base += 8;
 		if (i == CAVM_GTI_INT_VEC_E_WATCHDOG ||
 		    i == CAVM_GTI_INT_VEC_E_WATCHDOG_CLEAR) {
@@ -446,7 +446,7 @@ static void init_gti(int node, uint64_t config_base, uint64_t config_size)
 		} else {
 			msg = 0x100000000ULL; /* Masked */
 		}
-		cavm_write64(vector_base, msg);
+		octeontx_write64(vector_base, msg);
 		vector_base += 8;
 		debug_io
 		    ("GTI NODE(%d): Vector:%d address :%lx irq:%lu\n",
@@ -462,7 +462,7 @@ static void init_iobn(int node, uint64_t config_base, uint64_t config_size)
 	union cavm_pccpf_xxx_vsec_ctl vsec_ctl;
 	union cavm_iobnx_dis_ncbi_io iobn_dis_ncbi;
 
-	vsec_ctl.u = cavm_read32(config_base + CAVM_PCCPF_XXX_VSEC_CTL);
+	vsec_ctl.u = octeontx_read32(config_base + CAVM_PCCPF_XXX_VSEC_CTL);
 	iobn_nr = vsec_ctl.s.inst_num;
 
 	debug_io("IOBN(%d) NODE(%d) init called config_base:%lx size:%lx\n",
@@ -490,7 +490,7 @@ static void init_iobn5(int node, uint64_t config_base, uint64_t config_size)
 	union cavm_ecamx_const ecamx_const;
 	union cavm_ecamx_domx_const domx_const;
 
-	vsec_ctl.u = cavm_read32(config_base + CAVM_PCCPF_XXX_VSEC_CTL);
+	vsec_ctl.u = octeontx_read32(config_base + CAVM_PCCPF_XXX_VSEC_CTL);
 	iobn_nr = vsec_ctl.s.inst_num;
 
 	debug_io("IOBN(%d) NODE(%d) init called config_base:%lx size:%lx\n",
@@ -566,7 +566,7 @@ static int octeontx_call_probe(int node, uint64_t pconfig)
 	if (!probe_callbacks)
 		return 1;
 
-	pccpf_id.u = cavm_read32(pconfig + CAVM_PCCPF_XXX_ID);
+	pccpf_id.u = octeontx_read32(pconfig + CAVM_PCCPF_XXX_ID);
 
 	while (probe_callbacks[i].devid != ECAM_INVALID_DEV_ID) {
 		if (probe_callbacks[i].devid == pccpf_id.s.devid
@@ -593,7 +593,7 @@ static void octeontx_call_init(int node, uint64_t pconfig)
 	cavm_pccpf_xxx_id_t pccpf_id;
 	int i = 0;
 
-	pccpf_id.u = cavm_read32(pconfig + CAVM_PCCPF_XXX_ID);
+	pccpf_id.u = octeontx_read32(pconfig + CAVM_PCCPF_XXX_ID);
 
 	while (init_callbacks[i].devid != ECAM_INVALID_DEV_ID) {
 		if (init_callbacks[i].devid == pccpf_id.s.devid
@@ -642,9 +642,9 @@ static void octeontx_ari_capability(struct ecam_device *device)
 	pconfig = plat_ops.get_dev_config(device);
 
 	/* Program ARI capability properly */
-	vsec_ctl.u = cavm_read32(pconfig + CAVM_PCCPF_XXX_VSEC_CTL);
+	vsec_ctl.u = octeontx_read32(pconfig + CAVM_PCCPF_XXX_VSEC_CTL);
 	vsec_ctl.s.nxtfn_ns = act_func;
-	cavm_write32(pconfig + CAVM_PCCPF_XXX_VSEC_CTL, vsec_ctl.u);
+	octeontx_write32(pconfig + CAVM_PCCPF_XXX_VSEC_CTL, vsec_ctl.u);
 
 	/* Update prev_ns_func value */
 	device->func = act_func;
@@ -655,7 +655,7 @@ static inline int octeontx_dev_is_bridge(uint64_t pconfig)
 {
 	cavm_pccpf_xxx_id_t pccpf_id;
 
-	pccpf_id.u = cavm_read32(pconfig + CAVM_PCCPF_XXX_ID);
+	pccpf_id.u = octeontx_read32(pconfig + CAVM_PCCPF_XXX_ID);
 	if ((pccpf_id.s.devid & 0xff) == 0x02)
 		return 1;
 
@@ -682,12 +682,12 @@ static void octeontx_ecam_dev_enumerate(struct ecam_device *device)
 	 */
 	if (octeontx_bus_is_rsl(device)) {
 		debug_io("%s: reset NXTFN for ARI devices\n", __func__);
-		vsec_ctl.u = cavm_read32(pconfig + CAVM_PCCPF_XXX_VSEC_CTL);
+		vsec_ctl.u = octeontx_read32(pconfig + CAVM_PCCPF_XXX_VSEC_CTL);
 		vsec_ctl.s.nxtfn_ns = 0;
-		cavm_write32(pconfig + CAVM_PCCPF_XXX_VSEC_CTL, vsec_ctl.u);
-		vsec_sctl.u =  cavm_read32(pconfig + CAVM_PCCPF_XXX_VSEC_SCTL);
+		octeontx_write32(pconfig + CAVM_PCCPF_XXX_VSEC_CTL, vsec_ctl.u);
+		vsec_sctl.u =  octeontx_read32(pconfig + CAVM_PCCPF_XXX_VSEC_SCTL);
 		vsec_sctl.s.nxtfn_s = 0;
-		cavm_write32(pconfig + CAVM_PCCPF_XXX_VSEC_SCTL, vsec_sctl.u);
+		octeontx_write32(pconfig + CAVM_PCCPF_XXX_VSEC_SCTL, vsec_sctl.u);
 	}
 
 	/* Call platform-specific method for secure settings */
@@ -736,12 +736,12 @@ static void octeontx_ecam_dev_enumerate(struct ecam_device *device)
 	}
 
 	debug_io("%s: pconfig: 0x%lx, value: 0x%x\n", __func__, pconfig,
-		cavm_read32(pconfig));
+		octeontx_read32(pconfig));
 
 	if (octeontx_dev_is_bridge(pconfig)) {
 		cavm_pccbr_xxx_bus_t sbus;
 
-		sbus.u = cavm_read32(pconfig + CAVM_PCCBR_XXX_BUS);
+		sbus.u = octeontx_read32(pconfig + CAVM_PCCBR_XXX_BUS);
 		if (sbus.s.sbnum != 0) {
 			/* Add to brigdes list */
 			ecam_bridges[device->dev].bus = sbus.s.sbnum;
@@ -845,7 +845,7 @@ void octeontx_pci_init(void)
 {
 	unsigned node_count, ecam_count, node, ecam;
 
-	node_count = thunder_get_node_count();
+	node_count = plat_octeontx_get_node_count();
 	for (node = 0; node < node_count; node++) {
 		ecam_count = plat_ops.get_ecam_count(node);
 		for (ecam = 0; ecam < ecam_count; ecam++)

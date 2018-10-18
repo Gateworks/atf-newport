@@ -16,7 +16,7 @@
 #include <platform_def.h>
 #include <platform_tsp.h>
 #include <xlat_tables_v2.h>
-#include <thunder_private.h>
+#include <cavm_common.h>
 #include <cavm_utils.h>
 
 /*
@@ -61,7 +61,7 @@ void tsp_early_platform_setup(void)
  ******************************************************************************/
 void tsp_platform_setup(void)
 {
-	thunder_gic_driver_init();
+	octeontx_gic_driver_init();
 }
 
 /*******************************************************************************

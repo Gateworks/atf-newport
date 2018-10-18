@@ -57,13 +57,13 @@ struct ccs_region ccs_map [] = {
 
 void octeontx_security_setup(void)
 {
-	unsigned node_count = thunder_get_node_count();
+	unsigned node_count = plat_octeontx_get_node_count();
 	union cavm_ccs_asc_regionx_attr ccs_asc_attr;
 	struct ccs_region *region = ccs_map;
 	uint64_t dram_end;
 
 	while (region->node < node_count) {
-		dram_end = thunder_dram_size_node(region->node) - 1;
+		dram_end = octeontx_dram_size_node(region->node) - 1;
 		if (region->end > dram_end)
 			region->end = dram_end;
 
@@ -111,7 +111,7 @@ void octeontx_security_setup(void)
  * This function configures IOBN to grant access for eMMC controller
  * to secure/non-secure memory based on input parameter passed
  */
-void cavm_configure_mmc_security(int secure)
+void octeontx_configure_mmc_security(int secure)
 {
 	int node = cavm_numa_local();
 	/*
@@ -126,10 +126,10 @@ void cavm_configure_mmc_security(int secure)
 	cavm_iobnx_domx_busx_streams_t iobn_domx_busx_stream;
 
 	/* Check for MMC boot, if not return here */
-	if (bfdt->boot_dev.boot_type != THUNDER_BOOT_EMMC)
+	if (bfdt->boot_dev.boot_type != OCTEONTX_BOOT_EMMC)
 		return;
 
-	for (int iobn_idx = 0; iobn_idx < thunder_get_iobn_count();
+	for (int iobn_idx = 0; iobn_idx < plat_octeontx_get_iobn_count();
 				iobn_idx++) {
 		if (secure) {
 			/*

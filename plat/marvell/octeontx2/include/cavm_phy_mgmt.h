@@ -290,9 +290,9 @@ typedef struct phy_timer_mapping_s {
 } phy_timer_mapping_t;
 
 /* APIs */
-void cavm_phy_reset(int node, int cgx_id, int lmac_id);
+void octeontx_phy_reset(int node, int cgx_id, int lmac_id);
 
-int cavm_get_phy_link_status(int node, int cgx_id, int lmac_id,
+int octeontx_get_phy_link_status(int node, int cgx_id, int lmac_id,
 				link_state_t *link);
 
 #endif /* __CAVM_PHY_MGMT_H__ */

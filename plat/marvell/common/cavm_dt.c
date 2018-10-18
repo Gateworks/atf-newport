@@ -53,7 +53,7 @@ static void print_board_variables()
 }
 
 #if TRUSTED_BOARD_BOOT
-static uint64_t thunder_fdt_get_uint64(const void *fdt, int offset, const char *property, int base)
+static uint64_t octeontx_fdt_get_uint64(const void *fdt, int offset, const char *property, int base)
 {
 	const char *name;
 	int len;
@@ -68,7 +68,7 @@ static uint64_t thunder_fdt_get_uint64(const void *fdt, int offset, const char *
 }
 #endif
 
-static int thunder_fdt_get(const void *fdt, int offset, const char *property, int base)
+static int octeontx_fdt_get(const void *fdt, int offset, const char *property, int base)
 {
 	const char *name;
 	int len;
@@ -83,7 +83,7 @@ static int thunder_fdt_get(const void *fdt, int offset, const char *property, in
 
 }
 
-int cavm_fill_board_details(int info)
+int octeontx_fill_board_details(int info)
 {
 	const void *fdt = fdt_ptr;
 	const char *name;
@@ -113,42 +113,42 @@ int cavm_fill_board_details(int info)
 			bfdt->board_model[i] = tolower(bfdt->board_model[i]);
 	}
 
-	config = thunder_fdt_get(fdt, offset, "BMC-BOOT-TWSI-CONFIG", 0);
+	config = octeontx_fdt_get(fdt, offset, "BMC-BOOT-TWSI-CONFIG", 0);
 	if (config != -1) {
 		bfdt->bmc_boot_twsi_node = (config >> 16) & 0xff;
 		bfdt->bmc_boot_twsi_bus = (config >> 8) & 0xff;
 		bfdt->bmc_boot_twsi_addr = config & 0xff;
 	} else {
 		bfdt->bmc_boot_twsi_node = 0;
-		bfdt->bmc_boot_twsi_bus = thunder_fdt_get(fdt, offset, "BMC-BOOT-TWSI-BUS", 10);
-		bfdt->bmc_boot_twsi_addr = thunder_fdt_get(fdt, offset, "BMC-BOOT-TWSI-ADDR", 16);
+		bfdt->bmc_boot_twsi_bus = octeontx_fdt_get(fdt, offset, "BMC-BOOT-TWSI-BUS", 10);
+		bfdt->bmc_boot_twsi_addr = octeontx_fdt_get(fdt, offset, "BMC-BOOT-TWSI-ADDR", 16);
 	}
-	config = thunder_fdt_get(fdt, offset, "BMC-IPMI-TWSI-CONFIG", 0);
+	config = octeontx_fdt_get(fdt, offset, "BMC-IPMI-TWSI-CONFIG", 0);
 	if (config != -1) {
 		bfdt->bmc_ipmi_twsi_node = (config >> 16) & 0xff;
 		bfdt->bmc_ipmi_twsi_bus = (config >> 8) & 0xff;
 		bfdt->bmc_ipmi_twsi_addr = config & 0xff;
 	} else {
 		bfdt->bmc_ipmi_twsi_node = 0;
-		bfdt->bmc_ipmi_twsi_bus = thunder_fdt_get(fdt, offset, "BMC-IPMI-TWSI-BUS", 10);
-		bfdt->bmc_ipmi_twsi_addr = thunder_fdt_get(fdt, offset, "BMC-IPMI-TWSI-ADDR", 16);
+		bfdt->bmc_ipmi_twsi_bus = octeontx_fdt_get(fdt, offset, "BMC-IPMI-TWSI-BUS", 10);
+		bfdt->bmc_ipmi_twsi_addr = octeontx_fdt_get(fdt, offset, "BMC-IPMI-TWSI-ADDR", 16);
 	}
 
-	bfdt->gpio_shutdown_ctl_in = thunder_fdt_get(fdt, offset, "GPIO-SHUTDOWN-CTL-IN", 0);
+	bfdt->gpio_shutdown_ctl_in = octeontx_fdt_get(fdt, offset, "GPIO-SHUTDOWN-CTL-IN", 0);
 	/* The new format is hex and allows for node id and polarity
 	 * packed into the value. We don't use them right now and mask
 	 * them out. */
 	if (bfdt->gpio_shutdown_ctl_in != -1)
 		bfdt->gpio_shutdown_ctl_in &= 0xff;
 
-	bfdt->gpio_shutdown_ctl_out = thunder_fdt_get(fdt, offset, "GPIO-SHUTDOWN-CTL-OUT", 0);
+	bfdt->gpio_shutdown_ctl_out = octeontx_fdt_get(fdt, offset, "GPIO-SHUTDOWN-CTL-OUT", 0);
 	/* The new format is hex and allows for node id and polarity
 	 * packed into the value. We don't use them right now and mask
 	 * them out. */
 	if (bfdt->gpio_shutdown_ctl_out != -1)
 		bfdt->gpio_shutdown_ctl_out &= 0xff;
 
-	config = thunder_fdt_get(fdt, offset, "MCU-SHUTDOWN-TWSI-CONFIG", 16);
+	config = octeontx_fdt_get(fdt, offset, "MCU-SHUTDOWN-TWSI-CONFIG", 16);
 	if (config != -1) {
 		bfdt->mcu_twsi.s.node = (config >> 24) & 0xff;
 		bfdt->mcu_twsi.s.int_addr = (config >> 16) & 0xff;
@@ -164,10 +164,10 @@ int cavm_fill_board_details(int info)
 	 * For more information, please refer to bdk-trusted-boot.pdf file
 	 * in BDK source repository.
 	 */
-	bfdt->trust_rot_addr = thunder_fdt_get_uint64(fdt, offset, "TRUST-ROT-ADDR", 16);
+	bfdt->trust_rot_addr = octeontx_fdt_get_uint64(fdt, offset, "TRUST-ROT-ADDR", 16);
 
 	/*
-	 * If either thunder_fdt_get_uint64 returned -1 (property not found) or
+	 * If either octeontx_fdt_get_uint64 returned -1 (property not found) or
 	 * 0 (property found, but set to 0 indicates non-secure boot), stop secure booting
 	 */
 	if (bfdt->trust_rot_addr == 0 || bfdt->trust_rot_addr == -1) {
@@ -180,10 +180,10 @@ int cavm_fill_board_details(int info)
 	 * TRUST-BSSK-ADDR is set only when HUK parameter was passed to build system.
 	 * If so, it contains the address of BSSK key. Firstly, try to get BSSK
 	 */
-	bfdt->trust_key_addr = thunder_fdt_get_uint64(fdt, offset, "TRUST-BSSK-ADDR", 16);
+	bfdt->trust_key_addr = octeontx_fdt_get_uint64(fdt, offset, "TRUST-BSSK-ADDR", 16);
 
 	/*
-	 * If either thunder_fdt_get_uint64 returned -1 (property not found) or
+	 * If either octeontx_fdt_get_uint64 returned -1 (property not found) or
 	 * 0 (property found, but set to 0 indicates SSK), print info about it
 	 */
 	if (bfdt->trust_key_addr == 0 || bfdt->trust_rot_addr == -1) {

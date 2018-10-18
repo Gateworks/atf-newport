@@ -61,17 +61,17 @@ typedef enum {
 } scmi_power_state_t;
 
 /* Exported functions for SCP usage */
-void cavm_scp_suspend(const psci_power_state_t *target_state);
-void cavm_scp_off(const psci_power_state_t *target_state);
-void cavm_scp_on(u_register_t mpidr);
-int cavm_scp_get_power_state(u_register_t mpidr, unsigned int power_level);
-void __dead2 cavm_scp_sys_shutdown(void);
-void __dead2 cavm_scp_sys_reboot(void);
+void octeontx_scp_suspend(const psci_power_state_t *target_state);
+void octeontx_scp_off(const psci_power_state_t *target_state);
+void octeontx_scp_on(u_register_t mpidr);
+int octeontx_scp_get_power_state(u_register_t mpidr, unsigned int power_level);
+void __dead2 octeontx_scp_sys_shutdown(void);
+void __dead2 octeontx_scp_sys_reboot(void);
 
-const plat_psci_ops_t *plat_cavm_psci_override_pm_ops(plat_psci_ops_t *ops);
+const plat_psci_ops_t *plat_octeontx_psci_override_pm_ops(plat_psci_ops_t *ops);
 
-int cavm_pwrc_setup(void);
-int cavm_setup_psci_ops(uintptr_t sec_entrypoint,
+int octeontx_pwrc_setup(void);
+int octeontx_setup_psci_ops(uintptr_t sec_entrypoint,
 			const plat_psci_ops_t **psci_ops);
 
 #endif /* __CAVM_PWRC_H__ */

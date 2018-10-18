@@ -65,7 +65,7 @@ static int cgx_speed[PHY_CLAUSE45_MAX_SPEED_SEL] = {CGX_LINK_10G,
 				CGX_LINK_2HG,
 				CGX_LINK_5G};
 
-static void cavm_get_generic_8023_c22_phy_link_state(phy_config_t *phy,
+static void octeontx_get_generic_8023_c22_phy_link_state(phy_config_t *phy,
 							link_state_t *link)
 {
 	int addr = phy->phy_addr;
@@ -126,7 +126,7 @@ static void cavm_get_generic_8023_c22_phy_link_state(phy_config_t *phy,
 	}
 }
 
-static void cavm_get_generic_8023_c45_phy_link_state(phy_config_t *phy,
+static void octeontx_get_generic_8023_c45_phy_link_state(phy_config_t *phy,
 							link_state_t *link)
 {
 	int addr = phy->phy_addr;
@@ -166,7 +166,7 @@ static void cavm_get_generic_8023_c45_phy_link_state(phy_config_t *phy,
 		break;
 	case PHY_CLAUSE45_SPEED_BITS_2_5_SEL:
 		/* if bits 6 & 13 are set to 1, then bits 5:2 selects speed */
-		speed_sel = cavm_bit_extract(pma_ctrl1, 2, 4) & 0xF;
+		speed_sel = octeontx_bit_extract(pma_ctrl1, 2, 4) & 0xF;
 		if ((speed_sel >= 0x0) && (speed_sel < PHY_CLAUSE45_MAX_SPEED_SEL))
 			link->s.speed = cgx_speed[speed_sel];
 		else
@@ -183,12 +183,12 @@ static void cavm_get_generic_8023_c45_phy_link_state(phy_config_t *phy,
 	 */
 	phy_status = smi_phy_read(0, mdio, CLAUSE45, addr, PMA_PMD_DEVICE_ADDR,
 						PMA_PMD_STATUS_REG);
-	link->s.link_up = cavm_bit_extract(phy_status, 2, 1) & 0x1;
+	link->s.link_up = octeontx_bit_extract(phy_status, 2, 1) & 0x1;
 	if (link->s.link_up)
 		link->s.full_duplex = 1;
 }
 
-int cavm_get_phy_link_status(int node, int cgx_id, int lmac_id,
+int octeontx_get_phy_link_status(int node, int cgx_id, int lmac_id,
 						link_state_t *link)
 {
 	cgx_lmac_config_t *lmac = NULL;
@@ -221,7 +221,7 @@ int cavm_get_phy_link_status(int node, int cgx_id, int lmac_id,
 
 	/* in case of USXGMII, need to obtain link status from PHY */
 	if (lmac->mode == CAVM_CGX_LMAC_TYPES_E_USXGMII) {
-		cavm_get_generic_8023_c45_phy_link_state(
+		octeontx_get_generic_8023_c45_phy_link_state(
 						&lmac->phy_config, link);
 		debug_nw_mgmt("link %d speed %d duplex %d\n", link->s.link_up,
 			link->s.speed, link->s.full_duplex);
@@ -230,9 +230,9 @@ int cavm_get_phy_link_status(int node, int cgx_id, int lmac_id,
 
 	/* handle generic clause first */
 	if (lmac->phy_config.clause == PHY_GENERIC_8023_C22) {
-		cavm_get_generic_8023_c22_phy_link_state(&lmac->phy_config, link);
+		octeontx_get_generic_8023_c22_phy_link_state(&lmac->phy_config, link);
 	} else if (lmac->phy_config.clause == PHY_GENERIC_8023_C45) {
-		cavm_get_generic_8023_c45_phy_link_state(
+		octeontx_get_generic_8023_c45_phy_link_state(
 					&lmac->phy_config, link);
 	} else {
 		/* FIXME: handle other specific PHY cases */
@@ -244,7 +244,7 @@ int cavm_get_phy_link_status(int node, int cgx_id, int lmac_id,
 	return ret;
 }
 
-void cavm_phy_reset(int node, int cgx_id, int lmac_id)
+void octeontx_phy_reset(int node, int cgx_id, int lmac_id)
 {
 	phy_config_t *phy;
 

@@ -33,7 +33,7 @@ int gpio_clr_out(int pin);
 void plat_gpio_irq_setup(void);
 void plat_set_gpio_msix_vectors(int gpio_num, int irq_num, int enable);
 uint64_t gpio_irq_handler(uint32_t id, uint32_t flags, void *cookie);
-int cavm_register_gpio_handlers(void);
+int octeontx_register_gpio_handlers(void);
 int gpio_install_irq(uint64_t gpio_num, uint64_t sp, uint64_t  cpu,
 		     uint64_t isr_base);
 void gpio_clear_irq(uint64_t gpio_num);

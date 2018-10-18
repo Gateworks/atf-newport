@@ -26,7 +26,7 @@
  * to family, each platform can define
  * its own API and can be called from here
  */
-void plat_cavm_setup(void)
+void plat_octeontx_setup(void)
 {
 	/* setup gpio interrupt handling */
 	plat_gpio_irq_setup();
@@ -34,13 +34,13 @@ void plat_cavm_setup(void)
 
 void plat_pwrc_setup(void)
 {
-	cavm_legacy_pwrc_setup();
+	octeontx_legacy_pwrc_setup();
 }
 
 void plat_setup_psci_ops(uintptr_t sec_entrypoint,
 			 const plat_psci_ops_t **psci_ops)
 {
-	cavm_legacy_setup_psci_ops(sec_entrypoint, psci_ops);
+	octeontx_legacy_setup_psci_ops(sec_entrypoint, psci_ops);
 }
 
 /*
@@ -91,7 +91,7 @@ unsigned int plat_get_rom_t_cnt(int node)
 	 * ROM_T_CNT is stored on FUSF_BNK_DATX(0)[63:32].
 	 */
 	dat = CSR_READ(node, CAVM_FUSF_BNK_DATX(0));
-	nv_count_val = cavm_bit_extract(dat, CAVM_FUSF_FUSE_NUM_E_ROM_T_CNTX(0), 32);
+	nv_count_val = octeontx_bit_extract(dat, CAVM_FUSF_FUSE_NUM_E_ROM_T_CNTX(0), 32);
 
 	/*
 	 * When there's no runtime update on BDK side,

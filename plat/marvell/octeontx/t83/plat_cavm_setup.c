@@ -18,17 +18,12 @@
 #include <cavm_dt.h>
 #include <cavm_utils.h>
 
-int thunder_get_lmc_per_node(void)
+int plat_octeontx_get_lmc_per_node(void)
 {
 	return 2;
 }
 
-int thunder_get_num_ecams_per_node(void)
-{
-	return 2;
-}
-
-int thunder_get_sata_count(void)
+int plat_octeontx_get_sata_count(void)
 {
 	return 6;
 }
@@ -39,7 +34,7 @@ int thunder_get_sata_count(void)
  * SATA(2-3) --- GSER5
  * SATA(4-5) --- GSER6
  */
-int thunder_sata_to_gser(int ctrlr)
+int plat_octeontx_sata_to_gser(int ctrlr)
 {
 	if (ctrlr > 5)
 		return -1;
@@ -47,7 +42,7 @@ int thunder_sata_to_gser(int ctrlr)
 	return 4 + (ctrlr / 2);
 }
 
-int thunder_sata_to_lane(int ctrlr)
+int plat_octeontx_sata_to_lane(int ctrlr)
 {
 	if (ctrlr > 5)
 		return -1;
@@ -55,7 +50,7 @@ int thunder_sata_to_lane(int ctrlr)
 	return ctrlr % 2;
 }
 
-int thunder_dram_is_lmc_enabled(unsigned node, unsigned lmc)
+int plat_octeontx_is_lmc_enabled(unsigned node, unsigned lmc)
 {
 	union cavm_lmcx_dll_ctl2 lmcx_dll_ctl2;
 
@@ -64,7 +59,7 @@ int thunder_dram_is_lmc_enabled(unsigned node, unsigned lmc)
 	return (lmcx_dll_ctl2.s.dreset ? 0 : 1);
 }
 
-unsigned thunder_get_node_count(void)
+unsigned plat_octeontx_get_node_count(void)
 {
 	unsigned long node = cavm_numa_local();
 	union cavm_l2c_oci_ctl l2c_oci_ctl;
@@ -180,17 +175,17 @@ void plat_set_gpio_msix_vectors(int gpio_num, int irq_num, int enable)
 	vector_ptr =  CAVM_GPIO_BAR_E_GPIO_PF_BAR4 + intr_pinx * 0x10 + 0x8;
 
 	if (enable) {
-		cavm_write64(vector_ptr, irq_num);
+		octeontx_write64(vector_ptr, irq_num);
 
 		/* INTR_PINX_CLEAR vector */
 		vector_ptr += 0x10;
-		cavm_write64(vector_ptr, irq_num);
+		octeontx_write64(vector_ptr, irq_num);
 	} else {
-		cavm_write64(vector_ptr, OCTEONTX_IRQ_GPIO_NSEC);
+		octeontx_write64(vector_ptr, OCTEONTX_IRQ_GPIO_NSEC);
 
 		/* INTR_PINX_CLEAR vector */
 		vector_ptr += 0x10;
-		cavm_write64(vector_ptr, OCTEONTX_IRQ_GPIO_NSEC);
+		octeontx_write64(vector_ptr, OCTEONTX_IRQ_GPIO_NSEC);
 	}
 }
 
@@ -198,7 +193,7 @@ void plat_gpio_irq_setup(void)
 {
 	gpio_intercept_interrupts = bfdt->gpio_intercept_intr;
 	if (gpio_intercept_interrupts) {
-		if (cavm_register_gpio_handlers() < 0)
+		if (octeontx_register_gpio_handlers() < 0)
 			ERROR("Failed to register GPIO intercept handlers\n");
 	}
 }

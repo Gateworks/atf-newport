@@ -24,9 +24,9 @@
 	.globl	plat_crash_console_init
 	.globl	plat_crash_console_putc
 	.globl	platform_mem_init
-	.globl	thunder_sec_entry_point
+	.globl	octeontx_sec_entry_point
 
-	.weak cavm_io_trap_handler
+	.weak octeontx_io_trap_handler
 
 	/* -----------------------------------------------------
 	 * unsigned int plat_is_my_cpu_primary(void);
@@ -37,7 +37,7 @@
 func plat_is_my_cpu_primary
 	mrs	x0, mpidr_el1
 	and	x0, x0, #(MPIDR_CLUSTER_MASK | MPIDR_CPU_MASK | MPIDR_NODE_MASK)
-	cmp	x0, #THUNDER_PRIMARY_CPU
+	cmp	x0, #OCTEONTX_PRIMARY_CPU
 	cset	x0, eq
 	ret
 endfunc plat_is_my_cpu_primary
@@ -46,13 +46,13 @@ endfunc plat_is_my_cpu_primary
 	 * unsigned long plat_get_my_entrypoint (void);
 	 *
 	 * Main job of this routine is to distinguish between
-	 * a cold and warm boot. If the thunder_sec_entry_point for
+	 * a cold and warm boot. If the octeontx_sec_entry_point for
 	 * this CPU is present, then it's a warm boot.
 	 *
 	 * -----------------------------------------------------
 	 */
 func plat_get_my_entrypoint
-	adr	x1, thunder_sec_entry_point
+	adr	x1, octeontx_sec_entry_point
 	ldr	x0, [x1]
 	ret
 endfunc plat_get_my_entrypoint
@@ -122,9 +122,9 @@ endfunc platform_mem_init
 	 * CPU Secure entry point - resume from suspend
 	 * --------------------------------------------------
 	 */
-thunder_sec_entry_point:
+octeontx_sec_entry_point:
 	.quad	0
 
-func cavm_io_trap_handler
+func octeontx_io_trap_handler
 	ret
-endfunc cavm_io_trap_handler
+endfunc octeontx_io_trap_handler

@@ -245,9 +245,9 @@ static int cgx_link_bringup(int node, int cgx_id, int lmac_id)
 			link.s.speed = CGX_LINK_1G;
 		} else {
 			/* Enable the SMI/MDIO bus if PHY is on MDIO */
-			cavm_phy_reset(node, cgx_id, lmac_id);
+			octeontx_phy_reset(node, cgx_id, lmac_id);
 			/* Get the link status */
-			cavm_get_phy_link_status(node, cgx_id, lmac_id, &link);
+			octeontx_get_phy_link_status(node, cgx_id, lmac_id, &link);
 		}
 		if (link.s.link_up == 1) {	/* link is up */
 			if (cgx_sgmii_set_link_up(node, cgx_id, lmac_id) != 0)
@@ -291,9 +291,9 @@ static int cgx_link_bringup(int node, int cgx_id, int lmac_id)
 			/* Get the link status from PHY */
 			if (lmac_cfg->phy_present) {
 				/* Enable the SMI/MDIO bus if PHY is on MDIO */
-				cavm_phy_reset(node, cgx_id, lmac_id);
+				octeontx_phy_reset(node, cgx_id, lmac_id);
 				/* Get the link status */
-				cavm_get_phy_link_status(node, cgx_id, lmac_id,
+				octeontx_get_phy_link_status(node, cgx_id, lmac_id,
 								&link);
 				/* save the link status to program the rate */
 				cgx_set_link_state(node, cgx_id, lmac_id,
@@ -667,7 +667,7 @@ static int cgx_poll_for_link_cb(int timer)
 					debug_cgx_intf("%s:%d:%d:%d poll for link status\n",
 						__func__, node, cgx, lmac);
 					/* Get the link status */
-					cavm_get_phy_link_status(node, cgx,
+					octeontx_get_phy_link_status(node, cgx,
 							lmac, &link);
 					/* if the prev link change is not handled
 					 * wait until it is handled as the reqs

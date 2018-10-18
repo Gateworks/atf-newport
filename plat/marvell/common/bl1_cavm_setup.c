@@ -114,12 +114,12 @@ void bl1_platform_setup(void)
 	plat_fill_board_details(1);
 
         /* Initialise the IO layer and register platform IO devices */
-        thunder_io_setup();
+        octeontx_io_setup();
 }
 
 void bl1_early_platform_setup(void)
 {
-	thunder_cpu_setup();
+	octeontx_cpu_setup();
 
 	/* Do it here. Later this region will be mapped as RO. */
 	fdt_pack(fdt_ptr);

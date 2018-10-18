@@ -22,7 +22,7 @@
 #define debug_twsi(...) ((void) (0))
 #endif
 
-int thunder_twsi_send(unsigned int node, unsigned int twsi_num,
+int octeontx_twsi_send(unsigned int node, unsigned int twsi_num,
 		      uint16_t addr, const uint8_t *buffer, size_t size)
 {
 	cavm_mio_twsx_sw_twsi_t sw_twsi;
@@ -82,7 +82,7 @@ int thunder_twsi_send(unsigned int node, unsigned int twsi_num,
 	return 0;
 }
 
-int thunder_twsi_recv(unsigned int node, unsigned int twsi_num,
+int octeontx_twsi_recv(unsigned int node, unsigned int twsi_num,
 		      uint16_t addr, uint8_t *buffer, size_t size)
 {
 	cavm_mio_twsx_sw_twsi_t sw_twsi;

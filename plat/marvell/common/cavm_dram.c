@@ -19,7 +19,7 @@
 #include <string.h>
 #include <debug.h>
 
-extern int thunder_dram_is_lmc_enabled(unsigned node, unsigned lmc);
+extern int plat_octeontx_is_lmc_enabled(unsigned node, unsigned lmc);
 
 static inline uint32_t popcnt(uint64_t val)
 {
@@ -38,24 +38,24 @@ static inline uint32_t popcnt(uint64_t val)
 	return x;  /* (7 significant bits) */
 }
 
-uint64_t thunder_dram_size_node(unsigned node)
+uint64_t octeontx_dram_size_node(unsigned node)
 {
 	uint64_t rank_size, memsize = 0;
 	int num_ranks, lmc;
 	int lmc_per_node;
 	union cavm_lmcx_config lmcx_config;
 
-	lmc_per_node = thunder_get_lmc_per_node();
+	lmc_per_node = plat_octeontx_get_lmc_per_node();
 	if (lmc_per_node < 0) {
 		printf("Cannot obtain lmc_per_node count\n");
 		return 0;
 	}
 
-	if (node >= thunder_get_node_count())
+	if (node >= plat_octeontx_get_node_count())
 		return 0;
 
 	for (lmc = 0; lmc < lmc_per_node; lmc++) {
-		if (!thunder_dram_is_lmc_enabled(node, lmc))
+		if (!plat_octeontx_is_lmc_enabled(node, lmc))
 			continue;
 
 		lmcx_config.u = CSR_READ(node, CAVM_LMCX_CONFIG(lmc));

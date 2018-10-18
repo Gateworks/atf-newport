@@ -181,7 +181,7 @@ void bl31_early_platform_setup2(u_register_t arg0, u_register_t arg1,
 	bl31_early_platform_setup((void *)arg0, (void *)arg1);
 }
 
-static void thunder_el3_irq_init(void)
+static void octeontx_el3_irq_init(void)
 {
 	uint32_t flags;
 	int32_t rc;
@@ -206,16 +206,16 @@ void bl31_platform_setup()
 	 * make the device have access to non-secure memory. It is safe to
 	 * do it here, because every firmware image is loaded at this time.
 	 */
-	cavm_configure_mmc_security(0); /* non-secure */
-	thunder_el3_irq_init();
-	thunder_gic_driver_init();
-	thunder_gic_init();
+	octeontx_configure_mmc_security(0); /* non-secure */
+	octeontx_el3_irq_init();
+	octeontx_gic_driver_init();
+	octeontx_gic_init();
 	timers_init();
 	/* This API is platform dependent. It can be any boot time
 	 * initialization that needs to be performed related to
 	 * firmware services provided in BL31
 	 */
-	plat_cavm_setup();
+	plat_octeontx_setup();
 
 	/*
 	 * Apply SATA quirk only for CN8XXX family
@@ -234,7 +234,7 @@ void bl31_platform_setup()
  ******************************************************************************/
 void bl31_plat_arch_setup()
 {
-	uintptr_t ns_dma_memory_base = thunder_dram_size_node(0) - NS_DMA_MEMORY_SIZE;
+	uintptr_t ns_dma_memory_base = octeontx_dram_size_node(0) - NS_DMA_MEMORY_SIZE;
 	mmap_add_region(BL31_RO_BASE, BL31_RO_BASE,
 			BL31_END - BL31_RO_BASE,
 			MT_MEMORY | MT_RW | MT_SECURE);

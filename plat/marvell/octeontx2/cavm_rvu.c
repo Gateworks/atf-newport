@@ -287,7 +287,7 @@ static void mailbox_enable(int node)
 	for (pf = 0; pf < octeontx_get_max_rvu_pfs(node); pf++) {
 		if (rvu_dev[pf].enable && rvu_dev[pf].num_vfs) {
 			uint64_t bar4_addr = CSR_PA(node, CAVM_RVU_BAR_E_RVU_PFX_FUNCX_BAR2(pf, 0)) + 0x10;
-			cavm_write64(bar4_addr, vf_base);
+			octeontx_write64(bar4_addr, vf_base);
 			vf_base = vf_base + (0x10000 * (rvu_dev[pf].num_vfs & 0x7f));
 		}
 	}

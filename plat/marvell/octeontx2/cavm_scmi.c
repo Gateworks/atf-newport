@@ -304,7 +304,7 @@ int scmi_sys_pwr_state_get(void *p, uint32_t *system_state)
 /*
  * API to set the SCMI Cavium shutdown configuration
  */
-int scmi_cavm_shutdown_config(void *p, uint32_t board_type, uint32_t shutdown_data)
+int scmi_octeontx_shutdown_config(void *p, uint32_t board_type, uint32_t shutdown_data)
 {
 	mailbox_mem_t *mbx_mem;
 	int token = 0, ret;
@@ -336,8 +336,8 @@ int scmi_cavm_shutdown_config(void *p, uint32_t board_type, uint32_t shutdown_da
 /*
  * Private helper to fill up proper structures for CAVM_SHUTDOWN_CONFIG
  */
-static int scmi_fill_cavm_shutdown(cavm_shutdown_config_type_t *board_type,
-				   cavm_shutdown_config_data_t *data)
+static int scmi_fill_octeontx_shutdown(octeontx_shutdown_config_type_t *board_type,
+				   octeontx_shutdown_config_data_t *data)
 {
 	/* Check for MCU structure */
 	if (bfdt->mcu_twsi.u != 0) {
@@ -369,8 +369,8 @@ static int scmi_fill_cavm_shutdown(cavm_shutdown_config_type_t *board_type,
  */
 void *scmi_init(scmi_channel_t *ch)
 {
-	cavm_shutdown_config_type_t board_type;
-	cavm_shutdown_config_data_t shutdown_data;
+	octeontx_shutdown_config_type_t board_type;
+	octeontx_shutdown_config_data_t shutdown_data;
 	uint32_t version;
 	int ret;
 
@@ -430,14 +430,14 @@ void *scmi_init(scmi_channel_t *ch)
 	VERBOSE("SCMI Cavium config protocol version 0x%x detected\n", version);
 
 	/* Fill up the shutdown structures */
-	ret = scmi_fill_cavm_shutdown(&board_type, &shutdown_data);
+	ret = scmi_fill_octeontx_shutdown(&board_type, &shutdown_data);
 	if (ret != SCMI_E_SUCCESS) {
 		WARN("SCMI: Incorrect shutdown config\n");
 		goto error;
 	}
 
 	/* Send actual data to SCP */
-	ret = scmi_cavm_shutdown_config(ch, board_type.u, shutdown_data.u);
+	ret = scmi_octeontx_shutdown_config(ch, board_type.u, shutdown_data.u);
 	if (ret != SCMI_E_SUCCESS) {
 		WARN("SCMI Cavium config protocol - unable to send shutdown config - returned %d\n",
 			ret);

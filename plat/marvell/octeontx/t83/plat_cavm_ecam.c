@@ -90,7 +90,7 @@ static int ecam_probe_bgx(int node, unsigned long arg)
 /* arg is LMC number */
 static int ecam_probe_lmc(int node, unsigned long arg)
 {
-	return thunder_dram_is_lmc_enabled(node, arg);
+	return plat_octeontx_is_lmc_enabled(node, arg);
 }
 
 struct ecam_probe_callback probe_callbacks[] = {
@@ -127,9 +127,9 @@ static void init_gpio(int node, uint64_t config_base, uint64_t config_size)
 			node, config_base, config_size);
 
 	/* Mark the MSI-X interrupts as physical */
-	vsec_sctl.u = cavm_read32(config_base + CAVM_PCCPF_XXX_VSEC_SCTL);
+	vsec_sctl.u = octeontx_read32(config_base + CAVM_PCCPF_XXX_VSEC_SCTL);
 	vsec_sctl.s.msix_phys = 1;
-	cavm_write32(config_base + CAVM_PCCPF_XXX_VSEC_SCTL, vsec_sctl.u);
+	octeontx_write32(config_base + CAVM_PCCPF_XXX_VSEC_SCTL, vsec_sctl.u);
 
 	enable_msix(config_base, cap_ptr, &table_size, &bir);
 
@@ -144,11 +144,11 @@ static void init_gpio(int node, uint64_t config_base, uint64_t config_size)
 
 		for (i = vector_skip; i < table_size; i++) {
 			/* enable SECVEC (bit0) for each MSI-X vectors*/
-			cavm_write64(vector_base, ((i % 2) ?
+			octeontx_write64(vector_base, ((i % 2) ?
 						CAVM_GICD_CLRSPI_NSR :
 						CAVM_GICD_SETSPI_NSR) | 1);
 			vector_base += 8;
-			cavm_write64(vector_base, OCTEONTX_IRQ_GPIO_NSEC);
+			octeontx_write64(vector_base, OCTEONTX_IRQ_GPIO_NSEC);
 			vector_base += 8;
 		}
 	}
@@ -195,7 +195,7 @@ static inline uint64_t cn83xx_get_dev_config(struct ecam_device *dev)
 		  ((dev->dev << ECAM_DEV_SHIFT) & ECAM_DEV_MASK) |
 		  ((dev->func << ECAM_FUNC_SHIFT) & ECAM_FUNC_MASK));
 
-	pccpf_id.u = cavm_read32(pconfig + CAVM_PCCPF_XXX_ID);
+	pccpf_id.u = octeontx_read32(pconfig + CAVM_PCCPF_XXX_ID);
 	if (pccpf_id.s.vendid == 0xffff || pccpf_id.s.devid == 0xffff)
 		return 0;
 
@@ -371,7 +371,7 @@ static int cn83xx_get_secure_settings(struct ecam_device *dev, uint64_t pconfig)
 	int i = 0;
 
 	/* Get secure/non-secure setting */
-	pccpf_id.u = cavm_read32(pconfig + CAVM_PCCPF_XXX_ID);
+	pccpf_id.u = octeontx_read32(pconfig + CAVM_PCCPF_XXX_ID);
 	debug_plat_ecam("%s: DeviceID=0x%04x\n", __func__, pccpf_id.s.devid);
 
 	dev->config.s.is_secure = 0;

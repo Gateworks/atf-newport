@@ -55,14 +55,14 @@ struct l2c_region l2c_map [] = {
 
 void octeontx_security_setup(void)
 {
-	unsigned node_count = thunder_get_node_count();
+	unsigned node_count = plat_octeontx_get_node_count();
 	union cavm_l2c_asc_regionx_attr l2c_asc_attr;
 	struct l2c_region *region = l2c_map;
 
 	uint64_t dram_end;
 
 	while (region->node < node_count) {
-		dram_end = thunder_dram_size_node(region->node) - 1;
+		dram_end = octeontx_dram_size_node(region->node) - 1;
 		if (region->end > dram_end)
 			region->end = dram_end;
 
@@ -100,7 +100,7 @@ void octeontx_security_setup(void)
  * This function configures SMMU to grant access for eMMC controller
  * to secure/non-secure memory based on input parameter passed
  */
-void cavm_configure_mmc_security(int secure)
+void octeontx_configure_mmc_security(int secure)
 {
 	int node = cavm_numa_local();
 	uint64_t val;
@@ -109,7 +109,7 @@ void cavm_configure_mmc_security(int secure)
 	union cavm_smmux_nscr0 smmux_nscr0;
 
 	/* Check for MMC boot, if not return here */
-	if (bfdt->boot_dev.boot_type != THUNDER_BOOT_EMMC)
+	if (bfdt->boot_dev.boot_type != OCTEONTX_BOOT_EMMC)
 		return;
 
 	val = CSR_READ(node, CAVM_SMMUX_SSDRX(0, ssd_idx));

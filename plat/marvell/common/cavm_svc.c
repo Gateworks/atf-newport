@@ -26,12 +26,12 @@
 #define PAR_EL1_F	(1 << 0)
 
 /* Cavium OEM Service UUID */
-DEFINE_SVC_UUID(thunder_svc_uid,
+DEFINE_SVC_UUID(octeontx_svc_uid,
 		0xcf98f46f, 0xfa9c, 0x4e5a, 0xa4, 0x3a,
 		0x2a, 0x2f, 0x05, 0xb1, 0x45, 0x59);
 
 /* Setup Standard Services */
-static int32_t thunder_svc_setup(void)
+static int32_t octeontx_svc_setup(void)
 {
 	return 0;
 }
@@ -39,7 +39,7 @@ static int32_t thunder_svc_setup(void)
 /*
  * Top-level OEM Service SMC handler
  */
-uint64_t thunder_svc_smc_handler(uint32_t smc_fid,
+uint64_t octeontx_svc_smc_handler(uint32_t smc_fid,
 				 uint64_t x1,
 				 uint64_t x2,
 				 uint64_t x3,
@@ -61,19 +61,19 @@ uint64_t thunder_svc_smc_handler(uint32_t smc_fid,
 
 	case OCTEONTX_SVC_UID:
 		/* Return UID to the caller */
-		SMC_UUID_RET(handle, thunder_svc_uid);
+		SMC_UUID_RET(handle, octeontx_svc_uid);
 
 	case OCTEONTX_SVC_VERSION:
 		/* Return the version of current implementation */
 		SMC_RET2(handle, OCTEONTX_VERSION_MAJOR, OCTEONTX_VERSION_MINOR);
 
 	case OCTEONTX_DRAM_SIZE:
-		ret = thunder_dram_size_node(x1);
+		ret = octeontx_dram_size_node(x1);
 		WARN("DRAM size for %lx: %lx\n", x1, ret);
 		SMC_RET1(handle, ret);
 
 	case OCTEONTX_NODE_COUNT:
-		ret = thunder_get_node_count();
+		ret = plat_octeontx_get_node_count();
 		SMC_RET1(handle, ret);
 
 	case OCTEONTX_PUTC:
@@ -99,10 +99,10 @@ uint64_t thunder_svc_smc_handler(uint32_t smc_fid,
 
 /* Register Standard Service Calls as runtime service */
 DECLARE_RT_SVC(
-		thunder_svc,
+		octeontx_svc,
 		OEN_SIP_START,
 		OEN_SIP_END,
 		SMC_TYPE_FAST,
-		thunder_svc_setup,
-		thunder_svc_smc_handler
+		octeontx_svc_setup,
+		octeontx_svc_smc_handler
 );

@@ -264,10 +264,10 @@ struct blk_entry {
 	enum rvu_block_addr_e block;
 };
 
-union cavm_trapctl_el3
+union octeontx_trapctl_el3
 {
     uint64_t u;
-    struct cavm_trapctl_el3_s
+    struct octeontx_trapctl_el3_s
     {
         uint64_t ena                   : 1;  /**< [  0:  0](R/W) Enable. */
         uint64_t mtype                 : 3;  /**< [  3:  1](R/W) Read-only. Typs of matcher for software capability discovery:
@@ -287,9 +287,9 @@ union cavm_trapctl_el3
         uint64_t el2                   : 1;  /**< [ 36: 36](R/W) Trap accesses from EL2. */
         uint64_t reserved_37_63        : 27;
     } s;
-    /* struct cavm_trapctl_el3_s cn; */
+    /* struct octeontx_trapctl_el3_s cn; */
 };
-typedef union cavm_trapctl_el3 cavm_trapctl_el3_t;
+typedef union octeontx_trapctl_el3 octeontx_trapctl_el3_t;
 
 union rvu_af_bar2_sel
 {
@@ -306,6 +306,6 @@ typedef union rvu_af_bar2_sel rvu_af_bar2_sel_t;
 
 /* Exported functions */
 void plat_flr_init(void);
-void cavm_trap_handler(void * ctx_handle);
+void octeontx_trap_handler(void * ctx_handle);
 
 #endif /* __CAVM_FLR_H__ */

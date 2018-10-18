@@ -14,15 +14,15 @@
 #ifndef __CAVM_UTILS_H__
 #define __CAVM_UTILS_H__
 
-#define cavm_read8(addr)       (*(volatile uint8_t *)(addr))
-#define cavm_read16(addr)      cavm_le16_to_cpu(*(volatile uint16_t *)(addr))
-#define cavm_read32(addr)      cavm_le32_to_cpu(*(volatile uint32_t *)(addr))
-#define cavm_read64(addr)      cavm_le64_to_cpu(*(volatile uint64_t *)(addr))
+#define octeontx_read8(addr)       (*(volatile uint8_t *)(addr))
+#define octeontx_read16(addr)      cavm_le16_to_cpu(*(volatile uint16_t *)(addr))
+#define octeontx_read32(addr)      cavm_le32_to_cpu(*(volatile uint32_t *)(addr))
+#define octeontx_read64(addr)      cavm_le64_to_cpu(*(volatile uint64_t *)(addr))
 
-#define cavm_write8(addr, val) (*(volatile uint8_t *)(addr) = (val))
-#define cavm_write16(addr, val)        (*(volatile uint16_t *)(addr) = cavm_cpu_to_le16((val)))
-#define cavm_write32(addr, val)        (*(volatile uint32_t *)(addr) = cavm_cpu_to_le32((val)))
-#define cavm_write64(addr, val)        (*(volatile uint64_t *)(addr) = cavm_cpu_to_le64((val)))
+#define octeontx_write8(addr, val) (*(volatile uint8_t *)(addr) = (val))
+#define octeontx_write16(addr, val)        (*(volatile uint16_t *)(addr) = cavm_cpu_to_le16((val)))
+#define octeontx_write32(addr, val)        (*(volatile uint32_t *)(addr) = cavm_cpu_to_le32((val)))
+#define octeontx_write64(addr, val)        (*(volatile uint64_t *)(addr) = cavm_cpu_to_le64((val)))
 
 /**
  * Macro to get the physical address of a CSR on a node

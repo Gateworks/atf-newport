@@ -418,7 +418,7 @@ static void octeontx2_parse_rvu_config(const void *fdt, int *fdt_vfs)
 	}
 
 	/* Find if CPT node is available */
-	if (thunder_get_cpt_count()) {
+	if (plat_octeontx_get_cpt_count()) {
 		/* if CPT block is available, check if node is
 		 * present before configuring RVU for CPT
 		 */
@@ -456,40 +456,40 @@ static void octeontx2_boot_device_from_strapx(const int node)
 
 	switch (boot_medium) {
 		case CAVM_RST_BOOT_METHOD_E_REMOTE_CN9:
-			bfdt->boot_dev.boot_type = THUNDER_BOOT_REMOTE;
+			bfdt->boot_dev.boot_type = OCTEONTX_BOOT_REMOTE;
 			break;
 		case CAVM_RST_BOOT_METHOD_E_SPI0_CS0:
-			bfdt->boot_dev.boot_type = THUNDER_BOOT_SPI;
+			bfdt->boot_dev.boot_type = OCTEONTX_BOOT_SPI;
 			bfdt->boot_dev.controller = 0;
 			bfdt->boot_dev.cs = 0;
 			break;
 		case CAVM_RST_BOOT_METHOD_E_SPI0_CS1:
-			bfdt->boot_dev.boot_type = THUNDER_BOOT_SPI;
+			bfdt->boot_dev.boot_type = OCTEONTX_BOOT_SPI;
 			bfdt->boot_dev.controller = 0;
 			bfdt->boot_dev.cs = 1;
 			break;
 		case CAVM_RST_BOOT_METHOD_E_SPI1_CS0:
-			bfdt->boot_dev.boot_type = THUNDER_BOOT_SPI;
+			bfdt->boot_dev.boot_type = OCTEONTX_BOOT_SPI;
 			bfdt->boot_dev.controller = 1;
 			bfdt->boot_dev.cs = 0;
 			break;
 		case CAVM_RST_BOOT_METHOD_E_SPI1_CS1:
-			bfdt->boot_dev.boot_type = THUNDER_BOOT_SPI;
+			bfdt->boot_dev.boot_type = OCTEONTX_BOOT_SPI;
 			bfdt->boot_dev.controller = 1;
 			bfdt->boot_dev.cs = 1;
 			break;
 		case CAVM_RST_BOOT_METHOD_E_EMMC_CS0:
-			bfdt->boot_dev.boot_type = THUNDER_BOOT_EMMC;
+			bfdt->boot_dev.boot_type = OCTEONTX_BOOT_EMMC;
 			bfdt->boot_dev.controller = 0;
 			bfdt->boot_dev.cs = 0;
 			break;
 		case CAVM_RST_BOOT_METHOD_E_EMMC_CS1:
-			bfdt->boot_dev.boot_type = THUNDER_BOOT_EMMC;
+			bfdt->boot_dev.boot_type = OCTEONTX_BOOT_EMMC;
 			bfdt->boot_dev.controller = 0;
 			bfdt->boot_dev.cs = 1;
 			break;
 		default:
-			bfdt->boot_dev.boot_type = -THUNDER_BOOT_UNSUPPORTED;
+			bfdt->boot_dev.boot_type = -OCTEONTX_BOOT_UNSUPPORTED;
 			break;
 	}
 }
@@ -515,18 +515,18 @@ static int octeontx2_parse_boot_device(const void *fdt, const int offset,
 
 	/* Get boot type */
 	if (!strncmp("SPI", boot_device, 3))
-		val = THUNDER_BOOT_SPI;
+		val = OCTEONTX_BOOT_SPI;
 	else if (!strncmp("EMMC", boot_device, 4))
-		val = THUNDER_BOOT_EMMC;
+		val = OCTEONTX_BOOT_EMMC;
 	else if (!strncmp("REMOTE", boot_device, 6))
-		val = THUNDER_BOOT_REMOTE;
+		val = OCTEONTX_BOOT_REMOTE;
 	else
-		val = -THUNDER_BOOT_UNSUPPORTED;
+		val = -OCTEONTX_BOOT_UNSUPPORTED;
 
 	bfdt->boot_dev.boot_type = val;
 
 	/* Get boot controller (only for SPI) */
-	if (bfdt->boot_dev.boot_type == THUNDER_BOOT_SPI) {
+	if (bfdt->boot_dev.boot_type == OCTEONTX_BOOT_SPI) {
 		if (!strncmp("SPI0", boot_device, 4))
 			val = 0;
 		else if (!strncmp("SPI1", boot_device, 4))
@@ -540,8 +540,8 @@ static int octeontx2_parse_boot_device(const void *fdt, const int offset,
 	bfdt->boot_dev.controller = val;
 
 	/* Get chip select used to boot (EMMC and SPI) */
-	if (bfdt->boot_dev.boot_type == THUNDER_BOOT_SPI ||
-	    bfdt->boot_dev.boot_type == THUNDER_BOOT_EMMC) {
+	if (bfdt->boot_dev.boot_type == OCTEONTX_BOOT_SPI ||
+	    bfdt->boot_dev.boot_type == OCTEONTX_BOOT_EMMC) {
 		cs = strchr(boot_device, '_');
 		if (!cs) {
 			val = -1;
@@ -1422,11 +1422,11 @@ static void octeontx2_fill_cgx_details(const void *fdt)
 	int nnum;
 	int lnum;
 	int linit;
-	cavm_qlm_state_lane_t qlm_state;
+	octeontx_qlm_state_lane_t qlm_state;
 
-	nnum = thunder_get_node_count();
+	nnum = plat_octeontx_get_node_count();
 	for (node_idx = 0; node_idx < nnum; node_idx++) {
-		for (qlm_idx = thunder_get_gser_count() - 1; qlm_idx >= 0; qlm_idx--) {
+		for (qlm_idx = plat_octeontx_get_gser_count() - 1; qlm_idx >= 0; qlm_idx--) {
 			lnum = plat_get_max_lane_num(qlm_idx);
 			for (lane_idx = 0; lane_idx < lnum; lane_idx++) {
 				qlm_state.u = CSR_READ(node_idx, CAVM_GSERNX_LANEX_SCRATCHX(qlm_idx, lane_idx, 0));
@@ -1462,7 +1462,7 @@ int plat_fill_board_details(int info)
 	 */
 	assert(sizeof(board_fdt_t) < (BOARD_CFG_MAX_SIZE - BOARD_CFG_BASE));
 
-	rc = cavm_fill_board_details(info);
+	rc = octeontx_fill_board_details(info);
 	if (rc) {
 		WARN("Processing common FDT failed\n");
 		return rc;

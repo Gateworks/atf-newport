@@ -15,17 +15,12 @@
 #include <cavm_utils.h>
 #include <platform_def.h>
 
-int thunder_get_lmc_per_node(void)
+int plat_octeontx_get_lmc_per_node(void)
 {
 	return 1;
 }
 
-int thunder_get_num_ecams_per_node(void)
-{
-	return 1;
-}
-
-int thunder_get_sata_count(void)
+int plat_octeontx_get_sata_count(void)
 {
 	return 2;
 }
@@ -34,7 +29,7 @@ int thunder_get_sata_count(void)
  * SATA to GSER mapping
  * SATA(0-1) --- GSER3
  */
-int thunder_sata_to_gser(int ctrlr)
+int plat_octeontx_sata_to_gser(int ctrlr)
 {
 	if (ctrlr > 1)
 		return -1;
@@ -42,7 +37,7 @@ int thunder_sata_to_gser(int ctrlr)
 	return 3;
 }
 
-int thunder_sata_to_lane(int ctrlr)
+int plat_octeontx_sata_to_lane(int ctrlr)
 {
 	if (ctrlr > 1)
 		return -1;
@@ -50,7 +45,7 @@ int thunder_sata_to_lane(int ctrlr)
 	return ctrlr % 2;
 }
 
-int thunder_dram_is_lmc_enabled(unsigned node, unsigned lmc)
+int plat_octeontx_is_lmc_enabled(unsigned node, unsigned lmc)
 {
 	union cavm_lmcx_dll_ctl2 lmcx_dll_ctl2;
 
@@ -59,7 +54,7 @@ int thunder_dram_is_lmc_enabled(unsigned node, unsigned lmc)
 	return (lmcx_dll_ctl2.s.dreset ? 0 : 1);
 }
 
-unsigned thunder_get_node_count(void)
+unsigned plat_octeontx_get_node_count(void)
 {
 	unsigned long node = cavm_numa_local();
 	union cavm_l2c_oci_ctl l2c_oci_ctl;

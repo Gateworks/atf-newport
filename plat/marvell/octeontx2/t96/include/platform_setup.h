@@ -36,7 +36,7 @@
  * as CORES+CLUSTERS+NODES (for t93, it's 29).
  * Right now use 24 PWR_DOMAINS (one per core)
  */
-static const uint32_t plat_cavm_core_pos_to_scmi_dmn_id_map[PLATFORM_CORE_COUNT] = {
+static const uint32_t plat_octeontx_core_pos_to_scmi_dmn_id_map[PLATFORM_CORE_COUNT] = {
 				0, 1, 2, 3,
 				4, 5, 6, 7,
 				8, 9, 10, 11,
@@ -45,7 +45,7 @@ static const uint32_t plat_cavm_core_pos_to_scmi_dmn_id_map[PLATFORM_CORE_COUNT]
 				20, 21, 22, 23};
 
 /* CPU topology tree description for T96 */
-static const unsigned char cavm_power_domain_tree_desc[] = {
+static const unsigned char plat_octeontx_power_domain_tree_desc[] = {
 	/* No of root nodes */
 	PLATFORM_MAX_NODES,
 	/* No of clusters */

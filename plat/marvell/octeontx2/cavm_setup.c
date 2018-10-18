@@ -34,7 +34,7 @@
  * to family, each platform can define
  * its own API and can be called from here
  */
-void plat_cavm_setup(void)
+void plat_octeontx_setup(void)
 {
 	/* Initialize CGX framework */
 	cgx_fw_intf_init();
@@ -68,9 +68,9 @@ void plat_pwrc_setup(void)
 	 * Try to initialize SCMI, in case of error,
 	 * fallback to legacy PM driver
 	 */
-	rc = cavm_pwrc_setup();
+	rc = octeontx_pwrc_setup();
 	if (rc) {
-		cavm_legacy_pwrc_setup();
+		octeontx_legacy_pwrc_setup();
 	}
 }
 
@@ -78,9 +78,9 @@ void plat_setup_psci_ops(uintptr_t sec_entrypoint,
 			 const plat_psci_ops_t **psci_ops)
 {
 	if (scmi_handle == NULL) {
-		cavm_legacy_setup_psci_ops(sec_entrypoint, psci_ops);
+		octeontx_legacy_setup_psci_ops(sec_entrypoint, psci_ops);
 	} else {
-		cavm_setup_psci_ops(sec_entrypoint, psci_ops);
+		octeontx_setup_psci_ops(sec_entrypoint, psci_ops);
 	}
 }
 
@@ -135,7 +135,7 @@ unsigned int plat_get_rom_t_cnt(int node)
 	 * in the bank associated with FUSF_RCMD[ADDR].
 	 * ROM_T_CNT is stored on FUSF_BNK_DATX(0)[63:32]
 	 */
-	nv_count_val = cavm_bit_extract(dat, CAVM_FUSF_FUSE_NUM_E_ROM_T_CNTX(0), 32);
+	nv_count_val = octeontx_bit_extract(dat, CAVM_FUSF_FUSE_NUM_E_ROM_T_CNTX(0), 32);
 
 	/* Convert value from rom_t_cnt to unsigned int */
 	if (nv_count_val)

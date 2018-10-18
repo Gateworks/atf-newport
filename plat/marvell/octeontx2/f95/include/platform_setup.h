@@ -34,11 +34,11 @@
  * as CORES+CLUSTERS+NODES (for f95, it's 8).
  * Right now use one PWR_DOMAIN per core.
  */
-static const uint32_t plat_cavm_core_pos_to_scmi_dmn_id_map[PLATFORM_CORE_COUNT] = {
+static const uint32_t plat_octeontx_core_pos_to_scmi_dmn_id_map[PLATFORM_CORE_COUNT] = {
 				0, 1, 2, 3, 4, 5};
 
 /* CPU topology tree description for F95 */
-static const unsigned char cavm_power_domain_tree_desc[] = {
+static const unsigned char plat_octeontx_power_domain_tree_desc[] = {
 	/* No of root nodes */
 	PLATFORM_MAX_NODES,
 	/* No of clusters */

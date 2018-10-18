@@ -32,7 +32,7 @@
 /* Probe GSERNX_LANE_SCRATCHX[] for CGX config */
 static int ecam_probe_cgx(int node, unsigned long arg)
 {
-	cavm_qlm_state_lane_t qlm_state;
+	octeontx_qlm_state_lane_t qlm_state;
 	int qlm = -1, lnum = 0;
 
 	debug_plat_ecam("%s arg %ld\n", __func__, arg);
@@ -83,10 +83,10 @@ static void init_gpio(int node, uint64_t config_base, uint64_t config_size)
 			node, config_base, config_size);
 
 	/* Block can have mix of secure and non-secure MSI-X interrupts */
-	vsec_sctl.u = cavm_read32(config_base + CAVM_PCCPF_XXX_VSEC_SCTL);
+	vsec_sctl.u = octeontx_read32(config_base + CAVM_PCCPF_XXX_VSEC_SCTL);
 	vsec_sctl.cn9.msix_sec_en = 1;
 	vsec_sctl.cn9.msix_sec_phys = 1;
-	cavm_write32(config_base + CAVM_PCCPF_XXX_VSEC_SCTL, vsec_sctl.u);
+	octeontx_write32(config_base + CAVM_PCCPF_XXX_VSEC_SCTL, vsec_sctl.u);
 }
 
 static void init_rvu(int node, uint64_t config_base, uint64_t config_size)
@@ -99,7 +99,7 @@ static void init_cgx(int node, uint64_t config_base, uint64_t config_size)
 	union cavm_pccpf_xxx_vsec_ctl vsec_ctl;
 	int cgx_id;
 
-	vsec_ctl.u = cavm_read32(config_base + CAVM_PCCPF_XXX_VSEC_CTL);
+	vsec_ctl.u = octeontx_read32(config_base + CAVM_PCCPF_XXX_VSEC_CTL);
 	cgx_id = vsec_ctl.s.inst_num;
 
 	debug_plat_ecam("CGX(%d):NODE(%d) init config_base:%lx size:%lx\n",
@@ -176,7 +176,7 @@ static inline uint64_t cn95xx_get_dev_config(struct ecam_device *dev)
 		  ((dev->dev << ECAM_DEV_SHIFT) & ECAM_DEV_MASK) |
 		  ((dev->func << ECAM_FUNC_SHIFT) & ECAM_FUNC_MASK));
 
-	pccpf_id.u = cavm_read32(pconfig + CAVM_PCCPF_XXX_ID);
+	pccpf_id.u = octeontx_read32(pconfig + CAVM_PCCPF_XXX_ID);
 	if (pccpf_id.s.vendid == 0xffff || pccpf_id.s.devid == 0xffff)
 		return 0;
 
@@ -350,7 +350,7 @@ static int cn95xx_get_secure_settings(struct ecam_device *dev, uint64_t pconfig)
 	int i = 0;
 
 	/* Get secure/non-secure setting */
-	pccpf_id.u = cavm_read32(pconfig + CAVM_PCCPF_XXX_ID);
+	pccpf_id.u = octeontx_read32(pconfig + CAVM_PCCPF_XXX_ID);
 	debug_plat_ecam("%s: DeviceID=0x%04x\n", __func__, pccpf_id.s.devid);
 
 	dev->config.s.is_secure = 0;

@@ -29,7 +29,7 @@ static void octeontx_boot_device_from_strapx(const int node)
 	if (rst_boot.s.rboot) {
 		/* Fill boot_dev structure */
 		bfdt->boot_dev.node = node;
-		bfdt->boot_dev.boot_type = THUNDER_BOOT_REMOTE;
+		bfdt->boot_dev.boot_type = OCTEONTX_BOOT_REMOTE;
 		bfdt->boot_dev.controller = 0;
 		bfdt->boot_dev.cs = 0;
 		return;
@@ -41,14 +41,14 @@ static void octeontx_boot_device_from_strapx(const int node)
 	switch (boot_medium) {
 		case CAVM_RST_BOOT_METHOD_E_SPI24:
 		case CAVM_RST_BOOT_METHOD_E_SPI32:
-			ret = THUNDER_BOOT_SPI;
+			ret = OCTEONTX_BOOT_SPI;
 			break;
 		case CAVM_RST_BOOT_METHOD_E_EMMC_LS:
 		case CAVM_RST_BOOT_METHOD_E_EMMC_SS:
-			ret = THUNDER_BOOT_EMMC;
+			ret = OCTEONTX_BOOT_EMMC;
 			break;
 		default:
-			ret = -THUNDER_BOOT_UNSUPPORTED;
+			ret = -OCTEONTX_BOOT_UNSUPPORTED;
 			break;
 	}
 
@@ -80,13 +80,13 @@ static int octeontx_parse_boot_device(const void *fdt, const int offset,
 
 	/* Get boot type */
 	if (!strncmp("SPI", boot_device, 3))
-		val = THUNDER_BOOT_SPI;
+		val = OCTEONTX_BOOT_SPI;
 	else if (!strncmp("EMMC", boot_device, 4))
-		val = THUNDER_BOOT_EMMC;
+		val = OCTEONTX_BOOT_EMMC;
 	else if (!strncmp("REMOTE", boot_device, 6))
-		val = THUNDER_BOOT_REMOTE;
+		val = OCTEONTX_BOOT_REMOTE;
 	else
-		val = -THUNDER_BOOT_UNSUPPORTED;
+		val = -OCTEONTX_BOOT_UNSUPPORTED;
 
 	bfdt->boot_dev.boot_type = val;
 	bfdt->boot_dev.controller = 0;
@@ -107,7 +107,7 @@ int plat_fill_board_details(int info)
 	 */
 	assert(sizeof(board_fdt_t) < (BOARD_CFG_MAX_SIZE - BOARD_CFG_BASE));
 
-	rc = cavm_fill_board_details(info);
+	rc = octeontx_fill_board_details(info);
 	if (rc) {
 		WARN("Processing common FDT failed\n");
 		return rc;

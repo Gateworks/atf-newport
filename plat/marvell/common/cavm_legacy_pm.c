@@ -32,7 +32,7 @@
 #undef GICD_TYPER
 #undef GICD_IIDR
 
-static void cavm_odm_shutdown(int shutdown_gpio)
+static void octeontx_odm_shutdown(int shutdown_gpio)
 {
 	volatile int loop;
 
@@ -46,7 +46,7 @@ static void cavm_odm_shutdown(int shutdown_gpio)
 	gpio_set_out(shutdown_gpio);
 }
 
-static int cavm_signal_mcu(uint8_t signal)
+static int octeontx_signal_mcu(uint8_t signal)
 {
 	uint8_t data[2];
 	int rc;
@@ -54,7 +54,7 @@ static int cavm_signal_mcu(uint8_t signal)
 	data[0] = bfdt->mcu_twsi.s.int_addr;
 	data[1] = signal;
 
-	rc = thunder_twsi_send(bfdt->mcu_twsi.s.node, bfdt->mcu_twsi.s.bus,
+	rc = octeontx_twsi_send(bfdt->mcu_twsi.s.node, bfdt->mcu_twsi.s.bus,
 			       bfdt->mcu_twsi.s.addr, data, sizeof(data));
 	if (rc) {
 		ERROR("Unable to send signal 0x%x to MCU, error 0x%x\n",
@@ -65,14 +65,14 @@ static int cavm_signal_mcu(uint8_t signal)
 	return 0;
 }
 
-static void cavm_signal_shutdown(void)
+static void octeontx_signal_shutdown(void)
 {
 	int rc;
 
 	/* Check for MCU structure */
 	if (bfdt->mcu_twsi.u != 0) {
 		/* We're on EBB, shutdown using MCU */
-		rc = cavm_signal_mcu(OCTEONTX_MCU_SHUTDOWN_SIGNAL);
+		rc = octeontx_signal_mcu(OCTEONTX_MCU_SHUTDOWN_SIGNAL);
 		if (!rc) {
 			INFO("Cavium System Off: shutting down system...\n");
 			for(;;);
@@ -83,28 +83,27 @@ static void cavm_signal_shutdown(void)
 	/* Check for GPIO config */
 	} else if (bfdt->gpio_shutdown_ctl_out >= 0) {
 		/* We're on SFF board, shutdown using GPIO */
-		cavm_odm_shutdown(bfdt->gpio_shutdown_ctl_out);
+		octeontx_odm_shutdown(bfdt->gpio_shutdown_ctl_out);
 	} else {
 		ERROR("Cavium System Off: Incorrect shutdown configuration\n");
 		panic();
 	}
 }
 
-
-static void thunder_power_domain_on_finish_common(const psci_power_state_t *target_state)
+static void octeontx_legacy_power_domain_on_finish_common(const psci_power_state_t *target_state)
 {
 	assert(target_state->pwr_domain_state[MPIDR_AFFLVL0] ==
-					THUNDER_STATE_OFF);
+					OCTEONTX_STATE_OFF);
 }
 
 
 /*******************************************************************************
  * FVP handler called when a CPU is about to enter standby.
  ******************************************************************************/
-void thunder_cpu_standby(plat_local_state_t cpu_state)
+static void octeontx_legacy_cpu_standby(plat_local_state_t cpu_state)
 {
 
-	assert(cpu_state == THUNDER_STATE_RET);
+	assert(cpu_state == OCTEONTX_STATE_RET);
 
 	/*
 	 * Enter standby state
@@ -118,11 +117,11 @@ void thunder_cpu_standby(plat_local_state_t cpu_state)
  * FVP handler called when a power domain is about to be turned on. The
  * mpidr determines the CPU to be turned on.
  ******************************************************************************/
-int thunder_pwr_domain_on(u_register_t mpidr)
+static int octeontx_legacy_pwr_domain_on(u_register_t mpidr)
 {
 	int rc = PSCI_E_SUCCESS;
 
-	thunder_pwrc_write_pponr(mpidr);
+	octeontx_legacy_pwrc_write_pponr(mpidr);
 	return rc;
 }
 
@@ -130,37 +129,36 @@ int thunder_pwr_domain_on(u_register_t mpidr)
  * FVP handler called when a power domain is about to be turned off. The
  * target_state encodes the power state that each level should transition to.
  ******************************************************************************/
-void thunder_pwr_domain_off(const psci_power_state_t *target_state)
+static void octeontx_legacy_pwr_domain_off(const psci_power_state_t *target_state)
 {
 	assert(target_state->pwr_domain_state[MPIDR_AFFLVL0] ==
-					THUNDER_STATE_OFF);
+					OCTEONTX_STATE_OFF);
 	/*
 	 * If execution reaches this stage then this power domain will be
 	 * suspended. Prevent interrupts from spuriously waking up this cpu.
 	 */
-
-	cavm_gic_cpuif_disable();
+	octeontx_gic_cpuif_disable();
 }
 
 /*******************************************************************************
  * FVP handler called when a power domain is about to be suspended. The
  * target_state encodes the power state that each level should transition to.
  ******************************************************************************/
-void thunder_pwr_domain_suspend(const psci_power_state_t *target_state)
+static void octeontx_legacy_pwr_domain_suspend(const psci_power_state_t *target_state)
 {
 	/*
 	 * FVP has retention only at cpu level. Just return
 	 * as nothing is to be done for retention.
 	 */
 	if (target_state->pwr_domain_state[MPIDR_AFFLVL0] ==
-					THUNDER_STATE_RET)
+					OCTEONTX_STATE_RET)
 		return;
 
 	assert(target_state->pwr_domain_state[MPIDR_AFFLVL0] ==
-					THUNDER_STATE_OFF);
+					OCTEONTX_STATE_OFF);
 
 	/* Prevent interrupts from spuriously waking up this cpu */
-	cavm_gic_cpuif_disable();
+	octeontx_gic_cpuif_disable();
 }
 
 /*******************************************************************************
@@ -168,17 +166,18 @@ void thunder_pwr_domain_suspend(const psci_power_state_t *target_state)
  * being turned off earlier. The target_state encodes the low power state that
  * each level has woken up from.
  ******************************************************************************/
-void thunder_pwr_domain_on_finish(const psci_power_state_t *target_state)
+static void octeontx_legacy_pwr_domain_on_finish(const psci_power_state_t *target_state)
 {
-	thunder_power_domain_on_finish_common(target_state);
+	octeontx_legacy_power_domain_on_finish_common(target_state);
 
 	/* Enable the gic cpu interface */
-	cavm_gic_pcpu_init();
+	octeontx_gic_pcpu_init();
 
 	/* Program the gic per-cpu distributor or re-distributor interface */
-	cavm_gic_cpuif_enable();
+	octeontx_gic_cpuif_enable();
 
-	thunder_cpu_setup();
+	/* Setup platform quirks for secondary cores */
+	octeontx_cpu_setup();
 
 	/* Init FLR for secondary cores */
 	plat_flr_init();
@@ -191,32 +190,32 @@ void thunder_pwr_domain_on_finish(const psci_power_state_t *target_state)
  * TODO: At the moment we reuse the on finisher and reinitialize the secure
  * context. Need to implement a separate suspend finisher.
  ******************************************************************************/
-void thunder_pwr_domain_suspend_finish(const psci_power_state_t *target_state)
+static void octeontx_legacy_pwr_domain_suspend_finish(const psci_power_state_t *target_state)
 {
 	/*
 	 * Nothing to be done on waking up from retention from CPU level.
 	 */
 	if (target_state->pwr_domain_state[MPIDR_AFFLVL0] ==
-					THUNDER_STATE_RET)
+					OCTEONTX_STATE_RET)
 		return;
 
-	thunder_power_domain_on_finish_common(target_state);
+	octeontx_legacy_power_domain_on_finish_common(target_state);
 
 	/* Enable the gic cpu interface */
-	cavm_gic_cpuif_enable();
+	octeontx_gic_cpuif_enable();
 }
 
 /*******************************************************************************
  * FVP handlers to shutdown/reboot the system
  ******************************************************************************/
-static void __dead2 thunder_system_off(void)
+static void __dead2 octeontx_legacy_system_off(void)
 {
-	cavm_signal_shutdown();
+	octeontx_signal_shutdown();
 	/* Should never reach it */
 	panic();
 }
 
-static void __dead2 thunder_system_reset(void)
+static void __dead2 octeontx_legacy_system_reset(void)
 {
 	unsigned long node = cavm_numa_local();
 	union cavm_rst_soft_rst rst_soft_rst;
@@ -230,7 +229,7 @@ static void __dead2 thunder_system_reset(void)
 	rst_soft_rst.s.soft_rst = 1;
 	CSR_WRITE(node, CAVM_RST_SOFT_RST, rst_soft_rst.u);
 
-	ERROR("Thunder System Reset: operation not handled.\n");
+	ERROR("OcteonTX System Reset: operation not handled.\n");
 	panic();
 }
 
@@ -238,7 +237,7 @@ static void __dead2 thunder_system_reset(void)
  * ARM standard platform handler called to check the validity of the power state
  * parameter.
  ******************************************************************************/
-int thunder_validate_power_state(unsigned int power_state,
+static int octeontx_legacy_validate_power_state(unsigned int power_state,
 			    psci_power_state_t *req_state)
 {
 	int pstate = psci_get_pstate_type(power_state);
@@ -260,11 +259,11 @@ int thunder_validate_power_state(unsigned int power_state,
 			return PSCI_E_INVALID_PARAMS;
 
 		req_state->pwr_domain_state[MPIDR_AFFLVL0] =
-					THUNDER_STATE_RET;
+					OCTEONTX_STATE_RET;
 	} else {
 		for (i = MPIDR_AFFLVL0; i <= pwr_lvl; i++)
 			req_state->pwr_domain_state[i] =
-					THUNDER_STATE_OFF;
+					OCTEONTX_STATE_OFF;
 	}
 
 	/*
@@ -280,14 +279,14 @@ int thunder_validate_power_state(unsigned int power_state,
  * ARM standard platform handler called to check the validity of the non secure
  * entrypoint.
  ******************************************************************************/
-int thunder_validate_ns_entrypoint(uintptr_t entrypoint)
+static int octeontx_legacy_validate_ns_entrypoint(uintptr_t entrypoint)
 {
 	int i;
-	unsigned node_count = thunder_get_node_count();
+	unsigned node_count = plat_octeontx_get_node_count();
 	uint64_t dram_end = 0;
 
 	for (i = 0; i < node_count; i++)
-		dram_end += thunder_dram_size_node(i);
+		dram_end += octeontx_dram_size_node(i);
 
 	/*
 	 * Check if the non secure entrypoint lies within the non
@@ -300,44 +299,42 @@ int thunder_validate_ns_entrypoint(uintptr_t entrypoint)
 }
 
 /*******************************************************************************
- * Export the platform handlers via plat_thunder_psci_pm_ops. The ARM Standard
+ * Export the platform handlers via plat_octeontx_legacy_psci_pm_ops. The ARM Standard
  * platform layer will take care of registering the handlers with PSCI.
  ******************************************************************************/
-const plat_psci_ops_t plat_thunder_psci_pm_ops = {
-	.cpu_standby = thunder_cpu_standby,
-	.pwr_domain_on = thunder_pwr_domain_on,
-	.pwr_domain_off = thunder_pwr_domain_off,
-	.pwr_domain_suspend = thunder_pwr_domain_suspend,
-	.pwr_domain_on_finish = thunder_pwr_domain_on_finish,
-	.pwr_domain_suspend_finish = thunder_pwr_domain_suspend_finish,
-	.system_off = thunder_system_off,
-	.system_reset = thunder_system_reset,
-	.validate_power_state = thunder_validate_power_state,
-	.validate_ns_entrypoint = thunder_validate_ns_entrypoint
+const plat_psci_ops_t plat_octeontx_legacy_psci_pm_ops = {
+	.cpu_standby = octeontx_legacy_cpu_standby,
+	.pwr_domain_on = octeontx_legacy_pwr_domain_on,
+	.pwr_domain_off = octeontx_legacy_pwr_domain_off,
+	.pwr_domain_suspend = octeontx_legacy_pwr_domain_suspend,
+	.pwr_domain_on_finish = octeontx_legacy_pwr_domain_on_finish,
+	.pwr_domain_suspend_finish = octeontx_legacy_pwr_domain_suspend_finish,
+	.system_off = octeontx_legacy_system_off,
+	.system_reset = octeontx_legacy_system_reset,
+	.validate_power_state = octeontx_legacy_validate_power_state,
+	.validate_ns_entrypoint = octeontx_legacy_validate_ns_entrypoint
 };
-
-extern uint64_t thunder_sec_entry_point;
 
 /*******************************************************************************
  * Private function to program the mailbox for a cpu before it is released
  * from reset. This function assumes that the Trusted mail box base is within
  * the ARM_SHARED_RAM region
  ******************************************************************************/
-void thunder_program_trusted_mailbox(uintptr_t address)
+static void octeontx_legacy_program_trusted_mailbox(uintptr_t address)
 {
        uintptr_t *mailbox = (void *) MAILBOX_BASE;
 
        *mailbox = address;
 }
 
-int cavm_legacy_setup_psci_ops(uintptr_t sec_entrypoint,
+int octeontx_legacy_setup_psci_ops(uintptr_t sec_entrypoint,
 				const plat_psci_ops_t **psci_ops)
 {
 
-	*psci_ops = &plat_thunder_psci_pm_ops;
+	*psci_ops = &plat_octeontx_legacy_psci_pm_ops;
 
 	/* Setup mailbox with entry point. */
-	thunder_program_trusted_mailbox(sec_entrypoint);
+	octeontx_legacy_program_trusted_mailbox(sec_entrypoint);
 
 	return 0;
 }

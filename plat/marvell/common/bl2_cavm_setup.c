@@ -222,7 +222,7 @@ void bl2_platform_setup(void)
 	octeontx_pci_init();
 
 	/* Initialise the IO layer and register platform IO devices */
-	thunder_io_setup();
+	octeontx_io_setup();
 }
 
 /*******************************************************************************

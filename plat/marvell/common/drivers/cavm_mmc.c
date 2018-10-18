@@ -161,7 +161,7 @@ int sdmmc_rw_data(int write, unsigned int addr, int size, uintptr_t buf, int buf
 				buf_size, size, round_size);
 	}
 
-	cavm_configure_mmc_security(1); /* secure */
+	octeontx_configure_mmc_security(1); /* secure */
 
 	blk_cnt = round_size / mmc_drv.sector_size;
 	offset  = addr % mmc_drv.sector_size;

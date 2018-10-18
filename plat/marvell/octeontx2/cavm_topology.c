@@ -17,11 +17,11 @@
 #include <psci.h>
 
 /*******************************************************************************
- * This function returns the Thunder default topology tree information.
+ * This function returns the Cavium default topology tree information.
  ******************************************************************************/
 const unsigned char *plat_get_power_domain_tree_desc(void)
 {
-	return cavm_power_domain_tree_desc;
+	return plat_octeontx_power_domain_tree_desc;
 }
 
 /*******************************************************************************

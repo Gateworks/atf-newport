@@ -53,7 +53,7 @@ typedef enum {
 	CAVM_QLM_MODE_USXGMII_2X1,	/* USXGMII, 2 over 1 lane, 10M, 100M, 1G, 2.5G, 5G, 10G (CN93XX QLMs) */
 	CAVM_QLM_MODE_USXGMII_1X1,	/* USXGMII, 1 over 1 lane, 10M, 100M, 1G, 2.5G, 5G, 10G, 20G (CN93XX QLMs) */
 	CAVM_QLM_MODE_LAST,
-} cavm_qlm_modes_t;
+} octeontx_qlm_modes_t;
 
 /* This structure is stored in GSERNX_LANEX_SCRATCHX to remember the mode of a
  * single lane. Based on the BDK structure;
@@ -63,14 +63,14 @@ typedef union
 	uint64_t u;
 	struct {
 		uint16_t baud_mhz;		/* Baudrate of the lane in MHz */
-		cavm_qlm_modes_t mode: 8;	/* Mode of the lane */
+		octeontx_qlm_modes_t mode: 8;	/* Mode of the lane */
 		uint32_t flags: 8;		/* Mode flags */
 		uint32_t pcie: 1;		/* Mode is PCIE RC or endpoint, see flags */
 		uint32_t sata: 1;		/* Mode is SATA */
 		uint32_t cgx: 1;		/* Mode is supported by CGX, see mode for details */
 		uint32_t reserved: 29;		/* Reserved for future use */
 	} s;
-} cavm_qlm_state_lane_t;
+} octeontx_qlm_state_lane_t;
 
 typedef struct rvu_sw_rvu_pf {
 	int num_rvu_vfs;
@@ -176,7 +176,7 @@ typedef struct board_fdt {
 	mcu_twsi_t mcu_twsi;
 } board_fdt_t;
 
-int cavm_fill_board_details(int info);
+int octeontx_fill_board_details(int info);
 int plat_fill_board_details(int info);
 int octeontx2_get_lane_num(int qlm);
 

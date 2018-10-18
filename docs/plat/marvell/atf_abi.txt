@@ -107,13 +107,10 @@ describes state of such devices when execution is handled to BL33 firmware.
  - MSI-X registered and enabled
 
 * GICv3
- - Thunder-specific configuration for two-node platform:
-   * Multisocket, single-root mode with root set to NODE0
  - Implemented ERRATUM GIC-28835 for T83 pass 1.0
  - Registered following g0 EL3 interrupts for CPU0:
-   * THUNDER_IRQ_SEC_PHY_TIMER
-   * THUNDER_IRQ_GPIO_PWR_S
-   * THUNDER_IRQ_GTI_WDOG
+   * OCTEONTX_IRQ_SEC_PHY_TIMER
+   * OCTEONTX_IRQ_GPIO_PWR_S
    Distributors, redistributors and cpu interfaces configured accordingly
 
 * PEM

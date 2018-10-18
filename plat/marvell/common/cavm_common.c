@@ -22,7 +22,7 @@
 #pragma weak plat_flr_init
 
 extern void plat_add_mmio_node(unsigned long node);
-extern unsigned thunder_get_node_count(void);
+extern unsigned plat_octeontx_get_node_count(void);
 
 void *fdt_ptr = (void *)~0;
 
@@ -33,7 +33,7 @@ unsigned long plat_get_ns_image_entrypoint(void)
 
 uint64_t plat_get_syscnt_freq2(void)
 {
-	return THUNDER_SYSCNT_FREQ * 1000 * 1000;
+	return OCTEONTX_SYSCNT_FREQ * 1000 * 1000;
 }
 
 #define ROUND_DOWN(val, align)	((val) / (align) * (align))
@@ -75,12 +75,12 @@ void plat_add_mmio_map()
 
 	plat_add_mmio_common();
 
-	node_count = thunder_get_node_count();
+	node_count = plat_octeontx_get_node_count();
 	for (node = 0; node < node_count; node++)
 		plat_add_mmio_node(node);
 }
 
-void thunder_cpu_setup(void)
+void octeontx_cpu_setup(void)
 {
 	uint64_t cvmctl_el1, cvmmemctl0_el1, cvmmemctl1_el1, midr;
 
@@ -96,7 +96,7 @@ void thunder_cpu_setup(void)
 		unset_bit(cvmctl_el1, 36);  /* Enable CAS */
 		unset_bit(cvmctl_el1, 37);  /* Enable CASP */
 	} else if ((MIDR_PARTNUM(midr) == T83PARTNUM)
-		&& !(IS_THUNDER_PASS(midr, T83PARTNUM, 1, 0))) {
+		&& !(IS_OCTEONTX_PASS(midr, T83PARTNUM, 1, 0))) {
 		unset_bit(cvmctl_el1, 36);  /* Enable CAS */
 		unset_bit(cvmctl_el1, 37);  /* Enable CASP */
 		set_bit(cvmctl_el1, 33);    /* Enable v8.1 */
@@ -113,7 +113,7 @@ void thunder_cpu_setup(void)
 	set_bit(cvmctl_el1, 40);   /* Enable delta prefetcher. */
 
 	/* Set cvm_ctl_el1[5] to workaround debug state execution in incorrect EL */
-	if (IS_THUNDER_PASS(midr, T96PARTNUM, 1, 0))
+	if (IS_OCTEONTX_PASS(midr, T96PARTNUM, 1, 0))
 		set_bit(cvmctl_el1, 5);
 
 	if (MIDR_PARTNUM(midr) == T83PARTNUM) {
@@ -121,7 +121,7 @@ void thunder_cpu_setup(void)
 		set_bit(cvmmemctl1_el1, 4); /* Enable SSO/PKO addr region */
 		set_bit(cvmmemctl1_el1, 5); /* Trap any accesses to nonzero node id */
 
-		if (IS_THUNDER_PASS(midr, T83PARTNUM, 1, 0)) {
+		if (IS_OCTEONTX_PASS(midr, T83PARTNUM, 1, 0)) {
 			unset_bit(cvmmemctl1_el1, 6); /* Disable SSO switch tag */
 		} else {
 			set_bit(cvmmemctl1_el1, 6); /* Enable SSO switch tag */

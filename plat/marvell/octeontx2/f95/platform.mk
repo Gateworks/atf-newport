@@ -11,7 +11,7 @@
 #
 #**/
 
-# Include common thunder platform's makefile helper
+# Include common Marvell platform's makefile helper
 include plat/marvell/common/platform.mk
 
 ARM_ARCH_MINOR		:=	2

@@ -228,7 +228,7 @@ static int cgx_get_usxgmii_type(int node, int cgx_id, int lmac_id)
 	int type = -1;
 	cgx_config_t *cgx;
 	cgx_lmac_config_t *lmac;
-	cavm_qlm_state_lane_t qlm_state;
+	octeontx_qlm_state_lane_t qlm_state;
 
 	cgx = &bfdt->cgx_cfg[cgx_id];
 	lmac = &cgx->lmac_cfg[lmac_id];
@@ -381,7 +381,7 @@ static int cgx_get_lane_speed(int node, int cgx_id, int lmac_id)
 {
 	int qlm, lane_id, lanes = 0, speed = 0;
 	cgx_lmac_config_t *lmac;
-	cavm_qlm_state_lane_t qlm_state;
+	octeontx_qlm_state_lane_t qlm_state;
 	cavm_cgxx_spux_control1_t spux_ctrl1;
 
 	lmac = &bfdt->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
@@ -1596,7 +1596,7 @@ void cgx_set_internal_loopback(int node, int cgx_id, int lmac_id, int enable)
 		 * set RX_EDET_SIGNAL_OK bit to use SERDES energy
 		 * detect as signal_OK.
 		 */
-		if (IS_THUNDER_PASS(midr, T96PARTNUM, 1, 0))
+		if (IS_OCTEONTX_PASS(midr, T96PARTNUM, 1, 0))
 			CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_spux_misc_control_t,
 				CAVM_CGXX_SPUX_MISC_CONTROL(cgx_id, lmac_id),
 				rx_edet_signal_ok, enable);
