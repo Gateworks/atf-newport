@@ -21,7 +21,8 @@
 #include <xlat_tables_v2.h>
 #include "../../../bl1/bl1_private.h"
 #include <cavm_common.h>
-#include <cavm_dt.h>
+#include <cavm_board_cfg.h>
+#include <cavm_board_cfg_bl1.h>
 #include <libfdt.h>
 #include <debug.h>
 #include <assert.h>

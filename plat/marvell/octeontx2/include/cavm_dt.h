@@ -147,10 +147,6 @@ typedef struct plat_octeontx_board_cfg {
 	cgx_config_t cgx_cfg[MAX_CGX];
 } plat_octeontx_board_cfg_t;
 
-int octeontx_fill_board_details(int info);
-int plat_fill_board_details(int info);
-int octeontx2_get_lane_num(int qlm);
-
-extern plat_octeontx_board_cfg_t *plat_octeontx_bcfg;
+extern plat_octeontx_board_cfg_t * const plat_octeontx_bcfg;
 
 #endif

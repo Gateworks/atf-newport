@@ -18,8 +18,7 @@
 #include <platform_def.h>
 #include <cavm_dt.h>
 #include <cavm_common.h>
-
-plat_octeontx_board_cfg_t *plat_octeontx_bcfg = (void *)BOARD_CFG_BASE;
+#include <cavm_board_cfg_bl1.h>
 
 static void octeontx_boot_device_from_strapx(const int node)
 {
@@ -101,13 +100,6 @@ int plat_fill_board_details(int info)
 {
 	const void *fdt = fdt_ptr;
 	int offset, len, rc, node;
-
-	/*
-	 * Check if plat_octeontx_board_cfg_t fits in the memory region reserved
-	 * for plat_octeontx_board_cfg_t structure to make sure we do not modify
-	 * not-preserved memory.
-	 */
-	assert(sizeof(plat_octeontx_board_cfg_t) < (BOARD_CFG_MAX_SIZE - BOARD_CFG_BASE));
 
 	rc = octeontx_fill_board_details(info);
 	if (rc) {

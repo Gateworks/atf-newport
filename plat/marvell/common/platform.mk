@@ -31,7 +31,6 @@ PLAT_BL_COMMON_SOURCES	:=	drivers/arm/pl011/aarch64/pl011_console.S	\
 				${LIBFDT_DIR}/fdt_wip.c				\
 				plat/marvell/common/cavm_common.c		\
 				plat/marvell/common/cavm_dram.c			\
-				plat/marvell/common/cavm_dt.c			\
 				plat/marvell/common/drivers/cavm_smi.c		\
 				plat/marvell/common/cavm_io_storage.c		\
 				${XLAT_TABLES_LIB_SRCS}				\
@@ -42,6 +41,7 @@ BL1_SOURCES		+=	plat/marvell/common/drivers/cavm_spi.c		\
 				drivers/io/io_storage.c				\
 				plat/marvell/common/aarch64/cavm_helpers.S 	\
 				plat/marvell/common/bl1_cavm_setup.c		\
+				plat/marvell/common/cavm_dt.c			\
 
 BL2_SOURCES		+=	plat/marvell/common/drivers/cavm_spi.c		\
 				drivers/io/io_fip.c				\

@@ -22,9 +22,6 @@ typedef struct plat_octeontx_board_cfg {
 	int gpio_intercept_intr;
 } plat_octeontx_board_cfg_t;
 
-int plat_fill_board_details(int info);
-int octeontx_fill_board_details(int info);
-
-extern plat_octeontx_board_cfg_t *plat_octeontx_bcfg;
+extern plat_octeontx_board_cfg_t * const plat_octeontx_bcfg;
 
 #endif

@@ -24,7 +24,7 @@ PLAT_INCLUDES		+=	-Iplat/marvell/octeontx2/include			\
 
 PLAT_BL_COMMON_SOURCES	+=	plat/marvell/octeontx2/t96/plat_cavm_setup.c		\
 				plat/marvell/octeontx2/cavm_security.c		\
-				plat/marvell/octeontx2/cavm_octeontx2_dt.c	\
+				plat/marvell/octeontx2/cavm_bcfg_init.c		\
 				plat/marvell/octeontx2/cavm_phy_mgmt.c		\
 				plat/marvell/octeontx2/cavm_cgx_intf.c		\
 				plat/marvell/octeontx2/cavm_cgx.c		\
@@ -32,6 +32,7 @@ PLAT_BL_COMMON_SOURCES	+=	plat/marvell/octeontx2/t96/plat_cavm_setup.c		\
 
 BL1_SOURCES		+=	plat/marvell/octeontx2/aarch64/octeontx2_common.S	\
 				plat/marvell/octeontx2/aarch64/plat_cavm_helpers.S	\
+				plat/marvell/octeontx2/cavm_octeontx2_dt.c	\
 
 BL2_SOURCES		+=	plat/marvell/octeontx2/t96/plat_cavm_ecam.c		\
 				plat/marvell/octeontx2/cavm_rvu.c		\

@@ -42,7 +42,7 @@
 #include <stddef.h>
 #include <xlat_tables_v2.h>
 #include <cavm_common.h>
-#include <cavm_dt.h>
+#include <cavm_board_cfg.h>
 #include <debug.h>
 #include <timers.h>
 #include <cavm_utils.h>

@@ -40,7 +40,7 @@
 #include <string.h>
 #include <xlat_tables_v2.h>
 #include <cavm_common.h>
-#include <cavm_dt.h>
+#include <cavm_board_cfg.h>
 #include <stdio.h>
 #include <debug.h>
 #include <libfdt.h>
