@@ -54,7 +54,7 @@ static int octeontx_signal_mcu(uint8_t signal)
 	data[0] = plat_octeontx_bcfg->bcfg.mcu_twsi.s.int_addr;
 	data[1] = signal;
 
-	rc = octeontx_twsi_send(plat_octeontx_bcfg->bcfg.mcu_twsi.s.node, plat_octeontx_bcfg->bcfg.mcu_twsi.s.bus,
+	rc = octeontx_twsi_send(plat_octeontx_bcfg->bcfg.mcu_twsi.s.bus,
 			       plat_octeontx_bcfg->bcfg.mcu_twsi.s.addr, data, sizeof(data));
 	if (rc) {
 		ERROR("Unable to send signal 0x%x to MCU, error 0x%x\n",
@@ -217,17 +217,16 @@ static void __dead2 octeontx_legacy_system_off(void)
 
 static void __dead2 octeontx_legacy_system_reset(void)
 {
-	unsigned long node = cavm_numa_local();
 	union cavm_rst_soft_rst rst_soft_rst;
 	union cavm_rst_ocx rst_ocx;
 
 	rst_ocx.u = 0;
-	CSR_WRITE(node, CAVM_RST_OCX, rst_ocx.u);
+	CSR_WRITE(CAVM_RST_OCX, rst_ocx.u);
 
-	rst_ocx.u = CSR_READ(node, CAVM_RST_OCX);
+	rst_ocx.u = CSR_READ(CAVM_RST_OCX);
 	rst_soft_rst.u = 0;
 	rst_soft_rst.s.soft_rst = 1;
-	CSR_WRITE(node, CAVM_RST_SOFT_RST, rst_soft_rst.u);
+	CSR_WRITE(CAVM_RST_SOFT_RST, rst_soft_rst.u);
 
 	ERROR("OcteonTX System Reset: operation not handled.\n");
 	panic();
@@ -281,12 +280,9 @@ static int octeontx_legacy_validate_power_state(unsigned int power_state,
  ******************************************************************************/
 static int octeontx_legacy_validate_ns_entrypoint(uintptr_t entrypoint)
 {
-	int i;
-	unsigned node_count = plat_octeontx_get_node_count();
 	uint64_t dram_end = 0;
 
-	for (i = 0; i < node_count; i++)
-		dram_end += octeontx_dram_size_node(i);
+	dram_end = octeontx_dram_size();
 
 	/*
 	 * Check if the non secure entrypoint lies within the non

@@ -131,7 +131,6 @@ typedef struct cgx_lmac_config {
 } cgx_lmac_config_t;
 
 typedef struct cgx_config {
-	uint32_t node:4;
 	uint32_t lmac_count:4;
 	uint32_t lmacs_used:4;
 	uint32_t usxgmii_mode:1; /* global - per CGX */

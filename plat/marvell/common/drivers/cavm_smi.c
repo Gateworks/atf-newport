@@ -31,17 +31,17 @@
 #define debug_smi(...) ((void) (0))
 #endif
 
-void smi_setmode(int node, int bus_id, int mode)
+void smi_setmode(int bus_id, int mode)
 {
 	union cavm_smi_x_clk smix_clk;
 
-	smix_clk.u = CSR_READ(node, CAVM_SMI_X_CLK(bus_id));
+	smix_clk.u = CSR_READ(CAVM_SMI_X_CLK(bus_id));
 	smix_clk.s.mode = mode;
 	smix_clk.s.preamble = mode == CLAUSE45;
-	CSR_WRITE(node, CAVM_SMI_X_CLK(bus_id), smix_clk.u);
+	CSR_WRITE(CAVM_SMI_X_CLK(bus_id), smix_clk.u);
 }
 
-int smi_c45_addr(int node, int bus_id, int addr, int devad, int regnum)
+int smi_c45_addr(int bus_id, int addr, int devad, int regnum)
 {
 	union cavm_smi_x_cmd smix_cmd;
 	union cavm_smi_x_wr_dat smix_wr_dat;
@@ -50,17 +50,17 @@ int smi_c45_addr(int node, int bus_id, int addr, int devad, int regnum)
 	smix_wr_dat.u = 0;
 	smix_wr_dat.s.dat = regnum;
 
-	CSR_WRITE(node, CAVM_SMI_X_WR_DAT(bus_id), smix_wr_dat.u);
+	CSR_WRITE(CAVM_SMI_X_WR_DAT(bus_id), smix_wr_dat.u);
 
 	smix_cmd.u = 0;
 	smix_cmd.s.phy_op = SMI_OP_C45_ADDR;
 	smix_cmd.s.phy_adr = addr;
 	smix_cmd.s.reg_adr = devad;
 
-	CSR_WRITE(node, CAVM_SMI_X_CMD(bus_id), smix_cmd.u);
+	CSR_WRITE(CAVM_SMI_X_CMD(bus_id), smix_cmd.u);
 
 	do {
-		smix_wr_dat.u = CSR_READ(node, CAVM_SMI_X_WR_DAT(bus_id));
+		smix_wr_dat.u = CSR_READ(CAVM_SMI_X_WR_DAT(bus_id));
 		udelay(100);
 		timeout--;
 	} while (smix_wr_dat.s.pending && timeout);
@@ -68,7 +68,7 @@ int smi_c45_addr(int node, int bus_id, int addr, int devad, int regnum)
 	return timeout == 0;
 }
 
-int smi_phy_read(int node, int bus_id, int mode, int addr, int devad, int regnum)
+int smi_phy_read(int bus_id, int mode, int addr, int devad, int regnum)
 {
 	union cavm_smi_x_cmd smix_cmd;
 	union cavm_smi_x_rd_dat smix_rd_dat;
@@ -78,10 +78,10 @@ int smi_phy_read(int node, int bus_id, int mode, int addr, int devad, int regnum
 	debug_smi("RD: Mode: %u, addr: %d, devad: %d, reg: %d\n",
 	      mode, addr, devad, regnum);
 
-	smi_setmode(node, bus_id, mode);
+	smi_setmode(bus_id, mode);
 
 	if (mode == CLAUSE45) {
-		ret = smi_c45_addr(node, bus_id, addr, devad, regnum);
+		ret = smi_c45_addr(bus_id, addr, devad, regnum);
 
 		debug_smi("RD: ret: %u\n", ret);
 
@@ -101,10 +101,10 @@ int smi_phy_read(int node, int bus_id, int mode, int addr, int devad, int regnum
 		smix_cmd.s.phy_op = SMI_OP_C22_READ;
 	}
 
-	CSR_WRITE(node, CAVM_SMI_X_CMD(bus_id), smix_cmd.u);
+	CSR_WRITE(CAVM_SMI_X_CMD(bus_id), smix_cmd.u);
 
 	do {
-		smix_rd_dat.u = CSR_READ(node, CAVM_SMI_X_RD_DAT(bus_id));
+		smix_rd_dat.u = CSR_READ(CAVM_SMI_X_RD_DAT(bus_id));
 		udelay(10);
 		timeout--;
 	} while (smix_rd_dat.s.pending && timeout);
@@ -114,7 +114,7 @@ int smi_phy_read(int node, int bus_id, int mode, int addr, int devad, int regnum
 	return smix_rd_dat.s.dat;
 }
 
-int smi_phy_write(int node, int bus_id, int addr, int devad,
+int smi_phy_write(int bus_id, int addr, int devad,
 			 int mode, int regnum, uint16_t value)
 {
 	union cavm_smi_x_cmd smix_cmd;
@@ -126,7 +126,7 @@ int smi_phy_write(int node, int bus_id, int addr, int devad,
 	      mode, addr, devad, regnum);
 
 	if (mode == CLAUSE45) {
-		ret = smi_c45_addr(node, bus_id, addr, devad, regnum);
+		ret = smi_c45_addr(bus_id, addr, devad, regnum);
 
 		debug_smi("WR: ret: %u\n", ret);
 
@@ -137,7 +137,7 @@ int smi_phy_write(int node, int bus_id, int addr, int devad,
 	smix_wr_dat.u = 0;
 	smix_wr_dat.s.dat = value;
 
-	CSR_WRITE(node, CAVM_SMI_X_WR_DAT(bus_id), smix_wr_dat.u);
+	CSR_WRITE(CAVM_SMI_X_WR_DAT(bus_id), smix_wr_dat.u);
 
 	smix_cmd.u = 0;
 	smix_cmd.s.phy_adr = addr;
@@ -150,10 +150,10 @@ int smi_phy_write(int node, int bus_id, int addr, int devad,
 		smix_cmd.s.phy_op = SMI_OP_C22_WRITE;
 	}
 
-	CSR_WRITE(node, CAVM_SMI_X_CMD(bus_id), smix_cmd.u);
+	CSR_WRITE(CAVM_SMI_X_CMD(bus_id), smix_cmd.u);
 
 	do {
-		smix_wr_dat.u = CSR_READ(node, CAVM_SMI_X_WR_DAT(bus_id));
+		smix_wr_dat.u = CSR_READ(CAVM_SMI_X_WR_DAT(bus_id));
 		udelay(10);
 		timeout--;
 	} while (smix_wr_dat.s.pending && timeout);
@@ -163,15 +163,15 @@ int smi_phy_write(int node, int bus_id, int addr, int devad,
 	return timeout == 0;
 }
 
-int smi_phy_reset(int node, int bus_id)
+int smi_phy_reset(int bus_id)
 {
 	union cavm_smi_x_en smi_en;
 
 	smi_en.s.en = 0;
-	CSR_WRITE(node, CAVM_SMI_X_EN(bus_id), smi_en.u);
+	CSR_WRITE(CAVM_SMI_X_EN(bus_id), smi_en.u);
 
 	smi_en.s.en = 1;
-	CSR_WRITE(node, CAVM_SMI_X_EN(bus_id), smi_en.u);
+	CSR_WRITE(CAVM_SMI_X_EN(bus_id), smi_en.u);
 
 	return 0;
 }

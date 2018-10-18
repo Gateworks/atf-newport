@@ -46,7 +46,7 @@ void plat_setup_psci_ops(uintptr_t sec_entrypoint,
 /*
  * Read a single fuse bit from MIO_FUS
  */
-int plat_fuse_read(int node, int fuse)
+int plat_fuse_read(int fuse)
 {
 	cavm_mio_fus_rcmd_t read_cmd;
 	int byte_addr = FUSE_BIT_TO_BYTE_ADDR(fuse);
@@ -55,8 +55,8 @@ int plat_fuse_read(int node, int fuse)
 	read_cmd.s.addr = byte_addr;
 	read_cmd.s.addr_hi = FUSE_HI_ADDR(byte_addr);
 	read_cmd.s.pend = 1;
-	CSR_WRITE(node, CAVM_MIO_FUS_RCMD, read_cmd.u);
-	while ((read_cmd.u = CSR_READ(node, CAVM_MIO_FUS_RCMD)) &&
+	CSR_WRITE(CAVM_MIO_FUS_RCMD, read_cmd.u);
+	while ((read_cmd.u = CSR_READ(CAVM_MIO_FUS_RCMD)) &&
 		read_cmd.s.pend);
 
 	return FUSE_GET_VAL(read_cmd.s.dat, fuse);
@@ -67,7 +67,7 @@ int plat_fuse_read(int node, int fuse)
  *
  * Return: Value in 0-32 range
  */
-unsigned int plat_get_rom_t_cnt(int node)
+unsigned int plat_get_rom_t_cnt()
 {
 	cavm_fusf_rcmd_t read_cmd;
 	uint64_t dat;
@@ -80,9 +80,9 @@ unsigned int plat_get_rom_t_cnt(int node)
 	read_cmd.cn8.addr = CAVM_FUSF_FUSE_NUM_E_ROM_T_CNTX(0) >> 3;
 	read_cmd.cn8.addr_hi = CAVM_FUSF_FUSE_NUM_E_ROM_T_CNTX(0) >> 9;
 	read_cmd.s.pend = 1;
-	CSR_WRITE(node, CAVM_FUSF_RCMD, read_cmd.u);
+	CSR_WRITE(CAVM_FUSF_RCMD, read_cmd.u);
 	do {
-		read_cmd.u = CSR_READ(node, CAVM_FUSF_RCMD);
+		read_cmd.u = CSR_READ(CAVM_FUSF_RCMD);
 	} while (read_cmd.s.pend);
 
 	/*
@@ -90,7 +90,7 @@ unsigned int plat_get_rom_t_cnt(int node)
 	 * in the bank associated with FUSF_RCMD[ADDR].
 	 * ROM_T_CNT is stored on FUSF_BNK_DATX(0)[63:32].
 	 */
-	dat = CSR_READ(node, CAVM_FUSF_BNK_DATX(0));
+	dat = CSR_READ(CAVM_FUSF_BNK_DATX(0));
 	nv_count_val = octeontx_bit_extract(dat, CAVM_FUSF_FUSE_NUM_E_ROM_T_CNTX(0), 32);
 
 	/*
@@ -99,7 +99,7 @@ unsigned int plat_get_rom_t_cnt(int node)
 	 * the actually soft blown value.
 	 * Read NV_CNT from FUSF_CTL and use bigger value.
 	 */
-	fusf_ctl.u = CSR_READ(node, CAVM_FUSF_CTL);
+	fusf_ctl.u = CSR_READ(CAVM_FUSF_CTL);
 	if (nv_count_val < fusf_ctl.s.rom_t_cnt)
 		nv_count_val = fusf_ctl.s.rom_t_cnt;
 

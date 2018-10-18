@@ -27,7 +27,6 @@
 #include <debug.h>
 #include <assert.h>
 #include <bl1.h>
-#include <cavm_utils.h>
 
 #define BL1_RO_BASE (unsigned long)(&__RO_START__)
 #define BL1_RO_LIMIT (unsigned long)(&__RO_END__)
@@ -94,8 +93,7 @@ void bl1_platform_print_chip_id(void)
 		INFO("WARNING: FDT node not found\n");
 		return;
 	}
-	snprintf(uid_prop, sizeof(uid_prop), "CHIP-UNIQUE-ID.NODE%d",
-		 cavm_numa_local());
+	snprintf(uid_prop, sizeof(uid_prop), "CHIP-UNIQUE-ID.NODE0");
 	uid = fdt_getprop(fdt, offset, uid_prop, &len);
 	if (uid) {
 		if (!strncmp(uid, "00000000000000000000", 20))
@@ -126,7 +124,7 @@ void bl1_early_platform_setup(void)
 	fdt_pack(fdt_ptr);
 
 	/* Initialize the console to provide early debug support */
-	console_pl011_register(CSR_PA(0, UAAX_PF_BAR0(0)), 0, 0, &console);
+	console_pl011_register(UAAX_PF_BAR0(0), 0, 0, &console);
 
 	/* Allow BL1 to see the whole Trusted RAM */
 	bl1_tzram_layout.total_base = TZDRAM_BASE;

@@ -29,33 +29,33 @@
 #endif
 
 /* Probe for disabling TWSI busses from PCI scan */
-static int ecam_probe_twsi(int node, unsigned long arg)
+static int ecam_probe_twsi(unsigned long arg)
 {
 	return (plat_octeontx_bcfg->bcfg.bmc_boot_twsi_bus != arg);
 }
 
 /* Probe RST_CTLX for PEM usability. */
-static int ecam_probe_pem(int node, unsigned long arg)
+static int ecam_probe_pem(unsigned long arg)
 {
 	union cavm_rst_soft_prstx soft_prst;
 
-	soft_prst.u = CSR_READ(node, CAVM_RST_SOFT_PRSTX(arg));
+	soft_prst.u = CSR_READ(CAVM_RST_SOFT_PRSTX(arg));
 
 	return soft_prst.s.soft_prst == 0;
 }
 
 /* Probe GSERX_CFG[SATA] for SATA usability. arg is the GSER number. */
-static int ecam_probe_sata(int node, unsigned long arg)
+static int ecam_probe_sata(unsigned long arg)
 {
 	union cavm_gserx_cfg cfg;
 
-	cfg.u = CSR_READ(node, CAVM_GSERX_CFG(arg / 2 + 4));
+	cfg.u = CSR_READ(CAVM_GSERX_CFG(arg / 2 + 4));
 
 	return cfg.s.sata != 0;
 }
 
 /* Probe GSERX_CFG[BGX] for BGX usability. arg is the GSER number. */
-static int ecam_probe_bgx(int node, unsigned long arg)
+static int ecam_probe_bgx(unsigned long arg)
 {
 	union cavm_gserx_cfg cfg_dlm0;
 	union cavm_gserx_cfg cfg_dlm1;
@@ -68,17 +68,17 @@ static int ecam_probe_bgx(int node, unsigned long arg)
 	 */
 	switch (arg) {
 	case 0:
-		cfg_dlm0.u = CSR_READ(node, CAVM_GSERX_CFG(2));
+		cfg_dlm0.u = CSR_READ(CAVM_GSERX_CFG(2));
 		break;
 	case 1:
-		cfg_dlm0.u = CSR_READ(node, CAVM_GSERX_CFG(3));
+		cfg_dlm0.u = CSR_READ(CAVM_GSERX_CFG(3));
 		break;
 	case 2:
-		cfg_dlm0.u = CSR_READ(node, CAVM_GSERX_CFG(5));
-		cfg_dlm1.u = CSR_READ(node, CAVM_GSERX_CFG(6));
+		cfg_dlm0.u = CSR_READ(CAVM_GSERX_CFG(5));
+		cfg_dlm1.u = CSR_READ(CAVM_GSERX_CFG(6));
 		break;
 	case 3:
-		cfg_dlm0.u = CSR_READ(node, CAVM_GSERX_CFG(4));
+		cfg_dlm0.u = CSR_READ(CAVM_GSERX_CFG(4));
 		break;
 	default:
 		cfg_dlm0.u = 0;
@@ -88,9 +88,9 @@ static int ecam_probe_bgx(int node, unsigned long arg)
 }
 
 /* arg is LMC number */
-static int ecam_probe_lmc(int node, unsigned long arg)
+static int ecam_probe_lmc(unsigned long arg)
 {
-	return plat_octeontx_is_lmc_enabled(node, arg);
+	return plat_octeontx_is_lmc_enabled(arg);
 }
 
 struct ecam_probe_callback probe_callbacks[] = {
@@ -102,7 +102,7 @@ struct ecam_probe_callback probe_callbacks[] = {
 	{ECAM_INVALID_DEV_ID, 0, 0, 0}
 };
 
-static void init_gpio(int node, uint64_t config_base, uint64_t config_size)
+static void init_gpio(uint64_t config_base, uint64_t config_size)
 {
 	union cavm_pccpf_xxx_vsec_sctl vsec_sctl;
 	struct pcie_config *pconfig = (struct pcie_config *)config_base;
@@ -123,8 +123,8 @@ static void init_gpio(int node, uint64_t config_base, uint64_t config_size)
 	if (!plat_octeontx_bcfg->gpio_intercept_intr)
 		return;
 
-	debug_plat_ecam("GPIO Node(%d) init called config_base:%lx size:%lx\n",
-			node, config_base, config_size);
+	debug_plat_ecam("GPIO init called config_base:%lx size:%lx\n",
+			config_base, config_size);
 
 	/* Mark the MSI-X interrupts as physical */
 	vsec_sctl.u = octeontx_read32(config_base + CAVM_PCCPF_XXX_VSEC_SCTL);
@@ -223,13 +223,10 @@ static inline void cn83xx_disable_bus(struct ecam_device *dev)
 	cavm_ecamx_busx_sdis_t bus_sdis;
 
 	/* disable bus */
-	bus_sdis.u = CSR_READ(dev->node,
-				 CAVM_ECAMX_BUSX_SDIS(dev->ecam, dev->bus));
+	bus_sdis.u = CSR_READ(CAVM_ECAMX_BUSX_SDIS(dev->ecam, dev->bus));
 	bus_sdis.s.sec = 1;
-	CSR_WRITE(dev->node,
-		     CAVM_ECAMX_BUSX_SDIS(dev->ecam, dev->bus),
-		     bus_sdis.u);
-	debug_plat_ecam("disable_bus %d:%d:%d\n", dev->node, dev->ecam,
+	CSR_WRITE(CAVM_ECAMX_BUSX_SDIS(dev->ecam, dev->bus), bus_sdis.u);
+	debug_plat_ecam("disable_bus %d:%d\n", dev->ecam,
 			dev->bus);
 }
 
@@ -239,23 +236,16 @@ static inline void cn83xx_enable_bus(struct ecam_device *dev)
 	cavm_ecamx_busx_nsdis_t bus_nsdis;
 
 	/* enable bus */
-	bus_sdis.u = CSR_READ(dev->node,
-				 CAVM_ECAMX_BUSX_SDIS(dev->ecam, dev->bus));
+	bus_sdis.u = CSR_READ(CAVM_ECAMX_BUSX_SDIS(dev->ecam, dev->bus));
 	bus_sdis.s.sec = 0;
 	bus_sdis.s.dis = 0;
-	CSR_WRITE(dev->node,
-		     CAVM_ECAMX_BUSX_SDIS(dev->ecam, dev->bus),
-		     bus_sdis.u);
+	CSR_WRITE(CAVM_ECAMX_BUSX_SDIS(dev->ecam, dev->bus), bus_sdis.u);
 
-	bus_nsdis.u = CSR_READ(dev->node,
-				  CAVM_ECAMX_BUSX_NSDIS(dev->ecam, dev->bus));
+	bus_nsdis.u = CSR_READ(CAVM_ECAMX_BUSX_NSDIS(dev->ecam, dev->bus));
 	bus_nsdis.s.dis = 0;
-	CSR_WRITE(dev->node,
-		     CAVM_ECAMX_BUSX_NSDIS(dev->ecam, dev->bus),
-		     bus_nsdis.u);
+	CSR_WRITE(CAVM_ECAMX_BUSX_NSDIS(dev->ecam, dev->bus), bus_nsdis.u);
 
-	debug_plat_ecam("enable_bus %d:%d:%d\n", dev->node, dev->ecam,
-			dev->bus);
+	debug_plat_ecam("enable_bus %d:%d\n", dev->ecam, dev->bus);
 }
 
 static inline void cn83xx_disable_dev(struct ecam_device *dev)
@@ -263,14 +253,10 @@ static inline void cn83xx_disable_dev(struct ecam_device *dev)
 	cavm_ecamx_devx_sdis_t dev_sdis;
 
 	/* disable device */
-	dev_sdis.u = CSR_READ(dev->node,
-				 CAVM_ECAMX_DEVX_SDIS(dev->ecam, dev->dev));
+	dev_sdis.u = CSR_READ(CAVM_ECAMX_DEVX_SDIS(dev->ecam, dev->dev));
 	dev_sdis.s.sec = 1;
-	CSR_WRITE(dev->node,
-		     CAVM_ECAMX_DEVX_SDIS(dev->ecam, dev->dev),
-		     dev_sdis.u);
-	debug_plat_ecam("disable_dev %d:%d:%02x\n", dev->node, dev->ecam,
-			dev->dev);
+	CSR_WRITE(CAVM_ECAMX_DEVX_SDIS(dev->ecam, dev->dev), dev_sdis.u);
+	debug_plat_ecam("disable_dev %d:%d:%02x\n", dev->ecam, dev->dev);
 }
 
 static inline void cn83xx_enable_dev(struct ecam_device *dev)
@@ -279,23 +265,16 @@ static inline void cn83xx_enable_dev(struct ecam_device *dev)
 	cavm_ecamx_devx_nsdis_t dev_nsdis;
 
 	/* enable device */
-	dev_sdis.u = CSR_READ(dev->node,
-				 CAVM_ECAMX_DEVX_SDIS(dev->ecam, dev->dev));
+	dev_sdis.u = CSR_READ(CAVM_ECAMX_DEVX_SDIS(dev->ecam, dev->dev));
 	dev_sdis.s.sec = 0;
 	dev_sdis.s.dis = 0;
-	CSR_WRITE(dev->node,
-		     CAVM_ECAMX_DEVX_SDIS(dev->ecam, dev->dev),
-		     dev_sdis.u);
+	CSR_WRITE(CAVM_ECAMX_DEVX_SDIS(dev->ecam, dev->dev), dev_sdis.u);
 
-	dev_nsdis.u = CSR_READ(dev->node,
-				  CAVM_ECAMX_DEVX_NSDIS(dev->ecam, dev->dev));
+	dev_nsdis.u = CSR_READ(CAVM_ECAMX_DEVX_NSDIS(dev->ecam, dev->dev));
 	dev_nsdis.s.dis = 0;
-	CSR_WRITE(dev->node,
-		     CAVM_ECAMX_DEVX_NSDIS(dev->ecam, dev->dev),
-		     dev_nsdis.u);
+	CSR_WRITE(CAVM_ECAMX_DEVX_NSDIS(dev->ecam, dev->dev), dev_nsdis.u);
 
-	debug_plat_ecam("enable_dev %d:%d:%02x\n", dev->node, dev->ecam,
-			dev->dev);
+	debug_plat_ecam("enable_dev %d:%02x\n", dev->ecam, dev->dev);
 }
 
 static inline void cn83xx_disable_func(struct ecam_device *dev)
@@ -303,14 +282,10 @@ static inline void cn83xx_disable_func(struct ecam_device *dev)
 	cavm_ecamx_rslx_sdis_t rsl_sdis;
 
 	/* disable function */
-	rsl_sdis.u = CSR_READ(dev->node,
-				 CAVM_ECAMX_RSLX_SDIS(dev->ecam, dev->func));
+	rsl_sdis.u = CSR_READ(CAVM_ECAMX_RSLX_SDIS(dev->ecam, dev->func));
 	rsl_sdis.s.sec = 1;
-	CSR_WRITE(dev->node,
-		     CAVM_ECAMX_RSLX_SDIS(dev->ecam, dev->func),
-		     rsl_sdis.u);
-	debug_plat_ecam("disable_func %d:%d:%02x\n", dev->node, dev->ecam,
-			dev->func);
+	CSR_WRITE(CAVM_ECAMX_RSLX_SDIS(dev->ecam, dev->func), rsl_sdis.u);
+	debug_plat_ecam("disable_func %d:%02x\n", dev->ecam, dev->func);
 }
 
 static inline void cn83xx_enable_func(struct ecam_device *dev)
@@ -319,30 +294,23 @@ static inline void cn83xx_enable_func(struct ecam_device *dev)
 	cavm_ecamx_rslx_nsdis_t rsl_nsdis;
 
 	/* enable function */
-	rsl_sdis.u = CSR_READ(dev->node,
-				 CAVM_ECAMX_RSLX_SDIS(dev->ecam, dev->func));
+	rsl_sdis.u = CSR_READ(CAVM_ECAMX_RSLX_SDIS(dev->ecam, dev->func));
 	rsl_sdis.s.sec = 0;
 	rsl_sdis.s.dis = 0;
-	CSR_WRITE(dev->node,
-		     CAVM_ECAMX_RSLX_SDIS(dev->ecam, dev->func),
-		     rsl_sdis.u);
+	CSR_WRITE(CAVM_ECAMX_RSLX_SDIS(dev->ecam, dev->func), rsl_sdis.u);
 
-	rsl_nsdis.u = CSR_READ(dev->node,
-				  CAVM_ECAMX_RSLX_NSDIS(dev->ecam, dev->func));
+	rsl_nsdis.u = CSR_READ(CAVM_ECAMX_RSLX_NSDIS(dev->ecam, dev->func));
 	rsl_nsdis.s.dis = 0;
-	CSR_WRITE(dev->node,
-		     CAVM_ECAMX_RSLX_NSDIS(dev->ecam, dev->func),
-		     rsl_nsdis.u);
+	CSR_WRITE(CAVM_ECAMX_RSLX_NSDIS(dev->ecam, dev->func), rsl_nsdis.u);
 
-	debug_plat_ecam("enable_func %d:%d:%02x\n", dev->node, dev->ecam,
-			dev->func);
+	debug_plat_ecam("enable_func %d:%02x\n", dev->ecam, dev->func);
 }
 
-static inline int cn83xx_get_ecam_count(int node)
+static inline int cn83xx_get_ecam_count()
 {
 	cavm_ecamx_const_t ecam_const;
 
-	ecam_const.u = CSR_READ(node, CAVM_ECAMX_CONST(0));
+	ecam_const.u = CSR_READ(CAVM_ECAMX_CONST(0));
 
 	return ecam_const.s.ecams;
 }

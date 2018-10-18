@@ -21,8 +21,7 @@
 
 #pragma weak plat_flr_init
 
-extern void plat_add_mmio_node(unsigned long node);
-extern unsigned plat_octeontx_get_node_count(void);
+extern void plat_add_mmio();
 
 void *fdt_ptr = (void *)~0;
 
@@ -71,13 +70,9 @@ static void plat_add_mmio_common(void)
 
 void plat_add_mmio_map()
 {
-	unsigned long node, node_count;
-
 	plat_add_mmio_common();
 
-	node_count = plat_octeontx_get_node_count();
-	for (node = 0; node < node_count; node++)
-		plat_add_mmio_node(node);
+	plat_add_mmio();
 }
 
 void octeontx_cpu_setup(void)
@@ -197,9 +192,9 @@ void plat_error_handler(int err_code)
 	/* Handle platform-specific secure boot failure cause */
 	cavm_rst_boot_t rst_boot;
 
-	rst_boot.u = CSR_READ(0, CAVM_RST_BOOT);
+	rst_boot.u = CSR_READ(CAVM_RST_BOOT);
 	rst_boot.s.dis_huk = 1;
-	CSR_WRITE(0, CAVM_RST_BOOT, rst_boot.u);
+	CSR_WRITE(CAVM_RST_BOOT, rst_boot.u);
 #endif
 	for(;;);
 }

@@ -28,7 +28,7 @@ struct sata_ctrlr {
 	uint8_t  timeout;
 };
 
-struct sata_ctrlr sata_hba[PLATFORM_MAX_NODES][MAX_SATA_CONTROLLERS];
+struct sata_ctrlr sata_hba[MAX_SATA_CONTROLLERS];
 
 
 static int timer_hd;

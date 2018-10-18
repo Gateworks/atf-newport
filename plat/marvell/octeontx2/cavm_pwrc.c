@@ -318,12 +318,12 @@ void __dead2 octeontx_scp_sys_reboot(void)
 	panic();
 }
 
-static int octeontx_pwrc_init_scmi(int node, scmi_channel_plat_info_t *plat_scmi_info)
+static int octeontx_pwrc_init_scmi(scmi_channel_plat_info_t *plat_scmi_info)
 {
 	assert(plat_scmi_info);
 
-	plat_scmi_info->scmi_mbx_mem = plat_get_scmi_mbox_addr(node);
-	plat_scmi_info->db_reg_addr = plat_get_scmi_db_addr(node);
+	plat_scmi_info->scmi_mbx_mem = plat_get_scmi_mbox_addr();
+	plat_scmi_info->db_reg_addr = plat_get_scmi_db_addr();
 	plat_scmi_info->db_preserve_mask = PLAT_SCMI_DB_PRESERVE_MASK;
 	plat_scmi_info->db_modify_mask = PLAT_SCMI_DB_MODIFY_MASK;
 
@@ -333,7 +333,7 @@ static int octeontx_pwrc_init_scmi(int node, scmi_channel_plat_info_t *plat_scmi
 int octeontx_pwrc_setup(void)
 {
 	/* Initialize platform SCMI config structure */
-	octeontx_pwrc_init_scmi(0, &plat_octeontx_scmi_plat_info);
+	octeontx_pwrc_init_scmi(&plat_octeontx_scmi_plat_info);
 
 	scmi_channel.info = &plat_octeontx_scmi_plat_info;
 	scmi_channel.lock = &octeontx_scmi_lock;

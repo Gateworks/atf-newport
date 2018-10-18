@@ -68,12 +68,19 @@ uint64_t octeontx_svc_smc_handler(uint32_t smc_fid,
 		SMC_RET2(handle, OCTEONTX_VERSION_MAJOR, OCTEONTX_VERSION_MINOR);
 
 	case OCTEONTX_DRAM_SIZE:
-		ret = octeontx_dram_size_node(x1);
+		/* Current implementation support only one node */
+		if (x1 >= 1){
+			ret = 0;
+			WARN("DRAM size for %lx: %lx\n", x1, ret);
+			SMC_RET1(handle, ret);
+		}
+		ret = octeontx_dram_size();
 		WARN("DRAM size for %lx: %lx\n", x1, ret);
 		SMC_RET1(handle, ret);
 
 	case OCTEONTX_NODE_COUNT:
-		ret = plat_octeontx_get_node_count();
+		/* Current implementation support only one node */
+		ret = 1;
 		SMC_RET1(handle, ret);
 
 	case OCTEONTX_PUTC:

@@ -87,7 +87,7 @@ static int octeontx_verify_rotpk(const unsigned char * sha256, unsigned int len)
 		}
 
 		/* Get hash value from FUSF_ROTPK */
-		fusf_rotpkx.u = CSR_READ(0, CAVM_FUSF_ROTPKX(i));
+		fusf_rotpkx.u = CSR_READ(CAVM_FUSF_ROTPKX(i));
 
 		/* Compare hashes */
 		if (fusf_rotpkx.s.dat != hash[i]) {
@@ -211,12 +211,12 @@ int plat_get_nv_ctr(void *cookie, unsigned int *nv_ctr)
 		 * total 96 bits
 		 */
 		nv_ctr_val = 0;
-		fusf_swx.u = CSR_READ(0, CAVM_FUSF_SWX(0));
+		fusf_swx.u = CSR_READ(CAVM_FUSF_SWX(0));
 		fusf_swx.s.dat >>= 32;
 		if (fusf_swx.s.dat)
 			nv_ctr_val = 64 - __builtin_clzl(fusf_swx.s.dat);
 
-		fusf_swx.u = CSR_READ(0, CAVM_FUSF_SWX(1));
+		fusf_swx.u = CSR_READ(CAVM_FUSF_SWX(1));
 		if (fusf_swx.s.dat)
 			nv_ctr_val += (64 - __builtin_clzl(fusf_swx.s.dat));
 
@@ -260,7 +260,7 @@ int plat_get_crypt_key(unsigned char **key, unsigned int *key_len)
 		 * SSK will be used to decrypt images.
 		 */
 		for (i = 0; i < 2; i++)
-			ssk[i] = CSR_READ(0, CAVM_FUSF_SSKX(i));
+			ssk[i] = CSR_READ(CAVM_FUSF_SSKX(i));
 		memcpy(ptr, ssk, AES_KEY_BYTES);
 	}
 

@@ -23,7 +23,7 @@
 #define PLAT_SCMI_DB_PRESERVE_MASK	(~PLAT_SCMI_DB_MODIFY_MASK)
 
 /* SCMI register configuration API */
-const uintptr_t plat_get_scmi_mbox_addr(int node);
-const uintptr_t plat_get_scmi_db_addr(int node);
+const uintptr_t plat_get_scmi_mbox_addr();
+const uintptr_t plat_get_scmi_db_addr();
 
 #endif /* __CAVM_SETUP_H__ */

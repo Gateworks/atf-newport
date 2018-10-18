@@ -29,7 +29,6 @@ typedef struct {
 	 * valid.
 	 */
 	int		in_use;
-	unsigned	node;
 	unsigned	spi_con;
 	unsigned	cs;
 	size_t		file_pos;
@@ -69,11 +68,11 @@ static int spi_config(uint64_t spi_clk, uint32_t mode, int cpol, int cpha,
 	union cavm_rst_boot rst_boot;
 	union cavm_mpix_cfg mpi_cfg;
 
-	rst_boot.u = CSR_READ(current_file.node, CAVM_RST_BOOT);
+	rst_boot.u = CSR_READ(CAVM_RST_BOOT);
 	if (cavm_is_model(OCTEONTX_CN8XXX))
-		mpi_cfg.u = CSR_READ(current_file.node, CAVM_MPI_CFG);
+		mpi_cfg.u = CSR_READ(CAVM_MPI_CFG);
 	else if (cavm_is_model(OCTEONTX_CN9XXX)) {
-		mpi_cfg.u = CSR_READ(current_file.node, CAVM_MPIX_CFG(spi_con));
+		mpi_cfg.u = CSR_READ(CAVM_MPIX_CFG(spi_con));
 		mpi_cfg.s.legacy_dis = 0;
 	} else
 		return -1;
@@ -103,9 +102,9 @@ static int spi_config(uint64_t spi_clk, uint32_t mode, int cpol, int cpha,
 	mpi_cfg.s.cslate = cpha;
 	mpi_cfg.s.enable = 1;
 	if (cavm_is_model(OCTEONTX_CN8XXX))
-		CSR_WRITE(current_file.node, CAVM_MPI_CFG, mpi_cfg.u);
+		CSR_WRITE(CAVM_MPI_CFG, mpi_cfg.u);
 	else if (cavm_is_model(OCTEONTX_CN9XXX))
-		CSR_WRITE(current_file.node, CAVM_MPIX_CFG(spi_con), mpi_cfg.u);
+		CSR_WRITE(CAVM_MPIX_CFG(spi_con), mpi_cfg.u);
 	else
 		return -1;
 	return 0;
@@ -124,9 +123,9 @@ static int spi_xfer(unsigned char *dout, unsigned char *din, int len,
 		if (dout) {
 			for (i = 0; i < size; i++) {
 				if (cavm_is_model(OCTEONTX_CN8XXX))
-					CSR_WRITE(current_file.node, CAVM_MPI_DATX(i), *dout++);
+					CSR_WRITE(CAVM_MPI_DATX(i), *dout++);
 				else if (cavm_is_model(OCTEONTX_CN9XXX))
-					CSR_WRITE(current_file.node, CAVM_MPIX_DATX(spi_con, i), *dout++);
+					CSR_WRITE(CAVM_MPIX_DATX(spi_con, i), *dout++);
 				else
 					return -1;
 			}
@@ -143,17 +142,17 @@ static int spi_xfer(unsigned char *dout, unsigned char *din, int len,
 		mpi_tx.s.txnum = dout ? size : 0;
 		mpi_tx.s.totnum = size;
 		if (cavm_is_model(OCTEONTX_CN8XXX))
-			CSR_WRITE(current_file.node, CAVM_MPI_TX, mpi_tx.u);
+			CSR_WRITE(CAVM_MPI_TX, mpi_tx.u);
 		else if (cavm_is_model(OCTEONTX_CN9XXX))
-			CSR_WRITE(current_file.node, CAVM_MPIX_TX(spi_con), mpi_tx.u);
+			CSR_WRITE(CAVM_MPIX_TX(spi_con), mpi_tx.u);
 		else
 			return -1;
 		/* Wait for tx/rx to complete */
 		do {
 			if (cavm_is_model(OCTEONTX_CN8XXX))
-				mpi_sts.u = CSR_READ(current_file.node, CAVM_MPI_STS);
+				mpi_sts.u = CSR_READ(CAVM_MPI_STS);
 			else if (cavm_is_model(OCTEONTX_CN9XXX))
-				mpi_sts.u = CSR_READ(current_file.node, CAVM_MPIX_STS(spi_con));
+				mpi_sts.u = CSR_READ(CAVM_MPIX_STS(spi_con));
 			else
 				return -1;
 		} while (mpi_sts.s.busy != 0);
@@ -161,9 +160,9 @@ static int spi_xfer(unsigned char *dout, unsigned char *din, int len,
 		if (din) {
 			for (i = 0; i < size; i++) {
 				if (cavm_is_model(OCTEONTX_CN8XXX))
-					*din++ = CSR_READ(current_file.node, CAVM_MPI_DATX(i));
+					*din++ = CSR_READ(CAVM_MPI_DATX(i));
 				else if (cavm_is_model(OCTEONTX_CN9XXX))
-					*din++ = CSR_READ(current_file.node, CAVM_MPIX_DATX(spi_con, i));
+					*din++ = CSR_READ(CAVM_MPIX_DATX(spi_con, i));
 				else
 					return -1;
 			}
@@ -234,7 +233,6 @@ static int spi_block_open(io_dev_info_t *dev_info, const uintptr_t spec,
 		current_file.spi_con = plat_octeontx_bcfg->bcfg.boot_dev.controller;
 		current_file.cs = plat_octeontx_bcfg->bcfg.boot_dev.cs;
 		entity->info = (uintptr_t)&current_file;
-		current_file.node = cavm_numa_local();
 
 		return spi_config(CONFIG_SPI_FREQUENCY, 0, 0, 0,
 				  current_file.spi_con, current_file.cs);

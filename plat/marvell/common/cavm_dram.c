@@ -19,8 +19,6 @@
 #include <string.h>
 #include <debug.h>
 
-extern int plat_octeontx_is_lmc_enabled(unsigned node, unsigned lmc);
-
 static inline uint32_t popcnt(uint64_t val)
 {
 	uint64_t x, x2 = val;
@@ -38,27 +36,24 @@ static inline uint32_t popcnt(uint64_t val)
 	return x;  /* (7 significant bits) */
 }
 
-uint64_t octeontx_dram_size_node(unsigned node)
+uint64_t octeontx_dram_size()
 {
 	uint64_t rank_size, memsize = 0;
 	int num_ranks, lmc;
-	int lmc_per_node;
+	int lmc_count;
 	union cavm_lmcx_config lmcx_config;
 
-	lmc_per_node = plat_octeontx_get_lmc_per_node();
-	if (lmc_per_node < 0) {
-		printf("Cannot obtain lmc_per_node count\n");
+	lmc_count = plat_octeontx_get_lmc_count();
+	if (lmc_count < 0) {
+		printf("Cannot obtain lmc_count\n");
 		return 0;
 	}
 
-	if (node >= plat_octeontx_get_node_count())
-		return 0;
-
-	for (lmc = 0; lmc < lmc_per_node; lmc++) {
-		if (!plat_octeontx_is_lmc_enabled(node, lmc))
+	for (lmc = 0; lmc < lmc_count; lmc++) {
+		if (!plat_octeontx_is_lmc_enabled(lmc))
 			continue;
 
-		lmcx_config.u = CSR_READ(node, CAVM_LMCX_CONFIG(lmc));
+		lmcx_config.u = CSR_READ(CAVM_LMCX_CONFIG(lmc));
 		num_ranks = popcnt(lmcx_config.s.init_status);
 		rank_size = 1ull << (28 + lmcx_config.s.pbank_lsb - lmcx_config.s.rank_ena);
 		memsize += rank_size * num_ranks;

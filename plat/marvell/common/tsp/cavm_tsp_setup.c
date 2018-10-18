@@ -17,7 +17,6 @@
 #include <platform_tsp.h>
 #include <xlat_tables_v2.h>
 #include <cavm_common.h>
-#include <cavm_utils.h>
 
 /*
  * The next 3 constants identify the extents of the code & RO data region and
@@ -53,7 +52,7 @@ void tsp_early_platform_setup(void)
 	 * Initialize a different console than already in use to display
 	 * messages from TSP
 	 */
-	console_init(CSR_PA(0, UAAX_PF_BAR0(0)), 0, 0);
+	console_init(UAAX_PF_BAR0(0), 0, 0);
 }
 
 /*******************************************************************************

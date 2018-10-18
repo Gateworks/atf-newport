@@ -24,9 +24,4 @@
 #define octeontx_write32(addr, val)        (*(volatile uint32_t *)(addr) = cavm_cpu_to_le32((val)))
 #define octeontx_write64(addr, val)        (*(volatile uint64_t *)(addr) = cavm_cpu_to_le64((val)))
 
-/**
- * Macro to get the physical address of a CSR on a node
- */
-#define CSR_PA(node, csr) ((csr) | ((uint64_t)(node) << 44))
-
 #endif /* __CAVM_UTILS_H__ */

@@ -346,12 +346,9 @@ static int octeontx_translate_power_state_by_mpidr(u_register_t mpidr,
  ******************************************************************************/
 static int octeontx_validate_ns_entrypoint(uintptr_t entrypoint)
 {
-	int i;
-	unsigned node_count = plat_octeontx_get_node_count();
 	uint64_t dram_end = 0;
 
-	for (i = 0; i < node_count; i++)
-		dram_end += octeontx_dram_size_node(i);
+	dram_end = octeontx_dram_size();
 
 	/*
 	 * Check if the non secure entrypoint lies within the non

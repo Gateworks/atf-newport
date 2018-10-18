@@ -398,15 +398,14 @@ int gpio_set_out (int pin)
 {
 	cavm_gpio_tx_set_t gpio_tx_set;
 	cavm_gpio_bit_cfgx_t gpio_bit_cfg;
-	unsigned long node = cavm_numa_local();
 
 	gpio_tx_set.u = 0;
 	gpio_tx_set.s.set = (1ULL << pin);
-	CSR_WRITE(node, CAVM_GPIO_TX_SET, gpio_tx_set.u);
-	gpio_bit_cfg.u = CSR_READ(node, CAVM_GPIO_BIT_CFGX(pin));
+	CSR_WRITE(CAVM_GPIO_TX_SET, gpio_tx_set.u);
+	gpio_bit_cfg.u = CSR_READ(CAVM_GPIO_BIT_CFGX(pin));
 	gpio_bit_cfg.s.tx_oe = 1;
 	gpio_bit_cfg.s.pin_sel = 0;
-	CSR_WRITE(node, CAVM_GPIO_BIT_CFGX(pin), gpio_bit_cfg.u);
+	CSR_WRITE(CAVM_GPIO_BIT_CFGX(pin), gpio_bit_cfg.u);
 	return 0;
 }
 
@@ -414,15 +413,14 @@ int gpio_clr_out (int pin)
 {
 	cavm_gpio_bit_cfgx_t gpio_bit_cfg;
 	cavm_gpio_tx_clr_t gpio_tx_clr;
-	unsigned long node = cavm_numa_local();
 
 	gpio_tx_clr.u = 0;
 	gpio_tx_clr.s.clr = (1ULL << pin);
-	CSR_WRITE(node, CAVM_GPIO_TX_CLR, gpio_tx_clr.u);
-	gpio_bit_cfg.u = CSR_READ(node, CAVM_GPIO_BIT_CFGX(pin));
+	CSR_WRITE(CAVM_GPIO_TX_CLR, gpio_tx_clr.u);
+	gpio_bit_cfg.u = CSR_READ(CAVM_GPIO_BIT_CFGX(pin));
 	gpio_bit_cfg.s.pin_sel = 0;
 	gpio_bit_cfg.s.tx_oe = 1;
-	CSR_WRITE(node, CAVM_GPIO_BIT_CFGX(pin), gpio_bit_cfg.u);
+	CSR_WRITE(CAVM_GPIO_BIT_CFGX(pin), gpio_bit_cfg.u);
 	return 0;
 }
 

@@ -60,7 +60,7 @@ static usxgmii_rate_map_t usxgmii_rate_map[MAX_USXGMII_RATE_TYPES] = {
 	{CGX_LINK_NONE, CAVM_CGX_USXGMII_RATE_E_RSV_RATE, 0}
 };
 
-static int cgx_poll_for_csr(int node, uint64_t addr, uint64_t mask,
+static int cgx_poll_for_csr(uint64_t addr, uint64_t mask,
 					int poll_val)
 {
 	int tries = 100;
@@ -88,7 +88,7 @@ static int cgx_poll_for_csr(int node, uint64_t addr, uint64_t mask,
 /* This function initializes CGX in the SGMII/QSGMII modes
  * called one time either during boot or mode change
  */
-static int cgx_sgmii_hw_init(int node, int cgx_id, int lmac_id)
+static int cgx_sgmii_hw_init(int cgx_id, int lmac_id)
 {
 	cgx_lmac_config_t *lmac;
 	cavm_cgxx_gmp_gmi_txx_append_t tx_append;
@@ -98,26 +98,26 @@ static int cgx_sgmii_hw_init(int node, int cgx_id, int lmac_id)
 	debug_cgx("%s: cgx_id = %d, lmac_id = %d\n", __func__, cgx_id, lmac_id);
 
 	/* set TX threshold */
-	CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_gmp_gmi_txx_thresh_t,
+	CAVM_MODIFY_CGX_CSR(cavm_cgxx_gmp_gmi_txx_thresh_t,
 			CAVM_CGXX_GMP_GMI_TXX_THRESH(cgx_id, lmac_id),
 			cnt, CGX_GMP_TX_FIFO_WORDS); /* 128-bit words FIFO */
 	/* Max packet size */
-	CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_gmp_gmi_rxx_jabber_t,
+	CAVM_MODIFY_CGX_CSR(cavm_cgxx_gmp_gmi_rxx_jabber_t,
 			CAVM_CGXX_GMP_GMI_RXX_JABBER(cgx_id, lmac_id),
 			cnt, CGX_MAX_FRAME_SIZE); /* Max Frame size */
 
 	/* Disable frame alignment if using preamble */
-	tx_append.u = CSR_READ(node, CAVM_CGXX_GMP_GMI_TXX_APPEND(
+	tx_append.u = CSR_READ(CAVM_CGXX_GMP_GMI_TXX_APPEND(
 					cgx_id, lmac_id));
-	CSR_WRITE(node, CAVM_CGXX_GMP_GMI_TXX_SGMII_CTL(cgx_id, lmac_id),
+	CSR_WRITE(CAVM_CGXX_GMP_GMI_TXX_SGMII_CTL(cgx_id, lmac_id),
 				!tx_append.s.preamble);
 	tx_append.s.fcs = 1;
 	tx_append.s.pad = 1;
-	CSR_WRITE(node, CAVM_CGXX_GMP_GMI_TXX_APPEND(cgx_id,
+	CSR_WRITE(CAVM_CGXX_GMP_GMI_TXX_APPEND(cgx_id,
 					lmac_id), tx_append.u);
 
 	/* Min packet size */
-	CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_gmp_gmi_txx_min_pkt_t,
+	CAVM_MODIFY_CGX_CSR(cavm_cgxx_gmp_gmi_txx_min_pkt_t,
 			CAVM_CGXX_GMP_GMI_TXX_MIN_PKT(cgx_id, lmac_id),
 			min_size, CGX_GMP_MIN_PACKET_SIZE);
 
@@ -125,7 +125,7 @@ static int cgx_sgmii_hw_init(int node, int cgx_id, int lmac_id)
 	 * propagation across ports
 	 */
 	if (lmac->mode == CAVM_CGX_LMAC_TYPES_E_QSGMII) {
-		CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_gmp_pcs_miscx_ctl_t,
+		CAVM_MODIFY_CGX_CSR(cavm_cgxx_gmp_pcs_miscx_ctl_t,
 				CAVM_CGXX_GMP_PCS_MISCX_CTL(
 				cgx_id, lmac_id), disp_en, 0);
 	}
@@ -136,7 +136,7 @@ static int cgx_sgmii_hw_init(int node, int cgx_id, int lmac_id)
 /* This function initializes CGX in the XFI/XAUI/RXAUI/XLAUI/10G_R/40G_R
  * modes called one time either during boot or mode change
  */
-static int cgx_xaui_hw_init(int node, int cgx_id, int lmac_id)
+static int cgx_xaui_hw_init(int cgx_id, int lmac_id)
 {
 	cgx_lmac_config_t *lmac;
 	cavm_cgxx_smux_tx_append_t smux_tx_append;
@@ -144,41 +144,41 @@ static int cgx_xaui_hw_init(int node, int cgx_id, int lmac_id)
 	cavm_cgxx_const_t cgx_const;
 	cavm_cgxx_cmr_rx_lmacs_t cmr_rx_lmacs;
 
-	debug_cgx("%s %d:%d:%d\n", __func__, node, cgx_id, lmac_id);
+	debug_cgx("%s %d:%d\n", __func__, cgx_id, lmac_id);
 
 	lmac = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
 
 	/* Max packet size */
-	CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_smux_rx_jabber_t,
+	CAVM_MODIFY_CGX_CSR(cavm_cgxx_smux_rx_jabber_t,
 		CAVM_CGXX_SMUX_RX_JABBER(cgx_id, lmac_id),
 		cnt, CGX_MAX_FRAME_SIZE);
 	/* Tx threshold */
-	CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_smux_tx_thresh_t,
+	CAVM_MODIFY_CGX_CSR(cavm_cgxx_smux_tx_thresh_t,
 		CAVM_CGXX_SMUX_TX_THRESH(cgx_id, lmac_id),
 		cnt, CGX_SMUX_TX_FIFO_WORDS);
 
 	/* Disable forward error correction by default. will enable
 	 * it later based on transceiver capability
 	 */
-	CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_spux_fec_control_t,
+	CAVM_MODIFY_CGX_CSR(cavm_cgxx_spux_fec_control_t,
 			CAVM_CGXX_SPUX_FEC_CONTROL(cgx_id, lmac_id),
 			fec_en, 0);
 
 	/* Set interleaved running disparity for RXAUI */
 	if (lmac->mode == CAVM_CGX_LMAC_TYPES_E_RXAUI) {
-		CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_spux_misc_control_t,
+		CAVM_MODIFY_CGX_CSR(cavm_cgxx_spux_misc_control_t,
 			CAVM_CGXX_SPUX_MISC_CONTROL(cgx_id, lmac_id),
 			intlv_rdisp, 1);
 	}
 	/* Append FCS & pad to each packet */
-	smux_tx_append.u = CSR_READ(node, CAVM_CGXX_SMUX_TX_APPEND(
+	smux_tx_append.u = CSR_READ(CAVM_CGXX_SMUX_TX_APPEND(
 						cgx_id, lmac_id));
 	smux_tx_append.s.pad = 1;
 	smux_tx_append.s.fcs_d = 1;
-	CSR_WRITE(node, CAVM_CGXX_SMUX_TX_APPEND(cgx_id, lmac_id),
+	CSR_WRITE(CAVM_CGXX_SMUX_TX_APPEND(cgx_id, lmac_id),
 					smux_tx_append.u);
 	/* Min packet size */
-	CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_smux_tx_min_pkt_t,
+	CAVM_MODIFY_CGX_CSR(cavm_cgxx_smux_tx_min_pkt_t,
 			CAVM_CGXX_SMUX_TX_MIN_PKT(cgx_id, lmac_id),
 			min_size, CGX_SMUX_MIN_PACKET_SIZE);
 
@@ -187,43 +187,43 @@ static int cgx_xaui_hw_init(int node, int cgx_id, int lmac_id)
 	 * size as determined by CGX()_CMR_RX_LMACS[LMACS].
 	 * Also, mark to be configured in mulitple of 16 bytes
 	 */
-	cgx_const.u = CSR_READ(node, CAVM_CGXX_CONST(cgx_id));
-	cmr_rx_lmacs.u = CSR_READ(node, CAVM_CGXX_CMR_RX_LMACS(cgx_id));
-	rx_bp_on.u = CSR_READ(node, CAVM_CGXX_CMRX_RX_BP_ON(cgx_id, lmac_id));
+	cgx_const.u = CSR_READ(CAVM_CGXX_CONST(cgx_id));
+	cmr_rx_lmacs.u = CSR_READ(CAVM_CGXX_CMR_RX_LMACS(cgx_id));
+	rx_bp_on.u = CSR_READ(CAVM_CGXX_CMRX_RX_BP_ON(cgx_id, lmac_id));
 	rx_bp_on.s.mark = (cgx_const.s.rx_fifosz/(cmr_rx_lmacs.s.lmacs *
 				CGX_BP_ON_MARK_SIZE_DIV * CGX_BP_PACKET_DATA_DEPTH));
-	CSR_WRITE(node, CAVM_CGXX_CMRX_RX_BP_ON(cgx_id, lmac_id),
+	CSR_WRITE(CAVM_CGXX_CMRX_RX_BP_ON(cgx_id, lmac_id),
 			rx_bp_on.u);
 	return 0;
 }
 
-static void cgx_restart_training(int node, int cgx_id, int lmac_id)
+static void cgx_restart_training(int cgx_id, int lmac_id)
 {
 	cavm_cgxx_spux_int_t spux_int;
 
-	debug_cgx("%s %d:%d:%d\n", __func__, node, cgx_id, lmac_id);
+	debug_cgx("%s %d:%d\n", __func__, cgx_id, lmac_id);
 
 	/* clear the training interrupts by writing 1 - W1C CSR */
-	spux_int.u = CSR_READ(node, CAVM_CGXX_SPUX_INT(
+	spux_int.u = CSR_READ(CAVM_CGXX_SPUX_INT(
 				cgx_id, lmac_id));
 	spux_int.s.training_done = 1;
 	spux_int.s.training_failure = 1;
-	CSR_WRITE(node, CAVM_CGXX_SPUX_INT(cgx_id, lmac_id), spux_int.u);
+	CSR_WRITE(CAVM_CGXX_SPUX_INT(cgx_id, lmac_id), spux_int.u);
 
-	CSR_WRITE(node, CAVM_CGXX_SPUX_BR_PMD_LD_CUP(cgx_id, lmac_id), 0);
-	CSR_WRITE(node, CAVM_CGXX_SPUX_BR_PMD_LP_CUP(cgx_id, lmac_id), 0);
-	CSR_WRITE(node, CAVM_CGXX_SPUX_BR_PMD_LP_REP(cgx_id, lmac_id), 0);
+	CSR_WRITE(CAVM_CGXX_SPUX_BR_PMD_LD_CUP(cgx_id, lmac_id), 0);
+	CSR_WRITE(CAVM_CGXX_SPUX_BR_PMD_LP_CUP(cgx_id, lmac_id), 0);
+	CSR_WRITE(CAVM_CGXX_SPUX_BR_PMD_LP_REP(cgx_id, lmac_id), 0);
 
 	/* wait */
 	udelay(CGX_SPUX_TRAINING_RESTART_DELAY);
 
 	/* restart the training */
-	CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_spux_br_pmd_control_t,
+	CAVM_MODIFY_CGX_CSR(cavm_cgxx_spux_br_pmd_control_t,
 		CAVM_CGXX_SPUX_BR_PMD_CONTROL(cgx_id, lmac_id),
 		train_restart, 1);
 }
 
-static int cgx_get_usxgmii_type(int node, int cgx_id, int lmac_id)
+static int cgx_get_usxgmii_type(int cgx_id, int lmac_id)
 {
 	int type = -1;
 	cgx_config_t *cgx;
@@ -236,7 +236,7 @@ static int cgx_get_usxgmii_type(int node, int cgx_id, int lmac_id)
 	debug_cgx("%s: cgx %d qlm %d lane %d mode %d\n", __func__, cgx_id,
 					lmac->qlm, lmac->lane, lmac->mode);
 
-	qlm_state.u = CSR_READ(node, CAVM_GSERNX_LANEX_SCRATCHX(lmac->qlm,
+	qlm_state.u = CSR_READ(CAVM_GSERNX_LANEX_SCRATCHX(lmac->qlm,
 					lmac->lane, 0));
 	/* get the USXGMII type based on baud rate
 	 * and LMACs per CGX
@@ -286,14 +286,14 @@ static int cgx_get_usxgmii_speed_mbps_from_rate(int rate)
 /* This function initializes the CGX LMAC for
  * a particular mode
  */
-static void cgx_lmac_init(int node, int cgx_id, int lmac_id)
+static void cgx_lmac_init(int cgx_id, int lmac_id)
 {
 	cgx_lmac_config_t *lmac;
 	cavm_cgxx_cmrx_config_t cmr_config;
 	cavm_cgxx_spu_usxgmii_control_t usxgmii_ctrl;
 	cavm_cgxx_cmr_chan_msk_and_t chan_msk_and;
 
-	debug_cgx("%s %d:%d:%d\n", __func__, node, cgx_id, lmac_id);
+	debug_cgx("%s %d:%d\n", __func__, cgx_id, lmac_id);
 
 	lmac = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
 
@@ -309,15 +309,15 @@ static void cgx_lmac_init(int node, int cgx_id, int lmac_id)
 	/* force on CGX clocks to ensure successful propagation of reset
 	 * when disabling the link
 	 */
-	CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_cmr_global_config_t,
+	CAVM_MODIFY_CGX_CSR(cavm_cgxx_cmr_global_config_t,
 		CAVM_CGXX_CMR_GLOBAL_CONFIG(cgx_id), cgx_clk_enable, 1);
 
 	/* disable LMAC */
-	CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_cmrx_config_t,
+	CAVM_MODIFY_CGX_CSR(cavm_cgxx_cmrx_config_t,
 		CAVM_CGXX_CMRX_CONFIG(cgx_id, lmac_id), enable, 0);
 
 	/* release the force of clocks */
-	CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_cmr_global_config_t,
+	CAVM_MODIFY_CGX_CSR(cavm_cgxx_cmr_global_config_t,
 		CAVM_CGXX_CMR_GLOBAL_CONFIG(cgx_id), cgx_clk_enable, 0);
 
 	/* program CGX_CMRX_CONFIG register with
@@ -325,11 +325,11 @@ static void cgx_lmac_init(int node, int cgx_id, int lmac_id)
 	 */
 	debug_cgx("%s mode %d lane_to_sds %d\n", __func__, lmac->mode,
 					lmac->lane_to_sds);
-	cmr_config.u = CSR_READ(node,  CAVM_CGXX_CMRX_CONFIG(
+	cmr_config.u = CSR_READ( CAVM_CGXX_CMRX_CONFIG(
 				cgx_id, lmac_id));
 	cmr_config.s.lmac_type = lmac->mode;
 	cmr_config.s.lane_to_sds = lmac->lane_to_sds;
-	CSR_WRITE(node, CAVM_CGXX_CMRX_CONFIG(cgx_id, lmac_id),
+	CSR_WRITE(CAVM_CGXX_CMRX_CONFIG(cgx_id, lmac_id),
 			cmr_config.u);
 
 	/* For USXGMII, lane_to_sds is
@@ -338,12 +338,11 @@ static void cgx_lmac_init(int node, int cgx_id, int lmac_id)
 	 */
 	if (lmac->mode == CAVM_CGX_LMAC_TYPES_E_USXGMII) {
 		/* Program the lane and sub type */
-		usxgmii_ctrl.u = CSR_READ(node,
+		usxgmii_ctrl.u = CSR_READ(
 					CAVM_CGXX_SPU_USXGMII_CONTROL(cgx_id));
 		usxgmii_ctrl.s.sds_id = lmac->lane;
-		usxgmii_ctrl.s.usxgmii_type = cgx_get_usxgmii_type(node,
-				cgx_id, lmac_id);
-		CSR_WRITE(node, CAVM_CGXX_SPU_USXGMII_CONTROL(cgx_id),
+		usxgmii_ctrl.s.usxgmii_type = cgx_get_usxgmii_type(cgx_id, lmac_id);
+		CSR_WRITE(CAVM_CGXX_SPU_USXGMII_CONTROL(cgx_id),
 					usxgmii_ctrl.u);
 	}
 	/* do one time initialization of CGX based on
@@ -354,7 +353,7 @@ static void cgx_lmac_init(int node, int cgx_id, int lmac_id)
 	switch (lmac->mode) {
 	case CAVM_CGX_LMAC_TYPES_E_SGMII:
 	case CAVM_CGX_LMAC_TYPES_E_QSGMII:
-		cgx_sgmii_hw_init(node, cgx_id, lmac_id);
+		cgx_sgmii_hw_init(cgx_id, lmac_id);
 		break;
 	case CAVM_CGX_LMAC_TYPES_E_XAUI:
 	case CAVM_CGX_LMAC_TYPES_E_RXAUI:
@@ -364,20 +363,20 @@ static void cgx_lmac_init(int node, int cgx_id, int lmac_id)
 	case CAVM_CGX_LMAC_TYPES_E_FIFTYG_R:
 	case CAVM_CGX_LMAC_TYPES_E_HUNDREDG_R:
 	case CAVM_CGX_LMAC_TYPES_E_USXGMII:
-		cgx_xaui_hw_init(node, cgx_id, lmac_id);
+		cgx_xaui_hw_init(cgx_id, lmac_id);
 		break;
 	default:
 		ERROR("%s invalid mode %d\n", __func__, lmac->mode);
 		break;
 	}
 	/* Set the channel back pressure mask */
-	chan_msk_and.u = CSR_READ(node, CAVM_CGXX_CMR_CHAN_MSK_AND(cgx_id));
-	CSR_WRITE(node, CAVM_CGXX_CMR_CHAN_MSK_AND(cgx_id),
+	chan_msk_and.u = CSR_READ(CAVM_CGXX_CMR_CHAN_MSK_AND(cgx_id));
+	CSR_WRITE(CAVM_CGXX_CMR_CHAN_MSK_AND(cgx_id),
 			(chan_msk_and.s.msk_and |
 			(((1ull << 1) - 1ull) << (lmac_id * MAX_CHAN_PER_LMAC))));
 }
 
-static int cgx_get_lane_speed(int node, int cgx_id, int lmac_id)
+static int cgx_get_lane_speed(int cgx_id, int lmac_id)
 {
 	int qlm, lane_id, lanes = 0, speed = 0;
 	cgx_lmac_config_t *lmac;
@@ -391,7 +390,7 @@ static int cgx_get_lane_speed(int node, int cgx_id, int lmac_id)
 	debug_cgx("%s: cgx %d qlm %d lane %d mode %d\n", __func__, cgx_id,
 					qlm, lane_id, lmac->mode);
 
-	qlm_state.u = CSR_READ(node, CAVM_GSERNX_LANEX_SCRATCHX(qlm,
+	qlm_state.u = CSR_READ(CAVM_GSERNX_LANEX_SCRATCHX(qlm,
 					lane_id, 0));
 
 	/* Ref : Table 38-1 of T9X HRM for encoding, lanes
@@ -439,7 +438,7 @@ static int cgx_get_lane_speed(int node, int cgx_id, int lmac_id)
 		 * be different. If this is not the case, PHY's link
 		 * speed needs to be read here
 		 */
-		spux_ctrl1.u = CSR_READ(node, CAVM_CGXX_SPUX_CONTROL1(
+		spux_ctrl1.u = CSR_READ(CAVM_CGXX_SPUX_CONTROL1(
 					cgx_id, lmac_id));
 		speed = cgx_get_usxgmii_speed_mbps_from_rate(
 					spux_ctrl1.s.usxgmii_rate);
@@ -453,7 +452,7 @@ static int cgx_get_lane_speed(int node, int cgx_id, int lmac_id)
 }
 
 /* This API sets the speed for the link based on PHY status */
-int cgx_sgmii_set_link_speed(int node, int cgx_id, int lmac_id,
+int cgx_sgmii_set_link_speed(int cgx_id, int lmac_id,
 			 link_state_t *link)
 {
 	cavm_cgxx_cmrx_config_t cmr_config;
@@ -462,38 +461,38 @@ int cgx_sgmii_set_link_speed(int node, int cgx_id, int lmac_id,
 	cavm_cgxx_gmp_gmi_txx_slot_t txx_slot;
 	cavm_cgxx_gmp_gmi_txx_burst_t txx_burst;
 
-	debug_cgx("%s %d:%d:%d\n", __func__, node, cgx_id, lmac_id);
+	debug_cgx("%s %d:%d\n", __func__, cgx_id, lmac_id);
 
 	/* disable Rx/Tx */
-	cmr_config.u = CSR_READ(node, CAVM_CGXX_CMRX_CONFIG(
+	cmr_config.u = CSR_READ(CAVM_CGXX_CMRX_CONFIG(
 				cgx_id, lmac_id));
 	cmr_config.s.data_pkt_rx_en = 0;
 	cmr_config.s.data_pkt_tx_en = 0;
-	CSR_WRITE(node, CAVM_CGXX_CMRX_CONFIG(cgx_id, lmac_id),
+	CSR_WRITE(CAVM_CGXX_CMRX_CONFIG(cgx_id, lmac_id),
 				cmr_config.u);
 
 	/* Wait for GMX Tx/Rx to be idle */
-	if (cgx_poll_for_csr(node, CAVM_CGXX_GMP_GMI_PRTX_CFG(cgx_id, lmac_id),
+	if (cgx_poll_for_csr(CAVM_CGXX_GMP_GMI_PRTX_CFG(cgx_id, lmac_id),
 				CGX_GMP_TX_IDLE_MASK, 1)) {
 		debug_cgx("%s: %d:%d CGX GMP Tx not Idle\n",
 				__func__, cgx_id, lmac_id);
-		cgx_set_error_type(node, cgx_id, lmac_id, CGX_ERR_TX_NOT_IDLE);
+		cgx_set_error_type(cgx_id, lmac_id, CGX_ERR_TX_NOT_IDLE);
 		return -1;
 	}
-	if (cgx_poll_for_csr(node,  CAVM_CGXX_GMP_GMI_PRTX_CFG(
+	if (cgx_poll_for_csr(CAVM_CGXX_GMP_GMI_PRTX_CFG(
 				cgx_id, lmac_id), CGX_GMP_RX_IDLE_MASK, 1)) {
 		debug_cgx("%s: %d:%d CGX GMP Rx not Idle\n",
 				__func__, cgx_id, lmac_id);
-		cgx_set_error_type(node, cgx_id, lmac_id, CGX_ERR_RX_NOT_IDLE);
+		cgx_set_error_type(cgx_id, lmac_id, CGX_ERR_RX_NOT_IDLE);
 		return -1;
 	}
 
 	/* Read GMX CFG */
-	prtx_cfg.u = CSR_READ(node, CAVM_CGXX_GMP_GMI_PRTX_CFG(
+	prtx_cfg.u = CSR_READ(CAVM_CGXX_GMP_GMI_PRTX_CFG(
 			cgx_id, lmac_id));
 
 	/* Read PCS MISCS CTL */
-	pcs_miscx_ctl.u = CSR_READ(node, CAVM_CGXX_GMP_PCS_MISCX_CTL(
+	pcs_miscx_ctl.u = CSR_READ(CAVM_CGXX_GMP_PCS_MISCX_CTL(
 				cgx_id, lmac_id));
 
 	debug_cgx("%s: link %d duplex %d speed %d\n", __func__,
@@ -518,9 +517,9 @@ int cgx_sgmii_set_link_speed(int node, int cgx_id, int lmac_id,
 		prtx_cfg.s.slottime = 0;
 		pcs_miscx_ctl.s.samp_pt = 50; /* sampling point */
 		txx_slot.s.slot = 0x40;
-		CSR_WRITE(node, CAVM_CGXX_GMP_GMI_TXX_SLOT(cgx_id, lmac_id),
+		CSR_WRITE(CAVM_CGXX_GMP_GMI_TXX_SLOT(cgx_id, lmac_id),
 						txx_slot.u);
-		CSR_WRITE(node, CAVM_CGXX_GMP_GMI_TXX_BURST(cgx_id, lmac_id),
+		CSR_WRITE(CAVM_CGXX_GMP_GMI_TXX_BURST(cgx_id, lmac_id),
 					txx_burst.u);
 		break;
 	case CGX_LINK_100M:
@@ -529,9 +528,9 @@ int cgx_sgmii_set_link_speed(int node, int cgx_id, int lmac_id,
 		prtx_cfg.s.slottime = 0;
 		pcs_miscx_ctl.s.samp_pt = 5; /* sampling point */
 		txx_slot.s.slot = 0x40;
-		CSR_WRITE(node, CAVM_CGXX_GMP_GMI_TXX_SLOT(cgx_id, lmac_id),
+		CSR_WRITE(CAVM_CGXX_GMP_GMI_TXX_SLOT(cgx_id, lmac_id),
 						txx_slot.u);
-		CSR_WRITE(node, CAVM_CGXX_GMP_GMI_TXX_BURST(cgx_id, lmac_id),
+		CSR_WRITE(CAVM_CGXX_GMP_GMI_TXX_BURST(cgx_id, lmac_id),
 					txx_burst.u);
 		break;
 	case CGX_LINK_1G:
@@ -540,11 +539,11 @@ int cgx_sgmii_set_link_speed(int node, int cgx_id, int lmac_id,
 		prtx_cfg.s.slottime = 1;
 		pcs_miscx_ctl.s.samp_pt = 1; /* sampling point */
 		txx_slot.s.slot = 0x200;
-		CSR_WRITE(node, CAVM_CGXX_GMP_GMI_TXX_SLOT(cgx_id, lmac_id),
+		CSR_WRITE(CAVM_CGXX_GMP_GMI_TXX_SLOT(cgx_id, lmac_id),
 						txx_slot.u);
 		if (!link->s.full_duplex)
 			txx_burst.s.burst = 0x2000;
-		CSR_WRITE(node, CAVM_CGXX_GMP_GMI_TXX_BURST(cgx_id, lmac_id),
+		CSR_WRITE(CAVM_CGXX_GMP_GMI_TXX_BURST(cgx_id, lmac_id),
 					txx_burst.u);
 		break;
 	default:
@@ -552,26 +551,26 @@ int cgx_sgmii_set_link_speed(int node, int cgx_id, int lmac_id,
 	}
 
 	/* write back the new PCS misc and GMX settings */
-	CSR_WRITE(node, CAVM_CGXX_GMP_PCS_MISCX_CTL(cgx_id, lmac_id),
+	CSR_WRITE(CAVM_CGXX_GMP_PCS_MISCX_CTL(cgx_id, lmac_id),
 				pcs_miscx_ctl.u);
-	CSR_WRITE(node, CAVM_CGXX_GMP_GMI_PRTX_CFG(cgx_id, lmac_id),
+	CSR_WRITE(CAVM_CGXX_GMP_GMI_PRTX_CFG(cgx_id, lmac_id),
 						prtx_cfg.u);
 
 	/* read back GMX CFG again to check config completion */
-	prtx_cfg.u = CSR_READ(node,
+	prtx_cfg.u = CSR_READ(
 			CAVM_CGXX_GMP_GMI_PRTX_CFG(cgx_id, lmac_id));
 
 	/* enable Rx/Tx */
-	cmr_config.u = CSR_READ(node, CAVM_CGXX_CMRX_CONFIG(
+	cmr_config.u = CSR_READ(CAVM_CGXX_CMRX_CONFIG(
 				cgx_id, lmac_id));
 	cmr_config.s.data_pkt_rx_en = 1;
 	cmr_config.s.data_pkt_tx_en = 1;
-	CSR_WRITE(node, CAVM_CGXX_CMRX_CONFIG(cgx_id, lmac_id),
+	CSR_WRITE(CAVM_CGXX_CMRX_CONFIG(cgx_id, lmac_id),
 				cmr_config.u);
 	return 0;
 }
 
-static void cgx_set_autoneg(int node, int cgx_id, int lmac_id)
+static void cgx_set_autoneg(int cgx_id, int lmac_id)
 {
 	cgx_lmac_config_t *lmac;
 	cavm_cgxx_gmp_pcs_anx_adv_t pcs_anx_adv;
@@ -580,7 +579,7 @@ static void cgx_set_autoneg(int node, int cgx_id, int lmac_id)
 
 	lmac = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
 
-	debug_cgx("%s: %d:%d:%d, mode=%d an=%d\n", __func__, node,
+	debug_cgx("%s: %d:%d, mode=%d an=%d\n", __func__,
 				cgx_id, lmac_id, lmac->mode,
 				!lmac->autoneg_dis);
 	switch (lmac->mode) {
@@ -595,27 +594,27 @@ static void cgx_set_autoneg(int node, int cgx_id, int lmac_id)
 			/* both half-duplex and full-duplex capable */
 			pcs_anx_adv.s.hfd = 1;
 			pcs_anx_adv.s.fd = 1;
-			CSR_WRITE(node, CAVM_CGXX_GMP_PCS_ANX_ADV(
+			CSR_WRITE(CAVM_CGXX_GMP_PCS_ANX_ADV(
 					cgx_id, lmac_id), pcs_anx_adv.u);
 		} else { /* SGMII/QSGMII mode */
 			if (lmac->phy_mode) {	/* PHY mode */
 				sgmx_an_adv.u = 0;
 				sgmx_an_adv.s.dup = 1; /* full duplex */
 				sgmx_an_adv.s.speed = 1; /* 1000Mb/s */
-				CSR_WRITE(node, CAVM_CGXX_GMP_PCS_SGMX_AN_ADV(
+				CSR_WRITE(CAVM_CGXX_GMP_PCS_SGMX_AN_ADV(
 					cgx_id, lmac_id), sgmx_an_adv.u);
 			} /* nothing to do in MAC mode */
 		}
 
 		/* Auto Neg Enable */
-		CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_gmp_pcs_mrx_control_t,
+		CAVM_MODIFY_CGX_CSR(cavm_cgxx_gmp_pcs_mrx_control_t,
 			CAVM_CGXX_GMP_PCS_MRX_CONTROL(cgx_id, lmac_id),
 			an_en, 1);
 		break;
 	case CAVM_CGX_LMAC_TYPES_E_TENG_R:
 	case CAVM_CGX_LMAC_TYPES_E_FORTYG_R:
 		/* enable AN */
-		CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_spux_an_control_t,
+		CAVM_MODIFY_CGX_CSR(cavm_cgxx_spux_an_control_t,
 				CAVM_CGXX_SPUX_AN_CONTROL(cgx_id, lmac_id),
 				an_en, 1);
 
@@ -623,8 +622,8 @@ static void cgx_set_autoneg(int node, int cgx_id, int lmac_id)
 		/* reset to ZERO for all the fields in the ADV register and
 		 * program only the relevant
 		 */
-		CSR_WRITE(node, CAVM_CGXX_SPUX_AN_ADV(cgx_id, lmac_id), 0x0);
-		spux_an_adv.u = CSR_READ(node, CAVM_CGXX_SPUX_AN_ADV(
+		CSR_WRITE(CAVM_CGXX_SPUX_AN_ADV(cgx_id, lmac_id), 0x0);
+		spux_an_adv.u = CSR_READ(CAVM_CGXX_SPUX_AN_ADV(
 						cgx_id, lmac_id));
 		if (lmac->mode == CAVM_CGX_LMAC_TYPES_E_TENG_R) {
 			spux_an_adv.s.a10g_kr = 1;
@@ -644,13 +643,13 @@ static void cgx_set_autoneg(int node, int cgx_id, int lmac_id)
 				spux_an_adv.s.fec_req = 1;
 			}
 		}
-		CSR_WRITE(node, CAVM_CGXX_SPUX_AN_ADV(cgx_id, lmac_id),
+		CSR_WRITE(CAVM_CGXX_SPUX_AN_ADV(cgx_id, lmac_id),
 				spux_an_adv.u);
 
 		/* optionally set an_arb_link_chk_en. For CN9XXX pass 1, better
 		 * not to set it due to errata #34763
 		 */
-		CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_spux_an_control_t,
+		CAVM_MODIFY_CGX_CSR(cavm_cgxx_spux_an_control_t,
 				CAVM_CGXX_SPUX_AN_CONTROL(cgx_id, lmac_id),
 				an_arb_link_chk_en, 0);
 		break;
@@ -660,12 +659,12 @@ static void cgx_set_autoneg(int node, int cgx_id, int lmac_id)
 	}
 }
 
-static void cgx_set_fec(int node, int cgx_id, int lmac_id, fec_type_t fec)
+static void cgx_set_fec(int cgx_id, int lmac_id, fec_type_t fec)
 {
 	cgx_lmac_config_t *lmac;
 	int val = 0;
 
-	debug_cgx("%s %d:%d:%d fec type %d\n", __func__, node, cgx_id,
+	debug_cgx("%s %d:%d fec type %d\n", __func__, cgx_id,
 							lmac_id, fec);
 
 	lmac = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
@@ -715,38 +714,38 @@ static void cgx_set_fec(int node, int cgx_id, int lmac_id, fec_type_t fec)
 		break;
 	}
 
-	CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_spux_fec_control_t,
+	CAVM_MODIFY_CGX_CSR(cavm_cgxx_spux_fec_control_t,
 				CAVM_CGXX_SPUX_FEC_CONTROL(cgx_id, lmac_id),
 				fec_en, val);
 }
 
-static int cgx_usxgmii_spux_reset(int node, int cgx_id, int lmac_id, int an_en)
+static int cgx_usxgmii_spux_reset(int cgx_id, int lmac_id, int an_en)
 {
-	debug_cgx("%s %d:%d:%d an_en %d\n", __func__, node, cgx_id, lmac_id, an_en);
+	debug_cgx("%s %d:%d an_en %d\n", __func__, cgx_id, lmac_id, an_en);
 
 	if (an_en) { /* AN enabled case */
-		CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_spux_usx_an_control_t,
+		CAVM_MODIFY_CGX_CSR(cavm_cgxx_spux_usx_an_control_t,
 			CAVM_CGXX_SPUX_USX_AN_CONTROL(cgx_id, lmac_id),
 			an_reset, 1);
-		if (cgx_poll_for_csr(node, CAVM_CGXX_SPUX_USX_AN_CONTROL(
+		if (cgx_poll_for_csr(CAVM_CGXX_SPUX_USX_AN_CONTROL(
 					cgx_id, lmac_id),
 					CGX_SPUX_USX_AN_RESET_MASK, 0)) {
 			ERROR("%s: %d:%d SPUX USXGMII AN reset not complete\n",
 					__func__, cgx_id, lmac_id);
-			cgx_set_error_type(node, cgx_id, lmac_id,
+			cgx_set_error_type(cgx_id, lmac_id,
 				CGX_ERR_SPUX_USX_AN_RESET_FAIL);
 			return -1;
 		}
 	} else { /* AN disabled */
-		CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_spux_control1_t,
+		CAVM_MODIFY_CGX_CSR(cavm_cgxx_spux_control1_t,
 			CAVM_CGXX_SPUX_CONTROL1(cgx_id, lmac_id),
 			reset, 1);
 
-		if (cgx_poll_for_csr(node, CAVM_CGXX_SPUX_CONTROL1(cgx_id,
+		if (cgx_poll_for_csr(CAVM_CGXX_SPUX_CONTROL1(cgx_id,
 				lmac_id), CGX_SPUX_RESET_MASK, 0)) {
 			ERROR("%s: %d:%d SPUX reset not complete\n",
 					__func__, cgx_id, lmac_id);
-			cgx_set_error_type(node, cgx_id, lmac_id,
+			cgx_set_error_type(cgx_id, lmac_id,
 				CGX_ERR_SPUX_RESET_FAIL);
 			return -1;
 		}
@@ -757,7 +756,7 @@ static int cgx_usxgmii_spux_reset(int node, int cgx_id, int lmac_id, int an_en)
 /* This function sets MAC/PHY mode.
  * Also 1000base-x/SGMII mode. Accordingly, programs the GMP timer
  */
-static int cgx_sgmii_set_mode(int node, int cgx_id, int lmac_id)
+static int cgx_sgmii_set_mode(int cgx_id, int lmac_id)
 {
 	int timer_val = 0;
 	cgx_lmac_config_t *lmac;
@@ -766,23 +765,23 @@ static int cgx_sgmii_set_mode(int node, int cgx_id, int lmac_id)
 
 	lmac = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
 
-	debug_cgx("%s: %d:%d:%d mode %d AN enable %d\n",
-			__func__, node, cgx_id, lmac_id, lmac->mode,
+	debug_cgx("%s: %d:%d mode %d AN enable %d\n",
+			__func__, cgx_id, lmac_id, lmac->mode,
 			!lmac->autoneg_dis);
 
 	/* If phy is not present, force to 1G */
 	if (!lmac->phy_present)	{
-		pcs_mrx_ctl.u = CSR_READ(node, CAVM_CGXX_GMP_PCS_MRX_CONTROL(
+		pcs_mrx_ctl.u = CSR_READ(CAVM_CGXX_GMP_PCS_MRX_CONTROL(
 						cgx_id, lmac_id));
 		pcs_mrx_ctl.s.spdlsb = 0;
 		pcs_mrx_ctl.s.spdmsb = 1;
 		pcs_mrx_ctl.s.dup = 1;
-		CSR_WRITE(node, CAVM_CGXX_GMP_PCS_MRX_CONTROL(
+		CSR_WRITE(CAVM_CGXX_GMP_PCS_MRX_CONTROL(
 				cgx_id, lmac_id), pcs_mrx_ctl.u);
 	}
 
 	/* Adjust the MAC mode based on the info from DT */
-	pcs_miscx_ctl.u = CSR_READ(node, CAVM_CGXX_GMP_PCS_MISCX_CTL(
+	pcs_miscx_ctl.u = CSR_READ(CAVM_CGXX_GMP_PCS_MISCX_CTL(
 					cgx_id, lmac_id));
 
 	debug_cgx("%s phy mode %d 1000x-base mode %d\n", __func__,
@@ -794,7 +793,7 @@ static int cgx_sgmii_set_mode(int node, int cgx_id, int lmac_id)
 	/* set to 1 for 1000base-x mode. default is SGMII/QSGMII mode */
 	pcs_miscx_ctl.s.mode = lmac->sgmii_1000x_mode;
 
-	CSR_WRITE(node, CAVM_CGXX_GMP_PCS_MISCX_CTL(cgx_id, lmac_id),
+	CSR_WRITE(CAVM_CGXX_GMP_PCS_MISCX_CTL(cgx_id, lmac_id),
 						pcs_miscx_ctl.u);
 
 	/* Timer value should be 1.6 ms for SGMII/QSGMII and 10 ms for
@@ -805,7 +804,7 @@ static int cgx_sgmii_set_mode(int node, int cgx_id, int lmac_id)
 	else /* SGMII or QSGMII mode */
 		timer_val = 1600; /* reset value */
 
-	CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_gmp_pcs_linkx_timer_t,
+	CAVM_MODIFY_CGX_CSR(cavm_cgxx_gmp_pcs_linkx_timer_t,
 			CAVM_CGXX_GMP_PCS_LINKX_TIMER(cgx_id, lmac_id),
 			count, timer_val);
 	return 0;
@@ -814,77 +813,77 @@ static int cgx_sgmii_set_mode(int node, int cgx_id, int lmac_id)
 /* This API brings up SGMII/QSGMII link. This function to be called
  * after the PHY is up (only when link is up).
  */
-int cgx_sgmii_set_link_up(int node, int cgx_id, int lmac_id)
+int cgx_sgmii_set_link_up(int cgx_id, int lmac_id)
 {
 	cgx_lmac_config_t *lmac;
 	cavm_cgxx_gmp_pcs_mrx_control_t pcs_mrx_ctl;
 
 	lmac = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
 
-	debug_cgx("%s: %d:%d:%d mode %d AN enable %d\n",
-			__func__, node, cgx_id, lmac_id, lmac->mode,
+	debug_cgx("%s: %d:%d mode %d AN enable %d\n",
+			__func__, cgx_id, lmac_id, lmac->mode,
 			!lmac->autoneg_dis);
 
 	/* set MAC/PHY/1000 base-x/SGMII mode */
-	cgx_sgmii_set_mode(node, cgx_id, lmac_id);
+	cgx_sgmii_set_mode(cgx_id, lmac_id);
 
 	/* check if AN is enabled. If not enabled, just
 	 * configure MRX_CONTROL CSR with default speed
 	 */
 	if (lmac->autoneg_dis) {
-		pcs_mrx_ctl.u = CSR_READ(node, CAVM_CGXX_GMP_PCS_MRX_CONTROL(
+		pcs_mrx_ctl.u = CSR_READ(CAVM_CGXX_GMP_PCS_MRX_CONTROL(
 						cgx_id, lmac_id));
 		pcs_mrx_ctl.s.an_en = 0;
 		pcs_mrx_ctl.s.spdlsb = 0;
 		pcs_mrx_ctl.s.spdmsb = 1;
-		CSR_WRITE(node, CAVM_CGXX_GMP_PCS_MRX_CONTROL(
+		CSR_WRITE(CAVM_CGXX_GMP_PCS_MRX_CONTROL(
 			cgx_id, lmac_id), pcs_mrx_ctl.u);
 	} else	{ /* AN is desired. sequence from AN execution section(HRM) */
 		/* enable LMAC */
-		CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_cmrx_config_t,
+		CAVM_MODIFY_CGX_CSR(cavm_cgxx_cmrx_config_t,
 			CAVM_CGXX_CMRX_CONFIG(cgx_id, lmac_id),
 			enable, 1);
 
 		/* disable GMI */
-		CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_gmp_pcs_miscx_ctl_t,
+		CAVM_MODIFY_CGX_CSR(cavm_cgxx_gmp_pcs_miscx_ctl_t,
 				CAVM_CGXX_GMP_PCS_MISCX_CTL(cgx_id, lmac_id),
 				gmxeno, 1);
 
-		cgx_set_autoneg(node, cgx_id, lmac_id);
+		cgx_set_autoneg(cgx_id, lmac_id);
 	}
 
 	/* Bring the PCS out of reset */
-	CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_gmp_pcs_mrx_control_t,
+	CAVM_MODIFY_CGX_CSR(cavm_cgxx_gmp_pcs_mrx_control_t,
 		CAVM_CGXX_GMP_PCS_MRX_CONTROL(cgx_id, lmac_id),
 		reset, 1);
 
 	/* Wait till reset done */
-	if (cgx_poll_for_csr(node, CAVM_CGXX_GMP_PCS_MRX_CONTROL(cgx_id,
+	if (cgx_poll_for_csr(CAVM_CGXX_GMP_PCS_MRX_CONTROL(cgx_id,
 				lmac_id), CGX_GMP_PCS_RESET_MASK, 0)) {
 		debug_cgx("%s: %d:%d PCS reset not completed\n",
 				__func__, cgx_id, lmac_id);
-		cgx_set_error_type(node, cgx_id, lmac_id,
+		cgx_set_error_type(cgx_id, lmac_id,
 				CGX_ERR_PCS_RESET_FAIL);
 		return -1;
 	}
 
 	if (lmac->autoneg_dis) {
 		/* enable LMAC */
-		CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_cmrx_config_t,
+		CAVM_MODIFY_CGX_CSR(cavm_cgxx_cmrx_config_t,
 			CAVM_CGXX_CMRX_CONFIG(cgx_id, lmac_id),
 			enable, 1);
 	} else {
 		/* If AN is enabled, reset AN and wait for AN to complete */
-		CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_gmp_pcs_mrx_control_t,
+		CAVM_MODIFY_CGX_CSR(cavm_cgxx_gmp_pcs_mrx_control_t,
 			CAVM_CGXX_GMP_PCS_MRX_CONTROL(cgx_id, lmac_id),
 			rst_an, 1);
 		/* Note : check for AN_CPT only for SGMII */
 		if (lmac->mode == CAVM_CGX_LMAC_TYPES_E_SGMII) {
-			if (cgx_poll_for_csr(node, CAVM_CGXX_GMP_PCS_MRX_STATUS(
+			if (cgx_poll_for_csr(CAVM_CGXX_GMP_PCS_MRX_STATUS(
 				cgx_id, lmac_id), CGX_GMP_PCS_AN_CPT_MASK, 1)) {
 				ERROR("%s: %d:%d SGMII AN not complete\n",
 						__func__, cgx_id, lmac_id);
-				cgx_set_error_type(node, cgx_id, lmac_id,
+				cgx_set_error_type(cgx_id, lmac_id,
 					CGX_ERR_AN_CPT_FAIL);
 				return -1;
 			}
@@ -892,7 +891,7 @@ int cgx_sgmii_set_link_up(int node, int cgx_id, int lmac_id)
 	}
 
 	/* Normal operation - power up */
-	CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_gmp_pcs_mrx_control_t,
+	CAVM_MODIFY_CGX_CSR(cavm_cgxx_gmp_pcs_mrx_control_t,
 			CAVM_CGXX_GMP_PCS_MRX_CONTROL(cgx_id, lmac_id),
 			pwr_dn, 0);
 	return 0;
@@ -901,55 +900,55 @@ int cgx_sgmii_set_link_up(int node, int cgx_id, int lmac_id)
 /* This API brings down the link, typically called
  * when user invokes ifconfig down
  */
-int cgx_sgmii_set_link_down(int node, int cgx_id, int lmac_id)
+int cgx_sgmii_set_link_down(int cgx_id, int lmac_id)
 {
 	cavm_cgxx_cmrx_rx_fifo_len_t rx_fifo_len;
 	cavm_cgxx_cmrx_tx_fifo_len_t tx_fifo_len;
 
-	debug_cgx("%s %d:%d:%d\n", __func__, node, cgx_id, lmac_id);
+	debug_cgx("%s %d:%d\n", __func__, cgx_id, lmac_id);
 
 	/* Rx disable */
-	CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_cmrx_config_t,
+	CAVM_MODIFY_CGX_CSR(cavm_cgxx_cmrx_config_t,
 			CAVM_CGXX_CMRX_CONFIG(cgx_id, lmac_id),
 			data_pkt_rx_en, 0);
 
 	/* Wait until Rx buffer is empty and Tx path is Idle */
 	do {
-		rx_fifo_len.u = CSR_READ(node, CAVM_CGXX_CMRX_RX_FIFO_LEN(
+		rx_fifo_len.u = CSR_READ(CAVM_CGXX_CMRX_RX_FIFO_LEN(
 				cgx_id, lmac_id));
-		tx_fifo_len.u = CSR_READ(node, CAVM_CGXX_CMRX_TX_FIFO_LEN(
+		tx_fifo_len.u = CSR_READ(CAVM_CGXX_CMRX_TX_FIFO_LEN(
 				cgx_id, lmac_id));
 	} while ((rx_fifo_len.s.fifo_len > 0) &&
 				(tx_fifo_len.s.lmac_idle != 1));
 
 	/* Tx disable */
-	CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_cmrx_config_t,
+	CAVM_MODIFY_CGX_CSR(cavm_cgxx_cmrx_config_t,
 			CAVM_CGXX_CMRX_CONFIG(cgx_id, lmac_id),
 			data_pkt_tx_en, 0);
 
 	/* power down PCS */
-	CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_gmp_pcs_mrx_control_t,
+	CAVM_MODIFY_CGX_CSR(cavm_cgxx_gmp_pcs_mrx_control_t,
 			CAVM_CGXX_GMP_PCS_MRX_CONTROL(cgx_id, lmac_id),
 			pwr_dn, 1);
 
 	/* force on CGX clocks to ensure successful propagation of reset
 	 * when disabling the link
 	 */
-	CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_cmr_global_config_t,
+	CAVM_MODIFY_CGX_CSR(cavm_cgxx_cmr_global_config_t,
 		CAVM_CGXX_CMR_GLOBAL_CONFIG(cgx_id), cgx_clk_enable, 1);
 
 	/* disable LMAC */
-	CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_cmrx_config_t,
+	CAVM_MODIFY_CGX_CSR(cavm_cgxx_cmrx_config_t,
 		CAVM_CGXX_CMRX_CONFIG(cgx_id, lmac_id), enable, 0);
 
 	/* release the force of clocks */
-	CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_cmr_global_config_t,
+	CAVM_MODIFY_CGX_CSR(cavm_cgxx_cmr_global_config_t,
 		CAVM_CGXX_CMR_GLOBAL_CONFIG(cgx_id), cgx_clk_enable, 0);
 
 	return 0;
 }
 
-int cgx_xaui_init_link(int node, int cgx_id, int lmac_id)
+int cgx_xaui_init_link(int cgx_id, int lmac_id)
 {
 	int rate = 0, i;
 	cgx_config_t *cgx;
@@ -961,8 +960,8 @@ int cgx_xaui_init_link(int node, int cgx_id, int lmac_id)
 	cgx = &plat_octeontx_bcfg->cgx_cfg[cgx_id];
 	lmac = &cgx->lmac_cfg[lmac_id];
 
-	debug_cgx("%s: %d:%d:%d mode %d AN enable %d training %d\n",
-			__func__, node, cgx_id, lmac_id, lmac->mode,
+	debug_cgx("%s: %d:%d mode %d AN enable %d training %d\n",
+			__func__, cgx_id, lmac_id, lmac->mode,
 			!lmac->autoneg_dis, lmac->use_training);
 
 	/* reset SPU */
@@ -970,7 +969,7 @@ int cgx_xaui_init_link(int node, int cgx_id, int lmac_id)
 		/* For USXGMII mode, reset of LMACs should be done
 		 * for all LMACs in the CGX even if not used
 		 */
-		cgx_usxgmii_spux_reset(node, cgx_id, lmac_id,
+		cgx_usxgmii_spux_reset(cgx_id, lmac_id,
 						!lmac->autoneg_dis);
 
 		/* if LMAC index matches the LMAC count in that CGX, the
@@ -979,56 +978,55 @@ int cgx_xaui_init_link(int node, int cgx_id, int lmac_id)
 		 */
 		if (lmac_id == (cgx->lmac_count - 1)) {
 			for (i = (lmac_id + 1); i < MAX_LMAC_PER_CGX; i++)
-				cgx_usxgmii_spux_reset(node, cgx_id, i,
-							!lmac->autoneg_dis);
+				cgx_usxgmii_spux_reset(cgx_id, i, !lmac->autoneg_dis);
 		}
 	} else { /* all other modes */
 		if (lmac->autoneg_dis)	{
-			CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_spux_control1_t,
+			CAVM_MODIFY_CGX_CSR(cavm_cgxx_spux_control1_t,
 				CAVM_CGXX_SPUX_CONTROL1(cgx_id, lmac_id),
 				reset, 1);
-			if (cgx_poll_for_csr(node, CAVM_CGXX_SPUX_CONTROL1(
+			if (cgx_poll_for_csr(CAVM_CGXX_SPUX_CONTROL1(
 					cgx_id, lmac_id),
 					CGX_SPUX_RESET_MASK, 0)) {
 				ERROR("%s: %d:%d SPUX reset not complete\n",
 					__func__, cgx_id, lmac_id);
-				cgx_set_error_type(node, cgx_id, lmac_id,
+				cgx_set_error_type(cgx_id, lmac_id,
 					CGX_ERR_SPUX_RESET_FAIL);
 				return -1;
 			}
 		} else { /* AN enabled case, reset AN_CONTROL bit */
-			CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_spux_an_control_t,
+			CAVM_MODIFY_CGX_CSR(cavm_cgxx_spux_an_control_t,
 				CAVM_CGXX_SPUX_AN_CONTROL(cgx_id, lmac_id),
 				an_reset, 1);
-			if (cgx_poll_for_csr(node, CAVM_CGXX_SPUX_AN_CONTROL(
+			if (cgx_poll_for_csr(CAVM_CGXX_SPUX_AN_CONTROL(
 					cgx_id, lmac_id),
 					CGX_SPUX_AN_RESET_MASK, 0)) {
 				ERROR("%s: %d:%d SPUX AN reset not complete\n",
 					__func__, cgx_id, lmac_id);
-				cgx_set_error_type(node, cgx_id, lmac_id,
+				cgx_set_error_type(cgx_id, lmac_id,
 						CGX_ERR_SPUX_AN_RESET_FAIL);
 				return -1;
 			}
 		}
-		CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_spu_usxgmii_control_t,
+		CAVM_MODIFY_CGX_CSR(cavm_cgxx_spu_usxgmii_control_t,
 			CAVM_CGXX_SPU_USXGMII_CONTROL(cgx_id),
 			enable, 0); /* disable USXGMII */
-		CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_spux_usx_an_control_t,
+		CAVM_MODIFY_CGX_CSR(cavm_cgxx_spux_usx_an_control_t,
 			CAVM_CGXX_SPUX_USX_AN_CONTROL(cgx_id, lmac_id),
 			an_en, 0); /* disable AN for USXGMII */
 	}
 
 	/* disable LMAC */
-	CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_cmrx_config_t,
+	CAVM_MODIFY_CGX_CSR(cavm_cgxx_cmrx_config_t,
 			CAVM_CGXX_CMRX_CONFIG(cgx_id, lmac_id),
 			enable, 0);
 
 	/* low power enable */
-	CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_spux_control1_t,
+	CAVM_MODIFY_CGX_CSR(cavm_cgxx_spux_control1_t,
 			CAVM_CGXX_SPUX_CONTROL1(cgx_id, lmac_id),
 			lo_pwr, 1);
 
-	CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_spux_misc_control_t,
+	CAVM_MODIFY_CGX_CSR(cavm_cgxx_spux_misc_control_t,
 			CAVM_CGXX_SPUX_MISC_CONTROL(cgx_id, lmac_id),
 			rx_packet_dis, 0);
 
@@ -1036,22 +1034,22 @@ int cgx_xaui_init_link(int node, int cgx_id, int lmac_id)
 	 * will occur during bring up of a link
 	 * first zero XXX_INT and disable interrupts via ENA_W1C per HRM
 	 */
-	CSR_WRITE(node, CAVM_CGXX_SMUX_RX_INT(cgx_id, lmac_id),
-		CSR_READ(node, CAVM_CGXX_SMUX_RX_INT(cgx_id, lmac_id)));
-	CSR_WRITE(node, CAVM_CGXX_SMUX_TX_INT(cgx_id, lmac_id),
-		CSR_READ(node, CAVM_CGXX_SMUX_TX_INT(cgx_id, lmac_id)));
-	CSR_WRITE(node, CAVM_CGXX_SPUX_INT(cgx_id, lmac_id),
-		CSR_READ(node, CAVM_CGXX_SPUX_INT(cgx_id, lmac_id)));
-	CSR_WRITE(node, CAVM_CGXX_SMUX_RX_INT_ENA_W1C(cgx_id, lmac_id), ~0ULL);
-	CSR_WRITE(node, CAVM_CGXX_SMUX_TX_INT_ENA_W1C(cgx_id, lmac_id), ~0ULL);
-	CSR_WRITE(node, CAVM_CGXX_SPUX_INT_ENA_W1C(cgx_id, lmac_id), ~0ULL);
+	CSR_WRITE(CAVM_CGXX_SMUX_RX_INT(cgx_id, lmac_id),
+		CSR_READ(CAVM_CGXX_SMUX_RX_INT(cgx_id, lmac_id)));
+	CSR_WRITE(CAVM_CGXX_SMUX_TX_INT(cgx_id, lmac_id),
+		CSR_READ(CAVM_CGXX_SMUX_TX_INT(cgx_id, lmac_id)));
+	CSR_WRITE(CAVM_CGXX_SPUX_INT(cgx_id, lmac_id),
+		CSR_READ(CAVM_CGXX_SPUX_INT(cgx_id, lmac_id)));
+	CSR_WRITE(CAVM_CGXX_SMUX_RX_INT_ENA_W1C(cgx_id, lmac_id), ~0ULL);
+	CSR_WRITE(CAVM_CGXX_SMUX_TX_INT_ENA_W1C(cgx_id, lmac_id), ~0ULL);
+	CSR_WRITE(CAVM_CGXX_SPUX_INT_ENA_W1C(cgx_id, lmac_id), ~0ULL);
 
 	/* enable link training, if applicable */
 	if (lmac->use_training) {
 		if (lmac->mode == CAVM_CGX_LMAC_TYPES_E_USXGMII) {
 			ERROR("%s: %d:%d UXSGMII doesn't support training\n",
 					__func__, cgx_id, lmac_id);
-			cgx_set_error_type(node, cgx_id, lmac_id,
+			cgx_set_error_type(cgx_id, lmac_id,
 					CGX_ERR_TRAINING_FAIL);
 			return -1;
 		}
@@ -1059,20 +1057,20 @@ int cgx_xaui_init_link(int node, int cgx_id, int lmac_id)
 		 * As per HRM, these registers will be cleared
 		 * before start of the traning. Why to explicitly clear them?
 		 */
-		CSR_WRITE(node, CAVM_CGXX_SPUX_BR_PMD_LD_CUP(cgx_id, lmac_id),
+		CSR_WRITE(CAVM_CGXX_SPUX_BR_PMD_LD_CUP(cgx_id, lmac_id),
 					0);
-		CSR_WRITE(node, CAVM_CGXX_SPUX_BR_PMD_LP_CUP(cgx_id, lmac_id),
+		CSR_WRITE(CAVM_CGXX_SPUX_BR_PMD_LP_CUP(cgx_id, lmac_id),
 					0);
-		CSR_WRITE(node, CAVM_CGXX_SPUX_BR_PMD_LP_REP(cgx_id, lmac_id),
+		CSR_WRITE(CAVM_CGXX_SPUX_BR_PMD_LP_REP(cgx_id, lmac_id),
 					0);
-		CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_spux_br_pmd_control_t,
+		CAVM_MODIFY_CGX_CSR(cavm_cgxx_spux_br_pmd_control_t,
 			CAVM_CGXX_SPUX_BR_PMD_CONTROL(cgx_id, lmac_id),
 			train_en, 1);
-		CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_spux_br_pmd_control_t,
+		CAVM_MODIFY_CGX_CSR(cavm_cgxx_spux_br_pmd_control_t,
 			CAVM_CGXX_SPUX_BR_PMD_CONTROL(cgx_id, lmac_id),
 			train_restart, 1);
 	} else
-		CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_spux_br_pmd_control_t,
+		CAVM_MODIFY_CGX_CSR(cavm_cgxx_spux_br_pmd_control_t,
 			CAVM_CGXX_SPUX_BR_PMD_CONTROL(cgx_id, lmac_id),
 			train_en, 0);
 
@@ -1080,16 +1078,16 @@ int cgx_xaui_init_link(int node, int cgx_id, int lmac_id)
 	 * determined by device tree & transceiver type
 	 */
 	if (lmac->fec) /* if FEC needs to be enabled */
-		cgx_set_fec(node, cgx_id, lmac_id, lmac->fec);
+		cgx_set_fec(cgx_id, lmac_id, lmac->fec);
 
 	/* configure and enable AN, if AN is desired */
 	if (!lmac->autoneg_dis)
-		cgx_set_autoneg(node, cgx_id, lmac_id);
+		cgx_set_autoneg(cgx_id, lmac_id);
 	else { /* disable AN */
-		CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_spux_an_control_t,
+		CAVM_MODIFY_CGX_CSR(cavm_cgxx_spux_an_control_t,
 				CAVM_CGXX_SPUX_AN_CONTROL(cgx_id, lmac_id),
 				an_en, 0);
-		CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_spux_usx_an_control_t,
+		CAVM_MODIFY_CGX_CSR(cavm_cgxx_spux_usx_an_control_t,
 				CAVM_CGXX_SPUX_USX_AN_CONTROL(cgx_id, lmac_id),
 				an_en, 0);
 	}
@@ -1103,7 +1101,7 @@ int cgx_xaui_init_link(int node, int cgx_id, int lmac_id)
 		 */
 		if (!lmac->phy_present) {
 			/* get the sub type to retrieve the MAX allowed rate */
-			usxgmii_ctrl.u = CSR_READ(node,
+			usxgmii_ctrl.u = CSR_READ(
 					CAVM_CGXX_SPU_USXGMII_CONTROL(cgx_id));
 			/* configure the max allowed rate for the sub type */
 			for (i = 0; i < MAX_USXGMII_TYPES; i++) {
@@ -1115,42 +1113,42 @@ int cgx_xaui_init_link(int node, int cgx_id, int lmac_id)
 			}
 		} else {
 			/* PHY present case : get link speed to get the rate */
-			cgx_get_link_state(node, cgx_id, lmac_id, &link);
+			cgx_get_link_state(cgx_id, lmac_id, &link);
 			rate = cgx_get_usxgmii_rate_from_link_speed(link.s.speed);
 		}
-		CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_spux_control1_t,
+		CAVM_MODIFY_CGX_CSR(cavm_cgxx_spux_control1_t,
 			CAVM_CGXX_SPUX_CONTROL1(cgx_id, lmac_id),
 			usxgmii_rate, rate);
 	}
 
 	/* enable LMAC, bringup the SMU/SPU */
-	CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_spux_control1_t,
+	CAVM_MODIFY_CGX_CSR(cavm_cgxx_spux_control1_t,
 			CAVM_CGXX_SPUX_CONTROL1(cgx_id, lmac_id),
 			lo_pwr, 0);
 
-	CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_cmrx_config_t,
+	CAVM_MODIFY_CGX_CSR(cavm_cgxx_cmrx_config_t,
 			CAVM_CGXX_CMRX_CONFIG(cgx_id, lmac_id),
 			enable, 1);
 
 	if (lmac->mode == CAVM_CGX_LMAC_TYPES_E_USXGMII)
-		CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_spu_usxgmii_control_t,
+		CAVM_MODIFY_CGX_CSR(cavm_cgxx_spu_usxgmii_control_t,
 			CAVM_CGXX_SPU_USXGMII_CONTROL(cgx_id),
 			enable, 1);
 
 	/* keep the reset values for lane polarity. select deficit
 	 * idle count mode and unidirectional enable/disable
 	 */
-	smux_tx_ctl.u = CSR_READ(node, CAVM_CGXX_SMUX_TX_CTL(cgx_id, lmac_id));
+	smux_tx_ctl.u = CSR_READ(CAVM_CGXX_SMUX_TX_CTL(cgx_id, lmac_id));
 	smux_tx_ctl.s.dic_en = 1;
 	smux_tx_ctl.s.mia_en = 1;
 	smux_tx_ctl.s.uni_en = 0;
-	CSR_WRITE(node, CAVM_CGXX_SMUX_TX_CTL(cgx_id, lmac_id),
+	CSR_WRITE(CAVM_CGXX_SMUX_TX_CTL(cgx_id, lmac_id),
 			smux_tx_ctl.u);
 
 	return 0;
 }
 
-int cgx_xaui_set_link_up(int node, int cgx_id, int lmac_id)
+int cgx_xaui_set_link_up(int cgx_id, int lmac_id)
 {
 	cgx_lmac_config_t *lmac;
 	cavm_cgxx_spux_an_control_t spux_an_ctl;
@@ -1163,25 +1161,25 @@ int cgx_xaui_set_link_up(int node, int cgx_id, int lmac_id)
 
 	lmac = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
 
-	debug_cgx("%s: %d:%d:%d mode %d AN enable %d training %d\n",
-			__func__, node, cgx_id, lmac_id, lmac->mode,
+	debug_cgx("%s: %d:%d mode %d AN enable %d training %d\n",
+			__func__, cgx_id, lmac_id, lmac->mode,
 			!lmac->autoneg_dis, lmac->use_training);
 
 	/* check whether AN is complete, if AN is enabled */
 	if (!lmac->autoneg_dis) {
-		spux_an_ctl.u = CSR_READ(node, CAVM_CGXX_SPUX_AN_CONTROL(
+		spux_an_ctl.u = CSR_READ(CAVM_CGXX_SPUX_AN_CONTROL(
 						cgx_id, lmac_id));
 		if (spux_an_ctl.s.an_arb_link_chk_en) {
-			spux_an_sts.u = CSR_READ(node, CAVM_CGXX_SPUX_AN_STATUS(
+			spux_an_sts.u = CSR_READ(CAVM_CGXX_SPUX_AN_STATUS(
 						cgx_id, lmac_id));
 			if (!spux_an_sts.s.an_complete) {
 				WARN("%s: %d:%d AN not complete\n",
 					__func__, cgx_id, lmac_id);
 				/* restart AN */
-				CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_spux_an_control_t,
+				CAVM_MODIFY_CGX_CSR(cavm_cgxx_spux_an_control_t,
 						CAVM_CGXX_SPUX_AN_CONTROL(cgx_id, lmac_id),
 						an_restart, 1);
-				cgx_set_error_type(node, cgx_id, lmac_id,
+				cgx_set_error_type(cgx_id, lmac_id,
 						CGX_ERR_AN_CPT_FAIL);
 				return -1;
 			}
@@ -1197,13 +1195,13 @@ int cgx_xaui_set_link_up(int node, int cgx_id, int lmac_id)
 
 	/* check training is complete if enabled */
 	if (lmac->use_training) {
-		spux_int.u = CSR_READ(node, CAVM_CGXX_SPUX_INT(
+		spux_int.u = CSR_READ(CAVM_CGXX_SPUX_INT(
 				cgx_id, lmac_id));
 		if (!spux_int.s.training_done) {
 			WARN("%s: %d:%d training not complete: restarting\n",
 				__func__, cgx_id, lmac_id);
-			cgx_restart_training(node, cgx_id, lmac_id);
-			cgx_set_error_type(node, cgx_id, lmac_id,
+			cgx_restart_training(cgx_id, lmac_id);
+			cgx_set_error_type(cgx_id, lmac_id,
 						CGX_ERR_TRAINING_FAIL);
 			return -1;
 		}
@@ -1212,21 +1210,21 @@ int cgx_xaui_set_link_up(int node, int cgx_id, int lmac_id)
 		 * speed >= 10Gbaud - XAUI/XLAUI/XFI
 		 */
 		debug_cgx("%s: RX EQU mode %d\n", __func__, lmac->mode);
-		if (cgx_rx_equalization(node, cgx_id, lmac_id) == -1) {
+		if (cgx_rx_equalization(cgx_id, lmac_id) == -1) {
 			ERROR("%s: %d:%d RX EQU failed\n", __func__,
 					cgx_id, lmac_id);
-			cgx_set_error_type(node, cgx_id, lmac_id,
+			cgx_set_error_type(cgx_id, lmac_id,
 				CGX_ERR_RX_EQU_FAIL);
 			return -1;
 		}
 	}
 
 	/* bring the SPU out of reset */
-	if (cgx_poll_for_csr(node, CAVM_CGXX_SPUX_CONTROL1(cgx_id, lmac_id),
+	if (cgx_poll_for_csr(CAVM_CGXX_SPUX_CONTROL1(cgx_id, lmac_id),
 			CGX_SPUX_RESET_MASK, 0)) {
 		debug_cgx("%s: %d:%d SPUX reset not completed\n",
 				__func__, cgx_id, lmac_id);
-		cgx_set_error_type(node, cgx_id, lmac_id,
+		cgx_set_error_type(cgx_id, lmac_id,
 				CGX_ERR_SPUX_RESET_FAIL);
 		return -1;
 	}
@@ -1240,24 +1238,24 @@ int cgx_xaui_set_link_up(int node, int cgx_id, int lmac_id)
 		(lmac->mode == CAVM_CGX_LMAC_TYPES_E_FIFTYG_R) ||
 		(lmac->mode == CAVM_CGX_LMAC_TYPES_E_HUNDREDG_R) ||
 		(lmac->mode == CAVM_CGX_LMAC_TYPES_E_USXGMII)) {
-		if (cgx_poll_for_csr(node, CAVM_CGXX_SPUX_BR_STATUS1(cgx_id,
+		if (cgx_poll_for_csr(CAVM_CGXX_SPUX_BR_STATUS1(cgx_id,
 				lmac_id), CGX_SPUX_BLK_LOCK_MASK, 1)) {
 			debug_cgx("%s: %d:%d: SPUX BLK LOCK not completed 0x%lx\n",
-					__func__, cgx_id, lmac_id, CSR_READ(node,
+					__func__, cgx_id, lmac_id, CSR_READ(
 						CAVM_CGXX_SPUX_BR_STATUS1(cgx_id, lmac_id)));
-			cgx_set_error_type(node, cgx_id, lmac_id,
+			cgx_set_error_type(cgx_id, lmac_id,
 					CGX_ERR_SPUX_BR_BLKLOCK_FAIL);
 			return -1;
 		}
 
 		/* if RS-FEC is enabled, check the alignment status */
 		if (lmac->fec == CGX_FEC_RS) {
-			if (cgx_poll_for_csr(node, CAVM_CGXX_SPUX_RSFEC_STATUS(
+			if (cgx_poll_for_csr(CAVM_CGXX_SPUX_RSFEC_STATUS(
 					cgx_id, lmac_id),
 					CGX_SPUX_RSFEC_ALGN_STS_MASK, 1)) {
 				debug_cgx("%s: %d:%d: SPUX RSFEC alignment not acquired\n",
 						__func__, cgx_id, lmac_id);
-				cgx_set_error_type(node, cgx_id, lmac_id,
+				cgx_set_error_type(cgx_id, lmac_id,
 						CGX_ERR_SPUX_RSFEC_ALGN_FAIL);
 				return -1;
 			}
@@ -1267,13 +1265,13 @@ int cgx_xaui_set_link_up(int node, int cgx_id, int lmac_id)
 			(lmac->mode == CAVM_CGX_LMAC_TYPES_E_FIFTYG_R) ||
 			(lmac->mode == CAVM_CGX_LMAC_TYPES_E_HUNDREDG_R) ||
 			(lmac->mode == CAVM_CGX_LMAC_TYPES_E_USXGMII)) {
-			if (cgx_poll_for_csr(node, CAVM_CGXX_SPUX_BR_ALGN_STATUS(
+			if (cgx_poll_for_csr(CAVM_CGXX_SPUX_BR_ALGN_STATUS(
 					cgx_id, lmac_id),
 					CGX_SPUX_MARKER_LOCK_MASK, 1)) {
 				debug_cgx("%s: %d:%d SPUX Marker Lock not achieved\n",
 						__func__, cgx_id, lmac_id);
 #if 0
-				cgx_set_error_type(node, cgx_id, lmac_id,
+				cgx_set_error_type(cgx_id, lmac_id,
 						CGX_ERR_SPUX_MARKER_LOCK_FAIL);
 				return -1;
 #endif
@@ -1282,11 +1280,11 @@ int cgx_xaui_set_link_up(int node, int cgx_id, int lmac_id)
 
 	} else if ((lmac->mode == CAVM_CGX_LMAC_TYPES_E_XAUI) ||
 		(lmac->mode == CAVM_CGX_LMAC_TYPES_E_RXAUI)) {
-		if (cgx_poll_for_csr(node, CAVM_CGXX_SPUX_BX_STATUS(cgx_id,
+		if (cgx_poll_for_csr(CAVM_CGXX_SPUX_BX_STATUS(cgx_id,
 				lmac_id), CGX_SPUX_RX_ALIGN_MASK, 1)) {
 			debug_cgx("%s: %d:%d SPUX RX ALIGN not completed\n",
 					__func__, cgx_id, lmac_id);
-			cgx_set_error_type(node, cgx_id, lmac_id,
+			cgx_set_error_type(cgx_id, lmac_id,
 					CGX_ERR_SPUX_RX_ALIGN_FAIL);
 			return -1;
 		}
@@ -1295,59 +1293,59 @@ int cgx_xaui_set_link_up(int node, int cgx_id, int lmac_id)
 	/* check the receive fault. latching high bit (stays
 	 * set until write 1 to clear by SW)
 	 */
-	CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_spux_status2_t,
+	CAVM_MODIFY_CGX_CSR(cavm_cgxx_spux_status2_t,
 		CAVM_CGXX_SPUX_STATUS2(cgx_id, lmac_id),
 		rcvflt, 1);
-	spux_status2.u = CSR_READ(node, CAVM_CGXX_SPUX_STATUS2(
+	spux_status2.u = CSR_READ(CAVM_CGXX_SPUX_STATUS2(
 					cgx_id, lmac_id));
 	if (spux_status2.s.rcvflt) {
 		if (lmac->use_training)
-			cgx_restart_training(node, cgx_id, lmac_id);
+			cgx_restart_training(cgx_id, lmac_id);
 		debug_cgx("%s: %d:%d Receive Fault, retry training\n",
 			__func__, cgx_id, lmac_id);
-		cgx_set_error_type(node, cgx_id, lmac_id,
+		cgx_set_error_type(cgx_id, lmac_id,
 					CGX_ERR_SPUX_RX_FAULT);
 		return -1;
 	}
 
 	/* Wait for link to be OK and no faults */
-	if (cgx_poll_for_csr(node, CAVM_CGXX_SMUX_RX_CTL(cgx_id, lmac_id),
+	if (cgx_poll_for_csr(CAVM_CGXX_SMUX_RX_CTL(cgx_id, lmac_id),
 				CGX_SMUX_RX_STATUS_MASK, 0)) {
 		debug_cgx("%s: %d:%d SMUX RX Link not OK\n",
 				__func__, cgx_id, lmac_id);
-		cgx_set_error_type(node, cgx_id, lmac_id,
+		cgx_set_error_type(cgx_id, lmac_id,
 				CGX_ERR_SMUX_RX_LINK_NOT_OK);
 		return -1;
 	}
 
 	/* Wait for SMU Tx to be idle */
-	if (cgx_poll_for_csr(node, CAVM_CGXX_SMUX_CTRL(cgx_id, lmac_id),
+	if (cgx_poll_for_csr(CAVM_CGXX_SMUX_CTRL(cgx_id, lmac_id),
 				CGX_SMUX_TX_IDLE_MASK, 0)) {
 		debug_cgx("%s: %d:%d SMUX Tx not Idle\n",
 				__func__, cgx_id, lmac_id);
 #if 0		/* temp for simulation */
-		cgx_set_error_type(node, cgx_id, lmac_id, CGX_ERR_TX_NOT_IDLE);
+		cgx_set_error_type(cgx_id, lmac_id, CGX_ERR_TX_NOT_IDLE);
 		return -1;
 #endif
 	}
 	/* Wait for SMU Rx to be idle */
-	if (cgx_poll_for_csr(node, CAVM_CGXX_SMUX_CTRL(cgx_id, lmac_id),
+	if (cgx_poll_for_csr(CAVM_CGXX_SMUX_CTRL(cgx_id, lmac_id),
 				CGX_SMUX_RX_IDLE_MASK, 0)) {
 		debug_cgx("%s: %d:%d SMUX Rx not Idle\n",
 				__func__, cgx_id, lmac_id);
 #if 0
-		cgx_set_error_type(node, cgx_id, lmac_id, CGX_ERR_RX_NOT_IDLE);
+		cgx_set_error_type(cgx_id, lmac_id, CGX_ERR_RX_NOT_IDLE);
 		return -1;
 #endif
 	}
 
 	/* check Recv Fault */
-	spux_status2.u = CSR_READ(node, CAVM_CGXX_SPUX_STATUS2(
+	spux_status2.u = CSR_READ(CAVM_CGXX_SPUX_STATUS2(
 					cgx_id, lmac_id));
 	if (spux_status2.s.rcvflt) {
 		debug_cgx("%s: %d:%d Receive Fault\n",
 			 __func__, cgx_id, lmac_id);
-		cgx_set_error_type(node, cgx_id, lmac_id,
+		cgx_set_error_type(cgx_id, lmac_id,
 				CGX_ERR_SPUX_RX_FAULT);
 		return -1;
 	}
@@ -1355,14 +1353,14 @@ int cgx_xaui_set_link_up(int node, int cgx_id, int lmac_id)
 	/* check receive link. latching low bit (stays
 	 * set until write 1 to set by SW)
 	 */
-	CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_spux_status1_t,
+	CAVM_MODIFY_CGX_CSR(cavm_cgxx_spux_status1_t,
 		CAVM_CGXX_SPUX_STATUS1(cgx_id, lmac_id),
 		rcv_lnk, 1);
-	if (cgx_poll_for_csr(node, CAVM_CGXX_SPUX_STATUS1(cgx_id, lmac_id),
+	if (cgx_poll_for_csr(CAVM_CGXX_SPUX_STATUS1(cgx_id, lmac_id),
 				CGX_SMUX_PCS_RCV_LINK_MASK, 1)) {
 		debug_cgx("%s: %d:%d SPU receive link down\n",
 				__func__, cgx_id, lmac_id);
-		cgx_set_error_type(node, cgx_id, lmac_id,
+		cgx_set_error_type(cgx_id, lmac_id,
 				CGX_ERR_PCS_RECV_LINK_FAIL);
 		return -1;
 	}
@@ -1380,22 +1378,22 @@ int cgx_xaui_set_link_up(int node, int cgx_id, int lmac_id)
 		(lmac->mode == CAVM_CGX_LMAC_TYPES_E_HUNDREDG_R) ||
 		(lmac->mode == CAVM_CGX_LMAC_TYPES_E_USXGMII)) {
 		udelay(CGX_SPUX_BR_RCV_LINK_DELAY); /* 10 ms wait */
-		spux_status1.u = CSR_READ(node, CAVM_CGXX_SPUX_STATUS1(
+		spux_status1.u = CSR_READ(CAVM_CGXX_SPUX_STATUS1(
 					cgx_id, lmac_id));
 		if (!spux_status1.s.rcv_lnk) {
 			debug_cgx("%s: %d:%d SPU receive link down after 10 ms\n",
 					__func__, cgx_id, lmac_id);
-			cgx_set_error_type(node, cgx_id, lmac_id,
+			cgx_set_error_type(cgx_id, lmac_id,
 					CGX_ERR_PCS_RECV_LINK_FAIL);
 			return -1;
 		}
 		/* check for latched_ber */
-		br_status2.u = CSR_READ(node, CAVM_CGXX_SPUX_BR_STATUS2(
+		br_status2.u = CSR_READ(CAVM_CGXX_SPUX_BR_STATUS2(
 				cgx_id, lmac_id));
 		if (br_status2.s.latched_ber) {
 			debug_cgx("%s: %d:%d high bit-error rate latched\n",
 					__func__, cgx_id, lmac_id);
-			cgx_set_error_type(node, cgx_id, lmac_id,
+			cgx_set_error_type(cgx_id, lmac_id,
 					CGX_ERR_SPUX_BER_FAIL);
 			return -1;
 		}
@@ -1404,7 +1402,7 @@ int cgx_xaui_set_link_up(int node, int cgx_id, int lmac_id)
 			debug_cgx("%s: %d:%d bit-error-rate counter %d is high\n",
 					__func__, cgx_id, lmac_id,
 					br_status2.s.ber_cnt);
-			cgx_set_error_type(node, cgx_id, lmac_id,
+			cgx_set_error_type(cgx_id, lmac_id,
 					CGX_ERR_SPUX_BER_FAIL);
 			return -1;
 		}
@@ -1413,23 +1411,23 @@ int cgx_xaui_set_link_up(int node, int cgx_id, int lmac_id)
 			debug_cgx("%s: %d:%d errored-blocks counter %d is high\n",
 					__func__, cgx_id, lmac_id,
 					br_status2.s.err_blks);
-			cgx_set_error_type(node, cgx_id, lmac_id,
+			cgx_set_error_type(cgx_id, lmac_id,
 					CGX_ERR_SPUX_BER_FAIL);
 			return -1;
 		}
 	}
 
 	/* enable Data Tx/Rx */
-	cmr_config.u = CSR_READ(node, CAVM_CGXX_CMRX_CONFIG(
+	cmr_config.u = CSR_READ(CAVM_CGXX_CMRX_CONFIG(
 				cgx_id, lmac_id));
 	cmr_config.s.data_pkt_rx_en = 1;
 	cmr_config.s.data_pkt_tx_en = 1;
-	CSR_WRITE(node, CAVM_CGXX_CMRX_CONFIG(cgx_id, lmac_id),
+	CSR_WRITE(CAVM_CGXX_CMRX_CONFIG(cgx_id, lmac_id),
 				cmr_config.u);
 	return 0;
 }
 
-int cgx_xaui_get_link(int node, int cgx_id, int lmac_id,
+int cgx_xaui_get_link(int cgx_id, int lmac_id,
 		link_state_t *result)
 {
 	cavm_cgxx_spux_status1_t spux_status1;
@@ -1437,18 +1435,18 @@ int cgx_xaui_get_link(int node, int cgx_id, int lmac_id,
 	cavm_cgxx_smux_rx_ctl_t	smux_rx_ctl;
 	int speed = 0;
 
-	spux_status1.u = CSR_READ(node, CAVM_CGXX_SPUX_STATUS1(
+	spux_status1.u = CSR_READ(CAVM_CGXX_SPUX_STATUS1(
 					cgx_id, lmac_id));
-	smux_tx_ctl.u = CSR_READ(node, CAVM_CGXX_SMUX_TX_CTL(
+	smux_tx_ctl.u = CSR_READ(CAVM_CGXX_SMUX_TX_CTL(
 					cgx_id, lmac_id));
-	smux_rx_ctl.u = CSR_READ(node, CAVM_CGXX_SMUX_RX_CTL(
+	smux_rx_ctl.u = CSR_READ(CAVM_CGXX_SMUX_RX_CTL(
 					cgx_id, lmac_id));
 	if ((smux_tx_ctl.s.ls == 0) && (smux_rx_ctl.s.status ==
 			0) && (spux_status1.s.rcv_lnk)) {
 		/* link is up */
 		result->s.link_up = 1;
 		result->s.full_duplex = 1;
-		speed = cgx_get_lane_speed(node, cgx_id, lmac_id);
+		speed = cgx_get_lane_speed(cgx_id, lmac_id);
 		debug_cgx("%s: speed obtained %d\n", __func__, speed);
 		result->s.speed = CGX_LINK_NONE;
 		/* obtain the speed enum based on the speed in Mbps */
@@ -1467,7 +1465,7 @@ int cgx_xaui_get_link(int node, int cgx_id, int lmac_id,
 	return 0;
 }
 
-int cgx_xaui_set_link_down(int node, int cgx_id, int lmac_id)
+int cgx_xaui_set_link_down(int cgx_id, int lmac_id)
 {
 	int usx_en = 0;
 	cgx_lmac_config_t *lmac;
@@ -1475,26 +1473,26 @@ int cgx_xaui_set_link_down(int node, int cgx_id, int lmac_id)
 	cavm_cgxx_cmrx_tx_fifo_len_t tx_fifo_len;
 	cavm_cgxx_cmrx_config_t cmrx_config;
 
-	debug_cgx("%s %d:%d:%d\n", __func__, node, cgx_id, lmac_id);
+	debug_cgx("%s %d:%d\n", __func__, cgx_id, lmac_id);
 
 	lmac = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
 
 	/* Rx disable */
-	CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_cmrx_config_t,
+	CAVM_MODIFY_CGX_CSR(cavm_cgxx_cmrx_config_t,
 			CAVM_CGXX_CMRX_CONFIG(cgx_id, lmac_id),
 			data_pkt_rx_en, 0);
 
 	/* Wait until Rx buffer is empty and Tx path is Idle */
 	do {
-		rx_fifo_len.u = CSR_READ(node, CAVM_CGXX_CMRX_RX_FIFO_LEN(
+		rx_fifo_len.u = CSR_READ(CAVM_CGXX_CMRX_RX_FIFO_LEN(
 				cgx_id, lmac_id));
-		tx_fifo_len.u = CSR_READ(node, CAVM_CGXX_CMRX_TX_FIFO_LEN(
+		tx_fifo_len.u = CSR_READ(CAVM_CGXX_CMRX_TX_FIFO_LEN(
 				cgx_id, lmac_id));
 	} while ((rx_fifo_len.s.fifo_len > 0) &&
 				(tx_fifo_len.s.lmac_idle != 1));
 
 	/* Tx disable */
-	CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_cmrx_config_t,
+	CAVM_MODIFY_CGX_CSR(cavm_cgxx_cmrx_config_t,
 			CAVM_CGXX_CMRX_CONFIG(cgx_id, lmac_id),
 			data_pkt_tx_en, 0);
 
@@ -1503,18 +1501,18 @@ int cgx_xaui_set_link_down(int node, int cgx_id, int lmac_id)
 	 */
 
 	/* disable SerDes lane */
-	CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_spux_control1_t,
+	CAVM_MODIFY_CGX_CSR(cavm_cgxx_spux_control1_t,
 			CAVM_CGXX_SPUX_CONTROL1(cgx_id, lmac_id),
 			lo_pwr, 1);
 
 	/* force on CGX clocks to ensure successful propagation of reset
 	 * when disabling the link
 	 */
-	CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_cmr_global_config_t,
+	CAVM_MODIFY_CGX_CSR(cavm_cgxx_cmr_global_config_t,
 		CAVM_CGXX_CMR_GLOBAL_CONFIG(cgx_id), cgx_clk_enable, 1);
 
 	/* disable LMAC */
-	CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_cmrx_config_t,
+	CAVM_MODIFY_CGX_CSR(cavm_cgxx_cmrx_config_t,
 		CAVM_CGXX_CMRX_CONFIG(cgx_id, lmac_id), enable, 0);
 
 	/* In case of USXGMII mode, also clear USXGMII enable only when
@@ -1522,7 +1520,7 @@ int cgx_xaui_set_link_down(int node, int cgx_id, int lmac_id)
 	 */
 	if (lmac->mode == CAVM_CGX_LMAC_TYPES_E_USXGMII) {
 		for (int i = 0; i < MAX_LMAC_PER_CGX; i++) {
-			cmrx_config.u = CSR_READ(node, CAVM_CGXX_CMRX_CONFIG(
+			cmrx_config.u = CSR_READ(CAVM_CGXX_CMRX_CONFIG(
 						cgx_id, lmac_id));
 			/* if any of the LMACs are enabled, set usx_en */
 			if (cmrx_config.s.enable) {
@@ -1532,53 +1530,53 @@ int cgx_xaui_set_link_down(int node, int cgx_id, int lmac_id)
 		}
 		if (!usx_en) {
 			debug_cgx("%s %d %d disable usxgmii\n", __func__, cgx_id, lmac_id);
-			CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_spu_usxgmii_control_t,
+			CAVM_MODIFY_CGX_CSR(cavm_cgxx_spu_usxgmii_control_t,
 				CAVM_CGXX_SPU_USXGMII_CONTROL(cgx_id),
 				enable, 0);
 		}
 	}
 
 	/* release the force of clocks */
-	CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_cmr_global_config_t,
+	CAVM_MODIFY_CGX_CSR(cavm_cgxx_cmr_global_config_t,
 		CAVM_CGXX_CMR_GLOBAL_CONFIG(cgx_id), cgx_clk_enable, 0);
 
 	return 0;
 }
 
-void cgx_mode_change(int node, int cgx_id, int lmac_id, int new_mode,
+void cgx_mode_change(int cgx_id, int lmac_id, int new_mode,
 					int new_fec)
 {
 	/* FIXME */
-	debug_cgx("%s: %d:%d:%d\n", __func__, node, cgx_id, lmac_id);
+	debug_cgx("%s: %d:%d\n", __func__, cgx_id, lmac_id);
 }
 
 /* FIXME : Waiting for GSERN HRM */
-int cgx_rx_equalization(int node, int cgx_id, int lmac_id)
+int cgx_rx_equalization(int cgx_id, int lmac_id)
 {
-	debug_cgx("%s: %d:%d:%d\n", __func__, node, cgx_id, lmac_id);
+	debug_cgx("%s: %d:%d\n", __func__, cgx_id, lmac_id);
 	return 0;
 }
 
-void cgx_set_internal_loopback(int node, int cgx_id, int lmac_id, int enable)
+void cgx_set_internal_loopback(int cgx_id, int lmac_id, int enable)
 {
 	uint64_t midr;
 	cgx_lmac_config_t *lmac;
 
 	lmac = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
 
-	debug_cgx("%s: %d:%d:%d mode %d enable %d\n", __func__, node, cgx_id,
+	debug_cgx("%s: %d:%d mode %d enable %d\n", __func__, cgx_id,
 				lmac_id, lmac->mode, enable);
 
 	/* Enable internal beat generation as GSERN's credit pulses are ignored
 	 * in internal loopback mode
 	 */
-	CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_cmrx_config_t,
+	CAVM_MODIFY_CGX_CSR(cavm_cgxx_cmrx_config_t,
 		CAVM_CGXX_CMRX_CONFIG(cgx_id, lmac_id),
 		int_beat_gen, enable);
 
 	if ((lmac->mode == CAVM_CGX_LMAC_TYPES_E_SGMII) || (lmac->mode ==
 			CAVM_CGX_LMAC_TYPES_E_QSGMII)) {
-		CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_gmp_pcs_mrx_control_t,
+		CAVM_MODIFY_CGX_CSR(cavm_cgxx_gmp_pcs_mrx_control_t,
 			CAVM_CGXX_GMP_PCS_MRX_CONTROL(cgx_id, lmac_id),
 			loopbck1, enable);
 	} else if ((lmac->mode == CAVM_CGX_LMAC_TYPES_E_XAUI) ||
@@ -1597,28 +1595,28 @@ void cgx_set_internal_loopback(int node, int cgx_id, int lmac_id, int enable)
 		 * detect as signal_OK.
 		 */
 		if (IS_OCTEONTX_PASS(midr, T96PARTNUM, 1, 0))
-			CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_spux_misc_control_t,
+			CAVM_MODIFY_CGX_CSR(cavm_cgxx_spux_misc_control_t,
 				CAVM_CGXX_SPUX_MISC_CONTROL(cgx_id, lmac_id),
 				rx_edet_signal_ok, enable);
 
-		CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_spux_control1_t,
+		CAVM_MODIFY_CGX_CSR(cavm_cgxx_spux_control1_t,
 			CAVM_CGXX_SPUX_CONTROL1(cgx_id, lmac_id),
 			loopbck, enable);
 	}
 }
 
-void cgx_set_external_loopback(int node, int cgx_id, int lmac_id, int enable)
+void cgx_set_external_loopback(int cgx_id, int lmac_id, int enable)
 {
 	cgx_lmac_config_t *lmac;
 
 	lmac = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
 
-	debug_cgx("%s: %d:%d:%d mode %d enable %d\n", __func__, node, cgx_id,
+	debug_cgx("%s: %d:%d mode %d enable %d\n", __func__, cgx_id,
 				lmac_id, lmac->mode, enable);
 
 	if ((lmac->mode == CAVM_CGX_LMAC_TYPES_E_SGMII) || (lmac->mode ==
 			CAVM_CGX_LMAC_TYPES_E_QSGMII)) {
-		CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_gmp_pcs_miscx_ctl_t,
+		CAVM_MODIFY_CGX_CSR(cavm_cgxx_gmp_pcs_miscx_ctl_t,
 				CAVM_CGXX_GMP_PCS_MISCX_CTL(cgx_id, lmac_id),
 				loopbck2, enable);
 	} else if ((lmac->mode == CAVM_CGX_LMAC_TYPES_E_XAUI) ||
@@ -1629,7 +1627,7 @@ void cgx_set_external_loopback(int node, int cgx_id, int lmac_id, int enable)
 		(lmac->mode == CAVM_CGX_LMAC_TYPES_E_FIFTYG_R) ||
 		(lmac->mode == CAVM_CGX_LMAC_TYPES_E_HUNDREDG_R) ||
 		(lmac->mode == CAVM_CGX_LMAC_TYPES_E_USXGMII)) {
-		CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_smux_ext_loopback_t,
+		CAVM_MODIFY_CGX_CSR(cavm_cgxx_smux_ext_loopback_t,
 			CAVM_CGXX_SMUX_EXT_LOOPBACK(cgx_id, lmac_id),
 			en, enable);
 	}
@@ -1639,13 +1637,13 @@ void cgx_set_external_loopback(int node, int cgx_id, int lmac_id, int enable)
  * PCI scanning (CGX device enumeration) or
  * during INTF initialization
  */
-void cgx_hw_init(int node, int cgx_id)
+void cgx_hw_init(int cgx_id)
 {
 	int lmac_id;
 	cgx_config_t *cgx;
 	cavm_cgxx_cmrx_config_t cmr_config;
 
-	debug_cgx("%s: %d:%d\n", __func__, node, cgx_id);
+	debug_cgx("%s: %d\n", __func__, cgx_id);
 
 	cgx = &plat_octeontx_bcfg->cgx_cfg[cgx_id];
 
@@ -1654,13 +1652,13 @@ void cgx_hw_init(int node, int cgx_id)
 		 * for each CGX
 		 */
 		debug_cgx("%s lmac_count %d\n", __func__, cgx->lmac_count);
-		CSR_WRITE(node, CAVM_CGXX_CMR_TX_LMACS(cgx_id),
+		CSR_WRITE(CAVM_CGXX_CMR_TX_LMACS(cgx_id),
 					cgx->lmac_count);
-		CSR_WRITE(node, CAVM_CGXX_CMR_RX_LMACS(cgx_id),
+		CSR_WRITE(CAVM_CGXX_CMR_RX_LMACS(cgx_id),
 					cgx->lmac_count);
 
 		/* FCS setting */
-		CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_cmr_global_config_t,
+		CAVM_MODIFY_CGX_CSR(cavm_cgxx_cmr_global_config_t,
 			CAVM_CGXX_CMR_GLOBAL_CONFIG(cgx_id), fcs_strip, 1);
 
 		/* Retrieve the LMAC config from plat_octeontx_bcfg structure and loop
@@ -1669,12 +1667,12 @@ void cgx_hw_init(int node, int cgx_id)
 		 */
 		for (lmac_id = 0; lmac_id < MAX_LMAC_PER_CGX; lmac_id++) {
 			if (cgx->lmac_cfg[lmac_id].lmac_enable)
-				cgx_lmac_init(node, cgx_id, lmac_id);
+				cgx_lmac_init(cgx_id, lmac_id);
 			else
 				debug_cgx("%s LMAC%d not enabled\n", __func__, lmac_id);
 
 			/* enable CMR INT for notifications to kernel cmds/evt */
-			CAVM_MODIFY_CGX_CSR(node, cavm_cgxx_cmrx_int_ena_w1s_t,
+			CAVM_MODIFY_CGX_CSR(cavm_cgxx_cmrx_int_ena_w1s_t,
 				CAVM_CGXX_CMRX_INT_ENA_W1S(cgx_id, lmac_id),
 				overflw, 1);
 		}
@@ -1684,15 +1682,15 @@ void cgx_hw_init(int node, int cgx_id)
 		 * in CGX to be zero. configure the LMAC type as 0
 		 * and lane_to_sds with the reset value of 0xE4
 		 */
-		CSR_WRITE(node, CAVM_CGXX_CMR_TX_LMACS(cgx_id), 0);
-		CSR_WRITE(node, CAVM_CGXX_CMR_RX_LMACS(cgx_id), 0);
+		CSR_WRITE(CAVM_CGXX_CMR_TX_LMACS(cgx_id), 0);
+		CSR_WRITE(CAVM_CGXX_CMR_RX_LMACS(cgx_id), 0);
 
 		for (lmac_id = 0; lmac_id < MAX_LMAC_PER_CGX; lmac_id++) {
-			cmr_config.u = CSR_READ(node,  CAVM_CGXX_CMRX_CONFIG(
+			cmr_config.u = CSR_READ( CAVM_CGXX_CMRX_CONFIG(
 					cgx_id, lmac_id));
 			cmr_config.s.lmac_type = 0;
 			cmr_config.s.lane_to_sds = 0xE4; /* reset value */
-			CSR_WRITE(node, CAVM_CGXX_CMRX_CONFIG(cgx_id, lmac_id),
+			CSR_WRITE(CAVM_CGXX_CMRX_CONFIG(cgx_id, lmac_id),
 					cmr_config.u);
 		}
 	}

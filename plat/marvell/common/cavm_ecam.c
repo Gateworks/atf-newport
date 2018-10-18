@@ -132,11 +132,9 @@ int enable_msix(uint64_t config_base, uint8_t cap_pointer, uint16_t *table_size,
 
 }
 
-static inline int smmu_get_irq(int node, int smmunr, int vectornr)
+static inline int smmu_get_irq(int smmunr, int vectornr)
 {
-	int irq =
-	    (node * 8) + smmunr +
-	    ((vectornr < (OCTEONTX_SMMU_NUM_CONTEXTS * 2)) ? 0 : 4);
+	int irq = smmunr + ((vectornr < (OCTEONTX_SMMU_NUM_CONTEXTS * 2)) ? 0 : 4);
 	switch (irq) {
 	case 0:
 		return OCTEONTX_SMMU0_CONTEXT_IRQ;
@@ -175,7 +173,7 @@ static inline int smmu_get_irq(int node, int smmunr, int vectornr)
 	return -1;
 }
 
-static void init_smmu(int node, uint64_t config_base, uint64_t config_size)
+static void init_smmu(uint64_t config_base, uint64_t config_size)
 {
 	struct pcie_config *pconfig = (struct pcie_config *)config_base;
 	uint8_t cap_pointer = pconfig->cap_pointer;
@@ -185,8 +183,8 @@ static void init_smmu(int node, uint64_t config_base, uint64_t config_size)
 	int i;
 	int smmunr = ((config_base >> 36) & 0xff) - 0x48;
 
-	debug_io("SMMU(%d) NODE(%d) init called config_base:%lx size:%lx\n",
-		 smmunr, node, config_base, config_size);
+	debug_io("SMMU(%d) init called config_base:%lx size:%lx\n",
+		 smmunr, config_base, config_size);
 	print_config_space(pconfig);
 
 	/* Allow all IO units to access only non secure memory 
@@ -202,7 +200,7 @@ static void init_smmu(int node, uint64_t config_base, uint64_t config_size)
 			continue;
 		}*/
 
-		CSR_WRITE((unsigned long)node, CAVM_SMMUX_SSDRX(smmunr, i),
+		CSR_WRITE(CAVM_SMMUX_SSDRX(smmunr, i),
 			     0xffffffff);
 	}
 
@@ -221,7 +219,7 @@ static void init_smmu(int node, uint64_t config_base, uint64_t config_size)
 		for (i = 0; i < table_size; i++) {
 			octeontx_write64(vector_base, (i % 2) ? CAVM_GICD_CLRSPI_NSR : CAVM_GICD_SETSPI_NSR);
 			vector_base += 8;
-			octeontx_write64(vector_base, smmu_get_irq(node, smmunr, i));
+			octeontx_write64(vector_base, smmu_get_irq(smmunr, i));
 			vector_base += 8;
 			//debug_io("SMMU(%d) : Vector:%d address :%lx irq:%d\n",smmunr, i, 
 			//       ((i%2)? CAVM_GICD_CLRSPI_NSR : CAVM_GICD_SETSPI_NSR),smmu_get_irq(smmunr, i));
@@ -245,7 +243,7 @@ static inline int uaa_get_irq(int uaanr)
 	}
 }
 
-static void init_uaa(int node, uint64_t config_base, uint64_t config_size)
+static void init_uaa(uint64_t config_base, uint64_t config_size)
 {
 	struct pcie_config *pconfig = (struct pcie_config *)config_base;
 	uint8_t cap_pointer = pconfig->cap_pointer;
@@ -258,10 +256,6 @@ static void init_uaa(int node, uint64_t config_base, uint64_t config_size)
 	union cavm_pccpf_xxx_cmd cmd;
 
 	vsec_ctl.u = octeontx_read32(config_base + CAVM_PCCPF_XXX_VSEC_CTL);
-
-	/* not intialising node1 uaa */
-	if (node)
-		return;
 
 	/* Bypass SMMU translation for MSIx delivery, since we pretend
 	 * UAA as non PCI device for non secure world
@@ -281,8 +275,8 @@ static void init_uaa(int node, uint64_t config_base, uint64_t config_size)
 		octeontx_write32(config_base + CAVM_PCCPF_XXX_CMD, cmd.u);
 	}
 
-	debug_io("UAA(%d) Node(%d) init called config_base:%lx size:%lx\n",
-		 vsec_ctl.s.inst_num, node, config_base, config_size);
+	debug_io("UAA(%d) init called config_base:%lx size:%lx\n",
+		 vsec_ctl.s.inst_num, config_base, config_size);
 	print_config_space(pconfig);
 	enable_msix(config_base, cap_pointer, &table_size, &bir);
 	/* initialise MSI-X Vector table */
@@ -302,15 +296,15 @@ static void init_uaa(int node, uint64_t config_base, uint64_t config_size)
 			printf("\r"); /* Need to revisit and remove this workaround */
 			octeontx_write64(vector_base, uaa_irq);
 			vector_base += 8;
-			debug_io("UAA(%d)-NODE(%d): Vector:%d address :%lx irq:%d\n",
-				 vsec_ctl.s.inst_num, node, i,
+			debug_io("UAA(%d): Vector:%d address :%lx irq:%d\n",
+				 vsec_ctl.s.inst_num, i,
 				 ((i % 2) ? CAVM_GICD_CLRSPI_NSR : CAVM_GICD_SETSPI_NSR),
 				 uaa_irq);
 		}
 	}
 }
 
-static void init_twsi(int node, uint64_t config_base, uint64_t config_size)
+static void init_twsi(uint64_t config_base, uint64_t config_size)
 {
 	struct pcie_config *pconfig = (struct pcie_config *)config_base;
 	uint8_t cap_pointer = pconfig->cap_pointer;
@@ -324,10 +318,6 @@ static void init_twsi(int node, uint64_t config_base, uint64_t config_size)
 
 	vsec_ctl.u = octeontx_read32(config_base + CAVM_PCCPF_XXX_VSEC_CTL);
 
-	/* not intialising node1 twsi */
-	if (node)
-		return;
-
 	debug_io("Using TWSI func = 0x%x\n", devfn);
 
 	if ((devfn & 0x7) != plat_octeontx_bcfg->bcfg.bmc_boot_twsi_bus)
@@ -335,8 +325,8 @@ static void init_twsi(int node, uint64_t config_base, uint64_t config_size)
 
 	debug_io("setting secure/phys @%p\n", (void *)sctl);
 	*sctl |= 3;
-	printf("TWSI1(%d) Node(%d) init called config_base:%lx size:%lx\n",
-	       vsec_ctl.s.inst_num, node, config_base, config_size);
+	printf("TWSI1(%d) init called config_base:%lx size:%lx\n",
+	       vsec_ctl.s.inst_num, config_base, config_size);
 	print_config_space(pconfig);
 	enable_msix(config_base, cap_pointer, &table_size, &bir);
 	/* initialise MSI-X Vector table */
@@ -355,8 +345,8 @@ static void init_twsi(int node, uint64_t config_base, uint64_t config_size)
 			vector_base += 8;
 			octeontx_write64(vector_base, OCTEONTX_TWSI_1_S_IRQ);
 			vector_base += 8;
-			debug_io("TWSI1(%d)-NODE(%d): Vector:%d address :%lx irq:%d\n",
-				 vsec_ctl.s.inst_num, node, i,
+			debug_io("TWSI1(%d): Vector:%d address :%lx irq:%d\n",
+				 vsec_ctl.s.inst_num, i,
 				 ((i % 2) ? CAVM_GICD_CLRSPI_SR : CAVM_GICD_SETSPI_SR),
 				 OCTEONTX_TWSI_1_S_IRQ);
 
@@ -365,7 +355,7 @@ static void init_twsi(int node, uint64_t config_base, uint64_t config_size)
 	}
 }
 
-static void init_pem(int node, uint64_t config_base, uint64_t config_size)
+static void init_pem(uint64_t config_base, uint64_t config_size)
 {
 	struct pcie_config *pconfig = (struct pcie_config *)config_base;
 	uint8_t cap_pointer = pconfig->cap_pointer;
@@ -377,8 +367,8 @@ static void init_pem(int node, uint64_t config_base, uint64_t config_size)
 	union cavm_pccpf_xxx_vsec_ctl vsec_ctl;
 	vsec_ctl.u = octeontx_read32(config_base + CAVM_PCCPF_XXX_VSEC_CTL);
 
-	debug_io("PEM(%d) Node(%d) init called config_base:%lx size:%lx\n",
-		 vsec_ctl.s.inst_num, node, config_base, config_size);
+	debug_io("PEM(%d) init called config_base:%lx size:%lx\n",
+		 vsec_ctl.s.inst_num, config_base, config_size);
 	print_config_space(pconfig);
 	enable_msix(config_base, cap_pointer, &table_size, &bir);
 	/* initialise MSI-X Vector table */
@@ -397,21 +387,21 @@ static void init_pem(int node, uint64_t config_base, uint64_t config_size)
 			vector_base += 8;
 			if (i >= PEM_INT_VEC_E_INTA && i < PEM_INT_VEC_E_INT_SUM)
 				msg = ((i - PEM_INT_VEC_E_INTA) / 2) + OCTEONTX_PEM_INTBASE_IRQ +
-					(24 * node) + (4 * vsec_ctl.s.inst_num);
+					(4 * vsec_ctl.s.inst_num);
 			else
 				msg = 0x100000000ull;	/* Masked */
 			octeontx_write64(vector_base, msg);
 			vector_base += 8;
 			debug_io
-			    ("PEM(%d)-NODE(%d): Vector:%d address :%lx irq:%lu\n",
-			     vsec_ctl.s.inst_num, node, i,
+			    ("PEM(%d): Vector:%d address :%lx irq:%lu\n",
+			     vsec_ctl.s.inst_num, i,
 			     ((i % 2) ? CAVM_GICD_CLRSPI_NSR : CAVM_GICD_SETSPI_NSR),
 			     msg);
 		}
 	}
 }
 
-static void init_gti(int node, uint64_t config_base, uint64_t config_size)
+static void init_gti(uint64_t config_base, uint64_t config_size)
 {
 	struct pcie_config *pconfig = (struct pcie_config *)config_base;
 	int i;
@@ -419,7 +409,7 @@ static void init_gti(int node, uint64_t config_base, uint64_t config_size)
 	uint16_t table_size = 0;
 	uint64_t vector_base = 0, msg = 0;
 
-	debug_io("GTI NODE(%d) init called config_base:%lx size:%lx\n", node,
+	debug_io("GTI init called config_base:%lx size:%lx\n",
 		 config_base, config_size);
 	cap_pointer = pconfig->cap_pointer;
 	print_config_space(pconfig);
@@ -449,14 +439,14 @@ static void init_gti(int node, uint64_t config_base, uint64_t config_size)
 		octeontx_write64(vector_base, msg);
 		vector_base += 8;
 		debug_io
-		    ("GTI NODE(%d): Vector:%d address :%lx irq:%lu\n",
-		     node, i,
+		    ("GTI: Vector:%d address :%lx irq:%lu\n",
+		     i,
 		     (i % 2) ? CAVM_GICD_CLRSPI_NSR : CAVM_GICD_SETSPI_NSR,
 		     msg);
 	}
 }
 
-static void init_iobn(int node, uint64_t config_base, uint64_t config_size)
+static void init_iobn(uint64_t config_base, uint64_t config_size)
 {
 	int iobn_nr;
 	union cavm_pccpf_xxx_vsec_ctl vsec_ctl;
@@ -465,8 +455,8 @@ static void init_iobn(int node, uint64_t config_base, uint64_t config_size)
 	vsec_ctl.u = octeontx_read32(config_base + CAVM_PCCPF_XXX_VSEC_CTL);
 	iobn_nr = vsec_ctl.s.inst_num;
 
-	debug_io("IOBN(%d) NODE(%d) init called config_base:%lx size:%lx\n",
-		vsec_ctl.s.inst_num, node, config_base, config_size);
+	debug_io("IOBN(%d) init called config_base:%lx size:%lx\n",
+		vsec_ctl.s.inst_num, config_base, config_size);
 	/*
 	 * When booting in Trusted Mode the Boot ROM disables accesses originating
 	 * from SLI by setting IOBN0_DIS_NCBI_IO.SLI_OFF=1. We unset the bit here.
@@ -474,14 +464,14 @@ static void init_iobn(int node, uint64_t config_base, uint64_t config_size)
 	 * external PCIe devices to do DMA.
 	 */
 	if(iobn_nr == 0) {
-		iobn_dis_ncbi.u = CSR_READ(node, CAVM_IOBNX_DIS_NCBI_IO(iobn_nr));
+		iobn_dis_ncbi.u = CSR_READ(CAVM_IOBNX_DIS_NCBI_IO(iobn_nr));
 
 		iobn_dis_ncbi.s.sli_off = 0;
-		CSR_WRITE(node, CAVM_IOBNX_DIS_NCBI_IO(iobn_nr), iobn_dis_ncbi.u);
+		CSR_WRITE(CAVM_IOBNX_DIS_NCBI_IO(iobn_nr), iobn_dis_ncbi.u);
 	}
 }
 
-static void init_iobn5(int node, uint64_t config_base, uint64_t config_size)
+static void init_iobn5(uint64_t config_base, uint64_t config_size)
 {
 	struct pcie_config *pconfig = (struct pcie_config *)config_base;
 	int i, iobn_nr;
@@ -493,8 +483,8 @@ static void init_iobn5(int node, uint64_t config_base, uint64_t config_size)
 	vsec_ctl.u = octeontx_read32(config_base + CAVM_PCCPF_XXX_VSEC_CTL);
 	iobn_nr = vsec_ctl.s.inst_num;
 
-	debug_io("IOBN(%d) NODE(%d) init called config_base:%lx size:%lx\n",
-		vsec_ctl.s.inst_num, node, config_base, config_size);
+	debug_io("IOBN(%d) init called config_base:%lx size:%lx\n",
+		vsec_ctl.s.inst_num, config_base, config_size);
 
 	print_config_space(pconfig);
 
@@ -503,19 +493,19 @@ static void init_iobn5(int node, uint64_t config_base, uint64_t config_size)
 	 * We can program secure devices later when they discovered.
 	 */
 	for (i = 0; i < 256; i++) {
-		CSR_WRITE(node, CAVM_IOBNX_RSLX_STREAMS(iobn_nr,i), 0x3);
+		CSR_WRITE(CAVM_IOBNX_RSLX_STREAMS(iobn_nr,i), 0x3);
 	}
 
-	ecamx_const.u = CSR_READ(node, CAVM_ECAMX_CONST(0));
+	ecamx_const.u = CSR_READ(CAVM_ECAMX_CONST(0));
 
 	for (domain = 0; domain < ecamx_const.s.domains; domain++) {
 		/* Domains may not be contiguous */
-		domx_const.u = CSR_READ(node, CAVM_ECAMX_DOMX_CONST(0,domain));
+		domx_const.u = CSR_READ(CAVM_ECAMX_DOMX_CONST(0,domain));
 		if (domx_const.s.pres) {
 			for (bus = 0; bus < 256; bus++)
-				CSR_WRITE(node, CAVM_IOBNX_DOMX_BUSX_STREAMS(iobn_nr, domain, bus), 0x3);
+				CSR_WRITE(CAVM_IOBNX_DOMX_BUSX_STREAMS(iobn_nr, domain, bus), 0x3);
 			for (dev = 0; dev < 32; dev++)
-				CSR_WRITE(node, CAVM_IOBNX_DOMX_DEVX_STREAMS(iobn_nr, domain, dev), 0x3);
+				CSR_WRITE(CAVM_IOBNX_DOMX_DEVX_STREAMS(iobn_nr, domain, dev), 0x3);
 		}
 	}
 }
@@ -543,11 +533,9 @@ static inline int octeontx_bus_is_rsl(struct ecam_device *device)
 /*
  * Initialize ECAM device structure
  */
-static void octeontx_ecam_dev_init(struct ecam_device *device, unsigned node,
-				 unsigned ecam)
+static void octeontx_ecam_dev_init(struct ecam_device *device, unsigned ecam)
 {
-	device->base_addr = CSR_PA(node, ECAM_PF_BAR2(ecam));
-	device->node = node;
+	device->base_addr = ECAM_PF_BAR2(ecam);
 	device->ecam = ecam;
 }
 
@@ -556,7 +544,7 @@ static void octeontx_ecam_dev_init(struct ecam_device *device, unsigned node,
  * SoC-specific ECAM files to determine if given device should
  * be hidden from non-secure world.
  */
-static int octeontx_call_probe(int node, uint64_t pconfig)
+static int octeontx_call_probe(uint64_t pconfig)
 {
 	cavm_pccpf_xxx_id_t pccpf_id;
 	struct ecam_probe_callback *probe_callbacks;
@@ -573,8 +561,7 @@ static int octeontx_call_probe(int node, uint64_t pconfig)
 		    && probe_callbacks[i].vendor_id == pccpf_id.s.vendid) {
 			debug_io("'calling io_probe ... %lx\n",
 				 (uint64_t) probe_callbacks[i].io_probe);
-			rc = probe_callbacks[i].io_probe(node,
-					probe_callbacks[i].call_count);
+			rc = probe_callbacks[i].io_probe(probe_callbacks[i].call_count);
 			probe_callbacks[i].call_count++;
 			return rc;
 		}
@@ -587,7 +574,7 @@ static int octeontx_call_probe(int node, uint64_t pconfig)
 /*
  * Method to initialize given device if matched in init_callbacks definition. 
  */
-static void octeontx_call_init(int node, uint64_t pconfig)
+static void octeontx_call_init(uint64_t pconfig)
 {
 	struct ecam_init_callback *plat_init_callbacks;
 	cavm_pccpf_xxx_id_t pccpf_id;
@@ -600,7 +587,7 @@ static void octeontx_call_init(int node, uint64_t pconfig)
 		    && init_callbacks[i].vendor_id == pccpf_id.s.vendid) {
 			debug_io("'calling io_init ... %lx\n",
 				 (uint64_t) init_callbacks[i].io_init);
-			init_callbacks[i].io_init(node, pconfig,
+			init_callbacks[i].io_init(pconfig,
 						  sizeof(struct pcie_config));
 		}
 		i++;
@@ -617,7 +604,7 @@ static void octeontx_call_init(int node, uint64_t pconfig)
 		    && plat_init_callbacks[i].vendor_id == pccpf_id.s.vendid) {
 			debug_io("'calling plat_io_init ... %lx\n",
 				 (uint64_t) plat_init_callbacks[i].io_init);
-			plat_init_callbacks[i].io_init(node, pconfig,
+			plat_init_callbacks[i].io_init(pconfig,
 						sizeof(struct pcie_config));
 		}
 		i++;
@@ -698,7 +685,7 @@ static void octeontx_ecam_dev_enumerate(struct ecam_device *device)
 	}
 
 	/* Call probe function on device (if probe method exist) */
-	rc = octeontx_call_probe(device->node, pconfig);
+	rc = octeontx_call_probe(pconfig);
 	if (!rc) {
 		debug_io("%s: Probe returned with rc=%d\n", __func__, rc);
 		if (octeontx_bus_is_rsl(device))
@@ -709,11 +696,11 @@ static void octeontx_ecam_dev_enumerate(struct ecam_device *device)
 	}
 
 	/* Call init function on device */
-	octeontx_call_init(device->node, pconfig);
+	octeontx_call_init(pconfig);
 
-	debug_io("%s: N%u:E%u:DOM%u:B%u:D%u:FUN%u\n"
+	debug_io("%s: E%u:DOM%u:B%u:D%u:FUN%u\n"
 		 "pconfig: 0x%lx, secure:%u, scp:%u, mcp:%u\n",
-		 __func__, device->node, device->ecam, device->domain,
+		 __func__, device->ecam, device->domain,
 		 device->bus, device->dev, device->func, pconfig,
 		 device->config.s.is_secure, device->config.s.is_scp_secure,
 		 device->config.s.is_mcp_secure);
@@ -773,9 +760,8 @@ static void octeontx_dev_on_bus_enumerate(struct ecam_device *device)
 
 static void octeontx_bus_enumerate(struct ecam_device *device)
 {
-	debug_io("%s: N%u:E%u:DOM%u:B%u\n",
-		 __func__, device->node, device->ecam, device->domain,
-		 device->bus);
+	debug_io("%s: E%u:DOM%u:B%u\n",
+		 __func__, device->ecam, device->domain, device->bus);
 
 	plat_ops.enable_bus(device);
 
@@ -824,12 +810,12 @@ static void octeontx_domain_setup(struct ecam_device *device)
 	}
 }
 
-static void octeontx_ecam_setup(unsigned node, unsigned ecam)
+static void octeontx_ecam_setup(unsigned ecam)
 {
 	struct ecam_device *device = &ecam_dev;
 	unsigned domain_count;
 
-	octeontx_ecam_dev_init(device, node, ecam);
+	octeontx_ecam_dev_init(device, ecam);
 	domain_count = plat_ops.get_domain_count(device);
 
 	for (device->domain = 0;
@@ -843,12 +829,9 @@ static void octeontx_ecam_setup(unsigned node, unsigned ecam)
 
 void octeontx_pci_init(void)
 {
-	unsigned node_count, ecam_count, node, ecam;
+	unsigned ecam_count, ecam;
 
-	node_count = plat_octeontx_get_node_count();
-	for (node = 0; node < node_count; node++) {
-		ecam_count = plat_ops.get_ecam_count(node);
-		for (ecam = 0; ecam < ecam_count; ecam++)
-			octeontx_ecam_setup(node, ecam);
-	}
+	ecam_count = plat_ops.get_ecam_count();
+	for (ecam = 0; ecam < ecam_count; ecam++)
+		octeontx_ecam_setup(ecam);
 }

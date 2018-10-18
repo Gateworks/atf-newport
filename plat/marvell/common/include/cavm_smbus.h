@@ -33,12 +33,11 @@ typedef enum {
 } smbus_op_t;
 
 typedef struct smbus_hdr {
-	unsigned int	node;
 	unsigned int	twsi_num;
 	uint8_t		pec_check;
 } smbus_hdr_t;
 
-int smbus_execute(unsigned int node, unsigned int twsi_num, uint8_t pec_check,
+int smbus_execute(unsigned int twsi_num, uint8_t pec_check,
 		  uint16_t slave_addr, uint8_t command, smbus_op_t operation,
 		  uint8_t *data, uint8_t bytes);
 #endif

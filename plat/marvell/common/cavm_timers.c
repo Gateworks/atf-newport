@@ -166,7 +166,7 @@ static uint32_t plat_get_timer_value(void)
 	/* Generic delay timer implementation expects the timer to be a down
 	 * counter. We apply bitwise NOT operator to the tick values returned
 	 * by read_cntpct_el0() to simulate the down counter. */
-	volatile uint64_t count = CSR_READ(0, CAVM_RST_REF_CNTR);
+	volatile uint64_t count = CSR_READ(CAVM_RST_REF_CNTR);
 
 	return count;
 }

@@ -85,21 +85,21 @@ static void octeontx_get_generic_8023_c22_phy_link_state(phy_config_t *phy,
 
 	link->u64 = 0;
 
-	status = smi_phy_read(0, mdio, CLAUSE22, addr, -1, 1);
+	status = smi_phy_read(mdio, CLAUSE22, addr, -1, 1);
 	if (!(status & 0x4))	/* check bit 2 for Link Status */
 		return;		/* Link is down, return link down */
 
 	link->s.link_up = 1;
-	control = smi_phy_read(0, mdio, CLAUSE22, addr, -1, 0);
+	control = smi_phy_read(mdio, CLAUSE22, addr, -1, 0);
 	/* Check if AN is enabled & complete */
 	if ((control & (1 << 12)) && (status & (1 << 5))) {
 		debug_nw_mgmt("AN is enabled & complete\n");
-		ms_control = smi_phy_read(0, mdio, CLAUSE22, addr, -1, 0x9);
-		ms_status = smi_phy_read(0, mdio, CLAUSE22, addr, -1, 0xA);
+		ms_control = smi_phy_read(mdio, CLAUSE22, addr, -1, 0x9);
+		ms_status = smi_phy_read(mdio, CLAUSE22, addr, -1, 0xA);
 
 		ms_status &= ms_control << 2;
-		link_partner_abil = smi_phy_read(0, mdio, CLAUSE22, addr, -1, 0x5);
-		an_adv = smi_phy_read(0, mdio, CLAUSE22, addr, -1, 0x4);
+		link_partner_abil = smi_phy_read(mdio, CLAUSE22, addr, -1, 0x5);
+		an_adv = smi_phy_read(mdio, CLAUSE22, addr, -1, 0x4);
 		link_partner_abil &= an_adv;
 
 		if (ms_status & 0xC00) {
@@ -143,7 +143,7 @@ static void octeontx_get_generic_8023_c45_phy_link_state(phy_config_t *phy,
 	debug_nw_mgmt("%s: mdio_bus %d phy_addr 0x%x\n", __func__, mdio, addr);
 
 	link->u64 = 0;
-	pma_ctrl1 = smi_phy_read(0, mdio, CLAUSE45, addr, PMA_PMD_DEVICE_ADDR,
+	pma_ctrl1 = smi_phy_read(mdio, CLAUSE45, addr, PMA_PMD_DEVICE_ADDR,
 					PMA_PMD_CONTROL_REG);
 	/* From IEEE 803.2 spec
 	 * section 45.2.1.1 PMA/PMD control 1 register (Register 1.0)
@@ -181,20 +181,20 @@ static void octeontx_get_generic_8023_c45_phy_link_state(phy_config_t *phy,
 	 * 1 = PMA/PMD receive link up
 	 * 0 = PMA/PMD receive link down
 	 */
-	phy_status = smi_phy_read(0, mdio, CLAUSE45, addr, PMA_PMD_DEVICE_ADDR,
+	phy_status = smi_phy_read(mdio, CLAUSE45, addr, PMA_PMD_DEVICE_ADDR,
 						PMA_PMD_STATUS_REG);
 	link->s.link_up = octeontx_bit_extract(phy_status, 2, 1) & 0x1;
 	if (link->s.link_up)
 		link->s.full_duplex = 1;
 }
 
-int octeontx_get_phy_link_status(int node, int cgx_id, int lmac_id,
+int octeontx_get_phy_link_status(int cgx_id, int lmac_id,
 						link_state_t *link)
 {
 	cgx_lmac_config_t *lmac = NULL;
 	int ret = 0;
 
-	debug_nw_mgmt("%s: %d:%d:%d\n", __func__, node, cgx_id, lmac_id);
+	debug_nw_mgmt("%s: %d:%d\n", __func__, cgx_id, lmac_id);
 
 	/* Get the LMAC type for each LMAC */
 	lmac = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
@@ -213,7 +213,7 @@ int octeontx_get_phy_link_status(int node, int cgx_id, int lmac_id,
 		(lmac->mode == CAVM_CGX_LMAC_TYPES_E_FIFTYG_R) ||
 		(lmac->mode == CAVM_CGX_LMAC_TYPES_E_HUNDREDG_R)) {
 		/* obtain the status from CGX CSRs */
-		cgx_xaui_get_link(node, cgx_id, lmac_id, link);
+		cgx_xaui_get_link(cgx_id, lmac_id, link);
 		debug_nw_mgmt("link %d speed %d duplex %d\n", link->s.link_up,
 			link->s.speed, link->s.full_duplex);
 		return ret;
@@ -244,16 +244,16 @@ int octeontx_get_phy_link_status(int node, int cgx_id, int lmac_id,
 	return ret;
 }
 
-void octeontx_phy_reset(int node, int cgx_id, int lmac_id)
+void octeontx_phy_reset(int cgx_id, int lmac_id)
 {
 	phy_config_t *phy;
 
-	debug_nw_mgmt("%s: %d:%d:%d\n", __func__, node, cgx_id, lmac_id);
+	debug_nw_mgmt("%s: %d:%d\n", __func__, cgx_id, lmac_id);
 
 	phy = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id].phy_config;
 
 	/* Enable the SMI/MDIO bus */
 	if (phy->mdio_bus != -1)
-		smi_phy_reset(node, phy->mdio_bus);
+		smi_phy_reset(phy->mdio_bus);
 
 }

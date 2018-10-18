@@ -58,12 +58,12 @@
 #define MAX_USXGMII_RATE_TYPES (CAVM_CGX_USXGMII_RATE_E_RSV_RATE + 1)
 
 /* Read-Modify-Write APIs for CGX CSRs */
-#define CAVM_MODIFY_CGX_CSR(node, type, csr, field, val)        \
+#define CAVM_MODIFY_CGX_CSR(type, csr, field, val)        \
 	do {                                                    \
 		type c;                                         \
-		c.u = CSR_READ(node, csr);			\
+		c.u = CSR_READ(csr);			\
 		c.s.field = val;				\
-		CSR_WRITE(node, csr, c.u);			\
+		CSR_WRITE(csr, c.u);			\
 	} while (0)
 
 /* Macros to define BIT masks for polling */
@@ -158,22 +158,22 @@ typedef union cgx_lmac_context {
 } cgx_lmac_context_t;
 
 /* CGX driver APIs */
-void cgx_hw_init(int node, int cgx_id);
-int cgx_sgmii_set_link_speed(int node, int cgx_id, int lmac_id,
+void cgx_hw_init(int cgx_id);
+int cgx_sgmii_set_link_speed(int cgx_id, int lmac_id,
 			link_state_t *link);
-int cgx_sgmii_set_link_up(int node, int cgx_id, int lmac_id);
-int cgx_sgmii_set_link_down(int node, int cgx_id, int lmac_id);
+int cgx_sgmii_set_link_up(int cgx_id, int lmac_id);
+int cgx_sgmii_set_link_down(int cgx_id, int lmac_id);
 
-int cgx_xaui_init_link(int node, int cgx_id, int lmac_id);
-int cgx_xaui_set_link_up(int node, int cgx_id, int lmac_id);
-int cgx_xaui_set_link_down(int node, int cgx_id, int lmac_id);
-int cgx_xaui_get_link(int node, int cgx_id, int lmac_id,
+int cgx_xaui_init_link(int cgx_id, int lmac_id);
+int cgx_xaui_set_link_up(int cgx_id, int lmac_id);
+int cgx_xaui_set_link_down(int cgx_id, int lmac_id);
+int cgx_xaui_get_link(int cgx_id, int lmac_id,
 		link_state_t *result);
-int cgx_rx_equalization(int node, int cgx_id, int lmac_id);
-void cgx_set_internal_loopback(int node, int cgx_id, int lmac_id, int enable);
-void cgx_set_external_loopback(int node, int cgx_id, int lmac_id, int enable);
-void cgx_set_error_type(int node, int cgx_id, int lmac_id, uint64_t type);
-void cgx_get_link_state(int node, int cgx_id, int lmac_id, link_state_t *link);
+int cgx_rx_equalization(int cgx_id, int lmac_id);
+void cgx_set_internal_loopback(int cgx_id, int lmac_id, int enable);
+void cgx_set_external_loopback(int cgx_id, int lmac_id, int enable);
+void cgx_set_error_type(int cgx_id, int lmac_id, uint64_t type);
+void cgx_get_link_state(int cgx_id, int lmac_id, link_state_t *link);
 
 /* CGX FW interface APIs */
 void cgx_fw_intf_init(void);

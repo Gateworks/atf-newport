@@ -29,12 +29,10 @@ static void print_board_variables()
 {
 	INFO("======================\n");
 	INFO("BOARD MODEL = %s\n", plat_octeontx_bcfg->bcfg.board_model);
-	INFO("BMC BOOT TWSI node=%d bus=0x%x, addr=0x%x\n",
-		plat_octeontx_bcfg->bcfg.bmc_boot_twsi_node,
+	INFO("BMC BOOT TWSI bus=0x%x, addr=0x%x\n",
 		plat_octeontx_bcfg->bcfg.bmc_boot_twsi_bus,
 		plat_octeontx_bcfg->bcfg.bmc_boot_twsi_addr);
-	INFO("BMC IPMI TWSI node=%d bus=0x%x, addr=0x%x\n",
-		plat_octeontx_bcfg->bcfg.bmc_ipmi_twsi_node,
+	INFO("BMC IPMI TWSI bus=0x%x, addr=0x%x\n",
 		plat_octeontx_bcfg->bcfg.bmc_ipmi_twsi_bus,
 		plat_octeontx_bcfg->bcfg.bmc_ipmi_twsi_addr);
 	INFO("GPIO Shutdown pin IN = 0x%x\n",
@@ -120,21 +118,17 @@ int octeontx_fill_board_details(int info)
 
 	config = octeontx_fdt_get(fdt, offset, "BMC-BOOT-TWSI-CONFIG", 0);
 	if (config != -1) {
-		plat_octeontx_bcfg->bcfg.bmc_boot_twsi_node = (config >> 16) & 0xff;
 		plat_octeontx_bcfg->bcfg.bmc_boot_twsi_bus = (config >> 8) & 0xff;
 		plat_octeontx_bcfg->bcfg.bmc_boot_twsi_addr = config & 0xff;
 	} else {
-		plat_octeontx_bcfg->bcfg.bmc_boot_twsi_node = 0;
 		plat_octeontx_bcfg->bcfg.bmc_boot_twsi_bus = octeontx_fdt_get(fdt, offset, "BMC-BOOT-TWSI-BUS", 10);
 		plat_octeontx_bcfg->bcfg.bmc_boot_twsi_addr = octeontx_fdt_get(fdt, offset, "BMC-BOOT-TWSI-ADDR", 16);
 	}
 	config = octeontx_fdt_get(fdt, offset, "BMC-IPMI-TWSI-CONFIG", 0);
 	if (config != -1) {
-		plat_octeontx_bcfg->bcfg.bmc_ipmi_twsi_node = (config >> 16) & 0xff;
 		plat_octeontx_bcfg->bcfg.bmc_ipmi_twsi_bus = (config >> 8) & 0xff;
 		plat_octeontx_bcfg->bcfg.bmc_ipmi_twsi_addr = config & 0xff;
 	} else {
-		plat_octeontx_bcfg->bcfg.bmc_ipmi_twsi_node = 0;
 		plat_octeontx_bcfg->bcfg.bmc_ipmi_twsi_bus = octeontx_fdt_get(fdt, offset, "BMC-IPMI-TWSI-BUS", 10);
 		plat_octeontx_bcfg->bcfg.bmc_ipmi_twsi_addr = octeontx_fdt_get(fdt, offset, "BMC-IPMI-TWSI-ADDR", 16);
 	}
@@ -155,7 +149,6 @@ int octeontx_fill_board_details(int info)
 
 	config = octeontx_fdt_get(fdt, offset, "MCU-SHUTDOWN-TWSI-CONFIG", 16);
 	if (config != -1) {
-		plat_octeontx_bcfg->bcfg.mcu_twsi.s.node = (config >> 24) & 0xff;
 		plat_octeontx_bcfg->bcfg.mcu_twsi.s.int_addr = (config >> 16) & 0xff;
 		plat_octeontx_bcfg->bcfg.mcu_twsi.s.bus = (config >> 8) & 0xff;
 		plat_octeontx_bcfg->bcfg.mcu_twsi.s.addr = config & 0xff;

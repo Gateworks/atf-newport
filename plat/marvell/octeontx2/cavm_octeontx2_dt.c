@@ -19,7 +19,6 @@
 #include <assert.h>
 #include <cavm_dt.h>
 #include <cavm_common.h>
-#include <cavm_utils.h>
 #include <cavm_board_cfg_bl1.h>
 
 /* define DEBUG_ATF_DTS to enable debug logs */
@@ -84,12 +83,10 @@ void plat_octeontx_print_board_variables(void)
 
 	for (i = 0; i < MAX_CGX; i++) {
 		cgx = &(plat_octeontx_bcfg->cgx_cfg[i]);
-		debug_dts("N%d.CGX%d: lmac_count = %d\n", cgx->node, i,
-				cgx->lmac_count);
+		debug_dts("CGX%d: lmac_count = %d\n", i, cgx->lmac_count);
 		for (j = 0; j < cgx->lmac_count; j++) {
 			lmac = &cgx->lmac_cfg[j];
-			debug_dts("N%d.CGX%d.LMAC%d: mode = %s:%d, qlm = %d, lane = %d, lane_to_sds=0x%x\n",
-					cgx->node,
+			debug_dts("CGX%d.LMAC%d: mode = %s:%d, qlm = %d, lane = %d, lane_to_sds=0x%x\n",
 					i,
 					j,
 					qlmmode_strmap[lmac->mode_idx].bdk_str,
@@ -375,7 +372,6 @@ static void octeontx2_parse_rvu_config(const void *fdt, int *fdt_vfs)
 {
 	int offset, rc, soc_offset, cpt;
 	char node_name[32];
-	int node = 0; /* FIXME:node to be sent as a parameter */
 
 	/* CGX configuration is already done on this step,
 	 * perform initial setup for other RVU-related nodes */
@@ -388,7 +384,7 @@ static void octeontx2_parse_rvu_config(const void *fdt, int *fdt_vfs)
 
 	/* Parse all subnodes of ECAM0, Domain2 */
 	snprintf(node_name, sizeof(node_name), "pci@%llx",
-		(CSR_PA(node, ECAM_PF_BAR2(0)) | (2 << 28)));
+		(ECAM_PF_BAR2(0) | (2 << 28)));
 	offset = fdt_subnode_offset(fdt, soc_offset, node_name);
 	if (offset < 0) {
 		ERROR("RVU: Unable to find ecam2 node: %s\n", node_name);
@@ -445,14 +441,12 @@ static void octeontx2_parse_rvu_config(const void *fdt, int *fdt_vfs)
 }
 
 
-static void octeontx2_boot_device_from_strapx(const int node)
+static void octeontx2_boot_device_from_strapx()
 {
 	cavm_gpio_strap_t gpio_strap;
 	int boot_medium;
 
-	plat_octeontx_bcfg->bcfg.boot_dev.node = node;
-
-	gpio_strap.u = CSR_READ(0, CAVM_GPIO_STRAP);
+	gpio_strap.u = CSR_READ(CAVM_GPIO_STRAP);
 	boot_medium = (gpio_strap.u) & 0x7;
 
 	switch (boot_medium) {
@@ -495,16 +489,13 @@ static void octeontx2_boot_device_from_strapx(const int node)
 	}
 }
 
-static int octeontx2_parse_boot_device(const void *fdt, const int offset,
-				       const int node)
+static int octeontx2_parse_boot_device(const void *fdt, const int offset)
 {
 	char boot_device[16], *cs;
 	const char *name;
 	int len, val;
 
-	plat_octeontx_bcfg->bcfg.boot_dev.node = node;
-
-	snprintf(boot_device, sizeof(boot_device), "BOOT-DEVICE.N%d", node);
+	snprintf(boot_device, sizeof(boot_device), "BOOT-DEVICE.N0");
 	name = fdt_getprop(fdt, offset, boot_device, &len);
 	if (!name) {
 		WARN("No %s is found\n", boot_device);
@@ -934,7 +925,7 @@ static void octeontx2_lmac_num_touse(int mode_idx, int *cnt, int *touse)
 /* Check if it is possible to configure LMAC in the current mode. Return
  * 0 in case of success, otherwise return -1.
  */
-static int octeontx2_check_qlm_lmacs(int node, int cgx_idx,
+static int octeontx2_check_qlm_lmacs(int cgx_idx,
 		int qlm, int mode_idx, int lmac_need)
 {
 	int lmac_avail;
@@ -942,8 +933,8 @@ static int octeontx2_check_qlm_lmacs(int node, int cgx_idx,
 	cgx_lmac_config_t *lmac;
 	int i;
 
-	debug_dts("N%d:CGX%d: qlm = %d, mode_idx = %d, lmac_need = %d\n",
-			 node, cgx_idx, qlm, mode_idx, lmac_need);
+	debug_dts("CGX%d: qlm = %d, mode_idx = %d, lmac_need = %d\n",
+			 cgx_idx, qlm, mode_idx, lmac_need);
 	cgx = &(plat_octeontx_bcfg->cgx_cfg[cgx_idx]);
 	lmac_avail = MAX_LMAC_PER_CGX - cgx->lmacs_used;
 
@@ -960,8 +951,8 @@ static int octeontx2_check_qlm_lmacs(int node, int cgx_idx,
 			for (i = 0; i < cgx->lmac_count; i++) {
 				lmac = &cgx->lmac_cfg[i];
 				if (lmac->qlm != qlm) {
-					WARN("N%d.CGX%d: Can't configure mode:%s. QLM%d is requested, but QLM%d is used.",
-						node, cgx_idx,
+					WARN("CGX%d: Can't configure mode:%s. QLM%d is requested, but QLM%d is used.",
+						cgx_idx,
 						qlmmode_strmap[mode_idx].bdk_str,
 						qlm, lmac->qlm);
 					lmac_avail = 0;
@@ -993,8 +984,8 @@ static int octeontx2_check_qlm_lmacs(int node, int cgx_idx,
 	}
 
 	if (lmac_need > lmac_avail) {
-		WARN("N%d.CGX%d: Can't configure mode:%s. Requires %d LMACs, but %d LMACs available on QLM%d.\n",
-				node, cgx_idx,
+		WARN("CGX%d: Can't configure mode:%s. Requires %d LMACs, but %d LMACs available on QLM%d.\n",
+				cgx_idx,
 				qlmmode_strmap[mode_idx].bdk_str,
 				lmac_need, lmac_avail, qlm);
 		return -1;
@@ -1006,7 +997,7 @@ static int octeontx2_check_qlm_lmacs(int node, int cgx_idx,
 /* Fill CGX structure, if possible.
  * Return the number of lanes used for initialization.
  */
-static int octeontx2_fill_cgx_struct(int node, int qlm, int lane, int mode_idx)
+static int octeontx2_fill_cgx_struct(int qlm, int lane, int mode_idx)
 {
 	cgx_config_t *cgx;
 	cgx_lmac_config_t *lmac, *temp_lmac;
@@ -1016,23 +1007,21 @@ static int octeontx2_fill_cgx_struct(int node, int qlm, int lane, int mode_idx)
 	int lcnt, lused;
 
 	if ((mode_idx < CAVM_QLM_MODE_SGMII) || (mode_idx >= CAVM_QLM_MODE_LAST)) {
-		debug_dts("N%d.QLM%d.LANE%d: not configured for CGX, skip.\n",
-				node, qlm, lane);
+		debug_dts("QLM%d.LANE%d: not configured for CGX, skip.\n", qlm, lane);
 		return 0;
 	}
 
 	cgx_idx = plat_get_cgx_idx(qlm);
 	if ((cgx_idx < 0) || (cgx_idx >= MAX_CGX)) {
-		WARN("N%d.CGX: QLM%d cannot be configured for CGX.\n",
-				node, qlm);
+		WARN("CGX: QLM%d cannot be configured for CGX.\n", qlm);
 		return 0;
 	}
-	debug_dts("N%d.CGX%d: Configure QLM%d Lane%d\n", node, cgx_idx, qlm, lane);
+	debug_dts("CGX%d: Configure QLM%d Lane%d\n", cgx_idx, qlm, lane);
 
 	cgx = &(plat_octeontx_bcfg->cgx_cfg[cgx_idx]);
 	if (cgx->lmac_count >= MAX_LMAC_PER_CGX) {
-		WARN("N%d.CGX%d: already configured, not configuring QLM%d, Lane%d\n",
-				node, cgx_idx, qlm, lane);
+		WARN("CGX%d: already configured, not configuring QLM%d, Lane%d\n",
+				cgx_idx, qlm, lane);
 		return 0;
 	}
 
@@ -1040,8 +1029,8 @@ static int octeontx2_fill_cgx_struct(int node, int qlm, int lane, int mode_idx)
 	 * in the same CGX
 	 */
 	if (cgx->usxgmii_mode) {
-		WARN("N%d.CGX%d: is configured in USXGMII mode, cannot configure other modes\n",
-				node, cgx_idx);
+		WARN("CGX%d: is configured in USXGMII mode, cannot configure other modes\n",
+				cgx_idx);
 		return 0;
 	}
 
@@ -1053,31 +1042,30 @@ static int octeontx2_fill_cgx_struct(int node, int qlm, int lane, int mode_idx)
 		 * are configured with different modes already, UXSGMII cannot be
 		 * configured
 		 */
-		WARN("N%d.CGX%d: cannot configure USXGMII for this CGX\n",
-				node, cgx_idx);
+		WARN("CGX%d: cannot configure USXGMII for this CGX\n",
+				cgx_idx);
 		return 0;
 	}
 
 	octeontx2_lmac_num_touse(mode_idx, &lcnt, &lused);
 	if (!lcnt || !lused) {
-		debug_dts("N%d.CGX%d: the %s mode doesn't require any LMAC initialization.\n",
-				node, cgx_idx,
+		debug_dts("CGX%d: the %s mode doesn't require any LMAC initialization.\n",
+				cgx_idx,
 				qlmmode_strmap[mode_idx].bdk_str);
 		return 0;
 	}
-	debug_dts("N%d.CGX%d: mode_idx %d needs %d lanes, %d lmacs\n", node, cgx_idx, mode_idx, lused, lcnt); 
-	if (octeontx2_check_qlm_lmacs(node, cgx_idx, qlm, mode_idx, lcnt * lused))
+	debug_dts("CGX%d: mode_idx %d needs %d lanes, %d lmacs\n", cgx_idx, mode_idx, lused, lcnt); 
+	if (octeontx2_check_qlm_lmacs(cgx_idx, qlm, mode_idx, lcnt * lused))
 		return 0;
 	if (lane % (lcnt * lused)) {
-		WARN("N%d.CGX%d.LANE%d: wrong LANE%d for the %s mode.\n",
-				node, cgx_idx, lane, lane,
+		WARN("CGX%d.LANE%d: wrong LANE%d for the %s mode.\n",
+				cgx_idx, lane, lane,
 				qlmmode_strmap[mode_idx].bdk_str);
 		return 0;
 	}
 
 	mode = qlmmode_strmap[mode_idx].mode;
 	/* Fill in the CGX/LMAC structures. */
-	cgx->node = node;
 	for (i = 0; i < lcnt; i++) {
 		lmac = &cgx->lmac_cfg[cgx->lmac_count];
 		lmac->lane_to_sds = -1;
@@ -1278,8 +1266,8 @@ static void octeontx2_cgx_lmacs_check_linux(const void *fdt,
 		if (val)
 			lmac->num_msix_vec = fdt32_to_cpu(*val);
 		else {
-			WARN("N%d.CGX%d.LMAC%d: num-msix-vec not set, configuring %d number of MSIX.\n",
-					cgx->node, cgx_idx, lmac_idx, DEFAULT_MSIX_LMAC);
+			WARN("CGX%d.LMAC%d: num-msix-vec not set, configuring %d number of MSIX.\n",
+					cgx_idx, lmac_idx, DEFAULT_MSIX_LMAC);
 			lmac->num_msix_vec = DEFAULT_MSIX_LMAC;
 		}
 
@@ -1411,40 +1399,33 @@ static void octeontx2_cgx_assign_mac(const void *fdt)
 }
 
 /* BDK fills the CAVM_GSERNX_LANEX_SCRATCH0 register with mode used by LANE.
- * The routine goes through all the NODE/QLM/LANE sets and initializes
+ * The routine goes through all the QLM/LANE sets and initializes
  * CGX/LMAC, if any.
  * After it the Linux DT file is used to get other information for CGX.
  */
 static void octeontx2_fill_cgx_details(const void *fdt)
 {
-	int node_idx;
 	int qlm_idx;
 	int lane_idx;
-	int nnum;
 	int lnum;
 	int linit;
 	octeontx_qlm_state_lane_t qlm_state;
 
-	nnum = plat_octeontx_get_node_count();
-	for (node_idx = 0; node_idx < nnum; node_idx++) {
-		for (qlm_idx = plat_octeontx_get_gser_count() - 1; qlm_idx >= 0; qlm_idx--) {
-			lnum = plat_get_max_lane_num(qlm_idx);
-			for (lane_idx = 0; lane_idx < lnum; lane_idx++) {
-				qlm_state.u = CSR_READ(node_idx, CAVM_GSERNX_LANEX_SCRATCHX(qlm_idx, lane_idx, 0));
-				debug_dts("N%d.QLM%d.LANE%d: mode=%d:%s\n",
-						node_idx, qlm_idx, lane_idx,
-						qlm_state.s.mode,
-						qlmmode_strmap[qlm_state.s.mode].bdk_str);
-				linit = octeontx2_fill_cgx_struct(node_idx,
-						qlm_idx, lane_idx,
-						qlm_state.s.mode);
-				/* If number of initialized lanes is more
-				 * than 1, then we should skip these
-				 * initializations.
-				 */
-				if (linit > 1)
-					lane_idx += linit - 1;
-			}
+	for (qlm_idx = plat_octeontx_get_gser_count() - 1; qlm_idx >= 0; qlm_idx--) {
+		lnum = plat_get_max_lane_num(qlm_idx);
+		for (lane_idx = 0; lane_idx < lnum; lane_idx++) {
+			qlm_state.u = CSR_READ(CAVM_GSERNX_LANEX_SCRATCHX(qlm_idx, lane_idx, 0));
+			debug_dts("QLM%d.LANE%d: mode=%d:%s\n",
+					qlm_idx, lane_idx,
+					qlm_state.s.mode,
+					qlmmode_strmap[qlm_state.s.mode].bdk_str);
+			linit = octeontx2_fill_cgx_struct(qlm_idx, lane_idx, qlm_state.s.mode);
+			/* If number of initialized lanes is more
+			 * than 1, then we should skip these
+			 * initializations.
+			 */
+			if (linit > 1)
+				lane_idx += linit - 1;
 		}
 	}
 	octeontx2_cgx_check_linux(fdt);
@@ -1454,7 +1435,7 @@ static void octeontx2_fill_cgx_details(const void *fdt)
 int plat_octeontx_fill_board_details(void)
 {
 	const void *fdt = fdt_ptr;
-	int offset, rc, node;
+	int offset, rc;
 
 	rc = fdt_check_header(fdt);
 	if (rc) {
@@ -1468,11 +1449,10 @@ int plat_octeontx_fill_board_details(void)
 		return offset;
 	}
 
-	node = 0;
-	rc = octeontx2_parse_boot_device(fdt, offset, node);
+	rc = octeontx2_parse_boot_device(fdt, offset);
 	if (rc) {
 		debug_dts("Using GPIO_STRAPX register for boot device\n");
-		octeontx2_boot_device_from_strapx(node);
+		octeontx2_boot_device_from_strapx();
 	}
 
 	octeontx2_fill_cgx_details(fdt);

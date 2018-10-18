@@ -19,68 +19,59 @@
 #include <cavm_dt.h>
 
 struct l2c_region {
-	unsigned int  node;
 	unsigned int  number;
 	unsigned long start;
 	unsigned long end;
 	unsigned int  secure;
 };
 
+#define LAST_L2C_REGION (~0U)
+
 struct l2c_region l2c_map [] = {
 	{
-		.node    = 0,
 		.number  = 0,
 		.start   = TZDRAM_BASE,
 		.end     = TZDRAM_BASE + TZDRAM_SIZE,
 		.secure  = 1,
 	},
 	{
-		.node    = 0,
 		.number  = 1,
 		.start   = TZDRAM_BASE + TZDRAM_SIZE,
 		.end     = ~0UL,
 		.secure  = 0,
 	},
 	{
-		.node    = 1,
-		.number  = 0,
-		.start   = 0,
-		.end     = ~0UL,
-		.secure  = 0,
-	},
-	{
-		.node    = ~0U,
+		.number    = LAST_L2C_REGION,
 	},
 };
 
 void octeontx_security_setup(void)
 {
-	unsigned node_count = plat_octeontx_get_node_count();
 	union cavm_l2c_asc_regionx_attr l2c_asc_attr;
 	struct l2c_region *region = l2c_map;
 
 	uint64_t dram_end;
 
-	while (region->node < node_count) {
-		dram_end = octeontx_dram_size_node(region->node) - 1;
+	while (region->number != LAST_L2C_REGION) {
+		dram_end = octeontx_dram_size() - 1;
 		if (region->end > dram_end)
 			region->end = dram_end;
 
-		CSR_WRITE(region->node, CAVM_L2C_ASC_REGIONX_START(region->number), region->start);
-		CSR_WRITE(region->node, CAVM_L2C_ASC_REGIONX_END(region->number), region->end);
+		CSR_WRITE(CAVM_L2C_ASC_REGIONX_START(region->number), region->start);
+		CSR_WRITE(CAVM_L2C_ASC_REGIONX_END(region->number), region->end);
 
-		l2c_asc_attr.u = CSR_READ(region->node, CAVM_L2C_ASC_REGIONX_ATTR(region->number));
+		l2c_asc_attr.u = CSR_READ(CAVM_L2C_ASC_REGIONX_ATTR(region->number));
 		l2c_asc_attr.s.s_en  = region->secure;
 		l2c_asc_attr.s.ns_en = !region->secure;
 
-		CSR_WRITE(region->node, CAVM_L2C_ASC_REGIONX_ATTR(region->number), l2c_asc_attr.u);
+		CSR_WRITE(CAVM_L2C_ASC_REGIONX_ATTR(region->number), l2c_asc_attr.u);
 
-		INFO("Mark memory region %d at node %d:: %lx to %lx as %ssecure (%lx)\n",
-			region->number, region->node,
-			CSR_READ(region->node, CAVM_L2C_ASC_REGIONX_START(region->number)),
-			CSR_READ(region->node, CAVM_L2C_ASC_REGIONX_END(region->number)),
+		INFO("Mark memory region %d:: %lx to %lx as %ssecure (%lx)\n",
+			region->number,
+			CSR_READ(CAVM_L2C_ASC_REGIONX_START(region->number)),
+			CSR_READ(CAVM_L2C_ASC_REGIONX_END(region->number)),
 			region->secure ? "" : "non-",
-			CSR_READ(region->node, CAVM_L2C_ASC_REGIONX_ATTR(region->number)));
+			CSR_READ(CAVM_L2C_ASC_REGIONX_ATTR(region->number)));
 
 		region++;
 	}
@@ -102,7 +93,6 @@ void octeontx_security_setup(void)
  */
 void octeontx_configure_mmc_security(int secure)
 {
-	int node = cavm_numa_local();
 	uint64_t val;
 	uint64_t ssd_idx = CAVM_PCC_DEV_CON_E_MIO_EMM >> 5;
 	uint64_t emm_ssd_mask = (1ULL << (CAVM_PCC_DEV_CON_E_MIO_EMM & 0x1F));
@@ -112,7 +102,7 @@ void octeontx_configure_mmc_security(int secure)
 	if (plat_octeontx_bcfg->bcfg.boot_dev.boot_type != OCTEONTX_BOOT_EMMC)
 		return;
 
-	val = CSR_READ(node, CAVM_SMMUX_SSDRX(0, ssd_idx));
+	val = CSR_READ(CAVM_SMMUX_SSDRX(0, ssd_idx));
 
 	if (secure) {
 		/*
@@ -120,9 +110,9 @@ void octeontx_configure_mmc_security(int secure)
 		 * configure SMMU as to grant access for eMMC controller
 		 * to secure memory, where images are loaded
 		 */
-		smmux_nscr0.u = CSR_READ(node, CAVM_SMMUX_NSCR0(0));
+		smmux_nscr0.u = CSR_READ(CAVM_SMMUX_NSCR0(0));
 		smmux_nscr0.s.nscfg = 2;
-		CSR_WRITE(node, CAVM_SMMUX_NSCR0(0), smmux_nscr0.u);
+		CSR_WRITE(CAVM_SMMUX_NSCR0(0), smmux_nscr0.u);
 		val &= ~emm_ssd_mask;
 	} else {
 		/*
@@ -131,5 +121,5 @@ void octeontx_configure_mmc_security(int secure)
 		 */
 		val |= emm_ssd_mask;
 	}
-	CSR_WRITE(node, CAVM_SMMUX_SSDRX(0, ssd_idx), val);
+	CSR_WRITE(CAVM_SMMUX_SSDRX(0, ssd_idx), val);
 }

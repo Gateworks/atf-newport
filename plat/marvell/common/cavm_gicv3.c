@@ -14,7 +14,6 @@
 #include <arch.h>
 #include <platform_def.h>
 #include <cavm_common.h>
-#include <cavm_utils.h>
 
 #undef GICD_SETSPI_NSR
 #undef GICD_CLRSPI_NSR
@@ -74,13 +73,13 @@ void octeontx_gic_driver_init(void)
 	/* ERRATUM GIC-28835 */
 	if (IS_OCTEONTX_PASS(read_midr(), T83PARTNUM, 1, 0)) {
 	        union cavm_gic_cfg_ctlr cfg_ctlr;
-	        cfg_ctlr.u = CSR_READ(0, CAVM_GIC_CFG_CTLR);
+	        cfg_ctlr.u = CSR_READ(CAVM_GIC_CFG_CTLR);
 	        cfg_ctlr.s.dis_cpu_if_load_balancer = 1;
-	        CSR_WRITE(0, CAVM_GIC_CFG_CTLR, cfg_ctlr.u);
+	        CSR_WRITE(CAVM_GIC_CFG_CTLR, cfg_ctlr.u);
 	}
 
-	octeontx_gic_data.gicd_base = CSR_PA(0, CAVM_GIC_BAR_E_GIC_PF_BAR0);
-	octeontx_gic_data.gicr_base = CSR_PA(0, GIC_PF_BAR4);
+	octeontx_gic_data.gicd_base = CAVM_GIC_BAR_E_GIC_PF_BAR0;
+	octeontx_gic_data.gicr_base = GIC_PF_BAR4;
 	gicv3_driver_init(&octeontx_gic_data);
 #endif
 }

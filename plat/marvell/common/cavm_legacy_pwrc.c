@@ -20,7 +20,7 @@
 #include <debug.h>
 
 
-static int wait_for_core(unsigned node)
+static int wait_for_core()
 {
 
 	int loop=10;
@@ -41,7 +41,7 @@ static int wait_for_core(unsigned node)
 
     loop =1000000;
     while(loop) {
-        pp_pending.u = CSR_READ(node, CAVM_RST_PP_PENDING);
+        pp_pending.u = CSR_READ(CAVM_RST_PP_PENDING);
 
         if(!pp_pending.s.pend)
             break;
@@ -58,11 +58,10 @@ static int wait_for_core(unsigned node)
 void octeontx_legacy_pwrc_write_pponr(unsigned long mpidr)
 {
 	union cavm_rst_pp_reset pp_reset;
-	int node = ((mpidr >> MPIDR_AFF2_SHIFT) & MPIDR_AFFLVL_MASK);
 	unsigned long octeontx_core_id = (unsigned long)(plat_core_pos_by_mpidr
 					((u_register_t)mpidr));
 
-	pp_reset.u = CSR_READ(node, CAVM_RST_PP_RESET);
+	pp_reset.u = CSR_READ(CAVM_RST_PP_RESET);
 
 	if(!(pp_reset.u & (1ul << octeontx_core_id))) {
 		/* core is WFI suspended state
@@ -70,24 +69,24 @@ void octeontx_legacy_pwrc_write_pponr(unsigned long mpidr)
 		 * clearing it.
 		 **/
 		pp_reset.u |= (1ul << octeontx_core_id);
-		CSR_WRITE(node, CAVM_RST_PP_RESET, pp_reset.u);
+		CSR_WRITE(CAVM_RST_PP_RESET, pp_reset.u);
 		__asm("dsb ishst");
 		__asm("sev");
-		if(wait_for_core(node)) {
-			WARN("Failed to release core:%lu on node:%d\n ",
-					octeontx_core_id,node);
+		if(wait_for_core()) {
+			WARN("Failed to release core:%lu\n ",
+					octeontx_core_id);
 			while(1);
 			return;
 		}
-		pp_reset.u = CSR_READ(node, CAVM_RST_PP_RESET);
+		pp_reset.u = CSR_READ(CAVM_RST_PP_RESET);
 	}
 	pp_reset.u &= ~(1ul << octeontx_core_id);
-	CSR_WRITE(node, CAVM_RST_PP_RESET, pp_reset.u);
+	CSR_WRITE(CAVM_RST_PP_RESET, pp_reset.u);
 	__asm("dsb ishst");
 	__asm("sev");
-	if(wait_for_core(node)){
-		WARN("Failed to release core:%lu on node:%d\n ",
-				octeontx_core_id,node);
+	if(wait_for_core()){
+		WARN("Failed to release core:%lu\n ",
+				octeontx_core_id);
 	}
 }
 

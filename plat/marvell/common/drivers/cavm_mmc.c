@@ -87,7 +87,6 @@ typedef struct {
 	 * valid.
 	 */
 	int		in_use;
-	unsigned	node;
 	unsigned	cs;
 	size_t		file_pos;
 	size_t		offset_address;
@@ -108,12 +107,12 @@ mio_emm_driver_t mmc_drv = { 0 };
 /* Wait for delay reference cycles */
 void wait(uint64_t delay)
 {
-	volatile uint64_t count = CSR_READ(mmc_current_file.node, CAVM_RST_REF_CNTR);
+	volatile uint64_t count = CSR_READ(CAVM_RST_REF_CNTR);
 	uint64_t start = count;
 	uint64_t end = start + delay;
 
 	do {
-		count = CSR_READ(mmc_current_file.node, CAVM_RST_REF_CNTR);
+		count = CSR_READ(CAVM_RST_REF_CNTR);
 	} while (count < end);
 }
 
@@ -128,10 +127,10 @@ union cavm_mio_emm_rsp_sts mio_emm_cmd(uint32_t cmd_idx, uint32_t ctype_xor, uin
 	cmd.s.rtype_xor = rtype_xor;
 	cmd.s.arg = arg;
 	cmd.s.cmd_idx = cmd_idx;
-	CSR_WRITE(mmc_current_file.node, CAVM_MIO_EMM_CMD, cmd.u);
+	CSR_WRITE(CAVM_MIO_EMM_CMD, cmd.u);
 
 	do {
-		emm_rsp_sts.u = CSR_READ(mmc_current_file.node, CAVM_MIO_EMM_RSP_STS);
+		emm_rsp_sts.u = CSR_READ(CAVM_MIO_EMM_RSP_STS);
 	} while (emm_rsp_sts.s.cmd_val);
 
 
@@ -186,31 +185,31 @@ int sdmmc_rw_data(int write, unsigned int addr, int size, uintptr_t buf, int buf
 		mio_emm_dma.s.card_addr = addr / mmc_drv.sector_size;
 		mio_emm_dma.s.block_cnt = blks;
 
-		CSR_WRITE(mmc_current_file.node, CAVM_MIO_EMM_DMA_ADR, tmp_buf);
-		CSR_WRITE(mmc_current_file.node, CAVM_MIO_EMM_DMA_CFG, emm_dma_cfg.u);
-		CSR_WRITE(mmc_current_file.node, CAVM_MIO_EMM_DMA, mio_emm_dma.u);
+		CSR_WRITE(CAVM_MIO_EMM_DMA_ADR, tmp_buf);
+		CSR_WRITE(CAVM_MIO_EMM_DMA_CFG, emm_dma_cfg.u);
+		CSR_WRITE(CAVM_MIO_EMM_DMA, mio_emm_dma.u);
 
 		do {
-			emm_rsp_sts.u = CSR_READ(mmc_current_file.node, CAVM_MIO_EMM_RSP_STS);
+			emm_rsp_sts.u = CSR_READ(CAVM_MIO_EMM_RSP_STS);
 		} while (emm_rsp_sts.s.dma_val);
 
 		/* DMA error */
 		if (emm_rsp_sts.s.dma_pend) {
 			ERROR("sdmmc: DMA error\n");
 
-			mio_emm_dma.u = CSR_READ(mmc_current_file.node, CAVM_MIO_EMM_DMA);
+			mio_emm_dma.u = CSR_READ(CAVM_MIO_EMM_DMA);
 			mio_emm_dma.s.dma_val = 1;
 			mio_emm_dma.s.dat_null = 1;
-			CSR_WRITE(mmc_current_file.node, CAVM_MIO_EMM_DMA, mio_emm_dma.u);
+			CSR_WRITE(CAVM_MIO_EMM_DMA, mio_emm_dma.u);
 			do {
-				emm_rsp_sts.u = CSR_READ(mmc_current_file.node, CAVM_MIO_EMM_RSP_STS);
+				emm_rsp_sts.u = CSR_READ(CAVM_MIO_EMM_RSP_STS);
 			} while (emm_rsp_sts.s.dma_val);
 
 			return -1;
 		}
 
 		do {
-			emm_dma_cfg.u = CSR_READ(mmc_current_file.node, CAVM_MIO_EMM_DMA_CFG);
+			emm_dma_cfg.u = CSR_READ(CAVM_MIO_EMM_DMA_CFG);
 		} while (emm_dma_cfg.s.en);
 
 		blk_cnt -= blks;
@@ -248,7 +247,7 @@ int emmc_config()
 	mmc_drv.bus_id = mmc_current_file.cs;
 	mmc_drv.sector_size = MMC_SECTOR_SIZE;
 	/* Set eMMC bus id bit according to the used CS */
-	CSR_WRITE(mmc_current_file.node, CAVM_MIO_EMM_CFG, 1<<mmc_current_file.cs);
+	CSR_WRITE(CAVM_MIO_EMM_CFG, 1<<mmc_current_file.cs);
 
 #if 0
 	rst_boot.u = CSR_READ(mmc_current_file.node, CAVM_RST_BOOT);
@@ -406,8 +405,6 @@ static int emmc_block_open(io_dev_info_t *dev_info, const uintptr_t spec,
 		mmc_current_file.cs = plat_octeontx_bcfg->bcfg.boot_dev.cs;
 
 		entity->info = (uintptr_t)&mmc_current_file;
-
-		mmc_current_file.node = cavm_numa_local();
 
 		return emmc_config();
 	} else {

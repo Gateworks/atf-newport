@@ -25,7 +25,6 @@
 #include <cavm_gpio.h>
 #include <cavm_dt.h>
 #include <cavm_flr.h>
-#include <cavm_utils.h>
 
 /* Any SoC family specific setup
  * to be done in BL31 can be initialized
@@ -46,16 +45,16 @@ void plat_octeontx_setup(void)
 	plat_flr_init();
 }
 
-const uintptr_t plat_get_scmi_mbox_addr(int node)
+const uintptr_t plat_get_scmi_mbox_addr()
 {
-	return CSR_PA(node, CAVM_CPC_RAM_MEMX(AP_SECURE0_TO_XCP_MBOX_OFFSET));
+	return CAVM_CPC_RAM_MEMX(AP_SECURE0_TO_XCP_MBOX_OFFSET);
 }
 
-const uintptr_t plat_get_scmi_db_addr(int node)
+const uintptr_t plat_get_scmi_db_addr()
 {
-	return CSR_PA(node, CAVM_XCPX_DEVX_XCP_MBOX(
+	return CAVM_XCPX_DEVX_XCP_MBOX(
 			    CAVM_CPC_XCP_MAP_E_SCP,
-			    CAVM_XCP_MBOX_DEV_E_AP_SECURE0));
+			    CAVM_XCP_MBOX_DEV_E_AP_SECURE0);
 }
 
 extern void *scmi_handle;
@@ -88,7 +87,7 @@ void plat_setup_psci_ops(uintptr_t sec_entrypoint,
  * fuse parameter should be one of the fuse enum - FUS_FUSE_NUM_E
  * for which the value to be read
  */
-int plat_fuse_read(int node, int fuse)
+int plat_fuse_read(int fuse)
 {
 	uint64_t fus_val;
 	int byte_addr = FUSE_BIT_TO_BYTE_ADDR(fuse);
@@ -97,7 +96,7 @@ int plat_fuse_read(int node, int fuse)
 	 * FUS_CACHEX() operates on 64-bit and indexed by
 	 * FUS_FUSE_NUM_E
 	 */
-	fus_val = CSR_READ(node, CAVM_FUS_CACHEX(byte_addr >> 3));
+	fus_val = CSR_READ(CAVM_FUS_CACHEX(byte_addr >> 3));
 	fus_val >>= (byte_addr & 7) << 3;
 	return FUSE_GET_VAL(fus_val, fuse);
 }
@@ -107,7 +106,7 @@ int plat_fuse_read(int node, int fuse)
  *
  * Return: Value in 0-32 range
  */
-unsigned int plat_get_rom_t_cnt(int node)
+unsigned int plat_get_rom_t_cnt()
 {
 	cavm_fusf_rcmd_t read_cmd;
 	uint64_t dat;
@@ -119,16 +118,16 @@ unsigned int plat_get_rom_t_cnt(int node)
 	 * ROM_T_CNT is at bank 0 */
 	read_cmd.cn9.addr = CAVM_FUSF_FUSE_NUM_E_ROM_T_CNTX(0) >> 7;
 	read_cmd.s.pend = 1;
-	CSR_WRITE(node, CAVM_FUSF_RCMD, read_cmd.u);
+	CSR_WRITE(CAVM_FUSF_RCMD, read_cmd.u);
 	do {
-		read_cmd.u = CSR_READ(node, CAVM_FUSF_RCMD);
+		read_cmd.u = CSR_READ(CAVM_FUSF_RCMD);
 	} while (read_cmd.s.pend);
 
 	/* ASIM returns 0 on FUSF_RCMD accesses */
 	if (!strncmp(plat_octeontx_bcfg->bcfg.board_model, "asim-", 5))
-		dat = CSR_READ(node, CAVM_FUSF_CTL);
+		dat = CSR_READ(CAVM_FUSF_CTL);
 	else
-		dat = CSR_READ(node, CAVM_FUSF_BNK_DATX(0));
+		dat = CSR_READ(CAVM_FUSF_BNK_DATX(0));
 
 	/*
 	 * FUSF_BNK_DATX contains all 128 fuses

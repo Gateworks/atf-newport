@@ -20,6 +20,7 @@
 #include <cavm_scmi.h>
 #include <mmio.h>
 #include <cavm_dt.h>
+#include <cavm_common.h>
 
 /*
  * Private helper function to get exclusive access to SCMI channel.
@@ -344,7 +345,7 @@ static int scmi_fill_octeontx_shutdown(octeontx_shutdown_config_type_t *board_ty
 		/* Shutdown type is MCU, fill up structures accordingly */
 		board_type->s.type = SCMI_CAVM_SHUTDOWN_CONFIG_TYPE_MCU;
 		data->u = 0;
-		data->mcu_s.node = plat_octeontx_bcfg->bcfg.mcu_twsi.s.node;
+		data->mcu_s.node = 0;
 		data->mcu_s.int_addr = plat_octeontx_bcfg->bcfg.mcu_twsi.s.int_addr;
 		data->mcu_s.bus = plat_octeontx_bcfg->bcfg.mcu_twsi.s.bus;
 		data->mcu_s.addr = plat_octeontx_bcfg->bcfg.mcu_twsi.s.addr;

@@ -76,7 +76,6 @@ typedef union ecam_config ecam_config_t;
 /* Structure describing ECAM device */
 struct ecam_device {
 	uint64_t base_addr;
-	unsigned node;
 	unsigned ecam;
 	unsigned domain;
 	unsigned bus;
@@ -92,7 +91,7 @@ struct ecam_device {
  */
 struct ecam_platform_defs {
 	int soc_type;
-	int (*get_ecam_count)(int node);
+	int (*get_ecam_count)();
 	int (*get_domain_count)(struct ecam_device *dev);
 	int (*is_domain_present)(struct ecam_device *dev);
 	int (*get_secure_settings)(struct ecam_device *dev, uint64_t pconfig);
@@ -116,7 +115,7 @@ struct ecam_platform_defs {
 struct ecam_probe_callback {
 	int devid;
 	int vendor_id;
-	int (*io_probe)(int, uint64_t);
+	int (*io_probe)(uint64_t);
 	int call_count;
 };
 
@@ -127,7 +126,7 @@ struct ecam_probe_callback {
 struct ecam_init_callback {
 	int devid;
 	int vendor_id;
-	void (*io_init)(int, uint64_t, uint64_t);
+	void (*io_init)(uint64_t, uint64_t);
 };
 
 /*

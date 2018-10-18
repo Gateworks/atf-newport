@@ -58,19 +58,19 @@ enum {
 };
 
 /* Functions to be used by TWSI/SMBus/other drivers */
-uint64_t twsi_write_sw(unsigned int node, unsigned int twsi_num,
+uint64_t twsi_write_sw(unsigned int twsi_num,
 			      cavm_mio_twsx_sw_twsi_t sw_twsi);
-uint64_t twsi_read_sw(unsigned int node, unsigned int twsi_num,
+uint64_t twsi_read_sw(unsigned int twsi_num,
 			     cavm_mio_twsx_sw_twsi_t sw_twsi);
-uint8_t twsi_read_status(unsigned int node, unsigned int twsi_num);
-void twsi_write_ctl(unsigned int node, unsigned int twsi_num, uint8_t data);
-uint8_t twsi_read_ctl(unsigned int node, unsigned int twsi_num);
-int twsi_wait(unsigned int node, unsigned int twsi_num);
-void twsi_enable(unsigned int node, unsigned int twsi_num);
-void twsi_send_ack(unsigned int node, unsigned int twsi_num);
-void twsi_recover_bus(unsigned int node, unsigned int twsi_num);
-int twsi_stop(unsigned int node, unsigned int twsi_num);
-int twsi_start(unsigned int node, unsigned int twsi_num);
-void twsi_set_speed(unsigned int node, unsigned int twsi_num, unsigned int speed);
+uint8_t twsi_read_status(unsigned int twsi_num);
+void twsi_write_ctl(unsigned int twsi_num, uint8_t data);
+uint8_t twsi_read_ctl(unsigned int twsi_num);
+int twsi_wait(unsigned int twsi_num);
+void twsi_enable(unsigned int twsi_num);
+void twsi_send_ack(unsigned int twsi_num);
+void twsi_recover_bus(unsigned int twsi_num);
+int twsi_stop(unsigned int twsi_num);
+int twsi_start(unsigned int twsi_num);
+void twsi_set_speed(unsigned int twsi_num, unsigned int speed);
 
 #endif /* __CAVM_TWSI_CORE_H__ */

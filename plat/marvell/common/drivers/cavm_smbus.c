@@ -33,10 +33,10 @@ static int smbus_core_send_slave_addr(smbus_hdr_t *hdr, uint16_t slave_addr,
 	int rc;
 	cavm_mio_twsx_sw_twsi_t sw_twsi;
 
-	rc = twsi_start(hdr->node, hdr->twsi_num);
+	rc = twsi_start(hdr->twsi_num);
 	if (rc) {
 		debug_smbus("SMBus: N%d.TWSI%d: Could not start transaction\n",
-			    hdr->node, hdr->twsi_num);
+			    hdr->twsi_num);
 		return rc;
 	}
 
@@ -46,13 +46,13 @@ static int smbus_core_send_slave_addr(smbus_hdr_t *hdr, uint16_t slave_addr,
 	sw_twsi.s.data = (uint32_t) slave_addr << 1;
 	sw_twsi.s.data = ((read) ? (sw_twsi.s.data | 1) : (sw_twsi.s.data | 0));
 
-	twsi_write_sw(hdr->node, hdr->twsi_num, sw_twsi);
-	twsi_enable(hdr->node, hdr->twsi_num);
+	twsi_write_sw(hdr->twsi_num, sw_twsi);
+	twsi_enable(hdr->twsi_num);
 
-	rc = twsi_wait(hdr->node, hdr->twsi_num);
+	rc = twsi_wait(hdr->twsi_num);
 	if (rc) {
-		debug_smbus("SMBus: N%d.TWSI%d: Waiting for slave 0x%x failed\n",
-			    hdr->node, hdr->twsi_num, slave_addr);
+		debug_smbus("SMBus: TWSI%d: Waiting for slave 0x%x failed\n",
+			    hdr->twsi_num, slave_addr);
 		return rc;
 	}
 
@@ -69,19 +69,19 @@ static int smbus_core_send_byte(smbus_hdr_t *hdr, uint8_t *byte)
 	sw_twsi.s.eop_ia = TWSI_DATA;
 	sw_twsi.s.data = *byte;
 
-	twsi_write_sw(hdr->node, hdr->twsi_num, sw_twsi);
-	twsi_enable(hdr->node, hdr->twsi_num);
+	twsi_write_sw(hdr->twsi_num, sw_twsi);
+	twsi_enable(hdr->twsi_num);
 
-	rc = twsi_wait(hdr->node, hdr->twsi_num);
+	rc = twsi_wait(hdr->twsi_num);
 	if (rc) {
-		debug_smbus("SMBus: N%d.TWSI%d: Timeout writing data 0x%x\n",
-			    hdr->node, hdr->twsi_num, *byte);
+		debug_smbus("SMBus: TWSI%d: Timeout writing data 0x%x\n",
+			    hdr->twsi_num, *byte);
 		return rc;
 	}
 
-	rc = twsi_read_status(hdr->node, hdr->twsi_num);
-	debug_smbus("SMBus: N%d.TWSI%d: Status 0x%x\n",
-		    hdr->node, hdr->twsi_num, rc);
+	rc = twsi_read_status(hdr->twsi_num);
+	debug_smbus("SMBus: TWSI%d: Status 0x%x\n",
+		    hdr->twsi_num, rc);
 
 	return 0;
 }
@@ -91,14 +91,14 @@ static int smbus_core_receive_byte(smbus_hdr_t *hdr, uint8_t *byte)
 	int rc;
 	cavm_mio_twsx_sw_twsi_t sw_twsi;
 
-	rc = twsi_wait(hdr->node, hdr->twsi_num);
+	rc = twsi_wait(hdr->twsi_num);
 	if (rc) {
-		debug_smbus("SMBus: N%d.TWSI%d: Waiting for data failed\n",
-			    hdr->node, hdr->twsi_num);
+		debug_smbus("SMBus: TWSI%d: Waiting for data failed\n",
+			    hdr->twsi_num);
 		return rc;
 	}
 
-	sw_twsi.u = twsi_read_sw(hdr->node, hdr->twsi_num, sw_twsi);
+	sw_twsi.u = twsi_read_sw(hdr->twsi_num, sw_twsi);
 	*byte = sw_twsi.s.data;
 
 	return 0;
@@ -135,7 +135,7 @@ static int smbus_quick(smbus_hdr_t *hdr, uint16_t slave_addr, uint8_t read)
 		return -1;
 	}
 	/* SMBus 3.0 spec does not define the PEC check for Quick CMD */
-	twsi_stop(hdr->node, hdr->twsi_num);
+	twsi_stop(hdr->twsi_num);
 
 	return 0;
 }
@@ -157,7 +157,7 @@ static int smbus_byte(smbus_hdr_t *hdr, uint16_t slave_addr, uint8_t read,
 
 	if (read) {
 		if (pec_check) {
-			twsi_send_ack(hdr->node, hdr->twsi_num);
+			twsi_send_ack(hdr->twsi_num);
 			rc = smbus_core_receive_byte(hdr, data);
 			if (rc) {
 				debug_smbus("SMBus: Unable to receive data\n");
@@ -169,7 +169,7 @@ static int smbus_byte(smbus_hdr_t *hdr, uint16_t slave_addr, uint8_t read,
 			/* Calculate checksum of sent byte */
 			csum = smbus_calc_csum(&buf, 1);
 
-			twsi_enable(hdr->node, hdr->twsi_num);
+			twsi_enable(hdr->twsi_num);
 			/* Receive the PEC byte */
 			rc = smbus_core_receive_byte(hdr, &buf);
 			if (rc) {
@@ -185,7 +185,7 @@ static int smbus_byte(smbus_hdr_t *hdr, uint16_t slave_addr, uint8_t read,
 				return -1;
 			}
 		} else {
-			twsi_enable(hdr->node, hdr->twsi_num);
+			twsi_enable(hdr->twsi_num);
 			rc = smbus_core_receive_byte(hdr, data);
 			if (rc) {
 				debug_smbus("SMBus: Unable to receive data\n");
@@ -209,7 +209,7 @@ static int smbus_byte(smbus_hdr_t *hdr, uint16_t slave_addr, uint8_t read,
 		}
 	}
 
-	twsi_stop(hdr->node, hdr->twsi_num);
+	twsi_stop(hdr->twsi_num);
 
 	return 0;
 }
@@ -257,7 +257,7 @@ static int smbus_write(smbus_hdr_t *hdr, uint16_t slave_addr, uint8_t command,
 		}
 	}
 
-	twsi_stop(hdr->node, hdr->twsi_num);
+	twsi_stop(hdr->twsi_num);
 
 	return 0;
 }
@@ -292,7 +292,7 @@ static int smbus_read(smbus_hdr_t *hdr, uint16_t slave_addr, uint8_t command,
 	received = 0;
 	buf_ptr = data;
 	while (bytes > 1) {
-		twsi_send_ack(hdr->node, hdr->twsi_num);
+		twsi_send_ack(hdr->twsi_num);
 		rc = smbus_core_receive_byte(hdr, buf_ptr);
 		if (rc) {
 			debug_smbus("SMBus: Unable to receive data\n");
@@ -306,7 +306,7 @@ static int smbus_read(smbus_hdr_t *hdr, uint16_t slave_addr, uint8_t command,
 
 	/* Process last byte depending on PEC value */
 	if (pec_check) {
-		twsi_send_ack(hdr->node, hdr->twsi_num);
+		twsi_send_ack(hdr->twsi_num);
 		rc = smbus_core_receive_byte(hdr, buf_ptr);
 		if (rc) {
 			debug_smbus("SMBus: Unable to receive data\n");
@@ -319,7 +319,7 @@ static int smbus_read(smbus_hdr_t *hdr, uint16_t slave_addr, uint8_t command,
 		/* Calculate checksum */
 		csum = smbus_calc_csum(buf, received);
 
-		twsi_enable(hdr->node, hdr->twsi_num);
+		twsi_enable(hdr->twsi_num);
 		/* Receive the PEC byte */
 		rc = smbus_core_receive_byte(hdr, buf);
 		if (rc) {
@@ -335,7 +335,7 @@ static int smbus_read(smbus_hdr_t *hdr, uint16_t slave_addr, uint8_t command,
 			return -1;
 		}
 	} else {
-		twsi_enable(hdr->node, hdr->twsi_num);
+		twsi_enable(hdr->twsi_num);
 		rc = smbus_core_receive_byte(hdr, buf_ptr);
 		if (rc) {
 			debug_smbus("SMBus: Unable to receive data\n");
@@ -343,7 +343,7 @@ static int smbus_read(smbus_hdr_t *hdr, uint16_t slave_addr, uint8_t command,
 		}
 	}
 
-	twsi_stop(hdr->node, hdr->twsi_num);
+	twsi_stop(hdr->twsi_num);
 
 	return 0;
 }
@@ -392,7 +392,7 @@ static int smbus_process_call(smbus_hdr_t *hdr, uint16_t slave_addr,
 	}
 
 	/* Receive first 8 bits from slave */
-	twsi_send_ack(hdr->node, hdr->twsi_num);
+	twsi_send_ack(hdr->twsi_num);
 	buf_ptr = data;
 	rc = smbus_core_receive_byte(hdr, buf_ptr);
 	if (rc) {
@@ -402,7 +402,7 @@ static int smbus_process_call(smbus_hdr_t *hdr, uint16_t slave_addr,
 	buf_ptr++;
 
 	if (pec_check) {
-		twsi_send_ack(hdr->node, hdr->twsi_num);
+		twsi_send_ack(hdr->twsi_num);
 		rc = smbus_core_receive_byte(hdr, buf_ptr);
 		if (rc) {
 			debug_smbus("SMBus: Unable to receive data\n");
@@ -414,7 +414,7 @@ static int smbus_process_call(smbus_hdr_t *hdr, uint16_t slave_addr,
 		/* Calculate checksum */
 		csum = smbus_calc_csum(buf, 2);
 
-		twsi_enable(hdr->node, hdr->twsi_num);
+		twsi_enable(hdr->twsi_num);
 		/* Receive the PEC byte */
 		rc = smbus_core_receive_byte(hdr, buf);
 		if (rc) {
@@ -430,7 +430,7 @@ static int smbus_process_call(smbus_hdr_t *hdr, uint16_t slave_addr,
 			return -1;
 		}
 	} else {
-		twsi_enable(hdr->node, hdr->twsi_num);
+		twsi_enable(hdr->twsi_num);
 		rc = smbus_core_receive_byte(hdr, buf_ptr);
 		if (rc) {
 			debug_smbus("SMBus: Unable to receive data\n");
@@ -438,7 +438,7 @@ static int smbus_process_call(smbus_hdr_t *hdr, uint16_t slave_addr,
 		}
 	}
 
-	twsi_stop(hdr->node, hdr->twsi_num);
+	twsi_stop(hdr->twsi_num);
 
 	return 0;
 }
@@ -496,7 +496,7 @@ static int smbus_block_write(smbus_hdr_t *hdr, uint16_t slave_addr,
 		}
 	}
 
-	twsi_stop(hdr->node, hdr->twsi_num);
+	twsi_stop(hdr->twsi_num);
 
 	return 0;
 }
@@ -532,7 +532,7 @@ static int smbus_block_read(smbus_hdr_t *hdr, uint16_t slave_addr,
 	}
 
 	/* Receive the block count from slave */
-	twsi_send_ack(hdr->node, hdr->twsi_num);
+	twsi_send_ack(hdr->twsi_num);
 	rc = smbus_core_receive_byte(hdr, &block_count);
 	if (rc) {
 		debug_smbus("SMBus: Unable to receive data\n");
@@ -542,7 +542,7 @@ static int smbus_block_read(smbus_hdr_t *hdr, uint16_t slave_addr,
 	received = 0;
 	buf_ptr = data;
 	while (block_count > 1) {
-		twsi_send_ack(hdr->node, hdr->twsi_num);
+		twsi_send_ack(hdr->twsi_num);
 		rc = smbus_core_receive_byte(hdr, buf_ptr);
 		if (rc) {
 			debug_smbus("SMBus: Unable to receive data\n");
@@ -556,7 +556,7 @@ static int smbus_block_read(smbus_hdr_t *hdr, uint16_t slave_addr,
 
 	/* Process last byte depending on PEC value */
 	if (pec_check) {
-		twsi_send_ack(hdr->node, hdr->twsi_num);
+		twsi_send_ack(hdr->twsi_num);
 		rc = smbus_core_receive_byte(hdr, buf_ptr);
 		if (rc) {
 			debug_smbus("SMBus: Unable to receive data\n");
@@ -569,7 +569,7 @@ static int smbus_block_read(smbus_hdr_t *hdr, uint16_t slave_addr,
 		/* Calculate checksum */
 		csum = smbus_calc_csum(buf, received);
 
-		twsi_enable(hdr->node, hdr->twsi_num);
+		twsi_enable(hdr->twsi_num);
 		/* Receive the PEC byte */
 		rc = smbus_core_receive_byte(hdr, buf);
 		if (rc) {
@@ -585,7 +585,7 @@ static int smbus_block_read(smbus_hdr_t *hdr, uint16_t slave_addr,
 			return -1;
 		}
 	} else {
-		twsi_enable(hdr->node, hdr->twsi_num);
+		twsi_enable(hdr->twsi_num);
 		rc = smbus_core_receive_byte(hdr, buf_ptr);
 		if (rc) {
 			debug_smbus("SMBus: Unable to receive data\n");
@@ -593,7 +593,7 @@ static int smbus_block_read(smbus_hdr_t *hdr, uint16_t slave_addr,
 		}
 	}
 
-	twsi_stop(hdr->node, hdr->twsi_num);
+	twsi_stop(hdr->twsi_num);
 
 	return 0;
 }
@@ -607,10 +607,10 @@ static int smbus_host_notify(smbus_hdr_t *hdr, uint16_t slave_addr,
 
 	assert(bytes == 2);
 
-	rc = twsi_start(hdr->node, hdr->twsi_num);
+	rc = twsi_start(hdr->twsi_num);
 	if (rc) {
-		debug_smbus("SMBus: N%d.TWSI%d: Could not start transaction\n",
-			    hdr->node, hdr->twsi_num);
+		debug_smbus("SMBus: TWSI%d: Could not start transaction\n",
+			    hdr->twsi_num);
 		return rc;
 	}
 
@@ -619,13 +619,13 @@ static int smbus_host_notify(smbus_hdr_t *hdr, uint16_t slave_addr,
 	sw_twsi.s.eop_ia = TWSI_DATA;
 	sw_twsi.s.data = (uint32_t) SMBUS_HOST_ADDR << 1;
 
-	twsi_write_sw(hdr->node, hdr->twsi_num, sw_twsi);
-	twsi_enable(hdr->node, hdr->twsi_num);
+	twsi_write_sw(hdr->twsi_num, sw_twsi);
+	twsi_enable(hdr->twsi_num);
 
-	rc = twsi_wait(hdr->node, hdr->twsi_num);
+	rc = twsi_wait(hdr->twsi_num);
 	if (rc) {
-		debug_smbus("SMBus: N%d.TWSI%d: Unable to send SMB Host Addr\n",
-			    hdr->node, hdr->twsi_num);
+		debug_smbus("SMBus: TWSI%d: Unable to send SMB Host Addr\n",
+			    hdr->twsi_num);
 		return rc;
 	}
 
@@ -634,19 +634,19 @@ static int smbus_host_notify(smbus_hdr_t *hdr, uint16_t slave_addr,
 	sw_twsi.s.eop_ia = TWSI_DATA;
 	sw_twsi.s.data = (uint32_t)slave_addr << 1;
 
-	twsi_write_sw(hdr->node, hdr->twsi_num, sw_twsi);
-	twsi_enable(hdr->node, hdr->twsi_num);
+	twsi_write_sw(hdr->twsi_num, sw_twsi);
+	twsi_enable(hdr->twsi_num);
 
-	rc = twsi_wait(hdr->node, hdr->twsi_num);
+	rc = twsi_wait(hdr->twsi_num);
 	if (rc) {
-		debug_smbus("SMBus: N%d.TWSI%d: Timeout writing data 0x%x\n",
-			    hdr->node, hdr->twsi_num, (slave_addr << 1));
+		debug_smbus("SMBus: TWSI%d: Timeout writing data 0x%x\n",
+			    hdr->twsi_num, (slave_addr << 1));
 		return rc;
 	}
 
-	rc = twsi_read_status(hdr->node, hdr->twsi_num);
-	debug_smbus("SMBus: N%d.TWSI%d: Status 0x%x\n",
-		    hdr->node, hdr->twsi_num, rc);
+	rc = twsi_read_status(hdr->twsi_num);
+	debug_smbus("SMBus: TWSI%d: Status 0x%x\n",
+		    hdr->twsi_num, rc);
 
 	buf_ptr = data;
 	rc = smbus_core_send_byte(hdr, buf_ptr);
@@ -662,27 +662,25 @@ static int smbus_host_notify(smbus_hdr_t *hdr, uint16_t slave_addr,
 		return -1;
 	}
 
-	twsi_stop(hdr->node, hdr->twsi_num);
+	twsi_stop(hdr->twsi_num);
 
 	return 0;
 }
 
-static void smbus_init(smbus_hdr_t *hdr, unsigned int node,
-		       unsigned int twsi_num, uint8_t pec_check)
+static void smbus_init(smbus_hdr_t *hdr, unsigned int twsi_num, uint8_t pec_check)
 {
-	hdr->node = node;
 	hdr->twsi_num = twsi_num;
 	hdr->pec_check = pec_check;
 }
 
 /* SMBus API */
-int smbus_execute(unsigned int node, unsigned int twsi_num, uint8_t pec_check,
+int smbus_execute(unsigned int twsi_num, uint8_t pec_check,
 		  uint16_t slave_addr, uint8_t command, smbus_op_t operation,
 		  uint8_t *data, uint8_t bytes)
 {
 	int rc;
 	smbus_hdr_t hdr;
-	smbus_init(&hdr, node, twsi_num, pec_check);
+	smbus_init(&hdr, twsi_num, pec_check);
 
 	switch (operation) {
 		case SMBUS_QUICK_READ:

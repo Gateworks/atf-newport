@@ -44,7 +44,6 @@
 #include <stdio.h>
 #include <debug.h>
 #include <libfdt.h>
-#include <cavm_utils.h>
 
 #define BL2_NOLOAD_BASE (unsigned long)(&__NOLOAD_START__)
 #define BL2_NOLOAD_LIMIT (unsigned long)(&__RW_END__)
@@ -192,7 +191,7 @@ void bl2_early_platform_setup(meminfo_t *mem_layout,
 				void *plat_params_from_bl1)
 {
 	/* Initialize the console to provide early debug support */
-	console_pl011_register(CSR_PA(0, UAAX_PF_BAR0(0)), 0, 0, &console);
+	console_pl011_register(UAAX_PF_BAR0(0), 0, 0, &console);
 
 	/* Setup the BL2 memory layout */
 	bl2_tzram_layout = *mem_layout;

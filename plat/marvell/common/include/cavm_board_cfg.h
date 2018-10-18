@@ -24,7 +24,6 @@ typedef struct boot_device_conf {
 typedef union mcu_twsi {
 	uint32_t u;
 	struct mcu_twsi_s {
-		uint32_t node		: 8; /* Node ID */
 		uint32_t int_addr	: 8; /* TWSI Internal Address */
 		uint32_t bus		: 8; /* TWSI bus */
 		uint32_t addr		: 8; /* TWSI slave address */
@@ -33,10 +32,8 @@ typedef union mcu_twsi {
 
 typedef struct board_cfg {
 	char board_model[64];
-	int bmc_boot_twsi_node;
 	int bmc_boot_twsi_bus;
 	int bmc_boot_twsi_addr;
-	int bmc_ipmi_twsi_node;
 	int bmc_ipmi_twsi_bus;
 	int bmc_ipmi_twsi_addr;
 	int gpio_shutdown_ctl_in;

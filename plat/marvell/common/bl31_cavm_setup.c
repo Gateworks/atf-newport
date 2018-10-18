@@ -45,7 +45,6 @@
 #include <cavm_board_cfg.h>
 #include <debug.h>
 #include <timers.h>
-#include <cavm_utils.h>
 #include <platform_def.h>
 
 /*******************************************************************************
@@ -120,7 +119,7 @@ void bl31_early_platform_setup(bl31_params_t *from_bl2,
 				void *plat_params_from_bl2)
 #endif
 {
-	console_pl011_register(CSR_PA(0, UAAX_PF_BAR0(0)), 0, 0, &console);
+	console_pl011_register(UAAX_PF_BAR0(0), 0, 0, &console);
 
 #if LOAD_IMAGE_V2
 	/*
@@ -234,7 +233,7 @@ void bl31_platform_setup()
  ******************************************************************************/
 void bl31_plat_arch_setup()
 {
-	uintptr_t ns_dma_memory_base = octeontx_dram_size_node(0) - NS_DMA_MEMORY_SIZE;
+	uintptr_t ns_dma_memory_base = octeontx_dram_size() - NS_DMA_MEMORY_SIZE;
 	mmap_add_region(BL31_RO_BASE, BL31_RO_BASE,
 			BL31_END - BL31_RO_BASE,
 			MT_MEMORY | MT_RW | MT_SECURE);
