@@ -42,6 +42,7 @@ BL1_SOURCES		+=	plat/marvell/common/drivers/cavm_spi.c		\
 				plat/marvell/common/aarch64/cavm_helpers.S 	\
 				plat/marvell/common/bl1_cavm_setup.c		\
 				plat/marvell/common/cavm_dt.c			\
+				plat/marvell/common/cavm_scfg.c			\
 
 BL2_SOURCES		+=	plat/marvell/common/drivers/cavm_spi.c		\
 				drivers/io/io_fip.c				\

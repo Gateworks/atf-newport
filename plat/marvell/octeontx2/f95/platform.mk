@@ -30,6 +30,7 @@ PLAT_BL_COMMON_SOURCES	+=	plat/marvell/octeontx2/f95/plat_cavm_setup.c		\
 BL1_SOURCES		+=	plat/marvell/octeontx2/aarch64/octeontx2_common.S	\
 				plat/marvell/octeontx2/aarch64/plat_cavm_helpers.S	\
 				plat/marvell/octeontx2/cavm_octeontx2_dt.c	\
+				plat/marvell/octeontx2/cavm_octeontx_scfg.c	\
 
 BL2_SOURCES		+=	plat/marvell/octeontx2/f95/plat_cavm_ecam.c		\
 				plat/marvell/octeontx2/cavm_rvu.c		\

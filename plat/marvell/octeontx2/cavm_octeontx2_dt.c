@@ -20,6 +20,7 @@
 #include <cavm_dt.h>
 #include <cavm_common.h>
 #include <cavm_board_cfg_bl1.h>
+#include <cavm_octeontx_scfg.h>
 
 /* define DEBUG_ATF_DTS to enable debug logs */
 #undef DEBUG_ATF_DTS
@@ -1412,7 +1413,7 @@ static void octeontx2_fill_cgx_details(const void *fdt)
 	octeontx_qlm_state_lane_t qlm_state;
 
 	for (qlm_idx = plat_octeontx_get_gser_count() - 1; qlm_idx >= 0; qlm_idx--) {
-		lnum = plat_get_max_lane_num(qlm_idx);
+		lnum = plat_octeontx_scfg->qlm_max_lane_num[qlm_idx];
 		for (lane_idx = 0; lane_idx < lnum; lane_idx++) {
 			qlm_state.u = CSR_READ(CAVM_GSERNX_LANEX_SCRATCHX(qlm_idx, lane_idx, 0));
 			debug_dts("QLM%d.LANE%d: mode=%d:%s\n",

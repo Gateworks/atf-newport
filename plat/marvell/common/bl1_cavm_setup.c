@@ -27,6 +27,7 @@
 #include <debug.h>
 #include <assert.h>
 #include <bl1.h>
+#include <cavm_scfg_bl1.h>
 
 #define BL1_RO_BASE (unsigned long)(&__RO_START__)
 #define BL1_RO_LIMIT (unsigned long)(&__RO_END__)
@@ -110,6 +111,7 @@ void bl1_platform_print_chip_id(void)
 void bl1_platform_setup(void)
 {
 	bl1_platform_print_chip_id();
+	octeontx_fill_soc_details();
 	octeontx_fill_board_details(1);
 
         /* Initialise the IO layer and register platform IO devices */

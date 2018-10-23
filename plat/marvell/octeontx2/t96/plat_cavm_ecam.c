@@ -20,6 +20,7 @@
 #include <string.h>
 #include <cavm_ecam.h>
 #include <cavm_dt.h>
+#include <cavm_octeontx_scfg.h>
 #include <cavm_cgx.h>
 #include <cavm_utils.h>
 
@@ -37,8 +38,8 @@ static int ecam_probe_sata(unsigned long arg)
 
 	debug_plat_ecam("%s arg %ld\n", __func__, arg);
 
-	qlm = plat_octeontx_sata_to_gser(arg);
-	lane = plat_octeontx_sata_to_lane(arg);
+	qlm = plat_octeontx_scfg->scfg.sata_cfg.to_gser[arg];
+	lane = plat_octeontx_scfg->scfg.sata_cfg.to_lane[arg];
 
 	if ((qlm == -1) || (lane == -1))
 		return 0;
@@ -79,7 +80,7 @@ static int ecam_probe_cgx(unsigned long arg)
 	break;
 	}
 
-	lnum = plat_get_max_lane_num(qlm);
+	lnum = plat_octeontx_scfg->qlm_max_lane_num[qlm];
 	while (qlm != -1) {
 		for (int lane = 0; lane < lnum; lane++) {
 			qlm_state.u = CSR_READ(CAVM_GSERNX_LANEX_SCRATCHX(qlm, lane, 0));

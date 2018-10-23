@@ -18,6 +18,7 @@
 #include <platform_setup.h>
 #include <cavm_common.h>
 #include <cavm_dt.h>
+#include <cavm_octeontx_scfg.h>
 
 struct ccs_region {
 	unsigned int  number;
@@ -119,7 +120,7 @@ void octeontx_configure_mmc_security(int secure)
 	if (plat_octeontx_bcfg->bcfg.boot_dev.boot_type != OCTEONTX_BOOT_EMMC)
 		return;
 
-	for (int iobn_idx = 0; iobn_idx < plat_octeontx_get_iobn_count();
+	for (int iobn_idx = 0; iobn_idx < plat_octeontx_scfg->iobn_count;
 				iobn_idx++) {
 		if (secure) {
 			/*

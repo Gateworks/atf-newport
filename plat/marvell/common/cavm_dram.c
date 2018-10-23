@@ -18,6 +18,7 @@
 #include <cavm_common.h>
 #include <string.h>
 #include <debug.h>
+#include <cavm_octeontx_scfg.h>
 
 static inline uint32_t popcnt(uint64_t val)
 {
@@ -43,14 +44,14 @@ uint64_t octeontx_dram_size()
 	int lmc_count;
 	union cavm_lmcx_config lmcx_config;
 
-	lmc_count = plat_octeontx_get_lmc_count();
+	lmc_count = plat_octeontx_scfg->scfg.lmc_cfg.lmc_count;
 	if (lmc_count < 0) {
 		printf("Cannot obtain lmc_count\n");
 		return 0;
 	}
 
 	for (lmc = 0; lmc < lmc_count; lmc++) {
-		if (!plat_octeontx_is_lmc_enabled(lmc))
+		if (!plat_octeontx_scfg->scfg.lmc_cfg.is_enabled[lmc])
 			continue;
 
 		lmcx_config.u = CSR_READ(CAVM_LMCX_CONFIG(lmc));

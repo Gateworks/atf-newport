@@ -15,13 +15,16 @@
 #include <platform_def.h>
 #include <cassert.h>
 #include <cavm_dt.h>
+#include <cavm_octeontx_scfg.h>
 
 plat_octeontx_board_cfg_t * const plat_octeontx_bcfg = (void *)BOARD_CFG_BASE;
 
+plat_octeontx_scfg_t * const plat_octeontx_scfg = (void *)BOARD_CFG_BASE + sizeof(plat_octeontx_board_cfg_t);
+
 /*
- * Check if board_cfg_t fits in the memory region reserved
- * for board_cfg_t structure to make sure we do not modify
+ * Check if board_cfg_t and scfg_t fits in the memory region reserved
+ * for these structures to make sure we do not modify
  * not-preserved memory.
  */
-CASSERT(sizeof(plat_octeontx_board_cfg_t) < BOARD_CFG_MAX_SIZE,
+CASSERT((sizeof(plat_octeontx_board_cfg_t) + sizeof(plat_octeontx_scfg_t)) < BOARD_CFG_MAX_SIZE,
   plat_octeontx_board_cfg_t__is_larger_then__BOARD_CFG_MAX_SIZE);

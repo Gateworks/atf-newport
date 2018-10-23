@@ -21,6 +21,7 @@
 #include <cavm_dt.h>
 #include <cavm_ecam.h>
 #include <cavm_utils.h>
+#include <cavm_octeontx_scfg.h>
 
 #ifdef DEBUG_ATF_PLAT_ECAM
 #define debug_plat_ecam printf
@@ -90,7 +91,7 @@ static int ecam_probe_bgx(unsigned long arg)
 /* arg is LMC number */
 static int ecam_probe_lmc(unsigned long arg)
 {
-	return plat_octeontx_is_lmc_enabled(arg);
+	return plat_octeontx_scfg->scfg.lmc_cfg.is_enabled[arg];
 }
 
 struct ecam_probe_callback probe_callbacks[] = {

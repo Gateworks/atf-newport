@@ -22,6 +22,7 @@
 #include <cavm_sata.h>
 #include <delay_timer.h>
 #include <string.h>
+#include <cavm_octeontx_scfg.h>
 
 #undef SATA_DEBUG
 
@@ -178,8 +179,8 @@ static int sata_drive_check_unplug_failure(int sata)
 	int i, lane, qlm;
 
 	/* Determine which GSER and lane this SATA connects to */
-	qlm = plat_octeontx_sata_to_gser(sata);
-	lane = plat_octeontx_sata_to_lane(sata);
+	qlm = plat_octeontx_scfg->scfg.sata_cfg.to_gser[sata];
+	lane = plat_octeontx_scfg->scfg.sata_cfg.to_lane[sata];
 	if (lane < 0 || qlm < 0)
 		return 0;
 
@@ -293,10 +294,10 @@ void sata_ipm_quirk()
 	struct ahci_command_fis *ahci_cfis = (void *)(octeontx_dram_size() - 0x4000);
 	int i, timeout, retry;
 
-	sata_ctrlr_count = plat_octeontx_get_sata_count();
+	sata_ctrlr_count = plat_octeontx_scfg->scfg.sata_cfg.sata_count;
 
 	for (sata = 0; sata < sata_ctrlr_count; sata++) {
-		gser = plat_octeontx_sata_to_gser(sata);
+		gser = plat_octeontx_scfg->scfg.sata_cfg.to_gser[sata];
 
 		gser_cfg.u = CSR_READ(CAVM_GSERX_CFG(gser));
 		debug("CAVM_GSERX_CFG(%d): %lx\n", gser, gser_cfg.u);
