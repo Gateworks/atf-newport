@@ -20,6 +20,10 @@
 #include <cgx.h>
 #include <plat_scfg.h>
 
+#ifdef NT_FW_CONFIG
+#include <cavm_npc_mcam_profile.h>
+#endif
+
 /* define DEBUG_ATF_CGX_INTF to enable debug logs */
 #undef DEBUG_ATF_CGX_INTF
 
@@ -462,6 +466,10 @@ static int cgx_process_requests(int cgx_id, int lmac_id)
 	 * of whether LMAC is enabled or not
 	 */
 	if ((request_id == CGX_CMD_INTF_SHUTDOWN) ||
+#ifdef NT_FW_CONFIG
+		(request_id == CGX_CMD_GET_MKEX_SIZE) ||
+		(request_id == CGX_CMD_GET_MKEX_PROFILE) ||
+#endif
 		(request_id == CGX_CMD_GET_FW_VER)) {
 		switch (request_id) {
 		case CGX_CMD_INTF_SHUTDOWN:
@@ -483,6 +491,27 @@ static int cgx_process_requests(int cgx_id, int lmac_id)
 			CSR_WRITE(CAVM_CGXX_CMRX_SCRATCHX(
 				cgx_id, lmac_id, 0), scratchx0.u);
 			break;
+#ifdef NT_FW_CONFIG
+		case CGX_CMD_GET_MKEX_PROFILE:
+			scratchx0.u = 0;
+			scratchx0.s.prfl_addr.mcam_addr = otx2_get_npc_profile_addr(0);
+			CSR_WRITE(CAVM_CGXX_CMRX_SCRATCHX(
+				cgx_id, lmac_id, 0), scratchx0.u);
+
+			ERROR("%s: MKEX_PROFILE %u\n", __func__,
+				(unsigned int)scratchx0.s.prfl_addr.mcam_addr);
+			break;
+
+		case CGX_CMD_GET_MKEX_SIZE:
+			scratchx0.u = 0;
+			scratchx0.s.prfl_sz.mcam_sz = otx2_get_npc_profile_size(0);
+			CSR_WRITE(CAVM_CGXX_CMRX_SCRATCHX(
+				cgx_id, lmac_id, 0), scratchx0.u);
+
+			ERROR("%s: MKEX_SIZE %u\n", __func__,
+				(unsigned int)scratchx0.s.prfl_sz.mcam_sz);
+			break;
+#endif
 		}
 	} else {
 		/* all the below commands should be processed only

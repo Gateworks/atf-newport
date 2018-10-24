@@ -71,7 +71,11 @@ enum cgx_cmd_id {
 	CGX_CMD_HIGIG,
 	CGX_CMD_LINK_STAT_CHANGE,
 	CGX_CMD_MODE_CHANGE,		/* hot plug support */
-	CGX_CMD_INTF_SHUTDOWN
+	CGX_CMD_INTF_SHUTDOWN,
+#ifdef NT_FW_CONFIG
+	CGX_CMD_GET_MKEX_SIZE,
+	CGX_CMD_GET_MKEX_PROFILE
+#endif
 };
 
 /* async event ids */
@@ -151,6 +155,18 @@ struct cgx_mac_addr_s {			/* start from bit 9 */
 	uint64_t reserved2:7;
 };
 
+#ifdef NT_FW_CONFIG
+struct cgx_mcam_profile_addr_s {
+	uint64_t reserved1:9; /* start from bit 9 */
+	uint64_t mcam_addr:55;
+};
+
+struct cgx_mcam_profile_sz_s {
+	uint64_t reserved1:9; /* start from bit 9 */
+	uint64_t mcam_sz:55;
+};
+#endif
+
 /* Resp to cmd ID - CGX_CMD_LINK_BRING_UP/DOWN, event ID CGX_EVT_LINK_CHANGE
  * status can be either CGX_STAT_FAIL or CGX_STAT_SUCCESS
  * In case of CGX_STAT_FAIL, it indicates CGX configuration failed when
@@ -179,6 +195,12 @@ union cgx_rsp_sts {
 	struct cgx_mac_addr_s mac_s;
 	/* response if evt_status = CMD_FAIL */
 	struct cgx_err_sts_s err;
+#ifdef NT_FW_CONFIG
+	/* response to CGX_CMD_GET_MKEX_SIZE */
+	struct cgx_mcam_profile_sz_s prfl_sz;
+	/* response to CGX_CMD_GET_MKEX_PROFILE */
+	struct cgx_mcam_profile_addr_s prfl_addr;
+#endif
 };
 
 union cgx_scratchx0 {
