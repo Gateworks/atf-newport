@@ -43,14 +43,38 @@ static struct blk_entry block_map[] = {
 
 static inline uint64_t read_gp_reg(void *h, uint64_t *mask, uint8_t *r_id)
 {
-	assert(*r_id < 30);
+	/*
+	 * X30 read should be never handled, since X30 (LR)
+	 * is updated always on SMC handling sequence.
+	 */
+	assert(*r_id < 32 && *r_id != 30);
+
+	/*
+	 * x31 has to be encoded as ZR, load/stores to SP
+	 * are not supported (and never should be).
+	 * Return 0 in such case.
+	 */
+	if (*r_id == 31)
+		return 0;
 
 	return (read_ctx_reg(get_gpregs_ctx(h), (*r_id)*GP_REG_OFFSET) & *mask);
 }
 
 static inline void write_gp_reg(void *h, uint64_t *mask, uint8_t *r_id, uint64_t val)
 {
-	assert(*r_id < 30);
+	/*
+	 * X30 write should be never handled, since X30 (LR)
+	 * is updated always on SMC handling sequence.
+	 */
+	assert(*r_id < 32 && *r_id != 30);
+
+	/*
+	 * x31 has to be encoded as ZR, load/stores to SP
+	 * are not supported (and never should be).
+	 * Ignore this write.
+	 */
+	if (*r_id == 31)
+		return;
 
 	write_ctx_reg(get_gpregs_ctx(h), (*r_id)*GP_REG_OFFSET, (val & *mask));
 }
