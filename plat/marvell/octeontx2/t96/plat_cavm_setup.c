@@ -17,13 +17,9 @@
 #include <cavm_common.h>
 #include <cavm_gpio.h>
 #include <cavm_utils.h>
+#include <platform_scfg.h>
 
 static uint64_t msix_addr_save;
-
-int plat_octeontx_get_lmc_count(void)
-{
-	return 3;
-}
 
 int plat_octeontx_get_ecams_count(void)
 {
@@ -237,8 +233,7 @@ void plat_add_mmio()
 	add_map_record(CAVM_GTI_BAR_E_GTI_PF_BAR0_CN9, CAVM_GTI_BAR_E_GTI_PF_BAR0_CN9_SIZE, attr);
 	add_map_record(CAVM_GTI_BAR_E_GTI_PF_BAR4_CN9, CAVM_GTI_BAR_E_GTI_PF_BAR4_CN9_SIZE, attr);
 
-	device_type_count = plat_octeontx_get_lmc_count();
-	for (i = 0; i < device_type_count; i++) {
+	for (i = 0; i < MAX_LMC; i++) {
 		add_map_record(CAVM_LMC_BAR_E_LMCX_PF_BAR0(i), CAVM_LMC_BAR_E_LMCX_PF_BAR0_SIZE, attr);
 		add_map_record(CAVM_LMC_BAR_E_LMCX_PF_BAR4(i), CAVM_LMC_BAR_E_LMCX_PF_BAR4_SIZE, attr);
 	}

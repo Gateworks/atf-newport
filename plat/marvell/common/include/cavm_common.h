@@ -160,7 +160,6 @@ DEFINE_RENAME_SYSREG_RW_FUNCS(cvm_access_el3, AP_CVM_ACCESS_EL3)
 #define set_bit(reg, bit) reg |= (1ULL<<(bit))
 #define unset_bit(reg, bit) reg &= ~(1ULL<<(bit))
 
-int plat_octeontx_get_lmc_count(void);
 int plat_octeontx_get_sata_count(void);
 int plat_octeontx_sata_to_gser(int ctrlr);
 int plat_octeontx_sata_to_lane(int ctrlr);

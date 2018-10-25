@@ -41,17 +41,10 @@ uint64_t octeontx_dram_size()
 {
 	uint64_t rank_size, memsize = 0;
 	int num_ranks, lmc;
-	int lmc_count;
 	union cavm_lmcx_config lmcx_config;
 
-	lmc_count = plat_octeontx_scfg->scfg.lmc_cfg.lmc_count;
-	if (lmc_count < 0) {
-		printf("Cannot obtain lmc_count\n");
-		return 0;
-	}
-
-	for (lmc = 0; lmc < lmc_count; lmc++) {
-		if (!plat_octeontx_scfg->scfg.lmc_cfg.is_enabled[lmc])
+	for (lmc = 0; lmc < MAX_LMC; lmc++) {
+		if (!plat_octeontx_scfg->scfg.is_lmc_enabled[lmc])
 			continue;
 
 		lmcx_config.u = CSR_READ(CAVM_LMCX_CONFIG(lmc));

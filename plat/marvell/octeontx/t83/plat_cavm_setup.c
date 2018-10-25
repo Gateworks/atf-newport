@@ -18,11 +18,6 @@
 #include <cavm_dt.h>
 #include <cavm_utils.h>
 
-int plat_octeontx_get_lmc_count(void)
-{
-	return 2;
-}
-
 int plat_octeontx_get_sata_count(void)
 {
 	return 6;

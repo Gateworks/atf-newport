@@ -25,14 +25,6 @@ static void fill_sata_cfg() {
 	}
 }
 
-static void fill_lmc_cfg() {
-	int lmc;
-
-	plat_octeontx_scfg->scfg.lmc_cfg.lmc_count = plat_octeontx_get_lmc_count();
-	for (lmc = 0; lmc < plat_octeontx_scfg->scfg.lmc_cfg.lmc_count; lmc++) {
-		plat_octeontx_scfg->scfg.lmc_cfg.is_enabled[lmc] = plat_octeontx_is_lmc_enabled(lmc);
-	}
-}
 
 WEAK int plat_octeontx_fill_soc_details(void) {
 	return 0;
@@ -40,9 +32,12 @@ WEAK int plat_octeontx_fill_soc_details(void) {
 
 int octeontx_fill_soc_details()
 {
-	int rc;
+	int rc, lmc;
 
-	fill_lmc_cfg();
+	for (lmc = 0; lmc < MAX_LMC; lmc++) {
+		plat_octeontx_scfg->scfg.is_lmc_enabled[lmc] = plat_octeontx_is_lmc_enabled(lmc);
+	}
+
 	fill_sata_cfg();
 
 	rc = plat_octeontx_fill_soc_details();

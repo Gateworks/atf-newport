@@ -22,13 +22,8 @@ typedef struct sata_cfg {
 	uint8_t to_lane[MAX_SATA];
 } sata_cfg_t;
 
-typedef struct lmc_cfg {
-	uint8_t lmc_count;
-	uint8_t is_enabled[MAX_LMC];
-} lmc_cfg_t;
-
 typedef struct scfg {
-	lmc_cfg_t lmc_cfg;
+	uint8_t is_lmc_enabled[MAX_LMC];
 	sata_cfg_t sata_cfg;
 } scfg_t;
 

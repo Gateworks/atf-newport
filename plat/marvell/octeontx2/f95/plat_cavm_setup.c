@@ -20,15 +20,6 @@
 
 static uint64_t msix_addr_save;
 
-/* F95 has 2 LMCs enabled, but 0 and 2 instances
- * Hence return the count as 3 to support looping
- * through the count and skipping 1
- */
-int plat_octeontx_get_lmc_count(void)
-{
-	return 3;
-}
-
 int plat_octeontx_get_ecams_count(void)
 {
 	return 1;
