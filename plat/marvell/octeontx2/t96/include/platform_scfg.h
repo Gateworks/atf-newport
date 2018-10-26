@@ -17,6 +17,6 @@
 #define MAX_SATA 4
 #define MAX_LMC 3
 
-#define MAX_QLM 7
+#define MAX_QLM 8
 
 #endif /* __PLATFORM_BOARD_CFG_H__ */
