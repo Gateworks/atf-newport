@@ -98,6 +98,7 @@
 	cmp	x30, #EC_DABORT_LOWER_EL
 	b.eq	dabort_lower_el_handler
 
+#if (defined(PLAT_f95) || defined(PLAT_t96))
 	/* -----------------------------------------------------
 	 * Handle Cavium-specific trap - synchronous data abort
 	 * with (as per ARM's ARM DDI0487B) EC = 0x1f, which
@@ -106,6 +107,7 @@
 	 */
 	cmp	x30, #EC_CAVIUM_IO_TRAP
 	b.eq	octeontx_io_trap_handler
+#endif
 
 	/* -----------------------------------------------------
 	 * The following code handles any synchronous exception
