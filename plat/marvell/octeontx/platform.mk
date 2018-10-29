@@ -45,6 +45,7 @@ BL1_SOURCES		+=	drivers/marvell/cavm_spi.c		\
 				plat/marvell/octeontx/bl1_cavm_setup.c		\
 				plat/marvell/octeontx/cavm_dt.c			\
 				plat/marvell/octeontx/cavm_scfg.c	\
+				plat/marvell/octeontx/aarch64/octeontx_bl1_entrypoint.S	\
 
 BL2_SOURCES		+=	drivers/marvell/cavm_spi.c		\
 				drivers/io/io_fip.c				\
