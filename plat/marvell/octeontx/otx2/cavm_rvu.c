@@ -440,14 +440,16 @@ static int msix_enable()
 				pfx_msix_cfg.s.vf_msixt_offset = vf_msix_offset;
 				pfx_msix_cfg.s.vf_msixt_sizem1 =
 					rvu_dev[pf].vf_num_msix_vec - 1;
-				vf_msix_offset += ((rvu_dev[pf].num_vfs & MAX_RVU_VFS_PER_PF) *
-						   rvu_dev[pf].vf_num_msix_vec);
+				vf_msix_offset += ((rvu_dev[pf].num_vfs &
+					(MAX_RVU_VFS_PER_PF - 1)) *
+					rvu_dev[pf].vf_num_msix_vec);
 				/*
 				 * Increment number of already
 				 * configured MSI-Xes
 				 */
-				msix_conf_count += ((rvu_dev[pf].num_vfs & MAX_RVU_VFS_PER_PF) *
-						    rvu_dev[pf].vf_num_msix_vec);
+				msix_conf_count += ((rvu_dev[pf].num_vfs &
+					(MAX_RVU_VFS_PER_PF - 1)) *
+					rvu_dev[pf].vf_num_msix_vec);
 			}
 
 			/*
