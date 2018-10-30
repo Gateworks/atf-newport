@@ -332,6 +332,7 @@ static void conf_msix_admin_blk_offset()
 	union cavm_ndcx_priv_af_int_cfg ndc_int_cfg;
 	union cavm_cptx_priv_af_int_cfg	cpt_int_cfg;
 	int af_msix_used = 0, i = 0;
+	uint64_t midr;
 
 	/*
 	 * AF interrupt vectors enumerated by RVU_AF_INT_VEC_E
@@ -371,7 +372,15 @@ static void conf_msix_admin_blk_offset()
 	CSR_WRITE(CAVM_TIM_PRIV_AF_INT_CFG, tim_int_cfg.u);
 	af_msix_used += tim_int_cfg.s.msix_size;
 
+	midr = read_midr();
 	for (i = 0; i < 3; i++) {
+		/* Workaround for errata NDC-34917,
+		 * set NDC_PRIV_AF_INT_CFG[MSIX_OFFSET] = 0
+		 */
+		if (IS_OCTEONTX_PASS(midr, T96PARTNUM, 1, 0)) {
+			CSR_WRITE(CAVM_NDCX_PRIV_AF_INT_CFG(i), 0x0);
+			continue;
+		}
 		ndc_int_cfg.u = CSR_READ(CAVM_NDCX_PRIV_AF_INT_CFG(i));
 		ndc_int_cfg.s.msix_offset = af_msix_used;
 		CSR_WRITE(CAVM_NDCX_PRIV_AF_INT_CFG(i), ndc_int_cfg.u);
