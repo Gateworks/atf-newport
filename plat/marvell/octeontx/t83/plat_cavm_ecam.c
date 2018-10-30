@@ -91,7 +91,7 @@ static int ecam_probe_bgx(unsigned long arg)
 /* arg is LMC number */
 static int ecam_probe_lmc(unsigned long arg)
 {
-	return plat_octeontx_scfg->scfg.lmc_cfg.is_enabled[arg];
+	return plat_octeontx_scfg->scfg.is_lmc_enabled[arg];
 }
 
 struct ecam_probe_callback probe_callbacks[] = {
