@@ -36,6 +36,9 @@
 /* X1 - gpio_num */
 #define OCTEONTX_REMOVE_GPIO_INT	0xc2000802
 
+#define OCTEONTX_INSTALL_BPHY_PSM_ERRINT	0xc2000803
+#define OCTEONTX_REMOVE_BPHY_PSM_ERRINT		0xc2000804
+
 /* x1 - character to print */
 #define OCTEONTX_PUTC			0xc2000a01
 

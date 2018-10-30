@@ -157,6 +157,9 @@ DEFINE_RENAME_SYSREG_RW_FUNCS(cvm_access_el3, AP_CVM_ACCESS_EL3)
 /* Default SPI to be used by kernel GPIO driver when intercepting interrupts */
 #define OCTEONTX_IRQ_GPIO_NSEC		0x79
 
+/* CNF95xx BPHY PSM interrupts */
+#define OCTEONTX_IRQ_BPHY_PSM_ERRINT	0x80
+
 #define set_bit(reg, bit) reg |= (1ULL<<(bit))
 #define unset_bit(reg, bit) reg &= ~(1ULL<<(bit))
 

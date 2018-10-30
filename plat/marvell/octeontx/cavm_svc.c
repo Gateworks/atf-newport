@@ -20,6 +20,7 @@
 #include <string.h>
 #include <cavm_common.h>
 #include <cavm_gpio.h>
+#include <cavm_bphy.h>
 #include <errno.h>
 #include <libfdt.h>
 
@@ -98,6 +99,17 @@ uint64_t octeontx_svc_smc_handler(uint32_t smc_fid,
 	case OCTEONTX_REMOVE_GPIO_INT:
 		gpio_clear_irq(x1);
 		SMC_RET1(handle, 0);
+
+#if (defined(PLAT_f95))
+	case OCTEONTX_INSTALL_BPHY_PSM_ERRINT:
+		ret = bphy_psm_install_irq(x1, x2, x3, x4);
+		SMC_RET1(handle, ret);
+
+	case OCTEONTX_REMOVE_BPHY_PSM_ERRINT:
+		bphy_psm_clear_irq(x1);
+		SMC_RET1(handle, 0);
+#endif
+
 	default:
 		WARN("Unimplemented OcteonTX Service Call: 0x%x \n", smc_fid);
 		SMC_RET1(handle, SMC_UNK);

@@ -15,7 +15,9 @@
 #include <platform_def.h>
 #include <platform_setup.h>
 #include <cavm_common.h>
+#include <cavm_ecam.h>
 #include <cavm_gpio.h>
+#include <cavm_bphy.h>
 #include <cavm_utils.h>
 #include <cavm_plat_configuration.h>
 #include <cavm_otx2_configuration.h>
@@ -308,6 +310,10 @@ void plat_add_mmio()
 	add_map_record(CAVM_SMI_BAR_E_SMI_PF_BAR0_CN9,
 				CAVM_SMI_BAR_E_SMI_PF_BAR0_CN9_SIZE, attr);
 
+	/* Add BPHY MSI-X space */
+	/* The BAR0 space of BPHY is huge so just map few bytes */
+	add_map_record(CAVM_BPHY_BAR_E_BPHY_PF_BAR0, 4096, attr);
+
 	plat_map_cpc_mem();
 
 	/*
@@ -363,4 +369,51 @@ void plat_gpio_irq_setup(void)
 
 	if (octeontx_register_gpio_handlers() < 0)
 		ERROR("Failed to register GPIO intercept handlers\n");
+
+	if (cavm_register_bphy_intr_handlers() < 0)
+		ERROR("Failed to register BPHY intr handlers\n");
+}
+
+void plat_set_bphy_psm_msix_vectors(int msix_num, int irq_num, int enable)
+{
+	volatile struct msix_cap *msicap = NULL;
+	uint64_t vector_ptr, config_base;
+	struct pcie_config *pconfig;
+	uint8_t cap_pointer;
+	int bus, dev, fn;
+
+	/* OS pci enumeration disables msix, so enable again */
+	/* on 95xx BPHY is on 6:0.0*/
+	bus = 6;
+	dev = fn = 0;
+	config_base = CAVM_ECAM_BAR_E_ECAMX_PF_BAR2_CN9(0) +
+		  (bus << 20) + (dev << 15) + (fn << 12);
+	pconfig = (struct pcie_config *)config_base;
+	cap_pointer = pconfig->cap_pointer;
+
+	while (cap_pointer) {
+		msicap = (struct msix_cap *)(config_base + cap_pointer);
+		if (msicap->cap_ID == PCI_MSIX_CAP_ID) {
+			msicap->messagecontrol |= (1 << 15);
+			break;
+		}
+		cap_pointer = msicap->next_pointer;
+	}
+
+	if (cap_pointer == 0) {
+		ERROR("MSI-X cap header not found !\n");
+		return;
+	}
+
+	vector_ptr = CAVM_PSM_MSIX_VECX_ADDR(CAVM_PSM_INT_VEC_E_ERRINT);
+
+	if (enable) {
+		octeontx_write64(vector_ptr, CAVM_GICD_SETSPI_SR | 1);
+		vector_ptr += 8;
+		octeontx_write64(vector_ptr, irq_num);
+	} else {
+		octeontx_write64(vector_ptr, CAVM_GICD_SETSPI_NSR);
+		vector_ptr += 8;
+		octeontx_write64(vector_ptr, irq_num);
+	}
 }

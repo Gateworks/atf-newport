@@ -42,3 +42,4 @@ BL31_SOURCES		+=	plat/marvell/octeontx/otx2/aarch64/octeontx2_common.S	\
 				plat/marvell/octeontx/otx2/cavm_pm.c			\
 				plat/marvell/octeontx/otx2/cavm_pwrc.c		\
 				plat/marvell/octeontx/otx2/cavm_scmi.c		\
+				drivers/marvell/cavm_bphy.c

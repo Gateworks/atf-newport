@@ -108,10 +108,33 @@ static void init_cgx(uint64_t config_base, uint64_t config_size)
 	cgx_hw_init(cgx_id);
 }
 
+static void init_bphy(uint64_t config_base, uint64_t config_size)
+{
+	struct pcie_config *pconfig = (struct pcie_config *)config_base;
+	union cavm_pccpf_xxx_vsec_sctl vsec_sctl;
+	uint8_t bir = 0;
+	uint16_t tbl_sz = 0;
+
+	debug_plat_ecam("BPHY init called config_base:%lx size:%lx\n",
+			config_base, config_size);
+
+	vsec_sctl.u = octeontx_read32(config_base + CAVM_PCCPF_XXX_VSEC_SCTL);
+	vsec_sctl.cn9.msix_sec_en = 1;
+	vsec_sctl.cn9.msix_sec_phys = 1;
+	octeontx_write32(config_base + CAVM_PCCPF_XXX_VSEC_SCTL, vsec_sctl.u);
+
+	enable_msix(config_base, pconfig->cap_pointer, &tbl_sz, &bir);
+	if (tbl_sz) {
+		debug_plat_ecam("tbl sz: %x, bir:%x\n", tbl_sz, bir);
+		debug_plat_ecam("MSI-X vector base: %lx\n", get_bar_val(pconfig, bir));
+	}
+}
+
 struct ecam_init_callback plat_init_callbacks[] = {
 	{0xa00a, 0x177d, init_gpio},
 	{0xa059, 0x177d, init_cgx}, /* 0x59 - PCC_DEV_IDL_E::CGX */
 	{0xa065, 0x177d, init_rvu}, /* 0x65 - PCC_DEV_IDL_E::RVU_AF */
+	{0xa089, 0x177d, init_bphy},
 	{ECAM_INVALID_DEV_ID, 0, 0}
 };
 
