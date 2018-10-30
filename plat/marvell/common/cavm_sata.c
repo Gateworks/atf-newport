@@ -294,9 +294,7 @@ void sata_ipm_quirk()
 	struct ahci_command_fis *ahci_cfis = (void *)(octeontx_dram_size() - 0x4000);
 	int i, timeout, retry;
 
-	sata_ctrlr_count = plat_octeontx_scfg->scfg.sata_cfg.sata_count;
-
-	for (sata = 0; sata < sata_ctrlr_count; sata++) {
+	for (sata = 0; sata < MAX_SATA; sata++) {
 		gser = plat_octeontx_scfg->scfg.sata_cfg.to_gser[sata];
 
 		gser_cfg.u = CSR_READ(CAVM_GSERX_CFG(gser));

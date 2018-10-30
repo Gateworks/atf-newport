@@ -25,25 +25,9 @@ int plat_octeontx_get_ecams_count(void)
 	return 1;
 }
 
-int plat_octeontx_get_sata_count(void)
-{
-	return 0;
-}
-
 int plat_octeontx_get_iobn_count(void)
 {
 	return 1;
-}
-
-/* No SATA on F95 */
-int plat_octeontx_sata_to_gser(int ctrlr)
-{
-	return -1;
-}
-
-int plat_octeontx_sata_to_lane(int ctrlr)
-{
-	return -1;
 }
 
 int plat_octeontx_is_lmc_enabled(unsigned lmc)
@@ -274,12 +258,6 @@ void plat_add_mmio()
 	for (i = 0; i < device_type_count; i++) {
 		add_map_record(CAVM_ECAM_BAR_E_ECAMX_PF_BAR0_CN9(i), CAVM_ECAM_BAR_E_ECAMX_PF_BAR0_CN9_SIZE, attr);
 		add_map_record(ECAM_PF_BAR2(i), CAVM_ECAM_BAR_E_ECAMX_PF_BAR2_CN9_SIZE, attr);
-	}
-
-	device_type_count = plat_octeontx_get_sata_count();
-	for (i = 0; i < device_type_count; ++i) {
-		add_map_record(CAVM_SATA_BAR_E_SATAX_PF_BAR0(i), CAVM_SATA_BAR_E_SATAX_PF_BAR0_SIZE, attr);
-		add_map_record(CAVM_SATA_BAR_E_SATAX_PF_BAR2(i), CAVM_SATA_BAR_E_SATAX_PF_BAR2_SIZE, attr);
 	}
 
 	add_map_record(CAVM_ROM_BAR_E_ROM_PF_BAR0, CAVM_ROM_BAR_E_ROM_PF_BAR0_SIZE, attr);

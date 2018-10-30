@@ -26,11 +26,6 @@ int plat_octeontx_get_ecams_count(void)
 	return 1;
 }
 
-int plat_octeontx_get_sata_count(void)
-{
-	return 4;
-}
-
 int plat_octeontx_get_iobn_count(void)
 {
 	return 2;
@@ -286,8 +281,7 @@ void plat_add_mmio()
 		add_map_record(ECAM_PF_BAR2(i), CAVM_ECAM_BAR_E_ECAMX_PF_BAR2_CN9_SIZE, attr);
 	}
 
-	device_type_count = plat_octeontx_get_sata_count();
-	for (i = 0; i < device_type_count; ++i)
+	for (i = 0; i < MAX_SATA; ++i)
 	{
 		add_map_record(CAVM_SATA_BAR_E_SATAX_PF_BAR0(i), CAVM_SATA_BAR_E_SATAX_PF_BAR0_SIZE, attr);
 		add_map_record(CAVM_SATA_BAR_E_SATAX_PF_BAR2(i), CAVM_SATA_BAR_E_SATAX_PF_BAR2_SIZE, attr);

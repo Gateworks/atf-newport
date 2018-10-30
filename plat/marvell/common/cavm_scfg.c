@@ -15,30 +15,22 @@
 #include <cavm_octeontx_scfg.h>
 #include <cavm_scfg_bl1.h>
 
-static void fill_sata_cfg() {
-	int sata;
-
-	plat_octeontx_scfg->scfg.sata_cfg.sata_count = plat_octeontx_get_sata_count();
-	for (sata = 0; sata < plat_octeontx_scfg->scfg.sata_cfg.sata_count; sata++) {
-		plat_octeontx_scfg->scfg.sata_cfg.to_gser[sata] = plat_octeontx_sata_to_gser(sata);
-		plat_octeontx_scfg->scfg.sata_cfg.to_lane[sata] = plat_octeontx_sata_to_lane(sata);
-	}
-}
-
-
 WEAK int plat_octeontx_fill_soc_details(void) {
 	return 0;
 }
 
 int octeontx_fill_soc_details()
 {
-	int rc, lmc;
+	int rc, lmc, sata;
 
 	for (lmc = 0; lmc < MAX_LMC; lmc++) {
 		plat_octeontx_scfg->scfg.is_lmc_enabled[lmc] = plat_octeontx_is_lmc_enabled(lmc);
 	}
 
-	fill_sata_cfg();
+	for (sata = 0; sata < MAX_SATA; sata++) {
+		plat_octeontx_scfg->scfg.sata_cfg.to_gser[sata] = plat_octeontx_sata_to_gser(sata);
+		plat_octeontx_scfg->scfg.sata_cfg.to_lane[sata] = plat_octeontx_sata_to_lane(sata);
+	}
 
 	rc = plat_octeontx_fill_soc_details();
 	if(rc) {

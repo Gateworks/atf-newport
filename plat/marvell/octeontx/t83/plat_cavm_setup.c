@@ -18,11 +18,6 @@
 #include <cavm_dt.h>
 #include <cavm_utils.h>
 
-int plat_octeontx_get_sata_count(void)
-{
-	return 6;
-}
-
 /*
  * SATA to GSER mapping
  * SATA(0-1) --- GSER4
