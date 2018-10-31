@@ -48,6 +48,9 @@
 #define SCMI_CAVM_SHUTDOWN_CONFIG_MSG_LEN	12
 #define SCMI_CAVM_SHUTDOWN_CONFIG_RESP_LEN	8
 
+#define SCMI_CAVM_SFP_CONFIG_MSG_LEN		12
+#define SCMI_CAVM_SFP_CONFIG_RESP_LEN		8
+
 /* SCMI message header format bit field */
 #define SCMI_MSG_ID_SHIFT		0
 #define SCMI_MSG_ID_WIDTH		8
@@ -184,6 +187,7 @@
 
 /* SCMI custom Cavium configuration protocol message IDs */
 #define SCMI_CAVM_SHUTDOWN_CONFIG_MSG		0x4
+#define SCMI_CAVM_SFP_CONFIG_MSG		0x5
 
 /* Helper structures for Cavium shutdown config command */
 #define SCMI_CAVM_SHUTDOWN_CONFIG_TYPE_NONE	0x0
