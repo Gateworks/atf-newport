@@ -321,6 +321,11 @@ void plat_add_mmio()
 
 	mmap_add_region(SFP_SHMEM_BASE, SFP_SHMEM_BASE,
 			SFP_SHMEM_SIZE, (MT_MEMORY | MT_RW | MT_NS));
+
+#ifdef NT_FW_CONFIG
+       mmap_add_region(NT_FW_CONFIG_BASE, NT_FW_CONFIG_BASE,
+                       NT_FW_CONFIG_LIMIT, (MT_MEMORY | MT_RW | MT_NS));
+#endif
 }
 
 void plat_set_gpio_msix_vectors(int gpio_num, int irq_num, int enable)
