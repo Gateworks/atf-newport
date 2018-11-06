@@ -20,6 +20,7 @@
 #include <assert.h>
 #include <debug.h>
 #include <cavm_utils.h>
+#include <cavm_octeontx_scfg.h>
 
 #ifdef DEBUG_ATF_RVU
 #define debug_rvu printf
@@ -192,7 +193,7 @@ static int octeontx_init_rvu_from_fdt(void)
 
 	/* Initialize CGX PF */
 	pf = RVU_CGX0_LMAC0;
-	for (cgx_id = 0; cgx_id < MAX_CGX; cgx_id++) {
+	for (cgx_id = 0; cgx_id < plat_octeontx_scfg->cgx_count; cgx_id++) {
 		cgx = &(plat_octeontx_bcfg->cgx_cfg[cgx_id]);
 		if (cgx->enable) {
 			for (lmac_id = 0; lmac_id < MAX_LMAC_PER_CGX; lmac_id++) {

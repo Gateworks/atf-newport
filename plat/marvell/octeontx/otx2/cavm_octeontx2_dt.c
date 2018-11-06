@@ -83,7 +83,7 @@ void plat_octeontx_print_board_variables(void)
 	cgx_lmac_config_t *lmac;
 	phy_config_t *phy;
 
-	for (i = 0; i < MAX_CGX; i++) {
+	for (i = 0; i < plat_octeontx_scfg->cgx_count; i++) {
 		cgx = &(plat_octeontx_bcfg->cgx_cfg[i]);
 		debug_dts("CGX%d: lmac_count = %d\n", i, cgx->lmac_count);
 		for (j = 0; j < cgx->lmac_count; j++) {
@@ -934,6 +934,7 @@ static int octeontx2_check_qlm_lmacs(int cgx_idx,
 	cgx_config_t *cgx;
 	cgx_lmac_config_t *lmac;
 	int i;
+	int max_lanes = plat_octeontx_scfg->qlm_max_lane_num[qlm];
 
 	debug_dts("CGX%d: qlm = %d, mode_idx = %d, lmac_need = %d\n",
 			 cgx_idx, qlm, mode_idx, lmac_need);
@@ -961,10 +962,9 @@ static int octeontx2_check_qlm_lmacs(int cgx_idx,
 					break;
 				}
 			}
-		} else if ((qlm == 4) || (qlm == 5)) {
-			/* QLM4 and QLM5 does not support quad lane Ethernet
-			 * protocols. Only two lanes are available for each
-			 * QLM.
+		} else if (max_lanes == 2) {
+			/* DLMs does not support quad lane Ethernet protocols.
+			 * Only two lanes are available.
 			 */
 			lmac_avail = 2;
 			for (i = 0; i < cgx->lmac_count; i++) {
@@ -1014,7 +1014,7 @@ static int octeontx2_fill_cgx_struct(int qlm, int lane, int mode_idx)
 	}
 
 	cgx_idx = plat_get_cgx_idx(qlm);
-	if ((cgx_idx < 0) || (cgx_idx >= MAX_CGX)) {
+	if ((cgx_idx < 0) || (cgx_idx >= plat_octeontx_scfg->cgx_count)) {
 		WARN("CGX: QLM%d cannot be configured for CGX.\n", qlm);
 		return 0;
 	}
@@ -1316,7 +1316,7 @@ static void octeontx2_cgx_check_linux(const void *fdt)
 		return;
 	}
 
-	for (i = 0; i < MAX_CGX; i++) {
+	for (i = 0; i < plat_octeontx_scfg->cgx_count; i++) {
 		cgx = &(plat_octeontx_bcfg->cgx_cfg[i]);
 		snprintf(name, sizeof(name), "cgx@%d", i);
 		if (!cgx->lmac_count)
@@ -1375,7 +1375,7 @@ static void octeontx2_cgx_assign_mac(const void *fdt)
 	}
 
 	/* Initialize N first LMACs with the MAC address. */
-	for (cgx_idx = 0; cgx_idx < MAX_CGX; cgx_idx++) {
+	for (cgx_idx = 0; cgx_idx < plat_octeontx_scfg->cgx_count; cgx_idx++) {
 		cgx = &(plat_octeontx_bcfg->cgx_cfg[cgx_idx]);
 		for (lmac_idx = 0; lmac_idx < cgx->lmac_count; lmac_idx++) {
 			lmac = &cgx->lmac_cfg[lmac_idx];

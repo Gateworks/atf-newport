@@ -31,6 +31,9 @@ int plat_octeontx_get_ecams_count(void)
 
 int plat_octeontx_get_iobn_count(void)
 {
+	if (plat_get_altpkg() == CN95XXE_PKG)
+		return 1;
+
 	return 2;
 }
 
@@ -41,6 +44,9 @@ int plat_octeontx_get_iobn_count(void)
  */
 int plat_octeontx_sata_to_gser(int ctrlr)
 {
+	if (plat_get_altpkg() == CN95XXE_PKG)
+		return -1;
+
 	if (ctrlr > 3)
 		return -1;
 
@@ -49,6 +55,9 @@ int plat_octeontx_sata_to_gser(int ctrlr)
 
 int plat_octeontx_sata_to_lane(int ctrlr)
 {
+	if (plat_get_altpkg() == CN95XXE_PKG)
+		return -1;
+
 	if (ctrlr > 3)
 		return -1;
 
@@ -58,6 +67,14 @@ int plat_octeontx_sata_to_lane(int ctrlr)
 int plat_octeontx_is_lmc_enabled(unsigned lmc)
 {
 	union cavm_lmcx_dll_ctl2 lmcx_dll_ctl2;
+
+	if ((plat_get_altpkg() == CN95XXE_PKG)
+	    && (lmc == 1)) {
+		return 0;
+	} else if ((plat_get_altpkg() == CN93XX_PKG)
+	    && (lmc == 2)) {
+		return 0;
+	}
 
 	lmcx_dll_ctl2.u = CSR_READ(CAVM_LMCX_DLL_CTL2(lmc));
 
@@ -106,21 +123,33 @@ int plat_octeontx_get_twsi_count(void)
 
 int plat_octeontx_get_cpt_count(void)
 {
+	if (plat_get_altpkg() == CN95XXE_PKG)
+		return 0;
+
 	return 1;
 }
 
 int plat_octeontx_get_cgx_count(void)
 {
+	if (plat_get_altpkg() == CN93XX_PKG)
+		return 2;
+
 	return 3;
 }
 
 int plat_octeontx_get_pem_count(void)
 {
+	if (plat_get_altpkg() == CN95XXE_PKG)
+		return 1;
+
 	return 3;
 }
 
 int plat_octeontx_get_gser_count(void)
 {
+	if (plat_get_altpkg() == CN93XX_PKG)
+		return 6;
+
 	return 8;
 }
 

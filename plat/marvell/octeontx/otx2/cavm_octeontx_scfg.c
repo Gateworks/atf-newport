@@ -12,9 +12,11 @@
 **/
 #include <cavm_common.h>
 #include <platform_setup.h>
+#include <platform_dt.h>
 #include <cavm_octeontx_scfg.h>
 #include <cavm_scfg_bl1.h>
 #include <cavm_otx2_configuration.h>
+#include <assert.h>
 
 static void fill_qlm_max_lane_num(void)
 {
@@ -28,6 +30,10 @@ static void fill_qlm_max_lane_num(void)
 int plat_octeontx_fill_soc_details(void)
 {
 	plat_octeontx_scfg->iobn_count = plat_octeontx_get_iobn_count();
+	plat_octeontx_scfg->cgx_count = plat_octeontx_get_cgx_count();
+	assert(plat_octeontx_scfg->cgx_count <= MAX_CGX);
+	plat_octeontx_scfg->gser_count = plat_octeontx_get_gser_count();
+	assert(plat_octeontx_scfg->gser_count <= MAX_QLM);
 	fill_qlm_max_lane_num();
 
 	return 0;

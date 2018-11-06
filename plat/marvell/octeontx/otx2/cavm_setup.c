@@ -112,3 +112,19 @@ unsigned int plat_get_rom_t_cnt()
 
 	return ret;
 }
+
+/*
+ * Return alternative pkg information
+ *
+ * @return non-zero if an alternative package
+ *     0 = Normal package
+ *     1 = Alternative package 1 (CN93XX)
+ *     3 = Alternative package 3 (CN95XXE)
+ */
+int plat_get_altpkg(void)
+{
+	union cavm_gpio_pkg_ver pkg_ver;
+
+	pkg_ver.u = CSR_READ(CAVM_GPIO_PKG_VER);
+	return pkg_ver.s.pkg_ver;
+}

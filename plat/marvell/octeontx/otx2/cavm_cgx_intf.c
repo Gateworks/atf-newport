@@ -22,6 +22,7 @@
 #include <cavm_dt.h>
 #include <cavm_cgx_intf.h>
 #include <cavm_cgx.h>
+#include <cavm_octeontx_scfg.h>
 
 /* define DEBUG_ATF_CGX_INTF to enable debug logs */
 #undef DEBUG_ATF_CGX_INTF
@@ -635,7 +636,7 @@ static int cgx_poll_for_link_cb(int timer)
 	cgx_lmac_context_t *lmac_ctx;
 	link_state_t link = {0};
 
-	for (int cgx = 0; cgx < MAX_CGX; cgx++) {
+	for (int cgx = 0; cgx < plat_octeontx_scfg->cgx_count; cgx++) {
 		for (int lmac = 0; lmac < MAX_LMAC_PER_CGX; lmac++) {
 			lmac_cfg = &plat_octeontx_bcfg->cgx_cfg[cgx].lmac_cfg[lmac];
 			lmac_ctx = &lmac_context[cgx][lmac];
@@ -688,7 +689,7 @@ static int cgx_handle_requests_cb(int timer)
 	 * if there are any new message requests by reading
 	 * command register of each LMAC(SCRATCHX(1)
 	 */
-	for (int cgx = 0; cgx < MAX_CGX; cgx++) {
+	for (int cgx = 0; cgx < plat_octeontx_scfg->cgx_count; cgx++) {
 		for (int lmac = 0; lmac < MAX_LMAC_PER_CGX; lmac++) {
 			scratch1.u = CSR_READ(CAVM_CGXX_CMRX_SCRATCHX(cgx, lmac, 1));
 			scratch0.u = CSR_READ(CAVM_CGXX_CMRX_SCRATCHX(cgx, lmac, 0));
@@ -784,7 +785,7 @@ void cgx_fw_intf_init(void)
 	 * as init callback will not be triggered for these
 	 * CGXs
 	 */
-	for (int cgx = 0; cgx < MAX_CGX; cgx++) {
+	for (int cgx = 0; cgx < plat_octeontx_scfg->cgx_count; cgx++) {
 		cgx_cfg = &plat_octeontx_bcfg->cgx_cfg[cgx];
 		if (!cgx_cfg->enable)
 			/* if CGX is disabled, call this API
@@ -818,7 +819,7 @@ void cgx_fw_intf_shutdown(void)
 	/* bring down all the links and clear all SCRATCHX
 	 * registers/context
 	 */
-	for (int cgx = 0; cgx < MAX_CGX; cgx++) {
+	for (int cgx = 0; cgx < plat_octeontx_scfg->cgx_count; cgx++) {
 		for (int lmac = 0; lmac < MAX_LMAC_PER_CGX; lmac++) {
 			lmac_ctx = &lmac_context[cgx][lmac];
 			/* bring down the link if link_enable is set */
