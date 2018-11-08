@@ -19,6 +19,9 @@
 #include <stdint.h>
 #include <mmio.h>
 
+#define SCMI_GENERIC_TIMEOUT   300
+#define SCMI_ASIM_TIMEOUT      2000
+
 /*
  * SCMI power domain management protocol message and response lengths. It is
  * calculated as sum of length in bytes of the message header (4) and payload
