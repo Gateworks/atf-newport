@@ -66,9 +66,9 @@ typedef enum {
 
 /* FEC capabilities */
 typedef enum sfp_fec_mode {
-	SFP_FEC_MODE_NONE,
-	SFP_FEC_MODE_RS,
+	SFP_FEC_MODE_NONE = 0,
 	SFP_FEC_MODE_FIRECODE,
+	SFP_FEC_MODE_RS,
 	SFP_FEC_MODE_RS_FIRECODE	/* Both RS and FIRECODE FEC modes */
 } sfp_fec_mode_t;
 
