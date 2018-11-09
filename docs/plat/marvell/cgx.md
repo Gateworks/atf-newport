@@ -1,0 +1,873 @@
+# CGX related support in T9x firmware [Internal Reference]
+
+## 1. Overview
+
+This doc provides details on high level design of CGX implementation in ATF 
+including  SFP/PHY management and interface data structures used for ATF,
+U-Boot, UEFI and kernel communication.
+
+> **NOTES**:  
+> DT properties are mainly needed by ATF configure the ports accordingly. 
+> There is no DT dependency enforced > on kernel. 
+> If required, ATF can trim the DT properties if it doesn’t need to be passed to OS. 
+> Hence no restriction on whether OS boots with ACPI ON/OFF…
+
+---
+
+## 2. Device Tree
+
+Same as CN8XXX platforms, CGX nodes with all interfaces defined as sub nodes 
+and PHY or SFP/QSFP slot info to be present.
+
+Number of VFs/MSIX property for each sub nodes defined to be used by RVU driver:
+
+```c
+// Example:
+"num-rvu-vfs"
+"num-msix-vec"
+```
+
+Along with this, auto negotiation property, SGMII/1000BASE-X MAC/PHY mode to be 
+added to DT which will be used by ATF to configure CGX.
+
+For 1000 BASE-X mode, the sub node should have following property 
+`“octeontx,sgmii-mac-1000x-mode”`.
+
+For AN to be disabled, the sub node should have following property 
+`“octeontx,disable-autonegotiation"`.
+> **Note**: this is applicable only for SGMII/QSGMII modes.
+
+FEC configuration for each LMAC (Applicable for 10G/25G/40G/50G/100G/USXGMII modes)
+`octeontx,fec-type = <N>` where N can be 0, 1 or 2. If this attribute is not specified, 
+default FEC type specific to mode will be configured.
+> **Note**: If user wants to disable FEC, specify the value as 0 in the above property
+
+```c
+/* enum declaration for FEC */
+typedef enum cgx_fec_type {
+        CGX_FEC_NONE,
+        CGX_FEC_BASE_R,			/* BASE-R/FIRECODE FEC */
+        CGX_FEC_RS				/* RS-FEC */
+} fec_type_t;
+```
+
+**SFP (example slot info):**
+
+```c
+sfp_1: sfp-slot@1 {
+             compatible = "sfp-slot";
+             /* format : gpio_controller phandle, pin, flags
+              * flags : polarity inversion
+              */
+             rx_los = <&gpio0 4 0>;
+             detect = <&gpio0 5 0>;
+             tx_fault = <&gpio0 6 0>;
+             tx_disable = <&gpio0 7 0>;
+             eeprom = <&sfp1_eeprom>;
+             /* power in mW supported by board for SFP
+              * levels : 1000, 1500, 2000mW)
+              */
+             max_power = <1500>;
+};
+```
+
+**QSFP (example slot info):**
+
+```c
+qsfp_1: qsfp-slot@1 {
+           compatible = "qsfp-slot";
+           /* format : gpio_controller phandle, pin, flags
+            * flags : polarity inversion
+            */
+           mod_sel = <&gpio1 4 0>;
+           mod_present = <&gpio1 5 0>;
+           reset = <&gpio_15_0 48 0>; /* direct connection to SoC */
+           lowpow_mode = <&gpio1 6 0>;
+           int = <&gpio1 7 0>;
+           eeprom = <&qsfp1_eeprom>;
+           /* power in mW supported by board for QSFP
+            * levels : 1500, 2000, 2500, 3500, 4000, 4500, 5000 mW)
+            */
+           max_power = <3500>;
+};
+```
+
+> **NOTE**:  
+> Slot info need to be mapped to LMAC nodes based on the board design.  
+> For example, on particular CN9X board, QLM7/3 has QSFP slot, 
+> all 100G/40G/25G/10G LMAC nodes in CGX1 needs to have handle to QSFP slot info
+>
+> ```c
+> cgx@0 { /* QLM3 or QLM 7 */
+>   ethernetA29: 100g@00 {
+>       reg = <0>;
+>       num-rvu-vfs = <8>;
+>       num-msix-vec = <210>;
+>       qsfp-slot = <&qsfp_20>;
+>       phy-handle = <&>;
+>   };
+> };
+
+**GPIO expanders info (example):**
+```c
+gpio0: gpio-i2c@0 {
+    #gpio-cells = <2>;
+    compatible = "nxp,pca8574";
+    gpio-controller;
+    reg = <0x22>;
+    ngpios = <8>;
+};
+```
+
+**I2C switch info (example):**
+
+```c
+switch@e0 {
+    #address-cells = <1>;
+    #size-cells = <0>;
+    compatible = "nxp,pca9548";
+    reg = <0xE0>;
+    i2c@0 {
+        #address-cells = <1>;
+        #size-cells = <0>;
+        reg = <0>;  
+        sfp0_eeprom: eeprom@50 {
+            compatible = "atmel,24c01";
+            reg = <0x50>;
+        };  
+
+    sfp_0: sfp-slot@0 {
+    };
+
+    i2c@1 {
+        #address-cells = <1>;
+        #size-cells = <0>;
+        reg = <1>;
+    };
+};
+```
+
+PHY should have the details of which MDIO bus it is connected to and its 
+address and the compatible string should include the PHY name and/or the 
+CLAUSE string (if the PHY complaints with generic C22/C45 standard)
+PHY (example PHY info):
+
+```c
+mdio0@87e005003800 {
+    sgmii00: sgmii00 {
+        reg = <0x0>;
+        compatible = "marvell,88e1240", "ethernet-phy-ieee802.3-c22";
+    };
+};
+```
+
+And, the corresponding LMAC node depending on the board design, should have
+the handle to PHY:
+
+```c
+ethernetA0: sgmii@00 {
+    reg = <0>;
+    num-rvu-vfs = <8>;
+    num-msix-vec = <210>;
+    phy-handle = <&sgmii00>;
+};
+```
+
+LED example: **TODO**
+> **Note**: 
+> unlike CN8xxx, BDK will not trim the DT based on the QLM mode as each lane 
+> can support different modes for CN9xxx and mode change is supported 
+> dynamically. CN9xxx DT should not have “qlm-mode” and “local-mac-address” 
+> property in the CGX sub-nodes.
+
+---
+
+## 3. BOARD CONFIG/USER OPTIONS
+
+These are to be configured in board DT/via SETUP menu in BDK.
+
+ Item            | Comments                        | Status
+-----------------|---------------------------------|------
+QLM MODE         |                                 | Done
+QLM FREQUENCY    |                                 | Done
+FEC              |                                 | ?
+BINDINGS         |(If Splitter is connected or so) | ?
+Device Settings  | (Required for GSERN tuning)     | ?
+
+---
+
+## 4. ATF CGX INTERFACE
+
+### 4.1. BOOT TIME
+
+---
+
+#### 4.1.1. DT PARSER
+
+Based on the QLM LANE mode configuration by BDK (via `GSERNX_LANEX_SCRATCHX CSR`)
+mode is obtained for each lane of QLM. It gets mapped against CGX instance and
+checked against the OS DT to map the info with each LMAC of CGX.
+
+```c
+typedef union
+{
+    uint64_t u;
+    struct {
+        uint16_t baud_mhz;        /* Baudrate of the lane in MHz */
+        cavm_qlm_modes_t mode: 8; /* Mode of the lane */
+        uint32_t flags: 8;        /* Mode flags */
+        uint32_t pcie: 1;         /* Mode is PCIE RC or endpoint, see flags */
+        uint32_t sata: 1;         /* Mode is SATA */
+        uint32_t cgx: 1;          /* Mode is supported by CGX, see mode for details */
+        uint32_t reserved: 29;    /* Reserved for future use */
+    } s;
+} cavm_qlm_state_lane_t;
+```
+
+Additional properties of LMAC configuration like PHY info, SFP/QSFP module info, 
+RVU info, etc. are parsed from Linux DT specific to each board and updated in 
+global board config structure per LMAC.
+
+---
+
+#### 4.1.2. GSERN
+
+**TODO**
+
+---
+
+#### 4.1.3. CGX HW INIT
+
+During PCI scan, CGX init callback will be called for each CGX.
+
+This callback initializes the LMACs based on the info retrieved from board config 
+structure. Programs the LMAC count for CGX and LMAC type for each LMAC.
+
+Also, one time HW initialization based on LMAC type is done like configuring 
+threshold, min/max packet size etc.
+
+LMACs will not be enabled at this point. PCS will be in reset.
+
+2 timers are started and run periodically. Timer #1  to check for requests and
+process them. Timer #2 to interface with PHY or SFP/QSFP module to periodically
+to poll for link status
+
+> **Note**: 
+> CGX device is hidden from non-secure world if the particular CGX is not 
+> configured for any mode in BDK. 
+
+---
+
+#### 4.1.4. INTERRUPT ENABLE
+
+
+MSIX vector provided for SW purpose (37th vector in CGX) is dummy and
+interrupt cannot be triggered. 
+
+For firmware to notify kernel, `CGXX_CMRX_INT(0..2)(0..3)` – Overflow bit (bit 1)
+is chosen as communication method for T9X PASS 1.0 
+(until [http://mcbuggin.caveonetworks.com/bug/33218] is resolved)
+
+---
+
+### 4.2. RUN TIME SERVICES
+
+Interface from/to kernel, U-Boot and UEFI:  
+`CGX SCRATCHX()` registers implemented only for SW purpose. 
+> **NOTE**: 
+> Please check the SCRATCHX CSRs section of the doc for interface details 
+> which will be referred in the below section.
+
+---
+
+#### 4.2.1. INTERFACE FROM U-BOOT/UEFI/KERNEL
+
+`CGXX_CMRX_SCRATCHX[cgx][lmac][1]` reserved for this purpose for each LMAC.  
+Refer to [cgx_scratchx1](#cgx_scratchx1) structure.
+
+> **Note**s:
+> - User can post the requests only if the “ack” bit is clear 
+>   (and default ownership for command register is with non-secure SW).
+>
+> - After writing the command ID, non-secure SW should set the ownership 
+>   to `CGX_OWN_FIRMWARE` for firmware to process the command.
+>
+> - Firmware will set the ownership back to `CGX_OWN_NON_SECURE_SW` 
+>   after processing the command
+>
+> - User should clear the interrupt for any command response along with 
+>   clearing ack/releasing the ownership
+
+---
+
+##### 4.2.1.1. GET FW VER
+
+Parameters to be sent:
+
+- REQUEST ID – `CGX_CMD_GET_FW_VER`
+- Major/Minor version number returned
+
+---
+
+##### 4.2.1.2. GET MAC ADDR
+
+Parameters to be sent:
+
+- REQUEST ID – `CGX_CMD_GET_MAC_ADDR`
+- If MAC address is not configured, zeros are returned.
+
+---
+
+##### 4.2.1.3. LINK BRING UP 
+
+Initiated when ethernet interfaces are brought up
+Parameters to be sent:
+
+- REQUEST ID – `CGX_CMD_LINK_UP`
+- As part of request processing, ATF will bring up the link
+  as per the sequence documented in HRM
+
+Now, poll timer will start to check for link status periodically. 
+Even though ATF polls periodically for the link status, info will be shared 
+with non-secure SW only when there is change in link status.
+
+Return the link state info (by write to `CGXX_CMRX_SCRATCHX[cgx][lmac][0]`)  
+Refer to [cgx_scratchx0](#cgx_scratchx0) structure.
+
+If the PHY link is not up, `CGX_ERR_PHY_LINK_DOWN` will be returned.
+
+Any errors will be set in the `CGXX_CMRX_SCRATCHX[cgx][lmac][0]`  
+Refer to [cgx_scratchx0](#cgx_scratchx0) structure.
+
+**Code Flow**:
+
+- CGX HW initialization is done based on LMAC type
+- If PHY is present : 
+  - Check the link status
+  - If PHY link is up, CGX configured based on the link status
+  - If PHY link is down, error type will be set as `CGX_ERR_PHY_LINK_DOWN`
+    and link status is set with the current PHY status
+
+- If PHY is not present: 
+  - default link status is updated and CGX is configured
+
+- If SFP/QSFP slot is present:
+  - Read the module status
+  - If module is present and EEPROM data is available, check the module capabilities against user options.
+  - If matches, configure CGX
+  - SFP/QSFP flow chart to be followed, Refer to [this.](https://caviumnetworks.sharepoint.com/:u:/r/sites/ic-engplatform/_layouts/15/doc2.aspx?sourcedoc=%7B738fdb57-b29c-477e-a8f9-c529e382e8a0%7D&action=default&uid=%7B738FDB57-B29C-477E-A8F9-C529E382E8A0%7D&ListItemId=705&ListId=%7BC63A6416-EB1D-45C6-BF4A-F59B8DA8FC4E%7D&odsp=1&env=prod)
+
+- If CGX configuration succeeds, current link status will be set
+
+- If CGX configuration fails, both error type and current link status will be set
+
+> **NOTE**:  
+> Link bring up request will enable TX/RX for packet transfer. As per HRM,
+> NIX should be configured before enabling TX/RX as packets should not arrive
+> at NIX before configuration. So, user should send LINK UP request only after
+> NIX is fully configured.
+
+---
+
+##### 4.2.1.4. LINK BRING DOWN
+
+Initiated when ethernet interfaces are brought down 
+Parameters to be sent : 
+
+- REQUEST ID - `CGX_CMD_LINK_BRING_DOWN`
+
+As part of request processing, ATF will bring down the link 
+(sequence followed in HRM). 
+
+Timer #2 will stop periodically polling for the link status of this LMAC until
+ next LINK UP is sent
+
+---
+
+##### 4.2.1.5. INTERNAL LOOPBACK
+
+Parameters to be sent : 
+
+- REQUEST ID - `CGX_CMD_INTERNAL_LBK`
+- cmd_args.enable = 1 to enable loopback
+
+or
+
+- cmd_args.enable = 0 to disable loopback
+
+---
+
+##### 4.2.1.6. EXTERNAL LOOPBACK
+
+Parameters to be sent:
+
+- REQUEST ID - `CGX_CMD_EXTERNAL_LBK`
+- cmd_args.enable = 1 to enable loopback
+
+or
+
+- cmd_args.enable = 0 to disable loopback
+
+> **NOTE**:  
+> To enable loopback, sequence should be request ID for loopback followed
+> by request ID to bring the link up.
+
+---
+
+##### 4.2.1.7. LINK CHANGE
+
+Timer #2 polling periodically for the link status notifies Timer #1
+if there is any change in link status.
+
+Timer #1 will notify kernel about the change in link status via interrupt
+when this command is processed. Event type will be set as `CGX_EVT_ASYNC` and
+event ID will be `CGX_CMD_LINK_STATE_CHANGE`. 
+New link status will be updated in lnk_sts.
+
+**Code Flow**:
+
+- If there is a change in link status reported by PHY or SFP/QSFP module, 
+  CGX is reconfigured based on LMAC type before notifying kernel 
+  via asynchronous event
+- If link is up and CGX configuration succeeds,
+  - Stat: `CGX_STAT_SUCCESS`
+  - Lnk_sts : updated with current status
+  - Err_type: `CGX_ERR_NONE`
+- If link is down, and CGX configuration fails, 
+  - Stat : `CGX_STAT_FAIL`
+  - Lnk_sts : updated with current status
+  - Err_type: CGX HW error type
+
+---
+
+##### 4.2.1.8. INTF SHUTDOWN
+
+When U-Boot or UEFI boots to kernel, U-Boot or UEFI should send the below
+command to ATF - `CGX_CMD_INTF_SHUTDOWN`. 
+
+This command should be sent when CGX driver is unloaded in kernel as well.
+
+As result:
+
+- ATF brings down the link for active links 
+  (for which ever LMAC, LINK UP request was sent)
+- Clears the `SCRATCHX CSR`s (but only sets the ack bit and users should
+  not check for any response for this command as the status bits are cleared).
+- Also clear the interrupt when releasing the ownership
+
+---
+
+#### 4.2.2. INTERFACE FROM ATF to U-BOOT/UEFI/KERNEL
+
+`CGXX_CMRX_SCRATCHX[cgx][lmac][0]`/`CGXX_CMRX_SCRATCHX[cgx][lmac][1]` reserved
+for this purpose for each LMAC, refer to [cgx_scratchx0](#cgx_scratchx0) and
+[cgx_scratchx1](#cgx_scratchx1) structures.
+ 
+- ATF will write the following status for any command submitted in scratchx0:
+  - evt_type : `CGX_EVT_CMD_RESP`
+  - cmd ID : same command ID posted by user
+  - cmd status: Either `CGX_STAT_SUCCESS`/`CGX_STAT_FAIL`
+
+    - If status is returned as `CGX_STAT_FAIL`, 
+      reason/error type will be set in `cgx_err_sts_s` struct
+      > **Note**: In case of LINK UP/DOWN both error type and response
+      > will be updated in `cgx_lnk_sts_s` struct
+
+    - If status is returned as `CGX_CMD_SUCCESS`, based on cmd ID, 
+      specific responses will be set
+      - `GET_FW_VER` - `cgx_ver_s` struct
+      - `GET_MAC_ADDR` - `cgx_mac_addr_s` struct
+
+- In addition, ATF will generate asynchronous event without any commands
+  being posted. This is based on PHY or SFP/QSFP module link status read
+  by periodic polling.
+  - evt_type : `CGX_EVT_ASYNC`
+  - evt ID : `CGX_EVT_LINK_CHANGE`
+  - status : `CGX_STAT_SUCCESS`/`CGX_STAT_FAIL`
+  
+  - If status is `CGX_STAT_FAIL`, error_type and link status
+    will set in `cgx_lnk_sts_s` struct
+
+  - If status is `CGX_STAT_SUCCESS`, error_type will be zero and 
+    current status will be set in `cgx_lnk_sts_s` struct
+
+
+- Finally sets the ack bit and triggers interrupt
+
+- Interrupt is triggered by setting overflow bit of 
+  `CAVM_CGXX_CMRX_INT_W1S(0..2)(0..3)` 
+
+> **Note**: 
+> User is responsible for clearing the interrupt upon reception of interrupt.
+> Also, to differentiate between HW triggered genuine overflow interrupt or
+> firmware triggered event notification interrupt, user needs to read 
+> the ack bit of `SCRATCHX(0)` register.
+> If this bit it set to 1, it is triggered by firmware and needs
+> appropriate action as discussed above.
+
+---
+
+### 4.3. SCRATCHX CSRs
+
+`CGXX_CMRX_SCRATCHX(0..2)(0..3)(0..1)` SCRATCHX CSRs added for SW purpose on
+OCTEON TX2 FAMILY of SoCs. These CSRs are primarily used as the communication
+method between ATF and non-secure SW.
+
+`CGXX_CMRX_SCRATCHX(CGX)(LMAC)(0)` – STATUS REGISTER
+`CGXX_CMRX_SCRATCHX(CGX)(LMAC)(1)` – COMMAND REGISTER
+
+Please refer to [this.]( http://cadmzgitt1.caveonetworks.com/cgit/cgit.cgi/thunder/boot/atf.git/tree/plat/cavium/octeontx2/include/cavm_cgx_intf.h) for the interface definitions. 
+Current version of the interface – v1.0
+
+---
+
+## 5. SFP MANAGEMENT
+
+For network ports with SFP/QSFP slots, before CGX is configured, module capabilities are to be known.  Mostly, the module EEPROM will be connected via TWSI bus and since TWSI operations are slow, all TWSI accesses for SFP/QSFP slots are offloaded to MCP (MIPS based Management Control Processor).
+
+### 5.1. SHARED MEMORY
+
+ATF and MCP use shared memory to communicate with each other for SFP management.
+This SM is fixed memory in non-secure region which will include the data structures
+required to save the SFP module status, EEPROM data (256 bytes) and device tree info 
+to access the TWSI bus, I2C multiplexer/switch, GPIO expanders etc.
+
+**SM data structure:**
+
+```c
+#define SFP_MAX_EEPROM_SIZE     0x100
+typedef struct sfp_shared_data {
+        sfp_slot_info_t sfp_slot;         /* Module info from DT based on board */
+        sfp_context_t sfp_ctx;            /* State machine for SFP/QSFP state */
+        uint8_t buf[SFP_MAX_EEPROM_SIZE]; /* SFP/QSFP EEPROM data */
+        sfp_async_req sfp_req;            /* Post Req to MCP sfp_req_id_t */
+        sfp_async_rsp sfp_rsp;            /* Receive Response from MCP for request sent */
+} sfp_shared_data_t;
+```
+
+> **Note**:
+> This data structure is separately maintained for each LMAC.
+> If the LMAC doesn’t have SFP/QSFP module connected,
+> this SM doesn’t have any impact.
+
+**Context structure in SM:**
+
+```c
+/* Data structures to be shared between AP and MCP */
+typedef struct sfp_context {
+        uint8_t mod_status;          /* transceiver state, sfp_mod_state_info_t*/
+        uint8_t data_status;	/* transceiver data status, sfp_data_state_info_t*/
+        uint8_t lock;           /* lock to prevent conflict of access between AP and MCP */
+        /* SFF-8419 provides details of these pins */
+        uint8_t mod_abs;        /* state of mod_abs pin for SFP */
+        uint8_t tx_disable;     /* state of tx_disable pin for SFP */
+        uint8_t tx_fault;       /* state of tx_fault pin for SFP */
+        uint8_t rx_los;         /* state of rx_los pin for SFP */
+        /* SFF-8438 provides details of these pins */
+        uint8_t select;         /* state of Select pin for QSFP */
+        uint8_t reset;          /* state of reset pin for QSFP */
+        uint8_t lp_mode;        /* state of LPmode pin for QSFP */
+        uint8_t interrupt;      /* state of Interrupt pin for QSFP */
+        uint8_t mod_prs;        /* state of Mod present pin for QSFP */
+        uint8_t reserved;       /* for alignment */
+} sfp_context_t;
+```
+
+**State Machine:**
+
+```c
+/* State machine maintain for SFP/QSFP management for communication
+ * between AP & MCP
+ * sfp_mod_state_info: Module status
+ * sfp_data_state_info: EEPROM status
+ */
+typedef enum sfp_mod_state_info {
+        /* Module disconnected */
+        SFP_MOD_STATE_ABSENT = 0,
+        /* Module connected */
+        SFP_MOD_STATE_PRESENT,
+        /* Other state */
+        SFP_MOD_STATE_OTHER /* Change in other states like Rx LOS or Tx disable */
+} sfp_mod_state_info_t;
+
+typedef enum sfp_data_state_info {
+        SFP_DATA_STATE_IDLE = 0,
+/* MCP to update it after reading the EEPROM data */        SFP_DATA_STATE_READ_EEPROM,
+          /* MCP to update it after validate checksum of EEPROM data */
+           SFP_DATA_STATE_EEPROM_VALID,
+          /* MCP read the EEPROM data and data is not valid. MCP should read the
+         * EEPROM again (5 times) before setting this mode 
+         */
+        SFP_DATA_STATE_EEPROM_NVAL,
+} sfp_data_state_info_t;
+```
+
+**Code Flow:**
+
+- Initial mod_state will be module not present.
+
+- MCP to first check the module availability, and if module is present,
+  updates the state to `MOD_PRS`.
+
+- If module is present, MCP to update the state as `READ_EEPROM` before reading
+  the data from EEPROM and once the data is read from EEPROM and checksum is
+  validated, state is updated to `EEPROM_VALID`
+
+- The above steps (2 & 3) to be continued when periodically polling 
+  for the status (every 1 ms).
+
+- If the module is not present, state should be maintained at `MOD_ABS`.
+
+- During periodic polling, if there is a change is module status 
+  (either from MOD connected->disconnected or disconnected->connected),
+  state should be updated accordingly.
+
+- AP, upon request from user to bring the LINK up, checks for the current state.
+  If the current data state is `EEPROM_VALID`, reads the EEPROM data,
+  parses the info and obtains the cable type.
+
+  - AP obtains the Auto-Negotiation (AN), Forward Error Correction (FEC),
+    max speed capabilities and validate it against user options.
+
+  - Using these options, configure CGX to bring the LINK up.
+
+  - If the LINK is up, timer #2 running to obtain the status periodically
+    by reading the module status.
+
+  - If there is a change in module status (disconnected->connected),
+
+    - READ the EEPROM capabilities
+
+    - Case 1: If the link was never brought up and link request was 
+      already sent,  try to bring the link up
+
+    - Case 2: If the link was already active earlier, handled it as a link change.
+
+  - If there is a change in module status (connected->disconnected), 
+    send a asynchronous notification to user about this.
+
+- If the module state is not present/data state is not `EEPROM_VALID`,
+  AP will retry for 5 times to check the status before returning the error
+  to user (At this point, link will not be brought up).
+  But later, link will be brought up when the module status is obtained
+  by poll timer #2 (see d.ii)
+
+---
+
+## 5.2. AP->SCP
+
+ATF when initializing SCMI driver, initializes SM with info parsed from DT
+related to accessing SFP/QSFP slots and sends `SCMI_CAVM_SFP_CONFIG_MSG`
+to SCP which is passed to MCP.
+
+---
+
+## 5.3. AP->MCP
+
+When bringing the CGX link up, some of the SFP/QSFP pins might need to be
+toggled or some info needs to be read from EEPROM. This need to be asynchronous.
+Will be using SM and use the below request & response data structures.
+MCP to create a separate task to handle this request which will be of 
+high priority compared to other tasks.
+
+```c
+/* Example Request IDs. FIXME: this is not complete list */
+typedef enum sfp_async_req_id {
+        SFP_REQ_NONE = 0,
+        SFP_REQ_TX_ENABLE,      /* Turn ON transmitter */
+        SFP_REQ_TX_DISABLE,     /* Turn OFF transmitter */
+        SFP_REQ_SET_POWER_MODE, /* Set to High/Low Power Mode */
+        SFP_REQ_GET_POWER_MODE, /* Get power mode status */
+        SFP_REQ_WRITE_GPIO,     /* To toggle on one of SFP/QSFP GPIO pins */
+        SFP_REQ_READ_GPIO,      /* Optional */
+        SFP_REQ_READ_BYTE,      /* Optional: if required to read one of the bytes in EEPROM */
+} sfp_req_id_t;
+
+typedef struct sfp_async_req {
+        uint8_t req_id;		/* sfp_req_id_t */
+        /* Ex: which GPIO pin to toggle, which page/byte of EEPROM to read */
+        uint32_t req_args;
+} sfp_async_req_t;
+
+typedef struct sfp_async_resp {
+        uint8_t err_stat;       /* 0 indicates fail and 1 indicates success */
+        /* FIXME: any other specific fields expected as response - command specific */
+} sfp_async_resp_t;
+```
+
+## 5.4 MCP->AP
+
+MCP runs its own firmware known as MCP BL1 (compiled for 32-bit microMIPS architecture).
+MCP is viewed as non-secure agent. It runs several tasks in cooperative multitasking way.
+MSI-X interrupts could be programmatically routed to one of the three GIB interrupt lines.
+Besides there is mailbox interrupt line as well.
+
+---
+
+### 5.4.1 Access to main RAM (MMIO windows)
+
+MCP accesses shared memory region via special hardware mechanism - programmatically
+configured MMIO windows that map certain fixed regions of MCP's MMIO virtual address
+space into the AP's virtual or physical address space. Thus any access to the mapped
+32-bit wide MMIO address range at MCP side is transparently forwarded to the
+corresponding AP's RAM. It's recommended to access shared RAM using 32-bit wide 
+operations and 32-bit aligned offsets.
+
+Address of shared memory region is received during start up of AP BL1 via SCMI message
+using custom vendor-specific protocol. Since MCP is non-secure agent it setups 32-bit
+NCB-based cache-able virtual window. Then MCP BL1 setups mapping for one on the four
+fixed address ranges to the received virtual address via special CSRs
+(`CAVM_XCPX_WINX_CFG` and `CAVM_XCPX_WINX_ADDR`).
+
+---
+
+### 5.4.2 SFP management tasks
+
+MCP BL1 uses two always running tasks and few temporary tasks for SFP management
+activities.
+
+First is status loop task that polls for status changes. At the beginning, it waits
+for SCMI configuration message from AP BL1 (received thru SCP) and then setups
+required hardware (like I2C switches and GPIO expanders) and starts second task
+for handling asynchronous request from ATF.
+
+Once done with setting up everything, status loop task goes into the never ending loop
+polling QSFP/SFP ports pointed out by configuration data from shared memory region.
+Upon detected status change it reports about a change to ATF and, in case of new
+connection observed, starts a task for reading and validating EEPROM.
+
+A task for reading EEPROM implements EEPROM reading sequence, copies just read EEPROM
+to the shared memory region and then finishes.
+
+Both status loop task and asynchronous command handling task have highest priority.
+When possible (time left) they yield execution to allow other tasks to proceed.
+Status loop task does that once per millisecond and asynchronous command task - once
+per microsecond.
+
+### 5.4.3 TWSI locking
+
+Depending on hardware design, required for SFP management GPIOs could situated under
+the same TWSI controller and/or same I2C switch/mux and GPIO expander, so transactions
+should not access same hardware in the same time.
+
+Currently, a global lock for TWSI access is implemented such that no new TWSI transaction
+is allowed until previous one is done. Task that requested TWSI transaction is blocked and
+yield for about 1 microsecond before next attempt to acquire the lock. Going forward,
+parallel access to different TWSI controllers may be allowed to improve responsiveness
+and overall latencies of SFP management's activities.
+
+---
+
+### 5.4.4 Interrupt handling
+
+Currently no interrupts are involved in SFP management related code. However, MCP BL1 has
+framework in place to signal interrupts to AP in the similar way to SCMI notifications from
+MCP Bl1 to AP cores.
+
+---
+
+## 5.5. Processing on MCP (Accessing SFP/QSFP module)
+
+For SFP, First 128 bytes of data from EEPROM can be just read.  
+> **Note**: 
+> if the module is connected, but the data is not read, it should be re-tried.
+> We should have a re-try limit of either 3 or 5 depending on the performance
+> before returning error to the user.
+
+**SFP Sequence:**
+
+- Check for module detect.
+- If Module is present, assert TX disable
+- Read the data from EEPROM
+- Update SM
+
+For QSFP, some transceivers cannot be identified in low power mode. 
+In that case, set it to high power mode, before reading from EEPROM.
+
+**QSFP Sequence:**
+
+- Check for module present
+
+- Assert module select
+
+- Configure power class
+  - First read byte 1 to check if memory map is flat or paged
+  - If paged, select page select to 0 (upper mem 00h)
+  - Read Byte 129 (TABLE 6-16 EXTENDED IDENTIFIER VALUES from `SFF-8636`)
+    to read the power class.
+
+- If the power class is one of 1.5, 2.0, 2.5, 3.0 W MAX, no need to do anything.
+
+- If the power is one of 4.0 W, 4.5 W, 5.0 W mac, set byte 93 bit 2 to 
+   enable high power mode. But, before enabling the high power class, check 
+   the MAX power level supported by the board. 
+   This info will be available in DT (which will be updated in SM for MCP to read)
+
+> *With reference to SFF8636*: 
+> The memory map is arranged into a single lower page address space of 128 bytes
+> and multiple upper address pages. This structure permits timely access to
+> addresses in the lower page such as interrupt flags and monitors.
+> Less time critical entries such as serial ID information and threshold settings
+> are available with the page select function. Data used for interrupt handling
+> is located in Lower Page 00h to enable single block read operations for time
+> critical data.  
+> Upper Page 01h and Upper Page 02h are optional.  
+> Upper Page 01h allows implementation of application select table while  
+> Upper Page 02h provides a user read/write space.  
+> Implementation of these two pages is optional.  
+> Lower and Upper Page 00h are always implemented.
+
+- Read EEPROM
+  Lower Page 00: Bytes 0 – 127
+  First read 128 bytes from EEPROM:  
+  
+  - Byte 0: Identifier (`SFF 8024`)
+  
+  - Byte 1: Revision Compliance
+  
+  - Byte 2:
+    - Bit 0 : Data_Not_Ready : If it is low, data is available
+    - Bit 2 : Upper memory flat or paged
+
+  - Check if Byte 2, bit 0 is low for data to be ready.
+  
+  - If data is ready, check byte 2 bit 2 for upper memory type.
+  
+  - If bit 2 is 0, select page 0 by writing 0 to byte 127 
+
+  - After setting page select, it is better to give a delay
+    (`QLOGIC` reference: 500 us).
+
+  - Now, upper page 00h contents (another 128 bytes: 128 – 255) 
+    are read which  is used for read only identification information.
+    These contents are copied to SM as well.
+
+---
+
+## 6. LED management
+
+**TODO**
+
+---
+
+## 7. PHY management
+
+**TODO**
+
+---
+
+### 7.3. CLAUSE 22
+
+**TODO**
+
+---
+
+### 7.2. CLAUSE 45
+
+**TODO**
+
+---
+
+## 8. SFP/QSFP with integrated PHY
+
+**TODO**
