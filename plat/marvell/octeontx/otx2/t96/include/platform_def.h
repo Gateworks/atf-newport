@@ -145,6 +145,14 @@
 #define RVU_MEM_BASE			(TZDRAM_BASE + TZDRAM_SIZE)
 #define RVU_MEM_SIZE			0x02800000
 
+/*
+ * Memory used for SFP slot config/status, EEPROM info
+ * between AP and MCP. SM should be part of non-secure
+ * memory region as MCP can access only non-secure mem
+ */
+#define SFP_SHMEM_BASE			(RVU_MEM_BASE + RVU_MEM_SIZE)
+#define SFP_SHMEM_SIZE			0x10000 /* 64KB to start with? */
+
 /* Load address of BL33 in the OcteonTX2 port. */
 #define NS_IMAGE_BASE			0x04000000
 #define NS_IMAGE_MAX_SIZE		(0x40000000 - NS_IMAGE_BASE)

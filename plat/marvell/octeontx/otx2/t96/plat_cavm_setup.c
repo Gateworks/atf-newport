@@ -368,11 +368,14 @@ void plat_add_mmio()
 
 	/*
 	 * Shared memory configuration.
-	 * Map additional memory used by RVU.
+	 * Map additional memory used by RVU/SFP mgmt(shared between AP & MCP).
 	 * Do not use add_map_record, it will round size up
 	 */
 	mmap_add_region(RVU_MEM_BASE, RVU_MEM_BASE,
 			RVU_MEM_SIZE, (MT_MEMORY | MT_RW | MT_NS));
+
+	mmap_add_region(SFP_SHMEM_BASE, SFP_SHMEM_BASE,
+			SFP_SHMEM_SIZE, (MT_MEMORY | MT_RW | MT_NS));
 }
 
 void plat_set_gpio_msix_vectors(int gpio_num, int irq_num, int enable)
