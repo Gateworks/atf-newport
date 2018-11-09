@@ -311,8 +311,8 @@ void plat_add_mmio()
 				CAVM_SMI_BAR_E_SMI_PF_BAR0_CN9_SIZE, attr);
 
 	/* Add BPHY MSI-X space */
-	/* The BAR0 space of BPHY is huge so just map few bytes */
-	add_map_record(CAVM_BPHY_BAR_E_BPHY_PF_BAR0, 4096, attr);
+	/* The BAR0 space of BPHY is huge so just map few kbytes */
+	add_map_record(CAVM_BPHY_BAR_E_BPHY_PF_BAR0, 3 * 4096, attr);
 
 	plat_map_cpc_mem();
 
@@ -405,7 +405,7 @@ void plat_set_bphy_psm_msix_vectors(int msix_num, int irq_num, int enable)
 		return;
 	}
 
-	vector_ptr = CAVM_PSM_MSIX_VECX_ADDR(CAVM_PSM_INT_VEC_E_ERRINT);
+	vector_ptr = CAVM_PSM_MSIX_VECX_ADDR(CAVM_PSM_INT_VEC_E_ERRINT + msix_num);
 
 	if (enable) {
 		octeontx_write64(vector_ptr, CAVM_GICD_SETSPI_SR | 1);

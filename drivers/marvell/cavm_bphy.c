@@ -31,8 +31,8 @@
 #define SCR_ISR		(SCR_NS_BIT | SCR_TWE_BIT | SCR_TWI_BIT | SCR_RW_BIT)
 
 /* */
-#define MAX_BPHY_PSM_INTS	4
-#define OCTEONTX_BPHY_PSM_IRQ	4
+#define MAX_BPHY_PSM_INTS	23
+#define OCTEONTX_BPHY_PSM_IRQ	23
 
 struct bphy_psm_irq {
 	volatile uint64_t sp;
@@ -73,12 +73,8 @@ static uint64_t bphy_psm_errint_base;
 static volatile int irq_cpu_lock_counter;
 volatile struct bphy_psm_irq bphy_ints[MAX_BPHY_PSM_INTS] = {0};
 
-static volatile struct irq_cpu el3_bphy_irqs[4] = {
-	{ -1, 0 },
-	{ -1, 0 },
-	{ -1, 0 },
-	{ -1, 0 },
-};
+static volatile struct irq_cpu el3_bphy_irqs[] =
+	{[0 ... (OCTEONTX_BPHY_PSM_IRQ - 1)] = { -1, 0 }};
 
 static void prepare_el0_isr_callback(uint64_t irq_num, uint64_t counter)
 {
@@ -136,7 +132,7 @@ finish:
 uint64_t bphy_psm_irq_handler(uint32_t id, uint32_t flags, void *cookie)
 {
 	uint64_t counter;
-	int i, in_use_ready, index, matched = 0;
+	int in_use_ready, index, matched = 0;
 	uint64_t cpu, assigned_cpu;
 	int mapped_cpu, mapped_counter;
 
@@ -172,34 +168,31 @@ uint64_t bphy_psm_irq_handler(uint32_t id, uint32_t flags, void *cookie)
 		return 0;
 	}
 
-	for (i = 0; i < MAX_BPHY_PSM_INTS; i++) {
-		/*
-		 * Get the value of .counter before reading
-		 * anything from the descriptor. If
-		 * anything is or will become invalid, we
-		 * will see either .in_use_ready reset, or
-		 * .counter incremented.
-		 */
-		in_use_ready = 0;
-		assigned_cpu = 0;
-		counter = __atomic_load_n(&bphy_ints[i].counter,
-				__ATOMIC_SEQ_CST);
+	/*
+	 * Get the value of .counter before reading
+	 * anything from the descriptor. If
+	 * anything is or will become invalid, we
+	 * will see either .in_use_ready reset, or
+	 * .counter incremented.
+	 */
+	in_use_ready = 0;
+	assigned_cpu = 0;
+	counter = __atomic_load_n(&bphy_ints[index].counter, __ATOMIC_SEQ_CST);
 
-		in_use_ready =
-			__atomic_load_n(&bphy_ints[i].in_use_ready,
-					__ATOMIC_SEQ_CST);
-		if (in_use_ready != 0) {
-			assigned_cpu =
-				__atomic_load_n(&bphy_ints[i].cpu,
-						__ATOMIC_SEQ_CST);
-			/* Check for the interrupt for this IRQ */
-			if ((assigned_cpu == cpu)) {
-				matched = 1;
-				/* Call ISR wrapper */
-				prepare_el0_isr_callback(i, counter);
-			}
+	in_use_ready = __atomic_load_n(&bphy_ints[index].in_use_ready,
+				       __ATOMIC_SEQ_CST);
+	if (in_use_ready != 0) {
+		assigned_cpu = __atomic_load_n(&bphy_ints[index].cpu,
+					       __ATOMIC_SEQ_CST);
+
+		/* Check for the interrupt for this IRQ */
+		if ((assigned_cpu == cpu)) {
+			matched = 1;
+			/* Call ISR wrapper */
+			prepare_el0_isr_callback(index, counter);
 		}
 	}
+
 	/*
 	 * For all interrupts with no apparent cause on this CPU
 	 */
@@ -207,12 +200,13 @@ uint64_t bphy_psm_irq_handler(uint32_t id, uint32_t flags, void *cookie)
 		ERROR("Stale BPHY PSM interrupt %x\n", id);
 		return 0;
 	}
+
 	return 0;
 }
 
 static int setup_interrupt_entries(int irq_num, int cpu, int enable)
 {
-	int i, select_irq = -1;
+	int select_irq = -1;
 
 	/*
 	 * Global lock that protects CPU to IRQ mapping. Lock before
@@ -223,42 +217,26 @@ static int setup_interrupt_entries(int irq_num, int cpu, int enable)
 		__atomic_fetch_sub(&irq_cpu_lock_counter, 1, __ATOMIC_SEQ_CST);
 
 	if (enable) {
-		for (i = 0, select_irq = -1;
-		     (select_irq == -1) && (i < OCTEONTX_BPHY_PSM_IRQ);
-		     i++) {
-			if ((el3_bphy_irqs[i].counter != 0)
-			   && (el3_bphy_irqs[i].cpu == cpu)) {
-				select_irq = OCTEONTX_IRQ_BPHY_PSM_ERRINT + i;
-				el3_bphy_irqs[i].counter++;
-			}
-		}
-		if (select_irq == -1) {
-			for (i = 0;
-			   (select_irq == -1) && (i < OCTEONTX_BPHY_PSM_IRQ);
-			     i++) {
-				if (el3_bphy_irqs[i].counter == 0) {
-					el3_bphy_irqs[i].cpu = cpu;
-					el3_bphy_irqs[i].counter = 1;
-					select_irq =
-						OCTEONTX_IRQ_BPHY_PSM_ERRINT
-						+ i;
-					gicv3_set_spi_routing(select_irq,
-							      GICV3_IRM_PE,
-							      read_mpidr());
-				}
-			}
+		if (el3_bphy_irqs[irq_num].counter == 0) {
+			el3_bphy_irqs[irq_num].cpu = cpu;
+			el3_bphy_irqs[irq_num].counter = 1;
+			select_irq = OCTEONTX_IRQ_BPHY_PSM_ERRINT + irq_num;
+			gicv3_set_spi_routing(select_irq,
+					      GICV3_IRM_PE,
+					      read_mpidr());
+		} else {
+			NOTICE("ERR: handler already registered for MSI-X %d\n",
+			       irq_num);
+			return -1;
 		}
 	} else {
-		for (i = 0, select_irq = -1;
-		     (select_irq == -1) && (i < OCTEONTX_BPHY_PSM_IRQ); i++)
-			if ((el3_bphy_irqs[i].counter != 0)
-			    && (el3_bphy_irqs[i].cpu == cpu)) {
-				select_irq = OCTEONTX_IRQ_BPHY_PSM_ERRINT + i;
-				el3_bphy_irqs[i].counter--;
-				if (el3_bphy_irqs[i].counter == 0)
-					el3_bphy_irqs[i].cpu = -1;
-				i = OCTEONTX_BPHY_PSM_IRQ;
-			}
+		if ((el3_bphy_irqs[irq_num].counter != 0)
+		    && (el3_bphy_irqs[irq_num].cpu == cpu)) {
+			select_irq = OCTEONTX_IRQ_BPHY_PSM_ERRINT + irq_num;
+			el3_bphy_irqs[irq_num].counter--;
+			if (el3_bphy_irqs[irq_num].counter == 0)
+				el3_bphy_irqs[irq_num].cpu = -1;
+		}
 	}
 
 	if (enable)
@@ -366,7 +344,7 @@ void bphy_psm_clear_irq(uint64_t irq_num)
 	bphy_ints[irq_num].ttbr = 0;
 	__atomic_thread_fence(__ATOMIC_SEQ_CST);
 
-	bphy_psm_errint_base = 0x3f;
+	bphy_psm_errint_base = ~(0ull);
 
 	__atomic_thread_fence(__ATOMIC_SEQ_CST);
 	/*
