@@ -75,6 +75,62 @@ static struct qlm_mode_strmap_s qlmmode_strmap[] = {
 	{-1, NULL, NULL}
 };
 
+/* List of GPIO types - used as expanders in case of SFP/QSFP */
+static const sfp_gpio_compat_t gpio_compat_list[] = {
+	{ "cavium,thunder-8890-gpio", GPIO_PIN_DEFAULT, 64 },	/* 64 pins for T9x */
+	{ "nxp,pca9505",	GPIO_PIN_PCA953X, 40 },
+	{ "nxp,pca9698",	GPIO_PIN_PCA953X, 40 },
+	{ "nxp,pca9534",	GPIO_PIN_PCA953X, 8 },
+	{ "nxp,pca9535",	GPIO_PIN_PCA953X, 16 },
+	{ "nxp,pca9536",	GPIO_PIN_PCA953X, 4 },
+	{ "nxp,pca9537",	GPIO_PIN_PCA953X, 4 },
+	{ "nxp,pca9538",	GPIO_PIN_PCA953X, 8 },
+	{ "nxp,pca9539",	GPIO_PIN_PCA953X, 16 },
+	{ "nxp,pca9554",	GPIO_PIN_PCA953X, 8 },
+	{ "nxp,pca9554a",	GPIO_PIN_PCA953X, 8 },
+	{ "nxp,pca9555",	GPIO_PIN_PCA953X, 16 },
+	{ "nxp,pca9555a",	GPIO_PIN_PCA953X, 16 },
+	{ "nxp,pca9556",	GPIO_PIN_PCA953X, 8 },
+	{ "nxp,pca9557",	GPIO_PIN_PCA953X, 8 },
+	{ "nxp,pca9574",	GPIO_PIN_PCA957X, 8 },
+	{ "nxp,pca9575",	GPIO_PIN_PCA957X, 16 },
+	{ "maxim,max7310",	GPIO_PIN_PCA953X, 8 },
+	{ "maxim,max7312",	GPIO_PIN_PCA953X, 16 },
+	{ "maxim,max7313",	GPIO_PIN_PCA953X, 16 },
+	{ "maxim,max7315",	GPIO_PIN_PCA953X, 8 },
+	{ "ti,pca6107",		GPIO_PIN_PCA953X, 8 },
+	{ "ti,tca6408",		GPIO_PIN_PCA953X, 8 },
+	{ "ti,tca6416",		GPIO_PIN_PCA953X, 16 },
+	{ "ti,tca9554",		GPIO_PIN_PCA953X, 8 },
+	{ "nxp,pcf8574",	GPIO_PIN_PCF857X, 8 },
+	{ "nxp,pcf8574a",	GPIO_PIN_PCF857X, 8 },
+	{ "nxp,pca8574",	GPIO_PIN_PCF857X, 8 },
+	{ "nxp,pca9670",	GPIO_PIN_PCF857X, 8 },
+	{ "nxp,pca9672",	GPIO_PIN_PCF857X, 8 },
+	{ "nxp,pca9674",	GPIO_PIN_PCF857X, 8 },
+	{ "nxp,pca8575",	GPIO_PIN_PCF857X, 16 },
+	{ "nxp,pcf8575",	GPIO_PIN_PCF857X, 16 },
+	{ "nxp,pca9671",	GPIO_PIN_PCF857X, 16 },
+	{ "nxp,pca9673",	GPIO_PIN_PCF857X, 16 },
+	{ "nxp,pca9675",	GPIO_PIN_PCF857X, 16 },
+	{ "maxim,max7328",	GPIO_PIN_PCF857X, 8 },
+	{ "maxim,max7329",	GPIO_PIN_PCF857X, 8 },
+};
+
+/* List of I2C Mux/Switch types */
+static const sfp_i2c_compat_t i2c_compat_list[] = {
+	{ "cavium,thunder-8890-twsi", I2C_BUS_DEFAULT, I2C_OTHER,  0, 6},
+	{ "cavium,thunderx-i2c", I2C_BUS_DEFAULT, I2C_OTHER,  0, 6},
+	{ "nxp,pca9540", I2C_BUS_PCA9540, I2C_MUX,    4, 2 },
+	{ "nxp,pca9542", I2C_BUS_PCA9542, I2C_MUX,    4, 2 },
+	{ "nxp,pca9543", I2C_BUS_PCA9543, I2C_SWITCH, 0, 2 },
+	{ "nxp,pca9544", I2C_BUS_PCA9544, I2C_MUX,    4, 4 },
+	{ "nxp,pca9545", I2C_BUS_PCA9545, I2C_SWITCH, 0, 4 },
+	{ "nxp,pca9546", I2C_BUS_PCA9546, I2C_SWITCH, 0, 4 },
+	{ "nxp,pca9547", I2C_BUS_PCA9547, I2C_MUX,    8, 8 },
+	{ "nxp,pca9548", I2C_BUS_PCA9548, I2C_SWITCH, 0, 8 },
+};
+
 /* Output information specific for OCTEONTX2, for now only CGX. */
 void plat_octeontx_print_board_variables(void)
 {
@@ -121,6 +177,12 @@ void plat_octeontx_print_board_variables(void)
 				}
 			} else {
 				debug_dts("\tPHY: NONE\n");
+			}
+			if (lmac->sfp_slot) {
+				debug_dts("\tSFP: present\n");
+				debug_dts("\tis_sfp=%d\n", lmac->sfp_info.is_sfp);
+				debug_dts("\tis_qsfp=%d\n", lmac->sfp_info.is_qsfp);
+				debug_dts("\tmax_power=%dmW\n", lmac->sfp_info.max_power);
 			}
 			if ((lmac->mode == CAVM_CGX_LMAC_TYPES_E_SGMII) ||
 				(lmac->mode == CAVM_CGX_LMAC_TYPES_E_QSGMII)) {
@@ -581,14 +643,14 @@ static int octeontx2_fdt_get_bus(const void *fdt, int offset,
 		debug_dts("CGX%d.LMAC%d: mdio 0x%lx bus %d\n",
 				cgx_idx, lmac_idx, mdio, bus);
 	} else if (!strncmp(nodename, "i2c", 3)) {
-		debug_dts("CGX%d.LMAC%d: PHY is on I2C bus\n", cgx_idx, lmac_idx);
+		debug_dts("CGX%d.LMAC%d: PHY/SFP is on I2C bus\n", cgx_idx, lmac_idx);
 		i2c = octeontx2_fdt_get_int32(fdt, "reg", node);
-		/* based on DEVFN for TWSI 0/1 */
-		bus = (i2c & (1 << 8)) ? 1 : 0;
-		debug_dts("CGX%d.LMAC%d: i2c 0x%x bus %d\n",
-				cgx_idx, lmac_idx, i2c, bus);
+		/* based on DEVFN, obtain TWSI bus */
+		bus = ((i2c >> 8) & 0x7);
+		debug_dts("CGX%d.LMAC%d: bus %d\n",
+				cgx_idx, lmac_idx, bus);
 	} else
-		WARN("CGX%d.LMAC%d: no compatible bus type for PHY\n",
+		WARN("CGX%d.LMAC%d: no compatible bus type for PHY/SFP\n",
 				cgx_idx, lmac_idx);
 
 	return bus;
@@ -606,31 +668,35 @@ static void octeontx2_fdt_get_i2c_bus_info(const void *fdt, int offset,
 		return;
 	}
 
-	if (!fdt_node_check_compatible(fdt, parent,
-		"cavium,thunder-8890-twsi")) {
-		i2c_info->type = I2C_BUS_DEFAULT;
-		/* twsi bus */
-		i2c_info->bus  = octeontx2_fdt_get_bus(fdt, offset,
-				cgx_idx, lmac_idx);
-	} else if (!fdt_node_check_compatible(fdt, parent,
-				"nxp,pca9546")) {
-		debug_dts("CGX%d.LMAC%d: 9546 MUX\n", cgx_idx, lmac_idx);
-
-		i2c_info->is_mux = 0; /* PCA9546 is a switch */
-		i2c_info->type = I2C_MUX_PCA9546;
-		i2c_info->channel = octeontx2_fdt_get_int32(fdt, "reg",
-				offset);
-		i2c_info->addr = octeontx2_fdt_get_int32(fdt, "reg",
-				parent);
-		/* TWSI bus */
-		i2c_info->bus = octeontx2_fdt_get_bus(fdt,
-				parent, cgx_idx, lmac_idx);
-		debug_dts("CGX%d.LMAC%d: channel %d addr 0x%x bus %d\n",
-				cgx_idx, lmac_idx,
-				i2c_info->channel,
-				i2c_info->addr, i2c_info->bus);
-	} else
-		WARN("CGX%d.LMAC%d: couldn't find any valid MUX\n",
+	for (int i = 0; i < ARRAY_SIZE(i2c_compat_list); i++) {
+		if (!fdt_node_check_compatible(fdt, parent,
+					       i2c_compat_list[i].compatible)) {
+			debug_dts("CGX%d.LMAC%d: I2C type %d\n", cgx_idx,
+					lmac_idx, i2c_compat_list[i].type);
+			i2c_info->type = i2c_compat_list[i].type;
+			if (i2c_info->type == I2C_BUS_DEFAULT) {
+				/* TWSI bus */
+				i2c_info->bus = octeontx2_fdt_get_bus(fdt,
+					offset, cgx_idx, lmac_idx);
+			} else { /* all other MUX/SWITCH cases */
+				i2c_info->is_mux = i2c_compat_list[i].mux_type;
+				i2c_info->channel = octeontx2_fdt_get_int32(fdt,
+							"reg", offset);
+				i2c_info->addr = octeontx2_fdt_get_int32(fdt,
+							"reg", parent);
+				/* TWSI bus */
+				i2c_info->bus = octeontx2_fdt_get_bus(fdt,
+					parent, cgx_idx, lmac_idx);
+				debug_dts("CGX%d.LMAC%d: I2C SWITCH %d: channel %d addr 0x%x bus %d\n",
+					cgx_idx, lmac_idx, !i2c_info->is_mux,
+					i2c_info->channel,
+					i2c_info->addr, i2c_info->bus);
+			}
+			break;
+		}
+	}
+	if (i2c_info->type == I2C_BUS_NONE)
+		WARN("CGX%d.LMAC%d: couldn't find any valid I2C BUS type\n",
 				cgx_idx, lmac_idx);
 }
 
@@ -663,28 +729,63 @@ static void octeontx2_fdt_gpio_get_info_by_phandle(const void *fdt, int offset,
 
 	int node = fdt_node_offset_by_phandle(fdt, phandle);
 
-	if (!fdt_node_check_compatible(fdt, node,
-		"cavium,thunder-8890-gpio")) {
-		gpio_info->type = GPIO_PIN_DEFAULT;
-		/* handle this case later */
-	} else if (!fdt_node_check_compatible(fdt, node,
-			"nxp,pca9535")) {
-		debug_dts("CGX%d.LMAC%d: 9535 GPIO I2C Expander %d\n",
-				cgx_idx, lmac_idx,
-				gpio_info->pin);
-		gpio_info->type = GPIO_PIN_PCA9535;
-		gpio_info->num_pins = octeontx2_fdt_get_int32(fdt,
+	debug_dts("CGX%d.LMAC%d: GPIO name %s pin %d flags %d\n",
+			cgx_idx, lmac_idx, propname, gpio_info->pin, gpio_info->flags);
+	for (int i = 0; i < ARRAY_SIZE(gpio_compat_list); i++) {
+		if (!fdt_node_check_compatible(fdt, node,
+				gpio_compat_list[i].compatible)) {
+			debug_dts("CGX%d.LMAC%d: gpio type %d\n", cgx_idx,
+					lmac_idx, gpio_compat_list[i].type);
+
+			/* If the gpio is connected directly, just update
+			 * the type and return
+			 */
+			if (gpio_compat_list[i].type == GPIO_PIN_DEFAULT) {
+				gpio_info->type = gpio_compat_list[i].type;
+				break;
+			}
+
+			/* For all other GPIO pins that are connected
+			 * through expanders
+			 */
+			gpio_info->num_pins = octeontx2_fdt_get_int32(fdt,
 				"ngpios", node);
 
-		gpio_info->i2c_addr = octeontx2_fdt_get_int32(fdt, "reg",
+			/* If the gpio is connected directly, just update
+			 * the type and return
+			 */
+			if (gpio_compat_list[i].type == GPIO_PIN_DEFAULT) {
+				gpio_info->type = gpio_compat_list[i].type;
+				break;
+			}
+
+			/* For all other GPIO pins that are connected
+			 * through expanders
+			 */
+			gpio_info->num_pins = octeontx2_fdt_get_int32(fdt,
+				"ngpios", node);
+			/* If max number of GPIOs are not available from
+			 * DT, get it from the static table
+			 */
+			if (!gpio_info->num_pins)
+				gpio_info->num_pins = gpio_compat_list[i].ngpios;
+			gpio_info->type = gpio_compat_list[i].type;
+			gpio_info->i2c_addr = octeontx2_fdt_get_int32(fdt, "reg",
 				node);
-		octeontx2_fdt_get_i2c_bus_info(fdt, node, &gpio_info->i2c_info,
-				cgx_idx, lmac_idx);
-		debug_dts("CGX%d.LMAC%d: addr 0x%x bus %d num pins %d\n",
+			octeontx2_fdt_get_i2c_bus_info(fdt, node,
+					&gpio_info->i2c_info,
+					cgx_idx, lmac_idx);
+			gpio_info->i2c_bus = gpio_info->i2c_info.bus;
+			debug_dts("CGX%d.LMAC%d: GPIO expander : addr 0x%x bus %d num pins %d\n",
 				cgx_idx, lmac_idx,
-				gpio_info->i2c_addr, gpio_info->i2c_info.bus,
+				gpio_info->i2c_addr, gpio_info->i2c_bus,
 				gpio_info->num_pins);
+			break;
+		}
 	}
+	if (gpio_info->type == GPIO_PIN_NONE)
+		WARN("CGX%d.LMAC%d: couldn't find any valid GPIO type\n",
+				cgx_idx, lmac_idx);
 }
 
 static void octeontx2_fdt_parse_vsc7224_reginit(const void *fdt, int offset,
@@ -793,26 +894,32 @@ static void octeontx2_fdt_parse_vsc7224_channels(const void *fdt, int offset,
 	} while (num_chan < 4);
 }
 
-static void octeontx2_fdt_parse_sfp_info(const void *fdt, int offset,
+static void octeontx2_fdt_parse_qsfp_info(const void *fdt, int offset,
 		int cgx_idx, int lmac_idx)
 {
+	const char *name;
 	sfp_i2c_info_t *i2c_info;
-	sfp_gpio_info_t *mod_abs;
-	sfp_slot_info_t *sfp_info;
+	sfp_slot_info_t *qsfp_info;
 	cgx_lmac_config_t *lmac;
 	int eeprom, parent;
 
 	lmac = &(plat_octeontx_bcfg->cgx_cfg[cgx_idx].lmac_cfg[lmac_idx]);
-	sfp_info = &lmac->sfp_info;
-	i2c_info = &sfp_info->i2c_eeprom_info;
-	mod_abs = &sfp_info->mod_abs; /* for now, parse only mod abs */
+	qsfp_info = &lmac->sfp_info;
+	i2c_info = &qsfp_info->i2c_eeprom_info;
 
-	if (fdt_node_check_compatible(fdt, offset, "sfp-slot"))
+	if (fdt_node_check_compatible(fdt, offset, "qsfp-slot"))
 		return;
 
-	sfp_info->name = fdt_get_name(fdt, offset, NULL);
-	debug_dts("CGX%d.LMAC%d: sfp_info->name %s\n",
-			cgx_idx, lmac_idx, sfp_info->name);
+	lmac->sfp_slot = 1;	/* SFP slot is present */
+	qsfp_info->is_qsfp = 1;	/* To indicate slot is QSFP */
+	qsfp_info->is_sfp = 0;
+	name = fdt_get_name(fdt, offset, NULL);
+	strncpy(qsfp_info->name, name, sizeof(qsfp_info->name));
+	debug_dts("CGX%d.LMAC%d: qsfp_info->name %s\n",
+			cgx_idx, lmac_idx, qsfp_info->name);
+
+	/* obtain MAX power for the slot as per the board design */
+	qsfp_info->max_power = octeontx2_fdt_get_int32(fdt, "max_power", offset);
 
 	/* Parse EEPROM related I2C info */
 	eeprom = octeontx2_fdt_lookup_phandle(fdt, offset, "eeprom");
@@ -822,14 +929,82 @@ static void octeontx2_fdt_parse_sfp_info(const void *fdt, int offset,
 		return;
 	}
 
-	i2c_info->eeprom_addr = octeontx2_fdt_get_int32(fdt, "reg", eeprom);
 	parent = fdt_parent_offset(fdt, eeprom);
+
+	qsfp_info->eeprom_addr = octeontx2_fdt_get_int32(fdt, "reg", eeprom);
+
+	debug_dts("CGX%d.LMAC%d: EEPROM addr 0x%x\n", cgx_idx, lmac_idx,
+					qsfp_info->eeprom_addr);
+
+	octeontx2_fdt_get_i2c_bus_info(fdt, parent, i2c_info,
+					cgx_idx, lmac_idx);
+
+	/* Parse GPIO info for QSFP interface */
+	octeontx2_fdt_gpio_get_info_by_phandle(fdt, offset, "mod_sel",
+			&qsfp_info->select, cgx_idx, lmac_idx);
+	octeontx2_fdt_gpio_get_info_by_phandle(fdt, offset, "reset",
+			&qsfp_info->reset, cgx_idx, lmac_idx);
+	octeontx2_fdt_gpio_get_info_by_phandle(fdt, offset, "lowpow_mode",
+			&qsfp_info->lp_mode, cgx_idx, lmac_idx);
+	octeontx2_fdt_gpio_get_info_by_phandle(fdt, offset, "mod_present",
+			&qsfp_info->mod_prs, cgx_idx, lmac_idx);
+	octeontx2_fdt_gpio_get_info_by_phandle(fdt, offset, "int",
+			&qsfp_info->interrupt, cgx_idx, lmac_idx);
+}
+
+static void octeontx2_fdt_parse_sfp_info(const void *fdt, int offset,
+		int cgx_idx, int lmac_idx)
+{
+	const char *name;
+	sfp_i2c_info_t *i2c_info;
+	sfp_slot_info_t *sfp_info;
+	cgx_lmac_config_t *lmac;
+	int eeprom, parent;
+
+	lmac = &(plat_octeontx_bcfg->cgx_cfg[cgx_idx].lmac_cfg[lmac_idx]);
+	sfp_info = &lmac->sfp_info;
+	i2c_info = &sfp_info->i2c_eeprom_info;
+
+	if (fdt_node_check_compatible(fdt, offset, "sfp-slot"))
+		return;
+
+	lmac->sfp_slot = 1;	/* SFP slot is present */
+	sfp_info->is_sfp = 1;	/* To indicate slot is SFP */
+	sfp_info->is_qsfp = 0;
+	name = fdt_get_name(fdt, offset, NULL);
+	strncpy(sfp_info->name, name, sizeof(sfp_info->name));
+	debug_dts("CGX%d.LMAC%d: sfp_info->name %s\n",
+			cgx_idx, lmac_idx, sfp_info->name);
+
+	/* obtain MAX power for the slot as per the board design */
+	sfp_info->max_power = octeontx2_fdt_get_int32(fdt, "max_power", offset);
+
+	/* Parse EEPROM related I2C info */
+	eeprom = octeontx2_fdt_lookup_phandle(fdt, offset, "eeprom");
+	if (eeprom < 0) {
+		ERROR("CGX%d.LMAC%d: Couldn't find EEPROM info for SFP\n",
+				cgx_idx, lmac_idx);
+		return;
+	}
+
+	parent = fdt_parent_offset(fdt, eeprom);
+
+	sfp_info->eeprom_addr = octeontx2_fdt_get_int32(fdt, "reg", eeprom);
+
+	debug_dts("CGX%d.LMAC%d: EEPROM addr 0x%x\n", cgx_idx, lmac_idx,
+					sfp_info->eeprom_addr);
 
 	octeontx2_fdt_get_i2c_bus_info(fdt, parent, i2c_info, cgx_idx, lmac_idx);
 
-	/* Parse GPIO info for XFI-SFP interface */
-	octeontx2_fdt_gpio_get_info_by_phandle(fdt, offset, "detect", mod_abs,
-			cgx_idx, lmac_idx);
+	/* Parse GPIO info for SFP interface */
+	octeontx2_fdt_gpio_get_info_by_phandle(fdt, offset, "detect",
+			&sfp_info->mod_abs, cgx_idx, lmac_idx);
+	octeontx2_fdt_gpio_get_info_by_phandle(fdt, offset, "tx_disable",
+			&sfp_info->tx_disable, cgx_idx, lmac_idx);
+	octeontx2_fdt_gpio_get_info_by_phandle(fdt, offset, "tx_fault",
+			&sfp_info->tx_fault, cgx_idx, lmac_idx);
+	octeontx2_fdt_gpio_get_info_by_phandle(fdt, offset, "rx_los",
+			&sfp_info->rx_los, cgx_idx, lmac_idx);
 }
 
 static void octeontx2_fdt_parse_vsc7224_info(const void *fdt,
@@ -1176,7 +1351,7 @@ static void octeontx2_cgx_lmacs_check_linux(const void *fdt,
 	char name[16], node_name[64];
 	const int *val;
 	int len;
-	int lmac_offset, phy_offset, sfp_offset;
+	int lmac_offset, phy_offset, sfp_offset, qsfp_offset;
 	int req_vfs;
 	phy_config_t *phy;
 	const char *str;
@@ -1242,6 +1417,15 @@ static void octeontx2_cgx_lmacs_check_linux(const void *fdt,
 			octeontx2_fdt_parse_sfp_info(fdt, sfp_offset,
 					cgx_idx, lmac_idx);
 		}
+
+		/* Check for qsfp-slot info */
+		qsfp_offset = octeontx2_fdt_lookup_phandle(fdt,
+				lmac_offset, "qsfp-slot");
+		if (qsfp_offset > 0) {
+			octeontx2_fdt_parse_qsfp_info(fdt, qsfp_offset,
+					cgx_idx, lmac_idx);
+		}
+
 
 		/* Construct the proper node name for error handling */
 		snprintf(node_name, sizeof(node_name), "%s/%s",

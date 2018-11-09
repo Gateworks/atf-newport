@@ -16,6 +16,7 @@
 
 #include <platform_dt.h>
 #include <cavm_cgx.h>
+#include <cavm_sfp_mgmt.h>
 #include <cavm_phy_mgmt.h>
 #include <cavm_board_cfg.h>
 
