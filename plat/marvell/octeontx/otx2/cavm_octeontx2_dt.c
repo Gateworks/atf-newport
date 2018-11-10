@@ -191,6 +191,7 @@ void plat_octeontx_print_board_variables(void)
 						lmac->sgmii_1000x_mode,
 						lmac->autoneg_dis);
 			}
+			debug_dts("\tfec_type=%d\n", lmac->fec);
 			debug_dts("\tLMAC enable=%d\n", lmac->lmac_enable);
 		}
 	}
@@ -1045,6 +1046,49 @@ static void octeontx2_fdt_parse_vsc7224_info(const void *fdt,
 			cgx_idx, lmac_idx);
 }
 
+fec_type_t octeontx2_handle_fec_config(int mode, int req_fec)
+{
+	int fec = req_fec;
+
+	/* Validate FEC configuration against PCS supported FEC option.
+	 * If the type is not correct, set FEC to be -1 so default
+	 * FEC type can be configured
+	 */
+	switch (mode) {
+	case CAVM_CGX_LMAC_TYPES_E_TENG_R:
+	case CAVM_CGX_LMAC_TYPES_E_FORTYG_R:
+		if (fec != CGX_FEC_BASE_R) {
+			WARN("%s: 10G/40G PCS doesn't support FEC type %d\n", __func__, req_fec);
+			fec = -1;
+		}
+	break;
+	case CAVM_CGX_LMAC_TYPES_E_TWENTYFIVEG_R:
+	case CAVM_CGX_LMAC_TYPES_E_FIFTYG_R:
+		if ((fec != CGX_FEC_BASE_R) && (fec != CGX_FEC_RS)) {
+			WARN("%s: 25G/50G PCS doesn't support FEC type %d\n", __func__, req_fec);
+			fec = -1;
+		}
+	break;
+	case CAVM_CGX_LMAC_TYPES_E_HUNDREDG_R:
+		if (fec != CGX_FEC_RS) {
+			WARN("%s: 100G PCS doesn't support FEC type %d\n", __func__, req_fec);
+			fec = -1;
+		}
+	break;
+	case CAVM_CGX_LMAC_TYPES_E_USXGMII:
+		if (fec != CGX_FEC_RS) {
+			WARN("%s: USXGMII PCS doesn't support FEC type %d\n", __func__, req_fec);
+			fec = -1;
+		}
+	break;
+	default:
+		fec = 0;
+	break;
+	}
+
+	return fec;
+}
+
 /* This routine sets a number of LMACs to initialize and the size to use.
  * For instance:
  *  - SGMII_2X1: will initialize 2 LMACs and each LMAC will take only one
@@ -1352,7 +1396,7 @@ static void octeontx2_cgx_lmacs_check_linux(const void *fdt,
 	const int *val;
 	int len;
 	int lmac_offset, phy_offset, sfp_offset, qsfp_offset;
-	int req_vfs;
+	int req_vfs, req_fec;
 	phy_config_t *phy;
 	const char *str;
 
@@ -1426,6 +1470,20 @@ static void octeontx2_cgx_lmacs_check_linux(const void *fdt,
 					cgx_idx, lmac_idx);
 		}
 
+		/* Handle FEC types */
+		val = fdt_getprop(fdt, lmac_offset,
+				"octeontx,fec-type", &len);
+		if (val) {
+			req_fec = fdt32_to_cpu(*val);
+			lmac->fec = octeontx2_handle_fec_config(
+				lmac->mode, req_fec);
+		} else {
+			/* User did not specify FEC type property
+			 * in the DT. set it to -1 to configure
+			 * the default type.
+			 */
+			lmac->fec = -1;
+		}
 
 		/* Construct the proper node name for error handling */
 		snprintf(node_name, sizeof(node_name), "%s/%s",

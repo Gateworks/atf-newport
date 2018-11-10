@@ -659,64 +659,68 @@ static void cgx_set_autoneg(int cgx_id, int lmac_id)
 	}
 }
 
-static void cgx_set_fec(int cgx_id, int lmac_id, fec_type_t fec)
+static void cgx_set_fec(int cgx_id, int lmac_id, int req_fec)
 {
-	cgx_lmac_config_t *lmac;
 	int val = 0;
+	cgx_lmac_config_t *lmac;
 
 	debug_cgx("%s %d:%d fec type %d\n", __func__, cgx_id,
-							lmac_id, fec);
+							lmac_id, req_fec);
 
 	lmac = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
 
-	if (!fec)
-		return; /* if FEC need not be enabled, just return; */
+	if (req_fec == -1) {
+		/* In this case, User did not specify any FEC type.
+		 * By default enable FEC for
+		 * 10G, 25G, 40G, 50G, 100G BASE-R & USXGMII modes
+		 *
+		 * Below table from HRM describes how to enable "fec_en" for each mode.
+		 * fec_en is 2-bits
+		 *
+		 * Bit 0 enables BASE-R FEC. Bit 1 enables RS-FEC (Reed-Solomon FEC).
+		 *
+		 *	Value     LMAC_TYPE         Comment
+		 *	-------   ---------------   ------------
+		 *	0x0       All BASE-R        No FEC
+		 *	0x1       25G_R, 50G_R,     BASE-R FEC enabled
+		 *	0x2       25G_R, 50G_R,     RS-FEC enabled
+		 *	0x3       25G_R, 50G_R,     UNDEFINED
+		 *	0x2,0x3   100G_R, USXGMII   RS-FEC enabled
+		 *	0x2       10G_R, 40G_R      No FEC. 10G_R, 40G_R may only use BASE-R FEC
+		 *	0x1,0x3   10G_R, 40G_R      BASE-R FEC
+		 *	0x1       100G_R            No FEC. 100G_R  may only use RS-FEC
+		 *
+		 */
+		switch (lmac->mode) {
+		case CAVM_CGX_LMAC_TYPES_E_TENG_R:
+		case CAVM_CGX_LMAC_TYPES_E_FORTYG_R:
+			val = CGX_FEC_BASE_R;
+			break;
+		case CAVM_CGX_LMAC_TYPES_E_TWENTYFIVEG_R:
+		case CAVM_CGX_LMAC_TYPES_E_FIFTYG_R:
+			/* RS-FEC considered the default for now */
+			val = CGX_FEC_RS;
+			break;
+		case CAVM_CGX_LMAC_TYPES_E_HUNDREDG_R:
+		case CAVM_CGX_LMAC_TYPES_E_USXGMII:
+			val = CGX_FEC_RS;
+			break;
+		default:
+			val = CGX_FEC_NONE;
+			break;
+		}
 
-	/* Enable FEC if desired for 10G, 25G, 40G, 50G, 100G BASE-R
-	 * & USXGMII modes
-	 *
-	 * Below table from HRM describes how to enable "fec_en" for each mode.
-	 * fec_en is 2-bits
-	 *
-	 * Bit 0 enables BASE-R FEC. Bit 1 enables RS-FEC (Reed-Solomon FEC).
-	 *
-	 *	Value     LMAC_TYPE         Comment
-	 *	-------   ---------------   ------------
-	 *	0x0       All BASE-R        No FEC
-	 *	0x1       25G_R, 50G_R,     BASE-R FEC enabled
-	 *	0x2       25G_R, 50G_R,     RS-FEC enabled
-	 *	0x3       25G_R, 50G_R,     UNDEFINED
-	 *	0x2,0x3   100G_R, USXGMII   RS-FEC enabled
-	 *	0x2       10G_R, 40G_R      No FEC. 10G_R, 40G_R may only use BASE-R FEC
-	 *	0x1,0x3   10G_R, 40G_R      BASE-R FEC
-	 *	0x1       100G_R            No FEC. 100G_R  may only use RS-FEC
-	 *
-	 */
-
-	switch (lmac->mode) {
-	case CAVM_CGX_LMAC_TYPES_E_TENG_R:
-	case CAVM_CGX_LMAC_TYPES_E_FORTYG_R:
-		val = 0x1;	/* only BASE-R FEC */
-		break;
-	case CAVM_CGX_LMAC_TYPES_E_TWENTYFIVEG_R:
-	case CAVM_CGX_LMAC_TYPES_E_FIFTYG_R:
-		if (fec == CGX_FEC_RS)
-			val = 0x2;
-		else if (fec == CGX_FEC_BASE_R)
-			val = 0x1;
-		break;
-	case CAVM_CGX_LMAC_TYPES_E_HUNDREDG_R:
-	case CAVM_CGX_LMAC_TYPES_E_USXGMII:
-		val = 0x2; /* Only RS-FEC */
-		break;
-	default:
-		val = 0x0;
-		break;
-	}
-
-	CAVM_MODIFY_CGX_CSR(cavm_cgxx_spux_fec_control_t,
+		CAVM_MODIFY_CGX_CSR(cavm_cgxx_spux_fec_control_t,
+					CAVM_CGXX_SPUX_FEC_CONTROL(cgx_id, lmac_id),
+					fec_en, val);
+	} else {
+		/* If user has requested specific FEC type,
+		 * configure the FEC as such
+		 */
+		CAVM_MODIFY_CGX_CSR(cavm_cgxx_spux_fec_control_t,
 				CAVM_CGXX_SPUX_FEC_CONTROL(cgx_id, lmac_id),
-				fec_en, val);
+				fec_en, req_fec);
+	}
 }
 
 static int cgx_usxgmii_spux_reset(int cgx_id, int lmac_id, int an_en)
@@ -1074,11 +1078,8 @@ int cgx_xaui_init_link(int cgx_id, int lmac_id)
 			CAVM_CGXX_SPUX_BR_PMD_CONTROL(cgx_id, lmac_id),
 			train_en, 0);
 
-	/* FIXME: enable BASE-R FEC or RS-FEC if desired
-	 * determined by device tree & transceiver type
-	 */
-	if (lmac->fec) /* if FEC needs to be enabled */
-		cgx_set_fec(cgx_id, lmac_id, lmac->fec);
+	/* Configure FEC type */
+	cgx_set_fec(cgx_id, lmac_id, lmac->fec);
 
 	/* configure and enable AN, if AN is desired */
 	if (!lmac->autoneg_dis)
@@ -1255,9 +1256,11 @@ int cgx_xaui_set_link_up(int cgx_id, int lmac_id)
 					CGX_SPUX_RSFEC_ALGN_STS_MASK, 1)) {
 				debug_cgx("%s: %d:%d: SPUX RSFEC alignment not acquired\n",
 						__func__, cgx_id, lmac_id);
+#if 0
 				cgx_set_error_type(cgx_id, lmac_id,
 						CGX_ERR_SPUX_RSFEC_ALGN_FAIL);
 				return -1;
+#endif
 			}
 		}
 		/* check if marker lock achieved for 40G/50G/100G/USXGMII */

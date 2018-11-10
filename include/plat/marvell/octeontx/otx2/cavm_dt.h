@@ -125,7 +125,7 @@ typedef struct cgx_lmac_config {
 	int phy_present;
 	int sfp_slot;
 	int autoneg_dis;
-	fec_type_t fec;
+	int fec;
 	uint8_t local_mac_address[6];
 	phy_config_t phy_config;
 	sfp_slot_info_t sfp_info;
