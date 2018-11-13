@@ -20,7 +20,7 @@
 #include <mmio.h>
 
 #define SCMI_GENERIC_TIMEOUT   300
-#define SCMI_ASIM_TIMEOUT      2000
+#define SCMI_ASIM_TIMEOUT      3600
 
 /*
  * SCMI power domain management protocol message and response lengths. It is
