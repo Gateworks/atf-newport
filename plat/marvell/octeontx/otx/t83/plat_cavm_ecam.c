@@ -22,6 +22,7 @@
 #include <cavm_ecam.h>
 #include <cavm_utils.h>
 #include <cavm_octeontx_scfg.h>
+#include <cavm_irqs_def.h>
 
 #ifdef DEBUG_ATF_PLAT_ECAM
 #define debug_plat_ecam printf
@@ -149,7 +150,7 @@ static void init_gpio(uint64_t config_base, uint64_t config_size)
 						CAVM_GICD_CLRSPI_NSR :
 						CAVM_GICD_SETSPI_NSR) | 1);
 			vector_base += 8;
-			octeontx_write64(vector_base, OCTEONTX_IRQ_GPIO_NSEC);
+			octeontx_write64(vector_base, GPIO_SPI_IRQ_NSEC(0));
 			vector_base += 8;
 		}
 	}

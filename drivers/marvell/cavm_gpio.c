@@ -26,6 +26,7 @@
 #include <cavm_svc.h>
 #include <cavm_common.h>
 #include <cavm_gpio.h>
+#include <cavm_irqs_def.h>
 
 #define SPSR_ISR	((1ULL << SPSR_E_SHIFT) | (3 << SPSR_AIF_SHIFT))
 #define SCR_ISR		(SCR_NS_BIT | SCR_TWE_BIT | SCR_TWI_BIT | SCR_RW_BIT)
@@ -59,12 +60,18 @@ struct irq_cpu {
 	volatile int counter;
 };
 
-static volatile struct irq_cpu el3_gpio_irqs[OCTEONTX_IRQ_GPIO_COUNT] = {
-	{ -1, 0 }, /* OCTEONTX_IRQ_GPIO_BASE */
-	{ -1, 0 },
-	{ -1, 0 },
-	{ -1, 0 },
+#if GPIO_SPI_IRQS > 0
+static volatile struct irq_cpu el3_gpio_irqs[] = {
+	[0 ... (GPIO_SPI_IRQS - 1)] = { -1, 0 }
 };
+#else
+/* This driver is not usable when there is no GPIO_SPI_IRQS, create
+ * dummy place holder to not issue compilation error.
+ */
+static volatile struct irq_cpu el3_gpio_irqs[] = {
+	{ -1, 0 }
+};
+#endif
 
 static void prepare_el0_isr_callback(uint64_t gpio_num, uint64_t counter)
 {
@@ -128,10 +135,10 @@ uint64_t gpio_irq_handler(uint32_t id, uint32_t flags, void *cookie)
 
 	cpu = plat_my_core_pos();
 
-	index = id - OCTEONTX_IRQ_GPIO_BASE;
+	index = id - GPIO_SPI_IRQ(0);
 
 	/* For all invalid interrupts, clear interrupt and exit. */
-	if ((index < 0) || (index >= OCTEONTX_IRQ_GPIO_COUNT)) {
+	if ((index < 0) || (index >= GPIO_SPI_IRQS)) {
 		ERROR("Invalid GPIO interrupt %x\n", id);
 		return 0;
 	}
@@ -215,36 +222,36 @@ static int setup_interrupt_entries(int gpio_num, int cpu, int enable)
 
 	if (enable) {
 		for (i = 0, select_irq = -1;
-		     (select_irq == -1) && (i < OCTEONTX_IRQ_GPIO_COUNT);
+		     (select_irq == -1) && (i < GPIO_SPI_IRQS);
 		     i++) {
 			if ((el3_gpio_irqs[i].counter != 0)
 			   && (el3_gpio_irqs[i].cpu == cpu)) {
-				select_irq = OCTEONTX_IRQ_GPIO_BASE + i;
+				select_irq = GPIO_SPI_IRQ(i);
 				el3_gpio_irqs[i].counter++;
 			}
 		}
 		if (select_irq == -1) {
 			for (i = 0;
-			   (select_irq == -1) && (i < OCTEONTX_IRQ_GPIO_COUNT);
+			   (select_irq == -1) && (i < GPIO_SPI_IRQS);
 			     i++) {
 				if (el3_gpio_irqs[i].counter == 0) {
 					el3_gpio_irqs[i].cpu = cpu;
 					el3_gpio_irqs[i].counter = 1;
-					select_irq = OCTEONTX_IRQ_GPIO_BASE + i;
+					select_irq = GPIO_SPI_IRQ(i);
 					gicv3_set_spi_routing(select_irq, GICV3_IRM_PE, read_mpidr());
 				}
 			}
 		}
 	} else {
 		for (i = 0, select_irq = -1;
-		     (select_irq == -1) && (i < OCTEONTX_IRQ_GPIO_COUNT); i++)
+		     (select_irq == -1) && (i < GPIO_SPI_IRQS); i++)
 			if ((el3_gpio_irqs[i].counter != 0)
 			    && (el3_gpio_irqs[i].cpu == cpu)) {
-				select_irq = OCTEONTX_IRQ_GPIO_BASE + i;
+				select_irq = GPIO_SPI_IRQ(i);
 				el3_gpio_irqs[i].counter--;
 				if (el3_gpio_irqs[i].counter == 0)
 					el3_gpio_irqs[i].cpu = -1;
-				i = OCTEONTX_IRQ_GPIO_COUNT;
+				i = GPIO_SPI_IRQS;
 			}
 	}
 
@@ -377,9 +384,9 @@ int octeontx_register_gpio_handlers(void)
 {
 	int i, rc = 0;
 
-	for (i = 0; i < OCTEONTX_IRQ_GPIO_COUNT; i++) {
+	for (i = 0; i < GPIO_SPI_IRQS; i++) {
 		rc = register_interrupt_handler(INTR_TYPE_EL3,
-						OCTEONTX_IRQ_GPIO_BASE + i,
+						GPIO_SPI_IRQ(i),
 						gpio_irq_handler);
 		if (rc) {
 			ERROR("err %d while registering GPIO IRQ secure interrupt handler\n",

@@ -20,6 +20,7 @@
 #include <cavm_ecam.h>
 #include <cavm_utils.h>
 #include <platform_def.h>
+#include <cavm_irqs_def.h>
 
 #undef DEBUG_ATF_ECAM
 
@@ -134,43 +135,22 @@ int enable_msix(uint64_t config_base, uint8_t cap_pointer, uint16_t *table_size,
 
 static inline int smmu_get_irq(int smmunr, int vectornr)
 {
-	int irq = smmunr + ((vectornr < (OCTEONTX_SMMU_NUM_CONTEXTS * 2)) ? 0 : 4);
-	switch (irq) {
-	case 0:
-		return OCTEONTX_SMMU0_CONTEXT_IRQ;
-	case 1:
-		return OCTEONTX_SMMU1_CONTEXT_IRQ;
-	case 2:
-		return OCTEONTX_SMMU2_CONTEXT_IRQ;
-	case 3:
-		return OCTEONTX_SMMU3_CONTEXT_IRQ;
-	case 4:
-		return OCTEONTX_SMMU0_GLOBAL_IRQ;
-	case 5:
-		return OCTEONTX_SMMU1_GLOBAL_IRQ;
-	case 6:
-		return OCTEONTX_SMMU2_GLOBAL_IRQ;
-	case 7:
-		return OCTEONTX_SMMU3_GLOBAL_IRQ;
-	case 8:
-		return OCTEONTX_SMMU4_CONTEXT_IRQ;
-	case 9:
-		return OCTEONTX_SMMU5_CONTEXT_IRQ;
-	case 10:
-		return OCTEONTX_SMMU6_CONTEXT_IRQ;
-	case 11:
-		return OCTEONTX_SMMU7_CONTEXT_IRQ;
-	case 12:
-		return OCTEONTX_SMMU4_GLOBAL_IRQ;
-	case 13:
-		return OCTEONTX_SMMU5_GLOBAL_IRQ;
-	case 14:
-		return OCTEONTX_SMMU6_GLOBAL_IRQ;
-	case 15:
-		return OCTEONTX_SMMU7_GLOBAL_IRQ;
+/* Suppress warning about unused variable is_context_irq (When there is no
+ * SMMU devs, than SMMU_SPI_IRQ is always -1)
+ */
+#if SMMU_SPI_IRQ_DEVS > 0
+	uint8_t is_context_irq;
 
-	}
+	assert(smmunr < SMMU_SPI_IRQ_DEVS);
+	/*
+	 * Check if the requested vectornr is in range of SMMU CTX irqs
+	 * (as per SMMU_INT_VEC_E)
+	 */
+	is_context_irq = (vectornr < (SMMU_NUM_CONTEXTS * 2)) ? 1 : 0;
+	return SMMU_SPI_IRQ(smmunr, is_context_irq);
+#else
 	return -1;
+#endif
 }
 
 static void init_smmu(uint64_t config_base, uint64_t config_size)
@@ -227,22 +207,6 @@ static void init_smmu(uint64_t config_base, uint64_t config_size)
 	}
 }
 
-static inline int uaa_get_irq(int uaanr)
-{
-	switch (uaanr) {
-	case 0:
-		return OCTEONTX_UAA0_IRQ;
-	case 1:
-		return OCTEONTX_UAA1_IRQ;
-	case 2:
-		return OCTEONTX_UAA2_IRQ;
-	case 3:
-		return OCTEONTX_UAA3_IRQ;
-	default:
-		return -1;
-	}
-}
-
 static void init_uaa(uint64_t config_base, uint64_t config_size)
 {
 	struct pcie_config *pconfig = (struct pcie_config *)config_base;
@@ -263,10 +227,8 @@ static void init_uaa(uint64_t config_base, uint64_t config_size)
 	*sctl |= 0x1;
 	debug_io("Marking MSIX for UAA as phys(SMMU bypass)\n");
 
-	uaa_irq = uaa_get_irq(vsec_ctl.s.inst_num);
-
-	if (uaa_irq < 0)
-		return;
+	assert(vsec_ctl.s.inst_num < UAA_SPI_IRQ_DEVS);
+	uaa_irq = UAA_SPI_IRQ(vsec_ctl.s.inst_num);
 
 	if ((octeontx_read32(config_base + CAVM_PCCPF_XXX_SUBID)>>24) == 0xb2) {
 		/* enable bus master for uaa, not like 8xxx always en */
@@ -335,7 +297,7 @@ static void init_pem(uint64_t config_base, uint64_t config_size)
 			octeontx_write64(vector_base, (i % 2) ? CAVM_GICD_CLRSPI_NSR : CAVM_GICD_SETSPI_NSR);
 			vector_base += 8;
 			if (i >= PEM_INT_VEC_E_INTA && i < PEM_INT_VEC_E_INT_SUM)
-				msg = ((i - PEM_INT_VEC_E_INTA) / 2) + OCTEONTX_PEM_INTBASE_IRQ +
+				msg = ((i - PEM_INT_VEC_E_INTA) / 2) + PEM_SPI_IRQ(0, 0) +
 					(4 * vsec_ctl.s.inst_num);
 			else
 				msg = 0x100000000ull;	/* Masked */
@@ -381,7 +343,8 @@ static void init_gti(uint64_t config_base, uint64_t config_size)
 		vector_base += 8;
 		if (i == CAVM_GTI_INT_VEC_E_WATCHDOG ||
 		    i == CAVM_GTI_INT_VEC_E_WATCHDOG_CLEAR) {
-			msg = OCTEONTX_GTI_WDOG_IRQ;
+			assert(GTI_WATCHDOG_SPI_IRQ_DEVS > 0);
+			msg = GTI_WATCHDOG_SPI_IRQ(0);
 		} else {
 			msg = 0x100000000ULL; /* Masked */
 		}
