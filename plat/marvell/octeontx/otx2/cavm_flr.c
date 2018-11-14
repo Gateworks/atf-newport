@@ -188,7 +188,9 @@ static uintptr_t virt_to_phys(uintptr_t va)
 static int do_alias(void *ctx_h, uintptr_t pa, uint64_t *mask, uint8_t *rt_id, uint8_t w_flag)
 {
 	int blk_id, lf_slot, addr, rc;
-	uint64_t *pa_bar2, pf, func;
+	uint64_t *pa_bar2;
+	uint64_t pf, func;
+	uint64_t val;
 
 	assert(pa != 0);
 	assert(ctx_h != NULL);
@@ -247,10 +249,10 @@ static int do_alias(void *ctx_h, uintptr_t pa, uint64_t *mask, uint8_t *rt_id, u
 
 	if (w_flag) {
 		/* If it was write, the value to store is saved at Rt */
-		*pa_bar2 = read_gp_reg(ctx_h, mask, rt_id);
+		val = read_gp_reg(ctx_h, mask, rt_id);
 
-		INFO("%s: Write: addr=0x%p, val=0x%lx\n",
-		     __func__, pa_bar2, (*pa_bar2 & *mask));
+		INFO("%s: Write: addr=%p, val=0x%lx\n", __func__, pa_bar2, val);
+		*pa_bar2 = val;
 	} else {
 		/*
 		 * On reads, Rt is the register that is returned,
@@ -258,7 +260,7 @@ static int do_alias(void *ctx_h, uintptr_t pa, uint64_t *mask, uint8_t *rt_id, u
 		 * Write proper structure field at Rt.
 		 */
 		write_gp_reg(ctx_h, mask, rt_id, *pa_bar2);
-		INFO("%s: Read:  addr=0x%p, val=0x%lx",
+		INFO("%s: Read:  addr=0x%p, val=0x%lx\n",
 		     __func__, pa_bar2, (*pa_bar2 & *mask));
 	}
 
