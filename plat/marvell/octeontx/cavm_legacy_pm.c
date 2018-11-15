@@ -25,6 +25,8 @@
 #include <cavm_common.h>
 #include <cavm_dt.h>
 #include <cavm_gpio.h>
+#include <cavm_gicv3.h>
+
 #undef GICD_SETSPI_NSR
 #undef GICD_CLRSPI_NSR
 #undef GICD_SETSPI_SR

@@ -11,9 +11,12 @@
 
 **/
 
+/* GIC driver for OcteonTX (CN8xxx and CN9xxx) */
+
 #include <arch.h>
 #include <platform_def.h>
 #include <cavm_common.h>
+#include <cavm_gicv3.h>
 
 #undef GICD_SETSPI_NSR
 #undef GICD_CLRSPI_NSR

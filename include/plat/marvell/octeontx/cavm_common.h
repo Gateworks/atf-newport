@@ -197,11 +197,6 @@ void octeontx_security_setup(void);
 uint64_t octeontx_dram_size();
 void octeontx_cpu_setup(void);
 extern void *fdt_ptr;
-void octeontx_gic_driver_init(void);
-void octeontx_gic_init(void);
-void octeontx_gic_pcpu_init(void);
-void octeontx_gic_cpuif_enable(void);
-void octeontx_gic_cpuif_disable(void);
 unsigned int octeontx_calc_core_pos(unsigned long mpidr);
 
 int octeontx_twsi_send(unsigned int twsi_num,

@@ -17,6 +17,7 @@
 #include <platform_tsp.h>
 #include <xlat_tables_v2.h>
 #include <cavm_common.h>
+#include <cavm_gicv3.h>
 
 /*
  * The next 3 constants identify the extents of the code & RO data region and

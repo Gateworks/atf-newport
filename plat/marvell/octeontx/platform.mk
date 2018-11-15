@@ -59,11 +59,11 @@ BL31_SOURCES		+=	drivers/arm/gic/common/gic_common.c		\
 				drivers/arm/gic/v3/gicv3_helpers.c		\
 				drivers/marvell/cavm_spi.c		\
 				drivers/delay_timer/delay_timer.c		\
+				drivers/marvell/cavm_gicv3.c			\
 				lib/timers/timers.c				\
 				drivers/marvell/cavm_gpio.c		\
 				plat/marvell/octeontx/aarch64/cavm_helpers.S 	\
 				plat/marvell/octeontx/bl31_cavm_setup.c		\
-				plat/marvell/octeontx/cavm_gicv3.c			\
 				plat/marvell/octeontx/cavm_legacy_pm.c		\
 				plat/marvell/octeontx/cavm_legacy_pwrc.c		\
 				plat/marvell/octeontx/cavm_sata.c			\

@@ -21,6 +21,7 @@
 #include <string.h>
 #include <cavm_common.h>
 #include <cavm_scmi.h>
+#include <cavm_gicv3.h>
 
 /*
  * This file implements the SCP helper functions using SCMI protocol.
