@@ -22,6 +22,14 @@
 #include <cavm_dt.h>
 #include <cavm_common.h>
 
+#undef DEBUG_SCMI_ATF
+
+#ifdef DEBUG_SCMI_ATF
+#define assert_scmi assert
+#else
+#define assert_scmi(...) ;
+#endif
+
 const uintptr_t plat_get_scmi_mbox_addr()
 {
 	return CAVM_CPC_RAM_MEMX(AP_SECURE0_TO_XCP_MBOX_OFFSET);
@@ -39,11 +47,11 @@ const uintptr_t plat_get_scmi_db_addr()
  */
 void scmi_get_channel(scmi_channel_t *ch)
 {
-	assert(ch->lock);
+	assert_scmi(ch->lock);
 	bakery_lock_get(ch->lock);
 
 	/* Make sure any previous command has finished */
-	assert(SCMI_IS_CHANNEL_FREE(
+	assert_scmi(SCMI_IS_CHANNEL_FREE(
 			((mailbox_mem_t *)(ch->info->scmi_mbx_mem))->status));
 }
 
@@ -107,10 +115,10 @@ void scmi_send_sync_command(scmi_channel_t *ch)
 void scmi_put_channel(scmi_channel_t *ch)
 {
 	/* Make sure any previous command has finished */
-	assert(SCMI_IS_CHANNEL_FREE(
+	assert_scmi(SCMI_IS_CHANNEL_FREE(
 			((mailbox_mem_t *)(ch->info->scmi_mbx_mem))->status));
 
-	assert(ch->lock);
+	assert_scmi(ch->lock);
 	bakery_lock_release(ch->lock);
 }
 
@@ -137,8 +145,8 @@ int scmi_proto_version(void *p, uint32_t proto_id, uint32_t *version)
 
 	/* Get the return values */
 	SCMI_PAYLOAD_RET_VAL2(mbx_mem->payload, ret, *version);
-	assert(mbx_mem->len == SCMI_PROTO_VERSION_RESP_LEN);
-	assert(token == SCMI_MSG_GET_TOKEN(mbx_mem->msg_header));
+	assert_scmi(mbx_mem->len == SCMI_PROTO_VERSION_RESP_LEN);
+	assert_scmi(token == SCMI_MSG_GET_TOKEN(mbx_mem->msg_header));
 
 	scmi_put_channel(ch);
 
@@ -170,8 +178,8 @@ int scmi_proto_msg_attr(void *p, uint32_t proto_id,
 
 	/* Get the return values */
 	SCMI_PAYLOAD_RET_VAL2(mbx_mem->payload, ret, *attr);
-	assert(mbx_mem->len == SCMI_PROTO_MSG_ATTR_RESP_LEN);
-	assert(token == SCMI_MSG_GET_TOKEN(mbx_mem->msg_header));
+	assert_scmi(mbx_mem->len == SCMI_PROTO_MSG_ATTR_RESP_LEN);
+	assert_scmi(token == SCMI_MSG_GET_TOKEN(mbx_mem->msg_header));
 
 	scmi_put_channel(ch);
 
@@ -210,8 +218,8 @@ int scmi_pwr_state_set(void *p, uint32_t domain_id,
 
 	/* Get the return values */
 	SCMI_PAYLOAD_RET_VAL1(mbx_mem->payload, ret);
-	assert(mbx_mem->len == SCMI_PWR_STATE_SET_RESP_LEN);
-	assert(token == SCMI_MSG_GET_TOKEN(mbx_mem->msg_header));
+	assert_scmi(mbx_mem->len == SCMI_PWR_STATE_SET_RESP_LEN);
+	assert_scmi(token == SCMI_MSG_GET_TOKEN(mbx_mem->msg_header));
 
 	scmi_put_channel(ch);
 
@@ -243,8 +251,8 @@ int scmi_pwr_state_get(void *p, uint32_t domain_id,
 
 	/* Get the return values */
 	SCMI_PAYLOAD_RET_VAL2(mbx_mem->payload, ret, *scmi_pwr_state);
-	assert(mbx_mem->len == SCMI_PWR_STATE_GET_RESP_LEN);
-	assert(token == SCMI_MSG_GET_TOKEN(mbx_mem->msg_header));
+	assert_scmi(mbx_mem->len == SCMI_PWR_STATE_GET_RESP_LEN);
+	assert_scmi(token == SCMI_MSG_GET_TOKEN(mbx_mem->msg_header));
 
 	scmi_put_channel(ch);
 
@@ -275,8 +283,8 @@ int scmi_sys_pwr_state_set(void *p, uint32_t flags, uint32_t system_state)
 
 	/* Get the return values */
 	SCMI_PAYLOAD_RET_VAL1(mbx_mem->payload, ret);
-	assert(mbx_mem->len == SCMI_SYS_PWR_STATE_SET_RESP_LEN);
-	assert(token == SCMI_MSG_GET_TOKEN(mbx_mem->msg_header));
+	assert_scmi(mbx_mem->len == SCMI_SYS_PWR_STATE_SET_RESP_LEN);
+	assert_scmi(token == SCMI_MSG_GET_TOKEN(mbx_mem->msg_header));
 
 	scmi_put_channel(ch);
 
@@ -306,8 +314,8 @@ int scmi_sys_pwr_state_get(void *p, uint32_t *system_state)
 
 	/* Get the return values */
 	SCMI_PAYLOAD_RET_VAL2(mbx_mem->payload, ret, *system_state);
-	assert(mbx_mem->len == SCMI_SYS_PWR_STATE_GET_RESP_LEN);
-	assert(token == SCMI_MSG_GET_TOKEN(mbx_mem->msg_header));
+	assert_scmi(mbx_mem->len == SCMI_SYS_PWR_STATE_GET_RESP_LEN);
+	assert_scmi(token == SCMI_MSG_GET_TOKEN(mbx_mem->msg_header));
 
 	scmi_put_channel(ch);
 
@@ -338,8 +346,8 @@ int scmi_octeontx_shutdown_config(void *p, uint32_t board_type, uint32_t shutdow
 
 	/* Get the return values */
 	SCMI_PAYLOAD_RET_VAL1(mbx_mem->payload, ret);
-	assert(mbx_mem->len == SCMI_CAVM_SHUTDOWN_CONFIG_RESP_LEN);
-	assert(token == SCMI_MSG_GET_TOKEN(mbx_mem->msg_header));
+	assert_scmi(mbx_mem->len == SCMI_CAVM_SHUTDOWN_CONFIG_RESP_LEN);
+	assert_scmi(token == SCMI_MSG_GET_TOKEN(mbx_mem->msg_header));
 
 	scmi_put_channel(ch);
 
@@ -387,12 +395,12 @@ void *scmi_init(scmi_channel_t *ch)
 	uint32_t version;
 	int ret;
 
-	assert(ch && ch->info);
-	assert(ch->info->db_reg_addr);
-	assert(ch->info->db_modify_mask);
-	assert(ch->info->db_preserve_mask);
+	assert_scmi(ch && ch->info);
+	assert_scmi(ch->info->db_reg_addr);
+	assert_scmi(ch->info->db_modify_mask);
+	assert_scmi(ch->info->db_preserve_mask);
 
-	assert(ch->lock);
+	assert_scmi(ch->lock);
 
 	bakery_lock_init(ch->lock);
 
