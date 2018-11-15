@@ -20,6 +20,7 @@
 #include <cavm_dt.h>
 #include <cavm_octeontx_scfg.h>
 #include <cavm_security.h>
+#include <cavm_dram.h>
 
 struct ccs_region {
 	unsigned int  number;

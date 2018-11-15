@@ -189,7 +189,6 @@ void add_map_record(unsigned long addr, unsigned long size, mmap_attr_t attr);
 
 void plat_add_mmio_map(void);
 
-uint64_t octeontx_dram_size();
 void octeontx_cpu_setup(void);
 extern void *fdt_ptr;
 unsigned int octeontx_calc_core_pos(unsigned long mpidr);

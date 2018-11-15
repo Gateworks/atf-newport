@@ -24,6 +24,7 @@
 #include <errno.h>
 #include <libfdt.h>
 #include <cavm_rvu.h>
+#include <cavm_dram.h>
 
 /* Cavium OEM Service UUID */
 DEFINE_SVC_UUID(octeontx_svc_uid,

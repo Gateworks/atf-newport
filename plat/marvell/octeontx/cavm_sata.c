@@ -23,6 +23,7 @@
 #include <delay_timer.h>
 #include <string.h>
 #include <cavm_octeontx_scfg.h>
+#include <cavm_dram.h>
 
 #undef SATA_DEBUG
 

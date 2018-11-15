@@ -19,6 +19,7 @@
 #include <string.h>
 #include <debug.h>
 #include <cavm_octeontx_scfg.h>
+#include <cavm_dram.h>
 
 static inline uint32_t popcnt(uint64_t val)
 {
