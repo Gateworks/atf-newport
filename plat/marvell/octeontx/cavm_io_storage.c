@@ -44,6 +44,7 @@
 #include <cavm_dt.h>
 
 #include <cavm-arch.h>
+#include <cavm_io_storage.h>
 
 #define FIP_NAME "fip.bin"
 #define ROMFS_NAME "ROM-FS"

@@ -188,7 +188,6 @@ DEFINE_RENAME_SYSREG_RW_FUNCS(cvm_access_el3, AP_CVM_ACCESS_EL3)
 void add_map_record(unsigned long addr, unsigned long size, mmap_attr_t attr);
 
 void plat_add_mmio_map(void);
-void octeontx_io_setup(void);
 
 uint64_t octeontx_dram_size();
 void octeontx_cpu_setup(void);

@@ -29,6 +29,7 @@
 #include <bl1.h>
 #include <cavm_scfg_bl1.h>
 #include <plat_cavm.h>
+#include <cavm_io_storage.h>
 
 
 /* Data structure which holds the extents of the trusted DRAM for BL1*/
