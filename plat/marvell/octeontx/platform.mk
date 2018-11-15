@@ -25,7 +25,7 @@ include lib/xlat_tables_v2/xlat_tables.mk
 
 PLAT_BL_COMMON_SOURCES	:=	drivers/arm/pl011/aarch64/pl011_console.S	\
 				drivers/marvell/cavm_mmc.c		\
-				plat/marvell/octeontx/cavm_twsi_core.c		\
+				drivers/marvell/cavm_twsi_core.c		\
 				drivers/marvell/cavm_twsi.c		\
 				${LIBFDT_DIR}/fdt.c				\
 				${LIBFDT_DIR}/fdt_ro.c				\

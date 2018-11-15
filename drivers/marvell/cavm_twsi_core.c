@@ -10,6 +10,9 @@
   WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 
 **/
+
+/* TWSI driver for OcteonTX (CN8xxx and CN9xxx) */
+
 #include <stddef.h>
 #include <assert.h>
 #include <platform_def.h>

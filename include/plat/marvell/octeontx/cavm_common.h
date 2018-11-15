@@ -198,11 +198,6 @@ uint64_t octeontx_dram_size();
 void octeontx_cpu_setup(void);
 extern void *fdt_ptr;
 unsigned int octeontx_calc_core_pos(unsigned long mpidr);
-
-int octeontx_twsi_send(unsigned int twsi_num,
-			uint16_t addr, const uint8_t *buffer, size_t size);
-int octeontx_twsi_recv(unsigned int twsi_num,
-			uint16_t addr, uint8_t *buffer, size_t size);
 void sata_ipm_quirk(void);
 
 void octeontx_configure_mmc_security(int secure);
