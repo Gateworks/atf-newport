@@ -1383,9 +1383,9 @@ static int octeontx2_fill_cgx_struct(int qlm, int lane, int mode_idx)
  *  - num-rvu-vfs
  *  - num-msix-vec
  * SGMII/QSGMII only:
- *  - cavium,sgmii-mac-phy-mode
- *  - cavium,sgmii-mac-1000x-mode
- *  - cavium,disable-autonegotiation
+ *  - octeontx,sgmii-mac-phy-mode
+ *  - octeontx,sgmii-mac-1000x-mode
+ *  - octeontx,disable-autonegotiation
  */
 static void octeontx2_cgx_lmacs_check_linux(const void *fdt,
 		cgx_config_t *cgx, int cgx_idx, int cgx_offset, int *fdt_vfs)
@@ -1519,15 +1519,15 @@ static void octeontx2_cgx_lmacs_check_linux(const void *fdt,
 		if ((lmac->mode == CAVM_CGX_LMAC_TYPES_E_SGMII) ||
 				(lmac->mode == CAVM_CGX_LMAC_TYPES_E_QSGMII)) {
 			val = fdt_getprop(fdt, lmac_offset,
-					"cavium,sgmii-mac-phy-mode", &len);
+					"octeontx,sgmii-mac-phy-mode", &len);
 			if (val)
 				lmac->phy_mode = 1;
 			val = fdt_getprop(fdt, lmac_offset,
-					"cavium,sgmii-mac-1000x-mode", &len);
+					"octeontx,sgmii-mac-1000x-mode", &len);
 			if (val)
 				lmac->sgmii_1000x_mode = 1;
 			val = fdt_getprop(fdt, lmac_offset,
-					"cavium,disable-autonegotiation",
+					"octeontx,disable-autonegotiation",
 					&len);
 			if (val)
 				lmac->autoneg_dis = 1;
