@@ -17,6 +17,7 @@
 #include <platform_def.h>
 #include <cavm_common.h>
 #include <cavm_dt.h>
+#include <cavm_security.h>
 
 struct l2c_region {
 	unsigned int  number;

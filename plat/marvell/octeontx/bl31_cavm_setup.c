@@ -48,6 +48,7 @@
 #include <platform_def.h>
 #include <plat_cavm.h>
 #include <cavm_gicv3.h>
+#include <cavm_security.h>
 
 
 static entry_point_info_t bl33_image_ep_info, bl32_image_ep_info;

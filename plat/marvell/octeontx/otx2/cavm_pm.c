@@ -23,6 +23,7 @@
 #include <cavm_common.h>
 #include <timers.h>
 #include <cavm_gicv3.h>
+#include <cavm_security.h>
 
 extern void *scmi_handle;
 

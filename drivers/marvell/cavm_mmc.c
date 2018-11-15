@@ -21,6 +21,7 @@
 #include <io_driver.h>
 #include <debug.h>
 #include <cavm_dt.h>
+#include <cavm_security.h>
 
 #include <io_mmc.h>
 

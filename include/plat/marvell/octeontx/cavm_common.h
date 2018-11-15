@@ -190,15 +190,12 @@ void add_map_record(unsigned long addr, unsigned long size, mmap_attr_t attr);
 void octeontx_pci_init(void);
 void plat_add_mmio_map(void);
 void octeontx_io_setup(void);
-void octeontx_security_setup(void);
 
 uint64_t octeontx_dram_size();
 void octeontx_cpu_setup(void);
 extern void *fdt_ptr;
 unsigned int octeontx_calc_core_pos(unsigned long mpidr);
 void sata_ipm_quirk(void);
-
-void octeontx_configure_mmc_security(int secure);
 
 void l2c_flush(void);
 
