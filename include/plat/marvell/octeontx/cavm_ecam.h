@@ -176,4 +176,6 @@ struct pcie_config {
 uint64_t get_bar_val(struct pcie_config *pconfig, int bar);
 int enable_msix(uint64_t config_base, uint8_t cap_pointer, uint16_t *table_size,
 		uint8_t *bir);
+void octeontx_pci_init(void);
+
 #endif /* __CAVM_ECAM_H__ */

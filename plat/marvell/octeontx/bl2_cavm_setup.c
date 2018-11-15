@@ -45,6 +45,7 @@
 #include <debug.h>
 #include <libfdt.h>
 #include <cavm_security.h>
+#include <cavm_ecam.h>
 
 
 /* Pointer to memory visible to both BL2 and BL31 for passing data */
