@@ -24,12 +24,9 @@
 #include "cavm-arch.h"
 #pragma GCC diagnostic pop
 
-#define MIDR_REVISION_MASK      0xf
-#define MIDR_REVISION(midr)     ((midr) & MIDR_REVISION_MASK)
-#define MIDR_PARTNUM_SHIFT      4
-#define MIDR_PARTNUM_MASK       (0xfff << MIDR_PARTNUM_SHIFT)
+#define MIDR_REVISION(midr)     ((midr) & MIDR_REV_MASK)
 #define MIDR_PARTNUM(midr)      \
-        (((midr) & MIDR_PARTNUM_MASK) >> MIDR_PARTNUM_SHIFT)
+        (((midr) >> MIDR_PN_SHIFT) & MIDR_PN_MASK)
 
 #define T81PARTNUM 0xA2
 #define T83PARTNUM 0xA3
