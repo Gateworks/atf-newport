@@ -69,16 +69,6 @@ DEFINE_RENAME_SYSREG_RW_FUNCS(cvm_access_el3, AP_CVM_ACCESS_EL3)
 	 (((midr) >> MIDR_VAR_SHIFT & MIDR_VAR_MASK) == (hi) - 1) &&	\
 	 (((midr) >> MIDR_REV_SHIFT & MIDR_REV_MASK) == (low)))
 
-/* Utils macro for fuses usage */
-#define FUSE_BIT_TO_BYTE_ADDR_SHIFT	0x3
-#define FUSE_BIT_TO_BYTE_ADDR(addr)	((addr) >> FUSE_BIT_TO_BYTE_ADDR_SHIFT)
-#define FUSE_HI_ADDR_SHIFT		0x8
-#define FUSE_HI_ADDR(addr)		((addr) >> FUSE_HI_ADDR_SHIFT)
-#define FUSE_BYTE_ADDR_MASK		0x7
-#define FUSE_BIT_SET			0x1
-#define FUSE_GET_VAL(dat, fuse)		(((uint8_t)dat) >> ((fuse) & FUSE_BYTE_ADDR_MASK) & FUSE_BIT_SET)
-
-
 /* In Mhz */
 #define OCTEONTX_SYSCNT_FREQ	100ull
 
