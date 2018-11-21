@@ -1,3 +1,10 @@
+/*
+ * Copyright (C) 2018 Marvell International Ltd.
+ *
+ * SPDX-License-Identifier:     BSD-3-Clause
+ * https://spdx.org/licenses
+ */
+
 #ifndef __BPHY_H__
 #define __BPHY_H__
 
