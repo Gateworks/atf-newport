@@ -22,10 +22,10 @@ PLAT_INCLUDES		+=	-Iinclude/plat/marvell/octeontx/otx2			\
 PLAT_BL_COMMON_SOURCES	+=	plat/marvell/octeontx/otx2/f95/plat_cavm_setup.c		\
 				plat/marvell/octeontx/otx2/cavm_security.c		\
 				plat/marvell/octeontx/otx2/cavm_bcfg_init.c		\
-				plat/marvell/octeontx/otx2/cavm_phy_mgmt.c		\
-				plat/marvell/octeontx/otx2/cavm_sfp_mgmt.c		\
-				plat/marvell/octeontx/otx2/cavm_cgx_intf.c		\
-				plat/marvell/octeontx/otx2/cavm_cgx.c		\
+				drivers/marvell/cavm_phy_mgmt.c		\
+				drivers/marvell/cavm_sfp_mgmt.c		\
+				drivers/marvell/cavm_cgx_intf.c		\
+				drivers/marvell/cavm_cgx.c		\
 				plat/marvell/octeontx/otx2/cavm_setup.c		\
 
 BL1_SOURCES		+=	plat/marvell/octeontx/otx2/aarch64/octeontx2_common.S	\

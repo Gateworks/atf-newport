@@ -12,6 +12,8 @@
 
 **/
 
+/* PHY driver for OcteonTX2 */
+
 #include <arch.h>
 #include <stdio.h>
 #include <debug.h>
