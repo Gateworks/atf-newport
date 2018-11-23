@@ -84,7 +84,87 @@ DEFINE_RENAME_SYSREG_RW_FUNCS(cvm_access_el3, AP_CVM_ACCESS_EL3)
 
 #define PCI_MSIX_CAP_ID		0x11
 
-#define SMMU_NUM_CONTEXTS	0x80
+/* Definitions of IRQ PPI (Per-Processor Interrupt) IDs (range 0x10 - 0x1f) */
+
+/* Secure physical generic timer IRQ */
+#define OCTEONTX_IRQ_SEC_PHY_TIMER	0x1d
+
+
+/* Definitions of IRQ SPI (Shared Peripheral Interrupt) IDs (range 0x20-0x9f) */
+
+/* UAA interrupts */
+#define OCTEONTX_UAA0_IRQ		0x25
+#define OCTEONTX_UAA1_IRQ		0x26
+#define OCTEONTX_UAA2_IRQ		0x27
+#define OCTEONTX_UAA3_IRQ		0x28
+
+/* Watchdog interrupt */
+#define OCTEONTX_GTI_WDOG_IRQ		0x29
+
+/*
+ * 4 IRQs per PEM (INTA, INTB, INTC, INTD)
+ * 12 PEMs (6 per node)
+ * 0x30 (48) IRQs needed
+ */
+#define OCTEONTX_PEM_INTBASE_IRQ	0x30
+
+/* First available irq after PEM is 0x60 */
+
+/*
+ * SMMU 0..3 NODE0
+ * SMMU 4..7 NODE1
+ * Modify the below to change ths SMMU SPI's 
+ */
+#define OCTEONTX_SMMU0_GLOBAL_IRQ	0x64
+#define OCTEONTX_SMMU0_CONTEXT_IRQ	0x65
+#define OCTEONTX_SMMU1_GLOBAL_IRQ	0x66
+#define OCTEONTX_SMMU1_CONTEXT_IRQ	0x67
+#define OCTEONTX_SMMU2_GLOBAL_IRQ	0x68
+#define OCTEONTX_SMMU2_CONTEXT_IRQ	0x69
+#define OCTEONTX_SMMU3_GLOBAL_IRQ	0x6a
+#define OCTEONTX_SMMU3_CONTEXT_IRQ	0x6b
+#define OCTEONTX_SMMU4_GLOBAL_IRQ	0x6c
+#define OCTEONTX_SMMU4_CONTEXT_IRQ	0x6d
+#define OCTEONTX_SMMU5_GLOBAL_IRQ	0x6e
+#define OCTEONTX_SMMU5_CONTEXT_IRQ	0x6f
+#define OCTEONTX_SMMU6_GLOBAL_IRQ	0x70
+#define OCTEONTX_SMMU6_CONTEXT_IRQ	0x71
+#define OCTEONTX_SMMU7_GLOBAL_IRQ	0x72
+#define OCTEONTX_SMMU7_CONTEXT_IRQ	0x73
+
+#define OCTEONTX_SMMU_GLOBAL_VECTOR_OFFSET	0x1000
+#define OCTEONTX_SMMU_NUM_CONTEXTS		0x80
+
+/* Base SPI for GPIO interrupt to be handled in ATF */
+#define OCTEONTX_IRQ_GPIO_BASE		0x74
+#define OCTEONTX_IRQ_GPIO_COUNT		0x4
+/* Default SPI to be used by kernel GPIO driver when intercepting interrupts */
+#define OCTEONTX_IRQ_GPIO_NSEC		0x79
+
+/* CNF95xx BPHY PSM interrupts */
+#define OCTEONTX_IRQ_BPHY_PSM_ERRINT	0x80
+#define OCTEONTX_IRQ_BPHY_PSM_QOVF0	0x81
+#define OCTEONTX_IRQ_BPHY_PSM_QOVF1	0x82
+#define OCTEONTX_IRQ_BPHY_PSM_QTO0	0x83
+#define OCTEONTX_IRQ_BPHY_PSM_QTO1	0x84
+#define OCTEONTX_IRQ_BPHY_PSM_JERR0	0x85
+#define OCTEONTX_IRQ_BPHY_PSM_JERR1	0x86
+#define OCTEONTX_IRQ_BPHY_PSM_JERR2	0x87
+#define OCTEONTX_IRQ_BPHY_PSM_JNFAT0	0x88
+#define OCTEONTX_IRQ_BPHY_PSM_JNFAT1	0x89
+#define OCTEONTX_IRQ_BPHY_PSM_JNFAT2	0x8a
+#define OCTEONTX_IRQ_BPHY_PSM_JTO0	0x8b
+#define OCTEONTX_IRQ_BPHY_PSM_JTO1	0x8c
+#define OCTEONTX_IRQ_BPHY_PSM_JTO2	0x8d
+#define OCTEONTX_IRQ_BPHY_PSM_DERR0	0x8e
+#define OCTEONTX_IRQ_BPHY_PSM_DERR1	0x8f
+#define OCTEONTX_IRQ_BPHY_PSM_DERR2	0x90
+#define OCTEONTX_IRQ_BPHY_PSM_AERR0	0x91
+#define OCTEONTX_IRQ_BPHY_PSM_AERR1	0x92
+#define OCTEONTX_IRQ_BPHY_PSM_AERR2	0x93
+#define OCTEONTX_IRQ_BPHY_PSM_MTO0	0x94
+#define OCTEONTX_IRQ_BPHY_PSM_MTO1	0x95
+#define OCTEONTX_IRQ_BPHY_PSM_MTO2	0x96
 
 #define set_bit(reg, bit) reg |= (1ULL<<(bit))
 #define unset_bit(reg, bit) reg &= ~(1ULL<<(bit))
