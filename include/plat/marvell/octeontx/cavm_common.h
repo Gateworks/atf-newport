@@ -92,6 +92,9 @@ DEFINE_RENAME_SYSREG_RW_FUNCS(cvm_access_el3, AP_CVM_ACCESS_EL3)
 
 /* Definitions of IRQ SPI (Shared Peripheral Interrupt) IDs (range 0x20-0x9f) */
 
+/* TWSI Secure interrupt for BMC events */
+#define OCTEONTX_TWSI_1_S_IRQ		0x22
+
 /* UAA interrupts */
 #define OCTEONTX_UAA0_IRQ		0x25
 #define OCTEONTX_UAA1_IRQ		0x26
