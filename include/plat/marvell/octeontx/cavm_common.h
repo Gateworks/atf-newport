@@ -92,6 +92,19 @@ DEFINE_RENAME_SYSREG_RW_FUNCS(cvm_access_el3, AP_CVM_ACCESS_EL3)
 
 /* Definitions of IRQ SPI (Shared Peripheral Interrupt) IDs (range 0x20-0x9f) */
 
+/*
+ * OCTEONTX GPIO POWER IRQ for graceful shutdown.
+ * OCTEONTX_GPIO_PWR_S_IRQ: Secure IRQ that comes first as soon as GPIO
+ *                          is triggered
+ * OCTEONTX_GPIO_PWR_NS_IRQ: Non-Secure IRQ to kernel to initiate
+ *                           graceful shutdown
+ * OCTEONTX_KEY_POWER_IRQ: Firmware generated IRQ to signal KEY_POWER
+ *                         to non-secure software
+ */
+#define OCTEONTX_GPIO_PWR_NS_IRQ	0x20
+#define OCTEONTX_GPIO_PWR_S_IRQ		0x21
+#define OCTEONTX_KEY_POWER_IRQ		OCTEONTX_GPIO_PWR_NS_IRQ
+
 /* TWSI Secure interrupt for BMC events */
 #define OCTEONTX_TWSI_1_S_IRQ		0x22
 
