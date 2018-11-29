@@ -61,11 +61,6 @@ DEFINE_RENAME_SYSREG_RW_FUNCS(cvm_access_el1, AP_CVM_ACCESS_EL1)
 DEFINE_RENAME_SYSREG_RW_FUNCS(cvm_access_el2, AP_CVM_ACCESS_EL2)
 DEFINE_RENAME_SYSREG_RW_FUNCS(cvm_access_el3, AP_CVM_ACCESS_EL3)
 
-#define IS_OCTEONTX_PASS(midr, partnum, hi, low)			\
-	((((midr) >> MIDR_PN_SHIFT & MIDR_PN_MASK) == (partnum)) &&	\
-	 (((midr) >> MIDR_VAR_SHIFT & MIDR_VAR_MASK) == (hi) - 1) &&	\
-	 (((midr) >> MIDR_REV_SHIFT & MIDR_REV_MASK) == (low)))
-
 /* In Mhz */
 #define OCTEONTX_SYSCNT_FREQ	100ull
 
@@ -184,55 +179,5 @@ void sata_ipm_quirk(void);
 void l2c_flush(void);
 
 void plat_flr_init(void);
-
-/**
- * Builds a bit mask given the required size in bits.
- *
- * @param bits   Number of bits in the mask
- * @return The mask
- */
-static inline uint64_t octeontx_build_mask(uint64_t bits)
-{
-	if (bits == 64)
-		return -1;
-
-	return ~((~0x0ull) << bits);
-}
-
-/**
- * Extract bits out of a number
- *
- * @param input  Number to extract from
- * @param lsb    Starting bit, least significant (0-63)
- * @param width  Width in bits (1-64)
- *
- * @return Extracted number
- */
-static inline uint64_t octeontx_bit_extract(uint64_t input, int lsb, int width)
-{
-    uint64_t result = input >> lsb;
-    result &= octeontx_build_mask(width);
-    return result;
-}
-
-/**
- * Insert bits into a number
- *
- * @param original Original data, before insert
- * @param input    Data to insert
- * @param lsb    Starting bit, least significant (0-63)
- * @param width  Width in bits (1-64)
- *
- * @return Number with inserted bits
- */
-static inline uint64_t octeontx_bit_insert(uint64_t original, uint64_t input, int lsb, int width)
-{
-    uint64_t mask = octeontx_build_mask(width);
-    uint64_t result = original & ~(mask << lsb);
-    result |= (input & mask) << lsb;
-    return result;
-}
-
-
 
 #endif /* __CAVM_COMMON_H__ */

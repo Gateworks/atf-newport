@@ -27,6 +27,7 @@
 #include <cavm_cgx_intf.h>
 #include <cavm_cgx.h>
 #include <cavm_phy_mgmt.h>
+#include <cavm_utils.h>
 
 
 /* define DEBUG_ATF_NW_MGMT to enable debug logs */

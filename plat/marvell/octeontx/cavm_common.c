@@ -17,6 +17,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <libfdt.h>
+#include <cavm_utils.h>
 #include <cavm_common.h>
 
 #pragma weak plat_flr_init

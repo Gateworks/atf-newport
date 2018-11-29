@@ -20,6 +20,7 @@
 #include <cavm_gpio.h>
 #include <plat_cavm.h>
 #include <cavm_fuse.h>
+#include <cavm_utils.h>
 
 /* Any SoC family specific setup
  * to be done in BL31 can be initialized
