@@ -20,16 +20,16 @@
 #include <tbbr_img_def.h>
 #include <xlat_tables_v2.h>
 #include "../../../bl1/bl1_private.h"
-#include <cavm_common.h>
-#include <cavm_board_cfg.h>
-#include <cavm_board_cfg_bl1.h>
+#include <octeontx_common.h>
+#include <octeontx_board_cfg.h>
+#include <octeontx_board_cfg_bl1.h>
 #include <libfdt.h>
 #include <debug.h>
 #include <assert.h>
 #include <bl1.h>
-#include <cavm_scfg_bl1.h>
-#include <plat_cavm.h>
-#include <cavm_io_storage.h>
+#include <octeontx_scfg_bl1.h>
+#include <plat_octeontx.h>
+#include <octeontx_io_storage.h>
 
 
 /* Data structure which holds the extents of the trusted DRAM for BL1*/

@@ -17,13 +17,13 @@
 #include <platform_def.h>
 #include <debug.h>
 #include <assert.h>
-#include <cavm_common.h>
+#include <octeontx_common.h>
 #include <hw_timers.h>
-#include <cavm_sata.h>
+#include <octeontx_sata.h>
 #include <delay_timer.h>
 #include <string.h>
 #include <cavm_octeontx_scfg.h>
-#include <cavm_dram.h>
+#include <octeontx_dram.h>
 
 #undef SATA_DEBUG
 

@@ -14,7 +14,7 @@
 #ifndef __CAVM_OCTEONTX_SCFG_H__
 #define __CAVM_OCTEONTX_SCFG_H__
 
-#include <cavm_scfg.h>
+#include <octeontx_scfg.h>
 #include <platform_scfg.h>
 
 typedef struct plat_octeontx_scfg {

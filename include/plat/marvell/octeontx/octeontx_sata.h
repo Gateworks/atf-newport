@@ -12,8 +12,8 @@
 **/
 #include <stdint.h>
 
-#ifndef __CAVM_SATA_H__
-#define __CAVM_SATA_H__
+#ifndef __OCTEONTX_SATA_H__
+#define __OCTEONTX_SATA_H__
 
 #define SATA_SIG_PMP	0x96690101
 #define SATA_SIG_ATA	0x00000101

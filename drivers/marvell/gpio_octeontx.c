@@ -25,9 +25,9 @@
 #include <runtime_svc.h>
 #include <interrupt_mgmt.h>
 
-#include <cavm_ecam.h>
-#include <cavm_svc.h>
-#include <cavm_common.h>
+#include <octeontx_ecam.h>
+#include <octeontx_svc.h>
+#include <octeontx_common.h>
 #include <gpio_octeontx.h>
 
 #define SPSR_ISR	((1ULL << SPSR_E_SHIFT) | (3 << SPSR_AIF_SHIFT))

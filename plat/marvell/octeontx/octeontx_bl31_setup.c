@@ -41,15 +41,15 @@
 #include <interrupt_mgmt.h>
 #include <stddef.h>
 #include <xlat_tables_v2.h>
-#include <cavm_common.h>
-#include <cavm_board_cfg.h>
+#include <octeontx_common.h>
+#include <octeontx_board_cfg.h>
 #include <debug.h>
 #include <timers.h>
 #include <platform_def.h>
-#include <plat_cavm.h>
+#include <plat_octeontx.h>
 #include <gicv3_setup.h>
-#include <cavm_security.h>
-#include <cavm_dram.h>
+#include <octeontx_security.h>
+#include <octeontx_dram.h>
 
 
 static entry_point_info_t bl33_image_ep_info, bl32_image_ep_info;

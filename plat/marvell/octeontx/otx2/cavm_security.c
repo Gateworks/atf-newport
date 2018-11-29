@@ -16,11 +16,11 @@
 #include <arch.h>
 #include <platform_def.h>
 #include <platform_setup.h>
-#include <cavm_common.h>
+#include <octeontx_common.h>
 #include <cavm_dt.h>
 #include <cavm_octeontx_scfg.h>
-#include <cavm_security.h>
-#include <cavm_dram.h>
+#include <octeontx_security.h>
+#include <octeontx_dram.h>
 
 struct ccs_region {
 	unsigned int  number;

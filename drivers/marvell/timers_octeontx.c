@@ -16,7 +16,7 @@
 #include <bl_common.h>
 #include <interrupt_mgmt.h>
 #include <stdio.h>
-#include <cavm_common.h>
+#include <octeontx_common.h>
 #include <hw_timers.h>
 #include <delay_timer.h>
 

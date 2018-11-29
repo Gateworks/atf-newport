@@ -14,8 +14,8 @@
 #include <bakery_lock.h>
 #include <mmio.h>
 #include <platform.h>
-#include <cavm_legacy_pwrc.h>
-#include <cavm_common.h>
+#include <octeontx_legacy_pwrc.h>
+#include <octeontx_common.h>
 #include <arch_helpers.h>
 #include <debug.h>
 

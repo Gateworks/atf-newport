@@ -14,7 +14,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <assert.h>
-#include <cavm_common.h>
+#include <octeontx_common.h>
 #include <twsi_core.h>
 #include <smbus.h>
 

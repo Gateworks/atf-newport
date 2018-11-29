@@ -19,7 +19,7 @@
 #include <platform_setup.h>
 #include <platform.h>
 #include <string.h>
-#include <cavm_common.h>
+#include <octeontx_common.h>
 #include <cavm_scmi.h>
 #include <gicv3_setup.h>
 

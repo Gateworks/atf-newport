@@ -22,12 +22,12 @@ PLAT_BL_COMMON_SOURCES	+=	plat/marvell/octeontx/otx/t83/plat_cavm_setup.c	\
 				plat/marvell/octeontx/otx/cavm_bcfg_init.c		\
 				plat/marvell/octeontx/otx/cavm_setup.c		\
 
-BL1_SOURCES		+=	plat/marvell/octeontx/otx/aarch64/octeontx_common.S	\
+BL1_SOURCES		+=	plat/marvell/octeontx/otx/aarch64/plat_octeontx_common.S	\
 				plat/marvell/octeontx/otx/aarch64/plat_cavm_helpers.S	\
 				plat/marvell/octeontx/otx/cavm_octeontx_dt.c		\
 
 BL2_SOURCES		+=	plat/marvell/octeontx/otx/t83/plat_cavm_ecam.c	\
 
-BL31_SOURCES		+=	plat/marvell/octeontx/otx/aarch64/octeontx_common.S	\
+BL31_SOURCES		+=	plat/marvell/octeontx/otx/aarch64/plat_octeontx_common.S	\
 				plat/marvell/octeontx/otx/aarch64/plat_cavm_helpers.S	\
 				plat/marvell/octeontx/otx/cavm_topology.c		\

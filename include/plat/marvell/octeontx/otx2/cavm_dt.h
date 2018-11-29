@@ -18,7 +18,7 @@
 #include <cgx.h>
 #include <sfp_mgmt.h>
 #include <phy_mgmt.h>
-#include <cavm_board_cfg.h>
+#include <octeontx_board_cfg.h>
 
 /* Define different QLM-MODE variants. These definitions based on the BDK code. */
 typedef enum {

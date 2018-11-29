@@ -15,10 +15,10 @@
 #include <stdint.h>
 #include <string.h>
 #include <assert.h>
-#include <cavm_common.h>
+#include <octeontx_common.h>
 #include <cavm_dt.h>
-#include <cavm_ecam.h>
-#include <cavm_utils.h>
+#include <octeontx_ecam.h>
+#include <octeontx_utils.h>
 #include <platform_def.h>
 
 #undef DEBUG_ATF_ECAM

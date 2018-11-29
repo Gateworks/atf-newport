@@ -13,7 +13,7 @@
 
 /* TWSI driver for OcteonTX (CN8xxx and CN9xxx) */
 
-#include <cavm_common.h>
+#include <octeontx_common.h>
 #include <twsi_core.h>
 #include <twsi.h>
 

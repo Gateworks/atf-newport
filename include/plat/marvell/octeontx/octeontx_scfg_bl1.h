@@ -11,13 +11,13 @@
 
 **/
 
-#ifndef __CAVM_PLAT_CONFIGURATION_H__
-#define __CAVM_PLAT_CONFIGURATION_H__
+#ifndef __OCTEONTX_SCFG_BL1_H__
+#define __OCTEONTX_SCFG_BL1_H__
 
-int plat_octeontx_get_lmc_count(void);
-int plat_octeontx_get_sata_count(void);
-int plat_octeontx_sata_to_gser(int ctrlr);
-int plat_octeontx_sata_to_lane(int ctrlr);
-int plat_octeontx_is_lmc_enabled(unsigned lmc);
+// function used to fill scfg with common data
+int octeontx_fill_soc_details();
 
-#endif /* __CAVM_PLAT_CONFIGURATION_H__ */
+// function called by common code to fill scfg with family specific infromation
+int plat_octeontx_fill_soc_details(void);
+
+#endif /* __OCTEONTX_SCFG_BL1_H__ */

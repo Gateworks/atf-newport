@@ -12,15 +12,15 @@
 #**/
 
 #include <platform_def.h>
-#include <cavm_common.h>
+#include <octeontx_common.h>
 
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
 #include <libfdt.h>
 #include <cavm_dt.h>
-#include <cavm_ecam.h>
-#include <cavm_utils.h>
+#include <octeontx_ecam.h>
+#include <octeontx_utils.h>
 #include <cavm_octeontx_scfg.h>
 
 #ifdef DEBUG_ATF_PLAT_ECAM

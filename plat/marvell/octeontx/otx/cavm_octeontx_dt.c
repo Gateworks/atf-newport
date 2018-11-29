@@ -17,8 +17,8 @@
 #include <assert.h>
 #include <platform_def.h>
 #include <cavm_dt.h>
-#include <cavm_common.h>
-#include <cavm_board_cfg_bl1.h>
+#include <octeontx_common.h>
+#include <octeontx_board_cfg_bl1.h>
 
 static void octeontx_boot_device_from_strapx()
 {

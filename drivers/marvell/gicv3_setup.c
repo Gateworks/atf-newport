@@ -15,9 +15,9 @@
 
 #include <arch.h>
 #include <platform_def.h>
-#include <cavm_common.h>
+#include <octeontx_common.h>
 #include <gicv3_setup.h>
-#include <cavm_utils.h>
+#include <octeontx_utils.h>
 
 #undef GICD_SETSPI_NSR
 #undef GICD_CLRSPI_NSR

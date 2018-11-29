@@ -11,9 +11,14 @@
 
 **/
 
-#ifndef __CAVM_DRAM_H__
-#define __CAVM_DRAM_H__
+#ifndef __PLAT_OCTEONTX_H__
+#define __PLAT_OCTEONTX_H__
 
-uint64_t octeontx_dram_size();
+void set_secondary_cpu_jump_addr(unsigned int bl1_base);
 
-#endif /* __CAVM_DRAM_H__ */
+void plat_octeontx_setup(void);
+void plat_pwrc_setup(void);
+
+unsigned int plat_get_rom_t_cnt();
+
+#endif /* __PLAT_OCTEONTX_H__ */

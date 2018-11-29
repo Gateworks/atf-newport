@@ -11,8 +11,8 @@
 
 **/
 
-#ifndef __CAVM_COMMON_H__
-#define __CAVM_COMMON_H__
+#ifndef __OCTEONTX_COMMON_H__
+#define __OCTEONTX_COMMON_H__
 
 #include <stdint.h>
 #include <xlat_tables_v2.h>
@@ -180,4 +180,4 @@ void l2c_flush(void);
 
 void plat_flr_init(void);
 
-#endif /* __CAVM_COMMON_H__ */
+#endif /* __OCTEONTX_COMMON_H__ */

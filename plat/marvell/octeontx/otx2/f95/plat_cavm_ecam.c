@@ -13,16 +13,16 @@
 
 #include <platform_def.h>
 #include <platform_setup.h>
-#include <cavm_common.h>
+#include <octeontx_common.h>
 
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
-#include <cavm_ecam.h>
+#include <octeontx_ecam.h>
 #include <cavm_dt.h>
 #include <cavm_octeontx_scfg.h>
 #include <cgx.h>
-#include <cavm_utils.h>
+#include <octeontx_utils.h>
 #include <rvu.h>
 
 #ifdef DEBUG_ATF_PLAT_ECAM

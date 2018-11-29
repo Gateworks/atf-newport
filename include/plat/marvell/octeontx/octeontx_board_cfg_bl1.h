@@ -11,8 +11,8 @@
 
 **/
 
-#ifndef __CAVM_BOARD_CFG_BL1_H__
-#define __CAVM_BOARD_CFG_BL1_H__
+#ifndef __OCTEONTX_BOARD_CFG_BL1_H__
+#define __OCTEONTX_BOARD_CFG_BL1_H__
 
 // function used to fill bcfg with common data
 int octeontx_fill_board_details(int info);
@@ -23,4 +23,4 @@ int plat_octeontx_fill_board_details(void);
 // function to print family specific information
 void plat_octeontx_print_board_variables(void);
 
-#endif /* __CAVM_BOARD_CFG_BL1_H__ */
+#endif /* __OCTEONTX_BOARD_CFG_BL1_H__ */

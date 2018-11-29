@@ -16,7 +16,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
-#include <cavm_common.h>
+#include <octeontx_common.h>
 #include <io_storage.h>
 #include <assert.h>
 #include <io_driver.h>

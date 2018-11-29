@@ -10,11 +10,11 @@
   WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 
 **/
-#include <cavm_common.h>
+#include <octeontx_common.h>
 #include <platform_setup.h>
 #include <platform_dt.h>
 #include <cavm_octeontx_scfg.h>
-#include <cavm_scfg_bl1.h>
+#include <octeontx_scfg_bl1.h>
 #include <cavm_otx2_configuration.h>
 #include <assert.h>
 

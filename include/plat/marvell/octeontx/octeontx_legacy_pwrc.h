@@ -29,8 +29,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef __CAVM_LEGACY_PWRC_H__
-#define __CAVM_LEGACY_PWRC_H__
+#ifndef __OCTEONTX_LEGACY_PWRC_H__
+#define __OCTEONTX_LEGACY_PWRC_H__
 
 #include <psci.h>
 
@@ -47,4 +47,4 @@ int octeontx_legacy_setup_psci_ops(uintptr_t sec_entrypoint,
 
 #endif /*__ASSEMBLY__*/
 
-#endif /* __CAVM_LEGACY_PWRC_H__ */
+#endif /* __OCTEONTX_LEGACY_PWRC_H__ */

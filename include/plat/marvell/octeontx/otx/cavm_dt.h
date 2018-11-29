@@ -14,7 +14,7 @@
 #ifndef _CAVM_DT_H_
 #define _CAVM_DT_H_
 
-#include <cavm_board_cfg.h>
+#include <octeontx_board_cfg.h>
 
 typedef struct plat_octeontx_board_cfg {
 	board_cfg_t bcfg;

@@ -21,13 +21,13 @@
 #include <platform.h>
 #include <platform_def.h>
 #include <psci.h>
-#include <cavm_legacy_pwrc.h>
-#include <cavm_common.h>
+#include <octeontx_legacy_pwrc.h>
+#include <octeontx_common.h>
 #include <cavm_dt.h>
 #include <gpio_octeontx.h>
 #include <gicv3_setup.h>
 #include <twsi.h>
-#include <cavm_dram.h>
+#include <octeontx_dram.h>
 
 #undef GICD_SETSPI_NSR
 #undef GICD_CLRSPI_NSR

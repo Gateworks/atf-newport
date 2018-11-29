@@ -20,11 +20,11 @@
 #include <platform_def.h>
 #include <platform_setup.h>
 #include <platform.h>
-#include <cavm_common.h>
+#include <octeontx_common.h>
 #include <timers.h>
 #include <gicv3_setup.h>
-#include <cavm_security.h>
-#include <cavm_dram.h>
+#include <octeontx_security.h>
+#include <octeontx_dram.h>
 
 extern void *scmi_handle;
 

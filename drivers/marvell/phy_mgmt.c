@@ -20,14 +20,14 @@
 #include <string.h>
 #include <platform_def.h>
 #include <timers.h>
-#include <cavm_common.h>
+#include <octeontx_common.h>
 #include <delay_timer.h>
 #include <cavm_dt.h>
 #include <smi.h>
 #include <cgx_intf.h>
 #include <cgx.h>
 #include <phy_mgmt.h>
-#include <cavm_utils.h>
+#include <octeontx_utils.h>
 
 /* define DEBUG_ATF_NW_MGMT to enable debug logs */
 #undef DEBUG_ATF_NW_MGMT	/* PHY, SFP/QSFP management */

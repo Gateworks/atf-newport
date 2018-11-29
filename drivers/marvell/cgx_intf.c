@@ -19,7 +19,7 @@
 #include <string.h>
 #include <platform_def.h>
 #include <timers.h>
-#include <cavm_common.h>
+#include <octeontx_common.h>
 #include <delay_timer.h>
 #include <cavm_dt.h>
 #include <cgx_intf.h>

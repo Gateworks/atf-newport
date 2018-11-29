@@ -40,11 +40,11 @@
 #include <io_storage.h>
 #include <platform_def.h>
 #include <string.h>
-#include <cavm_common.h>
+#include <octeontx_common.h>
 #include <cavm_dt.h>
 
 #include <cavm-arch.h>
-#include <cavm_io_storage.h>
+#include <octeontx_io_storage.h>
 
 #define FIP_NAME "fip.bin"
 #define ROMFS_NAME "ROM-FS"

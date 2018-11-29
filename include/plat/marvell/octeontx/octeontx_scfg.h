@@ -11,10 +11,19 @@
 
 **/
 
-#ifndef __CAVM_SECURITY_H__
-#define __CAVM_SECURITY_H__
+#ifndef __OCTEONTX_SCFG_H__
+#define __OCTEONTX_SCFG_H__
 
-void octeontx_security_setup(void);
-void octeontx_configure_mmc_security(int secure);
+#include <platform_scfg.h>
 
-#endif /* __CAVM_SECURITY_H__ */
+typedef struct sata_cfg {
+	uint8_t to_gser[MAX_SATA];
+	uint8_t to_lane[MAX_SATA];
+} sata_cfg_t;
+
+typedef struct scfg {
+	uint8_t is_lmc_enabled[MAX_LMC];
+	sata_cfg_t sata_cfg;
+} scfg_t;
+
+#endif /* __OCTEONTX_SCFG_H__ */

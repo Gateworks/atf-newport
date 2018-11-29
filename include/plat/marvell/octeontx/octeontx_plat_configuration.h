@@ -11,14 +11,13 @@
 
 **/
 
-#ifndef __PLAT_CAVM_H__
-#define __PLAT_CAVM_H__
+#ifndef __OCTEONTX_PLAT_CONFIGURATION_H__
+#define __OCTEONTX_PLAT_CONFIGURATION_H__
 
-void set_secondary_cpu_jump_addr(unsigned int bl1_base);
+int plat_octeontx_get_lmc_count(void);
+int plat_octeontx_get_sata_count(void);
+int plat_octeontx_sata_to_gser(int ctrlr);
+int plat_octeontx_sata_to_lane(int ctrlr);
+int plat_octeontx_is_lmc_enabled(unsigned lmc);
 
-void plat_octeontx_setup(void);
-void plat_pwrc_setup(void);
-
-unsigned int plat_get_rom_t_cnt();
-
-#endif /* __PLAT_CAVM_H__ */
+#endif /* __OCTEONTX_PLAT_CONFIGURATION_H__ */

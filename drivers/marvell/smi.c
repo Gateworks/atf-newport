@@ -17,7 +17,7 @@
 #include <platform_def.h>
 #include <debug.h>
 #include <assert.h>
-#include <cavm_common.h>
+#include <octeontx_common.h>
 #include <hw_timers.h>
 #include <delay_timer.h>
 #include <string.h>

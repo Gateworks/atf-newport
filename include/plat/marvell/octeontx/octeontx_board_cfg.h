@@ -11,8 +11,8 @@
 
 **/
 
-#ifndef __CAVM_BOARD_CFG_H__
-#define __CAVM_BOARD_CFG_H__
+#ifndef __OCTEONTX_BOARD_CFG_H__
+#define __OCTEONTX_BOARD_CFG_H__
 
 typedef struct boot_device_conf {
 	int node;
@@ -47,4 +47,4 @@ typedef struct board_cfg {
   
 } board_cfg_t;
 
-#endif /* __CAVM_BOARD_CFG_H__ */
+#endif /* __OCTEONTX_BOARD_CFG_H__ */

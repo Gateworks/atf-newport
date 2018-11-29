@@ -18,7 +18,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <cavm_dt.h>
-#include <cavm_common.h>
+#include <octeontx_common.h>
 #include <mbedtls/sha256.h>
 #include <plat_cavm.h>
 

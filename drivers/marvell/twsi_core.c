@@ -18,7 +18,7 @@
 #include <platform_def.h>
 #include <delay_timer.h>
 #include <stdio.h>
-#include <cavm_common.h>
+#include <octeontx_common.h>
 #include <twsi_core.h>
 
 #undef DEBUG_ATF_TWSI

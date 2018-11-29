@@ -11,13 +11,9 @@
 
 **/
 
-#ifndef __CAVM_SCFG_BL1_H__
-#define __CAVM_SCFG_BL1_H__
+#ifndef __OCTEONTX_IO_STORAGE_H__
+#define __OCTEONTX_IO_STORAGE_H__
 
-// function used to fill scfg with common data
-int octeontx_fill_soc_details();
+void octeontx_io_setup(void);
 
-// function called by common code to fill scfg with family specific infromation
-int plat_octeontx_fill_soc_details(void);
-
-#endif /* __CAVM_SCFG_BL1_H__ */
+#endif /* __OCTEONTX_IO_STORAGE_H__ */

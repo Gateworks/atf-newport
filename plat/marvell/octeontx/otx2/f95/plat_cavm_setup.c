@@ -14,14 +14,14 @@
 #include <platform.h>
 #include <platform_def.h>
 #include <platform_setup.h>
-#include <cavm_common.h>
-#include <cavm_ecam.h>
+#include <octeontx_common.h>
+#include <octeontx_ecam.h>
 #include <gpio_octeontx.h>
 #include <bphy.h>
-#include <cavm_utils.h>
-#include <cavm_plat_configuration.h>
+#include <octeontx_utils.h>
+#include <octeontx_plat_configuration.h>
 #include <cavm_otx2_configuration.h>
-#include <plat_cavm.h>
+#include <plat_octeontx.h>
 
 static uint64_t msix_addr_save;
 

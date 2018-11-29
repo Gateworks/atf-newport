@@ -17,13 +17,13 @@
 #include <stdio.h>
 #include <string.h>
 #include <platform_def.h>
-#include <cavm_common.h>
+#include <octeontx_common.h>
 #include <io_storage.h>
 #include <assert.h>
 #include <io_driver.h>
 #include <debug.h>
 #include <cavm_dt.h>
-#include <cavm_security.h>
+#include <octeontx_security.h>
 
 #include <io_mmc.h>
 

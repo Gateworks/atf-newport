@@ -14,17 +14,17 @@
 #include <debug.h>
 #include <psci.h>
 #include <runtime_svc.h>
-#include <cavm_svc.h>
+#include <octeontx_svc.h>
 #include <stdint.h>
 #include <uuid.h>
 #include <string.h>
-#include <cavm_common.h>
+#include <octeontx_common.h>
 #include <gpio_octeontx.h>
 #include <bphy.h>
 #include <errno.h>
 #include <libfdt.h>
 #include <rvu.h>
-#include <cavm_dram.h>
+#include <octeontx_dram.h>
 
 /* Cavium OEM Service UUID */
 DEFINE_SVC_UUID(octeontx_svc_uid,

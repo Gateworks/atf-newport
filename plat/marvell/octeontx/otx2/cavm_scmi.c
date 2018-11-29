@@ -20,8 +20,8 @@
 #include <cavm_scmi.h>
 #include <mmio.h>
 #include <cavm_dt.h>
-#include <cavm_common.h>
-#include <cavm_utils.h>
+#include <octeontx_common.h>
+#include <octeontx_utils.h>
 
 #undef DEBUG_SCMI_ATF
 

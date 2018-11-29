@@ -11,8 +11,8 @@
 
 **/
 
-#ifndef __CAVM_ECAM_H__
-#define __CAVM_ECAM_H__
+#ifndef __OCTEONTX_ECAM_H__
+#define __OCTEONTX_ECAM_H__
 
 #define FALSE 0
 #define TRUE 1
@@ -178,4 +178,4 @@ int enable_msix(uint64_t config_base, uint8_t cap_pointer, uint16_t *table_size,
 		uint8_t *bir);
 void octeontx_pci_init(void);
 
-#endif /* __CAVM_ECAM_H__ */
+#endif /* __OCTEONTX_ECAM_H__ */

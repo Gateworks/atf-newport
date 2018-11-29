@@ -11,8 +11,8 @@
 
 **/
 
-#ifndef __CAVM_UTILS_H__
-#define __CAVM_UTILS_H__
+#ifndef __OCTEONTX_UTILS_H__
+#define __OCTEONTX_UTILS_H__
 
 #include <arch_helpers.h>
 
@@ -79,4 +79,4 @@ static inline uint64_t octeontx_bit_insert(uint64_t original, uint64_t input, in
 	return result;
 }
 
-#endif /* __CAVM_UTILS_H__ */
+#endif /* __OCTEONTX_UTILS_H__ */

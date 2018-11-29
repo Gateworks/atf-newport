@@ -18,8 +18,8 @@
 #include <string.h>
 #include <ctype.h>
 #include <cavm_dt.h>
-#include <cavm_board_cfg_bl1.h>
-#include <cavm_common.h>
+#include <octeontx_board_cfg_bl1.h>
+#include <octeontx_common.h>
 #include <debug.h>
 #include <assert.h>
 

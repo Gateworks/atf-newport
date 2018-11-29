@@ -11,8 +11,8 @@
 
 **/
 
-#ifndef __CAVM_SVC_H__
-#define __CAVM_SVC_H__
+#ifndef __OCTEONTX_SVC_H__
+#define __OCTEONTX_SVC_H__
 
 /* SMC function IDs for Standard Service queries */
 
@@ -53,4 +53,4 @@
 #define OCTEONTX_NUM_CALLS		8
 #endif
 
-#endif /* __CAVM_SVC_H__ */
+#endif /* __OCTEONTX_SVC_H__ */

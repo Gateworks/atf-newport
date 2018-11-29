@@ -15,11 +15,11 @@
 #include <stdio.h>
 #include <assert.h>
 #include <platform_def.h>
-#include <cavm_common.h>
+#include <octeontx_common.h>
 #include <string.h>
 #include <debug.h>
 #include <cavm_octeontx_scfg.h>
-#include <cavm_dram.h>
+#include <octeontx_dram.h>
 
 static inline uint32_t popcnt(uint64_t val)
 {

@@ -13,12 +13,12 @@
 
 #include <debug.h>
 #include <platform_def.h>
-#include <cavm_common.h>
+#include <octeontx_common.h>
 #include <gpio_octeontx.h>
 #include <cavm_dt.h>
-#include <cavm_utils.h>
-#include <cavm_plat_configuration.h>
-#include <plat_cavm.h>
+#include <octeontx_utils.h>
+#include <octeontx_plat_configuration.h>
+#include <plat_octeontx.h>
 #include <cavm_fuse.h>
 
 /*

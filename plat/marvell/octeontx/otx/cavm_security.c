@@ -15,10 +15,10 @@
 #include <debug.h>
 #include <arch.h>
 #include <platform_def.h>
-#include <cavm_common.h>
+#include <octeontx_common.h>
 #include <cavm_dt.h>
-#include <cavm_security.h>
-#include <cavm_dram.h>
+#include <octeontx_security.h>
+#include <octeontx_dram.h>
 
 struct l2c_region {
 	unsigned int  number;

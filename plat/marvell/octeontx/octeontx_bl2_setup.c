@@ -39,14 +39,14 @@
 #include <platform_def.h>
 #include <string.h>
 #include <xlat_tables_v2.h>
-#include <cavm_common.h>
-#include <cavm_board_cfg.h>
+#include <octeontx_common.h>
+#include <octeontx_board_cfg.h>
 #include <stdio.h>
 #include <debug.h>
 #include <libfdt.h>
-#include <cavm_security.h>
-#include <cavm_ecam.h>
-#include <cavm_io_storage.h>
+#include <octeontx_security.h>
+#include <octeontx_ecam.h>
+#include <octeontx_io_storage.h>
 
 
 /* Pointer to memory visible to both BL2 and BL31 for passing data */

@@ -11,9 +11,9 @@
 
 **/
 
-#ifndef __CAVM_IO_STORAGE_H__
-#define __CAVM_IO_STORAGE_H__
+#ifndef __OCTEONTX_DRAM_H__
+#define __OCTEONTX_DRAM_H__
 
-void octeontx_io_setup(void);
+uint64_t octeontx_dram_size();
 
-#endif /* __CAVM_IO_STORAGE_H__ */
+#endif /* __OCTEONTX_DRAM_H__ */

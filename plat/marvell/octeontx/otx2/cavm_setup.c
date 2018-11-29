@@ -16,16 +16,16 @@
 #include <debug.h>
 #include <string.h>
 #include <platform_def.h>
-#include <cavm_common.h>
+#include <octeontx_common.h>
 #include <cgx_intf.h>
 #include <cgx.h>
 #include <cavm_pwrc.h>
-#include <cavm_legacy_pwrc.h>
+#include <octeontx_legacy_pwrc.h>
 #include <gpio_octeontx.h>
 #include <cavm_dt.h>
 #include <cavm_flr.h>
-#include <plat_cavm.h>
-#include <cavm_utils.h>
+#include <plat_octeontx.h>
+#include <octeontx_utils.h>
 
 /* Any SoC family specific setup
  * to be done in BL31 can be initialized
