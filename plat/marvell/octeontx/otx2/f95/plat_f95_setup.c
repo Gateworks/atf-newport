@@ -20,7 +20,7 @@
 #include <bphy.h>
 #include <octeontx_utils.h>
 #include <octeontx_plat_configuration.h>
-#include <cavm_otx2_configuration.h>
+#include <plat_otx2_configuration.h>
 #include <plat_octeontx.h>
 
 static uint64_t msix_addr_save;

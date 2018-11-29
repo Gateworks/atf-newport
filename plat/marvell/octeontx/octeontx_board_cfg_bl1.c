@@ -17,7 +17,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#include <cavm_dt.h>
+#include <plat_board_cfg.h>
 #include <octeontx_board_cfg_bl1.h>
 #include <octeontx_common.h>
 #include <debug.h>

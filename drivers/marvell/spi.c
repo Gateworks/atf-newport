@@ -21,7 +21,7 @@
 #include <assert.h>
 #include <io_driver.h>
 #include <debug.h>
-#include <cavm_dt.h>
+#include <plat_board_cfg.h>
 
 #define PLL_REF_CLK 50000000	/* 50 MHz */
 

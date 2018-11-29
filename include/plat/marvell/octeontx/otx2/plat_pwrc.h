@@ -11,8 +11,8 @@
 
 **/
 
-#ifndef __CAVM_PWRC_H__
-#define __CAVM_PWRC_H__
+#ifndef __PLAT_PWRC_H__
+#define __PLAT_PWRC_H__
 
 #include <cdefs.h>
 #include <psci.h>
@@ -74,4 +74,4 @@ int octeontx_pwrc_setup(void);
 int octeontx_setup_psci_ops(uintptr_t sec_entrypoint,
 			const plat_psci_ops_t **psci_ops);
 
-#endif /* __CAVM_PWRC_H__ */
+#endif /* __PLAT_PWRC_H__ */

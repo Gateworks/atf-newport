@@ -13,9 +13,9 @@
 #include <octeontx_common.h>
 #include <platform_setup.h>
 #include <platform_dt.h>
-#include <cavm_octeontx_scfg.h>
+#include <plat_scfg.h>
 #include <octeontx_scfg_bl1.h>
-#include <cavm_otx2_configuration.h>
+#include <plat_otx2_configuration.h>
 #include <assert.h>
 
 static void fill_qlm_max_lane_num(void)

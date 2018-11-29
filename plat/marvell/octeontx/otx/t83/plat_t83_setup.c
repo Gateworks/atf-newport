@@ -15,11 +15,11 @@
 #include <platform_def.h>
 #include <octeontx_common.h>
 #include <gpio_octeontx.h>
-#include <cavm_dt.h>
+#include <plat_board_cfg.h>
 #include <octeontx_utils.h>
 #include <octeontx_plat_configuration.h>
 #include <plat_octeontx.h>
-#include <cavm_fuse.h>
+#include <plat_fuse.h>
 
 /*
  * SATA to GSER mapping

@@ -11,8 +11,8 @@
 
 **/
 
-#ifndef __CAVM_FLR_H__
-#define __CAVM_FLR_H__
+#ifndef __PLAT_FLR_H__
+#define __PLAT_FLR_H__
 
 #include <arch_helpers.h>
 
@@ -308,4 +308,4 @@ typedef union rvu_af_bar2_sel rvu_af_bar2_sel_t;
 void plat_flr_init(void);
 void octeontx_trap_handler(void * ctx_handle);
 
-#endif /* __CAVM_FLR_H__ */
+#endif /* __PLAT_FLR_H__ */

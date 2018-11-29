@@ -11,8 +11,8 @@
 
 **/
 
-#ifndef __CAVM_SCMI_H__
-#define __CAVM_SCMI_H__
+#ifndef __PLAT_SCMI_H__
+#define __PLAT_SCMI_H__
 
 #include <bakery_lock.h>
 #include <stddef.h>
@@ -352,4 +352,4 @@ static inline void validate_scmi_channel(scmi_channel_t *ch)
 	assert(ch->info && ch->info->scmi_mbx_mem);
 }
 
-#endif	/* __CAVM_SCMI_H__ */
+#endif	/* __PLAT_SCMI_H__ */

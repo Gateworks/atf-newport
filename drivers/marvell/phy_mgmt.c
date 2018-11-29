@@ -22,7 +22,7 @@
 #include <timers.h>
 #include <octeontx_common.h>
 #include <delay_timer.h>
-#include <cavm_dt.h>
+#include <plat_board_cfg.h>
 #include <smi.h>
 #include <cgx_intf.h>
 #include <cgx.h>

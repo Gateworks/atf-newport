@@ -17,13 +17,13 @@
 #include <arch.h>
 #include <platform_def.h>
 #include <octeontx_common.h>
-#include <cavm_dt.h>
+#include <plat_board_cfg.h>
 #include <rvu.h>
 #include <platform.h>
 #include <assert.h>
 #include <debug.h>
 #include <octeontx_utils.h>
-#include <cavm_octeontx_scfg.h>
+#include <plat_scfg.h>
 
 #ifdef DEBUG_ATF_RVU
 #define debug_rvu printf

@@ -19,28 +19,28 @@ ARM_ARCH_MINOR		:=	2
 PLAT_INCLUDES		+=	-Iinclude/plat/marvell/octeontx/otx2			\
 				-Iplat/marvell/octeontx/otx2/f95/include		\
 
-PLAT_BL_COMMON_SOURCES	+=	plat/marvell/octeontx/otx2/f95/plat_cavm_setup.c		\
-				plat/marvell/octeontx/otx2/cavm_security.c		\
-				plat/marvell/octeontx/otx2/cavm_bcfg_init.c		\
+PLAT_BL_COMMON_SOURCES	+=	plat/marvell/octeontx/otx2/f95/plat_f95_setup.c		\
+				plat/marvell/octeontx/otx2/plat_security.c		\
+				plat/marvell/octeontx/otx2/plat_bcfg_init.c		\
 				drivers/marvell/phy_mgmt.c		\
 				drivers/marvell/sfp_mgmt.c		\
 				drivers/marvell/cgx_intf.c		\
 				drivers/marvell/cgx.c		\
-				plat/marvell/octeontx/otx2/cavm_setup.c		\
+				plat/marvell/octeontx/otx2/plat_setup.c		\
 
-BL1_SOURCES		+=	plat/marvell/octeontx/otx2/aarch64/octeontx2_common.S	\
-				plat/marvell/octeontx/otx2/aarch64/plat_cavm_helpers.S	\
-				plat/marvell/octeontx/otx2/cavm_octeontx2_dt.c	\
-				plat/marvell/octeontx/otx2/cavm_octeontx_scfg.c	\
+BL1_SOURCES		+=	plat/marvell/octeontx/otx2/aarch64/plat_octeontx_common.S	\
+				plat/marvell/octeontx/otx2/aarch64/plat_helpers.S	\
+				plat/marvell/octeontx/otx2/plat_board_cfg.c	\
+				plat/marvell/octeontx/otx2/plat_scfg.c	\
 
-BL2_SOURCES		+=	plat/marvell/octeontx/otx2/f95/plat_cavm_ecam.c		\
+BL2_SOURCES		+=	plat/marvell/octeontx/otx2/f95/plat_f95_ecam.c		\
 				drivers/marvell/rvu.c		\
 
-BL31_SOURCES		+=	plat/marvell/octeontx/otx2/aarch64/octeontx2_common.S	\
-				plat/marvell/octeontx/otx2/aarch64/plat_cavm_helpers.S	\
-				plat/marvell/octeontx/otx2/cavm_topology.c		\
+BL31_SOURCES		+=	plat/marvell/octeontx/otx2/aarch64/plat_octeontx_common.S	\
+				plat/marvell/octeontx/otx2/aarch64/plat_helpers.S	\
+				plat/marvell/octeontx/otx2/plat_topology.c		\
 				drivers/marvell/rvu.c		\
-				plat/marvell/octeontx/otx2/cavm_pm.c			\
-				plat/marvell/octeontx/otx2/cavm_pwrc.c		\
-				plat/marvell/octeontx/otx2/cavm_scmi.c		\
+				plat/marvell/octeontx/otx2/plat_pm.c			\
+				plat/marvell/octeontx/otx2/plat_pwrc.c		\
+				plat/marvell/octeontx/otx2/plat_scmi.c		\
 				drivers/marvell/bphy.c			\

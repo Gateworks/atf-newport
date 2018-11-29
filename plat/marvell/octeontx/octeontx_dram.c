@@ -18,7 +18,7 @@
 #include <octeontx_common.h>
 #include <string.h>
 #include <debug.h>
-#include <cavm_octeontx_scfg.h>
+#include <plat_scfg.h>
 #include <octeontx_dram.h>
 
 static inline uint32_t popcnt(uint64_t val)

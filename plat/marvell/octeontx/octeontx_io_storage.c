@@ -41,7 +41,7 @@
 #include <platform_def.h>
 #include <string.h>
 #include <octeontx_common.h>
-#include <cavm_dt.h>
+#include <plat_board_cfg.h>
 
 #include <cavm-arch.h>
 #include <octeontx_io_storage.h>

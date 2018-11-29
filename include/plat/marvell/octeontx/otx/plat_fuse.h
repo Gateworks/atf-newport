@@ -11,8 +11,8 @@
 
 **/
 
-#ifndef __CAVM_FUSE_H__
-#define __CAVM_FUSE_H__
+#ifndef __PLAT_FUSE_H__
+#define __PLAT_FUSE_H__
 
 /* Utils macro for fuses usage */
 #define FUSE_BIT_TO_BYTE_ADDR_SHIFT	0x3
@@ -25,4 +25,4 @@
 
 int plat_fuse_read(int fuse);
 
-#endif /* __CAVM_FUSE_SETUP_H__ */
+#endif /* __PLAT_FUSE_H__ */

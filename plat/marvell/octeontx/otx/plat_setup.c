@@ -19,7 +19,7 @@
 #include <octeontx_legacy_pwrc.h>
 #include <gpio_octeontx.h>
 #include <plat_octeontx.h>
-#include <cavm_fuse.h>
+#include <plat_fuse.h>
 #include <octeontx_utils.h>
 
 /* Any SoC family specific setup

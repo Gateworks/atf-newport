@@ -23,7 +23,7 @@
 #include <psci.h>
 #include <octeontx_legacy_pwrc.h>
 #include <octeontx_common.h>
-#include <cavm_dt.h>
+#include <plat_board_cfg.h>
 #include <gpio_octeontx.h>
 #include <gicv3_setup.h>
 #include <twsi.h>

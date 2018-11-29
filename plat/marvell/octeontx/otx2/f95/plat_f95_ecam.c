@@ -19,8 +19,8 @@
 #include <stdint.h>
 #include <string.h>
 #include <octeontx_ecam.h>
-#include <cavm_dt.h>
-#include <cavm_octeontx_scfg.h>
+#include <plat_board_cfg.h>
+#include <plat_scfg.h>
 #include <cgx.h>
 #include <octeontx_utils.h>
 #include <rvu.h>

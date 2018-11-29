@@ -20,7 +20,7 @@
 #include <platform_def.h>
 #include <platform_dt.h>
 #include <octeontx_common.h>
-#include <cavm_dt.h>
+#include <plat_board_cfg.h>
 #include <cgx.h>
 #include <cgx_intf.h>
 #include <octeontx_utils.h>

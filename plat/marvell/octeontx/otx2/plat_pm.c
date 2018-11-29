@@ -14,7 +14,7 @@
 #include <arch_helpers.h>
 #include <assert.h>
 #include <cassert.h>
-#include <cavm_pwrc.h>
+#include <plat_pwrc.h>
 #include <debug.h>
 #include <errno.h>
 #include <platform_def.h>

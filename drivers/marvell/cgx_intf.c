@@ -21,10 +21,10 @@
 #include <timers.h>
 #include <octeontx_common.h>
 #include <delay_timer.h>
-#include <cavm_dt.h>
+#include <plat_board_cfg.h>
 #include <cgx_intf.h>
 #include <cgx.h>
-#include <cavm_octeontx_scfg.h>
+#include <plat_scfg.h>
 
 /* define DEBUG_ATF_CGX_INTF to enable debug logs */
 #undef DEBUG_ATF_CGX_INTF

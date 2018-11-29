@@ -11,8 +11,8 @@
 
 **/
 
-#ifndef __CAVM_OTX2_CONFIGURATION_H__
-#define __CAVM_OTX2_CONFIGURATION_H__
+#ifndef __PLAT_OTX2_CONFIGURATION_H__
+#define __PLAT_OTX2_CONFIGURATION_H__
 
 #define CN93XX_PKG   1
 #define CN95XXE_PKG  3
@@ -23,4 +23,4 @@ int plat_octeontx_get_cgx_count(void);
 int plat_octeontx_get_gser_count(void);
 int plat_get_altpkg(void);
 
-#endif /* __CAVM_OTX2_CONFIGURATION_H__ */
+#endif /* __PLAT_OTX2_CONFIGURATION_H__ */

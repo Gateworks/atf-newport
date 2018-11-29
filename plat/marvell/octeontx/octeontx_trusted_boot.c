@@ -17,7 +17,7 @@
 #include <stdint.h>
 #include <string.h>
 #include <stdio.h>
-#include <cavm_dt.h>
+#include <plat_board_cfg.h>
 #include <octeontx_common.h>
 #include <mbedtls/sha256.h>
 #include <plat_cavm.h>

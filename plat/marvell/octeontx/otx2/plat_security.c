@@ -17,8 +17,8 @@
 #include <platform_def.h>
 #include <platform_setup.h>
 #include <octeontx_common.h>
-#include <cavm_dt.h>
-#include <cavm_octeontx_scfg.h>
+#include <plat_board_cfg.h>
+#include <plat_scfg.h>
 #include <octeontx_security.h>
 #include <octeontx_dram.h>
 

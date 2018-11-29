@@ -17,11 +17,11 @@
 #include <libfdt.h>
 #include <stdlib.h>
 #include <assert.h>
-#include <cavm_dt.h>
+#include <plat_board_cfg.h>
 #include <octeontx_common.h>
 #include <octeontx_board_cfg_bl1.h>
-#include <cavm_octeontx_scfg.h>
-#include <cavm_otx2_configuration.h>
+#include <plat_scfg.h>
+#include <plat_otx2_configuration.h>
 
 /* define DEBUG_ATF_DTS to enable debug logs */
 #undef DEBUG_ATF_DTS

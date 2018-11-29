@@ -14,13 +14,13 @@
 #include <arch_helpers.h>
 #include <assert.h>
 #include <debug.h>
-#include <cavm_pwrc.h>
+#include <plat_pwrc.h>
 #include <platform_def.h>
 #include <platform_setup.h>
 #include <platform.h>
 #include <string.h>
 #include <octeontx_common.h>
-#include <cavm_scmi.h>
+#include <plat_scmi.h>
 #include <gicv3_setup.h>
 
 /*

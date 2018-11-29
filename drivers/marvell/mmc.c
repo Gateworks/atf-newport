@@ -22,7 +22,7 @@
 #include <assert.h>
 #include <io_driver.h>
 #include <debug.h>
-#include <cavm_dt.h>
+#include <plat_board_cfg.h>
 #include <octeontx_security.h>
 
 #include <io_mmc.h>

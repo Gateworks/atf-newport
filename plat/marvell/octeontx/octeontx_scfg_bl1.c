@@ -12,7 +12,7 @@
 **/
 #include <octeontx_common.h>
 #include <debug.h>
-#include <cavm_octeontx_scfg.h>
+#include <plat_scfg.h>
 #include <octeontx_scfg_bl1.h>
 #include <octeontx_plat_configuration.h>
 

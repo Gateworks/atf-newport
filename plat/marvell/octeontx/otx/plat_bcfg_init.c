@@ -14,8 +14,8 @@
 #include <stdint.h>
 #include <platform_def.h>
 #include <cassert.h>
-#include <cavm_dt.h>
-#include <cavm_octeontx_scfg.h>
+#include <plat_board_cfg.h>
+#include <plat_scfg.h>
 
 plat_octeontx_board_cfg_t * const plat_octeontx_bcfg = (void *)BOARD_CFG_BASE;
 

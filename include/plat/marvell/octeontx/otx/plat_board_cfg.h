@@ -11,8 +11,8 @@
 
 **/
 
-#ifndef _CAVM_DT_H_
-#define _CAVM_DT_H_
+#ifndef __PLAT_BOARD_CFG_H__
+#define __PLAT_BOARD_CFG_H__
 
 #include <octeontx_board_cfg.h>
 
@@ -24,4 +24,4 @@ typedef struct plat_octeontx_board_cfg {
 
 extern plat_octeontx_board_cfg_t * const plat_octeontx_bcfg;
 
-#endif
+#endif /* __PLAT_BOARD_CFG__ */

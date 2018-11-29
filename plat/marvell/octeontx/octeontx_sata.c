@@ -22,7 +22,7 @@
 #include <octeontx_sata.h>
 #include <delay_timer.h>
 #include <string.h>
-#include <cavm_octeontx_scfg.h>
+#include <plat_scfg.h>
 #include <octeontx_dram.h>
 
 #undef SATA_DEBUG

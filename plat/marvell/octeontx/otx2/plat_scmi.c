@@ -17,9 +17,9 @@
 #include <assert.h>
 #include <debug.h>
 #include <delay_timer.h>
-#include <cavm_scmi.h>
+#include <plat_scmi.h>
 #include <mmio.h>
-#include <cavm_dt.h>
+#include <plat_board_cfg.h>
 #include <octeontx_common.h>
 #include <octeontx_utils.h>
 

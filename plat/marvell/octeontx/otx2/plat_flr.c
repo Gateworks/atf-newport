@@ -17,7 +17,7 @@
 #include <platform.h>
 #include <platform_def.h>
 #include <platform_setup.h>
-#include <cavm_flr.h>
+#include <plat_flr.h>
 
 /* Global structures for FLR _SEL handling */
 rvu_af_bar2_sel_t blk_af_bar2_sel[BLKADDR_MAX];

@@ -16,7 +16,7 @@
 #include <string.h>
 #include <assert.h>
 #include <octeontx_common.h>
-#include <cavm_dt.h>
+#include <plat_board_cfg.h>
 #include <octeontx_ecam.h>
 #include <octeontx_utils.h>
 #include <platform_def.h>

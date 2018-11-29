@@ -17,17 +17,17 @@ include plat/marvell/octeontx/platform.mk
 PLAT_INCLUDES		+=	-Iinclude/plat/marvell/octeontx/otx			\
 				-Iplat/marvell/octeontx/otx/t83/include		\
 
-PLAT_BL_COMMON_SOURCES	+=	plat/marvell/octeontx/otx/t83/plat_cavm_setup.c	\
-				plat/marvell/octeontx/otx/cavm_security.c		\
-				plat/marvell/octeontx/otx/cavm_bcfg_init.c		\
-				plat/marvell/octeontx/otx/cavm_setup.c		\
+PLAT_BL_COMMON_SOURCES	+=	plat/marvell/octeontx/otx/t83/plat_t83_setup.c	\
+				plat/marvell/octeontx/otx/plat_security.c		\
+				plat/marvell/octeontx/otx/plat_bcfg_init.c		\
+				plat/marvell/octeontx/otx/plat_setup.c		\
 
 BL1_SOURCES		+=	plat/marvell/octeontx/otx/aarch64/plat_octeontx_common.S	\
-				plat/marvell/octeontx/otx/aarch64/plat_cavm_helpers.S	\
-				plat/marvell/octeontx/otx/cavm_octeontx_dt.c		\
+				plat/marvell/octeontx/otx/aarch64/plat_helpers.S	\
+				plat/marvell/octeontx/otx/plat_board_cfg.c		\
 
-BL2_SOURCES		+=	plat/marvell/octeontx/otx/t83/plat_cavm_ecam.c	\
+BL2_SOURCES		+=	plat/marvell/octeontx/otx/t83/plat_t83_ecam.c	\
 
 BL31_SOURCES		+=	plat/marvell/octeontx/otx/aarch64/plat_octeontx_common.S	\
-				plat/marvell/octeontx/otx/aarch64/plat_cavm_helpers.S	\
-				plat/marvell/octeontx/otx/cavm_topology.c		\
+				plat/marvell/octeontx/otx/aarch64/plat_helpers.S	\
+				plat/marvell/octeontx/otx/plat_topology.c		\
