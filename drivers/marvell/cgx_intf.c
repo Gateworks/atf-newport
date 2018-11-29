@@ -22,8 +22,8 @@
 #include <cavm_common.h>
 #include <delay_timer.h>
 #include <cavm_dt.h>
-#include <cavm_cgx_intf.h>
-#include <cavm_cgx.h>
+#include <cgx_intf.h>
+#include <cgx.h>
 #include <cavm_octeontx_scfg.h>
 
 /* define DEBUG_ATF_CGX_INTF to enable debug logs */

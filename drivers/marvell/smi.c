@@ -21,7 +21,9 @@
 #include <hw_timers.h>
 #include <delay_timer.h>
 #include <string.h>
-#include <cavm_smi.h>
+#include <smi.h>
+
+/* SMI driver for OcteonTX (CN8xxx and CN9xxx) */
 
 #undef DEBUG_ATF_SMI
 

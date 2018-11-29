@@ -18,7 +18,7 @@
 #include <platform_def.h>
 #include <cavm_common.h>
 #include <cavm_dt.h>
-#include <cavm_rvu.h>
+#include <rvu.h>
 #include <platform.h>
 #include <assert.h>
 #include <debug.h>

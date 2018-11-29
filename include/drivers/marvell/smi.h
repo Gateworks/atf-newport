@@ -11,6 +11,9 @@
 
 **/
 
+#ifndef __SMI_H__
+#define __SMI_H__
+
 #define MDIO_TIMEOUT 10000
 
 enum {
@@ -35,3 +38,5 @@ int smi_phy_write(int bus_id, int addr, int devad,
 			 int mode, int regnum, uint16_t value);
 
 int smi_phy_reset(int bus_id);
+
+#endif /* __SMI_H__ */

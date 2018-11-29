@@ -11,10 +11,10 @@
  * IMPLIED.
  *
  */
-#ifndef __CAVM_SFP_MGMT_H__
-#define __CAVM_SFP_MGMT_H__
+#ifndef __SFP_MGMT_H__
+#define __SFP_MGMT_H__
 
-#include <cavm_sfp_intf.h>
+#include <sfp_intf.h>
 
 #define SFP_EEPROM_I2C_ADDR	0x50
 
@@ -339,4 +339,4 @@ int sfp_get_fec_capability(int cgx_id, int lmac_id);
 int sfp_get_speed_capability(int cgx_id, int lmac_id);
 int sfp_is_transceiver_active(int cgx_id, int lmac_id);
 int sfp_is_transceiver_optical(int cgx_id, int lmac_id);
-#endif /* __CAVM_SFP_MGMT_H__ */
+#endif /* __SFP_MGMT_H__ */

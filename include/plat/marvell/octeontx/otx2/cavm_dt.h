@@ -15,9 +15,9 @@
 #define _CAVM_DT_H_
 
 #include <platform_dt.h>
-#include <cavm_cgx.h>
-#include <cavm_sfp_mgmt.h>
-#include <cavm_phy_mgmt.h>
+#include <cgx.h>
+#include <sfp_mgmt.h>
+#include <phy_mgmt.h>
 #include <cavm_board_cfg.h>
 
 /* Define different QLM-MODE variants. These definitions based on the BDK code. */

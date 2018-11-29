@@ -11,8 +11,8 @@
 
 **/
 
-#ifndef __CAVM_MMC_H__
-#define __CAVM_MMC_H__
+#ifndef __MMC_H__
+#define __MMC_H__
 
 #define MMC_READ	0
 #define MMC_WRITE	1
@@ -73,4 +73,4 @@
 int sdmmc_init();
 int sdmmc_rw_data(int write, unsigned long addr, int size, void *buf, int buf_size);
 
-#endif /* __CAVM_MMC_H__ */
+#endif /* __MMC_H__ */

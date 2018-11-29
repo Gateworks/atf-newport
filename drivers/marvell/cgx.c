@@ -21,9 +21,10 @@
 #include <platform_dt.h>
 #include <cavm_common.h>
 #include <cavm_dt.h>
-#include <cavm_cgx.h>
-#include <cavm_cgx_intf.h>
+#include <cgx.h>
+#include <cgx_intf.h>
 #include <cavm_utils.h>
+
 /* define DEBUG_ATF_CGX to enable debug logs */
 #undef DEBUG_ATF_CGX
 

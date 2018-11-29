@@ -22,7 +22,7 @@
 #include <platform.h>
 #include <cavm_common.h>
 #include <timers.h>
-#include <cavm_gicv3.h>
+#include <gicv3_setup.h>
 #include <cavm_security.h>
 #include <cavm_dram.h>
 

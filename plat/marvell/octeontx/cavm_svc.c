@@ -19,11 +19,11 @@
 #include <uuid.h>
 #include <string.h>
 #include <cavm_common.h>
-#include <cavm_gpio.h>
-#include <cavm_bphy.h>
+#include <gpio_octeontx.h>
+#include <bphy.h>
 #include <errno.h>
 #include <libfdt.h>
-#include <cavm_rvu.h>
+#include <rvu.h>
 #include <cavm_dram.h>
 
 /* Cavium OEM Service UUID */

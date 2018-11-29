@@ -24,20 +24,20 @@ PLAT_INCLUDES		:=	-Icsr/include					\
 include lib/xlat_tables_v2/xlat_tables.mk
 
 PLAT_BL_COMMON_SOURCES	:=	drivers/arm/pl011/aarch64/pl011_console.S	\
-				drivers/marvell/cavm_mmc.c		\
-				drivers/marvell/cavm_twsi_core.c		\
-				drivers/marvell/cavm_twsi.c		\
+				drivers/marvell/mmc.c		\
+				drivers/marvell/twsi_core.c		\
+				drivers/marvell/twsi.c		\
 				${LIBFDT_DIR}/fdt.c				\
 				${LIBFDT_DIR}/fdt_ro.c				\
 				${LIBFDT_DIR}/fdt_rw.c				\
 				${LIBFDT_DIR}/fdt_wip.c				\
 				plat/marvell/octeontx/cavm_common.c		\
 				plat/marvell/octeontx/cavm_dram.c			\
-				drivers/marvell/cavm_smi.c		\
+				drivers/marvell/smi.c		\
 				plat/marvell/octeontx/cavm_io_storage.c		\
 				${XLAT_TABLES_LIB_SRCS}				\
 
-BL1_SOURCES		+=	drivers/marvell/cavm_spi.c		\
+BL1_SOURCES		+=	drivers/marvell/spi.c		\
 				drivers/io/io_fip.c				\
 				drivers/io/io_memmap.c				\
 				drivers/io/io_storage.c				\
@@ -47,7 +47,7 @@ BL1_SOURCES		+=	drivers/marvell/cavm_spi.c		\
 				plat/marvell/octeontx/cavm_scfg.c	\
 				plat/marvell/octeontx/aarch64/octeontx_bl1_entrypoint.S	\
 
-BL2_SOURCES		+=	drivers/marvell/cavm_spi.c		\
+BL2_SOURCES		+=	drivers/marvell/spi.c		\
 				drivers/io/io_fip.c				\
 				drivers/io/io_memmap.c				\
 				drivers/io/io_storage.c				\
@@ -57,12 +57,12 @@ BL2_SOURCES		+=	drivers/marvell/cavm_spi.c		\
 BL31_SOURCES		+=	drivers/arm/gic/common/gic_common.c		\
 				drivers/arm/gic/v3/gicv3_main.c			\
 				drivers/arm/gic/v3/gicv3_helpers.c		\
-				drivers/marvell/cavm_spi.c		\
+				drivers/marvell/spi.c		\
 				drivers/delay_timer/delay_timer.c		\
-				drivers/marvell/cavm_gicv3.c			\
-				drivers/marvell/cavm_timers.c		\
+				drivers/marvell/gicv3_setup.c			\
+				drivers/marvell/timers_octeontx.c		\
 				lib/timers/timers.c				\
-				drivers/marvell/cavm_gpio.c		\
+				drivers/marvell/gpio_octeontx.c		\
 				plat/marvell/octeontx/aarch64/cavm_helpers.S 	\
 				plat/marvell/octeontx/bl31_cavm_setup.c		\
 				plat/marvell/octeontx/cavm_legacy_pm.c		\

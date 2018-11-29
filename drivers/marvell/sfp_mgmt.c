@@ -22,9 +22,9 @@
 #include <cavm_common.h>
 #include <delay_timer.h>
 #include <cavm_dt.h>
-#include <cavm_smi.h>
-#include <cavm_cgx_intf.h>
-#include <cavm_cgx.h>
+#include <smi.h>
+#include <cgx_intf.h>
+#include <cgx.h>
 
 /* define DEBUG_ATF_SFP_MGMT to enable debug logs */
 #undef DEBUG_ATF_SFP_MGMT	/* SFP/QSFP management */

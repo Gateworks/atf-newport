@@ -11,8 +11,8 @@
  * IMPLIED.
  *
  */
-#ifndef __CAVM_SFP_INTF_H__
-#define __CAVM_SFP_INTF_H__
+#ifndef __SFP_INTF_H__
+#define __SFP_INTF_H__
 
 #define SFP_MAX_EEPROM_SIZE	0x100
 
@@ -200,4 +200,4 @@ typedef struct sfp_shared_data {
 #endif
 } sfp_shared_data_t;
 
-#endif /* __CAVM_SFP_INTF_H__ */
+#endif /* __SFP_INTF_H__ */

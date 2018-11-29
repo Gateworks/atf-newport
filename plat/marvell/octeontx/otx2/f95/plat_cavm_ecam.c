@@ -21,9 +21,9 @@
 #include <cavm_ecam.h>
 #include <cavm_dt.h>
 #include <cavm_octeontx_scfg.h>
-#include <cavm_cgx.h>
+#include <cgx.h>
 #include <cavm_utils.h>
-#include <cavm_rvu.h>
+#include <rvu.h>
 
 #ifdef DEBUG_ATF_PLAT_ECAM
 #define debug_plat_ecam printf

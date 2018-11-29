@@ -11,8 +11,8 @@
 
 **/
 
-#ifndef __CAVM_TWSI_CORE_H__
-#define __CAVM_TWSI_CORE_H__
+#ifndef __TWSI_CORE_H__
+#define __TWSI_CORE_H__
 
 #define PLL_REF_CLK		50000000	/* 50 MHz */
 #define TWSI_RECOVERY_UDELAY	9
@@ -73,4 +73,4 @@ int twsi_stop(unsigned int twsi_num);
 int twsi_start(unsigned int twsi_num);
 void twsi_set_speed(unsigned int twsi_num, unsigned int speed);
 
-#endif /* __CAVM_TWSI_CORE_H__ */
+#endif /* __TWSI_CORE_H__ */

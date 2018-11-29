@@ -11,8 +11,8 @@
 
 **/
 
-#ifndef __CAVM_GPIO_H__
-#define __CAVM_GPIO_H__
+#ifndef __GPIO_OCTEONTX_H__
+#define __GPIO_OCTEONTX_H__
 
 struct gpio_irq {
 	volatile uint64_t sp;
@@ -42,4 +42,4 @@ extern int gpio_intercept_interrupts;
 extern volatile struct gpio_irq gpio_ints[MAX_GPIO_INTERRUPTS];
 extern uint64_t gpio_intrx_base;
 
-#endif /* __CAVM_GPIO_H__ */
+#endif /* __GPIO_OCTEONTX_H__ */

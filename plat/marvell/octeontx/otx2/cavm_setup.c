@@ -17,11 +17,11 @@
 #include <string.h>
 #include <platform_def.h>
 #include <cavm_common.h>
-#include <cavm_cgx_intf.h>
-#include <cavm_cgx.h>
+#include <cgx_intf.h>
+#include <cgx.h>
 #include <cavm_pwrc.h>
 #include <cavm_legacy_pwrc.h>
-#include <cavm_gpio.h>
+#include <gpio_octeontx.h>
 #include <cavm_dt.h>
 #include <cavm_flr.h>
 #include <plat_cavm.h>

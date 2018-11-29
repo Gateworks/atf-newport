@@ -11,6 +11,8 @@
 
 **/
 
+/* CGX driver for OcteonTX (CN8xxx and CN9xxx) */
+
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>

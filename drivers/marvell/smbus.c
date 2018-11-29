@@ -15,8 +15,8 @@
 #include <stdio.h>
 #include <assert.h>
 #include <cavm_common.h>
-#include <cavm_twsi_core.h>
-#include <cavm_smbus.h>
+#include <twsi_core.h>
+#include <smbus.h>
 
 #define DEBUG_ATF_SMBUS
 

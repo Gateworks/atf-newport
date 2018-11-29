@@ -11,8 +11,8 @@
 
 **/
 
-#ifndef _CAVM_RVU_H_
-#define _CAVM_RVU_H_
+#ifndef __RVU_H_
+#define __RVU_H_
 
 /*
  * Total 40MB of memory is reserved for mailbox and msix table.

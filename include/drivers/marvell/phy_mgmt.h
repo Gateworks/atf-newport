@@ -11,8 +11,8 @@
  * IMPLIED.
  *
  */
-#ifndef __CAVM_PHY_MGMT_H__
-#define __CAVM_PHY_MGMT_H__
+#ifndef __PHY_MGMT_H__
+#define __PHY_MGMT_H__
 
 /* IEEE 802.3 spec CLAUSE 45 MDIO access
  * PMA/PMD control reg bits 6 & 13 determine
@@ -74,4 +74,4 @@ void octeontx_phy_reset(int cgx_id, int lmac_id);
 int octeontx_get_phy_link_status(int cgx_id, int lmac_id,
 				link_state_t *link);
 
-#endif /* __CAVM_PHY_MGMT_H__ */
+#endif /* __PHY_MGMT_H__ */

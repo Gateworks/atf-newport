@@ -16,8 +16,8 @@
 #include <platform_setup.h>
 #include <cavm_common.h>
 #include <cavm_ecam.h>
-#include <cavm_gpio.h>
-#include <cavm_bphy.h>
+#include <gpio_octeontx.h>
+#include <bphy.h>
 #include <cavm_utils.h>
 #include <cavm_plat_configuration.h>
 #include <cavm_otx2_configuration.h>

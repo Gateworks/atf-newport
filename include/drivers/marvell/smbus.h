@@ -11,8 +11,8 @@
 
 **/
 
-#ifndef __CAVM_SMBUS_H__
-#define __CAVM_SMBUS_H__
+#ifndef __SMBUS_H__
+#define __SMBUS_H__
 
 #define SMBUS_HOST_ADDR		0x08
 #define SMBUS_MAX_BLOCK_BYTES	255

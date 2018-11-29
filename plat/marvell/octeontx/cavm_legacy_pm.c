@@ -24,9 +24,9 @@
 #include <cavm_legacy_pwrc.h>
 #include <cavm_common.h>
 #include <cavm_dt.h>
-#include <cavm_gpio.h>
-#include <cavm_gicv3.h>
-#include <cavm_twsi.h>
+#include <gpio_octeontx.h>
+#include <gicv3_setup.h>
+#include <twsi.h>
 #include <cavm_dram.h>
 
 #undef GICD_SETSPI_NSR

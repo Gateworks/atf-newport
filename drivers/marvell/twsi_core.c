@@ -19,7 +19,7 @@
 #include <delay_timer.h>
 #include <stdio.h>
 #include <cavm_common.h>
-#include <cavm_twsi_core.h>
+#include <twsi_core.h>
 
 #undef DEBUG_ATF_TWSI
 

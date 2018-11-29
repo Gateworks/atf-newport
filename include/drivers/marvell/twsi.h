@@ -11,13 +11,12 @@
 
 **/
 
-#ifndef __CAVM_GICV3_H__
-#define __CAVM_GICV3_H__
+#ifndef __TWSI_H__
+#define __TWSI_H__
 
-void octeontx_gic_driver_init(void);
-void octeontx_gic_init(void);
-void octeontx_gic_pcpu_init(void);
-void octeontx_gic_cpuif_enable(void);
-void octeontx_gic_cpuif_disable(void);
+int octeontx_twsi_send(unsigned int twsi_num,
+			uint16_t addr, const uint8_t *buffer, size_t size);
+int octeontx_twsi_recv(unsigned int twsi_num,
+			uint16_t addr, uint8_t *buffer, size_t size);
 
-#endif /* __CAVM_GICV3_H__ */
+#endif /* __TWSI_H__ */

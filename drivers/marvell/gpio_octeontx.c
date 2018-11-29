@@ -10,6 +10,9 @@
   WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 
 **/
+
+/* CGX driver for OcteonTX (CN8xxx and CN9xxx) */
+
 #include <arch_helpers.h>
 #include <assert.h>
 #include <debug.h>
@@ -25,7 +28,7 @@
 #include <cavm_ecam.h>
 #include <cavm_svc.h>
 #include <cavm_common.h>
-#include <cavm_gpio.h>
+#include <gpio_octeontx.h>
 
 #define SPSR_ISR	((1ULL << SPSR_E_SHIFT) | (3 << SPSR_AIF_SHIFT))
 #define SCR_ISR		(SCR_NS_BIT | SCR_TWE_BIT | SCR_TWI_BIT | SCR_RW_BIT)

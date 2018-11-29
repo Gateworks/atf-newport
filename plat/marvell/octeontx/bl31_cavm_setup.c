@@ -47,7 +47,7 @@
 #include <timers.h>
 #include <platform_def.h>
 #include <plat_cavm.h>
-#include <cavm_gicv3.h>
+#include <gicv3_setup.h>
 #include <cavm_security.h>
 #include <cavm_dram.h>
 
