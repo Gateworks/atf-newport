@@ -66,7 +66,7 @@ static void initialize_interrupt_array(interrupt_prop_t *intr_array)
 		intr_array[idx].intr_num = GPIO_SPI_IRQ(i);
 		intr_array[idx].intr_pri = 0;
 		intr_array[idx].intr_grp = INTR_TYPE_EL3;
-		intr_array[idx].intr_cfg = GIC_INTR_CFG_LEVEL;
+		intr_array[idx].intr_cfg = GIC_INTR_CFG_EDGE;
 		idx++;
 	}
 
@@ -75,7 +75,7 @@ static void initialize_interrupt_array(interrupt_prop_t *intr_array)
 		intr_array[idx].intr_num = BPHY_PSM_IRQ(i);
 		intr_array[idx].intr_pri = 0;
 		intr_array[idx].intr_grp = INTR_TYPE_EL3;
-		intr_array[idx].intr_cfg = GIC_INTR_CFG_LEVEL;
+		intr_array[idx].intr_cfg = GIC_INTR_CFG_EDGE;
 		idx++;
 	}
 }
