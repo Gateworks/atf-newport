@@ -340,8 +340,8 @@ static int octeontx2_parse_rvu_admin(const void *fdt, int parentoffset,
 	/* Get number of MSIX */
 	val = fdt_getprop(fdt, offset, "num-msix-vec", &len);
 	if (!val) {
-		WARN("RVU: No num-msix-vec, using %d number of MSIX\n"
-		     "              for node %s\n", DEFAULT_MSIX_AF, name);
+		VERBOSE("RVU: No num-msix-vec, using %d number of MSIX\n"
+		        "              for node %s\n", DEFAULT_MSIX_AF, name);
 		sw_pf->num_msix_vec = DEFAULT_MSIX_AF;
 	} else {
 		sw_pf->num_msix_vec = fdt32_to_cpu(*val);
@@ -352,7 +352,7 @@ static int octeontx2_parse_rvu_admin(const void *fdt, int parentoffset,
 	if (!val) {
 		/* If there's no such property in FDT
 		 * try to assign default VFS */
-		WARN("RVU: No num-rvu-vfs property for node %s\n", name);
+		VERBOSE("RVU: No num-rvu-vfs property for node %s\n", name);
 		sw_pf->num_rvu_vfs = octeontx2_handle_num_rvu_vfs(DEFAULT_AF_PF0_VFS,
 					DEFAULT_AF_PF0_VFS, sum_vfs, name);
 	} else {
@@ -399,8 +399,8 @@ static int octeontx2_parse_sw_rvu(const void *fdt, int parentoffset,
 	/* Get number of MSIX */
 	val = fdt_getprop(fdt, offset, "num-msix-vec", &len);
 	if (!val) {
-		WARN("RVU: No num-msix-vec, using %d number of MSIX\n"
-		     "              for node %s\n", DEFAULT_MSIX_SW, name);
+		VERBOSE("RVU: No num-msix-vec, using %d number of MSIX\n"
+		        "              for node %s\n", DEFAULT_MSIX_SW, name);
 		sw_pf->num_msix_vec = DEFAULT_MSIX_SW;
 	} else {
 		sw_pf->num_msix_vec = fdt32_to_cpu(*val);
@@ -411,7 +411,7 @@ static int octeontx2_parse_sw_rvu(const void *fdt, int parentoffset,
 	if (!val) {
 		/* If there's no such property in FDT
 		 * try to assign default VFS */
-		WARN("RVU: No num-rvu-vfs property for node %s\n", name);
+		VERBOSE("RVU: No num-rvu-vfs property for node %s\n", name);
 		sw_pf->num_rvu_vfs = octeontx2_handle_num_rvu_vfs(DEFAULT_VFS,
 					DEFAULT_VFS, sum_vfs, name);
 	} else {
@@ -1492,7 +1492,7 @@ static void octeontx2_cgx_lmacs_check_linux(const void *fdt,
 		} else {
 			/* If there's no such property in FDT
 			 * try to assign default VFS */
-			WARN("RVU: No num-rvu-vfs property for node %s\n", name);
+			VERBOSE("RVU: No num-rvu-vfs property for node %s\n", name);
 			lmac->num_rvu_vfs = octeontx2_handle_num_rvu_vfs(DEFAULT_VFS,
 						DEFAULT_VFS, fdt_vfs, node_name);
 		}
@@ -1504,7 +1504,7 @@ static void octeontx2_cgx_lmacs_check_linux(const void *fdt,
 		if (val)
 			lmac->num_msix_vec = fdt32_to_cpu(*val);
 		else {
-			WARN("CGX%d.LMAC%d: num-msix-vec not set, configuring %d number of MSIX.\n",
+			VERBOSE("CGX%d.LMAC%d: num-msix-vec not set, configuring %d number of MSIX.\n",
 					cgx_idx, lmac_idx, DEFAULT_MSIX_LMAC);
 			lmac->num_msix_vec = DEFAULT_MSIX_LMAC;
 		}
