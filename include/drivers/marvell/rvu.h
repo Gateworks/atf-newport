@@ -38,6 +38,12 @@
 /* Number of MSI-X per VF */
 #define RVU_VF_INT_VEC_COUNT			1
 
+/* Bit 0 is MBOX in RVU_PF_INT register */
+#define RVU_PF_INT_SET_MBOX		1
+
+/* Bit 0 is MBOX in RVU_VF_INT register */
+#define RVU_VF_INT_SET_MBOX		1
+
 #define FALSE	0
 #define TRUE	1
 

@@ -252,6 +252,16 @@ static int octeontx_get_max_rvu_pfs()
 	return priv_const.s.pfs;
 }
 
+/* returns max VFs supported by RVU */
+static int octeontx_get_max_rvu_vfs(void)
+{
+	union cavm_rvu_priv_const priv_const;
+
+	priv_const.u = CSR_READ(CAVM_RVU_PRIV_CONST);
+
+	return priv_const.s.max_vfs_per_pf;
+}
+
 static void dump_rvu_devs()
 {
 	int pf;
@@ -631,6 +641,37 @@ static int octeontx2_get_max_nix_lfs(int nix)
 	return nixx_af_const2.s.lfs;
 }
 
+/* This is workaround for errata RVU-35948 */
+static void rvu_errata_35948(void)
+{
+	int pf, mbox, vf;
+	uint64_t int_reg;
+
+	/* Write zeros to RVU_AF_AFPF()_MBOX() */
+	for (pf = 0; pf < octeontx_get_max_rvu_pfs(); pf++) {
+		for (mbox = 0; mbox < RVU_MBOX_NUM; mbox++)
+			CSR_WRITE(CAVM_RVU_AF_AFPFX_MBOXX(pf, mbox), 0);
+	}
+	/* Write zeros to RVU_PF_VF()_PFVF_MBOX() */
+	for (vf = 0; vf < octeontx_get_max_rvu_vfs(); vf++) {
+		for (mbox = 0; mbox < RVU_MBOX_NUM; mbox++)
+			CSR_WRITE(CAVM_RVU_PF_VFX_PFVF_MBOXX(vf, mbox), 0);
+	}
+
+	/* Clear RVU_PF_INT[MBOX] */
+	for (mbox = 0; mbox < RVU_MBOX_NUM; mbox++) {
+		int_reg = CSR_READ(CAVM_RVU_PF_INT);
+		int_reg |= RVU_PF_INT_SET_MBOX;
+		CSR_WRITE(CAVM_RVU_PF_INT, int_reg);
+	}
+	/* Clear RVU_VF_INT[MBOX] */
+	for (mbox = 0; mbox < RVU_MBOX_NUM; mbox++) {
+		int_reg = CSR_READ(CAVM_RVU_VF_INT);
+		int_reg |= RVU_VF_INT_SET_MBOX;
+		CSR_WRITE(CAVM_RVU_VF_INT, int_reg);
+	}
+}
+
 /* Exported functions */
 int octeontx2_clear_lf_to_pf_mapping()
 {
@@ -653,6 +694,10 @@ void octeontx_rvu_init()
 {
 	int pf, rc;
 	int npalf_id = 0, nixlf_id = 0;
+
+	/* This is workaround for errata RVU-35948 */
+	if (IS_OCTEONTX_PASS(read_midr(), T96PARTNUM, 1, 0))
+		rvu_errata_35948();
 
 	rc = octeontx_init_rvu_from_fdt();
 	if (rc < 0)

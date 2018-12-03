@@ -182,4 +182,7 @@
 
 #define ECAM_PF_BAR2(x)		CAVM_ECAM_BAR_E_ECAMX_PF_BAR2_CN9(x)
 
+/* Number of MBOX for AFPF and PFVF */
+#define RVU_MBOX_NUM		2
+
 #endif
