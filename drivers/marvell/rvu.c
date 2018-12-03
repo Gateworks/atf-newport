@@ -440,6 +440,17 @@ static int msix_enable()
 		/* Increment number of already configured MSI-Xes */
 		msix_conf_count += rvu_dev[pf].pf_num_msix_vec;
 
+		/* This is workaround for errata RVU-36163 */
+		if (IS_OCTEONTX_VAR(read_midr(), T96PARTNUM, 1) ||
+		    IS_OCTEONTX_VAR(read_midr(), F95PARTNUM, 1) ||
+		    IS_OCTEONTX_PASS(read_midr(), T96PARTNUM, 2, 0)) {
+			/* If pf_msix_offset needs alignment */
+			if (pf_msix_offset & RVU_36163_ALIGNMENT_MASK) {
+				pf_msix_offset += RVU_36163_OFFSET_ALIGNMENT;
+				pf_msix_offset &= ~(RVU_36163_ALIGNMENT_MASK);
+			}
+		}
+
 		/*
 		 * If such occurs, we're overlapping with VF base, should
 		 * never be reached since we're provisioning at most
@@ -461,16 +472,31 @@ static int msix_enable()
 			msix_conf_count += ((rvu_dev[pf].num_vfs &
 				(MAX_RVU_VFS_PER_PF - 1)) *
 				rvu_dev[pf].vf_num_msix_vec);
+
+			/* This is workaround for errata RVU-36163 */
+			if (IS_OCTEONTX_VAR(read_midr(), T96PARTNUM, 1) ||
+			    IS_OCTEONTX_VAR(read_midr(), F95PARTNUM, 1) ||
+			    IS_OCTEONTX_PASS(read_midr(), T96PARTNUM, 2, 0)) {
+				/* If vf_msix_offset needs alignment */
+				if (vf_msix_offset & RVU_36163_ALIGNMENT_MASK) {
+					vf_msix_offset +=
+						RVU_36163_OFFSET_ALIGNMENT;
+					vf_msix_offset &=
+						~(RVU_36163_ALIGNMENT_MASK);
+				}
+			}
 		}
 
 		/*
 		 * Check if requested number of MSI-X does
-		 * not exceedes number of available MSI-X by HRM.
+		 * not exceedes number of available MSI-X by HRM or
+		 * vf_msix_offset is not inside RVU memory.
 		 * If such configuration is requested,
 		 * print error and not configure more PFs.
 		 * Return pf index which has invalid configuration.
 		 */
-		if (msix_conf_count > priv_const.s.max_msix) {
+		if (msix_conf_count > priv_const.s.max_msix ||
+			vf_msix_offset > RVU_MEM_END) {
 			ERROR("Invalid RVU MSI-X configuration!\n");
 			ERROR("Disabling PFs (%d:%d)\n",
 			      pf, (octeontx_get_max_rvu_pfs() - 1));

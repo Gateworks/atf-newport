@@ -21,6 +21,14 @@
 #define VF_MBOX_SIZE		0x002000000
 #define PF_MSIX_BASE		(VF_MBOX_BASE + VF_MBOX_SIZE)
 #define VF_MSIX_BASE_IDX_NUMBER	0x2000
+#define RVU_MEM_END			(RVU_MEM_SIZE + RVU_MEM_BASE)
+
+/*
+ * According to errata RVU-36163 in RVU_PRIV_PF()_MSIX_CFG fields
+ * PF_MSIXT_OFFSET and VF_MSIXT_OFFSET has to be aligned to multiple of 64.
+ */
+#define RVU_36163_OFFSET_ALIGNMENT	(1 << 6)
+#define RVU_36163_ALIGNMENT_MASK    (RVU_36163_OFFSET_ALIGNMENT - 1)
 
 #define DEVID_MASK	0xff
 #define CLASS_CODE_MASK	0xffffff

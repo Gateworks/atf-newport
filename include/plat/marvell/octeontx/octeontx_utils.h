@@ -10,9 +10,15 @@
 
 #include <arch_helpers.h>
 
+#define IS_OCTEONTX_PN(midr, partnum)			\
+	(((midr) >> MIDR_PN_SHIFT & MIDR_PN_MASK) == (partnum))
+
+#define IS_OCTEONTX_VAR(midr, partnum, hi)				\
+	(IS_OCTEONTX_PN(midr, partnum) &&				\
+	 (((midr) >> MIDR_VAR_SHIFT & MIDR_VAR_MASK) == (hi) - 1))	\
+
 #define IS_OCTEONTX_PASS(midr, partnum, hi, low)			\
-	((((midr) >> MIDR_PN_SHIFT & MIDR_PN_MASK) == (partnum)) &&	\
-	 (((midr) >> MIDR_VAR_SHIFT & MIDR_VAR_MASK) == (hi) - 1) &&	\
+	(IS_OCTEONTX_VAR(midr, partnum, hi) &&				\
 	 (((midr) >> MIDR_REV_SHIFT & MIDR_REV_MASK) == (low)))
 
 #define octeontx_read8(addr)       (*(volatile uint8_t *)(addr))
