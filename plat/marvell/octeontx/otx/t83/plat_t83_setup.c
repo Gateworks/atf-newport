@@ -14,6 +14,7 @@
 #include <octeontx_plat_configuration.h>
 #include <plat_octeontx.h>
 #include <plat_fuse.h>
+#include <octeontx_irqs_def.h>
 
 /*
  * SATA to GSER mapping
@@ -158,11 +159,11 @@ void plat_set_gpio_msix_vectors(int gpio_num, int irq_num, int enable)
 		vector_ptr += 0x10;
 		octeontx_write64(vector_ptr, irq_num);
 	} else {
-		octeontx_write64(vector_ptr, OCTEONTX_IRQ_GPIO_NSEC);
+		octeontx_write64(vector_ptr, GPIO_SPI_IRQ_NSEC(0));
 
 		/* INTR_PINX_CLEAR vector */
 		vector_ptr += 0x10;
-		octeontx_write64(vector_ptr, OCTEONTX_IRQ_GPIO_NSEC);
+		octeontx_write64(vector_ptr, GPIO_SPI_IRQ_NSEC(0));
 	}
 }
 

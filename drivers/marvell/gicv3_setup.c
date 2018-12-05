@@ -12,6 +12,7 @@
 #include <octeontx_common.h>
 #include <gicv3_setup.h>
 #include <octeontx_utils.h>
+#include <octeontx_irqs_def.h>
 
 #undef GICD_SETSPI_NSR
 #undef GICD_CLRSPI_NSR
@@ -25,76 +26,61 @@
 #include <platform.h>
 #include <interrupt_mgmt.h>
 
+/*
+ * It is number of all interrupts configured in GIC.
+ * Every GIC interrupt has to be defined in interrupt_array.
+ * There is one interrupt for secure timer, interrupts for GPIO and
+ * interrupts for BPHY.
+ */
+#define NUMBER_OF_GIC_INTERRUPTS	(1 + GPIO_SPI_IRQS + BPHY_PSM_IRQS_NUMBER)
+
 #if IMAGE_BL31
 /* The GICv3 driver only needs to be initialized in EL3 */
 uintptr_t rdistif_base_addrs[PLATFORM_CORE_COUNT];
 
 /*
  * Array of interrupts to be configured by GIC driver
- * Define G0/G1S interrupts via Interrupt type,
- * one of INTR_TYPE_EL3, INTR_TYPE_S_EL1, INTR_TYPE_NS
  */
-static const interrupt_prop_t interrupt_array[] = {
-	INTR_PROP_DESC(OCTEONTX_IRQ_SEC_PHY_TIMER, 0, INTR_TYPE_EL3,
-			GIC_INTR_CFG_LEVEL),
-	INTR_PROP_DESC(OCTEONTX_IRQ_GPIO_BASE, 0, INTR_TYPE_EL3,
-			GIC_INTR_CFG_EDGE),
-	INTR_PROP_DESC(OCTEONTX_IRQ_GPIO_BASE + 1, 0, INTR_TYPE_EL3,
-			GIC_INTR_CFG_EDGE),
-	INTR_PROP_DESC(OCTEONTX_IRQ_GPIO_BASE + 2, 0, INTR_TYPE_EL3,
-			GIC_INTR_CFG_EDGE),
-	INTR_PROP_DESC(OCTEONTX_IRQ_GPIO_BASE + 3, 0, INTR_TYPE_EL3,
-			GIC_INTR_CFG_EDGE),
-	INTR_PROP_DESC(OCTEONTX_IRQ_BPHY_PSM_ERRINT, 0, INTR_TYPE_EL3,
-			GIC_INTR_CFG_EDGE),
-	INTR_PROP_DESC(OCTEONTX_IRQ_BPHY_PSM_QOVF0, 0, INTR_TYPE_EL3,
-			GIC_INTR_CFG_EDGE),
-	INTR_PROP_DESC(OCTEONTX_IRQ_BPHY_PSM_QOVF1, 0, INTR_TYPE_EL3,
-			GIC_INTR_CFG_EDGE),
-	INTR_PROP_DESC(OCTEONTX_IRQ_BPHY_PSM_QTO0, 0, INTR_TYPE_EL3,
-			GIC_INTR_CFG_EDGE),
-	INTR_PROP_DESC(OCTEONTX_IRQ_BPHY_PSM_QTO1, 0, INTR_TYPE_EL3,
-			GIC_INTR_CFG_EDGE),
-	INTR_PROP_DESC(OCTEONTX_IRQ_BPHY_PSM_JERR0, 0, INTR_TYPE_EL3,
-			GIC_INTR_CFG_EDGE),
-	INTR_PROP_DESC(OCTEONTX_IRQ_BPHY_PSM_JERR1, 0, INTR_TYPE_EL3,
-			GIC_INTR_CFG_EDGE),
-	INTR_PROP_DESC(OCTEONTX_IRQ_BPHY_PSM_JERR2, 0, INTR_TYPE_EL3,
-			GIC_INTR_CFG_EDGE),
-	INTR_PROP_DESC(OCTEONTX_IRQ_BPHY_PSM_JNFAT0, 0, INTR_TYPE_EL3,
-			GIC_INTR_CFG_EDGE),
-	INTR_PROP_DESC(OCTEONTX_IRQ_BPHY_PSM_JNFAT1, 0, INTR_TYPE_EL3,
-			GIC_INTR_CFG_EDGE),
-	INTR_PROP_DESC(OCTEONTX_IRQ_BPHY_PSM_JNFAT2, 0, INTR_TYPE_EL3,
-			GIC_INTR_CFG_EDGE),
-	INTR_PROP_DESC(OCTEONTX_IRQ_BPHY_PSM_JTO0, 0, INTR_TYPE_EL3,
-			GIC_INTR_CFG_EDGE),
-	INTR_PROP_DESC(OCTEONTX_IRQ_BPHY_PSM_JTO1, 0, INTR_TYPE_EL3,
-			GIC_INTR_CFG_EDGE),
-	INTR_PROP_DESC(OCTEONTX_IRQ_BPHY_PSM_JTO2, 0, INTR_TYPE_EL3,
-			GIC_INTR_CFG_EDGE),
-	INTR_PROP_DESC(OCTEONTX_IRQ_BPHY_PSM_DERR0, 0, INTR_TYPE_EL3,
-			GIC_INTR_CFG_EDGE),
-	INTR_PROP_DESC(OCTEONTX_IRQ_BPHY_PSM_DERR1, 0, INTR_TYPE_EL3,
-			GIC_INTR_CFG_EDGE),
-	INTR_PROP_DESC(OCTEONTX_IRQ_BPHY_PSM_DERR2, 0, INTR_TYPE_EL3,
-			GIC_INTR_CFG_EDGE),
-	INTR_PROP_DESC(OCTEONTX_IRQ_BPHY_PSM_AERR0, 0, INTR_TYPE_EL3,
-			GIC_INTR_CFG_EDGE),
-	INTR_PROP_DESC(OCTEONTX_IRQ_BPHY_PSM_AERR1, 0, INTR_TYPE_EL3,
-			GIC_INTR_CFG_EDGE),
-	INTR_PROP_DESC(OCTEONTX_IRQ_BPHY_PSM_AERR2, 0, INTR_TYPE_EL3,
-			GIC_INTR_CFG_EDGE),
-	INTR_PROP_DESC(OCTEONTX_IRQ_BPHY_PSM_MTO0, 0, INTR_TYPE_EL3,
-			GIC_INTR_CFG_EDGE),
-	INTR_PROP_DESC(OCTEONTX_IRQ_BPHY_PSM_MTO1, 0, INTR_TYPE_EL3,
-			GIC_INTR_CFG_EDGE),
-	INTR_PROP_DESC(OCTEONTX_IRQ_BPHY_PSM_MTO2, 0, INTR_TYPE_EL3,
-			GIC_INTR_CFG_EDGE)
-};
+static interrupt_prop_t interrupt_array[NUMBER_OF_GIC_INTERRUPTS];
+
+#define ADD_BPHY_PSM_INTERUPTS_TO_ARRAY()
+
+/*
+ * Method to initialize all GIC interrupts.
+ * Define G0/G1S interrupts via Interrupt type,
+ * one of INTR_TYPE_EL3, INTR_TYPE_S_EL1
+ */
+static void initialize_interrupt_array(interrupt_prop_t *intr_array)
+{
+	int i, idx = 0;
+
+	/* Configure Secure Timer Interrupt */
+	intr_array[idx].intr_num = SEC_TIMER_PPI_IRQ;
+	intr_array[idx].intr_pri = 0;
+	intr_array[idx].intr_grp = INTR_TYPE_EL3;
+	intr_array[idx].intr_cfg = GIC_INTR_CFG_LEVEL;
+	idx++;
+
+	/* Configure GPIO IRQs */
+	for (i = 0; i < GPIO_SPI_IRQS; i++) {
+		intr_array[idx].intr_num = GPIO_SPI_IRQ(i);
+		intr_array[idx].intr_pri = 0;
+		intr_array[idx].intr_grp = INTR_TYPE_EL3;
+		intr_array[idx].intr_cfg = GIC_INTR_CFG_LEVEL;
+		idx++;
+	}
+
+	/* Configure BPHY PSM IRQs */
+	for (i = 0; i < BPHY_PSM_IRQS_NUMBER; i++) {
+		intr_array[idx].intr_num = BPHY_PSM_IRQ(i);
+		intr_array[idx].intr_pri = 0;
+		intr_array[idx].intr_grp = INTR_TYPE_EL3;
+		intr_array[idx].intr_cfg = GIC_INTR_CFG_LEVEL;
+		idx++;
+	}
+}
 
 static gicv3_driver_data_t octeontx_gic_data = {
-	.interrupt_props = interrupt_array,
 	.interrupt_props_num = ARRAY_SIZE(interrupt_array),
 	.rdistif_num = PLATFORM_CORE_COUNT,
 	.rdistif_base_addrs = rdistif_base_addrs,
@@ -125,6 +111,10 @@ void octeontx_gic_driver_init(void)
 	        cfg_ctlr.s.dis_cpu_if_load_balancer = 1;
 	        CSR_WRITE(CAVM_GIC_CFG_CTLR, cfg_ctlr.u);
 	}
+
+	/* Initialize array of interrupts to be configured by GIC driver */
+	initialize_interrupt_array(interrupt_array);
+	octeontx_gic_data.interrupt_props = interrupt_array;
 
 	octeontx_gic_data.gicd_base = CAVM_GIC_BAR_E_GIC_PF_BAR0;
 	octeontx_gic_data.gicr_base = GIC_PF_BAR4;

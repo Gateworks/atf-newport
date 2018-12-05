@@ -18,6 +18,7 @@
 #include <platform_def.h>
 #include <runtime_svc.h>
 #include <interrupt_mgmt.h>
+#include <octeontx_irqs_def.h>
 
 #include <octeontx_ecam.h>
 #include <octeontx_svc.h>
@@ -29,7 +30,6 @@
 
 /* */
 #define MAX_BPHY_PSM_INTS	23
-#define OCTEONTX_BPHY_PSM_IRQ	23
 
 struct bphy_psm_irq {
 	volatile uint64_t sp;
@@ -71,7 +71,7 @@ static volatile int irq_cpu_lock_counter;
 volatile struct bphy_psm_irq bphy_ints[MAX_BPHY_PSM_INTS] = {0};
 
 static volatile struct irq_cpu el3_bphy_irqs[] =
-	{[0 ... (OCTEONTX_BPHY_PSM_IRQ - 1)] = { -1, 0 }};
+	{[0 ... (BPHY_PSM_IRQS_NUMBER - 1)] = { -1, 0 }};
 
 static void prepare_el0_isr_callback(uint64_t irq_num, uint64_t counter)
 {
@@ -135,11 +135,11 @@ uint64_t bphy_psm_irq_handler(uint32_t id, uint32_t flags, void *cookie)
 
 	cpu = plat_my_core_pos();
 
-	index = id - OCTEONTX_IRQ_BPHY_PSM_ERRINT;
+	index = id - BPHY_PSM_IRQ_BASE;
 
 	INFO("%s: id=0x%x, index=0x%x\n", __func__, id, index);
 	/* For all invalid interrupts, clear interrupt and exit. */
-	if ((index < 0) || (index >= OCTEONTX_BPHY_PSM_IRQ)) {
+	if ((index < 0) || (index >= BPHY_PSM_IRQS_NUMBER)) {
 		ERROR("Invalid BPHY PSM interrupt %x\n", id);
 		return 0;
 	}
@@ -217,7 +217,7 @@ static int setup_interrupt_entries(int irq_num, int cpu, int enable)
 		if (el3_bphy_irqs[irq_num].counter == 0) {
 			el3_bphy_irqs[irq_num].cpu = cpu;
 			el3_bphy_irqs[irq_num].counter = 1;
-			select_irq = OCTEONTX_IRQ_BPHY_PSM_ERRINT + irq_num;
+			select_irq = BPHY_PSM_IRQ(irq_num);
 			gicv3_set_spi_routing(select_irq,
 					      GICV3_IRM_PE,
 					      read_mpidr());
@@ -229,7 +229,7 @@ static int setup_interrupt_entries(int irq_num, int cpu, int enable)
 	} else {
 		if ((el3_bphy_irqs[irq_num].counter != 0)
 		    && (el3_bphy_irqs[irq_num].cpu == cpu)) {
-			select_irq = OCTEONTX_IRQ_BPHY_PSM_ERRINT + irq_num;
+			select_irq = BPHY_PSM_IRQ(irq_num);
 			el3_bphy_irqs[irq_num].counter--;
 			if (el3_bphy_irqs[irq_num].counter == 0)
 				el3_bphy_irqs[irq_num].cpu = -1;
@@ -363,8 +363,7 @@ int cavm_register_bphy_intr_handlers(void)
 
 	for (i = 0; i < MAX_BPHY_PSM_INTS; i++) {
 		rc = register_interrupt_handler(INTR_TYPE_EL3,
-						OCTEONTX_IRQ_BPHY_PSM_ERRINT +
-						i, bphy_psm_irq_handler);
+						BPHY_PSM_IRQ(i), bphy_psm_irq_handler);
 		if (rc) {
 			ERROR("err %d registering BPHY secure IRQ handler\n", rc);
 			break;

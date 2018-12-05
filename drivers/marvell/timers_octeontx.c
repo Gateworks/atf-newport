@@ -13,6 +13,7 @@
 #include <octeontx_common.h>
 #include <hw_timers.h>
 #include <delay_timer.h>
+#include <octeontx_irqs_def.h>
 
 #undef DEBUG_TIMERS
 
@@ -113,7 +114,7 @@ int plat_timer_register_irq(hw_timer_isr_t isr)
 
 	set_interrupt_rm_flag(flags, SECURE);
 	rc = register_interrupt_handler(INTR_TYPE_EL3,
-			OCTEONTX_IRQ_SEC_PHY_TIMER,
+			SEC_TIMER_PPI_IRQ,
 			plat_timer_irq_handler);
 	if (rc) {
 		printf("err %d while registering ARCH_PHYS_TIMER "
