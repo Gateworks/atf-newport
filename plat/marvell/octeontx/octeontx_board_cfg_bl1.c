@@ -34,9 +34,9 @@ static void print_board_variables()
 	INFO("GPIO Shutdown pin OUT = 0x%x\n",
 		plat_octeontx_bcfg->bcfg.gpio_shutdown_ctl_out);
 #if TRUSTED_BOARD_BOOT
-	INFO("TRUST-ROT-ADDR = 0x%lx\n",
+	INFO("TRUST-ROT-ADDR = 0x%llx\n",
 		plat_octeontx_bcfg->bcfg.trust_rot_addr);
-	INFO("TRUST-BSSK-ADDR = 0x%lx\n",
+	INFO("TRUST-BSSK-ADDR = 0x%llx\n",
 		plat_octeontx_bcfg->bcfg.trust_key_addr);
 #endif
 	INFO("======================\n");
