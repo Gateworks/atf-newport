@@ -14,7 +14,7 @@
 #include <plat_board_cfg.h>
 #include <octeontx_common.h>
 #include <mbedtls/sha256.h>
-#include <plat_cavm.h>
+#include <plat_octeontx.h>
 
 #define ROTPK_BYTES			64
 
