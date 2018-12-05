@@ -9,7 +9,6 @@
 #include <debug.h>
 #include <arch.h>
 #include <platform_def.h>
-#include <platform_setup.h>
 #include <octeontx_common.h>
 #include <plat_board_cfg.h>
 #include <plat_scfg.h>
@@ -48,6 +47,15 @@ void octeontx_security_setup(void)
 	union cavm_ccs_asc_regionx_attr ccs_asc_attr;
 	struct ccs_region *region = ccs_map;
 	uint64_t dram_end;
+	uint8_t lmc_mask, lmc_mode;
+
+	/*
+	 * BDK has configured CCS ASC REGION 0. We will use the same lmc_mask and
+	 * lmc_mode for every configured region.
+	 */
+	ccs_asc_attr.u = CSR_READ(CAVM_CCS_ASC_REGIONX_ATTR(0));
+	lmc_mode = ccs_asc_attr.s.lmc_mode;
+	lmc_mask = ccs_asc_attr.s.lmc_mask;
 
 	while (region->number != LAST_CCS_REGION) {
 		dram_end = octeontx_dram_size() - 1;
@@ -62,8 +70,8 @@ void octeontx_security_setup(void)
 		 * For given memory region, grant access
 		 * to this region to all LMCs
 		 */
-		ccs_asc_attr.s.lmc_mode = CAVM_CCS_LMC_MODE;
-		ccs_asc_attr.s.lmc_mask = CAVM_CCS_LMC_MASK;
+		ccs_asc_attr.s.lmc_mode = lmc_mode;
+		ccs_asc_attr.s.lmc_mask = lmc_mask;
 		ccs_asc_attr.s.s_en  = region->secure;
 		ccs_asc_attr.s.ns_en = !region->secure;
 		CSR_WRITE(CAVM_CCS_ASC_REGIONX_ATTR(region->number), ccs_asc_attr.u);

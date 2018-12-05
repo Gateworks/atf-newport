@@ -9,20 +9,6 @@
 #define __T96_PLAT_SETUP_H__
 
 /*
- * Defines used for CN96xx to enable particular
- * LMC access to particular ASC_REGION
- */
-
-#define CAVM_CCS_LMC_MASK_LMC0	0x1
-#define CAVM_CCS_LMC_MASK_LMC1	0x2
-#define CAVM_CCS_LMC_MASK_LMC2	0x4
-
-/* 3 LMCs per node */
-#define CAVM_CCS_LMC_MODE	CAVM_CCS_LMC_MODE_E_STRIPE_3
-#define CAVM_CCS_LMC_MASK	(CAVM_CCS_LMC_MASK_LMC0 | CAVM_CCS_LMC_MASK_LMC1 | \
-					CAVM_CCS_LMC_MASK_LMC2)
-
-/*
  * The array mapping platform core position (implemented by plat_my_core_pos())
  * to the SCMI power domain ID implemented by SCP.
  *
