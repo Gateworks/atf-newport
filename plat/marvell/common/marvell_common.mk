@@ -13,9 +13,6 @@ VERSION_STRING			+=(Marvell-${SUBVERSION})
 
 SEPARATE_CODE_AND_RODATA	:= 1
 
-# flag to switch from PLL to ARO
-ARO_ENABLE			:= 0
-$(eval $(call add_define,ARO_ENABLE))
 # Enable/Disable LLC
 LLC_ENABLE			:= 1
 $(eval $(call add_define,LLC_ENABLE))

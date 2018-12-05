@@ -718,10 +718,6 @@ int ble_plat_setup(int *skip)
 	if (ble_get_ap_type() == CHIP_ID_AP807)
 		ap807_clocks_init(freq_mode);
 
-#if ARO_ENABLE
-	init_aro();
-#endif
-
 	/* Do required AP setups for BLE stage */
 	ap_ble_init();
 

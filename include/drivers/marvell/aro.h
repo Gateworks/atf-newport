@@ -7,20 +7,6 @@
 #ifndef _ARO_H_
 #define _ARO_H_
 
-enum hws_freq {
-	CPU_FREQ_2000,
-	CPU_FREQ_1800,
-	CPU_FREQ_1600,
-	CPU_FREQ_1400,
-	CPU_FREQ_1300,
-	CPU_FREQ_1200,
-	CPU_FREQ_1000,
-	CPU_FREQ_600,
-	CPU_FREQ_800,
-	DDR_FREQ_LAST,
-	DDR_FREQ_SAR
-};
-
 enum cpu_clock_freq_mode {
 	CPU_2000_DDR_1200_RCLK_1200 = 0x0,
 	CPU_2000_DDR_1050_RCLK_1050 = 0x1,
@@ -41,7 +27,5 @@ enum cpu_clock_freq_mode {
 	CPU_1000_DDR_800_RCLK_800   = 0x1D,
 	CPU_DDR_RCLK_INVALID
 };
-
-int init_aro(void);
 
 #endif /* _ARO_H_ */

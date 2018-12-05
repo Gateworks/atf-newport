@@ -5,7 +5,7 @@
  * https://spdx.org/licenses
  */
 
-/* CCU unit device driver for Marvell AP807, AP807 and AP810 SoCs */
+/* CCU unit device driver for Marvell AP807 and AP807 SoCs */
 
 #ifndef _CCU_H_
 #define _CCU_H_

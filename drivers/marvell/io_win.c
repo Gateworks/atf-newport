@@ -5,7 +5,7 @@
  * https://spdx.org/licenses
  */
 
-/* IO Window unit device driver for Marvell AP807, AP807 and AP810 SoCs */
+/* IO Window unit device driver for Marvell AP807 and AP807 */
 
 #include <armada_common.h>
 #include <debug.h>

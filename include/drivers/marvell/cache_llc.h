@@ -6,7 +6,7 @@
  */
 
 /* LLC driver is the Last Level Cache (L3C) driver
- * for Marvell SoCs in AP806, AP807, and AP810
+ * for Marvell SoCs in AP806 and AP807
  */
 
 #ifndef _CACHE_LLC_H_
