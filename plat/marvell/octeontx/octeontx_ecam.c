@@ -298,57 +298,6 @@ static void init_uaa(uint64_t config_base, uint64_t config_size)
 	}
 }
 
-static void init_twsi(uint64_t config_base, uint64_t config_size)
-{
-	struct pcie_config *pconfig = (struct pcie_config *)config_base;
-	uint8_t cap_pointer = pconfig->cap_pointer;
-	uint16_t table_size = 0;
-	uint8_t bir = 0;
-	uint64_t vector_base = 0;
-	uint32_t devfn = (config_base >> 12) & 0xffUL;
-	int i;
-	uint32_t *sctl = (uint32_t *) (config_base + CAVM_PCCPF_XXX_VSEC_SCTL);
-	union cavm_pccpf_xxx_vsec_ctl vsec_ctl;
-
-	vsec_ctl.u = octeontx_read32(config_base + CAVM_PCCPF_XXX_VSEC_CTL);
-
-	debug_io("Using TWSI func = 0x%x\n", devfn);
-
-	if ((devfn & 0x7) != plat_octeontx_bcfg->bcfg.bmc_boot_twsi_bus)
-		return;
-
-	debug_io("setting secure/phys @%p\n", (void *)sctl);
-	*sctl |= 3;
-	printf("TWSI1(%d) init called config_base:%llx size:%llx\n",
-	       vsec_ctl.s.inst_num, config_base, config_size);
-	print_config_space(pconfig);
-	enable_msix(config_base, cap_pointer, &table_size, &bir);
-	/* initialise MSI-X Vector table */
-
-	/* even though size and bir got from generic code
-	 * this is highly specific to cn88xx pass 1.0
-	 */
-	if (1 && table_size) {
-		debug_io("table_size :%x bir:%1x \n", table_size, bir);
-		vector_base = get_bar_val(pconfig, bir);
-		debug_io("MSI-X vector base:%lx\n", vector_base);
-
-		/* configure interrupt vectors first */
-		for (i = 0; i < table_size; i++) {
-			octeontx_write64(vector_base, (i % 2) ? CAVM_GICD_CLRSPI_SR : CAVM_GICD_SETSPI_SR);
-			vector_base += 8;
-			octeontx_write64(vector_base, OCTEONTX_TWSI_1_S_IRQ);
-			vector_base += 8;
-			debug_io("TWSI1(%d): Vector:%d address :%lx irq:%d\n",
-				 vsec_ctl.s.inst_num, i,
-				 ((i % 2) ? CAVM_GICD_CLRSPI_SR : CAVM_GICD_SETSPI_SR),
-				 OCTEONTX_TWSI_1_S_IRQ);
-
-		}
-
-	}
-}
-
 static void init_pem(uint64_t config_base, uint64_t config_size)
 {
 	struct pcie_config *pconfig = (struct pcie_config *)config_base;
@@ -511,7 +460,6 @@ static void init_iobn5(uint64_t config_base, uint64_t config_size)
 struct ecam_init_callback init_callbacks[] = {
 	{0xa008, 0x177d, init_smmu},
 	{0xa00f, 0x177d, init_uaa},
-	{0xa012, 0x177d, init_twsi},
 	{0xa017, 0x177d, init_gti},
 	{0xa020, 0x177d, init_pem},
 	{0xa027, 0x177d, init_iobn},
