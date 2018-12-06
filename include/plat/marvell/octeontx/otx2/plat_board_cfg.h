@@ -92,7 +92,6 @@ typedef struct phy_config {
 	int mdio_bus;
 	int clause;
 	char phy_compatible[64];
-	phy_vsc7224_t vsc7224;
 } phy_config_t;
 
 /* Define LMAC structure. */

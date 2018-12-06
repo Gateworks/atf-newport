@@ -783,112 +783,6 @@ static void octeontx2_fdt_gpio_get_info_by_phandle(const void *fdt, int offset,
 				cgx_idx, lmac_idx);
 }
 
-static void octeontx2_fdt_parse_vsc7224_reginit(const void *fdt, int offset,
-			phy_vsc7224_t *vsc7224, int cgx_idx, int lmac_idx)
-{
-	int i;
-	int len;
-	const uint32_t *reginit;
-
-	reginit = fdt_getprop(fdt, offset, "vitesse,reg-init", &len);
-	if (!reginit) {
-		WARN("CGX%d.LMAC%d: Cannot find \"vitesse,reg-init\" parameter.\n",
-				cgx_idx, lmac_idx);
-		return;
-	}
-	debug_dts("CGX%d.LMAC%d: \"vitesse,reg-init\" length_bytes = %d, length_words32 = %ld.\n",
-			cgx_idx, lmac_idx, len, len / sizeof(*reginit));
-	debug_dts("CGX%d.LMAC%d: output \"vitesse,reg-init\":\n",
-			cgx_idx, lmac_idx);
-	len = len / sizeof(*reginit) - 1;
-	for (i = 0; i < len; i += 2) {
-		debug_dts("CGX%d.LMAC%d: \t0x%x 0x%x\n", cgx_idx, lmac_idx,
-				fdt32_to_cpu(*(reginit + i)),
-				fdt32_to_cpu(*(reginit + i + 1)));
-	}
-}
-
-static void octeontx2_fdt_parse_vsc7224_channels(const void *fdt, int offset,
-			phy_vsc7224_t *vsc7224, int cgx_idx, int lmac_idx)
-{
-	int num_chan = 0, reg = 0, len = 0, i;
-	phy_vsc7224_chan_t *chan;
-	const uint32_t *tap_values;
-
-	/* walk through all channels */
-	do {
-		offset = fdt_node_offset_by_compatible(fdt, offset,
-					"vitesse,vsc7224-channel");
-		if (offset < 0) {
-			WARN("CGX%d.LMAC%d: no valid 7224 channels found\n",
-					cgx_idx, lmac_idx);
-			break;
-		}
-		reg = octeontx2_fdt_get_int32(fdt, "reg", offset);
-		if (reg < 0 || reg > 3) {
-			ERROR("CGX%d.LMAC%d: invalid channel, only 4 channels are valid\n",
-					cgx_idx, lmac_idx);
-			break;
-		}
-		chan = &vsc7224->channel[num_chan];
-
-		if (fdt_getprop(fdt, offset, "direction-tx", NULL) != NULL)
-			chan->is_tx = 1;
-		else
-			chan->is_tx = 0;
-
-		if (fdt_getprop(fdt, offset, "pretap-disable", NULL) != NULL)
-			chan->pretap_disable = 1;
-		else
-			chan->pretap_disable = 0;
-
-		if (fdt_getprop(fdt, offset, "posttap-disable", NULL) != NULL)
-			chan->posttap_disable = 1;
-		else
-			chan->posttap_disable = 0;
-
-		if (fdt_getprop(fdt, offset, "maintap-disable", NULL) != NULL)
-			chan->maintap_disable = 1;
-		else
-			chan->maintap_disable = 0;
-
-		tap_values = fdt_getprop(fdt, offset, "taps", &len);
-		if (!tap_values) {
-			WARN("CGX%d.LMAC%d: no taps defined for vsc7224 channel %d\n",
-					cgx_idx, lmac_idx, num_chan);
-			break;
-		}
-		if (len % 16) {
-			WARN("CGX%d.LMAC%d: tap values not defined in 16-bit format\n",
-					cgx_idx, lmac_idx);
-			break;
-		}
-		chan->num_taps = len/16;
-		debug_dts("CGX%d.LMAC%d: taps %d chan %d\n", cgx_idx, lmac_idx,
-				chan->num_taps, num_chan);
-
-		/* Read all the tap values */
-		for (i = 0; i < chan->num_taps; i++) {
-			chan->taps[i].len =
-					fdt32_to_cpu(tap_values[i * 4 + 0]);
-			chan->taps[i].main_tap =
-					fdt32_to_cpu(tap_values[i * 4 + 1]);
-			chan->taps[i].pre_tap =
-					fdt32_to_cpu(tap_values[i * 4 + 2]);
-			chan->taps[i].post_tap =
-					fdt32_to_cpu(tap_values[i * 4 + 3]);
-			debug_dts("CGX%d.LMAC%d: tap %d: len: %d, main_tap: 0x%x, pre_tap:0x%x, post_tap: 0x%x\n",
-				cgx_idx, lmac_idx,
-				i, chan->taps[i].len,
-				chan->taps[i].main_tap,
-				chan->taps[i].pre_tap,
-				chan->taps[i].post_tap);
-		}
-
-		num_chan++;
-	} while (num_chan < 4);
-}
-
 static void octeontx2_fdt_parse_qsfp_info(const void *fdt, int offset,
 		int cgx_idx, int lmac_idx)
 {
@@ -1000,44 +894,6 @@ static void octeontx2_fdt_parse_sfp_info(const void *fdt, int offset,
 			&sfp_info->tx_fault, cgx_idx, lmac_idx);
 	octeontx2_fdt_gpio_get_info_by_phandle(fdt, offset, "rx_los",
 			&sfp_info->rx_los, cgx_idx, lmac_idx);
-}
-
-static void octeontx2_fdt_parse_vsc7224_info(const void *fdt,
-		phy_vsc7224_t *vsc7224, int cgx_idx, int lmac_idx)
-{
-	int offset = -1;
-	int parent = -1;
-	const uint32_t *reg;
-
-	offset = fdt_node_offset_by_compatible(fdt, offset,
-					"vitesse,vsc7224");
-
-	if (offset < 0) {
-		ERROR("CGX%d.LMAC%d: Cannot parse FDT info for VSC7224 phy.\n",
-				cgx_idx, lmac_idx);
-		return;
-	}
-
-	reg = fdt_getprop(fdt, offset, "reg", NULL);
-	if (!reg) {
-		ERROR("CGX%d.LMAC%d: \"vitesse,vsc7224\" section doesn't contain the reg property.\n",
-				cgx_idx, lmac_idx);
-		return;
-	}
-	vsc7224->i2c_addr = fdt32_to_cpu(*reg);
-	parent = fdt_parent_offset(fdt, offset);
-	octeontx2_fdt_get_i2c_bus_info(fdt, parent, &vsc7224->i2c_bus,
-			cgx_idx, lmac_idx);
-	vsc7224->name = fdt_get_name(fdt, offset, NULL);
-	debug_dts("CGX%d.LMAC%d: PHY name %s i2c_addr 0x%x\n",
-			cgx_idx, lmac_idx,
-			vsc7224->name, vsc7224->i2c_addr);
-
-	octeontx2_fdt_parse_vsc7224_reginit(fdt, offset, vsc7224,
-			cgx_idx, lmac_idx);
-
-	octeontx2_fdt_parse_vsc7224_channels(fdt, offset, vsc7224,
-			cgx_idx, lmac_idx);
 }
 
 fec_type_t octeontx2_handle_fec_config(int mode, int req_fec)
@@ -1432,19 +1288,11 @@ static void octeontx2_cgx_lmacs_check_linux(const void *fdt,
 
 				strncpy(phy->phy_compatible, str, 64);
 
-				if (!strcmp(str, "vitesse,vsc7224")) {
-					phy_vsc7224_t *vsc;
-
-					vsc = &lmac->phy_config.vsc7224;
-					octeontx2_fdt_parse_vsc7224_info(fdt, vsc,
-						cgx_idx, lmac_idx);
-				} else {
-					phy->phy_addr =	octeontx2_fdt_get_int32(fdt,
-							"reg", phy_offset);
-					phy->mdio_bus = octeontx2_fdt_get_bus(fdt,
-							phy_offset, cgx_idx,
-							lmac_idx);
-				}
+				phy->phy_addr =	octeontx2_fdt_get_int32(fdt,
+						"reg", phy_offset);
+				phy->mdio_bus = octeontx2_fdt_get_bus(fdt,
+						phy_offset, cgx_idx,
+						lmac_idx);
 			}
 		}
 
