@@ -706,12 +706,30 @@ static void sdmmc_switch_clock(int clock_hz)
 	sdmmc_set_watchdog(MMC_WATCHDOG_MS);
 }
 
+static inline int emmc_is_dev_initialized(void)
+{
+	if (!mmc_drv.is_init)
+		return 0;
+
+	/*
+	 * if bus_id didn't change then device is already initialized
+	 * with correct parameters
+	 */
+	return mmc_drv.bus_id == plat_octeontx_bcfg->bcfg.boot_dev.cs;
+}
+
 int sdmmc_dev_init(io_dev_info_t *dev_info, const uintptr_t init_params)
 {
 	uint64_t emm_rsp_sts;
 	sd_if_cond_t sd_if_cond;
 	uint32_t ocr;
 
+	if (emmc_is_dev_initialized()) {
+		INFO("MMC: Device already initialized, skip emmc_dev_init\n");
+		return 0;
+	}
+
+	mmc_drv.is_init = 0;
 	mmc_drv.bus_id = plat_octeontx_bcfg->bcfg.boot_dev.cs;
 	mmc_drv.sector_size = MMC_SECTOR_SIZE;
 
@@ -766,6 +784,8 @@ int sdmmc_dev_init(io_dev_info_t *dev_info, const uintptr_t init_params)
 
 	/* Do not set clock over 100MHz, for more info see errata EMM-35321 */
 	sdmmc_switch_clock(MMC_CLOCK_HZ);
+
+	mmc_drv.is_init = 1;
 	return 0;
 }
 

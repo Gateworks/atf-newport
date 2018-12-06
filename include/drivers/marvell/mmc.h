@@ -238,6 +238,7 @@ typedef struct mio_emm_driver {
 	uint8_t bus_width;
 	uint8_t sector_mode;
 	uint8_t is_sd;
+	uint8_t is_init;
 } mio_emm_driver_t;
 
 int sdmmc_dev_init(io_dev_info_t *dev_info, const uintptr_t init_params);
