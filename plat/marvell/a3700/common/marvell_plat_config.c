@@ -4,9 +4,10 @@
  * SPDX-License-Identifier:	BSD-3-Clause
  * https://spdx.org/licenses
  */
+
+#include <bl_common.h>
 #include <io_addr_dec.h>
 #include <mvebu_def.h>
-#include <types.h>
 
 struct dec_win_config io_dec_win_conf[] = {
 	/* dec_reg_base  win_attr  max_dram_win  max_remap  win_offset */

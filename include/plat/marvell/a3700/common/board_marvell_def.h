@@ -1,16 +1,12 @@
 /*
- * Copyright (C) 2016 Marvell International Ltd.
+ * Copyright (C) 2018 Marvell International Ltd.
  *
  * SPDX-License-Identifier:	BSD-3-Clause
  * https://spdx.org/licenses
  */
-/*
- * Copyright (c) 2015, ARM Limited and Contributors. All rights reserved.
- *
- * SPDX-License-Identifier: BSD-3-Clause
- */
-#ifndef __BOARD_MARVELL_DEF_H__
-#define __BOARD_MARVELL_DEF_H__
+
+#ifndef BOARD_MARVELL_DEF_H
+#define BOARD_MARVELL_DEF_H
 
 /*
  * Required platform porting definitions common to all ARM
@@ -18,9 +14,7 @@
  */
 
 /* Size of cacheable stacks */
-#if DEBUG_XLAT_TABLE
-# define PLATFORM_STACK_SIZE 0x800
-#elif IMAGE_BL1
+#if IMAGE_BL1
 #if TRUSTED_BOARD_BOOT
 # define PLATFORM_STACK_SIZE 0x1000
 #else
@@ -71,7 +65,7 @@
 #elif IMAGE_BL31
 # define MAX_XLAT_TABLES		4
 #elif IMAGE_BL32
-#  define MAX_XLAT_TABLES               4
+#  define MAX_XLAT_TABLES		4
 #endif
 
 #define MAX_IO_DEVICES			3
@@ -79,5 +73,4 @@
 
 #define PLAT_MARVELL_TRUSTED_SRAM_SIZE	0x80000	/* 512 KB */
 
-
-#endif /* __BOARD_MARVELL_DEF_H__ */
+#endif /* BOARD_MARVELL_DEF_H */

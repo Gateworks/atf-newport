@@ -5,8 +5,8 @@
  * https://spdx.org/licenses
  */
 
-#ifndef _IO_ADDR_DEC_H_
-#define _IO_ADDR_DEC_H_
+#ifndef IO_ADDR_DEC_H
+#define IO_ADDR_DEC_H
 
 #include <stdint.h>
 
@@ -16,12 +16,12 @@
 #define DRAM_CPU_DEC_TARGET_NUM	0
 
 /*
-* Not all configurable decode windows could be used for dram, some units have
-* to reserve one decode window for other unit they have to communicate with;
-* for example, DMA engineer has 3 configurable windows, but only two could be
-* for dram while the last one has to be for pcie, so for DMA, its max_dram_win
-* is 2.
-*/
+ * Not all configurable decode windows could be used for dram, some units have
+ * to reserve one decode window for other unit they have to communicate with;
+ * for example, DMA engineer has 3 configurable windows, but only two could be
+ * for dram while the last one has to be for pcie, so for DMA, its max_dram_win
+ * is 2.
+ */
 struct dec_win_config {
 	uint32_t dec_reg_base; /* IO address decoder register base address */
 	uint32_t win_attr;	/* IO address decoder windows attributes */
@@ -63,5 +63,4 @@ int init_io_addr_dec(struct dram_win_map *dram_wins_map,
 		     struct dec_win_config *io_dec_config,
 		     uint32_t io_unit_num);
 
-#endif /* _IO_ADDR_DEC_H_ */
-
+#endif /* IO_ADDR_DEC_H */

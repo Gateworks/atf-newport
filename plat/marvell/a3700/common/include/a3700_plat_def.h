@@ -4,8 +4,9 @@
  * SPDX-License-Identifier:	BSD-3-Clause
  * https://spdx.org/licenses
  */
-#ifndef __MVEBU_A3700_DEF_H__
-#define __MVEBU_A3700_DEF_H__
+
+#ifndef A3700_PLAT_DEF_H
+#define A3700_PLAT_DEF_H
 
 #include <marvell_def.h>
 
@@ -59,9 +60,9 @@
 #define MVEBU_NB_GPIO_IRQ_REG_BASE		(MVEBU_NB_REGS_BASE + 0xC00)
 #define MVEBU_SB_GPIO_REG_BASE			(MVEBU_SB_REGS_BASE + 0x800)
 #define MVEBU_SB_GPIO_IRQ_REG_BASE		(MVEBU_SB_REGS_BASE + 0xC00)
-#define MVEBU_NB_SB_IRQ_REG_BASE                (MVEBU_REGS_BASE + 0x8A00)
+#define MVEBU_NB_SB_IRQ_REG_BASE		(MVEBU_REGS_BASE + 0x8A00)
 
-/* North Bridge GPIO selection regsiter */
+/* North Bridge GPIO selection register */
 #define MVEBU_NB_GPIO_SEL_REG			(MVEBU_NB_GPIO_REG_BASE + 0x30)
 #define MVEBU_NB_GPIO_OUTPUT_EN_HIGH_REG	(MVEBU_NB_GPIO_REG_BASE + 0x04)
 /* I2C1 GPIO Enable bit offset */
@@ -118,4 +119,4 @@
  */
 #define MVEBU_COMPHY_REG_BASE			(MVEBU_REGS_BASE + 0x18300)
 
-#endif /* __MVEBU_A3700_DEF_H__ */
+#endif /* A3700_PLAT_DEF_H */

@@ -4,8 +4,9 @@
  * SPDX-License-Identifier:	BSD-3-Clause
  * https://spdx.org/licenses
  */
-#ifndef __PLAT_MARVELL_H__
-#define __PLAT_MARVELL_H__
+
+#ifndef PLAT_MARVELL_H
+#define PLAT_MARVELL_H
 
 #include <bl_common.h>
 #include <cassert.h>
@@ -21,7 +22,7 @@ extern const mmap_region_t plat_marvell_mmap[];
 #define MARVELL_CASSERT_MMAP						\
 	CASSERT((ARRAY_SIZE(plat_marvell_mmap) + MARVELL_BL_REGIONS)	\
 		<= MAX_MMAP_REGIONS,					\
-		assert_max_mmap_regions);
+		assert_max_mmap_regions)
 
 /*
  * Utility functions common to Marvell standard platforms
@@ -37,6 +38,12 @@ void marvell_setup_page_tables(uintptr_t total_base,
 			       uintptr_t coh_limit
 #endif
 );
+
+/* Console utility functions */
+void marvell_console_boot_init(void);
+void marvell_console_boot_end(void);
+void marvell_console_runtime_init(void);
+void marvell_console_runtime_end(void);
 
 /* IO storage utility functions */
 void marvell_io_setup(void);
@@ -61,7 +68,7 @@ uint32_t marvell_get_spsr_for_bl33_entry(void);
 
 /* BL31 utility functions */
 void marvell_bl31_early_platform_setup(bl31_params_t *from_bl2,
-				void *plat_params_from_bl2);
+				       void *plat_params_from_bl2);
 void marvell_bl31_platform_setup(void);
 void marvell_bl31_plat_runtime_setup(void);
 void marvell_bl31_plat_arch_setup(void);
@@ -90,4 +97,4 @@ void plat_marvell_interconnect_enter_coherency(void);
 
 const mmap_region_t *plat_marvell_get_mmap(void);
 
-#endif /* __PLAT_MARVELL_H__ */
+#endif /* PLAT_MARVELL_H */

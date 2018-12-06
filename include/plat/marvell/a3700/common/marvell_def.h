@@ -1,16 +1,12 @@
 /*
- * Copyright (C) 2016 Marvell International Ltd.
+ * Copyright (C) 2018 Marvell International Ltd.
  *
  * SPDX-License-Identifier:	BSD-3-Clause
  * https://spdx.org/licenses
  */
-/*
- * Copyright (c) 2015, ARM Limited and Contributors. All rights reserved.
- *
- * SPDX-License-Identifier: BSD-3-Clause
- */
-#ifndef __MARVELL_DEF_H__
-#define __MARVELL_DEF_H__
+
+#ifndef MARVELL_DEF_H
+#define MARVELL_DEF_H
 
 #include <arch.h>
 #include <common_def.h>
@@ -26,11 +22,11 @@
 /* Special value used to verify platform parameters from BL2 to BL31 */
 #define MARVELL_BL31_PLAT_PARAM_VAL		0x0f1e2d3c4b5a6978ULL
 
-#define PLAT_MARVELL_NORTHB_COUNT	1
+#define PLAT_MARVELL_NORTHB_COUNT		1
 
-#define PLAT_MARVELL_CLUSTER_COUNT	1
+#define PLAT_MARVELL_CLUSTER_COUNT		1
 
-#define MARVELL_CACHE_WRITEBACK_SHIFT	6
+#define MARVELL_CACHE_WRITEBACK_SHIFT		6
 
 /*
  * Macros mapping the MPIDR Affinity levels to MARVELL Platform Power levels.
@@ -48,7 +44,9 @@
 #define MARVELL_LOCAL_STATE_RUN	0
 /* Local power state for retention. Valid only for CPU power domains */
 #define MARVELL_LOCAL_STATE_RET	1
-/* Local power state for OFF/power-down. Valid for CPU and cluster power domains */
+/* Local power state for OFF/power-down.
+ * Valid for CPU and cluster power domains
+ */
 #define MARVELL_LOCAL_STATE_OFF	2
 
 /* The first 4KB of Trusted SRAM are used as shared memory */
@@ -57,14 +55,14 @@
 #define MARVELL_SHARED_RAM_SIZE		0x00001000	/* 4 KB */
 
 /* The remaining Trusted SRAM is used to load the BL images */
-#define MARVELL_BL_RAM_BASE		(MARVELL_SHARED_RAM_BASE +	\
+#define MARVELL_BL_RAM_BASE		(MARVELL_SHARED_RAM_BASE + \
 					 MARVELL_SHARED_RAM_SIZE)
-#define MARVELL_BL_RAM_SIZE		(PLAT_MARVELL_TRUSTED_SRAM_SIZE -	\
+#define MARVELL_BL_RAM_SIZE		(PLAT_MARVELL_TRUSTED_SRAM_SIZE - \
 					 MARVELL_SHARED_RAM_SIZE)
 
 #define MARVELL_DRAM_BASE		ULL(0x0)
 #define MARVELL_DRAM_SIZE		ULL(0x20000000)
-#define MARVELL_DRAM_END		(MARVELL_DRAM_BASE +		\
+#define MARVELL_DRAM_END		(MARVELL_DRAM_BASE + \
 					 MARVELL_DRAM_SIZE - 1)
 
 #define MARVELL_IRQ_SEC_PHY_TIMER		29
@@ -78,9 +76,9 @@
 #define MARVELL_IRQ_SEC_SGI_6		14
 #define MARVELL_IRQ_SEC_SGI_7		15
 
-#define MARVELL_MAP_SHARED_RAM		MAP_REGION_FLAT(		\
-						MARVELL_SHARED_RAM_BASE,	\
-						MARVELL_SHARED_RAM_SIZE,	\
+#define MARVELL_MAP_SHARED_RAM		MAP_REGION_FLAT(		 \
+						MARVELL_SHARED_RAM_BASE, \
+						MARVELL_SHARED_RAM_SIZE, \
 						MT_MEMORY | MT_RW | MT_SECURE)
 
 #define MARVELL_MAP_DRAM		MAP_REGION_FLAT(		\
@@ -94,18 +92,18 @@
  * different BL stages which need to be mapped in the MMU.
  */
 #if USE_COHERENT_MEM
-#define MARVELL_BL_REGIONS			3
+#define MARVELL_BL_REGIONS		3
 #else
-#define MARVELL_BL_REGIONS			2
+#define MARVELL_BL_REGIONS		2
 #endif
 
-#define MAX_MMAP_REGIONS		(PLAT_MARVELL_MMAP_ENTRIES +	\
+#define MAX_MMAP_REGIONS		(PLAT_MARVELL_MMAP_ENTRIES + \
 					 MARVELL_BL_REGIONS)
 
 #define MARVELL_CONSOLE_BAUDRATE	115200
 
 /****************************************************************************
- * Required platform porting definitions common to all MARVELL standard platforms
+ * Required platform porting definitions common to all MARVELL std. platforms
  ****************************************************************************
  */
 #define PLAT_PHY_ADDR_SPACE_SIZE	(1ULL << 32)
@@ -140,15 +138,15 @@
  * addresses.
  *****************************************************************************
  */
-#define BL1_RO_BASE			PLAT_MARVELL_TRUSTED_ROM_BASE
+#define BL1_RO_BASE		PLAT_MARVELL_TRUSTED_ROM_BASE
 #define BL1_RO_LIMIT		(PLAT_MARVELL_TRUSTED_ROM_BASE	\
-					 + PLAT_MARVELL_TRUSTED_ROM_SIZE)
+					+ PLAT_MARVELL_TRUSTED_ROM_SIZE)
 /*
  * Put BL1 RW at the top of the Trusted SRAM.
  */
-#define BL1_RW_BASE			(MARVELL_BL_RAM_BASE +		\
-						MARVELL_BL_RAM_SIZE -	\
-						0x6000)
+#define BL1_RW_BASE		(MARVELL_BL_RAM_BASE +		\
+					MARVELL_BL_RAM_SIZE -	\
+					PLAT_MARVELL_MAX_BL1_RW_SIZE)
 #define BL1_RW_LIMIT		(MARVELL_BL_RAM_BASE + MARVELL_BL_RAM_SIZE)
 
 /*****************************************************************************
@@ -158,8 +156,8 @@
 /*
  * Put BL2 just below BL31.
  */
-#define BL2_BASE			(BL31_BASE - 0xC000)
-#define BL2_LIMIT			BL31_BASE
+#define BL2_BASE		(BL31_BASE - PLAT_MARVELL_MAX_BL2_SIZE)
+#define BL2_LIMIT		BL31_BASE
 
 /*****************************************************************************
  * BL31 specific defines.
@@ -168,11 +166,12 @@
 /*
  * Put BL31 at the top of the Trusted SRAM.
  */
-#define BL31_BASE			(MARVELL_BL_RAM_BASE +		\
-						MARVELL_BL_RAM_SIZE -	\
-						0x5D000)
-#define BL31_PROGBITS_LIMIT		BL1_RW_BASE
-#define BL31_LIMIT			(MARVELL_BL_RAM_BASE + MARVELL_BL_RAM_SIZE)
+#define BL31_BASE		(MARVELL_BL_RAM_BASE + \
+					MARVELL_BL_RAM_SIZE - \
+					PLAT_MARVEL_MAX_BL31_SIZE)
+#define BL31_PROGBITS_LIMIT	BL1_RW_BASE
+#define BL31_LIMIT			(MARVELL_BL_RAM_BASE +	\
+					 MARVELL_BL_RAM_SIZE)
 
 
-#endif /* __MARVELL_DEF_H__ */
+#endif /* MARVELL_DEF_H */

@@ -4,8 +4,9 @@
  * SPDX-License-Identifier:	BSD-3-Clause
  * https://spdx.org/licenses
  */
-#ifndef __PLAT_MACROS_S__
-#define __PLAT_MACROS_S__
+
+#ifndef PLAT_MACROS_S
+#define PLAT_MACROS_S
 
 #include <marvell_macros.S>
 
@@ -18,8 +19,8 @@
 .macro plat_crash_print_regs
 	mov_imm	x17, MVEBU_GICC_BASE
 	mov_imm	x16, MVEBU_GICD_BASE
-	arm_print_gic_regs
+	marvell_print_gic_regs
 	print_cci_regs
 .endm
 
-#endif /* __PLAT_MACROS_S__ */
+#endif /* PLAT_MACROS_S */

@@ -5,16 +5,16 @@
  * https://spdx.org/licenses
  */
 #include <debug.h>
-#include <plat_marvell.h>
-#include <mmio.h>
 #include <io_addr_dec.h>
+#include <mmio.h>
+#include <plat_marvell.h>
 
-#define MVEBU_DEC_WIN_CTRL_REG(base, win, off)	(MVEBU_REGS_BASE + base + \
-						(win * off))
-#define MVEBU_DEC_WIN_BASE_REG(base, win, off)	(MVEBU_REGS_BASE + base + \
-						(win * off) + 0x4)
-#define MVEBU_DEC_WIN_REMAP_REG(base, win, off)	(MVEBU_REGS_BASE + base + \
-						(win * off) + 0x8)
+#define MVEBU_DEC_WIN_CTRL_REG(base, win, off)	(MVEBU_REGS_BASE + (base) + \
+						(win) * (off))
+#define MVEBU_DEC_WIN_BASE_REG(base, win, off)	(MVEBU_REGS_BASE + (base) + \
+						(win) * (off) + 0x4)
+#define MVEBU_DEC_WIN_REMAP_REG(base, win, off)	(MVEBU_REGS_BASE + (base) + \
+						(win) * (off) + 0x8)
 
 #define MVEBU_DEC_WIN_CTRL_SIZE_OFF		(16)
 #define MVEBU_DEC_WIN_ENABLE			(0x1)
@@ -167,9 +167,10 @@ int init_io_addr_dec(struct dram_win_map *dram_wins_map,
 		}
 		INFO("Set IO decode window successfully, base(0x%x)",
 		     io_dec_win->dec_reg_base);
-		INFO(" win_attr(%x) max_dram_win(%d) max_remap(%d) win_offset(%d)\n",
+		INFO(" win_attr(%x) max_dram_win(%d) max_remap(%d)",
 		     io_dec_win->win_attr, io_dec_win->max_dram_win,
-		     io_dec_win->max_remap, io_dec_win->win_offset);
+		     io_dec_win->max_remap);
+		INFO(" win_offset(%d)\n", io_dec_win->win_offset);
 	}
 
 	return 0;

@@ -6,7 +6,6 @@
  */
 #include <plat_marvell.h>
 
-
 /* MMU entry for internal (register) space access */
 #define MAP_DEVICE0	MAP_REGION_FLAT(DEVICE0_BASE,			\
 					DEVICE0_SIZE,			\
@@ -51,4 +50,4 @@ const mmap_region_t plat_marvell_mmap[] = {
 };
 #endif
 
-MARVELL_CASSERT_MMAP
+MARVELL_CASSERT_MMAP;

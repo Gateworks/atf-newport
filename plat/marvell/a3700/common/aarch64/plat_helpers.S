@@ -4,6 +4,7 @@
  * SPDX-License-Identifier:	BSD-3-Clause
  * https://spdx.org/licenses
  */
+
 #include <asm_macros.S>
 #include <platform_def.h>
 

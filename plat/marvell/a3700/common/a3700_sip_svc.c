@@ -9,7 +9,7 @@
 #include <marvell_plat_priv.h>
 #include <plat_marvell.h>
 #include <runtime_svc.h>
-#include <smcc.h>
+#include <smccc.h>
 #include "comphy/phy-comphy-3700.h"
 
 /* Comphy related FID's */

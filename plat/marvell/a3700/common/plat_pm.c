@@ -23,8 +23,8 @@
 #endif
 
 /* Warm reset register */
-#define MVEBU_WARM_RESET_REG            (MVEBU_NB_REGS_BASE + 0x840)
-#define MVEBU_WARM_RESET_MAGIC          0x1D1E
+#define MVEBU_WARM_RESET_REG		(MVEBU_NB_REGS_BASE + 0x840)
+#define MVEBU_WARM_RESET_MAGIC		0x1D1E
 
 /* North Bridge GPIO1 SEL register */
 #define MVEBU_NB_GPIO1_SEL_REG		(MVEBU_NB_REGS_BASE + 0x830)
@@ -34,9 +34,9 @@
  #define MVEBU_NB_GPIO1_GPIO_18_EN	BIT(13)
 
 /* CPU 1 reset register */
-#define MVEBU_CPU_1_RESET_VECTOR        (MVEBU_REGS_BASE + 0x14044)
-#define MVEBU_CPU_1_RESET_REG           (MVEBU_REGS_BASE + 0xD00C)
-#define MVEBU_CPU_1_RESET_BIT           31
+#define MVEBU_CPU_1_RESET_VECTOR	(MVEBU_REGS_BASE + 0x14044)
+#define MVEBU_CPU_1_RESET_REG		(MVEBU_REGS_BASE + 0xD00C)
+#define MVEBU_CPU_1_RESET_BIT		31
 
 /* IRQ register */
 #define MVEBU_NB_IRQ_STATUS_1_REG		(MVEBU_NB_SB_IRQ_REG_BASE)
@@ -237,7 +237,7 @@ static void a3700_pm_ack_irq(void)
 int a3700_validate_power_state(unsigned int power_state,
 			       psci_power_state_t *req_state)
 {
-	ERROR("a3700_validate_power_state needs to be implemented\n");
+	ERROR("%s needs to be implemented\n", __func__);
 	panic();
 }
 
@@ -247,7 +247,7 @@ int a3700_validate_power_state(unsigned int power_state,
  */
 void a3700_cpu_standby(plat_local_state_t cpu_state)
 {
-	ERROR("a3700_cpu_standby needs to be implemented\n");
+	ERROR("%s needs to be implemented\n", __func__);
 	panic();
 }
 
@@ -258,8 +258,8 @@ void a3700_cpu_standby(plat_local_state_t cpu_state)
  */
 int a3700_pwr_domain_on(u_register_t mpidr)
 {
-	/* Set barierr */
-	__asm__ volatile("dsb     sy");
+	/* Set barrier */
+	dsbsy();
 
 	/* Set the cpu start address to BL1 entry point */
 	mmio_write_32(MVEBU_CPU_1_RESET_VECTOR,
@@ -581,6 +581,7 @@ static wake_up_src_func a3700_get_wake_up_src_func(
 						  enum pm_wake_up_src_type type)
 {
 	uint32_t loop;
+
 	for (loop = 0; loop < WAKE_UP_SRC_MAX; loop++) {
 		if (src_func_table[loop].type == type)
 			return src_func_table[loop].func;
@@ -599,10 +600,9 @@ static void a3700_set_wake_up_source(void)
 		src_func = a3700_get_wake_up_src_func(
 			   wake_up_src->wake_up_src[loop].wake_up_src_type);
 		if (src_func)
-			src_func(&(wake_up_src->wake_up_src[loop].wake_up_data));
+			src_func(
+				&(wake_up_src->wake_up_src[loop].wake_up_data));
 	}
-
-	return;
 }
 
 static void a3700_pm_save_lp_flag(void)
@@ -739,12 +739,12 @@ void a3700_pwr_domain_suspend_finish(const psci_power_state_t *target_state)
 }
 
 /*****************************************************************************
- * This handler is called by the PSCI implementation during the `SYSTEM_SUSPEND`
+ * This handler is called by the PSCI implementation during the `SYSTEM_SUSPEND
  * call to get the `power_state` parameter. This allows the platform to encode
  * the appropriate State-ID field within the `power_state` parameter which can
  * be utilized in `pwr_domain_suspend()` to suspend to system affinity level.
-*****************************************************************************
-*/
+ *****************************************************************************
+ */
 void a3700_get_sys_suspend_power_state(psci_power_state_t *req_state)
 {
 	/* lower affinities use PLAT_MAX_OFF_STATE */
@@ -758,7 +758,7 @@ void a3700_get_sys_suspend_power_state(psci_power_state_t *req_state)
  */
 static void __dead2 a3700_system_off(void)
 {
-	ERROR("a3700_system_off needs to be implemented\n");
+	ERROR("%s needs to be implemented\n", __func__);
 	panic();
 }
 
@@ -771,7 +771,7 @@ static void __dead2 a3700_system_reset(void)
 	/* Clean the mailbox magic number to let it as act like cold boot */
 	mmio_write_32(PLAT_MARVELL_MAILBOX_BASE, 0x0);
 
-	__asm__ volatile("dsb	sy");
+	dsbsy();
 
 	/* Flush data cache if the mail box shared RAM is cached */
 #if PLAT_MARVELL_SHARED_RAM_CACHED

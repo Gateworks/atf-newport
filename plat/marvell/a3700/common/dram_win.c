@@ -4,6 +4,7 @@
  * SPDX-License-Identifier:	BSD-3-Clause
  * https://spdx.org/licenses
  */
+
 #include <dram_win.h>
 #include <marvell_plat_priv.h>
 #include <mmio.h>
@@ -47,68 +48,119 @@ struct cpu_win_configuration {
 	uint64_t		remap_addr;
 };
 
-struct cpu_win_configuration	mv_cpu_wins[CPU_WIN_CONFIG_MAX][MV_CPU_WIN_NUM] = {
+struct cpu_win_configuration mv_cpu_wins[CPU_WIN_CONFIG_MAX][MV_CPU_WIN_NUM] = {
 	/*
 	 * When total dram size is not over 2GB:
-	 * DDR window 0 is configured in tim header, its size may be not 512MB but the
-	 * actual dram size, no need to configure it again; other cpu windows are kept
-	 * as default.
+	 * DDR window 0 is configured in tim header, its size may be not 512MB,
+	 * but the actual dram size, no need to configure it again;
+	 * other cpu windows are kept as default.
 	 */
 	{
-		/* enabled		target				base		size		remap */
-		{CPU_WIN_ENABLED,	CPU_WIN_TARGET_DRAM,		0x0,		0x08000000,	0x0},
-		{CPU_WIN_ENABLED,	CPU_WIN_TARGET_MCI_EXTERNAL,	0xe0000000,	0x08000000,	0xe0000000},
-		{CPU_WIN_ENABLED,	CPU_WIN_TARGET_PCIE,		0xe8000000,	0x08000000,	0xe8000000},
-		{CPU_WIN_ENABLED,	CPU_WIN_TARGET_RWTM_RAM,	0xf0000000,	0x00020000,	0x1fff0000},
-		{CPU_WIN_ENABLED,	CPU_WIN_TARGET_PCIE_OVER_MCI,	0x80000000,	0x10000000,	0x80000000},
+		/* enabled
+		 *	target
+		 *		base
+		 *			size
+		 *				remap
+		 */
+		{CPU_WIN_ENABLED,
+			CPU_WIN_TARGET_DRAM,
+				0x0,
+					0x08000000,
+						0x0},
+		{CPU_WIN_ENABLED,
+			CPU_WIN_TARGET_MCI_EXTERNAL,
+				0xe0000000,
+					0x08000000,
+						0xe0000000},
+		{CPU_WIN_ENABLED,
+			CPU_WIN_TARGET_PCIE,
+				0xe8000000,
+					0x08000000,
+						0xe8000000},
+		{CPU_WIN_ENABLED,
+			CPU_WIN_TARGET_RWTM_RAM,
+				0xf0000000,
+					0x00020000,
+						0x1fff0000},
+		{CPU_WIN_ENABLED,
+			CPU_WIN_TARGET_PCIE_OVER_MCI,
+				0x80000000,
+					0x10000000,
+						0x80000000},
 	},
 
 	/*
-	 * If total dram size is more than 2GB, now there is only one case - 4GB dram;
-	 * we will use below cpu windows configurations:
-	 *  - Internal Regs, CCI-400, Boot Rom and PCIe windows are kept as default;
-	 *  - Use 4 CPU decode windows for DRAM, which cover 3.375GB DRAM; DDR window 0
-	 *    is configured in tim header with 2GB size, no need to configure it again
-         *    here;
-
-		0xFFFFFFFF ---> |-----------------------|
-				|	  Boot ROM	| 64KB
-		0xFFF00000 ---> +-----------------------+
-				:			:
-		0xF0000000 ---> |-----------------------|
-				|	  PCIE		| 128 MB
-		0xE8000000 ---> |-----------------------|
-				|	  DDR window 3	| 128 MB
-		0xE0000000 ---> +-----------------------+
-				:			:
-		0xD8010000 ---> |-----------------------|
-				|	  CCI Regs	| 64 KB
-		0xD8000000 ---> +-----------------------+
-				:			:
-				:			:
-		0xD2000000 ---> +-----------------------+
-				|	 Internal Regs	| 32MB
-		0xD0000000 ---> |-----------------------|
-				 |	  DDR window 2	| 256 MB
-		0xC0000000 ---> |-----------------------|
-				|			|
-				|	 DDR window 1	| 1 GB
-				|			|
-		0x80000000 ---> |-----------------------|
-				|			|
-				|			|
-				|	 DDR window 0	| 2 GB
-				|			|
-				|			|
-		0x00000000 ---> +-----------------------+
-	*/
+	 * If total dram size is more than 2GB, now there is only one case - 4GB
+	 *  dram; we will use below cpu windows configurations:
+	 *  - Internal Regs, CCI-400, Boot Rom and PCIe windows are kept as
+	 *    default;
+	 *  - Use 4 CPU decode windows for DRAM, which cover 3.375GB DRAM;
+	 *    DDR window 0 is configured in tim header with 2GB size, no need to
+	 *    configure it again here;
+	 *
+	 *	0xFFFFFFFF ---> |-----------------------|
+	 *			|	  Boot ROM	| 64KB
+	 *	0xFFF00000 ---> +-----------------------+
+	 *			:			:
+	 *	0xF0000000 ---> |-----------------------|
+	 *			|	  PCIE		| 128 MB
+	 *	0xE8000000 ---> |-----------------------|
+	 *			|	  DDR window 3	| 128 MB
+	 *	0xE0000000 ---> +-----------------------+
+	 *			:			:
+	 *	0xD8010000 ---> |-----------------------|
+	 *			|	  CCI Regs	| 64 KB
+	 *	0xD8000000 ---> +-----------------------+
+	 *			:			:
+	 *			:			:
+	 *	0xD2000000 ---> +-----------------------+
+	 *			|	 Internal Regs	| 32MB
+	 *	0xD0000000 ---> |-----------------------|
+	 *			 |	  DDR window 2	| 256 MB
+	 *	0xC0000000 ---> |-----------------------|
+	 *			|			|
+	 *			|	 DDR window 1	| 1 GB
+	 *			|			|
+	 *	0x80000000 ---> |-----------------------|
+	 *			|			|
+	 *			|			|
+	 *			|	 DDR window 0	| 2 GB
+	 *			|			|
+	 *			|			|
+	 *	0x00000000 ---> +-----------------------+
+	 */
 	{
-		/* win_id			target				base		size		remap */
-		{CPU_WIN_ENABLED,	CPU_WIN_TARGET_DRAM,		0x0,		0x80000000,	0x0},
-		{CPU_WIN_ENABLED,	CPU_WIN_TARGET_DRAM,		0x80000000,	0x40000000,	0x80000000},
-		{CPU_WIN_ENABLED,	CPU_WIN_TARGET_DRAM,		0xc0000000,	0x10000000,	0xc0000000},
-		{CPU_WIN_ENABLED,	CPU_WIN_TARGET_DRAM,		0xe0000000,	0x08000000,	0xe0000000},
-		{CPU_WIN_ENABLED,	CPU_WIN_TARGET_PCIE,		0xe8000000,	0x08000000,	0xe8000000},
+		/* win_id
+		 *	target
+		 *		base
+		 *			size
+		 *				remap
+		 */
+		{CPU_WIN_ENABLED,
+			CPU_WIN_TARGET_DRAM,
+				0x0,
+					0x80000000,
+						0x0},
+		{CPU_WIN_ENABLED,
+			CPU_WIN_TARGET_DRAM,
+				0x80000000,
+					0x40000000,
+						0x80000000},
+		{CPU_WIN_ENABLED,
+			CPU_WIN_TARGET_DRAM,
+				0xc0000000,
+					0x10000000,
+						0xc0000000},
+		{CPU_WIN_ENABLED,
+			CPU_WIN_TARGET_DRAM,
+				0xe0000000,
+					0x08000000,
+						0xe0000000},
+		{CPU_WIN_ENABLED,
+			CPU_WIN_TARGET_PCIE,
+				0xe8000000,
+					0x08000000,
+						0xe8000000},
 	},
 };
 
@@ -162,8 +214,6 @@ void dram_win_map_build(struct dram_win_map *win_map)
 
 		win_map->dram_win_num++;
 	}
-
-	return;
 }
 
 static void cpu_win_set(uint32_t win_id, struct cpu_win_configuration *win_cfg)
