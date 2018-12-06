@@ -1,11 +1,11 @@
 /*
- * Copyright (C) 2016-2018 Marvell International Ltd.
+ * Copyright (C) 2016-2019 Marvell International Ltd.
  *
  * SPDX-License-Identifier:     BSD-3-Clause
  * https://spdx.org/licenses
  */
 
-/* CGX driver for OcteonTX (CN8xxx and CN9xxx) */
+/* MMC driver for OcteonTX (CN8xxx and CN9xxx) */
 
 #include <stdint.h>
 #include <stdio.h>
@@ -18,93 +18,18 @@
 #include <debug.h>
 #include <plat_board_cfg.h>
 #include <octeontx_security.h>
+#include <octeontx_utils.h>
 
 #include <io_mmc.h>
-
-#define SHARED_MEM_BASE (TZDRAM_BASE + TZDRAM_SIZE)
-
-#define ROUND_UP(val, align)	(((val) + (align) - 1) / (align) * (align))
-
-#define REF_FREQ	50000 // number of reference cycles in a millisecond
-#define INIT_MAX_RETRY	20
-#define SECTOR_SIZE	512
-#define MMC_SECTOR_SIZE	512
-
-#define CMD_NO_DATA 	0
-#define CMD_READ_DBUF	1
-#define CMD_WRITE_DBUF	2
-#define RESP_NONE	0
-#define RESP_R1		1
-#define RESP_R2		2
-#define RESP_R3		3
-#define RESP_R4		4
-#define RESP_R5		5
-
-#define BUS_1_BIT	0
-#define BUS_4_BIT	1
-#define BUS_8_BIT	2
-
-#define MMC_CMD_GO_IDLE_STATE		0
-#define MMC_CMD_SEND_OP_COND		1
-#define MMC_CMD_ALL_SEND_CID		2
-#define MMC_CMD_SET_RELATIVE_ADDR	3
-#define MMC_CMD_SET_DSR			4
-#define MMC_CMD_SWITCH			6
-#define MMC_CMD_SELECT_CARD		7
-#define MMC_CMD_SEND_EXT_CSD		8
-#define MMC_CMD_SEND_CSD		9
-#define MMC_CMD_SEND_CID		10
-#define MMC_CMD_STOP_TRANSMISSION	12
-#define MMC_CMD_SEND_STATUS		13
-#define MMC_CMD_SET_BLOCKLEN		16
-#define MMC_CMD_READ_SINGLE_BLOCK	17
-#define MMC_CMD_READ_MULTIPLE_BLOCK	18
-#define MMC_CMD_WRITE_SINGLE_BLOCK	24
-#define MMC_CMD_WRITE_MULTIPLE_BLOCK	25
-#define MMC_CMD_ERASE_GROUP_START	35
-#define MMC_CMD_ERASE_GROUP_END		36
-#define MMC_CMD_ERASE			38
-#define MMC_CMD_APP_CMD			55
-#define MMC_CMD_SPI_READ_OCR		58
-#define MMC_CMD_SPI_CRC_ON_OFF		59
-#define MMC_CMD_RES_MAN			62
-
-#define SD_CMD_SEND_RELATIVE_ADDR	3
-#define SD_CMD_SWITCH_FUNC		6
-#define SD_CMD_SEND_IF_COND		8
-
-#define SD_CMD_APP_SET_BUS_WIDTH	6
-#define SD_CMD_ERASE_WR_BLK_START	32
-#define SD_CMD_ERASE_WR_BLK_END		33
-#define SD_CMD_APP_SEND_OP_COND		41
-#define SD_CMD_APP_SEND_SCR		51
-
-typedef struct {
-	/* Use the 'in_use' flag as any value for base and file_pos could be
-	 * valid.
-	 */
-	int		in_use;
-	unsigned	cs;
-	size_t		file_pos;
-	size_t		offset_address;
-} file_state_t;
+#include <mmc.h>
 
 static file_state_t mmc_current_file = { 0 };
-
-typedef struct mio_emm_driver {
-	int bus_id;
-	int rca;
-	int sector_size;
-	int bus_width;
-	int sector_mode;
-} mio_emm_driver_t;
-
-mio_emm_driver_t mmc_drv = { 0 };
+static mio_emm_driver_t mmc_drv = { 0 };
 
 /* Wait for delay reference cycles */
-void wait(uint64_t delay)
+static void wait(uint64_t delay)
 {
-	volatile uint64_t count = CSR_READ(CAVM_RST_REF_CNTR);
+	uint64_t count = CSR_READ(CAVM_RST_REF_CNTR);
 	uint64_t start = count;
 	uint64_t end = start + delay;
 
@@ -113,262 +38,299 @@ void wait(uint64_t delay)
 	} while (count < end);
 }
 
-union cavm_mio_emm_rsp_sts mio_emm_cmd(uint32_t cmd_idx, uint32_t ctype_xor, uint32_t rtype_xor, uint32_t arg)
+static int print_rsp_sts_errors(uint64_t emm_rsp_sts)
 {
-	union cavm_mio_emm_cmd cmd;
-	volatile union cavm_mio_emm_rsp_sts emm_rsp_sts;
+	int error_count = 0;
 
-	cmd.u = 0;
-	cmd.s.cmd_val = 1;
-	cmd.s.ctype_xor = ctype_xor;
-	cmd.s.rtype_xor = rtype_xor;
-	cmd.s.arg = arg;
-	cmd.s.cmd_idx = cmd_idx;
-	CSR_WRITE(CAVM_MIO_EMM_CMD, cmd.u);
+	if (RSP_STS_GET_RSP_BAD_STS(emm_rsp_sts) ||
+	    RSP_STS_GET_STP_BAD_STS(emm_rsp_sts)) {
+		ERROR("MMC: Response bad status\n");
+		error_count++;
+	}
+	if (RSP_STS_GET_RSP_CRC_ERR(emm_rsp_sts) ||
+	    RSP_STS_GET_STP_CRC_ERR(emm_rsp_sts)) {
+		ERROR("MMC: Response CRC error.\n");
+		error_count++;
+	}
+	if (RSP_STS_GET_RSP_TIMEOUT(emm_rsp_sts) ||
+	    RSP_STS_GET_STP_TIMEOUT(emm_rsp_sts)) {
+		ERROR("MMC: Response timeout error.\n");
+		error_count++;
+	}
+	if (RSP_STS_GET_BLK_CRC_ERR(emm_rsp_sts)) {
+		ERROR("MMC: Read/write block CRC error.\n");
+		error_count++;
+	}
+	if (RSP_STS_GET_BLK_TIMEOUT(emm_rsp_sts)) {
+		ERROR("MMC: Read/write block timeout error.\n");
+		error_count++;
+	}
+	if (RSP_STS_GET_DBUF_ERROR(emm_rsp_sts)) {
+		ERROR("MMC: Dbuf error, no free buffer\n");
+		error_count++;
+	}
+
+	return error_count;
+}
+
+static uint64_t mio_emm_cmd(uint32_t cmd_idx, uint32_t ctype_xor,
+	uint32_t rtype_xor, uint32_t arg)
+{
+	uint64_t cmd;
+	int cmd_error = 0;
+
+	uint64_t emm_rsp_sts;
+
+	cmd = 0;
+	cmd = MIO_EMM_CMD_SET_CMD_VAL(cmd);
+	cmd = MIO_EMM_CMD_SET_RTYPE(cmd, rtype_xor);
+	cmd = MIO_EMM_CMD_SET_CTYPE(cmd, ctype_xor);
+	cmd = MIO_EMM_CMD_SET_ARG(cmd, arg);
+	cmd = MIO_EMM_CMD_SET_CMD_IDX(cmd, cmd_idx);
+	cmd = MIO_EMM_CMD_SET_BUS_ID(cmd, mmc_drv.bus_id);
+
+	CSR_WRITE(CAVM_MIO_EMM_CMD, cmd);
 
 	do {
-		emm_rsp_sts.u = CSR_READ(CAVM_MIO_EMM_RSP_STS);
-	} while (emm_rsp_sts.s.cmd_val);
+		emm_rsp_sts = CSR_READ(CAVM_MIO_EMM_RSP_STS);
+	} while (!RSP_STS_GET_CMD_DONE(emm_rsp_sts));
 
+	if (RSP_STS_GET_RSP_VAL(emm_rsp_sts) ||
+	    RSP_STS_GET_STP_VAL(emm_rsp_sts)) {
 
+		cmd_error = print_rsp_sts_errors(emm_rsp_sts);
+		if (cmd_error)
+			return emm_rsp_sts;
+	} else {
+		if (cmd_idx != MMC_CMD_GO_IDLE_STATE &&
+		    cmd_idx != MMC_CMD_SET_DSR) {
+			ERROR("MMC: No valid response\n");
+			ERROR("MMC: cmd     = 0x%016llx\n",
+				(unsigned long long)cmd);
+			ERROR("MMC: rsp_sts = 0x%016llx\n",
+				(unsigned long long)emm_rsp_sts);
+			return emm_rsp_sts;
+		}
+	}
+
+	emm_rsp_sts = 0;
 	return emm_rsp_sts;
 }
 
-int sdmmc_rw_data(int write, unsigned int addr, int size, uintptr_t buf, int buf_size)
+static int sdmmc_rw_block(int write, unsigned int addr, int blk_cnt,
+	uintptr_t buf)
 {
-	int blk_cnt, blks, offset, bytes;
-	int round_size;
-	uintptr_t tmp_buf = TZDRAM_BASE + 512;
+	int blks;
+	int dma_retry_count;
+	int transfer_size;
 
-	union cavm_mio_emm_dma mio_emm_dma;
-	union cavm_mio_emm_dma_cfg emm_dma_cfg;
-	union cavm_mio_emm_rsp_sts emm_rsp_sts;
+	uint64_t mio_emm_dma;
+	uint64_t emm_dma_cfg;
+	uint64_t emm_rsp_sts;
 
-	/* DMA engine address must be 64-bit aligned */
-	if (size == 0 || ((uintptr_t)buf & 0x7)) {
-		printf("Invalid size %d or unaligned addr 0x%lx\n",
-				size, buf);
+	if (buf == 0) {
+		WARN("%s: buf is NULL\n", __func__);
 		return -1;
 	}
 
-	offset  = addr % mmc_drv.sector_size;
+	if (buf >= TZDRAM_BASE + TZDRAM_SIZE)
+		octeontx_configure_mmc_security(0); /* non-secure */
+	else
+		octeontx_configure_mmc_security(1); /* secure */
 
-	round_size = ROUND_UP(size + offset, mmc_drv.sector_size);
-	if (buf_size < size) {
-		printf("buf_size %d too small, need %d (aligned %d)\n",
-				buf_size, size, round_size);
-	}
-
-	octeontx_configure_mmc_security(1); /* secure */
-
-	blk_cnt = round_size / mmc_drv.sector_size;
+	/* DMA engine address must be 64-bit aligned */
+	assert(!((uintptr_t)buf & 0x7));
 
 	while (blk_cnt > 0) {
 		blks = (blk_cnt > 8) ? 8 : blk_cnt;
+		transfer_size = blks * mmc_drv.sector_size;
 
-		emm_dma_cfg.u = 0;
-		mio_emm_dma.u = 0;
+		emm_dma_cfg = 0;
+		mio_emm_dma = 0;
 
-		emm_dma_cfg.s.en = 1;
-		emm_dma_cfg.s.rw = write ? 1 : 0;
-		emm_dma_cfg.s.endian = 1;
-		emm_dma_cfg.s.size = (blks * mmc_drv.sector_size >> 3) - 1;
+		emm_dma_cfg = MIO_EMM_DMA_CFG_SET_ENABLE(emm_dma_cfg);
+		emm_dma_cfg = MIO_EMM_DMA_CFG_SET_WRITE(emm_dma_cfg, write ?
+							MMC_WRITE : MMC_READ);
+		emm_dma_cfg = MIO_EMM_DMA_CFG_SET_LITTLE_ENDIAN(emm_dma_cfg);
+		emm_dma_cfg = MIO_EMM_DMA_CFG_SET_SIZE(emm_dma_cfg,
+				MIO_EMM_DMA_BYTES_TO_SIZE(transfer_size));
 
-		mio_emm_dma.s.dma_val = 1;
-		mio_emm_dma.s.bus_id = mmc_drv.bus_id;
-		mio_emm_dma.s.sector = 1;
-		mio_emm_dma.s.card_addr = addr / mmc_drv.sector_size;
-		mio_emm_dma.s.block_cnt = blks;
+		mio_emm_dma = MIO_EMM_DMA_SET_DMA_VAL(mio_emm_dma);
+		mio_emm_dma = MIO_EMM_DMA_SET_BUS_ID(
+					mio_emm_dma, mmc_drv.bus_id);
+		if (mmc_drv.sector_mode) {
+			mio_emm_dma = MIO_EMM_DMA_SET_SECTOR(mio_emm_dma);
+			mio_emm_dma = MIO_EMM_DMA_SET_CARD_ADDR(mio_emm_dma,
+						addr / mmc_drv.sector_size);
+		} else {
+			mio_emm_dma = MIO_EMM_DMA_SET_CARD_ADDR(mio_emm_dma,
+						addr);
+		}
+		mio_emm_dma = MIO_EMM_DMA_SET_BLOCK_CNT(mio_emm_dma, blks);
+		mio_emm_dma = MIO_EMM_DMA_SET_WRITE(mio_emm_dma, write ?
+							MMC_WRITE : MMC_READ);
 
-		CSR_WRITE(CAVM_MIO_EMM_DMA_ADR, tmp_buf);
-		CSR_WRITE(CAVM_MIO_EMM_DMA_CFG, emm_dma_cfg.u);
-		CSR_WRITE(CAVM_MIO_EMM_DMA, mio_emm_dma.u);
+		CSR_WRITE(CAVM_MIO_EMM_DMA_ADR, buf);
+		CSR_WRITE(CAVM_MIO_EMM_DMA_CFG, emm_dma_cfg);
+		CSR_WRITE(CAVM_MIO_EMM_DMA, mio_emm_dma);
 
 		do {
-			emm_rsp_sts.u = CSR_READ(CAVM_MIO_EMM_RSP_STS);
-		} while (emm_rsp_sts.s.dma_val);
+			emm_rsp_sts = CSR_READ(CAVM_MIO_EMM_RSP_STS);
+		} while (RSP_STS_GET_DMA_VAL(emm_rsp_sts));
 
-		/* DMA error */
-		if (emm_rsp_sts.s.dma_pend) {
-			ERROR("sdmmc: DMA error\n");
+		dma_retry_count = 0;
+		/* DMA error retry */
+		while (RSP_STS_GET_DMA_PEND(emm_rsp_sts) &&
+			dma_retry_count < 3) {
 
-			mio_emm_dma.u = CSR_READ(CAVM_MIO_EMM_DMA);
-			mio_emm_dma.s.dma_val = 1;
-			mio_emm_dma.s.dat_null = 1;
-			CSR_WRITE(CAVM_MIO_EMM_DMA, mio_emm_dma.u);
+			dma_retry_count++;
+			INFO("MMC: DMA error, retry %d\n", dma_retry_count);
+			INFO("MMC:   rsp_sts: 0x%016llx\n",
+				(unsigned long long)emm_rsp_sts);
+			INFO("MMC:   rsp_lo : 0x%016llx\n",
+				(unsigned long long)CSR_READ(
+							CAVM_MIO_EMM_RSP_LO));
+			print_rsp_sts_errors(emm_rsp_sts);
+			mio_emm_dma = CSR_READ(CAVM_MIO_EMM_DMA);
+			mio_emm_dma = MIO_EMM_DMA_SET_DMA_VAL(mio_emm_dma);
+			CSR_WRITE(CAVM_MIO_EMM_DMA, mio_emm_dma);
 			do {
-				emm_rsp_sts.u = CSR_READ(CAVM_MIO_EMM_RSP_STS);
-			} while (emm_rsp_sts.s.dma_val);
+				emm_rsp_sts = CSR_READ(CAVM_MIO_EMM_RSP_STS);
+			} while (RSP_STS_GET_DMA_VAL(emm_rsp_sts));
+		}
+		/* DMA error */
+		if (RSP_STS_GET_DMA_PEND(emm_rsp_sts)) {
+			ERROR("MMC: sdmmc: DMA error\n");
+
+			mio_emm_dma = CSR_READ(CAVM_MIO_EMM_DMA);
+			mio_emm_dma = MIO_EMM_DMA_SET_DMA_VAL(mio_emm_dma);
+			mio_emm_dma = MIO_EMM_DMA_SET_DAT_NULL(mio_emm_dma);
+			CSR_WRITE(CAVM_MIO_EMM_DMA, mio_emm_dma);
+			do {
+				emm_rsp_sts = CSR_READ(CAVM_MIO_EMM_RSP_STS);
+			} while (RSP_STS_GET_DMA_VAL(emm_rsp_sts));
 
 			return -1;
 		}
 
 		do {
-			emm_dma_cfg.u = CSR_READ(CAVM_MIO_EMM_DMA_CFG);
-		} while (emm_dma_cfg.s.en);
+			emm_dma_cfg = CSR_READ(CAVM_MIO_EMM_DMA_CFG);
+		} while (MIO_EMM_DMA_CFG_GET_ENABLE(emm_dma_cfg));
 
 		blk_cnt -= blks;
-		addr += mmc_drv.sector_size * blks;
-
-		inv_dcache_range(tmp_buf, blks * mmc_drv.sector_size);
-
-		__asm__ volatile ("dsb sy");
-
-		bytes = blk_cnt ? (mmc_drv.sector_size * blks - offset) : size;
-
-		memcpy((void *)buf, (void *)(tmp_buf + offset), bytes);
-
-		buf += bytes;
-
-		offset = 0; // make skip 0 as we don't need it next loop
+		addr += transfer_size;
+		buf += transfer_size;
 	}
 
-	return buf_size;
+	octeontx_configure_mmc_security(0); /* non-secure */
+	return 0;
 }
 
-int emmc_config()
+
+static int sdmmc_rw_data(int write, unsigned int addr, int size, uintptr_t buf)
 {
-#if 0
-	uint64_t val;
-	int clock;
-	int sec_cap = 0;
-	volatile union cavm_rst_boot rst_boot;
-	volatile union cavm_gpio_bit_cfgx gpio_bit_cfgx;
-	volatile union cavm_mio_emm_switch emm_switch, slow_switch;
-	volatile union cavm_mio_emm_rsp_sts emm_rsp_sts;
-	volatile unsigned long emm_rsp_lo;
-#endif
+	int blk_cnt, offset, bytes;
+	/* DMA engine address must be 64-bit aligned */
+	__aligned(8) char tmp_buf[MMC_SECTOR_SIZE];
+	int transfer_size;
+	int unaligned_buf;
 
-	mmc_drv.bus_id = mmc_current_file.cs;
-	mmc_drv.sector_size = MMC_SECTOR_SIZE;
-	/* Set eMMC bus id bit according to the used CS */
-	CSR_WRITE(CAVM_MIO_EMM_CFG, 1<<mmc_current_file.cs);
-
-#if 0
-	rst_boot.u = CSR_READ(mmc_current_file.node, CAVM_RST_BOOT);
-
-	/* Clear GPIO_BIT_CFG8[TX_OE] to disable power / enable reset */
-	//gpio_bit_cfgx.u = 0;
-	//gpio_bit_cfgx.s.tx_oe = 0;
-	//CSR_WRITE(mmc_current_file.node,regs.gpio_base, GPIO_BIT_CFGX(8), gpio_bit_cfgx.u);
-	wait(200 * REF_FREQ);
-	val = (CSR_READ(mmc_current_file.node, CAVM_GPIO_RX_DAT) >> 8) & 0x1;
-
-	if (val)
-		CSR_WRITE(mmc_current_file.node, CAVM_GPIO_TX_CLR, 1 << 8);
-	else
-		CSR_WRITE(mmc_current_file.node, CAVM_GPIO_TX_SET, 1 << 8);
-
-	gpio_bit_cfgx.u = 0;
-	gpio_bit_cfgx.s.tx_oe = 1;
-	CSR_WRITE(mmc_current_file.node, CAVM_GPIO_BIT_CFGX(8), gpio_bit_cfgx.u);
-
-	wait(2 * REF_FREQ);
-
-	/* Set bit 1 to use eMMC bus 0 */
-	CSR_WRITE(mmc_current_file.node, CAVM_MIO_EMM_CFG, 0x1);
-
-	/* EMMC:(70)  Clear mio_emm_sts_mask.STS_MSK[31:8,6:0], Set Switch_ERR(<7>)
-	 * ignore errors except <7>
-	 */
-	CSR_WRITE(mmc_current_file.node, CAVM_MIO_EMM_STS_MASK, 0x80);
-
-	/* 400 KHz */
-	clock = (125 * rst_boot.s.pnr_mul + 1) >> 1;
-	emm_switch.u = 0;
-	emm_switch.s.power_class = 10;
-	emm_switch.s.clk_hi = emm_switch.s.clk_lo = clock;
-	CSR_WRITE(mmc_current_file.node, CAVM_MIO_EMM_SWITCH, emm_switch.u);
-
-	clock = (5 * rst_boot.s.pnr_mul + 3) >> 2;
-	emm_switch.s.clk_hi = emm_switch.s.clk_lo = clock;
-	emm_switch.s.power_class = 10;
-	emm_switch.s.bus_width = BUS_8_BIT;
-	wait(1.2 * REF_FREQ);
-
-	CSR_WRITE(mmc_current_file.node, CAVM_MIO_EMM_WDOG, 0x400);
-
-	// DO while loop
-	clock = (125 * rst_boot.s.pnr_mul + 1) >> 1;
-	slow_switch.u = 0;
-	slow_switch.s.power_class = 10;
-	//slow_switch.s.clk_hi = 0;
-	//slow_switch.s.clk_lo = clock;
-	slow_switch.s.clk_hi = slow_switch.s.clk_lo = clock;
-	CSR_WRITE(mmc_current_file.node, CAVM_MIO_EMM_SWITCH, slow_switch.u);
-
-	mio_emm_cmd(MMC_CMD_GO_IDLE_STATE, 0, 0, 0);
-	emm_rsp_sts = mio_emm_cmd(SD_CMD_SEND_IF_COND, 1, 2, 0x1aa);
-	sec_cap = emm_rsp_sts.s.rsp_timeout ? 0 : 1;
-	(void)sec_cap;
-
-	mio_emm_cmd(MMC_CMD_APP_CMD, 0, 0, 0);
-	emm_rsp_sts = mio_emm_cmd(SD_CMD_APP_SEND_OP_COND, 0, 3, 0x40ff8000);
-
-	/* Command 41 SD_CMD_APP_SEND_OP_COND timesout - eMMC  */
-	if (emm_rsp_sts.s.rsp_timeout) {
-		INFO("%s %d: mmc_drv\n", __func__, __LINE__);
+	if (size == 0) {
+		printf("Invalid size %d\n", size);
 		return -1;
 	}
 
-	emm_rsp_lo = CSR_READ(mmc_current_file.node, CAVM_MIO_EMM_RSP_LO);
-	/* SD card */
-	if ((emm_rsp_lo & (1UL << 39)) == 0) {
-		INFO("%s %d: error emm_rsp_lo = %lx\n", __func__, __LINE__, emm_rsp_lo);
-		/* TODO: retry */
-		return -1;
+	offset = addr % mmc_drv.sector_size;
+	unaligned_buf = ((buf - offset) & 0x7);
+	if (unaligned_buf)
+		WARN("unaligned buf address (0x%lx; offset 0x%x)\n",
+			buf, offset);
+
+	/*
+	 * addr represent address on sd/mmc card so it should be alligned
+	 * to sector_size
+	 */
+	addr -= offset;
+	bytes = 0;
+
+	if (offset) {
+		/* First block must be copied to tmp_buf */
+		if (sdmmc_rw_block(/* write = */ 0, addr,
+			/* blk_cnt = */ 1, (uintptr_t)tmp_buf))
+			return -1;
+		/* Number of bytes to read/write from first block */
+		bytes = MIN(size, mmc_drv.sector_size - offset);
+		if (write) {
+			memcpy((void *)(tmp_buf + offset), (void *)buf, bytes);
+			if (sdmmc_rw_block(/* write = */ 1, addr,
+				/* blk_cnt = */ 1, (uintptr_t)tmp_buf))
+				return -1;
+		} else {
+			memcpy((void *)buf, (void *)(tmp_buf + offset), bytes);
+		}
+		buf += bytes;
+		size -= bytes;
+		addr += mmc_drv.sector_size;
 	}
 
-	mmc_drv.sector_mode = emm_rsp_lo & (0x3UL << 37);
-	mmc_drv.bus_width = BUS_4_BIT;
-	emm_rsp_sts = mio_emm_cmd(MMC_CMD_ALL_SEND_CID, 0, 0, 0x0);
-	emm_rsp_sts = mio_emm_cmd(SD_CMD_SEND_RELATIVE_ADDR, 0, 0, 0x0);
-	mmc_drv.rca = (emm_rsp_lo >> 24) & 0xffff;
-	emm_rsp_sts = mio_emm_cmd(MMC_CMD_SELECT_CARD, 0, 0, mmc_drv.rca << 16);
-
-	CSR_WRITE(mmc_current_file.node, CAVM_MIO_EMM_RCA, mmc_drv.rca);
-
-	/* Switch to new bus width etc.
-	 * TODO: read the CSD register and config card properly
-	 */
-	mio_emm_cmd(MMC_CMD_APP_CMD, 0, 0, (mmc_drv.rca<<16));
-	emm_rsp_sts = mio_emm_cmd(MMC_CMD_SWITCH, 0, 0, mmc_drv.bus_width << 1);
-	emm_rsp_lo = CSR_READ(mmc_current_file.node, CAVM_MIO_EMM_RSP_LO);
-
-	if (!emm_rsp_sts.s.rsp_timeout) {
-		if (!(emm_rsp_lo >> (8 + 5) & 1)			// APP_CMD
-				&& (emm_rsp_lo >> (8 + 31) & 1)		// OUT_OF_RANGE
-				&& (emm_rsp_lo >> (8 + 19) & 1)){ 	// ERROR
-
-			emm_rsp_sts = mio_emm_cmd(MMC_CMD_SEND_STATUS, 0, 0, mmc_drv.rca << 16);
-			emm_rsp_lo = CSR_READ(mmc_current_file.node, CAVM_MIO_EMM_RSP_LO);
-			if (!emm_rsp_sts.s.rsp_timeout) {
-
-				if ((emm_rsp_lo >> (8 + 31) & 1)		// OUT_OF_RANGE
-						&& (emm_rsp_lo >> (8 + 19) & 1)) {	// ERROR
-
-					/* 20 MHz */
-					clock = (5 * rst_boot.s.pnr_mul + 3) >> 2;
-					emm_switch.u = 0;
-					emm_switch.s.bus_width = mmc_drv.bus_width;
-					emm_switch.s.clk_hi = clock;
-					emm_switch.s.clk_lo = clock;
-					emm_switch.s.power_class = 10;
-					emm_switch.s.switch_exe = 1;
-					CSR_WRITE(mmc_current_file.node, CAVM_MIO_EMM_SWITCH, emm_switch.u);
-					INFO("%s %d: emm_rsp_sts\n", __func__, __LINE__);
-
-					do {
-						emm_rsp_sts.u = CSR_READ(mmc_current_file.node, CAVM_MIO_EMM_RSP_STS);
-					} while (emm_rsp_sts.s.switch_val);
-				}
-			}
+	blk_cnt = size / mmc_drv.sector_size;
+	/* Read/write whole blocks */
+	if (unaligned_buf) {
+		/*
+		 * This is fallback mechanism, when buffer is unaligned.
+		 * It requires to copy each block to the tmp_buf which is
+		 * aligned.
+		 */
+		transfer_size = mmc_drv.sector_size;
+		while (blk_cnt > 0) {
+			if (write)
+				memcpy((void *)tmp_buf, (void *)buf,
+					transfer_size);
+			if (sdmmc_rw_block(write, addr, /* blk_cnt = */ 1,
+				(uintptr_t)tmp_buf))
+				return -1;
+			if (!write)
+				memcpy((void *)buf, (void *)tmp_buf,
+					transfer_size);
+			blk_cnt--;
+			size -= transfer_size;
+			addr += transfer_size;
+			buf += transfer_size;
+			bytes += transfer_size;
 		}
 	}
+	if (blk_cnt > 0) {
+		/*
+		 * When buf is aligned, sdmmc_rw_block use buf address directly
+		 * in DMA and handle transfering multiple blocks at the time.
+		 */
+		if (sdmmc_rw_block(write, addr, blk_cnt, buf))
+			return -1;
+		transfer_size = blk_cnt * mmc_drv.sector_size;
+		size -= transfer_size;
+		addr += transfer_size;
+		buf += transfer_size;
+		bytes += transfer_size;
+	}
 
-	INFO("%s %d: done\n", __func__, __LINE__);
-#endif
-	return 0;
+	if (size > 0) {
+		/* Read/write last remaining block */
+		if (sdmmc_rw_block(/* write = */ 0, addr,
+			/* blk_cnt = */ 1, (uintptr_t)tmp_buf))
+			return -1;
+
+		if (write) {
+			memcpy((void *)tmp_buf, (void *)buf, size);
+			if (sdmmc_rw_block(/* write = */ 1, addr,
+				/* blk_cnt = */ 1, (uintptr_t)tmp_buf))
+				return -1;
+		} else {
+			memcpy((void *)buf, (void *)tmp_buf, size);
+		}
+		bytes += size;
+	}
+
+	return bytes;
 }
 
 /* Identify the device type as emmc */
@@ -383,7 +345,8 @@ static int emmc_block_open(io_dev_info_t *dev_info, const uintptr_t spec,
 	int result = -ENOMEM;
 	const io_block_spec_t *block_spec = (io_block_spec_t *)spec;
 
-	/* Since we need to track open state for seek() we only allow one open
+	/*
+	 * Since we need to track open state for seek() we only allow one open
 	 * spec at a time. When we have dynamic memory we can malloc and set
 	 * entity->info.
 	 */
@@ -393,15 +356,13 @@ static int emmc_block_open(io_dev_info_t *dev_info, const uintptr_t spec,
 		assert(entity != NULL);
 
 		mmc_current_file.in_use = 1;
-		// FIXME mmc_current_file.cs = block_spec->offset;
 		/* File cursor offset for seek and incremental reads etc. */
 		mmc_current_file.file_pos = 0;
 		mmc_current_file.offset_address = block_spec->offset;
-		mmc_current_file.cs = plat_octeontx_bcfg->bcfg.boot_dev.cs;
 
 		entity->info = (uintptr_t)&mmc_current_file;
 
-		return emmc_config();
+		return 0;
 	} else {
 		WARN("An emmc device is already active. Close first.\n");
 	}
@@ -446,7 +407,7 @@ static int emmc_block_size(io_entity_t *entity, size_t *length)
 	assert(entity != NULL);
 	fp = (file_state_t *)entity->info;
 
-	ret = sdmmc_rw_data(0, offset + fp->file_pos, 1024, (uintptr_t) buffer, 1024);
+	ret = sdmmc_rw_data(0, offset + fp->file_pos, 1024, (uintptr_t) buffer);
 	if (ret < 0)
 		return ret;
 
@@ -470,7 +431,7 @@ static int emmc_block_read(io_entity_t *entity, uintptr_t buffer,
 
 	addr = fp->offset_address + fp->file_pos;
 
-	ret = sdmmc_rw_data(0,  addr, length, buffer, length);
+	ret = sdmmc_rw_data(0, addr, length, buffer);
 	if (ret < 0)
 		return ret;
 
@@ -486,9 +447,325 @@ static int emmc_block_close(io_entity_t *entity)
 
 	entity->info = 0;
 
-	/* This would be a mem free() if we had malloc.*/
+	/* This would be a mem free() if we had malloc. */
 	memset((void *)&mmc_current_file, 0, sizeof(mmc_current_file));
 
+	return 0;
+}
+
+static void sdmmc_set_watchdog(unsigned int time_in_ms)
+{
+	unsigned int wdog_value;
+	uint64_t rst_boot;
+	uint64_t mio_emm_modex;
+
+	mio_emm_modex = CSR_READ(CAVM_MIO_EMM_MODEX(mmc_drv.bus_id));
+	rst_boot = CSR_READ(CAVM_RST_BOOT);
+	wdog_value = RST_BOOT_GET_PNR_MUL(rst_boot) * REF_FREQ * time_in_ms;
+	wdog_value /= (MIO_EMM_MODEX_GET_CLK_LO(mio_emm_modex) +
+				MIO_EMM_MODEX_GET_CLK_HI(mio_emm_modex));
+	CSR_WRITE(CAVM_MIO_EMM_WDOG, wdog_value);
+}
+
+static inline void sdmmc_power_cycle(void)
+{
+	uint64_t gpio_bit_cfgx;
+	uint64_t mio_emm_modex;
+
+	/*
+	 * Disable buses, causes the clocking to reset to the default
+	 * Errata (EMMC-26703) EMMC CSR reset doesn't consistently work
+	 */
+	mio_emm_modex = CSR_READ(CAVM_MIO_EMM_MODEX(mmc_drv.bus_id));
+	while (MIO_EMM_MODEX_GET_CLK_LO(mio_emm_modex) != DEFAULT_CLK_LO) {
+		CSR_WRITE(CAVM_MIO_EMM_CFG, 0x0);
+		CSR_WRITE(CAVM_MIO_EMM_CFG, 0x1 << mmc_drv.bus_id);
+		mio_emm_modex = CSR_READ(CAVM_MIO_EMM_MODEX(mmc_drv.bus_id));
+	}
+	wait(200 * REF_FREQ);
+
+	// Disable buses and reset device using GPIO8
+	CSR_WRITE(CAVM_MIO_EMM_CFG, 0x0);
+	gpio_bit_cfgx = CSR_READ(CAVM_GPIO_BIT_CFGX(8));
+	gpio_bit_cfgx = GPIO_CFG_TX_OE(gpio_bit_cfgx, 1);
+	CSR_WRITE(CAVM_GPIO_BIT_CFGX(8), gpio_bit_cfgx);
+	wait(1 * REF_FREQ);
+	CSR_WRITE(CAVM_GPIO_TX_CLR, 0x1 << 8);
+	wait(200 * REF_FREQ);
+	CSR_WRITE(CAVM_GPIO_TX_SET, 0x1 << 8);
+	wait(2 * REF_FREQ);
+
+	// Enable bus
+	CSR_WRITE(CAVM_MIO_EMM_CFG, 0x1 << mmc_drv.bus_id);
+
+	// Reset the status mask reg., boot will change it
+	CSR_WRITE(CAVM_MIO_EMM_STS_MASK, DEFAULT_STS_MASK);
+	wait(2 * REF_FREQ);
+
+	sdmmc_set_watchdog(MMC_WATCHDOG_MS);
+}
+
+static inline uint64_t reset_card(void)
+{
+	return mio_emm_cmd(MMC_CMD_GO_IDLE_STATE, CMD_NO_DATA, RESP_NONE, 0);
+}
+
+static inline uint64_t sdmmc_all_send_cid(void)
+{
+	return mio_emm_cmd(MMC_CMD_ALL_SEND_CID, CMD_NO_DATA, RESP_NONE, 0);
+}
+
+/*
+ * Allow to distinguish SD version 2 >= and MMC
+ * Only SD version 2 >= will have rsp_sts == 0
+ */
+static inline sd_if_cond_t sdmmc_send_if_cond_cmd(void)
+{
+	sd_if_cond_t rsp;
+
+	rsp.rsp_sts = mio_emm_cmd(SD_CMD_SEND_IF_COND,
+			CMD_READ_DBUF, RESP_R2, SD_IF_COND_ARG);
+	rsp.rsp_lo = CSR_READ(CAVM_MIO_EMM_RSP_LO);
+	return rsp;
+}
+
+static inline uint32_t sd_ver_2_above_get_ocr(sd_if_cond_t sd_if_cond)
+{
+	uint64_t emm_rsp_sts;
+	uint64_t emm_rsp_lo;
+	uint32_t ocr;
+
+	/* suppress warning about uninitialized */
+	ocr = 0;
+	/* We may have an SD card, as it should respond */
+	if (octeontx_bit_extract(SKIP_CRC_RSP(sd_if_cond.rsp_lo), 0, 40) !=
+	    EXPECTED_IF_COND_VALUE) {
+		ERROR("MMC: Unexpected response from SD_CMD_SEND_IF_COND\n");
+		mmc_drv.is_sd = 0;
+		return ocr;
+	}
+	/* Send a ACMD 41 */
+	do {
+		emm_rsp_sts = mio_emm_cmd(SD_CMD_SEND_OP_COND,
+				CMD_NO_DATA, RESP_NONE, 0);
+
+		if (emm_rsp_sts == 0x0) {
+			emm_rsp_sts = mio_emm_cmd(SD_CMD_APP_SEND_OP_COND,
+					CMD_NO_DATA, RESP_R3, OP_COND_ARG);
+			if (emm_rsp_sts) {
+				ERROR("MMC: Failed to recognize card\n");
+				mmc_drv.is_sd = 0;
+				return ocr;
+			}
+			mmc_drv.is_sd = 1;
+		} else {
+			/* Failed, not sure what's out there */
+			ERROR("MMC: Failed to recognize card\n");
+			mmc_drv.is_sd = 0;
+			return ocr;
+		}
+
+		emm_rsp_lo = CSR_READ(CAVM_MIO_EMM_RSP_LO);
+		ocr = GET_OCR(emm_rsp_lo);
+	} while (!OCR_GET_DONE_BIT(ocr));
+
+	return ocr;
+}
+
+/*
+ * Valid OCR has done_bit set to 1.
+ * When function return OCR == 0 that indicate error.
+ */
+static inline uint32_t sdmmc_send_op_cond_cmd(void)
+{
+	uint64_t emm_rsp_sts;
+	uint64_t emm_rsp_lo;
+	uint32_t ocr;
+
+	do {
+		emm_rsp_sts = mio_emm_cmd(MMC_CMD_SEND_OP_COND,
+				CMD_NO_DATA, RESP_NONE, OP_COND_ARG);
+		if (emm_rsp_sts) {
+			ERROR("MMC: Failed to recognize card\n");
+			ocr = 0;
+			return ocr;
+		}
+		emm_rsp_lo = CSR_READ(CAVM_MIO_EMM_RSP_LO);
+		ocr = GET_OCR(emm_rsp_lo);
+	} while (!OCR_GET_DONE_BIT(ocr));
+
+	return ocr;
+}
+
+static inline uint32_t sdmmc_get_ocr(void)
+{
+	uint64_t emm_rsp_sts;
+	uint64_t emm_rsp_lo;
+	uint32_t ocr;
+
+	ocr = 0;
+	/* Send a ACMD 41 */
+	do {
+		emm_rsp_sts = mio_emm_cmd(SD_CMD_SEND_OP_COND,
+				CMD_NO_DATA, RESP_NONE, 0);
+		if (emm_rsp_sts == 0x0) {
+			emm_rsp_sts = mio_emm_cmd(SD_CMD_APP_SEND_OP_COND,
+					CMD_NO_DATA, RESP_R3, OP_COND_ARG);
+			if (emm_rsp_sts) {
+				/* Have an SD card, version less than 2. */
+				mmc_drv.is_sd = 1;
+				return sdmmc_send_op_cond_cmd();
+			}
+		} else {
+			/* APP_CMD command failed */
+			mmc_drv.is_sd = 0;
+			return sdmmc_send_op_cond_cmd();
+		}
+
+		emm_rsp_lo = CSR_READ(CAVM_MIO_EMM_RSP_LO);
+		ocr = GET_OCR(emm_rsp_lo);
+	} while (!OCR_GET_DONE_BIT(ocr));
+
+	mmc_drv.is_sd = 1;
+	return ocr;
+}
+
+static inline int sd_get_rca(void)
+{
+	uint64_t emm_rsp_sts;
+	uint64_t emm_rsp_lo;
+	uint64_t sts_mask;
+
+	/*
+	 * For SD, read the relative address from the card
+	 * CMD3 response for SD cards is R6 format, similar to R1, but different
+	 * Need to chaneg the mio_EMM_STS_MASK register so we don't get
+	 * a response status error
+	 */
+	sts_mask = CSR_READ(CAVM_MIO_EMM_STS_MASK);
+	CSR_WRITE(CAVM_MIO_EMM_STS_MASK, STS_MASK_RESP_R6);
+
+	emm_rsp_sts = mio_emm_cmd(
+			SD_CMD_SEND_RELATIVE_ADDR, CMD_NO_DATA, RESP_R6, 0);
+	CSR_WRITE(CAVM_MIO_EMM_STS_MASK, sts_mask);
+	if (emm_rsp_sts) {
+		ERROR("MMC: Filed to get rca.\n");
+		return -1;
+	}
+	emm_rsp_lo = CSR_READ(CAVM_MIO_EMM_RSP_LO);
+
+	return GET_RCA(emm_rsp_lo);
+}
+
+static inline uint64_t mmc_set_rca(void)
+{
+	return mio_emm_cmd(MMC_CMD_SET_RELATIVE_ADDR, CMD_NO_DATA, RESP_NONE,
+				RCA_ARG(mmc_drv.rca));
+}
+
+static inline uint64_t sdmmc_select_card(void)
+{
+	return mio_emm_cmd(MMC_CMD_SELECT_CARD, CMD_NO_DATA, RESP_NONE,
+				RCA_ARG(mmc_drv.rca));
+}
+
+static inline uint64_t sdmmc_send_card_status(void)
+{
+	return mio_emm_cmd(MMC_CMD_SEND_STATUS, CMD_NO_DATA, RESP_NONE,
+				RCA_ARG(mmc_drv.rca));
+}
+
+static void sdmmc_switch_clock(int clock_hz)
+{
+	int clock;
+	uint64_t rst_boot;
+	uint64_t emm_switch;
+	uint64_t mio_emm_modex;
+
+	rst_boot = CSR_READ(CAVM_RST_BOOT);
+	clock = RST_BOOT_GET_PNR_MUL(rst_boot) * REF_FREQ * 1000;
+	clock /= clock_hz;
+	clock /= 2; /* half time for hi and half for lo */
+
+	mio_emm_modex = CSR_READ(CAVM_MIO_EMM_MODEX(mmc_drv.bus_id));
+	emm_switch = 0;
+	emm_switch = MIO_EMM_SWITCH_SET_CLK_LO(emm_switch, clock);
+	emm_switch = MIO_EMM_SWITCH_SET_CLK_HI(emm_switch, clock);
+	emm_switch = MIO_EMM_SWITCH_SET_SWITHC_EXE(emm_switch, 0);
+	emm_switch = MIO_EMM_SWITCH_SET_HS_TIMING(emm_switch,
+				MIO_EMM_MODEX_GET_HS_TIMING(mio_emm_modex));
+	emm_switch = MIO_EMM_SWITCH_SET_BUS_WIDTH(emm_switch,
+				MIO_EMM_MODEX_GET_BUS_WIDTH(mio_emm_modex));
+	emm_switch = MIO_EMM_SWITCH_SET_POWER_CLASS(emm_switch,
+				MIO_EMM_MODEX_GET_POWER_CLASS(mio_emm_modex));
+	emm_switch = MIO_EMM_SWITCH_SET_BUS_ID(emm_switch, mmc_drv.bus_id);
+
+	CSR_WRITE(CAVM_MIO_EMM_SWITCH, emm_switch);
+	wait(2 * REF_FREQ);
+
+	sdmmc_set_watchdog(MMC_WATCHDOG_MS);
+}
+
+int sdmmc_dev_init(io_dev_info_t *dev_info, const uintptr_t init_params)
+{
+	uint64_t emm_rsp_sts;
+	sd_if_cond_t sd_if_cond;
+	uint32_t ocr;
+
+	mmc_drv.bus_id = plat_octeontx_bcfg->bcfg.boot_dev.cs;
+	mmc_drv.sector_size = MMC_SECTOR_SIZE;
+
+	sdmmc_power_cycle();
+	reset_card();
+
+	sd_if_cond = sdmmc_send_if_cond_cmd();
+	if (sd_if_cond.rsp_sts == 0x0) {
+		/* We may have an SD card */
+		ocr = sd_ver_2_above_get_ocr(sd_if_cond);
+		if (!mmc_drv.is_sd)
+			return -1;
+	} else {
+		/* Card could be an SD version less than 2.0 or an MMC card */
+		ocr = sdmmc_get_ocr();
+		if (!OCR_GET_DONE_BIT(ocr))
+			return -1;
+	}
+	mmc_drv.sector_mode = OCR_GET_ACCESS_MODE(ocr);
+
+	emm_rsp_sts = sdmmc_all_send_cid();
+	if (emm_rsp_sts) {
+		ERROR("MMC: Failed to send command all send cid.\n");
+		return -1;
+	}
+
+	if (mmc_drv.is_sd) {
+		mmc_drv.rca = sd_get_rca();
+		if (mmc_drv.rca == -1)
+			return -1;
+	} else {
+		mmc_drv.rca = 1;
+		emm_rsp_sts = mmc_set_rca();
+		if (emm_rsp_sts) {
+			ERROR("MMC: Failed to set rca.\n");
+			return -1;
+		}
+	}
+
+	CSR_WRITE(CAVM_MIO_EMM_RCA, mmc_drv.rca);
+
+	emm_rsp_sts = sdmmc_select_card();
+	if (emm_rsp_sts) {
+		ERROR("MMC: Failed to select card.\n");
+		return -1;
+	}
+	emm_rsp_sts = sdmmc_send_card_status();
+	if (emm_rsp_sts) {
+		ERROR("MMC: Failed to send card status.\n");
+		return -1;
+	}
+
+	/* Do not set clock over 100MHz, for more info see errata EMM-35321 */
+	sdmmc_switch_clock(MMC_CLOCK_HZ);
 	return 0;
 }
 
@@ -509,7 +786,7 @@ static const io_dev_funcs_t emmc_dev_funcs = {
 	.read = emmc_block_read,
 	.write = NULL,
 	.close = emmc_block_close,
-	.dev_init = NULL,
+	.dev_init = sdmmc_dev_init,
 	.dev_close = emmc_dev_close,
 };
 
