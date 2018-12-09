@@ -543,7 +543,7 @@ static void ble_plat_svc_config(void)
 				avs_workpoint = 0;
 			break;
 		}
-	} else if (device_id == MVEBU_3900_DEV_ID) {
+	} else if (device_id == MVEBU_3900_DEV_ID) { /* TODO: extend for 9130 */
 		NOTICE("SVC: DEV ID: %s, FREQ Mode: 0x%x\n",
 		       "3900", freq_pidi_mode);
 		switch (freq_pidi_mode) {
