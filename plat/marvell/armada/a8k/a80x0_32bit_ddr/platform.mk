@@ -14,6 +14,7 @@ MARVELL_MOCHI_DRV	:=	drivers/marvell/mochi/apn806_setup.c
 CP_NUM			:= 2
 $(eval $(call add_define,CP_NUM))
 
+BOARD_DIR		:= $(shell dirname $(lastword $(MAKEFILE_LIST)))
 include plat/marvell/armada/a8k/common/a8k_common.mk
 
 include plat/marvell/armada/common/marvell_common.mk

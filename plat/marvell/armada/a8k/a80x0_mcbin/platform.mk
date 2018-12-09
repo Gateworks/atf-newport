@@ -16,6 +16,7 @@ MARVELL_MOCHI_DRV	:=	drivers/marvell/mochi/apn806_setup.c
 
 BL31_LIBS		:=	plat/marvell/armada/common/bl31_lib/mv_lib_ext.a
 
+BOARD_DIR		:= $(shell dirname $(lastword $(MAKEFILE_LIST)))
 include plat/marvell/armada/a8k/common/a8k_common.mk
 
 include plat/marvell/armada/common/marvell_common.mk

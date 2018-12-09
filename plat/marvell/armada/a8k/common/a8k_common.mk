@@ -7,9 +7,8 @@
 include tools/doimage/doimage.mk
 
 PLAT_FAMILY		:= a8k
-PLAT_FAMILY_BASE	:= plat/marvell/armada/$(PLAT_FAMILY)
 PLAT_INCLUDE_BASE	:= include/plat/marvell/armada/$(PLAT_FAMILY)
-PLAT_COMMON_BASE	:= $(PLAT_FAMILY_BASE)/common
+PLAT_COMMON_BASE	:= plat/marvell/armada/a8k/common
 MARVELL_DRV_BASE	:= drivers/marvell
 MARVELL_COMMON_BASE	:= plat/marvell/armada/common
 
@@ -50,7 +49,7 @@ MARVELL_GIC_SOURCES	:=	drivers/arm/gic/common/gic_common.c	\
 
 ATF_INCLUDES		:=	-Iinclude/common/tbbr
 
-PLAT_INCLUDES		:=	-I$(PLAT_FAMILY_BASE)/$(PLAT)		\
+PLAT_INCLUDES		:=	-I$(BOARD_DIR)				\
 				-I$(PLAT_COMMON_BASE)/include		\
 				-I$(PLAT_INCLUDE_BASE)/common		\
 				-Iinclude/drivers/marvell		\
@@ -61,8 +60,8 @@ PLAT_BL_COMMON_SOURCES	:=	$(PLAT_COMMON_BASE)/aarch64/a8k_common.c \
 				drivers/console/aarch64/console.S	 \
 				drivers/ti/uart/aarch64/16550_console.S
 
-BLE_PORTING_SOURCES	:=	$(PLAT_FAMILY_BASE)/$(PLAT)/board/dram_port.c \
-				$(PLAT_FAMILY_BASE)/$(PLAT)/board/marvell_plat_config.c
+BLE_PORTING_SOURCES	:=	$(BOARD_DIR)/board/dram_port.c \
+				$(BOARD_DIR)/board/marvell_plat_config.c
 
 MARVELL_MOCHI_DRV	+=	$(MARVELL_DRV_BASE)/mochi/cp110_setup.c
 
@@ -100,7 +99,7 @@ MARVELL_DRV		:= 	$(MARVELL_DRV_BASE)/io_win.c	\
 				$(MARVELL_DRV_BASE)/comphy/phy-comphy-cp110.c \
 				$(MARVELL_DRV_BASE)/mc_trustzone/mc_trustzone.c
 
-BL31_PORTING_SOURCES	:=	$(PLAT_FAMILY_BASE)/$(PLAT)/board/marvell_plat_config.c
+BL31_PORTING_SOURCES	:=	$(BOARD_DIR)/board/marvell_plat_config.c
 
 BL31_SOURCES		+=	lib/cpus/aarch64/cortex_a72.S		       \
 				$(PLAT_COMMON_BASE)/aarch64/plat_helpers.S     \
