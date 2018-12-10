@@ -33,6 +33,8 @@ BL31_SOURCES		+=	plat/marvell/octeontx/otx2/aarch64/plat_octeontx_common.S	\
 				plat/marvell/octeontx/otx2/aarch64/plat_helpers.S	\
 				plat/marvell/octeontx/otx2/plat_topology.c		\
 				drivers/marvell/rvu.c		\
+				drivers/marvell/phy_gen.c		\
+				drivers/marvell/phy_vitesse.c		\
 				drivers/marvell/phy_mgmt.c		\
 				drivers/marvell/sfp_mgmt.c		\
 				drivers/marvell/cgx_intf.c		\
