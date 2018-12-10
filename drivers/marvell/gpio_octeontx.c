@@ -29,7 +29,7 @@
 #include <octeontx_svc.h>
 #include <octeontx_common.h>
 #include <gpio_octeontx.h>
-#include <octoentx_irqs_def.h>
+#include <octeontx_irqs_def.h>
 
 #define SPSR_ISR	((1ULL << SPSR_E_SHIFT) | (3 << SPSR_AIF_SHIFT))
 #define SCR_ISR		(SCR_NS_BIT | SCR_TWE_BIT | SCR_TWI_BIT | SCR_RW_BIT)
