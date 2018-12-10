@@ -27,7 +27,7 @@
 #define debug_smi(...) ((void) (0))
 #endif
 
-void smi_setmode(int bus_id, int mode)
+static void smi_setmode(int bus_id, int mode)
 {
 	union cavm_smi_x_clk smix_clk;
 
@@ -37,7 +37,7 @@ void smi_setmode(int bus_id, int mode)
 	CSR_WRITE(CAVM_SMI_X_CLK(bus_id), smix_clk.u);
 }
 
-int smi_c45_addr(int bus_id, int addr, int devad, int regnum)
+static int smi_c45_addr(int bus_id, int addr, int devad, int regnum)
 {
 	union cavm_smi_x_cmd smix_cmd;
 	union cavm_smi_x_wr_dat smix_wr_dat;
@@ -64,7 +64,7 @@ int smi_c45_addr(int bus_id, int addr, int devad, int regnum)
 	return timeout == 0;
 }
 
-int smi_phy_read(int bus_id, int mode, int addr, int devad, int regnum)
+int smi_read(int bus_id, int mode, int addr, int devad, int regnum)
 {
 	union cavm_smi_x_cmd smix_cmd;
 	union cavm_smi_x_rd_dat smix_rd_dat;
@@ -110,7 +110,7 @@ int smi_phy_read(int bus_id, int mode, int addr, int devad, int regnum)
 	return smix_rd_dat.s.dat;
 }
 
-int smi_phy_write(int bus_id, int addr, int devad,
+int smi_write(int bus_id, int addr, int devad,
 			 int mode, int regnum, uint16_t value)
 {
 	union cavm_smi_x_cmd smix_cmd;
@@ -159,7 +159,7 @@ int smi_phy_write(int bus_id, int addr, int devad,
 	return timeout == 0;
 }
 
-int smi_phy_reset(int bus_id)
+int smi_reset(int bus_id)
 {
 	union cavm_smi_x_en smi_en;
 

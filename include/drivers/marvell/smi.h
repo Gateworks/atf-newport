@@ -25,12 +25,10 @@ enum {
 	SMI_OP_C45_READ = 3,
 };
 
-int smi_phy_read(int bus_id, int mode,
+int smi_read(int bus_id, int mode,
 			int addr, int devad, int regnum);
-
-int smi_phy_write(int bus_id, int addr, int devad,
+int smi_write(int bus_id, int addr, int devad,
 			 int mode, int regnum, uint16_t value);
-
-int smi_phy_reset(int bus_id);
+int smi_reset(int bus_id);
 
 #endif /* __SMI_H__ */
