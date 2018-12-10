@@ -25,14 +25,16 @@ typedef enum {
 	GPIO_PIN_PCA9698,
 	/* GPIO pin is PCA9552 LED driver */
 	GPIO_PIN_PCA9552,
+	/* Pin is controlled via CPLD(similar to GPIO controller) */
+	GPIO_PIN_CPLD,
 	GPIO_PIN_OTHER,
-} sfp_gpio_type_e;
+} gpio_type_e;
 
 typedef enum i2c_mux_type {
 	I2C_SWITCH,
 	I2C_MUX,
 	I2C_OTHER
-} sfp_i2c_mux_type_e;
+} i2c_mux_type_e;
 
 /* Type of i2c bus */
 typedef enum {
@@ -47,43 +49,43 @@ typedef enum {
 	I2C_BUS_PCA9547,
 	I2C_BUS_PCA9548,
 	I2C_BUS_OTHER
-} sfp_i2c_bus_type_e;
+} i2c_bus_type_e;
 
 typedef struct gpio_compat {
 	char compatible[64];		/* compatible string */
-	sfp_gpio_type_e type;		/* type */
+	gpio_type_e type;		/* type */
 	uint8_t ngpios;			/* max number of pins */
-} sfp_gpio_compat_t;
+} gpio_compat_t;
 
 typedef struct i2c_compat {
 	char compatible[64];		/* Compatible string */
-	sfp_i2c_bus_type_e type;	/* Device type */
-	sfp_i2c_mux_type_e mux_type;	/* Mux or Switch */
+	i2c_bus_type_e type;	/* Device type */
+	i2c_mux_type_e mux_type;	/* Mux or Switch */
 	uint8_t enable;			/* Enable bit for mux. Each mux have different bit */
 	uint8_t size;			/* Max number of channels */
-} sfp_i2c_compat_t;
+} i2c_compat_t;
 
-typedef struct sfp_i2c_info {
+typedef struct i2c_info {
 	uint8_t addr;			/* Address of the MUX/Switch */
 	uint8_t channel;		/* To which channel the slot is connected to */
 	uint8_t enable_bit;		/* Enable bit of channel - Varies for MUX */
 	uint8_t is_mux;			/* Whether it is a MUX or Switch */
 	uint8_t bus;			/* TWSI bus the slot is connected to */
 	uint8_t type;			/* Type of MUX/Switch */
-	uint16_t reserved;		/* for alignment */
-} sfp_i2c_info_t;
+} i2c_info_t;
 
-typedef struct sfp_gpio_info {
-	uint8_t pin;			/* Pin Number */
-	uint8_t num_pins;		/* Total pins supported by the Expander */
+typedef struct gpio_info {
+	uint16_t pin;			/* Pin Number */
+	uint16_t num_pins;		/* Total pins supported by the Expander */
 	uint8_t i2c_addr;		/* Expander's TWSI address */
 	uint8_t i2c_bus;		/* TWSI bus Expander is connected to */
 	uint8_t dir_out;		/* Direction of the Pin is output */
 	uint8_t dir_in;			/* Direction of the Pin is input */
 	uint8_t type;			/* Type of Expander */
 	uint8_t flags;
-	sfp_i2c_info_t i2c_info;	/* details of how the expander is connected to SoC - switch or Mux */
-} sfp_gpio_info_t;
+	uint16_t reserved;		/* For alignment */
+	i2c_info_t i2c_info;	/* details of how the expander is connected to SoC - switch or Mux */
+} gpio_info_t;
 
 /* State machine maintain for SFP/QSFP management for communication
  * between AP & MCP
@@ -118,17 +120,17 @@ typedef struct sfp_slot_info {
 	uint8_t is_qsfp;                        /* set when QSFP is connected */
 	uint16_t eeprom_addr;			/* TWSI address of EEPROM */
 	uint32_t max_power;			/* different power levels in mW */
-	sfp_i2c_info_t i2c_eeprom_info;		/* TWSI details for EEPROM connection */
-	sfp_i2c_info_t i2c_diag_info;           /* TWSI details for DIAG connection (if applicable) */
-	sfp_gpio_info_t tx_disable;             /* SFP : GPIO details for tx_disable pin */
-	sfp_gpio_info_t mod_abs;                /* SFP : GPIO details for mod_abs pin */
-	sfp_gpio_info_t tx_fault;               /* SFP : GPIO details for tx_fault */
-	sfp_gpio_info_t rx_los;                 /* SFP : GPIO details for rx_los */
-	sfp_gpio_info_t select;                 /* QSFP : GPIO details for ModSelL pin */
-	sfp_gpio_info_t reset;                  /* QSFP : GPIO details for ResetL pin */
-	sfp_gpio_info_t lp_mode;                /* QSFP : GPIO details for LPMode */
-	sfp_gpio_info_t mod_prs;                /* QSFP : GPIO details for ModPrsL */
-	sfp_gpio_info_t interrupt;              /* QSFP : GPIO details for IntL */
+	i2c_info_t i2c_eeprom_info;		/* TWSI details for EEPROM connection */
+	i2c_info_t i2c_diag_info;           /* TWSI details for DIAG connection (if applicable) */
+	gpio_info_t tx_disable;             /* SFP : GPIO details for tx_disable pin */
+	gpio_info_t mod_abs;                /* SFP : GPIO details for mod_abs pin */
+	gpio_info_t tx_fault;               /* SFP : GPIO details for tx_fault */
+	gpio_info_t rx_los;                 /* SFP : GPIO details for rx_los */
+	gpio_info_t select;                 /* QSFP : GPIO details for ModSelL pin */
+	gpio_info_t reset;                  /* QSFP : GPIO details for ResetL pin */
+	gpio_info_t lp_mode;                /* QSFP : GPIO details for LPMode */
+	gpio_info_t mod_prs;                /* QSFP : GPIO details for ModPrsL */
+	gpio_info_t interrupt;              /* QSFP : GPIO details for IntL */
 } sfp_slot_info_t;
 
 /* Ownership of shared memory */

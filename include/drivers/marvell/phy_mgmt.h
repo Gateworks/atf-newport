@@ -29,17 +29,81 @@
 #define PMA_PMD_CONTROL_REG		0
 #define PMA_PMD_STATUS_REG		1
 
-/* generic 802.3 clause types */
-typedef enum {
-	PHY_GENERIC_8023_NONE,
+/* PHY types */
+typedef enum phy_type {
+	PHY_NONE = 0,
+	PHY_MARVELL_5123,
+	PHY_MARVELL_5113,
+	PHY_VITESSE_8574,
 	PHY_GENERIC_8023_C22,
-	PHY_GENERIC_8023_C45
-} phy_clause_t;
+	PHY_GENERIC_8023_C45,
+} phy_type_t;
+
+/* Type of GPIO pin */
+typedef enum {
+	PHY_MUX_GPIO_PIN_NONE = 0,
+	/* GPIO pin is directly connected to SoC */
+	PHY_MUX_GPIO_PIN_DEFAULT,
+	/* If the pin is controlled via CPLD */
+	PHY_MUX_GPIO_PIN_CPLD
+} phy_mux_type_t;
+
+/* Media type for vsc8574 */
+typedef enum phy_vsc8574_media_mode {
+	PHY_MEDIA_COPPER = 0,
+	PHY_MEDIA_1000BX,
+	PHY_MEDIA_100FX
+} phy_vsc8574_media_mode_t;
+
+typedef struct phy_compat {
+	char compatible[64];	/* compatible string */
+	int phy_type;		/* phy_type_t */
+} phy_compatible_type_t;
+
+typedef struct phy_drv {
+	char drv_name[64];
+	int drv_type;
+	int flags;	/* Any specific info about the PHY */
+	void (*probe)(int cgx_id, int lmac_id); /* Function pointer to initialize PHY */
+	void (*reset)(int cgx_id, int lmac_id); /* Function pointer to reset PHY */
+	void (*config)(int cgx_id, int lmac_id); /* Function pointer to set mode of PHY */
+	void (*set_an)(int cgx_id, int lmac_id); /* Function pointer to configure AN */
+	void (*get_link_status)(int cgx_id, int lmac_id, link_state_t *link); /* Function pointer to get link status of PHY */
+	void (*shutdown)(int cgx_id, int lmac_id); /* Function pointer to shutdown PHY */
+} phy_drv_t;
+
+typedef struct phy_config {
+	int type;
+	int addr;	/* PHY ADDR on MDIO bus */
+	int mdio_bus;	/* SMI bus number */
+	int mux_switch; /* If controlled via switch. Ex: Analog switch on EBB9604 */
+	int media_type; /* Required for VSC8574 */
+	int valid;	/* If valid PHY driver found */
+	int init;	/* Whether Initialization is already performed */
+	phy_drv_t *drv; /* struct for PHY driver operations */
+	void *priv;
+	gpio_info_t mux_info; /* Details of switch details if MDIO is muxed */
+} phy_config_t;
 
 /* APIs */
-void octeontx_phy_reset(int cgx_id, int lmac_id);
+void phy_probe(int cgx_id, int lmac_id);
+int phy_get_link_status(int cgx_id, int lmac_id, link_state_t *link);
+void phy_config(int cgx_id, int lmac_id);
+void phy_register(int cgx_id, int lmac_id, phy_drv_t *phy_drv);
+void phy_lookup(int cgx_id, int lmac_id, int type);
+int phy_mdio_read(phy_config_t *phy, int mode, int devad, int reg);
+void phy_mdio_write(phy_config_t *phy, int mode, int devad, int reg, int val);
+void phy_set_switch(phy_config_t *phy, int enable);
 
-int octeontx_get_phy_link_status(int cgx_id, int lmac_id,
-				link_state_t *link);
+/* Generic PHY driver APIs to be exposed to other PHY drivers */
+void phy_generic_reset(int cgx_id, int lmac_id);
+void phy_generic_shutdown(int cgx_id, int lmac_id);
+void phy_generic_config(int cgx_id, int lmac_id);
+void phy_generic_set_an(int cgx_id, int lmac_id);
+void phy_generic_c45_get_link_status(int cgx_id, int lmac_id, link_state_t *link);
+void phy_generic_c22_get_link_status(int cgx_id, int lmac_id, link_state_t *link);
 
-#endif /* __PHY_MGMT_H__ */
+phy_drv_t *phy_marvell_drv_lookup(int type);
+phy_drv_t *phy_generic_drv_lookup(int type);
+phy_drv_t *phy_vitesse_drv_lookup(int type);
+#endif /* __CAVM_PHY_MGMT_H__ */

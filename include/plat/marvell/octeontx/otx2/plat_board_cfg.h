@@ -88,13 +88,6 @@ typedef struct rvu_config {
 	rvu_sw_rvu_pf_t sw_pf[SW_RVU_MAX_PF];
 } rvu_config_t;
 
-typedef struct phy_config {
-	int phy_addr;
-	int mdio_bus;
-	int clause;
-	char phy_compatible[64];
-} phy_config_t;
-
 /* Define LMAC structure. */
 typedef struct cgx_lmac_config {
 	/* for RVU */

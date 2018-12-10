@@ -70,8 +70,8 @@ static struct qlm_mode_strmap_s qlmmode_strmap[] = {
 	{-1, NULL, NULL}
 };
 
-/* List of GPIO types - used as expanders in case of SFP/QSFP */
-static const sfp_gpio_compat_t gpio_compat_list[] = {
+/* List of GPIO types - used as expanders in case of SFP/QSFP/PHY */
+static const gpio_compat_t gpio_compat_list[] = {
 	{ "cavium,thunder-8890-gpio", GPIO_PIN_DEFAULT, 64 },	/* 64 pins for T9x */
 	{ "nxp,pca9505",	GPIO_PIN_PCA953X, 40 },
 	{ "nxp,pca9698",	GPIO_PIN_PCA953X, 40 },
@@ -110,10 +110,11 @@ static const sfp_gpio_compat_t gpio_compat_list[] = {
 	{ "nxp,pca9675",	GPIO_PIN_PCF857X, 16 },
 	{ "maxim,max7328",	GPIO_PIN_PCF857X, 8 },
 	{ "maxim,max7329",	GPIO_PIN_PCF857X, 8 },
+	{ "cavium,cpld96xx",	GPIO_PIN_CPLD,	8},
 };
 
 /* List of I2C Mux/Switch types */
-static const sfp_i2c_compat_t i2c_compat_list[] = {
+static const i2c_compat_t i2c_compat_list[] = {
 	{ "cavium,thunder-8890-twsi", I2C_BUS_DEFAULT, I2C_OTHER,  0, 6},
 	{ "cavium,thunderx-i2c", I2C_BUS_DEFAULT, I2C_OTHER,  0, 6},
 	{ "nxp,pca9540", I2C_BUS_PCA9540, I2C_MUX,    4, 2 },
@@ -124,6 +125,15 @@ static const sfp_i2c_compat_t i2c_compat_list[] = {
 	{ "nxp,pca9546", I2C_BUS_PCA9546, I2C_SWITCH, 0, 4 },
 	{ "nxp,pca9547", I2C_BUS_PCA9547, I2C_MUX,    8, 8 },
 	{ "nxp,pca9548", I2C_BUS_PCA9548, I2C_SWITCH, 0, 8 },
+};
+
+/* List of PHY compatible strings/types */
+static const phy_compatible_type_t phy_compat_list[] = {
+	{ "marvell,88x5123", PHY_MARVELL_5123},
+	{ "marvell,88x5113", PHY_MARVELL_5113},
+	{ "vitesse,vsc8574", PHY_VITESSE_8574},
+	{ "ethernet-phy-ieee802.3-c22", PHY_GENERIC_8023_C22},
+	{ "ethernet-phy-ieee802.3-c45", PHY_GENERIC_8023_C45},
 };
 
 /* Output information specific for OCTEONTX2, for now only CGX. */
@@ -160,15 +170,12 @@ void plat_octeontx_print_board_variables(void)
 					lmac->local_mac_address[5]);
 			if (lmac->phy_present) {
 				phy = &lmac->phy_config;
-				if (strlen(phy->phy_compatible)) {
-					debug_dts("\tPHY: mdio_bus=%d, phy_addr=0x%x, compatible=%s\n",
+				if (phy->type != PHY_NONE) {
+					debug_dts("\tPHY: mdio_bus=%d, phy_addr=0x%x, type=%d switch=%d\n",
 							phy->mdio_bus,
-							phy->phy_addr,
-							phy->phy_compatible);
-				} else {
-					debug_dts("\tPHY: mdio_bus=%d, phy_addr=0x%x, compatible=NULL\n",
-							phy->mdio_bus,
-							phy->phy_addr);
+							phy->addr,
+							phy->type,
+							phy->mux_switch);
 				}
 			} else {
 				debug_dts("\tPHY: NONE\n");
@@ -217,7 +224,7 @@ static uint64_t octeontx2_fdt_get_uint64(const void *fdt, const char *prop,
 
 	reg = fdt_getprop(fdt, offset, prop, NULL);
 	if (!reg) {
-		WARN("%s: cannot find reg property for prop %s\n",
+		WARN("%s: Cannot find property for prop %s\n",
 				 __func__, prop);
 		return -1;
 	}
@@ -633,13 +640,14 @@ static int octeontx2_fdt_get_bus(const void *fdt, int offset,
 	nodename = fdt_get_name(fdt, node, NULL);
 
 	if (!strncmp(nodename, "mdio", 4)) {
-		debug_dts("CGX%d.LMAC%d: PHY is on MDIO bus\n", cgx_idx, lmac_idx);
+		debug_dts("CGX%d.LMAC%d: MDIO node\n", cgx_idx, lmac_idx);
 		mdio = octeontx2_fdt_get_uint64(fdt, "reg", node);
-		bus = (mdio & (1 << 7)) ? 1 : 0;
-		debug_dts("CGX%d.LMAC%d: mdio 0x%llx bus %d\n",
+		if (mdio != -1)
+			bus = (mdio & (1 << 7)) ? 1 : 0;
+		debug_dts("CGX%d.LMAC%d: mdio 0x%lx bus %d\n",
 				cgx_idx, lmac_idx, mdio, bus);
 	} else if (!strncmp(nodename, "i2c", 3)) {
-		debug_dts("CGX%d.LMAC%d: PHY/SFP is on I2C bus\n", cgx_idx, lmac_idx);
+		debug_dts("CGX%d.LMAC%d: I2C node\n", cgx_idx, lmac_idx);
 		i2c = octeontx2_fdt_get_int32(fdt, "reg", node);
 		/* based on DEVFN, obtain TWSI bus */
 		bus = ((i2c >> 8) & 0x7);
@@ -653,7 +661,7 @@ static int octeontx2_fdt_get_bus(const void *fdt, int offset,
 }
 
 static void octeontx2_fdt_get_i2c_bus_info(const void *fdt, int offset,
-		sfp_i2c_info_t *i2c_info, int cgx_idx, int lmac_idx)
+		i2c_info_t *i2c_info, int cgx_idx, int lmac_idx)
 {
 	int parent;
 
@@ -697,7 +705,7 @@ static void octeontx2_fdt_get_i2c_bus_info(const void *fdt, int offset,
 }
 
 static void octeontx2_fdt_gpio_get_info_by_phandle(const void *fdt, int offset,
-		const char *propname, sfp_gpio_info_t *gpio_info,
+		const char *propname, gpio_info_t *gpio_info,
 		int cgx_idx, int lmac_idx)
 {
 	int len;
@@ -772,7 +780,7 @@ static void octeontx2_fdt_gpio_get_info_by_phandle(const void *fdt, int offset,
 					&gpio_info->i2c_info,
 					cgx_idx, lmac_idx);
 			gpio_info->i2c_bus = gpio_info->i2c_info.bus;
-			debug_dts("CGX%d.LMAC%d: GPIO expander : addr 0x%x bus %d num pins %d\n",
+			debug_dts("CGX%d.LMAC%d: GPIO controller : addr 0x%x bus %d num pins %d\n",
 				cgx_idx, lmac_idx,
 				gpio_info->i2c_addr, gpio_info->i2c_bus,
 				gpio_info->num_pins);
@@ -788,7 +796,7 @@ static void octeontx2_fdt_parse_qsfp_info(const void *fdt, int offset,
 		int cgx_idx, int lmac_idx)
 {
 	const char *name;
-	sfp_i2c_info_t *i2c_info;
+	i2c_info_t *i2c_info;
 	sfp_slot_info_t *qsfp_info;
 	cgx_lmac_config_t *lmac;
 	int eeprom, parent;
@@ -846,7 +854,7 @@ static void octeontx2_fdt_parse_sfp_info(const void *fdt, int offset,
 		int cgx_idx, int lmac_idx)
 {
 	const char *name;
-	sfp_i2c_info_t *i2c_info;
+	i2c_info_t *i2c_info;
 	sfp_slot_info_t *sfp_info;
 	cgx_lmac_config_t *lmac;
 	int eeprom, parent;
@@ -1228,6 +1236,78 @@ static int octeontx2_fill_cgx_struct(int qlm, int lane, int mode_idx)
 	return (lcnt * lused);
 }
 
+static int octeontx2_cgx_get_phy_info(const void *fdt, int lmac_offset, int cgx_idx, int lmac_idx)
+{
+	cgx_lmac_config_t *lmac;
+	int phy_offset, mux_offset;
+	char phyname[16];
+	phy_config_t *phy;
+
+	lmac = &plat_octeontx_bcfg->cgx_cfg[cgx_idx].lmac_cfg[lmac_idx];
+
+	strncpy(phyname, "phy-handle", sizeof(phyname));
+
+	/* FIXME: Using board model is safe to use for now */
+	if (!strncmp(plat_octeontx_bcfg->bcfg.board_model, "ebb9", 4)) {
+		/* On EBB9604 board, PHY address can be different on
+		 * QLM 3 and QLM 7 and at a time, ethernet can be configured
+		 * either on QLM3 or QLM7 only and not both. CGX0 is mapped to
+		 * QLM 3 or QLM 7. Hence if it is CGX0, check for the
+		 * QLM number it is mapped to look for the phy-handle.
+		 * QLM 3: phy-handle
+		 * QLM 7: phy-handle1
+		 */
+		if ((cgx_idx == 0) && (lmac->qlm == 7))
+			strncpy(phyname, "phy-handle1", sizeof(phyname));
+	}
+
+	phy_offset = octeontx2_fdt_lookup_phandle(fdt, lmac_offset, phyname);
+	if (phy_offset > 0) {
+		phy = &lmac->phy_config;
+
+		for (int i = 0; i < ARRAY_SIZE(phy_compat_list); i++) {
+			if (!fdt_node_check_compatible(fdt, phy_offset,
+				phy_compat_list[i].compatible)) {
+				phy->type = phy_compat_list[i].phy_type;
+				debug_dts("%s: %d:%d PHY type %d\n",
+					__func__, cgx_idx, lmac_idx,
+					phy->type);
+				break;
+			}
+		}
+		if (phy->type == PHY_NONE) {
+			ERROR("ERROR: Supported PHY compatible not found\n");
+			return -1;
+		}
+		/* Save the PHY address and bus for all PHY types */
+		phy->addr = octeontx2_fdt_get_int32(fdt,
+					"reg", phy_offset);
+		phy->mdio_bus = octeontx2_fdt_get_bus(fdt,
+				phy_offset, cgx_idx,
+				lmac_idx);
+
+		/* Check if the MDIO bus is behind a switch */
+		mux_offset = octeontx2_fdt_lookup_phandle(fdt,
+					phy_offset, "mdio-mux");
+		if (mux_offset > 0) {
+			if (fdt_node_check_compatible(fdt, mux_offset,
+						"octeontx2,mdio-mux")) {
+				WARN("%s: %d:%d MDIO switch not compatible\n",
+							__func__,
+							cgx_idx, lmac_idx);
+				return -1;
+			}
+
+			octeontx2_fdt_gpio_get_info_by_phandle(fdt,
+					mux_offset, "gpios",
+					&phy->mux_info, cgx_idx, lmac_idx);
+			phy->mux_switch = 1;
+		}
+		lmac->phy_present = 1;
+	}
+	return 0;
+}
+
 /* Get the LMAC information from the Linux DT file. The following properties
  * are checked:
  *  - phy-handle
@@ -1245,11 +1325,10 @@ static void octeontx2_cgx_lmacs_check_linux(const void *fdt,
 	cgx_lmac_config_t *lmac;
 	char name[16], node_name[64];
 	const int *val;
-	int len;
-	int lmac_offset, phy_offset, sfp_offset, qsfp_offset;
+	int len, ret;
+	int lmac_offset, sfp_offset, qsfp_offset;
 	int req_vfs, req_fec;
-	phy_config_t *phy;
-	const char *str;
+	char sfpname[16], qsfpname[16];
 
 	for (lmac_idx = 0; lmac_idx < cgx->lmac_count; lmac_idx++) {
 		lmac = &cgx->lmac_cfg[lmac_idx];
@@ -1263,43 +1342,39 @@ static void octeontx2_cgx_lmacs_check_linux(const void *fdt,
 			continue;
 		}
 
-		phy_offset = octeontx2_fdt_lookup_phandle(fdt,
-				lmac_offset, "phy-handle");
-		if (phy_offset > 0) {
-			lmac->phy_present = 1;
-			phy = &lmac->phy_config;
-			str = NULL;
-			str = (const char *)fdt_getprop(fdt, phy_offset,
-					"compatible", &len);
-			if (!str) {
-				ERROR("ERROR: no compatible property in phy\n");
-			} else {
-				if (fdt_stringlist_contains(str, len,
-						"ethernet-phy-ieee802.3-c22")) {
-					phy->clause = PHY_GENERIC_8023_C22;
-					debug_dts("%s: %d:%d C22 compatible PHY str\n",
-						__func__, cgx_idx, lmac_idx);
-				} else if (fdt_stringlist_contains(str, len,
-						"ethernet-phy-ieee802.3-c45")) {
-					phy->clause = PHY_GENERIC_8023_C45;
-					debug_dts("%s: %d:%d C45 compatible PHY\n",
-						__func__, cgx_idx, lmac_idx);
-				} else
-					phy->clause = PHY_GENERIC_8023_NONE;
+		ret = octeontx2_cgx_get_phy_info(fdt, lmac_offset, cgx_idx, lmac_idx);
+		if (ret == -1) {
+			/* If there are errors encountered in obtaining the valid PHY
+			 * info in case of PHY present, don't enable the LMAC. just return
+			 * here.
+			 */
+			WARN("%s: %d:%d PHY info not correct\n", __func__,
+						cgx_idx, lmac_idx);
+			continue;
+		}
 
-				strncpy(phy->phy_compatible, str, 64);
+		strncpy(sfpname, "sfp-slot", sizeof(sfpname));
+		strncpy(qsfpname, "qsfp-slot", sizeof(qsfpname));
 
-				phy->phy_addr =	octeontx2_fdt_get_int32(fdt,
-						"reg", phy_offset);
-				phy->mdio_bus = octeontx2_fdt_get_bus(fdt,
-						phy_offset, cgx_idx,
-						lmac_idx);
+		/* FIXME: Using board model is safe to use for now */
+		if (!strncmp(plat_octeontx_bcfg->bcfg.board_model, "ebb9", 4)) {
+			/* On EBB9604 board, PHY address can be different on
+			 * QLM 3 and QLM 7 and at a time, ethernet can be configured
+			 * either on QLM3 or QLM7 only and not both. CGX0 is mapped to
+			 * QLM 3 or QLM 7. Hence if it is CGX0, check for the
+			 * QLM number it is mapped to look for the sfp-slot.
+			 * QLM 3: sfp-slot
+			 * QLM 7: sfp-slot1
+			 */
+			if ((cgx_idx == 0) && (lmac->qlm == 7)) {
+				strncpy(sfpname, "sfp-slot1", sizeof(sfpname));
+				strncpy(qsfpname, "qsfp-slot1", sizeof(qsfpname));
 			}
 		}
 
 		/* Check for sfp-slot info */
 		sfp_offset = octeontx2_fdt_lookup_phandle(fdt,
-				lmac_offset, "sfp-slot");
+				lmac_offset, sfpname);
 		if (sfp_offset > 0) {
 			octeontx2_fdt_parse_sfp_info(fdt, sfp_offset,
 					cgx_idx, lmac_idx);
@@ -1307,7 +1382,7 @@ static void octeontx2_cgx_lmacs_check_linux(const void *fdt,
 
 		/* Check for qsfp-slot info */
 		qsfp_offset = octeontx2_fdt_lookup_phandle(fdt,
-				lmac_offset, "qsfp-slot");
+				lmac_offset, qsfpname);
 		if (qsfp_offset > 0) {
 			octeontx2_fdt_parse_qsfp_info(fdt, qsfp_offset,
 					cgx_idx, lmac_idx);

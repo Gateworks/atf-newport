@@ -240,10 +240,12 @@ static int cgx_link_bringup(int cgx_id, int lmac_id)
 			link.s.full_duplex = 1;
 			link.s.speed = CGX_LINK_1G;
 		} else {
-			/* Enable the SMI/MDIO bus if PHY is on MDIO */
-			octeontx_phy_reset(cgx_id, lmac_id);
+			/* Configure the PHY. For ex: if need to
+			 * set in particular mode
+			 */
+			phy_config(cgx_id, lmac_id);
 			/* Get the link status */
-			octeontx_get_phy_link_status(cgx_id, lmac_id, &link);
+			phy_get_link_status(cgx_id, lmac_id, &link);
 		}
 		if (link.s.link_up == 1) {	/* link is up */
 			if (cgx_sgmii_set_link_up(cgx_id, lmac_id) != 0)
@@ -280,18 +282,16 @@ static int cgx_link_bringup(int cgx_id, int lmac_id)
 		(lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_HUNDREDG_R) ||
 		(lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_USXGMII)) {
 
-		/* For USXGMII, read the PHY link capabilities first */
-		if (lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_USXGMII) {
-			/* Get the link status from PHY */
-			if (lmac_cfg->phy_present) {
-				/* Enable the SMI/MDIO bus if PHY is on MDIO */
-				octeontx_phy_reset(cgx_id, lmac_id);
-				/* Get the link status */
-				octeontx_get_phy_link_status(cgx_id, lmac_id, &link);
-				/* save the link status to program the rate */
-				cgx_set_link_state(cgx_id, lmac_id,
-					&link, 0);
-			}
+		if (lmac_cfg->phy_present) {
+			/* Configure the PHY. For ex: if need to
+			 * set in particular mode
+			 */
+			phy_config(cgx_id, lmac_id);
+			/* Get the link status */
+			phy_get_link_status(cgx_id, lmac_id, &link);
+			/* save the link status to program the rate */
+			cgx_set_link_state(cgx_id, lmac_id,
+				&link, 0);
 		}
 		/* initialize the link, get the link status,
 		 * If link is up, check AN and perform training
@@ -665,6 +665,20 @@ static int cgx_poll_for_link_cb(int timer)
 		for (int lmac = 0; lmac < MAX_LMAC_PER_CGX; lmac++) {
 			lmac_cfg = &plat_octeontx_bcfg->cgx_cfg[cgx].lmac_cfg[lmac];
 			lmac_ctx = &lmac_context[cgx][lmac];
+			if (lmac_cfg->phy_present) {
+				if (!lmac_cfg->phy_config.init) {
+					/* If a valid PHY driver is found and if
+					 * PHY is not initialized yet, call
+					 * the probe callback now for Init.
+					 * Don't wait until the user sends
+					 * LINK_UP command to initialize the
+					 * PHY.
+					 */
+					phy_probe(cgx, lmac);
+					lmac_cfg->phy_config.init = 1;
+					continue;
+				}
+			}
 			if (lmac_ctx->s.link_enable) {
 				/* check if PHY is present, if not
 				 * return the default link status
@@ -681,7 +695,7 @@ static int cgx_poll_for_link_cb(int timer)
 				debug_cgx_intf("%s:%d:%d poll for link status\n",
 					__func__, cgx, lmac);
 				/* Get the link status */
-				octeontx_get_phy_link_status(cgx, lmac, &link);
+				phy_get_link_status(cgx, lmac, &link);
 				/* if the prev link change is not handled
 				 * wait until it is handled as the reqs
 				 * are handled one at a time
@@ -802,22 +816,27 @@ void cgx_set_error_type(int cgx_id, int lmac_id, uint64_t type)
 void cgx_fw_intf_init(void)
 {
 	cgx_config_t *cgx_cfg;
+	cgx_lmac_config_t *lmac_cfg;
 
 	debug_cgx_intf("%s\n", __func__);
 
-	/* for CGXs that are not configured by BDK to any mode,
-	 * CGX config CSRs needs to be configured correctly
-	 * as init callback will not be triggered for these
-	 * CGXs
-	 */
 	for (int cgx = 0; cgx < plat_octeontx_scfg->cgx_count; cgx++) {
 		cgx_cfg = &plat_octeontx_bcfg->cgx_cfg[cgx];
-		if (!cgx_cfg->enable)
-			/* if CGX is disabled, call this API
-			 * to initialize the config CSRs
-			 * with default value
+		if (cgx_cfg->enable) {
+			for (int lmac = 0; lmac < MAX_LMAC_PER_CGX; lmac++) {
+				lmac_cfg = &plat_octeontx_bcfg->cgx_cfg[cgx].lmac_cfg[lmac];
+				if (!lmac_cfg->phy_present)
+					continue;
+				phy_lookup(cgx, lmac, lmac_cfg->phy_config.type);
+			}
+		} else {
+			/* for CGXs that are not configured by BDK to any mode,
+			 * CGX config CSRs needs to be configured correctly
+			 * as init callback will not be triggered for these
+			 * CGXs
 			 */
 			cgx_hw_init(cgx);
+		}
 	}
 
 	/* start with 1 timer to handle & process CGX requests */

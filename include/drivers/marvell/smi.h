@@ -30,5 +30,6 @@ int smi_read(int bus_id, int mode,
 int smi_write(int bus_id, int addr, int devad,
 			 int mode, int regnum, uint16_t value);
 int smi_reset(int bus_id);
+void smi_set_switch(phy_config_t *phy, int enable);
 
 #endif /* __SMI_H__ */

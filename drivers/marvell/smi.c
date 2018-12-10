@@ -15,7 +15,12 @@
 #include <hw_timers.h>
 #include <delay_timer.h>
 #include <string.h>
+#include <plat_board_cfg.h>
+#include <cgx.h>
+#include <sfp_intf.h>
+#include <phy_mgmt.h>
 #include <smi.h>
+#include <twsi.h>
 
 /* SMI driver for OcteonTX (CN8xxx and CN9xxx) */
 
@@ -170,4 +175,61 @@ int smi_reset(int bus_id)
 	CSR_WRITE(CAVM_SMI_X_EN(bus_id), smi_en.u);
 
 	return 0;
+}
+
+void smi_set_switch(phy_config_t *phy, int enable)
+{
+	uint8_t data[2], reg_val = 0x0;
+	int ret;
+	static uint8_t reg_read_mask;
+
+	debug_smi("%s: enable %d reg_read_mask 0x%x\n",
+			__func__, enable, reg_read_mask);
+
+	if (phy->mux_switch) {
+		if (phy->mux_info.pin > phy->mux_info.num_pins) {
+			ERROR("%s: Invalid pin\n", __func__);
+			return;
+		}
+
+		switch (phy->mux_info.type) {
+		/* For now, handle only 8-bit CPLD controller for MDIO MUX */
+		case GPIO_PIN_CPLD:
+			data[0] = (phy->mux_info.pin >> 3); /* Internal Addr */
+			reg_val = (1 << (phy->mux_info.pin & 7));
+			if (enable)
+				data[1] = reg_read_mask |= reg_val;
+			else
+				data[1] = reg_read_mask &= ~reg_val;
+			/* Reading the register via TWSI and toggle the bit
+			 * again via TWSI write seems expensive. Build a
+			 * reg mask at the end of every input and use it
+			 * for this internal ADDR. This internal ADDR is used
+			 * only for MDIO switch and it is safe to do so fornow.
+			 */
+			reg_read_mask |= data[1];
+			break;
+		default:
+			data[0] = 0;
+			data[1] = 0;
+			return; /* No other cases handled */
+		};
+
+		debug_smi("%s: Switch %d MUX type %d Int Addr 0x%x Bit %d\n",
+				__func__, phy->mux_switch, phy->mux_info.type,
+				phy->mux_info.pin >> 3, phy->mux_info.pin & 7);
+
+		/* Don't perform the TWSI operation for ASIM platform */
+		if (strncmp(plat_octeontx_bcfg->bcfg.board_model, "asim-", 5)) {
+			ret = octeontx_twsi_send(phy->mux_info.i2c_bus,
+					phy->mux_info.i2c_addr,
+					data,
+					sizeof(data));
+			if (ret) {
+				ERROR("%s TWSI write to GPIO controller reg 0x%x failed\n",
+					__func__, phy->mux_info.i2c_addr);
+				return;
+			}
+		}
+	}
 }
