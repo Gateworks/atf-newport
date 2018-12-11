@@ -7,6 +7,7 @@
 
 /* TWSI driver for OcteonTX (CN8xxx and CN9xxx) */
 
+#include <stdio.h>
 #include <octeontx_common.h>
 #include <twsi_core.h>
 #include <twsi.h>
@@ -48,7 +49,7 @@ int octeontx_twsi_send(unsigned int twsi_num,
 
 	rc = twsi_read_status(twsi_num);
 	if (rc != TWSI_STAT_TXADDR_ACK) {
-		debug_twsi("TWSI%d: Status 0x%x\n", twsi_num, rc);
+		debug_twsi("TWSI%d: RET != ACK : Status 0x%x\n", twsi_num, rc);
 		return rc;
 	}
 
@@ -68,7 +69,7 @@ int octeontx_twsi_send(unsigned int twsi_num,
 		}
 
 		rc = twsi_read_status(twsi_num);
-		debug_twsi("N%d.TWSI%d: Status 0x%x\n", twsi_num, rc);
+		debug_twsi("TWSI%d: Status 0x%x\n", twsi_num, rc);
 	}
 
 	twsi_stop(twsi_num);
@@ -104,7 +105,7 @@ int octeontx_twsi_recv(unsigned int twsi_num,
 
 	rc = twsi_read_status(twsi_num);
 	if (rc != TWSI_STAT_RXADDR_ACK) {
-		debug_twsi("N%d.TWSI%d: Status 0x%x\n", twsi_num, rc);
+		debug_twsi("TWSI%d: Status 0x%x\n", twsi_num, rc);
 		return rc;
 	}
 
@@ -116,7 +117,7 @@ int octeontx_twsi_recv(unsigned int twsi_num,
 
 		rc = twsi_wait(twsi_num);
 		if (rc) {
-			debug_twsi("N%d.TWSI%d: Waiting for data failed 0x%x\n", twsi_num, addr);
+			debug_twsi("TWSI%d: Waiting for data failed 0x%x\n", twsi_num, addr);
 			return rc;
 		}
 
