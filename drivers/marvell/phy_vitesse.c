@@ -256,6 +256,7 @@ void phy_vitesse_probe(int cgx_id, int lmac_id)
 
 	debug_phy_driver("%s: %d:%d\n", __func__, cgx_id, lmac_id);
 
+	return;	/* FIXME: hangs the system.comment for now */
 	lmac = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
 	phy = &lmac->phy_config;
 

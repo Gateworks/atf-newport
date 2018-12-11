@@ -186,6 +186,8 @@ void smi_set_switch(phy_config_t *phy, int enable)
 	debug_smi("%s: enable %d reg_read_mask 0x%x\n",
 			__func__, enable, reg_read_mask);
 
+	return; /* Not required for now */
+
 	if (phy->mux_switch) {
 		if (phy->mux_info.pin > phy->mux_info.num_pins) {
 			ERROR("%s: Invalid pin\n", __func__);

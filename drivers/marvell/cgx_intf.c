@@ -660,40 +660,31 @@ static int cgx_poll_for_link_cb(int timer)
 	cgx_lmac_config_t *lmac_cfg;
 	cgx_lmac_context_t *lmac_ctx;
 	link_state_t link = {0};
-
+	debug_cgx_intf("%s\n", __func__);
 	for (int cgx = 0; cgx < plat_octeontx_scfg->cgx_count; cgx++) {
 		for (int lmac = 0; lmac < MAX_LMAC_PER_CGX; lmac++) {
 			lmac_cfg = &plat_octeontx_bcfg->cgx_cfg[cgx].lmac_cfg[lmac];
 			lmac_ctx = &lmac_context[cgx][lmac];
-			if (lmac_cfg->phy_present) {
-				if (!lmac_cfg->phy_config.init) {
-					/* If a valid PHY driver is found and if
-					 * PHY is not initialized yet, call
-					 * the probe callback now for Init.
-					 * Don't wait until the user sends
-					 * LINK_UP command to initialize the
-					 * PHY.
-					 */
-					phy_probe(cgx, lmac);
-					lmac_cfg->phy_config.init = 1;
-					continue;
-				}
-			}
+
 			if (lmac_ctx->s.link_enable) {
 				/* check if PHY is present, if not
 				 * return the default link status
 				 */
 				if (!lmac_cfg->phy_present) {
+#if 0
 					debug_cgx_intf("%s:%d:%d PHY not present\t", __func__, cgx, lmac);
 					debug_cgx_intf("link %d speed %d duplex %d\n",
 						lmac_ctx->s.link_up,
 						lmac_ctx->s.speed,
 						lmac_ctx->s.full_duplex);
+#endif
 					continue;
 				}
 				/* if PHY is present */
+#if 0
 				debug_cgx_intf("%s:%d:%d poll for link status\n",
 					__func__, cgx, lmac);
+#endif
 				/* Get the link status */
 				phy_get_link_status(cgx, lmac, &link);
 				/* if the prev link change is not handled
@@ -827,7 +818,14 @@ void cgx_fw_intf_init(void)
 				lmac_cfg = &plat_octeontx_bcfg->cgx_cfg[cgx].lmac_cfg[lmac];
 				if (!lmac_cfg->phy_present)
 					continue;
+				/* If PHY is present, look up for PHY driver */
 				phy_lookup(cgx, lmac, lmac_cfg->phy_config.type);
+				if (lmac_cfg->phy_config.valid) {
+					debug_cgx_intf("%s: init PHY\n", __func__);
+					phy_probe(cgx, lmac);
+					lmac_cfg->phy_config.init = 1;
+					continue;
+				}
 			}
 		} else {
 			/* for CGXs that are not configured by BDK to any mode,
