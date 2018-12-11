@@ -29,7 +29,7 @@
 #define SCR_ISR		(SCR_NS_BIT | SCR_TWE_BIT | SCR_TWI_BIT | SCR_RW_BIT)
 
 /* */
-#define MAX_BPHY_PSM_INTS	23
+#define MAX_BPHY_PSM_INTS	27
 
 struct bphy_psm_irq {
 	volatile uint64_t sp;
@@ -66,7 +66,6 @@ void el3_start_el0_isr(uint64_t irq_num, uint64_t sp,
 		       uint64_t spsr_el3, uint64_t scr_el3,
 		       uint64_t tcr_el1);
 
-static uint64_t bphy_psm_errint_base;
 static volatile int irq_cpu_lock_counter;
 volatile struct bphy_psm_irq bphy_ints[MAX_BPHY_PSM_INTS] = {0};
 
@@ -341,8 +340,6 @@ void bphy_psm_clear_irq(uint64_t irq_num)
 	bphy_ints[irq_num].ttbr = 0;
 	__atomic_thread_fence(__ATOMIC_SEQ_CST);
 
-	bphy_psm_errint_base = ~(0ull);
-
 	__atomic_thread_fence(__ATOMIC_SEQ_CST);
 	/*
 	 * Leave this entry free for use. If by now it was not allocated in the
@@ -369,8 +366,6 @@ int cavm_register_bphy_intr_handlers(void)
 			break;
 		}
 	}
-
-	bphy_psm_errint_base = CAVM_PSM_INT_ERRINT_SUM_W1C;
 
 	NOTICE("Bphy intr handlers registered\n");
 

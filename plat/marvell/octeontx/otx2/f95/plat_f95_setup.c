@@ -403,7 +403,7 @@ void plat_set_bphy_psm_msix_vectors(int msix_num, int irq_num, int enable)
 		return;
 	}
 
-	vector_ptr = CAVM_PSM_MSIX_VECX_ADDR(CAVM_PSM_INT_VEC_E_ERRINT + msix_num);
+	vector_ptr = CAVM_PSM_MSIX_VECX_ADDR(CAVM_PSM_INT_VEC_E_GPINTX(0) + msix_num);
 
 	if (enable) {
 		octeontx_write64(vector_ptr, CAVM_GICD_SETSPI_SR | 1);

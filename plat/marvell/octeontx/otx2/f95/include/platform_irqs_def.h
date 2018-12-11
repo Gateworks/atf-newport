@@ -61,58 +61,63 @@
 #define GPIO_SPI_IRQ_NSEC_BASE	(GPIO_SPI_IRQ_BASE + GPIO_SPI_IRQS)
 #define GPIO_SPI_IRQ_NSEC(irq)	((irq) + GPIO_SPI_IRQ_NSEC_BASE)
 
-/* BPHY PSM interrupts. They have to be in continous space. (range 0x32 - 0x49)*/
+/* BPHY PSM interrupts. They have to be in continous space. (range 0x32 - 0x4D)*/
 /* These 3 defines are needed to iterate through all BPHY PSM interrupts in simpler way */
-#define BPHY_PSM_IRQ_BASE			(GPIO_SPI_IRQ_NSEC_BASE + GPIO_SPI_NSEC_IRQS)
+#define BPHY_PSM_IRQ_BASE		(GPIO_SPI_IRQ_NSEC_BASE + GPIO_SPI_NSEC_IRQS)
 #define BPHY_PSM_IRQS_NUMBER		(END_OF_BPHY_IRQS - BPHY_PSM_IRQ_BASE)
-#define BPHY_PSM_IRQ(irq)			((irq) + BPHY_PSM_IRQ_BASE)
+#define BPHY_PSM_IRQ(irq)		((irq) + BPHY_PSM_IRQ_BASE)
 
-/* interrupt 0x32 */
+/* interrupt 0x32 - 0x35 */
+#define BPHY_PSM_GPINT_IRQS		0x4
+#define BPHY_PSM_GPINT_IRQ_BASE		BPHY_PSM_IRQ_BASE
+#define BPHY_PSM_GPINT_IRQ(irq)		((irq) + BPHY_PSM_GPINT_IRQ_BASE)
+
+/* interrupt 0x36 */
 #define BPHY_PSM_ERRINT_IRQS		0x1
-#define BPHY_PSM_ERRINT_IRQ_BASE	BPHY_PSM_IRQ_BASE
+#define BPHY_PSM_ERRINT_IRQ_BASE	(BPHY_PSM_GPINT_IRQ_BASE + BPHY_PSM_GPINT_IRQS)
 #define BPHY_PSM_ERRINT_IRQ(irq)	((irq) + BPHY_PSM_ERRINT_IRQ_BASE)
 
-/* range 0x33 - 0x34 */
-#define BPHY_PSM_QOVF_IRQS			0x2
+/* range 0x37 - 0x38 */
+#define BPHY_PSM_QOVF_IRQS		0x2
 #define BPHY_PSM_QOVF_IRQ_BASE		(BPHY_PSM_ERRINT_IRQ_BASE + BPHY_PSM_ERRINT_IRQS)
 #define BPHY_PSM_QOVF_IRQ(irq)		((irq) + BPHY_PSM_QOVF_IRQ_BASE)
 
-/* range 0x35 - 0x36 */
-#define BPHY_PSM_QTO_IRQS			0x2
+/* range 0x39 - 0x3A */
+#define BPHY_PSM_QTO_IRQS		0x2
 #define BPHY_PSM_QTO_IRQ_BASE		(BPHY_PSM_QOVF_IRQ_BASE + BPHY_PSM_QOVF_IRQS)
 #define BPHY_PSM_QTO_IRQ(irq)		((irq) + BPHY_PSM_QTO_IRQ_BASE)
 
-/* range 0x37 - 0x39 */
-#define BPHY_PSM_JERR_IRQS			0x3
+/* range 0x3B - 0x3D */
+#define BPHY_PSM_JERR_IRQS		0x3
 #define BPHY_PSM_JERR_IRQ_BASE		(BPHY_PSM_QTO_IRQ_BASE + BPHY_PSM_QTO_IRQS)
 #define BPHY_PSM_JERR_IRQ(irq)		((irq) + BPHY_PSM_JERR_IRQ_BASE)
 
-/* range 0x3a - 0x3c */
-#define BPHY_PSM_JNFAT_IRQS			0x3
+/* range 0x3E - 0x40 */
+#define BPHY_PSM_JNFAT_IRQS		0x3
 #define BPHY_PSM_JNFAT_IRQ_BASE		(BPHY_PSM_JERR_IRQ_BASE + BPHY_PSM_JERR_IRQS)
 #define BPHY_PSM_JNFAT_IRQ(irq)		((irq) + BPHY_PSM_JNFAT_IRQ_BASE)
 
-/* range 0x3d - 0x3f */
-#define BPHY_PSM_JTO_IRQS			0x3
+/* range 0x41 - 0x43 */
+#define BPHY_PSM_JTO_IRQS		0x3
 #define BPHY_PSM_JTO_IRQ_BASE		(BPHY_PSM_JNFAT_IRQ_BASE + BPHY_PSM_JNFAT_IRQS)
 #define BPHY_PSM_JTO_IRQ(irq)		((irq) + BPHY_PSM_JTO_IRQ_BASE)
 
-/* range 0x40 - 0x42 */
-#define BPHY_PSM_DERR_IRQS			0x3
+/* range 0x44 - 0x46 */
+#define BPHY_PSM_DERR_IRQS		0x3
 #define BPHY_PSM_DERR_IRQ_BASE		(BPHY_PSM_JTO_IRQ_BASE + BPHY_PSM_JTO_IRQS)
 #define BPHY_PSM_DERR_IRQ(irq)		((irq) + BPHY_PSM_DERR_IRQ_BASE)
 
-/* range 0x43 - 0x45 */
-#define BPHY_PSM_AERR_IRQS			0x3
+/* range 0x47 - 0x49 */
+#define BPHY_PSM_AERR_IRQS		0x3
 #define BPHY_PSM_AERR_IRQ_BASE		(BPHY_PSM_DERR_IRQ_BASE + BPHY_PSM_DERR_IRQS)
 #define BPHY_PSM_AERR_IRQ(irq)		((irq) + BPHY_PSM_AERR_IRQ_BASE)
 
-/* range 0x46 - 0x49 */
-#define BPHY_PSM_MTO_IRQS			0x3
+/* range 0x4A - 0x4D */
+#define BPHY_PSM_MTO_IRQS		0x3
 #define BPHY_PSM_MTO_IRQ_BASE		(BPHY_PSM_AERR_IRQ_BASE + BPHY_PSM_AERR_IRQS)
 #define BPHY_PSM_MTO_IRQ(irq)		((irq) + BPHY_PSM_MTO_IRQ_BASE)
 
-#define END_OF_BPHY_IRQS			(BPHY_PSM_MTO_IRQ_BASE + BPHY_PSM_MTO_IRQS)
+#define END_OF_BPHY_IRQS		(BPHY_PSM_MTO_IRQ_BASE + BPHY_PSM_MTO_IRQS)
 /* End of BPHY PSM interrupts */
 
 
