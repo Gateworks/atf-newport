@@ -15,6 +15,9 @@
 
 /* Max Packet Size */
 #define CGX_MAX_FRAME_SIZE		9216
+#define CGX_FCS_BYTES			4
+#define CGX_PREAMBLE_BYTES		8
+#define CGX_JABBER_ALIGN		16
 
 /* SGMII types */
 /* Tx Threshold */

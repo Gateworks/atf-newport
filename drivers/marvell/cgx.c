@@ -135,6 +135,7 @@ static int cgx_sgmii_hw_init(int cgx_id, int lmac_id)
  */
 static int cgx_xaui_hw_init(int cgx_id, int lmac_id)
 {
+	int jabber;
 	cgx_lmac_config_t *lmac;
 	cavm_cgxx_smux_tx_append_t smux_tx_append;
 	cavm_cgxx_cmrx_rx_bp_on_t rx_bp_on;
@@ -145,10 +146,15 @@ static int cgx_xaui_hw_init(int cgx_id, int lmac_id)
 
 	lmac = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
 
-	/* Max packet size */
+	/* Jabber : Max packet size + 8 bytes for preamble + 4 bytes for FCS
+	 * and should be multiple of 16 bytes
+	 */
+	jabber = CGX_MAX_FRAME_SIZE + CGX_FCS_BYTES + CGX_PREAMBLE_BYTES;
+
 	CAVM_MODIFY_CGX_CSR(cavm_cgxx_smux_rx_jabber_t,
-		CAVM_CGXX_SMUX_RX_JABBER(cgx_id, lmac_id),
-		cnt, CGX_MAX_FRAME_SIZE);
+		CAVM_CGXX_SMUX_RX_JABBER(cgx_id, lmac_id), cnt,
+		((((jabber + CGX_JABBER_ALIGN - 1)/CGX_JABBER_ALIGN) * CGX_JABBER_ALIGN)));
+
 	/* Tx threshold */
 	CAVM_MODIFY_CGX_CSR(cavm_cgxx_smux_tx_thresh_t,
 		CAVM_CGXX_SMUX_TX_THRESH(cgx_id, lmac_id),
