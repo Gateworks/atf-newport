@@ -167,6 +167,11 @@ int smi_write(int bus_id, int addr, int devad,
 int smi_reset(int bus_id)
 {
 	union cavm_smi_x_en smi_en;
+	union cavm_smi_x_clk smix_clk;
+
+	smix_clk.u = CSR_READ(CAVM_SMI_X_CLK(bus_id));
+	smix_clk.s.sample_mode = 1;
+	CSR_WRITE(CAVM_SMI_X_CLK(bus_id), smix_clk.u);
 
 	smi_en.s.en = 0;
 	CSR_WRITE(CAVM_SMI_X_EN(bus_id), smi_en.u);
@@ -185,8 +190,6 @@ void smi_set_switch(phy_config_t *phy, int enable)
 
 	debug_smi("%s: enable %d reg_read_mask 0x%x\n",
 			__func__, enable, reg_read_mask);
-
-	return; /* Not required for now */
 
 	if (phy->mux_switch) {
 		if (phy->mux_info.pin > phy->mux_info.num_pins) {
