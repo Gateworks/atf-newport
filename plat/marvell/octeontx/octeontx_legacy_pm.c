@@ -215,17 +215,36 @@ static void __dead2 octeontx_legacy_system_off(void)
 
 static void __dead2 octeontx_legacy_system_reset(void)
 {
+#if (defined(PLAT_t96))
+	union cavm_rst_boot rst_boot;
+	union cavm_rst_chip_domain_w1s rst_chip;
+#else
 	union cavm_rst_soft_rst rst_soft_rst;
+#endif
 	union cavm_rst_ocx rst_ocx;
 
 	rst_ocx.u = 0;
 	CSR_WRITE(CAVM_RST_OCX, rst_ocx.u);
 
 	rst_ocx.u = CSR_READ(CAVM_RST_OCX);
+
+#if (defined(PLAT_t96))
+
+	// SCP should auto restart after reset
+	rst_boot.s.rboot = 0;
+	CSR_WRITE(CAVM_RST_BOOT, rst_boot.u);
+
+	// entire system reset
+	rst_chip.s.soft_rst = 1;
+	CSR_WRITE(CAVM_RST_CHIP_DOMAIN_W1S, rst_chip.u);
+	while (rst_chip.s.soft_rst)
+		rst_chip.u = CSR_READ(CAVM_RST_CHIP_DOMAIN_W1S);
+
+#else
 	rst_soft_rst.u = 0;
 	rst_soft_rst.s.soft_rst = 1;
 	CSR_WRITE(CAVM_RST_SOFT_RST, rst_soft_rst.u);
-
+#endif
 	ERROR("OcteonTX System Reset: operation not handled.\n");
 	panic();
 }
