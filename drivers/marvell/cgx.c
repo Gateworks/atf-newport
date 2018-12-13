@@ -20,7 +20,7 @@
 #include <octeontx_utils.h>
 
 /* define DEBUG_ATF_CGX to enable debug logs */
-#undef DEBUG_ATF_CGX
+#define DEBUG_ATF_CGX
 
 #ifdef DEBUG_ATF_CGX
 #define debug_cgx printf
@@ -1324,27 +1324,6 @@ int cgx_xaui_set_link_up(int cgx_id, int lmac_id)
 		return -1;
 	}
 
-	/* Wait for SMU Tx to be idle */
-	if (cgx_poll_for_csr(CAVM_CGXX_SMUX_CTRL(cgx_id, lmac_id),
-				CGX_SMUX_TX_IDLE_MASK, 0)) {
-		debug_cgx("%s: %d:%d SMUX Tx not Idle\n",
-				__func__, cgx_id, lmac_id);
-#if 0		/* temp for simulation */
-		cgx_set_error_type(cgx_id, lmac_id, CGX_ERR_TX_NOT_IDLE);
-		return -1;
-#endif
-	}
-	/* Wait for SMU Rx to be idle */
-	if (cgx_poll_for_csr(CAVM_CGXX_SMUX_CTRL(cgx_id, lmac_id),
-				CGX_SMUX_RX_IDLE_MASK, 0)) {
-		debug_cgx("%s: %d:%d SMUX Rx not Idle\n",
-				__func__, cgx_id, lmac_id);
-#if 0
-		cgx_set_error_type(cgx_id, lmac_id, CGX_ERR_RX_NOT_IDLE);
-		return -1;
-#endif
-	}
-
 	/* check Recv Fault */
 	spux_status2.u = CSR_READ(CAVM_CGXX_SPUX_STATUS2(
 					cgx_id, lmac_id));
@@ -1417,9 +1396,11 @@ int cgx_xaui_set_link_up(int cgx_id, int lmac_id)
 			debug_cgx("%s: %d:%d errored-blocks counter %d is high\n",
 					__func__, cgx_id, lmac_id,
 					br_status2.s.err_blks);
+#if 0
 			cgx_set_error_type(cgx_id, lmac_id,
 					CGX_ERR_SPUX_BER_FAIL);
 			return -1;
+#endif
 		}
 	}
 
