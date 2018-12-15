@@ -713,6 +713,8 @@ static void cgx_set_fec(int cgx_id, int lmac_id, int req_fec)
 			break;
 		}
 
+		/* FIXME: for now disable FEC by default */
+		val = 0;
 		CAVM_MODIFY_CGX_CSR(cavm_cgxx_spux_fec_control_t,
 					CAVM_CGXX_SPUX_FEC_CONTROL(cgx_id, lmac_id),
 					fec_en, val);
@@ -1428,6 +1430,7 @@ int cgx_xaui_get_link(int cgx_id, int lmac_id,
 					cgx_id, lmac_id));
 	smux_rx_ctl.u = CSR_READ(CAVM_CGXX_SMUX_RX_CTL(
 					cgx_id, lmac_id));
+
 	if ((smux_tx_ctl.s.ls == 0) && (smux_rx_ctl.s.status ==
 			0) && (spux_status1.s.rcv_lnk)) {
 		/* link is up */
@@ -1444,11 +1447,15 @@ int cgx_xaui_get_link(int cgx_id, int lmac_id,
 			}
 		}
 	} else {
+		debug_cgx("%s: spux_status1 0x%lx, smux_tx_ctl 0x%lx smux_rx_ctl 0x%lx\n",
+			__func__, spux_status1.u, smux_tx_ctl.u, smux_rx_ctl.u);
 		/* link is down */
 		result->s.link_up = 0;
 		result->s.full_duplex = 0;
 		result->s.speed = 0;
+		return -1;
 	}
+
 	return 0;
 }
 
@@ -1537,10 +1544,82 @@ void cgx_mode_change(int cgx_id, int lmac_id, int new_mode,
 	debug_cgx("%s: %d:%d\n", __func__, cgx_id, lmac_id);
 }
 
-/* FIXME : Waiting for GSERN HRM */
 int cgx_rx_equalization(int cgx_id, int lmac_id)
 {
-	debug_cgx("%s: %d:%d\n", __func__, cgx_id, lmac_id);
+	int qlm, lane, max_lanes, timeout = 100;
+	cgx_lmac_config_t *lmac;
+	cavm_gsernx_lanex_init_bsts_t init_bsts;
+
+	lmac = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
+
+	qlm = lmac->qlm;
+	lane = lmac->lane;
+
+	switch (lmac->mode) {
+	case CAVM_CGX_LMAC_TYPES_E_TENG_R:
+	case CAVM_CGX_LMAC_TYPES_E_TWENTYFIVEG_R:
+		max_lanes = 1;
+		break;
+	case CAVM_CGX_LMAC_TYPES_E_FIFTYG_R:
+		max_lanes = 2;
+		break;
+	case CAVM_CGX_LMAC_TYPES_E_FORTYG_R:
+	case CAVM_CGX_LMAC_TYPES_E_HUNDREDG_R:
+		max_lanes = 4;
+		break;
+	/* FIXME: for other modes */
+	default:
+		return 0;
+	}
+	debug_cgx("%s: %d:%d qlm %d lane %d max_lanes %d\n", __func__, cgx_id,
+					lmac_id, qlm, lane, max_lanes);
+
+	/* Check GSERN lane is not idle */
+	if (cgx_poll_for_csr(CAVM_GSERNX_LANEX_RX_IDLEDET_BSTS(qlm, lane),
+				GSERN_RX_IDLEDET_MASK, 0)) {
+		debug_cgx("%s: %d:%d GSERN LANE not idle 0x%lx\n",
+				__func__, qlm, lane,
+				CSR_READ(CAVM_GSERNX_LANEX_RX_IDLEDET_BSTS(qlm, lane)));
+		return -1;
+	}
+
+	for (int lane_idx = lane; lane_idx < max_lanes; lane_idx++) {
+		/* Perform Rx adapation sequence */
+		CAVM_MODIFY_CGX_CSR(cavm_gsernx_lanex_rst1_bcfg_t,
+				CAVM_GSERNX_LANEX_RST1_BCFG(qlm, lane_idx),
+				rx_go2deep_idle, 1);
+
+		/* Poll until RX_DEEP_IDLE is set to 1 */
+		if (cgx_poll_for_csr(CAVM_GSERNX_LANEX_INIT_BSTS(qlm, lane_idx),
+				GSERN_RX_DEEPIDLE_MASK, 0)) {
+			debug_cgx("%s: %d:%d GSERN Rx state is not deep idle\n",
+				__func__, qlm, lane_idx);
+			return -1;
+		}
+
+		CAVM_MODIFY_CGX_CSR(cavm_gsernx_lanex_rst1_bcfg_t,
+				CAVM_GSERNX_LANEX_RST1_BCFG(qlm, lane_idx),
+				rx_go2deep_idle, 0);
+
+		do {
+			init_bsts.u = CSR_READ(CAVM_GSERNX_LANEX_INIT_BSTS(
+				qlm, lane_idx));
+			if ((init_bsts.s.rx_rst_sm_complete == 1) &&
+				(init_bsts.s.rx_ready == 1))
+				break;
+			udelay(1);
+		} while (--timeout > 0);
+
+		if (!timeout) {
+			debug_cgx("%s: RX EQU failed qlm %d lane %d\n", __func__,
+				qlm, lane);
+			return -1;
+		}
+
+		debug_cgx("%s: %d:%d qlm %d lane %d Rx EQU done\n", __func__,
+				cgx_id, lmac_id, qlm, lane_idx);
+	}
+
 	return 0;
 }
 

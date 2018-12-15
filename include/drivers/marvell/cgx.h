@@ -84,6 +84,10 @@
 #define CGX_SPUX_RSFEC_ALGN_STS_MASK	1ULL << 8
 #define CGX_SPUX_MARKER_LOCK_MASK	1ULL << 41
 
+/* GSERN macros to define BIT masks for polling */
+#define GSERN_RX_IDLEDET_MASK	1ULL << 0
+#define GSERN_RX_DEEPIDLE_MASK	1ULL << 26
+
 /* ERROR MASK based on cgx_err_type */
 #define CGX_ERR_MASK			0x3FF		/* 10 bits */
 

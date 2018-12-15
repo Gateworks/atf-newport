@@ -197,7 +197,7 @@ static int cgx_link_bringup(int cgx_id, int lmac_id)
 	cgx_lmac_config_t *lmac_cfg;
 	cgx_lmac_context_t *lmac_ctx;
 	link_state_t link = {0};
-	int count = 0;
+	int count = 0, count1 = 0;
 
 	/* get the lmac type and based on lmac
 	 * type, initialize SGMII/XAUI link
@@ -309,14 +309,22 @@ retry_link:
 		if (cgx_xaui_set_link_up(cgx_id, lmac_id) == -1) {
 			/* if init link fails, retry */
 			if (count++ < 5) {
-				WARN("%s retrying link\n", __func__);
+				WARN("%s Init failed, retrying link\n", __func__);
 				/* clear the error when retrying */
 				cgx_set_error_type(cgx_id, lmac_id, 0);
 				goto retry_link;
 			}
 		}
 
-		cgx_xaui_get_link(cgx_id, lmac_id, &link);
+		if (cgx_xaui_get_link(cgx_id, lmac_id, &link) == -1) {
+			/* if link is not up, retry */
+			if (count1++ < 5) {
+				WARN("%s Link down, retrying link\n", __func__);
+				/* clear the error when retrying */
+				cgx_set_error_type(cgx_id, lmac_id, 0);
+				goto retry_link;
+			}
+		}
 		if (link.s.link_up == 1) {	/* link is up */
 			if (cgx_get_error_type(cgx_id, lmac_id) &
 						CGX_ERR_MASK)
@@ -660,7 +668,6 @@ static int cgx_poll_for_link_cb(int timer)
 	cgx_lmac_config_t *lmac_cfg;
 	cgx_lmac_context_t *lmac_ctx;
 	link_state_t link = {0};
-	debug_cgx_intf("%s\n", __func__);
 	for (int cgx = 0; cgx < plat_octeontx_scfg->cgx_count; cgx++) {
 		for (int lmac = 0; lmac < MAX_LMAC_PER_CGX; lmac++) {
 			lmac_cfg = &plat_octeontx_bcfg->cgx_cfg[cgx].lmac_cfg[lmac];
