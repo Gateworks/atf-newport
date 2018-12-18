@@ -226,6 +226,8 @@ void smi_set_switch(phy_config_t *phy, int enable)
 
 		/* Don't perform the TWSI operation for ASIM platform */
 		if (strncmp(plat_octeontx_bcfg->bcfg.board_model, "asim-", 5)) {
+			/* Bits are active low */
+			data[1] = ~data[1];
 			ret = octeontx_twsi_send(phy->mux_info.i2c_bus,
 					phy->mux_info.i2c_addr,
 					data,
