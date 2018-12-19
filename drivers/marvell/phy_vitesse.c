@@ -163,12 +163,12 @@ static void phy_vitesse_vsc8574_program(phy_config_t *phy)
 	int val;
 	int timeout = 10;
 
-	phy_mdio_write(phy, CLAUSE22, -1, 31, 0x0010);
-	phy_mdio_write(phy, CLAUSE22, -1, 18, 0x800F);
-	phy_mdio_write(phy, CLAUSE22, -1, 31, 0x0010);
+	smi_write(phy->mdio_bus, phy->addr, -1, CLAUSE22, 31, 0x0010);
+	smi_write(phy->mdio_bus, phy->addr, -1, CLAUSE22, 18, 0x800F);
+	smi_write(phy->mdio_bus, phy->addr, -1, CLAUSE22, 31, 0x0010);
 
 	do {
-		val = phy_mdio_read(phy, CLAUSE22, -1, 18);
+		val = smi_read(phy->mdio_bus, CLAUSE22, phy->addr, -1, 18);
 		if (!(val & (1 << 15)))
 			break;
 		mdelay(10);
@@ -177,56 +177,56 @@ static void phy_vitesse_vsc8574_program(phy_config_t *phy)
 	if (!timeout)
 		WARN("%s: Operation 1 not complete, timeout\n", __func__);
 
-	phy_mdio_write(phy, CLAUSE22, -1, 31, 0x0);
-	phy_mdio_write(phy, CLAUSE22, -1, 31, 0x0010);
+	smi_write(phy->mdio_bus, phy->addr, -1, CLAUSE22, 31, 0x0);
+	smi_write(phy->mdio_bus, phy->addr, -1, CLAUSE22, 31, 0x0010);
 
-	val = phy_mdio_read(phy, CLAUSE22, -1, 12);
+	val = smi_read(phy->mdio_bus, CLAUSE22, phy->addr, -1, 12);
 	val &= 0x0800;
-	phy_mdio_write(phy, CLAUSE22, -1, 12, val);
+	smi_write(phy->mdio_bus, phy->addr, -1, CLAUSE22, 12, val);
 
-	phy_mdio_write(phy, CLAUSE22, -1, 9, 0x05B);
-	phy_mdio_write(phy, CLAUSE22, -1, 10, 0x05B);
+	smi_write(phy->mdio_bus, phy->addr, -1, CLAUSE22, 9, 0x005B);
+	smi_write(phy->mdio_bus, phy->addr, -1, CLAUSE22, 10, 0x005B);
 
-	val = phy_mdio_read(phy, CLAUSE22, -1, 12);
+	val = smi_read(phy->mdio_bus, CLAUSE22, phy->addr, -1, 12);
 	val &= 0x0800;
-	phy_mdio_write(phy, CLAUSE22, -1, 12, val);
-	phy_mdio_write(phy, CLAUSE22, -1, 18, 0x800F);
+	smi_write(phy->mdio_bus, phy->addr, -1, CLAUSE22, 12, val);
+	smi_write(phy->mdio_bus, phy->addr, -1, CLAUSE22, 18, 0x800F);
 
-	val = phy_mdio_read(phy, CLAUSE22, -1, 0);
+	val = smi_read(phy->mdio_bus, CLAUSE22, phy->addr, -1, 0);
 	val &= 0x0800;
-	phy_mdio_write(phy, CLAUSE22, -1, 0, val);
-	phy_mdio_write(phy, CLAUSE22, -1, 18, 0);
+	smi_write(phy->mdio_bus, phy->addr, -1, CLAUSE22, 0, val);
+	smi_write(phy->mdio_bus, phy->addr, -1, CLAUSE22, 18, 0);
 
-	val = phy_mdio_read(phy, CLAUSE22, -1, 12);
+	val = smi_read(phy->mdio_bus, CLAUSE22, phy->addr, -1, 12);
 	val &= 0x0800;
-	phy_mdio_write(phy, CLAUSE22, -1, 12, val);
+	smi_write(phy->mdio_bus, phy->addr, -1, CLAUSE22, 12, val);
 
-	phy_mdio_write(phy, CLAUSE22, -1, 31, 0x0010);
-	phy_mdio_write(phy, CLAUSE22, -1, 0, 0x7009);
-	phy_mdio_write(phy, CLAUSE22, -1, 12, 0x5002);
-	phy_mdio_write(phy, CLAUSE22, -1, 11, 0x0000);
+	smi_write(phy->mdio_bus, phy->addr, -1, CLAUSE22, 31, 0x0010);
+	smi_write(phy->mdio_bus, phy->addr, -1, CLAUSE22, 0, 0x7009);
+	smi_write(phy->mdio_bus, phy->addr, -1, CLAUSE22, 12, 0x5002);
+	smi_write(phy->mdio_bus, phy->addr, -1, CLAUSE22, 11, 0x0000);
 
 	for (int i = 0; i < sizeof(vitesse_vsc8574_program); i++) {
 		val = (0x5000 | vitesse_vsc8574_program[i]);
-		phy_mdio_write(phy, CLAUSE22, -1, 12, val);
+		smi_write(phy->mdio_bus, phy->addr, -1, CLAUSE22, 12, val);
 	}
 
-	phy_mdio_write(phy, CLAUSE22, -1, 12, 0x0);
-	phy_mdio_write(phy, CLAUSE22, -1, 3, 0x3EB7);
-	phy_mdio_write(phy, CLAUSE22, -1, 4, 0x4012);
-	phy_mdio_write(phy, CLAUSE22, -1, 12, 0x0100);
-	phy_mdio_write(phy, CLAUSE22, -1, 0, 0x4018);
-	phy_mdio_write(phy, CLAUSE22, -1, 0, 0xC018);
+	smi_write(phy->mdio_bus, phy->addr, -1, CLAUSE22, 12, 0x0);
+	smi_write(phy->mdio_bus, phy->addr, -1, CLAUSE22, 3, 0x3EB7);
+	smi_write(phy->mdio_bus, phy->addr, -1, CLAUSE22, 4, 0x4012);
+	smi_write(phy->mdio_bus, phy->addr, -1, CLAUSE22, 12, 0x0100);
+	smi_write(phy->mdio_bus, phy->addr, -1, CLAUSE22, 0, 0x4018);
+	smi_write(phy->mdio_bus, phy->addr, -1, CLAUSE22, 0, 0xC018);
 
-	phy_mdio_write(phy, CLAUSE22, -1, 31, 0x0001);
-	phy_mdio_write(phy, CLAUSE22, -1, 25, 0x4000);
-	phy_mdio_write(phy, CLAUSE22, -1, 26,
+	smi_write(phy->mdio_bus, phy->addr, -1, CLAUSE22, 31, 0x0001);
+	smi_write(phy->mdio_bus, phy->addr, -1, CLAUSE22, 25, 0x4000);
+	smi_write(phy->mdio_bus, phy->addr, -1, CLAUSE22, 26,
 			(sizeof(vitesse_vsc8574_program) + 1));
-	phy_mdio_write(phy, CLAUSE22, -1, 31, 0x0010);
-	phy_mdio_write(phy, CLAUSE22, -1, 18, 0x8008);
+	smi_write(phy->mdio_bus, phy->addr, -1, CLAUSE22, 31, 0x0010);
+	smi_write(phy->mdio_bus, phy->addr, -1, CLAUSE22, 18, 0x8008);
 
 	do {
-		val = phy_mdio_read(phy, CLAUSE22, -1, 18);
+		val = smi_read(phy->mdio_bus, CLAUSE22, phy->addr, -1, 18);
 		if (!(val & (1 << 15)))
 			break;
 		mdelay(10);
@@ -235,147 +235,186 @@ static void phy_vitesse_vsc8574_program(phy_config_t *phy)
 	if (!timeout)
 		WARN("%s: Operation 2 not complete, timeout\n", __func__);
 
-	phy_mdio_write(phy, CLAUSE22, -1, 31, 0x0001);
+	smi_write(phy->mdio_bus, phy->addr, -1, CLAUSE22, 31, 0x0001);
 
 	/* CRC check */
-	val = phy_mdio_read(phy, CLAUSE22, -1, 25);
+	val = smi_read(phy->mdio_bus, CLAUSE22, phy->addr, -1, 25);
 	if (val != vsc8574_program_crc) {
 		WARN("%s: Expected CRC 0x%x, Calculated CRC 0x%x\n",
 			__func__, vsc8574_program_crc, val);
 	}
-	phy_mdio_write(phy, CLAUSE22, -1, 31, 0x0000);
+	smi_write(phy->mdio_bus, phy->addr, -1, CLAUSE22, 31, 0x0000);
 }
 
 /* One time initialization for the PHY if required */
 void phy_vitesse_probe(int cgx_id, int lmac_id)
 {
 	int val;
+	int mdio_addr;
 	int timeout = 10;
 	phy_config_t *phy;
 	cgx_lmac_config_t *lmac;
 
 	debug_phy_driver("%s: %d:%d\n", __func__, cgx_id, lmac_id);
 
-	return;	/* FIXME: hangs the system.comment for now */
 	lmac = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
 	phy = &lmac->phy_config;
+
+	/* Read the PHY ID */
+	debug_phy_driver("%s: %d:%d\n", __func__, phy->mdio_bus, phy->addr);
+	val = smi_read(phy->mdio_bus, CLAUSE22, phy->addr, -1, MII_PHY_ID1_REG);
+	if (val != PHY_VSC8574_ID1) {
+		ERROR("%s: Incorrect PHY ID1 read for VSC8574 0x%x\n", __func__, val);
+		return;
+	}
+	debug_phy_driver("%s: REG 2 val 0x%x\n", __func__, val);
+
+	val = smi_read(phy->mdio_bus, CLAUSE22, phy->addr, -1, MII_PHY_ID2_REG);
+	if (val != PHY_VSC8574_ID2) {
+		ERROR("%s: Incorrect PHY ID2 read for VSC8574 0x%x\n", __func__, val);
+		return;
+	}
+	debug_phy_driver("%s: REG 3 val 0x%x\n", __func__, val);
 
 	/* Ref : Section 2.21 Configuration section from VSC8574 DS Rev 4.0
 	 * To configure the device, perform the following steps:
 	 */
 
-	/* 1. COMA_MODE active, drive high
+	/* 1. COMA_MODE active, driven low to ground (no SW interventions)
 	 * 2. Apply Power
 	 * 3. Apply RefClk
 	 * 4. Release reset, drive high. Power and clock must be stable before
 	 * releasing reset.
 	 * 5. Wait 120ms minimum.
-	 * 6. Apply patch from PHY_API (required for production released
-	 * (optional for board testing).
+	 * 6. Apply patch from PHY_API (required for production released)
 	 */
 	/* Start with Step 6. Assume, steps 1 - 5 are done during reset */
 	phy_vitesse_vsc8574_program(phy);
 
-	/* 7. Configure register 19G for MAC mode (to access register
-	 * 19G, register 31 must be 0x10).  Read register 19G.  Set
-	 * bits 15:14, MAC configuration as follows:
-	 *	00: SGMII
-	 *	01: QSGMII
-	 *	10: Reserved
-	 *	11: Reserved
-	 * Write new register 19G.
+	/* This PHY needs to be initialized once but all the 4 ports need
+	 * to be programmed to correct MAC mode
 	 */
-	phy_mdio_write(phy, CLAUSE22, -1, 31, 0x0010);
-	val = phy_mdio_read(phy, CLAUSE22, -1, 19);
-	val = val & 0x3fff;
-	if (lmac->mode == CAVM_CGX_LMAC_TYPES_E_QSGMII)
-		val |= 0x4000;
+	for (int port = 0; port < 4; port++) {
+		mdio_addr = phy->addr +  port;
 
-	phy_mdio_write(phy, CLAUSE22, -1, 19, val);
-
-	/* 8. Configure register 18G for MAC on all 4 PHYs write:
-	 * SGMII: 0x80F0
-	 * QSGMII: 0x80e0
-	 * Read register 18G until bit 15 equals 0
-	 */
-	val = (lmac->mode == CAVM_CGX_LMAC_TYPES_E_QSGMII) ? 0x80E0 : 0x80F0;
-	phy_mdio_write(phy, CLAUSE22, -1, 18, val);
-
-	do {
-		val = phy_mdio_read(phy, CLAUSE22, -1, 18);
-		if (!(val & (1 << 15)))
-			break;
-		mdelay(10);
-	} while (timeout--);
-
-	if (!timeout)
-		WARN("%s: MAC mode configuration not complete, timeout\n", __func__);
-
-	/* 9. If Fiber Media on all 4 PHYs configure register 18G by writing:
-	 *    Media 1000BX: 0x8FC1
-	 *    Media 100FX: 0x8FD1
-	 */
-	if (phy->media_type) {
-		if (phy->media_type == PHY_MEDIA_1000BX)
-			val = 0x8FC1;
-		else if (phy->media_type == PHY_MEDIA_100FX)
-			val = 0x8FD1;
-		else
-			val = 0;
-		phy_mdio_write(phy, CLAUSE22, -1, 18, val);
-
-		/* 10. If Fiber Media read register 18G till (SIC) bit 15
-		 * equals 0.
+		debug_phy_driver("%s: port %d phy->addr 0x%x mdio_addr 0x%x\n",
+					__func__, port,
+					phy->addr, mdio_addr);
+		/* 7. Configure register 19G for MAC mode (to access register
+		 * 19G, register 31 must be 0x10).  Read register 19G.  Set
+		 * bits 15:14, MAC configuration as follows:
+		 *	00: SGMII
+		 *	01: QSGMII
+		 *	10: Reserved
+		 *	11: Reserved
+		 * Write new register 19G.
 		 */
+		smi_write(phy->mdio_bus, mdio_addr, -1, CLAUSE22, 31, 0x0010);
+		val = smi_read(phy->mdio_bus, CLAUSE22, mdio_addr, -1, 19);
+		val = val & 0x3fff;
+		if (lmac->mode == CAVM_CGX_LMAC_TYPES_E_QSGMII)
+			val |= 0x4000;
+
+		smi_write(phy->mdio_bus, mdio_addr, -1, CLAUSE22, 19, val);
+
+		/* 8. Configure register 18G for MAC on all 4 PHYs write:
+		 * SGMII: 0x80F0
+		 * QSGMII: 0x80e0
+		 * Read register 18G until bit 15 equals 0
+		 */
+		val = (lmac->mode == CAVM_CGX_LMAC_TYPES_E_QSGMII) ? 0x80E0 : 0x80F0;
+		debug_phy_driver("%s: Configuring the VSC8574 PHY for %d mode\n",
+				__func__, lmac->mode);
+		smi_write(phy->mdio_bus, mdio_addr, -1, CLAUSE22, 18, val);
+
 		do {
-			val = phy_mdio_read(phy, CLAUSE22, -1, 18);
+			val = smi_read(phy->mdio_bus, CLAUSE22, mdio_addr, -1, 18);
+			if (!(val & (1 << 15)))
+				break;
+			mdelay(100);
+		} while (timeout--);
+
+		if (!timeout)
+			WARN("%s: MAC mode configuration not complete, timeout\n", __func__);
+
+		smi_write(phy->mdio_bus, mdio_addr, -1, CLAUSE22, 31, 0);
+		/* 9. If Fiber Media on all 4 PHYs configure register 18G by writing:
+		 *    Media 1000BX: 0x8FC1
+		 *    Media 100FX: 0x8FD1
+		 */
+		if (phy->media_type) {
+			debug_phy_driver("%s: media type is not copper\n", __func__);
+			if (phy->media_type == PHY_MEDIA_1000BX)
+				val = 0x8FC1;
+			else if (phy->media_type == PHY_MEDIA_100FX)
+				val = 0x8FD1;
+			else
+				val = 0;
+			smi_write(phy->mdio_bus, mdio_addr, -1, CLAUSE22, 18, val);
+
+			/* 10. If Fiber Media read register 18G till (SIC) bit 15
+			 * equals 0.
+			 */
+			do {
+				val = smi_read(phy->mdio_bus, CLAUSE22, mdio_addr, -1, 18);
+				if (!(val & (1 << 15)))
+					break;
+				mdelay(10);
+			} while (timeout--);
+			if (!timeout)
+				WARN("%s: PHY optical configuration not complete, timeout\n", __func__);
+		}
+
+		/* 11. Configure register 23 for MAC and Media mode (to access
+		 * register 23, register 31 must be 0). Read register 23.
+		 *	Set bits 10:8 as follows:
+		 *	000: Copper
+		 *	010: 1000BX
+		 *	011: 100FX
+		 * Write new register 23.
+		 */
+		val = smi_read(phy->mdio_bus, CLAUSE22, mdio_addr, -1, 23);
+
+		val &= 0xF8FF; /* Copper Medium */
+
+		if (phy->media_type == PHY_MEDIA_1000BX)
+			val |= 0x0200;
+		else if (phy->media_type == PHY_MEDIA_100FX)
+			val |= 0x0300;
+		smi_write(phy->mdio_bus, mdio_addr, -1, CLAUSE22, 23, val);
+
+		/* 12. Software reset. Read register 0 (to access register 0,
+		 *     register 31 must be 0). Set bit 15 to 1.
+		 *     Write new register 0.
+		 */
+		smi_write(phy->mdio_bus, mdio_addr, -1, CLAUSE22, 31, 0);
+		val = smi_read(phy->mdio_bus, CLAUSE22, mdio_addr, -1, 0);
+		val |= 0x8000;
+		smi_write(phy->mdio_bus, mdio_addr, -1, CLAUSE22, 0, val);
+
+		/* 13. Read register 0 until bit 15 equals 0 */
+		do {
+			val = smi_read(phy->mdio_bus, CLAUSE22, mdio_addr, -1, 18);
 			if (!(val & (1 << 15)))
 				break;
 			mdelay(10);
 		} while (timeout--);
+
 		if (!timeout)
-			WARN("%s: PHY optical configuration not complete, timeout\n", __func__);
+			WARN("%s: PHY I/O error, timeout\n", __func__);
+
+		smi_write(phy->mdio_bus, mdio_addr, -1, CLAUSE22, 31, 3);
+		smi_write(phy->mdio_bus, mdio_addr, -1, CLAUSE22, 16, 0x80);
+		smi_write(phy->mdio_bus, mdio_addr, -1, CLAUSE22, 31, 0);
+
+		/* If PHY programming is successful, make the PHY initialized
+		 * on other LMACs as well. FIXME: in a proper way
+		 */
+		for (int i = 0; i < MAX_LMAC_PER_CGX; i++) {
+			lmac = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[i];
+			lmac->phy_config.init = 1;
+		}
 	}
-
-	/* 11. Configure register 23 for MAC and Media mode (to access
-	 * register 23, register 31 must be 0). Read register 23.
-	 *	Set bits 10:8 as follows:
-	 *	000: Copper
-	 *	010: 1000BX
-	 *	011: 100FX
-	 * Write new register 23.
-	 */
-	phy_mdio_write(phy, CLAUSE22, -1, 31, 0);
-
-	val = phy_mdio_read(phy, CLAUSE22, -1, 23);
-
-	val &= 0xF8FF; /* Copper Medium */
-
-	if (phy->media_type == PHY_MEDIA_1000BX)
-		val |= 0x0200;
-	else if (phy->media_type == PHY_MEDIA_100FX)
-		val |= 0x0300;
-	phy_mdio_write(phy, CLAUSE22, -1, 23, val);
-
-	/* 12. Software reset. Read register 0 (to access register 0,
-	 *     register 31 must be 0). Set bit 15 to 1.
-	 *     Write new register 0.
-	 */
-	phy_mdio_write(phy, CLAUSE22, -1, 31, 0x0);
-	val = phy_mdio_read(phy, CLAUSE22, -1, 0);
-	val |= 0x8000;
-	phy_mdio_write(phy, CLAUSE22, -1, 0, val);
-
-	/* 13. Read register 0 until bit 15 equals 0 */
-	do {
-		val = phy_mdio_read(phy, CLAUSE22, -1, 18);
-		if (!(val & (1 << 15)))
-			break;
-		mdelay(10);
-	} while (timeout--);
-
-	if (!timeout)
-		WARN("%s: PHY I/O error, timeout\n", __func__);
 }
 
 /* To set the operating mode of the PHY if required */

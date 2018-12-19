@@ -220,14 +220,17 @@ void smi_set_switch(phy_config_t *phy, int enable)
 			return; /* No other cases handled */
 		};
 
-		debug_smi("%s: Switch %d MUX type %d Int Addr 0x%x Bit %d\n",
+		debug_smi("%s: Switch %d MUX type %d Bus %d I2C Addr 0x%x Int Addr 0x%x Bit %d\n",
 				__func__, phy->mux_switch, phy->mux_info.type,
+				phy->mux_info.i2c_bus, phy->mux_info.i2c_addr,
 				phy->mux_info.pin >> 3, phy->mux_info.pin & 7);
 
 		/* Don't perform the TWSI operation for ASIM platform */
 		if (strncmp(plat_octeontx_bcfg->bcfg.board_model, "asim-", 5)) {
 			/* Bits are active low */
 			data[1] = ~data[1];
+			debug_smi("%s: data[0] 0x%x data[1] 0x%x\n", __func__,
+						data[0], data[1]);
 			ret = octeontx_twsi_send(phy->mux_info.i2c_bus,
 					phy->mux_info.i2c_addr,
 					data,

@@ -29,6 +29,16 @@
 #define PMA_PMD_CONTROL_REG		0
 #define PMA_PMD_STATUS_REG		1
 
+/* IEEE 802.3 spec : CLAUSE 22 registers */
+#define MII_CONTROL_REG			0
+#define MII_STATUS_REG			1
+#define MII_PHY_ID1_REG			2
+#define MII_PHY_ID2_REG			3
+
+/* PHY Identifies for various PHYs supported */
+#define PHY_VSC8574_ID1			0x0007
+#define PHY_VSC8574_ID2			0x04A2
+
 /* PHY types */
 typedef enum phy_type {
 	PHY_NONE = 0,

@@ -47,10 +47,16 @@ int phy_get_link_status(int cgx_id, int lmac_id,
 	debug_nw_mgmt("%s: mode %d\n", __func__, lmac->mode);
 
 	if (lmac->phy_present) {
+		if (phy->mux_switch)
+			smi_set_switch(phy, 1); /* Enable the switch */
+
 		/* Call PHY specific probe callback here */
 		if (phy->valid)
 			lmac->phy_config.drv->get_link_status(cgx_id,
 					lmac_id, link);
+
+		if (phy->mux_switch)
+			smi_set_switch(phy, 0); /* Disable the switch */
 
 		debug_nw_mgmt("link %d speed %d duplex %d\n", link->s.link_up,
 			link->s.speed, link->s.full_duplex);
@@ -84,19 +90,18 @@ void phy_probe(int cgx_id, int lmac_id)
 
 	phy = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id].phy_config;
 
-	/* If the MDIO is connected via analog switch, enable
-	 * the switch only once during boot (safe to do in phy_probe()
-	 * and never disable it for now.
-	 */
-	if (phy->mux_switch)
-		smi_set_switch(phy, 1); /* enable the switch */
-
 	/* Enable the SMI/MDIO bus */
 	smi_reset(phy->mdio_bus);
+
+	if (phy->mux_switch)
+		smi_set_switch(phy, 1); /* enable the switch */
 
 	/* Call PHY specific probe callback here */
 	if (phy->valid)
 		phy->drv->probe(cgx_id, lmac_id);
+
+	if (phy->mux_switch)
+		smi_set_switch(phy, 0); /* Disable the switch */
 
 }
 
@@ -108,9 +113,15 @@ void phy_config(int cgx_id, int lmac_id)
 
 	phy = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id].phy_config;
 
+	if (phy->mux_switch)
+		smi_set_switch(phy, 1); /* Enable the switch */
+
 	/* Call PHY specific config callback here */
 	if (phy->valid)
 		phy->drv->config(cgx_id, lmac_id);
+
+	if (phy->mux_switch)
+		smi_set_switch(phy, 0); /* Disable the switch */
 }
 
 void phy_lookup(int cgx_id, int lmac_id, int type)

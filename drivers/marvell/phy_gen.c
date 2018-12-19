@@ -195,7 +195,27 @@ void phy_generic_c45_get_link_status(int cgx_id, int lmac_id, link_state_t *link
 /* One time initialization for the PHY if required */
 void phy_generic_probe(int cgx_id, int lmac_id)
 {
+	int val = 0;
+	cgx_lmac_config_t *lmac;
+	phy_config_t *phy;
+
 	debug_phy_driver("%s: %d:%d\n", __func__, cgx_id, lmac_id);
+
+	lmac = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
+	phy = &lmac->phy_config;
+
+	debug_phy_driver("%s: %d:%d\n", __func__, phy->mdio_bus, phy->addr);
+
+	/* Read the PHY ID and print it to user so that in case of Generic
+	 * CLAUSE compatible PHY, PHY type is known
+	 */
+	val = smi_read(phy->mdio_bus, CLAUSE22, phy->addr, -1, MII_PHY_ID1_REG);
+	NOTICE("%s: bus %d addr 0x%x PHY ID1 0x%x\n", __func__, phy->mdio_bus,
+					phy->addr, val);
+
+	val = smi_read(phy->mdio_bus, CLAUSE22, phy->addr, -1, MII_PHY_ID2_REG);
+	NOTICE("%s: bus %d addr 0x%x PHY ID2 0x%x\n", __func__, phy->mdio_bus,
+					phy->addr, val);
 }
 
 /* To set the operating mode of the PHY if required */
