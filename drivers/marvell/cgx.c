@@ -890,8 +890,10 @@ int cgx_sgmii_set_link_up(int cgx_id, int lmac_id)
 		if (lmac->mode == CAVM_CGX_LMAC_TYPES_E_SGMII) {
 			if (cgx_poll_for_csr(CAVM_CGXX_GMP_PCS_MRX_STATUS(
 				cgx_id, lmac_id), CGX_GMP_PCS_AN_CPT_MASK, 1)) {
-				ERROR("%s: %d:%d SGMII AN not complete\n",
-						__func__, cgx_id, lmac_id);
+				ERROR("%s: %d:%d SGMII AN not complete 0x%lx\n",
+						__func__, cgx_id, lmac_id,
+						CSR_READ(CAVM_CGXX_GMP_PCS_MRX_STATUS(
+						cgx_id, lmac_id)));
 				cgx_set_error_type(cgx_id, lmac_id,
 					CGX_ERR_AN_CPT_FAIL);
 				return -1;
@@ -1246,7 +1248,7 @@ int cgx_xaui_set_link_up(int cgx_id, int lmac_id)
 		(lmac->mode == CAVM_CGX_LMAC_TYPES_E_USXGMII)) {
 		if (cgx_poll_for_csr(CAVM_CGXX_SPUX_BR_STATUS1(cgx_id,
 				lmac_id), CGX_SPUX_BLK_LOCK_MASK, 1)) {
-			debug_cgx("%s: %d:%d: SPUX BLK LOCK not completed 0x%lx\n",
+			debug_cgx("%s: %d:%d: SPUX BLK LOCK not set 0x%lx\n",
 					__func__, cgx_id, lmac_id, CSR_READ(
 						CAVM_CGXX_SPUX_BR_STATUS1(cgx_id, lmac_id)));
 			cgx_set_error_type(cgx_id, lmac_id,
@@ -1364,7 +1366,17 @@ int cgx_xaui_set_link_up(int cgx_id, int lmac_id)
 		(lmac->mode == CAVM_CGX_LMAC_TYPES_E_FIFTYG_R) ||
 		(lmac->mode == CAVM_CGX_LMAC_TYPES_E_HUNDREDG_R) ||
 		(lmac->mode == CAVM_CGX_LMAC_TYPES_E_USXGMII)) {
+		/* Clear error counters and latched error bits */
+		CSR_WRITE(CAVM_CGXX_SPUX_BR_STATUS2(cgx_id, lmac_id), 0);
+		br_status2.u = CSR_READ(CAVM_CGXX_SPUX_BR_STATUS2(
+					cgx_id, lmac_id));
+		br_status2.s.latched_ber = 1;
+		br_status2.s.latched_lock = 1;
+		CSR_WRITE(CAVM_CGXX_SPUX_BR_STATUS2(cgx_id, lmac_id),
+					br_status2.u);
+
 		udelay(CGX_SPUX_BR_RCV_LINK_DELAY); /* 10 ms wait */
+
 		spux_status1.u = CSR_READ(CAVM_CGXX_SPUX_STATUS1(
 					cgx_id, lmac_id));
 		if (!spux_status1.s.rcv_lnk) {
@@ -1374,7 +1386,8 @@ int cgx_xaui_set_link_up(int cgx_id, int lmac_id)
 					CGX_ERR_PCS_RECV_LINK_FAIL);
 			return -1;
 		}
-		/* check for latched_ber */
+
+		/* Check for bit error rate*/
 		br_status2.u = CSR_READ(CAVM_CGXX_SPUX_BR_STATUS2(
 				cgx_id, lmac_id));
 		if (br_status2.s.latched_ber) {
@@ -1384,7 +1397,8 @@ int cgx_xaui_set_link_up(int cgx_id, int lmac_id)
 					CGX_ERR_SPUX_BER_FAIL);
 			return -1;
 		}
-		/* BER_CNT should be 0 for a stable link */
+
+		/* Bit error rate counter should be 0 for a stable link */
 		if (br_status2.s.ber_cnt) {
 			debug_cgx("%s: %d:%d bit-error-rate counter %d is high\n",
 					__func__, cgx_id, lmac_id,
@@ -1393,16 +1407,15 @@ int cgx_xaui_set_link_up(int cgx_id, int lmac_id)
 					CGX_ERR_SPUX_BER_FAIL);
 			return -1;
 		}
-		/* ERR_BLKS should be 0 for a stable link */
+
+		/* Errored blocks counter should be 0 for a stable link */
 		if (br_status2.s.err_blks) {
 			debug_cgx("%s: %d:%d errored-blocks counter %d is high\n",
 					__func__, cgx_id, lmac_id,
 					br_status2.s.err_blks);
-#if 0
 			cgx_set_error_type(cgx_id, lmac_id,
 					CGX_ERR_SPUX_BER_FAIL);
 			return -1;
-#endif
 		}
 	}
 
@@ -1546,6 +1559,8 @@ void cgx_mode_change(int cgx_id, int lmac_id, int new_mode,
 
 int cgx_rx_equalization(int cgx_id, int lmac_id)
 {
+#if 0
+	int lane_idx;
 	int qlm, lane, max_lanes, timeout = 100;
 	cgx_lmac_config_t *lmac;
 	cavm_gsernx_lanex_init_bsts_t init_bsts;
@@ -1554,7 +1569,6 @@ int cgx_rx_equalization(int cgx_id, int lmac_id)
 
 	qlm = lmac->qlm;
 	lane = lmac->lane;
-
 	switch (lmac->mode) {
 	case CAVM_CGX_LMAC_TYPES_E_TENG_R:
 	case CAVM_CGX_LMAC_TYPES_E_TWENTYFIVEG_R:
@@ -1571,55 +1585,66 @@ int cgx_rx_equalization(int cgx_id, int lmac_id)
 	default:
 		return 0;
 	}
+
 	debug_cgx("%s: %d:%d qlm %d lane %d max_lanes %d\n", __func__, cgx_id,
 					lmac_id, qlm, lane, max_lanes);
 
-	/* Check GSERN lane is not idle */
-	if (cgx_poll_for_csr(CAVM_GSERNX_LANEX_RX_IDLEDET_BSTS(qlm, lane),
-				GSERN_RX_IDLEDET_MASK, 0)) {
-		debug_cgx("%s: %d:%d GSERN LANE not idle 0x%lx\n",
-				__func__, qlm, lane,
-				CSR_READ(CAVM_GSERNX_LANEX_RX_IDLEDET_BSTS(qlm, lane)));
-		return -1;
+	/* Poll for signal detection on GSERN lane */
+	for (lane_idx = lane; lane_idx < (lane + max_lanes); lane_idx++) {
+		if (cgx_poll_for_csr(CAVM_GSERNX_LANEX_RX_IDLEDET_BSTS(
+				qlm, lane_idx),	GSERN_RX_IDLEDET_MASK, 0)) {
+			debug_cgx("%s: %d:%d No signal detected on GSERN LANE 0x%lx\n",
+				__func__, qlm, lane_idx,
+			CSR_READ(CAVM_GSERNX_LANEX_RX_IDLEDET_BSTS(qlm, lane_idx)));
+			return -1;
+		}
 	}
 
-	for (int lane_idx = lane; lane_idx < max_lanes; lane_idx++) {
-		/* Perform Rx adapation sequence */
+	/* Perform Rx adapation sequence */
+	for (lane_idx = lane; lane_idx < (lane + max_lanes); lane_idx++) {
+		/* Enable deep idle */
 		CAVM_MODIFY_CGX_CSR(cavm_gsernx_lanex_rst1_bcfg_t,
 				CAVM_GSERNX_LANEX_RST1_BCFG(qlm, lane_idx),
 				rx_go2deep_idle, 1);
+	}
 
-		/* Poll until RX_DEEP_IDLE is set to 1 */
+	for (lane_idx = lane; lane_idx < (lane + max_lanes); lane_idx++) {
+		/* Poll for deep idle */
 		if (cgx_poll_for_csr(CAVM_GSERNX_LANEX_INIT_BSTS(qlm, lane_idx),
-				GSERN_RX_DEEPIDLE_MASK, 0)) {
-			debug_cgx("%s: %d:%d GSERN Rx state is not deep idle\n",
-				__func__, qlm, lane_idx);
+				GSERN_RX_DEEPIDLE_MASK, 1)) {
+			debug_cgx("%s: %d:%d GSERN Rx is not in deep idle state 0x%lx\n",
+				__func__, qlm, lane_idx,
+				CSR_READ(CAVM_GSERNX_LANEX_INIT_BSTS(qlm, lane_idx)));
 			return -1;
 		}
-
+		/* Disable deep idle */
 		CAVM_MODIFY_CGX_CSR(cavm_gsernx_lanex_rst1_bcfg_t,
 				CAVM_GSERNX_LANEX_RST1_BCFG(qlm, lane_idx),
 				rx_go2deep_idle, 0);
+	}
 
+	for (lane_idx = lane; lane_idx < (lane + max_lanes); lane_idx++) {
+		/* Poll for exit of deep idle and Rx ready to be 1 */
 		do {
 			init_bsts.u = CSR_READ(CAVM_GSERNX_LANEX_INIT_BSTS(
 				qlm, lane_idx));
-			if ((init_bsts.s.rx_rst_sm_complete == 1) &&
+			if ((init_bsts.s.rx_deep_idle == 0) &&
 				(init_bsts.s.rx_ready == 1))
 				break;
-			udelay(1);
+			mdelay(1);
 		} while (--timeout > 0);
 
 		if (!timeout) {
-			debug_cgx("%s: RX EQU failed qlm %d lane %d\n", __func__,
-				qlm, lane);
+			debug_cgx("%s: RX EQU failed qlm %d lane %d 0x%lx\n", __func__,
+				qlm, lane_idx,
+				CSR_READ(CAVM_GSERNX_LANEX_INIT_BSTS(qlm, lane_idx)));
 			return -1;
 		}
 
 		debug_cgx("%s: %d:%d qlm %d lane %d Rx EQU done\n", __func__,
 				cgx_id, lmac_id, qlm, lane_idx);
 	}
-
+#endif
 	return 0;
 }
 
@@ -1696,6 +1721,43 @@ void cgx_set_external_loopback(int cgx_id, int lmac_id, int enable)
 		CAVM_MODIFY_CGX_CSR(cavm_cgxx_smux_ext_loopback_t,
 			CAVM_CGXX_SMUX_EXT_LOOPBACK(cgx_id, lmac_id),
 			en, enable);
+	}
+}
+
+void cgx_lmac_init_link(int cgx_id, int lmac_id)
+{
+	cgx_lmac_config_t *lmac;
+
+	debug_cgx("%s %d:%d\n", __func__, cgx_id, lmac_id);
+
+	lmac = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
+
+	switch (lmac->mode) {
+	case CAVM_CGX_LMAC_TYPES_E_SGMII:
+	case CAVM_CGX_LMAC_TYPES_E_QSGMII:
+		if (cgx_sgmii_set_link_up(cgx_id, lmac_id) != 0) {
+			WARN("%s: %d:%d SGMII link initialization failed\n",
+				__func__, cgx_id, lmac_id);
+			break;
+		}
+		break;
+	case CAVM_CGX_LMAC_TYPES_E_XAUI:
+	case CAVM_CGX_LMAC_TYPES_E_RXAUI:
+	case CAVM_CGX_LMAC_TYPES_E_TENG_R:
+	case CAVM_CGX_LMAC_TYPES_E_TWENTYFIVEG_R:
+	case CAVM_CGX_LMAC_TYPES_E_FORTYG_R:
+	case CAVM_CGX_LMAC_TYPES_E_FIFTYG_R:
+	case CAVM_CGX_LMAC_TYPES_E_HUNDREDG_R:
+	case CAVM_CGX_LMAC_TYPES_E_USXGMII:
+		if (cgx_xaui_init_link(cgx_id, lmac_id) != 0) {
+			WARN("%s: %d:%d XAUI link initialization failed\n",
+				__func__, cgx_id, lmac_id);
+			break;
+		}
+		break;
+	default:
+		ERROR("%s invalid mode %d\n", __func__, lmac->mode);
+		break;
 	}
 }
 

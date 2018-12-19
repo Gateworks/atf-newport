@@ -248,10 +248,6 @@ static int cgx_link_bringup(int cgx_id, int lmac_id)
 			phy_get_link_status(cgx_id, lmac_id, &link);
 		}
 		if (link.s.link_up == 1) {	/* link is up */
-			if (cgx_sgmii_set_link_up(cgx_id, lmac_id) != 0)
-				/* error occurred, skip further */
-				goto cgx_err;
-
 			if (cgx_sgmii_set_link_speed(cgx_id, lmac_id, &link) != 0)
 				goto cgx_err;
 
@@ -293,18 +289,6 @@ static int cgx_link_bringup(int cgx_id, int lmac_id)
 			cgx_set_link_state(cgx_id, lmac_id,
 				&link, 0);
 		}
-		/* initialize the link, get the link status,
-		 * If link is up, check AN and perform training
-		 */
-		if (cgx_xaui_init_link(cgx_id, lmac_id) != 0) {
-			/* at this step, if there are errors, set error type
-			 * with the LINK status as down and return
-			 */
-			cgx_set_link_state(cgx_id, lmac_id, &link,
-				cgx_get_error_type(cgx_id, lmac_id));
-			return -1;
-		}
-
 retry_link:
 		if (cgx_xaui_set_link_up(cgx_id, lmac_id) == -1) {
 			/* if init link fails, retry */
@@ -820,18 +804,22 @@ void cgx_fw_intf_init(void)
 
 	for (int cgx = 0; cgx < plat_octeontx_scfg->cgx_count; cgx++) {
 		cgx_cfg = &plat_octeontx_bcfg->cgx_cfg[cgx];
+
 		if (cgx_cfg->enable) {
 			for (int lmac = 0; lmac < MAX_LMAC_PER_CGX; lmac++) {
 				lmac_cfg = &plat_octeontx_bcfg->cgx_cfg[cgx].lmac_cfg[lmac];
-				if (!lmac_cfg->phy_present)
-					continue;
-				/* If PHY is present, look up for PHY driver */
-				phy_lookup(cgx, lmac, lmac_cfg->phy_config.type);
-				if (lmac_cfg->phy_config.valid) {
-					debug_cgx_intf("%s: init PHY\n", __func__);
-					phy_probe(cgx, lmac);
-					lmac_cfg->phy_config.init = 1;
-					continue;
+				if (lmac_cfg->lmac_enable) {
+					cgx_lmac_init_link(cgx, lmac);
+					if (!lmac_cfg->phy_present)
+						continue;
+					/* If PHY is present, look up for PHY driver */
+					phy_lookup(cgx, lmac, lmac_cfg->phy_config.type);
+					if (lmac_cfg->phy_config.valid) {
+						debug_cgx_intf("%s: init PHY\n", __func__);
+						phy_probe(cgx, lmac);
+						lmac_cfg->phy_config.init = 1;
+						continue;
+					}
 				}
 			}
 		} else {
@@ -862,6 +850,7 @@ void cgx_fw_intf_init(void)
 void cgx_fw_intf_shutdown(void)
 {
 	cgx_lmac_context_t *lmac_ctx;
+	cgx_lmac_config_t *lmac_cfg;
 
 	debug_cgx_intf("%s\n", __func__);
 
@@ -871,6 +860,7 @@ void cgx_fw_intf_shutdown(void)
 	for (int cgx = 0; cgx < plat_octeontx_scfg->cgx_count; cgx++) {
 		for (int lmac = 0; lmac < MAX_LMAC_PER_CGX; lmac++) {
 			lmac_ctx = &lmac_context[cgx][lmac];
+			lmac_cfg = &plat_octeontx_bcfg->cgx_cfg[cgx].lmac_cfg[lmac];
 			/* bring down the link if link_enable is set */
 			if (lmac_ctx->s.link_enable)
 				cgx_link_bringdown(cgx, lmac);
@@ -879,6 +869,12 @@ void cgx_fw_intf_shutdown(void)
 			CSR_WRITE(CAVM_CGXX_CMRX_SCRATCHX(
 					cgx, lmac, 1), 0);
 			lmac_ctx->u64 = 0;
+			/* After bringing down the links, do one time
+			 * initialization of the LMACs that are enabled
+			 * so kernel can bring up the link
+			 */
+			if (lmac_cfg->lmac_enable)
+				cgx_lmac_init_link(cgx, lmac);
 		}
 	}
 }

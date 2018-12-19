@@ -175,6 +175,7 @@ void cgx_set_internal_loopback(int cgx_id, int lmac_id, int enable);
 void cgx_set_external_loopback(int cgx_id, int lmac_id, int enable);
 void cgx_set_error_type(int cgx_id, int lmac_id, uint64_t type);
 void cgx_get_link_state(int cgx_id, int lmac_id, link_state_t *link);
+void cgx_lmac_init_link(int cgx_id, int lmac_id);
 
 /* CGX FW interface APIs */
 void cgx_fw_intf_init(void);
