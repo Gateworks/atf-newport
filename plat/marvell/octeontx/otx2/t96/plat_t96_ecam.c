@@ -28,7 +28,6 @@
 /* Probe GSERNX_LANE_SCRATCHX[] for SATA config */
 static int ecam_probe_sata(unsigned long long arg)
 {
-#if 0
 	octeontx_qlm_state_lane_t qlm_state;
 	int qlm = 0, lane = 0;
 
@@ -46,7 +45,6 @@ static int ecam_probe_sata(unsigned long long arg)
 			__func__, qlm, lane);
 		return 1;
 	}
-#endif
 	return 0;
 }
 
