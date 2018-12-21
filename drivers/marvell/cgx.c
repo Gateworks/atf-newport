@@ -9,6 +9,7 @@
 
 #include <arch.h>
 #include <stdio.h>
+#include <string.h>
 #include <debug.h>
 #include <delay_timer.h>
 #include <platform_def.h>
@@ -1217,7 +1218,6 @@ int cgx_xaui_set_link_up(int cgx_id, int lmac_id)
 		/* Perform RX EQU for non-KR interfaces and for the link
 		 * speed >= 10Gbaud - XAUI/XLAUI/XFI
 		 */
-		debug_cgx("%s: RX EQU mode %d\n", __func__, lmac->mode);
 		if (cgx_rx_equalization(cgx_id, lmac_id) == -1) {
 			ERROR("%s: %d:%d RX EQU failed\n", __func__,
 					cgx_id, lmac_id);
@@ -1256,38 +1256,36 @@ int cgx_xaui_set_link_up(int cgx_id, int lmac_id)
 			return -1;
 		}
 
-		/* if RS-FEC is enabled, check the alignment status */
-		if (lmac->fec == CGX_FEC_RS) {
-			if (cgx_poll_for_csr(CAVM_CGXX_SPUX_RSFEC_STATUS(
-					cgx_id, lmac_id),
-					CGX_SPUX_RSFEC_ALGN_STS_MASK, 1)) {
-				debug_cgx("%s: %d:%d: SPUX RSFEC alignment not acquired\n",
+		if (strncmp(plat_octeontx_bcfg->bcfg.board_model, "asim-", 5)) {
+		/* Not simulated on ASIM */
+			/* if RS-FEC is enabled, check the alignment status */
+			if (lmac->fec == CGX_FEC_RS) {
+				if (cgx_poll_for_csr(CAVM_CGXX_SPUX_RSFEC_STATUS(
+						cgx_id, lmac_id),
+						CGX_SPUX_RSFEC_ALGN_STS_MASK, 1)) {
+					debug_cgx("%s: %d:%d: SPUX RSFEC alignment not acquired\n",
+							__func__, cgx_id, lmac_id);
+					cgx_set_error_type(cgx_id, lmac_id,
+							CGX_ERR_SPUX_RSFEC_ALGN_FAIL);
+					return -1;
+				}
+			}
+			/* check if marker lock achieved for 40G/50G/100G/USXGMII */
+			if ((lmac->mode == CAVM_CGX_LMAC_TYPES_E_FORTYG_R) ||
+				(lmac->mode == CAVM_CGX_LMAC_TYPES_E_FIFTYG_R) ||
+				(lmac->mode == CAVM_CGX_LMAC_TYPES_E_HUNDREDG_R) ||
+				(lmac->mode == CAVM_CGX_LMAC_TYPES_E_USXGMII)) {
+				if (cgx_poll_for_csr(CAVM_CGXX_SPUX_BR_ALGN_STATUS(
+						cgx_id, lmac_id),
+						CGX_SPUX_MARKER_LOCK_MASK, 1)) {
+					debug_cgx("%s: %d:%d SPUX Marker Lock not achieved\n",
 						__func__, cgx_id, lmac_id);
-#if 0
-				cgx_set_error_type(cgx_id, lmac_id,
-						CGX_ERR_SPUX_RSFEC_ALGN_FAIL);
-				return -1;
-#endif
+					cgx_set_error_type(cgx_id, lmac_id,
+							CGX_ERR_SPUX_MARKER_LOCK_FAIL);
+					return -1;
+				}
 			}
 		}
-		/* check if marker lock achieved for 40G/50G/100G/USXGMII */
-		if ((lmac->mode == CAVM_CGX_LMAC_TYPES_E_FORTYG_R) ||
-			(lmac->mode == CAVM_CGX_LMAC_TYPES_E_FIFTYG_R) ||
-			(lmac->mode == CAVM_CGX_LMAC_TYPES_E_HUNDREDG_R) ||
-			(lmac->mode == CAVM_CGX_LMAC_TYPES_E_USXGMII)) {
-			if (cgx_poll_for_csr(CAVM_CGXX_SPUX_BR_ALGN_STATUS(
-					cgx_id, lmac_id),
-					CGX_SPUX_MARKER_LOCK_MASK, 1)) {
-				debug_cgx("%s: %d:%d SPUX Marker Lock not achieved\n",
-						__func__, cgx_id, lmac_id);
-#if 0
-				cgx_set_error_type(cgx_id, lmac_id,
-						CGX_ERR_SPUX_MARKER_LOCK_FAIL);
-				return -1;
-#endif
-			}
-		}
-
 	} else if ((lmac->mode == CAVM_CGX_LMAC_TYPES_E_XAUI) ||
 		(lmac->mode == CAVM_CGX_LMAC_TYPES_E_RXAUI)) {
 		if (cgx_poll_for_csr(CAVM_CGXX_SPUX_BX_STATUS(cgx_id,
@@ -1367,13 +1365,16 @@ int cgx_xaui_set_link_up(int cgx_id, int lmac_id)
 		(lmac->mode == CAVM_CGX_LMAC_TYPES_E_HUNDREDG_R) ||
 		(lmac->mode == CAVM_CGX_LMAC_TYPES_E_USXGMII)) {
 		/* Clear error counters and latched error bits */
-		CSR_WRITE(CAVM_CGXX_SPUX_BR_STATUS2(cgx_id, lmac_id), 0);
-		br_status2.u = CSR_READ(CAVM_CGXX_SPUX_BR_STATUS2(
+		if (strncmp(plat_octeontx_bcfg->bcfg.board_model, "asim-", 5)) {
+			/* Not implemented in ASIM */
+			CSR_WRITE(CAVM_CGXX_SPUX_BR_STATUS2(cgx_id, lmac_id), 0);
+			br_status2.u = CSR_READ(CAVM_CGXX_SPUX_BR_STATUS2(
 					cgx_id, lmac_id));
-		br_status2.s.latched_ber = 1;
-		br_status2.s.latched_lock = 1;
-		CSR_WRITE(CAVM_CGXX_SPUX_BR_STATUS2(cgx_id, lmac_id),
+			br_status2.s.latched_ber = 1;
+			br_status2.s.latched_lock = 1;
+			CSR_WRITE(CAVM_CGXX_SPUX_BR_STATUS2(cgx_id, lmac_id),
 					br_status2.u);
+		}
 
 		udelay(CGX_SPUX_BR_RCV_LINK_DELAY); /* 10 ms wait */
 
