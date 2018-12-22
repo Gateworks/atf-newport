@@ -131,6 +131,8 @@ static const i2c_compat_t i2c_compat_list[] = {
 static const phy_compatible_type_t phy_compat_list[] = {
 	{ "marvell,88x5123", PHY_MARVELL_5123},
 	{ "marvell,88x5113", PHY_MARVELL_5113},
+	{ "marvell,88e1514", PHY_MARVELL_88E1514},
+	{ "marvell,88e1512", PHY_MARVELL_88E1514},
 	{ "vitesse,vsc8574", PHY_VITESSE_8574},
 	{ "ethernet-phy-ieee802.3-c22", PHY_GENERIC_8023_C22},
 	{ "ethernet-phy-ieee802.3-c45", PHY_GENERIC_8023_C45},

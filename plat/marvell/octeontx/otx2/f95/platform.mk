@@ -10,6 +10,10 @@ ARM_ARCH_MINOR		:=	2
 
 PLAT_INCLUDES		+=	-Iinclude/plat/marvell/octeontx/otx2			\
 				-Iplat/marvell/octeontx/otx2/f95/include		\
+				-Ilib/libphy/marvell_88x5113/include			\
+				-Ilib/libphy/marvell_88x5113/serdes/src/include		\
+				-Ilib/libphy/marvell_88x5123/include			\
+				-Ilib/libphy/marvell_88x5123/serdes/include		\
 
 PLAT_BL_COMMON_SOURCES	+=	plat/marvell/octeontx/otx2/f95/plat_f95_setup.c		\
 				plat/marvell/octeontx/otx2/plat_security.c		\
@@ -30,6 +34,7 @@ BL31_SOURCES		+=	plat/marvell/octeontx/otx2/aarch64/plat_octeontx_common.S	\
 				plat/marvell/octeontx/otx2/plat_topology.c		\
 				drivers/marvell/phy_gen.c		\
 				drivers/marvell/phy_vitesse.c		\
+				drivers/marvell/phy_marvell.c		\
 				drivers/marvell/rvu.c		\
 				drivers/marvell/phy_mgmt.c		\
 				drivers/marvell/sfp_mgmt.c		\

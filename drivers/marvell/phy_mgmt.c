@@ -132,8 +132,12 @@ void phy_lookup(int cgx_id, int lmac_id, int type)
 
 	lmac = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
 
-	/* FIXME: look for PHY driver in Marvell PHY table */
-
+	/* First look for PHY driver in Marvell PHY table */
+	lmac->phy_config.drv = phy_marvell_drv_lookup(type);
+	if (lmac->phy_config.drv != NULL) {
+		lmac->phy_config.valid = 1;
+		return;
+	}
 	/* Next look for PHY driver in Vitesse PHY table */
 	lmac->phy_config.drv = phy_vitesse_drv_lookup(type);
 	if (lmac->phy_config.drv != NULL) {

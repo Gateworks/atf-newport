@@ -34,6 +34,7 @@
 #define MII_STATUS_REG			1
 #define MII_PHY_ID1_REG			2
 #define MII_PHY_ID2_REG			3
+#define MII_88E1514_STATUS_REG		17
 
 /* PHY Identifies for various PHYs supported */
 #define PHY_VSC8574_ID1			0x0007
@@ -44,6 +45,7 @@ typedef enum phy_type {
 	PHY_NONE = 0,
 	PHY_MARVELL_5123,
 	PHY_MARVELL_5113,
+	PHY_MARVELL_88E1514,
 	PHY_VITESSE_8574,
 	PHY_GENERIC_8023_C22,
 	PHY_GENERIC_8023_C45,
@@ -106,6 +108,7 @@ void phy_mdio_write(phy_config_t *phy, int mode, int devad, int reg, int val);
 void phy_set_switch(phy_config_t *phy, int enable);
 
 /* Generic PHY driver APIs to be exposed to other PHY drivers */
+void phy_generic_probe(int cgx_id, int lmac_id);
 void phy_generic_reset(int cgx_id, int lmac_id);
 void phy_generic_shutdown(int cgx_id, int lmac_id);
 void phy_generic_config(int cgx_id, int lmac_id);
