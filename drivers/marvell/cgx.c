@@ -21,7 +21,7 @@
 #include <octeontx_utils.h>
 
 /* define DEBUG_ATF_CGX to enable debug logs */
-#define DEBUG_ATF_CGX
+#undef DEBUG_ATF_CGX
 
 #ifdef DEBUG_ATF_CGX
 #define debug_cgx printf
@@ -332,7 +332,19 @@ static void cgx_lmac_init(int cgx_id, int lmac_id)
 	cmr_config.u = CSR_READ( CAVM_CGXX_CMRX_CONFIG(
 				cgx_id, lmac_id));
 	cmr_config.s.lmac_type = lmac->mode;
-	cmr_config.s.lane_to_sds = lmac->lane_to_sds;
+	/* FIXME: On EBB9604 the lanes are swizzled and hence
+	 * lane_to_sds needs to be configured accordingly.
+	 * For now, only verified for SGMII/QSGMII. Hence
+	 * add a board model and mode check here
+	 */
+	if (!strncmp(plat_octeontx_bcfg->bcfg.board_model, "ebb9", 4)) {
+		if ((lmac->mode == CAVM_CGX_LMAC_TYPES_E_SGMII) ||
+			(lmac->mode == CAVM_CGX_LMAC_TYPES_E_QSGMII)) {
+			cmr_config.s.lane_to_sds = ~lmac->lane_to_sds;
+			debug_cgx("%s: lanes are reversed, lane_to_sds %d\n",
+					__func__, cmr_config.s.lane_to_sds);
+		}
+	}
 	CSR_WRITE(CAVM_CGXX_CMRX_CONFIG(cgx_id, lmac_id),
 			cmr_config.u);
 
@@ -882,30 +894,61 @@ int cgx_sgmii_set_link_up(int cgx_id, int lmac_id)
 		CAVM_MODIFY_CGX_CSR(cavm_cgxx_cmrx_config_t,
 			CAVM_CGXX_CMRX_CONFIG(cgx_id, lmac_id),
 			enable, 1);
-	} else {
-		/* If AN is enabled, reset AN and wait for AN to complete */
-		CAVM_MODIFY_CGX_CSR(cavm_cgxx_gmp_pcs_mrx_control_t,
-			CAVM_CGXX_GMP_PCS_MRX_CONTROL(cgx_id, lmac_id),
-			rst_an, 1);
-		/* Note : check for AN_CPT only for SGMII */
-		if (lmac->mode == CAVM_CGX_LMAC_TYPES_E_SGMII) {
-			if (cgx_poll_for_csr(CAVM_CGXX_GMP_PCS_MRX_STATUS(
-				cgx_id, lmac_id), CGX_GMP_PCS_AN_CPT_MASK, 1)) {
-				ERROR("%s: %d:%d SGMII AN not complete 0x%lx\n",
-						__func__, cgx_id, lmac_id,
-						CSR_READ(CAVM_CGXX_GMP_PCS_MRX_STATUS(
-						cgx_id, lmac_id)));
-				cgx_set_error_type(cgx_id, lmac_id,
-					CGX_ERR_AN_CPT_FAIL);
-				return -1;
-			}
-		}
 	}
 
 	/* Normal operation - power up */
 	CAVM_MODIFY_CGX_CSR(cavm_cgxx_gmp_pcs_mrx_control_t,
 			CAVM_CGXX_GMP_PCS_MRX_CONTROL(cgx_id, lmac_id),
 			pwr_dn, 0);
+	return 0;
+}
+
+int cgx_sgmii_check_link(int cgx_id, int lmac_id)
+{
+	cgx_lmac_config_t *lmac;
+
+	debug_cgx("%s %d:%d\n", __func__, cgx_id, lmac_id);
+
+	lmac = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
+
+	if ((lmac->mode != CAVM_CGX_LMAC_TYPES_E_SGMII) &&
+		(lmac->mode != CAVM_CGX_LMAC_TYPES_E_QSGMII))
+		return 0;
+
+	/* Check if AN is complete for SGMII only */
+	if (lmac->mode == CAVM_CGX_LMAC_TYPES_E_SGMII) {
+		if (lmac->autoneg_dis)
+			return 0; /* Auto Neg disabled */
+	/* FIXME: AN gets completed later. For now, don't check */
+#if 0
+		/* If AN is enabled, reset AN and wait for AN to complete */
+		CAVM_MODIFY_CGX_CSR(cavm_cgxx_gmp_pcs_mrx_control_t,
+			CAVM_CGXX_GMP_PCS_MRX_CONTROL(cgx_id, lmac_id),
+			rst_an, 1);
+
+		if (cgx_poll_for_csr(CAVM_CGXX_GMP_PCS_MRX_STATUS(
+			cgx_id, lmac_id), CGX_GMP_PCS_AN_CPT_MASK, 1)) {
+			ERROR("%s: %d:%d SGMII AN not complete 0x%lx\n",
+				__func__, cgx_id, lmac_id,
+				CSR_READ(CAVM_CGXX_GMP_PCS_MRX_STATUS(
+					cgx_id, lmac_id)));
+			cgx_set_error_type(cgx_id, lmac_id,
+				CGX_ERR_AN_CPT_FAIL);
+				return -1;
+		}
+#endif
+	}
+
+	if (cgx_poll_for_csr(CAVM_CGXX_GMP_PCS_MRX_STATUS(
+		cgx_id, lmac_id), CGX_GMP_PCS_LNK_ST_MASK, 1)) {
+		ERROR("%s: %d:%d SGMII/QSGMII Link is not up 0x%lx\n",
+				__func__, cgx_id, lmac_id,
+				CSR_READ(CAVM_CGXX_GMP_PCS_MRX_STATUS(
+				cgx_id, lmac_id)));
+		cgx_set_error_type(cgx_id, lmac_id, CGX_ERR_PCS_LINK_FAIL);
+		return -1;
+	}
+
 	return 0;
 }
 
@@ -1348,7 +1391,7 @@ int cgx_xaui_set_link_up(int cgx_id, int lmac_id)
 		debug_cgx("%s: %d:%d SPU receive link down\n",
 				__func__, cgx_id, lmac_id);
 		cgx_set_error_type(cgx_id, lmac_id,
-				CGX_ERR_PCS_RECV_LINK_FAIL);
+				CGX_ERR_PCS_LINK_FAIL);
 		return -1;
 	}
 
@@ -1384,7 +1427,7 @@ int cgx_xaui_set_link_up(int cgx_id, int lmac_id)
 			debug_cgx("%s: %d:%d SPU receive link down after 10 ms\n",
 					__func__, cgx_id, lmac_id);
 			cgx_set_error_type(cgx_id, lmac_id,
-					CGX_ERR_PCS_RECV_LINK_FAIL);
+					CGX_ERR_PCS_LINK_FAIL);
 			return -1;
 		}
 

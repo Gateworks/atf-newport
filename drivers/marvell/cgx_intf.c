@@ -247,9 +247,19 @@ static int cgx_link_bringup(int cgx_id, int lmac_id)
 			/* Get the link status */
 			phy_get_link_status(cgx_id, lmac_id, &link);
 		}
-		if (link.s.link_up == 1) {	/* link is up */
-			if (cgx_sgmii_set_link_speed(cgx_id, lmac_id, &link) != 0)
-				goto cgx_err;
+
+		/* Set up the link for the negotiated speed */
+		if (cgx_sgmii_set_link_speed(cgx_id, lmac_id, &link) != 0)
+			goto cgx_err;
+
+		if (link.s.link_up == 1) {	/* PHY link is up */
+			/* Check for PCS link */
+			if (cgx_sgmii_check_link(cgx_id, lmac_id) != 0) {
+				link.s.link_up = 0;
+				link.s.full_duplex = 0;
+				link.s.speed = CGX_LINK_NONE;
+				goto cgx_err;	/* Poll timer to retry */
+			}
 
 			/* SUCCESS case : update the link status and indicate
 			 * poll timer to start polling for the link
@@ -267,7 +277,7 @@ static int cgx_link_bringup(int cgx_id, int lmac_id)
 			ERROR("%s : PHY link status is down for LMAC%d\n",
 				__func__, lmac_id);
 			cgx_set_error_type(cgx_id, lmac_id, CGX_ERR_PHY_LINK_DOWN);
-			return -1;
+			goto cgx_err; /* To poll for the link again */
 		}
 	} else if ((lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_XAUI) ||
 		(lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_RXAUI) ||
@@ -328,9 +338,9 @@ retry_link:
 				__func__, lmac_id);
 			cgx_set_error_type(cgx_id, lmac_id,
 					CGX_ERR_PHY_LINK_DOWN);
-			return -1;
+			goto cgx_err; /* Poll timer to poll for the link */
 		}
-	} else { /* FIXME : add support for new modes */
+	} else {
 		ERROR("%s LMAC%d mode %d not configured correctly,"
 			" cannot initialize link\n",
 			__func__, lmac_id, lmac_cfg->mode);
@@ -340,7 +350,7 @@ retry_link:
 	}
 
 cgx_err:
-	/* If the link is up, but the CGX configuration failed, reach here
+	/* If the link is up/down, or the CGX configuration failed, reach here
 	 * In that case, update the link status along with the error type
 	 * in lmac_context structure and the SCRATCHX CSRs and notify
 	 * poll timer to start polling for the link
@@ -809,17 +819,20 @@ void cgx_fw_intf_init(void)
 			for (int lmac = 0; lmac < MAX_LMAC_PER_CGX; lmac++) {
 				lmac_cfg = &plat_octeontx_bcfg->cgx_cfg[cgx].lmac_cfg[lmac];
 				if (lmac_cfg->lmac_enable) {
-					cgx_lmac_init_link(cgx, lmac);
-					if (!lmac_cfg->phy_present)
-						continue;
-					/* If PHY is present, look up for PHY driver */
-					phy_lookup(cgx, lmac, lmac_cfg->phy_config.type);
-					if (lmac_cfg->phy_config.valid) {
-						debug_cgx_intf("%s: init PHY\n", __func__);
-						phy_probe(cgx, lmac);
-						lmac_cfg->phy_config.init = 1;
-						continue;
+					if (lmac_cfg->phy_present) {
+						/* If PHY is present, look up for PHY
+						 * driver and init
+						 */
+						phy_lookup(cgx, lmac, lmac_cfg->phy_config.type);
+						if ((lmac_cfg->phy_config.valid) &&
+							(!lmac_cfg->phy_config.init)) {
+							debug_cgx_intf("%s: init PHY\n", __func__);
+							phy_probe(cgx, lmac);
+							lmac_cfg->phy_config.init = 1;
+						}
 					}
+					/* Enable LMAC */
+					cgx_lmac_init_link(cgx, lmac);
 				}
 			}
 		} else {
