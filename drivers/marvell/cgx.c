@@ -1603,7 +1603,6 @@ void cgx_mode_change(int cgx_id, int lmac_id, int new_mode,
 
 int cgx_rx_equalization(int cgx_id, int lmac_id)
 {
-#if 0
 	int lane_idx;
 	int qlm, lane, max_lanes, timeout = 100;
 	cgx_lmac_config_t *lmac;
@@ -1688,7 +1687,6 @@ int cgx_rx_equalization(int cgx_id, int lmac_id)
 		debug_cgx("%s: %d:%d qlm %d lane %d Rx EQU done\n", __func__,
 				cgx_id, lmac_id, qlm, lane_idx);
 	}
-#endif
 	return 0;
 }
 
