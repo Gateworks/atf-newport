@@ -332,6 +332,7 @@ static void cgx_lmac_init(int cgx_id, int lmac_id)
 	cmr_config.u = CSR_READ( CAVM_CGXX_CMRX_CONFIG(
 				cgx_id, lmac_id));
 	cmr_config.s.lmac_type = lmac->mode;
+	cmr_config.s.lane_to_sds = lmac->lane_to_sds;
 	/* FIXME: On EBB9604 the lanes are swizzled and hence
 	 * lane_to_sds needs to be configured accordingly.
 	 * For now, only verified for SGMII/QSGMII. Hence
