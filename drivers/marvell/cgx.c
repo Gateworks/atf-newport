@@ -340,7 +340,7 @@ static void cgx_lmac_init(int cgx_id, int lmac_id)
 	if (!strncmp(plat_octeontx_bcfg->bcfg.board_model, "ebb9", 4)) {
 		if ((lmac->mode == CAVM_CGX_LMAC_TYPES_E_SGMII) ||
 			(lmac->mode == CAVM_CGX_LMAC_TYPES_E_QSGMII)) {
-			cmr_config.s.lane_to_sds = ~lmac->lane_to_sds;
+			cmr_config.s.lane_to_sds = ~lmac->lane_to_sds & 3;
 			debug_cgx("%s: lanes are reversed, lane_to_sds %d\n",
 					__func__, cmr_config.s.lane_to_sds);
 		}
@@ -592,6 +592,7 @@ static void cgx_set_autoneg(int cgx_id, int lmac_id)
 	cavm_cgxx_gmp_pcs_anx_adv_t pcs_anx_adv;
 	cavm_cgxx_gmp_pcs_sgmx_an_adv_t sgmx_an_adv;
 	cavm_cgxx_spux_an_adv_t spux_an_adv;
+	cavm_cgxx_gmp_pcs_mrx_control_t pcs_mrx_ctl;
 
 	lmac = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
 
@@ -622,10 +623,13 @@ static void cgx_set_autoneg(int cgx_id, int lmac_id)
 			} /* nothing to do in MAC mode */
 		}
 
-		/* Auto Neg Enable */
-		CAVM_MODIFY_CGX_CSR(cavm_cgxx_gmp_pcs_mrx_control_t,
-			CAVM_CGXX_GMP_PCS_MRX_CONTROL(cgx_id, lmac_id),
-			an_en, 1);
+		pcs_mrx_ctl.u = CSR_READ(CAVM_CGXX_GMP_PCS_MRX_CONTROL(
+						cgx_id, lmac_id));
+		pcs_mrx_ctl.s.an_en = 1;
+		pcs_mrx_ctl.s.rst_an = 1;
+		CSR_WRITE(CAVM_CGXX_GMP_PCS_MRX_CONTROL(
+				cgx_id, lmac_id), pcs_mrx_ctl.u);
+
 		break;
 	case CAVM_CGX_LMAC_TYPES_E_TENG_R:
 	case CAVM_CGX_LMAC_TYPES_E_FORTYG_R:
@@ -849,30 +853,15 @@ int cgx_sgmii_set_link_up(int cgx_id, int lmac_id)
 	/* set MAC/PHY/1000 base-x/SGMII mode */
 	cgx_sgmii_set_mode(cgx_id, lmac_id);
 
-	/* check if AN is enabled. If not enabled, just
-	 * configure MRX_CONTROL CSR with default speed
-	 */
-	if (lmac->autoneg_dis) {
-		pcs_mrx_ctl.u = CSR_READ(CAVM_CGXX_GMP_PCS_MRX_CONTROL(
-						cgx_id, lmac_id));
-		pcs_mrx_ctl.s.an_en = 0;
-		pcs_mrx_ctl.s.spdlsb = 0;
-		pcs_mrx_ctl.s.spdmsb = 1;
-		CSR_WRITE(CAVM_CGXX_GMP_PCS_MRX_CONTROL(
-			cgx_id, lmac_id), pcs_mrx_ctl.u);
-	} else	{ /* AN is desired. sequence from AN execution section(HRM) */
-		/* enable LMAC */
-		CAVM_MODIFY_CGX_CSR(cavm_cgxx_cmrx_config_t,
-			CAVM_CGXX_CMRX_CONFIG(cgx_id, lmac_id),
-			enable, 1);
+	/* enable LMAC */
+	CAVM_MODIFY_CGX_CSR(cavm_cgxx_cmrx_config_t,
+		CAVM_CGXX_CMRX_CONFIG(cgx_id, lmac_id),
+		enable, 1);
 
-		/* disable GMI */
-		CAVM_MODIFY_CGX_CSR(cavm_cgxx_gmp_pcs_miscx_ctl_t,
-				CAVM_CGXX_GMP_PCS_MISCX_CTL(cgx_id, lmac_id),
-				gmxeno, 1);
-
-		cgx_set_autoneg(cgx_id, lmac_id);
-	}
+	/* disable GMI */
+	CAVM_MODIFY_CGX_CSR(cavm_cgxx_gmp_pcs_miscx_ctl_t,
+			CAVM_CGXX_GMP_PCS_MISCX_CTL(cgx_id, lmac_id),
+			gmxeno, 1);
 
 	/* Bring the PCS out of reset */
 	CAVM_MODIFY_CGX_CSR(cavm_cgxx_gmp_pcs_mrx_control_t,
@@ -889,17 +878,26 @@ int cgx_sgmii_set_link_up(int cgx_id, int lmac_id)
 		return -1;
 	}
 
-	if (lmac->autoneg_dis) {
-		/* enable LMAC */
-		CAVM_MODIFY_CGX_CSR(cavm_cgxx_cmrx_config_t,
-			CAVM_CGXX_CMRX_CONFIG(cgx_id, lmac_id),
-			enable, 1);
-	}
-
 	/* Normal operation - power up */
 	CAVM_MODIFY_CGX_CSR(cavm_cgxx_gmp_pcs_mrx_control_t,
 			CAVM_CGXX_GMP_PCS_MRX_CONTROL(cgx_id, lmac_id),
 			pwr_dn, 0);
+
+	/* check if AN is enabled. If not enabled, just
+	 * configure MRX_CONTROL CSR with default speed
+	 */
+	if (lmac->autoneg_dis) {
+		pcs_mrx_ctl.u = CSR_READ(CAVM_CGXX_GMP_PCS_MRX_CONTROL(
+						cgx_id, lmac_id));
+		pcs_mrx_ctl.s.an_en = 0;
+		pcs_mrx_ctl.s.spdlsb = 0;
+		pcs_mrx_ctl.s.spdmsb = 1;
+		CSR_WRITE(CAVM_CGXX_GMP_PCS_MRX_CONTROL(
+			cgx_id, lmac_id), pcs_mrx_ctl.u);
+	} else
+		/* AN is desired. sequence from AN execution section(HRM) */
+		cgx_set_autoneg(cgx_id, lmac_id);
+
 	return 0;
 }
 
@@ -919,24 +917,21 @@ int cgx_sgmii_check_link(int cgx_id, int lmac_id)
 	if (lmac->mode == CAVM_CGX_LMAC_TYPES_E_SGMII) {
 		if (lmac->autoneg_dis)
 			return 0; /* Auto Neg disabled */
-	/* FIXME: AN gets completed later. For now, don't check */
-#if 0
-		/* If AN is enabled, reset AN and wait for AN to complete */
-		CAVM_MODIFY_CGX_CSR(cavm_cgxx_gmp_pcs_mrx_control_t,
-			CAVM_CGXX_GMP_PCS_MRX_CONTROL(cgx_id, lmac_id),
-			rst_an, 1);
 
-		if (cgx_poll_for_csr(CAVM_CGXX_GMP_PCS_MRX_STATUS(
-			cgx_id, lmac_id), CGX_GMP_PCS_AN_CPT_MASK, 1)) {
-			ERROR("%s: %d:%d SGMII AN not complete 0x%lx\n",
-				__func__, cgx_id, lmac_id,
-				CSR_READ(CAVM_CGXX_GMP_PCS_MRX_STATUS(
+	if (cgx_poll_for_csr(CAVM_CGXX_GMP_PCS_MRX_STATUS(
+		cgx_id, lmac_id), CGX_GMP_PCS_AN_CPT_MASK, 1)) {
+		ERROR("%s: %d:%d SGMII AN not complete 0x%lx\n",
+			__func__, cgx_id, lmac_id,
+			CSR_READ(CAVM_CGXX_GMP_PCS_MRX_STATUS(
 					cgx_id, lmac_id)));
+			/* Reset AN */
+			CAVM_MODIFY_CGX_CSR(cavm_cgxx_gmp_pcs_mrx_control_t,
+				CAVM_CGXX_GMP_PCS_MRX_CONTROL(cgx_id, lmac_id),
+				rst_an, 1);
 			cgx_set_error_type(cgx_id, lmac_id,
 				CGX_ERR_AN_CPT_FAIL);
 				return -1;
 		}
-#endif
 	}
 
 	if (cgx_poll_for_csr(CAVM_CGXX_GMP_PCS_MRX_STATUS(
@@ -945,6 +940,10 @@ int cgx_sgmii_check_link(int cgx_id, int lmac_id)
 				__func__, cgx_id, lmac_id,
 				CSR_READ(CAVM_CGXX_GMP_PCS_MRX_STATUS(
 				cgx_id, lmac_id)));
+		/* Reset AN */
+		CAVM_MODIFY_CGX_CSR(cavm_cgxx_gmp_pcs_mrx_control_t,
+			CAVM_CGXX_GMP_PCS_MRX_CONTROL(cgx_id, lmac_id),
+			rst_an, 1);
 		cgx_set_error_type(cgx_id, lmac_id, CGX_ERR_PCS_LINK_FAIL);
 		return -1;
 	}

@@ -248,18 +248,18 @@ static int cgx_link_bringup(int cgx_id, int lmac_id)
 			phy_get_link_status(cgx_id, lmac_id, &link);
 		}
 
-		/* Set up the link for the negotiated speed */
-		if (cgx_sgmii_set_link_speed(cgx_id, lmac_id, &link) != 0)
-			goto cgx_err;
-
 		if (link.s.link_up == 1) {	/* PHY link is up */
-			/* Check for PCS link */
+			/* Check for AN complete */
 			if (cgx_sgmii_check_link(cgx_id, lmac_id) != 0) {
 				link.s.link_up = 0;
 				link.s.full_duplex = 0;
 				link.s.speed = CGX_LINK_NONE;
 				goto cgx_err;	/* Poll timer to retry */
 			}
+
+			/* Set up the link for the negotiated speed */
+			if (cgx_sgmii_set_link_speed(cgx_id, lmac_id, &link) != 0)
+				goto cgx_err;
 
 			/* SUCCESS case : update the link status and indicate
 			 * poll timer to start polling for the link
