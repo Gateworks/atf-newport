@@ -45,6 +45,7 @@ static struct qlm_mode_strmap_s qlmmode_strmap[] = {
 	{-1, "SATA", NULL},
 	/* CGX/LMAC types. */
 	{CAVM_CGX_LMAC_TYPES_E_SGMII, "SGMII", "sgmii"},
+	{CAVM_CGX_LMAC_TYPES_E_SGMII, "1G_X", "sgmii"},
 	{CAVM_CGX_LMAC_TYPES_E_QSGMII, "QSGMII", "qsgmii"},
 	{CAVM_CGX_LMAC_TYPES_E_XAUI, "XAUI", "xaui"},
 	{CAVM_CGX_LMAC_TYPES_E_RXAUI, "RXAUI", "rxaui"},

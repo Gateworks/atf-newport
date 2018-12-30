@@ -27,6 +27,7 @@ typedef enum {
 	CAVM_QLM_MODE_SATA,		/* SATA, each lane independent (CN81xx) */
 	/* BGX / CGX modes */
 	CAVM_QLM_MODE_SGMII,		/* SGMII, each lane independent (CN81xx) */
+	CAVM_QLM_MODE_1G_X,          /* 1000BASE-X, each lane independent */
 	CAVM_QLM_MODE_QSGMII,		/* QSGMII is 4 SGMII on one lane (CN81xx) */
 	CAVM_QLM_MODE_XAUI,		/* 1 XAUI or DXAUI, 4 lanes (CN81xx), use gbaud to tell difference */
 	CAVM_QLM_MODE_RXAUI,		/* 2 RXAUI, 2 lanes each (CN81xx) */
