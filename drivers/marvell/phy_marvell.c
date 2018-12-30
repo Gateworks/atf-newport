@@ -8,6 +8,7 @@
 #include <arch.h>
 #include <stdio.h>
 #include <debug.h>
+#include <delay_timer.h>
 #include <platform_def.h>
 #include <octeontx_common.h>
 #include <plat_board_cfg.h>
@@ -76,6 +77,57 @@ static MXD_STATUS mxd_write_mdio(MXD_DEV_PTR pDev, MXD_U16 mdioPort, MXD_U16 mmd
 	phy_config_t *phy = pDev->hostContext;
 	phy_mdio_write(phy, mmd, CLAUSE45, reg, value);
 	return MXD_OK;
+}
+
+/* One time initialization for the PHY if required */
+void phy_marvell_1514_probe(int cgx_id, int lmac_id)
+{
+	int val;
+	phy_config_t *phy;
+
+	phy = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id].phy_config;
+
+	debug_phy_driver("%s: %d:%d\n", __func__, phy->mdio_bus, phy->addr);
+
+	/* Read the PHY ID and print it to user */
+	val = smi_read(phy->mdio_bus, CLAUSE22, phy->addr, -1, MII_PHY_ID1_REG);
+	NOTICE("%s: bus %d addr 0x%x PHY ID1 0x%x\n", __func__, phy->mdio_bus,
+					phy->addr, val);
+
+	val = smi_read(phy->mdio_bus, CLAUSE22, phy->addr, -1, MII_PHY_ID2_REG);
+	NOTICE("%s: bus %d addr 0x%x PHY ID2 0x%x\n", __func__, phy->mdio_bus,
+					phy->addr, val);
+
+	/* EEE initialization */
+	smi_write(phy->mdio_bus, phy->addr, -1, CLAUSE22, 22, 0x00FF);
+	smi_write(phy->mdio_bus, phy->addr, -1, CLAUSE22, 17, 0x214B);
+	smi_write(phy->mdio_bus, phy->addr, -1, CLAUSE22, 16, 0x2144);
+	smi_write(phy->mdio_bus, phy->addr, -1, CLAUSE22, 17, 0x0C28);
+	smi_write(phy->mdio_bus, phy->addr, -1, CLAUSE22, 16, 0x2146);
+	smi_write(phy->mdio_bus, phy->addr, -1, CLAUSE22, 17, 0xB233);
+	smi_write(phy->mdio_bus, phy->addr, -1, CLAUSE22, 16, 0x214D);
+	smi_write(phy->mdio_bus, phy->addr, -1, CLAUSE22, 17, 0xCC0C);
+	smi_write(phy->mdio_bus, phy->addr, -1, CLAUSE22, 16, 0x2159);
+	smi_write(phy->mdio_bus, phy->addr, -1, CLAUSE22, 22, 0x0000);
+
+	/* SGMII-to-Copper mode initialization */
+	/* Select page 18 */
+	smi_write(phy->mdio_bus, phy->addr, -1, CLAUSE22, 22, 0x0012);
+
+	/* In reg 20, write MODE[2:0] = 0x1 (SGMII to Copper) */
+	val = smi_read(phy->mdio_bus, CLAUSE22, phy->addr, -1, 20);
+	val &= ~0x7; /* Clear Mode[2:0] */
+	val |= 0x1; /* Mode[2:0} = SGMII */
+	smi_write(phy->mdio_bus, phy->addr, -1, CLAUSE22, 20, val);
+
+	/* PHY reset is necessary after changing MODE[2:0] */
+	val |= 0x8000;
+	smi_write(phy->mdio_bus, phy->addr, -1, CLAUSE22, 20, val);
+
+	udelay(100);
+
+	/* Reset page selection */
+	smi_write(phy->mdio_bus, phy->addr, -1, CLAUSE22, 22, 0x0);
 }
 
 /* To obtain link status for 88e1514 */
@@ -235,7 +287,7 @@ phy_drv_t marvell_drv[] = {
 		.drv_name			= "MARVELL-88E1514",
 		.drv_type			= PHY_MARVELL_88E1514,
 		.flags				= 0,
-		.probe				= phy_generic_probe,
+		.probe				= phy_marvell_1514_probe,
 		.config				= phy_generic_config,
 		.set_an				= phy_generic_set_an,
 		.reset				= phy_generic_reset,
