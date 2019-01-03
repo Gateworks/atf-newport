@@ -1498,7 +1498,7 @@ static void octeontx2_fill_cgx_details(const void *fdt)
 	int linit;
 	octeontx_qlm_state_lane_t qlm_state;
 
-	for (qlm_idx = plat_octeontx_get_gser_count() - 1; qlm_idx >= 0; qlm_idx--) {
+	for (qlm_idx = 0; qlm_idx < plat_octeontx_get_gser_count(); qlm_idx++) {
 		lnum = plat_octeontx_scfg->qlm_max_lane_num[qlm_idx];
 		for (lane_idx = 0; lane_idx < lnum; lane_idx++) {
 			qlm_state.u = CSR_READ(CAVM_GSERNX_LANEX_SCRATCHX(qlm_idx, lane_idx, 0));
