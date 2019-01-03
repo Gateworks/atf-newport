@@ -1607,7 +1607,7 @@ int cgx_rx_equalization(int cgx_id, int lmac_id)
 	cgx_lmac_config_t *lmac;
 	cavm_gsernx_lanex_init_bsts_t init_bsts;
 
-	if (strncmp(plat_octeontx_bcfg->bcfg.board_model, "asim-", 5))
+	if (!strncmp(plat_octeontx_bcfg->bcfg.board_model, "asim-", 5))
 		return 0;
 
 	lmac = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
