@@ -513,6 +513,9 @@ static int mvebu_a3700_comphy_sgmii_power_on(uint8_t comphy_index,
 	reg_set(MVEBU_COMPHY_REG_BASE + COMPHY_PHY_CFG1_OFFSET(comphy_index),
 		0x0, PIN_TX_IDLE_BIT);
 
+	/* TXconfig-to-RXconfig delay required. 1ms is not enough, use 10ms */
+	mdelay(10);
+
 	/*
 	 * 20. After valid data appear on PIN_RXDATA bus, set PIN_RX_INIT=1. To
 	 * start RX initialization. PIN_RX_INIT_DONE will be cleared to 0 by the
