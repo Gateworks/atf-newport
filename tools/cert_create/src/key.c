@@ -12,6 +12,7 @@
 #include <openssl/conf.h>
 #include <openssl/evp.h>
 #include <openssl/pem.h>
+#include <openssl/engine.h>
 
 #if USE_TBBR_DEFS
 #include <tbbr_oid.h>
@@ -131,7 +132,7 @@ int key_create(key_t *key, int type)
 	return 0;
 }
 
-int key_load(key_t *key, unsigned int *err_code)
+int key_load_from_file(key_t *key, unsigned int *err_code)
 {
 	FILE *fp;
 	EVP_PKEY *k;
@@ -159,6 +160,19 @@ int key_load(key_t *key, unsigned int *err_code)
 	}
 
 	return 0;
+}
+
+int key_load_using_engine(key_t *key, unsigned int *err_code, ENGINE *e)
+{
+	key->key = ENGINE_load_private_key(e, key->fn, UI_OpenSSL(), NULL);
+	if (!key->key) {
+		ERROR("Cannot load key from %s\n", key->fn);
+		*err_code = KEY_ERR_LOAD;
+		return 0;
+	}
+
+	*err_code = KEY_ERR_NONE;
+	return 1;
 }
 
 int key_store(key_t *key)

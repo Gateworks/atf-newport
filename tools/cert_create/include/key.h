@@ -59,7 +59,8 @@ int key_init(void);
 key_t *key_get_by_opt(const char *opt);
 int key_new(key_t *key);
 int key_create(key_t *key, int type);
-int key_load(key_t *key, unsigned int *err_code);
+int key_load_from_file(key_t *key, unsigned int *err_code);
+int key_load_using_engine(key_t *key, unsigned int *err_code, ENGINE *e);
 int key_store(key_t *key);
 
 /* Macro to register the keys used in the CoT */

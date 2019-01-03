@@ -18,6 +18,7 @@ OBJECTS := src/cert.o \
            src/key.o \
            src/main.o \
            src/sha.o \
+           src/engine.o \
            src/tbbr/tbb_cert.o \
            src/tbbr/tbb_ext.o \
            src/tbbr/tbb_key.o
