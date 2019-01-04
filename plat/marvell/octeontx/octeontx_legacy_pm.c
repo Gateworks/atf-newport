@@ -22,6 +22,7 @@
 #include <gicv3_setup.h>
 #include <twsi.h>
 #include <octeontx_dram.h>
+#include <octeontx_legacy_pm.h>
 
 #undef GICD_SETSPI_NSR
 #undef GICD_CLRSPI_NSR
@@ -315,7 +316,7 @@ static int octeontx_legacy_validate_ns_entrypoint(uintptr_t entrypoint)
  * Export the platform handlers via plat_octeontx_legacy_psci_pm_ops. The ARM Standard
  * platform layer will take care of registering the handlers with PSCI.
  ******************************************************************************/
-const plat_psci_ops_t plat_octeontx_legacy_psci_pm_ops = {
+plat_psci_ops_t plat_octeontx_legacy_psci_pm_ops = {
 	.cpu_standby = octeontx_legacy_cpu_standby,
 	.pwr_domain_on = octeontx_legacy_pwr_domain_on,
 	.pwr_domain_off = octeontx_legacy_pwr_domain_off,
@@ -340,11 +341,16 @@ static void octeontx_legacy_program_trusted_mailbox(uintptr_t address)
        *mailbox = address;
 }
 
+WEAK void plat_octeontx_legacy_psci_override_pm_ops(plat_psci_ops_t *pm_ops) {
+	// Default behavior is no override
+}
+
 int octeontx_legacy_setup_psci_ops(uintptr_t sec_entrypoint,
 				const plat_psci_ops_t **psci_ops)
 {
 
 	*psci_ops = &plat_octeontx_legacy_psci_pm_ops;
+	plat_octeontx_legacy_psci_override_pm_ops(&plat_octeontx_legacy_psci_pm_ops);
 
 	/* Setup mailbox with entry point. */
 	octeontx_legacy_program_trusted_mailbox(sec_entrypoint);
