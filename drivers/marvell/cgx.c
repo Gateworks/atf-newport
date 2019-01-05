@@ -920,7 +920,7 @@ int cgx_sgmii_check_link(int cgx_id, int lmac_id)
 
 	if (cgx_poll_for_csr(CAVM_CGXX_GMP_PCS_MRX_STATUS(
 		cgx_id, lmac_id), CGX_GMP_PCS_AN_CPT_MASK, 1)) {
-		ERROR("%s: %d:%d SGMII AN not complete 0x%lx\n",
+		ERROR("%s: %d:%d SGMII AN not complete 0x%llx\n",
 			__func__, cgx_id, lmac_id,
 			CSR_READ(CAVM_CGXX_GMP_PCS_MRX_STATUS(
 					cgx_id, lmac_id)));
@@ -936,7 +936,7 @@ int cgx_sgmii_check_link(int cgx_id, int lmac_id)
 
 	if (cgx_poll_for_csr(CAVM_CGXX_GMP_PCS_MRX_STATUS(
 		cgx_id, lmac_id), CGX_GMP_PCS_LNK_ST_MASK, 1)) {
-		ERROR("%s: %d:%d SGMII/QSGMII Link is not up 0x%lx\n",
+		ERROR("%s: %d:%d SGMII/QSGMII Link is not up 0x%llx\n",
 				__func__, cgx_id, lmac_id,
 				CSR_READ(CAVM_CGXX_GMP_PCS_MRX_STATUS(
 				cgx_id, lmac_id)));

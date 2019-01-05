@@ -78,4 +78,8 @@ void l2c_flush(void);
 
 void plat_flr_init(void);
 
+#ifdef NT_FW_CONFIG
+void plat_octeontx_set_nt_fw_config_size(uint64_t nt_fw_config_size);
+#endif
+
 #endif /* __OCTEONTX_COMMON_H__ */
