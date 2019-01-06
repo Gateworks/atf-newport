@@ -92,9 +92,8 @@ case $build_name in
 	*_a7020_amc )    platform="a70x0_amc"; ;;
 	*_a80x0_mcbin* ) platform="a80x0_mcbin"; ;;
 	*_a80x0* )       platform="a80x0"; ;;
-	*_a3900_z1* )    platform="a3900_z1"; ;;
-	*_a3900_z2* )    platform="a3900_z2"; ;;
-	*_a3900* )       platform="a3900"; ;;
+	*_cn903* )       platform="t9030"; ;;
+	*_cn913* )       platform="t9130"; ;;
 	*_a37xx* )       platform="a3700"; ;;
 	* ) echo "Error: Could not configure platform."
 		"Unsupported build ${build_name}"; exit -1; ;;
@@ -106,7 +105,8 @@ case $build_name in
 	*_a7020_amc ) build_flags="DEBUG=0 USE_COHERENT_MEM=0 LOG_LEVEL=20 WORKAROUND_CVE_2018_3639=0"; ;;
 	*_a80x0_mcbin_cve_2018_3639) build_flags="DEBUG=0 USE_COHERENT_MEM=0 LOG_LEVEL=20"; ;;
 	*_a80x0* )    build_flags="DEBUG=0 USE_COHERENT_MEM=0 LOG_LEVEL=20 WORKAROUND_CVE_2018_3639=0"; ;;
-	*_a3900* )    build_flags="DEBUG=0 USE_COHERENT_MEM=0 LOG_LEVEL=20 WORKAROUND_CVE_2018_3639=0 MV_DDR4_BUILD=y"; ;;
+	*_cn903* )    build_flags="DEBUG=0 USE_COHERENT_MEM=0 LOG_LEVEL=20 WORKAROUND_CVE_2018_3639=0"; ;;
+	*_cn913* )    build_flags="DEBUG=0 USE_COHERENT_MEM=0 LOG_LEVEL=20 WORKAROUND_CVE_2018_3639=0"; ;;
 	*_a37xx_ddr3_* ) build_flags="DDR_TYPE=DDR3 USE_COHERENT_MEM=0 LOG_LEVEL=20 DDR_TOPOLOGY=0"; ;;
 	*_a37xx_ddr4_v1_* ) build_flags="DDR_TYPE=DDR4 USE_COHERENT_MEM=0 LOG_LEVEL=20 DDR_TOPOLOGY=1"; ;;
 	*_a37xx_ddr4_v3_* ) build_flags="DDR_TYPE=DDR4 USE_COHERENT_MEM=0 LOG_LEVEL=20 DDR_TOPOLOGY=3"; ;;
