@@ -17,7 +17,7 @@
  * - on-board CP115 (MCI0)
  * - extension board CP115 (MCI1)
  */
-#define CP_COUNT		1	/* Temporary one CP enabled */
+#define CP_COUNT		CP_NUM
 #define MVEBU_SOC_AP807		1
 #define I2C_SPD_ADDR		0x53	/* Access SPD data */
 #define I2C_SPD_P0_ADDR		0x36	/* Select SPD data page 0 */
