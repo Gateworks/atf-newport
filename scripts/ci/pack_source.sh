@@ -30,9 +30,8 @@ ref_to_ref="${base_tag}..${end_tag}"
 srcpkg="sources-${packname}"
 gitpkg="git-${packname}"
 
-file_list=`git diff --name-status $ref_to_ref | grep -v \"^D\" | cut -f2`
 mkdir -p ${DESTDIR}/$srcpkg
-cp --parents $file_list ${DESTDIR}/$srcpkg/ || true
+cp -R ./* ${DESTDIR}/$srcpkg/ || true
 
 mkdir ${DESTDIR}/$gitpkg
 git format-patch -o ${DESTDIR}/$gitpkg $ref_to_ref
