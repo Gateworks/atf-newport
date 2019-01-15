@@ -43,7 +43,7 @@ BL31_SOURCES		+=	plat/marvell/octeontx/otx2/aarch64/plat_octeontx_common.S	\
 				plat/marvell/octeontx/otx2/plat_pwrc.c		\
 				plat/marvell/octeontx/otx2/plat_scmi.c		\
 				drivers/marvell/bphy.c			\
-				plat/marvell/octeontx/otx2/cavm_npc_mcam_profile.c	\
+				plat/marvell/octeontx/otx2/plat_npc_mcam_profile.c	\
 
 ifdef NT_FW_CONFIG
     $(eval $(call add_define,NT_FW_CONFIG))

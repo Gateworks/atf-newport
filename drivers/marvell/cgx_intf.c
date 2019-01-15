@@ -21,7 +21,7 @@
 #include <plat_scfg.h>
 
 #ifdef NT_FW_CONFIG
-#include <cavm_npc_mcam_profile.h>
+#include <plat_npc_mcam_profile.h>
 #endif
 
 /* define DEBUG_ATF_CGX_INTF to enable debug logs */
