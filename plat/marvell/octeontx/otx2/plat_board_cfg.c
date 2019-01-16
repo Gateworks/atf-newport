@@ -961,6 +961,7 @@ static void octeontx2_lmac_num_touse(int mode_idx, int *cnt, int *touse)
 	*cnt = 0;
 	*touse = 0;
 	switch (mode_idx) {
+	case CAVM_QLM_MODE_1G_X:
 	case CAVM_QLM_MODE_SGMII:
 	case CAVM_QLM_MODE_XFI:
 	case CAVM_QLM_MODE_SFI:
@@ -1225,6 +1226,10 @@ static int octeontx2_fill_cgx_struct(int qlm, int lane, int mode_idx)
 
 		cgx->lmac_count++;
 		cgx->lmacs_used += lused;
+
+		/* In case of 1000 BASE-X, update the property of LMAC */
+		if (mode_idx == CAVM_QLM_MODE_1G_X)
+			lmac->sgmii_1000x_mode = 1;
 	}
 
 	cgx->enable = 1;
@@ -1317,7 +1322,6 @@ static int octeontx2_cgx_get_phy_info(const void *fdt, int lmac_offset, int cgx_
  *  - num-msix-vec
  * SGMII/QSGMII only:
  *  - octeontx,sgmii-mac-phy-mode
- *  - octeontx,sgmii-mac-1000x-mode
  *  - octeontx,disable-autonegotiation
  */
 static void octeontx2_cgx_lmacs_check_linux(const void *fdt,
@@ -1442,10 +1446,6 @@ static void octeontx2_cgx_lmacs_check_linux(const void *fdt,
 					"octeontx,sgmii-mac-phy-mode", &len);
 			if (val)
 				lmac->phy_mode = 1;
-			val = fdt_getprop(fdt, lmac_offset,
-					"octeontx,sgmii-mac-1000x-mode", &len);
-			if (val)
-				lmac->sgmii_1000x_mode = 1;
 			val = fdt_getprop(fdt, lmac_offset,
 					"octeontx,disable-autonegotiation",
 					&len);

@@ -27,11 +27,7 @@ Number of VFs/MSIX property for each sub nodes defined to be used by RVU driver:
 "num-msix-vec"
 ```
 
-Along with this, auto negotiation property, SGMII/1000BASE-X MAC/PHY mode to be 
-added to DT which will be used by ATF to configure CGX.
-
-For 1000 BASE-X mode, the sub node should have following property 
-`“octeontx,sgmii-mac-1000x-mode”`.
+Along with this, auto negotiation property, MAC/PHY mode to be added to DT whichwill be used by ATF to configure CGX.
 
 For AN to be disabled, the sub node should have following property 
 `“octeontx,disable-autonegotiation"`.
