@@ -41,6 +41,47 @@ struct l2c_region l2c_map [] = {
 	},
 };
 
+
+/* Flush the L2 Cache */
+void l2c_flush(void)
+{
+	/* Select the L2 cache */
+	union cavm_ap_csselr_el1 csselr_el1;
+	union cavm_ap_ccsidr_el1 ccsidr_el1;
+	unsigned int sets, ways;
+	int l2_way, l2_set;
+	uint64_t val;
+
+	csselr_el1.s.level = 1;
+
+	__asm__ volatile ("msr csselr_el1, %0" : : "r"((uint64_t)csselr_el1.u));
+
+	__asm__ volatile ("mrs %0, ccsidr_el1" : "=&r"(val));
+
+	ccsidr_el1.u = val;
+
+	sets = ccsidr_el1.s.numsets + 1;
+	ways = ccsidr_el1.s.associativity + 1;
+
+	int is_rtg = 1; /* Clear remote tags */
+
+	for (l2_way = 0; l2_way < ways; l2_way++) {
+		for (l2_set = 0; l2_set < sets; l2_set++) {
+			val = (uint64_t)128 * (l2_set + sets *
+						(l2_way + (is_rtg * 16)));
+			__asm__ volatile("sys #0,c11,C0,#5, %0\n" : : "r"(val));
+		}
+	}
+
+	is_rtg = 0; /* Clear local tags */
+	for (l2_way = 0; l2_way < ways; l2_way++) {
+		for (l2_set = 0; l2_set < sets; l2_set++) {
+			val = 128 * (l2_set + sets * (l2_way + (is_rtg * 16)));
+			__asm__ volatile("sys #0,c11,C0,#5, %0\n" : : "r"(val));
+		}
+	}
+}
+
 void octeontx_security_setup(void)
 {
 	union cavm_l2c_asc_regionx_attr l2c_asc_attr;

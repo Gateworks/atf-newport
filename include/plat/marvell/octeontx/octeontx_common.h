@@ -74,8 +74,6 @@ extern void *fdt_ptr;
 unsigned int octeontx_calc_core_pos(unsigned long mpidr);
 void sata_ipm_quirk(void);
 
-void l2c_flush(void);
-
 void plat_flr_init(void);
 
 #ifdef NT_FW_CONFIG

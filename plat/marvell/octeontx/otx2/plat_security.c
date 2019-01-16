@@ -42,6 +42,47 @@ struct ccs_region ccs_map [] = {
 	},
 };
 
+/* Flush the L2 Cache */
+void l2c_flush(void)
+{
+	/* Select the L2 cache */
+	union cavm_ap_csselr_el1 csselr_el1;
+	union cavm_ap_ccsidr_el1 ccsidr_el1;
+	union cavm_ccs_const ccs_const;
+
+	unsigned int sets, ways, clusters, tads;
+	int cluster, tad, tg, way, index;
+
+	ccs_const.u = CSR_READ(CAVM_CCS_CONST);
+	clusters = ccs_const.s.clu;
+	tads = ccs_const.s.tadclu;
+	csselr_el1.s.level = 2;
+	__asm__ volatile ("msr csselr_el1, %0" : : "r"((uint64_t)csselr_el1.u));
+	__asm__ volatile ("mrs %0, ccsidr_el1" : "=&r"(ccsidr_el1.u));
+
+	sets = ((ccsidr_el1.s.numsets + 1) / tads / clusters);
+	ways = (ccsidr_el1.s.associativity + 1);
+	for (cluster = 0; cluster < clusters; cluster++) {
+		for (tad = 0; tad < tads; tad++) {
+			for (tg = 0; tg < 2; tg++) {
+				for (way = 0; way < ways; way++) {
+					for (index = 0; index < sets; index++) {
+						uint64_t encoded = 0;
+
+						encoded |= cluster << 25;
+						encoded |= tad << 24;
+						encoded |= tg << 23;
+						encoded |= way << 18;
+						encoded |= index << 8;
+						__asm__ volatile
+				("sys #0,c11,c0,#5, %0" : : "r" (encoded));
+					}
+				}
+			}
+		}
+	}
+}
+
 void octeontx_security_setup(void)
 {
 	union cavm_ccs_asc_regionx_attr ccs_asc_attr;
