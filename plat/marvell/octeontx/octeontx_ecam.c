@@ -25,7 +25,8 @@
 #endif
 
 /*
- * Platform methods defined in plat_cavm_ecam.c file
+ * Platform methods defined in plat_XX_ecam.c file, where XX is specific
+ * OcteonTX platform (t81, t83, f95, t96)
  */
 extern const struct ecam_platform_defs plat_ops;
 
@@ -36,49 +37,75 @@ static struct ecam_device ecam_bridges[OCTEONTX_ECAM_MAX_DEV];
  */
 static struct ecam_device ecam_dev;
 
+static uint64_t get_bar_val_from_enhanced_allocation(
+	struct pcie_config *pconfig, int bar, int cap_offset)
+{
+	uint32_t cap, header;
+	uint64_t baseh, basel;
+	int entry_size, bei, num_of_entries;
+
+	cap = octeontx_read32((uint8_t *) pconfig + cap_offset);
+	num_of_entries = ECAM_PCCPF_XXX_EA_CAP_HDR_NUM_ENTRIES(cap);
+
+	/* Skip EA capabilities header, go to first EA Entry */
+	cap_offset += 4;
+	while (num_of_entries) {
+		header = octeontx_read32(ECAM_EA_HEADER_ADDR(
+					pconfig, cap_offset));
+
+		entry_size = ECAM_EA_ES(header);
+		bei = ECAM_EA_BEI(header);
+		if (bei == bar) {
+			baseh = 0;
+			basel = octeontx_read32(ECAM_EA_BASEL_ADDR(
+						pconfig, cap_offset));
+			if (basel & ECAM_EA_IS_64)
+				baseh = octeontx_read32(ECAM_EA_BASEH_ADDR(
+							pconfig, cap_offset));
+			basel &= ECAM_EA_FIELD_MASK;
+
+			return (baseh << 32) | basel;
+		}
+		/* Calculate offset to the next EA entry */
+		cap_offset += ECAM_EA_END_OFFSET(entry_size);
+		num_of_entries--;
+	}
+	WARN("EA entry for bar %d in 0x%p was not found\n", bar, pconfig);
+	return 0;
+}
+
+static uint64_t get_bar_val_from_pccpf_xxx_bar(struct pcie_config *pconfig,
+	int bar)
+{
+	uint64_t baseh, basel;
+
+	baseh = 0;
+	basel = pconfig->baseaddress_reg[bar];
+	if (basel & ECAM_PCCPF_XXX_BARXL_IS_64)
+		baseh = pconfig->baseaddress_reg[bar + 1];
+
+	basel &= ECAM_PCCPF_XXX_BARXL_LBAB_MASK;
+	return (baseh << 32) | basel;
+}
+
 uint64_t get_bar_val(struct pcie_config *pconfig, int bar)
 {
 	uint32_t cap;
-	int cap_offset = pconfig->cap_pointer & 0xfc;
-	uint64_t h, l, ret = 0;
+	/* Capability offset in bytes */
+	int cap_offset = pconfig->cap_pointer;
 
 	do {
 		cap = octeontx_read32((uint8_t *) pconfig + cap_offset);
-		if ((cap & 0xff) == 0x14)
-			break;
-		cap_offset = (cap >> 8) & 0xfc;
+		if (ECAM_PCCPF_XXX_E_CAP_HDR_PCIEID(cap) ==
+		    ECAM_PCIEID_ENHANCED_ALLOCATION_CAP_ID)
+			/* Found EA */
+			return get_bar_val_from_enhanced_allocation(
+					pconfig, bar, cap_offset);
+
+		cap_offset = ECAM_PCCPF_XXX_E_CAP_HDR_NCP(cap);
 	} while (cap_offset);
-	if (cap_offset) {
-		/* Found EA */
-		int es, bei;
-		int ne = (cap >> 16) & 0x3f;
 
-		cap_offset += 4;
-		while (ne) {
-			uint32_t dw0 = octeontx_read32((uint8_t *) pconfig + cap_offset + 0);
-
-			es = dw0 & 7;
-			bei = (dw0 >> 4) & 0xf;
-			if (bei == bar) {
-				h = 0;
-				l = octeontx_read32((uint8_t *) pconfig + cap_offset + 4);
-				if (l & 2)
-					h = octeontx_read32((uint8_t *) pconfig + cap_offset + 12);
-				ret = (h << 32) | (l & ~0xfull);
-				break;
-			}
-			cap_offset += (es + 1) * 4;
-			ne--;
-		}
-
-	} else {
-		h = 0;
-		l = pconfig->baseaddress_reg[bar];
-		if (l & 4)
-			h = pconfig->baseaddress_reg[bar + 1];
-		ret = (h << 32) | (l & ~0xfull);
-	}
-	return ret;
+	return get_bar_val_from_pccpf_xxx_bar(pconfig, bar);
 }
 
 #ifdef DEBUG_ATF_IO
@@ -113,9 +140,9 @@ int enable_msix(uint64_t config_base, uint8_t cap_pointer, uint16_t *table_size,
 {
 	struct msix_cap *msicap;
 	/* enable MSI-X */
-	while (1 && cap_pointer) {
+	while (cap_pointer) {
 		msicap = (struct msix_cap *)(config_base + cap_pointer);
-		if (msicap->cap_ID == PCI_MSIX_CAP_ID) {
+		if (msicap->cap_ID == ECAM_PCIEID_MSIX_CAP_ID) {
 			msicap->messagecontrol |= (1 << 15);
 			*table_size = (msicap->messagecontrol & 0x3ff) + 1;
 			*bir = (msicap->table_offset_and_bir & 0x7);
@@ -129,7 +156,8 @@ int enable_msix(uint64_t config_base, uint8_t cap_pointer, uint16_t *table_size,
 
 static inline int smmu_get_irq(int smmunr, int vectornr)
 {
-/* Suppress warning about unused variable is_context_irq (When there is no
+/*
+ * Suppress warning about unused variable is_context_irq (When there is no
  * SMMU devs, than SMMU_SPI_IRQ is always -1)
  */
 #if SMMU_SPI_IRQ_DEVS > 0
@@ -161,9 +189,9 @@ static void init_smmu(uint64_t config_base, uint64_t config_size)
 		 smmunr, config_base, config_size);
 	print_config_space(pconfig);
 
-	/* Allow all IO units to access only non secure memory 
+	/*
+	 * Allow all IO units to access only non secure memory
 	 * We can program secure devices later when they discovered.
-	 *
 	 */
 	/* FIXME: Making devices non-secure from SMMU should be done differently */
 	for (int i = 0; i < 2048; i++) {
@@ -181,10 +209,7 @@ static void init_smmu(uint64_t config_base, uint64_t config_size)
 	enable_msix(config_base, cap_pointer, &table_size, &bir);
 	/* initialise MSI-X Vector table */
 
-	/* evn though size and bir got from generic code
-	 * this is hilghy specific to cn88xx pass 1.0
-	 * */
-	if (1 && table_size) {
+	if (table_size) {
 		debug_io("table_size :%x bir:%1x \n", table_size, bir);
 		vector_base = get_bar_val(pconfig, bir);
 		debug_io("MSI-X vector base:%llx\n", vector_base);
@@ -195,8 +220,11 @@ static void init_smmu(uint64_t config_base, uint64_t config_size)
 			vector_base += 8;
 			octeontx_write64(vector_base, smmu_get_irq(smmunr, i));
 			vector_base += 8;
-			//debug_io("SMMU(%d) : Vector:%d address :%lx irq:%d\n",smmunr, i, 
-			//       ((i%2)? CAVM_GICD_CLRSPI_NSR : CAVM_GICD_SETSPI_NSR),smmu_get_irq(smmunr, i));
+			debug_io("SMMU(%d) : Vector:%d address :%lx irq:%d\n",
+				smmunr, i,
+				((i%2) ? CAVM_GICD_CLRSPI_NSR :
+					CAVM_GICD_SETSPI_NSR),
+				smmu_get_irq(smmunr, i));
 		}
 	}
 }
@@ -237,10 +265,7 @@ static void init_uaa(uint64_t config_base, uint64_t config_size)
 	enable_msix(config_base, cap_pointer, &table_size, &bir);
 	/* initialise MSI-X Vector table */
 
-	/* evn though size and bir got from generic code
-	 * this is highly specific to cn88xx pass 1.0
-	 * */
-	if (1 && table_size) {
+	if (table_size) {
 		debug_io("table_size :%x bir:%1x \n", table_size, bir);
 		vector_base = get_bar_val(pconfig, bir);
 		debug_io("MSI-X vector base:%llx\n", vector_base);
@@ -278,9 +303,6 @@ static void init_pem(uint64_t config_base, uint64_t config_size)
 	enable_msix(config_base, cap_pointer, &table_size, &bir);
 	/* initialise MSI-X Vector table */
 
-	/* evn though size and bir got from generic code
-	 * this is highly specific to cn88xx pass 1.0
-	 * */
 	if (table_size) {
 		debug_io("table_size :%x bir:%1x \n", table_size, bir);
 		vector_base = get_bar_val(pconfig, bir);
@@ -291,8 +313,8 @@ static void init_pem(uint64_t config_base, uint64_t config_size)
 			octeontx_write64(vector_base, (i % 2) ? CAVM_GICD_CLRSPI_NSR : CAVM_GICD_SETSPI_NSR);
 			vector_base += 8;
 			if (i >= PEM_INT_VEC_E_INTA && i < PEM_INT_VEC_E_INT_SUM)
-				msg = ((i - PEM_INT_VEC_E_INTA) / 2) + PEM_SPI_IRQ(0, 0) +
-					(4 * vsec_ctl.s.inst_num);
+				msg = PEM_SPI_IRQ(vsec_ctl.s.inst_num,
+						(i - PEM_INT_VEC_E_INTA) / 2);
 			else
 				msg = 0x100000000ull;	/* Masked */
 			octeontx_write64(vector_base, msg);
@@ -346,11 +368,10 @@ static void init_gti(uint64_t config_base, uint64_t config_size)
 		}
 		octeontx_write64(vector_base, msg);
 		vector_base += 8;
-		debug_io
-		    ("GTI: Vector:%d address :%llx irq:%llu\n",
-		     i,
-		     (i % 2) ? CAVM_GICD_CLRSPI_NSR : CAVM_GICD_SETSPI_NSR,
-		     msg);
+		debug_io("GTI: Vector:%d address :%llx irq:%llu\n", i,
+			(i % 2 && i < CAVM_GTI_INT_VEC_E_TX_TIMESTAMP) ?
+				CAVM_GICD_CLRSPI_NSR : CAVM_GICD_SETSPI_NSR,
+			msg);
 	}
 	*sctl |= 0x1;
 }
@@ -482,7 +503,7 @@ static int octeontx_call_probe(uint64_t pconfig)
 
 	pccpf_id.u = octeontx_read32(pconfig + CAVM_PCCPF_XXX_ID);
 
-	while (probe_callbacks[i].devid != ECAM_INVALID_DEV_ID) {
+	for (i = 0; probe_callbacks[i].devid != ECAM_INVALID_DEV_ID; i++) {
 		if (probe_callbacks[i].devid == pccpf_id.s.devid
 		    && probe_callbacks[i].vendor_id == pccpf_id.s.vendid) {
 			debug_io("'calling io_probe ... %llx\n",
@@ -491,7 +512,6 @@ static int octeontx_call_probe(uint64_t pconfig)
 			probe_callbacks[i].call_count++;
 			return rc;
 		}
-		i++;
 	}
 
 	return 1;
@@ -508,7 +528,7 @@ static void octeontx_call_init(uint64_t pconfig)
 
 	pccpf_id.u = octeontx_read32(pconfig + CAVM_PCCPF_XXX_ID);
 
-	while (init_callbacks[i].devid != ECAM_INVALID_DEV_ID) {
+	for (i = 0; init_callbacks[i].devid != ECAM_INVALID_DEV_ID; i++) {
 		if (init_callbacks[i].devid == pccpf_id.s.devid
 		    && init_callbacks[i].vendor_id == pccpf_id.s.vendid) {
 			debug_io("'calling io_init ... %llx\n",
@@ -516,7 +536,6 @@ static void octeontx_call_init(uint64_t pconfig)
 			init_callbacks[i].io_init(pconfig,
 						  sizeof(struct pcie_config));
 		}
-		i++;
 	}
 
 	/* Look for plat_init_callbacks */
@@ -525,7 +544,7 @@ static void octeontx_call_init(uint64_t pconfig)
 		return;
 
 	i = 0;
-	while (plat_init_callbacks[i].devid != ECAM_INVALID_DEV_ID) {
+	for (i = 0; plat_init_callbacks[i].devid != ECAM_INVALID_DEV_ID; i++) {
 		if (plat_init_callbacks[i].devid == pccpf_id.s.devid
 		    && plat_init_callbacks[i].vendor_id == pccpf_id.s.vendid) {
 			debug_io("'calling plat_io_init ... %llx\n",
@@ -533,7 +552,6 @@ static void octeontx_call_init(uint64_t pconfig)
 			plat_init_callbacks[i].io_init(pconfig,
 						sizeof(struct pcie_config));
 		}
-		i++;
 	}
 }
 
@@ -666,6 +684,10 @@ static void octeontx_ecam_dev_enumerate(struct ecam_device *device)
 
 static void octeontx_rsl_enumerate(struct ecam_device *device)
 {
+	/*
+	 * Enumerate new RSL BUS, reset prev_ns_func counter
+	 */
+	prev_ns_func = 0;
 	for (device->func = 0;
 	     device->func < OCTEONTX_ECAM_MAX_FUNC;
 	     device->func++) {

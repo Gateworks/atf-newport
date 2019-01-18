@@ -80,8 +80,6 @@ DEFINE_RENAME_SYSREG_RW_FUNCS(cvmnvbar_el3, AP_CVM_NVBAR_EL3)
 /* In Mhz */
 #define OCTEONTX_SYSCNT_FREQ	100ull
 
-#define PCI_MSIX_CAP_ID		0x11
-
 #define SMMU_NUM_CONTEXTS	0x80
 
 #define set_bit(reg, bit) reg |= (1ULL<<(bit))

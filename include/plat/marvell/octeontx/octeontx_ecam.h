@@ -31,6 +31,76 @@
 #define ECAM_INVALID_DEV_ID	((ECAM_INVALID_PROD_ID << ECAM_PROD_SHIFT) | \
 					ECAM_INVALID_PCC_IDL_ID)
 
+/* PCCPF_XXX_E_CAP_HDR fields description */
+#define ECAM_PCCPF_XXX_E_CAP_HDR_PCIEID_SHIFT	ULL(0)
+#define ECAM_PCCPF_XXX_E_CAP_HDR_PCIEID_MASK	ULL(0xff)
+#define ECAM_PCCPF_XXX_E_CAP_HDR_PCIEID(x)	(\
+	((x) >> ECAM_PCCPF_XXX_E_CAP_HDR_PCIEID_SHIFT) &\
+	ECAM_PCCPF_XXX_E_CAP_HDR_PCIEID_MASK)
+
+#define ECAM_PCCPF_XXX_E_CAP_HDR_NCP_SHIFT	ULL(8)
+// 0xfc
+#define ECAM_PCCPF_XXX_E_CAP_HDR_NCP_MASK	ULL(0xff)
+#define ECAM_PCCPF_XXX_E_CAP_HDR_NCP(x)	(\
+	((x) >> ECAM_PCCPF_XXX_E_CAP_HDR_NCP_SHIFT) &\
+	ECAM_PCCPF_XXX_E_CAP_HDR_NCP_MASK)
+
+#define ECAM_PCIEID_ENHANCED_ALLOCATION_CAP_ID	ULL(0x14)
+#define ECAM_PCIEID_MSIX_CAP_ID			ULL(0x11)
+
+#define ECAM_PCCPF_XXX_EA_CAP_HDR_NUM_ENTRIES_SHIFT	ULL(16)
+#define ECAM_PCCPF_XXX_EA_CAP_HDR_NUM_ENTRIES_MASK	ULL(0x3f)
+#define ECAM_PCCPF_XXX_EA_CAP_HDR_NUM_ENTRIES(x)	(\
+	((x) >> ECAM_PCCPF_XXX_EA_CAP_HDR_NUM_ENTRIES_SHIFT) &\
+	ECAM_PCCPF_XXX_EA_CAP_HDR_NUM_ENTRIES_MASK)
+
+/* PCI Enhanced Allocation registers */
+/* Entry Size */
+#define ECAM_EA_ES_SHIFT	ULL(0)
+#define ECAM_EA_ES_MASK		ULL(0x7)
+#define ECAM_EA_ES(x)		(((x) >> ECAM_EA_ES_SHIFT) & ECAM_EA_ES_MASK)
+/* BAR Equivalent Indicator */
+#define ECAM_EA_BEI_SHIFT	ULL(4)
+#define ECAM_EA_BEI_MASK	ULL(0xf)
+#define ECAM_EA_BEI(x)		(((x) >> ECAM_EA_BEI_SHIFT) & ECAM_EA_BEI_MASK)
+/* Enable for this entry */
+#define ECAM_EA_ENABLE		BIT(31)
+
+/* Number of bytes from beginning of EA */
+#define ECAM_EA_HEADER_OFFSET	ULL(0)
+#define ECAM_EA_BASEL_OFFSET	ULL(4)
+#define ECAM_EA_OFFSETL_OFFSET	ULL(8)
+#define ECAM_EA_BASEH_OFFSET	ULL(12)
+#define ECAM_EA_OFFSETH_OFFSET	ULL(16)
+
+#define ECAM_EA_HEADER_ADDR(config_base, cap_offset) \
+	((uint8_t *)(config_base) + (cap_offset) + ECAM_EA_HEADER_OFFSET)
+
+#define ECAM_EA_BASEL_ADDR(config_base, cap_offset) \
+	((uint8_t *)(config_base) + (cap_offset) + ECAM_EA_BASEL_OFFSET)
+
+#define ECAM_EA_OFFSETL_ADDR(config_base, cap_offset) \
+	((uint8_t *)(config_base) + (cap_offset) + ECAM_EA_OFFSETL_OFFSET)
+
+#define ECAM_EA_BASEH_ADDR(config_base, cap_offset) \
+	((uint8_t *)(config_base) + (cap_offset) + ECAM_EA_BASEH_OFFSET)
+
+#define ECAM_EA_OFFSETH_ADDR(config_base, cap_offset) \
+	((uint8_t *)(config_base) + (cap_offset) + ECAM_EA_OFFSETH_OFFSET)
+
+/* Entry size field indicates DWORDs after 1st */
+#define ECAM_EA_END_OFFSET(entry_size) (((entry_size) + 1) * 4)
+
+/* For Base & Max Offset */
+#define ECAM_EA_FIELD_MASK	ULL(0xfffffffc)
+/* 64-bit field flag */
+#define ECAM_EA_IS_64		BIT(1)
+
+/* PCCPF_XXX_BARxL 64-bit field flag */
+#define ECAM_PCCPF_XXX_BARXL_IS_64	BIT(2)
+/* PCCPF_XXX_BARxL LBAB mask */
+#define ECAM_PCCPF_XXX_BARXL_LBAB_MASK	ULL(0xffff0000)
+
 /*
  * Structure for secure/non-secure settings
  * (in a meaning of BAR0 visibility to non-secure world),
