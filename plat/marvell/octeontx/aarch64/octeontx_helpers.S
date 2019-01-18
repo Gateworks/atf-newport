@@ -62,7 +62,10 @@ endfunc plat_get_my_entrypoint
 func plat_secondary_cold_boot_setup
 
 	mov_imm	x0, MAILBOX_BASE
-	/* Wait until the entrypoint gets populated */
+	/* Wait until the entrypoint gets populated.
+	 * In current implementation it will be always bl31_warm_entrypoint.
+	 * Secondary CPU will be trapped until all initializations will be done.
+	 */
 poll_mailbox:
 	ldr	x1, [x0]
 	cbz	x1, 1f

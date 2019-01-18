@@ -8,7 +8,7 @@
 #ifndef __PLAT_OCTEONTX_H__
 #define __PLAT_OCTEONTX_H__
 
-void set_secondary_cpu_jump_addr(unsigned int bl1_base);
+void plat_octeontx_set_secondary_cpu_jump_addr(uint64_t entrypoint_addr);
 
 void plat_octeontx_setup(void);
 void plat_pwrc_setup(void);

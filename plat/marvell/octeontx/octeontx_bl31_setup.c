@@ -50,6 +50,7 @@
 #include <gicv3_setup.h>
 #include <octeontx_security.h>
 #include <octeontx_dram.h>
+#include <octeontx_helpers.h>
 
 
 static entry_point_info_t bl33_image_ep_info, bl32_image_ep_info;
@@ -97,6 +98,12 @@ void bl31_early_platform_setup(bl31_params_t *from_bl2,
 #endif
 {
 	console_pl011_register(UAAX_PF_BAR0(0), 0, 0, &console);
+
+	/* Set secondary CPU entrypoint to somewhere in BL31 code, because
+	 * we should not relay on address that is inside of BL1 code.
+	 */
+	plat_octeontx_set_secondary_cpu_jump_addr(
+				(uint64_t)plat_secondary_cold_boot_setup);
 
 #ifdef NT_FW_CONFIG
 	plat_octeontx_set_nt_fw_config_size(nt_fw_config_size);

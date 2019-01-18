@@ -24,6 +24,7 @@
 #include <octeontx_scfg_bl1.h>
 #include <plat_octeontx.h>
 #include <octeontx_io_storage.h>
+#include <octeontx_helpers.h>
 
 
 /* Data structure which holds the extents of the trusted DRAM for BL1*/
@@ -60,7 +61,8 @@ void bl1_plat_arch_setup(void)
 
 	enable_mmu_el3(0);
 
-	set_secondary_cpu_jump_addr(BL1_RW_BASE);
+	plat_octeontx_set_secondary_cpu_jump_addr(
+				(uint64_t)plat_secondary_cold_boot_setup);
 }
 
 void bl1_platform_print_chip_id(void)

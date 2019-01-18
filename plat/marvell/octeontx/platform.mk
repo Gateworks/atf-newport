@@ -81,6 +81,8 @@ MULTI_CONSOLE_API	:=	1
 
 CTX_INCLUDE_AARCH32_REGS	:=	0
 
+PROGRAMMABLE_RESET_ADDRESS	:=	1
+
 ifeq (${LOAD_IMAGE_V2},1)
     BL2_SOURCES		+=	common/desc_image_load.c				\
 				plat/marvell/octeontx/aarch64/octeontx_bl2_mem_params_desc.c	\

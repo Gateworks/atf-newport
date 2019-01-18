@@ -43,9 +43,9 @@ int plat_octeontx_is_lmc_enabled(unsigned lmc)
 /*******************************************************************************
  * Setup secondary CPU JUMP address from RESET
  ******************************************************************************/
-void set_secondary_cpu_jump_addr(unsigned int bl1_base)
+void plat_octeontx_set_secondary_cpu_jump_addr(uint64_t entrypoint_addr)
 {
-       CSR_WRITE(CAVM_MIO_BOOT_AP_JUMP, bl1_base);
+	CSR_WRITE(CAVM_MIO_BOOT_AP_JUMP, entrypoint_addr);
 }
 
 void plat_add_mmio()

@@ -79,7 +79,7 @@ int plat_octeontx_is_lmc_enabled(unsigned lmc)
 /*******************************************************************************
  * Setup secondary CPU JUMP address from RESET
  ******************************************************************************/
-void set_secondary_cpu_jump_addr(unsigned int bl1_base)
+void plat_octeontx_set_secondary_cpu_jump_addr(uint64_t entrypoint_addr)
 {
 	/*
 	 * Assembly for ROM memory:
@@ -93,7 +93,7 @@ void set_secondary_cpu_jump_addr(unsigned int bl1_base)
 	 */
 	CSR_WRITE(CAVM_ROM_MEMX(0), 0xd503201fd508711f);
 	CSR_WRITE(CAVM_ROM_MEMX(1), 0xd61f000058000040);
-	CSR_WRITE(CAVM_ROM_MEMX(2), (uint64_t)bl1_base);
+	CSR_WRITE(CAVM_ROM_MEMX(2), entrypoint_addr);
 }
 
 int plat_octeontx_get_ccu_count(void)
