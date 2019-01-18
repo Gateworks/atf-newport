@@ -52,4 +52,5 @@ BL31_SOURCES		+=	plat/marvell/octeontx/otx2/aarch64/plat_octeontx_common.S	\
 
 ifdef NT_FW_CONFIG
     $(eval $(call add_define,NT_FW_CONFIG))
+    $(eval $(call TOOL_ADD_PAYLOAD,${NT_FW_CONFIG},--nt-fw-config))
 endif

@@ -28,7 +28,9 @@ static unsigned char nt_world_bl_hash_buf[HASH_DER_LEN];
 static unsigned char trusted_world_pk_buf[PK_DER_LEN];
 static unsigned char non_trusted_world_pk_buf[PK_DER_LEN];
 static unsigned char content_pk_buf[PK_DER_LEN];
-
+#ifdef NT_FW_CONFIG
+static unsigned char nt_fw_config_hash_buf[HASH_DER_LEN];
+#endif
 /*
  * Parameter type descriptors
  */
@@ -62,6 +64,10 @@ static auth_param_type_desc_t soc_fw_hash = AUTH_PARAM_TYPE_DESC(
 		AUTH_PARAM_HASH, SOC_AP_FW_HASH_OID);
 static auth_param_type_desc_t nt_world_bl_hash = AUTH_PARAM_TYPE_DESC(
 		AUTH_PARAM_HASH, NON_TRUSTED_WORLD_BOOTLOADER_HASH_OID);
+#ifdef NT_FW_CONFIG
+static auth_param_type_desc_t nt_fw_config_hash = AUTH_PARAM_TYPE_DESC(
+		AUTH_PARAM_HASH, NON_TRUSTED_FW_CONFIG_HASH_OID);
+#endif
 
 
 /*
@@ -101,6 +107,15 @@ static const auth_img_desc_t cot_desc[] = {
 					.len = (unsigned int)HASH_DER_LEN
 				}
 			}
+#ifdef NT_FW_CONFIG
+			[1] = {
+				.type_desc = &nt_fw_config_hash,
+				.data = {
+					.ptr = (void *)nt_fw_config_hash_buf,
+					.len = (unsigned int)HASH_DER_LEN
+				}
+			}
+#endif
 		}
 	},
 	[BL2_IMAGE_ID] = {
@@ -486,7 +501,24 @@ static const auth_img_desc_t cot_desc[] = {
 				}
 			}
 		}
-	}
+	},
+#ifdef NT_FW_CONFIG
+	/* NT FW Config */
+	[NT_FW_CONFIG_ID] = {
+		.img_id = NT_FW_CONFIG_ID,
+		.img_type = IMG_RAW,
+		.parent = &cot_desc[NON_TRUSTED_FW_CONTENT_CERT_ID],
+		.img_auth_methods = {
+			[0] = {
+				.type = AUTH_METHOD_HASH,
+				.param.hash = {
+					.data = &raw_data,
+					.hash = &nt_fw_config_hash,
+				}
+			}
+		}
+	},
+#endif
 	/*
 	 * FWU auth descriptor, not used by Cavium platform
 	 */
