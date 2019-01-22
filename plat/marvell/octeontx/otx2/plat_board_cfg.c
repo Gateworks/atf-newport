@@ -646,7 +646,7 @@ static int octeontx2_fdt_get_bus(const void *fdt, int offset,
 		mdio = octeontx2_fdt_get_uint64(fdt, "reg", node);
 		if (mdio != -1)
 			bus = (mdio & (1 << 7)) ? 1 : 0;
-		debug_dts("CGX%d.LMAC%d: mdio 0x%lx bus %d\n",
+		debug_dts("CGX%d.LMAC%d: mdio 0x%llx bus %d\n",
 				cgx_idx, lmac_idx, mdio, bus);
 	} else if (!strncmp(nodename, "i2c", 3)) {
 		debug_dts("CGX%d.LMAC%d: I2C node\n", cgx_idx, lmac_idx);

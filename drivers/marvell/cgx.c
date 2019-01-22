@@ -1291,7 +1291,7 @@ int cgx_xaui_set_link_up(int cgx_id, int lmac_id)
 		(lmac->mode == CAVM_CGX_LMAC_TYPES_E_USXGMII)) {
 		if (cgx_poll_for_csr(CAVM_CGXX_SPUX_BR_STATUS1(cgx_id,
 				lmac_id), CGX_SPUX_BLK_LOCK_MASK, 1)) {
-			debug_cgx("%s: %d:%d: SPUX BLK LOCK not set 0x%lx\n",
+			debug_cgx("%s: %d:%d: SPUX BLK LOCK not set 0x%llx\n",
 					__func__, cgx_id, lmac_id, CSR_READ(
 						CAVM_CGXX_SPUX_BR_STATUS1(cgx_id, lmac_id)));
 			cgx_set_error_type(cgx_id, lmac_id,
@@ -1504,7 +1504,7 @@ int cgx_xaui_get_link(int cgx_id, int lmac_id,
 			}
 		}
 	} else {
-		debug_cgx("%s: spux_status1 0x%lx, smux_tx_ctl 0x%lx smux_rx_ctl 0x%lx\n",
+		debug_cgx("%s: spux_status1 0x%llx, smux_tx_ctl 0x%llx smux_rx_ctl 0x%llx\n",
 			__func__, spux_status1.u, smux_tx_ctl.u, smux_rx_ctl.u);
 		/* link is down */
 		result->s.link_up = 0;
@@ -1639,7 +1639,7 @@ int cgx_rx_equalization(int cgx_id, int lmac_id)
 	for (lane_idx = lane; lane_idx < (lane + max_lanes); lane_idx++) {
 		if (cgx_poll_for_csr(CAVM_GSERNX_LANEX_RX_IDLEDET_BSTS(
 				qlm, lane_idx),	GSERN_RX_IDLEDET_MASK, 0)) {
-			debug_cgx("%s: %d:%d No signal detected on GSERN LANE 0x%lx\n",
+			debug_cgx("%s: %d:%d No signal detected on GSERN LANE 0x%llx\n",
 				__func__, qlm, lane_idx,
 			CSR_READ(CAVM_GSERNX_LANEX_RX_IDLEDET_BSTS(qlm, lane_idx)));
 			return -1;
@@ -1658,7 +1658,7 @@ int cgx_rx_equalization(int cgx_id, int lmac_id)
 		/* Poll for deep idle */
 		if (cgx_poll_for_csr(CAVM_GSERNX_LANEX_INIT_BSTS(qlm, lane_idx),
 				GSERN_RX_DEEPIDLE_MASK, 1)) {
-			debug_cgx("%s: %d:%d GSERN Rx is not in deep idle state 0x%lx\n",
+			debug_cgx("%s: %d:%d GSERN Rx is not in deep idle state 0x%llx\n",
 				__func__, qlm, lane_idx,
 				CSR_READ(CAVM_GSERNX_LANEX_INIT_BSTS(qlm, lane_idx)));
 			return -1;
@@ -1681,7 +1681,7 @@ int cgx_rx_equalization(int cgx_id, int lmac_id)
 		} while (--timeout > 0);
 
 		if (!timeout) {
-			debug_cgx("%s: RX EQU failed qlm %d lane %d 0x%lx\n", __func__,
+			debug_cgx("%s: RX EQU failed qlm %d lane %d 0x%llx\n", __func__,
 				qlm, lane_idx,
 				CSR_READ(CAVM_GSERNX_LANEX_INIT_BSTS(qlm, lane_idx)));
 			return -1;
