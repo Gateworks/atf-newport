@@ -145,6 +145,31 @@ DEFINE_RENAME_SYSREG_RW_FUNCS(cvmtrapaddrena7_el3, AP_CVM_TRAPADDRENA_EL3(7))
  #define OPCODE_LITERAL_SIZE_PRFM		U(0x3)
 
 /*
+ * This field is valid for Atomic memory operations set of instructions
+ */
+#define OPCODE_ATOMIC_OPC_MASK		U(0xf)
+#define OPCODE_ATOMIC_OPC_SHIFT		U(12)
+#define OPCODE_ATOMIC_OPC(x)		(((x) >> OPCODE_ATOMIC_OPC_SHIFT) \
+						& OPCODE_ATOMIC_OPC_MASK)
+#define OPCODE_ATOMIC_OPC_ADD		U(0x0)
+#define OPCODE_ATOMIC_OPC_CLR		U(0x1)
+#define OPCODE_ATOMIC_OPC_EOR		U(0x2)
+#define OPCODE_ATOMIC_OPC_SET		U(0x3)
+#define OPCODE_ATOMIC_OPC_SMAX		U(0x4)
+#define OPCODE_ATOMIC_OPC_SMIN		U(0x5)
+#define OPCODE_ATOMIC_OPC_UMAX		U(0x6)
+#define OPCODE_ATOMIC_OPC_UMIN		U(0x7)
+#define OPCODE_ATOMIC_OPC_SWAP		U(0x8)
+
+/*
+ * This field is valid for Atomic memory operations set of instructions
+ */
+#define OPCODE_RS_MASK		U(0x1f)
+#define OPCODE_RS_SHIFT		U(16)
+#define OPCODE_RS(x)		(((x) >> OPCODE_RS_SHIFT) & OPCODE_RS_MASK)
+
+
+/*
  * This field is correct for all instructions from the following sets:
  * Load/store register (unscaled immediate)
  * Load/store register (immediate post-indexed)
@@ -171,6 +196,8 @@ DEFINE_RENAME_SYSREG_RW_FUNCS(cvmtrapaddrena7_el3, AP_CVM_TRAPADDRENA_EL3(7))
  * Load/store register (immediate post-indexed)
  * Load/store register (unprivileged)
  * Load/store register (immediate pre-indexed)
+ * Atomic memory operations
+ * Load/store register (pac)
  * Load/store register (register offset)
  * Load/store register (unsigned immediate)
  *
@@ -199,6 +226,16 @@ DEFINE_RENAME_SYSREG_RW_FUNCS(cvmtrapaddrena7_el3, AP_CVM_TRAPADDRENA_EL3(7))
  */
 #define OPCODE_LD_ST_PRFM_VAL		U(0x3e2000)
 #define OPCODE_LD_ST_PRFM(x)		(((x) >> OPCODE_LD_ST_PRFM_SHIFT) & OPCODE_LD_ST_PRFM_MASK)
+
+#define OPCODE_LD_ST_PAC_SHIFT	U(10)
+#define OPCODE_LD_ST_PAC_MASK	U(0xec801)
+/*
+ * This value covers Load/store register (pac) instucitons
+ */
+#define OPCODE_LD_ST_PAC_VAL	U(0xe0801)
+#define OPCODE_LD_ST_PAC(x)		(((x) >> OPCODE_LD_ST_PAC_SHIFT) \
+						& OPCODE_LD_ST_PAC_MASK)
+
 
 #define OPCODE_LD_ST_PAIR_SHIFT		U(10)
 #define OPCODE_LD_ST_PAIR_MASK		U(0xf8000)
@@ -234,6 +271,15 @@ DEFINE_RENAME_SYSREG_RW_FUNCS(cvmtrapaddrena7_el3, AP_CVM_TRAPADDRENA_EL3(7))
 #define OPCODE_LD_ST_LITERAL_VAL		U(0x60000)
 #define OPCODE_LD_ST_LITERAL(x)			(((x) >> OPCODE_LD_ST_LITERAL_SHIFT) & OPCODE_LD_ST_LITERAL_MASK)
 
+#define OPCODE_LD_ST_ATOMIC_SHIFT		U(10)
+#define OPCODE_LD_ST_ATOMIC_MASK		U(0xec803)
+/*
+ * This value covers Atomic memory operations
+ */
+#define OPCODE_LD_ST_ATOMIC_VAL		U(0xe0800)
+#define OPCODE_LD_ST_ATOMIC(x)		(((x) >> OPCODE_LD_ST_ATOMIC_SHIFT) \
+						& OPCODE_LD_ST_ATOMIC_MASK)
+
 enum rvu_block_addr_e {
 	BLKADDR_RVUM    = 0x0ULL,
 	BLKADDR_LMT     = 0x1ULL,
@@ -252,6 +298,20 @@ enum rvu_block_addr_e {
 	BLKADDR_NDC2    = 0xeULL,
 	BLKADDR_MAX     = 0xfULL,
 };
+
+typedef enum flr_operation_e {
+	FLR_OPERATION_ADD   = OPCODE_ATOMIC_OPC_ADD,
+	FLR_OPERATION_CLR   = OPCODE_ATOMIC_OPC_CLR,
+	FLR_OPERATION_EOR   = OPCODE_ATOMIC_OPC_EOR,
+	FLR_OPERATION_SET   = OPCODE_ATOMIC_OPC_SET,
+	FLR_OPERATION_SMAX  = OPCODE_ATOMIC_OPC_SMAX,
+	FLR_OPERATION_SMIN  = OPCODE_ATOMIC_OPC_SMIN,
+	FLR_OPERATION_UMAX  = OPCODE_ATOMIC_OPC_UMAX,
+	FLR_OPERATION_UMIN  = OPCODE_ATOMIC_OPC_UMIN,
+	FLR_OPERATION_SWAP  = OPCODE_ATOMIC_OPC_SWAP,
+	FLR_OPERATION_LOAD,
+	FLR_OPERATION_STORE,
+} flr_operation_e;
 
 struct blk_entry {
 	int enabled;
