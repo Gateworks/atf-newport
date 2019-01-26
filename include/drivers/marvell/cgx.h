@@ -54,6 +54,10 @@
 /* MAX USXGMII rate types supported on CN9XXX */
 #define MAX_USXGMII_RATE_TYPES (CAVM_CGX_USXGMII_RATE_E_RSV_RATE + 1)
 
+/* TIMEOUT for different usecases */
+#define CGX_POLL_AN_STATUS		10000
+#define CGX_POLL_TRAINING_STATUS	800000	/* 800 ms */
+
 /* Read-Modify-Write APIs for CGX CSRs */
 #define CAVM_MODIFY_CGX_CSR(type, csr, field, val)        \
 	do {                                                    \
@@ -84,6 +88,9 @@
 #define CGX_SPUX_USX_AN_LNK_MASK	1ULL << 19
 #define CGX_SPUX_RSFEC_ALGN_STS_MASK	1ULL << 8
 #define CGX_SPUX_MARKER_LOCK_MASK	1ULL << 41
+#define CGX_SPUX_AN_CPT_MASK		1ULL << 5
+#define CGX_SPUX_TRAINING_MASK		1ULL << 13
+#define CGX_SPUX_AN_RX_PAGE_MASK	1ULL << 10
 
 /* GSERN macros to define BIT masks for polling */
 #define GSERN_RX_IDLEDET_MASK	1ULL << 0
