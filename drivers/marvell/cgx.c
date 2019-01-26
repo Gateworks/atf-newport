@@ -59,11 +59,20 @@ static usxgmii_rate_map_t usxgmii_rate_map[MAX_USXGMII_RATE_TYPES] = {
 };
 
 static int cgx_poll_for_csr(uint64_t addr, uint64_t mask,
-					int poll_val)
+					int poll_val, int timeout)
 {
-	int tries = 100;
+	int tries;
 	uint64_t val;
 
+	/* Default poll for CGX status registers is 1 ms. If any
+	 * specific case like AN, training needs different
+	 * timeout, it can be specified via the API. If not, -1
+	 * needs to be passed as a argument.
+	 */
+	if (timeout != -1)
+		tries = timeout;
+	else
+		tries = 100;
 	do {
 		/* NOTE : directly read from addr instead of using
 		 * CSR_READ in this case to avoid dependencies
@@ -490,14 +499,14 @@ int cgx_sgmii_set_link_speed(int cgx_id, int lmac_id,
 
 	/* Wait for GMX Tx/Rx to be idle */
 	if (cgx_poll_for_csr(CAVM_CGXX_GMP_GMI_PRTX_CFG(cgx_id, lmac_id),
-				CGX_GMP_TX_IDLE_MASK, 1)) {
+				CGX_GMP_TX_IDLE_MASK, 1, -1)) {
 		debug_cgx("%s: %d:%d CGX GMP Tx not Idle\n",
 				__func__, cgx_id, lmac_id);
 		cgx_set_error_type(cgx_id, lmac_id, CGX_ERR_TX_NOT_IDLE);
 		return -1;
 	}
-	if (cgx_poll_for_csr(CAVM_CGXX_GMP_GMI_PRTX_CFG(
-				cgx_id, lmac_id), CGX_GMP_RX_IDLE_MASK, 1)) {
+	if (cgx_poll_for_csr(CAVM_CGXX_GMP_GMI_PRTX_CFG(cgx_id, lmac_id),
+				CGX_GMP_RX_IDLE_MASK, 1, -1)) {
 		debug_cgx("%s: %d:%d CGX GMP Rx not Idle\n",
 				__func__, cgx_id, lmac_id);
 		cgx_set_error_type(cgx_id, lmac_id, CGX_ERR_RX_NOT_IDLE);
@@ -756,7 +765,7 @@ static int cgx_usxgmii_spux_reset(int cgx_id, int lmac_id, int an_en)
 			an_reset, 1);
 		if (cgx_poll_for_csr(CAVM_CGXX_SPUX_USX_AN_CONTROL(
 					cgx_id, lmac_id),
-					CGX_SPUX_USX_AN_RESET_MASK, 0)) {
+					CGX_SPUX_USX_AN_RESET_MASK, 0, -1)) {
 			ERROR("%s: %d:%d SPUX USXGMII AN reset not complete\n",
 					__func__, cgx_id, lmac_id);
 			cgx_set_error_type(cgx_id, lmac_id,
@@ -769,7 +778,7 @@ static int cgx_usxgmii_spux_reset(int cgx_id, int lmac_id, int an_en)
 			reset, 1);
 
 		if (cgx_poll_for_csr(CAVM_CGXX_SPUX_CONTROL1(cgx_id,
-				lmac_id), CGX_SPUX_RESET_MASK, 0)) {
+				lmac_id), CGX_SPUX_RESET_MASK, 0, -1)) {
 			ERROR("%s: %d:%d SPUX reset not complete\n",
 					__func__, cgx_id, lmac_id);
 			cgx_set_error_type(cgx_id, lmac_id,
@@ -871,7 +880,7 @@ int cgx_sgmii_set_link_up(int cgx_id, int lmac_id)
 
 	/* Wait till reset done */
 	if (cgx_poll_for_csr(CAVM_CGXX_GMP_PCS_MRX_CONTROL(cgx_id,
-				lmac_id), CGX_GMP_PCS_RESET_MASK, 0)) {
+				lmac_id), CGX_GMP_PCS_RESET_MASK, 0, -1)) {
 		debug_cgx("%s: %d:%d PCS reset not completed\n",
 				__func__, cgx_id, lmac_id);
 		cgx_set_error_type(cgx_id, lmac_id,
@@ -920,7 +929,7 @@ int cgx_sgmii_check_link(int cgx_id, int lmac_id)
 			return 0; /* Auto Neg disabled */
 
 	if (cgx_poll_for_csr(CAVM_CGXX_GMP_PCS_MRX_STATUS(
-		cgx_id, lmac_id), CGX_GMP_PCS_AN_CPT_MASK, 1)) {
+		cgx_id, lmac_id), CGX_GMP_PCS_AN_CPT_MASK, 1, -1)) {
 		ERROR("%s: %d:%d SGMII AN not complete 0x%llx\n",
 			__func__, cgx_id, lmac_id,
 			CSR_READ(CAVM_CGXX_GMP_PCS_MRX_STATUS(
@@ -936,7 +945,7 @@ int cgx_sgmii_check_link(int cgx_id, int lmac_id)
 	}
 
 	if (cgx_poll_for_csr(CAVM_CGXX_GMP_PCS_MRX_STATUS(
-		cgx_id, lmac_id), CGX_GMP_PCS_LNK_ST_MASK, 1)) {
+		cgx_id, lmac_id), CGX_GMP_PCS_LNK_ST_MASK, 1, -1)) {
 		ERROR("%s: %d:%d SGMII/QSGMII Link is not up 0x%llx\n",
 				__func__, cgx_id, lmac_id,
 				CSR_READ(CAVM_CGXX_GMP_PCS_MRX_STATUS(
@@ -1042,7 +1051,7 @@ int cgx_xaui_init_link(int cgx_id, int lmac_id)
 				reset, 1);
 			if (cgx_poll_for_csr(CAVM_CGXX_SPUX_CONTROL1(
 					cgx_id, lmac_id),
-					CGX_SPUX_RESET_MASK, 0)) {
+					CGX_SPUX_RESET_MASK, 0, -1)) {
 				ERROR("%s: %d:%d SPUX reset not complete\n",
 					__func__, cgx_id, lmac_id);
 				cgx_set_error_type(cgx_id, lmac_id,
@@ -1055,7 +1064,7 @@ int cgx_xaui_init_link(int cgx_id, int lmac_id)
 				an_reset, 1);
 			if (cgx_poll_for_csr(CAVM_CGXX_SPUX_AN_CONTROL(
 					cgx_id, lmac_id),
-					CGX_SPUX_AN_RESET_MASK, 0)) {
+					CGX_SPUX_AN_RESET_MASK, 0, -1)) {
 				ERROR("%s: %d:%d SPUX AN reset not complete\n",
 					__func__, cgx_id, lmac_id);
 				cgx_set_error_type(cgx_id, lmac_id,
@@ -1272,7 +1281,7 @@ int cgx_xaui_set_link_up(int cgx_id, int lmac_id)
 
 	/* bring the SPU out of reset */
 	if (cgx_poll_for_csr(CAVM_CGXX_SPUX_CONTROL1(cgx_id, lmac_id),
-			CGX_SPUX_RESET_MASK, 0)) {
+			CGX_SPUX_RESET_MASK, 0, -1)) {
 		debug_cgx("%s: %d:%d SPUX reset not completed\n",
 				__func__, cgx_id, lmac_id);
 		cgx_set_error_type(cgx_id, lmac_id,
@@ -1290,7 +1299,7 @@ int cgx_xaui_set_link_up(int cgx_id, int lmac_id)
 		(lmac->mode == CAVM_CGX_LMAC_TYPES_E_HUNDREDG_R) ||
 		(lmac->mode == CAVM_CGX_LMAC_TYPES_E_USXGMII)) {
 		if (cgx_poll_for_csr(CAVM_CGXX_SPUX_BR_STATUS1(cgx_id,
-				lmac_id), CGX_SPUX_BLK_LOCK_MASK, 1)) {
+				lmac_id), CGX_SPUX_BLK_LOCK_MASK, 1, -1)) {
 			debug_cgx("%s: %d:%d: SPUX BLK LOCK not set 0x%llx\n",
 					__func__, cgx_id, lmac_id, CSR_READ(
 						CAVM_CGXX_SPUX_BR_STATUS1(cgx_id, lmac_id)));
@@ -1305,7 +1314,8 @@ int cgx_xaui_set_link_up(int cgx_id, int lmac_id)
 			if (lmac->fec == CGX_FEC_RS) {
 				if (cgx_poll_for_csr(CAVM_CGXX_SPUX_RSFEC_STATUS(
 						cgx_id, lmac_id),
-						CGX_SPUX_RSFEC_ALGN_STS_MASK, 1)) {
+						CGX_SPUX_RSFEC_ALGN_STS_MASK,
+						1, -1)) {
 					debug_cgx("%s: %d:%d: SPUX RSFEC alignment not acquired\n",
 							__func__, cgx_id, lmac_id);
 					cgx_set_error_type(cgx_id, lmac_id,
@@ -1320,7 +1330,8 @@ int cgx_xaui_set_link_up(int cgx_id, int lmac_id)
 				(lmac->mode == CAVM_CGX_LMAC_TYPES_E_USXGMII)) {
 				if (cgx_poll_for_csr(CAVM_CGXX_SPUX_BR_ALGN_STATUS(
 						cgx_id, lmac_id),
-						CGX_SPUX_MARKER_LOCK_MASK, 1)) {
+						CGX_SPUX_MARKER_LOCK_MASK,
+						1, -1)) {
 					debug_cgx("%s: %d:%d SPUX Marker Lock not achieved\n",
 						__func__, cgx_id, lmac_id);
 					cgx_set_error_type(cgx_id, lmac_id,
@@ -1332,7 +1343,7 @@ int cgx_xaui_set_link_up(int cgx_id, int lmac_id)
 	} else if ((lmac->mode == CAVM_CGX_LMAC_TYPES_E_XAUI) ||
 		(lmac->mode == CAVM_CGX_LMAC_TYPES_E_RXAUI)) {
 		if (cgx_poll_for_csr(CAVM_CGXX_SPUX_BX_STATUS(cgx_id,
-				lmac_id), CGX_SPUX_RX_ALIGN_MASK, 1)) {
+				lmac_id), CGX_SPUX_RX_ALIGN_MASK, 1, -1)) {
 			debug_cgx("%s: %d:%d SPUX RX ALIGN not completed\n",
 					__func__, cgx_id, lmac_id);
 			cgx_set_error_type(cgx_id, lmac_id,
@@ -1361,7 +1372,7 @@ int cgx_xaui_set_link_up(int cgx_id, int lmac_id)
 
 	/* Wait for link to be OK and no faults */
 	if (cgx_poll_for_csr(CAVM_CGXX_SMUX_RX_CTL(cgx_id, lmac_id),
-				CGX_SMUX_RX_STATUS_MASK, 0)) {
+				CGX_SMUX_RX_STATUS_MASK, 0, -1)) {
 		debug_cgx("%s: %d:%d SMUX RX Link not OK\n",
 				__func__, cgx_id, lmac_id);
 		cgx_set_error_type(cgx_id, lmac_id,
@@ -1387,7 +1398,7 @@ int cgx_xaui_set_link_up(int cgx_id, int lmac_id)
 		CAVM_CGXX_SPUX_STATUS1(cgx_id, lmac_id),
 		rcv_lnk, 1);
 	if (cgx_poll_for_csr(CAVM_CGXX_SPUX_STATUS1(cgx_id, lmac_id),
-				CGX_SMUX_PCS_RCV_LINK_MASK, 1)) {
+				CGX_SMUX_PCS_RCV_LINK_MASK, 1, -1)) {
 		debug_cgx("%s: %d:%d SPU receive link down\n",
 				__func__, cgx_id, lmac_id);
 		cgx_set_error_type(cgx_id, lmac_id,
@@ -1638,7 +1649,7 @@ int cgx_rx_equalization(int cgx_id, int lmac_id)
 	/* Poll for signal detection on GSERN lane */
 	for (lane_idx = lane; lane_idx < (lane + max_lanes); lane_idx++) {
 		if (cgx_poll_for_csr(CAVM_GSERNX_LANEX_RX_IDLEDET_BSTS(
-				qlm, lane_idx),	GSERN_RX_IDLEDET_MASK, 0)) {
+				qlm, lane_idx),	GSERN_RX_IDLEDET_MASK, 0, -1)) {
 			debug_cgx("%s: %d:%d No signal detected on GSERN LANE 0x%llx\n",
 				__func__, qlm, lane_idx,
 			CSR_READ(CAVM_GSERNX_LANEX_RX_IDLEDET_BSTS(qlm, lane_idx)));
@@ -1657,7 +1668,7 @@ int cgx_rx_equalization(int cgx_id, int lmac_id)
 	for (lane_idx = lane; lane_idx < (lane + max_lanes); lane_idx++) {
 		/* Poll for deep idle */
 		if (cgx_poll_for_csr(CAVM_GSERNX_LANEX_INIT_BSTS(qlm, lane_idx),
-				GSERN_RX_DEEPIDLE_MASK, 1)) {
+				GSERN_RX_DEEPIDLE_MASK, 1, -1)) {
 			debug_cgx("%s: %d:%d GSERN Rx is not in deep idle state 0x%llx\n",
 				__func__, qlm, lane_idx,
 				CSR_READ(CAVM_GSERNX_LANEX_INIT_BSTS(qlm, lane_idx)));
