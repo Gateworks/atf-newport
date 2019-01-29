@@ -185,6 +185,7 @@ typedef struct sfp_async_resp {
 } sfp_async_resp_t;
 
 typedef struct sfp_shared_data {
+	char board_model[64];
 	uint32_t cgx_id;
 	uint32_t lmac_id;
 	sfp_slot_info_t sfp_slot;		/* Module info from DT based on board */

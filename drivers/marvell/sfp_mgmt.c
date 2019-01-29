@@ -72,6 +72,11 @@ void sfp_init_shmem(void)
 			/* Assign CGX/LMAC IDs */
 			sh_data->cgx_id = cgx_idx;
 			sh_data->lmac_id = lmac_idx;
+
+			/* Copy the board model */
+			strncpy(sh_data->board_model,
+				plat_octeontx_bcfg->bcfg.board_model,
+				sizeof(sh_data->board_model));
 		}
 	}
 }
