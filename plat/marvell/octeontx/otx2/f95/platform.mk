@@ -6,6 +6,9 @@
 # Include common Marvell platform's makefile helper
 include plat/marvell/octeontx/platform.mk
 
+PLAT_XLAT_TABLES_DYNAMIC :=	1
+$(eval $(call add_define,PLAT_XLAT_TABLES_DYNAMIC))
+
 ARM_ARCH_MINOR		:=	2
 
 PLAT_INCLUDES		+=	-Iinclude/plat/marvell/octeontx/otx2			\
@@ -42,6 +45,7 @@ BL31_SOURCES		+=	plat/marvell/octeontx/otx2/aarch64/plat_octeontx_common.S	\
 				plat/marvell/octeontx/otx2/plat_pm.c			\
 				plat/marvell/octeontx/otx2/plat_pwrc.c		\
 				plat/marvell/octeontx/otx2/plat_scmi.c		\
+				plat/marvell/octeontx/otx2/plat_flr.c	\
 				drivers/marvell/bphy.c			\
 				plat/marvell/octeontx/otx2/plat_npc_mcam_profile.c	\
 
