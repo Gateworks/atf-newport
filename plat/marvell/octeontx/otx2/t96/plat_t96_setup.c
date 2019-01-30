@@ -88,8 +88,8 @@ void plat_octeontx_set_secondary_cpu_jump_addr(uint64_t entrypoint_addr)
 	 * Memory is little endain, so 64 bit constants have the first
 	 * instruction in the low word
 	 */
-	CSR_WRITE(CAVM_ROM_MEMX(0), 0xd503201fd508711f);
-	CSR_WRITE(CAVM_ROM_MEMX(1), 0xd61f000058000040);
+	CSR_WRITE(CAVM_ROM_MEMX(0), 0xd503201fd508711full);
+	CSR_WRITE(CAVM_ROM_MEMX(1), 0xd61f000058000040ull);
 	CSR_WRITE(CAVM_ROM_MEMX(2), entrypoint_addr);
 }
 
