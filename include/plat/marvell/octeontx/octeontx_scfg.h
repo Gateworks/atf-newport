@@ -11,8 +11,8 @@
 #include <platform_scfg.h>
 
 typedef struct sata_cfg {
-	uint8_t to_gser[MAX_SATA];
-	uint8_t to_lane[MAX_SATA];
+	int to_gser[MAX_SATA];
+	int to_lane[MAX_SATA];
 } sata_cfg_t;
 
 typedef struct scfg {
