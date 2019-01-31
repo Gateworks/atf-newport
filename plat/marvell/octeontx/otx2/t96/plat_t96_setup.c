@@ -26,9 +26,6 @@ int plat_octeontx_get_ecams_count(void)
 
 int plat_octeontx_get_iobn_count(void)
 {
-	if (plat_get_altpkg() == CN95XXE_PKG)
-		return 1;
-
 	return 2;
 }
 
