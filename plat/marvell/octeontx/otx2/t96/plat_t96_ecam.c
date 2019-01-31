@@ -19,6 +19,8 @@
 #include <octeontx_utils.h>
 #include <rvu.h>
 
+#undef DEBUG_ATF_PLAT_ECAM
+
 #ifdef DEBUG_ATF_PLAT_ECAM
 #define debug_plat_ecam printf
 #else
@@ -31,7 +33,7 @@ static int ecam_probe_sata(unsigned long long arg)
 	octeontx_qlm_state_lane_t qlm_state;
 	int qlm = 0, lane = 0;
 
-	debug_plat_ecam("%s arg %ld\n", __func__, arg);
+	debug_plat_ecam("%s arg %lld\n", __func__, arg);
 
 	qlm = plat_octeontx_scfg->scfg.sata_cfg.to_gser[arg];
 	lane = plat_octeontx_scfg->scfg.sata_cfg.to_lane[arg];
@@ -54,7 +56,7 @@ static int ecam_probe_cgx(unsigned long long arg)
 	octeontx_qlm_state_lane_t qlm_state;
 	int qlm = -1, qlm1 = -1, lnum = 0;
 
-	debug_plat_ecam("%s arg %ld\n", __func__, arg);
+	debug_plat_ecam("%s arg %lld\n", __func__, arg);
 
 	/* FIXME: cgx to qlm mapping.
 	 * CGX0 - QLM3 or QLM 7
@@ -103,7 +105,7 @@ static void init_gpio(uint64_t config_base, uint64_t config_size)
 {
 	union cavm_pccpf_xxx_vsec_sctl vsec_sctl;
 
-	debug_plat_ecam("GPIO init called config_base:%lx size:%lx\n",
+	debug_plat_ecam("GPIO init called config_base:%llx size:%llx\n",
 			config_base, config_size);
 
 	/* Block can have mix of secure and non-secure MSI-X interrupts */
@@ -126,7 +128,7 @@ static void init_cgx(uint64_t config_base, uint64_t config_size)
 	vsec_ctl.u = octeontx_read32(config_base + CAVM_PCCPF_XXX_VSEC_CTL);
 	cgx_id = vsec_ctl.s.inst_num;
 
-	debug_plat_ecam("CGX(%d): init config_base:%lx size:%lx\n",
+	debug_plat_ecam("CGX(%d): init config_base:%llx size:%llx\n",
 		vsec_ctl.s.inst_num, config_base, config_size);
 
 	cgx_hw_init(cgx_id);
