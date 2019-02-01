@@ -56,16 +56,7 @@ void scmi_get_channel(scmi_channel_t *ch)
 void scmi_send_sync_command(scmi_channel_t *ch)
 {
 	mailbox_mem_t *mbx_mem = (mailbox_mem_t *)(ch->info->scmi_mbx_mem);
-	int tries_left = SCMI_GENERIC_TIMEOUT;
-
-	/*
-	 * ASIM environment needs much more time to process requests -
-	 * set tries_left to maximum possible value (basically not
-	 * handle timeouts). For other platforms, as per agreement with
-	 * SCP_BL1, 300us delay should be sufficient.
-	 */
-	if (!strncmp(plat_octeontx_bcfg->bcfg.board_model, "asim-", 5))
-		tries_left = SCMI_ASIM_TIMEOUT;
+	int tries_left = SCMI_GENERIC_TIMEOUT_US;
 
 	SCMI_MARK_CHANNEL_BUSY(mbx_mem->status);
 
