@@ -53,6 +53,7 @@ void sfp_init_shmem(void)
 	sfp_shared_data_t *sh_data;
 
 	debug_sfp_mgmt("%s\n", __func__);
+	debug_sfp_mgmt("sizeof = %d\n", (int)sizeof(sfp_shared_data_t));
 
 	for (cgx_idx = 0; cgx_idx < MAX_CGX; cgx_idx++) {
 		for (lmac_idx = 0; lmac_idx < MAX_LMAC_PER_CGX; lmac_idx++) {
@@ -62,8 +63,10 @@ void sfp_init_shmem(void)
 				ERROR("%s: SM pointer is NULL\n", __func__);
 				return;
 			}
+
 			/* Initialize shared memory for each LMAC */
 			memset(sh_data, 0, sizeof(sfp_shared_data_t));
+			sh_data->size = sizeof(sfp_shared_data_t);
 
 			if (lmac->sfp_slot) { /* if SFP slot is present */
 				memcpy(&sh_data->sfp_slot, &lmac->sfp_info,
