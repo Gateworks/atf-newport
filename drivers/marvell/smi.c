@@ -112,7 +112,10 @@ int smi_read(int bus_id, int mode, int addr, int devad, int regnum)
 
 	debug_smi("SMIX_RD_DAT: %lx\n", (unsigned long)smix_rd_dat.u);
 
-	return smix_rd_dat.s.dat;
+	if (smix_rd_dat.s.dat != 0xFFFF)
+		return smix_rd_dat.s.dat;
+	else
+		return 0x0;
 }
 
 int smi_write(int bus_id, int addr, int devad,
