@@ -20,6 +20,12 @@
 #include <rvu.h>
 #include <octeontx_dram.h>
 
+#if (!defined(PLAT_t81) && !defined(PLAT_t83))
+#include <plat_scmi.h>
+
+extern void *scmi_handle;
+#endif
+
 /* Cavium OEM Service UUID */
 DEFINE_SVC_UUID(octeontx_svc_uid,
 		0xcf98f46f, 0xfa9c, 0x4e5a, 0xa4, 0x3a,
@@ -85,7 +91,31 @@ uintptr_t octeontx_svc_smc_handler(uint32_t smc_fid,
 	case OCTEONTX_DISABLE_RVU_LFS:
 		ret = octeontx2_clear_lf_to_pf_mapping(x1);
 		SMC_RET1(handle, ret);
+		break;
 #endif
+
+#if (defined(PLAT_t96))
+	case OCTEONTX_NDC_RESET:
+		INFO("SVC NDC_RESET: x1 = 0x%lx, x2 = 0x%lx\n", x1, x2);
+		ret = scmi_octeontx_reset_ndc(scmi_handle, x1, x2);
+		INFO("SVC NDC_RESET: ret 0x%llx\n", ret);
+		SMC_RET1(handle, ret);
+		break;
+
+	case OCTEONTX_NDC_SYNC:
+		INFO("SVC NDC_SYNC: x1 = 0x%lx, x2 = 0x%lx, x3 = 0x%lx\n",
+			x1, x2, x3);
+		ret = scmi_octeontx_sync_ndc(scmi_handle, x1, x2, x3);
+		INFO("SVC NDC_SYNC: ret 0x%llx\n", ret);
+		SMC_RET1(handle, ret);
+		break;
+
+	case OCTEONTX_NDC_STATUS:
+		ret = scmi_octeontx_status_ndc(scmi_handle);
+		SMC_RET1(handle, ret);
+		break;
+#endif
+
 	case OCTEONTX_INSTALL_GPIO_INT:
 		ret = gpio_install_irq(x1, x2, x3, x4);
 		SMC_RET1(handle, ret);

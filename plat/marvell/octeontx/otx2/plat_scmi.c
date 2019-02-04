@@ -11,11 +11,11 @@
 #include <assert.h>
 #include <debug.h>
 #include <delay_timer.h>
-#include <plat_scmi.h>
 #include <mmio.h>
 #include <plat_board_cfg.h>
 #include <octeontx_common.h>
 #include <octeontx_utils.h>
+#include <plat_scmi.h>
 
 #undef DEBUG_SCMI_ATF
 
@@ -402,6 +402,144 @@ int scmi_octeontx_sfp_config(void *p, void *sfp_shmem)
 	assert(token == SCMI_MSG_GET_TOKEN(mbx_mem->msg_header));
 
 	scmi_put_channel(ch);
+
+	return ret;
+}
+
+/*
+ * API to implement reset NDC (errata 35094)
+ */
+int scmi_octeontx_reset_ndc(void *p, uint64_t lf_idx, uint64_t block_type)
+{
+	mailbox_mem_t *mbx_mem;
+	int token = 0, ret;
+	scmi_channel_t *ch = (scmi_channel_t *)p;
+
+	if (block_type != SCMI_RVU_BLOCK_TYPE_NIX &&
+	    block_type != SCMI_RVU_BLOCK_TYPE_NPA) {
+		ERROR("Invalid block type (0x%llx)\n", block_type);
+		return -1;
+	}
+	if (lf_idx > SCMI_RVU_MAX_LF) {
+		ERROR("Invalid lf idx (0x%llx)\n", lf_idx);
+		return -1;
+	}
+	if (!IS_OCTEONTX_PASS(read_midr(), T96PARTNUM, 1, 0)) {
+		ERROR("Errata 35094 is only for ebb9604 pass A0\n");
+		return -1;
+	}
+
+	validate_scmi_channel(ch);
+
+	scmi_get_channel(ch);
+
+	mbx_mem = (mailbox_mem_t *)(ch->info->scmi_mbx_mem);
+	mbx_mem->msg_header = SCMI_MSG_CREATE(SCMI_CAVM_CONFIG_PROTO_ID,
+			SCMI_CAVM_NDC_RESET_MSG, token);
+	mbx_mem->len = SCMI_CAVM_NDC_RESET_MSG_LEN;
+	mbx_mem->flags = SCMI_FLAG_RESP_POLL;
+
+	SCMI_PAYLOAD_ARG2(mbx_mem->payload, (uint32_t)lf_idx,
+		(uint32_t)block_type);
+
+	scmi_send_sync_command(ch);
+
+	/* Get the return values */
+	SCMI_PAYLOAD_RET_VAL1(mbx_mem->payload, ret);
+	assert_scmi(mbx_mem->len == SCMI_CAVM_NDC_RESET_RESP_LEN);
+	assert_scmi(token == SCMI_MSG_GET_TOKEN(mbx_mem->msg_header));
+
+	scmi_put_channel(ch);
+
+	if (ret != SCMI_CAVM_NDC_RET_OK)
+		ret = SCMI_CAVM_NDC_RET_FAIL;
+
+	return ret;
+}
+
+/*
+ * API to implement sync NDC (errata 35094)
+ */
+int scmi_octeontx_sync_ndc(void *p, uint64_t lf_idx, uint64_t lf_block_addr,
+	uint64_t ndc_block_addr)
+{
+	mailbox_mem_t *mbx_mem;
+	int token = 0, ret;
+	scmi_channel_t *ch = (scmi_channel_t *)p;
+
+	if (lf_block_addr > SCMI_RVU_MAX_LF_BLOCK_ADDR) {
+		ERROR("Invalid lf block addr (0x%llx)\n", lf_block_addr);
+		return -1;
+	}
+	if (ndc_block_addr > SCMI_RVU_MAX_NDC_BLOCK_ADDR &&
+	    ndc_block_addr < SCMI_RVU_MIN_NDC_BLOCK_ADDR) {
+		ERROR("Invalid ndc block addr (0x%llx)\n", ndc_block_addr);
+		return -1;
+	}
+	if (lf_idx > SCMI_RVU_MAX_LF) {
+		ERROR("Invalid lf idx (0x%llx)\n", lf_idx);
+		return -1;
+	}
+	if (!IS_OCTEONTX_PASS(read_midr(), T96PARTNUM, 1, 0)) {
+		ERROR("Errata 35094 is only for ebb9604 pass A0\n");
+		return -1;
+	}
+
+	validate_scmi_channel(ch);
+
+	scmi_get_channel(ch);
+
+	mbx_mem = (mailbox_mem_t *)(ch->info->scmi_mbx_mem);
+	mbx_mem->msg_header = SCMI_MSG_CREATE(SCMI_CAVM_CONFIG_PROTO_ID,
+			SCMI_CAVM_NDC_SYNC_MSG, token);
+	mbx_mem->len = SCMI_CAVM_NDC_SYNC_MSG_LEN;
+	mbx_mem->flags = SCMI_FLAG_RESP_POLL;
+
+	SCMI_PAYLOAD_ARG3(mbx_mem->payload, (uint32_t)lf_idx,
+		(uint64_t)lf_block_addr, (uint64_t)ndc_block_addr);
+
+	scmi_send_sync_command(ch);
+
+	/* Get the return values */
+	SCMI_PAYLOAD_RET_VAL1(mbx_mem->payload, ret);
+	assert_scmi(mbx_mem->len == SCMI_CAVM_NDC_SYNC_RESP_LEN);
+	assert_scmi(token == SCMI_MSG_GET_TOKEN(mbx_mem->msg_header));
+
+	scmi_put_channel(ch);
+
+	if (ret != SCMI_CAVM_NDC_RET_OK)
+		ret = SCMI_CAVM_NDC_RET_FAIL;
+
+	return ret;
+}
+
+int scmi_octeontx_status_ndc(void *p)
+{
+	mailbox_mem_t *mbx_mem;
+	int token = 0, ret;
+	scmi_channel_t *ch = (scmi_channel_t *)p;
+
+	validate_scmi_channel(ch);
+
+	scmi_get_channel(ch);
+
+	mbx_mem = (mailbox_mem_t *)(ch->info->scmi_mbx_mem);
+	mbx_mem->msg_header = SCMI_MSG_CREATE(SCMI_CAVM_CONFIG_PROTO_ID,
+			SCMI_CAVM_NDC_STATUS_MSG, token);
+	mbx_mem->len = SCMI_CAVM_NDC_STATUS_MSG_LEN;
+	mbx_mem->flags = SCMI_FLAG_RESP_POLL;
+
+	scmi_send_sync_command(ch);
+
+	/* Get the return values */
+	SCMI_PAYLOAD_RET_VAL1(mbx_mem->payload, ret);
+	assert_scmi(mbx_mem->len == SCMI_CAVM_NDC_STATUS_RESP_LEN);
+	assert_scmi(token == SCMI_MSG_GET_TOKEN(mbx_mem->msg_header));
+
+	scmi_put_channel(ch);
+
+	if (ret != SCMI_CAVM_NDC_RET_OK && ret != SCMI_CAVM_NDC_RET_ONGOING)
+		ret = SCMI_CAVM_NDC_RET_FAIL;
 
 	return ret;
 }
