@@ -55,8 +55,18 @@ static struct qlm_mode_strmap_s qlmmode_strmap[] = {
 	{CAVM_CGX_LMAC_TYPES_E_FORTYG_R, "XLAUI_C2M", "xlaui"},
 	{CAVM_CGX_LMAC_TYPES_E_TENG_R, "10G_KR", "10g_kr"},
 	{CAVM_CGX_LMAC_TYPES_E_FORTYG_R, "40G_KR4", "40g_kr"},
+	/* FIXME: if this new mode need to be supported in SDK.
+	 * For now, just add the string match
+	 */
+	{CAVM_CGX_LMAC_TYPES_E_TWENTYFIVEG_R, "20GAUI_C2C", "20gaui"},
+	{CAVM_CGX_LMAC_TYPES_E_TWENTYFIVEG_R, "20GAUI_C2M", "20gaui"},
 	{CAVM_CGX_LMAC_TYPES_E_TWENTYFIVEG_R, "25GAUI_C2C", "25gaui"},
 	{CAVM_CGX_LMAC_TYPES_E_TWENTYFIVEG_R, "25GAUI_C2M", "25gaui"},
+	/* FIXME: if this new mode need to be supported in SDK.
+	 * For now, just add the string match
+	 */
+	{CAVM_CGX_LMAC_TYPES_E_FORTYG_R, "40GAUI_2_C2C", "40gaui"},
+	{CAVM_CGX_LMAC_TYPES_E_FORTYG_R, "40GAUI_2_C2M", "40gaui"},
 	{CAVM_CGX_LMAC_TYPES_E_FIFTYG_R, "50GAUI_2_C2C", "50gaui"},
 	{CAVM_CGX_LMAC_TYPES_E_FIFTYG_R, "50GAUI_2_C2M", "50gaui"},
 	{CAVM_CGX_LMAC_TYPES_E_HUNDREDG_R, "CAUI_4_C2C", "caui"},
