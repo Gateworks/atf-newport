@@ -46,6 +46,16 @@ void plat_pwrc_setup(void)
 {
 	int rc;
 
+#ifdef SCMI_WITH_LEGACY_PM
+	/*
+	 * Initialize SCMI for custom Cavium configuration protocol.
+	 * Initialize legacy pwrc for PSCI
+	 */
+	rc = octeontx_pwrc_setup();
+	if (rc)
+		WARN("SCMI initialize falied with %d\n", rc);
+	octeontx_legacy_pwrc_setup();
+#else
 	/*
 	 * Try to initialize SCMI, in case of error,
 	 * fallback to legacy PM driver
@@ -54,16 +64,24 @@ void plat_pwrc_setup(void)
 	if (rc) {
 		octeontx_legacy_pwrc_setup();
 	}
+#endif
 }
 
 void plat_setup_psci_ops(uintptr_t sec_entrypoint,
 			 const plat_psci_ops_t **psci_ops)
 {
+#ifdef SCMI_WITH_LEGACY_PM
+	/*
+	 * Always use legacy PSCI ops
+	 */
+	octeontx_legacy_setup_psci_ops(sec_entrypoint, psci_ops);
+#else
 	if (scmi_handle == NULL) {
 		octeontx_legacy_setup_psci_ops(sec_entrypoint, psci_ops);
 	} else {
 		octeontx_setup_psci_ops(sec_entrypoint, psci_ops);
 	}
+#endif
 }
 
 /*
