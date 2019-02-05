@@ -713,7 +713,7 @@ static void octeontx2_fdt_gpio_get_info_by_phandle(const void *fdt, int offset,
 	int len;
 	const struct fdt_property *prop;
 	const uint32_t *data;
-	int phandle;
+	int phandle, parent;
 
 	prop = fdt_get_property(fdt, offset, propname, &len);
 	if (!prop) {
@@ -781,6 +781,17 @@ static void octeontx2_fdt_gpio_get_info_by_phandle(const void *fdt, int offset,
 			octeontx2_fdt_get_i2c_bus_info(fdt, node,
 					&gpio_info->i2c_info,
 					cgx_idx, lmac_idx);
+			if (gpio_info->i2c_info.type == I2C_BUS_NONE) {
+				/* There might be the case of where the GPIO
+				 * expander is behind the I2C switch. Hence
+				 * pass the parent node to obtain the
+				 * i2c info again
+				 */
+				parent = fdt_parent_offset(fdt, node);
+				octeontx2_fdt_get_i2c_bus_info(fdt, parent,
+					&gpio_info->i2c_info,
+					cgx_idx, lmac_idx);
+			}
 			gpio_info->i2c_bus = gpio_info->i2c_info.bus;
 			debug_dts("CGX%d.LMAC%d: GPIO controller : addr 0x%x bus %d num pins %d\n",
 				cgx_idx, lmac_idx,
