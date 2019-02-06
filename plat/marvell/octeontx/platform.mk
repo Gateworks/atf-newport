@@ -6,11 +6,11 @@
 
 LIBFDT_DIR		:=	lib/libfdt
 
-PLAT_INCLUDES		:=	-Icsr/include					\
-				-Iinclude/common/tbbr				\
+PLAT_INCLUDES		:=	-Iinclude/common/tbbr				\
 				-Iinclude/lib/libfdt 				\
 				-Iinclude/lib/stdlib				\
 				-Iinclude/plat/marvell/octeontx 			\
+				-Iinclude/plat/marvell/octeontx/csr 			\
 				-Iinclude/plat/marvell/octeontx/aarch64 			\
 				-Iinclude/drivers/marvell				\
 				-Iinclude/lib				\
