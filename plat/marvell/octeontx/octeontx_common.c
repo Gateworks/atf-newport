@@ -73,10 +73,16 @@ void plat_add_mmio_map()
 void octeontx_cpu_setup(void)
 {
 	uint64_t cvmctl_el1, cvmmemctl0_el1, cvmmemctl1_el1, midr;
+#if (defined(PLAT_t96) || defined(PLAT_f95))
+	uint64_t cvmmemctl2_el1;
+#endif
 
 	cvmctl_el1 = read_cvmctl_el1();
 	cvmmemctl0_el1 = read_cvmmemctl0_el1();
 	cvmmemctl1_el1 = read_cvmmemctl1_el1();
+#if (defined(PLAT_t96) || defined(PLAT_f95))
+	cvmmemctl2_el1 = read_cvmmemctl2_el1();
+#endif
 	midr = read_midr();
 
 	/* Enable CAS/CASP and v8.1 support for T96, F95 and T83 pass >1.0,
@@ -128,6 +134,22 @@ void octeontx_cpu_setup(void)
 		set_bit(cvmmemctl1_el1, 58); /* Enable 128-bit access to BPHY */
 	}
 
+#if (defined(PLAT_t96) || defined(PLAT_f95))
+	/*
+	 * To improve performance memory-unit for EL1 should be configured in
+	 * different way than default.
+	 */
+	if ((MIDR_PARTNUM(midr) == T96PARTNUM)
+	    || (MIDR_PARTNUM(midr) == F95PARTNUM)) {
+		cvmmemctl2_el1 = octeontx_bit_insert(
+			cvmmemctl2_el1, MTLB0_BLOCK_VALUE,
+			MTLB0_BLOCK_SHIFT, MTLB0_BLOCK_WIDTH);
+		cvmmemctl2_el1 = octeontx_bit_insert(
+			cvmmemctl2_el1, TLBI_BLOCK_VALUE,
+			TLBI_BLOCK_SHIFT, TLBI_BLOCK_WIDTH);
+	}
+#endif
+
 	/* Fix up defaults from the BDK which is broken and violates the ARM ARM. */
 	unset_bit(cvmmemctl0_el1, 17); /* Don't reset timer on merge as that violates the ARM ARM. */
 	unset_bit(cvmmemctl0_el1, 18); /* Set Write-buffer timeout for NSH entries to 218 cycles. */
@@ -135,6 +157,10 @@ void octeontx_cpu_setup(void)
 	write_cvmctl_el1(cvmctl_el1);
 	write_cvmmemctl0_el1(cvmmemctl0_el1);
 	write_cvmmemctl1_el1(cvmmemctl1_el1);
+
+#if (defined(PLAT_t96) || defined(PLAT_f95))
+	write_cvmmemctl2_el1(cvmmemctl2_el1);
+#endif
 
 	/* Allow CVM CACHE instructions from EL1/EL2 */
 	write_cvm_access_el1(read_cvm_access_el1() & ~(1 << 8));
