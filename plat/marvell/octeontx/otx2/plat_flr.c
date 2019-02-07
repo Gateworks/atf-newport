@@ -11,10 +11,7 @@
 #include <platform.h>
 #include <platform_def.h>
 #include <platform_setup.h>
-#include <bakery_lock.h>
 #include <plat_flr.h>
-
-static DEFINE_BAKERY_LOCK(atomic_operation_lock);
 
 /* Global structures for FLR _SEL handling */
 rvu_af_bar2_sel_t blk_af_bar2_sel[BLKADDR_MAX];
@@ -92,43 +89,6 @@ static inline uint64_t sign_extend(uint64_t val, uint8_t val_len, uint64_t mask)
 	return val & (~extended_sign);
 }
 
-static inline int get_sign(uint64_t val, uint64_t mask)
-{
-	return ((val & mask) & ~(mask >> 1));
-}
-
-static inline uint64_t get_umax(uint64_t a, uint64_t b, uint64_t mask)
-{
-	return (a & mask) > (b & mask) ? a : b;
-}
-
-static inline uint64_t get_umin(uint64_t a, uint64_t b, uint64_t mask)
-{
-	return (a & mask) < (b & mask) ? a : b;
-}
-
-static inline uint64_t get_smax(uint64_t a, uint64_t b, uint64_t mask)
-{
-	int sign_a;
-	int sign_b;
-
-	sign_a = get_sign(a, mask);
-	sign_b = get_sign(b, mask);
-
-	if (sign_a != sign_b) {
-		/* Values has different signs, return positive one */
-		return sign_a < sign_b ? a : b;
-	}
-	/* Values has the same sign, they can be simply compared */
-	return get_umax(a, b, mask);
-}
-
-static inline uint64_t get_smin(uint64_t a, uint64_t b, uint64_t mask)
-{
-	return a != get_smax(a, b, mask) ? a : b;
-}
-
-
 static inline int is_block_disabled(int blk_id)
 {
 	assert(blk_id >= 0 && (blk_id < (sizeof(block_map) / sizeof(struct blk_entry))));
@@ -180,73 +140,87 @@ static inline void virt_to_phys_el2(uintptr_t va)
 	__asm__ volatile ("at S1E2R, %[va]" : : [va] "r" (va));
 }
 
-static inline void do_ldadd64(uint64_t *rs, uint64_t *rt, uint64_t *rn)
-{
-	/*
-	 * Some memory access HAS TO be done using exactly atomic instruction.
-	 * rt will be modified. Address (rn) may be passed using any form,
-	 * rs and rt have to be registers.
-	 */
-	__asm__ volatile ("ldadd %[rs], %[rt], %[rn]"
-			:
-			[rt] "=r" (*rt)
-			:
-			[rs] "r" (*rs), [rn] "X" (*rn));
+/*
+ * Some memory access HAS TO be done using exactly atomic instruction.
+ * rt will be modified. Address (rn) may be passed using any form,
+ * rs and rt have to be registers.
+ */
+#define ATOMIC_ASM_STUB_64(instr)					       \
+static inline void do_##instr##64(uint64_t *rs, uint64_t *rt, uint64_t *rn)    \
+{									       \
+	__asm__ volatile (#instr " %[rs], %[rt], %[rn]"			       \
+			:						       \
+			[rt] "=r" (*rt)					       \
+			:						       \
+			[rs] "r" (*rs), [rn] "X" (*rn));		       \
 }
 
-static inline void do_ldadd(uint64_t *rs, uint64_t *rt, uint64_t *rn)
-{
-	/*
-	 * Some memory access HAS TO be done using exactly atomic instruction.
-	 * rt will be modified. Address (rn) may be passed using any form,
-	 * rs and rt have to be wx registers, so they are loaded from memory.
-	 */
-	__asm__ volatile (
-		"ldr w0, %[rs];"
-		"ldr w1, %[rt];"
-		"ldadd w0, w1, %[rn];"
-		"str w1, %[rt];"
-		: :
-		[rs] "m" (*rs), [rt] "m" (*rt), [rn] "X" (*rn)
-		: "w0", "w1"
-	);
+/*
+ * Some memory access HAS TO be done using exactly atomic instruction.
+ * rt will be modified. Address (rn) may be passed using any form,
+ * rs and rt have to be wx registers, so they are loaded from memory.
+ */
+#define ATOMIC_ASM_STUB_32(instr, size)					       \
+static inline void do_##instr##size(uint64_t *rs, uint64_t *rt, uint64_t *rn)  \
+{									       \
+	__asm__ volatile (						       \
+		"ldr"#size" w0, %[rs];"					       \
+		"ldr"#size" w1, %[rt];"					       \
+		#instr #size" w0, w1, %[rn];"				       \
+		"str"#size" w1, %[rt];"					       \
+		: :							       \
+		[rs] "m" (*rs), [rt] "m" (*rt), [rn] "X" (*rn)		       \
+		: "w0", "w1"						       \
+	);								       \
 }
 
-static inline void do_ldaddh(uint64_t *rs, uint64_t *rt, uint64_t *rn)
-{
-	/*
-	 * Some memory access HAS TO be done using exactly atomic instruction.
-	 * rt will be modified. Address (rn) may be passed using any form,
-	 * rs and rt have to be wx registers, so they are loaded from memory.
-	 */
-	__asm__ volatile (
-		"ldrh w0, %[rs];"
-		"ldrh w1, %[rt];"
-		"ldaddh w0, w1, %[rn];"
-		"strh w1, %[rt];"
-		: :
-		[rs] "m" (*rs), [rt] "m" (*rt), [rn] "X" (*rn)
-		: "w0", "w1"
-	);
-}
+ATOMIC_ASM_STUB_64(ldadd)
+ATOMIC_ASM_STUB_32(ldadd, /* Intentionally empty */)
+ATOMIC_ASM_STUB_32(ldadd, h)
+ATOMIC_ASM_STUB_32(ldadd, b)
 
-static inline void do_ldaddb(uint64_t *rs, uint64_t *rt, uint64_t *rn)
-{
-	/*
-	 * Some memory access HAS TO be done using exactly atomic instruction.
-	 * rt will be modified. Address (rn) may be passed using any form,
-	 * rs and rt have to be wx registers, so they are loaded from memory.
-	 */
-	__asm__ volatile (
-		"ldrb w0, %[rs];"
-		"ldrb w1, %[rt];"
-		"ldaddb w0, w1, %[rn];"
-		"strb w1, %[rt];"
-		: :
-		[rs] "m" (*rs), [rt] "m" (*rt), [rn] "X" (*rn)
-		: "w0", "w1"
-	);
-}
+ATOMIC_ASM_STUB_64(ldclr)
+ATOMIC_ASM_STUB_32(ldclr, /* Intentionally empty */)
+ATOMIC_ASM_STUB_32(ldclr, h)
+ATOMIC_ASM_STUB_32(ldclr, b)
+
+ATOMIC_ASM_STUB_64(ldeor)
+ATOMIC_ASM_STUB_32(ldeor, /* Intentionally empty */)
+ATOMIC_ASM_STUB_32(ldeor, h)
+ATOMIC_ASM_STUB_32(ldeor, b)
+
+ATOMIC_ASM_STUB_64(ldset)
+ATOMIC_ASM_STUB_32(ldset, /* Intentionally empty */)
+ATOMIC_ASM_STUB_32(ldset, h)
+ATOMIC_ASM_STUB_32(ldset, b)
+
+ATOMIC_ASM_STUB_64(ldsmax)
+ATOMIC_ASM_STUB_32(ldsmax, /* Intentionally empty */)
+ATOMIC_ASM_STUB_32(ldsmax, h)
+ATOMIC_ASM_STUB_32(ldsmax, b)
+
+ATOMIC_ASM_STUB_64(ldsmin)
+ATOMIC_ASM_STUB_32(ldsmin, /* Intentionally empty */)
+ATOMIC_ASM_STUB_32(ldsmin, h)
+ATOMIC_ASM_STUB_32(ldsmin, b)
+
+ATOMIC_ASM_STUB_64(ldumax)
+ATOMIC_ASM_STUB_32(ldumax, /* Intentionally empty */)
+ATOMIC_ASM_STUB_32(ldumax, h)
+ATOMIC_ASM_STUB_32(ldumax, b)
+
+ATOMIC_ASM_STUB_64(ldumin)
+ATOMIC_ASM_STUB_32(ldumin, /* Intentionally empty */)
+ATOMIC_ASM_STUB_32(ldumin, h)
+ATOMIC_ASM_STUB_32(ldumin, b)
+
+ATOMIC_ASM_STUB_64(swp)
+ATOMIC_ASM_STUB_32(swp, /* Intentionally empty */)
+ATOMIC_ASM_STUB_32(swp, h)
+ATOMIC_ASM_STUB_32(swp, b)
+
+#undef ATOMIC_ASM_STUB_64
+#undef ATOMIC_ASM_STUB_32
 
 static uintptr_t virt_to_phys(uintptr_t va)
 {
@@ -308,85 +282,63 @@ static int update_value(void *ctx_h, uint64_t *value, uint64_t *mask,
 		 */
 		write_gp_reg(ctx_h, mask, rt_id, *value);
 		INFO("%s: Read: value=0x%llx\n", __func__, (*value & *mask));
-	} else if (op == FLR_OPERATION_SWAP) {
-		bakery_lock_get(&atomic_operation_lock);
-		/*
-		 * On reads, Rt is the register that is returned,
-		 * Rn stores requested address, as well as FAR_EL3.
-		 * Write proper structure field at Rt.
-		 * Rs and Rt register may be the same register, so
-		 * temporary variable is needed.
-		 */
-		rs_value = read_gp_reg(ctx_h, mask, rs_id);
-		write_gp_reg(ctx_h, mask, rt_id, *value);
-		*value = rs_value;
-		INFO("%s: Swap: value=0x%llx, rs=0x%llx\n",
-		     __func__, (*value & *mask), rs_value & *mask);
+	} else {
+/*
+ * This macro helps to reduce repetitive sequence of choosing correct function.
+ */
+#define DO_ATOMIC_OPERATION(instr)					\
+do {									\
+	if (*mask == UINT64_MAX) {					\
+		do_##instr##64(&rs_value, &rt_value, value);		\
+	} else if (*mask == UINT32_MAX) {				\
+		do_##instr(&rs_value, &rt_value, value);		\
+	} else if (*mask == UINT16_MAX) {				\
+		do_##instr##h(&rs_value, &rt_value, value);		\
+	} else if (*mask == UINT8_MAX) {				\
+		do_##instr##b(&rs_value, &rt_value, value);		\
+	} else {							\
+		ERROR("%s: Invalid mask = 0x%llx\n", __func__, *mask);	\
+		return -1;						\
+	}								\
+} while (0)
 
-		bakery_lock_release(&atomic_operation_lock);
-	} else if (op == FLR_OPERATION_ADD) {
 		rs_value = read_gp_reg(ctx_h, mask, rs_id);
-		switch (*mask) {
-		case UINT64_MAX:
-			do_ldadd64(&rs_value, &rt_value, value);
+		switch (op) {
+		case FLR_OPERATION_ADD:
+			DO_ATOMIC_OPERATION(ldadd);
 			break;
-		case UINT32_MAX:
-			do_ldadd(&rs_value, &rt_value, value);
+		case FLR_OPERATION_CLR:
+			DO_ATOMIC_OPERATION(ldclr);
 			break;
-		case UINT16_MAX:
-			do_ldaddh(&rs_value, &rt_value, value);
+		case FLR_OPERATION_EOR:
+			DO_ATOMIC_OPERATION(ldeor);
 			break;
-		case UINT8_MAX:
-			do_ldaddb(&rs_value, &rt_value, value);
+		case FLR_OPERATION_SET:
+			DO_ATOMIC_OPERATION(ldset);
+			break;
+		case FLR_OPERATION_SMAX:
+			DO_ATOMIC_OPERATION(ldsmax);
+			break;
+		case FLR_OPERATION_SMIN:
+			DO_ATOMIC_OPERATION(ldsmin);
+			break;
+		case FLR_OPERATION_UMAX:
+			DO_ATOMIC_OPERATION(ldumax);
+			break;
+		case FLR_OPERATION_UMIN:
+			DO_ATOMIC_OPERATION(ldumin);
+			break;
+		case FLR_OPERATION_SWAP:
+			DO_ATOMIC_OPERATION(swp);
 			break;
 		default:
-			INFO("%s: Invalid size mask 0x%llx\n", __func__, *mask);
+			ERROR("%s: unknown op 0x%x\n", __func__, op);
 			return -1;
 		}
 		write_gp_reg(ctx_h, mask, rt_id, rt_value);
 		INFO("%s: Atomic op 0x%x: value=0x%llx, rs=0x%llx\n",
 			 __func__, op, (rt_value & *mask), rs_value & *mask);
-	} else {
-		bakery_lock_get(&atomic_operation_lock);
-		rs_value = read_gp_reg(ctx_h, mask, rs_id);
-		rt_value = *value;
-		switch (op) {
-		case FLR_OPERATION_CLR:
-			*value &= ~rs_value;
-			break;
-		case FLR_OPERATION_EOR:
-			*value ^= rs_value;
-			break;
-		case FLR_OPERATION_SET:
-			*value |= rs_value;
-			break;
-		case FLR_OPERATION_SMAX:
-			*value = get_smax(*value, rs_value, *mask);
-			break;
-		case FLR_OPERATION_SMIN:
-			*value = get_smin(*value, rs_value, *mask);
-			break;
-		case FLR_OPERATION_UMAX:
-			*value = get_umax(*value, rs_value, *mask);
-			break;
-		case FLR_OPERATION_UMIN:
-			*value = get_umin(*value, rs_value, *mask);
-			break;
-		default:
-			INFO("%s: unknown op 0x%x\n", __func__, op);
-			bakery_lock_release(&atomic_operation_lock);
-			return -1;
-		}
-
-		/*
-		 * On reads, Rt is the register that is returned,
-		 * Rn stores requested address, as well as FAR_EL3.
-		 * Write proper structure field at Rt.
-		 */
-		write_gp_reg(ctx_h, mask, rt_id, rt_value);
-		INFO("%s: Atomic op 0x%x: value=0x%llx, rs=0x%llx\n",
-			 __func__, op, (*value & *mask), rs_value & *mask);
-		bakery_lock_release(&atomic_operation_lock);
+#undef DO_ATOMIC_OPERATION
 	}
 	return 0;
 }
@@ -456,8 +408,7 @@ static int do_alias(void *ctx_h, uintptr_t pa, uint64_t *mask, uint8_t *rt_id,
 	}
 
 	update_value(ctx_h, pa_bar2, mask, rt_id, rs_id, op);
-	INFO("%s: op 0x%x: Write: addr=%p, val=0x%llx\n",
-		__func__, op, pa_bar2, (*pa_bar2 & *mask));
+	INFO("%s: op 0x%x: addr=%p\n", __func__, op, pa_bar2);
 
 	/* Unmap this region */
 	if ((func != 0) || (blk_id != 0)) {
