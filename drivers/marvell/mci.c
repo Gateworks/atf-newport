@@ -818,7 +818,7 @@ void mci_turn_link_on(void)
 }
 
 /* Initialize MCI for performance improvements */
-int mci_initialize(int mci_index)
+int mci_link_tune(int mci_index)
 {
 	int ret;
 
