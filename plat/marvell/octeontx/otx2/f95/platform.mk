@@ -10,6 +10,8 @@ PLAT_XLAT_TABLES_DYNAMIC :=	1
 $(eval $(call add_define,PLAT_XLAT_TABLES_DYNAMIC))
 
 ARM_ARCH_MINOR		:=	2
+# Allow to use armv8.2 specific instructions
+TF_CFLAGS_aarch64	:=	$(patsubst -march=%, -march=armv8.2-a, $(TF_CFLAGS_aarch64))
 
 PLAT_INCLUDES		+=	-Iinclude/plat/marvell/octeontx/otx2			\
 				-Iplat/marvell/octeontx/otx2/f95/include		\

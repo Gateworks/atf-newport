@@ -180,6 +180,74 @@ static inline void virt_to_phys_el2(uintptr_t va)
 	__asm__ volatile ("at S1E2R, %[va]" : : [va] "r" (va));
 }
 
+static inline void do_ldadd64(uint64_t *rs, uint64_t *rt, uint64_t *rn)
+{
+	/*
+	 * Some memory access HAS TO be done using exactly atomic instruction.
+	 * rt will be modified. Address (rn) may be passed using any form,
+	 * rs and rt have to be registers.
+	 */
+	__asm__ volatile ("ldadd %[rs], %[rt], %[rn]"
+			:
+			[rt] "=r" (*rt)
+			:
+			[rs] "r" (*rs), [rn] "X" (*rn));
+}
+
+static inline void do_ldadd(uint64_t *rs, uint64_t *rt, uint64_t *rn)
+{
+	/*
+	 * Some memory access HAS TO be done using exactly atomic instruction.
+	 * rt will be modified. Address (rn) may be passed using any form,
+	 * rs and rt have to be wx registers, so they are loaded from memory.
+	 */
+	__asm__ volatile (
+		"ldr w0, %[rs];"
+		"ldr w1, %[rt];"
+		"ldadd w0, w1, %[rn];"
+		"str w1, %[rt];"
+		: :
+		[rs] "m" (*rs), [rt] "m" (*rt), [rn] "X" (*rn)
+		: "w0", "w1"
+	);
+}
+
+static inline void do_ldaddh(uint64_t *rs, uint64_t *rt, uint64_t *rn)
+{
+	/*
+	 * Some memory access HAS TO be done using exactly atomic instruction.
+	 * rt will be modified. Address (rn) may be passed using any form,
+	 * rs and rt have to be wx registers, so they are loaded from memory.
+	 */
+	__asm__ volatile (
+		"ldrh w0, %[rs];"
+		"ldrh w1, %[rt];"
+		"ldaddh w0, w1, %[rn];"
+		"strh w1, %[rt];"
+		: :
+		[rs] "m" (*rs), [rt] "m" (*rt), [rn] "X" (*rn)
+		: "w0", "w1"
+	);
+}
+
+static inline void do_ldaddb(uint64_t *rs, uint64_t *rt, uint64_t *rn)
+{
+	/*
+	 * Some memory access HAS TO be done using exactly atomic instruction.
+	 * rt will be modified. Address (rn) may be passed using any form,
+	 * rs and rt have to be wx registers, so they are loaded from memory.
+	 */
+	__asm__ volatile (
+		"ldrb w0, %[rs];"
+		"ldrb w1, %[rt];"
+		"ldaddb w0, w1, %[rn];"
+		"strb w1, %[rt];"
+		: :
+		[rs] "m" (*rs), [rt] "m" (*rt), [rn] "X" (*rn)
+		: "w0", "w1"
+	);
+}
+
 static uintptr_t virt_to_phys(uintptr_t va)
 {
 	uint64_t pa, par_el1;
@@ -256,14 +324,33 @@ static int update_value(void *ctx_h, uint64_t *value, uint64_t *mask,
 		     __func__, (*value & *mask), rs_value & *mask);
 
 		bakery_lock_release(&atomic_operation_lock);
+	} else if (op == FLR_OPERATION_ADD) {
+		rs_value = read_gp_reg(ctx_h, mask, rs_id);
+		switch (*mask) {
+		case UINT64_MAX:
+			do_ldadd64(&rs_value, &rt_value, value);
+			break;
+		case UINT32_MAX:
+			do_ldadd(&rs_value, &rt_value, value);
+			break;
+		case UINT16_MAX:
+			do_ldaddh(&rs_value, &rt_value, value);
+			break;
+		case UINT8_MAX:
+			do_ldaddb(&rs_value, &rt_value, value);
+			break;
+		default:
+			INFO("%s: Invalid size mask 0x%llx\n", __func__, *mask);
+			return -1;
+		}
+		write_gp_reg(ctx_h, mask, rt_id, rt_value);
+		INFO("%s: Atomic op 0x%x: value=0x%llx, rs=0x%llx\n",
+			 __func__, op, (rt_value & *mask), rs_value & *mask);
 	} else {
 		bakery_lock_get(&atomic_operation_lock);
 		rs_value = read_gp_reg(ctx_h, mask, rs_id);
 		rt_value = *value;
 		switch (op) {
-		case FLR_OPERATION_ADD:
-			*value += rs_value;
-			break;
 		case FLR_OPERATION_CLR:
 			*value &= ~rs_value;
 			break;
