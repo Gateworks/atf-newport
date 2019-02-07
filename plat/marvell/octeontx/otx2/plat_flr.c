@@ -11,10 +11,7 @@
 #include <platform.h>
 #include <platform_def.h>
 #include <platform_setup.h>
-#include <bakery_lock.h>
 #include <plat_flr.h>
-
-static DEFINE_BAKERY_LOCK(atomic_operation_lock);
 
 /* Global structures for FLR _SEL handling */
 rvu_af_bar2_sel_t blk_af_bar2_sel[BLKADDR_MAX];
@@ -91,43 +88,6 @@ static inline uint64_t sign_extend(uint64_t val, uint8_t val_len, uint64_t mask)
 	/* sign bit is 0. Set zeros after sign */
 	return val & (~extended_sign);
 }
-
-static inline int get_sign(uint64_t val, uint64_t mask)
-{
-	return ((val & mask) & ~(mask >> 1));
-}
-
-static inline uint64_t get_umax(uint64_t a, uint64_t b, uint64_t mask)
-{
-	return (a & mask) > (b & mask) ? a : b;
-}
-
-static inline uint64_t get_umin(uint64_t a, uint64_t b, uint64_t mask)
-{
-	return (a & mask) < (b & mask) ? a : b;
-}
-
-static inline uint64_t get_smax(uint64_t a, uint64_t b, uint64_t mask)
-{
-	int sign_a;
-	int sign_b;
-
-	sign_a = get_sign(a, mask);
-	sign_b = get_sign(b, mask);
-
-	if (sign_a != sign_b) {
-		/* Values has different signs, return positive one */
-		return sign_a < sign_b ? a : b;
-	}
-	/* Values has the same sign, they can be simply compared */
-	return get_umax(a, b, mask);
-}
-
-static inline uint64_t get_smin(uint64_t a, uint64_t b, uint64_t mask)
-{
-	return a != get_smax(a, b, mask) ? a : b;
-}
-
 
 static inline int is_block_disabled(int blk_id)
 {
@@ -219,91 +179,7 @@ static uintptr_t virt_to_phys(uintptr_t va)
         return pa;
 }
 
-static int update_value(void *ctx_h, uint64_t *value, uint64_t *mask,
-	uint8_t *rt_id, uint8_t *rs_id, flr_operation_e op)
-{
-	uint64_t rs_value;
-
-	if (op == FLR_OPERATION_STORE) {
-		/* If it was write, the value to store is saved at Rt */
-		INFO("val = 0x%llx; rt=%d; mask=0x%llx\n",
-			read_gp_reg(ctx_h, mask, rt_id), *rt_id, *mask);
-		*value = read_gp_reg(ctx_h, mask, rt_id);
-
-		INFO("%s: Write: value=0x%llx\n", __func__, (*value & *mask));
-	} else if (op == FLR_OPERATION_LOAD) {
-		/*
-		 * On reads, Rt is the register that is returned,
-		 * Rn stores requested address, as well as FAR_EL3.
-		 * Write proper structure field at Rt.
-		 */
-		write_gp_reg(ctx_h, mask, rt_id, *value);
-		INFO("%s: Read: value=0x%llx\n", __func__, (*value & *mask));
-	} else if (op == FLR_OPERATION_SWAP) {
-		bakery_lock_get(&atomic_operation_lock);
-		/*
-		 * On reads, Rt is the register that is returned,
-		 * Rn stores requested address, as well as FAR_EL3.
-		 * Write proper structure field at Rt.
-		 * Rs and Rt register may be the same register, so
-		 * temporary variable is needed.
-		 */
-		rs_value = read_gp_reg(ctx_h, mask, rs_id);
-		write_gp_reg(ctx_h, mask, rt_id, *value);
-		*value = rs_value;
-		INFO("%s: Swap: value=0x%llx, rs=0x%llx\n",
-		     __func__, (*value & *mask), rs_value & *mask);
-
-		bakery_lock_release(&atomic_operation_lock);
-	} else {
-		bakery_lock_get(&atomic_operation_lock);
-		rs_value = read_gp_reg(ctx_h, mask, rs_id);
-		switch (op) {
-		case FLR_OPERATION_ADD:
-			*value += rs_value;
-			break;
-		case FLR_OPERATION_CLR:
-			*value &= ~rs_value;
-			break;
-		case FLR_OPERATION_EOR:
-			*value ^= rs_value;
-			break;
-		case FLR_OPERATION_SET:
-			*value |= rs_value;
-			break;
-		case FLR_OPERATION_SMAX:
-			*value = get_smax(*value, rs_value, *mask);
-			break;
-		case FLR_OPERATION_SMIN:
-			*value = get_smin(*value, rs_value, *mask);
-			break;
-		case FLR_OPERATION_UMAX:
-			*value = get_umax(*value, rs_value, *mask);
-			break;
-		case FLR_OPERATION_UMIN:
-			*value = get_umin(*value, rs_value, *mask);
-			break;
-		default:
-			INFO("%s: unknown op 0x%x\n", __func__, op);
-			bakery_lock_release(&atomic_operation_lock);
-			return -1;
-		}
-
-		/*
-		 * On reads, Rt is the register that is returned,
-		 * Rn stores requested address, as well as FAR_EL3.
-		 * Write proper structure field at Rt.
-		 */
-		write_gp_reg(ctx_h, mask, rt_id, *value);
-		INFO("%s: Atomic op 0x%x: value=0x%llx, rs=0x%llx\n",
-			 __func__, op, (*value & *mask), rs_value & *mask);
-		bakery_lock_release(&atomic_operation_lock);
-	}
-	return 0;
-}
-
-static int do_alias(void *ctx_h, uintptr_t pa, uint64_t *mask, uint8_t *rt_id,
-	uint8_t *rs_id, flr_operation_e op)
+static int do_alias(void *ctx_h, uintptr_t pa, uint64_t *mask, uint8_t *rt_id, uint8_t w_flag)
 {
 	int blk_id, lf_slot, addr, rc;
 	uint64_t *pa_bar2;
@@ -324,12 +200,11 @@ static int do_alias(void *ctx_h, uintptr_t pa, uint64_t *mask, uint8_t *rt_id,
 
 	/* Validate the alias_ena bit */
 	if (!(blk_af_bar2_sel[blk_id].s.alias_ena)) {
-		INFO(
-			"(blk)_AF_BAR2_SEL[ALIAS_ENA] not set for blk_id=%d, requested operation 0x%x\n",
-			blk_id, op);
+		INFO("(blk)_AF_BAR2_SEL[ALIAS_ENA] not set for blk_id=%d, requested %s\n",
+		      blk_id, w_flag ? "write" : "read");
 		/* write ignored, read as 0 */
-		val = 0;
-		update_value(ctx_h, &val, mask, rt_id, rs_id, op);
+		if (!w_flag)
+			write_gp_reg(ctx_h, mask, rt_id, 0);
 
 		return 0;
 	}
@@ -366,9 +241,21 @@ static int do_alias(void *ctx_h, uintptr_t pa, uint64_t *mask, uint8_t *rt_id,
 		}
 	}
 
-	update_value(ctx_h, pa_bar2, mask, rt_id, rs_id, op);
-	INFO("%s: op 0x%x: Write: addr=%p, val=0x%llx\n",
-		__func__, op, pa_bar2, val);
+	if (w_flag) {
+		/* If it was write, the value to store is saved at Rt */
+		val = read_gp_reg(ctx_h, mask, rt_id);
+		INFO("%s: Write: addr=%p, val=0x%llx\n", __func__, pa_bar2, val);
+		*pa_bar2 = val;
+	} else {
+		/*
+		 * On reads, Rt is the register that is returned,
+		 * Rn stores requested address, as well as FAR_EL3.
+		 * Write proper structure field at Rt.
+		 */
+		write_gp_reg(ctx_h, mask, rt_id, *pa_bar2);
+		INFO("%s: Read:  addr=0x%p, val=0x%llx\n",
+		     __func__, pa_bar2, (*pa_bar2 & *mask));
+	}
 
 	/* Unmap this region */
 	if ((func != 0) || (blk_id != 0)) {
@@ -384,14 +271,13 @@ static int do_alias(void *ctx_h, uintptr_t pa, uint64_t *mask, uint8_t *rt_id,
 	return 0;
 }
 
-static int alias_handler(void *ctx_h, uintptr_t pa, uint64_t *mask,
-	uint8_t *rt_id, uint8_t *rt2_id, flr_operation_e op)
+static int alias_handler(void *ctx_h, uintptr_t pa, uint64_t *mask, uint8_t *rt_id, uint8_t *rt2_id, uint8_t w_flag)
 {
 	int rc;
 
-	rc = do_alias(ctx_h, pa, mask, rt_id, rt2_id, op);
+	rc = do_alias(ctx_h, pa, mask, rt_id, w_flag);
 	if(rc) {
-		ERROR("Unable to handle operation 0x%x PA=0x%lx\n", op, pa);
+		ERROR("Unable to handle %s PA=0x%lx\n", w_flag ? "write to" : "read from", pa);
 		return rc;
 	}
 
@@ -401,16 +287,13 @@ static int alias_handler(void *ctx_h, uintptr_t pa, uint64_t *mask,
 
 	/* Load/store register pair are only in 8B and 4B variants */
 	pa += (*mask == UINT64_MAX) ? 8 : 4;
-	rc = do_alias(ctx_h, pa, mask, rt2_id, NULL, op);
+	rc = do_alias(ctx_h, pa, mask, rt2_id, w_flag);
 	if(rc)
-		ERROR(
-			"Unable to handle operation 0x%x PA=0x%lx for second register in pair\n",
-			op, pa);
+		ERROR("Unable to handle %s PA=0x%lx for second register in pair\n", w_flag ? "write to" : "read from", pa);
 	return rc;
 }
 
-static int do_sel(void *ctx_h, uintptr_t pa, uint64_t *mask, uint8_t *rt_id,
-	uint8_t *rs_id, flr_operation_e op)
+static int do_sel(void *ctx_h, uintptr_t pa, uint64_t *mask, uint8_t *rt_id, uint8_t w_flag)
 {
 	int blk_id;
 
@@ -427,37 +310,45 @@ static int do_sel(void *ctx_h, uintptr_t pa, uint64_t *mask, uint8_t *rt_id,
 	if (is_block_disabled(blk_id))
 		return -1;
 
-	update_value(ctx_h, &(blk_af_bar2_sel[blk_id].u), mask,
-			rt_id, rs_id, op);
-	INFO("%s: op 0x%x: blk_id=%d, blk_af_bar2_sel.u=0x%llx\n",
-	     __func__, op, blk_id, (blk_af_bar2_sel[blk_id].u & *mask));
+	if (w_flag) {
+		/* If it was write, the value to store is saved at Rt */
+		blk_af_bar2_sel[blk_id].u = read_gp_reg(ctx_h, mask, rt_id);
+
+		INFO("%s: Write: blk_id=%d, blk_af_bar2_sel.u=0x%llx\n",
+		     __func__, blk_id, (blk_af_bar2_sel[blk_id].u & *mask));
+	} else {
+		/*
+		 * On reads, Rt is the register that is returned,
+		 * Rn stores requested address, as well as FAR_EL3.
+		 * Write proper structure field at Rt.
+		 */
+		write_gp_reg(ctx_h, mask, rt_id, blk_af_bar2_sel[blk_id].u);
+		INFO("%s: Read: blk_id=%d, blk_af_bar2_sel_wa.u=0x%llx\n",
+		     __func__, blk_id, (blk_af_bar2_sel[blk_id].u & *mask));
+	}
 
 	return 0;
 }
 
-static int sel_handler(void *ctx_h, uintptr_t pa, uint64_t *mask,
-	uint8_t *rt_id, uint8_t *rt2_id, flr_operation_e op)
+static int sel_handler(void *ctx_h, uintptr_t pa, uint64_t *mask, uint8_t *rt_id, uint8_t *rt2_id, uint8_t w_flag)
 {
 	int rc;
 
-	rc = do_sel(ctx_h, pa, mask, rt_id, rt2_id, op);
+	rc = do_sel(ctx_h, pa, mask, rt_id, w_flag);
 	if(rc) {
-		ERROR("Unable to handle operation 0x%x PA=0x%lx\n", op, pa);
+		ERROR("Unable to handle %s PA=0x%lx\n", w_flag ? "write to" : "read from", pa);
 		return rc;
 	}
 
 	/* If it's not pair instruction, nothing to do here, simply return. */
-	if (*rt2_id == INVALID_REG_IDX ||
-	    (op != FLR_OPERATION_STORE && op != FLR_OPERATION_LOAD))
+	if(*rt2_id == INVALID_REG_IDX)
 		return rc;
 
 	/* Load/store register pair are only in 8B and 4B variants */
 	pa += (*mask == UINT64_MAX) ? 8 : 4;
-	rc = do_sel(ctx_h, pa, mask, rt2_id, NULL, op);
+	rc = do_sel(ctx_h, pa, mask, rt2_id, w_flag);
 	if(rc)
-		ERROR(
-			"Unable to handle operation 0x%x PA=0x%lx for second register in pair\n",
-			op, pa);
+		ERROR("Unable to handle %s PA=0x%lx for second register in pair\n", w_flag ? "write to" : "read from", pa);
 	return rc;
 }
 
@@ -481,8 +372,6 @@ static int update_rn(void *ctx_h, uint8_t *rn_id, int16_t *imm)
 static int validate_ld_st(uint32_t opcode, uint64_t *size_mask, uint8_t *rt_offset, uint8_t *rn_offset, int16_t *imm9)
 {
 	if (OPCODE_LD_ST_PRFM(opcode) == OPCODE_LD_ST_PRFM_VAL)
-		return -1;
-	if (OPCODE_LD_ST_PAC(opcode) == OPCODE_LD_ST_PAC_VAL)
 		return -1;
 
 	/* Check for instruction size (applicable for LD/ST only) */
@@ -579,106 +468,8 @@ static int validate_ld_st_literal(uint32_t opcode, uint64_t *size_mask, uint8_t 
 	return 0;
 }
 
-static int validate_ld_st_atomic(uint32_t opcode, uint64_t *size_mask,
-	uint8_t *rt_offset, uint8_t *rn_offset, uint8_t *rt2_offset,
-	flr_operation_e *op)
+static int validate_opcode(uint32_t opcode, uint64_t *size_mask, uint8_t *rt_offset, uint8_t *rn_offset, uint8_t *rt2_offset, int16_t *imm)
 {
-	/* Check for instruction size (applicable for LD/ST only) */
-	*size_mask = 0x0;
-	switch (OPCODE_SIZE(opcode)) {
-	case OPCODE_SIZE_1B:
-		*size_mask = UINT8_MAX;
-		break;
-	case OPCODE_SIZE_2B:
-		*size_mask = UINT16_MAX;
-		break;
-	case OPCODE_SIZE_4B:
-		*size_mask = UINT32_MAX;
-		break;
-	case OPCODE_SIZE_8B:
-		*size_mask = UINT64_MAX;
-		break;
-	default:
-		ERROR("Unsupported size mask=0x%x\n", OPCODE_SIZE(opcode));
-		return -1;
-	}
-
-	/*
-	 * TODO: Only SWAP, ADD and CLR could be trapped, so support for
-	 *       the rest atomic operations is disabled at the moment.
-	 *       When enabling, test of operation is needed.
-	 */
-	switch (OPCODE_ATOMIC_OPC(opcode)) {
-	case OPCODE_ATOMIC_OPC_ADD:
-		*op = FLR_OPERATION_ADD;
-		break;
-	case OPCODE_ATOMIC_OPC_CLR:
-		*op = FLR_OPERATION_CLR;
-		ERROR(
-			"At the moment atomic CLR opperation is not supported\n");
-		return -1;
-	case OPCODE_ATOMIC_OPC_EOR:
-		*op = FLR_OPERATION_EOR;
-		break;
-	case OPCODE_ATOMIC_OPC_SET:
-		*op = FLR_OPERATION_SET;
-		ERROR(
-			"At the moment atomic SET opperation is not supported\n");
-		return -1;
-	case OPCODE_ATOMIC_OPC_SMAX:
-		*op = FLR_OPERATION_SMAX;
-		ERROR(
-			"At the moment atomic SMAX opperation is not supported\n");
-		return -1;
-	case OPCODE_ATOMIC_OPC_SMIN:
-		*op = FLR_OPERATION_SMIN;
-		ERROR(
-			"At the moment atomic SMIN opperation is not supported\n");
-		return -1;
-	case OPCODE_ATOMIC_OPC_UMAX:
-		*op = FLR_OPERATION_UMAX;
-		ERROR(
-			"At the moment atomic UMAX opperation is not supported\n");
-		return -1;
-	case OPCODE_ATOMIC_OPC_UMIN:
-		*op = FLR_OPERATION_UMIN;
-		ERROR(
-			"At the moment atomic UMIN opperation is not supported\n");
-		return -1;
-	case OPCODE_ATOMIC_OPC_SWAP:
-		*op = FLR_OPERATION_SWAP;
-		break;
-	default:
-		ERROR("Unsupported atomic opperation=0x%x\n",
-			OPCODE_ATOMIC_OPC(opcode));
-		return -1;
-	}
-
-	/* Extract RT register offset from opcode */
-	*rt_offset = OPCODE_RT(opcode);
-	/* Extract RS register offset from opcode */
-	*rt2_offset = OPCODE_RS(opcode);
-	/* Extract RN register offset from opcode */
-	*rn_offset = OPCODE_RN(opcode);
-
-	return 0;
-}
-
-static int validate_opcode(uint32_t opcode, uint64_t *size_mask,
-	uint8_t *rt_offset, uint8_t *rn_offset, uint8_t *rt2_offset,
-	int16_t *imm, flr_operation_e *op)
-{
-	/*
-	 * OPCODE_LD_ST_ATOMIC has to be before OPCODE_LD_ST, because the later
-	 * one include atomic subset. This is a lot easier than creating mask
-	 * that excludes atomic operations.
-	 */
-	if (OPCODE_LD_ST_ATOMIC(opcode) == OPCODE_LD_ST_ATOMIC_VAL) {
-		*imm = 0;
-		return validate_ld_st_atomic(opcode, size_mask, rt_offset,
-						rn_offset, rt2_offset, op);
-	}
-
 	if (OPCODE_LD_ST(opcode) == OPCODE_LD_ST_VAL) {
 		*rt2_offset = INVALID_REG_IDX;
 		return validate_ld_st(opcode, size_mask, rt_offset, rn_offset, imm);
@@ -702,8 +493,7 @@ void octeontx_trap_handler(void *ctx_handle)
 {
 	uint64_t reg_el3, size_mask, pa;
 	int16_t imm;
-	uint8_t rt_offset, rn_offset, rt2_offset;
-	flr_operation_e op;
+	uint8_t rt_offset, rn_offset, rt2_offset, w_flag;
 	int rc;
 
 	assert(ctx_handle != NULL);
@@ -716,8 +506,7 @@ void octeontx_trap_handler(void *ctx_handle)
 	assert(EC_BITS(reg_el3) == EC_CAVIUM_IO_TRAP);
 
 	/* Read write flag */
-	op = !!(reg_el3 & ESR_WNR_MASK) ? FLR_OPERATION_STORE :
-		FLR_OPERATION_LOAD;
+	w_flag = !!(reg_el3 & ESR_WNR_MASK);
 
 	/*
 	 * Check for FAR_EL3 validity, for physical address
@@ -739,8 +528,7 @@ void octeontx_trap_handler(void *ctx_handle)
 
 	/* Extract and validate opcode */
 	reg_el3 = read_cvmtrapopc_el3();
-	rc = validate_opcode(CAVM_TRAPOPC_INSN(reg_el3), &size_mask, &rt_offset,
-				&rn_offset, &rt2_offset, &imm, &op);
+	rc = validate_opcode(CAVM_TRAPOPC_INSN(reg_el3), &size_mask, &rt_offset, &rn_offset, &rt2_offset, &imm);
 	if (rc) {
 		ERROR("Unsupported opcode=0x%llx, please contact firmware team\n",
 		      CAVM_TRAPOPC_INSN(reg_el3));
@@ -753,12 +541,10 @@ void octeontx_trap_handler(void *ctx_handle)
 	 */
 	switch (CAVM_TRAPOPC_REGSET(reg_el3)) {
 		case AP_CVM_TRAPOPC_EL3_REGSET_RVU_SEL:
-			rc = sel_handler(ctx_handle, pa, &size_mask,
-				&rt_offset, &rt2_offset, op);
+			rc = sel_handler(ctx_handle, pa, &size_mask, &rt_offset, &rt2_offset, w_flag);
 			break;
 		case AP_CVM_TRAPOPC_EL3_REGSET_RVU_ALIAS:
-			rc = alias_handler(ctx_handle, pa, &size_mask,
-				&rt_offset, &rt2_offset, op);
+			rc = alias_handler(ctx_handle, pa, &size_mask, &rt_offset, &rt2_offset, w_flag);
 			break;
 		default:
 			rc = -1;

@@ -13,7 +13,6 @@ PLAT_INCLUDES		:=	-Icsr/include					\
 				-Iinclude/plat/marvell/octeontx 			\
 				-Iinclude/plat/marvell/octeontx/aarch64 			\
 				-Iinclude/drivers/marvell				\
-				-Iinclude/lib				\
 
 include lib/xlat_tables_v2/xlat_tables.mk
 
