@@ -108,7 +108,7 @@ qsfp_1: qsfp-slot@1 {
 ```c
 gpio0: gpio-i2c@0 {
     #gpio-cells = <2>;
-    compatible = "nxp,pca8574";
+    compatible = "nxp_pca8574";
     gpio-controller;
     reg = <0x22>;
     ngpios = <8>;
@@ -121,7 +121,7 @@ gpio0: gpio-i2c@0 {
 switch@e0 {
     #address-cells = <1>;
     #size-cells = <0>;
-    compatible = "nxp,pca9548";
+    compatible = "nxp_pca9548";
     reg = <0xE0>;
     i2c@0 {
         #address-cells = <1>;
