@@ -145,79 +145,62 @@ static inline void virt_to_phys_el2(uintptr_t va)
  * rt will be modified. Address (rn) may be passed using any form,
  * rs and rt have to be registers.
  */
-#define ATOMIC_ASM_STUB_64(instr)					       \
-static inline void do_##instr##64(uint64_t *rs, uint64_t *rt, uint64_t *rn)    \
-{									       \
-	__asm__ volatile (#instr " %[rs], %[rt], %[rn]"			       \
-			:						       \
-			[rt] "=r" (*rt)					       \
-			:						       \
-			[rs] "r" (*rs), [rn] "X" (*rn));		       \
-}
-
-/*
- * Some memory access HAS TO be done using exactly atomic instruction.
- * rt will be modified. Address (rn) may be passed using any form,
- * rs and rt have to be wx registers, so they are loaded from memory.
- */
-#define ATOMIC_ASM_STUB_32(instr, size)					       \
-static inline void do_##instr##size(uint64_t *rs, uint64_t *rt, uint64_t *rn)  \
+#define ATOMIC_ASM_STUB(instr, size, reg_type)				       \
+static inline void do_##instr##size##reg_type(				       \
+	uint64_t *rs, uint64_t *rt, uint64_t *rn)			       \
 {									       \
 	__asm__ volatile (						       \
-		"ldr"#size" w0, %[rs];"					       \
-		"ldr"#size" w1, %[rt];"					       \
-		#instr #size" w0, w1, %[rn];"				       \
-		"str"#size" w1, %[rt];"					       \
-		: :							       \
-		[rs] "m" (*rs), [rt] "m" (*rt), [rn] "X" (*rn)		       \
-		: "w0", "w1"						       \
-	);								       \
+		#instr #size " %"#reg_type"[rs], %"#reg_type"[rt], %[rn]"      \
+		:							       \
+		[rt] "=r" (*rt)						       \
+		:							       \
+		[rs] "r" (*rs), [rn] "X" (*rn));			       \
 }
 
-ATOMIC_ASM_STUB_64(ldadd)
-ATOMIC_ASM_STUB_32(ldadd, /* Intentionally empty */)
-ATOMIC_ASM_STUB_32(ldadd, h)
-ATOMIC_ASM_STUB_32(ldadd, b)
+ATOMIC_ASM_STUB(ldadd, /* Intentionally empty */, /* Intentionally empty */)
+ATOMIC_ASM_STUB(ldadd, /* Intentionally empty */, w)
+ATOMIC_ASM_STUB(ldadd, h, w)
+ATOMIC_ASM_STUB(ldadd, b, w)
 
-ATOMIC_ASM_STUB_64(ldclr)
-ATOMIC_ASM_STUB_32(ldclr, /* Intentionally empty */)
-ATOMIC_ASM_STUB_32(ldclr, h)
-ATOMIC_ASM_STUB_32(ldclr, b)
+ATOMIC_ASM_STUB(ldclr, /* Intentionally empty */, /* Intentionally empty */)
+ATOMIC_ASM_STUB(ldclr, /* Intentionally empty */, w)
+ATOMIC_ASM_STUB(ldclr, h, w)
+ATOMIC_ASM_STUB(ldclr, b, w)
 
-ATOMIC_ASM_STUB_64(ldeor)
-ATOMIC_ASM_STUB_32(ldeor, /* Intentionally empty */)
-ATOMIC_ASM_STUB_32(ldeor, h)
-ATOMIC_ASM_STUB_32(ldeor, b)
+ATOMIC_ASM_STUB(ldeor, /* Intentionally empty */, /* Intentionally empty */)
+ATOMIC_ASM_STUB(ldeor, /* Intentionally empty */, w)
+ATOMIC_ASM_STUB(ldeor, h, w)
+ATOMIC_ASM_STUB(ldeor, b, w)
 
-ATOMIC_ASM_STUB_64(ldset)
-ATOMIC_ASM_STUB_32(ldset, /* Intentionally empty */)
-ATOMIC_ASM_STUB_32(ldset, h)
-ATOMIC_ASM_STUB_32(ldset, b)
+ATOMIC_ASM_STUB(ldset, /* Intentionally empty */, /* Intentionally empty */)
+ATOMIC_ASM_STUB(ldset, /* Intentionally empty */, w)
+ATOMIC_ASM_STUB(ldset, h, w)
+ATOMIC_ASM_STUB(ldset, b, w)
 
-ATOMIC_ASM_STUB_64(ldsmax)
-ATOMIC_ASM_STUB_32(ldsmax, /* Intentionally empty */)
-ATOMIC_ASM_STUB_32(ldsmax, h)
-ATOMIC_ASM_STUB_32(ldsmax, b)
+ATOMIC_ASM_STUB(ldsmax, /* Intentionally empty */, /* Intentionally empty */)
+ATOMIC_ASM_STUB(ldsmax, /* Intentionally empty */, w)
+ATOMIC_ASM_STUB(ldsmax, h, w)
+ATOMIC_ASM_STUB(ldsmax, b, w)
 
-ATOMIC_ASM_STUB_64(ldsmin)
-ATOMIC_ASM_STUB_32(ldsmin, /* Intentionally empty */)
-ATOMIC_ASM_STUB_32(ldsmin, h)
-ATOMIC_ASM_STUB_32(ldsmin, b)
+ATOMIC_ASM_STUB(ldsmin, /* Intentionally empty */, /* Intentionally empty */)
+ATOMIC_ASM_STUB(ldsmin, /* Intentionally empty */, w)
+ATOMIC_ASM_STUB(ldsmin, h, w)
+ATOMIC_ASM_STUB(ldsmin, b, w)
 
-ATOMIC_ASM_STUB_64(ldumax)
-ATOMIC_ASM_STUB_32(ldumax, /* Intentionally empty */)
-ATOMIC_ASM_STUB_32(ldumax, h)
-ATOMIC_ASM_STUB_32(ldumax, b)
+ATOMIC_ASM_STUB(ldumax, /* Intentionally empty */, /* Intentionally empty */)
+ATOMIC_ASM_STUB(ldumax, /* Intentionally empty */, w)
+ATOMIC_ASM_STUB(ldumax, h, w)
+ATOMIC_ASM_STUB(ldumax, b, w)
 
-ATOMIC_ASM_STUB_64(ldumin)
-ATOMIC_ASM_STUB_32(ldumin, /* Intentionally empty */)
-ATOMIC_ASM_STUB_32(ldumin, h)
-ATOMIC_ASM_STUB_32(ldumin, b)
+ATOMIC_ASM_STUB(ldumin, /* Intentionally empty */, /* Intentionally empty */)
+ATOMIC_ASM_STUB(ldumin, /* Intentionally empty */, w)
+ATOMIC_ASM_STUB(ldumin, h, w)
+ATOMIC_ASM_STUB(ldumin, b, w)
 
-ATOMIC_ASM_STUB_64(swp)
-ATOMIC_ASM_STUB_32(swp, /* Intentionally empty */)
-ATOMIC_ASM_STUB_32(swp, h)
-ATOMIC_ASM_STUB_32(swp, b)
+ATOMIC_ASM_STUB(swp, /* Intentionally empty */, /* Intentionally empty */)
+ATOMIC_ASM_STUB(swp, /* Intentionally empty */, w)
+ATOMIC_ASM_STUB(swp, h, w)
+ATOMIC_ASM_STUB(swp, b, w)
 
 #undef ATOMIC_ASM_STUB_64
 #undef ATOMIC_ASM_STUB_32
@@ -289,13 +272,13 @@ static int update_value(void *ctx_h, uint64_t *value, uint64_t *mask,
 #define DO_ATOMIC_OPERATION(instr)					\
 do {									\
 	if (*mask == UINT64_MAX) {					\
-		do_##instr##64(&rs_value, &rt_value, value);		\
-	} else if (*mask == UINT32_MAX) {				\
 		do_##instr(&rs_value, &rt_value, value);		\
+	} else if (*mask == UINT32_MAX) {				\
+		do_##instr##w(&rs_value, &rt_value, value);		\
 	} else if (*mask == UINT16_MAX) {				\
-		do_##instr##h(&rs_value, &rt_value, value);		\
+		do_##instr##hw(&rs_value, &rt_value, value);		\
 	} else if (*mask == UINT8_MAX) {				\
-		do_##instr##b(&rs_value, &rt_value, value);		\
+		do_##instr##bw(&rs_value, &rt_value, value);		\
 	} else {							\
 		ERROR("%s: Invalid mask = 0x%llx\n", __func__, *mask);	\
 		return -1;						\
