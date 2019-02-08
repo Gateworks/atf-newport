@@ -1108,7 +1108,7 @@ static int octeontx2_fill_cgx_struct(int qlm, int lane, int mode_idx)
 	int mode;
 	int cgx_idx;
 	int i, j;
-	int lcnt, lused;
+	int lcnt, lused, lane_to_sds;
 
 	if ((mode_idx < CAVM_QLM_MODE_SGMII) || (mode_idx >= CAVM_QLM_MODE_LAST)) {
 		debug_dts("QLM%d.LANE%d: not configured for CGX, skip.\n", qlm, lane);
@@ -1172,7 +1172,13 @@ static int octeontx2_fill_cgx_struct(int qlm, int lane, int mode_idx)
 	/* Fill in the CGX/LMAC structures. */
 	for (i = 0; i < lcnt; i++) {
 		lmac = &cgx->lmac_cfg[cgx->lmac_count];
-		lmac->lane_to_sds = -1;
+		if ((!strncmp(plat_octeontx_bcfg->bcfg.board_model, "ebb96",
+				5)) ||
+			(!strncmp(plat_octeontx_bcfg->bcfg.board_model,
+				"ebb93", 5)))
+			lane_to_sds = 0x1B; /* Lanes are reversed */
+		else
+			lane_to_sds = 0xE4; /* Default value */
 		lmac->mode = mode;
 		lmac->mode_idx = mode_idx;
 		lmac->qlm = qlm;
@@ -1190,31 +1196,38 @@ static int octeontx2_fill_cgx_struct(int qlm, int lane, int mode_idx)
 				 */
 				for (j = 0; j < MAX_LMAC_PER_CGX; j++) {
 					temp_lmac = &cgx->lmac_cfg[j];
-					temp_lmac->lane = lane;
+					if ((!strncmp(plat_octeontx_bcfg->bcfg.board_model,
+						"ebb96", 5)) ||
+					(!strncmp(plat_octeontx_bcfg->bcfg.board_model,
+						"ebb93", 5)))
+						temp_lmac->lane = ~lane & 3;
+					else
+						temp_lmac->lane = lane;
 				}
 			}
 		} else
 			lmac->lane = lane + i;
+		printf("%s: qlm %d lane %d lane_to_sds 0x%x\n",
+				__func__, qlm, lane, lane_to_sds);
 		switch (mode) {
 		case CAVM_CGX_LMAC_TYPES_E_XAUI:
 		case CAVM_CGX_LMAC_TYPES_E_FORTYG_R:
 		case CAVM_CGX_LMAC_TYPES_E_HUNDREDG_R:
-			lmac->lane_to_sds = 0xe4;
+			lmac->lane_to_sds = lane_to_sds;
 			break;
 		case CAVM_CGX_LMAC_TYPES_E_RXAUI:
 		case CAVM_CGX_LMAC_TYPES_E_FIFTYG_R:
 			/* The RXAUI mode is always using a double lane. So
 			 * the lane value can be 0 or 2.
 			 */
-			if (lane == 2)
-				lmac->lane_to_sds = 0xe;
-			else
-				lmac->lane_to_sds = 0x4;
+			if (cavm_is_model(OCTEONTX_CN9XXX) && (qlm == 5))
+				lane += 2;
+			lmac->lane_to_sds = (lane_to_sds >> (lane * 2)) & 0xF;
 			break;
 		default:
-			lmac->lane_to_sds = lmac->lane;
-			if (cavm_is_model(OCTEONTX_CN96XX) && (qlm == 5))
-				lmac->lane_to_sds += 2;
+			if (cavm_is_model(OCTEONTX_CN9XXX) && (qlm == 5))
+				lane += 2;
+			lmac->lane_to_sds = (lane_to_sds >> (lane * 2)) & 0x3;
 			break;
 		}
 
@@ -1276,7 +1289,7 @@ static int octeontx2_cgx_get_phy_info(const void *fdt, int lmac_offset, int cgx_
 	strncpy(phyname, "phy-handle", sizeof(phyname));
 
 	/* FIXME: Using board model is safe to use for now */
-	if (!strncmp(plat_octeontx_bcfg->bcfg.board_model, "ebb9", 4)) {
+	if (!strncmp(plat_octeontx_bcfg->bcfg.board_model, "ebb96", 5)) {
 		/* On EBB9604 board, PHY address can be different on
 		 * QLM 3 and QLM 7 and at a time, ethernet can be configured
 		 * either on QLM3 or QLM7 only and not both. CGX0 is mapped to
