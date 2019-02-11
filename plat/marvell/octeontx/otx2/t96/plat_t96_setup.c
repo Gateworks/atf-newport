@@ -115,9 +115,6 @@ int plat_octeontx_get_twsi_count(void)
 
 int plat_octeontx_get_cpt_count(void)
 {
-	if (plat_get_altpkg() == CN95XXE_PKG)
-		return 0;
-
 	return 1;
 }
 
