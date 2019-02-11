@@ -14,6 +14,7 @@
 #include <plat_scfg.h>
 #include <octeontx_security.h>
 #include <octeontx_dram.h>
+#include <octeontx_utils.h>
 
 struct ccs_region {
 	unsigned int  number;
@@ -23,6 +24,8 @@ struct ccs_region {
 };
 
 #define LAST_CCS_REGION (~0U)
+#define MCC_CONFIG_DIS_TADPSN_BIT	BIT(1)
+#define CCS_CTL_DISPSN_BIT		BIT(0)
 
 struct ccs_region ccs_map [] = {
 	{
@@ -41,6 +44,25 @@ struct ccs_region ccs_map [] = {
 		.number  = LAST_CCS_REGION,
 	},
 };
+
+/*
+ * This is workaround for errata NIX-31533
+ */
+static void disable_poison(void)
+{
+	uint64_t mmc_config, ccs_ctl;
+	int i;
+
+	for (i = 0; i < plat_octeontx_scfg->mcc_count; i++) {
+		mmc_config = CSR_READ(CAVM_MCCX_CONFIG(i));
+		mmc_config |= MCC_CONFIG_DIS_TADPSN_BIT;
+		CSR_WRITE(CAVM_MCCX_CONFIG(i), mmc_config);
+	}
+
+	ccs_ctl = CSR_READ(CAVM_CCS_CTL);
+	ccs_ctl |= CCS_CTL_DISPSN_BIT;
+	CSR_WRITE(CAVM_CCS_CTL, ccs_ctl);
+}
 
 /* Flush the L2 Cache */
 void l2c_flush(void)
@@ -88,7 +110,12 @@ void octeontx_security_setup(void)
 	union cavm_ccs_asc_regionx_attr ccs_asc_attr;
 	struct ccs_region *region = ccs_map;
 	uint64_t dram_end;
+	uint64_t midr;
 	uint8_t lmc_mask, lmc_mode;
+
+	midr = read_midr();
+	if (IS_OCTEONTX_PASS(midr, T96PARTNUM, 1, 0))
+		disable_poison();
 
 	/*
 	 * BDK has configured CCS ASC REGION 0. We will use the same lmc_mask and

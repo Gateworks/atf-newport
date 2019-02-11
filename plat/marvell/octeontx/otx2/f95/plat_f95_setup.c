@@ -112,6 +112,11 @@ int plat_octeontx_get_rvu_count(void)
 	return 16;
 }
 
+int plat_octeontx_get_mcc_count(void)
+{
+	return 1;
+}
+
 /* Return number of lanes available for different QLMs. */
 int plat_get_max_lane_num(int qlm)
 {

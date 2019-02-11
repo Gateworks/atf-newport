@@ -152,6 +152,11 @@ int plat_octeontx_get_rvu_count(void)
 	return 16;
 }
 
+int plat_octeontx_get_mcc_count(void)
+{
+	return 2;
+}
+
 /* Return number of lanes available for different QLMs. */
 int plat_get_max_lane_num(int qlm)
 {
@@ -354,6 +359,12 @@ void plat_add_mmio()
 				CAVM_SMI_BAR_E_SMI_PF_BAR0_CN9_SIZE, attr);
 
 	plat_map_cpc_mem();
+
+	device_type_count = plat_octeontx_get_mcc_count();
+	for (i = 0; i < device_type_count; ++i)
+		add_map_record(CAVM_MCC_BAR_E_MCCX_PF_BAR0(i),
+			CAVM_MCC_BAR_E_MCCX_PF_BAR0_SIZE, attr);
+
 
 	/*
 	 * Shared memory configuration.
