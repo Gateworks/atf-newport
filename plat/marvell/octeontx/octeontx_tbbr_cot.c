@@ -107,15 +107,6 @@ static const auth_img_desc_t cot_desc[] = {
 					.len = (unsigned int)HASH_DER_LEN
 				}
 			}
-#ifdef NT_FW_CONFIG
-			[1] = {
-				.type_desc = &nt_fw_config_hash,
-				.data = {
-					.ptr = (void *)nt_fw_config_hash_buf,
-					.len = (unsigned int)HASH_DER_LEN
-				}
-			}
-#endif
 		}
 	},
 	[BL2_IMAGE_ID] = {
@@ -485,7 +476,16 @@ static const auth_img_desc_t cot_desc[] = {
 					.ptr = (void *)nt_world_bl_hash_buf,
 					.len = (unsigned int)HASH_DER_LEN
 				}
+			},
+#ifdef NT_FW_CONFIG
+			[1] = {
+				.type_desc = &nt_fw_config_hash,
+				.data = {
+					.ptr = (void *)nt_fw_config_hash_buf,
+					.len = (unsigned int)HASH_DER_LEN
+				}
 			}
+#endif
 		}
 	},
 	[BL33_IMAGE_ID] = {
