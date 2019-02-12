@@ -232,7 +232,7 @@ typedef struct sfp_async_resp {
 typedef struct sfp_shared_data {
 	uint32_t size;
 	/* SFP/QSFP EEPROM data */
-	uint32_t buf[SFP_MAX_EEPROM_SIZE];
+	uint8_t buf[SFP_MAX_EEPROM_SIZE];
 	char board_model[64];
 	/* Module info from DT based on board */
 	sfp_slot_info_t sfp_slot;
