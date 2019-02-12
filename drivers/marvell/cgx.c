@@ -671,8 +671,11 @@ static void cgx_set_autoneg(int cgx_id, int lmac_id)
 		/* program the negotiation parameters to be advertised */
 		spux_an_adv.u = CSR_READ(CAVM_CGXX_SPUX_AN_ADV(
 						cgx_id, lmac_id));
-		spux_an_adv.s.fec_able = 0;
-		spux_an_adv.s.fec_req = 0;
+		spux_an_adv.u = 0;
+		/* set the default values */
+		spux_an_adv.s.xnp_able = 1;
+		spux_an_adv.s.pause = 1;
+		spux_an_adv.s.s	= 1;
 		if (lmac->mode == CAVM_CGX_LMAC_TYPES_E_TENG_R) {
 			spux_an_adv.s.np = 0;
 			if (lmac->use_training)
