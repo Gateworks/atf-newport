@@ -77,8 +77,7 @@
 /* VDD limit is 0.82V for all A3900 devices
  * AVS offsets are not the same as in A70x0
  */
-#ifdef MVEBU_CN9030
-/* CN9030 has the same values as A3900 */
+#ifdef MVEBU_A3900
 #define AVS_AP807_CLK_VALUE		((0x80 << 24) | \
 					 (0x2c2 << 13) | \
 					 (0x2c2 << 3) | \

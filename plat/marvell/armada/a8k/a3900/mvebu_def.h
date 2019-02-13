@@ -13,6 +13,6 @@
 /* A3900 has single CP0 */
 #define CP_COUNT		1
 #define MVEBU_SOC_AP807		1
-#define MVEBU_CN9030		1
+#define MVEBU_A3900		1
 
 #endif /* __MVEBU_DEF_H__ */
