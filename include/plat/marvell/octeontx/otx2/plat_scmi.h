@@ -52,7 +52,7 @@
 #define SCMI_CAVM_NDC_SYNC_RESP_LEN		8
 
 #define SCMI_CAVM_NDC_STATUS_MSG_LEN		4
-#define SCMI_CAVM_NDC_STATUS_RESP_LEN		8
+#define SCMI_CAVM_NDC_STATUS_RESP_LEN		12
 
 /* SCMI message header format bit field */
 #define SCMI_MSG_ID_SHIFT		0

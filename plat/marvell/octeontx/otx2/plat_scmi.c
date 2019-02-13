@@ -451,10 +451,8 @@ int scmi_octeontx_reset_ndc(void *p, uint64_t lf_idx, uint64_t block_type)
 
 	scmi_put_channel(ch);
 
-	if (ret != SCMI_CAVM_NDC_RET_OK)
-		ret = SCMI_CAVM_NDC_RET_FAIL;
-
-	return ret;
+	return ret == SCMI_E_SUCCESS ?
+		SCMI_CAVM_NDC_RET_OK : SCMI_CAVM_NDC_RET_FAIL;
 }
 
 /*
@@ -496,7 +494,7 @@ int scmi_octeontx_sync_ndc(void *p, uint64_t lf_idx, uint64_t lf_block_addr,
 	mbx_mem->flags = SCMI_FLAG_RESP_POLL;
 
 	SCMI_PAYLOAD_ARG3(mbx_mem->payload, (uint32_t)lf_idx,
-		(uint64_t)lf_block_addr, (uint64_t)ndc_block_addr);
+		(uint32_t)lf_block_addr, (uint32_t)ndc_block_addr);
 
 	scmi_send_sync_command(ch);
 
@@ -507,16 +505,14 @@ int scmi_octeontx_sync_ndc(void *p, uint64_t lf_idx, uint64_t lf_block_addr,
 
 	scmi_put_channel(ch);
 
-	if (ret != SCMI_CAVM_NDC_RET_OK)
-		ret = SCMI_CAVM_NDC_RET_FAIL;
-
-	return ret;
+	return ret == SCMI_E_SUCCESS ?
+		SCMI_CAVM_NDC_RET_OK : SCMI_CAVM_NDC_RET_FAIL;
 }
 
 int scmi_octeontx_status_ndc(void *p)
 {
 	mailbox_mem_t *mbx_mem;
-	int token = 0, ret;
+	int token = 0, ret, status;
 	scmi_channel_t *ch = (scmi_channel_t *)p;
 
 	validate_scmi_channel(ch);
@@ -532,16 +528,17 @@ int scmi_octeontx_status_ndc(void *p)
 	scmi_send_sync_command(ch);
 
 	/* Get the return values */
-	SCMI_PAYLOAD_RET_VAL1(mbx_mem->payload, ret);
+	SCMI_PAYLOAD_RET_VAL2(mbx_mem->payload, ret, status);
 	assert_scmi(mbx_mem->len == SCMI_CAVM_NDC_STATUS_RESP_LEN);
 	assert_scmi(token == SCMI_MSG_GET_TOKEN(mbx_mem->msg_header));
 
 	scmi_put_channel(ch);
 
-	if (ret != SCMI_CAVM_NDC_RET_OK && ret != SCMI_CAVM_NDC_RET_ONGOING)
-		ret = SCMI_CAVM_NDC_RET_FAIL;
+	if ((status != SCMI_CAVM_NDC_RET_OK &&
+	    status != SCMI_CAVM_NDC_RET_ONGOING) || ret != SCMI_E_SUCCESS)
+		status = SCMI_CAVM_NDC_RET_FAIL;
 
-	return ret;
+	return status;
 }
 
 /*
