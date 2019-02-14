@@ -1207,8 +1207,6 @@ static int octeontx2_fill_cgx_struct(int qlm, int lane, int mode_idx)
 			}
 		} else
 			lmac->lane = lane + i;
-		printf("%s: qlm %d lane %d lane_to_sds 0x%x\n",
-				__func__, qlm, lane, lane_to_sds);
 		switch (mode) {
 		case CAVM_CGX_LMAC_TYPES_E_XAUI:
 		case CAVM_CGX_LMAC_TYPES_E_FORTYG_R:
