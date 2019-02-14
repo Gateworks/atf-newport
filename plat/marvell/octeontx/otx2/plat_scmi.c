@@ -424,8 +424,11 @@ int scmi_octeontx_reset_ndc(void *p, uint64_t lf_idx, uint64_t block_type)
 		ERROR("Invalid lf idx (0x%llx)\n", lf_idx);
 		return -1;
 	}
-	if (!IS_OCTEONTX_PASS(read_midr(), T96PARTNUM, 1, 0)) {
-		ERROR("Errata 35094 is only for ebb9604 pass A0\n");
+	if (!IS_OCTEONTX_PASS(read_midr(), T96PARTNUM, 1, 0) &&
+	    !IS_OCTEONTX_PASS(read_midr(), T96PARTNUM, 1, 1) &&
+	    !IS_OCTEONTX_PASS(read_midr(), F95PARTNUM, 1, 0)) {
+		INFO(
+			"Errata #35094 is only needed for CN96xx A0, A1 and CNF95xx A0\n");
 		return -1;
 	}
 
@@ -478,8 +481,11 @@ int scmi_octeontx_sync_ndc(void *p, uint64_t lf_idx, uint64_t lf_block_addr,
 		ERROR("Invalid lf idx (0x%llx)\n", lf_idx);
 		return -1;
 	}
-	if (!IS_OCTEONTX_PASS(read_midr(), T96PARTNUM, 1, 0)) {
-		ERROR("Errata 35094 is only for ebb9604 pass A0\n");
+	if (!IS_OCTEONTX_PASS(read_midr(), T96PARTNUM, 1, 0) &&
+	    !IS_OCTEONTX_PASS(read_midr(), T96PARTNUM, 1, 1) &&
+	    !IS_OCTEONTX_PASS(read_midr(), F95PARTNUM, 1, 0)) {
+		INFO(
+			"Errata #35094 is only needed for CN96xx A0, A1 and CNF95xx A0\n");
 		return -1;
 	}
 
