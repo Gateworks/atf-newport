@@ -409,15 +409,22 @@ static void init_iobn5(uint64_t config_base, uint64_t config_size)
 		domx_const.u = CSR_READ(CAVM_ECAMX_DOMX_CONST(0,domain));
 		if (domx_const.s.pres) {
 			for (bus = 0; bus < 256; bus++) {
-				/* To get secure interrupts for GPIO the PHYS_NSEC has to be 0 */
-				if (domain == 0 && bus == 0)
+				/* To get secure interrupts for GPIO and BPHY
+				 * the PHYS_NSEC has to be 0
+				 */
+				if (domain == 0 && (bus == 0 || bus == 6))
 					CSR_WRITE(CAVM_IOBNX_DOMX_BUSX_STREAMS(iobn_nr, domain, bus), 0x2);
 				else
 					CSR_WRITE(CAVM_IOBNX_DOMX_BUSX_STREAMS(iobn_nr, domain, bus), 0x3);
 			}
 			for (dev = 0; dev < 32; dev++) {
-				/* To get secure interrupts for GPIO the PHYS_NSEC has to be 0 */
-				if (domain == 0 && dev == (CAVM_PCC_DEV_CON_E_GPIO_CN9 >> 3))
+				/* To get secure interrupts for GPIO and BPHY
+				 * the PHYS_NSEC has to be 0
+				 */
+				if (domain == 0 &&
+				    (dev == (CAVM_PCC_DEV_CON_E_GPIO_CN9 >> 3)
+				    || dev == ((CAVM_PCC_DEV_CON_E_BPHY & 0xFF)
+					       >> 3)))
 					CSR_WRITE(CAVM_IOBNX_DOMX_DEVX_STREAMS(iobn_nr, domain, dev), 0x2);
 				else
 					CSR_WRITE(CAVM_IOBNX_DOMX_DEVX_STREAMS(iobn_nr, domain, dev), 0x3);
