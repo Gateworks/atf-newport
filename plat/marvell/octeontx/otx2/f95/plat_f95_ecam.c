@@ -31,7 +31,7 @@ static int ecam_probe_cgx(unsigned long long arg)
 	octeontx_qlm_state_lane_t qlm_state;
 	int qlm = -1, lnum = 0;
 
-	debug_plat_ecam("%s arg %ld\n", __func__, arg);
+	debug_plat_ecam("%s arg %lld\n", __func__, arg);
 
 	/* FIXME: cgx to qlm mapping.
 	 * CGX0 - QLM1
@@ -74,7 +74,7 @@ static void init_gpio(uint64_t config_base, uint64_t config_size)
 {
 	union cavm_pccpf_xxx_vsec_sctl vsec_sctl;
 
-	debug_plat_ecam("GPIO init called config_base:%lx size:%lx\n",
+	debug_plat_ecam("GPIO init called config_base:%llx size:%llx\n",
 			config_base, config_size);
 
 	/* Block can have mix of secure and non-secure MSI-X interrupts */
@@ -97,7 +97,7 @@ static void init_cgx(uint64_t config_base, uint64_t config_size)
 	vsec_ctl.u = octeontx_read32(config_base + CAVM_PCCPF_XXX_VSEC_CTL);
 	cgx_id = vsec_ctl.s.inst_num;
 
-	debug_plat_ecam("CGX(%d): init config_base:%lx size:%lx\n",
+	debug_plat_ecam("CGX(%d): init config_base:%llx size:%llx\n",
 		vsec_ctl.s.inst_num, config_base, config_size);
 
 	cgx_hw_init(cgx_id);
@@ -110,7 +110,7 @@ static void init_bphy(uint64_t config_base, uint64_t config_size)
 	uint8_t bir = 0;
 	uint16_t tbl_sz = 0;
 
-	debug_plat_ecam("BPHY init called config_base:%lx size:%lx\n",
+	debug_plat_ecam("BPHY init called config_base:%llx size:%llx\n",
 			config_base, config_size);
 
 	vsec_sctl.u = octeontx_read32(config_base + CAVM_PCCPF_XXX_VSEC_SCTL);
@@ -121,7 +121,8 @@ static void init_bphy(uint64_t config_base, uint64_t config_size)
 	enable_msix(config_base, pconfig->cap_pointer, &tbl_sz, &bir);
 	if (tbl_sz) {
 		debug_plat_ecam("tbl sz: %x, bir:%x\n", tbl_sz, bir);
-		debug_plat_ecam("MSI-X vector base: %lx\n", get_bar_val(pconfig, bir));
+		debug_plat_ecam("MSI-X vector base: %llx\n",
+				get_bar_val(pconfig, bir));
 	}
 }
 
