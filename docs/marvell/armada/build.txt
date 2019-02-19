@@ -200,6 +200,7 @@ Special Build Flags
 		atf. In order to build uart recovery image this operation should be disabled for a70x0 and a80x0
                 because of hardware limitation(boot from secondary image can interrupt uart recovery process).
 		This MACRO definition is set in plat/marvell/armada/a8k/common/include/platform_def.h file
+	- DDR32: in order to work in 32bit DDR, instead of the default 64bit ECC DDR, this flag should be set to 1.
 
 (for more information about build options, please refer to section 'Summary of build options' in  TF-A user-guide:
  https://github.com/ARM-software/arm-trusted-firmware/blob/master/docs/user-guide.md)
