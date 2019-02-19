@@ -20,14 +20,16 @@ System preparations (for both methods)
 
 		> export MV_DDR_PATH=path/to/mv_ddr
 
-	For A7/8K, use this parameter to point to mv_ddr driver sources to allow BLE build.
-	For A37x0, it is used for ddr_tool build.
+	For A37x0/A7K/A8K/A3900/CN913x, use this parameter to point to mv_ddr
+	driver sources to allow BLE build.
+	A37x0 builds are using mv_ddr sources for ddr_tool build.
 
 	Usage example: MV_DDR_PATH=path/to/mv_ddr
 
-	The parameter is optional for A7/8K, when this parameter is not set, the mv_ddr
-	sources are expected to be located at: drivers/marvell/mv_ddr. However, the parameter
-	is necessary for A37x0.
+	The parameter is optional for A7K/A8K/A3900/CN913x, when this parameter is
+	not set, the mv_ddr sources are expected to be located at:
+		drivers/marvell/mv_ddr.
+ 	The parameter is mandatory for A37x0.
 
 (3) Set path for FIP images:
 
@@ -42,7 +44,7 @@ System preparations (for both methods)
 
 	   u-boot.bin should be used and not u-boot-spl.bin
 
-	Set MSS/SCP image path (mandatory only for Armada80x0 and Aramada8xxy)::
+	Set MSS/SCP image path (mandatory for A7K/A8K/A3900/CN913x)::
 
 		> export SCP_BL2=path/to/mrvl_scp_bl2*.img
 
@@ -116,7 +118,8 @@ Manual build procedure
 	- MARVELL_SECURE_BOOT: build trusted(=1)/non trusted(=0) image, default is non trusted.
 
 	- BLE_PATH:
-		Points to BLE (Binary ROM extension) sources folder. Only required for A8K and A8K+ builds.
+		Points to BLE (Binary ROM extension) sources folder.
+		Only required for A7K/A8K/A3900/CN913x builds.
 		The parameter is optional, its default value is "ble".
 
 	- DDR_TOPOLOGY: For Armada37x0 only, the DDR topology map index/name, default is 0.
@@ -160,17 +163,12 @@ Manual build procedure
 		can be found as a3700_utils.zip in the release.
 		Usage example: WTP=/path/to/a3700_utils
 
-	- CP_NUM: Total amount of CPs (South Bridge) chips wired to the interconnected APs.
-		When the parameter is omitted, the build is uses the default number of CPs equal to 2.
-		The parameter is valid for Armada 8K-plus SoC family (PLAT=a8xxy) and results in a build of images
-		suitable for a8xxY SoC, where "Y" is a number of connected CPs and "xx" is a number of CPU cores.
-		Valid values with CP_NUM is in a range of 0 to 8.
-		The CPs defined by this parameter are evenly distributed across interconnected APs that in turn
-		are dynamically detected. For instance, if the CP_NUM=6 and the TF-A detects 2 interconnected
-		APs, each AP assumed to have 3 attached CPs. With the same amount of APs and CP_NUM=3, the AP0
-		will have 2 CPs connected and AP1 - a just single CP.
-
-	- ARO_ENABLE: configure CPU frequency using ARO clock driver (instead of PLL clock driver).
+	- CP_NUM: Total amount of external CPs (South Bridge) chips wired to the SoC MCI ports.
+		When the parameter is omitted, the build is uses the default number of CPs equal to 0.
+		The parameter is valid for OcteonTX2 CN913x SoC family (PLAT=t9130) and results in a build
+		of images suitable for CN913x SoC, where "x" is a number of externally connected CPs
+		(not counting the CP0 located on the same die as AP).
+		Valid values with CP_NUM is in a range of 0 to 2.
 
 	For example, in order to build the image in debug mode with log level up to 'notice' level run::
 
@@ -186,12 +184,13 @@ Manual build procedure
 
 	Supported MARVELL_PLATFORM are:
 		- a3700
+		- a3900
 		- a70x0
 		- a70x0_amc (for AMC board)
 		- a70x0_cust (for customers)
 		- a80x0
 		- a80x0_mcbin (for MacciatoBin)
-		- a8xxy
+		- t9130 (OcteonTX2 CN913x)
 
 Special Build Flags
 --------------------
