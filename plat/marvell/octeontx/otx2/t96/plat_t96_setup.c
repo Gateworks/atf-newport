@@ -228,11 +228,9 @@ void plat_add_mmio()
 	add_map_record(CAVM_RST_BAR_E_RST_PF_BAR4, CAVM_RST_BAR_E_RST_PF_BAR4_SIZE, attr);
 
 	add_map_record(CAVM_CCS_BAR_E_CCS_PF_BAR0, CAVM_CCS_BAR_E_CCS_PF_BAR0_SIZE, attr);
-	add_map_record(CAVM_MIO_BOOT_BAR_E_MIO_BOOT_PF_BAR0, CAVM_MIO_BOOT_BAR_E_MIO_BOOT_PF_BAR0_SIZE, attr);
+
 	add_map_record(CAVM_MIO_EMM_BAR_E_MIO_EMM_PF_BAR0_CN9, CAVM_MIO_EMM_BAR_E_MIO_EMM_PF_BAR0_CN9_SIZE, attr);
 	add_map_record(CAVM_MIO_EMM_BAR_E_MIO_EMM_PF_BAR4, CAVM_MIO_EMM_BAR_E_MIO_EMM_PF_BAR4_SIZE, attr);
-	add_map_record(CAVM_FUS_BAR_E_FUS_PF_BAR0,
-		       CAVM_FUS_BAR_E_FUS_PF_BAR0_SIZE, attr);
 	add_map_record(CAVM_FUSF_BAR_E_FUSF_PF_BAR0,
 		       CAVM_FUSF_BAR_E_FUSF_PF_BAR0_SIZE, attr);
 
@@ -294,10 +292,7 @@ void plat_add_mmio()
 				       CAVM_GSERN_BAR_E_GSERNX_PF_BAR0_SIZE, attr);
 	}
 
-	add_map_record(CAVM_DAP_BAR_E_DAP_PF_BAR0, CAVM_DAP_BAR_E_DAP_PF_BAR0_SIZE, attr);
-	add_map_record(CAVM_DAP_BAR_E_DAP_PF_BAR2_CN9, CAVM_DAP_BAR_E_DAP_PF_BAR2_CN9_SIZE, attr);
 	add_map_record(CAVM_GPIO_BAR_E_GPIO_PF_BAR0_CN9, CAVM_GPIO_BAR_E_GPIO_PF_BAR0_CN9_SIZE, attr);
-	add_map_record(CAVM_GPIO_BAR_E_GPIO_PF_BAR4, CAVM_GPIO_BAR_E_GPIO_PF_BAR4_SIZE, attr);
 
 	device_type_count = plat_octeontx_get_uaa_count();
 	for (i = 0; i < device_type_count; i++) {
