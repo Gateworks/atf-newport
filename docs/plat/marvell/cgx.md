@@ -848,22 +848,120 @@ In that case, set it to high power mode, before reading from EEPROM.
 
 ## 7. PHY management
 
-**TODO**
+PHYs are expected to be accessed via MDIO bus and details of PHY address and busare parsed from board linux DT.
 
----
+ * SMI driver is included in ATF
+ * Generic Clause 22/45 APIs are supported
+ * Framework is provided to integrate individual SDK for the respective PHYs in the library.
 
-### 7.3. CLAUSE 22
+### 7.1 List of PHYs supported:
 
-**TODO**
+```c
+/* PHY types */
+typedef enum phy_type {
+        PHY_NONE = 0,
+        PHY_MARVELL_5123,
+        PHY_MARVELL_5113,
+        PHY_MARVELL_88E1514,
+        PHY_VITESSE_8574,
+        PHY_GENERIC_8023_C22,
+        PHY_GENERIC_8023_C45,
+} phy_type_t;
+```
 
----
+### 7.2 DTS changes
+Board Linux DTS needs to have the corresponding PHY compatible string to choose
+the appropriate PHY
 
-### 7.2. CLAUSE 45
+```c
+/* List of PHY compatible strings/types */
+static const phy_compatible_type_t phy_compat_list[] = {
+        { "marvell,88x5123", PHY_MARVELL_5123},
+        { "marvell,88x5113", PHY_MARVELL_5113},
+        { "marvell,88e1514", PHY_MARVELL_88E1514},
+        { "marvell,88e1512", PHY_MARVELL_88E1514},
+        { "vitesse,vsc8574", PHY_VITESSE_8574},
+        { "ethernet-phy-ieee802.3-c22", PHY_GENERIC_8023_C22},
+        { "ethernet-phy-ieee802.3-c45", PHY_GENERIC_8023_C45},
+};
+```
 
-**TODO**
+### 7.3 PHY management framework
+At boot time, if a corresponding LMAC of a CGX is reported to have PHY by the parser, it looks up for the PHY driver in ATF and assigns corresponding handle(below struct) to each PHY type.
+
+```c
+typedef struct phy_config {
+        int type;
+        int addr;       /* PHY ADDR on MDIO bus */
+        int mdio_bus;   /* SMI bus number */
+        int mux_switch; /* If controlled via switch. Ex: Analog switch on EBB9604 */
+        int media_type; /* Optional : Required for VSC8574 */
+        int port;       /* Optional : port num for Marvell PHYs */
+        int valid;      /* If valid PHY driver found */
+        int init;       /* Whether Initialization is already performed */
+        phy_drv_t *drv; /* struct for PHY driver operations */
+        void *priv;
+        gpio_info_t mux_info; /* Details of switch details if MDIO is muxed */
+} phy_config_t;
+```
+
+#### 7.3.1 PHY framework APIs
+Each driver is expected to have a set of APIs defined as below. Initialization of the PHY to be done in the probe callback
+
+```c
+typedef struct phy_drv {
+        char drv_name[64];
+        int drv_type;
+        int flags;      /* Any specific info about the PHY */
+        void (*probe)(int cgx_id, int lmac_id); /* Function pointer to initialize PHY */
+        void (*reset)(int cgx_id, int lmac_id); /* Function pointer to reset PHY */
+        void (*config)(int cgx_id, int lmac_id); /* Function pointer to set mode of PHY */
+        void (*set_an)(int cgx_id, int lmac_id); /* Function pointer to configure AN */
+        void (*get_link_status)(int cgx_id, int lmac_id, link_state_t *link); /* Function pointer to get link status of PHY */
+        void (*shutdown)(int cgx_id, int lmac_id); /* Function pointer to shutdown PHY */
+} phy_drv_t;
+```
+
+Ex:
+```c
+phy_drv_t marvell_drv[] = {
+        {
+                .drv_name                       = "MARVELL-88E1514",
+                .drv_type                       = PHY_MARVELL_88E1514,
+                .flags                          = 0,
+                .probe                          = phy_marvell_1514_probe,
+                .config                         = phy_generic_config,
+                .set_an                         = phy_generic_set_an,
+                .reset                          = phy_generic_reset,
+                .get_link_status                = phy_marvell_1514_get_link_status,
+                .shutdown                       = phy_generic_shutdown,
+        },
+        {
+                .drv_name                       = "MARVELL-88X5123",
+                .drv_type                       = PHY_MARVELL_5123,
+                .flags                          = 0,
+                .probe                          = phy_marvell_5123_probe,
+                .config                         = phy_marvell_5123_config,
+                .set_an                         = phy_marvell_5123_set_an,
+                .reset                          = phy_generic_reset,
+                .get_link_status                = phy_marvell_5123_get_link_status,
+                .shutdown                       = phy_generic_shutdown,
+        },
+};
+```
+
+#### 7.3.2 PHY SDK Library
+If a PHY has its own SDK, it should be built as a library and copied to atf/lib/libphy path alongwith the header files.
+
+Library should be included in the build as below in platform makefile along
+with the include path.
+
+BL31_LIBS               +=      lib/libphy/libphy_88x5123.a     \
+                                lib/libphy/libphy_88x5113.a     \
 
 ---
 
 ## 8. SFP/QSFP with integrated PHY
+There are cases where some boards do have PHY integrated with SFP/QSFP slots. Code flow is little different for this case.
 
 **TODO**
