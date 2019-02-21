@@ -180,11 +180,15 @@ void plat_octeontx_print_board_variables(void)
 			if (lmac->phy_present) {
 				phy = &lmac->phy_config;
 				if (phy->type != PHY_NONE) {
-					debug_dts("\tPHY: mdio_bus=%d, phy_addr=0x%x, type=%d switch=%d\n",
+					debug_dts("\tPHY: mdio_bus=%d\t"
+							"phy_addr=0x%x\t"
+							"type=%d switch=%d\t"
+							"port=%d\n",
 							phy->mdio_bus,
 							phy->addr,
 							phy->type,
-							phy->mux_switch);
+							phy->mux_switch,
+							phy->port);
 				}
 			} else {
 				debug_dts("\tPHY: NONE\n");
@@ -216,7 +220,7 @@ static int octeontx2_fdt_get_int32(const void *fdt, const char *prop,
 
 	reg = fdt_getprop(fdt, offset, prop, NULL);
 	if (!reg) {
-		WARN("%s: cannot find reg property for prop %s\n",
+		debug_dts("%s: cannot find property %s\n",
 				 __func__, prop);
 		return -1;
 	}
@@ -709,7 +713,7 @@ static void octeontx2_fdt_get_i2c_bus_info(const void *fdt, int offset,
 		}
 	}
 	if (i2c_info->type == I2C_BUS_NONE)
-		WARN("CGX%d.LMAC%d: couldn't find any valid I2C BUS type\n",
+		debug_dts("CGX%d.LMAC%d: couldn't find valid I2C BUS type\n",
 				cgx_idx, lmac_idx);
 }
 
@@ -1329,6 +1333,8 @@ static int octeontx2_cgx_get_phy_info(const void *fdt, int lmac_offset, int cgx_
 		phy->mdio_bus = octeontx2_fdt_get_bus(fdt,
 				phy_offset, cgx_idx,
 				lmac_idx);
+		phy->port = octeontx2_fdt_get_int32(fdt,
+					"port", phy_offset);
 
 		/* Check if the MDIO bus is behind a switch */
 		mux_offset = octeontx2_fdt_lookup_phandle(fdt,

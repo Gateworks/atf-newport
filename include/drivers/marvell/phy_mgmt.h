@@ -89,7 +89,8 @@ typedef struct phy_config {
 	int addr;	/* PHY ADDR on MDIO bus */
 	int mdio_bus;	/* SMI bus number */
 	int mux_switch; /* If controlled via switch. Ex: Analog switch on EBB9604 */
-	int media_type; /* Required for VSC8574 */
+	int media_type; /* Optional : Required for VSC8574 */
+	int port;	/* Optional : Port num for 88x5123/88x5113 */
 	int valid;	/* If valid PHY driver found */
 	int init;	/* Whether Initialization is already performed */
 	phy_drv_t *drv; /* struct for PHY driver operations */
