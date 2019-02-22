@@ -17,6 +17,7 @@
 #include <plat_scfg.h>
 #include <cgx.h>
 #include <octeontx_utils.h>
+#include <plat_otx2_configuration.h>
 #include <rvu.h>
 
 #undef DEBUG_ATF_PLAT_ECAM
@@ -58,23 +59,41 @@ static int ecam_probe_cgx(unsigned long long arg)
 
 	debug_plat_ecam("%s arg %lld\n", __func__, arg);
 
-	/* FIXME: cgx to qlm mapping.
-	 * CGX0 - QLM3 or QLM 7
-	 * CGX1 - DLM4 or DLM5 or DLM4 + 5
-	 * CGX2 - QLM6
-	 */
-	switch (arg) {
-	case 0:
-		qlm = 3;
-		qlm1 = 7;
-	break;
-	case 1:
-		qlm = 4;
-		qlm1 = 5;
-	break;
-	case 2:
-		qlm = 6;
-	break;
+	if (plat_get_altpkg() == CN93XX_PKG) {
+		/*
+		 * CGX to qlm mapping.
+		 * CGX0 - QLM3
+		 * CGX1 - DLM4 or DLM5 or DLM4 + 5
+		 */
+		switch (arg) {
+		case 0:
+			qlm = 3;
+		break;
+		case 1:
+			qlm = 4;
+			qlm1 = 5;
+		break;
+		}
+	} else {
+		/*
+		 * CGX to QLM mapping
+		 * CGX0 - QLM3 or QLM 7
+		 * CGX1 - DLM4 or DLM5 or DLM4 + 5
+		 * CGX2 - QLM6
+		 */
+		switch (arg) {
+		case 0:
+			qlm = 3;
+			qlm1 = 7;
+		break;
+		case 1:
+			qlm = 4;
+			qlm1 = 5;
+		break;
+		case 2:
+			qlm = 6;
+		break;
+		}
 	}
 
 	lnum = plat_octeontx_scfg->qlm_max_lane_num[qlm];
