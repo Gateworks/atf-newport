@@ -1,4 +1,4 @@
-# Copyright (C) 2016-2018 Marvell International Ltd.
+# Copyright (C) 2016-2019 Marvell International Ltd.
 #
 # SPDX-License-Identifier:     BSD-3-Clause
 # https://spdx.org/licenses
@@ -63,7 +63,7 @@ BL31_SOURCES		+=	plat/marvell/octeontx/otx2/aarch64/plat_octeontx_common.S	\
 				plat/marvell/octeontx/otx2/plat_scmi.c		\
 				plat/marvell/octeontx/otx2/plat_flr.c		\
 				plat/marvell/octeontx/otx2/plat_npc_mcam_profile.c	\
-				plat/marvell/octeontx/otx2/t96/plat_t96_legacy_pm_ops.c  \
+				plat/marvell/octeontx/otx2/plat_legacy_pm_ops.c		\
 				plat/marvell/octeontx/otx2/t96/plat_t96_svc.c  \
 
 ifdef NT_FW_CONFIG
