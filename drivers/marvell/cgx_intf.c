@@ -167,8 +167,8 @@ static int cgx_link_change_req(int cgx_id, int lmac_id)
 
 	if (ret == -1) {
 		err_type = cgx_get_error_type(cgx_id, lmac_id);
-		WARN("%s: %d:%d CGX error %d during link change req\n",
-			__func__, cgx_id, lmac_id, err_type);
+		debug_cgx_intf("%s: %d:%d CGX error %d\n", __func__,
+					cgx_id, lmac_id, err_type);
 	}
 
 	/* update the current link status along with any error type set */
@@ -274,8 +274,8 @@ static int cgx_link_bringup(int cgx_id, int lmac_id)
 
 		} else {
 			/* if the link is not up, return error */
-			ERROR("%s : PHY link status is down for LMAC%d\n",
-				__func__, lmac_id);
+			debug_cgx_intf("%s : %d:%d PHY link status is down\n",
+				__func__, cgx_id, lmac_id);
 			cgx_set_error_type(cgx_id, lmac_id, CGX_ERR_PHY_LINK_DOWN);
 			goto cgx_err; /* To poll for the link again */
 		}
@@ -303,7 +303,9 @@ retry_link:
 		if (cgx_xaui_set_link_up(cgx_id, lmac_id) == -1) {
 			/* if init link fails, retry */
 			if (count++ < 5) {
-				WARN("%s Init failed, retrying link\n", __func__);
+				debug_cgx_intf("%s: %d:%d Init failed,\t"
+					"retrying link\n", __func__,
+					cgx_id, lmac_id);
 				/* clear the error when retrying */
 				cgx_set_error_type(cgx_id, lmac_id, 0);
 				goto retry_link;
@@ -313,7 +315,9 @@ retry_link:
 		if (cgx_xaui_get_link(cgx_id, lmac_id, &link) == -1) {
 			/* if link is not up, retry */
 			if (count1++ < 5) {
-				WARN("%s Link down, retrying link\n", __func__);
+				debug_cgx_intf("%s %d:%d Link down,\t"
+					"retrying link\n", __func__,
+					cgx_id, lmac_id);
 				/* clear the error when retrying */
 				cgx_set_error_type(cgx_id, lmac_id, 0);
 				goto retry_link;
@@ -334,16 +338,16 @@ retry_link:
 			return 0;
 		} else {
 			/* link is down */
-			ERROR("%s: link status is down for LMAC%d\n",
-				__func__, lmac_id);
+			debug_cgx_intf("%s: %d:%d link status is down\n",
+				__func__, cgx_id, lmac_id);
 			cgx_set_error_type(cgx_id, lmac_id,
 					CGX_ERR_PHY_LINK_DOWN);
 			goto cgx_err; /* Poll timer to poll for the link */
 		}
 	} else {
-		ERROR("%s LMAC%d mode %d not configured correctly,"
+		debug_cgx_intf("%s %d:%d mode %d not configured correctly,"
 			" cannot initialize link\n",
-			__func__, lmac_id, lmac_cfg->mode);
+			__func__, cgx_id, lmac_id lmac_id, lmac_cfg->mode);
 		cgx_set_error_type(cgx_id, lmac_id,
 			CGX_ERR_LMAC_MODE_INVALID);
 		return -1;
@@ -413,7 +417,7 @@ static int cgx_link_bringdown(int cgx_id, int lmac_id)
 			return -1;
 
 	} else {
-		ERROR("%s LMAC%d mode %d not configured correctly"
+		debug_cgx_intf("%s LMAC%d mode %d not configured correctly"
 			" cannot bring down the link\n",
 			__func__, lmac_id, lmac_cfg->mode);
 		cgx_set_error_type(cgx_id, lmac_id,
@@ -500,7 +504,7 @@ static int cgx_process_requests(int cgx_id, int lmac_id)
 			CSR_WRITE(CAVM_CGXX_CMRX_SCRATCHX(
 				cgx_id, lmac_id, 0), scratchx0.u);
 
-			ERROR("%s: MKEX_PROFILE %u\n", __func__,
+			debug_cgx_intf("%s: MKEX_PROFILE %u\n", __func__,
 				(unsigned int)scratchx0.s.prfl_addr.mcam_addr);
 			break;
 
@@ -510,7 +514,7 @@ static int cgx_process_requests(int cgx_id, int lmac_id)
 			CSR_WRITE(CAVM_CGXX_CMRX_SCRATCHX(
 				cgx_id, lmac_id, 0), scratchx0.u);
 
-			ERROR("%s: MKEX_SIZE %u\n", __func__,
+			debug_cgx_intf("%s: MKEX_SIZE %u\n", __func__,
 				(unsigned int)scratchx0.s.prfl_sz.mcam_sz);
 			break;
 #endif
@@ -564,14 +568,16 @@ static int cgx_process_requests(int cgx_id, int lmac_id)
 				break;
 			/* FIXME: add support for other commands */
 			default:
-				ERROR("%s: Invalid ID %d\n", __func__, request_id);
+				debug_cgx_intf("%s: %d:%d Invalid request %d\n",
+					__func__, cgx_id, lmac_id, request_id);
 				cgx_set_error_type(cgx_id, lmac_id,
 					CGX_ERR_REQUEST_ID_INVALID);
 				break;
 			}
 		} else {
-			ERROR("%s: CGX%d LMAC%d is not enabled. Req %d ignored\n",
-				__func__, cgx_id, lmac_id, request_id);
+			debug_cgx_intf("%s: CGX%d LMAC%d is not enabled.\t"
+					"Req %d ignored\n", __func__, cgx_id,
+					lmac_id, request_id);
 			cgx_set_error_type(cgx_id, lmac_id,
 					CGX_ERR_LMAC_NOT_ENABLED);
 		}
@@ -630,15 +636,15 @@ static int cgx_handle_link_change(int cgx_id, int lmac_id,
 
 	if (!timeout) {
 		/* prev ack not clear */
-		WARN("%s %d:%d Prev ack not clear to post LINK CHANGE req\n",
-			__func__, cgx_id, lmac_id);
+		debug_cgx_intf("%s %d:%d Prev ack not clear to post\t"
+			"LINK CHANGE req\n", __func__, cgx_id, lmac_id);
 		return -1;
 	}
 
 	/* acquire the internal lock */
 	if (cgx_acquire_csr_lock(cgx_id, lmac_id) == -1) {
-		WARN("%s %d:%d lock not obtained to post LINK CHANGE req\n",
-			 __func__, cgx_id, lmac_id);
+		debug_cgx_intf("%s %d:%d lock not obtained to post\t"
+				"LINK CHANGE req\n", __func__, cgx_id, lmac_id);
 		return -1;
 	}
 
@@ -728,7 +734,7 @@ static int cgx_handle_requests_cb(int timer)
 
 			/* acquire firmware internal lock */
 			if (cgx_acquire_csr_lock(cgx, lmac) == -1) {
-				WARN("%s %d:%d lock not"
+				debug_cgx_intf("%s %d:%d lock not"
 				" obtained to process command,"
 				" wait for now\n",
 				 __func__, cgx, lmac);
@@ -753,7 +759,7 @@ static int cgx_handle_requests_cb(int timer)
 			 */
 			if (scratch1.s.own_status == CGX_OWN_FIRMWARE) {
 				if (scratch0.s.evt_sts.ack) {
-					ERROR("%s Req ignored,"
+					debug_cgx_intf("%s Req ignored,"
 						" status not cleared\n",
 						__func__);
 					cgx_set_error_type(cgx, lmac,
