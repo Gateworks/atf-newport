@@ -22,6 +22,7 @@
 #include <gicv3_setup.h>
 #include <twsi.h>
 #include <octeontx_dram.h>
+#include <plat_octeontx.h>
 #include <octeontx_legacy_pm.h>
 
 #undef GICD_SETSPI_NSR
@@ -176,7 +177,7 @@ static void octeontx_legacy_pwr_domain_on_finish(const psci_power_state_t *targe
 	octeontx_gic_cpuif_enable();
 
 	/* Setup platform quirks for secondary cores */
-	octeontx_cpu_setup();
+	plat_octeontx_cpu_setup();
 
 	/* Init FLR for secondary cores */
 	plat_flr_init();

@@ -15,4 +15,6 @@ void plat_pwrc_setup(void);
 
 unsigned int plat_get_rom_t_cnt();
 
+void plat_octeontx_cpu_setup(void);
+
 #endif /* __PLAT_OCTEONTX_H__ */

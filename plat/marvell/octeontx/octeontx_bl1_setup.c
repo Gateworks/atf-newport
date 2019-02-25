@@ -103,7 +103,7 @@ void bl1_platform_setup(void)
 
 void bl1_early_platform_setup(void)
 {
-	octeontx_cpu_setup();
+	plat_octeontx_cpu_setup();
 
 	/* Do it here. Later this region will be mapped as RO. */
 	fdt_pack(fdt_ptr);

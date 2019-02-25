@@ -84,7 +84,6 @@ void add_map_record(unsigned long addr, unsigned long size, mmap_attr_t attr);
 
 void plat_add_mmio_map(void);
 
-void octeontx_cpu_setup(void);
 extern void *fdt_ptr;
 unsigned int octeontx_calc_core_pos(unsigned long mpidr);
 void sata_ipm_quirk(void);

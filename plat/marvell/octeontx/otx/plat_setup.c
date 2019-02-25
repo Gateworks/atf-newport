@@ -114,3 +114,69 @@ void plat_octeontx_set_nt_fw_config_size(uint64_t nt_fw_config_size)
 	return;
 }
 #endif
+
+void plat_octeontx_cpu_setup(void)
+{
+	uint64_t cvmctl_el1, cvmmemctl0_el1, cvmmemctl1_el1, midr;
+
+	cvmctl_el1 = read_cvmctl_el1();
+	cvmmemctl0_el1 = read_cvmmemctl0_el1();
+	cvmmemctl1_el1 = read_cvmmemctl1_el1();
+
+	midr = read_midr();
+
+	/*
+	 * Enable CAS/CASP and v8.1 support for T83 pass >1.0,
+	 * disable for previous models.
+	 */
+	if ((MIDR_PARTNUM(midr) == T83PARTNUM)
+	    && !(IS_OCTEONTX_PASS(midr, T83PARTNUM, 1, 0))) {
+		unset_bit(cvmctl_el1, 36);  /* Enable CAS */
+		unset_bit(cvmctl_el1, 37);  /* Enable CASP */
+		set_bit(cvmctl_el1, 33);    /* Enable v8.1 */
+	} else {
+		set_bit(cvmctl_el1, 36);  /* Disable CAS */
+		set_bit(cvmctl_el1, 37);  /* Disable CASP */
+		unset_bit(cvmctl_el1, 33);    /* Disable v8.1 */
+	}
+
+	/* Enable prefetcher */
+	set_bit(cvmctl_el1, 43);   /* Ignore the bp for next line prefetcher. */
+	set_bit(cvmctl_el1, 42);   /* Use stride of 2. */
+	set_bit(cvmctl_el1, 41);   /* Enable next line prefetcher. */
+	set_bit(cvmctl_el1, 40);   /* Enable delta prefetcher. */
+
+	if (MIDR_PARTNUM(midr) == T83PARTNUM) {
+		set_bit(cvmmemctl1_el1, 3); /* Enable LMTST */
+		set_bit(cvmmemctl1_el1, 4); /* Enable SSO/PKO addr region */
+		/* Trap any accesses to nonzero node id */
+		set_bit(cvmmemctl1_el1, 5);
+
+		if (IS_OCTEONTX_PASS(midr, T83PARTNUM, 1, 0)) {
+			/* Disable SSO switch tag */
+			unset_bit(cvmmemctl1_el1, 6);
+		} else {
+			/* Enable SSO switch tag */
+			set_bit(cvmmemctl1_el1, 6);
+		}
+	}
+
+	/*
+	 * Fix up defaults from the BDK which is broken and
+	 * violates the ARM ARM.
+	 */
+
+	/* Don't reset timer on merge as that violates the ARM ARM. */
+	unset_bit(cvmmemctl0_el1, 17);
+	/* Set Write-buffer timeout for NSH entries to 218 cycles. */
+	unset_bit(cvmmemctl0_el1, 18);
+
+	write_cvmctl_el1(cvmctl_el1);
+	write_cvmmemctl0_el1(cvmmemctl0_el1);
+	write_cvmmemctl1_el1(cvmmemctl1_el1);
+
+	/* Allow CVM CACHE instructions from EL1/EL2 */
+	write_cvm_access_el1(read_cvm_access_el1() & ~(1 << 8));
+	write_cvm_access_el2(read_cvm_access_el2() & ~(1 << 8));
+	write_cvm_access_el3(read_cvm_access_el3() & ~(1 << 8));
+}

@@ -141,3 +141,71 @@ int plat_get_altpkg(void)
 	pkg_ver.u = CSR_READ(CAVM_GPIO_PKG_VER);
 	return pkg_ver.s.pkg_ver;
 }
+
+void plat_octeontx_cpu_setup(void)
+{
+	uint64_t cvmctl_el1, cvmmemctl0_el1, cvmmemctl1_el1, cvmmemctl2_el1;
+	uint64_t midr;
+
+	cvmctl_el1 = read_cvmctl_el1();
+	cvmmemctl0_el1 = read_cvmmemctl0_el1();
+	cvmmemctl1_el1 = read_cvmmemctl1_el1();
+	cvmmemctl2_el1 = read_cvmmemctl2_el1();
+	midr = read_midr();
+
+	/* Enable CAS/CASP and v8.1 support */
+	unset_bit(cvmctl_el1, 36);  /* Enable CAS */
+	unset_bit(cvmctl_el1, 37);  /* Enable CASP */
+
+	/* Enable prefetcher */
+	set_bit(cvmctl_el1, 43);   /* Ignore the bp for next line prefetcher. */
+	set_bit(cvmctl_el1, 42);   /* Use stride of 2. */
+	set_bit(cvmctl_el1, 41);   /* Enable next line prefetcher. */
+	set_bit(cvmctl_el1, 40);   /* Enable delta prefetcher. */
+
+	/*
+	 * Set cvm_ctl_el1[5] to workaround debug state execution in
+	 * incorrect EL
+	 */
+	if (IS_OCTEONTX_PASS(midr, T96PARTNUM, 1, 0))
+		set_bit(cvmctl_el1, 5);
+
+	set_bit(cvmmemctl1_el1, 3); /* Enable LMTST */
+	set_bit(cvmmemctl1_el1, 4); /* Enable SSO/PKO addr region */
+	set_bit(cvmmemctl1_el1, 5); /* Trap any accesses to nonzero node id */
+	set_bit(cvmmemctl1_el1, 6); /* Enable SSO switch tag */
+
+	if (MIDR_PARTNUM(midr) == F95PARTNUM)
+		set_bit(cvmmemctl1_el1, 58); /* Enable 128-bit access to BPHY */
+
+	/*
+	 * To improve performance memory-unit for EL1 should be configured in
+	 * different way than default.
+	 */
+	cvmmemctl2_el1 = octeontx_bit_insert(
+			cvmmemctl2_el1, MTLB0_BLOCK_VALUE,
+			MTLB0_BLOCK_SHIFT, MTLB0_BLOCK_WIDTH);
+	cvmmemctl2_el1 = octeontx_bit_insert(
+			cvmmemctl2_el1, TLBI_BLOCK_VALUE,
+			TLBI_BLOCK_SHIFT, TLBI_BLOCK_WIDTH);
+
+	/*
+	 * Fix up defaults from the BDK which is broken and
+	 * violates the ARM ARM.
+	 */
+
+	/* Don't reset timer on merge as that violates the ARM ARM. */
+	unset_bit(cvmmemctl0_el1, 17);
+	/* Set Write-buffer timeout for NSH entries to 218 cycles. */
+	unset_bit(cvmmemctl0_el1, 18);
+
+	write_cvmctl_el1(cvmctl_el1);
+	write_cvmmemctl0_el1(cvmmemctl0_el1);
+	write_cvmmemctl1_el1(cvmmemctl1_el1);
+	write_cvmmemctl2_el1(cvmmemctl2_el1);
+
+	/* Allow CVM CACHE instructions from EL1/EL2 */
+	write_cvm_access_el1(read_cvm_access_el1() & ~(1 << 8));
+	write_cvm_access_el2(read_cvm_access_el2() & ~(1 << 8));
+	write_cvm_access_el3(read_cvm_access_el3() & ~(1 << 8));
+}

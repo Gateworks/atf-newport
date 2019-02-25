@@ -19,6 +19,7 @@
 #include <gicv3_setup.h>
 #include <octeontx_security.h>
 #include <octeontx_dram.h>
+#include <plat_octeontx.h>
 
 extern void *scmi_handle;
 
@@ -89,7 +90,7 @@ static void octeontx_pwr_domain_on_finish(const psci_power_state_t *target_state
 	octeontx_gic_cpuif_enable();
 
 	/* Apply erratas on secondary cores */
-	octeontx_cpu_setup();
+	plat_octeontx_cpu_setup();
 
 	/* Init FLR for secondary cores */
 	plat_flr_init();
