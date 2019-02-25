@@ -34,6 +34,8 @@
 #define CLASS_CODE_MASK	0xffffff
 #define RVU_CLASS_CODE	0x020000
 #define CPT_CLASS_CODE	0x108000
+/* It is Generic System Peripheral with subclass System peripheral */
+#define GSP_CLASS_CODE	0x088000
 
 #define MAX_RVU_PFS			16
 #define MAX_RVU_VFS_PER_PF		128

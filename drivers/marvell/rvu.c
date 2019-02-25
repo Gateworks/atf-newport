@@ -109,7 +109,7 @@ static void octeontx_init_rvu_fixed(int *hwvf, int rvu, int bfdt_index, int has_
 			CAVM_PCC_DEV_IDL_E_SW_RVU_SSO_TIM_PF & DEVID_MASK;
 		rvu_dev[rvu].pci.vf_devid =
 			CAVM_PCC_DEV_IDL_E_SW_RVU_SSO_TIM_VF & DEVID_MASK;
-		rvu_dev[rvu].pci.class_code = RVU_CLASS_CODE & CLASS_CODE_MASK;
+		rvu_dev[rvu].pci.class_code = GSP_CLASS_CODE & CLASS_CODE_MASK;
 		rvu_dev[rvu].vf_num_msix_vec = has_vfs ?
 					(RVU_VF_INT_VEC_COUNT +
 					octeontx_get_msix_for_sso_tim(0)) : 0;
@@ -119,7 +119,7 @@ static void octeontx_init_rvu_fixed(int *hwvf, int rvu, int bfdt_index, int has_
 			CAVM_PCC_DEV_IDL_E_SW_RVU_NPA_PF & DEVID_MASK;
 		rvu_dev[rvu].pci.vf_devid =
 			CAVM_PCC_DEV_IDL_E_SW_RVU_NPA_VF & DEVID_MASK;
-		rvu_dev[rvu].pci.class_code = RVU_CLASS_CODE & CLASS_CODE_MASK;
+		rvu_dev[rvu].pci.class_code = GSP_CLASS_CODE & CLASS_CODE_MASK;
 		rvu_dev[rvu].vf_num_msix_vec = has_vfs ?
 					(RVU_VF_INT_VEC_COUNT +
 					 octeontx_get_msix_for_npa(0)) : 0;
