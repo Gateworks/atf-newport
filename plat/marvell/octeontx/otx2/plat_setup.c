@@ -145,9 +145,10 @@ int plat_get_altpkg(void)
 void plat_octeontx_cpu_setup(void)
 {
 	uint64_t cvmctl_el1, cvmmemctl0_el1, cvmmemctl1_el1, cvmmemctl2_el1;
-	uint64_t midr;
+	uint64_t cvmctl2_el1, midr;
 
 	cvmctl_el1 = read_cvmctl_el1();
+	cvmctl2_el1 = read_cvmctl2_el1();
 	cvmmemctl0_el1 = read_cvmmemctl0_el1();
 	cvmmemctl1_el1 = read_cvmmemctl1_el1();
 	cvmmemctl2_el1 = read_cvmmemctl2_el1();
@@ -162,6 +163,10 @@ void plat_octeontx_cpu_setup(void)
 	set_bit(cvmctl_el1, 42);   /* Use stride of 2. */
 	set_bit(cvmctl_el1, 41);   /* Enable next line prefetcher. */
 	set_bit(cvmctl_el1, 40);   /* Enable delta prefetcher. */
+
+	/* Errata AP-36579 */
+	set_bit(cvmctl2_el1, 2);   /* cvmctl2_el1[3:2] = REDUCE_MAP_BANDWIDTH */
+	set_bit(cvmctl2_el1, 3);
 
 	/*
 	 * Set cvm_ctl_el1[5] to workaround debug state execution in
@@ -200,6 +205,7 @@ void plat_octeontx_cpu_setup(void)
 	unset_bit(cvmmemctl0_el1, 18);
 
 	write_cvmctl_el1(cvmctl_el1);
+	write_cvmctl_el1(cvmctl2_el1);
 	write_cvmmemctl0_el1(cvmmemctl0_el1);
 	write_cvmmemctl1_el1(cvmmemctl1_el1);
 	write_cvmmemctl2_el1(cvmmemctl2_el1);
