@@ -1,0 +1,135 @@
+0.
+Only files placed under /drivers directory are considered in this file as "drivers".
+In this file common directory is /plat/marvell/octeontx
+Family directories are ${common directory}/otx and ${common direcotry}/otx2
+Platform directories are otx/t81, otx/t83, otx2/f95 and otx2/t96
+
+1.       Brief description of directory tree
+/drivers/marvell                        -- drivers source code
+/include/drivers/marvell                -- API for drivers
+/include/plat/marvell/octeontx          -- API for code shared by all OcteonTX families
+/include/plat/marvell/octeontx/otx      -- API for code shared by CN8xxx
+/include/plat/marvell/octeontx/otx2     -- API for code shared by CN9xxx
+/plat/marvell/octeontx                  -- source code common for OcteonTX families
+/plat/marvell/octeontx/otx              -- source code common for CN8xxx
+/plat/marvell/octeontx/otx/t81          -- source code specific for CN81xx
+/plat/marvell/octeontx/otx/t81/include  -- API for CN81xx specific code
+/plat/marvell/octeontx/otx/t83          -- source code specific for CN83xx
+/plat/marvell/octeontx/otx/t83/include  -- API for CN83xx specific code
+/plat/marvell/octeontx/otx2             -- source code common for CN9xxx
+/plat/marvell/octeontx/otx2/f95         -- source code specific for CNF95xx
+/plat/marvell/octeontx/otx2/f95/include -- API for CNF95xx specific code
+/plat/marvell/octeontx/otx2/t96         -- source code specific for CN96xx
+/plat/marvell/octeontx/otx2/t96/include -- API for CN96xx specific code
+
+1.1.     Additional subdirectories
+1.1.1.   /plat/marvell/octeontx/
+1.1.1.1. aarch64
+On every level following from /plat/marvell/octeontx, aarch64 directory may appear.
+This directory contains assembler sources.
+
+1.1.1.2. Others
+Some complex feutures may require greater separation then one source file.
+This is rare case but it is allowed to group source files in subdirectories.
+
+1.1.2.   /drivers/marvell
+1.1.2.1. Common set of drivers for different platforms
+There should be crated subdirectory if there is many implementations for the same device.
+It may be case, when implementation of driver differs between platforms in many places
+and it will be hard to put approperiate platform callbacks that will generalize driver.
+Then instance of driver for every platform should be placed in deticated subdirectory.
+If API for these drivers is common then only one header file should be placed in
+/include/drivers/marvell directory.
+If API differs between drivers, then under /include/drivers/marvell should be
+created subdirectory with the same name as that used in /drivers/marvell.
+
+1.1.2.2. Complex driver
+If driver is complex and need more than one source file, than all of files should
+be placed in new subdirectory. API for this driver still should be in one header file
+that will be placed under /include/drivers/marvell.
+
+
+2.       File names
+Common prefix is "octeontx_". It should be used if any of following rules apply.
+
+2.1.     Drivers
+Drivers has no prefix in name. Inside file, after license header there should be,
+comment that in one sentence describe driver and points for which platform, family
+or device is implemented.
+
+2.2.     Header files
+Header file should has the same name as source file where functions defined in
+this header are implemented.
+
+2.2.1.   API used by more generic level
+Exception of rule in 2.2. is when header contains definition of functions that
+will be implemented on more specified level then header it self is placed.
+(E.g. header is in /include/plat/marvell/octeontx and there are two implementations in
+/plat/marvell/octeontx/otx and /plat/marvell/octeontx/otx2).
+In that case functions from this header could be implemented in more than one file.
+E.g.
+  /include/plat/marvell/octeontx/head.h define void a() and void b()
+  a() may be implemented in /plat/marvell/octeontx/otx2/a_file.c and b() in
+  /plat/marvell/octeontx/otx2/b_file.c
+
+2.3.     /plat/marvell/octeontx
+2.3.1    otx and otx2
+Files under /plat/marvell/octeontx/otx and /plat/marvell/octeontx/otx2
+should have "plat_" prefix.
+
+
+3.       Functions names
+3.1.     Static functions
+Functions that are static should have prefix common for all static functions
+in specific file.
+E.g.
+  File /plat/marvell/octeontx/otx2/plat_rvu.c:
+  static int rvu_get_msix_for_cpt()
+  where "rvu_" is prefix.
+
+3.2.     Driver functions
+All functions across one driver should have the same prefix. This prefix is
+similar to prefixes from 3.1.
+
+3.3.     Common level functions
+Only functions defined in /include/plat/marvell/octeontx/*.h and implemented in
+/plat/marvell/octeontx/*.c (or subdirectory that is not family directory) are
+consider as common level functions.
+All of these functions should have "octeontx_" prefix.
+
+3.3.1.   Weak functions in common API
+There are allowed functions that not follow 3.3. only if they are weak implementations
+of functions described in 3.4. and 3.5.
+
+3.4.     Family specific functions in common API
+Only functions defined in /include/plat/marvell/octeontx/*.h and implemented in
+family directory are consider as family specific functions implementing common API.
+These functions should have "plat_octeontx_" prefix.
+
+3.5.     Platform specific functions in common API
+Only functions defined in /include/plat/marvell/octeontx/*.h and implemented in
+/plat/marvell/octeontx/{platform directory}/*.c are consider as platform specific
+functions implementing common API.
+These functions should have same prefix as family specific funcitons in common API.
+
+3.6.     Family level functions
+Only functions defined in /include/plat/marvell/octeontx/{famiy}/*.h and implemented in
+family directory, where {family} is otx or otx2, are consider as family level functions.
+These functions should have prefix "{famiy}_" ("otx_" for CN8xxx and "otx2_" for CN9xxx).
+
+3.6.1.   Weak functions in family API
+There are allowed functions that not follow 3.6. only if they are weak implementations
+of functions described in 3.7.
+
+3.7.     Platform specific functions in family API
+Only functions defined in /include/plat/marvell/octeontx/{famiy}/*.h and implemented in
+/plat/marvell/octeontx/{platform directory}/*.c, where {family} is otx or otx2,
+are consider as platform specific funcitons implementing family API.
+These functions should have prefix "plat_{family}_" ("plat_otx_" for CN8xxx and
+"plat_otx2_" for CN9xxx).
+
+3.8.     Platform level functions
+Only functions defined in /plat/marvell/octeontx/{platform directory}/include/*.h
+and implemented in /plat/marvell/octeontx/{platform directory}/*.c are consider
+platform level functions.
+These functions should have prefix same as platform (t81, t83, f95 or t96).
