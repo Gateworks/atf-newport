@@ -1,0 +1,72 @@
+Currently we have three levels of code:
+- Common
+- Family
+- Platform
+
+Additionaly we have drivers which resides in:
+/drivers/marvell/octeontx
+
+Common code reside in:
+/plat/marvell/octeontx
+
+We have two families CN8xxx and CN9xxx.
+CN8xxx code reside in:
+/plat/marvell/octeontx/otx
+
+CN9xxx code reside in:
+/plat/marvell/octeontx/otx
+
+We have four platforms: T81, T83, F95 and T96.
+T81 code reside in:
+/plat/marvell/octeontx/otx/t81
+
+T83 code reside in:
+/plat/marvell/octeontx/otx/t83
+
+F95 code reside in:
+/plat/marvell/octeontx/otx2/f95
+
+T96 code reside in:
+/plat/marvell/octeontx/otx2/t96
+
+Common code may call:
+- functions implemented in common code
+- functions defined in headers at common level
+Common code may include:
+- header at common level
+- header from family and platform levels only if it not contains functions
+  definitions (e.g. platform_def.h). This header has to be defined for all families/platforms.
+
+Family code may call:
+- functions implemented in family level
+- funcitons defined in headers at family level
+Family code may include:
+- header at family level
+- header from platform level only if it not contains functions definitions
+  (e.g. platform_def.h). This header has to be defined for all platforms that are
+  part of this family.
+- header from common level only in file which provide implementation of functions
+  from that header.
+
+Platform code may call:
+- functions implemented in platform level
+Platform code may include:
+- header at platform level
+- header from common or family level only in file which provide implementation of
+  functions from that header.
+
+Because of common API new platform need to have:
+/plat/marvell/octeontx/{family}/{new_plat}/include/platform_def.h
+/plat/marvell/octeontx/{family}/{new_plat}/include/platform_irqs_def.h
+/plat/marvell/octeontx/{family}/{new_plat}/include/platform_scfg.h
+/plat/marvell/octeontx/{family}/{new_plat}/include/platform_svc.h
+New platform needs to implement functions from:
+/include/plat/marvell/octeontx/octeontx_plat.h
+/include/plats/marvell/octeontx/octeontx_plat_configuration.h
+/include/plat/marvell/octeontx/octeontx_common.h
+If any of this functions is not implemented at family level, it will be implemented in:
+/plat/marvell/octeontx/{family}/{new_plat}/plat_{new_plat}_setup.c
+
+New platform needs to implement ecam_platform_defs plat_ops in following file:
+/plat/marvell/octeontx/{family}/{new_plat}/plat_{new_plat}_ecam.c
+
