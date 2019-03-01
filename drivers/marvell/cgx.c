@@ -283,7 +283,7 @@ static int cgx_get_usxgmii_type(int cgx_id, int lmac_id)
 			(type > CAVM_CGX_USXGMII_TYPE_E_QXGMII_10G)) {
 		/* FIXME: set to default 10G single port sub type */
 		type = CAVM_CGX_USXGMII_TYPE_E_SXGMII_10G;
-		debug_cgx("%s: invalid USXGMII sub type %d\n", __func__, type);
+		WARN("%s: invalid USXGMII sub type %d\n", __func__, type);
 	}
 	return type;
 }
@@ -330,7 +330,7 @@ static void cgx_lmac_init(int cgx_id, int lmac_id)
 	 * check if mode is programmed, if not, return
 	 */
 	if ((lmac->mode == -1) || (lmac->lane_to_sds == -1)) {
-		debug_cgx("%s: %d:%d mode/lane_to_sds not programmed\n",
+		ERROR("%s:mode/lane_to_sds not programmed for CGX%dLMAC%d\n",
 					__func__, cgx_id, lmac_id);
 		return;
 	}
@@ -395,7 +395,7 @@ static void cgx_lmac_init(int cgx_id, int lmac_id)
 		cgx_xaui_hw_init(cgx_id, lmac_id);
 		break;
 	default:
-		debug_cgx("%s invalid mode %d\n", __func__, lmac->mode);
+		ERROR("%s invalid mode %d\n", __func__, lmac->mode);
 		break;
 	}
 	/* Set the channel back pressure mask */
@@ -785,8 +785,7 @@ static int cgx_usxgmii_spux_reset(int cgx_id, int lmac_id, int an_en)
 		if (cgx_poll_for_csr(CAVM_CGXX_SPUX_USX_AN_CONTROL(
 					cgx_id, lmac_id),
 					CGX_SPUX_USX_AN_RESET_MASK, 0, -1)) {
-			debug_cgx("%s: %d:%d SPUX USXGMII AN reset not\t"
-					"complete\n",
+			ERROR("%s: %d:%d SPUX USXGMII AN reset not complete\n",
 					__func__, cgx_id, lmac_id);
 			cgx_set_error_type(cgx_id, lmac_id,
 				CGX_ERR_SPUX_USX_AN_RESET_FAIL);
@@ -799,7 +798,7 @@ static int cgx_usxgmii_spux_reset(int cgx_id, int lmac_id, int an_en)
 
 		if (cgx_poll_for_csr(CAVM_CGXX_SPUX_CONTROL1(cgx_id,
 				lmac_id), CGX_SPUX_RESET_MASK, 0, -1)) {
-			debug_cgx("%s: %d:%d SPUX reset not complete\n",
+			ERROR("%s: %d:%d SPUX reset not complete\n",
 					__func__, cgx_id, lmac_id);
 			cgx_set_error_type(cgx_id, lmac_id,
 				CGX_ERR_SPUX_RESET_FAIL);
@@ -939,7 +938,7 @@ static int cgx_complete_sw_an(int cgx_id, int lmac_id)
 	if (spux_an_ctl.s.an_arb_link_chk_en) {
 		if (cgx_poll_for_csr(CAVM_CGXX_SPUX_AN_STATUS(cgx_id, lmac_id),
 			CGX_SPUX_AN_CPT_MASK, 1, CGX_POLL_AN_STATUS)) {
-			debug_cgx("%s: %d:%d AN not complete\n",
+			WARN("%s: %d:%d AN not complete\n",
 				__func__, cgx_id, lmac_id);
 			/* restart AN */
 			cgx_restart_an(cgx_id, lmac_id);
@@ -1086,7 +1085,7 @@ int cgx_sgmii_check_link(int cgx_id, int lmac_id)
 
 	if (cgx_poll_for_csr(CAVM_CGXX_GMP_PCS_MRX_STATUS(
 		cgx_id, lmac_id), CGX_GMP_PCS_AN_CPT_MASK, 1, -1)) {
-		debug_cgx("%s: %d:%d SGMII AN not complete 0x%llx\n",
+		ERROR("%s: %d:%d SGMII AN not complete 0x%llx\n",
 			__func__, cgx_id, lmac_id,
 			CSR_READ(CAVM_CGXX_GMP_PCS_MRX_STATUS(
 					cgx_id, lmac_id)));
@@ -1102,7 +1101,7 @@ int cgx_sgmii_check_link(int cgx_id, int lmac_id)
 
 	if (cgx_poll_for_csr(CAVM_CGXX_GMP_PCS_MRX_STATUS(
 		cgx_id, lmac_id), CGX_GMP_PCS_LNK_ST_MASK, 1, -1)) {
-		debug_cgx("%s: %d:%d SGMII/QSGMII Link is not up 0x%llx\n",
+		ERROR("%s: %d:%d SGMII/QSGMII Link is not up 0x%llx\n",
 				__func__, cgx_id, lmac_id,
 				CSR_READ(CAVM_CGXX_GMP_PCS_MRX_STATUS(
 				cgx_id, lmac_id)));
@@ -1208,7 +1207,7 @@ int cgx_xaui_init_link(int cgx_id, int lmac_id)
 			if (cgx_poll_for_csr(CAVM_CGXX_SPUX_CONTROL1(
 					cgx_id, lmac_id),
 					CGX_SPUX_RESET_MASK, 0, -1)) {
-				debug_cgx("%s: %d:%d SPUX reset not complete\n",
+				ERROR("%s: %d:%d SPUX reset not complete\n",
 					__func__, cgx_id, lmac_id);
 				cgx_set_error_type(cgx_id, lmac_id,
 					CGX_ERR_SPUX_RESET_FAIL);
@@ -1221,8 +1220,7 @@ int cgx_xaui_init_link(int cgx_id, int lmac_id)
 			if (cgx_poll_for_csr(CAVM_CGXX_SPUX_AN_CONTROL(
 					cgx_id, lmac_id),
 					CGX_SPUX_AN_RESET_MASK, 0, -1)) {
-				debug_cgx("%s: %d:%d SPUX AN reset not\t"
-					"complete\n",
+				ERROR("%s: %d:%d SPUX AN reset not complete\n",
 					__func__, cgx_id, lmac_id);
 				cgx_set_error_type(cgx_id, lmac_id,
 						CGX_ERR_SPUX_AN_RESET_FAIL);
@@ -1268,9 +1266,8 @@ int cgx_xaui_init_link(int cgx_id, int lmac_id)
 	/* enable link training, if applicable */
 	if (lmac->use_training) {
 		if (lmac->mode == CAVM_CGX_LMAC_TYPES_E_USXGMII) {
-			debug_cgx("%s: %d:%d UXSGMII doesn't support\t"
-					"training\n", __func__, cgx_id,
-					lmac_id);
+			ERROR("%s: %d:%d UXSGMII doesn't support training\n",
+					__func__, cgx_id, lmac_id);
 			cgx_set_error_type(cgx_id, lmac_id,
 					CGX_ERR_TRAINING_FAIL);
 			return -1;
@@ -1408,8 +1405,8 @@ int cgx_xaui_set_link_up(int cgx_id, int lmac_id)
 					__func__, cgx_id, lmac_id);
 			} else {
 				/* Training failed, restart */
-				debug_cgx("%s: %d:%d Restarting Training\t"
-					"0x%llx\n", __func__, cgx_id, lmac_id,
+				WARN("%s: %d:%d Restarting Training 0x%llx\n",
+					__func__, cgx_id, lmac_id,
 					CSR_READ(CAVM_CGXX_SPUX_INT(
 						cgx_id, lmac_id)));
 				cgx_restart_training(cgx_id, lmac_id);
@@ -1422,9 +1419,8 @@ int cgx_xaui_set_link_up(int cgx_id, int lmac_id)
 		/* Perform RX EQU for non-KR interfaces and for the link
 		 * speed >= 10Gbaud - XAUI/XLAUI/XFI
 		 */
-		if (0) {
-		//if (cgx_rx_equalization(cgx_id, lmac_id) == -1) {
-			debug_cgx("%s: %d:%d RX EQU failed\n", __func__,
+		if (cgx_rx_equalization(cgx_id, lmac_id) == -1) {
+			ERROR("%s: %d:%d RX EQU failed\n", __func__,
 					cgx_id, lmac_id);
 			cgx_set_error_type(cgx_id, lmac_id,
 				CGX_ERR_RX_EQU_FAIL);
@@ -1950,8 +1946,8 @@ void cgx_lmac_init_link(int cgx_id, int lmac_id)
 	case CAVM_CGX_LMAC_TYPES_E_SGMII:
 	case CAVM_CGX_LMAC_TYPES_E_QSGMII:
 		if (cgx_sgmii_set_link_up(cgx_id, lmac_id) != 0) {
-			debug_cgx("%s: %d:%d SGMII link initialization\t"
-				"failed\n", __func__, cgx_id, lmac_id);
+			WARN("%s: %d:%d SGMII link initialization failed\n",
+				__func__, cgx_id, lmac_id);
 			break;
 		}
 		break;
@@ -1964,13 +1960,13 @@ void cgx_lmac_init_link(int cgx_id, int lmac_id)
 	case CAVM_CGX_LMAC_TYPES_E_HUNDREDG_R:
 	case CAVM_CGX_LMAC_TYPES_E_USXGMII:
 		if (cgx_xaui_init_link(cgx_id, lmac_id) != 0) {
-			debug_cgx("%s: %d:%d XAUI link initialization failed\n",
+			WARN("%s: %d:%d XAUI link initialization failed\n",
 				__func__, cgx_id, lmac_id);
 			break;
 		}
 		break;
 	default:
-		debug_cgx("%s invalid mode %d\n", __func__, lmac->mode);
+		ERROR("%s invalid mode %d\n", __func__, lmac->mode);
 		break;
 	}
 }
