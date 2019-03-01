@@ -666,10 +666,11 @@ static int cgx_poll_for_link_cb(int timer)
 			lmac_ctx = &lmac_context[cgx][lmac];
 
 			if (lmac_ctx->s.link_enable) {
-				/* check if PHY is present, if not
+				/* check if PHY/SFP slot is present, if not
 				 * return the default link status
 				 */
-				if (!lmac_cfg->phy_present) {
+				if ((!lmac_cfg->phy_present) &&
+					(!lmac_cfg->sfp_slot)) {
 #if 0
 					debug_cgx_intf("%s:%d:%d PHY not present\t", __func__, cgx, lmac);
 					debug_cgx_intf("link %d speed %d duplex %d\n",
@@ -679,7 +680,7 @@ static int cgx_poll_for_link_cb(int timer)
 #endif
 					continue;
 				}
-				/* if PHY is present */
+				/* if PHY/SFP slot is present */
 #if 0
 				debug_cgx_intf("%s:%d:%d poll for link status\n",
 					__func__, cgx, lmac);
