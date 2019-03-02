@@ -240,10 +240,6 @@ static int cgx_link_bringup(int cgx_id, int lmac_id)
 			link.s.full_duplex = 1;
 			link.s.speed = CGX_LINK_1G;
 		} else {
-			/* Configure the PHY. For ex: if need to
-			 * set in particular mode
-			 */
-			phy_config(cgx_id, lmac_id);
 			/* Get the link status */
 			phy_get_link_status(cgx_id, lmac_id, &link);
 		}
@@ -289,10 +285,6 @@ static int cgx_link_bringup(int cgx_id, int lmac_id)
 		(lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_USXGMII)) {
 
 		if (lmac_cfg->phy_present) {
-			/* Configure the PHY. For ex: if need to
-			 * set in particular mode
-			 */
-			phy_config(cgx_id, lmac_id);
 			/* Get the link status */
 			phy_get_link_status(cgx_id, lmac_id, &link);
 			/* save the link status to program the rate */
@@ -839,6 +831,12 @@ void cgx_fw_intf_init(void)
 					}
 					/* Enable LMAC */
 					cgx_lmac_init_link(cgx, lmac);
+					/* If PHY is initialized, configure
+					 * the PHY. For ex: to set in
+					 * particular mode
+					 */
+					if (lmac_cfg->phy_config.init)
+						phy_config(cgx, lmac);
 				}
 			}
 		} else {
