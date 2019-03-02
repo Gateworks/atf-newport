@@ -39,6 +39,8 @@ BL1_SOURCES		+=	plat/marvell/octeontx/otx2/aarch64/plat_octeontx_common.S	\
 BL2_SOURCES		+=	plat/marvell/octeontx/otx2/t96/plat_t96_ecam.c		\
 				drivers/marvell/rvu.c		\
 
+BL31_LIBS               +=      lib/libphy/libphy_88x5113.a     \
+
 BL31_SOURCES		+=	plat/marvell/octeontx/otx2/aarch64/plat_octeontx_common.S	\
 				plat/marvell/octeontx/otx2/aarch64/plat_helpers.S	\
 				plat/marvell/octeontx/otx2/plat_topology.c		\
