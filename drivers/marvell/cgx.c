@@ -712,6 +712,10 @@ static void cgx_set_fec(int cgx_id, int lmac_id, int req_fec)
 {
 	int val = 0;
 	cgx_lmac_config_t *lmac;
+	cavm_cgxx_spux_rx_mrk_cnt_t rx_mrk_cnt;
+	cavm_cgxx_spux_tx_mrk_cnt_t tx_mrk_cnt;
+	int mrk_cnt = 0x3FFF;
+	int ram_mrk_cnt;
 
 	debug_cgx("%s %d:%d fec type %d\n", __func__, cgx_id,
 							lmac_id, req_fec);
@@ -761,17 +765,63 @@ static void cgx_set_fec(int cgx_id, int lmac_id, int req_fec)
 
 		/* FIXME: for now disable FEC by default */
 		val = 0;
-		CAVM_MODIFY_CGX_CSR(cavm_cgxx_spux_fec_control_t,
-					CAVM_CGXX_SPUX_FEC_CONTROL(cgx_id, lmac_id),
-					fec_en, val);
+		/* update the board config structure with FEC set */
+		lmac->fec = val;
 	} else {
 		/* If user has requested specific FEC type,
 		 * configure the FEC as such
 		 */
-		CAVM_MODIFY_CGX_CSR(cavm_cgxx_spux_fec_control_t,
-				CAVM_CGXX_SPUX_FEC_CONTROL(cgx_id, lmac_id),
-				fec_en, req_fec);
+		val = req_fec;
 	}
+	CAVM_MODIFY_CGX_CSR(cavm_cgxx_spux_fec_control_t,
+				CAVM_CGXX_SPUX_FEC_CONTROL(cgx_id, lmac_id),
+				fec_en, val);
+	/* Program Tx/Rx marker count based on LMAC/FEC settings */
+	switch (lmac->mode) {
+	case CAVM_CGX_LMAC_TYPES_E_TWENTYFIVEG_R:
+		if (val == CGX_FEC_RS)
+			mrk_cnt = 0x13FFC;
+		else
+			mrk_cnt = 0x3FFF;
+	break;
+	case CAVM_CGX_LMAC_TYPES_E_FIFTYG_R:
+		if (val == CGX_FEC_RS)
+			mrk_cnt = 0x4FFF;
+		else
+			mrk_cnt = 0x3FFF;
+		break;
+	case CAVM_CGX_LMAC_TYPES_E_USXGMII:
+		if (val == CGX_FEC_RS)
+			mrk_cnt = 0x13FFC;
+		else
+			mrk_cnt = 0x4010;
+		break;
+	default:
+		/* All other modes with/wo FEC */
+		mrk_cnt = 0x3FFF;
+	break;
+	}
+
+	/* Rapid marker alignment, default is 15: for 100G, it should be 7 */
+	ram_mrk_cnt = (lmac->mode == CAVM_CGX_LMAC_TYPES_E_HUNDREDG_R) ? 7 : 15;
+	debug_cgx("%s: mode %d fec %d program mrk_cnt 0x%x\t"
+		"ram_mrk_cnt 0x%x\n", __func__, lmac->mode, val, mrk_cnt,
+			ram_mrk_cnt);
+
+	rx_mrk_cnt.u = CSR_READ(CAVM_CGXX_SPUX_RX_MRK_CNT(cgx_id,
+						lmac_id));
+	rx_mrk_cnt.s.ram_mrk_cnt = ram_mrk_cnt;
+	rx_mrk_cnt.s.mrk_cnt = mrk_cnt;
+
+	CSR_WRITE(CAVM_CGXX_SPUX_RX_MRK_CNT(cgx_id, lmac_id),
+				rx_mrk_cnt.u);
+
+	tx_mrk_cnt.u = CSR_READ(CAVM_CGXX_SPUX_TX_MRK_CNT(cgx_id,
+						lmac_id));
+	tx_mrk_cnt.s.ram_mrk_cnt = ram_mrk_cnt;
+	tx_mrk_cnt.s.mrk_cnt = mrk_cnt;
+	CSR_WRITE(CAVM_CGXX_SPUX_TX_MRK_CNT(cgx_id, lmac_id),
+			tx_mrk_cnt.u);
 }
 
 static int cgx_usxgmii_spux_reset(int cgx_id, int lmac_id, int an_en)
