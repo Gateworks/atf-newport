@@ -995,8 +995,8 @@ static void octeontx2_lmac_num_touse(int mode_idx, int *cnt, int *touse)
 	case CAVM_QLM_MODE_XAUI:
 	case CAVM_QLM_MODE_XLAUI:
 	case CAVM_QLM_MODE_XLAUI_C2M:
-	case CAVM_QLM_MODE_40GAUI_C2C:
-	case CAVM_QLM_MODE_40GAUI_C2M:
+	case CAVM_QLM_MODE_40GAUI_2_C2C:
+	case CAVM_QLM_MODE_40GAUI_2_C2M:
 	case CAVM_QLM_MODE_40G_KR4:
 	case CAVM_QLM_MODE_CAUI_4_C2C:
 	case CAVM_QLM_MODE_CAUI_4_C2M:
@@ -1250,8 +1250,8 @@ static int octeontx2_fill_cgx_struct(int qlm, int lane, int mode_idx)
 		case CAVM_QLM_MODE_20GAUI_C2M:
 		case CAVM_QLM_MODE_25GAUI_C2C:
 		case CAVM_QLM_MODE_25GAUI_C2M:
-		case CAVM_QLM_MODE_40GAUI_C2C:
-		case CAVM_QLM_MODE_40GAUI_C2M:
+		case CAVM_QLM_MODE_40GAUI_2_C2C:
+		case CAVM_QLM_MODE_40GAUI_2_C2M:
 		case CAVM_QLM_MODE_50GAUI_2_C2C:
 		case CAVM_QLM_MODE_50GAUI_2_C2M:
 		case CAVM_QLM_MODE_CAUI_4_C2C:
