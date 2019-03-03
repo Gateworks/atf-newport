@@ -31,13 +31,15 @@
 
 
 /* 5113 includes */
+#include "mxdApiRegs.h"
 #include "mxdApiTypes.h"
+#include "mxdAPI.h"
 #include "mxdHwCntl.h"
 #include "mxdUtils.h"
-#include "mxdApiRegs.h"
 #include "mxdFwDownload.h"
 #include "mxdInitialization.h"
 #include "mxdHwSerdesCntl.h"
+#include "mxdAPIInternal.h"
 
 /* define DEBUG_ATF_MARVELL_PHY_DRIVER to enable debug logs */
 #undef DEBUG_ATF_MARVELL_PHY_DRIVER	/* Marvell PHY Driver logs */
@@ -49,7 +51,23 @@
 #endif
 
 MCD_DEV marvell_5123_priv;
-MXD_DEV marvell_5113_priv;
+typedef struct {
+	MXD_DEV mxddev;
+	struct {
+		int set_20g;
+		int use_an;
+		int completed_an;
+		int cmain_host;
+		int cpre_host;
+		int cpost_host;
+		int cmain_line;
+		int cpre_line;
+		int cpost_line;
+	} port[4];
+} phy_mxd_priv_t;
+
+/* Allow multiple instances of PHY driver to run on different QLMs */
+phy_mxd_priv_t marvell_5113_priv[MAX_CGX];
 
 static MCD_STATUS mcd_read_mdio(MCD_DEV_PTR pDev, MCD_U16 mdioPort, MCD_U16 mmd, MCD_U16 reg, MCD_U16 *value)
 {
@@ -67,15 +85,17 @@ static MCD_STATUS mcd_write_mdio(MCD_DEV_PTR pDev, MCD_U16 mdioPort, MCD_U16 mmd
 
 static MXD_STATUS mxd_read_mdio(MXD_DEV_PTR pDev, MXD_U16 mdioPort, MXD_U16 mmd, MXD_U16 reg, MXD_U16 *value)
 {
+	int read;
 	phy_config_t *phy = pDev->hostContext;
-	*value = phy_mdio_read(phy, CLAUSE45, mmd, reg);
+	read = smi_read(phy->mdio_bus, CLAUSE45, phy->addr, mmd, reg);
+	*value = read;
 	return MXD_OK;
 }
 
 static MXD_STATUS mxd_write_mdio(MXD_DEV_PTR pDev, MXD_U16 mdioPort, MXD_U16 mmd, MXD_U16 reg, MXD_U16 value)
 {
 	phy_config_t *phy = pDev->hostContext;
-	phy_mdio_write(phy, mmd, CLAUSE45, reg, value);
+	smi_write(phy->mdio_bus, phy->addr, mmd, CLAUSE45, reg, value);
 	return MXD_OK;
 }
 
@@ -244,28 +264,321 @@ void phy_marvell_5113_probe(int cgx_id, int lmac_id)
 {
 	MXD_STATUS status;
 	phy_config_t *phy;
+	cgx_lmac_config_t *lmac;
 	
-	debug_phy_driver("%s: %d:%d\n", __func__, cgx_id, lmac_id);
-
-	return;
 	phy = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id].phy_config;
-	phy->priv = (void *)&marvell_5113_priv;
+	debug_phy_driver("%s: %d:%d addr 0x%x\n", __func__, cgx_id,
+						lmac_id, phy->addr);
+	phy->priv = (void *)&marvell_5113_priv[cgx_id];
 
 	status = mxdInitDriver(mxd_read_mdio, mxd_write_mdio, phy->addr,
 				NULL, 0,
 				NULL, 0,
 				NULL, 0,
-				phy, phy->priv);
+				phy, &marvell_5113_priv[cgx_id].mxddev);
 	if (status != MXD_OK) {
-		ERROR("%s: %d:%d MARVELL 5113 PHY driver Initialization failed\n",
-			 __func__, cgx_id, lmac_id);
+		ERROR("%s PHY driver init failed 0x%lx\n", __func__, status);
+		return;
 	}
+
+	/* If PHY programming is successful, make the PHY initialized
+	 * on other LMACs as well
+	 */
+	for (int i = 0; i < MAX_LMAC_PER_CGX; i++) {
+		lmac = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[i];
+		lmac->phy_config.init = 1;
+	}
+	printf("%s: cgx%d 5113 PHY init successfully\n", __func__,
+						cgx_id);
 }
+
+#define MXD_LINE_SIDE  3
+#define MXD_HOST_SIDE  4
 
 /* To set the operating mode of the PHY if required */
 void phy_marvell_5113_config(int cgx_id, int lmac_id)
 {
+	int port;
+	cgx_lmac_config_t *lmac_cfg;
+	phy_config_t *phy;
+	int host_mode = MXD_P10LN;
+	int line_mode = MXD_P10LN;
+	const char *mode_str = "10G-BASE-R";
+	MXD_U16 result = 0;
+	MXD_BOOL forceReConfig = MXD_FALSE;
+	MXD_STATUS status;
+	MXD_U16 swReset = 1;
+	MXD_16 preCursor;
+	MXD_16 attenuation;
+	MXD_16 postCursor;
+
 	debug_phy_driver("%s: %d:%d\n", __func__, cgx_id, lmac_id);
+
+	lmac_cfg = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
+	phy = &lmac_cfg->phy_config;
+	port = phy->port;
+
+	debug_phy_driver("%s: port %d AN %d QLM mode %d\n", __func__, port,
+			!lmac_cfg->autoneg_dis, lmac_cfg->mode_idx);
+
+	/* Disable AN and enable AN only for appropriate modes */
+	marvell_5113_priv[cgx_id].port[port].use_an = 0;
+	switch (lmac_cfg->mode_idx) {
+	case CAVM_QLM_MODE_XLAUI:
+		if (lmac_cfg->fec == CGX_FEC_BASE_R) {
+			mode_str = "40G-BASE-R4-FEC";
+			host_mode = line_mode = MXD_P40LF;
+		} else {
+			mode_str = "40G-BASE-R4";
+			host_mode = line_mode = MXD_P40LN;
+		}
+		marvell_5113_priv[cgx_id].port[port].use_an = 0;
+	break;
+	case CAVM_QLM_MODE_40G_KR4:
+		if (lmac_cfg->fec == CGX_FEC_BASE_R) {
+			mode_str = "40G-BASE-KR4-FEC";
+			host_mode = line_mode = MXD_P40KF;
+		} else {
+			mode_str = "40G-BASE-KR4-FEC";
+			host_mode = line_mode = MXD_P40KN;
+		}
+		marvell_5113_priv[cgx_id].port[port].use_an = 1;
+	break;
+	case CAVM_QLM_MODE_XFI:
+		if (lmac_cfg->fec == CGX_FEC_BASE_R) {
+			mode_str = "10G-BASE-R-FEC";
+			host_mode = line_mode = MXD_P10LF;
+		} else {
+			mode_str = "10G-BASE-R";
+			host_mode = line_mode = MXD_P10LN;
+		}
+		marvell_5113_priv[cgx_id].port[port].use_an = 0;
+	break;
+	case CAVM_QLM_MODE_10G_KR:
+		if (lmac_cfg->fec == CGX_FEC_BASE_R) {
+			mode_str = "10G-BASE-KR-FEC";
+			host_mode = line_mode = MXD_P10KF;
+		} else {
+			mode_str = "10G-BASE-KR";
+			host_mode = line_mode = MXD_P10KN;
+		}
+		marvell_5113_priv[cgx_id].port[port].use_an = 1;
+	break;
+	case CAVM_QLM_MODE_20GAUI_C2C:
+	case CAVM_QLM_MODE_20GAUI_C2M:
+		if (lmac_cfg->fec == CGX_FEC_RS) {
+			mode_str = "20G-BASE-R-RSFEC";
+			host_mode = line_mode = MXD_P25LR;
+		} else if (lmac_cfg->fec == CGX_FEC_BASE_R) {
+			mode_str = "20G-BASE-R-FEC";
+			host_mode = line_mode = MXD_P25LF;
+		} else {
+			mode_str = "20G-BASE-R";
+			host_mode = line_mode = MXD_P25LN;
+		}
+		marvell_5113_priv[cgx_id].port[port].use_an = 0;
+		marvell_5113_priv[cgx_id].port[port].set_20g = 1;
+	break;
+	case CAVM_QLM_MODE_25GAUI_C2C:
+	case CAVM_QLM_MODE_25GAUI_C2M:
+		if (lmac_cfg->fec == CGX_FEC_RS) {
+			mode_str = "25G-BASE-R-RSFEC";
+			host_mode = line_mode = MXD_P25LR;
+		} else if (lmac_cfg->fec == CGX_FEC_BASE_R) {
+			mode_str = "25G-BASE-R-FEC";
+			host_mode = line_mode = MXD_P25LF;
+		} else {
+			mode_str = "25G-BASE-R";
+			host_mode = line_mode = MXD_P25LN;
+		}
+		marvell_5113_priv[cgx_id].port[port].use_an = 0;
+	break;
+	case CAVM_QLM_MODE_25G_AN:
+		if (lmac_cfg->fec == CGX_FEC_RS) {
+			mode_str = "25G-BASE-KR-RSFEC";
+			host_mode = line_mode = MXD_P25KR;
+		} else if (lmac_cfg->fec == CGX_FEC_BASE_R) {
+			mode_str = "25G-BASE-KR-FEC";
+			host_mode = line_mode = MXD_P25KF;
+		} else {
+			mode_str = "25G-BASE-KR";
+			host_mode = line_mode = MXD_P25KN;
+		}
+		marvell_5113_priv[cgx_id].port[port].use_an = 1;
+	break;
+	case CAVM_QLM_MODE_50GAUI_2_C2C:
+	case CAVM_QLM_MODE_50GAUI_2_C2M:
+		/* FIXME : to select the OP MODE for consortium/
+		 * non-standard
+		 */
+		if (lmac_cfg->fec == CGX_FEC_RS) {
+			mode_str = "50-BASE-R2-RSFEC";
+			host_mode = line_mode = MXD_P50MR;
+		} else if (lmac_cfg->fec == CGX_FEC_BASE_R) {
+			mode_str = "50G-BASE-R2-FEC";
+			host_mode = line_mode = MXD_P50LF;
+		} else {
+			mode_str = "50G-BASE-R2";
+			host_mode = line_mode = MXD_P50LN;
+		}
+		marvell_5113_priv[cgx_id].port[port].use_an = 0;
+	break;
+	case CAVM_QLM_MODE_50G_AN:
+		/* FIXME : to select the OP MODE for consortium/
+		 * non-standard
+		 */
+		if (lmac_cfg->fec == CGX_FEC_RS) {
+			mode_str = "50-BASE-KR2-RSFEC";
+			host_mode = line_mode = MXD_P50JR;
+		} else if (lmac_cfg->fec == CGX_FEC_BASE_R) {
+			mode_str = "50G-BASE-KR2-FEC";
+			host_mode = line_mode = MXD_P50KF;
+		} else {
+			mode_str = "50G-BASE-KR2";
+			host_mode = line_mode = MXD_P50KN;
+		}
+		marvell_5113_priv[cgx_id].port[port].use_an = 1;
+	break;
+	case CAVM_QLM_MODE_CAUI_4_C2C:
+	case CAVM_QLM_MODE_CAUI_4_C2M:
+		if (lmac_cfg->fec == CGX_FEC_RS) {
+			mode_str = "100G-BASE-R4-RSFEC";
+			host_mode = line_mode = MXD_P100LR;
+		} else {
+			mode_str = "100G-BASE-R4";
+			host_mode = line_mode = MXD_P100LN;
+		}
+		marvell_5113_priv[cgx_id].port[port].use_an = 0;
+	break;
+	case CAVM_QLM_MODE_100G_AN:
+		if (lmac_cfg->fec == CGX_FEC_RS) {
+			mode_str = "100G-BASE-KR4-RSFEC";
+			host_mode = line_mode = MXD_P100KR;
+		} else {
+			mode_str = "100G-BASE-KR4";
+			host_mode = line_mode = MXD_P100KN;
+		}
+		marvell_5113_priv[cgx_id].port[port].use_an = 1;
+	break;
+	default:
+	break;
+	}
+	if (mode_str != NULL)
+		printf("%s: port %d mode_str %s host_mode %d\t"
+				"line_mode %d\n", __func__, port, mode_str,
+				host_mode, line_mode);
+
+	status = mxdSetUserFixedModeSelection(&marvell_5113_priv[cgx_id].mxddev,
+					phy->addr, port,
+					host_mode, line_mode,
+					forceReConfig, &result);
+
+	if (status != MXD_OK) {
+		ERROR("%s: SetMode failed, error_result. status 0x%lx\t"
+			"result 0x%x\n", __func__, status, result);
+		return;
+	}
+
+	/* EBB9604 88x5113 module has host/line swapped
+	 * 88X5113 "host" side points to network
+	 * 88x5113 "line" side points to CN96
+	 * Patch : Received from Bruce(BDK)
+	 */
+	if (!strncmp(plat_octeontx_bcfg->bcfg.board_model, "ebb96", 5)) {
+		MXD_U16 HostRxPolarities[4] = {0, 1, 0, 1};
+		MXD_U16 HostTxPolarities[4] = {0, 0, 1, 0};
+		MXD_U16 LineRxPolarities[4] = {1, 1, 0, 0};
+		MXD_U16 LineTxPolarities[4] = {0, 0, 1, 1};
+
+		/* Invert host-side input lanes 3 and 1
+		 * Invert line-side input lanes 1 and 0 and
+		 * line-side output lanes 3 and 2
+		 * Invert host-side output lane 2
+		 */
+		for (int lane = 0; lane < 4; lane++) {
+			status = mxdSetRxPolarity(
+					&marvell_5113_priv[cgx_id].mxddev,
+					phy->addr,
+					MXD_HOST_SIDE, lane,
+					HostRxPolarities[lane],
+					swReset);
+			if (status != MXD_OK) {
+				ERROR("%s: mxdSetRxPolarity() host lane %d\t"
+					" failed\n", __func__, lane);
+				return;
+			}
+			status = mxdSetTxPolarity(
+					&marvell_5113_priv[cgx_id].mxddev,
+					phy->addr,
+					MXD_HOST_SIDE, lane,
+					HostTxPolarities[lane],
+					swReset);
+
+			if (status != MXD_OK) {
+				ERROR("%s: mxdSetTxPolarity() host lane %d\t"
+					"failed\n", __func__, lane);
+				return;
+			}
+			status = mxdSetRxPolarity(
+					&marvell_5113_priv[cgx_id].mxddev,
+					phy->addr,
+					MXD_LINE_SIDE, lane,
+					LineRxPolarities[lane],
+					swReset);
+			if (status != MXD_OK) {
+				ERROR("%s: mxdSetRxPolarity() line lane %d\t"
+					"failed\n", __func__, lane);
+				return;
+			}
+			status = mxdSetTxPolarity(
+					&marvell_5113_priv[cgx_id].mxddev,
+					phy->addr,
+					MXD_LINE_SIDE, lane,
+					LineTxPolarities[lane],
+					swReset);
+			if (status != MXD_OK) {
+				ERROR("%s: mxdSetTxPolarity() host lane %d\t"
+					"failed\n", __func__, lane);
+				return;
+			}
+		}
+	}
+
+	/* Patch : from Bruce (BDK) for 25G Serdes Tuning */
+	if ((lmac_cfg->mode_idx == CAVM_QLM_MODE_20GAUI_C2C) ||
+		(lmac_cfg->mode_idx == CAVM_QLM_MODE_20GAUI_C2M)) {
+		debug_phy_driver("%s(%d): 20G serdes tuning\n", __func__, port);
+		preCursor = 6;
+		attenuation = 31;
+		postCursor = 4;
+		/* FIXME : QLM 6 needs different tuning */
+		if (lmac_cfg->qlm == 6) {
+			preCursor = 10;
+			attenuation = 31;
+			postCursor = 6;
+		}
+		status = mxdSetTxFFE(&marvell_5113_priv[cgx_id].mxddev,
+					phy->addr,
+					MXD_LINE_SIDE, port,
+					preCursor, attenuation,
+					postCursor, 1);
+		if (status != MXD_OK) {
+			ERROR("%s(%d): mxdSetTxFFE failed\n", __func__, port);
+			return;
+		}
+		status = mxdGetTxFFE(&marvell_5113_priv[cgx_id].mxddev,
+					phy->addr,
+					MXD_LINE_SIDE, port,
+					&preCursor, &attenuation,
+					&postCursor);
+		if (status != MXD_OK) {
+			ERROR("%s(%d): mxdGetTxFFE failed\n", __func__, port);
+			return;
+		}
+		debug_phy_driver("%s(%d): FFE preCursor.%d attenuation.%d\t"
+				"postCursor.%d\n", __func__, port, preCursor,
+				attenuation, postCursor);
+	}
 }
 
 /* To enable/disable AN */
@@ -278,43 +591,124 @@ void phy_marvell_5113_set_an(int cgx_id, int lmac_id)
 void phy_marvell_5113_get_link_status(int cgx_id, int lmac_id,
 					link_state_t *link)
 {
+	MXD_U16 currentStatus = 0;
+	MXD_U16 latchedStatus = 0;
+	MXD_DETAILED_STATUS_TYPE detailedStatus;
+	MXD_STATUS status;
+	MXD_SPEED speed = 0;
+	MXD_PCS_TYPE pcsType = 0;
+	MXD_U16 reg;
+	MXD_U16 value;
+	int port;
+	cgx_lmac_config_t *lmac_cfg;
+	phy_config_t *phy;
+
+	lmac_cfg = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
+	phy = &lmac_cfg->phy_config;
+	port = phy->port;
+
+	link->u64 = 0;
+
 	debug_phy_driver("%s: %d:%d\n", __func__, cgx_id, lmac_id);
+	if (marvell_5113_priv[cgx_id].port[port].use_an) {
+		/* FIXME */
+	} else {
+		status =  mxdCheckLinkStatus(&marvell_5113_priv[cgx_id].mxddev,
+						phy->addr, port, MXD_TRUE,
+						&currentStatus, &latchedStatus,
+						&detailedStatus);
+		if (status != MXD_OK)
+			ERROR("%s: mxdCheckLinkStatus failed %ld\n",
+				__func__, status);
+
+		status = mxdGetModeSpeed(&marvell_5113_priv[cgx_id].mxddev,
+					phy->addr,
+					MXD_HOST_SIDE, port, &speed,
+					&pcsType);
+		if (status != MXD_OK) {
+			ERROR("%s: mxdGetModeSpeed failed %ld\n",
+				__func__, status);
+			return;
+		}
+		debug_phy_driver("%s(%d): 88X5113 PHY link is %d, speed 0x%x\n",
+				__func__,
+				port, currentStatus, speed);
+		debug_phy_driver("%s(%d): 88X5113 PHY link hostCurrent.%d\t"
+				"lineCurrent.%d\n", __func__, port,
+			  detailedStatus.Per_lane_status.hostCurrent[port],
+			  detailedStatus.Per_lane_status.lineCurrent[port]);
+
+		link->s.link_up = (currentStatus == MXD_LINK_UP);
+		link->s.full_duplex = 1;
+
+		switch (speed) {
+		case MXD_10GB:
+			link->s.speed = CGX_LINK_10G;
+		break;
+		case MXD_40GB:
+			link->s.speed = CGX_LINK_40G;
+		break;
+		case MXD_25GB:
+			link->s.speed = CGX_LINK_25G;
+			/* FIXME to get speed for 20G */
+			reg = 0xf005 + port;
+			mxd_read_mdio(&marvell_5113_priv[cgx_id].mxddev,
+							phy->addr,
+							4, reg, &value);
+			if (value == 0x8084) {
+				debug_phy_driver("%s(%d): Report 20G speed\n",
+						__func__, port);
+				link->s.speed = CGX_LINK_20G;
+			}
+		break;
+		/* FIXME for other modes : 50/100G - 40/80G */
+		case MXD_50GB:
+			link->s.speed = CGX_LINK_50G;
+		break;
+		case MXD_100GB:
+			link->s.speed = CGX_LINK_100G;
+		break;
+		default:
+			link->s.speed = CGX_LINK_NONE;
+		break;
+		}
+	}
 }
 
 /* Table of Marvell PHY driver list */
 phy_drv_t marvell_drv[] = {
 	{
-		.drv_name			= "MARVELL-88E1514",
-		.drv_type			= PHY_MARVELL_88E1514,
-		.flags				= 0,
-		.probe				= phy_marvell_1514_probe,
-		.config				= phy_generic_config,
-		.set_an				= phy_generic_set_an,
-		.reset				= phy_generic_reset,
-		.get_link_status		= phy_marvell_1514_get_link_status,
-		.shutdown			= phy_generic_shutdown,
+		.drv_name		= "MARVELL-88E1514",
+		.drv_type		= PHY_MARVELL_88E1514,
+		.flags			= 0,
+		.probe			= phy_marvell_1514_probe,
+		.config			= phy_generic_config,
+		.set_an			= phy_generic_set_an,
+		.reset			= phy_generic_reset,
+		.get_link_status	= phy_marvell_1514_get_link_status,
+		.shutdown		= phy_generic_shutdown,
 	},
 	{
-		.drv_name 			= "MARVELL-88X5123",
-		.drv_type 			= PHY_MARVELL_5123,
-		.flags 				= 0,
-		.probe 				= phy_marvell_5123_probe,
-		.config 			= phy_marvell_5123_config,
-		.set_an				= phy_marvell_5123_set_an,
-		.reset 				= phy_generic_reset,
-		.get_link_status		= phy_marvell_5123_get_link_status,
-		.shutdown			= phy_generic_shutdown,
+		.drv_name		= "MARVELL-88X5123",
+		.drv_type		= PHY_MARVELL_5123,
+		.flags			= 0,
+		.probe			= phy_marvell_5123_probe,
+		.config			= phy_marvell_5123_config,
+		.set_an			= phy_marvell_5123_set_an,
+		.reset			= phy_generic_reset,
+		.get_link_status	= phy_marvell_5123_get_link_status,
+		.shutdown		= phy_generic_shutdown,
 	},
 	{
-		.drv_name 			= "MARVELL-88X5113",
-		.drv_type 			= PHY_MARVELL_5113,
-		.flags	 			= 0,
-		.probe 				= phy_marvell_5113_probe,
-		.config	 			= phy_marvell_5113_config,
-		.set_an				= phy_marvell_5113_set_an,
-		.reset 				= phy_generic_reset,
-		.get_link_status 		= phy_marvell_5113_get_link_status,
-		.shutdown			= phy_generic_shutdown,
+		.drv_name		= "MARVELL-88X5113",
+		.drv_type		= PHY_MARVELL_5113,
+		.flags			= 0,
+		.probe			= phy_marvell_5113_probe,
+		.config			= phy_marvell_5113_config,
+		.set_an			= phy_marvell_5113_set_an,
+		.reset			= phy_generic_reset,
+		.get_link_status	= phy_marvell_5113_get_link_status,
+		.shutdown		= phy_generic_shutdown,
 	},
 };
 
