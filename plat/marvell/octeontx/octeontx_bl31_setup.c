@@ -98,6 +98,8 @@ void bl31_early_platform_setup(bl31_params_t *from_bl2,
 #endif
 {
 	console_pl011_register(UAAX_PF_BAR0(0), 0, 0, &console);
+	console_set_scope((console_t *)&console, CONSOLE_FLAG_RUNTIME);
+	console_switch_state(CONSOLE_FLAG_RUNTIME);
 
 	/* Set secondary CPU entrypoint to somewhere in BL31 code, because
 	 * we should not relay on address that is inside of BL1 code.

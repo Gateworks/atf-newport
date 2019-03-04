@@ -110,6 +110,8 @@ void bl1_early_platform_setup(void)
 
 	/* Initialize the console to provide early debug support */
 	console_pl011_register(UAAX_PF_BAR0(0), 0, 0, &console);
+	console_set_scope((console_t *)&console, CONSOLE_FLAG_RUNTIME);
+	console_switch_state(CONSOLE_FLAG_RUNTIME);
 
 	/* Allow BL1 to see the whole Trusted RAM */
 	bl1_tzram_layout.total_base = TZDRAM_BASE;
