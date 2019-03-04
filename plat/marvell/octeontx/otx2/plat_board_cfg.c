@@ -935,6 +935,14 @@ fec_type_t octeontx2_handle_fec_config(int mode, int req_fec)
 {
 	int fec = req_fec;
 
+	/* FEC can be disabled by user. In that case, no need
+	 * to validate against any PCS supported FEC option.
+	 */
+	if (fec == CGX_FEC_NONE) {
+		debug_dts("%s: FEC disabled\n", __func__);
+		return fec;
+	}
+
 	/* Validate FEC configuration against PCS supported FEC option.
 	 * If the type is not correct, set FEC to be -1 so default
 	 * FEC type can be configured
