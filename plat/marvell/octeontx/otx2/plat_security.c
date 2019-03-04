@@ -25,7 +25,6 @@ struct ccs_region {
 
 #define LAST_CCS_REGION (~0U)
 #define MCC_CONFIG_DIS_TADPSN_BIT	BIT(1)
-#define CCS_CTL_DISPSN_BIT		BIT(0)
 
 struct ccs_region ccs_map [] = {
 	{
@@ -50,7 +49,7 @@ struct ccs_region ccs_map [] = {
  */
 static void disable_poison(void)
 {
-	uint64_t mmc_config, ccs_ctl;
+	uint64_t mmc_config;
 	int i;
 
 	for (i = 0; i < plat_octeontx_scfg->mcc_count; i++) {
@@ -58,10 +57,6 @@ static void disable_poison(void)
 		mmc_config |= MCC_CONFIG_DIS_TADPSN_BIT;
 		CSR_WRITE(CAVM_MCCX_CONFIG(i), mmc_config);
 	}
-
-	ccs_ctl = CSR_READ(CAVM_CCS_CTL);
-	ccs_ctl |= CCS_CTL_DISPSN_BIT;
-	CSR_WRITE(CAVM_CCS_CTL, ccs_ctl);
 }
 
 /* Flush the L2 Cache */
