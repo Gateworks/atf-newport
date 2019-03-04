@@ -29,6 +29,8 @@ PLAT_BL_COMMON_SOURCES	+=	plat/marvell/octeontx/otx2/f95/plat_f95_setup.c		\
 				plat/marvell/octeontx/otx2/plat_security.c		\
 				plat/marvell/octeontx/otx2/plat_bcfg_init.c		\
 				drivers/marvell/cgx.c		\
+				drivers/marvell/gsern.c		\
+				drivers/marvell/qlm.c		\
 				plat/marvell/octeontx/otx2/plat_setup.c		\
 
 BL1_SOURCES		+=	plat/marvell/octeontx/otx2/aarch64/plat_octeontx_common.S	\

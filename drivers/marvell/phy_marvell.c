@@ -324,7 +324,7 @@ void phy_marvell_5113_config(int cgx_id, int lmac_id)
 	/* Disable AN and enable AN only for appropriate modes */
 	marvell_5113_priv[cgx_id].port[port].use_an = 0;
 	switch (lmac_cfg->mode_idx) {
-	case CAVM_QLM_MODE_XLAUI:
+	case QLM_MODE_XLAUI:
 		if (lmac_cfg->fec == CGX_FEC_BASE_R) {
 			mode_str = "40G-BASE-R4-FEC";
 			host_mode = line_mode = MXD_P40LF;
@@ -334,7 +334,7 @@ void phy_marvell_5113_config(int cgx_id, int lmac_id)
 		}
 		marvell_5113_priv[cgx_id].port[port].use_an = 0;
 	break;
-	case CAVM_QLM_MODE_40G_KR4:
+	case QLM_MODE_40G_KR4:
 		if (lmac_cfg->fec == CGX_FEC_BASE_R) {
 			mode_str = "40G-BASE-KR4-FEC";
 			host_mode = line_mode = MXD_P40KF;
@@ -344,7 +344,7 @@ void phy_marvell_5113_config(int cgx_id, int lmac_id)
 		}
 		marvell_5113_priv[cgx_id].port[port].use_an = 1;
 	break;
-	case CAVM_QLM_MODE_XFI:
+	case QLM_MODE_XFI:
 		if (lmac_cfg->fec == CGX_FEC_BASE_R) {
 			mode_str = "10G-BASE-R-FEC";
 			host_mode = line_mode = MXD_P10LF;
@@ -354,7 +354,7 @@ void phy_marvell_5113_config(int cgx_id, int lmac_id)
 		}
 		marvell_5113_priv[cgx_id].port[port].use_an = 0;
 	break;
-	case CAVM_QLM_MODE_10G_KR:
+	case QLM_MODE_10G_KR:
 		if (lmac_cfg->fec == CGX_FEC_BASE_R) {
 			mode_str = "10G-BASE-KR-FEC";
 			host_mode = line_mode = MXD_P10KF;
@@ -364,8 +364,8 @@ void phy_marvell_5113_config(int cgx_id, int lmac_id)
 		}
 		marvell_5113_priv[cgx_id].port[port].use_an = 1;
 	break;
-	case CAVM_QLM_MODE_20GAUI_C2C:
-	case CAVM_QLM_MODE_20GAUI_C2M:
+	case QLM_MODE_20GAUI_C2C:
+	case QLM_MODE_20GAUI_C2M:
 		if (lmac_cfg->fec == CGX_FEC_RS) {
 			mode_str = "20G-BASE-R-RSFEC";
 			host_mode = line_mode = MXD_P25LR;
@@ -379,8 +379,8 @@ void phy_marvell_5113_config(int cgx_id, int lmac_id)
 		marvell_5113_priv[cgx_id].port[port].use_an = 0;
 		marvell_5113_priv[cgx_id].port[port].set_20g = 1;
 	break;
-	case CAVM_QLM_MODE_25GAUI_C2C:
-	case CAVM_QLM_MODE_25GAUI_C2M:
+	case QLM_MODE_25GAUI_C2C:
+	case QLM_MODE_25GAUI_C2M:
 		if (lmac_cfg->fec == CGX_FEC_RS) {
 			mode_str = "25G-BASE-R-RSFEC";
 			host_mode = line_mode = MXD_P25LR;
@@ -393,7 +393,7 @@ void phy_marvell_5113_config(int cgx_id, int lmac_id)
 		}
 		marvell_5113_priv[cgx_id].port[port].use_an = 0;
 	break;
-	case CAVM_QLM_MODE_25G_AN:
+	case QLM_MODE_25G_AN:
 		if (lmac_cfg->fec == CGX_FEC_RS) {
 			mode_str = "25G-BASE-KR-RSFEC";
 			host_mode = line_mode = MXD_P25KR;
@@ -406,8 +406,8 @@ void phy_marvell_5113_config(int cgx_id, int lmac_id)
 		}
 		marvell_5113_priv[cgx_id].port[port].use_an = 1;
 	break;
-	case CAVM_QLM_MODE_50GAUI_2_C2C:
-	case CAVM_QLM_MODE_50GAUI_2_C2M:
+	case QLM_MODE_50GAUI_2_C2C:
+	case QLM_MODE_50GAUI_2_C2M:
 		/* FIXME : to select the OP MODE for consortium/
 		 * non-standard
 		 */
@@ -423,7 +423,7 @@ void phy_marvell_5113_config(int cgx_id, int lmac_id)
 		}
 		marvell_5113_priv[cgx_id].port[port].use_an = 0;
 	break;
-	case CAVM_QLM_MODE_50G_AN:
+	case QLM_MODE_50G_AN:
 		/* FIXME : to select the OP MODE for consortium/
 		 * non-standard
 		 */
@@ -439,8 +439,8 @@ void phy_marvell_5113_config(int cgx_id, int lmac_id)
 		}
 		marvell_5113_priv[cgx_id].port[port].use_an = 1;
 	break;
-	case CAVM_QLM_MODE_80GAUI_4_C2C:
-	case CAVM_QLM_MODE_80GAUI_4_C2M:
+	case QLM_MODE_80GAUI_4_C2C:
+	case QLM_MODE_80GAUI_4_C2M:
 		if (lmac_cfg->fec == CGX_FEC_RS) {
 			mode_str = "80G-BASE-R4-RSFEC";
 			host_mode = line_mode = MXD_P100LR;
@@ -450,8 +450,8 @@ void phy_marvell_5113_config(int cgx_id, int lmac_id)
 		}
 		marvell_5113_priv[cgx_id].port[port].use_an = 0;
 	break;
-	case CAVM_QLM_MODE_CAUI_4_C2C:
-	case CAVM_QLM_MODE_CAUI_4_C2M:
+	case QLM_MODE_CAUI_4_C2C:
+	case QLM_MODE_CAUI_4_C2M:
 		if (lmac_cfg->fec == CGX_FEC_RS) {
 			mode_str = "100G-BASE-R4-RSFEC";
 			host_mode = line_mode = MXD_P100LR;
@@ -461,7 +461,7 @@ void phy_marvell_5113_config(int cgx_id, int lmac_id)
 		}
 		marvell_5113_priv[cgx_id].port[port].use_an = 0;
 	break;
-	case CAVM_QLM_MODE_100G_AN:
+	case QLM_MODE_100G_AN:
 		if (lmac_cfg->fec == CGX_FEC_RS) {
 			mode_str = "100G-BASE-KR4-RSFEC";
 			host_mode = line_mode = MXD_P100KR;
@@ -556,8 +556,8 @@ void phy_marvell_5113_config(int cgx_id, int lmac_id)
 	}
 
 	/* Patch : from Bruce (BDK) for 25G Serdes Tuning */
-	if ((lmac_cfg->mode_idx == CAVM_QLM_MODE_20GAUI_C2C) ||
-		(lmac_cfg->mode_idx == CAVM_QLM_MODE_20GAUI_C2M)) {
+	if ((lmac_cfg->mode_idx == QLM_MODE_20GAUI_C2C) ||
+		(lmac_cfg->mode_idx == QLM_MODE_20GAUI_C2M)) {
 		debug_phy_driver("%s(%d): 20G serdes tuning\n", __func__, port);
 		preCursor = 6;
 		attenuation = 31;

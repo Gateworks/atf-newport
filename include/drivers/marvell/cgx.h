@@ -178,7 +178,6 @@ int cgx_xaui_set_link_up(int cgx_id, int lmac_id);
 int cgx_xaui_set_link_down(int cgx_id, int lmac_id);
 int cgx_xaui_get_link(int cgx_id, int lmac_id,
 		link_state_t *result);
-int cgx_rx_equalization(int cgx_id, int lmac_id);
 void cgx_set_internal_loopback(int cgx_id, int lmac_id, int enable);
 void cgx_set_external_loopback(int cgx_id, int lmac_id, int enable);
 void cgx_set_error_type(int cgx_id, int lmac_id, uint64_t type);

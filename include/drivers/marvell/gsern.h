@@ -18,6 +18,8 @@
 
 #define GSERN_LANE_INIT_BSTS_TX_RST_SM_COMPLETE		BIT(33)
 #define GSERN_LANE_INIT_BSTS_TX_READY			BIT(32)
+#define GSERN_LANE_INIT_BSTS_RX_DEEP_IDLE		BIT(26)
+#define GSERN_LANE_INIT_BSTS_RX_READY			BIT(24)
 #define GSERN_LANE_INIT_BSTS_RST_SM_COMPLETE		BIT(5)
 #define GSERN_LANE_INIT_BSTS_RST_SM_READY		BIT(4)
 #define GSERN_LANE_INIT_BSTS_CAL_FAIL			BIT(1)
@@ -33,8 +35,15 @@
 #define GSERN_FLAGS_DUAL		1
 #define GSERN_FLAGS_QUAD		2
 
-int gsern_init_network(int qlm, int qlm_lane, int flags,
-	enum gsern_lane_modes mode);
+/* GSERN modes */
+#define GSERN_MODE_DISABLED		0x0
+#define GSERN_MODE_SATA			0x1
+#define GSERN_MODE_PCIE_RC		0x2
+#define GSERN_MODE_PCIE_EP		0x3
+#define GSERN_MODE_CGX			0x4
+
+int gsern_set_mode(int qlm, int qlm_lane, int mode, int is_first, int baud_mhz,
+	int flags);
 
 #endif /* _GSERN_H_ */
 

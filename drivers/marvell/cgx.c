@@ -18,6 +18,7 @@
 #include <plat_board_cfg.h>
 #include <cgx.h>
 #include <cgx_intf.h>
+#include <qlm.h>
 #include <octeontx_utils.h>
 
 /* define DEBUG_ATF_CGX to enable debug logs */
@@ -1472,13 +1473,15 @@ int cgx_xaui_set_link_up(int cgx_id, int lmac_id)
 		/* Perform RX EQU for non-KR interfaces and for the link
 		 * speed >= 10Gbaud - XAUI/XLAUI/XFI
 		 */
-		if (cgx_rx_equalization(cgx_id, lmac_id) == -1) {
+#if 0
+		if (qlm_rx_equalization(cgx_id, lmac_id) == -1) {
 			debug_cgx("%s: %d:%d RX EQU failed\n", __func__,
 					cgx_id, lmac_id);
 			cgx_set_error_type(cgx_id, lmac_id,
 				CGX_ERR_RX_EQU_FAIL);
 			return -1;
 		}
+#endif
 	}
 
 	/* bring the SPU out of reset */
@@ -1816,104 +1819,6 @@ int cgx_xaui_set_link_down(int cgx_id, int lmac_id)
 	CAVM_MODIFY_CGX_CSR(cavm_cgxx_cmr_global_config_t,
 		CAVM_CGXX_CMR_GLOBAL_CONFIG(cgx_id), cgx_clk_enable, 0);
 
-	return 0;
-}
-
-int cgx_rx_equalization(int cgx_id, int lmac_id)
-{
-	/* RX adapation sequence has some issues and Serdes team is
-	 * investigating it. Until then, disable RX EQU during
-	 * CGX link bring up
-	 */
-#if 0
-	int lane_idx;
-	int qlm, lane, max_lanes, timeout = 100;
-	cgx_lmac_config_t *lmac;
-	cavm_gsernx_lanex_init_bsts_t init_bsts;
-
-	if (!strncmp(plat_octeontx_bcfg->bcfg.board_model, "asim-", 5))
-		return 0;
-
-	lmac = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
-
-	qlm = lmac->qlm;
-	lane = lmac->lane;
-	switch (lmac->mode) {
-	case CAVM_CGX_LMAC_TYPES_E_TENG_R:
-	case CAVM_CGX_LMAC_TYPES_E_TWENTYFIVEG_R:
-		max_lanes = 1;
-		break;
-	case CAVM_CGX_LMAC_TYPES_E_FIFTYG_R:
-		max_lanes = 2;
-		break;
-	case CAVM_CGX_LMAC_TYPES_E_FORTYG_R:
-	case CAVM_CGX_LMAC_TYPES_E_HUNDREDG_R:
-		max_lanes = 4;
-		break;
-	/* FIXME: for other modes */
-	default:
-		return 0;
-	}
-
-	debug_cgx("%s: %d:%d qlm %d lane %d max_lanes %d\n", __func__, cgx_id,
-					lmac_id, qlm, lane, max_lanes);
-
-	/* Poll for signal detection on GSERN lane */
-	for (lane_idx = lane; lane_idx < (lane + max_lanes); lane_idx++) {
-		if (cgx_poll_for_csr(CAVM_GSERNX_LANEX_RX_IDLEDET_BSTS(
-				qlm, lane_idx),	GSERN_RX_IDLEDET_MASK, 0, -1)) {
-			debug_cgx("%s: %d:%d No signal detected on GSERN LANE 0x%llx\n",
-				__func__, qlm, lane_idx,
-			CSR_READ(CAVM_GSERNX_LANEX_RX_IDLEDET_BSTS(qlm, lane_idx)));
-			return -1;
-		}
-	}
-
-	/* Perform Rx adapation sequence */
-	for (lane_idx = lane; lane_idx < (lane + max_lanes); lane_idx++) {
-		/* Enable deep idle */
-		CAVM_MODIFY_CGX_CSR(cavm_gsernx_lanex_rst1_bcfg_t,
-				CAVM_GSERNX_LANEX_RST1_BCFG(qlm, lane_idx),
-				rx_go2deep_idle, 1);
-	}
-
-	for (lane_idx = lane; lane_idx < (lane + max_lanes); lane_idx++) {
-		/* Poll for deep idle */
-		if (cgx_poll_for_csr(CAVM_GSERNX_LANEX_INIT_BSTS(qlm, lane_idx),
-				GSERN_RX_DEEPIDLE_MASK, 1, -1)) {
-			debug_cgx("%s: %d:%d GSERN Rx is not in deep idle state 0x%llx\n",
-				__func__, qlm, lane_idx,
-				CSR_READ(CAVM_GSERNX_LANEX_INIT_BSTS(qlm, lane_idx)));
-			return -1;
-		}
-		/* Disable deep idle */
-		CAVM_MODIFY_CGX_CSR(cavm_gsernx_lanex_rst1_bcfg_t,
-				CAVM_GSERNX_LANEX_RST1_BCFG(qlm, lane_idx),
-				rx_go2deep_idle, 0);
-	}
-
-	for (lane_idx = lane; lane_idx < (lane + max_lanes); lane_idx++) {
-		/* Poll for exit of deep idle and Rx ready to be 1 */
-		do {
-			init_bsts.u = CSR_READ(CAVM_GSERNX_LANEX_INIT_BSTS(
-				qlm, lane_idx));
-			if ((init_bsts.s.rx_deep_idle == 0) &&
-				(init_bsts.s.rx_ready == 1))
-				break;
-			mdelay(1);
-		} while (--timeout > 0);
-
-		if (!timeout) {
-			debug_cgx("%s: RX EQU failed qlm %d lane %d 0x%llx\n", __func__,
-				qlm, lane_idx,
-				CSR_READ(CAVM_GSERNX_LANEX_INIT_BSTS(qlm, lane_idx)));
-			return -1;
-		}
-
-		debug_cgx("%s: %d:%d qlm %d lane %d Rx EQU done\n", __func__,
-				cgx_id, lmac_id, qlm, lane_idx);
-	}
-#endif
 	return 0;
 }
 

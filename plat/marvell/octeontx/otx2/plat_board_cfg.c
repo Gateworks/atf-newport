@@ -993,50 +993,50 @@ static void octeontx2_lmac_num_touse(int mode_idx, int *cnt, int *touse)
 	*cnt = 0;
 	*touse = 0;
 	switch (mode_idx) {
-	case CAVM_QLM_MODE_1G_X:
-	case CAVM_QLM_MODE_SGMII:
-	case CAVM_QLM_MODE_XFI:
-	case CAVM_QLM_MODE_SFI:
-	case CAVM_QLM_MODE_10G_KR:
-	case CAVM_QLM_MODE_20GAUI_C2C:
-	case CAVM_QLM_MODE_20GAUI_C2M:
-	case CAVM_QLM_MODE_25GAUI_C2C:
-	case CAVM_QLM_MODE_25GAUI_C2M:
-	case CAVM_QLM_MODE_25G_AN:
+	case QLM_MODE_1G_X:
+	case QLM_MODE_SGMII:
+	case QLM_MODE_XFI:
+	case QLM_MODE_SFI:
+	case QLM_MODE_10G_KR:
+	case QLM_MODE_20GAUI_C2C:
+	case QLM_MODE_20GAUI_C2M:
+	case QLM_MODE_25GAUI_C2C:
+	case QLM_MODE_25GAUI_C2M:
+	case QLM_MODE_25G_AN:
 		*cnt = 1;
 		*touse = 1;
 		break;
-	case CAVM_QLM_MODE_XAUI:
-	case CAVM_QLM_MODE_XLAUI:
-	case CAVM_QLM_MODE_XLAUI_C2M:
-	case CAVM_QLM_MODE_40GAUI_2_C2C:
-	case CAVM_QLM_MODE_40GAUI_2_C2M:
-	case CAVM_QLM_MODE_40G_KR4:
-	case CAVM_QLM_MODE_80GAUI_4_C2C:
-	case CAVM_QLM_MODE_80GAUI_4_C2M:
-	case CAVM_QLM_MODE_CAUI_4_C2C:
-	case CAVM_QLM_MODE_CAUI_4_C2M:
-	case CAVM_QLM_MODE_100G_AN:
+	case QLM_MODE_XAUI:
+	case QLM_MODE_XLAUI:
+	case QLM_MODE_XLAUI_C2M:
+	case QLM_MODE_40GAUI_2_C2C:
+	case QLM_MODE_40GAUI_2_C2M:
+	case QLM_MODE_40G_KR4:
+	case QLM_MODE_80GAUI_4_C2C:
+	case QLM_MODE_80GAUI_4_C2M:
+	case QLM_MODE_CAUI_4_C2C:
+	case QLM_MODE_CAUI_4_C2M:
+	case QLM_MODE_100G_AN:
 		*cnt = 1;
 		*touse = 4;
 		break;
-	case CAVM_QLM_MODE_RXAUI:
-	case CAVM_QLM_MODE_50GAUI_2_C2C:
-	case CAVM_QLM_MODE_50GAUI_2_C2M:
-	case CAVM_QLM_MODE_50G_AN:
+	case QLM_MODE_RXAUI:
+	case QLM_MODE_50GAUI_2_C2C:
+	case QLM_MODE_50GAUI_2_C2M:
+	case QLM_MODE_50G_AN:
 		*cnt = 1;
 		*touse = 2;
 		break;
-	case CAVM_QLM_MODE_USXGMII_4X1:
-	case CAVM_QLM_MODE_QSGMII:
+	case QLM_MODE_USXGMII_4X1:
+	case QLM_MODE_QSGMII:
 		*cnt = 4;
 		*touse = 1;
 		break;
-	case CAVM_QLM_MODE_USXGMII_2X1:
+	case QLM_MODE_USXGMII_2X1:
 		*cnt = 2;
 		*touse = 1;
 		break;
-	case CAVM_QLM_MODE_USXGMII_1X1:
+	case QLM_MODE_USXGMII_1X1:
 		*cnt = 1;
 		*touse = 1;
 		break;
@@ -1063,8 +1063,8 @@ static int octeontx2_check_qlm_lmacs(int cgx_idx,
 	/* This code is based on QLM<->CGX mapping and fixed per SoC.
 	 * hence add model specific condition
 	 */
-	if ((mode_idx == CAVM_QLM_MODE_QSGMII)
-	    || (mode_idx == CAVM_QLM_MODE_USXGMII_4X1)) {
+	if ((mode_idx == QLM_MODE_QSGMII)
+	    || (mode_idx == QLM_MODE_USXGMII_4X1)) {
 		if (cgx->lmacs_used)
 			lmac_avail = cgx->lmacs_used;
 	} else if (cavm_is_model(OCTEONTX_CN96XX)) {
@@ -1127,7 +1127,7 @@ static int octeontx2_fill_cgx_struct(int qlm, int lane, int mode_idx)
 	int i, j;
 	int lcnt, lused, lane_to_sds;
 
-	if ((mode_idx < CAVM_QLM_MODE_SGMII) || (mode_idx >= CAVM_QLM_MODE_LAST)) {
+	if ((mode_idx < QLM_MODE_SGMII) || (mode_idx >= QLM_MODE_LAST)) {
 		debug_dts("QLM%d.LANE%d: not configured for CGX, skip.\n", qlm, lane);
 		return 0;
 	}
@@ -1155,9 +1155,9 @@ static int octeontx2_fill_cgx_struct(int qlm, int lane, int mode_idx)
 		return 0;
 	}
 
-	if (((mode_idx == CAVM_QLM_MODE_USXGMII_1X1) ||
-			(mode_idx == CAVM_QLM_MODE_USXGMII_2X1) ||
-			(mode_idx == CAVM_QLM_MODE_USXGMII_4X1)) &&
+	if (((mode_idx == QLM_MODE_USXGMII_1X1) ||
+			(mode_idx == QLM_MODE_USXGMII_2X1) ||
+			(mode_idx == QLM_MODE_USXGMII_4X1)) &&
 			(cgx->lmac_count)) {
 		/* if LMACs in the same CGX for which USXGMII is configured,
 		 * are configured with different modes already, UXSGMII cannot be
@@ -1247,33 +1247,34 @@ static int octeontx2_fill_cgx_struct(int qlm, int lane, int mode_idx)
 		}
 
 		switch (mode_idx) {
-		case CAVM_QLM_MODE_10G_KR:
-		case CAVM_QLM_MODE_40G_KR4:
+		case QLM_MODE_10G_KR:
+		case QLM_MODE_40G_KR4:
 			lmac->use_training = 1; /* FIXME: should be coming from SFP/QSFP */
 			break;
-		case CAVM_QLM_MODE_USXGMII_1X1:
-		case CAVM_QLM_MODE_USXGMII_2X1:
-		case CAVM_QLM_MODE_USXGMII_4X1:
+		case QLM_MODE_USXGMII_1X1:
+		case QLM_MODE_USXGMII_2X1:
+		case QLM_MODE_USXGMII_4X1:
 			cgx->usxgmii_mode = 1;	/* set USXGMII for this CGX */
-		case CAVM_QLM_MODE_XFI:
-		case CAVM_QLM_MODE_SFI:
-		case CAVM_QLM_MODE_XLAUI:
-		case CAVM_QLM_MODE_XLAUI_C2M:
-		case CAVM_QLM_MODE_RXAUI:
-		case CAVM_QLM_MODE_XAUI:
+		case QLM_MODE_XFI:
+		case QLM_MODE_SFI:
+		case QLM_MODE_XLAUI:
+		case QLM_MODE_XLAUI_C2M:
+		case QLM_MODE_RXAUI:
+		case QLM_MODE_XAUI:
 		/* fixed speed option. consider as AN disabled cases */
-		case CAVM_QLM_MODE_20GAUI_C2C:
-		case CAVM_QLM_MODE_20GAUI_C2M:
-		case CAVM_QLM_MODE_25GAUI_C2C:
-		case CAVM_QLM_MODE_25GAUI_C2M:
-		case CAVM_QLM_MODE_40GAUI_2_C2C:
-		case CAVM_QLM_MODE_40GAUI_2_C2M:
-		case CAVM_QLM_MODE_50GAUI_2_C2C:
-		case CAVM_QLM_MODE_50GAUI_2_C2M:
-		case CAVM_QLM_MODE_80GAUI_4_C2C:
-		case CAVM_QLM_MODE_80GAUI_4_C2M:
-		case CAVM_QLM_MODE_CAUI_4_C2C:
-		case CAVM_QLM_MODE_CAUI_4_C2M:
+
+		case QLM_MODE_20GAUI_C2C:
+		case QLM_MODE_20GAUI_C2M:
+		case QLM_MODE_25GAUI_C2C:
+		case QLM_MODE_25GAUI_C2M:
+		case QLM_MODE_40GAUI_2_C2C:
+		case QLM_MODE_40GAUI_2_C2M:
+		case QLM_MODE_50GAUI_2_C2C:
+		case QLM_MODE_50GAUI_2_C2M:
+		case QLM_MODE_80GAUI_4_C2C:
+		case QLM_MODE_80GAUI_4_C2M:
+		case QLM_MODE_CAUI_4_C2C:
+		case QLM_MODE_CAUI_4_C2M:
 			/* FIXME : always disable AN for USXGMII for now */
 			lmac->autoneg_dis = 1;
 			break;
@@ -1283,7 +1284,7 @@ static int octeontx2_fill_cgx_struct(int qlm, int lane, int mode_idx)
 		cgx->lmacs_used += lused;
 
 		/* In case of 1000 BASE-X, update the property of LMAC */
-		if (mode_idx == CAVM_QLM_MODE_1G_X)
+		if (mode_idx == QLM_MODE_1G_X)
 			lmac->sgmii_1000x_mode = 1;
 	}
 

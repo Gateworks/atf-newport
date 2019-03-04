@@ -211,7 +211,7 @@ static int gsern_init_pll(int qlm)
 	return 0;
 }
 
-int gsern_init_network(int qlm, int qlm_lane, int flags,
+static int gsern_init_network(int qlm, int qlm_lane, int flags,
 	enum gsern_lane_modes mode)
 {
 	int use_dual = (flags & GSERN_FLAGS_DUAL) != 0;
@@ -1005,4 +1005,48 @@ int gsern_init_network(int qlm, int qlm_lane, int flags,
 	 * remote transmitter sends serial data
 	 */
 	return 0;
+}
+
+int gsern_set_mode(int qlm, int qlm_lane, int mode, int is_first, int baud_mhz,
+	int flags)
+{
+	enum gsern_lane_modes lane_mode;
+
+	switch (mode) {
+	case GSERN_MODE_DISABLED:
+		return 0;
+	case GSERN_MODE_CGX:
+		switch (baud_mhz) {
+		case 1250:
+			lane_mode = GSERN_SGMII_01250000000;
+			break;
+		case 3125:
+			lane_mode = GSERN_GEN_03125000000;
+			break;
+		case 5000:
+			lane_mode = GSERN_QSGMII_05000000000;
+			break;
+		case 6250:
+			lane_mode = GSERN_GEN_06250000000;
+			break;
+		case 10312:
+			lane_mode = GSERN_GEN_10312500000;
+			break;
+		case 20625:
+			lane_mode = GSERN_GEN_20625000000;
+			break;
+		case 25781:
+		default:
+			lane_mode = GSERN_GEN_25781250000;
+			break;
+		}
+		return gsern_init_network(qlm, qlm_lane, flags, lane_mode);
+	case GSERN_MODE_SATA:
+	case GSERN_MODE_PCIE_RC:
+	case GSERN_MODE_PCIE_EP:
+	default:
+		WARN("Gesern set mode 0x%x not implemented!\n", mode);
+		return -1;
+	}
+	return -1;
 }
