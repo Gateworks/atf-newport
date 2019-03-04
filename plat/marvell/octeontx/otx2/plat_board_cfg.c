@@ -66,6 +66,8 @@ static struct qlm_mode_strmap_s qlmmode_strmap[] = {
 	{CAVM_CGX_LMAC_TYPES_E_FORTYG_R, "40GAUI_2_C2M", "40gaui"},
 	{CAVM_CGX_LMAC_TYPES_E_FIFTYG_R, "50GAUI_2_C2C", "50gaui"},
 	{CAVM_CGX_LMAC_TYPES_E_FIFTYG_R, "50GAUI_2_C2M", "50gaui"},
+	{CAVM_CGX_LMAC_TYPES_E_HUNDREDG_R, "80GAUI_4_C2C", "caui"},
+	{CAVM_CGX_LMAC_TYPES_E_HUNDREDG_R, "80GAUI_4_C2M", "caui"},
 	{CAVM_CGX_LMAC_TYPES_E_HUNDREDG_R, "CAUI_4_C2C", "caui"},
 	{CAVM_CGX_LMAC_TYPES_E_HUNDREDG_R, "CAUI_4_C2M", "caui"},
 	{CAVM_CGX_LMAC_TYPES_E_TWENTYFIVEG_R, "25G_AN", "25g_kr"},
@@ -1002,6 +1004,8 @@ static void octeontx2_lmac_num_touse(int mode_idx, int *cnt, int *touse)
 	case CAVM_QLM_MODE_40GAUI_2_C2C:
 	case CAVM_QLM_MODE_40GAUI_2_C2M:
 	case CAVM_QLM_MODE_40G_KR4:
+	case CAVM_QLM_MODE_80GAUI_4_C2C:
+	case CAVM_QLM_MODE_80GAUI_4_C2M:
 	case CAVM_QLM_MODE_CAUI_4_C2C:
 	case CAVM_QLM_MODE_CAUI_4_C2M:
 	case CAVM_QLM_MODE_100G_AN:
@@ -1258,6 +1262,8 @@ static int octeontx2_fill_cgx_struct(int qlm, int lane, int mode_idx)
 		case CAVM_QLM_MODE_40GAUI_2_C2M:
 		case CAVM_QLM_MODE_50GAUI_2_C2C:
 		case CAVM_QLM_MODE_50GAUI_2_C2M:
+		case CAVM_QLM_MODE_80GAUI_4_C2C:
+		case CAVM_QLM_MODE_80GAUI_4_C2M:
 		case CAVM_QLM_MODE_CAUI_4_C2C:
 		case CAVM_QLM_MODE_CAUI_4_C2M:
 			/* FIXME : always disable AN for USXGMII for now */

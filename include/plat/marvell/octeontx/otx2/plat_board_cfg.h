@@ -71,6 +71,10 @@ typedef enum {
 	CAVM_QLM_MODE_50GAUI_2_C2C,
 	/* 50G chip to module, 2 lanes each (CN93XX QLMs) */
 	CAVM_QLM_MODE_50GAUI_2_C2M,
+	/* 80GAUI-2 chip to chip, 4 lanes each (CN9XXX) */
+	CAVM_QLM_MODE_80GAUI_4_C2C,
+	/* 80GAUI-2 chip to module, 4 lanes each (CN9XXX) */
+	CAVM_QLM_MODE_80GAUI_4_C2M,
 	/* 100G chip-to-chip, 4 lanes each (CN93XX) */
 	CAVM_QLM_MODE_CAUI_4_C2C,
 	/* 100G chip-to-module, 4 lanes each (CN93XX) */
