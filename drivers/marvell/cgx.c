@@ -32,7 +32,7 @@
 /* table to map speed in Mbps with cgx_link_speed enum */
 static int cgx_link_speed_mbps[CGX_LINK_MAX] = {
 		0, 10, 100, 1000, 2500, 5000, 10000, 20000, 25000,
-		40000, 50000, 100000 };
+		40000, 50000, 80000, 100000 };
 
 /* table to map USXGMII sub types with baud rate and number of LMACs */
 static usxgmii_type_t usxgmii_type[MAX_USXGMII_TYPES] = {
