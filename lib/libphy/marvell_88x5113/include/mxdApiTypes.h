@@ -16,7 +16,7 @@ X5113 API driver (MXD).
                               /* set to 1 to build sample code */
                               /* to interface to Marvell DB via SMI board */
 
-#define MXD_ENABLE_SERDES_API 1 /* Set to 1 to include the SERDES API.
+#define MXD_ENABLE_SERDES_API 0 /* Set to 1 to include the SERDES API.
                                    All SERDES source files in the serdes folder
                                    are needed to be in the makefile. Otherwise,
                                    it will generate build errors. */
@@ -493,28 +493,28 @@ typedef struct _MXD_MODE_CONFIG
 
 struct _MXD_DEV
 {
-    OUT MXD_DEVICE_ID   deviceId;      /* type of device and capabilities */
-    OUT MXD_DEVICE_REV  chipRevision;  /* revision */
-    IN  MXD_U16         mdioPort;      /* MDIO port number */
-    OUT MXD_U16         portCount;     /* 1 port count for X5113 */
+	OUT MXD_DEVICE_ID   deviceId;      /* type of device and capabilities */
+	OUT MXD_DEVICE_REV  chipRevision;  /* revision */
+	IN  MXD_U32         mdioPort;      /* MDIO port number */
+	OUT MXD_U32         portCount;     /* 1 port count for X5113 */
 
-    OUT MXD_FIXED_OP_MODE opMode[MXD_NUM_LANES];    /* fixed operational mode for both Host and Line */
-    OUT MXD_MODE_CONFIG hostConfig[MXD_NUM_LANES];  /* host mode of operation, per lane depending on mode */
-    OUT MXD_MODE_CONFIG lineConfig[MXD_NUM_LANES];  /* line mode of operation, per lane depending on mode */
+	OUT MXD_FIXED_OP_MODE opMode[MXD_NUM_LANES];    /* fixed operational mode for both Host and Line */
+	OUT MXD_MODE_CONFIG hostConfig[MXD_NUM_LANES];  /* host mode of operation, per lane depending on mode */
+	OUT MXD_MODE_CONFIG lineConfig[MXD_NUM_LANES];  /* line mode of operation, per lane depending on mode */
 
-    /* Serdes ID mapped to HOST_MODE_IDX(0) or LINE_MODE_IDX(1); lane offset[0-3] */
-    /* usage: serdesID[LINE_MODE_IDX][3] - returns serdesID for 3rd laneOffset on Line side */
-    OUT MXD_U16         serdesID[MXD_NUM_INTERFACE][MXD_NUM_LANES];
+	/* Serdes ID mapped to HOST_MODE_IDX(0) or LINE_MODE_IDX(1); lane offset[0-3] */
+	/* usage: serdesID[LINE_MODE_IDX][3] - returns serdesID for 3rd laneOffset on Line side */
+	OUT MXD_U32         serdesID[MXD_NUM_INTERFACE][MXD_NUM_LANES];
 
-    OUT MXD_BOOL        devEnabled;    /* whether mxdInitDriver() called successfully */
-    INOUT MXD_U32       devInfo;       /* operations, features, status tracking */
+	OUT MXD_BOOL        devEnabled;    /* whether mxdInitDriver() called successfully */
+	INOUT MXD_U32       devInfo;       /* operations, features, status tracking */
 
-    IN FMXD_READ_MDIO   fmxdReadMdio;  /* passed in function for MDIO Read  */
-    IN FMXD_WRITE_MDIO  fmxdWriteMdio; /* passed in function for MDIO Write */
+	IN FMXD_READ_MDIO   fmxdReadMdio;  /* passed in function for MDIO Read  */
+	IN FMXD_WRITE_MDIO  fmxdWriteMdio; /* passed in function for MDIO Write */
 
-    IN MXD_PVOID        hostContext;   /* user specific data for host to pass to the low layer */
+	IN MXD_PVOID        hostContext;   /* user specific data for host to pass to the low layer */
 #if MXD_ENABLE_SERDES_API
-    IN MXD_PVOID        serdesDev;     /* Device structure for Serdes API */
+	IN MXD_PVOID        serdesDev;     /* Device structure for Serdes API */
 #endif
 };
 

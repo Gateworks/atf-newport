@@ -339,7 +339,7 @@ void phy_marvell_5113_config(int cgx_id, int lmac_id)
 			mode_str = "40G-BASE-KR4-FEC";
 			host_mode = line_mode = MXD_P40KF;
 		} else {
-			mode_str = "40G-BASE-KR4-FEC";
+			mode_str = "40G-BASE-KR4";
 			host_mode = line_mode = MXD_P40KN;
 		}
 		marvell_5113_priv[cgx_id].port[port].use_an = 1;
@@ -438,6 +438,17 @@ void phy_marvell_5113_config(int cgx_id, int lmac_id)
 			host_mode = line_mode = MXD_P50KN;
 		}
 		marvell_5113_priv[cgx_id].port[port].use_an = 1;
+	break;
+	case CAVM_QLM_MODE_80GAUI_4_C2C:
+	case CAVM_QLM_MODE_80GAUI_4_C2M:
+		if (lmac_cfg->fec == CGX_FEC_RS) {
+			mode_str = "80G-BASE-R4-RSFEC";
+			host_mode = line_mode = MXD_P100LR;
+		} else {
+			mode_str = "80G-BASE-R4";
+			host_mode = line_mode = MXD_P100LN;
+		}
+		marvell_5113_priv[cgx_id].port[port].use_an = 0;
 	break;
 	case CAVM_QLM_MODE_CAUI_4_C2C:
 	case CAVM_QLM_MODE_CAUI_4_C2M:
@@ -602,6 +613,7 @@ void phy_marvell_5113_get_link_status(int cgx_id, int lmac_id,
 	int port;
 	cgx_lmac_config_t *lmac_cfg;
 	phy_config_t *phy;
+	int phy_side;
 
 	lmac_cfg = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
 	phy = &lmac_cfg->phy_config;
@@ -609,7 +621,13 @@ void phy_marvell_5113_get_link_status(int cgx_id, int lmac_id,
 
 	link->u64 = 0;
 
-	debug_phy_driver("%s: %d:%d\n", __func__, cgx_id, lmac_id);
+	if (!strncmp(plat_octeontx_bcfg->bcfg.board_model, "ebb96", 5))
+		phy_side = MXD_HOST_SIDE;
+	else
+		phy_side = MXD_LINE_SIDE;
+
+	debug_phy_driver("%s: %d:%d phy side %d\n", __func__, cgx_id, lmac_id,
+					phy_side);
 	if (marvell_5113_priv[cgx_id].port[port].use_an) {
 		/* FIXME */
 	} else {
@@ -623,7 +641,7 @@ void phy_marvell_5113_get_link_status(int cgx_id, int lmac_id,
 
 		status = mxdGetModeSpeed(&marvell_5113_priv[cgx_id].mxddev,
 					phy->addr,
-					MXD_HOST_SIDE, port, &speed,
+					phy_side, port, &speed,
 					&pcsType);
 		if (status != MXD_OK) {
 			ERROR("%s: mxdGetModeSpeed failed %ld\n",

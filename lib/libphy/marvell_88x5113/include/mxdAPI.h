@@ -702,38 +702,34 @@ MXD_STATUS mxdAutoNegCheckComplete
 #define MXD_LINK_DOWN 0
 typedef union
 {
-    struct
-    {
-        MXD_U16 hostCurrent[MXD_NUM_LANES];
-        MXD_U16 hostLatched[MXD_NUM_LANES];
-        MXD_U16 lineCurrent[MXD_NUM_LANES];
-        MXD_U16 lineLatched[MXD_NUM_LANES];
-    } Per_lane_status; /* Link status, lanes not grouped */
-                       /* P25, P10, P2_5, P5, or P1, or R25, R1, etc. */
-                       /* or lanes are a mixture of per lane PCS */
-                       /* and per lane repeater, or all lanes are in repeater mode like R40 or R100 */
+	struct {
+		MXD_U32 hostCurrent[MXD_NUM_LANES];
+		MXD_U32 hostLatched[MXD_NUM_LANES];
+		MXD_U32 lineCurrent[MXD_NUM_LANES];
+		MXD_U32 lineLatched[MXD_NUM_LANES];
+	} Per_lane_status; /* Link status, lanes not grouped */
+		/* P25, P10, P2_5, P5, or P1, or R25, R1, etc. */
+		/* or lanes are a mixture of per lane PCS */
+		/* and per lane repeater, or all lanes are in repeater mode like R40 or R100 */
 
-                       /* NOTE: Those lanes in repeater mode will not have a valid "Latched" status, */
-                       /* only "Current", check the lane mode setting before reading the latched status  */
-                       /* For lanes which are not configured the data is not valid */
-                       /**/
-                       /* Multi-lane repeater modes like R40 and R100 use this structure. */
-    struct
-    {
-        MXD_U16 hostCurrent;
-        MXD_U16 hostLatched;
-        MXD_U16 lineCurrent;
-        MXD_U16 lineLatched;
-    } PCS_lanes_grouped_status; /* PCS link status, lanes grouped */
-                                /* P40..P100, or P40/P25 gearbox mode */
+		/* NOTE: Those lanes in repeater mode will not have a valid "Latched" status, */
+		/* only "Current", check the lane mode setting before reading the latched status  */
+		/* For lanes which are not configured the data is not valid */
+		/**/
+		/* Multi-lane repeater modes like R40 and R100 use this structure. */
+		struct {
+			MXD_U32 hostCurrent;
+			MXD_U32 hostLatched;
+			MXD_U32 lineCurrent;
+			MXD_U32 lineLatched;
+		} PCS_lanes_grouped_status; /* PCS link status, lanes grouped */
+		/* P40..P100, or P40/P25 gearbox mode */
 
-    /* Repeater mode */
-    struct
-    {
-        MXD_U16 hostCurrent[MXD_NUM_LANES]; /* per lane */
-        MXD_U16 lineCurrent[MXD_NUM_LANES]; /* per lane */
-    } Repeater_status; /* R1, R2.5, R5, R10L, R25L, R40L, R100L */
-
+		/* Repeater mode */
+		struct {
+			MXD_U32 hostCurrent[MXD_NUM_LANES]; /* per lane */
+			MXD_U32 lineCurrent[MXD_NUM_LANES]; /* per lane */
+		} Repeater_status; /* R1, R2.5, R5, R10L, R25L, R40L, R100L */
 } MXD_DETAILED_STATUS_TYPE;
 
 /******************************************************************************
