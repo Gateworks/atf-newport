@@ -718,6 +718,41 @@ int octeontx2_clear_lf_to_pf_mapping()
 	return 0;
 }
 
+void rvu_fwdata_init(void)
+{
+	struct rvu_fwdata *fwdata;
+	int i, pf_mac_num;
+	uint64_t pf_mac;
+
+	fwdata = (struct rvu_fwdata *)rvu_get_fwdata_base();
+	if (rvu_get_fwdata_base() + sizeof(struct rvu_fwdata) > RVU_MEM_END) {
+		fwdata->header_magic = 0x0;
+		ERROR("RVU FWDATA size misconfiguration\n");
+		return;
+	}
+	fwdata->header_magic = RVU_FWDATA_HEADER_MAGIC;
+	fwdata->version = RVU_FWDATA_VERSION;
+
+	/* MAC address */
+	pf_mac_num = plat_octeontx_bcfg->pf_mac_num;
+	pf_mac = plat_octeontx_bcfg->pf_mac_base;
+
+	/* Clear MAC tables */
+	for (i = 0; i < PF_MACNUM_MAX; i++)
+		fwdata->pf_macs[i]  = 0;
+
+	for (i = 0; i < VF_MACNUM_MAX; i++)
+		fwdata->vf_macs[i] = 0;
+
+	/* Init PF MAC address; Skip PF 0 used as AF */
+	for (i = 1; i < pf_mac_num; i++) {
+		if (i >= PF_MACNUM_MAX)
+			break;
+		fwdata->pf_macs[i] = pf_mac;
+		pf_mac++;
+	}
+}
+
 void octeontx_rvu_init()
 {
 	int pf, rc;
@@ -759,4 +794,6 @@ void octeontx_rvu_init()
 
 	mailbox_enable();
 	config_rvu_pci();
+
+	rvu_fwdata_init();
 }

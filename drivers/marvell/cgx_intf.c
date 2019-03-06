@@ -19,6 +19,7 @@
 #include <cgx_intf.h>
 #include <cgx.h>
 #include <plat_scfg.h>
+#include <rvu.h>
 
 #ifdef NT_FW_CONFIG
 #include <plat_npc_mcam_profile.h>
@@ -557,6 +558,14 @@ static int cgx_process_requests(int cgx_id, int lmac_id)
 						scratchx0.s.mac_s.addr_5);
 				CSR_WRITE(CAVM_CGXX_CMRX_SCRATCHX(
 						cgx_id, lmac_id, 0), scratchx0.u);
+				break;
+			case CGX_CMD_GET_FWD_BASE:
+				scratchx0.u = 0;
+				scratchx0.s.fwd_base_s.addr =
+					rvu_get_fwdata_base();
+				CSR_WRITE(CAVM_CGXX_CMRX_SCRATCHX(
+					cgx_id, lmac_id, 0),
+					scratchx0.u);
 				break;
 			/* FIXME: add support for other commands */
 			default:

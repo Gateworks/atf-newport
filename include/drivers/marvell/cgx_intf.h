@@ -75,8 +75,9 @@ enum cgx_cmd_id {
 	CGX_CMD_INTF_SHUTDOWN,
 #ifdef NT_FW_CONFIG
 	CGX_CMD_GET_MKEX_SIZE,
-	CGX_CMD_GET_MKEX_PROFILE
+	CGX_CMD_GET_MKEX_PROFILE,
 #endif
+	CGX_CMD_GET_FWD_BASE		/* get base address of fw data */
 };
 
 /* async event ids */
@@ -185,6 +186,11 @@ struct cgx_lnk_sts_s {
 	uint64_t reserved2:39;
 };
 
+struct rvu_fwd_base_s {
+	uint64_t reserved1:9;
+	uint64_t addr:55;
+};
+
 union cgx_rsp_sts {
 	/* Fixed, applicable for all commands/events */
 	struct cgx_evt_sts_s evt_sts;
@@ -194,6 +200,8 @@ union cgx_rsp_sts {
 	struct cgx_ver_s ver;
 	/* response to CGX_CMD_GET_MAC_ADDR */
 	struct cgx_mac_addr_s mac_s;
+	/* response to CGX_CMD_GET_FWD_BASE */
+	struct rvu_fwd_base_s fwd_base_s;
 	/* response if evt_status = CMD_FAIL */
 	struct cgx_err_sts_s err;
 #ifdef NT_FW_CONFIG

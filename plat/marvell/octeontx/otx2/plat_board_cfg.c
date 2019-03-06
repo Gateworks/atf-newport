@@ -1594,6 +1594,10 @@ static void octeontx2_cgx_assign_mac(const void *fdt)
 		return;
 	}
 
+	/* Update the board configuration */
+	plat_octeontx_bcfg->pf_mac_base = mac;
+	plat_octeontx_bcfg->pf_mac_num = mac_num;
+
 	/* Initialize N first LMACs with the MAC address. */
 	for (cgx_idx = 0; cgx_idx < plat_octeontx_scfg->cgx_count; cgx_idx++) {
 		cgx = &(plat_octeontx_bcfg->cgx_cfg[cgx_idx]);

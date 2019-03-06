@@ -75,9 +75,10 @@ typedef struct cgx_config {
 
 typedef struct plat_octeontx_board_cfg {
 	board_cfg_t bcfg;
-
 	rvu_config_t rvu_config;
 	cgx_config_t cgx_cfg[MAX_CGX];
+	uint64_t pf_mac_base; /* PF MAC Address */
+	int pf_mac_num;
 } plat_octeontx_board_cfg_t;
 
 extern plat_octeontx_board_cfg_t * const plat_octeontx_bcfg;
