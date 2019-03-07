@@ -1734,11 +1734,12 @@ int cgx_xaui_get_link(int cgx_id, int lmac_id,
 	} else {
 		debug_cgx("%s: spux_status1 0x%llx, smux_tx_ctl 0x%llx smux_rx_ctl 0x%llx\n",
 			__func__, spux_status1.u, smux_tx_ctl.u, smux_rx_ctl.u);
-		/* link is down */
+
+		/* When the link is down, try to re-initialize the CGX link */
 		result->s.link_up = 0;
 		result->s.full_duplex = 0;
 		result->s.speed = 0;
-		return -1;
+		return cgx_xaui_set_link_up(cgx_id, lmac_id);
 	}
 
 	return 0;
