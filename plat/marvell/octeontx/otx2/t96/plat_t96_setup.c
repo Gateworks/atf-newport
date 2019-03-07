@@ -120,9 +120,6 @@ int plat_octeontx_get_cpt_count(void)
 
 int plat_octeontx_get_cgx_count(void)
 {
-	if (plat_get_altpkg() == CN93XX_PKG)
-		return 2;
-
 	return 3;
 }
 
