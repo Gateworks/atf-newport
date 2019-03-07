@@ -651,8 +651,8 @@ void phy_marvell_5113_get_link_status(int cgx_id, int lmac_id,
 		debug_phy_driver("%s(%d): 88X5113 PHY link is %d, speed 0x%x\n",
 				__func__,
 				port, currentStatus, speed);
-		debug_phy_driver("%s(%d): 88X5113 PHY link hostCurrent.%d\t"
-				"lineCurrent.%d\n", __func__, port,
+		debug_phy_driver("%s(%d): 88X5113 PHY link hostCurrent.%ld\t"
+				"lineCurrent.%ld\n", __func__, port,
 			  detailedStatus.Per_lane_status.hostCurrent[port],
 			  detailedStatus.Per_lane_status.lineCurrent[port]);
 
