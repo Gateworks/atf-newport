@@ -29,13 +29,14 @@ PLAT_BL_COMMON_SOURCES	:=	drivers/arm/pl011/aarch64/pl011_console.S	\
 				plat/marvell/octeontx/octeontx_dram.c			\
 				drivers/marvell/smi.c		\
 				plat/marvell/octeontx/octeontx_io_storage.c		\
+				plat/marvell/octeontx/aarch64/octeontx_report_exception.S	\
+				plat/marvell/octeontx/aarch64/octeontx_helpers.S 	\
 				${XLAT_TABLES_LIB_SRCS}				\
 
 BL1_SOURCES		+=	drivers/marvell/spi.c		\
 				drivers/io/io_fip.c				\
 				drivers/io/io_memmap.c				\
 				drivers/io/io_storage.c				\
-				plat/marvell/octeontx/aarch64/octeontx_helpers.S 	\
 				plat/marvell/octeontx/octeontx_bl1_setup.c			\
 				plat/marvell/octeontx/octeontx_board_cfg_bl1.c		\
 				plat/marvell/octeontx/octeontx_scfg_bl1.c			\
@@ -57,7 +58,6 @@ BL31_SOURCES		+=	drivers/arm/gic/common/gic_common.c		\
 				drivers/marvell/timers_octeontx.c		\
 				lib/timers/timers.c				\
 				drivers/marvell/gpio_octeontx.c		\
-				plat/marvell/octeontx/aarch64/octeontx_helpers.S 	\
 				plat/marvell/octeontx/octeontx_bl31_setup.c			\
 				plat/marvell/octeontx/octeontx_legacy_pm.c			\
 				plat/marvell/octeontx/octeontx_legacy_pwrc.c		\

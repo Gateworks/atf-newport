@@ -81,7 +81,7 @@ endfunc plat_secondary_cold_boot_setup
 	 * int plat_crash_console_init(void)
 	 * Function to initialize the crash console
 	 * without a C Runtime to print crash report.
-	 * Clobber list : x0, x1, x2, x3, x4
+	 * Clobber list : x0, x1, x2, x3, x4, x6, x7, x14
 	 * ---------------------------------------------
 	 */
 func plat_crash_console_init
