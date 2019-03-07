@@ -18,9 +18,11 @@
 #include <plat_board_cfg.h>
 #include <cgx_intf.h>
 #include <cgx.h>
+#include <qlm.h>
 #include <plat_scfg.h>
 #include <sh_fwdata.h>
 #include <gsern/gsern_internal.h>
+#include <platform_setup.h>
 
 #ifdef NT_FW_CONFIG
 #include <plat_npc_mcam_profile.h>
@@ -1034,6 +1036,135 @@ static int cgx_set_phy_mod_type(int cgx_id, int lmac_id, int phy_mod_type)
 	return 0;
 }
 
+#ifdef DEBUG_ATF_ENABLE_SERDES_DIAGNOSTIC_CMDS
+static int do_prbs(int qlm, int mode, int time)
+{
+	int num_lanes;
+	int lane;
+	int show_phy_host = 1;
+	int show_phy_line = 1;
+	int errors;
+	int time_left, delay;
+	int cgx_id;
+	cgx_config_t *cgx_cfg;
+	const int DISPLAY_INTERVAL = 5;
+
+	if (qlm >= MAX_QLM || qlm < 0) {
+		WARN("%d not in range, available QLM0-%d\n", qlm, MAX_QLM - 1);
+		return -1;
+	}
+	num_lanes = plat_octeontx_scfg->qlm_max_lane_num[qlm];
+	cgx_id = plat_get_cgx_idx(qlm);
+	if (cgx_id == -1) {
+		WARN("To QLM%d any CGX cannot by wired.\n", qlm);
+		cgx_cfg = NULL;
+	} else {
+		cgx_cfg = &(plat_octeontx_bcfg->cgx_cfg[cgx_id]);
+	}
+
+	if (mode == 0) {
+		WARN("PRBS with pattern memory not implemented yet.\n");
+		return -1;
+	}
+	printf("Start PRBS-%d on QLM%d (CGX %d), end in %d sec\n",
+		mode, qlm, cgx_id, time);
+
+	/* Start PRBS */
+	qlm_enable_prbs_gsern(qlm, mode, QLM_DIRECTION_TX);
+
+	for (lane = 0; lane < num_lanes; lane++) {
+		/* BDK use here bdk_netphy_get_handle function */
+		if (cgx_cfg != NULL && cgx_cfg->lmac_cfg[lane].phy_present) {
+			if (show_phy_host) {
+				if (phy_enable_prbs(cgx_id, lane, 1, mode, 1))
+					show_phy_host = 0;
+			}
+			if (show_phy_host) {
+				if (phy_enable_prbs(cgx_id, lane, 0, mode, 1))
+					show_phy_line = 0;
+			}
+		}
+	}
+	udelay(1000);  /* Let TX run for 1ms before starting RX */
+	qlm_enable_prbs_gsern(qlm, mode, QLM_DIRECTION_RX);
+
+	for (lane = 0; lane < num_lanes; lane++) {
+		/* BDK use here bdk_netphy_get_handle function */
+		if (cgx_cfg != NULL && cgx_cfg->lmac_cfg[lane].phy_present) {
+			if (show_phy_host) {
+				if (phy_enable_prbs(cgx_id, lane, 1, mode, 1))
+					show_phy_host = 0;
+			}
+			if (show_phy_host) {
+				if (phy_enable_prbs(cgx_id, lane, 0, mode, 1))
+					show_phy_line = 0;
+			}
+		}
+	}
+
+	/* Wait/display */
+	time_left = time;
+	while (time_left > 0) {
+		delay = time_left > DISPLAY_INTERVAL ?
+				DISPLAY_INTERVAL : time_left;
+		time_left -= delay;
+		mdelay(delay * 1000);
+
+		for (lane = 0; lane < num_lanes; lane++) {
+			errors = qlm_get_prbs_errors_gsern(qlm, lane, 0);
+			printf("Time: %d seconds QLM%d.Lane%d: errors: ",
+				time - time_left, qlm, lane);
+			if (errors != -1)
+				printf("%d", errors);
+			else
+				printf("No lock");
+
+			if (cgx_cfg != NULL && show_phy_host) {
+				printf(", PHY Host errors: ");
+				/* BDK use here bdk_netphy_get_handle */
+				if (cgx_cfg->lmac_cfg[lane].phy_present) {
+					errors = phy_get_prbs_errors(cgx_id,
+							lane, 1, 0, mode);
+					if (errors != -1)
+						printf("%d", errors);
+					else
+						printf("No lock");
+				}
+			}
+			if (cgx_cfg != NULL && show_phy_line) {
+				printf(", PHY Line errors: ");
+				/* BDK use here bdk_netphy_get_handle */
+				if (cgx_cfg->lmac_cfg[lane].phy_present) {
+					errors = phy_get_prbs_errors(cgx_id,
+							lane, 0, 0, mode);
+					if (errors != -1)
+						printf("%d", errors);
+					else
+						printf("No lock");
+				}
+			}
+			printf("\n");
+		}
+	}
+
+	printf("Stopping pattern generator\n");
+	/* Stop PRBS */
+	qlm_disable_prbs_gsern(qlm);
+
+	for (lane = 0; lane < num_lanes; lane++) {
+		/* BDK use here bdk_netphy_get_handle function */
+		if (cgx_cfg != NULL && cgx_cfg->lmac_cfg[lane].phy_present) {
+			if (show_phy_host) {
+				phy_disable_prbs(cgx_id, lane, 1, mode);
+				phy_disable_prbs(cgx_id, lane, 0, mode);
+			}
+		}
+	}
+
+	return 0;
+}
+#endif /* DEBUG_ATF_ENABLE_SERDES_DIAGNOSTIC_CMDS */
+
 /* Note : this function executes with lock acquired */
 static int cgx_process_requests(int cgx_id, int lmac_id)
 {
@@ -1071,6 +1202,10 @@ static int cgx_process_requests(int cgx_id, int lmac_id)
 		(request_id == CGX_CMD_GET_MKEX_PROFILE) ||
 #endif
 		(request_id == CGX_CMD_GET_FWD_BASE) ||
+#ifdef DEBUG_ATF_ENABLE_SERDES_DIAGNOSTIC_CMDS
+		(request_id == CGX_CMD_PRBS) ||
+		(request_id == CGX_CMD_DISPLAY_EYE) ||
+#endif /* DEBUG_ATF_ENABLE_SERDES_DIAGNOSTIC_CMDS */
 		(request_id == CGX_CMD_GET_FW_VER)) {
 		switch (request_id) {
 		case CGX_CMD_INTF_SHUTDOWN:
@@ -1119,6 +1254,18 @@ static int cgx_process_requests(int cgx_id, int lmac_id)
 			CSR_WRITE(CAVM_CGXX_CMRX_SCRATCHX(cgx_id, lmac_id, 0),
 				scratchx0.u);
 			break;
+
+#ifdef DEBUG_ATF_ENABLE_SERDES_DIAGNOSTIC_CMDS
+		case CGX_CMD_PRBS:
+			do_prbs(scratchx1.s.prbs_args.qlm,
+				scratchx1.s.prbs_args.mode,
+				scratchx1.s.prbs_args.time);
+			break;
+
+		case CGX_CMD_DISPLAY_EYE:
+			NOTICE("Display Eye not implemented yet.\n");
+			break;
+#endif /* DEBUG_ATF_ENABLE_SERDES_DIAGNOSTIC_CMDS */
 		}
 	} else {
 		/* all the below commands should be processed only
