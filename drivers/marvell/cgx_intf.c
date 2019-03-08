@@ -869,6 +869,7 @@ void cgx_fw_intf_shutdown(void)
 {
 	cgx_lmac_context_t *lmac_ctx;
 	cgx_lmac_config_t *lmac_cfg;
+	cavm_cgxx_cmrx_int_t cmrx_int;
 
 	debug_cgx_intf("%s\n", __func__);
 
@@ -893,6 +894,15 @@ void cgx_fw_intf_shutdown(void)
 			 */
 			if (lmac_cfg->lmac_enable)
 				cgx_lmac_init_link(cgx, lmac);
+			/* Clear the interrupt during shutdown for all
+			 * LMACs as there might be a possibility that
+			 * interrupts are not cleared by u-boot
+			 * as it doesn't handle asynchronous events
+			 */
+			cmrx_int.u = CSR_READ(CAVM_CGXX_CMRX_INT(cgx, lmac));
+			cmrx_int.s.overflw = 1;
+			CSR_WRITE(CAVM_CGXX_CMRX_INT(cgx, lmac),
+					cmrx_int.u);
 		}
 	}
 }
