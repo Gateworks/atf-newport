@@ -50,7 +50,7 @@ struct mv_ddr_iface dram_iface_ap0 = {
 		   0, 0,			/* cas_l, cas_wl */
 		   MV_DDR_TEMP_LOW} },		/* temperature */
 #if DDR32
-		BUS_MASK_32BIT,	/* subphys mask */
+		MV_DDR_32BIT_ECC_PUP8_BUS_MASK,	/* subphys mask */
 #else
 		MV_DDR_64BIT_ECC_PUP8_BUS_MASK,	/* subphys mask */
 #endif
