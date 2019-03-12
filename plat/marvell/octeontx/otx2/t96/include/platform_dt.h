@@ -19,7 +19,7 @@
 #define MAX_VFS_PER_PF		128
 
 /* Global, default number of VFs */
-#define DEFAULT_VFS		8
+#define DEFAULT_VFS		3
 
 /* Default number of VFs for PF0 (admin PF) */
 #define DEFAULT_AF_PF0_VFS	0
