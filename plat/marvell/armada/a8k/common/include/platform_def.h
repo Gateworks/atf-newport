@@ -207,9 +207,7 @@
 #define TRUSTED_DRAM_BASE	PLAT_MARVELL_TRUSTED_DRAM_BASE
 #define TRUSTED_DRAM_SIZE	PLAT_MARVELL_TRUSTED_DRAM_SIZE
 
-#ifdef BL32 /* Only required for BL32 images attachment (OP-TEE for instance) */
 #define BL32_BASE				TRUSTED_DRAM_BASE
-#endif
 
 #ifdef MVEBU_PCIE_ECAM_WA
 #define HANDLE_EA_EL3_FIRST
