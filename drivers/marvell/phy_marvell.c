@@ -41,6 +41,14 @@
 #include "mxdHwSerdesCntl.h"
 #include "mxdAPIInternal.h"
 
+/* 6141 includes */
+#include "mydApiTypes.h"
+#include "mydAPI.h"
+#include "mydUtils.h"
+#include "mydInitialization.h"
+#include "mydFwImages.h"
+#include "mydHwSerdesCntl.h"
+
 /* define DEBUG_ATF_MARVELL_PHY_DRIVER to enable debug logs */
 #undef DEBUG_ATF_MARVELL_PHY_DRIVER	/* Marvell PHY Driver logs */
 
@@ -68,6 +76,8 @@ typedef struct {
 
 /* Allow multiple instances of PHY driver to run on different QLMs */
 phy_mxd_priv_t marvell_5113_priv[MAX_CGX];
+
+MYD_DEV marvell_6141_priv;
 
 static MCD_STATUS mcd_read_mdio(MCD_DEV_PTR pDev, MCD_U16 mdioPort, MCD_U16 mmd, MCD_U16 reg, MCD_U16 *value)
 {
@@ -97,6 +107,26 @@ static MXD_STATUS mxd_write_mdio(MXD_DEV_PTR pDev, MXD_U16 mdioPort, MXD_U16 mmd
 	phy_config_t *phy = pDev->hostContext;
 	smi_write(phy->mdio_bus, phy->addr, mmd, CLAUSE45, reg, value);
 	return MXD_OK;
+}
+
+static MYD_STATUS myd_read_mdio(MYD_DEV_PTR pDev, MYD_U16 mdioPort,
+				MYD_U16 mmd, MYD_U16 reg, MYD_U16 *value)
+{
+	int read;
+	phy_config_t *phy = pDev->hostContext;
+
+	read = smi_read(phy->mdio_bus, CLAUSE45, phy->addr, mmd, reg);
+	*value = read;
+	return MYD_OK;
+}
+
+static MYD_STATUS myd_write_mdio(MYD_DEV_PTR pDev, MYD_U16 mdioPort,
+				 MYD_U16 mmd, MYD_U16 reg, MYD_U16 value)
+{
+	phy_config_t *phy = pDev->hostContext;
+
+	smi_write(phy->mdio_bus, phy->addr, mmd, CLAUSE45, reg, value);
+	return MYD_OK;
 }
 
 /* One time initialization for the PHY if required */
@@ -693,6 +723,148 @@ void phy_marvell_5113_get_link_status(int cgx_id, int lmac_id,
 	}
 }
 
+void phy_marvell_6141_probe(int cgx_id, int lmac_id)
+{
+	MYD_U16 x6141_sbus_master_image_size;
+	MYD_U16 x6141_serdes_image_size;
+	MYD_STATUS status;
+	phy_config_t *phy;
+
+	debug_phy_driver("%s: %d:%d\n", __func__, cgx_id, lmac_id);
+
+	phy = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id].phy_config;
+	phy->priv = &marvell_6141_priv;
+
+	if (marvell_6141_priv.devEnabled)
+		return;
+
+	x6141_sbus_master_image_size = x6141_sbus_master_image_end -
+						x6141_sbus_master_image_start;
+	x6141_serdes_image_size = x6141_serdes_image_end -
+						x6141_serdes_image_start;
+
+	status = mydInitDriver(myd_read_mdio, myd_write_mdio, phy->addr, NULL,
+			       0,
+			       x6141_sbus_master_image_start,
+			       x6141_sbus_master_image_size,
+			       x6141_serdes_image_start,
+			       x6141_serdes_image_size,
+			       phy,
+			       &marvell_6141_priv);
+	if (status != MYD_OK) {
+		ERROR("%s: %d:%d mydInitDriver() failed\n", __func__, cgx_id,
+		      lmac_id);
+		return;
+	}
+
+#ifdef DEBUG_ATF_MARVELL_PHY_DRIVER
+	MYD_U16 serdesRevision = 0;
+	MYD_U16 sbmRevision = 0;
+
+	status = mydSerdesGetRevision(phy->priv, phy->addr, &serdesRevision,
+				      &sbmRevision);
+	if (status != MYD_OK) {
+		ERROR("%s: %d:%d mydSerdesGetRevision() failed\n", __func__,
+		      cgx_id, lmac_id);
+	}
+	printf("%s: %d:%d SERDES FW rev 0x%x SBUS MASTER FW rev 0x%x\n",
+			 __func__, cgx_id, lmac_id, serdesRevision,
+			 sbmRevision);
+#endif
+}
+
+void phy_marvell_6141_config(int cgx_id, int lmac_id)
+{
+	phy_config_t *phy;
+	cgx_lmac_config_t *lmac_cfg;
+	MYD_STATUS status;
+	MYD_U16 result;
+	MYD_OP_MODE host_mode, line_mode;
+
+	debug_phy_driver("%s: %d:%d\n", __func__, cgx_id, lmac_id);
+
+	lmac_cfg = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
+
+	switch (lmac_cfg->mode_idx) {
+	case QLM_MODE_10G_KR:
+		host_mode = MYD_P10KN; /* 10GBASE-KR, no FEC */
+		line_mode = MYD_P10LN; /* 10GBASE-LR/SR */
+		break;
+
+	case QLM_MODE_25GAUI_C2C:
+		host_mode = MYD_P25LR; /* 25GBASE-R, RS-FEC, no AN */
+		line_mode = MYD_P25LN; /* 25GBASE-R, no FEC, no AN */
+		break;
+
+	case QLM_MODE_50GAUI_2_C2C:
+		host_mode = MYD_P50MR; /* 50GBASE-R2, RS-FEC, no AN */
+		line_mode = MYD_P50MN; /* 50GBASE-R2, no FEC, no AN */
+		break;
+
+	default:
+		ERROR("%s: %d:%d QLM_MODE %d is not supported\n", __func__,
+		      cgx_id, lmac_id, lmac_cfg->mode_idx);
+		return;
+	}
+
+	phy = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id].phy_config;
+
+	status = mydSetModeSelection(phy->priv, phy->addr, lmac_id, host_mode,
+				     line_mode, MYD_MODE_ICAL_EFFORT_0,
+				     &result);
+	if (status != MYD_OK) {
+		ERROR("%s: %d:%d mydSetModeSelection() failed, result=%hu\n",
+		      __func__, cgx_id, lmac_id, result);
+	}
+}
+
+void phy_marvell_6141_get_link_status(int cgx_id, int lmac_id,
+				      link_state_t *link)
+{
+	MYD_U16 latchedStatus, currentStatus;
+	MYD_PCS_LINK_STATUS statusDetail;
+	MYD_STATUS status;
+	phy_config_t *phy;
+	int lmac_type;
+
+	debug_phy_driver("%s: %d:%d\n", __func__, cgx_id, lmac_id);
+
+	lmac_type = plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id].mode;
+
+	phy = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id].phy_config;
+
+	mydMemSet(&statusDetail, 0, sizeof(MYD_PCS_LINK_STATUS));
+	link->u64 = 0;
+
+	status = mydCheckPCSLinkStatus(phy->priv, phy->addr, lmac_id,
+				       &currentStatus, &latchedStatus,
+				       &statusDetail);
+	if (status == MYD_OK) {
+		if (currentStatus == MYD_LINK_UP) {
+			switch (lmac_type) {
+			case CAVM_CGX_LMAC_TYPES_E_TENG_R:
+				link->s.speed = CGX_LINK_10G;
+				break;
+			case CAVM_CGX_LMAC_TYPES_E_TWENTYFIVEG_R:
+				link->s.speed = CGX_LINK_25G;
+				break;
+			case CAVM_CGX_LMAC_TYPES_E_FIFTYG_R:
+				link->s.speed = CGX_LINK_50G;
+				break;
+			default:
+				ERROR("%s: %d:%d Unexpected lmac_type %d\n",
+				      __func__, cgx_id, lmac_id, lmac_type);
+				return;
+			}
+			link->s.link_up = 1;
+			link->s.full_duplex = 1;
+		}
+	} else {
+		ERROR("%s: %d:%d mydCheckPCSLinkStatus failed.\n", __func__,
+		      cgx_id, lmac_id);
+	}
+}
+
 /* Table of Marvell PHY driver list */
 phy_drv_t marvell_drv[] = {
 	{
@@ -726,6 +898,16 @@ phy_drv_t marvell_drv[] = {
 		.set_an			= phy_marvell_5113_set_an,
 		.reset			= phy_generic_reset,
 		.get_link_status	= phy_marvell_5113_get_link_status,
+		.shutdown		= phy_generic_shutdown,
+	},
+	{
+		.drv_name		= "MARVELL-88X6141",
+		.drv_type		= PHY_MARVELL_6141,
+		.flags			= 0,
+		.probe			= phy_marvell_6141_probe,
+		.config			= phy_marvell_6141_config,
+		.reset			= phy_generic_reset,
+		.get_link_status	= phy_marvell_6141_get_link_status,
 		.shutdown		= phy_generic_shutdown,
 	},
 };

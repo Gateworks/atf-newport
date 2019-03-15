@@ -24,6 +24,7 @@ PLAT_INCLUDES		+=	-Iinclude/plat/marvell/octeontx/otx2			\
 				-Ilib/libphy/marvell_88x5113/serdes/src/include		\
 				-Ilib/libphy/marvell_88x5123/include			\
 				-Ilib/libphy/marvell_88x5123/serdes/include		\
+				-Ilib/libphy/marvell_88x6141/include			\
 
 PLAT_BL_COMMON_SOURCES	+=	plat/marvell/octeontx/otx2/t96/plat_t96_setup.c		\
 				plat/marvell/octeontx/otx2/plat_security.c		\
@@ -42,6 +43,7 @@ BL2_SOURCES		+=	plat/marvell/octeontx/otx2/t96/plat_t96_ecam.c		\
 				drivers/marvell/rvu.c		\
 
 BL31_LIBS               +=      lib/libphy/libphy_88x5113.a     \
+				lib/libphy/libphy_88x6141.a	\
 
 BL31_SOURCES		+=	plat/marvell/octeontx/otx2/aarch64/plat_octeontx_common.S	\
 				plat/marvell/octeontx/otx2/aarch64/plat_helpers.S	\
