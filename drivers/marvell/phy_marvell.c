@@ -41,6 +41,7 @@
 #include "mxdHwSerdesCntl.h"
 #include "mxdAPIInternal.h"
 
+#ifdef MARVELL_PHY_6141
 /* 6141 includes */
 #include "mydApiTypes.h"
 #include "mydAPI.h"
@@ -48,6 +49,7 @@
 #include "mydInitialization.h"
 #include "mydFwImages.h"
 #include "mydHwSerdesCntl.h"
+#endif /* MARVELL_PHY_6141 */
 
 /* define DEBUG_ATF_MARVELL_PHY_DRIVER to enable debug logs */
 #undef DEBUG_ATF_MARVELL_PHY_DRIVER	/* Marvell PHY Driver logs */
@@ -77,7 +79,9 @@ typedef struct {
 /* Allow multiple instances of PHY driver to run on different QLMs */
 phy_mxd_priv_t marvell_5113_priv[MAX_CGX];
 
+#ifdef MARVELL_PHY_6141
 MYD_DEV marvell_6141_priv;
+#endif /* MARVELL_PHY_6141 */
 
 static MCD_STATUS mcd_read_mdio(MCD_DEV_PTR pDev, MCD_U16 mdioPort, MCD_U16 mmd, MCD_U16 reg, MCD_U16 *value)
 {
@@ -109,6 +113,7 @@ static MXD_STATUS mxd_write_mdio(MXD_DEV_PTR pDev, MXD_U16 mdioPort, MXD_U16 mmd
 	return MXD_OK;
 }
 
+#ifdef MARVELL_PHY_6141
 static MYD_STATUS myd_read_mdio(MYD_DEV_PTR pDev, MYD_U16 mdioPort,
 				MYD_U16 mmd, MYD_U16 reg, MYD_U16 *value)
 {
@@ -128,6 +133,7 @@ static MYD_STATUS myd_write_mdio(MYD_DEV_PTR pDev, MYD_U16 mdioPort,
 	smi_write(phy->mdio_bus, phy->addr, mmd, CLAUSE45, reg, value);
 	return MYD_OK;
 }
+#endif /* MARVELL_PHY_6141 */
 
 /* One time initialization for the PHY if required */
 void phy_marvell_1514_probe(int cgx_id, int lmac_id)
@@ -723,6 +729,7 @@ void phy_marvell_5113_get_link_status(int cgx_id, int lmac_id,
 	}
 }
 
+#ifdef MARVELL_PHY_6141
 void phy_marvell_6141_probe(int cgx_id, int lmac_id)
 {
 	MYD_U16 x6141_sbus_master_image_size;
@@ -864,6 +871,7 @@ void phy_marvell_6141_get_link_status(int cgx_id, int lmac_id,
 		      cgx_id, lmac_id);
 	}
 }
+#endif /* MARVELL_PHY_6141 */
 
 /* Table of Marvell PHY driver list */
 phy_drv_t marvell_drv[] = {
@@ -900,6 +908,8 @@ phy_drv_t marvell_drv[] = {
 		.get_link_status	= phy_marvell_5113_get_link_status,
 		.shutdown		= phy_generic_shutdown,
 	},
+
+#ifdef MARVELL_PHY_6141
 	{
 		.drv_name		= "MARVELL-88X6141",
 		.drv_type		= PHY_MARVELL_6141,
@@ -910,6 +920,7 @@ phy_drv_t marvell_drv[] = {
 		.get_link_status	= phy_marvell_6141_get_link_status,
 		.shutdown		= phy_generic_shutdown,
 	},
+#endif /* MARVELL_PHY_6141 */
 };
 
 phy_drv_t *phy_marvell_drv_lookup(int type)
