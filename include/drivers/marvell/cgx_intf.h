@@ -73,11 +73,19 @@ enum cgx_cmd_id {
 	CGX_CMD_LINK_STAT_CHANGE,
 	CGX_CMD_MODE_CHANGE,		/* hot plug support */
 	CGX_CMD_INTF_SHUTDOWN,
+	CGX_CMD_GET_FWD_BASE,		/* get base address of shared FW data */
+	CGX_CMD_GET_LINK_MODES,		/* Supported Link Modes */
+	CGX_CMD_SET_LINK_MODE,
+	CGX_CMD_GET_SUPPORTED_FEC,
+	CGX_CMD_SET_FEC,
+	CGX_CMD_GET_AN,
+	CGX_CMD_SET_AN,
+	CGX_CMD_GET_ADV_LINK_MODES,
+	CGX_CMD_GET_ADV_FEC,
 #ifdef NT_FW_CONFIG
 	CGX_CMD_GET_MKEX_SIZE,
 	CGX_CMD_GET_MKEX_PROFILE,
 #endif
-	CGX_CMD_GET_FWD_BASE		/* get base address of fw data */
 };
 
 /* async event ids */
@@ -103,6 +111,32 @@ enum cgx_cmd_own {
 	/* set by kernel/uefi/u-boot after posting a new request to ATF */
 	CGX_OWN_FIRMWARE,
 };
+/* Supported LINK MODE enums
+ * Each link mode is a bit mask of these
+ * enums which are represented as bits
+ * The modes enum is still a FIXME
+ */
+typedef enum {
+	CGX_MODE_SGMII_BIT = 0,
+	CGX_MODE_1000_BASEX_BIT,
+	CGX_MODE_QSGMII_BIT,
+	CGX_MODE_10G_R_BIT,
+	CGX_MODE_10G_KR_BIT,
+	CGX_MODE_20G_R_BIT,
+	CGX_MODE_25G_R_BIT,
+	CGX_MODE_25G_KR_BIT,
+	CGX_MODE_40G_R4_BIT,
+	CGX_MODE_40G_KR4_BIT,
+	CGX_MODE_50G_R2_BIT,
+	CGX_MODE_50G_KR_BIT,
+	CGX_MODE_80G_R4_BIT,
+	CGX_MODE_100G_R4_BIT,
+	CGX_MODE_100G_KR4_BIT,
+	CGX_MODE_XAUI_BIT,
+	CGX_MODE_RXAUI_BIT,
+	CGX_MODE_USXGMII_BIT,
+	CGX_MODE_MAX_BIT /* = 18 */
+} cgx_mode_t;
 
 /* scratchx(0) CSR used for ATF->non-secure SW communication.
  * This acts as the status register
@@ -181,14 +215,43 @@ struct cgx_lnk_sts_s {
 	uint64_t reserved1:9;
 	uint64_t link_up:1;
 	uint64_t full_duplex:1;
-	uint64_t speed:4;		/* cgx_link_speed */
+	uint64_t speed:4;	/* cgx_link_speed */
 	uint64_t err_type:10;
-	uint64_t reserved2:39;
+	uint64_t an:1;		/* Current AN state : enabled/disabled */
+	uint64_t fec:2;		/* Current FEC type if enabled, if not 0 */
+	uint64_t port:8;	/* Share the current port info if required */
+	uint64_t reserved2:28;
 };
 
-struct rvu_fwd_base_s {
+struct sh_fwd_base_s {
 	uint64_t reserved1:9;
 	uint64_t addr:55;
+};
+
+struct cgx_link_modes_s {
+	uint64_t reserved1:9;
+	uint64_t modes:55;
+};
+
+/* Resp to cmd ID - CGX_CMD_GET_ADV_FEC/CGX_CMD_GET_SUPPORTED_FEC
+ * fec : 2 bits
+ * typedef enum cgx_fec_type {
+ *     CGX_FEC_NONE,
+ *     CGX_FEC_BASE_R,
+ *     CGX_FEC_RS
+ * } fec_type_t;
+ */
+struct cgx_fec_types_s {
+	uint64_t reserved1:9;
+	uint64_t fec:2;
+	uint64_t reserved2:53;
+};
+
+/* Resp to cmd ID - CGX_CMD_GET_AN */
+struct cgx_get_an_s {
+	uint64_t reserved1:9;
+	uint64_t an:1;
+	uint64_t reserved2:54;
 };
 
 union cgx_rsp_sts {
@@ -201,9 +264,19 @@ union cgx_rsp_sts {
 	/* response to CGX_CMD_GET_MAC_ADDR */
 	struct cgx_mac_addr_s mac_s;
 	/* response to CGX_CMD_GET_FWD_BASE */
-	struct rvu_fwd_base_s fwd_base_s;
+	struct sh_fwd_base_s fwd_base_s;
 	/* response if evt_status = CMD_FAIL */
 	struct cgx_err_sts_s err;
+	/* response to CGX_CMD_GET_SUPPORTED_FEC */
+	struct cgx_fec_types_s supported_fec;
+	/* response to CGX_CMD_GET_LINK_MODES */
+	struct cgx_link_modes_s supported_modes;
+	/* response to CGX_CMD_GET_ADV_LINK_MODES */
+	struct cgx_link_modes_s adv_modes;
+	/* response to CGX_CMD_GET_ADV_FEC */
+	struct cgx_fec_types_s adv_fec;
+	/* response to CGX_CMD_GET_AN */
+	struct cgx_get_an_s an;
 #ifdef NT_FW_CONFIG
 	/* response to CGX_CMD_GET_MKEX_SIZE */
 	struct cgx_mcam_profile_sz_s prfl_sz;
@@ -256,12 +329,27 @@ struct cgx_link_change_args {		/* start from bit 8 */
 	uint64_t reserved2:50;
 };
 
+/* command argument to be passed for cmd ID - CGX_CMD_SET_LINK_MODE */
+struct cgx_set_mode_args {
+	uint64_t reserved1:8;
+	uint64_t mode:56;
+};
+
+/* command argument to be passed for cmd ID - CGX_CMD_SET_FEC */
+struct cgx_set_fec_args {
+	uint64_t reserved1:8;
+	uint64_t fec:2;
+	uint64_t reserved2:54;
+};
+
 union cgx_cmd_s {
 	uint64_t own_status:2;			/* cgx_cmd_own */
 	struct cgx_cmd cmd;
 	struct cgx_ctl_args cmd_args;
 	struct cgx_mtu_args mtu_size;
 	struct cgx_link_change_args lnk_args;	/* Input to CGX_CMD_LINK_CHANGE */
+	struct cgx_set_mode_args mode_args;
+	struct cgx_set_fec_args fec_args;
 	/* any other arg for command id * like : mtu, dmac filtering control */
 };
 
