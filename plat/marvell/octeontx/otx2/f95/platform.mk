@@ -39,6 +39,7 @@ BL1_SOURCES		+=	plat/marvell/octeontx/otx2/aarch64/plat_octeontx_common.S	\
 				plat/marvell/octeontx/otx2/plat_scfg.c	\
 
 BL2_SOURCES		+=	plat/marvell/octeontx/otx2/f95/plat_f95_ecam.c		\
+				drivers/marvell/sh_fwdata.c		\
 				drivers/marvell/rvu.c		\
 
 BL31_LIBS               +=      lib/libphy/libphy_88x5113.a     \
@@ -49,6 +50,7 @@ BL31_SOURCES		+=	plat/marvell/octeontx/otx2/aarch64/plat_octeontx_common.S	\
 				drivers/marvell/phy_gen.c		\
 				drivers/marvell/phy_vitesse.c		\
 				drivers/marvell/phy_marvell.c		\
+				drivers/marvell/sh_fwdata.c		\
 				drivers/marvell/rvu.c		\
 				drivers/marvell/phy_mgmt.c		\
 				drivers/marvell/sfp_mgmt.c		\

@@ -23,11 +23,11 @@
 #define VF_MBOX_SIZE		0x002000000
 #define PF_MSIX_BASE		(VF_MBOX_BASE + VF_MBOX_SIZE)
 #define VF_MSIX_BASE_IDX_NUMBER	0x2000
-/* The last 2M reserved for RVU firmware data */
-#define FWDATA_OFFSET		0x2600000
-#define RVU_FWDATA_BASE		(RVU_MEM_BASE + FWDATA_OFFSET)
-#define RVU_FWDATA_SIZE		0x200000
-#define RVU_MEM_END			(RVU_MEM_SIZE + RVU_MEM_BASE)
+/* The last 2M reserved for shared firmware data */
+#define SH_FWDATA_OFFSET	0x2600000
+#define SH_FWDATA_BASE		(RVU_MEM_BASE + SH_FWDATA_OFFSET)
+#define SH_FWDATA_SIZE		0x200000
+#define RVU_MEM_END		(RVU_MEM_SIZE + RVU_MEM_BASE)
 
 /*
  * According to errata RVU-36163 in RVU_PRIV_PF()_MSIX_CFG fields
@@ -69,20 +69,6 @@ typedef struct pci_config {
 	int class_code;
 } pci_config_t;
 
-/* To be synced from linux/drivers/net/ethernet/marvell/octeontx2/af/rvu.h */
-struct rvu_fwdata {
-#define RVU_FWDATA_HEADER_MAGIC	0xCFDA	/*Custom Firmware Data*/
-#define RVU_FWDATA_VERSION	0x0000
-	uint32_t header_magic;
-	uint32_t version;		/* version id */
-
-	/* MAC address */
-#define PF_MACNUM_MAX	32
-#define VF_MACNUM_MAX	256
-	uint64_t pf_macs[PF_MACNUM_MAX];
-	uint64_t vf_macs[VF_MACNUM_MAX];
-};
-
 struct rvu_device {
 	int enable;
 	int num_vfs;
@@ -116,8 +102,4 @@ typedef enum {
 int octeontx2_clear_lf_to_pf_mapping();
 void octeontx_rvu_init();
 
-static inline uint64_t rvu_get_fwdata_base(void)
-{
-	return RVU_FWDATA_BASE;
-}
 #endif
