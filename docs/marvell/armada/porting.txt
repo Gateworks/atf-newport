@@ -74,10 +74,6 @@ Armada-70x0/Armada-80x0 Porting
 		all relevant comphy parameters. The PHY porting layer specifies which parameters need to be suited and
 		the board designer should provide relevant values.
 
-		.. seealso::
-			For XFI/SFI comphy type there is procedure "rx_training" which eases process of suiting some of
-			the parameters. Please see :ref:`uboot_cmd` section: rx_training.
-
 		The PHY porting layer simplifies updating static values per board type, which are now grouped in one place.
 
 		.. note::
