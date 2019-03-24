@@ -28,6 +28,7 @@ struct mv_ddr_iface dram_iface_ap0 = {
 	.ap_base = MVEBU_REGS_BASE_AP(0),
 	.state = MV_DDR_IFACE_NRDY,
 	.validation = MV_DDR_MEMORY_CHECK,
+	.sscg = SSCG_EN,
 	.id = 0,
 	.iface_base_addr = 0,
 	.tm = {
