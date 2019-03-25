@@ -60,7 +60,20 @@
 #define debug_phy_driver(...) ((void) (0))
 #endif
 
-MCD_DEV marvell_5123_priv;
+typedef struct {
+	MCD_DEV mcddev;
+	struct {
+		int use_an;
+		int completed_an;
+		int cmain_host;
+		int cpre_host;
+		int cpost_host;
+		int cmain_line;
+		int cpre_line;
+		int cpost_line;
+	} port[8];
+} phy_mcd_priv_t;
+
 typedef struct {
 	MXD_DEV mxddev;
 	struct {
@@ -76,6 +89,8 @@ typedef struct {
 	} port[4];
 } phy_mxd_priv_t;
 
+phy_mcd_priv_t marvell_5123_priv;
+
 /* Allow multiple instances of PHY driver to run on different QLMs */
 phy_mxd_priv_t marvell_5113_priv[MAX_CGX];
 
@@ -85,15 +100,17 @@ MYD_DEV marvell_6141_priv;
 
 static MCD_STATUS mcd_read_mdio(MCD_DEV_PTR pDev, MCD_U16 mdioPort, MCD_U16 mmd, MCD_U16 reg, MCD_U16 *value)
 {
+	int read;
 	phy_config_t *phy = pDev->hostContext;
-	*value = phy_mdio_read(phy, CLAUSE45, mmd, reg);
+	read = smi_read(phy->mdio_bus, CLAUSE45, phy->addr, mmd, reg);
+	*value = read;
 	return MCD_OK;
 }
 
 static MCD_STATUS mcd_write_mdio(MCD_DEV_PTR pDev, MCD_U16 mdioPort, MCD_U16 mmd, MCD_U16 reg, MCD_U16 value)
 {
 	phy_config_t *phy = pDev->hostContext;
-	phy_mdio_write(phy, mmd, CLAUSE45, reg, value);
+	smi_write(phy->mdio_bus, phy->addr, mmd, CLAUSE45, reg, value);
 	return MCD_OK;
 }
 
@@ -252,34 +269,148 @@ void phy_marvell_1514_get_link_status(int cgx_id, int lmac_id,
 /* One time initialization for the PHY if required */
 void phy_marvell_5123_probe(int cgx_id, int lmac_id)
 {
+	static int init;
 	MCD_STATUS status;
+	MCD_U16 serdesRevision = 0;
+	MCD_U16 sbmRevision = 0;
 	phy_config_t *phy;
 
-	debug_phy_driver("%s: %d:%d\n", __func__, cgx_id, lmac_id);
+	if (init)
+		return;
+
+	printf("%s: Initializing Marvell 88x5123 PHY...\n", __func__);
 
 	phy = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id].phy_config;
-	phy->priv = (void *)&marvell_5123_priv;
-	return;
+
+	phy->priv = &marvell_5123_priv;
 	status = mcdInitDriver(mcd_read_mdio, mcd_write_mdio, phy->addr,
 				(const MCD_U8 *)mcdServiceCpuCm3BvFw,
 				sizeof(mcdServiceCpuCm3BvFw),
 				(const MCD_U16 *)mcd_sbusMaster01x101A_0001Data,
-				sizeof(mcd_sbusMaster01x101A_0001Data),
+				AVAGO_SBUS_MASTER_FW_IMAGE_SIZE,
 				(const MCD_U16 *)mcd_serdes0x2464_0245Swap,
-				sizeof(mcd_serdes0x2464_0245Swap),
+				AVAGO_SERDES_FW_SWAP_IMAGE_SIZE,
 				(const MCD_U16 *)mcd_serdes0x2464_0245Data,
-				sizeof(mcd_serdes0x2464_0245Data),
-				phy, phy->priv);
+				AVAGO_SERDES_FW_IMAGE_SIZE,
+				phy, &marvell_5123_priv.mcddev);
 	if (status != MCD_OK) {
-		ERROR("%s: %d:%d MARVELL 5123 PHY driver Initialization failed\n",
-			 __func__, cgx_id, lmac_id);
+		ERROR("%s: %d:%d MARVELL 5123 PHY driver Initialization\t"
+			"failed, status 0x%x\n",
+			 __func__, cgx_id, lmac_id, status);
 	}
+
+	/* PHY needs to be initialized only once for both the slices */
+	init = 1;
+
+	status = mcdSerdesGetRevision(phy->priv, &serdesRevision, &sbmRevision);
+	if (status != MCD_OK) {
+		ERROR("%s(): failed %d\n", __func__, status);
+		return;
+	}
+	printf("%s: SERDES FW revision 0x%x BUS MASTER FW revision 0x%x\n",
+				__func__, serdesRevision, sbmRevision);
 }
 
 /* To set the operating mode of the PHY if required */
 void phy_marvell_5123_config(int cgx_id, int lmac_id)
 {
+	int port_num;
+	cgx_lmac_config_t *lmac_cfg;
+	phy_config_t *phy;
+	MCD_U32 modesVector = MCD_AN_10GBase_KR;
+	MCD_OP_MODE op_mode = MCD_MODE_P10L;
+	MCD_FEC_TYPE fec_type = MCD_NO_FEC;
+	const char *mode_str = "10GBASE-KR";
+	MCD_MODE_CONFIG_PARAM config;
+	MCD_CONFIG_SERDES_AP_PARAM ap_config;
+	MCD_STATUS status;
+
 	debug_phy_driver("%s: %d:%d\n", __func__, cgx_id, lmac_id);
+
+	memset(&config, 0, sizeof(MCD_MODE_CONFIG_PARAM));
+	memset(&ap_config, 0, sizeof(MCD_CONFIG_SERDES_AP_PARAM));
+
+	lmac_cfg = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
+	phy = &lmac_cfg->phy_config;
+	port_num = phy->port;
+
+	debug_phy_driver("%s: port %d AN %d\n", __func__, port_num,
+			!lmac_cfg->autoneg_dis);
+
+	if (!lmac_cfg->autoneg_dis)
+		marvell_5123_priv.port[port_num].use_an = 1;
+
+	switch (lmac_cfg->mode) {
+	case CAVM_CGX_LMAC_TYPES_E_TENG_R:
+		modesVector = MCD_AN_10GBase_KR;
+		op_mode = MCD_MODE_P10L;
+		fec_type = MCD_NO_FEC;
+		mode_str = "10GBASE-KR";
+	break;
+	case CAVM_CGX_LMAC_TYPES_E_TWENTYFIVEG_R:
+		modesVector = MCD_AN_25GBase_KR1S;
+		op_mode = MCD_MODE_P25S;
+		fec_type = MCD_RS_FEC_HOST;
+		mode_str = "25GBASE-KR";
+	break;
+	case CAVM_CGX_LMAC_TYPES_E_FORTYG_R:
+		modesVector = MCD_AN_40GBASE_KR4;
+		op_mode = MCD_MODE_P40L;
+		fec_type = MCD_NO_FEC;
+		mode_str = "40GBASE-KR4";
+	break;
+	case CAVM_CGX_LMAC_TYPES_E_HUNDREDG_R:
+		modesVector = MCD_AN_100GBASE_KR4;
+		op_mode = MCD_MODE_P100S;
+		fec_type = MCD_RS_FEC_HOST;
+		mode_str = "100GBASE-KR4";
+	break;
+	/* FIXME for other modes */
+	default:
+	break;
+	}
+	printf("%s: port %d op_mode %d fec %d\n", __func__, port_num,
+						op_mode, fec_type);
+
+	if (marvell_5123_priv.port[port_num].use_an) {
+		if (mode_str != NULL)
+			debug_phy_driver("%s: port %d setting AP modestr %s\n",
+					__func__, port_num, mode_str);
+
+		status = mcdSetAPModeSelection(&marvell_5123_priv.mcddev,
+						port_num,
+						port_num, /* lane used for AN*/
+						modesVector,
+						MCD_TRUE, /* fcPause */
+						MCD_TRUE, /* fcAsmDir */
+						fec_type, /* Support FEC */
+						fec_type, /* Request FEC */
+						/* AN nonce checking disabled */
+						MCD_TRUE,
+						&ap_config,
+						MCD_TRUE); /* Enable AN */
+		if (status != MCD_OK) {
+			debug_phy_driver("%s: port %d mcdSetAPModeSelection\t"
+						"failed %d\n",
+						__func__, port_num, status);
+			return;
+		}
+	} else {
+		debug_phy_driver("%s: port %d setting non AP\n", __func__,
+						port_num);
+
+		status = mcdSetModeSelectionExt(&marvell_5123_priv.mcddev,
+				port_num,
+				op_mode,
+				MCD_FALSE,	/* autoNegAdvEnable */
+				fec_type,	/* Request FEC */
+				&config);
+		if (status != MCD_OK) {
+			printf("%s: port%d mcdSetModeSelectionExt() fail %d\n",
+				__func__, port_num, status);
+			return;
+		}
+	}
 }
 
 /* To enable/disable AN */
@@ -292,7 +423,137 @@ void phy_marvell_5123_set_an(int cgx_id, int lmac_id)
 void phy_marvell_5123_get_link_status(int cgx_id, int lmac_id,
 					link_state_t *link)
 {
+	int port_num;
+	MCD_MODE_CONFIG_PARAM config;
+	MCD_U16 speed;
+	MCD_U16 currentStatus = 0;
+	MCD_U16 latchedStatus = 0;
+	MCD_STATUS status;
+	cgx_lmac_config_t *lmac_cfg;
+	phy_config_t *phy;
+	DETAILED_STATUS_TYPE statusDetail;
 
+	link->u64 = 0;
+
+	lmac_cfg = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
+	phy = &lmac_cfg->phy_config;
+	port_num = phy->port;
+	if (!lmac_cfg->autoneg_dis) {
+		if (marvell_5123_priv.port[port_num].completed_an)
+			return;
+		memset(&config, 0, sizeof(config));
+		config.ctleBiasParams.host = MCD_CTLE_BIAS_NORMAL;
+		config.noPpmMode = MCD_NO_PPM_RX_SQUELCH_MODE;
+
+		status = mcdAutoNegCheckCompleteExt(&marvell_5123_priv.mcddev,
+					port_num, MCD_LINE_SIDE, TRUE,
+					&config, &speed);
+		if (status != MCD_OK) {
+			printf("%s: port %d mcdAutoNegCheckCompleteExt()\t"
+				"failed", __func__, port_num);
+			return;
+		}
+
+		debug_phy_driver("%s: %d returned speed 0x%x\n", __func__,
+							port_num, speed);
+		if (speed)
+			marvell_5123_priv.port[port_num].completed_an = 1;
+
+		link->s.link_up = 1;
+		link->s.full_duplex = 1;
+
+		switch (speed)	{
+		case MCD_NEG_1000KX:
+			link->s.speed = CGX_LINK_1G;
+		break;
+		case MCD_NEG_100CR10:
+		case MCD_NEG_100KP4:
+		case MCD_NEG_100KR4:
+		case MCD_NEG_100CR4:
+			link->s.speed = CGX_LINK_100G;
+		break;
+		case MCD_NEG_10KR:
+			link->s.speed = CGX_LINK_10G;
+		break;
+		case MCD_NEG_40KR4:
+		case MCD_NEG_40CR4:
+			link->s.speed = CGX_LINK_40G;
+		break;
+		case MCD_NEG_25KR_CONSORTIUM:
+		case MCD_NEG_25CR_CONSORTIUM:
+		case MCD_NEG_25KRCS:
+		case MCD_NEG_25KCR:
+			link->s.speed = CGX_LINK_25G;
+		break;
+		case MCD_NEG_50KR_CONSORTIUM:
+		case MCD_NEG_50CR_CONSORTIUM:
+			link->s.speed = CGX_LINK_50G;
+		break;
+		/* FIXME for 20G/80G modes */
+		case MCD_NEG_NONE:
+		default:
+			link->s.speed = CGX_LINK_NONE;
+			link->s.link_up = 0;
+			link->s.full_duplex = 0;
+		break;
+		}
+	} else {
+		status =  mcdCheckLinkStatus(&marvell_5123_priv.mcddev,
+				port_num, &currentStatus, &latchedStatus,
+				&statusDetail);
+		if (status != MCD_OK)
+			WARN("%s: port %d mcdCheckLinkStatus() failed",
+					__func__, port_num);
+		debug_phy_driver("%s: port %d PHY link is %d\n", __func__,
+					port_num, currentStatus);
+
+		link->s.link_up = (currentStatus == MCD_LINK_UP);
+		link->s.full_duplex = 1;
+
+		/* In case of FIXED mode, just return the speed based on
+		 * mode configured
+		 */
+		switch (lmac_cfg->mode_idx) {
+		case QLM_MODE_XFI:
+		case QLM_MODE_SFI:
+			link->s.speed = CGX_LINK_10G;
+		break;
+		case QLM_MODE_20GAUI_C2C:
+		case QLM_MODE_20GAUI_C2M:
+			link->s.speed = CGX_LINK_20G;
+		break;
+		case QLM_MODE_25GAUI_C2C:
+		case QLM_MODE_25GAUI_C2M:
+			link->s.speed = CGX_LINK_25G;
+		break;
+		case QLM_MODE_XLAUI:
+		case QLM_MODE_XLAUI_C2M:
+			link->s.speed = CGX_LINK_40G;
+		break;
+		case QLM_MODE_40GAUI_2_C2C:
+		case QLM_MODE_40GAUI_2_C2M:
+			link->s.speed = CGX_LINK_40G;
+		break;
+		case QLM_MODE_50GAUI_2_C2C:
+		case QLM_MODE_50GAUI_2_C2M:
+			link->s.speed = CGX_LINK_50G;
+		break;
+		case QLM_MODE_80GAUI_4_C2C:
+		case QLM_MODE_80GAUI_4_C2M:
+			link->s.speed = CGX_LINK_80G;
+		break;
+		case QLM_MODE_CAUI_4_C2C:
+		case QLM_MODE_CAUI_4_C2M:
+			link->s.speed = CGX_LINK_100G;
+		break;
+		/* FIXME for other modes */
+		default:
+			link->s.speed = CGX_LINK_NONE;
+			link->s.link_up = 0;
+			link->s.full_duplex = 0;
+		break;
+		}
+	}
 }
 
 /* One time initialization for the PHY if required */
