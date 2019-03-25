@@ -226,10 +226,8 @@ void bl2_plat_get_bl32_meminfo(meminfo_t *bl32_meminfo)
 	 */
 	bl32_meminfo->total_base = BL32_BASE;
 	bl32_meminfo->free_base = BL32_BASE;
-	bl32_meminfo->total_size =
-			(TRUSTED_DRAM_BASE + TRUSTED_DRAM_SIZE) - BL32_BASE;
-	bl32_meminfo->free_size =
-			(TRUSTED_DRAM_BASE + TRUSTED_DRAM_SIZE) - BL32_BASE;
+	bl32_meminfo->total_size = BL32_LIMIT - BL32_BASE;
+	bl32_meminfo->free_size = BL32_LIMIT - BL32_BASE;
 }
 #endif
 
