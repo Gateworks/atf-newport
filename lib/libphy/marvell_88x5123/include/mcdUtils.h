@@ -1,8 +1,11 @@
 /*******************************************************************************
-Copyright (C) 2014, 2015, Marvell International Ltd. and its affiliates
-If you received this File from Marvell and you have entered into a commercial
-license agreement (a "Commercial License") with Marvell, the File is licensed
-to you under the terms of the applicable Commercial License.
+*              (c), Copyright 2001, Marvell International Ltd.                 *
+* THIS CODE CONTAINS CONFIDENTIAL INFORMATION OF MARVELL SEMICONDUCTOR, INC.   *
+* NO RIGHTS ARE GRANTED HEREIN UNDER ANY PATENT, MASK WORK RIGHT OR COPYRIGHT  *
+* OF MARVELL OR ANY THIRD PARTY. MARVELL RESERVES THE RIGHT AT ITS SOLE        *
+* DISCRETION TO REQUEST THAT THIS CODE BE IMMEDIATELY RETURNED TO MARVELL.     *
+* THIS CODE IS PROVIDED "AS IS". MARVELL MAKES NO WARRANTIES, EXPRESSED,       *
+* IMPLIED OR OTHERWISE, REGARDING ITS ACCURACY, COMPLETENESS OR PERFORMANCE.   *
 *******************************************************************************/
 
 /********************************************************************
@@ -19,7 +22,7 @@ X5121/X5111/X2381 API driver (MCD).
 #include "stdio.h"
 #include "stdarg.h"
 #endif
-                                   
+
 #define C_LINKAGE 1 /* set to 1 if C compile/linkage on C files is desired with C++ */
 
 #if C_LINKAGE
@@ -28,10 +31,9 @@ X5121/X5111/X2381 API driver (MCD).
 #endif
 #endif
 
-
 #ifdef MCD_DEBUG
 
-typedef enum 
+typedef enum
 {
     MCD_DBG_OFF_LVL,
     MCD_DBG_ERR_LVL,
@@ -41,13 +43,42 @@ typedef enum
 
 typedef int (*MCD_DBG_LOG) (const char *msg);
 
+
+/**
+* @internal mcdDebugLevelSet function
+* @endinternal
+*
+* @brief   Set a debug level
+*
+* @param[in] debugLevel               - new debug level
+*                                       None
+*/
+MCD_VOID mcdDebugLevelSet
+(
+    IN MCD_DBG_LEVEL debugLevel
+);
+
+/**
+* @internal mcdSampleDebugLevelGet function
+* @endinternal
+*
+* @brief   Get a debug level
+*
+* @param[in] None
+*                                       None
+*/
+MCD_DBG_LEVEL mcdDebugLevelGet
+(
+    void
+);
+
+
 /*******************************************************************************
  void mcdDbgPrint
  (
-     FILE *stream, 
-     MCD_DBG_LEVEL debug_level, 
-     char* format, 
-     ...
+	MCD_DBG_LEVEL debug_level,
+	char* format,
+	...
  );
 
  Inputs:
@@ -63,8 +94,8 @@ typedef int (*MCD_DBG_LOG) (const char *msg);
        None
 
  Description:
-       This function tests for the debug message level and prints out the 
-       string with the given arguments.  
+       This function tests for the debug message level and prints out the
+       string with the given arguments.
 
  Side effects:
     None
@@ -82,9 +113,8 @@ typedef int (*MCD_DBG_LOG) (const char *msg);
 *******************************************************************************/
 void mcdDbgPrint
 (
-    FILE *stream, 
-    MCD_DBG_LEVEL debug_level, 
-    char* format, 
+    MCD_DBG_LEVEL debug_level,
+    char* format,
     ...
 );
 
@@ -120,18 +150,10 @@ void mcdDbgSetLoggerFn
     MCD_DBG_LOG logger
 );
 
-#ifndef MV_HWS_REDUCED_BUILD_EXT_CM3
-#define MCD_DBG_ERROR(...)       mcdDbgPrint(stderr, MCD_DBG_ERR_LVL, __VA_ARGS__) /* macro for error messages */
-#define MCD_SHOW(...)            mcdDbgPrint(stderr, MCD_DBG_ERR_LVL, __VA_ARGS__) /* macro for show messages */
-#define MCD_DBG_INFO(...)        mcdDbgPrint(stdout, MCD_DBG_ALL_LVL, __VA_ARGS__) /* macro for informational messages */
-#define MCD_DBG_CRITIC_INFO(...) mcdDbgPrint(stdout, MCD_DBG_INF_LVL, __VA_ARGS__) /* macro for informational messages */
-#else
-#include <printf.h>
-
-#define MCD_DBG_ERROR       printf
-#define MCD_DBG_INFO(...)
-#define MCD_DBG_CRITIC_INFO printf
-#endif
+#define MCD_DBG_ERROR(...)       mcdDbgPrint(MCD_DBG_ERR_LVL, __VA_ARGS__)
+#define MCD_SHOW(...)            mcdDbgPrint(MCD_DBG_ERR_LVL, __VA_ARGS__)
+#define MCD_DBG_INFO(...)        mcdDbgPrint(MCD_DBG_ALL_LVL, __VA_ARGS__)
+#define MCD_DBG_CRITIC_INFO(...) mcdDbgPrint(MCD_DBG_INF_LVL, __VA_ARGS__)
 
 extern MCD_DBG_LEVEL mcd_debug_level;
 
@@ -140,8 +162,9 @@ extern MCD_DBG_LEVEL mcd_debug_level;
 #define MCD_DBG_ERROR(...)
 #define MCD_DBG_INFO(...)
 #define MCD_DBG_CRITIC_INFO(...)
+#define MCD_SHOW(...)
 
-#endif
+#endif /* MCD_DEBUG */
 
 
 #define MCD_CHECK_RET_CODE_WITH_ACTION(ptr, action) \
@@ -173,6 +196,23 @@ extern MCD_DBG_LEVEL mcd_debug_level;
         return MCD_FAIL; \
     } \
 }
+
+
+/**
+* @internal mcdDbgPrintAllRegisters function
+* @endinternal
+*
+* @brief   Prints all registers.
+*
+* @param[in] pDev                   device number
+*
+* @note should set debug level to MCD_DBG_ALL_LVL before calling this function in order to see the printout
+*
+*/
+MCD_STATUS mcdDbgPrintAllRegisters(
+    IN  MCD_DEV_PTR pDev
+);
+
 
 
 /*******************************************************************************
@@ -219,7 +259,7 @@ MCD_PVOID mcdMemSet
      IN const MCD_PVOID pSource,
      IN MCD_U32 size
  );
- 
+
  Inputs:
        pDestination - destination of copy
        pSource      - source of copy
@@ -285,4 +325,5 @@ MCD_U32 mcdStrlen
 #endif
 
 #endif /* defined MCD_UTILS_H */
+
 

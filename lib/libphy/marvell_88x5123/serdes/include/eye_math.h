@@ -23,8 +23,8 @@
  */
 
 /** Doxygen File Header
- ** @file
- ** @brief Declarations for eye math functions.
+*  @file
+*  @brief Declarations for eye math functions.
  **/
 
 #ifndef AVAGO_EYE_MATH_H_

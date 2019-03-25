@@ -1,8 +1,11 @@
 /*******************************************************************************
-Copyright (C) 2014, 2015, Marvell International Ltd. and its affiliates
-If you received this File from Marvell and you have entered into a commercial
-license agreement (a "Commercial License") with Marvell, the File is licensed
-to you under the terms of the applicable Commercial License.
+*              (c), Copyright 2001, Marvell International Ltd.                 *
+* THIS CODE CONTAINS CONFIDENTIAL INFORMATION OF MARVELL SEMICONDUCTOR, INC.   *
+* NO RIGHTS ARE GRANTED HEREIN UNDER ANY PATENT, MASK WORK RIGHT OR COPYRIGHT  *
+* OF MARVELL OR ANY THIRD PARTY. MARVELL RESERVES THE RIGHT AT ITS SOLE        *
+* DISCRETION TO REQUEST THAT THIS CODE BE IMMEDIATELY RETURNED TO MARVELL.     *
+* THIS CODE IS PROVIDED "AS IS". MARVELL MAKES NO WARRANTIES, EXPRESSED,       *
+* IMPLIED OR OTHERWISE, REGARDING ITS ACCURACY, COMPLETENESS OR PERFORMANCE.   *
 *******************************************************************************/
 
 /********************************************************************************
@@ -261,6 +264,52 @@ MCD_STATUS mcdPortReset
     IN MCD_U16 timeoutMs
 );
 
+/**
+* @internal mcdPreInitSetBootMode function
+* @endinternal
+*
+* @brief   set boot mode before driver initalization
+*
+* @param[in] mode                 -  Boot Mode
+*
+* @retval 0                        - on success
+* @retval 1                        - on error
+*/
+MCD_STATUS mcdPreInitSetBootMode(MCD_BOOT_MODE mode);
+
+/**
+* @internal mcdPostInitSetBootMode function
+* @endinternal
+*
+* @brief   set boot mode after Driver was initalized
+*
+* @param[in] phyId
+* @param[in] mode                 -  Boot Mode
+*
+* @retval 0                        - on success
+* @retval 1                        - on error
+*/
+MCD_STATUS mcdPostInitSetBootMode
+(
+    IN MCD_DEV_PTR pDev,
+    IN MCD_BOOT_MODE mode
+);
+
+#ifndef MV_HWS_REDUCED_BUILD_EXT_CM3
+/**
+* @internal mcdGetBootModeState function
+* @endinternal
+*
+* @brief   get the current boot mode
+*
+* @param[in] phyId 
+* @param[in] mode - pointer to boot mode
+*
+* @retval 0                        - on success
+* @retval 1                        - on error
+*/
+MCD_STATUS mcdGetBootModeState(MCD_DEV_PTR pDev, MCD_BOOT_MODE *mode);
+#endif
 
 /* LED behavior selections. */
 typedef enum
@@ -436,6 +485,7 @@ MCD_STATUS mcdChipAndZ80ResetControl
 #endif
 
 #endif /* MCDINITIALIZATION_H */
+
 
 
 

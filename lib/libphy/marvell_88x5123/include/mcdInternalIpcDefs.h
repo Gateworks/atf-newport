@@ -1,14 +1,12 @@
 /*******************************************************************************
-*                Copyright 2001, Marvell International Ltd.
-* This code contains confidential information of Marvell semiconductor, inc.
-* no rights are granted herein under any patent, mask work right or copyright
-* of Marvell or any third party.
-* Marvell reserves the right at its sole discretion to request that this code
-* be immediately returned to Marvell. This code is provided "as is".
-* Marvell makes no warranties, express, implied or otherwise, regarding its
-* accuracy, completeness or performance.
-********************************************************************************
-*/
+*              (c), Copyright 2001, Marvell International Ltd.                 *
+* THIS CODE CONTAINS CONFIDENTIAL INFORMATION OF MARVELL SEMICONDUCTOR, INC.   *
+* NO RIGHTS ARE GRANTED HEREIN UNDER ANY PATENT, MASK WORK RIGHT OR COPYRIGHT  *
+* OF MARVELL OR ANY THIRD PARTY. MARVELL RESERVES THE RIGHT AT ITS SOLE        *
+* DISCRETION TO REQUEST THAT THIS CODE BE IMMEDIATELY RETURNED TO MARVELL.     *
+* THIS CODE IS PROVIDED "AS IS". MARVELL MAKES NO WARRANTIES, EXPRESSED,       *
+* IMPLIED OR OTHERWISE, REGARDING ITS ACCURACY, COMPLETENESS OR PERFORMANCE.   *
+*******************************************************************************/
 /**
 ********************************************************************************
 * @file mcdInternalIpcDefs.h
@@ -150,7 +148,9 @@ typedef struct
     MCD_U8 macNum;
     MCD_U8  polarityVector;
     MCD_U32 retimerMode;
-
+    MCD_U16 rxRemapVector;
+    MCD_U16 txRemapVector;
+    MCD_BOOL enSdTuningApRes;
 }MCD_IPC_PORT_AP_DATA_STRUCT;
 
 typedef struct
@@ -437,8 +437,18 @@ typedef struct
     MCD_U32                       advMode;
     MCD_BOOL                      retimerWithAp;
     MCD_U32                       polarityVector;
+    MCD_U16                       hostRxRemapVector;
+    MCD_U16                       hostTxRemapVector;
+    MCD_U16                       lineRxRemapVector;
+    MCD_U16                       lineTxRemapVector;
+    MCD_U32                       minEyeThreshold;
+    MCD_U32                       maxEyeThreshold;
+    MCD_U32                       lfLowThreshold;
+    MCD_U32                       lfHighThreshold;
+    MCD_U32                       hfThreshold;
     MCD_U16                       noPpmMode;
-    MCD_U8                        reducedRxTraining;
+    MCD_U8                        calibrationMode;
+    MCD_U8                        calibrationAlgo;
 
 } MCD_IPC_POLLING_PORT_LINK_STATUS_START_STC;
 
@@ -683,6 +693,7 @@ typedef struct
 #endif
 
 #endif /* __mcdInternalIpcDefs_H */
+
 
 
 

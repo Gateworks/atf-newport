@@ -1,8 +1,11 @@
 /*******************************************************************************
-Copyright (C) 2014, 2015, Marvell International Ltd. and its affiliates
-If you received this File from Marvell and you have entered into a commercial
-license aGLBLeement (a "Commercial License") with Marvell, the File is licensed
-to you under the terms of the applicable Commercial License.
+*              (c), Copyright 2001, Marvell International Ltd.                 *
+* THIS CODE CONTAINS CONFIDENTIAL INFORMATION OF MARVELL SEMICONDUCTOR, INC.   *
+* NO RIGHTS ARE GRANTED HEREIN UNDER ANY PATENT, MASK WORK RIGHT OR COPYRIGHT  *
+* OF MARVELL OR ANY THIRD PARTY. MARVELL RESERVES THE RIGHT AT ITS SOLE        *
+* DISCRETION TO REQUEST THAT THIS CODE BE IMMEDIATELY RETURNED TO MARVELL.     *
+* THIS CODE IS PROVIDED "AS IS". MARVELL MAKES NO WARRANTIES, EXPRESSED,       *
+* IMPLIED OR OTHERWISE, REGARDING ITS ACCURACY, COMPLETENESS OR PERFORMANCE.   *
 *******************************************************************************/
 
 /********************************************************************
@@ -295,9 +298,18 @@ registers in the X5123 and EC808
 #define UMAC_SERDESMUX_laneremaprx(_slice)                           (UMAC_BASE(_slice) + 0x05C08)
 #define UMAC_SERDESMUX_laneremaptx(_slice)                           (UMAC_BASE(_slice) + 0x05E08)
 
+/* Bit definition for BASE-X advertisement (mradvability) register */
+#define MCD_BASEX_AD_ASYM_PAUSE         0x0100      /* Bit-8, Asymmetric Pause bit */
+#define MCD_BASEX_AD_PAUSE              0x0080      /* Bit-7, Pause */
+#define MCD_BASEX_AD_1000HDX            0x0040      /* Bit-6, 1000X Half Duplex */
+#define MCD_BASEX_AD_1000FDX            0x0020      /* Bit-5, 1000X Full Duplex */
+#define MCD_BASEX_AD_MASK               (MCD_BASEX_AD_ASYM_PAUSE | \
+                                         MCD_BASEX_AD_PAUSE      | \
+                                         MCD_BASEX_AD_1000HDX    | \
+                                         MCD_BASEX_AD_1000FDX)
 
 /* SERDES wrapper pipe registers */
-/*Offset Formula:	0x32000000 + 0x1000 * a + 0x80000 * t: where a (0-7) represents SERDES_Num, where t (0-1) represents CHAIN_Num */
+/*Offset Formula:   0x32000000 + 0x1000 * a + 0x80000 * t: where a (0-7) represents SERDES_Num, where t (0-1) represents CHAIN_Num */
 #define MAX_SERDES_NUM_IN_SLICE 8
 #define FIRST_LINE_SERDES_NUM_IN_SLICE 4
 #define MCD_SD_IP_SIDE(_serdes)              (_serdes/MAX_SERDES_NUM_IN_SLICE)
@@ -476,7 +488,7 @@ registers in the X5123 and EC808
 #define UMAC_INTERRUPT_clrintenable(_slice, _reg_idx)   (UMAC_BASE(_slice) + 0x6004 + (_reg_idx * 8))
 #define UMAC_INTERRUPT_intstat(_slice, _reg_idx)        (UMAC_BASE(_slice) + 0x6080 + (_reg_idx * 8))
 #define UMAC_INTERRUPT_intclr(_slice, _reg_idx)         (UMAC_BASE(_slice) + 0x6084 + (_reg_idx * 8))
-#define UMAC_INTERRUPT_intraw(_slice, _reg_idx)         (UMAC_BASE(_slice) + 0x6100 + (_reg_idx * 4))
+#define UMAC_INTERRUPT_intraw(_slice, _reg_idx)         (UMAC_BASE(_slice) + 0x6100 + (_reg_idx * 8))
 
 /* serdesmux */
 /* to convert host side of SERDES_MUX register address to line side of SERDES_MUX register address  */
@@ -548,4 +560,5 @@ registers in the X5123 and EC808
 
 
 #endif
+
 

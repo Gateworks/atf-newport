@@ -1,13 +1,12 @@
 /*******************************************************************************
-*              (c), Copyright 2016, Marvell International Ltd.                 *
+*              (c), Copyright 2001, Marvell International Ltd.                 *
 * THIS CODE CONTAINS CONFIDENTIAL INFORMATION OF MARVELL SEMICONDUCTOR, INC.   *
 * NO RIGHTS ARE GRANTED HEREIN UNDER ANY PATENT, MASK WORK RIGHT OR COPYRIGHT  *
 * OF MARVELL OR ANY THIRD PARTY. MARVELL RESERVES THE RIGHT AT ITS SOLE        *
 * DISCRETION TO REQUEST THAT THIS CODE BE IMMEDIATELY RETURNED TO MARVELL.     *
 * THIS CODE IS PROVIDED "AS IS". MARVELL MAKES NO WARRANTIES, EXPRESSED,       *
 * IMPLIED OR OTHERWISE, REGARDING ITS ACCURACY, COMPLETENESS OR PERFORMANCE.   *
-********************************************************************************
-*/
+*******************************************************************************/
 /**
 ********************************************************************************
 * @file mcdInternalShmIpc.h
@@ -94,15 +93,17 @@ typedef struct MCD_IPC_SHM_STCT {
 * @note   APPLICABLE DEVICES:      Any
 * @note   NOT APPLICABLE DEVICES:  None
  *
-* @retval 0                        - on success
-*                                       - 1
 * @param[in] shm_virt_addr            - virtual address of shared memory block
 * @param[in] shmIoAnchorPtr           - anchor parameter to pass to memory read and write functions
 * @param[in] shmWriteFunc             - (pointer to)shared memory write function
 * @param[in] shmReadFunc              - (pointer to)shared memory read function
 * @param[in] size                     - the  of SHM block
-* @param[in] master                   - role: 1 - , 0 - slave
+* @param[in] master                   - role: 1 - master, 0 - slave
+*
 * @param[out] shm                      - SHM control structure
+*
+* @retval 0                        - on success
+*                                       -1       - on failure
 */
 int mcdInternalShmIpcInit(
     OUT MCD_IPC_SHM_STC         *shm,
@@ -123,10 +124,6 @@ int mcdInternalShmIpcInit(
 * @note   APPLICABLE DEVICES:      Any
 * @note   NOT APPLICABLE DEVICES:  None
  *
-* @retval 0                        - on success
-*                                       - 1
-*                                       - 2
-*                                       - 3
 * @param[in] shm                      - SHM control structure
 * @param[in] chn                      - IPC channel number to configure
 * @param[in] maxrx                    - max number of messages in Rx FIFO
@@ -135,6 +132,11 @@ int mcdInternalShmIpcInit(
 * @param[in] maxtx                    - max number of messages in Tx FIFO
 *                                      must be power of 2
 *                                      txsize      - max message size in Tx FIFO
+*
+* @retval 0                        - on success
+*                                       -1     - already configured\
+*                                       -2     - can't configure (no memory left)
+*                                       -3     - bad parameter
 */
 int mcdInternalShmIpcConfigChannel(
     IN  MCD_IPC_SHM_STC *shm,
@@ -154,15 +156,16 @@ int mcdInternalShmIpcConfigChannel(
 * @note   APPLICABLE DEVICES:      Any
 * @note   NOT APPLICABLE DEVICES:  None
  *
-* @retval 0                        - on success
-*                                       - 1
-*                                       - 2
-*                                       - 3
-*                                       - 4
 * @param[in] shm                      - SHM control structure
 * @param[in] chn                      - IPC channel number
 * @param[in] data                     -  to send
-* @param[in] size                     - data
+* @param[in] size                     - data size
+*
+* @retval 0                        - on success
+*                                       -1     - Tx fifo not configured (zero size)
+*                                       -2     - full
+*                                       -3     - bad parameter: message too long
+*                                       -4     - fifo not initialized
 */
 int mcdInternalShmIpcSend(
     IN  MCD_IPC_SHM_STC *shm,
@@ -180,14 +183,16 @@ int mcdInternalShmIpcSend(
 * @note   APPLICABLE DEVICES:      Any
 * @note   NOT APPLICABLE DEVICES:  None
  *
-* @retval 1                        - Received
-* @retval 0                        - No data (FIFO empty)
-*                                       - 1
 * @param[in] shm                      - SHM control structure
 * @param[in] chn                      - IPC channel number
 * @param[in,out] size                     - data buffer
+*
 * @param[out] data                     -  buffer
 * @param[in,out] size                     - received data
+*
+* @retval 1                        - Received
+* @retval 0                        - No data (FIFO empty)
+*                                       -1     - Rx fifo not configured (zero size)
 */
 int mcdInternalShmIpcRecv(
     IN    MCD_IPC_SHM_STC *shm,
@@ -204,6 +209,7 @@ int mcdInternalShmIpcRecv(
  *
 * @note   APPLICABLE DEVICES:      Any
 * @note   NOT APPLICABLE DEVICES:  None
+*
  *
 * @retval 0                        - No messages(yet)
 * @retval non 0                    - Messages are pending
@@ -219,6 +225,7 @@ int mcdInternalShmIpcRxReady(MCD_IPC_SHM_STC* shm); /* returns bitmask */
 * @note   APPLICABLE DEVICES:      Any
 * @note   NOT APPLICABLE DEVICES:  None
  *
+*
 * @retval 0                        - No messages(yet)
 * @retval non 0                    - Messages are pending
 */
@@ -233,6 +240,12 @@ int mcdInternalShmIpcRxChnReady(MCD_IPC_SHM_STC* shm, int chn);
 * @note   APPLICABLE DEVICES:      Any
 * @note   NOT APPLICABLE DEVICES:  None
  *
+* @param[in] shm                      - SHM control structure
+* @param[in] reg                      - Register number. The registers are enumerated
+*                                      from the end of SRAM. For example on CM3
+* @param[in] reg                      0 will have address 0x1fffc
+* @param[in] reg                      1 will have address 0x1fff8
+* @param[in] reg                      2 will have address 0x1fff4
 *                                       Register value (converted from Little Endian to host byte order)
 */
 MCD_IPC_U32 mcdInternalShmIpcRegRead(
@@ -250,8 +263,16 @@ MCD_IPC_U32 mcdInternalShmIpcRegRead(
 * @note   APPLICABLE DEVICES:      Any
 * @note   NOT APPLICABLE DEVICES:  None
  *
+* @param[in] shm                      - SHM control structure
+*                                      reg         - Register number. The registers are enumerated
+*                                      from the end of SRAM. For example on CM3
+*                                      register 0 will have address 0x1fffc
+*                                      register 1 will have address 0x1fff8
+*                                      register 2 will have address 0x1fff4
+* @param[in] data                     -  to write (host byte order)
+*
 * @retval 0                        - on success
-*                                       - 1
+*                                       -1       - on failure
 */
 int mcdInternalShmIpcRegWrite(
     IN  MCD_IPC_SHM_STC* shm, int reg,
@@ -259,4 +280,5 @@ int mcdInternalShmIpcRegWrite(
 );
 
 #endif /* __mcdInternalShmIpc_h__ */
+
 

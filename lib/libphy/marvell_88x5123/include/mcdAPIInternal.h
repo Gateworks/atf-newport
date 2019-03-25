@@ -1,15 +1,13 @@
 /*******************************************************************************
-Copyright (C) 2014, 2015, Marvell International Ltd. and its affiliates
-If you received this File from Marvell and you have entered into a commercial
-license agreement (a "Commercial License") with Marvell, the File is licensed
-to you under the terms of the applicable Commercial License.
+*              (c), Copyright 2001, Marvell International Ltd.                 *
+* THIS CODE CONTAINS CONFIDENTIAL INFORMATION OF MARVELL SEMICONDUCTOR, INC.   *
+* NO RIGHTS ARE GRANTED HEREIN UNDER ANY PATENT, MASK WORK RIGHT OR COPYRIGHT  *
+* OF MARVELL OR ANY THIRD PARTY. MARVELL RESERVES THE RIGHT AT ITS SOLE        *
+* DISCRETION TO REQUEST THAT THIS CODE BE IMMEDIATELY RETURNED TO MARVELL.     *
+* THIS CODE IS PROVIDED "AS IS". MARVELL MAKES NO WARRANTIES, EXPRESSED,       *
+* IMPLIED OR OTHERWISE, REGARDING ITS ACCURACY, COMPLETENESS OR PERFORMANCE.   *
 *******************************************************************************/
 
-/********************************************************************
-This file contains functions and data that are strictly internal
-for the proper functioning of the API on the Marvell X5121/X5111/X2381/X5123/EC808
-PHY.
-********************************************************************/
 #ifndef MCDINTRNL_H
 #define MCDINTRNL_H
 
@@ -56,7 +54,8 @@ MCD_STATUS mcdCheckIsDeviceSupported
 
 /* X5123 and EC808 Channel mode types */
 typedef enum {
-    MCD_QSGMII = 2,
+    MCD_SGMII = 1,
+    MCD_QSGMII,
     MCD_BASE_R1,
     MCD_BASE_R2,
     MCD_BASE_R4,
@@ -65,6 +64,14 @@ typedef enum {
     MCD_2_5G_USXGMII = 0xc,
     MCD_5G_USXGMII
 } MCD_CHANNEL_MODE_TYPE;
+
+/* X5123 and EC808 supported speeds in LSMPCS */
+typedef enum {
+    MCD_LOW_SPEED_10M,
+    MCD_LOW_SPEED_100M,
+    MCD_LOW_SPEED_1000M,
+    MCD_LOW_SPEED_UNKNOWN
+}MCD_LOW_SPEED_MODE;
 
 typedef enum {
     MCD_PCS_CHANNEL_CLOCK_GATE,
@@ -100,6 +107,12 @@ typedef enum {
 #define MCD_SERDES_LANE_SBUS_ADDR(host_or_line, slice, lane_offset) \
     (MCD_SERDES_LANE_NUM(host_or_line, slice, lane_offset) + 1)
 
+#define MCD_HOST_OR_LINE_SIDE(lane_offset)   \
+    ((lane_offset > 3) ? MCD_LINE_SIDE: MCD_HOST_SIDE)
+
+#define MCD_GET_PORTNUM_FROM_CHANUNIT(slice, channelUnit)   \
+    (((slice == MCD_FALSE) ? 0 : 4) + CHAN_IN_SLICE_NUM(channelUnit))
+
 /* Internal CPU polling algorithm statistic. */
 #define MCD_POLLING_SERDES_NUM_CNS 16
 #define MCD_POLLING_PORTS_NUM_CNS 8
@@ -133,8 +146,36 @@ do                                                                 \
     return MCD_FAIL;                                       \
 }
 
+#define MCD_GET_SLICE_NUM_BY_SERDES(_serdesNum,_slice)                       \
+do                                                                           \
+{                                                                            \
+    if (_serdesNum >= MCD_HOST_SIDE_START_SERDES_NUMBER)                     \
+    {                                                                        \
+        _slice = (_serdesNum - MCD_HOST_SIDE_START_SERDES_NUMBER)/4;         \
+    }                                                                        \
+    else                                                                     \
+    {                                                                        \
+        _slice = _serdesNum/4;                                               \
+    }                                                                        \
+}while(0);
 
+#define MCD_LOGIC_TO_PHYSICAL_SERDES_MAC(_serdesNum, _phySerdesNum)                                         \
+do                                                                                                          \
+{                                                                                                           \
+    _phySerdesNum = mcdSerdesLogicalToPhysicalConvert(pDev, _serdesNum, slice);                             \
+}while(0);
 
+#define MCD_LOGIC_TO_PHYSICAL_SERDES_TX_MAC(_serdesNum, _phySerdesNum)                                         \
+do                                                                                                          \
+{                                                                                                           \
+    _phySerdesNum = mcdSerdesLogicalToPhysicalConvertTx(pDev, _serdesNum, slice);                             \
+}while(0);
+
+#define MCD_FW_LOGIC_TO_PHYSICAL_SERDES_MAC(_serdesNum, _phySerdesNum)                                      \
+do                                                                                                          \
+{                                                                                                           \
+    _phySerdesNum = mcdSerdesLogicalToPhysicalConvert(&mcdDevDb, _serdesNum, slice);                        \
+}while(0);
 
 /*
    Port statistic
@@ -171,12 +212,18 @@ typedef struct
     MCD_U16    trainCount[MCD_POLLING_SERDES_NUM_CNS];
     MCD_U16    trainFailCount[MCD_POLLING_SERDES_NUM_CNS];
     MCD_U16    countICalFailed[MCD_POLLING_SERDES_NUM_CNS];
+    MCD_U16    countEoFailed[MCD_POLLING_SERDES_NUM_CNS];
+    MCD_U16    stopAdaptiveFailed[MCD_POLLING_SERDES_NUM_CNS];
+    MCD_U16    countConfidenceIntFailed[MCD_POLLING_SERDES_NUM_CNS];
 
-    /* retimer port side statistics counters - index 0 - host, index 1 - line */
+    /* port side statistics counters - index 0 - host, index 1 - line */
     MCD_U16 countSignalOffToCheckStable[2][MCD_POLLING_PORTS_NUM_CNS];
     MCD_U16 countSignalCheckStableToOff[2][MCD_POLLING_PORTS_NUM_CNS];
     MCD_U16 countSignalCheckStableToOn[2][MCD_POLLING_PORTS_NUM_CNS];
     MCD_U16 countSignalOnToOff[2][MCD_POLLING_PORTS_NUM_CNS];
+
+    /* port side statistics counters - index 0 - host, index 1 - line */
+    MCD_U16 registedSignalLastStates[2][MCD_POLLING_PORTS_NUM_CNS];
 
     /* retimer port side statistics OS mSec times - index 0 - host, index 1 - line   */
     MCD_U32 minSignalOnTime[2][MCD_POLLING_PORTS_NUM_CNS];
@@ -188,7 +235,92 @@ typedef struct
     /* retimer port statistics OS mSec times */
     MCD_U32 minSignalOnBothSidesTime[MCD_POLLING_PORTS_NUM_CNS];
 
+    #ifdef  MCD_AP_STATE_STATUS_LOG
+    /* AP statistics */
+    /* Keeping the last STATES of the AP per SM */
+    MCD_U64 registedApSmLog      [MCD_POLLING_PORTS_NUM_CNS];  /* Each U64 includes max of 12 statuses states */
+    MCD_U16 registedApSmLogType  [MCD_POLLING_PORTS_NUM_CNS];  /* Each U16 includes 16 different log types
+                                                                    (0-state, 1-status)*/
+    MCD_U64 registedPortSmLog    [MCD_POLLING_PORTS_NUM_CNS];  /* Each U64 includes max of 12 statuses states */
+    MCD_U16 registedPortSmLogType[MCD_POLLING_PORTS_NUM_CNS];  /* Each U16 includes 16 different log types
+                                                                (0-state, 1-status)*/
+    #endif /*MCD_AP_STATE_STATUS_LOG*/
+
 } MCD_POLLING_PORT_STATISTIC_STC;
+
+
+/* In order to enable access to these registers from the CM3 and from the HOST CPU side
+   The below ifdef is required.
+*/
+#ifdef MV_HWS_REDUCED_BUILD_EXT_CM3
+    extern MCD_POLLING_PORT_STATISTIC_STC mcdFwPortCtrlPollingStat;
+    #define MCD_STAT_SIGNAL_DECODE(_lineSide, _portIndex)  \
+                                       (mcdFwPortCtrlPollingStat.registedSignalLastStates[_lineSide][_portIndex])
+    #ifdef  MCD_AP_STATE_STATUS_LOG
+    #define MCD_AP_SM_DECODE(_portIndex)          (mcdFwPortCtrlPollingStat.registedApSmLog[_portIndex])
+    #define MCD_AP_SM_DECODE_TYPE(_portIndex)     (mcdFwPortCtrlPollingStat.registedApSmLogType[_portIndex])
+    #define MCD_PORT_SM_DECODE(_portIndex)        (mcdFwPortCtrlPollingStat.registedPortSmLog[_portIndex])
+    #define MCD_PORT_SM_DECODE_TYPE(_portIndex)   (mcdFwPortCtrlPollingStat.registedPortSmLogType[_portIndex])
+    #endif  /*MCD_AP_STATE_STATUS_LOG*/
+#else
+    #define MCD_STAT_SIGNAL_DECODE(_lineSide, _portIndex)  \
+                                       (pollingStat.registedSignalLastStates[_lineSide][_portIndex])
+
+    #ifdef  MCD_AP_STATE_STATUS_LOG
+    #define MCD_AP_SM_DECODE(_portIndex)          (pollingStat.registedApSmLog[_portIndex])
+    #define MCD_AP_SM_DECODE_TYPE(_portIndex)     (pollingStat.registedApSmLogType[_portIndex])
+    #define MCD_PORT_SM_DECODE(_portIndex)        (pollingStat.registedPortSmLog[_portIndex])
+    #define MCD_PORT_SM_DECODE_TYPE(_portIndex)   (pollingStat.registedPortSmLogType[_portIndex])
+    #endif  /*MCD_AP_STATE_STATUS_LOG*/
+#endif
+
+/* Mickey - Adding...  */
+typedef enum {
+    MCD_STAT_OFF_TO_CHK_STABLE,
+    MCD_STAT_CHK_STABLE_TO_OFF,
+    MCD_STAT_CHK_STABLE_TO_ON,
+    MCD_STAT_ON_TO_OFF
+}MCD_STAT_SIGNAL_TYPE;
+
+
+/* Keeping the Signals state information coded in the argument */
+/* Binary 00 01 10 11... - means according to the MCD_STAT_SIGNAL_TYPE above */
+#define MCD_STAT_SIGNAL_INSERT(_lineSide, _portIndex,_state) \
+    (MCD_STAT_SIGNAL_DECODE(_lineSide, _portIndex) = \
+    ((MCD_STAT_SIGNAL_DECODE(_lineSide, _portIndex) << 2) | ((MCD_U16)_state & 0x3)))
+
+#define MCD_STAT_SIGNAL_GET(_lineSide, _portIndex,_location) \
+    ((MCD_STAT_SIGNAL_DECODE(_lineSide, _portIndex) >> (2*_location)) & 0x3)
+
+
+/************************************************************************/
+/* Adding new macros for saving the AP/Port State machine States/Status */
+/************************************************************************/
+
+/*******************************************************************************
+*                            AP Port Log State/Status                          *
+* ============================================================================ *
+*******************************************************************************/
+
+/* Keeping the AP_SM state information coded in the argument */
+/* Binary 00 01 10 11... - means according to the MV_AP_PORT_SM_STATE above */
+#define MCD_STAT_AP_SM_STATE_INSERT(_portIndex,_state) \
+     mcdStatApSmStateInsert(_portIndex, _state)
+
+/* Keeping the AP_SM status information coded in the argument */
+/* Binary 00000 00001 00010 00011... - means according to the MV_AP_PORT_SM_STATUS above */
+#define MCD_STAT_AP_SM_STATUS_INSERT(_portIndex,_status) \
+     mcdStatApSmStatusInsert(_portIndex, _status)
+
+/* Keeping the AP_SM state information coded in the argument */
+/* Binary 00 01 10 11... - means according to the MV_AP_PORT_SM_STATE above */
+#define MCD_STAT_PORT_SM_STATE_INSERT(_portIndex,_state) \
+     mcdStatPortSmStateInsert(_portIndex, _state)
+
+/* Keeping the AP_SM status information coded in the argument */
+/* Binary 00000 00001 00010 00011... - means according to the MV_AP_PORT_SM_STATUS above */
+#define MCD_STAT_PORT_SM_STATUS_INSERT(_portIndex,_status) \
+     mcdStatPortSmStatusInsert(_portIndex, _status)
 
 /*******************************************************************
  MCD_STATUS mcdChannelSwReset
@@ -272,12 +404,186 @@ MCD_STATUS mcdChannelControl
 * @internal mcdPortSerdesTxEnable function
 * @endinternal
  *
+* @brief   Enable/Disable Tx of port lines.
+*
+* @retval MCD_OK                   - on success
+* @retval MCD_FAIL                 - on error
+* @retval MCD_STATUS_NOT_READY     - when training is in process.
 */
 MCD_STATUS mcdPortSerdesTxEnable
 (
    MCD_DEV_PTR      pDev,
    MCD_U16          phyPortNum,
    MCD_BOOL         enable
+);
+
+/**
+* @internal mcdForceOutputLocalFaults function
+* @endinternal
+*
+* @brief   Start/Stop trasnmiting local faults
+*
+* @param[in] pDev                     - pointer to MCD_DEV
+* @param[in] mdioPort                 - mdioPort
+* @param[in] host_or_line             - side
+* @param[in] serdesSpeed              - serdes speed
+* @param[in] outputEnable             - enable/disable outputing
+*       Local Faults.
+*/
+MCD_STATUS mcdForceOutputLocalFaults
+(
+    IN  MCD_DEV_PTR pDev,
+    IN  MCD_U16 mdioPort,
+    IN  MCD_U16 host_or_line,
+    IN  MCD_SERDES_SPEED serdesSpeed,
+    IN  MCD_BOOL outputEnable
+);
+
+/**
+* @internal mcdLowSpeedANEnable function
+* @endinternal
+*
+* @brief   Enable/Disable Auto Negotiation for 1G (Low speed) port mode.
+*
+* @param[in] pDev                   - pointer to MCD_DEV initialized by mcdInitDriver() call
+* @param[in] mdioPort               - MDIO port, 0-7
+* @param[in] host_or_line           - which interface to be modified, MCD_HOST_SIDE or MCD_LINE_SIDE
+* @param[in] anEnable               - 1 for AN enable, 0 for disable
+*
+* @retval MCD_OK                    - on success.
+* @retval MCD_FAIL                  - on failure
+*
+*/
+MCD_STATUS mcdLowSpeedANEnable
+(
+    IN  MCD_DEV_PTR     pDev,
+    IN  MCD_U16         mdioPort,
+    IN  MCD_U16         host_or_line,
+    IN  MCD_BOOL        anEnable
+);
+
+/**
+* @internal mcdLowSpeedANEnableGet function
+* @endinternal
+*
+* @brief   Read status (Enabled/Disabled) of ANenable for 1G (Low speed) port mode.
+*
+* @param[in] pDev                   - pointer to MCD_DEV initialized by mcdInitDriver() call
+* @param[in] mdioPort               - MDIO port, 0-7
+* @param[in] host_or_line           - which interface to be monitored, MCD_HOST_SIDE or MCD_LINE_SIDE
+* @param[out] anEnableSts           - Read ANenable status, 1=AN is Enabled, 0=AN Disabled.
+*
+* @retval MCD_OK                    - on success.
+* @retval MCD_FAIL                  - on failure
+*
+*/
+MCD_STATUS mcdLowSpeedANEnableGet
+(
+    IN  MCD_DEV_PTR     pDev,
+    IN  MCD_U16         mdioPort,
+    IN  MCD_U16         host_or_line,
+    OUT  MCD_U32         *enable
+);
+
+/**
+* @internal mcdLowSpeedANRestart function
+* @endinternal
+*
+* @brief   Restarting AN will enable ANenable bit in case it is disabled (or) if ANenable bit is already
+*          set then just restart AN state machine.
+*
+* @param[in] pDev                   - pointer to MCD_DEV initialized by mcdInitDriver() call
+* @param[in] mdioPort               - MDIO port, 0-7
+* @param[in] host_or_line           - which interface to be monitored, MCD_HOST_SIDE or MCD_LINE_SIDE
+*
+* @retval MCD_OK                    - on success.
+* @retval MCD_FAIL                  - on failure
+*
+*/
+MCD_STATUS mcdLowSpeedANRestart
+(
+    IN  MCD_DEV_PTR     pDev,
+    IN  MCD_U16         mdioPort,
+    IN  MCD_U16         host_or_line
+);
+
+/**
+* @internal mcdLowSpeedANDoneGet function
+* @endinternal
+*
+* @brief   Read the status of AN done bit.
+*
+* @param[in] pDev                   - pointer to MCD_DEV initialized by mcdInitDriver() call
+* @param[in] mdioPort               - MDIO port, 0-7
+* @param[in] host_or_line           - which interface to be monitored, MCD_HOST_SIDE or MCD_LINE_SIDE
+* @param[out] anDoneReg             - Read status of AN done.
+*
+* @retval MCD_OK                    - on success.
+* @retval MCD_FAIL                  - on failure
+*
+*/
+MCD_STATUS mcdLowSpeedANDoneGet
+(
+    IN  MCD_DEV_PTR     pDev,
+    IN  MCD_U16         mdioPort,
+    IN  MCD_U16         host_or_line,
+    OUT MCD_U32         *anDoneReg
+);
+
+/**
+* @internal mcdSetPortModeG21common function
+* @endinternal
+*
+* @brief   Port configuration for G21L/G21SK.
+*
+* @param[in] pDev                   - pointer to MCD_DEV initialized by mcdInitDriver() call.
+* @param[in] mdioPort               - MDIO port 0 to 7.
+* @param[in] portMode               - operational mode of port that will be configured.
+* @param[in] fecConfigPtr           - pointer to FEC type.
+* @param[in] configPtr              - pointer to config DB.
+*
+* @retval MCD_OK                    - on success.
+* @retval MCD_FAIL                  - on failure
+* @retval MCD_STATUS_BAD_PARAM      - on incorrect config structure
+*
+*/
+MCD_STATUS mcdSetPortModeG21common
+(
+    IN  MCD_DEV_PTR               pDev,
+    IN  MCD_U16                   mdioPort,
+    IN  MCD_OP_MODE               portMode,
+    IN  MCD_FEC_TYPE_GET          *fecConfigPtr,
+    IN  MCD_MODE_CONFIG_PARAM_PTR configPtr
+);
+
+/**
+* @internal mcdLowSpeedANAdvertSet function
+* @endinternal
+*
+* @brief   Advertise AN capabilities.
+*
+* @param[in] pDev                   - pointer to MCD_DEV initialized by mcdInitDriver() call
+* @param[in] mdioPort               - MDIO port, 0-7
+* @param[in] host_or_line           - which interface to be monitored, MCD_HOST_SIDE or MCD_LINE_SIDE
+* @param[in] mode                   - Advertise modes of operation
+*                                     MCD_BASEX_AD_ASYM_PAUSE 0x0100, i.e Bit-8: Asymm Pause bit
+*                                     MCD_BASEX_AD_PAUSE      0x0080, i.e Bit-7: Pause
+*                                     MCD_BASEX_AD_1000HDX    0x0040, i.e Bit-6: 1000X Half Duplex
+*                                     MCD_BASEX_AD_1000FDX    0x0020, i.e Bit-5: 1000X Full Duplex
+*                                     Ex1: To advertise Full duplex and pause, set mode = 0x00A0
+*                                     Ex2: To advertise HALF & FULL duplex, set mode = 0x0060
+*                                     Ex3: To advertise all of 1000Base-x capability, set mode = 0x01E0
+*
+* @retval MCD_OK                    - on success.
+* @retval MCD_FAIL                  - on failure
+*
+*/
+MCD_STATUS mcdLowSpeedANAdvertSet
+(
+    IN MCD_DEV_PTR      pDev,
+    IN MCD_U16          mdioPort,
+    IN MCD_U16          host_or_line,
+    IN MCD_U32          mode
 );
 
 /*******************************************************************************
@@ -317,27 +623,16 @@ MCD_STATUS mcdConfigurePcs2p5gBasex
 );
 
 /******************************************************************************
-MCD_STATUS mcdConfigurePcs10gR
-   This function performs channel configuration in 10 R1 mode
+MCD_STATUS mcdConfigurePcs10_25gR1
+   This function performs channel configuration in 10 R1 or 25G R1 mode
 ******************************************************************************/
-MCD_STATUS mcdConfigurePcs10gR1
+MCD_STATUS mcdConfigurePcs10_25gR1
 (
     IN MCD_DEV_PTR pDev,
     IN MCD_U16 slice,
     IN MCD_U16 chan,
-    IN MCD_FEC_TYPE  fecCorrect
-);
-
-/******************************************************************************
-MCD_STATUS mcdConfigurePcs25gR
-   This function performs channel configuration in 25G R1 mode
-******************************************************************************/
-MCD_STATUS mcdConfigurePcs25gR1
-(
-    IN MCD_DEV_PTR pDev,
-    IN MCD_U16 slice,
-    IN MCD_U16 chan,
-    IN MCD_FEC_TYPE  fecCorrect
+    IN MCD_FEC_TYPE  fecCorrect,
+    IN MCD_OP_MODE portMode
 );
 
 /******************************************************************************
@@ -402,6 +697,29 @@ MCD_U16 mcdPortModeGetLanesNum
     IN MCD_U16 host_or_line
 );
 
+/**
+* @internal mcdPortBuildLanesArray function
+* @endinternal
+*
+* @brief   build an array of active SerDes lanes per side
+*
+* @param[in] pDev                   - pointer to MCD_DEV initialized by mcdInitDriver() call
+* @param[in] portMode               - port mode.
+* @param[in] host_or_line           - side.
+* @param[out] serdesArr             - array of active lanes.
+*
+* @retval MCD_OK                    - on success.
+* @retval MCD_FAIL                  - on failure
+*
+*/
+MCD_STATUS mcdPortBuildLanesArray
+(
+    IN  MCD_U16     mdioPort,
+    IN  MCD_OP_MODE portMode,
+    IN  MCD_U16 host_or_line,
+    OUT MCD_U32 *serdesArr
+);
+
 /*******************************************************************
  MCD_STATUS mcdPortModeGetStoppedSerdesBitmaps
    returns bitmap of lanes in the slice that should be powered down
@@ -443,10 +761,15 @@ MCD_BOOL mcdIsRetimerMode
 /**
 * @internal mcdPortStop function
 * @endinternal
- *
+*
+* @brief   Release all port resources, calls to serdes power down in order to
+*         configure new port.
 * @param[in] pDev                     - pointer to MCD_DEV
 * @param[in] mdioPort                 - MDIO port address 0...7
 * @param[in] newPortMode              - operational mode of port that will be configured
+*
+* @retval 0                        - on success
+* @retval 1                        - on error
 */
 MCD_STATUS mcdPortStop
 (
@@ -529,6 +852,10 @@ MCD_STATUS mcdServiceCpuRead
 * @internal mcdServiceCpuWrite function
 * @endinternal
  *
+* @brief   Write to data Service CPU memory
+*
+* @retval 0                        - on success
+* @retval 1                        - on error
 */
 MCD_STATUS mcdServiceCpuWrite
 (
@@ -817,6 +1144,81 @@ MCD_STATUS mcdIsFecParamValid
     IN MCD_FEC_TYPE fecCorrect
 );
 
+/**
+* @internal mcdLaneSteeringModeValidate function
+* @endinternal
+*
+* @brief   lane steering validation function
+*
+* @param[in] pDev                   - device pointer
+* @param[in] mdioPort               - MDIO port, 0-7
+* @param[in] masterSlice            - master slice
+* @param[in] laneSteeringMode       - lane steering port mode
+*
+* @retval MCD_OK                    - on success
+* @retval MCD_FAIL                  - on failure
+*
+*
+*/
+MCD_STATUS mcdLaneSteeringModeValidate
+(
+    IN  MCD_DEV_PTR  pDev,
+    IN  MCD_U16      mdioPort,
+    IN  MCD_MASTER_SLICE  masterSlice,
+    IN  MCD_LANE_STEERING_MODE  laneSteeringMode
+);
+
+/**
+* @internal mcdLaneSteeringRemapVectorRebuild function
+* @endinternal
+*
+* @brief   constructing the remap data for single lane
+* lane steering mode
+*
+* @param[in] pDev                   - device pointer
+* @param[in] mdioPort               - MDIO port, 0-7
+* @param[in] slice                  - slice
+* @param[in] laneSteeringMode       - lane steering port mode
+* @param[in] laneSteeringOverride   - lane steering override
+* pointer
+*
+* @retval MCD_OK                    - on success
+* @retval MCD_FAIL                  - on failure
+*
+*
+*/
+MCD_STATUS mcdLaneSteeringRemapVectorRebuild
+(
+    IN  MCD_DEV_PTR  pDev,
+    IN  MCD_U16 mdioPort,
+    IN  MCD_U16 slice,
+    IN  MCD_LANE_STEERING_MODE  laneSteeringMode,
+    IN  MCD_LANE_STEERING_OVERRIDE_CFG* laneSteeringOverride
+);
+
+/**
+* @internal mcdLaneSteeringSingleModeTune function
+* @endinternal
+*
+* @brief   single mode tuning for lane steering
+* lane steering mode
+*
+* @param[in] pDev                   - device pointer
+* @param[in] mdioPort               - MDIO port, 0-7
+* @param[in] masterSlice            - master slice
+*
+* @retval MCD_OK                    - on success
+* @retval MCD_FAIL                  - on failure
+*
+*
+*/
+MCD_STATUS mcdLaneSteeringSingleModeTune
+(
+    IN  MCD_DEV_PTR  pDev,
+    IN  MCD_U16  mdioPort,
+    IN  MCD_MASTER_SLICE  masterSlice
+);
+
 /*******************************************************************
  MCD_STATUS mcdPortResetTimeout
  Check timeout after the soft or hard reset
@@ -962,11 +1364,16 @@ MCD_STATUS mcdPortSerdesDfeConfig_noSignalCheck
 /**
 * @internal mcdClearSerdesSignalLostIntCause function
 * @endinternal
- *
+*
+* @brief   Clear status of Serdes Signal Lost Interrupt.
+*
 * @param[in] pDev                     - pointer to MCD_DEV initialized by mcdInitDriver() call
 * @param[in] host_or_line             - the side of port (host or line)
 * @param[in] slice                    -  0..1
 * @param[in] channel                  -  0..3
+*
+* @retval MSD_OK                   - on success
+* @retval MCD_FAIL                 - on error
 */
 MCD_STATUS mcdClearSerdesSignalLostIntCause
 (
@@ -979,12 +1386,18 @@ MCD_STATUS mcdClearSerdesSignalLostIntCause
 /**
 * @internal mcdGetSerdesSignalLostIntCause function
 * @endinternal
+*
+* @brief   Get status of Serdes Signal Lost Interrupt.
  *
 * @param[in] pDev                     - pointer to MCD_DEV initialized by mcdInitDriver() call
 * @param[in] host_or_line             - the side of port (host or line)
 * @param[in] slice                    -  0..1
 * @param[in] channel                  -  0..3
+*
 * @param[out] status                   - pointer to  of interrupt (0 - no signal lost or 1 - signal lost)
+*
+* @retval MSD_OK                   - on success
+* @retval MCD_FAIL                 - on error
 */
 MCD_STATUS mcdGetSerdesSignalLostIntCause
 (
@@ -998,13 +1411,19 @@ MCD_STATUS mcdGetSerdesSignalLostIntCause
 /**
 * @internal mcdCheckSerdesSignalStability function
 * @endinternal
+*
+* @brief   Check Serdes Signal Stability.
  *
 * @param[in] pDev                     - pointer to MCD_DEV initialized by mcdInitDriver() call
 * @param[in] host_or_line             - the side of port (host or line)
 * @param[in] slice                    -  0..1
 * @param[in] channel                  -  0..3
 * @param[in] testTimeMs               - time of period without signal lost in milliseconds.
+*
 * @param[out] status                   - pointer to  of interrupt (0 - signal not stable or 1 - signal stable)
+*
+* @retval MSD_OK                   - on success
+* @retval MCD_FAIL                 - on error
 */
 MCD_STATUS mcdCheckSerdesSignalStability
 (
@@ -1019,10 +1438,16 @@ MCD_STATUS mcdCheckSerdesSignalStability
 /**
 * @internal mcdLockHwSemaphore function
 * @endinternal
+*
+* @brief   Lock HW semaphore.
  *
 * @param[in] pDev                     - pointer to MCD_DEV initialized by mcdInitDriver() call
 * @param[in] semaphore_id             - semaphore id 0..127
 * @param[in] event_id                 - event id 0..254
+*
+* @retval MCD_OK                   - on success
+* @retval MCD_PENDING              - semaphore locked by other event
+* @retval MCD_FAIL                 - on error
 */
 MCD_STATUS mcdLockHwSemaphore
 (
@@ -1034,10 +1459,15 @@ MCD_STATUS mcdLockHwSemaphore
 /**
 * @internal mcdUnlockHwSemaphore function
 * @endinternal
+*
+* @brief   Unock HW semaphore.
  *
 * @param[in] pDev                     - pointer to MCD_DEV initialized by mcdInitDriver() call
 * @param[in] semaphore_id             - semaphore id 0..127
 *                                      event_id     - event id 0..254
+*
+* @retval MCD_OK                   - on success
+* @retval MCD_FAIL                 - on error
 */
 MCD_STATUS mcdUnlockHwSemaphore
 (
@@ -1048,7 +1478,12 @@ MCD_STATUS mcdUnlockHwSemaphore
 * @internal mcd25gRsFecInit function
 * @endinternal
  *
+* @brief   Init registers to support RS FEC 1.6 consortium.
+*
 * @param[in] pDev                     - pointer to MCD_DEV initialized by mcdInitDriver() call
+*
+* @retval MCD_OK                   - on success
+* @retval MCD_FAIL                 - on error
 */
 MCD_STATUS mcd25gRsFecInit
 (
@@ -1057,8 +1492,11 @@ MCD_STATUS mcd25gRsFecInit
 /**
 * @internal mcdGetHwTimestamp function
 * @endinternal
+*
+* @brief   Get HW timestamp.
  *
 * @param[in] pDev                     - pointer to MCD_DEV initialized by mcdInitDriver() call
+*                                       Timestamp value in clocks.
 */
 MCD_STATUS mcdGetHwTimestamp
 (
@@ -1074,6 +1512,23 @@ MCD_STATUS mcdPortModeVectorToPortMode
 (
     IN  MCD_U32     modesVector,
     OUT MCD_OP_MODE *portModePtr
+);
+
+/*******************************************************************
+  MCD_STATUS mcdSetPortLoopback
+  lbMode options are:
+    MCD_CLEAR_SERDES_LOOPBACK 0
+    MCD_DEEP_SERDES_LOOPBACK 1
+    MCD_SHALLOW_SERDES_LOOPBACK 2
+    MCD_PARALLEL_SERDES_LOOPBACK 2
+*******************************************************************/
+MCD_STATUS mcdSetPortLoopback
+(
+    IN  MCD_DEV_PTR pDev,
+    IN  MCD_U16 mdioPort,
+    IN  MCD_OP_MODE portMode,
+    IN  MCD_U16 host_or_line,
+    IN  MCD_U32  lbMode
 );
 
 #if C_LINKAGE

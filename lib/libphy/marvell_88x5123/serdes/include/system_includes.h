@@ -128,7 +128,6 @@
 #       include <stdarg.h>
 #       include <errno.h>
 #       include <time.h>
-#       include <math.h>
 #       include <stdlib.h>
 #       include <string.h>
 #   else
@@ -140,7 +139,6 @@
 #     endif
 #   endif
 #   if HAVE_UNISTD_H && !defined __MINGW32__ && !defined ASIC_SIMULATION
-#       include <unistd.h>
 #   endif
 #   if defined HAVE_SYS_TYPES_H && HAVE_SYS_TYPES_H
 #       include <sys/types.h>

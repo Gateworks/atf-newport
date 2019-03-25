@@ -1,8 +1,11 @@
 /*******************************************************************************
-Copyright (C) 2014-2016, Marvell International Ltd. and its affiliates
-If you received this File from Marvell and you have entered into a commercial
-license agreement (a "Commercial License") with Marvell, the File is licensed
-to you under the terms of the applicable Commercial License.
+*              (c), Copyright 2001, Marvell International Ltd.                 *
+* THIS CODE CONTAINS CONFIDENTIAL INFORMATION OF MARVELL SEMICONDUCTOR, INC.   *
+* NO RIGHTS ARE GRANTED HEREIN UNDER ANY PATENT, MASK WORK RIGHT OR COPYRIGHT  *
+* OF MARVELL OR ANY THIRD PARTY. MARVELL RESERVES THE RIGHT AT ITS SOLE        *
+* DISCRETION TO REQUEST THAT THIS CODE BE IMMEDIATELY RETURNED TO MARVELL.     *
+* THIS CODE IS PROVIDED "AS IS". MARVELL MAKES NO WARRANTIES, EXPRESSED,       *
+* IMPLIED OR OTHERWISE, REGARDING ITS ACCURACY, COMPLETENESS OR PERFORMANCE.   *
 *******************************************************************************/
 
 /********************************************************************
@@ -111,6 +114,26 @@ defined by worst case with DAC cables - squelch level 84 - threshold value 1*/
 #define MCD_SERDES_HIGHEST_SQUELCH             150
 #define MCD_SERDES_DEFAILT_SIGNAL_OK_THRESHOLD   2
 
+#define MCD_MIN_EYE_TH 50
+#define MCD_MAX_EYE_TH 750
+#define MCD_LF_LOW_TH  12
+#define MCD_LF_HIGH_TH 15
+#define MCD_HF_TH      4
+
+/* offset for MCD_PRE_DEFINED_CTLE_DATA DB */
+#define MCD_CTLE_PARAM_DC_OFFSET            0
+#define MCD_CTLE_PARAM_LF_OFFSET            1
+#define MCD_CTLE_PARAM_HF_OFFSET            2
+#define MCD_CTLE_PARAM_BW_OFFSET            3
+#define MCD_CTLE_PARAM_LBW_OFFSET           4
+
+/* offset for MCD_SERDES_CONFIG_DATA DB */
+#define MCD_ELEC_PARAM_RX_POL_OFFSET        0
+#define MCD_ELEC_PARAM_TX_POL_OFFSET        1
+#define MCD_ELEC_PARAM_PRECUSOR_OFFSET      2
+#define MCD_ELEC_PARAM_ATTENU_OFFSET        3
+#define MCD_ELEC_PARAM_POSTCURSOR_OFFSET    4
+
 typedef enum
 {
     MCD_SPEED_NA,
@@ -136,7 +159,8 @@ typedef enum
     MCD_DFE_STOP_ADAPTIVE = 4,
     MCD_DFE_START_ADAPTIVE,
     MCD_DFE_ICAL,
-    MCD_DFE_PCAL
+    MCD_DFE_PCAL,
+    MCD_DFE_ICAL_VSR       /* iCal-VSR mode, Bypass DFE TAP tuning */
 
 }MCD_DFE_MODE;
 
@@ -255,7 +279,8 @@ typedef enum
   MCD_TUNE_NOT_COMPLITED,
   MCD_TUNE_READY,
   MCD_TUNE_NOT_READY,
-  MCD_TUNE_INTERRUPTED
+  MCD_TUNE_INTERRUPTED,
+  MCD_TUNE_RESET
 }MCD_AUTO_TUNE_STATUS;
 
 /* DFE Status has the following bits:
@@ -324,8 +349,58 @@ typedef struct
     MCD_U16    preCursor;
     MCD_U16    attenuation;
     MCD_U16    postCursor;
+    MCD_U8     bitMapEnable;
 
+    /* MCD_U8 bitMapEnable; bit position description:
+        rxPolarity = 0x01;
+        txPolartiy = 0x02;
+        preCursor  = 0x04;
+        attenuation= 0x08;
+        postCursor = 0x10;
+    */
 }MCD_SERDES_CONFIG_DATA;
+
+typedef struct
+{
+    MCD_U8    txRemap;
+    MCD_U8    rxRemap;
+} MCD_SERDES_TXRX_LANE_REMAP;
+
+typedef enum
+{
+    MCD_DEFAULT_CALIBRATION,           /* use regular ical (default) */
+    MCD_OPTICAL_CTLE_BYPASS_CALIBRATION,    /* use ical with ctle bypass */
+    MCD_OPTICAL_CALIBRATION,                /* use ical with internal ctle update */
+    MCD_REDUCE_CALIBRATION
+}MCD_CTLE_CALIBRATION_MODE_E;
+
+/* Calibration Algorithm */
+typedef enum
+{
+    MCD_CONFIDENCE_INTERVAL_ALGO, /* default algorithm, available only for optics, line side */
+    MCD_EYE_OPENING_ALGO, /* available for both sides, optics and regulatr ports */
+    MCD_BOTH_ALGO /* both algorithms are activated */
+} MCD_CALIBRATION_ALGO_E;
+
+
+typedef struct
+{
+    MCD_CTLE_CALIBRATION_MODE_E  calibrationMode;
+    MCD_CALIBRATION_ALGO_E  calibrationAlgorithm;
+    MCD_U32 minEyeThreshold;
+    MCD_U32 maxEyeThreshold;
+    MCD_U32 lfHighThreshold;
+    MCD_U32 lfLowThreshold;
+    MCD_U32 hfThreshold;
+}MCD_CTLE_CALIBRATION_MODE_CFG;
+
+typedef struct
+{
+    MCD_BOOL  txEnable;
+    MCD_BOOL  rxEnable;
+    MCD_BOOL  txOutputEnable;
+} MCD_SERDES_TX_RX_ENABLE;
+
 
 typedef struct
 {
@@ -618,8 +693,14 @@ MCD_STATUS mcdSerdesoAaplInit(MCD_DEV_PTR  pDev);
 /**
 * @internal mcdSerdesSpicoInterrupt function
 * @endinternal
+*
+* @brief   Issue the interrupt to the Spico processor.
+*         The return value is the interrupt number.
  *
 * @param[out] result                   - spico interrupt return value
+*
+* @retval 0                        - on success
+* @retval 1                        - on error
 */
 int mcdSerdesSpicoInterrupt
 (
@@ -634,6 +715,11 @@ int mcdSerdesSpicoInterrupt
 * @internal mcdSerdesTxEnable function
 * @endinternal
  *
+* @brief   Enable/Disable Tx.
+*
+* @retval MCD_OK                   - on success
+* @retval MCD_FAIL                 - on error
+* @retval MCD_STATUS_NOT_READY     - when training is in process.
 */
 MCD_STATUS mcdSerdesTxEnable
 (
@@ -646,6 +732,11 @@ MCD_STATUS mcdSerdesTxEnable
 * @internal mcdSerdesTxRxEnableSet function
 * @endinternal
  *
+* @brief   Enable/Disable Tx, Rx, Tx Output.
+*
+* @retval MCD_OK                   - on success
+* @retval MCD_FAIL                 - on error
+* @retval MCD_STATUS_NOT_READY     - when training is in process.
 */
 MCD_STATUS mcdSerdesTxRxEnableSet
 (
@@ -660,7 +751,12 @@ MCD_STATUS mcdSerdesTxRxEnableSet
 * @internal mcdSerdesSignalDetectGet function
 * @endinternal
  *
+* @brief   Per SERDES get indication is signal detected.
+*
 * @param[out] signalDet                - TRUE if signal detected and FALSE otherwise.
+*
+* @retval 0                        - on success
+* @retval 1                        - on error
 */
 MCD_STATUS mcdSerdesSignalDetectGet
 (
@@ -670,24 +766,18 @@ MCD_STATUS mcdSerdesSignalDetectGet
 );
 
 /**
-* @internal mcdSerdesDfeConfig_noSignalCheck function
-* @endinternal
- *
-*/
-MCD_STATUS mcdSerdesDfeConfig_noSignalCheck
-(
-    MCD_DEV_PTR                     pDev,
-    MCD_U8                          serdesNum,
-    MCD_DFE_MODE                    dfeMode
-);
-
-/**
 * @internal mcdSerdesDataVoltageOffsetCheck function
 * @endinternal
- *
+*
+* @brief   Per SERDES check Data Voltage Offeset
+*
 * @param[in] pDev
 * @param[in] serdesNum                - physical serdes number
+*
 * @param[out] stateIsOk                - MCD_TRUE - data voltage offset OK, MCD_FALSE - out of valid bounds
+*
+* @retval 0                        - on success
+* @retval 1                        - on error
 */
 MCD_STATUS mcdSerdesDataVoltageOffsetCheck
 (
@@ -699,11 +789,17 @@ MCD_STATUS mcdSerdesDataVoltageOffsetCheck
 /**
 * @internal mcdSerdesAutoTuneStatus function
 * @endinternal
- *
+*
+* @brief   Per SERDES check the Rx training status
+*
 * @param[in] pDev
 * @param[in] serdesNum                - physical serdes number
+*
 * @param[out] rxStatus                 - status of Rx-Training
 * @param[out] txStatus                 - status of TX-Training
+*
+* @retval 0                        - on success
+* @retval 1                        - on error
 */
 MCD_STATUS mcdSerdesAutoTuneStatus
 (
@@ -715,10 +811,16 @@ MCD_STATUS mcdSerdesAutoTuneStatus
 /**
 * @internal mcdSerdesRxAutoTuneStatusGet function
 * @endinternal
- *
+*
+* @brief   Per SERDES check the Rx training status
+*
 * @param[in] pDev
 * @param[in] serdesNum                - physical serdes number
+*
 * @param[out] rxStatus                 - status of Rx-Training
+*
+* @retval 0                        - on success
+* @retval 1                        - on error
 */
 MCD_STATUS mcdSerdesRxAutoTuneStatusGet
 (
@@ -730,22 +832,33 @@ MCD_STATUS mcdSerdesRxAutoTuneStatusGet
 /**
 * @internal mcdSerdesDfeStatusGet function
 * @endinternal
- *
+*
+* @brief   Per SERDES check the DFE status
+*
 * @param[in] pDev
 * @param[in] serdesNum                - physical serdes number
+*
 * @param[out] dfeStatusBitmapPtr       - status of DFE as in HW
+*
+* @retval 0                        - on success
+* @retval 1                        - on error
 */
 MCD_STATUS mcdSerdesDfeStatusGet
 (
     MCD_DEV_PTR               pDev,
     MCD_U8                    serdesNum,
-    MCD_DFE_STATUS            *dfeStatusBitmapPtr
+    MCD_U16/*MCD_DFE_STATUS*/            *dfeStatusBitmapPtr
 );
 
 /**
 * @internal mcdSerdesManualTxConfig function
 * @endinternal
- *
+*
+* @brief   Per SERDES configure the TX parameters: amplitude, 3 TAP Tx FIR.
+*         Can be run after create port.
+*
+* @retval 0                        - on success
+* @retval 1                        - on error
 */
 MCD_STATUS mcdSerdesManualTxConfig
 (
@@ -759,6 +872,8 @@ MCD_STATUS mcdSerdesManualTxConfig
 /**
 * @internal mcdSerdesManualCtleConfig function
 * @endinternal
+*
+* @brief   Set the Serdes Manual CTLE config for DFE
  *
 * @param[in] pDev
 * @param[in] serdesNum                - physical serdes number
@@ -768,6 +883,9 @@ MCD_STATUS mcdSerdesManualTxConfig
 * @param[in] bandWidth                - CTLE Band-width      (rang: 0-15)
 * @param[in] loopBandwidth            - CTLE Loop Band-width (rang: 0-15)
 * @param[in] squelch                  - Signal OK threshold  (rang: 0-310)
+*
+* @retval 0                        - on success
+* @retval 1                        - on error
 */
 MCD_STATUS mcdSerdesManualCtleConfig
 (
@@ -784,10 +902,22 @@ MCD_STATUS mcdSerdesManualCtleConfig
 /**
 * @internal mcdSerdesManualCtleConfigGet function
 * @endinternal
+*
+* @brief   Get the Serdes CTLE (RX) configurations
  *
 * @param[in] pDev
 * @param[in] serdesNum                - physical lane number
+*
 * @param[out] configParams             - Ctle params structures:
+*                                      dcGain         DC-Gain value        (rang: 0-255)
+*                                      lowFrequency   CTLE Low-Frequency   (rang: 0-15)
+*                                      highFrequency  CTLE High-Frequency  (rang: 0-15)
+*                                      bandWidth      CTLE Band-width      (rang: 0-15)
+*                                      loopBandwidth  CTLE Loop Band-width (rang: 0-15)
+*                                      squelch        Signal OK threshold  (rang: 0-310)
+*
+* @retval 0                        - on success
+* @retval 1                        - on error
 */
 MCD_STATUS mcdSerdesManualCtleConfigGet
 (
@@ -798,10 +928,15 @@ MCD_STATUS mcdSerdesManualCtleConfigGet
 /**
 * @internal mcdSerdesSignalOkCfg function
 * @endinternal
+*
+* @brief   Set the signal OK threshold on Serdes
  *
 * @param[in] pDev
 * @param[in] serdesNum                - physical serdes number
 * @param[in] signalThreshold          - Signal OK threshold (0-15)
+*
+* @retval 0                        - on success
+* @retval 1                        - on error
 */
 MCD_STATUS mcdSerdesSignalOkCfg
 (
@@ -813,10 +948,16 @@ MCD_STATUS mcdSerdesSignalOkCfg
 /**
 * @internal mcdSerdesSignalOkThresholdGet function
 * @endinternal
+*
+* @brief   Get the signal OK threshold on Serdes
  *
 * @param[in] pDev
 * @param[in] serdesNum                - physical serdes number
+*
 * @param[out] signalThreshold          - Signal OK threshold (0-15)
+*
+* @retval 0                        - on success
+* @retval 1                        - on error
 */
 MCD_STATUS mcdSerdesSignalOkThresholdGet
 (
@@ -1024,11 +1165,35 @@ MCD_STATUS mcdFreeSerdesDev
     IN MCD_DEV_PTR pDev
 );
 
+/**
+* @internal mcdSerdesHaltDfeTraining function
+* @endinternal
+*
+* @brief   Halt DFE tuning by reset un-reset sbus reset register
+*
+* @param[in] pDev                   - pointer to MCD_DEV initialized by mcdInitDriver() call
+* @param[in] serdesArr              - SerDes Array
+* @param[in] lanesNum               - num of active lanes
+*
+* @retval MCD_OK                    - on success.
+* @retval MCD_FAIL                  - on failure
+*
+*/
+MCD_STATUS mcdSerdesHaltDfeTraining
+(
+    MCD_DEV_PTR         pDev,
+    unsigned int        *serdesArr,
+    MCD_U16             lanesNum
+);
 
 /**
 * @internal mcdSerdesPowerCtrl function
 * @endinternal
  *
+* @brief   Power up SERDES
+*
+* @retval 0                        - on success
+* @retval 1                        - on error
 */
 int mcdSerdesPowerCtrl
 (
@@ -1041,6 +1206,37 @@ int mcdSerdesPowerCtrl
     MCD_U32             refClkDiv
 );
 
+/**
+* @internal mcdSerdesLogicalToPhysicalConvert function
+* @endinternal
+*
+* @brief   convert Rx logical serdes to physical serdes
+*
+* @retval 0                        - on success
+* @retval 1                        - on error
+*/
+MCD_U32 mcdSerdesLogicalToPhysicalConvert
+(
+  MCD_DEV_PTR  pDev,
+  MCD_U32 serdesNum,
+  MCD_U32 slice
+);
+
+/**
+* @internal mcdSerdesLogicalToPhysicalConvertTx function
+* @endinternal
+*
+* @brief   convert Tx logical serdes to physical serdes
+*
+* @retval 0                        - on success
+* @retval 1                        - on error
+*/
+MCD_U32 mcdSerdesLogicalToPhysicalConvertTx
+(
+  MCD_DEV_PTR  pDev,
+  MCD_U32 serdesNum,
+  MCD_U32 slice
+);
 /******************************************************************************
  MCD_STATUS mcdSerdesGetEye
 (
@@ -1107,7 +1303,13 @@ MCD_STATUS mcdSerdesGetEye
 * @internal mcdSerdesEyeGetExt function
 * @endinternal
  *
+* @brief   Per SERDES return the adapted tuning results
+*         Can be run after create port.
+*
 * @param[out] eye_resultsPtr           - pointer to results structure
+*
+* @retval 0                        - on success
+* @retval 1                        - on error
 */
 MCD_STATUS mcdSerdesEyeGetExt
 (
@@ -2020,6 +2222,7 @@ MCD_STATUS mcdSerdesSetLoopback
     loopbackMode -  MCD_CLEAR_SERDES_LOOPBACK(0)
                     MCD_DEEP_SERDES_LOOPBACK(1)
                     MCD_SHALLOW_SERDES_LOOPBACK(2)
+                    MCD_PARALLEL_SERDES_LOOPBACK(2)
 
  Outputs:
     None
@@ -2048,11 +2251,16 @@ MCD_STATUS mcdSerdesSetLoopback
 * @internal mcdSerdesEnhanceTune function
 * @endinternal
  *
+* @brief   Set the ICAL with shifted sampling point to find best sampling point
+*
 * @param[in] pDev
 * @param[in] serdesArr                - collection of SERDESes to configure
 * @param[in] numOfSerdes              - number of SERDESes to configure
 * @param[in] min_LF                   - Minimum LF value that can be set on Serdes (0...15)
 * @param[in] max_LF                   - Maximum LF value that can be set on Serdes (0...15)
+*
+* @retval 0                        - on success
+* @retval 1                        - on error
 */
 MCD_STATUS mcdSerdesEnhanceTune
 (
@@ -2064,9 +2272,134 @@ MCD_STATUS mcdSerdesEnhanceTune
 );
 
 /**
+* @internal mcdSerdesTxPowerCtrl function
+* @endinternal
+*
+* @brief   power up/down SerDes Tx direction
+*
+* @param[in] pDev                     - pointer to MCD_DEV initialized by mcdInitDriver() call
+* @param[in] serdesNum                - serdes number
+* @param[in] powerUp                  - power up/down
+* @param[in] baudRate                 - serdes baud rate
+* @param[in] retimerMode              - retimer enable/disable
+* @param[in] refClkSel                - reference clock
+* @param[in] refClkDiv                - reference clock divider
+*
+* @retval MCD_OK                   - on success
+* @retval MCD_FAIL                 - on error
+*/
+int mcdSerdesTxPowerCtrl
+(
+    MCD_DEV_PTR         pDev,
+    unsigned int        serdesNum,
+    unsigned char       powerUp,
+    MCD_SERDES_SPEED    baudRate,
+    MCD_BOOL            retimerMode,
+    MCD_U32             refClkSel,
+    MCD_U32             refClkDiv
+);
+
+/**
+* @internal mcdSerdesRxPowerCtrl function
+* @endinternal
+*
+* @brief   power up/down SerDes Rx direction
+*
+* @param[in] pDev                     - pointer to MCD_DEV initialized by mcdInitDriver() call
+* @param[in] serdesNum                - serdes number
+* @param[in] powerUp                  - power up/down
+* @param[in] baudRate                 - serdes baud rate
+* @param[in] retimerMode              - retimer enable/disable
+* @param[in] refClkSel                - reference clock
+* @param[in] refClkDiv                - reference clock divider
+*
+* @retval MCD_OK                   - on success
+* @retval MCD_FAIL                 - on error
+*/
+int mcdSerdesRxPowerCtrl
+(
+    MCD_DEV_PTR         pDev,
+    unsigned int        serdesNum,
+    unsigned char       powerUp,
+    MCD_SERDES_SPEED    baudRate,
+    MCD_BOOL            retimerMode,
+    MCD_U32             refClkSel,
+    MCD_U32             refClkDiv
+);
+
+/**
+* @internal mcdSerdesTxRxAllocateSwDb function
+* @endinternal
+*
+* @brief   allocate serdes Tx/Rx SW data base
+*
+* @param[in] pDev                     - pointer to device
+* @param[in] serdesNum                - serdes number
+*
+* @retval MCD_OK                   - on success
+* @retval MCD_FAIL                 - on error
+*/
+MCD_STATUS mcdSerdesTxRxAllocateSwDb
+(
+    MCD_DEV_PTR         pDev,
+    unsigned int        serdesNum
+);
+
+/**
+* @internal mcdSerdesVcoTxConfig function
+* @endinternal
+*
+* @brief   allocate serdes Tx/Rx SW data base
+*
+* @param[in] pDev           - pointer to device
+* @param[in] serdesNum      - serdes number
+* @param[in] temperature    - Temperature (in C) from Avago Serdes
+* @param[in] rxTherm        - Tx therm of VCO  (0...0xFFFF)
+* @param[in] rxBin          - Tx bin of VCO  (0...0xFFFF)
+*
+* @retval MCD_OK            - on success
+* @retval MCD_FAIL          - on error
+*/
+unsigned int mcdSerdesVcoTxConfig
+(
+    MCD_DEV_PTR     pDev,
+    unsigned int    serdesNum,
+    int     temperature,
+    int     txTherm,
+    int     txBin
+);
+
+/**
+* @internal mcdSerdesVcoRxConfig function
+* @endinternal
+*
+* @brief   allocate serdes Tx/Rx SW data base
+*
+* @param[in] pDev           - pointer to device
+* @param[in] serdesNum      - serdes number
+* @param[in] temperature    - Temperature (in C) from Avago Serdes
+* @param[in] rxTherm        - Rx therm of VCO  (0...0xFFFF)
+* @param[in] rxBin          - Rx bin of VCO  (0...0xFFFF)
+*
+* @retval MCD_OK            - on success
+* @retval MCD_FAIL          - on error
+*/
+unsigned int mcdSerdesVcoRxConfig
+(
+    MCD_DEV_PTR     pDev,
+    unsigned int    serdesNum,
+    int     temperature,
+    int     txTherm,
+    int     txBin
+);
+
+/**
 * @internal mcdSerdesEnhanceTuneLite function
 * @endinternal
- *
+*
+* @brief   Set the PCAL with shifted sampling point to find best sampling point
+*         This API runs only for AP port after linkUp indication and before running
+*         the Rx-Training Adative pCal
 * @param[in] pDev                     - system device number
 * @param[in] serdesArr                - collection of SERDESes to configure
 * @param[in] numOfSerdes              - number of SERDESes to configure
@@ -2077,6 +2410,9 @@ MCD_STATUS mcdSerdesEnhanceTune
 * @param[in] max_dly                  - Maximum delay_cal value:
 *                                      - for Serdes speed 10G (30)
 *                                      - for Serdes speed 25G (21)
+*
+* @retval 0                        - on success
+* @retval 1                        - on error
 */
 MCD_STATUS mcdSerdesEnhanceTuneLite
 (
@@ -2091,7 +2427,10 @@ MCD_STATUS mcdSerdesEnhanceTuneLite
 /**
 * @internal mcdSerdesEnhanceTuneLitePhase1 function
 * @endinternal
- *
+*
+* @brief   Set the PCAL with shifted sampling point to find best sampling point.
+*         This API runs only for AP port after linkUp indication and before running
+*         the Rx-Training Adative pCal.
 * @param[in] pDev                     - system device number
 * @param[in] serdesArr                - collection of SERDESes to configure
 * @param[in] numOfSerdes              - number of SERDESes to configure
@@ -2102,10 +2441,14 @@ MCD_STATUS mcdSerdesEnhanceTuneLite
 * @param[in] best_eye                 - best eyes array to update
 * @param[in] best_dly                 - best delays array to update
 * @param[in] subPhase                 - assist flag to know which code to execute in this sub-phase
+*
 * @param[out] inOutI                   - iteration index between different phases
 * @param[out] best_eye                 - best eyes array to update
 * @param[out] best_dly                 - best delays array to update
 * @param[out] subPhase                 - assist flag to know which code to execute in this sub-phase
+*
+* @retval 0                        - on success
+* @retval 1                        - on error
 */
 MCD_STATUS mcdSerdesEnhanceTuneLitePhase1
 (
@@ -2126,11 +2469,17 @@ MCD_STATUS mcdSerdesEnhanceTuneLitePhase1
 /**
 * @internal mcdSerdesEnhanceTuneLitePhase2 function
 * @endinternal
- *
+*
+* @brief   Set shift sample point to with the best delay_cal value.
+*         This API runs only for AP port after linkUp indication and before running
+*         the Rx-Training Adative pCal
 * @param[in] pDev                     - system device number
 * @param[in] serdesArr                - collection of SERDESes to configure
 * @param[in] numOfSerdes              - number of SERDESes to configure
 * @param[in] best_dly                 - best delay to set on serdes
+*
+* @retval 0                        - on success
+* @retval 1                        - on error
 */
 MCD_STATUS mcdSerdesEnhanceTuneLitePhase2
 (
@@ -2143,8 +2492,13 @@ MCD_STATUS mcdSerdesEnhanceTuneLitePhase2
 /**
 * @internal mcdSerdesDefaultMinMaxDlyGet function
 * @endinternal
- *
+*
+* @brief   This function returns the default minimum and maximum delay
+*         values according to the given port mode
 * @param[in] laneSpeed                - mode type of port
+*
+* @retval 0                        - on success
+* @retval 1                        - on error
 */
 MCD_STATUS mcdSerdesDefaultMinMaxDlyGet
 (
@@ -2156,11 +2510,17 @@ MCD_STATUS mcdSerdesDefaultMinMaxDlyGet
 /**
 * @internal mcdSerdesAutoTuneStatusShort function
 * @endinternal
- *
+*
+* @brief   Check the Serdes Rx or Tx training status
+*
 * @param[in] pDev
 * @param[in] serdesNum                - physical serdes number
+*
 * @param[out] rxStatus                 - Rx-Training status
 * @param[out] txStatus                 - Tx-Training status
+*
+* @retval 0                        - on success
+* @retval 1                        - on error
 */
 MCD_STATUS mcdSerdesAutoTuneStatusShort
 (
@@ -2173,17 +2533,35 @@ MCD_STATUS mcdSerdesAutoTuneStatusShort
 /**
 * @internal mcdSerdesBypassCtleTuneStart function
 * @endinternal
- *
+*
+* @brief   Per SERDES running reduced iCal.
+*
+* @param[in] pDev
+* @param[in] serdesNum                - physical serdes number
+*
+* @retval 0                        - on success
+* @retval 1                        - on error
 */
 MCD_STATUS mcdSerdesBypassCtleTuneStart
 (
     MCD_DEV_PTR                     pDev,
-    MCD_U8                          serdesNum
+    MCD_U8                          serdesNum,
+    MCD_CTLE_CALIBRATION_MODE_E     calibrationMode,
+    MCD_SERDES_SPEED                baudrate
 );
 /**
 * @internal mcdSerdesAutoTuneStartExt function
 * @endinternal
- *
+*
+* @brief   Per SERDES control the TX training & Rx Training starting
+*
+* @param[in] pDev
+* @param[in] serdesNum                - physical serdes number
+* @param[in] rxTraining               - Rx Training modes
+* @param[in] txTraining               - Tx Training modes
+*
+* @retval 0                        - on success
+* @retval 1                        - on error
 */
 
 MCD_STATUS mcdSerdesAutoTuneStartExt
@@ -2198,6 +2576,17 @@ MCD_STATUS mcdSerdesAutoTuneStartExt
 * @internal mcdSerdesAutoTuneStartExtAp function
 * @endinternal
  *
+* @brief   Per SERDES control the TX training & Rx Training starting
+*
+* @param[in] pDev
+* @param[in] serdesNum                - physical serdes number
+* @param[in] rxTraining               - Rx Training modes
+* @param[in] txTraining               - Tx Training modes
+* @param[in] laneSpeed                - serdesSpeed
+* @param[in] laneNum                  - lane number
+*
+* @retval 0                        - on success
+* @retval 1                        - on error
 */
 
 MCD_STATUS mcdSerdesAutoTuneStartExtAp
@@ -2210,6 +2599,25 @@ MCD_STATUS mcdSerdesAutoTuneStartExtAp
     MCD_U32                         laneNum
 );
 
+/**
+* @internal mcdSerdesRxCalibrationConfig function
+* @endinternal
+*
+* @brief   Per SERDES, configs Rx paramter.
+*
+* @param[in] pDev           - pointer to device
+* @param[in] serdesNum      - physical serdes number
+* @param[in] baudRate       - baudRate enum value
+*
+* @retval MCD_OK            - on success
+* @retval MCD_FAIL          - on error
+*/
+MCD_STATUS mcdSerdesRxCalibrationConfig
+(
+    MCD_DEV_PTR                     pDev,
+    MCD_U16                         serdesLane,
+    MCD_U32                         baudRate
+);
 
 /******************************************************************************
 MCD_STATUS mcdSerdesReset
@@ -2247,6 +2655,7 @@ MCD_STATUS mcdSerdesReset
 * @internal mcdSerdesAccessLock function
 * @endinternal
  *
+* @brief   Serdes access lock
 */
 void mcdSerdesAccessLock
 (
@@ -2257,6 +2666,7 @@ void mcdSerdesAccessLock
 * @internal mcdSerdesAccessUnlock function
 * @endinternal
  *
+* @brief   Serdes access unlock
 */
 void mcdSerdesAccessUnlock
 (
@@ -2297,9 +2707,14 @@ unsigned int mcdSerdesResetImpl
 /**
 * @internal mcdSerdesRxTune function
 * @endinternal
- *
+*
+* @brief   Serdes RX training (ONE_SHOT and PCal)
+*
 * @param[in] pDev
 * @param[in] serdesNum                -  SERDES number
+*
+* @retval 0                        - on success
+* @retval 1                        - on error
 */
 MCD_STATUS mcdSerdesRxTune
 (
@@ -2310,7 +2725,11 @@ MCD_STATUS mcdSerdesRxTune
 /**
 * @internal mcdSerdesSetOneSideRetimerMode function
 * @endinternal
- *
+*
+* @brief   Configure serdes PCIE clock mux and SD1 TX input mux
+*
+* @retval 0                        - on success
+* @retval 1                        - on error
 */
 MCD_STATUS mcdSerdesSetOneSideRetimerMode
 (
@@ -2324,7 +2743,11 @@ MCD_STATUS mcdSerdesSetOneSideRetimerMode
 /**
 * @internal mcdSerdesSetRetimerMode function
 * @endinternal
- *
+*
+* @brief   Configure serdes PCIE clock mux and SD1 TX input mux
+*
+* @retval 0                        - on success
+* @retval 1                        - on error
 */
 MCD_STATUS mcdSerdesSetRetimerMode
 (
@@ -2336,7 +2759,11 @@ MCD_STATUS mcdSerdesSetRetimerMode
 /**
 * @internal mcdSerdesSetRetimerClock function
 * @endinternal
- *
+*
+* @brief   Configure retimer clock
+*
+* @retval 0                        - on success
+* @retval 1                        - on error
 */
 MCD_STATUS  mcdSerdesSetRetimerClock
 (
@@ -2347,7 +2774,11 @@ MCD_STATUS  mcdSerdesSetRetimerClock
 /**
 * @internal mcdSerdesSetRetimerClockLaneSteeringMode function
 * @endinternal
- *
+*
+* @brief   Configure retimer clock in lane Steering mode
+*
+* @retval 0                        - on success
+* @retval 1                        - on error
 */
 MCD_STATUS mcdSerdesSetRetimerClockLaneSteeringMode
 (
@@ -2360,7 +2791,11 @@ MCD_STATUS mcdSerdesSetRetimerClockLaneSteeringMode
 /**
 * @internal mcdSetSerdesLaneCfgForRetimerMode function
 * @endinternal
- *
+*
+* @brief   Configure one serdes lane without training and clock switch.
+*
+* @retval 0                        - on success
+* @retval 1                        - on error
 */
 MCD_STATUS mcdSetSerdesLaneCfgForRetimerMode
 (
@@ -2372,7 +2807,10 @@ MCD_STATUS mcdSetSerdesLaneCfgForRetimerMode
 /**
 * @internal mcdSetSerdesLaneCfgForRetimerModePreSet function
 * @endinternal
- *
+*
+*
+* @retval 0                        - on success
+* @retval 1                        - on error
 */
 MCD_STATUS mcdSetSerdesLaneCfgForRetimerModePreSet
 (
@@ -2384,11 +2822,15 @@ MCD_STATUS mcdSetSerdesLaneCfgForRetimerModePreSet
 /**
 * @internal mcdSetSerdesLaneCfgForRetimerModePostSet function
 * @endinternal
- *
+*
+*
+* @retval 0                        - on success
+* @retval 1                        - on error
 */
 MCD_STATUS mcdSetSerdesLaneCfgForRetimerModePostSet
 (
      IN MCD_DEV_PTR         pDev,
+     IN MCD_U16             mdioPort,
      IN MCD_U16             serdesLane,
      IN MCD_SERDES_SPEED    baudRate,
      IN MCD_U16             clockSourceSerdes,
@@ -2401,7 +2843,11 @@ MCD_STATUS mcdSetSerdesLaneCfgForRetimerModePostSet
 /**
 * @internal mcdSetRetimerMode function
 * @endinternal
- *
+*
+* @brief   Configure retimer mode on the referenced port
+*
+* @retval 0                        - on success
+* @retval 1                        - on error
 */
 MCD_STATUS mcdSetRetimerMode
 (
@@ -2413,7 +2859,11 @@ MCD_STATUS mcdSetRetimerMode
 /**
 * @internal mcdSerdesSetTxMux function
 * @endinternal
- *
+*
+* @brief   Configure serdes PCIE clock mux and SD1 TX input mux
+*
+* @retval 0                        - on success
+* @retval 1                        - on error
 */
  MCD_STATUS mcdSerdesSetTxMux
  (
@@ -2427,8 +2877,13 @@ MCD_STATUS mcdSetRetimerMode
 /**
 * @internal mcdSerdesRealCdrStateGet function
 * @endinternal
- *
+*
+* @brief   Get serdes CDR lock state.
+*
 * @param[out] lockedPtr                - locked or not.
+*
+* @retval 0                        - on success
+* @retval 1                        - on error
 */
 MCD_STATUS mcdSerdesRealCdrStateGet
 (
@@ -2440,7 +2895,11 @@ MCD_STATUS mcdSerdesRealCdrStateGet
 /**
 * @internal mcdSerdesDwellTimeSet function
 * @endinternal
- *
+*
+* @brief   Set serdes Dwell time.
+*
+* @retval 0                        - on success
+* @retval 1                        - on error
 */
 MCD_STATUS mcdSerdesDwellTimeSet
 (
@@ -2452,10 +2911,15 @@ MCD_STATUS mcdSerdesDwellTimeSet
 /**
 * @internal mcdSerdesClockRegular function
 * @endinternal
- *
+*
+* @brief   Change to local clock .
+*
 * @param[in] pDev
 * @param[in] serdesNum                - SERDES number
 * @param[in] baudRate                 - serdes speed
+*
+* @retval 0                        - on success
+* @retval 1                        - on error
 */
 MCD_STATUS mcdSerdesClockRegular
 (
@@ -2464,10 +2928,33 @@ MCD_STATUS mcdSerdesClockRegular
     IN MCD_SERDES_SPEED baudRate
 );
 
+
+/**
+* @internal mcdSerdesAdaptiveStatusGet function
+* @endinternal
+*
+* @brief   get stop adaptive status .
+*
+* @param[in] pDev
+* @param[in] serdesNum                - SERDES number
+* @param[in] rxStatus                 - serdes status
+*
+* @retval 0                        - on success
+* @retval 1                        - on error
+*/
+MCD_STATUS mcdSerdesAdaptiveStatusGet
+(
+    MCD_DEV_PTR                     pDev,
+    MCD_U8                          serdesNum,
+    MCD_AUTO_TUNE_STATUS            *rxStatus
+);
+
 /**
 * @internal mcdSerdesNoPpmModeSet function
 * @endinternal
- *
+*
+* @brief   Set serdes with noPpmMode.
+*
 * @param[in] pDev
 *                                      serdesNum - SERDES number.
 * @param[in] baudRate                 - serdes speed.
@@ -2475,6 +2962,9 @@ MCD_STATUS mcdSerdesClockRegular
 * @param[in] slice                    -  number [0..1]
 * @param[in] enable                   - MCD_TRUE - start forwarding clock, MCD_FALSE - stop
 *                                      forwarding.
+*
+* @retval 0                        - on success
+* @retval 1                        - on error
 */
 MCD_STATUS mcdSerdesNoPpmModeSet
 (
@@ -2489,11 +2979,16 @@ MCD_STATUS mcdSerdesNoPpmModeSet
 /**
 * @internal mcdSerdesCtleBiasUpdateDB function
 * @endinternal
- *
+*
+* @brief   Update CTLE BIAS data base per serdes.
+*
 * @param[in] pDev
 *                                      serdesNum - SERDES number.
 * @param[in] ctleBiasVal              - ctle bias value [0..1].
 * @param[in] host_or_line             - host/line serdes.
+*
+* @retval 0                        - on success
+* @retval 1                        - on error
 */
 MCD_STATUS mcdSerdesCtleBiasUpdateDB
 (
@@ -2503,29 +2998,25 @@ MCD_STATUS mcdSerdesCtleBiasUpdateDB
     MCD_U8              host_or_line
 );
 
-/*******************************************************************************
-* mcdLaneSteeringOtherSideCfg
+/**
+* @internal mcdLaneSteeringOtherSideCfg function
+* @endinternal
 *
-* DESCRIPTION:
-*       bring up other slice SerDes's for lane steering
+* @brief   power up slave slice in lane steering mode
 *
-* INPUTS:
-*       pDev
-*       portMode - port mode
-*       masterSlice  - active slice
-*       baudRate  - SerDes baud rate
+* @param[in] pDev                     - device pointer
+* @param[in] mdioPort                 - mdio port
+* @param[in] portMode                 - port mode
+* @param[in] masterSlice              - master slice
+* @param[in] baud rate                 - serdes baud rate
 *
-* OUTPUTS:
-*       None.
-*
-* RETURNS:
-*       0  - on success
-*       1  - on error
-*
-*******************************************************************************/
+* @retval 0                        - on success
+* @retval 1                        - on error
+*/
 MCD_STATUS mcdLaneSteeringOtherSideCfg
 (
     MCD_DEV_PTR    pDev,
+    MCD_U16        mdioPort,
     MCD_OP_MODE    portMode,
     MCD_MASTER_SLICE  masterSlice,
     MCD_SERDES_SPEED  baudRate
@@ -2556,25 +3047,18 @@ MCD_STATUS mcdLaneSteeringAutoTuneStart
     MCD_U16        slice,
     MCD_MASTER_SLICE  masterSlice
 );
-/*******************************************************************************
-* mcdSerdesAutoTuneResult
+/**
+* @internal mcdSerdesAutoTuneResult function
+* @endinternal
 *
-* DESCRIPTION:
-*       Per SERDES return the adapted tuning results
-*       Can be run after create port.
+* @brief   Per SERDES return the adapted tuning results
+*         Can be run after create port.
 *
-* INPUTS:
-*        pSerdesDev
-*       serdesNum - physical serdes number
+* @param[out] results                  - the adapted tuning results.
 *
-* OUTPUTS:
-*       results - the adapted tuning results.
-*
-* RETURNS:
-*       0  - on success
-*       1  - on error
-*
-*******************************************************************************/
+* @retval 0                        - on success
+* @retval 1                        - on error
+*/
 MCD_STATUS mcdSerdesAutoTuneResult
 (
     MCD_DEV_PTR                 pDev,
@@ -2585,7 +3069,11 @@ MCD_STATUS mcdSerdesAutoTuneResult
 /**
 * @internal mcdSetSerdesDefaultCtleParameters function
 * @endinternal
- *
+*
+* @brief   Store default per baud rateport serdeses CTLE parameters in DB
+*
+* @retval 0                        - on success
+* @retval 1                        - on error
 */
 MCD_STATUS mcdSetSerdesDefaultCtleParameters
 (
@@ -2596,7 +3084,11 @@ MCD_STATUS mcdSetSerdesDefaultCtleParameters
 /**
 * @internal mcdSetSetSerdesDefaultElectricalParameters function
 * @endinternal
- *
+*
+* @brief   Store default per baud rateport serdeses electrical parameters in DB
+*
+* @retval 0                        - on success
+* @retval 1                        - on error
 */
 MCD_STATUS mcdSetSetSerdesDefaultElectricalParameters
 (
@@ -2692,8 +3184,19 @@ unsigned int mcdSerdesShiftCalc
 /**
 * @internal mcdSerdesManualTxConfigGet function
 * @endinternal
- *
+*
+* @brief   Per SERDES get the configure TX parameters: amplitude, 3 TAP Tx FIR.
+*         Can be run after create port.
+*
 * @param[out] configParams             - Manual Tx params structures:
+*                                      txAmp       Tx amplitude
+*                                      txAmpAdj    not used in Avago serdes
+*                                      emph0       TX emphasis 0
+*                                      emph1       TX emphasis 1
+*                                      txAmpShft   not used in Avago serdes
+*
+* @retval 0                        - on success
+* @retval 1                        - on error
 */
 MCD_STATUS mcdSerdesManualTxConfigGet
 (
@@ -2705,14 +3208,20 @@ MCD_STATUS mcdSerdesManualTxConfigGet
 /**
 * @internal mcdSerdesTxEnableGet function
 * @endinternal
- *
+*
+* @brief   Gets the status of SERDES Tx mode - Enable/Disable transmission of packets.
+*         Use this API to disable Tx for loopback ports.
+*
+* @param[out] enablePtr
+*                                      - MCD_TRUE - Enable transmission of packets from SERDES
+*                                      - MCD_FALSE - Disable transmission of packets from SERDES
+*
 * @retval 0                        - on success
 * @retval 1                        - on error
 *
 * @note Disabling transmission of packets from SERDES causes to link down
 *       of devices that are connected to the port.
 *
-* @param[out] enablePtr
 */
 MCD_STATUS mcdSerdesTxEnableGet
 (
@@ -2724,10 +3233,16 @@ MCD_STATUS mcdSerdesTxEnableGet
 /**
 * @internal mcdSerdesRxSignalCheck function
 * @endinternal
- *
+*
+* @brief   Per SERDES check there is Rx Signal and indicate if Serdes is ready for Tuning or not
+*
 * @param[in] pDev
 * @param[in] serdesNum                - physical serdes number
+*
 * @param[out] rxSignal                 - Serdes is ready for Tuning or not
+*
+* @retval 0                        - on success
+* @retval 1                        - on error
 */
 MCD_STATUS mcdSerdesRxSignalCheck
 (
@@ -2739,10 +3254,15 @@ MCD_STATUS mcdSerdesRxSignalCheck
 /**
 * @internal mcdSerdesDfeConfig function
 * @endinternal
- *
+*
+* @brief   Per SERDES configure the DFE parameters.
+*         Can be run after create port.
 * @param[in] pDev
 * @param[in] serdesNum                - physical serdes number
 * @param[in] dfeMode                  - start/stop/iCal/pCal
+*
+* @retval 0                        - on success
+* @retval 1                        - on error
 */
 MCD_STATUS mcdSerdesDfeConfig
 (
@@ -2754,10 +3274,16 @@ MCD_STATUS mcdSerdesDfeConfig
 /**
 * @internal mcdSerdesTxAutoTuneStatusShort function
 * @endinternal
- *
+*
+* @brief   Per SERDES check the Tx training status
+*         This function is necessary for 802.3ap functionality
 * @param[in] pDev
 * @param[in] serdesNum                - physical serdes number
+*
 * @param[out] txStatus                 - status of Tx-Training
+*
+* @retval 0                        - on success
+* @retval 1                        - on error
 */
 MCD_STATUS mcdSerdesTxAutoTuneStatusShort
 (
@@ -2769,7 +3295,17 @@ MCD_STATUS mcdSerdesTxAutoTuneStatusShort
 /**
 * @internal mcdSerdesAutoTuneStart function
 * @endinternal
- *
+*
+* @brief   Per SERDES control the TX training & Rx Training starting.
+*         This function calls to the mcdSerdesAutoTuneStartExt, which includes
+*         all the functional options.
+* @param[in] pDev
+* @param[in] serdesNum                - physical serdes number
+* @param[in] rxTraining               - Rx Training (true (AVAGO_DFE_ICAL) /false)
+* @param[in] txTraining               - Tx Training (true (AVAGO_PMD_TRAIN) /false)
+*
+* @retval 0                        - on success
+* @retval 1                        - on error
 */
 MCD_STATUS mcdSerdesAutoTuneStart
 (
@@ -2782,10 +3318,15 @@ MCD_STATUS mcdSerdesAutoTuneStart
 /**
 * @internal mcdSerdesRxAutoTuneStart function
 * @endinternal
- *
+*
+* @brief   Per SERDES control the Rx Training starting.
+*
 * @param[in] pDev
 * @param[in] serdesNum                - physical serdes number
 * @param[in] rxTraining               - Rx Training (true/false)
+*
+* @retval 0                        - on success
+* @retval 1                        - on error
 */
 MCD_STATUS mcdSerdesRxAutoTuneStart
 (
@@ -2797,10 +3338,15 @@ MCD_STATUS mcdSerdesRxAutoTuneStart
 /**
 * @internal mcdSerdesTxAutoTuneStart function
 * @endinternal
- *
+*
+* @brief   Per SERDES control the TX training starting.
+*
 * @param[in] pDev
 * @param[in] serdesNum                - physical serdes number
 * @param[in] txTraining               - Tx Training (true/false)
+*
+* @retval 0                        - on success
+* @retval 1                        - on error
 */
 MCD_STATUS mcdSerdesTxAutoTuneStart
 (
@@ -2812,9 +3358,14 @@ MCD_STATUS mcdSerdesTxAutoTuneStart
 /**
 * @internal mcdSerdesTxAutoTuneStop function
 * @endinternal
- *
+*
+* @brief   Per SERDES stop the TX training
+*
 * @param[in] pDev
 * @param[in] serdesNum                - physical serdes number
+*
+* @retval 0                        - on success
+* @retval 1                        - on error
 */
 MCD_STATUS mcdSerdesTxAutoTuneStop
 (
@@ -2825,7 +3376,11 @@ MCD_STATUS mcdSerdesTxAutoTuneStop
 /**
 * @internal mcdSerdesSetTxMuxLaneSteering function
 * @endinternal
- *
+*
+* @brief   Configure serdes PCIE clock mux and SD1 TX input mux
+*
+* @retval 0                        - on success
+* @retval 1                        - on error
 */
  MCD_STATUS mcdSerdesSetTxMuxLaneSteering
  (
@@ -2838,10 +3393,15 @@ MCD_STATUS mcdSerdesTxAutoTuneStop
 /**
 * @internal mcdSerdesShiftSamplePoint function
 * @endinternal
- *
+*
+* @brief   Shift Serdes sampling point earlier in time
+*
 * @param[in] pDev
 * @param[in] serdesNum                - physical serdes number
 * @param[in] delay                    - set the  (0..31)
+*
+* @retval 0                        - on success
+* @retval 1                        - on error
 */
 MCD_STATUS mcdSerdesShiftSamplePoint
 (
@@ -2853,12 +3413,17 @@ MCD_STATUS mcdSerdesShiftSamplePoint
 /**
 * @internal mcdSerdesArrayAutoTuneSet function
 * @endinternal
- *
+*
+* @brief   Set iCAL(CTLE and DFE) or pCAL(DFE) Auto Tuning on multiple Serdeses
+*
 * @param[in] pDev
 * @param[in] serdesArr                - collection of SERDESes to configure
 * @param[in] numOfSerdes              - number of SERDESes to configure
 * @param[in] trainingMode             - for value 0: set iCAL mode,
 *                                      for value 1: set pCAL mode
+*
+* @retval 0                        - on success
+* @retval 1                        - on error
 */
 MCD_STATUS mcdSerdesArrayAutoTuneSet
 (
@@ -2871,7 +3436,12 @@ MCD_STATUS mcdSerdesArrayAutoTuneSet
 /**
 * @internal mcdSerdesPolarityConfigImpl function
 * @endinternal
- *
+*
+* @brief   Per Serdes invert the Tx or Rx.
+*         Can be run after create port.
+*
+* @retval 0                        - on success
+* @retval 1                        - on error
 */
 int mcdSerdesPolarityConfigImpl
 (
@@ -2884,10 +3454,15 @@ int mcdSerdesPolarityConfigImpl
 /**
 * @internal mcdSerdesSbmVoltageGet function
 * @endinternal
- *
+*
+* @brief   Gets the voltage data from a given AVAGO_THERMAL_SENSOR sensor.
+*         Returns the voltage in milli-volt.
 * @param[in] pSerdesDev
 *                                      serdesNum   - physical serdes number
 *                                      sensorAddr  - SBus address of the AVAGO_THERMAL_SENSOR
+*
+* @retval 0                        - on success
+* @retval 1                        - on error
 */
 int mcdSerdesSbmVoltageGet
 (
@@ -2900,10 +3475,16 @@ int mcdSerdesSbmVoltageGet
 /**
 * @internal mcdSerdesGetLoopbackInfo function
 * @endinternal
- *
+*
+* @brief   Gets the status of Internal/External SERDES loopback mode.
+*         Can be run after create port.
 * @param[in] pDev
 *                                      serdesNum - physical Serdes number
+*
 * @param[out] lbModePtr                - current loopback mode
+*
+* @retval 0                        - on success
+* @retval 1                        - on error
 */
 MCD_STATUS mcdSerdesGetLoopbackInfo
 (
@@ -2915,10 +3496,15 @@ MCD_STATUS mcdSerdesGetLoopbackInfo
 /**
 * @internal mcdSerdesDigitalReset function
 * @endinternal
- *
+*
+* @brief   Run digital reset / unreset on current SERDES.
+*
 * @param[in] pDev
 *                                      serdesNum - serdes number
 * @param[in] digitalReset             - digital Reset (On/Off)
+*
+* @retval 0                        - on success
+* @retval 1                        - on error
 */
 MCD_STATUS mcdSerdesDigitalReset
 (
@@ -2930,11 +3516,19 @@ MCD_STATUS mcdSerdesDigitalReset
 /**
 * @internal mcdSerdesTestGenGet function
 * @endinternal
- *
+*
+* @brief   Get configuration of the Serdes test generator/checker.
+*         Can be run after create port.
 * @param[in] pDev
 * @param[in] serdesNum                - physical serdes number
+*
 * @param[out] txPatternPtr             - pattern to transmit ("Other" means any mode not
+*                                      included explicitly in MV_HWS_SERDES_TX_PATTERN type)
 * @param[out] modePtr                  - test mode or normal
+*
+* @retval MCD_OK                   - on success
+* @retval MCD_NOT_SUPPORTED        - unexpected pattern
+* @retval MCD_FAIL                 - HW error
 */
 MCD_STATUS mcdSerdesTestGenGet
 (
@@ -2947,11 +3541,16 @@ MCD_STATUS mcdSerdesTestGenGet
 /**
 * @internal mcdSerdesTestGenStatus function
 * @endinternal
- *
+*
+* @brief   Read the tested pattern receive error counters.
+*         Can be run after create port.
 * @param[in] pDev
 * @param[in] serdesNum                - physical serdes number
 * @param[in] txPattern                - pattern to transmit
 * @param[in] counterAccumulateMode    - Enable/Disable reset the accumulation of error counters
+*
+* @retval 0                        - on success
+* @retval 1                        - on error
 */
 MCD_STATUS mcdSerdesTestGenStatus
 (
@@ -2964,6 +3563,10 @@ MCD_STATUS mcdSerdesTestGenStatus
 
 
 
+
+
+
+
 #endif /* MCD_ENABLE_SERDES_API */
 
 #if C_LINKAGE
@@ -2973,5 +3576,6 @@ MCD_STATUS mcdSerdesTestGenStatus
 #endif
 
 #endif /* defined MCD_HWSERDESCNT_H */
+
 
 

@@ -19,8 +19,8 @@
  */
 
 /** Doxygen File Header
- ** @file
- ** @brief Declarations for measurement functions.
+*  @file
+*  @brief Declarations for measurement functions.
  **/
 
 #ifndef AVAGO_SERDES_MEAS_H_

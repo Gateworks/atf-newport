@@ -1,14 +1,12 @@
 /*******************************************************************************
-*                Copyright 2001, Marvell International Ltd.
-* This code contains confidential information of Marvell semiconductor, inc.
-* no rights are granted herein under any patent, mask work right or copyright
-* of Marvell or any third party.
-* Marvell reserves the right at its sole discretion to request that this code
-* be immediately returned to Marvell. This code is provided "as is".
-* Marvell makes no warranties, express, implied or otherwise, regarding its
-* accuracy, completeness or performance.
-********************************************************************************
-*/
+*              (c), Copyright 2001, Marvell International Ltd.                 *
+* THIS CODE CONTAINS CONFIDENTIAL INFORMATION OF MARVELL SEMICONDUCTOR, INC.   *
+* NO RIGHTS ARE GRANTED HEREIN UNDER ANY PATENT, MASK WORK RIGHT OR COPYRIGHT  *
+* OF MARVELL OR ANY THIRD PARTY. MARVELL RESERVES THE RIGHT AT ITS SOLE        *
+* DISCRETION TO REQUEST THAT THIS CODE BE IMMEDIATELY RETURNED TO MARVELL.     *
+* THIS CODE IS PROVIDED "AS IS". MARVELL MAKES NO WARRANTIES, EXPRESSED,       *
+* IMPLIED OR OTHERWISE, REGARDING ITS ACCURACY, COMPLETENESS OR PERFORMANCE.   *
+*******************************************************************************/
 /**
 ********************************************************************************
 * @file mcdInternalPortApInitIf.h
@@ -171,6 +169,7 @@ typedef struct
 #endif
 
 #endif /* mcdInternalPortApInitIf_H */
+
 
 
 

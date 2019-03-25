@@ -1,34 +1,12 @@
-/******************************************************************************
-*              Copyright (c) Marvell International Ltd. and its affiliates
-*
-* This software file (the "File") is owned and distributed by Marvell
-* International Ltd. and/or its affiliates ("Marvell") under the following
-* alternative licensing terms.
-* If you received this File from Marvell, you may opt to use, redistribute
-* and/or modify this File under the following licensing terms.
-* Redistribution and use in source and binary forms, with or without
-* modification, are permitted provided that the following conditions are met:
-*  -   Redistributions of source code must retain the above copyright notice,
-*       this list of conditions and the following disclaimer.
-*  -   Redistributions in binary form must reproduce the above copyright
-*       notice, this list of conditions and the following disclaimer in the
-*       documentation and/or other materials provided with the distribution.
-*  -    Neither the name of Marvell nor the names of its contributors may be
-*       used to endorse or promote products derived from this software without
-*       specific prior written permission.
-*
-* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-* AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-* IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
-* LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-* CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-* SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
-* OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
-* WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
-* OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
-* ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*******************************************************************************
+/*******************************************************************************
+*              (c), Copyright 2001, Marvell International Ltd.                 *
+* THIS CODE CONTAINS CONFIDENTIAL INFORMATION OF MARVELL SEMICONDUCTOR, INC.   *
+* NO RIGHTS ARE GRANTED HEREIN UNDER ANY PATENT, MASK WORK RIGHT OR COPYRIGHT  *
+* OF MARVELL OR ANY THIRD PARTY. MARVELL RESERVES THE RIGHT AT ITS SOLE        *
+* DISCRETION TO REQUEST THAT THIS CODE BE IMMEDIATELY RETURNED TO MARVELL.     *
+* THIS CODE IS PROVIDED "AS IS". MARVELL MAKES NO WARRANTIES, EXPRESSED,       *
+* IMPLIED OR OTHERWISE, REGARDING ITS ACCURACY, COMPLETENESS OR PERFORMANCE.   *
+********************************************************************************
 */
 /**
 ********************************************************************************
@@ -682,11 +660,16 @@ MCD_OP_MODE mcdApConvertPortMode
 /**
 * @internal mcdApPortCtrlDebugParamsSet function
 * @endinternal
+*
+* @brief   Set AP debug information
  *
 * @param[in] apFwLogBaseAddr          - AP Firmware Real-time log base address
 * @param[in] apFwLogCountAddr         - AP Firmware Real-time log count address
 * @param[in] apFwLogPointerAddr       - AP Firmware Real-time log pointer address
 * @param[in] apFwLogResetAddr         - AP Firmware Real-time log reset address
+*
+* @retval 0                        - on success
+* @retval 1                        - on error
 */
 void mcdApPortCtrlDebugParamsSet
 (
@@ -699,12 +682,15 @@ void mcdApPortCtrlDebugParamsSet
 /**
 * @internal mcdLogParamsSet function
 * @endinternal
+*
+* @brief   Set Hws log information
  *
 * @param[in] fwLogBaseAddr            - Firmware HWS Real-time log base address
 * @param[in] fwLogCountAddr           - Firmware HWS Real-time log count address
 * @param[in] fwLogPointerAddr         - Firmware HWS Real-time log pointer address
 * @param[in] fwLogResetAddr           - Firmware HWS Real-time log reset address
 * @param[in] fwPollingDbAddr          - Firmware HWS Real-time polling DB address
+*                                       None
 */
 void mcdLogParamsSet
 (
@@ -720,4 +706,5 @@ void mcdLogParamsSet
 #endif /* __cplusplus */
 
 #endif /* __mvHwsPortCtrlApLogDefs_H */
+
 

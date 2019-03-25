@@ -1,14 +1,23 @@
 /*******************************************************************************
-Copyright (C) 2014 - 2016, Marvell International Ltd. and its affiliates
-If you received this File from Marvell and you have entered into a commercial
-license agreement (a "Commercial License") with Marvell, the File is licensed
-to you under the terms of the applicable Commercial License.
+*              (c), Copyright 2001, Marvell International Ltd.                 *
+* THIS CODE CONTAINS CONFIDENTIAL INFORMATION OF MARVELL SEMICONDUCTOR, INC.   *
+* NO RIGHTS ARE GRANTED HEREIN UNDER ANY PATENT, MASK WORK RIGHT OR COPYRIGHT  *
+* OF MARVELL OR ANY THIRD PARTY. MARVELL RESERVES THE RIGHT AT ITS SOLE        *
+* DISCRETION TO REQUEST THAT THIS CODE BE IMMEDIATELY RETURNED TO MARVELL.     *
+* THIS CODE IS PROVIDED "AS IS". MARVELL MAKES NO WARRANTIES, EXPRESSED,       *
+* IMPLIED OR OTHERWISE, REGARDING ITS ACCURACY, COMPLETENESS OR PERFORMANCE.   *
 *******************************************************************************/
 
 /********************************************************************
-This file contains common types and defines across the Marvell
-X5121/X5111/X2381/X5123 API driver (MCD).
-********************************************************************/
+**
+* @file mcdApiTypes.h
+*
+* @brief This file contains common types and defines across the Marvell MCD driver.
+*
+********************************************************************************
+*/
+
+
 #ifndef MCD_TYPES_H
 #define MCD_TYPES_H
 
@@ -35,11 +44,6 @@ X5121/X5111/X2381/X5123 API driver (MCD).
 #endif
 #endif
 
-#ifndef MCD_API_NAMES_ORIGINAL
-/* cases using internal names prefixed by "phy5123_"          */
-/* avoiding linker problems when used with other MCD versions */
-#include "mcdApiHiddenNames.h"
-#endif
 
 #undef IN
 #define IN
@@ -99,13 +103,22 @@ typedef enum {
 #define MCD_GET_BIT_AS_BOOL(uintVar) ((uintVar) ? MCD_TRUE : MCD_FALSE)
 
 typedef MCD_U32 MCD_STATUS;
+#define MCD_OK       0    /* Operation succeeded */
+#define MCD_FAIL     1    /* Operation failed    */
+#define MCD_PENDING  2    /* Pending  */
+#define MCD_BAD_PTR  3   /* Pointer is NULL */
+#define MCD_OUT_OF_CPU_MEM 4 /* Alocation failed */
+#define MCD_HCD_NOT_FOUND 5 /* HCD not found */
+#define MCD_CREATE_ERROR  (0x0A) /* Fail while creating an item           */
 
 #define MCD_MAX_CHANNEL_NUM_PER_SLICE      4 /* number of lanes per slice in X5123 */
 #define MCD_MAX_SLICE_NUM                  2 /* number of slices in X5123 */
 #define MCD_MAX_PORT_NUM                   8 /* max port number in X5123 */
+#define MCD_MAX_SERDES_NUM                 16
 
 #define MCD_NUM_LANES       4 /* number of serdes lanes for 100G and 40G PCS */
-#define MCD_NUM_PCS_LANES  20 /* number of PCS lanes for 100G PCS */
+
+#define MCD_UMAC_INTERRUPT_INTRAW_SYNC  0x800/* defines los of sync bit in umac interrupt raw register*/
 
 /* Defines for mcdInitDriver() and all API functions which need MCD_DEV */
 typedef struct _MCD_DEV MCD_DEV;
@@ -125,11 +138,41 @@ typedef MCD_STATUS (*FMCD_WRITE_MDIO)(
                         MCD_U16 reg,
                         MCD_U16 value);
 
+
+/**
+* @enum MCD_SIDE_ENT
+ *
+ * @brief Enumeration for device side.
+*/
+typedef enum
+{
+    /** @brief Host Side       */
+    MCD_SIDE_HOST,
+    /** @brief Line Side       */
+    MCD_SIDE_LINE,
+    /** @brief Both Sides       */
+    MCD_SIDE_BOTH
+}MCD_SIDE_ENT;
+
+
+/**
+* @enum MCD_BOOT_MODE
+ *
+ * @brief Enumeration for boot mode.
+*/
+typedef enum
+{
+    /** @brief Regular Mode            */
+    MCD_REGULAR_BOOT_MODE,
+    /** @brief High Availability Mode  */
+    MCD_HIGH_AVAILABILITY_BOOT_MODE
+}MCD_BOOT_MODE;
+
 /* operational mode configuration */
 /* those ifdef 0 are not supported in this release */
 
 /* Note: MCD_MODE_P100_40_CK: AutoNeg with multi-speed selection. Requires
-   polling for mcdAutoNegCheckComplete() after calling mcdSetModeSelection() */
+   polling for mcdAutoNegCheckCompleteExt() after calling mcdOneSideSetMode() */
 typedef enum
 {
     MCD_MODE_UNKNOWN,
@@ -196,6 +239,8 @@ typedef enum
     MCD_MODE_R1C,           /* 1000Base-X repeater mode                                */
     MCD_MODE_P1_BaseX_SGMII,/* host side - SGMII, line side - 1000BaseX                 */
     MCD_MODE_G21SK,          /* GEARBOX 40GBase-R2 (host Side) to 40GBase-R4 (Line Side) with FEC and AN*/
+    MCD_MODE_P20L,          /* 58 20GBase-R1                                              */
+    MCD_MODE_P20S,          /* 59 20GBase-R1 with FEC and AN                              */
 
     MCD_MODE_NUM
 } MCD_OP_MODE;
@@ -230,7 +275,12 @@ typedef enum
     MCD_4P_P1G_1000BaseX_STEERING,
     MCD_4P_P1G_SGMII_STEERING,
     MCD_G21L_NONE_STEERING,
-    MCD_G21L_P10G_NONE_STEERING_AP
+    MCD_G21L_P10G_NONE_STEERING_AP,
+    MCD_1P_P25G_STEERING,
+    MCD_1P_P10G_STEERING,
+    MCD_1P_P10G_25G_STEERING_AP,
+    MCD_1P_P1G_1000BaseX_STEERING,
+    MCD_1P_P1G_SGMII_STEERING
 } MCD_LANE_STEERING_MODE;
 
 /* do not rearrange the order */
@@ -256,6 +306,7 @@ typedef enum
     MCD_50GB_KR2,
     MCD_2_5GB_R_LINE,
     MCD_1GB_R_LINE,
+    MCD_20GB_SLR,
     MCD_SPEED_NUM
 } MCD_LINE_SPEED;
 
@@ -271,7 +322,8 @@ typedef enum
    MCD_40GB_R2,
    MCD_50GB_R2,
    MCD_2_5GB_R,
-   MCD_1GB_R
+   MCD_1GB_R,
+   MCD_20GB_R,
 } MCD_HOST_SPEED;
 
 typedef enum
@@ -378,6 +430,19 @@ typedef struct
 #include "mcdInternalIpcDefs.h"
 #include "mcdHwSerdesCntl.h"
 
+
+typedef enum
+{
+    MCD_LANE_REMAP_DISABLE,
+    MCD_LANE_REMAP_ENABLE
+} MCD_LANE_REMAP_MODE;
+
+typedef struct
+{
+    MCD_SERDES_TXRX_LANE_REMAP  sliceZeroHostRemap[MCD_MAX_CHANNEL_NUM_PER_SLICE];
+    MCD_SERDES_TXRX_LANE_REMAP  sliceOneHostRemap[MCD_MAX_CHANNEL_NUM_PER_SLICE];
+} MCD_LANE_STEERING_HOST_REMAP_CFG;
+
 typedef struct
 {
     MCD_REF_CLK_SEL      lsRefClkSel;
@@ -396,7 +461,7 @@ typedef MCD_AP_SERDES_CONFIG_DATA *MCD_AP_SERDES_CONFIG_DATA_PTR;
 
 typedef struct
 {
-    MCD_U16 					numOfLanes; /* number of lanes                                            */
+    MCD_U16                     numOfLanes; /* number of lanes                                            */
     MCD_AP_SERDES_CONFIG_DATA*  params;     /* pointer to array that consists TX and RX polarity per lane */
 }MCD_CONFIG_SERDES_AP_PARAM;
 typedef MCD_CONFIG_SERDES_AP_PARAM *MCD_CONFIG_SERDES_AP_PARAM_PTR;
@@ -488,6 +553,7 @@ typedef struct
 
 #define MCD_AP_OPTIONS_G21_MODE_CNS          0x1
 #define MCD_AP_OPTIONS_1G_SGMII_MODE_CNS     0x2
+#define MCD_AP_OPTIONS_AN_ADV_ENABLE         0x4
 
 typedef struct
 {
@@ -514,6 +580,7 @@ typedef struct
     MCD_CTLE_BIAS_VAL                   ctleBiasVal;
     MCD_U8                              g21Mode;
     MCD_U8                              g1SgmiiMode;
+    MCD_BOOL                            enSdTuningApRes;
 }MCD_CONFIG_AP_PARAM;
 typedef MCD_CONFIG_AP_PARAM *MCD_CONFIG_AP_PARAM_PTR;
 
@@ -529,27 +596,46 @@ typedef struct
 
 typedef struct
 {
+    MCD_U32 minEyeThreshold;
+    MCD_U32 maxEyeThreshold;
+}MCD_LINE_SIDE_EO_TH_OVERRIDE;
+
+/**
+* @struct MCD_LANE_STEERING_OVERRIDE_CFG
+ *
+*  @brief A struct containing the override parameters for lane
+*         steering single port mode
+*/
+typedef struct
+{
+    MCD_U16 externalLpbSerdes;
+    MCD_U16 internalLpSerdes;
+    MCD_U8  txRemap;
+    MCD_U8  rxRemap;
+}MCD_LANE_STEERING_OVERRIDE_CFG;
+
+typedef struct
+{
+    MCD_U32 lfHighThreshold;
+    MCD_U32 lfLowThreshold;
+    MCD_U32 hfThreshold;
+} MCD_CONFIDENCE_INTERVAL_PARAMS_OVERRIDE;
+
+typedef struct
+{
     MCD_NO_PPM_MODE                                noPpmMode;
     MCD_PORT_PER_SERDES_CONFIG_DATA*               electricalParamsPtr;
     MCD_CONFIG_AP_PARAM_PTR                        configApPtr;
     MCD_SERDES_REF_CLK                             refClk;
     MCD_CTLE_BIAS_CONFIG                           ctleBiasParams;
     MCD_PORT_PER_SERDES_CTLE_CONFIG_DATA*          ctleParamsPtr;
+    MCD_CTLE_CALIBRATION_MODE_E                    calibrationMode;
+    MCD_CALIBRATION_ALGO_E                         calibrationAlgo;
+    MCD_LINE_SIDE_EO_TH_OVERRIDE*                  eyeThresholdPtr;
+    MCD_CONFIDENCE_INTERVAL_PARAMS_OVERRIDE*       confidenceParamsPtr;
+    MCD_LANE_STEERING_OVERRIDE_CFG*                laneSteerCfgPtr;
 }MCD_MODE_CONFIG_PARAM;
 typedef MCD_MODE_CONFIG_PARAM *MCD_MODE_CONFIG_PARAM_PTR;
-
-typedef struct
-{
-    MCD_FEC_TYPE                                       fec;
-    MCD_NO_PPM_MODE                              noPpmMode;
-    MCD_PORT_PER_SERDES_CONFIG_DATA*   electricalParamsPtr;
-    MCD_CTLE_BIAS_CONFIG                    ctleBiasParams;
-    MCD_PORT_PER_SERDES_CTLE_CONFIG_DATA*    ctleParamsPtr;
-}MCD_PORT_CONFIG_PARAMS;
-
-typedef MCD_PORT_CONFIG_PARAMS *MCD_PORT_CONFIG_PARAMS_PTR;
-
-
 
 /*
  * Reference Clock configuration
@@ -595,6 +681,7 @@ typedef struct
     MCD_U8                 ctleBiasVal;
     MCD_U8                 noPpmMode;
     MCD_U8                 options;
+    MCD_BOOL               enSdTuningApRes;
 }MCD_AP_CFG;
 
 typedef MCD_AP_CFG *MCD_AP_CFG_PTR;
@@ -617,12 +704,59 @@ typedef struct _MCD_MODE_CONFIG
     IN MCD_NO_PPM_MODE noPpmMode;     /* noPpmMode */
 } MCD_MODE_CONFIG,  *PMCD_MODE_CONFIG;
 
+/**
+* @struct MCD_LANE_STEERING_CONFIG
+ *
+*  @brief A struct containing the data base
+*  of lane steering configuration
+*/
 typedef struct
 {
     MCD_BOOL  laneSteeringEnable;
     MCD_MASTER_SLICE  masterSlice;
     MCD_BOOL  reducedRxTraining;
+    MCD_BOOL  singlePortEnable[MCD_MAX_PORT_NUM];
+    MCD_U16   externalLpPort[MCD_MAX_PORT_NUM];
+    MCD_U16   internalLpPort[MCD_MAX_PORT_NUM];
+    MCD_U16   externalLpSerdes[MCD_MAX_PORT_NUM];
+    MCD_U16   internalLpSerdes[MCD_MAX_PORT_NUM];
+    MCD_BOOL  laneSteeringTxRemap[MCD_MAX_SERDES_NUM];
 }MCD_LANE_STEERING_CONFIG;
+
+typedef struct
+{
+    MCD_LANE_REMAP_MODE hostRemapMode;
+    MCD_LANE_REMAP_MODE lineRemapMode;
+    MCD_U16 hostRxRemapVector;
+    MCD_U16 hostTxRemapVector;
+    MCD_U16 lineRxRemapVector;
+    MCD_U16 lineTxRemapVector;
+} MCD_LANE_REMAPING_CONFIG;
+
+typedef Avago_serdes_init_config_t MCD_AVAGO_SERDES_INIT_CFG;
+#define MCD_TX_PLL_RECAL 0x1;
+#define MCD_RX_PLL_RECAL 0x2;
+
+typedef struct
+{
+    MCD_AVAGO_SERDES_INIT_CFG  txRxConfigDef;
+    MCD_BOOL                   txRxConfigInitalized;
+    MCD_SERDES_TX_RX_ENABLE    serdesTxRxEnable;
+    MCD_U32                    txRxPllRecal;
+} MCD_AVAGO_SERDES_SW_DB;
+
+typedef struct
+{
+    MCD_AVAGO_SERDES_SW_DB  **txRxAvagoSerdesSwDb;
+} MCD_TX_RX_SERDES_SW_DB;
+
+typedef struct
+{
+    MCD_U8      ctleBiasData[MCD_MAX_SERDES_NUM];
+    MCD_BOOL    serdesPowerStatus[MCD_MAX_SERDES_NUM];
+    MCD_BOOL    stopAdaptiveFlag[MCD_MAX_SERDES_NUM];
+    MCD_U8      serdesLpbkMode[MCD_MAX_PORT_NUM];
+} MCD_SERDES_STATUS_DB;
 
 #define MCD_PHY_SHADOW_REG_MAX_INDEX 2
 
@@ -648,6 +782,7 @@ struct _MCD_DEV
     MCD_U16             portApCapability[MCD_MAX_PORT_NUM]; /* speed_bits - speeds that advertise during auto-negotiation*/
     /* shadows of SSMI controller 16-bit registers of indirect access to 32-bit registers */
     MCD_LANE_STEERING_CONFIG  laneSteeringCfg;
+    MCD_LANE_REMAPING_CONFIG  laneRemapCfg[MCD_MAX_SLICE_NUM];
     MCD_U16             shadowValidBmp;
     MCD_U16             regShadow[MCD_PHY_SHADOW_REG_MAX_INDEX];
     MCD_RX_CLOCK_CTRL   rxCloclControl[MCD_MAX_SLICE_NUM];
@@ -657,11 +792,14 @@ struct _MCD_DEV
     MCD_IPC_SHM_STC             shm; /* IPC sared mempory message send/receive */
     MCD_AP_RESOLUTION           apRes[MCD_MAX_PORT_NUM];
 #endif
+    MCD_CTLE_CALIBRATION_MODE_CFG   calibrationCfg[MCD_MAX_PORT_NUM];
+    MCD_BOOL                    highAvailabilityMode;
+    MCD_BOOL                    haAccessDisable;
+    MCD_TX_RX_SERDES_SW_DB      txRxSerdesSwDb;
+    MCD_SERDES_STATUS_DB        serdesStatus;
+    MCD_BOOL                    noPpmEn[MCD_MAX_PORT_NUM];
 };
 
-#define MCD_OK       0    /* Operation succeeded */
-#define MCD_FAIL     1    /* Operation failed    */
-#define MCD_PENDING  2    /* Pending  */
 /* Chip,Port reset types */
 typedef enum {
     MCD_SOFT_RESET = 1,
@@ -732,5 +870,11 @@ typedef enum {
 #endif
 #endif
 
+/* Enable the MCD_AP_STATE_STATUS_LOG by setting #define
+   The reason isn't enabled - it requires 1.1KB of memory
+   in the FW. */
+#undef MCD_AP_STATE_STATUS_LOG
+
 #endif /* MCD_TYPES_H */
+
 

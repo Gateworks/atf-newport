@@ -1,14 +1,12 @@
 /*******************************************************************************
-*                Copyright 2001, Marvell International Ltd.
-* This code contains confidential information of Marvell semiconductor, inc.
-* no rights are granted herein under any patent, mask work right or copyright
-* of Marvell or any third party.
-* Marvell reserves the right at its sole discretion to request that this code
-* be immediately returned to Marvell. This code is provided "as is".
-* Marvell makes no warranties, express, implied or otherwise, regarding its
-* accuracy, completeness or performance.
-********************************************************************************
-*/
+*              (c), Copyright 2001, Marvell International Ltd.                 *
+* THIS CODE CONTAINS CONFIDENTIAL INFORMATION OF MARVELL SEMICONDUCTOR, INC.   *
+* NO RIGHTS ARE GRANTED HEREIN UNDER ANY PATENT, MASK WORK RIGHT OR COPYRIGHT  *
+* OF MARVELL OR ANY THIRD PARTY. MARVELL RESERVES THE RIGHT AT ITS SOLE        *
+* DISCRETION TO REQUEST THAT THIS CODE BE IMMEDIATELY RETURNED TO MARVELL.     *
+* THIS CODE IS PROVIDED "AS IS". MARVELL MAKES NO WARRANTIES, EXPRESSED,       *
+* IMPLIED OR OTHERWISE, REGARDING ITS ACCURACY, COMPLETENESS OR PERFORMANCE.   *
+*******************************************************************************/
 /**
 ********************************************************************************
 * @file mcdInternalIpcApis.h
@@ -76,8 +74,13 @@ MCD_U32 mcdInternalIpcSwappedLeToBeConvert
 /**
 * @internal mcdInternalIpcDbInit function
 * @endinternal
+*
+* @brief   IPC database initialization
  *
 * @param[in] pDev
+*
+* @retval 0                        - on success
+* @retval 1                        - on error
 */
 MCD_STATUS mcdInternalIpcDbInit
 (
@@ -87,9 +90,14 @@ MCD_STATUS mcdInternalIpcDbInit
 /**
 * @internal mcdServiceCpuFwPostInit function
 * @endinternal
+*
+* @brief   Init Serdes Configuration DB and Log support on service CPU.
  *
 * @param[in] pDev
 *                                      phyPortNum  - physical port number
+*
+* @retval 0                        - on success
+* @retval 1                        - on error
 */
 MCD_STATUS mcdServiceCpuFwPostInit
 (
@@ -100,6 +108,10 @@ MCD_STATUS mcdServiceCpuFwPostInit
 * @internal mcdInternalServiceCpuMsgSend function
 * @endinternal
  *
+* @brief   Send message to Service CPU via IPC channel
+*
+* @retval 0                        - on success
+* @retval 1                        - on error
 */
 MCD_STATUS mcdInternalServiceCpuMsgSend
 (
@@ -112,6 +124,10 @@ MCD_STATUS mcdInternalServiceCpuMsgSend
 * @internal mcdInternalServiceCpuMsgRecv function
 * @endinternal
  *
+* @brief   Receive message from Service CPU via IPC channel
+*
+* @retval 0                        - on success
+* @retval 1                        - on error
 */
 MCD_STATUS mcdInternalServiceCpuMsgRecv
 (
@@ -124,9 +140,15 @@ MCD_STATUS mcdInternalServiceCpuMsgRecv
 * @internal mcdInternalIpcSendRequestAndGetReply function
 * @endinternal
  *
+* @brief   Gets reply from HW Services to the Host
+*
 * @param[in] requestMsg               - pointer to request message
 * @param[in] msgId                    - message ID
+*
 * @param[out] replyData                - pointer to reply message
+*
+* @retval 0                        - on success
+* @retval 1                        - on error,
 */
 MCD_STATUS mcdInternalIpcSendRequestAndGetReply
 (
@@ -141,10 +163,16 @@ MCD_STATUS mcdInternalIpcSendRequestAndGetReply
 /**
 * @internal mcdSerdesCfgAddrGetIpc function
 * @endinternal
+*
+* @brief   Return Serdes Configuration structure address
  *
 * @param[in] pDev
+*
 * @param[out] avagoCfgAddr             - Serdes Configuration structure address
 * @param[out] avagoCfgSize             - Serdes Configuration structure size
+*
+* @retval 0                        - on success
+* @retval 1                        - on error
 */
 MCD_STATUS mcdSerdesCfgAddrGetIpc
 (
@@ -156,9 +184,14 @@ MCD_STATUS mcdSerdesCfgAddrGetIpc
 /**
 * @internal mcdSerdesAaplInitIpc function
 * @endinternal
+*
+* @brief   Init Serdes Configuration structure pointers parameters, on service CPU, with NULL values.
  *
 * @param[in] pDev
 *                                      phyPortNum  - physical port number
+*
+* @retval 0                        - on success
+* @retval 1                        - on error
 */
 MCD_STATUS mcdSerdesAaplInitIpc
 (
@@ -169,6 +202,8 @@ MCD_STATUS mcdSerdesAaplInitIpc
 * @internal mcdInternalPortInitIpc function
 * @endinternal
  *
+* @brief   Sends to FW request to init physical port.
+*
 * @param[in] pDev
 * @param[in] portGroup                - port group (core) number
 * @param[in] phyPortNum               - physical port number
@@ -176,6 +211,9 @@ MCD_STATUS mcdSerdesAaplInitIpc
 * @param[in] lbPort                   - if true, init port without serdes activity
 * @param[in] refClock                 - Reference clock frequency
 * @param[in] refClock                 - Reference clock source line
+*
+* @retval 0                        - on success
+* @retval 1                        - on error
 */
 MCD_STATUS mcdInternalPortInitIpc
 (
@@ -192,6 +230,8 @@ MCD_STATUS mcdInternalPortInitIpc
 /**
 * @internal mcdInternalPortResetIpc function
 * @endinternal
+*
+* @brief   Sends to FW request to power down or reset physical port.
  *
 * @param[in] pDev
 * @param[in] portGroup                - port group (core) number
@@ -199,6 +239,9 @@ MCD_STATUS mcdInternalPortInitIpc
 * @param[in] portMode                 - port standard metric
 *                                      lbPort     - if true, init port without serdes activity
 * @param[in] action                   - Power down or reset
+*
+* @retval 0                        - on success
+* @retval 1                        - on error
 */
 MCD_STATUS mcdInternalPortResetIpc
 (
@@ -218,6 +261,9 @@ MCD_STATUS mcdInternalPortResetIpc
 * @param[in] phyPortNum               - physical port number
 * @param[in] portMode                 - port standard metric
 *                                      portTuningMode - port TX related tuning mode
+*
+* @retval 0                        - on success
+* @retval 1                        - on error
 */
 MCD_STATUS mcdInternalPortAutoTuneStateCheckIpc
 (
@@ -233,6 +279,11 @@ MCD_STATUS mcdInternalPortAutoTuneStateCheckIpc
 * @internal mcdInternalPortLinkStatusGetIpc function
 * @endinternal
  *
+* @brief   Sends message to get the port link status.
+*         Can be run any time.
+*
+* @retval 0                        - on success
+* @retval 1                        - on error
 */
 MCD_STATUS mcdInternalPortLinkStatusGetIpc
 (
@@ -247,6 +298,10 @@ MCD_STATUS mcdInternalPortLinkStatusGetIpc
 * @internal mcdInternalPortAutoTuneStopIpc function
 * @endinternal
  *
+* @brief   Send IPC message to stop Tx and Rx training
+*
+* @retval 0                        - on success
+* @retval 1                        - on error
 */
 MCD_STATUS mcdInternalPortAutoTuneStopIpc
 (
@@ -262,9 +317,14 @@ MCD_STATUS mcdInternalPortAutoTuneStopIpc
 * @internal mcdInternalPortApStartIpc function
 * @endinternal
  *
+* @brief   Send message to configure AP port parameters and start execution
+*
 * @param[in] pDev
 * @param[in] phyPortNum               - physical port number
 * @param[in] retimerMode              = TRUE for retimer
+*
+* @retval 0                        - on success
+* @retval 1                        - on error
 */
 MCD_STATUS mcdInternalPortApStartIpc
 (
@@ -276,9 +336,14 @@ MCD_STATUS mcdInternalPortApStartIpc
 /**
 * @internal mcdInternalPortApStopIpc function
 * @endinternal
+*
+* @brief   Send message to stop AP port execution
  *
 * @param[in] pDev
 * @param[in] phyPortNum               - physical port number
+*
+* @retval 0                        - on success
+* @retval 1                        - on error
 */
 MCD_STATUS mcdInternalPortApStopIpc
 (
@@ -289,11 +354,16 @@ MCD_STATUS mcdInternalPortApStopIpc
 /**
 * @internal mcdInternalPortApCfgGetIpc function
 * @endinternal
+*
+* @brief   Send message to retrive AP port configuration parameters
  *
 * @param[in] pDev
 * @param[in] portGroup                - core number
 * @param[in] phyPortNum               - physical port number
 *                                      portApCfg  - AP configuration parameters
+*
+* @retval 0                        - on success
+* @retval 1                        - on error
 */
 MCD_STATUS mcdInternalPortApCfgGetIpc
 (
@@ -307,9 +377,14 @@ MCD_STATUS mcdInternalPortApCfgGetIpc
 * @internal mcdSetSquelchRxClockControlIpc function
 * @endinternal
  *
+* @brief   Sends to Service CPU Squelch parameters
+*
 * @param[in] pDev
 * @param[in] phyPortNum               - physical port number
 * @param[in] clckCtrl                 - pin to output the clock
+*
+* @retval 0                        - on success
+* @retval 1                        - on error
 */
 MCD_STATUS mcdSetSquelchRxClockControlIpc
 (
@@ -321,10 +396,15 @@ MCD_STATUS mcdSetSquelchRxClockControlIpc
 /**
 * @internal mcdInternalPortApStatusGetIpc function
 * @endinternal
+*
+* @brief   Send message to retrive AP port status parameters
  *
 * @param[in] pDev
 * @param[in] phyPortNum               - physical port number
 *                                      apStatus   - AP Status parameters
+*
+* @retval 0                        - on success
+* @retval 1                        - on error
 */
 MCD_STATUS mcdInternalPortApStatusGetIpc
 (
@@ -337,6 +417,10 @@ MCD_STATUS mcdInternalPortApStatusGetIpc
 * @internal mcdInternalPortApStatsGetIpc function
 * @endinternal
  *
+* @brief   Send message to retrive AP port stats parameters
+*
+* @retval 0                        - on success
+* @retval 1                        - on error
 */
 MCD_STATUS mcdInternalPortApStatsGetIpc
 (
@@ -347,12 +431,34 @@ MCD_STATUS mcdInternalPortApStatsGetIpc
 );
 
 /**
+* @internal mcdPortApIntropSetIpc function
+* @endinternal
+*
+* @brief   Set AP port introp 
+*
+* @retval 0                        - on success
+* @retval 1                        - on error
+*/
+MCD_STATUS mcdPortApIntropSetIpc
+(
+    MCD_DEV_PTR  pDev,
+    MCD_U32      phyPortNum,
+    MCD_U32      *apIntrop
+);
+
+
+/**
 * @internal mcdInternalPortApStatsResetIpc function
 * @endinternal
  *
+* @brief   Reset AP port statistics information
+*
 * @param[in] pDev
 * @param[in] portGroup                - port group (core) number
 * @param[in] apPortNum                - AP port number
+*
+* @retval 0                        - on success
+* @retval 1                        - on error
 */
 MCD_STATUS mcdInternalPortApStatsResetIpc
 (
@@ -364,11 +470,16 @@ MCD_STATUS mcdInternalPortApStatsResetIpc
 /**
 * @internal mcdInternalPortApIntropSetIpc function
 * @endinternal
+*
+* @brief   Set AP port introp information
  *
 * @param[in] pDev
 * @param[in] portGroup                - port group (core) number
 * @param[in] phyPortNum               - physical port number
 *                                      apintrop    - AP introp parameters
+*
+* @retval 0                        - on success
+* @retval 1                        - on error
 */
 MCD_STATUS mcdInternalPortApIntropSetIpc
 (
@@ -382,10 +493,15 @@ MCD_STATUS mcdInternalPortApIntropSetIpc
 * @internal mcdInternalPortApIntropGetIpc function
 * @endinternal
  *
+* @brief   Return AP port introp information
+*
 * @param[in] pDev
 * @param[in] portGroup                - port group (core) number
 * @param[in] phyPortNum               - physical port number
 *                                      apintrop    - AP introp parameters
+*
+* @retval 0                        - on success
+* @retval 1                        - on error
 */
 MCD_STATUS mcdInternalPortApIntropGetIpc
 (
@@ -399,10 +515,15 @@ MCD_STATUS mcdInternalPortApIntropGetIpc
 * @internal mcdInternalPortApDebugGetIpc function
 * @endinternal
  *
+* @brief   Return AP debug information
+*
 * @param[in] pDev
 * @param[in] portGroup                - port group (core) number
 * @param[in] phyPortNum               - physical port number
 *                                      apDebug    - AP debug parameters
+*
+* @retval 0                        - on success
+* @retval 1                        - on error
 */
 MCD_STATUS mcdInternalPortApDebugGetIpc
 (
@@ -416,6 +537,8 @@ MCD_STATUS mcdInternalPortApDebugGetIpc
 * @internal mcdPortPollingLinkStatusStartIpc function
 * @endinternal
  *
+* @brief   Start Port link status polling.
+*
 * @param[in] pDev
 * @param[in] mdioPort                 - physical port number
 * @param[in] retimerMode              - 1 - retimer mode, 0 -PCS mode
@@ -424,6 +547,9 @@ MCD_STATUS mcdInternalPortApDebugGetIpc
 *                                      hostSerdesSpeed  - host Serdes Speed
 * @param[in] lineSerdesBitmap         - line Serdes Bitmap (bits 0-7)
 * @param[in] hostSerdesBitmap         - host Serdes Bitmap (bits 0-7)
+*
+* @retval 0                        - on success
+* @retval 1                        - on error
 */
 MCD_STATUS mcdPortPollingLinkStatusStartIpc
 (
@@ -436,15 +562,23 @@ MCD_STATUS mcdPortPollingLinkStatusStartIpc
     MCD_U16                       lineSerdesBitmap,
     MCD_U16                       hostSerdesBitmap,
     MCD_U16                       noPpmMode,
-    MCD_U8                        reducedRxTraining
+    MCD_U8                        reducedRxTraining,
+    MCD_CALIBRATION_ALGO_E        calibrationAlgo,
+    MCD_CONFIDENCE_INTERVAL_PARAMS_OVERRIDE  *confidenceInterval,
+    MCD_LINE_SIDE_EO_TH_OVERRIDE  *eoThreshold
 );
 
 /**
 * @internal mcdPortPollingLinkStatusStopIpc function
 * @endinternal
+*
+* @brief   Stop Port link status polling.
  *
 * @param[in] pDev
 * @param[in] mdioPort                 - physical port number
+*
+* @retval 0                        - on success
+* @retval 1                        - on error
 */
 MCD_STATUS mcdPortPollingLinkStatusStopIpc
 (
@@ -453,6 +587,7 @@ MCD_STATUS mcdPortPollingLinkStatusStopIpc
 );
 
 #endif /* __mcdInternalIpcApis_H */
+
 
 
 

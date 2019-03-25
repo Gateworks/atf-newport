@@ -49,7 +49,8 @@
 #ifdef  WIN32
 #define __AVAGO_FILENAME__ (strrchr(__FILE__, '\\') ? (strrchr(__FILE__, '\\') + 1) :(__FILE__))
 #else
-#define __AVAGO_FILENAME__ (strrchr(__FILE__, '/') ? (strrchr(__FILE__, '/') + 1) : (__FILE__))
+//#define __AVAGO_FILENAME__ (strrchr(__FILE__, '/') ? (strrchr(__FILE__, '/') + 1) : (__FILE__))
+#define __AVAGO_FILENAME__ "NA"
 #endif /* WIN32 */
 #else
 #define __AVAGO_FILENAME__ "NA"
@@ -135,7 +136,7 @@
 /*      cause compile failures. */
 
 #if !defined(MV_HWS_BIN_HEADER) && !defined(CPSS_BLOB)
-#define AAPL_ALLOW_AACS                1  /**< Set to 0 to remove AVAGO_AACS_SBUS, AVAGO_AACS_MDIO, and AVAGO_AACS_I2C communication methods. */
+#define AAPL_ALLOW_AACS                0  /**< Set to 0 to remove AVAGO_AACS_SBUS, AVAGO_AACS_MDIO, and AVAGO_AACS_I2C communication methods. */
 #else
 #define AAPL_ALLOW_AACS                0  /**< Set to 0 to remove AVAGO_AACS_SBUS, AVAGO_AACS_MDIO, and AVAGO_AACS_I2C communication methods. */
 #endif /* MV_HWS_BIN_HEADER */
@@ -152,8 +153,8 @@
 #if !defined(MV_HWS_REDUCED_BUILD_EXT_CM3) && !defined(CPSS_BLOB)
 /* Set value to 0 to disable corresponding feature support: */
 #define AAPL_ENABLE_AACS_SERVER        1  /**< Enable the AACS server. */
-#define AAPL_ENABLE_FILE_IO            1  /**< Enable use of file IO and the FILE type. */
-#define AAPL_ENABLE_EYE_MEASUREMENT    1  /**< Enable eye measurement support. */
+#define AAPL_ENABLE_FILE_IO            0  /**< Enable use of file IO and the FILE type. */
+#define AAPL_ENABLE_EYE_MEASUREMENT    0  /**< Enable eye measurement support. */
 #else
 #define AAPL_ENABLE_AACS_SERVER        0  /**< Enable the AACS server. */
 #define AAPL_ENABLE_FILE_IO            0  /**< Enable use of file IO and the FILE type. */
@@ -264,7 +265,7 @@ typedef enum
 /** Maximum number of SBus rings AAPL supports. */
 /** Reducing this value to that actually used will reduce the memory footprint of the Aapl_t struct. */
 /** Valid range: [1-15]. */
-#if defined (MICRO_INIT) || defined (BOBK_DEV_SUPPORT) && defined (CM3)
+#if defined (MICRO_INIT) && ! defined (BC3_DEV_SUPPORT) || defined (BOBK_DEV_SUPPORT) && defined (CM3)
 #define AAPL_MAX_RINGS 1
 #else
 /** Due to memory limitation for CM3_BOBK only. */
@@ -387,7 +388,7 @@ typedef enum
 /** Set to 0 to compile in with a disabled default. */
 /** Set to 1 to compile in with an enabled default. */
 /** */
-#define AAPL_LOG_TIME_STAMPS 1
+#define AAPL_LOG_TIME_STAMPS 0
 
 
 /** Only used when calling the aacs_server() function */

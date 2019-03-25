@@ -22,21 +22,21 @@
 #define AVAGO_SERDES_EYE_H_
 
 /** Doxygen File Header
- ** @file
- ** @brief   Functions and data structures for eye measurement.
- ** @details The general function call outline is:
- **
- **   Avago_serdes_eye_config_t *config = avago_serdes_eye_config_construct(aapl);
- **   Avago_serdes_eye_data_t *data = avago_serdes_eye_data_construct(aapl);
- **
- **
- **
- **   avago_serdes_eye_get(aapl, sbus_addr, config, data);
- **
- **
- **
- **   avago_serdes_eye_data_destruct(aapl, data);
- **   avago_serdes_eye_config_destruct(aapl, config);
+*  @file
+*  @brief   Functions and data structures for eye measurement.
+*  @details The general function call outline is:
+*
+*    Avago_serdes_eye_config_t *config = avago_serdes_eye_config_construct(aapl);
+*    Avago_serdes_eye_data_t *data = avago_serdes_eye_data_construct(aapl);
+*
+*
+*
+*    avago_serdes_eye_get(aapl, sbus_addr, config, data);
+*
+*
+*
+*    avago_serdes_eye_data_destruct(aapl, data);
+*    avago_serdes_eye_config_destruct(aapl, config);
  **/
 
 #define AVAGO_EYE_MIN_DWELL_BITS     (bigint)1e4

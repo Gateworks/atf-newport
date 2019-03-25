@@ -1,15 +1,20 @@
 /*******************************************************************************
-Copyright (C) 2014, 2015, Marvell International Ltd. and its affiliates
-If you received this File from Marvell and you have entered into a commercial
-license agreement (a "Commercial License") with Marvell, the File is licensed
-to you under the terms of the applicable Commercial License.
+*              (c), Copyright 2001, Marvell International Ltd.                 *
+* THIS CODE CONTAINS CONFIDENTIAL INFORMATION OF MARVELL SEMICONDUCTOR, INC.   *
+* NO RIGHTS ARE GRANTED HEREIN UNDER ANY PATENT, MASK WORK RIGHT OR COPYRIGHT  *
+* OF MARVELL OR ANY THIRD PARTY. MARVELL RESERVES THE RIGHT AT ITS SOLE        *
+* DISCRETION TO REQUEST THAT THIS CODE BE IMMEDIATELY RETURNED TO MARVELL.     *
+* THIS CODE IS PROVIDED "AS IS". MARVELL MAKES NO WARRANTIES, EXPRESSED,       *
+* IMPLIED OR OTHERWISE, REGARDING ITS ACCURACY, COMPLETENESS OR PERFORMANCE.   *
 *******************************************************************************/
 
 /********************************************************************
-This file contains functions and global data for
-higher-level functions using MDIO access to enable test modes,
-loopbacks, and other diagnostic functions of the Marvell X5121/X5111/X2381/X5123/EC808
-PHY.
+* @mcdDiagnostics.h
+*
+* @brief This file contains functions and global data for
+* higher-level functions using MDIO access to enable test modes,
+* loopbacks, and other diagnostic functions of the Marvell PHY MCD driver
+* PHY.
 ********************************************************************/
 #ifndef MCDDIAG_H
 #define MCDDIAG_H
@@ -186,7 +191,7 @@ MCD_STATUS mcdGetSerdesSignalDetectAndDspLock
 
 
 
-#define MCD_SHALLOW_PCS_LB    1
+/*#define MCD_SHALLOW_PCS_LB    1  not supported */
 #define MCD_DEEP_PCS_LB       2
 #define MCD_DEEP_PMA_LB       3
 
@@ -1409,6 +1414,34 @@ MCD_STATUS mcdGetTxFFE
     OUT MCD_16 *postCursor
 );
 
+/**
+* @internal mcdSampleGetPortStatistics function
+* @endinternal
+*
+* @brief  Print Statistics (MIB) counters of a port.
+*
+* @param[in] pDev        - pointer to MCD_DEV initialized by mcdInitDriver() call
+* @param[in] mdioPort  - represents port  (0..8) number
+* @param[in] host_or_line     - host or lane side of a port, values MCD_LINE_SIDE or MCD_HOST_SIDE.
+* @param[in] reducedPrint     - if true prints only non-zero counters
+*
+* @retval MCD_OK                    - on success.
+* @retval MCD_FAIL                  - on failure
+*
+* @note use like mcdSampleGetPortStatistics 0,0,3,0
+* statistics can be read from 4 registers - one per side and per slice.  IN each register we can specify from which channel to read a statistics and
+* which type of counter.  In this function we dump all counters of a certain port, specific for a defined side.  The port is a "channel", meaning we don't
+* relate to ports speed in case of multi-lane ports
+*/
+MCD_STATUS mcdGetPortStatistics
+(
+    IN MCD_DEV_PTR pDev,
+    IN MCD_U16  mdioPort,
+    IN MCD_U16 host_or_line,
+    IN MCD_BOOL   reducedPrint
+);
+
+
 #if C_LINKAGE
 #if defined __cplusplus
 }
@@ -1416,3 +1449,4 @@ MCD_STATUS mcdGetTxFFE
 #endif
 
 #endif /* defined MCDDIAG_H */
+
