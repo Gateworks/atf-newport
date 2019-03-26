@@ -150,6 +150,9 @@ static int cgx_link_change_req(int cgx_id, int lmac_id)
 	link.s.speed = lmac_ctx->s.speed;
 	link.s.full_duplex = lmac_ctx->s.full_duplex;
 
+	/* clear the previous errors before changing the link */
+	cgx_set_error_type(cgx_id, lmac_id, 0);
+
 	if (link.s.link_up) {
 		if ((lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_SGMII) ||
 			(lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_QSGMII)) {
