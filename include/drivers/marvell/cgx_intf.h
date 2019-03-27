@@ -73,6 +73,8 @@ enum cgx_cmd_id {
 	CGX_CMD_LINK_STAT_CHANGE,
 	CGX_CMD_MODE_CHANGE,		/* hot plug support */
 	CGX_CMD_INTF_SHUTDOWN,
+	CGX_CMD_GET_MKEX_SIZE,
+	CGX_CMD_GET_MKEX_PROFILE,
 	CGX_CMD_GET_FWD_BASE,		/* get base address of shared FW data */
 	CGX_CMD_GET_LINK_MODES,		/* Supported Link Modes */
 	CGX_CMD_SET_LINK_MODE,
@@ -82,10 +84,6 @@ enum cgx_cmd_id {
 	CGX_CMD_SET_AN,
 	CGX_CMD_GET_ADV_LINK_MODES,
 	CGX_CMD_GET_ADV_FEC,
-#ifdef NT_FW_CONFIG
-	CGX_CMD_GET_MKEX_SIZE,
-	CGX_CMD_GET_MKEX_PROFILE,
-#endif
 };
 
 /* async event ids */
