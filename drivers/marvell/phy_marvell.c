@@ -77,7 +77,6 @@ typedef struct {
 typedef struct {
 	MXD_DEV mxddev;
 	struct {
-		int set_20g;
 		int use_an;
 		int completed_an;
 		int cmain_host;
@@ -674,7 +673,7 @@ void phy_marvell_5113_config(int cgx_id, int lmac_id)
 			host_mode = line_mode = MXD_P25LN;
 		}
 		marvell_5113_priv[cgx_id].port[port].use_an = 0;
-		marvell_5113_priv[cgx_id].port[port].set_20g = 1;
+		marvell_5113_priv[cgx_id].mxddev.use20G = 1;
 	break;
 	case QLM_MODE_25GAUI_C2C:
 	case QLM_MODE_25GAUI_C2M:
@@ -746,6 +745,7 @@ void phy_marvell_5113_config(int cgx_id, int lmac_id)
 			host_mode = line_mode = MXD_P100LN;
 		}
 		marvell_5113_priv[cgx_id].port[port].use_an = 0;
+		marvell_5113_priv[cgx_id].mxddev.use20G = 1;
 	break;
 	case QLM_MODE_CAUI_4_C2C:
 	case QLM_MODE_CAUI_4_C2M:
