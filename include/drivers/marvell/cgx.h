@@ -113,7 +113,11 @@ typedef union cgx_link_status {
 		uint64_t link_up:1;
 		uint64_t full_duplex:1;
 		uint64_t speed:4;		/* cgx_link_speed enum */
-		uint64_t reserved:58;
+		/* current AN state:1 */
+		uint64_t an:1;
+		/* current FEC type:2 */
+		uint64_t fec:2;
+		uint64_t reserved:55;
 	} s;
 } link_state_t;
 
@@ -162,7 +166,11 @@ typedef union cgx_lmac_context {
 		uint64_t error_type:10;
 		/* link change request */
 		uint64_t link_change_req:1;
-		uint64_t reserved:34;
+		/* current AN state:1 */
+		uint64_t an:1;
+		/* current FEC type:2 */
+		uint64_t fec:2;
+		uint64_t reserved:31;
 	} s;
 } cgx_lmac_context_t;
 
@@ -184,6 +192,9 @@ void cgx_set_error_type(int cgx_id, int lmac_id, uint64_t type);
 void cgx_get_link_state(int cgx_id, int lmac_id, link_state_t *link);
 void cgx_lmac_init_link(int cgx_id, int lmac_id);
 int cgx_sgmii_check_link(int cgx_id, int lmac_id);
+int cgx_fec_change(int cgx_id, int lmac_id, int new_fec);
+int cgx_get_supported_fec_type(int cgx_id, int lmac_id);
+int cgx_validate_fec_config(int mode, int req_fec);
 
 /* CGX FW interface APIs */
 void cgx_fw_intf_init(void);

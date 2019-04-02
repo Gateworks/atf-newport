@@ -110,17 +110,23 @@ static void cgx_set_link_state(int cgx_id, int lmac_id,
 {
 	union cgx_scratchx0 scratchx0;
 
-	debug_cgx_intf("%s %d:%d link_up %d speed %d duplex %d err_type %d\n",
+	debug_cgx_intf("%s %d:%d link_up %d speed %d duplex %d\t"
+			"err_type %d fec %d\n",
 			__func__, cgx_id, lmac_id,
 			link->s.link_up, link->s.speed,
-			link->s.full_duplex, err_type);
+			link->s.full_duplex, err_type,
+			link->s.fec);
 
 	scratchx0.u = CSR_READ(CAVM_CGXX_CMRX_SCRATCHX(cgx_id, lmac_id, 0));
 	scratchx0.s.link_sts.link_up = link->s.link_up;
 	scratchx0.s.link_sts.speed = link->s.speed;
 	scratchx0.s.link_sts.full_duplex = link->s.full_duplex;
 	scratchx0.s.link_sts.err_type = err_type;
+	scratchx0.s.link_sts.fec = link->s.fec;
 	CSR_WRITE(CAVM_CGXX_CMRX_SCRATCHX(cgx_id, lmac_id, 0), scratchx0.u);
+
+	/* Update supported FEC to SM when updating link status */
+	sh_fwdata_update_supported_fec(cgx_id, lmac_id);
 }
 
 static int cgx_link_change_req(int cgx_id, int lmac_id)
@@ -149,6 +155,7 @@ static int cgx_link_change_req(int cgx_id, int lmac_id)
 	link.s.link_up = lmac_ctx->s.link_up;
 	link.s.speed = lmac_ctx->s.speed;
 	link.s.full_duplex = lmac_ctx->s.full_duplex;
+	link.s.fec = lmac_ctx->s.fec;
 
 	/* clear the previous errors before changing the link */
 	cgx_set_error_type(cgx_id, lmac_id, 0);
@@ -212,6 +219,7 @@ static int cgx_link_bringup(int cgx_id, int lmac_id)
 			lmac_id, lmac_cfg->mode);
 
 	lmac_ctx = &lmac_context[cgx_id][lmac_id];
+
 	/* link_enable will be set when the LINK UP req is processed.
 	 * To avoid processing duplication of requests, check for it
 	 * and return the previous link status
@@ -222,10 +230,14 @@ static int cgx_link_bringup(int cgx_id, int lmac_id)
 		link.s.link_up = lmac_ctx->s.link_up;
 		link.s.full_duplex = lmac_ctx->s.full_duplex;
 		link.s.speed = lmac_ctx->s.speed;
+		link.s.fec = lmac_ctx->s.fec;
 		cgx_set_link_state(cgx_id, lmac_id, &link,
 			cgx_get_error_type(cgx_id, lmac_id));
 		return 0;
 	}
+
+	/* Save the current FEC what is configured by the user */
+	link.s.fec = lmac_ctx->s.fec = lmac_cfg->fec;
 
 	if ((lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_SGMII) ||
 		(lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_QSGMII)) {
@@ -436,12 +448,85 @@ static int cgx_link_bringdown(int cgx_id, int lmac_id)
 	return 0;
 }
 
+int cgx_set_fec_type(int cgx_id, int lmac_id, int req_fec)
+{
+	int ret = 0;
+	link_state_t link;
+	cgx_lmac_config_t *lmac;
+	cgx_lmac_context_t *lmac_ctx;
+
+	lmac_ctx = &lmac_context[cgx_id][lmac_id];
+	lmac = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
+
+	debug_cgx_intf("%s: %d:%d fec %d request_fec %d\n", __func__, cgx_id,
+				lmac_id, lmac->fec, req_fec);
+
+	if ((lmac->mode == CAVM_CGX_LMAC_TYPES_E_SGMII) ||
+			(lmac->mode == CAVM_CGX_LMAC_TYPES_E_QSGMII)) {
+		ERROR("%s: %d: %d FEC is not applicable for this mode %d\n",
+				__func__, cgx_id, lmac_id, lmac->mode);
+		cgx_set_error_type(cgx_id, lmac_id, CGX_ERR_SET_FEC_INVALID);
+		return -1;
+	}
+
+	/* FIXME: FEC change is not implemented yet for modes with AN/LT
+	 * hence return error for these modes
+	 */
+	if (!lmac->autoneg_dis && lmac->use_training) {
+		ERROR("%s: %d:%d FEC change is not supported for this mode\n",
+			__func__, cgx_id, lmac_id);
+		cgx_set_error_type(cgx_id, lmac_id, CGX_ERR_SET_FEC_INVALID);
+		return -1;
+	}
+
+	if (req_fec == lmac->fec) {
+		WARN("%s: %d:%d FEC requested is same as current FEC state\n",
+				__func__, cgx_id, lmac_id);
+		return 0;
+	}
+
+	/* Validate FEC based on LMAC mode */
+	ret = cgx_validate_fec_config(lmac->mode, req_fec);
+	if (ret == -1) {
+		cgx_set_error_type(cgx_id, lmac_id, CGX_ERR_SET_FEC_INVALID);
+		return -1;
+	}
+
+	/* FIXME: Validate FEC based on transceiver */
+
+	/* Update the new FEC requested by user in the board config */
+	lmac->fec = req_fec;
+
+	/* FIXME : Configure PHY to new mode based on FEC requested
+	 * if PHY is present
+	 */
+
+	/* Change CGX configuration to new FEC */
+	ret = cgx_fec_change(cgx_id, lmac_id, req_fec);
+	if (ret == -1) {
+		ERROR("%s: FEC type could not be changed\n", __func__);
+		cgx_set_error_type(cgx_id, lmac_id, CGX_ERR_SET_FEC_FAIL);
+		return -1;
+	}
+
+	/* Just update the new FEC type but use the existing link status */
+	link.s.fec = lmac_ctx->s.fec = req_fec;
+	link.s.link_up = lmac_ctx->s.link_up;
+	link.s.full_duplex = lmac_ctx->s.full_duplex;
+	link.s.speed = lmac_ctx->s.speed;
+
+	cgx_set_link_state(cgx_id, lmac_id, &link,
+			cgx_get_error_type(cgx_id, lmac_id));
+
+	return 0;
+}
+
 /* Note : this function executes with lock acquired */
 static int cgx_process_requests(int cgx_id, int lmac_id)
 {
 	int ret = 0;
 	int enable = 0; /* read from scratch1 - cmd_args */
-	int request_id = 0, err_type = 0;
+	int request_id = 0, err_type = 0, req_fec;
 	union cgx_scratchx0 scratchx0;
 	union cgx_scratchx1 scratchx1;
 	link_state_t link;
@@ -570,6 +655,29 @@ static int cgx_process_requests(int cgx_id, int lmac_id)
 					cgx_id, lmac_id, 0),
 					scratchx0.u);
 				break;
+			case CGX_CMD_GET_SUPPORTED_FEC:
+				scratchx0.u = 0;
+				scratchx0.s.supported_fec.fec =
+						sh_fwdata_get_supported_fec(
+							cgx_id, lmac_id);
+				debug_cgx_intf("%s: %d:%d supported FEC %d\n",
+					__func__, cgx_id, lmac_id,
+					scratchx0.s.supported_fec.fec);
+				CSR_WRITE(CAVM_CGXX_CMRX_SCRATCHX(
+						cgx_id, lmac_id, 0),
+						scratchx0.u);
+			break;
+			case CGX_CMD_SET_FEC:
+				/* Read the command arguments from SCRATCH(1) */
+				scratchx1.u = CSR_READ(CAVM_CGXX_CMRX_SCRATCHX(
+							cgx_id, lmac_id, 1));
+				req_fec = scratchx1.s.fec_args.fec;
+				debug_cgx_intf("%s: %d:%d requested FEC %d\n",
+						__func__,
+						cgx_id, lmac_id, req_fec);
+				ret = cgx_set_fec_type(cgx_id, lmac_id,
+								req_fec);
+			break;
 			/* FIXME: add support for other commands */
 			default:
 				debug_cgx_intf("%s: %d:%d Invalid request %d\n",
@@ -603,7 +711,8 @@ static int cgx_process_requests(int cgx_id, int lmac_id)
 	scratchx0.s.evt_sts.id = request_id;
 	scratchx0.s.evt_sts.evt_type = CGX_EVT_CMD_RESP;
 	if ((request_id != CGX_CMD_LINK_BRING_UP) &&
-		(request_id != CGX_CMD_LINK_BRING_DOWN)) {
+		(request_id != CGX_CMD_LINK_BRING_DOWN) &&
+		(request_id != CGX_CMD_SET_FEC)) {
 		/* in case of LINK_UP/DOWN, error type is updated
 		 * as part of link status struct
 		 */

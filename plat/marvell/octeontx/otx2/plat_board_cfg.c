@@ -934,57 +934,6 @@ static void octeontx2_fdt_parse_sfp_info(const void *fdt, int offset,
 			&sfp_info->rx_los, cgx_idx, lmac_idx);
 }
 
-fec_type_t octeontx2_handle_fec_config(int mode, int req_fec)
-{
-	int fec = req_fec;
-
-	/* FEC can be disabled by user. In that case, no need
-	 * to validate against any PCS supported FEC option.
-	 */
-	if (fec == CGX_FEC_NONE) {
-		debug_dts("%s: FEC disabled\n", __func__);
-		return fec;
-	}
-
-	/* Validate FEC configuration against PCS supported FEC option.
-	 * If the type is not correct, set FEC to be -1 so default
-	 * FEC type can be configured
-	 */
-	switch (mode) {
-	case CAVM_CGX_LMAC_TYPES_E_TENG_R:
-	case CAVM_CGX_LMAC_TYPES_E_FORTYG_R:
-		if (fec != CGX_FEC_BASE_R) {
-			WARN("%s: 10G/40G PCS doesn't support FEC type %d\n", __func__, req_fec);
-			fec = -1;
-		}
-	break;
-	case CAVM_CGX_LMAC_TYPES_E_TWENTYFIVEG_R:
-	case CAVM_CGX_LMAC_TYPES_E_FIFTYG_R:
-		if ((fec != CGX_FEC_BASE_R) && (fec != CGX_FEC_RS)) {
-			WARN("%s: 25G/50G PCS doesn't support FEC type %d\n", __func__, req_fec);
-			fec = -1;
-		}
-	break;
-	case CAVM_CGX_LMAC_TYPES_E_HUNDREDG_R:
-		if (fec != CGX_FEC_RS) {
-			WARN("%s: 100G PCS doesn't support FEC type %d\n", __func__, req_fec);
-			fec = -1;
-		}
-	break;
-	case CAVM_CGX_LMAC_TYPES_E_USXGMII:
-		if (fec != CGX_FEC_RS) {
-			WARN("%s: USXGMII PCS doesn't support FEC type %d\n", __func__, req_fec);
-			fec = -1;
-		}
-	break;
-	default:
-		fec = 0;
-	break;
-	}
-
-	return fec;
-}
-
 /* This routine sets a number of LMACs to initialize and the size to use.
  * For instance:
  *  - SGMII_2X1: will initialize 2 LMACs and each LMAC will take only one
@@ -1460,7 +1409,7 @@ static void octeontx2_cgx_lmacs_check_linux(const void *fdt,
 				"octeontx,fec-type", &len);
 		if (val) {
 			req_fec = fdt32_to_cpu(*val);
-			lmac->fec = octeontx2_handle_fec_config(
+			lmac->fec = cgx_validate_fec_config(
 				lmac->mode, req_fec);
 		} else {
 			/* User did not specify FEC type property

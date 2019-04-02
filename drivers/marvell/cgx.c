@@ -930,6 +930,170 @@ static void cgx_mode_change(int cgx_id, int lmac_id, int new_mode,
 	debug_cgx("%s: %d:%d\n", __func__, cgx_id, lmac_id);
 }
 
+int cgx_validate_fec_config(int mode, int req_fec)
+{
+	int fec = req_fec;
+
+	debug_cgx("%s: mode %d, req_fec %d\n", __func__, mode, req_fec);
+
+	/* FEC can be disabled by user. In that case, no need
+	 * to validate against any PCS supported FEC option.
+	 */
+	if (fec == CGX_FEC_NONE) {
+		debug_cgx("%s: FEC disabled\n", __func__);
+		return fec;
+	}
+
+	/* Validate FEC configuration against PCS supported FEC option.
+	 * If the type is not correct, set FEC to be -1 so default
+	 * FEC type can be configured
+	 */
+	switch (mode) {
+	case CAVM_CGX_LMAC_TYPES_E_TENG_R:
+	case CAVM_CGX_LMAC_TYPES_E_FORTYG_R:
+		if (fec != CGX_FEC_BASE_R) {
+			WARN("%s: 10G/40G PCS doesn't support FEC type %d\t"
+				"default FEC type will be set\n",
+				__func__, req_fec);
+			fec = -1;
+		}
+	break;
+	case CAVM_CGX_LMAC_TYPES_E_TWENTYFIVEG_R:
+	case CAVM_CGX_LMAC_TYPES_E_FIFTYG_R:
+		if ((fec != CGX_FEC_BASE_R) && (fec != CGX_FEC_RS)) {
+			WARN("%s: 25G/50G PCS doesn't support FEC type %d\t"
+				"default FEC type will be set\n",
+				__func__, req_fec);
+			fec = -1;
+		}
+	break;
+	case CAVM_CGX_LMAC_TYPES_E_HUNDREDG_R:
+		if (fec != CGX_FEC_RS) {
+			WARN("%s: 100G PCS doesn't support FEC type %d\t"
+				"default FEC type will be set\n",
+				__func__, req_fec);
+			fec = -1;
+		}
+	break;
+	case CAVM_CGX_LMAC_TYPES_E_USXGMII:
+		if (fec != CGX_FEC_RS) {
+			WARN("%s: USXGMII PCS doesn't support FEC type %d\t"
+				"default FEC type will be set\n",
+				__func__, req_fec);
+			fec = -1;
+		}
+	break;
+	default:
+		fec = 0;
+	break;
+	}
+
+	return fec;
+}
+
+
+int cgx_get_supported_fec_type(int cgx_id, int lmac_id)
+{
+	int val = 0;
+	cgx_lmac_config_t *lmac;
+
+	debug_cgx("%s %d:%d\n", __func__, cgx_id, lmac_id);
+
+	lmac = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
+
+	switch (lmac->mode) {
+	case CAVM_CGX_LMAC_TYPES_E_TENG_R:
+	case CAVM_CGX_LMAC_TYPES_E_FORTYG_R:
+		val = CGX_FEC_BASE_R;
+		break;
+	case CAVM_CGX_LMAC_TYPES_E_TWENTYFIVEG_R:
+	case CAVM_CGX_LMAC_TYPES_E_FIFTYG_R:
+		val = CGX_FEC_RS | CGX_FEC_BASE_R;
+		break;
+	case CAVM_CGX_LMAC_TYPES_E_HUNDREDG_R:
+	case CAVM_CGX_LMAC_TYPES_E_USXGMII:
+		val = CGX_FEC_RS;
+		break;
+	default:
+		val = CGX_FEC_NONE;
+		break;
+	}
+	return val;
+}
+
+int cgx_fec_change(int cgx_id, int lmac_id, int new_fec)
+{
+	cgx_lmac_config_t *lmac;
+
+	lmac = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
+
+	debug_cgx("%s: %d:%d fec %d\n", __func__, cgx_id, lmac_id, new_fec);
+
+	/* Handle FEC configuration change, follow the
+	 * below steps as mentioned in HRM
+	 */
+
+	CAVM_MODIFY_CGX_CSR(cavm_cgxx_cmr_global_config_t,
+			CAVM_CGXX_CMR_GLOBAL_CONFIG(cgx_id), cgx_clk_enable, 1);
+
+	/* disable LMAC */
+	CAVM_MODIFY_CGX_CSR(cavm_cgxx_cmrx_config_t,
+			CAVM_CGXX_CMRX_CONFIG(cgx_id, lmac_id), enable, 0);
+
+	if (!lmac->autoneg_dis)
+		/* disable AN */
+		CAVM_MODIFY_CGX_CSR(cavm_cgxx_spux_an_control_t,
+				CAVM_CGXX_SPUX_AN_CONTROL(cgx_id, lmac_id),
+				an_en, 0);
+	/* Update the board LMAC config structure with the new
+	 * configuration
+	 */
+	lmac->fec = new_fec;
+
+	/* set the new FEC */
+	cgx_set_fec(cgx_id, lmac_id, new_fec);
+
+	CAVM_MODIFY_CGX_CSR(cavm_cgxx_cmr_global_config_t,
+			CAVM_CGXX_CMR_GLOBAL_CONFIG(cgx_id), cgx_clk_enable, 0);
+
+	/* optionally enable training */
+	if (lmac->use_training) {
+		CAVM_MODIFY_CGX_CSR(cavm_cgxx_spux_br_pmd_control_t,
+			CAVM_CGXX_SPUX_BR_PMD_CONTROL(cgx_id, lmac_id),
+				train_en, 1);
+		CAVM_MODIFY_CGX_CSR(cavm_cgxx_spux_br_pmd_control_t,
+				CAVM_CGXX_SPUX_BR_PMD_CONTROL(cgx_id, lmac_id),
+				train_restart, 1);
+	}
+
+	if (!lmac->autoneg_dis) {
+		/* AN reset */
+		CAVM_MODIFY_CGX_CSR(cavm_cgxx_spux_an_control_t,
+				CAVM_CGXX_SPUX_AN_CONTROL(cgx_id, lmac_id),
+				an_reset, 1);
+
+		if (cgx_poll_for_csr(CAVM_CGXX_SPUX_AN_CONTROL(
+					cgx_id, lmac_id),
+					CGX_SPUX_AN_RESET_MASK, 0, -1)) {
+			ERROR("%s: %d:%d SPUX AN reset not complete\n",
+						__func__, cgx_id, lmac_id);
+			cgx_set_error_type(cgx_id, lmac_id,
+						CGX_ERR_SPUX_AN_RESET_FAIL);
+			return -1;
+		}
+
+		/* Enable AN and program AN related CSRs as AN reset
+		 * will clear the corresponding CSRs
+		 */
+		cgx_set_autoneg(cgx_id, lmac_id);
+	}
+
+	/* enable LMAC */
+	CAVM_MODIFY_CGX_CSR(cavm_cgxx_cmrx_config_t,
+			CAVM_CGXX_CMRX_CONFIG(cgx_id, lmac_id), enable, 1);
+
+	return 0;
+}
 
 static int cgx_complete_sw_an(int cgx_id, int lmac_id)
 {
@@ -1064,6 +1228,9 @@ int cgx_sgmii_set_link_up(int cgx_id, int lmac_id)
 	debug_cgx("%s: %d:%d mode %d AN enable %d\n",
 			__func__, cgx_id, lmac_id, lmac->mode,
 			!lmac->autoneg_dis);
+
+	/* FEC is not applicable in case of SGMII */
+	lmac->fec = CGX_FEC_NONE;
 
 	/* set MAC/PHY/1000 base-x/SGMII mode */
 	cgx_sgmii_set_mode(cgx_id, lmac_id);

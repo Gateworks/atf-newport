@@ -36,7 +36,9 @@ enum cgx_error_type {
 	CGX_ERR_RX_EQU_FAIL,
 	CGX_ERR_SPUX_BER_FAIL,
 	CGX_ERR_SPUX_RSFEC_ALGN_FAIL,
-	CGX_ERR_SPUX_MARKER_LOCK_FAIL,	/* = 23 */
+	CGX_ERR_SPUX_MARKER_LOCK_FAIL,
+	CGX_ERR_SET_FEC_INVALID,
+	CGX_ERR_SET_FEC_FAIL,	/* = 25 */
 	/* FIXME : add more error types when adding support for new modes */
 };
 
