@@ -57,6 +57,9 @@ static inline uint64_t get_sh_fwdata_base(void)
 	return SH_FWDATA_BASE;
 }
 
+/* API declarations */
 void sh_fwdata_init(void);
+void sh_fwdata_update_supported_fec(int cgx_id, int lmac_id);
+int sh_fwdata_get_supported_fec(int cgx_id, int lmac_id);
 
 #endif
