@@ -9,8 +9,15 @@ PLAT		:= none
 V		?= 0
 DEBUG		:= 0
 BINARY		:= ${PROJECT}${BIN_EXT}
-OPENSSL_DIR	:= /usr
 USE_TBBR_DEFS   := 1
+
+ifdef SSL_HSM_INSTALL_DIR
+  OPENSSL_DIR	:= ${SSL_HSM_INSTALL_DIR}/ssl
+  LDFLAGS	:= -Wl,-rpath=${SSL_HSM_INSTALL_DIR}/lib
+else
+  OPENSSL_DIR	:= /usr
+  LDFLAGS	:=
+endif
 
 OBJECTS := src/cert.o \
            src/cmd_opt.o \
@@ -77,7 +84,7 @@ ${BINARY}: ${OBJECTS} Makefile
 	@echo 'const char build_msg[] = "Built : "__TIME__", "__DATE__; \
                 const char platform_msg[] = "${PLAT_MSG}";' | \
                 ${CC} -c ${CFLAGS} -xc - -o src/build_msg.o
-	${Q}${HOSTCC} src/build_msg.o ${OBJECTS} ${LIB_DIR} ${LIB} -o $@
+	${Q}${HOSTCC} src/build_msg.o ${OBJECTS} ${LIB_DIR} ${LIB} ${LDFLAGS} -o $@
 
 %.o: %.c
 	@echo "  CC      $<"
