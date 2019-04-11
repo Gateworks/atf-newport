@@ -672,6 +672,9 @@ static void cgx_set_autoneg(int cgx_id, int lmac_id)
 			if (lmac->fec == CGX_FEC_BASE_R) {
 				spux_an_adv.s.fec_able = 1;
 				spux_an_adv.s.fec_req = 1;
+			} else {
+				spux_an_adv.s.fec_able = 0;
+				spux_an_adv.s.fec_req = 0;
 			}
 		} else if (lmac->mode == CAVM_CGX_LMAC_TYPES_E_FORTYG_R) {
 			spux_an_adv.s.np = 0;
@@ -683,6 +686,9 @@ static void cgx_set_autoneg(int cgx_id, int lmac_id)
 				/* only BASE-R ability */
 				spux_an_adv.s.fec_able = 1;
 				spux_an_adv.s.fec_req = 1;
+			} else {
+				spux_an_adv.s.fec_able = 0;
+				spux_an_adv.s.fec_req = 0;
 			}
 		}
 		CSR_WRITE(CAVM_CGXX_SPUX_AN_ADV(cgx_id, lmac_id),
@@ -951,8 +957,6 @@ static int cgx_complete_sw_an(int cgx_id, int lmac_id)
 						cgx_id, lmac_id)));
 			cgx_set_error_type(cgx_id, lmac_id,
 					CGX_ERR_AN_CPT_FAIL);
-			/* restart AN */
-			cgx_restart_an(cgx_id, lmac_id);
 			return -1;
 		}
 		/* W1C */
@@ -992,8 +996,6 @@ static int cgx_complete_sw_an(int cgx_id, int lmac_id)
 			CGX_SPUX_AN_CPT_MASK, 1, CGX_POLL_AN_STATUS)) {
 			debug_cgx("%s: %d:%d AN not complete\n",
 				__func__, cgx_id, lmac_id);
-			/* restart AN */
-			cgx_restart_an(cgx_id, lmac_id);
 			cgx_set_error_type(cgx_id, lmac_id,
 					CGX_ERR_AN_CPT_FAIL);
 			return -1;
@@ -1012,10 +1014,6 @@ static int cgx_complete_sw_an(int cgx_id, int lmac_id)
 						__func__, cgx_id, lmac_id);
 			cgx_set_error_type(cgx_id, lmac_id,
 					CGX_ERR_AN_CPT_FAIL);
-			/* restart AN */
-			CAVM_MODIFY_CGX_CSR(cavm_cgxx_spux_an_control_t,
-				CAVM_CGXX_SPUX_AN_CONTROL(cgx_id, lmac_id),
-				an_restart, 1);
 			return -1;
 		}
 
