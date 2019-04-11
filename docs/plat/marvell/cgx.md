@@ -453,6 +453,25 @@ As result:
 
 ---
 
+##### 4.2.1.9. FEC CHANGE
+
+In addition to FEC type allowed to be mentioned in Linux DT, User is allowed
+to change the FEC type dynamically from kernel via ethtool.
+This command - CGX_CMD_SET_FEC needs to be sent to ATF with the required FEC
+type from kernel upon execution of ethtool commands.
+
+As result, ATF:
+- Validates if FEC change is allowed for the particular mode and if the FEC
+type requested matches with the expected PCS type. If not, returns error.
+- Link status is updated with the new FEC if CGX is successfully configured.
+- Status is updated with CGX_STAT_FAIL or CGX_STAT_SUCCESS info
+
+Optionally, CGX_CMD_GET_SUPPORTED_FEC command can be sent to ATF to know the
+supported FEC types. But, by default, supported FEC types are updated in
+shared FW data memory
+
+---
+
 #### 4.2.2. INTERFACE FROM ATF to U-BOOT/UEFI/KERNEL
 
 `CGXX_CMRX_SCRATCHX[cgx][lmac][0]`/`CGXX_CMRX_SCRATCHX[cgx][lmac][1]` reserved
@@ -965,3 +984,14 @@ BL31_LIBS               +=      lib/libphy/libphy_88x5123.a     \
 There are cases where some boards do have PHY integrated with SFP/QSFP slots. Code flow is little different for this case.
 
 **TODO**
+
+## 9. User interface commands to change FEC via ethtool
+
+ > ethtool --show-fec ethX
+
+-- The above command provides the supported FEC types for a particular ethernet interface
+
+ > ethtool --set-fec ethX encoding <rs | baser | off>
+
+-- The above command provides option to user to change FEC type for a particular ethernet interface. Allowed FEC types depends on the protocol.
+
