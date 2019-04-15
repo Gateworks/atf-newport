@@ -14,6 +14,9 @@ MARVELL_COMMON_BASE	:= plat/marvell/armada/common
 
 $(eval $(call add_define,PLAT_FAMILY))
 
+# Enable version2 of image loading
+LOAD_IMAGE_V2		:= 1
+
 SVC_TEST		:= 0
 $(eval $(call add_define,SVC_TEST))
 
@@ -28,7 +31,6 @@ $(eval $(call add_define,BL31_CACHE_DISABLE))
 
 $(eval $(call add_define,PCI_EP_SUPPORT))
 $(eval $(call assert_boolean,PCI_EP_SUPPORT))
-
 
 AP_NUM			:= 1
 $(eval $(call add_define,AP_NUM))
