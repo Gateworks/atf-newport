@@ -1125,12 +1125,12 @@ union cavm_xcpx_cwd_wdog
         uint32_t gstop                 : 1;  /**< [ 31: 31](R/W) Global-stop enable. Global stop is asserted if the other XCP or any of the Arm
                                                                  cores are in debug mode. */
         uint32_t dstop                 : 1;  /**< [ 30: 30](R/W) Debug-stop enable. Debug stop is asserted if the local XCP is in debug mode. */
-        uint32_t cnt                   : 17; /**< [ 29: 13](R/W/H) Number of 10,240 us intervals until next watchdog expiration. Set on write to
+        uint32_t cnt                   : 17; /**< [ 29: 13](R/W/H) Number of 10.24 us intervals until next watchdog expiration. Set on write to
                                                                  associated XCP()_CWD_POKE.
 
                                                                  Typically on each write to XCP()_CWD_WDOG, [CNT] should be set to [LEN] * 0x100. */
         uint32_t len                   : 9;  /**< [ 12:  4](R/W) Watchdog time-expiration length. The most-significant nine bits of a 17-bit value to be
-                                                                 decremented every 10,240 us. */
+                                                                 decremented every 10.24 us. */
         uint32_t state                 : 2;  /**< [  3:  2](R/W/H) Watchdog state. The number of watchdog time expirations since last core poke. Cleared on
                                                                  write to associated XCP()_CWD_POKE. */
         uint32_t mode                  : 2;  /**< [  1:  0](R/W) Watchdog mode:
@@ -1147,8 +1147,8 @@ union cavm_xcpx_cwd_wdog
         uint32_t state                 : 2;  /**< [  3:  2](R/W/H) Watchdog state. The number of watchdog time expirations since last core poke. Cleared on
                                                                  write to associated XCP()_CWD_POKE. */
         uint32_t len                   : 9;  /**< [ 12:  4](R/W) Watchdog time-expiration length. The most-significant nine bits of a 17-bit value to be
-                                                                 decremented every 10,240 us. */
-        uint32_t cnt                   : 17; /**< [ 29: 13](R/W/H) Number of 10,240 us intervals until next watchdog expiration. Set on write to
+                                                                 decremented every 10.24 us. */
+        uint32_t cnt                   : 17; /**< [ 29: 13](R/W/H) Number of 10.24 us intervals until next watchdog expiration. Set on write to
                                                                  associated XCP()_CWD_POKE.
 
                                                                  Typically on each write to XCP()_CWD_WDOG, [CNT] should be set to [LEN] * 0x100. */

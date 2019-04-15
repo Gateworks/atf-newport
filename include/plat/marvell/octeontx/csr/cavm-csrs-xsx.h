@@ -243,9 +243,12 @@ union cavm_xsx_smtx_arbpri
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_9_63         : 55;
-        uint64_t rotate                : 1;  /**< [  8:  8](R/W) Rotate bank arbitration read over write and port0 over port1 priority every cycle.
-                                                                   0 = use static priority selected by [POPRI] and [RDPRI]. o75 mode.
-                                                                   1 = change priority every cycle. */
+        uint64_t rotate                : 1;  /**< [  8:  8](R/W) Rotate bank arbitration read over write and port 0 over port 1 priority every cycle.
+                                                                   0 = Use static priority selected by [P0PRI] and [RDPRI].
+                                                                   1 = Change priority every cycle.
+
+                                                                 Internal:
+                                                                 Use [ROTATE]=0 to match o75 behavior. */
         uint64_t reserved_6_7          : 2;
         uint64_t hog_interval          : 2;  /**< [  5:  4](R/W) Static configuration that must only be changed during reset or system idle periods.
                                                                  Defines interval to invert [RDPRI] setting.  Ignored when [HOGEN] = 0.
@@ -281,9 +284,12 @@ union cavm_xsx_smtx_arbpri
                                                                    2 =  Every 32 cycles.
                                                                    3 =  Every 64 cycles. */
         uint64_t reserved_6_7          : 2;
-        uint64_t rotate                : 1;  /**< [  8:  8](R/W) Rotate bank arbitration read over write and port0 over port1 priority every cycle.
-                                                                   0 = use static priority selected by [POPRI] and [RDPRI]. o75 mode.
-                                                                   1 = change priority every cycle. */
+        uint64_t rotate                : 1;  /**< [  8:  8](R/W) Rotate bank arbitration read over write and port 0 over port 1 priority every cycle.
+                                                                   0 = Use static priority selected by [P0PRI] and [RDPRI].
+                                                                   1 = Change priority every cycle.
+
+                                                                 Internal:
+                                                                 Use [ROTATE]=0 to match o75 behavior. */
         uint64_t reserved_9_63         : 55;
 #endif /* Word 0 - End */
     } s;

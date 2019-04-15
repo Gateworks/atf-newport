@@ -3215,7 +3215,7 @@ union cavm_pmux_pmpidr2
 #endif /* Word 0 - End */
     } s;
     /* struct cavm_pmux_pmpidr2_s cn8; */
-    struct cavm_pmux_pmpidr2_cn96xx
+    struct cavm_pmux_pmpidr2_cn9
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_8_31         : 24;
@@ -3228,8 +3228,7 @@ union cavm_pmux_pmpidr2
         uint32_t revision              : 4;  /**< [  7:  4](RO) Architectural revision, as assigned by Arm. */
         uint32_t reserved_8_31         : 24;
 #endif /* Word 0 - End */
-    } cn96xx;
-    /* struct cavm_pmux_pmpidr2_s cnf95xx; */
+    } cn9;
 };
 typedef union cavm_pmux_pmpidr2 cavm_pmux_pmpidr2_t;
 
@@ -3328,7 +3327,7 @@ union cavm_pmux_pmpidr4
 #endif /* Word 0 - End */
     } s;
     /* struct cavm_pmux_pmpidr4_s cn8; */
-    struct cavm_pmux_pmpidr4_cn96xx
+    struct cavm_pmux_pmpidr4_cn9
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_8_31         : 24;
@@ -3343,8 +3342,7 @@ union cavm_pmux_pmpidr4
                                                                      component ID registers. */
         uint32_t reserved_8_31         : 24;
 #endif /* Word 0 - End */
-    } cn96xx;
-    /* struct cavm_pmux_pmpidr4_s cnf95xx; */
+    } cn9;
 };
 typedef union cavm_pmux_pmpidr4 cavm_pmux_pmpidr4_t;
 

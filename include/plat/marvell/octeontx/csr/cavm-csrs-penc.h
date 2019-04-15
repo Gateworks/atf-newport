@@ -35,9 +35,9 @@ union cavm_penc_common_cfg_s
         uint64_t reserved_32_63        : 32;
         uint64_t num_cfg_words_per_task : 8; /**< [ 31: 24] Number of configuration words per task. Must be 0x9 for all PENC jobs. */
         uint64_t reserved_5_23         : 19;
-        uint64_t num_tasks             : 5;  /**< [  4:  0] Number of tasks in the job.  Permitted values are 1-16. */
+        uint64_t num_tasks             : 5;  /**< [  4:  0] Number of tasks in the job.  Permitted values are 0x1 - 0x10. */
 #else /* Word 0 - Little Endian */
-        uint64_t num_tasks             : 5;  /**< [  4:  0] Number of tasks in the job.  Permitted values are 1-16. */
+        uint64_t num_tasks             : 5;  /**< [  4:  0] Number of tasks in the job.  Permitted values are 0x1 - 0x10. */
         uint64_t reserved_5_23         : 19;
         uint64_t num_cfg_words_per_task : 8; /**< [ 31: 24] Number of configuration words per task. Must be 0x9 for all PENC jobs. */
         uint64_t reserved_32_63        : 32;
@@ -65,19 +65,19 @@ union cavm_penc_task_cfg_s
 
                                                                  In encoder-only mode (when [CH_SELECTION] = 0x3), this is the length
                                                                  of mother code. When [SYMB_ALIGNED] = 0x1 or [BYPASS_SEGMENTATION] =
-                                                                 0x0, [G_SIZE] must be an exact multiple of [MOD_ORDER].
+                                                                 0, [G_SIZE] must be an exact multiple of [MOD_ORDER].
 
                                                                  When:
 
-                                                                 _ [CH_SELECTION]=0x2, [G_SIZE] must be 0x360.
+                                                                 _ [CH_SELECTION] = 0x2, [G_SIZE] must be 0x360.
 
-                                                                 _ [CH_SELECTION]=0x3, [G_SIZE] must be one of {0x20,0x40,0x80,0x100,0x200}.
+                                                                 _ [CH_SELECTION] = 0x3, [G_SIZE] must be one of {0x20,0x40,0x80,0x100,0x200}.
 
-                                                                 _ Otherwise, [G_SIZE] must be in the range [[K_SIZE],0x1FFF]. */
+                                                                 _ Otherwise, [G_SIZE] must be in the range [[K_SIZE] , 0x1FFF]. */
         uint64_t reserved_24_31        : 8;
         uint64_t k_size                : 8;  /**< [ 23: 16] Payload size including CRC.
 
-                                                                 Must be set to 0 for scrambling sequence output mode (when [CH_SELECTION] = 0x2).
+                                                                 Must be set to 0x0 for scrambling sequence output mode (when [CH_SELECTION] = 0x2).
 
                                                                  When [BYPASS_CRC] = 0x0, [K_SIZE] must be in the range [0x19, 0xA4].
 
@@ -87,7 +87,7 @@ union cavm_penc_task_cfg_s
                                                                  Note that, although [K_SIZE] could be less than 0x24, to comply with the 3GPP standard (38.212
                                                                  7.3.1), if the number of information bits in DCI is less
                                                                  than 12 bits, zeros must be appended to input bit stream to make payload size
-                                                                 0xC (i.e, [K_SIZE]=0x24). */
+                                                                 0xC (i.e, [K_SIZE] = 0x24). */
         uint64_t task_id               : 16; /**< [ 15:  0] Each task in a job must be assigned a unique ID. The task ID will be
                                                                  included in the output to correctly identify the output for each task. */
 #else /* Word 0 - Little Endian */
@@ -95,7 +95,7 @@ union cavm_penc_task_cfg_s
                                                                  included in the output to correctly identify the output for each task. */
         uint64_t k_size                : 8;  /**< [ 23: 16] Payload size including CRC.
 
-                                                                 Must be set to 0 for scrambling sequence output mode (when [CH_SELECTION] = 0x2).
+                                                                 Must be set to 0x0 for scrambling sequence output mode (when [CH_SELECTION] = 0x2).
 
                                                                  When [BYPASS_CRC] = 0x0, [K_SIZE] must be in the range [0x19, 0xA4].
 
@@ -105,28 +105,28 @@ union cavm_penc_task_cfg_s
                                                                  Note that, although [K_SIZE] could be less than 0x24, to comply with the 3GPP standard (38.212
                                                                  7.3.1), if the number of information bits in DCI is less
                                                                  than 12 bits, zeros must be appended to input bit stream to make payload size
-                                                                 0xC (i.e, [K_SIZE]=0x24). */
+                                                                 0xC (i.e, [K_SIZE] = 0x24). */
         uint64_t reserved_24_31        : 8;
         uint64_t g_size                : 13; /**< [ 44: 32] Size after rate matching (corresponds to G in 3GPP).
 
                                                                  In encoder-only mode (when [CH_SELECTION] = 0x3), this is the length
                                                                  of mother code. When [SYMB_ALIGNED] = 0x1 or [BYPASS_SEGMENTATION] =
-                                                                 0x0, [G_SIZE] must be an exact multiple of [MOD_ORDER].
+                                                                 0, [G_SIZE] must be an exact multiple of [MOD_ORDER].
 
                                                                  When:
 
-                                                                 _ [CH_SELECTION]=0x2, [G_SIZE] must be 0x360.
+                                                                 _ [CH_SELECTION] = 0x2, [G_SIZE] must be 0x360.
 
-                                                                 _ [CH_SELECTION]=0x3, [G_SIZE] must be one of {0x20,0x40,0x80,0x100,0x200}.
+                                                                 _ [CH_SELECTION] = 0x3, [G_SIZE] must be one of {0x20,0x40,0x80,0x100,0x200}.
 
-                                                                 _ Otherwise, [G_SIZE] must be in the range [[K_SIZE],0x1FFF]. */
+                                                                 _ Otherwise, [G_SIZE] must be in the range [[K_SIZE] , 0x1FFF]. */
         uint64_t reserved_45_63        : 19;
 #endif /* Word 0 - End */
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 1 - Big Endian */
         uint64_t reserved_123_127      : 5;
         uint64_t v_pbch_2nd_scrm       : 3;  /**< [122:120] The v value for 2nd scramling on PBCH (section 7.3.3.1 in 38.211).
 
-                                                                 Must set to 0x0 if [CH_SELECTION] != 0x1. */
+                                                                 Must be set to 0x0 if [CH_SELECTION] != 0x1. */
         uint64_t reserved_119          : 1;
         uint64_t symb_aligned          : 2;  /**< [118:117] Alignment mode.
 
@@ -136,12 +136,12 @@ union cavm_penc_task_cfg_s
                                                                  in little endian format, with zero padding in the upper bits in each
                                                                  byte. Can only be used when [MOD_ORDER] \< 0xA.
 
-                                                                 _ 0x2 = Two-byte interleaved mode. Every 0xA bits are mapped to a
+                                                                 _ 0x2 = Two-byte interleaved mode. Every 10 bits are mapped to a
                                                                  two-byte symbol, with even bits mapped to the first byte, and odd bits
                                                                  mapped to the second byte, with zero padding in the upper three bits of each
                                                                  byte. Can only be used when [MOD_ORDER] = 0xA.
 
-                                                                 _ 0x3 = Two-byte consecutive mode. Every 0xA bits are mapped to a
+                                                                 _ 0x3 = Two-byte consecutive mode. Every 10 bits are mapped to a
                                                                  two-byte symbol, with the first five bits mapped to the first byte, and the second five bits
                                                                  mapped to the second byte, with zero padding in the upper three bits of each
                                                                  byte. Can only be used when [MOD_ORDER] = 0xA. */
@@ -156,36 +156,36 @@ union cavm_penc_task_cfg_s
 
                                                                  Must be set to 0x2 (QPSK) for PBCH. */
         uint64_t output_data_order     : 3;  /**< [112:110] LSB bit:
-                                                                 0x0 = DATA_BIT_MSB_FIRST.
-                                                                 0x1 = DATA_BIT_LSB_FIRST.
+                                                                 0 = DATA_BIT_MSB_FIRST.
+                                                                 1 = DATA_BIT_LSB_FIRST.
 
                                                                  Two MSB bits:
                                                                  0x0 = DATA_BYTE_ORDER_MODE_0.
                                                                  0x1 = DATA_BYTE_ORDER_MODE_1.
                                                                  0x2 = DATA_BYTE_ORDER_MODE_2. */
         uint64_t bypass_pbch_1st_scrm  : 1;  /**< [109:109] Bypass PBCH first scrambling:
-                                                                 0x0 = Do not bypass fisrt scrambler in PBCH channel.
-                                                                 0x1 = bypass first scrambler in PBCH channel.
+                                                                 0 = Do not bypass first scrambler in PBCH channel.
+                                                                 1 = bypass first scrambler in PBCH channel.
 
                                                                  Ignored when [CH_SELECTION] != 0x1.
 
-                                                                 Must be set to 1 when [BYPASS_CRC]= 0x1.
+                                                                 Must be set to 1 when [BYPASS_CRC] = 1.
 
                                                                  Must be set to 1 when [K_SIZE] \> 0x38. */
         uint64_t bypass_scrm           : 1;  /**< [108:108] Bypass scrambling:
-                                                                 0x0 = not bypass.
-                                                                 0x1 = bypass scrambler after rate-matching. */
+                                                                 0 = not bypassed.
+                                                                 1 = bypass scrambler after rate-matching. */
         uint64_t bypass_dcrc_intlv     : 1;  /**< [107:107] Bypass D-CRC interleaving:
-                                                                 0x0 = Do not bypass D-CRC interleaving.
-                                                                 0x1 = bypass D-CRC interleaving function. */
+                                                                 0 = Do not bypass D-CRC interleaving.
+                                                                 1 = bypass D-CRC interleaving function. */
         uint64_t bypass_crc            : 1;  /**< [106:106] Bypass CRC generation:
                                                                  0 = Do not bypass CRC generation/attachment.
                                                                  1 = bypass CRC generation/attachment. In case of PBCH, PBCH scrambling is also bypassed
 
                                                                  [BYPASS_CRC] must set to 0x1 when [CH_SELECTION] = 0x3. */
         uint64_t input_data_order      : 3;  /**< [105:103] LSB bit:
-                                                                 0x0 = DATA_BIT_MSB_FIRST.
-                                                                 0x1 = DATA_BIT_LSB_FIRST.
+                                                                 0 = DATA_BIT_MSB_FIRST.
+                                                                 1 = DATA_BIT_LSB_FIRST.
 
                                                                  Two MSB bits:
                                                                  0x0 = DATA_BYTE_ORDER_MODE_0.
@@ -201,7 +201,7 @@ union cavm_penc_task_cfg_s
 
                                                                  Note that the total offset will be equal to [SCRM_OFFSET] + Nc (= 0x640).
 
-                                                                 This parameter must be set to 0 when [CH_SELECTION] = 0x1 or 0x3. In PBCH,
+                                                                 This parameter must be set to 0x0 when [CH_SELECTION] = 0x1 or 0x3. In PBCH,
                                                                  scrambler offset is controlled by
                                                                  config parameter [V_PBCH_2ND_SCRM] when [CH_SELECTION] = 0x1. */
 #else /* Word 1 - Little Endian */
@@ -209,7 +209,7 @@ union cavm_penc_task_cfg_s
 
                                                                  Note that the total offset will be equal to [SCRM_OFFSET] + Nc (= 0x640).
 
-                                                                 This parameter must be set to 0 when [CH_SELECTION] = 0x1 or 0x3. In PBCH,
+                                                                 This parameter must be set to 0x0 when [CH_SELECTION] = 0x1 or 0x3. In PBCH,
                                                                  scrambler offset is controlled by
                                                                  config parameter [V_PBCH_2ND_SCRM] when [CH_SELECTION] = 0x1. */
         uint64_t reserved_81_100       : 20;
@@ -219,8 +219,8 @@ union cavm_penc_task_cfg_s
                                                                  0x2 = Scrambling sequence output.
                                                                  0x3 = Encoder only. */
         uint64_t input_data_order      : 3;  /**< [105:103] LSB bit:
-                                                                 0x0 = DATA_BIT_MSB_FIRST.
-                                                                 0x1 = DATA_BIT_LSB_FIRST.
+                                                                 0 = DATA_BIT_MSB_FIRST.
+                                                                 1 = DATA_BIT_LSB_FIRST.
 
                                                                  Two MSB bits:
                                                                  0x0 = DATA_BYTE_ORDER_MODE_0.
@@ -232,23 +232,23 @@ union cavm_penc_task_cfg_s
 
                                                                  [BYPASS_CRC] must set to 0x1 when [CH_SELECTION] = 0x3. */
         uint64_t bypass_dcrc_intlv     : 1;  /**< [107:107] Bypass D-CRC interleaving:
-                                                                 0x0 = Do not bypass D-CRC interleaving.
-                                                                 0x1 = bypass D-CRC interleaving function. */
+                                                                 0 = Do not bypass D-CRC interleaving.
+                                                                 1 = bypass D-CRC interleaving function. */
         uint64_t bypass_scrm           : 1;  /**< [108:108] Bypass scrambling:
-                                                                 0x0 = not bypass.
-                                                                 0x1 = bypass scrambler after rate-matching. */
+                                                                 0 = not bypassed.
+                                                                 1 = bypass scrambler after rate-matching. */
         uint64_t bypass_pbch_1st_scrm  : 1;  /**< [109:109] Bypass PBCH first scrambling:
-                                                                 0x0 = Do not bypass fisrt scrambler in PBCH channel.
-                                                                 0x1 = bypass first scrambler in PBCH channel.
+                                                                 0 = Do not bypass first scrambler in PBCH channel.
+                                                                 1 = bypass first scrambler in PBCH channel.
 
                                                                  Ignored when [CH_SELECTION] != 0x1.
 
-                                                                 Must be set to 1 when [BYPASS_CRC]= 0x1.
+                                                                 Must be set to 1 when [BYPASS_CRC] = 1.
 
                                                                  Must be set to 1 when [K_SIZE] \> 0x38. */
         uint64_t output_data_order     : 3;  /**< [112:110] LSB bit:
-                                                                 0x0 = DATA_BIT_MSB_FIRST.
-                                                                 0x1 = DATA_BIT_LSB_FIRST.
+                                                                 0 = DATA_BIT_MSB_FIRST.
+                                                                 1 = DATA_BIT_LSB_FIRST.
 
                                                                  Two MSB bits:
                                                                  0x0 = DATA_BYTE_ORDER_MODE_0.
@@ -272,19 +272,19 @@ union cavm_penc_task_cfg_s
                                                                  in little endian format, with zero padding in the upper bits in each
                                                                  byte. Can only be used when [MOD_ORDER] \< 0xA.
 
-                                                                 _ 0x2 = Two-byte interleaved mode. Every 0xA bits are mapped to a
+                                                                 _ 0x2 = Two-byte interleaved mode. Every 10 bits are mapped to a
                                                                  two-byte symbol, with even bits mapped to the first byte, and odd bits
                                                                  mapped to the second byte, with zero padding in the upper three bits of each
                                                                  byte. Can only be used when [MOD_ORDER] = 0xA.
 
-                                                                 _ 0x3 = Two-byte consecutive mode. Every 0xA bits are mapped to a
+                                                                 _ 0x3 = Two-byte consecutive mode. Every 10 bits are mapped to a
                                                                  two-byte symbol, with the first five bits mapped to the first byte, and the second five bits
                                                                  mapped to the second byte, with zero padding in the upper three bits of each
                                                                  byte. Can only be used when [MOD_ORDER] = 0xA. */
         uint64_t reserved_119          : 1;
         uint64_t v_pbch_2nd_scrm       : 3;  /**< [122:120] The v value for 2nd scramling on PBCH (section 7.3.3.1 in 38.211).
 
-                                                                 Must set to 0x0 if [CH_SELECTION] != 0x1. */
+                                                                 Must be set to 0x0 if [CH_SELECTION] != 0x1. */
         uint64_t reserved_123_127      : 5;
 #endif /* Word 1 - End */
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 2 - Big Endian */
@@ -303,7 +303,7 @@ union cavm_penc_task_cfg_s
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 3 - Big Endian */
         uint64_t reserved_255          : 1;
         uint64_t vm_pbch_1st_scrm      : 7;  /**< [254:248] Value of vM described in 38.212 section 7.1.2. Starting position of pseudo-random sequence. */
-        uint64_t dci_crc_mask          : 24; /**< [247:224] Mask of which CRC bits RNTI masks. Only used when [CH_SELECTION]=0x0.
+        uint64_t dci_crc_mask          : 24; /**< [247:224] Mask of which CRC bits RNTI masks. Only used when [CH_SELECTION] = 0x0.
 
                                                                  Mapping:
 
@@ -317,7 +317,7 @@ union cavm_penc_task_cfg_s
 
                                                                  Example:
 
-                                                                 _ [x0,.., x15] = [100000000000011] and [DCI_CRC_MASK][0x17:0x10]=[00000001].
+                                                                 _ [x0,.., x15] = [100000000000011] and [DCI_CRC_MASK][0x17:0x10] = [00000001].
 
                                                                  _ [DCI_CRC_MASK][0x17:0] = [00000001100000000000011] = 0x018003. */
         uint64_t pbch_1st_scrm_mask    : 32; /**< [223:192] Scrambling mask for first scrambling in PBCH. Only used for PBCH.
@@ -337,7 +337,7 @@ union cavm_penc_task_cfg_s
                                                                  Example:
 
                                                                  _ If [PBCH_1ST_SCRM_MASK][0x1F:0] = [00000000...0001], first bit is scrambled. */
-        uint64_t dci_crc_mask          : 24; /**< [247:224] Mask of which CRC bits RNTI masks. Only used when [CH_SELECTION]=0x0.
+        uint64_t dci_crc_mask          : 24; /**< [247:224] Mask of which CRC bits RNTI masks. Only used when [CH_SELECTION] = 0x0.
 
                                                                  Mapping:
 
@@ -351,7 +351,7 @@ union cavm_penc_task_cfg_s
 
                                                                  Example:
 
-                                                                 _ [x0,.., x15] = [100000000000011] and [DCI_CRC_MASK][0x17:0x10]=[00000001].
+                                                                 _ [x0,.., x15] = [100000000000011] and [DCI_CRC_MASK][0x17:0x10] = [00000001].
 
                                                                  _ [DCI_CRC_MASK][0x17:0] = [00000001100000000000011] = 0x018003. */
         uint64_t vm_pbch_1st_scrm      : 7;  /**< [254:248] Value of vM described in 38.212 section 7.1.2. Starting position of pseudo-random sequence. */
@@ -392,16 +392,16 @@ union cavm_penc_task_cfg_s
 #endif /* Word 6 - End */
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 7 - Big Endian */
         uint64_t reserved_506_511      : 6;
-        uint64_t num_total_sym         : 24; /**< [505:482] When [SEGMENT_PADDING_FLAG]=1, specifies the total number of symbols in all
+        uint64_t num_total_sym         : 24; /**< [505:482] When [SEGMENT_PADDING_FLAG] = 1, specifies the total number of symbols in all
                                                                  segments.  Each segment is padded to this size.
 
-                                                                 Note that when [SEGMENT_PADDING_FLAG]=1 and [SYMB_ALIGNED]=0, [SYM_PER_SEG] must be
+                                                                 Note that when [SEGMENT_PADDING_FLAG] = 1 and [SYMB_ALIGNED] = 0x0, [SYM_PER_SEG] must be
                                                                  set such that ([MOD_ORDER] x [NUM_TOTAL_SYM]) % 128 = 0.
 
-                                                                 When [SEGMENT_PADDING_FLAG]=1 and [SYMB_ALIGNED]=1, [NUM_TOTAL_SYM] must be
+                                                                 When [SEGMENT_PADDING_FLAG] = 1 and [SYMB_ALIGNED] = 0x1, [NUM_TOTAL_SYM] must be
                                                                  set such that (8 x [NUM_TOTAL_SYM]) % 128 = 0.
 
-                                                                 When [SEGMENT_PADDING_FLAG]=1 and [SYMB_ALIGNED]=2 or 3, [NUM_TOTAL_SYM] must be
+                                                                 When [SEGMENT_PADDING_FLAG] = 1 and [SYMB_ALIGNED] = 0x2 or 0x3, [NUM_TOTAL_SYM] must be
                                                                  set such that (16 x [NUM_TOTAL_SYM]) % 128 = 0. */
         uint64_t segment_padding_flag  : 1;  /**< [481:481] Segment padding mode:
                                                                  0: Pad each segment to the next multiple of 128-bit words after
@@ -410,23 +410,23 @@ union cavm_penc_task_cfg_s
                                                                  See [NUM_TOTAL_SYM] for more details.
 
                                                                  Only used when [CH_SELECTION] = 0x0 or 0x1 and
-                                                                 [BYPASS_SEGMENTATION]=0x0. Ignored otherwise.
+                                                                 [BYPASS_SEGMENTATION] = 0x0. Ignored otherwise.
 
-                                                                 Each segment consists of [MOD_ORDER]x[NUM_SEGx_SYM] bits before padding. */
-        uint64_t bypass_segmentation   : 1;  /**< [480:480] Used only when (CH_SELECTION = 0x0 or CH_SELECTION = 0x1); otherwise, set the value to 0x1.
-                                                                 When set to 0x0, the output is segmented, with extra padding inserted.
-                                                                 See [SEG_PASEGMENT_PADDING_FLAG] for more details.
-                                                                 When set to 0x1, the output bits are written contiguously with no extra padding
+                                                                 Each segment consists of [MOD_ORDER] x [NUM_SEGx_SYM] bits before padding. */
+        uint64_t bypass_segmentation   : 1;  /**< [480:480] Used only when ([CH_SELECTION] = 0x0 or [CH_SELECTION] = 0x1); otherwise, set the value to 1.
+                                                                 When set to 0, the output is segmented, with extra padding inserted.
+                                                                 See [SEGMENT_PADDING_FLAG] for more details.
+                                                                 When set to 1, the output bits are written contiguously with no extra padding
                                                                  inserted to segment the output. */
         uint64_t num_seg13_sym         : 16; /**< [479:464] See [SEGMENT_PADDING_FLAG]. */
         uint64_t num_seg12_sym         : 16; /**< [463:448] See [SEGMENT_PADDING_FLAG]. */
 #else /* Word 7 - Little Endian */
         uint64_t num_seg12_sym         : 16; /**< [463:448] See [SEGMENT_PADDING_FLAG]. */
         uint64_t num_seg13_sym         : 16; /**< [479:464] See [SEGMENT_PADDING_FLAG]. */
-        uint64_t bypass_segmentation   : 1;  /**< [480:480] Used only when (CH_SELECTION = 0x0 or CH_SELECTION = 0x1); otherwise, set the value to 0x1.
-                                                                 When set to 0x0, the output is segmented, with extra padding inserted.
-                                                                 See [SEG_PASEGMENT_PADDING_FLAG] for more details.
-                                                                 When set to 0x1, the output bits are written contiguously with no extra padding
+        uint64_t bypass_segmentation   : 1;  /**< [480:480] Used only when ([CH_SELECTION] = 0x0 or [CH_SELECTION] = 0x1); otherwise, set the value to 1.
+                                                                 When set to 0, the output is segmented, with extra padding inserted.
+                                                                 See [SEGMENT_PADDING_FLAG] for more details.
+                                                                 When set to 1, the output bits are written contiguously with no extra padding
                                                                  inserted to segment the output. */
         uint64_t segment_padding_flag  : 1;  /**< [481:481] Segment padding mode:
                                                                  0: Pad each segment to the next multiple of 128-bit words after
@@ -435,19 +435,19 @@ union cavm_penc_task_cfg_s
                                                                  See [NUM_TOTAL_SYM] for more details.
 
                                                                  Only used when [CH_SELECTION] = 0x0 or 0x1 and
-                                                                 [BYPASS_SEGMENTATION]=0x0. Ignored otherwise.
+                                                                 [BYPASS_SEGMENTATION] = 0x0. Ignored otherwise.
 
-                                                                 Each segment consists of [MOD_ORDER]x[NUM_SEGx_SYM] bits before padding. */
-        uint64_t num_total_sym         : 24; /**< [505:482] When [SEGMENT_PADDING_FLAG]=1, specifies the total number of symbols in all
+                                                                 Each segment consists of [MOD_ORDER] x [NUM_SEGx_SYM] bits before padding. */
+        uint64_t num_total_sym         : 24; /**< [505:482] When [SEGMENT_PADDING_FLAG] = 1, specifies the total number of symbols in all
                                                                  segments.  Each segment is padded to this size.
 
-                                                                 Note that when [SEGMENT_PADDING_FLAG]=1 and [SYMB_ALIGNED]=0, [SYM_PER_SEG] must be
+                                                                 Note that when [SEGMENT_PADDING_FLAG] = 1 and [SYMB_ALIGNED] = 0x0, [SYM_PER_SEG] must be
                                                                  set such that ([MOD_ORDER] x [NUM_TOTAL_SYM]) % 128 = 0.
 
-                                                                 When [SEGMENT_PADDING_FLAG]=1 and [SYMB_ALIGNED]=1, [NUM_TOTAL_SYM] must be
+                                                                 When [SEGMENT_PADDING_FLAG] = 1 and [SYMB_ALIGNED] = 0x1, [NUM_TOTAL_SYM] must be
                                                                  set such that (8 x [NUM_TOTAL_SYM]) % 128 = 0.
 
-                                                                 When [SEGMENT_PADDING_FLAG]=1 and [SYMB_ALIGNED]=2 or 3, [NUM_TOTAL_SYM] must be
+                                                                 When [SEGMENT_PADDING_FLAG] = 1 and [SYMB_ALIGNED] = 0x2 or 0x3, [NUM_TOTAL_SYM] must be
                                                                  set such that (16 x [NUM_TOTAL_SYM]) % 128 = 0. */
         uint64_t reserved_506_511      : 6;
 #endif /* Word 7 - End */
@@ -646,9 +646,9 @@ union cavm_pencx_hab_jcfg0_ramx_data
     struct cavm_pencx_hab_jcfg0_ramx_data_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t entry                 : 64; /**< [ 63:  0](R/W) JCFG0 RAM CSRs */
+        uint64_t entry                 : 64; /**< [ 63:  0](R/W/H) JCFG0 RAM CSRs */
 #else /* Word 0 - Little Endian */
-        uint64_t entry                 : 64; /**< [ 63:  0](R/W) JCFG0 RAM CSRs */
+        uint64_t entry                 : 64; /**< [ 63:  0](R/W/H) JCFG0 RAM CSRs */
 #endif /* Word 0 - End */
     } s;
     /* struct cavm_pencx_hab_jcfg0_ramx_data_s cn; */
@@ -681,9 +681,9 @@ union cavm_pencx_hab_jcfg1_ramx_data
     struct cavm_pencx_hab_jcfg1_ramx_data_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t entry                 : 64; /**< [ 63:  0](R/W) JCFG1 RAM CSRs */
+        uint64_t entry                 : 64; /**< [ 63:  0](R/W/H) JCFG1 RAM CSRs */
 #else /* Word 0 - Little Endian */
-        uint64_t entry                 : 64; /**< [ 63:  0](R/W) JCFG1 RAM CSRs */
+        uint64_t entry                 : 64; /**< [ 63:  0](R/W/H) JCFG1 RAM CSRs */
 #endif /* Word 0 - End */
     } s;
     /* struct cavm_pencx_hab_jcfg1_ramx_data_s cn; */
@@ -716,9 +716,9 @@ union cavm_pencx_hab_jcfg2_ramx_data
     struct cavm_pencx_hab_jcfg2_ramx_data_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t entry                 : 64; /**< [ 63:  0](R/W) JCFG2 RAM CSRs */
+        uint64_t entry                 : 64; /**< [ 63:  0](R/W/H) JCFG2 RAM CSRs */
 #else /* Word 0 - Little Endian */
-        uint64_t entry                 : 64; /**< [ 63:  0](R/W) JCFG2 RAM CSRs */
+        uint64_t entry                 : 64; /**< [ 63:  0](R/W/H) JCFG2 RAM CSRs */
 #endif /* Word 0 - End */
     } s;
     /* struct cavm_pencx_hab_jcfg2_ramx_data_s cn; */
@@ -833,113 +833,45 @@ union cavm_pencx_tc_config_err_flags_reg
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_19_63        : 45;
-        uint64_t error18               : 1;  /**< [ 18: 18](R/W) Reserved.
-                                                                 Internal:
-                                                                 Invalid range for vm_pbch_1st_scrm. */
-        uint64_t error17               : 1;  /**< [ 17: 17](R/W) Reserved.
-                                                                 Internal:
-                                                                 Invalid range for dci_crc_mask */
-        uint64_t error16               : 1;  /**< [ 16: 16](R/W) Reserved. */
-        uint64_t error15               : 1;  /**< [ 15: 15](R/W) Reserved.
-                                                                 Internal:
-                                                                 Invalid range for pbch_1st_scrm_init. */
-        uint64_t error14               : 1;  /**< [ 14: 14](R/W) Reserved.
-                                                                 Internal:
-                                                                 Invalid range for scrm_init. */
-        uint64_t error13               : 1;  /**< [ 13: 13](R/W) Reserved.
-                                                                 Internal:
-                                                                 Invalid range for v_pbch_2nd_scrm. */
-        uint64_t error12               : 1;  /**< [ 12: 12](R/W) Reserved.
-                                                                 Internal:
-                                                                 Invalid range for symb_aligned. */
-        uint64_t error11               : 1;  /**< [ 11: 11](R/W) Reserved.
-                                                                 Internal:
-                                                                 Invalid range for mod_order. */
-        uint64_t error10               : 1;  /**< [ 10: 10](R/W) Reserved.
-                                                                 Internal:
-                                                                 Invalid range for output_data_order. */
-        uint64_t error9                : 1;  /**< [  9:  9](R/W) Reserved.
-                                                                 Internal:
-                                                                 Invalid range for bypass_pbch_1st_scrm. */
-        uint64_t error8                : 1;  /**< [  8:  8](R/W) Reserved.
-                                                                 Internal:
-                                                                 Invalid range for scrm_offset. */
-        uint64_t error7                : 1;  /**< [  7:  7](R/W) Reserved.
-                                                                 Internal:
-                                                                 Invalid range for bypass_scrm. */
-        uint64_t error6                : 1;  /**< [  6:  6](R/W) Reserved.
-                                                                 Internal:
-                                                                 Invalid range for bypass_dcrc_intlv. */
-        uint64_t error5                : 1;  /**< [  5:  5](R/W) Reserved.
-                                                                 Internal:
-                                                                 Invalid range for bypass_crc. */
-        uint64_t error4                : 1;  /**< [  4:  4](R/W) Reserved.
-                                                                 Internal:
-                                                                 Invalid range for input_data_order. */
-        uint64_t error3                : 1;  /**< [  3:  3](R/W) Reserved.
-                                                                 Internal:
-                                                                 Invalid range for ch_selection. */
-        uint64_t error2                : 1;  /**< [  2:  2](R/W) Reserved.
-                                                                 Internal:
-                                                                 Invalid range for e_size. */
-        uint64_t error1                : 1;  /**< [  1:  1](R/W) Reserved.
-                                                                 Internal:
-                                                                 Invalid range for k_size. */
-        uint64_t error0                : 1;  /**< [  0:  0](R/W) Reserved. */
+        uint64_t invalid_vm_pbch_1st_scrm : 1;/**< [ 18: 18](RO/H) Invalid PENC_TASK_CFG_S[VM_PBCH_1ST_SCRM] value. */
+        uint64_t invalid_dci_crc_mask  : 1;  /**< [ 17: 17](RO/H) Invalid PENC_TASK_CFG_S[DCI_CRC_MASK] value. */
+        uint64_t reserved_16           : 1;
+        uint64_t invalid_pbch_1st_scrm_init : 1;/**< [ 15: 15](RO/H) Invalid PENC_TASK_CFG_S[PBCH_1ST_SCRM_INIT] value. */
+        uint64_t invalid_scrm_init     : 1;  /**< [ 14: 14](RO/H) Invalid PENC_TASK_CFG_S[SCRM_INIT] value. */
+        uint64_t invalid_v_pbch_2nd_scrm : 1;/**< [ 13: 13](RO/H) Invalid PENC_TASK_CFG_S[V_PBCH_2ND_SCRM] value. */
+        uint64_t invalid_symb_aligned  : 1;  /**< [ 12: 12](RO/H) Invalid PENC_TASK_CFG_S[SYMB_ALIGNED] value. */
+        uint64_t invalid_mod_order     : 1;  /**< [ 11: 11](RO/H) Invalid PENC_TASK_CFG_S[MOD_ORDER] value. */
+        uint64_t invalid_output_data_order : 1;/**< [ 10: 10](RO/H) Invalid PENC_TASK_CFG_S[OUTPUT_DATA_ORDER] value. */
+        uint64_t invalid_bypass_pbch_1st_scrm : 1;/**< [  9:  9](RO/H) Invalid PENC_TASK_CFG_S[BYPASS_PBCH_1ST_SCRM] value. */
+        uint64_t invalid_scrm_offset   : 1;  /**< [  8:  8](RO/H) Invalid PENC_TASK_CFG_S[SCRM_OFFSET] value. */
+        uint64_t invalid_bypass_scrm   : 1;  /**< [  7:  7](RO/H) Invalid PENC_TASK_CFG_S[BYPASS_SCRM] value. */
+        uint64_t invalid_bypass_dcrc_intlv : 1;/**< [  6:  6](RO/H) Invalid PENC_TASK_CFG_S[BYPASS_DCRC_INTLV] value. */
+        uint64_t invalid_bypass_crc    : 1;  /**< [  5:  5](RO/H) Invalid PENC_TASK_CFG_S[BYPASS_CRC] value. */
+        uint64_t invalid_input_data_order : 1;/**< [  4:  4](RO/H) Invalid PENC_TASK_CFG_S[INPUT_DATA_ORDER] value. */
+        uint64_t invalid_ch_selection  : 1;  /**< [  3:  3](RO/H) Invalid PENC_TASK_CFG_S[CH_SELECTION] value. */
+        uint64_t invalid_g_size        : 1;  /**< [  2:  2](RO/H) Invalid PENC_TASK_CFG_S[G_SIZE] value. */
+        uint64_t invalid_k_size        : 1;  /**< [  1:  1](RO/H) Invalid PENC_TASK_CFG_S[K_SIZE] value. */
+        uint64_t reserved_0            : 1;
 #else /* Word 0 - Little Endian */
-        uint64_t error0                : 1;  /**< [  0:  0](R/W) Reserved. */
-        uint64_t error1                : 1;  /**< [  1:  1](R/W) Reserved.
-                                                                 Internal:
-                                                                 Invalid range for k_size. */
-        uint64_t error2                : 1;  /**< [  2:  2](R/W) Reserved.
-                                                                 Internal:
-                                                                 Invalid range for e_size. */
-        uint64_t error3                : 1;  /**< [  3:  3](R/W) Reserved.
-                                                                 Internal:
-                                                                 Invalid range for ch_selection. */
-        uint64_t error4                : 1;  /**< [  4:  4](R/W) Reserved.
-                                                                 Internal:
-                                                                 Invalid range for input_data_order. */
-        uint64_t error5                : 1;  /**< [  5:  5](R/W) Reserved.
-                                                                 Internal:
-                                                                 Invalid range for bypass_crc. */
-        uint64_t error6                : 1;  /**< [  6:  6](R/W) Reserved.
-                                                                 Internal:
-                                                                 Invalid range for bypass_dcrc_intlv. */
-        uint64_t error7                : 1;  /**< [  7:  7](R/W) Reserved.
-                                                                 Internal:
-                                                                 Invalid range for bypass_scrm. */
-        uint64_t error8                : 1;  /**< [  8:  8](R/W) Reserved.
-                                                                 Internal:
-                                                                 Invalid range for scrm_offset. */
-        uint64_t error9                : 1;  /**< [  9:  9](R/W) Reserved.
-                                                                 Internal:
-                                                                 Invalid range for bypass_pbch_1st_scrm. */
-        uint64_t error10               : 1;  /**< [ 10: 10](R/W) Reserved.
-                                                                 Internal:
-                                                                 Invalid range for output_data_order. */
-        uint64_t error11               : 1;  /**< [ 11: 11](R/W) Reserved.
-                                                                 Internal:
-                                                                 Invalid range for mod_order. */
-        uint64_t error12               : 1;  /**< [ 12: 12](R/W) Reserved.
-                                                                 Internal:
-                                                                 Invalid range for symb_aligned. */
-        uint64_t error13               : 1;  /**< [ 13: 13](R/W) Reserved.
-                                                                 Internal:
-                                                                 Invalid range for v_pbch_2nd_scrm. */
-        uint64_t error14               : 1;  /**< [ 14: 14](R/W) Reserved.
-                                                                 Internal:
-                                                                 Invalid range for scrm_init. */
-        uint64_t error15               : 1;  /**< [ 15: 15](R/W) Reserved.
-                                                                 Internal:
-                                                                 Invalid range for pbch_1st_scrm_init. */
-        uint64_t error16               : 1;  /**< [ 16: 16](R/W) Reserved. */
-        uint64_t error17               : 1;  /**< [ 17: 17](R/W) Reserved.
-                                                                 Internal:
-                                                                 Invalid range for dci_crc_mask */
-        uint64_t error18               : 1;  /**< [ 18: 18](R/W) Reserved.
-                                                                 Internal:
-                                                                 Invalid range for vm_pbch_1st_scrm. */
+        uint64_t reserved_0            : 1;
+        uint64_t invalid_k_size        : 1;  /**< [  1:  1](RO/H) Invalid PENC_TASK_CFG_S[K_SIZE] value. */
+        uint64_t invalid_g_size        : 1;  /**< [  2:  2](RO/H) Invalid PENC_TASK_CFG_S[G_SIZE] value. */
+        uint64_t invalid_ch_selection  : 1;  /**< [  3:  3](RO/H) Invalid PENC_TASK_CFG_S[CH_SELECTION] value. */
+        uint64_t invalid_input_data_order : 1;/**< [  4:  4](RO/H) Invalid PENC_TASK_CFG_S[INPUT_DATA_ORDER] value. */
+        uint64_t invalid_bypass_crc    : 1;  /**< [  5:  5](RO/H) Invalid PENC_TASK_CFG_S[BYPASS_CRC] value. */
+        uint64_t invalid_bypass_dcrc_intlv : 1;/**< [  6:  6](RO/H) Invalid PENC_TASK_CFG_S[BYPASS_DCRC_INTLV] value. */
+        uint64_t invalid_bypass_scrm   : 1;  /**< [  7:  7](RO/H) Invalid PENC_TASK_CFG_S[BYPASS_SCRM] value. */
+        uint64_t invalid_scrm_offset   : 1;  /**< [  8:  8](RO/H) Invalid PENC_TASK_CFG_S[SCRM_OFFSET] value. */
+        uint64_t invalid_bypass_pbch_1st_scrm : 1;/**< [  9:  9](RO/H) Invalid PENC_TASK_CFG_S[BYPASS_PBCH_1ST_SCRM] value. */
+        uint64_t invalid_output_data_order : 1;/**< [ 10: 10](RO/H) Invalid PENC_TASK_CFG_S[OUTPUT_DATA_ORDER] value. */
+        uint64_t invalid_mod_order     : 1;  /**< [ 11: 11](RO/H) Invalid PENC_TASK_CFG_S[MOD_ORDER] value. */
+        uint64_t invalid_symb_aligned  : 1;  /**< [ 12: 12](RO/H) Invalid PENC_TASK_CFG_S[SYMB_ALIGNED] value. */
+        uint64_t invalid_v_pbch_2nd_scrm : 1;/**< [ 13: 13](RO/H) Invalid PENC_TASK_CFG_S[V_PBCH_2ND_SCRM] value. */
+        uint64_t invalid_scrm_init     : 1;  /**< [ 14: 14](RO/H) Invalid PENC_TASK_CFG_S[SCRM_INIT] value. */
+        uint64_t invalid_pbch_1st_scrm_init : 1;/**< [ 15: 15](RO/H) Invalid PENC_TASK_CFG_S[PBCH_1ST_SCRM_INIT] value. */
+        uint64_t reserved_16           : 1;
+        uint64_t invalid_dci_crc_mask  : 1;  /**< [ 17: 17](RO/H) Invalid PENC_TASK_CFG_S[DCI_CRC_MASK] value. */
+        uint64_t invalid_vm_pbch_1st_scrm : 1;/**< [ 18: 18](RO/H) Invalid PENC_TASK_CFG_S[VM_PBCH_1ST_SCRM] value. */
         uint64_t reserved_19_63        : 45;
 #endif /* Word 0 - End */
     } s;
@@ -974,9 +906,9 @@ union cavm_pencx_tc_config_regx
     struct cavm_pencx_tc_config_regx_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t entry                 : 64; /**< [ 63:  0](R/W) Config bits. */
+        uint64_t entry                 : 64; /**< [ 63:  0](R/W/H) Config bits. */
 #else /* Word 0 - Little Endian */
-        uint64_t entry                 : 64; /**< [ 63:  0](R/W) Config bits. */
+        uint64_t entry                 : 64; /**< [ 63:  0](R/W/H) Config bits. */
 #endif /* Word 0 - End */
     } s;
     /* struct cavm_pencx_tc_config_regx_s cn; */
@@ -1013,22 +945,22 @@ union cavm_pencx_tc_control_reg
         uint64_t control_bus           : 5;  /**< [  4:  0](R/W) Internal core control bits:
                                                                  bit\<0\> = clock gating disable.
                                                                  bit\<1\> = configuration check disable.
-                                                                 bit\<2\> = wait until the core is idle until accepting the next task
+                                                                 bit\<2\> = wait until the core is idle before accepting the next task
                                                                  (degrades the throughput).
-                                                                 bit\<3\>  = wait until the core is idle until accepting the next task
-                                                                 (degrades the throughput) in case of changing phy_mode.
-                                                                 bit\<4\> = wait until the core is idle until accepting the next task
-                                                                 (degrades the throughput) in case of changing channel_mode. */
+                                                                 bit\<3\>  = wait until the core is idle before accepting the next task
+                                                                 in case of changing phy_mode (degrades the throughput).
+                                                                 bit\<4\> = wait until the core is idle before accepting the next task
+                                                                 in case of changing channel_mode (degrades the throughput). */
 #else /* Word 0 - Little Endian */
         uint64_t control_bus           : 5;  /**< [  4:  0](R/W) Internal core control bits:
                                                                  bit\<0\> = clock gating disable.
                                                                  bit\<1\> = configuration check disable.
-                                                                 bit\<2\> = wait until the core is idle until accepting the next task
+                                                                 bit\<2\> = wait until the core is idle before accepting the next task
                                                                  (degrades the throughput).
-                                                                 bit\<3\>  = wait until the core is idle until accepting the next task
-                                                                 (degrades the throughput) in case of changing phy_mode.
-                                                                 bit\<4\> = wait until the core is idle until accepting the next task
-                                                                 (degrades the throughput) in case of changing channel_mode. */
+                                                                 bit\<3\>  = wait until the core is idle before accepting the next task
+                                                                 in case of changing phy_mode (degrades the throughput).
+                                                                 bit\<4\> = wait until the core is idle before accepting the next task
+                                                                 in case of changing channel_mode (degrades the throughput). */
         uint64_t reserved_5_63         : 59;
 #endif /* Word 0 - End */
     } s;
@@ -1040,22 +972,22 @@ union cavm_pencx_tc_control_reg
         uint64_t control_bus           : 5;  /**< [  4:  0](R/W) Internal core control bits:
                                                                  bit\<0\> = clock gating disable.
                                                                  bit\<1\> = configuration check disable.
-                                                                 bit\<2\> = wait until the core is idle until accepting the next task
+                                                                 bit\<2\> = wait until the core is idle before accepting the next task
                                                                  (degrades the throughput).
-                                                                 bit\<3\>  = wait until the core is idle until accepting the next task
-                                                                 (degrades the throughput) in case of changing phy_mode.
-                                                                 bit\<4\> = wait until the core is idle until accepting the next task
-                                                                 (degrades the throughput) in case of changing channel_mode. */
+                                                                 bit\<3\>  = wait until the core is idle before accepting the next task
+                                                                 in case of changing phy_mode (degrades the throughput).
+                                                                 bit\<4\> = wait until the core is idle before accepting the next task
+                                                                 in case of changing channel_mode (degrades the throughput). */
 #else /* Word 0 - Little Endian */
         uint64_t control_bus           : 5;  /**< [  4:  0](R/W) Internal core control bits:
                                                                  bit\<0\> = clock gating disable.
                                                                  bit\<1\> = configuration check disable.
-                                                                 bit\<2\> = wait until the core is idle until accepting the next task
+                                                                 bit\<2\> = wait until the core is idle before accepting the next task
                                                                  (degrades the throughput).
-                                                                 bit\<3\>  = wait until the core is idle until accepting the next task
-                                                                 (degrades the throughput) in case of changing phy_mode.
-                                                                 bit\<4\> = wait until the core is idle until accepting the next task
-                                                                 (degrades the throughput) in case of changing channel_mode. */
+                                                                 bit\<3\>  = wait until the core is idle before accepting the next task
+                                                                 in case of changing phy_mode (degrades the throughput).
+                                                                 bit\<4\> = wait until the core is idle before accepting the next task
+                                                                 in case of changing channel_mode (degrades the throughput). */
         uint64_t reserved_5_31         : 27;
         uint64_t reserved_32_63        : 32;
 #endif /* Word 0 - End */
@@ -1083,7 +1015,7 @@ static inline uint64_t CAVM_PENCX_TC_CONTROL_REG(unsigned long a)
  * PENC Encoder Core Error Mask Register
  * This register enables internal encoder errors. Errors reported in
  * PENC()_TC_ERROR_REG will generate an error signal only when the
- * corresponding bit is set in PENC()_TC_ERROR_REG.
+ * corresponding bit is set in PENC()_TC_ERROR_MASK_REG.
  */
 union cavm_pencx_tc_error_mask_reg
 {
@@ -1121,7 +1053,6 @@ static inline uint64_t CAVM_PENCX_TC_ERROR_MASK_REG(unsigned long a)
  *
  * PENC Encoder Error Register
  * This register reports various error conditions.
- * Errors are cleared by writing the specific error bits to zero.
  *
  * All errors reported in this register are reported as FATAL errors, and the
  * MHBW registers can be inspected to determine the job tag(s) associated with
@@ -1134,19 +1065,19 @@ union cavm_pencx_tc_error_reg
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_9_63         : 55;
-        uint64_t inv_cfg               : 1;  /**< [  8:  8](R/W) Invalid task configuration -- aborted job. */
+        uint64_t inv_cfg               : 1;  /**< [  8:  8](R/W1C/H) Invalid task configuration -- aborted job. */
         uint64_t reserved_4_7          : 4;
-        uint64_t ign_read              : 1;  /**< [  3:  3](R/W) Ignored a read access while another read was in process. */
-        uint64_t inv_read              : 1;  /**< [  2:  2](R/W) Invalid read access to an out-of-range address. */
-        uint64_t inv_write             : 1;  /**< [  1:  1](R/W) Invalid write access to an out-of-range address. */
-        uint64_t inv_start             : 1;  /**< [  0:  0](R/W) Invalid task start. */
+        uint64_t ign_read              : 1;  /**< [  3:  3](R/W1C/H) Ignored a read access while another read was in process. */
+        uint64_t inv_read              : 1;  /**< [  2:  2](R/W1C/H) Invalid read access to an out-of-range address. */
+        uint64_t inv_write             : 1;  /**< [  1:  1](R/W1C/H) Invalid write access to an out-of-range address. */
+        uint64_t inv_start             : 1;  /**< [  0:  0](R/W1C/H) Invalid task start. */
 #else /* Word 0 - Little Endian */
-        uint64_t inv_start             : 1;  /**< [  0:  0](R/W) Invalid task start. */
-        uint64_t inv_write             : 1;  /**< [  1:  1](R/W) Invalid write access to an out-of-range address. */
-        uint64_t inv_read              : 1;  /**< [  2:  2](R/W) Invalid read access to an out-of-range address. */
-        uint64_t ign_read              : 1;  /**< [  3:  3](R/W) Ignored a read access while another read was in process. */
+        uint64_t inv_start             : 1;  /**< [  0:  0](R/W1C/H) Invalid task start. */
+        uint64_t inv_write             : 1;  /**< [  1:  1](R/W1C/H) Invalid write access to an out-of-range address. */
+        uint64_t inv_read              : 1;  /**< [  2:  2](R/W1C/H) Invalid read access to an out-of-range address. */
+        uint64_t ign_read              : 1;  /**< [  3:  3](R/W1C/H) Ignored a read access while another read was in process. */
         uint64_t reserved_4_7          : 4;
-        uint64_t inv_cfg               : 1;  /**< [  8:  8](R/W) Invalid task configuration -- aborted job. */
+        uint64_t inv_cfg               : 1;  /**< [  8:  8](R/W1C/H) Invalid task configuration -- aborted job. */
         uint64_t reserved_9_63         : 55;
 #endif /* Word 0 - End */
     } s;
@@ -1181,9 +1112,9 @@ union cavm_pencx_tc_main_reset_reg
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_1_63         : 63;
-        uint64_t soft_reset            : 1;  /**< [  0:  0](R/W) Reset bit. */
+        uint64_t soft_reset            : 1;  /**< [  0:  0](R/W/H) Any write to this register will reset the internal encoder core. */
 #else /* Word 0 - Little Endian */
-        uint64_t soft_reset            : 1;  /**< [  0:  0](R/W) Reset bit. */
+        uint64_t soft_reset            : 1;  /**< [  0:  0](R/W/H) Any write to this register will reset the internal encoder core. */
         uint64_t reserved_1_63         : 63;
 #endif /* Word 0 - End */
     } s;
@@ -1219,9 +1150,9 @@ union cavm_pencx_tc_main_start_reg
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_1_63         : 63;
-        uint64_t start                 : 1;  /**< [  0:  0](R/W) Start bit. */
+        uint64_t start                 : 1;  /**< [  0:  0](R/W/H) Start bit. */
 #else /* Word 0 - Little Endian */
-        uint64_t start                 : 1;  /**< [  0:  0](R/W) Start bit. */
+        uint64_t start                 : 1;  /**< [  0:  0](R/W/H) Start bit. */
         uint64_t reserved_1_63         : 63;
 #endif /* Word 0 - End */
     } s;
@@ -1257,10 +1188,10 @@ union cavm_pencx_tc_mon_reg
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_16_63        : 48;
-        uint64_t bus_val               : 16; /**< [ 15:  0](RO) tc1840 task output monitoring values.
+        uint64_t bus_val               : 16; /**< [ 15:  0](RO/H) Encoder core task output monitoring values.
                                                                  mon_reg0_bus = Identifier associated to the Q output interface. Valid when q_avl is HIGH. */
 #else /* Word 0 - Little Endian */
-        uint64_t bus_val               : 16; /**< [ 15:  0](RO) tc1840 task output monitoring values.
+        uint64_t bus_val               : 16; /**< [ 15:  0](RO/H) Encoder core task output monitoring values.
                                                                  mon_reg0_bus = Identifier associated to the Q output interface. Valid when q_avl is HIGH. */
         uint64_t reserved_16_63        : 48;
 #endif /* Word 0 - End */
@@ -1295,13 +1226,13 @@ union cavm_pencx_tc_status_reg
     struct cavm_pencx_tc_status_reg_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t monitor_bus           : 32; /**< [ 63: 32](RO) core dependent */
+        uint64_t monitor_bus           : 32; /**< [ 63: 32](RO/H) core dependent */
         uint64_t reserved_1_31         : 31;
-        uint64_t idle                  : 1;  /**< [  0:  0](RO) When set to 1, the encoder is idle. */
+        uint64_t idle                  : 1;  /**< [  0:  0](RO/H) When set to 1, the encoder is idle. */
 #else /* Word 0 - Little Endian */
-        uint64_t idle                  : 1;  /**< [  0:  0](RO) When set to 1, the encoder is idle. */
+        uint64_t idle                  : 1;  /**< [  0:  0](RO/H) When set to 1, the encoder is idle. */
         uint64_t reserved_1_31         : 31;
-        uint64_t monitor_bus           : 32; /**< [ 63: 32](RO) core dependent */
+        uint64_t monitor_bus           : 32; /**< [ 63: 32](RO/H) core dependent */
 #endif /* Word 0 - End */
     } s;
     /* struct cavm_pencx_tc_status_reg_s cn; */

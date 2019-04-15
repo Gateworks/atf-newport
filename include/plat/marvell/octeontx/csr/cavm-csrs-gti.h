@@ -1693,11 +1693,11 @@ union cavm_gti_cc_imp_ctl
         uint64_t reserved_1_63         : 63;
         uint64_t clk_src               : 1;  /**< [  0:  0](SR/W) Count source clock for GTI_CC_CNTRATE.
                                                                  0 = Coprocessor clock.
-                                                                 1 = PTP system clock. See MIO_PTP_SYSCLK_THRESH_HI/LO. */
+                                                                 1 = PTP system clock. See MIO_PTP_SYSCK_THRESH_HI/LO. */
 #else /* Word 0 - Little Endian */
         uint64_t clk_src               : 1;  /**< [  0:  0](SR/W) Count source clock for GTI_CC_CNTRATE.
                                                                  0 = Coprocessor clock.
-                                                                 1 = PTP system clock. See MIO_PTP_SYSCLK_THRESH_HI/LO. */
+                                                                 1 = PTP system clock. See MIO_PTP_SYSCK_THRESH_HI/LO. */
         uint64_t reserved_1_63         : 63;
 #endif /* Word 0 - End */
     } cn96xx;

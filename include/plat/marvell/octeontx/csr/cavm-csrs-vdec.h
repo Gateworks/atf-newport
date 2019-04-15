@@ -44,9 +44,9 @@ union cavm_vdec_common_cfg_s
                                                                  0x0 = LTE.
                                                                  0x1-0x3 = Reserved. */
         uint64_t reserved_5_15         : 11;
-        uint64_t num_tasks             : 5;  /**< [  4:  0] Number of tasks in the job.  Permitted values are 1-16. */
+        uint64_t num_tasks             : 5;  /**< [  4:  0] Number of tasks in the job.  Permitted values are 0x1-0x10. */
 #else /* Word 0 - Little Endian */
-        uint64_t num_tasks             : 5;  /**< [  4:  0] Number of tasks in the job.  Permitted values are 1-16. */
+        uint64_t num_tasks             : 5;  /**< [  4:  0] Number of tasks in the job.  Permitted values are 0x1-0x10. */
         uint64_t reserved_5_15         : 11;
         uint64_t phy_mode              : 2;  /**< [ 17: 16] PHY operating mode:
                                                                  0x0 = LTE.
@@ -94,15 +94,14 @@ union cavm_vdec_lte_report_s
 #endif /* Word 0 - End */
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 1 - Big Endian */
         uint64_t reserved_127          : 1;
-        uint64_t nbits_cber            : 15; /**< [126:112] Number of bits used in the CBER calculation.
-                                                                 Internal:
-                                                                 Please double-check this description. */
+        uint64_t nbits_cber            : 15; /**< [126:112] Number of bits, excluding bits with LLR == 0x0, used in the
+                                                                 [CBER] calculation. */
         uint64_t cber                  : 15; /**< [111: 97] Estimated bit error rate. This field reports the number of bit-wise
                                                                  differences between the input sign and the decoded value for all
                                                                  coded bits. */
         uint64_t crc_error             : 1;  /**< [ 96: 96] CRC mismatch detected:
-                                                                 0 = [DECODED_CRC] matches [CALC_CRC].
-                                                                 1 = [DECODED_CRC] does not match [CALC_CRC]. */
+                                                                 0 = [DECODED_CRC] matches the calculated CRC.
+                                                                 1 = [DECODED_CRC] does not match the calculated CRC. */
         uint64_t reserved_88_95        : 8;
         uint64_t calc_crc              : 24; /**< [ 87: 64] CRC calculated from the decoded output. Valid only if the task
                                                                  configuration specified [BYPS_CRC] = 0. */
@@ -111,14 +110,13 @@ union cavm_vdec_lte_report_s
                                                                  configuration specified [BYPS_CRC] = 0. */
         uint64_t reserved_88_95        : 8;
         uint64_t crc_error             : 1;  /**< [ 96: 96] CRC mismatch detected:
-                                                                 0 = [DECODED_CRC] matches [CALC_CRC].
-                                                                 1 = [DECODED_CRC] does not match [CALC_CRC]. */
+                                                                 0 = [DECODED_CRC] matches the calculated CRC.
+                                                                 1 = [DECODED_CRC] does not match the calculated CRC. */
         uint64_t cber                  : 15; /**< [111: 97] Estimated bit error rate. This field reports the number of bit-wise
                                                                  differences between the input sign and the decoded value for all
                                                                  coded bits. */
-        uint64_t nbits_cber            : 15; /**< [126:112] Number of bits used in the CBER calculation.
-                                                                 Internal:
-                                                                 Please double-check this description. */
+        uint64_t nbits_cber            : 15; /**< [126:112] Number of bits, excluding bits with LLR == 0x0, used in the
+                                                                 [CBER] calculation. */
         uint64_t reserved_127          : 1;
 #endif /* Word 1 - End */
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 2 - Big Endian */
@@ -150,7 +148,7 @@ union cavm_vdec_lte_task_cfg_s
     struct cavm_vdec_lte_task_cfg_s_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t num_llr               : 18; /**< [ 63: 46] The number of input LLRs, up to 186624. When [BYPS_CIRC_EXT] = 1, this
+        uint64_t num_llr               : 18; /**< [ 63: 46] The number of input LLRs, up to 0x2D900. When [BYPS_CIRC_EXT] = 1, this
                                                                  field is ignored and the number of encoded LLRs must be 3 x [DEC_OUT_SIZE]. */
         uint64_t byps_rm               : 1;  /**< [ 45: 45] When set, bypass rate dematching and subblock deinterleaving. */
         uint64_t byps_circ_ext         : 1;  /**< [ 44: 44] When set, bypass circular extension. When circular extension is
@@ -158,20 +156,18 @@ union cavm_vdec_lte_task_cfg_s
                                                                  deinterleaving functions are bypassed as if [BYPS_RM] = 1.
 
                                                                  When set to one, [REENC_ENA] must be 0, [BYPS_CH_DEINT] must be 1, and
-                                                                 [BYPS_LAYER_DEMAP] must be 1.
-                                                                 In addition,
-
-                                                                 This field must be set to 1 if [DEC_OUT_SIZE] is greater than 0x400.
+                                                                 [BYPS_LAYER_DEMAP] must be 1.  In addition, this field must be set
+                                                                 to 1 if [DEC_OUT_SIZE] is greater than 0x400.
 
                                                                  If [BYPS_CIRC_EXT] is set to 1, circular extension must be performed
                                                                  externally, and the input data must include
-                                                                 3*5*ceiling(TRACEBACK_LEN/5) bits of circular prefix and postfix
+                                                                 3*5*ceiling([TRACEBACK_LEN] / 5) bits of circular prefix and postfix
                                                                  before and after the encoded data. The prefix and original encoded
                                                                  data must be 128-bit aligned, with padding bits added to the end of
                                                                  the prefix as required. The postfix must be packed immediately after
                                                                  the encoded data, with no extra padding bits.
 
-                                                                 When [BYPS_CIRC_EXT] is set to 1, the coding rate is always 0x3. */
+                                                                 When [BYPS_CIRC_EXT] is set to 1, the coding rate is always 1/3. */
         uint64_t byps_crc              : 1;  /**< [ 43: 43] When 1, CRC decoding is bypassed. When this field is 0, the code
                                                                  block CRC is decoded using the polynomial selected by [CRC_SELECT].
                                                                  The decoded CRC is stripped from the decoded output data. */
@@ -185,15 +181,15 @@ union cavm_vdec_lte_task_cfg_s
         uint64_t total_num_sym         : 5;  /**< [ 38: 34] The number of input symbols to be deinterleaved.
 
                                                                  _ When [BYPS_CH_DEINT] = 0, [TOTAL_NUM_SYM] shall be set to the total
-                                                                 number of OFDM symbols [1..24] onto which the data/control LLR
-                                                                 values are mapped.  In time-first mode, this is the same as the
-                                                                 number of input threads to be deinterleaved.
+                                                                 number of OFDM symbols [0x1, 0x18] onto which the data/control LLR
+                                                                 values are mapped.  This is the same as the number of input threads
+                                                                 to be de-interleaved.
 
                                                                  _ When [BYPS_CH_DEINT] = 1 and [BYPS_LAYER_DEMAP] = 1, then [TOTAL_NUM_SYM]
-                                                                 shall be set to 0x1.
+                                                                 must be set to 0x1.
 
                                                                  _ When [BYPS_CH_DEINT] = 1 and [BYPS_LAYER_DEMAP] = 0, then [TOTAL_NUM_SYM]
-                                                                 shall be set to 0x2. */
+                                                                 must be set to 0x2. */
         uint64_t byps_layer_demap      : 1;  /**< [ 33: 33] Bypasses internal layer demapping.
 
                                                                  _ When [BYPS_CH_DEINT] = 0, layer
@@ -202,22 +198,21 @@ union cavm_vdec_lte_task_cfg_s
 
                                                                  _ When [BYPS_CH_DEINT] = 1, this field determines whether VDEC performs
                                                                  layer demapping. If [BYPS_LAYER_DEMAP] = 0, then [NUM_SYMBOLS] must be
-                                                                 2, and there must be 2 input DMA threads, using [CHUNK_SIZE] of 48
-                                                                 bytes. */
+                                                                 0x2, and there must be two input DMA threads, using
+                                                                 MHBW_JD_DMA_CFG_WORD_0_S[CHUNK_SIZE] of 0xC (48 bytes). */
         uint64_t byps_ch_deint         : 1;  /**< [ 32: 32] When set, the task will bypass channel deinterleaving. */
         uint64_t reserved_23_31        : 9;
-        uint64_t num_layers            : 3;  /**< [ 22: 20] Number of layers the transport block is mapped to. Must be either 1 or
-                                                                 2. */
+        uint64_t num_layers            : 3;  /**< [ 22: 20] Number of layers the transport block is mapped to. Must be either 0x1 or 0x2. */
         uint64_t mod_order             : 4;  /**< [ 19: 16] The modulation order:
                                                                  0x1 = BPSK.
                                                                  0x2 = QPSK.
                                                                  0x4 = 16QAM.
                                                                  0x6 = 64QAM.
                                                                  0x8 = 256QAM.
-                                                                 0x0, 0x3, 0x5, 0x7, 0x9-0xf = Reserved.
+                                                                 0x0, 0x3, 0x5, 0x7, 0x9-0xF = Reserved.
 
                                                                  Internal:
-                                                                 0xa specifies 1024QAM, but this mode is not supported by
+                                                                 0xA specifies 1024QAM, but this mode is not supported by
                                                                  the channel deinterleaver. */
         uint64_t task_id               : 16; /**< [ 15:  0] Each task in a job should be assigned a unique ID. The task ID will be
                                                                  included in the output to correctly identify the output for each task. */
@@ -230,13 +225,12 @@ union cavm_vdec_lte_task_cfg_s
                                                                  0x4 = 16QAM.
                                                                  0x6 = 64QAM.
                                                                  0x8 = 256QAM.
-                                                                 0x0, 0x3, 0x5, 0x7, 0x9-0xf = Reserved.
+                                                                 0x0, 0x3, 0x5, 0x7, 0x9-0xF = Reserved.
 
                                                                  Internal:
-                                                                 0xa specifies 1024QAM, but this mode is not supported by
+                                                                 0xA specifies 1024QAM, but this mode is not supported by
                                                                  the channel deinterleaver. */
-        uint64_t num_layers            : 3;  /**< [ 22: 20] Number of layers the transport block is mapped to. Must be either 1 or
-                                                                 2. */
+        uint64_t num_layers            : 3;  /**< [ 22: 20] Number of layers the transport block is mapped to. Must be either 0x1 or 0x2. */
         uint64_t reserved_23_31        : 9;
         uint64_t byps_ch_deint         : 1;  /**< [ 32: 32] When set, the task will bypass channel deinterleaving. */
         uint64_t byps_layer_demap      : 1;  /**< [ 33: 33] Bypasses internal layer demapping.
@@ -247,20 +241,20 @@ union cavm_vdec_lte_task_cfg_s
 
                                                                  _ When [BYPS_CH_DEINT] = 1, this field determines whether VDEC performs
                                                                  layer demapping. If [BYPS_LAYER_DEMAP] = 0, then [NUM_SYMBOLS] must be
-                                                                 2, and there must be 2 input DMA threads, using [CHUNK_SIZE] of 48
-                                                                 bytes. */
+                                                                 0x2, and there must be two input DMA threads, using
+                                                                 MHBW_JD_DMA_CFG_WORD_0_S[CHUNK_SIZE] of 0xC (48 bytes). */
         uint64_t total_num_sym         : 5;  /**< [ 38: 34] The number of input symbols to be deinterleaved.
 
                                                                  _ When [BYPS_CH_DEINT] = 0, [TOTAL_NUM_SYM] shall be set to the total
-                                                                 number of OFDM symbols [1..24] onto which the data/control LLR
-                                                                 values are mapped.  In time-first mode, this is the same as the
-                                                                 number of input threads to be deinterleaved.
+                                                                 number of OFDM symbols [0x1, 0x18] onto which the data/control LLR
+                                                                 values are mapped.  This is the same as the number of input threads
+                                                                 to be de-interleaved.
 
                                                                  _ When [BYPS_CH_DEINT] = 1 and [BYPS_LAYER_DEMAP] = 1, then [TOTAL_NUM_SYM]
-                                                                 shall be set to 0x1.
+                                                                 must be set to 0x1.
 
                                                                  _ When [BYPS_CH_DEINT] = 1 and [BYPS_LAYER_DEMAP] = 0, then [TOTAL_NUM_SYM]
-                                                                 shall be set to 0x2. */
+                                                                 must be set to 0x2. */
         uint64_t byps_llr_negate       : 1;  /**< [ 39: 39] When set, bypass LLR negation. */
         uint64_t crc_select            : 3;  /**< [ 42: 40] CRC size and type:
                                                                  0x0 = CRC8.
@@ -276,22 +270,20 @@ union cavm_vdec_lte_task_cfg_s
                                                                  deinterleaving functions are bypassed as if [BYPS_RM] = 1.
 
                                                                  When set to one, [REENC_ENA] must be 0, [BYPS_CH_DEINT] must be 1, and
-                                                                 [BYPS_LAYER_DEMAP] must be 1.
-                                                                 In addition,
-
-                                                                 This field must be set to 1 if [DEC_OUT_SIZE] is greater than 0x400.
+                                                                 [BYPS_LAYER_DEMAP] must be 1.  In addition, this field must be set
+                                                                 to 1 if [DEC_OUT_SIZE] is greater than 0x400.
 
                                                                  If [BYPS_CIRC_EXT] is set to 1, circular extension must be performed
                                                                  externally, and the input data must include
-                                                                 3*5*ceiling(TRACEBACK_LEN/5) bits of circular prefix and postfix
+                                                                 3*5*ceiling([TRACEBACK_LEN] / 5) bits of circular prefix and postfix
                                                                  before and after the encoded data. The prefix and original encoded
                                                                  data must be 128-bit aligned, with padding bits added to the end of
                                                                  the prefix as required. The postfix must be packed immediately after
                                                                  the encoded data, with no extra padding bits.
 
-                                                                 When [BYPS_CIRC_EXT] is set to 1, the coding rate is always 0x3. */
+                                                                 When [BYPS_CIRC_EXT] is set to 1, the coding rate is always 1/3. */
         uint64_t byps_rm               : 1;  /**< [ 45: 45] When set, bypass rate dematching and subblock deinterleaving. */
-        uint64_t num_llr               : 18; /**< [ 63: 46] The number of input LLRs, up to 186624. When [BYPS_CIRC_EXT] = 1, this
+        uint64_t num_llr               : 18; /**< [ 63: 46] The number of input LLRs, up to 0x2D900. When [BYPS_CIRC_EXT] = 1, this
                                                                  field is ignored and the number of encoded LLRs must be 3 x [DEC_OUT_SIZE]. */
 #endif /* Word 0 - End */
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 1 - Big Endian */
@@ -299,7 +291,7 @@ union cavm_vdec_lte_task_cfg_s
         uint64_t crc_mask_en           : 1;  /**< [120:120] When 0, no CRC mask is applied on the calculated CRC.  When 1,
                                                                  the calculated CRC is masked with [CRC_MASK]. */
         uint64_t symb_byte_align       : 2;  /**< [119:118] When 0x1, each [MOD_ORDER] bits of reencoded output are mapped to one
-                                                                 byte, with the (8-MOD_ORDER) most significant bits padded with zeros.
+                                                                 byte, with the (8 - [MOD_ORDER]) most significant bits padded with zeros.
                                                                  When 0x0, the reencoded output bits are packed with no extra padding.
 
                                                                  Internal:
@@ -313,7 +305,7 @@ union cavm_vdec_lte_task_cfg_s
                                                                  next byte.  The data bits are mapped in little endian format, and
                                                                  the 3 MSB bits are set to 0. */
         uint64_t reenc_size            : 18; /**< [117:100] The reencoded output size, in bits, after rate matching. The maximum
-                                                                 size is 186624. */
+                                                                 size is 0x2D900. */
         uint64_t reenc_byte_order      : 2;  /**< [ 99: 98] Byte order for the reencoded output data.  See Baseband PHY (BPHY):
                                                                  Data Packing section for details. Normal usage should use
                                                                  [REENC_BYTE_ORDER] = 0x0. */
@@ -324,14 +316,15 @@ union cavm_vdec_lte_task_cfg_s
         uint64_t dec_byte_order        : 2;  /**< [ 95: 94] The byte order for the decoded output data.  See Baseband PHY (BPHY):
                                                                  Data Packing section for details. Normal usage should use
                                                                  [DEC_BYTE_ORDER] = 0x0. */
-        uint64_t llr_lvl               : 4;  /**< [ 93: 90] Rounding level used when [LLR_MODE] = 0. Rounding is performed as
+        uint64_t llr_lvl               : 4;  /**< [ 93: 90] Rounding level used when [LLR_MODE] = 0x0. Rounding is performed as
                                                                  follows:
 
-                                                                 _ LLR \> 0: (LLR + (1 \<\< (LLR_LVL-1)) \>\> LLR_LVL
+                                                                 _ LLR \>= 0: (LLR + (1 \<\< ([LLR_LVL] - 1)) \>\> [LLR_LVL]
 
-                                                                 _ LLR \< 0: (LLR + NEG((1 \<\< (LLR_LVL-1))) \>\> LLR_LVL
+                                                                 _ LLR \<  0: (LLR + NEG((1 \<\< ([LLR_LVL] - 1))) \>\> [LLR_LVL]
 
-                                                                 The result is then saturated to 8 bits (symmetrically). */
+                                                                 The result is then saturated to 8 bits (symmetrically).
+                                                                 Permitted values for this field are [0x0, 0x2]. */
         uint64_t llr_mode              : 2;  /**< [ 89: 88] The LLR conversion mode.
                                                                  0x0 = LLR conversion uses the setting in [LLR_LVL].
                                                                  0x1 = LLRs are normalized by the average scale.
@@ -344,17 +337,17 @@ union cavm_vdec_lte_task_cfg_s
         uint64_t byps_reenc_rm         : 1;  /**< [ 79: 79] When set, bypass rate-matching of the reencoded output, and output
                                                                  3 x [DEC_OUT_SIZE] bits of encoder output. */
         uint64_t reenc_ena             : 1;  /**< [ 78: 78] When set, enable re-encoding. */
-        uint64_t dec_out_size          : 14; /**< [ 77: 64] The number of decoded bits. This size always
-                                                                 includes the 8 CRC bits, even if [BYPS_CRC] = 0 and the CRC is not
-                                                                 included with the output data.
+        uint64_t dec_out_size          : 14; /**< [ 77: 64] The number of decoded bits. This size always includes the CRC
+                                                                 bits, even if [BYPS_CRC] = 0 and the CRC is not included with
+                                                                 the output data.
 
                                                                  _ When [BYPS_CIRC_EXT] = 0, the max size is 0x1000.
 
                                                                  _ When [BYPS_CIRC_EXT] = 1, the max size is 0x2000. */
 #else /* Word 1 - Little Endian */
-        uint64_t dec_out_size          : 14; /**< [ 77: 64] The number of decoded bits. This size always
-                                                                 includes the 8 CRC bits, even if [BYPS_CRC] = 0 and the CRC is not
-                                                                 included with the output data.
+        uint64_t dec_out_size          : 14; /**< [ 77: 64] The number of decoded bits. This size always includes the CRC
+                                                                 bits, even if [BYPS_CRC] = 0 and the CRC is not included with
+                                                                 the output data.
 
                                                                  _ When [BYPS_CIRC_EXT] = 0, the max size is 0x1000.
 
@@ -371,14 +364,15 @@ union cavm_vdec_lte_task_cfg_s
                                                                  0x2 = LLRs are normalized by the maximum scale.
                                                                  0x3 = Reserved.
                                                                  Note, when [BYPS_CIRC_EXT] = 1, [LLR_MODE] must be 0x0. */
-        uint64_t llr_lvl               : 4;  /**< [ 93: 90] Rounding level used when [LLR_MODE] = 0. Rounding is performed as
+        uint64_t llr_lvl               : 4;  /**< [ 93: 90] Rounding level used when [LLR_MODE] = 0x0. Rounding is performed as
                                                                  follows:
 
-                                                                 _ LLR \> 0: (LLR + (1 \<\< (LLR_LVL-1)) \>\> LLR_LVL
+                                                                 _ LLR \>= 0: (LLR + (1 \<\< ([LLR_LVL] - 1)) \>\> [LLR_LVL]
 
-                                                                 _ LLR \< 0: (LLR + NEG((1 \<\< (LLR_LVL-1))) \>\> LLR_LVL
+                                                                 _ LLR \<  0: (LLR + NEG((1 \<\< ([LLR_LVL] - 1))) \>\> [LLR_LVL]
 
-                                                                 The result is then saturated to 8 bits (symmetrically). */
+                                                                 The result is then saturated to 8 bits (symmetrically).
+                                                                 Permitted values for this field are [0x0, 0x2]. */
         uint64_t dec_byte_order        : 2;  /**< [ 95: 94] The byte order for the decoded output data.  See Baseband PHY (BPHY):
                                                                  Data Packing section for details. Normal usage should use
                                                                  [DEC_BYTE_ORDER] = 0x0. */
@@ -390,9 +384,9 @@ union cavm_vdec_lte_task_cfg_s
                                                                  Data Packing section for details. Normal usage should use
                                                                  [REENC_BYTE_ORDER] = 0x0. */
         uint64_t reenc_size            : 18; /**< [117:100] The reencoded output size, in bits, after rate matching. The maximum
-                                                                 size is 186624. */
+                                                                 size is 0x2D900. */
         uint64_t symb_byte_align       : 2;  /**< [119:118] When 0x1, each [MOD_ORDER] bits of reencoded output are mapped to one
-                                                                 byte, with the (8-MOD_ORDER) most significant bits padded with zeros.
+                                                                 byte, with the (8 - [MOD_ORDER]) most significant bits padded with zeros.
                                                                  When 0x0, the reencoded output bits are packed with no extra padding.
 
                                                                  Internal:
@@ -417,42 +411,72 @@ union cavm_vdec_lte_task_cfg_s
         uint64_t reserved_152_191      : 40;
 #endif /* Word 2 - End */
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 3 - Big Endian */
-        uint64_t deint_skip_offset2    : 16; /**< [255:240] Applicable only to frequency-first mode.
+        uint64_t deint_skip_offset2    : 16; /**< [255:240] Reserved.
+                                                                 Internal:
+                                                                 Applicable only to frequency-first mode.
                                                                  The number of initial REs to be discarded in the remaining
                                                                  symbols after the first [SKIP_OFFSET1_NUM_SYM] symbols (including
                                                                  tagged LLRs marked with the value 0x80).  The actual number of
                                                                  LLRs that are discarded in each symbol is [DEINT_SKIP_OFFSET2] *
                                                                  [MOD_ORDER]. */
-        uint64_t deint_skip_offset1    : 16; /**< [239:224] Applicable only to frequency-first mode.
+        uint64_t deint_skip_offset1    : 16; /**< [239:224] Reserved.
+                                                                 Internal:
+                                                                 Applicable only to frequency-first mode.
                                                                  The number of initial REs to be discarded in the first
                                                                  [SKIP_OFFSET1_NUM_SYM] symbols (including tagged LLRs marked
                                                                  with the value 0x80).  The actual number of LLRs that are
                                                                  discarded in each symbol is [DEINT_SKIP_OFFSET1] * [MOD_ORDER]. */
-        uint64_t skip_offset1_num_sym  : 16; /**< [223:208] Applicable only to frequency-first mode.
+        uint64_t skip_offset1_num_sym  : 16; /**< [223:208] Reserved.
+                                                                 Internal:
+                                                                 Applicable only to frequency-first mode.
                                                                  Indicates the number of OFDM symbols for which the
                                                                  [DEINT_SKIP_OFFSET1] parameter applies. */
         uint64_t reserved_198_207      : 10;
         uint64_t ch_deint_offset       : 5;  /**< [197:193] Number of REs to be discarded across all threads from the
                                                                  beginning of the channel deinterleaver (excluding RI LLRs
                                                                  that are marked with the value 0x80).  The actual number of
-                                                                 LLRs that are discarded is [CH_DEINT_OFFSET] * [MOD_ORDER]. */
-        uint64_t ch_deint_mode         : 1;  /**< [192:192] Reserved. Must be zero. */
+                                                                 LLRs that are discarded is [CH_DEINT_OFFSET] * [MOD_ORDER].
+
+                                                                 Internal:
+                                                                 Applicable only to time-first mode. */
+        uint64_t ch_deint_mode         : 1;  /**< [192:192] Must be set to 0.
+                                                                 Internal:
+                                                                 Frequency-first mode is no longer needed for this block,
+                                                                 but the logic is still present.
+                                                                 When 0, time-first mode is enabled, and multi-threaded DMA must
+                                                                 be used.  When 1, frequency-first mode is enabled, and a
+                                                                 sequential DMA per symbol, or a 2D DMA across all symbols is used. */
 #else /* Word 3 - Little Endian */
-        uint64_t ch_deint_mode         : 1;  /**< [192:192] Reserved. Must be zero. */
+        uint64_t ch_deint_mode         : 1;  /**< [192:192] Must be set to 0.
+                                                                 Internal:
+                                                                 Frequency-first mode is no longer needed for this block,
+                                                                 but the logic is still present.
+                                                                 When 0, time-first mode is enabled, and multi-threaded DMA must
+                                                                 be used.  When 1, frequency-first mode is enabled, and a
+                                                                 sequential DMA per symbol, or a 2D DMA across all symbols is used. */
         uint64_t ch_deint_offset       : 5;  /**< [197:193] Number of REs to be discarded across all threads from the
                                                                  beginning of the channel deinterleaver (excluding RI LLRs
                                                                  that are marked with the value 0x80).  The actual number of
-                                                                 LLRs that are discarded is [CH_DEINT_OFFSET] * [MOD_ORDER]. */
+                                                                 LLRs that are discarded is [CH_DEINT_OFFSET] * [MOD_ORDER].
+
+                                                                 Internal:
+                                                                 Applicable only to time-first mode. */
         uint64_t reserved_198_207      : 10;
-        uint64_t skip_offset1_num_sym  : 16; /**< [223:208] Applicable only to frequency-first mode.
+        uint64_t skip_offset1_num_sym  : 16; /**< [223:208] Reserved.
+                                                                 Internal:
+                                                                 Applicable only to frequency-first mode.
                                                                  Indicates the number of OFDM symbols for which the
                                                                  [DEINT_SKIP_OFFSET1] parameter applies. */
-        uint64_t deint_skip_offset1    : 16; /**< [239:224] Applicable only to frequency-first mode.
+        uint64_t deint_skip_offset1    : 16; /**< [239:224] Reserved.
+                                                                 Internal:
+                                                                 Applicable only to frequency-first mode.
                                                                  The number of initial REs to be discarded in the first
                                                                  [SKIP_OFFSET1_NUM_SYM] symbols (including tagged LLRs marked
                                                                  with the value 0x80).  The actual number of LLRs that are
                                                                  discarded in each symbol is [DEINT_SKIP_OFFSET1] * [MOD_ORDER]. */
-        uint64_t deint_skip_offset2    : 16; /**< [255:240] Applicable only to frequency-first mode.
+        uint64_t deint_skip_offset2    : 16; /**< [255:240] Reserved.
+                                                                 Internal:
+                                                                 Applicable only to frequency-first mode.
                                                                  The number of initial REs to be discarded in the remaining
                                                                  symbols after the first [SKIP_OFFSET1_NUM_SYM] symbols (including
                                                                  tagged LLRs marked with the value 0x80).  The actual number of
@@ -461,7 +485,9 @@ union cavm_vdec_lte_task_cfg_s
 #endif /* Word 3 - End */
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 4 - Big Endian */
         uint64_t num_rd_dma_wrds_per_sym : 16;/**< [319:304] Number of 128-bit words of DMA input per OFDM symbol.
-                                                                 In time-first mode, this is the same as the number of words per thread.
+                                                                 This is the same as the number of words per thread.
+
+                                                                 Internal:
                                                                  In frequency-first mode, this is the same as [NUM_RD_WRDS] / [TOTAL_NUM_SYM]. */
         uint64_t num_wr1_wrds          : 16; /**< [303:288] Number of 64-bit words this task will output on write DMA port 1.
                                                                  Note that port 1 is used for writing the reencoded output and this
@@ -475,7 +501,9 @@ union cavm_vdec_lte_task_cfg_s
                                                                  Note that port 1 is used for writing the reencoded output and this
                                                                  field must be set to zero if [REENC_ENA] = 0. */
         uint64_t num_rd_dma_wrds_per_sym : 16;/**< [319:304] Number of 128-bit words of DMA input per OFDM symbol.
-                                                                 In time-first mode, this is the same as the number of words per thread.
+                                                                 This is the same as the number of words per thread.
+
+                                                                 Internal:
                                                                  In frequency-first mode, this is the same as [NUM_RD_WRDS] / [TOTAL_NUM_SYM]. */
 #endif /* Word 4 - End */
     } s;
@@ -666,9 +694,9 @@ union cavm_vdecx_hab_jcfg0_ramx_data
     struct cavm_vdecx_hab_jcfg0_ramx_data_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t entry                 : 64; /**< [ 63:  0](R/W) Job configuration RAM entry. */
+        uint64_t entry                 : 64; /**< [ 63:  0](R/W/H) Job configuration RAM entry. */
 #else /* Word 0 - Little Endian */
-        uint64_t entry                 : 64; /**< [ 63:  0](R/W) Job configuration RAM entry. */
+        uint64_t entry                 : 64; /**< [ 63:  0](R/W/H) Job configuration RAM entry. */
 #endif /* Word 0 - End */
     } s;
     /* struct cavm_vdecx_hab_jcfg0_ramx_data_s cn; */
@@ -701,9 +729,9 @@ union cavm_vdecx_hab_jcfg1_ramx_data
     struct cavm_vdecx_hab_jcfg1_ramx_data_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t entry                 : 64; /**< [ 63:  0](R/W) Job configuration RAM entry. */
+        uint64_t entry                 : 64; /**< [ 63:  0](R/W/H) Job configuration RAM entry. */
 #else /* Word 0 - Little Endian */
-        uint64_t entry                 : 64; /**< [ 63:  0](R/W) Job configuration RAM entry. */
+        uint64_t entry                 : 64; /**< [ 63:  0](R/W/H) Job configuration RAM entry. */
 #endif /* Word 0 - End */
     } s;
     /* struct cavm_vdecx_hab_jcfg1_ramx_data_s cn; */
@@ -736,9 +764,9 @@ union cavm_vdecx_hab_jcfg2_ramx_data
     struct cavm_vdecx_hab_jcfg2_ramx_data_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t entry                 : 64; /**< [ 63:  0](R/W) Job configuration RAM entry. */
+        uint64_t entry                 : 64; /**< [ 63:  0](R/W/H) Job configuration RAM entry. */
 #else /* Word 0 - Little Endian */
-        uint64_t entry                 : 64; /**< [ 63:  0](R/W) Job configuration RAM entry. */
+        uint64_t entry                 : 64; /**< [ 63:  0](R/W/H) Job configuration RAM entry. */
 #endif /* Word 0 - End */
     } s;
     /* struct cavm_vdecx_hab_jcfg2_ramx_data_s cn; */
@@ -844,9 +872,7 @@ static inline uint64_t CAVM_VDECX_STATUS(unsigned long a)
  *
  * VDEC Task Configuration Error Register
  * This register reports task configuration errors, that occur when a
- * specified parameter value is outside the acceptable range.  Different
- * bit mappings are used depending on whether the VDEC_COMMON_CFG_S[PHY_MODE] for the job is set
- * to LTE, GSM or 3G mode.
+ * specified parameter value is outside the acceptable range.
  */
 union cavm_vdecx_tc_config_err_flags_reg
 {
@@ -854,325 +880,55 @@ union cavm_vdecx_tc_config_err_flags_reg
     struct cavm_vdecx_tc_config_err_flags_reg_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_34_63        : 30;
-        uint64_t error33               : 1;  /**< [ 33: 33](R/W) _ LTE mode: Reserved.
-
-                                                                 _ GSM mode: Reserved.
-
-                                                                 _ 3G mode: invalid VDEC_LTE_TASK_CFG_S[TRACEBACK_LEN] [20:TB_MAX]. */
-        uint64_t error32               : 1;  /**< [ 32: 32](R/W) Reserved.
-                                                                 Internal:
-                                                                 In 3G mode, TDEC param algo_select. */
-        uint64_t error31               : 1;  /**< [ 31: 31](R/W) Reserved.
-                                                                 Internal:
-                                                                 In 3G mode, TDEC param sw_speed. */
-        uint64_t error30               : 1;  /**< [ 30: 30](R/W) Reserved.
-                                                                 Internal:
-                                                                 In 3G mode, TDEC param table_index. */
-        uint64_t error29               : 1;  /**< [ 29: 29](R/W) Reserved.
-                                                                 Internal:
-                                                                 In 3G mode, TDEC param threshold. */
-        uint64_t error28               : 1;  /**< [ 28: 28](R/W) Reserved.
-                                                                 Internal:
-                                                                 In 3G mode, TDEC param dyn_stop. */
-        uint64_t error27               : 1;  /**< [ 27: 27](R/W) Reserved.
-                                                                 Internal:
-                                                                 In 3G mode, TDEC param halfit. */
-        uint64_t error26               : 1;  /**< [ 26: 26](R/W) _ LTE mode: Reserved.
-
-                                                                 _ GSM mode: Reserved.
-
-                                                                 _ 3G mode: invalid VDEC_LTE_TASK_CFG_S[BYPS_CRC] (0,1). */
-        uint64_t error25               : 1;  /**< [ 25: 25](R/W) _ LTE mode: Reserved.
-
-                                                                 _ GSM mode: Reserved.
-
-                                                                 _ 3G mode: invalid VDEC_LTE_TASK_CFG_S[BYPS_LLR_NEGATE] (0,1). */
-        uint64_t error24               : 1;  /**< [ 24: 24](R/W) _ LTE mode: Reserved.
-
-                                                                 _ GSM mode: Reserved.
-
-                                                                 _ 3G mode: invalid BPYS_TB_PROC (0,1). */
-        uint64_t error23               : 1;  /**< [ 23: 23](R/W) _ LTE mode: Reserved.
-
-                                                                 _ GSM mode: Reserved.
-
-                                                                 _ 3G mode: invalid CRC_SIZE [0:4]. */
-        uint64_t error22               : 1;  /**< [ 22: 22](R/W) _ LTE mode: Reserved.
-
-                                                                 _ GSM mode: Reserved.
-
-                                                                 _ 3G mode: invalid FILLER [0:40]. */
-        uint64_t error21               : 1;  /**< [ 21: 21](R/W) _ LTE mode: Reserved.
-
-                                                                 _ GSM mode: Reserved.
-
-                                                                 _ 3G mode: invalid TB_LEN [1:5000]. */
-        uint64_t error20               : 1;  /**< [ 20: 20](R/W) _ LTE mode: Reserved.
-
-                                                                 _ GSM mode: Reserved.
-
-                                                                 _ 3G mode: invalid CB_LEN [1:5114]. */
-        uint64_t error19               : 1;  /**< [ 19: 19](R/W) _ LTE mode: invalid REENC_BYTE_ORDER (0,1,2).
-
-                                                                 _ GSM mode: Reserved.
-
-                                                                 _ 3G mode: invalid NUM_CB [1:3]. */
-        uint64_t error18               : 1;  /**< [ 18: 18](R/W) _ LTE mode: invalid VDEC_LTE_TASK_CFG_S[REENC_BIT_ORDER] (0,1).
-
-                                                                 _ GSM mode: Reserved.
-
-                                                                 _ 3G mode: invalid CODE_RATE (0,1). */
-        uint64_t error17               : 1;  /**< [ 17: 17](R/W) _ LTE mode: invalid VDEC_LTE_TASK_CFG_S[DEC_BYTE_ORDER] (0,1,2).
-
-                                                                 _ GSM mode: Reserved.
-
-                                                                 _ 3G mode: invalid FEC_MODE (0,1). */
-        uint64_t error16               : 1;  /**< [ 16: 16](R/W) _ LTE mode: invalid VDEC_LTE_TASK_CFG_S[DEC_BIT_ORDER] (0,1).
-
-                                                                 _ GSM mode: Reserved.
-
-                                                                 _ 3G mode: invalid NUM_TB [1:32]. */
-        uint64_t error15               : 1;  /**< [ 15: 15](R/W) _ LTE mode: invalid VDEC_LTE_TASK_CFG_S[SYMB_BYTE_ALIGN] (0,1).
-
-                                                                 _ GSM mode: invalid START_METRIC1 [0:2048].
-
-                                                                 _ 3G mode: Reserved. */
-        uint64_t error14               : 1;  /**< [ 14: 14](R/W) _ LTE mode: invalid VDEC_LTE_TASK_CFG_S[REENC_SIZE] [1:2^18-1].
-
-                                                                 _ GSM mode: invalid START_METRIC0 [0:2048].
-
-                                                                 _ 3G mode: Reserved. */
-        uint64_t error13               : 1;  /**< [ 13: 13](R/W) _ LTE mode: invalid VDEC_LTE_TASK_CFG_S[BYPS_REENC_RM].
-
-                                                                 _ GSM mode: invalid DEC_BIT_ORDER (0,1).
-
-                                                                 _ 3G mode: Reserved. */
-        uint64_t error12               : 1;  /**< [ 12: 12](R/W) _ LTE mode: invalid REENC_ENA (0,1).
-
-                                                                 _ GSM mode: invalid VDEC_LTE_TASK_CFG_S[DEC_BYTE_ORDER] (0,1,2).
-
-                                                                 _ 3G mode: Reserved. */
-        uint64_t error11               : 1;  /**< [ 11: 11](R/W) _ LTE mode: invalid VDEC_LTE_TASK_CFG_S[LLR_LVL] [0:6].
-
-                                                                 _ GSM mode: invalid TAILBITING (0,1).
-
-                                                                 _ 3G mode: Reserved. */
-        uint64_t error10               : 1;  /**< [ 10: 10](R/W) _ LTE mode: invalid VDEC_LTE_TASK_CFG_S[LLR_MODE] (0,1,2).
-
-                                                                 _ GSM mode: invalid TAILBITS (0,1).
-
-                                                                 _ 3G mode: Reserved. */
-        uint64_t error9                : 1;  /**< [  9:  9](R/W) _ LTE mode: invalid VDEC_LTE_TASK_CFG_S[BYPS_LLR_NEGATE] (0,1).
-
-                                                                 _ GSM mode: Reserved.
-
-                                                                 _ 3G mode: Reserved. */
-        uint64_t error8                : 1;  /**< [  8:  8](R/W) _ LTE mode: invalid VDEC_LTE_TASK_CFG_S[BYPS_CIRC_EXT] (0,1).
-
-                                                                 _ GSM mode: invalid RECURSIVE (0,1).
-
-                                                                 _ 3G mode: Reserved. */
-        uint64_t error7                : 1;  /**< [  7:  7](R/W) _ LTE mode: invalid VDEC_LTE_TASK_CFG_S[BYPS_CRC] (0,1).
-
-                                                                 _ GSM mode: invalid RATE_INDEX [2:10].
-
-                                                                 _ 3G mode: Reserved. */
-        uint64_t error6                : 1;  /**< [  6:  6](R/W) _ LTE mode: invalid VDEC_LTE_TASK_CFG_S[MOD_ORDER] (2,4,6).
-
-                                                                 _ GSM mode: invalid CODED_BITS [36:1938].
-
-                                                                 _ 3G mode: invalid LLR_LVL [0: I_WIDTH + REP_WIDTH-D_WIDTH]. */
-        uint64_t error5                : 1;  /**< [  5:  5](R/W) _ LTE mode: invalid VDEC_LTE_TASK_CFG_S[BYPS_LAYER_DEMAP] (0,1).
-
-                                                                 _ GSM mode: invalid DEC_BITS [18:876].
-
-                                                                 _ 3G mode: invalid PINCT_REP [0:255]. */
-        uint64_t error4                : 1;  /**< [  4:  4](R/W) _ LTE mode: invalid VDEC_LTE_TASK_CFG_S[NUM_LLR] [1:2^18-1].
-
-                                                                 _ GSM mode: invalid TRACEBACK_LEN [20:212].
-
-                                                                 _ 3G mode: invalid TTI [0:3]. */
-        uint64_t error3                : 1;  /**< [  3:  3](R/W) _ LTE mode: invalid VDEC_LTE_TASK_CFG_S[BYPS_RM] (0,1).
-
-                                                                 _ GSM mode: invalid CHANNEL [1:189].
-
-                                                                 _ 3G mode: invalid VDEC_LTE_TASK_CFG_S[DEC_BYTE_ORDER] (0,1). */
-        uint64_t error2                : 1;  /**< [  2:  2](R/W) _ LTE mode: invalid VDEC_LTE_TASK_CFG_S[TRACEBACK_LEN] [20:96].
-
-                                                                 _ GSM mode: invalid BYPS_FRONTEND (0,1).
-
-                                                                 _ 3G mode: invalid VDEC_LTE_TASK_CFG_S[DEC_BIT_ORDER] (0,1). */
-        uint64_t error1                : 1;  /**< [  1:  1](R/W) _ LTE mode: invalid VDEC_LTE_TASK_CFG_S[DEC_OUT_SIZE] [20:8192].
-
-                                                                 _ GSM mode: Reserved.
-
-                                                                 _ 3G mode: Reserved. */
-        uint64_t error0                : 1;  /**< [  0:  0](R/W) _ LTE mode: Reserved.
-
-                                                                 _ GSM mode: invalid PHY_MODE (0,1,2).
-
-                                                                 _ 3G mode: invalid PHY_MODE (0,1,2). */
+        uint64_t reserved_23_63        : 41;
+        uint64_t invalid_reenc_byte_order : 1;/**< [ 22: 22](RO/H) Invalid VDEC_LTE_TASK_CFG_S[REENC_BYTE_ORDER] value. */
+        uint64_t invalid_reenc_bit_order : 1;/**< [ 21: 21](RO/H) Invalid VDEC_LTE_TASK_CFG_S[REENC_BIT_ORDER] value. */
+        uint64_t invalid_dec_byte_order : 1; /**< [ 20: 20](RO/H) Invalid VDEC_LTE_TASK_CFG_S[DEC_BYTE_ORDER] value. */
+        uint64_t invalid_dec_bit_order : 1;  /**< [ 19: 19](RO/H) Invalid VDEC_LTE_TASK_CFG_S[DEC_BIT_ORDER] value. */
+        uint64_t invalid_symb_byte_align : 1;/**< [ 18: 18](RO/H) Invalid VDEC_LTE_TASK_CFG_S[SYMB_BYTE_ALIGN] value. */
+        uint64_t invalid_reenc_size    : 1;  /**< [ 17: 17](RO/H) Invalid VDEC_LTE_TASK_CFG_S[REENC_SIZE] value. */
+        uint64_t invalid_byps_reenc_rm : 1;  /**< [ 16: 16](RO/H) Invalid VDEC_LTE_TASK_CFG_S[BYPS_REENC_RM] value. */
+        uint64_t invalid_reenc_ena     : 1;  /**< [ 15: 15](RO/H) Invalid VDEC_LTE_TASK_CFG_S[REENC_ENA] value. */
+        uint64_t invalid_llr_lvl       : 1;  /**< [ 14: 14](RO/H) Invalid VDEC_LTE_TASK_CFG_S[LLR_LVL] value. */
+        uint64_t invalid_llr_mode      : 1;  /**< [ 13: 13](RO/H) Invalid VDEC_LTE_TASK_CFG_S[LLR_MODE] value. */
+        uint64_t invalid_byps_llr_negate : 1;/**< [ 12: 12](RO/H) Invalid VDEC_LTE_TASK_CFG_S[BYPS_LLR_NEGATE] value. */
+        uint64_t invalid_byps_circ_ext : 1;  /**< [ 11: 11](RO/H) Invalid VDEC_LTE_TASK_CFG_S[BYPS_CIRC_EXT] value. */
+        uint64_t invalid_crc_mask      : 1;  /**< [ 10: 10](RO/H) Invalid VDEC_LTE_TASK_CFG_S[CRC_MASK] value. */
+        uint64_t invalid_crc_mask_en   : 1;  /**< [  9:  9](RO/H) Invalid VDEC_LTE_TASK_CFG_S[CRC_MASK_EN] value. */
+        uint64_t invalid_crc_select    : 1;  /**< [  8:  8](RO/H) Invalid VDEC_LTE_TASK_CFG_S[CRC_SELECT] value. */
+        uint64_t invalid_byps_crc      : 1;  /**< [  7:  7](RO/H) Invalid VDEC_LTE_TASK_CFG_S[BYPS_CRC] value. */
+        uint64_t invalid_mod_order     : 1;  /**< [  6:  6](RO/H) Invalid VDEC_LTE_TASK_CFG_S[MOD_ORDER] value. */
+        uint64_t invalid_byps_layer_demap : 1;/**< [  5:  5](RO/H) Invalid VDEC_LTE_TASK_CFG_S[BYPS_LAYER_DEMAP] value. */
+        uint64_t invalid_num_llr       : 1;  /**< [  4:  4](RO/H) Invalid VDEC_LTE_TASK_CFG_S[NUM_LLR] value. */
+        uint64_t invalid_byps_rm       : 1;  /**< [  3:  3](RO/H) Invalid VDEC_LTE_TASK_CFG_S[BYPS_RM] value. */
+        uint64_t invalid_traceback_len : 1;  /**< [  2:  2](RO/H) Invalid VDEC_LTE_TASK_CFG_S[TRACEBACK_LEN] value. */
+        uint64_t invalid_dec_out_size  : 1;  /**< [  1:  1](RO/H) Invalid VDEC_LTE_TASK_CFG_S[DEC_OUT_SIZE] value. */
+        uint64_t reserved_0            : 1;
 #else /* Word 0 - Little Endian */
-        uint64_t error0                : 1;  /**< [  0:  0](R/W) _ LTE mode: Reserved.
-
-                                                                 _ GSM mode: invalid PHY_MODE (0,1,2).
-
-                                                                 _ 3G mode: invalid PHY_MODE (0,1,2). */
-        uint64_t error1                : 1;  /**< [  1:  1](R/W) _ LTE mode: invalid VDEC_LTE_TASK_CFG_S[DEC_OUT_SIZE] [20:8192].
-
-                                                                 _ GSM mode: Reserved.
-
-                                                                 _ 3G mode: Reserved. */
-        uint64_t error2                : 1;  /**< [  2:  2](R/W) _ LTE mode: invalid VDEC_LTE_TASK_CFG_S[TRACEBACK_LEN] [20:96].
-
-                                                                 _ GSM mode: invalid BYPS_FRONTEND (0,1).
-
-                                                                 _ 3G mode: invalid VDEC_LTE_TASK_CFG_S[DEC_BIT_ORDER] (0,1). */
-        uint64_t error3                : 1;  /**< [  3:  3](R/W) _ LTE mode: invalid VDEC_LTE_TASK_CFG_S[BYPS_RM] (0,1).
-
-                                                                 _ GSM mode: invalid CHANNEL [1:189].
-
-                                                                 _ 3G mode: invalid VDEC_LTE_TASK_CFG_S[DEC_BYTE_ORDER] (0,1). */
-        uint64_t error4                : 1;  /**< [  4:  4](R/W) _ LTE mode: invalid VDEC_LTE_TASK_CFG_S[NUM_LLR] [1:2^18-1].
-
-                                                                 _ GSM mode: invalid TRACEBACK_LEN [20:212].
-
-                                                                 _ 3G mode: invalid TTI [0:3]. */
-        uint64_t error5                : 1;  /**< [  5:  5](R/W) _ LTE mode: invalid VDEC_LTE_TASK_CFG_S[BYPS_LAYER_DEMAP] (0,1).
-
-                                                                 _ GSM mode: invalid DEC_BITS [18:876].
-
-                                                                 _ 3G mode: invalid PINCT_REP [0:255]. */
-        uint64_t error6                : 1;  /**< [  6:  6](R/W) _ LTE mode: invalid VDEC_LTE_TASK_CFG_S[MOD_ORDER] (2,4,6).
-
-                                                                 _ GSM mode: invalid CODED_BITS [36:1938].
-
-                                                                 _ 3G mode: invalid LLR_LVL [0: I_WIDTH + REP_WIDTH-D_WIDTH]. */
-        uint64_t error7                : 1;  /**< [  7:  7](R/W) _ LTE mode: invalid VDEC_LTE_TASK_CFG_S[BYPS_CRC] (0,1).
-
-                                                                 _ GSM mode: invalid RATE_INDEX [2:10].
-
-                                                                 _ 3G mode: Reserved. */
-        uint64_t error8                : 1;  /**< [  8:  8](R/W) _ LTE mode: invalid VDEC_LTE_TASK_CFG_S[BYPS_CIRC_EXT] (0,1).
-
-                                                                 _ GSM mode: invalid RECURSIVE (0,1).
-
-                                                                 _ 3G mode: Reserved. */
-        uint64_t error9                : 1;  /**< [  9:  9](R/W) _ LTE mode: invalid VDEC_LTE_TASK_CFG_S[BYPS_LLR_NEGATE] (0,1).
-
-                                                                 _ GSM mode: Reserved.
-
-                                                                 _ 3G mode: Reserved. */
-        uint64_t error10               : 1;  /**< [ 10: 10](R/W) _ LTE mode: invalid VDEC_LTE_TASK_CFG_S[LLR_MODE] (0,1,2).
-
-                                                                 _ GSM mode: invalid TAILBITS (0,1).
-
-                                                                 _ 3G mode: Reserved. */
-        uint64_t error11               : 1;  /**< [ 11: 11](R/W) _ LTE mode: invalid VDEC_LTE_TASK_CFG_S[LLR_LVL] [0:6].
-
-                                                                 _ GSM mode: invalid TAILBITING (0,1).
-
-                                                                 _ 3G mode: Reserved. */
-        uint64_t error12               : 1;  /**< [ 12: 12](R/W) _ LTE mode: invalid REENC_ENA (0,1).
-
-                                                                 _ GSM mode: invalid VDEC_LTE_TASK_CFG_S[DEC_BYTE_ORDER] (0,1,2).
-
-                                                                 _ 3G mode: Reserved. */
-        uint64_t error13               : 1;  /**< [ 13: 13](R/W) _ LTE mode: invalid VDEC_LTE_TASK_CFG_S[BYPS_REENC_RM].
-
-                                                                 _ GSM mode: invalid DEC_BIT_ORDER (0,1).
-
-                                                                 _ 3G mode: Reserved. */
-        uint64_t error14               : 1;  /**< [ 14: 14](R/W) _ LTE mode: invalid VDEC_LTE_TASK_CFG_S[REENC_SIZE] [1:2^18-1].
-
-                                                                 _ GSM mode: invalid START_METRIC0 [0:2048].
-
-                                                                 _ 3G mode: Reserved. */
-        uint64_t error15               : 1;  /**< [ 15: 15](R/W) _ LTE mode: invalid VDEC_LTE_TASK_CFG_S[SYMB_BYTE_ALIGN] (0,1).
-
-                                                                 _ GSM mode: invalid START_METRIC1 [0:2048].
-
-                                                                 _ 3G mode: Reserved. */
-        uint64_t error16               : 1;  /**< [ 16: 16](R/W) _ LTE mode: invalid VDEC_LTE_TASK_CFG_S[DEC_BIT_ORDER] (0,1).
-
-                                                                 _ GSM mode: Reserved.
-
-                                                                 _ 3G mode: invalid NUM_TB [1:32]. */
-        uint64_t error17               : 1;  /**< [ 17: 17](R/W) _ LTE mode: invalid VDEC_LTE_TASK_CFG_S[DEC_BYTE_ORDER] (0,1,2).
-
-                                                                 _ GSM mode: Reserved.
-
-                                                                 _ 3G mode: invalid FEC_MODE (0,1). */
-        uint64_t error18               : 1;  /**< [ 18: 18](R/W) _ LTE mode: invalid VDEC_LTE_TASK_CFG_S[REENC_BIT_ORDER] (0,1).
-
-                                                                 _ GSM mode: Reserved.
-
-                                                                 _ 3G mode: invalid CODE_RATE (0,1). */
-        uint64_t error19               : 1;  /**< [ 19: 19](R/W) _ LTE mode: invalid REENC_BYTE_ORDER (0,1,2).
-
-                                                                 _ GSM mode: Reserved.
-
-                                                                 _ 3G mode: invalid NUM_CB [1:3]. */
-        uint64_t error20               : 1;  /**< [ 20: 20](R/W) _ LTE mode: Reserved.
-
-                                                                 _ GSM mode: Reserved.
-
-                                                                 _ 3G mode: invalid CB_LEN [1:5114]. */
-        uint64_t error21               : 1;  /**< [ 21: 21](R/W) _ LTE mode: Reserved.
-
-                                                                 _ GSM mode: Reserved.
-
-                                                                 _ 3G mode: invalid TB_LEN [1:5000]. */
-        uint64_t error22               : 1;  /**< [ 22: 22](R/W) _ LTE mode: Reserved.
-
-                                                                 _ GSM mode: Reserved.
-
-                                                                 _ 3G mode: invalid FILLER [0:40]. */
-        uint64_t error23               : 1;  /**< [ 23: 23](R/W) _ LTE mode: Reserved.
-
-                                                                 _ GSM mode: Reserved.
-
-                                                                 _ 3G mode: invalid CRC_SIZE [0:4]. */
-        uint64_t error24               : 1;  /**< [ 24: 24](R/W) _ LTE mode: Reserved.
-
-                                                                 _ GSM mode: Reserved.
-
-                                                                 _ 3G mode: invalid BPYS_TB_PROC (0,1). */
-        uint64_t error25               : 1;  /**< [ 25: 25](R/W) _ LTE mode: Reserved.
-
-                                                                 _ GSM mode: Reserved.
-
-                                                                 _ 3G mode: invalid VDEC_LTE_TASK_CFG_S[BYPS_LLR_NEGATE] (0,1). */
-        uint64_t error26               : 1;  /**< [ 26: 26](R/W) _ LTE mode: Reserved.
-
-                                                                 _ GSM mode: Reserved.
-
-                                                                 _ 3G mode: invalid VDEC_LTE_TASK_CFG_S[BYPS_CRC] (0,1). */
-        uint64_t error27               : 1;  /**< [ 27: 27](R/W) Reserved.
-                                                                 Internal:
-                                                                 In 3G mode, TDEC param halfit. */
-        uint64_t error28               : 1;  /**< [ 28: 28](R/W) Reserved.
-                                                                 Internal:
-                                                                 In 3G mode, TDEC param dyn_stop. */
-        uint64_t error29               : 1;  /**< [ 29: 29](R/W) Reserved.
-                                                                 Internal:
-                                                                 In 3G mode, TDEC param threshold. */
-        uint64_t error30               : 1;  /**< [ 30: 30](R/W) Reserved.
-                                                                 Internal:
-                                                                 In 3G mode, TDEC param table_index. */
-        uint64_t error31               : 1;  /**< [ 31: 31](R/W) Reserved.
-                                                                 Internal:
-                                                                 In 3G mode, TDEC param sw_speed. */
-        uint64_t error32               : 1;  /**< [ 32: 32](R/W) Reserved.
-                                                                 Internal:
-                                                                 In 3G mode, TDEC param algo_select. */
-        uint64_t error33               : 1;  /**< [ 33: 33](R/W) _ LTE mode: Reserved.
-
-                                                                 _ GSM mode: Reserved.
-
-                                                                 _ 3G mode: invalid VDEC_LTE_TASK_CFG_S[TRACEBACK_LEN] [20:TB_MAX]. */
-        uint64_t reserved_34_63        : 30;
+        uint64_t reserved_0            : 1;
+        uint64_t invalid_dec_out_size  : 1;  /**< [  1:  1](RO/H) Invalid VDEC_LTE_TASK_CFG_S[DEC_OUT_SIZE] value. */
+        uint64_t invalid_traceback_len : 1;  /**< [  2:  2](RO/H) Invalid VDEC_LTE_TASK_CFG_S[TRACEBACK_LEN] value. */
+        uint64_t invalid_byps_rm       : 1;  /**< [  3:  3](RO/H) Invalid VDEC_LTE_TASK_CFG_S[BYPS_RM] value. */
+        uint64_t invalid_num_llr       : 1;  /**< [  4:  4](RO/H) Invalid VDEC_LTE_TASK_CFG_S[NUM_LLR] value. */
+        uint64_t invalid_byps_layer_demap : 1;/**< [  5:  5](RO/H) Invalid VDEC_LTE_TASK_CFG_S[BYPS_LAYER_DEMAP] value. */
+        uint64_t invalid_mod_order     : 1;  /**< [  6:  6](RO/H) Invalid VDEC_LTE_TASK_CFG_S[MOD_ORDER] value. */
+        uint64_t invalid_byps_crc      : 1;  /**< [  7:  7](RO/H) Invalid VDEC_LTE_TASK_CFG_S[BYPS_CRC] value. */
+        uint64_t invalid_crc_select    : 1;  /**< [  8:  8](RO/H) Invalid VDEC_LTE_TASK_CFG_S[CRC_SELECT] value. */
+        uint64_t invalid_crc_mask_en   : 1;  /**< [  9:  9](RO/H) Invalid VDEC_LTE_TASK_CFG_S[CRC_MASK_EN] value. */
+        uint64_t invalid_crc_mask      : 1;  /**< [ 10: 10](RO/H) Invalid VDEC_LTE_TASK_CFG_S[CRC_MASK] value. */
+        uint64_t invalid_byps_circ_ext : 1;  /**< [ 11: 11](RO/H) Invalid VDEC_LTE_TASK_CFG_S[BYPS_CIRC_EXT] value. */
+        uint64_t invalid_byps_llr_negate : 1;/**< [ 12: 12](RO/H) Invalid VDEC_LTE_TASK_CFG_S[BYPS_LLR_NEGATE] value. */
+        uint64_t invalid_llr_mode      : 1;  /**< [ 13: 13](RO/H) Invalid VDEC_LTE_TASK_CFG_S[LLR_MODE] value. */
+        uint64_t invalid_llr_lvl       : 1;  /**< [ 14: 14](RO/H) Invalid VDEC_LTE_TASK_CFG_S[LLR_LVL] value. */
+        uint64_t invalid_reenc_ena     : 1;  /**< [ 15: 15](RO/H) Invalid VDEC_LTE_TASK_CFG_S[REENC_ENA] value. */
+        uint64_t invalid_byps_reenc_rm : 1;  /**< [ 16: 16](RO/H) Invalid VDEC_LTE_TASK_CFG_S[BYPS_REENC_RM] value. */
+        uint64_t invalid_reenc_size    : 1;  /**< [ 17: 17](RO/H) Invalid VDEC_LTE_TASK_CFG_S[REENC_SIZE] value. */
+        uint64_t invalid_symb_byte_align : 1;/**< [ 18: 18](RO/H) Invalid VDEC_LTE_TASK_CFG_S[SYMB_BYTE_ALIGN] value. */
+        uint64_t invalid_dec_bit_order : 1;  /**< [ 19: 19](RO/H) Invalid VDEC_LTE_TASK_CFG_S[DEC_BIT_ORDER] value. */
+        uint64_t invalid_dec_byte_order : 1; /**< [ 20: 20](RO/H) Invalid VDEC_LTE_TASK_CFG_S[DEC_BYTE_ORDER] value. */
+        uint64_t invalid_reenc_bit_order : 1;/**< [ 21: 21](RO/H) Invalid VDEC_LTE_TASK_CFG_S[REENC_BIT_ORDER] value. */
+        uint64_t invalid_reenc_byte_order : 1;/**< [ 22: 22](RO/H) Invalid VDEC_LTE_TASK_CFG_S[REENC_BYTE_ORDER] value. */
+        uint64_t reserved_23_63        : 41;
 #endif /* Word 0 - End */
     } s;
     /* struct cavm_vdecx_tc_config_err_flags_reg_s cn; */
@@ -1206,9 +962,9 @@ union cavm_vdecx_tc_config_regx
     struct cavm_vdecx_tc_config_regx_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t entry                 : 64; /**< [ 63:  0](R/W) Config bits. */
+        uint64_t entry                 : 64; /**< [ 63:  0](R/W/H) Config bits. */
 #else /* Word 0 - Little Endian */
-        uint64_t entry                 : 64; /**< [ 63:  0](R/W) Config bits. */
+        uint64_t entry                 : 64; /**< [ 63:  0](R/W/H) Config bits. */
 #endif /* Word 0 - End */
     } s;
     /* struct cavm_vdecx_tc_config_regx_s cn; */
@@ -1242,9 +998,15 @@ union cavm_vdecx_tc_control_reg
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_5_63         : 59;
-        uint64_t single_task_chnl_en   : 1;  /**< [  4:  4](R/W) When set to 1, the core will wait until idle before starting the next
+        uint64_t single_task_chnl_en   : 1;  /**< [  4:  4](R/W) Reserved.
+                                                                 Internal:
+                                                                 This bit is reserved because the decoder core only has one channel mode now.
+                                                                 When set to 1, the core will wait until idle before starting the next
                                                                  task when changing channel mode. */
-        uint64_t single_task_phy_en    : 1;  /**< [  3:  3](R/W) When set to 1, the core will wait until idle before starting the next
+        uint64_t single_task_phy_en    : 1;  /**< [  3:  3](R/W) Reserved.
+                                                                 Internal:
+                                                                 This bit is reserved because the decoder core only has one PHY mode now.
+                                                                 When set to 1, the core will wait until idle before starting the next
                                                                  task when changing PHY mode. */
         uint64_t single_task_en        : 1;  /**< [  2:  2](R/W) When set to 1, the core will always wait until idle before starting
                                                                  the next task. */
@@ -1257,9 +1019,15 @@ union cavm_vdecx_tc_control_reg
                                                                  configurations will still be processed. */
         uint64_t single_task_en        : 1;  /**< [  2:  2](R/W) When set to 1, the core will always wait until idle before starting
                                                                  the next task. */
-        uint64_t single_task_phy_en    : 1;  /**< [  3:  3](R/W) When set to 1, the core will wait until idle before starting the next
+        uint64_t single_task_phy_en    : 1;  /**< [  3:  3](R/W) Reserved.
+                                                                 Internal:
+                                                                 This bit is reserved because the decoder core only has one PHY mode now.
+                                                                 When set to 1, the core will wait until idle before starting the next
                                                                  task when changing PHY mode. */
-        uint64_t single_task_chnl_en   : 1;  /**< [  4:  4](R/W) When set to 1, the core will wait until idle before starting the next
+        uint64_t single_task_chnl_en   : 1;  /**< [  4:  4](R/W) Reserved.
+                                                                 Internal:
+                                                                 This bit is reserved because the decoder core only has one channel mode now.
+                                                                 When set to 1, the core will wait until idle before starting the next
                                                                  task when changing channel mode. */
         uint64_t reserved_5_63         : 59;
 #endif /* Word 0 - End */
@@ -1296,11 +1064,11 @@ union cavm_vdecx_tc_error_mask_reg
     struct cavm_vdecx_tc_error_mask_reg_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_4_63         : 60;
-        uint64_t err_mask              : 4;  /**< [  3:  0](R/W) Error mask bits. */
+        uint64_t reserved_32_63        : 32;
+        uint64_t err_mask              : 32; /**< [ 31:  0](R/W) Error mask bits. */
 #else /* Word 0 - Little Endian */
-        uint64_t err_mask              : 4;  /**< [  3:  0](R/W) Error mask bits. */
-        uint64_t reserved_4_63         : 60;
+        uint64_t err_mask              : 32; /**< [ 31:  0](R/W) Error mask bits. */
+        uint64_t reserved_32_63        : 32;
 #endif /* Word 0 - End */
     } s;
     /* struct cavm_vdecx_tc_error_mask_reg_s cn; */
@@ -1334,19 +1102,21 @@ union cavm_vdecx_tc_error_reg
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_9_63         : 55;
-        uint64_t inv_cfg               : 1;  /**< [  8:  8](R/W) Invalid task configuration -- aborted job. */
-        uint64_t reg_mask_err          : 4;  /**< [  7:  4](RAZ) Reserved. */
-        uint64_t ign_read              : 1;  /**< [  3:  3](R/W) Ignored a read access while another read was in process. */
-        uint64_t inv_read              : 1;  /**< [  2:  2](R/W) Invalid read access to an out-of-range address. */
-        uint64_t inv_write             : 1;  /**< [  1:  1](R/W) Invalid write access to an out-of-range address. */
-        uint64_t inv_start             : 1;  /**< [  0:  0](R/W) Invalid task start. */
+        uint64_t inv_cfg               : 1;  /**< [  8:  8](R/W1C/H) Invalid task configuration -- aborted job.  Further information is
+                                                                 captured in VDEC()_TC_CONFIG_ERR_FLAGS_REG. */
+        uint64_t reserved_4_7          : 4;
+        uint64_t ign_read              : 1;  /**< [  3:  3](R/W1C/H) Ignored a read access while another read was in process. */
+        uint64_t inv_read              : 1;  /**< [  2:  2](R/W1C/H) Invalid read access to an out-of-range address. */
+        uint64_t inv_write             : 1;  /**< [  1:  1](R/W1C/H) Invalid write access to an out-of-range address. */
+        uint64_t inv_start             : 1;  /**< [  0:  0](R/W1C/H) Invalid task start. */
 #else /* Word 0 - Little Endian */
-        uint64_t inv_start             : 1;  /**< [  0:  0](R/W) Invalid task start. */
-        uint64_t inv_write             : 1;  /**< [  1:  1](R/W) Invalid write access to an out-of-range address. */
-        uint64_t inv_read              : 1;  /**< [  2:  2](R/W) Invalid read access to an out-of-range address. */
-        uint64_t ign_read              : 1;  /**< [  3:  3](R/W) Ignored a read access while another read was in process. */
-        uint64_t reg_mask_err          : 4;  /**< [  7:  4](RAZ) Reserved. */
-        uint64_t inv_cfg               : 1;  /**< [  8:  8](R/W) Invalid task configuration -- aborted job. */
+        uint64_t inv_start             : 1;  /**< [  0:  0](R/W1C/H) Invalid task start. */
+        uint64_t inv_write             : 1;  /**< [  1:  1](R/W1C/H) Invalid write access to an out-of-range address. */
+        uint64_t inv_read              : 1;  /**< [  2:  2](R/W1C/H) Invalid read access to an out-of-range address. */
+        uint64_t ign_read              : 1;  /**< [  3:  3](R/W1C/H) Ignored a read access while another read was in process. */
+        uint64_t reserved_4_7          : 4;
+        uint64_t inv_cfg               : 1;  /**< [  8:  8](R/W1C/H) Invalid task configuration -- aborted job.  Further information is
+                                                                 captured in VDEC()_TC_CONFIG_ERR_FLAGS_REG. */
         uint64_t reserved_9_63         : 55;
 #endif /* Word 0 - End */
     } s;
@@ -1380,9 +1150,9 @@ union cavm_vdecx_tc_main_reset_reg
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_1_63         : 63;
-        uint64_t soft_reset            : 1;  /**< [  0:  0](R/W) Reset bit. */
+        uint64_t soft_reset            : 1;  /**< [  0:  0](R/W/H) Reset bit.  Write any value to reset the VDEC decoder core. */
 #else /* Word 0 - Little Endian */
-        uint64_t soft_reset            : 1;  /**< [  0:  0](R/W) Reset bit. */
+        uint64_t soft_reset            : 1;  /**< [  0:  0](R/W/H) Reset bit.  Write any value to reset the VDEC decoder core. */
         uint64_t reserved_1_63         : 63;
 #endif /* Word 0 - End */
     } s;
@@ -1418,9 +1188,9 @@ union cavm_vdecx_tc_main_start_reg
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_1_63         : 63;
-        uint64_t start                 : 1;  /**< [  0:  0](R/W) Start bit. */
+        uint64_t start                 : 1;  /**< [  0:  0](R/W/H) Start bit. */
 #else /* Word 0 - Little Endian */
-        uint64_t start                 : 1;  /**< [  0:  0](R/W) Start bit. */
+        uint64_t start                 : 1;  /**< [  0:  0](R/W/H) Start bit. */
         uint64_t reserved_1_63         : 63;
 #endif /* Word 0 - End */
     } s;
@@ -1454,9 +1224,9 @@ union cavm_vdecx_tc_mon_regx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_16_63        : 48;
-        uint64_t bus_val               : 16; /**< [ 15:  0](RO) Output bus monitoring values. */
+        uint64_t bus_val               : 16; /**< [ 15:  0](RO/H) Output bus monitoring values. */
 #else /* Word 0 - Little Endian */
-        uint64_t bus_val               : 16; /**< [ 15:  0](RO) Output bus monitoring values. */
+        uint64_t bus_val               : 16; /**< [ 15:  0](RO/H) Output bus monitoring values. */
         uint64_t reserved_16_63        : 48;
 #endif /* Word 0 - End */
     } s;
@@ -1490,15 +1260,15 @@ union cavm_vdecx_tc_status0_reg
     struct cavm_vdecx_tc_status0_reg_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t core_stat             : 32; /**< [ 63: 32](RO) Reserved.
+        uint64_t core_stat             : 32; /**< [ 63: 32](RO/H) Reserved.
                                                                  Internal:
                                                                  Undocumented, core-dependent status bits. */
         uint64_t reserved_1_31         : 31;
-        uint64_t idle                  : 1;  /**< [  0:  0](R/W) Idle status bit. */
+        uint64_t idle                  : 1;  /**< [  0:  0](RO/H) Idle status bit. */
 #else /* Word 0 - Little Endian */
-        uint64_t idle                  : 1;  /**< [  0:  0](R/W) Idle status bit. */
+        uint64_t idle                  : 1;  /**< [  0:  0](RO/H) Idle status bit. */
         uint64_t reserved_1_31         : 31;
-        uint64_t core_stat             : 32; /**< [ 63: 32](RO) Reserved.
+        uint64_t core_stat             : 32; /**< [ 63: 32](RO/H) Reserved.
                                                                  Internal:
                                                                  Undocumented, core-dependent status bits. */
 #endif /* Word 0 - End */
@@ -1526,7 +1296,9 @@ static inline uint64_t CAVM_VDECX_TC_STATUS0_REG(unsigned long a)
  *
  * INTERNAL: TC Status 1 Register
  *
- * This register reports additional status of the internal decoder core.
+ * Internal:
+ * There's no register implemented in the TC core, but removing this
+ * from the CSR file might change the csr_bridge RTL.
  */
 union cavm_vdecx_tc_status1_reg
 {

@@ -383,34 +383,30 @@ union cavm_lbkx_const
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_48_63        : 16;
         uint64_t chan                  : 16; /**< [ 47: 32](RO) Number of channels supported. */
-        uint64_t dest                  : 4;  /**< [ 31: 28](RO) What blocks this LBK transmits traffic to. Enumerated by LBK_CONNECT_E.
-                                                                 For LBK0, indicates LBK_CONNECT_E::NIX(0).
+        uint64_t dest                  : 4;  /**< [ 31: 28](RO) What block this LBK transmits traffic to. Enumerated by LBK_CONNECT_E.
+                                                                 For LBK(0), indicates LBK_CONNECT_E::NIX(0).
 
                                                                  Internal:
                                                                  lbk.v takes this from input straps set by the instantiation. */
-        uint64_t src                   : 4;  /**< [ 27: 24](RO) What blocks this LBK receives traffic from. Enumerated by LBK_CONNECT_E.
-                                                                 For LBK0, indicates LBK_CONNECT_E::NIX(0).
+        uint64_t src                   : 4;  /**< [ 27: 24](RO) What block this LBK receives traffic from. Enumerated by LBK_CONNECT_E.
+                                                                 For LBK(0), indicates LBK_CONNECT_E::NIX(0).
 
                                                                  Internal:
                                                                  lbk.v takes this from input straps set by the instantiation. */
-        uint64_t buf_size              : 24; /**< [ 23:  0](RO) Number of bytes in loopback data FIFO.
-                                                                 For LBK0, 0x3000 for each of FIFOs (express/non-express).
-
+        uint64_t buf_size              : 24; /**< [ 23:  0](RO) Number of bytes in each loopback data FIFO (express/non-express).
                                                                  Internal:
                                                                  lbk.v takes this from input straps set by the instantiation. */
 #else /* Word 0 - Little Endian */
-        uint64_t buf_size              : 24; /**< [ 23:  0](RO) Number of bytes in loopback data FIFO.
-                                                                 For LBK0, 0x3000 for each of FIFOs (express/non-express).
+        uint64_t buf_size              : 24; /**< [ 23:  0](RO) Number of bytes in each loopback data FIFO (express/non-express).
+                                                                 Internal:
+                                                                 lbk.v takes this from input straps set by the instantiation. */
+        uint64_t src                   : 4;  /**< [ 27: 24](RO) What block this LBK receives traffic from. Enumerated by LBK_CONNECT_E.
+                                                                 For LBK(0), indicates LBK_CONNECT_E::NIX(0).
 
                                                                  Internal:
                                                                  lbk.v takes this from input straps set by the instantiation. */
-        uint64_t src                   : 4;  /**< [ 27: 24](RO) What blocks this LBK receives traffic from. Enumerated by LBK_CONNECT_E.
-                                                                 For LBK0, indicates LBK_CONNECT_E::NIX(0).
-
-                                                                 Internal:
-                                                                 lbk.v takes this from input straps set by the instantiation. */
-        uint64_t dest                  : 4;  /**< [ 31: 28](RO) What blocks this LBK transmits traffic to. Enumerated by LBK_CONNECT_E.
-                                                                 For LBK0, indicates LBK_CONNECT_E::NIX(0).
+        uint64_t dest                  : 4;  /**< [ 31: 28](RO) What block this LBK transmits traffic to. Enumerated by LBK_CONNECT_E.
+                                                                 For LBK(0), indicates LBK_CONNECT_E::NIX(0).
 
                                                                  Internal:
                                                                  lbk.v takes this from input straps set by the instantiation. */

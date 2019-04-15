@@ -14823,7 +14823,7 @@ static inline uint64_t CAVM_PCIEEPX_HDR_LOG4(unsigned long a)
 /**
  * Register (PCICONFIGEP) pcieep#_hide_pf
  *
- * INTERNAL: PCIe EP Hide PF Register
+ * PCIe EP Hide PF Register
  */
 union cavm_pcieepx_hide_pf
 {

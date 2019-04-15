@@ -1430,9 +1430,7 @@ union cavm_mio_twsx_twsi_block_ctl
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_33_63        : 31;
-        uint64_t slave_vbyte           : 1;  /**< [ 32: 32](R/W) When this mode set to 1 in block mode, slave mode read response will include
-                                                                 an extra V byte rest of the data transmission. The definition of V byte is compatible
-                                                                 with 1 byte/4 byte slave response. */
+        uint64_t slave_vbyte           : 1;  /**< [ 32: 32](R/W) Reserved. */
         uint64_t reserved_27_31        : 5;
         uint64_t block_thresh          : 11; /**< [ 26: 16](R/W) Block mode interrupt threshold, from 0-1024, 0x0 disables the
                                                                  interrupt. MIO_TWS()_INT[BLOCK_INT] interrupt will fire when the number of
@@ -1452,9 +1450,7 @@ union cavm_mio_twsx_twsi_block_ctl
                                                                  bytes to be sent/received is less than threshold [BLOCK_THRESH], the interrupt
                                                                  will fire immediately. This interrupt is enabled only in HLC block mode. */
         uint64_t reserved_27_31        : 5;
-        uint64_t slave_vbyte           : 1;  /**< [ 32: 32](R/W) When this mode set to 1 in block mode, slave mode read response will include
-                                                                 an extra V byte rest of the data transmission. The definition of V byte is compatible
-                                                                 with 1 byte/4 byte slave response. */
+        uint64_t slave_vbyte           : 1;  /**< [ 32: 32](R/W) Reserved. */
         uint64_t reserved_33_63        : 31;
 #endif /* Word 0 - End */
     } s;

@@ -138,6 +138,45 @@ union cavm_rfoe_fd_cstm_hdr_s
         uint64_t reserved_0_63         : 64;
 #endif /* Word 0 - End */
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 1 - Big Endian */
+        uint64_t reserved_96_127       : 32;
+        uint64_t antenna               : 8;  /**< [ 95: 88] Antenna number.
+                                                                 Internal:
+                                                                 Hardware does not use this field other than to report status in PSW & logger messages. */
+        uint64_t symbol                : 8;  /**< [ 87: 80] Symbol number.
+                                                                 Internal:
+                                                                 Hardware does not use this field other than to report status in PSW & logger messages. */
+        uint64_t sos                   : 1;  /**< [ 79: 79] Start of symbol flag. Indicates first packet for current symbol.
+                                                                 Internal:
+                                                                 Hardware uses this for control and error checking for 0xfd subtype */
+        uint64_t eos                   : 1;  /**< [ 78: 78] End of symbol flag. Indicates last packet for current symbol.
+                                                                 Internal:
+                                                                 Hardware uses this for control and error checking for 0xfd subtype */
+        uint64_t reserved_64_77        : 14;
+#else /* Word 1 - Little Endian */
+        uint64_t reserved_64_77        : 14;
+        uint64_t eos                   : 1;  /**< [ 78: 78] End of symbol flag. Indicates last packet for current symbol.
+                                                                 Internal:
+                                                                 Hardware uses this for control and error checking for 0xfd subtype */
+        uint64_t sos                   : 1;  /**< [ 79: 79] Start of symbol flag. Indicates first packet for current symbol.
+                                                                 Internal:
+                                                                 Hardware uses this for control and error checking for 0xfd subtype */
+        uint64_t symbol                : 8;  /**< [ 87: 80] Symbol number.
+                                                                 Internal:
+                                                                 Hardware does not use this field other than to report status in PSW & logger messages. */
+        uint64_t antenna               : 8;  /**< [ 95: 88] Antenna number.
+                                                                 Internal:
+                                                                 Hardware does not use this field other than to report status in PSW & logger messages. */
+        uint64_t reserved_96_127       : 32;
+#endif /* Word 1 - End */
+    } s;
+    struct cavm_rfoe_fd_cstm_hdr_s_cnf95xxp1
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_0_63         : 64;
+#else /* Word 0 - Little Endian */
+        uint64_t reserved_0_63         : 64;
+#endif /* Word 0 - End */
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 1 - Big Endian */
         uint64_t marvell_timestamp     : 32; /**< [127: 96] Arrival timestamp, formatted according to RFOE_MARVELL_TIMESTAMP_S.
                                                                  Internal:
                                                                  TX - Sampled value from the psm__rfoe_time_bus.  BFN, SF, TICK.
@@ -174,8 +213,52 @@ union cavm_rfoe_fd_cstm_hdr_s
                                                                  TX - Sampled value from the psm__rfoe_time_bus.  BFN, SF, TICK.
                                                                  RX - Unused from packet unless header is written. */
 #endif /* Word 1 - End */
-    } s;
-    /* struct cavm_rfoe_fd_cstm_hdr_s_s cn; */
+    } cnf95xxp1;
+    struct cavm_rfoe_fd_cstm_hdr_s_cnf95xxp2
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_0_63         : 64;
+#else /* Word 0 - Little Endian */
+        uint64_t reserved_0_63         : 64;
+#endif /* Word 0 - End */
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 1 - Big Endian */
+        uint64_t rfoe_timestamp        : 32; /**< [127: 96] Arrival timestamp, formatted according to RFOE_TIMESTAMP_S.
+                                                                 Internal:
+                                                                 TX - Sampled value from the psm__rfoe_time_bus.  BFN, SF, TICK.
+                                                                 RX - Unused from packet unless header is written. */
+        uint64_t antenna               : 8;  /**< [ 95: 88] Antenna number.
+                                                                 Internal:
+                                                                 Hardware does not use this field other than to report status in PSW & logger messages. */
+        uint64_t symbol                : 8;  /**< [ 87: 80] Symbol number.
+                                                                 Internal:
+                                                                 Hardware does not use this field other than to report status in PSW & logger messages. */
+        uint64_t sos                   : 1;  /**< [ 79: 79] Start of symbol flag. Indicates first packet for current symbol.
+                                                                 Internal:
+                                                                 Hardware uses this for control and error checking for 0xfd subtype */
+        uint64_t eos                   : 1;  /**< [ 78: 78] End of symbol flag. Indicates last packet for current symbol.
+                                                                 Internal:
+                                                                 Hardware uses this for control and error checking for 0xfd subtype */
+        uint64_t reserved_64_77        : 14;
+#else /* Word 1 - Little Endian */
+        uint64_t reserved_64_77        : 14;
+        uint64_t eos                   : 1;  /**< [ 78: 78] End of symbol flag. Indicates last packet for current symbol.
+                                                                 Internal:
+                                                                 Hardware uses this for control and error checking for 0xfd subtype */
+        uint64_t sos                   : 1;  /**< [ 79: 79] Start of symbol flag. Indicates first packet for current symbol.
+                                                                 Internal:
+                                                                 Hardware uses this for control and error checking for 0xfd subtype */
+        uint64_t symbol                : 8;  /**< [ 87: 80] Symbol number.
+                                                                 Internal:
+                                                                 Hardware does not use this field other than to report status in PSW & logger messages. */
+        uint64_t antenna               : 8;  /**< [ 95: 88] Antenna number.
+                                                                 Internal:
+                                                                 Hardware does not use this field other than to report status in PSW & logger messages. */
+        uint64_t rfoe_timestamp        : 32; /**< [127: 96] Arrival timestamp, formatted according to RFOE_TIMESTAMP_S.
+                                                                 Internal:
+                                                                 TX - Sampled value from the psm__rfoe_time_bus.  BFN, SF, TICK.
+                                                                 RX - Unused from packet unless header is written. */
+#endif /* Word 1 - End */
+    } cnf95xxp2;
 };
 
 /**
@@ -211,6 +294,119 @@ union cavm_rfoe_packet_status_s
 {
     uint64_t u[2];
     struct cavm_rfoe_packet_status_s_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_62_63        : 2;
+        uint64_t lmac_id               : 2;  /**< [ 61: 60] LMAC identifier from MAC that received the packet. */
+        uint64_t orderinfo_status      : 1;  /**< [ 59: 59] Sequence number and timestamp check status:
+                                                                 0 = Failed checks.
+                                                                 1 = Passed checks.
+
+                                                                 Notes:
+                                                                 * CHI ignored.  CHI has no seqnum or timestamp.
+                                                                 * ALT_PKT  ignored.  ALT_PKT has no seqnum or timestamp.
+                                                                 * RoE 0xfd subtype. AND of all segment results. If any segments fail, this will be 0.
+
+                                                                 Internal:
+                                                                 CHI and ALT_PKT types always set [ORDERINFO_STATUS] */
+        uint64_t jd_target_mem         : 1;  /**< [ 58: 58] Job descriptor pointer target memory.
+                                                                 0 = SMEM.
+                                                                 1 = LLC/DRAM.
+                                                                 If RoE subtype=0xfc, there is no job descriptor and this will be 0x0. */
+        uint64_t jd_ptr                : 53; /**< [ 57:  5] Pointer to job descriptor used by this packet/symbol.
+                                                                 * All except RoE subtype=0xfc, job descriptor pointer corresponding to this packet status
+                                                                 * If RoE subtype=0xfc, this will be 0x0. */
+        uint64_t dma_error             : 1;  /**< [  4:  4] DMA or header processing error. Possible errors include:
+                                                                 * Late aperture failure.
+                                                                 * Attempted to write past the end of the buffer.
+                                                                 * RoE length field did not match incoming packet. */
+        uint64_t pkt_err_sts           : 4;  /**< [  3:  0] Packet error status, enumerated by RFOE_RX_PKT_ERR_E.
+                                                                 Internal:
+                                                                 Packet Error Status from x2p err field.  0 = no error detected. Values enumerated in
+                                                                 x2p2_p2x2_defs::x2p2_pkt_err_t */
+#else /* Word 0 - Little Endian */
+        uint64_t pkt_err_sts           : 4;  /**< [  3:  0] Packet error status, enumerated by RFOE_RX_PKT_ERR_E.
+                                                                 Internal:
+                                                                 Packet Error Status from x2p err field.  0 = no error detected. Values enumerated in
+                                                                 x2p2_p2x2_defs::x2p2_pkt_err_t */
+        uint64_t dma_error             : 1;  /**< [  4:  4] DMA or header processing error. Possible errors include:
+                                                                 * Late aperture failure.
+                                                                 * Attempted to write past the end of the buffer.
+                                                                 * RoE length field did not match incoming packet. */
+        uint64_t jd_ptr                : 53; /**< [ 57:  5] Pointer to job descriptor used by this packet/symbol.
+                                                                 * All except RoE subtype=0xfc, job descriptor pointer corresponding to this packet status
+                                                                 * If RoE subtype=0xfc, this will be 0x0. */
+        uint64_t jd_target_mem         : 1;  /**< [ 58: 58] Job descriptor pointer target memory.
+                                                                 0 = SMEM.
+                                                                 1 = LLC/DRAM.
+                                                                 If RoE subtype=0xfc, there is no job descriptor and this will be 0x0. */
+        uint64_t orderinfo_status      : 1;  /**< [ 59: 59] Sequence number and timestamp check status:
+                                                                 0 = Failed checks.
+                                                                 1 = Passed checks.
+
+                                                                 Notes:
+                                                                 * CHI ignored.  CHI has no seqnum or timestamp.
+                                                                 * ALT_PKT  ignored.  ALT_PKT has no seqnum or timestamp.
+                                                                 * RoE 0xfd subtype. AND of all segment results. If any segments fail, this will be 0.
+
+                                                                 Internal:
+                                                                 CHI and ALT_PKT types always set [ORDERINFO_STATUS] */
+        uint64_t lmac_id               : 2;  /**< [ 61: 60] LMAC identifier from MAC that received the packet. */
+        uint64_t reserved_62_63        : 2;
+#endif /* Word 0 - End */
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 1 - Big Endian */
+        uint64_t reserved_96_127       : 32;
+        uint64_t fd_antid              : 8;  /**< [ 95: 88] For RoE subtype=0xfd packets, this is the RFOE_FD_CSTM_HDR_S[ANTENNA]
+                                                                 field from the custom header. For other packets, this field is
+                                                                 reserved.
+
+                                                                 Internal:
+                                                                 - Others: 0. */
+        uint64_t fd_symbol             : 8;  /**< [ 87: 80] For RoE subtype=0xfd packets, this is the RFOE_FD_CSTM_HDR_S[SYMBOL]
+                                                                 field from the custom header. For other packets, this field is
+                                                                 reserved.
+
+                                                                 Internal:
+                                                                 - Others: 0. */
+        uint64_t roe_flowid            : 8;  /**< [ 79: 72] Flowid field extracted from RoE packet header. Undefined for CHI and ALT_PKT
+                                                                 packets.
+
+                                                                 Internal:
+                                                                 - CHI packets: value from RX_DIRECTION_CTL(first EtherType match)[FLOWID].
+                                                                 - ALT_PKT packets: value from RX_DIRECTION_CTL(3)[FLOWID]. */
+        uint64_t roe_subtype           : 8;  /**< [ 71: 64] RoE subtype field. Value is undefined for CHI, ALT_PKT, and Transparent packets.
+                                                                 Internal:
+                                                                 - CHI packets: value will be the upper byte of length field.  Packet byte 14.
+                                                                 - ALT_PKT: value will be the first byte of payload.   Packet byte 14.
+                                                                 - TRANSPARENT: value will be the first byte of payload.   Packet byte 14. */
+#else /* Word 1 - Little Endian */
+        uint64_t roe_subtype           : 8;  /**< [ 71: 64] RoE subtype field. Value is undefined for CHI, ALT_PKT, and Transparent packets.
+                                                                 Internal:
+                                                                 - CHI packets: value will be the upper byte of length field.  Packet byte 14.
+                                                                 - ALT_PKT: value will be the first byte of payload.   Packet byte 14.
+                                                                 - TRANSPARENT: value will be the first byte of payload.   Packet byte 14. */
+        uint64_t roe_flowid            : 8;  /**< [ 79: 72] Flowid field extracted from RoE packet header. Undefined for CHI and ALT_PKT
+                                                                 packets.
+
+                                                                 Internal:
+                                                                 - CHI packets: value from RX_DIRECTION_CTL(first EtherType match)[FLOWID].
+                                                                 - ALT_PKT packets: value from RX_DIRECTION_CTL(3)[FLOWID]. */
+        uint64_t fd_symbol             : 8;  /**< [ 87: 80] For RoE subtype=0xfd packets, this is the RFOE_FD_CSTM_HDR_S[SYMBOL]
+                                                                 field from the custom header. For other packets, this field is
+                                                                 reserved.
+
+                                                                 Internal:
+                                                                 - Others: 0. */
+        uint64_t fd_antid              : 8;  /**< [ 95: 88] For RoE subtype=0xfd packets, this is the RFOE_FD_CSTM_HDR_S[ANTENNA]
+                                                                 field from the custom header. For other packets, this field is
+                                                                 reserved.
+
+                                                                 Internal:
+                                                                 - Others: 0. */
+        uint64_t reserved_96_127       : 32;
+#endif /* Word 1 - End */
+    } s;
+    struct cavm_rfoe_packet_status_s_cnf95xxp1
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_62_63        : 2;
@@ -326,8 +522,148 @@ union cavm_rfoe_packet_status_s
                                                                  RFOE_MARVELL_TIMESTAMP_S. Sampled at SOP in header processing.
                                                                  For 0xfd subtype, it is sampled at SOP of the EOS packet. */
 #endif /* Word 1 - End */
+    } cnf95xxp1;
+    struct cavm_rfoe_packet_status_s_cnf95xxp2
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_62_63        : 2;
+        uint64_t lmac_id               : 2;  /**< [ 61: 60] LMAC identifier from MAC that received the packet. */
+        uint64_t orderinfo_status      : 1;  /**< [ 59: 59] Sequence number and timestamp check status:
+                                                                 0 = Failed checks.
+                                                                 1 = Passed checks.
+
+                                                                 Notes:
+                                                                 * CHI ignored.  CHI has no seqnum or timestamp.
+                                                                 * ALT_PKT  ignored.  ALT_PKT has no seqnum or timestamp.
+                                                                 * RoE 0xfd subtype. AND of all segment results. If any segments fail, this will be 0.
+
+                                                                 Internal:
+                                                                 CHI and ALT_PKT types always set [ORDERINFO_STATUS] */
+        uint64_t jd_target_mem         : 1;  /**< [ 58: 58] Job descriptor pointer target memory.
+                                                                 0 = SMEM.
+                                                                 1 = LLC/DRAM.
+                                                                 If RoE subtype=0xfc, there is no job descriptor and this will be 0x0. */
+        uint64_t jd_ptr                : 53; /**< [ 57:  5] Pointer to job descriptor used by this packet/symbol.
+                                                                 * All except RoE subtype=0xfc, job descriptor pointer corresponding to this packet status
+                                                                 * If RoE subtype=0xfc, this will be 0x0. */
+        uint64_t dma_error             : 1;  /**< [  4:  4] DMA or header processing error. Possible errors include:
+                                                                 * Late aperture failure.
+                                                                 * Attempted to write past the end of the buffer.
+                                                                 * RoE length field did not match incoming packet. */
+        uint64_t pkt_err_sts           : 4;  /**< [  3:  0] Packet error status, enumerated by RFOE_RX_PKT_ERR_E.
+                                                                 Internal:
+                                                                 Packet Error Status from x2p err field.  0 = no error detected. Values enumerated in
+                                                                 x2p2_p2x2_defs::x2p2_pkt_err_t */
+#else /* Word 0 - Little Endian */
+        uint64_t pkt_err_sts           : 4;  /**< [  3:  0] Packet error status, enumerated by RFOE_RX_PKT_ERR_E.
+                                                                 Internal:
+                                                                 Packet Error Status from x2p err field.  0 = no error detected. Values enumerated in
+                                                                 x2p2_p2x2_defs::x2p2_pkt_err_t */
+        uint64_t dma_error             : 1;  /**< [  4:  4] DMA or header processing error. Possible errors include:
+                                                                 * Late aperture failure.
+                                                                 * Attempted to write past the end of the buffer.
+                                                                 * RoE length field did not match incoming packet. */
+        uint64_t jd_ptr                : 53; /**< [ 57:  5] Pointer to job descriptor used by this packet/symbol.
+                                                                 * All except RoE subtype=0xfc, job descriptor pointer corresponding to this packet status
+                                                                 * If RoE subtype=0xfc, this will be 0x0. */
+        uint64_t jd_target_mem         : 1;  /**< [ 58: 58] Job descriptor pointer target memory.
+                                                                 0 = SMEM.
+                                                                 1 = LLC/DRAM.
+                                                                 If RoE subtype=0xfc, there is no job descriptor and this will be 0x0. */
+        uint64_t orderinfo_status      : 1;  /**< [ 59: 59] Sequence number and timestamp check status:
+                                                                 0 = Failed checks.
+                                                                 1 = Passed checks.
+
+                                                                 Notes:
+                                                                 * CHI ignored.  CHI has no seqnum or timestamp.
+                                                                 * ALT_PKT  ignored.  ALT_PKT has no seqnum or timestamp.
+                                                                 * RoE 0xfd subtype. AND of all segment results. If any segments fail, this will be 0.
+
+                                                                 Internal:
+                                                                 CHI and ALT_PKT types always set [ORDERINFO_STATUS] */
+        uint64_t lmac_id               : 2;  /**< [ 61: 60] LMAC identifier from MAC that received the packet. */
+        uint64_t reserved_62_63        : 2;
+#endif /* Word 0 - End */
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 1 - Big Endian */
+        uint64_t rfoe_timestamp        : 32; /**< [127: 96] Timestamp sampled at packet arrival, formatted as
+                                                                 RFOE_TIMESTAMP_S. Sampled at SOP in header processing.
+                                                                 For 0xfd subtype, it is sampled at SOP of the EOS packet. */
+        uint64_t fd_antid              : 8;  /**< [ 95: 88] For RoE subtype=0xfd packets, this is the RFOE_FD_CSTM_HDR_S[ANTENNA]
+                                                                 field from the custom header. For other packets, this field is
+                                                                 reserved.
+
+                                                                 Internal:
+                                                                 - Others: 0. */
+        uint64_t fd_symbol             : 8;  /**< [ 87: 80] For RoE subtype=0xfd packets, this is the RFOE_FD_CSTM_HDR_S[SYMBOL]
+                                                                 field from the custom header. For other packets, this field is
+                                                                 reserved.
+
+                                                                 Internal:
+                                                                 - Others: 0. */
+        uint64_t roe_flowid            : 8;  /**< [ 79: 72] Flowid field extracted from RoE packet header. Undefined for CHI and ALT_PKT
+                                                                 packets.
+
+                                                                 Internal:
+                                                                 - CHI packets: value from RX_DIRECTION_CTL(first EtherType match)[FLOWID].
+                                                                 - ALT_PKT packets: value from RX_DIRECTION_CTL(3)[FLOWID]. */
+        uint64_t roe_subtype           : 8;  /**< [ 71: 64] RoE subtype field. Value is undefined for CHI, ALT_PKT, and Transparent packets.
+                                                                 Internal:
+                                                                 - CHI packets: value will be the upper byte of length field.  Packet byte 14.
+                                                                 - ALT_PKT: value will be the first byte of payload.   Packet byte 14.
+                                                                 - TRANSPARENT: value will be the first byte of payload.   Packet byte 14. */
+#else /* Word 1 - Little Endian */
+        uint64_t roe_subtype           : 8;  /**< [ 71: 64] RoE subtype field. Value is undefined for CHI, ALT_PKT, and Transparent packets.
+                                                                 Internal:
+                                                                 - CHI packets: value will be the upper byte of length field.  Packet byte 14.
+                                                                 - ALT_PKT: value will be the first byte of payload.   Packet byte 14.
+                                                                 - TRANSPARENT: value will be the first byte of payload.   Packet byte 14. */
+        uint64_t roe_flowid            : 8;  /**< [ 79: 72] Flowid field extracted from RoE packet header. Undefined for CHI and ALT_PKT
+                                                                 packets.
+
+                                                                 Internal:
+                                                                 - CHI packets: value from RX_DIRECTION_CTL(first EtherType match)[FLOWID].
+                                                                 - ALT_PKT packets: value from RX_DIRECTION_CTL(3)[FLOWID]. */
+        uint64_t fd_symbol             : 8;  /**< [ 87: 80] For RoE subtype=0xfd packets, this is the RFOE_FD_CSTM_HDR_S[SYMBOL]
+                                                                 field from the custom header. For other packets, this field is
+                                                                 reserved.
+
+                                                                 Internal:
+                                                                 - Others: 0. */
+        uint64_t fd_antid              : 8;  /**< [ 95: 88] For RoE subtype=0xfd packets, this is the RFOE_FD_CSTM_HDR_S[ANTENNA]
+                                                                 field from the custom header. For other packets, this field is
+                                                                 reserved.
+
+                                                                 Internal:
+                                                                 - Others: 0. */
+        uint64_t rfoe_timestamp        : 32; /**< [127: 96] Timestamp sampled at packet arrival, formatted as
+                                                                 RFOE_TIMESTAMP_S. Sampled at SOP in header processing.
+                                                                 For 0xfd subtype, it is sampled at SOP of the EOS packet. */
+#endif /* Word 1 - End */
+    } cnf95xxp2;
+};
+
+/**
+ * Structure rfoe_timestamp_s
+ *
+ * RFOE Custom Timestamp Structure
+ * Specifies fields in RFOE timestamp.
+ */
+union cavm_rfoe_timestamp_s
+{
+    uint32_t u;
+    struct cavm_rfoe_timestamp_s_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t bfn                   : 12; /**< [ 31: 20] Basic frame number. */
+        uint32_t sf                    : 4;  /**< [ 19: 16] Subframe number. */
+        uint32_t time_tick             : 16; /**< [ 15:  0] Time tick. */
+#else /* Word 0 - Little Endian */
+        uint32_t time_tick             : 16; /**< [ 15:  0] Time tick. */
+        uint32_t sf                    : 4;  /**< [ 19: 16] Subframe number. */
+        uint32_t bfn                   : 12; /**< [ 31: 20] Basic frame number. */
+#endif /* Word 0 - End */
     } s;
-    /* struct cavm_rfoe_packet_status_s_s cn; */
+    /* struct cavm_rfoe_timestamp_s_s cn; */
 };
 
 /**
@@ -627,7 +963,14 @@ union cavm_rfoex_abx_slotx_configuration1
     struct cavm_rfoex_abx_slotx_configuration1_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_61_63        : 3;
+        uint64_t sof_mode              : 2;  /**< [ 63: 62](R/W) SOF bit setting in the Orderinfo Timestamp.
+                                                                 This is used when RFOE()_AB()_SLOT()_CONFIGURATION[ORDERINFOTYPE]=1 and
+                                                                 RFOE()_AB()_SLOT()_CONFIGURATION[ORDERINFO_INSERT]=1.
+                                                                 0x0 = Sample SoF from the timer bus from PSM.
+                                                                 0x1 = Sets SoF=0 in the orderInfo timestamp field.
+                                                                 0x2 = Reserved.
+                                                                 0x3 = Sets SoF=1 in the orderInfo timestamp field. */
+        uint64_t reserved_61           : 1;
         uint64_t presentation_time_offset : 29;/**< [ 60: 32](R/W) Presentation time offset is used when RFOE()_AB()_SLOT()_CONFIGURATION[ORDERINFOTYPE]=1.
                                                                  Presentation time offset is added to value of current timebus.tod and the resultant value
                                                                  sent out in the RoE header.
@@ -647,19 +990,11 @@ union cavm_rfoex_abx_slotx_configuration1
                                                                  16-bit Q components. In this case, [PKT_LEN] must be a multiple of 4. */
         uint64_t rbmap_bytes           : 8;  /**< [  7:  0](R/W) Reserved.
                                                                  Internal:
-                                                                 When RFOE()_AB()_SLOT()_CONFIGURATION[PKT_MODE]=1, interpret the
-                                                                 first [RBMAP_BYTES] as an RoE rbMap. The bytes will be byte-swapped,
-                                                                 and the [RBMAP_BYTES] will be zero-padded.
-
                                                                  Feature not implemented in a meaningful way for t95 pass 1, so making
                                                                  this reserved. */
 #else /* Word 0 - Little Endian */
         uint64_t rbmap_bytes           : 8;  /**< [  7:  0](R/W) Reserved.
                                                                  Internal:
-                                                                 When RFOE()_AB()_SLOT()_CONFIGURATION[PKT_MODE]=1, interpret the
-                                                                 first [RBMAP_BYTES] as an RoE rbMap. The bytes will be byte-swapped,
-                                                                 and the [RBMAP_BYTES] will be zero-padded.
-
                                                                  Feature not implemented in a meaningful way for t95 pass 1, so making
                                                                  this reserved. */
         uint64_t pkt_len               : 16; /**< [ 23:  8](R/W) The packet length.
@@ -679,10 +1014,130 @@ union cavm_rfoex_abx_slotx_configuration1
                                                                  _ Bits [36:32] indicate fractional nanoseconds.
 
                                                                  See IEEE P1914.3/D3. */
-        uint64_t reserved_61_63        : 3;
+        uint64_t reserved_61           : 1;
+        uint64_t sof_mode              : 2;  /**< [ 63: 62](R/W) SOF bit setting in the Orderinfo Timestamp.
+                                                                 This is used when RFOE()_AB()_SLOT()_CONFIGURATION[ORDERINFOTYPE]=1 and
+                                                                 RFOE()_AB()_SLOT()_CONFIGURATION[ORDERINFO_INSERT]=1.
+                                                                 0x0 = Sample SoF from the timer bus from PSM.
+                                                                 0x1 = Sets SoF=0 in the orderInfo timestamp field.
+                                                                 0x2 = Reserved.
+                                                                 0x3 = Sets SoF=1 in the orderInfo timestamp field. */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_rfoex_abx_slotx_configuration1_s cn; */
+    struct cavm_rfoex_abx_slotx_configuration1_cnf95xxp1
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_62_63        : 2;
+        uint64_t reserved_61           : 1;
+        uint64_t presentation_time_offset : 29;/**< [ 60: 32](R/W) Presentation time offset is used when RFOE()_AB()_SLOT()_CONFIGURATION[ORDERINFOTYPE]=1.
+                                                                 Presentation time offset is added to value of current timebus.tod and the resultant value
+                                                                 sent out in the RoE header.
+
+                                                                 _ Bits [60:37] indicate integer nanoseconds.
+
+                                                                 _ Bits [36:32] indicate fractional nanoseconds.
+
+                                                                 See IEEE P1914.3/D3. */
+        uint64_t hdr_len               : 8;  /**< [ 31: 24](R/W) Header length in number of bytes. When [PKT_MODE]=0x2, indicates the number of header bytes
+                                                                 contained in the read DMA data. */
+        uint64_t pkt_len               : 16; /**< [ 23:  8](R/W) The packet length.
+                                                                 * When [PKT_MODE]=0x0, the number of bytes to read from the memory.
+
+                                                                 * When [PKT_MODE]=0x1 or 0x2, the number of samples to read from
+                                                                 memory. Samples in memory are always 32 bits, with 16-bit I and
+                                                                 16-bit Q components. In this case, [PKT_LEN] must be a multiple of 4. */
+        uint64_t rbmap_bytes           : 8;  /**< [  7:  0](R/W) Reserved.
+                                                                 Internal:
+                                                                 Feature not implemented in a meaningful way for t95 pass 1, so making
+                                                                 this reserved. */
+#else /* Word 0 - Little Endian */
+        uint64_t rbmap_bytes           : 8;  /**< [  7:  0](R/W) Reserved.
+                                                                 Internal:
+                                                                 Feature not implemented in a meaningful way for t95 pass 1, so making
+                                                                 this reserved. */
+        uint64_t pkt_len               : 16; /**< [ 23:  8](R/W) The packet length.
+                                                                 * When [PKT_MODE]=0x0, the number of bytes to read from the memory.
+
+                                                                 * When [PKT_MODE]=0x1 or 0x2, the number of samples to read from
+                                                                 memory. Samples in memory are always 32 bits, with 16-bit I and
+                                                                 16-bit Q components. In this case, [PKT_LEN] must be a multiple of 4. */
+        uint64_t hdr_len               : 8;  /**< [ 31: 24](R/W) Header length in number of bytes. When [PKT_MODE]=0x2, indicates the number of header bytes
+                                                                 contained in the read DMA data. */
+        uint64_t presentation_time_offset : 29;/**< [ 60: 32](R/W) Presentation time offset is used when RFOE()_AB()_SLOT()_CONFIGURATION[ORDERINFOTYPE]=1.
+                                                                 Presentation time offset is added to value of current timebus.tod and the resultant value
+                                                                 sent out in the RoE header.
+
+                                                                 _ Bits [60:37] indicate integer nanoseconds.
+
+                                                                 _ Bits [36:32] indicate fractional nanoseconds.
+
+                                                                 See IEEE P1914.3/D3. */
+        uint64_t reserved_61           : 1;
+        uint64_t reserved_62_63        : 2;
+#endif /* Word 0 - End */
+    } cnf95xxp1;
+    struct cavm_rfoex_abx_slotx_configuration1_cnf95xxp2
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t sof_mode              : 2;  /**< [ 63: 62](R/W) SOF bit setting in the Orderinfo Timestamp.
+                                                                 This is used when RFOE()_AB()_SLOT()_CONFIGURATION[ORDERINFOTYPE]=1 and
+                                                                 RFOE()_AB()_SLOT()_CONFIGURATION[ORDERINFO_INSERT]=1.
+                                                                 0x0 = Sample SoF from the timer bus from PSM.
+                                                                 0x1 = Sets SoF=0 in the orderInfo timestamp field.
+                                                                 0x2 = Reserved.
+                                                                 0x3 = Sets SoF=1 in the orderInfo timestamp field. */
+        uint64_t reserved_61           : 1;
+        uint64_t presentation_time_offset : 29;/**< [ 60: 32](R/W) Presentation time offset is used when RFOE()_AB()_SLOT()_CONFIGURATION[ORDERINFOTYPE]=1.
+                                                                 Presentation time offset is added to value of current timebus.tod and the resultant value
+                                                                 sent out in the RoE header.
+
+                                                                 _ Bits [60:37] indicate integer nanoseconds.
+
+                                                                 _ Bits [36:32] indicate fractional nanoseconds.
+
+                                                                 See IEEE P1914.3/D3. */
+        uint64_t hdr_len               : 8;  /**< [ 31: 24](R/W) Header length in number of bytes. When [PKT_MODE]=0x2, indicates the number of header bytes
+                                                                 contained in the read DMA data. */
+        uint64_t pkt_len               : 16; /**< [ 23:  8](R/W) The packet length.
+                                                                 * When [PKT_MODE]=0x0, the number of bytes to read from the memory.
+
+                                                                 * When [PKT_MODE]=0x1 or 0x2, the number of samples to read from
+                                                                 memory. Samples in memory are always 32 bits, with 16-bit I and
+                                                                 16-bit Q components. In this case, [PKT_LEN] must be a multiple of 4. */
+        uint64_t rbmap_bytes           : 8;  /**< [  7:  0](R/W) When RFOE()_AB()_SLOT()_CONFIGURATION[PKT_MODE]=1, read the
+                                                                 [RBMAP_BYTES] from the read DMA, and insert as-is, and then
+                                                                 read sample data at the next 128-bit boundary. */
+#else /* Word 0 - Little Endian */
+        uint64_t rbmap_bytes           : 8;  /**< [  7:  0](R/W) When RFOE()_AB()_SLOT()_CONFIGURATION[PKT_MODE]=1, read the
+                                                                 [RBMAP_BYTES] from the read DMA, and insert as-is, and then
+                                                                 read sample data at the next 128-bit boundary. */
+        uint64_t pkt_len               : 16; /**< [ 23:  8](R/W) The packet length.
+                                                                 * When [PKT_MODE]=0x0, the number of bytes to read from the memory.
+
+                                                                 * When [PKT_MODE]=0x1 or 0x2, the number of samples to read from
+                                                                 memory. Samples in memory are always 32 bits, with 16-bit I and
+                                                                 16-bit Q components. In this case, [PKT_LEN] must be a multiple of 4. */
+        uint64_t hdr_len               : 8;  /**< [ 31: 24](R/W) Header length in number of bytes. When [PKT_MODE]=0x2, indicates the number of header bytes
+                                                                 contained in the read DMA data. */
+        uint64_t presentation_time_offset : 29;/**< [ 60: 32](R/W) Presentation time offset is used when RFOE()_AB()_SLOT()_CONFIGURATION[ORDERINFOTYPE]=1.
+                                                                 Presentation time offset is added to value of current timebus.tod and the resultant value
+                                                                 sent out in the RoE header.
+
+                                                                 _ Bits [60:37] indicate integer nanoseconds.
+
+                                                                 _ Bits [36:32] indicate fractional nanoseconds.
+
+                                                                 See IEEE P1914.3/D3. */
+        uint64_t reserved_61           : 1;
+        uint64_t sof_mode              : 2;  /**< [ 63: 62](R/W) SOF bit setting in the Orderinfo Timestamp.
+                                                                 This is used when RFOE()_AB()_SLOT()_CONFIGURATION[ORDERINFOTYPE]=1 and
+                                                                 RFOE()_AB()_SLOT()_CONFIGURATION[ORDERINFO_INSERT]=1.
+                                                                 0x0 = Sample SoF from the timer bus from PSM.
+                                                                 0x1 = Sets SoF=0 in the orderInfo timestamp field.
+                                                                 0x2 = Reserved.
+                                                                 0x3 = Sets SoF=1 in the orderInfo timestamp field. */
+#endif /* Word 0 - End */
+    } cnf95xxp2;
 };
 typedef union cavm_rfoex_abx_slotx_configuration1 cavm_rfoex_abx_slotx_configuration1_t;
 
@@ -1113,7 +1568,15 @@ union cavm_rfoex_rx_cfg
         uint64_t reserved_3_15         : 13;
         uint64_t calibrate_x2p         : 1;  /**< [  2:  2](R/W) Calibrate X2P bus. Writing this bit from zero to one starts a calibration cycle.
                                                                  Software may then monitor the RFOE()_RX_STATUS[CALIBRATE_DONE] bit for completion,
-                                                                 and clear this bit. */
+                                                                 and clear this bit.
+                                                                 * Initialization sequence must calibrate X2P.
+                                                                 * Must calibrate only during post-reset initialization sequence while
+                                                                 RFOE_RX_CTRL[DATA_PKT_RX_EN]==0.
+                                                                 * Must be 0 when RFOE_RX_CTRL[DATA_PKT_RX_EN]==1.
+
+                                                                 Internal:
+                                                                 Calibration defines the x2p grant to response latency.  Response latency is determined
+                                                                 by CGX latency, which is a fixed value--it never changes. */
         uint64_t force_intf_clk_en     : 1;  /**< [  1:  1](R/W) Force the conditional clocks on interface signals between blocks. For diagnostic use only. */
         uint64_t force_cond_clk_en     : 1;  /**< [  0:  0](R/W) Force the conditional clocks active within the block. For diagnostic use only. */
 #else /* Word 0 - Little Endian */
@@ -1121,7 +1584,15 @@ union cavm_rfoex_rx_cfg
         uint64_t force_intf_clk_en     : 1;  /**< [  1:  1](R/W) Force the conditional clocks on interface signals between blocks. For diagnostic use only. */
         uint64_t calibrate_x2p         : 1;  /**< [  2:  2](R/W) Calibrate X2P bus. Writing this bit from zero to one starts a calibration cycle.
                                                                  Software may then monitor the RFOE()_RX_STATUS[CALIBRATE_DONE] bit for completion,
-                                                                 and clear this bit. */
+                                                                 and clear this bit.
+                                                                 * Initialization sequence must calibrate X2P.
+                                                                 * Must calibrate only during post-reset initialization sequence while
+                                                                 RFOE_RX_CTRL[DATA_PKT_RX_EN]==0.
+                                                                 * Must be 0 when RFOE_RX_CTRL[DATA_PKT_RX_EN]==1.
+
+                                                                 Internal:
+                                                                 Calibration defines the x2p grant to response latency.  Response latency is determined
+                                                                 by CGX latency, which is a fixed value--it never changes. */
         uint64_t reserved_3_15         : 13;
         uint64_t wr_hp                 : 4;  /**< [ 19: 16](R/W) Write priority. One bit per LMAC. If a bit is set, writes associated
                                                                  with the given LMAC are marked high priority. Otherwise writes are
@@ -1152,12 +1623,15 @@ static inline uint64_t CAVM_RFOEX_RX_CFG(unsigned long a)
  * Register (RSL) rfoe#_rx_cgx_octs_stat#
  *
  * RFOE RX Received Byte Statistic Register
- * Number of octets received from CGX. Per LMAC.
+ * Number of octets received from CGX on enabled interface
+ * (RFOE()_RX_CTRL[DATA_PKT_RX_EN]=1). Per LMAC.
+ *
  * Internal:
  * Bytes received on x2p pkt_bus interface:
  * input x2p2_p2x2_defs::x2p2_bus_t cgx__rfoe_x2p_pkt_bus).
  * Normally 16B per transfer.
  * On EOP can have less.  EOP byte count determined by x2p bval field.
+ * Does not include bytes shunted by RFOE()_RX_CTRL[DATA_PKT_RX_EN] = 0.
  */
 union cavm_rfoex_rx_cgx_octs_statx
 {
@@ -1167,10 +1641,12 @@ union cavm_rfoex_rx_cgx_octs_statx
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_48_63        : 16;
         uint64_t stat                  : 48; /**< [ 47:  0](R/W/H) Number of octets received from CGX. Wraps to zero at 2^48.
-                                                                 Excludes RFOE()_RX_ERROR_INT[MALFORMED_X2P_PKT] bytes. */
+                                                                 Excludes RFOE()_RX_ERROR_INT[MALFORMED_X2P_PKT] bytes.
+                                                                 Excludes bytes received when RX is disabled by RFOE()_RX_CTRL[DATA_PKT_RX_EN]=0. */
 #else /* Word 0 - Little Endian */
         uint64_t stat                  : 48; /**< [ 47:  0](R/W/H) Number of octets received from CGX. Wraps to zero at 2^48.
-                                                                 Excludes RFOE()_RX_ERROR_INT[MALFORMED_X2P_PKT] bytes. */
+                                                                 Excludes RFOE()_RX_ERROR_INT[MALFORMED_X2P_PKT] bytes.
+                                                                 Excludes bytes received when RX is disabled by RFOE()_RX_CTRL[DATA_PKT_RX_EN]=0. */
         uint64_t reserved_48_63        : 16;
 #endif /* Word 0 - End */
     } s;
@@ -1196,10 +1672,13 @@ static inline uint64_t CAVM_RFOEX_RX_CGX_OCTS_STATX(unsigned long a, unsigned lo
  * Register (RSL) rfoe#_rx_cgx_pkt_stat#
  *
  * RFOE RX  Packet Received  Count Statistic Register
- * Number of packets received from MAC. One for each source LMAC.
+ * Number of packets received from MAC on enabled interface
+ * (RFOE()_RX_CTRL[DATA_PKT_RX_EN]=1). One for each source LMAC.
+ *
  * Internal:
  * Packets received on x2p pkt_bus interface:
  *   input x2p2_p2x2_defs::x2p2_bus_t cgx__rfoe_x2p_pkt_bus.
+ * Does not include packets shunted by RFOE()_RX_CTRL[DATA_PKT_RX_EN] = 0.
  */
 union cavm_rfoex_rx_cgx_pkt_statx
 {
@@ -1209,10 +1688,12 @@ union cavm_rfoex_rx_cgx_pkt_statx
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_48_63        : 16;
         uint64_t stat                  : 48; /**< [ 47:  0](R/W/H) The counter value, increments on EOP transfers. Wraps to zero at 2^48.
-                                                                 Excludes  RFOE()_RX_ERROR_INT[MALFORMED_X2P_PKT] packets. */
+                                                                 Excludes  RFOE()_RX_ERROR_INT[MALFORMED_X2P_PKT] packets.
+                                                                 Excludes packets received when RX is disabled by RFOE()_RX_CTRL[DATA_PKT_RX_EN]=0 . */
 #else /* Word 0 - Little Endian */
         uint64_t stat                  : 48; /**< [ 47:  0](R/W/H) The counter value, increments on EOP transfers. Wraps to zero at 2^48.
-                                                                 Excludes  RFOE()_RX_ERROR_INT[MALFORMED_X2P_PKT] packets. */
+                                                                 Excludes  RFOE()_RX_ERROR_INT[MALFORMED_X2P_PKT] packets.
+                                                                 Excludes packets received when RX is disabled by RFOE()_RX_CTRL[DATA_PKT_RX_EN]=0 . */
         uint64_t reserved_48_63        : 16;
 #endif /* Word 0 - End */
     } s;
@@ -3953,7 +4434,9 @@ union cavm_rfoex_rx_status
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_50_63        : 14;
         uint64_t pkt_logger_flush_done : 1;  /**< [ 49: 49](RO/H) Cleared on a write to RFOE()_RX_PKT_LOGGER_CFG[FLUSH]=1.  Set when the
-                                                                 packet logger buffer has been flushed to memory. */
+                                                                 packet logger buffer has been flushed to memory.
+                                                                 * Indicates that all logger write requests have been issued from RFOE.
+                                                                 * Does not guarantee return of all commits. */
         uint64_t pkt_logger_tail_idx   : 17; /**< [ 48: 32](RO/H) Index for the next logger status write, in units of 16 bytes.
                                                                  * Newest logger entry is at ([PKT_LOGGER_TAIL_IDX]-1) mod RFOE(0..1)_RX_PKT_LOGGER_CFG[SIZE].
                                                                  * Address in memory is RFOE(0..1)_RX_PKT_LOGGER_ADDR +
@@ -4006,7 +4489,9 @@ union cavm_rfoex_rx_status
                                                                  (([PKT_LOGGER_TAIL_IDX]-1) mod RFOE(0..1)_RX_PKT_LOGGER_CFG[SIZE])*16 bytes.
                                                                  * Newest is not valid after reset since nothing has been written to packet logger in memory. */
         uint64_t pkt_logger_flush_done : 1;  /**< [ 49: 49](RO/H) Cleared on a write to RFOE()_RX_PKT_LOGGER_CFG[FLUSH]=1.  Set when the
-                                                                 packet logger buffer has been flushed to memory. */
+                                                                 packet logger buffer has been flushed to memory.
+                                                                 * Indicates that all logger write requests have been issued from RFOE.
+                                                                 * Does not guarantee return of all commits. */
         uint64_t reserved_50_63        : 14;
 #endif /* Word 0 - End */
     } s;
@@ -4176,17 +4661,19 @@ union cavm_rfoex_tx_ctrl
                                                                  * RFIF domain (CGX) can still be active, and a RFIF reset will reset all these transactions.
                                                                  *Once [TX_IDLE] is set, it will stay set until [DATA_PKT_TX_EN] is set to 0 by SW.
                                                                  [TX_IDLE] should be ignored when [DATA_PKT_TX_EN] == 1. */
-        uint64_t data_pkt_tx_en        : 1;  /**< [  0:  0](R/W) Enable TX traffic.  Software must write to 1 to enable TX traffic.
-                                                                 0 = RFOE discards packets transmit packets.
-                                                                 1 = RFOE transmits packets to CGX.
+        uint64_t data_pkt_tx_en        : 1;  /**< [  0:  0](R/W) Enable TX traffic.  Software must write to 1 [DATA_PKT_TX_LMAC_EN] and
+                                                                  [DATA_PKT_TX_EN] to enable TX traffic.
+                                                                 0 = RFOE discards packets transmit packets to all LMAC.
+                                                                 1 = RFOE enables packet transmits to CGX.
 
                                                                  When [DATA_PKT_TX_EN] transitions from 1 to 0, RFOE completes any
                                                                  in-flight transmit packets. Once all in-flight packets are sent,
                                                                  RFOE sets [TX_IDLE], and discards and subsequent transmit packets. */
 #else /* Word 0 - Little Endian */
-        uint64_t data_pkt_tx_en        : 1;  /**< [  0:  0](R/W) Enable TX traffic.  Software must write to 1 to enable TX traffic.
-                                                                 0 = RFOE discards packets transmit packets.
-                                                                 1 = RFOE transmits packets to CGX.
+        uint64_t data_pkt_tx_en        : 1;  /**< [  0:  0](R/W) Enable TX traffic.  Software must write to 1 [DATA_PKT_TX_LMAC_EN] and
+                                                                  [DATA_PKT_TX_EN] to enable TX traffic.
+                                                                 0 = RFOE discards packets transmit packets to all LMAC.
+                                                                 1 = RFOE enables packet transmits to CGX.
 
                                                                  When [DATA_PKT_TX_EN] transitions from 1 to 0, RFOE completes any
                                                                  in-flight transmit packets. Once all in-flight packets are sent,
@@ -4629,6 +5116,113 @@ static inline uint64_t CAVM_RFOEX_TX_INDIRECT_INDEX(unsigned long a)
 #define arguments_CAVM_RFOEX_TX_INDIRECT_INDEX(a) (a),-1,-1,-1
 
 /**
+ * Register (RSL) rfoe#_tx_lmac_cfg#
+ *
+ * RFOE TX Packet LMAC Configuration Register
+ * Configures channel credits per LMAC.
+ */
+union cavm_rfoex_tx_lmac_cfgx
+{
+    uint64_t u;
+    struct cavm_rfoex_tx_lmac_cfgx_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_32_63        : 32;
+        uint64_t cc_count_stat         : 12; /**< [ 31: 20](RO/H) Channel-credit current count status.
+                                                                 This value represents the current Channel credits available for this LMAC.
+                                                                 The value gets reloaded when [DATA_PKT_TX_LMAC_EN] is set to 1 and
+                                                                 the value is reloaded after reset is deasserted.
+                                                                 This value is valid when [CC_ENABLE] is 0x2 or 0x3. */
+        uint64_t cc_count              : 12; /**< [ 19:  8](R/W) Channel-credit unit count. This value indicates the maximum credit units allowed for
+                                                                 this LMAC. One credit unit is one flit (up to 16 Bytes max) on the P2X bus.
+                                                                 Packets are not allowed to flow when the cuurent value of [CC_COUNT_STAT] is less
+                                                                 than packet lenght.
+                                                                 In order to prevent blocking between CGX LMACs, [CC_ENABLE] should be set to 0x2
+                                                                 or 0x3 and [CC_COUNT] appropriately configured.
+                                                                 The recommended configuration is based on the LMAC TX buffer size. The LMAC TX
+                                                                 buffer size is defined by CGX()_CMR_TX_LMACS[LMACS]. For example, if
+                                                                 CGX()_CMR_TX_LMACS[LMACS]=0x4 (16 KB per LMAC), then [CC_COUNT] = 0xfff.
+                                                                 [CC_COUNT] cannot be changed after [CC_ENABLE] is set to 0x2 or 0x3.
+                                                                 When [CC_ENABLE] is set to 0x2 or 0x3 and setting [CC_COUNT]=0 is nonsensical. */
+        uint64_t reserved_3_7          : 5;
+        uint64_t cc_enable             : 2;  /**< [  2:  1](R/W) Channel Credit Check enable. Enables [CC_COUNT] channel credit processing for
+                                                                 packets destined to this LMAC.
+                                                                 _ [CC_ENABLE]=0 - Channel Credit Check is disabled.
+                                                                 _ [CC_ENABLE]=1 - Channel Credit Check is disabled.
+                                                                 _ [CC_ENABLE]=2 - Channel Credit Check is enabled.
+                                                                 _                 The transmit state machine checks the packet length against the [CC_COUNT_STAT].
+                                                                 _                 If the current packet length is \<= [CC_COUNT_STAT], the packet is sent to CGX.
+                                                                 _                 If the current packet length is \> [CC_COUNT_STAT], the transmit state machine
+                                                                 _                 stalls and waits untill the required [CC_COUNT] is available before sending
+                                                                 _                 the packet.
+                                                                 _ [CC_ENABLE]=3 - Channel Credit Check is enabled.
+                                                                 _                 The transmit state machine checks the packet length against the [CC_COUNT_STAT].
+                                                                 _                 If the current packet length is \<= [CC_COUNT_STAT], the packet is sent to CGX.
+                                                                 _                 If the current packet length is \> [CC_COUNT_STAT], the
+                                                                 _                 transmit state machine drops the packet. */
+        uint64_t data_pkt_tx_lmac_en   : 1;  /**< [  0:  0](R/W) Enable TX traffic to CGX LMAC.
+                                                                 Software must write to 1 to [DATA_PKT_TX_LMAC_EN] and
+                                                                 [DATA_PKT_TX_EN] = 1 to enable TX traffic to this LMAC.
+                                                                 When [DATA_PKT_TX_LMAC_EN] = 0, RFOE discards transmit packets destined to this LMAC. */
+#else /* Word 0 - Little Endian */
+        uint64_t data_pkt_tx_lmac_en   : 1;  /**< [  0:  0](R/W) Enable TX traffic to CGX LMAC.
+                                                                 Software must write to 1 to [DATA_PKT_TX_LMAC_EN] and
+                                                                 [DATA_PKT_TX_EN] = 1 to enable TX traffic to this LMAC.
+                                                                 When [DATA_PKT_TX_LMAC_EN] = 0, RFOE discards transmit packets destined to this LMAC. */
+        uint64_t cc_enable             : 2;  /**< [  2:  1](R/W) Channel Credit Check enable. Enables [CC_COUNT] channel credit processing for
+                                                                 packets destined to this LMAC.
+                                                                 _ [CC_ENABLE]=0 - Channel Credit Check is disabled.
+                                                                 _ [CC_ENABLE]=1 - Channel Credit Check is disabled.
+                                                                 _ [CC_ENABLE]=2 - Channel Credit Check is enabled.
+                                                                 _                 The transmit state machine checks the packet length against the [CC_COUNT_STAT].
+                                                                 _                 If the current packet length is \<= [CC_COUNT_STAT], the packet is sent to CGX.
+                                                                 _                 If the current packet length is \> [CC_COUNT_STAT], the transmit state machine
+                                                                 _                 stalls and waits untill the required [CC_COUNT] is available before sending
+                                                                 _                 the packet.
+                                                                 _ [CC_ENABLE]=3 - Channel Credit Check is enabled.
+                                                                 _                 The transmit state machine checks the packet length against the [CC_COUNT_STAT].
+                                                                 _                 If the current packet length is \<= [CC_COUNT_STAT], the packet is sent to CGX.
+                                                                 _                 If the current packet length is \> [CC_COUNT_STAT], the
+                                                                 _                 transmit state machine drops the packet. */
+        uint64_t reserved_3_7          : 5;
+        uint64_t cc_count              : 12; /**< [ 19:  8](R/W) Channel-credit unit count. This value indicates the maximum credit units allowed for
+                                                                 this LMAC. One credit unit is one flit (up to 16 Bytes max) on the P2X bus.
+                                                                 Packets are not allowed to flow when the cuurent value of [CC_COUNT_STAT] is less
+                                                                 than packet lenght.
+                                                                 In order to prevent blocking between CGX LMACs, [CC_ENABLE] should be set to 0x2
+                                                                 or 0x3 and [CC_COUNT] appropriately configured.
+                                                                 The recommended configuration is based on the LMAC TX buffer size. The LMAC TX
+                                                                 buffer size is defined by CGX()_CMR_TX_LMACS[LMACS]. For example, if
+                                                                 CGX()_CMR_TX_LMACS[LMACS]=0x4 (16 KB per LMAC), then [CC_COUNT] = 0xfff.
+                                                                 [CC_COUNT] cannot be changed after [CC_ENABLE] is set to 0x2 or 0x3.
+                                                                 When [CC_ENABLE] is set to 0x2 or 0x3 and setting [CC_COUNT]=0 is nonsensical. */
+        uint64_t cc_count_stat         : 12; /**< [ 31: 20](RO/H) Channel-credit current count status.
+                                                                 This value represents the current Channel credits available for this LMAC.
+                                                                 The value gets reloaded when [DATA_PKT_TX_LMAC_EN] is set to 1 and
+                                                                 the value is reloaded after reset is deasserted.
+                                                                 This value is valid when [CC_ENABLE] is 0x2 or 0x3. */
+        uint64_t reserved_32_63        : 32;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rfoex_tx_lmac_cfgx_s cn; */
+};
+typedef union cavm_rfoex_tx_lmac_cfgx cavm_rfoex_tx_lmac_cfgx_t;
+
+static inline uint64_t CAVM_RFOEX_TX_LMAC_CFGX(unsigned long a, unsigned long b) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_RFOEX_TX_LMAC_CFGX(unsigned long a, unsigned long b)
+{
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS2_X) && ((a<=1) && (b<=3)))
+        return 0x87e043d00f80ll + 0x80000ll * ((a) & 0x1) + 8ll * ((b) & 0x3);
+    __cavm_csr_fatal("RFOEX_TX_LMAC_CFGX", 2, a, b, 0, 0);
+}
+
+#define typedef_CAVM_RFOEX_TX_LMAC_CFGX(a,b) cavm_rfoex_tx_lmac_cfgx_t
+#define bustype_CAVM_RFOEX_TX_LMAC_CFGX(a,b) CSR_TYPE_RSL
+#define basename_CAVM_RFOEX_TX_LMAC_CFGX(a,b) "RFOEX_TX_LMAC_CFGX"
+#define busnum_CAVM_RFOEX_TX_LMAC_CFGX(a,b) (a)
+#define arguments_CAVM_RFOEX_TX_LMAC_CFGX(a,b) (a),(b),-1,-1
+
+/**
  * Register (RSL) rfoe#_tx_octs_stat#
  *
  * RFOE TX Packet Statistic Register
@@ -4664,6 +5258,43 @@ static inline uint64_t CAVM_RFOEX_TX_OCTS_STATX(unsigned long a, unsigned long b
 #define basename_CAVM_RFOEX_TX_OCTS_STATX(a,b) "RFOEX_TX_OCTS_STATX"
 #define busnum_CAVM_RFOEX_TX_OCTS_STATX(a,b) (a)
 #define arguments_CAVM_RFOEX_TX_OCTS_STATX(a,b) (a),(b),-1,-1
+
+/**
+ * Register (RSL) rfoe#_tx_pkt_drop_stat#
+ *
+ * RFOE TX Packet Dropped Statistic Register
+ * Counts the number of packets dropped. One counter per LMAC.
+ */
+union cavm_rfoex_tx_pkt_drop_statx
+{
+    uint64_t u;
+    struct cavm_rfoex_tx_pkt_drop_statx_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_48_63        : 16;
+        uint64_t stat                  : 48; /**< [ 47:  0](R/W/H) Number of packets dropped. Wraps to zero at 2^48. */
+#else /* Word 0 - Little Endian */
+        uint64_t stat                  : 48; /**< [ 47:  0](R/W/H) Number of packets dropped. Wraps to zero at 2^48. */
+        uint64_t reserved_48_63        : 16;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rfoex_tx_pkt_drop_statx_s cn; */
+};
+typedef union cavm_rfoex_tx_pkt_drop_statx cavm_rfoex_tx_pkt_drop_statx_t;
+
+static inline uint64_t CAVM_RFOEX_TX_PKT_DROP_STATX(unsigned long a, unsigned long b) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_RFOEX_TX_PKT_DROP_STATX(unsigned long a, unsigned long b)
+{
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS2_X) && ((a<=1) && (b<=3)))
+        return 0x87e043d00f60ll + 0x80000ll * ((a) & 0x1) + 8ll * ((b) & 0x3);
+    __cavm_csr_fatal("RFOEX_TX_PKT_DROP_STATX", 2, a, b, 0, 0);
+}
+
+#define typedef_CAVM_RFOEX_TX_PKT_DROP_STATX(a,b) cavm_rfoex_tx_pkt_drop_statx_t
+#define bustype_CAVM_RFOEX_TX_PKT_DROP_STATX(a,b) CSR_TYPE_RSL
+#define basename_CAVM_RFOEX_TX_PKT_DROP_STATX(a,b) "RFOEX_TX_PKT_DROP_STATX"
+#define busnum_CAVM_RFOEX_TX_PKT_DROP_STATX(a,b) (a)
+#define arguments_CAVM_RFOEX_TX_PKT_DROP_STATX(a,b) (a),(b),-1,-1
 
 /**
  * Register (RSL) rfoe#_tx_pkt_stat#

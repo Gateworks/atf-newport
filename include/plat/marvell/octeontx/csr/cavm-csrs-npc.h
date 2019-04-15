@@ -2053,6 +2053,56 @@ static inline uint64_t CAVM_NPC_AF_KPUX_ERR_CTL(unsigned long a)
 #define arguments_CAVM_NPC_AF_KPUX_ERR_CTL(a) (a),-1,-1,-1
 
 /**
+ * Register (RVU_PF_BAR0) npc_af_kpu_diag
+ *
+ * INTERNAL : NPC AF Debug Result Registers
+ */
+union cavm_npc_af_kpu_diag
+{
+    uint64_t u;
+    struct cavm_npc_af_kpu_diag_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_1_63         : 63;
+        uint64_t skip_dis              : 1;  /**< [  0:  0](R/W) Disable skipping KPU pipe stages 1 to 6 when there is no previous transaction
+                                                                 in pipe and packet is:
+                                                                   * Marked with parse_done.
+                                                                   * Marked with error.
+                                                                   * Byp_count is set from previous KPU stage.
+
+                                                                 For diagnostic use only. */
+#else /* Word 0 - Little Endian */
+        uint64_t skip_dis              : 1;  /**< [  0:  0](R/W) Disable skipping KPU pipe stages 1 to 6 when there is no previous transaction
+                                                                 in pipe and packet is:
+                                                                   * Marked with parse_done.
+                                                                   * Marked with error.
+                                                                   * Byp_count is set from previous KPU stage.
+
+                                                                 For diagnostic use only. */
+        uint64_t reserved_1_63         : 63;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_npc_af_kpu_diag_s cn; */
+};
+typedef union cavm_npc_af_kpu_diag cavm_npc_af_kpu_diag_t;
+
+#define CAVM_NPC_AF_KPU_DIAG CAVM_NPC_AF_KPU_DIAG_FUNC()
+static inline uint64_t CAVM_NPC_AF_KPU_DIAG_FUNC(void) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_NPC_AF_KPU_DIAG_FUNC(void)
+{
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X))
+        return 0x840063002000ll;
+    __cavm_csr_fatal("NPC_AF_KPU_DIAG", 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_NPC_AF_KPU_DIAG cavm_npc_af_kpu_diag_t
+#define bustype_CAVM_NPC_AF_KPU_DIAG CSR_TYPE_RVU_PF_BAR0
+#define basename_CAVM_NPC_AF_KPU_DIAG "NPC_AF_KPU_DIAG"
+#define device_bar_CAVM_NPC_AF_KPU_DIAG 0x0 /* RVU_BAR0 */
+#define busnum_CAVM_NPC_AF_KPU_DIAG 0
+#define arguments_CAVM_NPC_AF_KPU_DIAG -1,-1,-1,-1
+
+/**
  * Register (RVU_PF_BAR0) npc_af_lkup_ctl
  *
  * NPC AF Software Lookup Control Registers

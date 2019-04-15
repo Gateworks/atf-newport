@@ -394,9 +394,9 @@ union cavm_mhbw_jd_hdr_word_0_s
                                                                  set [TOTH_TICK]=0x6, [TOTH]=0xA, and MHBW()_JD_CFG[TIMEOUT_MULT]=0x1. */
         uint64_t toth_tick             : 4;  /**< [ 56: 53] Timeout threshold tick count. See MHBW_JD_HDR_WORD_0_S[TOTH] for
                                                                  details. */
-        uint64_t jce_cnt               : 6;  /**< [ 52: 47] Specifies the number of 64-bit words in the job completion even
+        uint64_t jce_cnt               : 6;  /**< [ 52: 47] Specifies the number of 64-bit words in the job completion event
                                                                  subdescriptor, starting from MHBW_JD_JCE_PTR_S[START_ADDR].
-                                                                 Supports up to 64 x 64-bit words, i.e., 32 PSM commands. */
+                                                                 Supports up to 62 x 64-bit words, i.e., 31 PSM commands. */
         uint64_t reserved_42_46        : 5;
         uint64_t dma_p0_wrcnt          : 10; /**< [ 41: 32] Specifies the number of 64-bit words in the DMA subdescriptor for
                                                                  write port 0. Supports up to 1023 64-bit words. */
@@ -418,9 +418,9 @@ union cavm_mhbw_jd_hdr_word_0_s
         uint64_t dma_p0_wrcnt          : 10; /**< [ 41: 32] Specifies the number of 64-bit words in the DMA subdescriptor for
                                                                  write port 0. Supports up to 1023 64-bit words. */
         uint64_t reserved_42_46        : 5;
-        uint64_t jce_cnt               : 6;  /**< [ 52: 47] Specifies the number of 64-bit words in the job completion even
+        uint64_t jce_cnt               : 6;  /**< [ 52: 47] Specifies the number of 64-bit words in the job completion event
                                                                  subdescriptor, starting from MHBW_JD_JCE_PTR_S[START_ADDR].
-                                                                 Supports up to 64 x 64-bit words, i.e., 32 PSM commands. */
+                                                                 Supports up to 62 x 64-bit words, i.e., 31 PSM commands. */
         uint64_t toth_tick             : 4;  /**< [ 56: 53] Timeout threshold tick count. See MHBW_JD_HDR_WORD_0_S[TOTH] for
                                                                  details. */
         uint64_t toth                  : 4;  /**< [ 60: 57] Job timeout threshold. The timeout timer starts counting when the job
@@ -2341,15 +2341,15 @@ union cavm_mhbwx_adr_err_int
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_4_63         : 60;
-        uint64_t gaa_wr_nxm_err        : 1;  /**< [  3:  3](R/W1C/H) NXM access detected for GAA writes. */
-        uint64_t gaa_rd_nxm_err        : 1;  /**< [  2:  2](R/W1C/H) NXM access detected for GAA reads. */
-        uint64_t ddr_range_err         : 1;  /**< [  1:  1](R/W1C/H) L2C/DDR access range error. */
+        uint64_t gaa_wr_nxm_err        : 1;  /**< [  3:  3](R/W1C/H) Non-existant access detected for writes. */
+        uint64_t gaa_rd_nxm_err        : 1;  /**< [  2:  2](R/W1C/H) Non-existant access detected for reads. */
+        uint64_t ddr_range_err         : 1;  /**< [  1:  1](R/W1C/H) LLC/DDR access range error. */
         uint64_t smem_range_err        : 1;  /**< [  0:  0](R/W1C/H) SMEM access range error. */
 #else /* Word 0 - Little Endian */
         uint64_t smem_range_err        : 1;  /**< [  0:  0](R/W1C/H) SMEM access range error. */
-        uint64_t ddr_range_err         : 1;  /**< [  1:  1](R/W1C/H) L2C/DDR access range error. */
-        uint64_t gaa_rd_nxm_err        : 1;  /**< [  2:  2](R/W1C/H) NXM access detected for GAA reads. */
-        uint64_t gaa_wr_nxm_err        : 1;  /**< [  3:  3](R/W1C/H) NXM access detected for GAA writes. */
+        uint64_t ddr_range_err         : 1;  /**< [  1:  1](R/W1C/H) LLC/DDR access range error. */
+        uint64_t gaa_rd_nxm_err        : 1;  /**< [  2:  2](R/W1C/H) Non-existant access detected for reads. */
+        uint64_t gaa_wr_nxm_err        : 1;  /**< [  3:  3](R/W1C/H) Non-existant access detected for writes. */
         uint64_t reserved_4_63         : 60;
 #endif /* Word 0 - End */
     } s;
@@ -2938,7 +2938,7 @@ union cavm_mhbwx_err_stat1
     struct cavm_mhbwx_err_stat1_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t adr_err_stat          : 32; /**< [ 63: 32](R/W/H) Count of Address range errors.
+        uint64_t adr_err_stat          : 32; /**< [ 63: 32](R/W/H) Count of address range errors.
                                                                  Internal:
                                                                  This does not account for multiple
                                                                  DMA errors that might occur across different jobs, AB's in the same clock cycle. */
@@ -2951,7 +2951,7 @@ union cavm_mhbwx_err_stat1
                                                                  Internal:
                                                                  This does not account for multiple
                                                                  DMA errors that might occur across different jobs, AB's in the same clock cycle. */
-        uint64_t adr_err_stat          : 32; /**< [ 63: 32](R/W/H) Count of Address range errors.
+        uint64_t adr_err_stat          : 32; /**< [ 63: 32](R/W/H) Count of address range errors.
                                                                  Internal:
                                                                  This does not account for multiple
                                                                  DMA errors that might occur across different jobs, AB's in the same clock cycle. */
@@ -3542,7 +3542,7 @@ static inline uint64_t CAVM_MHBWX_NON_FATAL_ERROR_JCE_W1(unsigned long a)
  * Register (RSL) mhbw#_phymem_range
  *
  * MHBW BPHY SMEM Address Range Register
- * This register specifies the legal address range for BPHY memory access.
+ * This register specifies the legal address range for BPHY shared memory access.
  */
 union cavm_mhbwx_phymem_range
 {
@@ -3551,13 +3551,13 @@ union cavm_mhbwx_phymem_range
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_57_63        : 7;
-        uint64_t smem_max_addr         : 25; /**< [ 56: 32](R/W) SMEM max address. 128-bit aligned. */
+        uint64_t smem_max_addr         : 25; /**< [ 56: 32](R/W) SMEM maximum address. Must be 128-bit aligned. */
         uint64_t reserved_25_31        : 7;
-        uint64_t smem_min_addr         : 25; /**< [ 24:  0](R/W) SMEM min address. 128-bit aligned. */
+        uint64_t smem_min_addr         : 25; /**< [ 24:  0](R/W) SMEM minimum address. Must be 128-bit aligned. */
 #else /* Word 0 - Little Endian */
-        uint64_t smem_min_addr         : 25; /**< [ 24:  0](R/W) SMEM min address. 128-bit aligned. */
+        uint64_t smem_min_addr         : 25; /**< [ 24:  0](R/W) SMEM minimum address. Must be 128-bit aligned. */
         uint64_t reserved_25_31        : 7;
-        uint64_t smem_max_addr         : 25; /**< [ 56: 32](R/W) SMEM max address. 128-bit aligned. */
+        uint64_t smem_max_addr         : 25; /**< [ 56: 32](R/W) SMEM maximum address. Must be 128-bit aligned. */
         uint64_t reserved_57_63        : 7;
 #endif /* Word 0 - End */
     } s;
@@ -3583,7 +3583,7 @@ static inline uint64_t CAVM_MHBWX_PHYMEM_RANGE(unsigned long a)
  * Register (RSL) mhbw#_sysmem_range_max
  *
  * MHBW L2C/DDR Address Range Max Register
- * This register specifies the legal max address for system memory access.
+ * This register specifies the legal maximum address for system memory access.
  */
 union cavm_mhbwx_sysmem_range_max
 {
@@ -3592,9 +3592,9 @@ union cavm_mhbwx_sysmem_range_max
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_53_63        : 11;
-        uint64_t ddr_max_addr          : 53; /**< [ 52:  0](R/W) L2C/DDR max byte address. */
+        uint64_t ddr_max_addr          : 53; /**< [ 52:  0](R/W) Maximum IOVA for accesses to LLC/DRAM memory. */
 #else /* Word 0 - Little Endian */
-        uint64_t ddr_max_addr          : 53; /**< [ 52:  0](R/W) L2C/DDR max byte address. */
+        uint64_t ddr_max_addr          : 53; /**< [ 52:  0](R/W) Maximum IOVA for accesses to LLC/DRAM memory. */
         uint64_t reserved_53_63        : 11;
 #endif /* Word 0 - End */
     } s;
@@ -3620,7 +3620,7 @@ static inline uint64_t CAVM_MHBWX_SYSMEM_RANGE_MAX(unsigned long a)
  * Register (RSL) mhbw#_sysmem_range_min
  *
  * MHBW L2C/DDR Address Range Min Register
- * This register specifies the legal min address for system memory access.
+ * This register specifies the legal minimum address for system memory access.
  */
 union cavm_mhbwx_sysmem_range_min
 {
@@ -3629,9 +3629,9 @@ union cavm_mhbwx_sysmem_range_min
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_53_63        : 11;
-        uint64_t ddr_min_addr          : 53; /**< [ 52:  0](R/W) L2C/DDR min byte address. */
+        uint64_t ddr_min_addr          : 53; /**< [ 52:  0](R/W) Minimum IOVA for accesses to LLC/DRAM memory. */
 #else /* Word 0 - Little Endian */
-        uint64_t ddr_min_addr          : 53; /**< [ 52:  0](R/W) L2C/DDR min byte address. */
+        uint64_t ddr_min_addr          : 53; /**< [ 52:  0](R/W) Minimum IOVA for accesses to LLC/DRAM memory. */
         uint64_t reserved_53_63        : 11;
 #endif /* Word 0 - End */
     } s;

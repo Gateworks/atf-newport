@@ -36,17 +36,40 @@
  * CGX MSI-X Vector Enumeration
  * Enumeration the MSI-X interrupt vectors.
  */
-#define CAVM_CGX_INT_VEC_E_CMRX_INT(a) (0 + 9 * (a))
-#define CAVM_CGX_INT_VEC_E_CMR_MEM_INT (0x24)
-#define CAVM_CGX_INT_VEC_E_GMPX_GMI_RX_INT(a) (5 + 9 * (a))
-#define CAVM_CGX_INT_VEC_E_GMPX_GMI_TX_INT(a) (6 + 9 * (a))
-#define CAVM_CGX_INT_VEC_E_GMPX_GMI_WOL_INT(a) (7 + 9 * (a))
-#define CAVM_CGX_INT_VEC_E_GMPX_PCS_INT(a) (4 + 9 * (a))
-#define CAVM_CGX_INT_VEC_E_SMUX_RX_INT(a) (2 + 9 * (a))
-#define CAVM_CGX_INT_VEC_E_SMUX_RX_WOL_INT(a) (8 + 9 * (a))
-#define CAVM_CGX_INT_VEC_E_SMUX_TX_INT(a) (3 + 9 * (a))
-#define CAVM_CGX_INT_VEC_E_SPUX_INT(a) (1 + 9 * (a))
-#define CAVM_CGX_INT_VEC_E_SW (0x25)
+#define CAVM_CGX_INT_VEC_E_CMRX_INT_CN96XXP1(a) (0 + 9 * (a))
+#define CAVM_CGX_INT_VEC_E_CMRX_INT_CN96XXP3(a) (0 + 0xa * (a))
+#define CAVM_CGX_INT_VEC_E_CMRX_INT_CNF95XX(a) (0 + 9 * (a))
+#define CAVM_CGX_INT_VEC_E_CMRX_SW(a) (9 + 0xa * (a))
+#define CAVM_CGX_INT_VEC_E_CMR_MEM_INT_CN96XXP1 (0x24)
+#define CAVM_CGX_INT_VEC_E_CMR_MEM_INT_CN96XXP3 (0x28)
+#define CAVM_CGX_INT_VEC_E_CMR_MEM_INT_CNF95XX (0x24)
+#define CAVM_CGX_INT_VEC_E_GMPX_GMI_RX_INT_CN96XXP1(a) (5 + 9 * (a))
+#define CAVM_CGX_INT_VEC_E_GMPX_GMI_RX_INT_CN96XXP3(a) (5 + 0xa * (a))
+#define CAVM_CGX_INT_VEC_E_GMPX_GMI_RX_INT_CNF95XX(a) (5 + 9 * (a))
+#define CAVM_CGX_INT_VEC_E_GMPX_GMI_TX_INT_CN96XXP1(a) (6 + 9 * (a))
+#define CAVM_CGX_INT_VEC_E_GMPX_GMI_TX_INT_CN96XXP3(a) (6 + 0xa * (a))
+#define CAVM_CGX_INT_VEC_E_GMPX_GMI_TX_INT_CNF95XX(a) (6 + 9 * (a))
+#define CAVM_CGX_INT_VEC_E_GMPX_GMI_WOL_INT_CN96XXP1(a) (7 + 9 * (a))
+#define CAVM_CGX_INT_VEC_E_GMPX_GMI_WOL_INT_CN96XXP3(a) (7 + 0xa * (a))
+#define CAVM_CGX_INT_VEC_E_GMPX_GMI_WOL_INT_CNF95XX(a) (7 + 9 * (a))
+#define CAVM_CGX_INT_VEC_E_GMPX_PCS_INT_CN96XXP1(a) (4 + 9 * (a))
+#define CAVM_CGX_INT_VEC_E_GMPX_PCS_INT_CN96XXP3(a) (4 + 0xa * (a))
+#define CAVM_CGX_INT_VEC_E_GMPX_PCS_INT_CNF95XX(a) (4 + 9 * (a))
+#define CAVM_CGX_INT_VEC_E_SMUX_RX_INT_CN96XXP1(a) (2 + 9 * (a))
+#define CAVM_CGX_INT_VEC_E_SMUX_RX_INT_CN96XXP3(a) (2 + 0xa * (a))
+#define CAVM_CGX_INT_VEC_E_SMUX_RX_INT_CNF95XX(a) (2 + 9 * (a))
+#define CAVM_CGX_INT_VEC_E_SMUX_RX_WOL_INT_CN96XXP1(a) (8 + 9 * (a))
+#define CAVM_CGX_INT_VEC_E_SMUX_RX_WOL_INT_CN96XXP3(a) (8 + 0xa * (a))
+#define CAVM_CGX_INT_VEC_E_SMUX_RX_WOL_INT_CNF95XX(a) (8 + 9 * (a))
+#define CAVM_CGX_INT_VEC_E_SMUX_TX_INT_CN96XXP1(a) (3 + 9 * (a))
+#define CAVM_CGX_INT_VEC_E_SMUX_TX_INT_CN96XXP3(a) (3 + 0xa * (a))
+#define CAVM_CGX_INT_VEC_E_SMUX_TX_INT_CNF95XX(a) (3 + 9 * (a))
+#define CAVM_CGX_INT_VEC_E_SPUX_INT_CN96XXP1(a) (1 + 9 * (a))
+#define CAVM_CGX_INT_VEC_E_SPUX_INT_CN96XXP3(a) (1 + 0xa * (a))
+#define CAVM_CGX_INT_VEC_E_SPUX_INT_CNF95XX(a) (1 + 9 * (a))
+#define CAVM_CGX_INT_VEC_E_SW_CN96XXP1 (0x25)
+#define CAVM_CGX_INT_VEC_E_SW_CN96XXP3 (0x29)
+#define CAVM_CGX_INT_VEC_E_SW_CNF95XX (0x25)
 
 /**
  * Enumeration cgx_lmac_types_e
@@ -800,7 +823,243 @@ union cavm_cgxx_cmrx_config
         uint64_t reserved_62_63        : 2;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_cgxx_cmrx_config_s cn; */
+    /* struct cavm_cgxx_cmrx_config_s cn96xx; */
+    struct cavm_cgxx_cmrx_config_cnf95xx
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_62_63        : 2;
+        uint64_t p2x_select            : 3;  /**< [ 61: 59](R/W) Selects interior side P2X interface over which the LMAC will communicate:
+                                                                 \<pre\>
+                                                                   [P2X_SELECT]      Name      Connected block
+                                                                   -------------------------------------------
+                                                                   0                 --        Reserved
+                                                                   1                 P2X1      NIX0 (for CGX0), RFOE0 (for CGX1), RFOE1 (for CGX2)
+                                                                   2..7              --        Reserved
+                                                                 \</pre\> */
+        uint64_t x2p_select            : 3;  /**< [ 58: 56](R/W) Selects interior side X2P interface over which the LMAC will communicate:
+                                                                 \<pre\>
+                                                                   [X2P_SELECT]      Name      Connected block
+                                                                   -------------------------------------------
+                                                                   0                 --        Reserved
+                                                                   1                 X2P1      NIX0 (for CGX0), RFOE0 (for CGX1), RFOE1 (for CGX2)
+                                                                   2..7              --        Reserved
+                                                                 \</pre\> */
+        uint64_t enable                : 1;  /**< [ 55: 55](R/W) Logical MAC/PCS enable. This is the master enable for the LMAC. When clear, all the
+                                                                 dedicated CGX context state for the LMAC (state machines, FIFOs, counters, etc.) is reset,
+                                                                 and LMAC access to shared CGX resources (data path, SerDes lanes) is disabled.
+
+                                                                 When set, LMAC operation is enabled, including link bring-up, synchronization, and
+                                                                 transmit/receive of idles and fault sequences. Note that configuration registers for an
+                                                                 LMAC are not reset when this bit is clear, allowing software to program them before
+                                                                 setting this bit to enable the LMAC. This bit together with [LMAC_TYPE] is also used to
+                                                                 enable the clocking to the GMP and/or blocks of the Super path (SMU and SPU). CMR clocking
+                                                                 is enabled when any of the paths are enabled. */
+        uint64_t data_pkt_rx_en        : 1;  /**< [ 54: 54](R/W) Data packet receive enable. When [ENABLE] = 1 and [DATA_PKT_RX_EN] = 1, the reception of
+                                                                 data packets is enabled in the MAC layer. When [ENABLE] = 1 and [DATA_PKT_RX_EN] = 0, the
+                                                                 MAC layer drops received data and flow-control packets. */
+        uint64_t data_pkt_tx_en        : 1;  /**< [ 53: 53](R/W) Data packet transmit enable. When [ENABLE] = 1 and [DATA_PKT_TX_EN] = 1, the transmission
+                                                                 of data packets is enabled in the MAC layer. When [ENABLE] = 1 and [DATA_PKT_TX_EN] = 0,
+                                                                 the MAC layer suppresses the transmission of new data and packets for the LMAC. */
+        uint64_t int_beat_gen          : 1;  /**< [ 52: 52](R/W) Internal beat generation. This bit is used for debug/test purposes and should be clear
+                                                                 during normal operation. When set, the LMAC's PCS layer ignores RXVALID and
+                                                                 TXREADY/TXCREDIT from the associated SerDes lanes, internally generates fake (idle)
+                                                                 RXVALID and TXCREDIT pulses, and suppresses transmission to the SerDes. */
+        uint64_t unused                : 8;  /**< [ 51: 44](RAZ) Reserved. */
+        uint64_t lmac_type             : 4;  /**< [ 43: 40](R/W) Logical MAC/PCS/port type:
+
+                                                                 \<pre\>
+                                                                   LMAC_TYPE  Name     Description          NUM_LOG_LANES
+                                                                   ---------  -------  -------------------  -------------
+                                                                   0x0        SGMII    SGMII/1000BASE-X             1
+                                                                   0x1        XAUI     10GBASE-X/XAUI or DXAUI      4
+                                                                   0x2        RXAUI    Reduced XAUI                 2
+                                                                   0x3        10G_R    10GBASE-R                    1
+                                                                   0x4        40G_R    40GBASE-R                    4
+                                                                   0x5        --       Reserved                     -
+                                                                   0x6        QSGMII   QSGMII                       1
+                                                                   0x7        25G_R    25GBASE-R                    1
+                                                                   0x8        50G_R    50GBASE-R                    2
+                                                                   0x9        100G_R   100GBASE-R                   4
+                                                                   0xa        USXGMII  USXGMII                      1
+                                                                   Other      --       Reserved                     -
+                                                                 \</pre\>
+
+                                                                 NUM_LOG_LANES specifies the number of logical lanes that are valid for
+                                                                 each type. Each valid logical lane is mapped to a physical SerDes lane
+                                                                 based on the programming of [LANE_TO_SDS], except in USXGMII mode.
+
+                                                                 This field must be programmed to its final value before [ENABLE] is set, and must not
+                                                                 be changed when [ENABLE] = 1.
+
+                                                                 When LMAC_TYPE = CGX_LMAC_TYPES_E::USXGMII and optional PCH headers
+                                                                 are present in the received frames, the following must be set:
+                                                                 * CGX()_SMU()_RX_FRM_CTL[PRE_CHK]  = 0.
+                                                                 * CGX()_SMU()_RX_FRM_CTL[PRE_STRP] = 0.
+                                                                 * CGX()_SMU()_RX_UDD_SKP[LEN]      = 8.
+                                                                 * CGX()_SMU()_RX_UDD_SKP[FCSSEL]   = 1. */
+        uint64_t reserved_8_39         : 32;
+        uint64_t lane_to_sds           : 8;  /**< [  7:  0](R/W) Logical lane-to-SerDes lane mapping.
+                                                                 This is an array of 2-bit values that map each logical PCS lane in the LMAC to a
+                                                                 physical SerDes lane, as follows:
+
+                                                                 \<pre\>
+                                                                   Bits     Description                Reset value
+                                                                   -------  -------------------------  -----------
+                                                                   \<07:06\>  Logical lane 03 SerDes ID       0x3
+                                                                   \<05:04\>  Logical lane 02 SerDes ID       0x2
+                                                                   \<03:02\>  Logical lane 01 SerDes ID       0x1
+                                                                   \<01:00\>  Logical lane 00 SerDes ID       0x0
+                                                                 \</pre\>
+                                                                 \<page\>
+
+                                                                 Logical PCS lanes 0 through NUM_LOG_LANES-1 are valid, where NUM_LOG_LANES is a
+                                                                 function of the logical MAC/PCS type (see [LMAC_TYPE]). For example, when
+                                                                 [LMAC_TYPE] = SGMII, then there is only one PCS lane per LMAC (NUM_LOG_LANES =
+                                                                 1), and it will be logical PCS lane 0, and the associated physical SerDes lanes
+                                                                 are selected by bits \<1:0\>.
+
+                                                                 For 40GBASE-R ([LMAC_TYPE] = 40G_R), all four logical lanes are valid, and the PCS lane
+                                                                 IDs determine the block distribution order and associated alignment markers on the
+                                                                 transmit side. This is not necessarily the order in which logical lanes receive data
+                                                                 because 802.3 allows multilane BASE-R receive lanes to be reordered. When a lane
+                                                                 (called service interface (or lane) in 802.3) has achieved alignment marker lock on the
+                                                                 receive side (i.e. the associated CGX()_SPU()_BR_ALGN_STATUS[MARKER_LOCK] = 1), then
+                                                                 the actual detected RX PCS lane number is recorded in the corresponding
+                                                                 CGX()_SPU()_BR_LANE_MAP()[LN_MAPPING].
+
+                                                                 Above also applies to 100GBASE-R ([LMAC_TYPE] = 100G_R) which also uses all four logical
+                                                                 lanes which fan into 20 service lanes. The 20 service lanes map to 20 PCS lanes via
+                                                                 CGX()_SPU()_BR_LANE_MAP()[LN_MAPPING].
+
+                                                                 Above also applies individually for each of up to two 50GBASE-R LMACs ([LMAC_TYPE] =
+                                                                 50G_R) each of which uses 2 logical lanes and 2 SerDes.
+
+                                                                 For QSGMII, [LANE_TO_SDS]\<1:0\> for LMAC 0 selects the physical SerDes lane shared by four
+                                                                 LMACs, and [LANE_TO_SDS]\<1:0\> must be unique for each of the four LMACs.
+
+                                                                 For USXGMII, [LANE_TO_SDS] is ignored.  For SerDes mapping in USXGMII mode, see
+                                                                 CGX()_SPU_USXGMII_CONTROL[SDS_ID].
+
+                                                                 This field must be programmed to its final value before [ENABLE] is set, and
+                                                                 must not be changed when [ENABLE] = 1. */
+#else /* Word 0 - Little Endian */
+        uint64_t lane_to_sds           : 8;  /**< [  7:  0](R/W) Logical lane-to-SerDes lane mapping.
+                                                                 This is an array of 2-bit values that map each logical PCS lane in the LMAC to a
+                                                                 physical SerDes lane, as follows:
+
+                                                                 \<pre\>
+                                                                   Bits     Description                Reset value
+                                                                   -------  -------------------------  -----------
+                                                                   \<07:06\>  Logical lane 03 SerDes ID       0x3
+                                                                   \<05:04\>  Logical lane 02 SerDes ID       0x2
+                                                                   \<03:02\>  Logical lane 01 SerDes ID       0x1
+                                                                   \<01:00\>  Logical lane 00 SerDes ID       0x0
+                                                                 \</pre\>
+                                                                 \<page\>
+
+                                                                 Logical PCS lanes 0 through NUM_LOG_LANES-1 are valid, where NUM_LOG_LANES is a
+                                                                 function of the logical MAC/PCS type (see [LMAC_TYPE]). For example, when
+                                                                 [LMAC_TYPE] = SGMII, then there is only one PCS lane per LMAC (NUM_LOG_LANES =
+                                                                 1), and it will be logical PCS lane 0, and the associated physical SerDes lanes
+                                                                 are selected by bits \<1:0\>.
+
+                                                                 For 40GBASE-R ([LMAC_TYPE] = 40G_R), all four logical lanes are valid, and the PCS lane
+                                                                 IDs determine the block distribution order and associated alignment markers on the
+                                                                 transmit side. This is not necessarily the order in which logical lanes receive data
+                                                                 because 802.3 allows multilane BASE-R receive lanes to be reordered. When a lane
+                                                                 (called service interface (or lane) in 802.3) has achieved alignment marker lock on the
+                                                                 receive side (i.e. the associated CGX()_SPU()_BR_ALGN_STATUS[MARKER_LOCK] = 1), then
+                                                                 the actual detected RX PCS lane number is recorded in the corresponding
+                                                                 CGX()_SPU()_BR_LANE_MAP()[LN_MAPPING].
+
+                                                                 Above also applies to 100GBASE-R ([LMAC_TYPE] = 100G_R) which also uses all four logical
+                                                                 lanes which fan into 20 service lanes. The 20 service lanes map to 20 PCS lanes via
+                                                                 CGX()_SPU()_BR_LANE_MAP()[LN_MAPPING].
+
+                                                                 Above also applies individually for each of up to two 50GBASE-R LMACs ([LMAC_TYPE] =
+                                                                 50G_R) each of which uses 2 logical lanes and 2 SerDes.
+
+                                                                 For QSGMII, [LANE_TO_SDS]\<1:0\> for LMAC 0 selects the physical SerDes lane shared by four
+                                                                 LMACs, and [LANE_TO_SDS]\<1:0\> must be unique for each of the four LMACs.
+
+                                                                 For USXGMII, [LANE_TO_SDS] is ignored.  For SerDes mapping in USXGMII mode, see
+                                                                 CGX()_SPU_USXGMII_CONTROL[SDS_ID].
+
+                                                                 This field must be programmed to its final value before [ENABLE] is set, and
+                                                                 must not be changed when [ENABLE] = 1. */
+        uint64_t reserved_8_39         : 32;
+        uint64_t lmac_type             : 4;  /**< [ 43: 40](R/W) Logical MAC/PCS/port type:
+
+                                                                 \<pre\>
+                                                                   LMAC_TYPE  Name     Description          NUM_LOG_LANES
+                                                                   ---------  -------  -------------------  -------------
+                                                                   0x0        SGMII    SGMII/1000BASE-X             1
+                                                                   0x1        XAUI     10GBASE-X/XAUI or DXAUI      4
+                                                                   0x2        RXAUI    Reduced XAUI                 2
+                                                                   0x3        10G_R    10GBASE-R                    1
+                                                                   0x4        40G_R    40GBASE-R                    4
+                                                                   0x5        --       Reserved                     -
+                                                                   0x6        QSGMII   QSGMII                       1
+                                                                   0x7        25G_R    25GBASE-R                    1
+                                                                   0x8        50G_R    50GBASE-R                    2
+                                                                   0x9        100G_R   100GBASE-R                   4
+                                                                   0xa        USXGMII  USXGMII                      1
+                                                                   Other      --       Reserved                     -
+                                                                 \</pre\>
+
+                                                                 NUM_LOG_LANES specifies the number of logical lanes that are valid for
+                                                                 each type. Each valid logical lane is mapped to a physical SerDes lane
+                                                                 based on the programming of [LANE_TO_SDS], except in USXGMII mode.
+
+                                                                 This field must be programmed to its final value before [ENABLE] is set, and must not
+                                                                 be changed when [ENABLE] = 1.
+
+                                                                 When LMAC_TYPE = CGX_LMAC_TYPES_E::USXGMII and optional PCH headers
+                                                                 are present in the received frames, the following must be set:
+                                                                 * CGX()_SMU()_RX_FRM_CTL[PRE_CHK]  = 0.
+                                                                 * CGX()_SMU()_RX_FRM_CTL[PRE_STRP] = 0.
+                                                                 * CGX()_SMU()_RX_UDD_SKP[LEN]      = 8.
+                                                                 * CGX()_SMU()_RX_UDD_SKP[FCSSEL]   = 1. */
+        uint64_t unused                : 8;  /**< [ 51: 44](RAZ) Reserved. */
+        uint64_t int_beat_gen          : 1;  /**< [ 52: 52](R/W) Internal beat generation. This bit is used for debug/test purposes and should be clear
+                                                                 during normal operation. When set, the LMAC's PCS layer ignores RXVALID and
+                                                                 TXREADY/TXCREDIT from the associated SerDes lanes, internally generates fake (idle)
+                                                                 RXVALID and TXCREDIT pulses, and suppresses transmission to the SerDes. */
+        uint64_t data_pkt_tx_en        : 1;  /**< [ 53: 53](R/W) Data packet transmit enable. When [ENABLE] = 1 and [DATA_PKT_TX_EN] = 1, the transmission
+                                                                 of data packets is enabled in the MAC layer. When [ENABLE] = 1 and [DATA_PKT_TX_EN] = 0,
+                                                                 the MAC layer suppresses the transmission of new data and packets for the LMAC. */
+        uint64_t data_pkt_rx_en        : 1;  /**< [ 54: 54](R/W) Data packet receive enable. When [ENABLE] = 1 and [DATA_PKT_RX_EN] = 1, the reception of
+                                                                 data packets is enabled in the MAC layer. When [ENABLE] = 1 and [DATA_PKT_RX_EN] = 0, the
+                                                                 MAC layer drops received data and flow-control packets. */
+        uint64_t enable                : 1;  /**< [ 55: 55](R/W) Logical MAC/PCS enable. This is the master enable for the LMAC. When clear, all the
+                                                                 dedicated CGX context state for the LMAC (state machines, FIFOs, counters, etc.) is reset,
+                                                                 and LMAC access to shared CGX resources (data path, SerDes lanes) is disabled.
+
+                                                                 When set, LMAC operation is enabled, including link bring-up, synchronization, and
+                                                                 transmit/receive of idles and fault sequences. Note that configuration registers for an
+                                                                 LMAC are not reset when this bit is clear, allowing software to program them before
+                                                                 setting this bit to enable the LMAC. This bit together with [LMAC_TYPE] is also used to
+                                                                 enable the clocking to the GMP and/or blocks of the Super path (SMU and SPU). CMR clocking
+                                                                 is enabled when any of the paths are enabled. */
+        uint64_t x2p_select            : 3;  /**< [ 58: 56](R/W) Selects interior side X2P interface over which the LMAC will communicate:
+                                                                 \<pre\>
+                                                                   [X2P_SELECT]      Name      Connected block
+                                                                   -------------------------------------------
+                                                                   0                 --        Reserved
+                                                                   1                 X2P1      NIX0 (for CGX0), RFOE0 (for CGX1), RFOE1 (for CGX2)
+                                                                   2..7              --        Reserved
+                                                                 \</pre\> */
+        uint64_t p2x_select            : 3;  /**< [ 61: 59](R/W) Selects interior side P2X interface over which the LMAC will communicate:
+                                                                 \<pre\>
+                                                                   [P2X_SELECT]      Name      Connected block
+                                                                   -------------------------------------------
+                                                                   0                 --        Reserved
+                                                                   1                 P2X1      NIX0 (for CGX0), RFOE0 (for CGX1), RFOE1 (for CGX2)
+                                                                   2..7              --        Reserved
+                                                                 \</pre\> */
+        uint64_t reserved_62_63        : 2;
+#endif /* Word 0 - End */
+    } cnf95xx;
 };
 typedef union cavm_cgxx_cmrx_config cavm_cgxx_cmrx_config_t;
 
@@ -2455,6 +2714,157 @@ static inline uint64_t CAVM_CGXX_CMRX_SCRATCHX(unsigned long a, unsigned long b,
 #define device_bar_CAVM_CGXX_CMRX_SCRATCHX(a,b,c) 0x0 /* PF_BAR0 */
 #define busnum_CAVM_CGXX_CMRX_SCRATCHX(a,b,c) (a)
 #define arguments_CAVM_CGXX_CMRX_SCRATCHX(a,b,c) (a),(b),(c),-1
+
+/**
+ * Register (RSL) cgx#_cmr#_sw_int
+ *
+ * CGX CMR Interrupt Register
+ */
+union cavm_cgxx_cmrx_sw_int
+{
+    uint64_t u;
+    struct cavm_cgxx_cmrx_sw_int_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_1_63         : 63;
+        uint64_t sw_set                : 1;  /**< [  0:  0](R/W1C/H) Software sets this bit to trigger an interrupt */
+#else /* Word 0 - Little Endian */
+        uint64_t sw_set                : 1;  /**< [  0:  0](R/W1C/H) Software sets this bit to trigger an interrupt */
+        uint64_t reserved_1_63         : 63;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_cgxx_cmrx_sw_int_s cn; */
+};
+typedef union cavm_cgxx_cmrx_sw_int cavm_cgxx_cmrx_sw_int_t;
+
+static inline uint64_t CAVM_CGXX_CMRX_SW_INT(unsigned long a, unsigned long b) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CGXX_CMRX_SW_INT(unsigned long a, unsigned long b)
+{
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a<=2) && (b<=3)))
+        return 0x87e0e0000180ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    __cavm_csr_fatal("CGXX_CMRX_SW_INT", 2, a, b, 0, 0);
+}
+
+#define typedef_CAVM_CGXX_CMRX_SW_INT(a,b) cavm_cgxx_cmrx_sw_int_t
+#define bustype_CAVM_CGXX_CMRX_SW_INT(a,b) CSR_TYPE_RSL
+#define basename_CAVM_CGXX_CMRX_SW_INT(a,b) "CGXX_CMRX_SW_INT"
+#define device_bar_CAVM_CGXX_CMRX_SW_INT(a,b) 0x0 /* PF_BAR0 */
+#define busnum_CAVM_CGXX_CMRX_SW_INT(a,b) (a)
+#define arguments_CAVM_CGXX_CMRX_SW_INT(a,b) (a),(b),-1,-1
+
+/**
+ * Register (RSL) cgx#_cmr#_sw_int_ena_w1c
+ *
+ * CGX CMR Interrupt Enable Clear Register
+ * This register clears interrupt enable bits.
+ */
+union cavm_cgxx_cmrx_sw_int_ena_w1c
+{
+    uint64_t u;
+    struct cavm_cgxx_cmrx_sw_int_ena_w1c_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_1_63         : 63;
+        uint64_t sw_set                : 1;  /**< [  0:  0](R/W1C/H) Reads or clears enable for CGX(0..2)_CMR(0..3)_SW_INT[SW_SET]. */
+#else /* Word 0 - Little Endian */
+        uint64_t sw_set                : 1;  /**< [  0:  0](R/W1C/H) Reads or clears enable for CGX(0..2)_CMR(0..3)_SW_INT[SW_SET]. */
+        uint64_t reserved_1_63         : 63;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_cgxx_cmrx_sw_int_ena_w1c_s cn; */
+};
+typedef union cavm_cgxx_cmrx_sw_int_ena_w1c cavm_cgxx_cmrx_sw_int_ena_w1c_t;
+
+static inline uint64_t CAVM_CGXX_CMRX_SW_INT_ENA_W1C(unsigned long a, unsigned long b) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CGXX_CMRX_SW_INT_ENA_W1C(unsigned long a, unsigned long b)
+{
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a<=2) && (b<=3)))
+        return 0x87e0e0000190ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    __cavm_csr_fatal("CGXX_CMRX_SW_INT_ENA_W1C", 2, a, b, 0, 0);
+}
+
+#define typedef_CAVM_CGXX_CMRX_SW_INT_ENA_W1C(a,b) cavm_cgxx_cmrx_sw_int_ena_w1c_t
+#define bustype_CAVM_CGXX_CMRX_SW_INT_ENA_W1C(a,b) CSR_TYPE_RSL
+#define basename_CAVM_CGXX_CMRX_SW_INT_ENA_W1C(a,b) "CGXX_CMRX_SW_INT_ENA_W1C"
+#define device_bar_CAVM_CGXX_CMRX_SW_INT_ENA_W1C(a,b) 0x0 /* PF_BAR0 */
+#define busnum_CAVM_CGXX_CMRX_SW_INT_ENA_W1C(a,b) (a)
+#define arguments_CAVM_CGXX_CMRX_SW_INT_ENA_W1C(a,b) (a),(b),-1,-1
+
+/**
+ * Register (RSL) cgx#_cmr#_sw_int_ena_w1s
+ *
+ * CGX CMR Interrupt Enable Set Register
+ * This register sets interrupt enable bits.
+ */
+union cavm_cgxx_cmrx_sw_int_ena_w1s
+{
+    uint64_t u;
+    struct cavm_cgxx_cmrx_sw_int_ena_w1s_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_1_63         : 63;
+        uint64_t sw_set                : 1;  /**< [  0:  0](R/W1S/H) Reads or sets enable for CGX(0..2)_CMR(0..3)_SW_INT[SW_SET]. */
+#else /* Word 0 - Little Endian */
+        uint64_t sw_set                : 1;  /**< [  0:  0](R/W1S/H) Reads or sets enable for CGX(0..2)_CMR(0..3)_SW_INT[SW_SET]. */
+        uint64_t reserved_1_63         : 63;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_cgxx_cmrx_sw_int_ena_w1s_s cn; */
+};
+typedef union cavm_cgxx_cmrx_sw_int_ena_w1s cavm_cgxx_cmrx_sw_int_ena_w1s_t;
+
+static inline uint64_t CAVM_CGXX_CMRX_SW_INT_ENA_W1S(unsigned long a, unsigned long b) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CGXX_CMRX_SW_INT_ENA_W1S(unsigned long a, unsigned long b)
+{
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a<=2) && (b<=3)))
+        return 0x87e0e0000198ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    __cavm_csr_fatal("CGXX_CMRX_SW_INT_ENA_W1S", 2, a, b, 0, 0);
+}
+
+#define typedef_CAVM_CGXX_CMRX_SW_INT_ENA_W1S(a,b) cavm_cgxx_cmrx_sw_int_ena_w1s_t
+#define bustype_CAVM_CGXX_CMRX_SW_INT_ENA_W1S(a,b) CSR_TYPE_RSL
+#define basename_CAVM_CGXX_CMRX_SW_INT_ENA_W1S(a,b) "CGXX_CMRX_SW_INT_ENA_W1S"
+#define device_bar_CAVM_CGXX_CMRX_SW_INT_ENA_W1S(a,b) 0x0 /* PF_BAR0 */
+#define busnum_CAVM_CGXX_CMRX_SW_INT_ENA_W1S(a,b) (a)
+#define arguments_CAVM_CGXX_CMRX_SW_INT_ENA_W1S(a,b) (a),(b),-1,-1
+
+/**
+ * Register (RSL) cgx#_cmr#_sw_int_w1s
+ *
+ * CGX CMR Interrupt Set Register
+ * This register sets interrupt bits.
+ */
+union cavm_cgxx_cmrx_sw_int_w1s
+{
+    uint64_t u;
+    struct cavm_cgxx_cmrx_sw_int_w1s_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_1_63         : 63;
+        uint64_t sw_set                : 1;  /**< [  0:  0](R/W1S/H) Reads or sets CGX(0..2)_CMR(0..3)_SW_INT[SW_SET]. */
+#else /* Word 0 - Little Endian */
+        uint64_t sw_set                : 1;  /**< [  0:  0](R/W1S/H) Reads or sets CGX(0..2)_CMR(0..3)_SW_INT[SW_SET]. */
+        uint64_t reserved_1_63         : 63;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_cgxx_cmrx_sw_int_w1s_s cn; */
+};
+typedef union cavm_cgxx_cmrx_sw_int_w1s cavm_cgxx_cmrx_sw_int_w1s_t;
+
+static inline uint64_t CAVM_CGXX_CMRX_SW_INT_W1S(unsigned long a, unsigned long b) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CGXX_CMRX_SW_INT_W1S(unsigned long a, unsigned long b)
+{
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a<=2) && (b<=3)))
+        return 0x87e0e0000188ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    __cavm_csr_fatal("CGXX_CMRX_SW_INT_W1S", 2, a, b, 0, 0);
+}
+
+#define typedef_CAVM_CGXX_CMRX_SW_INT_W1S(a,b) cavm_cgxx_cmrx_sw_int_w1s_t
+#define bustype_CAVM_CGXX_CMRX_SW_INT_W1S(a,b) CSR_TYPE_RSL
+#define basename_CAVM_CGXX_CMRX_SW_INT_W1S(a,b) "CGXX_CMRX_SW_INT_W1S"
+#define device_bar_CAVM_CGXX_CMRX_SW_INT_W1S(a,b) 0x0 /* PF_BAR0 */
+#define busnum_CAVM_CGXX_CMRX_SW_INT_W1S(a,b) (a)
+#define arguments_CAVM_CGXX_CMRX_SW_INT_W1S(a,b) (a),(b),-1,-1
 
 /**
  * Register (RSL) cgx#_cmr#_tx_channel
@@ -10430,7 +10840,11 @@ typedef union cavm_cgxx_msix_vecx_addr cavm_cgxx_msix_vecx_addr_t;
 static inline uint64_t CAVM_CGXX_MSIX_VECX_ADDR(unsigned long a, unsigned long b) __attribute__ ((pure, always_inline));
 static inline uint64_t CAVM_CGXX_MSIX_VECX_ADDR(unsigned long a, unsigned long b)
 {
-    if (cavm_is_model(OCTEONTX_CN9XXX) && ((a<=2) && (b<=37)))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && ((a<=2) && (b<=37)))
+        return 0x87e0e0400000ll + 0x1000000ll * ((a) & 0x3) + 0x10ll * ((b) & 0x3f);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a<=2) && (b<=41)))
+        return 0x87e0e0400000ll + 0x1000000ll * ((a) & 0x3) + 0x10ll * ((b) & 0x3f);
+    if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=37)))
         return 0x87e0e0400000ll + 0x1000000ll * ((a) & 0x3) + 0x10ll * ((b) & 0x3f);
     __cavm_csr_fatal("CGXX_MSIX_VECX_ADDR", 2, a, b, 0, 0);
 }
@@ -10470,7 +10884,11 @@ typedef union cavm_cgxx_msix_vecx_ctl cavm_cgxx_msix_vecx_ctl_t;
 static inline uint64_t CAVM_CGXX_MSIX_VECX_CTL(unsigned long a, unsigned long b) __attribute__ ((pure, always_inline));
 static inline uint64_t CAVM_CGXX_MSIX_VECX_CTL(unsigned long a, unsigned long b)
 {
-    if (cavm_is_model(OCTEONTX_CN9XXX) && ((a<=2) && (b<=37)))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && ((a<=2) && (b<=37)))
+        return 0x87e0e0400008ll + 0x1000000ll * ((a) & 0x3) + 0x10ll * ((b) & 0x3f);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a<=2) && (b<=41)))
+        return 0x87e0e0400008ll + 0x1000000ll * ((a) & 0x3) + 0x10ll * ((b) & 0x3f);
+    if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=37)))
         return 0x87e0e0400008ll + 0x1000000ll * ((a) & 0x3) + 0x10ll * ((b) & 0x3f);
     __cavm_csr_fatal("CGXX_MSIX_VECX_CTL", 2, a, b, 0, 0);
 }
@@ -13998,7 +14416,7 @@ union cavm_cgxx_spux_br_pmd_control
         uint64_t reserved_4_63         : 60;
 #endif /* Word 0 - End */
     } s;
-    struct cavm_cgxx_spux_br_pmd_control_cn96xx
+    struct cavm_cgxx_spux_br_pmd_control_cn96xxp1_0
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_3_63         : 61;
@@ -14023,8 +14441,11 @@ union cavm_cgxx_spux_br_pmd_control
                                                                  92.7.12 will be used. */
         uint64_t reserved_3_63         : 61;
 #endif /* Word 0 - End */
-    } cn96xx;
-    /* struct cavm_cgxx_spux_br_pmd_control_s cnf95xx; */
+    } cn96xxp1_0;
+    /* struct cavm_cgxx_spux_br_pmd_control_s cn96xxp1_1; */
+    /* struct cavm_cgxx_spux_br_pmd_control_s cn96xxp3; */
+    /* struct cavm_cgxx_spux_br_pmd_control_s cnf95xxp1; */
+    /* struct cavm_cgxx_spux_br_pmd_control_cn96xxp1_0 cnf95xxp2; */
 };
 typedef union cavm_cgxx_spux_br_pmd_control cavm_cgxx_spux_br_pmd_control_t;
 
@@ -17569,6 +17990,174 @@ union cavm_cgxx_spu_dbg_control
         uint64_t us_clk_period         : 12; /**< [ 43: 32](R/W) Microsecond clock period. Specifies the number of 100MHz cycles per microseconds, minus one.
                                                                  Only sensical value is 100 - 1 == 99 == 0x63.
                                                                  This is used by the BASE-R BER monitor timers. */
+        uint64_t rf_cw_mon_erly_restart_dis : 1;/**< [ 31: 31](R/W) The pipe-stage where the FEC alignment state machine RF_CW_MON (802.3bj-2014 Figure 91-9,
+                                                                 802.3by-2016 Figure 108-6) resides will retain knowledge of uncorectable errors in the system
+                                                                 from the moment the Reed-Solomon decoder is up and running and until the SM leaves
+                                                                 ALIGN_ACQUIRED. If any uncorrectable errors occur in theat interval the SM will go to THREE_BAD
+                                                                 and cause restart lock to occur. This behavior will be preempted if this bit is set to 1.
+
+                                                                 Internal:
+                                                                 This was added to disable part of the fix to bug 36607. */
+        uint64_t br_ber_mon_dis        : 1;  /**< [ 30: 30](R/W) BASE-R bit error rate monitor disable. This bit should be clear for normal operation.
+                                                                 Setting it disables the BASE-R BER monitor state machine defined in 802.3-2008 Figure
+                                                                 49-13 for 10G, 25GBASE-R, also used for USXGMII and 802.3ba-2010 Figure 82-13 for
+                                                                 40G, 50G, 100GBASE-R. */
+        uint64_t an_nonce_match_dis    : 1;  /**< [ 29: 29](R/W) Autonegotiation nonce match disable. This bit should be clear for normal operation.
+                                                                 Setting it disables Nonce Match check by forcing nonce_match variable to 0 in the
+                                                                 autonegotiation arbitration state diagram, as defined in 802.3-2008 Figure 73-11. This bit
+                                                                 can be set by software for test purposes, e.g. for running autonegotiation in
+                                                                 loopback mode. */
+        uint64_t timestamp_norm_dis    : 1;  /**< [ 28: 28](R/W) Multi-lane BASE-R RX timestamp normalization disable. This bit controls the generation
+                                                                 of the receive SOP timestamp passed to the SMU sub-block for a 40G, 50G or 100GBASE-R
+                                                                 LMAC/LPCS. When this bit is clear, SPU normalizes the receive SOP timestamp in order to
+                                                                 compensate for lane-to-lane skew on a multi-lane BASE-R link, as described below. When
+                                                                 this bit is set, timestamp normalization is disabled and SPU directly passes the
+                                                                 captured SOP timestamp values to SMU.
+
+                                                                 In multi-lane mode, a packet's SOP block can be transferred on any of the LMAC's lanes.
+                                                                 In the presence of lane-to-lane skew, the SOP delay from transmit (by the link partner)
+                                                                 to receive by SPU varies depending on which lane is used by the SOP block. This variation
+                                                                 reduces the accuracy of the received SOP timestamp relative to when it was transmitted by
+                                                                 the link partner.
+
+                                                                 SPU captures the timestamp of the alignment marker received on each SerDes lane during
+                                                                 align/skew detection; the captured value can be read from the SerDes lane's
+                                                                 CGX()_SPU_SDS()_SKEW_STATUS[SKEW_STATUS] field (CGX_SPU_SDS_SKEW_STATUS_S[AM_TIMESTAMP]
+                                                                 sub-field). If
+                                                                 alignment markers are transmitted at about the same time on all lanes by the link partner,
+                                                                 then the difference between the CGX_SPU_SDS_SKEW_STATUS_S[AM_TIMESTAMP] values for a pair
+                                                                 of lanes represents the
+                                                                 approximate skew between those lanes.
+
+                                                                 SPU uses the multi-lane LMAC's programmed PCS lane 0 as a reference and computes the
+                                                                 CGX_SPU_SDS_SKEW_STATUS_S[AM_TIMESTAMP] delta of every other lane relative to PCS lane 0.
+                                                                 When normalization is
+                                                                 enabled, SPU adjusts the timestamp of a received SOP by subtracting the receiving lane's
+                                                                 CGX_SPU_SDS_SKEW_STATUS_S[AM_TIMESTAMP] delta from the captured timestamp value. The
+                                                                 adjusted/normalized timestamp
+                                                                 value is then passed to SMU along with the SOP.
+
+                                                                 Software can determine the actual maximum skew of a multi-lane link by examining the
+                                                                 CGX_SPU_SDS_SKEW_STATUS_S[AM_TIMESTAMP] values in the CGX()_SPU_SDS()_SKEW_STATUS
+                                                                 registers, and decide if
+                                                                 timestamp normalization should be enabled or disabled to improve PTP accuracy.
+                                                                 Normalization improves accuracy for larger skew values but reduces the accuracy (due to
+                                                                 timestamp measurement errors) for small skew values. */
+        uint64_t reserved_20_27        : 8;
+        uint64_t br_pmd_train_soft_en  : 1;  /**< [ 19: 19](R/W) Enable BASE-R PMD software controlled link training. This bit configures the operation
+                                                                 mode for BASE-R link training for all LMACs and lanes. When this bit is set along with
+                                                                 CGX()_SPU()_BR_PMD_CONTROL[TRAIN_EN] for a given LMAC, the BASE-R link training
+                                                                 protocol for that LMAC is executed under software control, whereby the contents the
+                                                                 CGX()_SPU()_BR_PMD_LD_CUP and CGX()_SPU()_BR_PMD_LD_REP registers are
+                                                                 updated by software. When this bit is clear and
+                                                                 CGX()_SPU()_BR_PMD_CONTROL[TRAIN_EN] is set, the link training protocol is fully
+                                                                 automated in hardware, whereby the contents CGX()_SPU()_BR_PMD_LD_CUP and
+                                                                 CGX()_SPU()_BR_PMD_LD_REP registers are automatically updated by hardware. */
+        uint64_t reserved_17_18        : 2;
+        uint64_t scramble_dis          : 1;  /**< [ 16: 16](R/W) BASE-R scrambler/descrambler disable. Setting this bit to 1 disables the BASE-R scrambler
+                                                                 & descrambler functions and FEC PN-2112 scrambler & descrambler functions for debug
+                                                                 purposes. */
+        uint64_t reserved_15           : 1;
+        uint64_t marker_rxp            : 15; /**< [ 14:  0](R/W) BASE-R alignment marker receive period. For a multilane BASE-R logical PCS (i.e.
+                                                                 40,50,100GBASE-R), this field specifies the expected alignment marker receive period per
+                                                                 lane,
+                                                                 i.e. the expected number of received 66b non-marker blocks between consecutive markers on
+                                                                 the same lane. The default value corresponds to a period of 16383 blocks (exclusive) as
+                                                                 specified in 802.3ba-2010. Must be greater than 64. */
+#else /* Word 0 - Little Endian */
+        uint64_t marker_rxp            : 15; /**< [ 14:  0](R/W) BASE-R alignment marker receive period. For a multilane BASE-R logical PCS (i.e.
+                                                                 40,50,100GBASE-R), this field specifies the expected alignment marker receive period per
+                                                                 lane,
+                                                                 i.e. the expected number of received 66b non-marker blocks between consecutive markers on
+                                                                 the same lane. The default value corresponds to a period of 16383 blocks (exclusive) as
+                                                                 specified in 802.3ba-2010. Must be greater than 64. */
+        uint64_t reserved_15           : 1;
+        uint64_t scramble_dis          : 1;  /**< [ 16: 16](R/W) BASE-R scrambler/descrambler disable. Setting this bit to 1 disables the BASE-R scrambler
+                                                                 & descrambler functions and FEC PN-2112 scrambler & descrambler functions for debug
+                                                                 purposes. */
+        uint64_t reserved_17_18        : 2;
+        uint64_t br_pmd_train_soft_en  : 1;  /**< [ 19: 19](R/W) Enable BASE-R PMD software controlled link training. This bit configures the operation
+                                                                 mode for BASE-R link training for all LMACs and lanes. When this bit is set along with
+                                                                 CGX()_SPU()_BR_PMD_CONTROL[TRAIN_EN] for a given LMAC, the BASE-R link training
+                                                                 protocol for that LMAC is executed under software control, whereby the contents the
+                                                                 CGX()_SPU()_BR_PMD_LD_CUP and CGX()_SPU()_BR_PMD_LD_REP registers are
+                                                                 updated by software. When this bit is clear and
+                                                                 CGX()_SPU()_BR_PMD_CONTROL[TRAIN_EN] is set, the link training protocol is fully
+                                                                 automated in hardware, whereby the contents CGX()_SPU()_BR_PMD_LD_CUP and
+                                                                 CGX()_SPU()_BR_PMD_LD_REP registers are automatically updated by hardware. */
+        uint64_t reserved_20_27        : 8;
+        uint64_t timestamp_norm_dis    : 1;  /**< [ 28: 28](R/W) Multi-lane BASE-R RX timestamp normalization disable. This bit controls the generation
+                                                                 of the receive SOP timestamp passed to the SMU sub-block for a 40G, 50G or 100GBASE-R
+                                                                 LMAC/LPCS. When this bit is clear, SPU normalizes the receive SOP timestamp in order to
+                                                                 compensate for lane-to-lane skew on a multi-lane BASE-R link, as described below. When
+                                                                 this bit is set, timestamp normalization is disabled and SPU directly passes the
+                                                                 captured SOP timestamp values to SMU.
+
+                                                                 In multi-lane mode, a packet's SOP block can be transferred on any of the LMAC's lanes.
+                                                                 In the presence of lane-to-lane skew, the SOP delay from transmit (by the link partner)
+                                                                 to receive by SPU varies depending on which lane is used by the SOP block. This variation
+                                                                 reduces the accuracy of the received SOP timestamp relative to when it was transmitted by
+                                                                 the link partner.
+
+                                                                 SPU captures the timestamp of the alignment marker received on each SerDes lane during
+                                                                 align/skew detection; the captured value can be read from the SerDes lane's
+                                                                 CGX()_SPU_SDS()_SKEW_STATUS[SKEW_STATUS] field (CGX_SPU_SDS_SKEW_STATUS_S[AM_TIMESTAMP]
+                                                                 sub-field). If
+                                                                 alignment markers are transmitted at about the same time on all lanes by the link partner,
+                                                                 then the difference between the CGX_SPU_SDS_SKEW_STATUS_S[AM_TIMESTAMP] values for a pair
+                                                                 of lanes represents the
+                                                                 approximate skew between those lanes.
+
+                                                                 SPU uses the multi-lane LMAC's programmed PCS lane 0 as a reference and computes the
+                                                                 CGX_SPU_SDS_SKEW_STATUS_S[AM_TIMESTAMP] delta of every other lane relative to PCS lane 0.
+                                                                 When normalization is
+                                                                 enabled, SPU adjusts the timestamp of a received SOP by subtracting the receiving lane's
+                                                                 CGX_SPU_SDS_SKEW_STATUS_S[AM_TIMESTAMP] delta from the captured timestamp value. The
+                                                                 adjusted/normalized timestamp
+                                                                 value is then passed to SMU along with the SOP.
+
+                                                                 Software can determine the actual maximum skew of a multi-lane link by examining the
+                                                                 CGX_SPU_SDS_SKEW_STATUS_S[AM_TIMESTAMP] values in the CGX()_SPU_SDS()_SKEW_STATUS
+                                                                 registers, and decide if
+                                                                 timestamp normalization should be enabled or disabled to improve PTP accuracy.
+                                                                 Normalization improves accuracy for larger skew values but reduces the accuracy (due to
+                                                                 timestamp measurement errors) for small skew values. */
+        uint64_t an_nonce_match_dis    : 1;  /**< [ 29: 29](R/W) Autonegotiation nonce match disable. This bit should be clear for normal operation.
+                                                                 Setting it disables Nonce Match check by forcing nonce_match variable to 0 in the
+                                                                 autonegotiation arbitration state diagram, as defined in 802.3-2008 Figure 73-11. This bit
+                                                                 can be set by software for test purposes, e.g. for running autonegotiation in
+                                                                 loopback mode. */
+        uint64_t br_ber_mon_dis        : 1;  /**< [ 30: 30](R/W) BASE-R bit error rate monitor disable. This bit should be clear for normal operation.
+                                                                 Setting it disables the BASE-R BER monitor state machine defined in 802.3-2008 Figure
+                                                                 49-13 for 10G, 25GBASE-R, also used for USXGMII and 802.3ba-2010 Figure 82-13 for
+                                                                 40G, 50G, 100GBASE-R. */
+        uint64_t rf_cw_mon_erly_restart_dis : 1;/**< [ 31: 31](R/W) The pipe-stage where the FEC alignment state machine RF_CW_MON (802.3bj-2014 Figure 91-9,
+                                                                 802.3by-2016 Figure 108-6) resides will retain knowledge of uncorectable errors in the system
+                                                                 from the moment the Reed-Solomon decoder is up and running and until the SM leaves
+                                                                 ALIGN_ACQUIRED. If any uncorrectable errors occur in theat interval the SM will go to THREE_BAD
+                                                                 and cause restart lock to occur. This behavior will be preempted if this bit is set to 1.
+
+                                                                 Internal:
+                                                                 This was added to disable part of the fix to bug 36607. */
+        uint64_t us_clk_period         : 12; /**< [ 43: 32](R/W) Microsecond clock period. Specifies the number of 100MHz cycles per microseconds, minus one.
+                                                                 Only sensical value is 100 - 1 == 99 == 0x63.
+                                                                 This is used by the BASE-R BER monitor timers. */
+        uint64_t ms_clk_period         : 12; /**< [ 55: 44](R/W) Millisecond clock period. Specifies the number of microsecond clock ticks per millisecond,
+                                                                 minus one. The default value of 999 (0x3E7) should be used during normal operation; other
+                                                                 values may be used for test/debug purposes. */
+        uint64_t reserved_56_63        : 8;
+#endif /* Word 0 - End */
+    } s;
+    struct cavm_cgxx_spu_dbg_control_cn96xxp1
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_56_63        : 8;
+        uint64_t ms_clk_period         : 12; /**< [ 55: 44](R/W) Millisecond clock period. Specifies the number of microsecond clock ticks per millisecond,
+                                                                 minus one. The default value of 999 (0x3E7) should be used during normal operation; other
+                                                                 values may be used for test/debug purposes. */
+        uint64_t us_clk_period         : 12; /**< [ 43: 32](R/W) Microsecond clock period. Specifies the number of 100MHz cycles per microseconds, minus one.
+                                                                 Only sensical value is 100 - 1 == 99 == 0x63.
+                                                                 This is used by the BASE-R BER monitor timers. */
         uint64_t reserved_31           : 1;
         uint64_t br_ber_mon_dis        : 1;  /**< [ 30: 30](R/W) BASE-R bit error rate monitor disable. This bit should be clear for normal operation.
                                                                  Setting it disables the BASE-R BER monitor state machine defined in 802.3-2008 Figure
@@ -17712,8 +18301,10 @@ union cavm_cgxx_spu_dbg_control
                                                                  values may be used for test/debug purposes. */
         uint64_t reserved_56_63        : 8;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_cgxx_spu_dbg_control_s cn; */
+    } cn96xxp1;
+    /* struct cavm_cgxx_spu_dbg_control_s cn96xxp3; */
+    /* struct cavm_cgxx_spu_dbg_control_cn96xxp1 cnf95xxp1; */
+    /* struct cavm_cgxx_spu_dbg_control_s cnf95xxp2; */
 };
 typedef union cavm_cgxx_spu_dbg_control cavm_cgxx_spu_dbg_control_t;
 

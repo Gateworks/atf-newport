@@ -32,6 +32,7 @@
     in ARM speak). Inner or Outer shared instructions won't work */
 #define MB          __asm__ volatile ("dmb sy"      : : :"memory") /* Full memory barrier, like MIPS SYNC */
 #define WMB         __asm__ volatile ("dmb st"      : : :"memory") /* Write memory barrier, like MIPS SYNCW */
+#define RMB         __asm__ volatile ("dmb ld"      : : :"memory") /* Read memory barrier, only necessary on OcteonTX2 */
 
 /* other useful stuff */
 #define WFE         __asm__ volatile ("wfe"         : : :"memory") /* Wait for event */

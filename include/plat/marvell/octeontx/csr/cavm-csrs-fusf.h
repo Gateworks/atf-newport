@@ -32,7 +32,15 @@
  * Enumeration fusf_fuse_num_e
  *
  * Field Fuse Fuse Number Enumeration
- * Enumerates the fuse numbers.
+ * Enumerates the field fuse numbers.
+ *
+ * The fuse_lock column indicates which lock bits prevent the given row of fuses
+ * from being reprogrammed, as follows:
+ *   NO_LOCK = Locked by only ::FUSF_LCK.
+ *   CFG = Locked by only ::FUSF_LCK.
+ *   SSK = Locked by ::SSK_LCK or ::FUSF_LCK.
+ *   ROT = Locked by ::ROT_LCK or ::FUSF_LCK.
+ *   SW = Locked by ::SW_LCK or ::FUSF_LCK.
  */
 #define CAVM_FUSF_FUSE_NUM_E_CRYPT_NO_DIS (0xe)
 #define CAVM_FUSF_FUSE_NUM_E_CRYPT_SSK_DIS (0xf)

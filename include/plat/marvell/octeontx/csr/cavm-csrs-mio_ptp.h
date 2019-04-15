@@ -282,13 +282,15 @@ union cavm_mio_ptp_clock_cfg
                                                                  0x1 = Divided by 2.
                                                                  0x2 = Divided by 4.
                                                                  0x3 = Divided by 8. */
-        uint64_t refclk_src            : 1;  /**< [ 33: 33](R/W) Internal reference clock source used to generate PTP clock.
+        uint64_t refclk_src            : 1;  /**< [ 33: 33](R/W) Reserved.
+                                                                 Internal:
+                                                                 Internal reference clock source used to generate PTP clock.
                                                                    0 = Use the coprocessor-clock to generates PTP clock.  To provide sufficient
                                                                    resolution the coprocessor clock is typically required, however if the
                                                                    frequency of the coprocessor-clock is changed, this may result in time drift
                                                                    which must be recompensated by software, perhaps by redoing the IEEE 1588
                                                                    synchronization.
-                                                                   1 = Use 100 MHz input reference clock to generate the PTP clock. */
+                                                                   1 = Not recommended. (100 MHz input reference clock). */
         uint64_t sysck_en              : 1;  /**< [ 32: 32](R/W) Enable PTP SYSCK. (For output pin selection see GPIO_BIT_CFG().) */
         uint64_t pps_inv               : 1;  /**< [ 31: 31](R/W) Invert PTP PPS.
                                                                  0 = Don't invert.
@@ -334,13 +336,15 @@ union cavm_mio_ptp_clock_cfg
                                                                  0 = Don't invert.
                                                                  1 = Invert. */
         uint64_t sysck_en              : 1;  /**< [ 32: 32](R/W) Enable PTP SYSCK. (For output pin selection see GPIO_BIT_CFG().) */
-        uint64_t refclk_src            : 1;  /**< [ 33: 33](R/W) Internal reference clock source used to generate PTP clock.
+        uint64_t refclk_src            : 1;  /**< [ 33: 33](R/W) Reserved.
+                                                                 Internal:
+                                                                 Internal reference clock source used to generate PTP clock.
                                                                    0 = Use the coprocessor-clock to generates PTP clock.  To provide sufficient
                                                                    resolution the coprocessor clock is typically required, however if the
                                                                    frequency of the coprocessor-clock is changed, this may result in time drift
                                                                    which must be recompensated by software, perhaps by redoing the IEEE 1588
                                                                    synchronization.
-                                                                   1 = Use 100 MHz input reference clock to generate the PTP clock. */
+                                                                   1 = Not recommended. (100 MHz input reference clock). */
         uint64_t bts_clk_div           : 2;  /**< [ 35: 34](R/W) External BTS PLL clock divider before edge detect:
                                                                  0x0 = Original external clock.
                                                                  0x1 = Divided by 2.

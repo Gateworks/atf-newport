@@ -1346,21 +1346,7 @@ union cavm_etrx_pidr2
         uint32_t reserved_8_31         : 24;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_etrx_pidr2_s cn96xx; */
-    struct cavm_etrx_pidr2_cnf95xx
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint32_t reserved_8_31         : 24;
-        uint32_t revision              : 4;  /**< [  7:  4](RO) Architectural revision, as assigned by Arm. */
-        uint32_t jedec                 : 1;  /**< [  3:  3](RO) JEDEC assigned. */
-        uint32_t des_1                 : 3;  /**< [  2:  0](RO) JEP106 identification code \<6:4\>. Cavium code is 0x4C. */
-#else /* Word 0 - Little Endian */
-        uint32_t des_1                 : 3;  /**< [  2:  0](RO) JEP106 identification code \<6:4\>. Cavium code is 0x4C. */
-        uint32_t jedec                 : 1;  /**< [  3:  3](RO) JEDEC assigned. */
-        uint32_t revision              : 4;  /**< [  7:  4](RO) Architectural revision, as assigned by Arm. */
-        uint32_t reserved_8_31         : 24;
-#endif /* Word 0 - End */
-    } cnf95xx;
+    /* struct cavm_etrx_pidr2_s cn; */
 };
 typedef union cavm_etrx_pidr2 cavm_etrx_pidr2_t;
 
@@ -1446,21 +1432,7 @@ union cavm_etrx_pidr4
         uint32_t reserved_8_31         : 24;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_etrx_pidr4_s cn96xx; */
-    struct cavm_etrx_pidr4_cnf95xx
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint32_t reserved_8_31         : 24;
-        uint32_t fourkbcount           : 4;  /**< [  7:  4](RO) Size of the component. Log\<sub\>2\</sub\> of the number of 4KB pages from the
-                                                                 start of the component to the end of the component ID registers. */
-        uint32_t jep106cont            : 4;  /**< [  3:  0](RO) JEP106 continuation code, least significant nibble. Indicates Cavium. */
-#else /* Word 0 - Little Endian */
-        uint32_t jep106cont            : 4;  /**< [  3:  0](RO) JEP106 continuation code, least significant nibble. Indicates Cavium. */
-        uint32_t fourkbcount           : 4;  /**< [  7:  4](RO) Size of the component. Log\<sub\>2\</sub\> of the number of 4KB pages from the
-                                                                 start of the component to the end of the component ID registers. */
-        uint32_t reserved_8_31         : 24;
-#endif /* Word 0 - End */
-    } cnf95xx;
+    /* struct cavm_etrx_pidr4_s cn; */
 };
 typedef union cavm_etrx_pidr4 cavm_etrx_pidr4_t;
 

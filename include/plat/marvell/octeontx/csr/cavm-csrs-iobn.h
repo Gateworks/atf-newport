@@ -855,6 +855,7 @@ union cavm_iobnx_arbidx_ctl
                                                                  1 = The inbound scheduler can accelerate transaction scheduling by considering
                                                                  PRs ordered when the transaction is scheduled to the memory interface.
                                                                  [SOW_DIS] should be set when [FAST_ORD] is set for a given ARBID.
+
                                                                  Reset value represents the typical usage.  Set for all non-PEM ARBIDs.
 
                                                                  Internal:
@@ -864,11 +865,14 @@ union cavm_iobnx_arbidx_ctl
                                                                  relwrflid.ord/flid fields. */
         uint64_t sow_dis               : 1;  /**< [  8:  8](R/W) Disables the PCIe store widget for memory store performance. Does not affect
                                                                  observable ordering. No impact on IO stores.  For diagnostic use only.
+                                                                 Must be set for non-PEM ARBIDs.
                                                                  0 = Performance optimization on. Issue prefetches on stores to improve
                                                                  store-store ordering.
                                                                  1 = Performance optimization off. No prefetches.
                                                                  [SOW_DIS] should be set when [FAST_ORD] is set for a given ARBID.
-                                                                 Reset value represents the typical usage.  Set for all non-PEM ARBIDs.
+
+                                                                 Reset value represents the typical usage; clear for all PEM ARBIDs, otherwise
+                                                                 set.
 
                                                                  Internal:
                                                                  The SOW is only available on the NCB2/256b devices which include PEMs, CPT,
@@ -891,6 +895,7 @@ union cavm_iobnx_arbidx_ctl
                                                                  0 = PR will not pass a younger PR with the same IOVA.
                                                                  1 = PR may pass a younger PR with the same IOVA, if the relaxed ordering request
                                                                  and [RO_DIS] bit allow it.
+
                                                                  Reset value represents the typical usage.  Clear for all non-PEM ARBIDs. */
         uint64_t ro_dis                : 1;  /**< [  3:  3](R/W) Disable relaxed ordering. For diagnostic use only.
                                                                  0 = Relaxed ordering is performed if the NCB device requests it.
@@ -931,6 +936,7 @@ union cavm_iobnx_arbidx_ctl
                                                                  0 = PR will not pass a younger PR with the same IOVA.
                                                                  1 = PR may pass a younger PR with the same IOVA, if the relaxed ordering request
                                                                  and [RO_DIS] bit allow it.
+
                                                                  Reset value represents the typical usage.  Clear for all non-PEM ARBIDs. */
         uint64_t prefetch_dis          : 1;  /**< [  5:  5](R/W) Disables mesh prefetches. For diagnostic use only.
                                                                  0 = Store-store ordered transactions will issue prefetches before the second
@@ -946,11 +952,14 @@ union cavm_iobnx_arbidx_ctl
                                                                  0x3 = Force 1. */
         uint64_t sow_dis               : 1;  /**< [  8:  8](R/W) Disables the PCIe store widget for memory store performance. Does not affect
                                                                  observable ordering. No impact on IO stores.  For diagnostic use only.
+                                                                 Must be set for non-PEM ARBIDs.
                                                                  0 = Performance optimization on. Issue prefetches on stores to improve
                                                                  store-store ordering.
                                                                  1 = Performance optimization off. No prefetches.
                                                                  [SOW_DIS] should be set when [FAST_ORD] is set for a given ARBID.
-                                                                 Reset value represents the typical usage.  Set for all non-PEM ARBIDs.
+
+                                                                 Reset value represents the typical usage; clear for all PEM ARBIDs, otherwise
+                                                                 set.
 
                                                                  Internal:
                                                                  The SOW is only available on the NCB2/256b devices which include PEMs, CPT,
@@ -963,6 +972,7 @@ union cavm_iobnx_arbidx_ctl
                                                                  1 = The inbound scheduler can accelerate transaction scheduling by considering
                                                                  PRs ordered when the transaction is scheduled to the memory interface.
                                                                  [SOW_DIS] should be set when [FAST_ORD] is set for a given ARBID.
+
                                                                  Reset value represents the typical usage.  Set for all non-PEM ARBIDs.
 
                                                                  Internal:

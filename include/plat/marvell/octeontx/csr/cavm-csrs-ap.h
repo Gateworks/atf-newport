@@ -6327,19 +6327,19 @@ union cavm_ap_cvm_statprofctl_el1
                                                                  0 = Comparator matches AP_CVM_STATPROFCMP_EL1[52:2] against instruction PC.
                                                                  1 = Comparator matches AP_CVM_STATPROFCMP_EL1[31:0] against instruction opcode
                                                                     with bits enabled for comparison with a corresponding 1 in AP_CVM_STATPROFCMP_EL1[63:32]. */
-        uint64_t dir_sample            : 1;  /**< [  1:  1](R/W) When set, replaces statistical profile's random sample selection logic
-                                                                 with the output of the instruction and/or address comparators from the
-                                                                 trace logic. This provides the ability to profile a specific instruction.
-                                                                 Note that this feature will not function if trace is enabled. */
+        uint64_t dir_sample            : 1;  /**< [  1:  1](R/W) When set, replaces statistical profile's random sample selection logic with the
+                                                                 output of the instruction/address comparator described in AP_CVM_STATPROFCMP_EL1[CMP_VAL]
+                                                                 and AP_CVM_STATPROFCTL_EL1[OC_PC]. This provides the ability to profile a specific
+                                                                 instruction. */
         uint64_t ernd                  : 1;  /**< [  0:  0](R/W) Provides the value for AP_PMSIDR_EL1[ERND]. This field describes how
                                                                  randomization is used in selecting the sample. See AP_PMSIDR_EL1[ERND]. */
 #else /* Word 0 - Little Endian */
         uint64_t ernd                  : 1;  /**< [  0:  0](R/W) Provides the value for AP_PMSIDR_EL1[ERND]. This field describes how
                                                                  randomization is used in selecting the sample. See AP_PMSIDR_EL1[ERND]. */
-        uint64_t dir_sample            : 1;  /**< [  1:  1](R/W) When set, replaces statistical profile's random sample selection logic
-                                                                 with the output of the instruction and/or address comparators from the
-                                                                 trace logic. This provides the ability to profile a specific instruction.
-                                                                 Note that this feature will not function if trace is enabled. */
+        uint64_t dir_sample            : 1;  /**< [  1:  1](R/W) When set, replaces statistical profile's random sample selection logic with the
+                                                                 output of the instruction/address comparator described in AP_CVM_STATPROFCMP_EL1[CMP_VAL]
+                                                                 and AP_CVM_STATPROFCTL_EL1[OC_PC]. This provides the ability to profile a specific
+                                                                 instruction. */
         uint64_t oc_pc                 : 1;  /**< [  2:  2](R/W) When in directed sample mode, indicates whether the instruction to be
                                                                  sample is found by matching the PC or the OpCode.
                                                                  0 = Comparator matches AP_CVM_STATPROFCMP_EL1[52:2] against instruction PC.
@@ -7119,9 +7119,11 @@ union cavm_ap_cvmctl_el1
     struct cavm_ap_cvmctl_el1_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_62_63        : 2;
+        uint64_t acquire_imposes_barrier : 1;/**< [ 63: 63](R/W) If set, instructions with acquire properties have additional dependence
+                                                                 with later instructions. */
+        uint64_t serialize_io_loads    : 1;  /**< [ 62: 62](R/W) If set, serialize IO loads. */
         uint64_t disable_store_barrier_func : 1;/**< [ 61: 61](R/W) Disable store barrier functionality (v8.5 disable). */
-        uint64_t disable_large_offset_pred : 1;/**< [ 60: 60](R/W) Disable large offset predictor. */
+        uint64_t disable_large_offset_dpref : 1;/**< [ 60: 60](R/W) Disable large offset predictor. */
         uint64_t disable_forward_progress : 1;/**< [ 59: 59](R/W) Disable forward progress requirement for remote TLBI flow. For diagnostic use only. */
         uint64_t force_st_r            : 1;  /**< [ 58: 58](R/W) Force release attributes to all stores. For diagnostic use only. */
         uint64_t force_ld_a            : 1;  /**< [ 57: 57](R/W) Force acquire attributes to all loads. For diagnostic use only. */
@@ -7143,10 +7145,7 @@ union cavm_ap_cvmctl_el1
                                                                  CN8XXX is always strong ordering. */
         uint64_t disable_mem_ooo       : 1;  /**< [ 45: 45](R/W) Disable all memory out-of-order. */
         uint64_t disable_ooo           : 1;  /**< [ 44: 44](R/W) Disable all out-of-order. */
-        uint64_t dpref_bp_dis          : 1;  /**< [ 43: 43](R/W) When set, hardware data prefetcher ignores memory system backpressure for next line prefetcher. */
-        uint64_t dpref_lookahead       : 1;  /**< [ 42: 42](R/W) When set, hardware data prefetcher uses a lookahead of 2. When clear, lookahead of 1. */
-        uint64_t dpref_next_line       : 1;  /**< [ 41: 41](R/W) Enable next line hardware data prefetcher. */
-        uint64_t dpref_delta           : 1;  /**< [ 40: 40](R/W) Enable delta stream hardware data prefetcher. */
+        uint64_t reserved_40_43        : 4;
         uint64_t mrs_msr_hazard        : 1;  /**< [ 39: 39](R/W) Disable MRS/MSR pipelining, assume hazards. */
         uint64_t disable_eret_pred     : 1;  /**< [ 38: 38](R/W) Disable ERET prediction. */
         uint64_t disable_casp          : 1;  /**< [ 37: 37](R/W) Disable the CASP instruction. */
@@ -7204,10 +7203,7 @@ union cavm_ap_cvmctl_el1
         uint64_t disable_casp          : 1;  /**< [ 37: 37](R/W) Disable the CASP instruction. */
         uint64_t disable_eret_pred     : 1;  /**< [ 38: 38](R/W) Disable ERET prediction. */
         uint64_t mrs_msr_hazard        : 1;  /**< [ 39: 39](R/W) Disable MRS/MSR pipelining, assume hazards. */
-        uint64_t dpref_delta           : 1;  /**< [ 40: 40](R/W) Enable delta stream hardware data prefetcher. */
-        uint64_t dpref_next_line       : 1;  /**< [ 41: 41](R/W) Enable next line hardware data prefetcher. */
-        uint64_t dpref_lookahead       : 1;  /**< [ 42: 42](R/W) When set, hardware data prefetcher uses a lookahead of 2. When clear, lookahead of 1. */
-        uint64_t dpref_bp_dis          : 1;  /**< [ 43: 43](R/W) When set, hardware data prefetcher ignores memory system backpressure for next line prefetcher. */
+        uint64_t reserved_40_43        : 4;
         uint64_t disable_ooo           : 1;  /**< [ 44: 44](R/W) Disable all out-of-order. */
         uint64_t disable_mem_ooo       : 1;  /**< [ 45: 45](R/W) Disable all memory out-of-order. */
         uint64_t force_strong_ordering : 1;  /**< [ 46: 46](R/W) Force strong load ordering.
@@ -7229,9 +7225,11 @@ union cavm_ap_cvmctl_el1
         uint64_t force_ld_a            : 1;  /**< [ 57: 57](R/W) Force acquire attributes to all loads. For diagnostic use only. */
         uint64_t force_st_r            : 1;  /**< [ 58: 58](R/W) Force release attributes to all stores. For diagnostic use only. */
         uint64_t disable_forward_progress : 1;/**< [ 59: 59](R/W) Disable forward progress requirement for remote TLBI flow. For diagnostic use only. */
-        uint64_t disable_large_offset_pred : 1;/**< [ 60: 60](R/W) Disable large offset predictor. */
+        uint64_t disable_large_offset_dpref : 1;/**< [ 60: 60](R/W) Disable large offset predictor. */
         uint64_t disable_store_barrier_func : 1;/**< [ 61: 61](R/W) Disable store barrier functionality (v8.5 disable). */
-        uint64_t reserved_62_63        : 2;
+        uint64_t serialize_io_loads    : 1;  /**< [ 62: 62](R/W) If set, serialize IO loads. */
+        uint64_t acquire_imposes_barrier : 1;/**< [ 63: 63](R/W) If set, instructions with acquire properties have additional dependence
+                                                                 with later instructions. */
 #endif /* Word 0 - End */
     } s;
     struct cavm_ap_cvmctl_el1_cn8
@@ -7306,7 +7304,7 @@ union cavm_ap_cvmctl_el1
         uint64_t reserved_44_63        : 20;
 #endif /* Word 0 - End */
     } cn8;
-    struct cavm_ap_cvmctl_el1_cn96xx
+    struct cavm_ap_cvmctl_el1_cn96xxp1_0
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_60_63        : 4;
@@ -7331,10 +7329,20 @@ union cavm_ap_cvmctl_el1
                                                                  CN8XXX is always strong ordering. */
         uint64_t disable_mem_ooo       : 1;  /**< [ 45: 45](R/W) Disable all memory out-of-order. */
         uint64_t disable_ooo           : 1;  /**< [ 44: 44](R/W) Disable all out-of-order. */
-        uint64_t dpref_bp_dis          : 1;  /**< [ 43: 43](R/W) When set, hardware data prefetcher ignores memory system backpressure for next line prefetcher. */
-        uint64_t dpref_lookahead       : 1;  /**< [ 42: 42](R/W) When set, hardware data prefetcher uses a lookahead of 2. When clear, lookahead of 1. */
-        uint64_t dpref_next_line       : 1;  /**< [ 41: 41](R/W) Enable next line hardware data prefetcher. */
-        uint64_t dpref_delta           : 1;  /**< [ 40: 40](R/W) Enable delta stream hardware data prefetcher. */
+        uint64_t dpref                 : 4;  /**< [ 43: 40](R/W) Dstream prefetch control.
+                                                                 0x0 = No hardware data prefetch. This implicitly disables large offset
+                                                                 prefetcher (AP_CVMCTL_EL1[DISABLE_LARGE_OFFSET_DPREF]).
+                                                                 0x1 = Delta stream prefetcher activated only when there is no backpressure.
+                                                                 0x2 = Both delta stream and next line prefetchers activated only when there is
+                                                                 no backpressure.
+                                                                 0x9 = Delta stream prefetcher activated regardless of backpressure.
+                                                                 0xA = Both delta stream and next line prefetchers activated regardless of
+                                                                 backpressure.
+                                                                 _else = Unpredictable.
+
+                                                                 For values 1, 2, 9, and 10, the large offset prefetcher
+                                                                 (AP_CVMCTL_EL1[DISABLE_LARGE_OFFSET_DPREF]) has to be activated / deactivated
+                                                                 separately. */
         uint64_t mrs_msr_hazard        : 1;  /**< [ 39: 39](R/W) Disable MRS/MSR pipelining, assume hazards. */
         uint64_t disable_eret_pred     : 1;  /**< [ 38: 38](R/W) Disable ERET prediction. */
         uint64_t disable_casp          : 1;  /**< [ 37: 37](R/W) Disable the CASP instruction. */
@@ -7398,10 +7406,20 @@ union cavm_ap_cvmctl_el1
         uint64_t disable_casp          : 1;  /**< [ 37: 37](R/W) Disable the CASP instruction. */
         uint64_t disable_eret_pred     : 1;  /**< [ 38: 38](R/W) Disable ERET prediction. */
         uint64_t mrs_msr_hazard        : 1;  /**< [ 39: 39](R/W) Disable MRS/MSR pipelining, assume hazards. */
-        uint64_t dpref_delta           : 1;  /**< [ 40: 40](R/W) Enable delta stream hardware data prefetcher. */
-        uint64_t dpref_next_line       : 1;  /**< [ 41: 41](R/W) Enable next line hardware data prefetcher. */
-        uint64_t dpref_lookahead       : 1;  /**< [ 42: 42](R/W) When set, hardware data prefetcher uses a lookahead of 2. When clear, lookahead of 1. */
-        uint64_t dpref_bp_dis          : 1;  /**< [ 43: 43](R/W) When set, hardware data prefetcher ignores memory system backpressure for next line prefetcher. */
+        uint64_t dpref                 : 4;  /**< [ 43: 40](R/W) Dstream prefetch control.
+                                                                 0x0 = No hardware data prefetch. This implicitly disables large offset
+                                                                 prefetcher (AP_CVMCTL_EL1[DISABLE_LARGE_OFFSET_DPREF]).
+                                                                 0x1 = Delta stream prefetcher activated only when there is no backpressure.
+                                                                 0x2 = Both delta stream and next line prefetchers activated only when there is
+                                                                 no backpressure.
+                                                                 0x9 = Delta stream prefetcher activated regardless of backpressure.
+                                                                 0xA = Both delta stream and next line prefetchers activated regardless of
+                                                                 backpressure.
+                                                                 _else = Unpredictable.
+
+                                                                 For values 1, 2, 9, and 10, the large offset prefetcher
+                                                                 (AP_CVMCTL_EL1[DISABLE_LARGE_OFFSET_DPREF]) has to be activated / deactivated
+                                                                 separately. */
         uint64_t disable_ooo           : 1;  /**< [ 44: 44](R/W) Disable all out-of-order. */
         uint64_t disable_mem_ooo       : 1;  /**< [ 45: 45](R/W) Disable all memory out-of-order. */
         uint64_t force_strong_ordering : 1;  /**< [ 46: 46](R/W) Force strong load ordering.
@@ -7425,13 +7443,15 @@ union cavm_ap_cvmctl_el1
         uint64_t disable_forward_progress : 1;/**< [ 59: 59](R/W) Disable forward progress requirement for remote TLBI flow. For diagnostic use only. */
         uint64_t reserved_60_63        : 4;
 #endif /* Word 0 - End */
-    } cn96xx;
-    struct cavm_ap_cvmctl_el1_cnf95xx
+    } cn96xxp1_0;
+    struct cavm_ap_cvmctl_el1_cn96xxp1_1
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_62_63        : 2;
+        uint64_t acquire_imposes_barrier : 1;/**< [ 63: 63](R/W) If set, instructions with acquire properties have additional dependence
+                                                                 with later instructions. */
+        uint64_t serialize_io_loads    : 1;  /**< [ 62: 62](R/W) If set, serialize IO loads. */
         uint64_t disable_store_barrier_func : 1;/**< [ 61: 61](R/W) Disable store barrier functionality (v8.5 disable). */
-        uint64_t disable_large_offset_pred : 1;/**< [ 60: 60](R/W) Disable large offset predictor. */
+        uint64_t disable_large_offset_dpref : 1;/**< [ 60: 60](R/W) Disable large offset predictor. */
         uint64_t disable_forward_progress : 1;/**< [ 59: 59](R/W) Disable forward progress requirement for remote TLBI flow. For diagnostic use only. */
         uint64_t force_st_r            : 1;  /**< [ 58: 58](R/W) Force release attributes to all stores. For diagnostic use only. */
         uint64_t force_ld_a            : 1;  /**< [ 57: 57](R/W) Force acquire attributes to all loads. For diagnostic use only. */
@@ -7453,10 +7473,20 @@ union cavm_ap_cvmctl_el1
                                                                  CN8XXX is always strong ordering. */
         uint64_t disable_mem_ooo       : 1;  /**< [ 45: 45](R/W) Disable all memory out-of-order. */
         uint64_t disable_ooo           : 1;  /**< [ 44: 44](R/W) Disable all out-of-order. */
-        uint64_t dpref_bp_dis          : 1;  /**< [ 43: 43](R/W) When set, hardware data prefetcher ignores memory system backpressure for next line prefetcher. */
-        uint64_t dpref_lookahead       : 1;  /**< [ 42: 42](R/W) When set, hardware data prefetcher uses a lookahead of 2. When clear, lookahead of 1. */
-        uint64_t dpref_next_line       : 1;  /**< [ 41: 41](R/W) Enable next line hardware data prefetcher. */
-        uint64_t dpref_delta           : 1;  /**< [ 40: 40](R/W) Enable delta stream hardware data prefetcher. */
+        uint64_t dpref                 : 4;  /**< [ 43: 40](R/W) Dstream prefetch control.
+                                                                 0x0 = No hardware data prefetch. This implicitly disables large offset
+                                                                 prefetcher (AP_CVMCTL_EL1[DISABLE_LARGE_OFFSET_DPREF]).
+                                                                 0x1 = Delta stream prefetcher activated only when there is no backpressure.
+                                                                 0x2 = Both delta stream and next line prefetchers activated only when there is
+                                                                 no backpressure.
+                                                                 0x9 = Delta stream prefetcher activated regardless of backpressure.
+                                                                 0xA = Both delta stream and next line prefetchers activated regardless of
+                                                                 backpressure.
+                                                                 _else = Unpredictable.
+
+                                                                 For values 1, 2, 9, and 10, the large offset prefetcher
+                                                                 (AP_CVMCTL_EL1[DISABLE_LARGE_OFFSET_DPREF]) has to be activated / deactivated
+                                                                 separately. */
         uint64_t mrs_msr_hazard        : 1;  /**< [ 39: 39](R/W) Disable MRS/MSR pipelining, assume hazards. */
         uint64_t disable_eret_pred     : 1;  /**< [ 38: 38](R/W) Disable ERET prediction. */
         uint64_t disable_casp          : 1;  /**< [ 37: 37](R/W) Disable the CASP instruction. */
@@ -7520,10 +7550,20 @@ union cavm_ap_cvmctl_el1
         uint64_t disable_casp          : 1;  /**< [ 37: 37](R/W) Disable the CASP instruction. */
         uint64_t disable_eret_pred     : 1;  /**< [ 38: 38](R/W) Disable ERET prediction. */
         uint64_t mrs_msr_hazard        : 1;  /**< [ 39: 39](R/W) Disable MRS/MSR pipelining, assume hazards. */
-        uint64_t dpref_delta           : 1;  /**< [ 40: 40](R/W) Enable delta stream hardware data prefetcher. */
-        uint64_t dpref_next_line       : 1;  /**< [ 41: 41](R/W) Enable next line hardware data prefetcher. */
-        uint64_t dpref_lookahead       : 1;  /**< [ 42: 42](R/W) When set, hardware data prefetcher uses a lookahead of 2. When clear, lookahead of 1. */
-        uint64_t dpref_bp_dis          : 1;  /**< [ 43: 43](R/W) When set, hardware data prefetcher ignores memory system backpressure for next line prefetcher. */
+        uint64_t dpref                 : 4;  /**< [ 43: 40](R/W) Dstream prefetch control.
+                                                                 0x0 = No hardware data prefetch. This implicitly disables large offset
+                                                                 prefetcher (AP_CVMCTL_EL1[DISABLE_LARGE_OFFSET_DPREF]).
+                                                                 0x1 = Delta stream prefetcher activated only when there is no backpressure.
+                                                                 0x2 = Both delta stream and next line prefetchers activated only when there is
+                                                                 no backpressure.
+                                                                 0x9 = Delta stream prefetcher activated regardless of backpressure.
+                                                                 0xA = Both delta stream and next line prefetchers activated regardless of
+                                                                 backpressure.
+                                                                 _else = Unpredictable.
+
+                                                                 For values 1, 2, 9, and 10, the large offset prefetcher
+                                                                 (AP_CVMCTL_EL1[DISABLE_LARGE_OFFSET_DPREF]) has to be activated / deactivated
+                                                                 separately. */
         uint64_t disable_ooo           : 1;  /**< [ 44: 44](R/W) Disable all out-of-order. */
         uint64_t disable_mem_ooo       : 1;  /**< [ 45: 45](R/W) Disable all memory out-of-order. */
         uint64_t force_strong_ordering : 1;  /**< [ 46: 46](R/W) Force strong load ordering.
@@ -7545,11 +7585,15 @@ union cavm_ap_cvmctl_el1
         uint64_t force_ld_a            : 1;  /**< [ 57: 57](R/W) Force acquire attributes to all loads. For diagnostic use only. */
         uint64_t force_st_r            : 1;  /**< [ 58: 58](R/W) Force release attributes to all stores. For diagnostic use only. */
         uint64_t disable_forward_progress : 1;/**< [ 59: 59](R/W) Disable forward progress requirement for remote TLBI flow. For diagnostic use only. */
-        uint64_t disable_large_offset_pred : 1;/**< [ 60: 60](R/W) Disable large offset predictor. */
+        uint64_t disable_large_offset_dpref : 1;/**< [ 60: 60](R/W) Disable large offset predictor. */
         uint64_t disable_store_barrier_func : 1;/**< [ 61: 61](R/W) Disable store barrier functionality (v8.5 disable). */
-        uint64_t reserved_62_63        : 2;
+        uint64_t serialize_io_loads    : 1;  /**< [ 62: 62](R/W) If set, serialize IO loads. */
+        uint64_t acquire_imposes_barrier : 1;/**< [ 63: 63](R/W) If set, instructions with acquire properties have additional dependence
+                                                                 with later instructions. */
 #endif /* Word 0 - End */
-    } cnf95xx;
+    } cn96xxp1_1;
+    /* struct cavm_ap_cvmctl_el1_cn96xxp1_1 cn96xxp3; */
+    /* struct cavm_ap_cvmctl_el1_cn96xxp1_1 cnf95xx; */
 };
 typedef union cavm_ap_cvmctl_el1 cavm_ap_cvmctl_el1_t;
 
@@ -8046,9 +8090,9 @@ union cavm_ap_cvmmemctl1_el1
         uint64_t rbfevictbyp3dis       : 1;  /**< [ 55: 55](R/W) MAF RBUF evict datapath 3-cycle bypass disable. For diagnostic use only. */
         uint64_t rbfevictbyp2dis       : 1;  /**< [ 54: 54](R/W) MAF RBUF evict datapath 2-cycle bypass disable. For diagnostic use only. */
         uint64_t xmcpriwbfdis          : 1;  /**< [ 53: 53](RO) XMC priority disable for predicted unlock WBF eviction. For diagnostic use only. */
-        uint64_t xmcpristdis           : 1;  /**< [ 52: 52](R/W) XMC priority disable for predicted unlock ST. For diagnostic use only. */
-        uint64_t xmcpriswpdis          : 1;  /**< [ 51: 51](R/W) XMC priority disable for predicted unlock SWP. For diagnostic use only. */
-        uint64_t xmcpricasdis          : 1;  /**< [ 50: 50](R/W) XMC priority disable for predicted unlock CAS. For diagnostic use only. */
+        uint64_t xmcpristdis           : 1;  /**< [ 52: 52](R/W) XMC priority disable for predicted unlock ST with release semantics. For diagnostic use only. */
+        uint64_t xmcpriswpdis          : 1;  /**< [ 51: 51](R/W) XMC priority disable for predicted unlock SWP with release semantics. For diagnostic use only. */
+        uint64_t xmcpricasdis          : 1;  /**< [ 50: 50](R/W) XMC priority disable for predicted unlock CAS with release semantics. For diagnostic use only. */
         uint64_t iostmergedis          : 1;  /**< [ 49: 49](R/W) IO ST merging disable. */
         uint64_t ioldmergedis          : 1;  /**< [ 48: 48](R/W) IO LD merging disable. */
         uint64_t gclkforce             : 1;  /**< [ 47: 47](R/W) Force gated clocks to be on. For diagnostic use only. */
@@ -8158,9 +8202,9 @@ union cavm_ap_cvmmemctl1_el1
         uint64_t gclkforce             : 1;  /**< [ 47: 47](R/W) Force gated clocks to be on. For diagnostic use only. */
         uint64_t ioldmergedis          : 1;  /**< [ 48: 48](R/W) IO LD merging disable. */
         uint64_t iostmergedis          : 1;  /**< [ 49: 49](R/W) IO ST merging disable. */
-        uint64_t xmcpricasdis          : 1;  /**< [ 50: 50](R/W) XMC priority disable for predicted unlock CAS. For diagnostic use only. */
-        uint64_t xmcpriswpdis          : 1;  /**< [ 51: 51](R/W) XMC priority disable for predicted unlock SWP. For diagnostic use only. */
-        uint64_t xmcpristdis           : 1;  /**< [ 52: 52](R/W) XMC priority disable for predicted unlock ST. For diagnostic use only. */
+        uint64_t xmcpricasdis          : 1;  /**< [ 50: 50](R/W) XMC priority disable for predicted unlock CAS with release semantics. For diagnostic use only. */
+        uint64_t xmcpriswpdis          : 1;  /**< [ 51: 51](R/W) XMC priority disable for predicted unlock SWP with release semantics. For diagnostic use only. */
+        uint64_t xmcpristdis           : 1;  /**< [ 52: 52](R/W) XMC priority disable for predicted unlock ST with release semantics. For diagnostic use only. */
         uint64_t xmcpriwbfdis          : 1;  /**< [ 53: 53](RO) XMC priority disable for predicted unlock WBF eviction. For diagnostic use only. */
         uint64_t rbfevictbyp2dis       : 1;  /**< [ 54: 54](R/W) MAF RBUF evict datapath 2-cycle bypass disable. For diagnostic use only. */
         uint64_t rbfevictbyp3dis       : 1;  /**< [ 55: 55](R/W) MAF RBUF evict datapath 3-cycle bypass disable. For diagnostic use only. */
@@ -8352,9 +8396,9 @@ union cavm_ap_cvmmemctl1_el1
         uint64_t rbfevictbyp3dis       : 1;  /**< [ 55: 55](R/W) MAF RBUF evict datapath 3-cycle bypass disable. For diagnostic use only. */
         uint64_t rbfevictbyp2dis       : 1;  /**< [ 54: 54](R/W) MAF RBUF evict datapath 2-cycle bypass disable. For diagnostic use only. */
         uint64_t xmcpriwbfdis          : 1;  /**< [ 53: 53](RO) XMC priority disable for predicted unlock WBF eviction. For diagnostic use only. */
-        uint64_t xmcpristdis           : 1;  /**< [ 52: 52](R/W) XMC priority disable for predicted unlock ST. For diagnostic use only. */
-        uint64_t xmcpriswpdis          : 1;  /**< [ 51: 51](R/W) XMC priority disable for predicted unlock SWP. For diagnostic use only. */
-        uint64_t xmcpricasdis          : 1;  /**< [ 50: 50](R/W) XMC priority disable for predicted unlock CAS. For diagnostic use only. */
+        uint64_t xmcpristdis           : 1;  /**< [ 52: 52](R/W) XMC priority disable for predicted unlock ST with release semantics. For diagnostic use only. */
+        uint64_t xmcpriswpdis          : 1;  /**< [ 51: 51](R/W) XMC priority disable for predicted unlock SWP with release semantics. For diagnostic use only. */
+        uint64_t xmcpricasdis          : 1;  /**< [ 50: 50](R/W) XMC priority disable for predicted unlock CAS with release semantics. For diagnostic use only. */
         uint64_t iostmergedis          : 1;  /**< [ 49: 49](R/W) IO ST merging disable. */
         uint64_t ioldmergedis          : 1;  /**< [ 48: 48](R/W) IO LD merging disable. */
         uint64_t gclkforce             : 1;  /**< [ 47: 47](R/W) Force gated clocks to be on. For diagnostic use only. */
@@ -8462,9 +8506,9 @@ union cavm_ap_cvmmemctl1_el1
         uint64_t gclkforce             : 1;  /**< [ 47: 47](R/W) Force gated clocks to be on. For diagnostic use only. */
         uint64_t ioldmergedis          : 1;  /**< [ 48: 48](R/W) IO LD merging disable. */
         uint64_t iostmergedis          : 1;  /**< [ 49: 49](R/W) IO ST merging disable. */
-        uint64_t xmcpricasdis          : 1;  /**< [ 50: 50](R/W) XMC priority disable for predicted unlock CAS. For diagnostic use only. */
-        uint64_t xmcpriswpdis          : 1;  /**< [ 51: 51](R/W) XMC priority disable for predicted unlock SWP. For diagnostic use only. */
-        uint64_t xmcpristdis           : 1;  /**< [ 52: 52](R/W) XMC priority disable for predicted unlock ST. For diagnostic use only. */
+        uint64_t xmcpricasdis          : 1;  /**< [ 50: 50](R/W) XMC priority disable for predicted unlock CAS with release semantics. For diagnostic use only. */
+        uint64_t xmcpriswpdis          : 1;  /**< [ 51: 51](R/W) XMC priority disable for predicted unlock SWP with release semantics. For diagnostic use only. */
+        uint64_t xmcpristdis           : 1;  /**< [ 52: 52](R/W) XMC priority disable for predicted unlock ST with release semantics. For diagnostic use only. */
         uint64_t xmcpriwbfdis          : 1;  /**< [ 53: 53](RO) XMC priority disable for predicted unlock WBF eviction. For diagnostic use only. */
         uint64_t rbfevictbyp2dis       : 1;  /**< [ 54: 54](R/W) MAF RBUF evict datapath 2-cycle bypass disable. For diagnostic use only. */
         uint64_t rbfevictbyp3dis       : 1;  /**< [ 55: 55](R/W) MAF RBUF evict datapath 3-cycle bypass disable. For diagnostic use only. */
@@ -8488,9 +8532,9 @@ union cavm_ap_cvmmemctl1_el1
         uint64_t rbfevictbyp3dis       : 1;  /**< [ 55: 55](R/W) MAF RBUF evict datapath 3-cycle bypass disable. For diagnostic use only. */
         uint64_t rbfevictbyp2dis       : 1;  /**< [ 54: 54](R/W) MAF RBUF evict datapath 2-cycle bypass disable. For diagnostic use only. */
         uint64_t xmcpriwbfdis          : 1;  /**< [ 53: 53](RO) XMC priority disable for predicted unlock WBF eviction. For diagnostic use only. */
-        uint64_t xmcpristdis           : 1;  /**< [ 52: 52](R/W) XMC priority disable for predicted unlock ST. For diagnostic use only. */
-        uint64_t xmcpriswpdis          : 1;  /**< [ 51: 51](R/W) XMC priority disable for predicted unlock SWP. For diagnostic use only. */
-        uint64_t xmcpricasdis          : 1;  /**< [ 50: 50](R/W) XMC priority disable for predicted unlock CAS. For diagnostic use only. */
+        uint64_t xmcpristdis           : 1;  /**< [ 52: 52](R/W) XMC priority disable for predicted unlock ST with release semantics. For diagnostic use only. */
+        uint64_t xmcpriswpdis          : 1;  /**< [ 51: 51](R/W) XMC priority disable for predicted unlock SWP with release semantics. For diagnostic use only. */
+        uint64_t xmcpricasdis          : 1;  /**< [ 50: 50](R/W) XMC priority disable for predicted unlock CAS with release semantics. For diagnostic use only. */
         uint64_t iostmergedis          : 1;  /**< [ 49: 49](R/W) IO ST merging disable. */
         uint64_t ioldmergedis          : 1;  /**< [ 48: 48](R/W) IO LD merging disable. */
         uint64_t gclkforce             : 1;  /**< [ 47: 47](R/W) Force gated clocks to be on. For diagnostic use only. */
@@ -8598,9 +8642,9 @@ union cavm_ap_cvmmemctl1_el1
         uint64_t gclkforce             : 1;  /**< [ 47: 47](R/W) Force gated clocks to be on. For diagnostic use only. */
         uint64_t ioldmergedis          : 1;  /**< [ 48: 48](R/W) IO LD merging disable. */
         uint64_t iostmergedis          : 1;  /**< [ 49: 49](R/W) IO ST merging disable. */
-        uint64_t xmcpricasdis          : 1;  /**< [ 50: 50](R/W) XMC priority disable for predicted unlock CAS. For diagnostic use only. */
-        uint64_t xmcpriswpdis          : 1;  /**< [ 51: 51](R/W) XMC priority disable for predicted unlock SWP. For diagnostic use only. */
-        uint64_t xmcpristdis           : 1;  /**< [ 52: 52](R/W) XMC priority disable for predicted unlock ST. For diagnostic use only. */
+        uint64_t xmcpricasdis          : 1;  /**< [ 50: 50](R/W) XMC priority disable for predicted unlock CAS with release semantics. For diagnostic use only. */
+        uint64_t xmcpriswpdis          : 1;  /**< [ 51: 51](R/W) XMC priority disable for predicted unlock SWP with release semantics. For diagnostic use only. */
+        uint64_t xmcpristdis           : 1;  /**< [ 52: 52](R/W) XMC priority disable for predicted unlock ST with release semantics. For diagnostic use only. */
         uint64_t xmcpriwbfdis          : 1;  /**< [ 53: 53](RO) XMC priority disable for predicted unlock WBF eviction. For diagnostic use only. */
         uint64_t rbfevictbyp2dis       : 1;  /**< [ 54: 54](R/W) MAF RBUF evict datapath 2-cycle bypass disable. For diagnostic use only. */
         uint64_t rbfevictbyp3dis       : 1;  /**< [ 55: 55](R/W) MAF RBUF evict datapath 3-cycle bypass disable. For diagnostic use only. */
@@ -10217,7 +10261,7 @@ union cavm_ap_dspsr_el0
                                                                      to CPSR[N] on exiting Debug state. */
 #endif /* Word 0 - End */
     } cn8;
-    struct cavm_ap_dspsr_el0_cn96xx
+    struct cavm_ap_dspsr_el0_cn96xxp1_0
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t n                     : 1;  /**< [ 31: 31](R/W) Set to the value of CPSR[N] on entering Debug state, and copied
@@ -10284,7 +10328,9 @@ union cavm_ap_dspsr_el0
         uint32_t n                     : 1;  /**< [ 31: 31](R/W) Set to the value of CPSR[N] on entering Debug state, and copied
                                                                      to CPSR[N] on exiting Debug state. */
 #endif /* Word 0 - End */
-    } cn96xx;
+    } cn96xxp1_0;
+    /* struct cavm_ap_dspsr_el0_s cn96xxp1_1; */
+    /* struct cavm_ap_dspsr_el0_s cn96xxp3; */
     /* struct cavm_ap_dspsr_el0_s cnf95xx; */
 };
 typedef union cavm_ap_dspsr_el0 cavm_ap_dspsr_el0_t;
@@ -18345,7 +18391,7 @@ union cavm_ap_id_aa64isar1_el1
         uint64_t reserved_0_63         : 64;
 #endif /* Word 0 - End */
     } cn8;
-    struct cavm_ap_id_aa64isar1_el1_cn96xx
+    struct cavm_ap_id_aa64isar1_el1_cn96xxp1_0
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_4_63         : 60;
@@ -18360,7 +18406,9 @@ union cavm_ap_id_aa64isar1_el1
                                                                  All other values reserved. */
         uint64_t reserved_4_63         : 60;
 #endif /* Word 0 - End */
-    } cn96xx;
+    } cn96xxp1_0;
+    /* struct cavm_ap_id_aa64isar1_el1_s cn96xxp1_1; */
+    /* struct cavm_ap_id_aa64isar1_el1_s cn96xxp3; */
     /* struct cavm_ap_id_aa64isar1_el1_s cnf95xx; */
 };
 typedef union cavm_ap_id_aa64isar1_el1 cavm_ap_id_aa64isar1_el1_t;
@@ -19443,7 +19491,7 @@ union cavm_ap_id_aa64pfr1_el1
                                                                  All other values RESERVED
 
                                                                  CYA bit = CVMCTL_EL1[61]
-                                                                 CYA bit = 0 =\> v8.5 enabled for T93 2.0 and T95.
+                                                                 CYA bit = 0 =\> v8.5 enabled for T93 1.1 and T95.
                                                                  SB  : ID_AA64ISAR1_EL1[39:36] = 0001 [SB instruction implemented]
                                                                  SSBS: ID_AA64PFR1_EL1[7:4]    = 0010 [AArch64 provides the PSTATE.SSBS mechanism
                                                                  to mark regions that are Speculative Store Bypassing Safe, and the MSR/MRS
@@ -19451,7 +19499,7 @@ union cavm_ap_id_aa64pfr1_el1
                                                                  interpretation is that this means stores and loads are in order when PSTATE.SSBS
                                                                  is zero]
 
-                                                                 CYA bit = 1 =\> v8.5 disabled for T93 2.0 and T95:
+                                                                 CYA bit = 1 =\> v8.5 disabled for T93 1.1 and T95:
                                                                  SB  : ID_AA64ISAR1_EL1[39:36] = 0000 [SB instruction not implemented]
                                                                  SSBS: ID_AA64PFR1_EL1[7:4]    = 0000 [AArch64 provides no mechanism to control
                                                                  the use of Speculative Store Bypassing] */
@@ -19469,7 +19517,7 @@ union cavm_ap_id_aa64pfr1_el1
                                                                  All other values RESERVED
 
                                                                  CYA bit = CVMCTL_EL1[61]
-                                                                 CYA bit = 0 =\> v8.5 enabled for T93 2.0 and T95.
+                                                                 CYA bit = 0 =\> v8.5 enabled for T93 1.1 and T95.
                                                                  SB  : ID_AA64ISAR1_EL1[39:36] = 0001 [SB instruction implemented]
                                                                  SSBS: ID_AA64PFR1_EL1[7:4]    = 0010 [AArch64 provides the PSTATE.SSBS mechanism
                                                                  to mark regions that are Speculative Store Bypassing Safe, and the MSR/MRS
@@ -19477,7 +19525,7 @@ union cavm_ap_id_aa64pfr1_el1
                                                                  interpretation is that this means stores and loads are in order when PSTATE.SSBS
                                                                  is zero]
 
-                                                                 CYA bit = 1 =\> v8.5 disabled for T93 2.0 and T95:
+                                                                 CYA bit = 1 =\> v8.5 disabled for T93 1.1 and T95:
                                                                  SB  : ID_AA64ISAR1_EL1[39:36] = 0000 [SB instruction not implemented]
                                                                  SSBS: ID_AA64PFR1_EL1[7:4]    = 0000 [AArch64 provides no mechanism to control
                                                                  the use of Speculative Store Bypassing] */
@@ -19492,7 +19540,9 @@ union cavm_ap_id_aa64pfr1_el1
         uint64_t reserved_0_63         : 64;
 #endif /* Word 0 - End */
     } cn8;
-    /* struct cavm_ap_id_aa64pfr1_el1_cn8 cn96xx; */
+    /* struct cavm_ap_id_aa64pfr1_el1_cn8 cn96xxp1_0; */
+    /* struct cavm_ap_id_aa64pfr1_el1_s cn96xxp1_1; */
+    /* struct cavm_ap_id_aa64pfr1_el1_s cn96xxp3; */
     /* struct cavm_ap_id_aa64pfr1_el1_s cnf95xx; */
 };
 typedef union cavm_ap_id_aa64pfr1_el1 cavm_ap_id_aa64pfr1_el1_t;
@@ -27886,7 +27936,7 @@ union cavm_ap_sctlr_el1
         uint64_t reserved_30_31        : 2;
 #endif /* Word 0 - End */
     } cn8;
-    struct cavm_ap_sctlr_el1_cn96xx
+    struct cavm_ap_sctlr_el1_cn96xxp1_0
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_30_63        : 34;
@@ -28259,8 +28309,8 @@ union cavm_ap_sctlr_el1
         uint64_t rsvd_28_29            : 2;  /**< [ 29: 28](RO) Reserved 1. */
         uint64_t reserved_30_63        : 34;
 #endif /* Word 0 - End */
-    } cn96xx;
-    struct cavm_ap_sctlr_el1_cnf95xx
+    } cn96xxp1_0;
+    struct cavm_ap_sctlr_el1_cn96xxp1_1
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_45_63        : 19;
@@ -28637,7 +28687,9 @@ union cavm_ap_sctlr_el1
         uint64_t dssbs                 : 1;  /**< [ 44: 44](R/W) D Speculative store bypass safe. */
         uint64_t reserved_45_63        : 19;
 #endif /* Word 0 - End */
-    } cnf95xx;
+    } cn96xxp1_1;
+    /* struct cavm_ap_sctlr_el1_cn96xxp1_1 cn96xxp3; */
+    /* struct cavm_ap_sctlr_el1_cn96xxp1_1 cnf95xx; */
 };
 typedef union cavm_ap_sctlr_el1 cavm_ap_sctlr_el1_t;
 
@@ -29078,7 +29130,7 @@ union cavm_ap_sctlr_el2
         uint64_t reserved_30_31        : 2;
 #endif /* Word 0 - End */
     } cn8;
-    struct cavm_ap_sctlr_el2_cn96xx
+    struct cavm_ap_sctlr_el2_cn96xxp1_0
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_30_63        : 34;
@@ -29277,7 +29329,9 @@ union cavm_ap_sctlr_el2
         uint64_t rsvd_28_29            : 2;  /**< [ 29: 28](RO) Reserved 1. */
         uint64_t reserved_30_63        : 34;
 #endif /* Word 0 - End */
-    } cn96xx;
+    } cn96xxp1_0;
+    /* struct cavm_ap_sctlr_el2_s cn96xxp1_1; */
+    /* struct cavm_ap_sctlr_el2_s cn96xxp3; */
     /* struct cavm_ap_sctlr_el2_s cnf95xx; */
 };
 typedef union cavm_ap_sctlr_el2 cavm_ap_sctlr_el2_t;
@@ -30065,7 +30119,7 @@ union cavm_ap_sctlr_el2_e2h
         uint64_t reserved_30_31        : 2;
 #endif /* Word 0 - End */
     } cn8;
-    struct cavm_ap_sctlr_el2_e2h_cn96xx
+    struct cavm_ap_sctlr_el2_e2h_cn96xxp1_0
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_30_63        : 34;
@@ -30442,8 +30496,8 @@ union cavm_ap_sctlr_el2_e2h
         uint64_t rsvd_28_29            : 2;  /**< [ 29: 28](RO) Reserved 1. */
         uint64_t reserved_30_63        : 34;
 #endif /* Word 0 - End */
-    } cn96xx;
-    struct cavm_ap_sctlr_el2_e2h_cnf95xx
+    } cn96xxp1_0;
+    struct cavm_ap_sctlr_el2_e2h_cn96xxp1_1
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_45_63        : 19;
@@ -30824,7 +30878,9 @@ union cavm_ap_sctlr_el2_e2h
         uint64_t dssbs                 : 1;  /**< [ 44: 44](R/W) D Speculative store bypass safe. */
         uint64_t reserved_45_63        : 19;
 #endif /* Word 0 - End */
-    } cnf95xx;
+    } cn96xxp1_1;
+    /* struct cavm_ap_sctlr_el2_e2h_cn96xxp1_1 cn96xxp3; */
+    /* struct cavm_ap_sctlr_el2_e2h_cn96xxp1_1 cnf95xx; */
 };
 typedef union cavm_ap_sctlr_el2_e2h cavm_ap_sctlr_el2_e2h_t;
 
@@ -31221,7 +31277,7 @@ union cavm_ap_sctlr_el3
         uint64_t reserved_30_31        : 2;
 #endif /* Word 0 - End */
     } cn8;
-    struct cavm_ap_sctlr_el3_cn96xx
+    struct cavm_ap_sctlr_el3_cn96xxp1_0
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_30_63        : 34;
@@ -31416,7 +31472,9 @@ union cavm_ap_sctlr_el3
         uint64_t rsvd_28_29            : 2;  /**< [ 29: 28](RO) Reserved 1. */
         uint64_t reserved_30_63        : 34;
 #endif /* Word 0 - End */
-    } cn96xx;
+    } cn96xxp1_0;
+    /* struct cavm_ap_sctlr_el3_s cn96xxp1_1; */
+    /* struct cavm_ap_sctlr_el3_s cn96xxp3; */
     /* struct cavm_ap_sctlr_el3_s cnf95xx; */
 };
 typedef union cavm_ap_sctlr_el3 cavm_ap_sctlr_el3_t;
@@ -31951,7 +32009,7 @@ union cavm_ap_spsr_elx
                                                                      operation in Monitor mode. */
 #endif /* Word 0 - End */
     } cn8;
-    struct cavm_ap_spsr_elx_cn96xx
+    struct cavm_ap_spsr_elx_cn96xxp1_0
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t n                     : 1;  /**< [ 31: 31](R/W) Set to the value of CPSR[N] on taking an exception to Monitor
@@ -32078,7 +32136,9 @@ union cavm_ap_spsr_elx
                                                                      mode, and copied to CPSR[N] on executing an exception return
                                                                      operation in Monitor mode. */
 #endif /* Word 0 - End */
-    } cn96xx;
+    } cn96xxp1_0;
+    /* struct cavm_ap_spsr_elx_s cn96xxp1_1; */
+    /* struct cavm_ap_spsr_elx_s cn96xxp3; */
     /* struct cavm_ap_spsr_elx_s cnf95xx; */
 };
 typedef union cavm_ap_spsr_elx cavm_ap_spsr_elx_t;
@@ -32293,6 +32353,10 @@ typedef union cavm_ap_ssbs cavm_ap_ssbs_t;
 static inline uint64_t CAVM_AP_SSBS_FUNC(void) __attribute__ ((pure, always_inline));
 static inline uint64_t CAVM_AP_SSBS_FUNC(void)
 {
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_1))
+        return 0x30304020600ll;
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X))
+        return 0x30304020600ll;
     if (cavm_is_model(OCTEONTX_CNF95XX))
         return 0x30304020600ll;
     __cavm_csr_fatal("AP_SSBS", 0, 0, 0, 0, 0);

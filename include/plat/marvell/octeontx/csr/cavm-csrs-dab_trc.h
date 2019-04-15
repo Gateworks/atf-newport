@@ -5348,7 +5348,7 @@ union cavm_trcx_trcpidr2
 #endif /* Word 0 - End */
     } s;
     /* struct cavm_trcx_trcpidr2_s cn8; */
-    struct cavm_trcx_trcpidr2_cn96xx
+    struct cavm_trcx_trcpidr2_cn9
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_8_31         : 24;
@@ -5361,8 +5361,7 @@ union cavm_trcx_trcpidr2
         uint32_t revision              : 4;  /**< [  7:  4](RO) Architectural revision, as assigned by Arm. */
         uint32_t reserved_8_31         : 24;
 #endif /* Word 0 - End */
-    } cn96xx;
-    /* struct cavm_trcx_trcpidr2_s cnf95xx; */
+    } cn9;
 };
 typedef union cavm_trcx_trcpidr2 cavm_trcx_trcpidr2_t;
 
@@ -5453,7 +5452,7 @@ union cavm_trcx_trcpidr4
 #endif /* Word 0 - End */
     } s;
     /* struct cavm_trcx_trcpidr4_s cn8; */
-    struct cavm_trcx_trcpidr4_cn96xx
+    struct cavm_trcx_trcpidr4_cn9
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_8_31         : 24;
@@ -5466,8 +5465,7 @@ union cavm_trcx_trcpidr4
                                                                  start of the component to the end of the component ID registers. */
         uint32_t reserved_8_31         : 24;
 #endif /* Word 0 - End */
-    } cn96xx;
-    /* struct cavm_trcx_trcpidr4_s cnf95xx; */
+    } cn9;
 };
 typedef union cavm_trcx_trcpidr4 cavm_trcx_trcpidr4_t;
 

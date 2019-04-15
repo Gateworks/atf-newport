@@ -156,6 +156,8 @@
 #define CAVM_GPIO_PIN_SEL_E_GPIO_PTP_PPS (2)
 #define CAVM_GPIO_PIN_SEL_E_GPIO_PTP_SYSCK (8)
 #define CAVM_GPIO_PIN_SEL_E_GPIO_SW (0)
+#define CAVM_GPIO_PIN_SEL_E_GSERRX_BURNINX(a,b) (0x60c + 0x10 * (a) + (b))
+#define CAVM_GPIO_PIN_SEL_E_GSERRX_DTESTX(a,b) (0x600 + 0x10 * (a) + (b))
 #define CAVM_GPIO_PIN_SEL_E_LMCX_ECC_CN8(a) (0x237 + (a))
 #define CAVM_GPIO_PIN_SEL_E_LMCX_ECC_CN9(a) (0x3d0 + (a))
 #define CAVM_GPIO_PIN_SEL_E_MCDX_IN(a) (0x23f + (a))
@@ -962,10 +964,10 @@ static inline uint64_t CAVM_GPIO_CLK_GENX(unsigned long a)
  * Register (NCB) gpio_clk_synce#
  *
  * GPIO Clock SyncE Registers
- * A GSER can be configured as a clock source. The GPIO block can support up to two
+ * Certain SerDes may be configured as a clock source. The GPIO block can support up to two
  * unique clocks to send out any GPIO pin as configured when GPIO_BIT_CFG()[PIN_SEL] =
  * GPIO_PIN_SEL_E::GPIO_CLK_SYNCE(0..1). The clock can be divided by 20, 40, 80 or 160
- * of the selected GSER SerDes clock. Legal values are based on the number of SerDes.
+ * of the selected SerDes clock. Legal values are based on the number of SerDes.
  *
  * This register is only accessible to the requestor(s) permitted with GPIO_PERMIT.
  *
@@ -1033,27 +1035,27 @@ union cavm_gpio_clk_syncex
         uint64_t reserved_12_63        : 52;
 #endif /* Word 0 - End */
     } cn83xx;
-    struct cavm_gpio_clk_syncex_cn96xx
+    struct cavm_gpio_clk_syncex_cn96xxp1
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_12_63        : 52;
         uint64_t qlm_sel               : 4;  /**< [ 11:  8](R/W) Selects which GSER to select from. */
         uint64_t reserved_4_7          : 4;
-        uint64_t div                   : 2;  /**< [  3:  2](R/W) GPIO internal clock division of the GSER SerDes recovered clock to create the
-                                                                 output clock. The maximum supported GPIO output frequency is 125 MHz.
+        uint64_t div                   : 2;  /**< [  3:  2](R/W) GPIO internal clock division of the SerDes recovered clock selected by [QLM_SEL]
+                                                                 to create the output clock. The maximum supported GPIO output frequency is 125
+                                                                 MHz.
                                                                  0x0 = Divide by 40.
                                                                  0x1 = Divide by 80.
                                                                  0x2 = Divide by 160.
                                                                  0x3 = Divide by 320. */
-        uint64_t lane_sel              : 2;  /**< [  1:  0](R/W) Which RX lane within the GSER permitted with [QLM_SEL] to use as the GPIO
-                                                                 internal QLMx clock.  Note that GSER 0..3 have four selections each while
-                                                                 GSER 4..6 have two selections each. */
+        uint64_t lane_sel              : 2;  /**< [  1:  0](R/W) Which RX lane within the SerDes selected with [QLM_SEL] to use as the GPIO
+                                                                 internal clock. */
 #else /* Word 0 - Little Endian */
-        uint64_t lane_sel              : 2;  /**< [  1:  0](R/W) Which RX lane within the GSER permitted with [QLM_SEL] to use as the GPIO
-                                                                 internal QLMx clock.  Note that GSER 0..3 have four selections each while
-                                                                 GSER 4..6 have two selections each. */
-        uint64_t div                   : 2;  /**< [  3:  2](R/W) GPIO internal clock division of the GSER SerDes recovered clock to create the
-                                                                 output clock. The maximum supported GPIO output frequency is 125 MHz.
+        uint64_t lane_sel              : 2;  /**< [  1:  0](R/W) Which RX lane within the SerDes selected with [QLM_SEL] to use as the GPIO
+                                                                 internal clock. */
+        uint64_t div                   : 2;  /**< [  3:  2](R/W) GPIO internal clock division of the SerDes recovered clock selected by [QLM_SEL]
+                                                                 to create the output clock. The maximum supported GPIO output frequency is 125
+                                                                 MHz.
                                                                  0x0 = Divide by 40.
                                                                  0x1 = Divide by 80.
                                                                  0x2 = Divide by 160.
@@ -1062,37 +1064,39 @@ union cavm_gpio_clk_syncex
         uint64_t qlm_sel               : 4;  /**< [ 11:  8](R/W) Selects which GSER to select from. */
         uint64_t reserved_12_63        : 52;
 #endif /* Word 0 - End */
-    } cn96xx;
-    struct cavm_gpio_clk_syncex_cnf95xx
+    } cn96xxp1;
+    struct cavm_gpio_clk_syncex_cn96xxp3
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_12_63        : 52;
-        uint64_t qlm_sel               : 4;  /**< [ 11:  8](R/W) Selects which GSER to select from. */
+        uint64_t qlm_sel               : 4;  /**< [ 11:  8](R/W) Selects which GSERR to select from. */
         uint64_t reserved_4_7          : 4;
-        uint64_t div                   : 2;  /**< [  3:  2](R/W) GPIO internal clock division of the GSER SerDes recovered clock to create the
-                                                                 output clock. The maximum supported GPIO output frequency is 125 MHz.
+        uint64_t div                   : 2;  /**< [  3:  2](R/W) GPIO internal clock division of the SerDes recovered clock selected by [QLM_SEL]
+                                                                 to create the output clock. The maximum supported GPIO output frequency is 125
+                                                                 MHz.
                                                                  0x0 = Divide by 40.
                                                                  0x1 = Divide by 80.
                                                                  0x2 = Divide by 160.
                                                                  0x3 = Divide by 320. */
-        uint64_t lane_sel              : 2;  /**< [  1:  0](R/W) Which RX lane within the GSER permitted with [QLM_SEL] to use as the GPIO
-                                                                 internal QLMx clock.  Note that GSER 0..2 have four selections each while
-                                                                 GSER 3 has two selections each. */
+        uint64_t lane_sel              : 2;  /**< [  1:  0](R/W) Which RX lane within the SerDes selected with [QLM_SEL] to use as the GPIO
+                                                                 internal clock. */
 #else /* Word 0 - Little Endian */
-        uint64_t lane_sel              : 2;  /**< [  1:  0](R/W) Which RX lane within the GSER permitted with [QLM_SEL] to use as the GPIO
-                                                                 internal QLMx clock.  Note that GSER 0..2 have four selections each while
-                                                                 GSER 3 has two selections each. */
-        uint64_t div                   : 2;  /**< [  3:  2](R/W) GPIO internal clock division of the GSER SerDes recovered clock to create the
-                                                                 output clock. The maximum supported GPIO output frequency is 125 MHz.
+        uint64_t lane_sel              : 2;  /**< [  1:  0](R/W) Which RX lane within the SerDes selected with [QLM_SEL] to use as the GPIO
+                                                                 internal clock. */
+        uint64_t div                   : 2;  /**< [  3:  2](R/W) GPIO internal clock division of the SerDes recovered clock selected by [QLM_SEL]
+                                                                 to create the output clock. The maximum supported GPIO output frequency is 125
+                                                                 MHz.
                                                                  0x0 = Divide by 40.
                                                                  0x1 = Divide by 80.
                                                                  0x2 = Divide by 160.
                                                                  0x3 = Divide by 320. */
         uint64_t reserved_4_7          : 4;
-        uint64_t qlm_sel               : 4;  /**< [ 11:  8](R/W) Selects which GSER to select from. */
+        uint64_t qlm_sel               : 4;  /**< [ 11:  8](R/W) Selects which GSERR to select from. */
         uint64_t reserved_12_63        : 52;
 #endif /* Word 0 - End */
-    } cnf95xx;
+    } cn96xxp3;
+    /* struct cavm_gpio_clk_syncex_cn96xxp1 cnf95xxp1; */
+    /* struct cavm_gpio_clk_syncex_cn96xxp3 cnf95xxp2; */
 };
 typedef union cavm_gpio_clk_syncex cavm_gpio_clk_syncex_t;
 
@@ -1418,12 +1422,12 @@ union cavm_gpio_mc_intrx
         uint64_t reserved_24_63        : 40;
         uint64_t intr                  : 24; /**< [ 23:  0](R/W1C/H) GPIO interrupt for each core. When corresponding GPIO4-7 is edge-triggered and GPIO_MULTI_CAST[EN]
                                                                  is enabled, a GPIO assertion will set all 24 bits. Each bit is expected to be routed to
-                                                                 interrupt a different core using the CIU, and each core will then write one to clear its
+                                                                 interrupt a different core using the GIC, and each core will then write one to clear its
                                                                  corresponding bit in this register. */
 #else /* Word 0 - Little Endian */
         uint64_t intr                  : 24; /**< [ 23:  0](R/W1C/H) GPIO interrupt for each core. When corresponding GPIO4-7 is edge-triggered and GPIO_MULTI_CAST[EN]
                                                                  is enabled, a GPIO assertion will set all 24 bits. Each bit is expected to be routed to
-                                                                 interrupt a different core using the CIU, and each core will then write one to clear its
+                                                                 interrupt a different core using the GIC, and each core will then write one to clear its
                                                                  corresponding bit in this register. */
         uint64_t reserved_24_63        : 40;
 #endif /* Word 0 - End */
@@ -1434,12 +1438,12 @@ union cavm_gpio_mc_intrx
         uint64_t reserved_6_63         : 58;
         uint64_t intr                  : 6;  /**< [  5:  0](R/W1C/H) GPIO interrupt for each core. When corresponding GPIO4-7 is edge-triggered and GPIO_MULTI_CAST[EN]
                                                                  is enabled, a GPIO assertion will set all 24 bits. Each bit is expected to be routed to
-                                                                 interrupt a different core using the CIU, and each core will then write one to clear its
+                                                                 interrupt a different core using the GIC, and each core will then write one to clear its
                                                                  corresponding bit in this register. */
 #else /* Word 0 - Little Endian */
         uint64_t intr                  : 6;  /**< [  5:  0](R/W1C/H) GPIO interrupt for each core. When corresponding GPIO4-7 is edge-triggered and GPIO_MULTI_CAST[EN]
                                                                  is enabled, a GPIO assertion will set all 24 bits. Each bit is expected to be routed to
-                                                                 interrupt a different core using the CIU, and each core will then write one to clear its
+                                                                 interrupt a different core using the GIC, and each core will then write one to clear its
                                                                  corresponding bit in this register. */
         uint64_t reserved_6_63         : 58;
 #endif /* Word 0 - End */
@@ -1733,17 +1737,17 @@ union cavm_gpio_misc_supply
                                                                  0x1 = 2.5 V.
                                                                  0x2/0x3 = 1.8 V.
                                                                  _ All other values reserved. */
-        uint64_t vdet_io_e             : 2;  /**< [ 11: 10](RO/H) Sensed I/O power supply setting for generic east IO pins:
+        uint64_t vdet_io_e             : 2;  /**< [ 11: 10](RO/H) Sensed I/O power supply setting for generic east I/O pins:
                                                                  0x0 = 3.3 V.
                                                                  0x1 = 2.5 V.
                                                                  0x2/0x3 = 1.8 V.
                                                                  _ All other values reserved. */
-        uint64_t vdet_io_n             : 2;  /**< [  9:  8](RO/H) Sensed I/O power supply setting for generic north IO pins:
+        uint64_t vdet_io_n             : 2;  /**< [  9:  8](RO/H) Sensed I/O power supply setting for generic north I/O pins:
                                                                  0x0 = 3.3 V.
                                                                  0x1 = 2.5 V.
                                                                  0x2/0x3 = 1.8 V.
                                                                  _ All other values reserved. */
-        uint64_t vdet_pci              : 2;  /**< [  7:  6](RO/H) Sensed I/O power supply setting for PCI IO pins:
+        uint64_t vdet_pci              : 2;  /**< [  7:  6](RO/H) Sensed I/O power supply setting for PCI I/O pins:
                                                                  0x0 = 3.3 V.
                                                                  0x1 = 2.5 V.
                                                                  0x2/0x3 = 1.8 V.
@@ -1779,17 +1783,17 @@ union cavm_gpio_misc_supply
                                                                  0x1 = 2.5 V.
                                                                  0x2/0x3 = 1.8 V.
                                                                  _ All other values reserved. */
-        uint64_t vdet_pci              : 2;  /**< [  7:  6](RO/H) Sensed I/O power supply setting for PCI IO pins:
+        uint64_t vdet_pci              : 2;  /**< [  7:  6](RO/H) Sensed I/O power supply setting for PCI I/O pins:
                                                                  0x0 = 3.3 V.
                                                                  0x1 = 2.5 V.
                                                                  0x2/0x3 = 1.8 V.
                                                                  _ All other values reserved. */
-        uint64_t vdet_io_n             : 2;  /**< [  9:  8](RO/H) Sensed I/O power supply setting for generic north IO pins:
+        uint64_t vdet_io_n             : 2;  /**< [  9:  8](RO/H) Sensed I/O power supply setting for generic north I/O pins:
                                                                  0x0 = 3.3 V.
                                                                  0x1 = 2.5 V.
                                                                  0x2/0x3 = 1.8 V.
                                                                  _ All other values reserved. */
-        uint64_t vdet_io_e             : 2;  /**< [ 11: 10](RO/H) Sensed I/O power supply setting for generic east IO pins:
+        uint64_t vdet_io_e             : 2;  /**< [ 11: 10](RO/H) Sensed I/O power supply setting for generic east I/O pins:
                                                                  0x0 = 3.3 V.
                                                                  0x1 = 2.5 V.
                                                                  0x2/0x3 = 1.8 V.
@@ -1856,17 +1860,17 @@ union cavm_gpio_misc_supply
                                                                  0x1 = 2.5 V.
                                                                  0x2/0x3 = 1.8 V.
                                                                  _ All other values reserved. */
-        uint64_t vdet_io_e             : 2;  /**< [ 11: 10](RO/H) Sensed I/O power supply setting for generic east IO pins:
+        uint64_t vdet_io_e             : 2;  /**< [ 11: 10](RO/H) Sensed I/O power supply setting for generic east I/O pins:
                                                                  0x0 = 3.3 V.
                                                                  0x1 = 2.5 V.
                                                                  0x2/0x3 = 1.8 V.
                                                                  _ All other values reserved. */
-        uint64_t vdet_io_n             : 2;  /**< [  9:  8](RO/H) Sensed I/O power supply setting for generic north IO pins:
+        uint64_t vdet_io_n             : 2;  /**< [  9:  8](RO/H) Sensed I/O power supply setting for generic north I/O pins:
                                                                  0x0 = 3.3 V.
                                                                  0x1 = 2.5 V.
                                                                  0x2/0x3 = 1.8 V.
                                                                  _ All other values reserved. */
-        uint64_t vdet_pci              : 2;  /**< [  7:  6](RO/H) Sensed I/O power supply setting for PCI IO pins:
+        uint64_t vdet_pci              : 2;  /**< [  7:  6](RO/H) Sensed I/O power supply setting for PCI I/O pins:
                                                                  0x0 = 3.3 V.
                                                                  0x1 = 2.5 V.
                                                                  0x2/0x3 = 1.8 V.
@@ -1902,17 +1906,17 @@ union cavm_gpio_misc_supply
                                                                  0x1 = 2.5 V.
                                                                  0x2/0x3 = 1.8 V.
                                                                  _ All other values reserved. */
-        uint64_t vdet_pci              : 2;  /**< [  7:  6](RO/H) Sensed I/O power supply setting for PCI IO pins:
+        uint64_t vdet_pci              : 2;  /**< [  7:  6](RO/H) Sensed I/O power supply setting for PCI I/O pins:
                                                                  0x0 = 3.3 V.
                                                                  0x1 = 2.5 V.
                                                                  0x2/0x3 = 1.8 V.
                                                                  _ All other values reserved. */
-        uint64_t vdet_io_n             : 2;  /**< [  9:  8](RO/H) Sensed I/O power supply setting for generic north IO pins:
+        uint64_t vdet_io_n             : 2;  /**< [  9:  8](RO/H) Sensed I/O power supply setting for generic north I/O pins:
                                                                  0x0 = 3.3 V.
                                                                  0x1 = 2.5 V.
                                                                  0x2/0x3 = 1.8 V.
                                                                  _ All other values reserved. */
-        uint64_t vdet_io_e             : 2;  /**< [ 11: 10](RO/H) Sensed I/O power supply setting for generic east IO pins:
+        uint64_t vdet_io_e             : 2;  /**< [ 11: 10](RO/H) Sensed I/O power supply setting for generic east I/O pins:
                                                                  0x0 = 3.3 V.
                                                                  0x1 = 2.5 V.
                                                                  0x2/0x3 = 1.8 V.
@@ -1995,7 +1999,7 @@ union cavm_gpio_misc_supply
                                                                  0x1 = 2.5 V.
                                                                  0x2/0x3 = 1.8 V.
                                                                  _ All other values reserved. */
-        uint64_t vdet_pci              : 2;  /**< [  7:  6](RO/H) Sensed I/O power supply setting for PCI IO pins:
+        uint64_t vdet_pci              : 2;  /**< [  7:  6](RO/H) Sensed I/O power supply setting for PCI I/O pins:
                                                                  0x0 = 3.3 V.
                                                                  0x1 = 2.5 V.
                                                                  0x2/0x3 = 1.8 V.
@@ -2031,7 +2035,7 @@ union cavm_gpio_misc_supply
                                                                  0x1 = 2.5 V.
                                                                  0x2/0x3 = 1.8 V.
                                                                  _ All other values reserved. */
-        uint64_t vdet_pci              : 2;  /**< [  7:  6](RO/H) Sensed I/O power supply setting for PCI IO pins:
+        uint64_t vdet_pci              : 2;  /**< [  7:  6](RO/H) Sensed I/O power supply setting for PCI I/O pins:
                                                                  0x0 = 3.3 V.
                                                                  0x1 = 2.5 V.
                                                                  0x2/0x3 = 1.8 V.
@@ -2551,24 +2555,54 @@ union cavm_gpio_pkg_ver
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_3_63         : 61;
         uint64_t pkg_ver               : 3;  /**< [  2:  0](RO/H) Reads the package version straps, which are set by the package.
+
+                                                                 If FUS_FUSE_NUM_E::CHIP_ID() fuses indicate pass A or B:
                                                                  0x0 = SKU package A = 50 x 50mm package, up to 3 DDR channels.
-                                                                 0x1 = SKU package B = 42.5 x 42.5mm package, up to 2 DDR channels.
+                                                                 0x1 = SKU package B = 42.5 x 42.5mm package, up to 2 DDR channels, 4 lanes Ethernet.
+                                                                 0x2 = SKU package C = 42.5 x 42.5mm package, up to 2 DDR channels, 8 lanes Ethernet.
                                                                  0x3 = SKU package D = 45 x 45mm package, up to 2 DDR channels, for CN95xxE.
-                                                                 0x4 = SKU package E = 55 x 55mm package, die A of two die package, for CN96xxD.
-                                                                 0x5 = SKU package E = 55 x 55mm package, die B of two die package, for CN96xxD.
+                                                                 0x4 = SKU package E = 55 x 55mm package, die 0 of two die package, for CN96xxD.
+                                                                 0x5 = SKU package F = 55 x 55mm package, die 1 of two die package, for CN96xxD.
+
+                                                                 If FUS_FUSE_NUM_E::CHIP_ID() fuses indicate pass C or later:
+                                                                 0x0 = SKU package I = 50 x 50mm package, up to 3 DDR channels,
+                                                                                       backwards A0 board-compatible.
+                                                                 0x4 = SKU package M = 55 x 55mm package, die 0 of two die package, for CN96xxD.
+                                                                 0x5 = SKU package N = 55 x 55mm package, die 1 of two die package, for CN96xxD.
+                                                                 0x7 = SKU package P = 50 x 50mm package, up to 3 DDR channels, for CN-to-be-numbered.
 
                                                                  Internal:
-                                                                 Architecturally defined, same encoding across same die. */
+                                                                 Architecturally defined, same encoding across same die.
+
+                                                                 Proposed but currently not planned packages:
+                                                                 Pass A: 0x7 = SKU package H = 50 x 50mm package, up to 3 DDR channels,
+                                                                               forward C0 board compatible.
+                                                                 Pass C: 0x1 = SKU package J = 42.5 x 42.5mm package, up to 2 DDR channels, 4 lanes Ethernet. */
 #else /* Word 0 - Little Endian */
         uint64_t pkg_ver               : 3;  /**< [  2:  0](RO/H) Reads the package version straps, which are set by the package.
+
+                                                                 If FUS_FUSE_NUM_E::CHIP_ID() fuses indicate pass A or B:
                                                                  0x0 = SKU package A = 50 x 50mm package, up to 3 DDR channels.
-                                                                 0x1 = SKU package B = 42.5 x 42.5mm package, up to 2 DDR channels.
+                                                                 0x1 = SKU package B = 42.5 x 42.5mm package, up to 2 DDR channels, 4 lanes Ethernet.
+                                                                 0x2 = SKU package C = 42.5 x 42.5mm package, up to 2 DDR channels, 8 lanes Ethernet.
                                                                  0x3 = SKU package D = 45 x 45mm package, up to 2 DDR channels, for CN95xxE.
-                                                                 0x4 = SKU package E = 55 x 55mm package, die A of two die package, for CN96xxD.
-                                                                 0x5 = SKU package E = 55 x 55mm package, die B of two die package, for CN96xxD.
+                                                                 0x4 = SKU package E = 55 x 55mm package, die 0 of two die package, for CN96xxD.
+                                                                 0x5 = SKU package F = 55 x 55mm package, die 1 of two die package, for CN96xxD.
+
+                                                                 If FUS_FUSE_NUM_E::CHIP_ID() fuses indicate pass C or later:
+                                                                 0x0 = SKU package I = 50 x 50mm package, up to 3 DDR channels,
+                                                                                       backwards A0 board-compatible.
+                                                                 0x4 = SKU package M = 55 x 55mm package, die 0 of two die package, for CN96xxD.
+                                                                 0x5 = SKU package N = 55 x 55mm package, die 1 of two die package, for CN96xxD.
+                                                                 0x7 = SKU package P = 50 x 50mm package, up to 3 DDR channels, for CN-to-be-numbered.
 
                                                                  Internal:
-                                                                 Architecturally defined, same encoding across same die. */
+                                                                 Architecturally defined, same encoding across same die.
+
+                                                                 Proposed but currently not planned packages:
+                                                                 Pass A: 0x7 = SKU package H = 50 x 50mm package, up to 3 DDR channels,
+                                                                               forward C0 board compatible.
+                                                                 Pass C: 0x1 = SKU package J = 42.5 x 42.5mm package, up to 2 DDR channels, 4 lanes Ethernet. */
         uint64_t reserved_3_63         : 61;
 #endif /* Word 0 - End */
     } s;
@@ -2626,15 +2660,15 @@ union cavm_gpio_pspi_ctl
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_1_63         : 63;
         uint64_t pspi_gpio             : 1;  /**< [  0:  0](R/W) PSPI GPIO reset override.
-                                                                 When set, this field causes the GPIO pins 39-43 to maintain their
-                                                                 values through a chip reset.  This bit is typically set when PCIe Expansion RIM
+                                                                 When set, this field causes the GPIO pins 39-42 to maintain their
+                                                                 values through a chip reset. This bit is typically set when PCIe Expansion RIM
                                                                  is required and a PEM has been configured as an end point.
                                                                  When cleared, the GPIOs are reset during a chip domain reset.
                                                                  This register is reset only on a cold domain reset. */
 #else /* Word 0 - Little Endian */
         uint64_t pspi_gpio             : 1;  /**< [  0:  0](R/W) PSPI GPIO reset override.
-                                                                 When set, this field causes the GPIO pins 39-43 to maintain their
-                                                                 values through a chip reset.  This bit is typically set when PCIe Expansion RIM
+                                                                 When set, this field causes the GPIO pins 39-42 to maintain their
+                                                                 values through a chip reset. This bit is typically set when PCIe Expansion RIM
                                                                  is required and a PEM has been configured as an end point.
                                                                  When cleared, the GPIOs are reset during a chip domain reset.
                                                                  This register is reset only on a cold domain reset. */

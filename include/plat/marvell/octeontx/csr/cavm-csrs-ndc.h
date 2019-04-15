@@ -70,8 +70,10 @@ typedef union cavm_ndcx_af_active_pc cavm_ndcx_af_active_pc_t;
 static inline uint64_t CAVM_NDCX_AF_ACTIVE_PC(unsigned long a) __attribute__ ((pure, always_inline));
 static inline uint64_t CAVM_NDCX_AF_ACTIVE_PC(unsigned long a)
 {
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=2))
         return 0x8400c0000078ll + 0x10000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a<=5))
+        return 0x8400c0000078ll + 0x10000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x8400c0000078ll + 0x10000000ll * ((a) & 0x7);
     __cavm_csr_fatal("NDCX_AF_ACTIVE_PC", 1, a, 0, 0, 0);
@@ -107,8 +109,10 @@ typedef union cavm_ndcx_af_bankx_hit_pc cavm_ndcx_af_bankx_hit_pc_t;
 static inline uint64_t CAVM_NDCX_AF_BANKX_HIT_PC(unsigned long a, unsigned long b) __attribute__ ((pure, always_inline));
 static inline uint64_t CAVM_NDCX_AF_BANKX_HIT_PC(unsigned long a, unsigned long b)
 {
-    if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=15)))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && ((a<=2) && (b<=15)))
         return 0x8400c0001000ll + 0x10000000ll * ((a) & 0x3) + 8ll * ((b) & 0xf);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a<=5) && (b<=15)))
+        return 0x8400c0001000ll + 0x10000000ll * ((a) & 0x7) + 8ll * ((b) & 0xf);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=5) && (b<=15)))
         return 0x8400c0001000ll + 0x10000000ll * ((a) & 0x7) + 8ll * ((b) & 0xf);
     __cavm_csr_fatal("NDCX_AF_BANKX_HIT_PC", 2, a, b, 0, 0);
@@ -146,8 +150,10 @@ typedef union cavm_ndcx_af_bankx_indexx_busy cavm_ndcx_af_bankx_indexx_busy_t;
 static inline uint64_t CAVM_NDCX_AF_BANKX_INDEXX_BUSY(unsigned long a, unsigned long b, unsigned long c) __attribute__ ((pure, always_inline));
 static inline uint64_t CAVM_NDCX_AF_BANKX_INDEXX_BUSY(unsigned long a, unsigned long b, unsigned long c)
 {
-    if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=15) && (c<=3)))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && ((a<=2) && (b<=15) && (c<=3)))
         return 0x8400c0000600ll + 0x10000000ll * ((a) & 0x3) + 0x20ll * ((b) & 0xf) + 8ll * ((c) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a<=5) && (b<=15) && (c<=3)))
+        return 0x8400c0000600ll + 0x10000000ll * ((a) & 0x7) + 0x20ll * ((b) & 0xf) + 8ll * ((c) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=5) && (b<=15) && (c<=3)))
         return 0x8400c0000600ll + 0x10000000ll * ((a) & 0x7) + 0x20ll * ((b) & 0xf) + 8ll * ((c) & 0x3);
     __cavm_csr_fatal("NDCX_AF_BANKX_INDEXX_BUSY", 3, a, b, c, 0);
@@ -185,8 +191,10 @@ typedef union cavm_ndcx_af_bankx_indexx_dirty cavm_ndcx_af_bankx_indexx_dirty_t;
 static inline uint64_t CAVM_NDCX_AF_BANKX_INDEXX_DIRTY(unsigned long a, unsigned long b, unsigned long c) __attribute__ ((pure, always_inline));
 static inline uint64_t CAVM_NDCX_AF_BANKX_INDEXX_DIRTY(unsigned long a, unsigned long b, unsigned long c)
 {
-    if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=15) && (c<=3)))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && ((a<=2) && (b<=15) && (c<=3)))
         return 0x8400c0000800ll + 0x10000000ll * ((a) & 0x3) + 0x20ll * ((b) & 0xf) + 8ll * ((c) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a<=5) && (b<=15) && (c<=3)))
+        return 0x8400c0000800ll + 0x10000000ll * ((a) & 0x7) + 0x20ll * ((b) & 0xf) + 8ll * ((c) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=5) && (b<=15) && (c<=3)))
         return 0x8400c0000800ll + 0x10000000ll * ((a) & 0x7) + 0x20ll * ((b) & 0xf) + 8ll * ((c) & 0x3);
     __cavm_csr_fatal("NDCX_AF_BANKX_INDEXX_DIRTY", 3, a, b, c, 0);
@@ -224,8 +232,10 @@ typedef union cavm_ndcx_af_bankx_indexx_lock cavm_ndcx_af_bankx_indexx_lock_t;
 static inline uint64_t CAVM_NDCX_AF_BANKX_INDEXX_LOCK(unsigned long a, unsigned long b, unsigned long c) __attribute__ ((pure, always_inline));
 static inline uint64_t CAVM_NDCX_AF_BANKX_INDEXX_LOCK(unsigned long a, unsigned long b, unsigned long c)
 {
-    if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=15) && (c<=3)))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && ((a<=2) && (b<=15) && (c<=3)))
         return 0x8400c0000a00ll + 0x10000000ll * ((a) & 0x3) + 0x20ll * ((b) & 0xf) + 8ll * ((c) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a<=5) && (b<=15) && (c<=3)))
+        return 0x8400c0000a00ll + 0x10000000ll * ((a) & 0x7) + 0x20ll * ((b) & 0xf) + 8ll * ((c) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=5) && (b<=15) && (c<=3)))
         return 0x8400c0000a00ll + 0x10000000ll * ((a) & 0x7) + 0x20ll * ((b) & 0xf) + 8ll * ((c) & 0x3);
     __cavm_csr_fatal("NDCX_AF_BANKX_INDEXX_LOCK", 3, a, b, c, 0);
@@ -263,8 +273,10 @@ typedef union cavm_ndcx_af_bankx_indexx_vld cavm_ndcx_af_bankx_indexx_vld_t;
 static inline uint64_t CAVM_NDCX_AF_BANKX_INDEXX_VLD(unsigned long a, unsigned long b, unsigned long c) __attribute__ ((pure, always_inline));
 static inline uint64_t CAVM_NDCX_AF_BANKX_INDEXX_VLD(unsigned long a, unsigned long b, unsigned long c)
 {
-    if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=15) && (c<=3)))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && ((a<=2) && (b<=15) && (c<=3)))
         return 0x8400c0000400ll + 0x10000000ll * ((a) & 0x3) + 0x20ll * ((b) & 0xf) + 8ll * ((c) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a<=5) && (b<=15) && (c<=3)))
+        return 0x8400c0000400ll + 0x10000000ll * ((a) & 0x7) + 0x20ll * ((b) & 0xf) + 8ll * ((c) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=5) && (b<=15) && (c<=3)))
         return 0x8400c0000400ll + 0x10000000ll * ((a) & 0x7) + 0x20ll * ((b) & 0xf) + 8ll * ((c) & 0x3);
     __cavm_csr_fatal("NDCX_AF_BANKX_INDEXX_VLD", 3, a, b, c, 0);
@@ -318,8 +330,10 @@ typedef union cavm_ndcx_af_bankx_linex_metadata cavm_ndcx_af_bankx_linex_metadat
 static inline uint64_t CAVM_NDCX_AF_BANKX_LINEX_METADATA(unsigned long a, unsigned long b, unsigned long c) __attribute__ ((pure, always_inline));
 static inline uint64_t CAVM_NDCX_AF_BANKX_LINEX_METADATA(unsigned long a, unsigned long b, unsigned long c)
 {
-    if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=15) && (c<=255)))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && ((a<=2) && (b<=15) && (c<=255)))
         return 0x8400c0010000ll + 0x10000000ll * ((a) & 0x3) + 0x1000ll * ((b) & 0xf) + 8ll * ((c) & 0xff);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a<=5) && (b<=15) && (c<=255)))
+        return 0x8400c0010000ll + 0x10000000ll * ((a) & 0x7) + 0x1000ll * ((b) & 0xf) + 8ll * ((c) & 0xff);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=5) && (b<=15) && (c<=255)))
         return 0x8400c0010000ll + 0x10000000ll * ((a) & 0x7) + 0x1000ll * ((b) & 0xf) + 8ll * ((c) & 0xff);
     __cavm_csr_fatal("NDCX_AF_BANKX_LINEX_METADATA", 3, a, b, c, 0);
@@ -357,8 +371,10 @@ typedef union cavm_ndcx_af_bankx_linex_wordx cavm_ndcx_af_bankx_linex_wordx_t;
 static inline uint64_t CAVM_NDCX_AF_BANKX_LINEX_WORDX(unsigned long a, unsigned long b, unsigned long c, unsigned long d) __attribute__ ((pure, always_inline));
 static inline uint64_t CAVM_NDCX_AF_BANKX_LINEX_WORDX(unsigned long a, unsigned long b, unsigned long c, unsigned long d)
 {
-    if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=15) && (c<=255) && (d<=15)))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && ((a<=2) && (b<=15) && (c<=255) && (d<=15)))
         return 0x8400c0100000ll + 0x10000000ll * ((a) & 0x3) + 0x8000ll * ((b) & 0xf) + 0x80ll * ((c) & 0xff) + 8ll * ((d) & 0xf);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a<=5) && (b<=15) && (c<=255) && (d<=15)))
+        return 0x8400c0100000ll + 0x10000000ll * ((a) & 0x7) + 0x8000ll * ((b) & 0xf) + 0x80ll * ((c) & 0xff) + 8ll * ((d) & 0xf);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=5) && (b<=15) && (c<=255) && (d<=15)))
         return 0x8400c0100000ll + 0x10000000ll * ((a) & 0x7) + 0x8000ll * ((b) & 0xf) + 0x80ll * ((c) & 0xff) + 8ll * ((d) & 0xf);
     __cavm_csr_fatal("NDCX_AF_BANKX_LINEX_WORDX", 4, a, b, c, d);
@@ -394,8 +410,10 @@ typedef union cavm_ndcx_af_bankx_miss_pc cavm_ndcx_af_bankx_miss_pc_t;
 static inline uint64_t CAVM_NDCX_AF_BANKX_MISS_PC(unsigned long a, unsigned long b) __attribute__ ((pure, always_inline));
 static inline uint64_t CAVM_NDCX_AF_BANKX_MISS_PC(unsigned long a, unsigned long b)
 {
-    if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=15)))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && ((a<=2) && (b<=15)))
         return 0x8400c0001100ll + 0x10000000ll * ((a) & 0x3) + 8ll * ((b) & 0xf);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a<=5) && (b<=15)))
+        return 0x8400c0001100ll + 0x10000000ll * ((a) & 0x7) + 8ll * ((b) & 0xf);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=5) && (b<=15)))
         return 0x8400c0001100ll + 0x10000000ll * ((a) & 0x7) + 8ll * ((b) & 0xf);
     __cavm_csr_fatal("NDCX_AF_BANKX_MISS_PC", 2, a, b, 0, 0);
@@ -445,8 +463,10 @@ typedef union cavm_ndcx_af_bank_ctl_done cavm_ndcx_af_bank_ctl_done_t;
 static inline uint64_t CAVM_NDCX_AF_BANK_CTL_DONE(unsigned long a) __attribute__ ((pure, always_inline));
 static inline uint64_t CAVM_NDCX_AF_BANK_CTL_DONE(unsigned long a)
 {
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=2))
         return 0x8400c0000048ll + 0x10000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a<=5))
+        return 0x8400c0000048ll + 0x10000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x8400c0000048ll + 0x10000000ll * ((a) & 0x7);
     __cavm_csr_fatal("NDCX_AF_BANK_CTL_DONE", 1, a, 0, 0, 0);
@@ -527,8 +547,10 @@ typedef union cavm_ndcx_af_banks_ctl cavm_ndcx_af_banks_ctl_t;
 static inline uint64_t CAVM_NDCX_AF_BANKS_CTL(unsigned long a) __attribute__ ((pure, always_inline));
 static inline uint64_t CAVM_NDCX_AF_BANKS_CTL(unsigned long a)
 {
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=2))
         return 0x8400c0000040ll + 0x10000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a<=5))
+        return 0x8400c0000040ll + 0x10000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x8400c0000040ll + 0x10000000ll * ((a) & 0x7);
     __cavm_csr_fatal("NDCX_AF_BANKS_CTL", 1, a, 0, 0, 0);
@@ -574,8 +596,10 @@ typedef union cavm_ndcx_af_blk_rst cavm_ndcx_af_blk_rst_t;
 static inline uint64_t CAVM_NDCX_AF_BLK_RST(unsigned long a) __attribute__ ((pure, always_inline));
 static inline uint64_t CAVM_NDCX_AF_BLK_RST(unsigned long a)
 {
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=2))
         return 0x8400c00002f0ll + 0x10000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a<=5))
+        return 0x8400c00002f0ll + 0x10000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x8400c00002f0ll + 0x10000000ll * ((a) & 0x7);
     __cavm_csr_fatal("NDCX_AF_BLK_RST", 1, a, 0, 0, 0);
@@ -665,8 +689,10 @@ typedef union cavm_ndcx_af_bp_testx cavm_ndcx_af_bp_testx_t;
 static inline uint64_t CAVM_NDCX_AF_BP_TESTX(unsigned long a, unsigned long b) __attribute__ ((pure, always_inline));
 static inline uint64_t CAVM_NDCX_AF_BP_TESTX(unsigned long a, unsigned long b)
 {
-    if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && ((a<=2) && (b<=3)))
         return 0x8400c0000200ll + 0x10000000ll * ((a) & 0x3) + 8ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a<=5) && (b<=3)))
+        return 0x8400c0000200ll + 0x10000000ll * ((a) & 0x7) + 8ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=5) && (b<=3)))
         return 0x8400c0000200ll + 0x10000000ll * ((a) & 0x7) + 8ll * ((b) & 0x3);
     __cavm_csr_fatal("NDCX_AF_BP_TESTX", 2, a, b, 0, 0);
@@ -714,8 +740,10 @@ typedef union cavm_ndcx_af_bp_test_enable cavm_ndcx_af_bp_test_enable_t;
 static inline uint64_t CAVM_NDCX_AF_BP_TEST_ENABLE(unsigned long a) __attribute__ ((pure, always_inline));
 static inline uint64_t CAVM_NDCX_AF_BP_TEST_ENABLE(unsigned long a)
 {
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=2))
         return 0x8400c00001f8ll + 0x10000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a<=5))
+        return 0x8400c00001f8ll + 0x10000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x8400c00001f8ll + 0x10000000ll * ((a) & 0x7);
     __cavm_csr_fatal("NDCX_AF_BP_TEST_ENABLE", 1, a, 0, 0, 0);
@@ -767,8 +795,10 @@ typedef union cavm_ndcx_af_cams_rd_interval cavm_ndcx_af_cams_rd_interval_t;
 static inline uint64_t CAVM_NDCX_AF_CAMS_RD_INTERVAL(unsigned long a) __attribute__ ((pure, always_inline));
 static inline uint64_t CAVM_NDCX_AF_CAMS_RD_INTERVAL(unsigned long a)
 {
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=2))
         return 0x8400c0000080ll + 0x10000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a<=5))
+        return 0x8400c0000080ll + 0x10000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x8400c0000080ll + 0x10000000ll * ((a) & 0x7);
     __cavm_csr_fatal("NDCX_AF_CAMS_RD_INTERVAL", 1, a, 0, 0, 0);
@@ -810,8 +840,10 @@ typedef union cavm_ndcx_af_clk_en cavm_ndcx_af_clk_en_t;
 static inline uint64_t CAVM_NDCX_AF_CLK_EN(unsigned long a) __attribute__ ((pure, always_inline));
 static inline uint64_t CAVM_NDCX_AF_CLK_EN(unsigned long a)
 {
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=2))
         return 0x8400c0000020ll + 0x10000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a<=5))
+        return 0x8400c0000020ll + 0x10000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x8400c0000020ll + 0x10000000ll * ((a) & 0x7);
     __cavm_csr_fatal("NDCX_AF_CLK_EN", 1, a, 0, 0, 0);
@@ -857,8 +889,10 @@ typedef union cavm_ndcx_af_const cavm_ndcx_af_const_t;
 static inline uint64_t CAVM_NDCX_AF_CONST(unsigned long a) __attribute__ ((pure, always_inline));
 static inline uint64_t CAVM_NDCX_AF_CONST(unsigned long a)
 {
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=2))
         return 0x8400c0000000ll + 0x10000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a<=5))
+        return 0x8400c0000000ll + 0x10000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x8400c0000000ll + 0x10000000ll * ((a) & 0x7);
     __cavm_csr_fatal("NDCX_AF_CONST", 1, a, 0, 0, 0);
@@ -883,7 +917,24 @@ union cavm_ndcx_af_ctl
     struct cavm_ndcx_af_ctl_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_5_63         : 59;
+        uint64_t reserved_14_63        : 50;
+        uint64_t dis_sync_mods         : 1;  /**< [ 13: 13](R/W) For diagnostic use only.
+                                                                 Internal:
+                                                                 Setting this bit will disable TBD late fixes introduced to
+                                                                 resolve issues with FLR.SYNC operations.  As the design team
+                                                                 adds consumers of this bit, the description will be updated. */
+        uint64_t dis_unjam_w3a         : 1;  /**< [ 12: 12](R/W) For diagnostic use only.
+                                                                 Internal:
+                                                                 "Setting this bit will disable the fix for McBuggin #36640.
+                                                                 In short, the deadlock unjam mechanism will be disabled, such that
+                                                                 the particular deadlock described in the bug becomes possible again;
+                                                                 however, any inadvertent bug introduced by the fix could be avoided." */
+        uint64_t perf_mode             : 4;  /**< [ 11:  8](R/W) For diagnostic use only.
+                                                                 Internal:
+                                                                 These bits will eventually be used to limit performance
+                                                                 -- in some TBD manner -- in hopes that the lower-performance
+                                                                 mode(s) avoid triggering bugs fixed late in the design cycle. */
+        uint64_t reserved_5_7          : 3;
         uint64_t lock_dis              : 1;  /**< [  4:  4](R/W) Lock disabled. When set, NDC will not execute any command with lock bit set and report an error
                                                                  back to port if command has lock bit set. Unlock command is not effected by this CSR.
                                                                  When cleared NDC will process any command with lock bit set. */
@@ -925,18 +976,92 @@ union cavm_ndcx_af_ctl
         uint64_t lock_dis              : 1;  /**< [  4:  4](R/W) Lock disabled. When set, NDC will not execute any command with lock bit set and report an error
                                                                  back to port if command has lock bit set. Unlock command is not effected by this CSR.
                                                                  When cleared NDC will process any command with lock bit set. */
-        uint64_t reserved_5_63         : 59;
+        uint64_t reserved_5_7          : 3;
+        uint64_t perf_mode             : 4;  /**< [ 11:  8](R/W) For diagnostic use only.
+                                                                 Internal:
+                                                                 These bits will eventually be used to limit performance
+                                                                 -- in some TBD manner -- in hopes that the lower-performance
+                                                                 mode(s) avoid triggering bugs fixed late in the design cycle. */
+        uint64_t dis_unjam_w3a         : 1;  /**< [ 12: 12](R/W) For diagnostic use only.
+                                                                 Internal:
+                                                                 "Setting this bit will disable the fix for McBuggin #36640.
+                                                                 In short, the deadlock unjam mechanism will be disabled, such that
+                                                                 the particular deadlock described in the bug becomes possible again;
+                                                                 however, any inadvertent bug introduced by the fix could be avoided." */
+        uint64_t dis_sync_mods         : 1;  /**< [ 13: 13](R/W) For diagnostic use only.
+                                                                 Internal:
+                                                                 Setting this bit will disable TBD late fixes introduced to
+                                                                 resolve issues with FLR.SYNC operations.  As the design team
+                                                                 adds consumers of this bit, the description will be updated. */
+        uint64_t reserved_14_63        : 50;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_ndcx_af_ctl_s cn; */
+    struct cavm_ndcx_af_ctl_cn96xxp1_0
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_14_63        : 50;
+        uint64_t reserved_8_13         : 6;
+        uint64_t reserved_5_7          : 3;
+        uint64_t lock_dis              : 1;  /**< [  4:  4](R/W) Lock disabled. When set, NDC will not execute any command with lock bit set and report an error
+                                                                 back to port if command has lock bit set. Unlock command is not effected by this CSR.
+                                                                 When cleared NDC will process any command with lock bit set. */
+        uint64_t way_select_dis        : 1;  /**< [  3:  3](R/W) Way select disabled. When set, all NDC's port command way select field
+                                                                 is forced to all-ones. When cleared way select field is driven by the port. */
+        uint64_t reserved_2            : 1;
+        uint64_t hash_dis              : 1;  /**< [  1:  1](R/W) Hash disable. When set, the address hash function defined by NDC_AF_HASH()
+                                                                 is not used.
+
+                                                                 For diagnostic use only. May only be modified when NDC is idle and has no
+                                                                 cached data.
+
+                                                                 Internal:
+                                                                 When set, iova \<18:15\> select the bank and \<14:13\> select the index within
+                                                                 bank. */
+        uint64_t byp_only              : 1;  /**< [  0:  0](R/W) Bypass only.
+                                                                 0 = Bypass only mode is disabled and NDC will steer port requests based on command
+                                                                 bits, either to cache, for cache accesses or to LLC for bypass accesses.
+                                                                 1 = All requests will be directed to LLC, similar to bypass operation. Software
+                                                                 must not use the NDC LOCK feature. */
+#else /* Word 0 - Little Endian */
+        uint64_t byp_only              : 1;  /**< [  0:  0](R/W) Bypass only.
+                                                                 0 = Bypass only mode is disabled and NDC will steer port requests based on command
+                                                                 bits, either to cache, for cache accesses or to LLC for bypass accesses.
+                                                                 1 = All requests will be directed to LLC, similar to bypass operation. Software
+                                                                 must not use the NDC LOCK feature. */
+        uint64_t hash_dis              : 1;  /**< [  1:  1](R/W) Hash disable. When set, the address hash function defined by NDC_AF_HASH()
+                                                                 is not used.
+
+                                                                 For diagnostic use only. May only be modified when NDC is idle and has no
+                                                                 cached data.
+
+                                                                 Internal:
+                                                                 When set, iova \<18:15\> select the bank and \<14:13\> select the index within
+                                                                 bank. */
+        uint64_t reserved_2            : 1;
+        uint64_t way_select_dis        : 1;  /**< [  3:  3](R/W) Way select disabled. When set, all NDC's port command way select field
+                                                                 is forced to all-ones. When cleared way select field is driven by the port. */
+        uint64_t lock_dis              : 1;  /**< [  4:  4](R/W) Lock disabled. When set, NDC will not execute any command with lock bit set and report an error
+                                                                 back to port if command has lock bit set. Unlock command is not effected by this CSR.
+                                                                 When cleared NDC will process any command with lock bit set. */
+        uint64_t reserved_5_7          : 3;
+        uint64_t reserved_8_13         : 6;
+        uint64_t reserved_14_63        : 50;
+#endif /* Word 0 - End */
+    } cn96xxp1_0;
+    /* struct cavm_ndcx_af_ctl_s cn96xxp1_1; */
+    /* struct cavm_ndcx_af_ctl_s cn96xxp3; */
+    /* struct cavm_ndcx_af_ctl_cn96xxp1_0 cnf95xxp1; */
+    /* struct cavm_ndcx_af_ctl_s cnf95xxp2; */
 };
 typedef union cavm_ndcx_af_ctl cavm_ndcx_af_ctl_t;
 
 static inline uint64_t CAVM_NDCX_AF_CTL(unsigned long a) __attribute__ ((pure, always_inline));
 static inline uint64_t CAVM_NDCX_AF_CTL(unsigned long a)
 {
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=2))
         return 0x8400c0000030ll + 0x10000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a<=5))
+        return 0x8400c0000030ll + 0x10000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x8400c0000030ll + 0x10000000ll * ((a) & 0x7);
     __cavm_csr_fatal("NDCX_AF_CTL", 1, a, 0, 0, 0);
@@ -974,8 +1099,10 @@ typedef union cavm_ndcx_af_eco cavm_ndcx_af_eco_t;
 static inline uint64_t CAVM_NDCX_AF_ECO(unsigned long a) __attribute__ ((pure, always_inline));
 static inline uint64_t CAVM_NDCX_AF_ECO(unsigned long a)
 {
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=2))
         return 0x8400c0000010ll + 0x10000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a<=5))
+        return 0x8400c0000010ll + 0x10000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x8400c0000010ll + 0x10000000ll * ((a) & 0x7);
     __cavm_csr_fatal("NDCX_AF_ECO", 1, a, 0, 0, 0);
@@ -1069,8 +1196,10 @@ typedef union cavm_ndcx_af_hashx cavm_ndcx_af_hashx_t;
 static inline uint64_t CAVM_NDCX_AF_HASHX(unsigned long a, unsigned long b) __attribute__ ((pure, always_inline));
 static inline uint64_t CAVM_NDCX_AF_HASHX(unsigned long a, unsigned long b)
 {
-    if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=5)))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && ((a<=2) && (b<=5)))
         return 0x8400c0000300ll + 0x10000000ll * ((a) & 0x3) + 8ll * ((b) & 0x7);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a<=5) && (b<=5)))
+        return 0x8400c0000300ll + 0x10000000ll * ((a) & 0x7) + 8ll * ((b) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=5) && (b<=5)))
         return 0x8400c0000300ll + 0x10000000ll * ((a) & 0x7) + 8ll * ((b) & 0x7);
     __cavm_csr_fatal("NDCX_AF_HASHX", 2, a, b, 0, 0);
@@ -1120,8 +1249,10 @@ typedef union cavm_ndcx_af_intr cavm_ndcx_af_intr_t;
 static inline uint64_t CAVM_NDCX_AF_INTR(unsigned long a) __attribute__ ((pure, always_inline));
 static inline uint64_t CAVM_NDCX_AF_INTR(unsigned long a)
 {
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=2))
         return 0x8400c0000058ll + 0x10000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a<=5))
+        return 0x8400c0000058ll + 0x10000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x8400c0000058ll + 0x10000000ll * ((a) & 0x7);
     __cavm_csr_fatal("NDCX_AF_INTR", 1, a, 0, 0, 0);
@@ -1164,8 +1295,10 @@ typedef union cavm_ndcx_af_intr_ena_w1c cavm_ndcx_af_intr_ena_w1c_t;
 static inline uint64_t CAVM_NDCX_AF_INTR_ENA_W1C(unsigned long a) __attribute__ ((pure, always_inline));
 static inline uint64_t CAVM_NDCX_AF_INTR_ENA_W1C(unsigned long a)
 {
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=2))
         return 0x8400c0000070ll + 0x10000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a<=5))
+        return 0x8400c0000070ll + 0x10000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x8400c0000070ll + 0x10000000ll * ((a) & 0x7);
     __cavm_csr_fatal("NDCX_AF_INTR_ENA_W1C", 1, a, 0, 0, 0);
@@ -1208,8 +1341,10 @@ typedef union cavm_ndcx_af_intr_ena_w1s cavm_ndcx_af_intr_ena_w1s_t;
 static inline uint64_t CAVM_NDCX_AF_INTR_ENA_W1S(unsigned long a) __attribute__ ((pure, always_inline));
 static inline uint64_t CAVM_NDCX_AF_INTR_ENA_W1S(unsigned long a)
 {
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=2))
         return 0x8400c0000068ll + 0x10000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a<=5))
+        return 0x8400c0000068ll + 0x10000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x8400c0000068ll + 0x10000000ll * ((a) & 0x7);
     __cavm_csr_fatal("NDCX_AF_INTR_ENA_W1S", 1, a, 0, 0, 0);
@@ -1252,8 +1387,10 @@ typedef union cavm_ndcx_af_intr_w1s cavm_ndcx_af_intr_w1s_t;
 static inline uint64_t CAVM_NDCX_AF_INTR_W1S(unsigned long a) __attribute__ ((pure, always_inline));
 static inline uint64_t CAVM_NDCX_AF_INTR_W1S(unsigned long a)
 {
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=2))
         return 0x8400c0000060ll + 0x10000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a<=5))
+        return 0x8400c0000060ll + 0x10000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x8400c0000060ll + 0x10000000ll * ((a) & 0x7);
     __cavm_csr_fatal("NDCX_AF_INTR_W1S", 1, a, 0, 0, 0);
@@ -1317,8 +1454,10 @@ typedef union cavm_ndcx_af_portx_rtx_rwx_lat_pc cavm_ndcx_af_portx_rtx_rwx_lat_p
 static inline uint64_t CAVM_NDCX_AF_PORTX_RTX_RWX_LAT_PC(unsigned long a, unsigned long b, unsigned long c, unsigned long d) __attribute__ ((pure, always_inline));
 static inline uint64_t CAVM_NDCX_AF_PORTX_RTX_RWX_LAT_PC(unsigned long a, unsigned long b, unsigned long c, unsigned long d)
 {
-    if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=5) && (c<=1) && (d<=1)))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && ((a<=2) && (b<=5) && (c<=1) && (d<=1)))
         return 0x8400c0000e00ll + 0x10000000ll * ((a) & 0x3) + 0x20ll * ((b) & 0x7) + 0x10ll * ((c) & 0x1) + 8ll * ((d) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a<=5) && (b<=5) && (c<=1) && (d<=1)))
+        return 0x8400c0000e00ll + 0x10000000ll * ((a) & 0x7) + 0x20ll * ((b) & 0x7) + 0x10ll * ((c) & 0x1) + 8ll * ((d) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=5) && (b<=5) && (c<=1) && (d<=1)))
         return 0x8400c0000e00ll + 0x10000000ll * ((a) & 0x7) + 0x20ll * ((b) & 0x7) + 0x10ll * ((c) & 0x1) + 8ll * ((d) & 0x1);
     __cavm_csr_fatal("NDCX_AF_PORTX_RTX_RWX_LAT_PC", 4, a, b, c, d);
@@ -1364,8 +1503,10 @@ typedef union cavm_ndcx_af_portx_rtx_rwx_ostdn_pc cavm_ndcx_af_portx_rtx_rwx_ost
 static inline uint64_t CAVM_NDCX_AF_PORTX_RTX_RWX_OSTDN_PC(unsigned long a, unsigned long b, unsigned long c, unsigned long d) __attribute__ ((pure, always_inline));
 static inline uint64_t CAVM_NDCX_AF_PORTX_RTX_RWX_OSTDN_PC(unsigned long a, unsigned long b, unsigned long c, unsigned long d)
 {
-    if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=5) && (c<=1) && (d<=1)))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && ((a<=2) && (b<=5) && (c<=1) && (d<=1)))
         return 0x8400c0000d00ll + 0x10000000ll * ((a) & 0x3) + 0x20ll * ((b) & 0x7) + 0x10ll * ((c) & 0x1) + 8ll * ((d) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a<=5) && (b<=5) && (c<=1) && (d<=1)))
+        return 0x8400c0000d00ll + 0x10000000ll * ((a) & 0x7) + 0x20ll * ((b) & 0x7) + 0x10ll * ((c) & 0x1) + 8ll * ((d) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=5) && (b<=5) && (c<=1) && (d<=1)))
         return 0x8400c0000d00ll + 0x10000000ll * ((a) & 0x7) + 0x20ll * ((b) & 0x7) + 0x10ll * ((c) & 0x1) + 8ll * ((d) & 0x1);
     __cavm_csr_fatal("NDCX_AF_PORTX_RTX_RWX_OSTDN_PC", 4, a, b, c, d);
@@ -1411,8 +1552,10 @@ typedef union cavm_ndcx_af_portx_rtx_rwx_req_pc cavm_ndcx_af_portx_rtx_rwx_req_p
 static inline uint64_t CAVM_NDCX_AF_PORTX_RTX_RWX_REQ_PC(unsigned long a, unsigned long b, unsigned long c, unsigned long d) __attribute__ ((pure, always_inline));
 static inline uint64_t CAVM_NDCX_AF_PORTX_RTX_RWX_REQ_PC(unsigned long a, unsigned long b, unsigned long c, unsigned long d)
 {
-    if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=5) && (c<=1) && (d<=1)))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && ((a<=2) && (b<=5) && (c<=1) && (d<=1)))
         return 0x8400c0000c00ll + 0x10000000ll * ((a) & 0x3) + 0x20ll * ((b) & 0x7) + 0x10ll * ((c) & 0x1) + 8ll * ((d) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a<=5) && (b<=5) && (c<=1) && (d<=1)))
+        return 0x8400c0000c00ll + 0x10000000ll * ((a) & 0x7) + 0x20ll * ((b) & 0x7) + 0x10ll * ((c) & 0x1) + 8ll * ((d) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=5) && (b<=5) && (c<=1) && (d<=1)))
         return 0x8400c0000c00ll + 0x10000000ll * ((a) & 0x7) + 0x20ll * ((b) & 0x7) + 0x10ll * ((c) & 0x1) + 8ll * ((d) & 0x1);
     __cavm_csr_fatal("NDCX_AF_PORTX_RTX_RWX_REQ_PC", 4, a, b, c, d);
@@ -1476,8 +1619,10 @@ typedef union cavm_ndcx_af_portx_rwx_cant_alloc_pc cavm_ndcx_af_portx_rwx_cant_a
 static inline uint64_t CAVM_NDCX_AF_PORTX_RWX_CANT_ALLOC_PC(unsigned long a, unsigned long b, unsigned long c) __attribute__ ((pure, always_inline));
 static inline uint64_t CAVM_NDCX_AF_PORTX_RWX_CANT_ALLOC_PC(unsigned long a, unsigned long b, unsigned long c)
 {
-    if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=5) && (c<=1)))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && ((a<=2) && (b<=5) && (c<=1)))
         return 0x8400c0000f00ll + 0x10000000ll * ((a) & 0x3) + 0x20ll * ((b) & 0x7) + 0x10ll * ((c) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a<=5) && (b<=5) && (c<=1)))
+        return 0x8400c0000f00ll + 0x10000000ll * ((a) & 0x7) + 0x20ll * ((b) & 0x7) + 0x10ll * ((c) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=5) && (b<=5) && (c<=1)))
         return 0x8400c0000f00ll + 0x10000000ll * ((a) & 0x7) + 0x20ll * ((b) & 0x7) + 0x10ll * ((c) & 0x1);
     __cavm_csr_fatal("NDCX_AF_PORTX_RWX_CANT_ALLOC_PC", 3, a, b, c, 0);
@@ -1513,8 +1658,10 @@ typedef union cavm_ndcx_af_scratch cavm_ndcx_af_scratch_t;
 static inline uint64_t CAVM_NDCX_AF_SCRATCH(unsigned long a) __attribute__ ((pure, always_inline));
 static inline uint64_t CAVM_NDCX_AF_SCRATCH(unsigned long a)
 {
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=2))
         return 0x8400c0000018ll + 0x10000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a<=5))
+        return 0x8400c0000018ll + 0x10000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x8400c0000018ll + 0x10000000ll * ((a) & 0x7);
     __cavm_csr_fatal("NDCX_AF_SCRATCH", 1, a, 0, 0, 0);
@@ -1564,8 +1711,10 @@ typedef union cavm_ndcx_priv_af_int_cfg cavm_ndcx_priv_af_int_cfg_t;
 static inline uint64_t CAVM_NDCX_PRIV_AF_INT_CFG(unsigned long a) __attribute__ ((pure, always_inline));
 static inline uint64_t CAVM_NDCX_PRIV_AF_INT_CFG(unsigned long a)
 {
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=2))
         return 0x8400c00002f8ll + 0x10000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a<=5))
+        return 0x8400c00002f8ll + 0x10000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x8400c00002f8ll + 0x10000000ll * ((a) & 0x7);
     __cavm_csr_fatal("NDCX_PRIV_AF_INT_CFG", 1, a, 0, 0, 0);

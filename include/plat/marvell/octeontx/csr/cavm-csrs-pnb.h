@@ -260,6 +260,49 @@ static inline uint64_t CAVM_PNBX_GHABX_PULL_ARB_WT(unsigned long a, unsigned lon
 #define arguments_CAVM_PNBX_GHABX_PULL_ARB_WT(a,b) (a),(b),-1,-1
 
 /**
+ * Register (RSL) pnb#_ghab#_rrsp_arb_wt
+ *
+ * PNB GHAB Read Response Arbitration Weight Register
+ * This register specifies the arbitration weights used when returning GHAB
+ * read response. Each GHAB specifies one weight for high priority
+ * and one weight for low-priority.
+ */
+union cavm_pnbx_ghabx_rrsp_arb_wt
+{
+    uint64_t u;
+    struct cavm_pnbx_ghabx_rrsp_arb_wt_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_22_63        : 42;
+        uint64_t hp_wgt                : 6;  /**< [ 21: 16](R/W) Arbitration weight for high-priority DDR read response. */
+        uint64_t reserved_6_15         : 10;
+        uint64_t lp_wgt                : 6;  /**< [  5:  0](R/W) Arbitration weight for low-priority DDR read response. */
+#else /* Word 0 - Little Endian */
+        uint64_t lp_wgt                : 6;  /**< [  5:  0](R/W) Arbitration weight for low-priority DDR read response. */
+        uint64_t reserved_6_15         : 10;
+        uint64_t hp_wgt                : 6;  /**< [ 21: 16](R/W) Arbitration weight for high-priority DDR read response. */
+        uint64_t reserved_22_63        : 42;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_pnbx_ghabx_rrsp_arb_wt_s cn; */
+};
+typedef union cavm_pnbx_ghabx_rrsp_arb_wt cavm_pnbx_ghabx_rrsp_arb_wt_t;
+
+static inline uint64_t CAVM_PNBX_GHABX_RRSP_ARB_WT(unsigned long a, unsigned long b) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_PNBX_GHABX_RRSP_ARB_WT(unsigned long a, unsigned long b)
+{
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS2_X) && ((a<=1) && (b<=7)))
+        return 0x87e041000180ll + 0x1000000ll * ((a) & 0x1) + 8ll * ((b) & 0x7);
+    __cavm_csr_fatal("PNBX_GHABX_RRSP_ARB_WT", 2, a, b, 0, 0);
+}
+
+#define typedef_CAVM_PNBX_GHABX_RRSP_ARB_WT(a,b) cavm_pnbx_ghabx_rrsp_arb_wt_t
+#define bustype_CAVM_PNBX_GHABX_RRSP_ARB_WT(a,b) CSR_TYPE_RSL
+#define basename_CAVM_PNBX_GHABX_RRSP_ARB_WT(a,b) "PNBX_GHABX_RRSP_ARB_WT"
+#define busnum_CAVM_PNBX_GHABX_RRSP_ARB_WT(a,b) (a)
+#define arguments_CAVM_PNBX_GHABX_RRSP_ARB_WT(a,b) (a),(b),-1,-1
+
+/**
  * Register (RSL) pnb#_ghab_inb_arb_wt
  *
  * PNB GHAB Inbound Arbitration Weight Register
@@ -352,6 +395,48 @@ static inline uint64_t CAVM_PNBX_GHAB_PULL_BUSHOG_MAX(unsigned long a)
 #define arguments_CAVM_PNBX_GHAB_PULL_BUSHOG_MAX(a) (a),-1,-1,-1
 
 /**
+ * Register (RSL) pnb#_ghab_rrsp_bushog_max
+ *
+ * PNB GHAB Read Response Bus-Hog Limit Register
+ * This register controls the bus-hog limit when arbitrating for system
+ * memory requests coming from the GHABs.
+ */
+union cavm_pnbx_ghab_rrsp_bushog_max
+{
+    uint64_t u;
+    struct cavm_pnbx_ghab_rrsp_bushog_max_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_8_63         : 56;
+        uint64_t bushog_max            : 8;  /**< [  7:  0](R/W) The maximum number of consecutive high-priority requests that can win
+                                                                 arbitration over a waiting low-priority request. If set to zero, no
+                                                                 limit is enforced and low-priority requests might be starved. */
+#else /* Word 0 - Little Endian */
+        uint64_t bushog_max            : 8;  /**< [  7:  0](R/W) The maximum number of consecutive high-priority requests that can win
+                                                                 arbitration over a waiting low-priority request. If set to zero, no
+                                                                 limit is enforced and low-priority requests might be starved. */
+        uint64_t reserved_8_63         : 56;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_pnbx_ghab_rrsp_bushog_max_s cn; */
+};
+typedef union cavm_pnbx_ghab_rrsp_bushog_max cavm_pnbx_ghab_rrsp_bushog_max_t;
+
+static inline uint64_t CAVM_PNBX_GHAB_RRSP_BUSHOG_MAX(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_PNBX_GHAB_RRSP_BUSHOG_MAX(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS2_X) && (a<=1))
+        return 0x87e041000028ll + 0x1000000ll * ((a) & 0x1);
+    __cavm_csr_fatal("PNBX_GHAB_RRSP_BUSHOG_MAX", 1, a, 0, 0, 0);
+}
+
+#define typedef_CAVM_PNBX_GHAB_RRSP_BUSHOG_MAX(a) cavm_pnbx_ghab_rrsp_bushog_max_t
+#define bustype_CAVM_PNBX_GHAB_RRSP_BUSHOG_MAX(a) CSR_TYPE_RSL
+#define basename_CAVM_PNBX_GHAB_RRSP_BUSHOG_MAX(a) "PNBX_GHAB_RRSP_BUSHOG_MAX"
+#define busnum_CAVM_PNBX_GHAB_RRSP_BUSHOG_MAX(a) (a)
+#define arguments_CAVM_PNBX_GHAB_RRSP_BUSHOG_MAX(a) (a),-1,-1,-1
+
+/**
  * Register (RSL) pnb#_inb_arb_bushog_max
  *
  * PNB Inbound Arbiter Bus-Hog Limit Register
@@ -390,6 +475,46 @@ static inline uint64_t CAVM_PNBX_INB_ARB_BUSHOG_MAX(unsigned long a)
 #define arguments_CAVM_PNBX_INB_ARB_BUSHOG_MAX(a) (a),-1,-1,-1
 
 /**
+ * Register (RSL) pnb#_mab#_rrsp_hp
+ *
+ * PNB MHAB/MDAB Read Response High Priority Register
+ */
+union cavm_pnbx_mabx_rrsp_hp
+{
+    uint64_t u;
+    struct cavm_pnbx_mabx_rrsp_hp_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_1_63         : 63;
+        uint64_t hp                    : 1;  /**< [  0:  0](R/W) Setting this bit one to have the high priority on DDR read response bus.
+                                                                 The MHAB/MDAB {b} is encoded as {GHAB\<2:0\>, MAB\<2:0\>}, where MAB\<2:0\> is
+                                                                 the MHAB/MDAB index within the GHAB (e.g., 0...4). */
+#else /* Word 0 - Little Endian */
+        uint64_t hp                    : 1;  /**< [  0:  0](R/W) Setting this bit one to have the high priority on DDR read response bus.
+                                                                 The MHAB/MDAB {b} is encoded as {GHAB\<2:0\>, MAB\<2:0\>}, where MAB\<2:0\> is
+                                                                 the MHAB/MDAB index within the GHAB (e.g., 0...4). */
+        uint64_t reserved_1_63         : 63;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_pnbx_mabx_rrsp_hp_s cn; */
+};
+typedef union cavm_pnbx_mabx_rrsp_hp cavm_pnbx_mabx_rrsp_hp_t;
+
+static inline uint64_t CAVM_PNBX_MABX_RRSP_HP(unsigned long a, unsigned long b) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_PNBX_MABX_RRSP_HP(unsigned long a, unsigned long b)
+{
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS2_X) && ((a<=1) && (b<=63)))
+        return 0x87e041000600ll + 0x1000000ll * ((a) & 0x1) + 8ll * ((b) & 0x3f);
+    __cavm_csr_fatal("PNBX_MABX_RRSP_HP", 2, a, b, 0, 0);
+}
+
+#define typedef_CAVM_PNBX_MABX_RRSP_HP(a,b) cavm_pnbx_mabx_rrsp_hp_t
+#define bustype_CAVM_PNBX_MABX_RRSP_HP(a,b) CSR_TYPE_RSL
+#define basename_CAVM_PNBX_MABX_RRSP_HP(a,b) "PNBX_MABX_RRSP_HP"
+#define busnum_CAVM_PNBX_MABX_RRSP_HP(a,b) (a)
+#define arguments_CAVM_PNBX_MABX_RRSP_HP(a,b) (a),(b),-1,-1
+
+/**
  * Register (RSL) pnb#_mab#_strid
  *
  * PNB MHAB/MDAB StreamID Register
@@ -402,11 +527,11 @@ union cavm_pnbx_mabx_strid
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_8_63         : 56;
         uint64_t func                  : 8;  /**< [  7:  0](R/W) Bottom bits of the IOVA stream ID for MHAB/MDAB requests. The
-                                                                 MHAB/MDAB {a} is encoded as {GHAB\<2:0\>, MAB\<2:0\>}, where MAB\<2:0\> is
+                                                                 MHAB/MDAB {b} is encoded as {GHAB\<2:0\>, MAB\<2:0\>}, where MAB\<2:0\> is
                                                                  the MHAB/MDAB index within the GHAB (e.g., 0...4). */
 #else /* Word 0 - Little Endian */
         uint64_t func                  : 8;  /**< [  7:  0](R/W) Bottom bits of the IOVA stream ID for MHAB/MDAB requests. The
-                                                                 MHAB/MDAB {a} is encoded as {GHAB\<2:0\>, MAB\<2:0\>}, where MAB\<2:0\> is
+                                                                 MHAB/MDAB {b} is encoded as {GHAB\<2:0\>, MAB\<2:0\>}, where MAB\<2:0\> is
                                                                  the MHAB/MDAB index within the GHAB (e.g., 0...4). */
         uint64_t reserved_8_63         : 56;
 #endif /* Word 0 - End */

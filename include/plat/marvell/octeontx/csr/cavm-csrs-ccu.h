@@ -386,6 +386,43 @@ union cavm_ccux_msw_crclk_force
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_14_63        : 50;
+        uint64_t trb1                  : 1;  /**< [ 13: 13](R/W) Force on TRB1 conditional clock. */
+        uint64_t trb0                  : 1;  /**< [ 12: 12](R/W) Force on TRB0 conditional clock. */
+        uint64_t prb                   : 1;  /**< [ 11: 11](R/W) Force on PRB conditional clock. */
+        uint64_t tsb1                  : 1;  /**< [ 10: 10](R/W) Force on TSB1 conditional clock. */
+        uint64_t tsb0                  : 1;  /**< [  9:  9](R/W) Force on TSB0 conditional clock. */
+        uint64_t psb                   : 1;  /**< [  8:  8](R/W) Force on PSB conditional clock. */
+        uint64_t mtx3                  : 1;  /**< [  7:  7](R/W) Force on MTX3 conditional clock. */
+        uint64_t mtx2                  : 1;  /**< [  6:  6](R/W) Force on MTX2 conditional clock. */
+        uint64_t mtx1                  : 1;  /**< [  5:  5](R/W) Force on MTX1 conditional clock. */
+        uint64_t mtx0                  : 1;  /**< [  4:  4](R/W) Force on MTX0 conditional clock. */
+        uint64_t mrx3                  : 1;  /**< [  3:  3](R/W) Force on MRX3 conditional clock. */
+        uint64_t mrx2                  : 1;  /**< [  2:  2](R/W) Force on MRX2 conditional clock. */
+        uint64_t mrx1                  : 1;  /**< [  1:  1](R/W) Force on MRX1 conditional clock. */
+        uint64_t mrx0                  : 1;  /**< [  0:  0](R/W) Force on MRX0 conditional clock. */
+#else /* Word 0 - Little Endian */
+        uint64_t mrx0                  : 1;  /**< [  0:  0](R/W) Force on MRX0 conditional clock. */
+        uint64_t mrx1                  : 1;  /**< [  1:  1](R/W) Force on MRX1 conditional clock. */
+        uint64_t mrx2                  : 1;  /**< [  2:  2](R/W) Force on MRX2 conditional clock. */
+        uint64_t mrx3                  : 1;  /**< [  3:  3](R/W) Force on MRX3 conditional clock. */
+        uint64_t mtx0                  : 1;  /**< [  4:  4](R/W) Force on MTX0 conditional clock. */
+        uint64_t mtx1                  : 1;  /**< [  5:  5](R/W) Force on MTX1 conditional clock. */
+        uint64_t mtx2                  : 1;  /**< [  6:  6](R/W) Force on MTX2 conditional clock. */
+        uint64_t mtx3                  : 1;  /**< [  7:  7](R/W) Force on MTX3 conditional clock. */
+        uint64_t psb                   : 1;  /**< [  8:  8](R/W) Force on PSB conditional clock. */
+        uint64_t tsb0                  : 1;  /**< [  9:  9](R/W) Force on TSB0 conditional clock. */
+        uint64_t tsb1                  : 1;  /**< [ 10: 10](R/W) Force on TSB1 conditional clock. */
+        uint64_t prb                   : 1;  /**< [ 11: 11](R/W) Force on PRB conditional clock. */
+        uint64_t trb0                  : 1;  /**< [ 12: 12](R/W) Force on TRB0 conditional clock. */
+        uint64_t trb1                  : 1;  /**< [ 13: 13](R/W) Force on TRB1 conditional clock. */
+        uint64_t reserved_14_63        : 50;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_ccux_msw_crclk_force_s cn96xx; */
+    struct cavm_ccux_msw_crclk_force_cnf95xx
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_14_63        : 50;
         uint64_t trb1                  : 1;  /**< [ 13: 13](R/W) Force on TRB1 conditional clock. For diagnostic use only. */
         uint64_t trb0                  : 1;  /**< [ 12: 12](R/W) Force on TRB0 conditional clock. For diagnostic use only. */
         uint64_t prb                   : 1;  /**< [ 11: 11](R/W) Force on PRB conditional clock. For diagnostic use only. */
@@ -417,14 +454,15 @@ union cavm_ccux_msw_crclk_force
         uint64_t trb1                  : 1;  /**< [ 13: 13](R/W) Force on TRB1 conditional clock. For diagnostic use only. */
         uint64_t reserved_14_63        : 50;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_ccux_msw_crclk_force_s cn; */
+    } cnf95xx;
 };
 typedef union cavm_ccux_msw_crclk_force cavm_ccux_msw_crclk_force_t;
 
 static inline uint64_t CAVM_CCUX_MSW_CRCLK_FORCE(unsigned long a) __attribute__ ((pure, always_inline));
 static inline uint64_t CAVM_CCUX_MSW_CRCLK_FORCE(unsigned long a)
 {
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a<=3))
+        return 0x87e050200020ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x87e050200020ll + 0x1000000ll * ((a) & 0x0);
     __cavm_csr_fatal("CCUX_MSW_CRCLK_FORCE", 1, a, 0, 0, 0);

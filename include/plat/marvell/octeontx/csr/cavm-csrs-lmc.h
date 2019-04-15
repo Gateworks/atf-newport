@@ -6432,7 +6432,7 @@ union cavm_lmcx_dll_ctl3
         uint64_t reserved_50_63        : 14;
 #endif /* Word 0 - End */
     } cn8;
-    struct cavm_lmcx_dll_ctl3_cn96xx
+    struct cavm_lmcx_dll_ctl3_cn96xxp1
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_63           : 1;
@@ -6623,7 +6623,237 @@ union cavm_lmcx_dll_ctl3
                                                                  setting this field high. */
         uint64_t reserved_63           : 1;
 #endif /* Word 0 - End */
-    } cn96xx;
+    } cn96xxp1;
+    struct cavm_lmcx_dll_ctl3_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_63           : 1;
+        uint64_t rd_deskew_mem_ld      : 1;  /**< [ 62: 62](WO) Reserved.
+                                                                 Internal:
+                                                                 Provides manual control of the loading of the read deskew settings where
+                                                                 otherwise controlled by the LMC_SEQ_SEL_E::VREF_INT hardware sequence with
+                                                                 LMC()_EXT_CONFIG[VREFINT_SEQ_DESKEW] set high.
+                                                                 When set, all DQ bit read deskew settings in DDR PHY are loaded into their corresponding
+                                                                 rank deskew storage. The rank is chosen by the CSR LMC()_MR_MPR_CTL[MR_WR_RANK]. This is a
+                                                                 oneshot operation and clears itself each time it is set.
+                                                                 Note this has to be done during the bring-up state where there isn't yet any
+                                                                 traffic to DRAM. Also software need to ensure not to to run any sequence when
+                                                                 setting this field high. */
+        uint64_t rd_deskew_mem_sel_dis : 1;  /**< [ 61: 61](R/W) By default, LMC always selects per-rank deskew settings that are stored inside
+                                                                 PHY's read_mem module.
+                                                                 Set to one to manually disable this feature and that the common
+                                                                 deskew setting inside the PHY's state machine will get selected instead.
+
+                                                                 This field is only reset on cold reset. */
+        uint64_t wr_deskew_mem_sel     : 1;  /**< [ 60: 60](R/W) Reserved.
+                                                                 Internal:
+                                                                 Only relevant when [WR_DESKEW_ENA] is set.
+                                                                 0 = Selects the common deskew settings stored in each DQ bit. All writes to any package
+                                                                 rank uses this common settings to deskew the data bits.
+                                                                 1 = Selects the stored per-package rank deskew settings. Write to a particular
+                                                                 package rank uses the corresponding stored setting for that rank.
+
+                                                                 This field is only reset on cold reset. */
+        uint64_t wr_deskew_mem_ld      : 1;  /**< [ 59: 59](WO) Reserved.
+                                                                 Internal:
+                                                                 When set, all DQ bit write deskew settings in DDR PHY are loaded into their corresponding
+                                                                 rank deskew storage. The rank is chosen by the CSR LMC()_MR_MPR_CTL[MR_WR_RANK]. This is a
+                                                                 oneshot operation and clears itself each time it is set. Note this has to be done during
+                                                                 the bring-up state where there isn't yet any traffic to DRAM. */
+        uint64_t offset                : 9;  /**< [ 58: 50](R/W) Reserved; must be zero.
+                                                                 Internal:
+                                                                 Write/read offset setting. \<8:0\>: offset (not
+                                                                 two's-complement), \<8\>: 0 = increment, 1 = decrement. */
+        uint64_t wr_deskew_ena         : 1;  /**< [ 49: 49](R/W) When set, it enables the write bit deskew feature. */
+        uint64_t wr_deskew_ld          : 1;  /**< [ 48: 48](WO) When set, the bit deskew settings in LMC()_DLL_CTL3[OFFSET] gets loaded to
+                                                                 the designated byte LMC()_DLL_CTL3[BYTE_SEL] and bit LMC()_DLL_CTL3[BIT_SELECT]
+                                                                 for write bit deskew. This is a oneshot and clears itself each time
+                                                                 it is set. */
+        uint64_t bit_select            : 4;  /**< [ 47: 44](R/W) 0x0-0x7 = Selects bit 0 - bit 8 for write deskew setting assignment.
+                                                                 0x8 = Selects dbi for write deskew setting assignment.
+                                                                 0x9 = No-op.
+                                                                 0xA = Reuse deskew setting on.
+                                                                 0xB = Reuse deskew setting off.
+                                                                 0xC = Vref bypass setting load.
+                                                                 0xD = Vref bypass on.
+                                                                 0xE = Vref bypass off.
+                                                                 0xF = Bit select reset. Clear write deskew settings to default value 0x40 in each DQ bit.
+                                                                 Also sets Vref bypass to off and deskew reuse setting to off. */
+        uint64_t reserved_40_43        : 4;
+        uint64_t quad_dll_ena_override : 1;  /**< [ 39: 39](R/W) Reserved.
+                                                                 Internal:
+                                                                 When set, the VREF INT hardware sequence takes control over the
+                                                                 quad_dll_ena signal driven to the PHY. This is used for the DAC Calibration
+                                                                 Training using DLL. Software also needs to ensure that
+                                                                 LMC()_EXT_CONFIG[VREFINT_SEQ_DESKEW] gets cleared to 0 before running
+                                                                 LMC_SEQ_SEL_E::VREF_INT
+                                                                 sequence to ensure that hardware correctly asserts the quad_dll_ena signal. If
+                                                                 LMC()_EXT_CONFIG[VREFINT_SEQ_DESKEW] = 1 instead, hardware will not change the
+                                                                 value of quad_dll_ena and will just retain its value.
+
+                                                                 In summary, to ensure that DAC Calibration training using DLL is done properly,
+                                                                 Software needs to first configure the following CSRs before running
+                                                                 LMC_SEQ_SEL_E::VREF_INT sequence:
+
+                                                                 * LMC()_PHY_CTL3[VREF_CAL_OVERWRITE] = 1.
+                                                                 * LMC()_PHY_CTL3[VREF_CAL_ON] = 0.
+                                                                 * LMC()_PHY_CTL[DOUBLE_VREF_TRAINING] = 1.
+                                                                 * LMC()_EXT_CONFIG[VREFINT_SEQ_DESKEW] = 0.
+                                                                 * LMC()_DLL_CTL3[QUAD_DLL_ENA_OVERRIDE] = 1. */
+        uint64_t dll_fast              : 9;  /**< [ 38: 30](RO/H) Reserved; must be zero.
+                                                                 Internal:
+                                                                 DLL lock, 0=DLL locked. */
+        uint64_t dll90_setting         : 9;  /**< [ 29: 21](RO/H) Reserved; must be zero.
+                                                                 Internal:
+                                                                 Encoded DLL settings. Works in conjunction with [DLL90_BYTE_SEL]. MSB returns 0. */
+        uint64_t fine_tune_mode        : 1;  /**< [ 20: 20](R/W) DLL fine tune mode. 0 = disabled; 1 = enable. When enabled, calibrate internal PHY DLL
+                                                                 every LMC()_CONFIG[REF_ZQCS_INT] CK cycles.
+
+                                                                 This field is only reset on cold reset. */
+        uint64_t dll_mode              : 1;  /**< [ 19: 19](R/W) Reserved; must be zero.
+                                                                 Internal:
+                                                                 DLL mode. */
+        uint64_t dll90_byte_sel        : 4;  /**< [ 18: 15](R/W) Observe DLL settings for selected byte.
+                                                                 0x0 = byte 0.
+                                                                 0x1 = byte 1.
+                                                                 ...
+                                                                 0x8 = ECC byte.
+                                                                 0x9-0xF = Reserved. */
+        uint64_t offset_ena            : 1;  /**< [ 14: 14](R/W) Reserved; must be zero.
+                                                                 Internal:
+                                                                 Offset enable.
+
+                                                                 This field is only reset on cold reset. */
+        uint64_t load_offset           : 1;  /**< [ 13: 13](WO) Reserved; must be zero.
+                                                                 Internal:
+                                                                 Load offset. 0=disable, 1=generate a one cycle pulse to
+                                                                 the PHY. This field is a oneshot and clears itself each time it is set. */
+        uint64_t mode_sel              : 2;  /**< [ 12: 11](R/W) Reserved; must be zero.
+                                                                 Internal:
+                                                                 Mode select. 0x0 = reset, 0x1 = write, 0x2 = read, 0x3 =
+                                                                 write and read.
+
+                                                                 This field is only reset on cold reset. */
+        uint64_t byte_sel              : 4;  /**< [ 10:  7](R/W) Reserved; must be zero.
+                                                                 Internal:
+                                                                 Byte select. 0x0 = no byte, 0x1 = byte 0, ..., 0x9 =
+                                                                 byte 8, 0xA = all bytes, 0xB-0xF = Reserved. */
+        uint64_t reserved_0_6          : 7;
+#else /* Word 0 - Little Endian */
+        uint64_t reserved_0_6          : 7;
+        uint64_t byte_sel              : 4;  /**< [ 10:  7](R/W) Reserved; must be zero.
+                                                                 Internal:
+                                                                 Byte select. 0x0 = no byte, 0x1 = byte 0, ..., 0x9 =
+                                                                 byte 8, 0xA = all bytes, 0xB-0xF = Reserved. */
+        uint64_t mode_sel              : 2;  /**< [ 12: 11](R/W) Reserved; must be zero.
+                                                                 Internal:
+                                                                 Mode select. 0x0 = reset, 0x1 = write, 0x2 = read, 0x3 =
+                                                                 write and read.
+
+                                                                 This field is only reset on cold reset. */
+        uint64_t load_offset           : 1;  /**< [ 13: 13](WO) Reserved; must be zero.
+                                                                 Internal:
+                                                                 Load offset. 0=disable, 1=generate a one cycle pulse to
+                                                                 the PHY. This field is a oneshot and clears itself each time it is set. */
+        uint64_t offset_ena            : 1;  /**< [ 14: 14](R/W) Reserved; must be zero.
+                                                                 Internal:
+                                                                 Offset enable.
+
+                                                                 This field is only reset on cold reset. */
+        uint64_t dll90_byte_sel        : 4;  /**< [ 18: 15](R/W) Observe DLL settings for selected byte.
+                                                                 0x0 = byte 0.
+                                                                 0x1 = byte 1.
+                                                                 ...
+                                                                 0x8 = ECC byte.
+                                                                 0x9-0xF = Reserved. */
+        uint64_t dll_mode              : 1;  /**< [ 19: 19](R/W) Reserved; must be zero.
+                                                                 Internal:
+                                                                 DLL mode. */
+        uint64_t fine_tune_mode        : 1;  /**< [ 20: 20](R/W) DLL fine tune mode. 0 = disabled; 1 = enable. When enabled, calibrate internal PHY DLL
+                                                                 every LMC()_CONFIG[REF_ZQCS_INT] CK cycles.
+
+                                                                 This field is only reset on cold reset. */
+        uint64_t dll90_setting         : 9;  /**< [ 29: 21](RO/H) Reserved; must be zero.
+                                                                 Internal:
+                                                                 Encoded DLL settings. Works in conjunction with [DLL90_BYTE_SEL]. MSB returns 0. */
+        uint64_t dll_fast              : 9;  /**< [ 38: 30](RO/H) Reserved; must be zero.
+                                                                 Internal:
+                                                                 DLL lock, 0=DLL locked. */
+        uint64_t quad_dll_ena_override : 1;  /**< [ 39: 39](R/W) Reserved.
+                                                                 Internal:
+                                                                 When set, the VREF INT hardware sequence takes control over the
+                                                                 quad_dll_ena signal driven to the PHY. This is used for the DAC Calibration
+                                                                 Training using DLL. Software also needs to ensure that
+                                                                 LMC()_EXT_CONFIG[VREFINT_SEQ_DESKEW] gets cleared to 0 before running
+                                                                 LMC_SEQ_SEL_E::VREF_INT
+                                                                 sequence to ensure that hardware correctly asserts the quad_dll_ena signal. If
+                                                                 LMC()_EXT_CONFIG[VREFINT_SEQ_DESKEW] = 1 instead, hardware will not change the
+                                                                 value of quad_dll_ena and will just retain its value.
+
+                                                                 In summary, to ensure that DAC Calibration training using DLL is done properly,
+                                                                 Software needs to first configure the following CSRs before running
+                                                                 LMC_SEQ_SEL_E::VREF_INT sequence:
+
+                                                                 * LMC()_PHY_CTL3[VREF_CAL_OVERWRITE] = 1.
+                                                                 * LMC()_PHY_CTL3[VREF_CAL_ON] = 0.
+                                                                 * LMC()_PHY_CTL[DOUBLE_VREF_TRAINING] = 1.
+                                                                 * LMC()_EXT_CONFIG[VREFINT_SEQ_DESKEW] = 0.
+                                                                 * LMC()_DLL_CTL3[QUAD_DLL_ENA_OVERRIDE] = 1. */
+        uint64_t reserved_40_43        : 4;
+        uint64_t bit_select            : 4;  /**< [ 47: 44](R/W) 0x0-0x7 = Selects bit 0 - bit 8 for write deskew setting assignment.
+                                                                 0x8 = Selects dbi for write deskew setting assignment.
+                                                                 0x9 = No-op.
+                                                                 0xA = Reuse deskew setting on.
+                                                                 0xB = Reuse deskew setting off.
+                                                                 0xC = Vref bypass setting load.
+                                                                 0xD = Vref bypass on.
+                                                                 0xE = Vref bypass off.
+                                                                 0xF = Bit select reset. Clear write deskew settings to default value 0x40 in each DQ bit.
+                                                                 Also sets Vref bypass to off and deskew reuse setting to off. */
+        uint64_t wr_deskew_ld          : 1;  /**< [ 48: 48](WO) When set, the bit deskew settings in LMC()_DLL_CTL3[OFFSET] gets loaded to
+                                                                 the designated byte LMC()_DLL_CTL3[BYTE_SEL] and bit LMC()_DLL_CTL3[BIT_SELECT]
+                                                                 for write bit deskew. This is a oneshot and clears itself each time
+                                                                 it is set. */
+        uint64_t wr_deskew_ena         : 1;  /**< [ 49: 49](R/W) When set, it enables the write bit deskew feature. */
+        uint64_t offset                : 9;  /**< [ 58: 50](R/W) Reserved; must be zero.
+                                                                 Internal:
+                                                                 Write/read offset setting. \<8:0\>: offset (not
+                                                                 two's-complement), \<8\>: 0 = increment, 1 = decrement. */
+        uint64_t wr_deskew_mem_ld      : 1;  /**< [ 59: 59](WO) Reserved.
+                                                                 Internal:
+                                                                 When set, all DQ bit write deskew settings in DDR PHY are loaded into their corresponding
+                                                                 rank deskew storage. The rank is chosen by the CSR LMC()_MR_MPR_CTL[MR_WR_RANK]. This is a
+                                                                 oneshot operation and clears itself each time it is set. Note this has to be done during
+                                                                 the bring-up state where there isn't yet any traffic to DRAM. */
+        uint64_t wr_deskew_mem_sel     : 1;  /**< [ 60: 60](R/W) Reserved.
+                                                                 Internal:
+                                                                 Only relevant when [WR_DESKEW_ENA] is set.
+                                                                 0 = Selects the common deskew settings stored in each DQ bit. All writes to any package
+                                                                 rank uses this common settings to deskew the data bits.
+                                                                 1 = Selects the stored per-package rank deskew settings. Write to a particular
+                                                                 package rank uses the corresponding stored setting for that rank.
+
+                                                                 This field is only reset on cold reset. */
+        uint64_t rd_deskew_mem_sel_dis : 1;  /**< [ 61: 61](R/W) By default, LMC always selects per-rank deskew settings that are stored inside
+                                                                 PHY's read_mem module.
+                                                                 Set to one to manually disable this feature and that the common
+                                                                 deskew setting inside the PHY's state machine will get selected instead.
+
+                                                                 This field is only reset on cold reset. */
+        uint64_t rd_deskew_mem_ld      : 1;  /**< [ 62: 62](WO) Reserved.
+                                                                 Internal:
+                                                                 Provides manual control of the loading of the read deskew settings where
+                                                                 otherwise controlled by the LMC_SEQ_SEL_E::VREF_INT hardware sequence with
+                                                                 LMC()_EXT_CONFIG[VREFINT_SEQ_DESKEW] set high.
+                                                                 When set, all DQ bit read deskew settings in DDR PHY are loaded into their corresponding
+                                                                 rank deskew storage. The rank is chosen by the CSR LMC()_MR_MPR_CTL[MR_WR_RANK]. This is a
+                                                                 oneshot operation and clears itself each time it is set.
+                                                                 Note this has to be done during the bring-up state where there isn't yet any
+                                                                 traffic to DRAM. Also software need to ensure not to to run any sequence when
+                                                                 setting this field high. */
+        uint64_t reserved_63           : 1;
+#endif /* Word 0 - End */
+    } cn96xxp3;
     struct cavm_lmcx_dll_ctl3_cnf95xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -10027,7 +10257,10 @@ static inline uint64_t CAVM_LMCX_INT_W1S(unsigned long a)
  * Register (RSL) lmc#_lane#_crc_swiz
  *
  * LMC MR Write Control Register
- * This register contains the CRC bit swizzle for even and odd ranks.
+ * This register contains the CRC bit swizzle for even and odd ranks. This feature is
+ * only used LMC()_MODEREG_PARAMS3[CRC] is set high. Note that the same type of bit-
+ * swizzling characteristic is assumed for both DIMM0 and DIMM1. CRC feature is not
+ * supported if DIMM0 has a different bit-swizzling characteristic than DIMM1.
  */
 union cavm_lmcx_lanex_crc_swiz
 {
@@ -18021,7 +18254,8 @@ union cavm_lmcx_ref_config
     struct cavm_lmcx_ref_config_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_31_63        : 33;
+        uint64_t reserved_32_63        : 32;
+        uint64_t ref_stagger           : 1;  /**< [ 31: 31](RO) Reserved. */
         uint64_t zqcs_rankmask1        : 4;  /**< [ 30: 27](R/W) Selects which ranks get ZQCS command when servicing the second pair refresh. */
         uint64_t zqcs_rankmask0        : 4;  /**< [ 26: 23](R/W) Selects which ranks get ZQCS command when servicing the first pair refresh. */
         uint64_t pair_zqcs             : 1;  /**< [ 22: 22](R/W) When set, uses LMC()_REF_CONFIG[ZQCS_RANKMASK0] and LMC()_REF_CONFIG[ZQCS_RANKMASK1]
@@ -18179,14 +18413,24 @@ union cavm_lmcx_ref_config
                                                                  This bit can only be asserted if LMC()_REF_CONFIG[PAIR_REF_MODE] is non-zero. */
         uint64_t zqcs_rankmask0        : 4;  /**< [ 26: 23](R/W) Selects which ranks get ZQCS command when servicing the first pair refresh. */
         uint64_t zqcs_rankmask1        : 4;  /**< [ 30: 27](R/W) Selects which ranks get ZQCS command when servicing the second pair refresh. */
-        uint64_t reserved_31_63        : 33;
+        uint64_t ref_stagger           : 1;  /**< [ 31: 31](RO) Reserved. */
+        uint64_t reserved_32_63        : 32;
 #endif /* Word 0 - End */
     } s;
-    struct cavm_lmcx_ref_config_cn96xx
+    /* struct cavm_lmcx_ref_config_s cn96xxp1; */
+    struct cavm_lmcx_ref_config_cn96xxp3
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_32_63        : 32;
-        uint64_t reserved_31           : 1;
+        uint64_t ref_stagger           : 1;  /**< [ 31: 31](R/W) When set, refresh commands to all package ranks are staggered by TRFC. The default
+                                                                 behavior is to send a refresh command to all package ranks and wait TRFC.
+                                                                 Asserting this bit forces LMC to stagger refresh command by waiting TRFC for each rank.
+                                                                 For 3DS DIMMs, this mode will refresh all logical ranks for one package rank before moving
+                                                                 to the next package rank. Note, software is responsible for determining whether staggering
+                                                                 refresh by TRFC (and TRFC_dlr) is greater than TREFI which would cause refresh to never catch up.
+
+                                                                 It is not recommended to use this mode with 8H 3DS, fine granularity refresh mode, or extended
+                                                                 temperature mode. This mode cannot be combined with LMC()_REF_CONFIG[PAIR_REF_MODE]. */
         uint64_t zqcs_rankmask1        : 4;  /**< [ 30: 27](R/W) Selects which ranks get ZQCS command when servicing the second pair refresh. */
         uint64_t zqcs_rankmask0        : 4;  /**< [ 26: 23](R/W) Selects which ranks get ZQCS command when servicing the first pair refresh. */
         uint64_t pair_zqcs             : 1;  /**< [ 22: 22](R/W) When set, uses LMC()_REF_CONFIG[ZQCS_RANKMASK0] and LMC()_REF_CONFIG[ZQCS_RANKMASK1]
@@ -18344,11 +18588,182 @@ union cavm_lmcx_ref_config
                                                                  This bit can only be asserted if LMC()_REF_CONFIG[PAIR_REF_MODE] is non-zero. */
         uint64_t zqcs_rankmask0        : 4;  /**< [ 26: 23](R/W) Selects which ranks get ZQCS command when servicing the first pair refresh. */
         uint64_t zqcs_rankmask1        : 4;  /**< [ 30: 27](R/W) Selects which ranks get ZQCS command when servicing the second pair refresh. */
-        uint64_t reserved_31           : 1;
+        uint64_t ref_stagger           : 1;  /**< [ 31: 31](R/W) When set, refresh commands to all package ranks are staggered by TRFC. The default
+                                                                 behavior is to send a refresh command to all package ranks and wait TRFC.
+                                                                 Asserting this bit forces LMC to stagger refresh command by waiting TRFC for each rank.
+                                                                 For 3DS DIMMs, this mode will refresh all logical ranks for one package rank before moving
+                                                                 to the next package rank. Note, software is responsible for determining whether staggering
+                                                                 refresh by TRFC (and TRFC_dlr) is greater than TREFI which would cause refresh to never catch up.
+
+                                                                 It is not recommended to use this mode with 8H 3DS, fine granularity refresh mode, or extended
+                                                                 temperature mode. This mode cannot be combined with LMC()_REF_CONFIG[PAIR_REF_MODE]. */
         uint64_t reserved_32_63        : 32;
 #endif /* Word 0 - End */
-    } cn96xx;
-    /* struct cavm_lmcx_ref_config_s cnf95xx; */
+    } cn96xxp3;
+    struct cavm_lmcx_ref_config_cnf95xx
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_31_63        : 33;
+        uint64_t zqcs_rankmask1        : 4;  /**< [ 30: 27](R/W) Selects which ranks get ZQCS command when servicing the second pair refresh. */
+        uint64_t zqcs_rankmask0        : 4;  /**< [ 26: 23](R/W) Selects which ranks get ZQCS command when servicing the first pair refresh. */
+        uint64_t pair_zqcs             : 1;  /**< [ 22: 22](R/W) When set, uses LMC()_REF_CONFIG[ZQCS_RANKMASK0] and LMC()_REF_CONFIG[ZQCS_RANKMASK1]
+                                                                 to select which ranks get ZQCS command on the pair refresh interval that expires
+                                                                 the ZQCS count. Ranks selected by [ZQCS_RANKMASK0] get serviced on first pair refresh
+                                                                 then [ZQCS_RANKMASK1] get serviced on second pair refresh. Note [ZQCS_RANKMASK0] and
+                                                                 [ZQCS_RANKMASK1] should be mutually exclusive.
+
+                                                                 If not set, all available ranks get ZQCS commands on the first pair refresh.
+
+                                                                 This bit can only be asserted if LMC()_REF_CONFIG[PAIR_REF_MODE] is non-zero. */
+        uint64_t ref_rank_all          : 1;  /**< [ 21: 21](R/W) Reserved.
+                                                                 Internal:
+                                                                 When set, cycles through all ranks during the refresh sequence disregarding rank
+                                                                 availability status. For diagnostic use only. */
+        uint64_t pair_ref_mode         : 2;  /**< [ 20: 19](R/W) Selects the pair refresh mode.
+                                                                 0x0 = All ranks get refreshed together at the end of TREFI and all traffic is halted.
+                                                                 0x1 = Ranks are refreshed in pairs during TREFI window. At TREFI/2, ranks 1 & 3
+                                                                     are refreshed while allowing traffic to 0 & 2. At TREFI, ranks 0 & 2 are
+                                                                     refreshed while allowing traffic to 1 & 3.
+                                                                 0x2 = Ranks are refreshed in pairs during TREFI window. All traffic is halted
+                                                                     whenever each pair is refreshed. */
+        uint64_t ref_block             : 1;  /**< [ 18: 18](R/W) When set, LMC is blocked to initiate any refresh sequence. LMC then only
+                                                                 allows refresh sequence to start when LMC()_REF_STATUS[REF_COUNT0] or
+                                                                 LMC()_REF_STATUS[REF_COUNT1] has reached the maximum value of 0x7. */
+        uint64_t fgrm_trefi_div        : 2;  /**< [ 17: 16](R/W) Divides TREFI base programmed in LMC()_CONFIG[REF_ZQCS_INT].
+                                                                 This CSR can only be used if LMC()_MODEREG_PARAMS3[FGRM] is set.
+
+                                                                 0x0 = TREFI.
+                                                                 0x1 = TREFI/2.
+                                                                 0x2 = TREFI/4.
+                                                                 0x3 = TREFI/8.
+
+                                                                 If changing refresh rate with FGRM set to on-the-fly, this must be programmed at
+                                                                 the same time as LMC()_REF_CONFIG[OTF_REF_MODE]. */
+        uint64_t otf_ref_mode          : 2;  /**< [ 15: 14](R/W) Refresh mode for on-the-fly refresh. This CSR must be programmed to switch
+                                                                 to the modes between 1X/2X or 1X/4X as set by LMC()_MODEREG_PARAMS3[FGRM].
+                                                                 0x0 = REF 1X.
+                                                                 0x1 = REF 2X.
+                                                                 0x2 = REF 4x.
+
+                                                                 The status of the mode switch can be read back in LMC()_REF_STATUS[OTF_REF_STATUS]. */
+        uint64_t fgrm_trfc_dlr         : 7;  /**< [ 13:  7](R/W) Indicates tRFC_DLR2 or tRFC_DLR4 constraints for Fine-Granularity Refresh.
+                                                                 Set this field as follows:
+
+                                                                 _ RNDUP[tRFC_DLRx(ns) / (8 * TCYC(ns))]
+
+                                                                 where tRFC_DLR2 or tRFC_DLR4 is from the JEDEC 3D stacked SDRAM spec, and TCYC(ns) is the DDR clock
+                                                                 frequency (not data rate).
+
+                                                                 TYP = 90-120 ns.
+
+                                                                 0x0 = reserved.
+                                                                 0x1 = 8 TCYC.
+                                                                 0x2 = 16 TCYC.
+                                                                 0x3 = 24 TCYC.
+                                                                 0x4 = 32 TCYC.
+                                                                 ...
+                                                                 0x7E = 1008 TCYC.
+                                                                 0x7F = 1016 TCYC. */
+        uint64_t fgrm_trfc             : 7;  /**< [  6:  0](R/W) Indicates TRFC2 or TRFC4 constraints for Fine-Granularity Refresh.
+                                                                 Set this field as follows:
+
+                                                                 _ RNDUP[TRFCx(ns) / (8 * TCYC(ns))]
+
+                                                                 where TRFC2 or TRFC4 is from the JEDEC DDR4 spec, and TCYC(ns) is the DDR clock
+                                                                 frequency (not data rate).
+
+                                                                 TYP = 90-350 ns
+
+                                                                 0x0 = reserved.
+                                                                 0x1 = 8 TCYC.
+                                                                 0x2 = 16 TCYC.
+                                                                 0x3 = 24 TCYC.
+                                                                 0x4 = 32 TCYC.
+                                                                 ...
+                                                                 0x7E = 1008 TCYC.
+                                                                 0x7F = 1016 TCYC. */
+#else /* Word 0 - Little Endian */
+        uint64_t fgrm_trfc             : 7;  /**< [  6:  0](R/W) Indicates TRFC2 or TRFC4 constraints for Fine-Granularity Refresh.
+                                                                 Set this field as follows:
+
+                                                                 _ RNDUP[TRFCx(ns) / (8 * TCYC(ns))]
+
+                                                                 where TRFC2 or TRFC4 is from the JEDEC DDR4 spec, and TCYC(ns) is the DDR clock
+                                                                 frequency (not data rate).
+
+                                                                 TYP = 90-350 ns
+
+                                                                 0x0 = reserved.
+                                                                 0x1 = 8 TCYC.
+                                                                 0x2 = 16 TCYC.
+                                                                 0x3 = 24 TCYC.
+                                                                 0x4 = 32 TCYC.
+                                                                 ...
+                                                                 0x7E = 1008 TCYC.
+                                                                 0x7F = 1016 TCYC. */
+        uint64_t fgrm_trfc_dlr         : 7;  /**< [ 13:  7](R/W) Indicates tRFC_DLR2 or tRFC_DLR4 constraints for Fine-Granularity Refresh.
+                                                                 Set this field as follows:
+
+                                                                 _ RNDUP[tRFC_DLRx(ns) / (8 * TCYC(ns))]
+
+                                                                 where tRFC_DLR2 or tRFC_DLR4 is from the JEDEC 3D stacked SDRAM spec, and TCYC(ns) is the DDR clock
+                                                                 frequency (not data rate).
+
+                                                                 TYP = 90-120 ns.
+
+                                                                 0x0 = reserved.
+                                                                 0x1 = 8 TCYC.
+                                                                 0x2 = 16 TCYC.
+                                                                 0x3 = 24 TCYC.
+                                                                 0x4 = 32 TCYC.
+                                                                 ...
+                                                                 0x7E = 1008 TCYC.
+                                                                 0x7F = 1016 TCYC. */
+        uint64_t otf_ref_mode          : 2;  /**< [ 15: 14](R/W) Refresh mode for on-the-fly refresh. This CSR must be programmed to switch
+                                                                 to the modes between 1X/2X or 1X/4X as set by LMC()_MODEREG_PARAMS3[FGRM].
+                                                                 0x0 = REF 1X.
+                                                                 0x1 = REF 2X.
+                                                                 0x2 = REF 4x.
+
+                                                                 The status of the mode switch can be read back in LMC()_REF_STATUS[OTF_REF_STATUS]. */
+        uint64_t fgrm_trefi_div        : 2;  /**< [ 17: 16](R/W) Divides TREFI base programmed in LMC()_CONFIG[REF_ZQCS_INT].
+                                                                 This CSR can only be used if LMC()_MODEREG_PARAMS3[FGRM] is set.
+
+                                                                 0x0 = TREFI.
+                                                                 0x1 = TREFI/2.
+                                                                 0x2 = TREFI/4.
+                                                                 0x3 = TREFI/8.
+
+                                                                 If changing refresh rate with FGRM set to on-the-fly, this must be programmed at
+                                                                 the same time as LMC()_REF_CONFIG[OTF_REF_MODE]. */
+        uint64_t ref_block             : 1;  /**< [ 18: 18](R/W) When set, LMC is blocked to initiate any refresh sequence. LMC then only
+                                                                 allows refresh sequence to start when LMC()_REF_STATUS[REF_COUNT0] or
+                                                                 LMC()_REF_STATUS[REF_COUNT1] has reached the maximum value of 0x7. */
+        uint64_t pair_ref_mode         : 2;  /**< [ 20: 19](R/W) Selects the pair refresh mode.
+                                                                 0x0 = All ranks get refreshed together at the end of TREFI and all traffic is halted.
+                                                                 0x1 = Ranks are refreshed in pairs during TREFI window. At TREFI/2, ranks 1 & 3
+                                                                     are refreshed while allowing traffic to 0 & 2. At TREFI, ranks 0 & 2 are
+                                                                     refreshed while allowing traffic to 1 & 3.
+                                                                 0x2 = Ranks are refreshed in pairs during TREFI window. All traffic is halted
+                                                                     whenever each pair is refreshed. */
+        uint64_t ref_rank_all          : 1;  /**< [ 21: 21](R/W) Reserved.
+                                                                 Internal:
+                                                                 When set, cycles through all ranks during the refresh sequence disregarding rank
+                                                                 availability status. For diagnostic use only. */
+        uint64_t pair_zqcs             : 1;  /**< [ 22: 22](R/W) When set, uses LMC()_REF_CONFIG[ZQCS_RANKMASK0] and LMC()_REF_CONFIG[ZQCS_RANKMASK1]
+                                                                 to select which ranks get ZQCS command on the pair refresh interval that expires
+                                                                 the ZQCS count. Ranks selected by [ZQCS_RANKMASK0] get serviced on first pair refresh
+                                                                 then [ZQCS_RANKMASK1] get serviced on second pair refresh. Note [ZQCS_RANKMASK0] and
+                                                                 [ZQCS_RANKMASK1] should be mutually exclusive.
+
+                                                                 If not set, all available ranks get ZQCS commands on the first pair refresh.
+
+                                                                 This bit can only be asserted if LMC()_REF_CONFIG[PAIR_REF_MODE] is non-zero. */
+        uint64_t zqcs_rankmask0        : 4;  /**< [ 26: 23](R/W) Selects which ranks get ZQCS command when servicing the first pair refresh. */
+        uint64_t zqcs_rankmask1        : 4;  /**< [ 30: 27](R/W) Selects which ranks get ZQCS command when servicing the second pair refresh. */
+        uint64_t reserved_31_63        : 33;
+#endif /* Word 0 - End */
+    } cnf95xx;
 };
 typedef union cavm_lmcx_ref_config cavm_lmcx_ref_config_t;
 
@@ -21500,10 +21915,11 @@ union cavm_lmcx_timing_params1
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_62_63        : 2;
-        uint64_t tpdm_full_cycle_ena   : 1;  /**< [ 61: 61](R/W) When set, this field enables the addition of a one cycle delay to the
-                                                                 write/read latency calculation. This is to compensate the case when
-                                                                 tPDM delay in the RCD of an RDIMM is greater than one-cycle.
-                                                                 Only valid in RDIMM  (LMC()_CONTROL[RDIMM_ENA]=1). */
+        uint64_t tpdm_full_cycle_ena   : 1;  /**< [ 61: 61](R/W) When set, this field enables the addition of a one cycle delay to the write/read
+                                                                 latency calculation. This is to compensate for the tPDM (and hence tSTAOFF)
+                                                                 delay in the RCD module of an RDIMM. Only valid for RDIMM application
+                                                                 (LMC()_CONTROL[RDIMM_ENA]=1).
+                                                                 Set this field to 1 if tPDM \>= 0.5*TCYC, where TCYC is the DDR clock period. */
         uint64_t trfc_dlr              : 7;  /**< [ 60: 54](R/W) Indicates tRFC_DLR constraints. Set this field as follows:
 
                                                                  _ RNDUP[tRFC_DLR(ns) / (8 * TCYC(ns))]
@@ -21811,10 +22227,11 @@ union cavm_lmcx_timing_params1
                                                                  ...
                                                                  0x7E = 1008 TCYC.
                                                                  0x7F = 1016 TCYC. */
-        uint64_t tpdm_full_cycle_ena   : 1;  /**< [ 61: 61](R/W) When set, this field enables the addition of a one cycle delay to the
-                                                                 write/read latency calculation. This is to compensate the case when
-                                                                 tPDM delay in the RCD of an RDIMM is greater than one-cycle.
-                                                                 Only valid in RDIMM  (LMC()_CONTROL[RDIMM_ENA]=1). */
+        uint64_t tpdm_full_cycle_ena   : 1;  /**< [ 61: 61](R/W) When set, this field enables the addition of a one cycle delay to the write/read
+                                                                 latency calculation. This is to compensate for the tPDM (and hence tSTAOFF)
+                                                                 delay in the RCD module of an RDIMM. Only valid for RDIMM application
+                                                                 (LMC()_CONTROL[RDIMM_ENA]=1).
+                                                                 Set this field to 1 if tPDM \>= 0.5*TCYC, where TCYC is the DDR clock period. */
         uint64_t reserved_62_63        : 2;
 #endif /* Word 0 - End */
     } cn9;

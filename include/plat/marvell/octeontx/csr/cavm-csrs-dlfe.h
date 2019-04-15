@@ -40,7 +40,7 @@ union cavm_dlfe_jcfg0_s
         uint64_t num_dma_words         : 10; /**< [ 56: 47] DMA block size to read from RD-DMA port, in 128-bit words. Each DMA word
                                                                  contains 4 baseband signal samples, since each baseband signal sample is
                                                                  (16b+16b) complex integer. The maximum RB size is 275, which is equal to 3300
-                                                                 subcarriers. As such, [NUM_DMA_WORDS] must be in the range [1, 875]. */
+                                                                 subcarriers. As such, [NUM_DMA_WORDS] must be in the range [1, 825]. */
         uint64_t fft_size_idx          : 2;  /**< [ 46: 45] Determines the FFT size.
                                                                  0x0 = 512.
                                                                  0x1 = 1024.
@@ -101,7 +101,7 @@ union cavm_dlfe_jcfg0_s
         uint64_t num_dma_words         : 10; /**< [ 56: 47] DMA block size to read from RD-DMA port, in 128-bit words. Each DMA word
                                                                  contains 4 baseband signal samples, since each baseband signal sample is
                                                                  (16b+16b) complex integer. The maximum RB size is 275, which is equal to 3300
-                                                                 subcarriers. As such, [NUM_DMA_WORDS] must be in the range [1, 875]. */
+                                                                 subcarriers. As such, [NUM_DMA_WORDS] must be in the range [1, 825]. */
         uint64_t ant_idx               : 6;  /**< [ 62: 57] Specifies the Antenna Index for the processing job. */
         uint64_t job_type              : 1;  /**< [ 63: 63] The type of job configuration.
                                                                  0 = Semi-static parameter update (SSUP) job.

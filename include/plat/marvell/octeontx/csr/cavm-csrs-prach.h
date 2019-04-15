@@ -30,8 +30,7 @@ union cavm_prach_jd_cal_parm_s
     struct cavm_prach_jd_cal_parm_s_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t occ_phase_i           : 16; /**< [ 63: 48] I Phase value for second preamble body in the case of OCC */
-        uint64_t occ_phase_q           : 16; /**< [ 47: 32] Q Phase value for second preamble body in the case of OCC */
+        uint64_t reserved_32_63        : 32;
         uint64_t tagc_backoff          : 5;  /**< [ 31: 27] Represents the power to which the input signal must be scaled to.
                                                                  Default : 0xC */
         uint64_t reserved_16_26        : 11;
@@ -55,11 +54,41 @@ union cavm_prach_jd_cal_parm_s
         uint64_t reserved_16_26        : 11;
         uint64_t tagc_backoff          : 5;  /**< [ 31: 27] Represents the power to which the input signal must be scaled to.
                                                                  Default : 0xC */
-        uint64_t occ_phase_q           : 16; /**< [ 47: 32] Q Phase value for second preamble body in the case of OCC */
-        uint64_t occ_phase_i           : 16; /**< [ 63: 48] I Phase value for second preamble body in the case of OCC */
+        uint64_t reserved_32_63        : 32;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_prach_jd_cal_parm_s_s cn; */
+    struct cavm_prach_jd_cal_parm_s_cn
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_48_63        : 16;
+        uint64_t reserved_32_47        : 16;
+        uint64_t tagc_backoff          : 5;  /**< [ 31: 27] Represents the power to which the input signal must be scaled to.
+                                                                 Default : 0xC */
+        uint64_t reserved_16_26        : 11;
+        uint64_t m_rs                  : 4;  /**< [ 15: 12] Used only when PRACH_JD_SYS_CFG_S[MRC_MODE]=1.
+                                                                 Adjusts MRC right shift after antenna correlation power sample is scaled by
+                                                                 noise power value, to adjust the accuracy of MRC combiner. */
+        uint64_t restrictedwin_mode    : 1;  /**< [ 11: 11] Used only when PRACH_JD_SYS_CFG_S[HIGH_SPEED_SET]\>0x0
+                                                                 Default: 0x0 */
+        uint64_t rtl_debug2            : 1;  /**< [ 10: 10] rtl debug */
+        uint64_t min_noise             : 10; /**< [  9:  0] The minimum value at which the estimated noise value capped
+                                                                 Default : 0x1 */
+#else /* Word 0 - Little Endian */
+        uint64_t min_noise             : 10; /**< [  9:  0] The minimum value at which the estimated noise value capped
+                                                                 Default : 0x1 */
+        uint64_t rtl_debug2            : 1;  /**< [ 10: 10] rtl debug */
+        uint64_t restrictedwin_mode    : 1;  /**< [ 11: 11] Used only when PRACH_JD_SYS_CFG_S[HIGH_SPEED_SET]\>0x0
+                                                                 Default: 0x0 */
+        uint64_t m_rs                  : 4;  /**< [ 15: 12] Used only when PRACH_JD_SYS_CFG_S[MRC_MODE]=1.
+                                                                 Adjusts MRC right shift after antenna correlation power sample is scaled by
+                                                                 noise power value, to adjust the accuracy of MRC combiner. */
+        uint64_t reserved_16_26        : 11;
+        uint64_t tagc_backoff          : 5;  /**< [ 31: 27] Represents the power to which the input signal must be scaled to.
+                                                                 Default : 0xC */
+        uint64_t reserved_32_47        : 16;
+        uint64_t reserved_48_63        : 16;
+#endif /* Word 0 - End */
+    } cn;
 };
 
 /**
@@ -867,17 +896,17 @@ union cavm_prach_jd_jobcfg_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_2_63         : 62;
-        uint64_t job_config            : 2;  /**< [  1:  0] Define job type. Job definition:
-                                                                 0x0: Job type 0
-                                                                 0x1: Job type 1
-                                                                 0x2: Job type 2
-                                                                 0x3: Job type 3 */
+        uint64_t job_config            : 2;  /**< [  1:  0] Define job type:
+                                                                 0x0: Job type 0 - used for \<= 8 antennas and only one job.
+                                                                 0x1: Job type 1 - first job when combining power profiles.
+                                                                 0x2: Job type 2 - middle job when combining power profiles.
+                                                                 0x3: Job type 3 - last job when combining power profiles. */
 #else /* Word 0 - Little Endian */
-        uint64_t job_config            : 2;  /**< [  1:  0] Define job type. Job definition:
-                                                                 0x0: Job type 0
-                                                                 0x1: Job type 1
-                                                                 0x2: Job type 2
-                                                                 0x3: Job type 3 */
+        uint64_t job_config            : 2;  /**< [  1:  0] Define job type:
+                                                                 0x0: Job type 0 - used for \<= 8 antennas and only one job.
+                                                                 0x1: Job type 1 - first job when combining power profiles.
+                                                                 0x2: Job type 2 - middle job when combining power profiles.
+                                                                 0x3: Job type 3 - last job when combining power profiles. */
         uint64_t reserved_2_63         : 62;
 #endif /* Word 0 - End */
     } s;

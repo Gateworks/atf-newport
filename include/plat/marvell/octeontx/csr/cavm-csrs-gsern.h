@@ -5407,8 +5407,8 @@ union cavm_gsernx_lanex_pcie_rxeq1_3_bcfg
         uint64_t reserved_62_63        : 2;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_gsernx_lanex_pcie_rxeq1_3_bcfg_s cn96xx; */
-    struct cavm_gsernx_lanex_pcie_rxeq1_3_bcfg_cnf95xx
+    /* struct cavm_gsernx_lanex_pcie_rxeq1_3_bcfg_s cn96xxp1; */
+    struct cavm_gsernx_lanex_pcie_rxeq1_3_bcfg_cn96xxp3
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_62_63        : 2;
@@ -5437,7 +5437,8 @@ union cavm_gsernx_lanex_pcie_rxeq1_3_bcfg
         uint64_t pcie_g1_c5_limit_hi   : 6;  /**< [ 61: 56](R/W) C5 postcursor limit high. */
         uint64_t reserved_62_63        : 2;
 #endif /* Word 0 - End */
-    } cnf95xx;
+    } cn96xxp3;
+    /* struct cavm_gsernx_lanex_pcie_rxeq1_3_bcfg_cn96xxp3 cnf95xx; */
 };
 typedef union cavm_gsernx_lanex_pcie_rxeq1_3_bcfg cavm_gsernx_lanex_pcie_rxeq1_3_bcfg_t;
 
@@ -5564,6 +5565,8 @@ typedef union cavm_gsernx_lanex_pcie_rxeq1_5_bcfg cavm_gsernx_lanex_pcie_rxeq1_5
 static inline uint64_t CAVM_GSERNX_LANEX_PCIE_RXEQ1_5_BCFG(unsigned long a, unsigned long b) __attribute__ ((pure, always_inline));
 static inline uint64_t CAVM_GSERNX_LANEX_PCIE_RXEQ1_5_BCFG(unsigned long a, unsigned long b)
 {
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a<=7) && (b<=4)))
+        return 0x87e090002520ll + 0x1000000ll * ((a) & 0x7) + 0x10000ll * ((b) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=3) && (b<=4)))
         return 0x87e090002520ll + 0x1000000ll * ((a) & 0x3) + 0x10000ll * ((b) & 0x7);
     __cavm_csr_fatal("GSERNX_LANEX_PCIE_RXEQ1_5_BCFG", 2, a, b, 0, 0);
@@ -5762,8 +5765,8 @@ union cavm_gsernx_lanex_pcie_rxeq2_3_bcfg
         uint64_t reserved_62_63        : 2;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_gsernx_lanex_pcie_rxeq2_3_bcfg_s cn96xx; */
-    struct cavm_gsernx_lanex_pcie_rxeq2_3_bcfg_cnf95xx
+    /* struct cavm_gsernx_lanex_pcie_rxeq2_3_bcfg_s cn96xxp1; */
+    struct cavm_gsernx_lanex_pcie_rxeq2_3_bcfg_cn96xxp3
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_62_63        : 2;
@@ -5792,7 +5795,8 @@ union cavm_gsernx_lanex_pcie_rxeq2_3_bcfg
         uint64_t pcie_g2_c5_limit_hi   : 6;  /**< [ 61: 56](R/W) C5 postcursor limit high. */
         uint64_t reserved_62_63        : 2;
 #endif /* Word 0 - End */
-    } cnf95xx;
+    } cn96xxp3;
+    /* struct cavm_gsernx_lanex_pcie_rxeq2_3_bcfg_cn96xxp3 cnf95xx; */
 };
 typedef union cavm_gsernx_lanex_pcie_rxeq2_3_bcfg cavm_gsernx_lanex_pcie_rxeq2_3_bcfg_t;
 
@@ -5919,6 +5923,8 @@ typedef union cavm_gsernx_lanex_pcie_rxeq2_5_bcfg cavm_gsernx_lanex_pcie_rxeq2_5
 static inline uint64_t CAVM_GSERNX_LANEX_PCIE_RXEQ2_5_BCFG(unsigned long a, unsigned long b) __attribute__ ((pure, always_inline));
 static inline uint64_t CAVM_GSERNX_LANEX_PCIE_RXEQ2_5_BCFG(unsigned long a, unsigned long b)
 {
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a<=7) && (b<=4)))
+        return 0x87e090002530ll + 0x1000000ll * ((a) & 0x7) + 0x10000ll * ((b) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=3) && (b<=4)))
         return 0x87e090002530ll + 0x1000000ll * ((a) & 0x3) + 0x10000ll * ((b) & 0x7);
     __cavm_csr_fatal("GSERNX_LANEX_PCIE_RXEQ2_5_BCFG", 2, a, b, 0, 0);
@@ -6117,8 +6123,8 @@ union cavm_gsernx_lanex_pcie_rxeq3_3_bcfg
         uint64_t reserved_62_63        : 2;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_gsernx_lanex_pcie_rxeq3_3_bcfg_s cn96xx; */
-    struct cavm_gsernx_lanex_pcie_rxeq3_3_bcfg_cnf95xx
+    /* struct cavm_gsernx_lanex_pcie_rxeq3_3_bcfg_s cn96xxp1; */
+    struct cavm_gsernx_lanex_pcie_rxeq3_3_bcfg_cn96xxp3
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_62_63        : 2;
@@ -6147,7 +6153,8 @@ union cavm_gsernx_lanex_pcie_rxeq3_3_bcfg
         uint64_t pcie_g3_c5_limit_hi   : 6;  /**< [ 61: 56](R/W) C5 postcursor limit high. */
         uint64_t reserved_62_63        : 2;
 #endif /* Word 0 - End */
-    } cnf95xx;
+    } cn96xxp3;
+    /* struct cavm_gsernx_lanex_pcie_rxeq3_3_bcfg_cn96xxp3 cnf95xx; */
 };
 typedef union cavm_gsernx_lanex_pcie_rxeq3_3_bcfg cavm_gsernx_lanex_pcie_rxeq3_3_bcfg_t;
 
@@ -6274,6 +6281,8 @@ typedef union cavm_gsernx_lanex_pcie_rxeq3_5_bcfg cavm_gsernx_lanex_pcie_rxeq3_5
 static inline uint64_t CAVM_GSERNX_LANEX_PCIE_RXEQ3_5_BCFG(unsigned long a, unsigned long b) __attribute__ ((pure, always_inline));
 static inline uint64_t CAVM_GSERNX_LANEX_PCIE_RXEQ3_5_BCFG(unsigned long a, unsigned long b)
 {
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a<=7) && (b<=4)))
+        return 0x87e090002540ll + 0x1000000ll * ((a) & 0x7) + 0x10000ll * ((b) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=3) && (b<=4)))
         return 0x87e090002540ll + 0x1000000ll * ((a) & 0x3) + 0x10000ll * ((b) & 0x7);
     __cavm_csr_fatal("GSERNX_LANEX_PCIE_RXEQ3_5_BCFG", 2, a, b, 0, 0);
@@ -6472,8 +6481,8 @@ union cavm_gsernx_lanex_pcie_rxeq4_3_bcfg
         uint64_t reserved_62_63        : 2;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_gsernx_lanex_pcie_rxeq4_3_bcfg_s cn96xx; */
-    struct cavm_gsernx_lanex_pcie_rxeq4_3_bcfg_cnf95xx
+    /* struct cavm_gsernx_lanex_pcie_rxeq4_3_bcfg_s cn96xxp1; */
+    struct cavm_gsernx_lanex_pcie_rxeq4_3_bcfg_cn96xxp3
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_62_63        : 2;
@@ -6502,7 +6511,8 @@ union cavm_gsernx_lanex_pcie_rxeq4_3_bcfg
         uint64_t pcie_g4_c5_limit_hi   : 6;  /**< [ 61: 56](R/W) C5 postcursor limit high. */
         uint64_t reserved_62_63        : 2;
 #endif /* Word 0 - End */
-    } cnf95xx;
+    } cn96xxp3;
+    /* struct cavm_gsernx_lanex_pcie_rxeq4_3_bcfg_cn96xxp3 cnf95xx; */
 };
 typedef union cavm_gsernx_lanex_pcie_rxeq4_3_bcfg cavm_gsernx_lanex_pcie_rxeq4_3_bcfg_t;
 
@@ -6629,6 +6639,8 @@ typedef union cavm_gsernx_lanex_pcie_rxeq4_5_bcfg cavm_gsernx_lanex_pcie_rxeq4_5
 static inline uint64_t CAVM_GSERNX_LANEX_PCIE_RXEQ4_5_BCFG(unsigned long a, unsigned long b) __attribute__ ((pure, always_inline));
 static inline uint64_t CAVM_GSERNX_LANEX_PCIE_RXEQ4_5_BCFG(unsigned long a, unsigned long b)
 {
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a<=7) && (b<=4)))
+        return 0x87e090002550ll + 0x1000000ll * ((a) & 0x7) + 0x10000ll * ((b) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=3) && (b<=4)))
         return 0x87e090002550ll + 0x1000000ll * ((a) & 0x3) + 0x10000ll * ((b) & 0x7);
     __cavm_csr_fatal("GSERNX_LANEX_PCIE_RXEQ4_5_BCFG", 2, a, b, 0, 0);
@@ -10438,8 +10450,8 @@ union cavm_gsernx_lanex_rx_15_bcfg
         uint64_t reserved_62_63        : 2;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_gsernx_lanex_rx_15_bcfg_s cn96xx; */
-    struct cavm_gsernx_lanex_rx_15_bcfg_cnf95xx
+    /* struct cavm_gsernx_lanex_rx_15_bcfg_s cn96xxp1; */
+    struct cavm_gsernx_lanex_rx_15_bcfg_cn96xxp3
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_62_63        : 2;
@@ -10468,7 +10480,8 @@ union cavm_gsernx_lanex_rx_15_bcfg
         uint64_t c5_limit_hi           : 6;  /**< [ 61: 56](R/W) C5 postcursor limit high. */
         uint64_t reserved_62_63        : 2;
 #endif /* Word 0 - End */
-    } cnf95xx;
+    } cn96xxp3;
+    /* struct cavm_gsernx_lanex_rx_15_bcfg_cn96xxp3 cnf95xx; */
 };
 typedef union cavm_gsernx_lanex_rx_15_bcfg cavm_gsernx_lanex_rx_15_bcfg_t;
 
@@ -11255,6 +11268,8 @@ typedef union cavm_gsernx_lanex_rx_25_bcfg cavm_gsernx_lanex_rx_25_bcfg_t;
 static inline uint64_t CAVM_GSERNX_LANEX_RX_25_BCFG(unsigned long a, unsigned long b) __attribute__ ((pure, always_inline));
 static inline uint64_t CAVM_GSERNX_LANEX_RX_25_BCFG(unsigned long a, unsigned long b)
 {
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a<=7) && (b<=4)))
+        return 0x87e090000e00ll + 0x1000000ll * ((a) & 0x7) + 0x10000ll * ((b) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=3) && (b<=4)))
         return 0x87e090000e00ll + 0x1000000ll * ((a) & 0x3) + 0x10000ll * ((b) & 0x7);
     __cavm_csr_fatal("GSERNX_LANEX_RX_25_BCFG", 2, a, b, 0, 0);
@@ -16244,6 +16259,8 @@ typedef union cavm_gsernx_lanex_sata_rxeq1_4_bcfg cavm_gsernx_lanex_sata_rxeq1_4
 static inline uint64_t CAVM_GSERNX_LANEX_SATA_RXEQ1_4_BCFG(unsigned long a, unsigned long b) __attribute__ ((pure, always_inline));
 static inline uint64_t CAVM_GSERNX_LANEX_SATA_RXEQ1_4_BCFG(unsigned long a, unsigned long b)
 {
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a<=7) && (b<=4)))
+        return 0x87e090002fc0ll + 0x1000000ll * ((a) & 0x7) + 0x10000ll * ((b) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=3) && (b<=4)))
         return 0x87e090002fc0ll + 0x1000000ll * ((a) & 0x3) + 0x10000ll * ((b) & 0x7);
     __cavm_csr_fatal("GSERNX_LANEX_SATA_RXEQ1_4_BCFG", 2, a, b, 0, 0);
@@ -16526,6 +16543,8 @@ typedef union cavm_gsernx_lanex_sata_rxeq2_4_bcfg cavm_gsernx_lanex_sata_rxeq2_4
 static inline uint64_t CAVM_GSERNX_LANEX_SATA_RXEQ2_4_BCFG(unsigned long a, unsigned long b) __attribute__ ((pure, always_inline));
 static inline uint64_t CAVM_GSERNX_LANEX_SATA_RXEQ2_4_BCFG(unsigned long a, unsigned long b)
 {
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a<=7) && (b<=4)))
+        return 0x87e090002fd0ll + 0x1000000ll * ((a) & 0x7) + 0x10000ll * ((b) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=3) && (b<=4)))
         return 0x87e090002fd0ll + 0x1000000ll * ((a) & 0x3) + 0x10000ll * ((b) & 0x7);
     __cavm_csr_fatal("GSERNX_LANEX_SATA_RXEQ2_4_BCFG", 2, a, b, 0, 0);
@@ -16808,6 +16827,8 @@ typedef union cavm_gsernx_lanex_sata_rxeq3_4_bcfg cavm_gsernx_lanex_sata_rxeq3_4
 static inline uint64_t CAVM_GSERNX_LANEX_SATA_RXEQ3_4_BCFG(unsigned long a, unsigned long b) __attribute__ ((pure, always_inline));
 static inline uint64_t CAVM_GSERNX_LANEX_SATA_RXEQ3_4_BCFG(unsigned long a, unsigned long b)
 {
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a<=7) && (b<=4)))
+        return 0x87e090002fe0ll + 0x1000000ll * ((a) & 0x7) + 0x10000ll * ((b) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=3) && (b<=4)))
         return 0x87e090002fe0ll + 0x1000000ll * ((a) & 0x3) + 0x10000ll * ((b) & 0x7);
     __cavm_csr_fatal("GSERNX_LANEX_SATA_RXEQ3_4_BCFG", 2, a, b, 0, 0);

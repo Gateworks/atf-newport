@@ -2598,7 +2598,8 @@ union cavm_mdabx_job_statusx
         uint64_t job_tag               : 16; /**< [ 31: 16](RO/H) The JOB_TAG field from the PSM command that created the job.
                                                                  Since MDAB hardware updates this register, its contents are unpredictable in software. */
         uint64_t job_type              : 2;  /**< [ 15: 14](RO/H) The JOB_TYPE field from the PSM command that created the job.
-                                                                     { 0: NML OP / 1: ST_LCL / 2: LD_LCL (w/o RST) / 3: LD_LCL (w/ RST) }
+                                                                 The MDBW_JD_HDR_WORD_0_S[DSP_JOB_TYPE] value from the job descriptor, enumerated
+                                                                 by MDBW_DSP_JOB_SEL_E.
                                                                  Since MDAB hardware updates this register, its contents are unpredictable in software. */
         uint64_t reserved_6_13         : 8;
         uint64_t wr_dma_done           : 1;  /**< [  5:  5](RO/H) Set when hardware completes all WR-DMA transfers and all writes have been committed to
@@ -2636,7 +2637,8 @@ union cavm_mdabx_job_statusx
                                                                  Since MDAB hardware updates this register, its contents are unpredictable in software. */
         uint64_t reserved_6_13         : 8;
         uint64_t job_type              : 2;  /**< [ 15: 14](RO/H) The JOB_TYPE field from the PSM command that created the job.
-                                                                     { 0: NML OP / 1: ST_LCL / 2: LD_LCL (w/o RST) / 3: LD_LCL (w/ RST) }
+                                                                 The MDBW_JD_HDR_WORD_0_S[DSP_JOB_TYPE] value from the job descriptor, enumerated
+                                                                 by MDBW_DSP_JOB_SEL_E.
                                                                  Since MDAB hardware updates this register, its contents are unpredictable in software. */
         uint64_t job_tag               : 16; /**< [ 31: 16](RO/H) The JOB_TAG field from the PSM command that created the job.
                                                                  Since MDAB hardware updates this register, its contents are unpredictable in software. */
@@ -2649,7 +2651,8 @@ union cavm_mdabx_job_statusx
         uint64_t job_tag               : 16; /**< [ 31: 16](RO/H) The JOB_TAG field from the PSM command that created the job.
                                                                  Since MDAB hardware updates this register, its contents are unpredictable in software. */
         uint64_t job_type              : 2;  /**< [ 15: 14](RO/H) The JOB_TYPE field from the PSM command that created the job.
-                                                                     { 0: NML OP / 1: ST_LCL / 2: LD_LCL (w/o RST) / 3: LD_LCL (w/ RST) }
+                                                                 The MDBW_JD_HDR_WORD_0_S[DSP_JOB_TYPE] value from the job descriptor, enumerated
+                                                                 by MDBW_DSP_JOB_SEL_E.
                                                                  Since MDAB hardware updates this register, its contents are unpredictable in software. */
         uint64_t reserved_6_13         : 8;
         uint64_t wr_dma_done           : 1;  /**< [  5:  5](RO/H) Set when hardware completes all WR-DMA transfers and all writes have been committed to
@@ -2687,7 +2690,8 @@ union cavm_mdabx_job_statusx
                                                                  Since MDAB hardware updates this register, its contents are unpredictable in software. */
         uint64_t reserved_6_13         : 8;
         uint64_t job_type              : 2;  /**< [ 15: 14](RO/H) The JOB_TYPE field from the PSM command that created the job.
-                                                                     { 0: NML OP / 1: ST_LCL / 2: LD_LCL (w/o RST) / 3: LD_LCL (w/ RST) }
+                                                                 The MDBW_JD_HDR_WORD_0_S[DSP_JOB_TYPE] value from the job descriptor, enumerated
+                                                                 by MDBW_DSP_JOB_SEL_E.
                                                                  Since MDAB hardware updates this register, its contents are unpredictable in software. */
         uint64_t job_tag               : 16; /**< [ 31: 16](RO/H) The JOB_TAG field from the PSM command that created the job.
                                                                  Since MDAB hardware updates this register, its contents are unpredictable in software. */

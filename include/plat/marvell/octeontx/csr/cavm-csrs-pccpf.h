@@ -53,6 +53,7 @@
 #define CAVM_PCC_DEV_CON_E_GPIO_CN9 (0x78)
 #define CAVM_PCC_DEV_CON_E_GSERX(a) (0x1e0 + (a))
 #define CAVM_PCC_DEV_CON_E_GSERNX(a) (0x1f0 + (a))
+#define CAVM_PCC_DEV_CON_E_GSERRX(a) (0x1f6 + (a))
 #define CAVM_PCC_DEV_CON_E_GTI_CN8 (0x20)
 #define CAVM_PCC_DEV_CON_E_GTI_CN9 (0x28)
 #define CAVM_PCC_DEV_CON_E_IOBNX(a) (0x158 + (a))
@@ -201,6 +202,7 @@
 #define CAVM_PCC_DEV_IDL_E_GPIO (0xa)
 #define CAVM_PCC_DEV_IDL_E_GSER (0x25)
 #define CAVM_PCC_DEV_IDL_E_GSERN (0x28)
+#define CAVM_PCC_DEV_IDL_E_GSERR (0x39)
 #define CAVM_PCC_DEV_IDL_E_GTI (0x17)
 #define CAVM_PCC_DEV_IDL_E_IOBN (0x27)
 #define CAVM_PCC_DEV_IDL_E_IOBN5 (0x6b)
@@ -342,7 +344,10 @@
  * Enumeration pcc_prod_e
  *
  * PCC Device ID Product Enumeration
- * Enumerates the chip identifier.
+ * Enumerates the die's chip identifier, used in PCCPF_XXX_ID[DEVID]\<15:8\> and other
+ * chip identification registers.
+ *
+ * See also GPIO_PKG_VER to differentiate between package variants.
  */
 #define CAVM_PCC_PROD_E_CN109XX (0xb8)
 #define CAVM_PCC_PROD_E_CN81XX (0xa2)

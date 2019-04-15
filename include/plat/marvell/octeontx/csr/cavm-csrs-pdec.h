@@ -67,7 +67,7 @@ union cavm_pdec_report_s
                                                                  reported in the decoder output. */
         uint64_t crc_error0            : 1;  /**< [ 26: 26] For the first CB, it reports the result of the CRC check of the path that is
                                                                  reported in the decoder output. When all paths within [CRC_TRIALS] paths have
-                                                                 CRC error this flag is '1'. */
+                                                                 a CRC error, this flag is 1. */
         uint64_t nlists                : 6;  /**< [ 25: 20] Number of lists that are considered in list decoding. It is equal to the number
                                                                  of lists selected by PDEC_TASK_CFG_S[LIST_SIZE]. */
         uint64_t num_cbs_out           : 4;  /**< [ 19: 16] Number of CBs in the range of {0x1,0x2}. It is equal to PDEC_TASK_CFG_S[NUM_CBS]
@@ -81,7 +81,7 @@ union cavm_pdec_report_s
                                                                  of lists selected by PDEC_TASK_CFG_S[LIST_SIZE]. */
         uint64_t crc_error0            : 1;  /**< [ 26: 26] For the first CB, it reports the result of the CRC check of the path that is
                                                                  reported in the decoder output. When all paths within [CRC_TRIALS] paths have
-                                                                 CRC error this flag is '1'. */
+                                                                 a CRC error, this flag is 1. */
         uint64_t idx_decoded0          : 6;  /**< [ 32: 27] For the first CB, it reports the index, within [CRC_TRIALS], of the path that is
                                                                  reported in the decoder output. */
         uint64_t nfpc_error0           : 5;  /**< [ 37: 33] Number of errors in FPC metric (for the first CB). */
@@ -93,10 +93,10 @@ union cavm_pdec_report_s
         uint64_t pm_max0               : 16; /**< [127:112] For the first CB, it reports the maximum path metric of the [NLISTS] paths. */
         uint64_t pm_min0               : 16; /**< [111: 96] For the first CB, it reports the minimum path metric of the [NLISTS] paths. */
         uint64_t pm_decoded0           : 16; /**< [ 95: 80] For the first CB, it reports the path metric of the reported path. */
-        uint64_t cber0                 : 16; /**< [ 79: 64] For the first CB, it reports the number of bit-wise difference between the bits
+        uint64_t cber0                 : 16; /**< [ 79: 64] For the first CB, it reports the number of bit-wise differences between the bits
                                                                  from hard-decision of input LLRs and the re-encoded bits from the decoded bits. */
 #else /* Word 1 - Little Endian */
-        uint64_t cber0                 : 16; /**< [ 79: 64] For the first CB, it reports the number of bit-wise difference between the bits
+        uint64_t cber0                 : 16; /**< [ 79: 64] For the first CB, it reports the number of bit-wise differences between the bits
                                                                  from hard-decision of input LLRs and the re-encoded bits from the decoded bits. */
         uint64_t pm_decoded0           : 16; /**< [ 95: 80] For the first CB, it reports the path metric of the reported path. */
         uint64_t pm_min0               : 16; /**< [111: 96] For the first CB, it reports the minimum path metric of the [NLISTS] paths. */
@@ -114,13 +114,13 @@ union cavm_pdec_report_s
                                                                  is reported in the decoder output. If PDEC_TASK_CFG_S[NUM_CBS] = 0x1, this field is undefined. */
         uint64_t crc_error1            : 1;  /**< [154:154] For the second CB, it reports the result of the CRC check of the path that is
                                                                  reported in the decoder output. When all paths within [CRC_TRIALS] paths have
-                                                                 CRC error this flag is '1'. If PDEC_TASK_CFG_S[NUM_CBS] = 1, this field is undefined. */
+                                                                 a CRC error this flag is 1. If PDEC_TASK_CFG_S[NUM_CBS] = 0x1, this field is undefined. */
         uint64_t crc_trials            : 26; /**< [153:128] Number of codewords candidates that are tested by the CRC checker to select the output codeword. */
 #else /* Word 2 - Little Endian */
         uint64_t crc_trials            : 26; /**< [153:128] Number of codewords candidates that are tested by the CRC checker to select the output codeword. */
         uint64_t crc_error1            : 1;  /**< [154:154] For the second CB, it reports the result of the CRC check of the path that is
                                                                  reported in the decoder output. When all paths within [CRC_TRIALS] paths have
-                                                                 CRC error this flag is '1'. If PDEC_TASK_CFG_S[NUM_CBS] = 1, this field is undefined. */
+                                                                 a CRC error this flag is 1. If PDEC_TASK_CFG_S[NUM_CBS] = 0x1, this field is undefined. */
         uint64_t idx_decoded1          : 6;  /**< [160:155] For the second CB, it reports the index, within [CRC_TRIALS], of the path that
                                                                  is reported in the decoder output. If PDEC_TASK_CFG_S[NUM_CBS] = 0x1, this field is undefined. */
         uint64_t nfpc_error1           : 5;  /**< [165:161] Number of errors in FPC metric for second CB. If PDEC_TASK_CFG_S[NUM_CBS] = 0x1,
@@ -138,11 +138,11 @@ union cavm_pdec_report_s
                                                                  PDEC_TASK_CFG_S[NUM_CBS] = 0x1, this field is undefined. */
         uint64_t pm_decoded1           : 16; /**< [223:208] For second CB, it reports the path metric of selected list. If PDEC_TASK_CFG_S[NUM_CBS] = 0x1,
                                                                  this field is undefined. */
-        uint64_t cber1                 : 16; /**< [207:192] For second CB, it reports the number of bit-wise difference between the bits
+        uint64_t cber1                 : 16; /**< [207:192] For second CB, it reports the number of bit-wise differences between the bits
                                                                  from hard-decision of input LLRs and the re-encoded bits from the decoded bits.
                                                                  If PDEC_TASK_CFG_S[NUM_CBS] = 0x1, this field is undefined. */
 #else /* Word 3 - Little Endian */
-        uint64_t cber1                 : 16; /**< [207:192] For second CB, it reports the number of bit-wise difference between the bits
+        uint64_t cber1                 : 16; /**< [207:192] For second CB, it reports the number of bit-wise differences between the bits
                                                                  from hard-decision of input LLRs and the re-encoded bits from the decoded bits.
                                                                  If PDEC_TASK_CFG_S[NUM_CBS] = 0x1, this field is undefined. */
         uint64_t pm_decoded1           : 16; /**< [223:208] For second CB, it reports the path metric of selected list. If PDEC_TASK_CFG_S[NUM_CBS] = 0x1,
@@ -1119,14 +1119,14 @@ union cavm_pdec_task_cfg_s
         uint64_t reserved_63           : 1;
         uint64_t npc_wm                : 2;  /**< [ 62: 61] Number of parity check bits with minimum row weight.
 
-                                                                 _ if 0xC \<= payload_block_size0 \<= 0x13: [NPC_WM] must be in {0x0,0x1}.
+                                                                 _ if 0xC \<= [K_SIZE] \<= 0x13 : [NPC_WM] must be in {0x0,0x1}.
 
-                                                                 _ if 0x14 \<= payload_block_size0: [NPC_WM] must be 0x0. */
+                                                                 _ if 0x14 \<= [K_SIZE] : [NPC_WM] must be 0x0. */
         uint64_t npc                   : 3;  /**< [ 60: 58] Number of parity check bits.
 
-                                                                 _ if 0xC \<= payload_block_size \<= 0x13, [NPC] must be in {0x0,0x1,0x2,0x3}.
+                                                                 _ if 0xC \<= [K_SIZE] \<= 0x13, [NPC] must be in {0x0,0x1,0x2,0x3}.
 
-                                                                 _ if 0x14 \<= payload_block_size: [NPC] must be 0x0. */
+                                                                 _ if 0x14 \<= [K_SIZE] : [NPC] must be 0x0. */
         uint64_t k_size                : 12; /**< [ 57: 46] Payload block size including CRC for one CB. Range [0x12, 0x400].
 
                                                                  The length of the decoded stream is:
@@ -1137,16 +1137,16 @@ union cavm_pdec_task_cfg_s
         uint64_t list_size             : 1;  /**< [ 40: 40] List size to be used in list decoding in this task:
                                                                  0 = List size is 0x10.
                                                                  1 = List size is 0x20. */
-        uint64_t llr_conv_lvl          : 3;  /**< [ 39: 37] Specifies the number of LSB bits to be truncated when converting quantization
-                                                                 width from 0xC to 0x6. Must be in the range 0 to 0x6.
+        uint64_t llr_conv_lvl          : 3;  /**< [ 39: 37] Specifies the number of LSB bits to be truncated when converting the quantization
+                                                                 width from 12 to 6. Must be in the range 0x0 to 0x6.
 
                                                                  Example:
 
-                                                                 _ [LLR_CONV_LVL] = 0x0: takes the 0x6 LSBs with saturation.
+                                                                 _ [LLR_CONV_LVL] = 0x0: takes the 6 LSBs with saturation.
 
-                                                                 _ [LLR_CONV_LVL] = 0x6: takes the 0x6 MSBs with rounding. */
+                                                                 _ [LLR_CONV_LVL] = 0x6: takes the 6 MSBs with rounding. */
         uint64_t llr_sign_format       : 1;  /**< [ 36: 36] LLR sign format.
-                                                                 0x0 =  Zero sign bit indicates positive LLR.
+                                                                 0x0 = Zero sign bit indicates positive LLR.
                                                                  0x1 = One sign bit indicates positive LLR. */
         uint64_t mod_order             : 4;  /**< [ 35: 32] Modulation order:
                                                                  0x1 = BPSK.
@@ -1160,10 +1160,10 @@ union cavm_pdec_task_cfg_s
                                                                  [LLR_OFFSET] indicates the offset of the first LLR associated with this task.
                                                                  The preprocessing block drops the first [LLR_OFFSET] LLRs. */
         uint64_t task_id               : 16; /**< [ 15:  0] Index associated with this decoding task. Its value will be relayed in
-                                                                 PDEC_REPORT_S and can be used for debugging purposes. */
+                                                                 the PDEC_REPORT_S and can be used for debugging purposes. */
 #else /* Word 0 - Little Endian */
         uint64_t task_id               : 16; /**< [ 15:  0] Index associated with this decoding task. Its value will be relayed in
-                                                                 PDEC_REPORT_S and can be used for debugging purposes. */
+                                                                 the PDEC_REPORT_S and can be used for debugging purposes. */
         uint64_t llr_offset            : 16; /**< [ 31: 16] It is possible that the first LLR associated to this task is not word-aligned.
                                                                  [LLR_OFFSET] indicates the offset of the first LLR associated with this task.
                                                                  The preprocessing block drops the first [LLR_OFFSET] LLRs. */
@@ -1176,16 +1176,16 @@ union cavm_pdec_task_cfg_s
                                                                  0xA = 1024-QAM.
                                                                  Other values = Reserved. */
         uint64_t llr_sign_format       : 1;  /**< [ 36: 36] LLR sign format.
-                                                                 0x0 =  Zero sign bit indicates positive LLR.
+                                                                 0x0 = Zero sign bit indicates positive LLR.
                                                                  0x1 = One sign bit indicates positive LLR. */
-        uint64_t llr_conv_lvl          : 3;  /**< [ 39: 37] Specifies the number of LSB bits to be truncated when converting quantization
-                                                                 width from 0xC to 0x6. Must be in the range 0 to 0x6.
+        uint64_t llr_conv_lvl          : 3;  /**< [ 39: 37] Specifies the number of LSB bits to be truncated when converting the quantization
+                                                                 width from 12 to 6. Must be in the range 0x0 to 0x6.
 
                                                                  Example:
 
-                                                                 _ [LLR_CONV_LVL] = 0x0: takes the 0x6 LSBs with saturation.
+                                                                 _ [LLR_CONV_LVL] = 0x0: takes the 6 LSBs with saturation.
 
-                                                                 _ [LLR_CONV_LVL] = 0x6: takes the 0x6 MSBs with rounding. */
+                                                                 _ [LLR_CONV_LVL] = 0x6: takes the 6 MSBs with rounding. */
         uint64_t list_size             : 1;  /**< [ 40: 40] List size to be used in list decoding in this task:
                                                                  0 = List size is 0x10.
                                                                  1 = List size is 0x20. */
@@ -1198,14 +1198,14 @@ union cavm_pdec_task_cfg_s
                                                                  _ ([K_SIZE] - [CRC_LEN]) * [NUM_CBS] - [NUM_FILLERS] */
         uint64_t npc                   : 3;  /**< [ 60: 58] Number of parity check bits.
 
-                                                                 _ if 0xC \<= payload_block_size \<= 0x13, [NPC] must be in {0x0,0x1,0x2,0x3}.
+                                                                 _ if 0xC \<= [K_SIZE] \<= 0x13, [NPC] must be in {0x0,0x1,0x2,0x3}.
 
-                                                                 _ if 0x14 \<= payload_block_size: [NPC] must be 0x0. */
+                                                                 _ if 0x14 \<= [K_SIZE] : [NPC] must be 0x0. */
         uint64_t npc_wm                : 2;  /**< [ 62: 61] Number of parity check bits with minimum row weight.
 
-                                                                 _ if 0xC \<= payload_block_size0 \<= 0x13: [NPC_WM] must be in {0x0,0x1}.
+                                                                 _ if 0xC \<= [K_SIZE] \<= 0x13 : [NPC_WM] must be in {0x0,0x1}.
 
-                                                                 _ if 0x14 \<= payload_block_size0: [NPC_WM] must be 0x0. */
+                                                                 _ if 0x14 \<= [K_SIZE] : [NPC_WM] must be 0x0. */
         uint64_t reserved_63           : 1;
 #endif /* Word 0 - End */
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 1 - Big Endian */
@@ -1219,8 +1219,8 @@ union cavm_pdec_task_cfg_s
                                                                  passed through the CRC checker. The codeword that passes the CRC with minimal
                                                                  metric is released. */
         uint64_t reenc_qm_with_crc     : 1;  /**< [116:116] Output CRC within re-encoded data.
-                                                                 0x0 = No CRC addition.
-                                                                 0x1 = Add 1-bit CB CRC result to each set of [MOD_ORDER] bits of re-encoded output.
+                                                                 0 = No CRC addition.
+                                                                 1 = Add 1-bit CB CRC result to each set of [MOD_ORDER] bits of re-encoded output.
 
                                                                  This feature can be enabled only when [SYMB_ALIGNED] = 0x0. */
         uint64_t nfpc                  : 5;  /**< [115:111] Number of frozen bits decoded as info bits for FPC-based metric. */
@@ -1232,29 +1232,29 @@ union cavm_pdec_task_cfg_s
                                                                  in little endian format, with zero padding in the upper bits in each
                                                                  byte. Can only be used when [MOD_ORDER] \< 0xA.
 
-                                                                 _ 0x2 = Two-byte interleaved mode. Every 0xA bits are mapped to a
+                                                                 _ 0x2 = Two-byte interleaved mode. Every 10 bits are mapped to a
                                                                  two-byte symbol, with even bits mapped to the first byte, and odd bits
                                                                  mapped to the second byte, with zero padding in the upper three bits of each
                                                                  byte. Can only be used when [MOD_ORDER] = 0xA.
 
-                                                                 _ 0x3 = Two-byte consecutive mode. Every 0xA bits are mapped to a
+                                                                 _ 0x3 = Two-byte consecutive mode. Every 10 bits are mapped to a
                                                                  two-byte symbol, with the first five bits mapped to the first byte, and the second five bits
                                                                  mapped to the second byte, with zero padding in the upper three bits of each
                                                                  byte. Can only be used when [MOD_ORDER] = 0xA. */
         uint64_t reenc_data_order      : 3;  /**< [108:106] LSB bit:
-                                                                 0x0 = DATA_BIT_MSB_FIRST.
-                                                                 0x1 = DATA_BIT_LSB_FIRST.
+                                                                 0 = DATA_BIT_MSB_FIRST.
+                                                                 1 = DATA_BIT_LSB_FIRST.
 
                                                                  Two MSB bits:
                                                                  0x0 = DATA_BYTE_ORDER_MODE_0.
                                                                  0x1 = DATA_BYTE_ORDER_MODE_1.
                                                                  0x2 = DATA_BYTE_ORDER_MODE_2. */
         uint64_t enable_reenc          : 1;  /**< [105:105] Enable re-encoding:
-                                                                 0x0 = re-encoding is bypassed.
-                                                                 0x1 = re-encoding is enabled. */
+                                                                 0 = re-encoding is bypassed.
+                                                                 1 = re-encoding is enabled. */
         uint64_t output_data_order     : 3;  /**< [104:102] LSB bit:
-                                                                 0x0 = DATA_BIT_MSB_FIRST.
-                                                                 0x1 = DATA_BIT_LSB_FIRST.
+                                                                 0 = DATA_BIT_MSB_FIRST.
+                                                                 1 = DATA_BIT_LSB_FIRST.
 
                                                                  Two MSB bits:
                                                                  0x0 = DATA_BYTE_ORDER_MODE_0.
@@ -1264,87 +1264,87 @@ union cavm_pdec_task_cfg_s
                                                                  [NUM_PADDING] bits from the end of the input stream are ignored. */
         uint64_t num_fillers           : 3;  /**< [ 98: 96] The number of filler bits to be removed after decoding.
 
-                                                                 When [NUM_CBS] = 0x1, first [NUM_FILLERS] bits are removed.
+                                                                 When [NUM_CBS] = 0x1, the first [NUM_FILLERS] bits are removed.
 
-                                                                 When [NUM_CBS] = 0x2, first [NUM_FILLERS] bits of the first CB are removed. */
+                                                                 When [NUM_CBS] = 0x2, the first [NUM_FILLERS] bits of the first CB are removed. */
         uint64_t crc_select            : 2;  /**< [ 95: 94] Select CRC polynomial.
-                                                                 0x0= use polynomial gCRC6.
-                                                                 0x1= use polynomial gCRC11.
-                                                                 0x2-0x3= Reserved.
+                                                                 0x0 = use polynomial gCRC6.
+                                                                 0x1 = use polynomial gCRC11.
+                                                                 0x2 - 0x3 = Reserved.
 
                                                                  The same CRC polynomial is used for both CBs when [NUM_CBS] = 0x2. */
         uint64_t reserved_80_93        : 14;
         uint64_t bypass_intlv          : 1;  /**< [ 79: 79] Bypass de-interleaving.
-                                                                 0x0: do not bypass.
-                                                                 0x1: bypass triangular de-interleaving.
+                                                                 0: do not bypass.
+                                                                 1: bypass triangular de-interleaving.
 
-                                                                 This field is only applicable when [NUM_CBS]= 0x1. */
+                                                                 This field is only applicable when [NUM_CBS] = 0x1. */
         uint64_t bypass_rm             : 1;  /**< [ 78: 78] Switch for bypassing de-rate matching.
-                                                                 0x0 = do not bypass rate dematching.
-                                                                 0x1 = bypass rate dematching.
+                                                                 0 = do not bypass rate dematching.
+                                                                 1 = bypass rate dematching.
 
-                                                                 This field is only applicable when [NUM_CBS]= 0x1. */
-        uint64_t e_size                : 14; /**< [ 77: 64] Number of input LLRs for one CB. Must be either 0 or in the range [18, 8192].
+                                                                 This field is only applicable when [NUM_CBS] = 0x1. */
+        uint64_t e_size                : 14; /**< [ 77: 64] Number of input LLRs for one CB. Must be either 0x0 or in the range [0x12, 0x2000].
 
-                                                                 When [E_SIZE] = 0, PDEC only generates monitoring words with [CRC_ERROR_CHECK0] = 0x1.
+                                                                 When [E_SIZE] = 0x0, PDEC only generates monitoring words with [CRC_ERRORn] = 0x1.
 
                                                                  [E_SIZE] must be always \>= [K_SIZE] to ensure code rate \>= 1.0
 
                                                                  The length of the input stream is G = [NUM_CBS] x [E_SIZE] + [NUM_PADDING],
                                                                  where G corresponds to the parameter G in 38.212.
 
-                                                                 When [BYPASS_RM] = 0x1, the length of the input stream is the size of the mother
+                                                                 When [BYPASS_RM] = 1, the length of the input stream is the size of the mother
                                                                  code described in Section 5.3.1 in 38.212. */
 #else /* Word 1 - Little Endian */
-        uint64_t e_size                : 14; /**< [ 77: 64] Number of input LLRs for one CB. Must be either 0 or in the range [18, 8192].
+        uint64_t e_size                : 14; /**< [ 77: 64] Number of input LLRs for one CB. Must be either 0x0 or in the range [0x12, 0x2000].
 
-                                                                 When [E_SIZE] = 0, PDEC only generates monitoring words with [CRC_ERROR_CHECK0] = 0x1.
+                                                                 When [E_SIZE] = 0x0, PDEC only generates monitoring words with [CRC_ERRORn] = 0x1.
 
                                                                  [E_SIZE] must be always \>= [K_SIZE] to ensure code rate \>= 1.0
 
                                                                  The length of the input stream is G = [NUM_CBS] x [E_SIZE] + [NUM_PADDING],
                                                                  where G corresponds to the parameter G in 38.212.
 
-                                                                 When [BYPASS_RM] = 0x1, the length of the input stream is the size of the mother
+                                                                 When [BYPASS_RM] = 1, the length of the input stream is the size of the mother
                                                                  code described in Section 5.3.1 in 38.212. */
         uint64_t bypass_rm             : 1;  /**< [ 78: 78] Switch for bypassing de-rate matching.
-                                                                 0x0 = do not bypass rate dematching.
-                                                                 0x1 = bypass rate dematching.
+                                                                 0 = do not bypass rate dematching.
+                                                                 1 = bypass rate dematching.
 
-                                                                 This field is only applicable when [NUM_CBS]= 0x1. */
+                                                                 This field is only applicable when [NUM_CBS] = 0x1. */
         uint64_t bypass_intlv          : 1;  /**< [ 79: 79] Bypass de-interleaving.
-                                                                 0x0: do not bypass.
-                                                                 0x1: bypass triangular de-interleaving.
+                                                                 0: do not bypass.
+                                                                 1: bypass triangular de-interleaving.
 
-                                                                 This field is only applicable when [NUM_CBS]= 0x1. */
+                                                                 This field is only applicable when [NUM_CBS] = 0x1. */
         uint64_t reserved_80_93        : 14;
         uint64_t crc_select            : 2;  /**< [ 95: 94] Select CRC polynomial.
-                                                                 0x0= use polynomial gCRC6.
-                                                                 0x1= use polynomial gCRC11.
-                                                                 0x2-0x3= Reserved.
+                                                                 0x0 = use polynomial gCRC6.
+                                                                 0x1 = use polynomial gCRC11.
+                                                                 0x2 - 0x3 = Reserved.
 
                                                                  The same CRC polynomial is used for both CBs when [NUM_CBS] = 0x2. */
         uint64_t num_fillers           : 3;  /**< [ 98: 96] The number of filler bits to be removed after decoding.
 
-                                                                 When [NUM_CBS] = 0x1, first [NUM_FILLERS] bits are removed.
+                                                                 When [NUM_CBS] = 0x1, the first [NUM_FILLERS] bits are removed.
 
-                                                                 When [NUM_CBS] = 0x2, first [NUM_FILLERS] bits of the first CB are removed. */
+                                                                 When [NUM_CBS] = 0x2, the first [NUM_FILLERS] bits of the first CB are removed. */
         uint64_t num_padding           : 3;  /**< [101: 99] Number of padding LLRs that are present in the received input stream.
                                                                  [NUM_PADDING] bits from the end of the input stream are ignored. */
         uint64_t output_data_order     : 3;  /**< [104:102] LSB bit:
-                                                                 0x0 = DATA_BIT_MSB_FIRST.
-                                                                 0x1 = DATA_BIT_LSB_FIRST.
+                                                                 0 = DATA_BIT_MSB_FIRST.
+                                                                 1 = DATA_BIT_LSB_FIRST.
 
                                                                  Two MSB bits:
                                                                  0x0 = DATA_BYTE_ORDER_MODE_0.
                                                                  0x1 = DATA_BYTE_ORDER_MODE_1.
                                                                  0x2 = DATA_BYTE_ORDER_MODE_2. */
         uint64_t enable_reenc          : 1;  /**< [105:105] Enable re-encoding:
-                                                                 0x0 = re-encoding is bypassed.
-                                                                 0x1 = re-encoding is enabled. */
+                                                                 0 = re-encoding is bypassed.
+                                                                 1 = re-encoding is enabled. */
         uint64_t reenc_data_order      : 3;  /**< [108:106] LSB bit:
-                                                                 0x0 = DATA_BIT_MSB_FIRST.
-                                                                 0x1 = DATA_BIT_LSB_FIRST.
+                                                                 0 = DATA_BIT_MSB_FIRST.
+                                                                 1 = DATA_BIT_LSB_FIRST.
 
                                                                  Two MSB bits:
                                                                  0x0 = DATA_BYTE_ORDER_MODE_0.
@@ -1358,19 +1358,19 @@ union cavm_pdec_task_cfg_s
                                                                  in little endian format, with zero padding in the upper bits in each
                                                                  byte. Can only be used when [MOD_ORDER] \< 0xA.
 
-                                                                 _ 0x2 = Two-byte interleaved mode. Every 0xA bits are mapped to a
+                                                                 _ 0x2 = Two-byte interleaved mode. Every 10 bits are mapped to a
                                                                  two-byte symbol, with even bits mapped to the first byte, and odd bits
                                                                  mapped to the second byte, with zero padding in the upper three bits of each
                                                                  byte. Can only be used when [MOD_ORDER] = 0xA.
 
-                                                                 _ 0x3 = Two-byte consecutive mode. Every 0xA bits are mapped to a
+                                                                 _ 0x3 = Two-byte consecutive mode. Every 10 bits are mapped to a
                                                                  two-byte symbol, with the first five bits mapped to the first byte, and the second five bits
                                                                  mapped to the second byte, with zero padding in the upper three bits of each
                                                                  byte. Can only be used when [MOD_ORDER] = 0xA. */
         uint64_t nfpc                  : 5;  /**< [115:111] Number of frozen bits decoded as info bits for FPC-based metric. */
         uint64_t reenc_qm_with_crc     : 1;  /**< [116:116] Output CRC within re-encoded data.
-                                                                 0x0 = No CRC addition.
-                                                                 0x1 = Add 1-bit CB CRC result to each set of [MOD_ORDER] bits of re-encoded output.
+                                                                 0 = No CRC addition.
+                                                                 1 = Add 1-bit CB CRC result to each set of [MOD_ORDER] bits of re-encoded output.
 
                                                                  This feature can be enabled only when [SYMB_ALIGNED] = 0x0. */
         uint64_t crc_trials            : 6;  /**< [122:117] Number of codeword candidates that are tested by the CRC checker to select the output codeword.
@@ -1397,18 +1397,18 @@ union cavm_pdec_task_cfg_s
         uint64_t preproc_p0_csi2_len0  : 19; /**< [215:197] Size of burst 0, CSI2 part0. Must be in the range [0x0, 0x671FF]. */
         uint64_t reserved_194_196      : 3;
         uint64_t preproc_enable        : 1;  /**< [193:193] LLR pre-processing enable.
-                                                                 0x0 = disable pre-processor.
-                                                                 0x1 = enable pre-processor. */
+                                                                 0 = disable pre-processor.
+                                                                 1 = enable pre-processor. */
         uint64_t preproc_mode          : 1;  /**< [192:192] LLR pre-processing block mode.
-                                                                 0x0 = Keep CSI2 LLRs.
-                                                                 0x1 = Keep data LLRs. */
+                                                                 0 = Keep CSI2 LLRs.
+                                                                 1 = Keep data LLRs. */
 #else /* Word 3 - Little Endian */
         uint64_t preproc_mode          : 1;  /**< [192:192] LLR pre-processing block mode.
-                                                                 0x0 = Keep CSI2 LLRs.
-                                                                 0x1 = Keep data LLRs. */
+                                                                 0 = Keep CSI2 LLRs.
+                                                                 1 = Keep data LLRs. */
         uint64_t preproc_enable        : 1;  /**< [193:193] LLR pre-processing enable.
-                                                                 0x0 = disable pre-processor.
-                                                                 0x1 = enable pre-processor. */
+                                                                 0 = disable pre-processor.
+                                                                 1 = enable pre-processor. */
         uint64_t reserved_194_196      : 3;
         uint64_t preproc_p0_csi2_len0  : 19; /**< [215:197] Size of burst 0, CSI2 part0. Must be in the range [0x0, 0x671FF]. */
         uint64_t preproc_p0_csi2_len1  : 19; /**< [234:216] Size of burst 1, CSI2 part0. Must be in the range [0x0, 0x671FF]. */
@@ -1465,30 +1465,30 @@ union cavm_pdec_task_cfg_s
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 7 - Big Endian */
         uint64_t preproc_num_rd_dma_words_p1 : 32;/**< [511:480] Number of read DMA words for part 1. Must satisfy the constraint:
 
-                                                                 _ [PREPROC_NUM_RD_DMA_WORDS_P0] + [PREPROC_NUM_RD_DMA_WORDS_P1] = [NUM_RD0_DMA_WORDS]
+                                                                 _ [PREPROC_NUM_RD_DMA_WORDS_P0] + [PREPROC_NUM_RD_DMA_WORDS_P1] = [NUM_RD_DMA_WORDS]
 
                                                                  Must be in the range [0x0, 0x2998]. */
         uint64_t preproc_num_rd_dma_words_p0 : 32;/**< [479:448] Number of read DMA words for part 0. Must satisfy the constraint:
 
-                                                                 _ [PREPROC_NUM_RD_DMA_WORDS_P0] + [PREPROC_NUM_RD_DMA_WORDS_P1] = [NUM_RD0_DMA_WORDS]
+                                                                 _ [PREPROC_NUM_RD_DMA_WORDS_P0] + [PREPROC_NUM_RD_DMA_WORDS_P1] = [NUM_RD_DMA_WORDS]
 
                                                                  Must be in the range [0x0, 0x2998]. */
 #else /* Word 7 - Little Endian */
         uint64_t preproc_num_rd_dma_words_p0 : 32;/**< [479:448] Number of read DMA words for part 0. Must satisfy the constraint:
 
-                                                                 _ [PREPROC_NUM_RD_DMA_WORDS_P0] + [PREPROC_NUM_RD_DMA_WORDS_P1] = [NUM_RD0_DMA_WORDS]
+                                                                 _ [PREPROC_NUM_RD_DMA_WORDS_P0] + [PREPROC_NUM_RD_DMA_WORDS_P1] = [NUM_RD_DMA_WORDS]
 
                                                                  Must be in the range [0x0, 0x2998]. */
         uint64_t preproc_num_rd_dma_words_p1 : 32;/**< [511:480] Number of read DMA words for part 1. Must satisfy the constraint:
 
-                                                                 _ [PREPROC_NUM_RD_DMA_WORDS_P0] + [PREPROC_NUM_RD_DMA_WORDS_P1] = [NUM_RD0_DMA_WORDS]
+                                                                 _ [PREPROC_NUM_RD_DMA_WORDS_P0] + [PREPROC_NUM_RD_DMA_WORDS_P1] = [NUM_RD_DMA_WORDS]
 
                                                                  Must be in the range [0x0, 0x2998]. */
 #endif /* Word 7 - End */
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 8 - Big Endian */
         uint64_t num_wr1_dma_words     : 16; /**< [575:560] Number of 64-bit words written to Port 1 output DMA.
                                                                  Port 1 is used only when re-encoding is enabled. I.e., [NUM_WR1_DMA_WORDS] must
-                                                                 be 0x0 when [ENABLE_REENC] = 0x0. */
+                                                                 be 0x0 when [ENABLE_REENC] = 0. */
         uint64_t num_wr0_dma_words     : 16; /**< [559:544] Number of 64-bit words written to Port 0 output DMA. */
         uint64_t num_rd_dma_words      : 32; /**< [543:512] Number of 128-bit words read from Port 0 input DMA. */
 #else /* Word 8 - Little Endian */
@@ -1496,7 +1496,7 @@ union cavm_pdec_task_cfg_s
         uint64_t num_wr0_dma_words     : 16; /**< [559:544] Number of 64-bit words written to Port 0 output DMA. */
         uint64_t num_wr1_dma_words     : 16; /**< [575:560] Number of 64-bit words written to Port 1 output DMA.
                                                                  Port 1 is used only when re-encoding is enabled. I.e., [NUM_WR1_DMA_WORDS] must
-                                                                 be 0x0 when [ENABLE_REENC] = 0x0. */
+                                                                 be 0x0 when [ENABLE_REENC] = 0. */
 #endif /* Word 8 - End */
     } s;
     /* struct cavm_pdec_task_cfg_s_s cn; */
@@ -1772,9 +1772,9 @@ union cavm_pdecx_hab_jcfg0_ramx_data
     struct cavm_pdecx_hab_jcfg0_ramx_data_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t entry                 : 64; /**< [ 63:  0](R/W) JCFG0 RAM CSRs */
+        uint64_t entry                 : 64; /**< [ 63:  0](R/W/H) JCFG0 RAM CSRs */
 #else /* Word 0 - Little Endian */
-        uint64_t entry                 : 64; /**< [ 63:  0](R/W) JCFG0 RAM CSRs */
+        uint64_t entry                 : 64; /**< [ 63:  0](R/W/H) JCFG0 RAM CSRs */
 #endif /* Word 0 - End */
     } s;
     /* struct cavm_pdecx_hab_jcfg0_ramx_data_s cn; */
@@ -1807,9 +1807,9 @@ union cavm_pdecx_hab_jcfg1_ramx_data
     struct cavm_pdecx_hab_jcfg1_ramx_data_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t entry                 : 64; /**< [ 63:  0](R/W) JCFG1 RAM CSRs */
+        uint64_t entry                 : 64; /**< [ 63:  0](R/W/H) JCFG1 RAM CSRs */
 #else /* Word 0 - Little Endian */
-        uint64_t entry                 : 64; /**< [ 63:  0](R/W) JCFG1 RAM CSRs */
+        uint64_t entry                 : 64; /**< [ 63:  0](R/W/H) JCFG1 RAM CSRs */
 #endif /* Word 0 - End */
     } s;
     /* struct cavm_pdecx_hab_jcfg1_ramx_data_s cn; */
@@ -1842,9 +1842,9 @@ union cavm_pdecx_hab_jcfg2_ramx_data
     struct cavm_pdecx_hab_jcfg2_ramx_data_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t entry                 : 64; /**< [ 63:  0](R/W) JCFG2 RAM CSRs */
+        uint64_t entry                 : 64; /**< [ 63:  0](R/W/H) JCFG2 RAM CSRs */
 #else /* Word 0 - Little Endian */
-        uint64_t entry                 : 64; /**< [ 63:  0](R/W) JCFG2 RAM CSRs */
+        uint64_t entry                 : 64; /**< [ 63:  0](R/W/H) JCFG2 RAM CSRs */
 #endif /* Word 0 - End */
     } s;
     /* struct cavm_pdecx_hab_jcfg2_ramx_data_s cn; */
@@ -1948,7 +1948,7 @@ static inline uint64_t CAVM_PDECX_STATUS(unsigned long a)
 /**
  * Register (RSL) pdec#_tc_config_err_flags_reg
  *
- * PDEC Task Confiuration Error Flags Register
+ * PDEC Task Configuration Error Flags Register
  * This register reports task configuration errors that occur when a
  * specified parameter value is outside the acceptable range.
  */
@@ -1959,53 +1959,53 @@ union cavm_pdecx_tc_config_err_flags_reg
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_23_63        : 41;
-        uint64_t error22               : 1;  /**< [ 22: 22](R/W) Output is empty since PDEC_TASK_CFG_S[K_SIZE] - CRC_LENGTH - PDEC_TASK_CFG_S[NUM_FILLERS] = 0. */
-        uint64_t error21               : 1;  /**< [ 21: 21](R/W) Invalid range for PDEC_TASK_CFG_S[CRC_TRIALS]. */
-        uint64_t error20               : 1;  /**< [ 20: 20](R/W) Invalid range for PDEC_TASK_CFG_S[REENC_QM_WITH_CRC]. */
-        uint64_t error19               : 1;  /**< [ 19: 19](R/W) Invalid range for PDEC_TASK_CFG_S[NFPC]. */
-        uint64_t error18               : 1;  /**< [ 18: 18](R/W) Invalid range for PDEC_TASK_CFG_S[SYMB_ALIGNED]. */
-        uint64_t error17               : 1;  /**< [ 17: 17](R/W) Invalid range for PDEC_TASK_CFG_S[REENC_DATA_ORDER]. */
-        uint64_t error16               : 1;  /**< [ 16: 16](R/W) Invalid range for PDEC_TASK_CFG_S[ENABLE_REENC]. */
-        uint64_t error15               : 1;  /**< [ 15: 15](R/W) Invalid range for PDEC_TASK_CFG_S[OUTPUT_DATA_ORDER]. */
-        uint64_t error14               : 1;  /**< [ 14: 14](R/W) Invalid range for PDEC_TASK_CFG_S[BYPASS_INTLV]. */
-        uint64_t error13               : 1;  /**< [ 13: 13](R/W) Invalid range for PDEC_TASK_CFG_S[BYPASS_RM]. */
-        uint64_t error12               : 1;  /**< [ 12: 12](R/W) Invalid range for PDEC_TASK_CFG_S[NPC_WM]. */
-        uint64_t error11               : 1;  /**< [ 11: 11](R/W) Invalid range for PDEC_TASK_CFG_S[NPC]. */
-        uint64_t error10               : 1;  /**< [ 10: 10](R/W) Invalid range for PDEC_TASK_CFG_S[NUM_PADDING]. */
-        uint64_t error9                : 1;  /**< [  9:  9](R/W) Invalid range for PDEC_TASK_CFG_S[NUM_FILLERS]. */
-        uint64_t error8                : 1;  /**< [  8:  8](R/W) Invalid range for PDEC_TASK_CFG_S[CRC_SELECT]. */
-        uint64_t error7                : 1;  /**< [  7:  7](R/W) Invalid range for PDEC_TASK_CFG_S[E_SIZE]. */
-        uint64_t error6                : 1;  /**< [  6:  6](R/W) Invalid range for PDEC_TASK_CFG_S[K_SIZE]. */
-        uint64_t error5                : 1;  /**< [  5:  5](R/W) Invalid range for PDEC_TASK_CFG_S[NUM_CBS]. */
-        uint64_t error4                : 1;  /**< [  4:  4](R/W) Invalid range for PDEC_TASK_CFG_S[LLR_CONV_LVL]. */
-        uint64_t error3                : 1;  /**< [  3:  3](R/W) Invalid range for PDEC_TASK_CFG_S[LLR_SIGN_FORMAT]. */
-        uint64_t error2                : 1;  /**< [  2:  2](R/W) Invalid range for PDEC_TASK_CFG_S[MOD_ORDER]. */
-        uint64_t error1                : 1;  /**< [  1:  1](R/W) Invalid range for PDEC_TASK_CFG_S[LIST_SIZE]. */
+        uint64_t error_output_size     : 1;  /**< [ 22: 22](RO/H) Output is empty since PDEC_TASK_CFG_S[K_SIZE] - CRC_LENGTH - PDEC_TASK_CFG_S[NUM_FILLERS] = 0. */
+        uint64_t invalid_crc_trials    : 1;  /**< [ 21: 21](RO/H) Invalid PDEC_TASK_CFG_S[CRC_TRIALS] value. */
+        uint64_t invalid_reenc_qm_with_crc : 1;/**< [ 20: 20](RO/H) Invalid PDEC_TASK_CFG_S[REENC_QM_WITH_CRC] value. */
+        uint64_t invalid_nfpc          : 1;  /**< [ 19: 19](RO/H) Invalid PDEC_TASK_CFG_S[NFPC] value. */
+        uint64_t invalid_symb_aligned  : 1;  /**< [ 18: 18](RO/H) Invalid PDEC_TASK_CFG_S[SYMB_ALIGNED] value. */
+        uint64_t invalid_reenc_data_order : 1;/**< [ 17: 17](RO/H) Invalid PDEC_TASK_CFG_S[REENC_DATA_ORDER] value. */
+        uint64_t invalid_enable_reenc  : 1;  /**< [ 16: 16](RO/H) Invalid PDEC_TASK_CFG_S[ENABLE_REENC] value. */
+        uint64_t invalid_output_data_order : 1;/**< [ 15: 15](RO/H) Invalid PDEC_TASK_CFG_S[OUTPUT_DATA_ORDER] value. */
+        uint64_t invalid_bypass_intlv  : 1;  /**< [ 14: 14](RO/H) Invalid PDEC_TASK_CFG_S[BYPASS_INTLV] value. */
+        uint64_t invalid_bypass_rm     : 1;  /**< [ 13: 13](RO/H) Invalid PDEC_TASK_CFG_S[BYPASS_RM] value. */
+        uint64_t invalid_npc_wm        : 1;  /**< [ 12: 12](RO/H) Invalid PDEC_TASK_CFG_S[NPC_WM] value. */
+        uint64_t invalid_npc           : 1;  /**< [ 11: 11](RO/H) Invalid PDEC_TASK_CFG_S[NPC] value. */
+        uint64_t invalid_num_padding   : 1;  /**< [ 10: 10](RO/H) Invalid PDEC_TASK_CFG_S[NUM_PADDING] value. */
+        uint64_t invalid_num_fillers   : 1;  /**< [  9:  9](RO/H) Invalid PDEC_TASK_CFG_S[NUM_FILLERS] value. */
+        uint64_t invalid_crc_select    : 1;  /**< [  8:  8](RO/H) Invalid PDEC_TASK_CFG_S[CRC_SELECT] value. */
+        uint64_t invalid_e_size        : 1;  /**< [  7:  7](RO/H) Invalid PDEC_TASK_CFG_S[E_SIZE] value. */
+        uint64_t invalid_k_size        : 1;  /**< [  6:  6](RO/H) Invalid PDEC_TASK_CFG_S[K_SIZE] value. */
+        uint64_t invalid_num_cbs       : 1;  /**< [  5:  5](RO/H) Invalid PDEC_TASK_CFG_S[NUM_CBS] value. */
+        uint64_t invalid_llr_conv_lvl  : 1;  /**< [  4:  4](RO/H) Invalid PDEC_TASK_CFG_S[LLR_CONV_LVL] value. */
+        uint64_t invalid_llr_sign_format : 1;/**< [  3:  3](RO/H) Invalid PDEC_TASK_CFG_S[LLR_SIGN_FORMAT] value. */
+        uint64_t invalid_mod_order     : 1;  /**< [  2:  2](RO/H) Invalid PDEC_TASK_CFG_S[MOD_ORDER] value. */
+        uint64_t invalid_list_size     : 1;  /**< [  1:  1](RO/H) Invalid PDEC_TASK_CFG_S[LIST_SIZE] value. */
         uint64_t reserved_0            : 1;
 #else /* Word 0 - Little Endian */
         uint64_t reserved_0            : 1;
-        uint64_t error1                : 1;  /**< [  1:  1](R/W) Invalid range for PDEC_TASK_CFG_S[LIST_SIZE]. */
-        uint64_t error2                : 1;  /**< [  2:  2](R/W) Invalid range for PDEC_TASK_CFG_S[MOD_ORDER]. */
-        uint64_t error3                : 1;  /**< [  3:  3](R/W) Invalid range for PDEC_TASK_CFG_S[LLR_SIGN_FORMAT]. */
-        uint64_t error4                : 1;  /**< [  4:  4](R/W) Invalid range for PDEC_TASK_CFG_S[LLR_CONV_LVL]. */
-        uint64_t error5                : 1;  /**< [  5:  5](R/W) Invalid range for PDEC_TASK_CFG_S[NUM_CBS]. */
-        uint64_t error6                : 1;  /**< [  6:  6](R/W) Invalid range for PDEC_TASK_CFG_S[K_SIZE]. */
-        uint64_t error7                : 1;  /**< [  7:  7](R/W) Invalid range for PDEC_TASK_CFG_S[E_SIZE]. */
-        uint64_t error8                : 1;  /**< [  8:  8](R/W) Invalid range for PDEC_TASK_CFG_S[CRC_SELECT]. */
-        uint64_t error9                : 1;  /**< [  9:  9](R/W) Invalid range for PDEC_TASK_CFG_S[NUM_FILLERS]. */
-        uint64_t error10               : 1;  /**< [ 10: 10](R/W) Invalid range for PDEC_TASK_CFG_S[NUM_PADDING]. */
-        uint64_t error11               : 1;  /**< [ 11: 11](R/W) Invalid range for PDEC_TASK_CFG_S[NPC]. */
-        uint64_t error12               : 1;  /**< [ 12: 12](R/W) Invalid range for PDEC_TASK_CFG_S[NPC_WM]. */
-        uint64_t error13               : 1;  /**< [ 13: 13](R/W) Invalid range for PDEC_TASK_CFG_S[BYPASS_RM]. */
-        uint64_t error14               : 1;  /**< [ 14: 14](R/W) Invalid range for PDEC_TASK_CFG_S[BYPASS_INTLV]. */
-        uint64_t error15               : 1;  /**< [ 15: 15](R/W) Invalid range for PDEC_TASK_CFG_S[OUTPUT_DATA_ORDER]. */
-        uint64_t error16               : 1;  /**< [ 16: 16](R/W) Invalid range for PDEC_TASK_CFG_S[ENABLE_REENC]. */
-        uint64_t error17               : 1;  /**< [ 17: 17](R/W) Invalid range for PDEC_TASK_CFG_S[REENC_DATA_ORDER]. */
-        uint64_t error18               : 1;  /**< [ 18: 18](R/W) Invalid range for PDEC_TASK_CFG_S[SYMB_ALIGNED]. */
-        uint64_t error19               : 1;  /**< [ 19: 19](R/W) Invalid range for PDEC_TASK_CFG_S[NFPC]. */
-        uint64_t error20               : 1;  /**< [ 20: 20](R/W) Invalid range for PDEC_TASK_CFG_S[REENC_QM_WITH_CRC]. */
-        uint64_t error21               : 1;  /**< [ 21: 21](R/W) Invalid range for PDEC_TASK_CFG_S[CRC_TRIALS]. */
-        uint64_t error22               : 1;  /**< [ 22: 22](R/W) Output is empty since PDEC_TASK_CFG_S[K_SIZE] - CRC_LENGTH - PDEC_TASK_CFG_S[NUM_FILLERS] = 0. */
+        uint64_t invalid_list_size     : 1;  /**< [  1:  1](RO/H) Invalid PDEC_TASK_CFG_S[LIST_SIZE] value. */
+        uint64_t invalid_mod_order     : 1;  /**< [  2:  2](RO/H) Invalid PDEC_TASK_CFG_S[MOD_ORDER] value. */
+        uint64_t invalid_llr_sign_format : 1;/**< [  3:  3](RO/H) Invalid PDEC_TASK_CFG_S[LLR_SIGN_FORMAT] value. */
+        uint64_t invalid_llr_conv_lvl  : 1;  /**< [  4:  4](RO/H) Invalid PDEC_TASK_CFG_S[LLR_CONV_LVL] value. */
+        uint64_t invalid_num_cbs       : 1;  /**< [  5:  5](RO/H) Invalid PDEC_TASK_CFG_S[NUM_CBS] value. */
+        uint64_t invalid_k_size        : 1;  /**< [  6:  6](RO/H) Invalid PDEC_TASK_CFG_S[K_SIZE] value. */
+        uint64_t invalid_e_size        : 1;  /**< [  7:  7](RO/H) Invalid PDEC_TASK_CFG_S[E_SIZE] value. */
+        uint64_t invalid_crc_select    : 1;  /**< [  8:  8](RO/H) Invalid PDEC_TASK_CFG_S[CRC_SELECT] value. */
+        uint64_t invalid_num_fillers   : 1;  /**< [  9:  9](RO/H) Invalid PDEC_TASK_CFG_S[NUM_FILLERS] value. */
+        uint64_t invalid_num_padding   : 1;  /**< [ 10: 10](RO/H) Invalid PDEC_TASK_CFG_S[NUM_PADDING] value. */
+        uint64_t invalid_npc           : 1;  /**< [ 11: 11](RO/H) Invalid PDEC_TASK_CFG_S[NPC] value. */
+        uint64_t invalid_npc_wm        : 1;  /**< [ 12: 12](RO/H) Invalid PDEC_TASK_CFG_S[NPC_WM] value. */
+        uint64_t invalid_bypass_rm     : 1;  /**< [ 13: 13](RO/H) Invalid PDEC_TASK_CFG_S[BYPASS_RM] value. */
+        uint64_t invalid_bypass_intlv  : 1;  /**< [ 14: 14](RO/H) Invalid PDEC_TASK_CFG_S[BYPASS_INTLV] value. */
+        uint64_t invalid_output_data_order : 1;/**< [ 15: 15](RO/H) Invalid PDEC_TASK_CFG_S[OUTPUT_DATA_ORDER] value. */
+        uint64_t invalid_enable_reenc  : 1;  /**< [ 16: 16](RO/H) Invalid PDEC_TASK_CFG_S[ENABLE_REENC] value. */
+        uint64_t invalid_reenc_data_order : 1;/**< [ 17: 17](RO/H) Invalid PDEC_TASK_CFG_S[REENC_DATA_ORDER] value. */
+        uint64_t invalid_symb_aligned  : 1;  /**< [ 18: 18](RO/H) Invalid PDEC_TASK_CFG_S[SYMB_ALIGNED] value. */
+        uint64_t invalid_nfpc          : 1;  /**< [ 19: 19](RO/H) Invalid PDEC_TASK_CFG_S[NFPC] value. */
+        uint64_t invalid_reenc_qm_with_crc : 1;/**< [ 20: 20](RO/H) Invalid PDEC_TASK_CFG_S[REENC_QM_WITH_CRC] value. */
+        uint64_t invalid_crc_trials    : 1;  /**< [ 21: 21](RO/H) Invalid PDEC_TASK_CFG_S[CRC_TRIALS] value. */
+        uint64_t error_output_size     : 1;  /**< [ 22: 22](RO/H) Output is empty since PDEC_TASK_CFG_S[K_SIZE] - CRC_LENGTH - PDEC_TASK_CFG_S[NUM_FILLERS] = 0. */
         uint64_t reserved_23_63        : 41;
 #endif /* Word 0 - End */
     } s;
@@ -2040,9 +2040,9 @@ union cavm_pdecx_tc_config_regx
     struct cavm_pdecx_tc_config_regx_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t entry                 : 64; /**< [ 63:  0](R/W) Config bits. */
+        uint64_t entry                 : 64; /**< [ 63:  0](R/W/H) Config bits. */
 #else /* Word 0 - Little Endian */
-        uint64_t entry                 : 64; /**< [ 63:  0](R/W) Config bits. */
+        uint64_t entry                 : 64; /**< [ 63:  0](R/W/H) Config bits. */
 #endif /* Word 0 - End */
     } s;
     /* struct cavm_pdecx_tc_config_regx_s cn; */
@@ -2077,9 +2077,9 @@ union cavm_pdecx_tc_control_reg
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_5_63         : 59;
         uint64_t single_task_chnl_en   : 1;  /**< [  4:  4](R/W) When set to 1, the core will wait until idle before accepting
-                                                                 a new task in case of changing channel_mode. */
+                                                                 a new task in case of changing channel_mode. (degrades the throughput). */
         uint64_t single_task_phy_en    : 1;  /**< [  3:  3](R/W) When set to 1, the core will wait until idle before accepting
-                                                                 a new task (degrades the throughput) with a different PHY_MODE. */
+                                                                 a new task with a different PHY_MODE (degrades the throughput). */
         uint64_t single_task_en        : 1;  /**< [  2:  2](R/W) When set to 1, the core will always wait until idle before
                                                                  starting the next task (degrades the throughput). */
         uint64_t cfg_chk_dis           : 1;  /**< [  1:  1](R/W) When set to 1, disables config checks. Tasks with
@@ -2092,9 +2092,9 @@ union cavm_pdecx_tc_control_reg
         uint64_t single_task_en        : 1;  /**< [  2:  2](R/W) When set to 1, the core will always wait until idle before
                                                                  starting the next task (degrades the throughput). */
         uint64_t single_task_phy_en    : 1;  /**< [  3:  3](R/W) When set to 1, the core will wait until idle before accepting
-                                                                 a new task (degrades the throughput) with a different PHY_MODE. */
+                                                                 a new task with a different PHY_MODE (degrades the throughput). */
         uint64_t single_task_chnl_en   : 1;  /**< [  4:  4](R/W) When set to 1, the core will wait until idle before accepting
-                                                                 a new task in case of changing channel_mode. */
+                                                                 a new task in case of changing channel_mode. (degrades the throughput). */
         uint64_t reserved_5_63         : 59;
 #endif /* Word 0 - End */
     } s;
@@ -2104,9 +2104,9 @@ union cavm_pdecx_tc_control_reg
         uint64_t reserved_32_63        : 32;
         uint64_t reserved_5_31         : 27;
         uint64_t single_task_chnl_en   : 1;  /**< [  4:  4](R/W) When set to 1, the core will wait until idle before accepting
-                                                                 a new task in case of changing channel_mode. */
+                                                                 a new task in case of changing channel_mode. (degrades the throughput). */
         uint64_t single_task_phy_en    : 1;  /**< [  3:  3](R/W) When set to 1, the core will wait until idle before accepting
-                                                                 a new task (degrades the throughput) with a different PHY_MODE. */
+                                                                 a new task with a different PHY_MODE (degrades the throughput). */
         uint64_t single_task_en        : 1;  /**< [  2:  2](R/W) When set to 1, the core will always wait until idle before
                                                                  starting the next task (degrades the throughput). */
         uint64_t cfg_chk_dis           : 1;  /**< [  1:  1](R/W) When set to 1, disables config checks. Tasks with
@@ -2119,9 +2119,9 @@ union cavm_pdecx_tc_control_reg
         uint64_t single_task_en        : 1;  /**< [  2:  2](R/W) When set to 1, the core will always wait until idle before
                                                                  starting the next task (degrades the throughput). */
         uint64_t single_task_phy_en    : 1;  /**< [  3:  3](R/W) When set to 1, the core will wait until idle before accepting
-                                                                 a new task (degrades the throughput) with a different PHY_MODE. */
+                                                                 a new task with a different PHY_MODE (degrades the throughput). */
         uint64_t single_task_chnl_en   : 1;  /**< [  4:  4](R/W) When set to 1, the core will wait until idle before accepting
-                                                                 a new task in case of changing channel_mode. */
+                                                                 a new task in case of changing channel_mode. (degrades the throughput). */
         uint64_t reserved_5_31         : 27;
         uint64_t reserved_32_63        : 32;
 #endif /* Word 0 - End */
@@ -2149,7 +2149,7 @@ static inline uint64_t CAVM_PDECX_TC_CONTROL_REG(unsigned long a)
  * PDEC Decoder Core Error Mask Register
  * This register enables internal decoder errors. Errors reported in
  * PDEC()_TC_ERROR_REG will generate an error signal only when the
- * corresponding bit is set in PDEC()_TC_ERROR_REG[ERR_MASK].
+ * corresponding bit is set in PDEC()_TC_ERROR_MASK_REG[ERR_MASK].
  */
 union cavm_pdecx_tc_error_mask_reg
 {
@@ -2187,7 +2187,7 @@ static inline uint64_t CAVM_PDECX_TC_ERROR_MASK_REG(unsigned long a)
  *
  * PDEC Decoder Error Register
  * This register reports various error conditions.
- * Errors are cleared by writing the specific error bits to zero.
+ *
  * All errors reported in this register are reported as FATAL errors, and the
  * MHBW registers can be inspected to determine the job tag(s) associated with
  * the error(s).
@@ -2199,19 +2199,19 @@ union cavm_pdecx_tc_error_reg
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_9_63         : 55;
-        uint64_t inv_cfg               : 1;  /**< [  8:  8](R/W) Invalid task configuration. Task aborted. */
-        uint64_t reg_mask_err          : 4;  /**< [  7:  4](R/W) Reserved. */
-        uint64_t ign_read              : 1;  /**< [  3:  3](R/W) Ignored read access error -- one already in progress. */
-        uint64_t inv_read              : 1;  /**< [  2:  2](R/W) Invalid read access error (out of range address). */
-        uint64_t inv_write             : 1;  /**< [  1:  1](R/W) Invalid write access error (out of range address). */
-        uint64_t inv_start             : 1;  /**< [  0:  0](R/W) Invalid start task error (core is busy processing a task). */
+        uint64_t inv_cfg               : 1;  /**< [  8:  8](R/W1C/H) Invalid task configuration. Task aborted. */
+        uint64_t reg_mask_err          : 4;  /**< [  7:  4](R/W1C/H) Reserved. */
+        uint64_t ign_read              : 1;  /**< [  3:  3](R/W1C/H) Ignored read access error -- one already in progress. */
+        uint64_t inv_read              : 1;  /**< [  2:  2](R/W1C/H) Invalid read access error (out of range address). */
+        uint64_t inv_write             : 1;  /**< [  1:  1](R/W1C/H) Invalid write access error (out of range address). */
+        uint64_t inv_start             : 1;  /**< [  0:  0](R/W1C/H) Invalid start task error (core is busy processing a task). */
 #else /* Word 0 - Little Endian */
-        uint64_t inv_start             : 1;  /**< [  0:  0](R/W) Invalid start task error (core is busy processing a task). */
-        uint64_t inv_write             : 1;  /**< [  1:  1](R/W) Invalid write access error (out of range address). */
-        uint64_t inv_read              : 1;  /**< [  2:  2](R/W) Invalid read access error (out of range address). */
-        uint64_t ign_read              : 1;  /**< [  3:  3](R/W) Ignored read access error -- one already in progress. */
-        uint64_t reg_mask_err          : 4;  /**< [  7:  4](R/W) Reserved. */
-        uint64_t inv_cfg               : 1;  /**< [  8:  8](R/W) Invalid task configuration. Task aborted. */
+        uint64_t inv_start             : 1;  /**< [  0:  0](R/W1C/H) Invalid start task error (core is busy processing a task). */
+        uint64_t inv_write             : 1;  /**< [  1:  1](R/W1C/H) Invalid write access error (out of range address). */
+        uint64_t inv_read              : 1;  /**< [  2:  2](R/W1C/H) Invalid read access error (out of range address). */
+        uint64_t ign_read              : 1;  /**< [  3:  3](R/W1C/H) Ignored read access error -- one already in progress. */
+        uint64_t reg_mask_err          : 4;  /**< [  7:  4](R/W1C/H) Reserved. */
+        uint64_t inv_cfg               : 1;  /**< [  8:  8](R/W1C/H) Invalid task configuration. Task aborted. */
         uint64_t reserved_9_63         : 55;
 #endif /* Word 0 - End */
     } s;
@@ -2246,9 +2246,9 @@ union cavm_pdecx_tc_main_reset_reg
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_1_63         : 63;
-        uint64_t soft_reset            : 1;  /**< [  0:  0](R/W) Reset bit. */
+        uint64_t soft_reset            : 1;  /**< [  0:  0](R/W/H) Any write to this register will reset the internal decoder core. */
 #else /* Word 0 - Little Endian */
-        uint64_t soft_reset            : 1;  /**< [  0:  0](R/W) Reset bit. */
+        uint64_t soft_reset            : 1;  /**< [  0:  0](R/W/H) Any write to this register will reset the internal decoder core. */
         uint64_t reserved_1_63         : 63;
 #endif /* Word 0 - End */
     } s;
@@ -2284,9 +2284,9 @@ union cavm_pdecx_tc_main_start_reg
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_1_63         : 63;
-        uint64_t start                 : 1;  /**< [  0:  0](R/W) Start bit. */
+        uint64_t start                 : 1;  /**< [  0:  0](R/W/H) Start bit. */
 #else /* Word 0 - Little Endian */
-        uint64_t start                 : 1;  /**< [  0:  0](R/W) Start bit. */
+        uint64_t start                 : 1;  /**< [  0:  0](R/W/H) Start bit. */
         uint64_t reserved_1_63         : 63;
 #endif /* Word 0 - End */
     } s;
@@ -2321,14 +2321,14 @@ union cavm_pdecx_tc_mon_regx
     struct cavm_pdecx_tc_mon_regx_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t bus_val               : 64; /**< [ 63:  0](RO) tc1870 task output monitoring values.
+        uint64_t bus_val               : 64; /**< [ 63:  0](RO/H) Decoder core task output monitoring values.
                                                                  Note that PDEC only has Q and R outputs. mon_reg2|3_bus are placeholders.
                                                                  mon_reg0_bus = Identifier associated to the Q output interface. Valid when q_avl is HIGH.
                                                                  mon_reg1_bus = Identifier associated to the R output interface. Valid when r_avl is HIGH.
                                                                  mon_reg2_bus = Identifier associated to the S output interface. Valid when s_avl is HIGH.
                                                                  mon_reg3_bus = Identifier associated to the H output interface. Valid when h_avl is HIGH. */
 #else /* Word 0 - Little Endian */
-        uint64_t bus_val               : 64; /**< [ 63:  0](RO) tc1870 task output monitoring values.
+        uint64_t bus_val               : 64; /**< [ 63:  0](RO/H) Decoder core task output monitoring values.
                                                                  Note that PDEC only has Q and R outputs. mon_reg2|3_bus are placeholders.
                                                                  mon_reg0_bus = Identifier associated to the Q output interface. Valid when q_avl is HIGH.
                                                                  mon_reg1_bus = Identifier associated to the R output interface. Valid when r_avl is HIGH.
@@ -2366,13 +2366,13 @@ union cavm_pdecx_tc_status_reg
     struct cavm_pdecx_tc_status_reg_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t monitor_bus           : 32; /**< [ 63: 32](RO) core dependent */
+        uint64_t monitor_bus           : 32; /**< [ 63: 32](RO/H) core dependent */
         uint64_t reserved_1_31         : 31;
-        uint64_t idle                  : 1;  /**< [  0:  0](RO) Idle status bit. High means core is idle. */
+        uint64_t idle                  : 1;  /**< [  0:  0](RO/H) Idle status bit. High means core is idle. */
 #else /* Word 0 - Little Endian */
-        uint64_t idle                  : 1;  /**< [  0:  0](RO) Idle status bit. High means core is idle. */
+        uint64_t idle                  : 1;  /**< [  0:  0](RO/H) Idle status bit. High means core is idle. */
         uint64_t reserved_1_31         : 31;
-        uint64_t monitor_bus           : 32; /**< [ 63: 32](RO) core dependent */
+        uint64_t monitor_bus           : 32; /**< [ 63: 32](RO/H) core dependent */
 #endif /* Word 0 - End */
     } s;
     /* struct cavm_pdecx_tc_status_reg_s cn; */

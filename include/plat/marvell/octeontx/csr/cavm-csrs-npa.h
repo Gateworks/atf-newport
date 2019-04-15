@@ -3163,7 +3163,7 @@ union cavm_npa_af_lfx_auras_cfg
         uint64_t reserved_61_63        : 3;
 #endif /* Word 0 - End */
     } s;
-    struct cavm_npa_af_lfx_auras_cfg_cn96xx
+    struct cavm_npa_af_lfx_auras_cfg_cn96xxp1_0
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_61_63        : 3;
@@ -3304,7 +3304,9 @@ union cavm_npa_af_lfx_auras_cfg
                                                                  [LOC_AURA_OFFSET]. */
         uint64_t reserved_61_63        : 3;
 #endif /* Word 0 - End */
-    } cn96xx;
+    } cn96xxp1_0;
+    /* struct cavm_npa_af_lfx_auras_cfg_s cn96xxp1_1; */
+    /* struct cavm_npa_af_lfx_auras_cfg_s cn96xxp3; */
     /* struct cavm_npa_af_lfx_auras_cfg_s cnf95xx; */
 };
 typedef union cavm_npa_af_lfx_auras_cfg cavm_npa_af_lfx_auras_cfg_t;

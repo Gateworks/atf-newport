@@ -7111,13 +7111,67 @@ union cavm_pemx_debug
     struct cavm_pemx_debug_cn9
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t ib_drop_why           : 32; /**< [ 63: 32](R/W1C/H) Reasons why inbound TLPs were dropped. */
+        uint64_t ib_drop_why           : 32; /**< [ 63: 32](R/W1C/H) Reasons why inbound TLPs were dropped.
+                                                                 \<32\> = No NCB. The TLP targets NCBI but there is no NCBI connected to PEM in this chip.
+                                                                 \<33\> = No EBUS. The TLP targets EBI but there is no EBI connected to PEM in this chip.
+                                                                 \<34\> = No PSPI. The TLP targets PSPI (ROM) but there is no PSPI connected to PEM in this chip.
+                                                                 \<35\> = Core Reset. The TLP was processed during core reset or core reset recovery process.
+                                                                 \<36\> = IB Drop. A CFG or IO completion was dropped as marked by outbound at time of NP request.
+                                                                 \<37\> = Illegal BAR. BAR miss or improper config to BAR0, BAR2 or BAR4.
+                                                                 \<38\> = Illegal EBAR.  The TLP targets EBAR (EROM) but was NOT a read (writes not supported).
+                                                                 \<39\> = Zero MemWr.  The TLP was a zero-length memory write operation which we do not support.
+                                                                 \<40\> = Illegal PCIe Type.  Inbound TLP is not supported (examples: CFG, IO, RDLOCK).
+                                                                 \<41\> = Unsupported AtomicOp.  The TLP was poisoned, to PSPI bus, or to EBI with atomic disabled.
+                                                                 \<42\> = Malformed AtomicOp.  Unsupported size/alignment restrictions.
+                                                                 \<43\> = Malformed AtomicOp EOT.  The AtomicOp did not indicate EOT on its first beat of data.
+                                                                 \<44\> = Mac Reset. The TLP was processed when the Mac was in reset.
+                                                                 \<45\> = SBRST.  The TLP was processed when the chip as RC initiates hot reset or link down event.
+                                                                 \<46\> = No BME.  The TLP functions PCIEEP_CMD[ME]/PCIEEPVF_CMD[ME] (Bus Master
+                                                                 Enable) set OR it was an AtomicOp and PCIERC_DEV_CTL2[ATOM_OP] (AtomicOp requster
+                                                                 enable) was not set.
+                                                                 \<47\> = In FLR.  The TLP's function (PF/VF) was in Function Level Reset.  Same as bit 54.
+                                                                 \<48\> = IN RASDP.  The TLP was processed when the Mac indiacated RAS Data Protection mode.
+                                                                 \<49\> = Framing.  The TLP was terminated due to incorrect framing (EOT on the expected beat).
+                                                                 \<50\> = Max TLP Size.  The TLP DW length exceeded 1kB.
+                                                                 \<51\> = DLLP Error.  The TLP was flagged by the MAC as having a Data Link Error (LCRC) error.
+                                                                 \<52\> = TLP Error.  The TLP was flagged by the MAC as being malformed on TRGT1
+                                                                 (ECRC or LUT failure).
+                                                                 \<53\> = ECRC Error.  The TLP was flagged by the MAC as having an ECRC error on the received TLP.
+                                                                 \<54\> = In FLR.  The TLP's function (PF/VF) was in Function Level Reset.  Same as bit 47.
+                                                                 \<63:55\> = Reserved. */
         uint64_t reserved_6_31         : 26;
         uint64_t intval                : 6;  /**< [  5:  0](RO/H) Status of INTX, PMEI, and AERI interrupts. */
 #else /* Word 0 - Little Endian */
         uint64_t intval                : 6;  /**< [  5:  0](RO/H) Status of INTX, PMEI, and AERI interrupts. */
         uint64_t reserved_6_31         : 26;
-        uint64_t ib_drop_why           : 32; /**< [ 63: 32](R/W1C/H) Reasons why inbound TLPs were dropped. */
+        uint64_t ib_drop_why           : 32; /**< [ 63: 32](R/W1C/H) Reasons why inbound TLPs were dropped.
+                                                                 \<32\> = No NCB. The TLP targets NCBI but there is no NCBI connected to PEM in this chip.
+                                                                 \<33\> = No EBUS. The TLP targets EBI but there is no EBI connected to PEM in this chip.
+                                                                 \<34\> = No PSPI. The TLP targets PSPI (ROM) but there is no PSPI connected to PEM in this chip.
+                                                                 \<35\> = Core Reset. The TLP was processed during core reset or core reset recovery process.
+                                                                 \<36\> = IB Drop. A CFG or IO completion was dropped as marked by outbound at time of NP request.
+                                                                 \<37\> = Illegal BAR. BAR miss or improper config to BAR0, BAR2 or BAR4.
+                                                                 \<38\> = Illegal EBAR.  The TLP targets EBAR (EROM) but was NOT a read (writes not supported).
+                                                                 \<39\> = Zero MemWr.  The TLP was a zero-length memory write operation which we do not support.
+                                                                 \<40\> = Illegal PCIe Type.  Inbound TLP is not supported (examples: CFG, IO, RDLOCK).
+                                                                 \<41\> = Unsupported AtomicOp.  The TLP was poisoned, to PSPI bus, or to EBI with atomic disabled.
+                                                                 \<42\> = Malformed AtomicOp.  Unsupported size/alignment restrictions.
+                                                                 \<43\> = Malformed AtomicOp EOT.  The AtomicOp did not indicate EOT on its first beat of data.
+                                                                 \<44\> = Mac Reset. The TLP was processed when the Mac was in reset.
+                                                                 \<45\> = SBRST.  The TLP was processed when the chip as RC initiates hot reset or link down event.
+                                                                 \<46\> = No BME.  The TLP functions PCIEEP_CMD[ME]/PCIEEPVF_CMD[ME] (Bus Master
+                                                                 Enable) set OR it was an AtomicOp and PCIERC_DEV_CTL2[ATOM_OP] (AtomicOp requster
+                                                                 enable) was not set.
+                                                                 \<47\> = In FLR.  The TLP's function (PF/VF) was in Function Level Reset.  Same as bit 54.
+                                                                 \<48\> = IN RASDP.  The TLP was processed when the Mac indiacated RAS Data Protection mode.
+                                                                 \<49\> = Framing.  The TLP was terminated due to incorrect framing (EOT on the expected beat).
+                                                                 \<50\> = Max TLP Size.  The TLP DW length exceeded 1kB.
+                                                                 \<51\> = DLLP Error.  The TLP was flagged by the MAC as having a Data Link Error (LCRC) error.
+                                                                 \<52\> = TLP Error.  The TLP was flagged by the MAC as being malformed on TRGT1
+                                                                 (ECRC or LUT failure).
+                                                                 \<53\> = ECRC Error.  The TLP was flagged by the MAC as having an ECRC error on the received TLP.
+                                                                 \<54\> = In FLR.  The TLP's function (PF/VF) was in Function Level Reset.  Same as bit 47.
+                                                                 \<63:55\> = Reserved. */
 #endif /* Word 0 - End */
     } cn9;
 };

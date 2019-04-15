@@ -677,7 +677,30 @@ union cavm_sso_af_aw_read_arb
         uint64_t reserved_30_63        : 34;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_sso_af_aw_read_arb_s cn96xx; */
+    /* struct cavm_sso_af_aw_read_arb_s cn96xxp1_0; */
+    struct cavm_sso_af_aw_read_arb_cn96xxp1_1
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_30_63        : 34;
+        uint64_t xaq_lev               : 6;  /**< [ 29: 24](RO/H) Current number of XAQ reads outstanding. */
+        uint64_t reserved_21_23        : 3;
+        uint64_t xaq_min               : 5;  /**< [ 20: 16](R/W) Number of read slots reserved for XAQ exclusive use. Values \> 16 will not result in
+                                                                 additional XAQ reads in flight, but will reduce maximum AW tag reads in flight. */
+        uint64_t reserved_14_15        : 2;
+        uint64_t reserved_5_13         : 9;
+        uint64_t aw_tag_min            : 5;  /**< [  4:  0](R/W) Reserved. */
+#else /* Word 0 - Little Endian */
+        uint64_t aw_tag_min            : 5;  /**< [  4:  0](R/W) Reserved. */
+        uint64_t reserved_5_13         : 9;
+        uint64_t reserved_14_15        : 2;
+        uint64_t xaq_min               : 5;  /**< [ 20: 16](R/W) Number of read slots reserved for XAQ exclusive use. Values \> 16 will not result in
+                                                                 additional XAQ reads in flight, but will reduce maximum AW tag reads in flight. */
+        uint64_t reserved_21_23        : 3;
+        uint64_t xaq_lev               : 6;  /**< [ 29: 24](RO/H) Current number of XAQ reads outstanding. */
+        uint64_t reserved_30_63        : 34;
+#endif /* Word 0 - End */
+    } cn96xxp1_1;
+    /* struct cavm_sso_af_aw_read_arb_cn96xxp1_1 cn96xxp3; */
     struct cavm_sso_af_aw_read_arb_cnf95xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -2428,6 +2451,10 @@ typedef union cavm_sso_af_gws_inv cavm_sso_af_gws_inv_t;
 static inline uint64_t CAVM_SSO_AF_GWS_INV_FUNC(void) __attribute__ ((pure, always_inline));
 static inline uint64_t CAVM_SSO_AF_GWS_INV_FUNC(void)
 {
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_1))
+        return 0x840070001060ll;
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X))
+        return 0x840070001060ll;
     if (cavm_is_model(OCTEONTX_CNF95XX))
         return 0x840070001060ll;
     __cavm_csr_fatal("SSO_AF_GWS_INV", 0, 0, 0, 0, 0);

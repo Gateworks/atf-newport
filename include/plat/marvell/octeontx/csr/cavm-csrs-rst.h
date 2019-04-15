@@ -94,6 +94,7 @@
 #define CAVM_RST_DEV_E_CGXX(a) (0x12 + (a))
 #define CAVM_RST_DEV_E_EMMC (0x19)
 #define CAVM_RST_DEV_E_GSERX(a) (0x1a + (a))
+#define CAVM_RST_DEV_E_GSERRX(a) (0x20 + (a))
 #define CAVM_RST_DEV_E_MPIX(a) (2 + (a))
 #define CAVM_RST_DEV_E_NCSI (0)
 #define CAVM_RST_DEV_E_PEMX(a) (0x28 + (a))
@@ -3037,7 +3038,7 @@ union cavm_rst_ctlx
         uint64_t reserved_11_63        : 53;
 #endif /* Word 0 - End */
     } cn83xx;
-    struct cavm_rst_ctlx_cn9
+    struct cavm_rst_ctlx_cn96xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_14_63        : 50;
@@ -3081,12 +3082,11 @@ union cavm_rst_ctlx
                                                                  _ 0 when RST_CTL()[HOST_MODE] = 1.
                                                                  _ 1 when RST_CTL()[HOST_MODE] = 0. */
         uint64_t prst_link             : 1;  /**< [  9:  9](R/W) PEM reset on link down.
-                                                                 0 = Link-down or hot-reset will set RST_INT[RST_LINK] for the corresponding
+                                                                 0 = Link-down event will set RST_INT[RST_LINK] for the corresponding
                                                                  controller, and (provided properly configured) the link should come back up
                                                                  automatically.
-                                                                 1 = Link-down or hot-reset will set RST_INT[RST_LINK] for the corresponding
-                                                                 controller, and set RST_SOFT_PRST()[SOFT_PRST]. This will hold the link in reset
-                                                                 until software clears RST_SOFT_PRST()[SOFT_PRST].
+                                                                 1 = Link-down event detected by the PCIe logic causes the internal reset
+                                                                 specified by [RESET_TYPE].
 
                                                                  A core/chip reset does not change this field. On cold reset, this field is
                                                                  initialized to 0. */
@@ -3212,12 +3212,11 @@ union cavm_rst_ctlx
                                                                  * RST_SOFT_PRST()[SOFT_PRST] = 1, or
                                                                  * [RST_RCV] = 1 and PERST*_L pin is asserted. */
         uint64_t prst_link             : 1;  /**< [  9:  9](R/W) PEM reset on link down.
-                                                                 0 = Link-down or hot-reset will set RST_INT[RST_LINK] for the corresponding
+                                                                 0 = Link-down event will set RST_INT[RST_LINK] for the corresponding
                                                                  controller, and (provided properly configured) the link should come back up
                                                                  automatically.
-                                                                 1 = Link-down or hot-reset will set RST_INT[RST_LINK] for the corresponding
-                                                                 controller, and set RST_SOFT_PRST()[SOFT_PRST]. This will hold the link in reset
-                                                                 until software clears RST_SOFT_PRST()[SOFT_PRST].
+                                                                 1 = Link-down event detected by the PCIe logic causes the internal reset
+                                                                 specified by [RESET_TYPE].
 
                                                                  A core/chip reset does not change this field. On cold reset, this field is
                                                                  initialized to 0. */
@@ -3262,7 +3261,303 @@ union cavm_rst_ctlx
                                                                  _ 1 when RST_CTL()[HOST_MODE] = 1. */
         uint64_t reserved_14_63        : 50;
 #endif /* Word 0 - End */
-    } cn9;
+    } cn96xx;
+    struct cavm_rst_ctlx_cnf95xx
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_14_63        : 50;
+        uint64_t reset_type            : 1;  /**< [ 13: 13](R/W) Reserved.
+                                                                 Internal:
+                                                                 In pass A0, but PCI is defeatured.
+                                                                 Type of reset generated internally by PCI MAC PF FLR, link down/hot reset, Powerdown  or
+                                                                 PERST events. See [PF_FLR_CHIP], [RST_LINK], [RST_PWRDWN] and [RST_CHIP].
+
+                                                                 0 = Chip and core domain reset. (A chip domain reset always also causes a core
+                                                                 domain reset.)
+                                                                 1 = Core domain reset.
+
+                                                                 On cold reset, this field is initialized as follows:
+                                                                 _ 0 when RST_CTL()[HOST_MODE] = 0.
+                                                                 _ 1 when RST_CTL()[HOST_MODE] = 1. */
+        uint64_t rst_pwrdwn            : 1;  /**< [ 12: 12](R/W) Reserved.
+                                                                 Internal:
+                                                                 In pass A0, but PCI is defeatured.
+                                                                 Powerdown event internal reset enable.
+                                                                 0 = PEM going into powerdown (L2) does not cause an internal reset.
+                                                                 1 = PEM going into powerdown (L2) causes the internal reset
+                                                                 specified by [RESET_TYPE].
+
+                                                                 On a cold reset, the field is initialized as follows:
+                                                                 _ 0 when RST_CTL()[HOST_MODE] is set.
+                                                                 _ 1 when RST_CTL()[HOST_MODE] is cleared.
+
+                                                                 Note that a powerdown event can never cause a domain reset when the
+                                                                 controller is already in reset (i.e. when [RST_DONE] = 0). */
+        uint64_t prst_pwrdwn           : 1;  /**< [ 11: 11](R/W) Reserved.
+                                                                 Internal:
+                                                                 In pass A0, but PCI is defeatured.
+                                                                 PEM reset on power down.
+                                                                 0 = PEM entering L2/P2 power state will set RST_INT[RST_PWRDWN] for the
+                                                                 corresponding controller, and (provided properly configured) the link should
+                                                                 come back up automatically.
+                                                                 1 = PEM entering L2/P2 power state will set RST_INT[RST_PWRDWN] for
+                                                                 the corresponding controller and set RST_SOFT_PRST()[SOFT_PRST]. This will
+                                                                 hold the link in reset until software clears RST_SOFT_PRST()[SOFT_PRST].
+
+                                                                 A core/chip reset does not change this field. On cold reset, this field is
+                                                                 initialized to 0. */
+        uint64_t pf_flr_chip           : 1;  /**< [ 10: 10](R/W) Reserved.
+                                                                 Internal:
+                                                                 In pass A0, but PCI is defeatured.
+                                                                 PF FLR internal reset enable.
+                                                                 0 = PF FLR events will not cause an internal reset.
+                                                                 1 = A PF FLR event received by the PCIe logic causes the internal reset
+                                                                 specified by [RESET_TYPE].
+
+                                                                 On cold reset, this field is initialized as follows:
+                                                                 _ 0 when RST_CTL()[HOST_MODE] = 1.
+                                                                 _ 1 when RST_CTL()[HOST_MODE] = 0. */
+        uint64_t prst_link             : 1;  /**< [  9:  9](R/W) Reserved.
+                                                                 Internal:
+                                                                 In pass A0, but PCI is defeatured.
+                                                                 PEM reset on link down.
+                                                                 0 = Link-down event will set RST_INT[RST_LINK] for the corresponding
+                                                                 controller, and (provided properly configured) the link should come back up
+                                                                 automatically.
+                                                                 1 = Link-down event detected by the PCIe logic causes the internal reset
+                                                                 specified by [RESET_TYPE].
+
+                                                                 A core/chip reset does not change this field. On cold reset, this field is
+                                                                 initialized to 0. */
+        uint64_t rst_done              : 1;  /**< [  8:  8](RO/H) Reserved.
+                                                                 Internal:
+                                                                 In pass A0, but PCI is defeatured.
+                                                                 Reset done. Indicates the controller reset status. [RST_DONE] is always 0
+                                                                 (i.e. the controller is held in reset) when
+                                                                 * RST_SOFT_PRST()[SOFT_PRST] = 1, or
+                                                                 * [RST_RCV] = 1 and PERST*_L pin is asserted. */
+        uint64_t rst_link              : 1;  /**< [  7:  7](R/W) Reserved.
+                                                                 Internal:
+                                                                 In pass A0, but PCI is defeatured.
+                                                                 Link down / hot reset event internal reset enable.
+                                                                 0 = Link down or hot reset do not cause an internal reset.
+                                                                 1 = A link-down or hot-reset event on the PCIe interface causes the internal
+                                                                 reset specified by [RESET_TYPE].
+
+                                                                 On a cold reset, the field is initialized as follows:
+                                                                 _ 0 when RST_CTL()[HOST_MODE] is set.
+                                                                 _ 1 when RST_CTL()[HOST_MODE] is cleared.
+
+                                                                 Note that a link-down or hot reset event can never cause a domain reset when the
+                                                                 controller is already in reset (i.e. when [RST_DONE] = 0). */
+        uint64_t host_mode             : 1;  /**< [  6:  6](RO/H) Reserved.
+                                                                 Internal:
+                                                                 In pass A0, but PCI is defeatured.
+                                                                 Read-only access to the corresponding PEM()_CFG[HOSTMD] field
+                                                                 indicating PEMn is root complex (host). */
+        uint64_t reserved_4_5          : 2;
+        uint64_t rst_drv               : 1;  /**< [  3:  3](R/W) Reserved.
+                                                                 Internal:
+                                                                 In pass A0, but PCI is defeatured.
+                                                                 Controls whether PERST*_L is driven.
+                                                                 This field is always reinitialized on a cold domain reset.
+                                                                 The field is initialized as follows:
+                                                                 _ 0 when RST_CTL()[HOST_MODE] is cleared.
+                                                                 _ 1 when RST_CTL()[HOST_MODE] is set.
+
+                                                                 This bit must not be changed in the same write that sets [RST_RCV]=1; separate
+                                                                 writes to RST_CTL() are required to clear one bit and then set the other. */
+        uint64_t rst_rcv               : 1;  /**< [  2:  2](R/W) Reserved.
+                                                                 Internal:
+                                                                 In pass A0, but PCI is defeatured.
+                                                                 Reset received. Controls whether PERST*_L is received.
+                                                                 This field is always reinitialized on a cold domain reset.
+                                                                 The field is initialized as follows:
+                                                                 _ 0 when RST_CTL()[HOST_MODE] is set.
+                                                                 _ 1 when RST_CTL()[HOST_MODE] is cleared.
+
+                                                                 When [RST_RCV] = 1, the PERST*_L value is received and can be used to reset the
+                                                                 controller and (optionally, based on [RST_CHIP]) cause a domain reset.
+
+                                                                 When [RST_RCV] = 1 (and [RST_CHIP] = 0), RST_INT[PERST*] gets set when the PERST*_L
+                                                                 pin asserts. (This interrupt can alert software whenever the external reset pin initiates
+                                                                 a controller reset sequence.)
+
+                                                                 [RST_VAL] gives the PERST*_L pin value when [RST_RCV] = 1.
+
+                                                                 When [RST_RCV] = 0, the PERST*_L pin value is ignored.
+
+                                                                 This bit must not be changed in the same write that sets [RST_DRV]=1; separate
+                                                                 writes to RST_CTL() are required to clear one bit and then set the other.
+                                                                 If this bit is written while PERSTx_L pin is de-asserted then the MAC can come
+                                                                 out of reset unexpectedly. */
+        uint64_t rst_chip              : 1;  /**< [  1:  1](R/W) Reserved.
+                                                                 Internal:
+                                                                 In pass A0, but PCI is defeatured.
+                                                                 PERST internal reset enable. When set along with [RST_RCV],
+                                                                 logic will generate an internal reset specified by [RESET_TYPE]
+                                                                 when the corresponding PERST*_L pin is asserted.  When cleared or
+                                                                 when [RST_RCV] is cleared, the PERST*_L does not cause an internal reset.
+
+                                                                 If this bit is written while PERSTx_L pin is asserted and [RST_RCV]=1 then an
+                                                                 internal reset can occur unexpectedly.
+
+                                                                 During a cold domain reset this field is initialized to zero. */
+        uint64_t rst_val               : 1;  /**< [  0:  0](RO/H) Reserved.
+                                                                 Internal:
+                                                                 In pass A0, but PCI is defeatured.
+                                                                 Read-only access to PERST*_L. Unpredictable when [RST_RCV] = 0.
+
+                                                                 Reads as 1 when [RST_RCV] = 1 and the PERST*_L pin is asserted.
+                                                                 Reads as 0 when [RST_RCV] = 1 and the PERST*_L pin is not asserted. */
+#else /* Word 0 - Little Endian */
+        uint64_t rst_val               : 1;  /**< [  0:  0](RO/H) Reserved.
+                                                                 Internal:
+                                                                 In pass A0, but PCI is defeatured.
+                                                                 Read-only access to PERST*_L. Unpredictable when [RST_RCV] = 0.
+
+                                                                 Reads as 1 when [RST_RCV] = 1 and the PERST*_L pin is asserted.
+                                                                 Reads as 0 when [RST_RCV] = 1 and the PERST*_L pin is not asserted. */
+        uint64_t rst_chip              : 1;  /**< [  1:  1](R/W) Reserved.
+                                                                 Internal:
+                                                                 In pass A0, but PCI is defeatured.
+                                                                 PERST internal reset enable. When set along with [RST_RCV],
+                                                                 logic will generate an internal reset specified by [RESET_TYPE]
+                                                                 when the corresponding PERST*_L pin is asserted.  When cleared or
+                                                                 when [RST_RCV] is cleared, the PERST*_L does not cause an internal reset.
+
+                                                                 If this bit is written while PERSTx_L pin is asserted and [RST_RCV]=1 then an
+                                                                 internal reset can occur unexpectedly.
+
+                                                                 During a cold domain reset this field is initialized to zero. */
+        uint64_t rst_rcv               : 1;  /**< [  2:  2](R/W) Reserved.
+                                                                 Internal:
+                                                                 In pass A0, but PCI is defeatured.
+                                                                 Reset received. Controls whether PERST*_L is received.
+                                                                 This field is always reinitialized on a cold domain reset.
+                                                                 The field is initialized as follows:
+                                                                 _ 0 when RST_CTL()[HOST_MODE] is set.
+                                                                 _ 1 when RST_CTL()[HOST_MODE] is cleared.
+
+                                                                 When [RST_RCV] = 1, the PERST*_L value is received and can be used to reset the
+                                                                 controller and (optionally, based on [RST_CHIP]) cause a domain reset.
+
+                                                                 When [RST_RCV] = 1 (and [RST_CHIP] = 0), RST_INT[PERST*] gets set when the PERST*_L
+                                                                 pin asserts. (This interrupt can alert software whenever the external reset pin initiates
+                                                                 a controller reset sequence.)
+
+                                                                 [RST_VAL] gives the PERST*_L pin value when [RST_RCV] = 1.
+
+                                                                 When [RST_RCV] = 0, the PERST*_L pin value is ignored.
+
+                                                                 This bit must not be changed in the same write that sets [RST_DRV]=1; separate
+                                                                 writes to RST_CTL() are required to clear one bit and then set the other.
+                                                                 If this bit is written while PERSTx_L pin is de-asserted then the MAC can come
+                                                                 out of reset unexpectedly. */
+        uint64_t rst_drv               : 1;  /**< [  3:  3](R/W) Reserved.
+                                                                 Internal:
+                                                                 In pass A0, but PCI is defeatured.
+                                                                 Controls whether PERST*_L is driven.
+                                                                 This field is always reinitialized on a cold domain reset.
+                                                                 The field is initialized as follows:
+                                                                 _ 0 when RST_CTL()[HOST_MODE] is cleared.
+                                                                 _ 1 when RST_CTL()[HOST_MODE] is set.
+
+                                                                 This bit must not be changed in the same write that sets [RST_RCV]=1; separate
+                                                                 writes to RST_CTL() are required to clear one bit and then set the other. */
+        uint64_t reserved_4_5          : 2;
+        uint64_t host_mode             : 1;  /**< [  6:  6](RO/H) Reserved.
+                                                                 Internal:
+                                                                 In pass A0, but PCI is defeatured.
+                                                                 Read-only access to the corresponding PEM()_CFG[HOSTMD] field
+                                                                 indicating PEMn is root complex (host). */
+        uint64_t rst_link              : 1;  /**< [  7:  7](R/W) Reserved.
+                                                                 Internal:
+                                                                 In pass A0, but PCI is defeatured.
+                                                                 Link down / hot reset event internal reset enable.
+                                                                 0 = Link down or hot reset do not cause an internal reset.
+                                                                 1 = A link-down or hot-reset event on the PCIe interface causes the internal
+                                                                 reset specified by [RESET_TYPE].
+
+                                                                 On a cold reset, the field is initialized as follows:
+                                                                 _ 0 when RST_CTL()[HOST_MODE] is set.
+                                                                 _ 1 when RST_CTL()[HOST_MODE] is cleared.
+
+                                                                 Note that a link-down or hot reset event can never cause a domain reset when the
+                                                                 controller is already in reset (i.e. when [RST_DONE] = 0). */
+        uint64_t rst_done              : 1;  /**< [  8:  8](RO/H) Reserved.
+                                                                 Internal:
+                                                                 In pass A0, but PCI is defeatured.
+                                                                 Reset done. Indicates the controller reset status. [RST_DONE] is always 0
+                                                                 (i.e. the controller is held in reset) when
+                                                                 * RST_SOFT_PRST()[SOFT_PRST] = 1, or
+                                                                 * [RST_RCV] = 1 and PERST*_L pin is asserted. */
+        uint64_t prst_link             : 1;  /**< [  9:  9](R/W) Reserved.
+                                                                 Internal:
+                                                                 In pass A0, but PCI is defeatured.
+                                                                 PEM reset on link down.
+                                                                 0 = Link-down event will set RST_INT[RST_LINK] for the corresponding
+                                                                 controller, and (provided properly configured) the link should come back up
+                                                                 automatically.
+                                                                 1 = Link-down event detected by the PCIe logic causes the internal reset
+                                                                 specified by [RESET_TYPE].
+
+                                                                 A core/chip reset does not change this field. On cold reset, this field is
+                                                                 initialized to 0. */
+        uint64_t pf_flr_chip           : 1;  /**< [ 10: 10](R/W) Reserved.
+                                                                 Internal:
+                                                                 In pass A0, but PCI is defeatured.
+                                                                 PF FLR internal reset enable.
+                                                                 0 = PF FLR events will not cause an internal reset.
+                                                                 1 = A PF FLR event received by the PCIe logic causes the internal reset
+                                                                 specified by [RESET_TYPE].
+
+                                                                 On cold reset, this field is initialized as follows:
+                                                                 _ 0 when RST_CTL()[HOST_MODE] = 1.
+                                                                 _ 1 when RST_CTL()[HOST_MODE] = 0. */
+        uint64_t prst_pwrdwn           : 1;  /**< [ 11: 11](R/W) Reserved.
+                                                                 Internal:
+                                                                 In pass A0, but PCI is defeatured.
+                                                                 PEM reset on power down.
+                                                                 0 = PEM entering L2/P2 power state will set RST_INT[RST_PWRDWN] for the
+                                                                 corresponding controller, and (provided properly configured) the link should
+                                                                 come back up automatically.
+                                                                 1 = PEM entering L2/P2 power state will set RST_INT[RST_PWRDWN] for
+                                                                 the corresponding controller and set RST_SOFT_PRST()[SOFT_PRST]. This will
+                                                                 hold the link in reset until software clears RST_SOFT_PRST()[SOFT_PRST].
+
+                                                                 A core/chip reset does not change this field. On cold reset, this field is
+                                                                 initialized to 0. */
+        uint64_t rst_pwrdwn            : 1;  /**< [ 12: 12](R/W) Reserved.
+                                                                 Internal:
+                                                                 In pass A0, but PCI is defeatured.
+                                                                 Powerdown event internal reset enable.
+                                                                 0 = PEM going into powerdown (L2) does not cause an internal reset.
+                                                                 1 = PEM going into powerdown (L2) causes the internal reset
+                                                                 specified by [RESET_TYPE].
+
+                                                                 On a cold reset, the field is initialized as follows:
+                                                                 _ 0 when RST_CTL()[HOST_MODE] is set.
+                                                                 _ 1 when RST_CTL()[HOST_MODE] is cleared.
+
+                                                                 Note that a powerdown event can never cause a domain reset when the
+                                                                 controller is already in reset (i.e. when [RST_DONE] = 0). */
+        uint64_t reset_type            : 1;  /**< [ 13: 13](R/W) Reserved.
+                                                                 Internal:
+                                                                 In pass A0, but PCI is defeatured.
+                                                                 Type of reset generated internally by PCI MAC PF FLR, link down/hot reset, Powerdown  or
+                                                                 PERST events. See [PF_FLR_CHIP], [RST_LINK], [RST_PWRDWN] and [RST_CHIP].
+
+                                                                 0 = Chip and core domain reset. (A chip domain reset always also causes a core
+                                                                 domain reset.)
+                                                                 1 = Core domain reset.
+
+                                                                 On cold reset, this field is initialized as follows:
+                                                                 _ 0 when RST_CTL()[HOST_MODE] = 0.
+                                                                 _ 1 when RST_CTL()[HOST_MODE] = 1. */
+        uint64_t reserved_14_63        : 50;
+#endif /* Word 0 - End */
+    } cnf95xx;
 };
 typedef union cavm_rst_ctlx cavm_rst_ctlx_t;
 
@@ -3825,6 +4120,74 @@ static inline uint64_t CAVM_RST_ECO_FUNC(void)
 #define device_bar_CAVM_RST_ECO 0x0 /* PF_BAR0 */
 #define busnum_CAVM_RST_ECO 0
 #define arguments_CAVM_RST_ECO -1,-1,-1,-1
+
+/**
+ * Register (RSL) rst_gclk_pll
+ *
+ * RST GSERR Clock PLL Control Register
+ * This register should only be programmed while GSERR microcontrollers are in reset.
+ * It is accessible through ROM scripts; see SCR_WRITE32_S[ADDR].
+ */
+union cavm_rst_gclk_pll
+{
+    uint64_t u;
+    struct cavm_rst_gclk_pll_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_16_63        : 48;
+        uint64_t nxt_pgm               : 1;  /**< [ 15: 15](R/W/H) Programs the active PLL using [NXT_MUL]. Hardware automatically
+                                                                 clears bit when PLL has been updated.  Software should wait at least 20uS
+                                                                 for clock frequency to be reached before releasing GSERRs from reset.
+                                                                 This field is always reinitialized on a chip domain reset.
+
+                                                                 Changing GCLK frequency is for diagnostic use only; changes can only be made
+                                                                 while all GSERR are in reset. */
+        uint64_t nxt_mul               : 7;  /**< [ 14:  8](R/W) GSERR PLL frequency to be program in 50 MHz increments.  The
+                                                                 actual value must be in the range between 200 MHz and 600 MHz.
+                                                                 Value will be 400 MHz immediately after a cold domain reset. */
+        uint64_t reserved_7            : 1;
+        uint64_t cur_mul               : 7;  /**< [  6:  0](RO/H) GSERR clock frequency.  Actual frequency is [CUR_MUL] * 50 MHz.
+                                                                 Value will reflect [NXT_MUL] after [NXT_PGM] has been set or 400 MHz
+                                                                 immediately after a cold domain reset. */
+#else /* Word 0 - Little Endian */
+        uint64_t cur_mul               : 7;  /**< [  6:  0](RO/H) GSERR clock frequency.  Actual frequency is [CUR_MUL] * 50 MHz.
+                                                                 Value will reflect [NXT_MUL] after [NXT_PGM] has been set or 400 MHz
+                                                                 immediately after a cold domain reset. */
+        uint64_t reserved_7            : 1;
+        uint64_t nxt_mul               : 7;  /**< [ 14:  8](R/W) GSERR PLL frequency to be program in 50 MHz increments.  The
+                                                                 actual value must be in the range between 200 MHz and 600 MHz.
+                                                                 Value will be 400 MHz immediately after a cold domain reset. */
+        uint64_t nxt_pgm               : 1;  /**< [ 15: 15](R/W/H) Programs the active PLL using [NXT_MUL]. Hardware automatically
+                                                                 clears bit when PLL has been updated.  Software should wait at least 20uS
+                                                                 for clock frequency to be reached before releasing GSERRs from reset.
+                                                                 This field is always reinitialized on a chip domain reset.
+
+                                                                 Changing GCLK frequency is for diagnostic use only; changes can only be made
+                                                                 while all GSERR are in reset. */
+        uint64_t reserved_16_63        : 48;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rst_gclk_pll_s cn; */
+};
+typedef union cavm_rst_gclk_pll cavm_rst_gclk_pll_t;
+
+#define CAVM_RST_GCLK_PLL CAVM_RST_GCLK_PLL_FUNC()
+static inline uint64_t CAVM_RST_GCLK_PLL_FUNC(void) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_RST_GCLK_PLL_FUNC(void)
+{
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X))
+        return 0x87e00a0017f8ll;
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS2_X))
+        return 0x87e00a0017f8ll;
+    __cavm_csr_fatal("RST_GCLK_PLL", 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_RST_GCLK_PLL cavm_rst_gclk_pll_t
+#define bustype_CAVM_RST_GCLK_PLL CSR_TYPE_RSL
+#define basename_CAVM_RST_GCLK_PLL "RST_GCLK_PLL"
+#define device_bar_CAVM_RST_GCLK_PLL 0x2 /* PF_BAR2 */
+#define busnum_CAVM_RST_GCLK_PLL 0
+#define arguments_CAVM_RST_GCLK_PLL -1,-1,-1,-1
 
 /**
  * Register (RSL) rst_int
@@ -4976,7 +5339,7 @@ union cavm_rst_out_ctl
         uint64_t bphy_rst              : 1;  /**< [  4:  4](R/W) BPHY reset output. When set by software, this field drives the GPIO_PIN_SEL_E::BPHY_RESET_OUT
                                                                  selectable pin active. The pin can be assigned using GPIO_BIT_CFG(). If this
                                                                  field is set by software then it must also be cleared to deassert the pin.
-                                                                 The pin is also automatically asserted and deasserted by hardware during a SCP
+                                                                 The pin is also automatically asserted and deasserted by hardware during a BPHY
                                                                  domain reset.
                                                                  This field is always reinitialized on a BPHY domain reset. */
         uint64_t scp_rst               : 1;  /**< [  3:  3](R/W) SCP reset output. When set by software, this field drives the GPIO_PIN_SEL_E::SCP_RESET_OUT
@@ -5021,7 +5384,7 @@ union cavm_rst_out_ctl
         uint64_t bphy_rst              : 1;  /**< [  4:  4](R/W) BPHY reset output. When set by software, this field drives the GPIO_PIN_SEL_E::BPHY_RESET_OUT
                                                                  selectable pin active. The pin can be assigned using GPIO_BIT_CFG(). If this
                                                                  field is set by software then it must also be cleared to deassert the pin.
-                                                                 The pin is also automatically asserted and deasserted by hardware during a SCP
+                                                                 The pin is also automatically asserted and deasserted by hardware during a BPHY
                                                                  domain reset.
                                                                  This field is always reinitialized on a BPHY domain reset. */
         uint64_t reserved_5_63         : 59;
@@ -5104,7 +5467,7 @@ union cavm_rst_out_ctl
         uint64_t bphy_rst              : 1;  /**< [  4:  4](R/W) BPHY reset output. When set by software, this field drives the GPIO_PIN_SEL_E::BPHY_RESET_OUT
                                                                  selectable pin active. The pin can be assigned using GPIO_BIT_CFG(). If this
                                                                  field is set by software then it must also be cleared to deassert the pin.
-                                                                 The pin is also automatically asserted and deasserted by hardware during a SCP
+                                                                 The pin is also automatically asserted and deasserted by hardware during a BPHY
                                                                  domain reset.
                                                                  This field is always reinitialized on a BPHY domain reset. */
         uint64_t scp_rst               : 1;  /**< [  3:  3](R/W) SCP reset output. When set by software, this field drives the GPIO_PIN_SEL_E::SCP_RESET_OUT
@@ -5157,7 +5520,7 @@ union cavm_rst_out_ctl
         uint64_t bphy_rst              : 1;  /**< [  4:  4](R/W) BPHY reset output. When set by software, this field drives the GPIO_PIN_SEL_E::BPHY_RESET_OUT
                                                                  selectable pin active. The pin can be assigned using GPIO_BIT_CFG(). If this
                                                                  field is set by software then it must also be cleared to deassert the pin.
-                                                                 The pin is also automatically asserted and deasserted by hardware during a SCP
+                                                                 The pin is also automatically asserted and deasserted by hardware during a BPHY
                                                                  domain reset.
                                                                  This field is always reinitialized on a BPHY domain reset. */
         uint64_t reserved_5_63         : 59;
@@ -6692,7 +7055,7 @@ union cavm_rst_reset_active
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_5_63         : 59;
         uint64_t bphy                  : 1;  /**< [  4:  4](RO/H) BPHY domain reset status.  When set, BPHY domain is in reset.
-                                                                 Default reset value is zero after a chip reset. */
+                                                                 Default reset value is one after a chip or core reset. */
         uint64_t scp                   : 1;  /**< [  3:  3](RO/H) SCP domain reset status.  When set, SCP domain is in reset.
                                                                  Default reset value is zero after a chip reset. */
         uint64_t mcp                   : 1;  /**< [  2:  2](RO/H) MCP domain reset status.  When set, MCP domain is in reset.
@@ -6709,7 +7072,7 @@ union cavm_rst_reset_active
         uint64_t scp                   : 1;  /**< [  3:  3](RO/H) SCP domain reset status.  When set, SCP domain is in reset.
                                                                  Default reset value is zero after a chip reset. */
         uint64_t bphy                  : 1;  /**< [  4:  4](RO/H) BPHY domain reset status.  When set, BPHY domain is in reset.
-                                                                 Default reset value is zero after a chip reset. */
+                                                                 Default reset value is one after a chip or core reset. */
         uint64_t reserved_5_63         : 59;
 #endif /* Word 0 - End */
     } s;
@@ -6899,7 +7262,7 @@ union cavm_rst_soft_prstx
 #endif /* Word 0 - End */
     } s;
     /* struct cavm_rst_soft_prstx_s cn8; */
-    struct cavm_rst_soft_prstx_cn9
+    struct cavm_rst_soft_prstx_cn96xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_1_63         : 63;
@@ -6956,7 +7319,67 @@ union cavm_rst_soft_prstx
                                                                  This bit is also forced high if the corresponding PEM cripple fuse is set. */
         uint64_t reserved_1_63         : 63;
 #endif /* Word 0 - End */
-    } cn9;
+    } cn96xx;
+    struct cavm_rst_soft_prstx_cnf95xx
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_1_63         : 63;
+        uint64_t soft_prst             : 1;  /**< [  0:  0](R/W/H) Reserved.
+                                                                 Internal:
+                                                                 In pass A0, but PCI is defeatured.
+                                                                 Soft PCIe reset. Resets the PEM and corresponding GSER SerDes logic.
+                                                                 This field is initialized as follows during cold domain resets:
+                                                                 * If RST_CTL()[HOST_MODE] is clear, [SOFT_PRST] resets to 0.
+                                                                 * If RST_CTL()[HOST_MODE] is set, [SOFT_PRST] resets to 1.
+
+                                                                 It is set by hardware under three conditions:
+                                                                 * If RST_CTL()[HOST_MODE] and the PEM domain is reset.
+                                                                 * If RST_CTL()[PRST_LINK] is set and the link goes down.
+                                                                 * If RST_CTL()[PRST_PWRDWN] is set and the PEM is powered down.
+
+                                                                 When RST_CTL()[RST_DRV] is set, this controls the output value on PERST*_L.
+                                                                 While RST_CTL()[RST_DRV] is set, hardware does not guarantee a minimum assertion time.
+                                                                 Table 2-4 in section 2.6.2 of the PCIE CEM spec states that PERST*_L must be
+                                                                 asserted for at least 100 us.
+
+                                                                 In the endpoint case, the hardware requires that this signal be set for a
+                                                                 minimum of 5 us to guarantee that the PCIe interface shuts down completely.
+
+                                                                 These time period must be implemented by software.
+
+                                                                 When RST_CTL()[RST_DRV] is clear and [SOFT_PRST] has been set by either hardware
+                                                                 or software, a minimum assertion time of 2uS is required.
+                                                                 This bit is also forced high if the corresponding PEM cripple fuse is set. */
+#else /* Word 0 - Little Endian */
+        uint64_t soft_prst             : 1;  /**< [  0:  0](R/W/H) Reserved.
+                                                                 Internal:
+                                                                 In pass A0, but PCI is defeatured.
+                                                                 Soft PCIe reset. Resets the PEM and corresponding GSER SerDes logic.
+                                                                 This field is initialized as follows during cold domain resets:
+                                                                 * If RST_CTL()[HOST_MODE] is clear, [SOFT_PRST] resets to 0.
+                                                                 * If RST_CTL()[HOST_MODE] is set, [SOFT_PRST] resets to 1.
+
+                                                                 It is set by hardware under three conditions:
+                                                                 * If RST_CTL()[HOST_MODE] and the PEM domain is reset.
+                                                                 * If RST_CTL()[PRST_LINK] is set and the link goes down.
+                                                                 * If RST_CTL()[PRST_PWRDWN] is set and the PEM is powered down.
+
+                                                                 When RST_CTL()[RST_DRV] is set, this controls the output value on PERST*_L.
+                                                                 While RST_CTL()[RST_DRV] is set, hardware does not guarantee a minimum assertion time.
+                                                                 Table 2-4 in section 2.6.2 of the PCIE CEM spec states that PERST*_L must be
+                                                                 asserted for at least 100 us.
+
+                                                                 In the endpoint case, the hardware requires that this signal be set for a
+                                                                 minimum of 5 us to guarantee that the PCIe interface shuts down completely.
+
+                                                                 These time period must be implemented by software.
+
+                                                                 When RST_CTL()[RST_DRV] is clear and [SOFT_PRST] has been set by either hardware
+                                                                 or software, a minimum assertion time of 2uS is required.
+                                                                 This bit is also forced high if the corresponding PEM cripple fuse is set. */
+        uint64_t reserved_1_63         : 63;
+#endif /* Word 0 - End */
+    } cnf95xx;
 };
 typedef union cavm_rst_soft_prstx cavm_rst_soft_prstx_t;
 

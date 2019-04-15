@@ -1757,7 +1757,7 @@ union cavm_mio_emm_modex
         uint64_t reserved_49_63        : 15;
 #endif /* Word 0 - End */
     } cn8;
-    struct cavm_mio_emm_modex_cn96xx
+    struct cavm_mio_emm_modex_cn96xxp1_0
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_51_63        : 13;
@@ -1822,7 +1822,9 @@ union cavm_mio_emm_modex
                                                                  Bus width of 8-bit data bus (dual data rate) required. */
         uint64_t reserved_51_63        : 13;
 #endif /* Word 0 - End */
-    } cn96xx;
+    } cn96xxp1_0;
+    /* struct cavm_mio_emm_modex_s cn96xxp1_1; */
+    /* struct cavm_mio_emm_modex_s cn96xxp3; */
     /* struct cavm_mio_emm_modex_s cnf95xx; */
 };
 typedef union cavm_mio_emm_modex cavm_mio_emm_modex_t;
@@ -2665,7 +2667,7 @@ union cavm_mio_emm_switch
         uint64_t reserved_62_63        : 2;
 #endif /* Word 0 - End */
     } cn8;
-    struct cavm_mio_emm_switch_cn96xx
+    struct cavm_mio_emm_switch_cn96xxp1_0
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_62_63        : 2;
@@ -2742,8 +2744,8 @@ union cavm_mio_emm_switch
         uint64_t bus_id                : 2;  /**< [ 61: 60](R/W/H) Specifies the eMMC bus ID. */
         uint64_t reserved_62_63        : 2;
 #endif /* Word 0 - End */
-    } cn96xx;
-    struct cavm_mio_emm_switch_cnf95xx
+    } cn96xxp1_0;
+    struct cavm_mio_emm_switch_cn96xxp1_1
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_62_63        : 2;
@@ -2828,7 +2830,9 @@ union cavm_mio_emm_switch
         uint64_t bus_id                : 2;  /**< [ 61: 60](R/W/H) Specifies the eMMC bus ID. */
         uint64_t reserved_62_63        : 2;
 #endif /* Word 0 - End */
-    } cnf95xx;
+    } cn96xxp1_1;
+    /* struct cavm_mio_emm_switch_cn96xxp1_1 cn96xxp3; */
+    /* struct cavm_mio_emm_switch_cn96xxp1_1 cnf95xx; */
 };
 typedef union cavm_mio_emm_switch cavm_mio_emm_switch_t;
 

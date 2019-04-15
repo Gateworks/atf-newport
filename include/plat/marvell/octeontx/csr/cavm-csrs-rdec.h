@@ -20,6 +20,60 @@
  */
 
 /**
+ * Structure rdec_common_cfg_s
+ *
+ * RDEC Common Configuration Parameters Structure
+ * This structure defines the format for the job configuration for RDEC jobs.
+ */
+union cavm_rdec_common_cfg_s
+{
+    uint64_t u;
+    struct cavm_rdec_common_cfg_s_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_54_63        : 10;
+        uint64_t data_byte_order       : 2;  /**< [ 53: 52] The byte order for the decoded output data.  See Baseband PHY (BPHY):
+                                                                 Data Packing section for details. */
+        uint64_t data_bit_order        : 1;  /**< [ 51: 51] The bit order for the decoded output data.  See Baseband PHY (BPHY):
+                                                                 Data Packing section for details. */
+        uint64_t num_reported_correlations : 3;/**< [ 50: 48] Number of best correlation outputs to be reported. Must be in range 1-4. */
+        uint64_t reserved_46_47        : 2;
+        uint64_t ue_dsp_report_size    : 5;  /**< [ 45: 41] The size of per UE DSP report in 128-bit words. */
+        uint64_t rb_dsp_report_size    : 5;  /**< [ 40: 36] The size of per RB DSP report in 128-bit words. */
+        uint64_t num_words_per_task_cnfg : 4;/**< [ 35: 32] Number of 128-bit words per task configuration. Must be set to 1. */
+        uint64_t reserved_26_31        : 6;
+        uint64_t num_data_words        : 10; /**< [ 25: 16] Number of 128-bit data words for this job. This should be the total
+                                                                 size of all DSP reports and input LLRs read into the internal buffer.
+
+                                                                 The total number of read DMA words for the job must equal
+                                                                 [NUM_DATA_WORDS] + [NUM_BUNDLED_TASKS]. */
+        uint64_t reserved_9_15         : 7;
+        uint64_t num_bundled_tasks     : 9;  /**< [  8:  0] Number of tasks that are bundled in one job. */
+#else /* Word 0 - Little Endian */
+        uint64_t num_bundled_tasks     : 9;  /**< [  8:  0] Number of tasks that are bundled in one job. */
+        uint64_t reserved_9_15         : 7;
+        uint64_t num_data_words        : 10; /**< [ 25: 16] Number of 128-bit data words for this job. This should be the total
+                                                                 size of all DSP reports and input LLRs read into the internal buffer.
+
+                                                                 The total number of read DMA words for the job must equal
+                                                                 [NUM_DATA_WORDS] + [NUM_BUNDLED_TASKS]. */
+        uint64_t reserved_26_31        : 6;
+        uint64_t num_words_per_task_cnfg : 4;/**< [ 35: 32] Number of 128-bit words per task configuration. Must be set to 1. */
+        uint64_t rb_dsp_report_size    : 5;  /**< [ 40: 36] The size of per RB DSP report in 128-bit words. */
+        uint64_t ue_dsp_report_size    : 5;  /**< [ 45: 41] The size of per UE DSP report in 128-bit words. */
+        uint64_t reserved_46_47        : 2;
+        uint64_t num_reported_correlations : 3;/**< [ 50: 48] Number of best correlation outputs to be reported. Must be in range 1-4. */
+        uint64_t data_bit_order        : 1;  /**< [ 51: 51] The bit order for the decoded output data.  See Baseband PHY (BPHY):
+                                                                 Data Packing section for details. */
+        uint64_t data_byte_order       : 2;  /**< [ 53: 52] The byte order for the decoded output data.  See Baseband PHY (BPHY):
+                                                                 Data Packing section for details. */
+        uint64_t reserved_54_63        : 10;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rdec_common_cfg_s_s cn; */
+};
+
+/**
  * Structure rdec_reenc_output_s
  *
  * RDEC Re-Encoded Output Structure
@@ -58,10 +112,10 @@ union cavm_rdec_reenc_output_s
  * This structure specifies the format of the RDEC report output. RDEC
  * produces one report for each of the best correlations, with the number of
  * correlations determined by
- * RDEC()_CONFIGURATION[NUM_REPORTED_CORRELATIONS]. The M^th report output
+ * RDEC_COMMON_CFG_S[NUM_REPORTED_CORRELATIONS]. The M^th report output
  * contains details for the M^th best correlation, and when there are more
- * reports than possible decodings, any extra reports will set DECODED_UCI
- * and BEST_CORR_0 to 0.
+ * reports than possible decodings, any extra reports will set [DECODED_UCI]
+ * and [BEST_CORR_0] to 0.
  */
 union cavm_rdec_report_s
 {
@@ -85,11 +139,11 @@ union cavm_rdec_report_s
         uint64_t harq_ack              : 2;  /**< [ 97: 96] The HARQ_ACK hypothesis index. Only valid for
                                                                  RDEC_TASK_CFG_S[TASK_TYPE] = 1 or 2:
 
-                                                                 _ TASK_TYPE = 1 (Format 2a). HARQ_ACK\<0\> is the codeword index, and
-                                                                 HARQ_ACK\<1\> is unused.
+                                                                 _ RDEC_TASK_CFG_S[TASK_TYPE] = 1 (Format 2a). [HARQ_ACK]\<0\> is the codeword index, and
+                                                                 [HARQ_ACK]\<1\> is unused.
 
-                                                                 _ TASK_TYPE = 2 (Format 2b). HARQ_ACK\<0\> is the index for codeword 1,
-                                                                 and HARQ_ACK\<1\> is the index for codeword 0. */
+                                                                 _ RDEC_TASK_CFG_S[TASK_TYPE] = 2 (Format 2b). [HARQ_ACK]\<0\> is the index for codeword 1,
+                                                                 and [HARQ_ACK]\<1\> is the index for codeword 0. */
         uint64_t reserved_77_95        : 19;
         uint64_t best_corr_1           : 13; /**< [ 76: 64] The M^th best correlation output for the second RM decoding as a
                                                                  signed integer. Only valid when the configuration had
@@ -102,11 +156,11 @@ union cavm_rdec_report_s
         uint64_t harq_ack              : 2;  /**< [ 97: 96] The HARQ_ACK hypothesis index. Only valid for
                                                                  RDEC_TASK_CFG_S[TASK_TYPE] = 1 or 2:
 
-                                                                 _ TASK_TYPE = 1 (Format 2a). HARQ_ACK\<0\> is the codeword index, and
-                                                                 HARQ_ACK\<1\> is unused.
+                                                                 _ RDEC_TASK_CFG_S[TASK_TYPE] = 1 (Format 2a). [HARQ_ACK]\<0\> is the codeword index, and
+                                                                 [HARQ_ACK]\<1\> is unused.
 
-                                                                 _ TASK_TYPE = 2 (Format 2b). HARQ_ACK\<0\> is the index for codeword 1,
-                                                                 and HARQ_ACK\<1\> is the index for codeword 0. */
+                                                                 _ RDEC_TASK_CFG_S[TASK_TYPE] = 2 (Format 2b). [HARQ_ACK]\<0\> is the index for codeword 1,
+                                                                 and [HARQ_ACK]\<1\> is the index for codeword 0. */
         uint64_t reserved_98_111       : 14;
         uint64_t task_id               : 16; /**< [127:112] Per-task ID from RDEC_TASK_CFG_S[TASK_ID]. */
 #endif /* Word 1 - End */
@@ -118,7 +172,9 @@ union cavm_rdec_report_s
  * Structure rdec_task_cfg_s
  *
  * RDEC Task Configuration Structure
- * This structure is used to specify the configuration for an individual RDEC task.
+ * This structure is used to specify the configuration for an individual
+ * RDEC task.  The task configurations are read by the RDEC via the
+ * read DMA port, after all the LLR data is read.
  */
 union cavm_rdec_task_cfg_s
 {
@@ -129,26 +185,24 @@ union cavm_rdec_task_cfg_s
         uint64_t reserved_58_63        : 6;
         uint64_t word_offset1          : 10; /**< [ 57: 48] Offset to the beginning of the LLRs for antenna port 1 in the RDEC
                                                                  internal buffer. Specified in number of 128 bit words. This value is
-                                                                 only valid if TASK_TYPE = 0..4 and SORTD = 1. */
+                                                                 only valid if [TASK_TYPE] = 0..4 and [SORTD] = 1. */
         uint64_t reserved_42_47        : 6;
         uint64_t word_offset0          : 10; /**< [ 41: 32] Offset to the beginning of the LLRs for antenna port 0 in the RDEC
                                                                  internal buffer. Specified in number of 128 bit words. */
         uint64_t reserved_24_31        : 8;
-        uint64_t nr_table_idx          : 3;  /**< [ 23: 21] NR table index for RM decoder.
-                                                                 0x0 = LTE table.
-                                                                 0x1 = NR A table, configured via RDEC()_NR_STBL_A() and
-                                                                 RDEC()_NR_MTBL_A().
-                                                                 0x2 = NR B table, configured via RDEC(0..1)_NR_S/MTBL_B.
-                                                                 0x2 = NR B table, configured via RDEC(0..1)_NR_STBL_B() and
-                                                                 RDEC()_NR_MTBL_B().
-                                                                 0x3-0x7 = Reserved. */
+        uint64_t nr_table_idx          : 3;  /**< [ 23: 21] General Mode table index for RM decoder.
+                                                                 0 = LTE table
+                                                                 1 = General Mode A table, configured via RDEC(0..1)_NR_S/MTBL_A
+                                                                 2 = General Mode B table, configured via RDEC(0..1)_NR_S/MTBL_B
+                                                                 3-7 = Reserved */
         uint64_t uci_bits              : 5;  /**< [ 20: 16] Number of UCI information bits to be decoded.
-                                                                 In LTE mode, must meet the limits in Release 11 of the 3GPP spec.
-                                                                 * TASK_TYPE = 0..2: UCI_BITS \<= 13.
-                                                                 * TASK_TYPE = 3 or 5: UCI_BITS \<= 11.
-                                                                 * TASK_TYPE = 4: UCI_BITS \<= 22.
-                                                                 * TASK_TYPE = 6: UCI_BITS \<= 20.
-                                                                 * TASK_TYPE = 7: UCI_BITS \<= 10. */
+                                                                 In LTE mode, must meet the following limits.
+                                                                 * [TASK_TYPE] = 0..2: [UCI_BITS] \<= 13.
+                                                                 * [TASK_TYPE] = 3 or 5: [UCI_BITS] \<= 11.
+                                                                 * [TASK_TYPE] = 4: [UCI_BITS] \<= 22.
+                                                                 * [TASK_TYPE] = 6: [UCI_BITS] \<= 20.
+                                                                 In general mode, must meet the following limits.
+                                                                 * [TASK_TYPE] = 7: [UCI_BITS] \<= 13. */
         uint64_t reserved_14_15        : 2;
         uint64_t llr_negate            : 1;  /**< [ 13: 13] 1 = Enable LLR negation. 0 = Disable LLR negation.
 
@@ -156,11 +210,11 @@ union cavm_rdec_task_cfg_s
                                                                  negated relative to the standard specification. */
         uint64_t rev_alt_concat        : 1;  /**< [ 12: 12] Enables reverse-alternate concatenation:
                                                                  0 = Disabled.
-                                                                 1 = Enabled. Only valid for TASK_TYPE = 4. */
-        uint64_t sortd_ena             : 1;  /**< [ 11: 11] Enables SORTD when set to 1. Must be set to 0 for TASK_TYPE = 5..7. */
-        uint64_t num_hyp               : 3;  /**< [ 10:  8] Number of hypotheses. Only valid for TASK_TYPE = 1 or 2. Must be 1
+                                                                 1 = Enabled. Only valid for [TASK_TYPE] = 4. */
+        uint64_t sortd_ena             : 1;  /**< [ 11: 11] Enables [SORTD] when set to 1. Must be set to 0 for [TASK_TYPE] = 5..7. */
+        uint64_t num_hyp               : 3;  /**< [ 10:  8] Number of hypotheses. Only valid for [TASK_TYPE] = 1 or 2. Must be 1
                                                                  otherwise. */
-        uint64_t num_streams           : 4;  /**< [  7:  4] Total number of input streams. Must be 1 unless TASK_TYPE = 5 or 6.
+        uint64_t num_streams           : 4;  /**< [  7:  4] Total number of input streams. Must be 1 unless [TASK_TYPE] = 5 or 6.
                                                                  Task types 5 and 6 support 1..8 streams (up to 4 layers with up to two
                                                                  streams each). */
         uint64_t task_type             : 3;  /**< [  3:  1] Describes the type of task based on the channel type and encoding
@@ -168,13 +222,13 @@ union cavm_rdec_task_cfg_s
                                                                  0x0 = Format 2. Input LLRs have 3 words per stream.
                                                                  0x1 = Format 2a. Input LLRs have 5 words per stream.
                                                                  0x2 = Format 2b. Input LLRs have 10 words per stream.
-                                                                 0x3 = Format 3 with single RM decoding (UCI_BITS \<= 11). Input LLRs
+                                                                 0x3 = Format 3 with single RM decoding ([UCI_BITS] \<= 11). Input LLRs
                                                                  have 6 words per stream.
-                                                                 0x4 = Format 3 with double RM decoding (UCI_BITS \> 11). Input LLRs
+                                                                 0x4 = Format 3 with double RM decoding ([UCI_BITS] \> 11). Input LLRs
                                                                  have 6 words per stream.
-                                                                 0x5 = PUSCH UCI with single RM decoding (UCI_BITS \<= 11). Input LLRs
+                                                                 0x5 = PUSCH UCI with single RM decoding ([UCI_BITS] \<= 11). Input LLRs
                                                                  have 4 words per stream.
-                                                                 0x6 = PUSCH UCI with double RM decoding (UCI_BITS \> 11). Input LLRs
+                                                                 0x6 = PUSCH UCI with double RM decoding ([UCI_BITS] \> 11). Input LLRs
                                                                  have 8 words per stream.
                                                                  0x7 = General. */
         uint64_t op_mode               : 1;  /**< [  0:  0] Operation mode:
@@ -189,51 +243,49 @@ union cavm_rdec_task_cfg_s
                                                                  0x0 = Format 2. Input LLRs have 3 words per stream.
                                                                  0x1 = Format 2a. Input LLRs have 5 words per stream.
                                                                  0x2 = Format 2b. Input LLRs have 10 words per stream.
-                                                                 0x3 = Format 3 with single RM decoding (UCI_BITS \<= 11). Input LLRs
+                                                                 0x3 = Format 3 with single RM decoding ([UCI_BITS] \<= 11). Input LLRs
                                                                  have 6 words per stream.
-                                                                 0x4 = Format 3 with double RM decoding (UCI_BITS \> 11). Input LLRs
+                                                                 0x4 = Format 3 with double RM decoding ([UCI_BITS] \> 11). Input LLRs
                                                                  have 6 words per stream.
-                                                                 0x5 = PUSCH UCI with single RM decoding (UCI_BITS \<= 11). Input LLRs
+                                                                 0x5 = PUSCH UCI with single RM decoding ([UCI_BITS] \<= 11). Input LLRs
                                                                  have 4 words per stream.
-                                                                 0x6 = PUSCH UCI with double RM decoding (UCI_BITS \> 11). Input LLRs
+                                                                 0x6 = PUSCH UCI with double RM decoding ([UCI_BITS] \> 11). Input LLRs
                                                                  have 8 words per stream.
                                                                  0x7 = General. */
-        uint64_t num_streams           : 4;  /**< [  7:  4] Total number of input streams. Must be 1 unless TASK_TYPE = 5 or 6.
+        uint64_t num_streams           : 4;  /**< [  7:  4] Total number of input streams. Must be 1 unless [TASK_TYPE] = 5 or 6.
                                                                  Task types 5 and 6 support 1..8 streams (up to 4 layers with up to two
                                                                  streams each). */
-        uint64_t num_hyp               : 3;  /**< [ 10:  8] Number of hypotheses. Only valid for TASK_TYPE = 1 or 2. Must be 1
+        uint64_t num_hyp               : 3;  /**< [ 10:  8] Number of hypotheses. Only valid for [TASK_TYPE] = 1 or 2. Must be 1
                                                                  otherwise. */
-        uint64_t sortd_ena             : 1;  /**< [ 11: 11] Enables SORTD when set to 1. Must be set to 0 for TASK_TYPE = 5..7. */
+        uint64_t sortd_ena             : 1;  /**< [ 11: 11] Enables [SORTD] when set to 1. Must be set to 0 for [TASK_TYPE] = 5..7. */
         uint64_t rev_alt_concat        : 1;  /**< [ 12: 12] Enables reverse-alternate concatenation:
                                                                  0 = Disabled.
-                                                                 1 = Enabled. Only valid for TASK_TYPE = 4. */
+                                                                 1 = Enabled. Only valid for [TASK_TYPE] = 4. */
         uint64_t llr_negate            : 1;  /**< [ 13: 13] 1 = Enable LLR negation. 0 = Disable LLR negation.
 
                                                                  LLR negations should only be used when the input LLRs have been
                                                                  negated relative to the standard specification. */
         uint64_t reserved_14_15        : 2;
         uint64_t uci_bits              : 5;  /**< [ 20: 16] Number of UCI information bits to be decoded.
-                                                                 In LTE mode, must meet the limits in Release 11 of the 3GPP spec.
-                                                                 * TASK_TYPE = 0..2: UCI_BITS \<= 13.
-                                                                 * TASK_TYPE = 3 or 5: UCI_BITS \<= 11.
-                                                                 * TASK_TYPE = 4: UCI_BITS \<= 22.
-                                                                 * TASK_TYPE = 6: UCI_BITS \<= 20.
-                                                                 * TASK_TYPE = 7: UCI_BITS \<= 10. */
-        uint64_t nr_table_idx          : 3;  /**< [ 23: 21] NR table index for RM decoder.
-                                                                 0x0 = LTE table.
-                                                                 0x1 = NR A table, configured via RDEC()_NR_STBL_A() and
-                                                                 RDEC()_NR_MTBL_A().
-                                                                 0x2 = NR B table, configured via RDEC(0..1)_NR_S/MTBL_B.
-                                                                 0x2 = NR B table, configured via RDEC(0..1)_NR_STBL_B() and
-                                                                 RDEC()_NR_MTBL_B().
-                                                                 0x3-0x7 = Reserved. */
+                                                                 In LTE mode, must meet the following limits.
+                                                                 * [TASK_TYPE] = 0..2: [UCI_BITS] \<= 13.
+                                                                 * [TASK_TYPE] = 3 or 5: [UCI_BITS] \<= 11.
+                                                                 * [TASK_TYPE] = 4: [UCI_BITS] \<= 22.
+                                                                 * [TASK_TYPE] = 6: [UCI_BITS] \<= 20.
+                                                                 In general mode, must meet the following limits.
+                                                                 * [TASK_TYPE] = 7: [UCI_BITS] \<= 13. */
+        uint64_t nr_table_idx          : 3;  /**< [ 23: 21] General Mode table index for RM decoder.
+                                                                 0 = LTE table
+                                                                 1 = General Mode A table, configured via RDEC(0..1)_NR_S/MTBL_A
+                                                                 2 = General Mode B table, configured via RDEC(0..1)_NR_S/MTBL_B
+                                                                 3-7 = Reserved */
         uint64_t reserved_24_31        : 8;
         uint64_t word_offset0          : 10; /**< [ 41: 32] Offset to the beginning of the LLRs for antenna port 0 in the RDEC
                                                                  internal buffer. Specified in number of 128 bit words. */
         uint64_t reserved_42_47        : 6;
         uint64_t word_offset1          : 10; /**< [ 57: 48] Offset to the beginning of the LLRs for antenna port 1 in the RDEC
                                                                  internal buffer. Specified in number of 128 bit words. This value is
-                                                                 only valid if TASK_TYPE = 0..4 and SORTD = 1. */
+                                                                 only valid if [TASK_TYPE] = 0..4 and [SORTD] = 1. */
         uint64_t reserved_58_63        : 6;
 #endif /* Word 0 - End */
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 1 - Big Endian */
@@ -242,31 +294,33 @@ union cavm_rdec_task_cfg_s
         uint64_t reserved_106_111      : 6;
         uint64_t reenc_ena             : 1;  /**< [105:105] Enables RM re-encoding when set to 1. */
         uint64_t rb_rpt_incl1          : 1;  /**< [104:104] Per-RB report included in antenna port 1 input. This parameter is only
-                                                                 used when SORTD_ENA = 1.  When set to 1, the first (UE_DSP_REPORT_SIZE
-                                                                 + RB_DSP_REPORT_SIZE) words of the antenna port 1 input will be
+
+                                                                 used when [SORTD_ENA] = 1.  When set to 1, the first (RDEC_COMMON_CFG_S[UE_DSP_REPORT_SIZE]
+                                                                 + RDEC_COMMON_CFG_S[RB_DSP_REPORT_SIZE]) words of the antenna port 1 input will be
                                                                  bypassed to the output to form the DSP report. If set to 0, only
-                                                                 UE_DSP_REPORT_SIZE words are bypassed. */
+                                                                 RDEC_COMMON_CFG_S[UE_DSP_REPORT_SIZE] words are bypassed. */
         uint64_t rb_rpt_incl0          : 1;  /**< [103:103] Per-RB report included in antenna port 0 input. When set to 1, the
-                                                                 first (UE_DSP_REPORT_SIZE + RB_DSP_REPORT_SIZE) words of the antenna port 0
+                                                                 first (RDEC_COMMON_CFG_S[UE_DSP_REPORT_SIZE] +
+                                                                 RDEC_COMMON_CFG_S[RB_DSP_REPORT_SIZE]) words of the antenna port 0
                                                                  input will be bypassed to the output to form the DSP report. If set to
-                                                                 0, only UE_DSP_REPORT_SIZE words are bypassed. */
+                                                                 0, only RDEC_COMMON_CFG_S[UE_DSP_REPORT_SIZE] words are bypassed. */
         uint64_t double_rm_mode        : 1;  /**< [102:102] Selects the output format when double RM decoding is used (i.e., for
-                                                                 TASK_TYPE = 4 and 6):
+                                                                 [TASK_TYPE] = 4 and 6):
                                                                  0 = Concatenate two RM decoder outputs.
                                                                  1 = Interleave the two RM decoder outputs bit-by-bit (i.e. first
                                                                  decoder output maps to even bits, second decoder output maps to odd
                                                                  bits). */
-        uint64_t llr_conv_lvl          : 4;  /**< [101: 98] Rounding level used when LLR_CONV_MODE = 0. Rounding is performed as
+        uint64_t llr_conv_lvl          : 4;  /**< [101: 98] Rounding level used when [LLR_CONV_MODE] = 0. Rounding is performed as
                                                                  follows:
 
-                                                                 _ LLR \> 0: (LLR + (1 \<\< (LLR_CONV_LVL-1)) \>\> LLR_CONV_LVL
+                                                                 _ LLR \> 0: (LLR + (1 \<\< ([LLR_CONV_LVL]-1)) \>\> [LLR_CONV_LVL]
 
-                                                                 _ LLR \< 0: (LLR + NEG((1 \<\< (LLR_CONV_LVL-1))) \>\> LLR_CONV_LVL
+                                                                 _ LLR \< 0: (LLR + NEG((1 \<\< ([LLR_CONV_LVL]-1))) \>\> [LLR_CONV_LVL]
 
                                                                  The result is then saturated to 8 bits (symmetrically). */
         uint64_t llr_conv_mode         : 2;  /**< [ 97: 96] Determines how 18-bit LLRs are converted to 8-bit LLRs prior to
                                                                  decoding. Available LLR conversion modes are:
-                                                                 0x0 = Use LLR_CONV_LVL as the rounding level.
+                                                                 0x0 = Use [LLR_CONV_LVL] as the rounding level.
                                                                  0x1 = Use rounding level derived from average of input LLRs.
                                                                  0x2 = Use rounding level derived from maximum input LLR.
                                                                  0x3 = Reserved.
@@ -274,62 +328,72 @@ union cavm_rdec_task_cfg_s
         uint64_t reserved_86_95        : 10;
         uint64_t mask                  : 22; /**< [ 85: 64] Bit-mask of known zeros in decoded bits. If S_i is zero, then bit i of
                                                                  the output is known to be zero and any non-conforming decoding
-                                                                 candidates are discarded. Only the UCI_BITS most significant bits are
+                                                                 candidates are discarded. Only the [UCI_BITS] most significant bits are
                                                                  used, and bits are numbered starting from the most significant bit,
-                                                                 significant bit, i.e., S_i = MASK\<21-i\>.  For TASK_TYPE
-                                                                 = 4 or 6, the S_i bits for the two RM decodings are either
-                                                                 concatenated or interleaved according to the value of DOUBLE_RM_MODE:
-                                                                 * DOUBLE_RM_MODE = 0: First RM decoding uses
-                                                                 MASK\<21..(21-UCI_BITS/2+1)\>, with S_0 = MASK\<21\>. Second RM decoding
-                                                                 uses MASK\<(21-UCI_BITS/2)..(21-UCI_BITS+1)\>, with S_0 = MASK\<21-UCI_BITS/2\>.
+                                                                 significant bit, i.e., S_i = [MASK]\<21-i\>.
 
-                                                                 * DOUBLE_RM_MODE = 1: First RM decoding uses S_i = MASK\<21-2i\>, and
-                                                                 second RM decoding uses S_i = MASK\<21-2i-1\>. */
+                                                                 For [TASK_TYPE] = 4 or 6, the S_i bits for the two RM decodings
+                                                                 are either concatenated or interleaved according to the value of
+                                                                 [DOUBLE_RM_MODE]:
+
+                                                                 * [DOUBLE_RM_MODE] = 0: The S_i bits for the two RM decodings
+                                                                 are concatenated.  The first RM decoding uses S_i = [MASK]\<21-i\>,
+                                                                 and the second RM decoding uses S_i = [MASK]\<21-[UCI_BITS]/2-i\>.
+
+                                                                 * [DOUBLE_RM_MODE] = 1: The S_i bits for the two RM decodings
+                                                                 are interleaved.  The first RM decoding uses S_i = [MASK]\<21-2i\>,
+                                                                 and the second RM decoding uses S_i = [MASK]\<21-2i-1\>. */
 #else /* Word 1 - Little Endian */
         uint64_t mask                  : 22; /**< [ 85: 64] Bit-mask of known zeros in decoded bits. If S_i is zero, then bit i of
                                                                  the output is known to be zero and any non-conforming decoding
-                                                                 candidates are discarded. Only the UCI_BITS most significant bits are
+                                                                 candidates are discarded. Only the [UCI_BITS] most significant bits are
                                                                  used, and bits are numbered starting from the most significant bit,
-                                                                 significant bit, i.e., S_i = MASK\<21-i\>.  For TASK_TYPE
-                                                                 = 4 or 6, the S_i bits for the two RM decodings are either
-                                                                 concatenated or interleaved according to the value of DOUBLE_RM_MODE:
-                                                                 * DOUBLE_RM_MODE = 0: First RM decoding uses
-                                                                 MASK\<21..(21-UCI_BITS/2+1)\>, with S_0 = MASK\<21\>. Second RM decoding
-                                                                 uses MASK\<(21-UCI_BITS/2)..(21-UCI_BITS+1)\>, with S_0 = MASK\<21-UCI_BITS/2\>.
+                                                                 significant bit, i.e., S_i = [MASK]\<21-i\>.
 
-                                                                 * DOUBLE_RM_MODE = 1: First RM decoding uses S_i = MASK\<21-2i\>, and
-                                                                 second RM decoding uses S_i = MASK\<21-2i-1\>. */
+                                                                 For [TASK_TYPE] = 4 or 6, the S_i bits for the two RM decodings
+                                                                 are either concatenated or interleaved according to the value of
+                                                                 [DOUBLE_RM_MODE]:
+
+                                                                 * [DOUBLE_RM_MODE] = 0: The S_i bits for the two RM decodings
+                                                                 are concatenated.  The first RM decoding uses S_i = [MASK]\<21-i\>,
+                                                                 and the second RM decoding uses S_i = [MASK]\<21-[UCI_BITS]/2-i\>.
+
+                                                                 * [DOUBLE_RM_MODE] = 1: The S_i bits for the two RM decodings
+                                                                 are interleaved.  The first RM decoding uses S_i = [MASK]\<21-2i\>,
+                                                                 and the second RM decoding uses S_i = [MASK]\<21-2i-1\>. */
         uint64_t reserved_86_95        : 10;
         uint64_t llr_conv_mode         : 2;  /**< [ 97: 96] Determines how 18-bit LLRs are converted to 8-bit LLRs prior to
                                                                  decoding. Available LLR conversion modes are:
-                                                                 0x0 = Use LLR_CONV_LVL as the rounding level.
+                                                                 0x0 = Use [LLR_CONV_LVL] as the rounding level.
                                                                  0x1 = Use rounding level derived from average of input LLRs.
                                                                  0x2 = Use rounding level derived from maximum input LLR.
                                                                  0x3 = Reserved.
                                                                  In all cases, the rounded LLRs are saturated to 8 bits. */
-        uint64_t llr_conv_lvl          : 4;  /**< [101: 98] Rounding level used when LLR_CONV_MODE = 0. Rounding is performed as
+        uint64_t llr_conv_lvl          : 4;  /**< [101: 98] Rounding level used when [LLR_CONV_MODE] = 0. Rounding is performed as
                                                                  follows:
 
-                                                                 _ LLR \> 0: (LLR + (1 \<\< (LLR_CONV_LVL-1)) \>\> LLR_CONV_LVL
+                                                                 _ LLR \> 0: (LLR + (1 \<\< ([LLR_CONV_LVL]-1)) \>\> [LLR_CONV_LVL]
 
-                                                                 _ LLR \< 0: (LLR + NEG((1 \<\< (LLR_CONV_LVL-1))) \>\> LLR_CONV_LVL
+                                                                 _ LLR \< 0: (LLR + NEG((1 \<\< ([LLR_CONV_LVL]-1))) \>\> [LLR_CONV_LVL]
 
                                                                  The result is then saturated to 8 bits (symmetrically). */
         uint64_t double_rm_mode        : 1;  /**< [102:102] Selects the output format when double RM decoding is used (i.e., for
-                                                                 TASK_TYPE = 4 and 6):
+                                                                 [TASK_TYPE] = 4 and 6):
                                                                  0 = Concatenate two RM decoder outputs.
                                                                  1 = Interleave the two RM decoder outputs bit-by-bit (i.e. first
                                                                  decoder output maps to even bits, second decoder output maps to odd
                                                                  bits). */
         uint64_t rb_rpt_incl0          : 1;  /**< [103:103] Per-RB report included in antenna port 0 input. When set to 1, the
-                                                                 first (UE_DSP_REPORT_SIZE + RB_DSP_REPORT_SIZE) words of the antenna port 0
+                                                                 first (RDEC_COMMON_CFG_S[UE_DSP_REPORT_SIZE] +
+                                                                 RDEC_COMMON_CFG_S[RB_DSP_REPORT_SIZE]) words of the antenna port 0
                                                                  input will be bypassed to the output to form the DSP report. If set to
-                                                                 0, only UE_DSP_REPORT_SIZE words are bypassed. */
+                                                                 0, only RDEC_COMMON_CFG_S[UE_DSP_REPORT_SIZE] words are bypassed. */
         uint64_t rb_rpt_incl1          : 1;  /**< [104:104] Per-RB report included in antenna port 1 input. This parameter is only
-                                                                 used when SORTD_ENA = 1.  When set to 1, the first (UE_DSP_REPORT_SIZE
-                                                                 + RB_DSP_REPORT_SIZE) words of the antenna port 1 input will be
+
+                                                                 used when [SORTD_ENA] = 1.  When set to 1, the first (RDEC_COMMON_CFG_S[UE_DSP_REPORT_SIZE]
+                                                                 + RDEC_COMMON_CFG_S[RB_DSP_REPORT_SIZE]) words of the antenna port 1 input will be
                                                                  bypassed to the output to form the DSP report. If set to 0, only
-                                                                 UE_DSP_REPORT_SIZE words are bypassed. */
+                                                                 RDEC_COMMON_CFG_S[UE_DSP_REPORT_SIZE] words are bypassed. */
         uint64_t reenc_ena             : 1;  /**< [105:105] Enables RM re-encoding when set to 1. */
         uint64_t reserved_106_111      : 6;
         uint64_t task_id               : 16; /**< [127:112] Per-task ID that is written to the report output. Each task in a job
@@ -370,7 +434,7 @@ union cavm_rdecx_configuration
                                                                  size of all DSP reports and input LLRs read into the internal buffer.
 
                                                                  The total number of read DMA words for the job must equal
-                                                                 NUM_DATA_WORDS + NUM_BUNDLED_TASKS. */
+                                                                 [NUM_DATA_WORDS] + [NUM_BUNDLED_TASKS]. */
         uint64_t reserved_9_15         : 7;
         uint64_t num_bundled_tasks     : 9;  /**< [  8:  0](R/W) Number of tasks that are bundled in one job. */
 #else /* Word 0 - Little Endian */
@@ -380,7 +444,7 @@ union cavm_rdecx_configuration
                                                                  size of all DSP reports and input LLRs read into the internal buffer.
 
                                                                  The total number of read DMA words for the job must equal
-                                                                 NUM_DATA_WORDS + NUM_BUNDLED_TASKS. */
+                                                                 [NUM_DATA_WORDS] + [NUM_BUNDLED_TASKS]. */
         uint64_t reserved_26_31        : 6;
         uint64_t num_words_per_task_cnfg : 4;/**< [ 35: 32](R/W) Number of 128-bit words per task configuration. Must be set to 1. */
         uint64_t rb_dsp_report_size    : 5;  /**< [ 40: 36](R/W) The size of per RB DSP report in 128-bit words. */
@@ -623,7 +687,7 @@ static inline uint64_t CAVM_RDECX_NR_MTBL_AX(unsigned long a, unsigned long b)
  * Register (RSL) rdec#_nr_mtbl_b#
  *
  * RDEC MASK TABLE B Register
- * This register space contains the RDEC general mode mask table A.
+ * This register space contains the RDEC general mode mask table B.
  *
  * Software should write this register directly.
  */
