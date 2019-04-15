@@ -425,10 +425,9 @@ int scmi_octeontx_reset_ndc(void *p, uint64_t lf_idx, uint64_t block_type)
 		return -1;
 	}
 	if (!IS_OCTEONTX_PASS(read_midr(), T96PARTNUM, 1, 0) &&
-	    !IS_OCTEONTX_PASS(read_midr(), T96PARTNUM, 1, 1) &&
 	    !IS_OCTEONTX_PASS(read_midr(), F95PARTNUM, 1, 0)) {
 		INFO(
-			"Errata #35094 is only needed for CN96xx A0, A1 and CNF95xx A0\n");
+			"Errata #35094 is only needed for CN96xx A0 and CNF95xx A0\n");
 		return -1;
 	}
 
@@ -482,10 +481,9 @@ int scmi_octeontx_sync_ndc(void *p, uint64_t lf_idx, uint64_t lf_block_addr,
 		return -1;
 	}
 	if (!IS_OCTEONTX_PASS(read_midr(), T96PARTNUM, 1, 0) &&
-	    !IS_OCTEONTX_PASS(read_midr(), T96PARTNUM, 1, 1) &&
 	    !IS_OCTEONTX_PASS(read_midr(), F95PARTNUM, 1, 0)) {
 		INFO(
-			"Errata #35094 is only needed for CN96xx A0, A1 and CNF95xx A0\n");
+			"Errata #35094 is only needed for CN96xx A0 and CNF95xx A0\n");
 		return -1;
 	}
 
@@ -520,6 +518,13 @@ int scmi_octeontx_status_ndc(void *p)
 	mailbox_mem_t *mbx_mem;
 	int token = 0, ret, status;
 	scmi_channel_t *ch = (scmi_channel_t *)p;
+
+	if (!IS_OCTEONTX_PASS(read_midr(), T96PARTNUM, 1, 0) &&
+	    !IS_OCTEONTX_PASS(read_midr(), F95PARTNUM, 1, 0)) {
+		INFO(
+			"Errata #35094 is only needed for CN96xx A0 and CNF95xx A0\n");
+		return -1;
+	}
 
 	validate_scmi_channel(ch);
 
