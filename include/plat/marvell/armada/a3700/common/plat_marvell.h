@@ -60,15 +60,26 @@ void marvell_bl1_platform_setup(void);
 void marvell_bl1_plat_arch_setup(void);
 
 /* BL2 utility functions */
-void marvell_bl2_early_platform_setup(meminfo_t *mem_layout);
+void marvell_bl2_early_platform_setup(uintptr_t tb_fw_config,
+				      struct meminfo *mem_layout);
 void marvell_bl2_platform_setup(void);
 void marvell_bl2_plat_arch_setup(void);
 uint32_t marvell_get_spsr_for_bl32_entry(void);
 uint32_t marvell_get_spsr_for_bl33_entry(void);
 
 /* BL31 utility functions */
-void marvell_bl31_early_platform_setup(bl31_params_t *from_bl2,
-				       void *plat_params_from_bl2);
+#if LOAD_IMAGE_V2
+void marvell_bl31_early_platform_setup(void *from_bl2,
+					uintptr_t soc_fw_config,
+					uintptr_t hw_config,
+					void *plat_params_from_bl2);
+#else
+void marvell_bl31_early_platform_setup(struct bl31_params *from_bl2,
+					uintptr_t soc_fw_config,
+					uintptr_t hw_config,
+					void *plat_params_from_bl2);
+#endif
+
 void marvell_bl31_platform_setup(void);
 void marvell_bl31_plat_runtime_setup(void);
 void marvell_bl31_plat_arch_setup(void);

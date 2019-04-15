@@ -35,8 +35,6 @@ meminfo_t *bl1_plat_sec_mem_layout(void)
  */
 void marvell_bl1_early_platform_setup(void)
 {
-	const size_t bl1_size = BL1_RAM_LIMIT - BL1_RAM_BASE;
-
 #if PALLADIUM
 	/* Initialize SoC MPPs in case it's needed. */
 	marvell_bl1_setup_mpps();
@@ -51,13 +49,15 @@ void marvell_bl1_early_platform_setup(void)
 	bl1_ram_layout.total_base = MARVELL_BL_RAM_BASE;
 	bl1_ram_layout.total_size = MARVELL_BL_RAM_SIZE;
 
+#if !LOAD_IMAGE_V2
 	/* Calculate how much RAM BL1 is using and how much remains free */
 	bl1_ram_layout.free_base = MARVELL_BL_RAM_BASE;
 	bl1_ram_layout.free_size = MARVELL_BL_RAM_SIZE;
 	reserve_mem(&bl1_ram_layout.free_base,
 		    &bl1_ram_layout.free_size,
 		    BL1_RAM_BASE,
-		    bl1_size);
+		    BL1_RAM_LIMIT - BL1_RAM_BASE);
+#endif /* !LOAD_IMAGE_V2 */
 }
 
 void bl1_early_platform_setup(void)

@@ -6,16 +6,34 @@
  */
 
 #include <arch_helpers.h>
+#include <assert.h>
 #include <bl_common.h>
 #include <console.h>
+#include <debug.h>
+#include <desc_image_load.h>
+#include <generic_delay_timer.h>
+#ifdef SPD_opteed
+#include <optee_utils.h>
+#endif
 #include <marvell_def.h>
 #include <platform_def.h>
 #include <plat_marvell.h>
 #include <string.h>
+#include <utils.h>
 
 /* Data structure which holds the extents of the trusted SRAM for BL2 */
 static meminfo_t bl2_tzram_layout __aligned(CACHE_WRITEBACK_GRANULE);
 
+#pragma weak bl2_early_platform_setup
+#pragma weak bl2_platform_setup
+#pragma weak bl2_plat_arch_setup
+#pragma weak bl2_plat_sec_mem_layout
+
+#if LOAD_IMAGE_V2
+
+#pragma weak bl2_plat_handle_post_image_load
+
+#else /* LOAD_IMAGE_V2 */
 
 /*****************************************************************************
  * This structure represents the superset of information that is passed to
@@ -38,10 +56,6 @@ static bl2_to_bl31_params_mem_t bl31_params_mem;
 
 
 /* Weak definitions may be overridden in specific MARVELL standard platform */
-#pragma weak bl2_early_platform_setup
-#pragma weak bl2_platform_setup
-#pragma weak bl2_plat_arch_setup
-#pragma weak bl2_plat_sec_mem_layout
 #pragma weak bl2_plat_get_bl31_params
 #pragma weak bl2_plat_get_bl31_ep_info
 #pragma weak bl2_plat_flush_bl31_params
@@ -132,6 +146,7 @@ struct entry_point_info *bl2_plat_get_bl31_ep_info(void)
 
 	return &bl31_params_mem.bl31_ep_info;
 }
+#endif /* LOAD_IMAGE_V2 */
 
 /*****************************************************************************
  * BL1 has passed the extents of the trusted SRAM that should be visible to BL2
@@ -139,7 +154,8 @@ struct entry_point_info *bl2_plat_get_bl31_ep_info(void)
  * Copy it to a safe location before its reclaimed by later BL2 functionality.
  *****************************************************************************
  */
-void marvell_bl2_early_platform_setup(meminfo_t *mem_layout)
+void marvell_bl2_early_platform_setup(uintptr_t tb_fw_config,
+				      meminfo_t *mem_layout)
 {
 	/* Initialize the console to provide early debug support */
 	console_init(PLAT_MARVELL_BOOT_UART_BASE,
@@ -153,9 +169,10 @@ void marvell_bl2_early_platform_setup(meminfo_t *mem_layout)
 	plat_marvell_io_setup();
 }
 
-void bl2_early_platform_setup(meminfo_t *mem_layout)
+void bl2_early_platform_setup2(u_register_t arg0, u_register_t arg1,
+			       u_register_t arg2, u_register_t arg3)
 {
-	marvell_bl2_early_platform_setup(mem_layout);
+	marvell_bl2_early_platform_setup((uintptr_t)arg0, (meminfo_t *)arg1);
 }
 
 void bl2_platform_setup(void)
@@ -189,6 +206,69 @@ void bl2_plat_arch_setup(void)
 	marvell_bl2_plat_arch_setup();
 }
 
+#if LOAD_IMAGE_V2
+int marvell_bl2_handle_post_image_load(unsigned int image_id)
+{
+	int err = 0;
+	bl_mem_params_node_t *bl_mem_params = get_bl_mem_params_node(image_id);
+#ifdef SPD_opteed
+	bl_mem_params_node_t *pager_mem_params = NULL;
+	bl_mem_params_node_t *paged_mem_params = NULL;
+#endif /* SPD_opteed */
+	assert(bl_mem_params);
+
+	switch (image_id) {
+	case BL32_IMAGE_ID:
+#ifdef SPD_opteed
+		pager_mem_params = get_bl_mem_params_node(BL32_EXTRA1_IMAGE_ID);
+		assert(pager_mem_params);
+
+		paged_mem_params = get_bl_mem_params_node(BL32_EXTRA2_IMAGE_ID);
+		assert(paged_mem_params);
+
+		err = parse_optee_header(&bl_mem_params->ep_info,
+					 &pager_mem_params->image_info,
+					 &paged_mem_params->image_info);
+		if (err != 0)
+			WARN("OPTEE header parse error.\n");
+#endif /* SPD_opteed */
+		bl_mem_params->ep_info.spsr = marvell_get_spsr_for_bl32_entry();
+		break;
+
+	case BL33_IMAGE_ID:
+		/* BL33 expects to receive the primary CPU MPID (through r0) */
+		bl_mem_params->ep_info.args.arg0 = 0xffff & read_mpidr();
+		bl_mem_params->ep_info.spsr = marvell_get_spsr_for_bl33_entry();
+		break;
+
+#ifdef SCP_BL2_BASE
+	case SCP_BL2_IMAGE_ID:
+		/* The subsequent handling of SCP_BL2 is platform specific */
+		err =
+		    plat_marvell_bl2_handle_scp_bl2(&bl_mem_params->image_info);
+		if (err)
+			WARN("Failure in platform-specific handling of SCP_BL2 image.\n");
+		break;
+#endif /* SCP_BL2_BASE */
+	default:
+		/* Do nothing in default case */
+		break;
+	}
+
+	return err;
+}
+
+/*******************************************************************************
+ * This function can be used by the platforms to update/use image
+ * information for given `image_id`.
+ ******************************************************************************/
+int bl2_plat_handle_post_image_load(unsigned int image_id)
+{
+	return marvell_bl2_handle_post_image_load(image_id);
+}
+
+#else /* LOAD_IMAGE_V2 */
+
 /*****************************************************************************
  * Populate the extents of memory available for loading SCP_BL2 (if used),
  * i.e. anywhere in trusted RAM as long as it doesn't overwrite BL2.
@@ -215,10 +295,24 @@ void bl2_plat_set_bl31_ep_info(image_info_t *bl31_image_info,
 }
 
 /*****************************************************************************
- * Populate the extents of memory available for loading BL32
+ * Before calling this function BL32 is loaded in memory and its entry point
+ * is set by load_image. This is a placeholder for the platform to change
+ * the entry point of BL32 and set SPSR and security state.
+ * On MARVELL std. platforms we only set the security state of the entry point
  *****************************************************************************
  */
 #ifdef BL32_BASE
+void bl2_plat_set_bl32_ep_info(image_info_t *bl32_image_info,
+			       entry_point_info_t *bl32_ep_info)
+{
+	SET_SECURITY_STATE(bl32_ep_info->h.attr, SECURE);
+	bl32_ep_info->spsr = marvell_get_spsr_for_bl32_entry();
+}
+
+/*****************************************************************************
+ * Populate the extents of memory available for loading BL32
+ *****************************************************************************
+ */
 void bl2_plat_get_bl32_meminfo(meminfo_t *bl32_meminfo)
 {
 	/*
@@ -230,20 +324,6 @@ void bl2_plat_get_bl32_meminfo(meminfo_t *bl32_meminfo)
 	bl32_meminfo->free_size = BL32_LIMIT - BL32_BASE;
 }
 #endif
-
-/*****************************************************************************
- * Before calling this function BL32 is loaded in memory and its entrypoint
- * is set by load_image. This is a placeholder for the platform to change
- * the entrypoint of BL32 and set SPSR and security state.
- * On MARVELL std. platforms we only set the security state of the entrypoint
- *****************************************************************************
- */
-void bl2_plat_set_bl32_ep_info(image_info_t *bl32_image_info,
-			       entry_point_info_t *bl32_ep_info)
-{
-	SET_SECURITY_STATE(bl32_ep_info->h.attr, SECURE);
-	bl32_ep_info->spsr = marvell_get_spsr_for_bl32_entry();
-}
 
 /*****************************************************************************
  * Before calling this function BL33 is loaded in memory and its entrypoint
@@ -271,3 +351,5 @@ void bl2_plat_get_bl33_meminfo(meminfo_t *bl33_meminfo)
 	bl33_meminfo->free_base = MARVELL_DRAM_BASE;
 	bl33_meminfo->free_size = MARVELL_DRAM_SIZE;
 }
+
+#endif /* LOAD_IMAGE_V2 */

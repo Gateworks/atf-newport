@@ -17,6 +17,12 @@
 
 #include "mss_scp_bootloader.h"
 
+#if LOAD_IMAGE_V2
+#pragma weak plat_marvell_bl2_handle_scp_bl2
+#else
+#pragma weak bl2_plat_handle_scp_bl2
+#endif
+
 /* MSS windows configuration */
 #define MSS_AEBR(base)			(base + 0x160)
 #define MSS_AIBR(base)			(base + 0x164)
@@ -96,7 +102,16 @@ static int bl2_plat_mmap_init(void)
  * Return 0 on success, -1 otherwise.
  *****************************************************************************
  */
+#if LOAD_IMAGE_V2
+/*
+ * This function is called after loading SCP_BL2 image and it is used to perform
+ * any platform-specific actions required to handle the SCP firmware.
+ */
+int plat_marvell_bl2_handle_scp_bl2(image_info_t *scp_bl2_image_info)
+#else
 int bl2_plat_handle_scp_bl2(image_info_t *scp_bl2_image_info)
+#endif
+
 {
 	int ret;
 

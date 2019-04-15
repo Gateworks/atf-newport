@@ -161,7 +161,9 @@
  * it is discarded and BL31 is loaded over the top.
  */
 #ifdef SCP_IMAGE
-#define SCP_BL2_BASE                    BL31_BASE
+#define SCP_BL2_BASE			BL31_BASE
+#define SCP_BL2_LIMIT			(SCP_BL2_BASE + 0x00100000)
+#define SCP_BL2_SIZE			(SCP_BL2_LIMIT - SCP_BL2_BASE)
 #endif
 
 #ifndef __ASSEMBLER__
