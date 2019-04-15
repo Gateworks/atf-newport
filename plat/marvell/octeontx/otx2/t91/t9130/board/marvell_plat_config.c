@@ -148,7 +148,7 @@ struct addr_map_win ccu_memory_map[] = {	/* IO window */
 	{0x00000000f2000000,	0x6000000,	IO_0_TID}, /* IO window */
 #else
 #if LLC_SRAM
-	{PLAT_MARVELL_LLC_SRAM_BASE, PLAT_MARVELL_LLC_SRAM_SIZE, SRAM_TID},
+	{PLAT_MARVELL_LLC_SRAM_BASE, PLAT_MARVELL_LLC_SRAM_SIZE, DRAM_0_TID},
 #endif
 	{0x00000000f2000000,	0xe000000,	IO_0_TID}, /* IO window */
 	{0x00000000c0000000,	0x30000000,	IO_0_TID}, /* IO window */

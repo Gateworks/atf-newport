@@ -18,15 +18,7 @@ LLC_SRAM			:= 0
 $(eval $(call add_define,LLC_SRAM))
 
 # Enable/Disable LLC
-ifeq (${LLC_SRAM}, 0)
 LLC_ENABLE			:= 1
-else
-# When LLC_SRAM=1, all or part of LLC converted to SRAM and enabled by OP-TEE.
-# All existing cases activating LLC at BL31 stage should be disabled.
-# The below assignment does not allow changing the LLC_ENABLE
-# value in the command line.
-LLC_ENABLE			= 0
-endif
 $(eval $(call add_define,LLC_ENABLE))
 
 PLAT_INCLUDES		+=	-I. -Iinclude/common/tbbr		\
