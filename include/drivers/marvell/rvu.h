@@ -8,12 +8,15 @@
 #ifndef __RVU_H_
 #define __RVU_H_
 
+#include <cassert.h>
+
 /*
  * Total 40MB of memory is reserved for mailbox, msix table
  * and firwmare data
  *   - 34MB is for mailbox(32 PFs + 512 VFs * 64KB mailbox size)
- *   - 128KB for PFs msix table(32 PFs * 256(MSIX entries) * entry * size).
- *   - 1MB for VFs msix table(512 VFs * 128 * MSIX entry size).
+ *   - 2MB for MSI-X table (must be greater or equeals to hardware limit):
+ *     - 128KB for PFs msix (32 PFs * 256(MSIX entries) * entry * size).
+ *     - 1MB for VFs msix  (512 VFs * 128 * MSIX entry size).
  *   - fwdata @ offset 38M
  * 96xx has 16 PFs and 256 VFs whereas 98xx has 32 PFs and 512 VFs.
  */
@@ -21,13 +24,16 @@
 #define PF_MBOX_SIZE		0x000200000
 #define VF_MBOX_BASE		(PF_MBOX_BASE + PF_MBOX_SIZE)
 #define VF_MBOX_SIZE		0x002000000
-#define PF_MSIX_BASE		(VF_MBOX_BASE + VF_MBOX_SIZE)
-#define VF_MSIX_BASE_IDX_NUMBER	0x2000
+#define MSIX_TABLE_BASE		(VF_MBOX_BASE + VF_MBOX_SIZE)
+#define MSIX_TABLE_SIZE		0x200000
 /* The last 2M reserved for shared firmware data */
 #define SH_FWDATA_OFFSET	0x2600000
 #define SH_FWDATA_BASE		(RVU_MEM_BASE + SH_FWDATA_OFFSET)
 #define SH_FWDATA_SIZE		0x200000
 #define RVU_MEM_END		(RVU_MEM_SIZE + RVU_MEM_BASE)
+
+CASSERT(MSIX_TABLE_BASE + MSIX_TABLE_SIZE <= SH_FWDATA_BASE,
+	sh_fwdate_overlaps_with_msix_table);
 
 /*
  * According to errata RVU-36163 in RVU_PRIV_PF()_MSIX_CFG fields

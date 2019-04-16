@@ -409,8 +409,8 @@ static void conf_msix_admin_blk_offset()
 
 static int msix_enable()
 {
-	uint32_t pf_msix_offset = 0, vf_msix_offset = VF_MSIX_BASE_IDX_NUMBER;
-	int pf, msix_conf_count = 0;
+	uint32_t msix_offset = 0;
+	int pf;
 	union cavm_rvu_priv_const priv_const;
 
 	/* Read contents of RVU_PRIV_CONST */
@@ -419,8 +419,14 @@ static int msix_enable()
 	/* set AF MSIX table base*/
 	union cavm_rvu_af_msixtr_base af_msix_cfg;
 
-	af_msix_cfg.u = PF_MSIX_BASE;
+	af_msix_cfg.u = MSIX_TABLE_BASE;
 	CSR_WRITE(CAVM_RVU_AF_MSIXTR_BASE, af_msix_cfg.u);
+
+	/*
+	 * Check if reserved memory for MSI-X table is big enough to hold all
+	 * possible MSI-Xes.
+	 */
+	assert(priv_const.s.max_msix * RVU_MSIX_VEC_SIZE <= MSIX_TABLE_SIZE);
 
 	/* Configure AF interrupt offsets at PF0 */
 	conf_msix_admin_blk_offset();
@@ -434,43 +440,27 @@ static int msix_enable()
 
 		/* Get the number of MSIX from rvu_dev array */
 		pfx_msix_cfg.u = 0;
-		pfx_msix_cfg.s.pf_msixt_offset = pf_msix_offset;
+		pfx_msix_cfg.s.pf_msixt_offset = msix_offset;
 		pfx_msix_cfg.s.pf_msixt_sizem1 =
 				rvu_dev[pf].pf_num_msix_vec - 1;
-		pf_msix_offset += (rvu_dev[pf].pf_num_msix_vec);
-		/* Increment number of already configured MSI-Xes */
-		msix_conf_count += rvu_dev[pf].pf_num_msix_vec;
+		msix_offset += (rvu_dev[pf].pf_num_msix_vec);
 
 		/* This is workaround for errata RVU-36163 */
 		if (IS_OCTEONTX_VAR(read_midr(), T96PARTNUM, 1) ||
 		    IS_OCTEONTX_VAR(read_midr(), F95PARTNUM, 1) ||
 		    IS_OCTEONTX_PASS(read_midr(), T96PARTNUM, 2, 0)) {
 			/* If pf_msix_offset needs alignment */
-			if (pf_msix_offset & RVU_36163_ALIGNMENT_MASK) {
-				pf_msix_offset += RVU_36163_OFFSET_ALIGNMENT;
-				pf_msix_offset &= ~(RVU_36163_ALIGNMENT_MASK);
+			if (msix_offset & RVU_36163_ALIGNMENT_MASK) {
+				msix_offset += RVU_36163_OFFSET_ALIGNMENT;
+				msix_offset &= ~(RVU_36163_ALIGNMENT_MASK);
 			}
 		}
 
-		/*
-		 * If such occurs, we're overlapping with VF base, should
-		 * never be reached since we're provisioning at most
-		 * 256 MSIX vectors per PF, so FDT gave us wrong setup.
-		 */
-		assert(pf_msix_offset < VF_MSIX_BASE_IDX_NUMBER);
-
 		if (rvu_dev[pf].num_vfs) {
-			pfx_msix_cfg.s.vf_msixt_offset = vf_msix_offset;
+			pfx_msix_cfg.s.vf_msixt_offset = msix_offset;
 			pfx_msix_cfg.s.vf_msixt_sizem1 =
 				rvu_dev[pf].vf_num_msix_vec - 1;
-			vf_msix_offset += ((rvu_dev[pf].num_vfs &
-				(MAX_RVU_VFS_PER_PF - 1)) *
-				rvu_dev[pf].vf_num_msix_vec);
-			/*
-			 * Increment number of already
-			 * configured MSI-Xes
-			 */
-			msix_conf_count += ((rvu_dev[pf].num_vfs &
+			msix_offset += ((rvu_dev[pf].num_vfs &
 				(MAX_RVU_VFS_PER_PF - 1)) *
 				rvu_dev[pf].vf_num_msix_vec);
 
@@ -479,10 +469,10 @@ static int msix_enable()
 			    IS_OCTEONTX_VAR(read_midr(), F95PARTNUM, 1) ||
 			    IS_OCTEONTX_PASS(read_midr(), T96PARTNUM, 2, 0)) {
 				/* If vf_msix_offset needs alignment */
-				if (vf_msix_offset & RVU_36163_ALIGNMENT_MASK) {
-					vf_msix_offset +=
+				if (msix_offset & RVU_36163_ALIGNMENT_MASK) {
+					msix_offset +=
 						RVU_36163_OFFSET_ALIGNMENT;
-					vf_msix_offset &=
+					msix_offset &=
 						~(RVU_36163_ALIGNMENT_MASK);
 				}
 			}
@@ -490,14 +480,12 @@ static int msix_enable()
 
 		/*
 		 * Check if requested number of MSI-X does
-		 * not exceedes number of available MSI-X by HRM or
-		 * vf_msix_offset is not inside RVU memory.
+		 * not exceedes number of available MSI-X by HRM.
 		 * If such configuration is requested,
 		 * print error and not configure more PFs.
 		 * Return pf index which has invalid configuration.
 		 */
-		if (msix_conf_count > priv_const.s.max_msix ||
-			vf_msix_offset > RVU_MEM_END) {
+		if (msix_offset > priv_const.s.max_msix) {
 			ERROR("Invalid RVU MSI-X configuration!\n");
 			ERROR("Disabling PFs (%d:%d)\n",
 			      pf, (octeontx_get_max_rvu_pfs() - 1));
