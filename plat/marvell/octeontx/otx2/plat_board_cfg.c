@@ -1141,10 +1141,14 @@ static int octeontx2_fill_cgx_struct(int qlm, int lane, int mode_idx)
 	/* Fill in the CGX/LMAC structures. */
 	for (i = 0; i < lcnt; i++) {
 		lmac = &cgx->lmac_cfg[cgx->lmac_count];
+		/* EBB9604, EBB9304 and 95E based EBB9504 boards have lane
+		 * reversed. Handle it accordingly
+		 */
 		if ((!strncmp(plat_octeontx_bcfg->bcfg.board_model, "ebb96",
 				5)) ||
 			(!strncmp(plat_octeontx_bcfg->bcfg.board_model,
-				"ebb93", 5)))
+				"ebb93", 5)) ||
+			(plat_get_altpkg() == CN95XXE_PKG))
 			lane_to_sds = 0x1B; /* Lanes are reversed */
 		else
 			lane_to_sds = 0xE4; /* Default value */
@@ -1168,7 +1172,8 @@ static int octeontx2_fill_cgx_struct(int qlm, int lane, int mode_idx)
 					if ((!strncmp(plat_octeontx_bcfg->bcfg.board_model,
 						"ebb96", 5)) ||
 					(!strncmp(plat_octeontx_bcfg->bcfg.board_model,
-						"ebb93", 5)))
+						"ebb93", 5)) ||
+					(plat_get_altpkg() == CN95XXE_PKG))
 						temp_lmac->lane = ~lane & 3;
 					else
 						temp_lmac->lane = lane;
@@ -1192,9 +1197,20 @@ static int octeontx2_fill_cgx_struct(int qlm, int lane, int mode_idx)
 			lmac->lane_to_sds = (lane_to_sds >> (lane * 2)) & 0xF;
 			break;
 		default:
-			if (cavm_is_model(OCTEONTX_CN9XXX) && (qlm == 5))
-				lane += 2;
-			lmac->lane_to_sds = (lane_to_sds >> (lane * 2)) & 0x3;
+			/* 95E alternative package based EBB9504 boards have
+			 * lane reversed and for DLM 4, it just has 2 lanes.
+			 * Update lane_to_sds accordingly
+			 */
+			if ((plat_get_altpkg() == CN95XXE_PKG) && (qlm == 4))
+				lmac->lane_to_sds = !lane;
+			else {
+				if (cavm_is_model(OCTEONTX_CN9XXX) &&
+							(qlm == 5))
+					lane += 2;
+
+				lmac->lane_to_sds = ((lane_to_sds >> (lane * 2))
+								& 0x3);
+			}
 			break;
 		}
 
