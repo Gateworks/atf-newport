@@ -5,19 +5,19 @@
  * https://spdx.org/licenses
  */
 
+#include <arch_helpers.h> /* for cache maintanance operations */
 #include <assert.h>
 #include <debug.h>
-#include <mmio.h>
-#include <string.h>
-#include <arch_helpers.h> /* for cache maintanance operations */
-#include <platform_def.h>
 #include <delay_timer.h>
-
-#include <plat_pm_trace.h>
-#include <mss_scp_bootloader.h>
+#include <mg_conf_cm3/mg_conf_cm3.h>
+#include <mmio.h>
 #include <mss_ipc_drv.h>
 #include <mss_mem.h>
 #include <mss_scp_bl2_format.h>
+#include <mss_scp_bootloader.h>
+#include <platform_def.h>
+#include <plat_pm_trace.h>
+#include <string.h>
 
 #define MSS_DMA_SRCBR(base)		(base + 0xC0)
 #define MSS_DMA_DSTBR(base)		(base + 0xC4)
@@ -45,8 +45,6 @@
 #define MSS_HANDSHAKE_TIMEOUT		5000
 #endif
 
-#define MG_CM3_SRAM_BASE(CP)		(MVEBU_CP_REGS_BASE(CP) + 0x100000)
-
 static int mss_check_image_ready(volatile struct mss_pm_ctrl_block *mss_pm_crtl)
 {
 	int timeout = MSS_HANDSHAKE_TIMEOUT;
@@ -60,27 +58,6 @@ static int mss_check_image_ready(volatile struct mss_pm_ctrl_block *mss_pm_crtl)
 		return -1;
 
 	mss_pm_crtl->handshake = HOST_ACKNOWLEDGMENT;
-
-	return 0;
-}
-
-static int mg_image_load(uintptr_t src_addr, uint32_t size, uintptr_t mg_regs)
-{
-	if (size > MG_SRAM_SIZE) {
-		ERROR("image is too big to fit into MG CM3 memory\n");
-		return 1;
-	}
-
-	NOTICE("Loading MG image from address 0x%lx Size 0x%x to MG at 0x%lx\n",
-	       src_addr, size, mg_regs);
-
-	/* Copy image to MG CM3 SRAM */
-	memcpy((void *)mg_regs, (void *)src_addr, size);
-
-	/* Don't release MG CM3 from reset - it will be done by next step
-	 * bootloader (e.g. U-Boot), when appriopriate device-tree setup (which
-	 * has enabeld 802.3. auto-neg) will be choosen.
-	 */
 
 	return 0;
 }
@@ -260,8 +237,7 @@ static int load_img_to_cm3(enum cm3_t cm3_type,
 			break;
 		}
 		NOTICE("Load image to CP%d MG\n", cp_index);
-		ret = mg_image_load(single_img, image_size,
-				    MG_CM3_SRAM_BASE(cp_index));
+		ret = mg_image_load(single_img, image_size, cp_index);
 		if (ret != 0) {
 			ERROR("SCP Image load failed\n");
 			return -1;
