@@ -723,6 +723,7 @@ static void cgx_set_fec(int cgx_id, int lmac_id, int req_fec)
 	cavm_cgxx_spux_tx_mrk_cnt_t tx_mrk_cnt;
 	int mrk_cnt = 0x3FFF;
 	int ram_mrk_cnt;
+	int by_mrk_100g = 1;
 
 	debug_cgx("%s %d:%d fec type %d\n", __func__, cgx_id,
 							lmac_id, req_fec);
@@ -792,9 +793,10 @@ static void cgx_set_fec(int cgx_id, int lmac_id, int req_fec)
 			mrk_cnt = 0x3FFF;
 	break;
 	case CAVM_CGX_LMAC_TYPES_E_FIFTYG_R:
-		if (val == CGX_FEC_RS)
+		if (val == CGX_FEC_RS) {
+			by_mrk_100g = 0;
 			mrk_cnt = 0x4FFF;
-		else
+		} else
 			mrk_cnt = 0x3FFF;
 		break;
 	case CAVM_CGX_LMAC_TYPES_E_USXGMII:
@@ -818,6 +820,7 @@ static void cgx_set_fec(int cgx_id, int lmac_id, int req_fec)
 	rx_mrk_cnt.u = CSR_READ(CAVM_CGXX_SPUX_RX_MRK_CNT(cgx_id,
 						lmac_id));
 	rx_mrk_cnt.s.ram_mrk_cnt = ram_mrk_cnt;
+	rx_mrk_cnt.s.by_mrk_100g = by_mrk_100g;
 	rx_mrk_cnt.s.mrk_cnt = mrk_cnt;
 
 	CSR_WRITE(CAVM_CGXX_SPUX_RX_MRK_CNT(cgx_id, lmac_id),
@@ -826,6 +829,7 @@ static void cgx_set_fec(int cgx_id, int lmac_id, int req_fec)
 	tx_mrk_cnt.u = CSR_READ(CAVM_CGXX_SPUX_TX_MRK_CNT(cgx_id,
 						lmac_id));
 	tx_mrk_cnt.s.ram_mrk_cnt = ram_mrk_cnt;
+	tx_mrk_cnt.s.by_mrk_100g = by_mrk_100g;
 	tx_mrk_cnt.s.mrk_cnt = mrk_cnt;
 	CSR_WRITE(CAVM_CGXX_SPUX_TX_MRK_CNT(cgx_id, lmac_id),
 			tx_mrk_cnt.u);
