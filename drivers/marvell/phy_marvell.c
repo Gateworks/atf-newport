@@ -1048,6 +1048,7 @@ void phy_marvell_6141_config(int cgx_id, int lmac_id)
 	MYD_STATUS status;
 	MYD_U16 result;
 	MYD_OP_MODE host_mode, line_mode;
+	MYD_U16 lane;
 
 	debug_phy_driver("%s: %d:%d\n", __func__, cgx_id, lmac_id);
 
@@ -1076,14 +1077,16 @@ void phy_marvell_6141_config(int cgx_id, int lmac_id)
 	}
 
 	phy = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id].phy_config;
+	lane = lmac_cfg->lane_to_sds & 3;
 
-	status = mydSetModeSelection(phy->priv, phy->addr, lmac_id, host_mode,
+	status = mydSetModeSelection(phy->priv, phy->addr, lane, host_mode,
 				     line_mode, MYD_MODE_ICAL_EFFORT_0,
 				     &result);
-	if (status != MYD_OK) {
-		ERROR("%s: %d:%d mydSetModeSelection() failed, result=%hu\n",
-		      __func__, cgx_id, lmac_id, result);
-	}
+	if (status == MYD_OK)
+		return;
+
+	ERROR("%s: %d:%d mydSetModeSelection() failed, lane=%hu, result=%hu\n",
+	      __func__, cgx_id, lmac_id, lane, result);
 }
 
 void phy_marvell_6141_get_link_status(int cgx_id, int lmac_id,
@@ -1092,19 +1095,22 @@ void phy_marvell_6141_get_link_status(int cgx_id, int lmac_id,
 	MYD_U16 latchedStatus, currentStatus;
 	MYD_PCS_LINK_STATUS statusDetail;
 	MYD_STATUS status;
+	MYD_U16 lane;
 	phy_config_t *phy;
+	cgx_lmac_config_t *lmac_cfg;
 	int lmac_type;
 
 	debug_phy_driver("%s: %d:%d\n", __func__, cgx_id, lmac_id);
 
-	lmac_type = plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id].mode;
-
-	phy = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id].phy_config;
+	lmac_cfg = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
+	lmac_type = lmac_cfg->mode;
+	lane = lmac_cfg->lane_to_sds & 3;
+	phy = &lmac_cfg->phy_config;
 
 	mydMemSet(&statusDetail, 0, sizeof(MYD_PCS_LINK_STATUS));
 	link->u64 = 0;
 
-	status = mydCheckPCSLinkStatus(phy->priv, phy->addr, lmac_id,
+	status = mydCheckPCSLinkStatus(phy->priv, phy->addr, lane,
 				       &currentStatus, &latchedStatus,
 				       &statusDetail);
 	if (status == MYD_OK) {
@@ -1127,10 +1133,11 @@ void phy_marvell_6141_get_link_status(int cgx_id, int lmac_id,
 			link->s.link_up = 1;
 			link->s.full_duplex = 1;
 		}
-	} else {
-		ERROR("%s: %d:%d mydCheckPCSLinkStatus failed.\n", __func__,
-		      cgx_id, lmac_id);
+		return;
 	}
+
+	ERROR("%s: %d:%d mydCheckPCSLinkStatus() failed for lane %hu.\n",
+	      __func__, cgx_id, lmac_id, lane);
 }
 #endif /* MARVELL_PHY_6141 */
 
