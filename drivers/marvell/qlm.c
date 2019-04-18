@@ -1424,6 +1424,16 @@ int qlm_set_mode(int qlm, int lane, octeontx_qlm_modes_t mode, int baud_mhz,
 		qlm_tune(qlm, l, mode, baud_mhz);
 	}
 
+	/* CGX0 routes to either to QLM3 or QLM7. Setup the routing when
+	 * a network mode is selected on either of these QLMs
+	 */
+	if ((mode >= QLM_MODE_SGMII) && ((qlm == 3) || (qlm == 7))) {
+		CSR_MODIFY(c, CAVM_CGXX_CMR_GLOBAL_CONFIG(0),
+				c.s.pmux_sds_sel = (qlm == 7));
+	}
+
+	/* FIXME: special fix for qlm 4 for 4-lane protocols */
+
 	return 0;
 }
 

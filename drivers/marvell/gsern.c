@@ -29,6 +29,9 @@
 #define debug_cgx(...) ((void) (0))
 #endif
 
+/* FIXME: Need to obtain the voltage info from BDK DT */
+int gsern_voltage = 900; /* HRM recommendation, increase to 1000 for 25G */
+
 static int gsern_poll_for_csr(uint64_t addr, uint64_t mask,
 					int poll_val, int timeout)
 {
@@ -58,7 +61,7 @@ static int gsern_poll_for_csr(uint64_t addr, uint64_t mask,
 /* Wait for GSERNX_COMMON_INIT_BSTS[rst_sm_complete] */
 static int gsern_init_wait_for_sm_complete(int qlm)
 {
-	const int TIMEOUT = 100; /* Timeout for wait loops in microsec */
+	const int TIMEOUT = 10000; /* Timeout for wait loops in microsec */
 
 	if (!strncmp(plat_octeontx_bcfg->bcfg.board_model, "asim-", 5) ||
 	    !strncmp(plat_octeontx_bcfg->bcfg.board_model, "emul-", 5))
@@ -97,9 +100,9 @@ static int gsern_init_wait_for_sm_complete(int qlm)
 }
 
 /* Wait for GSERNX_LANEX_INIT_BSTS[rst_sm_ready] */
-static int gsern_init_wait_for_sm_ready(int qlm)
+static int gsern_init_wait_for_sm_ready(int qlm, int qlm_lane)
 {
-	const int TIMEOUT = 100; /* Timeout for wait loops in microsec */
+	const int TIMEOUT = 10000; /* Timeout for wait loops in microsec */
 	int num_lanes = plat_octeontx_scfg->qlm_max_lane_num[qlm];
 
 	if (!strncmp(plat_octeontx_bcfg->bcfg.board_model, "asim-", 5) ||
@@ -107,6 +110,11 @@ static int gsern_init_wait_for_sm_ready(int qlm)
 		return 0;
 
 	for (int lane = 0; lane < num_lanes; lane++) {
+
+		/* Skip lanes we don't care about */
+		if ((qlm_lane != -1) && (qlm_lane != lane))
+			continue;
+
 		if (gsern_poll_for_csr(CAVM_GSERNX_LANEX_INIT_BSTS(qlm, lane),
 			GSERN_LANE_INIT_BSTS_RST_SM_COMPLETE, 1, TIMEOUT)) {
 			debug_cgx(
@@ -157,7 +165,7 @@ static int gsern_init_pll(int qlm)
 {
 	/* Skip REFCLK setup as already done */
 	CSR_MODIFY(c, CAVM_GSERNX_COMMON_BIAS_BCFG(qlm),
-		c.s.dac1 = 0xf;
+		c.s.dac1 = (gsern_voltage > 950) ? 0xf : 0x8;
 		c.s.dac0 = 8;
 		c.s.bias = 1;
 		c.s.bypass = 0;
@@ -230,6 +238,11 @@ static int gsern_init_network(int qlm, int qlm_lane, int flags,
 		if (gsern_init_pll(qlm))
 			return -1;
 	}
+
+	/* Force lane into Rx idle while initializing the GSER */
+	CSR_MODIFY(c, CAVM_GSERNX_LANEX_RX_IDLEDET_2_BCFG(qlm, qlm_lane),
+				c.s.frc_en = 1;
+				c.s.frc_val = 1);
 
 	/* Reset indiviual lane before continuing */
 	CSR_MODIFY(c, CAVM_GSERNX_LANEX_RST2_BCFG(qlm, qlm_lane),
@@ -546,13 +559,13 @@ static int gsern_init_network(int qlm, int qlm_lane, int flags,
 		c.s.ctle_lte_zero_ovrd_en = gsern_lane_ctle_lte_zero_ovrd_en;
 		c.s.ctle_lte_zero_ovrd = gsern_lane_ctle_lte_zero_ovrd[mode];
 		c.s.ctle_lte_gain_ovrd_en = gsern_lane_ctle_lte_gain_ovrd_en;
-		c.s.ctle_lte_gain_ovrd = gsern_lane_ctle_lte_gain_ovrd;
+		c.s.ctle_lte_gain_ovrd = gsern_lane_ctle_lte_gain_ovrd[mode];
 		c.s.ctle_zero_ovrd_en = gsern_lane_ctle_zero_ovrd_en;
 		c.s.ctle_zero_ovrd = gsern_lane_ctle_zero_ovrd[mode];
 		c.s.ctle_gain_ovrd_en = gsern_lane_ctle_gain_ovrd_en[mode];
 		c.s.ctle_gain_ovrd = gsern_lane_ctle_gain_ovrd[mode];
-		c.s.vga_gain_ovrd_en = gsern_lane_vga_gain_ovrd_en;
-		c.s.vga_gain_ovrd = gsern_lane_vga_gain_ovrd);
+		c.s.vga_gain_ovrd_en = gsern_lane_vga_gain_ovrd_en[mode];
+		c.s.vga_gain_ovrd = gsern_lane_vga_gain_ovrd[mode]);
 	CSR_MODIFY(c, CAVM_GSERNX_LANEX_RX_ST_BCFG(qlm, qlm_lane),
 		c.s.rxcdrfsmi = gsern_lane_rxcdrfsmi;
 		c.s.rx_dcc_iboost = gsern_lane_rx_dcc_iboost[mode];
@@ -657,7 +670,7 @@ static int gsern_init_network(int qlm, int qlm_lane, int flags,
 		c.s.dfe_mu = gsern_lane_dfe_mu;
 		c.s.dfe_timer_max = gsern_lane_dfe_timer_max);
 	/*
-	 * Errata GSER-35489 Disable DFE C2 & C3 Taps for 20.625Gbd and
+	 * Errata GSER-35489 Disable DFE C2 & C3 Taps for
 	 * 25.78125Gbd modes
 	 */
 	CSR_MODIFY(c, CAVM_GSERNX_LANEX_RX_0_BCFG(qlm, qlm_lane),
@@ -990,8 +1003,15 @@ static int gsern_init_network(int qlm, int qlm_lane, int flags,
 		c.s.tx_dcc_pdb = 1);
 
 	/* Wait for Lane PLL Ready and Tx Ready */
-	if (gsern_init_wait_for_sm_ready(qlm))
+	if (gsern_init_wait_for_sm_ready(qlm, qlm_lane))
 		return -1;
+
+	udelay(1000);
+
+	/* Clear the Rx idle override after GSER init complete */
+	CSR_MODIFY(c, CAVM_GSERNX_LANEX_RX_IDLEDET_2_BCFG(qlm, qlm_lane),
+				c.s.frc_en = 0;
+				c.s.frc_val = 0);
 
 	/*
 	 * Note for the "QUAD" case we should wait for all four lanes to
