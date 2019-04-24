@@ -45,6 +45,13 @@
 #define SCMI_CAVM_SFP_CONFIG_MSG_LEN		12
 #define SCMI_CAVM_SFP_CONFIG_RESP_LEN		8
 
+#define SCMI_CAVM_FLSF_FW_BOOTED_MSG_LEN		4
+#define SCMI_CAVM_FLSF_FW_BOOTED_RESP_LEN		12
+
+#define SCMI_CAVM_FLSF_CLR_FORCE_2NDRY_MSG_LEN		4
+#define SCMI_CAVM_FLSF_CLR_FORCE_2NDRY_RESP_LEN		12
+
+
 /* SCMI message header format bit field */
 #define SCMI_MSG_ID_SHIFT		0
 #define SCMI_MSG_ID_WIDTH		8
@@ -181,7 +188,13 @@
 
 /* SCMI custom Cavium configuration protocol message IDs */
 #define SCMI_CAVM_SHUTDOWN_CONFIG_MSG		0x4
-#define SCMI_CAVM_SFP_CONFIG_MSG		0x5
+#define SCMI_CAVM_SFP_CONFIG_MSG			0x5
+#define SCMI_CAVM_FLSF_FW_BOOTED_MSG		0x6
+#define SCMI_CAVM_FLSF_CLR_FORCE_2NDRY_MSG	0x7
+
+/* FailSafe status return codes */
+#define SCMI_CAVM_FLSF_RET_OK		0x0
+#define SCMI_CAVM_FLSF_RET_FAIL		0x1
 
 /* Helper structures for Cavium shutdown config command */
 #define SCMI_CAVM_SHUTDOWN_CONFIG_TYPE_NONE	0x0
@@ -316,6 +329,10 @@ void *scmi_init(scmi_channel_t *ch);
 int scmi_proto_msg_attr(void *p, uint32_t proto_id, uint32_t command_id,
 						uint32_t *attr);
 int scmi_proto_version(void *p, uint32_t proto_id, uint32_t *version);
+
+/* SCMI API to implement fail safe feature via SVC */
+int scmi_octeontx_flsf_fw_booted(void *p);
+int scmi_octeontx_flsf_clear_force_2ndry(void *p);
 
 /*
  * Power domain protocol commands. Refer to the SCMI specification for more
