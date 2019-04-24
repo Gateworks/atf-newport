@@ -81,22 +81,23 @@ static const struct default_tuning_t DEF_TUNING[] = {
 	{QLM_MODE_XLAUI,	10312,	36,	0,	12,	42},
 	{QLM_MODE_XLAUI_C2M,	10312,	40,	0,	8,	42},
 	{QLM_MODE_10G_KR,	10312,	48,	0,	0,	42},
+	{QLM_MODE_40G_CR4,	10312,	48,	0,	0,	42},
 	{QLM_MODE_40G_KR4,	10312,	48,	0,	0,	42},
 	{QLM_MODE_20GAUI_C2C,	20625,	42,	6,	0,	42},
-	{QLM_MODE_20GAUI_C2M,	20625,	42,	6,	0,	42},
 	{QLM_MODE_25GAUI_C2C,	25781,	42,	6,	0,	42},
 	{QLM_MODE_25GAUI_C2M,	25781,	42,	6,	0,	42},
+	{QLM_MODE_25G_CR,	25781,	42,	6,	0,	42},
+	{QLM_MODE_25G_KR,	25781,	42,	6,	0,	42},
 	{QLM_MODE_40GAUI_2_C2C,	20625,	42,	6,	0,	42},
-	{QLM_MODE_40GAUI_2_C2M,	20625,	42,	6,	0,	42},
 	{QLM_MODE_50GAUI_2_C2C,	25781,	42,	6,	0,	42},
 	{QLM_MODE_50GAUI_2_C2M,	25781,	42,	6,	0,	42},
+	{QLM_MODE_50G_CR2,	25781,	42,	6,	0,	42},
+	{QLM_MODE_50G_KR2,	25781,	42,	6,	0,	42},
 	{QLM_MODE_80GAUI_4_C2C,	20625,	42,	6,	0,	42},
-	{QLM_MODE_80GAUI_4_C2M,	20625,	42,	6,	0,	42},
 	{QLM_MODE_CAUI_4_C2C,	25781,	42,	6,	0,	42},
 	{QLM_MODE_CAUI_4_C2M,	25781,	42,	6,	0,	42},
-	{QLM_MODE_25G_AN,	25781,	42,	6,	0,	42},
-	{QLM_MODE_50G_AN,	25781,	42,	6,	0,	42},
-	{QLM_MODE_100G_AN,	25781,	42,	6,	0,	42},
+	{QLM_MODE_100G_CR4,	25781,	42,	6,	0,	42},
+	{QLM_MODE_100G_KR4,	25781,	42,	6,	0,	42},
 	{QLM_MODE_USXGMII_4X1,	20625,	42,	6,	0,	42},
 	{QLM_MODE_USXGMII_2X1,	20625,	42,	6,	0,	42},
 	{QLM_MODE_USXGMII_1X1,	10312,	48,	0,	0,	42},
@@ -1371,10 +1372,10 @@ int qlm_set_mode(int qlm, int lane, octeontx_qlm_modes_t mode, int baud_mhz,
 	case QLM_MODE_10G_KR:
 	case QLM_MODE_QSGMII:
 	case QLM_MODE_20GAUI_C2C:
-	case QLM_MODE_20GAUI_C2M:
 	case QLM_MODE_25GAUI_C2C:
 	case QLM_MODE_25GAUI_C2M:
-	case QLM_MODE_25G_AN:
+	case QLM_MODE_25G_CR:
+	case QLM_MODE_25G_KR:
 	case QLM_MODE_USXGMII_4X1:
 	case QLM_MODE_USXGMII_2X1:
 	case QLM_MODE_USXGMII_1X1:
@@ -1383,10 +1384,10 @@ int qlm_set_mode(int qlm, int lane, octeontx_qlm_modes_t mode, int baud_mhz,
 		break;
 	case QLM_MODE_RXAUI:
 	case QLM_MODE_40GAUI_2_C2C:
-	case QLM_MODE_40GAUI_2_C2M:
 	case QLM_MODE_50GAUI_2_C2C:
 	case QLM_MODE_50GAUI_2_C2M:
-	case QLM_MODE_50G_AN:
+	case QLM_MODE_50G_CR2:
+	case QLM_MODE_50G_KR2:
 		gsern_mode = GSERN_MODE_CGX;
 		gsern_flags = GSERN_FLAGS_DUAL;
 		is_network = 1;
@@ -1395,11 +1396,12 @@ int qlm_set_mode(int qlm, int lane, octeontx_qlm_modes_t mode, int baud_mhz,
 	case QLM_MODE_XLAUI:
 	case QLM_MODE_XLAUI_C2M:
 	case QLM_MODE_40G_KR4:
+	case QLM_MODE_40G_CR4:
         case QLM_MODE_80GAUI_4_C2C:
-        case QLM_MODE_80GAUI_4_C2M:
 	case QLM_MODE_CAUI_4_C2C:
 	case QLM_MODE_CAUI_4_C2M:
-	case QLM_MODE_100G_AN:
+	case QLM_MODE_100G_CR4:
+	case QLM_MODE_100G_KR4:
 		gsern_mode = GSERN_MODE_CGX;
 		gsern_flags = GSERN_FLAGS_QUAD;
 		is_network = 1;

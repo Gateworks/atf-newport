@@ -47,40 +47,42 @@ typedef enum {
 	QLM_MODE_XLAUI,
 	/* 1 XLAUI chip-to-module, 4 lanes each (CN93xx) */
 	QLM_MODE_XLAUI_C2M,
-	/* 4 10GBASE-KR, 1 lane each (CN81xx) */
+	/* 4 10GBASE-KR, 1 lane each */
 	QLM_MODE_10G_KR,
-	/* 1 40GBASE-KR4, 4 lanes each (CN83xx) */
+	/* 1 40GBASE-CR4, 4 lanes each */
+	QLM_MODE_40G_CR4,
+	/* 1 40GBASE-KR4, 4 lanes each */
 	QLM_MODE_40G_KR4,
 	/* 20GAUI chip to chip, 1 lane each (CN9XXX) */
 	QLM_MODE_20GAUI_C2C,
-	/* 20GAUI chip to module, 1 lane each (CN9XXX) */
-	QLM_MODE_20GAUI_C2M,
 	/* 25G chip-to-chip, 1 lane each (CN93XX QLMs) */
 	QLM_MODE_25GAUI_C2C,
 	/* 25G chip-to-module, 1 lane each (CN93XX QLMs) */
 	QLM_MODE_25GAUI_C2M,
+	/* 25GBASE-CR, 1 lane each */
+	QLM_MODE_25G_CR,
+	/* 25GBASE-KR, 1 lane each */
+	QLM_MODE_25G_KR,
 	/* 40GAUI-2 chip to chip, 2 lanes each (CN9XXX) */
 	QLM_MODE_40GAUI_2_C2C,
-	/* 40GAUI-2 chip to module, 2 lanes each (CN9XXX) */
-	QLM_MODE_40GAUI_2_C2M,
 	/* 50G chip to chip, 2 lanes each (CN93XX QLMs) */
 	QLM_MODE_50GAUI_2_C2C,
 	/* 50G chip to module, 2 lanes each (CN93XX QLMs) */
 	QLM_MODE_50GAUI_2_C2M,
+	/* 50GBASE-CR2, 2 lanes each */
+	QLM_MODE_50G_CR2,
+	/* 50GBASE-KR2, 2 lanes each */
+	QLM_MODE_50G_KR2,
 	/* 80GAUI-2 chip to chip, 4 lanes each (CN9XXX) */
 	QLM_MODE_80GAUI_4_C2C,
-	/* 80GAUI-2 chip to module, 4 lanes each (CN9XXX) */
-	QLM_MODE_80GAUI_4_C2M,
 	/* 100G chip-to-chip, 4 lanes each (CN93XX) */
 	QLM_MODE_CAUI_4_C2C,
 	/* 100G chip-to-module, 4 lanes each (CN93XX) */
 	QLM_MODE_CAUI_4_C2M,
-	/* 25G max using auto-neg, 1 lane each (CN93XX QLMs) */
-	QLM_MODE_25G_AN,
-	/* 50G max using auto-neg, 2 lanes each (CN93XX QLMs) */
-	QLM_MODE_50G_AN,
-	/* 100G max using auto-neg, 4 lanes each (CN93XX) */
-	QLM_MODE_100G_AN,
+	/* 100GBASE-CR4, 4 lanes each */
+	QLM_MODE_100G_CR4,
+	/* 1 100GBASE-KR4, 4 lanes each */
+	QLM_MODE_100G_KR4,
 	/* USXGMII, 4 over 1 lane, 10M, 100M, 1G, 2.5G, 5G (CN93XX QLMs) */
 	QLM_MODE_USXGMII_4X1,
 	/* USXGMII, 2 over 1 lane, 10M, 100M, 1G, 2.5G, 5G, 10G (CN93XX QLMs) */
