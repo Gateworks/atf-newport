@@ -1062,10 +1062,12 @@ void phy_marvell_6141_config(int cgx_id, int lmac_id)
 	MYD_U16 result;
 	MYD_OP_MODE host_mode, line_mode;
 	MYD_U16 lane;
+	MYD_U32 mode_option;
 
 	debug_phy_driver("%s: %d:%d\n", __func__, cgx_id, lmac_id);
 
 	lmac_cfg = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
+	phy = &lmac_cfg->phy_config;
 
 	switch (lmac_cfg->mode_idx) {
 	case QLM_MODE_10G_KR:
@@ -1080,7 +1082,11 @@ void phy_marvell_6141_config(int cgx_id, int lmac_id)
 
 	case QLM_MODE_50GAUI_2_C2C:
 		host_mode = MYD_P50MR; /* 50GBASE-R2, RS-FEC, no AN */
-		line_mode = MYD_P50MN; /* 50GBASE-R2, no FEC, no AN */
+
+		if (phy->mod_type == PHY_MOD_TYPE_PAM4)
+			line_mode = MYD_P50UP; /* 50GBASE-R, RS-FEC, no AN */
+		else
+			line_mode = MYD_P50MN; /* 50GBASE-R2, no FEC, no AN */
 		break;
 
 	default:
@@ -1089,11 +1095,10 @@ void phy_marvell_6141_config(int cgx_id, int lmac_id)
 		return;
 	}
 
-	phy = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id].phy_config;
 	lane = lmac_cfg->lane_to_sds & 3;
-
+	mode_option = MYD_MODE_ICAL_EFFORT_0 | MYD_MODE_FORCE_RECONFIG;
 	status = mydSetModeSelection(phy->priv, phy->addr, lane, host_mode,
-				     line_mode, MYD_MODE_ICAL_EFFORT_0,
+				     line_mode, mode_option,
 				     &result);
 	if (status == MYD_OK)
 		return;
@@ -1194,7 +1199,7 @@ phy_drv_t marvell_drv[] = {
 	{
 		.drv_name		= "MARVELL-88X6141",
 		.drv_type		= PHY_MARVELL_6141,
-		.flags			= 0,
+		.flags			= PHY_FLAG_SUPPORTS_CHANGING_MOD_TYPE,
 		.probe			= phy_marvell_6141_probe,
 		.config			= phy_marvell_6141_config,
 		.reset			= phy_generic_reset,

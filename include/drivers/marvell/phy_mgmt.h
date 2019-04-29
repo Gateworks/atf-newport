@@ -40,6 +40,15 @@
 #define PHY_VSC8574_ID1			0x0007
 #define PHY_VSC8574_ID2			0x04A2
 
+/* PHY flags */
+#define PHY_FLAG_SUPPORTS_CHANGING_MOD_TYPE 1
+
+/* PHY modulation types */
+typedef enum phy_mod_type {
+	PHY_MOD_TYPE_NRZ,
+	PHY_MOD_TYPE_PAM4,
+} phy_mod_type;
+
 /* PHY types */
 typedef enum phy_type {
 	PHY_NONE = 0,
@@ -94,6 +103,7 @@ typedef struct phy_config {
 	int port;	/* Optional : Port num for 88x5123/88x5113 */
 	int valid;	/* If valid PHY driver found */
 	int init;	/* Whether Initialization is already performed */
+	phy_mod_type mod_type; /* Line-side modulation type */
 	phy_drv_t *drv; /* struct for PHY driver operations */
 	void *priv;
 	gpio_info_t mux_info; /* Details of switch details if MDIO is muxed */
@@ -108,6 +118,7 @@ void phy_lookup(int cgx_id, int lmac_id, int type);
 int phy_mdio_read(phy_config_t *phy, int mode, int devad, int reg);
 void phy_mdio_write(phy_config_t *phy, int mode, int devad, int reg, int val);
 void phy_set_switch(phy_config_t *phy, int enable);
+void phy_set_mod_type(int cgx_id, int lmac_id, phy_mod_type mod_type);
 
 /* Generic PHY driver APIs to be exposed to other PHY drivers */
 void phy_generic_probe(int cgx_id, int lmac_id);
