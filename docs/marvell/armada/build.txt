@@ -166,12 +166,11 @@ Manual build procedure
 		can be found as a3700_utils.zip in the release.
 		Usage example: WTP=/path/to/a3700_utils
 
-	- CP_NUM: Total amount of external CPs (South Bridge) chips wired to the SoC MCI ports.
-		When the parameter is omitted, the build is uses the default number of CPs equal to 0.
-		The parameter is valid for OcteonTX2 CN913x SoC family (PLAT=t9130) and results in a build
-		of images suitable for CN913x SoC, where "x" is a number of externally connected CPs
-		(not counting the CP0 located on the same die as AP).
-		Valid values with CP_NUM is in a range of 0 to 2.
+	- CP_NUM: Total amount of CPs (South Bridge) connected to AP. When the parameter is omitted,
+		the build uses the default number of CPs, which is number of embedded CPs inside the
+		package: 1 or 2 depends on SoC used. The parameter is valid for OcteonTX2 CN913x SoC
+		family (PLAT=t9130), which can have external CPs connected to the MCI ports. Valid
+		values with CP_NUM are in a range of 1 to 3.
 
 	For example, in order to build the image in debug mode with log level up to 'notice' level run::
 
