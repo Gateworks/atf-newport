@@ -1,1 +1,1 @@
-SUBVERSION = devel-1.0.0
+SUBVERSION = 2.0.0
