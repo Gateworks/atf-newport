@@ -497,9 +497,13 @@ int cgx_set_fec_type(int cgx_id, int lmac_id, int req_fec)
 	/* Update the new FEC requested by user in the board config */
 	lmac->fec = req_fec;
 
-	/* FIXME : Configure PHY to new mode based on FEC requested
+	/* Configure PHY to new mode based on FEC requested
 	 * if PHY is present
 	 */
+	if ((lmac->phy_present) && (lmac->phy_config.init)) {
+		phy_config(cgx_id, lmac_id);
+		mdelay(1);
+	}
 
 	/* Change CGX configuration to new FEC */
 	ret = cgx_fec_change(cgx_id, lmac_id, req_fec);

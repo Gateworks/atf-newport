@@ -58,6 +58,9 @@ int phy_get_link_status(int cgx_id, int lmac_id,
 		if (phy->mux_switch)
 			smi_set_switch(phy, 0); /* Disable the switch */
 
+		/* Append the current FEC to new link status */
+		link->s.fec = lmac->fec;
+
 		debug_nw_mgmt("link %d speed %d duplex %d\n", link->s.link_up,
 			link->s.speed, link->s.full_duplex);
 		return ret;
