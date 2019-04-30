@@ -618,6 +618,7 @@ void phy_marvell_5113_config(int cgx_id, int lmac_id)
 	marvell_5113_priv[cgx_id].port[port].use_an = 0;
 	switch (lmac_cfg->mode_idx) {
 	case QLM_MODE_XLAUI:
+	case QLM_MODE_XLAUI_C2M:
 		if (lmac_cfg->fec == CGX_FEC_BASE_R) {
 			mode_str = "40G-BASE-R4-FEC";
 			host_mode = line_mode = MXD_P40LF;
@@ -638,6 +639,7 @@ void phy_marvell_5113_config(int cgx_id, int lmac_id)
 		marvell_5113_priv[cgx_id].port[port].use_an = 1;
 	break;
 	case QLM_MODE_XFI:
+	case QLM_MODE_SFI:
 		if (lmac_cfg->fec == CGX_FEC_BASE_R) {
 			mode_str = "10G-BASE-R-FEC";
 			host_mode = line_mode = MXD_P10LF;
