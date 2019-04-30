@@ -27,6 +27,7 @@
 #else
 #define debug_shmem_mgmt(...) ((void) (0))
 #endif
+#define RST_REF_CLK 50
 
 static struct cgx_lmac_fwdata_s *get_sh_cgx_fwdata_ptr(int cgx_id, int lmac_id)
 {
@@ -45,6 +46,7 @@ static struct cgx_lmac_fwdata_s *get_sh_cgx_fwdata_ptr(int cgx_id, int lmac_id)
 
 void sh_fwdata_init(void)
 {
+	union cavm_rst_boot cavm_rst_boot_t;
 	struct sh_fwdata *fwdata;
 	int i, pf_mac_num;
 	uint64_t pf_mac;
@@ -76,6 +78,10 @@ void sh_fwdata_init(void)
 		fwdata->pf_macs[i] = pf_mac;
 		pf_mac++;
 	}
+	cavm_rst_boot_t.u = CSR_READ(CAVM_RST_BOOT);
+	fwdata->rclk = cavm_rst_boot_t.s.c_mul * RST_REF_CLK;
+	fwdata->sclk = cavm_rst_boot_t.s.pnr_mul * RST_REF_CLK;
+
 }
 
 void sh_fwdata_update_supported_fec(int cgx_id, int lmac_id)
