@@ -780,6 +780,31 @@ static void cgx_set_fec(int cgx_id, int lmac_id, int req_fec)
 		 * configure the FEC as such
 		 */
 		val = req_fec;
+
+		/* Workaround for errata GSER-35489
+		 * For T9X pass 1.0 and 1.1, always enable RS-FEC
+		 * for 25G
+		 */
+		if ((IS_OCTEONTX_PASS(read_midr(), T96PARTNUM, 1, 0)) ||
+			(IS_OCTEONTX_PASS(read_midr(), T96PARTNUM, 1, 1)) ||
+			(IS_OCTEONTX_PASS(read_midr(), F95PARTNUM, 1, 0))) {
+			switch (lmac->mode_idx) {
+			case QLM_MODE_25GAUI_C2C:
+			case QLM_MODE_25GAUI_C2M:
+			case QLM_MODE_25G_CR:
+			case QLM_MODE_25G_KR:
+			case QLM_MODE_50GAUI_2_C2C:
+			case QLM_MODE_50GAUI_2_C2M:
+			case QLM_MODE_50G_CR2:
+			case QLM_MODE_50G_KR2:
+			case QLM_MODE_CAUI_4_C2C:
+			case QLM_MODE_CAUI_4_C2M:
+			case QLM_MODE_100G_CR4:
+			case QLM_MODE_100G_KR4:
+				val = CGX_FEC_RS;
+			break;
+			}
+		}
 	}
 	CAVM_MODIFY_CGX_CSR(cavm_cgxx_spux_fec_control_t,
 				CAVM_CGXX_SPUX_FEC_CONTROL(cgx_id, lmac_id),
