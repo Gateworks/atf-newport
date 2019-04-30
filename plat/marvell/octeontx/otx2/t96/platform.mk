@@ -43,6 +43,7 @@ BL1_SOURCES		+=	plat/marvell/octeontx/otx2/aarch64/plat_octeontx_common.S	\
 BL2_SOURCES		+=	plat/marvell/octeontx/otx2/t96/plat_t96_ecam.c		\
 				drivers/marvell/sh_fwdata.c		\
 				drivers/marvell/rvu.c		\
+				plat/marvell/octeontx/otx2/plat_npc_mcam_profile.c	\
 
 BL31_LIBS               +=      lib/libphy/libphy_88x5113.a     \
 				lib/libphy/libphy_88x5123.a     \

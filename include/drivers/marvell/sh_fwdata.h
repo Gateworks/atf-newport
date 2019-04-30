@@ -52,6 +52,8 @@ struct sh_fwdata {
 	struct cgx_lmac_fwdata_s cgx_fw_data[CGX_MAX][CGX_LMACS_MAX];
 	uint64_t sclk;
 	uint64_t rclk;
+	uint64_t mcam_addr;
+	uint64_t mcam_sz;
 };
 
 static inline uint64_t get_sh_fwdata_base(void)

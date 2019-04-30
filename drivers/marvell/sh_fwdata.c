@@ -20,6 +20,10 @@
 #include <octeontx_utils.h>
 #include <plat_scfg.h>
 
+#ifdef NT_FW_CONFIG
+#include <plat_npc_mcam_profile.h>
+#endif
+
 #undef DEBUG_ATF_SH_MEM_MGMT
 
 #ifdef DEBUG_ATF_SH_MEM_MGMT
@@ -82,6 +86,10 @@ void sh_fwdata_init(void)
 	fwdata->rclk = cavm_rst_boot_t.s.c_mul * RST_REF_CLK;
 	fwdata->sclk = cavm_rst_boot_t.s.pnr_mul * RST_REF_CLK;
 
+#ifdef NT_FW_CONFIG
+	fwdata->mcam_addr = otx2_get_npc_profile_addr(0);
+	fwdata->mcam_sz = otx2_get_npc_profile_size(0);
+#endif
 }
 
 void sh_fwdata_update_supported_fec(int cgx_id, int lmac_id)

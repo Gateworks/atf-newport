@@ -552,6 +552,7 @@ static int cgx_process_requests(int cgx_id, int lmac_id)
 		(request_id == CGX_CMD_GET_MKEX_SIZE) ||
 		(request_id == CGX_CMD_GET_MKEX_PROFILE) ||
 #endif
+		(request_id == CGX_CMD_GET_FWD_BASE) ||
 		(request_id == CGX_CMD_GET_FW_VER)) {
 		switch (request_id) {
 		case CGX_CMD_INTF_SHUTDOWN:
@@ -594,6 +595,12 @@ static int cgx_process_requests(int cgx_id, int lmac_id)
 				(unsigned int)scratchx0.s.prfl_sz.mcam_sz);
 			break;
 #endif
+		case CGX_CMD_GET_FWD_BASE:
+			scratchx0.u = 0;
+			scratchx0.s.fwd_base_s.addr = get_sh_fwdata_base();
+			CSR_WRITE(CAVM_CGXX_CMRX_SCRATCHX(cgx_id, lmac_id, 0),
+				scratchx0.u);
+			break;
 		}
 	} else {
 		/* all the below commands should be processed only
@@ -641,14 +648,6 @@ static int cgx_process_requests(int cgx_id, int lmac_id)
 						scratchx0.s.mac_s.addr_5);
 				CSR_WRITE(CAVM_CGXX_CMRX_SCRATCHX(
 						cgx_id, lmac_id, 0), scratchx0.u);
-				break;
-			case CGX_CMD_GET_FWD_BASE:
-				scratchx0.u = 0;
-				scratchx0.s.fwd_base_s.addr =
-					get_sh_fwdata_base();
-				CSR_WRITE(CAVM_CGXX_CMRX_SCRATCHX(
-					cgx_id, lmac_id, 0),
-					scratchx0.u);
 				break;
 			case CGX_CMD_GET_SUPPORTED_FEC:
 				scratchx0.u = 0;
