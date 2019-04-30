@@ -37,8 +37,16 @@
  *	0x2 -- Fail
  */
 #define PLAT_OCTEONTX_NDC_STATUS	0xc2000b04
+/*
+ * x1 - ooo
+ * Return:
+ *	0x0 -- Success
+ *	0x2 -- Fail
+ */
+#define PLAT_OCTEONTX_OOO_CONFIG	0xc2000b07
 
 /* Number of platform specific SMCs */
 #define PLAT_OCTEONTX_NUM_SMC_CALLS	4
+int octeontx2_configure_ooo(int);
 
 #endif /* __PLATFORM_SVC_H__ */

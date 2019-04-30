@@ -21,6 +21,8 @@
 #include <plat_octeontx.h>
 #include <octeontx_utils.h>
 
+static int disable_ooo;
+
 /* Any SoC family specific setup
  * to be done in BL31 can be initialized
  * in this API. If there are any platform
@@ -142,6 +144,19 @@ int plat_get_altpkg(void)
 	return pkg_ver.s.pkg_ver;
 }
 
+/*
+ * Return to enable/disable OOO
+ *
+ * @return non-zero to diable OOO
+ */
+int plat_get_ooo_status(void)
+{
+	if (disable_ooo)
+		return 1;
+	else
+		return 0;
+}
+
 void plat_octeontx_cpu_setup(void)
 {
 	uint64_t cvmctl_el1, cvmmemctl0_el1, cvmmemctl1_el1, cvmmemctl2_el1;
@@ -208,6 +223,12 @@ void plat_octeontx_cpu_setup(void)
 	/* Set Write-buffer timeout for NSH entries to 218 cycles. */
 	unset_bit(cvmmemctl0_el1, 18);
 
+	/* Disable/enable OOO */
+	if (plat_get_ooo_status())
+		set_bit(cvmctl_el1, 44);
+	else
+		unset_bit(cvmctl_el1, 44);
+
 	write_cvmctl_el1(cvmctl_el1);
 	write_cvmctl2_el1(cvmctl2_el1);
 	write_cvmmemctl0_el1(cvmmemctl0_el1);
@@ -218,4 +239,21 @@ void plat_octeontx_cpu_setup(void)
 	write_cvm_access_el1(read_cvm_access_el1() & ~(1 << 8));
 	write_cvm_access_el2(read_cvm_access_el2() & ~(1 << 8));
 	write_cvm_access_el3(read_cvm_access_el3() & ~(1 << 8));
+}
+
+int octeontx2_configure_ooo(int x1)
+{
+	uint64_t cvmctl_el1;
+
+	disable_ooo = x1 ? 1 : 0;
+
+	cvmctl_el1 = read_cvmctl_el1();
+	if (disable_ooo)
+		set_bit(cvmctl_el1, 44);
+	else
+		unset_bit(cvmctl_el1, 44);
+
+	write_cvmctl_el1(cvmctl_el1);
+
+	return 0;
 }

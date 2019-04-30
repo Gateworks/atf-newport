@@ -65,6 +65,13 @@ uintptr_t plat_octeontx_svc_smc_handler(uint32_t smc_fid,
 		SMC_RET1(handle, 0);
 		break;
 
+	case PLAT_OCTEONTX_OOO_CONFIG:
+		INFO("SVC OOO CONFIG: x1 = 0x%lx\n", x1);
+		ret = octeontx2_configure_ooo(x1);
+		SMC_RET1(handle, ret);
+		break;
+
+
 	default:
 		WARN("Unimplemented OcteonTX Service Call: 0x%x\n", smc_fid);
 		SMC_RET1(handle, SMC_UNK);

@@ -17,5 +17,6 @@ int plat_octeontx_get_cgx_count(void);
 int plat_octeontx_get_gser_count(void);
 int plat_octeontx_get_mcc_count(void);
 int plat_get_altpkg(void);
+int plat_get_ooo_status(void);
 
 #endif /* __PLAT_OTX2_CONFIGURATION_H__ */

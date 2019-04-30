@@ -37,6 +37,13 @@
  *	0x2 -- Fail
  */
 #define PLAT_OCTEONTX_NDC_STATUS		0xc2000b04
+/*
+ * x1 - ooo
+ * Return:
+ *	0x0 -- Success
+ *	0x2 -- Fail
+ */
+#define PLAT_OCTEONTX_OOO_CONFIG		0xc2000b07
 
 #define PLAT_OCTEONTX_INSTALL_BPHY_PSM_ERRINT	0xc2000803
 #define PLAT_OCTEONTX_REMOVE_BPHY_PSM_ERRINT	0xc2000804
