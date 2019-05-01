@@ -673,6 +673,18 @@ static int cgx_process_requests(int cgx_id, int lmac_id)
 				ret = cgx_set_fec_type(cgx_id, lmac_id,
 								req_fec);
 			break;
+			case CGX_CMD_SET_PHY_MOD_TYPE:
+				phy_set_mod_type(cgx_id, lmac_id,
+						 scratchx1.s.phy_mod_args.mod);
+			break;
+			case CGX_CMD_GET_PHY_MOD_TYPE:
+				scratchx0.u = 0;
+				scratchx0.s.phy_mod_type.mod =
+					lmac->phy_config.mod_type;
+				CSR_WRITE(CAVM_CGXX_CMRX_SCRATCHX(
+						cgx_id, lmac_id, 0),
+						scratchx0.u);
+			break;
 			/* FIXME: add support for other commands */
 			default:
 				debug_cgx_intf("%s: %d:%d Invalid request %d\n",

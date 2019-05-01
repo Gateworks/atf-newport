@@ -86,6 +86,8 @@ enum cgx_cmd_id {
 	CGX_CMD_SET_AN,
 	CGX_CMD_GET_ADV_LINK_MODES,
 	CGX_CMD_GET_ADV_FEC,
+	CGX_CMD_GET_PHY_MOD_TYPE, /* line-side modulation type: NRZ or PAM4 */
+	CGX_CMD_SET_PHY_MOD_TYPE,
 };
 
 /* async event ids */
@@ -254,6 +256,13 @@ struct cgx_get_an_s {
 	uint64_t reserved2:54;
 };
 
+/* Resp to cmd ID - CGX_CMD_GET_PHY_MOD_TYPE */
+struct cgx_get_phy_mod_type_s {
+	uint64_t reserved1:9;
+	uint64_t mod:1;		/* 0=NRZ, 1=PAM4 */
+	uint64_t reserved2:54;
+};
+
 union cgx_rsp_sts {
 	/* Fixed, applicable for all commands/events */
 	struct cgx_evt_sts_s evt_sts;
@@ -277,6 +286,8 @@ union cgx_rsp_sts {
 	struct cgx_fec_types_s adv_fec;
 	/* response to CGX_CMD_GET_AN */
 	struct cgx_get_an_s an;
+	/* response to CGX_CMD_GET_PHY_MOD_TYPE */
+	struct cgx_get_phy_mod_type_s phy_mod_type;
 #ifdef NT_FW_CONFIG
 	/* response to CGX_CMD_GET_MKEX_SIZE */
 	struct cgx_mcam_profile_sz_s prfl_sz;
@@ -342,6 +353,13 @@ struct cgx_set_fec_args {
 	uint64_t reserved2:54;
 };
 
+/* command argument to be passed for cmd ID - CGX_CMD_SET_PHY_MOD_TYPE */
+struct cgx_set_phy_mod_args {
+	uint64_t reserved1:8;
+	uint64_t mod:1;		/* 0=NRZ, 1=PAM4 */
+	uint64_t reserved2:55;
+};
+
 union cgx_cmd_s {
 	uint64_t own_status:2;			/* cgx_cmd_own */
 	struct cgx_cmd cmd;
@@ -350,6 +368,7 @@ union cgx_cmd_s {
 	struct cgx_link_change_args lnk_args;	/* Input to CGX_CMD_LINK_CHANGE */
 	struct cgx_set_mode_args mode_args;
 	struct cgx_set_fec_args fec_args;
+	struct cgx_set_phy_mod_args phy_mod_args;
 	/* any other arg for command id * like : mtu, dmac filtering control */
 };
 
