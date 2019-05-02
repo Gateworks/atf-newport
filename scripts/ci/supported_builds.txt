@@ -35,6 +35,8 @@ uboot_2018_cn9130_A
 uboot_2018_cn9130_B
 uboot_2018_cn9130_C
 uboot_2018_cn9130_ddr32_A
+uboot_2018_cn9130_crb_A
+uboot_2018_cn9130_crb_B
 uboot_2018_cn9131_A
 uboot_2018_cn9131_ddr32_A
 uboot_2018_cn9132_A
