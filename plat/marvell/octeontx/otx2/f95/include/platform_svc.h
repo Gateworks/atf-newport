@@ -50,5 +50,6 @@
 
 /* Number of platform specific SMCs */
 #define PLAT_OCTEONTX_NUM_SMC_CALLS	6
+int octeontx2_configure_ooo(int);
 
 #endif /* __PLATFORM_SVC_H__ */
