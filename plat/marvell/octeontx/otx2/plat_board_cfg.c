@@ -1359,10 +1359,17 @@ static void octeontx2_cgx_lmacs_check_linux(const void *fdt,
 	char sfpname[16], qsfpname[16];
 
 	for (lmac_idx = 0; lmac_idx < cgx->lmac_count; lmac_idx++) {
+		int lane;
+		/* Look for lane index instead of LMAC index for each LMAC */
 		lmac = &cgx->lmac_cfg[lmac_idx];
+		if (cavm_is_model(OCTEONTX_CN9XXX) && (lmac->qlm == 5))
+			lane = lmac->lane + 2;
+		else
+			lane = lmac->lane;
+
 		snprintf(name, sizeof(name), "%s@%d%d",
 				qlmmode_strmap[lmac->mode_idx].linux_str,
-				cgx_idx, lmac_idx);
+				cgx_idx, lane);
 		lmac_offset = fdt_subnode_offset(fdt, cgx_offset, name);
 		if (lmac_offset < 0) {
 			ERROR("CGX%d.LMAC%d: DT:%s not found in device tree\n",
