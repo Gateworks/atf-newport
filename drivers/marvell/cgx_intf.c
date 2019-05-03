@@ -148,7 +148,8 @@ static int cgx_link_change_req(int cgx_id, int lmac_id)
 			lmac_id, lmac_cfg->mode);
 
 	/* In case of link change from down -> up, do the necessary
-	 * HW configuration to initialize the link again. If the link
+	 * HW configuration to initialize the link again. For >=10G interfaces,
+	 * if the link is down, set up link is already called once. If the link
 	 * has changed from up -> down, just update the status. no HW
 	 * re-configuration is required.
 	 */
@@ -162,18 +163,8 @@ static int cgx_link_change_req(int cgx_id, int lmac_id)
 
 	if (link.s.link_up) {
 		if ((lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_SGMII) ||
-			(lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_QSGMII)) {
+			(lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_QSGMII))
 			ret = cgx_sgmii_set_link_speed(cgx_id, lmac_id, &link);
-		} else if ((lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_XAUI) ||
-			(lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_RXAUI) ||
-			(lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_TENG_R) ||
-			(lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_TWENTYFIVEG_R) ||
-			(lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_FORTYG_R) ||
-			(lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_FIFTYG_R) ||
-			(lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_HUNDREDG_R) ||
-			(lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_USXGMII)) {
-			ret = cgx_xaui_set_link_up(cgx_id, lmac_id);
-		}
 	}
 
 	if (ret == -1) {
