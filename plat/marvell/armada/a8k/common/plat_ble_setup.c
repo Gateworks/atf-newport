@@ -120,7 +120,6 @@
 #define EFUSE_AP_LD0_REVID_MASK		0xF
 #define EFUSE_AP_LD0_BIN_OFFS		16		/* LD0[80:79] */
 #define EFUSE_AP_LD0_BIN_MASK		0x3
-#define EFUSE_AP_LD0_SWREV_OFFS		50		/* LD0[115:113] */
 #define EFUSE_AP_LD0_SWREV_MASK		0x7
 
 #ifndef MVEBU_SOC_AP807
@@ -134,6 +133,7 @@
 	#define EFUSE_AP_LD0_SVC2_OFFS		26	/* LD0[96:89] */
 	#define EFUSE_AP_LD0_SVC3_OFFS		34	/* LD0[104:97] */
 	#define EFUSE_AP_LD0_WP_MASK		0xFF
+	#define EFUSE_AP_LD0_SWREV_OFFS		50	/* LD0[115:113] */
 #else
 	/* AP807 AVS work points in the LD0 eFuse
 	 * SVC1 work point:     LD0[91:81]
@@ -143,7 +143,8 @@
 	#define EFUSE_AP_LD0_SVC1_OFFS		17	/* LD0[91:81] */
 	#define EFUSE_AP_LD0_SVC2_OFFS		28	/* LD0[102:92] */
 	#define EFUSE_AP_LD0_SVC3_OFFS		39	/* LD0[113:103] */
-	#define EFUSE_AP_LD0_WP_MASK		0x3FF
+	#define EFUSE_AP_LD0_WP_MASK		0x7FF	/* 10 data,1 parity */
+	#define EFUSE_AP_LD0_SWREV_OFFS		51	/* LD0[116:114] */
 #endif
 
 #define EFUSE_AP_LD0_SVC4_OFFS		42		/* LD0[112:105] */
@@ -216,6 +217,7 @@ static void ble_plat_mmap_config(int restore)
  ****************************************************************************
  */
 #if !SVC_TEST
+
 static void ble_plat_avs_config(void)
 {
 	uint32_t freq_mode, device_id;
@@ -225,7 +227,9 @@ static void ble_plat_avs_config(void)
 		SAR_CLOCK_FREQ_MODE(mmio_read_32(MVEBU_AP_SAR_REG_BASE(
 						 FREQ_MODE_AP_SAR_REG_NUM)));
 	if (ble_get_ap_type() == CHIP_ID_AP807) {
+
 		avs_val = AVS_AP807_CLK_VALUE;
+
 	} else {
 		/* Check which SoC is running and act accordingly */
 		device_id = cp110_device_id_get(MVEBU_CP_REGS_BASE(0));
@@ -378,6 +382,7 @@ static void ble_plat_svc_config(void)
 	uint64_t efuse;
 	uint32_t device_id, single_cluster;
 	uint16_t  svc[4], perr[4], i, sw_ver;
+	uint8_t	 avs_data_bits, min_sw_ver, svc_fields;
 	unsigned int ap_type;
 
 	/* Check if the AVS override is requested */
@@ -431,22 +436,28 @@ static void ble_plat_svc_config(void)
 			 & EFUSE_AP_LD0_WP_MASK;
 		INFO("SVC: Efuse WP: [0]=0x%x, [1]=0x%x, [2]=0x%x, [3]=0x%x\n",
 		     svc[0], svc[1], svc[2], svc[3]);
+		avs_data_bits = 7;
+		min_sw_ver = 2; /* parity check from sw revision 2 */
+		svc_fields = 4;
 	} else {
 		INFO("SVC: Efuse WP: [0]=0x%x, [1]=0x%x, [2]=0x%x\n",
 		     svc[0], svc[1], svc[2]);
+		avs_data_bits = 10;
+		min_sw_ver = 1; /* parity check required from sw revision 1 */
+		svc_fields = 3;
 	}
 
 	/* Validate parity of SVC workpoint values */
-	for (i = 0; i < 4; i++) {
+	for (i = 0; i < svc_fields; i++) {
 		uint8_t parity, bit;
-
 		perr[i] = 0;
 
-		for (bit = 1, parity = svc[i] & 1; bit < 7; bit++)
+		for (bit = 1, parity = (svc[i] & 1); bit < avs_data_bits; bit++)
 			parity ^= (svc[i] >> bit) & 1;
 
-		/* Starting from SW version 2, the parity check is mandatory */
-		if ((sw_ver > 1) && (parity != ((svc[i] >> 7) & 1)))
+		/* From SW version 1 or 2 (AP806/AP807), check parity */
+		if ((sw_ver >= min_sw_ver) &&
+		    (parity != ((svc[i] >> avs_data_bits) & 1)))
 			perr[i] = 1; /* register the error */
 	}
 
@@ -537,10 +548,11 @@ static void ble_plat_svc_config(void)
 					goto perror;
 				avs_workpoint = svc[0];
 			} else
-				avs_workpoint = 0;
+				NOTICE("SVC: AVS work point not changed\n");
+				return;
 			break;
 		}
-	} else if (device_id == MVEBU_3900_DEV_ID) { /* TODO: extend for 9130 */
+	} else if (device_id == MVEBU_3900_DEV_ID) {
 		NOTICE("SVC: DEV ID: %s, FREQ Mode: 0x%x\n",
 		       "3900", freq_pidi_mode);
 		switch (freq_pidi_mode) {
@@ -560,6 +572,31 @@ static void ble_plat_svc_config(void)
 			avs_workpoint = svc[0];
 			break;
 		}
+	} else if (device_id == MVEBU_CN9130_DEV_ID) {
+		NOTICE("SVC: DEV ID: %s, FREQ Mode: 0x%x\n",
+		       "CN913x", freq_pidi_mode);
+		switch (freq_pidi_mode) {
+		case CPU_2200_DDR_1200_RCLK_1200:
+			if (perr[0])
+				goto perror;
+			avs_workpoint = svc[0];
+			break;
+		case CPU_2000_DDR_1200_RCLK_1200:
+			if (perr[1])
+				goto perror;
+			avs_workpoint = svc[1];
+			break;
+		case CPU_1600_DDR_1200_RCLK_1200:
+			if (perr[2])
+				goto perror;
+			avs_workpoint = svc[2];
+			break;
+		default:
+			ERROR("SVC: Unsupported Frequency 0x%x\n",
+				freq_pidi_mode);
+			return;
+
+		}
 	} else {
 		ERROR("SVC: Unsupported Device ID 0x%x\n", device_id);
 		return;
@@ -567,13 +604,17 @@ static void ble_plat_svc_config(void)
 
 	/* Set AVS control if needed */
 	if (avs_workpoint == 0) {
-		ERROR("SVC: AVS work point not changed\n");
+		ERROR("SVC: You are using a frequency setup which is\n");
+		ERROR("Not supported by this device\n");
+		ERROR("This may result in malfunction of the device\n");
 		return;
 	}
 
 	/* Remove parity bit */
 	if (ap_type != CHIP_ID_AP807)
 		avs_workpoint &= 0x7F;
+	else
+		avs_workpoint &= 0x3FF;
 
 	/* Update WP from EEPROM if needed */
 	avs_workpoint = avs_update_from_eeprom(avs_workpoint);
