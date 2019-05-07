@@ -93,12 +93,19 @@ static void init_cgx(uint64_t config_base, uint64_t config_size)
 {
 	union cavm_pccpf_xxx_vsec_ctl vsec_ctl;
 	int cgx_id;
+	cgx_config_t *cgx;
 
 	vsec_ctl.u = octeontx_read32(config_base + CAVM_PCCPF_XXX_VSEC_CTL);
 	cgx_id = vsec_ctl.s.inst_num;
 
 	debug_plat_ecam("CGX(%d): init config_base:%llx size:%llx\n",
 		vsec_ctl.s.inst_num, config_base, config_size);
+
+	cgx = &(plat_octeontx_bcfg->cgx_cfg[cgx_id]);
+	if (cgx_id == 0)
+		cgx->is_nix = 1;
+	else
+		cgx->is_nix = 0;
 
 	cgx_hw_init(cgx_id);
 }

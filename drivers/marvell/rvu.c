@@ -161,7 +161,7 @@ static int octeontx_init_rvu_from_fdt(void)
 	pf = RVU_CGX0_LMAC0;
 	for (cgx_id = 0; cgx_id < MAX_CGX; cgx_id++) {
 		cgx = &(plat_octeontx_bcfg->cgx_cfg[cgx_id]);
-		if (cgx->enable) {
+		if (cgx->enable && cgx->is_nix) {
 			for (lmac_id = 0; lmac_id < MAX_LMAC_PER_CGX; lmac_id++) {
 				if (cgx->lmac_cfg[lmac_id].lmac_enable) {
 					octeontx_init_rvu_lmac(&current_hwvf,

@@ -71,6 +71,7 @@ typedef struct cgx_config {
 	uint32_t usxgmii_mode:1; /* global - per CGX */
 	/* for RVU */
 	uint32_t enable:1;
+	uint32_t is_nix:1;
 	cgx_lmac_config_t lmac_cfg[MAX_LMAC_PER_CGX];
 } cgx_config_t;
 
