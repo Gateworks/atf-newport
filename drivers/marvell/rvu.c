@@ -28,18 +28,6 @@
 
 static struct rvu_device rvu_dev[MAX_RVU_PFS];
 
-static inline int octeontx_get_msix_for_cpt()
-{
-	union cavm_cptx_priv_lfx_int_cfg cpt_int_cfg;
-	union cavm_cptx_af_constants0 cpt_af_const0;
-	int cpt = 0, lf = 0;
-
-	cpt_int_cfg.u = CSR_READ(CAVM_CPTX_PRIV_LFX_INT_CFG(cpt, lf));
-	cpt_af_const0.u = CSR_READ(CAVM_CPTX_AF_CONSTANTS0(cpt));
-
-	return (cpt_af_const0.s.lf * cpt_int_cfg.s.msix_size);
-}
-
 static inline int octeontx_get_msix_for_npa()
 {
 	union cavm_npa_priv_lfx_int_cfg npa_int_cfg;
@@ -48,22 +36,6 @@ static inline int octeontx_get_msix_for_npa()
 	npa_int_cfg.u = CSR_READ(CAVM_NPA_PRIV_LFX_INT_CFG(lf));
 
 	return npa_int_cfg.s.msix_size;
-}
-
-static inline int octeontx_get_msix_for_sso_tim()
-{
-	int lf = 0;
-	union cavm_tim_priv_lfx_int_cfg tim_int_cfg;
-	union cavm_sso_priv_lfx_hwgrp_int_cfg sso_int_cfg;
-	union cavm_ssow_priv_lfx_hws_int_cfg ssow_int_cfg;
-
-	tim_int_cfg.u = CSR_READ(CAVM_TIM_PRIV_LFX_INT_CFG(lf));
-	sso_int_cfg.u = CSR_READ(CAVM_SSO_PRIV_LFX_HWGRP_INT_CFG(lf));
-	ssow_int_cfg.u = CSR_READ(CAVM_SSOW_PRIV_LFX_HWS_INT_CFG(lf));
-
-	return (tim_int_cfg.s.msix_size +
-		ssow_int_cfg.s.msix_size +
-		sso_int_cfg.s.msix_size);
 }
 
 static inline int octeontx_get_msix_for_cgx()
@@ -112,8 +84,7 @@ static void octeontx_init_rvu_fixed(int *hwvf, int rvu, int bfdt_index, int has_
 			CAVM_PCC_DEV_IDL_E_SW_RVU_SSO_TIM_VF & DEVID_MASK;
 		rvu_dev[rvu].pci.class_code = GSP_CLASS_CODE & CLASS_CODE_MASK;
 		rvu_dev[rvu].vf_num_msix_vec = has_vfs ?
-					(RVU_VF_INT_VEC_COUNT +
-					octeontx_get_msix_for_sso_tim(0)) : 0;
+						sw_pf->num_msix_vec : 0;
 		break;
 	case SW_RVU_NPA_PF:
 		rvu_dev[rvu].pci.pf_devid =
@@ -122,8 +93,7 @@ static void octeontx_init_rvu_fixed(int *hwvf, int rvu, int bfdt_index, int has_
 			CAVM_PCC_DEV_IDL_E_SW_RVU_NPA_VF & DEVID_MASK;
 		rvu_dev[rvu].pci.class_code = GSP_CLASS_CODE & CLASS_CODE_MASK;
 		rvu_dev[rvu].vf_num_msix_vec = has_vfs ?
-					(RVU_VF_INT_VEC_COUNT +
-					 octeontx_get_msix_for_npa(0)) : 0;
+						sw_pf->num_msix_vec : 0;
 		break;
 	case SW_RVU_CPT_PF:
 		rvu_dev[rvu].pci.pf_devid =
@@ -132,8 +102,7 @@ static void octeontx_init_rvu_fixed(int *hwvf, int rvu, int bfdt_index, int has_
 			CAVM_PCC_DEV_IDL_E_SW_RVU_CPT_VF & DEVID_MASK;
 		rvu_dev[rvu].pci.class_code = CPT_CLASS_CODE & CLASS_CODE_MASK;
 		rvu_dev[rvu].vf_num_msix_vec = has_vfs ?
-					(RVU_VF_INT_VEC_COUNT +
-					 octeontx_get_msix_for_cpt(0)) : 0;
+						sw_pf->num_msix_vec : 0;
 		break;
 	}
 	/* Increment already allocated HWVFs */
@@ -147,8 +116,7 @@ static void octeontx_init_rvu_lmac(int *hwvf, int rvu, cgx_config_t *cgx,
 	rvu_dev[rvu].num_vfs = cgx->lmac_cfg[lmac_id].num_rvu_vfs;
 	rvu_dev[rvu].first_hwvf = *hwvf;
 	rvu_dev[rvu].pf_num_msix_vec = cgx->lmac_cfg[lmac_id].num_msix_vec;
-	rvu_dev[rvu].vf_num_msix_vec = RVU_VF_INT_VEC_COUNT +
-				       octeontx_get_msix_for_cgx(0);
+	rvu_dev[rvu].vf_num_msix_vec = cgx->lmac_cfg[lmac_id].num_msix_vec;
 	rvu_dev[rvu].pf_res_ena = TRUE;
 	rvu_dev[rvu].pci.pf_devid = CAVM_PCC_DEV_IDL_E_RVU & DEVID_MASK;
 	rvu_dev[rvu].pci.vf_devid = CAVM_PCC_DEV_IDL_E_RVU_VF & DEVID_MASK;
@@ -270,10 +238,11 @@ static void dump_rvu_devs()
 	for (pf = 0; pf < octeontx_get_max_rvu_pfs(); pf++) {
 		debug_rvu("******************************************\n");
 		debug_rvu("PF%d: enable=%d, num_vfs=%d, first_hwvf=%d\n"
-			  "pf_num_msix_vec=%d, pf_res_ena=%d\n",
+			  "pf_num_msix_vec=%d, vf_num_msix_vec=%d\n"
+			  "pf_res_ena=%d\n",
 			  pf, rvu_dev[pf].enable, rvu_dev[pf].num_vfs,
 			  rvu_dev[pf].first_hwvf, rvu_dev[pf].pf_num_msix_vec,
-			  rvu_dev[pf].pf_res_ena);
+			  rvu_dev[pf].vf_num_msix_vec, rvu_dev[pf].pf_res_ena);
 		debug_rvu("PCI Settings:\n"
 			  "pf_devid=0x%x, vf_devid=0x%x, class_code=0x%x\n",
 			  rvu_dev[pf].pci.pf_devid, rvu_dev[pf].pci.vf_devid,
