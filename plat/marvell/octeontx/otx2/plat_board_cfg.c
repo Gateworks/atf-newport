@@ -1621,7 +1621,7 @@ static void octeontx2_fill_cgx_details(const void *fdt)
 	int lane_idx;
 	int lnum;
 	int linit;
-	octeontx_qlm_state_lane_t qlm_state;
+	qlm_state_lane_t qlm_state;
 
 	octeontx2_fill_cgx_network_lane_order(fdt);
 
@@ -1648,7 +1648,7 @@ static void octeontx2_fill_cgx_details(const void *fdt)
 
 static void octeontx2_fill_qlm_details(const void *fdt)
 {
-	int qlm, lane, polarity, max_lanes;
+	int qlm, lane, polarity, max_lanes, voltage;
 	char prop[64];
 
 	for (qlm = 0; qlm < MAX_QLM; qlm++) {
@@ -1673,6 +1673,12 @@ static void octeontx2_fill_qlm_details(const void *fdt)
 				= polarity;
 		}
 	}
+
+	voltage = octeontx2_fdtbdk_get_num(fdt, "QLM-VOLTAGE.N0", 10);
+	if (voltage == -1)
+		voltage = QLM_DEFAULT_VOLTAGE;
+
+	plat_octeontx_bcfg->qlm_voltage = voltage;
 }
 
 int plat_octeontx_fill_board_details(void)

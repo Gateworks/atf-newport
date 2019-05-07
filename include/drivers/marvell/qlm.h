@@ -8,6 +8,9 @@
 #ifndef _QLM_H_
 #define _QLM_H_
 
+/* Default value of QLM-VOLTAGE.N0 property */
+#define QLM_DEFAULT_VOLTAGE	900
+
 /*
  * Define different QLM-MODE variants. These definitions based on the BDK code.
  */
@@ -16,15 +19,15 @@ typedef enum {
 	QLM_MODE_DISABLED,
 	/* PCIe modes  */
 	/* 1 PCIe, 1 lane. Other lanes unused */
-	QLM_MODE_PCIE_1X1,
+	QLM_MODE_PCIE_X1,
 	/* 1 PCIe, 2 lanes */
-	QLM_MODE_PCIE_1X2,
+	QLM_MODE_PCIE_X2,
 	/* 1 PCIe, 4 lanes */
-	QLM_MODE_PCIE_1X4,
+	QLM_MODE_PCIE_X4,
 	/* 1 PCIe, 8 lanes */
-	QLM_MODE_PCIE_1X8,
+	QLM_MODE_PCIE_X8,
 	/* 1 PCIe, 16 lanes (CN93XX) */
-	QLM_MODE_PCIE_1X16,
+	QLM_MODE_PCIE_X16,
 	/* SATA modes  */
 	/* SATA, each lane independent (CN81xx) */
 	QLM_MODE_SATA,
@@ -93,7 +96,7 @@ typedef enum {
 	 */
 	QLM_MODE_USXGMII_1X1,
 	QLM_MODE_LAST,
-} octeontx_qlm_modes_t;
+} qlm_modes_t;
 
 /*
  * This structure is stored in GSERNX_LANEX_SCRATCHX to remember the mode of a
@@ -104,7 +107,7 @@ typedef union {
 	struct {
 		/* Baudrate of the lane in MHz */
 		uint16_t baud_mhz;
-		octeontx_qlm_modes_t mode: 8;	/* Mode of the lane */
+		qlm_modes_t mode: 8;	/* Mode of the lane */
 		uint32_t flags: 8;		/* Mode flags */
 		/* Mode is PCIE RC or endpoint, see flags */
 		uint32_t pcie: 1;
@@ -113,32 +116,32 @@ typedef union {
 		uint32_t cgx: 1;
 		uint32_t reserved: 29;		/* Reserved for future use */
 	} s;
-} octeontx_qlm_state_lane_t;
+} qlm_state_lane_t;
 
 typedef enum {
-	OCTEONTX_QLM_MODE_FLAG_NONE = 0,     /* No flags */
-	OCTEONTX_QLM_MODE_FLAG_ENDPOINT = 1, /* PCIe in EP instead of RC */
-} octeontx_qlm_mode_flags_t;
+	QLM_MODE_FLAG_NONE = 0,     /* No flags */
+	QLM_MODE_FLAG_ENDPOINT = 1, /* PCIe in EP instead of RC */
+} qlm_mode_flags_t;
 
 typedef enum {
-	OCTEONTX_QLM_DIRECTION_TX = 1,
-	OCTEONTX_QLM_DIRECTION_RX = 2,
-	OCTEONTX_QLM_DIRECTION_BOTH = 3,
-} octeontx_qlm_direction_t;
+	QLM_DIRECTION_TX = 1,
+	QLM_DIRECTION_RX = 2,
+	QLM_DIRECTION_BOTH = 3,
+} qlm_direction_t;
 
 typedef enum {
 	/* No loopback */
-	OCTEONTX_QLM_LOOP_DISABLED,
+	QLM_LOOP_DISABLED,
 	/* Loop external data RX->TX (Not supported on CN8XXX) */
-	OCTEONTX_QLM_LOOP_SHALLOW,
+	QLM_LOOP_SHALLOW,
 	/*
 	 * Loop internal data TX->RX in analog domain
 	 * (Not supported on CN8XXX)
 	 */
-	OCTEONTX_QLM_LOOP_NEAR_END,
+	QLM_LOOP_NEAR_END,
 	/* Loop internal data TX->RX in digital domain */
-	OCTEONTX_QLM_LOOP_CORE,
-} octeontx_qlm_loop_t;
+	QLM_LOOP_CORE,
+} qlm_loop_t;
 
 /* QLM APIs */
 
@@ -149,8 +152,8 @@ typedef enum {
  * @param is_endpoint
  *			   Non zero if PEM is a EP
  */
-octeontx_qlm_state_lane_t qlm_build_state(octeontx_qlm_modes_t mode,
-	int baud_mhz, octeontx_qlm_mode_flags_t flags);
+qlm_state_lane_t qlm_build_state_gsern(qlm_modes_t mode, int baud_mhz,
+	qlm_mode_flags_t flags);
 
 /*
  * Setup the PEM to either driver or receive reset from PRST based on RC or EP
@@ -158,7 +161,25 @@ octeontx_qlm_state_lane_t qlm_build_state(octeontx_qlm_modes_t mode,
  * @param pem	Which PEM to setuo
  * @param is_endpoint  Non zero if PEM is a EP
  */
-void qlm_setup_pem_reset(int pem, int is_endpoint);
+void qlm_setup_pem_reset_gsern(int pem, int is_endpoint);
+
+/*
+ * Given a valid PEM number, return its speed in Gbaud
+ *
+ * @param pem	PEM to get speed of
+ *
+ * @return Speed in Gbaud. Zero if disabled
+ */
+int qlm_get_gbaud_mhz_pem_gsern(int pem);
+
+/**
+ * Measure the reference clock of a QLM
+ *
+ * @param qlm    QLM to measure
+ *
+ * @return Clock rate in Hz
+ */
+int qlm_measure_refclock_gsern(int qlm);
 
 /*
  * Put a QLM into hardware reset
@@ -167,7 +188,7 @@ void qlm_setup_pem_reset(int pem, int is_endpoint);
  *
  * @return Zero on success, negative on failure
  */
-int qlm_reset(int qlm);
+int qlm_reset_gsern(int qlm);
 
 /*
  * Enable PRBS on a QLM
@@ -179,7 +200,7 @@ int qlm_reset(int qlm);
  *
  * @return Zero on success, negative on failure
  */
-int qlm_enable_prbs(int qlm, int prbs, octeontx_qlm_direction_t dir);
+int qlm_enable_prbs_gsern(int qlm, int prbs, qlm_direction_t dir);
 
 /*
  * Disable PRBS on a QLM
@@ -188,7 +209,7 @@ int qlm_enable_prbs(int qlm, int prbs, octeontx_qlm_direction_t dir);
  *
  * @return Zero on success, negative on failure
  */
-int qlm_disable_prbs(int qlm);
+int qlm_disable_prbs_gsern(int qlm);
 
 /*
  * Return the number of PRBS errors since PRBS started running
@@ -199,7 +220,7 @@ int qlm_disable_prbs(int qlm);
  *
  * @return Number of errors
  */
-uint64_t qlm_get_prbs_errors(int qlm, int lane, int clear);
+uint64_t qlm_get_prbs_errors_gsern(int qlm, int lane, int clear);
 
 /*
  * Inject an error into PRBS
@@ -207,7 +228,7 @@ uint64_t qlm_get_prbs_errors(int qlm, int lane, int clear);
  * @param qlm	QLM to use
  * @param lane   Which lane
  */
-void qlm_inject_prbs_error(int qlm, int lane);
+void qlm_inject_prbs_error_gsern(int qlm, int lane);
 
 /*
  * Enable shallow loopback on a QLM
@@ -217,16 +238,7 @@ void qlm_inject_prbs_error(int qlm, int lane);
  *
  * @return Zero on success, negative on failure
  */
-int qlm_enable_loop(int qlm, octeontx_qlm_loop_t loop);
-
-/*
- * Given a valid PEM number, return its speed in Gbaud
- *
- * @param pem	PEM to get speed of
- *
- * @return Speed in Gbaud. Zero if disabled
- */
-int qlm_get_gbaud_mhz_pem(int pem);
+int qlm_enable_loop_gsern(int qlm, qlm_loop_t loop);
 
 /*
  * Perform RX equalization on a QLM
@@ -236,7 +248,7 @@ int qlm_get_gbaud_mhz_pem(int pem);
  *
  * @return Zero on success, negative if any lane failed RX equalization
  */
-int qlm_rx_equalization(int qlm, int qlm_lane);
+int qlm_rx_equalization_gsern(int qlm, int qlm_lane);
 
 /*
  * Configure the TX tuning parameters for a QLM lane
@@ -267,7 +279,7 @@ int qlm_rx_equalization(int qlm, int qlm_lane);
  *
  * @return Zero on success, negative on failure
  */
-int qlm_tune_lane_tx(int qlm, int lane, int tx_cmain, int tx_cpre,
+int qlm_tune_lane_tx_gsern(int qlm, int lane, int tx_cmain, int tx_cpre,
 	int tx_cpost, int tx_bs, int tx_unused);
 
 /*
@@ -299,8 +311,18 @@ int qlm_tune_lane_tx(int qlm, int lane, int tx_cmain, int tx_cpre,
  *
  * @return Zero on success, negative on failure
  */
-int qlm_get_tune_lane_tx(int qlm, int lane, int *tx_cmain, int *tx_cpre,
+int qlm_get_tune_lane_tx_gsern(int qlm, int lane, int *tx_cmain, int *tx_cpre,
 	int *tx_cpost, int *tx_bs, int *tx_unused);
+
+/*
+ * Display the current settings of a QLM lane
+ *
+ * @param qlm	  QLM to display
+ * @param qlm_lane Lane to use
+ * @param show_tx  Display TX parameters
+ * @param show_rx  Display RX parameters
+ */
+void qlm_display_settings_gsern(int qlm, int qlm_lane, int show_tx, int show_rx);
 
 /*
  * Some QLM speeds need to override the default tuning parameters
@@ -310,12 +332,12 @@ int qlm_get_tune_lane_tx(int qlm, int lane, int *tx_cmain, int *tx_cpre,
  * @param mode	 Desired mode
  * @param baud_mhz Desired speed
  */
-void qlm_tune(int qlm, int lane, octeontx_qlm_modes_t mode, int baud_mhz);
+void qlm_tune_gsern(int qlm, int lane, qlm_modes_t mode, int baud_mhz);
 
 /*
  * Called to initialize the GSERN programming API
  */
-void qlm_init(void);
+void qlm_init_gsern(void);
 
 /*
  * Call GSERN APIs for CN9XXX chips
@@ -328,7 +350,7 @@ void qlm_init(void);
  *
  * @return Zero on success, negative on failure
  */
-int qlm_set_mode(int qlm, int lane, octeontx_qlm_modes_t mode, int baud_mhz,
-	octeontx_qlm_mode_flags_t flags);
+int qlm_set_mode_gsern(int qlm, int lane, qlm_modes_t mode, int baud_mhz,
+	qlm_mode_flags_t flags);
 
 #endif /* _QLM_H_ */

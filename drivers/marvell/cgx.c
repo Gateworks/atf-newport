@@ -258,7 +258,7 @@ static int cgx_get_usxgmii_type(int cgx_id, int lmac_id)
 	int type = -1;
 	cgx_config_t *cgx;
 	cgx_lmac_config_t *lmac;
-	octeontx_qlm_state_lane_t qlm_state;
+	qlm_state_lane_t qlm_state;
 
 	cgx = &plat_octeontx_bcfg->cgx_cfg[cgx_id];
 	lmac = &cgx->lmac_cfg[lmac_id];
@@ -410,7 +410,7 @@ int cgx_get_lane_speed(int cgx_id, int lmac_id)
 {
 	int qlm, lane_id, lanes = 0, speed = 0;
 	cgx_lmac_config_t *lmac;
-	octeontx_qlm_state_lane_t qlm_state;
+	qlm_state_lane_t qlm_state;
 	cavm_cgxx_spux_control1_t spux_ctrl1;
 
 	lmac = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id];

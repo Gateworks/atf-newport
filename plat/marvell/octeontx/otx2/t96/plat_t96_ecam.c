@@ -31,7 +31,7 @@
 /* Probe GSERNX_LANE_SCRATCHX[] for SATA config */
 static int ecam_probe_sata(unsigned long long arg)
 {
-	octeontx_qlm_state_lane_t qlm_state;
+	qlm_state_lane_t qlm_state;
 	int qlm = 0, lane = 0;
 
 	debug_plat_ecam("%s arg %lld\n", __func__, arg);
@@ -54,7 +54,7 @@ static int ecam_probe_sata(unsigned long long arg)
 /* Probe GSERNX_LANE_SCRATCHX[] for CGX config */
 static int ecam_probe_cgx(unsigned long long arg)
 {
-	octeontx_qlm_state_lane_t qlm_state;
+	qlm_state_lane_t qlm_state;
 	int qlm = -1, qlm1 = -1, lnum = 0;
 
 	debug_plat_ecam("%s arg %lld\n", __func__, arg);

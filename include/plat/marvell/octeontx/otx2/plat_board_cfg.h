@@ -86,6 +86,7 @@ typedef struct plat_octeontx_board_cfg {
 	rvu_config_t rvu_config;
 	cgx_config_t cgx_cfg[MAX_CGX];
 	qlm_config_t qlm_cfg[MAX_QLM];
+	int qlm_voltage;
 	uint64_t pf_mac_base; /* PF MAC Address */
 	int pf_mac_num;
 } plat_octeontx_board_cfg_t;

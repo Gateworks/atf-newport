@@ -1,14 +1,12 @@
-/*
- * Copyright (C) 2019 Marvell International Ltd.
- *
- * SPDX-License-Identifier:     BSD-3-Clause
- * https://spdx.org/licenses
- */
-
-#ifndef _GSERN_SETTINGS_H_
-#define _GSERN_SETTINGS_H_
-
+#ifndef _CAVM_GSERN_SETTINGS_H_
+#define _CAVM_GSERN_SETTINGS_H_
 /* This file is auto-generated. Do not edit */
+
+/***********************license start***********************************
+* Copyright (C) 2019 Marvell International Ltd.
+* SPDX-License-Identifier: BSD-3-Clause
+* https://spdx.org/licenses
+***********************license end**************************************/
 
 /* Enumaration used to index arrays below */
 enum gsern_lane_modes {
@@ -402,5 +400,4 @@ static const int gsern_lane_vga_timer_max = 0x3ffef; /* GSERN#_LANE#_RX_5_BCFG[v
 static const int gsern_lane_voter_sp_mask[] = { 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x1, 0x1, 0x1, 0x1, 0x1, 0x1, 0x1, 0x1, 0x0, 0x0, 0x1, 0x1, 0x0, 0x0, 0x0, 0x0, 0x0}; /* GSERN#_LANE#_CDRFSM_BCFG[voter_sp_mask] */
 
 /* End of generated data */
-
-#endif
+#endif /* _CAVM_GSERN_SETTINGS_H_ */

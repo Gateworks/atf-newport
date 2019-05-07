@@ -34,7 +34,7 @@ extern const struct ecam_platform_defs plat_ops;
 /* Probe GSERNX_LANE_SCRATCHX[] for CGX config */
 static int ecam_probe_cgx(unsigned long long arg)
 {
-	octeontx_qlm_state_lane_t qlm_state;
+	qlm_state_lane_t qlm_state;
 	int qlm = -1, lnum = 0;
 
 	debug_plat_ecam("%s arg %lld\n", __func__, arg);
