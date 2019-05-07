@@ -13,6 +13,7 @@
 #include <qlm.h>
 #include <sfp_mgmt.h>
 #include <phy_mgmt.h>
+#include <platform_scfg.h>
 #include <octeontx_board_cfg.h>
 
 typedef struct rvu_sw_rvu_pf {
@@ -73,10 +74,16 @@ typedef struct cgx_config {
 	cgx_lmac_config_t lmac_cfg[MAX_LMAC_PER_CGX];
 } cgx_config_t;
 
+typedef struct qlm_config {
+	uint8_t lane_rx_polarity[MAX_LANES_PER_QLM];
+	uint8_t lane_tx_polarity[MAX_LANES_PER_QLM];
+} qlm_config_t;
+
 typedef struct plat_octeontx_board_cfg {
 	board_cfg_t bcfg;
 	rvu_config_t rvu_config;
 	cgx_config_t cgx_cfg[MAX_CGX];
+	qlm_config_t qlm_cfg[MAX_QLM];
 	uint64_t pf_mac_base; /* PF MAC Address */
 	int pf_mac_num;
 } plat_octeontx_board_cfg_t;

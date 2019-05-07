@@ -1629,6 +1629,35 @@ static void octeontx2_fill_cgx_details(const void *fdt)
 	octeontx2_cgx_assign_mac(fdt);
 }
 
+static void octeontx2_fill_qlm_details(const void *fdt)
+{
+	int qlm, lane, polarity, max_lanes;
+	char prop[64];
+
+	for (qlm = 0; qlm < MAX_QLM; qlm++) {
+		max_lanes = plat_octeontx_scfg->qlm_max_lane_num[qlm];
+		for (lane = 0; lane < max_lanes; lane++) {
+			snprintf(prop, sizeof(prop),
+				"QLM-LANE-TX-POLARITY.N0.QLM%d.LANE%d",
+				qlm, lane);
+			polarity = octeontx2_fdtbdk_get_num(fdt, prop, 10);
+			if (polarity == -1)
+				polarity = 0;
+			plat_octeontx_bcfg->qlm_cfg[qlm].lane_tx_polarity[lane]
+				= polarity;
+
+			snprintf(prop, sizeof(prop),
+				"QLM-LANE-RX-POLARITY.N0.QLM%d.LANE%d",
+				qlm, lane);
+			polarity = octeontx2_fdtbdk_get_num(fdt, prop, 10);
+			if (polarity == -1)
+				polarity = 0;
+			plat_octeontx_bcfg->qlm_cfg[qlm].lane_rx_polarity[lane]
+				= polarity;
+		}
+	}
+}
+
 int plat_octeontx_fill_board_details(void)
 {
 	const void *fdt = fdt_ptr;
@@ -1653,6 +1682,7 @@ int plat_octeontx_fill_board_details(void)
 	}
 
 	octeontx2_fill_cgx_details(fdt);
+	octeontx2_fill_qlm_details(fdt);
 
 	return 0;
 }
