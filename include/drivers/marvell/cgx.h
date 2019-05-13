@@ -99,6 +99,9 @@
 /* ERROR MASK based on cgx_err_type */
 #define CGX_ERR_MASK			0x3FF		/* 10 bits */
 
+/* Default value of NETWORK-LANE-ORDER.N0.CGX%d property */
+#define CGX_DEFAULT_NETWORK_LANE_ORDER	0x3210
+
 /* enum declaration for FEC */
 typedef enum cgx_fec_type {
 	CGX_FEC_NONE,

@@ -1595,6 +1595,21 @@ static void octeontx2_cgx_assign_mac(const void *fdt)
 	}
 }
 
+static void octeontx2_fill_cgx_network_lane_order(const void *fdt)
+{
+	int cgx, order;
+	char prop[64];
+
+	for (cgx = 0; cgx < MAX_CGX; cgx++) {
+		snprintf(prop, sizeof(prop), "NETWORK-LANE-ORDER.N0.CGX%d",
+				cgx);
+		order = octeontx2_fdtbdk_get_num(fdt, prop, 10);
+		if (order == -1)
+			order = CGX_DEFAULT_NETWORK_LANE_ORDER;
+		plat_octeontx_bcfg->cgx_cfg[cgx].network_lane_order = order;
+	}
+}
+
 /* BDK fills the CAVM_GSERNX_LANEX_SCRATCH0 register with mode used by LANE.
  * The routine goes through all the QLM/LANE sets and initializes
  * CGX/LMAC, if any.
@@ -1607,6 +1622,8 @@ static void octeontx2_fill_cgx_details(const void *fdt)
 	int lnum;
 	int linit;
 	octeontx_qlm_state_lane_t qlm_state;
+
+	octeontx2_fill_cgx_network_lane_order(fdt);
 
 	for (qlm_idx = 0; qlm_idx < plat_octeontx_get_gser_count(); qlm_idx++) {
 		lnum = plat_octeontx_scfg->qlm_max_lane_num[qlm_idx];

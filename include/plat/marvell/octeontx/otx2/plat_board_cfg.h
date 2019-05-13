@@ -72,6 +72,7 @@ typedef struct cgx_config {
 	/* for RVU */
 	uint32_t enable:1;
 	uint32_t is_rfoe:1;
+	uint16_t network_lane_order;
 	cgx_lmac_config_t lmac_cfg[MAX_LMAC_PER_CGX];
 } cgx_config_t;
 
