@@ -26,6 +26,7 @@ case $build_name in
 	*_a70x0* )       platform="a70x0"; ;;
 	*_a7020_amc )    platform="a70x0_amc"; ;;
 	*_a80x0_mcbin* ) platform="a80x0_mcbin"; ;;
+	*_a80x0_ucpe ) 	 platform="a80x0_mcbin"; ;;
 	*_a80x0* ) 	 platform="a80x0"; ;;
 	*_a3900* )       platform="a3900"; ;;
 	*_cn913* )       platform="t9130"; ;;
