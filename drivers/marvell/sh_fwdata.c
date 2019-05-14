@@ -8,6 +8,7 @@
 /* SH FW DATA management driver for OcteonTX2 */
 
 #include <stdio.h>
+#include <string.h>
 #include <arch.h>
 #include <platform_def.h>
 #include <octeontx_common.h>
@@ -61,6 +62,7 @@ void sh_fwdata_init(void)
 		ERROR("SHARED FWDATA size misconfiguration\n");
 		return;
 	}
+	 memset(fwdata, 0, sizeof(fwdata));
 	fwdata->header_magic = SH_FWDATA_HEADER_MAGIC;
 	fwdata->version = SH_FWDATA_VERSION;
 

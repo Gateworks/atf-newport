@@ -13,7 +13,7 @@
 /* CGX related shared firmware data */
 struct sfp_eeprom_s {
 #define SFP_EEPROM_SIZE 256
-	uint16_t valid;	/* to be set to 1 after copying data to buf */
+	uint16_t sff_id;
 	uint8_t buf[SFP_EEPROM_SIZE];
 };
 
@@ -37,7 +37,7 @@ struct cgx_lmac_fwdata_s {
 /* To be synced with linux/drivers/net/ethernet/marvell/octeontx2/af/rvu.h */
 struct sh_fwdata {
 #define SH_FWDATA_HEADER_MAGIC	0xCFDA	/*Custom Firmware Data*/
-#define SH_FWDATA_VERSION	0x0000
+#define SH_FWDATA_VERSION	0x0001
 	uint32_t header_magic;
 	uint32_t version;		/* version id */
 
@@ -46,14 +46,16 @@ struct sh_fwdata {
 #define VF_MACNUM_MAX	256
 	uint64_t pf_macs[PF_MACNUM_MAX];
 	uint64_t vf_macs[VF_MACNUM_MAX];
-
-#define CGX_MAX		3
-#define CGX_LMACS_MAX	4
-	struct cgx_lmac_fwdata_s cgx_fw_data[CGX_MAX][CGX_LMACS_MAX];
 	uint64_t sclk;
 	uint64_t rclk;
 	uint64_t mcam_addr;
 	uint64_t mcam_sz;
+ #define RESERVED_MEM 1024
+	uint64_t reserved[RESERVED_MEM];
+
+#define CGX_MAX		3
+#define CGX_LMACS_MAX	4
+	struct cgx_lmac_fwdata_s cgx_fw_data[CGX_MAX][CGX_LMACS_MAX];
 };
 
 static inline uint64_t get_sh_fwdata_base(void)
