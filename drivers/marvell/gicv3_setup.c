@@ -32,7 +32,8 @@
  * There is one interrupt for secure timer, interrupts for GPIO and
  * interrupts for BPHY.
  */
-#define NUMBER_OF_GIC_INTERRUPTS	(1 + GPIO_SPI_IRQS + BPHY_PSM_IRQS_NUMBER)
+#define NUMBER_OF_GIC_INTERRUPTS	(1 + GPIO_SPI_IRQS + \
+					BPHY_PSM_IRQS_NUMBER + GTI_CWD_SPI_IRQS)
 
 #if IMAGE_BL31
 /* The GICv3 driver only needs to be initialized in EL3 */
@@ -73,6 +74,15 @@ static void initialize_interrupt_array(interrupt_prop_t *intr_array)
 	/* Configure BPHY PSM IRQs */
 	for (i = 0; i < BPHY_PSM_IRQS_NUMBER; i++) {
 		intr_array[idx].intr_num = BPHY_PSM_IRQ(i);
+		intr_array[idx].intr_pri = 0;
+		intr_array[idx].intr_grp = INTR_TYPE_EL3;
+		intr_array[idx].intr_cfg = GIC_INTR_CFG_EDGE;
+		idx++;
+	}
+
+	/* Configure CWD GTI IRQs */
+	for (i = 0; i < GTI_CWD_SPI_IRQS; i++) {
+		intr_array[idx].intr_num = GTI_CWD_SPI_IRQ(i);
 		intr_array[idx].intr_pri = 0;
 		intr_array[idx].intr_grp = INTR_TYPE_EL3;
 		intr_array[idx].intr_cfg = GIC_INTR_CFG_EDGE;

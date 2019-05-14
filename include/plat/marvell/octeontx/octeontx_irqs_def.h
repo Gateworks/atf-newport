@@ -59,4 +59,10 @@
 #define BPHY_PSM_IRQ(irq)		-1
 #endif
 
+/* GTI CWD definitions */
+#ifndef GTI_CWD_SPI_IRQ
+#define GTI_CWD_SPI_IRQS	0x0
+#define GTI_CWD_SPI_IRQ(irq)		-1
+#endif
+
 #endif /* __OCTEONTX_IRQS_DEF_H__ */

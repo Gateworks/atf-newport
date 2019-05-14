@@ -313,6 +313,8 @@ static void init_gti(uint64_t config_base, uint64_t config_size)
 	uint8_t cap_pointer, bir = 0;
 	uint16_t table_size = 0;
 	uint64_t vector_base = 0, msg = 0;
+	volatile uint32_t *sctl = (uint32_t *)
+			 (config_base + CAVM_PCCPF_XXX_VSEC_SCTL);
 
 	debug_io("GTI init called config_base:%llx size:%llx\n",
 		 config_base, config_size);
@@ -350,6 +352,7 @@ static void init_gti(uint64_t config_base, uint64_t config_size)
 		     (i % 2) ? CAVM_GICD_CLRSPI_NSR : CAVM_GICD_SETSPI_NSR,
 		     msg);
 	}
+	*sctl |= 0x1;
 }
 
 static void init_iobn(uint64_t config_base, uint64_t config_size)

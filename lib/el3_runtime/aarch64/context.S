@@ -20,6 +20,7 @@
 	.global	el3_exit
 	.global	el3_exit_wfi
 	.global el3_start_el0_isr
+	.global el3_invoke_elx_kernel_callback
 
 /* -----------------------------------------------------
  * The following function strictly follows the AArch64
@@ -532,3 +533,61 @@ func el3_start_el0_isr
 	eret
 endfunc el3_start_el0_isr
 
+func el3_invoke_elx_kernel_callback
+	/*
+	 * X0 holds the kernel callback
+	 * X1 holds spsr_el3
+	 * X2 holds scr_el3
+	 */
+
+	/*
+	 * msr sp_el0, x1
+	 * nop
+	 */
+
+	msr scr_el3, x2
+	msr spsr_el3, x1
+	msr elr_el3, x0
+
+	msr spsel, #1
+	nop
+
+	ldp     x0, x1, [sp, #CTX_EL3STATE_OFFSET + CTX_SPSR_EL3]
+	/*
+	 * Load saved EL3 sysregs into kernel's ELR_ELx and SPSR_ELx to simulate
+	 * an exception return.
+	 * NOTE: H/W register aliasing for VHE will only happen in EL2 context,
+	 * not in EL3, will need to explicitly specify here the correct
+	 * ELx sysregs.
+	 */
+	/*
+	msr	elr_el2, x1
+	msr	spsr_el2, x0
+	*/
+	msr	S3_5_C4_C0_1, x1			/* elr_el12 */
+	msr	S3_5_C4_C0_0, x0			/* spsr_el12 */
+
+	ldp	x0, x1, [sp, #CTX_GPREGS_OFFSET + CTX_GPREG_X0]
+	ldp	x2, x3, [sp, #CTX_GPREGS_OFFSET + CTX_GPREG_X2]
+	ldp	x4, x5, [sp, #CTX_GPREGS_OFFSET + CTX_GPREG_X4]
+	ldp	x6, x7, [sp, #CTX_GPREGS_OFFSET + CTX_GPREG_X6]
+	ldp	x8, x9, [sp, #CTX_GPREGS_OFFSET + CTX_GPREG_X8]
+	ldp	x10, x11, [sp, #CTX_GPREGS_OFFSET + CTX_GPREG_X10]
+	ldp	x12, x13, [sp, #CTX_GPREGS_OFFSET + CTX_GPREG_X12]
+	ldp	x14, x15, [sp, #CTX_GPREGS_OFFSET + CTX_GPREG_X14]
+	ldp	x18, x19, [sp, #CTX_GPREGS_OFFSET + CTX_GPREG_X18]
+	ldp	x20, x21, [sp, #CTX_GPREGS_OFFSET + CTX_GPREG_X20]
+	ldp	x22, x23, [sp, #CTX_GPREGS_OFFSET + CTX_GPREG_X22]
+	ldp	x24, x25, [sp, #CTX_GPREGS_OFFSET + CTX_GPREG_X24]
+	ldp	x26, x27, [sp, #CTX_GPREGS_OFFSET + CTX_GPREG_X26]
+	ldp	x28, x29, [sp, #CTX_GPREGS_OFFSET + CTX_GPREG_X28]
+	ldp	x30, x17, [sp, #CTX_GPREGS_OFFSET + CTX_GPREG_LR]
+	msr	sp_el0, x17
+	ldp	x16, x17, [sp, #CTX_GPREGS_OFFSET + CTX_GPREG_X16]
+
+	/* Can't access any kernel memory here as no kernel pagetables mapped */
+
+	dsb sy
+	isb
+	eret
+endfunc el3_invoke_elx_kernel_callback

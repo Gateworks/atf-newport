@@ -58,6 +58,7 @@ BL31_SOURCES		+=	drivers/arm/gic/common/gic_common.c		\
 				drivers/marvell/timers_octeontx.c		\
 				lib/timers/timers.c				\
 				drivers/marvell/gpio_octeontx.c		\
+				drivers/marvell/gti_watchdog.c                  \
 				plat/marvell/octeontx/octeontx_bl31_setup.c			\
 				plat/marvell/octeontx/octeontx_legacy_pm.c			\
 				plat/marvell/octeontx/octeontx_legacy_pwrc.c		\

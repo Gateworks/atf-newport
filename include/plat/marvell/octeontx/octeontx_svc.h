@@ -29,7 +29,15 @@
 /* x1 - character to print */
 #define OCTEONTX_PUTC			0xc2000a01
 
-#define OCTEONTX_NUM_CALLS		8
+/*
+ * X1 - kernel_wdog_callback, X2 - cpu,
+ * X3 - watchdog_timeout_ms, X4 - coremask
+ */
+#define OCTEONTX_INSTALL_WDOG           0xc2000c01
+
+#define OCTEONTX_REMOVE_WDOG            0xc2000c02
+
+#define OCTEONTX_NUM_CALLS		10
 
 /* API that allows to define family specific SMC CALLS */
 uintptr_t plat_octeontx_svc_smc_handler(uint32_t smc_fid,

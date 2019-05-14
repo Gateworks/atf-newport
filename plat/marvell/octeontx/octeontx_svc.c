@@ -14,6 +14,7 @@
 #include <string.h>
 #include <octeontx_common.h>
 #include <gpio_octeontx.h>
+#include <gti_watchdog.h>
 #include <errno.h>
 #include <libfdt.h>
 #include <octeontx_dram.h>
@@ -113,6 +114,16 @@ uintptr_t octeontx_svc_smc_handler(uint32_t smc_fid,
 	case OCTEONTX_REMOVE_GPIO_INT:
 		gpio_clear_irq(x1);
 		SMC_RET1(handle, 0);
+		break;
+
+	case OCTEONTX_INSTALL_WDOG:
+		ret = gti_wdog_install_handler(x1, x2, x3, x4);
+		SMC_RET1(handle, ret);
+		break;
+
+	case OCTEONTX_REMOVE_WDOG:
+		ret = gti_wdog_remove_handler();
+		SMC_RET1(handle, ret);
 		break;
 
 	default:
