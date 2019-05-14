@@ -316,6 +316,10 @@ void plat_add_mmio()
 
 	plat_map_cpc_mem();
 
+	device_type_count = plat_octeontx_get_mcc_count();
+	for (i = 0; i < device_type_count; ++i)
+		add_map_record(CAVM_MCC_BAR_E_MCCX_PF_BAR0(i),
+			CAVM_MCC_BAR_E_MCCX_PF_BAR0_SIZE, attr);
 	/*
 	 * Shared memory configuration.
 	 * Map additional memory used by RVU/SFP mgmt(shared between AP & MCP).

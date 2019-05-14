@@ -49,13 +49,13 @@ struct ccs_region ccs_map [] = {
  */
 static void disable_poison(void)
 {
-	uint64_t mmc_config;
+	uint64_t mcc_config;
 	int i;
 
 	for (i = 0; i < plat_octeontx_scfg->mcc_count; i++) {
-		mmc_config = CSR_READ(CAVM_MCCX_CONFIG(i));
-		mmc_config |= MCC_CONFIG_DIS_TADPSN_BIT;
-		CSR_WRITE(CAVM_MCCX_CONFIG(i), mmc_config);
+		mcc_config = CSR_READ(CAVM_MCCX_CONFIG(i));
+		mcc_config |= MCC_CONFIG_DIS_TADPSN_BIT;
+		CSR_WRITE(CAVM_MCCX_CONFIG(i), mcc_config);
 	}
 }
 
@@ -109,8 +109,11 @@ void octeontx_security_setup(void)
 	uint8_t lmc_mask, lmc_mode;
 
 	midr = read_midr();
-	if (IS_OCTEONTX_PASS(midr, T96PARTNUM, 1, 0))
+
+	if ((IS_OCTEONTX_PASS(midr, T96PARTNUM, 1, 0)) ||
+		(IS_OCTEONTX_PASS(midr, F95PARTNUM, 1, 0))) {
 		disable_poison();
+	}
 
 	/*
 	 * BDK has configured CCS ASC REGION 0. We will use the same lmc_mask and
