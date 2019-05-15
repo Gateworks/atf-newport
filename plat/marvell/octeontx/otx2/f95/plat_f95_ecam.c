@@ -25,6 +25,11 @@
 #define debug_plat_ecam(...) ((void) (0))
 #endif
 
+/*
+ * Platform methods defined in plat_cavm_ecam.c file
+ */
+extern const struct ecam_platform_defs plat_ops;
+
 /* Probe GSERNX_LANE_SCRATCHX[] for CGX config */
 static int ecam_probe_cgx(unsigned long long arg)
 {
@@ -295,6 +300,17 @@ static inline void cn95xx_disable_dev(struct ecam_device *dev)
 static inline void cn95xx_enable_func(struct ecam_device *dev)
 {
 	cavm_ecamx_domx_rslx_permit_t rsl_permit;
+
+	/*
+	 * CGX1 and CGX2 are connected to RFOE, disable the function, so that
+	 * kernel will not connect it to NIX.
+	 */
+	if ((dev->domain == 0) &&
+	    ((dev->func == (CAVM_PCC_DEV_CON_E_CGXX(1) & 0xff))
+	     || (dev->func == (CAVM_PCC_DEV_CON_E_CGXX(2) & 0xff)))) {
+		plat_ops.disable_func(dev);
+		return;
+	}
 
 	/* enable func */
 	rsl_permit.u = CSR_READ(CAVM_ECAMX_DOMX_RSLX_PERMIT(dev->ecam,
