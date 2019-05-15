@@ -107,10 +107,10 @@ static void init_cgx(uint64_t config_base, uint64_t config_size)
 		vsec_ctl.s.inst_num, config_base, config_size);
 
 	cgx = &(plat_octeontx_bcfg->cgx_cfg[cgx_id]);
-	if (cgx_id == 0)
-		cgx->is_nix = 1;
-	else
-		cgx->is_nix = 0;
+
+	/* CGX1 and CGX2 are routed to RFOE for F95 */
+	if ((cgx_id == 1) || (cgx_id == 2))
+		cgx->is_rfoe = 1;
 
 	cgx_hw_init(cgx_id);
 }
