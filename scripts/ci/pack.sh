@@ -29,6 +29,7 @@ case $build_name in
 	*_a80x0_ucpe ) 	 platform="a80x0_mcbin"; ;;
 	*_a80x0* ) 	 platform="a80x0"; ;;
 	*_a3900* )       platform="a3900"; ;;
+	*_cn9130_crb*) platform="t9130_crb"; ;;
 	*_cn913* )       platform="t9130"; ;;
 	*_a37xx* )       platform="a3700"; ;;
 	* )	echo "Error: Could not configure platform."
