@@ -576,7 +576,9 @@ static inline uint64_t CAVM_MHBWX_ABX_PORT_HP(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=27) && (b<=2)))
         return 0x87e043023000ll + 0x80000ll * ((a) & 0x1f) + 0x40ll * ((b) & 0x3);
-    __cavm_csr_fatal("MHBWX_ABX_PORT_HP", 2, a, b, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=27) && (b<=2)))
+        return 0x87e043023000ll + 0x80000ll * ((a) & 0x1f) + 0x40ll * ((b) & 0x3);
+    __cavm_csr_fatal("MHBWX_ABX_PORT_HP", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MHBWX_ABX_PORT_HP(a,b) cavm_mhbwx_abx_port_hp_t
@@ -629,7 +631,9 @@ static inline uint64_t CAVM_MHBWX_ABX_SLTX_CP_FAT_JTAG(unsigned long a, unsigned
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=27) && (b<=2) && (c<=2)))
         return 0x87e043022000ll + 0x80000ll * ((a) & 0x1f) + 0x40ll * ((b) & 0x3) + 0x10ll * ((c) & 0x3);
-    __cavm_csr_fatal("MHBWX_ABX_SLTX_CP_FAT_JTAG", 3, a, b, c, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=27) && (b<=2) && (c<=2)))
+        return 0x87e043022000ll + 0x80000ll * ((a) & 0x1f) + 0x40ll * ((b) & 0x3) + 0x10ll * ((c) & 0x3);
+    __cavm_csr_fatal("MHBWX_ABX_SLTX_CP_FAT_JTAG", 3, a, b, c, 0, 0, 0);
 }
 
 #define typedef_CAVM_MHBWX_ABX_SLTX_CP_FAT_JTAG(a,b,c) cavm_mhbwx_abx_sltx_cp_fat_jtag_t
@@ -682,7 +686,9 @@ static inline uint64_t CAVM_MHBWX_ABX_SLTX_CP_NFAT_JTAG(unsigned long a, unsigne
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=27) && (b<=2) && (c<=2)))
         return 0x87e043022700ll + 0x80000ll * ((a) & 0x1f) + 0x40ll * ((b) & 0x3) + 0x10ll * ((c) & 0x3);
-    __cavm_csr_fatal("MHBWX_ABX_SLTX_CP_NFAT_JTAG", 3, a, b, c, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=27) && (b<=2) && (c<=2)))
+        return 0x87e043022700ll + 0x80000ll * ((a) & 0x1f) + 0x40ll * ((b) & 0x3) + 0x10ll * ((c) & 0x3);
+    __cavm_csr_fatal("MHBWX_ABX_SLTX_CP_NFAT_JTAG", 3, a, b, c, 0, 0, 0);
 }
 
 #define typedef_CAVM_MHBWX_ABX_SLTX_CP_NFAT_JTAG(a,b,c) cavm_mhbwx_abx_sltx_cp_nfat_jtag_t
@@ -746,7 +752,9 @@ static inline uint64_t CAVM_MHBWX_ABX_SLTX_DEBUG0(unsigned long a, unsigned long
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=27) && (b<=2) && (c<=2)))
         return 0x87e043022900ll + 0x80000ll * ((a) & 0x1f) + 0x40ll * ((b) & 0x3) + 0x10ll * ((c) & 0x3);
-    __cavm_csr_fatal("MHBWX_ABX_SLTX_DEBUG0", 3, a, b, c, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=27) && (b<=2) && (c<=2)))
+        return 0x87e043022900ll + 0x80000ll * ((a) & 0x1f) + 0x40ll * ((b) & 0x3) + 0x10ll * ((c) & 0x3);
+    __cavm_csr_fatal("MHBWX_ABX_SLTX_DEBUG0", 3, a, b, c, 0, 0, 0);
 }
 
 #define typedef_CAVM_MHBWX_ABX_SLTX_DEBUG0(a,b,c) cavm_mhbwx_abx_sltx_debug0_t
@@ -813,7 +821,9 @@ static inline uint64_t CAVM_MHBWX_ABX_SLTX_DERR_ENA_W1C(unsigned long a, unsigne
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=27) && (b<=2) && (c<=2)))
         return 0x87e043021200ll + 0x80000ll * ((a) & 0x1f) + 0x40ll * ((b) & 0x3) + 0x10ll * ((c) & 0x3);
-    __cavm_csr_fatal("MHBWX_ABX_SLTX_DERR_ENA_W1C", 3, a, b, c, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=27) && (b<=2) && (c<=2)))
+        return 0x87e043021200ll + 0x80000ll * ((a) & 0x1f) + 0x40ll * ((b) & 0x3) + 0x10ll * ((c) & 0x3);
+    __cavm_csr_fatal("MHBWX_ABX_SLTX_DERR_ENA_W1C", 3, a, b, c, 0, 0, 0);
 }
 
 #define typedef_CAVM_MHBWX_ABX_SLTX_DERR_ENA_W1C(a,b,c) cavm_mhbwx_abx_sltx_derr_ena_w1c_t
@@ -880,7 +890,9 @@ static inline uint64_t CAVM_MHBWX_ABX_SLTX_DERR_ENA_W1S(unsigned long a, unsigne
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=27) && (b<=2) && (c<=2)))
         return 0x87e043021100ll + 0x80000ll * ((a) & 0x1f) + 0x40ll * ((b) & 0x3) + 0x10ll * ((c) & 0x3);
-    __cavm_csr_fatal("MHBWX_ABX_SLTX_DERR_ENA_W1S", 3, a, b, c, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=27) && (b<=2) && (c<=2)))
+        return 0x87e043021100ll + 0x80000ll * ((a) & 0x1f) + 0x40ll * ((b) & 0x3) + 0x10ll * ((c) & 0x3);
+    __cavm_csr_fatal("MHBWX_ABX_SLTX_DERR_ENA_W1S", 3, a, b, c, 0, 0, 0);
 }
 
 #define typedef_CAVM_MHBWX_ABX_SLTX_DERR_ENA_W1S(a,b,c) cavm_mhbwx_abx_sltx_derr_ena_w1s_t
@@ -971,7 +983,9 @@ static inline uint64_t CAVM_MHBWX_ABX_SLTX_DERR_INT(unsigned long a, unsigned lo
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=27) && (b<=2) && (c<=2)))
         return 0x87e043020e00ll + 0x80000ll * ((a) & 0x1f) + 0x40ll * ((b) & 0x3) + 0x10ll * ((c) & 0x3);
-    __cavm_csr_fatal("MHBWX_ABX_SLTX_DERR_INT", 3, a, b, c, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=27) && (b<=2) && (c<=2)))
+        return 0x87e043020e00ll + 0x80000ll * ((a) & 0x1f) + 0x40ll * ((b) & 0x3) + 0x10ll * ((c) & 0x3);
+    __cavm_csr_fatal("MHBWX_ABX_SLTX_DERR_INT", 3, a, b, c, 0, 0, 0);
 }
 
 #define typedef_CAVM_MHBWX_ABX_SLTX_DERR_INT(a,b,c) cavm_mhbwx_abx_sltx_derr_int_t
@@ -1038,7 +1052,9 @@ static inline uint64_t CAVM_MHBWX_ABX_SLTX_DERR_INT_W1S(unsigned long a, unsigne
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=27) && (b<=2) && (c<=2)))
         return 0x87e043021300ll + 0x80000ll * ((a) & 0x1f) + 0x40ll * ((b) & 0x3) + 0x10ll * ((c) & 0x3);
-    __cavm_csr_fatal("MHBWX_ABX_SLTX_DERR_INT_W1S", 3, a, b, c, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=27) && (b<=2) && (c<=2)))
+        return 0x87e043021300ll + 0x80000ll * ((a) & 0x1f) + 0x40ll * ((b) & 0x3) + 0x10ll * ((c) & 0x3);
+    __cavm_csr_fatal("MHBWX_ABX_SLTX_DERR_INT_W1S", 3, a, b, c, 0, 0, 0);
 }
 
 #define typedef_CAVM_MHBWX_ABX_SLTX_DERR_INT_W1S(a,b,c) cavm_mhbwx_abx_sltx_derr_int_w1s_t
@@ -1134,7 +1150,9 @@ static inline uint64_t CAVM_MHBWX_ABX_SLTX_FAT_ERR_ENA_W1C(unsigned long a, unsi
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=27) && (b<=2) && (c<=2)))
         return 0x87e043021c00ll + 0x80000ll * ((a) & 0x1f) + 0x40ll * ((b) & 0x3) + 0x10ll * ((c) & 0x3);
-    __cavm_csr_fatal("MHBWX_ABX_SLTX_FAT_ERR_ENA_W1C", 3, a, b, c, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=27) && (b<=2) && (c<=2)))
+        return 0x87e043021c00ll + 0x80000ll * ((a) & 0x1f) + 0x40ll * ((b) & 0x3) + 0x10ll * ((c) & 0x3);
+    __cavm_csr_fatal("MHBWX_ABX_SLTX_FAT_ERR_ENA_W1C", 3, a, b, c, 0, 0, 0);
 }
 
 #define typedef_CAVM_MHBWX_ABX_SLTX_FAT_ERR_ENA_W1C(a,b,c) cavm_mhbwx_abx_sltx_fat_err_ena_w1c_t
@@ -1230,7 +1248,9 @@ static inline uint64_t CAVM_MHBWX_ABX_SLTX_FAT_ERR_ENA_W1S(unsigned long a, unsi
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=27) && (b<=2) && (c<=2)))
         return 0x87e043021b00ll + 0x80000ll * ((a) & 0x1f) + 0x40ll * ((b) & 0x3) + 0x10ll * ((c) & 0x3);
-    __cavm_csr_fatal("MHBWX_ABX_SLTX_FAT_ERR_ENA_W1S", 3, a, b, c, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=27) && (b<=2) && (c<=2)))
+        return 0x87e043021b00ll + 0x80000ll * ((a) & 0x1f) + 0x40ll * ((b) & 0x3) + 0x10ll * ((c) & 0x3);
+    __cavm_csr_fatal("MHBWX_ABX_SLTX_FAT_ERR_ENA_W1S", 3, a, b, c, 0, 0, 0);
 }
 
 #define typedef_CAVM_MHBWX_ABX_SLTX_FAT_ERR_ENA_W1S(a,b,c) cavm_mhbwx_abx_sltx_fat_err_ena_w1s_t
@@ -1357,7 +1377,9 @@ static inline uint64_t CAVM_MHBWX_ABX_SLTX_FAT_ERR_INT(unsigned long a, unsigned
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=27) && (b<=2) && (c<=2)))
         return 0x87e043021a00ll + 0x80000ll * ((a) & 0x1f) + 0x40ll * ((b) & 0x3) + 0x10ll * ((c) & 0x3);
-    __cavm_csr_fatal("MHBWX_ABX_SLTX_FAT_ERR_INT", 3, a, b, c, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=27) && (b<=2) && (c<=2)))
+        return 0x87e043021a00ll + 0x80000ll * ((a) & 0x1f) + 0x40ll * ((b) & 0x3) + 0x10ll * ((c) & 0x3);
+    __cavm_csr_fatal("MHBWX_ABX_SLTX_FAT_ERR_INT", 3, a, b, c, 0, 0, 0);
 }
 
 #define typedef_CAVM_MHBWX_ABX_SLTX_FAT_ERR_INT(a,b,c) cavm_mhbwx_abx_sltx_fat_err_int_t
@@ -1453,7 +1475,9 @@ static inline uint64_t CAVM_MHBWX_ABX_SLTX_FAT_ERR_INT_W1S(unsigned long a, unsi
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=27) && (b<=2) && (c<=2)))
         return 0x87e043021d00ll + 0x80000ll * ((a) & 0x1f) + 0x40ll * ((b) & 0x3) + 0x10ll * ((c) & 0x3);
-    __cavm_csr_fatal("MHBWX_ABX_SLTX_FAT_ERR_INT_W1S", 3, a, b, c, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=27) && (b<=2) && (c<=2)))
+        return 0x87e043021d00ll + 0x80000ll * ((a) & 0x1f) + 0x40ll * ((b) & 0x3) + 0x10ll * ((c) & 0x3);
+    __cavm_csr_fatal("MHBWX_ABX_SLTX_FAT_ERR_INT_W1S", 3, a, b, c, 0, 0, 0);
 }
 
 #define typedef_CAVM_MHBWX_ABX_SLTX_FAT_ERR_INT_W1S(a,b,c) cavm_mhbwx_abx_sltx_fat_err_int_w1s_t
@@ -1549,7 +1573,9 @@ static inline uint64_t CAVM_MHBWX_ABX_SLTX_NFAT_ERR_ENA_W1C(unsigned long a, uns
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=27) && (b<=2) && (c<=2)))
         return 0x87e043022300ll + 0x80000ll * ((a) & 0x1f) + 0x40ll * ((b) & 0x3) + 0x10ll * ((c) & 0x3);
-    __cavm_csr_fatal("MHBWX_ABX_SLTX_NFAT_ERR_ENA_W1C", 3, a, b, c, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=27) && (b<=2) && (c<=2)))
+        return 0x87e043022300ll + 0x80000ll * ((a) & 0x1f) + 0x40ll * ((b) & 0x3) + 0x10ll * ((c) & 0x3);
+    __cavm_csr_fatal("MHBWX_ABX_SLTX_NFAT_ERR_ENA_W1C", 3, a, b, c, 0, 0, 0);
 }
 
 #define typedef_CAVM_MHBWX_ABX_SLTX_NFAT_ERR_ENA_W1C(a,b,c) cavm_mhbwx_abx_sltx_nfat_err_ena_w1c_t
@@ -1645,7 +1671,9 @@ static inline uint64_t CAVM_MHBWX_ABX_SLTX_NFAT_ERR_ENA_W1S(unsigned long a, uns
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=27) && (b<=2) && (c<=2)))
         return 0x87e043022200ll + 0x80000ll * ((a) & 0x1f) + 0x40ll * ((b) & 0x3) + 0x10ll * ((c) & 0x3);
-    __cavm_csr_fatal("MHBWX_ABX_SLTX_NFAT_ERR_ENA_W1S", 3, a, b, c, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=27) && (b<=2) && (c<=2)))
+        return 0x87e043022200ll + 0x80000ll * ((a) & 0x1f) + 0x40ll * ((b) & 0x3) + 0x10ll * ((c) & 0x3);
+    __cavm_csr_fatal("MHBWX_ABX_SLTX_NFAT_ERR_ENA_W1S", 3, a, b, c, 0, 0, 0);
 }
 
 #define typedef_CAVM_MHBWX_ABX_SLTX_NFAT_ERR_ENA_W1S(a,b,c) cavm_mhbwx_abx_sltx_nfat_err_ena_w1s_t
@@ -1771,7 +1799,9 @@ static inline uint64_t CAVM_MHBWX_ABX_SLTX_NFAT_ERR_INT(unsigned long a, unsigne
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=27) && (b<=2) && (c<=2)))
         return 0x87e043022100ll + 0x80000ll * ((a) & 0x1f) + 0x40ll * ((b) & 0x3) + 0x10ll * ((c) & 0x3);
-    __cavm_csr_fatal("MHBWX_ABX_SLTX_NFAT_ERR_INT", 3, a, b, c, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=27) && (b<=2) && (c<=2)))
+        return 0x87e043022100ll + 0x80000ll * ((a) & 0x1f) + 0x40ll * ((b) & 0x3) + 0x10ll * ((c) & 0x3);
+    __cavm_csr_fatal("MHBWX_ABX_SLTX_NFAT_ERR_INT", 3, a, b, c, 0, 0, 0);
 }
 
 #define typedef_CAVM_MHBWX_ABX_SLTX_NFAT_ERR_INT(a,b,c) cavm_mhbwx_abx_sltx_nfat_err_int_t
@@ -1867,7 +1897,9 @@ static inline uint64_t CAVM_MHBWX_ABX_SLTX_NFAT_ERR_INT_W1S(unsigned long a, uns
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=27) && (b<=2) && (c<=2)))
         return 0x87e043022400ll + 0x80000ll * ((a) & 0x1f) + 0x40ll * ((b) & 0x3) + 0x10ll * ((c) & 0x3);
-    __cavm_csr_fatal("MHBWX_ABX_SLTX_NFAT_ERR_INT_W1S", 3, a, b, c, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=27) && (b<=2) && (c<=2)))
+        return 0x87e043022400ll + 0x80000ll * ((a) & 0x1f) + 0x40ll * ((b) & 0x3) + 0x10ll * ((c) & 0x3);
+    __cavm_csr_fatal("MHBWX_ABX_SLTX_NFAT_ERR_INT_W1S", 3, a, b, c, 0, 0, 0);
 }
 
 #define typedef_CAVM_MHBWX_ABX_SLTX_NFAT_ERR_INT_W1S(a,b,c) cavm_mhbwx_abx_sltx_nfat_err_int_w1s_t
@@ -1910,7 +1942,9 @@ static inline uint64_t CAVM_MHBWX_ABX_SLTX_RD_FAT_JTAG(unsigned long a, unsigned
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=27) && (b<=2) && (c<=2)))
         return 0x87e043021e00ll + 0x80000ll * ((a) & 0x1f) + 0x40ll * ((b) & 0x3) + 0x10ll * ((c) & 0x3);
-    __cavm_csr_fatal("MHBWX_ABX_SLTX_RD_FAT_JTAG", 3, a, b, c, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=27) && (b<=2) && (c<=2)))
+        return 0x87e043021e00ll + 0x80000ll * ((a) & 0x1f) + 0x40ll * ((b) & 0x3) + 0x10ll * ((c) & 0x3);
+    __cavm_csr_fatal("MHBWX_ABX_SLTX_RD_FAT_JTAG", 3, a, b, c, 0, 0, 0);
 }
 
 #define typedef_CAVM_MHBWX_ABX_SLTX_RD_FAT_JTAG(a,b,c) cavm_mhbwx_abx_sltx_rd_fat_jtag_t
@@ -1953,7 +1987,9 @@ static inline uint64_t CAVM_MHBWX_ABX_SLTX_RD_NFAT_JTAG(unsigned long a, unsigne
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=27) && (b<=2) && (c<=2)))
         return 0x87e043022500ll + 0x80000ll * ((a) & 0x1f) + 0x40ll * ((b) & 0x3) + 0x10ll * ((c) & 0x3);
-    __cavm_csr_fatal("MHBWX_ABX_SLTX_RD_NFAT_JTAG", 3, a, b, c, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=27) && (b<=2) && (c<=2)))
+        return 0x87e043022500ll + 0x80000ll * ((a) & 0x1f) + 0x40ll * ((b) & 0x3) + 0x10ll * ((c) & 0x3);
+    __cavm_csr_fatal("MHBWX_ABX_SLTX_RD_NFAT_JTAG", 3, a, b, c, 0, 0, 0);
 }
 
 #define typedef_CAVM_MHBWX_ABX_SLTX_RD_NFAT_JTAG(a,b,c) cavm_mhbwx_abx_sltx_rd_nfat_jtag_t
@@ -2002,7 +2038,9 @@ static inline uint64_t CAVM_MHBWX_ABX_SLTX_RDERR_OFLOW_JTAG(unsigned long a, uns
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=27) && (b<=2) && (c<=2)))
         return 0x87e043020f00ll + 0x80000ll * ((a) & 0x1f) + 0x20ll * ((b) & 0x3) + 8ll * ((c) & 0x3);
-    __cavm_csr_fatal("MHBWX_ABX_SLTX_RDERR_OFLOW_JTAG", 3, a, b, c, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=27) && (b<=2) && (c<=2)))
+        return 0x87e043020f00ll + 0x80000ll * ((a) & 0x1f) + 0x20ll * ((b) & 0x3) + 8ll * ((c) & 0x3);
+    __cavm_csr_fatal("MHBWX_ABX_SLTX_RDERR_OFLOW_JTAG", 3, a, b, c, 0, 0, 0);
 }
 
 #define typedef_CAVM_MHBWX_ABX_SLTX_RDERR_OFLOW_JTAG(a,b,c) cavm_mhbwx_abx_sltx_rderr_oflow_jtag_t
@@ -2051,7 +2089,9 @@ static inline uint64_t CAVM_MHBWX_ABX_SLTX_RDERR_UFLOW_JTAG(unsigned long a, uns
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=27) && (b<=2) && (c<=2)))
         return 0x87e043020f80ll + 0x80000ll * ((a) & 0x1f) + 0x20ll * ((b) & 0x3) + 8ll * ((c) & 0x3);
-    __cavm_csr_fatal("MHBWX_ABX_SLTX_RDERR_UFLOW_JTAG", 3, a, b, c, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=27) && (b<=2) && (c<=2)))
+        return 0x87e043020f80ll + 0x80000ll * ((a) & 0x1f) + 0x20ll * ((b) & 0x3) + 8ll * ((c) & 0x3);
+    __cavm_csr_fatal("MHBWX_ABX_SLTX_RDERR_UFLOW_JTAG", 3, a, b, c, 0, 0, 0);
 }
 
 #define typedef_CAVM_MHBWX_ABX_SLTX_RDERR_UFLOW_JTAG(a,b,c) cavm_mhbwx_abx_sltx_rderr_uflow_jtag_t
@@ -2093,7 +2133,9 @@ static inline uint64_t CAVM_MHBWX_ABX_SLTX_WDERR_OFLOW_JTAG(unsigned long a, uns
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=27) && (b<=2) && (c<=2)))
         return 0x87e043021000ll + 0x80000ll * ((a) & 0x1f) + 0x20ll * ((b) & 0x3) + 8ll * ((c) & 0x3);
-    __cavm_csr_fatal("MHBWX_ABX_SLTX_WDERR_OFLOW_JTAG", 3, a, b, c, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=27) && (b<=2) && (c<=2)))
+        return 0x87e043021000ll + 0x80000ll * ((a) & 0x1f) + 0x20ll * ((b) & 0x3) + 8ll * ((c) & 0x3);
+    __cavm_csr_fatal("MHBWX_ABX_SLTX_WDERR_OFLOW_JTAG", 3, a, b, c, 0, 0, 0);
 }
 
 #define typedef_CAVM_MHBWX_ABX_SLTX_WDERR_OFLOW_JTAG(a,b,c) cavm_mhbwx_abx_sltx_wderr_oflow_jtag_t
@@ -2135,7 +2177,9 @@ static inline uint64_t CAVM_MHBWX_ABX_SLTX_WDERR_UFLOW_JTAG(unsigned long a, uns
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=27) && (b<=2) && (c<=2)))
         return 0x87e043021080ll + 0x80000ll * ((a) & 0x1f) + 0x20ll * ((b) & 0x3) + 8ll * ((c) & 0x3);
-    __cavm_csr_fatal("MHBWX_ABX_SLTX_WDERR_UFLOW_JTAG", 3, a, b, c, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=27) && (b<=2) && (c<=2)))
+        return 0x87e043021080ll + 0x80000ll * ((a) & 0x1f) + 0x20ll * ((b) & 0x3) + 8ll * ((c) & 0x3);
+    __cavm_csr_fatal("MHBWX_ABX_SLTX_WDERR_UFLOW_JTAG", 3, a, b, c, 0, 0, 0);
 }
 
 #define typedef_CAVM_MHBWX_ABX_SLTX_WDERR_UFLOW_JTAG(a,b,c) cavm_mhbwx_abx_sltx_wderr_uflow_jtag_t
@@ -2178,7 +2222,9 @@ static inline uint64_t CAVM_MHBWX_ABX_SLTX_WR_FAT_JTAG(unsigned long a, unsigned
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=27) && (b<=2) && (c<=2)))
         return 0x87e043021f00ll + 0x80000ll * ((a) & 0x1f) + 0x40ll * ((b) & 0x3) + 0x10ll * ((c) & 0x3);
-    __cavm_csr_fatal("MHBWX_ABX_SLTX_WR_FAT_JTAG", 3, a, b, c, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=27) && (b<=2) && (c<=2)))
+        return 0x87e043021f00ll + 0x80000ll * ((a) & 0x1f) + 0x40ll * ((b) & 0x3) + 0x10ll * ((c) & 0x3);
+    __cavm_csr_fatal("MHBWX_ABX_SLTX_WR_FAT_JTAG", 3, a, b, c, 0, 0, 0);
 }
 
 #define typedef_CAVM_MHBWX_ABX_SLTX_WR_FAT_JTAG(a,b,c) cavm_mhbwx_abx_sltx_wr_fat_jtag_t
@@ -2221,7 +2267,9 @@ static inline uint64_t CAVM_MHBWX_ABX_SLTX_WR_NFAT_JTAG(unsigned long a, unsigne
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=27) && (b<=2) && (c<=2)))
         return 0x87e043022600ll + 0x80000ll * ((a) & 0x1f) + 0x40ll * ((b) & 0x3) + 0x10ll * ((c) & 0x3);
-    __cavm_csr_fatal("MHBWX_ABX_SLTX_WR_NFAT_JTAG", 3, a, b, c, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=27) && (b<=2) && (c<=2)))
+        return 0x87e043022600ll + 0x80000ll * ((a) & 0x1f) + 0x40ll * ((b) & 0x3) + 0x10ll * ((c) & 0x3);
+    __cavm_csr_fatal("MHBWX_ABX_SLTX_WR_NFAT_JTAG", 3, a, b, c, 0, 0, 0);
 }
 
 #define typedef_CAVM_MHBWX_ABX_SLTX_WR_NFAT_JTAG(a,b,c) cavm_mhbwx_abx_sltx_wr_nfat_jtag_t
@@ -2264,7 +2312,9 @@ static inline uint64_t CAVM_MHBWX_ADR_ERR_ENA_W1C(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=27))
         return 0x87e043020d10ll + 0x80000ll * ((a) & 0x1f);
-    __cavm_csr_fatal("MHBWX_ADR_ERR_ENA_W1C", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=27))
+        return 0x87e043020d10ll + 0x80000ll * ((a) & 0x1f);
+    __cavm_csr_fatal("MHBWX_ADR_ERR_ENA_W1C", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MHBWX_ADR_ERR_ENA_W1C(a) cavm_mhbwx_adr_err_ena_w1c_t
@@ -2307,7 +2357,9 @@ static inline uint64_t CAVM_MHBWX_ADR_ERR_ENA_W1S(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=27))
         return 0x87e043020d08ll + 0x80000ll * ((a) & 0x1f);
-    __cavm_csr_fatal("MHBWX_ADR_ERR_ENA_W1S", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=27))
+        return 0x87e043020d08ll + 0x80000ll * ((a) & 0x1f);
+    __cavm_csr_fatal("MHBWX_ADR_ERR_ENA_W1S", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MHBWX_ADR_ERR_ENA_W1S(a) cavm_mhbwx_adr_err_ena_w1s_t
@@ -2362,7 +2414,9 @@ static inline uint64_t CAVM_MHBWX_ADR_ERR_INT(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=27))
         return 0x87e043020d00ll + 0x80000ll * ((a) & 0x1f);
-    __cavm_csr_fatal("MHBWX_ADR_ERR_INT", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=27))
+        return 0x87e043020d00ll + 0x80000ll * ((a) & 0x1f);
+    __cavm_csr_fatal("MHBWX_ADR_ERR_INT", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MHBWX_ADR_ERR_INT(a) cavm_mhbwx_adr_err_int_t
@@ -2405,7 +2459,9 @@ static inline uint64_t CAVM_MHBWX_ADR_ERR_INT_W1S(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=27))
         return 0x87e043020d18ll + 0x80000ll * ((a) & 0x1f);
-    __cavm_csr_fatal("MHBWX_ADR_ERR_INT_W1S", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=27))
+        return 0x87e043020d18ll + 0x80000ll * ((a) & 0x1f);
+    __cavm_csr_fatal("MHBWX_ADR_ERR_INT_W1S", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MHBWX_ADR_ERR_INT_W1S(a) cavm_mhbwx_adr_err_int_w1s_t
@@ -2449,7 +2505,9 @@ static inline uint64_t CAVM_MHBWX_ADR_ERR_JTAG(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=27))
         return 0x87e043020d20ll + 0x80000ll * ((a) & 0x1f);
-    __cavm_csr_fatal("MHBWX_ADR_ERR_JTAG", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=27))
+        return 0x87e043020d20ll + 0x80000ll * ((a) & 0x1f);
+    __cavm_csr_fatal("MHBWX_ADR_ERR_JTAG", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MHBWX_ADR_ERR_JTAG(a) cavm_mhbwx_adr_err_jtag_t
@@ -2485,7 +2543,9 @@ static inline uint64_t CAVM_MHBWX_ADR_ERROR_JCE_W0(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=27))
         return 0x87e043020060ll + 0x80000ll * ((a) & 0x1f);
-    __cavm_csr_fatal("MHBWX_ADR_ERROR_JCE_W0", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=27))
+        return 0x87e043020060ll + 0x80000ll * ((a) & 0x1f);
+    __cavm_csr_fatal("MHBWX_ADR_ERROR_JCE_W0", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MHBWX_ADR_ERROR_JCE_W0(a) cavm_mhbwx_adr_error_jce_w0_t
@@ -2521,7 +2581,9 @@ static inline uint64_t CAVM_MHBWX_ADR_ERROR_JCE_W1(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=27))
         return 0x87e043020068ll + 0x80000ll * ((a) & 0x1f);
-    __cavm_csr_fatal("MHBWX_ADR_ERROR_JCE_W1", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=27))
+        return 0x87e043020068ll + 0x80000ll * ((a) & 0x1f);
+    __cavm_csr_fatal("MHBWX_ADR_ERROR_JCE_W1", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MHBWX_ADR_ERROR_JCE_W1(a) cavm_mhbwx_adr_error_jce_w1_t
@@ -2586,8 +2648,8 @@ union cavm_mhbwx_cfg
 
                                                                  _ 7. Enable the HABs, one at a time or all together, by setting the [AB_ENA] bits to 1. */
         uint64_t reserved_12_15        : 4;
-        uint64_t ab_uclk_force_on      : 4;  /**< [ 11:  8](R/W) Set one to force the HAB unconditional clock to be always on. A CYA function. */
-        uint64_t ab_cclk_force_on      : 4;  /**< [  7:  4](R/W) Set one to force the HAB conditional clock to be always on. A CYA function. */
+        uint64_t ab_uclk_force_on      : 4;  /**< [ 11:  8](R/W) Set one to force the HAB unconditional clock to be always on. For diagnostic use only. */
+        uint64_t ab_cclk_force_on      : 4;  /**< [  7:  4](R/W) Set one to force the HAB conditional clock to be always on. For diagnostic use only. */
         uint64_t reserved_3            : 1;
         uint64_t job_slot_ena          : 1;  /**< [  2:  2](R/W) Enable job pipelining.
                                                                  0 = Jobs are only scheduled to slot 0 for each HAB.
@@ -2604,9 +2666,9 @@ union cavm_mhbwx_cfg
 
                                                                  After disabling the MHBW, software must wait until
                                                                  MHBW()_CFG[MHBW_DONE] is set before re-enabling it. */
-        uint64_t mhbw_cclk_force_on    : 1;  /**< [  0:  0](R/W) Set one to force the MHBW conditional clock to be always on. A CYA function. */
+        uint64_t mhbw_cclk_force_on    : 1;  /**< [  0:  0](R/W) Set one to force the MHBW conditional clock to be always on. For diagnostic use only. */
 #else /* Word 0 - Little Endian */
-        uint64_t mhbw_cclk_force_on    : 1;  /**< [  0:  0](R/W) Set one to force the MHBW conditional clock to be always on. A CYA function. */
+        uint64_t mhbw_cclk_force_on    : 1;  /**< [  0:  0](R/W) Set one to force the MHBW conditional clock to be always on. For diagnostic use only. */
         uint64_t ena                   : 1;  /**< [  1:  1](R/W) When set enables the MHBW. When cleared to zero, disables the MHBW.
                                                                  Note that all HABs must be disabled using MHBW()_CFG[AB_ENA] before
                                                                  disabling the MHBW.
@@ -2623,8 +2685,8 @@ union cavm_mhbwx_cfg
                                                                  Note that software must ensure the MHBW is in an idle state, i.e, no
                                                                  active or pending jobs, before setting this bit. */
         uint64_t reserved_3            : 1;
-        uint64_t ab_cclk_force_on      : 4;  /**< [  7:  4](R/W) Set one to force the HAB conditional clock to be always on. A CYA function. */
-        uint64_t ab_uclk_force_on      : 4;  /**< [ 11:  8](R/W) Set one to force the HAB unconditional clock to be always on. A CYA function. */
+        uint64_t ab_cclk_force_on      : 4;  /**< [  7:  4](R/W) Set one to force the HAB conditional clock to be always on. For diagnostic use only. */
+        uint64_t ab_uclk_force_on      : 4;  /**< [ 11:  8](R/W) Set one to force the HAB unconditional clock to be always on. For diagnostic use only. */
         uint64_t reserved_12_15        : 4;
         uint64_t ab_ena                : 4;  /**< [ 19: 16](R/W) Enable or disable each HAB. HABs must be disabled one at a time. When
                                                                  a HAB is disabled, hardware starts the HAB reset flush sequence.
@@ -2679,7 +2741,9 @@ static inline uint64_t CAVM_MHBWX_CFG(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=27))
         return 0x87e043020000ll + 0x80000ll * ((a) & 0x1f);
-    __cavm_csr_fatal("MHBWX_CFG", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=27))
+        return 0x87e043020000ll + 0x80000ll * ((a) & 0x1f);
+    __cavm_csr_fatal("MHBWX_CFG", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MHBWX_CFG(a) cavm_mhbwx_cfg_t
@@ -2741,7 +2805,9 @@ static inline uint64_t CAVM_MHBWX_DEBUG1(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=27))
         return 0x87e04302d200ll + 0x80000ll * ((a) & 0x1f);
-    __cavm_csr_fatal("MHBWX_DEBUG1", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=27))
+        return 0x87e04302d200ll + 0x80000ll * ((a) & 0x1f);
+    __cavm_csr_fatal("MHBWX_DEBUG1", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MHBWX_DEBUG1(a) cavm_mhbwx_debug1_t
@@ -2777,7 +2843,9 @@ static inline uint64_t CAVM_MHBWX_DMA_ERROR_JCE_W0(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=27))
         return 0x87e043020020ll + 0x80000ll * ((a) & 0x1f);
-    __cavm_csr_fatal("MHBWX_DMA_ERROR_JCE_W0", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=27))
+        return 0x87e043020020ll + 0x80000ll * ((a) & 0x1f);
+    __cavm_csr_fatal("MHBWX_DMA_ERROR_JCE_W0", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MHBWX_DMA_ERROR_JCE_W0(a) cavm_mhbwx_dma_error_jce_w0_t
@@ -2813,7 +2881,9 @@ static inline uint64_t CAVM_MHBWX_DMA_ERROR_JCE_W1(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=27))
         return 0x87e043020028ll + 0x80000ll * ((a) & 0x1f);
-    __cavm_csr_fatal("MHBWX_DMA_ERROR_JCE_W1", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=27))
+        return 0x87e043020028ll + 0x80000ll * ((a) & 0x1f);
+    __cavm_csr_fatal("MHBWX_DMA_ERROR_JCE_W1", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MHBWX_DMA_ERROR_JCE_W1(a) cavm_mhbwx_dma_error_jce_w1_t
@@ -2849,7 +2919,9 @@ static inline uint64_t CAVM_MHBWX_ECO(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=27))
         return 0x87e04302f000ll + 0x80000ll * ((a) & 0x1f);
-    __cavm_csr_fatal("MHBWX_ECO", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=27))
+        return 0x87e04302f000ll + 0x80000ll * ((a) & 0x1f);
+    __cavm_csr_fatal("MHBWX_ECO", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MHBWX_ECO(a) cavm_mhbwx_eco_t
@@ -2909,7 +2981,9 @@ static inline uint64_t CAVM_MHBWX_ERR_STAT0(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=27))
         return 0x87e043022818ll + 0x80000ll * ((a) & 0x1f);
-    __cavm_csr_fatal("MHBWX_ERR_STAT0", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=27))
+        return 0x87e043022818ll + 0x80000ll * ((a) & 0x1f);
+    __cavm_csr_fatal("MHBWX_ERR_STAT0", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MHBWX_ERR_STAT0(a) cavm_mhbwx_err_stat0_t
@@ -2966,7 +3040,9 @@ static inline uint64_t CAVM_MHBWX_ERR_STAT1(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=27))
         return 0x87e043022820ll + 0x80000ll * ((a) & 0x1f);
-    __cavm_csr_fatal("MHBWX_ERR_STAT1", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=27))
+        return 0x87e043022820ll + 0x80000ll * ((a) & 0x1f);
+    __cavm_csr_fatal("MHBWX_ERR_STAT1", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MHBWX_ERR_STAT1(a) cavm_mhbwx_err_stat1_t
@@ -3002,7 +3078,9 @@ static inline uint64_t CAVM_MHBWX_EXTX_SFUNC(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=27) && (b<=3)))
         return 0x87e04302d100ll + 0x80000ll * ((a) & 0x1f) + 0x10ll * ((b) & 0x3);
-    __cavm_csr_fatal("MHBWX_EXTX_SFUNC", 2, a, b, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=27) && (b<=3)))
+        return 0x87e04302d100ll + 0x80000ll * ((a) & 0x1f) + 0x10ll * ((b) & 0x3);
+    __cavm_csr_fatal("MHBWX_EXTX_SFUNC", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MHBWX_EXTX_SFUNC(a,b) cavm_mhbwx_extx_sfunc_t
@@ -3038,7 +3116,9 @@ static inline uint64_t CAVM_MHBWX_FATAL_ERROR_JCE_W0(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=27))
         return 0x87e043020030ll + 0x80000ll * ((a) & 0x1f);
-    __cavm_csr_fatal("MHBWX_FATAL_ERROR_JCE_W0", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=27))
+        return 0x87e043020030ll + 0x80000ll * ((a) & 0x1f);
+    __cavm_csr_fatal("MHBWX_FATAL_ERROR_JCE_W0", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MHBWX_FATAL_ERROR_JCE_W0(a) cavm_mhbwx_fatal_error_jce_w0_t
@@ -3074,7 +3154,9 @@ static inline uint64_t CAVM_MHBWX_FATAL_ERROR_JCE_W1(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=27))
         return 0x87e043020038ll + 0x80000ll * ((a) & 0x1f);
-    __cavm_csr_fatal("MHBWX_FATAL_ERROR_JCE_W1", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=27))
+        return 0x87e043020038ll + 0x80000ll * ((a) & 0x1f);
+    __cavm_csr_fatal("MHBWX_FATAL_ERROR_JCE_W1", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MHBWX_FATAL_ERROR_JCE_W1(a) cavm_mhbwx_fatal_error_jce_w1_t
@@ -3183,7 +3265,9 @@ static inline uint64_t CAVM_MHBWX_FYI(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=27))
         return 0x87e043020100ll + 0x80000ll * ((a) & 0x1f);
-    __cavm_csr_fatal("MHBWX_FYI", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=27))
+        return 0x87e043020100ll + 0x80000ll * ((a) & 0x1f);
+    __cavm_csr_fatal("MHBWX_FYI", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MHBWX_FYI(a) cavm_mhbwx_fyi_t
@@ -3294,7 +3378,9 @@ static inline uint64_t CAVM_MHBWX_JD_CFG(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=27))
         return 0x87e043020008ll + 0x80000ll * ((a) & 0x1f);
-    __cavm_csr_fatal("MHBWX_JD_CFG", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=27))
+        return 0x87e043020008ll + 0x80000ll * ((a) & 0x1f);
+    __cavm_csr_fatal("MHBWX_JD_CFG", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MHBWX_JD_CFG(a) cavm_mhbwx_jd_cfg_t
@@ -3331,7 +3417,9 @@ static inline uint64_t CAVM_MHBWX_JOB_COMPL_STAT(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=27))
         return 0x87e043022808ll + 0x80000ll * ((a) & 0x1f);
-    __cavm_csr_fatal("MHBWX_JOB_COMPL_STAT", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=27))
+        return 0x87e043022808ll + 0x80000ll * ((a) & 0x1f);
+    __cavm_csr_fatal("MHBWX_JOB_COMPL_STAT", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MHBWX_JOB_COMPL_STAT(a) cavm_mhbwx_job_compl_stat_t
@@ -3375,7 +3463,9 @@ static inline uint64_t CAVM_MHBWX_JOB_DROP_STAT(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=27))
         return 0x87e043022810ll + 0x80000ll * ((a) & 0x1f);
-    __cavm_csr_fatal("MHBWX_JOB_DROP_STAT", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=27))
+        return 0x87e043022810ll + 0x80000ll * ((a) & 0x1f);
+    __cavm_csr_fatal("MHBWX_JOB_DROP_STAT", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MHBWX_JOB_DROP_STAT(a) cavm_mhbwx_job_drop_stat_t
@@ -3412,7 +3502,9 @@ static inline uint64_t CAVM_MHBWX_JOB_ENQUEUE_STAT(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=27))
         return 0x87e043022800ll + 0x80000ll * ((a) & 0x1f);
-    __cavm_csr_fatal("MHBWX_JOB_ENQUEUE_STAT", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=27))
+        return 0x87e043022800ll + 0x80000ll * ((a) & 0x1f);
+    __cavm_csr_fatal("MHBWX_JOB_ENQUEUE_STAT", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MHBWX_JOB_ENQUEUE_STAT(a) cavm_mhbwx_job_enqueue_stat_t
@@ -3457,7 +3549,9 @@ static inline uint64_t CAVM_MHBWX_JOBQX_CFG(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=27) && (b<=1)))
         return 0x87e043020010ll + 0x80000ll * ((a) & 0x1f) + 8ll * ((b) & 0x1);
-    __cavm_csr_fatal("MHBWX_JOBQX_CFG", 2, a, b, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=27) && (b<=1)))
+        return 0x87e043020010ll + 0x80000ll * ((a) & 0x1f) + 8ll * ((b) & 0x1);
+    __cavm_csr_fatal("MHBWX_JOBQX_CFG", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MHBWX_JOBQX_CFG(a,b) cavm_mhbwx_jobqx_cfg_t
@@ -3493,7 +3587,9 @@ static inline uint64_t CAVM_MHBWX_NON_FATAL_ERROR_JCE_W0(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=27))
         return 0x87e043020040ll + 0x80000ll * ((a) & 0x1f);
-    __cavm_csr_fatal("MHBWX_NON_FATAL_ERROR_JCE_W0", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=27))
+        return 0x87e043020040ll + 0x80000ll * ((a) & 0x1f);
+    __cavm_csr_fatal("MHBWX_NON_FATAL_ERROR_JCE_W0", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MHBWX_NON_FATAL_ERROR_JCE_W0(a) cavm_mhbwx_non_fatal_error_jce_w0_t
@@ -3529,7 +3625,9 @@ static inline uint64_t CAVM_MHBWX_NON_FATAL_ERROR_JCE_W1(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=27))
         return 0x87e043020048ll + 0x80000ll * ((a) & 0x1f);
-    __cavm_csr_fatal("MHBWX_NON_FATAL_ERROR_JCE_W1", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=27))
+        return 0x87e043020048ll + 0x80000ll * ((a) & 0x1f);
+    __cavm_csr_fatal("MHBWX_NON_FATAL_ERROR_JCE_W1", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MHBWX_NON_FATAL_ERROR_JCE_W1(a) cavm_mhbwx_non_fatal_error_jce_w1_t
@@ -3570,7 +3668,9 @@ static inline uint64_t CAVM_MHBWX_PHYMEM_RANGE(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=27))
         return 0x87e043023210ll + 0x80000ll * ((a) & 0x1f);
-    __cavm_csr_fatal("MHBWX_PHYMEM_RANGE", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=27))
+        return 0x87e043023210ll + 0x80000ll * ((a) & 0x1f);
+    __cavm_csr_fatal("MHBWX_PHYMEM_RANGE", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MHBWX_PHYMEM_RANGE(a) cavm_mhbwx_phymem_range_t
@@ -3607,7 +3707,9 @@ static inline uint64_t CAVM_MHBWX_SYSMEM_RANGE_MAX(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=27))
         return 0x87e043023208ll + 0x80000ll * ((a) & 0x1f);
-    __cavm_csr_fatal("MHBWX_SYSMEM_RANGE_MAX", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=27))
+        return 0x87e043023208ll + 0x80000ll * ((a) & 0x1f);
+    __cavm_csr_fatal("MHBWX_SYSMEM_RANGE_MAX", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MHBWX_SYSMEM_RANGE_MAX(a) cavm_mhbwx_sysmem_range_max_t
@@ -3644,7 +3746,9 @@ static inline uint64_t CAVM_MHBWX_SYSMEM_RANGE_MIN(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=27))
         return 0x87e043023200ll + 0x80000ll * ((a) & 0x1f);
-    __cavm_csr_fatal("MHBWX_SYSMEM_RANGE_MIN", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=27))
+        return 0x87e043023200ll + 0x80000ll * ((a) & 0x1f);
+    __cavm_csr_fatal("MHBWX_SYSMEM_RANGE_MIN", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MHBWX_SYSMEM_RANGE_MIN(a) cavm_mhbwx_sysmem_range_min_t
@@ -3680,7 +3784,9 @@ static inline uint64_t CAVM_MHBWX_TIMEOUT_JCE_W0(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=27))
         return 0x87e043020050ll + 0x80000ll * ((a) & 0x1f);
-    __cavm_csr_fatal("MHBWX_TIMEOUT_JCE_W0", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=27))
+        return 0x87e043020050ll + 0x80000ll * ((a) & 0x1f);
+    __cavm_csr_fatal("MHBWX_TIMEOUT_JCE_W0", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MHBWX_TIMEOUT_JCE_W0(a) cavm_mhbwx_timeout_jce_w0_t
@@ -3716,7 +3822,9 @@ static inline uint64_t CAVM_MHBWX_TIMEOUT_JCE_W1(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=27))
         return 0x87e043020058ll + 0x80000ll * ((a) & 0x1f);
-    __cavm_csr_fatal("MHBWX_TIMEOUT_JCE_W1", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=27))
+        return 0x87e043020058ll + 0x80000ll * ((a) & 0x1f);
+    __cavm_csr_fatal("MHBWX_TIMEOUT_JCE_W1", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MHBWX_TIMEOUT_JCE_W1(a) cavm_mhbwx_timeout_jce_w1_t

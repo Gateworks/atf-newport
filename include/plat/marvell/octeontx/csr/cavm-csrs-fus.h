@@ -42,6 +42,7 @@
 #define CAVM_FUS_FUSE_NUM_E_BCH_DISABLE (0x202)
 #define CAVM_FUS_FUSE_NUM_E_BISR_FUSED_ONLY_CN96XX (0x53)
 #define CAVM_FUS_FUSE_NUM_E_BISR_FUSED_ONLY_CNF95XX (0x4d)
+#define CAVM_FUS_FUSE_NUM_E_BISR_FUSED_ONLY_LOKI (0x4d)
 #define CAVM_FUS_FUSE_NUM_E_BPHY_INIT_MULX(a) (0x4e + (a))
 #define CAVM_FUS_FUSE_NUM_E_BPHY_INIT_PLL (0x55)
 #define CAVM_FUS_FUSE_NUM_E_BPHY_MAX_MULX(a) (0x56 + (a))
@@ -51,10 +52,13 @@
 #define CAVM_FUS_FUSE_NUM_E_CHIP_TYPEX(a) (0 + (a))
 #define CAVM_FUS_FUSE_NUM_E_CORE_INIT_MULX_CN96XX(a) (0x43 + (a))
 #define CAVM_FUS_FUSE_NUM_E_CORE_INIT_MULX_CNF95XX(a) (0x3d + (a))
+#define CAVM_FUS_FUSE_NUM_E_CORE_INIT_MULX_LOKI(a) (0x3d + (a))
 #define CAVM_FUS_FUSE_NUM_E_CORE_INIT_PLL_CN96XX (0x4a)
 #define CAVM_FUS_FUSE_NUM_E_CORE_INIT_PLL_CNF95XX (0x44)
+#define CAVM_FUS_FUSE_NUM_E_CORE_INIT_PLL_LOKI (0x44)
 #define CAVM_FUS_FUSE_NUM_E_CORE_MAX_MULX_CN96XX(a) (0x4b + (a))
 #define CAVM_FUS_FUSE_NUM_E_CORE_MAX_MULX_CNF95XX(a) (0x45 + (a))
+#define CAVM_FUS_FUSE_NUM_E_CORE_MAX_MULX_LOKI(a) (0x45 + (a))
 #define CAVM_FUS_FUSE_NUM_E_CPT0_NOCRYPTOX(a) (0x255 + (a))
 #define CAVM_FUS_FUSE_NUM_E_CPT1_NOCRYPTOX(a) (0x257 + (a))
 #define CAVM_FUS_FUSE_NUM_E_CPT_EXE_DISABLEX(a) (0x580 + (a))
@@ -100,8 +104,10 @@
 #define CAVM_FUS_FUSE_NUM_E_DLL_INIT_SETTINGSX(a) (0x6c + (a))
 #define CAVM_FUS_FUSE_NUM_E_DLL_LOCK_FREEZE_CN96XX (0x54)
 #define CAVM_FUS_FUSE_NUM_E_DLL_LOCK_FREEZE_CNF95XX (0x177)
+#define CAVM_FUS_FUSE_NUM_E_DLL_LOCK_FREEZE_LOKI (0x177)
 #define CAVM_FUS_FUSE_NUM_E_DLL_REFRESH_RATEX_CN96XX(a) (0x55 + (a))
 #define CAVM_FUS_FUSE_NUM_E_DLL_REFRESH_RATEX_CNF95XX(a) (0x178 + (a))
+#define CAVM_FUS_FUSE_NUM_E_DLL_REFRESH_RATEX_LOKI(a) (0x178 + (a))
 #define CAVM_FUS_FUSE_NUM_E_DRO_CRIPPLE (0x73)
 #define CAVM_FUS_FUSE_NUM_E_DSP_INIT_MULX(a) (0x5d + (a))
 #define CAVM_FUS_FUSE_NUM_E_DSP_INIT_PLL (0x64)
@@ -123,6 +129,7 @@
 #define CAVM_FUS_FUSE_NUM_E_MDB_FUSE_CRIPPLEX(a) (0x2bb + (a))
 #define CAVM_FUS_FUSE_NUM_E_METAL_FIXX_CN96XX(a) (0x2c + (a))
 #define CAVM_FUS_FUSE_NUM_E_METAL_FIXX_CNF95XX(a) (0x29 + (a))
+#define CAVM_FUS_FUSE_NUM_E_METAL_FIXX_LOKI(a) (0x29 + (a))
 #define CAVM_FUS_FUSE_NUM_E_MFG_INFOX(a) (0x400 + (a))
 #define CAVM_FUS_FUSE_NUM_E_MHB_FUSE_CRIPPLEX(a) (0x29f + (a))
 #define CAVM_FUS_FUSE_NUM_E_MLC_CRIPPLEX(a) (0x219 + (a))
@@ -132,14 +139,18 @@
 #define CAVM_FUS_FUSE_NUM_E_PEM_CRIPPLEX(a) (0x230 + (a))
 #define CAVM_FUS_FUSE_NUM_E_PNR_INIT_MULX_CN96XX(a) (0x34 + (a))
 #define CAVM_FUS_FUSE_NUM_E_PNR_INIT_MULX_CNF95XX(a) (0x2e + (a))
+#define CAVM_FUS_FUSE_NUM_E_PNR_INIT_MULX_LOKI(a) (0x2e + (a))
 #define CAVM_FUS_FUSE_NUM_E_PNR_INIT_PLL_CN96XX (0x3b)
 #define CAVM_FUS_FUSE_NUM_E_PNR_INIT_PLL_CNF95XX (0x35)
+#define CAVM_FUS_FUSE_NUM_E_PNR_INIT_PLL_LOKI (0x35)
 #define CAVM_FUS_FUSE_NUM_E_PNR_MAX_MULX_CN96XX(a) (0x3c + (a))
 #define CAVM_FUS_FUSE_NUM_E_PNR_MAX_MULX_CNF95XX(a) (0x36 + (a))
+#define CAVM_FUS_FUSE_NUM_E_PNR_MAX_MULX_LOKI(a) (0x36 + (a))
 #define CAVM_FUS_FUSE_NUM_E_POWER_LIMITX(a) (0x225 + (a))
 #define CAVM_FUS_FUSE_NUM_E_PVTX(a) (0x680 + (a))
 #define CAVM_FUS_FUSE_NUM_E_REFCLK_CHECK_CN96XX (0x52)
 #define CAVM_FUS_FUSE_NUM_E_REFCLK_CHECK_CNF95XX (0x4c)
+#define CAVM_FUS_FUSE_NUM_E_REFCLK_CHECK_LOKI (0x4c)
 #define CAVM_FUS_FUSE_NUM_E_REPAIRX(a) (0x1000 + (a))
 #define CAVM_FUS_FUSE_NUM_E_ROM_INFOX(a) (0x3f0 + (a))
 #define CAVM_FUS_FUSE_NUM_E_RSVD140X(a) (0x140 + (a))
@@ -159,7 +170,8 @@
 #define CAVM_FUS_FUSE_NUM_E_RSVD28EX(a) (0x28e + (a))
 #define CAVM_FUS_FUSE_NUM_E_RSVD29X(a) (0x29 + (a))
 #define CAVM_FUS_FUSE_NUM_E_RSVD29DX(a) (0x29d + (a))
-#define CAVM_FUS_FUSE_NUM_E_RSVD2E5X(a) (0x2e5 + (a))
+#define CAVM_FUS_FUSE_NUM_E_RSVD2E5X_CNF95XX(a) (0x2e5 + (a))
+#define CAVM_FUS_FUSE_NUM_E_RSVD2E5X_LOKI(a) (0x2cb + (a))
 #define CAVM_FUS_FUSE_NUM_E_RSVD31X(a) (0x31 + (a))
 #define CAVM_FUS_FUSE_NUM_E_RSVD580X(a) (0x580 + (a))
 #define CAVM_FUS_FUSE_NUM_E_RSVD74 (0x74)
@@ -263,7 +275,7 @@ static inline uint64_t CAVM_FUS_BNK_DATX(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX) && (a<=1))
         return 0x87e003001520ll + 8ll * ((a) & 0x1);
-    __cavm_csr_fatal("FUS_BNK_DATX", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("FUS_BNK_DATX", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_FUS_BNK_DATX(a) cavm_fus_bnk_datx_t
@@ -304,7 +316,7 @@ static inline uint64_t CAVM_FUS_CACHEX(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX) && (a<=63))
         return 0x87e003001000ll + 8ll * ((a) & 0x3f);
-    __cavm_csr_fatal("FUS_CACHEX", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("FUS_CACHEX", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_FUS_CACHEX(a) cavm_fus_cachex_t
@@ -344,7 +356,7 @@ static inline uint64_t CAVM_FUS_CONST_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x87e003001578ll;
-    __cavm_csr_fatal("FUS_CONST", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("FUS_CONST", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_FUS_CONST cavm_fus_const_t
@@ -422,7 +434,7 @@ static inline uint64_t CAVM_FUS_PROG_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x87e003001510ll;
-    __cavm_csr_fatal("FUS_PROG", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("FUS_PROG", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_FUS_PROG cavm_fus_prog_t
@@ -493,7 +505,7 @@ static inline uint64_t CAVM_FUS_RCMD_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x87e003001500ll;
-    __cavm_csr_fatal("FUS_RCMD", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("FUS_RCMD", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_FUS_RCMD cavm_fus_rcmd_t
@@ -580,7 +592,7 @@ static inline uint64_t CAVM_FUS_READ_TIMES_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x87e003001570ll;
-    __cavm_csr_fatal("FUS_READ_TIMES", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("FUS_READ_TIMES", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_FUS_READ_TIMES cavm_fus_read_times_t
@@ -660,7 +672,7 @@ static inline uint64_t CAVM_FUS_SOFT_REPAIR_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x87e003001540ll;
-    __cavm_csr_fatal("FUS_SOFT_REPAIR", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("FUS_SOFT_REPAIR", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_FUS_SOFT_REPAIR cavm_fus_soft_repair_t

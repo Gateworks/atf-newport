@@ -678,7 +678,9 @@ static inline uint64_t CAVM_ULFE_CONFIG0_DATAX(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=1))
         return 0x87e043082000ll + 8ll * ((a) & 0x1);
-    __cavm_csr_fatal("ULFE_CONFIG0_DATAX", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=1))
+        return 0x87e043082000ll + 8ll * ((a) & 0x1);
+    __cavm_csr_fatal("ULFE_CONFIG0_DATAX", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_ULFE_CONFIG0_DATAX(a) cavm_ulfe_config0_datax_t
@@ -713,7 +715,9 @@ static inline uint64_t CAVM_ULFE_CONFIG1_DATAX(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=1))
         return 0x87e043084000ll + 8ll * ((a) & 0x1);
-    __cavm_csr_fatal("ULFE_CONFIG1_DATAX", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=1))
+        return 0x87e043084000ll + 8ll * ((a) & 0x1);
+    __cavm_csr_fatal("ULFE_CONFIG1_DATAX", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_ULFE_CONFIG1_DATAX(a) cavm_ulfe_config1_datax_t
@@ -748,7 +752,9 @@ static inline uint64_t CAVM_ULFE_CONFIG2_DATAX(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=1))
         return 0x87e043086000ll + 8ll * ((a) & 0x1);
-    __cavm_csr_fatal("ULFE_CONFIG2_DATAX", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=1))
+        return 0x87e043086000ll + 8ll * ((a) & 0x1);
+    __cavm_csr_fatal("ULFE_CONFIG2_DATAX", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_ULFE_CONFIG2_DATAX(a) cavm_ulfe_config2_datax_t
@@ -808,7 +814,9 @@ static inline uint64_t CAVM_ULFE_CONTROL_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX))
         return 0x87e043080000ll;
-    __cavm_csr_fatal("ULFE_CONTROL", 0, 0, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI))
+        return 0x87e043080000ll;
+    __cavm_csr_fatal("ULFE_CONTROL", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_ULFE_CONTROL cavm_ulfe_control_t
@@ -847,7 +855,9 @@ static inline uint64_t CAVM_ULFE_ECO_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX))
         return 0x87e043080008ll;
-    __cavm_csr_fatal("ULFE_ECO", 0, 0, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI))
+        return 0x87e043080008ll;
+    __cavm_csr_fatal("ULFE_ECO", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_ULFE_ECO cavm_ulfe_eco_t
@@ -887,7 +897,9 @@ static inline uint64_t CAVM_ULFE_ERROR_ENABLE0_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX))
         return 0x87e043080040ll;
-    __cavm_csr_fatal("ULFE_ERROR_ENABLE0", 0, 0, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI))
+        return 0x87e043080040ll;
+    __cavm_csr_fatal("ULFE_ERROR_ENABLE0", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_ULFE_ERROR_ENABLE0 cavm_ulfe_error_enable0_t
@@ -981,7 +993,9 @@ static inline uint64_t CAVM_ULFE_ERROR_ENABLE1_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX))
         return 0x87e043080048ll;
-    __cavm_csr_fatal("ULFE_ERROR_ENABLE1", 0, 0, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI))
+        return 0x87e043080048ll;
+    __cavm_csr_fatal("ULFE_ERROR_ENABLE1", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_ULFE_ERROR_ENABLE1 cavm_ulfe_error_enable1_t
@@ -1027,7 +1041,9 @@ static inline uint64_t CAVM_ULFE_ERROR_SOURCE0_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX))
         return 0x87e043080030ll;
-    __cavm_csr_fatal("ULFE_ERROR_SOURCE0", 0, 0, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI))
+        return 0x87e043080030ll;
+    __cavm_csr_fatal("ULFE_ERROR_SOURCE0", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_ULFE_ERROR_SOURCE0 cavm_ulfe_error_source0_t
@@ -1121,7 +1137,9 @@ static inline uint64_t CAVM_ULFE_ERROR_SOURCE1_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX))
         return 0x87e043080038ll;
-    __cavm_csr_fatal("ULFE_ERROR_SOURCE1", 0, 0, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI))
+        return 0x87e043080038ll;
+    __cavm_csr_fatal("ULFE_ERROR_SOURCE1", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_ULFE_ERROR_SOURCE1 cavm_ulfe_error_source1_t
@@ -1158,7 +1176,9 @@ static inline uint64_t CAVM_ULFE_SCRATCH_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX))
         return 0x87e043080080ll;
-    __cavm_csr_fatal("ULFE_SCRATCH", 0, 0, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI))
+        return 0x87e043080080ll;
+    __cavm_csr_fatal("ULFE_SCRATCH", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_ULFE_SCRATCH cavm_ulfe_scratch_t
@@ -1204,7 +1224,9 @@ static inline uint64_t CAVM_ULFE_STATUS_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX))
         return 0x87e043080018ll;
-    __cavm_csr_fatal("ULFE_STATUS", 0, 0, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI))
+        return 0x87e043080018ll;
+    __cavm_csr_fatal("ULFE_STATUS", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_ULFE_STATUS cavm_ulfe_status_t

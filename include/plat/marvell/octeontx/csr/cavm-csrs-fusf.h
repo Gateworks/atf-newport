@@ -114,7 +114,7 @@ static inline uint64_t CAVM_FUSF_BNK_DATX(unsigned long a)
 {
     if (a<=1)
         return 0x87e004000120ll + 8ll * ((a) & 0x1);
-    __cavm_csr_fatal("FUSF_BNK_DATX", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("FUSF_BNK_DATX", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_FUSF_BNK_DATX(a) cavm_fusf_bnk_datx_t
@@ -152,7 +152,7 @@ static inline uint64_t CAVM_FUSF_CONST_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x87e004000130ll;
-    __cavm_csr_fatal("FUSF_CONST", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("FUSF_CONST", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_FUSF_CONST cavm_fusf_const_t
@@ -351,7 +351,7 @@ static inline uint64_t CAVM_FUSF_ECO_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x87e004000118ll;
-    __cavm_csr_fatal("FUSF_ECO", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("FUSF_ECO", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_FUSF_ECO cavm_fusf_eco_t
@@ -386,7 +386,7 @@ static inline uint64_t CAVM_FUSF_EKX(unsigned long a)
 {
     if (a<=3)
         return 0x87e0040000a0ll + 8ll * ((a) & 0x3);
-    __cavm_csr_fatal("FUSF_EKX", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("FUSF_EKX", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_FUSF_EKX(a) cavm_fusf_ekx_t
@@ -421,7 +421,7 @@ static inline uint64_t CAVM_FUSF_HUKX(unsigned long a)
 {
     if (a<=1)
         return 0x87e004000090ll + 8ll * ((a) & 0x1);
-    __cavm_csr_fatal("FUSF_HUKX", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("FUSF_HUKX", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_FUSF_HUKX(a) cavm_fusf_hukx_t
@@ -743,7 +743,7 @@ static inline uint64_t CAVM_FUSF_ROTPKX(unsigned long a)
 {
     if (a<=3)
         return 0x87e004000060ll + 8ll * ((a) & 0x3);
-    __cavm_csr_fatal("FUSF_ROTPKX", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("FUSF_ROTPKX", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_FUSF_ROTPKX(a) cavm_fusf_rotpkx_t
@@ -778,7 +778,7 @@ static inline uint64_t CAVM_FUSF_SSKX(unsigned long a)
 {
     if (a<=1)
         return 0x87e004000080ll + 8ll * ((a) & 0x1);
-    __cavm_csr_fatal("FUSF_SSKX", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("FUSF_SSKX", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_FUSF_SSKX(a) cavm_fusf_sskx_t
@@ -813,7 +813,7 @@ static inline uint64_t CAVM_FUSF_SWX(unsigned long a)
 {
     if (a<=7)
         return 0x87e0040000c0ll + 8ll * ((a) & 0x7);
-    __cavm_csr_fatal("FUSF_SWX", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("FUSF_SWX", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_FUSF_SWX(a) cavm_fusf_swx_t
@@ -851,7 +851,7 @@ static inline uint64_t CAVM_FUSF_WADR_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX))
         return 0x87e004000108ll;
-    __cavm_csr_fatal("FUSF_WADR", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("FUSF_WADR", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_FUSF_WADR cavm_fusf_wadr_t

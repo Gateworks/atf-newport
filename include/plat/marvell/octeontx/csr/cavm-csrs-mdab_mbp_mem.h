@@ -62,7 +62,7 @@ static inline uint64_t CAVM_MDAB_MBPX_DMEM_ARRAYX(unsigned long a, unsigned long
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=39) && (b<=16383)))
         return 0x87e044800000ll + 0x20000ll * ((a) & 0x3f) + 8ll * ((b) & 0x3fff);
-    __cavm_csr_fatal("MDAB_MBPX_DMEM_ARRAYX", 2, a, b, 0, 0);
+    __cavm_csr_fatal("MDAB_MBPX_DMEM_ARRAYX", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDAB_MBPX_DMEM_ARRAYX(a,b) cavm_mdab_mbpx_dmem_arrayx_t
@@ -113,7 +113,7 @@ static inline uint64_t CAVM_MDAB_MBPX_IMEM_ARRAYX(unsigned long a, unsigned long
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=39) && (b<=8191)))
         return 0x87e044400000ll + 0x10000ll * ((a) & 0x3f) + 8ll * ((b) & 0x1fff);
-    __cavm_csr_fatal("MDAB_MBPX_IMEM_ARRAYX", 2, a, b, 0, 0);
+    __cavm_csr_fatal("MDAB_MBPX_IMEM_ARRAYX", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDAB_MBPX_IMEM_ARRAYX(a,b) cavm_mdab_mbpx_imem_arrayx_t

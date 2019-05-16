@@ -173,7 +173,7 @@ static inline uint64_t CAVM_MDC_ACTIVE_PC_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x87e0100000e8ll;
-    __cavm_csr_fatal("MDC_ACTIVE_PC", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("MDC_ACTIVE_PC", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDC_ACTIVE_PC cavm_mdc_active_pc_t
@@ -321,7 +321,7 @@ static inline uint64_t CAVM_MDC_BIST_CONFIG_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x87e010000008ll;
-    __cavm_csr_fatal("MDC_BIST_CONFIG", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("MDC_BIST_CONFIG", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDC_BIST_CONFIG cavm_mdc_bist_config_t
@@ -367,7 +367,7 @@ static inline uint64_t CAVM_MDC_BIST_CONTROL_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x87e010000028ll;
-    __cavm_csr_fatal("MDC_BIST_CONTROL", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("MDC_BIST_CONTROL", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDC_BIST_CONTROL cavm_mdc_bist_control_t
@@ -413,7 +413,7 @@ static inline uint64_t CAVM_MDC_BIST_DEBUG_MODE_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x87e010000000ll;
-    __cavm_csr_fatal("MDC_BIST_DEBUG_MODE", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("MDC_BIST_DEBUG_MODE", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDC_BIST_DEBUG_MODE cavm_mdc_bist_debug_mode_t
@@ -459,7 +459,7 @@ static inline uint64_t CAVM_MDC_BIST_FAILX(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX) && (a<=31))
         return 0x87e010000100ll + 8ll * ((a) & 0x1f);
-    __cavm_csr_fatal("MDC_BIST_FAILX", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("MDC_BIST_FAILX", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDC_BIST_FAILX(a) cavm_mdc_bist_failx_t
@@ -519,7 +519,7 @@ static inline uint64_t CAVM_MDC_BIST_STATUS_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x87e010000030ll;
-    __cavm_csr_fatal("MDC_BIST_STATUS", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("MDC_BIST_STATUS", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDC_BIST_STATUS cavm_mdc_bist_status_t
@@ -563,7 +563,7 @@ static inline uint64_t CAVM_MDC_CONST_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x87e010000068ll;
-    __cavm_csr_fatal("MDC_CONST", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("MDC_CONST", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDC_CONST cavm_mdc_const_t
@@ -609,7 +609,7 @@ static inline uint64_t CAVM_MDC_ECC_CONFIG_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x87e010000038ll;
-    __cavm_csr_fatal("MDC_ECC_CONFIG", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("MDC_ECC_CONFIG", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDC_ECC_CONFIG cavm_mdc_ecc_config_t
@@ -675,7 +675,7 @@ static inline uint64_t CAVM_MDC_ECC_STATUS_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x87e010000040ll;
-    __cavm_csr_fatal("MDC_ECC_STATUS", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("MDC_ECC_STATUS", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDC_ECC_STATUS cavm_mdc_ecc_status_t
@@ -713,7 +713,7 @@ static inline uint64_t CAVM_MDC_ECO_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x87e0100000f8ll;
-    __cavm_csr_fatal("MDC_ECO", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("MDC_ECO", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDC_ECO cavm_mdc_eco_t
@@ -752,7 +752,7 @@ static inline uint64_t CAVM_MDC_INT_ENA_W1C_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x87e010000058ll;
-    __cavm_csr_fatal("MDC_INT_ENA_W1C", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("MDC_INT_ENA_W1C", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDC_INT_ENA_W1C cavm_mdc_int_ena_w1c_t
@@ -791,7 +791,7 @@ static inline uint64_t CAVM_MDC_INT_ENA_W1S_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x87e010000060ll;
-    __cavm_csr_fatal("MDC_INT_ENA_W1S", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("MDC_INT_ENA_W1S", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDC_INT_ENA_W1S cavm_mdc_int_ena_w1s_t
@@ -829,7 +829,7 @@ static inline uint64_t CAVM_MDC_INT_W1C_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x87e010000048ll;
-    __cavm_csr_fatal("MDC_INT_W1C", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("MDC_INT_W1C", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDC_INT_W1C cavm_mdc_int_w1c_t
@@ -868,7 +868,7 @@ static inline uint64_t CAVM_MDC_INT_W1S_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x87e010000050ll;
-    __cavm_csr_fatal("MDC_INT_W1S", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("MDC_INT_W1S", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDC_INT_W1S cavm_mdc_int_w1s_t
@@ -907,7 +907,7 @@ static inline uint64_t CAVM_MDC_PF_MSIX_PBAX(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX) && (a==0))
         return 0x87e0101f0000ll + 8ll * ((a) & 0x0);
-    __cavm_csr_fatal("MDC_PF_MSIX_PBAX", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("MDC_PF_MSIX_PBAX", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDC_PF_MSIX_PBAX(a) cavm_mdc_pf_msix_pbax_t
@@ -993,7 +993,7 @@ static inline uint64_t CAVM_MDC_PF_MSIX_VECX_ADDR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX) && (a==0))
         return 0x87e010100000ll + 0x10ll * ((a) & 0x0);
-    __cavm_csr_fatal("MDC_PF_MSIX_VECX_ADDR", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("MDC_PF_MSIX_VECX_ADDR", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDC_PF_MSIX_VECX_ADDR(a) cavm_mdc_pf_msix_vecx_addr_t
@@ -1033,7 +1033,7 @@ static inline uint64_t CAVM_MDC_PF_MSIX_VECX_CTL(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX) && (a==0))
         return 0x87e010100008ll + 0x10ll * ((a) & 0x0);
-    __cavm_csr_fatal("MDC_PF_MSIX_VECX_CTL", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("MDC_PF_MSIX_VECX_CTL", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDC_PF_MSIX_VECX_CTL(a) cavm_mdc_pf_msix_vecx_ctl_t
@@ -1098,7 +1098,7 @@ static inline uint64_t CAVM_MDC_RAS_ROMX(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX) && (a<=8191))
         return 0x87e010010000ll + 8ll * ((a) & 0x1fff);
-    __cavm_csr_fatal("MDC_RAS_ROMX", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("MDC_RAS_ROMX", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDC_RAS_ROMX(a) cavm_mdc_ras_romx_t
@@ -1134,7 +1134,7 @@ static inline uint64_t CAVM_MDC_SCRATCH_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x87e0100000f0ll;
-    __cavm_csr_fatal("MDC_SCRATCH", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("MDC_SCRATCH", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDC_SCRATCH cavm_mdc_scratch_t
@@ -1180,7 +1180,7 @@ static inline uint64_t CAVM_MDC_TIMEOUTS_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x87e010000070ll;
-    __cavm_csr_fatal("MDC_TIMEOUTS", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("MDC_TIMEOUTS", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDC_TIMEOUTS cavm_mdc_timeouts_t
@@ -1253,7 +1253,7 @@ static inline uint64_t CAVM_MDC_WIN_CMD_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x87e010000010ll;
-    __cavm_csr_fatal("MDC_WIN_CMD", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("MDC_WIN_CMD", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDC_WIN_CMD cavm_mdc_win_cmd_t
@@ -1311,7 +1311,7 @@ static inline uint64_t CAVM_MDC_WIN_DAT_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x87e010000018ll;
-    __cavm_csr_fatal("MDC_WIN_DAT", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("MDC_WIN_DAT", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDC_WIN_DAT cavm_mdc_win_dat_t

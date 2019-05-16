@@ -23,7 +23,7 @@
  * Register (RSL32b) mdab#_cfg_addr
  *
  * MDAB Configuration DMA Address Register
- * The starting address used by the CFG-DMA engine when writing the job configuration to local
+ * The starting address used by the CFG DMA engine when writing the job configuration to local
  * DSP memory.
  */
 union cavm_mdabx_cfg_addr
@@ -67,7 +67,7 @@ union cavm_mdabx_cfg_addr
         uint64_t reserved_31_63        : 33;
 #endif /* Word 0 - End */
     } s;
-    struct cavm_mdabx_cfg_addr_cn
+    struct cavm_mdabx_cfg_addr_cnf95xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_31           : 1;
@@ -104,7 +104,35 @@ union cavm_mdabx_cfg_addr
                                                                  (0:DMEM/1:IMEM). */
         uint64_t reserved_31           : 1;
 #endif /* Word 0 - End */
-    } cn;
+    } cnf95xx;
+    struct cavm_mdabx_cfg_addr_loki
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_23_31        : 9;
+        uint64_t addr                  : 19; /**< [ 22:  4](R/W) The 128 bit-aligned starting address used by the CFG DMA engine when writing the job
+                                                                 configuration to local DSP memory.
+
+                                                                 _ When ADDR[22:21] is 0x0 (dTCM/DMEM), valid 128-bit-aligned address range = 0x0
+                                                                 - (0x03_FFFF \>\> 4).
+                                                                 _ When ADDR[22:21] is 0x1 (pTCM/IMEM), valid 128-bit-aligned address range =
+                                                                 (0x20_0000 \>\> 4) - (0x21_FFFF \>\> 4).
+                                                                 _ When ADDR[22:21] is 0x2 (CPM registers), valid 128-bit-aligned address range =
+                                                                 (0x40_0000 \>\> 4) - (0x40_3FFF \>\> 4). */
+        uint64_t reserved_0_3          : 4;
+#else /* Word 0 - Little Endian */
+        uint64_t reserved_0_3          : 4;
+        uint64_t addr                  : 19; /**< [ 22:  4](R/W) The 128 bit-aligned starting address used by the CFG DMA engine when writing the job
+                                                                 configuration to local DSP memory.
+
+                                                                 _ When ADDR[22:21] is 0x0 (dTCM/DMEM), valid 128-bit-aligned address range = 0x0
+                                                                 - (0x03_FFFF \>\> 4).
+                                                                 _ When ADDR[22:21] is 0x1 (pTCM/IMEM), valid 128-bit-aligned address range =
+                                                                 (0x20_0000 \>\> 4) - (0x21_FFFF \>\> 4).
+                                                                 _ When ADDR[22:21] is 0x2 (CPM registers), valid 128-bit-aligned address range =
+                                                                 (0x40_0000 \>\> 4) - (0x40_3FFF \>\> 4). */
+        uint64_t reserved_23_31        : 9;
+#endif /* Word 0 - End */
+    } loki;
 };
 typedef union cavm_mdabx_cfg_addr cavm_mdabx_cfg_addr_t;
 
@@ -113,7 +141,9 @@ static inline uint64_t CAVM_MDABX_CFG_ADDR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=41))
         return 0x87e044100030ll + 0x4000ll * ((a) & 0x3f);
-    __cavm_csr_fatal("MDABX_CFG_ADDR", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044400030ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDABX_CFG_ADDR", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDABX_CFG_ADDR(a) cavm_mdabx_cfg_addr_t
@@ -126,7 +156,7 @@ static inline uint64_t CAVM_MDABX_CFG_ADDR(unsigned long a)
  * Register (RSL32b) mdab#_cfg_length
  *
  * MDAB Configuration DMA Length Register
- * The actual 128-bit length of the most recent CFG-DMA engine job configuration transfer.
+ * The actual 128-bit length of the most recent CFG DMA engine job configuration transfer.
  */
 union cavm_mdabx_cfg_length
 {
@@ -153,7 +183,7 @@ union cavm_mdabx_cfg_length
         uint64_t reserved_19_63        : 45;
 #endif /* Word 0 - End */
     } s;
-    struct cavm_mdabx_cfg_length_cn
+    struct cavm_mdabx_cfg_length_cnf95xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_19_31        : 13;
@@ -174,7 +204,31 @@ union cavm_mdabx_cfg_length
                                                                  now currently available to be read and used. */
         uint64_t reserved_19_31        : 13;
 #endif /* Word 0 - End */
-    } cn;
+    } cnf95xx;
+    struct cavm_mdabx_cfg_length_loki
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_18_31        : 14;
+        uint64_t length                : 14; /**< [ 17:  4](RO/H) The actual 128-bit length of the most recent CFG-DMA engine job configuration transfer.
+
+                                                                 Note: This field will be updated when the CFG DMA has been actually write committed to
+                                                                 local DSP memory,
+                                                                 which allows software to read (poll) the length field during the CFG DMA transfer to know how
+                                                                 many 128-bit chunks are
+                                                                 now currently available to be read and used. */
+        uint64_t reserved_0_3          : 4;
+#else /* Word 0 - Little Endian */
+        uint64_t reserved_0_3          : 4;
+        uint64_t length                : 14; /**< [ 17:  4](RO/H) The actual 128-bit length of the most recent CFG-DMA engine job configuration transfer.
+
+                                                                 Note: This field will be updated when the CFG DMA has been actually write committed to
+                                                                 local DSP memory,
+                                                                 which allows software to read (poll) the length field during the CFG DMA transfer to know how
+                                                                 many 128-bit chunks are
+                                                                 now currently available to be read and used. */
+        uint64_t reserved_18_31        : 14;
+#endif /* Word 0 - End */
+    } loki;
 };
 typedef union cavm_mdabx_cfg_length cavm_mdabx_cfg_length_t;
 
@@ -183,7 +237,9 @@ static inline uint64_t CAVM_MDABX_CFG_LENGTH(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=41))
         return 0x87e044100050ll + 0x4000ll * ((a) & 0x3f);
-    __cavm_csr_fatal("MDABX_CFG_LENGTH", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044400050ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDABX_CFG_LENGTH", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDABX_CFG_LENGTH(a) cavm_mdabx_cfg_length_t
@@ -196,7 +252,7 @@ static inline uint64_t CAVM_MDABX_CFG_LENGTH(unsigned long a)
  * Register (RSL32b) mdab#_cfg_limit
  *
  * MDAB Configuration DMA Limit Register
- * The maximum number of 128-bit sized chunks that the CFG-DMA engine may write starting from the
+ * The maximum number of 128-bit sized chunks that the CFG DMA engine may write starting from the
  * 128-bit-aligned MDAB()_CFG_ADDR.
  */
 union cavm_mdabx_cfg_limit
@@ -266,7 +322,7 @@ union cavm_mdabx_cfg_limit
         uint64_t reserved_32_63        : 32;
 #endif /* Word 0 - End */
     } s;
-    struct cavm_mdabx_cfg_limit_cn
+    struct cavm_mdabx_cfg_limit_cnf95xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t last                  : 1;  /**< [ 31: 31](R/W) Indicates the last CFG-DMA slice which may be written to address MDAB()_CFG_ADDR.
@@ -327,7 +383,75 @@ union cavm_mdabx_cfg_limit
                                                                  SW_NOTE: For every new CFG-DMA slice operation, DSP software *MUST* signal LAST to indicate
                                                                  the final JD.CFG-DMA data slice transfer. */
 #endif /* Word 0 - End */
-    } cn;
+    } cnf95xx;
+    struct cavm_mdabx_cfg_limit_loki
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t last                  : 1;  /**< [ 31: 31](R/W) Indicates the last CFG-DMA slice which may be written to address MDAB()_CFG_ADDR.
+                                                                 DSP software may choose to segment the JD.CFG DMA data into multiple noncontiguous CFG DMA
+                                                                 transfers to DSP local memory.
+
+                                                                 Eventually, DSP software will indicate the [LAST] segment (or slice), to indicate this is
+                                                                 the final CFG DMA sub-block transfer.
+                                                                 Each CFG DMA operation's [LAST] will indicate when the last segment (or slice) CFG DMA
+                                                                 operation has been set up, to complete the JD.CFG DMA data transfer.
+
+                                                                 Software note: For every new CFG DMA slice operation, DSP software must signal [LAST] to indicate
+                                                                 the final JD.CFG DMA data slice transfer. */
+        uint64_t reserved_18_30        : 13;
+        uint64_t limit                 : 14; /**< [ 17:  4](R/W) "The maximum number of 128-bit chunks that the CFG DMA engine may write at address
+                                                                 MDAB()_CFG_ADDR.
+
+                                                                 Typically, DSP software will allocate [LIMIT] buffer space (max) to be larger than the JD.JCFG
+                                                                 data. DSP software is at liberty to break the total CFG DMA transfer into multiples segments (or
+                                                                 DMA slices) using the LIMIT register. When either [LIMIT] has been reached (or if the last
+                                                                 JD.JCFG data is detected), the CFG DMA is done.
+
+                                                                 _ dTCM/DMEM: 0x0 - (0x03_FFFF \>\> 4).
+                                                                 _ pTCM/IMEM: (0x20_0000 \>\> 4) - (0x21_FFFF \>\> 4).
+                                                                 _ CPM registers: (0x40_0000 \>\> 4) - (0x40_3FFF \>\> 4).
+
+                                                                 Software restriction #1: Software should never program [LIMIT] = 0x0.
+                                                                 Indeterminate results can/will occur.
+
+                                                                 Software restriction #2: Software should ensure that ADDR+LIMIT sizes fall
+                                                                 within the instruction and data memory
+                                                                 space; otherwise [DMA_ERROR] and indeterminate results can/will occur." */
+        uint64_t reserved_0_3          : 4;
+#else /* Word 0 - Little Endian */
+        uint64_t reserved_0_3          : 4;
+        uint64_t limit                 : 14; /**< [ 17:  4](R/W) "The maximum number of 128-bit chunks that the CFG DMA engine may write at address
+                                                                 MDAB()_CFG_ADDR.
+
+                                                                 Typically, DSP software will allocate [LIMIT] buffer space (max) to be larger than the JD.JCFG
+                                                                 data. DSP software is at liberty to break the total CFG DMA transfer into multiples segments (or
+                                                                 DMA slices) using the LIMIT register. When either [LIMIT] has been reached (or if the last
+                                                                 JD.JCFG data is detected), the CFG DMA is done.
+
+                                                                 _ dTCM/DMEM: 0x0 - (0x03_FFFF \>\> 4).
+                                                                 _ pTCM/IMEM: (0x20_0000 \>\> 4) - (0x21_FFFF \>\> 4).
+                                                                 _ CPM registers: (0x40_0000 \>\> 4) - (0x40_3FFF \>\> 4).
+
+                                                                 Software restriction #1: Software should never program [LIMIT] = 0x0.
+                                                                 Indeterminate results can/will occur.
+
+                                                                 Software restriction #2: Software should ensure that ADDR+LIMIT sizes fall
+                                                                 within the instruction and data memory
+                                                                 space; otherwise [DMA_ERROR] and indeterminate results can/will occur." */
+        uint64_t reserved_18_30        : 13;
+        uint64_t last                  : 1;  /**< [ 31: 31](R/W) Indicates the last CFG-DMA slice which may be written to address MDAB()_CFG_ADDR.
+                                                                 DSP software may choose to segment the JD.CFG DMA data into multiple noncontiguous CFG DMA
+                                                                 transfers to DSP local memory.
+
+                                                                 Eventually, DSP software will indicate the [LAST] segment (or slice), to indicate this is
+                                                                 the final CFG DMA sub-block transfer.
+                                                                 Each CFG DMA operation's [LAST] will indicate when the last segment (or slice) CFG DMA
+                                                                 operation has been set up, to complete the JD.CFG DMA data transfer.
+
+                                                                 Software note: For every new CFG DMA slice operation, DSP software must signal [LAST] to indicate
+                                                                 the final JD.CFG DMA data slice transfer. */
+#endif /* Word 0 - End */
+    } loki;
 };
 typedef union cavm_mdabx_cfg_limit cavm_mdabx_cfg_limit_t;
 
@@ -336,7 +460,9 @@ static inline uint64_t CAVM_MDABX_CFG_LIMIT(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=41))
         return 0x87e044100040ll + 0x4000ll * ((a) & 0x3f);
-    __cavm_csr_fatal("MDABX_CFG_LIMIT", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044400040ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDABX_CFG_LIMIT", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDABX_CFG_LIMIT(a) cavm_mdabx_cfg_limit_t
@@ -349,7 +475,7 @@ static inline uint64_t CAVM_MDABX_CFG_LIMIT(unsigned long a)
  * Register (RSL32b) mdab#_cfg_status
  *
  * MDAB Configuration DMA Status Register
- * Reports the status for the CFG-DMA engine.
+ * Reports the status for the CFG DMA engine.
  */
 union cavm_mdabx_cfg_status
 {
@@ -428,7 +554,7 @@ union cavm_mdabx_cfg_status
         uint64_t reserved_32_63        : 32;
 #endif /* Word 0 - End */
     } s;
-    struct cavm_mdabx_cfg_status_cn
+    struct cavm_mdabx_cfg_status_cnf95xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t job_tag               : 16; /**< [ 31: 16](RO/H) The JOB_TAG field from the PSM command for the last completed CFG-DMA operation.
@@ -499,7 +625,89 @@ union cavm_mdabx_cfg_status
                                                                   When DSP software writes START_BUSY=0-\>1, the CFG-DMA engine will wait until the next
                                                                   available Job has been enqueued, at which point the JOB_TAG will be latched in. */
 #endif /* Word 0 - End */
-    } cn;
+    } cnf95xx;
+    struct cavm_mdabx_cfg_status_loki
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t job_tag               : 16; /**< [ 31: 16](RO/H) The JOB_TAG field from the PSM command for the last completed CFG DMA operation.
+                                                                  When DSP software writes [START_BUSY] = 0 -\> 1, the CFG DMA engine will wait until the next
+                                                                  available job has been enqueued, at which point the JOB_TAG will be latched in. */
+        uint64_t reserved_10_15        : 6;
+        uint64_t pending_slot          : 1;  /**< [  9:  9](RO/H) The job slot for the pending CFG DMA operation. Valid only when [START_BUSY] is 0 and
+                                                                 [DMA_PENDING] is 1. */
+        uint64_t job_slot              : 1;  /**< [  8:  8](RO/H) The job slot for the most recent CFG DMA operation. */
+        uint64_t reserved_7            : 1;
+        uint64_t dma_uflow             : 1;  /**< [  6:  6](RO/H) Set when the last CFG DMA operation encountered an underflow. */
+        uint64_t dma_oflow             : 1;  /**< [  5:  5](RO/H) Set when the last CFG DMA operation encountered an overflow. */
+        uint64_t dma_error             : 1;  /**< [  4:  4](RO/H) Set when the last CFG DMA operation encountered an error. */
+        uint64_t last_dma_done         : 1;  /**< [  3:  3](RO/H) Set when the last CFG DMA operation transferred the last word of the job configuration
+                                                                 section from the job descriptor. */
+        uint64_t dma_pending           : 1;  /**< [  2:  2](RO/H) Set when a CFG DMA operation is pending for the engine and the internal interface needs to
+                                                                 be programmed. */
+        uint64_t post_reset            : 1;  /**< [  1:  1](RO/H) Set to one on MDAB reset and remains one until the CFG DMA engine starts its first
+                                                                 CFG DMA transfer.
+
+                                                                 Software note: DSP software can use this bit to qualify the [JOB_TAG],
+                                                                 [JOB_SLOT], [DMA_ERROR], and [LAST_DMA_DONE]
+                                                                 bits in this CSR. These status bits remain set and POST_RESET is used by software to know
+                                                                 when they are truly valid.
+
+                                                                 Set (hardware) = MDAB reset.
+
+                                                                 Clear (software) = DSP writes [START_BUSY] = 0 -\> 1. */
+        uint64_t start_busy            : 1;  /**< [  0:  0](R/W1S/H) When software writes a one to this register, hardware will write the job configuration
+                                                                 section (JD.JCFG) for the next available job into the local memory starting at
+                                                                 MDAB()_CFG_ADDR, up to
+                                                                 MDAB()_CFG_ADDR+MDAB()_CFG_LIMIT or until the last JD.JCFG data has been transferred.
+                                                                 If the CFG DMA engine has already transferred part but not all of the JD.JCFG section for
+                                                                 a job, it will continue transferring data until it reaches the end of the JD.JCFG
+                                                                 section, or until it writes
+                                                                 MDAB()_CFG_LIMIT for the last CFG DMA slice, whichever comes first.
+
+                                                                 This bit is reset to zero when the
+                                                                 CFG DMA engine has completed the transfer and is ready to be re-initialized for another
+                                                                 transfer. */
+#else /* Word 0 - Little Endian */
+        uint64_t start_busy            : 1;  /**< [  0:  0](R/W1S/H) When software writes a one to this register, hardware will write the job configuration
+                                                                 section (JD.JCFG) for the next available job into the local memory starting at
+                                                                 MDAB()_CFG_ADDR, up to
+                                                                 MDAB()_CFG_ADDR+MDAB()_CFG_LIMIT or until the last JD.JCFG data has been transferred.
+                                                                 If the CFG DMA engine has already transferred part but not all of the JD.JCFG section for
+                                                                 a job, it will continue transferring data until it reaches the end of the JD.JCFG
+                                                                 section, or until it writes
+                                                                 MDAB()_CFG_LIMIT for the last CFG DMA slice, whichever comes first.
+
+                                                                 This bit is reset to zero when the
+                                                                 CFG DMA engine has completed the transfer and is ready to be re-initialized for another
+                                                                 transfer. */
+        uint64_t post_reset            : 1;  /**< [  1:  1](RO/H) Set to one on MDAB reset and remains one until the CFG DMA engine starts its first
+                                                                 CFG DMA transfer.
+
+                                                                 Software note: DSP software can use this bit to qualify the [JOB_TAG],
+                                                                 [JOB_SLOT], [DMA_ERROR], and [LAST_DMA_DONE]
+                                                                 bits in this CSR. These status bits remain set and POST_RESET is used by software to know
+                                                                 when they are truly valid.
+
+                                                                 Set (hardware) = MDAB reset.
+
+                                                                 Clear (software) = DSP writes [START_BUSY] = 0 -\> 1. */
+        uint64_t dma_pending           : 1;  /**< [  2:  2](RO/H) Set when a CFG DMA operation is pending for the engine and the internal interface needs to
+                                                                 be programmed. */
+        uint64_t last_dma_done         : 1;  /**< [  3:  3](RO/H) Set when the last CFG DMA operation transferred the last word of the job configuration
+                                                                 section from the job descriptor. */
+        uint64_t dma_error             : 1;  /**< [  4:  4](RO/H) Set when the last CFG DMA operation encountered an error. */
+        uint64_t dma_oflow             : 1;  /**< [  5:  5](RO/H) Set when the last CFG DMA operation encountered an overflow. */
+        uint64_t dma_uflow             : 1;  /**< [  6:  6](RO/H) Set when the last CFG DMA operation encountered an underflow. */
+        uint64_t reserved_7            : 1;
+        uint64_t job_slot              : 1;  /**< [  8:  8](RO/H) The job slot for the most recent CFG DMA operation. */
+        uint64_t pending_slot          : 1;  /**< [  9:  9](RO/H) The job slot for the pending CFG DMA operation. Valid only when [START_BUSY] is 0 and
+                                                                 [DMA_PENDING] is 1. */
+        uint64_t reserved_10_15        : 6;
+        uint64_t job_tag               : 16; /**< [ 31: 16](RO/H) The JOB_TAG field from the PSM command for the last completed CFG DMA operation.
+                                                                  When DSP software writes [START_BUSY] = 0 -\> 1, the CFG DMA engine will wait until the next
+                                                                  available job has been enqueued, at which point the JOB_TAG will be latched in. */
+#endif /* Word 0 - End */
+    } loki;
 };
 typedef union cavm_mdabx_cfg_status cavm_mdabx_cfg_status_t;
 
@@ -508,7 +716,9 @@ static inline uint64_t CAVM_MDABX_CFG_STATUS(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=41))
         return 0x87e044100020ll + 0x4000ll * ((a) & 0x3f);
-    __cavm_csr_fatal("MDABX_CFG_STATUS", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044400020ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDABX_CFG_STATUS", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDABX_CFG_STATUS(a) cavm_mdabx_cfg_status_t
@@ -558,7 +768,9 @@ static inline uint64_t CAVM_MDABX_DAC_ECO(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=41))
         return 0x87e044100300ll + 0x4000ll * ((a) & 0x3f);
-    __cavm_csr_fatal("MDABX_DAC_ECO", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044400300ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDABX_DAC_ECO", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDABX_DAC_ECO(a) cavm_mdabx_dac_eco_t
@@ -603,7 +815,7 @@ static inline uint64_t CAVM_MDABX_DAC_MEMBASE_HI(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=41))
         return 0x87e044100450ll + 0x4000ll * ((a) & 0x3f);
-    __cavm_csr_fatal("MDABX_DAC_MEMBASE_HI", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("MDABX_DAC_MEMBASE_HI", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDABX_DAC_MEMBASE_HI(a) cavm_mdabx_dac_membase_hi_t
@@ -648,7 +860,7 @@ static inline uint64_t CAVM_MDABX_DAC_MEMBASE_LO(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=41))
         return 0x87e044100440ll + 0x4000ll * ((a) & 0x3f);
-    __cavm_csr_fatal("MDABX_DAC_MEMBASE_LO", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("MDABX_DAC_MEMBASE_LO", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDABX_DAC_MEMBASE_LO(a) cavm_mdabx_dac_membase_lo_t
@@ -700,7 +912,9 @@ static inline uint64_t CAVM_MDABX_DAC_TIMER(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=41))
         return 0x87e044100210ll + 0x4000ll * ((a) & 0x3f);
-    __cavm_csr_fatal("MDABX_DAC_TIMER", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044400210ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDABX_DAC_TIMER", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDABX_DAC_TIMER(a) cavm_mdabx_dac_timer_t
@@ -708,6 +922,1038 @@ static inline uint64_t CAVM_MDABX_DAC_TIMER(unsigned long a)
 #define basename_CAVM_MDABX_DAC_TIMER(a) "MDABX_DAC_TIMER"
 #define busnum_CAVM_MDABX_DAC_TIMER(a) (a)
 #define arguments_CAVM_MDABX_DAC_TIMER(a) (a),-1,-1,-1
+
+/**
+ * Register (RSL32b) mdab#_dsp_cnf
+ *
+ * MDAB DSP Configuration Register
+ * Set Configuration Values Driven on the DSP I/f, which changes the DSP WH behaviour.
+ */
+union cavm_mdabx_dsp_cnf
+{
+    uint32_t u;
+    struct cavm_mdabx_dsp_cnf_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t reserved_1_31         : 31;
+        uint32_t axi_b                 : 1;  /**< [  0:  0](R/W) Limits the DSP burst size to BL4. 0x1 - limit, 0x0-no limit. */
+#else /* Word 0 - Little Endian */
+        uint32_t axi_b                 : 1;  /**< [  0:  0](R/W) Limits the DSP burst size to BL4. 0x1 - limit, 0x0-no limit. */
+        uint32_t reserved_1_31         : 31;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_mdabx_dsp_cnf_s cn; */
+};
+typedef union cavm_mdabx_dsp_cnf cavm_mdabx_dsp_cnf_t;
+
+static inline uint64_t CAVM_MDABX_DSP_CNF(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_MDABX_DSP_CNF(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044400b10ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDABX_DSP_CNF", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_MDABX_DSP_CNF(a) cavm_mdabx_dsp_cnf_t
+#define bustype_CAVM_MDABX_DSP_CNF(a) CSR_TYPE_RSL32b
+#define basename_CAVM_MDABX_DSP_CNF(a) "MDABX_DSP_CNF"
+#define busnum_CAVM_MDABX_DSP_CNF(a) (a)
+#define arguments_CAVM_MDABX_DSP_CNF(a) (a),-1,-1,-1
+
+/**
+ * Register (RSL32b) mdab#_dsp_dma_ctrl
+ *
+ * MDAB DSP DMAs Control Register
+ * Control The DMA external I/F .
+ */
+union cavm_mdabx_dsp_dma_ctrl
+{
+    uint32_t u;
+    struct cavm_mdabx_dsp_dma_ctrl_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t reserved_2_31         : 30;
+        uint32_t ext_ddma_dbg_match_ack : 1; /**< [  1:  1](R/W) TBD */
+        uint32_t ddma_next             : 1;  /**< [  0:  0](R/W) TBD */
+#else /* Word 0 - Little Endian */
+        uint32_t ddma_next             : 1;  /**< [  0:  0](R/W) TBD */
+        uint32_t ext_ddma_dbg_match_ack : 1; /**< [  1:  1](R/W) TBD */
+        uint32_t reserved_2_31         : 30;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_mdabx_dsp_dma_ctrl_s cn; */
+};
+typedef union cavm_mdabx_dsp_dma_ctrl cavm_mdabx_dsp_dma_ctrl_t;
+
+static inline uint64_t CAVM_MDABX_DSP_DMA_CTRL(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_MDABX_DSP_DMA_CTRL(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044400b30ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDABX_DSP_DMA_CTRL", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_MDABX_DSP_DMA_CTRL(a) cavm_mdabx_dsp_dma_ctrl_t
+#define bustype_CAVM_MDABX_DSP_DMA_CTRL(a) CSR_TYPE_RSL32b
+#define basename_CAVM_MDABX_DSP_DMA_CTRL(a) "MDABX_DSP_DMA_CTRL"
+#define busnum_CAVM_MDABX_DSP_DMA_CTRL(a) (a)
+#define arguments_CAVM_MDABX_DSP_DMA_CTRL(a) (a),-1,-1,-1
+
+/**
+ * Register (RSL32b) mdab#_dsp_dma_sts
+ *
+ * MDAB DSP DMAs Status Register
+ * DSP DMA external Status I/F .
+ */
+union cavm_mdabx_dsp_dma_sts
+{
+    uint32_t u;
+    struct cavm_mdabx_dsp_dma_sts_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t reserved_1_31         : 31;
+        uint32_t ddma_dbg_match_r      : 1;  /**< [  0:  0](RO/H) TBD */
+#else /* Word 0 - Little Endian */
+        uint32_t ddma_dbg_match_r      : 1;  /**< [  0:  0](RO/H) TBD */
+        uint32_t reserved_1_31         : 31;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_mdabx_dsp_dma_sts_s cn; */
+};
+typedef union cavm_mdabx_dsp_dma_sts cavm_mdabx_dsp_dma_sts_t;
+
+static inline uint64_t CAVM_MDABX_DSP_DMA_STS(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_MDABX_DSP_DMA_STS(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044400b40ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDABX_DSP_DMA_STS", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_MDABX_DSP_DMA_STS(a) cavm_mdabx_dsp_dma_sts_t
+#define bustype_CAVM_MDABX_DSP_DMA_STS(a) CSR_TYPE_RSL32b
+#define basename_CAVM_MDABX_DSP_DMA_STS(a) "MDABX_DSP_DMA_STS"
+#define busnum_CAVM_MDABX_DSP_DMA_STS(a) (a)
+#define arguments_CAVM_MDABX_DSP_DMA_STS(a) (a),-1,-1,-1
+
+/**
+ * Register (RSL32b) mdab#_edp_brdg_ctrl
+ *
+ * INTERNAL: MDAB EDP Bridge Control Register
+ *
+ * Control The Bridge hook to the EDP AXI I/F.
+ */
+union cavm_mdabx_edp_brdg_ctrl
+{
+    uint32_t u;
+    struct cavm_mdabx_edp_brdg_ctrl_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t reserved_2_31         : 30;
+        uint32_t wburst                : 1;  /**< [  1:  1](R/W) Supporting Write Bursts to System Memory. 0x1 - Enable 0x0 - Disable */
+        uint32_t rburst                : 1;  /**< [  0:  0](R/W) Supporting READ Bursts to System Memory. 0x1 - Enable 0x0 - Disable */
+#else /* Word 0 - Little Endian */
+        uint32_t rburst                : 1;  /**< [  0:  0](R/W) Supporting READ Bursts to System Memory. 0x1 - Enable 0x0 - Disable */
+        uint32_t wburst                : 1;  /**< [  1:  1](R/W) Supporting Write Bursts to System Memory. 0x1 - Enable 0x0 - Disable */
+        uint32_t reserved_2_31         : 30;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_mdabx_edp_brdg_ctrl_s cn; */
+};
+typedef union cavm_mdabx_edp_brdg_ctrl cavm_mdabx_edp_brdg_ctrl_t;
+
+static inline uint64_t CAVM_MDABX_EDP_BRDG_CTRL(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_MDABX_EDP_BRDG_CTRL(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044400ba0ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDABX_EDP_BRDG_CTRL", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_MDABX_EDP_BRDG_CTRL(a) cavm_mdabx_edp_brdg_ctrl_t
+#define bustype_CAVM_MDABX_EDP_BRDG_CTRL(a) CSR_TYPE_RSL32b
+#define basename_CAVM_MDABX_EDP_BRDG_CTRL(a) "MDABX_EDP_BRDG_CTRL"
+#define busnum_CAVM_MDABX_EDP_BRDG_CTRL(a) (a)
+#define arguments_CAVM_MDABX_EDP_BRDG_CTRL(a) (a),-1,-1,-1
+
+/**
+ * Register (RSL32b) mdab#_edp_brdg_sts
+ *
+ * MDAB EDP Bridge Status Register
+ * Status The Bridge hook to the EDP AXI I/F.
+ */
+union cavm_mdabx_edp_brdg_sts
+{
+    uint32_t u;
+    struct cavm_mdabx_edp_brdg_sts_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t monitor_addr          : 24; /**< [ 31:  8](RO/H) Monitor address, valid when Lock indication is set. */
+        uint32_t reserved_4_7          : 4;
+        uint32_t monitor_sts           : 1;  /**< [  3:  3](RO/H) 0x0 Free, 0x1 Locked */
+        uint32_t reserved_2            : 1;
+        uint32_t edp_w_freetag         : 1;  /**< [  1:  1](RO/H) EDP Bridge has free tag for Write. */
+        uint32_t edp_r_freetag         : 1;  /**< [  0:  0](RO/H) EDP Bridge has free tag for read. */
+#else /* Word 0 - Little Endian */
+        uint32_t edp_r_freetag         : 1;  /**< [  0:  0](RO/H) EDP Bridge has free tag for read. */
+        uint32_t edp_w_freetag         : 1;  /**< [  1:  1](RO/H) EDP Bridge has free tag for Write. */
+        uint32_t reserved_2            : 1;
+        uint32_t monitor_sts           : 1;  /**< [  3:  3](RO/H) 0x0 Free, 0x1 Locked */
+        uint32_t reserved_4_7          : 4;
+        uint32_t monitor_addr          : 24; /**< [ 31:  8](RO/H) Monitor address, valid when Lock indication is set. */
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_mdabx_edp_brdg_sts_s cn; */
+};
+typedef union cavm_mdabx_edp_brdg_sts cavm_mdabx_edp_brdg_sts_t;
+
+static inline uint64_t CAVM_MDABX_EDP_BRDG_STS(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_MDABX_EDP_BRDG_STS(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044400bb0ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDABX_EDP_BRDG_STS", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_MDABX_EDP_BRDG_STS(a) cavm_mdabx_edp_brdg_sts_t
+#define bustype_CAVM_MDABX_EDP_BRDG_STS(a) CSR_TYPE_RSL32b
+#define basename_CAVM_MDABX_EDP_BRDG_STS(a) "MDABX_EDP_BRDG_STS"
+#define busnum_CAVM_MDABX_EDP_BRDG_STS(a) (a)
+#define arguments_CAVM_MDABX_EDP_BRDG_STS(a) (a),-1,-1,-1
+
+/**
+ * Register (RSL32b) mdab#_edp_err_sts
+ *
+ * MDAB Address Error Status Register
+ * Lock bits[31:4] of the address in case of an error on the AXI request.
+ */
+union cavm_mdabx_edp_err_sts
+{
+    uint32_t u;
+    struct cavm_mdabx_edp_err_sts_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t addr                  : 28; /**< [ 31:  4](RO/H) This Register Value defined the override value of address bits[31:20] of the
+                                                                 address targeting system memory. */
+        uint32_t reserved_2_3          : 2;
+        uint32_t typ                   : 1;  /**< [  1:  1](RO/H) Transaction type.
+                                                                 0 = Read.
+                                                                 1 = Write. */
+        uint32_t lock                  : 1;  /**< [  0:  0](R/W1C/H) Lock indication. When set address value can not be overriden. */
+#else /* Word 0 - Little Endian */
+        uint32_t lock                  : 1;  /**< [  0:  0](R/W1C/H) Lock indication. When set address value can not be overriden. */
+        uint32_t typ                   : 1;  /**< [  1:  1](RO/H) Transaction type.
+                                                                 0 = Read.
+                                                                 1 = Write. */
+        uint32_t reserved_2_3          : 2;
+        uint32_t addr                  : 28; /**< [ 31:  4](RO/H) This Register Value defined the override value of address bits[31:20] of the
+                                                                 address targeting system memory. */
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_mdabx_edp_err_sts_s cn; */
+};
+typedef union cavm_mdabx_edp_err_sts cavm_mdabx_edp_err_sts_t;
+
+static inline uint64_t CAVM_MDABX_EDP_ERR_STS(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_MDABX_EDP_ERR_STS(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e0444008e0ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDABX_EDP_ERR_STS", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_MDABX_EDP_ERR_STS(a) cavm_mdabx_edp_err_sts_t
+#define bustype_CAVM_MDABX_EDP_ERR_STS(a) CSR_TYPE_RSL32b
+#define basename_CAVM_MDABX_EDP_ERR_STS(a) "MDABX_EDP_ERR_STS"
+#define busnum_CAVM_MDABX_EDP_ERR_STS(a) (a)
+#define arguments_CAVM_MDABX_EDP_ERR_STS(a) (a),-1,-1,-1
+
+/**
+ * Register (RSL32b) mdab#_epp_brdg_ctrl
+ *
+ * MDAB EPP Bridge Control Register
+ * Control The Bridge hook to the EPP AXI I/F.
+ */
+union cavm_mdabx_epp_brdg_ctrl
+{
+    uint32_t u;
+    struct cavm_mdabx_epp_brdg_ctrl_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t reserved_1_31         : 31;
+        uint32_t rburst                : 1;  /**< [  0:  0](R/W) Supporting READ Bursts to System Memory. 0x1 - Enable 0x0 - Disable */
+#else /* Word 0 - Little Endian */
+        uint32_t rburst                : 1;  /**< [  0:  0](R/W) Supporting READ Bursts to System Memory. 0x1 - Enable 0x0 - Disable */
+        uint32_t reserved_1_31         : 31;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_mdabx_epp_brdg_ctrl_s cn; */
+};
+typedef union cavm_mdabx_epp_brdg_ctrl cavm_mdabx_epp_brdg_ctrl_t;
+
+static inline uint64_t CAVM_MDABX_EPP_BRDG_CTRL(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_MDABX_EPP_BRDG_CTRL(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044400b80ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDABX_EPP_BRDG_CTRL", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_MDABX_EPP_BRDG_CTRL(a) cavm_mdabx_epp_brdg_ctrl_t
+#define bustype_CAVM_MDABX_EPP_BRDG_CTRL(a) CSR_TYPE_RSL32b
+#define basename_CAVM_MDABX_EPP_BRDG_CTRL(a) "MDABX_EPP_BRDG_CTRL"
+#define busnum_CAVM_MDABX_EPP_BRDG_CTRL(a) (a)
+#define arguments_CAVM_MDABX_EPP_BRDG_CTRL(a) (a),-1,-1,-1
+
+/**
+ * Register (RSL32b) mdab#_epp_brdg_sts
+ *
+ * INTERNAL: MDAB EPP Bridge Status Register
+ *
+ * Status The Bridge hook to the EPP AXI I/F.
+ */
+union cavm_mdabx_epp_brdg_sts
+{
+    uint32_t u;
+    struct cavm_mdabx_epp_brdg_sts_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t reserved_1_31         : 31;
+        uint32_t epp_r_freetag         : 1;  /**< [  0:  0](RO/H) EPP Bridge has free tag for read. */
+#else /* Word 0 - Little Endian */
+        uint32_t epp_r_freetag         : 1;  /**< [  0:  0](RO/H) EPP Bridge has free tag for read. */
+        uint32_t reserved_1_31         : 31;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_mdabx_epp_brdg_sts_s cn; */
+};
+typedef union cavm_mdabx_epp_brdg_sts cavm_mdabx_epp_brdg_sts_t;
+
+static inline uint64_t CAVM_MDABX_EPP_BRDG_STS(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_MDABX_EPP_BRDG_STS(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044400b90ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDABX_EPP_BRDG_STS", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_MDABX_EPP_BRDG_STS(a) cavm_mdabx_epp_brdg_sts_t
+#define bustype_CAVM_MDABX_EPP_BRDG_STS(a) CSR_TYPE_RSL32b
+#define basename_CAVM_MDABX_EPP_BRDG_STS(a) "MDABX_EPP_BRDG_STS"
+#define busnum_CAVM_MDABX_EPP_BRDG_STS(a) (a)
+#define arguments_CAVM_MDABX_EPP_BRDG_STS(a) (a),-1,-1,-1
+
+/**
+ * Register (RSL32b) mdab#_epp_err_sts
+ *
+ * MDAB EPP Address Error Status Register
+ * Lock bits[31:4] of the address in case of an error on the AXI request.
+ */
+union cavm_mdabx_epp_err_sts
+{
+    uint32_t u;
+    struct cavm_mdabx_epp_err_sts_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t addr                  : 28; /**< [ 31:  4](RO/H) This Register Value defined the override value of address bits[31:20] of the
+                                                                 address targeting system memory. */
+        uint32_t reserved_2_3          : 2;
+        uint32_t typ                   : 1;  /**< [  1:  1](RO/H) Transaction type.
+                                                                 0 = Read.
+                                                                 1 = Write. */
+        uint32_t lock                  : 1;  /**< [  0:  0](R/W1C/H) Lock indication. When set the address value can not be overriden. */
+#else /* Word 0 - Little Endian */
+        uint32_t lock                  : 1;  /**< [  0:  0](R/W1C/H) Lock indication. When set the address value can not be overriden. */
+        uint32_t typ                   : 1;  /**< [  1:  1](RO/H) Transaction type.
+                                                                 0 = Read.
+                                                                 1 = Write. */
+        uint32_t reserved_2_3          : 2;
+        uint32_t addr                  : 28; /**< [ 31:  4](RO/H) This Register Value defined the override value of address bits[31:20] of the
+                                                                 address targeting system memory. */
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_mdabx_epp_err_sts_s cn; */
+};
+typedef union cavm_mdabx_epp_err_sts cavm_mdabx_epp_err_sts_t;
+
+static inline uint64_t CAVM_MDABX_EPP_ERR_STS(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_MDABX_EPP_ERR_STS(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e0444008f0ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDABX_EPP_ERR_STS", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_MDABX_EPP_ERR_STS(a) cavm_mdabx_epp_err_sts_t
+#define bustype_CAVM_MDABX_EPP_ERR_STS(a) CSR_TYPE_RSL32b
+#define basename_CAVM_MDABX_EPP_ERR_STS(a) "MDABX_EPP_ERR_STS"
+#define busnum_CAVM_MDABX_EPP_ERR_STS(a) (a)
+#define arguments_CAVM_MDABX_EPP_ERR_STS(a) (a),-1,-1,-1
+
+/**
+ * Register (RSL32b) mdab#_err_int_ena_w1c
+ *
+ * MDAB Error Cause Interrupt Enable Clear Register
+ * This register is used to Clear MDAB Erorr interrupt enable for the MDAB_ERR_INT_SUM bits.
+ */
+union cavm_mdabx_err_int_ena_w1c
+{
+    uint32_t u;
+    struct cavm_mdabx_err_int_ena_w1c_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t reserved_28_31        : 4;
+        uint32_t epprdtrgterr          : 1;  /**< [ 27: 27](R/W1S/H) EPP (DSP AXI Master Port) read channel target error indicates GAA Error response of FAT_ERR. */
+        uint32_t edpwrtrgterr          : 1;  /**< [ 26: 26](R/W1S/H) EDP (DSP AXI Master Port) write channel target error indicates GAA Error response of FAT_ERR. */
+        uint32_t edprdtrgterr          : 1;  /**< [ 25: 25](R/W1S/H) EDP (DSP AXI Master Port) read channel target error indicates GAA Error response of FAT_ERR. */
+        uint32_t epprdatterr           : 1;  /**< [ 24: 24](R/W1S/H) EPP (DSP AXI Master Port) read channel unsupported attribute (burst type). */
+        uint32_t edpwratterr           : 1;  /**< [ 23: 23](R/W1S/H) EDP (DSP AXI Master Port) write channel unsupported attribute (burst type, unsupported size). */
+        uint32_t edprdatterr           : 1;  /**< [ 22: 22](R/W1S/H) EDP (DSP AXI Master Port) read channel unsupported attribute (burst type). */
+        uint32_t eppiderr              : 1;  /**< [ 21: 21](R/W1S/H) EPP (DSP AXI Master Port) read channel unsupported AXI ID. */
+        uint32_t edpiderr              : 1;  /**< [ 20: 20](R/W1S/H) EDP (DSP AXI Master Port) read or write channel unsupported AXI ID. */
+        uint32_t epprdblerr            : 1;  /**< [ 19: 19](R/W1S/H) EPP (DSP AXI Master Port) read channel unsupported burst length. */
+        uint32_t edpwrblerr            : 1;  /**< [ 18: 18](R/W1S/H) EDP (DSP AXI Master Port) write channel unsupported burst length. */
+        uint32_t edprdblerr            : 1;  /**< [ 17: 17](R/W1S/H) EDP (DSP AXI Master Port) read channel unsupported burst length. */
+        uint32_t axisslverr            : 1;  /**< [ 16: 16](R/W1C/H) EDAP (DSP AXI Slave Port) return Slave Error for Read or Write access to the DSP memory space. */
+        uint32_t reserved_14_15        : 2;
+        uint32_t wcsr_err              : 1;  /**< [ 13: 13](R/W1C/H) A write transaction to CSR was violating the CSR access restrictions. A slave
+                                                                 error is returned to the intiator. */
+        uint32_t rcsr_err              : 1;  /**< [ 12: 12](R/W1C/H) A read transaction to CSR was violating the CSR access restrictions. A slave
+                                                                 error is returned to the intiator. */
+        uint32_t ifdecerr              : 1;  /**< [ 11: 11](R/W1C/H) Indicate Instruction Fetch from Non-SMEM memory space. Reported by the IPB. read
+                                                                 Decode Error is returned to the DSP as well. */
+        uint32_t edprdecerr            : 1;  /**< [ 10: 10](R/W1C/H) EDP (AXI Data master port) Read access did not hit any BAR */
+        uint32_t edpwdecerr            : 1;  /**< [  9:  9](R/W1C/H) EDP (AXI Program master port) Write access did not hit any BAR */
+        uint32_t epprdecerr            : 1;  /**< [  8:  8](R/W1C/H) EDP (AXI Program master port) Read access did not hit any BAR */
+        uint32_t bmv                   : 1;  /**< [  7:  7](R/W1C/H) DSP BMAN violation error */
+        uint32_t qmv                   : 1;  /**< [  6:  6](R/W1C/H) DSP QMAN violation error */
+        uint32_t apv                   : 1;  /**< [  5:  5](R/W1C/H) DSP Access protection violation */
+        uint32_t pi                    : 1;  /**< [  4:  4](R/W1C/H) DSP Permission Violation */
+        uint32_t gvi                   : 1;  /**< [  3:  3](R/W1C/H) DSP General Violation indication */
+        uint32_t uoc                   : 1;  /**< [  2:  2](R/W1C/H) DSP Undefined Op-Code */
+        uint32_t iteccerr              : 1;  /**< [  1:  1](R/W1C/H) DSP iCache ECC Error on TAG RAM. */
+        uint32_t ideccerr              : 1;  /**< [  0:  0](R/W1C/H) DSP iCache ECC Error on Data RAM. */
+#else /* Word 0 - Little Endian */
+        uint32_t ideccerr              : 1;  /**< [  0:  0](R/W1C/H) DSP iCache ECC Error on Data RAM. */
+        uint32_t iteccerr              : 1;  /**< [  1:  1](R/W1C/H) DSP iCache ECC Error on TAG RAM. */
+        uint32_t uoc                   : 1;  /**< [  2:  2](R/W1C/H) DSP Undefined Op-Code */
+        uint32_t gvi                   : 1;  /**< [  3:  3](R/W1C/H) DSP General Violation indication */
+        uint32_t pi                    : 1;  /**< [  4:  4](R/W1C/H) DSP Permission Violation */
+        uint32_t apv                   : 1;  /**< [  5:  5](R/W1C/H) DSP Access protection violation */
+        uint32_t qmv                   : 1;  /**< [  6:  6](R/W1C/H) DSP QMAN violation error */
+        uint32_t bmv                   : 1;  /**< [  7:  7](R/W1C/H) DSP BMAN violation error */
+        uint32_t epprdecerr            : 1;  /**< [  8:  8](R/W1C/H) EDP (AXI Program master port) Read access did not hit any BAR */
+        uint32_t edpwdecerr            : 1;  /**< [  9:  9](R/W1C/H) EDP (AXI Program master port) Write access did not hit any BAR */
+        uint32_t edprdecerr            : 1;  /**< [ 10: 10](R/W1C/H) EDP (AXI Data master port) Read access did not hit any BAR */
+        uint32_t ifdecerr              : 1;  /**< [ 11: 11](R/W1C/H) Indicate Instruction Fetch from Non-SMEM memory space. Reported by the IPB. read
+                                                                 Decode Error is returned to the DSP as well. */
+        uint32_t rcsr_err              : 1;  /**< [ 12: 12](R/W1C/H) A read transaction to CSR was violating the CSR access restrictions. A slave
+                                                                 error is returned to the intiator. */
+        uint32_t wcsr_err              : 1;  /**< [ 13: 13](R/W1C/H) A write transaction to CSR was violating the CSR access restrictions. A slave
+                                                                 error is returned to the intiator. */
+        uint32_t reserved_14_15        : 2;
+        uint32_t axisslverr            : 1;  /**< [ 16: 16](R/W1C/H) EDAP (DSP AXI Slave Port) return Slave Error for Read or Write access to the DSP memory space. */
+        uint32_t edprdblerr            : 1;  /**< [ 17: 17](R/W1S/H) EDP (DSP AXI Master Port) read channel unsupported burst length. */
+        uint32_t edpwrblerr            : 1;  /**< [ 18: 18](R/W1S/H) EDP (DSP AXI Master Port) write channel unsupported burst length. */
+        uint32_t epprdblerr            : 1;  /**< [ 19: 19](R/W1S/H) EPP (DSP AXI Master Port) read channel unsupported burst length. */
+        uint32_t edpiderr              : 1;  /**< [ 20: 20](R/W1S/H) EDP (DSP AXI Master Port) read or write channel unsupported AXI ID. */
+        uint32_t eppiderr              : 1;  /**< [ 21: 21](R/W1S/H) EPP (DSP AXI Master Port) read channel unsupported AXI ID. */
+        uint32_t edprdatterr           : 1;  /**< [ 22: 22](R/W1S/H) EDP (DSP AXI Master Port) read channel unsupported attribute (burst type). */
+        uint32_t edpwratterr           : 1;  /**< [ 23: 23](R/W1S/H) EDP (DSP AXI Master Port) write channel unsupported attribute (burst type, unsupported size). */
+        uint32_t epprdatterr           : 1;  /**< [ 24: 24](R/W1S/H) EPP (DSP AXI Master Port) read channel unsupported attribute (burst type). */
+        uint32_t edprdtrgterr          : 1;  /**< [ 25: 25](R/W1S/H) EDP (DSP AXI Master Port) read channel target error indicates GAA Error response of FAT_ERR. */
+        uint32_t edpwrtrgterr          : 1;  /**< [ 26: 26](R/W1S/H) EDP (DSP AXI Master Port) write channel target error indicates GAA Error response of FAT_ERR. */
+        uint32_t epprdtrgterr          : 1;  /**< [ 27: 27](R/W1S/H) EPP (DSP AXI Master Port) read channel target error indicates GAA Error response of FAT_ERR. */
+        uint32_t reserved_28_31        : 4;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_mdabx_err_int_ena_w1c_s cn; */
+};
+typedef union cavm_mdabx_err_int_ena_w1c cavm_mdabx_err_int_ena_w1c_t;
+
+static inline uint64_t CAVM_MDABX_ERR_INT_ENA_W1C(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_MDABX_ERR_INT_ENA_W1C(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044400aa0ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDABX_ERR_INT_ENA_W1C", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_MDABX_ERR_INT_ENA_W1C(a) cavm_mdabx_err_int_ena_w1c_t
+#define bustype_CAVM_MDABX_ERR_INT_ENA_W1C(a) CSR_TYPE_RSL32b
+#define basename_CAVM_MDABX_ERR_INT_ENA_W1C(a) "MDABX_ERR_INT_ENA_W1C"
+#define busnum_CAVM_MDABX_ERR_INT_ENA_W1C(a) (a)
+#define arguments_CAVM_MDABX_ERR_INT_ENA_W1C(a) (a),-1,-1,-1
+
+/**
+ * Register (RSL32b) mdab#_err_int_ena_w1s
+ *
+ * MDAB Error Cause Interrupt Enable Set Register
+ * This register is used to set MDAB Erorr interrupt enable for the MDAB_ERR_INT_SUM bits.
+ */
+union cavm_mdabx_err_int_ena_w1s
+{
+    uint32_t u;
+    struct cavm_mdabx_err_int_ena_w1s_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t reserved_28_31        : 4;
+        uint32_t epprdtrgterr          : 1;  /**< [ 27: 27](R/W1S/H) EPP (DSP AXI Master Port) read channel target error indicates GAA Error response of FAT_ERR. */
+        uint32_t edpwrtrgterr          : 1;  /**< [ 26: 26](R/W1S/H) EDP (DSP AXI Master Port) write channel target error indicates GAA Error response of FAT_ERR. */
+        uint32_t edprdtrgterr          : 1;  /**< [ 25: 25](R/W1S/H) EDP (DSP AXI Master Port) read channel target error indicates GAA Error response of FAT_ERR. */
+        uint32_t epprdatterr           : 1;  /**< [ 24: 24](R/W1S/H) EPP (DSP AXI Master Port) read channel unsupported attribute (burst type). */
+        uint32_t edpwratterr           : 1;  /**< [ 23: 23](R/W1S/H) EDP (DSP AXI Master Port) write channel unsupported attribute (burst type, unsupported size). */
+        uint32_t edprdatterr           : 1;  /**< [ 22: 22](R/W1S/H) EDP (DSP AXI Master Port) read channel unsupported attribute (burst type). */
+        uint32_t eppiderr              : 1;  /**< [ 21: 21](R/W1S/H) EPP (DSP AXI Master Port) read channel unsupported AXI ID. */
+        uint32_t edpiderr              : 1;  /**< [ 20: 20](R/W1S/H) EDP (DSP AXI Master Port) read or write channel unsupported AXI ID. */
+        uint32_t epprdblerr            : 1;  /**< [ 19: 19](R/W1S/H) EPP (DSP AXI Master Port) read channel unsupported burst length. */
+        uint32_t edpwrblerr            : 1;  /**< [ 18: 18](R/W1S/H) EDP (DSP AXI Master Port) write channel unsupported burst length. */
+        uint32_t edprdblerr            : 1;  /**< [ 17: 17](R/W1S/H) EDP (DSP AXI Master Port) read channel unsupported burst length. */
+        uint32_t axisslverr            : 1;  /**< [ 16: 16](R/W1S/H) EDAP (DSP AXI Slave Port) return Slave Error for Read or Write access to the DSP memory space. */
+        uint32_t reserved_14_15        : 2;
+        uint32_t wcsr_err              : 1;  /**< [ 13: 13](R/W1S/H) A write transaction to CSR was violating the CSR access restrictions. A slave
+                                                                 error is returned to the intiator. */
+        uint32_t rcsr_err              : 1;  /**< [ 12: 12](R/W1S/H) A read transaction to CSR was violating the CSR access restrictions. A slave
+                                                                 error is returned to the intiator. */
+        uint32_t ifdecerr              : 1;  /**< [ 11: 11](R/W1S/H) Indicate Instruction Fetch from Non-SMEM memory space. Reported by the IPB. read
+                                                                 Decode Error is returned to the DSP as well. */
+        uint32_t edprdecerr            : 1;  /**< [ 10: 10](R/W1S/H) EDP (AXI Data master port) Read access did not hit any BAR */
+        uint32_t edpwdecerr            : 1;  /**< [  9:  9](R/W1S/H) EDP (AXI Program master port) Write access did not hit any BAR */
+        uint32_t epprdecerr            : 1;  /**< [  8:  8](R/W1S/H) EDP (AXI Program master port) Read access did not hit any BAR */
+        uint32_t bmv                   : 1;  /**< [  7:  7](R/W1S/H) DSP BMAN violation error */
+        uint32_t qmv                   : 1;  /**< [  6:  6](R/W1S/H) DSP QMAN violation error */
+        uint32_t apv                   : 1;  /**< [  5:  5](R/W1S/H) DSP Access protection violation */
+        uint32_t pi                    : 1;  /**< [  4:  4](R/W1S/H) DSP Permission Violation */
+        uint32_t gvi                   : 1;  /**< [  3:  3](R/W1S/H) DSP General Violation indication */
+        uint32_t uoc                   : 1;  /**< [  2:  2](R/W1S/H) DSP Undefined Op-Code */
+        uint32_t iteccerr              : 1;  /**< [  1:  1](R/W1S/H) DSP iCache ECC Error on TAG RAM. */
+        uint32_t ideccerr              : 1;  /**< [  0:  0](R/W1S/H) DSP iCache ECC Error on Data RAM. */
+#else /* Word 0 - Little Endian */
+        uint32_t ideccerr              : 1;  /**< [  0:  0](R/W1S/H) DSP iCache ECC Error on Data RAM. */
+        uint32_t iteccerr              : 1;  /**< [  1:  1](R/W1S/H) DSP iCache ECC Error on TAG RAM. */
+        uint32_t uoc                   : 1;  /**< [  2:  2](R/W1S/H) DSP Undefined Op-Code */
+        uint32_t gvi                   : 1;  /**< [  3:  3](R/W1S/H) DSP General Violation indication */
+        uint32_t pi                    : 1;  /**< [  4:  4](R/W1S/H) DSP Permission Violation */
+        uint32_t apv                   : 1;  /**< [  5:  5](R/W1S/H) DSP Access protection violation */
+        uint32_t qmv                   : 1;  /**< [  6:  6](R/W1S/H) DSP QMAN violation error */
+        uint32_t bmv                   : 1;  /**< [  7:  7](R/W1S/H) DSP BMAN violation error */
+        uint32_t epprdecerr            : 1;  /**< [  8:  8](R/W1S/H) EDP (AXI Program master port) Read access did not hit any BAR */
+        uint32_t edpwdecerr            : 1;  /**< [  9:  9](R/W1S/H) EDP (AXI Program master port) Write access did not hit any BAR */
+        uint32_t edprdecerr            : 1;  /**< [ 10: 10](R/W1S/H) EDP (AXI Data master port) Read access did not hit any BAR */
+        uint32_t ifdecerr              : 1;  /**< [ 11: 11](R/W1S/H) Indicate Instruction Fetch from Non-SMEM memory space. Reported by the IPB. read
+                                                                 Decode Error is returned to the DSP as well. */
+        uint32_t rcsr_err              : 1;  /**< [ 12: 12](R/W1S/H) A read transaction to CSR was violating the CSR access restrictions. A slave
+                                                                 error is returned to the intiator. */
+        uint32_t wcsr_err              : 1;  /**< [ 13: 13](R/W1S/H) A write transaction to CSR was violating the CSR access restrictions. A slave
+                                                                 error is returned to the intiator. */
+        uint32_t reserved_14_15        : 2;
+        uint32_t axisslverr            : 1;  /**< [ 16: 16](R/W1S/H) EDAP (DSP AXI Slave Port) return Slave Error for Read or Write access to the DSP memory space. */
+        uint32_t edprdblerr            : 1;  /**< [ 17: 17](R/W1S/H) EDP (DSP AXI Master Port) read channel unsupported burst length. */
+        uint32_t edpwrblerr            : 1;  /**< [ 18: 18](R/W1S/H) EDP (DSP AXI Master Port) write channel unsupported burst length. */
+        uint32_t epprdblerr            : 1;  /**< [ 19: 19](R/W1S/H) EPP (DSP AXI Master Port) read channel unsupported burst length. */
+        uint32_t edpiderr              : 1;  /**< [ 20: 20](R/W1S/H) EDP (DSP AXI Master Port) read or write channel unsupported AXI ID. */
+        uint32_t eppiderr              : 1;  /**< [ 21: 21](R/W1S/H) EPP (DSP AXI Master Port) read channel unsupported AXI ID. */
+        uint32_t edprdatterr           : 1;  /**< [ 22: 22](R/W1S/H) EDP (DSP AXI Master Port) read channel unsupported attribute (burst type). */
+        uint32_t edpwratterr           : 1;  /**< [ 23: 23](R/W1S/H) EDP (DSP AXI Master Port) write channel unsupported attribute (burst type, unsupported size). */
+        uint32_t epprdatterr           : 1;  /**< [ 24: 24](R/W1S/H) EPP (DSP AXI Master Port) read channel unsupported attribute (burst type). */
+        uint32_t edprdtrgterr          : 1;  /**< [ 25: 25](R/W1S/H) EDP (DSP AXI Master Port) read channel target error indicates GAA Error response of FAT_ERR. */
+        uint32_t edpwrtrgterr          : 1;  /**< [ 26: 26](R/W1S/H) EDP (DSP AXI Master Port) write channel target error indicates GAA Error response of FAT_ERR. */
+        uint32_t epprdtrgterr          : 1;  /**< [ 27: 27](R/W1S/H) EPP (DSP AXI Master Port) read channel target error indicates GAA Error response of FAT_ERR. */
+        uint32_t reserved_28_31        : 4;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_mdabx_err_int_ena_w1s_s cn; */
+};
+typedef union cavm_mdabx_err_int_ena_w1s cavm_mdabx_err_int_ena_w1s_t;
+
+static inline uint64_t CAVM_MDABX_ERR_INT_ENA_W1S(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_MDABX_ERR_INT_ENA_W1S(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044400a90ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDABX_ERR_INT_ENA_W1S", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_MDABX_ERR_INT_ENA_W1S(a) cavm_mdabx_err_int_ena_w1s_t
+#define bustype_CAVM_MDABX_ERR_INT_ENA_W1S(a) CSR_TYPE_RSL32b
+#define basename_CAVM_MDABX_ERR_INT_ENA_W1S(a) "MDABX_ERR_INT_ENA_W1S"
+#define busnum_CAVM_MDABX_ERR_INT_ENA_W1S(a) (a)
+#define arguments_CAVM_MDABX_ERR_INT_ENA_W1S(a) (a),-1,-1,-1
+
+/**
+ * Register (RSL32b) mdab#_err_int_int0_ena
+ *
+ * MDAB Error Cause Interrupt INT0 Enable Register
+ * This register is used to Enable Reporting MDAB Secondary interrupts  To DSP INT0.
+ */
+union cavm_mdabx_err_int_int0_ena
+{
+    uint32_t u;
+    struct cavm_mdabx_err_int_int0_ena_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t reserved_28_31        : 4;
+        uint32_t epprdtrgterr          : 1;  /**< [ 27: 27](R/W) EPP (DSP AXI Master Port) read channel target error indicates GAA Error response of FAT_ERR. */
+        uint32_t edpwrtrgterr          : 1;  /**< [ 26: 26](R/W) EDP (DSP AXI Master Port) write channel target error indicates GAA Error response of FAT_ERR. */
+        uint32_t edprdtrgterr          : 1;  /**< [ 25: 25](R/W) EDP (DSP AXI Master Port) read channel target error indicates GAA Error response of FAT_ERR. */
+        uint32_t epprdatterr           : 1;  /**< [ 24: 24](R/W) EPP (DSP AXI Master Port) read channel unsupported attribute (burst type). */
+        uint32_t edpwratterr           : 1;  /**< [ 23: 23](R/W) EDP (DSP AXI Master Port) write channel unsupported attribute (burst type, unsupported size). */
+        uint32_t edprdatterr           : 1;  /**< [ 22: 22](R/W) EDP (DSP AXI Master Port) read channel unsupported attribute (burst type). */
+        uint32_t eppiderr              : 1;  /**< [ 21: 21](R/W) EPP (DSP AXI Master Port) read channel unsupported AXI ID. */
+        uint32_t edpiderr              : 1;  /**< [ 20: 20](R/W) EDP (DSP AXI Master Port) read or write channel unsupported AXI ID. */
+        uint32_t epprdblerr            : 1;  /**< [ 19: 19](R/W) EPP (DSP AXI Master Port) read channel unsupported burst length. */
+        uint32_t edpwrblerr            : 1;  /**< [ 18: 18](R/W) EDP (DSP AXI Master Port) write channel unsupported burst length. */
+        uint32_t edprdblerr            : 1;  /**< [ 17: 17](R/W) EDP (DSP AXI Master Port) read channel unsupported burst length. */
+        uint32_t axisslverr            : 1;  /**< [ 16: 16](R/W) EDAP (DSP AXI Slave Port) return Slave Error for Read or Write access to the DSP memory space. */
+        uint32_t reserved_14_15        : 2;
+        uint32_t wcsr_err              : 1;  /**< [ 13: 13](R/W) A write transaction to CSR was violating the CSR access restrictions. A slave
+                                                                 error is returned to the intiator. */
+        uint32_t rcsr_err              : 1;  /**< [ 12: 12](R/W) A read transaction to CSR was violating the CSR access restrictions. A slave
+                                                                 error is returned to the intiator. */
+        uint32_t ifdecerr              : 1;  /**< [ 11: 11](R/W) Indicate Instruction Fetch from Non-SMEM memory space. Reported by the IPB. read
+                                                                 Decode Error is returned to the DSP as well. */
+        uint32_t edprdecerr            : 1;  /**< [ 10: 10](R/W) EDP (AXI Data master port) Read access did not hit any BAR */
+        uint32_t edpwdecerr            : 1;  /**< [  9:  9](R/W) EDP (AXI Program master port) Write access did not hit any BAR */
+        uint32_t epprdecerr            : 1;  /**< [  8:  8](R/W) EDP (AXI Program master port) Read access did not hit any BAR */
+        uint32_t bmv                   : 1;  /**< [  7:  7](R/W) DSP BMAN violation error */
+        uint32_t qmv                   : 1;  /**< [  6:  6](R/W) DSP QMAN violation error */
+        uint32_t apv                   : 1;  /**< [  5:  5](R/W) DSP Access protection violation */
+        uint32_t pi                    : 1;  /**< [  4:  4](R/W) DSP Permission Violation */
+        uint32_t gvi                   : 1;  /**< [  3:  3](R/W) DSP General Violation indication */
+        uint32_t uoc                   : 1;  /**< [  2:  2](R/W) DSP Undefined Op-Code */
+        uint32_t iteccerr              : 1;  /**< [  1:  1](R/W) DSP iCache ECC Error on TAG RAM. */
+        uint32_t ideccerr              : 1;  /**< [  0:  0](R/W) DSP iCache ECC Error on Data RAM. */
+#else /* Word 0 - Little Endian */
+        uint32_t ideccerr              : 1;  /**< [  0:  0](R/W) DSP iCache ECC Error on Data RAM. */
+        uint32_t iteccerr              : 1;  /**< [  1:  1](R/W) DSP iCache ECC Error on TAG RAM. */
+        uint32_t uoc                   : 1;  /**< [  2:  2](R/W) DSP Undefined Op-Code */
+        uint32_t gvi                   : 1;  /**< [  3:  3](R/W) DSP General Violation indication */
+        uint32_t pi                    : 1;  /**< [  4:  4](R/W) DSP Permission Violation */
+        uint32_t apv                   : 1;  /**< [  5:  5](R/W) DSP Access protection violation */
+        uint32_t qmv                   : 1;  /**< [  6:  6](R/W) DSP QMAN violation error */
+        uint32_t bmv                   : 1;  /**< [  7:  7](R/W) DSP BMAN violation error */
+        uint32_t epprdecerr            : 1;  /**< [  8:  8](R/W) EDP (AXI Program master port) Read access did not hit any BAR */
+        uint32_t edpwdecerr            : 1;  /**< [  9:  9](R/W) EDP (AXI Program master port) Write access did not hit any BAR */
+        uint32_t edprdecerr            : 1;  /**< [ 10: 10](R/W) EDP (AXI Data master port) Read access did not hit any BAR */
+        uint32_t ifdecerr              : 1;  /**< [ 11: 11](R/W) Indicate Instruction Fetch from Non-SMEM memory space. Reported by the IPB. read
+                                                                 Decode Error is returned to the DSP as well. */
+        uint32_t rcsr_err              : 1;  /**< [ 12: 12](R/W) A read transaction to CSR was violating the CSR access restrictions. A slave
+                                                                 error is returned to the intiator. */
+        uint32_t wcsr_err              : 1;  /**< [ 13: 13](R/W) A write transaction to CSR was violating the CSR access restrictions. A slave
+                                                                 error is returned to the intiator. */
+        uint32_t reserved_14_15        : 2;
+        uint32_t axisslverr            : 1;  /**< [ 16: 16](R/W) EDAP (DSP AXI Slave Port) return Slave Error for Read or Write access to the DSP memory space. */
+        uint32_t edprdblerr            : 1;  /**< [ 17: 17](R/W) EDP (DSP AXI Master Port) read channel unsupported burst length. */
+        uint32_t edpwrblerr            : 1;  /**< [ 18: 18](R/W) EDP (DSP AXI Master Port) write channel unsupported burst length. */
+        uint32_t epprdblerr            : 1;  /**< [ 19: 19](R/W) EPP (DSP AXI Master Port) read channel unsupported burst length. */
+        uint32_t edpiderr              : 1;  /**< [ 20: 20](R/W) EDP (DSP AXI Master Port) read or write channel unsupported AXI ID. */
+        uint32_t eppiderr              : 1;  /**< [ 21: 21](R/W) EPP (DSP AXI Master Port) read channel unsupported AXI ID. */
+        uint32_t edprdatterr           : 1;  /**< [ 22: 22](R/W) EDP (DSP AXI Master Port) read channel unsupported attribute (burst type). */
+        uint32_t edpwratterr           : 1;  /**< [ 23: 23](R/W) EDP (DSP AXI Master Port) write channel unsupported attribute (burst type, unsupported size). */
+        uint32_t epprdatterr           : 1;  /**< [ 24: 24](R/W) EPP (DSP AXI Master Port) read channel unsupported attribute (burst type). */
+        uint32_t edprdtrgterr          : 1;  /**< [ 25: 25](R/W) EDP (DSP AXI Master Port) read channel target error indicates GAA Error response of FAT_ERR. */
+        uint32_t edpwrtrgterr          : 1;  /**< [ 26: 26](R/W) EDP (DSP AXI Master Port) write channel target error indicates GAA Error response of FAT_ERR. */
+        uint32_t epprdtrgterr          : 1;  /**< [ 27: 27](R/W) EPP (DSP AXI Master Port) read channel target error indicates GAA Error response of FAT_ERR. */
+        uint32_t reserved_28_31        : 4;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_mdabx_err_int_int0_ena_s cn; */
+};
+typedef union cavm_mdabx_err_int_int0_ena cavm_mdabx_err_int_int0_ena_t;
+
+static inline uint64_t CAVM_MDABX_ERR_INT_INT0_ENA(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_MDABX_ERR_INT_INT0_ENA(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044400ab0ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDABX_ERR_INT_INT0_ENA", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_MDABX_ERR_INT_INT0_ENA(a) cavm_mdabx_err_int_int0_ena_t
+#define bustype_CAVM_MDABX_ERR_INT_INT0_ENA(a) CSR_TYPE_RSL32b
+#define basename_CAVM_MDABX_ERR_INT_INT0_ENA(a) "MDABX_ERR_INT_INT0_ENA"
+#define busnum_CAVM_MDABX_ERR_INT_INT0_ENA(a) (a)
+#define arguments_CAVM_MDABX_ERR_INT_INT0_ENA(a) (a),-1,-1,-1
+
+/**
+ * Register (RSL32b) mdab#_err_int_intvec_ena
+ *
+ * MDAB Error Cause Interrupt INTVEC Enable Register
+ * This register is used to Enable Reporting MDAB Secondary interrupts  To DSP Interrupt Vector.
+ */
+union cavm_mdabx_err_int_intvec_ena
+{
+    uint32_t u;
+    struct cavm_mdabx_err_int_intvec_ena_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t reserved_28_31        : 4;
+        uint32_t epprdtrgterr          : 1;  /**< [ 27: 27](R/W) EPP (DSP AXI Master Port) read channel target error indicates GAA Error response of FAT_ERR. */
+        uint32_t edpwrtrgterr          : 1;  /**< [ 26: 26](R/W) EDP (DSP AXI Master Port) write channel target error indicates GAA Error response of FAT_ERR. */
+        uint32_t edprdtrgterr          : 1;  /**< [ 25: 25](R/W) EDP (DSP AXI Master Port) read channel target error indicates GAA Error response of FAT_ERR. */
+        uint32_t epprdatterr           : 1;  /**< [ 24: 24](R/W) EPP (DSP AXI Master Port) read channel unsupported attribute (burst type). */
+        uint32_t edpwratterr           : 1;  /**< [ 23: 23](R/W) EDP (DSP AXI Master Port) write channel unsupported attribute (burst type, unsupported size). */
+        uint32_t edprdatterr           : 1;  /**< [ 22: 22](R/W) EDP (DSP AXI Master Port) read channel unsupported attribute (burst type). */
+        uint32_t eppiderr              : 1;  /**< [ 21: 21](R/W) EPP (DSP AXI Master Port) read channel unsupported AXI ID. */
+        uint32_t edpiderr              : 1;  /**< [ 20: 20](R/W) EDP (DSP AXI Master Port) read or write channel unsupported AXI ID. */
+        uint32_t epprdblerr            : 1;  /**< [ 19: 19](R/W) EPP (DSP AXI Master Port) read channel unsupported burst length. */
+        uint32_t edpwrblerr            : 1;  /**< [ 18: 18](R/W) EDP (DSP AXI Master Port) write channel unsupported burst length. */
+        uint32_t edprdblerr            : 1;  /**< [ 17: 17](R/W) EDP (DSP AXI Master Port) read channel unsupported burst length. */
+        uint32_t axisslverr            : 1;  /**< [ 16: 16](R/W) EDAP (DSP AXI Slave Port) return Slave Error for Read or Write access to the DSP memory space. */
+        uint32_t reserved_14_15        : 2;
+        uint32_t wcsr_err              : 1;  /**< [ 13: 13](R/W) A write transaction to CSR was violating the CSR access restrictions. A slave
+                                                                 error is returned to the intiator. */
+        uint32_t rcsr_err              : 1;  /**< [ 12: 12](R/W) A read transaction to CSR was violating the CSR access restrictions. A slave
+                                                                 error is returned to the intiator. */
+        uint32_t ifdecerr              : 1;  /**< [ 11: 11](R/W) Indicate Instruction Fetch from Non-SMEM memory space. Reported by the IPB. read
+                                                                 Decode Error is returned to the DSP as well. */
+        uint32_t edprdecerr            : 1;  /**< [ 10: 10](R/W) EDP (AXI Data master port) Read access did not hit any BAR */
+        uint32_t edpwdecerr            : 1;  /**< [  9:  9](R/W) EDP (AXI Program master port) Write access did not hit any BAR */
+        uint32_t epprdecerr            : 1;  /**< [  8:  8](R/W) EDP (AXI Program master port) Read access did not hit any BAR */
+        uint32_t bmv                   : 1;  /**< [  7:  7](R/W) DSP BMAN violation error */
+        uint32_t qmv                   : 1;  /**< [  6:  6](R/W) DSP QMAN violation error */
+        uint32_t apv                   : 1;  /**< [  5:  5](R/W) DSP Access protection violation */
+        uint32_t pi                    : 1;  /**< [  4:  4](R/W) DSP Permission Violation */
+        uint32_t gvi                   : 1;  /**< [  3:  3](R/W) DSP General Violation indication */
+        uint32_t uoc                   : 1;  /**< [  2:  2](R/W) DSP Undefined Op-Code */
+        uint32_t iteccerr              : 1;  /**< [  1:  1](R/W) DSP iCache ECC Error on TAG RAM. */
+        uint32_t ideccerr              : 1;  /**< [  0:  0](R/W) DSP iCache ECC Error on Data RAM. */
+#else /* Word 0 - Little Endian */
+        uint32_t ideccerr              : 1;  /**< [  0:  0](R/W) DSP iCache ECC Error on Data RAM. */
+        uint32_t iteccerr              : 1;  /**< [  1:  1](R/W) DSP iCache ECC Error on TAG RAM. */
+        uint32_t uoc                   : 1;  /**< [  2:  2](R/W) DSP Undefined Op-Code */
+        uint32_t gvi                   : 1;  /**< [  3:  3](R/W) DSP General Violation indication */
+        uint32_t pi                    : 1;  /**< [  4:  4](R/W) DSP Permission Violation */
+        uint32_t apv                   : 1;  /**< [  5:  5](R/W) DSP Access protection violation */
+        uint32_t qmv                   : 1;  /**< [  6:  6](R/W) DSP QMAN violation error */
+        uint32_t bmv                   : 1;  /**< [  7:  7](R/W) DSP BMAN violation error */
+        uint32_t epprdecerr            : 1;  /**< [  8:  8](R/W) EDP (AXI Program master port) Read access did not hit any BAR */
+        uint32_t edpwdecerr            : 1;  /**< [  9:  9](R/W) EDP (AXI Program master port) Write access did not hit any BAR */
+        uint32_t edprdecerr            : 1;  /**< [ 10: 10](R/W) EDP (AXI Data master port) Read access did not hit any BAR */
+        uint32_t ifdecerr              : 1;  /**< [ 11: 11](R/W) Indicate Instruction Fetch from Non-SMEM memory space. Reported by the IPB. read
+                                                                 Decode Error is returned to the DSP as well. */
+        uint32_t rcsr_err              : 1;  /**< [ 12: 12](R/W) A read transaction to CSR was violating the CSR access restrictions. A slave
+                                                                 error is returned to the intiator. */
+        uint32_t wcsr_err              : 1;  /**< [ 13: 13](R/W) A write transaction to CSR was violating the CSR access restrictions. A slave
+                                                                 error is returned to the intiator. */
+        uint32_t reserved_14_15        : 2;
+        uint32_t axisslverr            : 1;  /**< [ 16: 16](R/W) EDAP (DSP AXI Slave Port) return Slave Error for Read or Write access to the DSP memory space. */
+        uint32_t edprdblerr            : 1;  /**< [ 17: 17](R/W) EDP (DSP AXI Master Port) read channel unsupported burst length. */
+        uint32_t edpwrblerr            : 1;  /**< [ 18: 18](R/W) EDP (DSP AXI Master Port) write channel unsupported burst length. */
+        uint32_t epprdblerr            : 1;  /**< [ 19: 19](R/W) EPP (DSP AXI Master Port) read channel unsupported burst length. */
+        uint32_t edpiderr              : 1;  /**< [ 20: 20](R/W) EDP (DSP AXI Master Port) read or write channel unsupported AXI ID. */
+        uint32_t eppiderr              : 1;  /**< [ 21: 21](R/W) EPP (DSP AXI Master Port) read channel unsupported AXI ID. */
+        uint32_t edprdatterr           : 1;  /**< [ 22: 22](R/W) EDP (DSP AXI Master Port) read channel unsupported attribute (burst type). */
+        uint32_t edpwratterr           : 1;  /**< [ 23: 23](R/W) EDP (DSP AXI Master Port) write channel unsupported attribute (burst type, unsupported size). */
+        uint32_t epprdatterr           : 1;  /**< [ 24: 24](R/W) EPP (DSP AXI Master Port) read channel unsupported attribute (burst type). */
+        uint32_t edprdtrgterr          : 1;  /**< [ 25: 25](R/W) EDP (DSP AXI Master Port) read channel target error indicates GAA Error response of FAT_ERR. */
+        uint32_t edpwrtrgterr          : 1;  /**< [ 26: 26](R/W) EDP (DSP AXI Master Port) write channel target error indicates GAA Error response of FAT_ERR. */
+        uint32_t epprdtrgterr          : 1;  /**< [ 27: 27](R/W) EPP (DSP AXI Master Port) read channel target error indicates GAA Error response of FAT_ERR. */
+        uint32_t reserved_28_31        : 4;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_mdabx_err_int_intvec_ena_s cn; */
+};
+typedef union cavm_mdabx_err_int_intvec_ena cavm_mdabx_err_int_intvec_ena_t;
+
+static inline uint64_t CAVM_MDABX_ERR_INT_INTVEC_ENA(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_MDABX_ERR_INT_INTVEC_ENA(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044400ac0ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDABX_ERR_INT_INTVEC_ENA", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_MDABX_ERR_INT_INTVEC_ENA(a) cavm_mdabx_err_int_intvec_ena_t
+#define bustype_CAVM_MDABX_ERR_INT_INTVEC_ENA(a) CSR_TYPE_RSL32b
+#define basename_CAVM_MDABX_ERR_INT_INTVEC_ENA(a) "MDABX_ERR_INT_INTVEC_ENA"
+#define busnum_CAVM_MDABX_ERR_INT_INTVEC_ENA(a) (a)
+#define arguments_CAVM_MDABX_ERR_INT_INTVEC_ENA(a) (a),-1,-1,-1
+
+/**
+ * Register (RSL32b) mdab#_err_int_nmi_ena
+ *
+ * MDAB Error Cause Interrupt NMI Enable Register
+ * This register is used to Enable Reporting MDAB Secondary interrupts  To DSP NMI.
+ */
+union cavm_mdabx_err_int_nmi_ena
+{
+    uint32_t u;
+    struct cavm_mdabx_err_int_nmi_ena_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t reserved_28_31        : 4;
+        uint32_t epprdtrgterr          : 1;  /**< [ 27: 27](R/W) EPP (DSP AXI Master Port) read channel target error indicates GAA Error response of FAT_ERR. */
+        uint32_t edpwrtrgterr          : 1;  /**< [ 26: 26](R/W) EDP (DSP AXI Master Port) write channel target error indicates GAA Error response of FAT_ERR. */
+        uint32_t edprdtrgterr          : 1;  /**< [ 25: 25](R/W) EDP (DSP AXI Master Port) read channel target error indicates GAA Error response of FAT_ERR. */
+        uint32_t epprdatterr           : 1;  /**< [ 24: 24](R/W) EPP (DSP AXI Master Port) read channel unsupported attribute (burst type). */
+        uint32_t edpwratterr           : 1;  /**< [ 23: 23](R/W) EDP (DSP AXI Master Port) write channel unsupported attribute (burst type, unsupported size). */
+        uint32_t edprdatterr           : 1;  /**< [ 22: 22](R/W) EDP (DSP AXI Master Port) read channel unsupported attribute (burst type). */
+        uint32_t eppiderr              : 1;  /**< [ 21: 21](R/W) EPP (DSP AXI Master Port) read channel unsupported AXI ID. */
+        uint32_t edpiderr              : 1;  /**< [ 20: 20](R/W) EDP (DSP AXI Master Port) read or write channel unsupported AXI ID. */
+        uint32_t epprdblerr            : 1;  /**< [ 19: 19](R/W) EPP (DSP AXI Master Port) read channel unsupported burst length. */
+        uint32_t edpwrblerr            : 1;  /**< [ 18: 18](R/W) EDP (DSP AXI Master Port) write channel unsupported burst length. */
+        uint32_t edprdblerr            : 1;  /**< [ 17: 17](R/W) EDP (DSP AXI Master Port) read channel unsupported burst length. */
+        uint32_t axisslverr            : 1;  /**< [ 16: 16](R/W) EDAP (DSP AXI Slave Port) return Slave Error for Read or Write access to the DSP memory space. */
+        uint32_t reserved_14_15        : 2;
+        uint32_t wcsr_err              : 1;  /**< [ 13: 13](R/W) A write transaction to CSR was violating the CSR access restrictions. A slave
+                                                                 error is returned to the intiator. */
+        uint32_t rcsr_err              : 1;  /**< [ 12: 12](R/W) A read transaction to CSR was violating the CSR access restrictions. A slave
+                                                                 error is returned to the intiator. */
+        uint32_t ifdecerr              : 1;  /**< [ 11: 11](R/W) Indicate Instruction Fetch from Non-SMEM memory space. Reported by the IPB. read
+                                                                 Decode Error is returned to the DSP as well. */
+        uint32_t edprdecerr            : 1;  /**< [ 10: 10](R/W) EDP (AXI Data master port) Read access did not hit any BAR */
+        uint32_t edpwdecerr            : 1;  /**< [  9:  9](R/W) EDP (AXI Program master port) Write access did not hit any BAR */
+        uint32_t epprdecerr            : 1;  /**< [  8:  8](R/W) EDP (AXI Program master port) Read access did not hit any BAR */
+        uint32_t bmv                   : 1;  /**< [  7:  7](R/W) DSP BMAN violation error */
+        uint32_t qmv                   : 1;  /**< [  6:  6](R/W) DSP QMAN violation error */
+        uint32_t apv                   : 1;  /**< [  5:  5](R/W) DSP Access protection violation */
+        uint32_t pi                    : 1;  /**< [  4:  4](R/W) DSP Permission Violation */
+        uint32_t gvi                   : 1;  /**< [  3:  3](R/W) DSP General Violation indication */
+        uint32_t uoc                   : 1;  /**< [  2:  2](R/W) DSP Undefined Op-Code */
+        uint32_t iteccerr              : 1;  /**< [  1:  1](R/W) DSP iCache ECC Error on TAG RAM. */
+        uint32_t ideccerr              : 1;  /**< [  0:  0](R/W) DSP iCache ECC Error on Data RAM. */
+#else /* Word 0 - Little Endian */
+        uint32_t ideccerr              : 1;  /**< [  0:  0](R/W) DSP iCache ECC Error on Data RAM. */
+        uint32_t iteccerr              : 1;  /**< [  1:  1](R/W) DSP iCache ECC Error on TAG RAM. */
+        uint32_t uoc                   : 1;  /**< [  2:  2](R/W) DSP Undefined Op-Code */
+        uint32_t gvi                   : 1;  /**< [  3:  3](R/W) DSP General Violation indication */
+        uint32_t pi                    : 1;  /**< [  4:  4](R/W) DSP Permission Violation */
+        uint32_t apv                   : 1;  /**< [  5:  5](R/W) DSP Access protection violation */
+        uint32_t qmv                   : 1;  /**< [  6:  6](R/W) DSP QMAN violation error */
+        uint32_t bmv                   : 1;  /**< [  7:  7](R/W) DSP BMAN violation error */
+        uint32_t epprdecerr            : 1;  /**< [  8:  8](R/W) EDP (AXI Program master port) Read access did not hit any BAR */
+        uint32_t edpwdecerr            : 1;  /**< [  9:  9](R/W) EDP (AXI Program master port) Write access did not hit any BAR */
+        uint32_t edprdecerr            : 1;  /**< [ 10: 10](R/W) EDP (AXI Data master port) Read access did not hit any BAR */
+        uint32_t ifdecerr              : 1;  /**< [ 11: 11](R/W) Indicate Instruction Fetch from Non-SMEM memory space. Reported by the IPB. read
+                                                                 Decode Error is returned to the DSP as well. */
+        uint32_t rcsr_err              : 1;  /**< [ 12: 12](R/W) A read transaction to CSR was violating the CSR access restrictions. A slave
+                                                                 error is returned to the intiator. */
+        uint32_t wcsr_err              : 1;  /**< [ 13: 13](R/W) A write transaction to CSR was violating the CSR access restrictions. A slave
+                                                                 error is returned to the intiator. */
+        uint32_t reserved_14_15        : 2;
+        uint32_t axisslverr            : 1;  /**< [ 16: 16](R/W) EDAP (DSP AXI Slave Port) return Slave Error for Read or Write access to the DSP memory space. */
+        uint32_t edprdblerr            : 1;  /**< [ 17: 17](R/W) EDP (DSP AXI Master Port) read channel unsupported burst length. */
+        uint32_t edpwrblerr            : 1;  /**< [ 18: 18](R/W) EDP (DSP AXI Master Port) write channel unsupported burst length. */
+        uint32_t epprdblerr            : 1;  /**< [ 19: 19](R/W) EPP (DSP AXI Master Port) read channel unsupported burst length. */
+        uint32_t edpiderr              : 1;  /**< [ 20: 20](R/W) EDP (DSP AXI Master Port) read or write channel unsupported AXI ID. */
+        uint32_t eppiderr              : 1;  /**< [ 21: 21](R/W) EPP (DSP AXI Master Port) read channel unsupported AXI ID. */
+        uint32_t edprdatterr           : 1;  /**< [ 22: 22](R/W) EDP (DSP AXI Master Port) read channel unsupported attribute (burst type). */
+        uint32_t edpwratterr           : 1;  /**< [ 23: 23](R/W) EDP (DSP AXI Master Port) write channel unsupported attribute (burst type, unsupported size). */
+        uint32_t epprdatterr           : 1;  /**< [ 24: 24](R/W) EPP (DSP AXI Master Port) read channel unsupported attribute (burst type). */
+        uint32_t edprdtrgterr          : 1;  /**< [ 25: 25](R/W) EDP (DSP AXI Master Port) read channel target error indicates GAA Error response of FAT_ERR. */
+        uint32_t edpwrtrgterr          : 1;  /**< [ 26: 26](R/W) EDP (DSP AXI Master Port) write channel target error indicates GAA Error response of FAT_ERR. */
+        uint32_t epprdtrgterr          : 1;  /**< [ 27: 27](R/W) EPP (DSP AXI Master Port) read channel target error indicates GAA Error response of FAT_ERR. */
+        uint32_t reserved_28_31        : 4;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_mdabx_err_int_nmi_ena_s cn; */
+};
+typedef union cavm_mdabx_err_int_nmi_ena cavm_mdabx_err_int_nmi_ena_t;
+
+static inline uint64_t CAVM_MDABX_ERR_INT_NMI_ENA(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_MDABX_ERR_INT_NMI_ENA(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044400ad0ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDABX_ERR_INT_NMI_ENA", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_MDABX_ERR_INT_NMI_ENA(a) cavm_mdabx_err_int_nmi_ena_t
+#define bustype_CAVM_MDABX_ERR_INT_NMI_ENA(a) CSR_TYPE_RSL32b
+#define basename_CAVM_MDABX_ERR_INT_NMI_ENA(a) "MDABX_ERR_INT_NMI_ENA"
+#define busnum_CAVM_MDABX_ERR_INT_NMI_ENA(a) (a)
+#define arguments_CAVM_MDABX_ERR_INT_NMI_ENA(a) (a),-1,-1,-1
+
+/**
+ * Register (RSL32b) mdab#_err_int_sum_w1c
+ *
+ * MDAB Error Cause Interrupt Summary Register
+ * This register reports the Error interrupt sources status for the MDAB.
+ * Software clears individual interrupts by writing one to the corresponding bit.
+ */
+union cavm_mdabx_err_int_sum_w1c
+{
+    uint32_t u;
+    struct cavm_mdabx_err_int_sum_w1c_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t reserved_28_31        : 4;
+        uint32_t epprdtrgterr          : 1;  /**< [ 27: 27](R/W1C/H) EPP (DSP AXI Master Port) read channel target error indicates GAA Error response of FAT_ERR. */
+        uint32_t edpwrtrgterr          : 1;  /**< [ 26: 26](R/W1C/H) EDP (DSP AXI Master Port) write channel target error indicates GAA Error response of FAT_ERR. */
+        uint32_t edprdtrgterr          : 1;  /**< [ 25: 25](R/W1C/H) EDP (DSP AXI Master Port) read channel target error indicates GAA Error response of FAT_ERR. */
+        uint32_t epprdatterr           : 1;  /**< [ 24: 24](R/W1C/H) EPP (DSP AXI Master Port) read channel unsupported attribute (burst type). */
+        uint32_t edpwratterr           : 1;  /**< [ 23: 23](R/W1C/H) EDP (DSP AXI Master Port) write channel unsupported attribute (burst type, unsupported size). */
+        uint32_t edprdatterr           : 1;  /**< [ 22: 22](R/W1C/H) EDP (DSP AXI Master Port) read channel unsupported attribute (burst type). */
+        uint32_t eppiderr              : 1;  /**< [ 21: 21](R/W1C/H) EPP (DSP AXI Master Port) read channel unsupported AXI ID. */
+        uint32_t edpiderr              : 1;  /**< [ 20: 20](R/W1C/H) EDP (DSP AXI Master Port) read or write channel unsupported AXI ID. */
+        uint32_t epprdblerr            : 1;  /**< [ 19: 19](R/W1C/H) EPP (DSP AXI Master Port) read channel unsupported burst length. */
+        uint32_t edpwrblerr            : 1;  /**< [ 18: 18](R/W1C/H) EDP (DSP AXI Master Port) write channel unsupported burst length. */
+        uint32_t edprdblerr            : 1;  /**< [ 17: 17](R/W1C/H) EDP (DSP AXI Master Port) read channel unsupported burst length. */
+        uint32_t axisslverr            : 1;  /**< [ 16: 16](R/W1C/H) EDAP (DSP AXI Slave Port) return Slave Error for Read or Write access to the DSP memory space. */
+        uint32_t reserved_14_15        : 2;
+        uint32_t wcsr_err              : 1;  /**< [ 13: 13](R/W1C/H) A write transaction to CSR was violating the CSR access restrictions. A slave
+                                                                 error is returned to the intiator. */
+        uint32_t rcsr_err              : 1;  /**< [ 12: 12](R/W1C/H) A read transaction to CSR was violating the CSR access restrictions. A slave
+                                                                 error is returned to the intiator. */
+        uint32_t ifdecerr              : 1;  /**< [ 11: 11](R/W1C/H) Instruction Fetch Decode Error. Instruction fetch does not hit SMEM. */
+        uint32_t edprdecerr            : 1;  /**< [ 10: 10](R/W1C/H) EDP (AXI Data master port) Read access did not hit any BAR */
+        uint32_t edpwdecerr            : 1;  /**< [  9:  9](R/W1C/H) EDP (AXI Program master port) Write access did not hit any BAR */
+        uint32_t epprdecerr            : 1;  /**< [  8:  8](R/W1C/H) EDP (AXI Program master port) Read access did not hit any BAR */
+        uint32_t bmv                   : 1;  /**< [  7:  7](R/W1C/H) DSP BMAN violation error */
+        uint32_t qmv                   : 1;  /**< [  6:  6](R/W1C/H) DSP QMAN violation error */
+        uint32_t apv                   : 1;  /**< [  5:  5](R/W1C/H) DSP Access protection violation */
+        uint32_t pi                    : 1;  /**< [  4:  4](R/W1C/H) DSP Permission Violation */
+        uint32_t gvi                   : 1;  /**< [  3:  3](R/W1C/H) DSP General Violation indication */
+        uint32_t uoc                   : 1;  /**< [  2:  2](R/W1C/H) DSP Undefined Op-Code */
+        uint32_t iteccerr              : 1;  /**< [  1:  1](R/W1C/H) DSP iCache ECC Error on TAG RAM. */
+        uint32_t ideccerr              : 1;  /**< [  0:  0](R/W1C/H) DSP iCache ECC Error on Data RAM. */
+#else /* Word 0 - Little Endian */
+        uint32_t ideccerr              : 1;  /**< [  0:  0](R/W1C/H) DSP iCache ECC Error on Data RAM. */
+        uint32_t iteccerr              : 1;  /**< [  1:  1](R/W1C/H) DSP iCache ECC Error on TAG RAM. */
+        uint32_t uoc                   : 1;  /**< [  2:  2](R/W1C/H) DSP Undefined Op-Code */
+        uint32_t gvi                   : 1;  /**< [  3:  3](R/W1C/H) DSP General Violation indication */
+        uint32_t pi                    : 1;  /**< [  4:  4](R/W1C/H) DSP Permission Violation */
+        uint32_t apv                   : 1;  /**< [  5:  5](R/W1C/H) DSP Access protection violation */
+        uint32_t qmv                   : 1;  /**< [  6:  6](R/W1C/H) DSP QMAN violation error */
+        uint32_t bmv                   : 1;  /**< [  7:  7](R/W1C/H) DSP BMAN violation error */
+        uint32_t epprdecerr            : 1;  /**< [  8:  8](R/W1C/H) EDP (AXI Program master port) Read access did not hit any BAR */
+        uint32_t edpwdecerr            : 1;  /**< [  9:  9](R/W1C/H) EDP (AXI Program master port) Write access did not hit any BAR */
+        uint32_t edprdecerr            : 1;  /**< [ 10: 10](R/W1C/H) EDP (AXI Data master port) Read access did not hit any BAR */
+        uint32_t ifdecerr              : 1;  /**< [ 11: 11](R/W1C/H) Instruction Fetch Decode Error. Instruction fetch does not hit SMEM. */
+        uint32_t rcsr_err              : 1;  /**< [ 12: 12](R/W1C/H) A read transaction to CSR was violating the CSR access restrictions. A slave
+                                                                 error is returned to the intiator. */
+        uint32_t wcsr_err              : 1;  /**< [ 13: 13](R/W1C/H) A write transaction to CSR was violating the CSR access restrictions. A slave
+                                                                 error is returned to the intiator. */
+        uint32_t reserved_14_15        : 2;
+        uint32_t axisslverr            : 1;  /**< [ 16: 16](R/W1C/H) EDAP (DSP AXI Slave Port) return Slave Error for Read or Write access to the DSP memory space. */
+        uint32_t edprdblerr            : 1;  /**< [ 17: 17](R/W1C/H) EDP (DSP AXI Master Port) read channel unsupported burst length. */
+        uint32_t edpwrblerr            : 1;  /**< [ 18: 18](R/W1C/H) EDP (DSP AXI Master Port) write channel unsupported burst length. */
+        uint32_t epprdblerr            : 1;  /**< [ 19: 19](R/W1C/H) EPP (DSP AXI Master Port) read channel unsupported burst length. */
+        uint32_t edpiderr              : 1;  /**< [ 20: 20](R/W1C/H) EDP (DSP AXI Master Port) read or write channel unsupported AXI ID. */
+        uint32_t eppiderr              : 1;  /**< [ 21: 21](R/W1C/H) EPP (DSP AXI Master Port) read channel unsupported AXI ID. */
+        uint32_t edprdatterr           : 1;  /**< [ 22: 22](R/W1C/H) EDP (DSP AXI Master Port) read channel unsupported attribute (burst type). */
+        uint32_t edpwratterr           : 1;  /**< [ 23: 23](R/W1C/H) EDP (DSP AXI Master Port) write channel unsupported attribute (burst type, unsupported size). */
+        uint32_t epprdatterr           : 1;  /**< [ 24: 24](R/W1C/H) EPP (DSP AXI Master Port) read channel unsupported attribute (burst type). */
+        uint32_t edprdtrgterr          : 1;  /**< [ 25: 25](R/W1C/H) EDP (DSP AXI Master Port) read channel target error indicates GAA Error response of FAT_ERR. */
+        uint32_t edpwrtrgterr          : 1;  /**< [ 26: 26](R/W1C/H) EDP (DSP AXI Master Port) write channel target error indicates GAA Error response of FAT_ERR. */
+        uint32_t epprdtrgterr          : 1;  /**< [ 27: 27](R/W1C/H) EPP (DSP AXI Master Port) read channel target error indicates GAA Error response of FAT_ERR. */
+        uint32_t reserved_28_31        : 4;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_mdabx_err_int_sum_w1c_s cn; */
+};
+typedef union cavm_mdabx_err_int_sum_w1c cavm_mdabx_err_int_sum_w1c_t;
+
+static inline uint64_t CAVM_MDABX_ERR_INT_SUM_W1C(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_MDABX_ERR_INT_SUM_W1C(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044400a70ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDABX_ERR_INT_SUM_W1C", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_MDABX_ERR_INT_SUM_W1C(a) cavm_mdabx_err_int_sum_w1c_t
+#define bustype_CAVM_MDABX_ERR_INT_SUM_W1C(a) CSR_TYPE_RSL32b
+#define basename_CAVM_MDABX_ERR_INT_SUM_W1C(a) "MDABX_ERR_INT_SUM_W1C"
+#define busnum_CAVM_MDABX_ERR_INT_SUM_W1C(a) (a)
+#define arguments_CAVM_MDABX_ERR_INT_SUM_W1C(a) (a),-1,-1,-1
+
+/**
+ * Register (RSL32b) mdab#_err_int_sum_w1s
+ *
+ * MDAB Error Cause Interrupt Summary Set Register
+ * This register is used to artificially set MDAB interrupts described in
+ * MDAB_ERR_INT_SUM (for software Debug/Test)
+ */
+union cavm_mdabx_err_int_sum_w1s
+{
+    uint32_t u;
+    struct cavm_mdabx_err_int_sum_w1s_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t reserved_28_31        : 4;
+        uint32_t epprdtrgterr          : 1;  /**< [ 27: 27](R/W1S/H) EPP (DSP AXI Master Port) read channel target error indicates GAA Error response of FAT_ERR. */
+        uint32_t edpwrtrgterr          : 1;  /**< [ 26: 26](R/W1S/H) EDP (DSP AXI Master Port) write channel target error indicates GAA Error response of FAT_ERR. */
+        uint32_t edprdtrgterr          : 1;  /**< [ 25: 25](R/W1S/H) EDP (DSP AXI Master Port) read channel target error indicates GAA Error response of FAT_ERR. */
+        uint32_t epprdatterr           : 1;  /**< [ 24: 24](R/W1S/H) EPP (DSP AXI Master Port) read channel unsupported attribute (burst type). */
+        uint32_t edpwratterr           : 1;  /**< [ 23: 23](R/W1S/H) EDP (DSP AXI Master Port) write channel unsupported attribute (burst type, unsupported size). */
+        uint32_t edprdatterr           : 1;  /**< [ 22: 22](R/W1S/H) EDP (DSP AXI Master Port) read channel unsupported attribute (burst type). */
+        uint32_t eppiderr              : 1;  /**< [ 21: 21](R/W1S/H) EPP (DSP AXI Master Port) read channel unsupported AXI ID. */
+        uint32_t edpiderr              : 1;  /**< [ 20: 20](R/W1S/H) EDP (DSP AXI Master Port) read or write channel unsupported AXI ID. */
+        uint32_t epprdblerr            : 1;  /**< [ 19: 19](R/W1S/H) EPP (DSP AXI Master Port) read channel unsupported burst length. */
+        uint32_t edpwrblerr            : 1;  /**< [ 18: 18](R/W1S/H) EDP (DSP AXI Master Port) write channel unsupported burst length. */
+        uint32_t edprdblerr            : 1;  /**< [ 17: 17](R/W1S/H) EDP (DSP AXI Master Port) read channel unsupported burst length. */
+        uint32_t axisslverr            : 1;  /**< [ 16: 16](R/W1S/H) EDAP (DSP AXI Slave Port) return Slave Error for Read or Write access to the DSP memory space. */
+        uint32_t reserved_14_15        : 2;
+        uint32_t wcsr_err              : 1;  /**< [ 13: 13](R/W1S/H) A write transaction to CSR was violating the CSR access restrictions. A slave
+                                                                 error is returned to the intiator. */
+        uint32_t rcsr_err              : 1;  /**< [ 12: 12](R/W1S/H) A read transaction to CSR was violating the CSR access restrictions. A slave
+                                                                 error is returned to the intiator. */
+        uint32_t ifdecerr              : 1;  /**< [ 11: 11](R/W1S/H) Indicate Instruction Fetch from Non-SMEM memory space. Reported by the IPB. read
+                                                                 Decode Error is returned to the DSP as well. */
+        uint32_t edprdecerr            : 1;  /**< [ 10: 10](R/W1S/H) EDP (AXI Data master port) Read access did not hit any BAR */
+        uint32_t edpwdecerr            : 1;  /**< [  9:  9](R/W1S/H) EDP (AXI Program master port) Write access did not hit any BAR */
+        uint32_t epprdecerr            : 1;  /**< [  8:  8](R/W1S/H) EDP (AXI Program master port) Read access did not hit any BAR */
+        uint32_t bmv                   : 1;  /**< [  7:  7](R/W1S/H) DSP BMAN violation error */
+        uint32_t qmv                   : 1;  /**< [  6:  6](R/W1S/H) DSP QMAN violation error */
+        uint32_t apv                   : 1;  /**< [  5:  5](R/W1S/H) DSP Access protection violation */
+        uint32_t pi                    : 1;  /**< [  4:  4](R/W1S/H) DSP Permission Violation */
+        uint32_t gvi                   : 1;  /**< [  3:  3](R/W1S/H) DSP General Violation indication */
+        uint32_t uoc                   : 1;  /**< [  2:  2](R/W1S/H) DSP Undefined Op-Code */
+        uint32_t iteccerr              : 1;  /**< [  1:  1](R/W1S/H) DSP iCache ECC Error on TAG RAM. */
+        uint32_t ideccerr              : 1;  /**< [  0:  0](R/W1S/H) DSP iCache ECC Error on Data RAM. */
+#else /* Word 0 - Little Endian */
+        uint32_t ideccerr              : 1;  /**< [  0:  0](R/W1S/H) DSP iCache ECC Error on Data RAM. */
+        uint32_t iteccerr              : 1;  /**< [  1:  1](R/W1S/H) DSP iCache ECC Error on TAG RAM. */
+        uint32_t uoc                   : 1;  /**< [  2:  2](R/W1S/H) DSP Undefined Op-Code */
+        uint32_t gvi                   : 1;  /**< [  3:  3](R/W1S/H) DSP General Violation indication */
+        uint32_t pi                    : 1;  /**< [  4:  4](R/W1S/H) DSP Permission Violation */
+        uint32_t apv                   : 1;  /**< [  5:  5](R/W1S/H) DSP Access protection violation */
+        uint32_t qmv                   : 1;  /**< [  6:  6](R/W1S/H) DSP QMAN violation error */
+        uint32_t bmv                   : 1;  /**< [  7:  7](R/W1S/H) DSP BMAN violation error */
+        uint32_t epprdecerr            : 1;  /**< [  8:  8](R/W1S/H) EDP (AXI Program master port) Read access did not hit any BAR */
+        uint32_t edpwdecerr            : 1;  /**< [  9:  9](R/W1S/H) EDP (AXI Program master port) Write access did not hit any BAR */
+        uint32_t edprdecerr            : 1;  /**< [ 10: 10](R/W1S/H) EDP (AXI Data master port) Read access did not hit any BAR */
+        uint32_t ifdecerr              : 1;  /**< [ 11: 11](R/W1S/H) Indicate Instruction Fetch from Non-SMEM memory space. Reported by the IPB. read
+                                                                 Decode Error is returned to the DSP as well. */
+        uint32_t rcsr_err              : 1;  /**< [ 12: 12](R/W1S/H) A read transaction to CSR was violating the CSR access restrictions. A slave
+                                                                 error is returned to the intiator. */
+        uint32_t wcsr_err              : 1;  /**< [ 13: 13](R/W1S/H) A write transaction to CSR was violating the CSR access restrictions. A slave
+                                                                 error is returned to the intiator. */
+        uint32_t reserved_14_15        : 2;
+        uint32_t axisslverr            : 1;  /**< [ 16: 16](R/W1S/H) EDAP (DSP AXI Slave Port) return Slave Error for Read or Write access to the DSP memory space. */
+        uint32_t edprdblerr            : 1;  /**< [ 17: 17](R/W1S/H) EDP (DSP AXI Master Port) read channel unsupported burst length. */
+        uint32_t edpwrblerr            : 1;  /**< [ 18: 18](R/W1S/H) EDP (DSP AXI Master Port) write channel unsupported burst length. */
+        uint32_t epprdblerr            : 1;  /**< [ 19: 19](R/W1S/H) EPP (DSP AXI Master Port) read channel unsupported burst length. */
+        uint32_t edpiderr              : 1;  /**< [ 20: 20](R/W1S/H) EDP (DSP AXI Master Port) read or write channel unsupported AXI ID. */
+        uint32_t eppiderr              : 1;  /**< [ 21: 21](R/W1S/H) EPP (DSP AXI Master Port) read channel unsupported AXI ID. */
+        uint32_t edprdatterr           : 1;  /**< [ 22: 22](R/W1S/H) EDP (DSP AXI Master Port) read channel unsupported attribute (burst type). */
+        uint32_t edpwratterr           : 1;  /**< [ 23: 23](R/W1S/H) EDP (DSP AXI Master Port) write channel unsupported attribute (burst type, unsupported size). */
+        uint32_t epprdatterr           : 1;  /**< [ 24: 24](R/W1S/H) EPP (DSP AXI Master Port) read channel unsupported attribute (burst type). */
+        uint32_t edprdtrgterr          : 1;  /**< [ 25: 25](R/W1S/H) EDP (DSP AXI Master Port) read channel target error indicates GAA Error response of FAT_ERR. */
+        uint32_t edpwrtrgterr          : 1;  /**< [ 26: 26](R/W1S/H) EDP (DSP AXI Master Port) write channel target error indicates GAA Error response of FAT_ERR. */
+        uint32_t epprdtrgterr          : 1;  /**< [ 27: 27](R/W1S/H) EPP (DSP AXI Master Port) read channel target error indicates GAA Error response of FAT_ERR. */
+        uint32_t reserved_28_31        : 4;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_mdabx_err_int_sum_w1s_s cn; */
+};
+typedef union cavm_mdabx_err_int_sum_w1s cavm_mdabx_err_int_sum_w1s_t;
+
+static inline uint64_t CAVM_MDABX_ERR_INT_SUM_W1S(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_MDABX_ERR_INT_SUM_W1S(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044400a80ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDABX_ERR_INT_SUM_W1S", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_MDABX_ERR_INT_SUM_W1S(a) cavm_mdabx_err_int_sum_w1s_t
+#define bustype_CAVM_MDABX_ERR_INT_SUM_W1S(a) CSR_TYPE_RSL32b
+#define basename_CAVM_MDABX_ERR_INT_SUM_W1S(a) "MDABX_ERR_INT_SUM_W1S"
+#define busnum_CAVM_MDABX_ERR_INT_SUM_W1S(a) (a)
+#define arguments_CAVM_MDABX_ERR_INT_SUM_W1S(a) (a),-1,-1,-1
 
 /**
  * Register (RSL32b) mdab#_error_address
@@ -753,7 +1999,7 @@ static inline uint64_t CAVM_MDABX_ERROR_ADDRESS(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=41))
         return 0x87e044100270ll + 0x4000ll * ((a) & 0x3f);
-    __cavm_csr_fatal("MDABX_ERROR_ADDRESS", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("MDABX_ERROR_ADDRESS", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDABX_ERROR_ADDRESS(a) cavm_mdabx_error_address_t
@@ -866,7 +2112,7 @@ static inline uint64_t CAVM_MDABX_ERROR_STATUS(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=41))
         return 0x87e044100260ll + 0x4000ll * ((a) & 0x3f);
-    __cavm_csr_fatal("MDABX_ERROR_STATUS", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("MDABX_ERROR_STATUS", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDABX_ERROR_STATUS(a) cavm_mdabx_error_status_t
@@ -910,7 +2156,9 @@ static inline uint64_t CAVM_MDABX_GP0(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=41))
         return 0x87e044100350ll + 0x4000ll * ((a) & 0x3f);
-    __cavm_csr_fatal("MDABX_GP0", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044400350ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDABX_GP0", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDABX_GP0(a) cavm_mdabx_gp0_t
@@ -954,7 +2202,9 @@ static inline uint64_t CAVM_MDABX_GP1(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=41))
         return 0x87e044100360ll + 0x4000ll * ((a) & 0x3f);
-    __cavm_csr_fatal("MDABX_GP1", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044400360ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDABX_GP1", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDABX_GP1(a) cavm_mdabx_gp1_t
@@ -998,7 +2248,9 @@ static inline uint64_t CAVM_MDABX_GP2(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=41))
         return 0x87e044100370ll + 0x4000ll * ((a) & 0x3f);
-    __cavm_csr_fatal("MDABX_GP2", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044400370ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDABX_GP2", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDABX_GP2(a) cavm_mdabx_gp2_t
@@ -1042,7 +2294,9 @@ static inline uint64_t CAVM_MDABX_GP3(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=41))
         return 0x87e044100380ll + 0x4000ll * ((a) & 0x3f);
-    __cavm_csr_fatal("MDABX_GP3", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044400380ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDABX_GP3", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDABX_GP3(a) cavm_mdabx_gp3_t
@@ -1086,7 +2340,9 @@ static inline uint64_t CAVM_MDABX_GP4(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=41))
         return 0x87e044100390ll + 0x4000ll * ((a) & 0x3f);
-    __cavm_csr_fatal("MDABX_GP4", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044400390ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDABX_GP4", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDABX_GP4(a) cavm_mdabx_gp4_t
@@ -1130,7 +2386,9 @@ static inline uint64_t CAVM_MDABX_GP5(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=41))
         return 0x87e0441003a0ll + 0x4000ll * ((a) & 0x3f);
-    __cavm_csr_fatal("MDABX_GP5", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e0444003a0ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDABX_GP5", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDABX_GP5(a) cavm_mdabx_gp5_t
@@ -1174,7 +2432,9 @@ static inline uint64_t CAVM_MDABX_GP6(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=41))
         return 0x87e0441003b0ll + 0x4000ll * ((a) & 0x3f);
-    __cavm_csr_fatal("MDABX_GP6", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e0444003b0ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDABX_GP6", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDABX_GP6(a) cavm_mdabx_gp6_t
@@ -1218,7 +2478,9 @@ static inline uint64_t CAVM_MDABX_GP7(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=41))
         return 0x87e0441003c0ll + 0x4000ll * ((a) & 0x3f);
-    __cavm_csr_fatal("MDABX_GP7", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e0444003c0ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDABX_GP7", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDABX_GP7(a) cavm_mdabx_gp7_t
@@ -1262,7 +2524,9 @@ static inline uint64_t CAVM_MDABX_GPIO_IN(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=41))
         return 0x87e044100320ll + 0x4000ll * ((a) & 0x3f);
-    __cavm_csr_fatal("MDABX_GPIO_IN", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044400320ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDABX_GPIO_IN", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDABX_GPIO_IN(a) cavm_mdabx_gpio_in_t
@@ -1306,7 +2570,9 @@ static inline uint64_t CAVM_MDABX_GPIO_OUT(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=41))
         return 0x87e044100310ll + 0x4000ll * ((a) & 0x3f);
-    __cavm_csr_fatal("MDABX_GPIO_OUT", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044400310ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDABX_GPIO_OUT", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDABX_GPIO_OUT(a) cavm_mdabx_gpio_out_t
@@ -1327,14 +2593,14 @@ union cavm_mdabx_id
     struct cavm_mdabx_id_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_6_63         : 58;
-        uint64_t mdb_id                : 6;  /**< [  5:  0](RO/H) MDAB ID register. */
+        uint64_t reserved_32_63        : 32;
+        uint64_t mdb_id                : 32; /**< [ 31:  0](RO/H) MDAB ID register. */
 #else /* Word 0 - Little Endian */
-        uint64_t mdb_id                : 6;  /**< [  5:  0](RO/H) MDAB ID register. */
-        uint64_t reserved_6_63         : 58;
+        uint64_t mdb_id                : 32; /**< [ 31:  0](RO/H) MDAB ID register. */
+        uint64_t reserved_32_63        : 32;
 #endif /* Word 0 - End */
     } s;
-    struct cavm_mdabx_id_cn
+    struct cavm_mdabx_id_cnf95xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_6_31         : 26;
@@ -1343,7 +2609,15 @@ union cavm_mdabx_id
         uint64_t mdb_id                : 6;  /**< [  5:  0](RO/H) MDAB ID register. */
         uint64_t reserved_6_31         : 26;
 #endif /* Word 0 - End */
-    } cn;
+    } cnf95xx;
+    struct cavm_mdabx_id_loki
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t mdb_id                : 32; /**< [ 31:  0](RO/H) MDAB ID register. */
+#else /* Word 0 - Little Endian */
+        uint64_t mdb_id                : 32; /**< [ 31:  0](RO/H) MDAB ID register. */
+#endif /* Word 0 - End */
+    } loki;
 };
 typedef union cavm_mdabx_id cavm_mdabx_id_t;
 
@@ -1352,7 +2626,9 @@ static inline uint64_t CAVM_MDABX_ID(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=41))
         return 0x87e044100340ll + 0x4000ll * ((a) & 0x3f);
-    __cavm_csr_fatal("MDABX_ID", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044400340ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDABX_ID", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDABX_ID(a) cavm_mdabx_id_t
@@ -1360,6 +2636,49 @@ static inline uint64_t CAVM_MDABX_ID(unsigned long a)
 #define basename_CAVM_MDABX_ID(a) "MDABX_ID"
 #define busnum_CAVM_MDABX_ID(a) (a)
 #define arguments_CAVM_MDABX_ID(a) (a),-1,-1,-1
+
+/**
+ * Register (RSL32b) mdab#_int1_ena
+ *
+ * MDAB Secondary Interrupt INT1 Enable Register
+ * This register is used to Enable Reporting MDAB Secondary interrupts  To DSP INT1.
+ */
+union cavm_mdabx_int1_ena
+{
+    uint32_t u;
+    struct cavm_mdabx_int1_ena_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t reserved_9_31         : 23;
+        uint32_t cti_int               : 1;  /**< [  8:  8](R/W) If Enable, CTI_INT event is reported to DSP INT1. 0x1 - Enable, 0x0 - Disable */
+        uint32_t reserved_2_7          : 6;
+        uint32_t qman_irq              : 1;  /**< [  1:  1](R/W) If Enable, QMAN_IRQ event is reported to DSP INT1. 0x1 - Enable, 0x0 - Disable */
+        uint32_t sgi                   : 1;  /**< [  0:  0](R/W) If Enable, SGO event is reported to DSP INT1. 0x1 - Enable, 0x0 - Disable */
+#else /* Word 0 - Little Endian */
+        uint32_t sgi                   : 1;  /**< [  0:  0](R/W) If Enable, SGO event is reported to DSP INT1. 0x1 - Enable, 0x0 - Disable */
+        uint32_t qman_irq              : 1;  /**< [  1:  1](R/W) If Enable, QMAN_IRQ event is reported to DSP INT1. 0x1 - Enable, 0x0 - Disable */
+        uint32_t reserved_2_7          : 6;
+        uint32_t cti_int               : 1;  /**< [  8:  8](R/W) If Enable, CTI_INT event is reported to DSP INT1. 0x1 - Enable, 0x0 - Disable */
+        uint32_t reserved_9_31         : 23;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_mdabx_int1_ena_s cn; */
+};
+typedef union cavm_mdabx_int1_ena cavm_mdabx_int1_ena_t;
+
+static inline uint64_t CAVM_MDABX_INT1_ENA(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_MDABX_INT1_ENA(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044400a40ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDABX_INT1_ENA", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_MDABX_INT1_ENA(a) cavm_mdabx_int1_ena_t
+#define bustype_CAVM_MDABX_INT1_ENA(a) CSR_TYPE_RSL32b
+#define basename_CAVM_MDABX_INT1_ENA(a) "MDABX_INT1_ENA"
+#define busnum_CAVM_MDABX_INT1_ENA(a) (a)
+#define arguments_CAVM_MDABX_INT1_ENA(a) (a),-1,-1,-1
 
 /**
  * Register (RSL32b) mdab#_int_ena_w1c
@@ -1404,7 +2723,7 @@ union cavm_mdabx_int_ena_w1c
         uint64_t reserved_13_63        : 51;
 #endif /* Word 0 - End */
     } s;
-    struct cavm_mdabx_int_ena_w1c_cn
+    struct cavm_mdabx_int_ena_w1c_cnf95xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_13_31        : 19;
@@ -1437,7 +2756,41 @@ union cavm_mdabx_int_ena_w1c
         uint64_t job_rdy1              : 1;  /**< [ 12: 12](R/W1C/H) Reads or clears the enable for the MDABx_INT_SUM[JOB_RDY1] interrupt bit. */
         uint64_t reserved_13_31        : 19;
 #endif /* Word 0 - End */
-    } cn;
+    } cnf95xx;
+    struct cavm_mdabx_int_ena_w1c_loki
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_13_31        : 19;
+        uint64_t job_rdy1              : 1;  /**< [ 12: 12](R/W1C/H) Reads or clears the enable for the MBAD()_INT_SUM[JOB_RDY1] interrupt bit. */
+        uint64_t job_rdy0              : 1;  /**< [ 11: 11](R/W1C/H) Reads or clears the enable for the MBAD()_INT_SUM[JOB_RDY0] interrupt bit. */
+        uint64_t wr_dma_uflow          : 1;  /**< [ 10: 10](R/W1C/H) Reads or clears enables for the MBAD()_INT_SUM[WR_DMA_UFLOW]. */
+        uint64_t wr_dma_oflow          : 1;  /**< [  9:  9](R/W1C/H) Reads or clears enables for the MBAD()_INT_SUM[WR_DMA_OFLOW]. */
+        uint64_t wr_dma_last_done      : 1;  /**< [  8:  8](R/W1C/H) Reads or clears enables for the MBAD()_INT_SUM[WR_DMA_LAST_DONE]. */
+        uint64_t wr_dma_slice_done     : 1;  /**< [  7:  7](R/W1C/H) Reads or clears enables for the MBAD()_INT_SUM[WR_DMA_SLICE_DONE]. */
+        uint64_t wr_dma_pending        : 1;  /**< [  6:  6](R/W1C/H) Reads or clears enables for the MBAD()_INT_SUM[WR_DMA_PENDING]. */
+        uint64_t rd_dma_last_done      : 1;  /**< [  5:  5](R/W1C/H) Reads or clears enables for the MBAD()_INT_SUM[RD_DMA_LAST_DONE]. */
+        uint64_t rd_dma_slice_done     : 1;  /**< [  4:  4](R/W1C/H) Reads or clears enables for the MBAD()_INT_SUM[RD_DMA_SLICE_DONE]. */
+        uint64_t rd_dma_pending        : 1;  /**< [  3:  3](R/W1C/H) Reads or clears enables for the MBAD()_INT_SUM[RD_DMA_PENDING]. */
+        uint64_t cfg_dma_last_done     : 1;  /**< [  2:  2](R/W1C/H) Reads or clears enables for the MBAD()_INT_SUM[CFG_DMA_LAST_DONE]. */
+        uint64_t cfg_dma_slice_done    : 1;  /**< [  1:  1](R/W1C/H) Reads or clears enables for the MBAD()_INT_SUM[CFG_DMA_SLICE_DONE]. */
+        uint64_t cfg_dma_pending       : 1;  /**< [  0:  0](R/W1C/H) Reads or clears enables for the MBAD()_INT_SUM[CFG_DMA_PENDING]. */
+#else /* Word 0 - Little Endian */
+        uint64_t cfg_dma_pending       : 1;  /**< [  0:  0](R/W1C/H) Reads or clears enables for the MBAD()_INT_SUM[CFG_DMA_PENDING]. */
+        uint64_t cfg_dma_slice_done    : 1;  /**< [  1:  1](R/W1C/H) Reads or clears enables for the MBAD()_INT_SUM[CFG_DMA_SLICE_DONE]. */
+        uint64_t cfg_dma_last_done     : 1;  /**< [  2:  2](R/W1C/H) Reads or clears enables for the MBAD()_INT_SUM[CFG_DMA_LAST_DONE]. */
+        uint64_t rd_dma_pending        : 1;  /**< [  3:  3](R/W1C/H) Reads or clears enables for the MBAD()_INT_SUM[RD_DMA_PENDING]. */
+        uint64_t rd_dma_slice_done     : 1;  /**< [  4:  4](R/W1C/H) Reads or clears enables for the MBAD()_INT_SUM[RD_DMA_SLICE_DONE]. */
+        uint64_t rd_dma_last_done      : 1;  /**< [  5:  5](R/W1C/H) Reads or clears enables for the MBAD()_INT_SUM[RD_DMA_LAST_DONE]. */
+        uint64_t wr_dma_pending        : 1;  /**< [  6:  6](R/W1C/H) Reads or clears enables for the MBAD()_INT_SUM[WR_DMA_PENDING]. */
+        uint64_t wr_dma_slice_done     : 1;  /**< [  7:  7](R/W1C/H) Reads or clears enables for the MBAD()_INT_SUM[WR_DMA_SLICE_DONE]. */
+        uint64_t wr_dma_last_done      : 1;  /**< [  8:  8](R/W1C/H) Reads or clears enables for the MBAD()_INT_SUM[WR_DMA_LAST_DONE]. */
+        uint64_t wr_dma_oflow          : 1;  /**< [  9:  9](R/W1C/H) Reads or clears enables for the MBAD()_INT_SUM[WR_DMA_OFLOW]. */
+        uint64_t wr_dma_uflow          : 1;  /**< [ 10: 10](R/W1C/H) Reads or clears enables for the MBAD()_INT_SUM[WR_DMA_UFLOW]. */
+        uint64_t job_rdy0              : 1;  /**< [ 11: 11](R/W1C/H) Reads or clears the enable for the MBAD()_INT_SUM[JOB_RDY0] interrupt bit. */
+        uint64_t job_rdy1              : 1;  /**< [ 12: 12](R/W1C/H) Reads or clears the enable for the MBAD()_INT_SUM[JOB_RDY1] interrupt bit. */
+        uint64_t reserved_13_31        : 19;
+#endif /* Word 0 - End */
+    } loki;
 };
 typedef union cavm_mdabx_int_ena_w1c cavm_mdabx_int_ena_w1c_t;
 
@@ -1446,7 +2799,9 @@ static inline uint64_t CAVM_MDABX_INT_ENA_W1C(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=41))
         return 0x87e044100170ll + 0x4000ll * ((a) & 0x3f);
-    __cavm_csr_fatal("MDABX_INT_ENA_W1C", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044400170ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDABX_INT_ENA_W1C", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDABX_INT_ENA_W1C(a) cavm_mdabx_int_ena_w1c_t
@@ -1514,7 +2869,7 @@ union cavm_mdabx_int_ena_w1s
         uint64_t reserved_13_63        : 51;
 #endif /* Word 0 - End */
     } s;
-    struct cavm_mdabx_int_ena_w1s_cn
+    struct cavm_mdabx_int_ena_w1s_cnf95xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_13_31        : 19;
@@ -1563,7 +2918,57 @@ union cavm_mdabx_int_ena_w1s
         uint64_t job_rdy1              : 1;  /**< [ 12: 12](R/W1S/H) Reads or sets the enable for the MDABx_INT_SUM[JOB_RDY1] interrupt bit. */
         uint64_t reserved_13_31        : 19;
 #endif /* Word 0 - End */
-    } cn;
+    } cnf95xx;
+    struct cavm_mdabx_int_ena_w1s_loki
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_13_31        : 19;
+        uint64_t job_rdy1              : 1;  /**< [ 12: 12](R/W1S/H) Reads or sets the enable for the MBAD()_INT_SUM[JOB_RDY1] interrupt bit. */
+        uint64_t job_rdy0              : 1;  /**< [ 11: 11](R/W1S/H) Reads or sets the enable for the MBAD()_INT_SUM[JOB_RDY0] interrupt bit. */
+        uint64_t wr_dma_uflow          : 1;  /**< [ 10: 10](R/W1S/H) Reads or sets enables for the MBAD()_INT_SUM[WR_DMA_UFLOW]. */
+        uint64_t wr_dma_oflow          : 1;  /**< [  9:  9](R/W1S/H) Reads or sets enables for the MBAD()_INT_SUM[WR_DMA_OFLOW]. */
+        uint64_t wr_dma_last_done      : 1;  /**< [  8:  8](R/W1S/H) Reads or sets enables for the MBAD()_INT_SUM[WR_DMA_LAST_DONE]. Note that this interrupt
+                                                                 bit will NOT get
+                                                                 set at the end of a store local operation. */
+        uint64_t wr_dma_slice_done     : 1;  /**< [  7:  7](R/W1S/H) Reads or sets enables for the MBAD()_INT_SUM[WR_DMA_SLICE_DONE]. Note that this interrupt
+                                                                 bit will NOT get
+                                                                 set at the end of a store local operation. */
+        uint64_t wr_dma_pending        : 1;  /**< [  6:  6](R/W1S/H) Reads or sets enables for the MBAD()_INT_SUM[WR_DMA_PENDING]. */
+        uint64_t rd_dma_last_done      : 1;  /**< [  5:  5](R/W1S/H) Reads or sets enables for the MBAD()_INT_SUM[RD_DMA_LAST_DONE].  Note that this interrupt
+                                                                 bit will NOT get
+                                                                 set at the end of a load local operation. */
+        uint64_t rd_dma_slice_done     : 1;  /**< [  4:  4](R/W1S/H) Reads or sets enables for the MBAD()_INT_SUM[RD_DMA_SLICE_DONE].  Note that this interrupt
+                                                                 bit will NOT get
+                                                                 set at the end of a load local operation. */
+        uint64_t rd_dma_pending        : 1;  /**< [  3:  3](R/W1S/H) Reads or sets enables for the MBAD()_INT_SUM[RD_DMA_PENDING]. */
+        uint64_t cfg_dma_last_done     : 1;  /**< [  2:  2](R/W1S/H) Reads or sets enables for the MBAD()_INT_SUM[CFG_DMA_LAST_DONE]. */
+        uint64_t cfg_dma_slice_done    : 1;  /**< [  1:  1](R/W1S/H) Reads or sets enables for the MBAD()_INT_SUM[CFG_DMA_SLICE_DONE]. */
+        uint64_t cfg_dma_pending       : 1;  /**< [  0:  0](R/W1S/H) Reads or sets enables for the MBAD()_INT_SUM[CFG_DMA_PENDING]. */
+#else /* Word 0 - Little Endian */
+        uint64_t cfg_dma_pending       : 1;  /**< [  0:  0](R/W1S/H) Reads or sets enables for the MBAD()_INT_SUM[CFG_DMA_PENDING]. */
+        uint64_t cfg_dma_slice_done    : 1;  /**< [  1:  1](R/W1S/H) Reads or sets enables for the MBAD()_INT_SUM[CFG_DMA_SLICE_DONE]. */
+        uint64_t cfg_dma_last_done     : 1;  /**< [  2:  2](R/W1S/H) Reads or sets enables for the MBAD()_INT_SUM[CFG_DMA_LAST_DONE]. */
+        uint64_t rd_dma_pending        : 1;  /**< [  3:  3](R/W1S/H) Reads or sets enables for the MBAD()_INT_SUM[RD_DMA_PENDING]. */
+        uint64_t rd_dma_slice_done     : 1;  /**< [  4:  4](R/W1S/H) Reads or sets enables for the MBAD()_INT_SUM[RD_DMA_SLICE_DONE].  Note that this interrupt
+                                                                 bit will NOT get
+                                                                 set at the end of a load local operation. */
+        uint64_t rd_dma_last_done      : 1;  /**< [  5:  5](R/W1S/H) Reads or sets enables for the MBAD()_INT_SUM[RD_DMA_LAST_DONE].  Note that this interrupt
+                                                                 bit will NOT get
+                                                                 set at the end of a load local operation. */
+        uint64_t wr_dma_pending        : 1;  /**< [  6:  6](R/W1S/H) Reads or sets enables for the MBAD()_INT_SUM[WR_DMA_PENDING]. */
+        uint64_t wr_dma_slice_done     : 1;  /**< [  7:  7](R/W1S/H) Reads or sets enables for the MBAD()_INT_SUM[WR_DMA_SLICE_DONE]. Note that this interrupt
+                                                                 bit will NOT get
+                                                                 set at the end of a store local operation. */
+        uint64_t wr_dma_last_done      : 1;  /**< [  8:  8](R/W1S/H) Reads or sets enables for the MBAD()_INT_SUM[WR_DMA_LAST_DONE]. Note that this interrupt
+                                                                 bit will NOT get
+                                                                 set at the end of a store local operation. */
+        uint64_t wr_dma_oflow          : 1;  /**< [  9:  9](R/W1S/H) Reads or sets enables for the MBAD()_INT_SUM[WR_DMA_OFLOW]. */
+        uint64_t wr_dma_uflow          : 1;  /**< [ 10: 10](R/W1S/H) Reads or sets enables for the MBAD()_INT_SUM[WR_DMA_UFLOW]. */
+        uint64_t job_rdy0              : 1;  /**< [ 11: 11](R/W1S/H) Reads or sets the enable for the MBAD()_INT_SUM[JOB_RDY0] interrupt bit. */
+        uint64_t job_rdy1              : 1;  /**< [ 12: 12](R/W1S/H) Reads or sets the enable for the MBAD()_INT_SUM[JOB_RDY1] interrupt bit. */
+        uint64_t reserved_13_31        : 19;
+#endif /* Word 0 - End */
+    } loki;
 };
 typedef union cavm_mdabx_int_ena_w1s cavm_mdabx_int_ena_w1s_t;
 
@@ -1572,7 +2977,9 @@ static inline uint64_t CAVM_MDABX_INT_ENA_W1S(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=41))
         return 0x87e044100180ll + 0x4000ll * ((a) & 0x3f);
-    __cavm_csr_fatal("MDABX_INT_ENA_W1S", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044400180ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDABX_INT_ENA_W1S", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDABX_INT_ENA_W1S(a) cavm_mdabx_int_ena_w1s_t
@@ -1608,19 +3015,9 @@ union cavm_mdabx_int_sel
                                                                  NOTE: To ensure correct generation of outstanding interrupts, this bit MUST be programmed
                                                                  prior
                                                                  to initial configuration of the interrupt enable register. */
-        uint64_t int_level_sel         : 1;  /**< [  0:  0](R/W) Selects interrupt priority for MDAB_INT_SUM interrupts.
-                                                                 0 = Level 1 interrupts.
-                                                                 1 = Level 2 interrupts.
-                                                                 NOTE: To ensure correct generation of outstanding interrupts, this bit MUST be programmed
-                                                                 prior
-                                                                 to initial configuration of the interrupt enable register. */
+        uint64_t reserved_0            : 1;
 #else /* Word 0 - Little Endian */
-        uint64_t int_level_sel         : 1;  /**< [  0:  0](R/W) Selects interrupt priority for MDAB_INT_SUM interrupts.
-                                                                 0 = Level 1 interrupts.
-                                                                 1 = Level 2 interrupts.
-                                                                 NOTE: To ensure correct generation of outstanding interrupts, this bit MUST be programmed
-                                                                 prior
-                                                                 to initial configuration of the interrupt enable register. */
+        uint64_t reserved_0            : 1;
         uint64_t dma_int_trig_style    : 1;  /**< [  1:  1](R/W) Determines whether interrupts reported via MDAB_INT_SUM are level or
                                                                  edge triggered:
                                                                  0 = Level-sensitive.
@@ -1638,7 +3035,7 @@ union cavm_mdabx_int_sel
         uint64_t reserved_3_63         : 61;
 #endif /* Word 0 - End */
     } s;
-    struct cavm_mdabx_int_sel_cn
+    struct cavm_mdabx_int_sel_cnf95xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_3_31         : 29;
@@ -1685,7 +3082,63 @@ union cavm_mdabx_int_sel
                                                                  to initial configuration of the interrupt enable register. */
         uint64_t reserved_3_31         : 29;
 #endif /* Word 0 - End */
-    } cn;
+    } cnf95xx;
+    struct cavm_mdabx_int_sel_loki
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_3_31         : 29;
+        uint64_t ld_lcl_trig_style     : 1;  /**< [  2:  2](R/W) Reserved. must be 0.
+                                                                 Internal:
+                                                                 Determines whether load local start/finish interrupts are level or
+                                                                 edge triggered:
+                                                                 0 = Level-sensitive.
+                                                                 1 = Edge-triggered.
+                                                                 NOTE: To ensure correct generation of outstanding interrupts, this bit MUST be programmed
+                                                                 prior to initial configuration of the interrupt enable register. */
+        uint64_t dma_int_trig_style    : 1;  /**< [  1:  1](R/W) Reserved. Must be 0.
+                                                                 Internal:
+                                                                 Determines whether interrupts reported via MDAB_INT_SUM are level or
+                                                                 edge triggered:
+                                                                 0 = Level-sensitive.
+                                                                 1 = Edge-triggered.
+                                                                 NOTE: To ensure correct generation of outstanding interrupts, this bit MUST be programmed
+                                                                 prior to initial configuration of the interrupt enable register. */
+        uint64_t int_rout_sel          : 1;  /**< [  0:  0](R/W) Selects interrupt routing for MDAB_INT_SUM interrupts.
+                                                                 0 = INT 0 Enable.
+                                                                 1 = VINT enable .
+                                                                 NOTE: To ensure correct generation of outstanding interrupts, this bit MUST be programmed
+                                                                 prior to initial configuration of the interrupt enable register.
+
+                                                                 Internal:
+                                                                 This bit in F95 control the level of interrupt reported - level 1 or level 2. */
+#else /* Word 0 - Little Endian */
+        uint64_t int_rout_sel          : 1;  /**< [  0:  0](R/W) Selects interrupt routing for MDAB_INT_SUM interrupts.
+                                                                 0 = INT 0 Enable.
+                                                                 1 = VINT enable .
+                                                                 NOTE: To ensure correct generation of outstanding interrupts, this bit MUST be programmed
+                                                                 prior to initial configuration of the interrupt enable register.
+
+                                                                 Internal:
+                                                                 This bit in F95 control the level of interrupt reported - level 1 or level 2. */
+        uint64_t dma_int_trig_style    : 1;  /**< [  1:  1](R/W) Reserved. Must be 0.
+                                                                 Internal:
+                                                                 Determines whether interrupts reported via MDAB_INT_SUM are level or
+                                                                 edge triggered:
+                                                                 0 = Level-sensitive.
+                                                                 1 = Edge-triggered.
+                                                                 NOTE: To ensure correct generation of outstanding interrupts, this bit MUST be programmed
+                                                                 prior to initial configuration of the interrupt enable register. */
+        uint64_t ld_lcl_trig_style     : 1;  /**< [  2:  2](R/W) Reserved. must be 0.
+                                                                 Internal:
+                                                                 Determines whether load local start/finish interrupts are level or
+                                                                 edge triggered:
+                                                                 0 = Level-sensitive.
+                                                                 1 = Edge-triggered.
+                                                                 NOTE: To ensure correct generation of outstanding interrupts, this bit MUST be programmed
+                                                                 prior to initial configuration of the interrupt enable register. */
+        uint64_t reserved_3_31         : 29;
+#endif /* Word 0 - End */
+    } loki;
 };
 typedef union cavm_mdabx_int_sel cavm_mdabx_int_sel_t;
 
@@ -1694,7 +3147,9 @@ static inline uint64_t CAVM_MDABX_INT_SEL(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=41))
         return 0x87e044100190ll + 0x4000ll * ((a) & 0x3f);
-    __cavm_csr_fatal("MDABX_INT_SEL", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044400190ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDABX_INT_SEL", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDABX_INT_SEL(a) cavm_mdabx_int_sel_t
@@ -1741,7 +3196,7 @@ static inline uint64_t CAVM_MDABX_INT_SRC(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=41))
         return 0x87e0441001a0ll + 0x4000ll * ((a) & 0x3f);
-    __cavm_csr_fatal("MDABX_INT_SRC", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("MDABX_INT_SRC", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDABX_INT_SRC(a) cavm_mdabx_int_src_t
@@ -1920,7 +3375,9 @@ static inline uint64_t CAVM_MDABX_INT_SUM_W1C(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=41))
         return 0x87e044100150ll + 0x4000ll * ((a) & 0x3f);
-    __cavm_csr_fatal("MDABX_INT_SUM_W1C", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044400150ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDABX_INT_SUM_W1C", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDABX_INT_SUM_W1C(a) cavm_mdabx_int_sum_w1c_t
@@ -1974,7 +3431,7 @@ union cavm_mdabx_int_sum_w1s
         uint64_t reserved_13_63        : 51;
 #endif /* Word 0 - End */
     } s;
-    struct cavm_mdabx_int_sum_w1s_cn
+    struct cavm_mdabx_int_sum_w1s_cnf95xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_13_31        : 19;
@@ -2007,7 +3464,41 @@ union cavm_mdabx_int_sum_w1s
         uint64_t job_rdy1              : 1;  /**< [ 12: 12](R/W1S/H) Reads or sets the MDABx_INT_SUM[JOB_RDY1] interrupt bit. */
         uint64_t reserved_13_31        : 19;
 #endif /* Word 0 - End */
-    } cn;
+    } cnf95xx;
+    struct cavm_mdabx_int_sum_w1s_loki
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_13_31        : 19;
+        uint64_t job_rdy1              : 1;  /**< [ 12: 12](R/W1S/H) Reads or sets the MDAB()_INT_SUM[JOB_RDY1] interrupt bit. */
+        uint64_t job_rdy0              : 1;  /**< [ 11: 11](R/W1S/H) Reads or sets the MDAB()_INT_SUM[JOB_RDY0] interrupt bit. */
+        uint64_t wr_dma_uflow          : 1;  /**< [ 10: 10](R/W1S/H) Reads or sets the MDAB()_INT_SUM[WR_DMA_UFLOW]. */
+        uint64_t wr_dma_oflow          : 1;  /**< [  9:  9](R/W1S/H) Reads or sets the MDAB()_INT_SUM[WR_DMA_OFLOW]. */
+        uint64_t wr_dma_last_done      : 1;  /**< [  8:  8](R/W1S/H) Reads or sets the MBAD()_INT_SUM[WR_DMA_LAST_DONE]. */
+        uint64_t wr_dma_slice_done     : 1;  /**< [  7:  7](R/W1S/H) Reads or sets the MBAD()_INT_SUM[WR_DMA_SLICE_DONE]. */
+        uint64_t wr_dma_pending        : 1;  /**< [  6:  6](R/W1S/H) Reads or sets the MBAD()_INT_SUM[WR_DMA_PENDING]. */
+        uint64_t rd_dma_last_done      : 1;  /**< [  5:  5](R/W1S/H) Reads or sets the MBAD()_INT_SUM[RD_DMA_LAST_DONE]. */
+        uint64_t rd_dma_slice_done     : 1;  /**< [  4:  4](R/W1S/H) Reads or sets the MBAD()_INT_SUM[RD_DMA_SLICE_DONE]. */
+        uint64_t rd_dma_pending        : 1;  /**< [  3:  3](R/W1S/H) Reads or sets the MBAD()_INT_SUM[RD_DMA_PENDING]. */
+        uint64_t cfg_dma_last_done     : 1;  /**< [  2:  2](R/W1S/H) Reads or sets the MBAD()_INT_SUM[CFG_DMA_LAST_DONE]. */
+        uint64_t cfg_dma_slice_done    : 1;  /**< [  1:  1](R/W1S/H) Reads or sets the MBAD()_INT_SUM[CFG_DMA_SLICE_DONE]. */
+        uint64_t cfg_dma_pending       : 1;  /**< [  0:  0](R/W1S/H) Reads or sets the MBAD()_INT_SUM[CFG_DMA_PENDING]. */
+#else /* Word 0 - Little Endian */
+        uint64_t cfg_dma_pending       : 1;  /**< [  0:  0](R/W1S/H) Reads or sets the MBAD()_INT_SUM[CFG_DMA_PENDING]. */
+        uint64_t cfg_dma_slice_done    : 1;  /**< [  1:  1](R/W1S/H) Reads or sets the MBAD()_INT_SUM[CFG_DMA_SLICE_DONE]. */
+        uint64_t cfg_dma_last_done     : 1;  /**< [  2:  2](R/W1S/H) Reads or sets the MBAD()_INT_SUM[CFG_DMA_LAST_DONE]. */
+        uint64_t rd_dma_pending        : 1;  /**< [  3:  3](R/W1S/H) Reads or sets the MBAD()_INT_SUM[RD_DMA_PENDING]. */
+        uint64_t rd_dma_slice_done     : 1;  /**< [  4:  4](R/W1S/H) Reads or sets the MBAD()_INT_SUM[RD_DMA_SLICE_DONE]. */
+        uint64_t rd_dma_last_done      : 1;  /**< [  5:  5](R/W1S/H) Reads or sets the MBAD()_INT_SUM[RD_DMA_LAST_DONE]. */
+        uint64_t wr_dma_pending        : 1;  /**< [  6:  6](R/W1S/H) Reads or sets the MBAD()_INT_SUM[WR_DMA_PENDING]. */
+        uint64_t wr_dma_slice_done     : 1;  /**< [  7:  7](R/W1S/H) Reads or sets the MBAD()_INT_SUM[WR_DMA_SLICE_DONE]. */
+        uint64_t wr_dma_last_done      : 1;  /**< [  8:  8](R/W1S/H) Reads or sets the MBAD()_INT_SUM[WR_DMA_LAST_DONE]. */
+        uint64_t wr_dma_oflow          : 1;  /**< [  9:  9](R/W1S/H) Reads or sets the MDAB()_INT_SUM[WR_DMA_OFLOW]. */
+        uint64_t wr_dma_uflow          : 1;  /**< [ 10: 10](R/W1S/H) Reads or sets the MDAB()_INT_SUM[WR_DMA_UFLOW]. */
+        uint64_t job_rdy0              : 1;  /**< [ 11: 11](R/W1S/H) Reads or sets the MDAB()_INT_SUM[JOB_RDY0] interrupt bit. */
+        uint64_t job_rdy1              : 1;  /**< [ 12: 12](R/W1S/H) Reads or sets the MDAB()_INT_SUM[JOB_RDY1] interrupt bit. */
+        uint64_t reserved_13_31        : 19;
+#endif /* Word 0 - End */
+    } loki;
 };
 typedef union cavm_mdabx_int_sum_w1s cavm_mdabx_int_sum_w1s_t;
 
@@ -2016,7 +3507,9 @@ static inline uint64_t CAVM_MDABX_INT_SUM_W1S(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=41))
         return 0x87e044100160ll + 0x4000ll * ((a) & 0x3f);
-    __cavm_csr_fatal("MDABX_INT_SUM_W1S", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044400160ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDABX_INT_SUM_W1S", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDABX_INT_SUM_W1S(a) cavm_mdabx_int_sum_w1s_t
@@ -2024,6 +3517,46 @@ static inline uint64_t CAVM_MDABX_INT_SUM_W1S(unsigned long a)
 #define basename_CAVM_MDABX_INT_SUM_W1S(a) "MDABX_INT_SUM_W1S"
 #define busnum_CAVM_MDABX_INT_SUM_W1S(a) (a)
 #define arguments_CAVM_MDABX_INT_SUM_W1S(a) (a),-1,-1,-1
+
+/**
+ * Register (RSL32b) mdab#_int_vec_addr
+ *
+ * MDAB Interrupt Vector Address Register
+ * This register sets the address for usage in case of INT Vec assertion. It is also
+ * being used upon reset exit for boot address when Boot register is set.
+ */
+union cavm_mdabx_int_vec_addr
+{
+    uint32_t u;
+    struct cavm_mdabx_int_vec_addr_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t vecaddr               : 28; /**< [ 31:  4](R/W) Handler Vector address. */
+        uint32_t reserved_1_3          : 3;
+        uint32_t vintc                 : 1;  /**< [  0:  0](R/W) Context switch control. */
+#else /* Word 0 - Little Endian */
+        uint32_t vintc                 : 1;  /**< [  0:  0](R/W) Context switch control. */
+        uint32_t reserved_1_3          : 3;
+        uint32_t vecaddr               : 28; /**< [ 31:  4](R/W) Handler Vector address. */
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_mdabx_int_vec_addr_s cn; */
+};
+typedef union cavm_mdabx_int_vec_addr cavm_mdabx_int_vec_addr_t;
+
+static inline uint64_t CAVM_MDABX_INT_VEC_ADDR(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_MDABX_INT_VEC_ADDR(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044400ae0ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDABX_INT_VEC_ADDR", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_MDABX_INT_VEC_ADDR(a) cavm_mdabx_int_vec_addr_t
+#define bustype_CAVM_MDABX_INT_VEC_ADDR(a) CSR_TYPE_RSL32b
+#define basename_CAVM_MDABX_INT_VEC_ADDR(a) "MDABX_INT_VEC_ADDR"
+#define busnum_CAVM_MDABX_INT_VEC_ADDR(a) (a)
+#define arguments_CAVM_MDABX_INT_VEC_ADDR(a) (a),-1,-1,-1
 
 /**
  * Register (RSL32b) mdab#_interrupt_active
@@ -2110,7 +3643,9 @@ static inline uint64_t CAVM_MDABX_INTERRUPT_ACTIVE(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=41))
         return 0x87e044100280ll + 0x4000ll * ((a) & 0x3f);
-    __cavm_csr_fatal("MDABX_INTERRUPT_ACTIVE", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044400280ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDABX_INTERRUPT_ACTIVE", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDABX_INTERRUPT_ACTIVE(a) cavm_mdabx_interrupt_active_t
@@ -2185,7 +3720,9 @@ static inline uint64_t CAVM_MDABX_IPB_CTL(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=41))
         return 0x87e0441002c0ll + 0x4000ll * ((a) & 0x3f);
-    __cavm_csr_fatal("MDABX_IPB_CTL", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e0444002c0ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDABX_IPB_CTL", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDABX_IPB_CTL(a) cavm_mdabx_ipb_ctl_t
@@ -2224,7 +3761,9 @@ static inline uint64_t CAVM_MDABX_IPB_FLUSH(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=41))
         return 0x87e0441002f0ll + 0x4000ll * ((a) & 0x3f);
-    __cavm_csr_fatal("MDABX_IPB_FLUSH", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e0444002f0ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDABX_IPB_FLUSH", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDABX_IPB_FLUSH(a) cavm_mdabx_ipb_flush_t
@@ -2261,7 +3800,9 @@ static inline uint64_t CAVM_MDABX_IPB_PERF_CTL(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=41))
         return 0x87e0441004a0ll + 0x4000ll * ((a) & 0x3f);
-    __cavm_csr_fatal("MDABX_IPB_PERF_CTL", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e0444004a0ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDABX_IPB_PERF_CTL", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDABX_IPB_PERF_CTL(a) cavm_mdabx_ipb_perf_ctl_t
@@ -2300,7 +3841,9 @@ static inline uint64_t CAVM_MDABX_IPB_PERF_HITCNT(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=41))
         return 0x87e0441004c0ll + 0x4000ll * ((a) & 0x3f);
-    __cavm_csr_fatal("MDABX_IPB_PERF_HITCNT", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e0444004c0ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDABX_IPB_PERF_HITCNT", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDABX_IPB_PERF_HITCNT(a) cavm_mdabx_ipb_perf_hitcnt_t
@@ -2345,7 +3888,9 @@ static inline uint64_t CAVM_MDABX_IPB_PERF_LATENCY(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=41))
         return 0x87e0441004d0ll + 0x4000ll * ((a) & 0x3f);
-    __cavm_csr_fatal("MDABX_IPB_PERF_LATENCY", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e0444004d0ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDABX_IPB_PERF_LATENCY", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDABX_IPB_PERF_LATENCY(a) cavm_mdabx_ipb_perf_latency_t
@@ -2384,7 +3929,9 @@ static inline uint64_t CAVM_MDABX_IPB_PERF_MISSCNT(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=41))
         return 0x87e0441004b0ll + 0x4000ll * ((a) & 0x3f);
-    __cavm_csr_fatal("MDABX_IPB_PERF_MISSCNT", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e0444004b0ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDABX_IPB_PERF_MISSCNT", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDABX_IPB_PERF_MISSCNT(a) cavm_mdabx_ipb_perf_misscnt_t
@@ -2431,7 +3978,9 @@ static inline uint64_t CAVM_MDABX_IPB_PFRANGE_MAX(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=41))
         return 0x87e0441002e0ll + 0x4000ll * ((a) & 0x3f);
-    __cavm_csr_fatal("MDABX_IPB_PFRANGE_MAX", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e0444002e0ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDABX_IPB_PFRANGE_MAX", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDABX_IPB_PFRANGE_MAX(a) cavm_mdabx_ipb_pfrange_max_t
@@ -2486,7 +4035,9 @@ static inline uint64_t CAVM_MDABX_IPB_PFRANGE_MIN(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=41))
         return 0x87e0441002d0ll + 0x4000ll * ((a) & 0x3f);
-    __cavm_csr_fatal("MDABX_IPB_PFRANGE_MIN", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e0444002d0ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDABX_IPB_PFRANGE_MIN", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDABX_IPB_PFRANGE_MIN(a) cavm_mdabx_ipb_pfrange_min_t
@@ -2502,7 +4053,7 @@ static inline uint64_t CAVM_MDABX_IPB_PFRANGE_MIN(unsigned long a)
  * Reports the upper pointer bits of the job in each slot. When a job is received from
  * the PSM, its pointer
  * will always be reflected in one of these two registers until the job completes. The job
- * will not complete until MDAB(0..41)_JOB_STATUS(0..1)
+ * will not complete until MDAB(0..15)_JOB_STATUS(0..1)
  * bits 0..5 have all been set.
  */
 union cavm_mdabx_job_ptr_hix
@@ -2529,7 +4080,9 @@ static inline uint64_t CAVM_MDABX_JOB_PTR_HIX(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=41) && (b<=1)))
         return 0x87e044100410ll + 0x4000ll * ((a) & 0x3f) + 0x20ll * ((b) & 0x1);
-    __cavm_csr_fatal("MDABX_JOB_PTR_HIX", 2, a, b, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=15) && (b<=1)))
+        return 0x87e044400410ll + 0x40000ll * ((a) & 0xf) + 0x20ll * ((b) & 0x1);
+    __cavm_csr_fatal("MDABX_JOB_PTR_HIX", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDABX_JOB_PTR_HIX(a,b) cavm_mdabx_job_ptr_hix_t
@@ -2545,7 +4098,7 @@ static inline uint64_t CAVM_MDABX_JOB_PTR_HIX(unsigned long a, unsigned long b)
  * Reports the lower pointer bits of the job in each slot. When a job is received from
  * the PSM, its pointer
  * will always be reflected in one of these two registers until the job completes. The job
- * will not complete until MDAB(0..41)_JOB_STATUS(0..1)
+ * will not complete until MDAB(0..15)_JOB_STATUS(0..1)
  * bits 0..5 have all been set.
  */
 union cavm_mdabx_job_ptr_lox
@@ -2570,7 +4123,9 @@ static inline uint64_t CAVM_MDABX_JOB_PTR_LOX(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=41) && (b<=1)))
         return 0x87e044100400ll + 0x4000ll * ((a) & 0x3f) + 0x20ll * ((b) & 0x1);
-    __cavm_csr_fatal("MDABX_JOB_PTR_LOX", 2, a, b, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=15) && (b<=1)))
+        return 0x87e044400400ll + 0x40000ll * ((a) & 0xf) + 0x20ll * ((b) & 0x1);
+    __cavm_csr_fatal("MDABX_JOB_PTR_LOX", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDABX_JOB_PTR_LOX(a,b) cavm_mdabx_job_ptr_lox_t
@@ -2645,7 +4200,7 @@ union cavm_mdabx_job_statusx
         uint64_t reserved_32_63        : 32;
 #endif /* Word 0 - End */
     } s;
-    struct cavm_mdabx_job_statusx_cn
+    struct cavm_mdabx_job_statusx_cnf95xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t job_tag               : 16; /**< [ 31: 16](RO/H) The JOB_TAG field from the PSM command that created the job.
@@ -2696,7 +4251,59 @@ union cavm_mdabx_job_statusx
         uint64_t job_tag               : 16; /**< [ 31: 16](RO/H) The JOB_TAG field from the PSM command that created the job.
                                                                  Since MDAB hardware updates this register, its contents are unpredictable in software. */
 #endif /* Word 0 - End */
-    } cn;
+    } cnf95xx;
+    struct cavm_mdabx_job_statusx_loki
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t job_tag               : 16; /**< [ 31: 16](RO/H) The JOB_TAG field from the PSM command that created the job.
+                                                                 Since MDAB hardware updates this register, its contents are unpredictable in software. */
+        uint64_t job_type              : 2;  /**< [ 15: 14](RO/H) The JOB_TYPE field from the PSM command that created the job.
+                                                                 The MDBW_JD_HDR_WORD_0_S[DSP_JOB_TYPE] value from the job descriptor, enumerated
+                                                                 by MDBW_DSP_JOB_SEL_E.
+                                                                 Since MDAB hardware updates this register, its contents are unpredictable in software. */
+        uint64_t reserved_6_13         : 8;
+        uint64_t wr_dma_done           : 1;  /**< [  5:  5](RO/H) Set when hardware completes all write DMA transfers and all writes have been committed to
+                                                                 SMEM or LLC/DRAM memory.
+                                                                 Since MDAB hardware updates this register, its contents are unpredictable in software. */
+        uint64_t rd_dma_done           : 1;  /**< [  4:  4](RO/H) Set when hardware completes all read DMA transfers and the data has been committed to
+                                                                 DSP local instruction memory and local data memory.
+                                                                 Since MDAB hardware updates this register, its contents are unpredictable in software. */
+        uint64_t cfg_dma_done          : 1;  /**< [  3:  3](RO/H) Set when hardware completes all CFG DMA transfers for the job configuration and the
+                                                                 configuration has been committed to DSP local instruction memory and local data memory. */
+        uint64_t sw_done               : 1;  /**< [  2:  2](R/W1S/H) Software must set this bit to signal when it has finished all processing for a job. */
+        uint64_t sw_started            : 1;  /**< [  1:  1](R/W1S/H) Software can set this bit to record when it began processing the job. The time when this
+                                                                 bit is set will be used by the job watchdog timer and will be used to determine the job
+                                                                 runtime
+                                                                 recorded in the job log. */
+        uint64_t valid                 : 1;  /**< [  0:  0](RO/H) Set to one when the status reflects a valid job has been received from the PSM. Set to
+                                                                 zero
+                                                                 when there is no job in the given slot. */
+#else /* Word 0 - Little Endian */
+        uint64_t valid                 : 1;  /**< [  0:  0](RO/H) Set to one when the status reflects a valid job has been received from the PSM. Set to
+                                                                 zero
+                                                                 when there is no job in the given slot. */
+        uint64_t sw_started            : 1;  /**< [  1:  1](R/W1S/H) Software can set this bit to record when it began processing the job. The time when this
+                                                                 bit is set will be used by the job watchdog timer and will be used to determine the job
+                                                                 runtime
+                                                                 recorded in the job log. */
+        uint64_t sw_done               : 1;  /**< [  2:  2](R/W1S/H) Software must set this bit to signal when it has finished all processing for a job. */
+        uint64_t cfg_dma_done          : 1;  /**< [  3:  3](RO/H) Set when hardware completes all CFG DMA transfers for the job configuration and the
+                                                                 configuration has been committed to DSP local instruction memory and local data memory. */
+        uint64_t rd_dma_done           : 1;  /**< [  4:  4](RO/H) Set when hardware completes all read DMA transfers and the data has been committed to
+                                                                 DSP local instruction memory and local data memory.
+                                                                 Since MDAB hardware updates this register, its contents are unpredictable in software. */
+        uint64_t wr_dma_done           : 1;  /**< [  5:  5](RO/H) Set when hardware completes all write DMA transfers and all writes have been committed to
+                                                                 SMEM or LLC/DRAM memory.
+                                                                 Since MDAB hardware updates this register, its contents are unpredictable in software. */
+        uint64_t reserved_6_13         : 8;
+        uint64_t job_type              : 2;  /**< [ 15: 14](RO/H) The JOB_TYPE field from the PSM command that created the job.
+                                                                 The MDBW_JD_HDR_WORD_0_S[DSP_JOB_TYPE] value from the job descriptor, enumerated
+                                                                 by MDBW_DSP_JOB_SEL_E.
+                                                                 Since MDAB hardware updates this register, its contents are unpredictable in software. */
+        uint64_t job_tag               : 16; /**< [ 31: 16](RO/H) The JOB_TAG field from the PSM command that created the job.
+                                                                 Since MDAB hardware updates this register, its contents are unpredictable in software. */
+#endif /* Word 0 - End */
+    } loki;
 };
 typedef union cavm_mdabx_job_statusx cavm_mdabx_job_statusx_t;
 
@@ -2705,7 +4312,9 @@ static inline uint64_t CAVM_MDABX_JOB_STATUSX(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=41) && (b<=1)))
         return 0x87e044100000ll + 0x4000ll * ((a) & 0x3f) + 0x10ll * ((b) & 0x1);
-    __cavm_csr_fatal("MDABX_JOB_STATUSX", 2, a, b, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=15) && (b<=1)))
+        return 0x87e044400000ll + 0x40000ll * ((a) & 0xf) + 0x10ll * ((b) & 0x1);
+    __cavm_csr_fatal("MDABX_JOB_STATUSX", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDABX_JOB_STATUSX(a,b) cavm_mdabx_job_statusx_t
@@ -2751,7 +4360,9 @@ static inline uint64_t CAVM_MDABX_JOB_STATUS1X(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=41) && (b<=1)))
         return 0x87e0441000e0ll + 0x4000ll * ((a) & 0x3f) + 0x10ll * ((b) & 0x1);
-    __cavm_csr_fatal("MDABX_JOB_STATUS1X", 2, a, b, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=15) && (b<=1)))
+        return 0x87e0444000e0ll + 0x40000ll * ((a) & 0xf) + 0x10ll * ((b) & 0x1);
+    __cavm_csr_fatal("MDABX_JOB_STATUS1X", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDABX_JOB_STATUS1X(a,b) cavm_mdabx_job_status1x_t
@@ -2801,7 +4412,9 @@ static inline uint64_t CAVM_MDABX_LD_INT_ENA_W1C(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=41))
         return 0x87e044100240ll + 0x4000ll * ((a) & 0x3f);
-    __cavm_csr_fatal("MDABX_LD_INT_ENA_W1C", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044400240ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDABX_LD_INT_ENA_W1C", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDABX_LD_INT_ENA_W1C(a) cavm_mdabx_ld_int_ena_w1c_t
@@ -2851,7 +4464,9 @@ static inline uint64_t CAVM_MDABX_LD_INT_ENA_W1S(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=41))
         return 0x87e044100250ll + 0x4000ll * ((a) & 0x3f);
-    __cavm_csr_fatal("MDABX_LD_INT_ENA_W1S", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044400250ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDABX_LD_INT_ENA_W1S", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDABX_LD_INT_ENA_W1S(a) cavm_mdabx_ld_int_ena_w1s_t
@@ -2901,7 +4516,9 @@ static inline uint64_t CAVM_MDABX_LD_INT_SUM_W1C(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=41))
         return 0x87e044100220ll + 0x4000ll * ((a) & 0x3f);
-    __cavm_csr_fatal("MDABX_LD_INT_SUM_W1C", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044400220ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDABX_LD_INT_SUM_W1C", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDABX_LD_INT_SUM_W1C(a) cavm_mdabx_ld_int_sum_w1c_t
@@ -2975,7 +4592,9 @@ static inline uint64_t CAVM_MDABX_LD_INT_SUM_W1S(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=41))
         return 0x87e044100230ll + 0x4000ll * ((a) & 0x3f);
-    __cavm_csr_fatal("MDABX_LD_INT_SUM_W1S", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044400230ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDABX_LD_INT_SUM_W1S", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDABX_LD_INT_SUM_W1S(a) cavm_mdabx_ld_int_sum_w1s_t
@@ -3014,7 +4633,7 @@ static inline uint64_t CAVM_MDABX_PFAULT_INFO(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=41))
         return 0x87e0441001d0ll + 0x4000ll * ((a) & 0x3f);
-    __cavm_csr_fatal("MDABX_PFAULT_INFO", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("MDABX_PFAULT_INFO", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDABX_PFAULT_INFO(a) cavm_mdabx_pfault_info_t
@@ -3172,7 +4791,7 @@ static inline uint64_t CAVM_MDABX_PFIO_CTL(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=41))
         return 0x87e044100330ll + 0x4000ll * ((a) & 0x3f);
-    __cavm_csr_fatal("MDABX_PFIO_CTL", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("MDABX_PFIO_CTL", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDABX_PFIO_CTL(a) cavm_mdabx_pfio_ctl_t
@@ -3193,7 +4812,13 @@ union cavm_mdabx_proc_ctl
     struct cavm_mdabx_proc_ctl_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_29_63        : 35;
+        uint64_t reserved_32_63        : 32;
+        uint64_t rcv_core              : 1;  /**< [ 31: 31](R/W) When this bit is set, a DSP core which is low power state (deep sleep or Light
+                                                                 Sleep) would wake up and move to run state. */
+        uint64_t deep_slp_req          : 1;  /**< [ 30: 30](R/W) An assertion of this bit, in a case where a DSP core is in light sleep would
+                                                                 cause transition to Stand By (deep sleep). */
+        uint64_t boot                  : 1;  /**< [ 29: 29](R/W) When this bit is set, upon DSP exit Global Reset, the DSP would start booting
+                                                                 from an address which is set by MDAB(0..15)_INT_VEC_ADDR. */
         uint64_t powersave_stall_en    : 1;  /**< [ 28: 28](R/W) This bit enables the RUNSTALL powersaving mode. If set, the RUNSTALL signal is toggled
                                                                  according to the POWERSAVE_ON_CNT and POWERSAVE_OFF_CNT registers. The RUNSTALL
                                                                  signal is toggled high for the number of clocks provided by POWERSAVE_ON_CNT+1. Likewise
@@ -3227,7 +4852,7 @@ union cavm_mdabx_proc_ctl
                                                                  interrupt vector (if run_stall is not asserted).  This bit is cleared at the start of
                                                                  a load local with reset operation so that the DSP reset input can be correctly controlled
                                                                  by the load local with reset logic. */
-        uint64_t ocd_halt_on_reset     : 1;  /**< [  3:  3](R/W) Force the DSP to enter OCDHaltMode after reset. */
+        uint64_t reserved_3            : 1;
         uint64_t dreset                : 1;  /**< [  2:  2](R/W) Setting this bit asserts reset to the DSP debug logic. */
         uint64_t stat_vector_sel       : 1;  /**< [  1:  1](R/W) Setting this bit selects the alternative stationary vector base address. */
         uint64_t run_stall             : 1;  /**< [  0:  0](R/W/H) When this bit is SET the DSP's RUN_STALL input will be asserted, forcing the DSP to
@@ -3245,7 +4870,7 @@ union cavm_mdabx_proc_ctl
                                                                  so the DSP can start running. */
         uint64_t stat_vector_sel       : 1;  /**< [  1:  1](R/W) Setting this bit selects the alternative stationary vector base address. */
         uint64_t dreset                : 1;  /**< [  2:  2](R/W) Setting this bit asserts reset to the DSP debug logic. */
-        uint64_t ocd_halt_on_reset     : 1;  /**< [  3:  3](R/W) Force the DSP to enter OCDHaltMode after reset. */
+        uint64_t reserved_3            : 1;
         uint64_t breset                : 1;  /**< [  4:  4](R/W/H) When software sets this bit the entire DSP will be forced in the reset state. When the
                                                                  software clears this bit, the DSP will come out of reset and start execution at the reset
                                                                  interrupt vector (if run_stall is not asserted).  This bit is cleared at the start of
@@ -3279,10 +4904,16 @@ union cavm_mdabx_proc_ctl
                                                                  signal is toggled high for the number of clocks provided by POWERSAVE_ON_CNT+1. Likewise
                                                                  the RUNSTALL is toggled low for the number of clocks provided by POWERSAVE_OFF_CNT+1.
                                                                  Minimum valid count values are 15. */
-        uint64_t reserved_29_63        : 35;
+        uint64_t boot                  : 1;  /**< [ 29: 29](R/W) When this bit is set, upon DSP exit Global Reset, the DSP would start booting
+                                                                 from an address which is set by MDAB(0..15)_INT_VEC_ADDR. */
+        uint64_t deep_slp_req          : 1;  /**< [ 30: 30](R/W) An assertion of this bit, in a case where a DSP core is in light sleep would
+                                                                 cause transition to Stand By (deep sleep). */
+        uint64_t rcv_core              : 1;  /**< [ 31: 31](R/W) When this bit is set, a DSP core which is low power state (deep sleep or Light
+                                                                 Sleep) would wake up and move to run state. */
+        uint64_t reserved_32_63        : 32;
 #endif /* Word 0 - End */
     } s;
-    struct cavm_mdabx_proc_ctl_cn
+    struct cavm_mdabx_proc_ctl_cnf95xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_29_31        : 3;
@@ -3373,7 +5004,113 @@ union cavm_mdabx_proc_ctl
                                                                  Minimum valid count values are 15. */
         uint64_t reserved_29_31        : 3;
 #endif /* Word 0 - End */
-    } cn;
+    } cnf95xx;
+    struct cavm_mdabx_proc_ctl_loki
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t rcv_core              : 1;  /**< [ 31: 31](R/W) When this bit is set, a DSP core which is low power state (deep sleep or Light
+                                                                 Sleep) would wake up and move to run state. */
+        uint64_t deep_slp_req          : 1;  /**< [ 30: 30](R/W) An assertion of this bit, in a case where a DSP core is in light sleep would
+                                                                 cause transition to Stand By (deep sleep). */
+        uint64_t boot                  : 1;  /**< [ 29: 29](R/W) When this bit is set, upon DSP exit Global Reset, the DSP would start booting
+                                                                 from an address which is set by MDAB(0..15)_INT_VEC_ADDR. */
+        uint64_t powersave_stall_en    : 1;  /**< [ 28: 28](R/W) This bit enables the RUNSTALL powersaving mode. If set, the RUNSTALL signal is toggled
+                                                                 according to the POWERSAVE_ON_CNT and POWERSAVE_OFF_CNT registers. The RUNSTALL
+                                                                 signal is toggled high for the number of clocks provided by POWERSAVE_ON_CNT+1. Likewise
+                                                                 the RUNSTALL is toggled low for the number of clocks provided by POWERSAVE_OFF_CNT+1.
+                                                                 Minimum valid count values are 15. */
+        uint64_t powersave_off_cnt     : 10; /**< [ 27: 18](R/W) This register provides the off (low) count for RUNSTALL powersaving mode. The
+                                                                 RUNSTALL signal will be driven low for
+                                                                 this value +1 clocks. The minimum valid value is 15, which provides a count of
+                                                                 16 clocks. This register provides
+                                                                 a maximum count of 1024. */
+        uint64_t powersave_on_cnt      : 10; /**< [ 17:  8](R/W) This register provides the on (high) count for RUNSTALL powersaving mode. The
+                                                                 RUNSTALL signal will be driven high for
+                                                                 this value +1 clocks. The minimum valid value is 15, which provides a count of
+                                                                 16 clocks. This register provides
+                                                                 a maximum count of 1024. */
+        uint64_t cya_ld_lcl_rst_rs_clr : 1;  /**< [  7:  7](R/W) This register contains backdoor cleanup state.
+                                                                 Internal:
+                                                                 When performing a load local with reset operation, If this bit is set
+                                                                 it will override the logic that holds reset and run_stall active until the slice with
+                                                                 last == 1 is completed.  This will result in reset and run_stall being deasserted after
+                                                                 each slice of a multislice ld_lcl_wrst operation. */
+        uint64_t stlcl_stall           : 1;  /**< [  6:  6](R/W) Local stall bit.  During a ST_LCL transaction, if this
+                                                                 bit is SET, the DAC hardware will assert the DSP RunStall input. If the bit
+                                                                 is CLEAR, the DAC hardware will NOT assert the DSP RunStall input. */
+        uint64_t ldlcl_stall           : 1;  /**< [  5:  5](R/W) Local stall bit.  During a LD_LCL (without reset) transaction, if this
+                                                                 bit is SET, the DAC hardware will assert the DSP RunStall input. If the bit
+                                                                 is CLEAR, the DAC hardware will NOT assert the DSP RunStall input.
+                                                                 NOTE: */
+        uint64_t breset                : 1;  /**< [  4:  4](R/W/H) When software sets this bit the entire DSP Core will be forced in the reset state. When the
+                                                                 software clears this bit, the DSP will come out of reset and start execution at the reset
+                                                                 interrupt vector (if run_stall is not asserted).  This bit is cleared at the start of
+                                                                 a load local with reset operation so that the DSP reset input can be correctly controlled
+                                                                 by the load local with reset logic. DSP Memory system and DSP Debug lgic are not
+                                                                 held at reset while this bit is set. */
+        uint64_t dspsysrest            : 1;  /**< [  3:  3](R/W) Force the DSP core and the DSP Memory system to reset state. DSP Debug logic is
+                                                                 not held at reset state while this bit is set. */
+        uint64_t dreset                : 1;  /**< [  2:  2](R/W) Setting this bit asserts reset to the DSP debug logic. */
+        uint64_t reserved_1            : 1;
+        uint64_t run_stall             : 1;  /**< [  0:  0](R/W/H) When this bit is SET the DSP's RUN_STALL input will be asserted, forcing the DSP to
+                                                                 "stall" until the bit is cleared.  This bit is cleared at the start of a load local
+                                                                 with reset operation to enable the load local logic to control the DSP RunStall input.
+                                                                 At the end of the load local with reset operation when the last block of instruction/
+                                                                 data has been loaded into the DSP memory, the DSP RunStall input will be deasserted
+                                                                 so the DSP can start running. */
+#else /* Word 0 - Little Endian */
+        uint64_t run_stall             : 1;  /**< [  0:  0](R/W/H) When this bit is SET the DSP's RUN_STALL input will be asserted, forcing the DSP to
+                                                                 "stall" until the bit is cleared.  This bit is cleared at the start of a load local
+                                                                 with reset operation to enable the load local logic to control the DSP RunStall input.
+                                                                 At the end of the load local with reset operation when the last block of instruction/
+                                                                 data has been loaded into the DSP memory, the DSP RunStall input will be deasserted
+                                                                 so the DSP can start running. */
+        uint64_t reserved_1            : 1;
+        uint64_t dreset                : 1;  /**< [  2:  2](R/W) Setting this bit asserts reset to the DSP debug logic. */
+        uint64_t dspsysrest            : 1;  /**< [  3:  3](R/W) Force the DSP core and the DSP Memory system to reset state. DSP Debug logic is
+                                                                 not held at reset state while this bit is set. */
+        uint64_t breset                : 1;  /**< [  4:  4](R/W/H) When software sets this bit the entire DSP Core will be forced in the reset state. When the
+                                                                 software clears this bit, the DSP will come out of reset and start execution at the reset
+                                                                 interrupt vector (if run_stall is not asserted).  This bit is cleared at the start of
+                                                                 a load local with reset operation so that the DSP reset input can be correctly controlled
+                                                                 by the load local with reset logic. DSP Memory system and DSP Debug lgic are not
+                                                                 held at reset while this bit is set. */
+        uint64_t ldlcl_stall           : 1;  /**< [  5:  5](R/W) Local stall bit.  During a LD_LCL (without reset) transaction, if this
+                                                                 bit is SET, the DAC hardware will assert the DSP RunStall input. If the bit
+                                                                 is CLEAR, the DAC hardware will NOT assert the DSP RunStall input.
+                                                                 NOTE: */
+        uint64_t stlcl_stall           : 1;  /**< [  6:  6](R/W) Local stall bit.  During a ST_LCL transaction, if this
+                                                                 bit is SET, the DAC hardware will assert the DSP RunStall input. If the bit
+                                                                 is CLEAR, the DAC hardware will NOT assert the DSP RunStall input. */
+        uint64_t cya_ld_lcl_rst_rs_clr : 1;  /**< [  7:  7](R/W) This register contains backdoor cleanup state.
+                                                                 Internal:
+                                                                 When performing a load local with reset operation, If this bit is set
+                                                                 it will override the logic that holds reset and run_stall active until the slice with
+                                                                 last == 1 is completed.  This will result in reset and run_stall being deasserted after
+                                                                 each slice of a multislice ld_lcl_wrst operation. */
+        uint64_t powersave_on_cnt      : 10; /**< [ 17:  8](R/W) This register provides the on (high) count for RUNSTALL powersaving mode. The
+                                                                 RUNSTALL signal will be driven high for
+                                                                 this value +1 clocks. The minimum valid value is 15, which provides a count of
+                                                                 16 clocks. This register provides
+                                                                 a maximum count of 1024. */
+        uint64_t powersave_off_cnt     : 10; /**< [ 27: 18](R/W) This register provides the off (low) count for RUNSTALL powersaving mode. The
+                                                                 RUNSTALL signal will be driven low for
+                                                                 this value +1 clocks. The minimum valid value is 15, which provides a count of
+                                                                 16 clocks. This register provides
+                                                                 a maximum count of 1024. */
+        uint64_t powersave_stall_en    : 1;  /**< [ 28: 28](R/W) This bit enables the RUNSTALL powersaving mode. If set, the RUNSTALL signal is toggled
+                                                                 according to the POWERSAVE_ON_CNT and POWERSAVE_OFF_CNT registers. The RUNSTALL
+                                                                 signal is toggled high for the number of clocks provided by POWERSAVE_ON_CNT+1. Likewise
+                                                                 the RUNSTALL is toggled low for the number of clocks provided by POWERSAVE_OFF_CNT+1.
+                                                                 Minimum valid count values are 15. */
+        uint64_t boot                  : 1;  /**< [ 29: 29](R/W) When this bit is set, upon DSP exit Global Reset, the DSP would start booting
+                                                                 from an address which is set by MDAB(0..15)_INT_VEC_ADDR. */
+        uint64_t deep_slp_req          : 1;  /**< [ 30: 30](R/W) An assertion of this bit, in a case where a DSP core is in light sleep would
+                                                                 cause transition to Stand By (deep sleep). */
+        uint64_t rcv_core              : 1;  /**< [ 31: 31](R/W) When this bit is set, a DSP core which is low power state (deep sleep or Light
+                                                                 Sleep) would wake up and move to run state. */
+#endif /* Word 0 - End */
+    } loki;
 };
 typedef union cavm_mdabx_proc_ctl cavm_mdabx_proc_ctl_t;
 
@@ -3382,7 +5119,9 @@ static inline uint64_t CAVM_MDABX_PROC_CTL(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=41))
         return 0x87e0441001c0ll + 0x4000ll * ((a) & 0x3f);
-    __cavm_csr_fatal("MDABX_PROC_CTL", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e0444001c0ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDABX_PROC_CTL", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDABX_PROC_CTL(a) cavm_mdabx_proc_ctl_t
@@ -3395,7 +5134,8 @@ static inline uint64_t CAVM_MDABX_PROC_CTL(unsigned long a)
  * Register (RSL32b) mdab#_proc_debug
  *
  * MDAB Processor Debug Register
- * This register contains iram data store and dram conditional store status bits.
+ * This register contains iram data store and dram conditional store status bits (need
+ * to update this register) .
  */
 union cavm_mdabx_proc_debug
 {
@@ -3464,7 +5204,9 @@ static inline uint64_t CAVM_MDABX_PROC_DEBUG(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=41))
         return 0x87e0441001e0ll + 0x4000ll * ((a) & 0x3f);
-    __cavm_csr_fatal("MDABX_PROC_DEBUG", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e0444001e0ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDABX_PROC_DEBUG", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDABX_PROC_DEBUG(a) cavm_mdabx_proc_debug_t
@@ -3477,7 +5219,7 @@ static inline uint64_t CAVM_MDABX_PROC_DEBUG(unsigned long a)
  * Register (RSL32b) mdab#_proc_status
  *
  * MDAB Processor Status Register
- * This register indicates if the DSP is halted due to a halt-on-reset or waiti instruction.
+ * This register indicates status value regarding the DSP state.
  */
 union cavm_mdabx_proc_status
 {
@@ -3485,18 +5227,26 @@ union cavm_mdabx_proc_status
     struct cavm_mdabx_proc_status_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_2_63         : 62;
-        uint64_t xocd_state            : 1;  /**< [  1:  1](RO/H) Indicates the DSP has entered the post reset OCD halt mode. */
-        uint64_t pwait_state           : 1;  /**< [  0:  0](RO/H) Indicates that the DSP is in the sleep mode as a result of executing the
-                                                                 WAITI instruction.  Any enabled interrupt will wake the DSP up. */
+        uint64_t reserved_17_63        : 47;
+        uint64_t ocem_dbg_mod          : 1;  /**< [ 16: 16](RO/H) DSP OECM debugmode indication. */
+        uint64_t dsp_trap              : 1;  /**< [ 15: 15](RO/H) DSP Core in a TRAP indication */
+        uint64_t etm_en                : 1;  /**< [ 14: 14](RO/H) DSP Core ETM is Enabled. */
+        uint64_t etm_fifo_empty        : 1;  /**< [ 13: 13](RO/H) reflect the status for the ETM FIFO, 0x0 - empty, 0x1 - accupeid . */
+        uint64_t ocem_gp               : 4;  /**< [ 12:  9](RO/H) reflect the status at OCEM Control Register bits[15:12]. */
+        uint64_t ack_ds                : 1;  /**< [  8:  8](RO/H) Acknowledge transition request from Light Sleep to Deep Sleep. */
+        uint64_t reserved_0_7          : 8;
 #else /* Word 0 - Little Endian */
-        uint64_t pwait_state           : 1;  /**< [  0:  0](RO/H) Indicates that the DSP is in the sleep mode as a result of executing the
-                                                                 WAITI instruction.  Any enabled interrupt will wake the DSP up. */
-        uint64_t xocd_state            : 1;  /**< [  1:  1](RO/H) Indicates the DSP has entered the post reset OCD halt mode. */
-        uint64_t reserved_2_63         : 62;
+        uint64_t reserved_0_7          : 8;
+        uint64_t ack_ds                : 1;  /**< [  8:  8](RO/H) Acknowledge transition request from Light Sleep to Deep Sleep. */
+        uint64_t ocem_gp               : 4;  /**< [ 12:  9](RO/H) reflect the status at OCEM Control Register bits[15:12]. */
+        uint64_t etm_fifo_empty        : 1;  /**< [ 13: 13](RO/H) reflect the status for the ETM FIFO, 0x0 - empty, 0x1 - accupeid . */
+        uint64_t etm_en                : 1;  /**< [ 14: 14](RO/H) DSP Core ETM is Enabled. */
+        uint64_t dsp_trap              : 1;  /**< [ 15: 15](RO/H) DSP Core in a TRAP indication */
+        uint64_t ocem_dbg_mod          : 1;  /**< [ 16: 16](RO/H) DSP OECM debugmode indication. */
+        uint64_t reserved_17_63        : 47;
 #endif /* Word 0 - End */
     } s;
-    struct cavm_mdabx_proc_status_cn
+    struct cavm_mdabx_proc_status_cnf95xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_2_31         : 30;
@@ -3509,7 +5259,37 @@ union cavm_mdabx_proc_status
         uint64_t xocd_state            : 1;  /**< [  1:  1](RO/H) Indicates the DSP has entered the post reset OCD halt mode. */
         uint64_t reserved_2_31         : 30;
 #endif /* Word 0 - End */
-    } cn;
+    } cnf95xx;
+    struct cavm_mdabx_proc_status_loki
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_17_31        : 15;
+        uint64_t ocem_dbg_mod          : 1;  /**< [ 16: 16](RO/H) DSP OECM debugmode indication. */
+        uint64_t dsp_trap              : 1;  /**< [ 15: 15](RO/H) DSP Core in a TRAP indication */
+        uint64_t etm_en                : 1;  /**< [ 14: 14](RO/H) DSP Core ETM is Enabled. */
+        uint64_t etm_fifo_empty        : 1;  /**< [ 13: 13](RO/H) reflect the status for the ETM FIFO, 0x0 - empty, 0x1 - accupeid . */
+        uint64_t ocem_gp               : 4;  /**< [ 12:  9](RO/H) reflect the status at OCEM Control Register bits[15:12]. */
+        uint64_t ack_ds                : 1;  /**< [  8:  8](RO/H) Acknowledge transition request from Light Sleep to Deep Sleep. */
+        uint64_t reserved_2_7          : 6;
+        uint64_t core_deep_sleep       : 1;  /**< [  1:  1](RO/H) Indicates the DSP core and its memory system are in sleep mode. Any enabled
+                                                                 interrupt will wake the DSP up or setting RCV_CORE in MDAB(0..15)_PROC_CTL. */
+        uint64_t core_light_sleep      : 1;  /**< [  0:  0](RO/H) Indicates that the DSP core is in the sleep mode. Any enabled interrupt will
+                                                                 wake the DSP up or setting RCV_CORE in MDAB(0..15)_PROC_CTL. */
+#else /* Word 0 - Little Endian */
+        uint64_t core_light_sleep      : 1;  /**< [  0:  0](RO/H) Indicates that the DSP core is in the sleep mode. Any enabled interrupt will
+                                                                 wake the DSP up or setting RCV_CORE in MDAB(0..15)_PROC_CTL. */
+        uint64_t core_deep_sleep       : 1;  /**< [  1:  1](RO/H) Indicates the DSP core and its memory system are in sleep mode. Any enabled
+                                                                 interrupt will wake the DSP up or setting RCV_CORE in MDAB(0..15)_PROC_CTL. */
+        uint64_t reserved_2_7          : 6;
+        uint64_t ack_ds                : 1;  /**< [  8:  8](RO/H) Acknowledge transition request from Light Sleep to Deep Sleep. */
+        uint64_t ocem_gp               : 4;  /**< [ 12:  9](RO/H) reflect the status at OCEM Control Register bits[15:12]. */
+        uint64_t etm_fifo_empty        : 1;  /**< [ 13: 13](RO/H) reflect the status for the ETM FIFO, 0x0 - empty, 0x1 - accupeid . */
+        uint64_t etm_en                : 1;  /**< [ 14: 14](RO/H) DSP Core ETM is Enabled. */
+        uint64_t dsp_trap              : 1;  /**< [ 15: 15](RO/H) DSP Core in a TRAP indication */
+        uint64_t ocem_dbg_mod          : 1;  /**< [ 16: 16](RO/H) DSP OECM debugmode indication. */
+        uint64_t reserved_17_31        : 15;
+#endif /* Word 0 - End */
+    } loki;
 };
 typedef union cavm_mdabx_proc_status cavm_mdabx_proc_status_t;
 
@@ -3518,7 +5298,9 @@ static inline uint64_t CAVM_MDABX_PROC_STATUS(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=41))
         return 0x87e0441001b0ll + 0x4000ll * ((a) & 0x3f);
-    __cavm_csr_fatal("MDABX_PROC_STATUS", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e0444001b0ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDABX_PROC_STATUS", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDABX_PROC_STATUS(a) cavm_mdabx_proc_status_t
@@ -3574,7 +5356,9 @@ static inline uint64_t CAVM_MDABX_PSM_CMDX(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=41) && (b<=3)))
         return 0x87e044100100ll + 0x4000ll * ((a) & 0x3f) + 0x10ll * ((b) & 0x3);
-    __cavm_csr_fatal("MDABX_PSM_CMDX", 2, a, b, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=15) && (b<=3)))
+        return 0x87e044400100ll + 0x40000ll * ((a) & 0xf) + 0x10ll * ((b) & 0x3);
+    __cavm_csr_fatal("MDABX_PSM_CMDX", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDABX_PSM_CMDX(a,b) cavm_mdabx_psm_cmdx_t
@@ -3637,7 +5421,9 @@ static inline uint64_t CAVM_MDABX_PSM_CMD_PUSH(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=41))
         return 0x87e044100140ll + 0x4000ll * ((a) & 0x3f);
-    __cavm_csr_fatal("MDABX_PSM_CMD_PUSH", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044400140ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDABX_PSM_CMD_PUSH", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDABX_PSM_CMD_PUSH(a) cavm_mdabx_psm_cmd_push_t
@@ -3687,7 +5473,7 @@ static inline uint64_t CAVM_MDABX_PSM_TIMER(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=41))
         return 0x87e0441001f0ll + 0x4000ll * ((a) & 0x3f);
-    __cavm_csr_fatal("MDABX_PSM_TIMER", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("MDABX_PSM_TIMER", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDABX_PSM_TIMER(a) cavm_mdabx_psm_timer_t
@@ -3695,6 +5481,92 @@ static inline uint64_t CAVM_MDABX_PSM_TIMER(unsigned long a)
 #define basename_CAVM_MDABX_PSM_TIMER(a) "MDABX_PSM_TIMER"
 #define busnum_CAVM_MDABX_PSM_TIMER(a) (a)
 #define arguments_CAVM_MDABX_PSM_TIMER(a) (a),-1,-1,-1
+
+/**
+ * Register (RSL32b) mdab#_psm_timer_hi
+ *
+ * MDAB PSM Timer Broadcast Register
+ * This register contains the latest value captured from the PSM timer bits[63:32].
+ */
+union cavm_mdabx_psm_timer_hi
+{
+    uint32_t u;
+    struct cavm_mdabx_psm_timer_hi_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t bcn_hi                : 32; /**< [ 31:  0](RO/H) BCN Time bits[63:32] broadcast from the PSM timer. */
+#else /* Word 0 - Little Endian */
+        uint32_t bcn_hi                : 32; /**< [ 31:  0](RO/H) BCN Time bits[63:32] broadcast from the PSM timer. */
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_mdabx_psm_timer_hi_s cn; */
+};
+typedef union cavm_mdabx_psm_timer_hi cavm_mdabx_psm_timer_hi_t;
+
+static inline uint64_t CAVM_MDABX_PSM_TIMER_HI(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_MDABX_PSM_TIMER_HI(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e0444001f0ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDABX_PSM_TIMER_HI", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_MDABX_PSM_TIMER_HI(a) cavm_mdabx_psm_timer_hi_t
+#define bustype_CAVM_MDABX_PSM_TIMER_HI(a) CSR_TYPE_RSL32b
+#define basename_CAVM_MDABX_PSM_TIMER_HI(a) "MDABX_PSM_TIMER_HI"
+#define busnum_CAVM_MDABX_PSM_TIMER_HI(a) (a)
+#define arguments_CAVM_MDABX_PSM_TIMER_HI(a) (a),-1,-1,-1
+
+/**
+ * Register (RSL32b) mdab#_psm_timer_lo
+ *
+ * MDAB PSM Timer Broadcast Register
+ * This register contains the latest value captured from the PSM timer[31:0].
+ *
+ * Internal:
+ * This register complete the lower bits of the BCN time. part of it is captured from
+ * the PSM time broadcast and the other parts is being generated locally.
+ * The 64bit formed from those two registers (PSM_TIMER_LO,PSM_TIMER_HI) are being
+ * passed to the Trace Timespamp .
+ */
+union cavm_mdabx_psm_timer_lo
+{
+    uint32_t u;
+    struct cavm_mdabx_psm_timer_lo_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t bcn_lo                : 8;  /**< [ 31: 24](RO/H) BCN Time bits[31:24] broadcast from the PSM timer. */
+        uint32_t bcn_lsb               : 24; /**< [ 23:  0](RO/H) BCN Time bits[23:0].
+
+                                                                 Internal:
+                                                                 Those bits are generated by a local counter running int he DSP Freq to alow high
+                                                                 granularity of the BNC timer. */
+#else /* Word 0 - Little Endian */
+        uint32_t bcn_lsb               : 24; /**< [ 23:  0](RO/H) BCN Time bits[23:0].
+
+                                                                 Internal:
+                                                                 Those bits are generated by a local counter running int he DSP Freq to alow high
+                                                                 granularity of the BNC timer. */
+        uint32_t bcn_lo                : 8;  /**< [ 31: 24](RO/H) BCN Time bits[31:24] broadcast from the PSM timer. */
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_mdabx_psm_timer_lo_s cn; */
+};
+typedef union cavm_mdabx_psm_timer_lo cavm_mdabx_psm_timer_lo_t;
+
+static inline uint64_t CAVM_MDABX_PSM_TIMER_LO(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_MDABX_PSM_TIMER_LO(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044400200ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDABX_PSM_TIMER_LO", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_MDABX_PSM_TIMER_LO(a) cavm_mdabx_psm_timer_lo_t
+#define bustype_CAVM_MDABX_PSM_TIMER_LO(a) CSR_TYPE_RSL32b
+#define basename_CAVM_MDABX_PSM_TIMER_LO(a) "MDABX_PSM_TIMER_LO"
+#define busnum_CAVM_MDABX_PSM_TIMER_LO(a) (a)
+#define arguments_CAVM_MDABX_PSM_TIMER_LO(a) (a),-1,-1,-1
 
 /**
  * Register (RSL32b) mdab#_rd_addr
@@ -3744,7 +5616,7 @@ union cavm_mdabx_rd_addr
         uint64_t reserved_31_63        : 33;
 #endif /* Word 0 - End */
     } s;
-    struct cavm_mdabx_rd_addr_cn
+    struct cavm_mdabx_rd_addr_cnf95xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_31           : 1;
@@ -3781,7 +5653,33 @@ union cavm_mdabx_rd_addr
                                                                  (0:DMEM/1:IMEM) */
         uint64_t reserved_31           : 1;
 #endif /* Word 0 - End */
-    } cn;
+    } cnf95xx;
+    struct cavm_mdabx_rd_addr_loki
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_23_31        : 9;
+        uint64_t addr                  : 19; /**< [ 22:  4](R/W/H) The 128b-aligned starting address used by the RD-DMA engine when writing RD-DMA data to
+                                                                 local DSP memory.
+                                                                 When ADDR[22:21] == 2'b00 (D-TCM/DMEM):
+                                                                   Valid 128b-aligned address range = 0x0 - (0x03_FFFF \>\> 4)
+                                                                 When ADDR[22:21] == 2'b01 (P-TCM/IMEM):
+                                                                   Valid 128b-aligned address range = (0x20_0000 \>\> 4) - (0x21_FFFF \>\> 4)
+                                                                 When ADDR[22:21] == 2'b10 (CMP registers):
+                                                                   Valid 128b-aligned address range = (0x40_0000 \>\> 4) - (0x40_3FFF \>\> 4) */
+        uint64_t reserved_0_3          : 4;
+#else /* Word 0 - Little Endian */
+        uint64_t reserved_0_3          : 4;
+        uint64_t addr                  : 19; /**< [ 22:  4](R/W/H) The 128b-aligned starting address used by the RD-DMA engine when writing RD-DMA data to
+                                                                 local DSP memory.
+                                                                 When ADDR[22:21] == 2'b00 (D-TCM/DMEM):
+                                                                   Valid 128b-aligned address range = 0x0 - (0x03_FFFF \>\> 4)
+                                                                 When ADDR[22:21] == 2'b01 (P-TCM/IMEM):
+                                                                   Valid 128b-aligned address range = (0x20_0000 \>\> 4) - (0x21_FFFF \>\> 4)
+                                                                 When ADDR[22:21] == 2'b10 (CMP registers):
+                                                                   Valid 128b-aligned address range = (0x40_0000 \>\> 4) - (0x40_3FFF \>\> 4) */
+        uint64_t reserved_23_31        : 9;
+#endif /* Word 0 - End */
+    } loki;
 };
 typedef union cavm_mdabx_rd_addr cavm_mdabx_rd_addr_t;
 
@@ -3790,7 +5688,9 @@ static inline uint64_t CAVM_MDABX_RD_ADDR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=41))
         return 0x87e044100070ll + 0x4000ll * ((a) & 0x3f);
-    __cavm_csr_fatal("MDABX_RD_ADDR", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044400070ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDABX_RD_ADDR", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDABX_RD_ADDR(a) cavm_mdabx_rd_addr_t
@@ -3798,6 +5698,61 @@ static inline uint64_t CAVM_MDABX_RD_ADDR(unsigned long a)
 #define basename_CAVM_MDABX_RD_ADDR(a) "MDABX_RD_ADDR"
 #define busnum_CAVM_MDABX_RD_ADDR(a) (a)
 #define arguments_CAVM_MDABX_RD_ADDR(a) (a),-1,-1,-1
+
+/**
+ * Register (RSL32b) mdab#_rd_error_sts
+ *
+ * MDAB RD Error Status Register
+ * This register contains DSP slave read error status signals.
+ */
+union cavm_mdabx_rd_error_sts
+{
+    uint32_t u;
+    struct cavm_mdabx_rd_error_sts_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t reserved_25_31        : 7;
+        uint32_t addr                  : 21; /**< [ 24:  4](RO/H) When a DSP slave write access causes the SLVERR error bit to be set, this field captures the
+                                                                 failing address. */
+        uint32_t error_src             : 3;  /**< [  3:  1](RO/H) This field indicates the source of the transaction that caused the recorded error.
+                                                                 000: WDM
+                                                                 001: RDM
+                                                                 010: CDM
+                                                                 011: CSR
+                                                                 100: PFO Write Request Error */
+        uint32_t mem_slverr            : 1;  /**< [  0:  0](R/W1C/H) This bit will be set when a write channel csr or DMA engine access is performed to a non existent
+                                                                 instruction or data memory address, or when any other illegal access is performed */
+#else /* Word 0 - Little Endian */
+        uint32_t mem_slverr            : 1;  /**< [  0:  0](R/W1C/H) This bit will be set when a write channel csr or DMA engine access is performed to a non existent
+                                                                 instruction or data memory address, or when any other illegal access is performed */
+        uint32_t error_src             : 3;  /**< [  3:  1](RO/H) This field indicates the source of the transaction that caused the recorded error.
+                                                                 000: WDM
+                                                                 001: RDM
+                                                                 010: CDM
+                                                                 011: CSR
+                                                                 100: PFO Write Request Error */
+        uint32_t addr                  : 21; /**< [ 24:  4](RO/H) When a DSP slave write access causes the SLVERR error bit to be set, this field captures the
+                                                                 failing address. */
+        uint32_t reserved_25_31        : 7;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_mdabx_rd_error_sts_s cn; */
+};
+typedef union cavm_mdabx_rd_error_sts cavm_mdabx_rd_error_sts_t;
+
+static inline uint64_t CAVM_MDABX_RD_ERROR_STS(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_MDABX_RD_ERROR_STS(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044400270ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDABX_RD_ERROR_STS", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_MDABX_RD_ERROR_STS(a) cavm_mdabx_rd_error_sts_t
+#define bustype_CAVM_MDABX_RD_ERROR_STS(a) CSR_TYPE_RSL32b
+#define basename_CAVM_MDABX_RD_ERROR_STS(a) "MDABX_RD_ERROR_STS"
+#define busnum_CAVM_MDABX_RD_ERROR_STS(a) (a)
+#define arguments_CAVM_MDABX_RD_ERROR_STS(a) (a),-1,-1,-1
 
 /**
  * Register (RSL32b) mdab#_rd_fifo_status
@@ -3833,7 +5788,9 @@ static inline uint64_t CAVM_MDABX_RD_FIFO_STATUS(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=41))
         return 0x87e044100480ll + 0x4000ll * ((a) & 0x3f);
-    __cavm_csr_fatal("MDABX_RD_FIFO_STATUS", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044400480ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDABX_RD_FIFO_STATUS", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDABX_RD_FIFO_STATUS(a) cavm_mdabx_rd_fifo_status_t
@@ -3873,7 +5830,7 @@ union cavm_mdabx_rd_length
         uint64_t reserved_19_63        : 45;
 #endif /* Word 0 - End */
     } s;
-    struct cavm_mdabx_rd_length_cn
+    struct cavm_mdabx_rd_length_cnf95xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_19_31        : 13;
@@ -3894,7 +5851,27 @@ union cavm_mdabx_rd_length
                                                                  the start of a transfer or when a new slice starts for a multi-slice transfer. */
         uint64_t reserved_19_31        : 13;
 #endif /* Word 0 - End */
-    } cn;
+    } cnf95xx;
+    struct cavm_mdabx_rd_length_loki
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_18_31        : 14;
+        uint64_t length                : 14; /**< [ 17:  4](RO/H) The actual 128-bit length of the most recent RD-DMA engine read DMA transfer.
+                                                                 This field will be updated when the RD-DMA has been actually write committed to local DSP
+                                                                 memory,
+                                                                 which allows software to read (poll) the length field during the RD-DMA transfer to know how many
+                                                                 128-bit chunks are now currently available to be read and used. */
+        uint64_t reserved_0_3          : 4;
+#else /* Word 0 - Little Endian */
+        uint64_t reserved_0_3          : 4;
+        uint64_t length                : 14; /**< [ 17:  4](RO/H) The actual 128-bit length of the most recent RD-DMA engine read DMA transfer.
+                                                                 This field will be updated when the RD-DMA has been actually write committed to local DSP
+                                                                 memory,
+                                                                 which allows software to read (poll) the length field during the RD-DMA transfer to know how many
+                                                                 128-bit chunks are now currently available to be read and used. */
+        uint64_t reserved_18_31        : 14;
+#endif /* Word 0 - End */
+    } loki;
 };
 typedef union cavm_mdabx_rd_length cavm_mdabx_rd_length_t;
 
@@ -3903,7 +5880,9 @@ static inline uint64_t CAVM_MDABX_RD_LENGTH(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=41))
         return 0x87e044100090ll + 0x4000ll * ((a) & 0x3f);
-    __cavm_csr_fatal("MDABX_RD_LENGTH", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044400090ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDABX_RD_LENGTH", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDABX_RD_LENGTH(a) cavm_mdabx_rd_length_t
@@ -3988,7 +5967,7 @@ union cavm_mdabx_rd_limit
         uint64_t reserved_32_63        : 32;
 #endif /* Word 0 - End */
     } s;
-    struct cavm_mdabx_rd_limit_cn
+    struct cavm_mdabx_rd_limit_cnf95xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t last                  : 1;  /**< [ 31: 31](R/W) Indicates the last RD-DMA slice which may be written to address MDAB()_RD_ADDR.
@@ -4049,7 +6028,63 @@ union cavm_mdabx_rd_limit
                                                                  SW_NOTE: For every new RD-DMA slice operation, DSP software *MUST* signal LAST to indicate
                                                                  the final JD.RD-DMA data slice transfer. */
 #endif /* Word 0 - End */
-    } cn;
+    } cnf95xx;
+    struct cavm_mdabx_rd_limit_loki
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t last                  : 1;  /**< [ 31: 31](R/W) Indicates the last RD-DMA slice which may be written to address MDAB()_RD_ADDR.
+                                                                 DSP software may choose to segment the JD.RD-DMA data into multiple non-contiguous RD-DMA
+                                                                 transfers to DSP local memory.
+                                                                 Eventually, DSP software will indicate the LAST segment (or slice), to indicate this is
+                                                                 the final RD-DMA sub-blk transfer.
+                                                                 Each RD-DMA operation's LAST will indicate when the last segment (or slice) RD-DMA
+                                                                 operation has been set up, to complete the JD.RD-DMA data transfer.
+                                                                 SW_NOTE: For every new RD-DMA slice operation, DSP software *MUST* signal LAST to indicate
+                                                                 the final JD.RD-DMA data slice transfer. */
+        uint64_t reserved_18_30        : 13;
+        uint64_t limit                 : 14; /**< [ 17:  4](R/W/H) "The maximum number of 128-bit chunks that the RD-DMA engine may write at address
+                                                                 MDAB()_RD_ADDR.
+                                                                 The JD.JCFG data typically will contain the total RD-DMA Length for each new job. The
+                                                                 DSP software is at liberty to break the total RD-DMA transfer into multiples RD-DMA segments (or
+                                                                 slices) using the LIMIT register. When either LIMIT has been reached (or if the last
+                                                                 JD.RD-DMA data is detected), the RD-DMA is done.
+
+                                                                 D-TCM/DMEM: 0x0 - (0x03_FFFF \>\> 4)
+                                                                 P-TCM/IMEM: (0x20_0000 \>\> 4) - (0x21_FFFF \>\> 4)
+                                                                 CMP registers: (0x40_0000 \>\> 4) - (0x40_3FFF \>\> 4)
+
+                                                                 SW RESTRICTION #1: Software should never program LIMIT=0. INDETERMINATE results can/will occur.
+                                                                 SW RESTRICTION #2: Software should ensure that ADDR+LIMIT SIZES fall within the I+D MEM space,
+                                                                 otherwise DMA_ERROR and INDETERMINATE results can/will occur." */
+        uint64_t reserved_0_3          : 4;
+#else /* Word 0 - Little Endian */
+        uint64_t reserved_0_3          : 4;
+        uint64_t limit                 : 14; /**< [ 17:  4](R/W/H) "The maximum number of 128-bit chunks that the RD-DMA engine may write at address
+                                                                 MDAB()_RD_ADDR.
+                                                                 The JD.JCFG data typically will contain the total RD-DMA Length for each new job. The
+                                                                 DSP software is at liberty to break the total RD-DMA transfer into multiples RD-DMA segments (or
+                                                                 slices) using the LIMIT register. When either LIMIT has been reached (or if the last
+                                                                 JD.RD-DMA data is detected), the RD-DMA is done.
+
+                                                                 D-TCM/DMEM: 0x0 - (0x03_FFFF \>\> 4)
+                                                                 P-TCM/IMEM: (0x20_0000 \>\> 4) - (0x21_FFFF \>\> 4)
+                                                                 CMP registers: (0x40_0000 \>\> 4) - (0x40_3FFF \>\> 4)
+
+                                                                 SW RESTRICTION #1: Software should never program LIMIT=0. INDETERMINATE results can/will occur.
+                                                                 SW RESTRICTION #2: Software should ensure that ADDR+LIMIT SIZES fall within the I+D MEM space,
+                                                                 otherwise DMA_ERROR and INDETERMINATE results can/will occur." */
+        uint64_t reserved_18_30        : 13;
+        uint64_t last                  : 1;  /**< [ 31: 31](R/W) Indicates the last RD-DMA slice which may be written to address MDAB()_RD_ADDR.
+                                                                 DSP software may choose to segment the JD.RD-DMA data into multiple non-contiguous RD-DMA
+                                                                 transfers to DSP local memory.
+                                                                 Eventually, DSP software will indicate the LAST segment (or slice), to indicate this is
+                                                                 the final RD-DMA sub-blk transfer.
+                                                                 Each RD-DMA operation's LAST will indicate when the last segment (or slice) RD-DMA
+                                                                 operation has been set up, to complete the JD.RD-DMA data transfer.
+                                                                 SW_NOTE: For every new RD-DMA slice operation, DSP software *MUST* signal LAST to indicate
+                                                                 the final JD.RD-DMA data slice transfer. */
+#endif /* Word 0 - End */
+    } loki;
 };
 typedef union cavm_mdabx_rd_limit cavm_mdabx_rd_limit_t;
 
@@ -4058,7 +6093,9 @@ static inline uint64_t CAVM_MDABX_RD_LIMIT(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=41))
         return 0x87e044100080ll + 0x4000ll * ((a) & 0x3f);
-    __cavm_csr_fatal("MDABX_RD_LIMIT", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044400080ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDABX_RD_LIMIT", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDABX_RD_LIMIT(a) cavm_mdabx_rd_limit_t
@@ -4090,7 +6127,21 @@ union cavm_mdabx_rd_next_addr
         uint32_t reserved_31           : 1;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdabx_rd_next_addr_s cn; */
+    /* struct cavm_mdabx_rd_next_addr_s cnf95xx; */
+    struct cavm_mdabx_rd_next_addr_loki
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t reserved_23_31        : 9;
+        uint32_t next_addr             : 19; /**< [ 22:  4](RO/H) The next 128b-aligned starting address to be used by the RD-DMA engine when writing RD-DMA data to
+                                                                 local DSP memory. This register is used to determine the address for unused slices. */
+        uint32_t reserved_0_3          : 4;
+#else /* Word 0 - Little Endian */
+        uint32_t reserved_0_3          : 4;
+        uint32_t next_addr             : 19; /**< [ 22:  4](RO/H) The next 128b-aligned starting address to be used by the RD-DMA engine when writing RD-DMA data to
+                                                                 local DSP memory. This register is used to determine the address for unused slices. */
+        uint32_t reserved_23_31        : 9;
+#endif /* Word 0 - End */
+    } loki;
 };
 typedef union cavm_mdabx_rd_next_addr cavm_mdabx_rd_next_addr_t;
 
@@ -4099,7 +6150,9 @@ static inline uint64_t CAVM_MDABX_RD_NEXT_ADDR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=41))
         return 0x87e044100460ll + 0x4000ll * ((a) & 0x3f);
-    __cavm_csr_fatal("MDABX_RD_NEXT_ADDR", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044400460ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDABX_RD_NEXT_ADDR", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDABX_RD_NEXT_ADDR(a) cavm_mdabx_rd_next_addr_t
@@ -4112,7 +6165,7 @@ static inline uint64_t CAVM_MDABX_RD_NEXT_ADDR(unsigned long a)
  * Register (RSL32b) mdab#_rd_status
  *
  * MDAB Read DMA Status Register
- * Reports the status for the RD-DMA engine.
+ * Reports the status for the RD DMA engine.
  */
 union cavm_mdabx_rd_status
 {
@@ -4201,7 +6254,7 @@ union cavm_mdabx_rd_status
         uint64_t reserved_32_63        : 32;
 #endif /* Word 0 - End */
     } s;
-    struct cavm_mdabx_rd_status_cn
+    struct cavm_mdabx_rd_status_cnf95xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t job_tag               : 16; /**< [ 31: 16](RO/H) The JOB_TAG field from the PSM command for the last completed RD-DMA operation.
@@ -4282,7 +6335,89 @@ union cavm_mdabx_rd_status
                                                                  When DSP software writes START_BUSY=0-\>1, the RD-DMA engine will wait until the next
                                                                  available Job has been enqueued, at which point the JOB_TAG will be latched in. */
 #endif /* Word 0 - End */
-    } cn;
+    } cnf95xx;
+    struct cavm_mdabx_rd_status_loki
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t job_tag               : 16; /**< [ 31: 16](RO/H) The JOB_TAG field from the PSM command for the last completed RD DMA operation.
+                                                                 When DSP software writes [START_BUSY] = 0 -\> 1, the RD DMA engine will wait until the next
+                                                                 available job has been enqueued, at which point the JOB_TAG will be latched in. */
+        uint64_t reserved_13_15        : 3;
+        uint64_t slice_fifo_flush      : 1;  /**< [ 12: 12](R/W1S/H) Write one to flush the slice FIFO. This field will be automatically cleared. */
+        uint64_t post_ld_lcl           : 1;  /**< [ 11: 11](RO/H) Set when a load local job has completed (last LOAD-LCL micro-op completes).
+                                                                 Cleared when a normal job has completed. */
+        uint64_t ld_lcl_busy           : 1;  /**< [ 10: 10](RO/H) Set when a load local operation is active. */
+        uint64_t pending_slot          : 1;  /**< [  9:  9](RO/H) The job slot for the pending RD DMA operation. Valid only when [START_BUSY] == 0 and
+                                                                 [DMA_PENDING] == 1. */
+        uint64_t job_slot              : 1;  /**< [  8:  8](RO/H) The job slot for the most recent RD DMA operation. */
+        uint64_t slice_fifo_oflow      : 1;  /**< [  7:  7](RO/H) Set when the slice FIFO overflows. */
+        uint64_t dma_uflow             : 1;  /**< [  6:  6](RO/H) Set when the last RD DMA operation encountered an underflow. */
+        uint64_t dma_oflow             : 1;  /**< [  5:  5](RO/H) Set when the last RD DMA operation encountered an overflow. */
+        uint64_t dma_error             : 1;  /**< [  4:  4](RO/H) Set when the last RD DMA operation encountered an error. */
+        uint64_t last_dma_done         : 1;  /**< [  3:  3](RO/H) Set when the last RD DMA operation transferred the last word of the RD DMA data from the
+                                                                 job descriptor (JD.RD-DMA). */
+        uint64_t dma_pending           : 1;  /**< [  2:  2](RO/H) Set when a RD DMA operation is pending for the engine and the internal interface needs to
+                                                                 be programmed. */
+        uint64_t post_reset            : 1;  /**< [  1:  1](RO/H) Set to one on MDAB reset and remains one until the RD-DMA engine starts its first
+                                                                 RD-DMA transfer.
+                                                                 SWNOTE: DSP software can use this bit to qualify the JOB_TAG, JOB_SLOT, DMA_ERROR, LAST_DMA_DONE
+                                                                 bits in this CSR. [see: these status bits remain SET and POST_RESET is used
+                                                                 by software to know when they are truly valid].
+                                                                 SET(HW): MDAB reset
+                                                                 CLR(SW): DSP writes START_BUSY=0-\>1 */
+        uint64_t start_busy            : 1;  /**< [  0:  0](R/W1S/H) When software writes a one to this register, hardware will write the job descriptor's read
+                                                                 DMA section (JD.RD-DMA) for the next available job into the local memory starting at
+                                                                 MDAB()_RD_ADDR, up to MDAB()_RD_ADDR+MDAB()_RD_LIMIT or when the last 128-bit word of the JD.RD-
+                                                                 DMA section is
+                                                                 transferred (whichever comes first).
+                                                                 If the RD-DMA engine has already transferred part but not all of the JD.RD-DMA section for
+                                                                 a job, then it will continue transferring data until it reaches the end of the JD.RD-DMA
+                                                                 section, or until it
+                                                                 writes MDAB()_CFG_LIMIT for the LAST RD-DMA slice, whichever comes first. This bit is reset
+                                                                 to zero when the
+                                                                 RD-DMA engine has completed the transfer and is ready to be re-initialized for another
+                                                                 transfer. */
+#else /* Word 0 - Little Endian */
+        uint64_t start_busy            : 1;  /**< [  0:  0](R/W1S/H) When software writes a one to this register, hardware will write the job descriptor's read
+                                                                 DMA section (JD.RD-DMA) for the next available job into the local memory starting at
+                                                                 MDAB()_RD_ADDR, up to MDAB()_RD_ADDR+MDAB()_RD_LIMIT or when the last 128-bit word of the JD.RD-
+                                                                 DMA section is
+                                                                 transferred (whichever comes first).
+                                                                 If the RD-DMA engine has already transferred part but not all of the JD.RD-DMA section for
+                                                                 a job, then it will continue transferring data until it reaches the end of the JD.RD-DMA
+                                                                 section, or until it
+                                                                 writes MDAB()_CFG_LIMIT for the LAST RD-DMA slice, whichever comes first. This bit is reset
+                                                                 to zero when the
+                                                                 RD-DMA engine has completed the transfer and is ready to be re-initialized for another
+                                                                 transfer. */
+        uint64_t post_reset            : 1;  /**< [  1:  1](RO/H) Set to one on MDAB reset and remains one until the RD-DMA engine starts its first
+                                                                 RD-DMA transfer.
+                                                                 SWNOTE: DSP software can use this bit to qualify the JOB_TAG, JOB_SLOT, DMA_ERROR, LAST_DMA_DONE
+                                                                 bits in this CSR. [see: these status bits remain SET and POST_RESET is used
+                                                                 by software to know when they are truly valid].
+                                                                 SET(HW): MDAB reset
+                                                                 CLR(SW): DSP writes START_BUSY=0-\>1 */
+        uint64_t dma_pending           : 1;  /**< [  2:  2](RO/H) Set when a RD DMA operation is pending for the engine and the internal interface needs to
+                                                                 be programmed. */
+        uint64_t last_dma_done         : 1;  /**< [  3:  3](RO/H) Set when the last RD DMA operation transferred the last word of the RD DMA data from the
+                                                                 job descriptor (JD.RD-DMA). */
+        uint64_t dma_error             : 1;  /**< [  4:  4](RO/H) Set when the last RD DMA operation encountered an error. */
+        uint64_t dma_oflow             : 1;  /**< [  5:  5](RO/H) Set when the last RD DMA operation encountered an overflow. */
+        uint64_t dma_uflow             : 1;  /**< [  6:  6](RO/H) Set when the last RD DMA operation encountered an underflow. */
+        uint64_t slice_fifo_oflow      : 1;  /**< [  7:  7](RO/H) Set when the slice FIFO overflows. */
+        uint64_t job_slot              : 1;  /**< [  8:  8](RO/H) The job slot for the most recent RD DMA operation. */
+        uint64_t pending_slot          : 1;  /**< [  9:  9](RO/H) The job slot for the pending RD DMA operation. Valid only when [START_BUSY] == 0 and
+                                                                 [DMA_PENDING] == 1. */
+        uint64_t ld_lcl_busy           : 1;  /**< [ 10: 10](RO/H) Set when a load local operation is active. */
+        uint64_t post_ld_lcl           : 1;  /**< [ 11: 11](RO/H) Set when a load local job has completed (last LOAD-LCL micro-op completes).
+                                                                 Cleared when a normal job has completed. */
+        uint64_t slice_fifo_flush      : 1;  /**< [ 12: 12](R/W1S/H) Write one to flush the slice FIFO. This field will be automatically cleared. */
+        uint64_t reserved_13_15        : 3;
+        uint64_t job_tag               : 16; /**< [ 31: 16](RO/H) The JOB_TAG field from the PSM command for the last completed RD DMA operation.
+                                                                 When DSP software writes [START_BUSY] = 0 -\> 1, the RD DMA engine will wait until the next
+                                                                 available job has been enqueued, at which point the JOB_TAG will be latched in. */
+#endif /* Word 0 - End */
+    } loki;
 };
 typedef union cavm_mdabx_rd_status cavm_mdabx_rd_status_t;
 
@@ -4291,7 +6426,9 @@ static inline uint64_t CAVM_MDABX_RD_STATUS(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=41))
         return 0x87e044100060ll + 0x4000ll * ((a) & 0x3f);
-    __cavm_csr_fatal("MDABX_RD_STATUS", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044400060ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDABX_RD_STATUS", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDABX_RD_STATUS(a) cavm_mdabx_rd_status_t
@@ -4299,6 +6436,641 @@ static inline uint64_t CAVM_MDABX_RD_STATUS(unsigned long a)
 #define basename_CAVM_MDABX_RD_STATUS(a) "MDABX_RD_STATUS"
 #define busnum_CAVM_MDABX_RD_STATUS(a) (a)
 #define arguments_CAVM_MDABX_RD_STATUS(a) (a),-1,-1,-1
+
+/**
+ * Register (RSL32b) mdab#_rmp_dflt_win_addr_hi
+ *
+ * MDAB System Memory Default Remap Address High Register
+ * Define the default remap address bits [52:32].
+ */
+union cavm_mdabx_rmp_dflt_win_addr_hi
+{
+    uint32_t u;
+    struct cavm_mdabx_rmp_dflt_win_addr_hi_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t reserved_21_31        : 11;
+        uint32_t haddr                 : 21; /**< [ 20:  0](R/W) This Register Value defined the override value of address bits[52:32] of the
+                                                                 address trgeting the System memory. */
+#else /* Word 0 - Little Endian */
+        uint32_t haddr                 : 21; /**< [ 20:  0](R/W) This Register Value defined the override value of address bits[52:32] of the
+                                                                 address trgeting the System memory. */
+        uint32_t reserved_21_31        : 11;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_mdabx_rmp_dflt_win_addr_hi_s cn; */
+};
+typedef union cavm_mdabx_rmp_dflt_win_addr_hi cavm_mdabx_rmp_dflt_win_addr_hi_t;
+
+static inline uint64_t CAVM_MDABX_RMP_DFLT_WIN_ADDR_HI(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_MDABX_RMP_DFLT_WIN_ADDR_HI(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e0444008c0ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDABX_RMP_DFLT_WIN_ADDR_HI", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_MDABX_RMP_DFLT_WIN_ADDR_HI(a) cavm_mdabx_rmp_dflt_win_addr_hi_t
+#define bustype_CAVM_MDABX_RMP_DFLT_WIN_ADDR_HI(a) CSR_TYPE_RSL32b
+#define basename_CAVM_MDABX_RMP_DFLT_WIN_ADDR_HI(a) "MDABX_RMP_DFLT_WIN_ADDR_HI"
+#define busnum_CAVM_MDABX_RMP_DFLT_WIN_ADDR_HI(a) (a)
+#define arguments_CAVM_MDABX_RMP_DFLT_WIN_ADDR_HI(a) (a),-1,-1,-1
+
+/**
+ * Register (RSL32b) mdab#_rmp_dflt_win_addr_low
+ *
+ * MDAB System Memory Default Remap Address Low Register
+ * Define the DefaultRemap address bits [31:0].
+ */
+union cavm_mdabx_rmp_dflt_win_addr_low
+{
+    uint32_t u;
+    struct cavm_mdabx_rmp_dflt_win_addr_low_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t laddr                 : 20; /**< [ 31: 12](R/W) This Register Value defined the override value of address bits[31:20] of the
+                                                                 address trgeting the System memory. */
+        uint32_t reserved_0_11         : 12;
+#else /* Word 0 - Little Endian */
+        uint32_t reserved_0_11         : 12;
+        uint32_t laddr                 : 20; /**< [ 31: 12](R/W) This Register Value defined the override value of address bits[31:20] of the
+                                                                 address trgeting the System memory. */
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_mdabx_rmp_dflt_win_addr_low_s cn; */
+};
+typedef union cavm_mdabx_rmp_dflt_win_addr_low cavm_mdabx_rmp_dflt_win_addr_low_t;
+
+static inline uint64_t CAVM_MDABX_RMP_DFLT_WIN_ADDR_LOW(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_MDABX_RMP_DFLT_WIN_ADDR_LOW(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e0444008d0ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDABX_RMP_DFLT_WIN_ADDR_LOW", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_MDABX_RMP_DFLT_WIN_ADDR_LOW(a) cavm_mdabx_rmp_dflt_win_addr_low_t
+#define bustype_CAVM_MDABX_RMP_DFLT_WIN_ADDR_LOW(a) CSR_TYPE_RSL32b
+#define basename_CAVM_MDABX_RMP_DFLT_WIN_ADDR_LOW(a) "MDABX_RMP_DFLT_WIN_ADDR_LOW"
+#define busnum_CAVM_MDABX_RMP_DFLT_WIN_ADDR_LOW(a) (a)
+#define arguments_CAVM_MDABX_RMP_DFLT_WIN_ADDR_LOW(a) (a),-1,-1,-1
+
+/**
+ * Register (RSL32b) mdab#_rmp_win_addr_hi
+ *
+ * MDAB System Memory Remap Address High Register
+ * Define the remap address bits [52:32].
+ */
+union cavm_mdabx_rmp_win_addr_hi
+{
+    uint32_t u;
+    struct cavm_mdabx_rmp_win_addr_hi_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t reserved_21_31        : 11;
+        uint32_t haddr                 : 21; /**< [ 20:  0](R/W) This Register Value defined the override value of address bits[52:32] of the
+                                                                 address trgeting the System memory. */
+#else /* Word 0 - Little Endian */
+        uint32_t haddr                 : 21; /**< [ 20:  0](R/W) This Register Value defined the override value of address bits[52:32] of the
+                                                                 address trgeting the System memory. */
+        uint32_t reserved_21_31        : 11;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_mdabx_rmp_win_addr_hi_s cn; */
+};
+typedef union cavm_mdabx_rmp_win_addr_hi cavm_mdabx_rmp_win_addr_hi_t;
+
+static inline uint64_t CAVM_MDABX_RMP_WIN_ADDR_HI(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_MDABX_RMP_WIN_ADDR_HI(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044400880ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDABX_RMP_WIN_ADDR_HI", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_MDABX_RMP_WIN_ADDR_HI(a) cavm_mdabx_rmp_win_addr_hi_t
+#define bustype_CAVM_MDABX_RMP_WIN_ADDR_HI(a) CSR_TYPE_RSL32b
+#define basename_CAVM_MDABX_RMP_WIN_ADDR_HI(a) "MDABX_RMP_WIN_ADDR_HI"
+#define busnum_CAVM_MDABX_RMP_WIN_ADDR_HI(a) (a)
+#define arguments_CAVM_MDABX_RMP_WIN_ADDR_HI(a) (a),-1,-1,-1
+
+/**
+ * Register (RSL32b) mdab#_rmp_win_addr_low
+ *
+ * MDAB System Memory Remap Address Low Register
+ * Define the remap address bits [31:0].
+ */
+union cavm_mdabx_rmp_win_addr_low
+{
+    uint32_t u;
+    struct cavm_mdabx_rmp_win_addr_low_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t laddr                 : 20; /**< [ 31: 12](R/W) This Register Value defined the override value of address bits[31:20] of the
+                                                                 address trgeting the System memory. */
+        uint32_t reserved_0_11         : 12;
+#else /* Word 0 - Little Endian */
+        uint32_t reserved_0_11         : 12;
+        uint32_t laddr                 : 20; /**< [ 31: 12](R/W) This Register Value defined the override value of address bits[31:20] of the
+                                                                 address trgeting the System memory. */
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_mdabx_rmp_win_addr_low_s cn; */
+};
+typedef union cavm_mdabx_rmp_win_addr_low cavm_mdabx_rmp_win_addr_low_t;
+
+static inline uint64_t CAVM_MDABX_RMP_WIN_ADDR_LOW(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_MDABX_RMP_WIN_ADDR_LOW(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044400890ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDABX_RMP_WIN_ADDR_LOW", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_MDABX_RMP_WIN_ADDR_LOW(a) cavm_mdabx_rmp_win_addr_low_t
+#define bustype_CAVM_MDABX_RMP_WIN_ADDR_LOW(a) CSR_TYPE_RSL32b
+#define basename_CAVM_MDABX_RMP_WIN_ADDR_LOW(a) "MDABX_RMP_WIN_ADDR_LOW"
+#define busnum_CAVM_MDABX_RMP_WIN_ADDR_LOW(a) (a)
+#define arguments_CAVM_MDABX_RMP_WIN_ADDR_LOW(a) (a),-1,-1,-1
+
+/**
+ * Register (RSL32b) mdab#_rmp_win_base
+ *
+ * MDAB System Memory Remap Window Base Addr Register
+ * Sets the Base Address of the System Memory Remap window.
+ */
+union cavm_mdabx_rmp_win_base
+{
+    uint32_t u;
+    struct cavm_mdabx_rmp_win_base_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t baddr                 : 28; /**< [ 31:  4](R/W) Base Address of the Remap Window. */
+        uint32_t reserved_1_3          : 3;
+        uint32_t rmp_win_en            : 1;  /**< [  0:  0](R/W) Enable the SYSMEM Remap window.
+                                                                 0 = Disable.
+                                                                 1 = Enable. */
+#else /* Word 0 - Little Endian */
+        uint32_t rmp_win_en            : 1;  /**< [  0:  0](R/W) Enable the SYSMEM Remap window.
+                                                                 0 = Disable.
+                                                                 1 = Enable. */
+        uint32_t reserved_1_3          : 3;
+        uint32_t baddr                 : 28; /**< [ 31:  4](R/W) Base Address of the Remap Window. */
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_mdabx_rmp_win_base_s cn; */
+};
+typedef union cavm_mdabx_rmp_win_base cavm_mdabx_rmp_win_base_t;
+
+static inline uint64_t CAVM_MDABX_RMP_WIN_BASE(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_MDABX_RMP_WIN_BASE(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e0444008a0ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDABX_RMP_WIN_BASE", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_MDABX_RMP_WIN_BASE(a) cavm_mdabx_rmp_win_base_t
+#define bustype_CAVM_MDABX_RMP_WIN_BASE(a) CSR_TYPE_RSL32b
+#define basename_CAVM_MDABX_RMP_WIN_BASE(a) "MDABX_RMP_WIN_BASE"
+#define busnum_CAVM_MDABX_RMP_WIN_BASE(a) (a)
+#define arguments_CAVM_MDABX_RMP_WIN_BASE(a) (a),-1,-1,-1
+
+/**
+ * Register (RSL32b) mdab#_rmp_win_size
+ *
+ * MDAB System Memory Remap Window Size Register
+ * Sets the Base Address of the System Memory Remap window.
+ */
+union cavm_mdabx_rmp_win_size
+{
+    uint32_t u;
+    struct cavm_mdabx_rmp_win_size_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t wsize                 : 32; /**< [ 31:  0](R/W) Remap window Size. */
+#else /* Word 0 - Little Endian */
+        uint32_t wsize                 : 32; /**< [ 31:  0](R/W) Remap window Size. */
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_mdabx_rmp_win_size_s cn; */
+};
+typedef union cavm_mdabx_rmp_win_size cavm_mdabx_rmp_win_size_t;
+
+static inline uint64_t CAVM_MDABX_RMP_WIN_SIZE(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_MDABX_RMP_WIN_SIZE(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e0444008b0ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDABX_RMP_WIN_SIZE", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_MDABX_RMP_WIN_SIZE(a) cavm_mdabx_rmp_win_size_t
+#define bustype_CAVM_MDABX_RMP_WIN_SIZE(a) CSR_TYPE_RSL32b
+#define basename_CAVM_MDABX_RMP_WIN_SIZE(a) "MDABX_RMP_WIN_SIZE"
+#define busnum_CAVM_MDABX_RMP_WIN_SIZE(a) (a)
+#define arguments_CAVM_MDABX_RMP_WIN_SIZE(a) (a),-1,-1,-1
+
+/**
+ * Register (RSL32b) mdab#_sec_int_ena_w1c
+ *
+ * MDAB Secondary Interrupt Enable CLEAR Register
+ * This register is used to clear MDAB Secondary interrupt enables for the MDAB_SEC_INT_SUM bits.
+ */
+union cavm_mdabx_sec_int_ena_w1c
+{
+    uint32_t u;
+    struct cavm_mdabx_sec_int_ena_w1c_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t reserved_9_31         : 23;
+        uint32_t cti_int               : 1;  /**< [  8:  8](R/W1C/H) Reads or clears the enable for the MBAD()_SEC_INT_SUM[CTI_INT] interrupt bit. */
+        uint32_t reserved_2_7          : 6;
+        uint32_t qman_int              : 1;  /**< [  1:  1](R/W1C/H) Reads or clears the enable for the MBAD()_SEC_INT_SUM[QMAN_INT] interrupt bit. */
+        uint32_t sgi                   : 1;  /**< [  0:  0](R/W1C/H) Reads or clears enables for the MBAD()_SEC_INT_SUM[SGI]. */
+#else /* Word 0 - Little Endian */
+        uint32_t sgi                   : 1;  /**< [  0:  0](R/W1C/H) Reads or clears enables for the MBAD()_SEC_INT_SUM[SGI]. */
+        uint32_t qman_int              : 1;  /**< [  1:  1](R/W1C/H) Reads or clears the enable for the MBAD()_SEC_INT_SUM[QMAN_INT] interrupt bit. */
+        uint32_t reserved_2_7          : 6;
+        uint32_t cti_int               : 1;  /**< [  8:  8](R/W1C/H) Reads or clears the enable for the MBAD()_SEC_INT_SUM[CTI_INT] interrupt bit. */
+        uint32_t reserved_9_31         : 23;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_mdabx_sec_int_ena_w1c_s cn; */
+};
+typedef union cavm_mdabx_sec_int_ena_w1c cavm_mdabx_sec_int_ena_w1c_t;
+
+static inline uint64_t CAVM_MDABX_SEC_INT_ENA_W1C(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_MDABX_SEC_INT_ENA_W1C(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044400a20ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDABX_SEC_INT_ENA_W1C", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_MDABX_SEC_INT_ENA_W1C(a) cavm_mdabx_sec_int_ena_w1c_t
+#define bustype_CAVM_MDABX_SEC_INT_ENA_W1C(a) CSR_TYPE_RSL32b
+#define basename_CAVM_MDABX_SEC_INT_ENA_W1C(a) "MDABX_SEC_INT_ENA_W1C"
+#define busnum_CAVM_MDABX_SEC_INT_ENA_W1C(a) (a)
+#define arguments_CAVM_MDABX_SEC_INT_ENA_W1C(a) (a),-1,-1,-1
+
+/**
+ * Register (RSL32b) mdab#_sec_int_ena_w1s
+ *
+ * MDAB Secondary Interrupt Enable SET Register
+ * This register is used to set MDAB Secondary interrupt enables for the MDAB_SEC_INT_SUM bits.
+ */
+union cavm_mdabx_sec_int_ena_w1s
+{
+    uint32_t u;
+    struct cavm_mdabx_sec_int_ena_w1s_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t reserved_9_31         : 23;
+        uint32_t cti_int               : 1;  /**< [  8:  8](R/W1S/H) Reads or sets the enable for the MBAD()_SEC_INT_SUM[CTI_INT] interrupt bit. */
+        uint32_t reserved_2_7          : 6;
+        uint32_t qman_irq              : 1;  /**< [  1:  1](R/W1S/H) Reads or sets the enable for the MBAD()_SEC_INT_SUM[QMAN_IRQ] interrupt bit. */
+        uint32_t sgi                   : 1;  /**< [  0:  0](R/W1S/H) Reads or sets enables for the MBAD()_SEC_INT_SUM[SGI]. */
+#else /* Word 0 - Little Endian */
+        uint32_t sgi                   : 1;  /**< [  0:  0](R/W1S/H) Reads or sets enables for the MBAD()_SEC_INT_SUM[SGI]. */
+        uint32_t qman_irq              : 1;  /**< [  1:  1](R/W1S/H) Reads or sets the enable for the MBAD()_SEC_INT_SUM[QMAN_IRQ] interrupt bit. */
+        uint32_t reserved_2_7          : 6;
+        uint32_t cti_int               : 1;  /**< [  8:  8](R/W1S/H) Reads or sets the enable for the MBAD()_SEC_INT_SUM[CTI_INT] interrupt bit. */
+        uint32_t reserved_9_31         : 23;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_mdabx_sec_int_ena_w1s_s cn; */
+};
+typedef union cavm_mdabx_sec_int_ena_w1s cavm_mdabx_sec_int_ena_w1s_t;
+
+static inline uint64_t CAVM_MDABX_SEC_INT_ENA_W1S(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_MDABX_SEC_INT_ENA_W1S(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044400a30ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDABX_SEC_INT_ENA_W1S", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_MDABX_SEC_INT_ENA_W1S(a) cavm_mdabx_sec_int_ena_w1s_t
+#define bustype_CAVM_MDABX_SEC_INT_ENA_W1S(a) CSR_TYPE_RSL32b
+#define basename_CAVM_MDABX_SEC_INT_ENA_W1S(a) "MDABX_SEC_INT_ENA_W1S"
+#define busnum_CAVM_MDABX_SEC_INT_ENA_W1S(a) (a)
+#define arguments_CAVM_MDABX_SEC_INT_ENA_W1S(a) (a),-1,-1,-1
+
+/**
+ * Register (RSL32b) mdab#_sec_int_intvec_ena
+ *
+ * MDAB Secondary Interrupt INTVEC Enable Register
+ * This register is used to Enable Reporting MDAB Secondary interrupts  To DSP INT Vector.
+ */
+union cavm_mdabx_sec_int_intvec_ena
+{
+    uint32_t u;
+    struct cavm_mdabx_sec_int_intvec_ena_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t reserved_9_31         : 23;
+        uint32_t cti_int               : 1;  /**< [  8:  8](R/W) If Enable, CTI_INT event is reported to DSP INTVEC. 0x1 - Enable, 0x0 - Disable */
+        uint32_t reserved_2_7          : 6;
+        uint32_t qman_irq              : 1;  /**< [  1:  1](R/W) If Enable, QMAN_IRQ event is reported to DSP INTVEC. 0x1 - Enable, 0x0 - Disable */
+        uint32_t sgi                   : 1;  /**< [  0:  0](R/W) If Enable, SGO event is reported to DSP INTVEC. 0x1 - Enable, 0x0 - Disable */
+#else /* Word 0 - Little Endian */
+        uint32_t sgi                   : 1;  /**< [  0:  0](R/W) If Enable, SGO event is reported to DSP INTVEC. 0x1 - Enable, 0x0 - Disable */
+        uint32_t qman_irq              : 1;  /**< [  1:  1](R/W) If Enable, QMAN_IRQ event is reported to DSP INTVEC. 0x1 - Enable, 0x0 - Disable */
+        uint32_t reserved_2_7          : 6;
+        uint32_t cti_int               : 1;  /**< [  8:  8](R/W) If Enable, CTI_INT event is reported to DSP INTVEC. 0x1 - Enable, 0x0 - Disable */
+        uint32_t reserved_9_31         : 23;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_mdabx_sec_int_intvec_ena_s cn; */
+};
+typedef union cavm_mdabx_sec_int_intvec_ena cavm_mdabx_sec_int_intvec_ena_t;
+
+static inline uint64_t CAVM_MDABX_SEC_INT_INTVEC_ENA(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_MDABX_SEC_INT_INTVEC_ENA(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044400a50ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDABX_SEC_INT_INTVEC_ENA", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_MDABX_SEC_INT_INTVEC_ENA(a) cavm_mdabx_sec_int_intvec_ena_t
+#define bustype_CAVM_MDABX_SEC_INT_INTVEC_ENA(a) CSR_TYPE_RSL32b
+#define basename_CAVM_MDABX_SEC_INT_INTVEC_ENA(a) "MDABX_SEC_INT_INTVEC_ENA"
+#define busnum_CAVM_MDABX_SEC_INT_INTVEC_ENA(a) (a)
+#define arguments_CAVM_MDABX_SEC_INT_INTVEC_ENA(a) (a),-1,-1,-1
+
+/**
+ * Register (RSL32b) mdab#_sec_int_nmi_ena
+ *
+ * MDAB Secondary Interrupt NMI Enable Register
+ * This register is used to Enable Reporting MDAB Secondary interrupts  To DSP NMI.
+ */
+union cavm_mdabx_sec_int_nmi_ena
+{
+    uint32_t u;
+    struct cavm_mdabx_sec_int_nmi_ena_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t reserved_9_31         : 23;
+        uint32_t cti_int               : 1;  /**< [  8:  8](R/W) If Enable, CTI_INT event is reported to DSP NMI. 0x1 - Enable, 0x0 - Disable */
+        uint32_t reserved_2_7          : 6;
+        uint32_t qman_irq              : 1;  /**< [  1:  1](R/W) If Enable, QMAN_IRQ event is reported to DSP NMI. 0x1 - Enable, 0x0 - Disable */
+        uint32_t sgi                   : 1;  /**< [  0:  0](R/W) If Enable, SGO event is reported to DSP NMI. 0x1 - Enable, 0x0 - Disable */
+#else /* Word 0 - Little Endian */
+        uint32_t sgi                   : 1;  /**< [  0:  0](R/W) If Enable, SGO event is reported to DSP NMI. 0x1 - Enable, 0x0 - Disable */
+        uint32_t qman_irq              : 1;  /**< [  1:  1](R/W) If Enable, QMAN_IRQ event is reported to DSP NMI. 0x1 - Enable, 0x0 - Disable */
+        uint32_t reserved_2_7          : 6;
+        uint32_t cti_int               : 1;  /**< [  8:  8](R/W) If Enable, CTI_INT event is reported to DSP NMI. 0x1 - Enable, 0x0 - Disable */
+        uint32_t reserved_9_31         : 23;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_mdabx_sec_int_nmi_ena_s cn; */
+};
+typedef union cavm_mdabx_sec_int_nmi_ena cavm_mdabx_sec_int_nmi_ena_t;
+
+static inline uint64_t CAVM_MDABX_SEC_INT_NMI_ENA(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_MDABX_SEC_INT_NMI_ENA(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044400a60ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDABX_SEC_INT_NMI_ENA", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_MDABX_SEC_INT_NMI_ENA(a) cavm_mdabx_sec_int_nmi_ena_t
+#define bustype_CAVM_MDABX_SEC_INT_NMI_ENA(a) CSR_TYPE_RSL32b
+#define basename_CAVM_MDABX_SEC_INT_NMI_ENA(a) "MDABX_SEC_INT_NMI_ENA"
+#define busnum_CAVM_MDABX_SEC_INT_NMI_ENA(a) (a)
+#define arguments_CAVM_MDABX_SEC_INT_NMI_ENA(a) (a),-1,-1,-1
+
+/**
+ * Register (RSL32b) mdab#_sec_int_sum_w1c
+ *
+ * MDAB Secondary Interrupt Summary Register
+ * This register reports the Seconday interrupt sources status for the MDAB.
+ * Software clears individual interrupts by writing one to the corresponding bit.
+ */
+union cavm_mdabx_sec_int_sum_w1c
+{
+    uint32_t u;
+    struct cavm_mdabx_sec_int_sum_w1c_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t reserved_9_31         : 23;
+        uint32_t cti_trigger           : 1;  /**< [  8:  8](R/W1C/H) Indicates CTI Event has occured. */
+        uint32_t reserved_2_7          : 6;
+        uint32_t qmap_irq              : 1;  /**< [  1:  1](R/W1C/H) Indicates QMAN IRQ event has occured. */
+        uint32_t sgi                   : 1;  /**< [  0:  0](R/W1C/H) SW Generated Interrupt. */
+#else /* Word 0 - Little Endian */
+        uint32_t sgi                   : 1;  /**< [  0:  0](R/W1C/H) SW Generated Interrupt. */
+        uint32_t qmap_irq              : 1;  /**< [  1:  1](R/W1C/H) Indicates QMAN IRQ event has occured. */
+        uint32_t reserved_2_7          : 6;
+        uint32_t cti_trigger           : 1;  /**< [  8:  8](R/W1C/H) Indicates CTI Event has occured. */
+        uint32_t reserved_9_31         : 23;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_mdabx_sec_int_sum_w1c_s cn; */
+};
+typedef union cavm_mdabx_sec_int_sum_w1c cavm_mdabx_sec_int_sum_w1c_t;
+
+static inline uint64_t CAVM_MDABX_SEC_INT_SUM_W1C(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_MDABX_SEC_INT_SUM_W1C(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044400a00ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDABX_SEC_INT_SUM_W1C", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_MDABX_SEC_INT_SUM_W1C(a) cavm_mdabx_sec_int_sum_w1c_t
+#define bustype_CAVM_MDABX_SEC_INT_SUM_W1C(a) CSR_TYPE_RSL32b
+#define basename_CAVM_MDABX_SEC_INT_SUM_W1C(a) "MDABX_SEC_INT_SUM_W1C"
+#define busnum_CAVM_MDABX_SEC_INT_SUM_W1C(a) (a)
+#define arguments_CAVM_MDABX_SEC_INT_SUM_W1C(a) (a),-1,-1,-1
+
+/**
+ * Register (RSL32b) mdab#_sec_int_sum_w1s
+ *
+ * MDAB Secondary Interrupt Summary SET Register
+ * This register is used to artificially set MDAB interrupts described in
+ * MDAB_SEC_INT_SUM (for software Debug/Test)
+ */
+union cavm_mdabx_sec_int_sum_w1s
+{
+    uint32_t u;
+    struct cavm_mdabx_sec_int_sum_w1s_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t reserved_9_31         : 23;
+        uint32_t cti_int               : 1;  /**< [  8:  8](R/W1S/H) Reads or sets the MBAD()_SEC_INT_SUM[CTI_INT] interrupt bit. */
+        uint32_t reserved_2_7          : 6;
+        uint32_t qman_irq              : 1;  /**< [  1:  1](R/W1S/H) Reads or sets the MBAD()_SEC_INT_SUM[QMAN_INT] interrupt bit. */
+        uint32_t sgi                   : 1;  /**< [  0:  0](R/W1S/H) Reads or sets the MBAD()_SEC_INT_SUM[SGI]. */
+#else /* Word 0 - Little Endian */
+        uint32_t sgi                   : 1;  /**< [  0:  0](R/W1S/H) Reads or sets the MBAD()_SEC_INT_SUM[SGI]. */
+        uint32_t qman_irq              : 1;  /**< [  1:  1](R/W1S/H) Reads or sets the MBAD()_SEC_INT_SUM[QMAN_INT] interrupt bit. */
+        uint32_t reserved_2_7          : 6;
+        uint32_t cti_int               : 1;  /**< [  8:  8](R/W1S/H) Reads or sets the MBAD()_SEC_INT_SUM[CTI_INT] interrupt bit. */
+        uint32_t reserved_9_31         : 23;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_mdabx_sec_int_sum_w1s_s cn; */
+};
+typedef union cavm_mdabx_sec_int_sum_w1s cavm_mdabx_sec_int_sum_w1s_t;
+
+static inline uint64_t CAVM_MDABX_SEC_INT_SUM_W1S(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_MDABX_SEC_INT_SUM_W1S(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044400a10ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDABX_SEC_INT_SUM_W1S", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_MDABX_SEC_INT_SUM_W1S(a) cavm_mdabx_sec_int_sum_w1s_t
+#define bustype_CAVM_MDABX_SEC_INT_SUM_W1S(a) CSR_TYPE_RSL32b
+#define basename_CAVM_MDABX_SEC_INT_SUM_W1S(a) "MDABX_SEC_INT_SUM_W1S"
+#define busnum_CAVM_MDABX_SEC_INT_SUM_W1S(a) (a)
+#define arguments_CAVM_MDABX_SEC_INT_SUM_W1S(a) (a),-1,-1,-1
+
+/**
+ * Register (RSL32b) mdab#_smem_bar
+ *
+ * MDAB Shared Memory Base Address Register
+ * Sets the Base address of the shared Memory address space.
+ */
+union cavm_mdabx_smem_bar
+{
+    uint32_t u;
+    struct cavm_mdabx_smem_bar_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t baddr                 : 32; /**< [ 31:  0](R/W) Base address */
+#else /* Word 0 - Little Endian */
+        uint32_t baddr                 : 32; /**< [ 31:  0](R/W) Base address */
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_mdabx_smem_bar_s cn; */
+};
+typedef union cavm_mdabx_smem_bar cavm_mdabx_smem_bar_t;
+
+static inline uint64_t CAVM_MDABX_SMEM_BAR(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_MDABX_SMEM_BAR(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044400800ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDABX_SMEM_BAR", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_MDABX_SMEM_BAR(a) cavm_mdabx_smem_bar_t
+#define bustype_CAVM_MDABX_SMEM_BAR(a) CSR_TYPE_RSL32b
+#define basename_CAVM_MDABX_SMEM_BAR(a) "MDABX_SMEM_BAR"
+#define busnum_CAVM_MDABX_SMEM_BAR(a) (a)
+#define arguments_CAVM_MDABX_SMEM_BAR(a) (a),-1,-1,-1
+
+/**
+ * Register (RSL32b) mdab#_smem_bar_size
+ *
+ * MDAB Shared Memory Address Space size Register
+ * Sets the Window Size, in bytes, minus 1. Example, for 1MByte window set this resiger
+ * to 0x000F_FFFF.
+ */
+union cavm_mdabx_smem_bar_size
+{
+    uint32_t u;
+    struct cavm_mdabx_smem_bar_size_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t bsize                 : 32; /**< [ 31:  0](R/W) BAR Size. */
+#else /* Word 0 - Little Endian */
+        uint32_t bsize                 : 32; /**< [ 31:  0](R/W) BAR Size. */
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_mdabx_smem_bar_size_s cn; */
+};
+typedef union cavm_mdabx_smem_bar_size cavm_mdabx_smem_bar_size_t;
+
+static inline uint64_t CAVM_MDABX_SMEM_BAR_SIZE(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_MDABX_SMEM_BAR_SIZE(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044400810ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDABX_SMEM_BAR_SIZE", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_MDABX_SMEM_BAR_SIZE(a) cavm_mdabx_smem_bar_size_t
+#define bustype_CAVM_MDABX_SMEM_BAR_SIZE(a) CSR_TYPE_RSL32b
+#define basename_CAVM_MDABX_SMEM_BAR_SIZE(a) "MDABX_SMEM_BAR_SIZE"
+#define busnum_CAVM_MDABX_SMEM_BAR_SIZE(a) (a)
+#define arguments_CAVM_MDABX_SMEM_BAR_SIZE(a) (a),-1,-1,-1
+
+/**
+ * Register (RSL32b) mdab#_sysmem_bar
+ *
+ * MDAB System Memory Base Address Register
+ * Sets the Base address of the System Memory address space.
+ */
+union cavm_mdabx_sysmem_bar
+{
+    uint32_t u;
+    struct cavm_mdabx_sysmem_bar_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t baddr                 : 32; /**< [ 31:  0](R/W) Base address */
+#else /* Word 0 - Little Endian */
+        uint32_t baddr                 : 32; /**< [ 31:  0](R/W) Base address */
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_mdabx_sysmem_bar_s cn; */
+};
+typedef union cavm_mdabx_sysmem_bar cavm_mdabx_sysmem_bar_t;
+
+static inline uint64_t CAVM_MDABX_SYSMEM_BAR(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_MDABX_SYSMEM_BAR(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044400820ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDABX_SYSMEM_BAR", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_MDABX_SYSMEM_BAR(a) cavm_mdabx_sysmem_bar_t
+#define bustype_CAVM_MDABX_SYSMEM_BAR(a) CSR_TYPE_RSL32b
+#define basename_CAVM_MDABX_SYSMEM_BAR(a) "MDABX_SYSMEM_BAR"
+#define busnum_CAVM_MDABX_SYSMEM_BAR(a) (a)
+#define arguments_CAVM_MDABX_SYSMEM_BAR(a) (a),-1,-1,-1
+
+/**
+ * Register (RSL32b) mdab#_sysmem_bar_size
+ *
+ * MDAB System Memory Address Space size Register
+ * Sets the Size of the System Memory BAR.
+ */
+union cavm_mdabx_sysmem_bar_size
+{
+    uint32_t u;
+    struct cavm_mdabx_sysmem_bar_size_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t bsize                 : 32; /**< [ 31:  0](R/W) BAR Size. */
+#else /* Word 0 - Little Endian */
+        uint32_t bsize                 : 32; /**< [ 31:  0](R/W) BAR Size. */
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_mdabx_sysmem_bar_size_s cn; */
+};
+typedef union cavm_mdabx_sysmem_bar_size cavm_mdabx_sysmem_bar_size_t;
+
+static inline uint64_t CAVM_MDABX_SYSMEM_BAR_SIZE(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_MDABX_SYSMEM_BAR_SIZE(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044400830ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDABX_SYSMEM_BAR_SIZE", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_MDABX_SYSMEM_BAR_SIZE(a) cavm_mdabx_sysmem_bar_size_t
+#define bustype_CAVM_MDABX_SYSMEM_BAR_SIZE(a) CSR_TYPE_RSL32b
+#define basename_CAVM_MDABX_SYSMEM_BAR_SIZE(a) "MDABX_SYSMEM_BAR_SIZE"
+#define busnum_CAVM_MDABX_SYSMEM_BAR_SIZE(a) (a)
+#define arguments_CAVM_MDABX_SYSMEM_BAR_SIZE(a) (a),-1,-1,-1
 
 /**
  * Register (RSL32b) mdab#_wr_addr
@@ -4348,7 +7120,7 @@ union cavm_mdabx_wr_addr
         uint64_t reserved_31_63        : 33;
 #endif /* Word 0 - End */
     } s;
-    struct cavm_mdabx_wr_addr_cn
+    struct cavm_mdabx_wr_addr_cnf95xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_31           : 1;
@@ -4385,7 +7157,33 @@ union cavm_mdabx_wr_addr
                                                                  (0:DMEM/1:IMEM) */
         uint64_t reserved_31           : 1;
 #endif /* Word 0 - End */
-    } cn;
+    } cnf95xx;
+    struct cavm_mdabx_wr_addr_loki
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_23_31        : 9;
+        uint64_t addr                  : 19; /**< [ 22:  4](R/W/H) The 128b-aligned starting address used by the WR-DMA engine when reading WR-DMA data from
+                                                                 local DSP memory.
+                                                                 When ADDR[22:21] == 2'b00 (D-TCM/DMEM):
+                                                                   Valid 128b-aligned address range = 0x0 - (0x03_FFFF \>\> 4)
+                                                                 When ADDR[22:21] == 2'b01 (P-TCM/IMEM):
+                                                                   Valid 128b-aligned address range = (0x20_0000 \>\> 4) - (0x21_FFFF \>\> 4)
+                                                                 When ADDR[22:21] == 2'b10 (CMP registers):
+                                                                   Valid 128b-aligned address range = (0x40_0000 \>\> 4) - (0x40_3FFF \>\> 4) */
+        uint64_t reserved_0_3          : 4;
+#else /* Word 0 - Little Endian */
+        uint64_t reserved_0_3          : 4;
+        uint64_t addr                  : 19; /**< [ 22:  4](R/W/H) The 128b-aligned starting address used by the WR-DMA engine when reading WR-DMA data from
+                                                                 local DSP memory.
+                                                                 When ADDR[22:21] == 2'b00 (D-TCM/DMEM):
+                                                                   Valid 128b-aligned address range = 0x0 - (0x03_FFFF \>\> 4)
+                                                                 When ADDR[22:21] == 2'b01 (P-TCM/IMEM):
+                                                                   Valid 128b-aligned address range = (0x20_0000 \>\> 4) - (0x21_FFFF \>\> 4)
+                                                                 When ADDR[22:21] == 2'b10 (CMP registers):
+                                                                   Valid 128b-aligned address range = (0x40_0000 \>\> 4) - (0x40_3FFF \>\> 4) */
+        uint64_t reserved_23_31        : 9;
+#endif /* Word 0 - End */
+    } loki;
 };
 typedef union cavm_mdabx_wr_addr cavm_mdabx_wr_addr_t;
 
@@ -4394,7 +7192,9 @@ static inline uint64_t CAVM_MDABX_WR_ADDR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=41))
         return 0x87e0441000b0ll + 0x4000ll * ((a) & 0x3f);
-    __cavm_csr_fatal("MDABX_WR_ADDR", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e0444000b0ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDABX_WR_ADDR", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDABX_WR_ADDR(a) cavm_mdabx_wr_addr_t
@@ -4402,6 +7202,62 @@ static inline uint64_t CAVM_MDABX_WR_ADDR(unsigned long a)
 #define basename_CAVM_MDABX_WR_ADDR(a) "MDABX_WR_ADDR"
 #define busnum_CAVM_MDABX_WR_ADDR(a) (a)
 #define arguments_CAVM_MDABX_WR_ADDR(a) (a),-1,-1,-1
+
+/**
+ * Register (RSL32b) mdab#_wr_error_sts
+ *
+ * INTERNAL: MDAB Write Error Status Register
+ *
+ * This register contains DSP slave write error status signals.
+ */
+union cavm_mdabx_wr_error_sts
+{
+    uint32_t u;
+    struct cavm_mdabx_wr_error_sts_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t reserved_25_31        : 7;
+        uint32_t addr                  : 21; /**< [ 24:  4](RO/H) When a DSP slave write access causes the SLVERR error bit to be set, this field captures the
+                                                                 failing address. */
+        uint32_t error_src             : 3;  /**< [  3:  1](RO/H) This field indicates the source of the transaction that caused the recorded error.
+                                                                 000: WDM
+                                                                 001: RDM
+                                                                 010: CDM
+                                                                 011: CSR
+                                                                 100: PFO Write Request Error */
+        uint32_t mem_slverr            : 1;  /**< [  0:  0](R/W1C/H) This bit will be set when a write channel csr or DMA engine access is performed to a non existent
+                                                                 instruction or data memory address, or when any other illegal access is performed */
+#else /* Word 0 - Little Endian */
+        uint32_t mem_slverr            : 1;  /**< [  0:  0](R/W1C/H) This bit will be set when a write channel csr or DMA engine access is performed to a non existent
+                                                                 instruction or data memory address, or when any other illegal access is performed */
+        uint32_t error_src             : 3;  /**< [  3:  1](RO/H) This field indicates the source of the transaction that caused the recorded error.
+                                                                 000: WDM
+                                                                 001: RDM
+                                                                 010: CDM
+                                                                 011: CSR
+                                                                 100: PFO Write Request Error */
+        uint32_t addr                  : 21; /**< [ 24:  4](RO/H) When a DSP slave write access causes the SLVERR error bit to be set, this field captures the
+                                                                 failing address. */
+        uint32_t reserved_25_31        : 7;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_mdabx_wr_error_sts_s cn; */
+};
+typedef union cavm_mdabx_wr_error_sts cavm_mdabx_wr_error_sts_t;
+
+static inline uint64_t CAVM_MDABX_WR_ERROR_STS(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_MDABX_WR_ERROR_STS(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044400260ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDABX_WR_ERROR_STS", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_MDABX_WR_ERROR_STS(a) cavm_mdabx_wr_error_sts_t
+#define bustype_CAVM_MDABX_WR_ERROR_STS(a) CSR_TYPE_RSL32b
+#define basename_CAVM_MDABX_WR_ERROR_STS(a) "MDABX_WR_ERROR_STS"
+#define busnum_CAVM_MDABX_WR_ERROR_STS(a) (a)
+#define arguments_CAVM_MDABX_WR_ERROR_STS(a) (a),-1,-1,-1
 
 /**
  * Register (RSL32b) mdab#_wr_fifo_status
@@ -4435,7 +7291,9 @@ static inline uint64_t CAVM_MDABX_WR_FIFO_STATUS(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=41))
         return 0x87e044100490ll + 0x4000ll * ((a) & 0x3f);
-    __cavm_csr_fatal("MDABX_WR_FIFO_STATUS", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044400490ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDABX_WR_FIFO_STATUS", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDABX_WR_FIFO_STATUS(a) cavm_mdabx_wr_fifo_status_t
@@ -4481,7 +7339,7 @@ union cavm_mdabx_wr_length
         uint64_t reserved_19_63        : 45;
 #endif /* Word 0 - End */
     } s;
-    struct cavm_mdabx_wr_length_cn
+    struct cavm_mdabx_wr_length_cnf95xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_19_31        : 13;
@@ -4508,7 +7366,33 @@ union cavm_mdabx_wr_length
                                                                  when a new transfer is started or when a new slice starts in and multi-slice transfer. */
         uint64_t reserved_19_31        : 13;
 #endif /* Word 0 - End */
-    } cn;
+    } cnf95xx;
+    struct cavm_mdabx_wr_length_loki
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_18_31        : 14;
+        uint64_t length                : 14; /**< [ 17:  4](RO/H) The actual 128-bit length of the most recent WR-DMA engine write DMA
+                                                                 transfer.
+
+                                                                 NOTE: This field will be updated when the WR-DMA has been actually
+                                                                 committed to SMEM or L2C/DDR Memory, which allows software to poll the
+                                                                 length field during the WR-DMA transfer to know how many 128-bit
+                                                                 chunks are currently available at their intended memory destinations
+                                                                 before use by software or other hardware blocks. */
+        uint64_t reserved_0_3          : 4;
+#else /* Word 0 - Little Endian */
+        uint64_t reserved_0_3          : 4;
+        uint64_t length                : 14; /**< [ 17:  4](RO/H) The actual 128-bit length of the most recent WR-DMA engine write DMA
+                                                                 transfer.
+
+                                                                 NOTE: This field will be updated when the WR-DMA has been actually
+                                                                 committed to SMEM or L2C/DDR Memory, which allows software to poll the
+                                                                 length field during the WR-DMA transfer to know how many 128-bit
+                                                                 chunks are currently available at their intended memory destinations
+                                                                 before use by software or other hardware blocks. */
+        uint64_t reserved_18_31        : 14;
+#endif /* Word 0 - End */
+    } loki;
 };
 typedef union cavm_mdabx_wr_length cavm_mdabx_wr_length_t;
 
@@ -4517,7 +7401,9 @@ static inline uint64_t CAVM_MDABX_WR_LENGTH(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=41))
         return 0x87e0441000d0ll + 0x4000ll * ((a) & 0x3f);
-    __cavm_csr_fatal("MDABX_WR_LENGTH", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e0444000d0ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDABX_WR_LENGTH", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDABX_WR_LENGTH(a) cavm_mdabx_wr_length_t
@@ -4606,7 +7492,7 @@ union cavm_mdabx_wr_limit
         uint64_t reserved_32_63        : 32;
 #endif /* Word 0 - End */
     } s;
-    struct cavm_mdabx_wr_limit_cn
+    struct cavm_mdabx_wr_limit_cnf95xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t last                  : 1;  /**< [ 31: 31](R/W) Indicates the last WR-DMA slice which may be read from address MDAB()_WR_ADDR.
@@ -4671,7 +7557,67 @@ union cavm_mdabx_wr_limit
                                                                  SW_NOTE: For every new WR-DMA slice operation, DSP software *MUST* signal LAST to indicate
                                                                  the final JD.WR-DMA data slice transfer. */
 #endif /* Word 0 - End */
-    } cn;
+    } cnf95xx;
+    struct cavm_mdabx_wr_limit_loki
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t last                  : 1;  /**< [ 31: 31](R/W) Indicates the last WR-DMA slice which may be read from address MDAB()_WR_ADDR.
+                                                                 DSP software may choose to segment the JD.WR-DMA data into multiple non-contiguous WR-DMA
+                                                                 transfers from DSP local memory.
+                                                                 Eventually, DSP software will indicate the LAST segment (or slice), to indicate this is
+                                                                 the final WR-DMA sub-blk transfer.
+                                                                 Each WR-DMA operation's LAST will indicate when the last segment (or slice) WR-DMA
+                                                                 operation has been set up, to complete the JD.WR-DMA data transfer.
+                                                                 SW_NOTE: For every new WR-DMA slice operation, DSP software *MUST* signal LAST to indicate
+                                                                 the final JD.WR-DMA data slice transfer. */
+        uint64_t reserved_18_30        : 13;
+        uint64_t limit                 : 14; /**< [ 17:  4](R/W/H) "The maximum number of 128-bit chunks that the WR-DMA engine may read from address
+                                                                 MDAB()_WR_ADDR.
+                                                                 The JD.JCFG data typically will contain the total WR-DMA Length for each new job. The
+                                                                 DSP software is at liberty to break the total WR-DMA transfer into multiple WR-DMA segments (or
+                                                                 slices) using the LIMIT register.
+                                                                 DSP software will set the LAST flag and a LIMIT for the final WR-DMA slice.
+                                                                 When LIMIT has been reached during the LAST WR-DMA slice (or if the last JD.WR-DMA's write
+                                                                 commit is detected), the WR-DMA is done.
+
+                                                                 D-TCM/DMEM: 0x0 - (0x03_FFFF \>\> 4)
+                                                                 P-TCM/IMEM: (0x20_0000 \>\> 4) - (0x21_FFFF \>\> 4)
+                                                                 CMP registers: (0x40_0000 \>\> 4) - (0x40_3FFF \>\> 4)
+
+                                                                 SW RESTRICTION #1: Software should never program LIMIT=0. INDETERMINATE results can/will occur.
+                                                                 SW RESTRICTION #2: Software should ensure that ADDR+LIMIT SIZES fall within the I+D MEM space,
+                                                                 otherwise DMA_ERROR and INDETERMINATE results can/will occur." */
+        uint64_t reserved_0_3          : 4;
+#else /* Word 0 - Little Endian */
+        uint64_t reserved_0_3          : 4;
+        uint64_t limit                 : 14; /**< [ 17:  4](R/W/H) "The maximum number of 128-bit chunks that the WR-DMA engine may read from address
+                                                                 MDAB()_WR_ADDR.
+                                                                 The JD.JCFG data typically will contain the total WR-DMA Length for each new job. The
+                                                                 DSP software is at liberty to break the total WR-DMA transfer into multiple WR-DMA segments (or
+                                                                 slices) using the LIMIT register.
+                                                                 DSP software will set the LAST flag and a LIMIT for the final WR-DMA slice.
+                                                                 When LIMIT has been reached during the LAST WR-DMA slice (or if the last JD.WR-DMA's write
+                                                                 commit is detected), the WR-DMA is done.
+
+                                                                 D-TCM/DMEM: 0x0 - (0x03_FFFF \>\> 4)
+                                                                 P-TCM/IMEM: (0x20_0000 \>\> 4) - (0x21_FFFF \>\> 4)
+                                                                 CMP registers: (0x40_0000 \>\> 4) - (0x40_3FFF \>\> 4)
+
+                                                                 SW RESTRICTION #1: Software should never program LIMIT=0. INDETERMINATE results can/will occur.
+                                                                 SW RESTRICTION #2: Software should ensure that ADDR+LIMIT SIZES fall within the I+D MEM space,
+                                                                 otherwise DMA_ERROR and INDETERMINATE results can/will occur." */
+        uint64_t reserved_18_30        : 13;
+        uint64_t last                  : 1;  /**< [ 31: 31](R/W) Indicates the last WR-DMA slice which may be read from address MDAB()_WR_ADDR.
+                                                                 DSP software may choose to segment the JD.WR-DMA data into multiple non-contiguous WR-DMA
+                                                                 transfers from DSP local memory.
+                                                                 Eventually, DSP software will indicate the LAST segment (or slice), to indicate this is
+                                                                 the final WR-DMA sub-blk transfer.
+                                                                 Each WR-DMA operation's LAST will indicate when the last segment (or slice) WR-DMA
+                                                                 operation has been set up, to complete the JD.WR-DMA data transfer.
+                                                                 SW_NOTE: For every new WR-DMA slice operation, DSP software *MUST* signal LAST to indicate
+                                                                 the final JD.WR-DMA data slice transfer. */
+#endif /* Word 0 - End */
+    } loki;
 };
 typedef union cavm_mdabx_wr_limit cavm_mdabx_wr_limit_t;
 
@@ -4680,7 +7626,9 @@ static inline uint64_t CAVM_MDABX_WR_LIMIT(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=41))
         return 0x87e0441000c0ll + 0x4000ll * ((a) & 0x3f);
-    __cavm_csr_fatal("MDABX_WR_LIMIT", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e0444000c0ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDABX_WR_LIMIT", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDABX_WR_LIMIT(a) cavm_mdabx_wr_limit_t
@@ -4712,7 +7660,21 @@ union cavm_mdabx_wr_next_addr
         uint32_t reserved_31           : 1;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdabx_wr_next_addr_s cn; */
+    /* struct cavm_mdabx_wr_next_addr_s cnf95xx; */
+    struct cavm_mdabx_wr_next_addr_loki
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t reserved_23_31        : 9;
+        uint32_t next_addr             : 19; /**< [ 22:  4](RO/H) The next 128b-aligned starting address to be used by the WR-DMA engine when writing WR-DMA data to
+                                                                 local DSP memory. This register is used to determine the address for unused slices. */
+        uint32_t reserved_0_3          : 4;
+#else /* Word 0 - Little Endian */
+        uint32_t reserved_0_3          : 4;
+        uint32_t next_addr             : 19; /**< [ 22:  4](RO/H) The next 128b-aligned starting address to be used by the WR-DMA engine when writing WR-DMA data to
+                                                                 local DSP memory. This register is used to determine the address for unused slices. */
+        uint32_t reserved_23_31        : 9;
+#endif /* Word 0 - End */
+    } loki;
 };
 typedef union cavm_mdabx_wr_next_addr cavm_mdabx_wr_next_addr_t;
 
@@ -4721,7 +7683,9 @@ static inline uint64_t CAVM_MDABX_WR_NEXT_ADDR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=41))
         return 0x87e044100470ll + 0x4000ll * ((a) & 0x3f);
-    __cavm_csr_fatal("MDABX_WR_NEXT_ADDR", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044400470ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDABX_WR_NEXT_ADDR", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDABX_WR_NEXT_ADDR(a) cavm_mdabx_wr_next_addr_t
@@ -4917,7 +7881,9 @@ static inline uint64_t CAVM_MDABX_WR_STATUS(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=41))
         return 0x87e0441000a0ll + 0x4000ll * ((a) & 0x3f);
-    __cavm_csr_fatal("MDABX_WR_STATUS", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e0444000a0ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDABX_WR_STATUS", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDABX_WR_STATUS(a) cavm_mdabx_wr_status_t

@@ -169,7 +169,7 @@ static inline uint64_t CAVM_SMI_X_CLK(unsigned long a)
 {
     if (a<=1)
         return 0x87e005003818ll + 0x80ll * ((a) & 0x1);
-    __cavm_csr_fatal("SMI_X_CLK", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("SMI_X_CLK", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SMI_X_CLK(a) cavm_smi_x_clk_t
@@ -207,7 +207,7 @@ static inline uint64_t CAVM_SMI_X_CLKEN(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX) && (a<=1))
         return 0x87e005003830ll + 0x80ll * ((a) & 0x1);
-    __cavm_csr_fatal("SMI_X_CLKEN", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("SMI_X_CLKEN", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SMI_X_CLKEN(a) cavm_smi_x_clken_t
@@ -272,7 +272,7 @@ static inline uint64_t CAVM_SMI_X_CMD(unsigned long a)
 {
     if (a<=1)
         return 0x87e005003800ll + 0x80ll * ((a) & 0x1);
-    __cavm_csr_fatal("SMI_X_CMD", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("SMI_X_CMD", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SMI_X_CMD(a) cavm_smi_x_cmd_t
@@ -311,7 +311,7 @@ static inline uint64_t CAVM_SMI_X_ECO(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX) && (a<=1))
         return 0x87e005003828ll + 0x80ll * ((a) & 0x1);
-    __cavm_csr_fatal("SMI_X_ECO", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("SMI_X_ECO", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SMI_X_ECO(a) cavm_smi_x_eco_t
@@ -353,7 +353,7 @@ static inline uint64_t CAVM_SMI_X_EN(unsigned long a)
 {
     if (a<=1)
         return 0x87e005003820ll + 0x80ll * ((a) & 0x1);
-    __cavm_csr_fatal("SMI_X_EN", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("SMI_X_EN", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SMI_X_EN(a) cavm_smi_x_en_t
@@ -395,7 +395,7 @@ static inline uint64_t CAVM_SMI_X_RD_DAT(unsigned long a)
 {
     if (a<=1)
         return 0x87e005003810ll + 0x80ll * ((a) & 0x1);
-    __cavm_csr_fatal("SMI_X_RD_DAT", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("SMI_X_RD_DAT", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SMI_X_RD_DAT(a) cavm_smi_x_rd_dat_t
@@ -439,7 +439,7 @@ static inline uint64_t CAVM_SMI_X_WR_DAT(unsigned long a)
 {
     if (a<=1)
         return 0x87e005003808ll + 0x80ll * ((a) & 0x1);
-    __cavm_csr_fatal("SMI_X_WR_DAT", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("SMI_X_WR_DAT", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SMI_X_WR_DAT(a) cavm_smi_x_wr_dat_t
@@ -494,7 +494,7 @@ static inline uint64_t CAVM_SMI_DRV_CTL_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX))
         return 0x87e005003828ll;
-    __cavm_csr_fatal("SMI_DRV_CTL", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("SMI_DRV_CTL", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SMI_DRV_CTL cavm_smi_drv_ctl_t
@@ -538,7 +538,7 @@ static inline uint64_t CAVM_SMI_DRV_RSVD_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX))
         return 0x87e0050038a8ll;
-    __cavm_csr_fatal("SMI_DRV_RSVD", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("SMI_DRV_RSVD", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SMI_DRV_RSVD cavm_smi_drv_rsvd_t

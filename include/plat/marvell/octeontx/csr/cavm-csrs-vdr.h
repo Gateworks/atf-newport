@@ -81,7 +81,7 @@ static inline uint64_t CAVM_VDR_CTL_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x87e01e000000ll;
-    __cavm_csr_fatal("VDR_CTL", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("VDR_CTL", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_VDR_CTL cavm_vdr_ctl_t
@@ -118,7 +118,7 @@ static inline uint64_t CAVM_VDR_ECO_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x87e01e000010ll;
-    __cavm_csr_fatal("VDR_ECO", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("VDR_ECO", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_VDR_ECO cavm_vdr_eco_t

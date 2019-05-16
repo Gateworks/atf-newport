@@ -83,7 +83,9 @@ static inline uint64_t CAVM_PEMRCX_MSIX_PBAX(unsigned long a, unsigned long b)
         return 0x8e0e000f0000ll + 0x1000000000ll * ((a) & 0x3) + 8ll * ((b) & 0x0);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b==0)))
         return 0x8e0e000f0000ll + 0x1000000000ll * ((a) & 0x0) + 8ll * ((b) & 0x0);
-    __cavm_csr_fatal("PEMRCX_MSIX_PBAX", 2, a, b, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b==0)))
+        return 0x8e0e000f0000ll + 0x1000000000ll * ((a) & 0x0) + 8ll * ((b) & 0x0);
+    __cavm_csr_fatal("PEMRCX_MSIX_PBAX", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMRCX_MSIX_PBAX(a,b) cavm_pemrcx_msix_pbax_t
@@ -264,7 +266,9 @@ static inline uint64_t CAVM_PEMRCX_MSIX_VECX_ADDR(unsigned long a, unsigned long
         return 0x8e0e00000000ll + 0x1000000000ll * ((a) & 0x3) + 0x10ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=1)))
         return 0x8e0e00000000ll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0x1);
-    __cavm_csr_fatal("PEMRCX_MSIX_VECX_ADDR", 2, a, b, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=1)))
+        return 0x8e0e00000000ll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0x1);
+    __cavm_csr_fatal("PEMRCX_MSIX_VECX_ADDR", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMRCX_MSIX_VECX_ADDR(a,b) cavm_pemrcx_msix_vecx_addr_t
@@ -324,7 +328,9 @@ static inline uint64_t CAVM_PEMRCX_MSIX_VECX_CTL(unsigned long a, unsigned long 
         return 0x8e0e00000008ll + 0x1000000000ll * ((a) & 0x3) + 0x10ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=1)))
         return 0x8e0e00000008ll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0x1);
-    __cavm_csr_fatal("PEMRCX_MSIX_VECX_CTL", 2, a, b, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=1)))
+        return 0x8e0e00000008ll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0x1);
+    __cavm_csr_fatal("PEMRCX_MSIX_VECX_CTL", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMRCX_MSIX_VECX_CTL(a,b) cavm_pemrcx_msix_vecx_ctl_t

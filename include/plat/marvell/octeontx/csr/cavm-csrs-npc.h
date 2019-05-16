@@ -483,7 +483,7 @@ static inline uint64_t CAVM_NPC_AF_ACTIVE_PC_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x840060000010ll;
-    __cavm_csr_fatal("NPC_AF_ACTIVE_PC", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("NPC_AF_ACTIVE_PC", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_NPC_AF_ACTIVE_PC cavm_npc_af_active_pc_t
@@ -529,7 +529,7 @@ static inline uint64_t CAVM_NPC_AF_BLK_RST_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x840060000040ll;
-    __cavm_csr_fatal("NPC_AF_BLK_RST", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("NPC_AF_BLK_RST", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_NPC_AF_BLK_RST cavm_npc_af_blk_rst_t
@@ -571,7 +571,7 @@ static inline uint64_t CAVM_NPC_AF_CFG_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x840060000000ll;
-    __cavm_csr_fatal("NPC_AF_CFG", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("NPC_AF_CFG", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_NPC_AF_CFG cavm_npc_af_cfg_t
@@ -630,7 +630,7 @@ static inline uint64_t CAVM_NPC_AF_CONST_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x840060000020ll;
-    __cavm_csr_fatal("NPC_AF_CONST", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("NPC_AF_CONST", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_NPC_AF_CONST cavm_npc_af_const_t
@@ -673,7 +673,7 @@ static inline uint64_t CAVM_NPC_AF_CONST1_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x840060000030ll;
-    __cavm_csr_fatal("NPC_AF_CONST1", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("NPC_AF_CONST1", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_NPC_AF_CONST1 cavm_npc_af_const1_t
@@ -710,7 +710,7 @@ static inline uint64_t CAVM_NPC_AF_CPIX_CFG(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX) && (a<=1023))
         return 0x840060200000ll + 8ll * ((a) & 0x3ff);
-    __cavm_csr_fatal("NPC_AF_CPIX_CFG", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("NPC_AF_CPIX_CFG", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_NPC_AF_CPIX_CFG(a) cavm_npc_af_cpix_cfg_t
@@ -762,7 +762,7 @@ static inline uint64_t CAVM_NPC_AF_DBG_CTL_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x840063000000ll;
-    __cavm_csr_fatal("NPC_AF_DBG_CTL", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("NPC_AF_DBG_CTL", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_NPC_AF_DBG_CTL cavm_npc_af_dbg_ctl_t
@@ -821,7 +821,7 @@ static inline uint64_t CAVM_NPC_AF_DBG_DATAX(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX) && (a<=31))
         return 0x840063001400ll + 0x10ll * ((a) & 0x1f);
-    __cavm_csr_fatal("NPC_AF_DBG_DATAX", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("NPC_AF_DBG_DATAX", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_NPC_AF_DBG_DATAX(a) cavm_npc_af_dbg_datax_t
@@ -858,7 +858,7 @@ static inline uint64_t CAVM_NPC_AF_DBG_RESULTX(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX) && (a<=5))
         return 0x840063001800ll + 0x10ll * ((a) & 0x7);
-    __cavm_csr_fatal("NPC_AF_DBG_RESULTX", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("NPC_AF_DBG_RESULTX", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_NPC_AF_DBG_RESULTX(a) cavm_npc_af_dbg_resultx_t
@@ -904,7 +904,7 @@ static inline uint64_t CAVM_NPC_AF_DBG_STATUS_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x840063000010ll;
-    __cavm_csr_fatal("NPC_AF_DBG_STATUS", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("NPC_AF_DBG_STATUS", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_NPC_AF_DBG_STATUS cavm_npc_af_dbg_status_t
@@ -947,7 +947,7 @@ static inline uint64_t CAVM_NPC_AF_DV_FC_SCRATCH_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x840060000060ll;
-    __cavm_csr_fatal("NPC_AF_DV_FC_SCRATCH", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("NPC_AF_DV_FC_SCRATCH", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_NPC_AF_DV_FC_SCRATCH cavm_npc_af_dv_fc_scratch_t
@@ -985,7 +985,7 @@ static inline uint64_t CAVM_NPC_AF_ECO0_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x840060000200ll;
-    __cavm_csr_fatal("NPC_AF_ECO0", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("NPC_AF_ECO0", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_NPC_AF_ECO0 cavm_npc_af_eco0_t
@@ -1085,7 +1085,7 @@ static inline uint64_t CAVM_NPC_AF_IKPU_ERR_CTL_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x840063000080ll;
-    __cavm_csr_fatal("NPC_AF_IKPU_ERR_CTL", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("NPC_AF_IKPU_ERR_CTL", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_NPC_AF_IKPU_ERR_CTL cavm_npc_af_ikpu_err_ctl_t
@@ -1136,7 +1136,7 @@ static inline uint64_t CAVM_NPC_AF_INTFX_KEX_CFG(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX) && (a<=1))
         return 0x840060001010ll + 0x100ll * ((a) & 0x1);
-    __cavm_csr_fatal("NPC_AF_INTFX_KEX_CFG", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("NPC_AF_INTFX_KEX_CFG", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_NPC_AF_INTFX_KEX_CFG(a) cavm_npc_af_intfx_kex_cfg_t
@@ -1187,7 +1187,7 @@ static inline uint64_t CAVM_NPC_AF_INTFX_LDATAX_FLAGSX_CFG(unsigned long a, unsi
 {
     if (cavm_is_model(OCTEONTX_CN9XXX) && ((a<=1) && (b<=1) && (c<=15)))
         return 0x840060980000ll + 0x10000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x1) + 8ll * ((c) & 0xf);
-    __cavm_csr_fatal("NPC_AF_INTFX_LDATAX_FLAGSX_CFG", 3, a, b, c, 0);
+    __cavm_csr_fatal("NPC_AF_INTFX_LDATAX_FLAGSX_CFG", 3, a, b, c, 0, 0, 0);
 }
 
 #define typedef_CAVM_NPC_AF_INTFX_LDATAX_FLAGSX_CFG(a,b,c) cavm_npc_af_intfx_ldatax_flagsx_cfg_t
@@ -1283,7 +1283,7 @@ static inline uint64_t CAVM_NPC_AF_INTFX_LIDX_LTX_LDX_CFG(unsigned long a, unsig
 {
     if (cavm_is_model(OCTEONTX_CN9XXX) && ((a<=1) && (b<=7) && (c<=15) && (d<=1)))
         return 0x840060900000ll + 0x10000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x7) + 0x20ll * ((c) & 0xf) + 8ll * ((d) & 0x1);
-    __cavm_csr_fatal("NPC_AF_INTFX_LIDX_LTX_LDX_CFG", 4, a, b, c, d);
+    __cavm_csr_fatal("NPC_AF_INTFX_LIDX_LTX_LDX_CFG", 4, a, b, c, d, 0, 0);
 }
 
 #define typedef_CAVM_NPC_AF_INTFX_LIDX_LTX_LDX_CFG(a,b,c,d) cavm_npc_af_intfx_lidx_ltx_ldx_cfg_t
@@ -1323,7 +1323,7 @@ static inline uint64_t CAVM_NPC_AF_INTFX_MISS_ACT(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX) && (a<=1))
         return 0x840061a00000ll + 0x10ll * ((a) & 0x1);
-    __cavm_csr_fatal("NPC_AF_INTFX_MISS_ACT", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("NPC_AF_INTFX_MISS_ACT", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_NPC_AF_INTFX_MISS_ACT(a) cavm_npc_af_intfx_miss_act_t
@@ -1366,7 +1366,7 @@ static inline uint64_t CAVM_NPC_AF_INTFX_MISS_STAT_ACT(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX) && (a<=1))
         return 0x840061880040ll + 8ll * ((a) & 0x1);
-    __cavm_csr_fatal("NPC_AF_INTFX_MISS_STAT_ACT", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("NPC_AF_INTFX_MISS_STAT_ACT", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_NPC_AF_INTFX_MISS_STAT_ACT(a) cavm_npc_af_intfx_miss_stat_act_t
@@ -1407,7 +1407,7 @@ static inline uint64_t CAVM_NPC_AF_INTFX_MISS_TAG_ACT(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX) && (a<=1))
         return 0x840061b00008ll + 0x10ll * ((a) & 0x1);
-    __cavm_csr_fatal("NPC_AF_INTFX_MISS_TAG_ACT", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("NPC_AF_INTFX_MISS_TAG_ACT", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_NPC_AF_INTFX_MISS_TAG_ACT(a) cavm_npc_af_intfx_miss_tag_act_t
@@ -1445,7 +1445,7 @@ static inline uint64_t CAVM_NPC_AF_INTFX_STAT(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX) && (a<=1))
         return 0x840062000800ll + 0x10ll * ((a) & 0x1);
-    __cavm_csr_fatal("NPC_AF_INTFX_STAT", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("NPC_AF_INTFX_STAT", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_NPC_AF_INTFX_STAT(a) cavm_npc_af_intfx_stat_t
@@ -1499,7 +1499,7 @@ static inline uint64_t CAVM_NPC_AF_KCAM_SCRUB_CTL_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x8400600000b0ll;
-    __cavm_csr_fatal("NPC_AF_KCAM_SCRUB_CTL", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("NPC_AF_KCAM_SCRUB_CTL", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_NPC_AF_KCAM_SCRUB_CTL cavm_npc_af_kcam_scrub_ctl_t
@@ -1542,7 +1542,7 @@ static inline uint64_t CAVM_NPC_AF_KEX_LDATAX_FLAGS_CFG(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX) && (a<=1))
         return 0x840060000800ll + 8ll * ((a) & 0x1);
-    __cavm_csr_fatal("NPC_AF_KEX_LDATAX_FLAGS_CFG", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("NPC_AF_KEX_LDATAX_FLAGS_CFG", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_NPC_AF_KEX_LDATAX_FLAGS_CFG(a) cavm_npc_af_kex_ldatax_flags_cfg_t
@@ -1583,7 +1583,7 @@ static inline uint64_t CAVM_NPC_AF_KPUX_CFG(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX) && (a<=15))
         return 0x840060000500ll + 8ll * ((a) & 0xf);
-    __cavm_csr_fatal("NPC_AF_KPUX_CFG", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("NPC_AF_KPUX_CFG", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_NPC_AF_KPUX_CFG(a) cavm_npc_af_kpux_cfg_t
@@ -1638,7 +1638,7 @@ static inline uint64_t CAVM_NPC_AF_KPUX_DBG(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX) && (a<=15))
         return 0x840063000020ll + 0x100ll * ((a) & 0xf);
-    __cavm_csr_fatal("NPC_AF_KPUX_DBG", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("NPC_AF_KPUX_DBG", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_NPC_AF_KPUX_DBG(a) cavm_npc_af_kpux_dbg_t
@@ -1781,7 +1781,7 @@ static inline uint64_t CAVM_NPC_AF_KPUX_ENTRYX_ACTION0(unsigned long a, unsigned
 {
     if (cavm_is_model(OCTEONTX_CN9XXX) && ((a<=15) && (b<=127)))
         return 0x840060100020ll + 0x4000ll * ((a) & 0xf) + 0x40ll * ((b) & 0x7f);
-    __cavm_csr_fatal("NPC_AF_KPUX_ENTRYX_ACTION0", 2, a, b, 0, 0);
+    __cavm_csr_fatal("NPC_AF_KPUX_ENTRYX_ACTION0", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_NPC_AF_KPUX_ENTRYX_ACTION0(a,b) cavm_npc_af_kpux_entryx_action0_t
@@ -1839,7 +1839,7 @@ static inline uint64_t CAVM_NPC_AF_KPUX_ENTRYX_ACTION1(unsigned long a, unsigned
 {
     if (cavm_is_model(OCTEONTX_CN9XXX) && ((a<=15) && (b<=127)))
         return 0x840060100028ll + 0x4000ll * ((a) & 0xf) + 0x40ll * ((b) & 0x7f);
-    __cavm_csr_fatal("NPC_AF_KPUX_ENTRYX_ACTION1", 2, a, b, 0, 0);
+    __cavm_csr_fatal("NPC_AF_KPUX_ENTRYX_ACTION1", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_NPC_AF_KPUX_ENTRYX_ACTION1(a,b) cavm_npc_af_kpux_entryx_action1_t
@@ -1903,7 +1903,7 @@ static inline uint64_t CAVM_NPC_AF_KPUX_ENTRYX_CAMX(unsigned long a, unsigned lo
 {
     if (cavm_is_model(OCTEONTX_CN9XXX) && ((a<=15) && (b<=127) && (c<=1)))
         return 0x840060100000ll + 0x4000ll * ((a) & 0xf) + 0x40ll * ((b) & 0x7f) + 8ll * ((c) & 0x1);
-    __cavm_csr_fatal("NPC_AF_KPUX_ENTRYX_CAMX", 3, a, b, c, 0);
+    __cavm_csr_fatal("NPC_AF_KPUX_ENTRYX_CAMX", 3, a, b, c, 0, 0, 0);
 }
 
 #define typedef_CAVM_NPC_AF_KPUX_ENTRYX_CAMX(a,b,c) cavm_npc_af_kpux_entryx_camx_t
@@ -1945,7 +1945,7 @@ static inline uint64_t CAVM_NPC_AF_KPUX_ENTRY_DISX(unsigned long a, unsigned lon
 {
     if (cavm_is_model(OCTEONTX_CN9XXX) && ((a<=15) && (b<=1)))
         return 0x840060180000ll + 0x40ll * ((a) & 0xf) + 8ll * ((b) & 0x1);
-    __cavm_csr_fatal("NPC_AF_KPUX_ENTRY_DISX", 2, a, b, 0, 0);
+    __cavm_csr_fatal("NPC_AF_KPUX_ENTRY_DISX", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_NPC_AF_KPUX_ENTRY_DISX(a,b) cavm_npc_af_kpux_entry_disx_t
@@ -2042,7 +2042,7 @@ static inline uint64_t CAVM_NPC_AF_KPUX_ERR_CTL(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX) && (a<=15))
         return 0x8400630000a0ll + 0x100ll * ((a) & 0xf);
-    __cavm_csr_fatal("NPC_AF_KPUX_ERR_CTL", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("NPC_AF_KPUX_ERR_CTL", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_NPC_AF_KPUX_ERR_CTL(a) cavm_npc_af_kpux_err_ctl_t
@@ -2092,7 +2092,7 @@ static inline uint64_t CAVM_NPC_AF_KPU_DIAG_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X))
         return 0x840063002000ll;
-    __cavm_csr_fatal("NPC_AF_KPU_DIAG", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("NPC_AF_KPU_DIAG", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_NPC_AF_KPU_DIAG cavm_npc_af_kpu_diag_t
@@ -2148,7 +2148,7 @@ static inline uint64_t CAVM_NPC_AF_LKUP_CTL_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x840062000000ll;
-    __cavm_csr_fatal("NPC_AF_LKUP_CTL", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("NPC_AF_LKUP_CTL", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_NPC_AF_LKUP_CTL cavm_npc_af_lkup_ctl_t
@@ -2235,7 +2235,7 @@ static inline uint64_t CAVM_NPC_AF_LKUP_DATAX(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX) && (a<=31))
         return 0x840062000200ll + 0x10ll * ((a) & 0x1f);
-    __cavm_csr_fatal("NPC_AF_LKUP_DATAX", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("NPC_AF_LKUP_DATAX", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_NPC_AF_LKUP_DATAX(a) cavm_npc_af_lkup_datax_t
@@ -2270,7 +2270,7 @@ static inline uint64_t CAVM_NPC_AF_LKUP_RESULTX(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX) && (a<=5))
         return 0x840062000400ll + 0x10ll * ((a) & 0x7);
-    __cavm_csr_fatal("NPC_AF_LKUP_RESULTX", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("NPC_AF_LKUP_RESULTX", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_NPC_AF_LKUP_RESULTX(a) cavm_npc_af_lkup_resultx_t
@@ -2315,7 +2315,7 @@ static inline uint64_t CAVM_NPC_AF_MATCH_STATX(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX) && (a<=511))
         return 0x840061880008ll + 0x100ll * ((a) & 0x1ff);
-    __cavm_csr_fatal("NPC_AF_MATCH_STATX", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("NPC_AF_MATCH_STATX", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_NPC_AF_MATCH_STATX(a) cavm_npc_af_match_statx_t
@@ -2368,7 +2368,7 @@ static inline uint64_t CAVM_NPC_AF_MCAM_BANKX_HITX(unsigned long a, unsigned lon
 {
     if (cavm_is_model(OCTEONTX_CN9XXX) && ((a<=3) && (b<=15)))
         return 0x840061c80000ll + 0x100ll * ((a) & 0x3) + 0x10ll * ((b) & 0xf);
-    __cavm_csr_fatal("NPC_AF_MCAM_BANKX_HITX", 2, a, b, 0, 0);
+    __cavm_csr_fatal("NPC_AF_MCAM_BANKX_HITX", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_NPC_AF_MCAM_BANKX_HITX(a,b) cavm_npc_af_mcam_bankx_hitx_t
@@ -2416,7 +2416,7 @@ static inline uint64_t CAVM_NPC_AF_MCAM_DBG_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x840063001000ll;
-    __cavm_csr_fatal("NPC_AF_MCAM_DBG", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("NPC_AF_MCAM_DBG", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_NPC_AF_MCAM_DBG cavm_npc_af_mcam_dbg_t
@@ -2470,7 +2470,7 @@ static inline uint64_t CAVM_NPC_AF_MCAM_SCRUB_CTL_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x8400600000a0ll;
-    __cavm_csr_fatal("NPC_AF_MCAM_SCRUB_CTL", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("NPC_AF_MCAM_SCRUB_CTL", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_NPC_AF_MCAM_SCRUB_CTL cavm_npc_af_mcam_scrub_ctl_t
@@ -2522,7 +2522,7 @@ static inline uint64_t CAVM_NPC_AF_MCAMEX_BANKX_ACTION(unsigned long a, unsigned
 {
     if (cavm_is_model(OCTEONTX_CN9XXX) && ((a<=1023) && (b<=3)))
         return 0x840061900000ll + 0x100ll * ((a) & 0x3ff) + 0x10ll * ((b) & 0x3);
-    __cavm_csr_fatal("NPC_AF_MCAMEX_BANKX_ACTION", 2, a, b, 0, 0);
+    __cavm_csr_fatal("NPC_AF_MCAMEX_BANKX_ACTION", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_NPC_AF_MCAMEX_BANKX_ACTION(a,b) cavm_npc_af_mcamex_bankx_action_t
@@ -2626,7 +2626,7 @@ static inline uint64_t CAVM_NPC_AF_MCAMEX_BANKX_CAMX_INTF(unsigned long a, unsig
 {
     if (cavm_is_model(OCTEONTX_CN9XXX) && ((a<=1023) && (b<=3) && (c<=1)))
         return 0x840061000000ll + 0x400ll * ((a) & 0x3ff) + 0x40ll * ((b) & 0x3) + 8ll * ((c) & 0x1);
-    __cavm_csr_fatal("NPC_AF_MCAMEX_BANKX_CAMX_INTF", 3, a, b, c, 0);
+    __cavm_csr_fatal("NPC_AF_MCAMEX_BANKX_CAMX_INTF", 3, a, b, c, 0, 0, 0);
 }
 
 #define typedef_CAVM_NPC_AF_MCAMEX_BANKX_CAMX_INTF(a,b,c) cavm_npc_af_mcamex_bankx_camx_intf_t
@@ -2662,7 +2662,7 @@ static inline uint64_t CAVM_NPC_AF_MCAMEX_BANKX_CAMX_W0(unsigned long a, unsigne
 {
     if (cavm_is_model(OCTEONTX_CN9XXX) && ((a<=1023) && (b<=3) && (c<=1)))
         return 0x840061000010ll + 0x400ll * ((a) & 0x3ff) + 0x40ll * ((b) & 0x3) + 8ll * ((c) & 0x1);
-    __cavm_csr_fatal("NPC_AF_MCAMEX_BANKX_CAMX_W0", 3, a, b, c, 0);
+    __cavm_csr_fatal("NPC_AF_MCAMEX_BANKX_CAMX_W0", 3, a, b, c, 0, 0, 0);
 }
 
 #define typedef_CAVM_NPC_AF_MCAMEX_BANKX_CAMX_W0(a,b,c) cavm_npc_af_mcamex_bankx_camx_w0_t
@@ -2700,7 +2700,7 @@ static inline uint64_t CAVM_NPC_AF_MCAMEX_BANKX_CAMX_W1(unsigned long a, unsigne
 {
     if (cavm_is_model(OCTEONTX_CN9XXX) && ((a<=1023) && (b<=3) && (c<=1)))
         return 0x840061000020ll + 0x400ll * ((a) & 0x3ff) + 0x40ll * ((b) & 0x3) + 8ll * ((c) & 0x1);
-    __cavm_csr_fatal("NPC_AF_MCAMEX_BANKX_CAMX_W1", 3, a, b, c, 0);
+    __cavm_csr_fatal("NPC_AF_MCAMEX_BANKX_CAMX_W1", 3, a, b, c, 0, 0, 0);
 }
 
 #define typedef_CAVM_NPC_AF_MCAMEX_BANKX_CAMX_W1(a,b,c) cavm_npc_af_mcamex_bankx_camx_w1_t
@@ -2739,7 +2739,7 @@ static inline uint64_t CAVM_NPC_AF_MCAMEX_BANKX_CFG(unsigned long a, unsigned lo
 {
     if (cavm_is_model(OCTEONTX_CN9XXX) && ((a<=1023) && (b<=3)))
         return 0x840061800000ll + 0x100ll * ((a) & 0x3ff) + 0x10ll * ((b) & 0x3);
-    __cavm_csr_fatal("NPC_AF_MCAMEX_BANKX_CFG", 2, a, b, 0, 0);
+    __cavm_csr_fatal("NPC_AF_MCAMEX_BANKX_CFG", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_NPC_AF_MCAMEX_BANKX_CFG(a,b) cavm_npc_af_mcamex_bankx_cfg_t
@@ -2782,7 +2782,7 @@ static inline uint64_t CAVM_NPC_AF_MCAMEX_BANKX_STAT_ACT(unsigned long a, unsign
 {
     if (cavm_is_model(OCTEONTX_CN9XXX) && ((a<=1023) && (b<=3)))
         return 0x840061880000ll + 0x100ll * ((a) & 0x3ff) + 0x10ll * ((b) & 0x3);
-    __cavm_csr_fatal("NPC_AF_MCAMEX_BANKX_STAT_ACT", 2, a, b, 0, 0);
+    __cavm_csr_fatal("NPC_AF_MCAMEX_BANKX_STAT_ACT", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_NPC_AF_MCAMEX_BANKX_STAT_ACT(a,b) cavm_npc_af_mcamex_bankx_stat_act_t
@@ -2821,7 +2821,7 @@ static inline uint64_t CAVM_NPC_AF_MCAMEX_BANKX_TAG_ACT(unsigned long a, unsigne
 {
     if (cavm_is_model(OCTEONTX_CN9XXX) && ((a<=1023) && (b<=3)))
         return 0x840061900008ll + 0x100ll * ((a) & 0x3ff) + 0x10ll * ((b) & 0x3);
-    __cavm_csr_fatal("NPC_AF_MCAMEX_BANKX_TAG_ACT", 2, a, b, 0, 0);
+    __cavm_csr_fatal("NPC_AF_MCAMEX_BANKX_TAG_ACT", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_NPC_AF_MCAMEX_BANKX_TAG_ACT(a,b) cavm_npc_af_mcamex_bankx_tag_act_t
@@ -2927,7 +2927,7 @@ static inline uint64_t CAVM_NPC_AF_PCK_CFG_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x840060000600ll;
-    __cavm_csr_fatal("NPC_AF_PCK_CFG", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("NPC_AF_PCK_CFG", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_NPC_AF_PCK_CFG cavm_npc_af_pck_cfg_t
@@ -2980,7 +2980,7 @@ static inline uint64_t CAVM_NPC_AF_PCK_DEF_IIP4_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x840060000640ll;
-    __cavm_csr_fatal("NPC_AF_PCK_DEF_IIP4", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("NPC_AF_PCK_DEF_IIP4", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_NPC_AF_PCK_DEF_IIP4 cavm_npc_af_pck_def_iip4_t
@@ -3033,7 +3033,7 @@ static inline uint64_t CAVM_NPC_AF_PCK_DEF_OIP4_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x840060000620ll;
-    __cavm_csr_fatal("NPC_AF_PCK_DEF_OIP4", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("NPC_AF_PCK_DEF_OIP4", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_NPC_AF_PCK_DEF_OIP4 cavm_npc_af_pck_def_oip4_t
@@ -3087,7 +3087,7 @@ static inline uint64_t CAVM_NPC_AF_PCK_DEF_OIP6_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x840060000630ll;
-    __cavm_csr_fatal("NPC_AF_PCK_DEF_OIP6", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("NPC_AF_PCK_DEF_OIP6", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_NPC_AF_PCK_DEF_OIP6 cavm_npc_af_pck_def_oip6_t
@@ -3140,7 +3140,7 @@ static inline uint64_t CAVM_NPC_AF_PCK_DEF_OL2_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x840060000610ll;
-    __cavm_csr_fatal("NPC_AF_PCK_DEF_OL2", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("NPC_AF_PCK_DEF_OL2", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_NPC_AF_PCK_DEF_OL2 cavm_npc_af_pck_def_ol2_t
@@ -3281,7 +3281,7 @@ static inline uint64_t CAVM_NPC_AF_PKINDX_ACTION0(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX) && (a<=63))
         return 0x840060080000ll + 0x40ll * ((a) & 0x3f);
-    __cavm_csr_fatal("NPC_AF_PKINDX_ACTION0", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("NPC_AF_PKINDX_ACTION0", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_NPC_AF_PKINDX_ACTION0(a) cavm_npc_af_pkindx_action0_t
@@ -3340,7 +3340,7 @@ static inline uint64_t CAVM_NPC_AF_PKINDX_ACTION1(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX) && (a<=63))
         return 0x840060080008ll + 0x40ll * ((a) & 0x3f);
-    __cavm_csr_fatal("NPC_AF_PKINDX_ACTION1", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("NPC_AF_PKINDX_ACTION1", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_NPC_AF_PKINDX_ACTION1(a) cavm_npc_af_pkindx_action1_t
@@ -3433,7 +3433,7 @@ static inline uint64_t CAVM_NPC_AF_PKINDX_CPI_DEFX(unsigned long a, unsigned lon
 {
     if (cavm_is_model(OCTEONTX_CN9XXX) && ((a<=63) && (b<=1)))
         return 0x840060080020ll + 0x40ll * ((a) & 0x3f) + 8ll * ((b) & 0x1);
-    __cavm_csr_fatal("NPC_AF_PKINDX_CPI_DEFX", 2, a, b, 0, 0);
+    __cavm_csr_fatal("NPC_AF_PKINDX_CPI_DEFX", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_NPC_AF_PKINDX_CPI_DEFX(a,b) cavm_npc_af_pkindx_cpi_defx_t

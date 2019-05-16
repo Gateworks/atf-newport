@@ -89,7 +89,9 @@ static inline uint64_t CAVM_RASX_CIDR0(unsigned long a)
         return 0x87a008050ff0ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050ff0ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_CIDR0", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a008050ff0ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_CIDR0", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_CIDR0(a) cavm_rasx_cidr0_t
@@ -130,7 +132,9 @@ static inline uint64_t CAVM_RASX_CIDR1(unsigned long a)
         return 0x87a008050ff4ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050ff4ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_CIDR1", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a008050ff4ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_CIDR1", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_CIDR1(a) cavm_rasx_cidr1_t
@@ -169,7 +173,9 @@ static inline uint64_t CAVM_RASX_CIDR2(unsigned long a)
         return 0x87a008050ff8ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050ff8ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_CIDR2", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a008050ff8ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_CIDR2", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_CIDR2(a) cavm_rasx_cidr2_t
@@ -208,7 +214,9 @@ static inline uint64_t CAVM_RASX_CIDR3(unsigned long a)
         return 0x87a008050ffcll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050ffcll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_CIDR3", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a008050ffcll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_CIDR3", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_CIDR3(a) cavm_rasx_cidr3_t
@@ -273,7 +281,9 @@ static inline uint64_t CAVM_RASX_ERR00ADDR(unsigned long a)
         return 0x87a008050018ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050018ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERR00ADDR", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a008050018ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERR00ADDR", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERR00ADDR(a) cavm_rasx_err00addr_t
@@ -452,7 +462,9 @@ static inline uint64_t CAVM_RASX_ERR00CTLR(unsigned long a)
         return 0x87a008050008ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050008ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERR00CTLR", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a008050008ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERR00CTLR", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERR00CTLR(a) cavm_rasx_err00ctlr_t
@@ -696,7 +708,9 @@ static inline uint64_t CAVM_RASX_ERR00FR(unsigned long a)
         return 0x87a008050000ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050000ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERR00FR", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a008050000ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERR00FR", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERR00FR(a) cavm_rasx_err00fr_t
@@ -767,7 +781,9 @@ static inline uint64_t CAVM_RASX_ERR00MISC0(unsigned long a)
         return 0x87a008050020ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050020ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERR00MISC0", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a008050020ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERR00MISC0", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERR00MISC0(a) cavm_rasx_err00misc0_t
@@ -808,7 +824,9 @@ static inline uint64_t CAVM_RASX_ERR00MISC1(unsigned long a)
         return 0x87a008050028ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050028ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERR00MISC1", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a008050028ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERR00MISC1", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERR00MISC1(a) cavm_rasx_err00misc1_t
@@ -1015,7 +1033,9 @@ static inline uint64_t CAVM_RASX_ERR00STATUS(unsigned long a)
         return 0x87a008050010ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050010ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERR00STATUS", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a008050010ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERR00STATUS", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERR00STATUS(a) cavm_rasx_err00status_t
@@ -1076,7 +1096,9 @@ static inline uint64_t CAVM_RASX_ERR01ADDR(unsigned long a)
         return 0x87a008050058ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050058ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERR01ADDR", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a008050058ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERR01ADDR", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERR01ADDR(a) cavm_rasx_err01addr_t
@@ -1157,7 +1179,9 @@ static inline uint64_t CAVM_RASX_ERR01CTLR(unsigned long a)
         return 0x87a008050048ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050048ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERR01CTLR", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a008050048ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERR01CTLR", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERR01CTLR(a) cavm_rasx_err01ctlr_t
@@ -1216,7 +1240,9 @@ static inline uint64_t CAVM_RASX_ERR01FR(unsigned long a)
         return 0x87a008050040ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050040ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERR01FR", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a008050040ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERR01FR", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERR01FR(a) cavm_rasx_err01fr_t
@@ -1263,7 +1289,9 @@ static inline uint64_t CAVM_RASX_ERR01MISC0(unsigned long a)
         return 0x87a008050060ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050060ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERR01MISC0", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a008050060ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERR01MISC0", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERR01MISC0(a) cavm_rasx_err01misc0_t
@@ -1300,7 +1328,9 @@ static inline uint64_t CAVM_RASX_ERR01MISC1(unsigned long a)
         return 0x87a008050068ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050068ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERR01MISC1", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a008050068ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERR01MISC1", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERR01MISC1(a) cavm_rasx_err01misc1_t
@@ -1363,7 +1393,9 @@ static inline uint64_t CAVM_RASX_ERR01STATUS(unsigned long a)
         return 0x87a008050050ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050050ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERR01STATUS", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a008050050ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERR01STATUS", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERR01STATUS(a) cavm_rasx_err01status_t
@@ -1424,7 +1456,9 @@ static inline uint64_t CAVM_RASX_ERR02ADDR(unsigned long a)
         return 0x87a008050098ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050098ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERR02ADDR", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a008050098ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERR02ADDR", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERR02ADDR(a) cavm_rasx_err02addr_t
@@ -1505,7 +1539,9 @@ static inline uint64_t CAVM_RASX_ERR02CTLR(unsigned long a)
         return 0x87a008050088ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050088ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERR02CTLR", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a008050088ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERR02CTLR", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERR02CTLR(a) cavm_rasx_err02ctlr_t
@@ -1564,7 +1600,9 @@ static inline uint64_t CAVM_RASX_ERR02FR(unsigned long a)
         return 0x87a008050080ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050080ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERR02FR", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a008050080ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERR02FR", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERR02FR(a) cavm_rasx_err02fr_t
@@ -1611,7 +1649,9 @@ static inline uint64_t CAVM_RASX_ERR02MISC0(unsigned long a)
         return 0x87a0080500a0ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a0080500a0ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERR02MISC0", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a0080500a0ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERR02MISC0", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERR02MISC0(a) cavm_rasx_err02misc0_t
@@ -1648,7 +1688,9 @@ static inline uint64_t CAVM_RASX_ERR02MISC1(unsigned long a)
         return 0x87a0080500a8ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a0080500a8ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERR02MISC1", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a0080500a8ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERR02MISC1", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERR02MISC1(a) cavm_rasx_err02misc1_t
@@ -1711,7 +1753,9 @@ static inline uint64_t CAVM_RASX_ERR02STATUS(unsigned long a)
         return 0x87a008050090ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050090ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERR02STATUS", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a008050090ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERR02STATUS", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERR02STATUS(a) cavm_rasx_err02status_t
@@ -1772,7 +1816,9 @@ static inline uint64_t CAVM_RASX_ERR03ADDR(unsigned long a)
         return 0x87a0080500d8ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a0080500d8ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERR03ADDR", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a0080500d8ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERR03ADDR", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERR03ADDR(a) cavm_rasx_err03addr_t
@@ -1853,7 +1899,9 @@ static inline uint64_t CAVM_RASX_ERR03CTLR(unsigned long a)
         return 0x87a0080500c8ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a0080500c8ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERR03CTLR", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a0080500c8ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERR03CTLR", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERR03CTLR(a) cavm_rasx_err03ctlr_t
@@ -1912,7 +1960,9 @@ static inline uint64_t CAVM_RASX_ERR03FR(unsigned long a)
         return 0x87a0080500c0ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a0080500c0ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERR03FR", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a0080500c0ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERR03FR", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERR03FR(a) cavm_rasx_err03fr_t
@@ -1959,7 +2009,9 @@ static inline uint64_t CAVM_RASX_ERR03MISC0(unsigned long a)
         return 0x87a0080500e0ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a0080500e0ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERR03MISC0", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a0080500e0ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERR03MISC0", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERR03MISC0(a) cavm_rasx_err03misc0_t
@@ -1996,7 +2048,9 @@ static inline uint64_t CAVM_RASX_ERR03MISC1(unsigned long a)
         return 0x87a0080500e8ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a0080500e8ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERR03MISC1", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a0080500e8ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERR03MISC1", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERR03MISC1(a) cavm_rasx_err03misc1_t
@@ -2059,7 +2113,9 @@ static inline uint64_t CAVM_RASX_ERR03STATUS(unsigned long a)
         return 0x87a0080500d0ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a0080500d0ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERR03STATUS", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a0080500d0ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERR03STATUS", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERR03STATUS(a) cavm_rasx_err03status_t
@@ -2120,7 +2176,9 @@ static inline uint64_t CAVM_RASX_ERR04ADDR(unsigned long a)
         return 0x87a008050118ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050118ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERR04ADDR", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a008050118ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERR04ADDR", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERR04ADDR(a) cavm_rasx_err04addr_t
@@ -2201,7 +2259,9 @@ static inline uint64_t CAVM_RASX_ERR04CTLR(unsigned long a)
         return 0x87a008050108ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050108ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERR04CTLR", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a008050108ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERR04CTLR", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERR04CTLR(a) cavm_rasx_err04ctlr_t
@@ -2260,7 +2320,9 @@ static inline uint64_t CAVM_RASX_ERR04FR(unsigned long a)
         return 0x87a008050100ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050100ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERR04FR", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a008050100ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERR04FR", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERR04FR(a) cavm_rasx_err04fr_t
@@ -2307,7 +2369,9 @@ static inline uint64_t CAVM_RASX_ERR04MISC0(unsigned long a)
         return 0x87a008050120ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050120ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERR04MISC0", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a008050120ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERR04MISC0", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERR04MISC0(a) cavm_rasx_err04misc0_t
@@ -2344,7 +2408,9 @@ static inline uint64_t CAVM_RASX_ERR04MISC1(unsigned long a)
         return 0x87a008050128ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050128ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERR04MISC1", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a008050128ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERR04MISC1", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERR04MISC1(a) cavm_rasx_err04misc1_t
@@ -2407,7 +2473,9 @@ static inline uint64_t CAVM_RASX_ERR04STATUS(unsigned long a)
         return 0x87a008050110ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050110ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERR04STATUS", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a008050110ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERR04STATUS", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERR04STATUS(a) cavm_rasx_err04status_t
@@ -2468,7 +2536,9 @@ static inline uint64_t CAVM_RASX_ERR05ADDR(unsigned long a)
         return 0x87a008050158ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050158ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERR05ADDR", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a008050158ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERR05ADDR", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERR05ADDR(a) cavm_rasx_err05addr_t
@@ -2549,7 +2619,9 @@ static inline uint64_t CAVM_RASX_ERR05CTLR(unsigned long a)
         return 0x87a008050148ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050148ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERR05CTLR", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a008050148ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERR05CTLR", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERR05CTLR(a) cavm_rasx_err05ctlr_t
@@ -2608,7 +2680,9 @@ static inline uint64_t CAVM_RASX_ERR05FR(unsigned long a)
         return 0x87a008050140ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050140ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERR05FR", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a008050140ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERR05FR", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERR05FR(a) cavm_rasx_err05fr_t
@@ -2655,7 +2729,9 @@ static inline uint64_t CAVM_RASX_ERR05MISC0(unsigned long a)
         return 0x87a008050160ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050160ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERR05MISC0", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a008050160ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERR05MISC0", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERR05MISC0(a) cavm_rasx_err05misc0_t
@@ -2692,7 +2768,9 @@ static inline uint64_t CAVM_RASX_ERR05MISC1(unsigned long a)
         return 0x87a008050168ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050168ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERR05MISC1", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a008050168ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERR05MISC1", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERR05MISC1(a) cavm_rasx_err05misc1_t
@@ -2755,7 +2833,9 @@ static inline uint64_t CAVM_RASX_ERR05STATUS(unsigned long a)
         return 0x87a008050150ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050150ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERR05STATUS", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a008050150ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERR05STATUS", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERR05STATUS(a) cavm_rasx_err05status_t
@@ -2816,7 +2896,9 @@ static inline uint64_t CAVM_RASX_ERR06ADDR(unsigned long a)
         return 0x87a008050198ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050198ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERR06ADDR", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a008050198ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERR06ADDR", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERR06ADDR(a) cavm_rasx_err06addr_t
@@ -2897,7 +2979,9 @@ static inline uint64_t CAVM_RASX_ERR06CTLR(unsigned long a)
         return 0x87a008050188ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050188ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERR06CTLR", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a008050188ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERR06CTLR", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERR06CTLR(a) cavm_rasx_err06ctlr_t
@@ -2956,7 +3040,9 @@ static inline uint64_t CAVM_RASX_ERR06FR(unsigned long a)
         return 0x87a008050180ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050180ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERR06FR", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a008050180ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERR06FR", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERR06FR(a) cavm_rasx_err06fr_t
@@ -2999,7 +3085,9 @@ static inline uint64_t CAVM_RASX_ERR06MISC0(unsigned long a)
         return 0x87a0080501a0ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a0080501a0ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERR06MISC0", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a0080501a0ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERR06MISC0", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERR06MISC0(a) cavm_rasx_err06misc0_t
@@ -3036,7 +3124,9 @@ static inline uint64_t CAVM_RASX_ERR06MISC1(unsigned long a)
         return 0x87a0080501a8ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a0080501a8ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERR06MISC1", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a0080501a8ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERR06MISC1", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERR06MISC1(a) cavm_rasx_err06misc1_t
@@ -3099,7 +3189,9 @@ static inline uint64_t CAVM_RASX_ERR06STATUS(unsigned long a)
         return 0x87a008050190ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050190ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERR06STATUS", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a008050190ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERR06STATUS", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERR06STATUS(a) cavm_rasx_err06status_t
@@ -3160,7 +3252,9 @@ static inline uint64_t CAVM_RASX_ERR07ADDR(unsigned long a)
         return 0x87a0080501d8ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a0080501d8ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERR07ADDR", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a0080501d8ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERR07ADDR", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERR07ADDR(a) cavm_rasx_err07addr_t
@@ -3241,7 +3335,9 @@ static inline uint64_t CAVM_RASX_ERR07CTLR(unsigned long a)
         return 0x87a0080501c8ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a0080501c8ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERR07CTLR", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a0080501c8ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERR07CTLR", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERR07CTLR(a) cavm_rasx_err07ctlr_t
@@ -3300,7 +3396,9 @@ static inline uint64_t CAVM_RASX_ERR07FR(unsigned long a)
         return 0x87a0080501c0ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a0080501c0ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERR07FR", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a0080501c0ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERR07FR", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERR07FR(a) cavm_rasx_err07fr_t
@@ -3345,7 +3443,9 @@ static inline uint64_t CAVM_RASX_ERR07MISC0(unsigned long a)
         return 0x87a0080501e0ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a0080501e0ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERR07MISC0", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a0080501e0ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERR07MISC0", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERR07MISC0(a) cavm_rasx_err07misc0_t
@@ -3382,7 +3482,9 @@ static inline uint64_t CAVM_RASX_ERR07MISC1(unsigned long a)
         return 0x87a0080501e8ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a0080501e8ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERR07MISC1", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a0080501e8ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERR07MISC1", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERR07MISC1(a) cavm_rasx_err07misc1_t
@@ -3445,7 +3547,9 @@ static inline uint64_t CAVM_RASX_ERR07STATUS(unsigned long a)
         return 0x87a0080501d0ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a0080501d0ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERR07STATUS", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a0080501d0ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERR07STATUS", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERR07STATUS(a) cavm_rasx_err07status_t
@@ -3506,7 +3610,9 @@ static inline uint64_t CAVM_RASX_ERR08ADDR(unsigned long a)
         return 0x87a008050218ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050218ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERR08ADDR", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a008050218ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERR08ADDR", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERR08ADDR(a) cavm_rasx_err08addr_t
@@ -3587,7 +3693,9 @@ static inline uint64_t CAVM_RASX_ERR08CTLR(unsigned long a)
         return 0x87a008050208ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050208ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERR08CTLR", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a008050208ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERR08CTLR", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERR08CTLR(a) cavm_rasx_err08ctlr_t
@@ -3646,7 +3754,9 @@ static inline uint64_t CAVM_RASX_ERR08FR(unsigned long a)
         return 0x87a008050200ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050200ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERR08FR", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a008050200ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERR08FR", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERR08FR(a) cavm_rasx_err08fr_t
@@ -3691,7 +3801,9 @@ static inline uint64_t CAVM_RASX_ERR08MISC0(unsigned long a)
         return 0x87a008050220ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050220ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERR08MISC0", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a008050220ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERR08MISC0", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERR08MISC0(a) cavm_rasx_err08misc0_t
@@ -3728,7 +3840,9 @@ static inline uint64_t CAVM_RASX_ERR08MISC1(unsigned long a)
         return 0x87a008050228ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050228ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERR08MISC1", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a008050228ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERR08MISC1", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERR08MISC1(a) cavm_rasx_err08misc1_t
@@ -3791,7 +3905,9 @@ static inline uint64_t CAVM_RASX_ERR08STATUS(unsigned long a)
         return 0x87a008050210ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050210ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERR08STATUS", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a008050210ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERR08STATUS", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERR08STATUS(a) cavm_rasx_err08status_t
@@ -3852,7 +3968,9 @@ static inline uint64_t CAVM_RASX_ERR09ADDR(unsigned long a)
         return 0x87a008050258ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050258ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERR09ADDR", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a008050258ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERR09ADDR", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERR09ADDR(a) cavm_rasx_err09addr_t
@@ -3933,7 +4051,9 @@ static inline uint64_t CAVM_RASX_ERR09CTLR(unsigned long a)
         return 0x87a008050248ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050248ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERR09CTLR", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a008050248ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERR09CTLR", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERR09CTLR(a) cavm_rasx_err09ctlr_t
@@ -3992,7 +4112,9 @@ static inline uint64_t CAVM_RASX_ERR09FR(unsigned long a)
         return 0x87a008050240ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050240ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERR09FR", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a008050240ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERR09FR", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERR09FR(a) cavm_rasx_err09fr_t
@@ -4037,7 +4159,9 @@ static inline uint64_t CAVM_RASX_ERR09MISC0(unsigned long a)
         return 0x87a008050260ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050260ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERR09MISC0", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a008050260ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERR09MISC0", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERR09MISC0(a) cavm_rasx_err09misc0_t
@@ -4074,7 +4198,9 @@ static inline uint64_t CAVM_RASX_ERR09MISC1(unsigned long a)
         return 0x87a008050268ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050268ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERR09MISC1", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a008050268ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERR09MISC1", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERR09MISC1(a) cavm_rasx_err09misc1_t
@@ -4137,7 +4263,9 @@ static inline uint64_t CAVM_RASX_ERR09STATUS(unsigned long a)
         return 0x87a008050250ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050250ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERR09STATUS", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a008050250ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERR09STATUS", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERR09STATUS(a) cavm_rasx_err09status_t
@@ -4198,7 +4326,9 @@ static inline uint64_t CAVM_RASX_ERR10ADDR(unsigned long a)
         return 0x87a008050298ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050298ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERR10ADDR", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a008050298ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERR10ADDR", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERR10ADDR(a) cavm_rasx_err10addr_t
@@ -4279,7 +4409,9 @@ static inline uint64_t CAVM_RASX_ERR10CTLR(unsigned long a)
         return 0x87a008050288ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050288ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERR10CTLR", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a008050288ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERR10CTLR", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERR10CTLR(a) cavm_rasx_err10ctlr_t
@@ -4338,7 +4470,9 @@ static inline uint64_t CAVM_RASX_ERR10FR(unsigned long a)
         return 0x87a008050280ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050280ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERR10FR", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a008050280ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERR10FR", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERR10FR(a) cavm_rasx_err10fr_t
@@ -4381,7 +4515,9 @@ static inline uint64_t CAVM_RASX_ERR10MISC0(unsigned long a)
         return 0x87a0080502a0ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a0080502a0ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERR10MISC0", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a0080502a0ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERR10MISC0", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERR10MISC0(a) cavm_rasx_err10misc0_t
@@ -4418,7 +4554,9 @@ static inline uint64_t CAVM_RASX_ERR10MISC1(unsigned long a)
         return 0x87a0080502a8ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a0080502a8ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERR10MISC1", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a0080502a8ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERR10MISC1", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERR10MISC1(a) cavm_rasx_err10misc1_t
@@ -4481,7 +4619,9 @@ static inline uint64_t CAVM_RASX_ERR10STATUS(unsigned long a)
         return 0x87a008050290ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050290ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERR10STATUS", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a008050290ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERR10STATUS", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERR10STATUS(a) cavm_rasx_err10status_t
@@ -4542,7 +4682,9 @@ static inline uint64_t CAVM_RASX_ERR11ADDR(unsigned long a)
         return 0x87a0080502d8ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a0080502d8ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERR11ADDR", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a0080502d8ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERR11ADDR", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERR11ADDR(a) cavm_rasx_err11addr_t
@@ -4623,7 +4765,9 @@ static inline uint64_t CAVM_RASX_ERR11CTLR(unsigned long a)
         return 0x87a0080502c8ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a0080502c8ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERR11CTLR", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a0080502c8ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERR11CTLR", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERR11CTLR(a) cavm_rasx_err11ctlr_t
@@ -4682,7 +4826,9 @@ static inline uint64_t CAVM_RASX_ERR11FR(unsigned long a)
         return 0x87a0080502c0ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a0080502c0ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERR11FR", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a0080502c0ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERR11FR", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERR11FR(a) cavm_rasx_err11fr_t
@@ -4725,7 +4871,9 @@ static inline uint64_t CAVM_RASX_ERR11MISC0(unsigned long a)
         return 0x87a0080502e0ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a0080502e0ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERR11MISC0", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a0080502e0ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERR11MISC0", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERR11MISC0(a) cavm_rasx_err11misc0_t
@@ -4762,7 +4910,9 @@ static inline uint64_t CAVM_RASX_ERR11MISC1(unsigned long a)
         return 0x87a0080502e8ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a0080502e8ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERR11MISC1", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a0080502e8ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERR11MISC1", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERR11MISC1(a) cavm_rasx_err11misc1_t
@@ -4825,7 +4975,9 @@ static inline uint64_t CAVM_RASX_ERR11STATUS(unsigned long a)
         return 0x87a0080502d0ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a0080502d0ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERR11STATUS", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a0080502d0ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERR11STATUS", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERR11STATUS(a) cavm_rasx_err11status_t
@@ -4886,7 +5038,9 @@ static inline uint64_t CAVM_RASX_ERR12ADDR(unsigned long a)
         return 0x87a008050318ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050318ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERR12ADDR", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a008050318ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERR12ADDR", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERR12ADDR(a) cavm_rasx_err12addr_t
@@ -4967,7 +5121,9 @@ static inline uint64_t CAVM_RASX_ERR12CTLR(unsigned long a)
         return 0x87a008050308ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050308ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERR12CTLR", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a008050308ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERR12CTLR", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERR12CTLR(a) cavm_rasx_err12ctlr_t
@@ -5026,7 +5182,9 @@ static inline uint64_t CAVM_RASX_ERR12FR(unsigned long a)
         return 0x87a008050300ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050300ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERR12FR", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a008050300ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERR12FR", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERR12FR(a) cavm_rasx_err12fr_t
@@ -5081,7 +5239,9 @@ static inline uint64_t CAVM_RASX_ERR12MISC0(unsigned long a)
         return 0x87a008050320ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050320ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERR12MISC0", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a008050320ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERR12MISC0", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERR12MISC0(a) cavm_rasx_err12misc0_t
@@ -5118,7 +5278,9 @@ static inline uint64_t CAVM_RASX_ERR12MISC1(unsigned long a)
         return 0x87a008050328ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050328ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERR12MISC1", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a008050328ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERR12MISC1", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERR12MISC1(a) cavm_rasx_err12misc1_t
@@ -5181,7 +5343,9 @@ static inline uint64_t CAVM_RASX_ERR12STATUS(unsigned long a)
         return 0x87a008050310ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050310ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERR12STATUS", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a008050310ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERR12STATUS", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERR12STATUS(a) cavm_rasx_err12status_t
@@ -5242,7 +5406,9 @@ static inline uint64_t CAVM_RASX_ERR13ADDR(unsigned long a)
         return 0x87a008050358ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050358ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERR13ADDR", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a008050358ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERR13ADDR", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERR13ADDR(a) cavm_rasx_err13addr_t
@@ -5323,7 +5489,9 @@ static inline uint64_t CAVM_RASX_ERR13CTLR(unsigned long a)
         return 0x87a008050348ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050348ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERR13CTLR", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a008050348ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERR13CTLR", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERR13CTLR(a) cavm_rasx_err13ctlr_t
@@ -5382,7 +5550,9 @@ static inline uint64_t CAVM_RASX_ERR13FR(unsigned long a)
         return 0x87a008050340ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050340ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERR13FR", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a008050340ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERR13FR", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERR13FR(a) cavm_rasx_err13fr_t
@@ -5425,7 +5595,9 @@ static inline uint64_t CAVM_RASX_ERR13MISC0(unsigned long a)
         return 0x87a008050360ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050360ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERR13MISC0", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a008050360ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERR13MISC0", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERR13MISC0(a) cavm_rasx_err13misc0_t
@@ -5462,7 +5634,9 @@ static inline uint64_t CAVM_RASX_ERR13MISC1(unsigned long a)
         return 0x87a008050368ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050368ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERR13MISC1", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a008050368ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERR13MISC1", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERR13MISC1(a) cavm_rasx_err13misc1_t
@@ -5525,7 +5699,9 @@ static inline uint64_t CAVM_RASX_ERR13STATUS(unsigned long a)
         return 0x87a008050350ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050350ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERR13STATUS", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a008050350ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERR13STATUS", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERR13STATUS(a) cavm_rasx_err13status_t
@@ -5570,7 +5746,9 @@ static inline uint64_t CAVM_RASX_ERR14ADDR(unsigned long a)
         return 0x87a008050398ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050398ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERR14ADDR", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a008050398ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERR14ADDR", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERR14ADDR(a) cavm_rasx_err14addr_t
@@ -5651,7 +5829,9 @@ static inline uint64_t CAVM_RASX_ERR14CTLR(unsigned long a)
         return 0x87a008050388ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050388ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERR14CTLR", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a008050388ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERR14CTLR", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERR14CTLR(a) cavm_rasx_err14ctlr_t
@@ -5710,7 +5890,9 @@ static inline uint64_t CAVM_RASX_ERR14FR(unsigned long a)
         return 0x87a008050380ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050380ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERR14FR", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a008050380ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERR14FR", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERR14FR(a) cavm_rasx_err14fr_t
@@ -5755,7 +5937,9 @@ static inline uint64_t CAVM_RASX_ERR14MISC0(unsigned long a)
         return 0x87a0080503a0ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a0080503a0ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERR14MISC0", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a0080503a0ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERR14MISC0", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERR14MISC0(a) cavm_rasx_err14misc0_t
@@ -5792,7 +5976,9 @@ static inline uint64_t CAVM_RASX_ERR14MISC1(unsigned long a)
         return 0x87a0080503a8ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a0080503a8ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERR14MISC1", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a0080503a8ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERR14MISC1", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERR14MISC1(a) cavm_rasx_err14misc1_t
@@ -5855,7 +6041,9 @@ static inline uint64_t CAVM_RASX_ERR14STATUS(unsigned long a)
         return 0x87a008050390ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050390ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERR14STATUS", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a008050390ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERR14STATUS", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERR14STATUS(a) cavm_rasx_err14status_t
@@ -5916,7 +6104,9 @@ static inline uint64_t CAVM_RASX_ERR15ADDR(unsigned long a)
         return 0x87a0080503d8ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a0080503d8ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERR15ADDR", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a0080503d8ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERR15ADDR", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERR15ADDR(a) cavm_rasx_err15addr_t
@@ -5997,7 +6187,9 @@ static inline uint64_t CAVM_RASX_ERR15CTLR(unsigned long a)
         return 0x87a0080503c8ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a0080503c8ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERR15CTLR", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a0080503c8ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERR15CTLR", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERR15CTLR(a) cavm_rasx_err15ctlr_t
@@ -6056,7 +6248,9 @@ static inline uint64_t CAVM_RASX_ERR15FR(unsigned long a)
         return 0x87a0080503c0ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a0080503c0ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERR15FR", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a0080503c0ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERR15FR", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERR15FR(a) cavm_rasx_err15fr_t
@@ -6099,7 +6293,9 @@ static inline uint64_t CAVM_RASX_ERR15MISC0(unsigned long a)
         return 0x87a0080503e0ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a0080503e0ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERR15MISC0", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a0080503e0ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERR15MISC0", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERR15MISC0(a) cavm_rasx_err15misc0_t
@@ -6136,7 +6332,9 @@ static inline uint64_t CAVM_RASX_ERR15MISC1(unsigned long a)
         return 0x87a0080503e8ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a0080503e8ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERR15MISC1", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a0080503e8ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERR15MISC1", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERR15MISC1(a) cavm_rasx_err15misc1_t
@@ -6199,7 +6397,9 @@ static inline uint64_t CAVM_RASX_ERR15STATUS(unsigned long a)
         return 0x87a0080503d0ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a0080503d0ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERR15STATUS", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a0080503d0ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERR15STATUS", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERR15STATUS(a) cavm_rasx_err15status_t
@@ -6255,7 +6455,9 @@ static inline uint64_t CAVM_RASX_ERRDEVAFF(unsigned long a)
         return 0x87a008050fa8ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050fa8ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERRDEVAFF", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a008050fa8ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERRDEVAFF", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERRDEVAFF(a) cavm_rasx_errdevaff_t
@@ -6306,7 +6508,9 @@ static inline uint64_t CAVM_RASX_ERRDEVARCH(unsigned long a)
         return 0x87a008050fbcll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050fbcll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERRDEVARCH", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a008050fbcll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERRDEVARCH", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERRDEVARCH(a) cavm_rasx_errdevarch_t
@@ -6346,7 +6550,9 @@ static inline uint64_t CAVM_RASX_ERRDEVID(unsigned long a)
         return 0x87a008050fc8ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050fc8ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERRDEVID", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a008050fc8ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERRDEVID", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERRDEVID(a) cavm_rasx_errdevid_t
@@ -6389,7 +6595,9 @@ static inline uint64_t CAVM_RASX_ERRFHICR0(unsigned long a)
         return 0x87a008050e80ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050e80ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERRFHICR0", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a008050e80ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERRFHICR0", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERRFHICR0(a) cavm_rasx_errfhicr0_t
@@ -6426,7 +6634,9 @@ static inline uint64_t CAVM_RASX_ERRFHICR1(unsigned long a)
         return 0x87a008050e88ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050e88ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERRFHICR1", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a008050e88ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERRFHICR1", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERRFHICR1(a) cavm_rasx_errfhicr1_t
@@ -6491,7 +6701,9 @@ static inline uint64_t CAVM_RASX_ERRFHICR2(unsigned long a)
         return 0x87a008050e8cll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050e8cll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERRFHICR2", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a008050e8cll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERRFHICR2", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERRFHICR2(a) cavm_rasx_errfhicr2_t
@@ -6542,7 +6754,9 @@ static inline uint64_t CAVM_RASX_ERRGSR0(unsigned long a)
         return 0x87a008050e00ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050e00ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERRGSR0", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a008050e00ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERRGSR0", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERRGSR0(a) cavm_rasx_errgsr0_t
@@ -6635,7 +6849,9 @@ static inline uint64_t CAVM_RASX_ERRIRQSR(unsigned long a)
         return 0x87a008050ef8ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050ef8ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_ERRIRQSR", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a008050ef8ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_ERRIRQSR", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_ERRIRQSR(a) cavm_rasx_errirqsr_t
@@ -6680,7 +6896,9 @@ static inline uint64_t CAVM_RASX_PIDR0(unsigned long a)
         return 0x87a008050fe0ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050fe0ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_PIDR0", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a008050fe0ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_PIDR0", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_PIDR0(a) cavm_rasx_pidr0_t
@@ -6721,7 +6939,9 @@ static inline uint64_t CAVM_RASX_PIDR1(unsigned long a)
         return 0x87a008050fe4ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050fe4ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_PIDR1", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a008050fe4ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_PIDR1", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_PIDR1(a) cavm_rasx_pidr1_t
@@ -6764,7 +6984,9 @@ static inline uint64_t CAVM_RASX_PIDR2(unsigned long a)
         return 0x87a008050fe8ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050fe8ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_PIDR2", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a008050fe8ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_PIDR2", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_PIDR2(a) cavm_rasx_pidr2_t
@@ -6807,7 +7029,9 @@ static inline uint64_t CAVM_RASX_PIDR3(unsigned long a)
         return 0x87a008050fecll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050fecll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_PIDR3", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a008050fecll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_PIDR3", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_PIDR3(a) cavm_rasx_pidr3_t
@@ -6850,7 +7074,9 @@ static inline uint64_t CAVM_RASX_PIDR4(unsigned long a)
         return 0x87a008050fd0ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050fd0ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_PIDR4", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a008050fd0ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_PIDR4", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_PIDR4(a) cavm_rasx_pidr4_t
@@ -6887,7 +7113,9 @@ static inline uint64_t CAVM_RASX_PIDR5(unsigned long a)
         return 0x87a008050fd4ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050fd4ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_PIDR5", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a008050fd4ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_PIDR5", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_PIDR5(a) cavm_rasx_pidr5_t
@@ -6924,7 +7152,9 @@ static inline uint64_t CAVM_RASX_PIDR6(unsigned long a)
         return 0x87a008050fd8ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050fd8ll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_PIDR6", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a008050fd8ll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_PIDR6", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_PIDR6(a) cavm_rasx_pidr6_t
@@ -6961,7 +7191,9 @@ static inline uint64_t CAVM_RASX_PIDR7(unsigned long a)
         return 0x87a008050fdcll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050fdcll + 0x80000ll * ((a) & 0x7);
-    __cavm_csr_fatal("RASX_PIDR7", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87a008050fdcll + 0x80000ll * ((a) & 0x7);
+    __cavm_csr_fatal("RASX_PIDR7", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RASX_PIDR7(a) cavm_rasx_pidr7_t

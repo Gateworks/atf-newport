@@ -306,7 +306,7 @@ static inline uint64_t CAVM_CPC_BOOT_OWNERX(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX) && (a<=3))
         return 0x86d000000160ll + 8ll * ((a) & 0x3);
-    __cavm_csr_fatal("CPC_BOOT_OWNERX", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("CPC_BOOT_OWNERX", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_CPC_BOOT_OWNERX(a) cavm_cpc_boot_ownerx_t
@@ -360,7 +360,7 @@ static inline uint64_t CAVM_CPC_BOOT_ROM_LIMIT_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x86d000000158ll;
-    __cavm_csr_fatal("CPC_BOOT_ROM_LIMIT", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CPC_BOOT_ROM_LIMIT", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_CPC_BOOT_ROM_LIMIT cavm_cpc_boot_rom_limit_t
@@ -430,7 +430,7 @@ static inline uint64_t CAVM_CPC_BP_TEST0_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x86d000000180ll;
-    __cavm_csr_fatal("CPC_BP_TEST0", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CPC_BP_TEST0", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_CPC_BP_TEST0 cavm_cpc_bp_test0_t
@@ -500,7 +500,7 @@ static inline uint64_t CAVM_CPC_BP_TEST2_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x86d000000190ll;
-    __cavm_csr_fatal("CPC_BP_TEST2", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CPC_BP_TEST2", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_CPC_BP_TEST2 cavm_cpc_bp_test2_t
@@ -543,7 +543,7 @@ static inline uint64_t CAVM_CPC_CLKEN_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x86d000000118ll;
-    __cavm_csr_fatal("CPC_CLKEN", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CPC_CLKEN", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_CPC_CLKEN cavm_cpc_clken_t
@@ -588,7 +588,7 @@ static inline uint64_t CAVM_CPC_CONST_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x86d000000000ll;
-    __cavm_csr_fatal("CPC_CONST", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CPC_CONST", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_CPC_CONST cavm_cpc_const_t
@@ -627,7 +627,7 @@ static inline uint64_t CAVM_CPC_CSCLK_ACTIVE_PC_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x86d000000010ll;
-    __cavm_csr_fatal("CPC_CSCLK_ACTIVE_PC", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CPC_CSCLK_ACTIVE_PC", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_CPC_CSCLK_ACTIVE_PC cavm_cpc_csclk_active_pc_t
@@ -667,7 +667,7 @@ static inline uint64_t CAVM_CPC_ECO_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x86d000000100ll;
-    __cavm_csr_fatal("CPC_ECO", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CPC_ECO", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_CPC_ECO cavm_cpc_eco_t
@@ -727,7 +727,7 @@ static inline uint64_t CAVM_CPC_GIB_LOOP_REQ_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x86d000000030ll;
-    __cavm_csr_fatal("CPC_GIB_LOOP_REQ", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CPC_GIB_LOOP_REQ", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_CPC_GIB_LOOP_REQ cavm_cpc_gib_loop_req_t
@@ -777,7 +777,7 @@ static inline uint64_t CAVM_CPC_GIB_LOOP_RESP0_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x86d000000020ll;
-    __cavm_csr_fatal("CPC_GIB_LOOP_RESP0", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CPC_GIB_LOOP_RESP0", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_CPC_GIB_LOOP_RESP0 cavm_cpc_gib_loop_resp0_t
@@ -831,7 +831,7 @@ static inline uint64_t CAVM_CPC_GIB_LOOP_RESP1_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x86d000000028ll;
-    __cavm_csr_fatal("CPC_GIB_LOOP_RESP1", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CPC_GIB_LOOP_RESP1", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_CPC_GIB_LOOP_RESP1 cavm_cpc_gib_loop_resp1_t
@@ -882,7 +882,7 @@ static inline uint64_t CAVM_CPC_PERMIT_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x86d000000120ll;
-    __cavm_csr_fatal("CPC_PERMIT", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CPC_PERMIT", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_CPC_PERMIT cavm_cpc_permit_t
@@ -926,7 +926,7 @@ static inline uint64_t CAVM_CPC_RAM_MEMX(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX) && (a<=49151))
         return 0x86d000080000ll + 8ll * ((a) & 0xffff);
-    __cavm_csr_fatal("CPC_RAM_MEMX", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("CPC_RAM_MEMX", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_CPC_RAM_MEMX(a) cavm_cpc_ram_memx_t
@@ -996,7 +996,7 @@ static inline uint64_t CAVM_CPC_RAM_PERMITX(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX) && (a<=23))
         return 0x86d000008000ll + 8ll * ((a) & 0x1f);
-    __cavm_csr_fatal("CPC_RAM_PERMITX", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("CPC_RAM_PERMITX", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_CPC_RAM_PERMITX(a) cavm_cpc_ram_permitx_t
@@ -1036,7 +1036,7 @@ static inline uint64_t CAVM_CPC_ROM_MEMX(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX) && (a<=4095))
         return 0x86d000010000ll + 8ll * ((a) & 0xfff);
-    __cavm_csr_fatal("CPC_ROM_MEMX", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("CPC_ROM_MEMX", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_CPC_ROM_MEMX(a) cavm_cpc_rom_memx_t
@@ -1089,7 +1089,7 @@ static inline uint64_t CAVM_CPC_SCP_BOOT_ROM_LIMIT_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x86d000000150ll;
-    __cavm_csr_fatal("CPC_SCP_BOOT_ROM_LIMIT", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CPC_SCP_BOOT_ROM_LIMIT", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_CPC_SCP_BOOT_ROM_LIMIT cavm_cpc_scp_boot_rom_limit_t
@@ -1130,7 +1130,7 @@ static inline uint64_t CAVM_CPC_TIMER100_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x86d000000110ll;
-    __cavm_csr_fatal("CPC_TIMER100", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CPC_TIMER100", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_CPC_TIMER100 cavm_cpc_timer100_t
@@ -1180,7 +1180,7 @@ static inline uint64_t CAVM_CPC_XCPX_PERMIT(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX) && (a<=1))
         return 0x86d000000140ll + 8ll * ((a) & 0x1);
-    __cavm_csr_fatal("CPC_XCPX_PERMIT", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("CPC_XCPX_PERMIT", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_CPC_XCPX_PERMIT(a) cavm_cpc_xcpx_permit_t

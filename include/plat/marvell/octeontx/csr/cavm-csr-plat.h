@@ -14,13 +14,13 @@
 #include <linux/types.h>
 #include <asm/io.h>
 
-#define __cavm_csr_fatal(name, num_args, arg1, arg2, arg3, arg4) BUG_ON(0)
+#define __cavm_csr_fatal(name, num_args, arg1, arg2, arg3, arg4, arg5, arg6) BUG_ON(0)
 
 #else
 
 #include <stdint.h>
 
-#define __cavm_csr_fatal(name, num_args, arg1, arg2, arg3, arg4) while(1)
+#define __cavm_csr_fatal(name, num_args, arg1, arg2, arg3, arg4, arg5, arg6) while(1)
 
 #endif
 

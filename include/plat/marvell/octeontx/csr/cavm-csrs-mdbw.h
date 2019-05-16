@@ -343,7 +343,17 @@ union cavm_mdbw_jd_dma_cfg_word_3_s
         uint64_t reserved_32_63        : 32;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdbw_jd_dma_cfg_word_3_s_s cn; */
+    /* struct cavm_mdbw_jd_dma_cfg_word_3_s_s cnf95xx; */
+    struct cavm_mdbw_jd_dma_cfg_word_3_s_loki
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_23_63        : 41;
+        uint64_t mem_addr              : 23; /**< [ 22:  0] Specifies the DMEM/IMEM address and is used by the DAC to WR/RD. */
+#else /* Word 0 - Little Endian */
+        uint64_t mem_addr              : 23; /**< [ 22:  0] Specifies the DMEM/IMEM address and is used by the DAC to WR/RD. */
+        uint64_t reserved_23_63        : 41;
+#endif /* Word 0 - End */
+    } loki;
 };
 
 /**
@@ -446,7 +456,69 @@ union cavm_mdbw_jd_hdr_word_0_s
         uint64_t reserved_63           : 1;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdbw_jd_hdr_word_0_s_s cn; */
+    /* struct cavm_mdbw_jd_hdr_word_0_s_s cnf95xx; */
+    struct cavm_mdbw_jd_hdr_word_0_s_loki
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_63           : 1;
+        uint64_t dsp_job_type          : 2;  /**< [ 62: 61] Indicates whether DMA is performed under software control or automatic
+                                                                 hardware control. Job types are enumerated with MDBW_DSP_JOB_SEL_E. */
+        uint64_t toth                  : 4;  /**< [ 60: 57] Job timeout threshold. The timeout timer starts counting when the job
+                                                                 gets started on a DAC. The timer increments by one each SCLK cycle,
+                                                                 and a timeout occurs when the timer reaches the threshold specified
+                                                                 as:
+
+                                                                 _ ((MDBW()_JD_CFG[TIMEOUT_MULT]\<\<4)+[TOTH])*2^([TOTH_TICK]+4)
+
+                                                                 Setting [TOTH]=0 disables the timeout timer.
+
+                                                                 For example, to get 10.24 us timeout value when BPHY runs at 1GHz,
+                                                                 set [TOTH_TICK]=0x6, [TOTH]=0xA, and MDBW()_JD_CFG[TIMEOUT_MULT]=0x1. */
+        uint64_t toth_tick             : 4;  /**< [ 56: 53] Timeout threshold tick count. See MDBW_JD_HDR_WORD_0_S[TOTH] for
+                                                                 details. */
+        uint64_t jce_cnt               : 6;  /**< [ 52: 47] Specifies the number of 64-bit job completion event words to fetch starting from
+                                                                 MDBW_JD_JCE_PTR_S[START_ADDR].
+                                                                 Supports up to 62 64-bit words, i.e., 31 JCE commands. */
+        uint64_t reserved_42_46        : 5;
+        uint64_t dma_p0_wrcnt          : 10; /**< [ 41: 32] Specifies the number of 64-bit write DMA command words to fetch starting from
+                                                                 MDBW_JD_DMA_PTR_S[START_ADDR].  Supports up to 1023 64-bit words. */
+        uint64_t reserved_26_31        : 6;
+        uint64_t dma_p0_rdcnt          : 10; /**< [ 25: 16] Specifies the number of 64-bit read DMA command words to fetch starting from
+                                                                 MDBW_JD_DMA_PTR_S[START_ADDR].  Supports up to 1023 64-bit words. */
+        uint64_t reserved_10_15        : 6;
+        uint64_t cfg_cnt               : 10; /**< [  9:  0] Specifies the number of 64-bit job configuration words to fetch starting from
+                                                                 MDBW_JD_CFG_PTR_S[START_ADDR].  Supports up to 1022 64-bit words. */
+#else /* Word 0 - Little Endian */
+        uint64_t cfg_cnt               : 10; /**< [  9:  0] Specifies the number of 64-bit job configuration words to fetch starting from
+                                                                 MDBW_JD_CFG_PTR_S[START_ADDR].  Supports up to 1022 64-bit words. */
+        uint64_t reserved_10_15        : 6;
+        uint64_t dma_p0_rdcnt          : 10; /**< [ 25: 16] Specifies the number of 64-bit read DMA command words to fetch starting from
+                                                                 MDBW_JD_DMA_PTR_S[START_ADDR].  Supports up to 1023 64-bit words. */
+        uint64_t reserved_26_31        : 6;
+        uint64_t dma_p0_wrcnt          : 10; /**< [ 41: 32] Specifies the number of 64-bit write DMA command words to fetch starting from
+                                                                 MDBW_JD_DMA_PTR_S[START_ADDR].  Supports up to 1023 64-bit words. */
+        uint64_t reserved_42_46        : 5;
+        uint64_t jce_cnt               : 6;  /**< [ 52: 47] Specifies the number of 64-bit job completion event words to fetch starting from
+                                                                 MDBW_JD_JCE_PTR_S[START_ADDR].
+                                                                 Supports up to 62 64-bit words, i.e., 31 JCE commands. */
+        uint64_t toth_tick             : 4;  /**< [ 56: 53] Timeout threshold tick count. See MDBW_JD_HDR_WORD_0_S[TOTH] for
+                                                                 details. */
+        uint64_t toth                  : 4;  /**< [ 60: 57] Job timeout threshold. The timeout timer starts counting when the job
+                                                                 gets started on a DAC. The timer increments by one each SCLK cycle,
+                                                                 and a timeout occurs when the timer reaches the threshold specified
+                                                                 as:
+
+                                                                 _ ((MDBW()_JD_CFG[TIMEOUT_MULT]\<\<4)+[TOTH])*2^([TOTH_TICK]+4)
+
+                                                                 Setting [TOTH]=0 disables the timeout timer.
+
+                                                                 For example, to get 10.24 us timeout value when BPHY runs at 1GHz,
+                                                                 set [TOTH_TICK]=0x6, [TOTH]=0xA, and MDBW()_JD_CFG[TIMEOUT_MULT]=0x1. */
+        uint64_t dsp_job_type          : 2;  /**< [ 62: 61] Indicates whether DMA is performed under software control or automatic
+                                                                 hardware control. Job types are enumerated with MDBW_DSP_JOB_SEL_E. */
+        uint64_t reserved_63           : 1;
+#endif /* Word 0 - End */
+    } loki;
 };
 
 /**
@@ -506,7 +578,9 @@ static inline uint64_t CAVM_MDBWX_AB_PORT_HP(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=41))
         return 0x87e044002350ll + 0x4000ll * ((a) & 0x3f);
-    __cavm_csr_fatal("MDBWX_AB_PORT_HP", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044002350ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDBWX_AB_PORT_HP", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDBWX_AB_PORT_HP(a) cavm_mdbwx_ab_port_hp_t
@@ -544,7 +618,9 @@ static inline uint64_t CAVM_MDBWX_AB_SLTX_CDERR_OFLOW_JTAG(unsigned long a, unsi
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=41) && (b<=1)))
         return 0x87e044000f40ll + 0x4000ll * ((a) & 0x3f) + 8ll * ((b) & 0x1);
-    __cavm_csr_fatal("MDBWX_AB_SLTX_CDERR_OFLOW_JTAG", 2, a, b, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=15) && (b<=1)))
+        return 0x87e044000f40ll + 0x40000ll * ((a) & 0xf) + 8ll * ((b) & 0x1);
+    __cavm_csr_fatal("MDBWX_AB_SLTX_CDERR_OFLOW_JTAG", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDBWX_AB_SLTX_CDERR_OFLOW_JTAG(a,b) cavm_mdbwx_ab_sltx_cderr_oflow_jtag_t
@@ -582,7 +658,9 @@ static inline uint64_t CAVM_MDBWX_AB_SLTX_CDERR_UFLOW_JTAG(unsigned long a, unsi
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=41) && (b<=1)))
         return 0x87e044000f50ll + 0x4000ll * ((a) & 0x3f) + 8ll * ((b) & 0x1);
-    __cavm_csr_fatal("MDBWX_AB_SLTX_CDERR_UFLOW_JTAG", 2, a, b, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=15) && (b<=1)))
+        return 0x87e044000f50ll + 0x40000ll * ((a) & 0xf) + 8ll * ((b) & 0x1);
+    __cavm_csr_fatal("MDBWX_AB_SLTX_CDERR_UFLOW_JTAG", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDBWX_AB_SLTX_CDERR_UFLOW_JTAG(a,b) cavm_mdbwx_ab_sltx_cderr_uflow_jtag_t
@@ -620,7 +698,9 @@ static inline uint64_t CAVM_MDBWX_AB_SLTX_CFG_FAT_JTAG(unsigned long a, unsigned
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=41) && (b<=1)))
         return 0x87e044001900ll + 0x4000ll * ((a) & 0x3f) + 0x10ll * ((b) & 0x1);
-    __cavm_csr_fatal("MDBWX_AB_SLTX_CFG_FAT_JTAG", 2, a, b, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=15) && (b<=1)))
+        return 0x87e044001900ll + 0x40000ll * ((a) & 0xf) + 0x10ll * ((b) & 0x1);
+    __cavm_csr_fatal("MDBWX_AB_SLTX_CFG_FAT_JTAG", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDBWX_AB_SLTX_CFG_FAT_JTAG(a,b) cavm_mdbwx_ab_sltx_cfg_fat_jtag_t
@@ -658,7 +738,9 @@ static inline uint64_t CAVM_MDBWX_AB_SLTX_CFG_NFAT_JTAG(unsigned long a, unsigne
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=41) && (b<=1)))
         return 0x87e044002100ll + 0x4000ll * ((a) & 0x3f) + 0x10ll * ((b) & 0x1);
-    __cavm_csr_fatal("MDBWX_AB_SLTX_CFG_NFAT_JTAG", 2, a, b, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=15) && (b<=1)))
+        return 0x87e044002100ll + 0x40000ll * ((a) & 0xf) + 0x10ll * ((b) & 0x1);
+    __cavm_csr_fatal("MDBWX_AB_SLTX_CFG_NFAT_JTAG", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDBWX_AB_SLTX_CFG_NFAT_JTAG(a,b) cavm_mdbwx_ab_sltx_cfg_nfat_jtag_t
@@ -716,7 +798,9 @@ static inline uint64_t CAVM_MDBWX_AB_SLTX_CP_FAT_JTAG(unsigned long a, unsigned 
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=41) && (b<=1)))
         return 0x87e044001a00ll + 0x4000ll * ((a) & 0x3f) + 0x10ll * ((b) & 0x1);
-    __cavm_csr_fatal("MDBWX_AB_SLTX_CP_FAT_JTAG", 2, a, b, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=15) && (b<=1)))
+        return 0x87e044001a00ll + 0x40000ll * ((a) & 0xf) + 0x10ll * ((b) & 0x1);
+    __cavm_csr_fatal("MDBWX_AB_SLTX_CP_FAT_JTAG", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDBWX_AB_SLTX_CP_FAT_JTAG(a,b) cavm_mdbwx_ab_sltx_cp_fat_jtag_t
@@ -774,7 +858,9 @@ static inline uint64_t CAVM_MDBWX_AB_SLTX_CP_NFAT_JTAG(unsigned long a, unsigned
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=41) && (b<=1)))
         return 0x87e044002200ll + 0x4000ll * ((a) & 0x3f) + 0x10ll * ((b) & 0x1);
-    __cavm_csr_fatal("MDBWX_AB_SLTX_CP_NFAT_JTAG", 2, a, b, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=15) && (b<=1)))
+        return 0x87e044002200ll + 0x40000ll * ((a) & 0xf) + 0x10ll * ((b) & 0x1);
+    __cavm_csr_fatal("MDBWX_AB_SLTX_CP_NFAT_JTAG", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDBWX_AB_SLTX_CP_NFAT_JTAG(a,b) cavm_mdbwx_ab_sltx_cp_nfat_jtag_t
@@ -837,7 +923,9 @@ static inline uint64_t CAVM_MDBWX_AB_SLTX_DEBUG0(unsigned long a, unsigned long 
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=41) && (b<=1)))
         return 0x87e044002330ll + 0x4000ll * ((a) & 0x3f) + 8ll * ((b) & 0x1);
-    __cavm_csr_fatal("MDBWX_AB_SLTX_DEBUG0", 2, a, b, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=15) && (b<=1)))
+        return 0x87e044002330ll + 0x40000ll * ((a) & 0xf) + 8ll * ((b) & 0x1);
+    __cavm_csr_fatal("MDBWX_AB_SLTX_DEBUG0", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDBWX_AB_SLTX_DEBUG0(a,b) cavm_mdbwx_ab_sltx_debug0_t
@@ -883,7 +971,35 @@ union cavm_mdbwx_ab_sltx_derr_ena_w1c
         uint64_t reserved_27_63        : 37;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdbwx_ab_sltx_derr_ena_w1c_s cn; */
+    /* struct cavm_mdbwx_ab_sltx_derr_ena_w1c_s cnf95xx; */
+    struct cavm_mdbwx_ab_sltx_derr_ena_w1c_loki
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_27_63        : 37;
+        uint64_t cfg_dma_uflow         : 1;  /**< [ 26: 26](R/W1C/H) Reads or clears enable for MDBW(0..15)_AB_SLT(0..1)_DERR_INT[CFG_DMA_UFLOW]. */
+        uint64_t cfg_dma_oflow         : 1;  /**< [ 25: 25](R/W1C/H) Reads or clears enable for MDBW(0..15)_AB_SLT(0..1)_DERR_INT[CFG_DMA_OFLOW]. */
+        uint64_t reserved_13_24        : 12;
+        uint64_t wr_dma_uflow_port0    : 1;  /**< [ 12: 12](R/W1C/H) Reads or clears enable for MDBW(0..15)_AB_SLT(0..1)_DERR_INT[WR_DMA_UFLOW_PORT0]. */
+        uint64_t reserved_9_11         : 3;
+        uint64_t wr_dma_oflow_port0    : 1;  /**< [  8:  8](R/W1C/H) Reads or clears enable for MDBW(0..15)_AB_SLT(0..1)_DERR_INT[WR_DMA_OFLOW_PORT0]. */
+        uint64_t reserved_5_7          : 3;
+        uint64_t rd_dma_uflow_port0    : 1;  /**< [  4:  4](R/W1C/H) Reads or clears enable for MDBW(0..15)_AB_SLT(0..1)_DERR_INT[RD_DMA_UFLOW_PORT0]. */
+        uint64_t reserved_1_3          : 3;
+        uint64_t rd_dma_oflow_port0    : 1;  /**< [  0:  0](R/W1C/H) Reads or clears enable for MDBW(0..15)_AB_SLT(0..1)_DERR_INT[RD_DMA_OFLOW_PORT0]. */
+#else /* Word 0 - Little Endian */
+        uint64_t rd_dma_oflow_port0    : 1;  /**< [  0:  0](R/W1C/H) Reads or clears enable for MDBW(0..15)_AB_SLT(0..1)_DERR_INT[RD_DMA_OFLOW_PORT0]. */
+        uint64_t reserved_1_3          : 3;
+        uint64_t rd_dma_uflow_port0    : 1;  /**< [  4:  4](R/W1C/H) Reads or clears enable for MDBW(0..15)_AB_SLT(0..1)_DERR_INT[RD_DMA_UFLOW_PORT0]. */
+        uint64_t reserved_5_7          : 3;
+        uint64_t wr_dma_oflow_port0    : 1;  /**< [  8:  8](R/W1C/H) Reads or clears enable for MDBW(0..15)_AB_SLT(0..1)_DERR_INT[WR_DMA_OFLOW_PORT0]. */
+        uint64_t reserved_9_11         : 3;
+        uint64_t wr_dma_uflow_port0    : 1;  /**< [ 12: 12](R/W1C/H) Reads or clears enable for MDBW(0..15)_AB_SLT(0..1)_DERR_INT[WR_DMA_UFLOW_PORT0]. */
+        uint64_t reserved_13_24        : 12;
+        uint64_t cfg_dma_oflow         : 1;  /**< [ 25: 25](R/W1C/H) Reads or clears enable for MDBW(0..15)_AB_SLT(0..1)_DERR_INT[CFG_DMA_OFLOW]. */
+        uint64_t cfg_dma_uflow         : 1;  /**< [ 26: 26](R/W1C/H) Reads or clears enable for MDBW(0..15)_AB_SLT(0..1)_DERR_INT[CFG_DMA_UFLOW]. */
+        uint64_t reserved_27_63        : 37;
+#endif /* Word 0 - End */
+    } loki;
 };
 typedef union cavm_mdbwx_ab_sltx_derr_ena_w1c cavm_mdbwx_ab_sltx_derr_ena_w1c_t;
 
@@ -892,7 +1008,9 @@ static inline uint64_t CAVM_MDBWX_AB_SLTX_DERR_ENA_W1C(unsigned long a, unsigned
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=41) && (b<=1)))
         return 0x87e044001100ll + 0x4000ll * ((a) & 0x3f) + 0x10ll * ((b) & 0x1);
-    __cavm_csr_fatal("MDBWX_AB_SLTX_DERR_ENA_W1C", 2, a, b, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=15) && (b<=1)))
+        return 0x87e044001100ll + 0x40000ll * ((a) & 0xf) + 0x10ll * ((b) & 0x1);
+    __cavm_csr_fatal("MDBWX_AB_SLTX_DERR_ENA_W1C", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDBWX_AB_SLTX_DERR_ENA_W1C(a,b) cavm_mdbwx_ab_sltx_derr_ena_w1c_t
@@ -938,7 +1056,35 @@ union cavm_mdbwx_ab_sltx_derr_ena_w1s
         uint64_t reserved_27_63        : 37;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdbwx_ab_sltx_derr_ena_w1s_s cn; */
+    /* struct cavm_mdbwx_ab_sltx_derr_ena_w1s_s cnf95xx; */
+    struct cavm_mdbwx_ab_sltx_derr_ena_w1s_loki
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_27_63        : 37;
+        uint64_t cfg_dma_uflow         : 1;  /**< [ 26: 26](R/W1S/H) Reads or sets enable for MDBW(0..15)_AB_SLT(0..1)_DERR_INT[CFG_DMA_UFLOW]. */
+        uint64_t cfg_dma_oflow         : 1;  /**< [ 25: 25](R/W1S/H) Reads or sets enable for MDBW(0..15)_AB_SLT(0..1)_DERR_INT[CFG_DMA_OFLOW]. */
+        uint64_t reserved_13_24        : 12;
+        uint64_t wr_dma_uflow_port0    : 1;  /**< [ 12: 12](R/W1S/H) Reads or sets enable for MDBW(0..15)_AB_SLT(0..1)_DERR_INT[WR_DMA_UFLOW_PORT0]. */
+        uint64_t reserved_9_11         : 3;
+        uint64_t wr_dma_oflow_port0    : 1;  /**< [  8:  8](R/W1S/H) Reads or sets enable for MDBW(0..15)_AB_SLT(0..1)_DERR_INT[WR_DMA_OFLOW_PORT0]. */
+        uint64_t reserved_5_7          : 3;
+        uint64_t rd_dma_uflow_port0    : 1;  /**< [  4:  4](R/W1S/H) Reads or sets enable for MDBW(0..15)_AB_SLT(0..1)_DERR_INT[RD_DMA_UFLOW_PORT0]. */
+        uint64_t reserved_1_3          : 3;
+        uint64_t rd_dma_oflow_port0    : 1;  /**< [  0:  0](R/W1S/H) Reads or sets enable for MDBW(0..15)_AB_SLT(0..1)_DERR_INT[RD_DMA_OFLOW_PORT0]. */
+#else /* Word 0 - Little Endian */
+        uint64_t rd_dma_oflow_port0    : 1;  /**< [  0:  0](R/W1S/H) Reads or sets enable for MDBW(0..15)_AB_SLT(0..1)_DERR_INT[RD_DMA_OFLOW_PORT0]. */
+        uint64_t reserved_1_3          : 3;
+        uint64_t rd_dma_uflow_port0    : 1;  /**< [  4:  4](R/W1S/H) Reads or sets enable for MDBW(0..15)_AB_SLT(0..1)_DERR_INT[RD_DMA_UFLOW_PORT0]. */
+        uint64_t reserved_5_7          : 3;
+        uint64_t wr_dma_oflow_port0    : 1;  /**< [  8:  8](R/W1S/H) Reads or sets enable for MDBW(0..15)_AB_SLT(0..1)_DERR_INT[WR_DMA_OFLOW_PORT0]. */
+        uint64_t reserved_9_11         : 3;
+        uint64_t wr_dma_uflow_port0    : 1;  /**< [ 12: 12](R/W1S/H) Reads or sets enable for MDBW(0..15)_AB_SLT(0..1)_DERR_INT[WR_DMA_UFLOW_PORT0]. */
+        uint64_t reserved_13_24        : 12;
+        uint64_t cfg_dma_oflow         : 1;  /**< [ 25: 25](R/W1S/H) Reads or sets enable for MDBW(0..15)_AB_SLT(0..1)_DERR_INT[CFG_DMA_OFLOW]. */
+        uint64_t cfg_dma_uflow         : 1;  /**< [ 26: 26](R/W1S/H) Reads or sets enable for MDBW(0..15)_AB_SLT(0..1)_DERR_INT[CFG_DMA_UFLOW]. */
+        uint64_t reserved_27_63        : 37;
+#endif /* Word 0 - End */
+    } loki;
 };
 typedef union cavm_mdbwx_ab_sltx_derr_ena_w1s cavm_mdbwx_ab_sltx_derr_ena_w1s_t;
 
@@ -947,7 +1093,9 @@ static inline uint64_t CAVM_MDBWX_AB_SLTX_DERR_ENA_W1S(unsigned long a, unsigned
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=41) && (b<=1)))
         return 0x87e044001000ll + 0x4000ll * ((a) & 0x3f) + 0x10ll * ((b) & 0x1);
-    __cavm_csr_fatal("MDBWX_AB_SLTX_DERR_ENA_W1S", 2, a, b, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=15) && (b<=1)))
+        return 0x87e044001000ll + 0x40000ll * ((a) & 0xf) + 0x10ll * ((b) & 0x1);
+    __cavm_csr_fatal("MDBWX_AB_SLTX_DERR_ENA_W1S", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDBWX_AB_SLTX_DERR_ENA_W1S(a,b) cavm_mdbwx_ab_sltx_derr_ena_w1s_t
@@ -1003,7 +1151,9 @@ static inline uint64_t CAVM_MDBWX_AB_SLTX_DERR_INT(unsigned long a, unsigned lon
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=41) && (b<=1)))
         return 0x87e044000e00ll + 0x4000ll * ((a) & 0x3f) + 0x10ll * ((b) & 0x1);
-    __cavm_csr_fatal("MDBWX_AB_SLTX_DERR_INT", 2, a, b, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=15) && (b<=1)))
+        return 0x87e044000e00ll + 0x40000ll * ((a) & 0xf) + 0x10ll * ((b) & 0x1);
+    __cavm_csr_fatal("MDBWX_AB_SLTX_DERR_INT", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDBWX_AB_SLTX_DERR_INT(a,b) cavm_mdbwx_ab_sltx_derr_int_t
@@ -1049,7 +1199,35 @@ union cavm_mdbwx_ab_sltx_derr_int_w1s
         uint64_t reserved_27_63        : 37;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdbwx_ab_sltx_derr_int_w1s_s cn; */
+    /* struct cavm_mdbwx_ab_sltx_derr_int_w1s_s cnf95xx; */
+    struct cavm_mdbwx_ab_sltx_derr_int_w1s_loki
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_27_63        : 37;
+        uint64_t cfg_dma_uflow         : 1;  /**< [ 26: 26](R/W1S/H) Reads or sets MDBW(0..15)_AB_SLT(0..1)_DERR_INT[CFG_DMA_UFLOW]. */
+        uint64_t cfg_dma_oflow         : 1;  /**< [ 25: 25](R/W1S/H) Reads or sets MDBW(0..15)_AB_SLT(0..1)_DERR_INT[CFG_DMA_OFLOW]. */
+        uint64_t reserved_13_24        : 12;
+        uint64_t wr_dma_uflow_port0    : 1;  /**< [ 12: 12](R/W1S/H) Reads or sets MDBW(0..15)_AB_SLT(0..1)_DERR_INT[WR_DMA_UFLOW_PORT0]. */
+        uint64_t reserved_9_11         : 3;
+        uint64_t wr_dma_oflow_port0    : 1;  /**< [  8:  8](R/W1S/H) Reads or sets MDBW(0..15)_AB_SLT(0..1)_DERR_INT[WR_DMA_OFLOW_PORT0]. */
+        uint64_t reserved_5_7          : 3;
+        uint64_t rd_dma_uflow_port0    : 1;  /**< [  4:  4](R/W1S/H) Reads or sets MDBW(0..15)_AB_SLT(0..1)_DERR_INT[RD_DMA_UFLOW_PORT0]. */
+        uint64_t reserved_1_3          : 3;
+        uint64_t rd_dma_oflow_port0    : 1;  /**< [  0:  0](R/W1S/H) Reads or sets MDBW(0..15)_AB_SLT(0..1)_DERR_INT[RD_DMA_OFLOW_PORT0]. */
+#else /* Word 0 - Little Endian */
+        uint64_t rd_dma_oflow_port0    : 1;  /**< [  0:  0](R/W1S/H) Reads or sets MDBW(0..15)_AB_SLT(0..1)_DERR_INT[RD_DMA_OFLOW_PORT0]. */
+        uint64_t reserved_1_3          : 3;
+        uint64_t rd_dma_uflow_port0    : 1;  /**< [  4:  4](R/W1S/H) Reads or sets MDBW(0..15)_AB_SLT(0..1)_DERR_INT[RD_DMA_UFLOW_PORT0]. */
+        uint64_t reserved_5_7          : 3;
+        uint64_t wr_dma_oflow_port0    : 1;  /**< [  8:  8](R/W1S/H) Reads or sets MDBW(0..15)_AB_SLT(0..1)_DERR_INT[WR_DMA_OFLOW_PORT0]. */
+        uint64_t reserved_9_11         : 3;
+        uint64_t wr_dma_uflow_port0    : 1;  /**< [ 12: 12](R/W1S/H) Reads or sets MDBW(0..15)_AB_SLT(0..1)_DERR_INT[WR_DMA_UFLOW_PORT0]. */
+        uint64_t reserved_13_24        : 12;
+        uint64_t cfg_dma_oflow         : 1;  /**< [ 25: 25](R/W1S/H) Reads or sets MDBW(0..15)_AB_SLT(0..1)_DERR_INT[CFG_DMA_OFLOW]. */
+        uint64_t cfg_dma_uflow         : 1;  /**< [ 26: 26](R/W1S/H) Reads or sets MDBW(0..15)_AB_SLT(0..1)_DERR_INT[CFG_DMA_UFLOW]. */
+        uint64_t reserved_27_63        : 37;
+#endif /* Word 0 - End */
+    } loki;
 };
 typedef union cavm_mdbwx_ab_sltx_derr_int_w1s cavm_mdbwx_ab_sltx_derr_int_w1s_t;
 
@@ -1058,7 +1236,9 @@ static inline uint64_t CAVM_MDBWX_AB_SLTX_DERR_INT_W1S(unsigned long a, unsigned
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=41) && (b<=1)))
         return 0x87e044001200ll + 0x4000ll * ((a) & 0x3f) + 0x10ll * ((b) & 0x1);
-    __cavm_csr_fatal("MDBWX_AB_SLTX_DERR_INT_W1S", 2, a, b, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=15) && (b<=1)))
+        return 0x87e044001200ll + 0x40000ll * ((a) & 0xf) + 0x10ll * ((b) & 0x1);
+    __cavm_csr_fatal("MDBWX_AB_SLTX_DERR_INT_W1S", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDBWX_AB_SLTX_DERR_INT_W1S(a,b) cavm_mdbwx_ab_sltx_derr_int_w1s_t
@@ -1110,7 +1290,41 @@ union cavm_mdbwx_ab_sltx_fat_err_ena_w1c
         uint64_t reserved_19_63        : 45;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdbwx_ab_sltx_fat_err_ena_w1c_s cn; */
+    /* struct cavm_mdbwx_ab_sltx_fat_err_ena_w1c_s cnf95xx; */
+    struct cavm_mdbwx_ab_sltx_fat_err_ena_w1c_loki
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_19_63        : 45;
+        uint64_t ab                    : 1;  /**< [ 18: 18](R/W1C/H) Reads or clears enable for MDBW(0..15)_AB_SLT(0..1)_FAT_ERR_INT[AB]. */
+        uint64_t jd_fetch              : 1;  /**< [ 17: 17](R/W1C/H) Reads or clears enable for MDBW(0..15)_AB_SLT(0..1)_FAT_ERR_INT[JD_FETCH].
+                                                                 Internal:
+                                                                 Since this
+                                                                 happens before AB or job slot
+                                                                 assignment, the error is a single bit and always reported in AB(0), Slot(0). */
+        uint64_t job_sd_fetch          : 1;  /**< [ 16: 16](R/W1C/H) Reads or clears enable for MDBW(0..15)_AB_SLT(0..1)_FAT_ERR_INT[JOB_SD_FETCH]. */
+        uint64_t reserved_13_15        : 3;
+        uint64_t cfg_dma               : 1;  /**< [ 12: 12](R/W1C/H) Reads or clears enable for MDBW(0..15)_AB_SLT(0..1)_FAT_ERR_INT[CFG_DMA]. */
+        uint64_t reserved_9_11         : 3;
+        uint64_t wr_dma_port0          : 1;  /**< [  8:  8](R/W1C/H) Reads or clears enable for MDBW(0..15)_AB_SLT(0..1)_FAT_ERR_INT[WR_DMA_PORT0]. */
+        uint64_t reserved_1_7          : 7;
+        uint64_t rd_dma_port0          : 1;  /**< [  0:  0](R/W1C/H) Reads or clears enable for MDBW(0..15)_AB_SLT(0..1)_FAT_ERR_INT[RD_DMA_PORT0]. */
+#else /* Word 0 - Little Endian */
+        uint64_t rd_dma_port0          : 1;  /**< [  0:  0](R/W1C/H) Reads or clears enable for MDBW(0..15)_AB_SLT(0..1)_FAT_ERR_INT[RD_DMA_PORT0]. */
+        uint64_t reserved_1_7          : 7;
+        uint64_t wr_dma_port0          : 1;  /**< [  8:  8](R/W1C/H) Reads or clears enable for MDBW(0..15)_AB_SLT(0..1)_FAT_ERR_INT[WR_DMA_PORT0]. */
+        uint64_t reserved_9_11         : 3;
+        uint64_t cfg_dma               : 1;  /**< [ 12: 12](R/W1C/H) Reads or clears enable for MDBW(0..15)_AB_SLT(0..1)_FAT_ERR_INT[CFG_DMA]. */
+        uint64_t reserved_13_15        : 3;
+        uint64_t job_sd_fetch          : 1;  /**< [ 16: 16](R/W1C/H) Reads or clears enable for MDBW(0..15)_AB_SLT(0..1)_FAT_ERR_INT[JOB_SD_FETCH]. */
+        uint64_t jd_fetch              : 1;  /**< [ 17: 17](R/W1C/H) Reads or clears enable for MDBW(0..15)_AB_SLT(0..1)_FAT_ERR_INT[JD_FETCH].
+                                                                 Internal:
+                                                                 Since this
+                                                                 happens before AB or job slot
+                                                                 assignment, the error is a single bit and always reported in AB(0), Slot(0). */
+        uint64_t ab                    : 1;  /**< [ 18: 18](R/W1C/H) Reads or clears enable for MDBW(0..15)_AB_SLT(0..1)_FAT_ERR_INT[AB]. */
+        uint64_t reserved_19_63        : 45;
+#endif /* Word 0 - End */
+    } loki;
 };
 typedef union cavm_mdbwx_ab_sltx_fat_err_ena_w1c cavm_mdbwx_ab_sltx_fat_err_ena_w1c_t;
 
@@ -1119,7 +1333,9 @@ static inline uint64_t CAVM_MDBWX_AB_SLTX_FAT_ERR_ENA_W1C(unsigned long a, unsig
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=41) && (b<=1)))
         return 0x87e044001500ll + 0x4000ll * ((a) & 0x3f) + 0x10ll * ((b) & 0x1);
-    __cavm_csr_fatal("MDBWX_AB_SLTX_FAT_ERR_ENA_W1C", 2, a, b, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=15) && (b<=1)))
+        return 0x87e044001500ll + 0x40000ll * ((a) & 0xf) + 0x10ll * ((b) & 0x1);
+    __cavm_csr_fatal("MDBWX_AB_SLTX_FAT_ERR_ENA_W1C", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDBWX_AB_SLTX_FAT_ERR_ENA_W1C(a,b) cavm_mdbwx_ab_sltx_fat_err_ena_w1c_t
@@ -1171,7 +1387,41 @@ union cavm_mdbwx_ab_sltx_fat_err_ena_w1s
         uint64_t reserved_19_63        : 45;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdbwx_ab_sltx_fat_err_ena_w1s_s cn; */
+    /* struct cavm_mdbwx_ab_sltx_fat_err_ena_w1s_s cnf95xx; */
+    struct cavm_mdbwx_ab_sltx_fat_err_ena_w1s_loki
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_19_63        : 45;
+        uint64_t ab                    : 1;  /**< [ 18: 18](R/W1S/H) Reads or sets enable for MDBW(0..15)_AB_SLT(0..1)_FAT_ERR_INT[AB]. */
+        uint64_t jd_fetch              : 1;  /**< [ 17: 17](R/W1S/H) Reads or sets enable for MDBW(0..15)_AB_SLT(0..1)_FAT_ERR_INT[JD_FETCH].
+                                                                 Internal:
+                                                                 Since this
+                                                                 happens before AB or job slot
+                                                                 assignment, the error is a single bit and always reported in AB(0), Slot(0). */
+        uint64_t job_sd_fetch          : 1;  /**< [ 16: 16](R/W1S/H) Reads or sets enable for MDBW(0..15)_AB_SLT(0..1)_FAT_ERR_INT[JOB_SD_FETCH]. */
+        uint64_t reserved_13_15        : 3;
+        uint64_t cfg_dma               : 1;  /**< [ 12: 12](R/W1S/H) Reads or sets enable for MDBW(0..15)_AB_SLT(0..1)_FAT_ERR_INT[CFG_DMA]. */
+        uint64_t reserved_9_11         : 3;
+        uint64_t wr_dma_port0          : 1;  /**< [  8:  8](R/W1S/H) Reads or sets enable for MDBW(0..15)_AB_SLT(0..1)_FAT_ERR_INT[WR_DMA_PORT0]. */
+        uint64_t reserved_1_7          : 7;
+        uint64_t rd_dma_port0          : 1;  /**< [  0:  0](R/W1S/H) Reads or sets enable for MDBW(0..15)_AB_SLT(0..1)_FAT_ERR_INT[RD_DMA_PORT0]. */
+#else /* Word 0 - Little Endian */
+        uint64_t rd_dma_port0          : 1;  /**< [  0:  0](R/W1S/H) Reads or sets enable for MDBW(0..15)_AB_SLT(0..1)_FAT_ERR_INT[RD_DMA_PORT0]. */
+        uint64_t reserved_1_7          : 7;
+        uint64_t wr_dma_port0          : 1;  /**< [  8:  8](R/W1S/H) Reads or sets enable for MDBW(0..15)_AB_SLT(0..1)_FAT_ERR_INT[WR_DMA_PORT0]. */
+        uint64_t reserved_9_11         : 3;
+        uint64_t cfg_dma               : 1;  /**< [ 12: 12](R/W1S/H) Reads or sets enable for MDBW(0..15)_AB_SLT(0..1)_FAT_ERR_INT[CFG_DMA]. */
+        uint64_t reserved_13_15        : 3;
+        uint64_t job_sd_fetch          : 1;  /**< [ 16: 16](R/W1S/H) Reads or sets enable for MDBW(0..15)_AB_SLT(0..1)_FAT_ERR_INT[JOB_SD_FETCH]. */
+        uint64_t jd_fetch              : 1;  /**< [ 17: 17](R/W1S/H) Reads or sets enable for MDBW(0..15)_AB_SLT(0..1)_FAT_ERR_INT[JD_FETCH].
+                                                                 Internal:
+                                                                 Since this
+                                                                 happens before AB or job slot
+                                                                 assignment, the error is a single bit and always reported in AB(0), Slot(0). */
+        uint64_t ab                    : 1;  /**< [ 18: 18](R/W1S/H) Reads or sets enable for MDBW(0..15)_AB_SLT(0..1)_FAT_ERR_INT[AB]. */
+        uint64_t reserved_19_63        : 45;
+#endif /* Word 0 - End */
+    } loki;
 };
 typedef union cavm_mdbwx_ab_sltx_fat_err_ena_w1s cavm_mdbwx_ab_sltx_fat_err_ena_w1s_t;
 
@@ -1180,7 +1430,9 @@ static inline uint64_t CAVM_MDBWX_AB_SLTX_FAT_ERR_ENA_W1S(unsigned long a, unsig
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=41) && (b<=1)))
         return 0x87e044001400ll + 0x4000ll * ((a) & 0x3f) + 0x10ll * ((b) & 0x1);
-    __cavm_csr_fatal("MDBWX_AB_SLTX_FAT_ERR_ENA_W1S", 2, a, b, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=15) && (b<=1)))
+        return 0x87e044001400ll + 0x40000ll * ((a) & 0xf) + 0x10ll * ((b) & 0x1);
+    __cavm_csr_fatal("MDBWX_AB_SLTX_FAT_ERR_ENA_W1S", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDBWX_AB_SLTX_FAT_ERR_ENA_W1S(a,b) cavm_mdbwx_ab_sltx_fat_err_ena_w1s_t
@@ -1242,7 +1494,9 @@ static inline uint64_t CAVM_MDBWX_AB_SLTX_FAT_ERR_INT(unsigned long a, unsigned 
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=41) && (b<=1)))
         return 0x87e044001300ll + 0x4000ll * ((a) & 0x3f) + 0x10ll * ((b) & 0x1);
-    __cavm_csr_fatal("MDBWX_AB_SLTX_FAT_ERR_INT", 2, a, b, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=15) && (b<=1)))
+        return 0x87e044001300ll + 0x40000ll * ((a) & 0xf) + 0x10ll * ((b) & 0x1);
+    __cavm_csr_fatal("MDBWX_AB_SLTX_FAT_ERR_INT", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDBWX_AB_SLTX_FAT_ERR_INT(a,b) cavm_mdbwx_ab_sltx_fat_err_int_t
@@ -1294,7 +1548,41 @@ union cavm_mdbwx_ab_sltx_fat_err_int_w1s
         uint64_t reserved_19_63        : 45;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdbwx_ab_sltx_fat_err_int_w1s_s cn; */
+    /* struct cavm_mdbwx_ab_sltx_fat_err_int_w1s_s cnf95xx; */
+    struct cavm_mdbwx_ab_sltx_fat_err_int_w1s_loki
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_19_63        : 45;
+        uint64_t ab                    : 1;  /**< [ 18: 18](R/W1S/H) Reads or sets MDBW(0..15)_AB_SLT(0..1)_FAT_ERR_INT[AB]. */
+        uint64_t jd_fetch              : 1;  /**< [ 17: 17](R/W1S/H) Reads or sets MDBW(0..15)_AB_SLT(0..1)_FAT_ERR_INT[JD_FETCH].
+                                                                 Internal:
+                                                                 Since this
+                                                                 happens before AB or job slot
+                                                                 assignment, the error is a single bit and always reported in AB(0), Slot(0). */
+        uint64_t job_sd_fetch          : 1;  /**< [ 16: 16](R/W1S/H) Reads or sets MDBW(0..15)_AB_SLT(0..1)_FAT_ERR_INT[JOB_SD_FETCH]. */
+        uint64_t reserved_13_15        : 3;
+        uint64_t cfg_dma               : 1;  /**< [ 12: 12](R/W1S/H) Reads or sets MDBW(0..15)_AB_SLT(0..1)_FAT_ERR_INT[CFG_DMA]. */
+        uint64_t reserved_9_11         : 3;
+        uint64_t wr_dma_port0          : 1;  /**< [  8:  8](R/W1S/H) Reads or sets MDBW(0..15)_AB_SLT(0..1)_FAT_ERR_INT[WR_DMA_PORT0]. */
+        uint64_t reserved_1_7          : 7;
+        uint64_t rd_dma_port0          : 1;  /**< [  0:  0](R/W1S/H) Reads or sets MDBW(0..15)_AB_SLT(0..1)_FAT_ERR_INT[RD_DMA_PORT0]. */
+#else /* Word 0 - Little Endian */
+        uint64_t rd_dma_port0          : 1;  /**< [  0:  0](R/W1S/H) Reads or sets MDBW(0..15)_AB_SLT(0..1)_FAT_ERR_INT[RD_DMA_PORT0]. */
+        uint64_t reserved_1_7          : 7;
+        uint64_t wr_dma_port0          : 1;  /**< [  8:  8](R/W1S/H) Reads or sets MDBW(0..15)_AB_SLT(0..1)_FAT_ERR_INT[WR_DMA_PORT0]. */
+        uint64_t reserved_9_11         : 3;
+        uint64_t cfg_dma               : 1;  /**< [ 12: 12](R/W1S/H) Reads or sets MDBW(0..15)_AB_SLT(0..1)_FAT_ERR_INT[CFG_DMA]. */
+        uint64_t reserved_13_15        : 3;
+        uint64_t job_sd_fetch          : 1;  /**< [ 16: 16](R/W1S/H) Reads or sets MDBW(0..15)_AB_SLT(0..1)_FAT_ERR_INT[JOB_SD_FETCH]. */
+        uint64_t jd_fetch              : 1;  /**< [ 17: 17](R/W1S/H) Reads or sets MDBW(0..15)_AB_SLT(0..1)_FAT_ERR_INT[JD_FETCH].
+                                                                 Internal:
+                                                                 Since this
+                                                                 happens before AB or job slot
+                                                                 assignment, the error is a single bit and always reported in AB(0), Slot(0). */
+        uint64_t ab                    : 1;  /**< [ 18: 18](R/W1S/H) Reads or sets MDBW(0..15)_AB_SLT(0..1)_FAT_ERR_INT[AB]. */
+        uint64_t reserved_19_63        : 45;
+#endif /* Word 0 - End */
+    } loki;
 };
 typedef union cavm_mdbwx_ab_sltx_fat_err_int_w1s cavm_mdbwx_ab_sltx_fat_err_int_w1s_t;
 
@@ -1303,7 +1591,9 @@ static inline uint64_t CAVM_MDBWX_AB_SLTX_FAT_ERR_INT_W1S(unsigned long a, unsig
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=41) && (b<=1)))
         return 0x87e044001600ll + 0x4000ll * ((a) & 0x3f) + 0x10ll * ((b) & 0x1);
-    __cavm_csr_fatal("MDBWX_AB_SLTX_FAT_ERR_INT_W1S", 2, a, b, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=15) && (b<=1)))
+        return 0x87e044001600ll + 0x40000ll * ((a) & 0xf) + 0x10ll * ((b) & 0x1);
+    __cavm_csr_fatal("MDBWX_AB_SLTX_FAT_ERR_INT_W1S", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDBWX_AB_SLTX_FAT_ERR_INT_W1S(a,b) cavm_mdbwx_ab_sltx_fat_err_int_w1s_t
@@ -1351,7 +1641,37 @@ union cavm_mdbwx_ab_sltx_nfat_err_ena_w1c
         uint64_t reserved_19_63        : 45;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdbwx_ab_sltx_nfat_err_ena_w1c_s cn; */
+    /* struct cavm_mdbwx_ab_sltx_nfat_err_ena_w1c_s cnf95xx; */
+    struct cavm_mdbwx_ab_sltx_nfat_err_ena_w1c_loki
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_19_63        : 45;
+        uint64_t ab                    : 1;  /**< [ 18: 18](R/W1C/H) Reads or clears enable for MDBW(0..15)_AB_SLT(0..1)_NFAT_ERR_INT[AB]. */
+        uint64_t jd_fetch              : 1;  /**< [ 17: 17](R/W1C/H) Reads or clears enable for MDBW(0..15)_AB_SLT(0..1)_NFAT_ERR_INT[JD_FETCH].
+                                                                 Internal:
+                                                                 This error, job tag is only valid for SLT(0). */
+        uint64_t job_sd_fetch          : 1;  /**< [ 16: 16](R/W1C/H) Reads or clears enable for MDBW(0..15)_AB_SLT(0..1)_NFAT_ERR_INT[JOB_SD_FETCH]. */
+        uint64_t reserved_13_15        : 3;
+        uint64_t cfg_dma               : 1;  /**< [ 12: 12](R/W1C/H) Reads or clears enable for MDBW(0..15)_AB_SLT(0..1)_NFAT_ERR_INT[CFG_DMA]. */
+        uint64_t reserved_9_11         : 3;
+        uint64_t wr_dma_port0          : 1;  /**< [  8:  8](R/W1C/H) Reads or clears enable for MDBW(0..15)_AB_SLT(0..1)_NFAT_ERR_INT[WR_DMA_PORT0]. */
+        uint64_t reserved_1_7          : 7;
+        uint64_t rd_dma_port0          : 1;  /**< [  0:  0](R/W1C/H) Reads or clears enable for MDBW(0..15)_AB_SLT(0..1)_NFAT_ERR_INT[RD_DMA_PORT0]. */
+#else /* Word 0 - Little Endian */
+        uint64_t rd_dma_port0          : 1;  /**< [  0:  0](R/W1C/H) Reads or clears enable for MDBW(0..15)_AB_SLT(0..1)_NFAT_ERR_INT[RD_DMA_PORT0]. */
+        uint64_t reserved_1_7          : 7;
+        uint64_t wr_dma_port0          : 1;  /**< [  8:  8](R/W1C/H) Reads or clears enable for MDBW(0..15)_AB_SLT(0..1)_NFAT_ERR_INT[WR_DMA_PORT0]. */
+        uint64_t reserved_9_11         : 3;
+        uint64_t cfg_dma               : 1;  /**< [ 12: 12](R/W1C/H) Reads or clears enable for MDBW(0..15)_AB_SLT(0..1)_NFAT_ERR_INT[CFG_DMA]. */
+        uint64_t reserved_13_15        : 3;
+        uint64_t job_sd_fetch          : 1;  /**< [ 16: 16](R/W1C/H) Reads or clears enable for MDBW(0..15)_AB_SLT(0..1)_NFAT_ERR_INT[JOB_SD_FETCH]. */
+        uint64_t jd_fetch              : 1;  /**< [ 17: 17](R/W1C/H) Reads or clears enable for MDBW(0..15)_AB_SLT(0..1)_NFAT_ERR_INT[JD_FETCH].
+                                                                 Internal:
+                                                                 This error, job tag is only valid for SLT(0). */
+        uint64_t ab                    : 1;  /**< [ 18: 18](R/W1C/H) Reads or clears enable for MDBW(0..15)_AB_SLT(0..1)_NFAT_ERR_INT[AB]. */
+        uint64_t reserved_19_63        : 45;
+#endif /* Word 0 - End */
+    } loki;
 };
 typedef union cavm_mdbwx_ab_sltx_nfat_err_ena_w1c cavm_mdbwx_ab_sltx_nfat_err_ena_w1c_t;
 
@@ -1360,7 +1680,9 @@ static inline uint64_t CAVM_MDBWX_AB_SLTX_NFAT_ERR_ENA_W1C(unsigned long a, unsi
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=41) && (b<=1)))
         return 0x87e044001d00ll + 0x4000ll * ((a) & 0x3f) + 0x10ll * ((b) & 0x1);
-    __cavm_csr_fatal("MDBWX_AB_SLTX_NFAT_ERR_ENA_W1C", 2, a, b, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=15) && (b<=1)))
+        return 0x87e044001d00ll + 0x40000ll * ((a) & 0xf) + 0x10ll * ((b) & 0x1);
+    __cavm_csr_fatal("MDBWX_AB_SLTX_NFAT_ERR_ENA_W1C", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDBWX_AB_SLTX_NFAT_ERR_ENA_W1C(a,b) cavm_mdbwx_ab_sltx_nfat_err_ena_w1c_t
@@ -1408,7 +1730,37 @@ union cavm_mdbwx_ab_sltx_nfat_err_ena_w1s
         uint64_t reserved_19_63        : 45;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdbwx_ab_sltx_nfat_err_ena_w1s_s cn; */
+    /* struct cavm_mdbwx_ab_sltx_nfat_err_ena_w1s_s cnf95xx; */
+    struct cavm_mdbwx_ab_sltx_nfat_err_ena_w1s_loki
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_19_63        : 45;
+        uint64_t ab                    : 1;  /**< [ 18: 18](R/W1S/H) Reads or sets enable for MDBW(0..15)_AB_SLT(0..1)_NFAT_ERR_INT[AB]. */
+        uint64_t jd_fetch              : 1;  /**< [ 17: 17](R/W1S/H) Reads or sets enable for MDBW(0..15)_AB_SLT(0..1)_NFAT_ERR_INT[JD_FETCH].
+                                                                 Internal:
+                                                                 This error, job tag is only valid for SLT(0). */
+        uint64_t job_sd_fetch          : 1;  /**< [ 16: 16](R/W1S/H) Reads or sets enable for MDBW(0..15)_AB_SLT(0..1)_NFAT_ERR_INT[JOB_SD_FETCH]. */
+        uint64_t reserved_13_15        : 3;
+        uint64_t cfg_dma               : 1;  /**< [ 12: 12](R/W1S/H) Reads or sets enable for MDBW(0..15)_AB_SLT(0..1)_NFAT_ERR_INT[CFG_DMA]. */
+        uint64_t reserved_9_11         : 3;
+        uint64_t wr_dma_port0          : 1;  /**< [  8:  8](R/W1S/H) Reads or sets enable for MDBW(0..15)_AB_SLT(0..1)_NFAT_ERR_INT[WR_DMA_PORT0]. */
+        uint64_t reserved_1_7          : 7;
+        uint64_t rd_dma_port0          : 1;  /**< [  0:  0](R/W1S/H) Reads or sets enable for MDBW(0..15)_AB_SLT(0..1)_NFAT_ERR_INT[RD_DMA_PORT0]. */
+#else /* Word 0 - Little Endian */
+        uint64_t rd_dma_port0          : 1;  /**< [  0:  0](R/W1S/H) Reads or sets enable for MDBW(0..15)_AB_SLT(0..1)_NFAT_ERR_INT[RD_DMA_PORT0]. */
+        uint64_t reserved_1_7          : 7;
+        uint64_t wr_dma_port0          : 1;  /**< [  8:  8](R/W1S/H) Reads or sets enable for MDBW(0..15)_AB_SLT(0..1)_NFAT_ERR_INT[WR_DMA_PORT0]. */
+        uint64_t reserved_9_11         : 3;
+        uint64_t cfg_dma               : 1;  /**< [ 12: 12](R/W1S/H) Reads or sets enable for MDBW(0..15)_AB_SLT(0..1)_NFAT_ERR_INT[CFG_DMA]. */
+        uint64_t reserved_13_15        : 3;
+        uint64_t job_sd_fetch          : 1;  /**< [ 16: 16](R/W1S/H) Reads or sets enable for MDBW(0..15)_AB_SLT(0..1)_NFAT_ERR_INT[JOB_SD_FETCH]. */
+        uint64_t jd_fetch              : 1;  /**< [ 17: 17](R/W1S/H) Reads or sets enable for MDBW(0..15)_AB_SLT(0..1)_NFAT_ERR_INT[JD_FETCH].
+                                                                 Internal:
+                                                                 This error, job tag is only valid for SLT(0). */
+        uint64_t ab                    : 1;  /**< [ 18: 18](R/W1S/H) Reads or sets enable for MDBW(0..15)_AB_SLT(0..1)_NFAT_ERR_INT[AB]. */
+        uint64_t reserved_19_63        : 45;
+#endif /* Word 0 - End */
+    } loki;
 };
 typedef union cavm_mdbwx_ab_sltx_nfat_err_ena_w1s cavm_mdbwx_ab_sltx_nfat_err_ena_w1s_t;
 
@@ -1417,7 +1769,9 @@ static inline uint64_t CAVM_MDBWX_AB_SLTX_NFAT_ERR_ENA_W1S(unsigned long a, unsi
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=41) && (b<=1)))
         return 0x87e044001c00ll + 0x4000ll * ((a) & 0x3f) + 0x10ll * ((b) & 0x1);
-    __cavm_csr_fatal("MDBWX_AB_SLTX_NFAT_ERR_ENA_W1S", 2, a, b, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=15) && (b<=1)))
+        return 0x87e044001c00ll + 0x40000ll * ((a) & 0xf) + 0x10ll * ((b) & 0x1);
+    __cavm_csr_fatal("MDBWX_AB_SLTX_NFAT_ERR_ENA_W1S", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDBWX_AB_SLTX_NFAT_ERR_ENA_W1S(a,b) cavm_mdbwx_ab_sltx_nfat_err_ena_w1s_t
@@ -1475,7 +1829,9 @@ static inline uint64_t CAVM_MDBWX_AB_SLTX_NFAT_ERR_INT(unsigned long a, unsigned
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=41) && (b<=1)))
         return 0x87e044001b00ll + 0x4000ll * ((a) & 0x3f) + 0x10ll * ((b) & 0x1);
-    __cavm_csr_fatal("MDBWX_AB_SLTX_NFAT_ERR_INT", 2, a, b, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=15) && (b<=1)))
+        return 0x87e044001b00ll + 0x40000ll * ((a) & 0xf) + 0x10ll * ((b) & 0x1);
+    __cavm_csr_fatal("MDBWX_AB_SLTX_NFAT_ERR_INT", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDBWX_AB_SLTX_NFAT_ERR_INT(a,b) cavm_mdbwx_ab_sltx_nfat_err_int_t
@@ -1523,7 +1879,37 @@ union cavm_mdbwx_ab_sltx_nfat_err_int_w1s
         uint64_t reserved_19_63        : 45;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdbwx_ab_sltx_nfat_err_int_w1s_s cn; */
+    /* struct cavm_mdbwx_ab_sltx_nfat_err_int_w1s_s cnf95xx; */
+    struct cavm_mdbwx_ab_sltx_nfat_err_int_w1s_loki
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_19_63        : 45;
+        uint64_t ab                    : 1;  /**< [ 18: 18](R/W1S/H) Reads or sets MDBW(0..15)_AB_SLT(0..1)_NFAT_ERR_INT[AB]. */
+        uint64_t jd_fetch              : 1;  /**< [ 17: 17](R/W1S/H) Reads or sets MDBW(0..15)_AB_SLT(0..1)_NFAT_ERR_INT[JD_FETCH].
+                                                                 Internal:
+                                                                 This error, job tag is only valid for SLT(0). */
+        uint64_t job_sd_fetch          : 1;  /**< [ 16: 16](R/W1S/H) Reads or sets MDBW(0..15)_AB_SLT(0..1)_NFAT_ERR_INT[JOB_SD_FETCH]. */
+        uint64_t reserved_13_15        : 3;
+        uint64_t cfg_dma               : 1;  /**< [ 12: 12](R/W1S/H) Reads or sets MDBW(0..15)_AB_SLT(0..1)_NFAT_ERR_INT[CFG_DMA]. */
+        uint64_t reserved_9_11         : 3;
+        uint64_t wr_dma_port0          : 1;  /**< [  8:  8](R/W1S/H) Reads or sets MDBW(0..15)_AB_SLT(0..1)_NFAT_ERR_INT[WR_DMA_PORT0]. */
+        uint64_t reserved_1_7          : 7;
+        uint64_t rd_dma_port0          : 1;  /**< [  0:  0](R/W1S/H) Reads or sets MDBW(0..15)_AB_SLT(0..1)_NFAT_ERR_INT[RD_DMA_PORT0]. */
+#else /* Word 0 - Little Endian */
+        uint64_t rd_dma_port0          : 1;  /**< [  0:  0](R/W1S/H) Reads or sets MDBW(0..15)_AB_SLT(0..1)_NFAT_ERR_INT[RD_DMA_PORT0]. */
+        uint64_t reserved_1_7          : 7;
+        uint64_t wr_dma_port0          : 1;  /**< [  8:  8](R/W1S/H) Reads or sets MDBW(0..15)_AB_SLT(0..1)_NFAT_ERR_INT[WR_DMA_PORT0]. */
+        uint64_t reserved_9_11         : 3;
+        uint64_t cfg_dma               : 1;  /**< [ 12: 12](R/W1S/H) Reads or sets MDBW(0..15)_AB_SLT(0..1)_NFAT_ERR_INT[CFG_DMA]. */
+        uint64_t reserved_13_15        : 3;
+        uint64_t job_sd_fetch          : 1;  /**< [ 16: 16](R/W1S/H) Reads or sets MDBW(0..15)_AB_SLT(0..1)_NFAT_ERR_INT[JOB_SD_FETCH]. */
+        uint64_t jd_fetch              : 1;  /**< [ 17: 17](R/W1S/H) Reads or sets MDBW(0..15)_AB_SLT(0..1)_NFAT_ERR_INT[JD_FETCH].
+                                                                 Internal:
+                                                                 This error, job tag is only valid for SLT(0). */
+        uint64_t ab                    : 1;  /**< [ 18: 18](R/W1S/H) Reads or sets MDBW(0..15)_AB_SLT(0..1)_NFAT_ERR_INT[AB]. */
+        uint64_t reserved_19_63        : 45;
+#endif /* Word 0 - End */
+    } loki;
 };
 typedef union cavm_mdbwx_ab_sltx_nfat_err_int_w1s cavm_mdbwx_ab_sltx_nfat_err_int_w1s_t;
 
@@ -1532,7 +1918,9 @@ static inline uint64_t CAVM_MDBWX_AB_SLTX_NFAT_ERR_INT_W1S(unsigned long a, unsi
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=41) && (b<=1)))
         return 0x87e044001e00ll + 0x4000ll * ((a) & 0x3f) + 0x10ll * ((b) & 0x1);
-    __cavm_csr_fatal("MDBWX_AB_SLTX_NFAT_ERR_INT_W1S", 2, a, b, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=15) && (b<=1)))
+        return 0x87e044001e00ll + 0x40000ll * ((a) & 0xf) + 0x10ll * ((b) & 0x1);
+    __cavm_csr_fatal("MDBWX_AB_SLTX_NFAT_ERR_INT_W1S", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDBWX_AB_SLTX_NFAT_ERR_INT_W1S(a,b) cavm_mdbwx_ab_sltx_nfat_err_int_w1s_t
@@ -1570,7 +1958,9 @@ static inline uint64_t CAVM_MDBWX_AB_SLTX_RD_FAT_JTAG(unsigned long a, unsigned 
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=41) && (b<=1)))
         return 0x87e044001700ll + 0x4000ll * ((a) & 0x3f) + 0x10ll * ((b) & 0x1);
-    __cavm_csr_fatal("MDBWX_AB_SLTX_RD_FAT_JTAG", 2, a, b, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=15) && (b<=1)))
+        return 0x87e044001700ll + 0x40000ll * ((a) & 0xf) + 0x10ll * ((b) & 0x1);
+    __cavm_csr_fatal("MDBWX_AB_SLTX_RD_FAT_JTAG", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDBWX_AB_SLTX_RD_FAT_JTAG(a,b) cavm_mdbwx_ab_sltx_rd_fat_jtag_t
@@ -1608,7 +1998,9 @@ static inline uint64_t CAVM_MDBWX_AB_SLTX_RD_NFAT_JTAG(unsigned long a, unsigned
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=41) && (b<=1)))
         return 0x87e044001f00ll + 0x4000ll * ((a) & 0x3f) + 0x10ll * ((b) & 0x1);
-    __cavm_csr_fatal("MDBWX_AB_SLTX_RD_NFAT_JTAG", 2, a, b, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=15) && (b<=1)))
+        return 0x87e044001f00ll + 0x40000ll * ((a) & 0xf) + 0x10ll * ((b) & 0x1);
+    __cavm_csr_fatal("MDBWX_AB_SLTX_RD_NFAT_JTAG", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDBWX_AB_SLTX_RD_NFAT_JTAG(a,b) cavm_mdbwx_ab_sltx_rd_nfat_jtag_t
@@ -1646,7 +2038,9 @@ static inline uint64_t CAVM_MDBWX_AB_SLTX_RDERR_OFLOW_JTAG(unsigned long a, unsi
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=41) && (b<=1)))
         return 0x87e044000f00ll + 0x4000ll * ((a) & 0x3f) + 8ll * ((b) & 0x1);
-    __cavm_csr_fatal("MDBWX_AB_SLTX_RDERR_OFLOW_JTAG", 2, a, b, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=15) && (b<=1)))
+        return 0x87e044000f00ll + 0x40000ll * ((a) & 0xf) + 8ll * ((b) & 0x1);
+    __cavm_csr_fatal("MDBWX_AB_SLTX_RDERR_OFLOW_JTAG", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDBWX_AB_SLTX_RDERR_OFLOW_JTAG(a,b) cavm_mdbwx_ab_sltx_rderr_oflow_jtag_t
@@ -1684,7 +2078,9 @@ static inline uint64_t CAVM_MDBWX_AB_SLTX_RDERR_UFLOW_JTAG(unsigned long a, unsi
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=41) && (b<=1)))
         return 0x87e044000f10ll + 0x4000ll * ((a) & 0x3f) + 8ll * ((b) & 0x1);
-    __cavm_csr_fatal("MDBWX_AB_SLTX_RDERR_UFLOW_JTAG", 2, a, b, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=15) && (b<=1)))
+        return 0x87e044000f10ll + 0x40000ll * ((a) & 0xf) + 8ll * ((b) & 0x1);
+    __cavm_csr_fatal("MDBWX_AB_SLTX_RDERR_UFLOW_JTAG", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDBWX_AB_SLTX_RDERR_UFLOW_JTAG(a,b) cavm_mdbwx_ab_sltx_rderr_uflow_jtag_t
@@ -1722,7 +2118,9 @@ static inline uint64_t CAVM_MDBWX_AB_SLTX_WDERR_OFLOW_JTAG(unsigned long a, unsi
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=41) && (b<=1)))
         return 0x87e044000f20ll + 0x4000ll * ((a) & 0x3f) + 8ll * ((b) & 0x1);
-    __cavm_csr_fatal("MDBWX_AB_SLTX_WDERR_OFLOW_JTAG", 2, a, b, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=15) && (b<=1)))
+        return 0x87e044000f20ll + 0x40000ll * ((a) & 0xf) + 8ll * ((b) & 0x1);
+    __cavm_csr_fatal("MDBWX_AB_SLTX_WDERR_OFLOW_JTAG", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDBWX_AB_SLTX_WDERR_OFLOW_JTAG(a,b) cavm_mdbwx_ab_sltx_wderr_oflow_jtag_t
@@ -1760,7 +2158,9 @@ static inline uint64_t CAVM_MDBWX_AB_SLTX_WDERR_UFLOW_JTAG(unsigned long a, unsi
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=41) && (b<=1)))
         return 0x87e044000f30ll + 0x4000ll * ((a) & 0x3f) + 8ll * ((b) & 0x1);
-    __cavm_csr_fatal("MDBWX_AB_SLTX_WDERR_UFLOW_JTAG", 2, a, b, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=15) && (b<=1)))
+        return 0x87e044000f30ll + 0x40000ll * ((a) & 0xf) + 8ll * ((b) & 0x1);
+    __cavm_csr_fatal("MDBWX_AB_SLTX_WDERR_UFLOW_JTAG", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDBWX_AB_SLTX_WDERR_UFLOW_JTAG(a,b) cavm_mdbwx_ab_sltx_wderr_uflow_jtag_t
@@ -1799,7 +2199,9 @@ static inline uint64_t CAVM_MDBWX_AB_SLTX_WR_FAT_JTAG(unsigned long a, unsigned 
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=41) && (b<=1)))
         return 0x87e044001800ll + 0x4000ll * ((a) & 0x3f) + 0x10ll * ((b) & 0x1);
-    __cavm_csr_fatal("MDBWX_AB_SLTX_WR_FAT_JTAG", 2, a, b, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=15) && (b<=1)))
+        return 0x87e044001800ll + 0x40000ll * ((a) & 0xf) + 0x10ll * ((b) & 0x1);
+    __cavm_csr_fatal("MDBWX_AB_SLTX_WR_FAT_JTAG", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDBWX_AB_SLTX_WR_FAT_JTAG(a,b) cavm_mdbwx_ab_sltx_wr_fat_jtag_t
@@ -1837,7 +2239,9 @@ static inline uint64_t CAVM_MDBWX_AB_SLTX_WR_NFAT_JTAG(unsigned long a, unsigned
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=41) && (b<=1)))
         return 0x87e044002000ll + 0x4000ll * ((a) & 0x3f) + 0x10ll * ((b) & 0x1);
-    __cavm_csr_fatal("MDBWX_AB_SLTX_WR_NFAT_JTAG", 2, a, b, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=15) && (b<=1)))
+        return 0x87e044002000ll + 0x40000ll * ((a) & 0xf) + 0x10ll * ((b) & 0x1);
+    __cavm_csr_fatal("MDBWX_AB_SLTX_WR_NFAT_JTAG", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDBWX_AB_SLTX_WR_NFAT_JTAG(a,b) cavm_mdbwx_ab_sltx_wr_nfat_jtag_t
@@ -1871,7 +2275,23 @@ union cavm_mdbwx_adr_err_ena_w1c
         uint64_t reserved_4_63         : 60;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdbwx_adr_err_ena_w1c_s cn; */
+    /* struct cavm_mdbwx_adr_err_ena_w1c_s cnf95xx; */
+    struct cavm_mdbwx_adr_err_ena_w1c_loki
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_4_63         : 60;
+        uint64_t gaa_wr_nxm_err        : 1;  /**< [  3:  3](R/W1C/H) Reads or clears enable for MDBW(0..15)_ADR_ERR_INT[GAA_WR_NXM_ERR]. */
+        uint64_t gaa_rd_nxm_err        : 1;  /**< [  2:  2](R/W1C/H) Reads or clears enable for MDBW(0..15)_ADR_ERR_INT[GAA_RD_NXM_ERR]. */
+        uint64_t ddr_range_err         : 1;  /**< [  1:  1](R/W1C/H) Reads or clears enable for MDBW(0..15)_ADR_ERR_INT[DDR_RANGE_ERR]. */
+        uint64_t smem_range_err        : 1;  /**< [  0:  0](R/W1C/H) Reads or clears enable for MDBW(0..15)_ADR_ERR_INT[SMEM_RANGE_ERR]. */
+#else /* Word 0 - Little Endian */
+        uint64_t smem_range_err        : 1;  /**< [  0:  0](R/W1C/H) Reads or clears enable for MDBW(0..15)_ADR_ERR_INT[SMEM_RANGE_ERR]. */
+        uint64_t ddr_range_err         : 1;  /**< [  1:  1](R/W1C/H) Reads or clears enable for MDBW(0..15)_ADR_ERR_INT[DDR_RANGE_ERR]. */
+        uint64_t gaa_rd_nxm_err        : 1;  /**< [  2:  2](R/W1C/H) Reads or clears enable for MDBW(0..15)_ADR_ERR_INT[GAA_RD_NXM_ERR]. */
+        uint64_t gaa_wr_nxm_err        : 1;  /**< [  3:  3](R/W1C/H) Reads or clears enable for MDBW(0..15)_ADR_ERR_INT[GAA_WR_NXM_ERR]. */
+        uint64_t reserved_4_63         : 60;
+#endif /* Word 0 - End */
+    } loki;
 };
 typedef union cavm_mdbwx_adr_err_ena_w1c cavm_mdbwx_adr_err_ena_w1c_t;
 
@@ -1880,7 +2300,9 @@ static inline uint64_t CAVM_MDBWX_ADR_ERR_ENA_W1C(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=41))
         return 0x87e044000d10ll + 0x4000ll * ((a) & 0x3f);
-    __cavm_csr_fatal("MDBWX_ADR_ERR_ENA_W1C", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044000d10ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDBWX_ADR_ERR_ENA_W1C", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDBWX_ADR_ERR_ENA_W1C(a) cavm_mdbwx_adr_err_ena_w1c_t
@@ -1914,7 +2336,23 @@ union cavm_mdbwx_adr_err_ena_w1s
         uint64_t reserved_4_63         : 60;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdbwx_adr_err_ena_w1s_s cn; */
+    /* struct cavm_mdbwx_adr_err_ena_w1s_s cnf95xx; */
+    struct cavm_mdbwx_adr_err_ena_w1s_loki
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_4_63         : 60;
+        uint64_t gaa_wr_nxm_err        : 1;  /**< [  3:  3](R/W1S/H) Reads or sets enable for MDBW(0..15)_ADR_ERR_INT[GAA_WR_NXM_ERR]. */
+        uint64_t gaa_rd_nxm_err        : 1;  /**< [  2:  2](R/W1S/H) Reads or sets enable for MDBW(0..15)_ADR_ERR_INT[GAA_RD_NXM_ERR]. */
+        uint64_t ddr_range_err         : 1;  /**< [  1:  1](R/W1S/H) Reads or sets enable for MDBW(0..15)_ADR_ERR_INT[DDR_RANGE_ERR]. */
+        uint64_t smem_range_err        : 1;  /**< [  0:  0](R/W1S/H) Reads or sets enable for MDBW(0..15)_ADR_ERR_INT[SMEM_RANGE_ERR]. */
+#else /* Word 0 - Little Endian */
+        uint64_t smem_range_err        : 1;  /**< [  0:  0](R/W1S/H) Reads or sets enable for MDBW(0..15)_ADR_ERR_INT[SMEM_RANGE_ERR]. */
+        uint64_t ddr_range_err         : 1;  /**< [  1:  1](R/W1S/H) Reads or sets enable for MDBW(0..15)_ADR_ERR_INT[DDR_RANGE_ERR]. */
+        uint64_t gaa_rd_nxm_err        : 1;  /**< [  2:  2](R/W1S/H) Reads or sets enable for MDBW(0..15)_ADR_ERR_INT[GAA_RD_NXM_ERR]. */
+        uint64_t gaa_wr_nxm_err        : 1;  /**< [  3:  3](R/W1S/H) Reads or sets enable for MDBW(0..15)_ADR_ERR_INT[GAA_WR_NXM_ERR]. */
+        uint64_t reserved_4_63         : 60;
+#endif /* Word 0 - End */
+    } loki;
 };
 typedef union cavm_mdbwx_adr_err_ena_w1s cavm_mdbwx_adr_err_ena_w1s_t;
 
@@ -1923,7 +2361,9 @@ static inline uint64_t CAVM_MDBWX_ADR_ERR_ENA_W1S(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=41))
         return 0x87e044000d08ll + 0x4000ll * ((a) & 0x3f);
-    __cavm_csr_fatal("MDBWX_ADR_ERR_ENA_W1S", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044000d08ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDBWX_ADR_ERR_ENA_W1S", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDBWX_ADR_ERR_ENA_W1S(a) cavm_mdbwx_adr_err_ena_w1s_t
@@ -1978,7 +2418,9 @@ static inline uint64_t CAVM_MDBWX_ADR_ERR_INT(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=41))
         return 0x87e044000d00ll + 0x4000ll * ((a) & 0x3f);
-    __cavm_csr_fatal("MDBWX_ADR_ERR_INT", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044000d00ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDBWX_ADR_ERR_INT", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDBWX_ADR_ERR_INT(a) cavm_mdbwx_adr_err_int_t
@@ -2012,7 +2454,23 @@ union cavm_mdbwx_adr_err_int_w1s
         uint64_t reserved_4_63         : 60;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mdbwx_adr_err_int_w1s_s cn; */
+    /* struct cavm_mdbwx_adr_err_int_w1s_s cnf95xx; */
+    struct cavm_mdbwx_adr_err_int_w1s_loki
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_4_63         : 60;
+        uint64_t gaa_wr_nxm_err        : 1;  /**< [  3:  3](R/W1S/H) Reads or sets MDBW(0..15)_ADR_ERR_INT[GAA_WR_NXM_ERR]. */
+        uint64_t gaa_rd_nxm_err        : 1;  /**< [  2:  2](R/W1S/H) Reads or sets MDBW(0..15)_ADR_ERR_INT[GAA_RD_NXM_ERR]. */
+        uint64_t ddr_range_err         : 1;  /**< [  1:  1](R/W1S/H) Reads or sets MDBW(0..15)_ADR_ERR_INT[DDR_RANGE_ERR]. */
+        uint64_t smem_range_err        : 1;  /**< [  0:  0](R/W1S/H) Reads or sets MDBW(0..15)_ADR_ERR_INT[SMEM_RANGE_ERR]. */
+#else /* Word 0 - Little Endian */
+        uint64_t smem_range_err        : 1;  /**< [  0:  0](R/W1S/H) Reads or sets MDBW(0..15)_ADR_ERR_INT[SMEM_RANGE_ERR]. */
+        uint64_t ddr_range_err         : 1;  /**< [  1:  1](R/W1S/H) Reads or sets MDBW(0..15)_ADR_ERR_INT[DDR_RANGE_ERR]. */
+        uint64_t gaa_rd_nxm_err        : 1;  /**< [  2:  2](R/W1S/H) Reads or sets MDBW(0..15)_ADR_ERR_INT[GAA_RD_NXM_ERR]. */
+        uint64_t gaa_wr_nxm_err        : 1;  /**< [  3:  3](R/W1S/H) Reads or sets MDBW(0..15)_ADR_ERR_INT[GAA_WR_NXM_ERR]. */
+        uint64_t reserved_4_63         : 60;
+#endif /* Word 0 - End */
+    } loki;
 };
 typedef union cavm_mdbwx_adr_err_int_w1s cavm_mdbwx_adr_err_int_w1s_t;
 
@@ -2021,7 +2479,9 @@ static inline uint64_t CAVM_MDBWX_ADR_ERR_INT_W1S(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=41))
         return 0x87e044000d18ll + 0x4000ll * ((a) & 0x3f);
-    __cavm_csr_fatal("MDBWX_ADR_ERR_INT_W1S", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044000d18ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDBWX_ADR_ERR_INT_W1S", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDBWX_ADR_ERR_INT_W1S(a) cavm_mdbwx_adr_err_int_w1s_t
@@ -2065,7 +2525,9 @@ static inline uint64_t CAVM_MDBWX_ADR_ERR_JTAG(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=41))
         return 0x87e044000d20ll + 0x4000ll * ((a) & 0x3f);
-    __cavm_csr_fatal("MDBWX_ADR_ERR_JTAG", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044000d20ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDBWX_ADR_ERR_JTAG", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDBWX_ADR_ERR_JTAG(a) cavm_mdbwx_adr_err_jtag_t
@@ -2101,7 +2563,9 @@ static inline uint64_t CAVM_MDBWX_ADR_ERROR_JCE_W0(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=41))
         return 0x87e044000060ll + 0x4000ll * ((a) & 0x3f);
-    __cavm_csr_fatal("MDBWX_ADR_ERROR_JCE_W0", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044000060ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDBWX_ADR_ERROR_JCE_W0", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDBWX_ADR_ERROR_JCE_W0(a) cavm_mdbwx_adr_error_jce_w0_t
@@ -2137,7 +2601,9 @@ static inline uint64_t CAVM_MDBWX_ADR_ERROR_JCE_W1(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=41))
         return 0x87e044000068ll + 0x4000ll * ((a) & 0x3f);
-    __cavm_csr_fatal("MDBWX_ADR_ERROR_JCE_W1", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044000068ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDBWX_ADR_ERROR_JCE_W1", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDBWX_ADR_ERROR_JCE_W1(a) cavm_mdbwx_adr_error_jce_w1_t
@@ -2196,7 +2662,7 @@ union cavm_mdbwx_cfg
         uint64_t ab_cclk_pwait_dis     : 1;  /**< [  6:  6](R/W) Set one to disable the DSP conditional clock gating when DSP is in PWAIT sleep mode.
                                                                  During DSP sleep mode, the DSP conditional clock is turned off if this bit is set to 0. */
         uint64_t reserved_5            : 1;
-        uint64_t ab_cclk_force_on      : 1;  /**< [  4:  4](R/W) Set one to force the DSP conditional clock to be always on. A CYA function. */
+        uint64_t ab_cclk_force_on      : 1;  /**< [  4:  4](R/W) Set one to force the DSP conditional clock to be always on. For diagnostic use only. */
         uint64_t nojob_runstall_ena    : 1;  /**< [  3:  3](R/W) When set, force DAC RUNSTALL=1 when MDBW has no MDAB jobs to process.
                                                                  DSP RUNSTALL=1 will force the internal DSP pipeline to STALL (to save DSP core power).
                                                                  When this bit is ENABLED, the DSP pipeline is forced to STALL (to save power),
@@ -2214,9 +2680,9 @@ union cavm_mdbwx_cfg
                                                                  Internal:
                                                                  Used as a conditional
                                                                  reset for the MDBW. */
-        uint64_t mdbw_cclk_force_on    : 1;  /**< [  0:  0](R/W) Set one to force the MDBW conditional clock to be always on. A CYA function. */
+        uint64_t mdbw_cclk_force_on    : 1;  /**< [  0:  0](R/W) Set one to force the MDBW conditional clock to be always on. For diagnostic use only. */
 #else /* Word 0 - Little Endian */
-        uint64_t mdbw_cclk_force_on    : 1;  /**< [  0:  0](R/W) Set one to force the MDBW conditional clock to be always on. A CYA function. */
+        uint64_t mdbw_cclk_force_on    : 1;  /**< [  0:  0](R/W) Set one to force the MDBW conditional clock to be always on. For diagnostic use only. */
         uint64_t ena                   : 1;  /**< [  1:  1](R/W) This bit enables the MDBW. Setting this bit = 0, does not reset any MDBW CSR
                                                                  setting or stats; it only resets the JMGR, AMM logic.
 
@@ -2234,7 +2700,7 @@ union cavm_mdbwx_cfg
                                                                  DSP RUNSTALL=1 will force the internal DSP pipeline to STALL (to save DSP core power).
                                                                  When this bit is ENABLED, the DSP pipeline is forced to STALL (to save power),
                                                                  and the STALL will only be released when a new Job arrives [DSP Slave mode]. */
-        uint64_t ab_cclk_force_on      : 1;  /**< [  4:  4](R/W) Set one to force the DSP conditional clock to be always on. A CYA function. */
+        uint64_t ab_cclk_force_on      : 1;  /**< [  4:  4](R/W) Set one to force the DSP conditional clock to be always on. For diagnostic use only. */
         uint64_t reserved_5            : 1;
         uint64_t ab_cclk_pwait_dis     : 1;  /**< [  6:  6](R/W) Set one to disable the DSP conditional clock gating when DSP is in PWAIT sleep mode.
                                                                  During DSP sleep mode, the DSP conditional clock is turned off if this bit is set to 0. */
@@ -2283,7 +2749,9 @@ static inline uint64_t CAVM_MDBWX_CFG(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=41))
         return 0x87e044000000ll + 0x4000ll * ((a) & 0x3f);
-    __cavm_csr_fatal("MDBWX_CFG", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044000000ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDBWX_CFG", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDBWX_CFG(a) cavm_mdbwx_cfg_t
@@ -2350,7 +2818,9 @@ static inline uint64_t CAVM_MDBWX_DEBUG1(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=41))
         return 0x87e044002340ll + 0x4000ll * ((a) & 0x3f);
-    __cavm_csr_fatal("MDBWX_DEBUG1", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044002340ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDBWX_DEBUG1", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDBWX_DEBUG1(a) cavm_mdbwx_debug1_t
@@ -2387,7 +2857,9 @@ static inline uint64_t CAVM_MDBWX_DMA_ERROR_JCE_W0(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=41))
         return 0x87e044000020ll + 0x4000ll * ((a) & 0x3f);
-    __cavm_csr_fatal("MDBWX_DMA_ERROR_JCE_W0", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044000020ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDBWX_DMA_ERROR_JCE_W0", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDBWX_DMA_ERROR_JCE_W0(a) cavm_mdbwx_dma_error_jce_w0_t
@@ -2422,7 +2894,9 @@ static inline uint64_t CAVM_MDBWX_DMA_ERROR_JCE_W1(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=41))
         return 0x87e044000028ll + 0x4000ll * ((a) & 0x3f);
-    __cavm_csr_fatal("MDBWX_DMA_ERROR_JCE_W1", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044000028ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDBWX_DMA_ERROR_JCE_W1", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDBWX_DMA_ERROR_JCE_W1(a) cavm_mdbwx_dma_error_jce_w1_t
@@ -2462,7 +2936,9 @@ static inline uint64_t CAVM_MDBWX_DV_SCRATCH(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=41))
         return 0x87e044002f10ll + 0x4000ll * ((a) & 0x3f);
-    __cavm_csr_fatal("MDBWX_DV_SCRATCH", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044002f10ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDBWX_DV_SCRATCH", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDBWX_DV_SCRATCH(a) cavm_mdbwx_dv_scratch_t
@@ -2498,7 +2974,9 @@ static inline uint64_t CAVM_MDBWX_ECO(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=41))
         return 0x87e044002f00ll + 0x4000ll * ((a) & 0x3f);
-    __cavm_csr_fatal("MDBWX_ECO", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044002f00ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDBWX_ECO", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDBWX_ECO(a) cavm_mdbwx_eco_t
@@ -2541,7 +3019,9 @@ static inline uint64_t CAVM_MDBWX_ERR_STAT0(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=41))
         return 0x87e044002318ll + 0x4000ll * ((a) & 0x3f);
-    __cavm_csr_fatal("MDBWX_ERR_STAT0", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044002318ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDBWX_ERR_STAT0", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDBWX_ERR_STAT0(a) cavm_mdbwx_err_stat0_t
@@ -2597,7 +3077,9 @@ static inline uint64_t CAVM_MDBWX_ERR_STAT1(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=41))
         return 0x87e044002320ll + 0x4000ll * ((a) & 0x3f);
-    __cavm_csr_fatal("MDBWX_ERR_STAT1", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044002320ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDBWX_ERR_STAT1", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDBWX_ERR_STAT1(a) cavm_mdbwx_err_stat1_t
@@ -2634,7 +3116,9 @@ static inline uint64_t CAVM_MDBWX_FATAL_ERROR_JCE_W0(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=41))
         return 0x87e044000030ll + 0x4000ll * ((a) & 0x3f);
-    __cavm_csr_fatal("MDBWX_FATAL_ERROR_JCE_W0", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044000030ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDBWX_FATAL_ERROR_JCE_W0", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDBWX_FATAL_ERROR_JCE_W0(a) cavm_mdbwx_fatal_error_jce_w0_t
@@ -2671,7 +3155,9 @@ static inline uint64_t CAVM_MDBWX_FATAL_ERROR_JCE_W1(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=41))
         return 0x87e044000038ll + 0x4000ll * ((a) & 0x3f);
-    __cavm_csr_fatal("MDBWX_FATAL_ERROR_JCE_W1", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044000038ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDBWX_FATAL_ERROR_JCE_W1", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDBWX_FATAL_ERROR_JCE_W1(a) cavm_mdbwx_fatal_error_jce_w1_t
@@ -2770,7 +3256,9 @@ static inline uint64_t CAVM_MDBWX_FYI(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=41))
         return 0x87e044000100ll + 0x4000ll * ((a) & 0x3f);
-    __cavm_csr_fatal("MDBWX_FYI", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044000100ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDBWX_FYI", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDBWX_FYI(a) cavm_mdbwx_fyi_t
@@ -2891,7 +3379,9 @@ static inline uint64_t CAVM_MDBWX_JD_CFG(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=41))
         return 0x87e044000008ll + 0x4000ll * ((a) & 0x3f);
-    __cavm_csr_fatal("MDBWX_JD_CFG", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044000008ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDBWX_JD_CFG", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDBWX_JD_CFG(a) cavm_mdbwx_jd_cfg_t
@@ -2929,7 +3419,9 @@ static inline uint64_t CAVM_MDBWX_JOB_COMPL_STAT(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=41))
         return 0x87e044002308ll + 0x4000ll * ((a) & 0x3f);
-    __cavm_csr_fatal("MDBWX_JOB_COMPL_STAT", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044002308ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDBWX_JOB_COMPL_STAT", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDBWX_JOB_COMPL_STAT(a) cavm_mdbwx_job_compl_stat_t
@@ -2968,7 +3460,9 @@ static inline uint64_t CAVM_MDBWX_JOB_DROP_STAT(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=41))
         return 0x87e044002310ll + 0x4000ll * ((a) & 0x3f);
-    __cavm_csr_fatal("MDBWX_JOB_DROP_STAT", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044002310ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDBWX_JOB_DROP_STAT", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDBWX_JOB_DROP_STAT(a) cavm_mdbwx_job_drop_stat_t
@@ -3005,7 +3499,9 @@ static inline uint64_t CAVM_MDBWX_JOB_ENQUEUE_STAT(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=41))
         return 0x87e044002300ll + 0x4000ll * ((a) & 0x3f);
-    __cavm_csr_fatal("MDBWX_JOB_ENQUEUE_STAT", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044002300ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDBWX_JOB_ENQUEUE_STAT", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDBWX_JOB_ENQUEUE_STAT(a) cavm_mdbwx_job_enqueue_stat_t
@@ -3050,7 +3546,9 @@ static inline uint64_t CAVM_MDBWX_JOBQX_CFG(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=41) && (b<=1)))
         return 0x87e044000010ll + 0x4000ll * ((a) & 0x3f) + 8ll * ((b) & 0x1);
-    __cavm_csr_fatal("MDBWX_JOBQX_CFG", 2, a, b, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=15) && (b<=1)))
+        return 0x87e044000010ll + 0x40000ll * ((a) & 0xf) + 8ll * ((b) & 0x1);
+    __cavm_csr_fatal("MDBWX_JOBQX_CFG", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDBWX_JOBQX_CFG(a,b) cavm_mdbwx_jobqx_cfg_t
@@ -3089,7 +3587,9 @@ static inline uint64_t CAVM_MDBWX_NON_FATAL_ERROR_JCE_W0(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=41))
         return 0x87e044000040ll + 0x4000ll * ((a) & 0x3f);
-    __cavm_csr_fatal("MDBWX_NON_FATAL_ERROR_JCE_W0", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044000040ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDBWX_NON_FATAL_ERROR_JCE_W0", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDBWX_NON_FATAL_ERROR_JCE_W0(a) cavm_mdbwx_non_fatal_error_jce_w0_t
@@ -3128,7 +3628,9 @@ static inline uint64_t CAVM_MDBWX_NON_FATAL_ERROR_JCE_W1(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=41))
         return 0x87e044000048ll + 0x4000ll * ((a) & 0x3f);
-    __cavm_csr_fatal("MDBWX_NON_FATAL_ERROR_JCE_W1", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044000048ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDBWX_NON_FATAL_ERROR_JCE_W1", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDBWX_NON_FATAL_ERROR_JCE_W1(a) cavm_mdbwx_non_fatal_error_jce_w1_t
@@ -3169,7 +3671,9 @@ static inline uint64_t CAVM_MDBWX_PHYMEM_RANGE(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=41))
         return 0x87e044002410ll + 0x4000ll * ((a) & 0x3f);
-    __cavm_csr_fatal("MDBWX_PHYMEM_RANGE", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044002410ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDBWX_PHYMEM_RANGE", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDBWX_PHYMEM_RANGE(a) cavm_mdbwx_phymem_range_t
@@ -3206,7 +3710,9 @@ static inline uint64_t CAVM_MDBWX_SYSMEM_RANGE_MAX(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=41))
         return 0x87e044002408ll + 0x4000ll * ((a) & 0x3f);
-    __cavm_csr_fatal("MDBWX_SYSMEM_RANGE_MAX", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044002408ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDBWX_SYSMEM_RANGE_MAX", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDBWX_SYSMEM_RANGE_MAX(a) cavm_mdbwx_sysmem_range_max_t
@@ -3243,7 +3749,9 @@ static inline uint64_t CAVM_MDBWX_SYSMEM_RANGE_MIN(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=41))
         return 0x87e044002400ll + 0x4000ll * ((a) & 0x3f);
-    __cavm_csr_fatal("MDBWX_SYSMEM_RANGE_MIN", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044002400ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDBWX_SYSMEM_RANGE_MIN", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDBWX_SYSMEM_RANGE_MIN(a) cavm_mdbwx_sysmem_range_min_t
@@ -3278,7 +3786,9 @@ static inline uint64_t CAVM_MDBWX_TIMEOUT_JCE_W0(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=41))
         return 0x87e044000050ll + 0x4000ll * ((a) & 0x3f);
-    __cavm_csr_fatal("MDBWX_TIMEOUT_JCE_W0", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044000050ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDBWX_TIMEOUT_JCE_W0", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDBWX_TIMEOUT_JCE_W0(a) cavm_mdbwx_timeout_jce_w0_t
@@ -3313,7 +3823,9 @@ static inline uint64_t CAVM_MDBWX_TIMEOUT_JCE_W1(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=41))
         return 0x87e044000058ll + 0x4000ll * ((a) & 0x3f);
-    __cavm_csr_fatal("MDBWX_TIMEOUT_JCE_W1", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
+        return 0x87e044000058ll + 0x40000ll * ((a) & 0xf);
+    __cavm_csr_fatal("MDBWX_TIMEOUT_JCE_W1", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDBWX_TIMEOUT_JCE_W1(a) cavm_mdbwx_timeout_jce_w1_t

@@ -92,7 +92,7 @@ static inline uint64_t CAVM_MDN_BISR_REPAIR_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x28;
-    __cavm_csr_fatal("MDN_BISR_REPAIR", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("MDN_BISR_REPAIR", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDN_BISR_REPAIR cavm_mdn_bisr_repair_t
@@ -137,7 +137,7 @@ static inline uint64_t CAVM_MDN_BIST_ACTIVE_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0xc;
-    __cavm_csr_fatal("MDN_BIST_ACTIVE", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("MDN_BIST_ACTIVE", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDN_BIST_ACTIVE cavm_mdn_bist_active_t
@@ -220,7 +220,7 @@ static inline uint64_t CAVM_MDN_BIST_ADDR_MASK_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x4c;
-    __cavm_csr_fatal("MDN_BIST_ADDR_MASK", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("MDN_BIST_ADDR_MASK", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDN_BIST_ADDR_MASK cavm_mdn_bist_addr_mask_t
@@ -319,7 +319,7 @@ static inline uint64_t CAVM_MDN_BIST_CONFIG_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0;
-    __cavm_csr_fatal("MDN_BIST_CONFIG", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("MDN_BIST_CONFIG", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDN_BIST_CONFIG cavm_mdn_bist_config_t
@@ -412,7 +412,7 @@ static inline uint64_t CAVM_MDN_BIST_CONTROL_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 4;
-    __cavm_csr_fatal("MDN_BIST_CONTROL", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("MDN_BIST_CONTROL", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDN_BIST_CONTROL cavm_mdn_bist_control_t
@@ -457,7 +457,7 @@ static inline uint64_t CAVM_MDN_BIST_FAIL_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x10;
-    __cavm_csr_fatal("MDN_BIST_FAIL", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("MDN_BIST_FAIL", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDN_BIST_FAIL cavm_mdn_bist_fail_t
@@ -502,7 +502,7 @@ static inline uint64_t CAVM_MDN_BIST_REPAIRABLE_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x14;
-    __cavm_csr_fatal("MDN_BIST_REPAIRABLE", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("MDN_BIST_REPAIRABLE", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDN_BIST_REPAIRABLE cavm_mdn_bist_repairable_t
@@ -543,7 +543,7 @@ static inline uint64_t CAVM_MDN_BIST_STATUS_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 8;
-    __cavm_csr_fatal("MDN_BIST_STATUS", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("MDN_BIST_STATUS", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDN_BIST_STATUS cavm_mdn_bist_status_t
@@ -602,7 +602,7 @@ static inline uint64_t CAVM_MDN_CONST_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x40;
-    __cavm_csr_fatal("MDN_CONST", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("MDN_CONST", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDN_CONST cavm_mdn_const_t
@@ -638,7 +638,7 @@ static inline uint64_t CAVM_MDN_DEBUG_DATAX(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX) && (a<=31))
         return 0x80 + 4 * ((a) & 0x1f);
-    __cavm_csr_fatal("MDN_DEBUG_DATAX", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("MDN_DEBUG_DATAX", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDN_DEBUG_DATAX(a) cavm_mdn_debug_datax_t
@@ -704,7 +704,7 @@ static inline uint64_t CAVM_MDN_DEBUG_DEFECT_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x1c;
-    __cavm_csr_fatal("MDN_DEBUG_DEFECT", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("MDN_DEBUG_DEFECT", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDN_DEBUG_DEFECT cavm_mdn_debug_defect_t
@@ -771,7 +771,7 @@ static inline uint64_t CAVM_MDN_DEBUG_MARCH_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x20;
-    __cavm_csr_fatal("MDN_DEBUG_MARCH", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("MDN_DEBUG_MARCH", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDN_DEBUG_MARCH cavm_mdn_debug_march_t
@@ -820,7 +820,7 @@ static inline uint64_t CAVM_MDN_DEBUG_SKID_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x24;
-    __cavm_csr_fatal("MDN_DEBUG_SKID", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("MDN_DEBUG_SKID", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDN_DEBUG_SKID cavm_mdn_debug_skid_t
@@ -905,7 +905,7 @@ static inline uint64_t CAVM_MDN_ECC_CONFIG_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x2c;
-    __cavm_csr_fatal("MDN_ECC_CONFIG", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("MDN_ECC_CONFIG", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDN_ECC_CONFIG cavm_mdn_ecc_config_t
@@ -947,7 +947,7 @@ static inline uint64_t CAVM_MDN_ECC_IRQ_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x30;
-    __cavm_csr_fatal("MDN_ECC_IRQ", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("MDN_ECC_IRQ", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDN_ECC_IRQ cavm_mdn_ecc_irq_t
@@ -1024,7 +1024,7 @@ static inline uint64_t CAVM_MDN_ECC_STATUS_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x34;
-    __cavm_csr_fatal("MDN_ECC_STATUS", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("MDN_ECC_STATUS", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDN_ECC_STATUS cavm_mdn_ecc_status_t
@@ -1105,7 +1105,7 @@ static inline uint64_t CAVM_MDN_ECC_STATUS_RC_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x38;
-    __cavm_csr_fatal("MDN_ECC_STATUS_RC", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("MDN_ECC_STATUS_RC", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDN_ECC_STATUS_RC cavm_mdn_ecc_status_rc_t
@@ -1150,7 +1150,7 @@ static inline uint64_t CAVM_MDN_ENUM_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x44;
-    __cavm_csr_fatal("MDN_ENUM", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("MDN_ENUM", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDN_ENUM cavm_mdn_enum_t
@@ -1187,7 +1187,7 @@ static inline uint64_t CAVM_MDN_SCRATCH_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x3c;
-    __cavm_csr_fatal("MDN_SCRATCH", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("MDN_SCRATCH", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MDN_SCRATCH cavm_mdn_scratch_t

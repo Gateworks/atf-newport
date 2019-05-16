@@ -198,7 +198,7 @@ static inline uint64_t CAVM_PEMX_BAR1_INDEXX(unsigned long a, unsigned long b)
         return 0x87e0c0000100ll + 0x1000000ll * ((a) & 0x3) + 8ll * ((b) & 0xf);
     if (cavm_is_model(OCTEONTX_CN83XX) && ((a<=3) && (b<=15)))
         return 0x87e0c0000100ll + 0x1000000ll * ((a) & 0x3) + 8ll * ((b) & 0xf);
-    __cavm_csr_fatal("PEMX_BAR1_INDEXX", 2, a, b, 0, 0);
+    __cavm_csr_fatal("PEMX_BAR1_INDEXX", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_BAR1_INDEXX(a,b) cavm_pemx_bar1_indexx_t
@@ -286,7 +286,9 @@ static inline uint64_t CAVM_PEMX_BAR2_MASK(unsigned long a)
         return 0x8e0000000048ll + 0x1000000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x8e0000000048ll + 0x1000000000ll * ((a) & 0x0);
-    __cavm_csr_fatal("PEMX_BAR2_MASK", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
+        return 0x8e0000000048ll + 0x1000000000ll * ((a) & 0x0);
+    __cavm_csr_fatal("PEMX_BAR2_MASK", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_BAR2_MASK(a) cavm_pemx_bar2_mask_t
@@ -339,7 +341,9 @@ static inline uint64_t CAVM_PEMX_BAR4_INDEXX(unsigned long a, unsigned long b)
         return 0x8e0000000700ll + 0x1000000000ll * ((a) & 0x3) + 8ll * ((b) & 0xf);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=15)))
         return 0x8e0000000700ll + 0x1000000000ll * ((a) & 0x0) + 8ll * ((b) & 0xf);
-    __cavm_csr_fatal("PEMX_BAR4_INDEXX", 2, a, b, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=15)))
+        return 0x8e0000000700ll + 0x1000000000ll * ((a) & 0x0) + 8ll * ((b) & 0xf);
+    __cavm_csr_fatal("PEMX_BAR4_INDEXX", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_BAR4_INDEXX(a,b) cavm_pemx_bar4_indexx_t
@@ -1017,7 +1021,9 @@ static inline uint64_t CAVM_PEMX_BAR_CTL(unsigned long a)
         return 0x8e0000000168ll + 0x1000000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x8e0000000168ll + 0x1000000000ll * ((a) & 0x0);
-    __cavm_csr_fatal("PEMX_BAR_CTL", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
+        return 0x8e0000000168ll + 0x1000000000ll * ((a) & 0x0);
+    __cavm_csr_fatal("PEMX_BAR_CTL", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_BAR_CTL(a) cavm_pemx_bar_ctl_t
@@ -1174,7 +1180,7 @@ static inline uint64_t CAVM_PEMX_BIST_STATUS(unsigned long a)
         return 0x87e0c0000468ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CN83XX) && (a<=3))
         return 0x87e0c0000468ll + 0x1000000ll * ((a) & 0x3);
-    __cavm_csr_fatal("PEMX_BIST_STATUS", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("PEMX_BIST_STATUS", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_BIST_STATUS(a) cavm_pemx_bist_status_t
@@ -1261,7 +1267,9 @@ static inline uint64_t CAVM_PEMX_BP_TEST0(unsigned long a)
         return 0x8e00000001e0ll + 0x1000000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x8e00000001e0ll + 0x1000000000ll * ((a) & 0x0);
-    __cavm_csr_fatal("PEMX_BP_TEST0", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
+        return 0x8e00000001e0ll + 0x1000000000ll * ((a) & 0x0);
+    __cavm_csr_fatal("PEMX_BP_TEST0", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_BP_TEST0(a) cavm_pemx_bp_test0_t
@@ -1351,7 +1359,9 @@ static inline uint64_t CAVM_PEMX_BP_TEST1(unsigned long a)
         return 0x8e00000001e8ll + 0x1000000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x8e00000001e8ll + 0x1000000000ll * ((a) & 0x0);
-    __cavm_csr_fatal("PEMX_BP_TEST1", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
+        return 0x8e00000001e8ll + 0x1000000000ll * ((a) & 0x0);
+    __cavm_csr_fatal("PEMX_BP_TEST1", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_BP_TEST1(a) cavm_pemx_bp_test1_t
@@ -1438,7 +1448,9 @@ static inline uint64_t CAVM_PEMX_BP_TEST2(unsigned long a)
         return 0x8e00000001f0ll + 0x1000000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x8e00000001f0ll + 0x1000000000ll * ((a) & 0x0);
-    __cavm_csr_fatal("PEMX_BP_TEST2", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
+        return 0x8e00000001f0ll + 0x1000000000ll * ((a) & 0x0);
+    __cavm_csr_fatal("PEMX_BP_TEST2", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_BP_TEST2(a) cavm_pemx_bp_test2_t
@@ -1525,7 +1537,9 @@ static inline uint64_t CAVM_PEMX_BP_TEST3(unsigned long a)
         return 0x8e00000001f8ll + 0x1000000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x8e00000001f8ll + 0x1000000000ll * ((a) & 0x0);
-    __cavm_csr_fatal("PEMX_BP_TEST3", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
+        return 0x8e00000001f8ll + 0x1000000000ll * ((a) & 0x0);
+    __cavm_csr_fatal("PEMX_BP_TEST3", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_BP_TEST3(a) cavm_pemx_bp_test3_t
@@ -1610,7 +1624,9 @@ static inline uint64_t CAVM_PEMX_BP_TEST4(unsigned long a)
         return 0x8e0000000200ll + 0x1000000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x8e0000000200ll + 0x1000000000ll * ((a) & 0x0);
-    __cavm_csr_fatal("PEMX_BP_TEST4", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
+        return 0x8e0000000200ll + 0x1000000000ll * ((a) & 0x0);
+    __cavm_csr_fatal("PEMX_BP_TEST4", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_BP_TEST4(a) cavm_pemx_bp_test4_t
@@ -1697,7 +1713,9 @@ static inline uint64_t CAVM_PEMX_BP_TEST5(unsigned long a)
         return 0x8e0000000208ll + 0x1000000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x8e0000000208ll + 0x1000000000ll * ((a) & 0x0);
-    __cavm_csr_fatal("PEMX_BP_TEST5", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
+        return 0x8e0000000208ll + 0x1000000000ll * ((a) & 0x0);
+    __cavm_csr_fatal("PEMX_BP_TEST5", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_BP_TEST5(a) cavm_pemx_bp_test5_t
@@ -1782,7 +1800,9 @@ static inline uint64_t CAVM_PEMX_BP_TEST6(unsigned long a)
         return 0x8e0000000210ll + 0x1000000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x8e0000000210ll + 0x1000000000ll * ((a) & 0x0);
-    __cavm_csr_fatal("PEMX_BP_TEST6", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
+        return 0x8e0000000210ll + 0x1000000000ll * ((a) & 0x0);
+    __cavm_csr_fatal("PEMX_BP_TEST6", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_BP_TEST6(a) cavm_pemx_bp_test6_t
@@ -2101,7 +2121,9 @@ static inline uint64_t CAVM_PEMX_CFG(unsigned long a)
         return 0x8e00000000d8ll + 0x1000000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x8e00000000d8ll + 0x1000000000ll * ((a) & 0x0);
-    __cavm_csr_fatal("PEMX_CFG", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
+        return 0x8e00000000d8ll + 0x1000000000ll * ((a) & 0x0);
+    __cavm_csr_fatal("PEMX_CFG", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_CFG(a) cavm_pemx_cfg_t
@@ -2281,7 +2303,9 @@ static inline uint64_t CAVM_PEMX_CFG_RD(unsigned long a)
         return 0x8e0000000020ll + 0x1000000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x8e0000000020ll + 0x1000000000ll * ((a) & 0x0);
-    __cavm_csr_fatal("PEMX_CFG_RD", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
+        return 0x8e0000000020ll + 0x1000000000ll * ((a) & 0x0);
+    __cavm_csr_fatal("PEMX_CFG_RD", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_CFG_RD(a) cavm_pemx_cfg_rd_t
@@ -2363,7 +2387,9 @@ static inline uint64_t CAVM_PEMX_CFG_TBLX(unsigned long a, unsigned long b)
         return 0x8e0000002000ll + 0x1000000000ll * ((a) & 0x3) + 8ll * ((b) & 0x3ff);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=1023)))
         return 0x8e0000002000ll + 0x1000000000ll * ((a) & 0x0) + 8ll * ((b) & 0x3ff);
-    __cavm_csr_fatal("PEMX_CFG_TBLX", 2, a, b, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=1023)))
+        return 0x8e0000002000ll + 0x1000000000ll * ((a) & 0x0) + 8ll * ((b) & 0x3ff);
+    __cavm_csr_fatal("PEMX_CFG_TBLX", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_CFG_TBLX(a,b) cavm_pemx_cfg_tblx_t
@@ -2415,7 +2441,9 @@ static inline uint64_t CAVM_PEMX_CFG_TBL_SIZE(unsigned long a)
         return 0x8e0000000220ll + 0x1000000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x8e0000000220ll + 0x1000000000ll * ((a) & 0x0);
-    __cavm_csr_fatal("PEMX_CFG_TBL_SIZE", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
+        return 0x8e0000000220ll + 0x1000000000ll * ((a) & 0x0);
+    __cavm_csr_fatal("PEMX_CFG_TBL_SIZE", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_CFG_TBL_SIZE(a) cavm_pemx_cfg_tbl_size_t
@@ -2609,7 +2637,9 @@ static inline uint64_t CAVM_PEMX_CFG_WR(unsigned long a)
         return 0x8e0000000018ll + 0x1000000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x8e0000000018ll + 0x1000000000ll * ((a) & 0x0);
-    __cavm_csr_fatal("PEMX_CFG_WR", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
+        return 0x8e0000000018ll + 0x1000000000ll * ((a) & 0x0);
+    __cavm_csr_fatal("PEMX_CFG_WR", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_CFG_WR(a) cavm_pemx_cfg_wr_t
@@ -2744,7 +2774,9 @@ static inline uint64_t CAVM_PEMX_CLK_EN(unsigned long a)
         return 0x8e00000000c8ll + 0x1000000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x8e00000000c8ll + 0x1000000000ll * ((a) & 0x0);
-    __cavm_csr_fatal("PEMX_CLK_EN", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
+        return 0x8e00000000c8ll + 0x1000000000ll * ((a) & 0x0);
+    __cavm_csr_fatal("PEMX_CLK_EN", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_CLK_EN(a) cavm_pemx_clk_en_t
@@ -2789,7 +2821,9 @@ static inline uint64_t CAVM_PEMX_CMERGE_MERGED_PC(unsigned long a)
         return 0x8e00000001b8ll + 0x1000000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x8e00000001b8ll + 0x1000000000ll * ((a) & 0x0);
-    __cavm_csr_fatal("PEMX_CMERGE_MERGED_PC", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
+        return 0x8e00000001b8ll + 0x1000000000ll * ((a) & 0x0);
+    __cavm_csr_fatal("PEMX_CMERGE_MERGED_PC", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_CMERGE_MERGED_PC(a) cavm_pemx_cmerge_merged_pc_t
@@ -2831,7 +2865,9 @@ static inline uint64_t CAVM_PEMX_CMERGE_RECEIVED_PC(unsigned long a)
         return 0x8e00000001b0ll + 0x1000000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x8e00000001b0ll + 0x1000000000ll * ((a) & 0x0);
-    __cavm_csr_fatal("PEMX_CMERGE_RECEIVED_PC", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
+        return 0x8e00000001b0ll + 0x1000000000ll * ((a) & 0x0);
+    __cavm_csr_fatal("PEMX_CMERGE_RECEIVED_PC", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_CMERGE_RECEIVED_PC(a) cavm_pemx_cmerge_received_pc_t
@@ -2879,7 +2915,9 @@ static inline uint64_t CAVM_PEMX_CONST_ACC(unsigned long a)
         return 0x8e0000000218ll + 0x1000000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x8e0000000218ll + 0x1000000000ll * ((a) & 0x0);
-    __cavm_csr_fatal("PEMX_CONST_ACC", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
+        return 0x8e0000000218ll + 0x1000000000ll * ((a) & 0x0);
+    __cavm_csr_fatal("PEMX_CONST_ACC", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_CONST_ACC(a) cavm_pemx_const_acc_t
@@ -2935,7 +2973,9 @@ static inline uint64_t CAVM_PEMX_CPL_LUT_VALID(unsigned long a)
         return 0x8e0000000040ll + 0x1000000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x8e0000000040ll + 0x1000000000ll * ((a) & 0x0);
-    __cavm_csr_fatal("PEMX_CPL_LUT_VALID", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
+        return 0x8e0000000040ll + 0x1000000000ll * ((a) & 0x0);
+    __cavm_csr_fatal("PEMX_CPL_LUT_VALID", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_CPL_LUT_VALID(a) cavm_pemx_cpl_lut_valid_t
@@ -2977,7 +3017,9 @@ static inline uint64_t CAVM_PEMX_CSCLK_ACTIVE_PC(unsigned long a)
         return 0x8e0000000058ll + 0x1000000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x8e0000000058ll + 0x1000000000ll * ((a) & 0x0);
-    __cavm_csr_fatal("PEMX_CSCLK_ACTIVE_PC", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
+        return 0x8e0000000058ll + 0x1000000000ll * ((a) & 0x0);
+    __cavm_csr_fatal("PEMX_CSCLK_ACTIVE_PC", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_CSCLK_ACTIVE_PC(a) cavm_pemx_csclk_active_pc_t
@@ -3420,7 +3462,9 @@ static inline uint64_t CAVM_PEMX_CTL_STATUS(unsigned long a)
         return 0x8e0000000000ll + 0x1000000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x8e0000000000ll + 0x1000000000ll * ((a) & 0x0);
-    __cavm_csr_fatal("PEMX_CTL_STATUS", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
+        return 0x8e0000000000ll + 0x1000000000ll * ((a) & 0x0);
+    __cavm_csr_fatal("PEMX_CTL_STATUS", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_CTL_STATUS(a) cavm_pemx_ctl_status_t
@@ -3567,7 +3611,9 @@ static inline uint64_t CAVM_PEMX_CTL_STATUS2(unsigned long a)
         return 0x8e0000000130ll + 0x1000000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x8e0000000130ll + 0x1000000000ll * ((a) & 0x0);
-    __cavm_csr_fatal("PEMX_CTL_STATUS2", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
+        return 0x8e0000000130ll + 0x1000000000ll * ((a) & 0x0);
+    __cavm_csr_fatal("PEMX_CTL_STATUS2", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_CTL_STATUS2(a) cavm_pemx_ctl_status2_t
@@ -3639,7 +3685,7 @@ static inline uint64_t CAVM_PEMX_CTL_STREAM(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN83XX) && (a<=3))
         return 0x87e0c00004d0ll + 0x1000000ll * ((a) & 0x3);
-    __cavm_csr_fatal("PEMX_CTL_STREAM", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("PEMX_CTL_STREAM", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_CTL_STREAM(a) cavm_pemx_ctl_stream_t
@@ -4378,7 +4424,7 @@ static inline uint64_t CAVM_PEMX_DBG_ENA_W1C(unsigned long a)
         return 0x87e0c0000458ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CN83XX) && (a<=3))
         return 0x87e0c0000458ll + 0x1000000ll * ((a) & 0x3);
-    __cavm_csr_fatal("PEMX_DBG_ENA_W1C", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("PEMX_DBG_ENA_W1C", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_DBG_ENA_W1C(a) cavm_pemx_dbg_ena_w1c_t
@@ -5117,7 +5163,7 @@ static inline uint64_t CAVM_PEMX_DBG_ENA_W1S(unsigned long a)
         return 0x87e0c0000460ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CN83XX) && (a<=3))
         return 0x87e0c0000460ll + 0x1000000ll * ((a) & 0x3);
-    __cavm_csr_fatal("PEMX_DBG_ENA_W1S", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("PEMX_DBG_ENA_W1S", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_DBG_ENA_W1S(a) cavm_pemx_dbg_ena_w1s_t
@@ -6262,6 +6308,7 @@ union cavm_pemx_dbg_info
         uint64_t reserved_50_63        : 14;
 #endif /* Word 0 - End */
     } cnf95xx;
+    /* struct cavm_pemx_dbg_info_cnf95xx loki; */
 };
 typedef union cavm_pemx_dbg_info cavm_pemx_dbg_info_t;
 
@@ -6276,7 +6323,9 @@ static inline uint64_t CAVM_PEMX_DBG_INFO(unsigned long a)
         return 0x8e0000000108ll + 0x1000000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x8e0000000108ll + 0x1000000000ll * ((a) & 0x0);
-    __cavm_csr_fatal("PEMX_DBG_INFO", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
+        return 0x8e0000000108ll + 0x1000000000ll * ((a) & 0x0);
+    __cavm_csr_fatal("PEMX_DBG_INFO", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_DBG_INFO(a) cavm_pemx_dbg_info_t
@@ -7015,7 +7064,7 @@ static inline uint64_t CAVM_PEMX_DBG_INFO_W1S(unsigned long a)
         return 0x87e0c0000450ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CN83XX) && (a<=3))
         return 0x87e0c0000450ll + 0x1000000ll * ((a) & 0x3);
-    __cavm_csr_fatal("PEMX_DBG_INFO_W1S", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("PEMX_DBG_INFO_W1S", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_DBG_INFO_W1S(a) cavm_pemx_dbg_info_w1s_t
@@ -7188,7 +7237,9 @@ static inline uint64_t CAVM_PEMX_DEBUG(unsigned long a)
         return 0x8e0000000110ll + 0x1000000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x8e0000000110ll + 0x1000000000ll * ((a) & 0x0);
-    __cavm_csr_fatal("PEMX_DEBUG", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
+        return 0x8e0000000110ll + 0x1000000000ll * ((a) & 0x0);
+    __cavm_csr_fatal("PEMX_DEBUG", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_DEBUG(a) cavm_pemx_debug_t
@@ -7447,7 +7498,9 @@ static inline uint64_t CAVM_PEMX_DIAG_STATUS(unsigned long a)
         return 0x8e0000000010ll + 0x1000000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x8e0000000010ll + 0x1000000000ll * ((a) & 0x0);
-    __cavm_csr_fatal("PEMX_DIAG_STATUS", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
+        return 0x8e0000000010ll + 0x1000000000ll * ((a) & 0x0);
+    __cavm_csr_fatal("PEMX_DIAG_STATUS", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_DIAG_STATUS(a) cavm_pemx_diag_status_t
@@ -7509,7 +7562,9 @@ static inline uint64_t CAVM_PEMX_DIS_PORT(unsigned long a)
         return 0x8e0000000050ll + 0x1000000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x8e0000000050ll + 0x1000000000ll * ((a) & 0x0);
-    __cavm_csr_fatal("PEMX_DIS_PORT", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
+        return 0x8e0000000050ll + 0x1000000000ll * ((a) & 0x0);
+    __cavm_csr_fatal("PEMX_DIS_PORT", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_DIS_PORT(a) cavm_pemx_dis_port_t
@@ -7565,7 +7620,9 @@ static inline uint64_t CAVM_PEMX_EBI_TLP_CREDITS(unsigned long a)
         return 0x8e0000000028ll + 0x1000000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x8e0000000028ll + 0x1000000000ll * ((a) & 0x0);
-    __cavm_csr_fatal("PEMX_EBI_TLP_CREDITS", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
+        return 0x8e0000000028ll + 0x1000000000ll * ((a) & 0x0);
+    __cavm_csr_fatal("PEMX_EBI_TLP_CREDITS", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_EBI_TLP_CREDITS(a) cavm_pemx_ebi_tlp_credits_t
@@ -7689,7 +7746,9 @@ static inline uint64_t CAVM_PEMX_EBO_FIFO_STATUS(unsigned long a)
         return 0x8e0000000140ll + 0x1000000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x8e0000000140ll + 0x1000000000ll * ((a) & 0x0);
-    __cavm_csr_fatal("PEMX_EBO_FIFO_STATUS", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
+        return 0x8e0000000140ll + 0x1000000000ll * ((a) & 0x0);
+    __cavm_csr_fatal("PEMX_EBO_FIFO_STATUS", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_EBO_FIFO_STATUS(a) cavm_pemx_ebo_fifo_status_t
@@ -7829,7 +7888,9 @@ static inline uint64_t CAVM_PEMX_EBUS_CTL(unsigned long a)
         return 0x8e0000000080ll + 0x1000000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x8e0000000080ll + 0x1000000000ll * ((a) & 0x0);
-    __cavm_csr_fatal("PEMX_EBUS_CTL", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
+        return 0x8e0000000080ll + 0x1000000000ll * ((a) & 0x0);
+    __cavm_csr_fatal("PEMX_EBUS_CTL", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_EBUS_CTL(a) cavm_pemx_ebus_ctl_t
@@ -7960,7 +8021,7 @@ static inline uint64_t CAVM_PEMX_ECC_ENA(unsigned long a)
         return 0x87e0c0000470ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CN83XX) && (a<=3))
         return 0x87e0c0000470ll + 0x1000000ll * ((a) & 0x3);
-    __cavm_csr_fatal("PEMX_ECC_ENA", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("PEMX_ECC_ENA", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_ECC_ENA(a) cavm_pemx_ecc_ena_t
@@ -8091,7 +8152,7 @@ static inline uint64_t CAVM_PEMX_ECC_SYND_CTRL(unsigned long a)
         return 0x87e0c0000478ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CN83XX) && (a<=3))
         return 0x87e0c0000478ll + 0x1000000ll * ((a) & 0x3);
-    __cavm_csr_fatal("PEMX_ECC_SYND_CTRL", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("PEMX_ECC_SYND_CTRL", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_ECC_SYND_CTRL(a) cavm_pemx_ecc_synd_ctrl_t
@@ -8136,7 +8197,9 @@ static inline uint64_t CAVM_PEMX_ECO(unsigned long a)
         return 0x8e0000000008ll + 0x1000000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x8e0000000008ll + 0x1000000000ll * ((a) & 0x0);
-    __cavm_csr_fatal("PEMX_ECO", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
+        return 0x8e0000000008ll + 0x1000000000ll * ((a) & 0x0);
+    __cavm_csr_fatal("PEMX_ECO", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_ECO(a) cavm_pemx_eco_t
@@ -8179,7 +8242,9 @@ static inline uint64_t CAVM_PEMX_ECO2(unsigned long a)
         return 0x8e0000000238ll + 0x1000000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x8e0000000238ll + 0x1000000000ll * ((a) & 0x0);
-    __cavm_csr_fatal("PEMX_ECO2", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
+        return 0x8e0000000238ll + 0x1000000000ll * ((a) & 0x0);
+    __cavm_csr_fatal("PEMX_ECO2", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_ECO2(a) cavm_pemx_eco2_t
@@ -8225,7 +8290,9 @@ static inline uint64_t CAVM_PEMX_END_MERGE(unsigned long a)
         return 0x8e0000000188ll + 0x1000000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x8e0000000188ll + 0x1000000000ll * ((a) & 0x0);
-    __cavm_csr_fatal("PEMX_END_MERGE", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
+        return 0x8e0000000188ll + 0x1000000000ll * ((a) & 0x0);
+    __cavm_csr_fatal("PEMX_END_MERGE", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_END_MERGE(a) cavm_pemx_end_merge_t
@@ -8275,7 +8342,7 @@ static inline uint64_t CAVM_PEMX_EROMX(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN83XX) && ((a<=3) && (b<=65535)))
         return 0x87e0c0080000ll + 0x1000000ll * ((a) & 0x3) + 8ll * ((b) & 0xffff);
-    __cavm_csr_fatal("PEMX_EROMX", 2, a, b, 0, 0);
+    __cavm_csr_fatal("PEMX_EROMX", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_EROMX(a,b) cavm_pemx_eromx_t
@@ -8337,7 +8404,9 @@ static inline uint64_t CAVM_PEMX_EROM_BAR_ADDR(unsigned long a)
         return 0x8e0000000160ll + 0x1000000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x8e0000000160ll + 0x1000000000ll * ((a) & 0x0);
-    __cavm_csr_fatal("PEMX_EROM_BAR_ADDR", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
+        return 0x8e0000000160ll + 0x1000000000ll * ((a) & 0x0);
+    __cavm_csr_fatal("PEMX_EROM_BAR_ADDR", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_EROM_BAR_ADDR(a) cavm_pemx_erom_bar_addr_t
@@ -8403,7 +8472,9 @@ static inline uint64_t CAVM_PEMX_EROM_SIZE(unsigned long a)
         return 0x8e0000000230ll + 0x1000000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x8e0000000230ll + 0x1000000000ll * ((a) & 0x0);
-    __cavm_csr_fatal("PEMX_EROM_SIZE", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
+        return 0x8e0000000230ll + 0x1000000000ll * ((a) & 0x0);
+    __cavm_csr_fatal("PEMX_EROM_SIZE", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_EROM_SIZE(a) cavm_pemx_erom_size_t
@@ -8479,7 +8550,9 @@ static inline uint64_t CAVM_PEMX_FLR_CTL(unsigned long a)
         return 0x8e0000000070ll + 0x1000000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x8e0000000070ll + 0x1000000000ll * ((a) & 0x0);
-    __cavm_csr_fatal("PEMX_FLR_CTL", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
+        return 0x8e0000000070ll + 0x1000000000ll * ((a) & 0x0);
+    __cavm_csr_fatal("PEMX_FLR_CTL", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_FLR_CTL(a) cavm_pemx_flr_ctl_t
@@ -8535,7 +8608,7 @@ static inline uint64_t CAVM_PEMX_FLR_GLBLCNT_CTL(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN83XX) && (a<=3))
         return 0x87e0c0000210ll + 0x1000000ll * ((a) & 0x3);
-    __cavm_csr_fatal("PEMX_FLR_GLBLCNT_CTL", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("PEMX_FLR_GLBLCNT_CTL", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_FLR_GLBLCNT_CTL(a) cavm_pemx_flr_glblcnt_ctl_t
@@ -8598,7 +8671,9 @@ static inline uint64_t CAVM_PEMX_FLR_PFX_STOPREQ(unsigned long a, unsigned long 
         return 0x8e0000000c00ll + 0x1000000000ll * ((a) & 0x3) + 8ll * ((b) & 0xf);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=15)))
         return 0x8e0000000c00ll + 0x1000000000ll * ((a) & 0x0) + 8ll * ((b) & 0xf);
-    __cavm_csr_fatal("PEMX_FLR_PFX_STOPREQ", 2, a, b, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=15)))
+        return 0x8e0000000c00ll + 0x1000000000ll * ((a) & 0x0) + 8ll * ((b) & 0xf);
+    __cavm_csr_fatal("PEMX_FLR_PFX_STOPREQ", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_FLR_PFX_STOPREQ(a,b) cavm_pemx_flr_pfx_stopreq_t
@@ -8653,7 +8728,7 @@ static inline uint64_t CAVM_PEMX_FLR_PF0_VF_STOPREQ(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN83XX) && (a<=3))
         return 0x87e0c0000220ll + 0x1000000ll * ((a) & 0x3);
-    __cavm_csr_fatal("PEMX_FLR_PF0_VF_STOPREQ", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("PEMX_FLR_PF0_VF_STOPREQ", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_FLR_PF0_VF_STOPREQ(a) cavm_pemx_flr_pf0_vf_stopreq_t
@@ -8714,7 +8789,7 @@ static inline uint64_t CAVM_PEMX_FLR_PF_STOPREQ(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN83XX) && (a<=3))
         return 0x87e0c0000218ll + 0x1000000ll * ((a) & 0x3);
-    __cavm_csr_fatal("PEMX_FLR_PF_STOPREQ", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("PEMX_FLR_PF_STOPREQ", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_FLR_PF_STOPREQ(a) cavm_pemx_flr_pf_stopreq_t
@@ -8806,7 +8881,9 @@ static inline uint64_t CAVM_PEMX_FLR_STOPREQ_CTL(unsigned long a)
         return 0x8e0000000078ll + 0x1000000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x8e0000000078ll + 0x1000000000ll * ((a) & 0x0);
-    __cavm_csr_fatal("PEMX_FLR_STOPREQ_CTL", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
+        return 0x8e0000000078ll + 0x1000000000ll * ((a) & 0x0);
+    __cavm_csr_fatal("PEMX_FLR_STOPREQ_CTL", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_FLR_STOPREQ_CTL(a) cavm_pemx_flr_stopreq_ctl_t
@@ -8873,7 +8950,9 @@ static inline uint64_t CAVM_PEMX_FLR_VFX_STOPREQ(unsigned long a, unsigned long 
         return 0x8e0000000e00ll + 0x1000000000ll * ((a) & 0x3) + 8ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=3)))
         return 0x8e0000000e00ll + 0x1000000000ll * ((a) & 0x0) + 8ll * ((b) & 0x3);
-    __cavm_csr_fatal("PEMX_FLR_VFX_STOPREQ", 2, a, b, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=3)))
+        return 0x8e0000000e00ll + 0x1000000000ll * ((a) & 0x0) + 8ll * ((b) & 0x3);
+    __cavm_csr_fatal("PEMX_FLR_VFX_STOPREQ", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_FLR_VFX_STOPREQ(a,b) cavm_pemx_flr_vfx_stopreq_t
@@ -8927,7 +9006,7 @@ static inline uint64_t CAVM_PEMX_FLR_ZOMBIE_CTL(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN83XX) && (a<=3))
         return 0x87e0c0000230ll + 0x1000000ll * ((a) & 0x3);
-    __cavm_csr_fatal("PEMX_FLR_ZOMBIE_CTL", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("PEMX_FLR_ZOMBIE_CTL", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_FLR_ZOMBIE_CTL(a) cavm_pemx_flr_zombie_ctl_t
@@ -8991,7 +9070,9 @@ static inline uint64_t CAVM_PEMX_IB_MERGE_TIMER_CTL(unsigned long a)
         return 0x8e00000001c0ll + 0x1000000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x8e00000001c0ll + 0x1000000000ll * ((a) & 0x0);
-    __cavm_csr_fatal("PEMX_IB_MERGE_TIMER_CTL", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
+        return 0x8e00000001c0ll + 0x1000000000ll * ((a) & 0x0);
+    __cavm_csr_fatal("PEMX_IB_MERGE_TIMER_CTL", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_IB_MERGE_TIMER_CTL(a) cavm_pemx_ib_merge_timer_ctl_t
@@ -9035,7 +9116,9 @@ static inline uint64_t CAVM_PEMX_IB_WMERGE_MERGED_PC(unsigned long a)
         return 0x8e00000001d0ll + 0x1000000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x8e00000001d0ll + 0x1000000000ll * ((a) & 0x0);
-    __cavm_csr_fatal("PEMX_IB_WMERGE_MERGED_PC", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
+        return 0x8e00000001d0ll + 0x1000000000ll * ((a) & 0x0);
+    __cavm_csr_fatal("PEMX_IB_WMERGE_MERGED_PC", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_IB_WMERGE_MERGED_PC(a) cavm_pemx_ib_wmerge_merged_pc_t
@@ -9077,7 +9160,9 @@ static inline uint64_t CAVM_PEMX_IB_WMERGE_RECEIVED_PC(unsigned long a)
         return 0x8e00000001c8ll + 0x1000000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x8e00000001c8ll + 0x1000000000ll * ((a) & 0x0);
-    __cavm_csr_fatal("PEMX_IB_WMERGE_RECEIVED_PC", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
+        return 0x8e00000001c8ll + 0x1000000000ll * ((a) & 0x0);
+    __cavm_csr_fatal("PEMX_IB_WMERGE_RECEIVED_PC", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_IB_WMERGE_RECEIVED_PC(a) cavm_pemx_ib_wmerge_received_pc_t
@@ -9119,7 +9204,7 @@ static inline uint64_t CAVM_PEMX_INB_READ_CREDITS(unsigned long a)
         return 0x87e0c00000b8ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CN83XX) && (a<=3))
         return 0x87e0c00000b8ll + 0x1000000ll * ((a) & 0x3);
-    __cavm_csr_fatal("PEMX_INB_READ_CREDITS", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("PEMX_INB_READ_CREDITS", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_INB_READ_CREDITS(a) cavm_pemx_inb_read_credits_t
@@ -9354,6 +9439,7 @@ union cavm_pemx_int_ena_w1c
         uint64_t reserved_22_63        : 42;
 #endif /* Word 0 - End */
     } cnf95xx;
+    /* struct cavm_pemx_int_ena_w1c_cnf95xx loki; */
 };
 typedef union cavm_pemx_int_ena_w1c cavm_pemx_int_ena_w1c_t;
 
@@ -9368,7 +9454,9 @@ static inline uint64_t CAVM_PEMX_INT_ENA_W1C(unsigned long a)
         return 0x8e00000000f8ll + 0x1000000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x8e00000000f8ll + 0x1000000000ll * ((a) & 0x0);
-    __cavm_csr_fatal("PEMX_INT_ENA_W1C", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
+        return 0x8e00000000f8ll + 0x1000000000ll * ((a) & 0x0);
+    __cavm_csr_fatal("PEMX_INT_ENA_W1C", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_INT_ENA_W1C(a) cavm_pemx_int_ena_w1c_t
@@ -9603,6 +9691,7 @@ union cavm_pemx_int_ena_w1s
         uint64_t reserved_22_63        : 42;
 #endif /* Word 0 - End */
     } cnf95xx;
+    /* struct cavm_pemx_int_ena_w1s_cnf95xx loki; */
 };
 typedef union cavm_pemx_int_ena_w1s cavm_pemx_int_ena_w1s_t;
 
@@ -9617,7 +9706,9 @@ static inline uint64_t CAVM_PEMX_INT_ENA_W1S(unsigned long a)
         return 0x8e0000000100ll + 0x1000000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x8e0000000100ll + 0x1000000000ll * ((a) & 0x0);
-    __cavm_csr_fatal("PEMX_INT_ENA_W1S", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
+        return 0x8e0000000100ll + 0x1000000000ll * ((a) & 0x0);
+    __cavm_csr_fatal("PEMX_INT_ENA_W1S", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_INT_ENA_W1S(a) cavm_pemx_int_ena_w1s_t
@@ -9850,7 +9941,9 @@ static inline uint64_t CAVM_PEMX_INT_SUM(unsigned long a)
         return 0x8e00000000e8ll + 0x1000000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x8e00000000e8ll + 0x1000000000ll * ((a) & 0x0);
-    __cavm_csr_fatal("PEMX_INT_SUM", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
+        return 0x8e00000000e8ll + 0x1000000000ll * ((a) & 0x0);
+    __cavm_csr_fatal("PEMX_INT_SUM", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_INT_SUM(a) cavm_pemx_int_sum_t
@@ -10085,6 +10178,7 @@ union cavm_pemx_int_sum_w1s
         uint64_t reserved_22_63        : 42;
 #endif /* Word 0 - End */
     } cnf95xx;
+    /* struct cavm_pemx_int_sum_w1s_cnf95xx loki; */
 };
 typedef union cavm_pemx_int_sum_w1s cavm_pemx_int_sum_w1s_t;
 
@@ -10099,7 +10193,9 @@ static inline uint64_t CAVM_PEMX_INT_SUM_W1S(unsigned long a)
         return 0x8e00000000f0ll + 0x1000000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x8e00000000f0ll + 0x1000000000ll * ((a) & 0x0);
-    __cavm_csr_fatal("PEMX_INT_SUM_W1S", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
+        return 0x8e00000000f0ll + 0x1000000000ll * ((a) & 0x0);
+    __cavm_csr_fatal("PEMX_INT_SUM_W1S", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_INT_SUM_W1S(a) cavm_pemx_int_sum_w1s_t
@@ -10165,7 +10261,9 @@ static inline uint64_t CAVM_PEMX_LATENCY_PC(unsigned long a)
         return 0x8e0000000118ll + 0x1000000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x8e0000000118ll + 0x1000000000ll * ((a) & 0x0);
-    __cavm_csr_fatal("PEMX_LATENCY_PC", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
+        return 0x8e0000000118ll + 0x1000000000ll * ((a) & 0x0);
+    __cavm_csr_fatal("PEMX_LATENCY_PC", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_LATENCY_PC(a) cavm_pemx_latency_pc_t
@@ -10322,7 +10420,9 @@ static inline uint64_t CAVM_PEMX_LATENCY_PC_CTL(unsigned long a)
         return 0x8e0000000128ll + 0x1000000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x8e0000000128ll + 0x1000000000ll * ((a) & 0x0);
-    __cavm_csr_fatal("PEMX_LATENCY_PC_CTL", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
+        return 0x8e0000000128ll + 0x1000000000ll * ((a) & 0x0);
+    __cavm_csr_fatal("PEMX_LATENCY_PC_CTL", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_LATENCY_PC_CTL(a) cavm_pemx_latency_pc_ctl_t
@@ -10364,7 +10464,7 @@ static inline uint64_t CAVM_PEMX_LATENCY_PC_MASKX(unsigned long a, unsigned long
 {
     if (cavm_is_model(OCTEONTX_CN83XX) && ((a<=3) && (b<=1)))
         return 0x87e0c00004a0ll + 0x1000000ll * ((a) & 0x3) + 0x100ll * ((b) & 0x1);
-    __cavm_csr_fatal("PEMX_LATENCY_PC_MASKX", 2, a, b, 0, 0);
+    __cavm_csr_fatal("PEMX_LATENCY_PC_MASKX", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_LATENCY_PC_MASKX(a,b) cavm_pemx_latency_pc_maskx_t
@@ -10409,7 +10509,9 @@ static inline uint64_t CAVM_PEMX_LTR_LATENCY(unsigned long a)
         return 0x8e00000000c0ll + 0x1000000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x8e00000000c0ll + 0x1000000000ll * ((a) & 0x0);
-    __cavm_csr_fatal("PEMX_LTR_LATENCY", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
+        return 0x8e00000000c0ll + 0x1000000000ll * ((a) & 0x0);
+    __cavm_csr_fatal("PEMX_LTR_LATENCY", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_LTR_LATENCY(a) cavm_pemx_ltr_latency_t
@@ -10456,7 +10558,9 @@ static inline uint64_t CAVM_PEMX_LTR_VALX(unsigned long a, unsigned long b)
         return 0x8e00000000b0ll + 0x1000000000ll * ((a) & 0x3) + 8ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=1)))
         return 0x8e00000000b0ll + 0x1000000000ll * ((a) & 0x0) + 8ll * ((b) & 0x1);
-    __cavm_csr_fatal("PEMX_LTR_VALX", 2, a, b, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=1)))
+        return 0x8e00000000b0ll + 0x1000000000ll * ((a) & 0x0) + 8ll * ((b) & 0x1);
+    __cavm_csr_fatal("PEMX_LTR_VALX", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_LTR_VALX(a,b) cavm_pemx_ltr_valx_t
@@ -10515,7 +10619,9 @@ static inline uint64_t CAVM_PEMX_MAC_LANEX_EQ(unsigned long a, unsigned long b)
         return 0x8e0000000780ll + 0x1000000000ll * ((a) & 0x3) + 8ll * ((b) & 0xf);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=15)))
         return 0x8e0000000780ll + 0x1000000000ll * ((a) & 0x0) + 8ll * ((b) & 0xf);
-    __cavm_csr_fatal("PEMX_MAC_LANEX_EQ", 2, a, b, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=15)))
+        return 0x8e0000000780ll + 0x1000000000ll * ((a) & 0x0) + 8ll * ((b) & 0xf);
+    __cavm_csr_fatal("PEMX_MAC_LANEX_EQ", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_MAC_LANEX_EQ(a,b) cavm_pemx_mac_lanex_eq_t
@@ -10726,7 +10832,9 @@ static inline uint64_t CAVM_PEMX_MERGE_TIMER_CTL(unsigned long a)
         return 0x8e0000000180ll + 0x1000000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x8e0000000180ll + 0x1000000000ll * ((a) & 0x0);
-    __cavm_csr_fatal("PEMX_MERGE_TIMER_CTL", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
+        return 0x8e0000000180ll + 0x1000000000ll * ((a) & 0x0);
+    __cavm_csr_fatal("PEMX_MERGE_TIMER_CTL", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_MERGE_TIMER_CTL(a) cavm_pemx_merge_timer_ctl_t
@@ -10774,7 +10882,9 @@ static inline uint64_t CAVM_PEMX_MSIX_PBAX(unsigned long a, unsigned long b)
         return 0x8e0f000f0000ll + 0x1000000000ll * ((a) & 0x3) + 8ll * ((b) & 0x0);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b==0)))
         return 0x8e0f000f0000ll + 0x1000000000ll * ((a) & 0x0) + 8ll * ((b) & 0x0);
-    __cavm_csr_fatal("PEMX_MSIX_PBAX", 2, a, b, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b==0)))
+        return 0x8e0f000f0000ll + 0x1000000000ll * ((a) & 0x0) + 8ll * ((b) & 0x0);
+    __cavm_csr_fatal("PEMX_MSIX_PBAX", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_MSIX_PBAX(a,b) cavm_pemx_msix_pbax_t
@@ -10959,7 +11069,9 @@ static inline uint64_t CAVM_PEMX_MSIX_VECX_ADDR(unsigned long a, unsigned long b
         return 0x8e0f00000000ll + 0x1000000000ll * ((a) & 0x3) + 0x10ll * ((b) & 0xf);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=8)))
         return 0x8e0f00000000ll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0xf);
-    __cavm_csr_fatal("PEMX_MSIX_VECX_ADDR", 2, a, b, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=8)))
+        return 0x8e0f00000000ll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0xf);
+    __cavm_csr_fatal("PEMX_MSIX_VECX_ADDR", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_MSIX_VECX_ADDR(a,b) cavm_pemx_msix_vecx_addr_t
@@ -11023,7 +11135,9 @@ static inline uint64_t CAVM_PEMX_MSIX_VECX_CTL(unsigned long a, unsigned long b)
         return 0x8e0f00000008ll + 0x1000000000ll * ((a) & 0x3) + 0x10ll * ((b) & 0xf);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=8)))
         return 0x8e0f00000008ll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0xf);
-    __cavm_csr_fatal("PEMX_MSIX_VECX_CTL", 2, a, b, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=8)))
+        return 0x8e0f00000008ll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0xf);
+    __cavm_csr_fatal("PEMX_MSIX_VECX_CTL", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_MSIX_VECX_CTL(a,b) cavm_pemx_msix_vecx_ctl_t
@@ -11181,7 +11295,9 @@ static inline uint64_t CAVM_PEMX_NCBI_CTL(unsigned long a)
         return 0x8e0000000178ll + 0x1000000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x8e0000000178ll + 0x1000000000ll * ((a) & 0x0);
-    __cavm_csr_fatal("PEMX_NCBI_CTL", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
+        return 0x8e0000000178ll + 0x1000000000ll * ((a) & 0x0);
+    __cavm_csr_fatal("PEMX_NCBI_CTL", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_NCBI_CTL(a) cavm_pemx_ncbi_ctl_t
@@ -11237,7 +11353,9 @@ static inline uint64_t CAVM_PEMX_NCBI_TLP_CREDITS(unsigned long a)
         return 0x8e0000000030ll + 0x1000000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x8e0000000030ll + 0x1000000000ll * ((a) & 0x0);
-    __cavm_csr_fatal("PEMX_NCBI_TLP_CREDITS", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
+        return 0x8e0000000030ll + 0x1000000000ll * ((a) & 0x0);
+    __cavm_csr_fatal("PEMX_NCBI_TLP_CREDITS", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_NCBI_TLP_CREDITS(a) cavm_pemx_ncbi_tlp_credits_t
@@ -11309,7 +11427,9 @@ static inline uint64_t CAVM_PEMX_NCBO_FIFO_STATUS(unsigned long a)
         return 0x8e0000000138ll + 0x1000000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x8e0000000138ll + 0x1000000000ll * ((a) & 0x0);
-    __cavm_csr_fatal("PEMX_NCBO_FIFO_STATUS", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
+        return 0x8e0000000138ll + 0x1000000000ll * ((a) & 0x0);
+    __cavm_csr_fatal("PEMX_NCBO_FIFO_STATUS", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_NCBO_FIFO_STATUS(a) cavm_pemx_ncbo_fifo_status_t
@@ -11377,7 +11497,9 @@ static inline uint64_t CAVM_PEMX_OB_CPL_FIFO_STATUS(unsigned long a)
         return 0x8e0000000170ll + 0x1000000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x8e0000000170ll + 0x1000000000ll * ((a) & 0x0);
-    __cavm_csr_fatal("PEMX_OB_CPL_FIFO_STATUS", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
+        return 0x8e0000000170ll + 0x1000000000ll * ((a) & 0x0);
+    __cavm_csr_fatal("PEMX_OB_CPL_FIFO_STATUS", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_OB_CPL_FIFO_STATUS(a) cavm_pemx_ob_cpl_fifo_status_t
@@ -11453,7 +11575,9 @@ static inline uint64_t CAVM_PEMX_OBFF_CTL_STATUS(unsigned long a)
         return 0x8e0000000088ll + 0x1000000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x8e0000000088ll + 0x1000000000ll * ((a) & 0x0);
-    __cavm_csr_fatal("PEMX_OBFF_CTL_STATUS", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
+        return 0x8e0000000088ll + 0x1000000000ll * ((a) & 0x0);
+    __cavm_csr_fatal("PEMX_OBFF_CTL_STATUS", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_OBFF_CTL_STATUS(a) cavm_pemx_obff_ctl_status_t
@@ -11509,7 +11633,9 @@ static inline uint64_t CAVM_PEMX_OBFF_WAKE_CFG(unsigned long a)
         return 0x8e0000000090ll + 0x1000000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x8e0000000090ll + 0x1000000000ll * ((a) & 0x0);
-    __cavm_csr_fatal("PEMX_OBFF_WAKE_CFG", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
+        return 0x8e0000000090ll + 0x1000000000ll * ((a) & 0x0);
+    __cavm_csr_fatal("PEMX_OBFF_WAKE_CFG", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_OBFF_WAKE_CFG(a) cavm_pemx_obff_wake_cfg_t
@@ -11616,7 +11742,9 @@ static inline uint64_t CAVM_PEMX_ON(unsigned long a)
         return 0x8e00000000e0ll + 0x1000000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x8e00000000e0ll + 0x1000000000ll * ((a) & 0x0);
-    __cavm_csr_fatal("PEMX_ON", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
+        return 0x8e00000000e0ll + 0x1000000000ll * ((a) & 0x0);
+    __cavm_csr_fatal("PEMX_ON", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_ON(a) cavm_pemx_on_t
@@ -11695,7 +11823,9 @@ static inline uint64_t CAVM_PEMX_P2N_BAR0_START(unsigned long a)
         return 0x8e0000000158ll + 0x1000000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x8e0000000158ll + 0x1000000000ll * ((a) & 0x0);
-    __cavm_csr_fatal("PEMX_P2N_BAR0_START", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
+        return 0x8e0000000158ll + 0x1000000000ll * ((a) & 0x0);
+    __cavm_csr_fatal("PEMX_P2N_BAR0_START", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_P2N_BAR0_START(a) cavm_pemx_p2n_bar0_start_t
@@ -11736,7 +11866,7 @@ static inline uint64_t CAVM_PEMX_P2N_BAR1_START(unsigned long a)
         return 0x87e0c0000088ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CN83XX) && (a<=3))
         return 0x87e0c0000088ll + 0x1000000ll * ((a) & 0x3);
-    __cavm_csr_fatal("PEMX_P2N_BAR1_START", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("PEMX_P2N_BAR1_START", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_P2N_BAR1_START(a) cavm_pemx_p2n_bar1_start_t
@@ -11823,7 +11953,9 @@ static inline uint64_t CAVM_PEMX_P2N_BAR2_START(unsigned long a)
         return 0x8e0000000150ll + 0x1000000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x8e0000000150ll + 0x1000000000ll * ((a) & 0x0);
-    __cavm_csr_fatal("PEMX_P2N_BAR2_START", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
+        return 0x8e0000000150ll + 0x1000000000ll * ((a) & 0x0);
+    __cavm_csr_fatal("PEMX_P2N_BAR2_START", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_P2N_BAR2_START(a) cavm_pemx_p2n_bar2_start_t
@@ -11869,7 +12001,9 @@ static inline uint64_t CAVM_PEMX_P2N_BAR4_START(unsigned long a)
         return 0x8e0000000148ll + 0x1000000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x8e0000000148ll + 0x1000000000ll * ((a) & 0x0);
-    __cavm_csr_fatal("PEMX_P2N_BAR4_START", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
+        return 0x8e0000000148ll + 0x1000000000ll * ((a) & 0x0);
+    __cavm_csr_fatal("PEMX_P2N_BAR4_START", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_P2N_BAR4_START(a) cavm_pemx_p2n_bar4_start_t
@@ -11912,7 +12046,7 @@ static inline uint64_t CAVM_PEMX_P2P_BARX_END(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN83XX) && ((a<=3) && (b<=3)))
         return 0x87e0c0000048ll + 0x1000000ll * ((a) & 0x3) + 0x10ll * ((b) & 0x3);
-    __cavm_csr_fatal("PEMX_P2P_BARX_END", 2, a, b, 0, 0);
+    __cavm_csr_fatal("PEMX_P2P_BARX_END", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_P2P_BARX_END(a,b) cavm_pemx_p2p_barx_end_t
@@ -11961,7 +12095,7 @@ static inline uint64_t CAVM_PEMX_P2P_BARX_START(unsigned long a, unsigned long b
 {
     if (cavm_is_model(OCTEONTX_CN83XX) && ((a<=3) && (b<=3)))
         return 0x87e0c0000040ll + 0x1000000ll * ((a) & 0x3) + 0x10ll * ((b) & 0x3);
-    __cavm_csr_fatal("PEMX_P2P_BARX_START", 2, a, b, 0, 0);
+    __cavm_csr_fatal("PEMX_P2P_BARX_START", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_P2P_BARX_START(a,b) cavm_pemx_p2p_barx_start_t
@@ -12009,7 +12143,9 @@ static inline uint64_t CAVM_PEMX_PB_DATAX(unsigned long a, unsigned long b)
         return 0x8e0000000240ll + 0x1000000000ll * ((a) & 0x3) + 8ll * ((b) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=7)))
         return 0x8e0000000240ll + 0x1000000000ll * ((a) & 0x0) + 8ll * ((b) & 0x7);
-    __cavm_csr_fatal("PEMX_PB_DATAX", 2, a, b, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=7)))
+        return 0x8e0000000240ll + 0x1000000000ll * ((a) & 0x0) + 8ll * ((b) & 0x7);
+    __cavm_csr_fatal("PEMX_PB_DATAX", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_PB_DATAX(a,b) cavm_pemx_pb_datax_t
@@ -12077,7 +12213,9 @@ static inline uint64_t CAVM_PEMX_PERR_STATUS(unsigned long a)
         return 0x8e00000001d8ll + 0x1000000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x8e00000001d8ll + 0x1000000000ll * ((a) & 0x0);
-    __cavm_csr_fatal("PEMX_PERR_STATUS", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
+        return 0x8e00000001d8ll + 0x1000000000ll * ((a) & 0x0);
+    __cavm_csr_fatal("PEMX_PERR_STATUS", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_PERR_STATUS(a) cavm_pemx_perr_status_t
@@ -12123,7 +12261,9 @@ static inline uint64_t CAVM_PEMX_PFX_CLR_FLR_REQ(unsigned long a, unsigned long 
         return 0x8e0000000a00ll + 0x1000000000ll * ((a) & 0x3) + 8ll * ((b) & 0xf);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=15)))
         return 0x8e0000000a00ll + 0x1000000000ll * ((a) & 0x0) + 8ll * ((b) & 0xf);
-    __cavm_csr_fatal("PEMX_PFX_CLR_FLR_REQ", 2, a, b, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=15)))
+        return 0x8e0000000a00ll + 0x1000000000ll * ((a) & 0x0) + 8ll * ((b) & 0xf);
+    __cavm_csr_fatal("PEMX_PFX_CLR_FLR_REQ", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_PFX_CLR_FLR_REQ(a,b) cavm_pemx_pfx_clr_flr_req_t
@@ -12172,7 +12312,9 @@ static inline uint64_t CAVM_PEMX_PFX_CSX_PFCFGX(unsigned long a, unsigned long b
         return 0x8e0000008000ll + 0x1000000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0xf) + 0x10000ll * ((c) & 0x1) + 8ll * ((d) & 0x1ff);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=15) && (c<=1) && (d<=511)))
         return 0x8e0000008000ll + 0x1000000000ll * ((a) & 0x0) + 0x40000ll * ((b) & 0xf) + 0x10000ll * ((c) & 0x1) + 8ll * ((d) & 0x1ff);
-    __cavm_csr_fatal("PEMX_PFX_CSX_PFCFGX", 4, a, b, c, d);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=15) && (c<=1) && (d<=511)))
+        return 0x8e0000008000ll + 0x1000000000ll * ((a) & 0x0) + 0x40000ll * ((b) & 0xf) + 0x10000ll * ((c) & 0x1) + 8ll * ((d) & 0x1ff);
+    __cavm_csr_fatal("PEMX_PFX_CSX_PFCFGX", 4, a, b, c, d, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_PFX_CSX_PFCFGX(a,b,c,d) cavm_pemx_pfx_csx_pfcfgx_t
@@ -12261,7 +12403,9 @@ static inline uint64_t CAVM_PEMX_PFX_CTL_STATUS(unsigned long a, unsigned long b
         return 0x8e0000000800ll + 0x1000000000ll * ((a) & 0x3) + 8ll * ((b) & 0xf);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=15)))
         return 0x8e0000000800ll + 0x1000000000ll * ((a) & 0x0) + 8ll * ((b) & 0xf);
-    __cavm_csr_fatal("PEMX_PFX_CTL_STATUS", 2, a, b, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=15)))
+        return 0x8e0000000800ll + 0x1000000000ll * ((a) & 0x0) + 8ll * ((b) & 0xf);
+    __cavm_csr_fatal("PEMX_PFX_CTL_STATUS", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_PFX_CTL_STATUS(a,b) cavm_pemx_pfx_ctl_status_t
@@ -12310,7 +12454,9 @@ static inline uint64_t CAVM_PEMX_PFX_VFX_VFCFGX(unsigned long a, unsigned long b
         return 0x8e0000028000ll + 0x1000000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0xf) + 0x400000ll * ((c) & 0xff) + 8ll * ((d) & 0x1ff);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=15) && (c<=239) && (d<=511)))
         return 0x8e0000028000ll + 0x1000000000ll * ((a) & 0x0) + 0x40000ll * ((b) & 0xf) + 0x400000ll * ((c) & 0xff) + 8ll * ((d) & 0x1ff);
-    __cavm_csr_fatal("PEMX_PFX_VFX_VFCFGX", 4, a, b, c, d);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=15) && (c<=239) && (d<=511)))
+        return 0x8e0000028000ll + 0x1000000000ll * ((a) & 0x0) + 0x40000ll * ((b) & 0xf) + 0x400000ll * ((c) & 0xff) + 8ll * ((d) & 0x1ff);
+    __cavm_csr_fatal("PEMX_PFX_VFX_VFCFGX", 4, a, b, c, d, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_PFX_VFX_VFCFGX(a,b,c,d) cavm_pemx_pfx_vfx_vfcfgx_t
@@ -12360,7 +12506,9 @@ static inline uint64_t CAVM_PEMX_PSPI_TLP_CREDITS(unsigned long a)
         return 0x8e0000000038ll + 0x1000000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x8e0000000038ll + 0x1000000000ll * ((a) & 0x0);
-    __cavm_csr_fatal("PEMX_PSPI_TLP_CREDITS", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
+        return 0x8e0000000038ll + 0x1000000000ll * ((a) & 0x0);
+    __cavm_csr_fatal("PEMX_PSPI_TLP_CREDITS", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_PSPI_TLP_CREDITS(a) cavm_pemx_pspi_tlp_credits_t
@@ -12460,7 +12608,9 @@ static inline uint64_t CAVM_PEMX_PTM_CTL(unsigned long a)
         return 0x8e0000000098ll + 0x1000000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x8e0000000098ll + 0x1000000000ll * ((a) & 0x0);
-    __cavm_csr_fatal("PEMX_PTM_CTL", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
+        return 0x8e0000000098ll + 0x1000000000ll * ((a) & 0x0);
+    __cavm_csr_fatal("PEMX_PTM_CTL", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_PTM_CTL(a) cavm_pemx_ptm_ctl_t
@@ -12506,7 +12656,9 @@ static inline uint64_t CAVM_PEMX_PTM_LCL_TIME(unsigned long a)
         return 0x8e00000000a0ll + 0x1000000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x8e00000000a0ll + 0x1000000000ll * ((a) & 0x0);
-    __cavm_csr_fatal("PEMX_PTM_LCL_TIME", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
+        return 0x8e00000000a0ll + 0x1000000000ll * ((a) & 0x0);
+    __cavm_csr_fatal("PEMX_PTM_LCL_TIME", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_PTM_LCL_TIME(a) cavm_pemx_ptm_lcl_time_t
@@ -12552,7 +12704,9 @@ static inline uint64_t CAVM_PEMX_PTM_MAS_TIME(unsigned long a)
         return 0x8e00000000a8ll + 0x1000000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x8e00000000a8ll + 0x1000000000ll * ((a) & 0x0);
-    __cavm_csr_fatal("PEMX_PTM_MAS_TIME", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
+        return 0x8e00000000a8ll + 0x1000000000ll * ((a) & 0x0);
+    __cavm_csr_fatal("PEMX_PTM_MAS_TIME", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_PTM_MAS_TIME(a) cavm_pemx_ptm_mas_time_t
@@ -12608,7 +12762,7 @@ static inline uint64_t CAVM_PEMX_QLM(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN83XX) && (a<=3))
         return 0x87e0c0000418ll + 0x1000000ll * ((a) & 0x3);
-    __cavm_csr_fatal("PEMX_QLM", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("PEMX_QLM", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_QLM(a) cavm_pemx_qlm_t
@@ -12698,7 +12852,9 @@ static inline uint64_t CAVM_PEMX_RAS_TBA_CTL(unsigned long a)
         return 0x8e0000000068ll + 0x1000000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x8e0000000068ll + 0x1000000000ll * ((a) & 0x0);
-    __cavm_csr_fatal("PEMX_RAS_TBA_CTL", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
+        return 0x8e0000000068ll + 0x1000000000ll * ((a) & 0x0);
+    __cavm_csr_fatal("PEMX_RAS_TBA_CTL", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_RAS_TBA_CTL(a) cavm_pemx_ras_tba_ctl_t
@@ -12772,7 +12928,9 @@ static inline uint64_t CAVM_PEMX_READS_PC(unsigned long a)
         return 0x8e0000000120ll + 0x1000000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x8e0000000120ll + 0x1000000000ll * ((a) & 0x0);
-    __cavm_csr_fatal("PEMX_READS_PC", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
+        return 0x8e0000000120ll + 0x1000000000ll * ((a) & 0x0);
+    __cavm_csr_fatal("PEMX_READS_PC", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_READS_PC(a) cavm_pemx_reads_pc_t
@@ -12818,7 +12976,9 @@ static inline uint64_t CAVM_PEMX_REG_CTL(unsigned long a)
         return 0x8e0000000060ll + 0x1000000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x8e0000000060ll + 0x1000000000ll * ((a) & 0x0);
-    __cavm_csr_fatal("PEMX_REG_CTL", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
+        return 0x8e0000000060ll + 0x1000000000ll * ((a) & 0x0);
+    __cavm_csr_fatal("PEMX_REG_CTL", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_REG_CTL(a) cavm_pemx_reg_ctl_t
@@ -12931,7 +13091,9 @@ static inline uint64_t CAVM_PEMX_REG_HUGEX_ACC(unsigned long a, unsigned long b)
         return 0x8e0000006000ll + 0x1000000000ll * ((a) & 0x3) + 0x10ll * ((b) & 0xff);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=255)))
         return 0x8e0000006000ll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0xff);
-    __cavm_csr_fatal("PEMX_REG_HUGEX_ACC", 2, a, b, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=255)))
+        return 0x8e0000006000ll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0xff);
+    __cavm_csr_fatal("PEMX_REG_HUGEX_ACC", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_REG_HUGEX_ACC(a,b) cavm_pemx_reg_hugex_acc_t
@@ -12974,7 +13136,9 @@ static inline uint64_t CAVM_PEMX_REG_HUGEX_ACC2(unsigned long a, unsigned long b
         return 0x8e0000006008ll + 0x1000000000ll * ((a) & 0x3) + 0x10ll * ((b) & 0xff);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=255)))
         return 0x8e0000006008ll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0xff);
-    __cavm_csr_fatal("PEMX_REG_HUGEX_ACC2", 2, a, b, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=255)))
+        return 0x8e0000006008ll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0xff);
+    __cavm_csr_fatal("PEMX_REG_HUGEX_ACC2", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_REG_HUGEX_ACC2(a,b) cavm_pemx_reg_hugex_acc2_t
@@ -13101,7 +13265,9 @@ static inline uint64_t CAVM_PEMX_REG_NORMX_ACC(unsigned long a, unsigned long b)
         return 0x8e0000004000ll + 0x1000000000ll * ((a) & 0x3) + 0x10ll * ((b) & 0xff);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=255)))
         return 0x8e0000004000ll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0xff);
-    __cavm_csr_fatal("PEMX_REG_NORMX_ACC", 2, a, b, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=255)))
+        return 0x8e0000004000ll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0xff);
+    __cavm_csr_fatal("PEMX_REG_NORMX_ACC", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_REG_NORMX_ACC(a,b) cavm_pemx_reg_normx_acc_t
@@ -13141,7 +13307,9 @@ static inline uint64_t CAVM_PEMX_REG_NORMX_ACC2(unsigned long a, unsigned long b
         return 0x8e0000004008ll + 0x1000000000ll * ((a) & 0x3) + 0x10ll * ((b) & 0xff);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=255)))
         return 0x8e0000004008ll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0xff);
-    __cavm_csr_fatal("PEMX_REG_NORMX_ACC2", 2, a, b, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=255)))
+        return 0x8e0000004008ll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0xff);
+    __cavm_csr_fatal("PEMX_REG_NORMX_ACC2", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_REG_NORMX_ACC2(a,b) cavm_pemx_reg_normx_acc2_t
@@ -13185,7 +13353,9 @@ static inline uint64_t CAVM_PEMX_RMERGE_MERGED_PC(unsigned long a)
         return 0x8e00000001a8ll + 0x1000000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x8e00000001a8ll + 0x1000000000ll * ((a) & 0x0);
-    __cavm_csr_fatal("PEMX_RMERGE_MERGED_PC", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
+        return 0x8e00000001a8ll + 0x1000000000ll * ((a) & 0x0);
+    __cavm_csr_fatal("PEMX_RMERGE_MERGED_PC", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_RMERGE_MERGED_PC(a) cavm_pemx_rmerge_merged_pc_t
@@ -13227,7 +13397,9 @@ static inline uint64_t CAVM_PEMX_RMERGE_RECEIVED_PC(unsigned long a)
         return 0x8e00000001a0ll + 0x1000000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x8e00000001a0ll + 0x1000000000ll * ((a) & 0x0);
-    __cavm_csr_fatal("PEMX_RMERGE_RECEIVED_PC", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
+        return 0x8e00000001a0ll + 0x1000000000ll * ((a) & 0x0);
+    __cavm_csr_fatal("PEMX_RMERGE_RECEIVED_PC", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_RMERGE_RECEIVED_PC(a) cavm_pemx_rmerge_received_pc_t
@@ -13326,7 +13498,7 @@ static inline uint64_t CAVM_PEMX_SPI_CTL(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN83XX) && (a<=3))
         return 0x87e0c0000180ll + 0x1000000ll * ((a) & 0x3);
-    __cavm_csr_fatal("PEMX_SPI_CTL", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("PEMX_SPI_CTL", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_SPI_CTL(a) cavm_pemx_spi_ctl_t
@@ -13371,7 +13543,7 @@ static inline uint64_t CAVM_PEMX_SPI_DATA(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN83XX) && (a<=3))
         return 0x87e0c0000188ll + 0x1000000ll * ((a) & 0x3);
-    __cavm_csr_fatal("PEMX_SPI_DATA", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("PEMX_SPI_DATA", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_SPI_DATA(a) cavm_pemx_spi_data_t
@@ -13474,7 +13646,9 @@ static inline uint64_t CAVM_PEMX_STRAP(unsigned long a)
         return 0x8e00000000d0ll + 0x1000000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x8e00000000d0ll + 0x1000000000ll * ((a) & 0x0);
-    __cavm_csr_fatal("PEMX_STRAP", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
+        return 0x8e00000000d0ll + 0x1000000000ll * ((a) & 0x0);
+    __cavm_csr_fatal("PEMX_STRAP", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_STRAP(a) cavm_pemx_strap_t
@@ -13575,7 +13749,7 @@ static inline uint64_t CAVM_PEMX_TLP_CREDITS(unsigned long a)
         return 0x87e0c0000038ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CN83XX) && (a<=3))
         return 0x87e0c0000038ll + 0x1000000ll * ((a) & 0x3);
-    __cavm_csr_fatal("PEMX_TLP_CREDITS", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("PEMX_TLP_CREDITS", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_TLP_CREDITS(a) cavm_pemx_tlp_credits_t
@@ -13623,7 +13797,9 @@ static inline uint64_t CAVM_PEMX_VF_CLR_FLR_REQ(unsigned long a)
         return 0x8e0000000228ll + 0x1000000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x8e0000000228ll + 0x1000000000ll * ((a) & 0x0);
-    __cavm_csr_fatal("PEMX_VF_CLR_FLR_REQ", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
+        return 0x8e0000000228ll + 0x1000000000ll * ((a) & 0x0);
+    __cavm_csr_fatal("PEMX_VF_CLR_FLR_REQ", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_VF_CLR_FLR_REQ(a) cavm_pemx_vf_clr_flr_req_t
@@ -13667,7 +13843,9 @@ static inline uint64_t CAVM_PEMX_WMERGE_MERGED_PC(unsigned long a)
         return 0x8e0000000198ll + 0x1000000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x8e0000000198ll + 0x1000000000ll * ((a) & 0x0);
-    __cavm_csr_fatal("PEMX_WMERGE_MERGED_PC", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
+        return 0x8e0000000198ll + 0x1000000000ll * ((a) & 0x0);
+    __cavm_csr_fatal("PEMX_WMERGE_MERGED_PC", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_WMERGE_MERGED_PC(a) cavm_pemx_wmerge_merged_pc_t
@@ -13709,7 +13887,9 @@ static inline uint64_t CAVM_PEMX_WMERGE_RECEIVED_PC(unsigned long a)
         return 0x8e0000000190ll + 0x1000000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x8e0000000190ll + 0x1000000000ll * ((a) & 0x0);
-    __cavm_csr_fatal("PEMX_WMERGE_RECEIVED_PC", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
+        return 0x8e0000000190ll + 0x1000000000ll * ((a) & 0x0);
+    __cavm_csr_fatal("PEMX_WMERGE_RECEIVED_PC", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PEMX_WMERGE_RECEIVED_PC(a) cavm_pemx_wmerge_received_pc_t

@@ -42,7 +42,7 @@ typedef enum {
    CSR_TYPE_SYSREG,         /**< Core system register */
 } cavm_csr_type_t;
 
-#define CSR_DB_MAX_PARAM 4
+#define CSR_DB_MAX_PARAM 6
 typedef struct __attribute__ ((packed)) {
     uint32_t        name_index : 20;/**< Index into __cavm_csr_db_string where the name is */
     uint32_t        base_index : 14;/**< Index into __cavm_csr_db_number where the base address is */
@@ -65,7 +65,7 @@ typedef struct {
     const int16_t *data;            /**< Array of integers indexing __cavm_csr_db_csr */
 } __cavm_csr_db_map_t;
 
-extern void __cavm_csr_fatal(const char *name, int num_args, unsigned long arg1, unsigned long arg2, unsigned long arg3, unsigned long arg4) __attribute__ ((noreturn));
+extern void __cavm_csr_fatal(const char *name, int num_args, unsigned long arg1, unsigned long arg2, unsigned long arg3, unsigned long arg4, unsigned long arg5, unsigned long arg6) __attribute__ ((noreturn));
 extern int cavm_csr_decode_indexed(int db_index, int params[CSR_DB_MAX_PARAM], uint64_t value);
 extern int cavm_csr_decode(const char *name, uint64_t value);
 extern int cavm_csr_decode_by_address(uint64_t address, uint64_t value);

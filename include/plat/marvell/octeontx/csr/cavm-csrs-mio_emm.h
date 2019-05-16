@@ -229,7 +229,7 @@ static inline uint64_t CAVM_MIO_EMM_CALB_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x87e0090020c0ll;
-    __cavm_csr_fatal("MIO_EMM_CALB", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("MIO_EMM_CALB", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MIO_EMM_CALB cavm_mio_emm_calb_t
@@ -435,7 +435,7 @@ static inline uint64_t CAVM_MIO_EMM_COMP_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX))
         return 0x87e009002040ll;
-    __cavm_csr_fatal("MIO_EMM_COMP", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("MIO_EMM_COMP", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MIO_EMM_COMP cavm_mio_emm_comp_t
@@ -454,6 +454,71 @@ union cavm_mio_emm_debug
 {
     uint64_t u;
     struct cavm_mio_emm_debug_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_22_63        : 42;
+        uint64_t rdsync_rst            : 1;  /**< [ 21: 21](R/W) eMMC Read Syncronizer logic reset.
+                                                                 Must set/cleared only when EMMC_CLK_DISABLE is set.
+                                                                 For diagnostic use only. */
+        uint64_t emmc_clk_disable      : 1;  /**< [ 20: 20](R/W) Disable eMMC clock.
+                                                                 Required when MIO_EMM_TIMING[*_IN_TAP] changes. */
+        uint64_t dma_sm                : 4;  /**< [ 19: 16](RO) DMA state.
+                                                                 For diagnostic use only. */
+        uint64_t data_sm               : 4;  /**< [ 15: 12](RO) Data transfer state.
+                                                                 For diagnostic use only. */
+        uint64_t cmd_sm                : 4;  /**< [ 11:  8](RO) Command state.
+                                                                 For diagnostic use only. */
+        uint64_t reserved_1_7          : 7;
+        uint64_t clk_on                : 1;  /**< [  0:  0](R/W) Force eMMC related conditional clocks to always be on.
+                                                                 For diagnostic use only. */
+#else /* Word 0 - Little Endian */
+        uint64_t clk_on                : 1;  /**< [  0:  0](R/W) Force eMMC related conditional clocks to always be on.
+                                                                 For diagnostic use only. */
+        uint64_t reserved_1_7          : 7;
+        uint64_t cmd_sm                : 4;  /**< [ 11:  8](RO) Command state.
+                                                                 For diagnostic use only. */
+        uint64_t data_sm               : 4;  /**< [ 15: 12](RO) Data transfer state.
+                                                                 For diagnostic use only. */
+        uint64_t dma_sm                : 4;  /**< [ 19: 16](RO) DMA state.
+                                                                 For diagnostic use only. */
+        uint64_t emmc_clk_disable      : 1;  /**< [ 20: 20](R/W) Disable eMMC clock.
+                                                                 Required when MIO_EMM_TIMING[*_IN_TAP] changes. */
+        uint64_t rdsync_rst            : 1;  /**< [ 21: 21](R/W) eMMC Read Syncronizer logic reset.
+                                                                 Must set/cleared only when EMMC_CLK_DISABLE is set.
+                                                                 For diagnostic use only. */
+        uint64_t reserved_22_63        : 42;
+#endif /* Word 0 - End */
+    } s;
+    struct cavm_mio_emm_debug_cn96xxp1
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_22_63        : 42;
+        uint64_t reserved_20_21        : 2;
+        uint64_t dma_sm                : 4;  /**< [ 19: 16](RO) DMA state.
+                                                                 For diagnostic use only. */
+        uint64_t data_sm               : 4;  /**< [ 15: 12](RO) Data transfer state.
+                                                                 For diagnostic use only. */
+        uint64_t cmd_sm                : 4;  /**< [ 11:  8](RO) Command state.
+                                                                 For diagnostic use only. */
+        uint64_t reserved_1_7          : 7;
+        uint64_t clk_on                : 1;  /**< [  0:  0](R/W) Force eMMC related conditional clocks to always be on.
+                                                                 For diagnostic use only. */
+#else /* Word 0 - Little Endian */
+        uint64_t clk_on                : 1;  /**< [  0:  0](R/W) Force eMMC related conditional clocks to always be on.
+                                                                 For diagnostic use only. */
+        uint64_t reserved_1_7          : 7;
+        uint64_t cmd_sm                : 4;  /**< [ 11:  8](RO) Command state.
+                                                                 For diagnostic use only. */
+        uint64_t data_sm               : 4;  /**< [ 15: 12](RO) Data transfer state.
+                                                                 For diagnostic use only. */
+        uint64_t dma_sm                : 4;  /**< [ 19: 16](RO) DMA state.
+                                                                 For diagnostic use only. */
+        uint64_t reserved_20_21        : 2;
+        uint64_t reserved_22_63        : 42;
+#endif /* Word 0 - End */
+    } cn96xxp1;
+    /* struct cavm_mio_emm_debug_s cn96xxp3; */
+    struct cavm_mio_emm_debug_cnf95xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_20_63        : 44;
@@ -478,8 +543,8 @@ union cavm_mio_emm_debug
                                                                  For diagnostic use only. */
         uint64_t reserved_20_63        : 44;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_mio_emm_debug_s cn; */
+    } cnf95xx;
+    /* struct cavm_mio_emm_debug_s loki; */
 };
 typedef union cavm_mio_emm_debug cavm_mio_emm_debug_t;
 
@@ -489,7 +554,7 @@ static inline uint64_t CAVM_MIO_EMM_DEBUG_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x87e0090020f8ll;
-    __cavm_csr_fatal("MIO_EMM_DEBUG", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("MIO_EMM_DEBUG", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MIO_EMM_DEBUG cavm_mio_emm_debug_t
@@ -750,6 +815,93 @@ union cavm_mio_emm_dma_arg
                                                                  CMD23 to set the number of blocks.  This field is ignored if MIO_EMM_DMA[MULTI]
                                                                  is clear since that feature already skips CMD23 and issues multiple commands. */
         uint64_t alt_cmd               : 6;  /**< [ 21: 16](R/W) Alternate command.  When non-zero this fields supplies the command used for the DMA
+                                                                 Transfer.  Typically this would be CMD17/CMD18 in the case of a read operation or a
+                                                                 CMD24/CMD25 in the case of a write operation. */
+        uint64_t rel_wr                : 1;  /**< [ 15: 15](R/W) Reliable write.  Corresponds to bit 31 of CMD23 (SET_BLOCK_COUNT)
+                                                                 for a multiple block. */
+        uint64_t pack_cmd              : 1;  /**< [ 14: 14](R/W) Packed command enable.
+                                                                 Corresponds to bit 30 of CMD23 (SET_BLOCK_COUNT).
+                                                                 0 = Normal DMA command.
+                                                                 1 = Sets the packed command argument (bit 30) in the
+                                                                 SET_BLOCK_COUNT (CMD23) used to start the DMA.  The
+                                                                 MULTI field should also be set for both read and write
+                                                                 transfers.
+
+                                                                 In the case of a write using packed commands, the DMA
+                                                                 header occupies the first block to be transfered and
+                                                                 should be added to the BLOCK_COUNT of all the packed
+                                                                 write transfers.
+
+                                                                 In the case of a read using packed commands, a write
+                                                                 DMA is performed with this bit set and the BLOCK_COUNT is set
+                                                                 to a single block to transfer the DMA header.  Then a
+                                                                 non-packed read DMA with a BLOCK_COUNT of all the packed
+                                                                 read transfers should be executed. */
+        uint64_t tag_req               : 1;  /**< [ 13: 13](R/W) Tag request.
+                                                                 Corresponds to bit 29 of CMD23 (SET_BLOCK_COUNT). */
+        uint64_t context_id            : 4;  /**< [ 12:  9](R/W) Context ID.
+                                                                 Corresponds to bits 28:25 of CMD23 (SET_BLOCK_COUNT). */
+        uint64_t force_pgm             : 1;  /**< [  8:  8](R/W) Forced programming.
+                                                                 Corresponds to bit 24 of CMD23 (SET_BLOCK_COUNT). */
+        uint64_t cmd23_args            : 8;  /**< [  7:  0](R/W) CMD23 arguments 23:16.
+                                                                 Corresponds to bits 23:16 of CMD23 (SET_BLOCK_COUNT). */
+#else /* Word 0 - Little Endian */
+        uint64_t cmd23_args            : 8;  /**< [  7:  0](R/W) CMD23 arguments 23:16.
+                                                                 Corresponds to bits 23:16 of CMD23 (SET_BLOCK_COUNT). */
+        uint64_t force_pgm             : 1;  /**< [  8:  8](R/W) Forced programming.
+                                                                 Corresponds to bit 24 of CMD23 (SET_BLOCK_COUNT). */
+        uint64_t context_id            : 4;  /**< [ 12:  9](R/W) Context ID.
+                                                                 Corresponds to bits 28:25 of CMD23 (SET_BLOCK_COUNT). */
+        uint64_t tag_req               : 1;  /**< [ 13: 13](R/W) Tag request.
+                                                                 Corresponds to bit 29 of CMD23 (SET_BLOCK_COUNT). */
+        uint64_t pack_cmd              : 1;  /**< [ 14: 14](R/W) Packed command enable.
+                                                                 Corresponds to bit 30 of CMD23 (SET_BLOCK_COUNT).
+                                                                 0 = Normal DMA command.
+                                                                 1 = Sets the packed command argument (bit 30) in the
+                                                                 SET_BLOCK_COUNT (CMD23) used to start the DMA.  The
+                                                                 MULTI field should also be set for both read and write
+                                                                 transfers.
+
+                                                                 In the case of a write using packed commands, the DMA
+                                                                 header occupies the first block to be transfered and
+                                                                 should be added to the BLOCK_COUNT of all the packed
+                                                                 write transfers.
+
+                                                                 In the case of a read using packed commands, a write
+                                                                 DMA is performed with this bit set and the BLOCK_COUNT is set
+                                                                 to a single block to transfer the DMA header.  Then a
+                                                                 non-packed read DMA with a BLOCK_COUNT of all the packed
+                                                                 read transfers should be executed. */
+        uint64_t rel_wr                : 1;  /**< [ 15: 15](R/W) Reliable write.  Corresponds to bit 31 of CMD23 (SET_BLOCK_COUNT)
+                                                                 for a multiple block. */
+        uint64_t alt_cmd               : 6;  /**< [ 21: 16](R/W) Alternate command.  When non-zero this fields supplies the command used for the DMA
+                                                                 Transfer.  Typically this would be CMD17/CMD18 in the case of a read operation or a
+                                                                 CMD24/CMD25 in the case of a write operation. */
+        uint64_t skip_blk_cmd          : 1;  /**< [ 22: 22](R/W) When set DMA will ignore issuing CMD23 (Set Block Count) command and instead
+                                                                 issue a stop command when the number of blocks have expired. This flag would
+                                                                 typically be set with SD devices and with an alternate command that does not use
+                                                                 CMD23 to set the number of blocks.  This field is ignored if MIO_EMM_DMA[MULTI]
+                                                                 is clear since that feature already skips CMD23 and issues multiple commands. */
+        uint64_t reserved_23_31        : 9;
+        uint64_t alt_cmd_arg           : 32; /**< [ 63: 32](R/W) Alternate command arguments. When nonzero this field is used at the 24-bit
+                                                                 argument for the DMA command instead of the address. This feature is typically
+                                                                 used in conjunction with [ALT_CMD]. */
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_mio_emm_dma_arg_s cn96xx; */
+    struct cavm_mio_emm_dma_arg_cnf95xx
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t alt_cmd_arg           : 32; /**< [ 63: 32](R/W) Alternate command arguments. When nonzero this field is used at the 24-bit
+                                                                 argument for the DMA command instead of the address. This feature is typically
+                                                                 used in conjunction with [ALT_CMD]. */
+        uint64_t reserved_23_31        : 9;
+        uint64_t skip_blk_cmd          : 1;  /**< [ 22: 22](R/W) When set DMA will ignore issuing CMD23 (Set Block Count) command and instead
+                                                                 issue a stop command when the number of blocks have expired. This flag would
+                                                                 typically be set with SD devices and with an alternate command that does not use
+                                                                 CMD23 to set the number of blocks.  This field is ignored if MIO_EMM_DMA[MULTI]
+                                                                 is clear since that feature already skips CMD23 and issues multiple commands. */
+        uint64_t alt_cmd               : 6;  /**< [ 21: 16](R/W) Alternate command.  When non-zero this fields supplies the command used for the DMA
                                                                  Transfer.  Typically this would be CMD18 in the case of Corresponds to bit 31 of
                                                                  CMD23 (SET_BLOCK_COUNT)
                                                                  for a multiple block. */
@@ -824,8 +976,8 @@ union cavm_mio_emm_dma_arg
                                                                  argument for the DMA command instead of the address. This feature is typically
                                                                  used in conjunction with [ALT_CMD]. */
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_mio_emm_dma_arg_s cn; */
+    } cnf95xx;
+    /* struct cavm_mio_emm_dma_arg_s loki; */
 };
 typedef union cavm_mio_emm_dma_arg cavm_mio_emm_dma_arg_t;
 
@@ -835,7 +987,7 @@ static inline uint64_t CAVM_MIO_EMM_DMA_ARG_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x87e009002090ll;
-    __cavm_csr_fatal("MIO_EMM_DMA_ARG", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("MIO_EMM_DMA_ARG", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MIO_EMM_DMA_ARG cavm_mio_emm_dma_arg_t
@@ -1623,7 +1775,7 @@ static inline uint64_t CAVM_MIO_EMM_IO_CTL_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x87e009002040ll;
-    __cavm_csr_fatal("MIO_EMM_IO_CTL", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("MIO_EMM_IO_CTL", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MIO_EMM_IO_CTL cavm_mio_emm_io_ctl_t
@@ -1826,6 +1978,7 @@ union cavm_mio_emm_modex
     /* struct cavm_mio_emm_modex_s cn96xxp1_1; */
     /* struct cavm_mio_emm_modex_s cn96xxp3; */
     /* struct cavm_mio_emm_modex_s cnf95xx; */
+    /* struct cavm_mio_emm_modex_s loki; */
 };
 typedef union cavm_mio_emm_modex cavm_mio_emm_modex_t;
 
@@ -1834,7 +1987,7 @@ static inline uint64_t CAVM_MIO_EMM_MODEX(unsigned long a)
 {
     if (a<=3)
         return 0x87e009002008ll + 8ll * ((a) & 0x3);
-    __cavm_csr_fatal("MIO_EMM_MODEX", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("MIO_EMM_MODEX", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MIO_EMM_MODEX(a) cavm_mio_emm_modex_t
@@ -1873,7 +2026,7 @@ static inline uint64_t CAVM_MIO_EMM_MSIX_PBAX(unsigned long a)
 {
     if (a==0)
         return 0x87e009ff0000ll + 8ll * ((a) & 0x0);
-    __cavm_csr_fatal("MIO_EMM_MSIX_PBAX", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("MIO_EMM_MSIX_PBAX", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MIO_EMM_MSIX_PBAX(a) cavm_mio_emm_msix_pbax_t
@@ -2020,7 +2173,7 @@ static inline uint64_t CAVM_MIO_EMM_MSIX_VECX_ADDR(unsigned long a)
         return 0x87e009f00000ll + 0x10ll * ((a) & 0xf);
     if (cavm_is_model(OCTEONTX_CN9XXX) && (a<=10))
         return 0x87e009f00000ll + 0x10ll * ((a) & 0xf);
-    __cavm_csr_fatal("MIO_EMM_MSIX_VECX_ADDR", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("MIO_EMM_MSIX_VECX_ADDR", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MIO_EMM_MSIX_VECX_ADDR(a) cavm_mio_emm_msix_vecx_addr_t
@@ -2076,7 +2229,7 @@ static inline uint64_t CAVM_MIO_EMM_MSIX_VECX_CTL(unsigned long a)
         return 0x87e009f00008ll + 0x10ll * ((a) & 0xf);
     if (cavm_is_model(OCTEONTX_CN9XXX) && (a<=10))
         return 0x87e009f00008ll + 0x10ll * ((a) & 0xf);
-    __cavm_csr_fatal("MIO_EMM_MSIX_VECX_CTL", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("MIO_EMM_MSIX_VECX_CTL", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MIO_EMM_MSIX_VECX_CTL(a) cavm_mio_emm_msix_vecx_ctl_t
@@ -2448,7 +2601,7 @@ static inline uint64_t CAVM_MIO_EMM_SAMPLE_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX))
         return 0x87e009002090ll;
-    __cavm_csr_fatal("MIO_EMM_SAMPLE", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("MIO_EMM_SAMPLE", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MIO_EMM_SAMPLE cavm_mio_emm_sample_t
@@ -2833,6 +2986,7 @@ union cavm_mio_emm_switch
     } cn96xxp1_1;
     /* struct cavm_mio_emm_switch_cn96xxp1_1 cn96xxp3; */
     /* struct cavm_mio_emm_switch_cn96xxp1_1 cnf95xx; */
+    /* struct cavm_mio_emm_switch_cn96xxp1_1 loki; */
 };
 typedef union cavm_mio_emm_switch cavm_mio_emm_switch_t;
 
@@ -2891,7 +3045,7 @@ static inline uint64_t CAVM_MIO_EMM_TAP_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x87e0090020c8ll;
-    __cavm_csr_fatal("MIO_EMM_TAP", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("MIO_EMM_TAP", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MIO_EMM_TAP cavm_mio_emm_tap_t
@@ -2971,7 +3125,7 @@ static inline uint64_t CAVM_MIO_EMM_TIMING_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x87e0090020d0ll;
-    __cavm_csr_fatal("MIO_EMM_TIMING", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("MIO_EMM_TIMING", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MIO_EMM_TIMING cavm_mio_emm_timing_t

@@ -475,7 +475,322 @@ union cavm_lenc_task_cfg_s
         uint64_t num_wr0_wrds          : 32; /**< [511:480] Number of words to write to write DMA port 0 for this task. Valid range is [0x1, 0x1D640]. */
 #endif /* Word 7 - End */
     } s;
-    /* struct cavm_lenc_task_cfg_s_s cn; */
+    /* struct cavm_lenc_task_cfg_s_s cnf95xx; */
+    struct cavm_lenc_task_cfg_s_loki
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t mod_order             : 4;  /**< [ 63: 60] Modulation order:
+                                                                 0x1 = {pi}/2 BPSK.
+                                                                 0x2 = QPSK.
+                                                                 0x4 = 16-QAM.
+                                                                 0x6 = 64-QAM.
+                                                                 0x8 = 256-QAM.
+                                                                 0xA = 1024-QAM. */
+        uint64_t bypass_scrambling     : 1;  /**< [ 59: 59] Bypass scrambling when set. */
+        uint64_t input_data_order      : 3;  /**< [ 58: 56] Bit 56:
+                                                                 0 = DATA_BIT_MSB_FIRST.
+                                                                 1 = DATA_BIT_LSB_FIRST.
+
+                                                                 Bits \<58:57\>:
+                                                                 0x0 = DATA_BYTE_ORDER_MODE_0.
+                                                                 0x1 = DATA_BYTE_ORDER_MODE_1.
+                                                                 0x2 = DATA_BYTE_ORDER_MODE_2.
+                                                                 0x3 = Reserved. */
+        uint64_t tb_crc                : 24; /**< [ 55: 32] TB CRC calculated for initial transmission. If CRC length is 16, the 16 least-significant bits
+                                                                 of [TB_CRC] are valid. */
+        uint64_t tb_crc_from_cfg_flag  : 1;  /**< [ 31: 31] _ 0 = Do not use [TB_CRC]. If [TB_CRC_SELECT] = 0x1 or 0x2, TB CRC is calculated internally.
+
+                                                                 _ 1 = Append [TB_CRC] of length selected by [TB_CRC_SELECT] = 0x1 or 0x2 to the
+                                                                 end of the input bits of the current task. */
+        uint64_t tb_crc_output_flag    : 1;  /**< [ 30: 30] Output raw TB CRC:
+                                                                 0 = no raw TB CRC (before scrambling) output.
+                                                                 1 = raw TB CRC (before scrambling) output.
+                                                                 When [TB_CRC_SELECT] \> 0x0, [TB_CRC_OUTPUT_FLAG] must be 0. */
+        uint64_t tb_crc_select         : 2;  /**< [ 29: 28] CRC polynomial used for the calculation of TB CRC and CB level TB CRC contribution.
+                                                                 0x0 = no CRC (i.e. CRC added before Core).
+                                                                 0x1 = use CRC-16.
+                                                                 0x2 = use CRC-24A.
+                                                                 0x3 = Reserved. */
+        uint64_t reserved_27           : 1;
+        uint64_t cb_crc_select         : 1;  /**< [ 26: 26] CB CRC polynomial select
+                                                                 0 = no CRC.
+                                                                 1 = use CRC-24B.
+                                                                 When LENC_CB_CFG_S[NUM_CB] = 0x1, [CB_CRC_SELECT] must be 0.
+                                                                 When LENC_CB_CFG_S[NUM_CB] \> 0x1 and [TB_CRC_SELECT] \> 0x0, [CB_CRC_SELECT] must be 1. */
+        uint64_t basegraph             : 1;  /**< [ 25: 25] LDPC basegraph
+                                                                 0 = BG1.
+                                                                 1 = BG2. */
+        uint64_t mixed_mod             : 1;  /**< [ 24: 24] Reserved.
+                                                                 Internal:
+                                                                 Used only in DOCSIS mode.
+
+                                                                 0: Do not use mixed modulation.
+                                                                 1: Use mixed modulation.
+                                                                 Ignored if shortening is applied or when LENC_CB_CFG_S[CODE_ID] \> 0x0. */
+        uint64_t num_cb_cfg            : 8;  /**< [ 23: 16] The number of CB configuration entries. Valid range is [0x1, 0x8]. */
+        uint64_t task_id               : 16; /**< [ 15:  0] Each task in a job must have a unique ID. The task ID will be
+                                                                 included in the output to correctly identify the output for each task. */
+#else /* Word 0 - Little Endian */
+        uint64_t task_id               : 16; /**< [ 15:  0] Each task in a job must have a unique ID. The task ID will be
+                                                                 included in the output to correctly identify the output for each task. */
+        uint64_t num_cb_cfg            : 8;  /**< [ 23: 16] The number of CB configuration entries. Valid range is [0x1, 0x8]. */
+        uint64_t mixed_mod             : 1;  /**< [ 24: 24] Reserved.
+                                                                 Internal:
+                                                                 Used only in DOCSIS mode.
+
+                                                                 0: Do not use mixed modulation.
+                                                                 1: Use mixed modulation.
+                                                                 Ignored if shortening is applied or when LENC_CB_CFG_S[CODE_ID] \> 0x0. */
+        uint64_t basegraph             : 1;  /**< [ 25: 25] LDPC basegraph
+                                                                 0 = BG1.
+                                                                 1 = BG2. */
+        uint64_t cb_crc_select         : 1;  /**< [ 26: 26] CB CRC polynomial select
+                                                                 0 = no CRC.
+                                                                 1 = use CRC-24B.
+                                                                 When LENC_CB_CFG_S[NUM_CB] = 0x1, [CB_CRC_SELECT] must be 0.
+                                                                 When LENC_CB_CFG_S[NUM_CB] \> 0x1 and [TB_CRC_SELECT] \> 0x0, [CB_CRC_SELECT] must be 1. */
+        uint64_t reserved_27           : 1;
+        uint64_t tb_crc_select         : 2;  /**< [ 29: 28] CRC polynomial used for the calculation of TB CRC and CB level TB CRC contribution.
+                                                                 0x0 = no CRC (i.e. CRC added before Core).
+                                                                 0x1 = use CRC-16.
+                                                                 0x2 = use CRC-24A.
+                                                                 0x3 = Reserved. */
+        uint64_t tb_crc_output_flag    : 1;  /**< [ 30: 30] Output raw TB CRC:
+                                                                 0 = no raw TB CRC (before scrambling) output.
+                                                                 1 = raw TB CRC (before scrambling) output.
+                                                                 When [TB_CRC_SELECT] \> 0x0, [TB_CRC_OUTPUT_FLAG] must be 0. */
+        uint64_t tb_crc_from_cfg_flag  : 1;  /**< [ 31: 31] _ 0 = Do not use [TB_CRC]. If [TB_CRC_SELECT] = 0x1 or 0x2, TB CRC is calculated internally.
+
+                                                                 _ 1 = Append [TB_CRC] of length selected by [TB_CRC_SELECT] = 0x1 or 0x2 to the
+                                                                 end of the input bits of the current task. */
+        uint64_t tb_crc                : 24; /**< [ 55: 32] TB CRC calculated for initial transmission. If CRC length is 16, the 16 least-significant bits
+                                                                 of [TB_CRC] are valid. */
+        uint64_t input_data_order      : 3;  /**< [ 58: 56] Bit 56:
+                                                                 0 = DATA_BIT_MSB_FIRST.
+                                                                 1 = DATA_BIT_LSB_FIRST.
+
+                                                                 Bits \<58:57\>:
+                                                                 0x0 = DATA_BYTE_ORDER_MODE_0.
+                                                                 0x1 = DATA_BYTE_ORDER_MODE_1.
+                                                                 0x2 = DATA_BYTE_ORDER_MODE_2.
+                                                                 0x3 = Reserved. */
+        uint64_t bypass_scrambling     : 1;  /**< [ 59: 59] Bypass scrambling when set. */
+        uint64_t mod_order             : 4;  /**< [ 63: 60] Modulation order:
+                                                                 0x1 = {pi}/2 BPSK.
+                                                                 0x2 = QPSK.
+                                                                 0x4 = 16-QAM.
+                                                                 0x6 = 64-QAM.
+                                                                 0x8 = 256-QAM.
+                                                                 0xA = 1024-QAM. */
+#endif /* Word 0 - End */
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 1 - Big Endian */
+        uint64_t k0                    : 16; /**< [127:112] k0 value representing offset of Rx data in unpruned circular buffer as defined
+                                                                 in Table 5.4.2.1-2 of [R1]. It must be less than [NCB_SIZE]. */
+        uint64_t ncb_size              : 16; /**< [111: 96] Soft buffer size for each code block as specified in Section
+                                                                 5.4.2.1 of [R1]. Maximum value is 0x6300. */
+        uint64_t tb_size               : 32; /**< [ 95: 64] Transport Block size. It corresponds to 'A' defined in Section 5.1
+                                                                 of [R1]. Valid range is [0x18, 0x138028]. */
+#else /* Word 1 - Little Endian */
+        uint64_t tb_size               : 32; /**< [ 95: 64] Transport Block size. It corresponds to 'A' defined in Section 5.1
+                                                                 of [R1]. Valid range is [0x18, 0x138028]. */
+        uint64_t ncb_size              : 16; /**< [111: 96] Soft buffer size for each code block as specified in Section
+                                                                 5.4.2.1 of [R1]. Maximum value is 0x6300. */
+        uint64_t k0                    : 16; /**< [127:112] k0 value representing offset of Rx data in unpruned circular buffer as defined
+                                                                 in Table 5.4.2.1-2 of [R1]. It must be less than [NCB_SIZE]. */
+#endif /* Word 1 - End */
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 2 - Big Endian */
+        uint64_t scrambling_init       : 31; /**< [191:161] The initialization value of the 2nd m-sequence of the scrambler. */
+        uint64_t bypass_segmentation   : 1;  /**< [160:160] When set to 0, the output is segmented, with extra padding inserted.
+                                                                 See [SEG_PAD] for more details.
+
+                                                                 When set to 1, the output bits are sent contiguously to output. */
+        uint64_t symb_byte_aligned     : 2;  /**< [159:158] Select the alignment and interleaving for output bits.
+                                                                 0x0 = Bypass mode. Bits are written consecutively, with no per-symbol
+                                                                 alignment.
+                                                                 0x1: Byte alignment for [MOD_ORDER] \< 0xA. Every [MOD_ORDER] bits are aligned to a bit
+                                                                 boundary.
+                                                                 0x2 = Interleaved byte alignment for [MOD_ORDER] = 0xA. For each symbol, the five
+                                                                 even bits are packed in one byte, and the five odd bits are packed
+                                                                 in the next byte.
+                                                                 0x3 = Consecutive byte alignment for [MOD_ORDER] = 0xA. For each symbol, bits 0-4
+                                                                 are written in one byte and bits 5-9 are written in the next
+                                                                 subsequent byte. */
+        uint64_t bypass_intlv          : 1;  /**< [157:157] Bypass bit interleaving when set. */
+        uint64_t seg_pad               : 1;  /**< [156:156] This flag is used only when [BYPASS_SEGMENTATION] = 0 and ignored otherwise.
+
+                                                                 When [SEG_PAD] = 1, and [SYMB_BYTE_ALIGNED] = 0x0, the output data will be separated into segments
+                                                                 with [SEGx_SYMS] x [NUM_LAYER] x [MOD_ORDER] segments and padded with
+                                                                 [MOD_ORDER] x [NUM_LAYER] x ([NUM_TOTAL_SYM_PER_LAYER] - SEGx_SYMS]) zero. The total size
+                                                                 of each segment will be [MOD_ORDER] x [NUM_LAYER] x [NUM_TOTAL_SYM_PER_LAYER].
+
+                                                                 When [SEG_PAD] = 1, and [SYMB_BYTE_ALIGNED] = 0x1, the output data will be separated into segments
+                                                                 with [SEGx_SYMS] x [NUM_LAYER] x 8 segments and padded with 8 x [NUM_LAYER] x
+                                                                 ([NUM_TOTAL_SYM_PER_LAYER] - SEGx_SYMS]) zero. The total size of each segment will be 8 x
+                                                                 [NUM_LAYER] x [NUM_TOTAL_SYM_PER_LAYER].
+
+                                                                 When [SEG_PAD] = 1, and [SYMB_BYTE_ALIGNED] = 0x2 or 0x3, the output data will be separated into
+                                                                 segments with 16 x [SEGx_SYMS] x [NUM_LAYER] segments and padded with 16 x
+                                                                 [NUM_LAYER] x ([NUM_TOTAL_SYM_PER_LAYER] - SEGx_SYMS]) zero. The total size of each
+                                                                 segment will be 16 x [NUM_LAYER] x [NUM_TOTAL_SYM_PER_LAYER].
+
+                                                                 When [SEG_PAD] = 0, and [SYMB_BYTE_ALIGNED] = 0x0, the output data will be separated into segments
+                                                                 with [SEGx_SYMS] x [NUM_LAYER] x [MOD_ORDER] segments and padded with zero such
+                                                                 that ([MOD_ORDER] x [NUM_LAYER] x SEGx_SYMS]) % 128 = 0.
+
+                                                                 When [SEG_PAD] = 0, and [SYMB_BYTE_ALIGNED] = 0x1, the output data will be separated into segments
+                                                                 with [SEGx_SYMS] x [NUM_LAYER] x 8 segments and padded with zero such that
+                                                                 (8 x [NUM_LAYER] x SEGx_SYMS]) % 128 = 0.
+
+                                                                 When [SEG_PAD] = 0, and [SYMB_BYTE_ALIGNED] = 0x2 or 0x3, the output data will be separated into
+                                                                 segments with 16 x [SEGx_SYMS] x [NUM_LAYER] segments and padded with zero such
+                                                                 that (16 x [NUM_LAYER] x SEGx_SYMS]) % 128 = 0. */
+        uint64_t num_layer             : 4;  /**< [155:152] number of layers the transport block will be mapped to. Valid range is
+                                                                 [0x1, 0x4]. */
+        uint64_t num_total_sym_per_layer : 24;/**< [151:128] When [SEG_PAD] = 1, it specifies the total number of symbols in all segments. When
+                                                                 [SEG_PAD] = 0, this field is ignored.
+                                                                 Each segment is padded to this size. [NUM_TOTAL_SYM_PER_LAYER] must be \>=
+                                                                 MAX[SEGx_SYMS], for x = 0,...,13.
+
+                                                                 Note that when [SEG_PAD] = 1 and [SYMB_BYTE_ALIGN] = 0x0, [NUM_TOTAL_SYM_PER_LAYER] must be
+                                                                 set such that ([MOD_ORDER] x [NUM_LAYER] x [NUM_TOTAL_SYM_PER_LAYER]) % 128 = 0.
+
+                                                                 When [SEG_PAD] = 1 and [SYMB_BYTE_ALIGN] = 0x1, [NUM_TOTAL_SYM_PER_LAYER] must be
+                                                                 set such that (8 x [NUM_LAYER] x [NUM_TOTAL_SYM_PER_LAYER]) % 128 = 0.
+
+                                                                 When [SEG_PAD] = 1 and [SYMB_BYTE_ALIGN] = 0x2 or 0x3, [NUM_TOTAL_SYM_PER_LAYER] must be
+                                                                 set such that (16 x [NUM_LAYER] x [NUM_TOTAL_SYM_PER_LAYER]) % 128 = 0. */
+#else /* Word 2 - Little Endian */
+        uint64_t num_total_sym_per_layer : 24;/**< [151:128] When [SEG_PAD] = 1, it specifies the total number of symbols in all segments. When
+                                                                 [SEG_PAD] = 0, this field is ignored.
+                                                                 Each segment is padded to this size. [NUM_TOTAL_SYM_PER_LAYER] must be \>=
+                                                                 MAX[SEGx_SYMS], for x = 0,...,13.
+
+                                                                 Note that when [SEG_PAD] = 1 and [SYMB_BYTE_ALIGN] = 0x0, [NUM_TOTAL_SYM_PER_LAYER] must be
+                                                                 set such that ([MOD_ORDER] x [NUM_LAYER] x [NUM_TOTAL_SYM_PER_LAYER]) % 128 = 0.
+
+                                                                 When [SEG_PAD] = 1 and [SYMB_BYTE_ALIGN] = 0x1, [NUM_TOTAL_SYM_PER_LAYER] must be
+                                                                 set such that (8 x [NUM_LAYER] x [NUM_TOTAL_SYM_PER_LAYER]) % 128 = 0.
+
+                                                                 When [SEG_PAD] = 1 and [SYMB_BYTE_ALIGN] = 0x2 or 0x3, [NUM_TOTAL_SYM_PER_LAYER] must be
+                                                                 set such that (16 x [NUM_LAYER] x [NUM_TOTAL_SYM_PER_LAYER]) % 128 = 0. */
+        uint64_t num_layer             : 4;  /**< [155:152] number of layers the transport block will be mapped to. Valid range is
+                                                                 [0x1, 0x4]. */
+        uint64_t seg_pad               : 1;  /**< [156:156] This flag is used only when [BYPASS_SEGMENTATION] = 0 and ignored otherwise.
+
+                                                                 When [SEG_PAD] = 1, and [SYMB_BYTE_ALIGNED] = 0x0, the output data will be separated into segments
+                                                                 with [SEGx_SYMS] x [NUM_LAYER] x [MOD_ORDER] segments and padded with
+                                                                 [MOD_ORDER] x [NUM_LAYER] x ([NUM_TOTAL_SYM_PER_LAYER] - SEGx_SYMS]) zero. The total size
+                                                                 of each segment will be [MOD_ORDER] x [NUM_LAYER] x [NUM_TOTAL_SYM_PER_LAYER].
+
+                                                                 When [SEG_PAD] = 1, and [SYMB_BYTE_ALIGNED] = 0x1, the output data will be separated into segments
+                                                                 with [SEGx_SYMS] x [NUM_LAYER] x 8 segments and padded with 8 x [NUM_LAYER] x
+                                                                 ([NUM_TOTAL_SYM_PER_LAYER] - SEGx_SYMS]) zero. The total size of each segment will be 8 x
+                                                                 [NUM_LAYER] x [NUM_TOTAL_SYM_PER_LAYER].
+
+                                                                 When [SEG_PAD] = 1, and [SYMB_BYTE_ALIGNED] = 0x2 or 0x3, the output data will be separated into
+                                                                 segments with 16 x [SEGx_SYMS] x [NUM_LAYER] segments and padded with 16 x
+                                                                 [NUM_LAYER] x ([NUM_TOTAL_SYM_PER_LAYER] - SEGx_SYMS]) zero. The total size of each
+                                                                 segment will be 16 x [NUM_LAYER] x [NUM_TOTAL_SYM_PER_LAYER].
+
+                                                                 When [SEG_PAD] = 0, and [SYMB_BYTE_ALIGNED] = 0x0, the output data will be separated into segments
+                                                                 with [SEGx_SYMS] x [NUM_LAYER] x [MOD_ORDER] segments and padded with zero such
+                                                                 that ([MOD_ORDER] x [NUM_LAYER] x SEGx_SYMS]) % 128 = 0.
+
+                                                                 When [SEG_PAD] = 0, and [SYMB_BYTE_ALIGNED] = 0x1, the output data will be separated into segments
+                                                                 with [SEGx_SYMS] x [NUM_LAYER] x 8 segments and padded with zero such that
+                                                                 (8 x [NUM_LAYER] x SEGx_SYMS]) % 128 = 0.
+
+                                                                 When [SEG_PAD] = 0, and [SYMB_BYTE_ALIGNED] = 0x2 or 0x3, the output data will be separated into
+                                                                 segments with 16 x [SEGx_SYMS] x [NUM_LAYER] segments and padded with zero such
+                                                                 that (16 x [NUM_LAYER] x SEGx_SYMS]) % 128 = 0. */
+        uint64_t bypass_intlv          : 1;  /**< [157:157] Bypass bit interleaving when set. */
+        uint64_t symb_byte_aligned     : 2;  /**< [159:158] Select the alignment and interleaving for output bits.
+                                                                 0x0 = Bypass mode. Bits are written consecutively, with no per-symbol
+                                                                 alignment.
+                                                                 0x1: Byte alignment for [MOD_ORDER] \< 0xA. Every [MOD_ORDER] bits are aligned to a bit
+                                                                 boundary.
+                                                                 0x2 = Interleaved byte alignment for [MOD_ORDER] = 0xA. For each symbol, the five
+                                                                 even bits are packed in one byte, and the five odd bits are packed
+                                                                 in the next byte.
+                                                                 0x3 = Consecutive byte alignment for [MOD_ORDER] = 0xA. For each symbol, bits 0-4
+                                                                 are written in one byte and bits 5-9 are written in the next
+                                                                 subsequent byte. */
+        uint64_t bypass_segmentation   : 1;  /**< [160:160] When set to 0, the output is segmented, with extra padding inserted.
+                                                                 See [SEG_PAD] for more details.
+
+                                                                 When set to 1, the output bits are sent contiguously to output. */
+        uint64_t scrambling_init       : 31; /**< [191:161] The initialization value of the 2nd m-sequence of the scrambler. */
+#endif /* Word 2 - End */
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 3 - Big Endian */
+        uint64_t seg3_syms             : 16; /**< [255:240] See [SEG_PAD]. */
+        uint64_t seg2_syms             : 16; /**< [239:224] See [SEG_PAD]. */
+        uint64_t seg1_syms             : 16; /**< [223:208] See [SEG_PAD]. */
+        uint64_t seg0_syms             : 16; /**< [207:192] See [SEG_PAD]. */
+#else /* Word 3 - Little Endian */
+        uint64_t seg0_syms             : 16; /**< [207:192] See [SEG_PAD]. */
+        uint64_t seg1_syms             : 16; /**< [223:208] See [SEG_PAD]. */
+        uint64_t seg2_syms             : 16; /**< [239:224] See [SEG_PAD]. */
+        uint64_t seg3_syms             : 16; /**< [255:240] See [SEG_PAD]. */
+#endif /* Word 3 - End */
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 4 - Big Endian */
+        uint64_t seg7_syms             : 16; /**< [319:304] See [SEG_PAD]. */
+        uint64_t seg6_syms             : 16; /**< [303:288] See [SEG_PAD]. */
+        uint64_t seg5_syms             : 16; /**< [287:272] See [SEG_PAD]. */
+        uint64_t seg4_syms             : 16; /**< [271:256] See [SEG_PAD]. */
+#else /* Word 4 - Little Endian */
+        uint64_t seg4_syms             : 16; /**< [271:256] See [SEG_PAD]. */
+        uint64_t seg5_syms             : 16; /**< [287:272] See [SEG_PAD]. */
+        uint64_t seg6_syms             : 16; /**< [303:288] See [SEG_PAD]. */
+        uint64_t seg7_syms             : 16; /**< [319:304] See [SEG_PAD]. */
+#endif /* Word 4 - End */
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 5 - Big Endian */
+        uint64_t seg11_syms            : 16; /**< [383:368] See [SEG_PAD]. */
+        uint64_t seg10_syms            : 16; /**< [367:352] See [SEG_PAD]. */
+        uint64_t seg9_syms             : 16; /**< [351:336] See [SEG_PAD]. */
+        uint64_t seg8_syms             : 16; /**< [335:320] See [SEG_PAD]. */
+#else /* Word 5 - Little Endian */
+        uint64_t seg8_syms             : 16; /**< [335:320] See [SEG_PAD]. */
+        uint64_t seg9_syms             : 16; /**< [351:336] See [SEG_PAD]. */
+        uint64_t seg10_syms            : 16; /**< [367:352] See [SEG_PAD]. */
+        uint64_t seg11_syms            : 16; /**< [383:368] See [SEG_PAD]. */
+#endif /* Word 5 - End */
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 6 - Big Endian */
+        uint64_t reserved_419_447      : 29;
+        uint64_t output_data_order     : 3;  /**< [418:416] Bit 34:
+                                                                 0 = DATA_BIT_MSB_FIRST.
+                                                                 1 = DATA_BIT_LSB_FIRST.
+
+                                                                 Bits \<33:32\>:
+                                                                 0x0 = DATA_BYTE_ORDER_MODE_0.
+                                                                 0x1 = DATA_BYTE_ORDER_MODE_1.
+                                                                 0x2 = DATA_BYTE_ORDER_MODE_2.
+                                                                 0x3 = Reserved. */
+        uint64_t seg13_syms            : 16; /**< [415:400] See [SEG_PAD]. */
+        uint64_t seg12_syms            : 16; /**< [399:384] See [SEG_PAD]. */
+#else /* Word 6 - Little Endian */
+        uint64_t seg12_syms            : 16; /**< [399:384] See [SEG_PAD]. */
+        uint64_t seg13_syms            : 16; /**< [415:400] See [SEG_PAD]. */
+        uint64_t output_data_order     : 3;  /**< [418:416] Bit 34:
+                                                                 0 = DATA_BIT_MSB_FIRST.
+                                                                 1 = DATA_BIT_LSB_FIRST.
+
+                                                                 Bits \<33:32\>:
+                                                                 0x0 = DATA_BYTE_ORDER_MODE_0.
+                                                                 0x1 = DATA_BYTE_ORDER_MODE_1.
+                                                                 0x2 = DATA_BYTE_ORDER_MODE_2.
+                                                                 0x3 = Reserved. */
+        uint64_t reserved_419_447      : 29;
+#endif /* Word 6 - End */
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 7 - Big Endian */
+        uint64_t num_wr0_wrds          : 32; /**< [511:480] Number of words to write to write DMA port 0 for this task. Valid range is [0x1, 0x1D640]. */
+        uint64_t num_rd0_wrds          : 32; /**< [479:448] Number of words to read from read DMA port 0 for this task. The recommended
+                                                                 range is [0x1, 0x4E20] for NR. This is not a hard limit, however. */
+#else /* Word 7 - Little Endian */
+        uint64_t num_rd0_wrds          : 32; /**< [479:448] Number of words to read from read DMA port 0 for this task. The recommended
+                                                                 range is [0x1, 0x4E20] for NR. This is not a hard limit, however. */
+        uint64_t num_wr0_wrds          : 32; /**< [511:480] Number of words to write to write DMA port 0 for this task. Valid range is [0x1, 0x1D640]. */
+#endif /* Word 7 - End */
+    } loki;
 };
 
 /**
@@ -515,7 +830,9 @@ static inline uint64_t CAVM_LENCX_ABX_CONTROL(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=1) && (b<=1)))
         return 0x87e043300000ll + 0x580000ll * ((a) & 0x1) + 0x8000ll * ((b) & 0x1);
-    __cavm_csr_fatal("LENCX_ABX_CONTROL", 2, a, b, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=1) && (b<=1)))
+        return 0x87e043300000ll + 0x580000ll * ((a) & 0x1) + 0x8000ll * ((b) & 0x1);
+    __cavm_csr_fatal("LENCX_ABX_CONTROL", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_LENCX_ABX_CONTROL(a,b) cavm_lencx_abx_control_t
@@ -553,7 +870,9 @@ static inline uint64_t CAVM_LENCX_ABX_ECO(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=1) && (b<=1)))
         return 0x87e043300008ll + 0x580000ll * ((a) & 0x1) + 0x8000ll * ((b) & 0x1);
-    __cavm_csr_fatal("LENCX_ABX_ECO", 2, a, b, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=1) && (b<=1)))
+        return 0x87e043300008ll + 0x580000ll * ((a) & 0x1) + 0x8000ll * ((b) & 0x1);
+    __cavm_csr_fatal("LENCX_ABX_ECO", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_LENCX_ABX_ECO(a,b) cavm_lencx_abx_eco_t
@@ -594,7 +913,9 @@ static inline uint64_t CAVM_LENCX_ABX_ERROR_ENABLE0(unsigned long a, unsigned lo
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=1) && (b<=1)))
         return 0x87e043300040ll + 0x580000ll * ((a) & 0x1) + 0x8000ll * ((b) & 0x1);
-    __cavm_csr_fatal("LENCX_ABX_ERROR_ENABLE0", 2, a, b, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=1) && (b<=1)))
+        return 0x87e043300040ll + 0x580000ll * ((a) & 0x1) + 0x8000ll * ((b) & 0x1);
+    __cavm_csr_fatal("LENCX_ABX_ERROR_ENABLE0", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_LENCX_ABX_ERROR_ENABLE0(a,b) cavm_lencx_abx_error_enable0_t
@@ -641,7 +962,9 @@ static inline uint64_t CAVM_LENCX_ABX_ERROR_SOURCE0(unsigned long a, unsigned lo
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=1) && (b<=1)))
         return 0x87e043300030ll + 0x580000ll * ((a) & 0x1) + 0x8000ll * ((b) & 0x1);
-    __cavm_csr_fatal("LENCX_ABX_ERROR_SOURCE0", 2, a, b, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=1) && (b<=1)))
+        return 0x87e043300030ll + 0x580000ll * ((a) & 0x1) + 0x8000ll * ((b) & 0x1);
+    __cavm_csr_fatal("LENCX_ABX_ERROR_SOURCE0", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_LENCX_ABX_ERROR_SOURCE0(a,b) cavm_lencx_abx_error_source0_t
@@ -676,7 +999,9 @@ static inline uint64_t CAVM_LENCX_ABX_HAB_JCFG0_RAMX_DATA(unsigned long a, unsig
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=1) && (b<=1) && (c<=384)))
         return 0x87e043302000ll + 0x580000ll * ((a) & 0x1) + 0x8000ll * ((b) & 0x1) + 8ll * ((c) & 0x1ff);
-    __cavm_csr_fatal("LENCX_ABX_HAB_JCFG0_RAMX_DATA", 3, a, b, c, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=1) && (b<=1) && (c<=384)))
+        return 0x87e043302000ll + 0x580000ll * ((a) & 0x1) + 0x8000ll * ((b) & 0x1) + 8ll * ((c) & 0x1ff);
+    __cavm_csr_fatal("LENCX_ABX_HAB_JCFG0_RAMX_DATA", 3, a, b, c, 0, 0, 0);
 }
 
 #define typedef_CAVM_LENCX_ABX_HAB_JCFG0_RAMX_DATA(a,b,c) cavm_lencx_abx_hab_jcfg0_ramx_data_t
@@ -711,7 +1036,9 @@ static inline uint64_t CAVM_LENCX_ABX_HAB_JCFG1_RAMX_DATA(unsigned long a, unsig
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=1) && (b<=1) && (c<=384)))
         return 0x87e043304000ll + 0x580000ll * ((a) & 0x1) + 0x8000ll * ((b) & 0x1) + 8ll * ((c) & 0x1ff);
-    __cavm_csr_fatal("LENCX_ABX_HAB_JCFG1_RAMX_DATA", 3, a, b, c, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=1) && (b<=1) && (c<=384)))
+        return 0x87e043304000ll + 0x580000ll * ((a) & 0x1) + 0x8000ll * ((b) & 0x1) + 8ll * ((c) & 0x1ff);
+    __cavm_csr_fatal("LENCX_ABX_HAB_JCFG1_RAMX_DATA", 3, a, b, c, 0, 0, 0);
 }
 
 #define typedef_CAVM_LENCX_ABX_HAB_JCFG1_RAMX_DATA(a,b,c) cavm_lencx_abx_hab_jcfg1_ramx_data_t
@@ -746,7 +1073,9 @@ static inline uint64_t CAVM_LENCX_ABX_HAB_JCFG2_RAMX_DATA(unsigned long a, unsig
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=1) && (b<=1) && (c<=384)))
         return 0x87e043306000ll + 0x580000ll * ((a) & 0x1) + 0x8000ll * ((b) & 0x1) + 8ll * ((c) & 0x1ff);
-    __cavm_csr_fatal("LENCX_ABX_HAB_JCFG2_RAMX_DATA", 3, a, b, c, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=1) && (b<=1) && (c<=384)))
+        return 0x87e043306000ll + 0x580000ll * ((a) & 0x1) + 0x8000ll * ((b) & 0x1) + 8ll * ((c) & 0x1ff);
+    __cavm_csr_fatal("LENCX_ABX_HAB_JCFG2_RAMX_DATA", 3, a, b, c, 0, 0, 0);
 }
 
 #define typedef_CAVM_LENCX_ABX_HAB_JCFG2_RAMX_DATA(a,b,c) cavm_lencx_abx_hab_jcfg2_ramx_data_t
@@ -782,7 +1111,9 @@ static inline uint64_t CAVM_LENCX_ABX_SCRATCH(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=1) && (b<=1)))
         return 0x87e043300080ll + 0x580000ll * ((a) & 0x1) + 0x8000ll * ((b) & 0x1);
-    __cavm_csr_fatal("LENCX_ABX_SCRATCH", 2, a, b, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=1) && (b<=1)))
+        return 0x87e043300080ll + 0x580000ll * ((a) & 0x1) + 0x8000ll * ((b) & 0x1);
+    __cavm_csr_fatal("LENCX_ABX_SCRATCH", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_LENCX_ABX_SCRATCH(a,b) cavm_lencx_abx_scratch_t
@@ -826,7 +1157,9 @@ static inline uint64_t CAVM_LENCX_ABX_STATUS(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=1) && (b<=1)))
         return 0x87e043300018ll + 0x580000ll * ((a) & 0x1) + 0x8000ll * ((b) & 0x1);
-    __cavm_csr_fatal("LENCX_ABX_STATUS", 2, a, b, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=1) && (b<=1)))
+        return 0x87e043300018ll + 0x580000ll * ((a) & 0x1) + 0x8000ll * ((b) & 0x1);
+    __cavm_csr_fatal("LENCX_ABX_STATUS", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_LENCX_ABX_STATUS(a,b) cavm_lencx_abx_status_t
@@ -862,7 +1195,9 @@ static inline uint64_t CAVM_LENCX_ABX_TC_CONFIGX(unsigned long a, unsigned long 
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=1) && (b<=1) && (c<=7)))
         return 0x87e043301400ll + 0x580000ll * ((a) & 0x1) + 0x8000ll * ((b) & 0x1) + 8ll * ((c) & 0x7);
-    __cavm_csr_fatal("LENCX_ABX_TC_CONFIGX", 3, a, b, c, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=1) && (b<=1) && (c<=7)))
+        return 0x87e043301400ll + 0x580000ll * ((a) & 0x1) + 0x8000ll * ((b) & 0x1) + 8ll * ((c) & 0x7);
+    __cavm_csr_fatal("LENCX_ABX_TC_CONFIGX", 3, a, b, c, 0, 0, 0);
 }
 
 #define typedef_CAVM_LENCX_ABX_TC_CONFIGX(a,b,c) cavm_lencx_abx_tc_configx_t
@@ -936,7 +1271,9 @@ static inline uint64_t CAVM_LENCX_ABX_TC_CONFIG_ERR_FLAGS(unsigned long a, unsig
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=1) && (b<=1)))
         return 0x87e043301040ll + 0x580000ll * ((a) & 0x1) + 0x8000ll * ((b) & 0x1);
-    __cavm_csr_fatal("LENCX_ABX_TC_CONFIG_ERR_FLAGS", 2, a, b, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=1) && (b<=1)))
+        return 0x87e043301040ll + 0x580000ll * ((a) & 0x1) + 0x8000ll * ((b) & 0x1);
+    __cavm_csr_fatal("LENCX_ABX_TC_CONFIG_ERR_FLAGS", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_LENCX_ABX_TC_CONFIG_ERR_FLAGS(a,b) cavm_lencx_abx_tc_config_err_flags_t
@@ -989,7 +1326,9 @@ static inline uint64_t CAVM_LENCX_ABX_TC_CONTROL(unsigned long a, unsigned long 
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=1) && (b<=1)))
         return 0x87e043301010ll + 0x580000ll * ((a) & 0x1) + 0x8000ll * ((b) & 0x1);
-    __cavm_csr_fatal("LENCX_ABX_TC_CONTROL", 2, a, b, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=1) && (b<=1)))
+        return 0x87e043301010ll + 0x580000ll * ((a) & 0x1) + 0x8000ll * ((b) & 0x1);
+    __cavm_csr_fatal("LENCX_ABX_TC_CONTROL", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_LENCX_ABX_TC_CONTROL(a,b) cavm_lencx_abx_tc_control_t
@@ -1040,7 +1379,9 @@ static inline uint64_t CAVM_LENCX_ABX_TC_ERROR(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=1) && (b<=1)))
         return 0x87e043301038ll + 0x580000ll * ((a) & 0x1) + 0x8000ll * ((b) & 0x1);
-    __cavm_csr_fatal("LENCX_ABX_TC_ERROR", 2, a, b, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=1) && (b<=1)))
+        return 0x87e043301038ll + 0x580000ll * ((a) & 0x1) + 0x8000ll * ((b) & 0x1);
+    __cavm_csr_fatal("LENCX_ABX_TC_ERROR", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_LENCX_ABX_TC_ERROR(a,b) cavm_lencx_abx_tc_error_t
@@ -1079,7 +1420,9 @@ static inline uint64_t CAVM_LENCX_ABX_TC_ERROR_MASK(unsigned long a, unsigned lo
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=1) && (b<=1)))
         return 0x87e043301030ll + 0x580000ll * ((a) & 0x1) + 0x8000ll * ((b) & 0x1);
-    __cavm_csr_fatal("LENCX_ABX_TC_ERROR_MASK", 2, a, b, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=1) && (b<=1)))
+        return 0x87e043301030ll + 0x580000ll * ((a) & 0x1) + 0x8000ll * ((b) & 0x1);
+    __cavm_csr_fatal("LENCX_ABX_TC_ERROR_MASK", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_LENCX_ABX_TC_ERROR_MASK(a,b) cavm_lencx_abx_tc_error_mask_t
@@ -1116,7 +1459,9 @@ static inline uint64_t CAVM_LENCX_ABX_TC_MAIN_RESET(unsigned long a, unsigned lo
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=1) && (b<=1)))
         return 0x87e043301000ll + 0x580000ll * ((a) & 0x1) + 0x8000ll * ((b) & 0x1);
-    __cavm_csr_fatal("LENCX_ABX_TC_MAIN_RESET", 2, a, b, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=1) && (b<=1)))
+        return 0x87e043301000ll + 0x580000ll * ((a) & 0x1) + 0x8000ll * ((b) & 0x1);
+    __cavm_csr_fatal("LENCX_ABX_TC_MAIN_RESET", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_LENCX_ABX_TC_MAIN_RESET(a,b) cavm_lencx_abx_tc_main_reset_t
@@ -1154,7 +1499,9 @@ static inline uint64_t CAVM_LENCX_ABX_TC_MAIN_START(unsigned long a, unsigned lo
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=1) && (b<=1)))
         return 0x87e043301008ll + 0x580000ll * ((a) & 0x1) + 0x8000ll * ((b) & 0x1);
-    __cavm_csr_fatal("LENCX_ABX_TC_MAIN_START", 2, a, b, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=1) && (b<=1)))
+        return 0x87e043301008ll + 0x580000ll * ((a) & 0x1) + 0x8000ll * ((b) & 0x1);
+    __cavm_csr_fatal("LENCX_ABX_TC_MAIN_START", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_LENCX_ABX_TC_MAIN_START(a,b) cavm_lencx_abx_tc_main_start_t
@@ -1192,7 +1539,9 @@ static inline uint64_t CAVM_LENCX_ABX_TC_MON(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=1) && (b<=1)))
         return 0x87e043301300ll + 0x580000ll * ((a) & 0x1) + 0x8000ll * ((b) & 0x1);
-    __cavm_csr_fatal("LENCX_ABX_TC_MON", 2, a, b, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=1) && (b<=1)))
+        return 0x87e043301300ll + 0x580000ll * ((a) & 0x1) + 0x8000ll * ((b) & 0x1);
+    __cavm_csr_fatal("LENCX_ABX_TC_MON", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_LENCX_ABX_TC_MON(a,b) cavm_lencx_abx_tc_mon_t
@@ -1231,7 +1580,9 @@ static inline uint64_t CAVM_LENCX_ABX_TC_STATUS(unsigned long a, unsigned long b
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=1) && (b<=1)))
         return 0x87e043301020ll + 0x580000ll * ((a) & 0x1) + 0x8000ll * ((b) & 0x1);
-    __cavm_csr_fatal("LENCX_ABX_TC_STATUS", 2, a, b, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=1) && (b<=1)))
+        return 0x87e043301020ll + 0x580000ll * ((a) & 0x1) + 0x8000ll * ((b) & 0x1);
+    __cavm_csr_fatal("LENCX_ABX_TC_STATUS", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_LENCX_ABX_TC_STATUS(a,b) cavm_lencx_abx_tc_status_t

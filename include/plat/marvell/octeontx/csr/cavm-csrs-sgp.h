@@ -485,7 +485,7 @@ static inline uint64_t CAVM_SGP_IMP_DRIVEX(unsigned long a)
         return 0x87e027040000ll + 8ll * ((a) & 0xf);
     if (cavm_is_model(OCTEONTX_CN9XXX) && (a<=19))
         return 0x87e027040000ll + 8ll * ((a) & 0x1f);
-    __cavm_csr_fatal("SGP_IMP_DRIVEX", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("SGP_IMP_DRIVEX", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SGP_IMP_DRIVEX(a) cavm_sgp_imp_drivex_t
@@ -594,7 +594,7 @@ static inline uint64_t CAVM_SGP_RXX(unsigned long a)
         return 0x87e027000400ll + 4ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CN9XXX) && (a<=4))
         return 0x87e027000400ll + 4ll * ((a) & 0x7);
-    __cavm_csr_fatal("SGP_RXX", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("SGP_RXX", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SGP_RXX(a) cavm_sgp_rxx_t
@@ -689,7 +689,7 @@ static inline uint64_t CAVM_SGP_RX_GPX(unsigned long a)
 {
     if ((a>=1)&&(a<=2))
         return 0x87e027000800ll + 4ll * ((a) & 0x3);
-    __cavm_csr_fatal("SGP_RX_GPX", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("SGP_RX_GPX", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SGP_RX_GPX(a) cavm_sgp_rx_gpx_t
@@ -786,7 +786,7 @@ static inline uint64_t CAVM_SGP_TXX(unsigned long a)
         return 0x87e027000c00ll + 4ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CN9XXX) && (a<=4))
         return 0x87e027000c00ll + 4ll * ((a) & 0x7);
-    __cavm_csr_fatal("SGP_TXX", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("SGP_TXX", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SGP_TXX(a) cavm_sgp_txx_t
@@ -883,7 +883,7 @@ static inline uint64_t CAVM_SGP_TX_GPX(unsigned long a)
 {
     if ((a>=1)&&(a<=2))
         return 0x87e027001000ll + 4ll * ((a) & 0x3);
-    __cavm_csr_fatal("SGP_TX_GPX", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("SGP_TX_GPX", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SGP_TX_GPX(a) cavm_sgp_tx_gpx_t

@@ -98,7 +98,8 @@
 #define CAVM_RST_DEV_E_MPIX(a) (2 + (a))
 #define CAVM_RST_DEV_E_NCSI (0)
 #define CAVM_RST_DEV_E_PEMX(a) (0x28 + (a))
-#define CAVM_RST_DEV_E_RFIFX(a) (0x26 + (a))
+#define CAVM_RST_DEV_E_RFIFX_CNF95XX(a) (0x26 + (a))
+#define CAVM_RST_DEV_E_RFIFX_LOKI(a) (0x21 + (a))
 #define CAVM_RST_DEV_E_ROC_OCLA (0x18)
 #define CAVM_RST_DEV_E_SGPIO (0x17)
 #define CAVM_RST_DEV_E_SMI (0x16)
@@ -147,6 +148,8 @@
 #define CAVM_RST_SOURCE_E_MCP_SOFT (9)
 #define CAVM_RST_SOURCE_E_MCP_WDOG (0xa)
 #define CAVM_RST_SOURCE_E_OCX (0xe)
+#define CAVM_RST_SOURCE_E_PEM_CHIPX(a) (0x11 + 2 * (a))
+#define CAVM_RST_SOURCE_E_PEM_COREX(a) (0x10 + 2 * (a))
 #define CAVM_RST_SOURCE_E_PEM_LINKDOWNX(a) (0x11 + 4 * (a))
 #define CAVM_RST_SOURCE_E_PEM_PFFLRX(a) (0x13 + 4 * (a))
 #define CAVM_RST_SOURCE_E_PEM_PWRDOWNX(a) (0x12 + 4 * (a))
@@ -292,7 +295,9 @@ static inline uint64_t CAVM_RST_APX_AFFINITY_CONST(unsigned long a)
         return 0x87e006001000ll + 8ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87e006001000ll + 8ll * ((a) & 0x7);
-    __cavm_csr_fatal("RST_APX_AFFINITY_CONST", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87e006001000ll + 8ll * ((a) & 0x7);
+    __cavm_csr_fatal("RST_APX_AFFINITY_CONST", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RST_APX_AFFINITY_CONST(a) cavm_rst_apx_affinity_const_t
@@ -301,6 +306,72 @@ static inline uint64_t CAVM_RST_APX_AFFINITY_CONST(unsigned long a)
 #define device_bar_CAVM_RST_APX_AFFINITY_CONST(a) 0x0 /* PF_BAR0 */
 #define busnum_CAVM_RST_APX_AFFINITY_CONST(a) (a)
 #define arguments_CAVM_RST_APX_AFFINITY_CONST(a) (a),-1,-1,-1
+
+/**
+ * Register (RSL) rst_bcn_pll
+ *
+ * RST GSERR Clock PLL Control Register
+ * This register should only be programmed while all RFIF logic is in reset.
+ * It is accessible through ROM scripts; see SCR_WRITE32_S[ADDR].
+ */
+union cavm_rst_bcn_pll
+{
+    uint64_t u;
+    struct cavm_rst_bcn_pll_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_16_63        : 48;
+        uint64_t nxt_pgm               : 1;  /**< [ 15: 15](R/W/H) Programs the active PLL using [NXT_MUL]. Hardware automatically
+                                                                 clears bit when PLL has been updated.  Software should wait at least 20uS
+                                                                 for clock frequency to be reached before releasing GSERRs from reset.
+                                                                 This field is always reinitialized on a chip domain reset.
+
+                                                                 Changing BCN Clock frequency is for diagnostic use only; changes can only be made
+                                                                 while all RFIF logic is in reset. */
+        uint64_t nxt_mul               : 7;  /**< [ 14:  8](R/W) BCN PLL frequency to be program in 61.44 MHz increments.  The
+                                                                 actual value must be in the range between 295 MHz and 1228.8 MHz.
+                                                                 Value will be 307.2 MHz immediately after a cold domain reset. */
+        uint64_t reserved_7            : 1;
+        uint64_t cur_mul               : 7;  /**< [  6:  0](RO/H) BCN clock frequency.  Actual frequency is [CUR_MUL] * 61.44 MHz.
+                                                                 Value will reflect [NXT_MUL] after [NXT_PGM] has been set or 307.2 MHz
+                                                                 immediately after a cold domain reset. */
+#else /* Word 0 - Little Endian */
+        uint64_t cur_mul               : 7;  /**< [  6:  0](RO/H) BCN clock frequency.  Actual frequency is [CUR_MUL] * 61.44 MHz.
+                                                                 Value will reflect [NXT_MUL] after [NXT_PGM] has been set or 307.2 MHz
+                                                                 immediately after a cold domain reset. */
+        uint64_t reserved_7            : 1;
+        uint64_t nxt_mul               : 7;  /**< [ 14:  8](R/W) BCN PLL frequency to be program in 61.44 MHz increments.  The
+                                                                 actual value must be in the range between 295 MHz and 1228.8 MHz.
+                                                                 Value will be 307.2 MHz immediately after a cold domain reset. */
+        uint64_t nxt_pgm               : 1;  /**< [ 15: 15](R/W/H) Programs the active PLL using [NXT_MUL]. Hardware automatically
+                                                                 clears bit when PLL has been updated.  Software should wait at least 20uS
+                                                                 for clock frequency to be reached before releasing GSERRs from reset.
+                                                                 This field is always reinitialized on a chip domain reset.
+
+                                                                 Changing BCN Clock frequency is for diagnostic use only; changes can only be made
+                                                                 while all RFIF logic is in reset. */
+        uint64_t reserved_16_63        : 48;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rst_bcn_pll_s cn; */
+};
+typedef union cavm_rst_bcn_pll cavm_rst_bcn_pll_t;
+
+#define CAVM_RST_BCN_PLL CAVM_RST_BCN_PLL_FUNC()
+static inline uint64_t CAVM_RST_BCN_PLL_FUNC(void) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_RST_BCN_PLL_FUNC(void)
+{
+    if (cavm_is_model(OCTEONTX_LOKI))
+        return 0x87e00a001800ll;
+    __cavm_csr_fatal("RST_BCN_PLL", 0, 0, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_RST_BCN_PLL cavm_rst_bcn_pll_t
+#define bustype_CAVM_RST_BCN_PLL CSR_TYPE_RSL
+#define basename_CAVM_RST_BCN_PLL "RST_BCN_PLL"
+#define device_bar_CAVM_RST_BCN_PLL 0x2 /* PF_BAR2 */
+#define busnum_CAVM_RST_BCN_PLL 0
+#define arguments_CAVM_RST_BCN_PLL -1,-1,-1,-1
 
 /**
  * Register (RSL) rst_bist_active
@@ -476,6 +547,7 @@ union cavm_rst_bist_active
 #endif /* Word 0 - End */
     } cn96xx;
     /* struct cavm_rst_bist_active_s cnf95xx; */
+    /* struct cavm_rst_bist_active_s loki; */
 };
 typedef union cavm_rst_bist_active cavm_rst_bist_active_t;
 
@@ -485,7 +557,7 @@ static inline uint64_t CAVM_RST_BIST_ACTIVE_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x87e006001890ll;
-    __cavm_csr_fatal("RST_BIST_ACTIVE", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("RST_BIST_ACTIVE", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RST_BIST_ACTIVE cavm_rst_bist_active_t
@@ -1342,6 +1414,7 @@ union cavm_rst_boot
                                                                  This field is reinitialized with a chip domain reset. */
 #endif /* Word 0 - End */
     } cnf95xx;
+    /* struct cavm_rst_boot_cnf95xx loki; */
 };
 typedef union cavm_rst_boot cavm_rst_boot_t;
 
@@ -1416,7 +1489,7 @@ static inline uint64_t CAVM_RST_BOOT_STATUS_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x87e006001800ll;
-    __cavm_csr_fatal("RST_BOOT_STATUS", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("RST_BOOT_STATUS", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RST_BOOT_STATUS cavm_rst_boot_status_t
@@ -1467,7 +1540,9 @@ static inline uint64_t CAVM_RST_BPHY_DOMAIN_W1C_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX))
         return 0x87e006001858ll;
-    __cavm_csr_fatal("RST_BPHY_DOMAIN_W1C", 0, 0, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI))
+        return 0x87e006001858ll;
+    __cavm_csr_fatal("RST_BPHY_DOMAIN_W1C", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RST_BPHY_DOMAIN_W1C cavm_rst_bphy_domain_w1c_t
@@ -1516,7 +1591,9 @@ static inline uint64_t CAVM_RST_BPHY_DOMAIN_W1S_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX))
         return 0x87e006001850ll;
-    __cavm_csr_fatal("RST_BPHY_DOMAIN_W1S", 0, 0, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI))
+        return 0x87e006001850ll;
+    __cavm_csr_fatal("RST_BPHY_DOMAIN_W1S", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RST_BPHY_DOMAIN_W1S cavm_rst_bphy_domain_w1s_t
@@ -1663,7 +1740,9 @@ static inline uint64_t CAVM_RST_BPHY_PLL_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX))
         return 0x87e00a001768ll;
-    __cavm_csr_fatal("RST_BPHY_PLL", 0, 0, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI))
+        return 0x87e00a001768ll;
+    __cavm_csr_fatal("RST_BPHY_PLL", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RST_BPHY_PLL cavm_rst_bphy_pll_t
@@ -1796,7 +1875,7 @@ static inline uint64_t CAVM_RST_CHIP_DOMAIN_W1S_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x87e006001810ll;
-    __cavm_csr_fatal("RST_CHIP_DOMAIN_W1S", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("RST_CHIP_DOMAIN_W1S", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RST_CHIP_DOMAIN_W1S cavm_rst_chip_domain_w1s_t
@@ -1901,7 +1980,7 @@ static inline uint64_t CAVM_RST_COLD_DATAX(unsigned long a)
 {
     if (a<=5)
         return 0x87e0060017c0ll + 8ll * ((a) & 0x7);
-    __cavm_csr_fatal("RST_COLD_DATAX", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("RST_COLD_DATAX", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RST_COLD_DATAX(a) cavm_rst_cold_datax_t
@@ -1954,7 +2033,7 @@ static inline uint64_t CAVM_RST_COLD_DOMAIN_W1S_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x87e006001808ll;
-    __cavm_csr_fatal("RST_COLD_DOMAIN_W1S", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("RST_COLD_DOMAIN_W1S", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RST_COLD_DOMAIN_W1S cavm_rst_cold_domain_w1s_t
@@ -1985,7 +2064,21 @@ union cavm_rst_const
         uint64_t reserved_16_63        : 48;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_rst_const_s cn; */
+    /* struct cavm_rst_const_s cn96xxp1; */
+    struct cavm_rst_const_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_16_63        : 48;
+        uint64_t rst_devs              : 8;  /**< [ 15:  8](RO) Number of RST_DEV_E enumeration values supported, and size of RST_DEV_MAP(). */
+        uint64_t pems                  : 8;  /**< [  7:  0](RO) Number of PEMs supported by RST. */
+#else /* Word 0 - Little Endian */
+        uint64_t pems                  : 8;  /**< [  7:  0](RO) Number of PEMs supported by RST. */
+        uint64_t rst_devs              : 8;  /**< [ 15:  8](RO) Number of RST_DEV_E enumeration values supported, and size of RST_DEV_MAP(). */
+        uint64_t reserved_16_63        : 48;
+#endif /* Word 0 - End */
+    } cn96xxp3;
+    /* struct cavm_rst_const_s cnf95xx; */
+    /* struct cavm_rst_const_s loki; */
 };
 typedef union cavm_rst_const cavm_rst_const_t;
 
@@ -1995,7 +2088,7 @@ static inline uint64_t CAVM_RST_CONST_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x87e0060018f8ll;
-    __cavm_csr_fatal("RST_CONST", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("RST_CONST", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RST_CONST cavm_rst_const_t
@@ -2046,7 +2139,7 @@ static inline uint64_t CAVM_RST_CORE_DOMAIN_W1C_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x87e006001828ll;
-    __cavm_csr_fatal("RST_CORE_DOMAIN_W1C", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("RST_CORE_DOMAIN_W1C", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RST_CORE_DOMAIN_W1C cavm_rst_core_domain_w1c_t
@@ -2097,7 +2190,7 @@ static inline uint64_t CAVM_RST_CORE_DOMAIN_W1S_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x87e006001820ll;
-    __cavm_csr_fatal("RST_CORE_DOMAIN_W1S", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("RST_CORE_DOMAIN_W1S", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RST_CORE_DOMAIN_W1S cavm_rst_core_domain_w1s_t
@@ -2353,6 +2446,7 @@ union cavm_rst_core_pll
         uint64_t reserved_51_63        : 13;
 #endif /* Word 0 - End */
     } cnf95xx;
+    /* struct cavm_rst_core_pll_cnf95xx loki; */
 };
 typedef union cavm_rst_core_pll cavm_rst_core_pll_t;
 
@@ -2362,7 +2456,7 @@ static inline uint64_t CAVM_RST_CORE_PLL_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x87e00a001780ll;
-    __cavm_csr_fatal("RST_CORE_PLL", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("RST_CORE_PLL", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RST_CORE_PLL cavm_rst_core_pll_t
@@ -2517,7 +2611,7 @@ static inline uint64_t CAVM_RST_CPT_PLL_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN96XX))
         return 0x87e00a001778ll;
-    __cavm_csr_fatal("RST_CPT_PLL", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("RST_CPT_PLL", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RST_CPT_PLL cavm_rst_cpt_pll_t
@@ -3558,6 +3652,7 @@ union cavm_rst_ctlx
         uint64_t reserved_14_63        : 50;
 #endif /* Word 0 - End */
     } cnf95xx;
+    /* struct cavm_rst_ctlx_cnf95xx loki; */
 };
 typedef union cavm_rst_ctlx cavm_rst_ctlx_t;
 
@@ -3568,11 +3663,13 @@ static inline uint64_t CAVM_RST_CTLX(unsigned long a)
         return 0x87e006001640ll + 8ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CN83XX) && (a<=3))
         return 0x87e006001640ll + 8ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=3))
         return 0x87e006001640ll + 8ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x87e006001640ll + 8ll * ((a) & 0x0);
-    __cavm_csr_fatal("RST_CTLX", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
+        return 0x87e006001640ll + 8ll * ((a) & 0x0);
+    __cavm_csr_fatal("RST_CTLX", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RST_CTLX(a) cavm_rst_ctlx_t
@@ -3623,7 +3720,7 @@ static inline uint64_t CAVM_RST_DBG_RESET_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX))
         return 0x87e006001750ll;
-    __cavm_csr_fatal("RST_DBG_RESET", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("RST_DBG_RESET", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RST_DBG_RESET cavm_rst_dbg_reset_t
@@ -3645,7 +3742,23 @@ union cavm_rst_debug
     struct cavm_rst_debug_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_4_63         : 60;
+        uint64_t reserved_6_63         : 58;
+        uint64_t suspend_rstpwr        : 1;  /**< [  5:  5](R/W) Stop RSTPWR bus.
+                                                                 Setting this field will stop AP Resets from getting to the cores.
+                                                                 Clearing this field will restart communication starting with AP0.
+                                                                 This will allow test sequencies to predicte AP resets with much greater accuracy.
+                                                                 For diagnostic and test use only.
+
+                                                                 This field is always reinitialized on a cold domain reset. */
+        uint64_t div_clk_rst           : 1;  /**< [  4:  4](R/W) Forces Clock Divider Reset.
+                                                                 Setting this field will force fixed clock dividers into reset.
+                                                                 Clearing this field will enable clock dividers.
+                                                                 For diagnostic use only.
+
+                                                                 This field is always reinitialized on a cold domain reset.
+
+                                                                 Internal:
+                                                                 Currently only used in BPHY on f95n */
         uint64_t dll_csr_wakeup        : 1;  /**< [  3:  3](R/W) Forces DLL setting to unlock.
                                                                  Setting this field will force all DLLs to track clock changes.
                                                                  For diagnostic use only.
@@ -3681,7 +3794,23 @@ union cavm_rst_debug
                                                                  For diagnostic use only.
 
                                                                  This field is always reinitialized on a cold domain reset. */
-        uint64_t reserved_4_63         : 60;
+        uint64_t div_clk_rst           : 1;  /**< [  4:  4](R/W) Forces Clock Divider Reset.
+                                                                 Setting this field will force fixed clock dividers into reset.
+                                                                 Clearing this field will enable clock dividers.
+                                                                 For diagnostic use only.
+
+                                                                 This field is always reinitialized on a cold domain reset.
+
+                                                                 Internal:
+                                                                 Currently only used in BPHY on f95n */
+        uint64_t suspend_rstpwr        : 1;  /**< [  5:  5](R/W) Stop RSTPWR bus.
+                                                                 Setting this field will stop AP Resets from getting to the cores.
+                                                                 Clearing this field will restart communication starting with AP0.
+                                                                 This will allow test sequencies to predicte AP resets with much greater accuracy.
+                                                                 For diagnostic and test use only.
+
+                                                                 This field is always reinitialized on a cold domain reset. */
+        uint64_t reserved_6_63         : 58;
 #endif /* Word 0 - End */
     } s;
     struct cavm_rst_debug_cn8
@@ -3694,7 +3823,119 @@ union cavm_rst_debug
         uint64_t reserved_1_63         : 63;
 #endif /* Word 0 - End */
     } cn8;
-    struct cavm_rst_debug_cn9
+    struct cavm_rst_debug_cn96xxp1
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_6_63         : 58;
+        uint64_t reserved_5            : 1;
+        uint64_t reserved_4            : 1;
+        uint64_t dll_csr_wakeup        : 1;  /**< [  3:  3](R/W) Forces DLL setting to unlock.
+                                                                 Setting this field will force all DLLs to track clock changes.
+                                                                 For diagnostic use only.
+
+                                                                 This field is always reinitialized on a cold domain reset. */
+        uint64_t clkena_on             : 1;  /**< [  2:  2](R/W) Force global clock enable on.
+                                                                 Setting this field will force all clocks on while they are in reset and
+                                                                 will dramatically increase power consumption.
+                                                                 For diagnostic use only.
+                                                                 This field is always reinitialized on a cold domain reset. */
+        uint64_t clk_cng               : 1;  /**< [  1:  1](R/W) Force clock-changing indicator on.
+                                                                 For diagnostic use only.
+                                                                 This field is always reinitialized on a cold domain reset.
+
+                                                                 Internal:
+                                                                 Forces store-n-forward across clock domains. */
+        uint64_t clk_on                : 1;  /**< [  0:  0](R/W) Force conditional clock used for interrupt logic to always be on.
+                                                                 For diagnostic use only.
+                                                                 This field is always reinitialized on a cold domain reset. */
+#else /* Word 0 - Little Endian */
+        uint64_t clk_on                : 1;  /**< [  0:  0](R/W) Force conditional clock used for interrupt logic to always be on.
+                                                                 For diagnostic use only.
+                                                                 This field is always reinitialized on a cold domain reset. */
+        uint64_t clk_cng               : 1;  /**< [  1:  1](R/W) Force clock-changing indicator on.
+                                                                 For diagnostic use only.
+                                                                 This field is always reinitialized on a cold domain reset.
+
+                                                                 Internal:
+                                                                 Forces store-n-forward across clock domains. */
+        uint64_t clkena_on             : 1;  /**< [  2:  2](R/W) Force global clock enable on.
+                                                                 Setting this field will force all clocks on while they are in reset and
+                                                                 will dramatically increase power consumption.
+                                                                 For diagnostic use only.
+                                                                 This field is always reinitialized on a cold domain reset. */
+        uint64_t dll_csr_wakeup        : 1;  /**< [  3:  3](R/W) Forces DLL setting to unlock.
+                                                                 Setting this field will force all DLLs to track clock changes.
+                                                                 For diagnostic use only.
+
+                                                                 This field is always reinitialized on a cold domain reset. */
+        uint64_t reserved_4            : 1;
+        uint64_t reserved_5            : 1;
+        uint64_t reserved_6_63         : 58;
+#endif /* Word 0 - End */
+    } cn96xxp1;
+    struct cavm_rst_debug_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_6_63         : 58;
+        uint64_t suspend_rstpwr        : 1;  /**< [  5:  5](R/W) Stop RSTPWR bus.
+                                                                 Setting this field will stop AP Resets from getting to the cores.
+                                                                 Clearing this field will restart communication starting with AP0.
+                                                                 This will allow test sequencies to predicte AP resets with much greater accuracy.
+                                                                 For diagnostic and test use only.
+
+                                                                 This field is always reinitialized on a cold domain reset. */
+        uint64_t reserved_4            : 1;
+        uint64_t dll_csr_wakeup        : 1;  /**< [  3:  3](R/W) Forces DLL setting to unlock.
+                                                                 Setting this field will force all DLLs to track clock changes.
+                                                                 For diagnostic use only.
+
+                                                                 This field is always reinitialized on a cold domain reset. */
+        uint64_t clkena_on             : 1;  /**< [  2:  2](R/W) Force global clock enable on.
+                                                                 Setting this field will force all clocks on while they are in reset and
+                                                                 will dramatically increase power consumption.
+                                                                 For diagnostic use only.
+                                                                 This field is always reinitialized on a cold domain reset. */
+        uint64_t clk_cng               : 1;  /**< [  1:  1](R/W) Force clock-changing indicator on.
+                                                                 For diagnostic use only.
+                                                                 This field is always reinitialized on a cold domain reset.
+
+                                                                 Internal:
+                                                                 Forces store-n-forward across clock domains. */
+        uint64_t clk_on                : 1;  /**< [  0:  0](R/W) Force conditional clock used for interrupt logic to always be on.
+                                                                 For diagnostic use only.
+                                                                 This field is always reinitialized on a cold domain reset. */
+#else /* Word 0 - Little Endian */
+        uint64_t clk_on                : 1;  /**< [  0:  0](R/W) Force conditional clock used for interrupt logic to always be on.
+                                                                 For diagnostic use only.
+                                                                 This field is always reinitialized on a cold domain reset. */
+        uint64_t clk_cng               : 1;  /**< [  1:  1](R/W) Force clock-changing indicator on.
+                                                                 For diagnostic use only.
+                                                                 This field is always reinitialized on a cold domain reset.
+
+                                                                 Internal:
+                                                                 Forces store-n-forward across clock domains. */
+        uint64_t clkena_on             : 1;  /**< [  2:  2](R/W) Force global clock enable on.
+                                                                 Setting this field will force all clocks on while they are in reset and
+                                                                 will dramatically increase power consumption.
+                                                                 For diagnostic use only.
+                                                                 This field is always reinitialized on a cold domain reset. */
+        uint64_t dll_csr_wakeup        : 1;  /**< [  3:  3](R/W) Forces DLL setting to unlock.
+                                                                 Setting this field will force all DLLs to track clock changes.
+                                                                 For diagnostic use only.
+
+                                                                 This field is always reinitialized on a cold domain reset. */
+        uint64_t reserved_4            : 1;
+        uint64_t suspend_rstpwr        : 1;  /**< [  5:  5](R/W) Stop RSTPWR bus.
+                                                                 Setting this field will stop AP Resets from getting to the cores.
+                                                                 Clearing this field will restart communication starting with AP0.
+                                                                 This will allow test sequencies to predicte AP resets with much greater accuracy.
+                                                                 For diagnostic and test use only.
+
+                                                                 This field is always reinitialized on a cold domain reset. */
+        uint64_t reserved_6_63         : 58;
+#endif /* Word 0 - End */
+    } cn96xxp3;
+    struct cavm_rst_debug_cnf95xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_4_63         : 60;
@@ -3739,7 +3980,85 @@ union cavm_rst_debug
                                                                  This field is always reinitialized on a cold domain reset. */
         uint64_t reserved_4_63         : 60;
 #endif /* Word 0 - End */
-    } cn9;
+    } cnf95xx;
+    struct cavm_rst_debug_loki
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_6_63         : 58;
+        uint64_t suspend_rstpwr        : 1;  /**< [  5:  5](R/W) Stop RSTPWR bus.
+                                                                 Setting this field will stop AP Resets from getting to the cores.
+                                                                 Clearing this field will restart communication starting with AP0.
+                                                                 This will allow test sequencies to predicte AP resets with much greater accuracy.
+                                                                 For diagnostic and test use only.
+
+                                                                 This field is always reinitialized on a cold domain reset. */
+        uint64_t div_clk_rst           : 1;  /**< [  4:  4](R/W) Forces Clock Divider Reset.
+                                                                 Setting this field will force fixed clock dividers into reset.
+                                                                 Clearing this field will enable clock dividers.
+                                                                 For diagnostic use only.
+
+                                                                 This field is always reinitialized on a cold domain reset.
+
+                                                                 Internal:
+                                                                 Currently only used in BPHY on f95n */
+        uint64_t dll_csr_wakeup        : 1;  /**< [  3:  3](R/W) Forces DLL setting to unlock.
+                                                                 Setting this field will force all DLLs to track clock changes.
+                                                                 For diagnostic use only.
+
+                                                                 This field is always reinitialized on a cold domain reset. */
+        uint64_t clkena_on             : 1;  /**< [  2:  2](R/W) Force global clock enable on.
+                                                                 Setting this field will force all clocks on while they are in reset and
+                                                                 will dramatically increase power consumption.
+                                                                 For diagnostic use only.
+                                                                 This field is always reinitialized on a cold domain reset. */
+        uint64_t clk_cng               : 1;  /**< [  1:  1](R/W) Force clock-changing indicator on.
+                                                                 For diagnostic use only.
+                                                                 This field is always reinitialized on a cold domain reset.
+
+                                                                 Internal:
+                                                                 Forces store-n-forward across clock domains. */
+        uint64_t clk_on                : 1;  /**< [  0:  0](R/W) Force conditional clock used for interrupt logic to always be on.
+                                                                 For diagnostic use only.
+                                                                 This field is always reinitialized on a cold domain reset. */
+#else /* Word 0 - Little Endian */
+        uint64_t clk_on                : 1;  /**< [  0:  0](R/W) Force conditional clock used for interrupt logic to always be on.
+                                                                 For diagnostic use only.
+                                                                 This field is always reinitialized on a cold domain reset. */
+        uint64_t clk_cng               : 1;  /**< [  1:  1](R/W) Force clock-changing indicator on.
+                                                                 For diagnostic use only.
+                                                                 This field is always reinitialized on a cold domain reset.
+
+                                                                 Internal:
+                                                                 Forces store-n-forward across clock domains. */
+        uint64_t clkena_on             : 1;  /**< [  2:  2](R/W) Force global clock enable on.
+                                                                 Setting this field will force all clocks on while they are in reset and
+                                                                 will dramatically increase power consumption.
+                                                                 For diagnostic use only.
+                                                                 This field is always reinitialized on a cold domain reset. */
+        uint64_t dll_csr_wakeup        : 1;  /**< [  3:  3](R/W) Forces DLL setting to unlock.
+                                                                 Setting this field will force all DLLs to track clock changes.
+                                                                 For diagnostic use only.
+
+                                                                 This field is always reinitialized on a cold domain reset. */
+        uint64_t div_clk_rst           : 1;  /**< [  4:  4](R/W) Forces Clock Divider Reset.
+                                                                 Setting this field will force fixed clock dividers into reset.
+                                                                 Clearing this field will enable clock dividers.
+                                                                 For diagnostic use only.
+
+                                                                 This field is always reinitialized on a cold domain reset.
+
+                                                                 Internal:
+                                                                 Currently only used in BPHY on f95n */
+        uint64_t suspend_rstpwr        : 1;  /**< [  5:  5](R/W) Stop RSTPWR bus.
+                                                                 Setting this field will stop AP Resets from getting to the cores.
+                                                                 Clearing this field will restart communication starting with AP0.
+                                                                 This will allow test sequencies to predicte AP resets with much greater accuracy.
+                                                                 For diagnostic and test use only.
+
+                                                                 This field is always reinitialized on a cold domain reset. */
+        uint64_t reserved_6_63         : 58;
+#endif /* Word 0 - End */
+    } loki;
 };
 typedef union cavm_rst_debug cavm_rst_debug_t;
 
@@ -3914,7 +4233,7 @@ static inline uint64_t CAVM_RST_DEV_MAPX(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX) && (a<=47))
         return 0x87e00a001a00ll + 8ll * ((a) & 0x3f);
-    __cavm_csr_fatal("RST_DEV_MAPX", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("RST_DEV_MAPX", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RST_DEV_MAPX(a) cavm_rst_dev_mapx_t
@@ -4061,7 +4380,9 @@ static inline uint64_t CAVM_RST_DSP_PLL_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX))
         return 0x87e00a001770ll;
-    __cavm_csr_fatal("RST_DSP_PLL", 0, 0, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI))
+        return 0x87e00a001770ll;
+    __cavm_csr_fatal("RST_DSP_PLL", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RST_DSP_PLL cavm_rst_dsp_pll_t
@@ -4125,7 +4446,7 @@ static inline uint64_t CAVM_RST_ECO_FUNC(void)
  * Register (RSL) rst_gclk_pll
  *
  * RST GSERR Clock PLL Control Register
- * This register should only be programmed while GSERR microcontrollers are in reset.
+ * This register should only be programmed while GSERR logic is in reset.
  * It is accessible through ROM scripts; see SCR_WRITE32_S[ADDR].
  */
 union cavm_rst_gclk_pll
@@ -4167,7 +4488,44 @@ union cavm_rst_gclk_pll
         uint64_t reserved_16_63        : 48;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_rst_gclk_pll_s cn; */
+    /* struct cavm_rst_gclk_pll_s cn96xx; */
+    /* struct cavm_rst_gclk_pll_s cnf95xx; */
+    struct cavm_rst_gclk_pll_loki
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_16_63        : 48;
+        uint64_t nxt_pgm               : 1;  /**< [ 15: 15](R/W/H) Programs the active PLL using [NXT_MUL]. Hardware automatically
+                                                                 clears bit when PLL has been updated.  Software should wait at least 20uS
+                                                                 for clock frequency to be reached before releasing RFIFs from reset.
+                                                                 This field is always reinitialized on a chip domain reset.
+
+                                                                 Changing GSERR Clock frequency is for diagnostic use only; changes can only be made
+                                                                 while GSERR logic is in reset. */
+        uint64_t nxt_mul               : 7;  /**< [ 14:  8](R/W) GSERR PLL frequency to be program in 50 MHz increments.  The
+                                                                 actual value must be in the range between 200 MHz and 600 MHz.
+                                                                 Value will be 400 MHz immediately after a cold domain reset. */
+        uint64_t reserved_7            : 1;
+        uint64_t cur_mul               : 7;  /**< [  6:  0](RO/H) GSERR clock frequency.  Actual frequency is [CUR_MUL] * 50 MHz.
+                                                                 Value will reflect [NXT_MUL] after [NXT_PGM] has been set or 400 MHz
+                                                                 immediately after a cold domain reset. */
+#else /* Word 0 - Little Endian */
+        uint64_t cur_mul               : 7;  /**< [  6:  0](RO/H) GSERR clock frequency.  Actual frequency is [CUR_MUL] * 50 MHz.
+                                                                 Value will reflect [NXT_MUL] after [NXT_PGM] has been set or 400 MHz
+                                                                 immediately after a cold domain reset. */
+        uint64_t reserved_7            : 1;
+        uint64_t nxt_mul               : 7;  /**< [ 14:  8](R/W) GSERR PLL frequency to be program in 50 MHz increments.  The
+                                                                 actual value must be in the range between 200 MHz and 600 MHz.
+                                                                 Value will be 400 MHz immediately after a cold domain reset. */
+        uint64_t nxt_pgm               : 1;  /**< [ 15: 15](R/W/H) Programs the active PLL using [NXT_MUL]. Hardware automatically
+                                                                 clears bit when PLL has been updated.  Software should wait at least 20uS
+                                                                 for clock frequency to be reached before releasing RFIFs from reset.
+                                                                 This field is always reinitialized on a chip domain reset.
+
+                                                                 Changing GSERR Clock frequency is for diagnostic use only; changes can only be made
+                                                                 while GSERR logic is in reset. */
+        uint64_t reserved_16_63        : 48;
+#endif /* Word 0 - End */
+    } loki;
 };
 typedef union cavm_rst_gclk_pll cavm_rst_gclk_pll_t;
 
@@ -4179,7 +4537,9 @@ static inline uint64_t CAVM_RST_GCLK_PLL_FUNC(void)
         return 0x87e00a0017f8ll;
     if (cavm_is_model(OCTEONTX_CNF95XX_PASS2_X))
         return 0x87e00a0017f8ll;
-    __cavm_csr_fatal("RST_GCLK_PLL", 0, 0, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI))
+        return 0x87e00a0017f8ll;
+    __cavm_csr_fatal("RST_GCLK_PLL", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RST_GCLK_PLL cavm_rst_gclk_pll_t
@@ -4272,7 +4632,7 @@ union cavm_rst_int
         uint64_t reserved_12_63        : 52;
 #endif /* Word 0 - End */
     } cn83xx;
-    struct cavm_rst_int_cn96xx
+    struct cavm_rst_int_cn96xxp1
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_51_63        : 13;
@@ -4315,7 +4675,29 @@ union cavm_rst_int
                                                                  This field is reinitialized with a chip domain reset. */
         uint64_t reserved_51_63        : 13;
 #endif /* Word 0 - End */
-    } cn96xx;
+    } cn96xxp1;
+    struct cavm_rst_int_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_51_63        : 13;
+        uint64_t scp_reset             : 1;  /**< [ 50: 50](R/W1C/H) SCP domain entered reset.
+                                                                 This field is reinitialized with a chip domain reset. */
+        uint64_t mcp_reset             : 1;  /**< [ 49: 49](R/W1C/H) MCP domain entered reset.
+                                                                 This field is reinitialized with a chip domain reset. */
+        uint64_t core_reset            : 1;  /**< [ 48: 48](R/W1C/H) Core domain entered reset.
+                                                                 This field is reinitialized with a chip domain reset. */
+        uint64_t reserved_0_47         : 48;
+#else /* Word 0 - Little Endian */
+        uint64_t reserved_0_47         : 48;
+        uint64_t core_reset            : 1;  /**< [ 48: 48](R/W1C/H) Core domain entered reset.
+                                                                 This field is reinitialized with a chip domain reset. */
+        uint64_t mcp_reset             : 1;  /**< [ 49: 49](R/W1C/H) MCP domain entered reset.
+                                                                 This field is reinitialized with a chip domain reset. */
+        uint64_t scp_reset             : 1;  /**< [ 50: 50](R/W1C/H) SCP domain entered reset.
+                                                                 This field is reinitialized with a chip domain reset. */
+        uint64_t reserved_51_63        : 13;
+#endif /* Word 0 - End */
+    } cn96xxp3;
     struct cavm_rst_int_cnf95xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -4364,6 +4746,7 @@ union cavm_rst_int
         uint64_t reserved_52_63        : 12;
 #endif /* Word 0 - End */
     } cnf95xx;
+    /* struct cavm_rst_int_cnf95xx loki; */
 };
 typedef union cavm_rst_int cavm_rst_int_t;
 
@@ -4442,7 +4825,7 @@ union cavm_rst_int_ena_w1c
         uint64_t reserved_12_63        : 52;
 #endif /* Word 0 - End */
     } cn83xx;
-    struct cavm_rst_int_ena_w1c_cn96xx
+    struct cavm_rst_int_ena_w1c_cn96xxp1
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_51_63        : 13;
@@ -4467,7 +4850,23 @@ union cavm_rst_int_ena_w1c
         uint64_t scp_reset             : 1;  /**< [ 50: 50](R/W1C/H) Reads or clears enable for RST_INT[SCP_RESET]. */
         uint64_t reserved_51_63        : 13;
 #endif /* Word 0 - End */
-    } cn96xx;
+    } cn96xxp1;
+    struct cavm_rst_int_ena_w1c_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_51_63        : 13;
+        uint64_t scp_reset             : 1;  /**< [ 50: 50](R/W1C/H) Reads or clears enable for RST_INT[SCP_RESET]. */
+        uint64_t mcp_reset             : 1;  /**< [ 49: 49](R/W1C/H) Reads or clears enable for RST_INT[MCP_RESET]. */
+        uint64_t core_reset            : 1;  /**< [ 48: 48](R/W1C/H) Reads or clears enable for RST_INT[CORE_RESET]. */
+        uint64_t reserved_0_47         : 48;
+#else /* Word 0 - Little Endian */
+        uint64_t reserved_0_47         : 48;
+        uint64_t core_reset            : 1;  /**< [ 48: 48](R/W1C/H) Reads or clears enable for RST_INT[CORE_RESET]. */
+        uint64_t mcp_reset             : 1;  /**< [ 49: 49](R/W1C/H) Reads or clears enable for RST_INT[MCP_RESET]. */
+        uint64_t scp_reset             : 1;  /**< [ 50: 50](R/W1C/H) Reads or clears enable for RST_INT[SCP_RESET]. */
+        uint64_t reserved_51_63        : 13;
+#endif /* Word 0 - End */
+    } cn96xxp3;
     struct cavm_rst_int_ena_w1c_cnf95xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -4496,6 +4895,7 @@ union cavm_rst_int_ena_w1c
         uint64_t reserved_52_63        : 12;
 #endif /* Word 0 - End */
     } cnf95xx;
+    /* struct cavm_rst_int_ena_w1c_cnf95xx loki; */
 };
 typedef union cavm_rst_int_ena_w1c cavm_rst_int_ena_w1c_t;
 
@@ -4574,7 +4974,7 @@ union cavm_rst_int_ena_w1s
         uint64_t reserved_12_63        : 52;
 #endif /* Word 0 - End */
     } cn83xx;
-    struct cavm_rst_int_ena_w1s_cn96xx
+    struct cavm_rst_int_ena_w1s_cn96xxp1
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_51_63        : 13;
@@ -4599,7 +4999,23 @@ union cavm_rst_int_ena_w1s
         uint64_t scp_reset             : 1;  /**< [ 50: 50](R/W1S/H) Reads or sets enable for RST_INT[SCP_RESET]. */
         uint64_t reserved_51_63        : 13;
 #endif /* Word 0 - End */
-    } cn96xx;
+    } cn96xxp1;
+    struct cavm_rst_int_ena_w1s_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_51_63        : 13;
+        uint64_t scp_reset             : 1;  /**< [ 50: 50](R/W1S/H) Reads or sets enable for RST_INT[SCP_RESET]. */
+        uint64_t mcp_reset             : 1;  /**< [ 49: 49](R/W1S/H) Reads or sets enable for RST_INT[MCP_RESET]. */
+        uint64_t core_reset            : 1;  /**< [ 48: 48](R/W1S/H) Reads or sets enable for RST_INT[CORE_RESET]. */
+        uint64_t reserved_0_47         : 48;
+#else /* Word 0 - Little Endian */
+        uint64_t reserved_0_47         : 48;
+        uint64_t core_reset            : 1;  /**< [ 48: 48](R/W1S/H) Reads or sets enable for RST_INT[CORE_RESET]. */
+        uint64_t mcp_reset             : 1;  /**< [ 49: 49](R/W1S/H) Reads or sets enable for RST_INT[MCP_RESET]. */
+        uint64_t scp_reset             : 1;  /**< [ 50: 50](R/W1S/H) Reads or sets enable for RST_INT[SCP_RESET]. */
+        uint64_t reserved_51_63        : 13;
+#endif /* Word 0 - End */
+    } cn96xxp3;
     struct cavm_rst_int_ena_w1s_cnf95xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -4628,6 +5044,7 @@ union cavm_rst_int_ena_w1s
         uint64_t reserved_52_63        : 12;
 #endif /* Word 0 - End */
     } cnf95xx;
+    /* struct cavm_rst_int_ena_w1s_cnf95xx loki; */
 };
 typedef union cavm_rst_int_ena_w1s cavm_rst_int_ena_w1s_t;
 
@@ -4706,7 +5123,7 @@ union cavm_rst_int_w1s
         uint64_t reserved_12_63        : 52;
 #endif /* Word 0 - End */
     } cn83xx;
-    struct cavm_rst_int_w1s_cn96xx
+    struct cavm_rst_int_w1s_cn96xxp1
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_51_63        : 13;
@@ -4731,7 +5148,23 @@ union cavm_rst_int_w1s
         uint64_t scp_reset             : 1;  /**< [ 50: 50](R/W1S/H) Reads or sets RST_INT[SCP_RESET]. */
         uint64_t reserved_51_63        : 13;
 #endif /* Word 0 - End */
-    } cn96xx;
+    } cn96xxp1;
+    struct cavm_rst_int_w1s_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_51_63        : 13;
+        uint64_t scp_reset             : 1;  /**< [ 50: 50](R/W1S/H) Reads or sets RST_INT[SCP_RESET]. */
+        uint64_t mcp_reset             : 1;  /**< [ 49: 49](R/W1S/H) Reads or sets RST_INT[MCP_RESET]. */
+        uint64_t core_reset            : 1;  /**< [ 48: 48](R/W1S/H) Reads or sets RST_INT[CORE_RESET]. */
+        uint64_t reserved_0_47         : 48;
+#else /* Word 0 - Little Endian */
+        uint64_t reserved_0_47         : 48;
+        uint64_t core_reset            : 1;  /**< [ 48: 48](R/W1S/H) Reads or sets RST_INT[CORE_RESET]. */
+        uint64_t mcp_reset             : 1;  /**< [ 49: 49](R/W1S/H) Reads or sets RST_INT[MCP_RESET]. */
+        uint64_t scp_reset             : 1;  /**< [ 50: 50](R/W1S/H) Reads or sets RST_INT[SCP_RESET]. */
+        uint64_t reserved_51_63        : 13;
+#endif /* Word 0 - End */
+    } cn96xxp3;
     struct cavm_rst_int_w1s_cnf95xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -4760,6 +5193,7 @@ union cavm_rst_int_w1s
         uint64_t reserved_52_63        : 12;
 #endif /* Word 0 - End */
     } cnf95xx;
+    /* struct cavm_rst_int_w1s_cnf95xx loki; */
 };
 typedef union cavm_rst_int_w1s cavm_rst_int_w1s_t;
 
@@ -4815,6 +5249,7 @@ union cavm_rst_lboot
 #endif /* Word 0 - End */
     } cn96xx;
     /* struct cavm_rst_lboot_s cnf95xx; */
+    /* struct cavm_rst_lboot_s loki; */
 };
 typedef union cavm_rst_lboot cavm_rst_lboot_t;
 
@@ -4824,7 +5259,7 @@ static inline uint64_t CAVM_RST_LBOOT_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x87e006001620ll;
-    __cavm_csr_fatal("RST_LBOOT", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("RST_LBOOT", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RST_LBOOT cavm_rst_lboot_t
@@ -4875,7 +5310,7 @@ static inline uint64_t CAVM_RST_MCP_DOMAIN_W1C_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x87e006001838ll;
-    __cavm_csr_fatal("RST_MCP_DOMAIN_W1C", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("RST_MCP_DOMAIN_W1C", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RST_MCP_DOMAIN_W1C cavm_rst_mcp_domain_w1c_t
@@ -4926,7 +5361,7 @@ static inline uint64_t CAVM_RST_MCP_DOMAIN_W1S_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x87e006001830ll;
-    __cavm_csr_fatal("RST_MCP_DOMAIN_W1S", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("RST_MCP_DOMAIN_W1S", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RST_MCP_DOMAIN_W1S cavm_rst_mcp_domain_w1s_t
@@ -4979,7 +5414,7 @@ static inline uint64_t CAVM_RST_MSIX_PBAX(unsigned long a)
 {
     if (a==0)
         return 0x87e006ff0000ll + 8ll * ((a) & 0x0);
-    __cavm_csr_fatal("RST_MSIX_PBAX", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("RST_MSIX_PBAX", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RST_MSIX_PBAX(a) cavm_rst_msix_pbax_t
@@ -5130,7 +5565,7 @@ static inline uint64_t CAVM_RST_MSIX_VECX_ADDR(unsigned long a)
 {
     if (a==0)
         return 0x87e006f00000ll + 0x10ll * ((a) & 0x0);
-    __cavm_csr_fatal("RST_MSIX_VECX_ADDR", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("RST_MSIX_VECX_ADDR", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RST_MSIX_VECX_ADDR(a) cavm_rst_msix_vecx_addr_t
@@ -5201,7 +5636,7 @@ static inline uint64_t CAVM_RST_MSIX_VECX_CTL(unsigned long a)
 {
     if (a==0)
         return 0x87e006f00008ll + 0x10ll * ((a) & 0x0);
-    __cavm_csr_fatal("RST_MSIX_VECX_CTL", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("RST_MSIX_VECX_CTL", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RST_MSIX_VECX_CTL(a) cavm_rst_msix_vecx_ctl_t
@@ -5313,7 +5748,7 @@ static inline uint64_t CAVM_RST_OSC_CNTR_FUNC(void)
         return 0x87e006001778ll;
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x87e006001768ll;
-    __cavm_csr_fatal("RST_OSC_CNTR", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("RST_OSC_CNTR", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RST_OSC_CNTR cavm_rst_osc_cntr_t
@@ -5526,6 +5961,7 @@ union cavm_rst_out_ctl
         uint64_t reserved_5_63         : 59;
 #endif /* Word 0 - End */
     } cnf95xx;
+    /* struct cavm_rst_out_ctl_cnf95xx loki; */
 };
 typedef union cavm_rst_out_ctl cavm_rst_out_ctl_t;
 
@@ -5824,6 +6260,7 @@ union cavm_rst_pll_limit
         uint64_t reserved_39_63        : 25;
 #endif /* Word 0 - End */
     } cnf95xx;
+    /* struct cavm_rst_pll_limit_cnf95xx loki; */
 };
 typedef union cavm_rst_pll_limit cavm_rst_pll_limit_t;
 
@@ -5833,7 +6270,7 @@ static inline uint64_t CAVM_RST_PLL_LIMIT_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x87e00a001790ll;
-    __cavm_csr_fatal("RST_PLL_LIMIT", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("RST_PLL_LIMIT", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RST_PLL_LIMIT cavm_rst_pll_limit_t
@@ -6097,6 +6534,7 @@ union cavm_rst_pnr_pll
         uint64_t reserved_51_63        : 13;
 #endif /* Word 0 - End */
     } cnf95xx;
+    /* struct cavm_rst_pnr_pll_cnf95xx loki; */
 };
 typedef union cavm_rst_pnr_pll cavm_rst_pnr_pll_t;
 
@@ -6106,7 +6544,7 @@ static inline uint64_t CAVM_RST_PNR_PLL_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x87e00a001788ll;
-    __cavm_csr_fatal("RST_PNR_PLL", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("RST_PNR_PLL", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RST_PNR_PLL cavm_rst_pnr_pll_t
@@ -6148,7 +6586,7 @@ static inline uint64_t CAVM_RST_POWER_DBG_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX))
         return 0x87e006001708ll;
-    __cavm_csr_fatal("RST_POWER_DBG", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("RST_POWER_DBG", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RST_POWER_DBG cavm_rst_power_dbg_t
@@ -6199,6 +6637,7 @@ union cavm_rst_pp_available
         uint64_t reserved_6_63         : 58;
 #endif /* Word 0 - End */
     } cnf95xx;
+    /* struct cavm_rst_pp_available_cnf95xx loki; */
 };
 typedef union cavm_rst_pp_available cavm_rst_pp_available_t;
 
@@ -6320,6 +6759,7 @@ union cavm_rst_pp_pending
         uint64_t reserved_6_63         : 58;
 #endif /* Word 0 - End */
     } cnf95xx;
+    /* struct cavm_rst_pp_pending_cnf95xx loki; */
 };
 typedef union cavm_rst_pp_pending cavm_rst_pp_pending_t;
 
@@ -6467,6 +6907,7 @@ union cavm_rst_pp_power
         uint64_t reserved_6_63         : 58;
 #endif /* Word 0 - End */
     } cnf95xx;
+    /* struct cavm_rst_pp_power_cnf95xx loki; */
 };
 typedef union cavm_rst_pp_power cavm_rst_pp_power_t;
 
@@ -6606,6 +7047,7 @@ union cavm_rst_pp_power_stat
         uint64_t reserved_6_63         : 58;
 #endif /* Word 0 - End */
     } cnf95xx;
+    /* struct cavm_rst_pp_power_stat_cnf95xx loki; */
 };
 typedef union cavm_rst_pp_power_stat cavm_rst_pp_power_stat_t;
 
@@ -6724,6 +7166,7 @@ union cavm_rst_pp_reset
         uint64_t reserved_6_63         : 58;
 #endif /* Word 0 - End */
     } cnf95xx;
+    /* struct cavm_rst_pp_reset_cnf95xx loki; */
 };
 typedef union cavm_rst_pp_reset cavm_rst_pp_reset_t;
 
@@ -7031,7 +7474,7 @@ static inline uint64_t CAVM_RST_REFC_CTL_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x87e00a001798ll;
-    __cavm_csr_fatal("RST_REFC_CTL", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("RST_REFC_CTL", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RST_REFC_CTL cavm_rst_refc_ctl_t
@@ -7099,6 +7542,7 @@ union cavm_rst_reset_active
 #endif /* Word 0 - End */
     } cn96xx;
     /* struct cavm_rst_reset_active_s cnf95xx; */
+    /* struct cavm_rst_reset_active_s loki; */
 };
 typedef union cavm_rst_reset_active cavm_rst_reset_active_t;
 
@@ -7108,7 +7552,7 @@ static inline uint64_t CAVM_RST_RESET_ACTIVE_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x87e006001888ll;
-    __cavm_csr_fatal("RST_RESET_ACTIVE", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("RST_RESET_ACTIVE", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RST_RESET_ACTIVE cavm_rst_reset_active_t
@@ -7159,7 +7603,7 @@ static inline uint64_t CAVM_RST_SCP_DOMAIN_W1C_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x87e006001848ll;
-    __cavm_csr_fatal("RST_SCP_DOMAIN_W1C", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("RST_SCP_DOMAIN_W1C", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RST_SCP_DOMAIN_W1C cavm_rst_scp_domain_w1c_t
@@ -7212,7 +7656,7 @@ static inline uint64_t CAVM_RST_SCP_DOMAIN_W1S_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x87e006001840ll;
-    __cavm_csr_fatal("RST_SCP_DOMAIN_W1S", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("RST_SCP_DOMAIN_W1S", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RST_SCP_DOMAIN_W1S cavm_rst_scp_domain_w1s_t
@@ -7380,6 +7824,7 @@ union cavm_rst_soft_prstx
         uint64_t reserved_1_63         : 63;
 #endif /* Word 0 - End */
     } cnf95xx;
+    /* struct cavm_rst_soft_prstx_cnf95xx loki; */
 };
 typedef union cavm_rst_soft_prstx cavm_rst_soft_prstx_t;
 
@@ -7390,11 +7835,13 @@ static inline uint64_t CAVM_RST_SOFT_PRSTX(unsigned long a)
         return 0x87e0060016c0ll + 8ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CN83XX) && (a<=3))
         return 0x87e0060016c0ll + 8ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=3))
         return 0x87e0060016c0ll + 8ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x87e0060016c0ll + 8ll * ((a) & 0x0);
-    __cavm_csr_fatal("RST_SOFT_PRSTX", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
+        return 0x87e0060016c0ll + 8ll * ((a) & 0x0);
+    __cavm_csr_fatal("RST_SOFT_PRSTX", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RST_SOFT_PRSTX(a) cavm_rst_soft_prstx_t
@@ -7436,7 +7883,7 @@ static inline uint64_t CAVM_RST_SOFT_RST_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX))
         return 0x87e006001680ll;
-    __cavm_csr_fatal("RST_SOFT_RST", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("RST_SOFT_RST", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RST_SOFT_RST cavm_rst_soft_rst_t
@@ -7736,6 +8183,7 @@ union cavm_rst_src_map
         uint64_t reserved_13_63        : 51;
 #endif /* Word 0 - End */
     } cnf95xx;
+    /* struct cavm_rst_src_map_cnf95xx loki; */
 };
 typedef union cavm_rst_src_map cavm_rst_src_map_t;
 
@@ -7745,7 +8193,7 @@ static inline uint64_t CAVM_RST_SRC_MAP_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x87e006001898ll;
-    __cavm_csr_fatal("RST_SRC_MAP", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("RST_SRC_MAP", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RST_SRC_MAP cavm_rst_src_map_t
@@ -7786,7 +8234,7 @@ static inline uint64_t CAVM_RST_SW_W1S_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x87e0060017f0ll;
-    __cavm_csr_fatal("RST_SW_W1S", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("RST_SW_W1S", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RST_SW_W1S cavm_rst_sw_w1s_t

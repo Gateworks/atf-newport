@@ -57,7 +57,7 @@ static inline uint64_t CAVM_LMT_LF_LMTCANCEL_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x840200100400ll;
-    __cavm_csr_fatal("LMT_LF_LMTCANCEL", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("LMT_LF_LMTCANCEL", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_LMT_LF_LMTCANCEL cavm_lmt_lf_lmtcancel_t
@@ -104,7 +104,7 @@ static inline uint64_t CAVM_LMT_LF_LMTLINEX(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX) && (a<=15))
         return 0x840200100000ll + 8ll * ((a) & 0xf);
-    __cavm_csr_fatal("LMT_LF_LMTLINEX", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("LMT_LF_LMTLINEX", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_LMT_LF_LMTLINEX(a) cavm_lmt_lf_lmtlinex_t

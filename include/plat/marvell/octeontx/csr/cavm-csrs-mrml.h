@@ -176,7 +176,7 @@ static inline uint64_t CAVM_MRML_CMD_TO_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x87e0fc000008ll;
-    __cavm_csr_fatal("MRML_CMD_TO", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("MRML_CMD_TO", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MRML_CMD_TO cavm_mrml_cmd_to_t
@@ -216,7 +216,7 @@ static inline uint64_t CAVM_MRML_CONFIG_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x87e0fc002000ll;
-    __cavm_csr_fatal("MRML_CONFIG", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("MRML_CONFIG", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MRML_CONFIG cavm_mrml_config_t
@@ -581,7 +581,7 @@ static inline uint64_t CAVM_MRML_MSIX_PBAX(unsigned long a)
 {
     if (a==0)
         return 0x87e0fcff0000ll + 8ll * ((a) & 0x0);
-    __cavm_csr_fatal("MRML_MSIX_PBAX", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("MRML_MSIX_PBAX", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MRML_MSIX_PBAX(a) cavm_mrml_msix_pbax_t
@@ -720,7 +720,7 @@ static inline uint64_t CAVM_MRML_MSIX_VECX_ADDR(unsigned long a)
 {
     if (a==0)
         return 0x87e0fcf00000ll + 0x10ll * ((a) & 0x0);
-    __cavm_csr_fatal("MRML_MSIX_VECX_ADDR", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("MRML_MSIX_VECX_ADDR", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MRML_MSIX_VECX_ADDR(a) cavm_mrml_msix_vecx_addr_t
@@ -774,7 +774,7 @@ static inline uint64_t CAVM_MRML_MSIX_VECX_CTL(unsigned long a)
 {
     if (a==0)
         return 0x87e0fcf00008ll + 0x10ll * ((a) & 0x0);
-    __cavm_csr_fatal("MRML_MSIX_VECX_CTL", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("MRML_MSIX_VECX_CTL", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MRML_MSIX_VECX_CTL(a) cavm_mrml_msix_vecx_ctl_t
@@ -828,7 +828,7 @@ static inline uint64_t CAVM_MRML_NCBX_PERMIT(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX) && (a<=255))
         return 0x87e0fc020000ll + 8ll * ((a) & 0xff);
-    __cavm_csr_fatal("MRML_NCBX_PERMIT", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("MRML_NCBX_PERMIT", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MRML_NCBX_PERMIT(a) cavm_mrml_ncbx_permit_t
@@ -865,7 +865,7 @@ static inline uint64_t CAVM_MRML_NCBX_SDEV(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && (a<=3))
         return 0x87e0fc000400ll + 8ll * ((a) & 0x3);
-    __cavm_csr_fatal("MRML_NCBX_SDEV", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("MRML_NCBX_SDEV", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MRML_NCBX_SDEV(a) cavm_mrml_ncbx_sdev_t
@@ -902,7 +902,7 @@ static inline uint64_t CAVM_MRML_NCBX_SKILL(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && (a<=3))
         return 0x87e0fc000500ll + 8ll * ((a) & 0x3);
-    __cavm_csr_fatal("MRML_NCBX_SKILL", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("MRML_NCBX_SKILL", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MRML_NCBX_SKILL(a) cavm_mrml_ncbx_skill_t
@@ -956,7 +956,7 @@ static inline uint64_t CAVM_MRML_RSLX_PERMIT(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX) && (a<=255))
         return 0x87e0fc010000ll + 8ll * ((a) & 0xff);
-    __cavm_csr_fatal("MRML_RSLX_PERMIT", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("MRML_RSLX_PERMIT", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MRML_RSLX_PERMIT(a) cavm_mrml_rslx_permit_t
@@ -1013,7 +1013,7 @@ static inline uint64_t CAVM_MRML_RSLX_SDEV(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && (a<=3))
         return 0x87e0fc000200ll + 8ll * ((a) & 0x3);
-    __cavm_csr_fatal("MRML_RSLX_SDEV", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("MRML_RSLX_SDEV", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MRML_RSLX_SDEV(a) cavm_mrml_rslx_sdev_t
@@ -1058,7 +1058,7 @@ static inline uint64_t CAVM_MRML_RSLX_SKILL(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && (a<=3))
         return 0x87e0fc000300ll + 8ll * ((a) & 0x3);
-    __cavm_csr_fatal("MRML_RSLX_SKILL", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("MRML_RSLX_SKILL", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MRML_RSLX_SKILL(a) cavm_mrml_rslx_skill_t

@@ -153,7 +153,7 @@ static inline uint64_t CAVM_AVS_CFG_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x80a000000100ll;
-    __cavm_csr_fatal("AVS_CFG", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("AVS_CFG", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_AVS_CFG cavm_avs_cfg_t
@@ -192,7 +192,7 @@ static inline uint64_t CAVM_AVS_CLKEN_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x80a000002080ll;
-    __cavm_csr_fatal("AVS_CLKEN", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("AVS_CLKEN", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_AVS_CLKEN cavm_avs_clken_t
@@ -231,7 +231,7 @@ static inline uint64_t CAVM_AVS_CONST_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x80a000000000ll;
-    __cavm_csr_fatal("AVS_CONST", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("AVS_CONST", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_AVS_CONST cavm_avs_const_t
@@ -269,7 +269,7 @@ static inline uint64_t CAVM_AVS_ECO_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x80a000000120ll;
-    __cavm_csr_fatal("AVS_ECO", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("AVS_ECO", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_AVS_ECO cavm_avs_eco_t
@@ -310,7 +310,7 @@ static inline uint64_t CAVM_AVS_INT_ENA_W1C_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x80a000000210ll;
-    __cavm_csr_fatal("AVS_INT_ENA_W1C", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("AVS_INT_ENA_W1C", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_AVS_INT_ENA_W1C cavm_avs_int_ena_w1c_t
@@ -351,7 +351,7 @@ static inline uint64_t CAVM_AVS_INT_ENA_W1S_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x80a000000218ll;
-    __cavm_csr_fatal("AVS_INT_ENA_W1S", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("AVS_INT_ENA_W1S", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_AVS_INT_ENA_W1S cavm_avs_int_ena_w1s_t
@@ -405,7 +405,7 @@ static inline uint64_t CAVM_AVS_IO_CTL_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x80a000000128ll;
-    __cavm_csr_fatal("AVS_IO_CTL", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("AVS_IO_CTL", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_AVS_IO_CTL cavm_avs_io_ctl_t
@@ -464,7 +464,7 @@ static inline uint64_t CAVM_AVS_MDATA_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x80a000001010ll;
-    __cavm_csr_fatal("AVS_MDATA", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("AVS_MDATA", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_AVS_MDATA cavm_avs_mdata_t
@@ -502,7 +502,7 @@ static inline uint64_t CAVM_AVS_MSIX_PBAX(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX) && (a==0))
         return 0x80a000ff0000ll + 8ll * ((a) & 0x0);
-    __cavm_csr_fatal("AVS_MSIX_PBAX", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("AVS_MSIX_PBAX", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_AVS_MSIX_PBAX(a) cavm_avs_msix_pbax_t
@@ -586,7 +586,7 @@ static inline uint64_t CAVM_AVS_MSIX_VECX_ADDR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX) && (a==0))
         return 0x80a000f00000ll + 0x10ll * ((a) & 0x0);
-    __cavm_csr_fatal("AVS_MSIX_VECX_ADDR", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("AVS_MSIX_VECX_ADDR", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_AVS_MSIX_VECX_ADDR(a) cavm_avs_msix_vecx_addr_t
@@ -626,7 +626,7 @@ static inline uint64_t CAVM_AVS_MSIX_VECX_CTL(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX) && (a==0))
         return 0x80a000f00008ll + 0x10ll * ((a) & 0x0);
-    __cavm_csr_fatal("AVS_MSIX_VECX_CTL", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("AVS_MSIX_VECX_CTL", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_AVS_MSIX_VECX_CTL(a) cavm_avs_msix_vecx_ctl_t
@@ -680,7 +680,7 @@ static inline uint64_t CAVM_AVS_SDATA_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x80a000001020ll;
-    __cavm_csr_fatal("AVS_SDATA", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("AVS_SDATA", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_AVS_SDATA cavm_avs_sdata_t
@@ -730,7 +730,7 @@ static inline uint64_t CAVM_AVS_SSTATUS_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x80a000001030ll;
-    __cavm_csr_fatal("AVS_SSTATUS", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("AVS_SSTATUS", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_AVS_SSTATUS cavm_avs_sstatus_t
@@ -789,7 +789,7 @@ static inline uint64_t CAVM_AVS_STS_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x80a000000200ll;
-    __cavm_csr_fatal("AVS_STS", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("AVS_STS", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_AVS_STS cavm_avs_sts_t
@@ -830,7 +830,7 @@ static inline uint64_t CAVM_AVS_STS_W1S_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x80a000000208ll;
-    __cavm_csr_fatal("AVS_STS_W1S", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("AVS_STS_W1S", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_AVS_STS_W1S cavm_avs_sts_w1s_t

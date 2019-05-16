@@ -181,7 +181,7 @@ static inline uint64_t CAVM_NDF_DEBUG_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x8080000000f8ll;
-    __cavm_csr_fatal("NDF_DEBUG", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("NDF_DEBUG", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_NDF_DEBUG cavm_ndf_debug_t
@@ -502,7 +502,7 @@ static inline uint64_t CAVM_NDF_ECC_CNT_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX))
         return 0x808000000010ll;
-    __cavm_csr_fatal("NDF_ECC_CNT", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("NDF_ECC_CNT", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_NDF_ECC_CNT cavm_ndf_ecc_cnt_t
@@ -1148,7 +1148,7 @@ static inline uint64_t CAVM_NDF_MSIX_PBAX(unsigned long a)
 {
     if (a==0)
         return 0x808000ff0000ll + 8ll * ((a) & 0x0);
-    __cavm_csr_fatal("NDF_MSIX_PBAX", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("NDF_MSIX_PBAX", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_NDF_MSIX_PBAX(a) cavm_ndf_msix_pbax_t
@@ -1295,7 +1295,7 @@ static inline uint64_t CAVM_NDF_MSIX_VECX_ADDR(unsigned long a)
         return 0x808000f00000ll + 0x10ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_CN9XXX) && (a<=1))
         return 0x808000f00000ll + 0x10ll * ((a) & 0x1);
-    __cavm_csr_fatal("NDF_MSIX_VECX_ADDR", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("NDF_MSIX_VECX_ADDR", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_NDF_MSIX_VECX_ADDR(a) cavm_ndf_msix_vecx_addr_t
@@ -1351,7 +1351,7 @@ static inline uint64_t CAVM_NDF_MSIX_VECX_CTL(unsigned long a)
         return 0x808000f00008ll + 0x10ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_CN9XXX) && (a<=1))
         return 0x808000f00008ll + 0x10ll * ((a) & 0x1);
-    __cavm_csr_fatal("NDF_MSIX_VECX_CTL", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("NDF_MSIX_VECX_CTL", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_NDF_MSIX_VECX_CTL(a) cavm_ndf_msix_vecx_ctl_t
@@ -1391,7 +1391,7 @@ static inline uint64_t CAVM_NDF_RAS_INT_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x808000000080ll;
-    __cavm_csr_fatal("NDF_RAS_INT", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("NDF_RAS_INT", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_NDF_RAS_INT cavm_ndf_ras_int_t
@@ -1430,7 +1430,7 @@ static inline uint64_t CAVM_NDF_RAS_INT_ENA_W1C_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x808000000098ll;
-    __cavm_csr_fatal("NDF_RAS_INT_ENA_W1C", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("NDF_RAS_INT_ENA_W1C", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_NDF_RAS_INT_ENA_W1C cavm_ndf_ras_int_ena_w1c_t
@@ -1469,7 +1469,7 @@ static inline uint64_t CAVM_NDF_RAS_INT_ENA_W1S_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x808000000090ll;
-    __cavm_csr_fatal("NDF_RAS_INT_ENA_W1S", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("NDF_RAS_INT_ENA_W1S", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_NDF_RAS_INT_ENA_W1S cavm_ndf_ras_int_ena_w1s_t
@@ -1508,7 +1508,7 @@ static inline uint64_t CAVM_NDF_RAS_INT_W1S_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x808000000088ll;
-    __cavm_csr_fatal("NDF_RAS_INT_W1S", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("NDF_RAS_INT_W1S", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_NDF_RAS_INT_W1S cavm_ndf_ras_int_w1s_t

@@ -61,7 +61,7 @@ static inline uint64_t CAVM_CSK_AP_SEL_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x87e00e000018ll;
-    __cavm_csr_fatal("CSK_AP_SEL", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CSK_AP_SEL", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_CSK_AP_SEL cavm_csk_ap_sel_t
@@ -97,7 +97,7 @@ static inline uint64_t CAVM_CSK_CLK_STOP_INDEX_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x87e00e000030ll;
-    __cavm_csr_fatal("CSK_CLK_STOP_INDEX", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CSK_CLK_STOP_INDEX", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_CSK_CLK_STOP_INDEX cavm_csk_clk_stop_index_t
@@ -162,7 +162,7 @@ static inline uint64_t CAVM_CSK_CTRL_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x87e00e000010ll;
-    __cavm_csr_fatal("CSK_CTRL", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CSK_CTRL", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_CSK_CTRL cavm_csk_ctrl_t
@@ -198,7 +198,7 @@ static inline uint64_t CAVM_CSK_CYCLE_COUNT_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x87e00e000038ll;
-    __cavm_csr_fatal("CSK_CYCLE_COUNT", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CSK_CYCLE_COUNT", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_CSK_CYCLE_COUNT cavm_csk_cycle_count_t
@@ -236,7 +236,7 @@ static inline uint64_t CAVM_CSK_SCRATCH_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x87e00e000000ll;
-    __cavm_csr_fatal("CSK_SCRATCH", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CSK_SCRATCH", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_CSK_SCRATCH cavm_csk_scratch_t
@@ -272,7 +272,7 @@ static inline uint64_t CAVM_CSK_SHRINK_START_INDEX_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x87e00e000020ll;
-    __cavm_csr_fatal("CSK_SHRINK_START_INDEX", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CSK_SHRINK_START_INDEX", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_CSK_SHRINK_START_INDEX cavm_csk_shrink_start_index_t
@@ -308,7 +308,7 @@ static inline uint64_t CAVM_CSK_SHRINK_STOP_INDEX_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x87e00e000028ll;
-    __cavm_csr_fatal("CSK_SHRINK_STOP_INDEX", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("CSK_SHRINK_STOP_INDEX", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_CSK_SHRINK_STOP_INDEX cavm_csk_shrink_stop_index_t

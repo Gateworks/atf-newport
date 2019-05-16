@@ -71,7 +71,7 @@ static inline uint64_t CAVM_KEY_BIST_REG_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX))
         return 0x87e041000018ll;
-    __cavm_csr_fatal("KEY_BIST_REG", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("KEY_BIST_REG", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_KEY_BIST_REG cavm_key_bist_reg_t
@@ -112,7 +112,7 @@ static inline uint64_t CAVM_KEY_CTL_STATUS_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX))
         return 0x87e041000010ll;
-    __cavm_csr_fatal("KEY_CTL_STATUS", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("KEY_CTL_STATUS", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_KEY_CTL_STATUS cavm_key_ctl_status_t
@@ -153,7 +153,7 @@ static inline uint64_t CAVM_KEY_INT_ENA_W1C_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX))
         return 0x87e041000120ll;
-    __cavm_csr_fatal("KEY_INT_ENA_W1C", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("KEY_INT_ENA_W1C", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_KEY_INT_ENA_W1C cavm_key_int_ena_w1c_t
@@ -194,7 +194,7 @@ static inline uint64_t CAVM_KEY_INT_ENA_W1S_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX))
         return 0x87e041000128ll;
-    __cavm_csr_fatal("KEY_INT_ENA_W1S", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("KEY_INT_ENA_W1S", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_KEY_INT_ENA_W1S cavm_key_int_ena_w1s_t
@@ -235,7 +235,7 @@ static inline uint64_t CAVM_KEY_INT_SUM_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX))
         return 0x87e041000100ll;
-    __cavm_csr_fatal("KEY_INT_SUM", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("KEY_INT_SUM", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_KEY_INT_SUM cavm_key_int_sum_t
@@ -276,7 +276,7 @@ static inline uint64_t CAVM_KEY_INT_SUM_W1S_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX))
         return 0x87e041000108ll;
-    __cavm_csr_fatal("KEY_INT_SUM_W1S", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("KEY_INT_SUM_W1S", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_KEY_INT_SUM_W1S cavm_key_int_sum_w1s_t
@@ -311,7 +311,7 @@ static inline uint64_t CAVM_KEY_MEMX(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && (a<=2047))
         return 0x841000400000ll + 8ll * ((a) & 0x7ff);
-    __cavm_csr_fatal("KEY_MEMX", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("KEY_MEMX", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_KEY_MEMX(a) cavm_key_memx_t
@@ -358,7 +358,7 @@ static inline uint64_t CAVM_KEY_MEM_ACCESS_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX))
         return 0x87e041000020ll;
-    __cavm_csr_fatal("KEY_MEM_ACCESS", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("KEY_MEM_ACCESS", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_KEY_MEM_ACCESS cavm_key_mem_access_t
@@ -396,7 +396,7 @@ static inline uint64_t CAVM_KEY_MSIX_PBAX(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && (a==0))
         return 0x87e041ff0000ll + 8ll * ((a) & 0x0);
-    __cavm_csr_fatal("KEY_MSIX_PBAX", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("KEY_MSIX_PBAX", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_KEY_MSIX_PBAX(a) cavm_key_msix_pbax_t
@@ -452,7 +452,7 @@ static inline uint64_t CAVM_KEY_MSIX_VECX_ADDR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && (a==0))
         return 0x87e041f00000ll + 0x10ll * ((a) & 0x0);
-    __cavm_csr_fatal("KEY_MSIX_VECX_ADDR", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("KEY_MSIX_VECX_ADDR", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_KEY_MSIX_VECX_ADDR(a) cavm_key_msix_vecx_addr_t
@@ -494,7 +494,7 @@ static inline uint64_t CAVM_KEY_MSIX_VECX_CTL(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && (a==0))
         return 0x87e041f00008ll + 0x10ll * ((a) & 0x0);
-    __cavm_csr_fatal("KEY_MSIX_VECX_CTL", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("KEY_MSIX_VECX_CTL", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_KEY_MSIX_VECX_CTL(a) cavm_key_msix_vecx_ctl_t

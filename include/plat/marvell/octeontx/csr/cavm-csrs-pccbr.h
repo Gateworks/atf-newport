@@ -81,7 +81,7 @@ static inline uint64_t CAVM_PCCBR_XXX_ACS_CAP_CTL_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x144;
-    __cavm_csr_fatal("PCCBR_XXX_ACS_CAP_CTL", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("PCCBR_XXX_ACS_CAP_CTL", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PCCBR_XXX_ACS_CAP_CTL cavm_pccbr_xxx_acs_cap_ctl_t
@@ -121,7 +121,7 @@ static inline uint64_t CAVM_PCCBR_XXX_ACS_CAP_HDR_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x140;
-    __cavm_csr_fatal("PCCBR_XXX_ACS_CAP_HDR", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("PCCBR_XXX_ACS_CAP_HDR", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PCCBR_XXX_ACS_CAP_HDR cavm_pccbr_xxx_acs_cap_hdr_t

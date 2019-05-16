@@ -27,12 +27,8 @@
  */
 #define CAVM_SATA_BAR_E_SATAX_PF_BAR0(a) (0x810000000000ll + 0x1000000000ll * (a))
 #define CAVM_SATA_BAR_E_SATAX_PF_BAR0_SIZE 0x200000ull
-#define CAVM_SATA_BAR_E_SATAX_PF_BAR2(a) (0x810000200000ll + 0x1000000000ll * (a))
-#define CAVM_SATA_BAR_E_SATAX_PF_BAR2_SIZE 0x100000ull
-#define CAVM_SATA_BAR_E_SATAX_PF_BAR4_CN8(a) (0x810000200000ll + 0x1000000000ll * (a))
-#define CAVM_SATA_BAR_E_SATAX_PF_BAR4_CN8_SIZE 0x100000ull
-#define CAVM_SATA_BAR_E_SATAX_PF_BAR4_CN9(a) (0x810000000000ll + 0x1000000000ll * (a))
-#define CAVM_SATA_BAR_E_SATAX_PF_BAR4_CN9_SIZE 0x200000ull
+#define CAVM_SATA_BAR_E_SATAX_PF_BAR4(a) (0x810000200000ll + 0x1000000000ll * (a))
+#define CAVM_SATA_BAR_E_SATAX_PF_BAR4_SIZE 0x100000ull
 
 /**
  * Enumeration sata_int_vec_e
@@ -44,7 +40,6 @@
 #define CAVM_SATA_INT_VEC_E_UAHC_PME_REQ_IP (2)
 #define CAVM_SATA_INT_VEC_E_UAHC_PME_REQ_IP_CLEAR (3)
 #define CAVM_SATA_INT_VEC_E_UCTL_INTSTAT (1)
-#define CAVM_SATA_INT_VEC_E_UCTL_RAS (4)
 
 /**
  * Enumeration sata_uctl_dma_read_cmd_e
@@ -127,15 +122,13 @@ static inline uint64_t CAVM_SATAX_MSIX_PBAX(unsigned long a, unsigned long b)
         return 0x8100002f0000ll + 0x1000000000ll * ((a) & 0x1) + 8ll * ((b) & 0x0);
     if (cavm_is_model(OCTEONTX_CN83XX) && ((a<=5) && (b==0)))
         return 0x8100002f0000ll + 0x1000000000ll * ((a) & 0x7) + 8ll * ((b) & 0x0);
-    if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=3) && (b==0)))
-        return 0x8100002f0000ll + 0x1000000000ll * ((a) & 0x3) + 8ll * ((b) & 0x0);
-    __cavm_csr_fatal("SATAX_MSIX_PBAX", 2, a, b, 0, 0);
+    __cavm_csr_fatal("SATAX_MSIX_PBAX", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SATAX_MSIX_PBAX(a,b) cavm_satax_msix_pbax_t
 #define bustype_CAVM_SATAX_MSIX_PBAX(a,b) CSR_TYPE_NCB
 #define basename_CAVM_SATAX_MSIX_PBAX(a,b) "SATAX_MSIX_PBAX"
-#define device_bar_CAVM_SATAX_MSIX_PBAX(a,b) 0x2 /* PF_BAR2 */
+#define device_bar_CAVM_SATAX_MSIX_PBAX(a,b) 0x4 /* PF_BAR4 */
 #define busnum_CAVM_SATAX_MSIX_PBAX(a,b) (a)
 #define arguments_CAVM_SATAX_MSIX_PBAX(a,b) (a),(b),-1,-1
 
@@ -151,8 +144,8 @@ union cavm_satax_msix_vecx_addr
     struct cavm_satax_msix_vecx_addr_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_53_63        : 11;
-        uint64_t addr                  : 51; /**< [ 52:  2](R/W) IOVA to use for MSI-X delivery of this vector. */
+        uint64_t reserved_49_63        : 15;
+        uint64_t addr                  : 47; /**< [ 48:  2](R/W) IOVA to use for MSI-X delivery of this vector. */
         uint64_t reserved_1            : 1;
         uint64_t secvec                : 1;  /**< [  0:  0](SR/W) Secure vector.
                                                                  0 = This vector may be read or written by either secure or nonsecure states.
@@ -176,42 +169,11 @@ union cavm_satax_msix_vecx_addr
                                                                  PCCPF_XXX_VSEC_SCTL[MSIX_SEC]) is
                                                                  set, all vectors are secure and function as if [SECVEC] was set. */
         uint64_t reserved_1            : 1;
-        uint64_t addr                  : 51; /**< [ 52:  2](R/W) IOVA to use for MSI-X delivery of this vector. */
-        uint64_t reserved_53_63        : 11;
+        uint64_t addr                  : 47; /**< [ 48:  2](R/W) IOVA to use for MSI-X delivery of this vector. */
+        uint64_t reserved_49_63        : 15;
 #endif /* Word 0 - End */
     } s;
-    struct cavm_satax_msix_vecx_addr_cn81xx
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_49_63        : 15;
-        uint64_t addr                  : 47; /**< [ 48:  2](R/W) IOVA to use for MSI-X delivery of this vector. */
-        uint64_t reserved_1            : 1;
-        uint64_t secvec                : 1;  /**< [  0:  0](SR/W) Secure vector.
-                                                                 0 = This vector may be read or written by either secure or nonsecure states.
-                                                                 1 = This vector's SATA()_MSIX_VEC()_ADDR, SATA()_MSIX_VEC()_CTL, and
-                                                                 corresponding
-                                                                 bit of SATA()_MSIX_PBA() are RAZ/WI and does not cause a fault when accessed
-                                                                 by the nonsecure world.
-
-                                                                 If PCCPF_SATA(0..1)_VSEC_SCTL[MSIX_SEC] (for documentation, see
-                                                                 PCCPF_XXX_VSEC_SCTL[MSIX_SEC]) is
-                                                                 set, all vectors are secure and function as if [SECVEC] was set. */
-#else /* Word 0 - Little Endian */
-        uint64_t secvec                : 1;  /**< [  0:  0](SR/W) Secure vector.
-                                                                 0 = This vector may be read or written by either secure or nonsecure states.
-                                                                 1 = This vector's SATA()_MSIX_VEC()_ADDR, SATA()_MSIX_VEC()_CTL, and
-                                                                 corresponding
-                                                                 bit of SATA()_MSIX_PBA() are RAZ/WI and does not cause a fault when accessed
-                                                                 by the nonsecure world.
-
-                                                                 If PCCPF_SATA(0..1)_VSEC_SCTL[MSIX_SEC] (for documentation, see
-                                                                 PCCPF_XXX_VSEC_SCTL[MSIX_SEC]) is
-                                                                 set, all vectors are secure and function as if [SECVEC] was set. */
-        uint64_t reserved_1            : 1;
-        uint64_t addr                  : 47; /**< [ 48:  2](R/W) IOVA to use for MSI-X delivery of this vector. */
-        uint64_t reserved_49_63        : 15;
-#endif /* Word 0 - End */
-    } cn81xx;
+    /* struct cavm_satax_msix_vecx_addr_s cn81xx; */
     struct cavm_satax_msix_vecx_addr_cn83xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -244,66 +206,6 @@ union cavm_satax_msix_vecx_addr
         uint64_t reserved_49_63        : 15;
 #endif /* Word 0 - End */
     } cn83xx;
-    struct cavm_satax_msix_vecx_addr_cn9
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_53_63        : 11;
-        uint64_t addr                  : 51; /**< [ 52:  2](R/W) IOVA to use for MSI-X delivery of this vector. */
-        uint64_t reserved_1            : 1;
-        uint64_t secvec                : 1;  /**< [  0:  0](SR/W) Secure vector.
-                                                                 0 = This vector may be read or written by either secure or nonsecure states.
-                                                                 The vector's IOVA is sent to the SMMU as nonsecure (though this only affects
-                                                                 physical addresses if PCCPF_XXX_VSEC_SCTL[MSIX_PHYS]=1).
-
-                                                                 1 = This vector's SATA()_MSIX_VEC()_ADDR, SATA()_MSIX_VEC()_CTL, and
-                                                                 corresponding
-                                                                 bit of SATA()_MSIX_PBA() are RAZ/WI and does not cause a fault when accessed
-                                                                 by the nonsecure world.
-                                                                 The vector's IOVA is sent to the SMMU as secure (though this only affects
-                                                                 physical addresses if PCCPF_XXX_VSEC_SCTL[MSIX_PHYS]=1 or
-                                                                 PCCPF_XXX_VSEC_SCTL[MSIX_SEC_PHYS]=1).
-
-                                                                 If PCCPF_SATA()_VSEC_SCTL[MSIX_SEC] (for documentation, see
-                                                                 PCCPF_XXX_VSEC_SCTL[MSIX_SEC]) is
-                                                                 set, all vectors are secure and function as if [SECVEC] was set.
-
-                                                                 Also note the following:
-                                                                 * When PCCPF_XXX_VSEC_SCTL[MSIX_SEC_EN]=1, all secure vectors (including secure
-                                                                 VF vectors) will act as if PCCPF/PCCVF_XXX_MSIX_CAP_HDR[MSIXEN]=1,
-                                                                 PCCPF/PCCVF_XXX_MSIX_CAP_HDR[FUNM]=0 and PCCPF/PCCVF_XXX_CMD[ME]=1.
-                                                                 * When PCCPF_XXX_VSEC_SCTL[MSIX_SEC_PHYS]=1, all secure vectors (including
-                                                                 secure VF vectors) are considered physical, regardless of
-                                                                 PCCPF_XXX_VSEC_SCTL[MSIX_PHYS]. */
-#else /* Word 0 - Little Endian */
-        uint64_t secvec                : 1;  /**< [  0:  0](SR/W) Secure vector.
-                                                                 0 = This vector may be read or written by either secure or nonsecure states.
-                                                                 The vector's IOVA is sent to the SMMU as nonsecure (though this only affects
-                                                                 physical addresses if PCCPF_XXX_VSEC_SCTL[MSIX_PHYS]=1).
-
-                                                                 1 = This vector's SATA()_MSIX_VEC()_ADDR, SATA()_MSIX_VEC()_CTL, and
-                                                                 corresponding
-                                                                 bit of SATA()_MSIX_PBA() are RAZ/WI and does not cause a fault when accessed
-                                                                 by the nonsecure world.
-                                                                 The vector's IOVA is sent to the SMMU as secure (though this only affects
-                                                                 physical addresses if PCCPF_XXX_VSEC_SCTL[MSIX_PHYS]=1 or
-                                                                 PCCPF_XXX_VSEC_SCTL[MSIX_SEC_PHYS]=1).
-
-                                                                 If PCCPF_SATA()_VSEC_SCTL[MSIX_SEC] (for documentation, see
-                                                                 PCCPF_XXX_VSEC_SCTL[MSIX_SEC]) is
-                                                                 set, all vectors are secure and function as if [SECVEC] was set.
-
-                                                                 Also note the following:
-                                                                 * When PCCPF_XXX_VSEC_SCTL[MSIX_SEC_EN]=1, all secure vectors (including secure
-                                                                 VF vectors) will act as if PCCPF/PCCVF_XXX_MSIX_CAP_HDR[MSIXEN]=1,
-                                                                 PCCPF/PCCVF_XXX_MSIX_CAP_HDR[FUNM]=0 and PCCPF/PCCVF_XXX_CMD[ME]=1.
-                                                                 * When PCCPF_XXX_VSEC_SCTL[MSIX_SEC_PHYS]=1, all secure vectors (including
-                                                                 secure VF vectors) are considered physical, regardless of
-                                                                 PCCPF_XXX_VSEC_SCTL[MSIX_PHYS]. */
-        uint64_t reserved_1            : 1;
-        uint64_t addr                  : 51; /**< [ 52:  2](R/W) IOVA to use for MSI-X delivery of this vector. */
-        uint64_t reserved_53_63        : 11;
-#endif /* Word 0 - End */
-    } cn9;
 };
 typedef union cavm_satax_msix_vecx_addr cavm_satax_msix_vecx_addr_t;
 
@@ -314,15 +216,13 @@ static inline uint64_t CAVM_SATAX_MSIX_VECX_ADDR(unsigned long a, unsigned long 
         return 0x810000200000ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CN83XX) && ((a<=5) && (b<=3)))
         return 0x810000200000ll + 0x1000000000ll * ((a) & 0x7) + 0x10ll * ((b) & 0x3);
-    if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=3) && (b<=4)))
-        return 0x810000200000ll + 0x1000000000ll * ((a) & 0x3) + 0x10ll * ((b) & 0x7);
-    __cavm_csr_fatal("SATAX_MSIX_VECX_ADDR", 2, a, b, 0, 0);
+    __cavm_csr_fatal("SATAX_MSIX_VECX_ADDR", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SATAX_MSIX_VECX_ADDR(a,b) cavm_satax_msix_vecx_addr_t
 #define bustype_CAVM_SATAX_MSIX_VECX_ADDR(a,b) CSR_TYPE_NCB
 #define basename_CAVM_SATAX_MSIX_VECX_ADDR(a,b) "SATAX_MSIX_VECX_ADDR"
-#define device_bar_CAVM_SATAX_MSIX_VECX_ADDR(a,b) 0x2 /* PF_BAR2 */
+#define device_bar_CAVM_SATAX_MSIX_VECX_ADDR(a,b) 0x4 /* PF_BAR4 */
 #define busnum_CAVM_SATAX_MSIX_VECX_ADDR(a,b) (a)
 #define arguments_CAVM_SATAX_MSIX_VECX_ADDR(a,b) (a),(b),-1,-1
 
@@ -340,28 +240,16 @@ union cavm_satax_msix_vecx_ctl
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_33_63        : 31;
         uint64_t mask                  : 1;  /**< [ 32: 32](R/W) When set, no MSI-X interrupts will be sent to this vector. */
-        uint64_t data                  : 32; /**< [ 31:  0](R/W) Data to use for MSI-X delivery of this vector. */
+        uint64_t reserved_20_31        : 12;
+        uint64_t data                  : 20; /**< [ 19:  0](R/W) Data to use for MSI-X delivery of this vector. */
 #else /* Word 0 - Little Endian */
-        uint64_t data                  : 32; /**< [ 31:  0](R/W) Data to use for MSI-X delivery of this vector. */
+        uint64_t data                  : 20; /**< [ 19:  0](R/W) Data to use for MSI-X delivery of this vector. */
+        uint64_t reserved_20_31        : 12;
         uint64_t mask                  : 1;  /**< [ 32: 32](R/W) When set, no MSI-X interrupts will be sent to this vector. */
         uint64_t reserved_33_63        : 31;
 #endif /* Word 0 - End */
     } s;
-    struct cavm_satax_msix_vecx_ctl_cn8
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_33_63        : 31;
-        uint64_t mask                  : 1;  /**< [ 32: 32](R/W) When set, no MSI-X interrupts will be sent to this vector. */
-        uint64_t reserved_20_31        : 12;
-        uint64_t data                  : 20; /**< [ 19:  0](R/W) Data to use for MSI-X delivery of this vector. */
-#else /* Word 0 - Little Endian */
-        uint64_t data                  : 20; /**< [ 19:  0](R/W) Data to use for MSI-X delivery of this vector. */
-        uint64_t reserved_20_31        : 12;
-        uint64_t mask                  : 1;  /**< [ 32: 32](R/W) When set, no MSI-X interrupts will be sent to this vector. */
-        uint64_t reserved_33_63        : 31;
-#endif /* Word 0 - End */
-    } cn8;
-    /* struct cavm_satax_msix_vecx_ctl_s cn9; */
+    /* struct cavm_satax_msix_vecx_ctl_s cn; */
 };
 typedef union cavm_satax_msix_vecx_ctl cavm_satax_msix_vecx_ctl_t;
 
@@ -372,15 +260,13 @@ static inline uint64_t CAVM_SATAX_MSIX_VECX_CTL(unsigned long a, unsigned long b
         return 0x810000200008ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CN83XX) && ((a<=5) && (b<=3)))
         return 0x810000200008ll + 0x1000000000ll * ((a) & 0x7) + 0x10ll * ((b) & 0x3);
-    if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=3) && (b<=4)))
-        return 0x810000200008ll + 0x1000000000ll * ((a) & 0x3) + 0x10ll * ((b) & 0x7);
-    __cavm_csr_fatal("SATAX_MSIX_VECX_CTL", 2, a, b, 0, 0);
+    __cavm_csr_fatal("SATAX_MSIX_VECX_CTL", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SATAX_MSIX_VECX_CTL(a,b) cavm_satax_msix_vecx_ctl_t
 #define bustype_CAVM_SATAX_MSIX_VECX_CTL(a,b) CSR_TYPE_NCB
 #define basename_CAVM_SATAX_MSIX_VECX_CTL(a,b) "SATAX_MSIX_VECX_CTL"
-#define device_bar_CAVM_SATAX_MSIX_VECX_CTL(a,b) 0x2 /* PF_BAR2 */
+#define device_bar_CAVM_SATAX_MSIX_VECX_CTL(a,b) 0x4 /* PF_BAR4 */
 #define busnum_CAVM_SATAX_MSIX_VECX_CTL(a,b) (a)
 #define arguments_CAVM_SATAX_MSIX_VECX_CTL(a,b) (a),(b),-1,-1
 
@@ -397,7 +283,7 @@ static inline uint64_t CAVM_SATAX_MSIX_VECX_CTL(unsigned long a, unsigned long b
  * fields of the received BIST activate FIS.
  *
  * Internal:
- * See DWC_ahsata databook v5.00.
+ * See DWC_ahsata databook v4.20a.
  */
 union cavm_satax_uahc_gbl_bistafr
 {
@@ -449,15 +335,13 @@ static inline uint64_t CAVM_SATAX_UAHC_GBL_BISTAFR(unsigned long a)
         return 0x8100000000a0ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN83XX) && (a<=5))
         return 0x8100000000a0ll + 0x1000000000ll * ((a) & 0x7);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
-        return 0x8100000000a0ll + 0x1000000000ll * ((a) & 0x3);
-    __cavm_csr_fatal("SATAX_UAHC_GBL_BISTAFR", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("SATAX_UAHC_GBL_BISTAFR", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SATAX_UAHC_GBL_BISTAFR(a) cavm_satax_uahc_gbl_bistafr_t
 #define bustype_CAVM_SATAX_UAHC_GBL_BISTAFR(a) CSR_TYPE_NCB32b
 #define basename_CAVM_SATAX_UAHC_GBL_BISTAFR(a) "SATAX_UAHC_GBL_BISTAFR"
-#define device_bar_CAVM_SATAX_UAHC_GBL_BISTAFR(a) 0x4 /* PF_BAR4 */
+#define device_bar_CAVM_SATAX_UAHC_GBL_BISTAFR(a) 0x0 /* PF_BAR0 */
 #define busnum_CAVM_SATAX_UAHC_GBL_BISTAFR(a) (a)
 #define arguments_CAVM_SATAX_UAHC_GBL_BISTAFR(a) (a),-1,-1,-1
 
@@ -470,7 +354,7 @@ static inline uint64_t CAVM_SATAX_UAHC_GBL_BISTAFR(unsigned long a)
  * to the SATA()_UAHC_GBL_TESTR[PSEL] field.
  *
  * Internal:
- * See DWC_ahsata databook v5.00.
+ * See DWC_ahsata databook v4.20a.
  */
 union cavm_satax_uahc_gbl_bistcr
 {
@@ -527,59 +411,7 @@ union cavm_satax_uahc_gbl_bistcr
         uint32_t reserved_26_31        : 6;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_satax_uahc_gbl_bistcr_s cn8; */
-    struct cavm_satax_uahc_gbl_bistcr_cn9
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint32_t reserved_26_31        : 6;
-        uint32_t old_phy_ready         : 1;  /**< [ 25: 25](R/W) Old phy_ready. Do not change the value of this bit. */
-        uint32_t late_phy_ready        : 1;  /**< [ 24: 24](R/W) Late phy_ready. */
-        uint32_t reserved_21_23        : 3;
-        uint32_t ferlib                : 1;  /**< [ 20: 20](WO) Far-end retimed loopback. */
-        uint32_t reserved_19           : 1;
-        uint32_t txo                   : 1;  /**< [ 18: 18](WO) Transmit only. */
-        uint32_t cntclr                : 1;  /**< [ 17: 17](WO) Counter clear. */
-        uint32_t nealb                 : 1;  /**< [ 16: 16](WO) Near-end analog loopback. */
-        uint32_t llb                   : 1;  /**< [ 15: 15](R/W) Lab loopback mode. */
-        uint32_t reserved_14           : 1;
-        uint32_t errlossen             : 1;  /**< [ 13: 13](R/W) Error loss detect enable. */
-        uint32_t sdfe                  : 1;  /**< [ 12: 12](R/W) Signal detect feature enable. */
-        uint32_t rsvd_1rsvd_11         : 1;  /**< [ 11: 11](R/W) Reserved. */
-        uint32_t llc                   : 3;  /**< [ 10:  8](R/W) Link layer control.
-                                                                 \<10\> = RPD - repeat primitive drop enable.
-                                                                 \<9\> = DESCRAM - descrambler enable.
-                                                                 \<8\> = SCRAM - scrambler enable. */
-        uint32_t reserved_7            : 1;
-        uint32_t erren                 : 1;  /**< [  6:  6](R/W) Error enable. */
-        uint32_t flip                  : 1;  /**< [  5:  5](R/W) Flip disparity. */
-        uint32_t pv                    : 1;  /**< [  4:  4](R/W) Pattern version. */
-        uint32_t pattern               : 4;  /**< [  3:  0](R/W) SATA compliant pattern selection. */
-#else /* Word 0 - Little Endian */
-        uint32_t pattern               : 4;  /**< [  3:  0](R/W) SATA compliant pattern selection. */
-        uint32_t pv                    : 1;  /**< [  4:  4](R/W) Pattern version. */
-        uint32_t flip                  : 1;  /**< [  5:  5](R/W) Flip disparity. */
-        uint32_t erren                 : 1;  /**< [  6:  6](R/W) Error enable. */
-        uint32_t reserved_7            : 1;
-        uint32_t llc                   : 3;  /**< [ 10:  8](R/W) Link layer control.
-                                                                 \<10\> = RPD - repeat primitive drop enable.
-                                                                 \<9\> = DESCRAM - descrambler enable.
-                                                                 \<8\> = SCRAM - scrambler enable. */
-        uint32_t rsvd_1rsvd_11         : 1;  /**< [ 11: 11](R/W) Reserved. */
-        uint32_t sdfe                  : 1;  /**< [ 12: 12](R/W) Signal detect feature enable. */
-        uint32_t errlossen             : 1;  /**< [ 13: 13](R/W) Error loss detect enable. */
-        uint32_t reserved_14           : 1;
-        uint32_t llb                   : 1;  /**< [ 15: 15](R/W) Lab loopback mode. */
-        uint32_t nealb                 : 1;  /**< [ 16: 16](WO) Near-end analog loopback. */
-        uint32_t cntclr                : 1;  /**< [ 17: 17](WO) Counter clear. */
-        uint32_t txo                   : 1;  /**< [ 18: 18](WO) Transmit only. */
-        uint32_t reserved_19           : 1;
-        uint32_t ferlib                : 1;  /**< [ 20: 20](WO) Far-end retimed loopback. */
-        uint32_t reserved_21_23        : 3;
-        uint32_t late_phy_ready        : 1;  /**< [ 24: 24](R/W) Late phy_ready. */
-        uint32_t old_phy_ready         : 1;  /**< [ 25: 25](R/W) Old phy_ready. Do not change the value of this bit. */
-        uint32_t reserved_26_31        : 6;
-#endif /* Word 0 - End */
-    } cn9;
+    /* struct cavm_satax_uahc_gbl_bistcr_s cn; */
 };
 typedef union cavm_satax_uahc_gbl_bistcr cavm_satax_uahc_gbl_bistcr_t;
 
@@ -590,15 +422,13 @@ static inline uint64_t CAVM_SATAX_UAHC_GBL_BISTCR(unsigned long a)
         return 0x8100000000a4ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN83XX) && (a<=5))
         return 0x8100000000a4ll + 0x1000000000ll * ((a) & 0x7);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
-        return 0x8100000000a4ll + 0x1000000000ll * ((a) & 0x3);
-    __cavm_csr_fatal("SATAX_UAHC_GBL_BISTCR", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("SATAX_UAHC_GBL_BISTCR", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SATAX_UAHC_GBL_BISTCR(a) cavm_satax_uahc_gbl_bistcr_t
 #define bustype_CAVM_SATAX_UAHC_GBL_BISTCR(a) CSR_TYPE_NCB32b
 #define basename_CAVM_SATAX_UAHC_GBL_BISTCR(a) "SATAX_UAHC_GBL_BISTCR"
-#define device_bar_CAVM_SATAX_UAHC_GBL_BISTCR(a) 0x4 /* PF_BAR4 */
+#define device_bar_CAVM_SATAX_UAHC_GBL_BISTCR(a) 0x0 /* PF_BAR0 */
 #define busnum_CAVM_SATAX_UAHC_GBL_BISTCR(a) (a)
 #define arguments_CAVM_SATAX_UAHC_GBL_BISTCR(a) (a),-1,-1,-1
 
@@ -609,11 +439,9 @@ static inline uint64_t CAVM_SATAX_UAHC_GBL_BISTCR(unsigned long a)
  * This register is shared between SATA ports. Before accessing this
  * register, first select the required port by writing the port number
  * to the SATA()_UAHC_GBL_TESTR[PSEL] field.
- * Access to the register is disabled on power-on (system reset) or global
- * SATA block reset, and when the TESTR.BSEL is set to 0.
  *
  * Internal:
- * See DWC_ahsata databook v5.00.
+ * See DWC_ahsata databook v4.20a.
  */
 union cavm_satax_uahc_gbl_bistdecr
 {
@@ -637,15 +465,13 @@ static inline uint64_t CAVM_SATAX_UAHC_GBL_BISTDECR(unsigned long a)
         return 0x8100000000b0ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN83XX) && (a<=5))
         return 0x8100000000b0ll + 0x1000000000ll * ((a) & 0x7);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
-        return 0x8100000000b0ll + 0x1000000000ll * ((a) & 0x3);
-    __cavm_csr_fatal("SATAX_UAHC_GBL_BISTDECR", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("SATAX_UAHC_GBL_BISTDECR", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SATAX_UAHC_GBL_BISTDECR(a) cavm_satax_uahc_gbl_bistdecr_t
 #define bustype_CAVM_SATAX_UAHC_GBL_BISTDECR(a) CSR_TYPE_NCB32b
 #define basename_CAVM_SATAX_UAHC_GBL_BISTDECR(a) "SATAX_UAHC_GBL_BISTDECR"
-#define device_bar_CAVM_SATAX_UAHC_GBL_BISTDECR(a) 0x4 /* PF_BAR4 */
+#define device_bar_CAVM_SATAX_UAHC_GBL_BISTDECR(a) 0x0 /* PF_BAR0 */
 #define busnum_CAVM_SATAX_UAHC_GBL_BISTDECR(a) (a)
 #define arguments_CAVM_SATAX_UAHC_GBL_BISTDECR(a) (a),-1,-1,-1
 
@@ -658,7 +484,7 @@ static inline uint64_t CAVM_SATAX_UAHC_GBL_BISTDECR(unsigned long a)
  * to the SATA()_UAHC_GBL_TESTR[PSEL] field.
  *
  * Internal:
- * See DWC_ahsata databook v5.00.
+ * See DWC_ahsata databook v4.20a.
  */
 union cavm_satax_uahc_gbl_bistfctr
 {
@@ -682,25 +508,22 @@ static inline uint64_t CAVM_SATAX_UAHC_GBL_BISTFCTR(unsigned long a)
         return 0x8100000000a8ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN83XX) && (a<=5))
         return 0x8100000000a8ll + 0x1000000000ll * ((a) & 0x7);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
-        return 0x8100000000a8ll + 0x1000000000ll * ((a) & 0x3);
-    __cavm_csr_fatal("SATAX_UAHC_GBL_BISTFCTR", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("SATAX_UAHC_GBL_BISTFCTR", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SATAX_UAHC_GBL_BISTFCTR(a) cavm_satax_uahc_gbl_bistfctr_t
 #define bustype_CAVM_SATAX_UAHC_GBL_BISTFCTR(a) CSR_TYPE_NCB32b
 #define basename_CAVM_SATAX_UAHC_GBL_BISTFCTR(a) "SATAX_UAHC_GBL_BISTFCTR"
-#define device_bar_CAVM_SATAX_UAHC_GBL_BISTFCTR(a) 0x4 /* PF_BAR4 */
+#define device_bar_CAVM_SATAX_UAHC_GBL_BISTFCTR(a) 0x0 /* PF_BAR0 */
 #define busnum_CAVM_SATAX_UAHC_GBL_BISTFCTR(a) (a)
 #define arguments_CAVM_SATAX_UAHC_GBL_BISTFCTR(a) (a),-1,-1,-1
 
 /**
  * Register (NCB32b) sata#_uahc_gbl_bistsr
  *
- * INTERNAL: SATA UAHC BIST Status Register
- *
+ * SATA UAHC BIST Status Register
  * Internal:
- * See DWC_ahsata databook v5.00.
+ * See DWC_ahsata databook v4.20a.
  */
 union cavm_satax_uahc_gbl_bistsr
 {
@@ -728,15 +551,13 @@ static inline uint64_t CAVM_SATAX_UAHC_GBL_BISTSR(unsigned long a)
         return 0x8100000000acll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN83XX) && (a<=5))
         return 0x8100000000acll + 0x1000000000ll * ((a) & 0x7);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
-        return 0x8100000000acll + 0x1000000000ll * ((a) & 0x3);
-    __cavm_csr_fatal("SATAX_UAHC_GBL_BISTSR", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("SATAX_UAHC_GBL_BISTSR", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SATAX_UAHC_GBL_BISTSR(a) cavm_satax_uahc_gbl_bistsr_t
 #define bustype_CAVM_SATAX_UAHC_GBL_BISTSR(a) CSR_TYPE_NCB32b
 #define basename_CAVM_SATAX_UAHC_GBL_BISTSR(a) "SATAX_UAHC_GBL_BISTSR"
-#define device_bar_CAVM_SATAX_UAHC_GBL_BISTSR(a) 0x4 /* PF_BAR4 */
+#define device_bar_CAVM_SATAX_UAHC_GBL_BISTSR(a) 0x0 /* PF_BAR0 */
 #define busnum_CAVM_SATAX_UAHC_GBL_BISTSR(a) (a)
 #define arguments_CAVM_SATAX_UAHC_GBL_BISTSR(a) (a),-1,-1,-1
 
@@ -744,7 +565,7 @@ static inline uint64_t CAVM_SATAX_UAHC_GBL_BISTSR(unsigned long a)
  * Register (NCB32b) sata#_uahc_gbl_cap
  *
  * SATA AHCI HBA Capabilities Register
- * This register indicates basic capabilities of the SATA core to software.
+ * See AHCI specification v1.3 section 3.1.
  */
 union cavm_satax_uahc_gbl_cap
 {
@@ -797,59 +618,7 @@ union cavm_satax_uahc_gbl_cap
         uint32_t s64a                  : 1;  /**< [ 31: 31](RO) Supports 64-bit addressing. */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_satax_uahc_gbl_cap_s cn8; */
-    struct cavm_satax_uahc_gbl_cap_cn9
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint32_t s64a                  : 1;  /**< [ 31: 31](RO) Supports 64-bit addressing. */
-        uint32_t sncq                  : 1;  /**< [ 30: 30](RO) Supports native command queuing. */
-        uint32_t ssntf                 : 1;  /**< [ 29: 29](RO) Supports SNotification register. */
-        uint32_t smps                  : 1;  /**< [ 28: 28](R/W) Supports mechanical presence switch. */
-        uint32_t sss                   : 1;  /**< [ 27: 27](R/W) Supports staggered spin-up. */
-        uint32_t salp                  : 1;  /**< [ 26: 26](RO) Supports aggressive link power management. */
-        uint32_t sal                   : 1;  /**< [ 25: 25](RO) Supports activity LED. */
-        uint32_t sclo                  : 1;  /**< [ 24: 24](RO) Supports command list override. */
-        uint32_t iss                   : 4;  /**< [ 23: 20](RO) Interface speed support. */
-        uint32_t snzo                  : 1;  /**< [ 19: 19](RO) Supports nonzero DMA offsets. */
-        uint32_t sam                   : 1;  /**< [ 18: 18](RO) Supports AHCI mode only. */
-        uint32_t spm                   : 1;  /**< [ 17: 17](RO) Supports port multiplier. */
-        uint32_t fbss                  : 1;  /**< [ 16: 16](RO) Supports FIS-based switching. */
-        uint32_t pmd                   : 1;  /**< [ 15: 15](RO) PIO multiple DRQ block. */
-        uint32_t ssc                   : 1;  /**< [ 14: 14](RO) Slumber state capable. */
-        uint32_t psc                   : 1;  /**< [ 13: 13](RO) Partial state capable. */
-        uint32_t ncs                   : 5;  /**< [ 12:  8](RO) Number of command slots. */
-        uint32_t cccs                  : 1;  /**< [  7:  7](RO) Command completion coalescing support. */
-        uint32_t ems                   : 1;  /**< [  6:  6](RO) Enclosure management support, as in termination of commands.
-                                                                 CNXXXX does not terminate enclosure management commands, but does support
-                                                                 passing enclosure management commands through to downstream controllers. */
-        uint32_t sxs                   : 1;  /**< [  5:  5](RO) Supports external SATA. */
-        uint32_t np                    : 5;  /**< [  4:  0](RO) Number of ports. 0x0 = 1 port. */
-#else /* Word 0 - Little Endian */
-        uint32_t np                    : 5;  /**< [  4:  0](RO) Number of ports. 0x0 = 1 port. */
-        uint32_t sxs                   : 1;  /**< [  5:  5](RO) Supports external SATA. */
-        uint32_t ems                   : 1;  /**< [  6:  6](RO) Enclosure management support, as in termination of commands.
-                                                                 CNXXXX does not terminate enclosure management commands, but does support
-                                                                 passing enclosure management commands through to downstream controllers. */
-        uint32_t cccs                  : 1;  /**< [  7:  7](RO) Command completion coalescing support. */
-        uint32_t ncs                   : 5;  /**< [ 12:  8](RO) Number of command slots. */
-        uint32_t psc                   : 1;  /**< [ 13: 13](RO) Partial state capable. */
-        uint32_t ssc                   : 1;  /**< [ 14: 14](RO) Slumber state capable. */
-        uint32_t pmd                   : 1;  /**< [ 15: 15](RO) PIO multiple DRQ block. */
-        uint32_t fbss                  : 1;  /**< [ 16: 16](RO) Supports FIS-based switching. */
-        uint32_t spm                   : 1;  /**< [ 17: 17](RO) Supports port multiplier. */
-        uint32_t sam                   : 1;  /**< [ 18: 18](RO) Supports AHCI mode only. */
-        uint32_t snzo                  : 1;  /**< [ 19: 19](RO) Supports nonzero DMA offsets. */
-        uint32_t iss                   : 4;  /**< [ 23: 20](RO) Interface speed support. */
-        uint32_t sclo                  : 1;  /**< [ 24: 24](RO) Supports command list override. */
-        uint32_t sal                   : 1;  /**< [ 25: 25](RO) Supports activity LED. */
-        uint32_t salp                  : 1;  /**< [ 26: 26](RO) Supports aggressive link power management. */
-        uint32_t sss                   : 1;  /**< [ 27: 27](R/W) Supports staggered spin-up. */
-        uint32_t smps                  : 1;  /**< [ 28: 28](R/W) Supports mechanical presence switch. */
-        uint32_t ssntf                 : 1;  /**< [ 29: 29](RO) Supports SNotification register. */
-        uint32_t sncq                  : 1;  /**< [ 30: 30](RO) Supports native command queuing. */
-        uint32_t s64a                  : 1;  /**< [ 31: 31](RO) Supports 64-bit addressing. */
-#endif /* Word 0 - End */
-    } cn9;
+    /* struct cavm_satax_uahc_gbl_cap_s cn; */
 };
 typedef union cavm_satax_uahc_gbl_cap cavm_satax_uahc_gbl_cap_t;
 
@@ -860,15 +629,13 @@ static inline uint64_t CAVM_SATAX_UAHC_GBL_CAP(unsigned long a)
         return 0x810000000000ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN83XX) && (a<=5))
         return 0x810000000000ll + 0x1000000000ll * ((a) & 0x7);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
-        return 0x810000000000ll + 0x1000000000ll * ((a) & 0x3);
-    __cavm_csr_fatal("SATAX_UAHC_GBL_CAP", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("SATAX_UAHC_GBL_CAP", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SATAX_UAHC_GBL_CAP(a) cavm_satax_uahc_gbl_cap_t
 #define bustype_CAVM_SATAX_UAHC_GBL_CAP(a) CSR_TYPE_NCB32b
 #define basename_CAVM_SATAX_UAHC_GBL_CAP(a) "SATAX_UAHC_GBL_CAP"
-#define device_bar_CAVM_SATAX_UAHC_GBL_CAP(a) 0x4 /* PF_BAR4 */
+#define device_bar_CAVM_SATAX_UAHC_GBL_CAP(a) 0x0 /* PF_BAR0 */
 #define busnum_CAVM_SATAX_UAHC_GBL_CAP(a) (a)
 #define arguments_CAVM_SATAX_UAHC_GBL_CAP(a) (a),-1,-1,-1
 
@@ -876,7 +643,7 @@ static inline uint64_t CAVM_SATAX_UAHC_GBL_CAP(unsigned long a)
  * Register (NCB32b) sata#_uahc_gbl_cap2
  *
  * SATA AHCI HBA Capabilities Extended Register
- * This register indicates capabilities of the SATA core to software.
+ * See AHCI specification v1.3 section 3.1.
  */
 union cavm_satax_uahc_gbl_cap2
 {
@@ -912,15 +679,13 @@ static inline uint64_t CAVM_SATAX_UAHC_GBL_CAP2(unsigned long a)
         return 0x810000000024ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN83XX) && (a<=5))
         return 0x810000000024ll + 0x1000000000ll * ((a) & 0x7);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
-        return 0x810000000024ll + 0x1000000000ll * ((a) & 0x3);
-    __cavm_csr_fatal("SATAX_UAHC_GBL_CAP2", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("SATAX_UAHC_GBL_CAP2", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SATAX_UAHC_GBL_CAP2(a) cavm_satax_uahc_gbl_cap2_t
 #define bustype_CAVM_SATAX_UAHC_GBL_CAP2(a) CSR_TYPE_NCB32b
 #define basename_CAVM_SATAX_UAHC_GBL_CAP2(a) "SATAX_UAHC_GBL_CAP2"
-#define device_bar_CAVM_SATAX_UAHC_GBL_CAP2(a) 0x4 /* PF_BAR4 */
+#define device_bar_CAVM_SATAX_UAHC_GBL_CAP2(a) 0x0 /* PF_BAR0 */
 #define busnum_CAVM_SATAX_UAHC_GBL_CAP2(a) (a)
 #define arguments_CAVM_SATAX_UAHC_GBL_CAP2(a) (a),-1,-1,-1
 
@@ -928,8 +693,7 @@ static inline uint64_t CAVM_SATAX_UAHC_GBL_CAP2(unsigned long a)
  * Register (NCB32b) sata#_uahc_gbl_ccc_ctl
  *
  * SATA AHCI CCC Control Register
- * This register is used to configure the command completion coalescing (CCC) feature for the
- * SATA core. It is reset on global reset.
+ * See AHCI specification v1.3 section 3.1.
  */
 union cavm_satax_uahc_gbl_ccc_ctl
 {
@@ -961,15 +725,13 @@ static inline uint64_t CAVM_SATAX_UAHC_GBL_CCC_CTL(unsigned long a)
         return 0x810000000014ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN83XX) && (a<=5))
         return 0x810000000014ll + 0x1000000000ll * ((a) & 0x7);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
-        return 0x810000000014ll + 0x1000000000ll * ((a) & 0x3);
-    __cavm_csr_fatal("SATAX_UAHC_GBL_CCC_CTL", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("SATAX_UAHC_GBL_CCC_CTL", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SATAX_UAHC_GBL_CCC_CTL(a) cavm_satax_uahc_gbl_ccc_ctl_t
 #define bustype_CAVM_SATAX_UAHC_GBL_CCC_CTL(a) CSR_TYPE_NCB32b
 #define basename_CAVM_SATAX_UAHC_GBL_CCC_CTL(a) "SATAX_UAHC_GBL_CCC_CTL"
-#define device_bar_CAVM_SATAX_UAHC_GBL_CCC_CTL(a) 0x4 /* PF_BAR4 */
+#define device_bar_CAVM_SATAX_UAHC_GBL_CCC_CTL(a) 0x0 /* PF_BAR0 */
 #define busnum_CAVM_SATAX_UAHC_GBL_CCC_CTL(a) (a)
 #define arguments_CAVM_SATAX_UAHC_GBL_CCC_CTL(a) (a),-1,-1,-1
 
@@ -977,9 +739,7 @@ static inline uint64_t CAVM_SATAX_UAHC_GBL_CCC_CTL(unsigned long a)
  * Register (NCB32b) sata#_uahc_gbl_ccc_ports
  *
  * SATA AHCI CCC Ports Register
- * This register specifies the ports that are coalesced as part of the command completion
- * coalescing
- * (CCC) feature when SATA()_UAHC_GBL_CCC_CTL[EN]=1. It is reset on global reset.
+ * See AHCI specification v1.3 section 3.1.
  */
 union cavm_satax_uahc_gbl_ccc_ports
 {
@@ -1005,60 +765,21 @@ static inline uint64_t CAVM_SATAX_UAHC_GBL_CCC_PORTS(unsigned long a)
         return 0x810000000018ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN83XX) && (a<=5))
         return 0x810000000018ll + 0x1000000000ll * ((a) & 0x7);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
-        return 0x810000000018ll + 0x1000000000ll * ((a) & 0x3);
-    __cavm_csr_fatal("SATAX_UAHC_GBL_CCC_PORTS", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("SATAX_UAHC_GBL_CCC_PORTS", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SATAX_UAHC_GBL_CCC_PORTS(a) cavm_satax_uahc_gbl_ccc_ports_t
 #define bustype_CAVM_SATAX_UAHC_GBL_CCC_PORTS(a) CSR_TYPE_NCB32b
 #define basename_CAVM_SATAX_UAHC_GBL_CCC_PORTS(a) "SATAX_UAHC_GBL_CCC_PORTS"
-#define device_bar_CAVM_SATAX_UAHC_GBL_CCC_PORTS(a) 0x4 /* PF_BAR4 */
+#define device_bar_CAVM_SATAX_UAHC_GBL_CCC_PORTS(a) 0x0 /* PF_BAR0 */
 #define busnum_CAVM_SATAX_UAHC_GBL_CCC_PORTS(a) (a)
 #define arguments_CAVM_SATAX_UAHC_GBL_CCC_PORTS(a) (a),-1,-1,-1
-
-/**
- * Register (NCB32b) sata#_uahc_gbl_diagnr3
- *
- * SATA UAHC DIAGNR3 Register
- * Internal:
- * See DWC_ahsata databook v5.00.
- */
-union cavm_satax_uahc_gbl_diagnr3
-{
-    uint32_t u;
-    struct cavm_satax_uahc_gbl_diagnr3_s
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint32_t fbcsw_cnt             : 32; /**< [ 31:  0](R/W1C) FIS-based context switching counter. Any 32-bit write to this location clears the counter. */
-#else /* Word 0 - Little Endian */
-        uint32_t fbcsw_cnt             : 32; /**< [ 31:  0](R/W1C) FIS-based context switching counter. Any 32-bit write to this location clears the counter. */
-#endif /* Word 0 - End */
-    } s;
-    /* struct cavm_satax_uahc_gbl_diagnr3_s cn; */
-};
-typedef union cavm_satax_uahc_gbl_diagnr3 cavm_satax_uahc_gbl_diagnr3_t;
-
-static inline uint64_t CAVM_SATAX_UAHC_GBL_DIAGNR3(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_SATAX_UAHC_GBL_DIAGNR3(unsigned long a)
-{
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
-        return 0x8100000000c4ll + 0x1000000000ll * ((a) & 0x3);
-    __cavm_csr_fatal("SATAX_UAHC_GBL_DIAGNR3", 1, a, 0, 0, 0);
-}
-
-#define typedef_CAVM_SATAX_UAHC_GBL_DIAGNR3(a) cavm_satax_uahc_gbl_diagnr3_t
-#define bustype_CAVM_SATAX_UAHC_GBL_DIAGNR3(a) CSR_TYPE_NCB32b
-#define basename_CAVM_SATAX_UAHC_GBL_DIAGNR3(a) "SATAX_UAHC_GBL_DIAGNR3"
-#define device_bar_CAVM_SATAX_UAHC_GBL_DIAGNR3(a) 0x4 /* PF_BAR4 */
-#define busnum_CAVM_SATAX_UAHC_GBL_DIAGNR3(a) (a)
-#define arguments_CAVM_SATAX_UAHC_GBL_DIAGNR3(a) (a),-1,-1,-1
 
 /**
  * Register (NCB32b) sata#_uahc_gbl_ghc
  *
  * SATA AHCI Global HBA Control Register
- * This register controls various global actions of the SATA core.
+ * See AHCI specification v1.3 section 3.1.
  */
 union cavm_satax_uahc_gbl_ghc
 {
@@ -1088,15 +809,13 @@ static inline uint64_t CAVM_SATAX_UAHC_GBL_GHC(unsigned long a)
         return 0x810000000004ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN83XX) && (a<=5))
         return 0x810000000004ll + 0x1000000000ll * ((a) & 0x7);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
-        return 0x810000000004ll + 0x1000000000ll * ((a) & 0x3);
-    __cavm_csr_fatal("SATAX_UAHC_GBL_GHC", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("SATAX_UAHC_GBL_GHC", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SATAX_UAHC_GBL_GHC(a) cavm_satax_uahc_gbl_ghc_t
 #define bustype_CAVM_SATAX_UAHC_GBL_GHC(a) CSR_TYPE_NCB32b
 #define basename_CAVM_SATAX_UAHC_GBL_GHC(a) "SATAX_UAHC_GBL_GHC"
-#define device_bar_CAVM_SATAX_UAHC_GBL_GHC(a) 0x4 /* PF_BAR4 */
+#define device_bar_CAVM_SATAX_UAHC_GBL_GHC(a) 0x0 /* PF_BAR0 */
 #define busnum_CAVM_SATAX_UAHC_GBL_GHC(a) (a)
 #define arguments_CAVM_SATAX_UAHC_GBL_GHC(a) (a),-1,-1,-1
 
@@ -1105,7 +824,7 @@ static inline uint64_t CAVM_SATAX_UAHC_GBL_GHC(unsigned long a)
  *
  * SATA UAHC Global Parameter Register 1
  * Internal:
- * See DWC_ahsata databook v5.00.
+ * See DWC_ahsata databook v4.20a.
  */
 union cavm_satax_uahc_gbl_gparam1r
 {
@@ -1155,15 +874,13 @@ static inline uint64_t CAVM_SATAX_UAHC_GBL_GPARAM1R(unsigned long a)
         return 0x8100000000e8ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN83XX) && (a<=5))
         return 0x8100000000e8ll + 0x1000000000ll * ((a) & 0x7);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
-        return 0x8100000000e8ll + 0x1000000000ll * ((a) & 0x3);
-    __cavm_csr_fatal("SATAX_UAHC_GBL_GPARAM1R", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("SATAX_UAHC_GBL_GPARAM1R", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SATAX_UAHC_GBL_GPARAM1R(a) cavm_satax_uahc_gbl_gparam1r_t
 #define bustype_CAVM_SATAX_UAHC_GBL_GPARAM1R(a) CSR_TYPE_NCB32b
 #define basename_CAVM_SATAX_UAHC_GBL_GPARAM1R(a) "SATAX_UAHC_GBL_GPARAM1R"
-#define device_bar_CAVM_SATAX_UAHC_GBL_GPARAM1R(a) 0x4 /* PF_BAR4 */
+#define device_bar_CAVM_SATAX_UAHC_GBL_GPARAM1R(a) 0x0 /* PF_BAR0 */
 #define busnum_CAVM_SATAX_UAHC_GBL_GPARAM1R(a) (a)
 #define arguments_CAVM_SATAX_UAHC_GBL_GPARAM1R(a) (a),-1,-1,-1
 
@@ -1172,7 +889,7 @@ static inline uint64_t CAVM_SATAX_UAHC_GBL_GPARAM1R(unsigned long a)
  *
  * SATA UAHC Global Parameter Register 2
  * Internal:
- * See DWC_ahsata databook v5.00.
+ * See DWC_ahsata databook v4.20a.
  */
 union cavm_satax_uahc_gbl_gparam2r
 {
@@ -1180,7 +897,7 @@ union cavm_satax_uahc_gbl_gparam2r
     struct cavm_satax_uahc_gbl_gparam2r_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint32_t fbs_mem_mode          : 1;  /**< [ 31: 31](RO) Selects FBS memory read port type. */
+        uint32_t reserved_31           : 1;
         uint32_t rxoob_clk_units       : 1;  /**< [ 30: 30](RO) RX OOB clock frequency units. */
         uint32_t rxoob_clk_upper       : 10; /**< [ 29: 20](RO) Upper bits of RX OOB clock frequency. */
         uint32_t bist_m                : 1;  /**< [ 19: 19](RO) BIST loopback checking depth (BIST_MODE). */
@@ -1208,77 +925,10 @@ union cavm_satax_uahc_gbl_gparam2r
         uint32_t bist_m                : 1;  /**< [ 19: 19](RO) BIST loopback checking depth (BIST_MODE). */
         uint32_t rxoob_clk_upper       : 10; /**< [ 29: 20](RO) Upper bits of RX OOB clock frequency. */
         uint32_t rxoob_clk_units       : 1;  /**< [ 30: 30](RO) RX OOB clock frequency units. */
-        uint32_t fbs_mem_mode          : 1;  /**< [ 31: 31](RO) Selects FBS memory read port type. */
+        uint32_t reserved_31           : 1;
 #endif /* Word 0 - End */
     } s;
-    struct cavm_satax_uahc_gbl_gparam2r_cn8
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint32_t reserved_31           : 1;
-        uint32_t rxoob_clk_units       : 1;  /**< [ 30: 30](RO) RX OOB clock frequency units. */
-        uint32_t rxoob_clk_upper       : 10; /**< [ 29: 20](RO) Upper bits of RX OOB clock frequency. */
-        uint32_t bist_m                : 1;  /**< [ 19: 19](RO) BIST loopback checking depth (BIST_MODE). */
-        uint32_t fbs_mem_s             : 1;  /**< [ 18: 18](RO) Context RAM memory location. */
-        uint32_t fbs_pmpn              : 2;  /**< [ 17: 16](RO) Maximum number of port multiplier ports (FBS_PMPN_MAX). */
-        uint32_t fbs_support           : 1;  /**< [ 15: 15](RO) FIS-based switching support (FBS_SUPPORT). */
-        uint32_t dev_cp                : 1;  /**< [ 14: 14](RO) Cold presence detect (DEV_CP_DET). */
-        uint32_t dev_mp                : 1;  /**< [ 13: 13](RO) Mechanical presence switch (DEV_MP_SWITCH). */
-        uint32_t encode_m              : 1;  /**< [ 12: 12](RO) 8/10 bit encoding/decoding (ENCODE_MODE). */
-        uint32_t rxoob_clk_m           : 1;  /**< [ 11: 11](RO) RX OOB clock mode (RXOOB_CLK_MODE). */
-        uint32_t rx_oob_m              : 1;  /**< [ 10: 10](RO) RX OOB mode (RX_OOB_MODE). */
-        uint32_t tx_oob_m              : 1;  /**< [  9:  9](RO) TX OOB mode (TX_OOB_MODE). */
-        uint32_t rxoob_clk             : 9;  /**< [  8:  0](RO) RX OOB clock frequency (RXOOB_CLK). */
-#else /* Word 0 - Little Endian */
-        uint32_t rxoob_clk             : 9;  /**< [  8:  0](RO) RX OOB clock frequency (RXOOB_CLK). */
-        uint32_t tx_oob_m              : 1;  /**< [  9:  9](RO) TX OOB mode (TX_OOB_MODE). */
-        uint32_t rx_oob_m              : 1;  /**< [ 10: 10](RO) RX OOB mode (RX_OOB_MODE). */
-        uint32_t rxoob_clk_m           : 1;  /**< [ 11: 11](RO) RX OOB clock mode (RXOOB_CLK_MODE). */
-        uint32_t encode_m              : 1;  /**< [ 12: 12](RO) 8/10 bit encoding/decoding (ENCODE_MODE). */
-        uint32_t dev_mp                : 1;  /**< [ 13: 13](RO) Mechanical presence switch (DEV_MP_SWITCH). */
-        uint32_t dev_cp                : 1;  /**< [ 14: 14](RO) Cold presence detect (DEV_CP_DET). */
-        uint32_t fbs_support           : 1;  /**< [ 15: 15](RO) FIS-based switching support (FBS_SUPPORT). */
-        uint32_t fbs_pmpn              : 2;  /**< [ 17: 16](RO) Maximum number of port multiplier ports (FBS_PMPN_MAX). */
-        uint32_t fbs_mem_s             : 1;  /**< [ 18: 18](RO) Context RAM memory location. */
-        uint32_t bist_m                : 1;  /**< [ 19: 19](RO) BIST loopback checking depth (BIST_MODE). */
-        uint32_t rxoob_clk_upper       : 10; /**< [ 29: 20](RO) Upper bits of RX OOB clock frequency. */
-        uint32_t rxoob_clk_units       : 1;  /**< [ 30: 30](RO) RX OOB clock frequency units. */
-        uint32_t reserved_31           : 1;
-#endif /* Word 0 - End */
-    } cn8;
-    struct cavm_satax_uahc_gbl_gparam2r_cn9
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint32_t fbs_mem_mode          : 1;  /**< [ 31: 31](RO) Selects FBS memory read port type. */
-        uint32_t rxoob_clk_units       : 1;  /**< [ 30: 30](RO) RX OOB clock frequency units. */
-        uint32_t rxoob_clk_upper       : 10; /**< [ 29: 20](RO) Upper bits of RX OOB clock frequency. */
-        uint32_t bist_m                : 1;  /**< [ 19: 19](RO) BIST loopback checking depth (BIST_MODE). */
-        uint32_t fbs_mem_s             : 1;  /**< [ 18: 18](RO) Context RAM memory location. */
-        uint32_t fbs_pmpn              : 2;  /**< [ 17: 16](RO) FBS RAM depth FBS_RAM_DEPTH. */
-        uint32_t fbs_support           : 1;  /**< [ 15: 15](RO) FIS-based switching support (FBS_SUPPORT). */
-        uint32_t dev_cp                : 1;  /**< [ 14: 14](RO) Cold presence detect (DEV_CP_DET). */
-        uint32_t dev_mp                : 1;  /**< [ 13: 13](RO) Mechanical presence switch (DEV_MP_SWITCH). */
-        uint32_t encode_m              : 1;  /**< [ 12: 12](RO) 8/10 bit encoding/decoding (ENCODE_MODE). */
-        uint32_t rxoob_clk_m           : 1;  /**< [ 11: 11](RO) RX OOB clock mode (RXOOB_CLK_MODE). */
-        uint32_t rx_oob_m              : 1;  /**< [ 10: 10](RO) RX OOB mode (RX_OOB_MODE). */
-        uint32_t tx_oob_m              : 1;  /**< [  9:  9](RO) TX OOB mode (TX_OOB_MODE). */
-        uint32_t rxoob_clk             : 9;  /**< [  8:  0](RO) RX OOB clock frequency (RXOOB_CLK_FREQ). */
-#else /* Word 0 - Little Endian */
-        uint32_t rxoob_clk             : 9;  /**< [  8:  0](RO) RX OOB clock frequency (RXOOB_CLK_FREQ). */
-        uint32_t tx_oob_m              : 1;  /**< [  9:  9](RO) TX OOB mode (TX_OOB_MODE). */
-        uint32_t rx_oob_m              : 1;  /**< [ 10: 10](RO) RX OOB mode (RX_OOB_MODE). */
-        uint32_t rxoob_clk_m           : 1;  /**< [ 11: 11](RO) RX OOB clock mode (RXOOB_CLK_MODE). */
-        uint32_t encode_m              : 1;  /**< [ 12: 12](RO) 8/10 bit encoding/decoding (ENCODE_MODE). */
-        uint32_t dev_mp                : 1;  /**< [ 13: 13](RO) Mechanical presence switch (DEV_MP_SWITCH). */
-        uint32_t dev_cp                : 1;  /**< [ 14: 14](RO) Cold presence detect (DEV_CP_DET). */
-        uint32_t fbs_support           : 1;  /**< [ 15: 15](RO) FIS-based switching support (FBS_SUPPORT). */
-        uint32_t fbs_pmpn              : 2;  /**< [ 17: 16](RO) FBS RAM depth FBS_RAM_DEPTH. */
-        uint32_t fbs_mem_s             : 1;  /**< [ 18: 18](RO) Context RAM memory location. */
-        uint32_t bist_m                : 1;  /**< [ 19: 19](RO) BIST loopback checking depth (BIST_MODE). */
-        uint32_t rxoob_clk_upper       : 10; /**< [ 29: 20](RO) Upper bits of RX OOB clock frequency. */
-        uint32_t rxoob_clk_units       : 1;  /**< [ 30: 30](RO) RX OOB clock frequency units. */
-        uint32_t fbs_mem_mode          : 1;  /**< [ 31: 31](RO) Selects FBS memory read port type. */
-#endif /* Word 0 - End */
-    } cn9;
+    /* struct cavm_satax_uahc_gbl_gparam2r_s cn; */
 };
 typedef union cavm_satax_uahc_gbl_gparam2r cavm_satax_uahc_gbl_gparam2r_t;
 
@@ -1289,71 +939,22 @@ static inline uint64_t CAVM_SATAX_UAHC_GBL_GPARAM2R(unsigned long a)
         return 0x8100000000ecll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN83XX) && (a<=5))
         return 0x8100000000ecll + 0x1000000000ll * ((a) & 0x7);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
-        return 0x8100000000ecll + 0x1000000000ll * ((a) & 0x3);
-    __cavm_csr_fatal("SATAX_UAHC_GBL_GPARAM2R", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("SATAX_UAHC_GBL_GPARAM2R", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SATAX_UAHC_GBL_GPARAM2R(a) cavm_satax_uahc_gbl_gparam2r_t
 #define bustype_CAVM_SATAX_UAHC_GBL_GPARAM2R(a) CSR_TYPE_NCB32b
 #define basename_CAVM_SATAX_UAHC_GBL_GPARAM2R(a) "SATAX_UAHC_GBL_GPARAM2R"
-#define device_bar_CAVM_SATAX_UAHC_GBL_GPARAM2R(a) 0x4 /* PF_BAR4 */
+#define device_bar_CAVM_SATAX_UAHC_GBL_GPARAM2R(a) 0x0 /* PF_BAR0 */
 #define busnum_CAVM_SATAX_UAHC_GBL_GPARAM2R(a) (a)
 #define arguments_CAVM_SATAX_UAHC_GBL_GPARAM2R(a) (a),-1,-1,-1
-
-/**
- * Register (NCB32b) sata#_uahc_gbl_gparam3
- *
- * SATA UAHC Global Parameter 3 Register
- * Internal:
- * See DWC_ahsata databook v5.00.
- */
-union cavm_satax_uahc_gbl_gparam3
-{
-    uint32_t u;
-    struct cavm_satax_uahc_gbl_gparam3_s
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint32_t reserved_9_31         : 23;
-        uint32_t mem_ap_support        : 1;  /**< [  8:  8](RO) Enable address protection. */
-        uint32_t phy_type              : 5;  /**< [  7:  3](RO) PHY interface type. */
-        uint32_t mem_ecc_cor_en        : 1;  /**< [  2:  2](RO) Single-bit correction enable. */
-        uint32_t mem_dp_type           : 1;  /**< [  1:  1](RO) Data protection type. */
-        uint32_t mem_dp_support        : 1;  /**< [  0:  0](RO) Enable data protection. */
-#else /* Word 0 - Little Endian */
-        uint32_t mem_dp_support        : 1;  /**< [  0:  0](RO) Enable data protection. */
-        uint32_t mem_dp_type           : 1;  /**< [  1:  1](RO) Data protection type. */
-        uint32_t mem_ecc_cor_en        : 1;  /**< [  2:  2](RO) Single-bit correction enable. */
-        uint32_t phy_type              : 5;  /**< [  7:  3](RO) PHY interface type. */
-        uint32_t mem_ap_support        : 1;  /**< [  8:  8](RO) Enable address protection. */
-        uint32_t reserved_9_31         : 23;
-#endif /* Word 0 - End */
-    } s;
-    /* struct cavm_satax_uahc_gbl_gparam3_s cn; */
-};
-typedef union cavm_satax_uahc_gbl_gparam3 cavm_satax_uahc_gbl_gparam3_t;
-
-static inline uint64_t CAVM_SATAX_UAHC_GBL_GPARAM3(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_SATAX_UAHC_GBL_GPARAM3(unsigned long a)
-{
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
-        return 0x8100000000dcll + 0x1000000000ll * ((a) & 0x3);
-    __cavm_csr_fatal("SATAX_UAHC_GBL_GPARAM3", 1, a, 0, 0, 0);
-}
-
-#define typedef_CAVM_SATAX_UAHC_GBL_GPARAM3(a) cavm_satax_uahc_gbl_gparam3_t
-#define bustype_CAVM_SATAX_UAHC_GBL_GPARAM3(a) CSR_TYPE_NCB32b
-#define basename_CAVM_SATAX_UAHC_GBL_GPARAM3(a) "SATAX_UAHC_GBL_GPARAM3"
-#define device_bar_CAVM_SATAX_UAHC_GBL_GPARAM3(a) 0x4 /* PF_BAR4 */
-#define busnum_CAVM_SATAX_UAHC_GBL_GPARAM3(a) (a)
-#define arguments_CAVM_SATAX_UAHC_GBL_GPARAM3(a) (a),-1,-1,-1
 
 /**
  * Register (NCB32b) sata#_uahc_gbl_idr
  *
  * SATA UAHC ID Register
  * Internal:
- * See DWC_ahsata databook v5.00.
+ * See DWC_ahsata databook v4.20a.
  */
 union cavm_satax_uahc_gbl_idr
 {
@@ -1377,15 +978,13 @@ static inline uint64_t CAVM_SATAX_UAHC_GBL_IDR(unsigned long a)
         return 0x8100000000fcll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN83XX) && (a<=5))
         return 0x8100000000fcll + 0x1000000000ll * ((a) & 0x7);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
-        return 0x8100000000fcll + 0x1000000000ll * ((a) & 0x3);
-    __cavm_csr_fatal("SATAX_UAHC_GBL_IDR", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("SATAX_UAHC_GBL_IDR", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SATAX_UAHC_GBL_IDR(a) cavm_satax_uahc_gbl_idr_t
 #define bustype_CAVM_SATAX_UAHC_GBL_IDR(a) CSR_TYPE_NCB32b
 #define basename_CAVM_SATAX_UAHC_GBL_IDR(a) "SATAX_UAHC_GBL_IDR"
-#define device_bar_CAVM_SATAX_UAHC_GBL_IDR(a) 0x4 /* PF_BAR4 */
+#define device_bar_CAVM_SATAX_UAHC_GBL_IDR(a) 0x0 /* PF_BAR0 */
 #define busnum_CAVM_SATAX_UAHC_GBL_IDR(a) (a)
 #define arguments_CAVM_SATAX_UAHC_GBL_IDR(a) (a),-1,-1,-1
 
@@ -1393,8 +992,7 @@ static inline uint64_t CAVM_SATAX_UAHC_GBL_IDR(unsigned long a)
  * Register (NCB32b) sata#_uahc_gbl_is
  *
  * SATA AHCI Interrupt Status Register
- * This register indicates which of the ports within the SATA core have an interrupt
- * pending and require service. This register is reset on global reset (GHC.HR=1).
+ * See AHCI specification v1.3 section 3.1.
  */
 union cavm_satax_uahc_gbl_is
 {
@@ -1420,15 +1018,13 @@ static inline uint64_t CAVM_SATAX_UAHC_GBL_IS(unsigned long a)
         return 0x810000000008ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN83XX) && (a<=5))
         return 0x810000000008ll + 0x1000000000ll * ((a) & 0x7);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
-        return 0x810000000008ll + 0x1000000000ll * ((a) & 0x3);
-    __cavm_csr_fatal("SATAX_UAHC_GBL_IS", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("SATAX_UAHC_GBL_IS", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SATAX_UAHC_GBL_IS(a) cavm_satax_uahc_gbl_is_t
 #define bustype_CAVM_SATAX_UAHC_GBL_IS(a) CSR_TYPE_NCB32b
 #define basename_CAVM_SATAX_UAHC_GBL_IS(a) "SATAX_UAHC_GBL_IS"
-#define device_bar_CAVM_SATAX_UAHC_GBL_IS(a) 0x4 /* PF_BAR4 */
+#define device_bar_CAVM_SATAX_UAHC_GBL_IS(a) 0x0 /* PF_BAR0 */
 #define busnum_CAVM_SATAX_UAHC_GBL_IS(a) (a)
 #define arguments_CAVM_SATAX_UAHC_GBL_IS(a) (a),-1,-1,-1
 
@@ -1441,7 +1037,7 @@ static inline uint64_t CAVM_SATAX_UAHC_GBL_IS(unsigned long a)
  * to the SATA()_UAHC_GBL_TESTR[PSEL] field.
  *
  * Internal:
- * See DWC_ahsata databook v5.00.
+ * See DWC_ahsata databook v4.20a.
  */
 union cavm_satax_uahc_gbl_oobr
 {
@@ -1473,15 +1069,13 @@ static inline uint64_t CAVM_SATAX_UAHC_GBL_OOBR(unsigned long a)
         return 0x8100000000bcll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN83XX) && (a<=5))
         return 0x8100000000bcll + 0x1000000000ll * ((a) & 0x7);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
-        return 0x8100000000bcll + 0x1000000000ll * ((a) & 0x3);
-    __cavm_csr_fatal("SATAX_UAHC_GBL_OOBR", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("SATAX_UAHC_GBL_OOBR", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SATAX_UAHC_GBL_OOBR(a) cavm_satax_uahc_gbl_oobr_t
 #define bustype_CAVM_SATAX_UAHC_GBL_OOBR(a) CSR_TYPE_NCB32b
 #define basename_CAVM_SATAX_UAHC_GBL_OOBR(a) "SATAX_UAHC_GBL_OOBR"
-#define device_bar_CAVM_SATAX_UAHC_GBL_OOBR(a) 0x4 /* PF_BAR4 */
+#define device_bar_CAVM_SATAX_UAHC_GBL_OOBR(a) 0x0 /* PF_BAR0 */
 #define busnum_CAVM_SATAX_UAHC_GBL_OOBR(a) (a)
 #define arguments_CAVM_SATAX_UAHC_GBL_OOBR(a) (a),-1,-1,-1
 
@@ -1489,8 +1083,7 @@ static inline uint64_t CAVM_SATAX_UAHC_GBL_OOBR(unsigned long a)
  * Register (NCB32b) sata#_uahc_gbl_pi
  *
  * SATA AHCI Ports Implemented Register
- * This register indicates which ports are exposed by the SATA core and are available
- * for the software to use.
+ * See AHCI specification v1.3 section 3.1.
  */
 union cavm_satax_uahc_gbl_pi
 {
@@ -1516,15 +1109,13 @@ static inline uint64_t CAVM_SATAX_UAHC_GBL_PI(unsigned long a)
         return 0x81000000000cll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN83XX) && (a<=5))
         return 0x81000000000cll + 0x1000000000ll * ((a) & 0x7);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
-        return 0x81000000000cll + 0x1000000000ll * ((a) & 0x3);
-    __cavm_csr_fatal("SATAX_UAHC_GBL_PI", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("SATAX_UAHC_GBL_PI", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SATAX_UAHC_GBL_PI(a) cavm_satax_uahc_gbl_pi_t
 #define bustype_CAVM_SATAX_UAHC_GBL_PI(a) CSR_TYPE_NCB32b
 #define basename_CAVM_SATAX_UAHC_GBL_PI(a) "SATAX_UAHC_GBL_PI"
-#define device_bar_CAVM_SATAX_UAHC_GBL_PI(a) 0x4 /* PF_BAR4 */
+#define device_bar_CAVM_SATAX_UAHC_GBL_PI(a) 0x0 /* PF_BAR0 */
 #define busnum_CAVM_SATAX_UAHC_GBL_PI(a) (a)
 #define arguments_CAVM_SATAX_UAHC_GBL_PI(a) (a),-1,-1,-1
 
@@ -1534,7 +1125,7 @@ static inline uint64_t CAVM_SATAX_UAHC_GBL_PI(unsigned long a)
  * SATA UAHC Port Parameter Register
  * Port is selected by the SATA()_UAHC_GBL_TESTR[PSEL] field.
  * Internal:
- * See DWC_ahsata databook v5.00.
+ * See DWC_ahsata databook v4.20a.
  */
 union cavm_satax_uahc_gbl_pparamr
 {
@@ -1570,15 +1161,13 @@ static inline uint64_t CAVM_SATAX_UAHC_GBL_PPARAMR(unsigned long a)
         return 0x8100000000f0ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN83XX) && (a<=5))
         return 0x8100000000f0ll + 0x1000000000ll * ((a) & 0x7);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
-        return 0x8100000000f0ll + 0x1000000000ll * ((a) & 0x3);
-    __cavm_csr_fatal("SATAX_UAHC_GBL_PPARAMR", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("SATAX_UAHC_GBL_PPARAMR", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SATAX_UAHC_GBL_PPARAMR(a) cavm_satax_uahc_gbl_pparamr_t
 #define bustype_CAVM_SATAX_UAHC_GBL_PPARAMR(a) CSR_TYPE_NCB32b
 #define basename_CAVM_SATAX_UAHC_GBL_PPARAMR(a) "SATAX_UAHC_GBL_PPARAMR"
-#define device_bar_CAVM_SATAX_UAHC_GBL_PPARAMR(a) 0x4 /* PF_BAR4 */
+#define device_bar_CAVM_SATAX_UAHC_GBL_PPARAMR(a) 0x0 /* PF_BAR0 */
 #define busnum_CAVM_SATAX_UAHC_GBL_PPARAMR(a) (a)
 #define arguments_CAVM_SATAX_UAHC_GBL_PPARAMR(a) (a),-1,-1,-1
 
@@ -1587,7 +1176,7 @@ static inline uint64_t CAVM_SATAX_UAHC_GBL_PPARAMR(unsigned long a)
  *
  * SATA UAHC Test Register
  * Internal:
- * See DWC_ahsata databook v5.00.
+ * See DWC_ahsata databook v4.20a.
  */
 union cavm_satax_uahc_gbl_testr
 {
@@ -1595,9 +1184,7 @@ union cavm_satax_uahc_gbl_testr
     struct cavm_satax_uahc_gbl_testr_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint32_t reserved_25_31        : 7;
-        uint32_t bsel                  : 1;  /**< [ 24: 24](R/W) Bank select. Always select 0 for BIST registers. */
-        uint32_t reserved_19_23        : 5;
+        uint32_t reserved_19_31        : 13;
         uint32_t psel                  : 3;  /**< [ 18: 16](R/W) Port select. */
         uint32_t reserved_1_15         : 15;
         uint32_t test_if               : 1;  /**< [  0:  0](R/W) Test interface. */
@@ -1605,26 +1192,10 @@ union cavm_satax_uahc_gbl_testr
         uint32_t test_if               : 1;  /**< [  0:  0](R/W) Test interface. */
         uint32_t reserved_1_15         : 15;
         uint32_t psel                  : 3;  /**< [ 18: 16](R/W) Port select. */
-        uint32_t reserved_19_23        : 5;
-        uint32_t bsel                  : 1;  /**< [ 24: 24](R/W) Bank select. Always select 0 for BIST registers. */
-        uint32_t reserved_25_31        : 7;
+        uint32_t reserved_19_31        : 13;
 #endif /* Word 0 - End */
     } s;
-    struct cavm_satax_uahc_gbl_testr_cn8
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint32_t reserved_19_31        : 13;
-        uint32_t psel                  : 3;  /**< [ 18: 16](R/W) Port select. */
-        uint32_t reserved_1_15         : 15;
-        uint32_t test_if               : 1;  /**< [  0:  0](R/W) Test interface. */
-#else /* Word 0 - Little Endian */
-        uint32_t test_if               : 1;  /**< [  0:  0](R/W) Test interface. */
-        uint32_t reserved_1_15         : 15;
-        uint32_t psel                  : 3;  /**< [ 18: 16](R/W) Port select. */
-        uint32_t reserved_19_31        : 13;
-#endif /* Word 0 - End */
-    } cn8;
-    /* struct cavm_satax_uahc_gbl_testr_s cn9; */
+    /* struct cavm_satax_uahc_gbl_testr_s cn; */
 };
 typedef union cavm_satax_uahc_gbl_testr cavm_satax_uahc_gbl_testr_t;
 
@@ -1635,15 +1206,13 @@ static inline uint64_t CAVM_SATAX_UAHC_GBL_TESTR(unsigned long a)
         return 0x8100000000f4ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN83XX) && (a<=5))
         return 0x8100000000f4ll + 0x1000000000ll * ((a) & 0x7);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
-        return 0x8100000000f4ll + 0x1000000000ll * ((a) & 0x3);
-    __cavm_csr_fatal("SATAX_UAHC_GBL_TESTR", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("SATAX_UAHC_GBL_TESTR", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SATAX_UAHC_GBL_TESTR(a) cavm_satax_uahc_gbl_testr_t
 #define bustype_CAVM_SATAX_UAHC_GBL_TESTR(a) CSR_TYPE_NCB32b
 #define basename_CAVM_SATAX_UAHC_GBL_TESTR(a) "SATAX_UAHC_GBL_TESTR"
-#define device_bar_CAVM_SATAX_UAHC_GBL_TESTR(a) 0x4 /* PF_BAR4 */
+#define device_bar_CAVM_SATAX_UAHC_GBL_TESTR(a) 0x0 /* PF_BAR0 */
 #define busnum_CAVM_SATAX_UAHC_GBL_TESTR(a) (a)
 #define arguments_CAVM_SATAX_UAHC_GBL_TESTR(a) (a),-1,-1,-1
 
@@ -1652,7 +1221,7 @@ static inline uint64_t CAVM_SATAX_UAHC_GBL_TESTR(unsigned long a)
  *
  * SATA UAHC Timer 1ms Register
  * Internal:
- * See DWC_ahsata databook v5.00.
+ * See DWC_ahsata databook v4.20a.
  */
 union cavm_satax_uahc_gbl_timer1ms
 {
@@ -1678,15 +1247,13 @@ static inline uint64_t CAVM_SATAX_UAHC_GBL_TIMER1MS(unsigned long a)
         return 0x8100000000e0ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN83XX) && (a<=5))
         return 0x8100000000e0ll + 0x1000000000ll * ((a) & 0x7);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
-        return 0x8100000000e0ll + 0x1000000000ll * ((a) & 0x3);
-    __cavm_csr_fatal("SATAX_UAHC_GBL_TIMER1MS", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("SATAX_UAHC_GBL_TIMER1MS", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SATAX_UAHC_GBL_TIMER1MS(a) cavm_satax_uahc_gbl_timer1ms_t
 #define bustype_CAVM_SATAX_UAHC_GBL_TIMER1MS(a) CSR_TYPE_NCB32b
 #define basename_CAVM_SATAX_UAHC_GBL_TIMER1MS(a) "SATAX_UAHC_GBL_TIMER1MS"
-#define device_bar_CAVM_SATAX_UAHC_GBL_TIMER1MS(a) 0x4 /* PF_BAR4 */
+#define device_bar_CAVM_SATAX_UAHC_GBL_TIMER1MS(a) 0x0 /* PF_BAR0 */
 #define busnum_CAVM_SATAX_UAHC_GBL_TIMER1MS(a) (a)
 #define arguments_CAVM_SATAX_UAHC_GBL_TIMER1MS(a) (a),-1,-1,-1
 
@@ -1695,7 +1262,7 @@ static inline uint64_t CAVM_SATAX_UAHC_GBL_TIMER1MS(unsigned long a)
  *
  * SATA UAHC Version Register
  * Internal:
- * See DWC_ahsata databook v5.00.
+ * See DWC_ahsata databook v4.20a.
  */
 union cavm_satax_uahc_gbl_versionr
 {
@@ -1719,15 +1286,13 @@ static inline uint64_t CAVM_SATAX_UAHC_GBL_VERSIONR(unsigned long a)
         return 0x8100000000f8ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN83XX) && (a<=5))
         return 0x8100000000f8ll + 0x1000000000ll * ((a) & 0x7);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
-        return 0x8100000000f8ll + 0x1000000000ll * ((a) & 0x3);
-    __cavm_csr_fatal("SATAX_UAHC_GBL_VERSIONR", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("SATAX_UAHC_GBL_VERSIONR", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SATAX_UAHC_GBL_VERSIONR(a) cavm_satax_uahc_gbl_versionr_t
 #define bustype_CAVM_SATAX_UAHC_GBL_VERSIONR(a) CSR_TYPE_NCB32b
 #define basename_CAVM_SATAX_UAHC_GBL_VERSIONR(a) "SATAX_UAHC_GBL_VERSIONR"
-#define device_bar_CAVM_SATAX_UAHC_GBL_VERSIONR(a) 0x4 /* PF_BAR4 */
+#define device_bar_CAVM_SATAX_UAHC_GBL_VERSIONR(a) 0x0 /* PF_BAR0 */
 #define busnum_CAVM_SATAX_UAHC_GBL_VERSIONR(a) (a)
 #define arguments_CAVM_SATAX_UAHC_GBL_VERSIONR(a) (a),-1,-1,-1
 
@@ -1735,8 +1300,7 @@ static inline uint64_t CAVM_SATAX_UAHC_GBL_VERSIONR(unsigned long a)
  * Register (NCB32b) sata#_uahc_gbl_vs
  *
  * SATA AHCI Version Register
- * This register indicates the major and minor version of the AHCI specification that
- * the SATA core supports.
+ * See AHCI specification v1.3 section 3.1.
  */
 union cavm_satax_uahc_gbl_vs
 {
@@ -1751,17 +1315,7 @@ union cavm_satax_uahc_gbl_vs
         uint32_t mjr                   : 16; /**< [ 31: 16](RO) Major version number. */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_satax_uahc_gbl_vs_s cn8; */
-    struct cavm_satax_uahc_gbl_vs_cn9
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint32_t mjr                   : 16; /**< [ 31: 16](RO) Major version number. */
-        uint32_t mnr                   : 16; /**< [ 15:  0](RO) Minor version number. DevSleep is supported. */
-#else /* Word 0 - Little Endian */
-        uint32_t mnr                   : 16; /**< [ 15:  0](RO) Minor version number. DevSleep is supported. */
-        uint32_t mjr                   : 16; /**< [ 31: 16](RO) Major version number. */
-#endif /* Word 0 - End */
-    } cn9;
+    /* struct cavm_satax_uahc_gbl_vs_s cn; */
 };
 typedef union cavm_satax_uahc_gbl_vs cavm_satax_uahc_gbl_vs_t;
 
@@ -1772,15 +1326,13 @@ static inline uint64_t CAVM_SATAX_UAHC_GBL_VS(unsigned long a)
         return 0x810000000010ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN83XX) && (a<=5))
         return 0x810000000010ll + 0x1000000000ll * ((a) & 0x7);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
-        return 0x810000000010ll + 0x1000000000ll * ((a) & 0x3);
-    __cavm_csr_fatal("SATAX_UAHC_GBL_VS", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("SATAX_UAHC_GBL_VS", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SATAX_UAHC_GBL_VS(a) cavm_satax_uahc_gbl_vs_t
 #define bustype_CAVM_SATAX_UAHC_GBL_VS(a) CSR_TYPE_NCB32b
 #define basename_CAVM_SATAX_UAHC_GBL_VS(a) "SATAX_UAHC_GBL_VS"
-#define device_bar_CAVM_SATAX_UAHC_GBL_VS(a) 0x4 /* PF_BAR4 */
+#define device_bar_CAVM_SATAX_UAHC_GBL_VS(a) 0x0 /* PF_BAR0 */
 #define busnum_CAVM_SATAX_UAHC_GBL_VS(a) (a)
 #define arguments_CAVM_SATAX_UAHC_GBL_VS(a) (a),-1,-1,-1
 
@@ -1789,7 +1341,7 @@ static inline uint64_t CAVM_SATAX_UAHC_GBL_VS(unsigned long a)
  *
  * SATA UAHC Command Issue Registers
  * Internal:
- * See DWC_ahsata databook v5.00.
+ * See DWC_ahsata databook v4.20a.
  */
 union cavm_satax_uahc_p0_ci
 {
@@ -1813,15 +1365,13 @@ static inline uint64_t CAVM_SATAX_UAHC_P0_CI(unsigned long a)
         return 0x810000000138ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN83XX) && (a<=5))
         return 0x810000000138ll + 0x1000000000ll * ((a) & 0x7);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
-        return 0x810000000138ll + 0x1000000000ll * ((a) & 0x3);
-    __cavm_csr_fatal("SATAX_UAHC_P0_CI", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("SATAX_UAHC_P0_CI", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SATAX_UAHC_P0_CI(a) cavm_satax_uahc_p0_ci_t
 #define bustype_CAVM_SATAX_UAHC_P0_CI(a) CSR_TYPE_NCB32b
 #define basename_CAVM_SATAX_UAHC_P0_CI(a) "SATAX_UAHC_P0_CI"
-#define device_bar_CAVM_SATAX_UAHC_P0_CI(a) 0x4 /* PF_BAR4 */
+#define device_bar_CAVM_SATAX_UAHC_P0_CI(a) 0x0 /* PF_BAR0 */
 #define busnum_CAVM_SATAX_UAHC_P0_CI(a) (a)
 #define arguments_CAVM_SATAX_UAHC_P0_CI(a) (a),-1,-1,-1
 
@@ -1830,7 +1380,7 @@ static inline uint64_t CAVM_SATAX_UAHC_P0_CI(unsigned long a)
  *
  * SATA UAHC Command-List Base-Address Registers
  * Internal:
- * See DWC_ahsata databook v5.00.
+ * See DWC_ahsata databook v4.20a.
  */
 union cavm_satax_uahc_p0_clb
 {
@@ -1856,15 +1406,13 @@ static inline uint64_t CAVM_SATAX_UAHC_P0_CLB(unsigned long a)
         return 0x810000000100ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN83XX) && (a<=5))
         return 0x810000000100ll + 0x1000000000ll * ((a) & 0x7);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
-        return 0x810000000100ll + 0x1000000000ll * ((a) & 0x3);
-    __cavm_csr_fatal("SATAX_UAHC_P0_CLB", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("SATAX_UAHC_P0_CLB", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SATAX_UAHC_P0_CLB(a) cavm_satax_uahc_p0_clb_t
 #define bustype_CAVM_SATAX_UAHC_P0_CLB(a) CSR_TYPE_NCB
 #define basename_CAVM_SATAX_UAHC_P0_CLB(a) "SATAX_UAHC_P0_CLB"
-#define device_bar_CAVM_SATAX_UAHC_P0_CLB(a) 0x4 /* PF_BAR4 */
+#define device_bar_CAVM_SATAX_UAHC_P0_CLB(a) 0x0 /* PF_BAR0 */
 #define busnum_CAVM_SATAX_UAHC_P0_CLB(a) (a)
 #define arguments_CAVM_SATAX_UAHC_P0_CLB(a) (a),-1,-1,-1
 
@@ -1873,7 +1421,7 @@ static inline uint64_t CAVM_SATAX_UAHC_P0_CLB(unsigned long a)
  *
  * SATA UAHC Command Registers
  * Internal:
- * See DWC_ahsata databook v5.00.
+ * See DWC_ahsata databook v4.20a.
  */
 union cavm_satax_uahc_p0_cmd
 {
@@ -1943,89 +1491,22 @@ static inline uint64_t CAVM_SATAX_UAHC_P0_CMD(unsigned long a)
         return 0x810000000118ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN83XX) && (a<=5))
         return 0x810000000118ll + 0x1000000000ll * ((a) & 0x7);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
-        return 0x810000000118ll + 0x1000000000ll * ((a) & 0x3);
-    __cavm_csr_fatal("SATAX_UAHC_P0_CMD", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("SATAX_UAHC_P0_CMD", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SATAX_UAHC_P0_CMD(a) cavm_satax_uahc_p0_cmd_t
 #define bustype_CAVM_SATAX_UAHC_P0_CMD(a) CSR_TYPE_NCB32b
 #define basename_CAVM_SATAX_UAHC_P0_CMD(a) "SATAX_UAHC_P0_CMD"
-#define device_bar_CAVM_SATAX_UAHC_P0_CMD(a) 0x4 /* PF_BAR4 */
+#define device_bar_CAVM_SATAX_UAHC_P0_CMD(a) 0x0 /* PF_BAR0 */
 #define busnum_CAVM_SATAX_UAHC_P0_CMD(a) (a)
 #define arguments_CAVM_SATAX_UAHC_P0_CMD(a) (a),-1,-1,-1
-
-/**
- * Register (NCB32b) sata#_uahc_p0_devslp
- *
- * SATA UAHC Device Sleep Register
- * Internal:
- * See DWC_ahsata databook v5.00.
- */
-union cavm_satax_uahc_p0_devslp
-{
-    uint32_t u;
-    struct cavm_satax_uahc_p0_devslp_s
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint32_t reserved_29_31        : 3;
-        uint32_t dm                    : 4;  /**< [ 28: 25](R/W) DITO multiplier. Write once only. */
-        uint32_t dito                  : 10; /**< [ 24: 15](R/W) Device sleep idle timeout.
-                                                                 If [DSP]=0, then these bits are read-only zero and software should treat them as reserved.
-                                                                 If [DSP]=1, then these bits are read-write and reset to 0xA on powerup only. */
-        uint32_t mdat                  : 5;  /**< [ 14: 10](R/W) Minimum device sleep assertion time.
-                                                                 If [DSP]=0, then these bits are read-only zero and software should treat them as reserved.
-                                                                 If [DSP]=1, then these bits are read-write and reset to 0xA on powerup only. */
-        uint32_t deto                  : 8;  /**< [  9:  2](R/W) Device sleep exit timeout.
-                                                                 If [DSP]=0, then these bits are read-only zero and software should treat them as reserved.
-                                                                 If [DSP]=1, then these bits are read-write and reset to 0x14 on powerup only. */
-        uint32_t dsp                   : 1;  /**< [  1:  1](R/W) Device sleep present. Write once only. */
-        uint32_t adse                  : 1;  /**< [  0:  0](R/W) Aggressive device sleep enable.
-                                                                 If [DSP]=0, then this bit is read-only zero and software should treat it as reserved.
-                                                                 If [DSP]=1, then this bit is read-write. */
-#else /* Word 0 - Little Endian */
-        uint32_t adse                  : 1;  /**< [  0:  0](R/W) Aggressive device sleep enable.
-                                                                 If [DSP]=0, then this bit is read-only zero and software should treat it as reserved.
-                                                                 If [DSP]=1, then this bit is read-write. */
-        uint32_t dsp                   : 1;  /**< [  1:  1](R/W) Device sleep present. Write once only. */
-        uint32_t deto                  : 8;  /**< [  9:  2](R/W) Device sleep exit timeout.
-                                                                 If [DSP]=0, then these bits are read-only zero and software should treat them as reserved.
-                                                                 If [DSP]=1, then these bits are read-write and reset to 0x14 on powerup only. */
-        uint32_t mdat                  : 5;  /**< [ 14: 10](R/W) Minimum device sleep assertion time.
-                                                                 If [DSP]=0, then these bits are read-only zero and software should treat them as reserved.
-                                                                 If [DSP]=1, then these bits are read-write and reset to 0xA on powerup only. */
-        uint32_t dito                  : 10; /**< [ 24: 15](R/W) Device sleep idle timeout.
-                                                                 If [DSP]=0, then these bits are read-only zero and software should treat them as reserved.
-                                                                 If [DSP]=1, then these bits are read-write and reset to 0xA on powerup only. */
-        uint32_t dm                    : 4;  /**< [ 28: 25](R/W) DITO multiplier. Write once only. */
-        uint32_t reserved_29_31        : 3;
-#endif /* Word 0 - End */
-    } s;
-    /* struct cavm_satax_uahc_p0_devslp_s cn; */
-};
-typedef union cavm_satax_uahc_p0_devslp cavm_satax_uahc_p0_devslp_t;
-
-static inline uint64_t CAVM_SATAX_UAHC_P0_DEVSLP(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_SATAX_UAHC_P0_DEVSLP(unsigned long a)
-{
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
-        return 0x810000000144ll + 0x1000000000ll * ((a) & 0x3);
-    __cavm_csr_fatal("SATAX_UAHC_P0_DEVSLP", 1, a, 0, 0, 0);
-}
-
-#define typedef_CAVM_SATAX_UAHC_P0_DEVSLP(a) cavm_satax_uahc_p0_devslp_t
-#define bustype_CAVM_SATAX_UAHC_P0_DEVSLP(a) CSR_TYPE_NCB32b
-#define basename_CAVM_SATAX_UAHC_P0_DEVSLP(a) "SATAX_UAHC_P0_DEVSLP"
-#define device_bar_CAVM_SATAX_UAHC_P0_DEVSLP(a) 0x4 /* PF_BAR4 */
-#define busnum_CAVM_SATAX_UAHC_P0_DEVSLP(a) (a)
-#define arguments_CAVM_SATAX_UAHC_P0_DEVSLP(a) (a),-1,-1,-1
 
 /**
  * Register (NCB32b) sata#_uahc_p0_dmacr
  *
  * SATA UAHC DMA Control Registers
  * Internal:
- * See DWC_ahsata databook v5.00.
+ * See DWC_ahsata databook v4.20a.
  */
 union cavm_satax_uahc_p0_dmacr
 {
@@ -2057,15 +1538,13 @@ static inline uint64_t CAVM_SATAX_UAHC_P0_DMACR(unsigned long a)
         return 0x810000000170ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN83XX) && (a<=5))
         return 0x810000000170ll + 0x1000000000ll * ((a) & 0x7);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
-        return 0x810000000170ll + 0x1000000000ll * ((a) & 0x3);
-    __cavm_csr_fatal("SATAX_UAHC_P0_DMACR", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("SATAX_UAHC_P0_DMACR", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SATAX_UAHC_P0_DMACR(a) cavm_satax_uahc_p0_dmacr_t
 #define bustype_CAVM_SATAX_UAHC_P0_DMACR(a) CSR_TYPE_NCB32b
 #define basename_CAVM_SATAX_UAHC_P0_DMACR(a) "SATAX_UAHC_P0_DMACR"
-#define device_bar_CAVM_SATAX_UAHC_P0_DMACR(a) 0x4 /* PF_BAR4 */
+#define device_bar_CAVM_SATAX_UAHC_P0_DMACR(a) 0x0 /* PF_BAR0 */
 #define busnum_CAVM_SATAX_UAHC_P0_DMACR(a) (a)
 #define arguments_CAVM_SATAX_UAHC_P0_DMACR(a) (a),-1,-1,-1
 
@@ -2074,7 +1553,7 @@ static inline uint64_t CAVM_SATAX_UAHC_P0_DMACR(unsigned long a)
  *
  * SATA UAHC FIS Base-Address Registers
  * Internal:
- * See DWC_ahsata databook v5.00.
+ * See DWC_ahsata databook v4.20a.
  */
 union cavm_satax_uahc_p0_fb
 {
@@ -2100,15 +1579,13 @@ static inline uint64_t CAVM_SATAX_UAHC_P0_FB(unsigned long a)
         return 0x810000000108ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN83XX) && (a<=5))
         return 0x810000000108ll + 0x1000000000ll * ((a) & 0x7);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
-        return 0x810000000108ll + 0x1000000000ll * ((a) & 0x3);
-    __cavm_csr_fatal("SATAX_UAHC_P0_FB", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("SATAX_UAHC_P0_FB", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SATAX_UAHC_P0_FB(a) cavm_satax_uahc_p0_fb_t
 #define bustype_CAVM_SATAX_UAHC_P0_FB(a) CSR_TYPE_NCB
 #define basename_CAVM_SATAX_UAHC_P0_FB(a) "SATAX_UAHC_P0_FB"
-#define device_bar_CAVM_SATAX_UAHC_P0_FB(a) 0x4 /* PF_BAR4 */
+#define device_bar_CAVM_SATAX_UAHC_P0_FB(a) 0x0 /* PF_BAR0 */
 #define busnum_CAVM_SATAX_UAHC_P0_FB(a) (a)
 #define arguments_CAVM_SATAX_UAHC_P0_FB(a) (a),-1,-1,-1
 
@@ -2117,7 +1594,7 @@ static inline uint64_t CAVM_SATAX_UAHC_P0_FB(unsigned long a)
  *
  * SATA UAHC FIS-Based Switching Control Registers
  * Internal:
- * See DWC_ahsata databook v5.00.
+ * See DWC_ahsata databook v4.20a.
  */
 union cavm_satax_uahc_p0_fbs
 {
@@ -2155,15 +1632,13 @@ static inline uint64_t CAVM_SATAX_UAHC_P0_FBS(unsigned long a)
         return 0x810000000140ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN83XX) && (a<=5))
         return 0x810000000140ll + 0x1000000000ll * ((a) & 0x7);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
-        return 0x810000000140ll + 0x1000000000ll * ((a) & 0x3);
-    __cavm_csr_fatal("SATAX_UAHC_P0_FBS", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("SATAX_UAHC_P0_FBS", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SATAX_UAHC_P0_FBS(a) cavm_satax_uahc_p0_fbs_t
 #define bustype_CAVM_SATAX_UAHC_P0_FBS(a) CSR_TYPE_NCB32b
 #define basename_CAVM_SATAX_UAHC_P0_FBS(a) "SATAX_UAHC_P0_FBS"
-#define device_bar_CAVM_SATAX_UAHC_P0_FBS(a) 0x4 /* PF_BAR4 */
+#define device_bar_CAVM_SATAX_UAHC_P0_FBS(a) 0x0 /* PF_BAR0 */
 #define busnum_CAVM_SATAX_UAHC_P0_FBS(a) (a)
 #define arguments_CAVM_SATAX_UAHC_P0_FBS(a) (a),-1,-1,-1
 
@@ -2172,7 +1647,7 @@ static inline uint64_t CAVM_SATAX_UAHC_P0_FBS(unsigned long a)
  *
  * SATA UAHC Interrupt Enable Registers
  * Internal:
- * See DWC_ahsata databook v5.00.
+ * See DWC_ahsata databook v4.20a.
  */
 union cavm_satax_uahc_p0_ie
 {
@@ -2232,15 +1707,13 @@ static inline uint64_t CAVM_SATAX_UAHC_P0_IE(unsigned long a)
         return 0x810000000114ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN83XX) && (a<=5))
         return 0x810000000114ll + 0x1000000000ll * ((a) & 0x7);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
-        return 0x810000000114ll + 0x1000000000ll * ((a) & 0x3);
-    __cavm_csr_fatal("SATAX_UAHC_P0_IE", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("SATAX_UAHC_P0_IE", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SATAX_UAHC_P0_IE(a) cavm_satax_uahc_p0_ie_t
 #define bustype_CAVM_SATAX_UAHC_P0_IE(a) CSR_TYPE_NCB32b
 #define basename_CAVM_SATAX_UAHC_P0_IE(a) "SATAX_UAHC_P0_IE"
-#define device_bar_CAVM_SATAX_UAHC_P0_IE(a) 0x4 /* PF_BAR4 */
+#define device_bar_CAVM_SATAX_UAHC_P0_IE(a) 0x0 /* PF_BAR0 */
 #define busnum_CAVM_SATAX_UAHC_P0_IE(a) (a)
 #define arguments_CAVM_SATAX_UAHC_P0_IE(a) (a),-1,-1,-1
 
@@ -2249,7 +1722,7 @@ static inline uint64_t CAVM_SATAX_UAHC_P0_IE(unsigned long a)
  *
  * SATA UAHC Interrupt Status Registers
  * Internal:
- * See DWC_ahsata databook v5.00.
+ * See DWC_ahsata databook v4.20a.
  */
 union cavm_satax_uahc_p0_is
 {
@@ -2309,15 +1782,13 @@ static inline uint64_t CAVM_SATAX_UAHC_P0_IS(unsigned long a)
         return 0x810000000110ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN83XX) && (a<=5))
         return 0x810000000110ll + 0x1000000000ll * ((a) & 0x7);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
-        return 0x810000000110ll + 0x1000000000ll * ((a) & 0x3);
-    __cavm_csr_fatal("SATAX_UAHC_P0_IS", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("SATAX_UAHC_P0_IS", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SATAX_UAHC_P0_IS(a) cavm_satax_uahc_p0_is_t
 #define bustype_CAVM_SATAX_UAHC_P0_IS(a) CSR_TYPE_NCB32b
 #define basename_CAVM_SATAX_UAHC_P0_IS(a) "SATAX_UAHC_P0_IS"
-#define device_bar_CAVM_SATAX_UAHC_P0_IS(a) 0x4 /* PF_BAR4 */
+#define device_bar_CAVM_SATAX_UAHC_P0_IS(a) 0x0 /* PF_BAR0 */
 #define busnum_CAVM_SATAX_UAHC_P0_IS(a) (a)
 #define arguments_CAVM_SATAX_UAHC_P0_IS(a) (a),-1,-1,-1
 
@@ -2326,7 +1797,7 @@ static inline uint64_t CAVM_SATAX_UAHC_P0_IS(unsigned long a)
  *
  * SATA UAHC PHY Control Registers
  * Internal:
- * See DWC_ahsata databook v5.00.
+ * See DWC_ahsata databook v4.20a.
  */
 union cavm_satax_uahc_p0_phycr
 {
@@ -2350,15 +1821,13 @@ static inline uint64_t CAVM_SATAX_UAHC_P0_PHYCR(unsigned long a)
         return 0x810000000178ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN83XX) && (a<=5))
         return 0x810000000178ll + 0x1000000000ll * ((a) & 0x7);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
-        return 0x810000000178ll + 0x1000000000ll * ((a) & 0x3);
-    __cavm_csr_fatal("SATAX_UAHC_P0_PHYCR", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("SATAX_UAHC_P0_PHYCR", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SATAX_UAHC_P0_PHYCR(a) cavm_satax_uahc_p0_phycr_t
 #define bustype_CAVM_SATAX_UAHC_P0_PHYCR(a) CSR_TYPE_NCB32b
 #define basename_CAVM_SATAX_UAHC_P0_PHYCR(a) "SATAX_UAHC_P0_PHYCR"
-#define device_bar_CAVM_SATAX_UAHC_P0_PHYCR(a) 0x4 /* PF_BAR4 */
+#define device_bar_CAVM_SATAX_UAHC_P0_PHYCR(a) 0x0 /* PF_BAR0 */
 #define busnum_CAVM_SATAX_UAHC_P0_PHYCR(a) (a)
 #define arguments_CAVM_SATAX_UAHC_P0_PHYCR(a) (a),-1,-1,-1
 
@@ -2367,7 +1836,7 @@ static inline uint64_t CAVM_SATAX_UAHC_P0_PHYCR(unsigned long a)
  *
  * SATA UAHC PHY Status Registers
  * Internal:
- * See DWC_ahsata databook v5.00.
+ * See DWC_ahsata databook v4.20a.
  */
 union cavm_satax_uahc_p0_physr
 {
@@ -2391,15 +1860,13 @@ static inline uint64_t CAVM_SATAX_UAHC_P0_PHYSR(unsigned long a)
         return 0x81000000017cll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN83XX) && (a<=5))
         return 0x81000000017cll + 0x1000000000ll * ((a) & 0x7);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
-        return 0x81000000017cll + 0x1000000000ll * ((a) & 0x3);
-    __cavm_csr_fatal("SATAX_UAHC_P0_PHYSR", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("SATAX_UAHC_P0_PHYSR", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SATAX_UAHC_P0_PHYSR(a) cavm_satax_uahc_p0_physr_t
 #define bustype_CAVM_SATAX_UAHC_P0_PHYSR(a) CSR_TYPE_NCB32b
 #define basename_CAVM_SATAX_UAHC_P0_PHYSR(a) "SATAX_UAHC_P0_PHYSR"
-#define device_bar_CAVM_SATAX_UAHC_P0_PHYSR(a) 0x4 /* PF_BAR4 */
+#define device_bar_CAVM_SATAX_UAHC_P0_PHYSR(a) 0x0 /* PF_BAR0 */
 #define busnum_CAVM_SATAX_UAHC_P0_PHYSR(a) (a)
 #define arguments_CAVM_SATAX_UAHC_P0_PHYSR(a) (a),-1,-1,-1
 
@@ -2408,7 +1875,7 @@ static inline uint64_t CAVM_SATAX_UAHC_P0_PHYSR(unsigned long a)
  *
  * SATA UAHC SATA Active Registers
  * Internal:
- * See DWC_ahsata databook v5.00.
+ * See DWC_ahsata databook v4.20a.
  */
 union cavm_satax_uahc_p0_sact
 {
@@ -2432,15 +1899,13 @@ static inline uint64_t CAVM_SATAX_UAHC_P0_SACT(unsigned long a)
         return 0x810000000134ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN83XX) && (a<=5))
         return 0x810000000134ll + 0x1000000000ll * ((a) & 0x7);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
-        return 0x810000000134ll + 0x1000000000ll * ((a) & 0x3);
-    __cavm_csr_fatal("SATAX_UAHC_P0_SACT", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("SATAX_UAHC_P0_SACT", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SATAX_UAHC_P0_SACT(a) cavm_satax_uahc_p0_sact_t
 #define bustype_CAVM_SATAX_UAHC_P0_SACT(a) CSR_TYPE_NCB32b
 #define basename_CAVM_SATAX_UAHC_P0_SACT(a) "SATAX_UAHC_P0_SACT"
-#define device_bar_CAVM_SATAX_UAHC_P0_SACT(a) 0x4 /* PF_BAR4 */
+#define device_bar_CAVM_SATAX_UAHC_P0_SACT(a) 0x0 /* PF_BAR0 */
 #define busnum_CAVM_SATAX_UAHC_P0_SACT(a) (a)
 #define arguments_CAVM_SATAX_UAHC_P0_SACT(a) (a),-1,-1,-1
 
@@ -2449,7 +1914,7 @@ static inline uint64_t CAVM_SATAX_UAHC_P0_SACT(unsigned long a)
  *
  * SATA UAHC SATA Control Registers
  * Internal:
- * See DWC_ahsata databook v5.00.
+ * See DWC_ahsata databook v4.20a.
  */
 union cavm_satax_uahc_p0_sctl
 {
@@ -2457,8 +1922,8 @@ union cavm_satax_uahc_p0_sctl
     struct cavm_satax_uahc_p0_sctl_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint32_t reserved_11_31        : 21;
-        uint32_t ipm                   : 3;  /**< [ 10:  8](R/W) Interface power-management transitions allowed. */
+        uint32_t reserved_10_31        : 22;
+        uint32_t ipm                   : 2;  /**< [  9:  8](R/W) Interface power-management transitions allowed. */
         uint32_t reserved_6_7          : 2;
         uint32_t spd                   : 2;  /**< [  5:  4](R/W) Speed allowed. */
         uint32_t reserved_3            : 1;
@@ -2468,29 +1933,11 @@ union cavm_satax_uahc_p0_sctl
         uint32_t reserved_3            : 1;
         uint32_t spd                   : 2;  /**< [  5:  4](R/W) Speed allowed. */
         uint32_t reserved_6_7          : 2;
-        uint32_t ipm                   : 3;  /**< [ 10:  8](R/W) Interface power-management transitions allowed. */
-        uint32_t reserved_11_31        : 21;
+        uint32_t ipm                   : 2;  /**< [  9:  8](R/W) Interface power-management transitions allowed. */
+        uint32_t reserved_10_31        : 22;
 #endif /* Word 0 - End */
     } s;
-    struct cavm_satax_uahc_p0_sctl_cn8
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint32_t reserved_10_31        : 22;
-        uint32_t ipm                   : 2;  /**< [  9:  8](R/W) Interface power-management transitions allowed. */
-        uint32_t reserved_6_7          : 2;
-        uint32_t spd                   : 2;  /**< [  5:  4](R/W) Speed allowed. */
-        uint32_t reserved_3            : 1;
-        uint32_t det                   : 3;  /**< [  2:  0](R/W) Device-detection initialization. */
-#else /* Word 0 - Little Endian */
-        uint32_t det                   : 3;  /**< [  2:  0](R/W) Device-detection initialization. */
-        uint32_t reserved_3            : 1;
-        uint32_t spd                   : 2;  /**< [  5:  4](R/W) Speed allowed. */
-        uint32_t reserved_6_7          : 2;
-        uint32_t ipm                   : 2;  /**< [  9:  8](R/W) Interface power-management transitions allowed. */
-        uint32_t reserved_10_31        : 22;
-#endif /* Word 0 - End */
-    } cn8;
-    /* struct cavm_satax_uahc_p0_sctl_s cn9; */
+    /* struct cavm_satax_uahc_p0_sctl_s cn; */
 };
 typedef union cavm_satax_uahc_p0_sctl cavm_satax_uahc_p0_sctl_t;
 
@@ -2501,15 +1948,13 @@ static inline uint64_t CAVM_SATAX_UAHC_P0_SCTL(unsigned long a)
         return 0x81000000012cll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN83XX) && (a<=5))
         return 0x81000000012cll + 0x1000000000ll * ((a) & 0x7);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
-        return 0x81000000012cll + 0x1000000000ll * ((a) & 0x3);
-    __cavm_csr_fatal("SATAX_UAHC_P0_SCTL", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("SATAX_UAHC_P0_SCTL", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SATAX_UAHC_P0_SCTL(a) cavm_satax_uahc_p0_sctl_t
 #define bustype_CAVM_SATAX_UAHC_P0_SCTL(a) CSR_TYPE_NCB32b
 #define basename_CAVM_SATAX_UAHC_P0_SCTL(a) "SATAX_UAHC_P0_SCTL"
-#define device_bar_CAVM_SATAX_UAHC_P0_SCTL(a) 0x4 /* PF_BAR4 */
+#define device_bar_CAVM_SATAX_UAHC_P0_SCTL(a) 0x0 /* PF_BAR0 */
 #define busnum_CAVM_SATAX_UAHC_P0_SCTL(a) (a)
 #define arguments_CAVM_SATAX_UAHC_P0_SCTL(a) (a),-1,-1,-1
 
@@ -2518,7 +1963,7 @@ static inline uint64_t CAVM_SATAX_UAHC_P0_SCTL(unsigned long a)
  *
  * SATA UAHC SATA Error Registers
  * Internal:
- * See DWC_ahsata databook v5.00.
+ * See DWC_ahsata databook v4.20a.
  */
 union cavm_satax_uahc_p0_serr
 {
@@ -2580,15 +2025,13 @@ static inline uint64_t CAVM_SATAX_UAHC_P0_SERR(unsigned long a)
         return 0x810000000130ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN83XX) && (a<=5))
         return 0x810000000130ll + 0x1000000000ll * ((a) & 0x7);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
-        return 0x810000000130ll + 0x1000000000ll * ((a) & 0x3);
-    __cavm_csr_fatal("SATAX_UAHC_P0_SERR", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("SATAX_UAHC_P0_SERR", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SATAX_UAHC_P0_SERR(a) cavm_satax_uahc_p0_serr_t
 #define bustype_CAVM_SATAX_UAHC_P0_SERR(a) CSR_TYPE_NCB32b
 #define basename_CAVM_SATAX_UAHC_P0_SERR(a) "SATAX_UAHC_P0_SERR"
-#define device_bar_CAVM_SATAX_UAHC_P0_SERR(a) 0x4 /* PF_BAR4 */
+#define device_bar_CAVM_SATAX_UAHC_P0_SERR(a) 0x0 /* PF_BAR0 */
 #define busnum_CAVM_SATAX_UAHC_P0_SERR(a) (a)
 #define arguments_CAVM_SATAX_UAHC_P0_SERR(a) (a),-1,-1,-1
 
@@ -2597,7 +2040,7 @@ static inline uint64_t CAVM_SATAX_UAHC_P0_SERR(unsigned long a)
  *
  * SATA UAHC Signature Registers
  * Internal:
- * See DWC_ahsata databook v5.00.
+ * See DWC_ahsata databook v4.20a.
  */
 union cavm_satax_uahc_p0_sig
 {
@@ -2621,15 +2064,13 @@ static inline uint64_t CAVM_SATAX_UAHC_P0_SIG(unsigned long a)
         return 0x810000000124ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN83XX) && (a<=5))
         return 0x810000000124ll + 0x1000000000ll * ((a) & 0x7);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
-        return 0x810000000124ll + 0x1000000000ll * ((a) & 0x3);
-    __cavm_csr_fatal("SATAX_UAHC_P0_SIG", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("SATAX_UAHC_P0_SIG", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SATAX_UAHC_P0_SIG(a) cavm_satax_uahc_p0_sig_t
 #define bustype_CAVM_SATAX_UAHC_P0_SIG(a) CSR_TYPE_NCB32b
 #define basename_CAVM_SATAX_UAHC_P0_SIG(a) "SATAX_UAHC_P0_SIG"
-#define device_bar_CAVM_SATAX_UAHC_P0_SIG(a) 0x4 /* PF_BAR4 */
+#define device_bar_CAVM_SATAX_UAHC_P0_SIG(a) 0x0 /* PF_BAR0 */
 #define busnum_CAVM_SATAX_UAHC_P0_SIG(a) (a)
 #define arguments_CAVM_SATAX_UAHC_P0_SIG(a) (a),-1,-1,-1
 
@@ -2638,7 +2079,7 @@ static inline uint64_t CAVM_SATAX_UAHC_P0_SIG(unsigned long a)
  *
  * SATA UAHC SATA Notification Registers
  * Internal:
- * See DWC_ahsata databook v5.00.
+ * See DWC_ahsata databook v4.20a.
  */
 union cavm_satax_uahc_p0_sntf
 {
@@ -2664,15 +2105,13 @@ static inline uint64_t CAVM_SATAX_UAHC_P0_SNTF(unsigned long a)
         return 0x81000000013cll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN83XX) && (a<=5))
         return 0x81000000013cll + 0x1000000000ll * ((a) & 0x7);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
-        return 0x81000000013cll + 0x1000000000ll * ((a) & 0x3);
-    __cavm_csr_fatal("SATAX_UAHC_P0_SNTF", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("SATAX_UAHC_P0_SNTF", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SATAX_UAHC_P0_SNTF(a) cavm_satax_uahc_p0_sntf_t
 #define bustype_CAVM_SATAX_UAHC_P0_SNTF(a) CSR_TYPE_NCB32b
 #define basename_CAVM_SATAX_UAHC_P0_SNTF(a) "SATAX_UAHC_P0_SNTF"
-#define device_bar_CAVM_SATAX_UAHC_P0_SNTF(a) 0x4 /* PF_BAR4 */
+#define device_bar_CAVM_SATAX_UAHC_P0_SNTF(a) 0x0 /* PF_BAR0 */
 #define busnum_CAVM_SATAX_UAHC_P0_SNTF(a) (a)
 #define arguments_CAVM_SATAX_UAHC_P0_SNTF(a) (a),-1,-1,-1
 
@@ -2681,7 +2120,7 @@ static inline uint64_t CAVM_SATAX_UAHC_P0_SNTF(unsigned long a)
  *
  * SATA UAHC SATA Status Registers
  * Internal:
- * See DWC_ahsata databook v5.00.
+ * See DWC_ahsata databook v4.20a.
  */
 union cavm_satax_uahc_p0_ssts
 {
@@ -2711,15 +2150,13 @@ static inline uint64_t CAVM_SATAX_UAHC_P0_SSTS(unsigned long a)
         return 0x810000000128ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN83XX) && (a<=5))
         return 0x810000000128ll + 0x1000000000ll * ((a) & 0x7);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
-        return 0x810000000128ll + 0x1000000000ll * ((a) & 0x3);
-    __cavm_csr_fatal("SATAX_UAHC_P0_SSTS", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("SATAX_UAHC_P0_SSTS", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SATAX_UAHC_P0_SSTS(a) cavm_satax_uahc_p0_ssts_t
 #define bustype_CAVM_SATAX_UAHC_P0_SSTS(a) CSR_TYPE_NCB32b
 #define basename_CAVM_SATAX_UAHC_P0_SSTS(a) "SATAX_UAHC_P0_SSTS"
-#define device_bar_CAVM_SATAX_UAHC_P0_SSTS(a) 0x4 /* PF_BAR4 */
+#define device_bar_CAVM_SATAX_UAHC_P0_SSTS(a) 0x0 /* PF_BAR0 */
 #define busnum_CAVM_SATAX_UAHC_P0_SSTS(a) (a)
 #define arguments_CAVM_SATAX_UAHC_P0_SSTS(a) (a),-1,-1,-1
 
@@ -2728,7 +2165,7 @@ static inline uint64_t CAVM_SATAX_UAHC_P0_SSTS(unsigned long a)
  *
  * SATA UAHC Task File Data Registers
  * Internal:
- * See DWC_ahsata databook v5.00.
+ * See DWC_ahsata databook v4.20a.
  */
 union cavm_satax_uahc_p0_tfd
 {
@@ -2766,15 +2203,13 @@ static inline uint64_t CAVM_SATAX_UAHC_P0_TFD(unsigned long a)
         return 0x810000000120ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN83XX) && (a<=5))
         return 0x810000000120ll + 0x1000000000ll * ((a) & 0x7);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
-        return 0x810000000120ll + 0x1000000000ll * ((a) & 0x3);
-    __cavm_csr_fatal("SATAX_UAHC_P0_TFD", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("SATAX_UAHC_P0_TFD", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SATAX_UAHC_P0_TFD(a) cavm_satax_uahc_p0_tfd_t
 #define bustype_CAVM_SATAX_UAHC_P0_TFD(a) CSR_TYPE_NCB32b
 #define basename_CAVM_SATAX_UAHC_P0_TFD(a) "SATAX_UAHC_P0_TFD"
-#define device_bar_CAVM_SATAX_UAHC_P0_TFD(a) 0x4 /* PF_BAR4 */
+#define device_bar_CAVM_SATAX_UAHC_P0_TFD(a) 0x0 /* PF_BAR0 */
 #define busnum_CAVM_SATAX_UAHC_P0_TFD(a) (a)
 #define arguments_CAVM_SATAX_UAHC_P0_TFD(a) (a),-1,-1,-1
 
@@ -2839,7 +2274,7 @@ static inline uint64_t CAVM_SATAX_UCTL_BIST_STATUS(unsigned long a)
         return 0x810000100008ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN83XX) && (a<=5))
         return 0x810000100008ll + 0x1000000000ll * ((a) & 0x7);
-    __cavm_csr_fatal("SATAX_UCTL_BIST_STATUS", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("SATAX_UCTL_BIST_STATUS", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SATAX_UCTL_BIST_STATUS(a) cavm_satax_uctl_bist_status_t
@@ -2848,228 +2283,6 @@ static inline uint64_t CAVM_SATAX_UCTL_BIST_STATUS(unsigned long a)
 #define device_bar_CAVM_SATAX_UCTL_BIST_STATUS(a) 0x0 /* PF_BAR0 */
 #define busnum_CAVM_SATAX_UCTL_BIST_STATUS(a) (a)
 #define arguments_CAVM_SATAX_UCTL_BIST_STATUS(a) (a),-1,-1,-1
-
-/**
- * Register (NCB) sata#_uctl_bp_test
- *
- * INTERNAL: SATA UCTL Backpressure Test Register
- */
-union cavm_satax_uctl_bp_test
-{
-    uint64_t u;
-    struct cavm_satax_uctl_bp_test_s
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t enable                : 4;  /**< [ 63: 60](R/W) Enable test mode. For diagnostic use only.
-                                                                 Internal:
-                                                                 Once a bit is set, random backpressure is generated
-                                                                 at the corresponding point to allow for more frequent backpressure.
-                                                                 \<63\> = Reserved.
-                                                                 \<62\> = Limit the NCBI posted request FIFO from unloading.
-                                                                 \<61\> = Limit the NCBI nonposted request FIFO from unloading.
-                                                                 \<60\> = Limit the NCBI completion request FIFO from unloading. */
-        uint64_t reserved_24_59        : 36;
-        uint64_t bp_cfg                : 8;  /**< [ 23: 16](R/W) Backpressure weight. For diagnostic use only.
-                                                                 Internal:
-                                                                 There are 2 backpressure configuration bits per enable, with the two bits
-                                                                 defined as 0x0=100% of the time, 0x1=75% of the time, 0x2=50% of the time,
-                                                                 0x3=25% of the time.
-                                                                   \<23:22\> = Config 3.
-                                                                   \<21:20\> = Config 2.
-                                                                   \<19:18\> = Config 1.
-                                                                   \<17:16\> = Config 0. */
-        uint64_t reserved_12_15        : 4;
-        uint64_t lfsr_freq             : 12; /**< [ 11:  0](R/W) Test LFSR update frequency in coprocessor-clocks minus one. */
-#else /* Word 0 - Little Endian */
-        uint64_t lfsr_freq             : 12; /**< [ 11:  0](R/W) Test LFSR update frequency in coprocessor-clocks minus one. */
-        uint64_t reserved_12_15        : 4;
-        uint64_t bp_cfg                : 8;  /**< [ 23: 16](R/W) Backpressure weight. For diagnostic use only.
-                                                                 Internal:
-                                                                 There are 2 backpressure configuration bits per enable, with the two bits
-                                                                 defined as 0x0=100% of the time, 0x1=75% of the time, 0x2=50% of the time,
-                                                                 0x3=25% of the time.
-                                                                   \<23:22\> = Config 3.
-                                                                   \<21:20\> = Config 2.
-                                                                   \<19:18\> = Config 1.
-                                                                   \<17:16\> = Config 0. */
-        uint64_t reserved_24_59        : 36;
-        uint64_t enable                : 4;  /**< [ 63: 60](R/W) Enable test mode. For diagnostic use only.
-                                                                 Internal:
-                                                                 Once a bit is set, random backpressure is generated
-                                                                 at the corresponding point to allow for more frequent backpressure.
-                                                                 \<63\> = Reserved.
-                                                                 \<62\> = Limit the NCBI posted request FIFO from unloading.
-                                                                 \<61\> = Limit the NCBI nonposted request FIFO from unloading.
-                                                                 \<60\> = Limit the NCBI completion request FIFO from unloading. */
-#endif /* Word 0 - End */
-    } s;
-    /* struct cavm_satax_uctl_bp_test_s cn; */
-};
-typedef union cavm_satax_uctl_bp_test cavm_satax_uctl_bp_test_t;
-
-static inline uint64_t CAVM_SATAX_UCTL_BP_TEST(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_SATAX_UCTL_BP_TEST(unsigned long a)
-{
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
-        return 0x810000100020ll + 0x1000000000ll * ((a) & 0x3);
-    __cavm_csr_fatal("SATAX_UCTL_BP_TEST", 1, a, 0, 0, 0);
-}
-
-#define typedef_CAVM_SATAX_UCTL_BP_TEST(a) cavm_satax_uctl_bp_test_t
-#define bustype_CAVM_SATAX_UCTL_BP_TEST(a) CSR_TYPE_NCB
-#define basename_CAVM_SATAX_UCTL_BP_TEST(a) "SATAX_UCTL_BP_TEST"
-#define device_bar_CAVM_SATAX_UCTL_BP_TEST(a) 0x4 /* PF_BAR4 */
-#define busnum_CAVM_SATAX_UCTL_BP_TEST(a) (a)
-#define arguments_CAVM_SATAX_UCTL_BP_TEST(a) (a),-1,-1,-1
-
-/**
- * Register (NCB) sata#_uctl_cap_cfg
- *
- * SATA UCTL Capability Configuration Register
- * This register allows for overriding the advertised AHCI power management
- * capabilities, configuration registers, and unplug notifications to work around
- * hardware issues without modifying standard drivers. For diagnostic use only.
- */
-union cavm_satax_uctl_cap_cfg
-{
-    uint64_t u;
-    struct cavm_satax_uctl_cap_cfg_s
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t or_ahci_cap_en        : 1;  /**< [ 63: 63](R/W) Enable overriding advertised AHCI power management capabilities. */
-        uint64_t gbl_cap_salp          : 1;  /**< [ 62: 62](R/W) Override SATA()_UAHC_GBL_CAP[SALP]. */
-        uint64_t gbl_cap_ssc           : 1;  /**< [ 61: 61](R/W) Override SATA()_UAHC_GBL_CAP[SSC]. */
-        uint64_t gbl_cap2_sadm         : 1;  /**< [ 60: 60](R/W) Override SATA()_UAHC_GBL_CAP2[SADM]. */
-        uint64_t gbl_cap2_sds          : 1;  /**< [ 59: 59](R/W) Override SATA()_UAHC_GBL_CAP2[SDS]. */
-        uint64_t gbl_cap2_apst         : 1;  /**< [ 58: 58](R/W) Override SATA()_UAHC_GBL_CAP2[APST]. */
-        uint64_t reserved_56_57        : 2;
-        uint64_t or_ahci_pwr_en        : 1;  /**< [ 55: 55](R/W) Enable overriding programmed setting to AHCI power management config registers. */
-        uint64_t sctl_ipm              : 3;  /**< [ 54: 52](R/W) Override SATA()_UAHC_P0_SCTL[IPM]. */
-        uint64_t cmd_icc               : 4;  /**< [ 51: 48](R/W) Override SATA()_UAHC_P0_CMD[ICC]. */
-        uint64_t cmd_asp               : 1;  /**< [ 47: 47](R/W) Override SATA()_UAHC_P0_CMD[ASP]. */
-        uint64_t cmd_alpe              : 1;  /**< [ 46: 46](R/W) Override SATA()_UAHC_P0_CMD[ALPE]. */
-        uint64_t cmd_apste             : 1;  /**< [ 45: 45](R/W) Override SATA()_UAHC_P0_CMD[APSTE]. */
-        uint64_t reserved_40_44        : 5;
-        uint64_t or_uahc_int_en        : 1;  /**< [ 39: 39](R/W) Enable overriding notification of unplug event to force the interrupts. */
-        uint64_t p0_is_prcs            : 1;  /**< [ 38: 38](R/W) Override SATA()_UAHC_P0_IS[PRCS].
-                                                                 Setting this bit to one also sets SATA()_UAHC_P0_SERR[DIAG_N] to one. */
-        uint64_t p0_serr_diag_n        : 1;  /**< [ 37: 37](R/W) Override SATA()_UAHC_P0_SERR[DIAG_N].
-                                                                 Setting this bit to one also sets SATA()_UAHC_P0_IS[PRCS] to one. */
-        uint64_t reserved_0_36         : 37;
-#else /* Word 0 - Little Endian */
-        uint64_t reserved_0_36         : 37;
-        uint64_t p0_serr_diag_n        : 1;  /**< [ 37: 37](R/W) Override SATA()_UAHC_P0_SERR[DIAG_N].
-                                                                 Setting this bit to one also sets SATA()_UAHC_P0_IS[PRCS] to one. */
-        uint64_t p0_is_prcs            : 1;  /**< [ 38: 38](R/W) Override SATA()_UAHC_P0_IS[PRCS].
-                                                                 Setting this bit to one also sets SATA()_UAHC_P0_SERR[DIAG_N] to one. */
-        uint64_t or_uahc_int_en        : 1;  /**< [ 39: 39](R/W) Enable overriding notification of unplug event to force the interrupts. */
-        uint64_t reserved_40_44        : 5;
-        uint64_t cmd_apste             : 1;  /**< [ 45: 45](R/W) Override SATA()_UAHC_P0_CMD[APSTE]. */
-        uint64_t cmd_alpe              : 1;  /**< [ 46: 46](R/W) Override SATA()_UAHC_P0_CMD[ALPE]. */
-        uint64_t cmd_asp               : 1;  /**< [ 47: 47](R/W) Override SATA()_UAHC_P0_CMD[ASP]. */
-        uint64_t cmd_icc               : 4;  /**< [ 51: 48](R/W) Override SATA()_UAHC_P0_CMD[ICC]. */
-        uint64_t sctl_ipm              : 3;  /**< [ 54: 52](R/W) Override SATA()_UAHC_P0_SCTL[IPM]. */
-        uint64_t or_ahci_pwr_en        : 1;  /**< [ 55: 55](R/W) Enable overriding programmed setting to AHCI power management config registers. */
-        uint64_t reserved_56_57        : 2;
-        uint64_t gbl_cap2_apst         : 1;  /**< [ 58: 58](R/W) Override SATA()_UAHC_GBL_CAP2[APST]. */
-        uint64_t gbl_cap2_sds          : 1;  /**< [ 59: 59](R/W) Override SATA()_UAHC_GBL_CAP2[SDS]. */
-        uint64_t gbl_cap2_sadm         : 1;  /**< [ 60: 60](R/W) Override SATA()_UAHC_GBL_CAP2[SADM]. */
-        uint64_t gbl_cap_ssc           : 1;  /**< [ 61: 61](R/W) Override SATA()_UAHC_GBL_CAP[SSC]. */
-        uint64_t gbl_cap_salp          : 1;  /**< [ 62: 62](R/W) Override SATA()_UAHC_GBL_CAP[SALP]. */
-        uint64_t or_ahci_cap_en        : 1;  /**< [ 63: 63](R/W) Enable overriding advertised AHCI power management capabilities. */
-#endif /* Word 0 - End */
-    } s;
-    /* struct cavm_satax_uctl_cap_cfg_s cn; */
-};
-typedef union cavm_satax_uctl_cap_cfg cavm_satax_uctl_cap_cfg_t;
-
-static inline uint64_t CAVM_SATAX_UCTL_CAP_CFG(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_SATAX_UCTL_CAP_CFG(unsigned long a)
-{
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
-        return 0x8100001000e0ll + 0x1000000000ll * ((a) & 0x3);
-    __cavm_csr_fatal("SATAX_UCTL_CAP_CFG", 1, a, 0, 0, 0);
-}
-
-#define typedef_CAVM_SATAX_UCTL_CAP_CFG(a) cavm_satax_uctl_cap_cfg_t
-#define bustype_CAVM_SATAX_UCTL_CAP_CFG(a) CSR_TYPE_NCB
-#define basename_CAVM_SATAX_UCTL_CAP_CFG(a) "SATAX_UCTL_CAP_CFG"
-#define device_bar_CAVM_SATAX_UCTL_CAP_CFG(a) 0x4 /* PF_BAR4 */
-#define busnum_CAVM_SATAX_UCTL_CAP_CFG(a) (a)
-#define arguments_CAVM_SATAX_UCTL_CAP_CFG(a) (a),-1,-1,-1
-
-/**
- * Register (NCB) sata#_uctl_const
- *
- * SATA UCTL Constants Register
- * This register contains constants for software discovery.
- */
-union cavm_satax_uctl_const
-{
-    uint64_t u;
-    struct cavm_satax_uctl_const_s
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_0_63         : 64;
-#else /* Word 0 - Little Endian */
-        uint64_t reserved_0_63         : 64;
-#endif /* Word 0 - End */
-    } s;
-    /* struct cavm_satax_uctl_const_s cn; */
-};
-typedef union cavm_satax_uctl_const cavm_satax_uctl_const_t;
-
-static inline uint64_t CAVM_SATAX_UCTL_CONST(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_SATAX_UCTL_CONST(unsigned long a)
-{
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
-        return 0x810000100028ll + 0x1000000000ll * ((a) & 0x3);
-    __cavm_csr_fatal("SATAX_UCTL_CONST", 1, a, 0, 0, 0);
-}
-
-#define typedef_CAVM_SATAX_UCTL_CONST(a) cavm_satax_uctl_const_t
-#define bustype_CAVM_SATAX_UCTL_CONST(a) CSR_TYPE_NCB
-#define basename_CAVM_SATAX_UCTL_CONST(a) "SATAX_UCTL_CONST"
-#define device_bar_CAVM_SATAX_UCTL_CONST(a) 0x4 /* PF_BAR4 */
-#define busnum_CAVM_SATAX_UCTL_CONST(a) (a)
-#define arguments_CAVM_SATAX_UCTL_CONST(a) (a),-1,-1,-1
-
-/**
- * Register (NCB) sata#_uctl_csclk_active_pc
- *
- * SATA UCTL Conditional Sclk Clock Counter Register
- * This register count csclk clock cycle.
- * Reset by NCB reset.
- */
-union cavm_satax_uctl_csclk_active_pc
-{
-    uint64_t u;
-    struct cavm_satax_uctl_csclk_active_pc_s
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t count                 : 64; /**< [ 63:  0](R/W/H) Counts conditional clock active cycles since reset. */
-#else /* Word 0 - Little Endian */
-        uint64_t count                 : 64; /**< [ 63:  0](R/W/H) Counts conditional clock active cycles since reset. */
-#endif /* Word 0 - End */
-    } s;
-    /* struct cavm_satax_uctl_csclk_active_pc_s cn; */
-};
-typedef union cavm_satax_uctl_csclk_active_pc cavm_satax_uctl_csclk_active_pc_t;
-
-static inline uint64_t CAVM_SATAX_UCTL_CSCLK_ACTIVE_PC(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_SATAX_UCTL_CSCLK_ACTIVE_PC(unsigned long a)
-{
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
-        return 0x810000100018ll + 0x1000000000ll * ((a) & 0x3);
-    __cavm_csr_fatal("SATAX_UCTL_CSCLK_ACTIVE_PC", 1, a, 0, 0, 0);
-}
-
-#define typedef_CAVM_SATAX_UCTL_CSCLK_ACTIVE_PC(a) cavm_satax_uctl_csclk_active_pc_t
-#define bustype_CAVM_SATAX_UCTL_CSCLK_ACTIVE_PC(a) CSR_TYPE_NCB
-#define basename_CAVM_SATAX_UCTL_CSCLK_ACTIVE_PC(a) "SATAX_UCTL_CSCLK_ACTIVE_PC"
-#define device_bar_CAVM_SATAX_UCTL_CSCLK_ACTIVE_PC(a) 0x4 /* PF_BAR4 */
-#define busnum_CAVM_SATAX_UCTL_CSCLK_ACTIVE_PC(a) (a)
-#define arguments_CAVM_SATAX_UCTL_CSCLK_ACTIVE_PC(a) (a),-1,-1,-1
 
 /**
  * Register (NCB) sata#_uctl_ctl
@@ -3107,18 +2320,7 @@ union cavm_satax_uctl_ctl
                                                                  be checked after FULL BIST completion, both of which are indicated in
                                                                  SATA()_UCTL_BIST_STATUS. The FULL BIST run takes almost 80,000 host-controller
                                                                  clock cycles for the largest RAM. */
-        uint64_t reserved_32_61        : 30;
-        uint64_t cmd_flr_en            : 1;  /**< [ 31: 31](R/W) Select an option for doing SATA FLR based on finishing existing commands or DMA transactions.
-                                                                 0 = DMA-base FLR.
-                                                                 1 = Command-base FLR.
-
-                                                                 Command-base option will require AHCI software to read SATA()_UAHC_P0_CI to make sure there is
-                                                                 no more command to process, then proceed FLR by negating PCC master enable signal.
-
-                                                                 This option has to be set before PCC master enable negates. Futher commands write to
-                                                                 SATA()_UAHC_P0_CI after this bit is set will not be executed.
-
-                                                                 To check if commands have finished, read SATA()_UCTL_CTL[CMD_FLR_DONE]. */
+        uint64_t reserved_31_61        : 31;
         uint64_t a_clk_en              : 1;  /**< [ 30: 30](R/W) Host-controller clock enable. When set to one, the host-controller clock is generated. This
                                                                  also enables access to UCTL registers 0x30-0xF8. */
         uint64_t a_clk_byp_sel         : 1;  /**< [ 29: 29](R/W) Select the bypass input to the host-controller clock divider.
@@ -3133,8 +2335,7 @@ union cavm_satax_uctl_ctl
         uint64_t a_clkdiv_rst          : 1;  /**< [ 28: 28](R/W) Host-controller-clock divider reset. Divided clocks are not generated while the divider is
                                                                  being reset.
                                                                  This also resets the suspend-clock divider. */
-        uint64_t cmd_flr_done          : 1;  /**< [ 27: 27](RO/H) This bit tells you if commands set before SATA()_UCTL_CTL[CMD_FLR_EN] are finished or not.
-                                                                 This bit is only valid after SATA()_UCTL_CTL[CMD_FLR_EN] is set. */
+        uint64_t reserved_27           : 1;
         uint64_t a_clkdiv_sel          : 3;  /**< [ 26: 24](R/W) The host-controller clock frequency is the coprocessor-clock frequency divided by
                                                                  [A_CLKDIV_SEL]. The host-controller clock frequency must be at or below 333MHz.
                                                                  This field can be changed only when [A_CLKDIV_RST] = 1. The divider values are the
@@ -3147,12 +2348,10 @@ union cavm_satax_uctl_ctl
                                                                  0x5 = divide by 8.
                                                                  0x6 = divide by 16.
                                                                  0x7 = divide by 24. */
-        uint64_t reserved_6_23         : 18;
-        uint64_t dma_psn_ign           : 1;  /**< [  5:  5](R/W) Handling of poison indication on DMA read responses.
-                                                                 0 = Treat poison data the same way as fault, sending an AXI error to the SATA
-                                                                 controller.
-                                                                 1 = Ignore poison and proceed with the transaction as if no problems. */
-        uint64_t reserved_2_4          : 3;
+        uint64_t reserved_5_23         : 19;
+        uint64_t csclk_en              : 1;  /**< [  4:  4](R/W) Turns on the SATA UCTL interface clock (coprocessor clock). This enables access to UAHC
+                                                                 registers via the NCB, as well as UCTL registers starting from 0x10_0030. */
+        uint64_t reserved_2_3          : 2;
         uint64_t sata_uahc_rst         : 1;  /**< [  1:  1](R/W) Software reset; resets UAHC; active-high.
                                                                  Internal:
                                                                  Note that soft-resetting the UAHC while it is active may cause violations of RSL
@@ -3184,12 +2383,10 @@ union cavm_satax_uctl_ctl
                                                                  Internal:
                                                                  Note that soft-resetting the UAHC while it is active may cause violations of RSL
                                                                  or NCB protocols. */
-        uint64_t reserved_2_4          : 3;
-        uint64_t dma_psn_ign           : 1;  /**< [  5:  5](R/W) Handling of poison indication on DMA read responses.
-                                                                 0 = Treat poison data the same way as fault, sending an AXI error to the SATA
-                                                                 controller.
-                                                                 1 = Ignore poison and proceed with the transaction as if no problems. */
-        uint64_t reserved_6_23         : 18;
+        uint64_t reserved_2_3          : 2;
+        uint64_t csclk_en              : 1;  /**< [  4:  4](R/W) Turns on the SATA UCTL interface clock (coprocessor clock). This enables access to UAHC
+                                                                 registers via the NCB, as well as UCTL registers starting from 0x10_0030. */
+        uint64_t reserved_5_23         : 19;
         uint64_t a_clkdiv_sel          : 3;  /**< [ 26: 24](R/W) The host-controller clock frequency is the coprocessor-clock frequency divided by
                                                                  [A_CLKDIV_SEL]. The host-controller clock frequency must be at or below 333MHz.
                                                                  This field can be changed only when [A_CLKDIV_RST] = 1. The divider values are the
@@ -3202,8 +2399,7 @@ union cavm_satax_uctl_ctl
                                                                  0x5 = divide by 8.
                                                                  0x6 = divide by 16.
                                                                  0x7 = divide by 24. */
-        uint64_t cmd_flr_done          : 1;  /**< [ 27: 27](RO/H) This bit tells you if commands set before SATA()_UCTL_CTL[CMD_FLR_EN] are finished or not.
-                                                                 This bit is only valid after SATA()_UCTL_CTL[CMD_FLR_EN] is set. */
+        uint64_t reserved_27           : 1;
         uint64_t a_clkdiv_rst          : 1;  /**< [ 28: 28](R/W) Host-controller-clock divider reset. Divided clocks are not generated while the divider is
                                                                  being reset.
                                                                  This also resets the suspend-clock divider. */
@@ -3218,18 +2414,7 @@ union cavm_satax_uctl_ctl
                                                                  controller clock dividers are not running. */
         uint64_t a_clk_en              : 1;  /**< [ 30: 30](R/W) Host-controller clock enable. When set to one, the host-controller clock is generated. This
                                                                  also enables access to UCTL registers 0x30-0xF8. */
-        uint64_t cmd_flr_en            : 1;  /**< [ 31: 31](R/W) Select an option for doing SATA FLR based on finishing existing commands or DMA transactions.
-                                                                 0 = DMA-base FLR.
-                                                                 1 = Command-base FLR.
-
-                                                                 Command-base option will require AHCI software to read SATA()_UAHC_P0_CI to make sure there is
-                                                                 no more command to process, then proceed FLR by negating PCC master enable signal.
-
-                                                                 This option has to be set before PCC master enable negates. Futher commands write to
-                                                                 SATA()_UAHC_P0_CI after this bit is set will not be executed.
-
-                                                                 To check if commands have finished, read SATA()_UCTL_CTL[CMD_FLR_DONE]. */
-        uint64_t reserved_32_61        : 30;
+        uint64_t reserved_31_61        : 31;
         uint64_t start_bist            : 1;  /**< [ 62: 62](R/W) Start BIST. The rising edge starts BIST on the memories in SATA. To run BIST, the host-
                                                                  controller clock must be both configured and enabled, and should be configured to the
                                                                  maximum available frequency given the available coprocessor clock and dividers.
@@ -3252,284 +2437,7 @@ union cavm_satax_uctl_ctl
                                                                  RAM. */
 #endif /* Word 0 - End */
     } s;
-    struct cavm_satax_uctl_ctl_cn8
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t clear_bist            : 1;  /**< [ 63: 63](R/W) BIST fast-clear mode select. There are two major modes of BIST: FULL and CLEAR.
-                                                                 0 = FULL BIST is run by the BIST state machine.
-                                                                 1 = CLEAR BIST is run by the BIST state machine. A clear-BIST run clears all entries in
-                                                                 SATA RAMs to 0x0.
-
-                                                                 To avoid race conditions, software must first perform a CSR write operation that puts
-                                                                 [CLEAR_BIST] into the correct state and then perform another CSR write operation to set
-                                                                 [START_BIST] (keeping [CLEAR_BIST] constant). CLEAR BIST completion is indicated by
-                                                                 SATA()_UCTL_BIST_STATUS[NDONE*] clear.
-
-                                                                 A BIST clear operation takes almost 2,000 host-controller clock cycles for the largest
-                                                                 RAM. */
-        uint64_t start_bist            : 1;  /**< [ 62: 62](R/W) Start BIST. The rising edge starts BIST on the memories in SATA. To run BIST, the host-
-                                                                 controller clock must be both configured and enabled, and should be configured to the
-                                                                 maximum available frequency given the available coprocessor clock and dividers.
-
-                                                                 Refer to Cold Reset for clock initialization procedures. BIST defect status can
-                                                                 be checked after FULL BIST completion, both of which are indicated in
-                                                                 SATA()_UCTL_BIST_STATUS. The FULL BIST run takes almost 80,000 host-controller
-                                                                 clock cycles for the largest RAM. */
-        uint64_t reserved_31_61        : 31;
-        uint64_t a_clk_en              : 1;  /**< [ 30: 30](R/W) Host-controller clock enable. When set to one, the host-controller clock is generated. This
-                                                                 also enables access to UCTL registers 0x30-0xF8. */
-        uint64_t a_clk_byp_sel         : 1;  /**< [ 29: 29](R/W) Select the bypass input to the host-controller clock divider.
-                                                                 0 = Use the divided coprocessor clock from the [A_CLKDIV_SEL] divider.
-                                                                 1 = use the bypass clock from the GPIO pins (generally bypass is only used for scan
-                                                                 purposes).
-
-                                                                 This signal is a multiplexer-select signal; it does not enable the host-controller clock.
-                                                                 You must set [A_CLK_EN] separately. [A_CLK_BYP_SEL] select should not be changed unless
-                                                                 [A_CLK_EN] is disabled. The bypass clock can be selected and running even if the host-
-                                                                 controller clock dividers are not running. */
-        uint64_t a_clkdiv_rst          : 1;  /**< [ 28: 28](R/W) Host-controller-clock divider reset. Divided clocks are not generated while the divider is
-                                                                 being reset.
-                                                                 This also resets the suspend-clock divider. */
-        uint64_t reserved_27           : 1;
-        uint64_t a_clkdiv_sel          : 3;  /**< [ 26: 24](R/W) The host-controller clock frequency is the coprocessor-clock frequency divided by
-                                                                 [A_CLKDIV_SEL]. The host-controller clock frequency must be at or below 333MHz.
-                                                                 This field can be changed only when [A_CLKDIV_RST] = 1. The divider values are the
-                                                                 following:
-                                                                 0x0 = divide by 1.
-                                                                 0x1 = divide by 2.
-                                                                 0x2 = divide by 3.
-                                                                 0x3 = divide by 4.
-                                                                 0x4 = divide by 6.
-                                                                 0x5 = divide by 8.
-                                                                 0x6 = divide by 16.
-                                                                 0x7 = divide by 24. */
-        uint64_t reserved_5_23         : 19;
-        uint64_t csclk_en              : 1;  /**< [  4:  4](R/W) Turns on the SATA UCTL interface clock (coprocessor clock). This enables access to UAHC
-                                                                 registers via the NCB, as well as UCTL registers starting from 0x10_0030. */
-        uint64_t reserved_2_3          : 2;
-        uint64_t sata_uahc_rst         : 1;  /**< [  1:  1](R/W) Software reset; resets UAHC; active-high.
-                                                                 Internal:
-                                                                 Note that soft-resetting the UAHC while it is active may cause violations of RSL
-                                                                 or NCB protocols. */
-        uint64_t sata_uctl_rst         : 1;  /**< [  0:  0](R/W) Software reset; resets UCTL; active-high. Resets UAHC DMA and register shims and the UCTL
-                                                                 registers 0x10_0030-0x10_00F8.
-
-                                                                 It does not reset UCTL registers 0x10_0000-0x10_0028.
-
-                                                                 The UCTL registers starting from 0x10_0030 can be accessed only after the host-controller
-                                                                 clock is active and [SATA_UCTL_RST] is deasserted.
-
-                                                                 Internal:
-                                                                 Note that soft-resetting the UCTL while it is active may cause violations of
-                                                                 RSL, NCB, and GIB protocols. */
-#else /* Word 0 - Little Endian */
-        uint64_t sata_uctl_rst         : 1;  /**< [  0:  0](R/W) Software reset; resets UCTL; active-high. Resets UAHC DMA and register shims and the UCTL
-                                                                 registers 0x10_0030-0x10_00F8.
-
-                                                                 It does not reset UCTL registers 0x10_0000-0x10_0028.
-
-                                                                 The UCTL registers starting from 0x10_0030 can be accessed only after the host-controller
-                                                                 clock is active and [SATA_UCTL_RST] is deasserted.
-
-                                                                 Internal:
-                                                                 Note that soft-resetting the UCTL while it is active may cause violations of
-                                                                 RSL, NCB, and GIB protocols. */
-        uint64_t sata_uahc_rst         : 1;  /**< [  1:  1](R/W) Software reset; resets UAHC; active-high.
-                                                                 Internal:
-                                                                 Note that soft-resetting the UAHC while it is active may cause violations of RSL
-                                                                 or NCB protocols. */
-        uint64_t reserved_2_3          : 2;
-        uint64_t csclk_en              : 1;  /**< [  4:  4](R/W) Turns on the SATA UCTL interface clock (coprocessor clock). This enables access to UAHC
-                                                                 registers via the NCB, as well as UCTL registers starting from 0x10_0030. */
-        uint64_t reserved_5_23         : 19;
-        uint64_t a_clkdiv_sel          : 3;  /**< [ 26: 24](R/W) The host-controller clock frequency is the coprocessor-clock frequency divided by
-                                                                 [A_CLKDIV_SEL]. The host-controller clock frequency must be at or below 333MHz.
-                                                                 This field can be changed only when [A_CLKDIV_RST] = 1. The divider values are the
-                                                                 following:
-                                                                 0x0 = divide by 1.
-                                                                 0x1 = divide by 2.
-                                                                 0x2 = divide by 3.
-                                                                 0x3 = divide by 4.
-                                                                 0x4 = divide by 6.
-                                                                 0x5 = divide by 8.
-                                                                 0x6 = divide by 16.
-                                                                 0x7 = divide by 24. */
-        uint64_t reserved_27           : 1;
-        uint64_t a_clkdiv_rst          : 1;  /**< [ 28: 28](R/W) Host-controller-clock divider reset. Divided clocks are not generated while the divider is
-                                                                 being reset.
-                                                                 This also resets the suspend-clock divider. */
-        uint64_t a_clk_byp_sel         : 1;  /**< [ 29: 29](R/W) Select the bypass input to the host-controller clock divider.
-                                                                 0 = Use the divided coprocessor clock from the [A_CLKDIV_SEL] divider.
-                                                                 1 = use the bypass clock from the GPIO pins (generally bypass is only used for scan
-                                                                 purposes).
-
-                                                                 This signal is a multiplexer-select signal; it does not enable the host-controller clock.
-                                                                 You must set [A_CLK_EN] separately. [A_CLK_BYP_SEL] select should not be changed unless
-                                                                 [A_CLK_EN] is disabled. The bypass clock can be selected and running even if the host-
-                                                                 controller clock dividers are not running. */
-        uint64_t a_clk_en              : 1;  /**< [ 30: 30](R/W) Host-controller clock enable. When set to one, the host-controller clock is generated. This
-                                                                 also enables access to UCTL registers 0x30-0xF8. */
-        uint64_t reserved_31_61        : 31;
-        uint64_t start_bist            : 1;  /**< [ 62: 62](R/W) Start BIST. The rising edge starts BIST on the memories in SATA. To run BIST, the host-
-                                                                 controller clock must be both configured and enabled, and should be configured to the
-                                                                 maximum available frequency given the available coprocessor clock and dividers.
-
-                                                                 Refer to Cold Reset for clock initialization procedures. BIST defect status can
-                                                                 be checked after FULL BIST completion, both of which are indicated in
-                                                                 SATA()_UCTL_BIST_STATUS. The FULL BIST run takes almost 80,000 host-controller
-                                                                 clock cycles for the largest RAM. */
-        uint64_t clear_bist            : 1;  /**< [ 63: 63](R/W) BIST fast-clear mode select. There are two major modes of BIST: FULL and CLEAR.
-                                                                 0 = FULL BIST is run by the BIST state machine.
-                                                                 1 = CLEAR BIST is run by the BIST state machine. A clear-BIST run clears all entries in
-                                                                 SATA RAMs to 0x0.
-
-                                                                 To avoid race conditions, software must first perform a CSR write operation that puts
-                                                                 [CLEAR_BIST] into the correct state and then perform another CSR write operation to set
-                                                                 [START_BIST] (keeping [CLEAR_BIST] constant). CLEAR BIST completion is indicated by
-                                                                 SATA()_UCTL_BIST_STATUS[NDONE*] clear.
-
-                                                                 A BIST clear operation takes almost 2,000 host-controller clock cycles for the largest
-                                                                 RAM. */
-#endif /* Word 0 - End */
-    } cn8;
-    struct cavm_satax_uctl_ctl_cn9
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_32_63        : 32;
-        uint64_t cmd_flr_en            : 1;  /**< [ 31: 31](R/W) Select an option for doing SATA FLR based on finishing existing commands or DMA transactions.
-                                                                 0 = DMA-base FLR.
-                                                                 1 = Command-base FLR.
-
-                                                                 Command-base option will require AHCI software to read SATA()_UAHC_P0_CI to make sure there is
-                                                                 no more command to process, then proceed FLR by negating PCC master enable signal.
-
-                                                                 This option has to be set before PCC master enable negates. Futher commands write to
-                                                                 SATA()_UAHC_P0_CI after this bit is set will not be executed.
-
-                                                                 To check if commands have finished, read SATA()_UCTL_CTL[CMD_FLR_DONE]. */
-        uint64_t a_clk_en              : 1;  /**< [ 30: 30](R/W) Host-controller clock enable. When set to one, the host-controller clock is generated. This
-                                                                 also enables access to UCTL registers 0x30-0xF8. */
-        uint64_t a_clk_byp_sel         : 1;  /**< [ 29: 29](R/W) Select the bypass input to the host-controller clock divider.
-                                                                 0 = Use the divided coprocessor clock from the [A_CLKDIV_SEL] divider.
-                                                                 1 = use the bypass clock from the GPIO pins (generally bypass is only used for scan
-                                                                 purposes).
-
-                                                                 This signal is a multiplexer-select signal; it does not enable the host-controller clock.
-                                                                 You must set [A_CLK_EN] separately. [A_CLK_BYP_SEL] select should not be changed unless
-                                                                 [A_CLK_EN] is disabled. The bypass clock can be selected and running even if the host-
-                                                                 controller clock dividers are not running. */
-        uint64_t a_clkdiv_rst          : 1;  /**< [ 28: 28](R/W) Host-controller-clock divider reset. Divided clocks are not generated while the divider is
-                                                                 being reset.
-                                                                 This also resets the suspend-clock divider. */
-        uint64_t cmd_flr_done          : 1;  /**< [ 27: 27](RO/H) This bit tells you if commands set before SATA()_UCTL_CTL[CMD_FLR_EN] are finished or not.
-                                                                 This bit is only valid after SATA()_UCTL_CTL[CMD_FLR_EN] is set. */
-        uint64_t a_clkdiv_sel          : 3;  /**< [ 26: 24](R/W) The host-controller clock frequency is the coprocessor-clock frequency divided by
-                                                                 [A_CLKDIV_SEL]. The host-controller clock frequency must be at or below 333MHz.
-                                                                 This field can be changed only when [A_CLKDIV_RST] = 1. The divider values are the
-                                                                 following:
-                                                                 0x0 = divide by 1.
-                                                                 0x1 = divide by 2.
-                                                                 0x2 = divide by 3.
-                                                                 0x3 = divide by 4.
-                                                                 0x4 = divide by 6.
-                                                                 0x5 = divide by 8.
-                                                                 0x6 = divide by 16.
-                                                                 0x7 = divide by 24. */
-        uint64_t reserved_6_23         : 18;
-        uint64_t dma_psn_ign           : 1;  /**< [  5:  5](R/W) Handling of poison indication on DMA read responses.
-                                                                 0 = Treat poison data the same way as fault, sending an AXI error to the SATA
-                                                                 controller.
-                                                                 1 = Ignore poison and proceed with the transaction as if no problems. */
-        uint64_t csclk_force           : 1;  /**< [  4:  4](R/W) Force conditional clock to be running. For diagnostic use only.
-                                                                 0 = No override.
-                                                                 1 = Override the enable of conditional clock to force it running, also forces
-                                                                 NCBI clock enable signal to 1. */
-        uint64_t reserved_2_3          : 2;
-        uint64_t sata_uahc_rst         : 1;  /**< [  1:  1](R/W) Software reset; resets UAHC; active-high.
-                                                                 Internal:
-                                                                 Note that soft-resetting the UAHC while it is active may cause violations of RSL
-                                                                 or NCB protocols. */
-        uint64_t sata_uctl_rst         : 1;  /**< [  0:  0](R/W) Software reset; resets UCTL; active-high. Resets UAHC DMA and register shims and the UCTL
-                                                                 registers 0x10_0030-0x10_00F8.
-
-                                                                 It does not reset UCTL registers 0x10_0000-0x10_0028. These can be accessed when
-                                                                 [SATA_UCTL_RST] is asserted.
-
-                                                                 The UCTL registers starting from 0x10_0030 can be accessed only after the host-controller
-                                                                 clock is active and [SATA_UCTL_RST] is deasserted.
-
-                                                                 Internal:
-                                                                 Note that soft-resetting the UCTL while it is active may cause violations of
-                                                                 RSL, NCB, and GIB protocols. */
-#else /* Word 0 - Little Endian */
-        uint64_t sata_uctl_rst         : 1;  /**< [  0:  0](R/W) Software reset; resets UCTL; active-high. Resets UAHC DMA and register shims and the UCTL
-                                                                 registers 0x10_0030-0x10_00F8.
-
-                                                                 It does not reset UCTL registers 0x10_0000-0x10_0028. These can be accessed when
-                                                                 [SATA_UCTL_RST] is asserted.
-
-                                                                 The UCTL registers starting from 0x10_0030 can be accessed only after the host-controller
-                                                                 clock is active and [SATA_UCTL_RST] is deasserted.
-
-                                                                 Internal:
-                                                                 Note that soft-resetting the UCTL while it is active may cause violations of
-                                                                 RSL, NCB, and GIB protocols. */
-        uint64_t sata_uahc_rst         : 1;  /**< [  1:  1](R/W) Software reset; resets UAHC; active-high.
-                                                                 Internal:
-                                                                 Note that soft-resetting the UAHC while it is active may cause violations of RSL
-                                                                 or NCB protocols. */
-        uint64_t reserved_2_3          : 2;
-        uint64_t csclk_force           : 1;  /**< [  4:  4](R/W) Force conditional clock to be running. For diagnostic use only.
-                                                                 0 = No override.
-                                                                 1 = Override the enable of conditional clock to force it running, also forces
-                                                                 NCBI clock enable signal to 1. */
-        uint64_t dma_psn_ign           : 1;  /**< [  5:  5](R/W) Handling of poison indication on DMA read responses.
-                                                                 0 = Treat poison data the same way as fault, sending an AXI error to the SATA
-                                                                 controller.
-                                                                 1 = Ignore poison and proceed with the transaction as if no problems. */
-        uint64_t reserved_6_23         : 18;
-        uint64_t a_clkdiv_sel          : 3;  /**< [ 26: 24](R/W) The host-controller clock frequency is the coprocessor-clock frequency divided by
-                                                                 [A_CLKDIV_SEL]. The host-controller clock frequency must be at or below 333MHz.
-                                                                 This field can be changed only when [A_CLKDIV_RST] = 1. The divider values are the
-                                                                 following:
-                                                                 0x0 = divide by 1.
-                                                                 0x1 = divide by 2.
-                                                                 0x2 = divide by 3.
-                                                                 0x3 = divide by 4.
-                                                                 0x4 = divide by 6.
-                                                                 0x5 = divide by 8.
-                                                                 0x6 = divide by 16.
-                                                                 0x7 = divide by 24. */
-        uint64_t cmd_flr_done          : 1;  /**< [ 27: 27](RO/H) This bit tells you if commands set before SATA()_UCTL_CTL[CMD_FLR_EN] are finished or not.
-                                                                 This bit is only valid after SATA()_UCTL_CTL[CMD_FLR_EN] is set. */
-        uint64_t a_clkdiv_rst          : 1;  /**< [ 28: 28](R/W) Host-controller-clock divider reset. Divided clocks are not generated while the divider is
-                                                                 being reset.
-                                                                 This also resets the suspend-clock divider. */
-        uint64_t a_clk_byp_sel         : 1;  /**< [ 29: 29](R/W) Select the bypass input to the host-controller clock divider.
-                                                                 0 = Use the divided coprocessor clock from the [A_CLKDIV_SEL] divider.
-                                                                 1 = use the bypass clock from the GPIO pins (generally bypass is only used for scan
-                                                                 purposes).
-
-                                                                 This signal is a multiplexer-select signal; it does not enable the host-controller clock.
-                                                                 You must set [A_CLK_EN] separately. [A_CLK_BYP_SEL] select should not be changed unless
-                                                                 [A_CLK_EN] is disabled. The bypass clock can be selected and running even if the host-
-                                                                 controller clock dividers are not running. */
-        uint64_t a_clk_en              : 1;  /**< [ 30: 30](R/W) Host-controller clock enable. When set to one, the host-controller clock is generated. This
-                                                                 also enables access to UCTL registers 0x30-0xF8. */
-        uint64_t cmd_flr_en            : 1;  /**< [ 31: 31](R/W) Select an option for doing SATA FLR based on finishing existing commands or DMA transactions.
-                                                                 0 = DMA-base FLR.
-                                                                 1 = Command-base FLR.
-
-                                                                 Command-base option will require AHCI software to read SATA()_UAHC_P0_CI to make sure there is
-                                                                 no more command to process, then proceed FLR by negating PCC master enable signal.
-
-                                                                 This option has to be set before PCC master enable negates. Futher commands write to
-                                                                 SATA()_UAHC_P0_CI after this bit is set will not be executed.
-
-                                                                 To check if commands have finished, read SATA()_UCTL_CTL[CMD_FLR_DONE]. */
-        uint64_t reserved_32_63        : 32;
-#endif /* Word 0 - End */
-    } cn9;
+    /* struct cavm_satax_uctl_ctl_s cn; */
 };
 typedef union cavm_satax_uctl_ctl cavm_satax_uctl_ctl_t;
 
@@ -3540,15 +2448,13 @@ static inline uint64_t CAVM_SATAX_UCTL_CTL(unsigned long a)
         return 0x810000100000ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN83XX) && (a<=5))
         return 0x810000100000ll + 0x1000000000ll * ((a) & 0x7);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
-        return 0x810000100000ll + 0x1000000000ll * ((a) & 0x3);
-    __cavm_csr_fatal("SATAX_UCTL_CTL", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("SATAX_UCTL_CTL", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SATAX_UCTL_CTL(a) cavm_satax_uctl_ctl_t
 #define bustype_CAVM_SATAX_UCTL_CTL(a) CSR_TYPE_NCB
 #define basename_CAVM_SATAX_UCTL_CTL(a) "SATAX_UCTL_CTL"
-#define device_bar_CAVM_SATAX_UCTL_CTL(a) 0x4 /* PF_BAR4 */
+#define device_bar_CAVM_SATAX_UCTL_CTL(a) 0x0 /* PF_BAR0 */
 #define busnum_CAVM_SATAX_UCTL_CTL(a) (a)
 #define arguments_CAVM_SATAX_UCTL_CTL(a) (a),-1,-1,-1
 
@@ -3624,7 +2530,7 @@ static inline uint64_t CAVM_SATAX_UCTL_ECC(unsigned long a)
         return 0x8100001000f0ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN83XX) && (a<=5))
         return 0x8100001000f0ll + 0x1000000000ll * ((a) & 0x7);
-    __cavm_csr_fatal("SATAX_UCTL_ECC", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("SATAX_UCTL_ECC", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SATAX_UCTL_ECC(a) cavm_satax_uctl_ecc_t
@@ -3655,7 +2561,7 @@ union cavm_satax_uctl_intena_w1c
         uint64_t uahc_fb_sbe           : 1;  /**< [  8:  8](R/W1C/H) Reads or clears enable for SATA(0..1)_UCTL_INTSTAT[UAHC_FB_SBE]. */
         uint64_t dma_rd_err            : 1;  /**< [  7:  7](R/W1C/H) Reads or clears enable for SATA(0..1)_UCTL_INTSTAT[DMA_RD_ERR]. */
         uint64_t dma_wr_err            : 1;  /**< [  6:  6](R/W1C/H) Reads or clears enable for SATA(0..1)_UCTL_INTSTAT[DMA_WR_ERR]. */
-        uint64_t reserved_5            : 1;
+        uint64_t xm_r_dbe              : 1;  /**< [  5:  5](R/W1C/H) Reads or clears enable for SATA(0..1)_UCTL_INTSTAT[XM_R_DBE]. */
         uint64_t xm_r_sbe              : 1;  /**< [  4:  4](R/W1C/H) Reads or clears enable for SATA(0..1)_UCTL_INTSTAT[XM_R_SBE]. */
         uint64_t xm_w_dbe              : 1;  /**< [  3:  3](R/W1C/H) Reads or clears enable for SATA(0..1)_UCTL_INTSTAT[XM_W_DBE]. */
         uint64_t xm_w_sbe              : 1;  /**< [  2:  2](R/W1C/H) Reads or clears enable for SATA(0..1)_UCTL_INTSTAT[XM_W_SBE]. */
@@ -3667,7 +2573,7 @@ union cavm_satax_uctl_intena_w1c
         uint64_t xm_w_sbe              : 1;  /**< [  2:  2](R/W1C/H) Reads or clears enable for SATA(0..1)_UCTL_INTSTAT[XM_W_SBE]. */
         uint64_t xm_w_dbe              : 1;  /**< [  3:  3](R/W1C/H) Reads or clears enable for SATA(0..1)_UCTL_INTSTAT[XM_W_DBE]. */
         uint64_t xm_r_sbe              : 1;  /**< [  4:  4](R/W1C/H) Reads or clears enable for SATA(0..1)_UCTL_INTSTAT[XM_R_SBE]. */
-        uint64_t reserved_5            : 1;
+        uint64_t xm_r_dbe              : 1;  /**< [  5:  5](R/W1C/H) Reads or clears enable for SATA(0..1)_UCTL_INTSTAT[XM_R_DBE]. */
         uint64_t dma_wr_err            : 1;  /**< [  6:  6](R/W1C/H) Reads or clears enable for SATA(0..1)_UCTL_INTSTAT[DMA_WR_ERR]. */
         uint64_t dma_rd_err            : 1;  /**< [  7:  7](R/W1C/H) Reads or clears enable for SATA(0..1)_UCTL_INTSTAT[DMA_RD_ERR]. */
         uint64_t uahc_fb_sbe           : 1;  /**< [  8:  8](R/W1C/H) Reads or clears enable for SATA(0..1)_UCTL_INTSTAT[UAHC_FB_SBE]. */
@@ -3679,42 +2585,7 @@ union cavm_satax_uctl_intena_w1c
         uint64_t reserved_14_63        : 50;
 #endif /* Word 0 - End */
     } s;
-    struct cavm_satax_uctl_intena_w1c_cn81xx
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_14_63        : 50;
-        uint64_t uahc_rx_dbe           : 1;  /**< [ 13: 13](R/W1C/H) Reads or clears enable for SATA(0..1)_UCTL_INTSTAT[UAHC_RX_DBE]. */
-        uint64_t uahc_rx_sbe           : 1;  /**< [ 12: 12](R/W1C/H) Reads or clears enable for SATA(0..1)_UCTL_INTSTAT[UAHC_RX_SBE]. */
-        uint64_t uahc_tx_dbe           : 1;  /**< [ 11: 11](R/W1C/H) Reads or clears enable for SATA(0..1)_UCTL_INTSTAT[UAHC_TX_DBE]. */
-        uint64_t uahc_tx_sbe           : 1;  /**< [ 10: 10](R/W1C/H) Reads or clears enable for SATA(0..1)_UCTL_INTSTAT[UAHC_TX_SBE]. */
-        uint64_t uahc_fb_dbe           : 1;  /**< [  9:  9](R/W1C/H) Reads or clears enable for SATA(0..1)_UCTL_INTSTAT[UAHC_FB_DBE]. */
-        uint64_t uahc_fb_sbe           : 1;  /**< [  8:  8](R/W1C/H) Reads or clears enable for SATA(0..1)_UCTL_INTSTAT[UAHC_FB_SBE]. */
-        uint64_t dma_rd_err            : 1;  /**< [  7:  7](R/W1C/H) Reads or clears enable for SATA(0..1)_UCTL_INTSTAT[DMA_RD_ERR]. */
-        uint64_t dma_wr_err            : 1;  /**< [  6:  6](R/W1C/H) Reads or clears enable for SATA(0..1)_UCTL_INTSTAT[DMA_WR_ERR]. */
-        uint64_t xm_r_dbe              : 1;  /**< [  5:  5](R/W1C/H) Reads or clears enable for SATA(0..1)_UCTL_INTSTAT[XM_R_DBE]. */
-        uint64_t xm_r_sbe              : 1;  /**< [  4:  4](R/W1C/H) Reads or clears enable for SATA(0..1)_UCTL_INTSTAT[XM_R_SBE]. */
-        uint64_t xm_w_dbe              : 1;  /**< [  3:  3](R/W1C/H) Reads or clears enable for SATA(0..1)_UCTL_INTSTAT[XM_W_DBE]. */
-        uint64_t xm_w_sbe              : 1;  /**< [  2:  2](R/W1C/H) Reads or clears enable for SATA(0..1)_UCTL_INTSTAT[XM_W_SBE]. */
-        uint64_t xm_bad_dma            : 1;  /**< [  1:  1](R/W1C/H) Reads or clears enable for SATA(0..1)_UCTL_INTSTAT[XM_BAD_DMA]. */
-        uint64_t xs_ncb_oob            : 1;  /**< [  0:  0](R/W1C/H) Reads or clears enable for SATA(0..1)_UCTL_INTSTAT[XS_NCB_OOB]. */
-#else /* Word 0 - Little Endian */
-        uint64_t xs_ncb_oob            : 1;  /**< [  0:  0](R/W1C/H) Reads or clears enable for SATA(0..1)_UCTL_INTSTAT[XS_NCB_OOB]. */
-        uint64_t xm_bad_dma            : 1;  /**< [  1:  1](R/W1C/H) Reads or clears enable for SATA(0..1)_UCTL_INTSTAT[XM_BAD_DMA]. */
-        uint64_t xm_w_sbe              : 1;  /**< [  2:  2](R/W1C/H) Reads or clears enable for SATA(0..1)_UCTL_INTSTAT[XM_W_SBE]. */
-        uint64_t xm_w_dbe              : 1;  /**< [  3:  3](R/W1C/H) Reads or clears enable for SATA(0..1)_UCTL_INTSTAT[XM_W_DBE]. */
-        uint64_t xm_r_sbe              : 1;  /**< [  4:  4](R/W1C/H) Reads or clears enable for SATA(0..1)_UCTL_INTSTAT[XM_R_SBE]. */
-        uint64_t xm_r_dbe              : 1;  /**< [  5:  5](R/W1C/H) Reads or clears enable for SATA(0..1)_UCTL_INTSTAT[XM_R_DBE]. */
-        uint64_t dma_wr_err            : 1;  /**< [  6:  6](R/W1C/H) Reads or clears enable for SATA(0..1)_UCTL_INTSTAT[DMA_WR_ERR]. */
-        uint64_t dma_rd_err            : 1;  /**< [  7:  7](R/W1C/H) Reads or clears enable for SATA(0..1)_UCTL_INTSTAT[DMA_RD_ERR]. */
-        uint64_t uahc_fb_sbe           : 1;  /**< [  8:  8](R/W1C/H) Reads or clears enable for SATA(0..1)_UCTL_INTSTAT[UAHC_FB_SBE]. */
-        uint64_t uahc_fb_dbe           : 1;  /**< [  9:  9](R/W1C/H) Reads or clears enable for SATA(0..1)_UCTL_INTSTAT[UAHC_FB_DBE]. */
-        uint64_t uahc_tx_sbe           : 1;  /**< [ 10: 10](R/W1C/H) Reads or clears enable for SATA(0..1)_UCTL_INTSTAT[UAHC_TX_SBE]. */
-        uint64_t uahc_tx_dbe           : 1;  /**< [ 11: 11](R/W1C/H) Reads or clears enable for SATA(0..1)_UCTL_INTSTAT[UAHC_TX_DBE]. */
-        uint64_t uahc_rx_sbe           : 1;  /**< [ 12: 12](R/W1C/H) Reads or clears enable for SATA(0..1)_UCTL_INTSTAT[UAHC_RX_SBE]. */
-        uint64_t uahc_rx_dbe           : 1;  /**< [ 13: 13](R/W1C/H) Reads or clears enable for SATA(0..1)_UCTL_INTSTAT[UAHC_RX_DBE]. */
-        uint64_t reserved_14_63        : 50;
-#endif /* Word 0 - End */
-    } cn81xx;
+    /* struct cavm_satax_uctl_intena_w1c_s cn81xx; */
     struct cavm_satax_uctl_intena_w1c_cn83xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -3751,26 +2622,6 @@ union cavm_satax_uctl_intena_w1c
         uint64_t reserved_14_63        : 50;
 #endif /* Word 0 - End */
     } cn83xx;
-    struct cavm_satax_uctl_intena_w1c_cn9
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_8_63         : 56;
-        uint64_t dma_rd_err            : 1;  /**< [  7:  7](R/W1C/H) Reads or clears enable for SATA(0..3)_UCTL_INTSTAT[DMA_RD_ERR]. */
-        uint64_t dma_wr_err            : 1;  /**< [  6:  6](R/W1C/H) Reads or clears enable for SATA(0..3)_UCTL_INTSTAT[DMA_WR_ERR]. */
-        uint64_t dma_psn               : 1;  /**< [  5:  5](R/W1C/H) Reads or clears enable for SATA(0..3)_UCTL_INTSTAT[DMA_PSN]. */
-        uint64_t reserved_2_4          : 3;
-        uint64_t xm_bad_dma            : 1;  /**< [  1:  1](R/W1C/H) Reads or clears enable for SATA(0..3)_UCTL_INTSTAT[XM_BAD_DMA]. */
-        uint64_t xs_ncb_oob            : 1;  /**< [  0:  0](R/W1C/H) Reads or clears enable for SATA(0..3)_UCTL_INTSTAT[XS_NCB_OOB]. */
-#else /* Word 0 - Little Endian */
-        uint64_t xs_ncb_oob            : 1;  /**< [  0:  0](R/W1C/H) Reads or clears enable for SATA(0..3)_UCTL_INTSTAT[XS_NCB_OOB]. */
-        uint64_t xm_bad_dma            : 1;  /**< [  1:  1](R/W1C/H) Reads or clears enable for SATA(0..3)_UCTL_INTSTAT[XM_BAD_DMA]. */
-        uint64_t reserved_2_4          : 3;
-        uint64_t dma_psn               : 1;  /**< [  5:  5](R/W1C/H) Reads or clears enable for SATA(0..3)_UCTL_INTSTAT[DMA_PSN]. */
-        uint64_t dma_wr_err            : 1;  /**< [  6:  6](R/W1C/H) Reads or clears enable for SATA(0..3)_UCTL_INTSTAT[DMA_WR_ERR]. */
-        uint64_t dma_rd_err            : 1;  /**< [  7:  7](R/W1C/H) Reads or clears enable for SATA(0..3)_UCTL_INTSTAT[DMA_RD_ERR]. */
-        uint64_t reserved_8_63         : 56;
-#endif /* Word 0 - End */
-    } cn9;
 };
 typedef union cavm_satax_uctl_intena_w1c cavm_satax_uctl_intena_w1c_t;
 
@@ -3781,15 +2632,13 @@ static inline uint64_t CAVM_SATAX_UCTL_INTENA_W1C(unsigned long a)
         return 0x810000100040ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN83XX) && (a<=5))
         return 0x810000100040ll + 0x1000000000ll * ((a) & 0x7);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
-        return 0x810000100040ll + 0x1000000000ll * ((a) & 0x3);
-    __cavm_csr_fatal("SATAX_UCTL_INTENA_W1C", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("SATAX_UCTL_INTENA_W1C", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SATAX_UCTL_INTENA_W1C(a) cavm_satax_uctl_intena_w1c_t
 #define bustype_CAVM_SATAX_UCTL_INTENA_W1C(a) CSR_TYPE_NCB
 #define basename_CAVM_SATAX_UCTL_INTENA_W1C(a) "SATAX_UCTL_INTENA_W1C"
-#define device_bar_CAVM_SATAX_UCTL_INTENA_W1C(a) 0x4 /* PF_BAR4 */
+#define device_bar_CAVM_SATAX_UCTL_INTENA_W1C(a) 0x0 /* PF_BAR0 */
 #define busnum_CAVM_SATAX_UCTL_INTENA_W1C(a) (a)
 #define arguments_CAVM_SATAX_UCTL_INTENA_W1C(a) (a),-1,-1,-1
 
@@ -3814,7 +2663,7 @@ union cavm_satax_uctl_intena_w1s
         uint64_t uahc_fb_sbe           : 1;  /**< [  8:  8](R/W1S/H) Reads or sets enable for SATA(0..1)_UCTL_INTSTAT[UAHC_FB_SBE]. */
         uint64_t dma_rd_err            : 1;  /**< [  7:  7](R/W1S/H) Reads or sets enable for SATA(0..1)_UCTL_INTSTAT[DMA_RD_ERR]. */
         uint64_t dma_wr_err            : 1;  /**< [  6:  6](R/W1S/H) Reads or sets enable for SATA(0..1)_UCTL_INTSTAT[DMA_WR_ERR]. */
-        uint64_t reserved_5            : 1;
+        uint64_t xm_r_dbe              : 1;  /**< [  5:  5](R/W1S/H) Reads or sets enable for SATA(0..1)_UCTL_INTSTAT[XM_R_DBE]. */
         uint64_t xm_r_sbe              : 1;  /**< [  4:  4](R/W1S/H) Reads or sets enable for SATA(0..1)_UCTL_INTSTAT[XM_R_SBE]. */
         uint64_t xm_w_dbe              : 1;  /**< [  3:  3](R/W1S/H) Reads or sets enable for SATA(0..1)_UCTL_INTSTAT[XM_W_DBE]. */
         uint64_t xm_w_sbe              : 1;  /**< [  2:  2](R/W1S/H) Reads or sets enable for SATA(0..1)_UCTL_INTSTAT[XM_W_SBE]. */
@@ -3826,7 +2675,7 @@ union cavm_satax_uctl_intena_w1s
         uint64_t xm_w_sbe              : 1;  /**< [  2:  2](R/W1S/H) Reads or sets enable for SATA(0..1)_UCTL_INTSTAT[XM_W_SBE]. */
         uint64_t xm_w_dbe              : 1;  /**< [  3:  3](R/W1S/H) Reads or sets enable for SATA(0..1)_UCTL_INTSTAT[XM_W_DBE]. */
         uint64_t xm_r_sbe              : 1;  /**< [  4:  4](R/W1S/H) Reads or sets enable for SATA(0..1)_UCTL_INTSTAT[XM_R_SBE]. */
-        uint64_t reserved_5            : 1;
+        uint64_t xm_r_dbe              : 1;  /**< [  5:  5](R/W1S/H) Reads or sets enable for SATA(0..1)_UCTL_INTSTAT[XM_R_DBE]. */
         uint64_t dma_wr_err            : 1;  /**< [  6:  6](R/W1S/H) Reads or sets enable for SATA(0..1)_UCTL_INTSTAT[DMA_WR_ERR]. */
         uint64_t dma_rd_err            : 1;  /**< [  7:  7](R/W1S/H) Reads or sets enable for SATA(0..1)_UCTL_INTSTAT[DMA_RD_ERR]. */
         uint64_t uahc_fb_sbe           : 1;  /**< [  8:  8](R/W1S/H) Reads or sets enable for SATA(0..1)_UCTL_INTSTAT[UAHC_FB_SBE]. */
@@ -3838,42 +2687,7 @@ union cavm_satax_uctl_intena_w1s
         uint64_t reserved_14_63        : 50;
 #endif /* Word 0 - End */
     } s;
-    struct cavm_satax_uctl_intena_w1s_cn81xx
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_14_63        : 50;
-        uint64_t uahc_rx_dbe           : 1;  /**< [ 13: 13](R/W1S/H) Reads or sets enable for SATA(0..1)_UCTL_INTSTAT[UAHC_RX_DBE]. */
-        uint64_t uahc_rx_sbe           : 1;  /**< [ 12: 12](R/W1S/H) Reads or sets enable for SATA(0..1)_UCTL_INTSTAT[UAHC_RX_SBE]. */
-        uint64_t uahc_tx_dbe           : 1;  /**< [ 11: 11](R/W1S/H) Reads or sets enable for SATA(0..1)_UCTL_INTSTAT[UAHC_TX_DBE]. */
-        uint64_t uahc_tx_sbe           : 1;  /**< [ 10: 10](R/W1S/H) Reads or sets enable for SATA(0..1)_UCTL_INTSTAT[UAHC_TX_SBE]. */
-        uint64_t uahc_fb_dbe           : 1;  /**< [  9:  9](R/W1S/H) Reads or sets enable for SATA(0..1)_UCTL_INTSTAT[UAHC_FB_DBE]. */
-        uint64_t uahc_fb_sbe           : 1;  /**< [  8:  8](R/W1S/H) Reads or sets enable for SATA(0..1)_UCTL_INTSTAT[UAHC_FB_SBE]. */
-        uint64_t dma_rd_err            : 1;  /**< [  7:  7](R/W1S/H) Reads or sets enable for SATA(0..1)_UCTL_INTSTAT[DMA_RD_ERR]. */
-        uint64_t dma_wr_err            : 1;  /**< [  6:  6](R/W1S/H) Reads or sets enable for SATA(0..1)_UCTL_INTSTAT[DMA_WR_ERR]. */
-        uint64_t xm_r_dbe              : 1;  /**< [  5:  5](R/W1S/H) Reads or sets enable for SATA(0..1)_UCTL_INTSTAT[XM_R_DBE]. */
-        uint64_t xm_r_sbe              : 1;  /**< [  4:  4](R/W1S/H) Reads or sets enable for SATA(0..1)_UCTL_INTSTAT[XM_R_SBE]. */
-        uint64_t xm_w_dbe              : 1;  /**< [  3:  3](R/W1S/H) Reads or sets enable for SATA(0..1)_UCTL_INTSTAT[XM_W_DBE]. */
-        uint64_t xm_w_sbe              : 1;  /**< [  2:  2](R/W1S/H) Reads or sets enable for SATA(0..1)_UCTL_INTSTAT[XM_W_SBE]. */
-        uint64_t xm_bad_dma            : 1;  /**< [  1:  1](R/W1S/H) Reads or sets enable for SATA(0..1)_UCTL_INTSTAT[XM_BAD_DMA]. */
-        uint64_t xs_ncb_oob            : 1;  /**< [  0:  0](R/W1S/H) Reads or sets enable for SATA(0..1)_UCTL_INTSTAT[XS_NCB_OOB]. */
-#else /* Word 0 - Little Endian */
-        uint64_t xs_ncb_oob            : 1;  /**< [  0:  0](R/W1S/H) Reads or sets enable for SATA(0..1)_UCTL_INTSTAT[XS_NCB_OOB]. */
-        uint64_t xm_bad_dma            : 1;  /**< [  1:  1](R/W1S/H) Reads or sets enable for SATA(0..1)_UCTL_INTSTAT[XM_BAD_DMA]. */
-        uint64_t xm_w_sbe              : 1;  /**< [  2:  2](R/W1S/H) Reads or sets enable for SATA(0..1)_UCTL_INTSTAT[XM_W_SBE]. */
-        uint64_t xm_w_dbe              : 1;  /**< [  3:  3](R/W1S/H) Reads or sets enable for SATA(0..1)_UCTL_INTSTAT[XM_W_DBE]. */
-        uint64_t xm_r_sbe              : 1;  /**< [  4:  4](R/W1S/H) Reads or sets enable for SATA(0..1)_UCTL_INTSTAT[XM_R_SBE]. */
-        uint64_t xm_r_dbe              : 1;  /**< [  5:  5](R/W1S/H) Reads or sets enable for SATA(0..1)_UCTL_INTSTAT[XM_R_DBE]. */
-        uint64_t dma_wr_err            : 1;  /**< [  6:  6](R/W1S/H) Reads or sets enable for SATA(0..1)_UCTL_INTSTAT[DMA_WR_ERR]. */
-        uint64_t dma_rd_err            : 1;  /**< [  7:  7](R/W1S/H) Reads or sets enable for SATA(0..1)_UCTL_INTSTAT[DMA_RD_ERR]. */
-        uint64_t uahc_fb_sbe           : 1;  /**< [  8:  8](R/W1S/H) Reads or sets enable for SATA(0..1)_UCTL_INTSTAT[UAHC_FB_SBE]. */
-        uint64_t uahc_fb_dbe           : 1;  /**< [  9:  9](R/W1S/H) Reads or sets enable for SATA(0..1)_UCTL_INTSTAT[UAHC_FB_DBE]. */
-        uint64_t uahc_tx_sbe           : 1;  /**< [ 10: 10](R/W1S/H) Reads or sets enable for SATA(0..1)_UCTL_INTSTAT[UAHC_TX_SBE]. */
-        uint64_t uahc_tx_dbe           : 1;  /**< [ 11: 11](R/W1S/H) Reads or sets enable for SATA(0..1)_UCTL_INTSTAT[UAHC_TX_DBE]. */
-        uint64_t uahc_rx_sbe           : 1;  /**< [ 12: 12](R/W1S/H) Reads or sets enable for SATA(0..1)_UCTL_INTSTAT[UAHC_RX_SBE]. */
-        uint64_t uahc_rx_dbe           : 1;  /**< [ 13: 13](R/W1S/H) Reads or sets enable for SATA(0..1)_UCTL_INTSTAT[UAHC_RX_DBE]. */
-        uint64_t reserved_14_63        : 50;
-#endif /* Word 0 - End */
-    } cn81xx;
+    /* struct cavm_satax_uctl_intena_w1s_s cn81xx; */
     struct cavm_satax_uctl_intena_w1s_cn83xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -3910,26 +2724,6 @@ union cavm_satax_uctl_intena_w1s
         uint64_t reserved_14_63        : 50;
 #endif /* Word 0 - End */
     } cn83xx;
-    struct cavm_satax_uctl_intena_w1s_cn9
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_8_63         : 56;
-        uint64_t dma_rd_err            : 1;  /**< [  7:  7](R/W1S/H) Reads or sets enable for SATA(0..3)_UCTL_INTSTAT[DMA_RD_ERR]. */
-        uint64_t dma_wr_err            : 1;  /**< [  6:  6](R/W1S/H) Reads or sets enable for SATA(0..3)_UCTL_INTSTAT[DMA_WR_ERR]. */
-        uint64_t dma_psn               : 1;  /**< [  5:  5](R/W1S/H) Reads or sets enable for SATA(0..3)_UCTL_INTSTAT[DMA_PSN]. */
-        uint64_t reserved_2_4          : 3;
-        uint64_t xm_bad_dma            : 1;  /**< [  1:  1](R/W1S/H) Reads or sets enable for SATA(0..3)_UCTL_INTSTAT[XM_BAD_DMA]. */
-        uint64_t xs_ncb_oob            : 1;  /**< [  0:  0](R/W1S/H) Reads or sets enable for SATA(0..3)_UCTL_INTSTAT[XS_NCB_OOB]. */
-#else /* Word 0 - Little Endian */
-        uint64_t xs_ncb_oob            : 1;  /**< [  0:  0](R/W1S/H) Reads or sets enable for SATA(0..3)_UCTL_INTSTAT[XS_NCB_OOB]. */
-        uint64_t xm_bad_dma            : 1;  /**< [  1:  1](R/W1S/H) Reads or sets enable for SATA(0..3)_UCTL_INTSTAT[XM_BAD_DMA]. */
-        uint64_t reserved_2_4          : 3;
-        uint64_t dma_psn               : 1;  /**< [  5:  5](R/W1S/H) Reads or sets enable for SATA(0..3)_UCTL_INTSTAT[DMA_PSN]. */
-        uint64_t dma_wr_err            : 1;  /**< [  6:  6](R/W1S/H) Reads or sets enable for SATA(0..3)_UCTL_INTSTAT[DMA_WR_ERR]. */
-        uint64_t dma_rd_err            : 1;  /**< [  7:  7](R/W1S/H) Reads or sets enable for SATA(0..3)_UCTL_INTSTAT[DMA_RD_ERR]. */
-        uint64_t reserved_8_63         : 56;
-#endif /* Word 0 - End */
-    } cn9;
 };
 typedef union cavm_satax_uctl_intena_w1s cavm_satax_uctl_intena_w1s_t;
 
@@ -3940,15 +2734,13 @@ static inline uint64_t CAVM_SATAX_UCTL_INTENA_W1S(unsigned long a)
         return 0x810000100048ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN83XX) && (a<=5))
         return 0x810000100048ll + 0x1000000000ll * ((a) & 0x7);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
-        return 0x810000100048ll + 0x1000000000ll * ((a) & 0x3);
-    __cavm_csr_fatal("SATAX_UCTL_INTENA_W1S", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("SATAX_UCTL_INTENA_W1S", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SATAX_UCTL_INTENA_W1S(a) cavm_satax_uctl_intena_w1s_t
 #define bustype_CAVM_SATAX_UCTL_INTENA_W1S(a) CSR_TYPE_NCB
 #define basename_CAVM_SATAX_UCTL_INTENA_W1S(a) "SATAX_UCTL_INTENA_W1S"
-#define device_bar_CAVM_SATAX_UCTL_INTENA_W1S(a) 0x4 /* PF_BAR4 */
+#define device_bar_CAVM_SATAX_UCTL_INTENA_W1S(a) 0x0 /* PF_BAR0 */
 #define busnum_CAVM_SATAX_UCTL_INTENA_W1S(a) (a)
 #define arguments_CAVM_SATAX_UCTL_INTENA_W1S(a) (a),-1,-1,-1
 
@@ -3977,7 +2769,7 @@ union cavm_satax_uctl_intstat
         uint64_t uahc_fb_sbe           : 1;  /**< [  8:  8](R/W1C/H) Detected single-bit error on the UAHC FBS memory. */
         uint64_t dma_rd_err            : 1;  /**< [  7:  7](R/W1C/H) Received DMA read response fault error from NCBO. */
         uint64_t dma_wr_err            : 1;  /**< [  6:  6](R/W1C/H) Received DMA write response fault error from NCBO. */
-        uint64_t reserved_5            : 1;
+        uint64_t xm_r_dbe              : 1;  /**< [  5:  5](R/W1C/H) Detected double-bit error on the UCTL AxiMaster read-data FIFO. */
         uint64_t xm_r_sbe              : 1;  /**< [  4:  4](R/W1C/H) Detected single-bit error on the UCTL AxiMaster read-data FIFO. */
         uint64_t xm_w_dbe              : 1;  /**< [  3:  3](R/W1C/H) Detected double-bit error on the UCTL AxiMaster write-data FIFO. */
         uint64_t xm_w_sbe              : 1;  /**< [  2:  2](R/W1C/H) Detected single-bit error on the UCTL AxiMaster write-data FIFO. */
@@ -4013,7 +2805,7 @@ union cavm_satax_uctl_intstat
         uint64_t xm_w_sbe              : 1;  /**< [  2:  2](R/W1C/H) Detected single-bit error on the UCTL AxiMaster write-data FIFO. */
         uint64_t xm_w_dbe              : 1;  /**< [  3:  3](R/W1C/H) Detected double-bit error on the UCTL AxiMaster write-data FIFO. */
         uint64_t xm_r_sbe              : 1;  /**< [  4:  4](R/W1C/H) Detected single-bit error on the UCTL AxiMaster read-data FIFO. */
-        uint64_t reserved_5            : 1;
+        uint64_t xm_r_dbe              : 1;  /**< [  5:  5](R/W1C/H) Detected double-bit error on the UCTL AxiMaster read-data FIFO. */
         uint64_t dma_wr_err            : 1;  /**< [  6:  6](R/W1C/H) Received DMA write response fault error from NCBO. */
         uint64_t dma_rd_err            : 1;  /**< [  7:  7](R/W1C/H) Received DMA read response fault error from NCBO. */
         uint64_t uahc_fb_sbe           : 1;  /**< [  8:  8](R/W1C/H) Detected single-bit error on the UAHC FBS memory. */
@@ -4025,112 +2817,7 @@ union cavm_satax_uctl_intstat
         uint64_t reserved_14_63        : 50;
 #endif /* Word 0 - End */
     } s;
-    struct cavm_satax_uctl_intstat_cn8
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_14_63        : 50;
-        uint64_t uahc_rx_dbe           : 1;  /**< [ 13: 13](R/W1C/H) Detected double-bit error on the UAHC Rx FIFO. */
-        uint64_t uahc_rx_sbe           : 1;  /**< [ 12: 12](R/W1C/H) Detected single-bit error on the UAHC Rx FIFO. */
-        uint64_t uahc_tx_dbe           : 1;  /**< [ 11: 11](R/W1C/H) Detected double-bit error on the UAHC Tx FIFO. */
-        uint64_t uahc_tx_sbe           : 1;  /**< [ 10: 10](R/W1C/H) Detected single-bit error on the UAHC Tx FIFO. */
-        uint64_t uahc_fb_dbe           : 1;  /**< [  9:  9](R/W1C/H) Detected double-bit error on the UAHC FBS memory. */
-        uint64_t uahc_fb_sbe           : 1;  /**< [  8:  8](R/W1C/H) Detected single-bit error on the UAHC FBS memory. */
-        uint64_t dma_rd_err            : 1;  /**< [  7:  7](R/W1C/H) Received DMA read response fault error from NCBO. */
-        uint64_t dma_wr_err            : 1;  /**< [  6:  6](R/W1C/H) Received DMA write response fault error from NCBO. */
-        uint64_t xm_r_dbe              : 1;  /**< [  5:  5](R/W1C/H) Detected double-bit error on the UCTL AxiMaster read-data FIFO. */
-        uint64_t xm_r_sbe              : 1;  /**< [  4:  4](R/W1C/H) Detected single-bit error on the UCTL AxiMaster read-data FIFO. */
-        uint64_t xm_w_dbe              : 1;  /**< [  3:  3](R/W1C/H) Detected double-bit error on the UCTL AxiMaster write-data FIFO. */
-        uint64_t xm_w_sbe              : 1;  /**< [  2:  2](R/W1C/H) Detected single-bit error on the UCTL AxiMaster write-data FIFO. */
-        uint64_t xm_bad_dma            : 1;  /**< [  1:  1](R/W1C/H) Detected bad DMA access from UAHC to NCB. The error information is logged in
-                                                                 SATA()_UCTL_SHIM_CFG[XM_BAD_DMA_*]. Received a DMA request from UAHC that violates
-                                                                 the assumptions made by the AXI-to-NCB shim. Such scenarios include: illegal length/size
-                                                                 combinations and address out-of-bounds.
-
-                                                                 For more information on exact failures, see description in
-                                                                 SATA()_UCTL_SHIM_CFG[XM_BAD_DMA_TYPE].
-
-                                                                 The hardware does not translate the request correctly and results may violate NCB
-                                                                 protocols. */
-        uint64_t xs_ncb_oob            : 1;  /**< [  0:  0](R/W1C/H) Detected out-of-bound register access to UAHC over NCB. The UAHC defines 1MB of register
-                                                                 space, starting at offset 0x0. Any accesses outside of this register space cause this bit
-                                                                 to be set to 1. The error information is logged in
-                                                                 SATA()_UCTL_SHIM_CFG[XS_NCB_OOB_*]. */
-#else /* Word 0 - Little Endian */
-        uint64_t xs_ncb_oob            : 1;  /**< [  0:  0](R/W1C/H) Detected out-of-bound register access to UAHC over NCB. The UAHC defines 1MB of register
-                                                                 space, starting at offset 0x0. Any accesses outside of this register space cause this bit
-                                                                 to be set to 1. The error information is logged in
-                                                                 SATA()_UCTL_SHIM_CFG[XS_NCB_OOB_*]. */
-        uint64_t xm_bad_dma            : 1;  /**< [  1:  1](R/W1C/H) Detected bad DMA access from UAHC to NCB. The error information is logged in
-                                                                 SATA()_UCTL_SHIM_CFG[XM_BAD_DMA_*]. Received a DMA request from UAHC that violates
-                                                                 the assumptions made by the AXI-to-NCB shim. Such scenarios include: illegal length/size
-                                                                 combinations and address out-of-bounds.
-
-                                                                 For more information on exact failures, see description in
-                                                                 SATA()_UCTL_SHIM_CFG[XM_BAD_DMA_TYPE].
-
-                                                                 The hardware does not translate the request correctly and results may violate NCB
-                                                                 protocols. */
-        uint64_t xm_w_sbe              : 1;  /**< [  2:  2](R/W1C/H) Detected single-bit error on the UCTL AxiMaster write-data FIFO. */
-        uint64_t xm_w_dbe              : 1;  /**< [  3:  3](R/W1C/H) Detected double-bit error on the UCTL AxiMaster write-data FIFO. */
-        uint64_t xm_r_sbe              : 1;  /**< [  4:  4](R/W1C/H) Detected single-bit error on the UCTL AxiMaster read-data FIFO. */
-        uint64_t xm_r_dbe              : 1;  /**< [  5:  5](R/W1C/H) Detected double-bit error on the UCTL AxiMaster read-data FIFO. */
-        uint64_t dma_wr_err            : 1;  /**< [  6:  6](R/W1C/H) Received DMA write response fault error from NCBO. */
-        uint64_t dma_rd_err            : 1;  /**< [  7:  7](R/W1C/H) Received DMA read response fault error from NCBO. */
-        uint64_t uahc_fb_sbe           : 1;  /**< [  8:  8](R/W1C/H) Detected single-bit error on the UAHC FBS memory. */
-        uint64_t uahc_fb_dbe           : 1;  /**< [  9:  9](R/W1C/H) Detected double-bit error on the UAHC FBS memory. */
-        uint64_t uahc_tx_sbe           : 1;  /**< [ 10: 10](R/W1C/H) Detected single-bit error on the UAHC Tx FIFO. */
-        uint64_t uahc_tx_dbe           : 1;  /**< [ 11: 11](R/W1C/H) Detected double-bit error on the UAHC Tx FIFO. */
-        uint64_t uahc_rx_sbe           : 1;  /**< [ 12: 12](R/W1C/H) Detected single-bit error on the UAHC Rx FIFO. */
-        uint64_t uahc_rx_dbe           : 1;  /**< [ 13: 13](R/W1C/H) Detected double-bit error on the UAHC Rx FIFO. */
-        uint64_t reserved_14_63        : 50;
-#endif /* Word 0 - End */
-    } cn8;
-    struct cavm_satax_uctl_intstat_cn9
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_8_63         : 56;
-        uint64_t dma_rd_err            : 1;  /**< [  7:  7](R/W1C/H) Received DMA read response fault error from NCBO. */
-        uint64_t dma_wr_err            : 1;  /**< [  6:  6](R/W1C/H) Received DMA write response fault error from NCBO. */
-        uint64_t dma_psn               : 1;  /**< [  5:  5](R/W1C/H) Received DMA read response with poisoned data from NCBO.
-                                                                 Hardware also sets SATA()_UCTL_RAS[DMA_PSN]. */
-        uint64_t reserved_2_4          : 3;
-        uint64_t xm_bad_dma            : 1;  /**< [  1:  1](R/W1C/H) Detected bad DMA access from UAHC to NCB. The error information is logged in
-                                                                 SATA()_UCTL_SHIM_CFG[XM_BAD_DMA_*]. Received a DMA request from UAHC that violates
-                                                                 the assumptions made by the AXI-to-NCB shim. Such scenarios include: illegal length/size
-                                                                 combinations and address out-of-bounds.
-
-                                                                 For more information on exact failures, see description in
-                                                                 SATA()_UCTL_SHIM_CFG[XM_BAD_DMA_TYPE].
-
-                                                                 The hardware does not translate the request correctly and results may violate NCB
-                                                                 protocols. */
-        uint64_t xs_ncb_oob            : 1;  /**< [  0:  0](R/W1C/H) Detected out-of-bound register access to UAHC over NCB. The UAHC defines 1MB of register
-                                                                 space, starting at offset 0x0. Any accesses outside of this register space cause this bit
-                                                                 to be set to 1. The error information is logged in
-                                                                 SATA()_UCTL_SHIM_CFG[XS_NCB_OOB_*]. */
-#else /* Word 0 - Little Endian */
-        uint64_t xs_ncb_oob            : 1;  /**< [  0:  0](R/W1C/H) Detected out-of-bound register access to UAHC over NCB. The UAHC defines 1MB of register
-                                                                 space, starting at offset 0x0. Any accesses outside of this register space cause this bit
-                                                                 to be set to 1. The error information is logged in
-                                                                 SATA()_UCTL_SHIM_CFG[XS_NCB_OOB_*]. */
-        uint64_t xm_bad_dma            : 1;  /**< [  1:  1](R/W1C/H) Detected bad DMA access from UAHC to NCB. The error information is logged in
-                                                                 SATA()_UCTL_SHIM_CFG[XM_BAD_DMA_*]. Received a DMA request from UAHC that violates
-                                                                 the assumptions made by the AXI-to-NCB shim. Such scenarios include: illegal length/size
-                                                                 combinations and address out-of-bounds.
-
-                                                                 For more information on exact failures, see description in
-                                                                 SATA()_UCTL_SHIM_CFG[XM_BAD_DMA_TYPE].
-
-                                                                 The hardware does not translate the request correctly and results may violate NCB
-                                                                 protocols. */
-        uint64_t reserved_2_4          : 3;
-        uint64_t dma_psn               : 1;  /**< [  5:  5](R/W1C/H) Received DMA read response with poisoned data from NCBO.
-                                                                 Hardware also sets SATA()_UCTL_RAS[DMA_PSN]. */
-        uint64_t dma_wr_err            : 1;  /**< [  6:  6](R/W1C/H) Received DMA write response fault error from NCBO. */
-        uint64_t dma_rd_err            : 1;  /**< [  7:  7](R/W1C/H) Received DMA read response fault error from NCBO. */
-        uint64_t reserved_8_63         : 56;
-#endif /* Word 0 - End */
-    } cn9;
+    /* struct cavm_satax_uctl_intstat_s cn; */
 };
 typedef union cavm_satax_uctl_intstat cavm_satax_uctl_intstat_t;
 
@@ -4141,15 +2828,13 @@ static inline uint64_t CAVM_SATAX_UCTL_INTSTAT(unsigned long a)
         return 0x810000100030ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN83XX) && (a<=5))
         return 0x810000100030ll + 0x1000000000ll * ((a) & 0x7);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
-        return 0x810000100030ll + 0x1000000000ll * ((a) & 0x3);
-    __cavm_csr_fatal("SATAX_UCTL_INTSTAT", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("SATAX_UCTL_INTSTAT", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SATAX_UCTL_INTSTAT(a) cavm_satax_uctl_intstat_t
 #define bustype_CAVM_SATAX_UCTL_INTSTAT(a) CSR_TYPE_NCB
 #define basename_CAVM_SATAX_UCTL_INTSTAT(a) "SATAX_UCTL_INTSTAT"
-#define device_bar_CAVM_SATAX_UCTL_INTSTAT(a) 0x4 /* PF_BAR4 */
+#define device_bar_CAVM_SATAX_UCTL_INTSTAT(a) 0x0 /* PF_BAR0 */
 #define busnum_CAVM_SATAX_UCTL_INTSTAT(a) (a)
 #define arguments_CAVM_SATAX_UCTL_INTSTAT(a) (a),-1,-1,-1
 
@@ -4174,7 +2859,7 @@ union cavm_satax_uctl_intstat_w1s
         uint64_t uahc_fb_sbe           : 1;  /**< [  8:  8](R/W1S/H) Reads or sets SATA(0..1)_UCTL_INTSTAT[UAHC_FB_SBE]. */
         uint64_t dma_rd_err            : 1;  /**< [  7:  7](R/W1S/H) Reads or sets SATA(0..1)_UCTL_INTSTAT[DMA_RD_ERR]. */
         uint64_t dma_wr_err            : 1;  /**< [  6:  6](R/W1S/H) Reads or sets SATA(0..1)_UCTL_INTSTAT[DMA_WR_ERR]. */
-        uint64_t reserved_5            : 1;
+        uint64_t xm_r_dbe              : 1;  /**< [  5:  5](R/W1S/H) Reads or sets SATA(0..1)_UCTL_INTSTAT[XM_R_DBE]. */
         uint64_t xm_r_sbe              : 1;  /**< [  4:  4](R/W1S/H) Reads or sets SATA(0..1)_UCTL_INTSTAT[XM_R_SBE]. */
         uint64_t xm_w_dbe              : 1;  /**< [  3:  3](R/W1S/H) Reads or sets SATA(0..1)_UCTL_INTSTAT[XM_W_DBE]. */
         uint64_t xm_w_sbe              : 1;  /**< [  2:  2](R/W1S/H) Reads or sets SATA(0..1)_UCTL_INTSTAT[XM_W_SBE]. */
@@ -4186,7 +2871,7 @@ union cavm_satax_uctl_intstat_w1s
         uint64_t xm_w_sbe              : 1;  /**< [  2:  2](R/W1S/H) Reads or sets SATA(0..1)_UCTL_INTSTAT[XM_W_SBE]. */
         uint64_t xm_w_dbe              : 1;  /**< [  3:  3](R/W1S/H) Reads or sets SATA(0..1)_UCTL_INTSTAT[XM_W_DBE]. */
         uint64_t xm_r_sbe              : 1;  /**< [  4:  4](R/W1S/H) Reads or sets SATA(0..1)_UCTL_INTSTAT[XM_R_SBE]. */
-        uint64_t reserved_5            : 1;
+        uint64_t xm_r_dbe              : 1;  /**< [  5:  5](R/W1S/H) Reads or sets SATA(0..1)_UCTL_INTSTAT[XM_R_DBE]. */
         uint64_t dma_wr_err            : 1;  /**< [  6:  6](R/W1S/H) Reads or sets SATA(0..1)_UCTL_INTSTAT[DMA_WR_ERR]. */
         uint64_t dma_rd_err            : 1;  /**< [  7:  7](R/W1S/H) Reads or sets SATA(0..1)_UCTL_INTSTAT[DMA_RD_ERR]. */
         uint64_t uahc_fb_sbe           : 1;  /**< [  8:  8](R/W1S/H) Reads or sets SATA(0..1)_UCTL_INTSTAT[UAHC_FB_SBE]. */
@@ -4198,42 +2883,7 @@ union cavm_satax_uctl_intstat_w1s
         uint64_t reserved_14_63        : 50;
 #endif /* Word 0 - End */
     } s;
-    struct cavm_satax_uctl_intstat_w1s_cn81xx
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_14_63        : 50;
-        uint64_t uahc_rx_dbe           : 1;  /**< [ 13: 13](R/W1S/H) Reads or sets SATA(0..1)_UCTL_INTSTAT[UAHC_RX_DBE]. */
-        uint64_t uahc_rx_sbe           : 1;  /**< [ 12: 12](R/W1S/H) Reads or sets SATA(0..1)_UCTL_INTSTAT[UAHC_RX_SBE]. */
-        uint64_t uahc_tx_dbe           : 1;  /**< [ 11: 11](R/W1S/H) Reads or sets SATA(0..1)_UCTL_INTSTAT[UAHC_TX_DBE]. */
-        uint64_t uahc_tx_sbe           : 1;  /**< [ 10: 10](R/W1S/H) Reads or sets SATA(0..1)_UCTL_INTSTAT[UAHC_TX_SBE]. */
-        uint64_t uahc_fb_dbe           : 1;  /**< [  9:  9](R/W1S/H) Reads or sets SATA(0..1)_UCTL_INTSTAT[UAHC_FB_DBE]. */
-        uint64_t uahc_fb_sbe           : 1;  /**< [  8:  8](R/W1S/H) Reads or sets SATA(0..1)_UCTL_INTSTAT[UAHC_FB_SBE]. */
-        uint64_t dma_rd_err            : 1;  /**< [  7:  7](R/W1S/H) Reads or sets SATA(0..1)_UCTL_INTSTAT[DMA_RD_ERR]. */
-        uint64_t dma_wr_err            : 1;  /**< [  6:  6](R/W1S/H) Reads or sets SATA(0..1)_UCTL_INTSTAT[DMA_WR_ERR]. */
-        uint64_t xm_r_dbe              : 1;  /**< [  5:  5](R/W1S/H) Reads or sets SATA(0..1)_UCTL_INTSTAT[XM_R_DBE]. */
-        uint64_t xm_r_sbe              : 1;  /**< [  4:  4](R/W1S/H) Reads or sets SATA(0..1)_UCTL_INTSTAT[XM_R_SBE]. */
-        uint64_t xm_w_dbe              : 1;  /**< [  3:  3](R/W1S/H) Reads or sets SATA(0..1)_UCTL_INTSTAT[XM_W_DBE]. */
-        uint64_t xm_w_sbe              : 1;  /**< [  2:  2](R/W1S/H) Reads or sets SATA(0..1)_UCTL_INTSTAT[XM_W_SBE]. */
-        uint64_t xm_bad_dma            : 1;  /**< [  1:  1](R/W1S/H) Reads or sets SATA(0..1)_UCTL_INTSTAT[XM_BAD_DMA]. */
-        uint64_t xs_ncb_oob            : 1;  /**< [  0:  0](R/W1S/H) Reads or sets SATA(0..1)_UCTL_INTSTAT[XS_NCB_OOB]. */
-#else /* Word 0 - Little Endian */
-        uint64_t xs_ncb_oob            : 1;  /**< [  0:  0](R/W1S/H) Reads or sets SATA(0..1)_UCTL_INTSTAT[XS_NCB_OOB]. */
-        uint64_t xm_bad_dma            : 1;  /**< [  1:  1](R/W1S/H) Reads or sets SATA(0..1)_UCTL_INTSTAT[XM_BAD_DMA]. */
-        uint64_t xm_w_sbe              : 1;  /**< [  2:  2](R/W1S/H) Reads or sets SATA(0..1)_UCTL_INTSTAT[XM_W_SBE]. */
-        uint64_t xm_w_dbe              : 1;  /**< [  3:  3](R/W1S/H) Reads or sets SATA(0..1)_UCTL_INTSTAT[XM_W_DBE]. */
-        uint64_t xm_r_sbe              : 1;  /**< [  4:  4](R/W1S/H) Reads or sets SATA(0..1)_UCTL_INTSTAT[XM_R_SBE]. */
-        uint64_t xm_r_dbe              : 1;  /**< [  5:  5](R/W1S/H) Reads or sets SATA(0..1)_UCTL_INTSTAT[XM_R_DBE]. */
-        uint64_t dma_wr_err            : 1;  /**< [  6:  6](R/W1S/H) Reads or sets SATA(0..1)_UCTL_INTSTAT[DMA_WR_ERR]. */
-        uint64_t dma_rd_err            : 1;  /**< [  7:  7](R/W1S/H) Reads or sets SATA(0..1)_UCTL_INTSTAT[DMA_RD_ERR]. */
-        uint64_t uahc_fb_sbe           : 1;  /**< [  8:  8](R/W1S/H) Reads or sets SATA(0..1)_UCTL_INTSTAT[UAHC_FB_SBE]. */
-        uint64_t uahc_fb_dbe           : 1;  /**< [  9:  9](R/W1S/H) Reads or sets SATA(0..1)_UCTL_INTSTAT[UAHC_FB_DBE]. */
-        uint64_t uahc_tx_sbe           : 1;  /**< [ 10: 10](R/W1S/H) Reads or sets SATA(0..1)_UCTL_INTSTAT[UAHC_TX_SBE]. */
-        uint64_t uahc_tx_dbe           : 1;  /**< [ 11: 11](R/W1S/H) Reads or sets SATA(0..1)_UCTL_INTSTAT[UAHC_TX_DBE]. */
-        uint64_t uahc_rx_sbe           : 1;  /**< [ 12: 12](R/W1S/H) Reads or sets SATA(0..1)_UCTL_INTSTAT[UAHC_RX_SBE]. */
-        uint64_t uahc_rx_dbe           : 1;  /**< [ 13: 13](R/W1S/H) Reads or sets SATA(0..1)_UCTL_INTSTAT[UAHC_RX_DBE]. */
-        uint64_t reserved_14_63        : 50;
-#endif /* Word 0 - End */
-    } cn81xx;
+    /* struct cavm_satax_uctl_intstat_w1s_s cn81xx; */
     struct cavm_satax_uctl_intstat_w1s_cn83xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -4270,26 +2920,6 @@ union cavm_satax_uctl_intstat_w1s
         uint64_t reserved_14_63        : 50;
 #endif /* Word 0 - End */
     } cn83xx;
-    struct cavm_satax_uctl_intstat_w1s_cn9
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_8_63         : 56;
-        uint64_t dma_rd_err            : 1;  /**< [  7:  7](R/W1S/H) Reads or sets SATA(0..3)_UCTL_INTSTAT[DMA_RD_ERR]. */
-        uint64_t dma_wr_err            : 1;  /**< [  6:  6](R/W1S/H) Reads or sets SATA(0..3)_UCTL_INTSTAT[DMA_WR_ERR]. */
-        uint64_t dma_psn               : 1;  /**< [  5:  5](R/W1S/H) Reads or sets SATA(0..3)_UCTL_INTSTAT[DMA_PSN]. */
-        uint64_t reserved_2_4          : 3;
-        uint64_t xm_bad_dma            : 1;  /**< [  1:  1](R/W1S/H) Reads or sets SATA(0..3)_UCTL_INTSTAT[XM_BAD_DMA]. */
-        uint64_t xs_ncb_oob            : 1;  /**< [  0:  0](R/W1S/H) Reads or sets SATA(0..3)_UCTL_INTSTAT[XS_NCB_OOB]. */
-#else /* Word 0 - Little Endian */
-        uint64_t xs_ncb_oob            : 1;  /**< [  0:  0](R/W1S/H) Reads or sets SATA(0..3)_UCTL_INTSTAT[XS_NCB_OOB]. */
-        uint64_t xm_bad_dma            : 1;  /**< [  1:  1](R/W1S/H) Reads or sets SATA(0..3)_UCTL_INTSTAT[XM_BAD_DMA]. */
-        uint64_t reserved_2_4          : 3;
-        uint64_t dma_psn               : 1;  /**< [  5:  5](R/W1S/H) Reads or sets SATA(0..3)_UCTL_INTSTAT[DMA_PSN]. */
-        uint64_t dma_wr_err            : 1;  /**< [  6:  6](R/W1S/H) Reads or sets SATA(0..3)_UCTL_INTSTAT[DMA_WR_ERR]. */
-        uint64_t dma_rd_err            : 1;  /**< [  7:  7](R/W1S/H) Reads or sets SATA(0..3)_UCTL_INTSTAT[DMA_RD_ERR]. */
-        uint64_t reserved_8_63         : 56;
-#endif /* Word 0 - End */
-    } cn9;
 };
 typedef union cavm_satax_uctl_intstat_w1s cavm_satax_uctl_intstat_w1s_t;
 
@@ -4300,172 +2930,15 @@ static inline uint64_t CAVM_SATAX_UCTL_INTSTAT_W1S(unsigned long a)
         return 0x810000100038ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN83XX) && (a<=5))
         return 0x810000100038ll + 0x1000000000ll * ((a) & 0x7);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
-        return 0x810000100038ll + 0x1000000000ll * ((a) & 0x3);
-    __cavm_csr_fatal("SATAX_UCTL_INTSTAT_W1S", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("SATAX_UCTL_INTSTAT_W1S", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SATAX_UCTL_INTSTAT_W1S(a) cavm_satax_uctl_intstat_w1s_t
 #define bustype_CAVM_SATAX_UCTL_INTSTAT_W1S(a) CSR_TYPE_NCB
 #define basename_CAVM_SATAX_UCTL_INTSTAT_W1S(a) "SATAX_UCTL_INTSTAT_W1S"
-#define device_bar_CAVM_SATAX_UCTL_INTSTAT_W1S(a) 0x4 /* PF_BAR4 */
+#define device_bar_CAVM_SATAX_UCTL_INTSTAT_W1S(a) 0x0 /* PF_BAR0 */
 #define busnum_CAVM_SATAX_UCTL_INTSTAT_W1S(a) (a)
 #define arguments_CAVM_SATAX_UCTL_INTSTAT_W1S(a) (a),-1,-1,-1
-
-/**
- * Register (NCB) sata#_uctl_ras
- *
- * SATA UCTL RAS Register
- * This register is intended for delivery of RAS events to the SCP, so should be
- * ignored by OS drivers.
- */
-union cavm_satax_uctl_ras
-{
-    uint64_t u;
-    struct cavm_satax_uctl_ras_s
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_1_63         : 63;
-        uint64_t dma_psn               : 1;  /**< [  0:  0](R/W1C/H) Received DMA read response with poisoned data from NCBO.
-                                                                 Hardware also sets SATA()_UCTL_INTSTAT[DMA_PSN]. */
-#else /* Word 0 - Little Endian */
-        uint64_t dma_psn               : 1;  /**< [  0:  0](R/W1C/H) Received DMA read response with poisoned data from NCBO.
-                                                                 Hardware also sets SATA()_UCTL_INTSTAT[DMA_PSN]. */
-        uint64_t reserved_1_63         : 63;
-#endif /* Word 0 - End */
-    } s;
-    /* struct cavm_satax_uctl_ras_s cn; */
-};
-typedef union cavm_satax_uctl_ras cavm_satax_uctl_ras_t;
-
-static inline uint64_t CAVM_SATAX_UCTL_RAS(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_SATAX_UCTL_RAS(unsigned long a)
-{
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
-        return 0x810000100050ll + 0x1000000000ll * ((a) & 0x3);
-    __cavm_csr_fatal("SATAX_UCTL_RAS", 1, a, 0, 0, 0);
-}
-
-#define typedef_CAVM_SATAX_UCTL_RAS(a) cavm_satax_uctl_ras_t
-#define bustype_CAVM_SATAX_UCTL_RAS(a) CSR_TYPE_NCB
-#define basename_CAVM_SATAX_UCTL_RAS(a) "SATAX_UCTL_RAS"
-#define device_bar_CAVM_SATAX_UCTL_RAS(a) 0x4 /* PF_BAR4 */
-#define busnum_CAVM_SATAX_UCTL_RAS(a) (a)
-#define arguments_CAVM_SATAX_UCTL_RAS(a) (a),-1,-1,-1
-
-/**
- * Register (NCB) sata#_uctl_ras_ena_w1c
- *
- * SATA UCTL RAS Enable Clear Register
- * This register clears interrupt enable bits.
- */
-union cavm_satax_uctl_ras_ena_w1c
-{
-    uint64_t u;
-    struct cavm_satax_uctl_ras_ena_w1c_s
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_1_63         : 63;
-        uint64_t dma_psn               : 1;  /**< [  0:  0](R/W1C/H) Reads or clears enable for SATA(0..3)_UCTL_RAS[DMA_PSN]. */
-#else /* Word 0 - Little Endian */
-        uint64_t dma_psn               : 1;  /**< [  0:  0](R/W1C/H) Reads or clears enable for SATA(0..3)_UCTL_RAS[DMA_PSN]. */
-        uint64_t reserved_1_63         : 63;
-#endif /* Word 0 - End */
-    } s;
-    /* struct cavm_satax_uctl_ras_ena_w1c_s cn; */
-};
-typedef union cavm_satax_uctl_ras_ena_w1c cavm_satax_uctl_ras_ena_w1c_t;
-
-static inline uint64_t CAVM_SATAX_UCTL_RAS_ENA_W1C(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_SATAX_UCTL_RAS_ENA_W1C(unsigned long a)
-{
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
-        return 0x810000100060ll + 0x1000000000ll * ((a) & 0x3);
-    __cavm_csr_fatal("SATAX_UCTL_RAS_ENA_W1C", 1, a, 0, 0, 0);
-}
-
-#define typedef_CAVM_SATAX_UCTL_RAS_ENA_W1C(a) cavm_satax_uctl_ras_ena_w1c_t
-#define bustype_CAVM_SATAX_UCTL_RAS_ENA_W1C(a) CSR_TYPE_NCB
-#define basename_CAVM_SATAX_UCTL_RAS_ENA_W1C(a) "SATAX_UCTL_RAS_ENA_W1C"
-#define device_bar_CAVM_SATAX_UCTL_RAS_ENA_W1C(a) 0x4 /* PF_BAR4 */
-#define busnum_CAVM_SATAX_UCTL_RAS_ENA_W1C(a) (a)
-#define arguments_CAVM_SATAX_UCTL_RAS_ENA_W1C(a) (a),-1,-1,-1
-
-/**
- * Register (NCB) sata#_uctl_ras_ena_w1s
- *
- * SATA UCTL RAS Enable Set Register
- * This register sets interrupt enable bits.
- */
-union cavm_satax_uctl_ras_ena_w1s
-{
-    uint64_t u;
-    struct cavm_satax_uctl_ras_ena_w1s_s
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_1_63         : 63;
-        uint64_t dma_psn               : 1;  /**< [  0:  0](R/W1S/H) Reads or sets enable for SATA(0..3)_UCTL_RAS[DMA_PSN]. */
-#else /* Word 0 - Little Endian */
-        uint64_t dma_psn               : 1;  /**< [  0:  0](R/W1S/H) Reads or sets enable for SATA(0..3)_UCTL_RAS[DMA_PSN]. */
-        uint64_t reserved_1_63         : 63;
-#endif /* Word 0 - End */
-    } s;
-    /* struct cavm_satax_uctl_ras_ena_w1s_s cn; */
-};
-typedef union cavm_satax_uctl_ras_ena_w1s cavm_satax_uctl_ras_ena_w1s_t;
-
-static inline uint64_t CAVM_SATAX_UCTL_RAS_ENA_W1S(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_SATAX_UCTL_RAS_ENA_W1S(unsigned long a)
-{
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
-        return 0x810000100068ll + 0x1000000000ll * ((a) & 0x3);
-    __cavm_csr_fatal("SATAX_UCTL_RAS_ENA_W1S", 1, a, 0, 0, 0);
-}
-
-#define typedef_CAVM_SATAX_UCTL_RAS_ENA_W1S(a) cavm_satax_uctl_ras_ena_w1s_t
-#define bustype_CAVM_SATAX_UCTL_RAS_ENA_W1S(a) CSR_TYPE_NCB
-#define basename_CAVM_SATAX_UCTL_RAS_ENA_W1S(a) "SATAX_UCTL_RAS_ENA_W1S"
-#define device_bar_CAVM_SATAX_UCTL_RAS_ENA_W1S(a) 0x4 /* PF_BAR4 */
-#define busnum_CAVM_SATAX_UCTL_RAS_ENA_W1S(a) (a)
-#define arguments_CAVM_SATAX_UCTL_RAS_ENA_W1S(a) (a),-1,-1,-1
-
-/**
- * Register (NCB) sata#_uctl_ras_w1s
- *
- * SATA UCTL RAS Set Register
- * This register sets interrupt bits.
- */
-union cavm_satax_uctl_ras_w1s
-{
-    uint64_t u;
-    struct cavm_satax_uctl_ras_w1s_s
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_1_63         : 63;
-        uint64_t dma_psn               : 1;  /**< [  0:  0](R/W1S/H) Reads or sets SATA(0..3)_UCTL_RAS[DMA_PSN]. */
-#else /* Word 0 - Little Endian */
-        uint64_t dma_psn               : 1;  /**< [  0:  0](R/W1S/H) Reads or sets SATA(0..3)_UCTL_RAS[DMA_PSN]. */
-        uint64_t reserved_1_63         : 63;
-#endif /* Word 0 - End */
-    } s;
-    /* struct cavm_satax_uctl_ras_w1s_s cn; */
-};
-typedef union cavm_satax_uctl_ras_w1s cavm_satax_uctl_ras_w1s_t;
-
-static inline uint64_t CAVM_SATAX_UCTL_RAS_W1S(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_SATAX_UCTL_RAS_W1S(unsigned long a)
-{
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
-        return 0x810000100058ll + 0x1000000000ll * ((a) & 0x3);
-    __cavm_csr_fatal("SATAX_UCTL_RAS_W1S", 1, a, 0, 0, 0);
-}
-
-#define typedef_CAVM_SATAX_UCTL_RAS_W1S(a) cavm_satax_uctl_ras_w1s_t
-#define bustype_CAVM_SATAX_UCTL_RAS_W1S(a) CSR_TYPE_NCB
-#define basename_CAVM_SATAX_UCTL_RAS_W1S(a) "SATAX_UCTL_RAS_W1S"
-#define device_bar_CAVM_SATAX_UCTL_RAS_W1S(a) 0x4 /* PF_BAR4 */
-#define busnum_CAVM_SATAX_UCTL_RAS_W1S(a) (a)
-#define arguments_CAVM_SATAX_UCTL_RAS_W1S(a) (a),-1,-1,-1
 
 /**
  * Register (NCB) sata#_uctl_shim_cfg
@@ -4541,15 +3014,13 @@ static inline uint64_t CAVM_SATAX_UCTL_SHIM_CFG(unsigned long a)
         return 0x8100001000e8ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN83XX) && (a<=5))
         return 0x8100001000e8ll + 0x1000000000ll * ((a) & 0x7);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
-        return 0x8100001000e8ll + 0x1000000000ll * ((a) & 0x3);
-    __cavm_csr_fatal("SATAX_UCTL_SHIM_CFG", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("SATAX_UCTL_SHIM_CFG", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SATAX_UCTL_SHIM_CFG(a) cavm_satax_uctl_shim_cfg_t
 #define bustype_CAVM_SATAX_UCTL_SHIM_CFG(a) CSR_TYPE_NCB
 #define basename_CAVM_SATAX_UCTL_SHIM_CFG(a) "SATAX_UCTL_SHIM_CFG"
-#define device_bar_CAVM_SATAX_UCTL_SHIM_CFG(a) 0x4 /* PF_BAR4 */
+#define device_bar_CAVM_SATAX_UCTL_SHIM_CFG(a) 0x0 /* PF_BAR0 */
 #define busnum_CAVM_SATAX_UCTL_SHIM_CFG(a) (a)
 #define arguments_CAVM_SATAX_UCTL_SHIM_CFG(a) (a),-1,-1,-1
 
@@ -4586,15 +3057,13 @@ static inline uint64_t CAVM_SATAX_UCTL_SPARE0(unsigned long a)
         return 0x810000100010ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN83XX) && (a<=5))
         return 0x810000100010ll + 0x1000000000ll * ((a) & 0x7);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
-        return 0x810000100010ll + 0x1000000000ll * ((a) & 0x3);
-    __cavm_csr_fatal("SATAX_UCTL_SPARE0", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("SATAX_UCTL_SPARE0", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SATAX_UCTL_SPARE0(a) cavm_satax_uctl_spare0_t
 #define bustype_CAVM_SATAX_UCTL_SPARE0(a) CSR_TYPE_NCB
 #define basename_CAVM_SATAX_UCTL_SPARE0(a) "SATAX_UCTL_SPARE0"
-#define device_bar_CAVM_SATAX_UCTL_SPARE0(a) 0x4 /* PF_BAR4 */
+#define device_bar_CAVM_SATAX_UCTL_SPARE0(a) 0x0 /* PF_BAR0 */
 #define busnum_CAVM_SATAX_UCTL_SPARE0(a) (a)
 #define arguments_CAVM_SATAX_UCTL_SPARE0(a) (a),-1,-1,-1
 
@@ -4631,15 +3100,13 @@ static inline uint64_t CAVM_SATAX_UCTL_SPARE1(unsigned long a)
         return 0x8100001000f8ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN83XX) && (a<=5))
         return 0x8100001000f8ll + 0x1000000000ll * ((a) & 0x7);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
-        return 0x8100001000f8ll + 0x1000000000ll * ((a) & 0x3);
-    __cavm_csr_fatal("SATAX_UCTL_SPARE1", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("SATAX_UCTL_SPARE1", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SATAX_UCTL_SPARE1(a) cavm_satax_uctl_spare1_t
 #define bustype_CAVM_SATAX_UCTL_SPARE1(a) CSR_TYPE_NCB
 #define basename_CAVM_SATAX_UCTL_SPARE1(a) "SATAX_UCTL_SPARE1"
-#define device_bar_CAVM_SATAX_UCTL_SPARE1(a) 0x4 /* PF_BAR4 */
+#define device_bar_CAVM_SATAX_UCTL_SPARE1(a) 0x0 /* PF_BAR0 */
 #define busnum_CAVM_SATAX_UCTL_SPARE1(a) (a)
 #define arguments_CAVM_SATAX_UCTL_SPARE1(a) (a),-1,-1,-1
 

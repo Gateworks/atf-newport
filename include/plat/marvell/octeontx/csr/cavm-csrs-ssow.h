@@ -168,7 +168,7 @@ static inline uint64_t CAVM_SSOW_AF_BAR2_ALIASX(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX) && (a<=131071))
         return 0x840089100000ll + 8ll * ((a) & 0x1ffff);
-    __cavm_csr_fatal("SSOW_AF_BAR2_ALIASX", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("SSOW_AF_BAR2_ALIASX", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SSOW_AF_BAR2_ALIASX(a) cavm_ssow_af_bar2_aliasx_t
@@ -214,7 +214,7 @@ static inline uint64_t CAVM_SSOW_AF_BAR2_SEL_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x840089000000ll;
-    __cavm_csr_fatal("SSOW_AF_BAR2_SEL", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("SSOW_AF_BAR2_SEL", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SSOW_AF_BAR2_SEL cavm_ssow_af_bar2_sel_t
@@ -280,7 +280,7 @@ static inline uint64_t CAVM_SSOW_AF_LF_HWS_RST_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x840080000030ll;
-    __cavm_csr_fatal("SSOW_AF_LF_HWS_RST", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("SSOW_AF_LF_HWS_RST", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SSOW_AF_LF_HWS_RST cavm_ssow_af_lf_hws_rst_t
@@ -338,7 +338,7 @@ static inline uint64_t CAVM_SSOW_AF_RVU_LF_HWS_CFG_DEBUG_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x840080000010ll;
-    __cavm_csr_fatal("SSOW_AF_RVU_LF_HWS_CFG_DEBUG", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("SSOW_AF_RVU_LF_HWS_CFG_DEBUG", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SSOW_AF_RVU_LF_HWS_CFG_DEBUG cavm_ssow_af_rvu_lf_hws_cfg_debug_t
@@ -376,7 +376,7 @@ static inline uint64_t CAVM_SSOW_AF_SCRATCH_AW_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x840080300000ll;
-    __cavm_csr_fatal("SSOW_AF_SCRATCH_AW", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("SSOW_AF_SCRATCH_AW", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SSOW_AF_SCRATCH_AW cavm_ssow_af_scratch_aw_t
@@ -414,7 +414,7 @@ static inline uint64_t CAVM_SSOW_AF_SCRATCH_GW_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x840080200000ll;
-    __cavm_csr_fatal("SSOW_AF_SCRATCH_GW", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("SSOW_AF_SCRATCH_GW", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SSOW_AF_SCRATCH_GW cavm_ssow_af_scratch_gw_t
@@ -452,7 +452,7 @@ static inline uint64_t CAVM_SSOW_AF_SCRATCH_WS_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x840080100000ll;
-    __cavm_csr_fatal("SSOW_AF_SCRATCH_WS", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("SSOW_AF_SCRATCH_WS", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SSOW_AF_SCRATCH_WS cavm_ssow_af_scratch_ws_t
@@ -612,7 +612,7 @@ static inline uint64_t CAVM_SSOW_LF_GWS_GRPMSK_CHG_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x840200800080ll;
-    __cavm_csr_fatal("SSOW_LF_GWS_GRPMSK_CHG", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("SSOW_LF_GWS_GRPMSK_CHG", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SSOW_LF_GWS_GRPMSK_CHG cavm_ssow_lf_gws_grpmsk_chg_t
@@ -635,6 +635,95 @@ union cavm_ssow_lf_gws_int
     struct cavm_ssow_lf_gws_int_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_12_63        : 52;
+        uint64_t swtag_dis             : 1;  /**< [ 11: 11](R/W1C/H) Received UPD_WQP_GRP/SWTAG_FULL/SWTAG_DESCH when SSO_AF_HWGRP()_AW_CFG[SWTAG_DIS] was set. */
+        uint64_t illegal_ld            : 1;  /**< [ 10: 10](R/W1C/H) Received illegal load for workslot op. */
+        uint64_t illegal_st            : 1;  /**< [  9:  9](R/W1C/H) Received illegal store for workslot op. */
+        uint64_t wqp_space             : 1;  /**< [  8:  8](R/W1C/H) Received UPD_WQP_GRP referencing a different tag space than currently held by workslot. */
+        uint64_t wqp0                  : 1;  /**< [  7:  7](R/W1C/H) Received UPD_WQP_GRP/SWTAG_FULL/CLR_NSCHED with WQP=0. */
+        uint64_t clr_nsched_pend       : 1;  /**< [  6:  6](R/W1C/H) Received SWTAG_NORM/SWTAG_UNTAG/SWTAG_FULL /SWTAG_FLUSH/SWTAG_DESCHED/DESCH
+                                                                 /UPD_WQP_GRP/GET_WORK/ALLOC_WE/CLR_NSCHED from workslot with CLR_NSCHED
+                                                                 pending. */
+        uint64_t desched_pend          : 1;  /**< [  5:  5](R/W1C/H) Received CLR_NSCHED or indexed GET_WORK from workslot with SWTAG_DESCHED/DESCH pending. */
+        uint64_t alloc_pend            : 1;  /**< [  4:  4](R/W1C/H) Received SWTAG_NORM/SWTAG_UNTAG/SWTAG_FULL /SWTAG_FLUSH/SWTAG_DESCHED/DESCH
+                                                                 /UPD_WQP_GRP/GET_WORK/ALLOC_WE/CLR_NSCHED from workslot with ALLOC_WE pending. */
+        uint64_t gw_pend               : 1;  /**< [  3:  3](R/W1C/H) Received SWTAG_NORM/SWTAG_UNTAG/SWTAG_FULL /SWTAG_FLUSH/SWTAG_DESCHED/DESCH
+                                                                 /UPD_WQP_GRP/GET_WORK/ALLOC_WE/CLR_NSCHED from workslot with GET_WORK pending. */
+        uint64_t sw_empty              : 1;  /**< [  2:  2](R/W1C/H) Received SWTAG_NORM/SWTAG_FULL/SWTAG_DESCHED with tag specified as EMPTY. */
+        uint64_t sw_pend               : 1;  /**< [  1:  1](R/W1C/H) Received SWTAG_NORM/SWTAG_UNTAG/SWTAG_FULL /SWTAG_FLUSH/SWTAG_DESCHED/GET_WORK/ALLOC_WE/CLR_NSCHED
+                                                                 from workslot with pending tag switch to ORDERED or ATOMIC. */
+        uint64_t empty_ws              : 1;  /**< [  0:  0](R/W1C/H) Received SWTAG_NORM/SWTAG_UNTAG/SWTAG_FULL/SWTAG_FLUSH/SWTAG_DESCHED/DESCH/UPD_WQP_GRP from work
+                                                                 slot in EMPTY state. */
+#else /* Word 0 - Little Endian */
+        uint64_t empty_ws              : 1;  /**< [  0:  0](R/W1C/H) Received SWTAG_NORM/SWTAG_UNTAG/SWTAG_FULL/SWTAG_FLUSH/SWTAG_DESCHED/DESCH/UPD_WQP_GRP from work
+                                                                 slot in EMPTY state. */
+        uint64_t sw_pend               : 1;  /**< [  1:  1](R/W1C/H) Received SWTAG_NORM/SWTAG_UNTAG/SWTAG_FULL /SWTAG_FLUSH/SWTAG_DESCHED/GET_WORK/ALLOC_WE/CLR_NSCHED
+                                                                 from workslot with pending tag switch to ORDERED or ATOMIC. */
+        uint64_t sw_empty              : 1;  /**< [  2:  2](R/W1C/H) Received SWTAG_NORM/SWTAG_FULL/SWTAG_DESCHED with tag specified as EMPTY. */
+        uint64_t gw_pend               : 1;  /**< [  3:  3](R/W1C/H) Received SWTAG_NORM/SWTAG_UNTAG/SWTAG_FULL /SWTAG_FLUSH/SWTAG_DESCHED/DESCH
+                                                                 /UPD_WQP_GRP/GET_WORK/ALLOC_WE/CLR_NSCHED from workslot with GET_WORK pending. */
+        uint64_t alloc_pend            : 1;  /**< [  4:  4](R/W1C/H) Received SWTAG_NORM/SWTAG_UNTAG/SWTAG_FULL /SWTAG_FLUSH/SWTAG_DESCHED/DESCH
+                                                                 /UPD_WQP_GRP/GET_WORK/ALLOC_WE/CLR_NSCHED from workslot with ALLOC_WE pending. */
+        uint64_t desched_pend          : 1;  /**< [  5:  5](R/W1C/H) Received CLR_NSCHED or indexed GET_WORK from workslot with SWTAG_DESCHED/DESCH pending. */
+        uint64_t clr_nsched_pend       : 1;  /**< [  6:  6](R/W1C/H) Received SWTAG_NORM/SWTAG_UNTAG/SWTAG_FULL /SWTAG_FLUSH/SWTAG_DESCHED/DESCH
+                                                                 /UPD_WQP_GRP/GET_WORK/ALLOC_WE/CLR_NSCHED from workslot with CLR_NSCHED
+                                                                 pending. */
+        uint64_t wqp0                  : 1;  /**< [  7:  7](R/W1C/H) Received UPD_WQP_GRP/SWTAG_FULL/CLR_NSCHED with WQP=0. */
+        uint64_t wqp_space             : 1;  /**< [  8:  8](R/W1C/H) Received UPD_WQP_GRP referencing a different tag space than currently held by workslot. */
+        uint64_t illegal_st            : 1;  /**< [  9:  9](R/W1C/H) Received illegal store for workslot op. */
+        uint64_t illegal_ld            : 1;  /**< [ 10: 10](R/W1C/H) Received illegal load for workslot op. */
+        uint64_t swtag_dis             : 1;  /**< [ 11: 11](R/W1C/H) Received UPD_WQP_GRP/SWTAG_FULL/SWTAG_DESCH when SSO_AF_HWGRP()_AW_CFG[SWTAG_DIS] was set. */
+        uint64_t reserved_12_63        : 52;
+#endif /* Word 0 - End */
+    } s;
+    struct cavm_ssow_lf_gws_int_cn96xxp1
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_12_63        : 52;
+        uint64_t reserved_11           : 1;
+        uint64_t illegal_ld            : 1;  /**< [ 10: 10](R/W1C/H) Received illegal load for workslot op. */
+        uint64_t illegal_st            : 1;  /**< [  9:  9](R/W1C/H) Received illegal store for workslot op. */
+        uint64_t wqp_space             : 1;  /**< [  8:  8](R/W1C/H) Received UPD_WQP_GRP referencing a different tag space than currently held by workslot. */
+        uint64_t wqp0                  : 1;  /**< [  7:  7](R/W1C/H) Received UPD_WQP_GRP/SWTAG_FULL/CLR_NSCHED with WQP=0. */
+        uint64_t clr_nsched_pend       : 1;  /**< [  6:  6](R/W1C/H) Received SWTAG_NORM/SWTAG_UNTAG/SWTAG_FULL /SWTAG_FLUSH/SWTAG_DESCHED/DESCH
+                                                                 /UPD_WQP_GRP/GET_WORK/ALLOC_WE/CLR_NSCHED from workslot with CLR_NSCHED
+                                                                 pending. */
+        uint64_t desched_pend          : 1;  /**< [  5:  5](R/W1C/H) Received CLR_NSCHED or indexed GET_WORK from workslot with SWTAG_DESCHED/DESCH pending. */
+        uint64_t alloc_pend            : 1;  /**< [  4:  4](R/W1C/H) Received SWTAG_NORM/SWTAG_UNTAG/SWTAG_FULL /SWTAG_FLUSH/SWTAG_DESCHED/DESCH
+                                                                 /UPD_WQP_GRP/GET_WORK/ALLOC_WE/CLR_NSCHED from workslot with ALLOC_WE pending. */
+        uint64_t gw_pend               : 1;  /**< [  3:  3](R/W1C/H) Received SWTAG_NORM/SWTAG_UNTAG/SWTAG_FULL /SWTAG_FLUSH/SWTAG_DESCHED/DESCH
+                                                                 /UPD_WQP_GRP/GET_WORK/ALLOC_WE/CLR_NSCHED from workslot with GET_WORK pending. */
+        uint64_t sw_empty              : 1;  /**< [  2:  2](R/W1C/H) Received SWTAG_NORM/SWTAG_FULL/SWTAG_DESCHED with tag specified as EMPTY. */
+        uint64_t sw_pend               : 1;  /**< [  1:  1](R/W1C/H) Received SWTAG_NORM/SWTAG_UNTAG/SWTAG_FULL /SWTAG_FLUSH/SWTAG_DESCHED/GET_WORK/ALLOC_WE/CLR_NSCHED
+                                                                 from workslot with pending tag switch to ORDERED or ATOMIC. */
+        uint64_t empty_ws              : 1;  /**< [  0:  0](R/W1C/H) Received SWTAG_NORM/SWTAG_UNTAG/SWTAG_FULL/SWTAG_FLUSH/SWTAG_DESCHED/DESCH/UPD_WQP_GRP from work
+                                                                 slot in EMPTY state. */
+#else /* Word 0 - Little Endian */
+        uint64_t empty_ws              : 1;  /**< [  0:  0](R/W1C/H) Received SWTAG_NORM/SWTAG_UNTAG/SWTAG_FULL/SWTAG_FLUSH/SWTAG_DESCHED/DESCH/UPD_WQP_GRP from work
+                                                                 slot in EMPTY state. */
+        uint64_t sw_pend               : 1;  /**< [  1:  1](R/W1C/H) Received SWTAG_NORM/SWTAG_UNTAG/SWTAG_FULL /SWTAG_FLUSH/SWTAG_DESCHED/GET_WORK/ALLOC_WE/CLR_NSCHED
+                                                                 from workslot with pending tag switch to ORDERED or ATOMIC. */
+        uint64_t sw_empty              : 1;  /**< [  2:  2](R/W1C/H) Received SWTAG_NORM/SWTAG_FULL/SWTAG_DESCHED with tag specified as EMPTY. */
+        uint64_t gw_pend               : 1;  /**< [  3:  3](R/W1C/H) Received SWTAG_NORM/SWTAG_UNTAG/SWTAG_FULL /SWTAG_FLUSH/SWTAG_DESCHED/DESCH
+                                                                 /UPD_WQP_GRP/GET_WORK/ALLOC_WE/CLR_NSCHED from workslot with GET_WORK pending. */
+        uint64_t alloc_pend            : 1;  /**< [  4:  4](R/W1C/H) Received SWTAG_NORM/SWTAG_UNTAG/SWTAG_FULL /SWTAG_FLUSH/SWTAG_DESCHED/DESCH
+                                                                 /UPD_WQP_GRP/GET_WORK/ALLOC_WE/CLR_NSCHED from workslot with ALLOC_WE pending. */
+        uint64_t desched_pend          : 1;  /**< [  5:  5](R/W1C/H) Received CLR_NSCHED or indexed GET_WORK from workslot with SWTAG_DESCHED/DESCH pending. */
+        uint64_t clr_nsched_pend       : 1;  /**< [  6:  6](R/W1C/H) Received SWTAG_NORM/SWTAG_UNTAG/SWTAG_FULL /SWTAG_FLUSH/SWTAG_DESCHED/DESCH
+                                                                 /UPD_WQP_GRP/GET_WORK/ALLOC_WE/CLR_NSCHED from workslot with CLR_NSCHED
+                                                                 pending. */
+        uint64_t wqp0                  : 1;  /**< [  7:  7](R/W1C/H) Received UPD_WQP_GRP/SWTAG_FULL/CLR_NSCHED with WQP=0. */
+        uint64_t wqp_space             : 1;  /**< [  8:  8](R/W1C/H) Received UPD_WQP_GRP referencing a different tag space than currently held by workslot. */
+        uint64_t illegal_st            : 1;  /**< [  9:  9](R/W1C/H) Received illegal store for workslot op. */
+        uint64_t illegal_ld            : 1;  /**< [ 10: 10](R/W1C/H) Received illegal load for workslot op. */
+        uint64_t reserved_11           : 1;
+        uint64_t reserved_12_63        : 52;
+#endif /* Word 0 - End */
+    } cn96xxp1;
+    /* struct cavm_ssow_lf_gws_int_s cn96xxp3; */
+    struct cavm_ssow_lf_gws_int_cnf95xx
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_11_63        : 53;
         uint64_t illegal_ld            : 1;  /**< [ 10: 10](R/W1C/H) Received illegal load for workslot op. */
         uint64_t illegal_st            : 1;  /**< [  9:  9](R/W1C/H) Received illegal store for workslot op. */
@@ -673,8 +762,8 @@ union cavm_ssow_lf_gws_int
         uint64_t illegal_ld            : 1;  /**< [ 10: 10](R/W1C/H) Received illegal load for workslot op. */
         uint64_t reserved_11_63        : 53;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_ssow_lf_gws_int_s cn; */
+    } cnf95xx;
+    /* struct cavm_ssow_lf_gws_int_cnf95xx loki; */
 };
 typedef union cavm_ssow_lf_gws_int cavm_ssow_lf_gws_int_t;
 
@@ -684,7 +773,7 @@ static inline uint64_t CAVM_SSOW_LF_GWS_INT_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x840200800100ll;
-    __cavm_csr_fatal("SSOW_LF_GWS_INT", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("SSOW_LF_GWS_INT", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SSOW_LF_GWS_INT cavm_ssow_lf_gws_int_t
@@ -706,6 +795,71 @@ union cavm_ssow_lf_gws_int_ena_w1c
     struct cavm_ssow_lf_gws_int_ena_w1c_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_12_63        : 52;
+        uint64_t swtag_dis             : 1;  /**< [ 11: 11](R/W1C/H) Reads or clears enable for SSOW_LF_GWS_INT[SWTAG_DIS]. */
+        uint64_t illegal_ld            : 1;  /**< [ 10: 10](R/W1C/H) Reads or clears enable for SSOW_LF_GWS_INT[ILLEGAL_LD]. */
+        uint64_t illegal_st            : 1;  /**< [  9:  9](R/W1C/H) Reads or clears enable for SSOW_LF_GWS_INT[ILLEGAL_ST]. */
+        uint64_t wqp_space             : 1;  /**< [  8:  8](R/W1C/H) Reads or clears enable for SSOW_LF_GWS_INT[WQP_SPACE]. */
+        uint64_t wqp0                  : 1;  /**< [  7:  7](R/W1C/H) Reads or clears enable for SSOW_LF_GWS_INT[WQP0]. */
+        uint64_t clr_nsched_pend       : 1;  /**< [  6:  6](R/W1C/H) Reads or clears enable for SSOW_LF_GWS_INT[CLR_NSCHED_PEND]. */
+        uint64_t desched_pend          : 1;  /**< [  5:  5](R/W1C/H) Reads or clears enable for SSOW_LF_GWS_INT[DESCHED_PEND]. */
+        uint64_t alloc_pend            : 1;  /**< [  4:  4](R/W1C/H) Reads or clears enable for SSOW_LF_GWS_INT[ALLOC_PEND]. */
+        uint64_t gw_pend               : 1;  /**< [  3:  3](R/W1C/H) Reads or clears enable for SSOW_LF_GWS_INT[GW_PEND]. */
+        uint64_t sw_empty              : 1;  /**< [  2:  2](R/W1C/H) Reads or clears enable for SSOW_LF_GWS_INT[SW_EMPTY]. */
+        uint64_t sw_pend               : 1;  /**< [  1:  1](R/W1C/H) Reads or clears enable for SSOW_LF_GWS_INT[SW_PEND]. */
+        uint64_t empty_ws              : 1;  /**< [  0:  0](R/W1C/H) Reads or clears enable for SSOW_LF_GWS_INT[EMPTY_WS]. */
+#else /* Word 0 - Little Endian */
+        uint64_t empty_ws              : 1;  /**< [  0:  0](R/W1C/H) Reads or clears enable for SSOW_LF_GWS_INT[EMPTY_WS]. */
+        uint64_t sw_pend               : 1;  /**< [  1:  1](R/W1C/H) Reads or clears enable for SSOW_LF_GWS_INT[SW_PEND]. */
+        uint64_t sw_empty              : 1;  /**< [  2:  2](R/W1C/H) Reads or clears enable for SSOW_LF_GWS_INT[SW_EMPTY]. */
+        uint64_t gw_pend               : 1;  /**< [  3:  3](R/W1C/H) Reads or clears enable for SSOW_LF_GWS_INT[GW_PEND]. */
+        uint64_t alloc_pend            : 1;  /**< [  4:  4](R/W1C/H) Reads or clears enable for SSOW_LF_GWS_INT[ALLOC_PEND]. */
+        uint64_t desched_pend          : 1;  /**< [  5:  5](R/W1C/H) Reads or clears enable for SSOW_LF_GWS_INT[DESCHED_PEND]. */
+        uint64_t clr_nsched_pend       : 1;  /**< [  6:  6](R/W1C/H) Reads or clears enable for SSOW_LF_GWS_INT[CLR_NSCHED_PEND]. */
+        uint64_t wqp0                  : 1;  /**< [  7:  7](R/W1C/H) Reads or clears enable for SSOW_LF_GWS_INT[WQP0]. */
+        uint64_t wqp_space             : 1;  /**< [  8:  8](R/W1C/H) Reads or clears enable for SSOW_LF_GWS_INT[WQP_SPACE]. */
+        uint64_t illegal_st            : 1;  /**< [  9:  9](R/W1C/H) Reads or clears enable for SSOW_LF_GWS_INT[ILLEGAL_ST]. */
+        uint64_t illegal_ld            : 1;  /**< [ 10: 10](R/W1C/H) Reads or clears enable for SSOW_LF_GWS_INT[ILLEGAL_LD]. */
+        uint64_t swtag_dis             : 1;  /**< [ 11: 11](R/W1C/H) Reads or clears enable for SSOW_LF_GWS_INT[SWTAG_DIS]. */
+        uint64_t reserved_12_63        : 52;
+#endif /* Word 0 - End */
+    } s;
+    struct cavm_ssow_lf_gws_int_ena_w1c_cn96xxp1
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_12_63        : 52;
+        uint64_t reserved_11           : 1;
+        uint64_t illegal_ld            : 1;  /**< [ 10: 10](R/W1C/H) Reads or clears enable for SSOW_LF_GWS_INT[ILLEGAL_LD]. */
+        uint64_t illegal_st            : 1;  /**< [  9:  9](R/W1C/H) Reads or clears enable for SSOW_LF_GWS_INT[ILLEGAL_ST]. */
+        uint64_t wqp_space             : 1;  /**< [  8:  8](R/W1C/H) Reads or clears enable for SSOW_LF_GWS_INT[WQP_SPACE]. */
+        uint64_t wqp0                  : 1;  /**< [  7:  7](R/W1C/H) Reads or clears enable for SSOW_LF_GWS_INT[WQP0]. */
+        uint64_t clr_nsched_pend       : 1;  /**< [  6:  6](R/W1C/H) Reads or clears enable for SSOW_LF_GWS_INT[CLR_NSCHED_PEND]. */
+        uint64_t desched_pend          : 1;  /**< [  5:  5](R/W1C/H) Reads or clears enable for SSOW_LF_GWS_INT[DESCHED_PEND]. */
+        uint64_t alloc_pend            : 1;  /**< [  4:  4](R/W1C/H) Reads or clears enable for SSOW_LF_GWS_INT[ALLOC_PEND]. */
+        uint64_t gw_pend               : 1;  /**< [  3:  3](R/W1C/H) Reads or clears enable for SSOW_LF_GWS_INT[GW_PEND]. */
+        uint64_t sw_empty              : 1;  /**< [  2:  2](R/W1C/H) Reads or clears enable for SSOW_LF_GWS_INT[SW_EMPTY]. */
+        uint64_t sw_pend               : 1;  /**< [  1:  1](R/W1C/H) Reads or clears enable for SSOW_LF_GWS_INT[SW_PEND]. */
+        uint64_t empty_ws              : 1;  /**< [  0:  0](R/W1C/H) Reads or clears enable for SSOW_LF_GWS_INT[EMPTY_WS]. */
+#else /* Word 0 - Little Endian */
+        uint64_t empty_ws              : 1;  /**< [  0:  0](R/W1C/H) Reads or clears enable for SSOW_LF_GWS_INT[EMPTY_WS]. */
+        uint64_t sw_pend               : 1;  /**< [  1:  1](R/W1C/H) Reads or clears enable for SSOW_LF_GWS_INT[SW_PEND]. */
+        uint64_t sw_empty              : 1;  /**< [  2:  2](R/W1C/H) Reads or clears enable for SSOW_LF_GWS_INT[SW_EMPTY]. */
+        uint64_t gw_pend               : 1;  /**< [  3:  3](R/W1C/H) Reads or clears enable for SSOW_LF_GWS_INT[GW_PEND]. */
+        uint64_t alloc_pend            : 1;  /**< [  4:  4](R/W1C/H) Reads or clears enable for SSOW_LF_GWS_INT[ALLOC_PEND]. */
+        uint64_t desched_pend          : 1;  /**< [  5:  5](R/W1C/H) Reads or clears enable for SSOW_LF_GWS_INT[DESCHED_PEND]. */
+        uint64_t clr_nsched_pend       : 1;  /**< [  6:  6](R/W1C/H) Reads or clears enable for SSOW_LF_GWS_INT[CLR_NSCHED_PEND]. */
+        uint64_t wqp0                  : 1;  /**< [  7:  7](R/W1C/H) Reads or clears enable for SSOW_LF_GWS_INT[WQP0]. */
+        uint64_t wqp_space             : 1;  /**< [  8:  8](R/W1C/H) Reads or clears enable for SSOW_LF_GWS_INT[WQP_SPACE]. */
+        uint64_t illegal_st            : 1;  /**< [  9:  9](R/W1C/H) Reads or clears enable for SSOW_LF_GWS_INT[ILLEGAL_ST]. */
+        uint64_t illegal_ld            : 1;  /**< [ 10: 10](R/W1C/H) Reads or clears enable for SSOW_LF_GWS_INT[ILLEGAL_LD]. */
+        uint64_t reserved_11           : 1;
+        uint64_t reserved_12_63        : 52;
+#endif /* Word 0 - End */
+    } cn96xxp1;
+    /* struct cavm_ssow_lf_gws_int_ena_w1c_s cn96xxp3; */
+    struct cavm_ssow_lf_gws_int_ena_w1c_cnf95xx
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_11_63        : 53;
         uint64_t illegal_ld            : 1;  /**< [ 10: 10](R/W1C/H) Reads or clears enable for SSOW_LF_GWS_INT[ILLEGAL_LD]. */
         uint64_t illegal_st            : 1;  /**< [  9:  9](R/W1C/H) Reads or clears enable for SSOW_LF_GWS_INT[ILLEGAL_ST]. */
@@ -732,8 +886,8 @@ union cavm_ssow_lf_gws_int_ena_w1c
         uint64_t illegal_ld            : 1;  /**< [ 10: 10](R/W1C/H) Reads or clears enable for SSOW_LF_GWS_INT[ILLEGAL_LD]. */
         uint64_t reserved_11_63        : 53;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_ssow_lf_gws_int_ena_w1c_s cn; */
+    } cnf95xx;
+    /* struct cavm_ssow_lf_gws_int_ena_w1c_cnf95xx loki; */
 };
 typedef union cavm_ssow_lf_gws_int_ena_w1c cavm_ssow_lf_gws_int_ena_w1c_t;
 
@@ -743,7 +897,7 @@ static inline uint64_t CAVM_SSOW_LF_GWS_INT_ENA_W1C_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x840200800118ll;
-    __cavm_csr_fatal("SSOW_LF_GWS_INT_ENA_W1C", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("SSOW_LF_GWS_INT_ENA_W1C", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SSOW_LF_GWS_INT_ENA_W1C cavm_ssow_lf_gws_int_ena_w1c_t
@@ -765,6 +919,71 @@ union cavm_ssow_lf_gws_int_ena_w1s
     struct cavm_ssow_lf_gws_int_ena_w1s_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_12_63        : 52;
+        uint64_t swtag_dis             : 1;  /**< [ 11: 11](R/W1S/H) Reads or sets enable for SSOW_LF_GWS_INT[SWTAG_DIS]. */
+        uint64_t illegal_ld            : 1;  /**< [ 10: 10](R/W1S/H) Reads or sets enable for SSOW_LF_GWS_INT[ILLEGAL_LD]. */
+        uint64_t illegal_st            : 1;  /**< [  9:  9](R/W1S/H) Reads or sets enable for SSOW_LF_GWS_INT[ILLEGAL_ST]. */
+        uint64_t wqp_space             : 1;  /**< [  8:  8](R/W1S/H) Reads or sets enable for SSOW_LF_GWS_INT[WQP_SPACE]. */
+        uint64_t wqp0                  : 1;  /**< [  7:  7](R/W1S/H) Reads or sets enable for SSOW_LF_GWS_INT[WQP0]. */
+        uint64_t clr_nsched_pend       : 1;  /**< [  6:  6](R/W1S/H) Reads or sets enable for SSOW_LF_GWS_INT[CLR_NSCHED_PEND]. */
+        uint64_t desched_pend          : 1;  /**< [  5:  5](R/W1S/H) Reads or sets enable for SSOW_LF_GWS_INT[DESCHED_PEND]. */
+        uint64_t alloc_pend            : 1;  /**< [  4:  4](R/W1S/H) Reads or sets enable for SSOW_LF_GWS_INT[ALLOC_PEND]. */
+        uint64_t gw_pend               : 1;  /**< [  3:  3](R/W1S/H) Reads or sets enable for SSOW_LF_GWS_INT[GW_PEND]. */
+        uint64_t sw_empty              : 1;  /**< [  2:  2](R/W1S/H) Reads or sets enable for SSOW_LF_GWS_INT[SW_EMPTY]. */
+        uint64_t sw_pend               : 1;  /**< [  1:  1](R/W1S/H) Reads or sets enable for SSOW_LF_GWS_INT[SW_PEND]. */
+        uint64_t empty_ws              : 1;  /**< [  0:  0](R/W1S/H) Reads or sets enable for SSOW_LF_GWS_INT[EMPTY_WS]. */
+#else /* Word 0 - Little Endian */
+        uint64_t empty_ws              : 1;  /**< [  0:  0](R/W1S/H) Reads or sets enable for SSOW_LF_GWS_INT[EMPTY_WS]. */
+        uint64_t sw_pend               : 1;  /**< [  1:  1](R/W1S/H) Reads or sets enable for SSOW_LF_GWS_INT[SW_PEND]. */
+        uint64_t sw_empty              : 1;  /**< [  2:  2](R/W1S/H) Reads or sets enable for SSOW_LF_GWS_INT[SW_EMPTY]. */
+        uint64_t gw_pend               : 1;  /**< [  3:  3](R/W1S/H) Reads or sets enable for SSOW_LF_GWS_INT[GW_PEND]. */
+        uint64_t alloc_pend            : 1;  /**< [  4:  4](R/W1S/H) Reads or sets enable for SSOW_LF_GWS_INT[ALLOC_PEND]. */
+        uint64_t desched_pend          : 1;  /**< [  5:  5](R/W1S/H) Reads or sets enable for SSOW_LF_GWS_INT[DESCHED_PEND]. */
+        uint64_t clr_nsched_pend       : 1;  /**< [  6:  6](R/W1S/H) Reads or sets enable for SSOW_LF_GWS_INT[CLR_NSCHED_PEND]. */
+        uint64_t wqp0                  : 1;  /**< [  7:  7](R/W1S/H) Reads or sets enable for SSOW_LF_GWS_INT[WQP0]. */
+        uint64_t wqp_space             : 1;  /**< [  8:  8](R/W1S/H) Reads or sets enable for SSOW_LF_GWS_INT[WQP_SPACE]. */
+        uint64_t illegal_st            : 1;  /**< [  9:  9](R/W1S/H) Reads or sets enable for SSOW_LF_GWS_INT[ILLEGAL_ST]. */
+        uint64_t illegal_ld            : 1;  /**< [ 10: 10](R/W1S/H) Reads or sets enable for SSOW_LF_GWS_INT[ILLEGAL_LD]. */
+        uint64_t swtag_dis             : 1;  /**< [ 11: 11](R/W1S/H) Reads or sets enable for SSOW_LF_GWS_INT[SWTAG_DIS]. */
+        uint64_t reserved_12_63        : 52;
+#endif /* Word 0 - End */
+    } s;
+    struct cavm_ssow_lf_gws_int_ena_w1s_cn96xxp1
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_12_63        : 52;
+        uint64_t reserved_11           : 1;
+        uint64_t illegal_ld            : 1;  /**< [ 10: 10](R/W1S/H) Reads or sets enable for SSOW_LF_GWS_INT[ILLEGAL_LD]. */
+        uint64_t illegal_st            : 1;  /**< [  9:  9](R/W1S/H) Reads or sets enable for SSOW_LF_GWS_INT[ILLEGAL_ST]. */
+        uint64_t wqp_space             : 1;  /**< [  8:  8](R/W1S/H) Reads or sets enable for SSOW_LF_GWS_INT[WQP_SPACE]. */
+        uint64_t wqp0                  : 1;  /**< [  7:  7](R/W1S/H) Reads or sets enable for SSOW_LF_GWS_INT[WQP0]. */
+        uint64_t clr_nsched_pend       : 1;  /**< [  6:  6](R/W1S/H) Reads or sets enable for SSOW_LF_GWS_INT[CLR_NSCHED_PEND]. */
+        uint64_t desched_pend          : 1;  /**< [  5:  5](R/W1S/H) Reads or sets enable for SSOW_LF_GWS_INT[DESCHED_PEND]. */
+        uint64_t alloc_pend            : 1;  /**< [  4:  4](R/W1S/H) Reads or sets enable for SSOW_LF_GWS_INT[ALLOC_PEND]. */
+        uint64_t gw_pend               : 1;  /**< [  3:  3](R/W1S/H) Reads or sets enable for SSOW_LF_GWS_INT[GW_PEND]. */
+        uint64_t sw_empty              : 1;  /**< [  2:  2](R/W1S/H) Reads or sets enable for SSOW_LF_GWS_INT[SW_EMPTY]. */
+        uint64_t sw_pend               : 1;  /**< [  1:  1](R/W1S/H) Reads or sets enable for SSOW_LF_GWS_INT[SW_PEND]. */
+        uint64_t empty_ws              : 1;  /**< [  0:  0](R/W1S/H) Reads or sets enable for SSOW_LF_GWS_INT[EMPTY_WS]. */
+#else /* Word 0 - Little Endian */
+        uint64_t empty_ws              : 1;  /**< [  0:  0](R/W1S/H) Reads or sets enable for SSOW_LF_GWS_INT[EMPTY_WS]. */
+        uint64_t sw_pend               : 1;  /**< [  1:  1](R/W1S/H) Reads or sets enable for SSOW_LF_GWS_INT[SW_PEND]. */
+        uint64_t sw_empty              : 1;  /**< [  2:  2](R/W1S/H) Reads or sets enable for SSOW_LF_GWS_INT[SW_EMPTY]. */
+        uint64_t gw_pend               : 1;  /**< [  3:  3](R/W1S/H) Reads or sets enable for SSOW_LF_GWS_INT[GW_PEND]. */
+        uint64_t alloc_pend            : 1;  /**< [  4:  4](R/W1S/H) Reads or sets enable for SSOW_LF_GWS_INT[ALLOC_PEND]. */
+        uint64_t desched_pend          : 1;  /**< [  5:  5](R/W1S/H) Reads or sets enable for SSOW_LF_GWS_INT[DESCHED_PEND]. */
+        uint64_t clr_nsched_pend       : 1;  /**< [  6:  6](R/W1S/H) Reads or sets enable for SSOW_LF_GWS_INT[CLR_NSCHED_PEND]. */
+        uint64_t wqp0                  : 1;  /**< [  7:  7](R/W1S/H) Reads or sets enable for SSOW_LF_GWS_INT[WQP0]. */
+        uint64_t wqp_space             : 1;  /**< [  8:  8](R/W1S/H) Reads or sets enable for SSOW_LF_GWS_INT[WQP_SPACE]. */
+        uint64_t illegal_st            : 1;  /**< [  9:  9](R/W1S/H) Reads or sets enable for SSOW_LF_GWS_INT[ILLEGAL_ST]. */
+        uint64_t illegal_ld            : 1;  /**< [ 10: 10](R/W1S/H) Reads or sets enable for SSOW_LF_GWS_INT[ILLEGAL_LD]. */
+        uint64_t reserved_11           : 1;
+        uint64_t reserved_12_63        : 52;
+#endif /* Word 0 - End */
+    } cn96xxp1;
+    /* struct cavm_ssow_lf_gws_int_ena_w1s_s cn96xxp3; */
+    struct cavm_ssow_lf_gws_int_ena_w1s_cnf95xx
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_11_63        : 53;
         uint64_t illegal_ld            : 1;  /**< [ 10: 10](R/W1S/H) Reads or sets enable for SSOW_LF_GWS_INT[ILLEGAL_LD]. */
         uint64_t illegal_st            : 1;  /**< [  9:  9](R/W1S/H) Reads or sets enable for SSOW_LF_GWS_INT[ILLEGAL_ST]. */
@@ -791,8 +1010,8 @@ union cavm_ssow_lf_gws_int_ena_w1s
         uint64_t illegal_ld            : 1;  /**< [ 10: 10](R/W1S/H) Reads or sets enable for SSOW_LF_GWS_INT[ILLEGAL_LD]. */
         uint64_t reserved_11_63        : 53;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_ssow_lf_gws_int_ena_w1s_s cn; */
+    } cnf95xx;
+    /* struct cavm_ssow_lf_gws_int_ena_w1s_cnf95xx loki; */
 };
 typedef union cavm_ssow_lf_gws_int_ena_w1s cavm_ssow_lf_gws_int_ena_w1s_t;
 
@@ -802,7 +1021,7 @@ static inline uint64_t CAVM_SSOW_LF_GWS_INT_ENA_W1S_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x840200800110ll;
-    __cavm_csr_fatal("SSOW_LF_GWS_INT_ENA_W1S", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("SSOW_LF_GWS_INT_ENA_W1S", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SSOW_LF_GWS_INT_ENA_W1S cavm_ssow_lf_gws_int_ena_w1s_t
@@ -822,6 +1041,71 @@ union cavm_ssow_lf_gws_int_w1s
 {
     uint64_t u;
     struct cavm_ssow_lf_gws_int_w1s_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_12_63        : 52;
+        uint64_t swtag_dis             : 1;  /**< [ 11: 11](R/W1S/H) Reads or sets SSOW_LF_GWS_INT[SWTAG_DIS]. */
+        uint64_t illegal_ld            : 1;  /**< [ 10: 10](R/W1S/H) Reads or sets SSOW_LF_GWS_INT[ILLEGAL_LD]. */
+        uint64_t illegal_st            : 1;  /**< [  9:  9](R/W1S/H) Reads or sets SSOW_LF_GWS_INT[ILLEGAL_ST]. */
+        uint64_t wqp_space             : 1;  /**< [  8:  8](R/W1S/H) Reads or sets SSOW_LF_GWS_INT[WQP_SPACE]. */
+        uint64_t wqp0                  : 1;  /**< [  7:  7](R/W1S/H) Reads or sets SSOW_LF_GWS_INT[WQP0]. */
+        uint64_t clr_nsched_pend       : 1;  /**< [  6:  6](R/W1S/H) Reads or sets SSOW_LF_GWS_INT[CLR_NSCHED_PEND]. */
+        uint64_t desched_pend          : 1;  /**< [  5:  5](R/W1S/H) Reads or sets SSOW_LF_GWS_INT[DESCHED_PEND]. */
+        uint64_t alloc_pend            : 1;  /**< [  4:  4](R/W1S/H) Reads or sets SSOW_LF_GWS_INT[ALLOC_PEND]. */
+        uint64_t gw_pend               : 1;  /**< [  3:  3](R/W1S/H) Reads or sets SSOW_LF_GWS_INT[GW_PEND]. */
+        uint64_t sw_empty              : 1;  /**< [  2:  2](R/W1S/H) Reads or sets SSOW_LF_GWS_INT[SW_EMPTY]. */
+        uint64_t sw_pend               : 1;  /**< [  1:  1](R/W1S/H) Reads or sets SSOW_LF_GWS_INT[SW_PEND]. */
+        uint64_t empty_ws              : 1;  /**< [  0:  0](R/W1S/H) Reads or sets SSOW_LF_GWS_INT[EMPTY_WS]. */
+#else /* Word 0 - Little Endian */
+        uint64_t empty_ws              : 1;  /**< [  0:  0](R/W1S/H) Reads or sets SSOW_LF_GWS_INT[EMPTY_WS]. */
+        uint64_t sw_pend               : 1;  /**< [  1:  1](R/W1S/H) Reads or sets SSOW_LF_GWS_INT[SW_PEND]. */
+        uint64_t sw_empty              : 1;  /**< [  2:  2](R/W1S/H) Reads or sets SSOW_LF_GWS_INT[SW_EMPTY]. */
+        uint64_t gw_pend               : 1;  /**< [  3:  3](R/W1S/H) Reads or sets SSOW_LF_GWS_INT[GW_PEND]. */
+        uint64_t alloc_pend            : 1;  /**< [  4:  4](R/W1S/H) Reads or sets SSOW_LF_GWS_INT[ALLOC_PEND]. */
+        uint64_t desched_pend          : 1;  /**< [  5:  5](R/W1S/H) Reads or sets SSOW_LF_GWS_INT[DESCHED_PEND]. */
+        uint64_t clr_nsched_pend       : 1;  /**< [  6:  6](R/W1S/H) Reads or sets SSOW_LF_GWS_INT[CLR_NSCHED_PEND]. */
+        uint64_t wqp0                  : 1;  /**< [  7:  7](R/W1S/H) Reads or sets SSOW_LF_GWS_INT[WQP0]. */
+        uint64_t wqp_space             : 1;  /**< [  8:  8](R/W1S/H) Reads or sets SSOW_LF_GWS_INT[WQP_SPACE]. */
+        uint64_t illegal_st            : 1;  /**< [  9:  9](R/W1S/H) Reads or sets SSOW_LF_GWS_INT[ILLEGAL_ST]. */
+        uint64_t illegal_ld            : 1;  /**< [ 10: 10](R/W1S/H) Reads or sets SSOW_LF_GWS_INT[ILLEGAL_LD]. */
+        uint64_t swtag_dis             : 1;  /**< [ 11: 11](R/W1S/H) Reads or sets SSOW_LF_GWS_INT[SWTAG_DIS]. */
+        uint64_t reserved_12_63        : 52;
+#endif /* Word 0 - End */
+    } s;
+    struct cavm_ssow_lf_gws_int_w1s_cn96xxp1
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_12_63        : 52;
+        uint64_t reserved_11           : 1;
+        uint64_t illegal_ld            : 1;  /**< [ 10: 10](R/W1S/H) Reads or sets SSOW_LF_GWS_INT[ILLEGAL_LD]. */
+        uint64_t illegal_st            : 1;  /**< [  9:  9](R/W1S/H) Reads or sets SSOW_LF_GWS_INT[ILLEGAL_ST]. */
+        uint64_t wqp_space             : 1;  /**< [  8:  8](R/W1S/H) Reads or sets SSOW_LF_GWS_INT[WQP_SPACE]. */
+        uint64_t wqp0                  : 1;  /**< [  7:  7](R/W1S/H) Reads or sets SSOW_LF_GWS_INT[WQP0]. */
+        uint64_t clr_nsched_pend       : 1;  /**< [  6:  6](R/W1S/H) Reads or sets SSOW_LF_GWS_INT[CLR_NSCHED_PEND]. */
+        uint64_t desched_pend          : 1;  /**< [  5:  5](R/W1S/H) Reads or sets SSOW_LF_GWS_INT[DESCHED_PEND]. */
+        uint64_t alloc_pend            : 1;  /**< [  4:  4](R/W1S/H) Reads or sets SSOW_LF_GWS_INT[ALLOC_PEND]. */
+        uint64_t gw_pend               : 1;  /**< [  3:  3](R/W1S/H) Reads or sets SSOW_LF_GWS_INT[GW_PEND]. */
+        uint64_t sw_empty              : 1;  /**< [  2:  2](R/W1S/H) Reads or sets SSOW_LF_GWS_INT[SW_EMPTY]. */
+        uint64_t sw_pend               : 1;  /**< [  1:  1](R/W1S/H) Reads or sets SSOW_LF_GWS_INT[SW_PEND]. */
+        uint64_t empty_ws              : 1;  /**< [  0:  0](R/W1S/H) Reads or sets SSOW_LF_GWS_INT[EMPTY_WS]. */
+#else /* Word 0 - Little Endian */
+        uint64_t empty_ws              : 1;  /**< [  0:  0](R/W1S/H) Reads or sets SSOW_LF_GWS_INT[EMPTY_WS]. */
+        uint64_t sw_pend               : 1;  /**< [  1:  1](R/W1S/H) Reads or sets SSOW_LF_GWS_INT[SW_PEND]. */
+        uint64_t sw_empty              : 1;  /**< [  2:  2](R/W1S/H) Reads or sets SSOW_LF_GWS_INT[SW_EMPTY]. */
+        uint64_t gw_pend               : 1;  /**< [  3:  3](R/W1S/H) Reads or sets SSOW_LF_GWS_INT[GW_PEND]. */
+        uint64_t alloc_pend            : 1;  /**< [  4:  4](R/W1S/H) Reads or sets SSOW_LF_GWS_INT[ALLOC_PEND]. */
+        uint64_t desched_pend          : 1;  /**< [  5:  5](R/W1S/H) Reads or sets SSOW_LF_GWS_INT[DESCHED_PEND]. */
+        uint64_t clr_nsched_pend       : 1;  /**< [  6:  6](R/W1S/H) Reads or sets SSOW_LF_GWS_INT[CLR_NSCHED_PEND]. */
+        uint64_t wqp0                  : 1;  /**< [  7:  7](R/W1S/H) Reads or sets SSOW_LF_GWS_INT[WQP0]. */
+        uint64_t wqp_space             : 1;  /**< [  8:  8](R/W1S/H) Reads or sets SSOW_LF_GWS_INT[WQP_SPACE]. */
+        uint64_t illegal_st            : 1;  /**< [  9:  9](R/W1S/H) Reads or sets SSOW_LF_GWS_INT[ILLEGAL_ST]. */
+        uint64_t illegal_ld            : 1;  /**< [ 10: 10](R/W1S/H) Reads or sets SSOW_LF_GWS_INT[ILLEGAL_LD]. */
+        uint64_t reserved_11           : 1;
+        uint64_t reserved_12_63        : 52;
+#endif /* Word 0 - End */
+    } cn96xxp1;
+    /* struct cavm_ssow_lf_gws_int_w1s_s cn96xxp3; */
+    struct cavm_ssow_lf_gws_int_w1s_cnf95xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_11_63        : 53;
@@ -850,8 +1134,8 @@ union cavm_ssow_lf_gws_int_w1s
         uint64_t illegal_ld            : 1;  /**< [ 10: 10](R/W1S/H) Reads or sets SSOW_LF_GWS_INT[ILLEGAL_LD]. */
         uint64_t reserved_11_63        : 53;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_ssow_lf_gws_int_w1s_s cn; */
+    } cnf95xx;
+    /* struct cavm_ssow_lf_gws_int_w1s_cnf95xx loki; */
 };
 typedef union cavm_ssow_lf_gws_int_w1s cavm_ssow_lf_gws_int_w1s_t;
 
@@ -861,7 +1145,7 @@ static inline uint64_t CAVM_SSOW_LF_GWS_INT_W1S_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x840200800108ll;
-    __cavm_csr_fatal("SSOW_LF_GWS_INT_W1S", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("SSOW_LF_GWS_INT_W1S", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SSOW_LF_GWS_INT_W1S cavm_ssow_lf_gws_int_w1s_t
@@ -918,7 +1202,7 @@ static inline uint64_t CAVM_SSOW_LF_GWS_LINKS_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x840200800010ll;
-    __cavm_csr_fatal("SSOW_LF_GWS_LINKS", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("SSOW_LF_GWS_LINKS", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SSOW_LF_GWS_LINKS cavm_ssow_lf_gws_links_t
@@ -967,7 +1251,7 @@ static inline uint64_t CAVM_SSOW_LF_GWS_NW_TIM_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x840200800070ll;
-    __cavm_csr_fatal("SSOW_LF_GWS_NW_TIM", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("SSOW_LF_GWS_NW_TIM", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SSOW_LF_GWS_NW_TIM cavm_ssow_lf_gws_nw_tim_t
@@ -1006,7 +1290,7 @@ static inline uint64_t CAVM_SSOW_LF_GWS_OP_ALLOC_WE_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x840200800400ll;
-    __cavm_csr_fatal("SSOW_LF_GWS_OP_ALLOC_WE", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("SSOW_LF_GWS_OP_ALLOC_WE", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SSOW_LF_GWS_OP_ALLOC_WE cavm_ssow_lf_gws_op_alloc_we_t
@@ -1057,7 +1341,7 @@ static inline uint64_t CAVM_SSOW_LF_GWS_OP_CLR_NSCHED0_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x840200800a00ll;
-    __cavm_csr_fatal("SSOW_LF_GWS_OP_CLR_NSCHED0", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("SSOW_LF_GWS_OP_CLR_NSCHED0", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SSOW_LF_GWS_OP_CLR_NSCHED0 cavm_ssow_lf_gws_op_clr_nsched0_t
@@ -1096,7 +1380,7 @@ static inline uint64_t CAVM_SSOW_LF_GWS_OP_CLR_NSCHED1_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x840200800a08ll;
-    __cavm_csr_fatal("SSOW_LF_GWS_OP_CLR_NSCHED1", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("SSOW_LF_GWS_OP_CLR_NSCHED1", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SSOW_LF_GWS_OP_CLR_NSCHED1 cavm_ssow_lf_gws_op_clr_nsched1_t
@@ -1133,7 +1417,7 @@ static inline uint64_t CAVM_SSOW_LF_GWS_OP_DESCHED_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x840200800880ll;
-    __cavm_csr_fatal("SSOW_LF_GWS_OP_DESCHED", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("SSOW_LF_GWS_OP_DESCHED", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SSOW_LF_GWS_OP_DESCHED cavm_ssow_lf_gws_op_desched_t
@@ -1170,7 +1454,7 @@ static inline uint64_t CAVM_SSOW_LF_GWS_OP_DESCHED_NOSCH_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x8402008008c0ll;
-    __cavm_csr_fatal("SSOW_LF_GWS_OP_DESCHED_NOSCH", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("SSOW_LF_GWS_OP_DESCHED_NOSCH", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SSOW_LF_GWS_OP_DESCHED_NOSCH cavm_ssow_lf_gws_op_desched_nosch_t
@@ -1259,7 +1543,7 @@ static inline uint64_t CAVM_SSOW_LF_GWS_OP_GET_WORK_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x840200800600ll;
-    __cavm_csr_fatal("SSOW_LF_GWS_OP_GET_WORK", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("SSOW_LF_GWS_OP_GET_WORK", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SSOW_LF_GWS_OP_GET_WORK cavm_ssow_lf_gws_op_get_work_t
@@ -1298,7 +1582,7 @@ static inline uint64_t CAVM_SSOW_LF_GWS_OP_GWC_INVAL_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x840200800e00ll;
-    __cavm_csr_fatal("SSOW_LF_GWS_OP_GWC_INVAL", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("SSOW_LF_GWS_OP_GWC_INVAL", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SSOW_LF_GWS_OP_GWC_INVAL cavm_ssow_lf_gws_op_gwc_inval_t
@@ -1343,7 +1627,7 @@ static inline uint64_t CAVM_SSOW_LF_GWS_OP_SWTAG_DESCHED_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x840200800980ll;
-    __cavm_csr_fatal("SSOW_LF_GWS_OP_SWTAG_DESCHED", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("SSOW_LF_GWS_OP_SWTAG_DESCHED", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SSOW_LF_GWS_OP_SWTAG_DESCHED cavm_ssow_lf_gws_op_swtag_desched_t
@@ -1380,7 +1664,7 @@ static inline uint64_t CAVM_SSOW_LF_GWS_OP_SWTAG_FLUSH_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x840200800800ll;
-    __cavm_csr_fatal("SSOW_LF_GWS_OP_SWTAG_FLUSH", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("SSOW_LF_GWS_OP_SWTAG_FLUSH", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SSOW_LF_GWS_OP_SWTAG_FLUSH cavm_ssow_lf_gws_op_swtag_flush_t
@@ -1428,7 +1712,7 @@ static inline uint64_t CAVM_SSOW_LF_GWS_OP_SWTAG_FULL0_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x840200800c20ll;
-    __cavm_csr_fatal("SSOW_LF_GWS_OP_SWTAG_FULL0", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("SSOW_LF_GWS_OP_SWTAG_FULL0", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SSOW_LF_GWS_OP_SWTAG_FULL0 cavm_ssow_lf_gws_op_swtag_full0_t
@@ -1470,7 +1754,7 @@ static inline uint64_t CAVM_SSOW_LF_GWS_OP_SWTAG_FULL1_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x840200800c28ll;
-    __cavm_csr_fatal("SSOW_LF_GWS_OP_SWTAG_FULL1", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("SSOW_LF_GWS_OP_SWTAG_FULL1", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SSOW_LF_GWS_OP_SWTAG_FULL1 cavm_ssow_lf_gws_op_swtag_full1_t
@@ -1511,7 +1795,7 @@ static inline uint64_t CAVM_SSOW_LF_GWS_OP_SWTAG_NORM_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x840200800c10ll;
-    __cavm_csr_fatal("SSOW_LF_GWS_OP_SWTAG_NORM", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("SSOW_LF_GWS_OP_SWTAG_NORM", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SSOW_LF_GWS_OP_SWTAG_NORM cavm_ssow_lf_gws_op_swtag_norm_t
@@ -1557,7 +1841,7 @@ static inline uint64_t CAVM_SSOW_LF_GWS_OP_SWTAG_NOSCHED_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x8402008009c0ll;
-    __cavm_csr_fatal("SSOW_LF_GWS_OP_SWTAG_NOSCHED", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("SSOW_LF_GWS_OP_SWTAG_NOSCHED", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SSOW_LF_GWS_OP_SWTAG_NOSCHED cavm_ssow_lf_gws_op_swtag_nosched_t
@@ -1594,7 +1878,7 @@ static inline uint64_t CAVM_SSOW_LF_GWS_OP_SWTAG_UNTAG_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x840200800810ll;
-    __cavm_csr_fatal("SSOW_LF_GWS_OP_SWTAG_UNTAG", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("SSOW_LF_GWS_OP_SWTAG_UNTAG", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SSOW_LF_GWS_OP_SWTAG_UNTAG cavm_ssow_lf_gws_op_swtag_untag_t
@@ -1633,7 +1917,7 @@ static inline uint64_t CAVM_SSOW_LF_GWS_OP_SWTP_CLR_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x840200800820ll;
-    __cavm_csr_fatal("SSOW_LF_GWS_OP_SWTP_CLR", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("SSOW_LF_GWS_OP_SWTP_CLR", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SSOW_LF_GWS_OP_SWTP_CLR cavm_ssow_lf_gws_op_swtp_clr_t
@@ -1672,7 +1956,7 @@ static inline uint64_t CAVM_SSOW_LF_GWS_OP_SWTP_SET_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x840200800c00ll;
-    __cavm_csr_fatal("SSOW_LF_GWS_OP_SWTP_SET", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("SSOW_LF_GWS_OP_SWTP_SET", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SSOW_LF_GWS_OP_SWTP_SET cavm_ssow_lf_gws_op_swtp_set_t
@@ -1718,7 +2002,7 @@ static inline uint64_t CAVM_SSOW_LF_GWS_OP_UPD_WQP_GRP0_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x840200800830ll;
-    __cavm_csr_fatal("SSOW_LF_GWS_OP_UPD_WQP_GRP0", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("SSOW_LF_GWS_OP_UPD_WQP_GRP0", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SSOW_LF_GWS_OP_UPD_WQP_GRP0 cavm_ssow_lf_gws_op_upd_wqp_grp0_t
@@ -1760,7 +2044,7 @@ static inline uint64_t CAVM_SSOW_LF_GWS_OP_UPD_WQP_GRP1_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x840200800838ll;
-    __cavm_csr_fatal("SSOW_LF_GWS_OP_UPD_WQP_GRP1", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("SSOW_LF_GWS_OP_UPD_WQP_GRP1", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SSOW_LF_GWS_OP_UPD_WQP_GRP1 cavm_ssow_lf_gws_op_upd_wqp_grp1_t
@@ -1783,6 +2067,44 @@ union cavm_ssow_lf_gws_pendstate
 {
     uint64_t u;
     struct cavm_ssow_lf_gws_pendstate_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t pend_get_work         : 1;  /**< [ 63: 63](RO/H) Set when there is a pending GET_WORK. */
+        uint64_t pend_switch           : 1;  /**< [ 62: 62](RO/H) Set when there is a pending SWTAG, SWTAG_DESCHED, or SWTAG_FULL. If the register
+                                                                 read was issued after an indexed GET_WORK, the DESCHED portion of a
+                                                                 SWTAG_DESCHED cannot still be pending. */
+        uint64_t pend_get_work_wait    : 1;  /**< [ 61: 61](RO/H) When [PEND_GET_WORK] is set, indicates that the WAITW bit was set. */
+        uint64_t pend_nosched          : 1;  /**< [ 60: 60](RO/H) Set when nosched is desired and [PEND_DESCHED] is set. */
+        uint64_t pend_nosched_clr      : 1;  /**< [ 59: 59](RO/H) Set when there is a pending CLR_NSCHED. */
+        uint64_t pend_desched          : 1;  /**< [ 58: 58](RO/H) Set when there is a pending DESCHED or SWTAG_DESCHED. */
+        uint64_t pend_alloc_we         : 1;  /**< [ 57: 57](RO/H) Set when there is a pending ALLOC_WE. */
+        uint64_t pend_flush            : 1;  /**< [ 56: 56](RO/H) Set when there is a pending SWTAG_FLUSH. */
+        uint64_t pend_gw_insert        : 1;  /**< [ 55: 55](RAZ) Reserved. Obsolete. */
+        uint64_t pend_swunt            : 1;  /**< [ 54: 54](RO/H) Set when there is a pending SWTAG_UNTAG or SWTAG_NORM/SWTAG_FULL with TT of UNTAGGED. */
+        uint64_t pend_index            : 14; /**< [ 53: 40](RO/H) The index when [PEND_NOSCHED_CLR] is set. */
+        uint64_t reserved_34_39        : 6;
+        uint64_t pend_tt               : 2;  /**< [ 33: 32](RO/H) The tag type when [PEND_SWITCH] is set and [PEND_GET_WORK] is clear. */
+        uint64_t pend_tag              : 32; /**< [ 31:  0](RO/H) The tag when [PEND_SWITCH] is set and [PEND_GET_WORK] is clear. */
+#else /* Word 0 - Little Endian */
+        uint64_t pend_tag              : 32; /**< [ 31:  0](RO/H) The tag when [PEND_SWITCH] is set and [PEND_GET_WORK] is clear. */
+        uint64_t pend_tt               : 2;  /**< [ 33: 32](RO/H) The tag type when [PEND_SWITCH] is set and [PEND_GET_WORK] is clear. */
+        uint64_t reserved_34_39        : 6;
+        uint64_t pend_index            : 14; /**< [ 53: 40](RO/H) The index when [PEND_NOSCHED_CLR] is set. */
+        uint64_t pend_swunt            : 1;  /**< [ 54: 54](RO/H) Set when there is a pending SWTAG_UNTAG or SWTAG_NORM/SWTAG_FULL with TT of UNTAGGED. */
+        uint64_t pend_gw_insert        : 1;  /**< [ 55: 55](RAZ) Reserved. Obsolete. */
+        uint64_t pend_flush            : 1;  /**< [ 56: 56](RO/H) Set when there is a pending SWTAG_FLUSH. */
+        uint64_t pend_alloc_we         : 1;  /**< [ 57: 57](RO/H) Set when there is a pending ALLOC_WE. */
+        uint64_t pend_desched          : 1;  /**< [ 58: 58](RO/H) Set when there is a pending DESCHED or SWTAG_DESCHED. */
+        uint64_t pend_nosched_clr      : 1;  /**< [ 59: 59](RO/H) Set when there is a pending CLR_NSCHED. */
+        uint64_t pend_nosched          : 1;  /**< [ 60: 60](RO/H) Set when nosched is desired and [PEND_DESCHED] is set. */
+        uint64_t pend_get_work_wait    : 1;  /**< [ 61: 61](RO/H) When [PEND_GET_WORK] is set, indicates that the WAITW bit was set. */
+        uint64_t pend_switch           : 1;  /**< [ 62: 62](RO/H) Set when there is a pending SWTAG, SWTAG_DESCHED, or SWTAG_FULL. If the register
+                                                                 read was issued after an indexed GET_WORK, the DESCHED portion of a
+                                                                 SWTAG_DESCHED cannot still be pending. */
+        uint64_t pend_get_work         : 1;  /**< [ 63: 63](RO/H) Set when there is a pending GET_WORK. */
+#endif /* Word 0 - End */
+    } s;
+    struct cavm_ssow_lf_gws_pendstate_cn96xxp1
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t pend_get_work         : 1;  /**< [ 63: 63](RO/H) Set when there is a pending GET_WORK. */
@@ -1819,8 +2141,10 @@ union cavm_ssow_lf_gws_pendstate
                                                                  SWTAG_DESCHED cannot still be pending. */
         uint64_t pend_get_work         : 1;  /**< [ 63: 63](RO/H) Set when there is a pending GET_WORK. */
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_ssow_lf_gws_pendstate_s cn; */
+    } cn96xxp1;
+    /* struct cavm_ssow_lf_gws_pendstate_s cn96xxp3; */
+    /* struct cavm_ssow_lf_gws_pendstate_cn96xxp1 cnf95xx; */
+    /* struct cavm_ssow_lf_gws_pendstate_cn96xxp1 loki; */
 };
 typedef union cavm_ssow_lf_gws_pendstate cavm_ssow_lf_gws_pendstate_t;
 
@@ -1830,7 +2154,7 @@ static inline uint64_t CAVM_SSOW_LF_GWS_PENDSTATE_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x840200800050ll;
-    __cavm_csr_fatal("SSOW_LF_GWS_PENDSTATE", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("SSOW_LF_GWS_PENDSTATE", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SSOW_LF_GWS_PENDSTATE cavm_ssow_lf_gws_pendstate_t
@@ -1883,7 +2207,7 @@ static inline uint64_t CAVM_SSOW_LF_GWS_PENDTAG_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x840200800230ll;
-    __cavm_csr_fatal("SSOW_LF_GWS_PENDTAG", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("SSOW_LF_GWS_PENDTAG", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SSOW_LF_GWS_PENDTAG cavm_ssow_lf_gws_pendtag_t
@@ -1922,7 +2246,7 @@ static inline uint64_t CAVM_SSOW_LF_GWS_PENDWQP_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x840200800040ll;
-    __cavm_csr_fatal("SSOW_LF_GWS_PENDWQP", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("SSOW_LF_GWS_PENDWQP", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SSOW_LF_GWS_PENDWQP cavm_ssow_lf_gws_pendwqp_t
@@ -1968,7 +2292,7 @@ static inline uint64_t CAVM_SSOW_LF_GWS_SWTP_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x840200800220ll;
-    __cavm_csr_fatal("SSOW_LF_GWS_SWTP", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("SSOW_LF_GWS_SWTP", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SSOW_LF_GWS_SWTP cavm_ssow_lf_gws_swtp_t
@@ -2027,7 +2351,7 @@ static inline uint64_t CAVM_SSOW_LF_GWS_TAG_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x840200800200ll;
-    __cavm_csr_fatal("SSOW_LF_GWS_TAG", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("SSOW_LF_GWS_TAG", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SSOW_LF_GWS_TAG cavm_ssow_lf_gws_tag_t
@@ -2070,7 +2394,7 @@ static inline uint64_t CAVM_SSOW_LF_GWS_WQP_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x840200800210ll;
-    __cavm_csr_fatal("SSOW_LF_GWS_WQP", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("SSOW_LF_GWS_WQP", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SSOW_LF_GWS_WQP cavm_ssow_lf_gws_wqp_t
@@ -2123,7 +2447,7 @@ static inline uint64_t CAVM_SSOW_PRIV_LFX_HWS_CFG(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX) && (a<=51))
         return 0x840080001000ll + 8ll * ((a) & 0x3f);
-    __cavm_csr_fatal("SSOW_PRIV_LFX_HWS_CFG", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("SSOW_PRIV_LFX_HWS_CFG", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SSOW_PRIV_LFX_HWS_CFG(a) cavm_ssow_priv_lfx_hws_cfg_t
@@ -2174,7 +2498,7 @@ static inline uint64_t CAVM_SSOW_PRIV_LFX_HWS_INT_CFG(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX) && (a<=51))
         return 0x840080002000ll + 8ll * ((a) & 0x3f);
-    __cavm_csr_fatal("SSOW_PRIV_LFX_HWS_INT_CFG", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("SSOW_PRIV_LFX_HWS_INT_CFG", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SSOW_PRIV_LFX_HWS_INT_CFG(a) cavm_ssow_priv_lfx_hws_int_cfg_t
@@ -2262,7 +2586,7 @@ static inline uint64_t CAVM_SSOW_VHWSX_GRPMSK_CHGX(unsigned long a, unsigned lon
 {
     if (cavm_is_model(OCTEONTX_CN83XX) && ((a<=31) && (b<=3)))
         return 0x861800000080ll + 0x100000ll * ((a) & 0x1f) + 8ll * ((b) & 0x3);
-    __cavm_csr_fatal("SSOW_VHWSX_GRPMSK_CHGX", 2, a, b, 0, 0);
+    __cavm_csr_fatal("SSOW_VHWSX_GRPMSK_CHGX", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SSOW_VHWSX_GRPMSK_CHGX(a,b) cavm_ssow_vhwsx_grpmsk_chgx_t
@@ -2328,7 +2652,7 @@ static inline uint64_t CAVM_SSOW_VHWSX_LINKS(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN83XX) && (a<=31))
         return 0x861800000310ll + 0x100000ll * ((a) & 0x1f);
-    __cavm_csr_fatal("SSOW_VHWSX_LINKS", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("SSOW_VHWSX_LINKS", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SSOW_VHWSX_LINKS(a) cavm_ssow_vhwsx_links_t
@@ -2366,7 +2690,7 @@ static inline uint64_t CAVM_SSOW_VHWSX_OP_ALLOC_WE(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN83XX) && (a<=31))
         return 0x861800000410ll + 0x100000ll * ((a) & 0x1f);
-    __cavm_csr_fatal("SSOW_VHWSX_OP_ALLOC_WE", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("SSOW_VHWSX_OP_ALLOC_WE", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SSOW_VHWSX_OP_ALLOC_WE(a) cavm_ssow_vhwsx_op_alloc_we_t
@@ -2406,7 +2730,7 @@ static inline uint64_t CAVM_SSOW_VHWSX_OP_CLR_NSCHED(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN83XX) && (a<=31))
         return 0x861800010000ll + 0x100000ll * ((a) & 0x1f);
-    __cavm_csr_fatal("SSOW_VHWSX_OP_CLR_NSCHED", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("SSOW_VHWSX_OP_CLR_NSCHED", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SSOW_VHWSX_OP_CLR_NSCHED(a) cavm_ssow_vhwsx_op_clr_nsched_t
@@ -2442,7 +2766,7 @@ static inline uint64_t CAVM_SSOW_VHWSX_OP_DESCHED(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN83XX) && (a<=31))
         return 0x861800000860ll + 0x100000ll * ((a) & 0x1f);
-    __cavm_csr_fatal("SSOW_VHWSX_OP_DESCHED", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("SSOW_VHWSX_OP_DESCHED", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SSOW_VHWSX_OP_DESCHED(a) cavm_ssow_vhwsx_op_desched_t
@@ -2478,7 +2802,7 @@ static inline uint64_t CAVM_SSOW_VHWSX_OP_DESCHED_NOSCH(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN83XX) && (a<=31))
         return 0x861800000870ll + 0x100000ll * ((a) & 0x1f);
-    __cavm_csr_fatal("SSOW_VHWSX_OP_DESCHED_NOSCH", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("SSOW_VHWSX_OP_DESCHED_NOSCH", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SSOW_VHWSX_OP_DESCHED_NOSCH(a) cavm_ssow_vhwsx_op_desched_nosch_t
@@ -2550,7 +2874,7 @@ static inline uint64_t CAVM_SSOW_VHWSX_OP_GET_WORK0(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN83XX) && (a<=31))
         return 0x861800080000ll + 0x100000ll * ((a) & 0x1f);
-    __cavm_csr_fatal("SSOW_VHWSX_OP_GET_WORK0", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("SSOW_VHWSX_OP_GET_WORK0", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SSOW_VHWSX_OP_GET_WORK0(a) cavm_ssow_vhwsx_op_get_work0_t
@@ -2598,7 +2922,7 @@ static inline uint64_t CAVM_SSOW_VHWSX_OP_GET_WORK1(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN83XX) && (a<=31))
         return 0x861800080008ll + 0x100000ll * ((a) & 0x1f);
-    __cavm_csr_fatal("SSOW_VHWSX_OP_GET_WORK1", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("SSOW_VHWSX_OP_GET_WORK1", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SSOW_VHWSX_OP_GET_WORK1(a) cavm_ssow_vhwsx_op_get_work1_t
@@ -2642,7 +2966,7 @@ static inline uint64_t CAVM_SSOW_VHWSX_OP_SWTAG_DESCHED(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN83XX) && (a<=31))
         return 0x8618000008c0ll + 0x100000ll * ((a) & 0x1f);
-    __cavm_csr_fatal("SSOW_VHWSX_OP_SWTAG_DESCHED", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("SSOW_VHWSX_OP_SWTAG_DESCHED", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SSOW_VHWSX_OP_SWTAG_DESCHED(a) cavm_ssow_vhwsx_op_swtag_desched_t
@@ -2705,7 +3029,7 @@ static inline uint64_t CAVM_SSOW_VHWSX_OP_SWTAG_FULL0(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN83XX) && (a<=31))
         return 0x861800000ca0ll + 0x100000ll * ((a) & 0x1f);
-    __cavm_csr_fatal("SSOW_VHWSX_OP_SWTAG_FULL0", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("SSOW_VHWSX_OP_SWTAG_FULL0", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SSOW_VHWSX_OP_SWTAG_FULL0(a) cavm_ssow_vhwsx_op_swtag_full0_t
@@ -2746,7 +3070,7 @@ static inline uint64_t CAVM_SSOW_VHWSX_OP_SWTAG_FULL1(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN83XX) && (a<=31))
         return 0x861800000ca8ll + 0x100000ll * ((a) & 0x1f);
-    __cavm_csr_fatal("SSOW_VHWSX_OP_SWTAG_FULL1", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("SSOW_VHWSX_OP_SWTAG_FULL1", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SSOW_VHWSX_OP_SWTAG_FULL1(a) cavm_ssow_vhwsx_op_swtag_full1_t
@@ -2786,7 +3110,7 @@ static inline uint64_t CAVM_SSOW_VHWSX_OP_SWTAG_NORM(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN83XX) && (a<=31))
         return 0x861800000c80ll + 0x100000ll * ((a) & 0x1f);
-    __cavm_csr_fatal("SSOW_VHWSX_OP_SWTAG_NORM", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("SSOW_VHWSX_OP_SWTAG_NORM", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SSOW_VHWSX_OP_SWTAG_NORM(a) cavm_ssow_vhwsx_op_swtag_norm_t
@@ -2830,7 +3154,7 @@ static inline uint64_t CAVM_SSOW_VHWSX_OP_SWTAG_NOSCHED(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN83XX) && (a<=31))
         return 0x8618000008d0ll + 0x100000ll * ((a) & 0x1f);
-    __cavm_csr_fatal("SSOW_VHWSX_OP_SWTAG_NOSCHED", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("SSOW_VHWSX_OP_SWTAG_NOSCHED", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SSOW_VHWSX_OP_SWTAG_NOSCHED(a) cavm_ssow_vhwsx_op_swtag_nosched_t
@@ -2866,7 +3190,7 @@ static inline uint64_t CAVM_SSOW_VHWSX_OP_SWTAG_UNTAG(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN83XX) && (a<=31))
         return 0x861800000490ll + 0x100000ll * ((a) & 0x1f);
-    __cavm_csr_fatal("SSOW_VHWSX_OP_SWTAG_UNTAG", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("SSOW_VHWSX_OP_SWTAG_UNTAG", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SSOW_VHWSX_OP_SWTAG_UNTAG(a) cavm_ssow_vhwsx_op_swtag_untag_t
@@ -2904,7 +3228,7 @@ static inline uint64_t CAVM_SSOW_VHWSX_OP_SWTP_CLR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN83XX) && (a<=31))
         return 0x861800000820ll + 0x100000ll * ((a) & 0x1f);
-    __cavm_csr_fatal("SSOW_VHWSX_OP_SWTP_CLR", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("SSOW_VHWSX_OP_SWTP_CLR", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SSOW_VHWSX_OP_SWTP_CLR(a) cavm_ssow_vhwsx_op_swtp_clr_t
@@ -2942,7 +3266,7 @@ static inline uint64_t CAVM_SSOW_VHWSX_OP_SWTP_SET(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN83XX) && (a<=31))
         return 0x861800000c20ll + 0x100000ll * ((a) & 0x1f);
-    __cavm_csr_fatal("SSOW_VHWSX_OP_SWTP_SET", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("SSOW_VHWSX_OP_SWTP_SET", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SSOW_VHWSX_OP_SWTP_SET(a) cavm_ssow_vhwsx_op_swtp_set_t
@@ -2987,7 +3311,7 @@ static inline uint64_t CAVM_SSOW_VHWSX_OP_UPD_WQP_GRP0(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN83XX) && (a<=31))
         return 0x861800000440ll + 0x100000ll * ((a) & 0x1f);
-    __cavm_csr_fatal("SSOW_VHWSX_OP_UPD_WQP_GRP0", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("SSOW_VHWSX_OP_UPD_WQP_GRP0", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SSOW_VHWSX_OP_UPD_WQP_GRP0(a) cavm_ssow_vhwsx_op_upd_wqp_grp0_t
@@ -3028,7 +3352,7 @@ static inline uint64_t CAVM_SSOW_VHWSX_OP_UPD_WQP_GRP1(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN83XX) && (a<=31))
         return 0x861800000448ll + 0x100000ll * ((a) & 0x1f);
-    __cavm_csr_fatal("SSOW_VHWSX_OP_UPD_WQP_GRP1", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("SSOW_VHWSX_OP_UPD_WQP_GRP1", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SSOW_VHWSX_OP_UPD_WQP_GRP1(a) cavm_ssow_vhwsx_op_upd_wqp_grp1_t
@@ -3092,7 +3416,7 @@ static inline uint64_t CAVM_SSOW_VHWSX_PENDTAG(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN83XX) && (a<=31))
         return 0x861800000340ll + 0x100000ll * ((a) & 0x1f);
-    __cavm_csr_fatal("SSOW_VHWSX_PENDTAG", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("SSOW_VHWSX_PENDTAG", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SSOW_VHWSX_PENDTAG(a) cavm_ssow_vhwsx_pendtag_t
@@ -3130,7 +3454,7 @@ static inline uint64_t CAVM_SSOW_VHWSX_PENDWQP(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN83XX) && (a<=31))
         return 0x861800000348ll + 0x100000ll * ((a) & 0x1f);
-    __cavm_csr_fatal("SSOW_VHWSX_PENDWQP", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("SSOW_VHWSX_PENDWQP", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SSOW_VHWSX_PENDWQP(a) cavm_ssow_vhwsx_pendwqp_t
@@ -3175,7 +3499,7 @@ static inline uint64_t CAVM_SSOW_VHWSX_SWTP(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN83XX) && (a<=31))
         return 0x861800000400ll + 0x100000ll * ((a) & 0x1f);
-    __cavm_csr_fatal("SSOW_VHWSX_SWTP", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("SSOW_VHWSX_SWTP", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SSOW_VHWSX_SWTP(a) cavm_ssow_vhwsx_swtp_t
@@ -3247,7 +3571,7 @@ static inline uint64_t CAVM_SSOW_VHWSX_TAG(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN83XX) && (a<=31))
         return 0x861800000300ll + 0x100000ll * ((a) & 0x1f);
-    __cavm_csr_fatal("SSOW_VHWSX_TAG", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("SSOW_VHWSX_TAG", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SSOW_VHWSX_TAG(a) cavm_ssow_vhwsx_tag_t
@@ -3285,7 +3609,7 @@ static inline uint64_t CAVM_SSOW_VHWSX_WQP(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN83XX) && (a<=31))
         return 0x861800000308ll + 0x100000ll * ((a) & 0x1f);
-    __cavm_csr_fatal("SSOW_VHWSX_WQP", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("SSOW_VHWSX_WQP", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_SSOW_VHWSX_WQP(a) cavm_ssow_vhwsx_wqp_t

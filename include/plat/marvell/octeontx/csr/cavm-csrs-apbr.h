@@ -55,7 +55,7 @@ static inline uint64_t CAVM_APBRX_CONST(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX) && (a<=53))
         return 0x8fb000000000ll + 0x100000ll * ((a) & 0x3f);
-    __cavm_csr_fatal("APBRX_CONST", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("APBRX_CONST", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_APBRX_CONST(a) cavm_apbrx_const_t

@@ -53,7 +53,7 @@ static inline uint64_t CAVM_PCCVF_XXX_AER_CAP_HDR_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x140;
-    __cavm_csr_fatal("PCCVF_XXX_AER_CAP_HDR", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("PCCVF_XXX_AER_CAP_HDR", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PCCVF_XXX_AER_CAP_HDR cavm_pccvf_xxx_aer_cap_hdr_t
@@ -96,7 +96,7 @@ static inline uint64_t CAVM_PCCVF_XXX_AER_COR_MASK_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x154;
-    __cavm_csr_fatal("PCCVF_XXX_AER_COR_MASK", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("PCCVF_XXX_AER_COR_MASK", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PCCVF_XXX_AER_COR_MASK cavm_pccvf_xxx_aer_cor_mask_t
@@ -138,7 +138,7 @@ static inline uint64_t CAVM_PCCVF_XXX_AER_COR_STATUS_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x150;
-    __cavm_csr_fatal("PCCVF_XXX_AER_COR_STATUS", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("PCCVF_XXX_AER_COR_STATUS", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PCCVF_XXX_AER_COR_STATUS cavm_pccvf_xxx_aer_cor_status_t
@@ -181,7 +181,7 @@ static inline uint64_t CAVM_PCCVF_XXX_AER_UNCOR_MASK_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x148;
-    __cavm_csr_fatal("PCCVF_XXX_AER_UNCOR_MASK", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("PCCVF_XXX_AER_UNCOR_MASK", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PCCVF_XXX_AER_UNCOR_MASK cavm_pccvf_xxx_aer_uncor_mask_t
@@ -223,7 +223,7 @@ static inline uint64_t CAVM_PCCVF_XXX_AER_UNCOR_SEVER_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x14c;
-    __cavm_csr_fatal("PCCVF_XXX_AER_UNCOR_SEVER", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("PCCVF_XXX_AER_UNCOR_SEVER", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PCCVF_XXX_AER_UNCOR_SEVER cavm_pccvf_xxx_aer_uncor_sever_t
@@ -279,7 +279,7 @@ static inline uint64_t CAVM_PCCVF_XXX_AER_UNCOR_STATUS_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x144;
-    __cavm_csr_fatal("PCCVF_XXX_AER_UNCOR_STATUS", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("PCCVF_XXX_AER_UNCOR_STATUS", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PCCVF_XXX_AER_UNCOR_STATUS cavm_pccvf_xxx_aer_uncor_status_t
@@ -321,7 +321,7 @@ static inline uint64_t CAVM_PCCVF_XXX_ARI_CAP_HDR_FUNC(void)
         return 0x100;
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x170;
-    __cavm_csr_fatal("PCCVF_XXX_ARI_CAP_HDR", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("PCCVF_XXX_ARI_CAP_HDR", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PCCVF_XXX_ARI_CAP_HDR cavm_pccvf_xxx_ari_cap_hdr_t
@@ -621,7 +621,7 @@ static inline uint64_t CAVM_PCCVF_XXX_E_DEV_CTL_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x78;
-    __cavm_csr_fatal("PCCVF_XXX_E_DEV_CTL", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("PCCVF_XXX_E_DEV_CTL", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PCCVF_XXX_E_DEV_CTL cavm_pccvf_xxx_e_dev_ctl_t
@@ -1020,7 +1020,7 @@ static inline uint64_t CAVM_PCCVF_XXX_VSEC_CAP_HDR_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x100;
-    __cavm_csr_fatal("PCCVF_XXX_VSEC_CAP_HDR", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("PCCVF_XXX_VSEC_CAP_HDR", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PCCVF_XXX_VSEC_CAP_HDR cavm_pccvf_xxx_vsec_cap_hdr_t
@@ -1080,7 +1080,7 @@ static inline uint64_t CAVM_PCCVF_XXX_VSEC_CTL_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x108;
-    __cavm_csr_fatal("PCCVF_XXX_VSEC_CTL", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("PCCVF_XXX_VSEC_CTL", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PCCVF_XXX_VSEC_CTL cavm_pccvf_xxx_vsec_ctl_t
@@ -1127,7 +1127,7 @@ static inline uint64_t CAVM_PCCVF_XXX_VSEC_ID_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x104;
-    __cavm_csr_fatal("PCCVF_XXX_VSEC_ID", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("PCCVF_XXX_VSEC_ID", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PCCVF_XXX_VSEC_ID cavm_pccvf_xxx_vsec_id_t

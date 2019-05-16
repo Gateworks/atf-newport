@@ -866,7 +866,9 @@ static inline uint64_t CAVM_DMAPX_BP_TEST0(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=1))
         return 0x87e043a80010ll + 0x80000ll * ((a) & 0x1);
-    __cavm_csr_fatal("DMAPX_BP_TEST0", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=1))
+        return 0x87e043a80010ll + 0x80000ll * ((a) & 0x1);
+    __cavm_csr_fatal("DMAPX_BP_TEST0", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_DMAPX_BP_TEST0(a) cavm_dmapx_bp_test0_t
@@ -940,7 +942,9 @@ static inline uint64_t CAVM_DMAPX_BP_TEST1(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=1))
         return 0x87e043a80020ll + 0x80000ll * ((a) & 0x1);
-    __cavm_csr_fatal("DMAPX_BP_TEST1", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=1))
+        return 0x87e043a80020ll + 0x80000ll * ((a) & 0x1);
+    __cavm_csr_fatal("DMAPX_BP_TEST1", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_DMAPX_BP_TEST1(a) cavm_dmapx_bp_test1_t
@@ -1014,7 +1018,9 @@ static inline uint64_t CAVM_DMAPX_BP_TEST2(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=1))
         return 0x87e043a80028ll + 0x80000ll * ((a) & 0x1);
-    __cavm_csr_fatal("DMAPX_BP_TEST2", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=1))
+        return 0x87e043a80028ll + 0x80000ll * ((a) & 0x1);
+    __cavm_csr_fatal("DMAPX_BP_TEST2", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_DMAPX_BP_TEST2(a) cavm_dmapx_bp_test2_t
@@ -1060,7 +1066,9 @@ static inline uint64_t CAVM_DMAPX_CONTROL(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=1))
         return 0x87e043a80000ll + 0x80000ll * ((a) & 0x1);
-    __cavm_csr_fatal("DMAPX_CONTROL", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=1))
+        return 0x87e043a80000ll + 0x80000ll * ((a) & 0x1);
+    __cavm_csr_fatal("DMAPX_CONTROL", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_DMAPX_CONTROL(a) cavm_dmapx_control_t
@@ -1096,7 +1104,9 @@ static inline uint64_t CAVM_DMAPX_ECO(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=1))
         return 0x87e043a80008ll + 0x80000ll * ((a) & 0x1);
-    __cavm_csr_fatal("DMAPX_ECO", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=1))
+        return 0x87e043a80008ll + 0x80000ll * ((a) & 0x1);
+    __cavm_csr_fatal("DMAPX_ECO", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_DMAPX_ECO(a) cavm_dmapx_eco_t
@@ -1176,7 +1186,9 @@ static inline uint64_t CAVM_DMAPX_JDX_CFG0(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=1) && (b<=2)))
         return 0x87e043a82000ll + 0x80000ll * ((a) & 0x1) + 0x2000ll * ((b) & 0x3);
-    __cavm_csr_fatal("DMAPX_JDX_CFG0", 2, a, b, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=1) && (b<=2)))
+        return 0x87e043a82000ll + 0x80000ll * ((a) & 0x1) + 0x2000ll * ((b) & 0x3);
+    __cavm_csr_fatal("DMAPX_JDX_CFG0", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_DMAPX_JDX_CFG0(a,b) cavm_dmapx_jdx_cfg0_t
@@ -1270,7 +1282,9 @@ static inline uint64_t CAVM_DMAPX_JDX_CFG1(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=1) && (b<=2)))
         return 0x87e043a82008ll + 0x80000ll * ((a) & 0x1) + 0x2000ll * ((b) & 0x3);
-    __cavm_csr_fatal("DMAPX_JDX_CFG1", 2, a, b, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=1) && (b<=2)))
+        return 0x87e043a82008ll + 0x80000ll * ((a) & 0x1) + 0x2000ll * ((b) & 0x3);
+    __cavm_csr_fatal("DMAPX_JDX_CFG1", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_DMAPX_JDX_CFG1(a,b) cavm_dmapx_jdx_cfg1_t
@@ -1324,7 +1338,9 @@ static inline uint64_t CAVM_DMAPX_JDX_CFG2(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=1) && (b<=2)))
         return 0x87e043a82010ll + 0x80000ll * ((a) & 0x1) + 0x2000ll * ((b) & 0x3);
-    __cavm_csr_fatal("DMAPX_JDX_CFG2", 2, a, b, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=1) && (b<=2)))
+        return 0x87e043a82010ll + 0x80000ll * ((a) & 0x1) + 0x2000ll * ((b) & 0x3);
+    __cavm_csr_fatal("DMAPX_JDX_CFG2", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_DMAPX_JDX_CFG2(a,b) cavm_dmapx_jdx_cfg2_t
@@ -1392,7 +1408,9 @@ static inline uint64_t CAVM_DMAPX_JDX_CFG3(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=1) && (b<=2)))
         return 0x87e043a82018ll + 0x80000ll * ((a) & 0x1) + 0x2000ll * ((b) & 0x3);
-    __cavm_csr_fatal("DMAPX_JDX_CFG3", 2, a, b, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=1) && (b<=2)))
+        return 0x87e043a82018ll + 0x80000ll * ((a) & 0x1) + 0x2000ll * ((b) & 0x3);
+    __cavm_csr_fatal("DMAPX_JDX_CFG3", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_DMAPX_JDX_CFG3(a,b) cavm_dmapx_jdx_cfg3_t
@@ -1464,7 +1482,9 @@ static inline uint64_t CAVM_DMAPX_JDX_CFG4(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=1) && (b<=2)))
         return 0x87e043a82020ll + 0x80000ll * ((a) & 0x1) + 0x2000ll * ((b) & 0x3);
-    __cavm_csr_fatal("DMAPX_JDX_CFG4", 2, a, b, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=1) && (b<=2)))
+        return 0x87e043a82020ll + 0x80000ll * ((a) & 0x1) + 0x2000ll * ((b) & 0x3);
+    __cavm_csr_fatal("DMAPX_JDX_CFG4", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_DMAPX_JDX_CFG4(a,b) cavm_dmapx_jdx_cfg4_t
@@ -1498,7 +1518,9 @@ static inline uint64_t CAVM_DMAPX_JDX_LTE_NR_CFGX(unsigned long a, unsigned long
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=1) && (b<=2) && (c<=15)))
         return 0x87e043a82028ll + 0x80000ll * ((a) & 0x1) + 0x2000ll * ((b) & 0x3) + 8ll * ((c) & 0xf);
-    __cavm_csr_fatal("DMAPX_JDX_LTE_NR_CFGX", 3, a, b, c, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=1) && (b<=2) && (c<=15)))
+        return 0x87e043a82028ll + 0x80000ll * ((a) & 0x1) + 0x2000ll * ((b) & 0x3) + 8ll * ((c) & 0xf);
+    __cavm_csr_fatal("DMAPX_JDX_LTE_NR_CFGX", 3, a, b, c, 0, 0, 0);
 }
 
 #define typedef_CAVM_DMAPX_JDX_LTE_NR_CFGX(a,b,c) cavm_dmapx_jdx_lte_nr_cfgx_t
@@ -1538,7 +1560,9 @@ static inline uint64_t CAVM_DMAPX_STATUS(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=1))
         return 0x87e043a80018ll + 0x80000ll * ((a) & 0x1);
-    __cavm_csr_fatal("DMAPX_STATUS", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=1))
+        return 0x87e043a80018ll + 0x80000ll * ((a) & 0x1);
+    __cavm_csr_fatal("DMAPX_STATUS", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_DMAPX_STATUS(a) cavm_dmapx_status_t

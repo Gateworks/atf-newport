@@ -47,8 +47,10 @@
 #define CAVM_PSBM_SYS_CHAIN_E_CPT (0xb)
 #define CAVM_PSBM_SYS_CHAIN_E_DCPX_CN96XX(a) (4 + (a))
 #define CAVM_PSBM_SYS_CHAIN_E_DCPX_CNF95XX(a) (1 + (a))
+#define CAVM_PSBM_SYS_CHAIN_E_DCPX_LOKI(a) (1 + (a))
 #define CAVM_PSBM_SYS_CHAIN_E_GSERX_CN96XX(a) (7 + (a))
 #define CAVM_PSBM_SYS_CHAIN_E_GSERX_CNF95XX(a) (3 + (a))
+#define CAVM_PSBM_SYS_CHAIN_E_GSERX_LOKI(a) (3 + (a))
 #define CAVM_PSBM_SYS_CHAIN_E_IOB (6)
 #define CAVM_PSBM_SYS_CHAIN_E_IOBX(a) (2 + (a))
 
@@ -61,10 +63,14 @@
 #define CAVM_PSBM_SYS_MAP_E_CPTX(a) (0xd + (a))
 #define CAVM_PSBM_SYS_MAP_E_GSERX_CN96XX(a) (5 + (a))
 #define CAVM_PSBM_SYS_MAP_E_GSERX_CNF95XX(a) (3 + (a))
+#define CAVM_PSBM_SYS_MAP_E_GSERX_LOKI(a) (3 + (a))
+#define CAVM_PSBM_SYS_MAP_E_GSERRX(a) (0xa + (a))
 #define CAVM_PSBM_SYS_MAP_E_IOBX_CN96XX(a) (3 + (a))
 #define CAVM_PSBM_SYS_MAP_E_IOBX_CNF95XX(a) (2 + (a))
+#define CAVM_PSBM_SYS_MAP_E_IOBX_LOKI(a) (2 + (a))
 #define CAVM_PSBM_SYS_MAP_E_LMCX_CN96XX(a) (0 + (a))
 #define CAVM_PSBM_SYS_MAP_E_LMCX_CNF95XX(a) (0x00 | a>>1)
+#define CAVM_PSBM_SYS_MAP_E_LMCX_LOKI(a) (0x00 | a>>1)
 
 /**
  * Register (NCB32b) psbm_ap#_data#
@@ -106,7 +112,9 @@ static inline uint64_t CAVM_PSBM_APX_DATAX(unsigned long a, unsigned long b)
         return 0x87e0de010000ll + 0x100ll * ((a) & 0x1f) + 0x10ll * ((b) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=5) && (b<=5)))
         return 0x87e0de010000ll + 0x100ll * ((a) & 0x7) + 0x10ll * ((b) & 0x7);
-    __cavm_csr_fatal("PSBM_APX_DATAX", 2, a, b, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=5) && (b<=5)))
+        return 0x87e0de010000ll + 0x100ll * ((a) & 0x7) + 0x10ll * ((b) & 0x7);
+    __cavm_csr_fatal("PSBM_APX_DATAX", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PSBM_APX_DATAX(a,b) cavm_psbm_apx_datax_t
@@ -151,7 +159,9 @@ static inline uint64_t CAVM_PSBM_APX_HDR(unsigned long a)
         return 0x87e0de018000ll + 0x10ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87e0de018000ll + 0x10ll * ((a) & 0x7);
-    __cavm_csr_fatal("PSBM_APX_HDR", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87e0de018000ll + 0x10ll * ((a) & 0x7);
+    __cavm_csr_fatal("PSBM_APX_HDR", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PSBM_APX_HDR(a) cavm_psbm_apx_hdr_t
@@ -202,6 +212,7 @@ union cavm_psbm_chain_dbg
         uint32_t reserved_4_31         : 28;
 #endif /* Word 0 - End */
     } cnf95xx;
+    /* struct cavm_psbm_chain_dbg_cnf95xx loki; */
 };
 typedef union cavm_psbm_chain_dbg cavm_psbm_chain_dbg_t;
 
@@ -211,7 +222,7 @@ static inline uint64_t CAVM_PSBM_CHAIN_DBG_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x87e0de000100ll;
-    __cavm_csr_fatal("PSBM_CHAIN_DBG", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("PSBM_CHAIN_DBG", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PSBM_CHAIN_DBG cavm_psbm_chain_dbg_t
@@ -258,7 +269,7 @@ static inline uint64_t CAVM_PSBM_CONST_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x87e0de000008ll;
-    __cavm_csr_fatal("PSBM_CONST", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("PSBM_CONST", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PSBM_CONST cavm_psbm_const_t
@@ -294,7 +305,7 @@ static inline uint64_t CAVM_PSBM_CONST1_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x87e0de000010ll;
-    __cavm_csr_fatal("PSBM_CONST1", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("PSBM_CONST1", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PSBM_CONST1 cavm_psbm_const1_t
@@ -336,7 +347,7 @@ static inline uint64_t CAVM_PSBM_CTL_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x87e0de000000ll;
-    __cavm_csr_fatal("PSBM_CTL", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("PSBM_CTL", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PSBM_CTL cavm_psbm_ctl_t
@@ -372,7 +383,7 @@ static inline uint64_t CAVM_PSBM_ECO_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x87e0de000018ll;
-    __cavm_csr_fatal("PSBM_ECO", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("PSBM_ECO", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PSBM_ECO cavm_psbm_eco_t
@@ -410,7 +421,7 @@ static inline uint64_t CAVM_PSBM_LINT_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x87e0de000020ll;
-    __cavm_csr_fatal("PSBM_LINT", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("PSBM_LINT", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PSBM_LINT cavm_psbm_lint_t
@@ -449,7 +460,7 @@ static inline uint64_t CAVM_PSBM_LINT_ENA_W1C_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x87e0de000030ll;
-    __cavm_csr_fatal("PSBM_LINT_ENA_W1C", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("PSBM_LINT_ENA_W1C", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PSBM_LINT_ENA_W1C cavm_psbm_lint_ena_w1c_t
@@ -488,7 +499,7 @@ static inline uint64_t CAVM_PSBM_LINT_ENA_W1S_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x87e0de000038ll;
-    __cavm_csr_fatal("PSBM_LINT_ENA_W1S", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("PSBM_LINT_ENA_W1S", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PSBM_LINT_ENA_W1S cavm_psbm_lint_ena_w1s_t
@@ -527,7 +538,7 @@ static inline uint64_t CAVM_PSBM_LINT_W1S_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x87e0de000028ll;
-    __cavm_csr_fatal("PSBM_LINT_W1S", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("PSBM_LINT_W1S", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PSBM_LINT_W1S cavm_psbm_lint_w1s_t
@@ -566,7 +577,9 @@ static inline uint64_t CAVM_PSBM_SYSX_DATAX(unsigned long a, unsigned long b)
         return 0x87e0de020000ll + 0x100ll * ((a) & 0xf) + 0x10ll * ((b) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=4) && (b<=5)))
         return 0x87e0de020000ll + 0x100ll * ((a) & 0x7) + 0x10ll * ((b) & 0x7);
-    __cavm_csr_fatal("PSBM_SYSX_DATAX", 2, a, b, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=4) && (b<=5)))
+        return 0x87e0de020000ll + 0x100ll * ((a) & 0x7) + 0x10ll * ((b) & 0x7);
+    __cavm_csr_fatal("PSBM_SYSX_DATAX", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PSBM_SYSX_DATAX(a,b) cavm_psbm_sysx_datax_t
@@ -611,7 +624,9 @@ static inline uint64_t CAVM_PSBM_SYSX_HDR(unsigned long a)
         return 0x87e0de028000ll + 0x10ll * ((a) & 0xf);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=4))
         return 0x87e0de028000ll + 0x10ll * ((a) & 0x7);
-    __cavm_csr_fatal("PSBM_SYSX_HDR", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=4))
+        return 0x87e0de028000ll + 0x10ll * ((a) & 0x7);
+    __cavm_csr_fatal("PSBM_SYSX_HDR", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_PSBM_SYSX_HDR(a) cavm_psbm_sysx_hdr_t

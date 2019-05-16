@@ -245,7 +245,7 @@ static inline uint64_t CAVM_MIO_PTP_CLKEN_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x807000002080ll;
-    __cavm_csr_fatal("MIO_PTP_CLKEN", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("MIO_PTP_CLKEN", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MIO_PTP_CLKEN cavm_mio_ptp_clken_t
@@ -911,7 +911,7 @@ static inline uint64_t CAVM_MIO_PTP_MSIX_PBAX(unsigned long a)
 {
     if (a==0)
         return 0x807000ff0000ll + 8ll * ((a) & 0x0);
-    __cavm_csr_fatal("MIO_PTP_MSIX_PBAX", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("MIO_PTP_MSIX_PBAX", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MIO_PTP_MSIX_PBAX(a) cavm_mio_ptp_msix_pbax_t
@@ -1058,7 +1058,7 @@ static inline uint64_t CAVM_MIO_PTP_MSIX_VECX_ADDR(unsigned long a)
 {
     if (a<=1)
         return 0x807000f00000ll + 0x10ll * ((a) & 0x1);
-    __cavm_csr_fatal("MIO_PTP_MSIX_VECX_ADDR", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("MIO_PTP_MSIX_VECX_ADDR", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MIO_PTP_MSIX_VECX_ADDR(a) cavm_mio_ptp_msix_vecx_addr_t
@@ -1112,7 +1112,7 @@ static inline uint64_t CAVM_MIO_PTP_MSIX_VECX_CTL(unsigned long a)
 {
     if (a<=1)
         return 0x807000f00008ll + 0x10ll * ((a) & 0x1);
-    __cavm_csr_fatal("MIO_PTP_MSIX_VECX_CTL", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("MIO_PTP_MSIX_VECX_CTL", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MIO_PTP_MSIX_VECX_CTL(a) cavm_mio_ptp_msix_vecx_ctl_t
@@ -1312,7 +1312,7 @@ static inline uint64_t CAVM_MIO_PTP_SYSCK_HI_INCR_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x807000000fc0ll;
-    __cavm_csr_fatal("MIO_PTP_SYSCK_HI_INCR", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("MIO_PTP_SYSCK_HI_INCR", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MIO_PTP_SYSCK_HI_INCR cavm_mio_ptp_sysck_hi_incr_t
@@ -1353,7 +1353,7 @@ static inline uint64_t CAVM_MIO_PTP_SYSCK_LO_INCR_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x807000000fc8ll;
-    __cavm_csr_fatal("MIO_PTP_SYSCK_LO_INCR", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("MIO_PTP_SYSCK_LO_INCR", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MIO_PTP_SYSCK_LO_INCR cavm_mio_ptp_sysck_lo_incr_t
@@ -1401,7 +1401,7 @@ static inline uint64_t CAVM_MIO_PTP_SYSCK_THRESH_HI_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x807000000fb8ll;
-    __cavm_csr_fatal("MIO_PTP_SYSCK_THRESH_HI", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("MIO_PTP_SYSCK_THRESH_HI", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MIO_PTP_SYSCK_THRESH_HI cavm_mio_ptp_sysck_thresh_hi_t
@@ -1441,7 +1441,7 @@ static inline uint64_t CAVM_MIO_PTP_SYSCK_THRESH_LO_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x807000000fb0ll;
-    __cavm_csr_fatal("MIO_PTP_SYSCK_THRESH_LO", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("MIO_PTP_SYSCK_THRESH_LO", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MIO_PTP_SYSCK_THRESH_LO cavm_mio_ptp_sysck_thresh_lo_t

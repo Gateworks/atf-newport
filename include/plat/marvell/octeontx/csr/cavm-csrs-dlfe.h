@@ -220,7 +220,9 @@ static inline uint64_t CAVM_DLFE_ACAL_ADDR_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX))
         return 0x87e043180408ll;
-    __cavm_csr_fatal("DLFE_ACAL_ADDR", 0, 0, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI))
+        return 0x87e043180408ll;
+    __cavm_csr_fatal("DLFE_ACAL_ADDR", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_DLFE_ACAL_ADDR cavm_dlfe_acal_addr_t
@@ -262,7 +264,9 @@ static inline uint64_t CAVM_DLFE_ACAL_COEF_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX))
         return 0x87e043180400ll;
-    __cavm_csr_fatal("DLFE_ACAL_COEF", 0, 0, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI))
+        return 0x87e043180400ll;
+    __cavm_csr_fatal("DLFE_ACAL_COEF", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_DLFE_ACAL_COEF cavm_dlfe_acal_coef_t
@@ -327,7 +331,9 @@ static inline uint64_t CAVM_DLFE_ANT_EXPX(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87e043180580ll + 8ll * ((a) & 0x7);
-    __cavm_csr_fatal("DLFE_ANT_EXPX", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
+        return 0x87e043180580ll + 8ll * ((a) & 0x7);
+    __cavm_csr_fatal("DLFE_ANT_EXPX", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_DLFE_ANT_EXPX(a) cavm_dlfe_ant_expx_t
@@ -376,7 +382,9 @@ static inline uint64_t CAVM_DLFE_ANT_GAINX(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=11))
         return 0x87e043180500ll + 8ll * ((a) & 0xf);
-    __cavm_csr_fatal("DLFE_ANT_GAINX", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=11))
+        return 0x87e043180500ll + 8ll * ((a) & 0xf);
+    __cavm_csr_fatal("DLFE_ANT_GAINX", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_DLFE_ANT_GAINX(a) cavm_dlfe_ant_gainx_t
@@ -411,7 +419,9 @@ static inline uint64_t CAVM_DLFE_CONFIG0_DATAX(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=1))
         return 0x87e043182000ll + 8ll * ((a) & 0x1);
-    __cavm_csr_fatal("DLFE_CONFIG0_DATAX", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=1))
+        return 0x87e043182000ll + 8ll * ((a) & 0x1);
+    __cavm_csr_fatal("DLFE_CONFIG0_DATAX", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_DLFE_CONFIG0_DATAX(a) cavm_dlfe_config0_datax_t
@@ -446,7 +456,9 @@ static inline uint64_t CAVM_DLFE_CONFIG1_DATAX(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=1))
         return 0x87e043184000ll + 8ll * ((a) & 0x1);
-    __cavm_csr_fatal("DLFE_CONFIG1_DATAX", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=1))
+        return 0x87e043184000ll + 8ll * ((a) & 0x1);
+    __cavm_csr_fatal("DLFE_CONFIG1_DATAX", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_DLFE_CONFIG1_DATAX(a) cavm_dlfe_config1_datax_t
@@ -481,7 +493,9 @@ static inline uint64_t CAVM_DLFE_CONFIG2_DATAX(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=1))
         return 0x87e043186000ll + 8ll * ((a) & 0x1);
-    __cavm_csr_fatal("DLFE_CONFIG2_DATAX", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=1))
+        return 0x87e043186000ll + 8ll * ((a) & 0x1);
+    __cavm_csr_fatal("DLFE_CONFIG2_DATAX", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_DLFE_CONFIG2_DATAX(a) cavm_dlfe_config2_datax_t
@@ -541,7 +555,9 @@ static inline uint64_t CAVM_DLFE_CONTROL_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX))
         return 0x87e043180000ll;
-    __cavm_csr_fatal("DLFE_CONTROL", 0, 0, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI))
+        return 0x87e043180000ll;
+    __cavm_csr_fatal("DLFE_CONTROL", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_DLFE_CONTROL cavm_dlfe_control_t
@@ -580,7 +596,9 @@ static inline uint64_t CAVM_DLFE_ECO_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX))
         return 0x87e043180008ll;
-    __cavm_csr_fatal("DLFE_ECO", 0, 0, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI))
+        return 0x87e043180008ll;
+    __cavm_csr_fatal("DLFE_ECO", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_DLFE_ECO cavm_dlfe_eco_t
@@ -620,7 +638,9 @@ static inline uint64_t CAVM_DLFE_ERROR_ENABLE0_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX))
         return 0x87e043180040ll;
-    __cavm_csr_fatal("DLFE_ERROR_ENABLE0", 0, 0, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI))
+        return 0x87e043180040ll;
+    __cavm_csr_fatal("DLFE_ERROR_ENABLE0", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_DLFE_ERROR_ENABLE0 cavm_dlfe_error_enable0_t
@@ -666,7 +686,9 @@ static inline uint64_t CAVM_DLFE_ERROR_SOURCE0_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX))
         return 0x87e043180030ll;
-    __cavm_csr_fatal("DLFE_ERROR_SOURCE0", 0, 0, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI))
+        return 0x87e043180030ll;
+    __cavm_csr_fatal("DLFE_ERROR_SOURCE0", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_DLFE_ERROR_SOURCE0 cavm_dlfe_error_source0_t
@@ -715,7 +737,9 @@ static inline uint64_t CAVM_DLFE_RES_MAPX(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=11))
         return 0x87e043180480ll + 8ll * ((a) & 0xf);
-    __cavm_csr_fatal("DLFE_RES_MAPX", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=11))
+        return 0x87e043180480ll + 8ll * ((a) & 0xf);
+    __cavm_csr_fatal("DLFE_RES_MAPX", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_DLFE_RES_MAPX(a) cavm_dlfe_res_mapx_t
@@ -752,7 +776,9 @@ static inline uint64_t CAVM_DLFE_SCRATCH_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX))
         return 0x87e043180080ll;
-    __cavm_csr_fatal("DLFE_SCRATCH", 0, 0, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI))
+        return 0x87e043180080ll;
+    __cavm_csr_fatal("DLFE_SCRATCH", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_DLFE_SCRATCH cavm_dlfe_scratch_t
@@ -798,7 +824,9 @@ static inline uint64_t CAVM_DLFE_STATUS_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX))
         return 0x87e043180018ll;
-    __cavm_csr_fatal("DLFE_STATUS", 0, 0, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI))
+        return 0x87e043180018ll;
+    __cavm_csr_fatal("DLFE_STATUS", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_DLFE_STATUS cavm_dlfe_status_t
@@ -833,7 +861,9 @@ static inline uint64_t CAVM_DLFE_TSSIX(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=47))
         return 0x87e043180200ll + 8ll * ((a) & 0x3f);
-    __cavm_csr_fatal("DLFE_TSSIX", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=47))
+        return 0x87e043180200ll + 8ll * ((a) & 0x3f);
+    __cavm_csr_fatal("DLFE_TSSIX", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_DLFE_TSSIX(a) cavm_dlfe_tssix_t

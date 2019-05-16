@@ -107,7 +107,7 @@ static inline uint64_t CAVM_DAP_CONST_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x87e002000130ll;
-    __cavm_csr_fatal("DAP_CONST", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("DAP_CONST", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_DAP_CONST cavm_dap_const_t
@@ -480,7 +480,7 @@ static inline uint64_t CAVM_DAP_OWB_TO_STATUS_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x87e002000138ll;
-    __cavm_csr_fatal("DAP_OWB_TO_STATUS", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("DAP_OWB_TO_STATUS", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_DAP_OWB_TO_STATUS cavm_dap_owb_to_status_t

@@ -1233,7 +1233,7 @@ static inline uint64_t CAVM_ROM_MEMX(unsigned long a)
         return 0x87d000000000ll + 8ll * ((a) & 0x7ff);
     if (cavm_is_model(OCTEONTX_CN9XXX) && (a<=7))
         return 0x87d000000000ll + 8ll * ((a) & 0x7);
-    __cavm_csr_fatal("ROM_MEMX", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("ROM_MEMX", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_ROM_MEMX(a) cavm_rom_memx_t

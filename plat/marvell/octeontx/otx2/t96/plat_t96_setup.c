@@ -307,7 +307,7 @@ void plat_add_mmio()
 	for (i = 0; i < MAX_SATA; ++i)
 	{
 		add_map_record(CAVM_SATA_BAR_E_SATAX_PF_BAR0(i), CAVM_SATA_BAR_E_SATAX_PF_BAR0_SIZE, attr);
-		add_map_record(CAVM_SATA_BAR_E_SATAX_PF_BAR2(i), CAVM_SATA_BAR_E_SATAX_PF_BAR2_SIZE, attr);
+		add_map_record(CAVM_SATA_BAR_E_SATAX_PF_BAR4(i), CAVM_SATA_BAR_E_SATAX_PF_BAR4_SIZE, attr);
 	}
 
 	add_map_record(CAVM_ROM_BAR_E_ROM_PF_BAR0, CAVM_ROM_BAR_E_ROM_PF_BAR0_SIZE, attr);

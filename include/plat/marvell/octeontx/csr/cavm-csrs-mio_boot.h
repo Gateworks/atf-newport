@@ -56,7 +56,7 @@ static inline uint64_t CAVM_MIO_BOOT_AP_JUMP_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX))
         return 0x87e0000000d0ll;
-    __cavm_csr_fatal("MIO_BOOT_AP_JUMP", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("MIO_BOOT_AP_JUMP", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MIO_BOOT_AP_JUMP cavm_mio_boot_ap_jump_t
@@ -168,7 +168,7 @@ static inline uint64_t CAVM_MIO_BOOT_BIST_STAT_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX))
         return 0x87e0000000f8ll;
-    __cavm_csr_fatal("MIO_BOOT_BIST_STAT", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("MIO_BOOT_BIST_STAT", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MIO_BOOT_BIST_STAT cavm_mio_boot_bist_stat_t
@@ -281,7 +281,7 @@ static inline uint64_t CAVM_MIO_BOOT_PIN_DEFS_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX))
         return 0x87e0000000c0ll;
-    __cavm_csr_fatal("MIO_BOOT_PIN_DEFS", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("MIO_BOOT_PIN_DEFS", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MIO_BOOT_PIN_DEFS cavm_mio_boot_pin_defs_t
@@ -338,7 +338,7 @@ static inline uint64_t CAVM_MIO_BOOT_ROM_LIMIT_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX))
         return 0x87e0000000d8ll;
-    __cavm_csr_fatal("MIO_BOOT_ROM_LIMIT", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("MIO_BOOT_ROM_LIMIT", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MIO_BOOT_ROM_LIMIT cavm_mio_boot_rom_limit_t
@@ -382,7 +382,7 @@ static inline uint64_t CAVM_MIO_BOOT_THR_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX))
         return 0x87e0000000b0ll;
-    __cavm_csr_fatal("MIO_BOOT_THR", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("MIO_BOOT_THR", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MIO_BOOT_THR cavm_mio_boot_thr_t

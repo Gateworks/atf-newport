@@ -154,7 +154,7 @@ static inline uint64_t CAVM_MIO_FUS_BNK_DATX(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && (a<=1))
         return 0x87e003001520ll + 8ll * ((a) & 0x1);
-    __cavm_csr_fatal("MIO_FUS_BNK_DATX", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("MIO_FUS_BNK_DATX", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MIO_FUS_BNK_DATX(a) cavm_mio_fus_bnk_datx_t
@@ -192,7 +192,7 @@ static inline uint64_t CAVM_MIO_FUS_DAT0_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX))
         return 0x87e003001400ll;
-    __cavm_csr_fatal("MIO_FUS_DAT0", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("MIO_FUS_DAT0", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MIO_FUS_DAT0 cavm_mio_fus_dat0_t
@@ -230,7 +230,7 @@ static inline uint64_t CAVM_MIO_FUS_DAT1_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX))
         return 0x87e003001408ll;
-    __cavm_csr_fatal("MIO_FUS_DAT1", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("MIO_FUS_DAT1", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MIO_FUS_DAT1 cavm_mio_fus_dat1_t
@@ -795,7 +795,7 @@ static inline uint64_t CAVM_MIO_FUS_DAT2_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX))
         return 0x87e003001410ll;
-    __cavm_csr_fatal("MIO_FUS_DAT2", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("MIO_FUS_DAT2", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MIO_FUS_DAT2 cavm_mio_fus_dat2_t
@@ -1015,7 +1015,7 @@ static inline uint64_t CAVM_MIO_FUS_DAT3_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX))
         return 0x87e003001418ll;
-    __cavm_csr_fatal("MIO_FUS_DAT3", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("MIO_FUS_DAT3", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MIO_FUS_DAT3 cavm_mio_fus_dat3_t
@@ -1069,7 +1069,7 @@ static inline uint64_t CAVM_MIO_FUS_DAT4_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX))
         return 0x87e003001420ll;
-    __cavm_csr_fatal("MIO_FUS_DAT4", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("MIO_FUS_DAT4", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MIO_FUS_DAT4 cavm_mio_fus_dat4_t
@@ -1113,7 +1113,7 @@ static inline uint64_t CAVM_MIO_FUS_INT_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX))
         return 0x87e003001548ll;
-    __cavm_csr_fatal("MIO_FUS_INT", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("MIO_FUS_INT", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MIO_FUS_INT cavm_mio_fus_int_t
@@ -1149,7 +1149,7 @@ static inline uint64_t CAVM_MIO_FUS_PDF_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX))
         return 0x87e003001428ll;
-    __cavm_csr_fatal("MIO_FUS_PDF", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("MIO_FUS_PDF", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MIO_FUS_PDF cavm_mio_fus_pdf_t
@@ -1240,7 +1240,7 @@ static inline uint64_t CAVM_MIO_FUS_PLL_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX))
         return 0x87e003001580ll;
-    __cavm_csr_fatal("MIO_FUS_PLL", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("MIO_FUS_PLL", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MIO_FUS_PLL cavm_mio_fus_pll_t
@@ -1310,7 +1310,7 @@ static inline uint64_t CAVM_MIO_FUS_PNAMEX(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && (a<=1))
         return 0x87e003001440ll + 8ll * ((a) & 0x1);
-    __cavm_csr_fatal("MIO_FUS_PNAMEX", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("MIO_FUS_PNAMEX", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MIO_FUS_PNAMEX(a) cavm_mio_fus_pnamex_t
@@ -1378,7 +1378,7 @@ static inline uint64_t CAVM_MIO_FUS_PROG_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX))
         return 0x87e003001510ll;
-    __cavm_csr_fatal("MIO_FUS_PROG", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("MIO_FUS_PROG", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MIO_FUS_PROG cavm_mio_fus_prog_t
@@ -1428,7 +1428,7 @@ static inline uint64_t CAVM_MIO_FUS_PROG_TIMES_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX))
         return 0x87e003001518ll;
-    __cavm_csr_fatal("MIO_FUS_PROG_TIMES", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("MIO_FUS_PROG_TIMES", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MIO_FUS_PROG_TIMES cavm_mio_fus_prog_times_t
@@ -1504,7 +1504,7 @@ static inline uint64_t CAVM_MIO_FUS_RCMD_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX))
         return 0x87e003001500ll;
-    __cavm_csr_fatal("MIO_FUS_RCMD", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("MIO_FUS_RCMD", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MIO_FUS_RCMD cavm_mio_fus_rcmd_t
@@ -1579,7 +1579,7 @@ static inline uint64_t CAVM_MIO_FUS_READ_TIMES_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX))
         return 0x87e003001570ll;
-    __cavm_csr_fatal("MIO_FUS_READ_TIMES", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("MIO_FUS_READ_TIMES", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MIO_FUS_READ_TIMES cavm_mio_fus_read_times_t
@@ -1618,7 +1618,7 @@ static inline uint64_t CAVM_MIO_FUS_RPR_DATX(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && (a<=1))
         return 0x87e003001530ll + 8ll * ((a) & 0x1);
-    __cavm_csr_fatal("MIO_FUS_RPR_DATX", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("MIO_FUS_RPR_DATX", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MIO_FUS_RPR_DATX(a) cavm_mio_fus_rpr_datx_t
@@ -1689,7 +1689,7 @@ static inline uint64_t CAVM_MIO_FUS_SOFT_REPAIR_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX))
         return 0x87e003001540ll;
-    __cavm_csr_fatal("MIO_FUS_SOFT_REPAIR", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("MIO_FUS_SOFT_REPAIR", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MIO_FUS_SOFT_REPAIR cavm_mio_fus_soft_repair_t
@@ -1745,7 +1745,7 @@ static inline uint64_t CAVM_MIO_FUS_TGG_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX))
         return 0x87e003001430ll;
-    __cavm_csr_fatal("MIO_FUS_TGG", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("MIO_FUS_TGG", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MIO_FUS_TGG cavm_mio_fus_tgg_t
@@ -1787,7 +1787,7 @@ static inline uint64_t CAVM_MIO_FUS_WADR_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX))
         return 0x87e003001508ll;
-    __cavm_csr_fatal("MIO_FUS_WADR", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("MIO_FUS_WADR", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_MIO_FUS_WADR cavm_mio_fus_wadr_t

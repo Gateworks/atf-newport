@@ -20,13 +20,48 @@
  */
 
 /**
+ * Enumeration rfoe_ecpri_hdr_err_type_e
+ *
+ * RFOE eCPRI Error Type Enumeration
+ * Enumerates the eCPRI header error info types.
+ */
+#define CAVM_RFOE_ECPRI_HDR_ERR_TYPE_E_CONCATENATION (0)
+#define CAVM_RFOE_ECPRI_HDR_ERR_TYPE_E_ILLEGAL_RSVD (2)
+#define CAVM_RFOE_ECPRI_HDR_ERR_TYPE_E_ILLEGAL_VERSION (1)
+#define CAVM_RFOE_ECPRI_HDR_ERR_TYPE_E_MSG_TYPE (4)
+#define CAVM_RFOE_ECPRI_HDR_ERR_TYPE_E_PC_ID (3)
+
+/**
+ * Enumeration rfoe_ecpri_pcid_flowid_mode_e
+ *
+ * RFOE eCPRI PCID FLOWID Mode Enumeration
+ * Enumerates the PC_ID to FLOWID mapping modes.
+ */
+#define CAVM_RFOE_ECPRI_PCID_FLOWID_MODE_E_BASE (1)
+#define CAVM_RFOE_ECPRI_PCID_FLOWID_MODE_E_HASH (0)
+#define CAVM_RFOE_ECPRI_PCID_FLOWID_MODE_E_LMAC_TRUNCATE (2)
+#define CAVM_RFOE_ECPRI_PCID_FLOWID_MODE_E_RSVD3 (3)
+
+/**
  * Enumeration rfoe_order_info_type_e
  *
- * RoE orderInfoType Enumeration
+ * RFOE RoE orderInfoType Enumeration
  * Enumerates the types of RoE header field orderInfo.
  */
 #define CAVM_RFOE_ORDER_INFO_TYPE_E_SEQNUM (0)
 #define CAVM_RFOE_ORDER_INFO_TYPE_E_TIMESTAMP (1)
+
+/**
+ * Enumeration rfoe_rx_dir_ctl_pkt_type_e
+ *
+ * RFOE Direction Control Packet Type Enumeration
+ * Enumerates RX_DIRECTION_CTL packet type determination.
+ */
+#define CAVM_RFOE_RX_DIR_CTL_PKT_TYPE_E_ALT (2)
+#define CAVM_RFOE_RX_DIR_CTL_PKT_TYPE_E_CHI (1)
+#define CAVM_RFOE_RX_DIR_CTL_PKT_TYPE_E_ECPRI (4)
+#define CAVM_RFOE_RX_DIR_CTL_PKT_TYPE_E_GENERICX(a) (8 + (a))
+#define CAVM_RFOE_RX_DIR_CTL_PKT_TYPE_E_ROE (0)
 
 /**
  * Enumeration rfoe_rx_fd_state_e
@@ -52,6 +87,23 @@
 #define CAVM_RFOE_RX_PKT_ERR_E_RE_RX_CTL (0xb)
 #define CAVM_RFOE_RX_PKT_ERR_E_RE_SKIP (0xc)
 #define CAVM_RFOE_RX_PKT_ERR_E_RE_TERMINATE (9)
+
+/**
+ * Enumeration rfoe_rx_pkt_logger_idx_e
+ *
+ * RFOE Packet Logger Index Enumeration
+ */
+#define CAVM_RFOE_RX_PKT_LOGGER_IDX_E_RX_PKT (0)
+#define CAVM_RFOE_RX_PKT_LOGGER_IDX_E_TX_PKT (1)
+
+/**
+ * Enumeration rfoe_rx_pswt_e
+ *
+ * RFOE RX Packet Status Word Type Enumeration
+ * Enumerates RX_DIRECTION_CTL packet type determination.
+ */
+#define CAVM_RFOE_RX_PSWT_E_ECPRI_TYPE (2)
+#define CAVM_RFOE_RX_PSWT_E_ROE_TYPE (0)
 
 /**
  * Structure rfoe_cstm_hdr_addr_s
@@ -117,6 +169,127 @@ union cavm_rfoe_cstm_hdr_addr_s
 #endif /* Word 0 - End */
     } s;
     /* struct cavm_rfoe_cstm_hdr_addr_s_s cn; */
+};
+
+/**
+ * Structure rfoe_ecpri_psw0_s
+ *
+ * RFOE ECPRI Packet Status Word Zero Structure
+ * First 128b word of PSW and Logger Used for ECPRI packets.
+ */
+union cavm_rfoe_ecpri_psw0_s
+{
+    uint64_t u[2];
+    struct cavm_rfoe_ecpri_psw0_s_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t pswt                  : 2;  /**< [ 63: 62] PSW Type.  Enumerated by RFOE_RX_PSWT_E. */
+        uint64_t reserved_60_61        : 2;
+        uint64_t src_id                : 4;  /**< [ 59: 56] Packet source = {rfoe_inst[1:0],lmac_id[1:0]}. */
+        uint64_t reserved_54_55        : 2;
+        uint64_t jd_ptr_tmem           : 1;  /**< [ 53: 53] Target memory selection for job descriptor used by this packet/symbol.
+                                                                 0 = SMEM.
+                                                                 1 = LLC/DRAM.
+
+                                                                 Note that this will be zero for RoE subtype 0xFC packets. */
+        uint64_t jd_ptr                : 53; /**< [ 52:  0] Pointer to job descriptor used by this packet/symbol.
+                                                                 * All except RoE subtype=0xfc, job descriptor pointer corresponding to this packet status
+                                                                 * If RoE subtype=0xfc, this will be 0x0. */
+#else /* Word 0 - Little Endian */
+        uint64_t jd_ptr                : 53; /**< [ 52:  0] Pointer to job descriptor used by this packet/symbol.
+                                                                 * All except RoE subtype=0xfc, job descriptor pointer corresponding to this packet status
+                                                                 * If RoE subtype=0xfc, this will be 0x0. */
+        uint64_t jd_ptr_tmem           : 1;  /**< [ 53: 53] Target memory selection for job descriptor used by this packet/symbol.
+                                                                 0 = SMEM.
+                                                                 1 = LLC/DRAM.
+
+                                                                 Note that this will be zero for RoE subtype 0xFC packets. */
+        uint64_t reserved_54_55        : 2;
+        uint64_t src_id                : 4;  /**< [ 59: 56] Packet source = {rfoe_inst[1:0],lmac_id[1:0]}. */
+        uint64_t reserved_60_61        : 2;
+        uint64_t pswt                  : 2;  /**< [ 63: 62] PSW Type.  Enumerated by RFOE_RX_PSWT_E. */
+#endif /* Word 0 - End */
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 1 - Big Endian */
+        uint64_t seq_id                : 16; /**< [127:112] eCPRI SEQ_ID field from eCPRI Header */
+        uint64_t reserved_109_111      : 3;
+        uint64_t err_sts               : 5;  /**< [108:104] Packet error status, 0 = no errors detected.  For non-zero:
+                                                                 *Bits(3..0) are the packet errpr status from MAC, enumerated by RFOE_RX_PKT_ERR_E.
+                                                                 *Bit(4) is the DMA ERROR status, indicating Late aperture failure, buffer
+                                                                 overflow, or length miscompare from packet header vs. payload.
+
+                                                                 Internal:
+                                                                 Packet Error Status from x2p err field.  0 = no error detected. Values enumerated in
+                                                                 x2p2_p2x2_defs::x2p2_pkt_err_t */
+        uint64_t reserved_98_103       : 6;
+        uint64_t flow_id               : 10; /**< [ 97: 88] FLOW_ID calculated from PC_ID for msg_type=0. 0 for other msg_types. */
+        uint64_t ecpri_id              : 16; /**< [ 87: 72] eCPRI PC_ID or RTC_ID from eCPRI Header */
+        uint64_t msg_type              : 8;  /**< [ 71: 64] eCPRI Message Type Field from eCPRI Header. */
+#else /* Word 1 - Little Endian */
+        uint64_t msg_type              : 8;  /**< [ 71: 64] eCPRI Message Type Field from eCPRI Header. */
+        uint64_t ecpri_id              : 16; /**< [ 87: 72] eCPRI PC_ID or RTC_ID from eCPRI Header */
+        uint64_t flow_id               : 10; /**< [ 97: 88] FLOW_ID calculated from PC_ID for msg_type=0. 0 for other msg_types. */
+        uint64_t reserved_98_103       : 6;
+        uint64_t err_sts               : 5;  /**< [108:104] Packet error status, 0 = no errors detected.  For non-zero:
+                                                                 *Bits(3..0) are the packet errpr status from MAC, enumerated by RFOE_RX_PKT_ERR_E.
+                                                                 *Bit(4) is the DMA ERROR status, indicating Late aperture failure, buffer
+                                                                 overflow, or length miscompare from packet header vs. payload.
+
+                                                                 Internal:
+                                                                 Packet Error Status from x2p err field.  0 = no error detected. Values enumerated in
+                                                                 x2p2_p2x2_defs::x2p2_pkt_err_t */
+        uint64_t reserved_109_111      : 3;
+        uint64_t seq_id                : 16; /**< [127:112] eCPRI SEQ_ID field from eCPRI Header */
+#endif /* Word 1 - End */
+    } s;
+    /* struct cavm_rfoe_ecpri_psw0_s_s cn; */
+};
+
+/**
+ * Structure rfoe_ecpri_psw1_s
+ *
+ * RFOE eCPRI Packet Status Word One Structure
+ */
+union cavm_rfoe_ecpri_psw1_s
+{
+    uint64_t u[2];
+    struct cavm_rfoe_ecpri_psw1_s_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t ptp_timestamp         : 64; /**< [ 63:  0] PTP if present from CGX.  Undefined if RFOE_RX_CTRL[PTP_MODE(lmac)] == 0.
+                                                                 Internal:
+                                                                 Hardware writes 0 when PTP_MODE is 0 for this LMAC. */
+#else /* Word 0 - Little Endian */
+        uint64_t ptp_timestamp         : 64; /**< [ 63:  0] PTP if present from CGX.  Undefined if RFOE_RX_CTRL[PTP_MODE(lmac)] == 0.
+                                                                 Internal:
+                                                                 Hardware writes 0 when PTP_MODE is 0 for this LMAC. */
+#endif /* Word 0 - End */
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 1 - Big Endian */
+        uint64_t reserved_124_127      : 4;
+        uint64_t ptype                 : 4;  /**< [123:120] Type of processing applied to packet, as defined by  RFOE_RX_DIR_CTL_PKT_TYPE_E. */
+        uint64_t reserved_112_119      : 8;
+        uint64_t dec_num_syminc        : 8;  /**< [111:104] DEC block sets this field to a value equal to the number of section headers containing
+                                                                 the field "symInc" set to 1 for this packet. See also XRAN-FH.CUS.0-v02.01 document
+                                                                 section 5.4.5.3. */
+        uint64_t dec_num_sections      : 8;  /**< [103: 96] DEC block sets this field to the total number of sections found in this packet. */
+        uint64_t dec_error             : 8;  /**< [ 95: 88] DEC block error code - yet to be defined. */
+        uint64_t reserved_85_87        : 3;
+        uint64_t eindex                : 5;  /**< [ 84: 80] byte index to MSB of ETHERTYPE used for rx_direction_ctl lookup (non-VLAN ethertype) */
+        uint64_t ethertype             : 16; /**< [ 79: 64] ETHERTYPE pointed to by EINDEX */
+#else /* Word 1 - Little Endian */
+        uint64_t ethertype             : 16; /**< [ 79: 64] ETHERTYPE pointed to by EINDEX */
+        uint64_t eindex                : 5;  /**< [ 84: 80] byte index to MSB of ETHERTYPE used for rx_direction_ctl lookup (non-VLAN ethertype) */
+        uint64_t reserved_85_87        : 3;
+        uint64_t dec_error             : 8;  /**< [ 95: 88] DEC block error code - yet to be defined. */
+        uint64_t dec_num_sections      : 8;  /**< [103: 96] DEC block sets this field to the total number of sections found in this packet. */
+        uint64_t dec_num_syminc        : 8;  /**< [111:104] DEC block sets this field to a value equal to the number of section headers containing
+                                                                 the field "symInc" set to 1 for this packet. See also XRAN-FH.CUS.0-v02.01 document
+                                                                 section 5.4.5.3. */
+        uint64_t reserved_112_119      : 8;
+        uint64_t ptype                 : 4;  /**< [123:120] Type of processing applied to packet, as defined by  RFOE_RX_DIR_CTL_PKT_TYPE_E. */
+        uint64_t reserved_124_127      : 4;
+#endif /* Word 1 - End */
+    } s;
+    /* struct cavm_rfoe_ecpri_psw1_s_s cn; */
 };
 
 /**
@@ -259,6 +432,7 @@ union cavm_rfoe_fd_cstm_hdr_s
                                                                  RX - Unused from packet unless header is written. */
 #endif /* Word 1 - End */
     } cnf95xxp2;
+    /* struct cavm_rfoe_fd_cstm_hdr_s_cnf95xxp2 loki; */
 };
 
 /**
@@ -288,7 +462,7 @@ union cavm_rfoe_marvell_timestamp_s
 /**
  * Structure rfoe_packet_status_s
  *
- * RFOE Packet Status Structure
+ * RFOE 95xx Deprecated Packet Status Structure
  */
 union cavm_rfoe_packet_status_s
 {
@@ -640,6 +814,181 @@ union cavm_rfoe_packet_status_s
                                                                  For 0xfd subtype, it is sampled at SOP of the EOS packet. */
 #endif /* Word 1 - End */
     } cnf95xxp2;
+    /* struct cavm_rfoe_packet_status_s_cnf95xxp2 loki; */
+};
+
+/**
+ * Structure rfoe_psw0_s
+ *
+ * RFOE Packet Status Word Zero Structure
+ * First 128b word of PSW and Logger Used for all non-ECPRI packets.
+ */
+union cavm_rfoe_psw0_s
+{
+    uint64_t u[2];
+    struct cavm_rfoe_psw0_s_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t pswt                  : 2;  /**< [ 63: 62] PSW Type.  Enumerated by RFOE_RX_PSWT_E. */
+        uint64_t lmac_id               : 2;  /**< [ 61: 60] LMAC identifier from MAC that received the packet. */
+        uint64_t orderinfo_status      : 1;  /**< [ 59: 59] Sequence number and timestamp check status:
+                                                                 0 = Failed checks.
+                                                                 1 = Passed checks.
+
+                                                                 Notes:
+                                                                 * CHI ignored.  CHI has no seqnum or timestamp.
+                                                                 * ALT_PKT  ignored.  ALT_PKT has no seqnum or timestamp.
+                                                                 * RoE 0xfd subtype. AND of all segment results. If any segments fail, this will be 0.
+
+                                                                 Internal:
+                                                                 CHI and ALT_PKT types always set [ORDERINFO_STATUS] */
+        uint64_t jd_target_mem         : 1;  /**< [ 58: 58] Job descriptor pointer target memory.
+                                                                 0 = SMEM.
+                                                                 1 = LLC/DRAM.
+                                                                 If RoE subtype=0xfc, there is no job descriptor and this will be 0x0. */
+        uint64_t jd_ptr                : 53; /**< [ 57:  5] Pointer to job descriptor used by this packet/symbol.
+                                                                 * All except RoE subtype=0xfc, job descriptor pointer corresponding to this packet status
+                                                                 * If RoE subtype=0xfc, this will be 0x0. */
+        uint64_t dma_error             : 1;  /**< [  4:  4] DMA or header processing error. Possible errors include:
+                                                                 * Late aperture failure.
+                                                                 * Attempted to write past the end of the buffer.
+                                                                 * RoE length field did not match incoming packet. */
+        uint64_t pkt_err_sts           : 4;  /**< [  3:  0] Packet error status, enumerated by RFOE_RX_PKT_ERR_E.
+                                                                 Internal:
+                                                                 Packet Error Status from x2p err field.  0 = no error detected. Values enumerated in
+                                                                 x2p2_p2x2_defs::x2p2_pkt_err_t */
+#else /* Word 0 - Little Endian */
+        uint64_t pkt_err_sts           : 4;  /**< [  3:  0] Packet error status, enumerated by RFOE_RX_PKT_ERR_E.
+                                                                 Internal:
+                                                                 Packet Error Status from x2p err field.  0 = no error detected. Values enumerated in
+                                                                 x2p2_p2x2_defs::x2p2_pkt_err_t */
+        uint64_t dma_error             : 1;  /**< [  4:  4] DMA or header processing error. Possible errors include:
+                                                                 * Late aperture failure.
+                                                                 * Attempted to write past the end of the buffer.
+                                                                 * RoE length field did not match incoming packet. */
+        uint64_t jd_ptr                : 53; /**< [ 57:  5] Pointer to job descriptor used by this packet/symbol.
+                                                                 * All except RoE subtype=0xfc, job descriptor pointer corresponding to this packet status
+                                                                 * If RoE subtype=0xfc, this will be 0x0. */
+        uint64_t jd_target_mem         : 1;  /**< [ 58: 58] Job descriptor pointer target memory.
+                                                                 0 = SMEM.
+                                                                 1 = LLC/DRAM.
+                                                                 If RoE subtype=0xfc, there is no job descriptor and this will be 0x0. */
+        uint64_t orderinfo_status      : 1;  /**< [ 59: 59] Sequence number and timestamp check status:
+                                                                 0 = Failed checks.
+                                                                 1 = Passed checks.
+
+                                                                 Notes:
+                                                                 * CHI ignored.  CHI has no seqnum or timestamp.
+                                                                 * ALT_PKT  ignored.  ALT_PKT has no seqnum or timestamp.
+                                                                 * RoE 0xfd subtype. AND of all segment results. If any segments fail, this will be 0.
+
+                                                                 Internal:
+                                                                 CHI and ALT_PKT types always set [ORDERINFO_STATUS] */
+        uint64_t lmac_id               : 2;  /**< [ 61: 60] LMAC identifier from MAC that received the packet. */
+        uint64_t pswt                  : 2;  /**< [ 63: 62] PSW Type.  Enumerated by RFOE_RX_PSWT_E. */
+#endif /* Word 0 - End */
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 1 - Big Endian */
+        uint64_t rfoe_timestamp        : 32; /**< [127: 96] Timestamp sampled at packet arrival, formatted as
+                                                                 RFOE_TIMESTAMP_S. Sampled at SOP in header processing.
+                                                                 For 0xfd subtype, it is sampled at SOP of the EOS packet. */
+        uint64_t fd_antid              : 8;  /**< [ 95: 88] For RoE subtype=0xfd packets, this is the RFOE_FD_CSTM_HDR_S[ANTENNA]
+                                                                 field from the custom header. For other packets, this field is
+                                                                 reserved.
+
+                                                                 Internal:
+                                                                 - Others: 0. */
+        uint64_t fd_symbol             : 8;  /**< [ 87: 80] For RoE subtype=0xfd packets, this is the RFOE_FD_CSTM_HDR_S[SYMBOL]
+                                                                 field from the custom header. For other packets, this field is
+                                                                 reserved.
+
+                                                                 Internal:
+                                                                 - Others: 0. */
+        uint64_t roe_flowid            : 8;  /**< [ 79: 72] Flowid field extracted from RoE packet header. Undefined for CHI and ALT_PKT
+                                                                 packets.
+
+                                                                 Internal:
+                                                                 - CHI packets: value from RX_DIRECTION_CTL(first EtherType match)[FLOWID].
+                                                                 - ALT_PKT packets: value from RX_DIRECTION_CTL(3)[FLOWID]. */
+        uint64_t roe_subtype           : 8;  /**< [ 71: 64] RoE subtype field. Value is undefined for CHI, ALT_PKT, and Transparent packets.
+                                                                 Internal:
+                                                                 - CHI packets: value will be the upper byte of length field.  Packet byte 14.
+                                                                 - ALT_PKT: value will be the first byte of payload.   Packet byte 14.
+                                                                 - TRANSPARENT: value will be the first byte of payload.   Packet byte 14. */
+#else /* Word 1 - Little Endian */
+        uint64_t roe_subtype           : 8;  /**< [ 71: 64] RoE subtype field. Value is undefined for CHI, ALT_PKT, and Transparent packets.
+                                                                 Internal:
+                                                                 - CHI packets: value will be the upper byte of length field.  Packet byte 14.
+                                                                 - ALT_PKT: value will be the first byte of payload.   Packet byte 14.
+                                                                 - TRANSPARENT: value will be the first byte of payload.   Packet byte 14. */
+        uint64_t roe_flowid            : 8;  /**< [ 79: 72] Flowid field extracted from RoE packet header. Undefined for CHI and ALT_PKT
+                                                                 packets.
+
+                                                                 Internal:
+                                                                 - CHI packets: value from RX_DIRECTION_CTL(first EtherType match)[FLOWID].
+                                                                 - ALT_PKT packets: value from RX_DIRECTION_CTL(3)[FLOWID]. */
+        uint64_t fd_symbol             : 8;  /**< [ 87: 80] For RoE subtype=0xfd packets, this is the RFOE_FD_CSTM_HDR_S[SYMBOL]
+                                                                 field from the custom header. For other packets, this field is
+                                                                 reserved.
+
+                                                                 Internal:
+                                                                 - Others: 0. */
+        uint64_t fd_antid              : 8;  /**< [ 95: 88] For RoE subtype=0xfd packets, this is the RFOE_FD_CSTM_HDR_S[ANTENNA]
+                                                                 field from the custom header. For other packets, this field is
+                                                                 reserved.
+
+                                                                 Internal:
+                                                                 - Others: 0. */
+        uint64_t rfoe_timestamp        : 32; /**< [127: 96] Timestamp sampled at packet arrival, formatted as
+                                                                 RFOE_TIMESTAMP_S. Sampled at SOP in header processing.
+                                                                 For 0xfd subtype, it is sampled at SOP of the EOS packet. */
+#endif /* Word 1 - End */
+    } s;
+    /* struct cavm_rfoe_psw0_s_s cn; */
+};
+
+/**
+ * Structure rfoe_psw1_s
+ *
+ * RFOE Packet Status Word One Structure
+ * Second 128b word of PSW and Logger
+ */
+union cavm_rfoe_psw1_s
+{
+    uint64_t u[2];
+    struct cavm_rfoe_psw1_s_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t ptp_timestamp         : 64; /**< [ 63:  0] PTP if present from CGX.  Undefined if RFOE_RX_CTRL[PTP_MODE(lmac)] == 0.
+                                                                 Internal:
+                                                                 Hardware writes 0 when PTP_MODE is 0 for this LMAC. */
+#else /* Word 0 - Little Endian */
+        uint64_t ptp_timestamp         : 64; /**< [ 63:  0] PTP if present from CGX.  Undefined if RFOE_RX_CTRL[PTP_MODE(lmac)] == 0.
+                                                                 Internal:
+                                                                 Hardware writes 0 when PTP_MODE is 0 for this LMAC. */
+#endif /* Word 0 - End */
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 1 - Big Endian */
+        uint64_t reserved_124_127      : 4;
+        uint64_t ptype                 : 4;  /**< [123:120] Type of processing applied to packet, as defined by  RFOE_RX_DIR_CTL_PKT_TYPE_E. */
+        uint64_t reserved_112_119      : 8;
+        uint64_t dec_num_syminc        : 8;  /**< [111:104] DEC Configuration */
+        uint64_t dec_num_sections      : 8;  /**< [103: 96] DEC Configuration */
+        uint64_t dec_error             : 8;  /**< [ 95: 88] DEC ERROR BITS */
+        uint64_t reserved_85_87        : 3;
+        uint64_t eindex                : 5;  /**< [ 84: 80] byte index to MSB of ETHERTYPE used for rx_direction_ctl lookup (non-VLAN ethertype) */
+        uint64_t ethertype             : 16; /**< [ 79: 64] ETHERTYPE pointed to by EINDEX */
+#else /* Word 1 - Little Endian */
+        uint64_t ethertype             : 16; /**< [ 79: 64] ETHERTYPE pointed to by EINDEX */
+        uint64_t eindex                : 5;  /**< [ 84: 80] byte index to MSB of ETHERTYPE used for rx_direction_ctl lookup (non-VLAN ethertype) */
+        uint64_t reserved_85_87        : 3;
+        uint64_t dec_error             : 8;  /**< [ 95: 88] DEC ERROR BITS */
+        uint64_t dec_num_sections      : 8;  /**< [103: 96] DEC Configuration */
+        uint64_t dec_num_syminc        : 8;  /**< [111:104] DEC Configuration */
+        uint64_t reserved_112_119      : 8;
+        uint64_t ptype                 : 4;  /**< [123:120] Type of processing applied to packet, as defined by  RFOE_RX_DIR_CTL_PKT_TYPE_E. */
+        uint64_t reserved_124_127      : 4;
+#endif /* Word 1 - End */
+    } s;
+    /* struct cavm_rfoe_psw1_s_s cn; */
 };
 
 /**
@@ -664,6 +1013,42 @@ union cavm_rfoe_timestamp_s
 #endif /* Word 0 - End */
     } s;
     /* struct cavm_rfoe_timestamp_s_s cn; */
+};
+
+/**
+ * Structure rfoe_tx_pkt_log_s
+ *
+ * RFOE TX Packet Logger Structure
+ */
+union cavm_rfoe_tx_pkt_log_s
+{
+    uint64_t u[2];
+    struct cavm_rfoe_tx_pkt_log_s_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t ptp_timestamp         : 64; /**< [ 63:  0] This is the sampled value from the PTP timestamp bus, when the packet was
+                                                                 sent from the RFOE block. Packet loging is enabled when
+                                                                 RFOE()_AB()_TX_LMAC_CFG()[TX_PKT_LOG_EN] = 1, */
+#else /* Word 0 - Little Endian */
+        uint64_t ptp_timestamp         : 64; /**< [ 63:  0] This is the sampled value from the PTP timestamp bus, when the packet was
+                                                                 sent from the RFOE block. Packet loging is enabled when
+                                                                 RFOE()_AB()_TX_LMAC_CFG()[TX_PKT_LOG_EN] = 1, */
+#endif /* Word 0 - End */
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 1 - Big Endian */
+        uint64_t reserved_73_127       : 55;
+        uint64_t drop                  : 1;  /**< [ 72: 72] When set to 1, indicates the packet was dropped by the RFOE block. */
+        uint64_t reserved_68_71        : 4;
+        uint64_t rfoe_id               : 2;  /**< [ 67: 66] Instance of the RFOE block from which the packet was sent. */
+        uint64_t lmac_id               : 2;  /**< [ 65: 64] LMAC to which the packet was sent. */
+#else /* Word 1 - Little Endian */
+        uint64_t lmac_id               : 2;  /**< [ 65: 64] LMAC to which the packet was sent. */
+        uint64_t rfoe_id               : 2;  /**< [ 67: 66] Instance of the RFOE block from which the packet was sent. */
+        uint64_t reserved_68_71        : 4;
+        uint64_t drop                  : 1;  /**< [ 72: 72] When set to 1, indicates the packet was dropped by the RFOE block. */
+        uint64_t reserved_73_127       : 55;
+#endif /* Word 1 - End */
+    } s;
+    /* struct cavm_rfoe_tx_pkt_log_s_s cn; */
 };
 
 /**
@@ -703,7 +1088,9 @@ static inline uint64_t CAVM_RFOEX_ABX_CONTROL(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=1) && (b<=1)))
         return 0x87e043d00000ll + 0x80000ll * ((a) & 0x1) + 0x8000ll * ((b) & 0x1);
-    __cavm_csr_fatal("RFOEX_ABX_CONTROL", 2, a, b, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=1) && (b<=1)))
+        return 0x87e043d00000ll + 0x80000ll * ((a) & 0x1) + 0x8000ll * ((b) & 0x1);
+    __cavm_csr_fatal("RFOEX_ABX_CONTROL", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RFOEX_ABX_CONTROL(a,b) cavm_rfoex_abx_control_t
@@ -739,7 +1126,9 @@ static inline uint64_t CAVM_RFOEX_ABX_SCRATCH(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=1) && (b<=1)))
         return 0x87e043d00080ll + 0x80000ll * ((a) & 0x1) + 0x8000ll * ((b) & 0x1);
-    __cavm_csr_fatal("RFOEX_ABX_SCRATCH", 2, a, b, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=1) && (b<=1)))
+        return 0x87e043d00080ll + 0x80000ll * ((a) & 0x1) + 0x8000ll * ((b) & 0x1);
+    __cavm_csr_fatal("RFOEX_ABX_SCRATCH", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RFOEX_ABX_SCRATCH(a,b) cavm_rfoex_abx_scratch_t
@@ -761,6 +1150,180 @@ union cavm_rfoex_abx_slotx_configuration
 {
     uint64_t u;
     struct cavm_rfoex_abx_slotx_configuration_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t rfoe_mode             : 1;  /**< [ 63: 63](R/W) RFOE mode of opeartion. Indicates the current packet type being processed: eCPRI or RoE:
+                                                                 0 = indicates current packet type is RoE.
+                                                                 1 = indicates current packet type is eCPRI. */
+        uint64_t custom_timestamp_insert : 1;/**< [ 62: 62](R/W) When RFOE()_AB()_SLOT()_CONFIGURATION[PKT_MODE] = 2,
+                                                                 when set to 1, for 0xFD subtype,
+                                                                 TX inserts custom timestamp into custom header field. */
+        uint64_t orderinfo_insert      : 1;  /**< [ 61: 61](R/W) When RFOE()_AB()_SLOT()_CONFIGURATION[PKT_MODE] = 2,
+                                                                 when set to 1, for all subtypes,
+                                                                 TX inserts seqnum/timestamp into orderInfo field. */
+        uint64_t eos                   : 1;  /**< [ 60: 60](R/W) End of symbol flag. Indicates last packet for current symbol. This field is
+                                                                 inserted into RoE header for subtype=0xFD and when
+                                                                 RFOE()_AB()_SLOT()_CONFIGURATION[PKT_MODE] = 2. */
+        uint64_t sos                   : 1;  /**< [ 59: 59](R/W) Start of symbol flag. Indicates first packet for current symbol. This field is
+                                                                 inserted into RoE header for subtype=0xFD and when
+                                                                 RFOE()_AB()_SLOT()_CONFIGURATION[PKT_MODE] = 2. */
+        uint64_t symbol                : 8;  /**< [ 58: 51](R/W) Symbol number to insert into RoE header for subtype=0xFD and when
+                                                                 RFOE()_AB()_SLOT()_CONFIGURATION[PKT_MODE] = 2. */
+        uint64_t antenna               : 8;  /**< [ 50: 43](R/W) Antenna number to insert into RoE header for subtype=0xFD and when
+                                                                 RFOE()_AB()_SLOT()_CONFIGURATION[PKT_MODE] = 2. */
+        uint64_t orderinfooffset       : 5;  /**< [ 42: 38](R/W) Byte offset of RoE orderInfo field within header. Used when [PKT_MODE] = 2 to
+                                                                 allow RFOE to replace orderInfo field. */
+        uint64_t orderinfotype         : 1;  /**< [ 37: 37](R/W) Format for IEEE P1914.3/D3.0 orderInfo enumerated by RFOE_ORDER_INFO_TYPE_E.
+                                                                 0 = indicates seqNum is used.
+                                                                 1 = indicates timeStamp is used. */
+        uint64_t sample_width_sat_bypass : 1;/**< [ 36: 36](R/W) Bypass sample saturation.
+                                                                 0 = Perform symmetric saturation to [SAMPLE_WIDTH].
+                                                                 1 = Bypass saturation.
+                                                                 o If [SAMPLE_WIDTH_OPTION]=0, use the [SAMPLE_WIDTH] most significant
+                                                                 bits of the input sample.
+                                                                 o If [SAMPLE_WIDTH_OPTION]=1, the rounded value is truncated instead
+                                                                 of saturating.
+
+                                                                 Internal:
+                                                                 Same as rfif_dl_sample_width.v definition. */
+        uint64_t sample_width_option   : 1;  /**< [ 35: 35](R/W) Sample width conversion mode:
+                                                                 0: Y = SATn(X).
+                                                                 1: Y = SATn(ROUND(X)).
+
+                                                                 SATn(X) is saturation to the range [-2^(n-1)+1, 2^(n-1)-1].
+
+                                                                 ROUND(X) is symmetric rounding, defined as:
+                                                                 _ ROUND(X) = (X + 2^(m-1)) \>\> m, if X \>= 0.
+                                                                 _ ROUND(X) = -((-X + 2^(m-1)) \>\> m), if X \< 0.
+                                                                 _ where m = 16 - n, and when m=0, 2^(0-1) = 0.
+
+                                                                 n is the sample bit width specified by [SAMPLE_WIDTH].
+
+                                                                 Note that the saturation operation can be bypassed by setting
+                                                                 [SAMPLE_WIDTH_SAT_BYPASS]=1.
+
+                                                                 Internal:
+                                                                 Select sample conversion mode.  Same as rfif_dl_sample_width.v definition */
+        uint64_t sample_width          : 5;  /**< [ 34: 30](R/W) For SAMPLE_MODE=1, width in bits of I/Q samples in transmitted RoE
+                                                                 packet. Samples read from memory are always assume to have 16-bit I
+                                                                 and 16-bit Q components. */
+        uint64_t sample_mode           : 1;  /**< [ 29: 29](R/W) Enable sample mode. When set to 1, I/Q samples in the packet are
+                                                                 read as 16-bit I/Q values, and converted to [SAMPLE_WIDTH] bits, as
+                                                                 per [SAMPLE_WIDTH_OPTION]. Otherwise, samples are written to memory
+                                                                 with no conversions. */
+        uint64_t lmacid                : 2;  /**< [ 28: 27](R/W) LMAC destination ID. Must select an enabled LMAC on which to send the
+                                                                 packet. */
+        uint64_t subtype               : 8;  /**< [ 26: 19](R/W) RoE subtype. */
+        uint64_t flowid                : 8;  /**< [ 18: 11](R/W) FLOWID for the FLOWID field in the RoE packet header. */
+        uint64_t etype_sel             : 3;  /**< [ 10:  8](R/W) When [PKT_MODE]=1, selects which RFOE()_TX_HDR_ETHERTYPE() register
+                                                                 provides the Ethertype field to insert in the Ethernet header. Ignored
+                                                                 when [PKT_MODE] != 1. */
+        uint64_t sa_sel                : 3;  /**< [  7:  5](R/W) When [PKT_MODE]=1, selects which RFOE()_TX_HDR_SA() register
+                                                                 provides the source DMAC address to insert in the Ethernet header. Ignored
+                                                                 when [PKT_MODE] != 1. */
+        uint64_t da_sel                : 3;  /**< [  4:  2](R/W) When [PKT_MODE]=1, selects which RFOE()_TX_HDR_DA() register
+                                                                 provides the destination DMAC address to insert in the Ethernet header. Ignored
+                                                                 when [PKT_MODE] != 1. */
+        uint64_t pkt_mode              : 2;  /**< [  1:  0](R/W) Packet mode.
+                                                                 0x0 = Transparent mode (1 pointer in job descriptor).
+                                                                       This mode is used for control packet transmit.
+                                                                       Hardware does not access the Sequence Number configuration table.
+                                                                 0x1 = Packet DMA with Ethernet header built from RFOE()_TX_HDR_*
+                                                                       registers. This mode is used for Antenna symbol data transmit.
+                                                                       Hardware updates the Sequence Number configuration table accordingly.
+                                                                 0x2 = First DMA contains Ethernet, RoE header, Custom header and rbMap.
+                                                                       Second DMA contains sample data.
+                                                                       This mode is used for Antenna symbol data transmit.
+                                                                       Hardware updates the Sequence Number configuration table accordingly.
+                                                                 0x3 = Reserved. */
+#else /* Word 0 - Little Endian */
+        uint64_t pkt_mode              : 2;  /**< [  1:  0](R/W) Packet mode.
+                                                                 0x0 = Transparent mode (1 pointer in job descriptor).
+                                                                       This mode is used for control packet transmit.
+                                                                       Hardware does not access the Sequence Number configuration table.
+                                                                 0x1 = Packet DMA with Ethernet header built from RFOE()_TX_HDR_*
+                                                                       registers. This mode is used for Antenna symbol data transmit.
+                                                                       Hardware updates the Sequence Number configuration table accordingly.
+                                                                 0x2 = First DMA contains Ethernet, RoE header, Custom header and rbMap.
+                                                                       Second DMA contains sample data.
+                                                                       This mode is used for Antenna symbol data transmit.
+                                                                       Hardware updates the Sequence Number configuration table accordingly.
+                                                                 0x3 = Reserved. */
+        uint64_t da_sel                : 3;  /**< [  4:  2](R/W) When [PKT_MODE]=1, selects which RFOE()_TX_HDR_DA() register
+                                                                 provides the destination DMAC address to insert in the Ethernet header. Ignored
+                                                                 when [PKT_MODE] != 1. */
+        uint64_t sa_sel                : 3;  /**< [  7:  5](R/W) When [PKT_MODE]=1, selects which RFOE()_TX_HDR_SA() register
+                                                                 provides the source DMAC address to insert in the Ethernet header. Ignored
+                                                                 when [PKT_MODE] != 1. */
+        uint64_t etype_sel             : 3;  /**< [ 10:  8](R/W) When [PKT_MODE]=1, selects which RFOE()_TX_HDR_ETHERTYPE() register
+                                                                 provides the Ethertype field to insert in the Ethernet header. Ignored
+                                                                 when [PKT_MODE] != 1. */
+        uint64_t flowid                : 8;  /**< [ 18: 11](R/W) FLOWID for the FLOWID field in the RoE packet header. */
+        uint64_t subtype               : 8;  /**< [ 26: 19](R/W) RoE subtype. */
+        uint64_t lmacid                : 2;  /**< [ 28: 27](R/W) LMAC destination ID. Must select an enabled LMAC on which to send the
+                                                                 packet. */
+        uint64_t sample_mode           : 1;  /**< [ 29: 29](R/W) Enable sample mode. When set to 1, I/Q samples in the packet are
+                                                                 read as 16-bit I/Q values, and converted to [SAMPLE_WIDTH] bits, as
+                                                                 per [SAMPLE_WIDTH_OPTION]. Otherwise, samples are written to memory
+                                                                 with no conversions. */
+        uint64_t sample_width          : 5;  /**< [ 34: 30](R/W) For SAMPLE_MODE=1, width in bits of I/Q samples in transmitted RoE
+                                                                 packet. Samples read from memory are always assume to have 16-bit I
+                                                                 and 16-bit Q components. */
+        uint64_t sample_width_option   : 1;  /**< [ 35: 35](R/W) Sample width conversion mode:
+                                                                 0: Y = SATn(X).
+                                                                 1: Y = SATn(ROUND(X)).
+
+                                                                 SATn(X) is saturation to the range [-2^(n-1)+1, 2^(n-1)-1].
+
+                                                                 ROUND(X) is symmetric rounding, defined as:
+                                                                 _ ROUND(X) = (X + 2^(m-1)) \>\> m, if X \>= 0.
+                                                                 _ ROUND(X) = -((-X + 2^(m-1)) \>\> m), if X \< 0.
+                                                                 _ where m = 16 - n, and when m=0, 2^(0-1) = 0.
+
+                                                                 n is the sample bit width specified by [SAMPLE_WIDTH].
+
+                                                                 Note that the saturation operation can be bypassed by setting
+                                                                 [SAMPLE_WIDTH_SAT_BYPASS]=1.
+
+                                                                 Internal:
+                                                                 Select sample conversion mode.  Same as rfif_dl_sample_width.v definition */
+        uint64_t sample_width_sat_bypass : 1;/**< [ 36: 36](R/W) Bypass sample saturation.
+                                                                 0 = Perform symmetric saturation to [SAMPLE_WIDTH].
+                                                                 1 = Bypass saturation.
+                                                                 o If [SAMPLE_WIDTH_OPTION]=0, use the [SAMPLE_WIDTH] most significant
+                                                                 bits of the input sample.
+                                                                 o If [SAMPLE_WIDTH_OPTION]=1, the rounded value is truncated instead
+                                                                 of saturating.
+
+                                                                 Internal:
+                                                                 Same as rfif_dl_sample_width.v definition. */
+        uint64_t orderinfotype         : 1;  /**< [ 37: 37](R/W) Format for IEEE P1914.3/D3.0 orderInfo enumerated by RFOE_ORDER_INFO_TYPE_E.
+                                                                 0 = indicates seqNum is used.
+                                                                 1 = indicates timeStamp is used. */
+        uint64_t orderinfooffset       : 5;  /**< [ 42: 38](R/W) Byte offset of RoE orderInfo field within header. Used when [PKT_MODE] = 2 to
+                                                                 allow RFOE to replace orderInfo field. */
+        uint64_t antenna               : 8;  /**< [ 50: 43](R/W) Antenna number to insert into RoE header for subtype=0xFD and when
+                                                                 RFOE()_AB()_SLOT()_CONFIGURATION[PKT_MODE] = 2. */
+        uint64_t symbol                : 8;  /**< [ 58: 51](R/W) Symbol number to insert into RoE header for subtype=0xFD and when
+                                                                 RFOE()_AB()_SLOT()_CONFIGURATION[PKT_MODE] = 2. */
+        uint64_t sos                   : 1;  /**< [ 59: 59](R/W) Start of symbol flag. Indicates first packet for current symbol. This field is
+                                                                 inserted into RoE header for subtype=0xFD and when
+                                                                 RFOE()_AB()_SLOT()_CONFIGURATION[PKT_MODE] = 2. */
+        uint64_t eos                   : 1;  /**< [ 60: 60](R/W) End of symbol flag. Indicates last packet for current symbol. This field is
+                                                                 inserted into RoE header for subtype=0xFD and when
+                                                                 RFOE()_AB()_SLOT()_CONFIGURATION[PKT_MODE] = 2. */
+        uint64_t orderinfo_insert      : 1;  /**< [ 61: 61](R/W) When RFOE()_AB()_SLOT()_CONFIGURATION[PKT_MODE] = 2,
+                                                                 when set to 1, for all subtypes,
+                                                                 TX inserts seqnum/timestamp into orderInfo field. */
+        uint64_t custom_timestamp_insert : 1;/**< [ 62: 62](R/W) When RFOE()_AB()_SLOT()_CONFIGURATION[PKT_MODE] = 2,
+                                                                 when set to 1, for 0xFD subtype,
+                                                                 TX inserts custom timestamp into custom header field. */
+        uint64_t rfoe_mode             : 1;  /**< [ 63: 63](R/W) RFOE mode of opeartion. Indicates the current packet type being processed: eCPRI or RoE:
+                                                                 0 = indicates current packet type is RoE.
+                                                                 1 = indicates current packet type is eCPRI. */
+#endif /* Word 0 - End */
+    } s;
+    struct cavm_rfoex_abx_slotx_configuration_cnf95xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_63           : 1;
@@ -929,8 +1492,203 @@ union cavm_rfoex_abx_slotx_configuration
                                                                  TX inserts custom timestamp into custom header field. */
         uint64_t reserved_63           : 1;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_rfoex_abx_slotx_configuration_s cn; */
+    } cnf95xx;
+    struct cavm_rfoex_abx_slotx_configuration_loki
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t rfoe_mode             : 1;  /**< [ 63: 63](R/W) RFOE mode of opeartion. Indicates the current packet type being processed: eCPRI or RoE:
+                                                                 0 = indicates current packet type is RoE.
+                                                                 1 = indicates current packet type is eCPRI. */
+        uint64_t custom_timestamp_insert : 1;/**< [ 62: 62](R/W) When set to 1 and when [PKT_MODE] = 2, [RFOE_MODE] = 0, and [SUBTYPE]=0xFD,
+                                                                 TX inserts custom timestamp into custom header field. */
+        uint64_t orderinfo_insert      : 1;  /**< [ 61: 61](R/W) When [PKT_MODE] = 2,
+                                                                 and [RFOE_MODE] = 0,
+                                                                 when set to 1, for all RoE subtypes,
+                                                                 TX inserts seqnum/timestamp into orderInfo field. */
+        uint64_t eos                   : 1;  /**< [ 60: 60](R/W) End of symbol flag. Indicates last packet for current symbol. This field is
+                                                                 inserted into custom header for [SUBTYPE]=0xFD and when
+                                                                 [PKT_MODE] = 2,
+                                                                 and [RFOE_MODE] = 0. */
+        uint64_t sos                   : 1;  /**< [ 59: 59](R/W) Start of symbol flag. Indicates first packet for current symbol. This field is
+                                                                 inserted into RoE header for [SUBTYPE]=0xFD and when
+                                                                 [PKT_MODE] = 2,
+                                                                 and [RFOE_MODE] = 0. */
+        uint64_t symbol                : 8;  /**< [ 58: 51](R/W) Symbol number to insert into RoE header for [SUBTYPE]=0xFD and when
+                                                                 [PKT_MODE] = 2,
+                                                                 and [RFOE_MODE] = 0. */
+        uint64_t antenna               : 8;  /**< [ 50: 43](R/W) Antenna number to insert into RoE header for [SUBTYPE]=0xFD and when
+                                                                 [PKT_MODE] = 2,
+                                                                 and [RFOE_MODE] = 0. */
+        uint64_t orderinfooffset       : 5;  /**< [ 42: 38](R/W) Byte offset of RoE orderInfo field within header. Used when [PKT_MODE] = 2 to
+                                                                 allow RFOE to replace orderInfo field,
+                                                                 and [RFOE_MODE] = 0. */
+        uint64_t orderinfotype         : 1;  /**< [ 37: 37](R/W) Format for IEEE P1914.3/D3.0 orderInfo enumerated by RFOE_ORDER_INFO_TYPE_E.
+                                                                 0 = indicates seqNum is used.
+                                                                 1 = indicates timeStamp is used.
+                                                                 Used when [RFOE_MODE] = 0. */
+        uint64_t sample_width_sat_bypass : 1;/**< [ 36: 36](R/W) Bypass sample saturation.
+                                                                 Used when [RFOE_MODE] = 0.
+                                                                 0 = Perform symmetric saturation to [SAMPLE_WIDTH].
+                                                                 1 = Bypass saturation.
+                                                                 o If [SAMPLE_WIDTH_OPTION]=0, use the [SAMPLE_WIDTH] most significant
+                                                                 bits of the input sample.
+                                                                 o If [SAMPLE_WIDTH_OPTION]=1, the rounded value is truncated instead
+                                                                 of saturating.
+
+                                                                 Internal:
+                                                                 Same as rfif_dl_sample_width.v definition. */
+        uint64_t sample_width_option   : 1;  /**< [ 35: 35](R/W) Sample width conversion mode:
+                                                                 Used when [RFOE_MODE] = 0.
+                                                                 0: Y = SATn(X).
+                                                                 1: Y = SATn(ROUND(X)).
+
+                                                                 SATn(X) is saturation to the range [-2^(n-1)+1, 2^(n-1)-1].
+
+                                                                 ROUND(X) is symmetric rounding, defined as:
+                                                                 _ ROUND(X) = (X + 2^(m-1)) \>\> m, if X \>= 0.
+                                                                 _ ROUND(X) = -((-X + 2^(m-1)) \>\> m), if X \< 0.
+                                                                 _ where m = 16 - n, and when m=0, 2^(0-1) = 0.
+
+                                                                 n is the sample bit width specified by [SAMPLE_WIDTH].
+
+                                                                 Note that the saturation operation can be bypassed by setting
+                                                                 [SAMPLE_WIDTH_SAT_BYPASS]=1.
+
+                                                                 Internal:
+                                                                 Select sample conversion mode.  Same as rfif_dl_sample_width.v definition */
+        uint64_t sample_width          : 5;  /**< [ 34: 30](R/W) Used when [RFOE_MODE] = 0.
+                                                                 For SAMPLE_MODE=1, width in bits of I/Q samples in transmitted RoE
+                                                                 packet. Samples read from memory are always assume to have 16-bit I
+                                                                 and 16-bit Q components. */
+        uint64_t sample_mode           : 1;  /**< [ 29: 29](R/W) Used when [RFOE_MODE] = 0.
+                                                                 Enable sample mode. When set to 1, I/Q samples in the packet are
+                                                                 read as 16-bit I/Q values, and converted to [SAMPLE_WIDTH] bits, as
+                                                                 per [SAMPLE_WIDTH_OPTION]. Otherwise, samples are written to memory
+                                                                 with no conversions. */
+        uint64_t lmacid                : 2;  /**< [ 28: 27](R/W) LMAC destination ID. Must select an enabled LMAC on which to send the
+                                                                 packet. */
+        uint64_t subtype               : 8;  /**< [ 26: 19](R/W) RoE subtype. Used when [RFOE_MODE] = 0. */
+        uint64_t flowid                : 8;  /**< [ 18: 11](R/W) FLOWID for the FLOWID field in the RoE packet header.
+                                                                 Used when [RFOE_MODE] = 0. */
+        uint64_t etype_sel             : 3;  /**< [ 10:  8](R/W) When [PKT_MODE]=1, selects which RFOE()_TX_HDR_ETHERTYPE() register
+                                                                 provides the Ethertype field to insert in the Ethernet header. Ignored
+                                                                 when [PKT_MODE] != 1. */
+        uint64_t sa_sel                : 3;  /**< [  7:  5](R/W) When [PKT_MODE]=1, selects which RFOE()_TX_HDR_SA() register
+                                                                 provides the source DMAC address to insert in the Ethernet header. Ignored
+                                                                 when [PKT_MODE] != 1. */
+        uint64_t da_sel                : 3;  /**< [  4:  2](R/W) When [PKT_MODE]=1, selects which RFOE()_TX_HDR_DA() register
+                                                                 provides the destination DMAC address to insert in the Ethernet header. Ignored
+                                                                 when [PKT_MODE] != 1. */
+        uint64_t pkt_mode              : 2;  /**< [  1:  0](R/W) Packet mode.
+                                                                 0x0 = Transparent mode (1 pointer in job descriptor).
+                                                                       This mode is used for control packet transmit.
+                                                                       Hardware does not access the Sequence Number configuration table.
+                                                                 0x1 = Packet DMA with Ethernet header built from RFOE()_TX_HDR_*
+                                                                       registers. This mode is used for Antenna symbol data transmit.
+                                                                       Hardware updates the Sequence Number configuration table accordingly.
+                                                                 0x2 = First DMA contains Ethernet, RoE header, Custom header and rbMap.
+                                                                       Second DMA contains sample data.
+                                                                       This mode is used for Antenna symbol data transmit.
+                                                                       Hardware updates the Sequence Number configuration table accordingly.
+                                                                 0x3 = Reserved. */
+#else /* Word 0 - Little Endian */
+        uint64_t pkt_mode              : 2;  /**< [  1:  0](R/W) Packet mode.
+                                                                 0x0 = Transparent mode (1 pointer in job descriptor).
+                                                                       This mode is used for control packet transmit.
+                                                                       Hardware does not access the Sequence Number configuration table.
+                                                                 0x1 = Packet DMA with Ethernet header built from RFOE()_TX_HDR_*
+                                                                       registers. This mode is used for Antenna symbol data transmit.
+                                                                       Hardware updates the Sequence Number configuration table accordingly.
+                                                                 0x2 = First DMA contains Ethernet, RoE header, Custom header and rbMap.
+                                                                       Second DMA contains sample data.
+                                                                       This mode is used for Antenna symbol data transmit.
+                                                                       Hardware updates the Sequence Number configuration table accordingly.
+                                                                 0x3 = Reserved. */
+        uint64_t da_sel                : 3;  /**< [  4:  2](R/W) When [PKT_MODE]=1, selects which RFOE()_TX_HDR_DA() register
+                                                                 provides the destination DMAC address to insert in the Ethernet header. Ignored
+                                                                 when [PKT_MODE] != 1. */
+        uint64_t sa_sel                : 3;  /**< [  7:  5](R/W) When [PKT_MODE]=1, selects which RFOE()_TX_HDR_SA() register
+                                                                 provides the source DMAC address to insert in the Ethernet header. Ignored
+                                                                 when [PKT_MODE] != 1. */
+        uint64_t etype_sel             : 3;  /**< [ 10:  8](R/W) When [PKT_MODE]=1, selects which RFOE()_TX_HDR_ETHERTYPE() register
+                                                                 provides the Ethertype field to insert in the Ethernet header. Ignored
+                                                                 when [PKT_MODE] != 1. */
+        uint64_t flowid                : 8;  /**< [ 18: 11](R/W) FLOWID for the FLOWID field in the RoE packet header.
+                                                                 Used when [RFOE_MODE] = 0. */
+        uint64_t subtype               : 8;  /**< [ 26: 19](R/W) RoE subtype. Used when [RFOE_MODE] = 0. */
+        uint64_t lmacid                : 2;  /**< [ 28: 27](R/W) LMAC destination ID. Must select an enabled LMAC on which to send the
+                                                                 packet. */
+        uint64_t sample_mode           : 1;  /**< [ 29: 29](R/W) Used when [RFOE_MODE] = 0.
+                                                                 Enable sample mode. When set to 1, I/Q samples in the packet are
+                                                                 read as 16-bit I/Q values, and converted to [SAMPLE_WIDTH] bits, as
+                                                                 per [SAMPLE_WIDTH_OPTION]. Otherwise, samples are written to memory
+                                                                 with no conversions. */
+        uint64_t sample_width          : 5;  /**< [ 34: 30](R/W) Used when [RFOE_MODE] = 0.
+                                                                 For SAMPLE_MODE=1, width in bits of I/Q samples in transmitted RoE
+                                                                 packet. Samples read from memory are always assume to have 16-bit I
+                                                                 and 16-bit Q components. */
+        uint64_t sample_width_option   : 1;  /**< [ 35: 35](R/W) Sample width conversion mode:
+                                                                 Used when [RFOE_MODE] = 0.
+                                                                 0: Y = SATn(X).
+                                                                 1: Y = SATn(ROUND(X)).
+
+                                                                 SATn(X) is saturation to the range [-2^(n-1)+1, 2^(n-1)-1].
+
+                                                                 ROUND(X) is symmetric rounding, defined as:
+                                                                 _ ROUND(X) = (X + 2^(m-1)) \>\> m, if X \>= 0.
+                                                                 _ ROUND(X) = -((-X + 2^(m-1)) \>\> m), if X \< 0.
+                                                                 _ where m = 16 - n, and when m=0, 2^(0-1) = 0.
+
+                                                                 n is the sample bit width specified by [SAMPLE_WIDTH].
+
+                                                                 Note that the saturation operation can be bypassed by setting
+                                                                 [SAMPLE_WIDTH_SAT_BYPASS]=1.
+
+                                                                 Internal:
+                                                                 Select sample conversion mode.  Same as rfif_dl_sample_width.v definition */
+        uint64_t sample_width_sat_bypass : 1;/**< [ 36: 36](R/W) Bypass sample saturation.
+                                                                 Used when [RFOE_MODE] = 0.
+                                                                 0 = Perform symmetric saturation to [SAMPLE_WIDTH].
+                                                                 1 = Bypass saturation.
+                                                                 o If [SAMPLE_WIDTH_OPTION]=0, use the [SAMPLE_WIDTH] most significant
+                                                                 bits of the input sample.
+                                                                 o If [SAMPLE_WIDTH_OPTION]=1, the rounded value is truncated instead
+                                                                 of saturating.
+
+                                                                 Internal:
+                                                                 Same as rfif_dl_sample_width.v definition. */
+        uint64_t orderinfotype         : 1;  /**< [ 37: 37](R/W) Format for IEEE P1914.3/D3.0 orderInfo enumerated by RFOE_ORDER_INFO_TYPE_E.
+                                                                 0 = indicates seqNum is used.
+                                                                 1 = indicates timeStamp is used.
+                                                                 Used when [RFOE_MODE] = 0. */
+        uint64_t orderinfooffset       : 5;  /**< [ 42: 38](R/W) Byte offset of RoE orderInfo field within header. Used when [PKT_MODE] = 2 to
+                                                                 allow RFOE to replace orderInfo field,
+                                                                 and [RFOE_MODE] = 0. */
+        uint64_t antenna               : 8;  /**< [ 50: 43](R/W) Antenna number to insert into RoE header for [SUBTYPE]=0xFD and when
+                                                                 [PKT_MODE] = 2,
+                                                                 and [RFOE_MODE] = 0. */
+        uint64_t symbol                : 8;  /**< [ 58: 51](R/W) Symbol number to insert into RoE header for [SUBTYPE]=0xFD and when
+                                                                 [PKT_MODE] = 2,
+                                                                 and [RFOE_MODE] = 0. */
+        uint64_t sos                   : 1;  /**< [ 59: 59](R/W) Start of symbol flag. Indicates first packet for current symbol. This field is
+                                                                 inserted into RoE header for [SUBTYPE]=0xFD and when
+                                                                 [PKT_MODE] = 2,
+                                                                 and [RFOE_MODE] = 0. */
+        uint64_t eos                   : 1;  /**< [ 60: 60](R/W) End of symbol flag. Indicates last packet for current symbol. This field is
+                                                                 inserted into custom header for [SUBTYPE]=0xFD and when
+                                                                 [PKT_MODE] = 2,
+                                                                 and [RFOE_MODE] = 0. */
+        uint64_t orderinfo_insert      : 1;  /**< [ 61: 61](R/W) When [PKT_MODE] = 2,
+                                                                 and [RFOE_MODE] = 0,
+                                                                 when set to 1, for all RoE subtypes,
+                                                                 TX inserts seqnum/timestamp into orderInfo field. */
+        uint64_t custom_timestamp_insert : 1;/**< [ 62: 62](R/W) When set to 1 and when [PKT_MODE] = 2, [RFOE_MODE] = 0, and [SUBTYPE]=0xFD,
+                                                                 TX inserts custom timestamp into custom header field. */
+        uint64_t rfoe_mode             : 1;  /**< [ 63: 63](R/W) RFOE mode of opeartion. Indicates the current packet type being processed: eCPRI or RoE:
+                                                                 0 = indicates current packet type is RoE.
+                                                                 1 = indicates current packet type is eCPRI. */
+#endif /* Word 0 - End */
+    } loki;
 };
 typedef union cavm_rfoex_abx_slotx_configuration cavm_rfoex_abx_slotx_configuration_t;
 
@@ -939,7 +1697,9 @@ static inline uint64_t CAVM_RFOEX_ABX_SLOTX_CONFIGURATION(unsigned long a, unsig
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=1) && (b<=1) && (c<=2)))
         return 0x87e043d02000ll + 0x80000ll * ((a) & 0x1) + 0x8000ll * ((b) & 0x1) + 0x2000ll * ((c) & 0x3);
-    __cavm_csr_fatal("RFOEX_ABX_SLOTX_CONFIGURATION", 3, a, b, c, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=1) && (b<=1) && (c<=2)))
+        return 0x87e043d02000ll + 0x80000ll * ((a) & 0x1) + 0x8000ll * ((b) & 0x1) + 0x2000ll * ((c) & 0x3);
+    __cavm_csr_fatal("RFOEX_ABX_SLOTX_CONFIGURATION", 3, a, b, c, 0, 0, 0);
 }
 
 #define typedef_CAVM_RFOEX_ABX_SLOTX_CONFIGURATION(a,b,c) cavm_rfoex_abx_slotx_configuration_t
@@ -1138,6 +1898,84 @@ union cavm_rfoex_abx_slotx_configuration1
                                                                  0x3 = Sets SoF=1 in the orderInfo timestamp field. */
 #endif /* Word 0 - End */
     } cnf95xxp2;
+    struct cavm_rfoex_abx_slotx_configuration1_loki
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t sof_mode              : 2;  /**< [ 63: 62](R/W) SOF bit setting in the Orderinfo Timestamp.
+                                                                 This is used when RFOE()_AB()_SLOT()_CONFIGURATION[ORDERINFOTYPE]=1 and
+                                                                 RFOE()_AB()_SLOT()_CONFIGURATION[ORDERINFO_INSERT]=1,
+                                                                 and RFOE()_AB()_SLOT()_CONFIGURATION[RFOE_MODE] = 0.
+                                                                 when [SOF_MODE] = 0: Sample SoF from the Timer bus from PSM
+                                                                 when [SOF_MODE] = 1: Sets SoF=0 in the orderInfo Timestamp field
+                                                                 when [SOF_MODE] = 2: Reserved
+                                                                 when [SOF_MODE] = 3: Sets SoF=1 in the orderInfo Timestamp field */
+        uint64_t reserved_61           : 1;
+        uint64_t presentation_time_offset : 29;/**< [ 60: 32](R/W) Presentation time offset is used when RFOE()_AB()_SLOT()_CONFIGURATION[ORDERINFOTYPE]=1,
+                                                                 and RFOE()_AB()_SLOT()_CONFIGURATION[RFOE_MODE] = 0.
+                                                                 Presentation time offset is added to value of current timebus.tod and the resultant value
+                                                                 sent out in the RoE header.
+
+                                                                 _ Bits [60:37] indicate integer nanoseconds.
+
+                                                                 _ Bits [36:32] indicate fractional nanoseconds.
+
+                                                                 See IEEE P1914.3/D3. */
+        uint64_t hdr_len               : 8;  /**< [ 31: 24](R/W) Header length in number of bytes. When [PKT_MODE]=0x2, indicates the number of header bytes
+                                                                 contained in the read DMA data. */
+        uint64_t pkt_len               : 16; /**< [ 23:  8](R/W) The packet length.
+                                                                 * When [PKT_MODE]=0x0, the number of bytes to read from the memory.
+
+                                                                 * When RFOE()_AB()_SLOT()_CONFIGURATION[RFOE_MODE] = 0,
+                                                                  and [PKT_MODE]=0x1 or 0x2, the number of samples to read from
+                                                                 memory. Samples in memory are always 32 bits, with 16-bit I and
+                                                                 16-bit Q components. In this case, [PKT_LEN] must be a multiple of 4.
+
+                                                                 * When RFOE()_AB()_SLOT()_CONFIGURATION[RFOE_MODE] = 1,
+                                                                  and [PKT_MODE]=0x1 or 0x2, the number of bytes to read from
+                                                                 memory. */
+        uint64_t rbmap_bytes           : 8;  /**< [  7:  0](R/W) When RFOE()_AB()_SLOT()_CONFIGURATION[PKT_MODE]=1,
+                                                                 and RFOE()_AB()_SLOT()_CONFIGURATION[RFOE_MODE] = 0.
+                                                                 read the [RBMAP_BYTES] from the read DMA, and insert as-is, and then
+                                                                 read sample data at the next 128-bit boundary. */
+#else /* Word 0 - Little Endian */
+        uint64_t rbmap_bytes           : 8;  /**< [  7:  0](R/W) When RFOE()_AB()_SLOT()_CONFIGURATION[PKT_MODE]=1,
+                                                                 and RFOE()_AB()_SLOT()_CONFIGURATION[RFOE_MODE] = 0.
+                                                                 read the [RBMAP_BYTES] from the read DMA, and insert as-is, and then
+                                                                 read sample data at the next 128-bit boundary. */
+        uint64_t pkt_len               : 16; /**< [ 23:  8](R/W) The packet length.
+                                                                 * When [PKT_MODE]=0x0, the number of bytes to read from the memory.
+
+                                                                 * When RFOE()_AB()_SLOT()_CONFIGURATION[RFOE_MODE] = 0,
+                                                                  and [PKT_MODE]=0x1 or 0x2, the number of samples to read from
+                                                                 memory. Samples in memory are always 32 bits, with 16-bit I and
+                                                                 16-bit Q components. In this case, [PKT_LEN] must be a multiple of 4.
+
+                                                                 * When RFOE()_AB()_SLOT()_CONFIGURATION[RFOE_MODE] = 1,
+                                                                  and [PKT_MODE]=0x1 or 0x2, the number of bytes to read from
+                                                                 memory. */
+        uint64_t hdr_len               : 8;  /**< [ 31: 24](R/W) Header length in number of bytes. When [PKT_MODE]=0x2, indicates the number of header bytes
+                                                                 contained in the read DMA data. */
+        uint64_t presentation_time_offset : 29;/**< [ 60: 32](R/W) Presentation time offset is used when RFOE()_AB()_SLOT()_CONFIGURATION[ORDERINFOTYPE]=1,
+                                                                 and RFOE()_AB()_SLOT()_CONFIGURATION[RFOE_MODE] = 0.
+                                                                 Presentation time offset is added to value of current timebus.tod and the resultant value
+                                                                 sent out in the RoE header.
+
+                                                                 _ Bits [60:37] indicate integer nanoseconds.
+
+                                                                 _ Bits [36:32] indicate fractional nanoseconds.
+
+                                                                 See IEEE P1914.3/D3. */
+        uint64_t reserved_61           : 1;
+        uint64_t sof_mode              : 2;  /**< [ 63: 62](R/W) SOF bit setting in the Orderinfo Timestamp.
+                                                                 This is used when RFOE()_AB()_SLOT()_CONFIGURATION[ORDERINFOTYPE]=1 and
+                                                                 RFOE()_AB()_SLOT()_CONFIGURATION[ORDERINFO_INSERT]=1,
+                                                                 and RFOE()_AB()_SLOT()_CONFIGURATION[RFOE_MODE] = 0.
+                                                                 when [SOF_MODE] = 0: Sample SoF from the Timer bus from PSM
+                                                                 when [SOF_MODE] = 1: Sets SoF=0 in the orderInfo Timestamp field
+                                                                 when [SOF_MODE] = 2: Reserved
+                                                                 when [SOF_MODE] = 3: Sets SoF=1 in the orderInfo Timestamp field */
+#endif /* Word 0 - End */
+    } loki;
 };
 typedef union cavm_rfoex_abx_slotx_configuration1 cavm_rfoex_abx_slotx_configuration1_t;
 
@@ -1146,7 +1984,9 @@ static inline uint64_t CAVM_RFOEX_ABX_SLOTX_CONFIGURATION1(unsigned long a, unsi
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=1) && (b<=1) && (c<=2)))
         return 0x87e043d02008ll + 0x80000ll * ((a) & 0x1) + 0x8000ll * ((b) & 0x1) + 0x2000ll * ((c) & 0x3);
-    __cavm_csr_fatal("RFOEX_ABX_SLOTX_CONFIGURATION1", 3, a, b, c, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=1) && (b<=1) && (c<=2)))
+        return 0x87e043d02008ll + 0x80000ll * ((a) & 0x1) + 0x8000ll * ((b) & 0x1) + 0x2000ll * ((c) & 0x3);
+    __cavm_csr_fatal("RFOEX_ABX_SLOTX_CONFIGURATION1", 3, a, b, c, 0, 0, 0);
 }
 
 #define typedef_CAVM_RFOEX_ABX_SLOTX_CONFIGURATION1(a,b,c) cavm_rfoex_abx_slotx_configuration1_t
@@ -1154,6 +1994,126 @@ static inline uint64_t CAVM_RFOEX_ABX_SLOTX_CONFIGURATION1(unsigned long a, unsi
 #define basename_CAVM_RFOEX_ABX_SLOTX_CONFIGURATION1(a,b,c) "RFOEX_ABX_SLOTX_CONFIGURATION1"
 #define busnum_CAVM_RFOEX_ABX_SLOTX_CONFIGURATION1(a,b,c) (a)
 #define arguments_CAVM_RFOEX_ABX_SLOTX_CONFIGURATION1(a,b,c) (a),(b),(c),-1
+
+/**
+ * Register (RSL) rfoe#_ab#_slot#_configuration2
+ *
+ * RFOE AB Job Configuration Register
+ * This register space contains the RFOE job configuration data.
+ *
+ * Software should not write this register directly, but instead use this
+ * format when writing the job configuration section of the job descriptor.
+ */
+union cavm_rfoex_abx_slotx_configuration2
+{
+    uint64_t u;
+    struct cavm_rfoex_abx_slotx_configuration2_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_56_63        : 8;
+        uint64_t ecpri_seq_id          : 16; /**< [ 55: 40](R/W) ECPRI Transport Header Sequence ID field.
+                                                                 When RFOE()_AB()_SLOT()_CONFIGURATION[PKT_MODE] = 1,
+                                                                 and when RFOE()_AB()_SLOT()_CONFIGURATION[RFOE_MODE] = 1,
+                                                                 and when RFOE()_AB()_SLOT()_CONFIGURATION2[ECPRI_SEQ_ID_INSERT] = 1
+                                                                 this field is inserted in the ECPRI Transport Header. */
+        uint64_t ecpri_id              : 16; /**< [ 39: 24](R/W) ECPRI Transport Header ID field.
+                                                                 When RFOE()_AB()_SLOT()_CONFIGURATION[PKT_MODE] = 1,
+                                                                 and when RFOE()_AB()_SLOT()_CONFIGURATION[RFOE_MODE] = 1,
+                                                                 and when RFOE()_AB()_SLOT()_CONFIGURATION2[ECPRI_ID_INSERT] = 1
+                                                                 this field is inserted in the ECPRI Transport Header.
+                                                                 This could be used as the PC_ID or RTC_ID in the ECPRI Transport Header. */
+        uint64_t ecpri_msgtype         : 8;  /**< [ 23: 16](R/W) ECPRI Common Header Message Type field.
+                                                                 When RFOE()_AB()_SLOT()_CONFIGURATION[PKT_MODE] = 1,
+                                                                 and when RFOE()_AB()_SLOT()_CONFIGURATION[RFOE_MODE] = 1
+                                                                 this field is inserted as the second byte of the ECPRI Common Header */
+        uint64_t ecpri_rev             : 8;  /**< [ 15:  8](R/W) ECPRI Common Header Revision-Version field.
+                                                                 When RFOE()_AB()_SLOT()_CONFIGURATION[PKT_MODE] = 1,
+                                                                 and when RFOE()_AB()_SLOT()_CONFIGURATION[RFOE_MODE] = 1
+                                                                 this field is inserted as the first byte of the ECPRI Common Header */
+        uint64_t ecpri_seq_id_insert   : 1;  /**< [  7:  7](R/W) ECPRI Transport Header Sequence ID field Insert.
+                                                                 Used When RFOE()_AB()_SLOT()_CONFIGURATION[PKT_MODE] = 1,
+                                                                 and when RFOE()_AB()_SLOT()_CONFIGURATION[RFOE_MODE] = 1
+                                                                 When set to 1, the RFOE()_AB()_SLOT()_CONFIGURATION2[ECPRI_SEQ_ID]
+                                                                 field is inserted in the ECPRI Transport Header. */
+        uint64_t ecpri_id_insert       : 1;  /**< [  6:  6](R/W) ECPRI Transport Header ID field Insert.
+                                                                 Used When RFOE()_AB()_SLOT()_CONFIGURATION[PKT_MODE] = 1,
+                                                                 and when RFOE()_AB()_SLOT()_CONFIGURATION[RFOE_MODE] = 1
+                                                                 When set to 1, the RFOE()_AB()_SLOT()_CONFIGURATION2[ECPRI_ID]
+                                                                 field is inserted in the ECPRI Transport Header. */
+        uint64_t ptp_mode              : 1;  /**< [  5:  5](R/W) TX PTP timestamp marker.
+                                                                 When set to 1, causes the CGX to mark the current packet for timestamping.
+                                                                 Setting this bit to 1 on consecutive packets can cause packet stall, untill
+                                                                 the previous PTP marked packet is sent out of CGX block.
+                                                                 Please refer to CGX block for more details. */
+        uint64_t vlan_num              : 2;  /**< [  4:  3](R/W) When [PKT_MODE]=1, selects the number of VLANs to insert
+                                                                 in the Ethernet Header.
+                                                                 Possible values 0 to 2.
+                                                                 Ignored when [PKT_MODE] != 1. */
+        uint64_t vlan_sel              : 3;  /**< [  2:  0](R/W) When [PKT_MODE]=1, selects which RFOE()_TX_HDR_VLAN() register
+                                                                 provides the VLAN fields to insert in the Ethernet header. Ignored
+                                                                 when [PKT_MODE] != 1. */
+#else /* Word 0 - Little Endian */
+        uint64_t vlan_sel              : 3;  /**< [  2:  0](R/W) When [PKT_MODE]=1, selects which RFOE()_TX_HDR_VLAN() register
+                                                                 provides the VLAN fields to insert in the Ethernet header. Ignored
+                                                                 when [PKT_MODE] != 1. */
+        uint64_t vlan_num              : 2;  /**< [  4:  3](R/W) When [PKT_MODE]=1, selects the number of VLANs to insert
+                                                                 in the Ethernet Header.
+                                                                 Possible values 0 to 2.
+                                                                 Ignored when [PKT_MODE] != 1. */
+        uint64_t ptp_mode              : 1;  /**< [  5:  5](R/W) TX PTP timestamp marker.
+                                                                 When set to 1, causes the CGX to mark the current packet for timestamping.
+                                                                 Setting this bit to 1 on consecutive packets can cause packet stall, untill
+                                                                 the previous PTP marked packet is sent out of CGX block.
+                                                                 Please refer to CGX block for more details. */
+        uint64_t ecpri_id_insert       : 1;  /**< [  6:  6](R/W) ECPRI Transport Header ID field Insert.
+                                                                 Used When RFOE()_AB()_SLOT()_CONFIGURATION[PKT_MODE] = 1,
+                                                                 and when RFOE()_AB()_SLOT()_CONFIGURATION[RFOE_MODE] = 1
+                                                                 When set to 1, the RFOE()_AB()_SLOT()_CONFIGURATION2[ECPRI_ID]
+                                                                 field is inserted in the ECPRI Transport Header. */
+        uint64_t ecpri_seq_id_insert   : 1;  /**< [  7:  7](R/W) ECPRI Transport Header Sequence ID field Insert.
+                                                                 Used When RFOE()_AB()_SLOT()_CONFIGURATION[PKT_MODE] = 1,
+                                                                 and when RFOE()_AB()_SLOT()_CONFIGURATION[RFOE_MODE] = 1
+                                                                 When set to 1, the RFOE()_AB()_SLOT()_CONFIGURATION2[ECPRI_SEQ_ID]
+                                                                 field is inserted in the ECPRI Transport Header. */
+        uint64_t ecpri_rev             : 8;  /**< [ 15:  8](R/W) ECPRI Common Header Revision-Version field.
+                                                                 When RFOE()_AB()_SLOT()_CONFIGURATION[PKT_MODE] = 1,
+                                                                 and when RFOE()_AB()_SLOT()_CONFIGURATION[RFOE_MODE] = 1
+                                                                 this field is inserted as the first byte of the ECPRI Common Header */
+        uint64_t ecpri_msgtype         : 8;  /**< [ 23: 16](R/W) ECPRI Common Header Message Type field.
+                                                                 When RFOE()_AB()_SLOT()_CONFIGURATION[PKT_MODE] = 1,
+                                                                 and when RFOE()_AB()_SLOT()_CONFIGURATION[RFOE_MODE] = 1
+                                                                 this field is inserted as the second byte of the ECPRI Common Header */
+        uint64_t ecpri_id              : 16; /**< [ 39: 24](R/W) ECPRI Transport Header ID field.
+                                                                 When RFOE()_AB()_SLOT()_CONFIGURATION[PKT_MODE] = 1,
+                                                                 and when RFOE()_AB()_SLOT()_CONFIGURATION[RFOE_MODE] = 1,
+                                                                 and when RFOE()_AB()_SLOT()_CONFIGURATION2[ECPRI_ID_INSERT] = 1
+                                                                 this field is inserted in the ECPRI Transport Header.
+                                                                 This could be used as the PC_ID or RTC_ID in the ECPRI Transport Header. */
+        uint64_t ecpri_seq_id          : 16; /**< [ 55: 40](R/W) ECPRI Transport Header Sequence ID field.
+                                                                 When RFOE()_AB()_SLOT()_CONFIGURATION[PKT_MODE] = 1,
+                                                                 and when RFOE()_AB()_SLOT()_CONFIGURATION[RFOE_MODE] = 1,
+                                                                 and when RFOE()_AB()_SLOT()_CONFIGURATION2[ECPRI_SEQ_ID_INSERT] = 1
+                                                                 this field is inserted in the ECPRI Transport Header. */
+        uint64_t reserved_56_63        : 8;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rfoex_abx_slotx_configuration2_s cn; */
+};
+typedef union cavm_rfoex_abx_slotx_configuration2 cavm_rfoex_abx_slotx_configuration2_t;
+
+static inline uint64_t CAVM_RFOEX_ABX_SLOTX_CONFIGURATION2(unsigned long a, unsigned long b, unsigned long c) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_RFOEX_ABX_SLOTX_CONFIGURATION2(unsigned long a, unsigned long b, unsigned long c)
+{
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=1) && (b<=1) && (c<=2)))
+        return 0x87e043d02010ll + 0x80000ll * ((a) & 0x1) + 0x8000ll * ((b) & 0x1) + 0x2000ll * ((c) & 0x3);
+    __cavm_csr_fatal("RFOEX_ABX_SLOTX_CONFIGURATION2", 3, a, b, c, 0, 0, 0);
+}
+
+#define typedef_CAVM_RFOEX_ABX_SLOTX_CONFIGURATION2(a,b,c) cavm_rfoex_abx_slotx_configuration2_t
+#define bustype_CAVM_RFOEX_ABX_SLOTX_CONFIGURATION2(a,b,c) CSR_TYPE_RSL
+#define basename_CAVM_RFOEX_ABX_SLOTX_CONFIGURATION2(a,b,c) "RFOEX_ABX_SLOTX_CONFIGURATION2"
+#define busnum_CAVM_RFOEX_ABX_SLOTX_CONFIGURATION2(a,b,c) (a)
+#define arguments_CAVM_RFOEX_ABX_SLOTX_CONFIGURATION2(a,b,c) (a),(b),(c),-1
 
 /**
  * Register (RSL) rfoe#_active_pc
@@ -1181,7 +2141,9 @@ static inline uint64_t CAVM_RFOEX_ACTIVE_PC(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=1))
         return 0x87e043d01100ll + 0x80000ll * ((a) & 0x1);
-    __cavm_csr_fatal("RFOEX_ACTIVE_PC", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=1))
+        return 0x87e043d01068ll + 0x80000ll * ((a) & 0x1);
+    __cavm_csr_fatal("RFOEX_ACTIVE_PC", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RFOEX_ACTIVE_PC(a) cavm_rfoex_active_pc_t
@@ -1219,7 +2181,9 @@ static inline uint64_t CAVM_RFOEX_ECO(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=1))
         return 0x87e043d008f0ll + 0x80000ll * ((a) & 0x1);
-    __cavm_csr_fatal("RFOEX_ECO", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=1))
+        return 0x87e043d00900ll + 0x80000ll * ((a) & 0x1);
+    __cavm_csr_fatal("RFOEX_ECO", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RFOEX_ECO(a) cavm_rfoex_eco_t
@@ -1262,7 +2226,9 @@ static inline uint64_t CAVM_RFOEX_RX_APERT_DDR_MAX(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=1))
         return 0x87e043d01838ll + 0x80000ll * ((a) & 0x1);
-    __cavm_csr_fatal("RFOEX_RX_APERT_DDR_MAX", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=1))
+        return 0x87e043d01838ll + 0x80000ll * ((a) & 0x1);
+    __cavm_csr_fatal("RFOEX_RX_APERT_DDR_MAX", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RFOEX_RX_APERT_DDR_MAX(a) cavm_rfoex_rx_apert_ddr_max_t
@@ -1299,7 +2265,9 @@ static inline uint64_t CAVM_RFOEX_RX_APERT_DDR_MAX_ENA(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=1))
         return 0x87e043d01858ll + 0x80000ll * ((a) & 0x1);
-    __cavm_csr_fatal("RFOEX_RX_APERT_DDR_MAX_ENA", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=1))
+        return 0x87e043d01858ll + 0x80000ll * ((a) & 0x1);
+    __cavm_csr_fatal("RFOEX_RX_APERT_DDR_MAX_ENA", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RFOEX_RX_APERT_DDR_MAX_ENA(a) cavm_rfoex_rx_apert_ddr_max_ena_t
@@ -1342,7 +2310,9 @@ static inline uint64_t CAVM_RFOEX_RX_APERT_DDR_MIN(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=1))
         return 0x87e043d01830ll + 0x80000ll * ((a) & 0x1);
-    __cavm_csr_fatal("RFOEX_RX_APERT_DDR_MIN", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=1))
+        return 0x87e043d01830ll + 0x80000ll * ((a) & 0x1);
+    __cavm_csr_fatal("RFOEX_RX_APERT_DDR_MIN", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RFOEX_RX_APERT_DDR_MIN(a) cavm_rfoex_rx_apert_ddr_min_t
@@ -1379,7 +2349,9 @@ static inline uint64_t CAVM_RFOEX_RX_APERT_DDR_MIN_ENA(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=1))
         return 0x87e043d01850ll + 0x80000ll * ((a) & 0x1);
-    __cavm_csr_fatal("RFOEX_RX_APERT_DDR_MIN_ENA", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=1))
+        return 0x87e043d01850ll + 0x80000ll * ((a) & 0x1);
+    __cavm_csr_fatal("RFOEX_RX_APERT_DDR_MIN_ENA", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RFOEX_RX_APERT_DDR_MIN_ENA(a) cavm_rfoex_rx_apert_ddr_min_ena_t
@@ -1422,7 +2394,9 @@ static inline uint64_t CAVM_RFOEX_RX_APERT_SMEM_MAX(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=1))
         return 0x87e043d01828ll + 0x80000ll * ((a) & 0x1);
-    __cavm_csr_fatal("RFOEX_RX_APERT_SMEM_MAX", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=1))
+        return 0x87e043d01828ll + 0x80000ll * ((a) & 0x1);
+    __cavm_csr_fatal("RFOEX_RX_APERT_SMEM_MAX", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RFOEX_RX_APERT_SMEM_MAX(a) cavm_rfoex_rx_apert_smem_max_t
@@ -1459,7 +2433,9 @@ static inline uint64_t CAVM_RFOEX_RX_APERT_SMEM_MAX_ENA(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=1))
         return 0x87e043d01848ll + 0x80000ll * ((a) & 0x1);
-    __cavm_csr_fatal("RFOEX_RX_APERT_SMEM_MAX_ENA", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=1))
+        return 0x87e043d01848ll + 0x80000ll * ((a) & 0x1);
+    __cavm_csr_fatal("RFOEX_RX_APERT_SMEM_MAX_ENA", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RFOEX_RX_APERT_SMEM_MAX_ENA(a) cavm_rfoex_rx_apert_smem_max_ena_t
@@ -1502,7 +2478,9 @@ static inline uint64_t CAVM_RFOEX_RX_APERT_SMEM_MIN(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=1))
         return 0x87e043d01820ll + 0x80000ll * ((a) & 0x1);
-    __cavm_csr_fatal("RFOEX_RX_APERT_SMEM_MIN", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=1))
+        return 0x87e043d01820ll + 0x80000ll * ((a) & 0x1);
+    __cavm_csr_fatal("RFOEX_RX_APERT_SMEM_MIN", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RFOEX_RX_APERT_SMEM_MIN(a) cavm_rfoex_rx_apert_smem_min_t
@@ -1539,7 +2517,9 @@ static inline uint64_t CAVM_RFOEX_RX_APERT_SMEM_MIN_ENA(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=1))
         return 0x87e043d01840ll + 0x80000ll * ((a) & 0x1);
-    __cavm_csr_fatal("RFOEX_RX_APERT_SMEM_MIN_ENA", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=1))
+        return 0x87e043d01840ll + 0x80000ll * ((a) & 0x1);
+    __cavm_csr_fatal("RFOEX_RX_APERT_SMEM_MIN_ENA", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RFOEX_RX_APERT_SMEM_MIN_ENA(a) cavm_rfoex_rx_apert_smem_min_ena_t
@@ -1610,7 +2590,9 @@ static inline uint64_t CAVM_RFOEX_RX_CFG(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=1))
         return 0x87e043d01008ll + 0x80000ll * ((a) & 0x1);
-    __cavm_csr_fatal("RFOEX_RX_CFG", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=1))
+        return 0x87e043d01008ll + 0x80000ll * ((a) & 0x1);
+    __cavm_csr_fatal("RFOEX_RX_CFG", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RFOEX_RX_CFG(a) cavm_rfoex_rx_cfg_t
@@ -1659,7 +2641,9 @@ static inline uint64_t CAVM_RFOEX_RX_CGX_OCTS_STATX(unsigned long a, unsigned lo
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=1) && (b<=3)))
         return 0x87e043d01de0ll + 0x80000ll * ((a) & 0x1) + 8ll * ((b) & 0x3);
-    __cavm_csr_fatal("RFOEX_RX_CGX_OCTS_STATX", 2, a, b, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=1) && (b<=3)))
+        return 0x87e043d01de0ll + 0x80000ll * ((a) & 0x1) + 8ll * ((b) & 0x3);
+    __cavm_csr_fatal("RFOEX_RX_CGX_OCTS_STATX", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RFOEX_RX_CGX_OCTS_STATX(a,b) cavm_rfoex_rx_cgx_octs_statx_t
@@ -1706,7 +2690,9 @@ static inline uint64_t CAVM_RFOEX_RX_CGX_PKT_STATX(unsigned long a, unsigned lon
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=1) && (b<=3)))
         return 0x87e043d01dc0ll + 0x80000ll * ((a) & 0x1) + 8ll * ((b) & 0x3);
-    __cavm_csr_fatal("RFOEX_RX_CGX_PKT_STATX", 2, a, b, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=1) && (b<=3)))
+        return 0x87e043d01dc0ll + 0x80000ll * ((a) & 0x1) + 8ll * ((b) & 0x3);
+    __cavm_csr_fatal("RFOEX_RX_CGX_PKT_STATX", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RFOEX_RX_CGX_PKT_STATX(a,b) cavm_rfoex_rx_cgx_pkt_statx_t
@@ -1721,7 +2707,7 @@ static inline uint64_t CAVM_RFOEX_RX_CGX_PKT_STATX(unsigned long a, unsigned lon
  * INTERNAL: RFOE RX  CGXIF Back Pressure Test Register
  *
  * Internal:
- * Turns off x2p grand when generating back pressure.
+ * Turns off x2p grant when generating back pressure.
  */
 union cavm_rfoex_rx_cgxif_bp_test
 {
@@ -1783,7 +2769,9 @@ static inline uint64_t CAVM_RFOEX_RX_CGXIF_BP_TEST(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=1))
         return 0x87e043d01f00ll + 0x80000ll * ((a) & 0x1);
-    __cavm_csr_fatal("RFOEX_RX_CGXIF_BP_TEST", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=1))
+        return 0x87e043d01f00ll + 0x80000ll * ((a) & 0x1);
+    __cavm_csr_fatal("RFOEX_RX_CGXIF_BP_TEST", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RFOEX_RX_CGXIF_BP_TEST(a) cavm_rfoex_rx_cgxif_bp_test_t
@@ -1804,6 +2792,60 @@ union cavm_rfoex_rx_ctrl
     struct cavm_rfoex_rx_ctrl_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_8_63         : 56;
+        uint64_t rx_ptp_mode           : 4;  /**< [  7:  4](R/W) Per LMAC control of RX PTP.
+                                                                 When set, causes RX to interpret first 8B of packet as PTP Timestamp. Normal
+                                                                 packet data starts at byte 8.
+                                                                 RX strips PTP and writes value in PSW1 and Packet loger.
+                                                                 Packet traffic must be IDLE or disabled before changing the value of [RX_PTP_MODE] */
+        uint64_t reserved_2_3          : 2;
+        uint64_t rx_idle               : 1;  /**< [  1:  1](RO/H) When [DATA_PKT_RX_EN] = 0, [RX_IDLE]=1 indicates no in-flight RX
+                                                                 packets and any new RX packets will be discarded. [RX_IDLE] = 1
+                                                                 indicates that it is safe to do a BPHY and/or RFIF reset.
+                                                                 For the reset domains:
+                                                                 * BPHY domain DMA can still be active, but a BPHY reset will reset all these transactions.
+                                                                 * RFIF domain is discarding all traffic.
+                                                                 * Once [RX_IDLE] is set, it will stay set until [DATA_PKT_RX_EN] is set by software.
+                                                                 [RX_IDLE] should be ignored when [DATA_PKT_RX_EN] = 1. */
+        uint64_t data_pkt_rx_en        : 1;  /**< [  0:  0](R/W) Enable RX traffic.  Software must write to 1 to enable RX traffic.
+
+                                                                 When [DATA_PKT_RX_EN] transitions from 1 to 0, RFOE completes any
+                                                                 in-flight RX packets. At the next packet boundary, RFOE will set
+                                                                 [RX_IDLE] and begin discarding any subsequent packets.
+
+                                                                 When [DATA_PKT_RX_EN] transitions from 0 to 1, RFOE will continue to
+                                                                 discard any in-flight packets and begin normal reception at the next
+                                                                 start-of-packet boundary from CGX. */
+#else /* Word 0 - Little Endian */
+        uint64_t data_pkt_rx_en        : 1;  /**< [  0:  0](R/W) Enable RX traffic.  Software must write to 1 to enable RX traffic.
+
+                                                                 When [DATA_PKT_RX_EN] transitions from 1 to 0, RFOE completes any
+                                                                 in-flight RX packets. At the next packet boundary, RFOE will set
+                                                                 [RX_IDLE] and begin discarding any subsequent packets.
+
+                                                                 When [DATA_PKT_RX_EN] transitions from 0 to 1, RFOE will continue to
+                                                                 discard any in-flight packets and begin normal reception at the next
+                                                                 start-of-packet boundary from CGX. */
+        uint64_t rx_idle               : 1;  /**< [  1:  1](RO/H) When [DATA_PKT_RX_EN] = 0, [RX_IDLE]=1 indicates no in-flight RX
+                                                                 packets and any new RX packets will be discarded. [RX_IDLE] = 1
+                                                                 indicates that it is safe to do a BPHY and/or RFIF reset.
+                                                                 For the reset domains:
+                                                                 * BPHY domain DMA can still be active, but a BPHY reset will reset all these transactions.
+                                                                 * RFIF domain is discarding all traffic.
+                                                                 * Once [RX_IDLE] is set, it will stay set until [DATA_PKT_RX_EN] is set by software.
+                                                                 [RX_IDLE] should be ignored when [DATA_PKT_RX_EN] = 1. */
+        uint64_t reserved_2_3          : 2;
+        uint64_t rx_ptp_mode           : 4;  /**< [  7:  4](R/W) Per LMAC control of RX PTP.
+                                                                 When set, causes RX to interpret first 8B of packet as PTP Timestamp. Normal
+                                                                 packet data starts at byte 8.
+                                                                 RX strips PTP and writes value in PSW1 and Packet loger.
+                                                                 Packet traffic must be IDLE or disabled before changing the value of [RX_PTP_MODE] */
+        uint64_t reserved_8_63         : 56;
+#endif /* Word 0 - End */
+    } s;
+    struct cavm_rfoex_rx_ctrl_cnf95xx
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_2_63         : 62;
         uint64_t rx_idle               : 1;  /**< [  1:  1](RO/H) When [DATA_PKT_RX_EN] = 0, [RX_IDLE]=1 indicates no in-flight RX
                                                                  packets and any new RX packets will be discarded. [RX_IDLE] = 1
@@ -1842,8 +2884,8 @@ union cavm_rfoex_rx_ctrl
                                                                  [RX_IDLE] should be ignored when [DATA_PKT_RX_EN] = 1. */
         uint64_t reserved_2_63         : 62;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_rfoex_rx_ctrl_s cn; */
+    } cnf95xx;
+    /* struct cavm_rfoex_rx_ctrl_s loki; */
 };
 typedef union cavm_rfoex_rx_ctrl cavm_rfoex_rx_ctrl_t;
 
@@ -1852,7 +2894,9 @@ static inline uint64_t CAVM_RFOEX_RX_CTRL(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=1))
         return 0x87e043d01018ll + 0x80000ll * ((a) & 0x1);
-    __cavm_csr_fatal("RFOEX_RX_CTRL", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=1))
+        return 0x87e043d01018ll + 0x80000ll * ((a) & 0x1);
+    __cavm_csr_fatal("RFOEX_RX_CTRL", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RFOEX_RX_CTRL(a) cavm_rfoex_rx_ctrl_t
@@ -1871,14 +2915,48 @@ static inline uint64_t CAVM_RFOEX_RX_CTRL(unsigned long a)
  * with a matching [ETHERTYPE] and [VALID] = 1. The first match determines how
  * the packet is routed.
  *
- * The last register ({b} = 3) determines the routing for any packet with no
- * other match. Packets that have no match in 0..2 are handled in a transparent
+ * The last register ({b} = 7) determines the routing for any packet with no
+ * other match. Packets that have no match in 0..6 are handled in a transparent
  * manner as defined by the configuration selected by RFOE()_RX_IND_FT()_CFG.
  */
 union cavm_rfoex_rx_direction_ctlx
 {
     uint64_t u;
     struct cavm_rfoex_rx_direction_ctlx_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_29_63        : 35;
+        uint64_t valid                 : 1;  /**< [ 28: 28](R/W) Entry is valid. If [VALID] = 0, the register is ignored, except for the
+                                                                 last register ({b} = 3) which ignores this field. */
+        uint64_t ethertype             : 16; /**< [ 27: 12](R/W) EtherType to match against incoming packet from CGX.
+                                                                 * For the last register ({b} = 3) this field is a don't care and all
+                                                                 EtherTypes match (if they haven't already matched one of the other
+                                                                 registers). */
+        uint64_t reserved_8_11         : 4;
+        uint64_t flowid                : 8;  /**< [  7:  0](R/W) FlowID for configuration lookup when processing non-RoE packets. Non-RoE:
+                                                                 *[DMA_TYPE] = 1, or
+                                                                 *When default entry 3 is selected (no EtherType match in {0},{1}, or P{2}.
+
+                                                                 For RoE packets ([DMA_TYPE]=0), FlowID is extracted
+                                                                 from RoE header. */
+#else /* Word 0 - Little Endian */
+        uint64_t flowid                : 8;  /**< [  7:  0](R/W) FlowID for configuration lookup when processing non-RoE packets. Non-RoE:
+                                                                 *[DMA_TYPE] = 1, or
+                                                                 *When default entry 3 is selected (no EtherType match in {0},{1}, or P{2}.
+
+                                                                 For RoE packets ([DMA_TYPE]=0), FlowID is extracted
+                                                                 from RoE header. */
+        uint64_t reserved_8_11         : 4;
+        uint64_t ethertype             : 16; /**< [ 27: 12](R/W) EtherType to match against incoming packet from CGX.
+                                                                 * For the last register ({b} = 3) this field is a don't care and all
+                                                                 EtherTypes match (if they haven't already matched one of the other
+                                                                 registers). */
+        uint64_t valid                 : 1;  /**< [ 28: 28](R/W) Entry is valid. If [VALID] = 0, the register is ignored, except for the
+                                                                 last register ({b} = 3) which ignores this field. */
+        uint64_t reserved_29_63        : 35;
+#endif /* Word 0 - End */
+    } s;
+    struct cavm_rfoex_rx_direction_ctlx_cnf95xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_29_63        : 35;
@@ -1919,8 +2997,45 @@ union cavm_rfoex_rx_direction_ctlx
                                                                  last register ({b} = 3) which ignores this field. */
         uint64_t reserved_29_63        : 35;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_rfoex_rx_direction_ctlx_s cn; */
+    } cnf95xx;
+    struct cavm_rfoex_rx_direction_ctlx_loki
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_36_63        : 28;
+        uint64_t dma_type              : 4;  /**< [ 35: 32](R/W) Type of packet processing, as enumerated by RFOE_RX_DIR_CTL_PKT_TYPE_E. */
+        uint64_t reserved_29_31        : 3;
+        uint64_t valid                 : 1;  /**< [ 28: 28](R/W) Entry is valid. If [VALID] = 0, the register is ignored, except for the
+                                                                 last register ({b} = 7) which ignores this field. */
+        uint64_t ethertype             : 16; /**< [ 27: 12](R/W) EtherType to match against incoming packet from CGX.
+                                                                 * For the last register ({b} = 7) this field is a don't care and all
+                                                                 EtherTypes match (if they haven't already matched one of the other
+                                                                 registers). */
+        uint64_t reserved_8_11         : 4;
+        uint64_t flowid                : 8;  /**< [  7:  0](R/W) FlowID for configuration lookup when processing non-RoE packets. Non-RoE:
+                                                                 *[DMA_TYPE] = 1, or
+                                                                 *When default entry 3 is selected (no EtherType match in {0},{1}, or P{2}.
+
+                                                                 For RoE packets ([DMA_TYPE]=0), FlowID is extracted
+                                                                 from RoE header. */
+#else /* Word 0 - Little Endian */
+        uint64_t flowid                : 8;  /**< [  7:  0](R/W) FlowID for configuration lookup when processing non-RoE packets. Non-RoE:
+                                                                 *[DMA_TYPE] = 1, or
+                                                                 *When default entry 3 is selected (no EtherType match in {0},{1}, or P{2}.
+
+                                                                 For RoE packets ([DMA_TYPE]=0), FlowID is extracted
+                                                                 from RoE header. */
+        uint64_t reserved_8_11         : 4;
+        uint64_t ethertype             : 16; /**< [ 27: 12](R/W) EtherType to match against incoming packet from CGX.
+                                                                 * For the last register ({b} = 7) this field is a don't care and all
+                                                                 EtherTypes match (if they haven't already matched one of the other
+                                                                 registers). */
+        uint64_t valid                 : 1;  /**< [ 28: 28](R/W) Entry is valid. If [VALID] = 0, the register is ignored, except for the
+                                                                 last register ({b} = 7) which ignores this field. */
+        uint64_t reserved_29_31        : 3;
+        uint64_t dma_type              : 4;  /**< [ 35: 32](R/W) Type of packet processing, as enumerated by RFOE_RX_DIR_CTL_PKT_TYPE_E. */
+        uint64_t reserved_36_63        : 28;
+#endif /* Word 0 - End */
+    } loki;
 };
 typedef union cavm_rfoex_rx_direction_ctlx cavm_rfoex_rx_direction_ctlx_t;
 
@@ -1929,7 +3044,9 @@ static inline uint64_t CAVM_RFOEX_RX_DIRECTION_CTLX(unsigned long a, unsigned lo
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=1) && (b<=3)))
         return 0x87e043d01800ll + 0x80000ll * ((a) & 0x1) + 8ll * ((b) & 0x3);
-    __cavm_csr_fatal("RFOEX_RX_DIRECTION_CTLX", 2, a, b, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=1) && (b<=7)))
+        return 0x87e043d01780ll + 0x80000ll * ((a) & 0x1) + 8ll * ((b) & 0x7);
+    __cavm_csr_fatal("RFOEX_RX_DIRECTION_CTLX", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RFOEX_RX_DIRECTION_CTLX(a,b) cavm_rfoex_rx_direction_ctlx_t
@@ -1972,7 +3089,9 @@ static inline uint64_t CAVM_RFOEX_RX_DMA_COMPLETE_STATX(unsigned long a, unsigne
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=1) && (b<=3)))
         return 0x87e043d01da0ll + 0x80000ll * ((a) & 0x1) + 8ll * ((b) & 0x3);
-    __cavm_csr_fatal("RFOEX_RX_DMA_COMPLETE_STATX", 2, a, b, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=1) && (b<=3)))
+        return 0x87e043d01da0ll + 0x80000ll * ((a) & 0x1) + 8ll * ((b) & 0x3);
+    __cavm_csr_fatal("RFOEX_RX_DMA_COMPLETE_STATX", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RFOEX_RX_DMA_COMPLETE_STATX(a,b) cavm_rfoex_rx_dma_complete_statx_t
@@ -2049,7 +3168,9 @@ static inline uint64_t CAVM_RFOEX_RX_DMA_JCA_BP_TEST(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=1))
         return 0x87e043d01f08ll + 0x80000ll * ((a) & 0x1);
-    __cavm_csr_fatal("RFOEX_RX_DMA_JCA_BP_TEST", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=1))
+        return 0x87e043d01f08ll + 0x80000ll * ((a) & 0x1);
+    __cavm_csr_fatal("RFOEX_RX_DMA_JCA_BP_TEST", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RFOEX_RX_DMA_JCA_BP_TEST(a) cavm_rfoex_rx_dma_jca_bp_test_t
@@ -2090,7 +3211,9 @@ static inline uint64_t CAVM_RFOEX_RX_DMA_OCTS_STATX(unsigned long a, unsigned lo
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=1) && (b<=3)))
         return 0x87e043d01d80ll + 0x80000ll * ((a) & 0x1) + 8ll * ((b) & 0x3);
-    __cavm_csr_fatal("RFOEX_RX_DMA_OCTS_STATX", 2, a, b, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=1) && (b<=3)))
+        return 0x87e043d01d80ll + 0x80000ll * ((a) & 0x1) + 8ll * ((b) & 0x3);
+    __cavm_csr_fatal("RFOEX_RX_DMA_OCTS_STATX", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RFOEX_RX_DMA_OCTS_STATX(a,b) cavm_rfoex_rx_dma_octs_statx_t
@@ -2127,7 +3250,9 @@ static inline uint64_t CAVM_RFOEX_RX_DMA_PKT_STATX(unsigned long a, unsigned lon
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=1) && (b<=3)))
         return 0x87e043d01d60ll + 0x80000ll * ((a) & 0x1) + 8ll * ((b) & 0x3);
-    __cavm_csr_fatal("RFOEX_RX_DMA_PKT_STATX", 2, a, b, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=1) && (b<=3)))
+        return 0x87e043d01d60ll + 0x80000ll * ((a) & 0x1) + 8ll * ((b) & 0x3);
+    __cavm_csr_fatal("RFOEX_RX_DMA_PKT_STATX", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RFOEX_RX_DMA_PKT_STATX(a,b) cavm_rfoex_rx_dma_pkt_statx_t
@@ -2135,6 +3260,183 @@ static inline uint64_t CAVM_RFOEX_RX_DMA_PKT_STATX(unsigned long a, unsigned lon
 #define basename_CAVM_RFOEX_RX_DMA_PKT_STATX(a,b) "RFOEX_RX_DMA_PKT_STATX"
 #define busnum_CAVM_RFOEX_RX_DMA_PKT_STATX(a,b) (a)
 #define arguments_CAVM_RFOEX_RX_DMA_PKT_STATX(a,b) (a),(b),-1,-1
+
+/**
+ * Register (RSL) rfoe#_rx_ecpri_cfg#
+ *
+ * RFOE RX eCPRI Miscellaneous Configuration Register
+ * Per LMAC Configurations
+ */
+union cavm_rfoex_rx_ecpri_cfgx
+{
+    uint64_t u;
+    struct cavm_rfoex_rx_ecpri_cfgx_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t msg_type_enable       : 16; /**< [ 63: 48](R/W) Enable for ECPRI MSG TYPE [15..0]. Similar to RX_IND_FT_CFG[ENABLE].  Allows for
+                                                                 safe reconfiguration.
+                                                                 0 - Drop packets and count at FT_CFG_ENABLE drop.
+                                                                 1 - Process packets. */
+        uint64_t reserved_32_47        : 16;
+        uint64_t pcid_base             : 16; /**< [ 31: 16](R/W) Define base for PCID-\>FLOWID mapping when [PCID_FLOWID_MODE] = RFOE_ECPRI_PCID_FLOWID_MODE_E::BASE. */
+        uint64_t reserved_2_15         : 14;
+        uint64_t pcid_flowid_mode      : 2;  /**< [  1:  0](R/W) Define PCID-\>FLOWID mapping, as enumerated by RFOE_ECPRI_PCID_FLOWID_MODE_E. */
+#else /* Word 0 - Little Endian */
+        uint64_t pcid_flowid_mode      : 2;  /**< [  1:  0](R/W) Define PCID-\>FLOWID mapping, as enumerated by RFOE_ECPRI_PCID_FLOWID_MODE_E. */
+        uint64_t reserved_2_15         : 14;
+        uint64_t pcid_base             : 16; /**< [ 31: 16](R/W) Define base for PCID-\>FLOWID mapping when [PCID_FLOWID_MODE] = RFOE_ECPRI_PCID_FLOWID_MODE_E::BASE. */
+        uint64_t reserved_32_47        : 16;
+        uint64_t msg_type_enable       : 16; /**< [ 63: 48](R/W) Enable for ECPRI MSG TYPE [15..0]. Similar to RX_IND_FT_CFG[ENABLE].  Allows for
+                                                                 safe reconfiguration.
+                                                                 0 - Drop packets and count at FT_CFG_ENABLE drop.
+                                                                 1 - Process packets. */
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rfoex_rx_ecpri_cfgx_s cn; */
+};
+typedef union cavm_rfoex_rx_ecpri_cfgx cavm_rfoex_rx_ecpri_cfgx_t;
+
+static inline uint64_t CAVM_RFOEX_RX_ECPRI_CFGX(unsigned long a, unsigned long b) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_RFOEX_RX_ECPRI_CFGX(unsigned long a, unsigned long b)
+{
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=1) && (b<=3)))
+        return 0x87e043d018c0ll + 0x80000ll * ((a) & 0x1) + 8ll * ((b) & 0x3);
+    __cavm_csr_fatal("RFOEX_RX_ECPRI_CFGX", 2, a, b, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_RFOEX_RX_ECPRI_CFGX(a,b) cavm_rfoex_rx_ecpri_cfgx_t
+#define bustype_CAVM_RFOEX_RX_ECPRI_CFGX(a,b) CSR_TYPE_RSL
+#define basename_CAVM_RFOEX_RX_ECPRI_CFGX(a,b) "RFOEX_RX_ECPRI_CFGX"
+#define busnum_CAVM_RFOEX_RX_ECPRI_CFGX(a,b) (a)
+#define arguments_CAVM_RFOEX_RX_ECPRI_CFGX(a,b) (a),(b),-1,-1
+
+/**
+ * Register (RSL) rfoe#_rx_ecpri_check_ena#
+ *
+ * RFOE Error eCPRI Error Check Enable Register
+ * Per LMAC Enables error specified error checks.  When enabled, allows specific error
+ * checks to set error flags and drop packets when checks fail.
+ */
+union cavm_rfoex_rx_ecpri_check_enax
+{
+    uint64_t u;
+    struct cavm_rfoex_rx_ecpri_check_enax_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_4_63         : 60;
+        uint64_t pc_id                 : 1;  /**< [  3:  3](R/W) Enable range check on PC_ID */
+        uint64_t illegal_rsvd          : 1;  /**< [  2:  2](R/W) Enable check for RSVD!=0 */
+        uint64_t illegal_version       : 1;  /**< [  1:  1](R/W) Enable eCPRI packet header Version != 1 */
+        uint64_t concatenation         : 1;  /**< [  0:  0](R/W) Enable for eCPRI packet header C=1 */
+#else /* Word 0 - Little Endian */
+        uint64_t concatenation         : 1;  /**< [  0:  0](R/W) Enable for eCPRI packet header C=1 */
+        uint64_t illegal_version       : 1;  /**< [  1:  1](R/W) Enable eCPRI packet header Version != 1 */
+        uint64_t illegal_rsvd          : 1;  /**< [  2:  2](R/W) Enable check for RSVD!=0 */
+        uint64_t pc_id                 : 1;  /**< [  3:  3](R/W) Enable range check on PC_ID */
+        uint64_t reserved_4_63         : 60;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rfoex_rx_ecpri_check_enax_s cn; */
+};
+typedef union cavm_rfoex_rx_ecpri_check_enax cavm_rfoex_rx_ecpri_check_enax_t;
+
+static inline uint64_t CAVM_RFOEX_RX_ECPRI_CHECK_ENAX(unsigned long a, unsigned long b) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_RFOEX_RX_ECPRI_CHECK_ENAX(unsigned long a, unsigned long b)
+{
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=1) && (b<=3)))
+        return 0x87e043d01e60ll + 0x80000ll * ((a) & 0x1) + 8ll * ((b) & 0x3);
+    __cavm_csr_fatal("RFOEX_RX_ECPRI_CHECK_ENAX", 2, a, b, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_RFOEX_RX_ECPRI_CHECK_ENAX(a,b) cavm_rfoex_rx_ecpri_check_enax_t
+#define bustype_CAVM_RFOEX_RX_ECPRI_CHECK_ENAX(a,b) CSR_TYPE_RSL
+#define basename_CAVM_RFOEX_RX_ECPRI_CHECK_ENAX(a,b) "RFOEX_RX_ECPRI_CHECK_ENAX"
+#define busnum_CAVM_RFOEX_RX_ECPRI_CHECK_ENAX(a,b) (a)
+#define arguments_CAVM_RFOEX_RX_ECPRI_CHECK_ENAX(a,b) (a),(b),-1,-1
+
+/**
+ * Register (RSL) rfoe#_rx_ecpri_err_drop_stat#
+ *
+ * RFOE RX  eCPRI Packet Drop Register
+ * Number of eCPRI packets dropped, per LMAC, because of header error detected.
+ * Internal:
+ * Packets received on x2p pkt_bus interface:
+ *   input x2p2_p2x2_defs::x2p2_bus_t cgx__rfoe_x2p_pkt_bus.
+ * Does not include packets shunted by RFOE()_RX_CTRL[DATA_PKT_RX_EN] = 0.
+ */
+union cavm_rfoex_rx_ecpri_err_drop_statx
+{
+    uint64_t u;
+    struct cavm_rfoex_rx_ecpri_err_drop_statx_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_48_63        : 16;
+        uint64_t stat                  : 48; /**< [ 47:  0](R/W/H) The counter value, increments on EOP transfers. Wraps to zero at 2^48.
+                                                                 Excludes  RFOE()_RX_ERROR_INT[MALFORMED_X2P_PKT] packets.
+                                                                 Excludes packets received when RX is disabled by RFOE()_RX_CTRL[DATA_PKT_RX_EN]=0 . */
+#else /* Word 0 - Little Endian */
+        uint64_t stat                  : 48; /**< [ 47:  0](R/W/H) The counter value, increments on EOP transfers. Wraps to zero at 2^48.
+                                                                 Excludes  RFOE()_RX_ERROR_INT[MALFORMED_X2P_PKT] packets.
+                                                                 Excludes packets received when RX is disabled by RFOE()_RX_CTRL[DATA_PKT_RX_EN]=0 . */
+        uint64_t reserved_48_63        : 16;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rfoex_rx_ecpri_err_drop_statx_s cn; */
+};
+typedef union cavm_rfoex_rx_ecpri_err_drop_statx cavm_rfoex_rx_ecpri_err_drop_statx_t;
+
+static inline uint64_t CAVM_RFOEX_RX_ECPRI_ERR_DROP_STATX(unsigned long a, unsigned long b) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_RFOEX_RX_ECPRI_ERR_DROP_STATX(unsigned long a, unsigned long b)
+{
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=1) && (b<=3)))
+        return 0x87e043d01e00ll + 0x80000ll * ((a) & 0x1) + 8ll * ((b) & 0x3);
+    __cavm_csr_fatal("RFOEX_RX_ECPRI_ERR_DROP_STATX", 2, a, b, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_RFOEX_RX_ECPRI_ERR_DROP_STATX(a,b) cavm_rfoex_rx_ecpri_err_drop_statx_t
+#define bustype_CAVM_RFOEX_RX_ECPRI_ERR_DROP_STATX(a,b) CSR_TYPE_RSL
+#define basename_CAVM_RFOEX_RX_ECPRI_ERR_DROP_STATX(a,b) "RFOEX_RX_ECPRI_ERR_DROP_STATX"
+#define busnum_CAVM_RFOEX_RX_ECPRI_ERR_DROP_STATX(a,b) (a)
+#define arguments_CAVM_RFOEX_RX_ECPRI_ERR_DROP_STATX(a,b) (a),(b),-1,-1
+
+/**
+ * Register (RSL) rfoe#_rx_ecpri_pc_id_apert#
+ *
+ * RFOE RX ECPRI MSG_TYPE=0 Range Check Register
+ * Per LMAC{b} eCPRI msg_type==0 PC_ID Aperture Error Range
+ */
+union cavm_rfoex_rx_ecpri_pc_id_apertx
+{
+    uint64_t u;
+    struct cavm_rfoex_rx_ecpri_pc_id_apertx_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_32_63        : 32;
+        uint64_t max                   : 16; /**< [ 31: 16](R/W) PC_ID must be \<= [MAX] */
+        uint64_t min                   : 16; /**< [ 15:  0](R/W) PC_ID must be \>= [MIN] */
+#else /* Word 0 - Little Endian */
+        uint64_t min                   : 16; /**< [ 15:  0](R/W) PC_ID must be \>= [MIN] */
+        uint64_t max                   : 16; /**< [ 31: 16](R/W) PC_ID must be \<= [MAX] */
+        uint64_t reserved_32_63        : 32;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rfoex_rx_ecpri_pc_id_apertx_s cn; */
+};
+typedef union cavm_rfoex_rx_ecpri_pc_id_apertx cavm_rfoex_rx_ecpri_pc_id_apertx_t;
+
+static inline uint64_t CAVM_RFOEX_RX_ECPRI_PC_ID_APERTX(unsigned long a, unsigned long b) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_RFOEX_RX_ECPRI_PC_ID_APERTX(unsigned long a, unsigned long b)
+{
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=1) && (b<=3)))
+        return 0x87e043d01860ll + 0x80000ll * ((a) & 0x1) + 8ll * ((b) & 0x3);
+    __cavm_csr_fatal("RFOEX_RX_ECPRI_PC_ID_APERTX", 2, a, b, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_RFOEX_RX_ECPRI_PC_ID_APERTX(a,b) cavm_rfoex_rx_ecpri_pc_id_apertx_t
+#define bustype_CAVM_RFOEX_RX_ECPRI_PC_ID_APERTX(a,b) CSR_TYPE_RSL
+#define basename_CAVM_RFOEX_RX_ECPRI_PC_ID_APERTX(a,b) "RFOEX_RX_ECPRI_PC_ID_APERTX"
+#define busnum_CAVM_RFOEX_RX_ECPRI_PC_ID_APERTX(a,b) (a)
+#define arguments_CAVM_RFOEX_RX_ECPRI_PC_ID_APERTX(a,b) (a),(b),-1,-1
 
 /**
  * Register (RSL) rfoe#_rx_error_ena_w1c
@@ -2146,6 +3448,58 @@ union cavm_rfoex_rx_error_ena_w1c
 {
     uint64_t u;
     struct cavm_rfoex_rx_error_ena_w1c_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_17_63        : 47;
+        uint64_t ecpri_hdr             : 1;  /**< [ 16: 16](R/W1C/H) Reads or clears enable for RFOE(0..1)_RX_ERROR_INT[ECPRI_HDR]. */
+        uint64_t reserved_14_15        : 2;
+        uint64_t mtu                   : 1;  /**< [ 13: 13](R/W1C/H) Reads or clears enable for RFOE(0..1)_RX_ERROR_INT[MTU]. */
+        uint64_t wrrsp_nfat            : 1;  /**< [ 12: 12](R/W1C/H) Reads or clears enable for RFOE(0..1)_RX_ERROR_INT[WRRSP_NFAT].
+                                                                 Internal:
+                                                                 Should never occur. Including for completeness */
+        uint64_t wrrsp_fat             : 1;  /**< [ 11: 11](R/W1C/H) Reads or clears enable for RFOE(0..1)_RX_ERROR_INT[WRRSP_FAT]. */
+        uint64_t fc_psm_opcode         : 1;  /**< [ 10: 10](R/W1C/H) Reads or clears enable for RFOE(0..1)_RX_ERROR_INT[FC_PSM_OPCODE]. */
+        uint64_t malformed_x2p_pkt     : 1;  /**< [  9:  9](R/W1C/H) Reads or clears enable for RFOE(0..1)_RX_ERROR_INT[MALFORMED_X2P_PKT]. */
+        uint64_t reserved_8            : 1;
+        uint64_t fd_malformed          : 1;  /**< [  7:  7](R/W1C/H) Reads or clears enable for RFOE(0..1)_RX_ERROR_INT[FD_MALFORMED]. */
+        uint64_t fd_state              : 1;  /**< [  6:  6](R/W1C/H) Reads or clears enable for RFOE(0..1)_RX_ERROR_INT[FD_STATE]. */
+        uint64_t nxm                   : 1;  /**< [  5:  5](R/W1C/H) Reads or clears enable for RFOE(0..1)_RX_ERROR_INT[NXM]. */
+        uint64_t clean_aperture        : 1;  /**< [  4:  4](R/W1C/H) Reads or clears enable for RFOE(0..1)_RX_ERROR_INT[CLEAN_APERTURE]. */
+        uint64_t dirty_aperture        : 1;  /**< [  3:  3](R/W1C/H) Reads or clears enable for RFOE(0..1)_RX_ERROR_INT[DIRTY_APERTURE]. */
+        uint64_t buf_overflow          : 1;  /**< [  2:  2](R/W1C/H) Reads or clears enable for RFOE(0..1)_RX_ERROR_INT[BUF_OVERFLOW]. */
+        uint64_t len_miscomp           : 1;  /**< [  1:  1](R/W1C/H) Reads or clears enable for RFOE(0..1)_RX_ERROR_INT[LEN_MISCOMP].
+                                                                 Internal:
+                                                                 RX Header processing expects \> 48B. */
+        uint64_t len_abnorm            : 1;  /**< [  0:  0](R/W1C/H) Reads or clears enable for RFOE(0..1)_RX_ERROR_INT[LEN_ABNORM].
+                                                                 Internal:
+                                                                 RX Header processing expects \> 48B. P1914 note--  RoE payload must be \>= 64B. */
+#else /* Word 0 - Little Endian */
+        uint64_t len_abnorm            : 1;  /**< [  0:  0](R/W1C/H) Reads or clears enable for RFOE(0..1)_RX_ERROR_INT[LEN_ABNORM].
+                                                                 Internal:
+                                                                 RX Header processing expects \> 48B. P1914 note--  RoE payload must be \>= 64B. */
+        uint64_t len_miscomp           : 1;  /**< [  1:  1](R/W1C/H) Reads or clears enable for RFOE(0..1)_RX_ERROR_INT[LEN_MISCOMP].
+                                                                 Internal:
+                                                                 RX Header processing expects \> 48B. */
+        uint64_t buf_overflow          : 1;  /**< [  2:  2](R/W1C/H) Reads or clears enable for RFOE(0..1)_RX_ERROR_INT[BUF_OVERFLOW]. */
+        uint64_t dirty_aperture        : 1;  /**< [  3:  3](R/W1C/H) Reads or clears enable for RFOE(0..1)_RX_ERROR_INT[DIRTY_APERTURE]. */
+        uint64_t clean_aperture        : 1;  /**< [  4:  4](R/W1C/H) Reads or clears enable for RFOE(0..1)_RX_ERROR_INT[CLEAN_APERTURE]. */
+        uint64_t nxm                   : 1;  /**< [  5:  5](R/W1C/H) Reads or clears enable for RFOE(0..1)_RX_ERROR_INT[NXM]. */
+        uint64_t fd_state              : 1;  /**< [  6:  6](R/W1C/H) Reads or clears enable for RFOE(0..1)_RX_ERROR_INT[FD_STATE]. */
+        uint64_t fd_malformed          : 1;  /**< [  7:  7](R/W1C/H) Reads or clears enable for RFOE(0..1)_RX_ERROR_INT[FD_MALFORMED]. */
+        uint64_t reserved_8            : 1;
+        uint64_t malformed_x2p_pkt     : 1;  /**< [  9:  9](R/W1C/H) Reads or clears enable for RFOE(0..1)_RX_ERROR_INT[MALFORMED_X2P_PKT]. */
+        uint64_t fc_psm_opcode         : 1;  /**< [ 10: 10](R/W1C/H) Reads or clears enable for RFOE(0..1)_RX_ERROR_INT[FC_PSM_OPCODE]. */
+        uint64_t wrrsp_fat             : 1;  /**< [ 11: 11](R/W1C/H) Reads or clears enable for RFOE(0..1)_RX_ERROR_INT[WRRSP_FAT]. */
+        uint64_t wrrsp_nfat            : 1;  /**< [ 12: 12](R/W1C/H) Reads or clears enable for RFOE(0..1)_RX_ERROR_INT[WRRSP_NFAT].
+                                                                 Internal:
+                                                                 Should never occur. Including for completeness */
+        uint64_t mtu                   : 1;  /**< [ 13: 13](R/W1C/H) Reads or clears enable for RFOE(0..1)_RX_ERROR_INT[MTU]. */
+        uint64_t reserved_14_15        : 2;
+        uint64_t ecpri_hdr             : 1;  /**< [ 16: 16](R/W1C/H) Reads or clears enable for RFOE(0..1)_RX_ERROR_INT[ECPRI_HDR]. */
+        uint64_t reserved_17_63        : 47;
+#endif /* Word 0 - End */
+    } s;
+    struct cavm_rfoex_rx_error_ena_w1c_cnf95xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_13_63        : 51;
@@ -2190,8 +3544,8 @@ union cavm_rfoex_rx_error_ena_w1c
                                                                  Should never occur. Including for completeness */
         uint64_t reserved_13_63        : 51;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_rfoex_rx_error_ena_w1c_s cn; */
+    } cnf95xx;
+    /* struct cavm_rfoex_rx_error_ena_w1c_s loki; */
 };
 typedef union cavm_rfoex_rx_error_ena_w1c cavm_rfoex_rx_error_ena_w1c_t;
 
@@ -2200,7 +3554,9 @@ static inline uint64_t CAVM_RFOEX_RX_ERROR_ENA_W1C(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=1))
         return 0x87e043d01ea0ll + 0x80000ll * ((a) & 0x1);
-    __cavm_csr_fatal("RFOEX_RX_ERROR_ENA_W1C", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=1))
+        return 0x87e043d01ea0ll + 0x80000ll * ((a) & 0x1);
+    __cavm_csr_fatal("RFOEX_RX_ERROR_ENA_W1C", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RFOEX_RX_ERROR_ENA_W1C(a) cavm_rfoex_rx_error_ena_w1c_t
@@ -2221,6 +3577,58 @@ union cavm_rfoex_rx_error_ena_w1s
     struct cavm_rfoex_rx_error_ena_w1s_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_17_63        : 47;
+        uint64_t ecpri_hdr             : 1;  /**< [ 16: 16](R/W1S/H) Reads or sets enable for RFOE(0..1)_RX_ERROR_INT[ECPRI_HDR]. */
+        uint64_t reserved_14_15        : 2;
+        uint64_t mtu                   : 1;  /**< [ 13: 13](R/W1S/H) Reads or sets enable for RFOE(0..1)_RX_ERROR_INT[MTU]. */
+        uint64_t wrrsp_nfat            : 1;  /**< [ 12: 12](R/W1S/H) Reads or sets enable for RFOE(0..1)_RX_ERROR_INT[WRRSP_NFAT].
+                                                                 Internal:
+                                                                 Should never occur. Including for completeness */
+        uint64_t wrrsp_fat             : 1;  /**< [ 11: 11](R/W1S/H) Reads or sets enable for RFOE(0..1)_RX_ERROR_INT[WRRSP_FAT]. */
+        uint64_t fc_psm_opcode         : 1;  /**< [ 10: 10](R/W1S/H) Reads or sets enable for RFOE(0..1)_RX_ERROR_INT[FC_PSM_OPCODE]. */
+        uint64_t malformed_x2p_pkt     : 1;  /**< [  9:  9](R/W1S/H) Reads or sets enable for RFOE(0..1)_RX_ERROR_INT[MALFORMED_X2P_PKT]. */
+        uint64_t reserved_8            : 1;
+        uint64_t fd_malformed          : 1;  /**< [  7:  7](R/W1S/H) Reads or sets enable for RFOE(0..1)_RX_ERROR_INT[FD_MALFORMED]. */
+        uint64_t fd_state              : 1;  /**< [  6:  6](R/W1S/H) Reads or sets enable for RFOE(0..1)_RX_ERROR_INT[FD_STATE]. */
+        uint64_t nxm                   : 1;  /**< [  5:  5](R/W1S/H) Reads or sets enable for RFOE(0..1)_RX_ERROR_INT[NXM]. */
+        uint64_t clean_aperture        : 1;  /**< [  4:  4](R/W1S/H) Reads or sets enable for RFOE(0..1)_RX_ERROR_INT[CLEAN_APERTURE]. */
+        uint64_t dirty_aperture        : 1;  /**< [  3:  3](R/W1S/H) Reads or sets enable for RFOE(0..1)_RX_ERROR_INT[DIRTY_APERTURE]. */
+        uint64_t buf_overflow          : 1;  /**< [  2:  2](R/W1S/H) Reads or sets enable for RFOE(0..1)_RX_ERROR_INT[BUF_OVERFLOW]. */
+        uint64_t len_miscomp           : 1;  /**< [  1:  1](R/W1S/H) Reads or sets enable for RFOE(0..1)_RX_ERROR_INT[LEN_MISCOMP].
+                                                                 Internal:
+                                                                 RX Header processing expects \> 48B. */
+        uint64_t len_abnorm            : 1;  /**< [  0:  0](R/W1S/H) Reads or sets enable for RFOE(0..1)_RX_ERROR_INT[LEN_ABNORM].
+                                                                 Internal:
+                                                                 RX Header processing expects \> 48B. P1914 note--  RoE payload must be \>= 64B. */
+#else /* Word 0 - Little Endian */
+        uint64_t len_abnorm            : 1;  /**< [  0:  0](R/W1S/H) Reads or sets enable for RFOE(0..1)_RX_ERROR_INT[LEN_ABNORM].
+                                                                 Internal:
+                                                                 RX Header processing expects \> 48B. P1914 note--  RoE payload must be \>= 64B. */
+        uint64_t len_miscomp           : 1;  /**< [  1:  1](R/W1S/H) Reads or sets enable for RFOE(0..1)_RX_ERROR_INT[LEN_MISCOMP].
+                                                                 Internal:
+                                                                 RX Header processing expects \> 48B. */
+        uint64_t buf_overflow          : 1;  /**< [  2:  2](R/W1S/H) Reads or sets enable for RFOE(0..1)_RX_ERROR_INT[BUF_OVERFLOW]. */
+        uint64_t dirty_aperture        : 1;  /**< [  3:  3](R/W1S/H) Reads or sets enable for RFOE(0..1)_RX_ERROR_INT[DIRTY_APERTURE]. */
+        uint64_t clean_aperture        : 1;  /**< [  4:  4](R/W1S/H) Reads or sets enable for RFOE(0..1)_RX_ERROR_INT[CLEAN_APERTURE]. */
+        uint64_t nxm                   : 1;  /**< [  5:  5](R/W1S/H) Reads or sets enable for RFOE(0..1)_RX_ERROR_INT[NXM]. */
+        uint64_t fd_state              : 1;  /**< [  6:  6](R/W1S/H) Reads or sets enable for RFOE(0..1)_RX_ERROR_INT[FD_STATE]. */
+        uint64_t fd_malformed          : 1;  /**< [  7:  7](R/W1S/H) Reads or sets enable for RFOE(0..1)_RX_ERROR_INT[FD_MALFORMED]. */
+        uint64_t reserved_8            : 1;
+        uint64_t malformed_x2p_pkt     : 1;  /**< [  9:  9](R/W1S/H) Reads or sets enable for RFOE(0..1)_RX_ERROR_INT[MALFORMED_X2P_PKT]. */
+        uint64_t fc_psm_opcode         : 1;  /**< [ 10: 10](R/W1S/H) Reads or sets enable for RFOE(0..1)_RX_ERROR_INT[FC_PSM_OPCODE]. */
+        uint64_t wrrsp_fat             : 1;  /**< [ 11: 11](R/W1S/H) Reads or sets enable for RFOE(0..1)_RX_ERROR_INT[WRRSP_FAT]. */
+        uint64_t wrrsp_nfat            : 1;  /**< [ 12: 12](R/W1S/H) Reads or sets enable for RFOE(0..1)_RX_ERROR_INT[WRRSP_NFAT].
+                                                                 Internal:
+                                                                 Should never occur. Including for completeness */
+        uint64_t mtu                   : 1;  /**< [ 13: 13](R/W1S/H) Reads or sets enable for RFOE(0..1)_RX_ERROR_INT[MTU]. */
+        uint64_t reserved_14_15        : 2;
+        uint64_t ecpri_hdr             : 1;  /**< [ 16: 16](R/W1S/H) Reads or sets enable for RFOE(0..1)_RX_ERROR_INT[ECPRI_HDR]. */
+        uint64_t reserved_17_63        : 47;
+#endif /* Word 0 - End */
+    } s;
+    struct cavm_rfoex_rx_error_ena_w1s_cnf95xx
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_13_63        : 51;
         uint64_t wrrsp_nfat            : 1;  /**< [ 12: 12](R/W1S/H) Reads or sets enable for RFOE(0..1)_RX_ERROR_INT[WRRSP_NFAT].
                                                                  Internal:
@@ -2263,8 +3671,8 @@ union cavm_rfoex_rx_error_ena_w1s
                                                                  Should never occur. Including for completeness */
         uint64_t reserved_13_63        : 51;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_rfoex_rx_error_ena_w1s_s cn; */
+    } cnf95xx;
+    /* struct cavm_rfoex_rx_error_ena_w1s_s loki; */
 };
 typedef union cavm_rfoex_rx_error_ena_w1s cavm_rfoex_rx_error_ena_w1s_t;
 
@@ -2273,7 +3681,9 @@ static inline uint64_t CAVM_RFOEX_RX_ERROR_ENA_W1S(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=1))
         return 0x87e043d01e98ll + 0x80000ll * ((a) & 0x1);
-    __cavm_csr_fatal("RFOEX_RX_ERROR_ENA_W1S", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=1))
+        return 0x87e043d01e98ll + 0x80000ll * ((a) & 0x1);
+    __cavm_csr_fatal("RFOEX_RX_ERROR_ENA_W1S", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RFOEX_RX_ERROR_ENA_W1S(a) cavm_rfoex_rx_error_ena_w1s_t
@@ -2336,7 +3746,9 @@ static inline uint64_t CAVM_RFOEX_RX_ERROR_INFO0(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=1))
         return 0x87e043d01ec0ll + 0x80000ll * ((a) & 0x1);
-    __cavm_csr_fatal("RFOEX_RX_ERROR_INFO0", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=1))
+        return 0x87e043d01ec0ll + 0x80000ll * ((a) & 0x1);
+    __cavm_csr_fatal("RFOEX_RX_ERROR_INFO0", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RFOEX_RX_ERROR_INFO0(a) cavm_rfoex_rx_error_info0_t
@@ -2427,7 +3839,9 @@ static inline uint64_t CAVM_RFOEX_RX_ERROR_INFO1(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=1))
         return 0x87e043d01ec8ll + 0x80000ll * ((a) & 0x1);
-    __cavm_csr_fatal("RFOEX_RX_ERROR_INFO1", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=1))
+        return 0x87e043d01ec8ll + 0x80000ll * ((a) & 0x1);
+    __cavm_csr_fatal("RFOEX_RX_ERROR_INFO1", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RFOEX_RX_ERROR_INFO1(a) cavm_rfoex_rx_error_info1_t
@@ -2437,6 +3851,53 @@ static inline uint64_t CAVM_RFOEX_RX_ERROR_INFO1(unsigned long a)
 #define arguments_CAVM_RFOEX_RX_ERROR_INFO1(a) (a),-1,-1,-1
 
 /**
+ * Register (RSL) rfoe#_rx_error_info2
+ *
+ * RFOE Error Interrupt Information Register
+ * Error information for errors reported in RFOE()_RX_ERROR_INT.
+ */
+union cavm_rfoex_rx_error_info2
+{
+    uint64_t u;
+    struct cavm_rfoex_rx_error_info2_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_26_63        : 38;
+        uint64_t mtu_err_lmac_id       : 2;  /**< [ 25: 24](RO/H) LMAC_ID for MTU_ERR. */
+        uint64_t ecpri_hdr_err_type    : 4;  /**< [ 23: 20](RO/H) Error type for the first error that sets RFOE()_RX_ERROR_INT[ECPRI_HDR].
+                                                                 Enumerated in RFOE_ECPRI_HDR_ERR_TYPE_E. */
+        uint64_t ecpri_hdr_ecpri_id    : 16; /**< [ 19:  4](RO/H) PC_ID/RTC_ID for first error that set RFOE()_RX_ERROR_INT[ECPRI_HDR]. */
+        uint64_t reserved_2_3          : 2;
+        uint64_t ecpri_hdr_lmac_id     : 2;  /**< [  1:  0](RO/H) LMAC_ID for first error that set RFOE()_RX_ERROR_INT[ECPRI_HDR]. */
+#else /* Word 0 - Little Endian */
+        uint64_t ecpri_hdr_lmac_id     : 2;  /**< [  1:  0](RO/H) LMAC_ID for first error that set RFOE()_RX_ERROR_INT[ECPRI_HDR]. */
+        uint64_t reserved_2_3          : 2;
+        uint64_t ecpri_hdr_ecpri_id    : 16; /**< [ 19:  4](RO/H) PC_ID/RTC_ID for first error that set RFOE()_RX_ERROR_INT[ECPRI_HDR]. */
+        uint64_t ecpri_hdr_err_type    : 4;  /**< [ 23: 20](RO/H) Error type for the first error that sets RFOE()_RX_ERROR_INT[ECPRI_HDR].
+                                                                 Enumerated in RFOE_ECPRI_HDR_ERR_TYPE_E. */
+        uint64_t mtu_err_lmac_id       : 2;  /**< [ 25: 24](RO/H) LMAC_ID for MTU_ERR. */
+        uint64_t reserved_26_63        : 38;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rfoex_rx_error_info2_s cn; */
+};
+typedef union cavm_rfoex_rx_error_info2 cavm_rfoex_rx_error_info2_t;
+
+static inline uint64_t CAVM_RFOEX_RX_ERROR_INFO2(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_RFOEX_RX_ERROR_INFO2(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=1))
+        return 0x87e043d01ed0ll + 0x80000ll * ((a) & 0x1);
+    __cavm_csr_fatal("RFOEX_RX_ERROR_INFO2", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_RFOEX_RX_ERROR_INFO2(a) cavm_rfoex_rx_error_info2_t
+#define bustype_CAVM_RFOEX_RX_ERROR_INFO2(a) CSR_TYPE_RSL
+#define basename_CAVM_RFOEX_RX_ERROR_INFO2(a) "RFOEX_RX_ERROR_INFO2"
+#define busnum_CAVM_RFOEX_RX_ERROR_INFO2(a) (a)
+#define arguments_CAVM_RFOEX_RX_ERROR_INFO2(a) (a),-1,-1,-1
+
+/**
  * Register (RSL) rfoe#_rx_error_int
  *
  * RFOE Error Interrupt Register
@@ -2444,13 +3905,135 @@ static inline uint64_t CAVM_RFOEX_RX_ERROR_INFO1(unsigned long a)
  * When a miscompare occurs, the LMAC, FLOWID is recorded in the following register.
  * RFOE()_RX_ERROR_INFO0 or RFOE()_RX_ERROR_INFO1.
  *
- * When an error occurs, RFOE sends  message to PSM defined by
+ * When an error occurs, RFOE sends message to PSM defined by
  * RFOE()_RX_ERROR_PSM_MSG_W1,RFOE()_RX_ERROR_PSM_MSG_W0
  */
 union cavm_rfoex_rx_error_int
 {
     uint64_t u;
     struct cavm_rfoex_rx_error_int_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_17_63        : 47;
+        uint64_t ecpri_hdr             : 1;  /**< [ 16: 16](R/W1C/H) eCPRI Concatenation, Version, PC_ID, message type Errors. */
+        uint64_t reserved_14_15        : 2;
+        uint64_t mtu                   : 1;  /**< [ 13: 13](R/W1C/H) MTU violation. Incomine Ethernet packet length outside of range defined by RFOE()_RX_MTU_CFG(). */
+        uint64_t wrrsp_nfat            : 1;  /**< [ 12: 12](R/W1C/H) Write response returned a non-fatal non-NXM error.
+                                                                 Internal:
+                                                                 Should never occur. Including for completeness */
+        uint64_t wrrsp_fat             : 1;  /**< [ 11: 11](R/W1C/H) Write response returned a fatal non-NXM error. */
+        uint64_t fc_psm_opcode         : 1;  /**< [ 10: 10](R/W1C/H) Received RoE packet, 0xfc subtype with a PSM command carrying a disabled OPCODE.
+                                                                 Bit is set when RoE subtype 0xfc received with PSM command OPCODE is not enabled in
+                                                                 RFOE()_RX_FC_PSM_OPCODE_ENA. */
+        uint64_t malformed_x2p_pkt     : 1;  /**< [  9:  9](R/W1C/H) Corrupted packet arrived from MAC:
+                                                                 *Missing SOP: a flit arrived that was not preceded by SOP.
+                                                                 *Unexpected SOP: an SOP flit received while still processing a packet (no EOP for previous packet).
+                                                                 Something bad happened in receive path to cause bad packets. */
+        uint64_t reserved_8            : 1;
+        uint64_t fd_malformed          : 1;  /**< [  7:  7](R/W1C/H) 0xFD subtype SOS received for a MBT entry that is already busy:
+                                                                 *Packet is dropped.
+                                                                 *0xFD packets using the same MBT entry through EOS are dropped.
+                                                                 *0xFD packets already received and in memory for the MBT entry are ignored.
+                                                                 Packet data will be overwritten on next usage of the buffer.
+
+                                                                 0xFD subtype received, but no SOS received for that MBT entry.
+                                                                 *Packet is dropped.
+                                                                 *0xFD packets using the same MBT entry through EOS are dropped. */
+        uint64_t fd_state              : 1;  /**< [  6:  6](R/W1C/H) At SOP a non 0xFD subtype is received for an MBT entry that is being used to assemble a symbol.
+                                                                 New packet is dropped, and assembly continues for the symbol. */
+        uint64_t nxm                   : 1;  /**< [  5:  5](R/W1C/H) Attempt to write to invalid SMEM address (i.e., address beyond current
+                                                                 SMEM size). Writes to invalid addresses were dropped. Note that this
+                                                                 may result from either a packet write or a logger write, see
+                                                                 RFOE()_RX_ERROR_INFO1[NXM_LOGGER]. */
+        uint64_t clean_aperture        : 1;  /**< [  4:  4](R/W1C/H) For ROE 0xFC subtype and CHI packets. Starting address is outside of the
+                                                                 MIN_APERTURE, MAX_APERTURE.
+                                                                 When this happens:
+                                                                 *Packet is cleanly dropped.
+                                                                 *No data from packet is written to memory.
+                                                                 *No JCA message. */
+        uint64_t dirty_aperture        : 1;  /**< [  3:  3](R/W1C/H) For ROE 0xfc subtype and CHI packets. DMA started if the packet but packet
+                                                                 length caused the DMA operation to go outside of the MAX_APERTURE.
+                                                                 When this happens:
+                                                                 *All flits from the packet beyond the MAX_APERTURE are dropped.
+                                                                 *Packet status/logger sets the RFOE_PACKET_STATUS_S.DMA_ERROR bit.
+                                                                 *Normal Completion JCA message is sent at EOP. */
+        uint64_t buf_overflow          : 1;  /**< [  2:  2](R/W1C/H) DMA operation of ROE type to a memory buffer exceeded the size of the buffer programmed in
+                                                                 RFOE()_RX_IND_MBT_CFG[BUF_SIZE]. When this happens:
+                                                                 *All flits from the packet beyond the buf_size limit are dropped.
+                                                                 *Packet status/logger sets the RFOE_PACKET_STATUS_S.DMA_ERROR bit.
+                                                                 *Normal Completion JCA message is sent at EOP. */
+        uint64_t len_miscomp           : 1;  /**< [  1:  1](R/W1C/H) Length field in packet header does not match payload.  For packets using DMA:
+                                                                 * CHI packet header length field does not match data length.
+                                                                 * ROE others. Length field does not match payload.
+                                                                 * Transparent, ALT: no length check for [LEN_MISCOMP].
+
+                                                                 Internal:
+                                                                 RX Header processing expects \> 48B. */
+        uint64_t len_abnorm            : 1;  /**< [  0:  0](R/W1C/H) Total packet length \<= 48 bytes. Packet is dropped.  Total length at x2p must be \> 48B.
+                                                                 Internal:
+                                                                 RX Header processing expects \> 48B. P1914 note--  RoE payload must be \>= 64B. */
+#else /* Word 0 - Little Endian */
+        uint64_t len_abnorm            : 1;  /**< [  0:  0](R/W1C/H) Total packet length \<= 48 bytes. Packet is dropped.  Total length at x2p must be \> 48B.
+                                                                 Internal:
+                                                                 RX Header processing expects \> 48B. P1914 note--  RoE payload must be \>= 64B. */
+        uint64_t len_miscomp           : 1;  /**< [  1:  1](R/W1C/H) Length field in packet header does not match payload.  For packets using DMA:
+                                                                 * CHI packet header length field does not match data length.
+                                                                 * ROE others. Length field does not match payload.
+                                                                 * Transparent, ALT: no length check for [LEN_MISCOMP].
+
+                                                                 Internal:
+                                                                 RX Header processing expects \> 48B. */
+        uint64_t buf_overflow          : 1;  /**< [  2:  2](R/W1C/H) DMA operation of ROE type to a memory buffer exceeded the size of the buffer programmed in
+                                                                 RFOE()_RX_IND_MBT_CFG[BUF_SIZE]. When this happens:
+                                                                 *All flits from the packet beyond the buf_size limit are dropped.
+                                                                 *Packet status/logger sets the RFOE_PACKET_STATUS_S.DMA_ERROR bit.
+                                                                 *Normal Completion JCA message is sent at EOP. */
+        uint64_t dirty_aperture        : 1;  /**< [  3:  3](R/W1C/H) For ROE 0xfc subtype and CHI packets. DMA started if the packet but packet
+                                                                 length caused the DMA operation to go outside of the MAX_APERTURE.
+                                                                 When this happens:
+                                                                 *All flits from the packet beyond the MAX_APERTURE are dropped.
+                                                                 *Packet status/logger sets the RFOE_PACKET_STATUS_S.DMA_ERROR bit.
+                                                                 *Normal Completion JCA message is sent at EOP. */
+        uint64_t clean_aperture        : 1;  /**< [  4:  4](R/W1C/H) For ROE 0xFC subtype and CHI packets. Starting address is outside of the
+                                                                 MIN_APERTURE, MAX_APERTURE.
+                                                                 When this happens:
+                                                                 *Packet is cleanly dropped.
+                                                                 *No data from packet is written to memory.
+                                                                 *No JCA message. */
+        uint64_t nxm                   : 1;  /**< [  5:  5](R/W1C/H) Attempt to write to invalid SMEM address (i.e., address beyond current
+                                                                 SMEM size). Writes to invalid addresses were dropped. Note that this
+                                                                 may result from either a packet write or a logger write, see
+                                                                 RFOE()_RX_ERROR_INFO1[NXM_LOGGER]. */
+        uint64_t fd_state              : 1;  /**< [  6:  6](R/W1C/H) At SOP a non 0xFD subtype is received for an MBT entry that is being used to assemble a symbol.
+                                                                 New packet is dropped, and assembly continues for the symbol. */
+        uint64_t fd_malformed          : 1;  /**< [  7:  7](R/W1C/H) 0xFD subtype SOS received for a MBT entry that is already busy:
+                                                                 *Packet is dropped.
+                                                                 *0xFD packets using the same MBT entry through EOS are dropped.
+                                                                 *0xFD packets already received and in memory for the MBT entry are ignored.
+                                                                 Packet data will be overwritten on next usage of the buffer.
+
+                                                                 0xFD subtype received, but no SOS received for that MBT entry.
+                                                                 *Packet is dropped.
+                                                                 *0xFD packets using the same MBT entry through EOS are dropped. */
+        uint64_t reserved_8            : 1;
+        uint64_t malformed_x2p_pkt     : 1;  /**< [  9:  9](R/W1C/H) Corrupted packet arrived from MAC:
+                                                                 *Missing SOP: a flit arrived that was not preceded by SOP.
+                                                                 *Unexpected SOP: an SOP flit received while still processing a packet (no EOP for previous packet).
+                                                                 Something bad happened in receive path to cause bad packets. */
+        uint64_t fc_psm_opcode         : 1;  /**< [ 10: 10](R/W1C/H) Received RoE packet, 0xfc subtype with a PSM command carrying a disabled OPCODE.
+                                                                 Bit is set when RoE subtype 0xfc received with PSM command OPCODE is not enabled in
+                                                                 RFOE()_RX_FC_PSM_OPCODE_ENA. */
+        uint64_t wrrsp_fat             : 1;  /**< [ 11: 11](R/W1C/H) Write response returned a fatal non-NXM error. */
+        uint64_t wrrsp_nfat            : 1;  /**< [ 12: 12](R/W1C/H) Write response returned a non-fatal non-NXM error.
+                                                                 Internal:
+                                                                 Should never occur. Including for completeness */
+        uint64_t mtu                   : 1;  /**< [ 13: 13](R/W1C/H) MTU violation. Incomine Ethernet packet length outside of range defined by RFOE()_RX_MTU_CFG(). */
+        uint64_t reserved_14_15        : 2;
+        uint64_t ecpri_hdr             : 1;  /**< [ 16: 16](R/W1C/H) eCPRI Concatenation, Version, PC_ID, message type Errors. */
+        uint64_t reserved_17_63        : 47;
+#endif /* Word 0 - End */
+    } s;
+    struct cavm_rfoex_rx_error_int_cnf95xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_13_63        : 51;
@@ -2565,8 +4148,8 @@ union cavm_rfoex_rx_error_int
                                                                  Should never occur. Including for completeness */
         uint64_t reserved_13_63        : 51;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_rfoex_rx_error_int_s cn; */
+    } cnf95xx;
+    /* struct cavm_rfoex_rx_error_int_s loki; */
 };
 typedef union cavm_rfoex_rx_error_int cavm_rfoex_rx_error_int_t;
 
@@ -2575,7 +4158,9 @@ static inline uint64_t CAVM_RFOEX_RX_ERROR_INT(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=1))
         return 0x87e043d01e90ll + 0x80000ll * ((a) & 0x1);
-    __cavm_csr_fatal("RFOEX_RX_ERROR_INT", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=1))
+        return 0x87e043d01e90ll + 0x80000ll * ((a) & 0x1);
+    __cavm_csr_fatal("RFOEX_RX_ERROR_INT", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RFOEX_RX_ERROR_INT(a) cavm_rfoex_rx_error_int_t
@@ -2596,6 +4181,58 @@ union cavm_rfoex_rx_error_int_w1s
     struct cavm_rfoex_rx_error_int_w1s_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_17_63        : 47;
+        uint64_t ecpri_hdr             : 1;  /**< [ 16: 16](R/W1S/H) Reads or sets RFOE(0..1)_RX_ERROR_INT[ECPRI_HDR]. */
+        uint64_t reserved_14_15        : 2;
+        uint64_t mtu                   : 1;  /**< [ 13: 13](R/W1S/H) Reads or sets RFOE(0..1)_RX_ERROR_INT[MTU]. */
+        uint64_t wrrsp_nfat            : 1;  /**< [ 12: 12](R/W1S/H) Reads or sets RFOE(0..1)_RX_ERROR_INT[WRRSP_NFAT].
+                                                                 Internal:
+                                                                 Should never occur. Including for completeness */
+        uint64_t wrrsp_fat             : 1;  /**< [ 11: 11](R/W1S/H) Reads or sets RFOE(0..1)_RX_ERROR_INT[WRRSP_FAT]. */
+        uint64_t fc_psm_opcode         : 1;  /**< [ 10: 10](R/W1S/H) Reads or sets RFOE(0..1)_RX_ERROR_INT[FC_PSM_OPCODE]. */
+        uint64_t malformed_x2p_pkt     : 1;  /**< [  9:  9](R/W1S/H) Reads or sets RFOE(0..1)_RX_ERROR_INT[MALFORMED_X2P_PKT]. */
+        uint64_t reserved_8            : 1;
+        uint64_t fd_malformed          : 1;  /**< [  7:  7](R/W1S/H) Reads or sets RFOE(0..1)_RX_ERROR_INT[FD_MALFORMED]. */
+        uint64_t fd_state              : 1;  /**< [  6:  6](R/W1S/H) Reads or sets RFOE(0..1)_RX_ERROR_INT[FD_STATE]. */
+        uint64_t nxm                   : 1;  /**< [  5:  5](R/W1S/H) Reads or sets RFOE(0..1)_RX_ERROR_INT[NXM]. */
+        uint64_t clean_aperture        : 1;  /**< [  4:  4](R/W1S/H) Reads or sets RFOE(0..1)_RX_ERROR_INT[CLEAN_APERTURE]. */
+        uint64_t dirty_aperture        : 1;  /**< [  3:  3](R/W1S/H) Reads or sets RFOE(0..1)_RX_ERROR_INT[DIRTY_APERTURE]. */
+        uint64_t buf_overflow          : 1;  /**< [  2:  2](R/W1S/H) Reads or sets RFOE(0..1)_RX_ERROR_INT[BUF_OVERFLOW]. */
+        uint64_t len_miscomp           : 1;  /**< [  1:  1](R/W1S/H) Reads or sets RFOE(0..1)_RX_ERROR_INT[LEN_MISCOMP].
+                                                                 Internal:
+                                                                 RX Header processing expects \> 48B. */
+        uint64_t len_abnorm            : 1;  /**< [  0:  0](R/W1S/H) Reads or sets RFOE(0..1)_RX_ERROR_INT[LEN_ABNORM].
+                                                                 Internal:
+                                                                 RX Header processing expects \> 48B. P1914 note--  RoE payload must be \>= 64B. */
+#else /* Word 0 - Little Endian */
+        uint64_t len_abnorm            : 1;  /**< [  0:  0](R/W1S/H) Reads or sets RFOE(0..1)_RX_ERROR_INT[LEN_ABNORM].
+                                                                 Internal:
+                                                                 RX Header processing expects \> 48B. P1914 note--  RoE payload must be \>= 64B. */
+        uint64_t len_miscomp           : 1;  /**< [  1:  1](R/W1S/H) Reads or sets RFOE(0..1)_RX_ERROR_INT[LEN_MISCOMP].
+                                                                 Internal:
+                                                                 RX Header processing expects \> 48B. */
+        uint64_t buf_overflow          : 1;  /**< [  2:  2](R/W1S/H) Reads or sets RFOE(0..1)_RX_ERROR_INT[BUF_OVERFLOW]. */
+        uint64_t dirty_aperture        : 1;  /**< [  3:  3](R/W1S/H) Reads or sets RFOE(0..1)_RX_ERROR_INT[DIRTY_APERTURE]. */
+        uint64_t clean_aperture        : 1;  /**< [  4:  4](R/W1S/H) Reads or sets RFOE(0..1)_RX_ERROR_INT[CLEAN_APERTURE]. */
+        uint64_t nxm                   : 1;  /**< [  5:  5](R/W1S/H) Reads or sets RFOE(0..1)_RX_ERROR_INT[NXM]. */
+        uint64_t fd_state              : 1;  /**< [  6:  6](R/W1S/H) Reads or sets RFOE(0..1)_RX_ERROR_INT[FD_STATE]. */
+        uint64_t fd_malformed          : 1;  /**< [  7:  7](R/W1S/H) Reads or sets RFOE(0..1)_RX_ERROR_INT[FD_MALFORMED]. */
+        uint64_t reserved_8            : 1;
+        uint64_t malformed_x2p_pkt     : 1;  /**< [  9:  9](R/W1S/H) Reads or sets RFOE(0..1)_RX_ERROR_INT[MALFORMED_X2P_PKT]. */
+        uint64_t fc_psm_opcode         : 1;  /**< [ 10: 10](R/W1S/H) Reads or sets RFOE(0..1)_RX_ERROR_INT[FC_PSM_OPCODE]. */
+        uint64_t wrrsp_fat             : 1;  /**< [ 11: 11](R/W1S/H) Reads or sets RFOE(0..1)_RX_ERROR_INT[WRRSP_FAT]. */
+        uint64_t wrrsp_nfat            : 1;  /**< [ 12: 12](R/W1S/H) Reads or sets RFOE(0..1)_RX_ERROR_INT[WRRSP_NFAT].
+                                                                 Internal:
+                                                                 Should never occur. Including for completeness */
+        uint64_t mtu                   : 1;  /**< [ 13: 13](R/W1S/H) Reads or sets RFOE(0..1)_RX_ERROR_INT[MTU]. */
+        uint64_t reserved_14_15        : 2;
+        uint64_t ecpri_hdr             : 1;  /**< [ 16: 16](R/W1S/H) Reads or sets RFOE(0..1)_RX_ERROR_INT[ECPRI_HDR]. */
+        uint64_t reserved_17_63        : 47;
+#endif /* Word 0 - End */
+    } s;
+    struct cavm_rfoex_rx_error_int_w1s_cnf95xx
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_13_63        : 51;
         uint64_t wrrsp_nfat            : 1;  /**< [ 12: 12](R/W1S/H) Reads or sets RFOE(0..1)_RX_ERROR_INT[WRRSP_NFAT].
                                                                  Internal:
@@ -2638,8 +4275,8 @@ union cavm_rfoex_rx_error_int_w1s
                                                                  Should never occur. Including for completeness */
         uint64_t reserved_13_63        : 51;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_rfoex_rx_error_int_w1s_s cn; */
+    } cnf95xx;
+    /* struct cavm_rfoex_rx_error_int_w1s_s loki; */
 };
 typedef union cavm_rfoex_rx_error_int_w1s cavm_rfoex_rx_error_int_w1s_t;
 
@@ -2648,7 +4285,9 @@ static inline uint64_t CAVM_RFOEX_RX_ERROR_INT_W1S(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=1))
         return 0x87e043d01ea8ll + 0x80000ll * ((a) & 0x1);
-    __cavm_csr_fatal("RFOEX_RX_ERROR_INT_W1S", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=1))
+        return 0x87e043d01ea8ll + 0x80000ll * ((a) & 0x1);
+    __cavm_csr_fatal("RFOEX_RX_ERROR_INT_W1S", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RFOEX_RX_ERROR_INT_W1S(a) cavm_rfoex_rx_error_int_w1s_t
@@ -2683,7 +4322,9 @@ static inline uint64_t CAVM_RFOEX_RX_ERROR_PSM_MSG_W0(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=1))
         return 0x87e043d01eb0ll + 0x80000ll * ((a) & 0x1);
-    __cavm_csr_fatal("RFOEX_RX_ERROR_PSM_MSG_W0", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=1))
+        return 0x87e043d01eb0ll + 0x80000ll * ((a) & 0x1);
+    __cavm_csr_fatal("RFOEX_RX_ERROR_PSM_MSG_W0", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RFOEX_RX_ERROR_PSM_MSG_W0(a) cavm_rfoex_rx_error_psm_msg_w0_t
@@ -2718,7 +4359,9 @@ static inline uint64_t CAVM_RFOEX_RX_ERROR_PSM_MSG_W1(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=1))
         return 0x87e043d01eb8ll + 0x80000ll * ((a) & 0x1);
-    __cavm_csr_fatal("RFOEX_RX_ERROR_PSM_MSG_W1", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=1))
+        return 0x87e043d01eb8ll + 0x80000ll * ((a) & 0x1);
+    __cavm_csr_fatal("RFOEX_RX_ERROR_PSM_MSG_W1", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RFOEX_RX_ERROR_PSM_MSG_W1(a) cavm_rfoex_rx_error_psm_msg_w1_t
@@ -2731,7 +4374,7 @@ static inline uint64_t CAVM_RFOEX_RX_ERROR_PSM_MSG_W1(unsigned long a)
  * Register (RSL) rfoe#_rx_fc_psm_opcode_ena
  *
  * RFOE RX RoE FC PSM Opcode Enable Register
- * Per opcode enable.   If  RFOE()_RX_FC_PSM_OPCODE_ENA(OPCODE) == 0, then PSM MSG[OPCODE]
+ * Per-opcode enable.   If  RFOE()_RX_FC_PSM_OPCODE_ENA\<OPCODE\> = 0, then PSM MSG[OPCODE]
  * is disabled and the packet will dropped.
  */
 union cavm_rfoex_rx_fc_psm_opcode_ena
@@ -2754,7 +4397,9 @@ static inline uint64_t CAVM_RFOEX_RX_FC_PSM_OPCODE_ENA(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=1))
         return 0x87e043d01880ll + 0x80000ll * ((a) & 0x1);
-    __cavm_csr_fatal("RFOEX_RX_FC_PSM_OPCODE_ENA", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=1))
+        return 0x87e043d018a0ll + 0x80000ll * ((a) & 0x1);
+    __cavm_csr_fatal("RFOEX_RX_FC_PSM_OPCODE_ENA", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RFOEX_RX_FC_PSM_OPCODE_ENA(a) cavm_rfoex_rx_fc_psm_opcode_ena_t
@@ -2798,7 +4443,7 @@ static inline uint64_t CAVM_RFOEX_RX_FD_RESET(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=1))
         return 0x87e043d01770ll + 0x80000ll * ((a) & 0x1);
-    __cavm_csr_fatal("RFOEX_RX_FD_RESET", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("RFOEX_RX_FD_RESET", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RFOEX_RX_FD_RESET(a) cavm_rfoex_rx_fd_reset_t
@@ -2806,6 +4451,50 @@ static inline uint64_t CAVM_RFOEX_RX_FD_RESET(unsigned long a)
 #define basename_CAVM_RFOEX_RX_FD_RESET(a) "RFOEX_RX_FD_RESET"
 #define busnum_CAVM_RFOEX_RX_FD_RESET(a) (a)
 #define arguments_CAVM_RFOEX_RX_FD_RESET(a) (a),-1,-1,-1
+
+/**
+ * Register (RSL) rfoe#_rx_fd_reset#
+ *
+ * RFOE RX Sync State Register
+ * Reset the 0xFD subtype reassembly state per MBT_IDX.
+ * _  mbt_index = bit.
+ * FD_RESET{int(MBT_IDX)}(MBT_IDX%64)
+ * Writes of bit = 1 resets the reassembly state for that MBT_IDX.
+ * Must only be used when the RFOE()_RX_IND_FT()_CFG[ENABLE] must be 0 for all MBT_IDXes.
+ * Used as part of the rx_sync sequence.
+ */
+union cavm_rfoex_rx_fd_resetx
+{
+    uint64_t u;
+    struct cavm_rfoex_rx_fd_resetx_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reset                 : 64; /**< [ 63:  0](WO) Bit-mask of MBT_IDX. For each bit:
+                                                                 0 = Don't reset FD state.
+                                                                 1 =  Reset the FD state */
+#else /* Word 0 - Little Endian */
+        uint64_t reset                 : 64; /**< [ 63:  0](WO) Bit-mask of MBT_IDX. For each bit:
+                                                                 0 = Don't reset FD state.
+                                                                 1 =  Reset the FD state */
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rfoex_rx_fd_resetx_s cn; */
+};
+typedef union cavm_rfoex_rx_fd_resetx cavm_rfoex_rx_fd_resetx_t;
+
+static inline uint64_t CAVM_RFOEX_RX_FD_RESETX(unsigned long a, unsigned long b) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_RFOEX_RX_FD_RESETX(unsigned long a, unsigned long b)
+{
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=1) && (b<=15)))
+        return 0x87e043d01300ll + 0x80000ll * ((a) & 0x1) + 8ll * ((b) & 0xf);
+    __cavm_csr_fatal("RFOEX_RX_FD_RESETX", 2, a, b, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_RFOEX_RX_FD_RESETX(a,b) cavm_rfoex_rx_fd_resetx_t
+#define bustype_CAVM_RFOEX_RX_FD_RESETX(a,b) CSR_TYPE_RSL
+#define basename_CAVM_RFOEX_RX_FD_RESETX(a,b) "RFOEX_RX_FD_RESETX"
+#define busnum_CAVM_RFOEX_RX_FD_RESETX(a,b) (a)
+#define arguments_CAVM_RFOEX_RX_FD_RESETX(a,b) (a),(b),-1,-1
 
 /**
  * Register (RSL) rfoe#_rx_fd_sos_drop_stat
@@ -2838,7 +4527,9 @@ static inline uint64_t CAVM_RFOEX_RX_FD_SOS_DROP_STAT(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=1))
         return 0x87e043d01d30ll + 0x80000ll * ((a) & 0x1);
-    __cavm_csr_fatal("RFOEX_RX_FD_SOS_DROP_STAT", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=1))
+        return 0x87e043d01d30ll + 0x80000ll * ((a) & 0x1);
+    __cavm_csr_fatal("RFOEX_RX_FD_SOS_DROP_STAT", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RFOEX_RX_FD_SOS_DROP_STAT(a) cavm_rfoex_rx_fd_sos_drop_stat_t
@@ -2878,7 +4569,9 @@ static inline uint64_t CAVM_RFOEX_RX_FD_STATEX(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=1) && (b<=1)))
         return 0x87e043d01760ll + 0x80000ll * ((a) & 0x1) + 8ll * ((b) & 0x1);
-    __cavm_csr_fatal("RFOEX_RX_FD_STATEX", 2, a, b, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=1) && (b<=31)))
+        return 0x87e043d01200ll + 0x80000ll * ((a) & 0x1) + 8ll * ((b) & 0x1f);
+    __cavm_csr_fatal("RFOEX_RX_FD_STATEX", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RFOEX_RX_FD_STATEX(a,b) cavm_rfoex_rx_fd_statex_t
@@ -2915,7 +4608,9 @@ static inline uint64_t CAVM_RFOEX_RX_FT_ENABLE_DROP_STAT(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=1))
         return 0x87e043d01d28ll + 0x80000ll * ((a) & 0x1);
-    __cavm_csr_fatal("RFOEX_RX_FT_ENABLE_DROP_STAT", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=1))
+        return 0x87e043d01d28ll + 0x80000ll * ((a) & 0x1);
+    __cavm_csr_fatal("RFOEX_RX_FT_ENABLE_DROP_STAT", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RFOEX_RX_FT_ENABLE_DROP_STAT(a) cavm_rfoex_rx_ft_enable_drop_stat_t
@@ -2925,25 +4620,155 @@ static inline uint64_t CAVM_RFOEX_RX_FT_ENABLE_DROP_STAT(unsigned long a)
 #define arguments_CAVM_RFOEX_RX_FT_ENABLE_DROP_STAT(a) (a),-1,-1,-1
 
 /**
- * Register (RSL) rfoe#_rx_ind_ft#_cfg
+ * Register (RSL) rfoe#_rx_ind_ecpri_ft_cfg
  *
  * RFOE RX Indirect Flow Table Configuration Register
- * Flow table configuration for LMAC {b}.
+ * Flow table configuration for eCPRI msg_type 0 packets.
  *
- * This register indirectly accesses a flow configuration table with 256
+ * This register indirectly accesses a flow configuration table with 1024
  * entries.
  *
  * Reads and writes to this register access the table entry specified by
  * RFOE()_RX_INDIRECT_INDEX[INDEX].
  *
- * Incoming packets from LMAC {b} index the flow table using either the flow
+ * Incoming eCPRI msg_type=0  packets index the flow table using a flow_id=hash(PC_ID).
+ *
+ * Internal:
+ * Maps to words 1024..2047 of ft_cfg_mem
+ */
+union cavm_rfoex_rx_ind_ecpri_ft_cfg
+{
+    uint64_t u;
+    struct cavm_rfoex_rx_ind_ecpri_ft_cfg_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_25_63        : 39;
+        uint64_t enable                : 1;  /**< [ 24: 24](R/W) Enable this flow. Drop packets when clear. */
+        uint64_t reserved_22_23        : 2;
+        uint64_t mbt_idx               : 10; /**< [ 21: 12](R/W) Pointer to RFOE()_RX_IND_MBT_CFG, RFOE()_RX_IND_MBT_ADDR for DMA write buffer configurations. */
+        uint64_t reserved_10_11        : 2;
+        uint64_t flow_idx              : 10; /**< [  9:  0](R/W) Pointer to RFOE()_RX_IND_JDT memories for job descriptor and flow configuration. */
+#else /* Word 0 - Little Endian */
+        uint64_t flow_idx              : 10; /**< [  9:  0](R/W) Pointer to RFOE()_RX_IND_JDT memories for job descriptor and flow configuration. */
+        uint64_t reserved_10_11        : 2;
+        uint64_t mbt_idx               : 10; /**< [ 21: 12](R/W) Pointer to RFOE()_RX_IND_MBT_CFG, RFOE()_RX_IND_MBT_ADDR for DMA write buffer configurations. */
+        uint64_t reserved_22_23        : 2;
+        uint64_t enable                : 1;  /**< [ 24: 24](R/W) Enable this flow. Drop packets when clear. */
+        uint64_t reserved_25_63        : 39;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rfoex_rx_ind_ecpri_ft_cfg_s cn; */
+};
+typedef union cavm_rfoex_rx_ind_ecpri_ft_cfg cavm_rfoex_rx_ind_ecpri_ft_cfg_t;
+
+static inline uint64_t CAVM_RFOEX_RX_IND_ECPRI_FT_CFG(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_RFOEX_RX_IND_ECPRI_FT_CFG(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=1))
+        return 0x87e043d01cc0ll + 0x80000ll * ((a) & 0x1);
+    __cavm_csr_fatal("RFOEX_RX_IND_ECPRI_FT_CFG", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_RFOEX_RX_IND_ECPRI_FT_CFG(a) cavm_rfoex_rx_ind_ecpri_ft_cfg_t
+#define bustype_CAVM_RFOEX_RX_IND_ECPRI_FT_CFG(a) CSR_TYPE_RSL
+#define basename_CAVM_RFOEX_RX_IND_ECPRI_FT_CFG(a) "RFOEX_RX_IND_ECPRI_FT_CFG"
+#define busnum_CAVM_RFOEX_RX_IND_ECPRI_FT_CFG(a) (a)
+#define arguments_CAVM_RFOEX_RX_IND_ECPRI_FT_CFG(a) (a),-1,-1,-1
+
+/**
+ * Register (RSL) rfoe#_rx_ind_ecpri_hash_cfg
+ *
+ * RFOE RX Indirect eCPRI Hash Configuration Register
+ * Configures hash for eCPRI msg_type=0. Result of hash is flow_id that is used to
+ * index into RFOE()_RX_IND_ECPRI_FT_CFG.
+ * This register indirectly accesses the eCPRI Hash Configuration Table with 16
+ * entries, one for each bit in PC_ID. The [XOR_CFG] values are XOR'd to map
+ * the incoming PC_ID to a FLOW_ID, when
+ * RFOE()_RX_ECPRI_CFG()[PCID_FLOWID_MODE] =
+ * RFOE_ECPRI_PCID_FLOWID_MODE_E::HASH.
+ *
+ * On reset, the hash configuration is reset to
+ * \<pre\>
+ *   hash_cfg(0)  = 0x009
+ *   hash_cfg(1)  = 0x012
+ *   hash_cfg(2)  = 0x024
+ *   hash_cfg(3)  = 0x048
+ *   hash_cfg(4)  = 0x090
+ *   hash_cfg(5)  = 0x120
+ *   hash_cfg(6)  = 0x240
+ *   hash_cfg(7)  = 0x089
+ *   hash_cfg(8)  = 0x112
+ *   hash_cfg(9)  = 0x224
+ *   hash_cfg(10) = 0x041
+ *   hash_cfg(11) = 0x082
+ *   hash_cfg(12) = 0x104
+ *   hash_cfg(13) = 0x208
+ *   hash_cfg(14) = 0x019
+ *   hash_cfg(15) = 0x032
+ * \</pre\>
+ */
+union cavm_rfoex_rx_ind_ecpri_hash_cfg
+{
+    uint64_t u;
+    struct cavm_rfoex_rx_ind_ecpri_hash_cfg_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_10_63        : 54;
+        uint64_t xor_cfg               : 10; /**< [  9:  0](R/W) XOR value to use for hash function for each bit of PC_ID. */
+#else /* Word 0 - Little Endian */
+        uint64_t xor_cfg               : 10; /**< [  9:  0](R/W) XOR value to use for hash function for each bit of PC_ID. */
+        uint64_t reserved_10_63        : 54;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rfoex_rx_ind_ecpri_hash_cfg_s cn; */
+};
+typedef union cavm_rfoex_rx_ind_ecpri_hash_cfg cavm_rfoex_rx_ind_ecpri_hash_cfg_t;
+
+static inline uint64_t CAVM_RFOEX_RX_IND_ECPRI_HASH_CFG(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_RFOEX_RX_IND_ECPRI_HASH_CFG(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=1))
+        return 0x87e043d01ce0ll + 0x80000ll * ((a) & 0x1);
+    __cavm_csr_fatal("RFOEX_RX_IND_ECPRI_HASH_CFG", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_RFOEX_RX_IND_ECPRI_HASH_CFG(a) cavm_rfoex_rx_ind_ecpri_hash_cfg_t
+#define bustype_CAVM_RFOEX_RX_IND_ECPRI_HASH_CFG(a) CSR_TYPE_RSL
+#define basename_CAVM_RFOEX_RX_IND_ECPRI_HASH_CFG(a) "RFOEX_RX_IND_ECPRI_HASH_CFG"
+#define busnum_CAVM_RFOEX_RX_IND_ECPRI_HASH_CFG(a) (a)
+#define arguments_CAVM_RFOEX_RX_IND_ECPRI_HASH_CFG(a) (a),-1,-1,-1
+
+/**
+ * Register (RSL) rfoe#_rx_ind_ft#_cfg
+ *
+ * RFOE RX Indirect Flow Table Configuration Register
+ * Flow table configuration for non-eCPRI packets.  LMAC {b}.
+ *
+ * This register indirectly accesses a flow configuration table with 1024
+ * entries.
+ *
+ * Reads and writes to this register access the table entry specified by
+ * RFOE()_RX_INDIRECT_INDEX[INDEX].
+ *
+ * Incoming non-eCPRI packets from LMAC {b} index the flow table using either the flow
  * ID extracted from an RoE header, or using
  * RFOE()_RX_DIRECTION_CTL()[FLOWID].
+ *
+ * Internal:
+ * Maps to words 0..1023 of ft_cfg_mem
  */
 union cavm_rfoex_rx_ind_ftx_cfg
 {
     uint64_t u;
     struct cavm_rfoex_rx_ind_ftx_cfg_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_0_63         : 64;
+#else /* Word 0 - Little Endian */
+        uint64_t reserved_0_63         : 64;
+#endif /* Word 0 - End */
+    } s;
+    struct cavm_rfoex_rx_ind_ftx_cfg_cnf95xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_15_63        : 49;
@@ -2956,8 +4781,25 @@ union cavm_rfoex_rx_ind_ftx_cfg
         uint64_t enable                : 1;  /**< [ 14: 14](R/W) Enable this flow. Drop packets when clear. */
         uint64_t reserved_15_63        : 49;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_rfoex_rx_ind_ftx_cfg_s cn; */
+    } cnf95xx;
+    struct cavm_rfoex_rx_ind_ftx_cfg_loki
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_25_63        : 39;
+        uint64_t enable                : 1;  /**< [ 24: 24](R/W) Enable this flow. Drop packets when clear. */
+        uint64_t reserved_22_23        : 2;
+        uint64_t mbt_idx               : 10; /**< [ 21: 12](R/W) Pointer to RFOE()_RX_IND_MBT_CFG, RFOE()_RX_IND_MBT_ADDR for DMA write buffer configurations. */
+        uint64_t reserved_10_11        : 2;
+        uint64_t flow_idx              : 10; /**< [  9:  0](R/W) Pointer to RFOE()_RX_IND_JDT memories for job descriptor and flow configuration. */
+#else /* Word 0 - Little Endian */
+        uint64_t flow_idx              : 10; /**< [  9:  0](R/W) Pointer to RFOE()_RX_IND_JDT memories for job descriptor and flow configuration. */
+        uint64_t reserved_10_11        : 2;
+        uint64_t mbt_idx               : 10; /**< [ 21: 12](R/W) Pointer to RFOE()_RX_IND_MBT_CFG, RFOE()_RX_IND_MBT_ADDR for DMA write buffer configurations. */
+        uint64_t reserved_22_23        : 2;
+        uint64_t enable                : 1;  /**< [ 24: 24](R/W) Enable this flow. Drop packets when clear. */
+        uint64_t reserved_25_63        : 39;
+#endif /* Word 0 - End */
+    } loki;
 };
 typedef union cavm_rfoex_rx_ind_ftx_cfg cavm_rfoex_rx_ind_ftx_cfg_t;
 
@@ -2966,7 +4808,9 @@ static inline uint64_t CAVM_RFOEX_RX_IND_FTX_CFG(unsigned long a, unsigned long 
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=1) && (b<=3)))
         return 0x87e043d01c00ll + 0x80000ll * ((a) & 0x1) + 8ll * ((b) & 0x3);
-    __cavm_csr_fatal("RFOEX_RX_IND_FTX_CFG", 2, a, b, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=1) && (b<=3)))
+        return 0x87e043d01c00ll + 0x80000ll * ((a) & 0x1) + 8ll * ((b) & 0x3);
+    __cavm_csr_fatal("RFOEX_RX_IND_FTX_CFG", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RFOEX_RX_IND_FTX_CFG(a,b) cavm_rfoex_rx_ind_ftx_cfg_t
@@ -2983,13 +4827,16 @@ static inline uint64_t CAVM_RFOEX_RX_IND_FTX_CFG(unsigned long a, unsigned long 
  * the format and location of job descriptors produced for incoming packets,
  * and controls some parameters of how packets are written to memory.
  *
- * This register indirectly accesses a table of 256 entries.
+ * This register indirectly accesses a table of 1040 entries.
  *
  * Reads and writes to this register access the table entry specified by
  * RFOE()_RX_INDIRECT_INDEX[INDEX].
  *
- * Incoming packets select an JDT entry based on
- * RFOE()_RX_IND_FT()_CFG[FLOW_IDX].
+ * Incoming packets select an JDT entry based as follows:
+ * *eCPRI msg_type==0 - index=RFOE()_RX_IND_FT()_CFG[FLOW_IDX].
+ * *eCPRI msg_type!=0 - index=1024+msg_type.
+ * *eCPRI msg_type==1..15 - index=1023+msg_type.
+ * *Other             - index=RFOE()_RX_IND_FT()_CFG[FLOW_IDX].
  */
 union cavm_rfoex_rx_ind_jdt_cfg0
 {
@@ -3037,6 +4884,132 @@ union cavm_rfoex_rx_ind_jdt_cfg0
                                                                  * ([JD_RD_OFFSET]*8)+RFOE()_RX_IND_JDT_PTR[PTR] must be 128-bit aligned. */
         uint64_t jd_size               : 4;  /**< [ 27: 24](R/W) Size of each job descriptor, in units of 8 bytes. Must be even (i.e.,
                                                                  total size must be a multiple of 16 bytes). */
+        uint64_t reserved_21_23        : 3;
+        uint64_t end_bswap_enable      : 1;  /**< [ 20: 20](R/W) For all byte-mode data,endianess byte swap enable . Does not change PSW, Logger, JDW writes.
+                                                                 0 = Don't do endianess swap DMA write of packet data.
+                                                                 1 = Do the byte swap for byte DMA data.  byte0-byte15, byte1-byte14, etc. */
+        uint64_t sample_width          : 8;  /**< [ 19: 12](R/W) For [SAMPLE_MODE]=1, defines width in bits of I an Q samples in the packet
+                                                                 data. */
+        uint64_t sample_mode           : 1;  /**< [ 11: 11](R/W) Interpret RoE samples. When set, interpret the data following rbMap
+                                                                 bytes as I,Q samples, and expand each [SAMPLE_WIDTH] I/Q sample to a 16-bit sample. */
+        uint64_t sample_mode_width_option : 1;/**< [ 10: 10](R/W) I/Q sample format. When [SAMPLE_MODE]=1, this determines how samples
+                                                                 are expanded to 16 bits.
+                                                                 0 = Sign-extend left.
+                                                                 1 = Zero pad right. */
+        uint64_t transparent_mode      : 1;  /**< [  9:  9](R/W) Transparently write packet data to memory with no transformations.
+                                                                 Overrides settings for [HEADER_DMA_MODE], [RBMAP_BYTES], and
+                                                                 [SAMPLE_MODE]. RoE 0xFC subtype are never transparent and ignores this field. */
+        uint64_t header_dma_mode       : 1;  /**< [  8:  8](R/W) Write header bytes out to memory if [HEADER_DMA_MODE] = 1.  Ignored when [TRANSPARENT_MODE] = 1. */
+        uint64_t rbmap_bytes           : 8;  /**< [  7:  0](R/W) Number of rbMap bytes following the RoE header.
+                                                                 For ROE subtype == 0xFD, rbmap_bytes are only in first segment. SOS segment only.
+                                                                 *Transparent mode: ignored.  Transparent packets do not have rbMap.
+                                                                 *RoE 0xFC subtype: ignored.  0xFC packets do not have rbMap. */
+#else /* Word 0 - Little Endian */
+        uint64_t rbmap_bytes           : 8;  /**< [  7:  0](R/W) Number of rbMap bytes following the RoE header.
+                                                                 For ROE subtype == 0xFD, rbmap_bytes are only in first segment. SOS segment only.
+                                                                 *Transparent mode: ignored.  Transparent packets do not have rbMap.
+                                                                 *RoE 0xFC subtype: ignored.  0xFC packets do not have rbMap. */
+        uint64_t header_dma_mode       : 1;  /**< [  8:  8](R/W) Write header bytes out to memory if [HEADER_DMA_MODE] = 1.  Ignored when [TRANSPARENT_MODE] = 1. */
+        uint64_t transparent_mode      : 1;  /**< [  9:  9](R/W) Transparently write packet data to memory with no transformations.
+                                                                 Overrides settings for [HEADER_DMA_MODE], [RBMAP_BYTES], and
+                                                                 [SAMPLE_MODE]. RoE 0xFC subtype are never transparent and ignores this field. */
+        uint64_t sample_mode_width_option : 1;/**< [ 10: 10](R/W) I/Q sample format. When [SAMPLE_MODE]=1, this determines how samples
+                                                                 are expanded to 16 bits.
+                                                                 0 = Sign-extend left.
+                                                                 1 = Zero pad right. */
+        uint64_t sample_mode           : 1;  /**< [ 11: 11](R/W) Interpret RoE samples. When set, interpret the data following rbMap
+                                                                 bytes as I,Q samples, and expand each [SAMPLE_WIDTH] I/Q sample to a 16-bit sample. */
+        uint64_t sample_width          : 8;  /**< [ 19: 12](R/W) For [SAMPLE_MODE]=1, defines width in bits of I an Q samples in the packet
+                                                                 data. */
+        uint64_t end_bswap_enable      : 1;  /**< [ 20: 20](R/W) For all byte-mode data,endianess byte swap enable . Does not change PSW, Logger, JDW writes.
+                                                                 0 = Don't do endianess swap DMA write of packet data.
+                                                                 1 = Do the byte swap for byte DMA data.  byte0-byte15, byte1-byte14, etc. */
+        uint64_t reserved_21_23        : 3;
+        uint64_t jd_size               : 4;  /**< [ 27: 24](R/W) Size of each job descriptor, in units of 8 bytes. Must be even (i.e.,
+                                                                 total size must be a multiple of 16 bytes). */
+        uint64_t jd_rd_offset          : 4;  /**< [ 31: 28](R/W) Location of read DMA descriptor within each job descriptor, in units
+                                                                 of 8 bytes.
+                                                                 * Must be less than [JD_SIZE]-1.
+                                                                 * ([JD_RD_OFFSET]*8)+RFOE()_RX_IND_JDT_PTR[PTR] must be 128-bit aligned. */
+        uint64_t num_jd                : 16; /**< [ 47: 32](R/W) Number of job descriptors in this circular buffer. Total size of the
+                                                                 buffer is [NUM_JD]*[JD_SIZE]*8 bytes. Must be greater than 0.
+
+                                                                 Internal:
+                                                                 Hardware interprets [NUM_JD]=0 the same as [NUM_JD]=1.  [NUM_JD]=0 is nonsensical. */
+        uint64_t jca_enable            : 1;  /**< [ 48: 48](R/W) Enable job completion action. When set, RFOE sends a JCA message on
+                                                                 completion of each packet, or on the last segment for 0xFD subtype
+                                                                 packets. */
+        uint64_t pkt_status_write      : 1;  /**< [ 49: 49](R/W) When set, RFOE will write an RFOE_PACKET_STATUS_S header at the start
+                                                                 of each buffer. */
+        uint64_t jdw_enable            : 1;  /**< [ 50: 50](R/W) Enable JDW updates of job descriptor in memory.
+                                                                 0 = Do not update job descriptor in memory.
+                                                                 1 = Update job descriptor in memory.
+                                                                 Used for standard ROE & 0xFD subtype ROE packets. Ignored by
+                                                                 ROE subtype 0xFC. 0xFC subtype never writes the JD. */
+        uint64_t reserved_51           : 1;
+        uint64_t pkt_offset            : 3;  /**< [ 54: 52](R/W) Packet offset in units of 128-bits. DMA operation starts at START_ADDDR + [PKT_OFFSET]*16 bytes.
+                                                                 Must be \<= 4. If [PKT_STATUS_WRITE]=1, must be \> 0 or the packet
+                                                                 status write will over-write the packet data.
+
+                                                                 Internal:
+                                                                 Hardware should support values 5..7, but can't guarantee behavior. */
+        uint64_t reserved_55           : 1;
+        uint64_t dswap                 : 3;  /**< [ 58: 56](R/W) The byte swap mode for JDW to LLC/DRAM. JDW to BPHY SMEM ignores this field.
+                                                                 Enumerated by MHBW_PNB_DSWAP_E. */
+        uint64_t reserved_59           : 1;
+        uint64_t cmd_type              : 2;  /**< [ 61: 60](R/W) Deprecated.  Hardware does not use.
+                                                                 Internal:
+                                                                 Specifies the CMD_TYPE used by the JDW.  Used for the GAA write field dmat.
+                                                                 Enumerated by MHBW_PNB_WR_CMD_E. */
+        uint64_t reserved_62           : 1;
+        uint64_t target_mem            : 1;  /**< [ 63: 63](R/W) Specifies the target memory for the address for the DMA's job descriptor write (JDW):
+                                                                  0 = SMEM.
+                                                                  1 = LLC/DRAM. */
+#endif /* Word 0 - End */
+    } s;
+    struct cavm_rfoex_rx_ind_jdt_cfg0_cnf95xx
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t target_mem            : 1;  /**< [ 63: 63](R/W) Specifies the target memory for the address for the DMA's job descriptor write (JDW):
+                                                                  0 = SMEM.
+                                                                  1 = LLC/DRAM. */
+        uint64_t reserved_62           : 1;
+        uint64_t cmd_type              : 2;  /**< [ 61: 60](R/W) Deprecated.  Hardware does not use.
+                                                                 Internal:
+                                                                 Specifies the CMD_TYPE used by the JDW.  Used for the GAA write field dmat.
+                                                                 Enumerated by MHBW_PNB_WR_CMD_E. */
+        uint64_t reserved_59           : 1;
+        uint64_t dswap                 : 3;  /**< [ 58: 56](R/W) The byte swap mode for JDW to LLC/DRAM. JDW to BPHY SMEM ignores this field.
+                                                                 Enumerated by MHBW_PNB_DSWAP_E. */
+        uint64_t reserved_55           : 1;
+        uint64_t pkt_offset            : 3;  /**< [ 54: 52](R/W) Packet offset in units of 128-bits. DMA operation starts at START_ADDDR + [PKT_OFFSET]*16 bytes.
+                                                                 Must be \<= 4. If [PKT_STATUS_WRITE]=1, must be \> 0 or the packet
+                                                                 status write will over-write the packet data.
+
+                                                                 Internal:
+                                                                 Hardware should support values 5..7, but can't guarantee behavior. */
+        uint64_t reserved_51           : 1;
+        uint64_t jdw_enable            : 1;  /**< [ 50: 50](R/W) Enable JDW updates of job descriptor in memory.
+                                                                 0 = Do not update job descriptor in memory.
+                                                                 1 = Update job descriptor in memory.
+                                                                 Used for standard ROE & 0xFD subtype ROE packets. Ignored by
+                                                                 ROE subtype 0xFC. 0xFC subtype never writes the JD. */
+        uint64_t pkt_status_write      : 1;  /**< [ 49: 49](R/W) When set, RFOE will write an RFOE_PACKET_STATUS_S header at the start
+                                                                 of each buffer. */
+        uint64_t jca_enable            : 1;  /**< [ 48: 48](R/W) Enable job completion action. When set, RFOE sends a JCA message on
+                                                                 completion of each packet, or on the last segment for 0xFD subtype
+                                                                 packets. */
+        uint64_t num_jd                : 16; /**< [ 47: 32](R/W) Number of job descriptors in this circular buffer. Total size of the
+                                                                 buffer is [NUM_JD]*[JD_SIZE]*8 bytes. Must be greater than 0.
+
+                                                                 Internal:
+                                                                 Hardware interprets [NUM_JD]=0 the same as [NUM_JD]=1.  [NUM_JD]=0 is nonsensical. */
+        uint64_t jd_rd_offset          : 4;  /**< [ 31: 28](R/W) Location of read DMA descriptor within each job descriptor, in units
+                                                                 of 8 bytes.
+                                                                 * Must be less than [JD_SIZE]-1.
+                                                                 * ([JD_RD_OFFSET]*8)+RFOE()_RX_IND_JDT_PTR[PTR] must be 128-bit aligned. */
+        uint64_t jd_size               : 4;  /**< [ 27: 24](R/W) Size of each job descriptor, in units of 8 bytes. Must be even (i.e.,
+                                                                 total size must be a multiple of 16 bytes). */
         uint64_t reserved_20_23        : 4;
         uint64_t sample_width          : 8;  /**< [ 19: 12](R/W) For [SAMPLE_MODE]=1, defines width in bits of I an Q samples in the packet
                                                                  data. */
@@ -3113,8 +5086,133 @@ union cavm_rfoex_rx_ind_jdt_cfg0
                                                                   0 = SMEM.
                                                                   1 = LLC/DRAM. */
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_rfoex_rx_ind_jdt_cfg0_s cn; */
+    } cnf95xx;
+    struct cavm_rfoex_rx_ind_jdt_cfg0_loki
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t target_mem            : 1;  /**< [ 63: 63](R/W) Specifies the target memory for the address for the DMA's job descriptor write (JDW):
+                                                                  0 = SMEM.
+                                                                  1 = LLC/DRAM. */
+        uint64_t reserved_62           : 1;
+        uint64_t cmd_type              : 2;  /**< [ 61: 60](R/W) Deprecated.  Hardware does not use.
+                                                                 Internal:
+                                                                 Specifies the CMD_TYPE used by the JDW.  Used for the GAA write field dmat.
+                                                                 Enumerated by MHBW_PNB_WR_CMD_E. */
+        uint64_t reserved_59           : 1;
+        uint64_t dswap                 : 3;  /**< [ 58: 56](R/W) The byte swap mode for JDW to LLC/DRAM. JDW to BPHY SMEM ignores this field.
+                                                                 Enumerated by MHBW_PNB_DSWAP_E. */
+        uint64_t reserved_55           : 1;
+        uint64_t pkt_offset            : 3;  /**< [ 54: 52](R/W) Packet offset in units of 128-bits. DMA operation starts at START_ADDDR + [PKT_OFFSET]*16 bytes.
+                                                                 Must be \<= 4. If [PKT_STATUS_WRITE]=1, must be \> 1 or the packet
+                                                                 status write will over-write the packet data.
+
+                                                                 Internal:
+                                                                 Hardware should support values 5..7, but can't guarantee behavior. */
+        uint64_t reserved_51           : 1;
+        uint64_t jdw_enable            : 1;  /**< [ 50: 50](R/W) Enable JDW updates of job descriptor in memory.
+                                                                 0 = Do not update job descriptor in memory.
+                                                                 1 = Update job descriptor in memory.
+                                                                 Used for standard ROE & 0xFD subtype ROE packets. Ignored by
+                                                                 ROE subtype 0xFC. 0xFC subtype never writes the JD. */
+        uint64_t pkt_status_write      : 1;  /**< [ 49: 49](R/W) When set, RFOE will write an RFOE_PACKET_STATUS_S header at the start
+                                                                 of each buffer. */
+        uint64_t jca_enable            : 1;  /**< [ 48: 48](R/W) Enable job completion action. When set, RFOE sends a JCA message on
+                                                                 completion of each packet, or on the last segment for 0xFD subtype
+                                                                 packets. */
+        uint64_t num_jd                : 16; /**< [ 47: 32](R/W) Number of job descriptors in this circular buffer. Total size of the
+                                                                 buffer is [NUM_JD]*[JD_SIZE]*8 bytes. Must be greater than 0.
+
+                                                                 Internal:
+                                                                 Hardware interprets [NUM_JD]=0 the same as [NUM_JD]=1.  [NUM_JD]=0 is nonsensical. */
+        uint64_t jd_rd_offset          : 4;  /**< [ 31: 28](R/W) Location of read DMA descriptor within each job descriptor, in units
+                                                                 of 8 bytes.
+                                                                 * Must be less than [JD_SIZE]-1.
+                                                                 * ([JD_RD_OFFSET]*8)+RFOE()_RX_IND_JDT_PTR[PTR] must be 128-bit aligned. */
+        uint64_t jd_size               : 4;  /**< [ 27: 24](R/W) Size of each job descriptor, in units of 8 bytes. Must be even (i.e.,
+                                                                 total size must be a multiple of 16 bytes). [JD_SIZE] must be greater than 0. */
+        uint64_t reserved_21_23        : 3;
+        uint64_t end_bswap_enable      : 1;  /**< [ 20: 20](R/W) For all byte-mode data,endianess byte swap enable . Does not change PSW, Logger, JDW writes.
+                                                                 0 = Don't do endianess swap DMA write of packet data.
+                                                                 1 = Do the byte swap for byte DMA data.  byte0-byte15, byte1-byte14, etc. */
+        uint64_t sample_width          : 8;  /**< [ 19: 12](R/W) For [SAMPLE_MODE]=1, defines width in bits of I an Q samples in the packet
+                                                                 data. */
+        uint64_t sample_mode           : 1;  /**< [ 11: 11](R/W) Interpret RoE samples. When set, interpret the data following rbMap
+                                                                 bytes as I,Q samples, and expand each [SAMPLE_WIDTH] I/Q sample to a 16-bit sample. */
+        uint64_t sample_mode_width_option : 1;/**< [ 10: 10](R/W) I/Q sample format. When [SAMPLE_MODE]=1, this determines how samples
+                                                                 are expanded to 16 bits.
+                                                                 0 = Sign-extend left.
+                                                                 1 = Zero pad right. */
+        uint64_t transparent_mode      : 1;  /**< [  9:  9](R/W) Transparently write packet data to memory with no transformations.
+                                                                 Overrides settings for [HEADER_DMA_MODE], [RBMAP_BYTES], and
+                                                                 [SAMPLE_MODE]. RoE 0xFC subtype are never transparent and ignores this field. */
+        uint64_t header_dma_mode       : 1;  /**< [  8:  8](R/W) Write header bytes out to memory if [HEADER_DMA_MODE] = 1.  Ignored when [TRANSPARENT_MODE] = 1. */
+        uint64_t rbmap_bytes           : 8;  /**< [  7:  0](R/W) Number of rbMap bytes following the RoE header.
+                                                                 *ROE subtype == 0xFD: [RBMAP_BYTES] are only in first, SOS segment only.
+                                                                 *Transparent mode: ignored.  Transparent packets do not have rbMap.
+                                                                 *RoE 0xFC subtype: ignored.  0xFC packets do not have rbMap. */
+#else /* Word 0 - Little Endian */
+        uint64_t rbmap_bytes           : 8;  /**< [  7:  0](R/W) Number of rbMap bytes following the RoE header.
+                                                                 *ROE subtype == 0xFD: [RBMAP_BYTES] are only in first, SOS segment only.
+                                                                 *Transparent mode: ignored.  Transparent packets do not have rbMap.
+                                                                 *RoE 0xFC subtype: ignored.  0xFC packets do not have rbMap. */
+        uint64_t header_dma_mode       : 1;  /**< [  8:  8](R/W) Write header bytes out to memory if [HEADER_DMA_MODE] = 1.  Ignored when [TRANSPARENT_MODE] = 1. */
+        uint64_t transparent_mode      : 1;  /**< [  9:  9](R/W) Transparently write packet data to memory with no transformations.
+                                                                 Overrides settings for [HEADER_DMA_MODE], [RBMAP_BYTES], and
+                                                                 [SAMPLE_MODE]. RoE 0xFC subtype are never transparent and ignores this field. */
+        uint64_t sample_mode_width_option : 1;/**< [ 10: 10](R/W) I/Q sample format. When [SAMPLE_MODE]=1, this determines how samples
+                                                                 are expanded to 16 bits.
+                                                                 0 = Sign-extend left.
+                                                                 1 = Zero pad right. */
+        uint64_t sample_mode           : 1;  /**< [ 11: 11](R/W) Interpret RoE samples. When set, interpret the data following rbMap
+                                                                 bytes as I,Q samples, and expand each [SAMPLE_WIDTH] I/Q sample to a 16-bit sample. */
+        uint64_t sample_width          : 8;  /**< [ 19: 12](R/W) For [SAMPLE_MODE]=1, defines width in bits of I an Q samples in the packet
+                                                                 data. */
+        uint64_t end_bswap_enable      : 1;  /**< [ 20: 20](R/W) For all byte-mode data,endianess byte swap enable . Does not change PSW, Logger, JDW writes.
+                                                                 0 = Don't do endianess swap DMA write of packet data.
+                                                                 1 = Do the byte swap for byte DMA data.  byte0-byte15, byte1-byte14, etc. */
+        uint64_t reserved_21_23        : 3;
+        uint64_t jd_size               : 4;  /**< [ 27: 24](R/W) Size of each job descriptor, in units of 8 bytes. Must be even (i.e.,
+                                                                 total size must be a multiple of 16 bytes). [JD_SIZE] must be greater than 0. */
+        uint64_t jd_rd_offset          : 4;  /**< [ 31: 28](R/W) Location of read DMA descriptor within each job descriptor, in units
+                                                                 of 8 bytes.
+                                                                 * Must be less than [JD_SIZE]-1.
+                                                                 * ([JD_RD_OFFSET]*8)+RFOE()_RX_IND_JDT_PTR[PTR] must be 128-bit aligned. */
+        uint64_t num_jd                : 16; /**< [ 47: 32](R/W) Number of job descriptors in this circular buffer. Total size of the
+                                                                 buffer is [NUM_JD]*[JD_SIZE]*8 bytes. Must be greater than 0.
+
+                                                                 Internal:
+                                                                 Hardware interprets [NUM_JD]=0 the same as [NUM_JD]=1.  [NUM_JD]=0 is nonsensical. */
+        uint64_t jca_enable            : 1;  /**< [ 48: 48](R/W) Enable job completion action. When set, RFOE sends a JCA message on
+                                                                 completion of each packet, or on the last segment for 0xFD subtype
+                                                                 packets. */
+        uint64_t pkt_status_write      : 1;  /**< [ 49: 49](R/W) When set, RFOE will write an RFOE_PACKET_STATUS_S header at the start
+                                                                 of each buffer. */
+        uint64_t jdw_enable            : 1;  /**< [ 50: 50](R/W) Enable JDW updates of job descriptor in memory.
+                                                                 0 = Do not update job descriptor in memory.
+                                                                 1 = Update job descriptor in memory.
+                                                                 Used for standard ROE & 0xFD subtype ROE packets. Ignored by
+                                                                 ROE subtype 0xFC. 0xFC subtype never writes the JD. */
+        uint64_t reserved_51           : 1;
+        uint64_t pkt_offset            : 3;  /**< [ 54: 52](R/W) Packet offset in units of 128-bits. DMA operation starts at START_ADDDR + [PKT_OFFSET]*16 bytes.
+                                                                 Must be \<= 4. If [PKT_STATUS_WRITE]=1, must be \> 1 or the packet
+                                                                 status write will over-write the packet data.
+
+                                                                 Internal:
+                                                                 Hardware should support values 5..7, but can't guarantee behavior. */
+        uint64_t reserved_55           : 1;
+        uint64_t dswap                 : 3;  /**< [ 58: 56](R/W) The byte swap mode for JDW to LLC/DRAM. JDW to BPHY SMEM ignores this field.
+                                                                 Enumerated by MHBW_PNB_DSWAP_E. */
+        uint64_t reserved_59           : 1;
+        uint64_t cmd_type              : 2;  /**< [ 61: 60](R/W) Deprecated.  Hardware does not use.
+                                                                 Internal:
+                                                                 Specifies the CMD_TYPE used by the JDW.  Used for the GAA write field dmat.
+                                                                 Enumerated by MHBW_PNB_WR_CMD_E. */
+        uint64_t reserved_62           : 1;
+        uint64_t target_mem            : 1;  /**< [ 63: 63](R/W) Specifies the target memory for the address for the DMA's job descriptor write (JDW):
+                                                                  0 = SMEM.
+                                                                  1 = LLC/DRAM. */
+#endif /* Word 0 - End */
+    } loki;
 };
 typedef union cavm_rfoex_rx_ind_jdt_cfg0 cavm_rfoex_rx_ind_jdt_cfg0_t;
 
@@ -3123,7 +5221,9 @@ static inline uint64_t CAVM_RFOEX_RX_IND_JDT_CFG0(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=1))
         return 0x87e043d01c40ll + 0x80000ll * ((a) & 0x1);
-    __cavm_csr_fatal("RFOEX_RX_IND_JDT_CFG0", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=1))
+        return 0x87e043d01c40ll + 0x80000ll * ((a) & 0x1);
+    __cavm_csr_fatal("RFOEX_RX_IND_JDT_CFG0", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RFOEX_RX_IND_JDT_CFG0(a) cavm_rfoex_rx_ind_jdt_cfg0_t
@@ -3139,13 +5239,16 @@ static inline uint64_t CAVM_RFOEX_RX_IND_JDT_CFG0(unsigned long a)
  * Job descriptor table, additional configuration register one. This table determines
  * some details of IEE P1914.3/D3.0 sequence number tracking.
  *
- * This register indirectly accesses a table of 256 entries.
+ * This register indirectly accesses a table of 1040 entries.
  *
  * Reads and writes to this register access the table entry specified by
  * RFOE()_RX_INDIRECT_INDEX[INDEX].
  *
- * Incoming packets select an JDT entry based on
- * RFOE()_RX_IND_FT()_CFG[FLOW_IDX].
+ * Incoming packets select an JDT entry based as follows:
+ * *eCPRI msg_type==0 - index=RFOE()_RX_IND_FT()_CFG[FLOW_IDX].
+ * *eCPRI msg_type==1..15 - index=1023+msg_type.
+ * *eCPRI msg_type==16 - index=1023
+ * *Other             - index=RFOE()_RX_IND_FT()_CFG[FLOW_IDX].
  */
 union cavm_rfoex_rx_ind_jdt_cfg1
 {
@@ -3180,7 +5283,7 @@ union cavm_rfoex_rx_ind_jdt_cfg1
         uint64_t reserved_43_63        : 21;
 #endif /* Word 0 - End */
     } s;
-    struct cavm_rfoex_rx_ind_jdt_cfg1_cn
+    struct cavm_rfoex_rx_ind_jdt_cfg1_cnf95xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_57_63        : 7;
@@ -3217,7 +5320,45 @@ union cavm_rfoex_rx_ind_jdt_cfg1
         uint64_t reserved_52_56        : 5;
         uint64_t reserved_57_63        : 7;
 #endif /* Word 0 - End */
-    } cn;
+    } cnf95xx;
+    struct cavm_rfoex_rx_ind_jdt_cfg1_loki
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_57_63        : 7;
+        uint64_t reserved_52_56        : 5;
+        uint64_t reserved_49_51        : 3;
+        uint64_t reserved_44_48        : 5;
+        uint64_t reserved_43           : 1;
+        uint64_t pinc_prop             : 3;  /**< [ 42: 40](R/W) P1914D3 Table 4-3 seqNum configuration */
+        uint64_t reserved_39           : 1;
+        uint64_t qinc_prop             : 3;  /**< [ 38: 36](R/W) P1914D3 Table 4-3 seqNum configuration */
+        uint64_t reserved_33_35        : 3;
+        uint64_t order_info_type       : 1;  /**< [ 32: 32](R/W) RoE Order info type enumerated by RFOE_ORDER_INFO_TYPE_E.
+                                                                 0 = seqNum.
+                                                                 1 = timeStamp.
+                                                                 See IEEE P1914.3/D3. */
+        uint64_t reserved_29_31        : 3;
+        uint64_t accept_time_window    : 29; /**< [ 28:  0](R/W) Accept time window used when [ORDER_INFO_TYPE]=1.
+                                                                 See IEEE P1914.3/D3. */
+#else /* Word 0 - Little Endian */
+        uint64_t accept_time_window    : 29; /**< [ 28:  0](R/W) Accept time window used when [ORDER_INFO_TYPE]=1.
+                                                                 See IEEE P1914.3/D3. */
+        uint64_t reserved_29_31        : 3;
+        uint64_t order_info_type       : 1;  /**< [ 32: 32](R/W) RoE Order info type enumerated by RFOE_ORDER_INFO_TYPE_E.
+                                                                 0 = seqNum.
+                                                                 1 = timeStamp.
+                                                                 See IEEE P1914.3/D3. */
+        uint64_t reserved_33_35        : 3;
+        uint64_t qinc_prop             : 3;  /**< [ 38: 36](R/W) P1914D3 Table 4-3 seqNum configuration */
+        uint64_t reserved_39           : 1;
+        uint64_t pinc_prop             : 3;  /**< [ 42: 40](R/W) P1914D3 Table 4-3 seqNum configuration */
+        uint64_t reserved_43           : 1;
+        uint64_t reserved_44_48        : 5;
+        uint64_t reserved_49_51        : 3;
+        uint64_t reserved_52_56        : 5;
+        uint64_t reserved_57_63        : 7;
+#endif /* Word 0 - End */
+    } loki;
 };
 typedef union cavm_rfoex_rx_ind_jdt_cfg1 cavm_rfoex_rx_ind_jdt_cfg1_t;
 
@@ -3226,7 +5367,9 @@ static inline uint64_t CAVM_RFOEX_RX_IND_JDT_CFG1(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=1))
         return 0x87e043d01c48ll + 0x80000ll * ((a) & 0x1);
-    __cavm_csr_fatal("RFOEX_RX_IND_JDT_CFG1", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=1))
+        return 0x87e043d01c48ll + 0x80000ll * ((a) & 0x1);
+    __cavm_csr_fatal("RFOEX_RX_IND_JDT_CFG1", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RFOEX_RX_IND_JDT_CFG1(a) cavm_rfoex_rx_ind_jdt_cfg1_t
@@ -3260,13 +5403,16 @@ static inline uint64_t CAVM_RFOEX_RX_IND_JDT_CFG1(unsigned long a)
  *
  * For other OPCODE values, RFOE does no replacements for fields defined in the PSM CMD words.
  *
- * This register indirectly accesses a table of 256 entries.
+ * This register indirectly accesses a table of 1040 entries.
  *
  * Reads and writes to this register access the table entry specified by
  * RFOE()_RX_INDIRECT_INDEX[INDEX].
  *
- * Incoming packets select an JDT entry based on
- * RFOE()_RX_IND_FT()_CFG[FLOW_IDX].
+ * Incoming packets select an JDT entry based as follows:
+ * *eCPRI msg_type==0 - index=RFOE()_RX_IND_FT()_CFG[FLOW_IDX].
+ * *eCPRI msg_type==1..15 - index=1023+msg_type.
+ * *eCPRI msg_type==16 - index=1023
+ * *Other             - index=RFOE()_RX_IND_FT()_CFG[FLOW_IDX].
  */
 union cavm_rfoex_rx_ind_jdt_psm_w0
 {
@@ -3288,7 +5434,9 @@ static inline uint64_t CAVM_RFOEX_RX_IND_JDT_PSM_W0(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=1))
         return 0x87e043d01c58ll + 0x80000ll * ((a) & 0x1);
-    __cavm_csr_fatal("RFOEX_RX_IND_JDT_PSM_W0", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=1))
+        return 0x87e043d01c58ll + 0x80000ll * ((a) & 0x1);
+    __cavm_csr_fatal("RFOEX_RX_IND_JDT_PSM_W0", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RFOEX_RX_IND_JDT_PSM_W0(a) cavm_rfoex_rx_ind_jdt_psm_w0_t
@@ -3323,7 +5471,9 @@ static inline uint64_t CAVM_RFOEX_RX_IND_JDT_PSM_W1(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=1))
         return 0x87e043d01c60ll + 0x80000ll * ((a) & 0x1);
-    __cavm_csr_fatal("RFOEX_RX_IND_JDT_PSM_W1", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=1))
+        return 0x87e043d01c60ll + 0x80000ll * ((a) & 0x1);
+    __cavm_csr_fatal("RFOEX_RX_IND_JDT_PSM_W1", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RFOEX_RX_IND_JDT_PSM_W1(a) cavm_rfoex_rx_ind_jdt_psm_w1_t
@@ -3339,13 +5489,16 @@ static inline uint64_t CAVM_RFOEX_RX_IND_JDT_PSM_W1(unsigned long a)
  * Job descriptor table, job descriptor pointer register. This table
  * configures the location of job descriptors to submit when receiving packets.
  *
- * This register indirectly accesses a table of 256 entries.
+ * This register indirectly accesses a table of 1040 entries.
  *
  * Reads and writes to this register access the table entry specified by
  * RFOE()_RX_INDIRECT_INDEX[INDEX].
  *
- * Incoming packets select an JDT entry based on
- * RFOE()_RX_IND_FT()_CFG[FLOW_IDX].
+ * Incoming packets select an JDT entry based as follows:
+ * *eCPRI msg_type==0 - index=RFOE()_RX_IND_FT()_CFG[FLOW_IDX].
+ * *eCPRI msg_type==1..15 - index=1023+msg_type.
+ * *eCPRI msg_type==16 - index=1023
+ * *Other             - index=RFOE()_RX_IND_FT()_CFG[FLOW_IDX].
  */
 union cavm_rfoex_rx_ind_jdt_ptr
 {
@@ -3371,7 +5524,9 @@ static inline uint64_t CAVM_RFOEX_RX_IND_JDT_PTR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=1))
         return 0x87e043d01c50ll + 0x80000ll * ((a) & 0x1);
-    __cavm_csr_fatal("RFOEX_RX_IND_JDT_PTR", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=1))
+        return 0x87e043d01c50ll + 0x80000ll * ((a) & 0x1);
+    __cavm_csr_fatal("RFOEX_RX_IND_JDT_PTR", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RFOEX_RX_IND_JDT_PTR(a) cavm_rfoex_rx_ind_jdt_ptr_t
@@ -3384,10 +5539,10 @@ static inline uint64_t CAVM_RFOEX_RX_IND_JDT_PTR(unsigned long a)
  * Register (RSL) rfoe#_rx_ind_jdt_seqnum_p_cfg
  *
  * RFOE RX Indirect Job Descriptor Table SeqNum P-Counter Configuration Register
- * Job descriptor table, seqNum p-counter configuration. This table
+ * Job descriptor table, RoE seqNum p-counter configuration. This table
  * configures the IEEE P1914.3/D3.0 seqNum p-counter parameters.
  *
- * This register indirectly accesses a table of 256 entries.
+ * This register indirectly accesses a table of 1024 entries.
  *
  * Reads and writes to this register access the table entry specified by
  * RFOE()_RX_INDIRECT_INDEX[INDEX].
@@ -3427,7 +5582,9 @@ static inline uint64_t CAVM_RFOEX_RX_IND_JDT_SEQNUM_P_CFG(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=1))
         return 0x87e043d01c68ll + 0x80000ll * ((a) & 0x1);
-    __cavm_csr_fatal("RFOEX_RX_IND_JDT_SEQNUM_P_CFG", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=1))
+        return 0x87e043d01c68ll + 0x80000ll * ((a) & 0x1);
+    __cavm_csr_fatal("RFOEX_RX_IND_JDT_SEQNUM_P_CFG", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RFOEX_RX_IND_JDT_SEQNUM_P_CFG(a) cavm_rfoex_rx_ind_jdt_seqnum_p_cfg_t
@@ -3440,10 +5597,10 @@ static inline uint64_t CAVM_RFOEX_RX_IND_JDT_SEQNUM_P_CFG(unsigned long a)
  * Register (RSL) rfoe#_rx_ind_jdt_seqnum_q_cfg
  *
  * RFOE RX Indirect Job Descriptor Table SeqNum Q-Counter Configuration Register
- * Job descriptor table, seqNum p-counter configuration. This table
+ * Job descriptor table, RoE seqNum q-counter configuration. This table
  * configures the IEEE P1914.3/D3.0 seqNum q-counter parameters.
  *
- * This register indirectly accesses a table of 256 entries.
+ * This register indirectly accesses a table of 1024 entries.
  *
  * Reads and writes to this register access the table entry specified by
  * RFOE()_RX_INDIRECT_INDEX[INDEX].
@@ -3481,7 +5638,9 @@ static inline uint64_t CAVM_RFOEX_RX_IND_JDT_SEQNUM_Q_CFG(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=1))
         return 0x87e043d01c70ll + 0x80000ll * ((a) & 0x1);
-    __cavm_csr_fatal("RFOEX_RX_IND_JDT_SEQNUM_Q_CFG", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=1))
+        return 0x87e043d01c70ll + 0x80000ll * ((a) & 0x1);
+    __cavm_csr_fatal("RFOEX_RX_IND_JDT_SEQNUM_Q_CFG", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RFOEX_RX_IND_JDT_SEQNUM_Q_CFG(a) cavm_rfoex_rx_ind_jdt_seqnum_q_cfg_t
@@ -3494,11 +5653,13 @@ static inline uint64_t CAVM_RFOEX_RX_IND_JDT_SEQNUM_Q_CFG(unsigned long a)
  * Register (RSL) rfoe#_rx_ind_jdt_seqnum_state
  *
  * RFOE RX Job Descriptor Table SEQNUM STATE Register
- * Job descriptor table, seqNum state. This table
+ * Job descriptor table, RoE seqNum state. This table
  * reports the current values of the IEEE P1914.3/D3.0 sequence numbers for
  * this flow.
  *
- * This register indirectly accesses a table of 256 entries.
+ * Also used for eCPRI SEQ_ID checking.
+ *
+ * This register indirectly accesses a table of 1040 entries.
  *
  * Reads and writes to this register access the table entry specified by
  * RFOE()_RX_INDIRECT_INDEX[INDEX].
@@ -3540,7 +5701,9 @@ static inline uint64_t CAVM_RFOEX_RX_IND_JDT_SEQNUM_STATE(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=1))
         return 0x87e043d01c80ll + 0x80000ll * ((a) & 0x1);
-    __cavm_csr_fatal("RFOEX_RX_IND_JDT_SEQNUM_STATE", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=1))
+        return 0x87e043d01c80ll + 0x80000ll * ((a) & 0x1);
+    __cavm_csr_fatal("RFOEX_RX_IND_JDT_SEQNUM_STATE", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RFOEX_RX_IND_JDT_SEQNUM_STATE(a) cavm_rfoex_rx_ind_jdt_seqnum_state_t
@@ -3556,13 +5719,16 @@ static inline uint64_t CAVM_RFOEX_RX_IND_JDT_SEQNUM_STATE(unsigned long a)
  * Job descriptor table, next job descriptor state. This table tracks the
  * location of the next job descriptor for the given flow.
  *
- * This register indirectly accesses a table of 256 entries.
+ * This register indirectly accesses a table of 1040 entries.
  *
  * Reads and writes to this register access the table entry specified by
  * RFOE()_RX_INDIRECT_INDEX[INDEX].
  *
- * Incoming packets select an JDT entry based on
- * RFOE()_RX_IND_FT()_CFG[FLOW_IDX].
+ * Incoming packets select an JDT entry based as follows:
+ * *eCPRI msg_type==0 - index=RFOE()_RX_IND_FT()_CFG[FLOW_IDX].
+ * *eCPRI msg_type==1..15 - index=1023+msg_type.
+ * *eCPRI msg_type==16 - index=1023
+ * *Other             - index=RFOE()_RX_IND_FT()_CFG[FLOW_IDX].
  */
 union cavm_rfoex_rx_ind_jdt_state
 {
@@ -3586,7 +5752,9 @@ static inline uint64_t CAVM_RFOEX_RX_IND_JDT_STATE(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=1))
         return 0x87e043d01c78ll + 0x80000ll * ((a) & 0x1);
-    __cavm_csr_fatal("RFOEX_RX_IND_JDT_STATE", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=1))
+        return 0x87e043d01c78ll + 0x80000ll * ((a) & 0x1);
+    __cavm_csr_fatal("RFOEX_RX_IND_JDT_STATE", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RFOEX_RX_IND_JDT_STATE(a) cavm_rfoex_rx_ind_jdt_state_t
@@ -3601,12 +5769,16 @@ static inline uint64_t CAVM_RFOEX_RX_IND_JDT_STATE(unsigned long a)
  * RFOE RX Memory Buffer Table Address  Register
  * Memory buffer configuration table.
  *
- * This register indirectly accesses a table of 64 entries.
+ * This register indirectly accesses a table of 1040 entries.
  *
  * Reads and writes to this register access the table entry specified by
  * RFOE()_RX_INDIRECT_INDEX[INDEX].
  *
- * Incoming packets select an MBT entry based on RFOE()_RX_IND_FT()_CFG[MBT_IDX].
+ * Incoming packets select an MBT entry based as follows:
+ * *eCPRI msg_type==0 - index=RFOE()_RX_IND_FT()_CFG[MBT_IDX].
+ * *eCPRI msg_type==1..15 - index=1023+msg_type.
+ * *eCPRI msg_type==16 - index=1023
+ * *Other             - index=RFOE()_RX_IND_FT()_CFG[MBT_IDX].
  */
 union cavm_rfoex_rx_ind_mbt_addr
 {
@@ -3638,7 +5810,9 @@ static inline uint64_t CAVM_RFOEX_RX_IND_MBT_ADDR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=1))
         return 0x87e043d01c28ll + 0x80000ll * ((a) & 0x1);
-    __cavm_csr_fatal("RFOEX_RX_IND_MBT_ADDR", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=1))
+        return 0x87e043d01c28ll + 0x80000ll * ((a) & 0x1);
+    __cavm_csr_fatal("RFOEX_RX_IND_MBT_ADDR", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RFOEX_RX_IND_MBT_ADDR(a) cavm_rfoex_rx_ind_mbt_addr_t
@@ -3653,12 +5827,16 @@ static inline uint64_t CAVM_RFOEX_RX_IND_MBT_ADDR(unsigned long a)
  * RFOE RX Indirect Memory Buffer Table Configuration Register
  * Memory buffer configuration table.
  *
- * This register indirectly accesses a table of 64 entries.
+ * This register indirectly accesses a table of 1040 entries.
  *
  * Reads and writes to this register access the table entry specified by
  * RFOE()_RX_INDIRECT_INDEX[INDEX].
  *
- * Incoming packets select an MBT entry based on RFOE()_RX_IND_FT()_CFG[MBT_IDX].
+ * Incoming packets select an MBT entry based as follows:
+ * *eCPRI msg_type==0 - index=RFOE()_RX_IND_FT()_CFG[MBT_IDX].
+ * *eCPRI msg_type==1..15 - index=1023+msg_type.
+ * *eCPRI msg_type==16 - index=1023
+ * *Other             - index=RFOE()_RX_IND_FT()_CFG[MBT_IDX].
  */
 union cavm_rfoex_rx_ind_mbt_cfg
 {
@@ -3744,7 +5922,9 @@ static inline uint64_t CAVM_RFOEX_RX_IND_MBT_CFG(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=1))
         return 0x87e043d01c20ll + 0x80000ll * ((a) & 0x1);
-    __cavm_csr_fatal("RFOEX_RX_IND_MBT_CFG", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=1))
+        return 0x87e043d01c20ll + 0x80000ll * ((a) & 0x1);
+    __cavm_csr_fatal("RFOEX_RX_IND_MBT_CFG", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RFOEX_RX_IND_MBT_CFG(a) cavm_rfoex_rx_ind_mbt_cfg_t
@@ -3759,12 +5939,16 @@ static inline uint64_t CAVM_RFOEX_RX_IND_MBT_CFG(unsigned long a)
  * RFOE RX Indirect Memory Buffer Table Segmentation Register
  * Memory buffer table segmentation configuration and state.
  *
- * This register indirectly accesses a table of 64 entries.
+ * This register indirectly accesses a table of 1040 entries.
  *
  * Reads and writes to this register access the table entry specified by
  * RFOE()_RX_INDIRECT_INDEX[INDEX].
  *
- * Incoming packets select an MBT entry based on RFOE()_RX_IND_FT()_CFG[MBT_IDX].
+ * Incoming packets select an MBT entry based as follows:
+ * *eCPRI msg_type==0 - index=RFOE()_RX_IND_FT()_CFG[MBT_IDX].
+ * *eCPRI msg_type==1..15 - index=1023+msg_type.
+ * *eCPRI msg_type==16 - index=1023
+ * *Other             - index=RFOE()_RX_IND_FT()_CFG[MBT_IDX].
  */
 union cavm_rfoex_rx_ind_mbt_seg_state
 {
@@ -3810,7 +5994,9 @@ static inline uint64_t CAVM_RFOEX_RX_IND_MBT_SEG_STATE(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=1))
         return 0x87e043d01c30ll + 0x80000ll * ((a) & 0x1);
-    __cavm_csr_fatal("RFOEX_RX_IND_MBT_SEG_STATE", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=1))
+        return 0x87e043d01c30ll + 0x80000ll * ((a) & 0x1);
+    __cavm_csr_fatal("RFOEX_RX_IND_MBT_SEG_STATE", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RFOEX_RX_IND_MBT_SEG_STATE(a) cavm_rfoex_rx_ind_mbt_seg_state_t
@@ -3818,6 +6004,56 @@ static inline uint64_t CAVM_RFOEX_RX_IND_MBT_SEG_STATE(unsigned long a)
 #define basename_CAVM_RFOEX_RX_IND_MBT_SEG_STATE(a) "RFOEX_RX_IND_MBT_SEG_STATE"
 #define busnum_CAVM_RFOEX_RX_IND_MBT_SEG_STATE(a) (a)
 #define arguments_CAVM_RFOEX_RX_IND_MBT_SEG_STATE(a) (a),-1,-1,-1
+
+/**
+ * Register (RSL) rfoe#_rx_ind_vlan#_fwd
+ *
+ * RFOE RX Indirect VLAN Forward Configuration Register
+ * VLAN Forwarding Configuration for TPID VID.
+ * *RFOE(0..1)_RX_IND_VLAN(0)_FWD used for VLAN match of RFOE_RX_VLAN(0)_CFG.
+ * *RFOE(0..1)_RX_IND_VLAN(1)_FWD used for VLAN match of RFOE_RX_VLAN(1)_CFG.
+ *
+ * Reads and writes to this register access the table entry specified by
+ * RFOE()_RX_INDIRECT_INDEX[INDEX].
+ *
+ * Incoming VLAN tagged packets:
+ * *First select the word with service tag VID[11:6].
+ * *Within the word, select the forward bit with service tag VID[5:0].
+ * Forward:
+ * *1 means process packet.
+ * *0 means drop packet.
+ *
+ * Internal:
+ * (0) occupies lower 64 words of 128x64 memory. (1) occupies upper 64 words.
+ */
+union cavm_rfoex_rx_ind_vlanx_fwd
+{
+    uint64_t u;
+    struct cavm_rfoex_rx_ind_vlanx_fwd_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t fwd                   : 64; /**< [ 63:  0](R/W) When FWD[VID[5:0]]==0, drop packet. */
+#else /* Word 0 - Little Endian */
+        uint64_t fwd                   : 64; /**< [ 63:  0](R/W) When FWD[VID[5:0]]==0, drop packet. */
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rfoex_rx_ind_vlanx_fwd_s cn; */
+};
+typedef union cavm_rfoex_rx_ind_vlanx_fwd cavm_rfoex_rx_ind_vlanx_fwd_t;
+
+static inline uint64_t CAVM_RFOEX_RX_IND_VLANX_FWD(unsigned long a, unsigned long b) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_RFOEX_RX_IND_VLANX_FWD(unsigned long a, unsigned long b)
+{
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=1) && (b<=1)))
+        return 0x87e043d01cd0ll + 0x80000ll * ((a) & 0x1) + 8ll * ((b) & 0x1);
+    __cavm_csr_fatal("RFOEX_RX_IND_VLANX_FWD", 2, a, b, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_RFOEX_RX_IND_VLANX_FWD(a,b) cavm_rfoex_rx_ind_vlanx_fwd_t
+#define bustype_CAVM_RFOEX_RX_IND_VLANX_FWD(a,b) CSR_TYPE_RSL
+#define basename_CAVM_RFOEX_RX_IND_VLANX_FWD(a,b) "RFOEX_RX_IND_VLANX_FWD"
+#define busnum_CAVM_RFOEX_RX_IND_VLANX_FWD(a,b) (a)
+#define arguments_CAVM_RFOEX_RX_IND_VLANX_FWD(a,b) (a),(b),-1,-1
 
 /**
  * Register (RSL) rfoe#_rx_indirect_index
@@ -3847,7 +6083,9 @@ static inline uint64_t CAVM_RFOEX_RX_INDIRECT_INDEX(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=1))
         return 0x87e043d01bf8ll + 0x80000ll * ((a) & 0x1);
-    __cavm_csr_fatal("RFOEX_RX_INDIRECT_INDEX", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=1))
+        return 0x87e043d01bf8ll + 0x80000ll * ((a) & 0x1);
+    __cavm_csr_fatal("RFOEX_RX_INDIRECT_INDEX", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RFOEX_RX_INDIRECT_INDEX(a) cavm_rfoex_rx_indirect_index_t
@@ -3896,7 +6134,9 @@ static inline uint64_t CAVM_RFOEX_RX_JCA_ADDJOB_JOBTAG(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=1))
         return 0x87e043d01030ll + 0x80000ll * ((a) & 0x1);
-    __cavm_csr_fatal("RFOEX_RX_JCA_ADDJOB_JOBTAG", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=1))
+        return 0x87e043d01060ll + 0x80000ll * ((a) & 0x1);
+    __cavm_csr_fatal("RFOEX_RX_JCA_ADDJOB_JOBTAG", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RFOEX_RX_JCA_ADDJOB_JOBTAG(a) cavm_rfoex_rx_jca_addjob_jobtag_t
@@ -3906,10 +6146,49 @@ static inline uint64_t CAVM_RFOEX_RX_JCA_ADDJOB_JOBTAG(unsigned long a)
 #define arguments_CAVM_RFOEX_RX_JCA_ADDJOB_JOBTAG(a) (a),-1,-1,-1
 
 /**
+ * Register (RSL) rfoe#_rx_mtu_cfg#
+ *
+ * RFOE RX MTU Min-Max Configuration Register
+ * Per LMAC MIN/MAX MTU Configuration for Error Check.
+ */
+union cavm_rfoex_rx_mtu_cfgx
+{
+    uint64_t u;
+    struct cavm_rfoex_rx_mtu_cfgx_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_32_63        : 32;
+        uint64_t max                   : 16; /**< [ 31: 16](R/W) Maximum MTU. Set Interrupt and PSW on violation. */
+        uint64_t min                   : 16; /**< [ 15:  0](R/W) Minimum MTU. Set Interrupt and PSW on violation. */
+#else /* Word 0 - Little Endian */
+        uint64_t min                   : 16; /**< [ 15:  0](R/W) Minimum MTU. Set Interrupt and PSW on violation. */
+        uint64_t max                   : 16; /**< [ 31: 16](R/W) Maximum MTU. Set Interrupt and PSW on violation. */
+        uint64_t reserved_32_63        : 32;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rfoex_rx_mtu_cfgx_s cn; */
+};
+typedef union cavm_rfoex_rx_mtu_cfgx cavm_rfoex_rx_mtu_cfgx_t;
+
+static inline uint64_t CAVM_RFOEX_RX_MTU_CFGX(unsigned long a, unsigned long b) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_RFOEX_RX_MTU_CFGX(unsigned long a, unsigned long b)
+{
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=1) && (b<=3)))
+        return 0x87e043d01880ll + 0x80000ll * ((a) & 0x1) + 8ll * ((b) & 0x3);
+    __cavm_csr_fatal("RFOEX_RX_MTU_CFGX", 2, a, b, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_RFOEX_RX_MTU_CFGX(a,b) cavm_rfoex_rx_mtu_cfgx_t
+#define bustype_CAVM_RFOEX_RX_MTU_CFGX(a,b) CSR_TYPE_RSL
+#define basename_CAVM_RFOEX_RX_MTU_CFGX(a,b) "RFOEX_RX_MTU_CFGX"
+#define busnum_CAVM_RFOEX_RX_MTU_CFGX(a,b) (a)
+#define arguments_CAVM_RFOEX_RX_MTU_CFGX(a,b) (a),(b),-1,-1
+
+/**
  * Register (RSL) rfoe#_rx_orderinfo_fail_stat
  *
  * RFOE RX OrderInfo Fail  Statistic Register
- * Count of seqNum or timestamp (from RoE orderInfo field) failures. A failure is a
+ * Count of seqNum or timestamp (from RoE orderInfo field)  failures. A failure is a
  * miscompare in seqNum or a time that is outside of the accepted time window.
  */
 union cavm_rfoex_rx_orderinfo_fail_stat
@@ -3934,7 +6213,9 @@ static inline uint64_t CAVM_RFOEX_RX_ORDERINFO_FAIL_STAT(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=1))
         return 0x87e043d01d40ll + 0x80000ll * ((a) & 0x1);
-    __cavm_csr_fatal("RFOEX_RX_ORDERINFO_FAIL_STAT", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=1))
+        return 0x87e043d01d40ll + 0x80000ll * ((a) & 0x1);
+    __cavm_csr_fatal("RFOEX_RX_ORDERINFO_FAIL_STAT", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RFOEX_RX_ORDERINFO_FAIL_STAT(a) cavm_rfoex_rx_orderinfo_fail_stat_t
@@ -3946,7 +6227,7 @@ static inline uint64_t CAVM_RFOEX_RX_ORDERINFO_FAIL_STAT(unsigned long a)
 /**
  * Register (RSL) rfoe#_rx_ordinf_err_ena_w1c#
  *
- * RFOE RX OrderInfo Error Interrupt Enable Clear Register
+ * RFOE RX OrderInfo/SEQ_ID Error Interrupt Enable Clear Register
  * This register clears interrupt enable bits.
  */
 union cavm_rfoex_rx_ordinf_err_ena_w1cx
@@ -3960,7 +6241,15 @@ union cavm_rfoex_rx_ordinf_err_ena_w1cx
         uint64_t orderinfo_miscompare  : 64; /**< [ 63:  0](R/W1C/H) Reads or clears enable for RFOE(0..1)_RX_ORDINF_ERR_INT(0..3)[ORDERINFO_MISCOMPARE]. */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_rfoex_rx_ordinf_err_ena_w1cx_s cn; */
+    /* struct cavm_rfoex_rx_ordinf_err_ena_w1cx_s cnf95xx; */
+    struct cavm_rfoex_rx_ordinf_err_ena_w1cx_loki
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t orderinfo_miscompare  : 64; /**< [ 63:  0](R/W1C/H) Reads or clears enable for RFOE(0..1)_RX_ORDINF_ERR_INT(0..15)[ORDERINFO_MISCOMPARE]. */
+#else /* Word 0 - Little Endian */
+        uint64_t orderinfo_miscompare  : 64; /**< [ 63:  0](R/W1C/H) Reads or clears enable for RFOE(0..1)_RX_ORDINF_ERR_INT(0..15)[ORDERINFO_MISCOMPARE]. */
+#endif /* Word 0 - End */
+    } loki;
 };
 typedef union cavm_rfoex_rx_ordinf_err_ena_w1cx cavm_rfoex_rx_ordinf_err_ena_w1cx_t;
 
@@ -3969,7 +6258,9 @@ static inline uint64_t CAVM_RFOEX_RX_ORDINF_ERR_ENA_W1CX(unsigned long a, unsign
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=1) && (b<=3)))
         return 0x87e043d01e40ll + 0x80000ll * ((a) & 0x1) + 8ll * ((b) & 0x3);
-    __cavm_csr_fatal("RFOEX_RX_ORDINF_ERR_ENA_W1CX", 2, a, b, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=1) && (b<=15)))
+        return 0x87e043d01500ll + 0x80000ll * ((a) & 0x1) + 8ll * ((b) & 0xf);
+    __cavm_csr_fatal("RFOEX_RX_ORDINF_ERR_ENA_W1CX", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RFOEX_RX_ORDINF_ERR_ENA_W1CX(a,b) cavm_rfoex_rx_ordinf_err_ena_w1cx_t
@@ -3995,7 +6286,15 @@ union cavm_rfoex_rx_ordinf_err_ena_w1sx
         uint64_t orderinfo_miscompare  : 64; /**< [ 63:  0](R/W1S/H) Reads or sets enable for RFOE(0..1)_RX_ORDINF_ERR_INT(0..3)[ORDERINFO_MISCOMPARE]. */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_rfoex_rx_ordinf_err_ena_w1sx_s cn; */
+    /* struct cavm_rfoex_rx_ordinf_err_ena_w1sx_s cnf95xx; */
+    struct cavm_rfoex_rx_ordinf_err_ena_w1sx_loki
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t orderinfo_miscompare  : 64; /**< [ 63:  0](R/W1S/H) Reads or sets enable for RFOE(0..1)_RX_ORDINF_ERR_INT(0..15)[ORDERINFO_MISCOMPARE]. */
+#else /* Word 0 - Little Endian */
+        uint64_t orderinfo_miscompare  : 64; /**< [ 63:  0](R/W1S/H) Reads or sets enable for RFOE(0..1)_RX_ORDINF_ERR_INT(0..15)[ORDERINFO_MISCOMPARE]. */
+#endif /* Word 0 - End */
+    } loki;
 };
 typedef union cavm_rfoex_rx_ordinf_err_ena_w1sx cavm_rfoex_rx_ordinf_err_ena_w1sx_t;
 
@@ -4004,7 +6303,9 @@ static inline uint64_t CAVM_RFOEX_RX_ORDINF_ERR_ENA_W1SX(unsigned long a, unsign
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=1) && (b<=3)))
         return 0x87e043d01e20ll + 0x80000ll * ((a) & 0x1) + 8ll * ((b) & 0x3);
-    __cavm_csr_fatal("RFOEX_RX_ORDINF_ERR_ENA_W1SX", 2, a, b, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=1) && (b<=15)))
+        return 0x87e043d01480ll + 0x80000ll * ((a) & 0x1) + 8ll * ((b) & 0xf);
+    __cavm_csr_fatal("RFOEX_RX_ORDINF_ERR_ENA_W1SX", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RFOEX_RX_ORDINF_ERR_ENA_W1SX(a,b) cavm_rfoex_rx_ordinf_err_ena_w1sx_t
@@ -4016,8 +6317,8 @@ static inline uint64_t CAVM_RFOEX_RX_ORDINF_ERR_ENA_W1SX(unsigned long a, unsign
 /**
  * Register (RSL) rfoe#_rx_ordinf_err_int#
  *
- * RFOE OrderInfo Error Interrupt Register
- * These registers record orderInfo miscompare for each flow.
+ * RFOE OrderInfo/SEQ_ID Error Interrupt Register
+ * These registers record RoE orderInfo or eCPRI seq_id miscompare for each flow.
  *
  * When an error occurs, RFOE sends message to PSM defined by
  * RFOE()_RX_ORDINF_PSM_MSG_W1, RFOE()_RX_ORDINF_PSM_MSG_W0.
@@ -4038,7 +6339,15 @@ union cavm_rfoex_rx_ordinf_err_intx
         uint64_t orderinfo_miscompare  : 64; /**< [ 63:  0](R/W1C/H) orderInfo.seqNum or orderInfo .timestamp miscompare from incoming RoE packet. */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_rfoex_rx_ordinf_err_intx_s cn; */
+    /* struct cavm_rfoex_rx_ordinf_err_intx_s cnf95xx; */
+    struct cavm_rfoex_rx_ordinf_err_intx_loki
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t orderinfo_miscompare  : 64; /**< [ 63:  0](R/W1C/H) orderInfo.seqNum, orderInfo .timestamp miscompare, or eCPRI SEQ_ID from incoming RoE packet. */
+#else /* Word 0 - Little Endian */
+        uint64_t orderinfo_miscompare  : 64; /**< [ 63:  0](R/W1C/H) orderInfo.seqNum, orderInfo .timestamp miscompare, or eCPRI SEQ_ID from incoming RoE packet. */
+#endif /* Word 0 - End */
+    } loki;
 };
 typedef union cavm_rfoex_rx_ordinf_err_intx cavm_rfoex_rx_ordinf_err_intx_t;
 
@@ -4047,7 +6356,9 @@ static inline uint64_t CAVM_RFOEX_RX_ORDINF_ERR_INTX(unsigned long a, unsigned l
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=1) && (b<=3)))
         return 0x87e043d01e00ll + 0x80000ll * ((a) & 0x1) + 8ll * ((b) & 0x3);
-    __cavm_csr_fatal("RFOEX_RX_ORDINF_ERR_INTX", 2, a, b, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=1) && (b<=15)))
+        return 0x87e043d01400ll + 0x80000ll * ((a) & 0x1) + 8ll * ((b) & 0xf);
+    __cavm_csr_fatal("RFOEX_RX_ORDINF_ERR_INTX", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RFOEX_RX_ORDINF_ERR_INTX(a,b) cavm_rfoex_rx_ordinf_err_intx_t
@@ -4059,7 +6370,7 @@ static inline uint64_t CAVM_RFOEX_RX_ORDINF_ERR_INTX(unsigned long a, unsigned l
 /**
  * Register (RSL) rfoe#_rx_ordinf_err_int_w1s#
  *
- * RFOE RX OrderInfo Error Interrupt Set Register
+ * RFOE RX OrderInfo/SEQ_ID Error Interrupt Set Register
  * This register sets interrupt bits.
  */
 union cavm_rfoex_rx_ordinf_err_int_w1sx
@@ -4073,7 +6384,15 @@ union cavm_rfoex_rx_ordinf_err_int_w1sx
         uint64_t orderinfo_miscompare  : 64; /**< [ 63:  0](R/W1S/H) Reads or sets RFOE(0..1)_RX_ORDINF_ERR_INT(0..3)[ORDERINFO_MISCOMPARE]. */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_rfoex_rx_ordinf_err_int_w1sx_s cn; */
+    /* struct cavm_rfoex_rx_ordinf_err_int_w1sx_s cnf95xx; */
+    struct cavm_rfoex_rx_ordinf_err_int_w1sx_loki
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t orderinfo_miscompare  : 64; /**< [ 63:  0](R/W1S/H) Reads or sets RFOE(0..1)_RX_ORDINF_ERR_INT(0..15)[ORDERINFO_MISCOMPARE]. */
+#else /* Word 0 - Little Endian */
+        uint64_t orderinfo_miscompare  : 64; /**< [ 63:  0](R/W1S/H) Reads or sets RFOE(0..1)_RX_ORDINF_ERR_INT(0..15)[ORDERINFO_MISCOMPARE]. */
+#endif /* Word 0 - End */
+    } loki;
 };
 typedef union cavm_rfoex_rx_ordinf_err_int_w1sx cavm_rfoex_rx_ordinf_err_int_w1sx_t;
 
@@ -4082,7 +6401,9 @@ static inline uint64_t CAVM_RFOEX_RX_ORDINF_ERR_INT_W1SX(unsigned long a, unsign
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=1) && (b<=3)))
         return 0x87e043d01e60ll + 0x80000ll * ((a) & 0x1) + 8ll * ((b) & 0x3);
-    __cavm_csr_fatal("RFOEX_RX_ORDINF_ERR_INT_W1SX", 2, a, b, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=1) && (b<=15)))
+        return 0x87e043d01580ll + 0x80000ll * ((a) & 0x1) + 8ll * ((b) & 0xf);
+    __cavm_csr_fatal("RFOEX_RX_ORDINF_ERR_INT_W1SX", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RFOEX_RX_ORDINF_ERR_INT_W1SX(a,b) cavm_rfoex_rx_ordinf_err_int_w1sx_t
@@ -4117,7 +6438,9 @@ static inline uint64_t CAVM_RFOEX_RX_ORDINF_PSM_MSG_W0(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=1))
         return 0x87e043d01e80ll + 0x80000ll * ((a) & 0x1);
-    __cavm_csr_fatal("RFOEX_RX_ORDINF_PSM_MSG_W0", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=1))
+        return 0x87e043d01600ll + 0x80000ll * ((a) & 0x1);
+    __cavm_csr_fatal("RFOEX_RX_ORDINF_PSM_MSG_W0", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RFOEX_RX_ORDINF_PSM_MSG_W0(a) cavm_rfoex_rx_ordinf_psm_msg_w0_t
@@ -4152,7 +6475,9 @@ static inline uint64_t CAVM_RFOEX_RX_ORDINF_PSM_MSG_W1(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=1))
         return 0x87e043d01e88ll + 0x80000ll * ((a) & 0x1);
-    __cavm_csr_fatal("RFOEX_RX_ORDINF_PSM_MSG_W1", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=1))
+        return 0x87e043d01608ll + 0x80000ll * ((a) & 0x1);
+    __cavm_csr_fatal("RFOEX_RX_ORDINF_PSM_MSG_W1", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RFOEX_RX_ORDINF_PSM_MSG_W1(a) cavm_rfoex_rx_ordinf_psm_msg_w1_t
@@ -4191,7 +6516,9 @@ static inline uint64_t CAVM_RFOEX_RX_PKT_ERR_DROP_STAT(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=1))
         return 0x87e043d01d38ll + 0x80000ll * ((a) & 0x1);
-    __cavm_csr_fatal("RFOEX_RX_PKT_ERR_DROP_STAT", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=1))
+        return 0x87e043d01d38ll + 0x80000ll * ((a) & 0x1);
+    __cavm_csr_fatal("RFOEX_RX_PKT_ERR_DROP_STAT", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RFOEX_RX_PKT_ERR_DROP_STAT(a) cavm_rfoex_rx_pkt_err_drop_stat_t
@@ -4199,6 +6526,216 @@ static inline uint64_t CAVM_RFOEX_RX_PKT_ERR_DROP_STAT(unsigned long a)
 #define basename_CAVM_RFOEX_RX_PKT_ERR_DROP_STAT(a) "RFOEX_RX_PKT_ERR_DROP_STAT"
 #define busnum_CAVM_RFOEX_RX_PKT_ERR_DROP_STAT(a) (a)
 #define arguments_CAVM_RFOEX_RX_PKT_ERR_DROP_STAT(a) (a),-1,-1,-1
+
+/**
+ * Register (RSL) rfoe#_rx_pkt_logger#_addr
+ *
+ * RFOE RX Packet Logger Buffer Address Register
+ * Defines start address for packet logger circular buffer.
+ * Index enumerated by RFOE_RX_PKT_LOGGER_IDX_E
+ */
+union cavm_rfoex_rx_pkt_loggerx_addr
+{
+    uint64_t u;
+    struct cavm_rfoex_rx_pkt_loggerx_addr_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_53_63        : 11;
+        uint64_t start_addr            : 53; /**< [ 52:  0](R/W) Specifies the byte address of the start of the write DMA.
+                                                                 * If RFOE()_RX_PKT_LOGGER_CFG[TARGET_MEM] = 0, the address  must be
+                                                                 128-bit aligned (i.e., bits[3:0] must be 0).
+                                                                 * If RFOE()_RX_PKT_LOGGER_CFG[TARGET_MEM] = 1, the address  must be
+                                                                 128-byte aligned (i.e., bits[6:0] must be 0). */
+#else /* Word 0 - Little Endian */
+        uint64_t start_addr            : 53; /**< [ 52:  0](R/W) Specifies the byte address of the start of the write DMA.
+                                                                 * If RFOE()_RX_PKT_LOGGER_CFG[TARGET_MEM] = 0, the address  must be
+                                                                 128-bit aligned (i.e., bits[3:0] must be 0).
+                                                                 * If RFOE()_RX_PKT_LOGGER_CFG[TARGET_MEM] = 1, the address  must be
+                                                                 128-byte aligned (i.e., bits[6:0] must be 0). */
+        uint64_t reserved_53_63        : 11;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rfoex_rx_pkt_loggerx_addr_s cn; */
+};
+typedef union cavm_rfoex_rx_pkt_loggerx_addr cavm_rfoex_rx_pkt_loggerx_addr_t;
+
+static inline uint64_t CAVM_RFOEX_RX_PKT_LOGGERX_ADDR(unsigned long a, unsigned long b) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_RFOEX_RX_PKT_LOGGERX_ADDR(unsigned long a, unsigned long b)
+{
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=1) && (b<=1)))
+        return 0x87e043d01020ll + 0x80000ll * ((a) & 0x1) + 8ll * ((b) & 0x1);
+    __cavm_csr_fatal("RFOEX_RX_PKT_LOGGERX_ADDR", 2, a, b, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_RFOEX_RX_PKT_LOGGERX_ADDR(a,b) cavm_rfoex_rx_pkt_loggerx_addr_t
+#define bustype_CAVM_RFOEX_RX_PKT_LOGGERX_ADDR(a,b) CSR_TYPE_RSL
+#define basename_CAVM_RFOEX_RX_PKT_LOGGERX_ADDR(a,b) "RFOEX_RX_PKT_LOGGERX_ADDR"
+#define busnum_CAVM_RFOEX_RX_PKT_LOGGERX_ADDR(a,b) (a)
+#define arguments_CAVM_RFOEX_RX_PKT_LOGGERX_ADDR(a,b) (a),(b),-1,-1
+
+/**
+ * Register (RSL) rfoe#_rx_pkt_logger#_cfg
+ *
+ * RFOE RX Packet Logger Buffer Configuration  Register
+ * Defines configuration for packet logger circular buffer.
+ * Index enumerated by RFOE_RX_PKT_LOGGER_IDX_E
+ */
+union cavm_rfoex_rx_pkt_loggerx_cfg
+{
+    uint64_t u;
+    struct cavm_rfoex_rx_pkt_loggerx_cfg_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t target_mem            : 1;  /**< [ 63: 63](R/W) Specifies the target memory for the log buffer.
+                                                                 0 = SMEM.
+                                                                 1 = LLC/DRAM. */
+        uint64_t reserved_62           : 1;
+        uint64_t cmd_type              : 2;  /**< [ 61: 60](R/W) Command type for LLC/DRAM write, as enumerated by MHBW_PNB_WR_CMD_E.
+
+                                                                 Note:
+                                                                 * Writes to BPHY SMEM ignore this field.
+                                                                 * Unaligned or partial cacheline writes always use MHBW_PNB_WR_CMD_E::STP.
+
+                                                                 Internal:
+                                                                 Notes:
+                                                                 *BPHY DDR Hardware DMA replaces this field with STP for unaligned cache line
+                                                                 starts. All transfers for this burst will be STP.
+                                                                 *BPHY DDR Hardware DMA replaces this field with STP for the last transfer in a burst if unaligned. */
+        uint64_t reserved_59           : 1;
+        uint64_t dswap                 : 3;  /**< [ 58: 56](R/W) The byte swap mode for DMA to LLC/DRAM. Enumerated in MHBW_PNB_DSWAP_E.
+                                                                 DMA to BPHY SMEM ignores this field. */
+        uint64_t reserved_53_55        : 3;
+        uint64_t tail_idx              : 17; /**< [ 52: 36](RO/H) Index for the next logger status write, in units of 16 bytes.
+                                                                 * Newest logger entry is at ([TAIL_IDX]-1) mod [SIZE].
+                                                                 * Address in memory is RFOE(0..1)_RX_PKT_LOGGER_ADDR +
+                                                                 (([TAIL_IDX]-1) mod [SIZE])*16 bytes.
+                                                                 * Newest is not valid after reset since nothing has been written to packet logger in memory. */
+        uint64_t reserved_35           : 1;
+        uint64_t flush_done            : 1;  /**< [ 34: 34](RO/H) Cleared on a write to[FLUSH]=1.  Set when the
+                                                                 packet logger buffer has been flushed to memory.
+                                                                 * Indicates that all logger write requests have been issued from RFOE.
+                                                                 * Does not guarantee return of all commits. */
+        uint64_t flush                 : 1;  /**< [ 33: 33](R/W/H) On a write with [FLUSH]=1, hardware flushes the internal packet log FIFO to
+                                                                 memory. Hardware clears when flush operation completes as indicated by
+                                                                 [FLUSH_DONE] == 1. */
+        uint64_t enable                : 1;  /**< [ 32: 32](R/W) Enable receive packet logging.
+                                                                 0 = Disabled.
+                                                                 1 = Enable packet logging.
+
+                                                                 When enabled, each RoE subtype 0xfd packet with EOS set generates a log
+                                                                 entry. All other packets generate a log entry for each packet.
+
+                                                                 Logger entries for packets already started will be completed and written
+                                                                 normally.  If a flush is desired,
+                                                                 write [FLUSH] = 1 to force all waiting entries to memory.
+
+                                                                 Software should only change logger configuration when logger is idle, logger
+                                                                 FIFO empty (ie. flushed) and [ENABLE] = 0.
+
+                                                                 RFOE_RX_PKT_LOGGER(1)[ENABLE] is ignored. TX packet logger enable
+                                                                 functionality is controlled in TX side. */
+        uint64_t ddr_wait_cycles       : 12; /**< [ 31: 20](R/W) Used when [TARGET_MEM]=1.  No action when [TARGET_MEM]=0.
+                                                                 Maximum time for coalescing log writes to LLC/DRAM. Up to 128 bytes of
+                                                                 log entries are coalesced before writing to LLC/DRAM. After
+                                                                 [DDR_WAIT_CYCLES]*16 cycles with no new log entries, any buffered
+                                                                 entries are written to memory.
+
+                                                                 The reset value of 0x80 results in a time of 2 us when BCLK is 1 GHz.
+
+                                                                 Setting [DDR_WAIT_CYCLES]=0 disables the timer, and the logger will
+                                                                 wait indefinitely to collect 128 bytes of log entries before writing
+                                                                 to LLC/DRAM.
+
+                                                                 Ignored when [TARGET_MEM]=0. */
+        uint64_t reserved_17_19        : 3;
+        uint64_t size                  : 17; /**< [ 16:  0](R/W) Total size of the log buffer in units of 128 bits. Must have [SIZE] \> 0.
+                                                                 If RFOE()_RX_PKT_LOGGER_CFG[TARGET_MEM]=1, [SIZE] must be a multiple
+                                                                 of 8 (i.e., the size must be a multiple of 128 bytes). */
+#else /* Word 0 - Little Endian */
+        uint64_t size                  : 17; /**< [ 16:  0](R/W) Total size of the log buffer in units of 128 bits. Must have [SIZE] \> 0.
+                                                                 If RFOE()_RX_PKT_LOGGER_CFG[TARGET_MEM]=1, [SIZE] must be a multiple
+                                                                 of 8 (i.e., the size must be a multiple of 128 bytes). */
+        uint64_t reserved_17_19        : 3;
+        uint64_t ddr_wait_cycles       : 12; /**< [ 31: 20](R/W) Used when [TARGET_MEM]=1.  No action when [TARGET_MEM]=0.
+                                                                 Maximum time for coalescing log writes to LLC/DRAM. Up to 128 bytes of
+                                                                 log entries are coalesced before writing to LLC/DRAM. After
+                                                                 [DDR_WAIT_CYCLES]*16 cycles with no new log entries, any buffered
+                                                                 entries are written to memory.
+
+                                                                 The reset value of 0x80 results in a time of 2 us when BCLK is 1 GHz.
+
+                                                                 Setting [DDR_WAIT_CYCLES]=0 disables the timer, and the logger will
+                                                                 wait indefinitely to collect 128 bytes of log entries before writing
+                                                                 to LLC/DRAM.
+
+                                                                 Ignored when [TARGET_MEM]=0. */
+        uint64_t enable                : 1;  /**< [ 32: 32](R/W) Enable receive packet logging.
+                                                                 0 = Disabled.
+                                                                 1 = Enable packet logging.
+
+                                                                 When enabled, each RoE subtype 0xfd packet with EOS set generates a log
+                                                                 entry. All other packets generate a log entry for each packet.
+
+                                                                 Logger entries for packets already started will be completed and written
+                                                                 normally.  If a flush is desired,
+                                                                 write [FLUSH] = 1 to force all waiting entries to memory.
+
+                                                                 Software should only change logger configuration when logger is idle, logger
+                                                                 FIFO empty (ie. flushed) and [ENABLE] = 0.
+
+                                                                 RFOE_RX_PKT_LOGGER(1)[ENABLE] is ignored. TX packet logger enable
+                                                                 functionality is controlled in TX side. */
+        uint64_t flush                 : 1;  /**< [ 33: 33](R/W/H) On a write with [FLUSH]=1, hardware flushes the internal packet log FIFO to
+                                                                 memory. Hardware clears when flush operation completes as indicated by
+                                                                 [FLUSH_DONE] == 1. */
+        uint64_t flush_done            : 1;  /**< [ 34: 34](RO/H) Cleared on a write to[FLUSH]=1.  Set when the
+                                                                 packet logger buffer has been flushed to memory.
+                                                                 * Indicates that all logger write requests have been issued from RFOE.
+                                                                 * Does not guarantee return of all commits. */
+        uint64_t reserved_35           : 1;
+        uint64_t tail_idx              : 17; /**< [ 52: 36](RO/H) Index for the next logger status write, in units of 16 bytes.
+                                                                 * Newest logger entry is at ([TAIL_IDX]-1) mod [SIZE].
+                                                                 * Address in memory is RFOE(0..1)_RX_PKT_LOGGER_ADDR +
+                                                                 (([TAIL_IDX]-1) mod [SIZE])*16 bytes.
+                                                                 * Newest is not valid after reset since nothing has been written to packet logger in memory. */
+        uint64_t reserved_53_55        : 3;
+        uint64_t dswap                 : 3;  /**< [ 58: 56](R/W) The byte swap mode for DMA to LLC/DRAM. Enumerated in MHBW_PNB_DSWAP_E.
+                                                                 DMA to BPHY SMEM ignores this field. */
+        uint64_t reserved_59           : 1;
+        uint64_t cmd_type              : 2;  /**< [ 61: 60](R/W) Command type for LLC/DRAM write, as enumerated by MHBW_PNB_WR_CMD_E.
+
+                                                                 Note:
+                                                                 * Writes to BPHY SMEM ignore this field.
+                                                                 * Unaligned or partial cacheline writes always use MHBW_PNB_WR_CMD_E::STP.
+
+                                                                 Internal:
+                                                                 Notes:
+                                                                 *BPHY DDR Hardware DMA replaces this field with STP for unaligned cache line
+                                                                 starts. All transfers for this burst will be STP.
+                                                                 *BPHY DDR Hardware DMA replaces this field with STP for the last transfer in a burst if unaligned. */
+        uint64_t reserved_62           : 1;
+        uint64_t target_mem            : 1;  /**< [ 63: 63](R/W) Specifies the target memory for the log buffer.
+                                                                 0 = SMEM.
+                                                                 1 = LLC/DRAM. */
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rfoex_rx_pkt_loggerx_cfg_s cn; */
+};
+typedef union cavm_rfoex_rx_pkt_loggerx_cfg cavm_rfoex_rx_pkt_loggerx_cfg_t;
+
+static inline uint64_t CAVM_RFOEX_RX_PKT_LOGGERX_CFG(unsigned long a, unsigned long b) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_RFOEX_RX_PKT_LOGGERX_CFG(unsigned long a, unsigned long b)
+{
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=1) && (b<=1)))
+        return 0x87e043d01030ll + 0x80000ll * ((a) & 0x1) + 8ll * ((b) & 0x1);
+    __cavm_csr_fatal("RFOEX_RX_PKT_LOGGERX_CFG", 2, a, b, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_RFOEX_RX_PKT_LOGGERX_CFG(a,b) cavm_rfoex_rx_pkt_loggerx_cfg_t
+#define bustype_CAVM_RFOEX_RX_PKT_LOGGERX_CFG(a,b) CSR_TYPE_RSL
+#define basename_CAVM_RFOEX_RX_PKT_LOGGERX_CFG(a,b) "RFOEX_RX_PKT_LOGGERX_CFG"
+#define busnum_CAVM_RFOEX_RX_PKT_LOGGERX_CFG(a,b) (a)
+#define arguments_CAVM_RFOEX_RX_PKT_LOGGERX_CFG(a,b) (a),(b),-1,-1
 
 /**
  * Register (RSL) rfoe#_rx_pkt_logger_addr
@@ -4236,7 +6773,7 @@ static inline uint64_t CAVM_RFOEX_RX_PKT_LOGGER_ADDR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=1))
         return 0x87e043d01020ll + 0x80000ll * ((a) & 0x1);
-    __cavm_csr_fatal("RFOEX_RX_PKT_LOGGER_ADDR", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("RFOEX_RX_PKT_LOGGER_ADDR", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RFOEX_RX_PKT_LOGGER_ADDR(a) cavm_rfoex_rx_pkt_logger_addr_t
@@ -4375,7 +6912,7 @@ static inline uint64_t CAVM_RFOEX_RX_PKT_LOGGER_CFG(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=1))
         return 0x87e043d01028ll + 0x80000ll * ((a) & 0x1);
-    __cavm_csr_fatal("RFOEX_RX_PKT_LOGGER_CFG", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("RFOEX_RX_PKT_LOGGER_CFG", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RFOEX_RX_PKT_LOGGER_CFG(a) cavm_rfoex_rx_pkt_logger_cfg_t
@@ -4411,7 +6948,9 @@ static inline uint64_t CAVM_RFOEX_RX_SCRATCH(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=1))
         return 0x87e043d01000ll + 0x80000ll * ((a) & 0x1);
-    __cavm_csr_fatal("RFOEX_RX_SCRATCH", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=1))
+        return 0x87e043d01000ll + 0x80000ll * ((a) & 0x1);
+    __cavm_csr_fatal("RFOEX_RX_SCRATCH", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RFOEX_RX_SCRATCH(a) cavm_rfoex_rx_scratch_t
@@ -4495,7 +7034,55 @@ union cavm_rfoex_rx_status
         uint64_t reserved_50_63        : 14;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_rfoex_rx_status_s cn; */
+    /* struct cavm_rfoex_rx_status_s cnf95xx; */
+    struct cavm_rfoex_rx_status_loki
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_32_63        : 32;
+        uint64_t reserved_17_31        : 15;
+        uint64_t calibrate_status      : 1;  /**< [ 16: 16](RO/H) X2P device calibration state bit per x2p interface.
+                                                                 0 = Device inactive.
+                                                                 1 = Device ready.
+
+                                                                 Internal:
+                                                                 a "Device Inactive" status means that the X2P agent did not respond to the calibration
+                                                                 cycle.
+                                                                 This is most likely caused because the X2P agents (CGX, LBK, etc) was in reset during the
+                                                                 calibration cycle. */
+        uint64_t reserved_11_15        : 5;
+        uint64_t calibrate_done        : 1;  /**< [ 10: 10](RO/H) Calibrate cycle is complete. */
+        uint64_t blk_active            : 10; /**< [  9:  0](RO/H) If nonzero, block is active.
+                                                                 Internal:
+                                                                 Each bit corresponds to a subblock:
+                                                                 \<9:4\> = Reserved.
+                                                                 \<3\> = CSR JCA.   the JCA path
+                                                                 \<2\> = DMA.  Excludes responses. Those are tracked by free list.
+                                                                 \<1\> = EHP.  Includes free list.
+                                                                 \<0\> = CGXIF. */
+#else /* Word 0 - Little Endian */
+        uint64_t blk_active            : 10; /**< [  9:  0](RO/H) If nonzero, block is active.
+                                                                 Internal:
+                                                                 Each bit corresponds to a subblock:
+                                                                 \<9:4\> = Reserved.
+                                                                 \<3\> = CSR JCA.   the JCA path
+                                                                 \<2\> = DMA.  Excludes responses. Those are tracked by free list.
+                                                                 \<1\> = EHP.  Includes free list.
+                                                                 \<0\> = CGXIF. */
+        uint64_t calibrate_done        : 1;  /**< [ 10: 10](RO/H) Calibrate cycle is complete. */
+        uint64_t reserved_11_15        : 5;
+        uint64_t calibrate_status      : 1;  /**< [ 16: 16](RO/H) X2P device calibration state bit per x2p interface.
+                                                                 0 = Device inactive.
+                                                                 1 = Device ready.
+
+                                                                 Internal:
+                                                                 a "Device Inactive" status means that the X2P agent did not respond to the calibration
+                                                                 cycle.
+                                                                 This is most likely caused because the X2P agents (CGX, LBK, etc) was in reset during the
+                                                                 calibration cycle. */
+        uint64_t reserved_17_31        : 15;
+        uint64_t reserved_32_63        : 32;
+#endif /* Word 0 - End */
+    } loki;
 };
 typedef union cavm_rfoex_rx_status cavm_rfoex_rx_status_t;
 
@@ -4504,7 +7091,9 @@ static inline uint64_t CAVM_RFOEX_RX_STATUS(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=1))
         return 0x87e043d01010ll + 0x80000ll * ((a) & 0x1);
-    __cavm_csr_fatal("RFOEX_RX_STATUS", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=1))
+        return 0x87e043d01010ll + 0x80000ll * ((a) & 0x1);
+    __cavm_csr_fatal("RFOEX_RX_STATUS", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RFOEX_RX_STATUS(a) cavm_rfoex_rx_status_t
@@ -4517,7 +7106,7 @@ static inline uint64_t CAVM_RFOEX_RX_STATUS(unsigned long a)
  * Register (RSL) rfoe#_rx_sync_discard_counter
  *
  * RFOE RX SYNC Packet Discard Counter Statistic Register
- * Count number packets discarded as a result of an  RX sync drop.
+ * Count the number of packets discarded as a result of an RX sync drop.
  */
 union cavm_rfoex_rx_sync_discard_counter
 {
@@ -4539,7 +7128,9 @@ static inline uint64_t CAVM_RFOEX_RX_SYNC_DISCARD_COUNTER(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=1))
         return 0x87e043d01d20ll + 0x80000ll * ((a) & 0x1);
-    __cavm_csr_fatal("RFOEX_RX_SYNC_DISCARD_COUNTER", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=1))
+        return 0x87e043d01d20ll + 0x80000ll * ((a) & 0x1);
+    __cavm_csr_fatal("RFOEX_RX_SYNC_DISCARD_COUNTER", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RFOEX_RX_SYNC_DISCARD_COUNTER(a) cavm_rfoex_rx_sync_discard_counter_t
@@ -4581,7 +7172,9 @@ static inline uint64_t CAVM_RFOEX_RX_SYNC_FLOWX(unsigned long a, unsigned long b
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=1) && (b<=3)))
         return 0x87e043d01700ll + 0x80000ll * ((a) & 0x1) + 8ll * ((b) & 0x3);
-    __cavm_csr_fatal("RFOEX_RX_SYNC_FLOWX", 2, a, b, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=1) && (b<=15)))
+        return 0x87e043d01100ll + 0x80000ll * ((a) & 0x1) + 8ll * ((b) & 0xf);
+    __cavm_csr_fatal("RFOEX_RX_SYNC_FLOWX", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RFOEX_RX_SYNC_FLOWX(a,b) cavm_rfoex_rx_sync_flowx_t
@@ -4630,7 +7223,9 @@ static inline uint64_t CAVM_RFOEX_RX_SYNC_STATEX(unsigned long a, unsigned long 
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=1) && (b<=3)))
         return 0x87e043d01740ll + 0x80000ll * ((a) & 0x1) + 8ll * ((b) & 0x3);
-    __cavm_csr_fatal("RFOEX_RX_SYNC_STATEX", 2, a, b, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=1) && (b<=15)))
+        return 0x87e043d01180ll + 0x80000ll * ((a) & 0x1) + 8ll * ((b) & 0xf);
+    __cavm_csr_fatal("RFOEX_RX_SYNC_STATEX", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RFOEX_RX_SYNC_STATEX(a,b) cavm_rfoex_rx_sync_statex_t
@@ -4638,6 +7233,182 @@ static inline uint64_t CAVM_RFOEX_RX_SYNC_STATEX(unsigned long a, unsigned long 
 #define basename_CAVM_RFOEX_RX_SYNC_STATEX(a,b) "RFOEX_RX_SYNC_STATEX"
 #define busnum_CAVM_RFOEX_RX_SYNC_STATEX(a,b) (a)
 #define arguments_CAVM_RFOEX_RX_SYNC_STATEX(a,b) (a),(b),-1,-1
+
+/**
+ * Register (RSL) rfoe#_rx_vlan#_cfg
+ *
+ * RFOE RX VLAN EtherType Match Configuration Register
+ * Configures VLAN header processing.  Enables and EtherType for matching.
+ */
+union cavm_rfoex_rx_vlanx_cfg
+{
+    uint64_t u;
+    struct cavm_rfoex_rx_vlanx_cfg_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_17_63        : 47;
+        uint64_t ena                   : 1;  /**< [ 16: 16](R/W) Enable [TPID] match to packet EtherType. */
+        uint64_t tpid                  : 16; /**< [ 15:  0](R/W) EtherType match value for VLAN processing. If both
+                                                                 RFOE()_RX_VLAN(0..1)_CFG[ENA]==1, then require  RFOE()_RX_VLAN(0)_CFG[TPID] !=
+                                                                 RFOE()_RX_VLAN(1)_CFG[TPID] */
+#else /* Word 0 - Little Endian */
+        uint64_t tpid                  : 16; /**< [ 15:  0](R/W) EtherType match value for VLAN processing. If both
+                                                                 RFOE()_RX_VLAN(0..1)_CFG[ENA]==1, then require  RFOE()_RX_VLAN(0)_CFG[TPID] !=
+                                                                 RFOE()_RX_VLAN(1)_CFG[TPID] */
+        uint64_t ena                   : 1;  /**< [ 16: 16](R/W) Enable [TPID] match to packet EtherType. */
+        uint64_t reserved_17_63        : 47;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rfoex_rx_vlanx_cfg_s cn; */
+};
+typedef union cavm_rfoex_rx_vlanx_cfg cavm_rfoex_rx_vlanx_cfg_t;
+
+static inline uint64_t CAVM_RFOEX_RX_VLANX_CFG(unsigned long a, unsigned long b) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_RFOEX_RX_VLANX_CFG(unsigned long a, unsigned long b)
+{
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=1) && (b<=1)))
+        return 0x87e043d01070ll + 0x80000ll * ((a) & 0x1) + 8ll * ((b) & 0x1);
+    __cavm_csr_fatal("RFOEX_RX_VLANX_CFG", 2, a, b, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_RFOEX_RX_VLANX_CFG(a,b) cavm_rfoex_rx_vlanx_cfg_t
+#define bustype_CAVM_RFOEX_RX_VLANX_CFG(a,b) CSR_TYPE_RSL
+#define basename_CAVM_RFOEX_RX_VLANX_CFG(a,b) "RFOEX_RX_VLANX_CFG"
+#define busnum_CAVM_RFOEX_RX_VLANX_CFG(a,b) (a)
+#define arguments_CAVM_RFOEX_RX_VLANX_CFG(a,b) (a),(b),-1,-1
+
+/**
+ * Register (RSL) rfoe#_rx_vlan_allow_cfg
+ *
+ * RFOE RX VLAN Allowable Match Configuration Register
+ * Configures VLAN header allowable matches.
+ */
+union cavm_rfoex_rx_vlan_allow_cfg
+{
+    uint64_t u;
+    struct cavm_rfoex_rx_vlan_allow_cfg_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_9_63         : 55;
+        uint64_t untagged              : 1;  /**< [  8:  8](R/W) Allow packets with no VLAN tag matches.  Packets received with [UNTAGGED]=0 &&
+                                                                 no VLAN matches will be dropped and   counted as a not forwarded VLAN packet in
+                                                                 RFOE()_RX_VLAN_DROP_STAT register */
+        uint64_t vlan1_vlan1           : 1;  /**< [  7:  7](R/W) Allow double tag with RFOE()_RX_VLAN(1)_CFG matching against first two VLAN tags. */
+        uint64_t vlan1_vlan0           : 1;  /**< [  6:  6](R/W) Allow double tag with RFOE()_RX_VLAN(1)_CFG matching against first VLAN tag and
+                                                                 RFOE()_RX_VLAN(0)_CFG matching against second VLAN tag. */
+        uint64_t vlan0_vlan1           : 1;  /**< [  5:  5](R/W) Allow double tag with RFOE()_RX_VLAN(0)_CFG matching against first VLAN tag and
+                                                                 RFOE()_RX_VLAN(1)_CFG matching against second VLAN tag. */
+        uint64_t vlan0_vlan0           : 1;  /**< [  4:  4](R/W) Allow double tag with RFOE()_RX_VLAN(0)_CFG matching against first two VLAN tags. */
+        uint64_t reserved_2_3          : 2;
+        uint64_t vlan1_only            : 1;  /**< [  1:  1](R/W) Allow single match with RFOE()_RX_VLAN(1)_CFG against first packet EtherType. */
+        uint64_t vlan0_only            : 1;  /**< [  0:  0](R/W) Allow single match with RFOE()_RX_VLAN(0)_CFG against first packet EtherType. */
+#else /* Word 0 - Little Endian */
+        uint64_t vlan0_only            : 1;  /**< [  0:  0](R/W) Allow single match with RFOE()_RX_VLAN(0)_CFG against first packet EtherType. */
+        uint64_t vlan1_only            : 1;  /**< [  1:  1](R/W) Allow single match with RFOE()_RX_VLAN(1)_CFG against first packet EtherType. */
+        uint64_t reserved_2_3          : 2;
+        uint64_t vlan0_vlan0           : 1;  /**< [  4:  4](R/W) Allow double tag with RFOE()_RX_VLAN(0)_CFG matching against first two VLAN tags. */
+        uint64_t vlan0_vlan1           : 1;  /**< [  5:  5](R/W) Allow double tag with RFOE()_RX_VLAN(0)_CFG matching against first VLAN tag and
+                                                                 RFOE()_RX_VLAN(1)_CFG matching against second VLAN tag. */
+        uint64_t vlan1_vlan0           : 1;  /**< [  6:  6](R/W) Allow double tag with RFOE()_RX_VLAN(1)_CFG matching against first VLAN tag and
+                                                                 RFOE()_RX_VLAN(0)_CFG matching against second VLAN tag. */
+        uint64_t vlan1_vlan1           : 1;  /**< [  7:  7](R/W) Allow double tag with RFOE()_RX_VLAN(1)_CFG matching against first two VLAN tags. */
+        uint64_t untagged              : 1;  /**< [  8:  8](R/W) Allow packets with no VLAN tag matches.  Packets received with [UNTAGGED]=0 &&
+                                                                 no VLAN matches will be dropped and   counted as a not forwarded VLAN packet in
+                                                                 RFOE()_RX_VLAN_DROP_STAT register */
+        uint64_t reserved_9_63         : 55;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rfoex_rx_vlan_allow_cfg_s cn; */
+};
+typedef union cavm_rfoex_rx_vlan_allow_cfg cavm_rfoex_rx_vlan_allow_cfg_t;
+
+static inline uint64_t CAVM_RFOEX_RX_VLAN_ALLOW_CFG(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_RFOEX_RX_VLAN_ALLOW_CFG(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=1))
+        return 0x87e043d01080ll + 0x80000ll * ((a) & 0x1);
+    __cavm_csr_fatal("RFOEX_RX_VLAN_ALLOW_CFG", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_RFOEX_RX_VLAN_ALLOW_CFG(a) cavm_rfoex_rx_vlan_allow_cfg_t
+#define bustype_CAVM_RFOEX_RX_VLAN_ALLOW_CFG(a) CSR_TYPE_RSL
+#define basename_CAVM_RFOEX_RX_VLAN_ALLOW_CFG(a) "RFOEX_RX_VLAN_ALLOW_CFG"
+#define busnum_CAVM_RFOEX_RX_VLAN_ALLOW_CFG(a) (a)
+#define arguments_CAVM_RFOEX_RX_VLAN_ALLOW_CFG(a) (a),-1,-1,-1
+
+/**
+ * Register (RSL) rfoe#_rx_vlan_drop_stat#
+ *
+ * RFOE RX  VLAN Drop Packet Count Register
+ * Number of VLAN packets dropped because not being forwarded. Per LMAC.
+ */
+union cavm_rfoex_rx_vlan_drop_statx
+{
+    uint64_t u;
+    struct cavm_rfoex_rx_vlan_drop_statx_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_48_63        : 16;
+        uint64_t stat                  : 48; /**< [ 47:  0](R/W/H) The counter value. Wraps to zero at 2^48. */
+#else /* Word 0 - Little Endian */
+        uint64_t stat                  : 48; /**< [ 47:  0](R/W/H) The counter value. Wraps to zero at 2^48. */
+        uint64_t reserved_48_63        : 16;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rfoex_rx_vlan_drop_statx_s cn; */
+};
+typedef union cavm_rfoex_rx_vlan_drop_statx cavm_rfoex_rx_vlan_drop_statx_t;
+
+static inline uint64_t CAVM_RFOEX_RX_VLAN_DROP_STATX(unsigned long a, unsigned long b) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_RFOEX_RX_VLAN_DROP_STATX(unsigned long a, unsigned long b)
+{
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=1) && (b<=3)))
+        return 0x87e043d010a0ll + 0x80000ll * ((a) & 0x1) + 8ll * ((b) & 0x3);
+    __cavm_csr_fatal("RFOEX_RX_VLAN_DROP_STATX", 2, a, b, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_RFOEX_RX_VLAN_DROP_STATX(a,b) cavm_rfoex_rx_vlan_drop_statx_t
+#define bustype_CAVM_RFOEX_RX_VLAN_DROP_STATX(a,b) CSR_TYPE_RSL
+#define basename_CAVM_RFOEX_RX_VLAN_DROP_STATX(a,b) "RFOEX_RX_VLAN_DROP_STATX"
+#define busnum_CAVM_RFOEX_RX_VLAN_DROP_STATX(a,b) (a)
+#define arguments_CAVM_RFOEX_RX_VLAN_DROP_STATX(a,b) (a),(b),-1,-1
+
+/**
+ * Register (RSL) rfoe#_rx_vlan_fwd_stat#
+ *
+ * RFOE RX  VLAN Drop Packet Count Register
+ * Number of VLAN packets forwarded. Per LMAC.
+ */
+union cavm_rfoex_rx_vlan_fwd_statx
+{
+    uint64_t u;
+    struct cavm_rfoex_rx_vlan_fwd_statx_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_48_63        : 16;
+        uint64_t stat                  : 48; /**< [ 47:  0](R/W/H) The counter value. Wraps to zero at 2^48. */
+#else /* Word 0 - Little Endian */
+        uint64_t stat                  : 48; /**< [ 47:  0](R/W/H) The counter value. Wraps to zero at 2^48. */
+        uint64_t reserved_48_63        : 16;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rfoex_rx_vlan_fwd_statx_s cn; */
+};
+typedef union cavm_rfoex_rx_vlan_fwd_statx cavm_rfoex_rx_vlan_fwd_statx_t;
+
+static inline uint64_t CAVM_RFOEX_RX_VLAN_FWD_STATX(unsigned long a, unsigned long b) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_RFOEX_RX_VLAN_FWD_STATX(unsigned long a, unsigned long b)
+{
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=1) && (b<=3)))
+        return 0x87e043d010c0ll + 0x80000ll * ((a) & 0x1) + 8ll * ((b) & 0x3);
+    __cavm_csr_fatal("RFOEX_RX_VLAN_FWD_STATX", 2, a, b, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_RFOEX_RX_VLAN_FWD_STATX(a,b) cavm_rfoex_rx_vlan_fwd_statx_t
+#define bustype_CAVM_RFOEX_RX_VLAN_FWD_STATX(a,b) CSR_TYPE_RSL
+#define basename_CAVM_RFOEX_RX_VLAN_FWD_STATX(a,b) "RFOEX_RX_VLAN_FWD_STATX"
+#define busnum_CAVM_RFOEX_RX_VLAN_FWD_STATX(a,b) (a)
+#define arguments_CAVM_RFOEX_RX_VLAN_FWD_STATX(a,b) (a),(b),-1,-1
 
 /**
  * Register (RSL) rfoe#_tx_ctrl
@@ -4699,7 +7470,9 @@ static inline uint64_t CAVM_RFOEX_TX_CTRL(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=1))
         return 0x87e043d00f08ll + 0x80000ll * ((a) & 0x1);
-    __cavm_csr_fatal("RFOEX_TX_CTRL", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=1))
+        return 0x87e043d00f08ll + 0x80000ll * ((a) & 0x1);
+    __cavm_csr_fatal("RFOEX_TX_CTRL", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RFOEX_TX_CTRL(a) cavm_rfoex_tx_ctrl_t
@@ -4747,7 +7520,9 @@ static inline uint64_t CAVM_RFOEX_TX_HDR_DAX(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=1) && (b<=7)))
         return 0x87e043d00800ll + 0x80000ll * ((a) & 0x1) + 8ll * ((b) & 0x7);
-    __cavm_csr_fatal("RFOEX_TX_HDR_DAX", 2, a, b, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=1) && (b<=7)))
+        return 0x87e043d00800ll + 0x80000ll * ((a) & 0x1) + 8ll * ((b) & 0x7);
+    __cavm_csr_fatal("RFOEX_TX_HDR_DAX", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RFOEX_TX_HDR_DAX(a,b) cavm_rfoex_tx_hdr_dax_t
@@ -4784,7 +7559,19 @@ union cavm_rfoex_tx_hdr_ethertypex
         uint64_t reserved_16_63        : 48;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_rfoex_tx_hdr_ethertypex_s cn; */
+    /* struct cavm_rfoex_tx_hdr_ethertypex_s cnf95xx; */
+    struct cavm_rfoex_tx_hdr_ethertypex_loki
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_16_63        : 48;
+        uint64_t ethertype             : 16; /**< [ 15:  0](R/W) Ethernet Ethertype. The following ordering within the field ETHERTYPE\<7:0\> at
+                                                                 byte address 0, ETHERTYPE\<15:8\> at byte address 1, */
+#else /* Word 0 - Little Endian */
+        uint64_t ethertype             : 16; /**< [ 15:  0](R/W) Ethernet Ethertype. The following ordering within the field ETHERTYPE\<7:0\> at
+                                                                 byte address 0, ETHERTYPE\<15:8\> at byte address 1, */
+        uint64_t reserved_16_63        : 48;
+#endif /* Word 0 - End */
+    } loki;
 };
 typedef union cavm_rfoex_tx_hdr_ethertypex cavm_rfoex_tx_hdr_ethertypex_t;
 
@@ -4793,7 +7580,9 @@ static inline uint64_t CAVM_RFOEX_TX_HDR_ETHERTYPEX(unsigned long a, unsigned lo
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=1) && (b<=7)))
         return 0x87e043d00880ll + 0x80000ll * ((a) & 0x1) + 8ll * ((b) & 0x7);
-    __cavm_csr_fatal("RFOEX_TX_HDR_ETHERTYPEX", 2, a, b, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=1) && (b<=7)))
+        return 0x87e043d00880ll + 0x80000ll * ((a) & 0x1) + 8ll * ((b) & 0x7);
+    __cavm_csr_fatal("RFOEX_TX_HDR_ETHERTYPEX", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RFOEX_TX_HDR_ETHERTYPEX(a,b) cavm_rfoex_tx_hdr_ethertypex_t
@@ -4841,7 +7630,9 @@ static inline uint64_t CAVM_RFOEX_TX_HDR_SAX(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=1) && (b<=7)))
         return 0x87e043d00840ll + 0x80000ll * ((a) & 0x1) + 8ll * ((b) & 0x7);
-    __cavm_csr_fatal("RFOEX_TX_HDR_SAX", 2, a, b, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=1) && (b<=7)))
+        return 0x87e043d00840ll + 0x80000ll * ((a) & 0x1) + 8ll * ((b) & 0x7);
+    __cavm_csr_fatal("RFOEX_TX_HDR_SAX", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RFOEX_TX_HDR_SAX(a,b) cavm_rfoex_tx_hdr_sax_t
@@ -4851,13 +7642,57 @@ static inline uint64_t CAVM_RFOEX_TX_HDR_SAX(unsigned long a, unsigned long b)
 #define arguments_CAVM_RFOEX_TX_HDR_SAX(a,b) (a),(b),-1,-1
 
 /**
+ * Register (RSL) rfoe#_tx_hdr_vlan#
+ *
+ * RFOE TX Ethernet VLAN Register
+ * Ethernet header VLAN field for TX packets sent with
+ * RFOE()_AB()_SLOT()_CONFIGURATION[PKT_MODE]=1.
+ *
+ * The index {b} is selected by RFOE()_AB()_SLOT()_CONFIGURATION2[VLAN_SEL].
+ */
+union cavm_rfoex_tx_hdr_vlanx
+{
+    uint64_t u;
+    struct cavm_rfoex_tx_hdr_vlanx_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t vlan_id1              : 16; /**< [ 63: 48](R/W) Ethernet VLAN ID 1. This is used for Double VLAN tags */
+        uint64_t vlan_type1            : 16; /**< [ 47: 32](R/W) Ethernet VLAN Type 1. This is used for Double VLAN tags */
+        uint64_t vlan_id0              : 16; /**< [ 31: 16](R/W) Ethernet VLAN ID 0. */
+        uint64_t vlan_type0            : 16; /**< [ 15:  0](R/W) Ethernet VLAN Type 0. */
+#else /* Word 0 - Little Endian */
+        uint64_t vlan_type0            : 16; /**< [ 15:  0](R/W) Ethernet VLAN Type 0. */
+        uint64_t vlan_id0              : 16; /**< [ 31: 16](R/W) Ethernet VLAN ID 0. */
+        uint64_t vlan_type1            : 16; /**< [ 47: 32](R/W) Ethernet VLAN Type 1. This is used for Double VLAN tags */
+        uint64_t vlan_id1              : 16; /**< [ 63: 48](R/W) Ethernet VLAN ID 1. This is used for Double VLAN tags */
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rfoex_tx_hdr_vlanx_s cn; */
+};
+typedef union cavm_rfoex_tx_hdr_vlanx cavm_rfoex_tx_hdr_vlanx_t;
+
+static inline uint64_t CAVM_RFOEX_TX_HDR_VLANX(unsigned long a, unsigned long b) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_RFOEX_TX_HDR_VLANX(unsigned long a, unsigned long b)
+{
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=1) && (b<=7)))
+        return 0x87e043d008c0ll + 0x80000ll * ((a) & 0x1) + 8ll * ((b) & 0x7);
+    __cavm_csr_fatal("RFOEX_TX_HDR_VLANX", 2, a, b, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_RFOEX_TX_HDR_VLANX(a,b) cavm_rfoex_tx_hdr_vlanx_t
+#define bustype_CAVM_RFOEX_TX_HDR_VLANX(a,b) CSR_TYPE_RSL
+#define basename_CAVM_RFOEX_TX_HDR_VLANX(a,b) "RFOEX_TX_HDR_VLANX"
+#define busnum_CAVM_RFOEX_TX_HDR_VLANX(a,b) (a)
+#define arguments_CAVM_RFOEX_TX_HDR_VLANX(a,b) (a),(b),-1,-1
+
+/**
  * Register (RSL) rfoe#_tx_ind_seqnum_p_cfg
  *
  * RFOE TX Indirect SeqNum P-Counter Configuration Register
  * Transmit .seqNum p-counter configuration.  Refer to IEEE P1914.3/D3.0
  * Table 4-3 for details on p-counter configuration.
  *
- * This register indirectly accesses a table of 256 entries with p-counter
+ * This register indirectly accesses a table of 1024 entries with p-counter
  * configuration for each transmit flow.
  *
  * Reads and writes to this register access the table entry specified by
@@ -4898,7 +7733,9 @@ static inline uint64_t CAVM_RFOEX_TX_IND_SEQNUM_P_CFG(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=1))
         return 0x87e043d00c00ll + 0x80000ll * ((a) & 0x1);
-    __cavm_csr_fatal("RFOEX_TX_IND_SEQNUM_P_CFG", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=1))
+        return 0x87e043d00c00ll + 0x80000ll * ((a) & 0x1);
+    __cavm_csr_fatal("RFOEX_TX_IND_SEQNUM_P_CFG", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RFOEX_TX_IND_SEQNUM_P_CFG(a) cavm_rfoex_tx_ind_seqnum_p_cfg_t
@@ -4914,7 +7751,7 @@ static inline uint64_t CAVM_RFOEX_TX_IND_SEQNUM_P_CFG(unsigned long a)
  * Transmit .seqNum configuration.  Refer to IEEE P1914.3/D3.0
  * Table 4-3 for details on sequence number configuration.
  *
- * This register indirectly accesses a table of 256 entries with p-counter
+ * This register indirectly accesses a table of 1024 entries with p-counter
  * configuration for each transmit flow.
  *
  * Reads and writes to this register access the table entry specified by
@@ -4969,7 +7806,9 @@ static inline uint64_t CAVM_RFOEX_TX_IND_SEQNUM_PROP_CFG(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=1))
         return 0x87e043d00c10ll + 0x80000ll * ((a) & 0x1);
-    __cavm_csr_fatal("RFOEX_TX_IND_SEQNUM_PROP_CFG", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=1))
+        return 0x87e043d00c10ll + 0x80000ll * ((a) & 0x1);
+    __cavm_csr_fatal("RFOEX_TX_IND_SEQNUM_PROP_CFG", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RFOEX_TX_IND_SEQNUM_PROP_CFG(a) cavm_rfoex_tx_ind_seqnum_prop_cfg_t
@@ -4985,7 +7824,7 @@ static inline uint64_t CAVM_RFOEX_TX_IND_SEQNUM_PROP_CFG(unsigned long a)
  * Transmit .seqNum q-counter configuration.  Refer to IEEE P1914.3/D3.0
  * Table 4-3 for details on q-counter configuration.
  *
- * This register indirectly accesses a table of 256 entries with p-counter
+ * This register indirectly accesses a table of 1024 entries with p-counter
  * configuration for each transmit flow.
  *
  * Reads and writes to this register access the table entry specified by
@@ -5018,7 +7857,9 @@ static inline uint64_t CAVM_RFOEX_TX_IND_SEQNUM_Q_CFG(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=1))
         return 0x87e043d00c08ll + 0x80000ll * ((a) & 0x1);
-    __cavm_csr_fatal("RFOEX_TX_IND_SEQNUM_Q_CFG", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=1))
+        return 0x87e043d00c08ll + 0x80000ll * ((a) & 0x1);
+    __cavm_csr_fatal("RFOEX_TX_IND_SEQNUM_Q_CFG", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RFOEX_TX_IND_SEQNUM_Q_CFG(a) cavm_rfoex_tx_ind_seqnum_q_cfg_t
@@ -5034,7 +7875,7 @@ static inline uint64_t CAVM_RFOEX_TX_IND_SEQNUM_Q_CFG(unsigned long a)
  * Transmit .seqNum configuration.  Refer to IEEE P1914.3/D3.0
  * Table 4-3 for details on RoE sequence numbers.
  *
- * This register indirectly accesses a table of 256 entries with p-counter
+ * This register indirectly accesses a table of 1024 entries with p-counter
  * configuration for each transmit flow.
  *
  * Reads and writes to this register access the table entry specified by
@@ -5069,7 +7910,9 @@ static inline uint64_t CAVM_RFOEX_TX_IND_SEQNUM_STATE(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=1))
         return 0x87e043d00c18ll + 0x80000ll * ((a) & 0x1);
-    __cavm_csr_fatal("RFOEX_TX_IND_SEQNUM_STATE", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=1))
+        return 0x87e043d00c18ll + 0x80000ll * ((a) & 0x1);
+    __cavm_csr_fatal("RFOEX_TX_IND_SEQNUM_STATE", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RFOEX_TX_IND_SEQNUM_STATE(a) cavm_rfoex_tx_ind_seqnum_state_t
@@ -5106,7 +7949,9 @@ static inline uint64_t CAVM_RFOEX_TX_INDIRECT_INDEX(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=1))
         return 0x87e043d00bf8ll + 0x80000ll * ((a) & 0x1);
-    __cavm_csr_fatal("RFOEX_TX_INDIRECT_INDEX", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=1))
+        return 0x87e043d00bf8ll + 0x80000ll * ((a) & 0x1);
+    __cavm_csr_fatal("RFOEX_TX_INDIRECT_INDEX", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RFOEX_TX_INDIRECT_INDEX(a) cavm_rfoex_tx_indirect_index_t
@@ -5125,6 +7970,90 @@ union cavm_rfoex_tx_lmac_cfgx
 {
     uint64_t u;
     struct cavm_rfoex_tx_lmac_cfgx_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_33_63        : 31;
+        uint64_t tx_pkt_log_en         : 1;  /**< [ 32: 32](R/W) Transmit packet logging Enable.
+                                                                 When set to 1, enables packet logging for packets transmitted. */
+        uint64_t cc_count_stat         : 12; /**< [ 31: 20](RO/H) Channel-credit current count status.
+                                                                 This value represents the current Channel credits available for this LMAC.
+                                                                 The value gets reloaded when [DATA_PKT_TX_LMAC_EN] is set to 1 and
+                                                                 the value is reloaded after reset is deasserted.
+                                                                 This value is valid when [CC_ENABLE] is 0x2 or 0x3. */
+        uint64_t cc_count              : 12; /**< [ 19:  8](R/W) Channel-credit unit count. This value indicates the maximum credit units allowed for
+                                                                 this LMAC. One credit unit is one flit (up to 16 Bytes max) on the P2X bus.
+                                                                 Packets are not allowed to flow when the cuurent value of [CC_COUNT_STAT] is less
+                                                                 than packet lenght.
+                                                                 In order to prevent blocking between CGX LMACs, [CC_ENABLE] should be set to 0x2
+                                                                 or 0x3 and [CC_COUNT] appropriately configured.
+                                                                 The recommended configuration is based on the LMAC TX buffer size. The LMAC TX
+                                                                 buffer size is defined by CGX()_CMR_TX_LMACS[LMACS]. For example, if
+                                                                 CGX()_CMR_TX_LMACS[LMACS]=0x4 (16 KB per LMAC), then [CC_COUNT] = 0xfff.
+                                                                 [CC_COUNT] cannot be changed after [CC_ENABLE] is set to 0x2 or 0x3.
+                                                                 When [CC_ENABLE] is set to 0x2 or 0x3 and setting [CC_COUNT]=0 is nonsensical. */
+        uint64_t reserved_3_7          : 5;
+        uint64_t cc_enable             : 2;  /**< [  2:  1](R/W) Channel Credit Check enable. Enables [CC_COUNT] channel credit processing for
+                                                                 packets destined to this LMAC.
+                                                                 _ [CC_ENABLE]=0 - Channel Credit Check is disabled.
+                                                                 _ [CC_ENABLE]=1 - Channel Credit Check is disabled.
+                                                                 _ [CC_ENABLE]=2 - Channel Credit Check is enabled.
+                                                                 _                 The transmit state machine checks the packet length against the [CC_COUNT_STAT].
+                                                                 _                 If the current packet length is \<= [CC_COUNT_STAT], the packet is sent to CGX.
+                                                                 _                 If the current packet length is \> [CC_COUNT_STAT], the transmit state machine
+                                                                 _                 stalls and waits untill the required [CC_COUNT] is available before sending
+                                                                 _                 the packet.
+                                                                 _ [CC_ENABLE]=3 - Channel Credit Check is enabled.
+                                                                 _                 The transmit state machine checks the packet length against the [CC_COUNT_STAT].
+                                                                 _                 If the current packet length is \<= [CC_COUNT_STAT], the packet is sent to CGX.
+                                                                 _                 If the current packet length is \> [CC_COUNT_STAT], the
+                                                                 _                 transmit state machine drops the packet. */
+        uint64_t data_pkt_tx_lmac_en   : 1;  /**< [  0:  0](R/W) Enable TX traffic to CGX LMAC.
+                                                                 Software must write to 1 to [DATA_PKT_TX_LMAC_EN] and
+                                                                 [DATA_PKT_TX_EN] = 1 to enable TX traffic to this LMAC.
+                                                                 When [DATA_PKT_TX_LMAC_EN] = 0, RFOE discards transmit packets destined to this LMAC. */
+#else /* Word 0 - Little Endian */
+        uint64_t data_pkt_tx_lmac_en   : 1;  /**< [  0:  0](R/W) Enable TX traffic to CGX LMAC.
+                                                                 Software must write to 1 to [DATA_PKT_TX_LMAC_EN] and
+                                                                 [DATA_PKT_TX_EN] = 1 to enable TX traffic to this LMAC.
+                                                                 When [DATA_PKT_TX_LMAC_EN] = 0, RFOE discards transmit packets destined to this LMAC. */
+        uint64_t cc_enable             : 2;  /**< [  2:  1](R/W) Channel Credit Check enable. Enables [CC_COUNT] channel credit processing for
+                                                                 packets destined to this LMAC.
+                                                                 _ [CC_ENABLE]=0 - Channel Credit Check is disabled.
+                                                                 _ [CC_ENABLE]=1 - Channel Credit Check is disabled.
+                                                                 _ [CC_ENABLE]=2 - Channel Credit Check is enabled.
+                                                                 _                 The transmit state machine checks the packet length against the [CC_COUNT_STAT].
+                                                                 _                 If the current packet length is \<= [CC_COUNT_STAT], the packet is sent to CGX.
+                                                                 _                 If the current packet length is \> [CC_COUNT_STAT], the transmit state machine
+                                                                 _                 stalls and waits untill the required [CC_COUNT] is available before sending
+                                                                 _                 the packet.
+                                                                 _ [CC_ENABLE]=3 - Channel Credit Check is enabled.
+                                                                 _                 The transmit state machine checks the packet length against the [CC_COUNT_STAT].
+                                                                 _                 If the current packet length is \<= [CC_COUNT_STAT], the packet is sent to CGX.
+                                                                 _                 If the current packet length is \> [CC_COUNT_STAT], the
+                                                                 _                 transmit state machine drops the packet. */
+        uint64_t reserved_3_7          : 5;
+        uint64_t cc_count              : 12; /**< [ 19:  8](R/W) Channel-credit unit count. This value indicates the maximum credit units allowed for
+                                                                 this LMAC. One credit unit is one flit (up to 16 Bytes max) on the P2X bus.
+                                                                 Packets are not allowed to flow when the cuurent value of [CC_COUNT_STAT] is less
+                                                                 than packet lenght.
+                                                                 In order to prevent blocking between CGX LMACs, [CC_ENABLE] should be set to 0x2
+                                                                 or 0x3 and [CC_COUNT] appropriately configured.
+                                                                 The recommended configuration is based on the LMAC TX buffer size. The LMAC TX
+                                                                 buffer size is defined by CGX()_CMR_TX_LMACS[LMACS]. For example, if
+                                                                 CGX()_CMR_TX_LMACS[LMACS]=0x4 (16 KB per LMAC), then [CC_COUNT] = 0xfff.
+                                                                 [CC_COUNT] cannot be changed after [CC_ENABLE] is set to 0x2 or 0x3.
+                                                                 When [CC_ENABLE] is set to 0x2 or 0x3 and setting [CC_COUNT]=0 is nonsensical. */
+        uint64_t cc_count_stat         : 12; /**< [ 31: 20](RO/H) Channel-credit current count status.
+                                                                 This value represents the current Channel credits available for this LMAC.
+                                                                 The value gets reloaded when [DATA_PKT_TX_LMAC_EN] is set to 1 and
+                                                                 the value is reloaded after reset is deasserted.
+                                                                 This value is valid when [CC_ENABLE] is 0x2 or 0x3. */
+        uint64_t tx_pkt_log_en         : 1;  /**< [ 32: 32](R/W) Transmit packet logging Enable.
+                                                                 When set to 1, enables packet logging for packets transmitted. */
+        uint64_t reserved_33_63        : 31;
+#endif /* Word 0 - End */
+    } s;
+    struct cavm_rfoex_tx_lmac_cfgx_cnf95xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_32_63        : 32;
@@ -5203,8 +8132,8 @@ union cavm_rfoex_tx_lmac_cfgx
                                                                  This value is valid when [CC_ENABLE] is 0x2 or 0x3. */
         uint64_t reserved_32_63        : 32;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_rfoex_tx_lmac_cfgx_s cn; */
+    } cnf95xx;
+    /* struct cavm_rfoex_tx_lmac_cfgx_s loki; */
 };
 typedef union cavm_rfoex_tx_lmac_cfgx cavm_rfoex_tx_lmac_cfgx_t;
 
@@ -5213,7 +8142,9 @@ static inline uint64_t CAVM_RFOEX_TX_LMAC_CFGX(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX_PASS2_X) && ((a<=1) && (b<=3)))
         return 0x87e043d00f80ll + 0x80000ll * ((a) & 0x1) + 8ll * ((b) & 0x3);
-    __cavm_csr_fatal("RFOEX_TX_LMAC_CFGX", 2, a, b, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=1) && (b<=3)))
+        return 0x87e043d00f80ll + 0x80000ll * ((a) & 0x1) + 8ll * ((b) & 0x3);
+    __cavm_csr_fatal("RFOEX_TX_LMAC_CFGX", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RFOEX_TX_LMAC_CFGX(a,b) cavm_rfoex_tx_lmac_cfgx_t
@@ -5250,7 +8181,9 @@ static inline uint64_t CAVM_RFOEX_TX_OCTS_STATX(unsigned long a, unsigned long b
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=1) && (b<=3)))
         return 0x87e043d00f40ll + 0x80000ll * ((a) & 0x1) + 8ll * ((b) & 0x3);
-    __cavm_csr_fatal("RFOEX_TX_OCTS_STATX", 2, a, b, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=1) && (b<=3)))
+        return 0x87e043d00f40ll + 0x80000ll * ((a) & 0x1) + 8ll * ((b) & 0x3);
+    __cavm_csr_fatal("RFOEX_TX_OCTS_STATX", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RFOEX_TX_OCTS_STATX(a,b) cavm_rfoex_tx_octs_statx_t
@@ -5287,7 +8220,9 @@ static inline uint64_t CAVM_RFOEX_TX_PKT_DROP_STATX(unsigned long a, unsigned lo
 {
     if (cavm_is_model(OCTEONTX_CNF95XX_PASS2_X) && ((a<=1) && (b<=3)))
         return 0x87e043d00f60ll + 0x80000ll * ((a) & 0x1) + 8ll * ((b) & 0x3);
-    __cavm_csr_fatal("RFOEX_TX_PKT_DROP_STATX", 2, a, b, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=1) && (b<=3)))
+        return 0x87e043d00f60ll + 0x80000ll * ((a) & 0x1) + 8ll * ((b) & 0x3);
+    __cavm_csr_fatal("RFOEX_TX_PKT_DROP_STATX", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RFOEX_TX_PKT_DROP_STATX(a,b) cavm_rfoex_tx_pkt_drop_statx_t
@@ -5324,7 +8259,9 @@ static inline uint64_t CAVM_RFOEX_TX_PKT_STATX(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=1) && (b<=3)))
         return 0x87e043d00f20ll + 0x80000ll * ((a) & 0x1) + 8ll * ((b) & 0x3);
-    __cavm_csr_fatal("RFOEX_TX_PKT_STATX", 2, a, b, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=1) && (b<=3)))
+        return 0x87e043d00f20ll + 0x80000ll * ((a) & 0x1) + 8ll * ((b) & 0x3);
+    __cavm_csr_fatal("RFOEX_TX_PKT_STATX", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RFOEX_TX_PKT_STATX(a,b) cavm_rfoex_tx_pkt_statx_t
@@ -5360,7 +8297,9 @@ static inline uint64_t CAVM_RFOEX_TX_SCRATCH(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=1))
         return 0x87e043d00f00ll + 0x80000ll * ((a) & 0x1);
-    __cavm_csr_fatal("RFOEX_TX_SCRATCH", 1, a, 0, 0, 0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=1))
+        return 0x87e043d00f00ll + 0x80000ll * ((a) & 0x1);
+    __cavm_csr_fatal("RFOEX_TX_SCRATCH", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RFOEX_TX_SCRATCH(a) cavm_rfoex_tx_scratch_t

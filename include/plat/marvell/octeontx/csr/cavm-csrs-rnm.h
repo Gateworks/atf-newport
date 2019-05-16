@@ -66,7 +66,7 @@ static inline uint64_t CAVM_RNM_BIST_STATUS_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX))
         return 0x87e040000008ll;
-    __cavm_csr_fatal("RNM_BIST_STATUS", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("RNM_BIST_STATUS", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RNM_BIST_STATUS cavm_rnm_bist_status_t
@@ -136,7 +136,7 @@ static inline uint64_t CAVM_RNM_BP_TEST_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x87e00f000028ll;
-    __cavm_csr_fatal("RNM_BP_TEST", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("RNM_BP_TEST", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RNM_BP_TEST cavm_rnm_bp_test_t
@@ -185,7 +185,7 @@ static inline uint64_t CAVM_RNM_CONST_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x87e00f000030ll;
-    __cavm_csr_fatal("RNM_CONST", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("RNM_CONST", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RNM_CONST cavm_rnm_const_t
@@ -642,6 +642,7 @@ union cavm_rnm_ctl_status
         uint64_t reserved_13_63        : 51;
 #endif /* Word 0 - End */
     } cnf95xx;
+    /* struct cavm_rnm_ctl_status_cnf95xx loki; */
 };
 typedef union cavm_rnm_ctl_status cavm_rnm_ctl_status_t;
 
@@ -653,7 +654,7 @@ static inline uint64_t CAVM_RNM_CTL_STATUS_FUNC(void)
         return 0x87e040000000ll;
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x87e00f000000ll;
-    __cavm_csr_fatal("RNM_CTL_STATUS", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("RNM_CTL_STATUS", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RNM_CTL_STATUS cavm_rnm_ctl_status_t
@@ -694,7 +695,7 @@ static inline uint64_t CAVM_RNM_EER_KEY_FUNC(void)
         return 0x87e040000010ll;
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x87e00f000010ll;
-    __cavm_csr_fatal("RNM_EER_KEY", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("RNM_EER_KEY", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RNM_EER_KEY cavm_rnm_eer_key_t
@@ -741,7 +742,7 @@ static inline uint64_t CAVM_RNM_HEALTH_STATUS_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X))
         return 0x87e00f000038ll;
-    __cavm_csr_fatal("RNM_HEALTH_STATUS", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("RNM_HEALTH_STATUS", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RNM_HEALTH_STATUS cavm_rnm_health_status_t
@@ -795,7 +796,7 @@ static inline uint64_t CAVM_RNM_RANDOM_FUNC(void)
         return 0x840000800000ll;
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x80f000800000ll;
-    __cavm_csr_fatal("RNM_RANDOM", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("RNM_RANDOM", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RNM_RANDOM cavm_rnm_random_t
@@ -836,7 +837,7 @@ static inline uint64_t CAVM_RNM_SERIAL_NUM_FUNC(void)
         return 0x87e040000020ll;
     if (cavm_is_model(OCTEONTX_CN9XXX))
         return 0x87e00f000020ll;
-    __cavm_csr_fatal("RNM_SERIAL_NUM", 0, 0, 0, 0, 0);
+    __cavm_csr_fatal("RNM_SERIAL_NUM", 0, 0, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RNM_SERIAL_NUM cavm_rnm_serial_num_t
@@ -878,7 +879,7 @@ static inline uint64_t CAVM_RNM_ZUCX_INIT_LFSRX(unsigned long a, unsigned long b
 {
     if (cavm_is_model(OCTEONTX_CN9XXX) && ((a==0) && (b<=15)))
         return 0x87e00f000100ll + 0x400ll * ((a) & 0x0) + 8ll * ((b) & 0xf);
-    __cavm_csr_fatal("RNM_ZUCX_INIT_LFSRX", 2, a, b, 0, 0);
+    __cavm_csr_fatal("RNM_ZUCX_INIT_LFSRX", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RNM_ZUCX_INIT_LFSRX(a,b) cavm_rnm_zucx_init_lfsrx_t
@@ -922,7 +923,7 @@ static inline uint64_t CAVM_RNM_ZUCX_INIT_NLFX(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX) && ((a==0) && (b<=1)))
         return 0x87e00f000200ll + 0x400ll * ((a) & 0x0) + 8ll * ((b) & 0x1);
-    __cavm_csr_fatal("RNM_ZUCX_INIT_NLFX", 2, a, b, 0, 0);
+    __cavm_csr_fatal("RNM_ZUCX_INIT_NLFX", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_RNM_ZUCX_INIT_NLFX(a,b) cavm_rnm_zucx_init_nlfx_t

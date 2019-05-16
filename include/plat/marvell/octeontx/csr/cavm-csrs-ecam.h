@@ -291,7 +291,7 @@ static inline uint64_t CAVM_ECAMX_BUSX_NSDIS(unsigned long a, unsigned long b)
         return 0x87e048030000ll + 0x1000000ll * ((a) & 0x0) + 8ll * ((b) & 0xff);
     if (cavm_is_model(OCTEONTX_CN83XX) && ((a<=1) && (b<=255)))
         return 0x87e048030000ll + 0x1000000ll * ((a) & 0x1) + 8ll * ((b) & 0xff);
-    __cavm_csr_fatal("ECAMX_BUSX_NSDIS", 2, a, b, 0, 0);
+    __cavm_csr_fatal("ECAMX_BUSX_NSDIS", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_ECAMX_BUSX_NSDIS(a,b) cavm_ecamx_busx_nsdis_t
@@ -340,7 +340,7 @@ static inline uint64_t CAVM_ECAMX_BUSX_SDIS(unsigned long a, unsigned long b)
         return 0x87e048020000ll + 0x1000000ll * ((a) & 0x0) + 8ll * ((b) & 0xff);
     if (cavm_is_model(OCTEONTX_CN83XX) && ((a<=1) && (b<=255)))
         return 0x87e048020000ll + 0x1000000ll * ((a) & 0x1) + 8ll * ((b) & 0xff);
-    __cavm_csr_fatal("ECAMX_BUSX_SDIS", 2, a, b, 0, 0);
+    __cavm_csr_fatal("ECAMX_BUSX_SDIS", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_ECAMX_BUSX_SDIS(a,b) cavm_ecamx_busx_sdis_t
@@ -385,7 +385,7 @@ static inline uint64_t CAVM_ECAMX_BUSX_SKILL(unsigned long a, unsigned long b)
         return 0x87e048080000ll + 0x1000000ll * ((a) & 0x0) + 8ll * ((b) & 0xff);
     if (cavm_is_model(OCTEONTX_CN83XX) && ((a<=1) && (b<=255)))
         return 0x87e048080000ll + 0x1000000ll * ((a) & 0x1) + 8ll * ((b) & 0xff);
-    __cavm_csr_fatal("ECAMX_BUSX_SKILL", 2, a, b, 0, 0);
+    __cavm_csr_fatal("ECAMX_BUSX_SKILL", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_ECAMX_BUSX_SKILL(a,b) cavm_ecamx_busx_skill_t
@@ -439,7 +439,7 @@ static inline uint64_t CAVM_ECAMX_CONST(unsigned long a)
         return 0x87e048000200ll + 0x1000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN9XXX) && (a==0))
         return 0x87e078000200ll + 0x1000000ll * ((a) & 0x0);
-    __cavm_csr_fatal("ECAMX_CONST", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("ECAMX_CONST", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_ECAMX_CONST(a) cavm_ecamx_const_t
@@ -484,7 +484,7 @@ static inline uint64_t CAVM_ECAMX_DEVX_NSDIS(unsigned long a, unsigned long b)
         return 0x87e048070000ll + 0x1000000ll * ((a) & 0x0) + 8ll * ((b) & 0x1f);
     if (cavm_is_model(OCTEONTX_CN83XX) && ((a<=1) && (b<=31)))
         return 0x87e048070000ll + 0x1000000ll * ((a) & 0x1) + 8ll * ((b) & 0x1f);
-    __cavm_csr_fatal("ECAMX_DEVX_NSDIS", 2, a, b, 0, 0);
+    __cavm_csr_fatal("ECAMX_DEVX_NSDIS", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_ECAMX_DEVX_NSDIS(a,b) cavm_ecamx_devx_nsdis_t
@@ -535,7 +535,7 @@ static inline uint64_t CAVM_ECAMX_DEVX_SDIS(unsigned long a, unsigned long b)
         return 0x87e048060000ll + 0x1000000ll * ((a) & 0x0) + 8ll * ((b) & 0x1f);
     if (cavm_is_model(OCTEONTX_CN83XX) && ((a<=1) && (b<=31)))
         return 0x87e048060000ll + 0x1000000ll * ((a) & 0x1) + 8ll * ((b) & 0x1f);
-    __cavm_csr_fatal("ECAMX_DEVX_SDIS", 2, a, b, 0, 0);
+    __cavm_csr_fatal("ECAMX_DEVX_SDIS", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_ECAMX_DEVX_SDIS(a,b) cavm_ecamx_devx_sdis_t
@@ -580,7 +580,7 @@ static inline uint64_t CAVM_ECAMX_DEVX_SKILL(unsigned long a, unsigned long b)
         return 0x87e0480a0000ll + 0x1000000ll * ((a) & 0x0) + 8ll * ((b) & 0x1f);
     if (cavm_is_model(OCTEONTX_CN83XX) && ((a<=1) && (b<=31)))
         return 0x87e0480a0000ll + 0x1000000ll * ((a) & 0x1) + 8ll * ((b) & 0x1f);
-    __cavm_csr_fatal("ECAMX_DEVX_SKILL", 2, a, b, 0, 0);
+    __cavm_csr_fatal("ECAMX_DEVX_SKILL", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_ECAMX_DEVX_SKILL(a,b) cavm_ecamx_devx_skill_t
@@ -641,7 +641,7 @@ static inline uint64_t CAVM_ECAMX_DOMX_BUSX_PERMIT(unsigned long a, unsigned lon
 {
     if (cavm_is_model(OCTEONTX_CN9XXX) && ((a==0) && ((b==0) || (b==1) || (b==2)) && (c<=255)))
         return 0x87e078020000ll + 0x1000000ll * ((a) & 0x0) + 0x800ll * ((b) & 0x3) + 8ll * ((c) & 0xff);
-    __cavm_csr_fatal("ECAMX_DOMX_BUSX_PERMIT", 3, a, b, c, 0);
+    __cavm_csr_fatal("ECAMX_DOMX_BUSX_PERMIT", 3, a, b, c, 0, 0, 0);
 }
 
 #define typedef_CAVM_ECAMX_DOMX_BUSX_PERMIT(a,b,c) cavm_ecamx_domx_busx_permit_t
@@ -687,7 +687,7 @@ static inline uint64_t CAVM_ECAMX_DOMX_CONST(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX) && ((a==0) && (b<=63)))
         return 0x87e078000400ll + 0x1000000ll * ((a) & 0x0) + 8ll * ((b) & 0x3f);
-    __cavm_csr_fatal("ECAMX_DOMX_CONST", 2, a, b, 0, 0);
+    __cavm_csr_fatal("ECAMX_DOMX_CONST", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_ECAMX_DOMX_CONST(a,b) cavm_ecamx_domx_const_t
@@ -749,7 +749,7 @@ static inline uint64_t CAVM_ECAMX_DOMX_DEVX_PERMIT(unsigned long a, unsigned lon
 {
     if (cavm_is_model(OCTEONTX_CN9XXX) && ((a==0) && ((b==0) || (b==1) || (b==2)) && (c<=31)))
         return 0x87e078040000ll + 0x1000000ll * ((a) & 0x0) + 0x800ll * ((b) & 0x3) + 8ll * ((c) & 0x1f);
-    __cavm_csr_fatal("ECAMX_DOMX_DEVX_PERMIT", 3, a, b, c, 0);
+    __cavm_csr_fatal("ECAMX_DOMX_DEVX_PERMIT", 3, a, b, c, 0, 0, 0);
 }
 
 #define typedef_CAVM_ECAMX_DOMX_DEVX_PERMIT(a,b,c) cavm_ecamx_domx_devx_permit_t
@@ -812,7 +812,7 @@ static inline uint64_t CAVM_ECAMX_DOMX_RSLX_PERMIT(unsigned long a, unsigned lon
 {
     if (cavm_is_model(OCTEONTX_CN9XXX) && ((a==0) && ((b==0) || (b==1) || (b==2)) && (c<=255)))
         return 0x87e078060000ll + 0x1000000ll * ((a) & 0x0) + 0x800ll * ((b) & 0x3) + 8ll * ((c) & 0xff);
-    __cavm_csr_fatal("ECAMX_DOMX_RSLX_PERMIT", 3, a, b, c, 0);
+    __cavm_csr_fatal("ECAMX_DOMX_RSLX_PERMIT", 3, a, b, c, 0, 0, 0);
 }
 
 #define typedef_CAVM_ECAMX_DOMX_RSLX_PERMIT(a,b,c) cavm_ecamx_domx_rslx_permit_t
@@ -849,7 +849,7 @@ static inline uint64_t CAVM_ECAMX_NOP_OF(unsigned long a)
         return 0x87e048000000ll + 0x1000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_CN83XX) && (a<=1))
         return 0x87e048000000ll + 0x1000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("ECAMX_NOP_OF", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("ECAMX_NOP_OF", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_ECAMX_NOP_OF(a) cavm_ecamx_nop_of_t
@@ -886,7 +886,7 @@ static inline uint64_t CAVM_ECAMX_NOP_ONF(unsigned long a)
         return 0x87e048000080ll + 0x1000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_CN83XX) && (a<=1))
         return 0x87e048000080ll + 0x1000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("ECAMX_NOP_ONF", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("ECAMX_NOP_ONF", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_ECAMX_NOP_ONF(a) cavm_ecamx_nop_onf_t
@@ -923,7 +923,7 @@ static inline uint64_t CAVM_ECAMX_NOP_ZF(unsigned long a)
         return 0x87e048000100ll + 0x1000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_CN83XX) && (a<=1))
         return 0x87e048000100ll + 0x1000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("ECAMX_NOP_ZF", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("ECAMX_NOP_ZF", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_ECAMX_NOP_ZF(a) cavm_ecamx_nop_zf_t
@@ -960,7 +960,7 @@ static inline uint64_t CAVM_ECAMX_NOP_ZNF(unsigned long a)
         return 0x87e048000180ll + 0x1000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_CN83XX) && (a<=1))
         return 0x87e048000180ll + 0x1000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("ECAMX_NOP_ZNF", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("ECAMX_NOP_ZNF", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_ECAMX_NOP_ZNF(a) cavm_ecamx_nop_znf_t
@@ -1006,7 +1006,7 @@ static inline uint64_t CAVM_ECAMX_RSLX_NSDIS(unsigned long a, unsigned long b)
         return 0x87e048050000ll + 0x1000000ll * ((a) & 0x0) + 8ll * ((b) & 0xff);
     if (cavm_is_model(OCTEONTX_CN83XX) && ((a<=1) && (b<=255)))
         return 0x87e048050000ll + 0x1000000ll * ((a) & 0x1) + 8ll * ((b) & 0xff);
-    __cavm_csr_fatal("ECAMX_RSLX_NSDIS", 2, a, b, 0, 0);
+    __cavm_csr_fatal("ECAMX_RSLX_NSDIS", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_ECAMX_RSLX_NSDIS(a,b) cavm_ecamx_rslx_nsdis_t
@@ -1058,7 +1058,7 @@ static inline uint64_t CAVM_ECAMX_RSLX_SDIS(unsigned long a, unsigned long b)
         return 0x87e048040000ll + 0x1000000ll * ((a) & 0x0) + 8ll * ((b) & 0xff);
     if (cavm_is_model(OCTEONTX_CN83XX) && ((a<=1) && (b<=255)))
         return 0x87e048040000ll + 0x1000000ll * ((a) & 0x1) + 8ll * ((b) & 0xff);
-    __cavm_csr_fatal("ECAMX_RSLX_SDIS", 2, a, b, 0, 0);
+    __cavm_csr_fatal("ECAMX_RSLX_SDIS", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_ECAMX_RSLX_SDIS(a,b) cavm_ecamx_rslx_sdis_t
@@ -1104,7 +1104,7 @@ static inline uint64_t CAVM_ECAMX_RSLX_SKILL(unsigned long a, unsigned long b)
         return 0x87e048090000ll + 0x1000000ll * ((a) & 0x0) + 8ll * ((b) & 0xff);
     if (cavm_is_model(OCTEONTX_CN83XX) && ((a<=1) && (b<=255)))
         return 0x87e048090000ll + 0x1000000ll * ((a) & 0x1) + 8ll * ((b) & 0xff);
-    __cavm_csr_fatal("ECAMX_RSLX_SKILL", 2, a, b, 0, 0);
+    __cavm_csr_fatal("ECAMX_RSLX_SKILL", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_ECAMX_RSLX_SKILL(a,b) cavm_ecamx_rslx_skill_t
@@ -1139,7 +1139,7 @@ static inline uint64_t CAVM_ECAMX_SCRATCH(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN9XXX) && (a==0))
         return 0x87e078080000ll + 0x1000000ll * ((a) & 0x0);
-    __cavm_csr_fatal("ECAMX_SCRATCH", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("ECAMX_SCRATCH", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_ECAMX_SCRATCH(a) cavm_ecamx_scratch_t

@@ -168,7 +168,7 @@ static inline uint64_t CAVM_USBDRDX_BP_TEST0(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x868000100070ll + 0x1000000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("USBDRDX_BP_TEST0", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("USBDRDX_BP_TEST0", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_BP_TEST0(a) cavm_usbdrdx_bp_test0_t
@@ -203,7 +203,7 @@ static inline uint64_t CAVM_USBDRDX_CONST(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x868000100078ll + 0x1000000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("USBDRDX_CONST", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("USBDRDX_CONST", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_CONST(a) cavm_usbdrdx_const_t
@@ -246,7 +246,7 @@ static inline uint64_t CAVM_USBDRDX_MSIX_PBAX(unsigned long a, unsigned long b)
         return 0x8680002f0000ll + 0x1000000000ll * ((a) & 0x1) + 8ll * ((b) & 0x0);
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b==0)))
         return 0x8680002f0000ll + 0x1000000000ll * ((a) & 0x1) + 8ll * ((b) & 0x0);
-    __cavm_csr_fatal("USBDRDX_MSIX_PBAX", 2, a, b, 0, 0);
+    __cavm_csr_fatal("USBDRDX_MSIX_PBAX", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_MSIX_PBAX(a,b) cavm_usbdrdx_msix_pbax_t
@@ -399,7 +399,7 @@ static inline uint64_t CAVM_USBDRDX_MSIX_VECX_ADDR(unsigned long a, unsigned lon
         return 0x868000200000ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=4)))
         return 0x868000200000ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x7);
-    __cavm_csr_fatal("USBDRDX_MSIX_VECX_ADDR", 2, a, b, 0, 0);
+    __cavm_csr_fatal("USBDRDX_MSIX_VECX_ADDR", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_MSIX_VECX_ADDR(a,b) cavm_usbdrdx_msix_vecx_addr_t
@@ -455,7 +455,7 @@ static inline uint64_t CAVM_USBDRDX_MSIX_VECX_CTL(unsigned long a, unsigned long
         return 0x868000200008ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=4)))
         return 0x868000200008ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x7);
-    __cavm_csr_fatal("USBDRDX_MSIX_VECX_CTL", 2, a, b, 0, 0);
+    __cavm_csr_fatal("USBDRDX_MSIX_VECX_CTL", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_MSIX_VECX_CTL(a,b) cavm_usbdrdx_msix_vecx_ctl_t
@@ -499,7 +499,7 @@ static inline uint64_t CAVM_USBDRDX_UAHC_CAPLENGTH(unsigned long a)
         return 0x868000000000ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x868000000000ll + 0x1000000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("USBDRDX_UAHC_CAPLENGTH", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UAHC_CAPLENGTH", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UAHC_CAPLENGTH(a) cavm_usbdrdx_uahc_caplength_t
@@ -545,7 +545,7 @@ static inline uint64_t CAVM_USBDRDX_UAHC_CONFIG(unsigned long a)
         return 0x868000000058ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x868000000058ll + 0x1000000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("USBDRDX_UAHC_CONFIG", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UAHC_CONFIG", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UAHC_CONFIG(a) cavm_usbdrdx_uahc_config_t
@@ -598,7 +598,7 @@ static inline uint64_t CAVM_USBDRDX_UAHC_CRCR(unsigned long a)
         return 0x868000000038ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x868000000038ll + 0x1000000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("USBDRDX_UAHC_CRCR", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UAHC_CRCR", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UAHC_CRCR(a) cavm_usbdrdx_uahc_crcr_t
@@ -689,7 +689,7 @@ static inline uint64_t CAVM_USBDRDX_UAHC_DALEPENA(unsigned long a)
         return 0x86800000c720ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x86800000c720ll + 0x1000000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("USBDRDX_UAHC_DALEPENA", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UAHC_DALEPENA", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UAHC_DALEPENA(a) cavm_usbdrdx_uahc_dalepena_t
@@ -740,7 +740,7 @@ static inline uint64_t CAVM_USBDRDX_UAHC_DBX(unsigned long a, unsigned long b)
         return 0x868000000480ll + 0x1000000000ll * ((a) & 0x1) + 4ll * ((b) & 0x7f);
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=64)))
         return 0x868000000480ll + 0x1000000000ll * ((a) & 0x1) + 4ll * ((b) & 0x7f);
-    __cavm_csr_fatal("USBDRDX_UAHC_DBX", 2, a, b, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UAHC_DBX", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UAHC_DBX(a,b) cavm_usbdrdx_uahc_dbx_t
@@ -781,7 +781,7 @@ static inline uint64_t CAVM_USBDRDX_UAHC_DBOFF(unsigned long a)
         return 0x868000000014ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x868000000014ll + 0x1000000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("USBDRDX_UAHC_DBOFF", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UAHC_DBOFF", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UAHC_DBOFF(a) cavm_usbdrdx_uahc_dboff_t
@@ -829,7 +829,7 @@ static inline uint64_t CAVM_USBDRDX_UAHC_DCBAAP(unsigned long a)
         return 0x868000000050ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x868000000050ll + 0x1000000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("USBDRDX_UAHC_DCBAAP", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UAHC_DCBAAP", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UAHC_DCBAAP(a) cavm_usbdrdx_uahc_dcbaap_t
@@ -1089,7 +1089,7 @@ static inline uint64_t CAVM_USBDRDX_UAHC_DCFG(unsigned long a)
         return 0x86800000c700ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x86800000c700ll + 0x1000000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("USBDRDX_UAHC_DCFG", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UAHC_DCFG", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UAHC_DCFG(a) cavm_usbdrdx_uahc_dcfg_t
@@ -1506,7 +1506,7 @@ static inline uint64_t CAVM_USBDRDX_UAHC_DCTL(unsigned long a)
         return 0x86800000c704ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x86800000c704ll + 0x1000000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("USBDRDX_UAHC_DCTL", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UAHC_DCTL", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UAHC_DCTL(a) cavm_usbdrdx_uahc_dctl_t
@@ -1822,7 +1822,7 @@ static inline uint64_t CAVM_USBDRDX_UAHC_DEPCMDX(unsigned long a, unsigned long 
         return 0x86800000c80cll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0xf);
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=15)))
         return 0x86800000c80cll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0xf);
-    __cavm_csr_fatal("USBDRDX_UAHC_DEPCMDX", 2, a, b, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UAHC_DEPCMDX", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UAHC_DEPCMDX(a,b) cavm_usbdrdx_uahc_depcmdx_t
@@ -1869,7 +1869,7 @@ static inline uint64_t CAVM_USBDRDX_UAHC_DEPCMDPAR0_X(unsigned long a, unsigned 
         return 0x86800000c808ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0xf);
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=15)))
         return 0x86800000c808ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0xf);
-    __cavm_csr_fatal("USBDRDX_UAHC_DEPCMDPAR0_X", 2, a, b, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UAHC_DEPCMDPAR0_X", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UAHC_DEPCMDPAR0_X(a,b) cavm_usbdrdx_uahc_depcmdpar0_x_t
@@ -1916,7 +1916,7 @@ static inline uint64_t CAVM_USBDRDX_UAHC_DEPCMDPAR1_X(unsigned long a, unsigned 
         return 0x86800000c804ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0xf);
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=15)))
         return 0x86800000c804ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0xf);
-    __cavm_csr_fatal("USBDRDX_UAHC_DEPCMDPAR1_X", 2, a, b, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UAHC_DEPCMDPAR1_X", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UAHC_DEPCMDPAR1_X(a,b) cavm_usbdrdx_uahc_depcmdpar1_x_t
@@ -1963,7 +1963,7 @@ static inline uint64_t CAVM_USBDRDX_UAHC_DEPCMDPAR2_X(unsigned long a, unsigned 
         return 0x86800000c800ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0xf);
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=15)))
         return 0x86800000c800ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0xf);
-    __cavm_csr_fatal("USBDRDX_UAHC_DEPCMDPAR2_X", 2, a, b, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UAHC_DEPCMDPAR2_X", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UAHC_DEPCMDPAR2_X(a,b) cavm_usbdrdx_uahc_depcmdpar2_x_t
@@ -2008,7 +2008,7 @@ static inline uint64_t CAVM_USBDRDX_UAHC_DEV_IMODX(unsigned long a, unsigned lon
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=15)))
         return 0x86800000ca00ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0xf);
-    __cavm_csr_fatal("USBDRDX_UAHC_DEV_IMODX", 2, a, b, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UAHC_DEV_IMODX", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UAHC_DEV_IMODX(a,b) cavm_usbdrdx_uahc_dev_imodx_t
@@ -2124,7 +2124,7 @@ static inline uint64_t CAVM_USBDRDX_UAHC_DEVTEN(unsigned long a)
         return 0x86800000c708ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x86800000c708ll + 0x1000000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("USBDRDX_UAHC_DEVTEN", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UAHC_DEVTEN", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UAHC_DEVTEN(a) cavm_usbdrdx_uahc_devten_t
@@ -2207,7 +2207,7 @@ static inline uint64_t CAVM_USBDRDX_UAHC_DGCMD(unsigned long a)
         return 0x86800000c714ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x86800000c714ll + 0x1000000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("USBDRDX_UAHC_DGCMD", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UAHC_DGCMD", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UAHC_DGCMD(a) cavm_usbdrdx_uahc_dgcmd_t
@@ -2258,7 +2258,7 @@ static inline uint64_t CAVM_USBDRDX_UAHC_DGCMDPAR(unsigned long a)
         return 0x86800000c710ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x86800000c710ll + 0x1000000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("USBDRDX_UAHC_DGCMDPAR", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UAHC_DGCMDPAR", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UAHC_DGCMDPAR(a) cavm_usbdrdx_uahc_dgcmdpar_t
@@ -2306,7 +2306,7 @@ static inline uint64_t CAVM_USBDRDX_UAHC_DNCTRL(unsigned long a)
         return 0x868000000034ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x868000000034ll + 0x1000000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("USBDRDX_UAHC_DNCTRL", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UAHC_DNCTRL", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UAHC_DNCTRL(a) cavm_usbdrdx_uahc_dnctrl_t
@@ -2522,7 +2522,7 @@ static inline uint64_t CAVM_USBDRDX_UAHC_DSTS(unsigned long a)
         return 0x86800000c70cll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x86800000c70cll + 0x1000000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("USBDRDX_UAHC_DSTS", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UAHC_DSTS", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UAHC_DSTS(a) cavm_usbdrdx_uahc_dsts_t
@@ -2569,7 +2569,7 @@ static inline uint64_t CAVM_USBDRDX_UAHC_ERDPX(unsigned long a, unsigned long b)
         return 0x868000000478ll + 0x1000000000ll * ((a) & 0x1) + 0ll * ((b) & 0x0);
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b==0)))
         return 0x868000000478ll + 0x1000000000ll * ((a) & 0x1) + 0ll * ((b) & 0x0);
-    __cavm_csr_fatal("USBDRDX_UAHC_ERDPX", 2, a, b, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UAHC_ERDPX", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UAHC_ERDPX(a,b) cavm_usbdrdx_uahc_erdpx_t
@@ -2614,7 +2614,7 @@ static inline uint64_t CAVM_USBDRDX_UAHC_ERSTBAX(unsigned long a, unsigned long 
         return 0x868000000470ll + 0x1000000000ll * ((a) & 0x1) + 0ll * ((b) & 0x0);
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b==0)))
         return 0x868000000470ll + 0x1000000000ll * ((a) & 0x1) + 0ll * ((b) & 0x0);
-    __cavm_csr_fatal("USBDRDX_UAHC_ERSTBAX", 2, a, b, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UAHC_ERSTBAX", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UAHC_ERSTBAX(a,b) cavm_usbdrdx_uahc_erstbax_t
@@ -2659,7 +2659,7 @@ static inline uint64_t CAVM_USBDRDX_UAHC_ERSTSZX(unsigned long a, unsigned long 
         return 0x868000000468ll + 0x1000000000ll * ((a) & 0x1) + 0ll * ((b) & 0x0);
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b==0)))
         return 0x868000000468ll + 0x1000000000ll * ((a) & 0x1) + 0ll * ((b) & 0x0);
-    __cavm_csr_fatal("USBDRDX_UAHC_ERSTSZX", 2, a, b, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UAHC_ERSTSZX", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UAHC_ERSTSZX(a,b) cavm_usbdrdx_uahc_erstszx_t
@@ -2720,7 +2720,7 @@ static inline uint64_t CAVM_USBDRDX_UAHC_GBUSERRADDR(unsigned long a)
         return 0x86800000c130ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x86800000c130ll + 0x1000000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("USBDRDX_UAHC_GBUSERRADDR", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UAHC_GBUSERRADDR", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UAHC_GBUSERRADDR(a) cavm_usbdrdx_uahc_gbuserraddr_t
@@ -3621,7 +3621,7 @@ static inline uint64_t CAVM_USBDRDX_UAHC_GCTL(unsigned long a)
         return 0x86800000c110ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x86800000c110ll + 0x1000000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("USBDRDX_UAHC_GCTL", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UAHC_GCTL", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UAHC_GCTL(a) cavm_usbdrdx_uahc_gctl_t
@@ -3668,7 +3668,7 @@ static inline uint64_t CAVM_USBDRDX_UAHC_GDBGBMU(unsigned long a)
         return 0x86800000c16cll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x86800000c16cll + 0x1000000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("USBDRDX_UAHC_GDBGBMU", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UAHC_GDBGBMU", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UAHC_GDBGBMU(a) cavm_usbdrdx_uahc_gdbgbmu_t
@@ -3708,7 +3708,7 @@ static inline uint64_t CAVM_USBDRDX_UAHC_GDBGEPINFO(unsigned long a)
         return 0x86800000c178ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x86800000c178ll + 0x1000000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("USBDRDX_UAHC_GDBGEPINFO", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UAHC_GDBGEPINFO", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UAHC_GDBGEPINFO(a) cavm_usbdrdx_uahc_gdbgepinfo_t
@@ -3786,7 +3786,7 @@ static inline uint64_t CAVM_USBDRDX_UAHC_GDBGFIFOSPACE(unsigned long a)
         return 0x86800000c160ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x86800000c160ll + 0x1000000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("USBDRDX_UAHC_GDBGFIFOSPACE", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UAHC_GDBGFIFOSPACE", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UAHC_GDBGFIFOSPACE(a) cavm_usbdrdx_uahc_gdbgfifospace_t
@@ -3835,7 +3835,7 @@ static inline uint64_t CAVM_USBDRDX_UAHC_GDBGLNMCC(unsigned long a)
         return 0x86800000c168ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x86800000c168ll + 0x1000000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("USBDRDX_UAHC_GDBGLNMCC", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UAHC_GDBGLNMCC", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UAHC_GDBGLNMCC(a) cavm_usbdrdx_uahc_gdbglnmcc_t
@@ -3875,7 +3875,7 @@ static inline uint64_t CAVM_USBDRDX_UAHC_GDBGLSP(unsigned long a)
         return 0x86800000c174ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x86800000c174ll + 0x1000000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("USBDRDX_UAHC_GDBGLSP", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UAHC_GDBGLSP", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UAHC_GDBGLSP(a) cavm_usbdrdx_uahc_gdbglsp_t
@@ -3943,7 +3943,7 @@ static inline uint64_t CAVM_USBDRDX_UAHC_GDBGLSPMUX(unsigned long a)
         return 0x86800000c170ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x86800000c170ll + 0x1000000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("USBDRDX_UAHC_GDBGLSPMUX", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UAHC_GDBGLSPMUX", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UAHC_GDBGLSPMUX(a) cavm_usbdrdx_uahc_gdbglspmux_t
@@ -4049,7 +4049,7 @@ static inline uint64_t CAVM_USBDRDX_UAHC_GDBGLTSSM(unsigned long a)
         return 0x86800000c164ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x86800000c164ll + 0x1000000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("USBDRDX_UAHC_GDBGLTSSM", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UAHC_GDBGLTSSM", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UAHC_GDBGLTSSM(a) cavm_usbdrdx_uahc_gdbgltssm_t
@@ -4115,7 +4115,7 @@ static inline uint64_t CAVM_USBDRDX_UAHC_GDMAHLRATIO(unsigned long a)
         return 0x86800000c624ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x86800000c624ll + 0x1000000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("USBDRDX_UAHC_GDMAHLRATIO", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UAHC_GDMAHLRATIO", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UAHC_GDMAHLRATIO(a) cavm_usbdrdx_uahc_gdmahlratio_t
@@ -4169,7 +4169,7 @@ static inline uint64_t CAVM_USBDRDX_UAHC_GEVNTADRX(unsigned long a, unsigned lon
         return 0x86800000c400ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x0);
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b==0)))
         return 0x86800000c400ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x0);
-    __cavm_csr_fatal("USBDRDX_UAHC_GEVNTADRX", 2, a, b, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UAHC_GEVNTADRX", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UAHC_GEVNTADRX(a,b) cavm_usbdrdx_uahc_gevntadrx_t
@@ -4232,7 +4232,7 @@ static inline uint64_t CAVM_USBDRDX_UAHC_GEVNTCOUNTX(unsigned long a, unsigned l
         return 0x86800000c40cll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x0);
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b==0)))
         return 0x86800000c40cll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x0);
-    __cavm_csr_fatal("USBDRDX_UAHC_GEVNTCOUNTX", 2, a, b, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UAHC_GEVNTCOUNTX", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UAHC_GEVNTCOUNTX(a,b) cavm_usbdrdx_uahc_gevntcountx_t
@@ -4292,7 +4292,7 @@ static inline uint64_t CAVM_USBDRDX_UAHC_GEVNTSIZX(unsigned long a, unsigned lon
         return 0x86800000c408ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x0);
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b==0)))
         return 0x86800000c408ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x0);
-    __cavm_csr_fatal("USBDRDX_UAHC_GEVNTSIZX", 2, a, b, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UAHC_GEVNTSIZX", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UAHC_GEVNTSIZX(a,b) cavm_usbdrdx_uahc_gevntsizx_t
@@ -4518,7 +4518,7 @@ static inline uint64_t CAVM_USBDRDX_UAHC_GFLADJ(unsigned long a)
         return 0x86800000c630ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x86800000c630ll + 0x1000000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("USBDRDX_UAHC_GFLADJ", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UAHC_GFLADJ", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UAHC_GFLADJ(a) cavm_usbdrdx_uahc_gfladj_t
@@ -4564,7 +4564,7 @@ static inline uint64_t CAVM_USBDRDX_UAHC_GGPIO(unsigned long a)
         return 0x86800000c124ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x86800000c124ll + 0x1000000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("USBDRDX_UAHC_GGPIO", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UAHC_GGPIO", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UAHC_GGPIO(a) cavm_usbdrdx_uahc_ggpio_t
@@ -4615,7 +4615,7 @@ static inline uint64_t CAVM_USBDRDX_UAHC_GHWPARAMS0(unsigned long a)
         return 0x86800000c140ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x86800000c140ll + 0x1000000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("USBDRDX_UAHC_GHWPARAMS0", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UAHC_GHWPARAMS0", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UAHC_GHWPARAMS0(a) cavm_usbdrdx_uahc_ghwparams0_t
@@ -4694,7 +4694,7 @@ static inline uint64_t CAVM_USBDRDX_UAHC_GHWPARAMS1(unsigned long a)
         return 0x86800000c144ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x86800000c144ll + 0x1000000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("USBDRDX_UAHC_GHWPARAMS1", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UAHC_GHWPARAMS1", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UAHC_GHWPARAMS1(a) cavm_usbdrdx_uahc_ghwparams1_t
@@ -4735,7 +4735,7 @@ static inline uint64_t CAVM_USBDRDX_UAHC_GHWPARAMS2(unsigned long a)
         return 0x86800000c148ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x86800000c148ll + 0x1000000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("USBDRDX_UAHC_GHWPARAMS2", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UAHC_GHWPARAMS2", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UAHC_GHWPARAMS2(a) cavm_usbdrdx_uahc_ghwparams2_t
@@ -4795,7 +4795,7 @@ static inline uint64_t CAVM_USBDRDX_UAHC_GHWPARAMS3(unsigned long a)
         return 0x86800000c14cll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x86800000c14cll + 0x1000000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("USBDRDX_UAHC_GHWPARAMS3", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UAHC_GHWPARAMS3", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UAHC_GHWPARAMS3(a) cavm_usbdrdx_uahc_ghwparams3_t
@@ -4852,7 +4852,7 @@ static inline uint64_t CAVM_USBDRDX_UAHC_GHWPARAMS4(unsigned long a)
         return 0x86800000c150ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x86800000c150ll + 0x1000000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("USBDRDX_UAHC_GHWPARAMS4", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UAHC_GHWPARAMS4", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UAHC_GHWPARAMS4(a) cavm_usbdrdx_uahc_ghwparams4_t
@@ -4903,7 +4903,7 @@ static inline uint64_t CAVM_USBDRDX_UAHC_GHWPARAMS5(unsigned long a)
         return 0x86800000c154ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x86800000c154ll + 0x1000000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("USBDRDX_UAHC_GHWPARAMS5", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UAHC_GHWPARAMS5", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UAHC_GHWPARAMS5(a) cavm_usbdrdx_uahc_ghwparams5_t
@@ -4964,7 +4964,7 @@ static inline uint64_t CAVM_USBDRDX_UAHC_GHWPARAMS6(unsigned long a)
         return 0x86800000c158ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x86800000c158ll + 0x1000000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("USBDRDX_UAHC_GHWPARAMS6", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UAHC_GHWPARAMS6", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UAHC_GHWPARAMS6(a) cavm_usbdrdx_uahc_ghwparams6_t
@@ -5007,7 +5007,7 @@ static inline uint64_t CAVM_USBDRDX_UAHC_GHWPARAMS7(unsigned long a)
         return 0x86800000c15cll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x86800000c15cll + 0x1000000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("USBDRDX_UAHC_GHWPARAMS7", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UAHC_GHWPARAMS7", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UAHC_GHWPARAMS7(a) cavm_usbdrdx_uahc_ghwparams7_t
@@ -5048,7 +5048,7 @@ static inline uint64_t CAVM_USBDRDX_UAHC_GHWPARAMS8(unsigned long a)
         return 0x86800000c600ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x86800000c600ll + 0x1000000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("USBDRDX_UAHC_GHWPARAMS8", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UAHC_GHWPARAMS8", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UAHC_GHWPARAMS8(a) cavm_usbdrdx_uahc_ghwparams8_t
@@ -5134,7 +5134,7 @@ static inline uint64_t CAVM_USBDRDX_UAHC_GPMSTS(unsigned long a)
         return 0x86800000c114ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x86800000c114ll + 0x1000000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("USBDRDX_UAHC_GPMSTS", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UAHC_GPMSTS", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UAHC_GPMSTS(a) cavm_usbdrdx_uahc_gpmsts_t
@@ -5183,7 +5183,7 @@ static inline uint64_t CAVM_USBDRDX_UAHC_GPRTBIMAP(unsigned long a)
         return 0x86800000c138ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x86800000c138ll + 0x1000000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("USBDRDX_UAHC_GPRTBIMAP", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UAHC_GPRTBIMAP", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UAHC_GPRTBIMAP(a) cavm_usbdrdx_uahc_gprtbimap_t
@@ -5232,7 +5232,7 @@ static inline uint64_t CAVM_USBDRDX_UAHC_GPRTBIMAP_FS(unsigned long a)
         return 0x86800000c188ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x86800000c188ll + 0x1000000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("USBDRDX_UAHC_GPRTBIMAP_FS", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UAHC_GPRTBIMAP_FS", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UAHC_GPRTBIMAP_FS(a) cavm_usbdrdx_uahc_gprtbimap_fs_t
@@ -5281,7 +5281,7 @@ static inline uint64_t CAVM_USBDRDX_UAHC_GPRTBIMAP_HS(unsigned long a)
         return 0x86800000c180ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x86800000c180ll + 0x1000000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("USBDRDX_UAHC_GPRTBIMAP_HS", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UAHC_GPRTBIMAP_HS", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UAHC_GPRTBIMAP_HS(a) cavm_usbdrdx_uahc_gprtbimap_hs_t
@@ -5350,7 +5350,7 @@ static inline uint64_t CAVM_USBDRDX_UAHC_GRLSID(unsigned long a)
         return 0x86800000c120ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x86800000c120ll + 0x1000000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("USBDRDX_UAHC_GRLSID", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UAHC_GRLSID", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UAHC_GRLSID(a) cavm_usbdrdx_uahc_grlsid_t
@@ -5414,7 +5414,7 @@ static inline uint64_t CAVM_USBDRDX_UAHC_GRXFIFOPRIHST(unsigned long a)
         return 0x86800000c61cll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x86800000c61cll + 0x1000000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("USBDRDX_UAHC_GRXFIFOPRIHST", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UAHC_GRXFIFOPRIHST", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UAHC_GRXFIFOPRIHST(a) cavm_usbdrdx_uahc_grxfifoprihst_t
@@ -5479,7 +5479,7 @@ static inline uint64_t CAVM_USBDRDX_UAHC_GRXFIFOSIZX(unsigned long a, unsigned l
         return 0x86800000c380ll + 0x1000000000ll * ((a) & 0x1) + 4ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=2)))
         return 0x86800000c380ll + 0x1000000000ll * ((a) & 0x1) + 4ll * ((b) & 0x3);
-    __cavm_csr_fatal("USBDRDX_UAHC_GRXFIFOSIZX", 2, a, b, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UAHC_GRXFIFOSIZX", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UAHC_GRXFIFOSIZX(a,b) cavm_usbdrdx_uahc_grxfifosizx_t
@@ -5655,7 +5655,7 @@ static inline uint64_t CAVM_USBDRDX_UAHC_GRXTHRCFG(unsigned long a)
         return 0x86800000c10cll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x86800000c10cll + 0x1000000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("USBDRDX_UAHC_GRXTHRCFG", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UAHC_GRXTHRCFG", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UAHC_GRXTHRCFG(a) cavm_usbdrdx_uahc_grxthrcfg_t
@@ -5828,7 +5828,7 @@ static inline uint64_t CAVM_USBDRDX_UAHC_GSBUSCFG0(unsigned long a)
         return 0x86800000c100ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x86800000c100ll + 0x1000000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("USBDRDX_UAHC_GSBUSCFG0", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UAHC_GSBUSCFG0", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UAHC_GSBUSCFG0(a) cavm_usbdrdx_uahc_gsbuscfg0_t
@@ -5906,7 +5906,7 @@ static inline uint64_t CAVM_USBDRDX_UAHC_GSBUSCFG1(unsigned long a)
         return 0x86800000c104ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x86800000c104ll + 0x1000000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("USBDRDX_UAHC_GSBUSCFG1", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UAHC_GSBUSCFG1", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UAHC_GSBUSCFG1(a) cavm_usbdrdx_uahc_gsbuscfg1_t
@@ -5970,7 +5970,7 @@ static inline uint64_t CAVM_USBDRDX_UAHC_GSTS(unsigned long a)
         return 0x86800000c118ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x86800000c118ll + 0x1000000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("USBDRDX_UAHC_GSTS", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UAHC_GSTS", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UAHC_GSTS(a) cavm_usbdrdx_uahc_gsts_t
@@ -6037,7 +6037,7 @@ static inline uint64_t CAVM_USBDRDX_UAHC_GTXFIFOPRIDEV(unsigned long a)
         return 0x86800000c610ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x86800000c610ll + 0x1000000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("USBDRDX_UAHC_GTXFIFOPRIDEV", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UAHC_GTXFIFOPRIDEV", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UAHC_GTXFIFOPRIDEV(a) cavm_usbdrdx_uahc_gtxfifopridev_t
@@ -6106,7 +6106,7 @@ static inline uint64_t CAVM_USBDRDX_UAHC_GTXFIFOPRIHST(unsigned long a)
         return 0x86800000c618ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x86800000c618ll + 0x1000000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("USBDRDX_UAHC_GTXFIFOPRIHST", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UAHC_GTXFIFOPRIHST", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UAHC_GTXFIFOPRIHST(a) cavm_usbdrdx_uahc_gtxfifoprihst_t
@@ -6172,7 +6172,7 @@ static inline uint64_t CAVM_USBDRDX_UAHC_GTXFIFOSIZX(unsigned long a, unsigned l
         return 0x86800000c300ll + 0x1000000000ll * ((a) & 0x1) + 4ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=3)))
         return 0x86800000c300ll + 0x1000000000ll * ((a) & 0x1) + 4ll * ((b) & 0x3);
-    __cavm_csr_fatal("USBDRDX_UAHC_GTXFIFOSIZX", 2, a, b, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UAHC_GTXFIFOSIZX", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UAHC_GTXFIFOSIZX(a,b) cavm_usbdrdx_uahc_gtxfifosizx_t
@@ -6323,7 +6323,7 @@ static inline uint64_t CAVM_USBDRDX_UAHC_GTXTHRCFG(unsigned long a)
         return 0x86800000c108ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x86800000c108ll + 0x1000000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("USBDRDX_UAHC_GTXTHRCFG", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UAHC_GTXTHRCFG", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UAHC_GTXTHRCFG(a) cavm_usbdrdx_uahc_gtxthrcfg_t
@@ -6573,7 +6573,7 @@ static inline uint64_t CAVM_USBDRDX_UAHC_GUCTL(unsigned long a)
         return 0x86800000c12cll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x86800000c12cll + 0x1000000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("USBDRDX_UAHC_GUCTL", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UAHC_GUCTL", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UAHC_GUCTL(a) cavm_usbdrdx_uahc_guctl_t
@@ -6687,7 +6687,7 @@ static inline uint64_t CAVM_USBDRDX_UAHC_GUCTL1(unsigned long a)
         return 0x86800000c11cll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x86800000c11cll + 0x1000000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("USBDRDX_UAHC_GUCTL1", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UAHC_GUCTL1", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UAHC_GUCTL1(a) cavm_usbdrdx_uahc_guctl1_t
@@ -6737,7 +6737,7 @@ static inline uint64_t CAVM_USBDRDX_UAHC_GUCTL2(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x86800000c19cll + 0x1000000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("USBDRDX_UAHC_GUCTL2", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UAHC_GUCTL2", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UAHC_GUCTL2(a) cavm_usbdrdx_uahc_guctl2_t
@@ -6785,7 +6785,7 @@ static inline uint64_t CAVM_USBDRDX_UAHC_GUID(unsigned long a)
         return 0x86800000c128ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x86800000c128ll + 0x1000000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("USBDRDX_UAHC_GUID", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UAHC_GUID", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UAHC_GUID(a) cavm_usbdrdx_uahc_guid_t
@@ -6828,7 +6828,7 @@ static inline uint64_t CAVM_USBDRDX_UAHC_GUSB2I2CCTLX(unsigned long a, unsigned 
         return 0x86800000c240ll + 0x1000000000ll * ((a) & 0x1) + 4ll * ((b) & 0x0);
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b==0)))
         return 0x86800000c240ll + 0x1000000000ll * ((a) & 0x1) + 4ll * ((b) & 0x0);
-    __cavm_csr_fatal("USBDRDX_UAHC_GUSB2I2CCTLX", 2, a, b, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UAHC_GUSB2I2CCTLX", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UAHC_GUSB2I2CCTLX(a,b) cavm_usbdrdx_uahc_gusb2i2cctlx_t
@@ -7177,7 +7177,7 @@ static inline uint64_t CAVM_USBDRDX_UAHC_GUSB2PHYCFGX(unsigned long a, unsigned 
         return 0x86800000c200ll + 0x1000000000ll * ((a) & 0x1) + 4ll * ((b) & 0x0);
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b==0)))
         return 0x86800000c200ll + 0x1000000000ll * ((a) & 0x1) + 4ll * ((b) & 0x0);
-    __cavm_csr_fatal("USBDRDX_UAHC_GUSB2PHYCFGX", 2, a, b, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UAHC_GUSB2PHYCFGX", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UAHC_GUSB2PHYCFGX(a,b) cavm_usbdrdx_uahc_gusb2phycfgx_t
@@ -7882,7 +7882,7 @@ static inline uint64_t CAVM_USBDRDX_UAHC_GUSB3PIPECTLX(unsigned long a, unsigned
         return 0x86800000c2c0ll + 0x1000000000ll * ((a) & 0x1) + 4ll * ((b) & 0x0);
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b==0)))
         return 0x86800000c2c0ll + 0x1000000000ll * ((a) & 0x1) + 4ll * ((b) & 0x0);
-    __cavm_csr_fatal("USBDRDX_UAHC_GUSB3PIPECTLX", 2, a, b, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UAHC_GUSB3PIPECTLX", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UAHC_GUSB3PIPECTLX(a,b) cavm_usbdrdx_uahc_gusb3pipectlx_t
@@ -7944,7 +7944,7 @@ static inline uint64_t CAVM_USBDRDX_UAHC_HCCPARAMS(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && (a<=1))
         return 0x868000000010ll + 0x1000000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("USBDRDX_UAHC_HCCPARAMS", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UAHC_HCCPARAMS", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UAHC_HCCPARAMS(a) cavm_usbdrdx_uahc_hccparams_t
@@ -8006,7 +8006,7 @@ static inline uint64_t CAVM_USBDRDX_UAHC_HCCPARAMS1(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x868000000010ll + 0x1000000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("USBDRDX_UAHC_HCCPARAMS1", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UAHC_HCCPARAMS1", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UAHC_HCCPARAMS1(a) cavm_usbdrdx_uahc_hccparams1_t
@@ -8055,7 +8055,7 @@ static inline uint64_t CAVM_USBDRDX_UAHC_HCCPARAMS2(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x86800000001cll + 0x1000000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("USBDRDX_UAHC_HCCPARAMS2", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UAHC_HCCPARAMS2", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UAHC_HCCPARAMS2(a) cavm_usbdrdx_uahc_hccparams2_t
@@ -8101,7 +8101,7 @@ static inline uint64_t CAVM_USBDRDX_UAHC_HCSPARAMS1(unsigned long a)
         return 0x868000000004ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x868000000004ll + 0x1000000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("USBDRDX_UAHC_HCSPARAMS1", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UAHC_HCSPARAMS1", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UAHC_HCSPARAMS1(a) cavm_usbdrdx_uahc_hcsparams1_t
@@ -8150,7 +8150,7 @@ static inline uint64_t CAVM_USBDRDX_UAHC_HCSPARAMS2(unsigned long a)
         return 0x868000000008ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x868000000008ll + 0x1000000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("USBDRDX_UAHC_HCSPARAMS2", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UAHC_HCSPARAMS2", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UAHC_HCSPARAMS2(a) cavm_usbdrdx_uahc_hcsparams2_t
@@ -8192,7 +8192,7 @@ static inline uint64_t CAVM_USBDRDX_UAHC_HCSPARAMS3(unsigned long a)
         return 0x86800000000cll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x86800000000cll + 0x1000000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("USBDRDX_UAHC_HCSPARAMS3", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UAHC_HCSPARAMS3", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UAHC_HCSPARAMS3(a) cavm_usbdrdx_uahc_hcsparams3_t
@@ -8239,7 +8239,7 @@ static inline uint64_t CAVM_USBDRDX_UAHC_IMANX(unsigned long a, unsigned long b)
         return 0x868000000460ll + 0x1000000000ll * ((a) & 0x1) + 0ll * ((b) & 0x0);
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b==0)))
         return 0x868000000460ll + 0x1000000000ll * ((a) & 0x1) + 0ll * ((b) & 0x0);
-    __cavm_csr_fatal("USBDRDX_UAHC_IMANX", 2, a, b, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UAHC_IMANX", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UAHC_IMANX(a,b) cavm_usbdrdx_uahc_imanx_t
@@ -8284,7 +8284,7 @@ static inline uint64_t CAVM_USBDRDX_UAHC_IMODX(unsigned long a, unsigned long b)
         return 0x868000000464ll + 0x1000000000ll * ((a) & 0x1) + 0ll * ((b) & 0x0);
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b==0)))
         return 0x868000000464ll + 0x1000000000ll * ((a) & 0x1) + 0ll * ((b) & 0x0);
-    __cavm_csr_fatal("USBDRDX_UAHC_IMODX", 2, a, b, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UAHC_IMODX", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UAHC_IMODX(a,b) cavm_usbdrdx_uahc_imodx_t
@@ -8329,7 +8329,7 @@ static inline uint64_t CAVM_USBDRDX_UAHC_MFINDEX(unsigned long a)
         return 0x868000000440ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x868000000440ll + 0x1000000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("USBDRDX_UAHC_MFINDEX", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UAHC_MFINDEX", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UAHC_MFINDEX(a) cavm_usbdrdx_uahc_mfindex_t
@@ -8369,7 +8369,7 @@ static inline uint64_t CAVM_USBDRDX_UAHC_PAGESIZE(unsigned long a)
         return 0x868000000028ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x868000000028ll + 0x1000000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("USBDRDX_UAHC_PAGESIZE", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UAHC_PAGESIZE", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UAHC_PAGESIZE(a) cavm_usbdrdx_uahc_pagesize_t
@@ -8440,7 +8440,7 @@ static inline uint64_t CAVM_USBDRDX_UAHC_PORTHLPMC_20X(unsigned long a, unsigned
         return 0x86800000042cll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x0);
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b==0)))
         return 0x86800000042cll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x0);
-    __cavm_csr_fatal("USBDRDX_UAHC_PORTHLPMC_20X", 2, a, b, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UAHC_PORTHLPMC_20X", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UAHC_PORTHLPMC_20X(a,b) cavm_usbdrdx_uahc_porthlpmc_20x_t
@@ -8484,7 +8484,7 @@ static inline uint64_t CAVM_USBDRDX_UAHC_PORTHLPMC_SSX(unsigned long a, unsigned
         return 0x86800000042cll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b==1)))
         return 0x86800000042cll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x1);
-    __cavm_csr_fatal("USBDRDX_UAHC_PORTHLPMC_SSX", 2, a, b, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UAHC_PORTHLPMC_SSX", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UAHC_PORTHLPMC_SSX(a,b) cavm_usbdrdx_uahc_porthlpmc_ssx_t
@@ -8522,7 +8522,7 @@ static inline uint64_t CAVM_USBDRDX_UAHC_PORTLI_20X(unsigned long a, unsigned lo
         return 0x868000000428ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x0);
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b==0)))
         return 0x868000000428ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x0);
-    __cavm_csr_fatal("USBDRDX_UAHC_PORTLI_20X", 2, a, b, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UAHC_PORTLI_20X", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UAHC_PORTLI_20X(a,b) cavm_usbdrdx_uahc_portli_20x_t
@@ -8562,7 +8562,7 @@ static inline uint64_t CAVM_USBDRDX_UAHC_PORTLI_SSX(unsigned long a, unsigned lo
         return 0x868000000428ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b==1)))
         return 0x868000000428ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x1);
-    __cavm_csr_fatal("USBDRDX_UAHC_PORTLI_SSX", 2, a, b, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UAHC_PORTLI_SSX", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UAHC_PORTLI_SSX(a,b) cavm_usbdrdx_uahc_portli_ssx_t
@@ -8617,7 +8617,7 @@ static inline uint64_t CAVM_USBDRDX_UAHC_PORTPMSC_20X(unsigned long a, unsigned 
         return 0x868000000424ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x0);
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b==0)))
         return 0x868000000424ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x0);
-    __cavm_csr_fatal("USBDRDX_UAHC_PORTPMSC_20X", 2, a, b, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UAHC_PORTPMSC_20X", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UAHC_PORTPMSC_20X(a,b) cavm_usbdrdx_uahc_portpmsc_20x_t
@@ -8666,7 +8666,7 @@ static inline uint64_t CAVM_USBDRDX_UAHC_PORTPMSC_SSX(unsigned long a, unsigned 
         return 0x868000000424ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b==1)))
         return 0x868000000424ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x1);
-    __cavm_csr_fatal("USBDRDX_UAHC_PORTPMSC_SSX", 2, a, b, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UAHC_PORTPMSC_SSX", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UAHC_PORTPMSC_SSX(a,b) cavm_usbdrdx_uahc_portpmsc_ssx_t
@@ -8756,7 +8756,7 @@ static inline uint64_t CAVM_USBDRDX_UAHC_PORTSCX(unsigned long a, unsigned long 
         return 0x868000000420ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x868000000420ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x1);
-    __cavm_csr_fatal("USBDRDX_UAHC_PORTSCX", 2, a, b, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UAHC_PORTSCX", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UAHC_PORTSCX(a,b) cavm_usbdrdx_uahc_portscx_t
@@ -8797,7 +8797,7 @@ static inline uint64_t CAVM_USBDRDX_UAHC_RTSOFF(unsigned long a)
         return 0x868000000018ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x868000000018ll + 0x1000000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("USBDRDX_UAHC_RTSOFF", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UAHC_RTSOFF", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UAHC_RTSOFF(a) cavm_usbdrdx_uahc_rtsoff_t
@@ -8841,7 +8841,7 @@ static inline uint64_t CAVM_USBDRDX_UAHC_SUPTPRT2_DW0(unsigned long a)
         return 0x868000000890ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x868000000890ll + 0x1000000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("USBDRDX_UAHC_SUPTPRT2_DW0", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UAHC_SUPTPRT2_DW0", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UAHC_SUPTPRT2_DW0(a) cavm_usbdrdx_uahc_suptprt2_dw0_t
@@ -8879,7 +8879,7 @@ static inline uint64_t CAVM_USBDRDX_UAHC_SUPTPRT2_DW1(unsigned long a)
         return 0x868000000894ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x868000000894ll + 0x1000000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("USBDRDX_UAHC_SUPTPRT2_DW1", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UAHC_SUPTPRT2_DW1", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UAHC_SUPTPRT2_DW1(a) cavm_usbdrdx_uahc_suptprt2_dw1_t
@@ -8933,7 +8933,7 @@ static inline uint64_t CAVM_USBDRDX_UAHC_SUPTPRT2_DW2(unsigned long a)
         return 0x868000000898ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x868000000898ll + 0x1000000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("USBDRDX_UAHC_SUPTPRT2_DW2", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UAHC_SUPTPRT2_DW2", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UAHC_SUPTPRT2_DW2(a) cavm_usbdrdx_uahc_suptprt2_dw2_t
@@ -8973,7 +8973,7 @@ static inline uint64_t CAVM_USBDRDX_UAHC_SUPTPRT2_DW3(unsigned long a)
         return 0x86800000089cll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x86800000089cll + 0x1000000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("USBDRDX_UAHC_SUPTPRT2_DW3", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UAHC_SUPTPRT2_DW3", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UAHC_SUPTPRT2_DW3(a) cavm_usbdrdx_uahc_suptprt2_dw3_t
@@ -9023,7 +9023,7 @@ static inline uint64_t CAVM_USBDRDX_UAHC_SUPTPRT3_DW0(unsigned long a)
         return 0x8680000008a0ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x8680000008a0ll + 0x1000000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("USBDRDX_UAHC_SUPTPRT3_DW0", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UAHC_SUPTPRT3_DW0", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UAHC_SUPTPRT3_DW0(a) cavm_usbdrdx_uahc_suptprt3_dw0_t
@@ -9061,7 +9061,7 @@ static inline uint64_t CAVM_USBDRDX_UAHC_SUPTPRT3_DW1(unsigned long a)
         return 0x8680000008a4ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x8680000008a4ll + 0x1000000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("USBDRDX_UAHC_SUPTPRT3_DW1", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UAHC_SUPTPRT3_DW1", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UAHC_SUPTPRT3_DW1(a) cavm_usbdrdx_uahc_suptprt3_dw1_t
@@ -9105,7 +9105,7 @@ static inline uint64_t CAVM_USBDRDX_UAHC_SUPTPRT3_DW2(unsigned long a)
         return 0x8680000008a8ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x8680000008a8ll + 0x1000000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("USBDRDX_UAHC_SUPTPRT3_DW2", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UAHC_SUPTPRT3_DW2", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UAHC_SUPTPRT3_DW2(a) cavm_usbdrdx_uahc_suptprt3_dw2_t
@@ -9145,7 +9145,7 @@ static inline uint64_t CAVM_USBDRDX_UAHC_SUPTPRT3_DW3(unsigned long a)
         return 0x8680000008acll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x8680000008acll + 0x1000000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("USBDRDX_UAHC_SUPTPRT3_DW3", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UAHC_SUPTPRT3_DW3", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UAHC_SUPTPRT3_DW3(a) cavm_usbdrdx_uahc_suptprt3_dw3_t
@@ -9211,7 +9211,7 @@ static inline uint64_t CAVM_USBDRDX_UAHC_USBCMD(unsigned long a)
         return 0x868000000020ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x868000000020ll + 0x1000000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("USBDRDX_UAHC_USBCMD", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UAHC_USBCMD", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UAHC_USBCMD(a) cavm_usbdrdx_uahc_usbcmd_t
@@ -9299,7 +9299,7 @@ static inline uint64_t CAVM_USBDRDX_UAHC_USBLEGCTLSTS(unsigned long a)
         return 0x868000000884ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x868000000884ll + 0x1000000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("USBDRDX_UAHC_USBLEGCTLSTS", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UAHC_USBLEGCTLSTS", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UAHC_USBLEGCTLSTS(a) cavm_usbdrdx_uahc_usblegctlsts_t
@@ -9352,7 +9352,7 @@ static inline uint64_t CAVM_USBDRDX_UAHC_USBLEGSUP(unsigned long a)
         return 0x868000000880ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x868000000880ll + 0x1000000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("USBDRDX_UAHC_USBLEGSUP", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UAHC_USBLEGSUP", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UAHC_USBLEGSUP(a) cavm_usbdrdx_uahc_usblegsup_t
@@ -9418,7 +9418,7 @@ static inline uint64_t CAVM_USBDRDX_UAHC_USBSTS(unsigned long a)
         return 0x868000000024ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x868000000024ll + 0x1000000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("USBDRDX_UAHC_USBSTS", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UAHC_USBSTS", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UAHC_USBSTS(a) cavm_usbdrdx_uahc_usbsts_t
@@ -9482,7 +9482,7 @@ static inline uint64_t CAVM_USBDRDX_UCTL_BIST_STATUS(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && (a<=1))
         return 0x868000100008ll + 0x1000000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("USBDRDX_UCTL_BIST_STATUS", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UCTL_BIST_STATUS", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UCTL_BIST_STATUS(a) cavm_usbdrdx_uctl_bist_status_t
@@ -9519,7 +9519,7 @@ static inline uint64_t CAVM_USBDRDX_UCTL_CSCLK_ACTIVE_PC(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x868000100028ll + 0x1000000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("USBDRDX_UCTL_CSCLK_ACTIVE_PC", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UCTL_CSCLK_ACTIVE_PC", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UCTL_CSCLK_ACTIVE_PC(a) cavm_usbdrdx_uctl_csclk_active_pc_t
@@ -11910,7 +11910,7 @@ static inline uint64_t CAVM_USBDRDX_UCTL_CTL(unsigned long a)
         return 0x868000100000ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x868000100000ll + 0x1000000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("USBDRDX_UCTL_CTL", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UCTL_CTL", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UCTL_CTL(a) cavm_usbdrdx_uctl_ctl_t
@@ -11994,7 +11994,7 @@ static inline uint64_t CAVM_USBDRDX_UCTL_ECC(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && (a<=1))
         return 0x8680001000f0ll + 0x1000000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("USBDRDX_UCTL_ECC", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UCTL_ECC", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UCTL_ECC(a) cavm_usbdrdx_uctl_ecc_t
@@ -12141,7 +12141,7 @@ static inline uint64_t CAVM_USBDRDX_UCTL_HOST_CFG(unsigned long a)
         return 0x8680001000e0ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x8680001000e0ll + 0x1000000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("USBDRDX_UCTL_HOST_CFG", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UCTL_HOST_CFG", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UCTL_HOST_CFG(a) cavm_usbdrdx_uctl_host_cfg_t
@@ -12282,7 +12282,7 @@ static inline uint64_t CAVM_USBDRDX_UCTL_INTENA_W1C(unsigned long a)
         return 0x868000100040ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x868000100040ll + 0x1000000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("USBDRDX_UCTL_INTENA_W1C", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UCTL_INTENA_W1C", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UCTL_INTENA_W1C(a) cavm_usbdrdx_uctl_intena_w1c_t
@@ -12423,7 +12423,7 @@ static inline uint64_t CAVM_USBDRDX_UCTL_INTENA_W1S(unsigned long a)
         return 0x868000100048ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x868000100048ll + 0x1000000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("USBDRDX_UCTL_INTENA_W1S", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UCTL_INTENA_W1S", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UCTL_INTENA_W1S(a) cavm_usbdrdx_uctl_intena_w1s_t
@@ -12630,7 +12630,7 @@ static inline uint64_t CAVM_USBDRDX_UCTL_INTSTAT(unsigned long a)
         return 0x868000100030ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x868000100030ll + 0x1000000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("USBDRDX_UCTL_INTSTAT", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UCTL_INTSTAT", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UCTL_INTSTAT(a) cavm_usbdrdx_uctl_intstat_t
@@ -12771,7 +12771,7 @@ static inline uint64_t CAVM_USBDRDX_UCTL_INTSTAT_W1S(unsigned long a)
         return 0x868000100038ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x868000100038ll + 0x1000000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("USBDRDX_UCTL_INTSTAT_W1S", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UCTL_INTSTAT_W1S", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UCTL_INTSTAT_W1S(a) cavm_usbdrdx_uctl_intstat_w1s_t
@@ -12809,7 +12809,7 @@ static inline uint64_t CAVM_USBDRDX_UCTL_PIPECLK_COUNTER(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x868000100020ll + 0x1000000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("USBDRDX_UCTL_PIPECLK_COUNTER", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UCTL_PIPECLK_COUNTER", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UCTL_PIPECLK_COUNTER(a) cavm_usbdrdx_uctl_pipeclk_counter_t
@@ -13395,7 +13395,7 @@ static inline uint64_t CAVM_USBDRDX_UCTL_PORTX_CFG_HS(unsigned long a, unsigned 
         return 0x868000100050ll + 0x1000000000ll * ((a) & 0x1) + 0x20ll * ((b) & 0x0);
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b==0)))
         return 0x868000100050ll + 0x1000000000ll * ((a) & 0x1) + 0x20ll * ((b) & 0x0);
-    __cavm_csr_fatal("USBDRDX_UCTL_PORTX_CFG_HS", 2, a, b, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UCTL_PORTX_CFG_HS", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UCTL_PORTX_CFG_HS(a,b) cavm_usbdrdx_uctl_portx_cfg_hs_t
@@ -13666,7 +13666,7 @@ static inline uint64_t CAVM_USBDRDX_UCTL_PORTX_CFG_SS(unsigned long a, unsigned 
         return 0x868000100058ll + 0x1000000000ll * ((a) & 0x1) + 0x20ll * ((b) & 0x0);
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b==0)))
         return 0x868000100058ll + 0x1000000000ll * ((a) & 0x1) + 0x20ll * ((b) & 0x0);
-    __cavm_csr_fatal("USBDRDX_UCTL_PORTX_CFG_SS", 2, a, b, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UCTL_PORTX_CFG_SS", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UCTL_PORTX_CFG_SS(a,b) cavm_usbdrdx_uctl_portx_cfg_ss_t
@@ -13777,7 +13777,7 @@ static inline uint64_t CAVM_USBDRDX_UCTL_PORTX_CR_DBG_CFG(unsigned long a, unsig
         return 0x868000100060ll + 0x1000000000ll * ((a) & 0x1) + 0ll * ((b) & 0x0);
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b==0)))
         return 0x868000100060ll + 0x1000000000ll * ((a) & 0x1) + 0ll * ((b) & 0x0);
-    __cavm_csr_fatal("USBDRDX_UCTL_PORTX_CR_DBG_CFG", 2, a, b, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UCTL_PORTX_CR_DBG_CFG", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UCTL_PORTX_CR_DBG_CFG(a,b) cavm_usbdrdx_uctl_portx_cr_dbg_cfg_t
@@ -13826,7 +13826,7 @@ static inline uint64_t CAVM_USBDRDX_UCTL_PORTX_CR_DBG_STATUS(unsigned long a, un
         return 0x868000100068ll + 0x1000000000ll * ((a) & 0x1) + 0ll * ((b) & 0x0);
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b==0)))
         return 0x868000100068ll + 0x1000000000ll * ((a) & 0x1) + 0ll * ((b) & 0x0);
-    __cavm_csr_fatal("USBDRDX_UCTL_PORTX_CR_DBG_STATUS", 2, a, b, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UCTL_PORTX_CR_DBG_STATUS", 2, a, b, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UCTL_PORTX_CR_DBG_STATUS(a,b) cavm_usbdrdx_uctl_portx_cr_dbg_status_t
@@ -13867,7 +13867,7 @@ static inline uint64_t CAVM_USBDRDX_UCTL_RAS(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x868000100080ll + 0x1000000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("USBDRDX_UCTL_RAS", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UCTL_RAS", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UCTL_RAS(a) cavm_usbdrdx_uctl_ras_t
@@ -13905,7 +13905,7 @@ static inline uint64_t CAVM_USBDRDX_UCTL_RAS_W1S(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x868000100088ll + 0x1000000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("USBDRDX_UCTL_RAS_W1S", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UCTL_RAS_W1S", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UCTL_RAS_W1S(a) cavm_usbdrdx_uctl_ras_w1s_t
@@ -13943,7 +13943,7 @@ static inline uint64_t CAVM_USBDRDX_UCTL_RASENA_W1C(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x868000100090ll + 0x1000000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("USBDRDX_UCTL_RASENA_W1C", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UCTL_RASENA_W1C", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UCTL_RASENA_W1C(a) cavm_usbdrdx_uctl_rasena_w1c_t
@@ -13981,7 +13981,7 @@ static inline uint64_t CAVM_USBDRDX_UCTL_RASENA_W1S(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x868000100098ll + 0x1000000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("USBDRDX_UCTL_RASENA_W1S", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UCTL_RASENA_W1S", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UCTL_RASENA_W1S(a) cavm_usbdrdx_uctl_rasena_w1s_t
@@ -14064,7 +14064,7 @@ static inline uint64_t CAVM_USBDRDX_UCTL_SHIM_CFG(unsigned long a)
         return 0x8680001000e8ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x8680001000e8ll + 0x1000000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("USBDRDX_UCTL_SHIM_CFG", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UCTL_SHIM_CFG", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UCTL_SHIM_CFG(a) cavm_usbdrdx_uctl_shim_cfg_t
@@ -14103,7 +14103,7 @@ static inline uint64_t CAVM_USBDRDX_UCTL_SPARE0(unsigned long a)
         return 0x868000100010ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x868000100010ll + 0x1000000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("USBDRDX_UCTL_SPARE0", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UCTL_SPARE0", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UCTL_SPARE0(a) cavm_usbdrdx_uctl_spare0_t
@@ -14144,7 +14144,7 @@ static inline uint64_t CAVM_USBDRDX_UCTL_SPARE1(unsigned long a)
         return 0x8680001000f8ll + 0x1000000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x8680001000f8ll + 0x1000000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("USBDRDX_UCTL_SPARE1", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UCTL_SPARE1", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UCTL_SPARE1(a) cavm_usbdrdx_uctl_spare1_t
@@ -14182,7 +14182,7 @@ static inline uint64_t CAVM_USBDRDX_UCTL_UTMICLK_COUNTER(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x868000100018ll + 0x1000000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("USBDRDX_UCTL_UTMICLK_COUNTER", 1, a, 0, 0, 0);
+    __cavm_csr_fatal("USBDRDX_UCTL_UTMICLK_COUNTER", 1, a, 0, 0, 0, 0, 0);
 }
 
 #define typedef_CAVM_USBDRDX_UCTL_UTMICLK_COUNTER(a) cavm_usbdrdx_uctl_utmiclk_counter_t
