@@ -17,9 +17,11 @@ PLAT_BL_COMMON_SOURCES	+=	plat/marvell/octeontx/otx/t81/plat_t81_setup.c	\
 BL1_SOURCES		+=	plat/marvell/octeontx/otx/aarch64/plat_octeontx_common.S	\
 				plat/marvell/octeontx/otx/aarch64/plat_helpers.S	\
 				plat/marvell/octeontx/otx/plat_board_cfg.c		\
+				plat/marvell/octeontx/otx/plat_scfg.c		\
 
 BL2_SOURCES		+=	plat/marvell/octeontx/otx/t81/plat_t81_ecam.c	\
 
 BL31_SOURCES		+=	plat/marvell/octeontx/otx/aarch64/plat_octeontx_common.S	\
 				plat/marvell/octeontx/otx/aarch64/plat_helpers.S	\
 				plat/marvell/octeontx/otx/plat_topology.c		\
+				plat/marvell/octeontx/otx/plat_sata.c		\

@@ -62,7 +62,6 @@ BL31_SOURCES		+=	drivers/arm/gic/common/gic_common.c		\
 				plat/marvell/octeontx/octeontx_bl31_setup.c			\
 				plat/marvell/octeontx/octeontx_legacy_pm.c			\
 				plat/marvell/octeontx/octeontx_legacy_pwrc.c		\
-				plat/marvell/octeontx/octeontx_sata.c				\
 				plat/marvell/octeontx/octeontx_svc.c				\
 				plat/common/plat_psci_common.c			\
 				plat/common/plat_gicv3.c			\

@@ -27,6 +27,7 @@ void plat_octeontx_setup(void)
 {
 	/* setup gpio interrupt handling */
 	plat_gpio_irq_setup();
+	sata_ipm_quirk();
 }
 
 void plat_pwrc_setup(void)

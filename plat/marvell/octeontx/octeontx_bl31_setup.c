@@ -205,13 +205,6 @@ void bl31_platform_setup()
 	 */
 	plat_octeontx_setup();
 
-	/*
-	 * Apply SATA quirk only for CN8XXX family
-	 */
-	if (cavm_is_model(OCTEONTX_CN8XXX)) {
-		sata_ipm_quirk();
-	}
-
 	/* Intialize the power controller */
 	plat_pwrc_setup();
 }

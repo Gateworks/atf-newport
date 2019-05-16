@@ -9,9 +9,6 @@
 #define __OCTEONTX_PLAT_CONFIGURATION_H__
 
 int plat_octeontx_get_lmc_count(void);
-int plat_octeontx_get_sata_count(void);
-int plat_octeontx_sata_to_gser(int ctrlr);
-int plat_octeontx_sata_to_lane(int ctrlr);
 int plat_octeontx_is_lmc_enabled(unsigned lmc);
 
 #endif /* __OCTEONTX_PLAT_CONFIGURATION_H__ */

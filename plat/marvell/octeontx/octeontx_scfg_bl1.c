@@ -17,15 +17,10 @@ WEAK int plat_octeontx_fill_soc_details(void) {
 
 int octeontx_fill_soc_details()
 {
-	int rc, lmc, sata;
+	int rc, lmc;
 
 	for (lmc = 0; lmc < MAX_LMC; lmc++) {
 		plat_octeontx_scfg->scfg.is_lmc_enabled[lmc] = plat_octeontx_is_lmc_enabled(lmc);
-	}
-
-	for (sata = 0; sata < MAX_SATA; sata++) {
-		plat_octeontx_scfg->scfg.sata_cfg.to_gser[sata] = plat_octeontx_sata_to_gser(sata);
-		plat_octeontx_scfg->scfg.sata_cfg.to_lane[sata] = plat_octeontx_sata_to_lane(sata);
 	}
 
 	rc = plat_octeontx_fill_soc_details();

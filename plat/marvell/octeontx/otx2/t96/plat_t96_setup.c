@@ -29,33 +29,6 @@ int plat_octeontx_get_iobn_count(void)
 	return 2;
 }
 
-/*
- * SATA to GSER mapping
- * SATA(0-1) --- DLM4
- * SATA(2-3) --- DLM5
- */
-int plat_octeontx_sata_to_gser(int ctrlr)
-{
-	if (plat_get_altpkg() == CN95XXE_PKG)
-		return -1;
-
-	if (ctrlr > 3)
-		return -1;
-
-	return ((ctrlr > 1) ? 5 : 4);
-}
-
-int plat_octeontx_sata_to_lane(int ctrlr)
-{
-	if (plat_get_altpkg() == CN95XXE_PKG)
-		return -1;
-
-	if (ctrlr > 3)
-		return -1;
-
-	return ((ctrlr > 1) ? ctrlr - 2 : ctrlr);
-}
-
 int plat_octeontx_is_lmc_enabled(unsigned lmc)
 {
 	union cavm_lmcx_dll_ctl2 lmcx_dll_ctl2;
@@ -302,12 +275,6 @@ void plat_add_mmio()
 	for (i = 0; i < device_type_count; i++) {
 		add_map_record(CAVM_ECAM_BAR_E_ECAMX_PF_BAR0_CN9(i), CAVM_ECAM_BAR_E_ECAMX_PF_BAR0_CN9_SIZE, attr);
 		add_map_record(ECAM_PF_BAR2(i), CAVM_ECAM_BAR_E_ECAMX_PF_BAR2_CN9_SIZE, attr);
-	}
-
-	for (i = 0; i < MAX_SATA; ++i)
-	{
-		add_map_record(CAVM_SATA_BAR_E_SATAX_PF_BAR0(i), CAVM_SATA_BAR_E_SATAX_PF_BAR0_SIZE, attr);
-		add_map_record(CAVM_SATA_BAR_E_SATAX_PF_BAR4(i), CAVM_SATA_BAR_E_SATAX_PF_BAR4_SIZE, attr);
 	}
 
 	add_map_record(CAVM_ROM_BAR_E_ROM_PF_BAR0, CAVM_ROM_BAR_E_ROM_PF_BAR0_SIZE, attr);
