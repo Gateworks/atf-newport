@@ -267,9 +267,6 @@ int gti_wdog_install_handler(uint64_t kernel_wdog_callback, uint64_t core,
 	debug_gti_watchdog("Watchdog: core = %lld, mpidr = 0x%llx\n",
 			 core, read_mpidr());
 
-	gicv3_set_spi_routing(GTI_CWD_SPI_IRQ(core), GICV3_IRM_PE,
-			 read_mpidr());
-
 	if (core == PLATFORM_CORE_COUNT) {
 		debug_gti_watchdog("Watchdog: kernel callback = 0x%llx, ",
 				 g_kernel_cback);
@@ -277,6 +274,9 @@ int gti_wdog_install_handler(uint64_t kernel_wdog_callback, uint64_t core,
 				 watchdog_timeout_ms);
 		debug_gti_watchdog("cores = 0x%llx\n", cores);
 		gti_watchdog_set(watchdog_timeout_ms, cores);
+	} else {
+		gicv3_set_spi_routing(GTI_CWD_SPI_IRQ(core), GICV3_IRM_PE,
+			read_mpidr());
 	}
 
 	return retval;
