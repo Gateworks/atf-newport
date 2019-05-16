@@ -18,7 +18,10 @@
  * AMB Configuration
  *****************************************************************************
  */
-struct addr_map_win *amb_memory_map;
+struct addr_map_win amb_memory_map[] = {
+	/* CP0 SPI1 CS0 Direct Mode access */
+	{0xe800,	0x2000000,	AMB_SPI1_CS0_ID},
+};
 
 int marvell_get_amb_memory_map(struct addr_map_win **win, uint32_t *size,
 			       uintptr_t base)
@@ -82,6 +85,8 @@ int marvell_get_io_win_memory_map(int ap_index, struct addr_map_win **win,
  *****************************************************************************
  */
 struct addr_map_win iob_memory_map_cp0[] = {
+	/* SPI1_CS0 (RUNIT) window */
+	{0x00000000e8000000,	0x2000000,	RUNIT_TID},
 	/* PEX2_X1 window */
 	{0x00000000e1000000,	0x1000000,	PEX2_TID},
 	/* PEX1_X1 window */
