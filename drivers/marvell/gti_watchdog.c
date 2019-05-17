@@ -131,6 +131,10 @@ static void gti_watchdog_set(uint64_t timeout_ms, uint64_t cores)
 		}
 
 		for (i = 0; i < GTI_CWD_SPI_IRQS; i++) {
+
+			if (!(cores & (1 << i)))
+				continue;
+
 			rc = register_interrupt_handler(INTR_TYPE_EL3,
 							GTI_CWD_SPI_IRQ(i),
 							gti_cwd_irq_handler);
