@@ -149,7 +149,9 @@ static void gti_watchdog_set(uint64_t timeout_ms, uint64_t cores)
 		debug_gti_watchdog("Watchdog: Set to expire %llu SCLK cycles\n",
 					timeout_wdog << 18);
 
+		wdog.u = 0;
 		wdog.s.len = timeout_wdog;
+		wdog.s.cnt = timeout_wdog << 8;
 		/*
 		 * setup watchdog to interrupt + del3t + reset mode.
 		 * DEL3T is not enabled currently.
