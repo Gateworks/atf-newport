@@ -13,7 +13,7 @@
 #include <assert.h>
 #include <plat_board_cfg.h>
 #include <octeontx_common.h>
-#include <octeontx_board_cfg_bl1.h>
+#include <octeontx_board_cfg_setup.h>
 #include <plat_scfg.h>
 #include <plat_otx2_configuration.h>
 #include <octeontx_utils.h>

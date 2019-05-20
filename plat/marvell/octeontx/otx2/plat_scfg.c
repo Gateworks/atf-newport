@@ -9,7 +9,7 @@
 #include <platform_setup.h>
 #include <platform_dt.h>
 #include <plat_scfg.h>
-#include <octeontx_scfg_bl1.h>
+#include <octeontx_scfg_setup.h>
 #include <plat_otx2_configuration.h>
 #include <assert.h>
 

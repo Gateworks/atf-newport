@@ -38,8 +38,8 @@ BL1_SOURCES		+=	drivers/marvell/spi.c		\
 				drivers/io/io_memmap.c				\
 				drivers/io/io_storage.c				\
 				plat/marvell/octeontx/octeontx_bl1_setup.c			\
-				plat/marvell/octeontx/octeontx_board_cfg_bl1.c		\
-				plat/marvell/octeontx/octeontx_scfg_bl1.c			\
+				plat/marvell/octeontx/octeontx_board_cfg_setup.c		\
+				plat/marvell/octeontx/octeontx_scfg_setup.c			\
 				plat/marvell/octeontx/aarch64/octeontx_bl1_entrypoint.S	\
 
 BL2_SOURCES		+=	drivers/marvell/spi.c		\
@@ -65,6 +65,13 @@ BL31_SOURCES		+=	drivers/arm/gic/common/gic_common.c		\
 				plat/marvell/octeontx/octeontx_svc.c				\
 				plat/common/plat_psci_common.c			\
 				plat/common/plat_gicv3.c			\
+
+ifeq (${BL2_AT_EL3},1)
+    BL2_SOURCES		+=	plat/marvell/octeontx/octeontx_board_cfg_setup.c	\
+				plat/marvell/octeontx/octeontx_scfg_setup.c		\
+				plat/marvell/octeontx/aarch64/octeontx_bl1_entrypoint.S	\
+
+endif
 
 ENABLE_PLAT_COMPAT	:=	0
 

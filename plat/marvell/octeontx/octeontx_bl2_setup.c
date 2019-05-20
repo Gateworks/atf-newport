@@ -48,6 +48,13 @@
 #include <octeontx_ecam.h>
 #include <octeontx_io_storage.h>
 
+#if BL2_AT_EL3
+#include <octeontx_board_cfg_setup.h>
+#include <octeontx_scfg_setup.h>
+#include <plat_octeontx.h>
+#include <octeontx_helpers.h>
+#endif
+
 
 /* Pointer to memory visible to both BL2 and BL31 for passing data */
 extern unsigned char **bl2_el_change_mem_ptr;
@@ -163,6 +170,65 @@ static bl2_to_bl31_params_mem_t bl31_params_mem;
 
 #endif /* LOAD_IMAGE_V2 */
 
+#if BL2_AT_EL3
+static void bl2_platform_print_chip_id(void)
+{
+	const void *fdt = fdt_ptr;
+	const char *uid;
+	char uid_prop[21];
+	int offset, len;
+
+	offset = fdt_path_offset(fdt, "/cavium,bdk");
+	if (offset < 0) {
+		INFO("WARNING: FDT node not found\n");
+		return;
+	}
+	snprintf(uid_prop, sizeof(uid_prop), "CHIP-UNIQUE-ID.NODE0");
+	uid = fdt_getprop(fdt, offset, uid_prop, &len);
+	if (uid) {
+		if (!strncmp(uid, "00000000000000000000", 20))
+			NOTICE("CHIP UniqueID not set\n");
+		else
+			NOTICE("CHIP UniqueID = %s\n", uid);
+
+	} else {
+		INFO("WARNING: No CHIP-Unique-ID is found\n");
+		NOTICE("CHIP UniqueID not set\n");
+	}
+}
+
+void bl2_el3_early_platform_setup(u_register_t arg0, u_register_t arg1,
+				u_register_t arg2, u_register_t arg3)
+{
+	plat_octeontx_cpu_setup();
+
+	/* Do it here. Later this region will be mapped as RO. */
+	fdt_pack(fdt_ptr);
+
+	/* Initialize the console to provide early debug support */
+	console_pl011_register(UAAX_PF_BAR0(0), 0, 0, &console);
+	console_set_scope((console_t *)&console, CONSOLE_FLAG_RUNTIME);
+	console_switch_state(CONSOLE_FLAG_RUNTIME);
+
+	/* Allow BL1 to see the whole Trusted RAM */
+	bl2_tzram_layout.total_base = TZDRAM_BASE;
+	bl2_tzram_layout.total_size = TZDRAM_SIZE;
+
+	/* Calculate how much RAM BL2 is using and how much remains free */
+#if !LOAD_IMAGE_V2
+	bl2_tzram_layout.free_base = TZDRAM_BASE;
+	bl2_tzram_layout.free_size = TZDRAM_SIZE;
+	reserve_mem(&bl2_tzram_layout.free_base,
+		&bl2_tzram_layout.free_size,
+		BL2_RAM_BASE,
+		BL2_RAM_LIMIT - BL2_RAM_BASE);
+	reserve_mem(&bl2_tzram_layout.free_base,
+		&bl2_tzram_layout.free_size,
+		0,
+		BL31_BASE);
+#endif
+}
+#else  /* BL2_AT_EL3 */
 /*******************************************************************************
  * BL1 has passed the extents of the trusted SRAM that should be visible to BL2
  * in x0. This memory layout is sitting at the base of the free trusted SRAM.
@@ -188,6 +254,7 @@ void bl2_early_platform_setup2(u_register_t arg0, u_register_t arg1,
 	/* arg1 is a pointer to mem_layout, arg0 is a pointer to FDT */
 	bl2_early_platform_setup((void *)arg1, (void *)arg0);
 }
+#endif /* BL2_AT_EL3 */
 
 /*******************************************************************************
  * Perform platform specific setup. For now just initialize the memory location
@@ -195,6 +262,12 @@ void bl2_early_platform_setup2(u_register_t arg0, u_register_t arg1,
  ******************************************************************************/
 void bl2_platform_setup(void)
 {
+#if BL2_AT_EL3
+	bl2_platform_print_chip_id();
+	octeontx_fill_soc_details();
+	octeontx_fill_board_details(1);
+#endif /* BL2_AT_EL3 */
+
 	/*
 	 * Do initial security configuration to allow DRAM/device access.
 	 */
@@ -211,7 +284,11 @@ void bl2_platform_setup(void)
  * Perform the very early platform specific architectural setup here. At the
  * moment this is only intializes the mmu in a quick and dirty way.
  ******************************************************************************/
-void bl2_plat_arch_setup()
+#if BL2_AT_EL3
+void bl2_el3_plat_arch_setup(void)
+#else
+void bl2_plat_arch_setup(void)
+#endif
 {
 	mmap_add_region(bl2_tzram_layout.total_base, bl2_tzram_layout.total_base,
 			bl2_tzram_layout.total_size,
@@ -229,7 +306,13 @@ void bl2_plat_arch_setup()
 
 	init_xlat_tables();
 
+#if BL2_AT_EL3
+	enable_mmu_el3(0);
+	plat_octeontx_set_secondary_cpu_jump_addr(
+				(uint64_t)plat_secondary_cold_boot_setup);
+#else
 	enable_mmu_el1(0);
+#endif
 }
 
 /*******************************************************************************

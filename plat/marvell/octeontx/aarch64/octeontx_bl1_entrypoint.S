@@ -8,8 +8,15 @@
 #include <el3_common_macros.S>
 #include <platform_def.h>
 
-	.globl	bl1_entrypoint
+#if BL2_AT_EL3
+#define ENTRYPOINT_FUNC_NAME	bl2_entrypoint
+#else
+#define ENTRYPOINT_FUNC_NAME	bl1_entrypoint
+#endif
+
 	.globl	plat_reset_handler
+#if !BL2_AT_EL3
+	.globl	bl1_entrypoint
 
 	/* -----------------------------------------------------
 	 * bl1_entrypoint() is the entry point into the trusted
@@ -67,6 +74,7 @@ func bl1_entrypoint
 	 */
 	b	el3_exit
 endfunc bl1_entrypoint
+#endif /* !BL2_AT_EL3 */
 
 	/*
 	 * octeontx_relocation function set this variable to 1 when
@@ -124,8 +132,8 @@ func octeontx_relocation
 	 * Relocate to the linker address.
 	 * Code to this place is position independent so it can be done there.
 	 */
-	ldr     x0, =bl1_entrypoint        /* linker address */
-	adr     x1, bl1_entrypoint /* get the loaded address */
+	ldr     x0, =ENTRYPOINT_FUNC_NAME        /* linker address */
+	adr     x1, ENTRYPOINT_FUNC_NAME /* get the loaded address */
 	cmp     x0, x1
 	b.eq    reloc_end
 
@@ -145,7 +153,7 @@ reloc_loop:
 	mov_imm	x1, 1
 	str	x1, [x0]
 	/* Jump to relocated entrypoint */
-	ldr     x0, =bl1_entrypoint
+	ldr     x0, =ENTRYPOINT_FUNC_NAME
 	br      x0
 reloc_end:
 	mov	x30, x17

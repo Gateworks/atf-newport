@@ -25,3 +25,11 @@ BL31_SOURCES		+=	plat/marvell/octeontx/otx/aarch64/plat_octeontx_common.S	\
 				plat/marvell/octeontx/otx/aarch64/plat_helpers.S	\
 				plat/marvell/octeontx/otx/plat_topology.c		\
 				plat/marvell/octeontx/otx/plat_sata.c		\
+
+ifeq (${BL2_AT_EL3},1)
+    BL2_SOURCES		+=	plat/marvell/octeontx/otx/aarch64/plat_octeontx_common.S	\
+				plat/marvell/octeontx/otx/aarch64/plat_helpers.S		\
+				plat/marvell/octeontx/otx/plat_board_cfg.c			\
+				plat/marvell/octeontx/otx/plat_scfg.c				\
+
+endif

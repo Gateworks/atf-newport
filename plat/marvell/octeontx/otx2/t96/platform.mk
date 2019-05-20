@@ -71,6 +71,14 @@ BL31_SOURCES		+=	plat/marvell/octeontx/otx2/aarch64/plat_octeontx_common.S	\
 				plat/marvell/octeontx/otx2/plat_legacy_pm_ops.c		\
 				plat/marvell/octeontx/otx2/t96/plat_t96_svc.c  \
 
+ifeq (${BL2_AT_EL3},1)
+    BL2_SOURCES		+=	plat/marvell/octeontx/otx2/aarch64/plat_octeontx_common.S	\
+				plat/marvell/octeontx/otx2/aarch64/plat_helpers.S		\
+				plat/marvell/octeontx/otx2/plat_board_cfg.c			\
+				plat/marvell/octeontx/otx2/plat_scfg.c				\
+
+endif
+
 ifdef NT_FW_CONFIG
     $(eval $(call add_define,NT_FW_CONFIG))
     $(eval $(call TOOL_ADD_PAYLOAD,${NT_FW_CONFIG},--nt-fw-config))

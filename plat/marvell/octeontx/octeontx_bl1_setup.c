@@ -16,12 +16,12 @@
 #include "../../../bl1/bl1_private.h"
 #include <octeontx_common.h>
 #include <octeontx_board_cfg.h>
-#include <octeontx_board_cfg_bl1.h>
+#include <octeontx_board_cfg_setup.h>
 #include <libfdt.h>
 #include <debug.h>
 #include <assert.h>
 #include <bl1.h>
-#include <octeontx_scfg_bl1.h>
+#include <octeontx_scfg_setup.h>
 #include <plat_octeontx.h>
 #include <octeontx_io_storage.h>
 #include <octeontx_helpers.h>
