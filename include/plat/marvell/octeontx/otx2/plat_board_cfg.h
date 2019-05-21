@@ -79,6 +79,8 @@ typedef struct cgx_config {
 typedef struct qlm_config {
 	uint8_t lane_rx_polarity[MAX_LANES_PER_QLM];
 	uint8_t lane_tx_polarity[MAX_LANES_PER_QLM];
+	uint8_t lane_rx_prevga_gn_adapt[MAX_LANES_PER_QLM];
+	uint8_t lane_rx_prevga_gn_ovrd[MAX_LANES_PER_QLM];
 } qlm_config_t;
 
 typedef struct plat_octeontx_board_cfg {

@@ -1659,7 +1659,7 @@ static void octeontx2_fill_qlm_details(const void *fdt)
 				qlm, lane);
 			polarity = octeontx2_fdtbdk_get_num(fdt, prop, 10);
 			if (polarity == -1)
-				polarity = 0;
+				polarity = 0; /* Default value */
 			plat_octeontx_bcfg->qlm_cfg[qlm].lane_tx_polarity[lane]
 				= polarity;
 
@@ -1668,9 +1668,25 @@ static void octeontx2_fill_qlm_details(const void *fdt)
 				qlm, lane);
 			polarity = octeontx2_fdtbdk_get_num(fdt, prop, 10);
 			if (polarity == -1)
-				polarity = 0;
+				polarity = 0; /* Default value */
 			plat_octeontx_bcfg->qlm_cfg[qlm].lane_rx_polarity[lane]
 				= polarity;
+
+			snprintf(prop, sizeof(prop),
+				"QLM-LANE-RX-PREVGA-GN-ADAPT.N0.QLM%d.LANE%d",
+				qlm, lane);
+			/* Write directly because -1 is default value */
+			plat_octeontx_bcfg->qlm_cfg[qlm]
+				.lane_rx_prevga_gn_adapt[lane] =
+					octeontx2_fdtbdk_get_num(fdt, prop, 10);
+
+			snprintf(prop, sizeof(prop),
+				"QLM-LANE-RX-PREVGA-GN-OVRD.N0.QLM%d.LANE%d",
+				qlm, lane);
+			/* Write directly because -1 is default value */
+			plat_octeontx_bcfg->qlm_cfg[qlm]
+				.lane_rx_prevga_gn_ovrd[lane] =
+					octeontx2_fdtbdk_get_num(fdt, prop, 10);
 		}
 	}
 
