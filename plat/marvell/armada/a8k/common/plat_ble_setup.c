@@ -140,9 +140,9 @@
 	 * SVC2 work point:     LD0[102:92]
 	 * SVC3 work point:     LD0[113:103]
 	 */
-	#define EFUSE_AP_LD0_SVC1_OFFS		17	/* LD0[91:81] */
-	#define EFUSE_AP_LD0_SVC2_OFFS		28	/* LD0[102:92] */
-	#define EFUSE_AP_LD0_SVC3_OFFS		39	/* LD0[113:103] */
+	#define EFUSE_AP_LD0_SVC1_OFFS		18	/* LD0[91:81] */
+	#define EFUSE_AP_LD0_SVC2_OFFS		29	/* LD0[102:92] */
+	#define EFUSE_AP_LD0_SVC3_OFFS		40	/* LD0[113:103] */
 	#define EFUSE_AP_LD0_WP_MASK		0x7FF	/* 10 data,1 parity */
 	#define EFUSE_AP_LD0_SWREV_OFFS		51	/* LD0[116:114] */
 #endif
