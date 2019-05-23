@@ -164,7 +164,7 @@ union cavm_cpc_bp_test2_enable_s
  */
 union cavm_cpc_dvfs_config_s
 {
-    uint64_t u[4];
+    uint64_t u[5];
     struct cavm_cpc_dvfs_config_s_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -221,7 +221,7 @@ union cavm_cpc_dvfs_config_s
 #endif /* Word 1 - End */
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 2 - Big Endian */
         uint64_t sclk_freq             : 16; /**< [191:176] Coprocessor clock (SCLK) frequency in MHz. */
-        uint64_t dvfs_thermal_hot      : 16; /**< [175:160] DVFS control will assert the THERMAL_HOT_L pin when the highest
+        uint64_t dvfs_thermal_hot      : 16; /**< [175:160] SCP firmware will assert the THERMAL_HOT_L pin when the highest
                                                                  observed temperature on the chip is at or above this value. This
                                                                  value is recommended to be 10 degrees Celsius below VRM_TEMP_HIGH.
                                                                  The default value is the Marvell recommended maximum temperature of
@@ -237,7 +237,7 @@ union cavm_cpc_dvfs_config_s
                                                                  attempt to keep power at or below this level.  Default is 100W. */
         uint64_t dvfs_power_control_mode : 16;/**< [159:144] The operating mode of the DVFS (Dynamic Frequency Voltage Scaling)
                                                                  power control code.  Enumerated by CPC_DVFS_MODE_E. */
-        uint64_t dvfs_thermal_hot      : 16; /**< [175:160] DVFS control will assert the THERMAL_HOT_L pin when the highest
+        uint64_t dvfs_thermal_hot      : 16; /**< [175:160] SCP firmware will assert the THERMAL_HOT_L pin when the highest
                                                                  observed temperature on the chip is at or above this value. This
                                                                  value is recommended to be 10 degrees Celsius below VRM_TEMP_HIGH.
                                                                  The default value is the Marvell recommended maximum temperature of
@@ -251,9 +251,19 @@ union cavm_cpc_dvfs_config_s
         uint64_t dvfs_thermal_hot_backoff : 16;/**< [239:224] The percentage that the DVFS control should attempt to reduce the chip
                                                                  power when the board asserts THERMAL_HOT.  A value of 30 means reduce
                                                                  power 30%, etc.  Default is 50. */
-        uint64_t reserved_192_223      : 32;
+        uint64_t reserved_206_223      : 18;
+        uint64_t force_secondary_boot  : 1;  /**< [205:205] Force the next reboot to use the secondary boot device. */
+        uint64_t mcp_disable           : 1;  /**< [204:204] Instructs SCP firmware to not start the MCP. */
+        uint64_t scp_uart_num          : 4;  /**< [203:200] Selects which uart SCP will use for the SCP CLI and logging.  0xf selects no logging. */
+        uint64_t failsafe_timeout      : 8;  /**< [199:192] This timeout detects boot failures in when booting from the
+                                                                 primary boot device, and causes a reboot from secondary.  In seconds. */
 #else /* Word 3 - Little Endian */
-        uint64_t reserved_192_223      : 32;
+        uint64_t failsafe_timeout      : 8;  /**< [199:192] This timeout detects boot failures in when booting from the
+                                                                 primary boot device, and causes a reboot from secondary.  In seconds. */
+        uint64_t scp_uart_num          : 4;  /**< [203:200] Selects which uart SCP will use for the SCP CLI and logging.  0xf selects no logging. */
+        uint64_t mcp_disable           : 1;  /**< [204:204] Instructs SCP firmware to not start the MCP. */
+        uint64_t force_secondary_boot  : 1;  /**< [205:205] Force the next reboot to use the secondary boot device. */
+        uint64_t reserved_206_223      : 18;
         uint64_t dvfs_thermal_hot_backoff : 16;/**< [239:224] The percentage that the DVFS control should attempt to reduce the chip
                                                                  power when the board asserts THERMAL_HOT.  A value of 30 means reduce
                                                                  power 30%, etc.  Default is 50. */
@@ -261,6 +271,33 @@ union cavm_cpc_dvfs_config_s
                                                                  chip. Encoded as percentage * 10.  For example, a VRM with +/-0.5%
                                                                  accuracy would be 5.  Default is +/-0.5%. */
 #endif /* Word 3 - End */
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 4 - Big Endian */
+        uint64_t dspclk_freq_min       : 16; /**< [319:304] Maximum dsp clock (DSPCLK) frequency in MHz.  SCP firmware will vary
+                                                                 the actual DSPCLK frequency between min and max based on SCMI messages
+                                                                 from the AP.  F95* only; ignored in other chips. */
+        uint64_t dspclk_freq_max       : 16; /**< [303:288] Maximum dsp clock (DSPCLK) frequency in MHz.  SCP firmware will vary
+                                                                 the actual DSPCLK frequency between min and max based on SCMI messages
+                                                                 from the AP.  F95* only; ignored in other chips. */
+        uint64_t bclk_freq_min         : 16; /**< [287:272] Minimum bphy clock (BCLK) frequency in MHz.  SCP firmware will vary
+                                                                 the actual BCLK frequency between min and max based on SCMI messages
+                                                                 from the AP. F95* only; ignored in other chips. */
+        uint64_t bclk_freq_max         : 16; /**< [271:256] Maximum bphy clock (BCLK) frequency in MHz.  SCP firmware will vary
+                                                                 the actual BCLK frequency between min and max based on SCMI messages
+                                                                 from the AP.  F95* only; ignored in other chips. */
+#else /* Word 4 - Little Endian */
+        uint64_t bclk_freq_max         : 16; /**< [271:256] Maximum bphy clock (BCLK) frequency in MHz.  SCP firmware will vary
+                                                                 the actual BCLK frequency between min and max based on SCMI messages
+                                                                 from the AP.  F95* only; ignored in other chips. */
+        uint64_t bclk_freq_min         : 16; /**< [287:272] Minimum bphy clock (BCLK) frequency in MHz.  SCP firmware will vary
+                                                                 the actual BCLK frequency between min and max based on SCMI messages
+                                                                 from the AP. F95* only; ignored in other chips. */
+        uint64_t dspclk_freq_max       : 16; /**< [303:288] Maximum dsp clock (DSPCLK) frequency in MHz.  SCP firmware will vary
+                                                                 the actual DSPCLK frequency between min and max based on SCMI messages
+                                                                 from the AP.  F95* only; ignored in other chips. */
+        uint64_t dspclk_freq_min       : 16; /**< [319:304] Maximum dsp clock (DSPCLK) frequency in MHz.  SCP firmware will vary
+                                                                 the actual DSPCLK frequency between min and max based on SCMI messages
+                                                                 from the AP.  F95* only; ignored in other chips. */
+#endif /* Word 4 - End */
     } s;
     /* struct cavm_cpc_dvfs_config_s_s cn; */
 };

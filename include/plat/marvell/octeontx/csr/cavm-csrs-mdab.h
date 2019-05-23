@@ -3744,6 +3744,19 @@ union cavm_mdabx_ipb_flush
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_2_31         : 30;
+        uint32_t flush                 : 1;  /**< [  1:  1](R/W) Write to 1 to flush the IPB. This can be done only if field IPB IDLE is 1. */
+        uint32_t idle                  : 1;  /**< [  0:  0](RO/H) Set by the IPB whenever it is not servicing a cache miss request. */
+#else /* Word 0 - Little Endian */
+        uint32_t idle                  : 1;  /**< [  0:  0](RO/H) Set by the IPB whenever it is not servicing a cache miss request. */
+        uint32_t flush                 : 1;  /**< [  1:  1](R/W) Write to 1 to flush the IPB. This can be done only if field IPB IDLE is 1. */
+        uint32_t reserved_2_31         : 30;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_mdabx_ipb_flush_s cnf95xx; */
+    struct cavm_mdabx_ipb_flush_loki
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t reserved_2_31         : 30;
         uint32_t flush                 : 1;  /**< [  1:  1](R/W1C) Write to 1 to flush the IPB. This can be done only if field IPB IDLE is 1. */
         uint32_t idle                  : 1;  /**< [  0:  0](RO/H) Set by the IPB whenever it is not servicing a cache miss request. */
 #else /* Word 0 - Little Endian */
@@ -3751,8 +3764,7 @@ union cavm_mdabx_ipb_flush
         uint32_t flush                 : 1;  /**< [  1:  1](R/W1C) Write to 1 to flush the IPB. This can be done only if field IPB IDLE is 1. */
         uint32_t reserved_2_31         : 30;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_mdabx_ipb_flush_s cn; */
+    } loki;
 };
 typedef union cavm_mdabx_ipb_flush cavm_mdabx_ipb_flush_t;
 

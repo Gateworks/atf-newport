@@ -1292,7 +1292,8 @@ union cavm_fdeq_rdcfg_rb_params_jt1_s
                                                                  FDEQ()_JD_RS_GENERAL_PARAMETER[SIC_WITH_CRC_MAP] = 1. DS is indexed in
                                                                  increasing order with LSB refering to DS0.
                                                                  0x0 = CRC PASS (SIC is performed).
-                                                                 0x1 = CRC FAIL(SIC is not performed). */
+                                                                 0x1 = CRC FAIL(SIC is not performed).
+                                                                 Must be set to 1 when FDEQ()_JD_RS_GENERAL_PARAMETER[SIC_ON_OFF] = 1 */
 #else /* Word 4 - Little Endian */
         uint64_t layer_0_crc_layer_rbxsymb : 14;/**< [269:256] In the name LAYER_l_CRC_LAYER_RBXSYMB, l refers to layer number.
                                                                  This bitmap indicates the CRC of each DS of layer l and this RB. Valid when
@@ -1300,7 +1301,8 @@ union cavm_fdeq_rdcfg_rb_params_jt1_s
                                                                  FDEQ()_JD_RS_GENERAL_PARAMETER[SIC_WITH_CRC_MAP] = 1. DS is indexed in
                                                                  increasing order with LSB refering to DS0.
                                                                  0x0 = CRC PASS (SIC is performed).
-                                                                 0x1 = CRC FAIL(SIC is not performed). */
+                                                                 0x1 = CRC FAIL(SIC is not performed).
+                                                                 Must be set to 1 when FDEQ()_JD_RS_GENERAL_PARAMETER[SIC_ON_OFF] = 1 */
         uint64_t reserved_270_271      : 2;
         uint64_t layer_1_crc_layer_rbxsymb : 14;/**< [285:272] Refer to [LAYER_0_CRC_LAYER_RBXSYMB]. */
         uint64_t reserved_286_287      : 2;
@@ -1431,7 +1433,8 @@ union cavm_fdeq_rdcfg_rb_params_jt1_s
                                                                  0x1 = CRC FAIL (SIC is not performed).
                                                                  Must be set to 0 for FDEQ_RDCFG_UE_PHYC_PARAMS_S[CP_OFDM_ON] = 0x1 (CP_OFDM).
                                                                  Must be set to 0 or 1 if TB CRC = OK or NOK, respectively for
-                                                                 FDEQ_RDCFG_UE_PHYC_PARAMS_S[CP_OFDM_ON] = 0x0 (DFTs-OFDM). */
+                                                                 FDEQ_RDCFG_UE_PHYC_PARAMS_S[CP_OFDM_ON] = 0x0 (DFTs-OFDM).
+                                                                 Must be set to 1 if FDEQ()_JD_RS_GENERAL_PARAMETER[SIC_ON_OFF] = 0, */
         uint64_t rnn_calc_tone_bitmap  : 12; /**< [467:456] A bitmap, indicating if Rnn  is calculated on a tone in this RB. LSB refers to
                                                                  tone 0 and MSB refers to tone 11.
                                                                  0x0 = Rnn is not calculated.
@@ -1440,10 +1443,10 @@ union cavm_fdeq_rdcfg_rb_params_jt1_s
                                                                  0x1.If FDEQ()_JD_RS_GENERAL_PARAMETER[RS_FREQ_SPARSE]=0x1, 6 out of 12 bits
                                                                  must be 0x1. */
         uint64_t reserved_452_455      : 4;
-        uint64_t tdce_rs_on_pattern    : 4;  /**< [451:448] A bitmap indicating if a RS is included in Timer domain interpolation. LSB
+        uint64_t tdce_rs_on_pattern    : 4;  /**< [451:448] A bitmap indicating if a RS is included in Time domain interpolation. LSB
                                                                  refers to RS0. 0x0 = exclude the RS. 0x1 = include the RS. */
 #else /* Word 7 - Little Endian */
-        uint64_t tdce_rs_on_pattern    : 4;  /**< [451:448] A bitmap indicating if a RS is included in Timer domain interpolation. LSB
+        uint64_t tdce_rs_on_pattern    : 4;  /**< [451:448] A bitmap indicating if a RS is included in Time domain interpolation. LSB
                                                                  refers to RS0. 0x0 = exclude the RS. 0x1 = include the RS. */
         uint64_t reserved_452_455      : 4;
         uint64_t rnn_calc_tone_bitmap  : 12; /**< [467:456] A bitmap, indicating if Rnn  is calculated on a tone in this RB. LSB refers to
@@ -1462,7 +1465,8 @@ union cavm_fdeq_rdcfg_rb_params_jt1_s
                                                                  0x1 = CRC FAIL (SIC is not performed).
                                                                  Must be set to 0 for FDEQ_RDCFG_UE_PHYC_PARAMS_S[CP_OFDM_ON] = 0x1 (CP_OFDM).
                                                                  Must be set to 0 or 1 if TB CRC = OK or NOK, respectively for
-                                                                 FDEQ_RDCFG_UE_PHYC_PARAMS_S[CP_OFDM_ON] = 0x0 (DFTs-OFDM). */
+                                                                 FDEQ_RDCFG_UE_PHYC_PARAMS_S[CP_OFDM_ON] = 0x0 (DFTs-OFDM).
+                                                                 Must be set to 1 if FDEQ()_JD_RS_GENERAL_PARAMETER[SIC_ON_OFF] = 0, */
         uint64_t layer_1_rs_crc_layer_rbxsymb : 4;/**< [475:472] Refer to [LAYER_0_RS_CRC_LAYER_RBXSYMB]. */
         uint64_t layer_2_rs_crc_layer_rbxsymb : 4;/**< [479:476] Refer to [LAYER_0_RS_CRC_LAYER_RBXSYMB]. */
         uint64_t layer_3_rs_crc_layer_rbxsymb : 4;/**< [483:480] Refer to [LAYER_0_RS_CRC_LAYER_RBXSYMB]. */
@@ -1757,7 +1761,8 @@ union cavm_fdeq_rdcfg_rb_params_jt1_s
                                                                  FDEQ()_JD_RS_GENERAL_PARAMETER[SIC_WITH_CRC_MAP] = 1. DS is indexed in
                                                                  increasing order with LSB refering to DS0.
                                                                  0x0 = CRC PASS (SIC is performed).
-                                                                 0x1 = CRC FAIL(SIC is not performed). */
+                                                                 0x1 = CRC FAIL(SIC is not performed).
+                                                                 Must be set to 1 when FDEQ()_JD_RS_GENERAL_PARAMETER[SIC_ON_OFF] = 1 */
 #else /* Word 4 - Little Endian */
         uint64_t layer_0_crc_layer_rbxsymb : 14;/**< [269:256] In the name LAYER_l_CRC_LAYER_RBXSYMB, l refers to layer number.
                                                                  This bitmap indicates the CRC of each DS of layer l and this RB. Valid when
@@ -1765,7 +1770,8 @@ union cavm_fdeq_rdcfg_rb_params_jt1_s
                                                                  FDEQ()_JD_RS_GENERAL_PARAMETER[SIC_WITH_CRC_MAP] = 1. DS is indexed in
                                                                  increasing order with LSB refering to DS0.
                                                                  0x0 = CRC PASS (SIC is performed).
-                                                                 0x1 = CRC FAIL(SIC is not performed). */
+                                                                 0x1 = CRC FAIL(SIC is not performed).
+                                                                 Must be set to 1 when FDEQ()_JD_RS_GENERAL_PARAMETER[SIC_ON_OFF] = 1 */
         uint64_t reserved_270_271      : 2;
         uint64_t layer_1_crc_layer_rbxsymb : 14;/**< [285:272] Refer to [LAYER_0_CRC_LAYER_RBXSYMB]. */
         uint64_t reserved_286_287      : 2;
@@ -1896,7 +1902,8 @@ union cavm_fdeq_rdcfg_rb_params_jt1_s
                                                                  0x1 = CRC FAIL (SIC is not performed).
                                                                  Must be set to 0 for FDEQ_RDCFG_UE_PHYC_PARAMS_S[CP_OFDM_ON] = 0x1 (CP_OFDM).
                                                                  Must be set to 0 or 1 if TB CRC = OK or NOK, respectively for
-                                                                 FDEQ_RDCFG_UE_PHYC_PARAMS_S[CP_OFDM_ON] = 0x0 (DFTs-OFDM). */
+                                                                 FDEQ_RDCFG_UE_PHYC_PARAMS_S[CP_OFDM_ON] = 0x0 (DFTs-OFDM).
+                                                                 Must be set to 1 if FDEQ()_JD_RS_GENERAL_PARAMETER[SIC_ON_OFF] = 0, */
         uint64_t rnn_calc_tone_bitmap  : 12; /**< [467:456] A bitmap, indicating if Rnn  is calculated on a tone in this RB. LSB refers to
                                                                  tone 0 and MSB refers to tone 11.
                                                                  0x0 = Rnn is not calculated.
@@ -1905,10 +1912,10 @@ union cavm_fdeq_rdcfg_rb_params_jt1_s
                                                                  0x1.If FDEQ()_JD_RS_GENERAL_PARAMETER[RS_FREQ_SPARSE]=0x1, 6 out of 12 bits
                                                                  must be 0x1. */
         uint64_t reserved_452_455      : 4;
-        uint64_t tdce_rs_on_pattern    : 4;  /**< [451:448] A bitmap indicating if a RS is included in Timer domain interpolation. LSB
+        uint64_t tdce_rs_on_pattern    : 4;  /**< [451:448] A bitmap indicating if a RS is included in Time domain interpolation. LSB
                                                                  refers to RS0. 0x0 = exclude the RS. 0x1 = include the RS. */
 #else /* Word 7 - Little Endian */
-        uint64_t tdce_rs_on_pattern    : 4;  /**< [451:448] A bitmap indicating if a RS is included in Timer domain interpolation. LSB
+        uint64_t tdce_rs_on_pattern    : 4;  /**< [451:448] A bitmap indicating if a RS is included in Time domain interpolation. LSB
                                                                  refers to RS0. 0x0 = exclude the RS. 0x1 = include the RS. */
         uint64_t reserved_452_455      : 4;
         uint64_t rnn_calc_tone_bitmap  : 12; /**< [467:456] A bitmap, indicating if Rnn  is calculated on a tone in this RB. LSB refers to
@@ -1927,7 +1934,8 @@ union cavm_fdeq_rdcfg_rb_params_jt1_s
                                                                  0x1 = CRC FAIL (SIC is not performed).
                                                                  Must be set to 0 for FDEQ_RDCFG_UE_PHYC_PARAMS_S[CP_OFDM_ON] = 0x1 (CP_OFDM).
                                                                  Must be set to 0 or 1 if TB CRC = OK or NOK, respectively for
-                                                                 FDEQ_RDCFG_UE_PHYC_PARAMS_S[CP_OFDM_ON] = 0x0 (DFTs-OFDM). */
+                                                                 FDEQ_RDCFG_UE_PHYC_PARAMS_S[CP_OFDM_ON] = 0x0 (DFTs-OFDM).
+                                                                 Must be set to 1 if FDEQ()_JD_RS_GENERAL_PARAMETER[SIC_ON_OFF] = 0, */
         uint64_t layer_1_rs_crc_layer_rbxsymb : 4;/**< [475:472] Refer to [LAYER_0_RS_CRC_LAYER_RBXSYMB]. */
         uint64_t layer_2_rs_crc_layer_rbxsymb : 4;/**< [479:476] Refer to [LAYER_0_RS_CRC_LAYER_RBXSYMB]. */
         uint64_t layer_3_rs_crc_layer_rbxsymb : 4;/**< [483:480] Refer to [LAYER_0_RS_CRC_LAYER_RBXSYMB]. */
@@ -2442,6 +2450,48 @@ union cavm_fdeq_rdcfg_twf_set_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_62_63        : 2;
+        uint64_t w1_symbol0_q_phase    : 14; /**< [ 61: 48] Q value of complex weight 1 for symbol 0 as a signed 14 bit Q12 representation [-8192,8191]. */
+        uint64_t reserved_46_47        : 2;
+        uint64_t w1_symbol0_i_phase    : 14; /**< [ 45: 32] I value of complex weight 1 for symbol 0  as a signed 14 bit Q12 representation [-8192,8191]. */
+        uint64_t reserved_30_31        : 2;
+        uint64_t w0_symbol0_q_phase    : 14; /**< [ 29: 16] Q value of complex weight 0 for symbol 0. */
+        uint64_t reserved_14_15        : 2;
+        uint64_t w0_symbol0_i_phase    : 14; /**< [ 13:  0] I value of complex weight 0 for symbol 0. */
+#else /* Word 0 - Little Endian */
+        uint64_t w0_symbol0_i_phase    : 14; /**< [ 13:  0] I value of complex weight 0 for symbol 0. */
+        uint64_t reserved_14_15        : 2;
+        uint64_t w0_symbol0_q_phase    : 14; /**< [ 29: 16] Q value of complex weight 0 for symbol 0. */
+        uint64_t reserved_30_31        : 2;
+        uint64_t w1_symbol0_i_phase    : 14; /**< [ 45: 32] I value of complex weight 1 for symbol 0  as a signed 14 bit Q12 representation [-8192,8191]. */
+        uint64_t reserved_46_47        : 2;
+        uint64_t w1_symbol0_q_phase    : 14; /**< [ 61: 48] Q value of complex weight 1 for symbol 0 as a signed 14 bit Q12 representation [-8192,8191]. */
+        uint64_t reserved_62_63        : 2;
+#endif /* Word 0 - End */
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 1 - Big Endian */
+        uint64_t reserved_126_127      : 2;
+        uint64_t w1_symbol1_q_phase    : 14; /**< [125:112] Q value of complex weight 1 for symbol 1  as a signed 14 bit Q12 representation [-8192,8191]. */
+        uint64_t reserved_110_111      : 2;
+        uint64_t w1_symbol1_i_phase    : 14; /**< [109: 96] I value of complex weight 1 for symbol 1  as a signed 14 bit Q12 representation [-8192,8191]. */
+        uint64_t reserved_94_95        : 2;
+        uint64_t w0_symbol1_q_phase    : 14; /**< [ 93: 80] Q value of complex weight 0 for symbol 1  as a signed 14 bit Q12 representation [-8192,8191]. */
+        uint64_t reserved_78_79        : 2;
+        uint64_t w0_symbol1_i_phase    : 14; /**< [ 77: 64] I value of complex weight 0 for symbol 1  as a signed 14 bit Q12 representation [-8192,8191]. */
+#else /* Word 1 - Little Endian */
+        uint64_t w0_symbol1_i_phase    : 14; /**< [ 77: 64] I value of complex weight 0 for symbol 1  as a signed 14 bit Q12 representation [-8192,8191]. */
+        uint64_t reserved_78_79        : 2;
+        uint64_t w0_symbol1_q_phase    : 14; /**< [ 93: 80] Q value of complex weight 0 for symbol 1  as a signed 14 bit Q12 representation [-8192,8191]. */
+        uint64_t reserved_94_95        : 2;
+        uint64_t w1_symbol1_i_phase    : 14; /**< [109: 96] I value of complex weight 1 for symbol 1  as a signed 14 bit Q12 representation [-8192,8191]. */
+        uint64_t reserved_110_111      : 2;
+        uint64_t w1_symbol1_q_phase    : 14; /**< [125:112] Q value of complex weight 1 for symbol 1  as a signed 14 bit Q12 representation [-8192,8191]. */
+        uint64_t reserved_126_127      : 2;
+#endif /* Word 1 - End */
+    } s;
+    /* struct cavm_fdeq_rdcfg_twf_set_s_s cnf95xx; */
+    struct cavm_fdeq_rdcfg_twf_set_s_loki
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_62_63        : 2;
         uint64_t w1_symbol0_q_phase    : 14; /**< [ 61: 48] Q value of complex weight 1 for symbol 0. */
         uint64_t reserved_46_47        : 2;
         uint64_t w1_symbol0_i_phase    : 14; /**< [ 45: 32] I value of complex weight 1 for symbol 0 */
@@ -2478,8 +2528,685 @@ union cavm_fdeq_rdcfg_twf_set_s
         uint64_t w1_symbol1_q_phase    : 14; /**< [125:112] Q value of complex weight 1 for symbol 1. */
         uint64_t reserved_126_127      : 2;
 #endif /* Word 1 - End */
+    } loki;
+};
+
+/**
+ * Structure fdeq_rdcfg_twf_to_16r_s
+ *
+ * FDEQ DMA Read port Time weight filter and Time offset for 16 receive antenna Structure
+ * This structure defines the format of the job configuration of FDEQ.
+ */
+union cavm_fdeq_rdcfg_twf_to_16r_s
+{
+    uint64_t u[16];
+    struct cavm_fdeq_rdcfg_twf_to_16r_s_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t timewf_index_rs1_ant_1 : 4; /**< [ 63: 60] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs1_ant_1  : 12; /**< [ 59: 48] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs1_ant_0 : 4; /**< [ 47: 44] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs1_ant_0  : 12; /**< [ 43: 32] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs0_ant_1 : 4; /**< [ 31: 28] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs0_ant_1  : 12; /**< [ 27: 16] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs0_ant_0 : 4; /**< [ 15: 12] In the name TIMEWF_INDEX_RSs_ANT r, the tuple(s,r) refers to antenna index. This
+                                                                 parameter indicates the index of time domain weigth filter set used for antenna
+                                                                 r.  Only the one specified for the RS
+                                                                 FDEQ(0..1)_JD_JOB_TYPE_RS_PARAM[HRS_SYMBOL_NUMBER] - 1 is valid and others are ignored.
+                                                                 Valid range is (0, FDEQ(0..1)_JD_JOB_TYPE_RS_PARAM[TIMEWF_SET_NUMBER]-1). */
+        uint64_t timeoffset_rs0_ant_0  : 12; /**< [ 11:  0] In the name TIMEOFFSET RS s ANT r, the tuple (s,r) refers to RS and antenna
+                                                                 index. This parameter indicates the indicates the phase due to time offset on RS
+                                                                 s and antenna r. Valid range is [4095,0]. Unit is 2*pi/4096. */
+#else /* Word 0 - Little Endian */
+        uint64_t timeoffset_rs0_ant_0  : 12; /**< [ 11:  0] In the name TIMEOFFSET RS s ANT r, the tuple (s,r) refers to RS and antenna
+                                                                 index. This parameter indicates the indicates the phase due to time offset on RS
+                                                                 s and antenna r. Valid range is [4095,0]. Unit is 2*pi/4096. */
+        uint64_t timewf_index_rs0_ant_0 : 4; /**< [ 15: 12] In the name TIMEWF_INDEX_RSs_ANT r, the tuple(s,r) refers to antenna index. This
+                                                                 parameter indicates the index of time domain weigth filter set used for antenna
+                                                                 r.  Only the one specified for the RS
+                                                                 FDEQ(0..1)_JD_JOB_TYPE_RS_PARAM[HRS_SYMBOL_NUMBER] - 1 is valid and others are ignored.
+                                                                 Valid range is (0, FDEQ(0..1)_JD_JOB_TYPE_RS_PARAM[TIMEWF_SET_NUMBER]-1). */
+        uint64_t timeoffset_rs0_ant_1  : 12; /**< [ 27: 16] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs0_ant_1 : 4; /**< [ 31: 28] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs1_ant_0  : 12; /**< [ 43: 32] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs1_ant_0 : 4; /**< [ 47: 44] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs1_ant_1  : 12; /**< [ 59: 48] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs1_ant_1 : 4; /**< [ 63: 60] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+#endif /* Word 0 - End */
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 1 - Big Endian */
+        uint64_t timewf_index_rs3_ant_1 : 4; /**< [127:124] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs3_ant_1  : 12; /**< [123:112] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs3_ant_0 : 4; /**< [111:108] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs3_ant_0  : 12; /**< [107: 96] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs2_ant_1 : 4; /**< [ 95: 92] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs2_ant_1  : 12; /**< [ 91: 80] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs2_ant_0 : 4; /**< [ 79: 76] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs2_ant_0  : 12; /**< [ 75: 64] Refer [TIMEOFFSET_RS0_ANT_0] */
+#else /* Word 1 - Little Endian */
+        uint64_t timeoffset_rs2_ant_0  : 12; /**< [ 75: 64] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs2_ant_0 : 4; /**< [ 79: 76] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs2_ant_1  : 12; /**< [ 91: 80] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs2_ant_1 : 4; /**< [ 95: 92] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs3_ant_0  : 12; /**< [107: 96] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs3_ant_0 : 4; /**< [111:108] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs3_ant_1  : 12; /**< [123:112] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs3_ant_1 : 4; /**< [127:124] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+#endif /* Word 1 - End */
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 2 - Big Endian */
+        uint64_t timewf_index_rs1_ant_3 : 4; /**< [191:188] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs1_ant_3  : 12; /**< [187:176] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs1_ant_2 : 4; /**< [175:172] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs1_ant_2  : 12; /**< [171:160] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs0_ant_3 : 4; /**< [159:156] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs0_ant_3  : 12; /**< [155:144] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs0_ant_2 : 4; /**< [143:140] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timeoffset_rs0_ant_2  : 12; /**< [139:128] Refer [TIMEOFFSET_RS0_ANT_0] */
+#else /* Word 2 - Little Endian */
+        uint64_t timeoffset_rs0_ant_2  : 12; /**< [139:128] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs0_ant_2 : 4; /**< [143:140] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timeoffset_rs0_ant_3  : 12; /**< [155:144] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs0_ant_3 : 4; /**< [159:156] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs1_ant_2  : 12; /**< [171:160] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs1_ant_2 : 4; /**< [175:172] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs1_ant_3  : 12; /**< [187:176] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs1_ant_3 : 4; /**< [191:188] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+#endif /* Word 2 - End */
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 3 - Big Endian */
+        uint64_t timewf_index_rs3_ant_3 : 4; /**< [255:252] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs3_ant_3  : 12; /**< [251:240] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs3_ant_2 : 4; /**< [239:236] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs3_ant_2  : 12; /**< [235:224] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs2_ant_3 : 4; /**< [223:220] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs2_ant_3  : 12; /**< [219:208] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs2_ant_2 : 4; /**< [207:204] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs2_ant_2  : 12; /**< [203:192] Refer [TIMEOFFSET_RS0_ANT_0] */
+#else /* Word 3 - Little Endian */
+        uint64_t timeoffset_rs2_ant_2  : 12; /**< [203:192] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs2_ant_2 : 4; /**< [207:204] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs2_ant_3  : 12; /**< [219:208] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs2_ant_3 : 4; /**< [223:220] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs3_ant_2  : 12; /**< [235:224] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs3_ant_2 : 4; /**< [239:236] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs3_ant_3  : 12; /**< [251:240] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs3_ant_3 : 4; /**< [255:252] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+#endif /* Word 3 - End */
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 4 - Big Endian */
+        uint64_t timewf_index_rs1_ant_5 : 4; /**< [319:316] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs1_ant_5  : 12; /**< [315:304] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs1_ant_4 : 4; /**< [303:300] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs1_ant_4  : 12; /**< [299:288] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs0_ant_5 : 4; /**< [287:284] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs0_ant_5  : 12; /**< [283:272] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs0_ant_4 : 4; /**< [271:268] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs0_ant_4  : 12; /**< [267:256] Refer [TIMEOFFSET_RS0_ANT_0] */
+#else /* Word 4 - Little Endian */
+        uint64_t timeoffset_rs0_ant_4  : 12; /**< [267:256] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs0_ant_4 : 4; /**< [271:268] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs0_ant_5  : 12; /**< [283:272] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs0_ant_5 : 4; /**< [287:284] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs1_ant_4  : 12; /**< [299:288] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs1_ant_4 : 4; /**< [303:300] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs1_ant_5  : 12; /**< [315:304] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs1_ant_5 : 4; /**< [319:316] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+#endif /* Word 4 - End */
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 5 - Big Endian */
+        uint64_t timewf_index_rs3_ant_5 : 4; /**< [383:380] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs3_ant_5  : 12; /**< [379:368] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs3_ant_4 : 4; /**< [367:364] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs3_ant_4  : 12; /**< [363:352] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs2_ant_5 : 4; /**< [351:348] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs2_ant_5  : 12; /**< [347:336] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs2_ant_4 : 4; /**< [335:332] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs2_ant_4  : 12; /**< [331:320] Refer [TIMEOFFSET_RS0_ANT_0] */
+#else /* Word 5 - Little Endian */
+        uint64_t timeoffset_rs2_ant_4  : 12; /**< [331:320] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs2_ant_4 : 4; /**< [335:332] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs2_ant_5  : 12; /**< [347:336] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs2_ant_5 : 4; /**< [351:348] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs3_ant_4  : 12; /**< [363:352] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs3_ant_4 : 4; /**< [367:364] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs3_ant_5  : 12; /**< [379:368] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs3_ant_5 : 4; /**< [383:380] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+#endif /* Word 5 - End */
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 6 - Big Endian */
+        uint64_t timewf_index_rs1_ant_7 : 4; /**< [447:444] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs1_ant_7  : 12; /**< [443:432] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs1_ant_6 : 4; /**< [431:428] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs1_ant_6  : 12; /**< [427:416] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs0_ant_7 : 4; /**< [415:412] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs0_ant_7  : 12; /**< [411:400] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs0_ant_6 : 4; /**< [399:396] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timeoffset_rs0_ant_6  : 12; /**< [395:384] Refer [TIMEOFFSET_RS0_ANT_0] */
+#else /* Word 6 - Little Endian */
+        uint64_t timeoffset_rs0_ant_6  : 12; /**< [395:384] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs0_ant_6 : 4; /**< [399:396] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timeoffset_rs0_ant_7  : 12; /**< [411:400] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs0_ant_7 : 4; /**< [415:412] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs1_ant_6  : 12; /**< [427:416] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs1_ant_6 : 4; /**< [431:428] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs1_ant_7  : 12; /**< [443:432] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs1_ant_7 : 4; /**< [447:444] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+#endif /* Word 6 - End */
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 7 - Big Endian */
+        uint64_t timewf_index_rs3_ant_7 : 4; /**< [511:508] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs3_ant_7  : 12; /**< [507:496] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs3_ant_6 : 4; /**< [495:492] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs3_ant_6  : 12; /**< [491:480] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs2_ant_7 : 4; /**< [479:476] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs2_ant_7  : 12; /**< [475:464] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs2_ant_6 : 4; /**< [463:460] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs2_ant_6  : 12; /**< [459:448] Refer [TIMEOFFSET_RS0_ANT_0] */
+#else /* Word 7 - Little Endian */
+        uint64_t timeoffset_rs2_ant_6  : 12; /**< [459:448] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs2_ant_6 : 4; /**< [463:460] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs2_ant_7  : 12; /**< [475:464] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs2_ant_7 : 4; /**< [479:476] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs3_ant_6  : 12; /**< [491:480] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs3_ant_6 : 4; /**< [495:492] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs3_ant_7  : 12; /**< [507:496] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs3_ant_7 : 4; /**< [511:508] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+#endif /* Word 7 - End */
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 8 - Big Endian */
+        uint64_t timewf_index_rs1_ant_9 : 4; /**< [575:572] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs1_ant_9  : 12; /**< [571:560] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs1_ant_8 : 4; /**< [559:556] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs1_ant_8  : 12; /**< [555:544] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs0_ant_9 : 4; /**< [543:540] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs0_ant_9  : 12; /**< [539:528] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs0_ant_8 : 4; /**< [527:524] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timeoffset_rs0_ant_8  : 12; /**< [523:512] Refer [TIMEOFFSET_RS0_ANT_0] */
+#else /* Word 8 - Little Endian */
+        uint64_t timeoffset_rs0_ant_8  : 12; /**< [523:512] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs0_ant_8 : 4; /**< [527:524] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timeoffset_rs0_ant_9  : 12; /**< [539:528] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs0_ant_9 : 4; /**< [543:540] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs1_ant_8  : 12; /**< [555:544] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs1_ant_8 : 4; /**< [559:556] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs1_ant_9  : 12; /**< [571:560] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs1_ant_9 : 4; /**< [575:572] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+#endif /* Word 8 - End */
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 9 - Big Endian */
+        uint64_t timewf_index_rs3_ant_9 : 4; /**< [639:636] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs3_ant_9  : 12; /**< [635:624] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs3_ant_8 : 4; /**< [623:620] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs3_ant_8  : 12; /**< [619:608] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs2_ant_9 : 4; /**< [607:604] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs2_ant_9  : 12; /**< [603:592] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs2_ant_8 : 4; /**< [591:588] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs2_ant_8  : 12; /**< [587:576] Refer [TIMEOFFSET_RS0_ANT_0] */
+#else /* Word 9 - Little Endian */
+        uint64_t timeoffset_rs2_ant_8  : 12; /**< [587:576] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs2_ant_8 : 4; /**< [591:588] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs2_ant_9  : 12; /**< [603:592] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs2_ant_9 : 4; /**< [607:604] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs3_ant_8  : 12; /**< [619:608] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs3_ant_8 : 4; /**< [623:620] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs3_ant_9  : 12; /**< [635:624] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs3_ant_9 : 4; /**< [639:636] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+#endif /* Word 9 - End */
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 10 - Big Endian */
+        uint64_t timewf_index_rs1_ant_11 : 4;/**< [703:700] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs1_ant_11 : 12; /**< [699:688] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs1_ant_10 : 4;/**< [687:684] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs1_ant_10 : 12; /**< [683:672] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs0_ant_11 : 4;/**< [671:668] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs0_ant_11 : 12; /**< [667:656] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs0_ant_10 : 4;/**< [655:652] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timeoffset_rs0_ant_10 : 12; /**< [651:640] Refer [TIMEOFFSET_RS0_ANT_0] */
+#else /* Word 10 - Little Endian */
+        uint64_t timeoffset_rs0_ant_10 : 12; /**< [651:640] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs0_ant_10 : 4;/**< [655:652] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timeoffset_rs0_ant_11 : 12; /**< [667:656] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs0_ant_11 : 4;/**< [671:668] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs1_ant_10 : 12; /**< [683:672] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs1_ant_10 : 4;/**< [687:684] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs1_ant_11 : 12; /**< [699:688] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs1_ant_11 : 4;/**< [703:700] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+#endif /* Word 10 - End */
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 11 - Big Endian */
+        uint64_t timewf_index_rs3_ant_11 : 4;/**< [767:764] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs3_ant_11 : 12; /**< [763:752] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs3_ant_10 : 4;/**< [751:748] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs3_ant_10 : 12; /**< [747:736] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs2_ant_11 : 4;/**< [735:732] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs2_ant_11 : 12; /**< [731:720] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs2_ant_10 : 4;/**< [719:716] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs2_ant_10 : 12; /**< [715:704] Refer [TIMEOFFSET_RS0_ANT_0] */
+#else /* Word 11 - Little Endian */
+        uint64_t timeoffset_rs2_ant_10 : 12; /**< [715:704] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs2_ant_10 : 4;/**< [719:716] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs2_ant_11 : 12; /**< [731:720] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs2_ant_11 : 4;/**< [735:732] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs3_ant_10 : 12; /**< [747:736] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs3_ant_10 : 4;/**< [751:748] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs3_ant_11 : 12; /**< [763:752] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs3_ant_11 : 4;/**< [767:764] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+#endif /* Word 11 - End */
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 12 - Big Endian */
+        uint64_t timewf_index_rs1_ant_13 : 4;/**< [831:828] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs1_ant_13 : 12; /**< [827:816] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs1_ant_12 : 4;/**< [815:812] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs1_ant_12 : 12; /**< [811:800] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs0_ant_13 : 4;/**< [799:796] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs0_ant_13 : 12; /**< [795:784] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs0_ant_12 : 4;/**< [783:780] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs0_ant_12 : 12; /**< [779:768] Refer [TIMEOFFSET_RS0_ANT_0] */
+#else /* Word 12 - Little Endian */
+        uint64_t timeoffset_rs0_ant_12 : 12; /**< [779:768] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs0_ant_12 : 4;/**< [783:780] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs0_ant_13 : 12; /**< [795:784] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs0_ant_13 : 4;/**< [799:796] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs1_ant_12 : 12; /**< [811:800] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs1_ant_12 : 4;/**< [815:812] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs1_ant_13 : 12; /**< [827:816] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs1_ant_13 : 4;/**< [831:828] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+#endif /* Word 12 - End */
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 13 - Big Endian */
+        uint64_t timewf_index_rs3_ant_13 : 4;/**< [895:892] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs3_ant_13 : 12; /**< [891:880] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs3_ant_12 : 4;/**< [879:876] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs3_ant_12 : 12; /**< [875:864] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs2_ant_13 : 4;/**< [863:860] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs2_ant_13 : 12; /**< [859:848] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs2_ant_12 : 4;/**< [847:844] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs2_ant_12 : 12; /**< [843:832] Refer [TIMEOFFSET_RS0_ANT_0] */
+#else /* Word 13 - Little Endian */
+        uint64_t timeoffset_rs2_ant_12 : 12; /**< [843:832] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs2_ant_12 : 4;/**< [847:844] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs2_ant_13 : 12; /**< [859:848] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs2_ant_13 : 4;/**< [863:860] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs3_ant_12 : 12; /**< [875:864] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs3_ant_12 : 4;/**< [879:876] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs3_ant_13 : 12; /**< [891:880] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs3_ant_13 : 4;/**< [895:892] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+#endif /* Word 13 - End */
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 14 - Big Endian */
+        uint64_t timewf_index_rs1_ant_15 : 4;/**< [959:956] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs1_ant_15 : 12; /**< [955:944] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs1_ant_14 : 4;/**< [943:940] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs1_ant_14 : 12; /**< [939:928] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs0_ant_15 : 4;/**< [927:924] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs0_ant_15 : 12; /**< [923:912] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs0_ant_14 : 4;/**< [911:908] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timeoffset_rs0_ant_14 : 12; /**< [907:896] Refer [TIMEOFFSET_RS0_ANT_0] */
+#else /* Word 14 - Little Endian */
+        uint64_t timeoffset_rs0_ant_14 : 12; /**< [907:896] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs0_ant_14 : 4;/**< [911:908] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timeoffset_rs0_ant_15 : 12; /**< [923:912] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs0_ant_15 : 4;/**< [927:924] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs1_ant_14 : 12; /**< [939:928] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs1_ant_14 : 4;/**< [943:940] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs1_ant_15 : 12; /**< [955:944] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs1_ant_15 : 4;/**< [959:956] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+#endif /* Word 14 - End */
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 15 - Big Endian */
+        uint64_t timewf_index_rs3_ant_15 : 4;/**< [1023:1020] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs3_ant_15 : 12; /**< [1019:1008] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs3_ant_14 : 4;/**< [1007:1004] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs3_ant_14 : 12; /**< [1003:992] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs2_ant_15 : 4;/**< [991:988] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs2_ant_15 : 12; /**< [987:976] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs2_ant_14 : 4;/**< [975:972] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs2_ant_14 : 12; /**< [971:960] Refer [TIMEOFFSET_RS0_ANT_0] */
+#else /* Word 15 - Little Endian */
+        uint64_t timeoffset_rs2_ant_14 : 12; /**< [971:960] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs2_ant_14 : 4;/**< [975:972] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs2_ant_15 : 12; /**< [987:976] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs2_ant_15 : 4;/**< [991:988] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs3_ant_14 : 12; /**< [1003:992] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs3_ant_14 : 4;/**< [1007:1004] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs3_ant_15 : 12; /**< [1019:1008] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs3_ant_15 : 4;/**< [1023:1020] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+#endif /* Word 15 - End */
     } s;
-    /* struct cavm_fdeq_rdcfg_twf_set_s_s cn; */
+    /* struct cavm_fdeq_rdcfg_twf_to_16r_s_s cn; */
+};
+
+/**
+ * Structure fdeq_rdcfg_twf_to_2r_s
+ *
+ * FDEQ DMA Read port Time weight filter and Time offset for 2 receive antenna Structure
+ * This structure defines the format of the job configuration of FDEQ.
+ */
+union cavm_fdeq_rdcfg_twf_to_2r_s
+{
+    uint64_t u[2];
+    struct cavm_fdeq_rdcfg_twf_to_2r_s_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t timewf_index_rs1_ant_1 : 4; /**< [ 63: 60] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs1_ant_1  : 12; /**< [ 59: 48] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs1_ant_0 : 4; /**< [ 47: 44] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs1_ant_0  : 12; /**< [ 43: 32] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs0_ant_1 : 4; /**< [ 31: 28] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs0_ant_1  : 12; /**< [ 27: 16] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs0_ant_0 : 4; /**< [ 15: 12] In the name TIMEWF_INDEX_RSs_ANT r, the tuple(s,r) refers to antenna index. This
+                                                                 parameter indicates the index of time domain weigth filter set used for antenna
+                                                                 r.  Only the one specified for the RS
+                                                                 FDEQ(0..1)_JD_JOB_TYPE_RS_PARAM[HRS_SYMBOL_NUMBER] - 1 is valid and others are ignored.
+                                                                 Valid range is (0, FDEQ(0..1)_JD_JOB_TYPE_RS_PARAM[TIMEWF_SET_NUMBER]-1). */
+        uint64_t timeoffset_rs0_ant_0  : 12; /**< [ 11:  0] In the name TIMEOFFSET RS s ANT r, the tuple (s,r) refers to RS and antenna
+                                                                 index. This parameter indicates the indicates the phase due to time offset on RS
+                                                                 s and antenna r. Valid range is [4095,0]. Unit is 2*pi/4096. */
+#else /* Word 0 - Little Endian */
+        uint64_t timeoffset_rs0_ant_0  : 12; /**< [ 11:  0] In the name TIMEOFFSET RS s ANT r, the tuple (s,r) refers to RS and antenna
+                                                                 index. This parameter indicates the indicates the phase due to time offset on RS
+                                                                 s and antenna r. Valid range is [4095,0]. Unit is 2*pi/4096. */
+        uint64_t timewf_index_rs0_ant_0 : 4; /**< [ 15: 12] In the name TIMEWF_INDEX_RSs_ANT r, the tuple(s,r) refers to antenna index. This
+                                                                 parameter indicates the index of time domain weigth filter set used for antenna
+                                                                 r.  Only the one specified for the RS
+                                                                 FDEQ(0..1)_JD_JOB_TYPE_RS_PARAM[HRS_SYMBOL_NUMBER] - 1 is valid and others are ignored.
+                                                                 Valid range is (0, FDEQ(0..1)_JD_JOB_TYPE_RS_PARAM[TIMEWF_SET_NUMBER]-1). */
+        uint64_t timeoffset_rs0_ant_1  : 12; /**< [ 27: 16] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs0_ant_1 : 4; /**< [ 31: 28] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs1_ant_0  : 12; /**< [ 43: 32] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs1_ant_0 : 4; /**< [ 47: 44] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs1_ant_1  : 12; /**< [ 59: 48] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs1_ant_1 : 4; /**< [ 63: 60] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+#endif /* Word 0 - End */
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 1 - Big Endian */
+        uint64_t timewf_index_rs3_ant_1 : 4; /**< [127:124] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs3_ant_1  : 12; /**< [123:112] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs3_ant_0 : 4; /**< [111:108] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs3_ant_0  : 12; /**< [107: 96] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs2_ant_1 : 4; /**< [ 95: 92] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs2_ant_1  : 12; /**< [ 91: 80] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs2_ant_0 : 4; /**< [ 79: 76] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs2_ant_0  : 12; /**< [ 75: 64] Refer [TIMEOFFSET_RS0_ANT_0] */
+#else /* Word 1 - Little Endian */
+        uint64_t timeoffset_rs2_ant_0  : 12; /**< [ 75: 64] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs2_ant_0 : 4; /**< [ 79: 76] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs2_ant_1  : 12; /**< [ 91: 80] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs2_ant_1 : 4; /**< [ 95: 92] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs3_ant_0  : 12; /**< [107: 96] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs3_ant_0 : 4; /**< [111:108] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs3_ant_1  : 12; /**< [123:112] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs3_ant_1 : 4; /**< [127:124] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+#endif /* Word 1 - End */
+    } s;
+    /* struct cavm_fdeq_rdcfg_twf_to_2r_s_s cn; */
+};
+
+/**
+ * Structure fdeq_rdcfg_twf_to_4r_s
+ *
+ * FDEQ DMA Read port Time weight filter and Time offset for 4 receive antenna Structure
+ * This structure defines the format of the job configuration of FDEQ.
+ */
+union cavm_fdeq_rdcfg_twf_to_4r_s
+{
+    uint64_t u[4];
+    struct cavm_fdeq_rdcfg_twf_to_4r_s_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t timewf_index_rs1_ant_1 : 4; /**< [ 63: 60] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs1_ant_1  : 12; /**< [ 59: 48] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs1_ant_0 : 4; /**< [ 47: 44] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs1_ant_0  : 12; /**< [ 43: 32] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs0_ant_1 : 4; /**< [ 31: 28] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs0_ant_1  : 12; /**< [ 27: 16] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs0_ant_0 : 4; /**< [ 15: 12] In the name TIMEWF_INDEX_RSs_ANT r, the tuple(s,r) refers to antenna index. This
+                                                                 parameter indicates the index of time domain weigth filter set used for antenna
+                                                                 r.  Only the one specified for the RS
+                                                                 FDEQ(0..1)_JD_JOB_TYPE_RS_PARAM[HRS_SYMBOL_NUMBER] - 1 is valid and others are ignored.
+                                                                 Valid range is (0, FDEQ(0..1)_JD_JOB_TYPE_RS_PARAM[TIMEWF_SET_NUMBER]-1). */
+        uint64_t timeoffset_rs0_ant_0  : 12; /**< [ 11:  0] In the name TIMEOFFSET RS s ANT r, the tuple (s,r) refers to RS and antenna
+                                                                 index. This parameter indicates the indicates the phase due to time offset on RS
+                                                                 s and antenna r. Valid range is [4095,0]. Unit is 2*pi/4096. */
+#else /* Word 0 - Little Endian */
+        uint64_t timeoffset_rs0_ant_0  : 12; /**< [ 11:  0] In the name TIMEOFFSET RS s ANT r, the tuple (s,r) refers to RS and antenna
+                                                                 index. This parameter indicates the indicates the phase due to time offset on RS
+                                                                 s and antenna r. Valid range is [4095,0]. Unit is 2*pi/4096. */
+        uint64_t timewf_index_rs0_ant_0 : 4; /**< [ 15: 12] In the name TIMEWF_INDEX_RSs_ANT r, the tuple(s,r) refers to antenna index. This
+                                                                 parameter indicates the index of time domain weigth filter set used for antenna
+                                                                 r.  Only the one specified for the RS
+                                                                 FDEQ(0..1)_JD_JOB_TYPE_RS_PARAM[HRS_SYMBOL_NUMBER] - 1 is valid and others are ignored.
+                                                                 Valid range is (0, FDEQ(0..1)_JD_JOB_TYPE_RS_PARAM[TIMEWF_SET_NUMBER]-1). */
+        uint64_t timeoffset_rs0_ant_1  : 12; /**< [ 27: 16] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs0_ant_1 : 4; /**< [ 31: 28] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs1_ant_0  : 12; /**< [ 43: 32] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs1_ant_0 : 4; /**< [ 47: 44] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs1_ant_1  : 12; /**< [ 59: 48] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs1_ant_1 : 4; /**< [ 63: 60] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+#endif /* Word 0 - End */
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 1 - Big Endian */
+        uint64_t timewf_index_rs3_ant_1 : 4; /**< [127:124] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs3_ant_1  : 12; /**< [123:112] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs3_ant_0 : 4; /**< [111:108] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs3_ant_0  : 12; /**< [107: 96] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs2_ant_1 : 4; /**< [ 95: 92] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs2_ant_1  : 12; /**< [ 91: 80] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs2_ant_0 : 4; /**< [ 79: 76] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs2_ant_0  : 12; /**< [ 75: 64] Refer [TIMEOFFSET_RS0_ANT_0] */
+#else /* Word 1 - Little Endian */
+        uint64_t timeoffset_rs2_ant_0  : 12; /**< [ 75: 64] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs2_ant_0 : 4; /**< [ 79: 76] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs2_ant_1  : 12; /**< [ 91: 80] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs2_ant_1 : 4; /**< [ 95: 92] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs3_ant_0  : 12; /**< [107: 96] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs3_ant_0 : 4; /**< [111:108] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs3_ant_1  : 12; /**< [123:112] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs3_ant_1 : 4; /**< [127:124] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+#endif /* Word 1 - End */
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 2 - Big Endian */
+        uint64_t timewf_index_rs1_ant_3 : 4; /**< [191:188] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs1_ant_3  : 12; /**< [187:176] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs1_ant_2 : 4; /**< [175:172] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs1_ant_2  : 12; /**< [171:160] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs0_ant_3 : 4; /**< [159:156] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs0_ant_3  : 12; /**< [155:144] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs0_ant_2 : 4; /**< [143:140] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timeoffset_rs0_ant_2  : 12; /**< [139:128] Refer [TIMEOFFSET_RS0_ANT_0] */
+#else /* Word 2 - Little Endian */
+        uint64_t timeoffset_rs0_ant_2  : 12; /**< [139:128] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs0_ant_2 : 4; /**< [143:140] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timeoffset_rs0_ant_3  : 12; /**< [155:144] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs0_ant_3 : 4; /**< [159:156] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs1_ant_2  : 12; /**< [171:160] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs1_ant_2 : 4; /**< [175:172] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs1_ant_3  : 12; /**< [187:176] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs1_ant_3 : 4; /**< [191:188] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+#endif /* Word 2 - End */
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 3 - Big Endian */
+        uint64_t timewf_index_rs3_ant_3 : 4; /**< [255:252] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs3_ant_3  : 12; /**< [251:240] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs3_ant_2 : 4; /**< [239:236] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs3_ant_2  : 12; /**< [235:224] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs2_ant_3 : 4; /**< [223:220] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs2_ant_3  : 12; /**< [219:208] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs2_ant_2 : 4; /**< [207:204] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs2_ant_2  : 12; /**< [203:192] Refer [TIMEOFFSET_RS0_ANT_0] */
+#else /* Word 3 - Little Endian */
+        uint64_t timeoffset_rs2_ant_2  : 12; /**< [203:192] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs2_ant_2 : 4; /**< [207:204] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs2_ant_3  : 12; /**< [219:208] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs2_ant_3 : 4; /**< [223:220] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs3_ant_2  : 12; /**< [235:224] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs3_ant_2 : 4; /**< [239:236] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs3_ant_3  : 12; /**< [251:240] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs3_ant_3 : 4; /**< [255:252] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+#endif /* Word 3 - End */
+    } s;
+    /* struct cavm_fdeq_rdcfg_twf_to_4r_s_s cn; */
+};
+
+/**
+ * Structure fdeq_rdcfg_twf_to_8r_s
+ *
+ * FDEQ DMA Read port Time weight filter and Time offset for 8 receive antenna Structure
+ * This structure defines the format of the job configuration of FDEQ.
+ */
+union cavm_fdeq_rdcfg_twf_to_8r_s
+{
+    uint64_t u[8];
+    struct cavm_fdeq_rdcfg_twf_to_8r_s_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t timewf_index_rs1_ant_1 : 4; /**< [ 63: 60] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs1_ant_1  : 12; /**< [ 59: 48] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs1_ant_0 : 4; /**< [ 47: 44] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs1_ant_0  : 12; /**< [ 43: 32] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs0_ant_1 : 4; /**< [ 31: 28] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs0_ant_1  : 12; /**< [ 27: 16] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs0_ant_0 : 4; /**< [ 15: 12] In the name TIMEWF_INDEX_RSs_ANT r, the tuple(s,r) refers to antenna index. This
+                                                                 parameter indicates the index of time domain weigth filter set used for antenna
+                                                                 r.  Only the one specified for the RS
+                                                                 FDEQ(0..1)_JD_JOB_TYPE_RS_PARAM[HRS_SYMBOL_NUMBER] - 1 is valid and others are ignored.
+                                                                 Valid range is (0, FDEQ(0..1)_JD_JOB_TYPE_RS_PARAM[TIMEWF_SET_NUMBER]-1). */
+        uint64_t timeoffset_rs0_ant_0  : 12; /**< [ 11:  0] In the name TIMEOFFSET RS s ANT r, the tuple (s,r) refers to RS and antenna
+                                                                 index. This parameter indicates the indicates the phase due to time offset on RS
+                                                                 s and antenna r. Valid range is [4095,0]. Unit is 2*pi/4096. */
+#else /* Word 0 - Little Endian */
+        uint64_t timeoffset_rs0_ant_0  : 12; /**< [ 11:  0] In the name TIMEOFFSET RS s ANT r, the tuple (s,r) refers to RS and antenna
+                                                                 index. This parameter indicates the indicates the phase due to time offset on RS
+                                                                 s and antenna r. Valid range is [4095,0]. Unit is 2*pi/4096. */
+        uint64_t timewf_index_rs0_ant_0 : 4; /**< [ 15: 12] In the name TIMEWF_INDEX_RSs_ANT r, the tuple(s,r) refers to antenna index. This
+                                                                 parameter indicates the index of time domain weigth filter set used for antenna
+                                                                 r.  Only the one specified for the RS
+                                                                 FDEQ(0..1)_JD_JOB_TYPE_RS_PARAM[HRS_SYMBOL_NUMBER] - 1 is valid and others are ignored.
+                                                                 Valid range is (0, FDEQ(0..1)_JD_JOB_TYPE_RS_PARAM[TIMEWF_SET_NUMBER]-1). */
+        uint64_t timeoffset_rs0_ant_1  : 12; /**< [ 27: 16] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs0_ant_1 : 4; /**< [ 31: 28] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs1_ant_0  : 12; /**< [ 43: 32] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs1_ant_0 : 4; /**< [ 47: 44] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs1_ant_1  : 12; /**< [ 59: 48] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs1_ant_1 : 4; /**< [ 63: 60] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+#endif /* Word 0 - End */
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 1 - Big Endian */
+        uint64_t timewf_index_rs3_ant_1 : 4; /**< [127:124] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs3_ant_1  : 12; /**< [123:112] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs3_ant_0 : 4; /**< [111:108] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs3_ant_0  : 12; /**< [107: 96] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs2_ant_1 : 4; /**< [ 95: 92] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs2_ant_1  : 12; /**< [ 91: 80] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs2_ant_0 : 4; /**< [ 79: 76] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs2_ant_0  : 12; /**< [ 75: 64] Refer [TIMEOFFSET_RS0_ANT_0] */
+#else /* Word 1 - Little Endian */
+        uint64_t timeoffset_rs2_ant_0  : 12; /**< [ 75: 64] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs2_ant_0 : 4; /**< [ 79: 76] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs2_ant_1  : 12; /**< [ 91: 80] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs2_ant_1 : 4; /**< [ 95: 92] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs3_ant_0  : 12; /**< [107: 96] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs3_ant_0 : 4; /**< [111:108] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs3_ant_1  : 12; /**< [123:112] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs3_ant_1 : 4; /**< [127:124] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+#endif /* Word 1 - End */
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 2 - Big Endian */
+        uint64_t timewf_index_rs1_ant_3 : 4; /**< [191:188] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs1_ant_3  : 12; /**< [187:176] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs1_ant_2 : 4; /**< [175:172] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs1_ant_2  : 12; /**< [171:160] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs0_ant_3 : 4; /**< [159:156] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs0_ant_3  : 12; /**< [155:144] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs0_ant_2 : 4; /**< [143:140] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timeoffset_rs0_ant_2  : 12; /**< [139:128] Refer [TIMEOFFSET_RS0_ANT_0] */
+#else /* Word 2 - Little Endian */
+        uint64_t timeoffset_rs0_ant_2  : 12; /**< [139:128] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs0_ant_2 : 4; /**< [143:140] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timeoffset_rs0_ant_3  : 12; /**< [155:144] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs0_ant_3 : 4; /**< [159:156] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs1_ant_2  : 12; /**< [171:160] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs1_ant_2 : 4; /**< [175:172] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs1_ant_3  : 12; /**< [187:176] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs1_ant_3 : 4; /**< [191:188] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+#endif /* Word 2 - End */
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 3 - Big Endian */
+        uint64_t timewf_index_rs3_ant_3 : 4; /**< [255:252] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs3_ant_3  : 12; /**< [251:240] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs3_ant_2 : 4; /**< [239:236] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs3_ant_2  : 12; /**< [235:224] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs2_ant_3 : 4; /**< [223:220] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs2_ant_3  : 12; /**< [219:208] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs2_ant_2 : 4; /**< [207:204] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs2_ant_2  : 12; /**< [203:192] Refer [TIMEOFFSET_RS0_ANT_0] */
+#else /* Word 3 - Little Endian */
+        uint64_t timeoffset_rs2_ant_2  : 12; /**< [203:192] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs2_ant_2 : 4; /**< [207:204] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs2_ant_3  : 12; /**< [219:208] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs2_ant_3 : 4; /**< [223:220] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs3_ant_2  : 12; /**< [235:224] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs3_ant_2 : 4; /**< [239:236] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs3_ant_3  : 12; /**< [251:240] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs3_ant_3 : 4; /**< [255:252] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+#endif /* Word 3 - End */
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 4 - Big Endian */
+        uint64_t timewf_index_rs1_ant_5 : 4; /**< [319:316] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs1_ant_5  : 12; /**< [315:304] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs1_ant_4 : 4; /**< [303:300] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs1_ant_4  : 12; /**< [299:288] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs0_ant_5 : 4; /**< [287:284] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs0_ant_5  : 12; /**< [283:272] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs0_ant_4 : 4; /**< [271:268] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs0_ant_4  : 12; /**< [267:256] Refer [TIMEOFFSET_RS0_ANT_0] */
+#else /* Word 4 - Little Endian */
+        uint64_t timeoffset_rs0_ant_4  : 12; /**< [267:256] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs0_ant_4 : 4; /**< [271:268] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs0_ant_5  : 12; /**< [283:272] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs0_ant_5 : 4; /**< [287:284] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs1_ant_4  : 12; /**< [299:288] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs1_ant_4 : 4; /**< [303:300] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs1_ant_5  : 12; /**< [315:304] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs1_ant_5 : 4; /**< [319:316] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+#endif /* Word 4 - End */
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 5 - Big Endian */
+        uint64_t timewf_index_rs3_ant_5 : 4; /**< [383:380] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs3_ant_5  : 12; /**< [379:368] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs3_ant_4 : 4; /**< [367:364] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs3_ant_4  : 12; /**< [363:352] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs2_ant_5 : 4; /**< [351:348] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs2_ant_5  : 12; /**< [347:336] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs2_ant_4 : 4; /**< [335:332] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs2_ant_4  : 12; /**< [331:320] Refer [TIMEOFFSET_RS0_ANT_0] */
+#else /* Word 5 - Little Endian */
+        uint64_t timeoffset_rs2_ant_4  : 12; /**< [331:320] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs2_ant_4 : 4; /**< [335:332] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs2_ant_5  : 12; /**< [347:336] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs2_ant_5 : 4; /**< [351:348] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs3_ant_4  : 12; /**< [363:352] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs3_ant_4 : 4; /**< [367:364] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs3_ant_5  : 12; /**< [379:368] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs3_ant_5 : 4; /**< [383:380] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+#endif /* Word 5 - End */
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 6 - Big Endian */
+        uint64_t timewf_index_rs1_ant_7 : 4; /**< [447:444] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs1_ant_7  : 12; /**< [443:432] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs1_ant_6 : 4; /**< [431:428] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs1_ant_6  : 12; /**< [427:416] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs0_ant_7 : 4; /**< [415:412] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs0_ant_7  : 12; /**< [411:400] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs0_ant_6 : 4; /**< [399:396] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timeoffset_rs0_ant_6  : 12; /**< [395:384] Refer [TIMEOFFSET_RS0_ANT_0] */
+#else /* Word 6 - Little Endian */
+        uint64_t timeoffset_rs0_ant_6  : 12; /**< [395:384] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs0_ant_6 : 4; /**< [399:396] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timeoffset_rs0_ant_7  : 12; /**< [411:400] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs0_ant_7 : 4; /**< [415:412] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs1_ant_6  : 12; /**< [427:416] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs1_ant_6 : 4; /**< [431:428] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs1_ant_7  : 12; /**< [443:432] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs1_ant_7 : 4; /**< [447:444] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+#endif /* Word 6 - End */
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 7 - Big Endian */
+        uint64_t timewf_index_rs3_ant_7 : 4; /**< [511:508] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs3_ant_7  : 12; /**< [507:496] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs3_ant_6 : 4; /**< [495:492] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs3_ant_6  : 12; /**< [491:480] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs2_ant_7 : 4; /**< [479:476] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs2_ant_7  : 12; /**< [475:464] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs2_ant_6 : 4; /**< [463:460] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs2_ant_6  : 12; /**< [459:448] Refer [TIMEOFFSET_RS0_ANT_0] */
+#else /* Word 7 - Little Endian */
+        uint64_t timeoffset_rs2_ant_6  : 12; /**< [459:448] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs2_ant_6 : 4; /**< [463:460] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs2_ant_7  : 12; /**< [475:464] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs2_ant_7 : 4; /**< [479:476] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs3_ant_6  : 12; /**< [491:480] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs3_ant_6 : 4; /**< [495:492] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+        uint64_t timeoffset_rs3_ant_7  : 12; /**< [507:496] Refer [TIMEOFFSET_RS0_ANT_0] */
+        uint64_t timewf_index_rs3_ant_7 : 4; /**< [511:508] Refer [TIMEWF_INDEX_RS0_ANT_0] */
+#endif /* Word 7 - End */
+    } s;
+    /* struct cavm_fdeq_rdcfg_twf_to_8r_s_s cn; */
 };
 
 /**
@@ -2807,12 +3534,14 @@ union cavm_fdeq_rdcfg_ue_phyc_params_s
         uint64_t weight_phasecomp_on   : 1;  /**< [ 74: 74] If enabled  phase compensation due to time Offset is applied in the frequency
                                                                  domain interpolation of equalizer weights. */
         uint64_t weight_scale          : 10; /**< [ 73: 64] Value of internal bit shift applied to the equalizer weights. Valid values are
-                                                                 is [512,256,128,64,32]. Must be same as 32*2^[WSCALE_BITSHIFT] Default is 32
-                                                                 or 64. */
+                                                                 is [1024,512,256,128,64,32]. Must be same as 32*2^[WSCALE_BITSHIFT].
+                                                                 Default value is 32 when FDEQ_RDCFG_UE_PHYC_PARAMS_S[CP_OFDM_ON]=1 and
+                                                                 FDEQ_RDCFG_UE_PHYC_PARAMS_S[SIMO_RNN_BASED_IRC_ON] = 1. Otherwise it is 128. */
 #else /* Word 1 - Little Endian */
         uint64_t weight_scale          : 10; /**< [ 73: 64] Value of internal bit shift applied to the equalizer weights. Valid values are
-                                                                 is [512,256,128,64,32]. Must be same as 32*2^[WSCALE_BITSHIFT] Default is 32
-                                                                 or 64. */
+                                                                 is [1024,512,256,128,64,32]. Must be same as 32*2^[WSCALE_BITSHIFT].
+                                                                 Default value is 32 when FDEQ_RDCFG_UE_PHYC_PARAMS_S[CP_OFDM_ON]=1 and
+                                                                 FDEQ_RDCFG_UE_PHYC_PARAMS_S[SIMO_RNN_BASED_IRC_ON] = 1. Otherwise it is 128. */
         uint64_t weight_phasecomp_on   : 1;  /**< [ 74: 74] If enabled  phase compensation due to time Offset is applied in the frequency
                                                                  domain interpolation of equalizer weights. */
         uint64_t weight_interp_on      : 1;  /**< [ 75: 75] If enabled the equalizer weights in frequency domain are interpolated. */
@@ -2862,20 +3591,23 @@ union cavm_fdeq_rdcfg_ue_phyc_params_s
                                                                  0x1 = DMRS. */
         uint64_t reserved_174_176      : 3;
         uint64_t rs_channel_phasecomp_on : 1;/**< [173:173] If enabled, Time Offset induced phase is compensated during  frequency domain
-                                                                 interpolation of Hrs on each data symbol. */
+                                                                 interpolation of Hrs on each RS symbol. */
         uint64_t tdce_phasecomp_on     : 1;  /**< [172:172] If enabled, Frequency offset induced phase is compensated prior to TDCE and reapplied after TDCE. */
         uint64_t wscale_bitshift       : 3;  /**< [171:169] Indicate the amount of right shift on Weight in internal calucation.
                                                                  Valid range is [5,0].
                                                                  Must be log2([WEIGHT_SCALE]/32)
-                                                                 Default value is 1 or 2. */
+                                                                 Default value is 0 when FDEQ_RDCFG_UE_PHYC_PARAMS_S[CP_OFDM_ON]=1 and
+                                                                 FDEQ_RDCFG_UE_PHYC_PARAMS_S[SIMO_RNN_BASED_IRC_ON] = 1. Otherwise it is 2. */
         uint64_t freq_hopping_on       : 1;  /**< [168:168] If enabled, UE has frequency hopping. */
         uint64_t snrdb_offset          : 10; /**< [167:158] Offset value used to stabilize the final PSINR value by offseting value in internal stages. */
         uint64_t rs_omega              : 1;  /**< [157:157] Omega is used for DMRS generation. Valid when
-                                                                 FDEQ()_JD_JOB_TYPE_RS_PARAM[RS_SEQUENCE_GENERATION_ENABLE]=1. */
+                                                                 FDEQ()_JD_JOB_TYPE_RS_PARAM[RS_SEQUENCE_GENERATION_ENABLE]=1 and [RS_DELTA]=1.
+                                                                 When this parameter is 1, DMRS is valid only on odd numbered subcarriers of an RB. */
         uint64_t rs_delta              : 1;  /**< [156:156] Delta for DMRS generation.  Valid when
                                                                  FDEQ()_JD_JOB_TYPE_RS_PARAM[RS_SEQUENCE_GENERATION_ENABLE]=1.
                                                                  0x0 = IFDMA off.
-                                                                 0x1 = IFDMA on. */
+                                                                 0x1 = IFDMA on.
+                                                                 When this paramter is 1, the subcarriers indicated by [RS_OMEGA] are used for DMRS */
         uint64_t rb_size_index         : 6;  /**< [155:150] RB Size index for DMRS generation.Valid when
                                                                  FDEQ()_JD_JOB_TYPE_RS_PARAM[RS_SEQUENCE_GENERATION_ENABLE]=1.
                                                                  0x0 = 1 RB.
@@ -2912,18 +3644,21 @@ union cavm_fdeq_rdcfg_ue_phyc_params_s
         uint64_t rs_delta              : 1;  /**< [156:156] Delta for DMRS generation.  Valid when
                                                                  FDEQ()_JD_JOB_TYPE_RS_PARAM[RS_SEQUENCE_GENERATION_ENABLE]=1.
                                                                  0x0 = IFDMA off.
-                                                                 0x1 = IFDMA on. */
+                                                                 0x1 = IFDMA on.
+                                                                 When this paramter is 1, the subcarriers indicated by [RS_OMEGA] are used for DMRS */
         uint64_t rs_omega              : 1;  /**< [157:157] Omega is used for DMRS generation. Valid when
-                                                                 FDEQ()_JD_JOB_TYPE_RS_PARAM[RS_SEQUENCE_GENERATION_ENABLE]=1. */
+                                                                 FDEQ()_JD_JOB_TYPE_RS_PARAM[RS_SEQUENCE_GENERATION_ENABLE]=1 and [RS_DELTA]=1.
+                                                                 When this parameter is 1, DMRS is valid only on odd numbered subcarriers of an RB. */
         uint64_t snrdb_offset          : 10; /**< [167:158] Offset value used to stabilize the final PSINR value by offseting value in internal stages. */
         uint64_t freq_hopping_on       : 1;  /**< [168:168] If enabled, UE has frequency hopping. */
         uint64_t wscale_bitshift       : 3;  /**< [171:169] Indicate the amount of right shift on Weight in internal calucation.
                                                                  Valid range is [5,0].
                                                                  Must be log2([WEIGHT_SCALE]/32)
-                                                                 Default value is 1 or 2. */
+                                                                 Default value is 0 when FDEQ_RDCFG_UE_PHYC_PARAMS_S[CP_OFDM_ON]=1 and
+                                                                 FDEQ_RDCFG_UE_PHYC_PARAMS_S[SIMO_RNN_BASED_IRC_ON] = 1. Otherwise it is 2. */
         uint64_t tdce_phasecomp_on     : 1;  /**< [172:172] If enabled, Frequency offset induced phase is compensated prior to TDCE and reapplied after TDCE. */
         uint64_t rs_channel_phasecomp_on : 1;/**< [173:173] If enabled, Time Offset induced phase is compensated during  frequency domain
-                                                                 interpolation of Hrs on each data symbol. */
+                                                                 interpolation of Hrs on each RS symbol. */
         uint64_t reserved_174_176      : 3;
         uint64_t dmrs_pattern_bitmap   : 12; /**< [188:177] A bitmap indicating the DMRS pattern in CP-OFDM RB. MSB corresponds to tone index 0.
                                                                  0x0 = DTX or data.
@@ -2936,11 +3671,12 @@ union cavm_fdeq_rdcfg_ue_phyc_params_s
                                                                  0x0 = all 3 tones.
                                                                  0x1 = upper two tones.
                                                                  0x2 = lower two tones. */
-        uint64_t simo_rnn_based_irc_on : 1;  /**< [243:243] When enabled, the equalizer kernel is selected as Rnn. Valid when
-                                                                 FDEQ_RDCFG_RB_PARAMS_JT1_S[IRC_MODE_DATA_SYMBOL_k], k=0..13, is 0x0 or 0x2 or
+        uint64_t simo_rnn_based_irc_on : 1;  /**< [243:243] When enabled, the equalizer kernel is selected as Rnn.
+                                                                 FDEQ_RDCFG_RB_PARAMS_JT1_S[IRC_MODE_DATA_SYMBOL_k] k=0..13, is 0x0 or 0x2 or
                                                                  0x3.
                                                                  0x0 = Rnn+Rhh.
-                                                                 0x1 = R=Rnn. */
+                                                                 0x1 = R=Rnn.
+                                                                 A value of 0x1 is valid only when FDEQ_RDCFG_UE_PHYC_PARAMS_S[CP_OFDM_ON] = 1. */
         uint64_t reserved_242          : 1;
         uint64_t ryy_irc_threshold_p   : 10; /**< [241:232] Assist in selection of equalizer kernel when FDEQ_RDCFG_RB_PARAMS_JT1_S[
                                                                  IRC_MODE_DATA_SYMBOL_k], k=0..13, is 0x2 or 0x03.
@@ -2978,11 +3714,12 @@ union cavm_fdeq_rdcfg_ue_phyc_params_s
                                                                  IRC_MODE_DATA_SYMBOL_k], k=0..13, is 0x2 or 0x03.
                                                                  Valid range is [1023,0]. */
         uint64_t reserved_242          : 1;
-        uint64_t simo_rnn_based_irc_on : 1;  /**< [243:243] When enabled, the equalizer kernel is selected as Rnn. Valid when
-                                                                 FDEQ_RDCFG_RB_PARAMS_JT1_S[IRC_MODE_DATA_SYMBOL_k], k=0..13, is 0x0 or 0x2 or
+        uint64_t simo_rnn_based_irc_on : 1;  /**< [243:243] When enabled, the equalizer kernel is selected as Rnn.
+                                                                 FDEQ_RDCFG_RB_PARAMS_JT1_S[IRC_MODE_DATA_SYMBOL_k] k=0..13, is 0x0 or 0x2 or
                                                                  0x3.
                                                                  0x0 = Rnn+Rhh.
-                                                                 0x1 = R=Rnn. */
+                                                                 0x1 = R=Rnn.
+                                                                 A value of 0x1 is valid only when FDEQ_RDCFG_UE_PHYC_PARAMS_S[CP_OFDM_ON] = 1. */
         uint64_t subprb_3tone_case_idx : 2;  /**< [245:244] Indicates the UE allocation pattern in  subPRB.
                                                                  0x0 = all 3 tones.
                                                                  0x1 = upper two tones.
@@ -3107,12 +3844,14 @@ union cavm_fdeq_rdcfg_ue_phyc_params_s
         uint64_t weight_phasecomp_on   : 1;  /**< [ 74: 74] If enabled  phase compensation due to time Offset is applied in the frequency
                                                                  domain interpolation of equalizer weights. */
         uint64_t weight_scale          : 10; /**< [ 73: 64] Value of internal bit shift applied to the equalizer weights. Valid values are
-                                                                 is [512,256,128,64,32]. Must be same as 32*2^[WSCALE_BITSHIFT] Default is 32
-                                                                 or 64. */
+                                                                 is [1024,512,256,128,64,32]. Must be same as 32*2^[WSCALE_BITSHIFT].
+                                                                 Default value is 32 when FDEQ_RDCFG_UE_PHYC_PARAMS_S[CP_OFDM_ON]=1 and
+                                                                 FDEQ_RDCFG_UE_PHYC_PARAMS_S[SIMO_RNN_BASED_IRC_ON] = 1. Otherwise it is 128. */
 #else /* Word 1 - Little Endian */
         uint64_t weight_scale          : 10; /**< [ 73: 64] Value of internal bit shift applied to the equalizer weights. Valid values are
-                                                                 is [512,256,128,64,32]. Must be same as 32*2^[WSCALE_BITSHIFT] Default is 32
-                                                                 or 64. */
+                                                                 is [1024,512,256,128,64,32]. Must be same as 32*2^[WSCALE_BITSHIFT].
+                                                                 Default value is 32 when FDEQ_RDCFG_UE_PHYC_PARAMS_S[CP_OFDM_ON]=1 and
+                                                                 FDEQ_RDCFG_UE_PHYC_PARAMS_S[SIMO_RNN_BASED_IRC_ON] = 1. Otherwise it is 128. */
         uint64_t weight_phasecomp_on   : 1;  /**< [ 74: 74] If enabled  phase compensation due to time Offset is applied in the frequency
                                                                  domain interpolation of equalizer weights. */
         uint64_t weight_interp_on      : 1;  /**< [ 75: 75] If enabled the equalizer weights in frequency domain are interpolated. */
@@ -3163,20 +3902,23 @@ union cavm_fdeq_rdcfg_ue_phyc_params_s
                                                                  0x1 = DMRS. */
         uint64_t reserved_174_176      : 3;
         uint64_t rs_channel_phasecomp_on : 1;/**< [173:173] If enabled, Time Offset induced phase is compensated during  frequency domain
-                                                                 interpolation of Hrs on each data symbol. */
+                                                                 interpolation of Hrs on each RS symbol. */
         uint64_t tdce_phasecomp_on     : 1;  /**< [172:172] If enabled, Frequency offset induced phase is compensated prior to TDCE and reapplied after TDCE. */
         uint64_t wscale_bitshift       : 3;  /**< [171:169] Indicate the amount of right shift on Weight in internal calucation.
                                                                  Valid range is [5,0].
                                                                  Must be log2([WEIGHT_SCALE]/32)
-                                                                 Default value is 1 or 2. */
+                                                                 Default value is 0 when FDEQ_RDCFG_UE_PHYC_PARAMS_S[CP_OFDM_ON]=1 and
+                                                                 FDEQ_RDCFG_UE_PHYC_PARAMS_S[SIMO_RNN_BASED_IRC_ON] = 1. Otherwise it is 2. */
         uint64_t freq_hopping_on       : 1;  /**< [168:168] If enabled, UE has frequency hopping. */
         uint64_t snrdb_offset          : 10; /**< [167:158] Offset value used to stabilize the final PSINR value by offseting value in internal stages. */
         uint64_t rs_omega              : 1;  /**< [157:157] Omega is used for DMRS generation. Valid when
-                                                                 FDEQ()_JD_JOB_TYPE_RS_PARAM[RS_SEQUENCE_GENERATION_ENABLE]=1. */
+                                                                 FDEQ()_JD_JOB_TYPE_RS_PARAM[RS_SEQUENCE_GENERATION_ENABLE]=1 and [RS_DELTA]=1.
+                                                                 When this parameter is 1, DMRS is valid only on odd numbered subcarriers of an RB. */
         uint64_t rs_delta              : 1;  /**< [156:156] Delta for DMRS generation.  Valid when
                                                                  FDEQ()_JD_JOB_TYPE_RS_PARAM[RS_SEQUENCE_GENERATION_ENABLE]=1.
                                                                  0x0 = IFDMA off.
-                                                                 0x1 = IFDMA on. */
+                                                                 0x1 = IFDMA on.
+                                                                 When this paramter is 1, the subcarriers indicated by [RS_OMEGA] are used for DMRS */
         uint64_t rb_size_index         : 6;  /**< [155:150] RB Size index for DMRS generation.Valid when
                                                                  FDEQ()_JD_JOB_TYPE_RS_PARAM[RS_SEQUENCE_GENERATION_ENABLE]=1.
                                                                  0x0 = 1 RB.
@@ -3213,18 +3955,21 @@ union cavm_fdeq_rdcfg_ue_phyc_params_s
         uint64_t rs_delta              : 1;  /**< [156:156] Delta for DMRS generation.  Valid when
                                                                  FDEQ()_JD_JOB_TYPE_RS_PARAM[RS_SEQUENCE_GENERATION_ENABLE]=1.
                                                                  0x0 = IFDMA off.
-                                                                 0x1 = IFDMA on. */
+                                                                 0x1 = IFDMA on.
+                                                                 When this paramter is 1, the subcarriers indicated by [RS_OMEGA] are used for DMRS */
         uint64_t rs_omega              : 1;  /**< [157:157] Omega is used for DMRS generation. Valid when
-                                                                 FDEQ()_JD_JOB_TYPE_RS_PARAM[RS_SEQUENCE_GENERATION_ENABLE]=1. */
+                                                                 FDEQ()_JD_JOB_TYPE_RS_PARAM[RS_SEQUENCE_GENERATION_ENABLE]=1 and [RS_DELTA]=1.
+                                                                 When this parameter is 1, DMRS is valid only on odd numbered subcarriers of an RB. */
         uint64_t snrdb_offset          : 10; /**< [167:158] Offset value used to stabilize the final PSINR value by offseting value in internal stages. */
         uint64_t freq_hopping_on       : 1;  /**< [168:168] If enabled, UE has frequency hopping. */
         uint64_t wscale_bitshift       : 3;  /**< [171:169] Indicate the amount of right shift on Weight in internal calucation.
                                                                  Valid range is [5,0].
                                                                  Must be log2([WEIGHT_SCALE]/32)
-                                                                 Default value is 1 or 2. */
+                                                                 Default value is 0 when FDEQ_RDCFG_UE_PHYC_PARAMS_S[CP_OFDM_ON]=1 and
+                                                                 FDEQ_RDCFG_UE_PHYC_PARAMS_S[SIMO_RNN_BASED_IRC_ON] = 1. Otherwise it is 2. */
         uint64_t tdce_phasecomp_on     : 1;  /**< [172:172] If enabled, Frequency offset induced phase is compensated prior to TDCE and reapplied after TDCE. */
         uint64_t rs_channel_phasecomp_on : 1;/**< [173:173] If enabled, Time Offset induced phase is compensated during  frequency domain
-                                                                 interpolation of Hrs on each data symbol. */
+                                                                 interpolation of Hrs on each RS symbol. */
         uint64_t reserved_174_176      : 3;
         uint64_t dmrs_pattern_bitmap   : 12; /**< [188:177] A bitmap indicating the DMRS pattern in CP-OFDM RB. MSB corresponds to tone index 0.
                                                                  0x0 = DTX or data.
@@ -3237,11 +3982,12 @@ union cavm_fdeq_rdcfg_ue_phyc_params_s
                                                                  0x0 = all 3 tones.
                                                                  0x1 = upper two tones.
                                                                  0x2 = lower two tones. */
-        uint64_t simo_rnn_based_irc_on : 1;  /**< [243:243] When enabled, the equalizer kernel is selected as Rnn. Valid when
-                                                                 FDEQ_RDCFG_RB_PARAMS_JT1_S[IRC_MODE_DATA_SYMBOL_k], k=0..13, is 0x0 or 0x2 or
+        uint64_t simo_rnn_based_irc_on : 1;  /**< [243:243] When enabled, the equalizer kernel is selected as Rnn.
+                                                                 FDEQ_RDCFG_RB_PARAMS_JT1_S[IRC_MODE_DATA_SYMBOL_k] k=0..13, is 0x0 or 0x2 or
                                                                  0x3.
                                                                  0x0 = Rnn+Rhh.
-                                                                 0x1 = R=Rnn. */
+                                                                 0x1 = R=Rnn.
+                                                                 A value of 0x1 is valid only when FDEQ_RDCFG_UE_PHYC_PARAMS_S[CP_OFDM_ON] = 1. */
         uint64_t reserved_242          : 1;
         uint64_t ryy_irc_threshold_p   : 10; /**< [241:232] Assist in selection of equalizer kernel when FDEQ_RDCFG_RB_PARAMS_JT1_S[
                                                                  IRC_MODE_DATA_SYMBOL_k], k=0..13, is 0x2 or 0x03.
@@ -3279,11 +4025,12 @@ union cavm_fdeq_rdcfg_ue_phyc_params_s
                                                                  IRC_MODE_DATA_SYMBOL_k], k=0..13, is 0x2 or 0x03.
                                                                  Valid range is [1023,0]. */
         uint64_t reserved_242          : 1;
-        uint64_t simo_rnn_based_irc_on : 1;  /**< [243:243] When enabled, the equalizer kernel is selected as Rnn. Valid when
-                                                                 FDEQ_RDCFG_RB_PARAMS_JT1_S[IRC_MODE_DATA_SYMBOL_k], k=0..13, is 0x0 or 0x2 or
+        uint64_t simo_rnn_based_irc_on : 1;  /**< [243:243] When enabled, the equalizer kernel is selected as Rnn.
+                                                                 FDEQ_RDCFG_RB_PARAMS_JT1_S[IRC_MODE_DATA_SYMBOL_k] k=0..13, is 0x0 or 0x2 or
                                                                  0x3.
                                                                  0x0 = Rnn+Rhh.
-                                                                 0x1 = R=Rnn. */
+                                                                 0x1 = R=Rnn.
+                                                                 A value of 0x1 is valid only when FDEQ_RDCFG_UE_PHYC_PARAMS_S[CP_OFDM_ON] = 1. */
         uint64_t subprb_3tone_case_idx : 2;  /**< [245:244] Indicates the UE allocation pattern in  subPRB.
                                                                  0x0 = all 3 tones.
                                                                  0x1 = upper two tones.
@@ -5266,8 +6013,8 @@ union cavm_fdeqx_jd_rs_general_parameter
         uint64_t soft_sic_on           : 1;  /**< [ 48: 48](R/W) For test only, must be set to 0
                                                                  Used only for FDEQ()_JD_JOB_TYPE_RS_PARAM[JOB_TYPE] = 0x1. */
         uint64_t rs_frequency_sparse   : 1;  /**< [ 47: 47](R/W) Define how often R is calculated on each RS for PSINR.
-                                                                 0x0 = every tone.
-                                                                 0x1 = every other tone.
+                                                                 0x0 = All 12 tones in a RB.
+                                                                 0x1 = 6 tones in a RB indicated by  FDEQ_RDCFG_RB_PARAMS_JT1_S[RNN_CALC_TONE_BITMAP].
                                                                  Used only for FDEQ()_JD_JOB_TYPE_RS_PARAM[JOB_TYPE] = 0x1. */
         uint64_t data_frequency_sparse : 2;  /**< [ 46: 45](R/W) Defines how often equalizer filter weights are calculated for each DS.
                                                                  0x0 = every tone.
@@ -5305,8 +6052,8 @@ union cavm_fdeqx_jd_rs_general_parameter
                                                                  0x2 = every fourth tone.
                                                                  Used only for FDEQ()_JD_JOB_TYPE_RS_PARAM[JOB_TYPE] = 0x1. */
         uint64_t rs_frequency_sparse   : 1;  /**< [ 47: 47](R/W) Define how often R is calculated on each RS for PSINR.
-                                                                 0x0 = every tone.
-                                                                 0x1 = every other tone.
+                                                                 0x0 = All 12 tones in a RB.
+                                                                 0x1 = 6 tones in a RB indicated by  FDEQ_RDCFG_RB_PARAMS_JT1_S[RNN_CALC_TONE_BITMAP].
                                                                  Used only for FDEQ()_JD_JOB_TYPE_RS_PARAM[JOB_TYPE] = 0x1. */
         uint64_t soft_sic_on           : 1;  /**< [ 48: 48](R/W) For test only, must be set to 0
                                                                  Used only for FDEQ()_JD_JOB_TYPE_RS_PARAM[JOB_TYPE] = 0x1. */

@@ -2847,6 +2847,8 @@ static inline uint64_t CAVM_DTX_CPTX_BCST_RSP(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN83XX) && (a<=1))
         return 0x87e0feb90080ll + 0x8000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
+        return 0x87e0fea10080ll + 0x8000ll * ((a) & 0x1);
     __cavm_csr_fatal("DTX_CPTX_BCST_RSP", 1, a, 0, 0, 0, 0, 0);
 }
 
@@ -2884,7 +2886,27 @@ union cavm_dtx_cptx_ctl
         uint64_t reserved_5_63         : 59;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_dtx_cptx_ctl_s cn; */
+    /* struct cavm_dtx_cptx_ctl_s cn8; */
+    struct cavm_dtx_cptx_ctl_cn9
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_5_63         : 59;
+        uint64_t active                : 1;  /**< [  4:  4](R/W) Force block's gated clocks on, so that the state of idle signals may be captured. */
+        uint64_t reserved_2_3          : 2;
+        uint64_t echoen                : 1;  /**< [  1:  1](R/W) Drive debug bus with the value in DTX_MIO_ENA(0..1) instead of normal block
+                                                                 debug data. Not applicable when software directly reads the DTX_MIO_DAT(0..1)
+                                                                 registers.  For diagnostic use only. */
+        uint64_t swap                  : 1;  /**< [  0:  0](R/W) Swap the high and low 36-bit debug bus outputs. */
+#else /* Word 0 - Little Endian */
+        uint64_t swap                  : 1;  /**< [  0:  0](R/W) Swap the high and low 36-bit debug bus outputs. */
+        uint64_t echoen                : 1;  /**< [  1:  1](R/W) Drive debug bus with the value in DTX_MIO_ENA(0..1) instead of normal block
+                                                                 debug data. Not applicable when software directly reads the DTX_MIO_DAT(0..1)
+                                                                 registers.  For diagnostic use only. */
+        uint64_t reserved_2_3          : 2;
+        uint64_t active                : 1;  /**< [  4:  4](R/W) Force block's gated clocks on, so that the state of idle signals may be captured. */
+        uint64_t reserved_5_63         : 59;
+#endif /* Word 0 - End */
+    } cn9;
 };
 typedef union cavm_dtx_cptx_ctl cavm_dtx_cptx_ctl_t;
 
@@ -2893,6 +2915,8 @@ static inline uint64_t CAVM_DTX_CPTX_CTL(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN83XX) && (a<=1))
         return 0x87e0feb90060ll + 0x8000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
+        return 0x87e0fea10060ll + 0x8000ll * ((a) & 0x1);
     __cavm_csr_fatal("DTX_CPTX_CTL", 1, a, 0, 0, 0, 0, 0);
 }
 
@@ -2931,6 +2955,8 @@ static inline uint64_t CAVM_DTX_CPTX_DATX(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN83XX) && ((a<=1) && (b<=1)))
         return 0x87e0feb90040ll + 0x8000ll * ((a) & 0x1) + 8ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
+        return 0x87e0fea10040ll + 0x8000ll * ((a) & 0x1) + 8ll * ((b) & 0x1);
     __cavm_csr_fatal("DTX_CPTX_DATX", 2, a, b, 0, 0, 0, 0);
 }
 
@@ -2969,6 +2995,8 @@ static inline uint64_t CAVM_DTX_CPTX_ENAX(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN83XX) && ((a<=1) && (b<=1)))
         return 0x87e0feb90020ll + 0x8000ll * ((a) & 0x1) + 8ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
+        return 0x87e0fea10020ll + 0x8000ll * ((a) & 0x1) + 8ll * ((b) & 0x1);
     __cavm_csr_fatal("DTX_CPTX_ENAX", 2, a, b, 0, 0, 0, 0);
 }
 
@@ -3005,6 +3033,8 @@ static inline uint64_t CAVM_DTX_CPTX_SELX(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN83XX) && ((a<=1) && (b<=1)))
         return 0x87e0feb90000ll + 0x8000ll * ((a) & 0x1) + 8ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
+        return 0x87e0fea10000ll + 0x8000ll * ((a) & 0x1) + 8ll * ((b) & 0x1);
     __cavm_csr_fatal("DTX_CPTX_SELX", 2, a, b, 0, 0, 0, 0);
 }
 
@@ -3209,202 +3239,6 @@ static inline uint64_t CAVM_DTX_CPT0_SELX(unsigned long a)
 #define basename_CAVM_DTX_CPT0_SELX(a) "DTX_CPT0_SELX"
 #define busnum_CAVM_DTX_CPT0_SELX(a) (a)
 #define arguments_CAVM_DTX_CPT0_SELX(a) (a),-1,-1,-1
-
-/**
- * Register (RSL) dtx_cpt_bcst_rsp
- *
- * DTX CPT Control Register
- */
-union cavm_dtx_cpt_bcst_rsp
-{
-    uint64_t u;
-    struct cavm_dtx_cpt_bcst_rsp_s
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_1_63         : 63;
-        uint64_t ena                   : 1;  /**< [  0:  0](R/W) Enable this DTX instance as the responder to DTX broadcast read/write operations. */
-#else /* Word 0 - Little Endian */
-        uint64_t ena                   : 1;  /**< [  0:  0](R/W) Enable this DTX instance as the responder to DTX broadcast read/write operations. */
-        uint64_t reserved_1_63         : 63;
-#endif /* Word 0 - End */
-    } s;
-    /* struct cavm_dtx_cpt_bcst_rsp_s cn; */
-};
-typedef union cavm_dtx_cpt_bcst_rsp cavm_dtx_cpt_bcst_rsp_t;
-
-#define CAVM_DTX_CPT_BCST_RSP CAVM_DTX_CPT_BCST_RSP_FUNC()
-static inline uint64_t CAVM_DTX_CPT_BCST_RSP_FUNC(void) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_DTX_CPT_BCST_RSP_FUNC(void)
-{
-    if (cavm_is_model(OCTEONTX_CN96XX))
-        return 0x87e0fea10080ll;
-    __cavm_csr_fatal("DTX_CPT_BCST_RSP", 0, 0, 0, 0, 0, 0, 0);
-}
-
-#define typedef_CAVM_DTX_CPT_BCST_RSP cavm_dtx_cpt_bcst_rsp_t
-#define bustype_CAVM_DTX_CPT_BCST_RSP CSR_TYPE_RSL
-#define basename_CAVM_DTX_CPT_BCST_RSP "DTX_CPT_BCST_RSP"
-#define busnum_CAVM_DTX_CPT_BCST_RSP 0
-#define arguments_CAVM_DTX_CPT_BCST_RSP -1,-1,-1,-1
-
-/**
- * Register (RSL) dtx_cpt_ctl
- *
- * DTX CPT Control Register
- */
-union cavm_dtx_cpt_ctl
-{
-    uint64_t u;
-    struct cavm_dtx_cpt_ctl_s
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_5_63         : 59;
-        uint64_t active                : 1;  /**< [  4:  4](R/W) Force block's gated clocks on, so that the state of idle signals may be captured. */
-        uint64_t reserved_2_3          : 2;
-        uint64_t echoen                : 1;  /**< [  1:  1](R/W) Drive debug bus with the value in DTX_MIO_ENA(0..1) instead of normal block
-                                                                 debug data. Not applicable when software directly reads the DTX_MIO_DAT(0..1)
-                                                                 registers.  For diagnostic use only. */
-        uint64_t swap                  : 1;  /**< [  0:  0](R/W) Swap the high and low 36-bit debug bus outputs. */
-#else /* Word 0 - Little Endian */
-        uint64_t swap                  : 1;  /**< [  0:  0](R/W) Swap the high and low 36-bit debug bus outputs. */
-        uint64_t echoen                : 1;  /**< [  1:  1](R/W) Drive debug bus with the value in DTX_MIO_ENA(0..1) instead of normal block
-                                                                 debug data. Not applicable when software directly reads the DTX_MIO_DAT(0..1)
-                                                                 registers.  For diagnostic use only. */
-        uint64_t reserved_2_3          : 2;
-        uint64_t active                : 1;  /**< [  4:  4](R/W) Force block's gated clocks on, so that the state of idle signals may be captured. */
-        uint64_t reserved_5_63         : 59;
-#endif /* Word 0 - End */
-    } s;
-    /* struct cavm_dtx_cpt_ctl_s cn; */
-};
-typedef union cavm_dtx_cpt_ctl cavm_dtx_cpt_ctl_t;
-
-#define CAVM_DTX_CPT_CTL CAVM_DTX_CPT_CTL_FUNC()
-static inline uint64_t CAVM_DTX_CPT_CTL_FUNC(void) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_DTX_CPT_CTL_FUNC(void)
-{
-    if (cavm_is_model(OCTEONTX_CN96XX))
-        return 0x87e0fea10060ll;
-    __cavm_csr_fatal("DTX_CPT_CTL", 0, 0, 0, 0, 0, 0, 0);
-}
-
-#define typedef_CAVM_DTX_CPT_CTL cavm_dtx_cpt_ctl_t
-#define bustype_CAVM_DTX_CPT_CTL CSR_TYPE_RSL
-#define basename_CAVM_DTX_CPT_CTL "DTX_CPT_CTL"
-#define busnum_CAVM_DTX_CPT_CTL 0
-#define arguments_CAVM_DTX_CPT_CTL -1,-1,-1,-1
-
-/**
- * Register (RSL) dtx_cpt_dat#
- *
- * DTX CPT Raw Data Register
- */
-union cavm_dtx_cpt_datx
-{
-    uint64_t u;
-    struct cavm_dtx_cpt_datx_s
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_36_63        : 28;
-        uint64_t raw                   : 36; /**< [ 35:  0](RO/H) Raw debug data captured by the DTX before the ENA is applied. This gives the
-                                                                 ability to peek into blocks during an OCLA capture without OCLA reconfiguration. */
-#else /* Word 0 - Little Endian */
-        uint64_t raw                   : 36; /**< [ 35:  0](RO/H) Raw debug data captured by the DTX before the ENA is applied. This gives the
-                                                                 ability to peek into blocks during an OCLA capture without OCLA reconfiguration. */
-        uint64_t reserved_36_63        : 28;
-#endif /* Word 0 - End */
-    } s;
-    /* struct cavm_dtx_cpt_datx_s cn; */
-};
-typedef union cavm_dtx_cpt_datx cavm_dtx_cpt_datx_t;
-
-static inline uint64_t CAVM_DTX_CPT_DATX(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_DTX_CPT_DATX(unsigned long a)
-{
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
-        return 0x87e0fea10040ll + 8ll * ((a) & 0x1);
-    __cavm_csr_fatal("DTX_CPT_DATX", 1, a, 0, 0, 0, 0, 0);
-}
-
-#define typedef_CAVM_DTX_CPT_DATX(a) cavm_dtx_cpt_datx_t
-#define bustype_CAVM_DTX_CPT_DATX(a) CSR_TYPE_RSL
-#define basename_CAVM_DTX_CPT_DATX(a) "DTX_CPT_DATX"
-#define busnum_CAVM_DTX_CPT_DATX(a) (a)
-#define arguments_CAVM_DTX_CPT_DATX(a) (a),-1,-1,-1
-
-/**
- * Register (RSL) dtx_cpt_ena#
- *
- * DTX CPT Data Enable Register
- */
-union cavm_dtx_cpt_enax
-{
-    uint64_t u;
-    struct cavm_dtx_cpt_enax_s
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_36_63        : 28;
-        uint64_t ena                   : 36; /**< [ 35:  0](R/W) Output enable vector of which bits to drive onto the low/high 36-bit debug
-                                                                 buses. Normally only one block will drive each bit. */
-#else /* Word 0 - Little Endian */
-        uint64_t ena                   : 36; /**< [ 35:  0](R/W) Output enable vector of which bits to drive onto the low/high 36-bit debug
-                                                                 buses. Normally only one block will drive each bit. */
-        uint64_t reserved_36_63        : 28;
-#endif /* Word 0 - End */
-    } s;
-    /* struct cavm_dtx_cpt_enax_s cn; */
-};
-typedef union cavm_dtx_cpt_enax cavm_dtx_cpt_enax_t;
-
-static inline uint64_t CAVM_DTX_CPT_ENAX(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_DTX_CPT_ENAX(unsigned long a)
-{
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
-        return 0x87e0fea10020ll + 8ll * ((a) & 0x1);
-    __cavm_csr_fatal("DTX_CPT_ENAX", 1, a, 0, 0, 0, 0, 0);
-}
-
-#define typedef_CAVM_DTX_CPT_ENAX(a) cavm_dtx_cpt_enax_t
-#define bustype_CAVM_DTX_CPT_ENAX(a) CSR_TYPE_RSL
-#define basename_CAVM_DTX_CPT_ENAX(a) "DTX_CPT_ENAX"
-#define busnum_CAVM_DTX_CPT_ENAX(a) (a)
-#define arguments_CAVM_DTX_CPT_ENAX(a) (a),-1,-1,-1
-
-/**
- * Register (RSL) dtx_cpt_sel#
- *
- * DTX CPT Select Register
- */
-union cavm_dtx_cpt_selx
-{
-    uint64_t u;
-    struct cavm_dtx_cpt_selx_s
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_24_63        : 40;
-        uint64_t value                 : 24; /**< [ 23:  0](R/W) Debug select. Selects which signals to drive onto low/high 36-bit debug buses. */
-#else /* Word 0 - Little Endian */
-        uint64_t value                 : 24; /**< [ 23:  0](R/W) Debug select. Selects which signals to drive onto low/high 36-bit debug buses. */
-        uint64_t reserved_24_63        : 40;
-#endif /* Word 0 - End */
-    } s;
-    /* struct cavm_dtx_cpt_selx_s cn; */
-};
-typedef union cavm_dtx_cpt_selx cavm_dtx_cpt_selx_t;
-
-static inline uint64_t CAVM_DTX_CPT_SELX(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_DTX_CPT_SELX(unsigned long a)
-{
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
-        return 0x87e0fea10000ll + 8ll * ((a) & 0x1);
-    __cavm_csr_fatal("DTX_CPT_SELX", 1, a, 0, 0, 0, 0, 0);
-}
-
-#define typedef_CAVM_DTX_CPT_SELX(a) cavm_dtx_cpt_selx_t
-#define bustype_CAVM_DTX_CPT_SELX(a) CSR_TYPE_RSL
-#define basename_CAVM_DTX_CPT_SELX(a) "DTX_CPT_SELX"
-#define busnum_CAVM_DTX_CPT_SELX(a) (a)
-#define arguments_CAVM_DTX_CPT_SELX(a) (a),-1,-1,-1
 
 /**
  * Register (RSL) dtx_dap_bcst_rsp

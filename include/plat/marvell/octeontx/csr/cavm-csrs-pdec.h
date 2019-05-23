@@ -1156,17 +1156,13 @@ union cavm_pdec_task_cfg_s
                                                                  0x8 = 256-QAM.
                                                                  0xA = 1024-QAM.
                                                                  Other values = Reserved. */
-        uint64_t llr_offset            : 16; /**< [ 31: 16] It is possible that the first LLR associated to this task is not word-aligned.
-                                                                 [LLR_OFFSET] indicates the offset of the first LLR associated with this task.
-                                                                 The preprocessing block drops the first [LLR_OFFSET] LLRs. */
+        uint64_t llr_offset            : 16; /**< [ 31: 16] Must be 0x0. */
         uint64_t task_id               : 16; /**< [ 15:  0] Index associated with this decoding task. Its value will be relayed in
                                                                  the PDEC_REPORT_S and can be used for debugging purposes. */
 #else /* Word 0 - Little Endian */
         uint64_t task_id               : 16; /**< [ 15:  0] Index associated with this decoding task. Its value will be relayed in
                                                                  the PDEC_REPORT_S and can be used for debugging purposes. */
-        uint64_t llr_offset            : 16; /**< [ 31: 16] It is possible that the first LLR associated to this task is not word-aligned.
-                                                                 [LLR_OFFSET] indicates the offset of the first LLR associated with this task.
-                                                                 The preprocessing block drops the first [LLR_OFFSET] LLRs. */
+        uint64_t llr_offset            : 16; /**< [ 31: 16] Must be 0x0. */
         uint64_t mod_order             : 4;  /**< [ 35: 32] Modulation order:
                                                                  0x1 = BPSK.
                                                                  0x2 = QPSK.
@@ -1385,9 +1381,15 @@ union cavm_pdec_task_cfg_s
 #endif /* Word 1 - End */
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 2 - Big Endian */
         uint64_t reserved_152_191      : 40;
-        uint64_t tb_tx_bit_size        : 24; /**< [151:128] Number of LLRs to be sent to the decoder core. This field needs to be the same as [E_SIZE]. */
+        uint64_t tb_tx_bit_size        : 24; /**< [151:128] Number of LLRs to be sent to the decoder core.
+                                                                 This value, also known as the parameter G,  must be consistent
+                                                                 with the [E_SIZE] parameter.
+                                                                 In PDEC, it is G = [NUM_CBS] x [E_SIZE] + [NUM_PADDING]. */
 #else /* Word 2 - Little Endian */
-        uint64_t tb_tx_bit_size        : 24; /**< [151:128] Number of LLRs to be sent to the decoder core. This field needs to be the same as [E_SIZE]. */
+        uint64_t tb_tx_bit_size        : 24; /**< [151:128] Number of LLRs to be sent to the decoder core.
+                                                                 This value, also known as the parameter G,  must be consistent
+                                                                 with the [E_SIZE] parameter.
+                                                                 In PDEC, it is G = [NUM_CBS] x [E_SIZE] + [NUM_PADDING]. */
         uint64_t reserved_152_191      : 40;
 #endif /* Word 2 - End */
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 3 - Big Endian */

@@ -1035,17 +1035,19 @@ union cavm_rfoe_tx_pkt_log_s
                                                                  RFOE()_AB()_TX_LMAC_CFG()[TX_PKT_LOG_EN] = 1, */
 #endif /* Word 0 - End */
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 1 - Big Endian */
-        uint64_t reserved_73_127       : 55;
-        uint64_t drop                  : 1;  /**< [ 72: 72] When set to 1, indicates the packet was dropped by the RFOE block. */
-        uint64_t reserved_68_71        : 4;
+        uint64_t reserved_86_127       : 42;
+        uint64_t tx_err                : 1;  /**< [ 85: 85] When set to 1, indicates the packet was sent to CGX with the error bit set. */
+        uint64_t drop                  : 1;  /**< [ 84: 84] When set to 1, indicates the packet was dropped by the RFOE block. */
+        uint64_t jobid                 : 16; /**< [ 83: 68] The AB Job ID for this packet. */
         uint64_t rfoe_id               : 2;  /**< [ 67: 66] Instance of the RFOE block from which the packet was sent. */
         uint64_t lmac_id               : 2;  /**< [ 65: 64] LMAC to which the packet was sent. */
 #else /* Word 1 - Little Endian */
         uint64_t lmac_id               : 2;  /**< [ 65: 64] LMAC to which the packet was sent. */
         uint64_t rfoe_id               : 2;  /**< [ 67: 66] Instance of the RFOE block from which the packet was sent. */
-        uint64_t reserved_68_71        : 4;
-        uint64_t drop                  : 1;  /**< [ 72: 72] When set to 1, indicates the packet was dropped by the RFOE block. */
-        uint64_t reserved_73_127       : 55;
+        uint64_t jobid                 : 16; /**< [ 83: 68] The AB Job ID for this packet. */
+        uint64_t drop                  : 1;  /**< [ 84: 84] When set to 1, indicates the packet was dropped by the RFOE block. */
+        uint64_t tx_err                : 1;  /**< [ 85: 85] When set to 1, indicates the packet was sent to CGX with the error bit set. */
+        uint64_t reserved_86_127       : 42;
 #endif /* Word 1 - End */
     } s;
     /* struct cavm_rfoe_tx_pkt_log_s_s cn; */
@@ -3273,11 +3275,16 @@ union cavm_rfoex_rx_ecpri_cfgx
     struct cavm_rfoex_rx_ecpri_cfgx_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t msg_type_enable       : 16; /**< [ 63: 48](R/W) Enable for ECPRI MSG TYPE [15..0]. Similar to RX_IND_FT_CFG[ENABLE].  Allows for
+        uint64_t reserved_49_63        : 15;
+        uint64_t msg_type_enable       : 17; /**< [ 48: 32](R/W) Enable for ECPRI message types. Similar to RX_IND_FT_CFG[ENABLE].  Allows for
                                                                  safe reconfiguration.
-                                                                 0 - Drop packets and count at FT_CFG_ENABLE drop.
-                                                                 1 - Process packets. */
-        uint64_t reserved_32_47        : 16;
+                                                                 _ bit[16]    = enable for all eCPRI msg_types 16 and bigger.
+
+                                                                 _ bit[15..0] = enable for eCPRI msg_type 0..15.
+
+                                                                 For each bit:
+                                                                 0 = Drop packets and count at FT_CFG_ENABLE drop.
+                                                                 1 = Process packets. */
         uint64_t pcid_base             : 16; /**< [ 31: 16](R/W) Define base for PCID-\>FLOWID mapping when [PCID_FLOWID_MODE] = RFOE_ECPRI_PCID_FLOWID_MODE_E::BASE. */
         uint64_t reserved_2_15         : 14;
         uint64_t pcid_flowid_mode      : 2;  /**< [  1:  0](R/W) Define PCID-\>FLOWID mapping, as enumerated by RFOE_ECPRI_PCID_FLOWID_MODE_E. */
@@ -3285,11 +3292,16 @@ union cavm_rfoex_rx_ecpri_cfgx
         uint64_t pcid_flowid_mode      : 2;  /**< [  1:  0](R/W) Define PCID-\>FLOWID mapping, as enumerated by RFOE_ECPRI_PCID_FLOWID_MODE_E. */
         uint64_t reserved_2_15         : 14;
         uint64_t pcid_base             : 16; /**< [ 31: 16](R/W) Define base for PCID-\>FLOWID mapping when [PCID_FLOWID_MODE] = RFOE_ECPRI_PCID_FLOWID_MODE_E::BASE. */
-        uint64_t reserved_32_47        : 16;
-        uint64_t msg_type_enable       : 16; /**< [ 63: 48](R/W) Enable for ECPRI MSG TYPE [15..0]. Similar to RX_IND_FT_CFG[ENABLE].  Allows for
+        uint64_t msg_type_enable       : 17; /**< [ 48: 32](R/W) Enable for ECPRI message types. Similar to RX_IND_FT_CFG[ENABLE].  Allows for
                                                                  safe reconfiguration.
-                                                                 0 - Drop packets and count at FT_CFG_ENABLE drop.
-                                                                 1 - Process packets. */
+                                                                 _ bit[16]    = enable for all eCPRI msg_types 16 and bigger.
+
+                                                                 _ bit[15..0] = enable for eCPRI msg_type 0..15.
+
+                                                                 For each bit:
+                                                                 0 = Drop packets and count at FT_CFG_ENABLE drop.
+                                                                 1 = Process packets. */
+        uint64_t reserved_49_63        : 15;
 #endif /* Word 0 - End */
     } s;
     /* struct cavm_rfoex_rx_ecpri_cfgx_s cn; */
@@ -4680,7 +4692,7 @@ static inline uint64_t CAVM_RFOEX_RX_IND_ECPRI_FT_CFG(unsigned long a)
  *
  * RFOE RX Indirect eCPRI Hash Configuration Register
  * Configures hash for eCPRI msg_type=0. Result of hash is flow_id that is used to
- * index into RFOE()_RX_IND_ECPRI_FT_CFG.
+ * index into RFOE()_RX_IND_ECPRI_HASH_CFG.
  * This register indirectly accesses the eCPRI Hash Configuration Table with 16
  * entries, one for each bit in PC_ID. The [XOR_CFG] values are XOR'd to map
  * the incoming PC_ID to a FLOW_ID, when
@@ -4787,15 +4799,19 @@ union cavm_rfoex_rx_ind_ftx_cfg
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_25_63        : 39;
         uint64_t enable                : 1;  /**< [ 24: 24](R/W) Enable this flow. Drop packets when clear. */
-        uint64_t reserved_22_23        : 2;
-        uint64_t mbt_idx               : 10; /**< [ 21: 12](R/W) Pointer to RFOE()_RX_IND_MBT_CFG, RFOE()_RX_IND_MBT_ADDR for DMA write buffer configurations. */
-        uint64_t reserved_10_11        : 2;
-        uint64_t flow_idx              : 10; /**< [  9:  0](R/W) Pointer to RFOE()_RX_IND_JDT memories for job descriptor and flow configuration. */
+        uint64_t reserved_23           : 1;
+        uint64_t mbt_idx               : 11; /**< [ 22: 12](R/W) Pointer to RFOE()_RX_IND_MBT_CFG, RFOE()_RX_IND_MBT_ADDR for DMA write buffer
+                                                                 configurations. Valid range 0..1055 */
+        uint64_t reserved_11           : 1;
+        uint64_t flow_idx              : 11; /**< [ 10:  0](R/W) Pointer to RFOE()_RX_IND_JDT memories for job descriptor and flow configuration.
+                                                                 Valid range 0..1055 */
 #else /* Word 0 - Little Endian */
-        uint64_t flow_idx              : 10; /**< [  9:  0](R/W) Pointer to RFOE()_RX_IND_JDT memories for job descriptor and flow configuration. */
-        uint64_t reserved_10_11        : 2;
-        uint64_t mbt_idx               : 10; /**< [ 21: 12](R/W) Pointer to RFOE()_RX_IND_MBT_CFG, RFOE()_RX_IND_MBT_ADDR for DMA write buffer configurations. */
-        uint64_t reserved_22_23        : 2;
+        uint64_t flow_idx              : 11; /**< [ 10:  0](R/W) Pointer to RFOE()_RX_IND_JDT memories for job descriptor and flow configuration.
+                                                                 Valid range 0..1055 */
+        uint64_t reserved_11           : 1;
+        uint64_t mbt_idx               : 11; /**< [ 22: 12](R/W) Pointer to RFOE()_RX_IND_MBT_CFG, RFOE()_RX_IND_MBT_ADDR for DMA write buffer
+                                                                 configurations. Valid range 0..1055 */
+        uint64_t reserved_23           : 1;
         uint64_t enable                : 1;  /**< [ 24: 24](R/W) Enable this flow. Drop packets when clear. */
         uint64_t reserved_25_63        : 39;
 #endif /* Word 0 - End */
@@ -7278,65 +7294,6 @@ static inline uint64_t CAVM_RFOEX_RX_VLANX_CFG(unsigned long a, unsigned long b)
 #define arguments_CAVM_RFOEX_RX_VLANX_CFG(a,b) (a),(b),-1,-1
 
 /**
- * Register (RSL) rfoe#_rx_vlan_allow_cfg
- *
- * RFOE RX VLAN Allowable Match Configuration Register
- * Configures VLAN header allowable matches.
- */
-union cavm_rfoex_rx_vlan_allow_cfg
-{
-    uint64_t u;
-    struct cavm_rfoex_rx_vlan_allow_cfg_s
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_9_63         : 55;
-        uint64_t untagged              : 1;  /**< [  8:  8](R/W) Allow packets with no VLAN tag matches.  Packets received with [UNTAGGED]=0 &&
-                                                                 no VLAN matches will be dropped and   counted as a not forwarded VLAN packet in
-                                                                 RFOE()_RX_VLAN_DROP_STAT register */
-        uint64_t vlan1_vlan1           : 1;  /**< [  7:  7](R/W) Allow double tag with RFOE()_RX_VLAN(1)_CFG matching against first two VLAN tags. */
-        uint64_t vlan1_vlan0           : 1;  /**< [  6:  6](R/W) Allow double tag with RFOE()_RX_VLAN(1)_CFG matching against first VLAN tag and
-                                                                 RFOE()_RX_VLAN(0)_CFG matching against second VLAN tag. */
-        uint64_t vlan0_vlan1           : 1;  /**< [  5:  5](R/W) Allow double tag with RFOE()_RX_VLAN(0)_CFG matching against first VLAN tag and
-                                                                 RFOE()_RX_VLAN(1)_CFG matching against second VLAN tag. */
-        uint64_t vlan0_vlan0           : 1;  /**< [  4:  4](R/W) Allow double tag with RFOE()_RX_VLAN(0)_CFG matching against first two VLAN tags. */
-        uint64_t reserved_2_3          : 2;
-        uint64_t vlan1_only            : 1;  /**< [  1:  1](R/W) Allow single match with RFOE()_RX_VLAN(1)_CFG against first packet EtherType. */
-        uint64_t vlan0_only            : 1;  /**< [  0:  0](R/W) Allow single match with RFOE()_RX_VLAN(0)_CFG against first packet EtherType. */
-#else /* Word 0 - Little Endian */
-        uint64_t vlan0_only            : 1;  /**< [  0:  0](R/W) Allow single match with RFOE()_RX_VLAN(0)_CFG against first packet EtherType. */
-        uint64_t vlan1_only            : 1;  /**< [  1:  1](R/W) Allow single match with RFOE()_RX_VLAN(1)_CFG against first packet EtherType. */
-        uint64_t reserved_2_3          : 2;
-        uint64_t vlan0_vlan0           : 1;  /**< [  4:  4](R/W) Allow double tag with RFOE()_RX_VLAN(0)_CFG matching against first two VLAN tags. */
-        uint64_t vlan0_vlan1           : 1;  /**< [  5:  5](R/W) Allow double tag with RFOE()_RX_VLAN(0)_CFG matching against first VLAN tag and
-                                                                 RFOE()_RX_VLAN(1)_CFG matching against second VLAN tag. */
-        uint64_t vlan1_vlan0           : 1;  /**< [  6:  6](R/W) Allow double tag with RFOE()_RX_VLAN(1)_CFG matching against first VLAN tag and
-                                                                 RFOE()_RX_VLAN(0)_CFG matching against second VLAN tag. */
-        uint64_t vlan1_vlan1           : 1;  /**< [  7:  7](R/W) Allow double tag with RFOE()_RX_VLAN(1)_CFG matching against first two VLAN tags. */
-        uint64_t untagged              : 1;  /**< [  8:  8](R/W) Allow packets with no VLAN tag matches.  Packets received with [UNTAGGED]=0 &&
-                                                                 no VLAN matches will be dropped and   counted as a not forwarded VLAN packet in
-                                                                 RFOE()_RX_VLAN_DROP_STAT register */
-        uint64_t reserved_9_63         : 55;
-#endif /* Word 0 - End */
-    } s;
-    /* struct cavm_rfoex_rx_vlan_allow_cfg_s cn; */
-};
-typedef union cavm_rfoex_rx_vlan_allow_cfg cavm_rfoex_rx_vlan_allow_cfg_t;
-
-static inline uint64_t CAVM_RFOEX_RX_VLAN_ALLOW_CFG(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_RFOEX_RX_VLAN_ALLOW_CFG(unsigned long a)
-{
-    if (cavm_is_model(OCTEONTX_LOKI) && (a<=1))
-        return 0x87e043d01080ll + 0x80000ll * ((a) & 0x1);
-    __cavm_csr_fatal("RFOEX_RX_VLAN_ALLOW_CFG", 1, a, 0, 0, 0, 0, 0);
-}
-
-#define typedef_CAVM_RFOEX_RX_VLAN_ALLOW_CFG(a) cavm_rfoex_rx_vlan_allow_cfg_t
-#define bustype_CAVM_RFOEX_RX_VLAN_ALLOW_CFG(a) CSR_TYPE_RSL
-#define basename_CAVM_RFOEX_RX_VLAN_ALLOW_CFG(a) "RFOEX_RX_VLAN_ALLOW_CFG"
-#define busnum_CAVM_RFOEX_RX_VLAN_ALLOW_CFG(a) (a)
-#define arguments_CAVM_RFOEX_RX_VLAN_ALLOW_CFG(a) (a),-1,-1,-1
-
-/**
  * Register (RSL) rfoe#_rx_vlan_drop_stat#
  *
  * RFOE RX  VLAN Drop Packet Count Register
@@ -8269,6 +8226,89 @@ static inline uint64_t CAVM_RFOEX_TX_PKT_STATX(unsigned long a, unsigned long b)
 #define basename_CAVM_RFOEX_TX_PKT_STATX(a,b) "RFOEX_TX_PKT_STATX"
 #define busnum_CAVM_RFOEX_TX_PKT_STATX(a,b) (a)
 #define arguments_CAVM_RFOEX_TX_PKT_STATX(a,b) (a),(b),-1,-1
+
+/**
+ * Register (RSL) rfoe#_tx_ptp_tstmp_w0#
+ *
+ * RFOE TX PTP Timestamp Commit W0 Register
+ * This register captures the PTP timestamp of the last TX packet that
+ * requested a PTP timestamp. This register is defined for each LMAC.
+ */
+union cavm_rfoex_tx_ptp_tstmp_w0x
+{
+    uint64_t u;
+    struct cavm_rfoex_tx_ptp_tstmp_w0x_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t ptp_tstmp_commit      : 64; /**< [ 63:  0](RO/H) PTP commit time timestamp. */
+#else /* Word 0 - Little Endian */
+        uint64_t ptp_tstmp_commit      : 64; /**< [ 63:  0](RO/H) PTP commit time timestamp. */
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rfoex_tx_ptp_tstmp_w0x_s cn; */
+};
+typedef union cavm_rfoex_tx_ptp_tstmp_w0x cavm_rfoex_tx_ptp_tstmp_w0x_t;
+
+static inline uint64_t CAVM_RFOEX_TX_PTP_TSTMP_W0X(unsigned long a, unsigned long b) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_RFOEX_TX_PTP_TSTMP_W0X(unsigned long a, unsigned long b)
+{
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=1) && (b<=3)))
+        return 0x87e043d00fa0ll + 0x80000ll * ((a) & 0x1) + 8ll * ((b) & 0x3);
+    __cavm_csr_fatal("RFOEX_TX_PTP_TSTMP_W0X", 2, a, b, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_RFOEX_TX_PTP_TSTMP_W0X(a,b) cavm_rfoex_tx_ptp_tstmp_w0x_t
+#define bustype_CAVM_RFOEX_TX_PTP_TSTMP_W0X(a,b) CSR_TYPE_RSL
+#define basename_CAVM_RFOEX_TX_PTP_TSTMP_W0X(a,b) "RFOEX_TX_PTP_TSTMP_W0X"
+#define busnum_CAVM_RFOEX_TX_PTP_TSTMP_W0X(a,b) (a)
+#define arguments_CAVM_RFOEX_TX_PTP_TSTMP_W0X(a,b) (a),(b),-1,-1
+
+/**
+ * Register (RSL) rfoe#_tx_ptp_tstmp_w1#
+ *
+ * RFOE TX PTP Timestamp Commit W1 Register
+ * This register captures related info about the packet that requested a PTP timestamp.
+ * This register is updated at the same time when RFOE()_TX_PTP_TSTMP_W0 is updated.
+ * This register is defined for each LMAC.
+ */
+union cavm_rfoex_tx_ptp_tstmp_w1x
+{
+    uint64_t u;
+    struct cavm_rfoex_tx_ptp_tstmp_w1x_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_22_63        : 42;
+        uint64_t tx_err                : 1;  /**< [ 21: 21](RO/H) When set to 1, indicates the packet was sent to CGX witht error bit set. */
+        uint64_t drop                  : 1;  /**< [ 20: 20](RO/H) When set to 1, indicates the packet was dropped by the RFOE block. */
+        uint64_t jobid                 : 16; /**< [ 19:  4](RO/H) The AB Job ID for this packet. */
+        uint64_t rfoe_id               : 2;  /**< [  3:  2](RO/H) Instance of the RFOE block from which the packet was sent. */
+        uint64_t lmac_id               : 2;  /**< [  1:  0](RO/H) LMAC to which the packet was sent. */
+#else /* Word 0 - Little Endian */
+        uint64_t lmac_id               : 2;  /**< [  1:  0](RO/H) LMAC to which the packet was sent. */
+        uint64_t rfoe_id               : 2;  /**< [  3:  2](RO/H) Instance of the RFOE block from which the packet was sent. */
+        uint64_t jobid                 : 16; /**< [ 19:  4](RO/H) The AB Job ID for this packet. */
+        uint64_t drop                  : 1;  /**< [ 20: 20](RO/H) When set to 1, indicates the packet was dropped by the RFOE block. */
+        uint64_t tx_err                : 1;  /**< [ 21: 21](RO/H) When set to 1, indicates the packet was sent to CGX witht error bit set. */
+        uint64_t reserved_22_63        : 42;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rfoex_tx_ptp_tstmp_w1x_s cn; */
+};
+typedef union cavm_rfoex_tx_ptp_tstmp_w1x cavm_rfoex_tx_ptp_tstmp_w1x_t;
+
+static inline uint64_t CAVM_RFOEX_TX_PTP_TSTMP_W1X(unsigned long a, unsigned long b) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_RFOEX_TX_PTP_TSTMP_W1X(unsigned long a, unsigned long b)
+{
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=1) && (b<=3)))
+        return 0x87e043d00fc0ll + 0x80000ll * ((a) & 0x1) + 8ll * ((b) & 0x3);
+    __cavm_csr_fatal("RFOEX_TX_PTP_TSTMP_W1X", 2, a, b, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_RFOEX_TX_PTP_TSTMP_W1X(a,b) cavm_rfoex_tx_ptp_tstmp_w1x_t
+#define bustype_CAVM_RFOEX_TX_PTP_TSTMP_W1X(a,b) CSR_TYPE_RSL
+#define basename_CAVM_RFOEX_TX_PTP_TSTMP_W1X(a,b) "RFOEX_TX_PTP_TSTMP_W1X"
+#define busnum_CAVM_RFOEX_TX_PTP_TSTMP_W1X(a,b) (a)
+#define arguments_CAVM_RFOEX_TX_PTP_TSTMP_W1X(a,b) (a),(b),-1,-1
 
 /**
  * Register (RSL) rfoe#_tx_scratch

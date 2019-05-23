@@ -147,6 +147,9 @@
 #define CAVM_GPIO_PIN_SEL_E_CGXX_LMACX_TX(a,b) (0x4c0 + 4 * (a) + (b))
 #define CAVM_GPIO_PIN_SEL_E_CORE_RESET_IN (0x480)
 #define CAVM_GPIO_PIN_SEL_E_CORE_RESET_OUT (0x481)
+#define CAVM_GPIO_PIN_SEL_E_CPRI_HDLC_CK (0x276)
+#define CAVM_GPIO_PIN_SEL_E_CPRI_HDLC_RX (0x275)
+#define CAVM_GPIO_PIN_SEL_E_CPRI_HDLC_TX (0x274)
 #define CAVM_GPIO_PIN_SEL_E_EJTAG_TCK (0x3f1)
 #define CAVM_GPIO_PIN_SEL_E_EJTAG_TDI (0x3f0)
 #define CAVM_GPIO_PIN_SEL_E_EJTAG_TDO (0x3f4)
@@ -158,8 +161,11 @@
 #define CAVM_GPIO_PIN_SEL_E_GPIO_PTP_PPS (2)
 #define CAVM_GPIO_PIN_SEL_E_GPIO_PTP_SYSCK (8)
 #define CAVM_GPIO_PIN_SEL_E_GPIO_SW (0)
+#define CAVM_GPIO_PIN_SEL_E_GSERCX_BURNINX(a,b) (0x61c + 0x10 * (a) + (b))
+#define CAVM_GPIO_PIN_SEL_E_GSERCX_DTESTX(a,b) (0x610 + 0x10 * (a) + (b))
 #define CAVM_GPIO_PIN_SEL_E_GSERPX_BURNINX(a,b) (0x70c + 0x10 * (a) + (b))
 #define CAVM_GPIO_PIN_SEL_E_GSERPX_DTESTX(a,b) (0x700 + 0x10 * (a) + (b))
+#define CAVM_GPIO_PIN_SEL_E_GSERPX_SYNCEX(a,b) (0x580 + 5 * (a) + (b))
 #define CAVM_GPIO_PIN_SEL_E_GSERRX_BURNINX(a,b) (0x60c + 0x10 * (a) + (b))
 #define CAVM_GPIO_PIN_SEL_E_GSERRX_DTESTX(a,b) (0x600 + 0x10 * (a) + (b))
 #define CAVM_GPIO_PIN_SEL_E_LMCX_ECC_CN8(a) (0x237 + (a))
@@ -1102,7 +1108,40 @@ union cavm_gpio_clk_syncex
     } cn96xxp3;
     /* struct cavm_gpio_clk_syncex_cn96xxp1 cnf95xxp1; */
     /* struct cavm_gpio_clk_syncex_cn96xxp3 cnf95xxp2; */
-    /* struct cavm_gpio_clk_syncex_cn96xxp3 loki; */
+    struct cavm_gpio_clk_syncex_loki
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_12_63        : 52;
+        uint64_t qlm_sel               : 4;  /**< [ 11:  8](R/W) Selects which Ethernet/CPRI Serdes to select from.
+                                                                 0 = GSERR0.
+                                                                 1..5 = GSERC(0..4). */
+        uint64_t reserved_4_7          : 4;
+        uint64_t div                   : 2;  /**< [  3:  2](R/W) GPIO internal clock division of the SerDes recovered clock selected by [QLM_SEL]
+                                                                 to create the output clock. The maximum supported GPIO output frequency is 125
+                                                                 MHz.
+                                                                 0x0 = Divide by 40.
+                                                                 0x1 = Divide by 80.
+                                                                 0x2 = Divide by 160.
+                                                                 0x3 = Divide by 320. */
+        uint64_t lane_sel              : 2;  /**< [  1:  0](R/W) Which RX lane within the SerDes selected with [QLM_SEL] to use as the GPIO
+                                                                 internal clock. */
+#else /* Word 0 - Little Endian */
+        uint64_t lane_sel              : 2;  /**< [  1:  0](R/W) Which RX lane within the SerDes selected with [QLM_SEL] to use as the GPIO
+                                                                 internal clock. */
+        uint64_t div                   : 2;  /**< [  3:  2](R/W) GPIO internal clock division of the SerDes recovered clock selected by [QLM_SEL]
+                                                                 to create the output clock. The maximum supported GPIO output frequency is 125
+                                                                 MHz.
+                                                                 0x0 = Divide by 40.
+                                                                 0x1 = Divide by 80.
+                                                                 0x2 = Divide by 160.
+                                                                 0x3 = Divide by 320. */
+        uint64_t reserved_4_7          : 4;
+        uint64_t qlm_sel               : 4;  /**< [ 11:  8](R/W) Selects which Ethernet/CPRI Serdes to select from.
+                                                                 0 = GSERR0.
+                                                                 1..5 = GSERC(0..4). */
+        uint64_t reserved_12_63        : 52;
+#endif /* Word 0 - End */
+    } loki;
 };
 typedef union cavm_gpio_clk_syncex cavm_gpio_clk_syncex_t;
 
@@ -2577,14 +2616,10 @@ union cavm_gpio_pkg_ver
                                                                  0x1 = SKU package B = 42.5 x 42.5mm package, up to 2 DDR channels, 4 lanes Ethernet.
                                                                  0x2 = SKU package C = 42.5 x 42.5mm package, up to 2 DDR channels, 8 lanes Ethernet.
                                                                  0x3 = SKU package D = 45 x 45mm package, up to 2 DDR channels, for CN95xxE.
-                                                                 0x4 = SKU package E = 55 x 55mm package, die 0 of two die package, for CN96xxD.
-                                                                 0x5 = SKU package F = 55 x 55mm package, die 1 of two die package, for CN96xxD.
 
                                                                  If FUS_FUSE_NUM_E::CHIP_ID() fuses indicate pass C or later:
                                                                  0x0 = SKU package I = 50 x 50mm package, up to 3 DDR channels,
                                                                                        backwards A0 board-compatible.
-                                                                 0x4 = SKU package M = 55 x 55mm package, die 0 of two die package, for CN96xxD.
-                                                                 0x5 = SKU package N = 55 x 55mm package, die 1 of two die package, for CN96xxD.
                                                                  0x7 = SKU package P = 50 x 50mm package, up to 3 DDR channels, for CN-to-be-numbered.
 
                                                                  Internal:
@@ -2602,14 +2637,10 @@ union cavm_gpio_pkg_ver
                                                                  0x1 = SKU package B = 42.5 x 42.5mm package, up to 2 DDR channels, 4 lanes Ethernet.
                                                                  0x2 = SKU package C = 42.5 x 42.5mm package, up to 2 DDR channels, 8 lanes Ethernet.
                                                                  0x3 = SKU package D = 45 x 45mm package, up to 2 DDR channels, for CN95xxE.
-                                                                 0x4 = SKU package E = 55 x 55mm package, die 0 of two die package, for CN96xxD.
-                                                                 0x5 = SKU package F = 55 x 55mm package, die 1 of two die package, for CN96xxD.
 
                                                                  If FUS_FUSE_NUM_E::CHIP_ID() fuses indicate pass C or later:
                                                                  0x0 = SKU package I = 50 x 50mm package, up to 3 DDR channels,
                                                                                        backwards A0 board-compatible.
-                                                                 0x4 = SKU package M = 55 x 55mm package, die 0 of two die package, for CN96xxD.
-                                                                 0x5 = SKU package N = 55 x 55mm package, die 1 of two die package, for CN96xxD.
                                                                  0x7 = SKU package P = 50 x 50mm package, up to 3 DDR channels, for CN-to-be-numbered.
 
                                                                  Internal:

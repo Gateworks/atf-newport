@@ -58,7 +58,23 @@ union cavm_edec_lut_csr0_s
         uint64_t num_symbols           : 6;  /**< [  7:  2] Number of symbols minus 1. */
         uint64_t en_addr_calc          : 1;  /**< [  1:  1] Address calculation type.
                                                                  0 = Based on sequence ID.
-                                                                 1 = Based on address calculation. */
+                                                                 1 = Based on address calculation.
+
+                                                                 When sequence ID is used, the header and PRB (data) address calculations
+                                                                 are solely based on the base addresses, buffer sizes and buffer indexes
+                                                                 specified for each FLOW_ID in the LUT. For more details, consult the
+                                                                 "Header Circular Buffer Address Calculation" and "Data (PRBs) Circular Buffer
+                                                                 Address Calculation - EN_CALC_ADD = 0" sections of the technical specification
+                                                                 document.
+
+                                                                 When the address calculation is used, the PRD (data) address calculation
+                                                                 takes into account the subfrm_id, slot_id, and symbol_id from each timing header,
+                                                                 symInc and rb from the section header
+                                                                 as well as num_slot_exp_1ms, num_sym_per_slot, num_symbols, num_buffers,
+                                                                 next_buf_id specified for each FLOW_ID in the LUT. The header address calculation
+                                                                 remains the same as for the sequence ID case.
+                                                                 For more details, consult the "Data (PRBs) Circular Buffer Address Calculation
+                                                                 - EN_CALC_ADD = 1" section of the technical specification document. */
         uint64_t flow_en               : 1;  /**< [  0:  0] Flow enable.
                                                                  0 = Flow is disabled.
                                                                  1 = Flow is enabled. */
@@ -68,7 +84,23 @@ union cavm_edec_lut_csr0_s
                                                                  1 = Flow is enabled. */
         uint64_t en_addr_calc          : 1;  /**< [  1:  1] Address calculation type.
                                                                  0 = Based on sequence ID.
-                                                                 1 = Based on address calculation. */
+                                                                 1 = Based on address calculation.
+
+                                                                 When sequence ID is used, the header and PRB (data) address calculations
+                                                                 are solely based on the base addresses, buffer sizes and buffer indexes
+                                                                 specified for each FLOW_ID in the LUT. For more details, consult the
+                                                                 "Header Circular Buffer Address Calculation" and "Data (PRBs) Circular Buffer
+                                                                 Address Calculation - EN_CALC_ADD = 0" sections of the technical specification
+                                                                 document.
+
+                                                                 When the address calculation is used, the PRD (data) address calculation
+                                                                 takes into account the subfrm_id, slot_id, and symbol_id from each timing header,
+                                                                 symInc and rb from the section header
+                                                                 as well as num_slot_exp_1ms, num_sym_per_slot, num_symbols, num_buffers,
+                                                                 next_buf_id specified for each FLOW_ID in the LUT. The header address calculation
+                                                                 remains the same as for the sequence ID case.
+                                                                 For more details, consult the "Data (PRBs) Circular Buffer Address Calculation
+                                                                 - EN_CALC_ADD = 1" section of the technical specification document. */
         uint64_t num_symbols           : 6;  /**< [  7:  2] Number of symbols minus 1. */
         uint64_t num_buffers           : 8;  /**< [ 15:  8] Number of buffers minus 1. */
         uint64_t num_sym_per_slot      : 6;  /**< [ 21: 16] Number of symbols per slot minus 1. */
@@ -226,7 +258,7 @@ static inline uint64_t CAVM_EDEC_BP_TEST0_FUNC(void) __attribute__ ((pure, alway
 static inline uint64_t CAVM_EDEC_BP_TEST0_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_LOKI))
-        return 0x87e043c81000ll;
+        return 0x87e043401000ll;
     __cavm_csr_fatal("EDEC_BP_TEST0", 0, 0, 0, 0, 0, 0, 0);
 }
 
@@ -304,7 +336,7 @@ static inline uint64_t CAVM_EDEC_BP_TEST1_FUNC(void) __attribute__ ((pure, alway
 static inline uint64_t CAVM_EDEC_BP_TEST1_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_LOKI))
-        return 0x87e043c81008ll;
+        return 0x87e043401008ll;
     __cavm_csr_fatal("EDEC_BP_TEST1", 0, 0, 0, 0, 0, 0, 0);
 }
 
@@ -396,7 +428,7 @@ static inline uint64_t CAVM_EDEC_CONFIG_FUNC(void) __attribute__ ((pure, always_
 static inline uint64_t CAVM_EDEC_CONFIG_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_LOKI))
-        return 0x87e043c80008ll;
+        return 0x87e043400008ll;
     __cavm_csr_fatal("EDEC_CONFIG", 0, 0, 0, 0, 0, 0, 0);
 }
 
@@ -443,7 +475,7 @@ static inline uint64_t CAVM_EDEC_CONTROL_FUNC(void) __attribute__ ((pure, always
 static inline uint64_t CAVM_EDEC_CONTROL_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_LOKI))
-        return 0x87e043c80000ll;
+        return 0x87e043400000ll;
     __cavm_csr_fatal("EDEC_CONTROL", 0, 0, 0, 0, 0, 0, 0);
 }
 
@@ -482,7 +514,7 @@ static inline uint64_t CAVM_EDEC_ECO_FUNC(void) __attribute__ ((pure, always_inl
 static inline uint64_t CAVM_EDEC_ECO_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_LOKI))
-        return 0x87e043c81300ll;
+        return 0x87e043401300ll;
     __cavm_csr_fatal("EDEC_ECO", 0, 0, 0, 0, 0, 0, 0);
 }
 
@@ -536,7 +568,7 @@ static inline uint64_t CAVM_EDEC_ERROR_ENA_W1C_FUNC(void) __attribute__ ((pure, 
 static inline uint64_t CAVM_EDEC_ERROR_ENA_W1C_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_LOKI))
-        return 0x87e043c80050ll;
+        return 0x87e043400050ll;
     __cavm_csr_fatal("EDEC_ERROR_ENA_W1C", 0, 0, 0, 0, 0, 0, 0);
 }
 
@@ -590,7 +622,7 @@ static inline uint64_t CAVM_EDEC_ERROR_ENA_W1S_FUNC(void) __attribute__ ((pure, 
 static inline uint64_t CAVM_EDEC_ERROR_ENA_W1S_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_LOKI))
-        return 0x87e043c80048ll;
+        return 0x87e043400048ll;
     __cavm_csr_fatal("EDEC_ERROR_ENA_W1S", 0, 0, 0, 0, 0, 0, 0);
 }
 
@@ -632,7 +664,7 @@ static inline uint64_t CAVM_EDEC_ERROR_ENABLE0_FUNC(void) __attribute__ ((pure, 
 static inline uint64_t CAVM_EDEC_ERROR_ENABLE0_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_LOKI))
-        return 0x87e043c80038ll;
+        return 0x87e043400038ll;
     __cavm_csr_fatal("EDEC_ERROR_ENABLE0", 0, 0, 0, 0, 0, 0, 0);
 }
 
@@ -711,7 +743,7 @@ static inline uint64_t CAVM_EDEC_ERROR_INT_FUNC(void) __attribute__ ((pure, alwa
 static inline uint64_t CAVM_EDEC_ERROR_INT_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_LOKI))
-        return 0x87e043c80040ll;
+        return 0x87e043400040ll;
     __cavm_csr_fatal("EDEC_ERROR_INT", 0, 0, 0, 0, 0, 0, 0);
 }
 
@@ -765,7 +797,7 @@ static inline uint64_t CAVM_EDEC_ERROR_INT_W1S_FUNC(void) __attribute__ ((pure, 
 static inline uint64_t CAVM_EDEC_ERROR_INT_W1S_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_LOKI))
-        return 0x87e043c80058ll;
+        return 0x87e043400058ll;
     __cavm_csr_fatal("EDEC_ERROR_INT_W1S", 0, 0, 0, 0, 0, 0, 0);
 }
 
@@ -811,7 +843,7 @@ static inline uint64_t CAVM_EDEC_ERROR_SOURCE0_FUNC(void) __attribute__ ((pure, 
 static inline uint64_t CAVM_EDEC_ERROR_SOURCE0_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_LOKI))
-        return 0x87e043c80030ll;
+        return 0x87e043400030ll;
     __cavm_csr_fatal("EDEC_ERROR_SOURCE0", 0, 0, 0, 0, 0, 0, 0);
 }
 
@@ -820,61 +852,6 @@ static inline uint64_t CAVM_EDEC_ERROR_SOURCE0_FUNC(void)
 #define basename_CAVM_EDEC_ERROR_SOURCE0 "EDEC_ERROR_SOURCE0"
 #define busnum_CAVM_EDEC_ERROR_SOURCE0 0
 #define arguments_CAVM_EDEC_ERROR_SOURCE0 -1,-1,-1,-1
-
-/**
- * Register (RSL) edec_jdx#_cfg
- *
- * EDEC AB Job Configuration Register
- * This register space contains the EDEC job configuration data.
- * Software should not write this register directly, but instead use this
- * format when writing the job configuration section of the job descriptor.
- */
-union cavm_edec_jdxx_cfg
-{
-    uint64_t u;
-    struct cavm_edec_jdxx_cfg_s
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_32_63        : 32;
-        uint64_t num_sections          : 8;  /**< [ 31: 24](R/W) Number of sections in the packet. */
-        uint64_t reserved_16_23        : 8;
-        uint64_t byte_swap_disable     : 1;  /**< [ 15: 15](R/W) Disables the byte swap toward MHBW. */
-        uint64_t reserved_9_14         : 6;
-        uint64_t fix_mode_en           : 1;  /**< [  8:  8](R/W) When set, compression method is fixed and taken from [COMP_METH].
-                                                                 When clear, compression method is defined by packet's section headers. */
-        uint64_t iqwidth               : 4;  /**< [  7:  4](R/W) Width of compressed I/Q. Valid only when [FIX_MODE_EN] is set. */
-        uint64_t comp_meth             : 4;  /**< [  3:  0](R/W) Compression method. Enumerated by EDEC_COMP_METH_E Valid only if
-                                                                 [FIX_MODE_EN] is set. */
-#else /* Word 0 - Little Endian */
-        uint64_t comp_meth             : 4;  /**< [  3:  0](R/W) Compression method. Enumerated by EDEC_COMP_METH_E Valid only if
-                                                                 [FIX_MODE_EN] is set. */
-        uint64_t iqwidth               : 4;  /**< [  7:  4](R/W) Width of compressed I/Q. Valid only when [FIX_MODE_EN] is set. */
-        uint64_t fix_mode_en           : 1;  /**< [  8:  8](R/W) When set, compression method is fixed and taken from [COMP_METH].
-                                                                 When clear, compression method is defined by packet's section headers. */
-        uint64_t reserved_9_14         : 6;
-        uint64_t byte_swap_disable     : 1;  /**< [ 15: 15](R/W) Disables the byte swap toward MHBW. */
-        uint64_t reserved_16_23        : 8;
-        uint64_t num_sections          : 8;  /**< [ 31: 24](R/W) Number of sections in the packet. */
-        uint64_t reserved_32_63        : 32;
-#endif /* Word 0 - End */
-    } s;
-    /* struct cavm_edec_jdxx_cfg_s cn; */
-};
-typedef union cavm_edec_jdxx_cfg cavm_edec_jdxx_cfg_t;
-
-static inline uint64_t CAVM_EDEC_JDXX_CFG(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_EDEC_JDXX_CFG(unsigned long a)
-{
-    if (cavm_is_model(OCTEONTX_LOKI) && (a<=2))
-        return 0x87e043c82000ll + 0x2000ll * ((a) & 0x3);
-    __cavm_csr_fatal("EDEC_JDXX_CFG", 1, a, 0, 0, 0, 0, 0);
-}
-
-#define typedef_CAVM_EDEC_JDXX_CFG(a) cavm_edec_jdxx_cfg_t
-#define bustype_CAVM_EDEC_JDXX_CFG(a) CSR_TYPE_RSL
-#define basename_CAVM_EDEC_JDXX_CFG(a) "EDEC_JDXX_CFG"
-#define busnum_CAVM_EDEC_JDXX_CFG(a) (a)
-#define arguments_CAVM_EDEC_JDXX_CFG(a) (a),-1,-1,-1
 
 /**
  * Register (RSL) edec_lut_access
@@ -982,7 +959,7 @@ static inline uint64_t CAVM_EDEC_LUT_ACCESS_FUNC(void) __attribute__ ((pure, alw
 static inline uint64_t CAVM_EDEC_LUT_ACCESS_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_LOKI))
-        return 0x87e043c80100ll;
+        return 0x87e043400100ll;
     __cavm_csr_fatal("EDEC_LUT_ACCESS", 0, 0, 0, 0, 0, 0, 0);
 }
 
@@ -1030,7 +1007,7 @@ static inline uint64_t CAVM_EDEC_LUT_INCR_WRITE_FUNC(void) __attribute__ ((pure,
 static inline uint64_t CAVM_EDEC_LUT_INCR_WRITE_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_LOKI))
-        return 0x87e043c80108ll;
+        return 0x87e043400108ll;
     __cavm_csr_fatal("EDEC_LUT_INCR_WRITE", 0, 0, 0, 0, 0, 0, 0);
 }
 
@@ -1074,7 +1051,7 @@ static inline uint64_t CAVM_EDEC_LUT_RND_READ_CMD_FUNC(void) __attribute__ ((pur
 static inline uint64_t CAVM_EDEC_LUT_RND_READ_CMD_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_LOKI))
-        return 0x87e043c80110ll;
+        return 0x87e043400110ll;
     __cavm_csr_fatal("EDEC_LUT_RND_READ_CMD", 0, 0, 0, 0, 0, 0, 0);
 }
 
@@ -1112,7 +1089,7 @@ static inline uint64_t CAVM_EDEC_LUT_RND_READ_DATA0_FUNC(void) __attribute__ ((p
 static inline uint64_t CAVM_EDEC_LUT_RND_READ_DATA0_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_LOKI))
-        return 0x87e043c80118ll;
+        return 0x87e043400118ll;
     __cavm_csr_fatal("EDEC_LUT_RND_READ_DATA0", 0, 0, 0, 0, 0, 0, 0);
 }
 
@@ -1150,7 +1127,7 @@ static inline uint64_t CAVM_EDEC_LUT_RND_READ_DATA1_FUNC(void) __attribute__ ((p
 static inline uint64_t CAVM_EDEC_LUT_RND_READ_DATA1_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_LOKI))
-        return 0x87e043c80120ll;
+        return 0x87e043400120ll;
     __cavm_csr_fatal("EDEC_LUT_RND_READ_DATA1", 0, 0, 0, 0, 0, 0, 0);
 }
 
@@ -1188,7 +1165,7 @@ static inline uint64_t CAVM_EDEC_LUT_RND_READ_DATA2_FUNC(void) __attribute__ ((p
 static inline uint64_t CAVM_EDEC_LUT_RND_READ_DATA2_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_LOKI))
-        return 0x87e043c80128ll;
+        return 0x87e043400128ll;
     __cavm_csr_fatal("EDEC_LUT_RND_READ_DATA2", 0, 0, 0, 0, 0, 0, 0);
 }
 
@@ -1226,7 +1203,7 @@ static inline uint64_t CAVM_EDEC_LUT_RND_READ_DATA3_FUNC(void) __attribute__ ((p
 static inline uint64_t CAVM_EDEC_LUT_RND_READ_DATA3_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_LOKI))
-        return 0x87e043c80130ll;
+        return 0x87e043400130ll;
     __cavm_csr_fatal("EDEC_LUT_RND_READ_DATA3", 0, 0, 0, 0, 0, 0, 0);
 }
 
@@ -1270,7 +1247,7 @@ static inline uint64_t CAVM_EDEC_LUT_RND_WRITE_CMD_FUNC(void) __attribute__ ((pu
 static inline uint64_t CAVM_EDEC_LUT_RND_WRITE_CMD_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_LOKI))
-        return 0x87e043c80138ll;
+        return 0x87e043400138ll;
     __cavm_csr_fatal("EDEC_LUT_RND_WRITE_CMD", 0, 0, 0, 0, 0, 0, 0);
 }
 
@@ -1308,7 +1285,7 @@ static inline uint64_t CAVM_EDEC_LUT_RND_WRITE_DATA0_FUNC(void) __attribute__ ((
 static inline uint64_t CAVM_EDEC_LUT_RND_WRITE_DATA0_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_LOKI))
-        return 0x87e043c80140ll;
+        return 0x87e043400140ll;
     __cavm_csr_fatal("EDEC_LUT_RND_WRITE_DATA0", 0, 0, 0, 0, 0, 0, 0);
 }
 
@@ -1346,7 +1323,7 @@ static inline uint64_t CAVM_EDEC_LUT_RND_WRITE_DATA1_FUNC(void) __attribute__ ((
 static inline uint64_t CAVM_EDEC_LUT_RND_WRITE_DATA1_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_LOKI))
-        return 0x87e043c80148ll;
+        return 0x87e043400148ll;
     __cavm_csr_fatal("EDEC_LUT_RND_WRITE_DATA1", 0, 0, 0, 0, 0, 0, 0);
 }
 
@@ -1384,7 +1361,7 @@ static inline uint64_t CAVM_EDEC_LUT_RND_WRITE_DATA2_FUNC(void) __attribute__ ((
 static inline uint64_t CAVM_EDEC_LUT_RND_WRITE_DATA2_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_LOKI))
-        return 0x87e043c80150ll;
+        return 0x87e043400150ll;
     __cavm_csr_fatal("EDEC_LUT_RND_WRITE_DATA2", 0, 0, 0, 0, 0, 0, 0);
 }
 
@@ -1422,7 +1399,7 @@ static inline uint64_t CAVM_EDEC_LUT_RND_WRITE_DATA3_FUNC(void) __attribute__ ((
 static inline uint64_t CAVM_EDEC_LUT_RND_WRITE_DATA3_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_LOKI))
-        return 0x87e043c80158ll;
+        return 0x87e043400158ll;
     __cavm_csr_fatal("EDEC_LUT_RND_WRITE_DATA3", 0, 0, 0, 0, 0, 0, 0);
 }
 
@@ -1459,7 +1436,7 @@ static inline uint64_t CAVM_EDEC_SCRATCH_FUNC(void) __attribute__ ((pure, always
 static inline uint64_t CAVM_EDEC_SCRATCH_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_LOKI))
-        return 0x87e043c81200ll;
+        return 0x87e043401200ll;
     __cavm_csr_fatal("EDEC_SCRATCH", 0, 0, 0, 0, 0, 0, 0);
 }
 
@@ -1468,6 +1445,61 @@ static inline uint64_t CAVM_EDEC_SCRATCH_FUNC(void)
 #define basename_CAVM_EDEC_SCRATCH "EDEC_SCRATCH"
 #define busnum_CAVM_EDEC_SCRATCH 0
 #define arguments_CAVM_EDEC_SCRATCH -1,-1,-1,-1
+
+/**
+ * Register (RSL) edec_slot#_cfg
+ *
+ * EDEC AB Job Configuration Register
+ * This register space contains the EDEC job configuration data.
+ * Software should not write this register directly, but instead use this
+ * format when writing the job configuration section of the job descriptor.
+ */
+union cavm_edec_slotx_cfg
+{
+    uint64_t u;
+    struct cavm_edec_slotx_cfg_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_32_63        : 32;
+        uint64_t num_sections          : 8;  /**< [ 31: 24](R/W) Number of sections in the packet. */
+        uint64_t reserved_16_23        : 8;
+        uint64_t byte_swap_disable     : 1;  /**< [ 15: 15](R/W) Disables the byte swap toward MHBW. */
+        uint64_t reserved_9_14         : 6;
+        uint64_t fix_mode_en           : 1;  /**< [  8:  8](R/W) When set, compression method is fixed and taken from [COMP_METH].
+                                                                 When clear, compression method is defined by packet's section headers. */
+        uint64_t iqwidth               : 4;  /**< [  7:  4](R/W) Width of compressed I/Q. Valid only when [FIX_MODE_EN] is set. */
+        uint64_t comp_meth             : 4;  /**< [  3:  0](R/W) Compression method. Enumerated by EDEC_COMP_METH_E Valid only if
+                                                                 [FIX_MODE_EN] is set. */
+#else /* Word 0 - Little Endian */
+        uint64_t comp_meth             : 4;  /**< [  3:  0](R/W) Compression method. Enumerated by EDEC_COMP_METH_E Valid only if
+                                                                 [FIX_MODE_EN] is set. */
+        uint64_t iqwidth               : 4;  /**< [  7:  4](R/W) Width of compressed I/Q. Valid only when [FIX_MODE_EN] is set. */
+        uint64_t fix_mode_en           : 1;  /**< [  8:  8](R/W) When set, compression method is fixed and taken from [COMP_METH].
+                                                                 When clear, compression method is defined by packet's section headers. */
+        uint64_t reserved_9_14         : 6;
+        uint64_t byte_swap_disable     : 1;  /**< [ 15: 15](R/W) Disables the byte swap toward MHBW. */
+        uint64_t reserved_16_23        : 8;
+        uint64_t num_sections          : 8;  /**< [ 31: 24](R/W) Number of sections in the packet. */
+        uint64_t reserved_32_63        : 32;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_edec_slotx_cfg_s cn; */
+};
+typedef union cavm_edec_slotx_cfg cavm_edec_slotx_cfg_t;
+
+static inline uint64_t CAVM_EDEC_SLOTX_CFG(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_EDEC_SLOTX_CFG(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=2))
+        return 0x87e043402000ll + 0x2000ll * ((a) & 0x3);
+    __cavm_csr_fatal("EDEC_SLOTX_CFG", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_EDEC_SLOTX_CFG(a) cavm_edec_slotx_cfg_t
+#define bustype_CAVM_EDEC_SLOTX_CFG(a) CSR_TYPE_RSL
+#define basename_CAVM_EDEC_SLOTX_CFG(a) "EDEC_SLOTX_CFG"
+#define busnum_CAVM_EDEC_SLOTX_CFG(a) (a)
+#define arguments_CAVM_EDEC_SLOTX_CFG(a) (a),-1,-1,-1
 
 /**
  * Register (RSL) edec_slot#_hdr_out_cfg_word0
@@ -1500,7 +1532,7 @@ static inline uint64_t CAVM_EDEC_SLOTX_HDR_OUT_CFG_WORD0(unsigned long a) __attr
 static inline uint64_t CAVM_EDEC_SLOTX_HDR_OUT_CFG_WORD0(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=2))
-        return 0x87e043c82010ll + 0x2000ll * ((a) & 0x3);
+        return 0x87e043402010ll + 0x2000ll * ((a) & 0x3);
     __cavm_csr_fatal("EDEC_SLOTX_HDR_OUT_CFG_WORD0", 1, a, 0, 0, 0, 0, 0);
 }
 
@@ -1547,7 +1579,7 @@ static inline uint64_t CAVM_EDEC_SLOTX_HDR_OUT_CFG_WORD1(unsigned long a) __attr
 static inline uint64_t CAVM_EDEC_SLOTX_HDR_OUT_CFG_WORD1(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=2))
-        return 0x87e043c82018ll + 0x2000ll * ((a) & 0x3);
+        return 0x87e043402018ll + 0x2000ll * ((a) & 0x3);
     __cavm_csr_fatal("EDEC_SLOTX_HDR_OUT_CFG_WORD1", 1, a, 0, 0, 0, 0, 0);
 }
 
@@ -1600,7 +1632,7 @@ static inline uint64_t CAVM_EDEC_SLOTX_HDR_OUT_DSP_JD(unsigned long a) __attribu
 static inline uint64_t CAVM_EDEC_SLOTX_HDR_OUT_DSP_JD(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=2))
-        return 0x87e043c82008ll + 0x2000ll * ((a) & 0x3);
+        return 0x87e043402008ll + 0x2000ll * ((a) & 0x3);
     __cavm_csr_fatal("EDEC_SLOTX_HDR_OUT_DSP_JD", 1, a, 0, 0, 0, 0, 0);
 }
 
@@ -1645,7 +1677,7 @@ static inline uint64_t CAVM_EDEC_STATUS_FUNC(void) __attribute__ ((pure, always_
 static inline uint64_t CAVM_EDEC_STATUS_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_LOKI))
-        return 0x87e043c80010ll;
+        return 0x87e043400010ll;
     __cavm_csr_fatal("EDEC_STATUS", 0, 0, 0, 0, 0, 0, 0);
 }
 

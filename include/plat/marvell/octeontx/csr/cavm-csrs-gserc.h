@@ -10096,10 +10096,10 @@ union cavm_gsercx_lanex_control_bcfg
                                                                  Use to disable the ln_tx_clk for power savings.
                                                                  For normal operation set [LN_TX_CLK_GATE_EN] to 1. */
         uint64_t tx_clk_mux_sel        : 5;  /**< [ 30: 26](R/W) Selects the clock source for ln_tx_clk input:
-                                                                   0x0 = 25G, 50G, and 100G data rates.
-                                                                   0x1 = 10G, 40G data rates if GSERC()_PHY_CTRL_BCFG[PHY_CTRL_RATE1] is
+                                                                   0x0 = 25G, 50G, and 100G data rates. Also for
+                                                                         10G, 40G data rates if GSERC()_PHY_CTRL_BCFG[PHY_CTRL_RATE1] is
                                                                          configured for the 10.3125Gbps data rate.
-                                                                   0x4 = 10G, 40G data rates if GSERC()_PHY_CTRL_BCFG[PHY_CTRL_RATE2] is
+                                                                   0x1 = 10G, 40G data rates if GSERC()_PHY_CTRL_BCFG[PHY_CTRL_RATE2] is
                                                                          configured for the 10.3125Gbps data rate.
                                                                          Also for RXAUI, DXAUI, and QSGMII data rates.
                                                                    0x4 = XAUI data rate.
@@ -10271,10 +10271,10 @@ union cavm_gsercx_lanex_control_bcfg
                                                                    0xE = 50G_CR2. */
         uint64_t reserved_25           : 1;
         uint64_t tx_clk_mux_sel        : 5;  /**< [ 30: 26](R/W) Selects the clock source for ln_tx_clk input:
-                                                                   0x0 = 25G, 50G, and 100G data rates.
-                                                                   0x1 = 10G, 40G data rates if GSERC()_PHY_CTRL_BCFG[PHY_CTRL_RATE1] is
+                                                                   0x0 = 25G, 50G, and 100G data rates. Also for
+                                                                         10G, 40G data rates if GSERC()_PHY_CTRL_BCFG[PHY_CTRL_RATE1] is
                                                                          configured for the 10.3125Gbps data rate.
-                                                                   0x4 = 10G, 40G data rates if GSERC()_PHY_CTRL_BCFG[PHY_CTRL_RATE2] is
+                                                                   0x1 = 10G, 40G data rates if GSERC()_PHY_CTRL_BCFG[PHY_CTRL_RATE2] is
                                                                          configured for the 10.3125Gbps data rate.
                                                                          Also for RXAUI, DXAUI, and QSGMII data rates.
                                                                    0x4 = XAUI data rate.

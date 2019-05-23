@@ -20,6 +20,606 @@
  */
 
 /**
+ * Register (NCB) cpri#_axc_rdy0_int
+ *
+ * INTERNAL: CPRI MHB AXC 0 Ready Notification Register
+ *
+ * These registers record the individual AXC ready notification status for AXCs 0..63 of Lane 0.
+ * If any of these are set and if the interrupt is not masked,
+ * CPRIX_MHB_INT.RP3_UL_AXC_MSG_RDY is also set.
+ */
+union cavm_cprix_axc_rdy0_int
+{
+    uint64_t u;
+    struct cavm_cprix_axc_rdy0_int_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t axc_msg_rdy           : 64; /**< [ 63:  0](R/W1C/H) AXC Message Ready Notification for AXCs 0..63  of Lane 0. Bit 0 corresponds to AXC0, Bit 1
+                                                                 corresponds to AXC1 and so on. This is an extension of the MHB_INT and causes
+                                                                 the same interrupt as MHB_INT */
+#else /* Word 0 - Little Endian */
+        uint64_t axc_msg_rdy           : 64; /**< [ 63:  0](R/W1C/H) AXC Message Ready Notification for AXCs 0..63  of Lane 0. Bit 0 corresponds to AXC0, Bit 1
+                                                                 corresponds to AXC1 and so on. This is an extension of the MHB_INT and causes
+                                                                 the same interrupt as MHB_INT */
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_cprix_axc_rdy0_int_s cn; */
+};
+typedef union cavm_cprix_axc_rdy0_int cavm_cprix_axc_rdy0_int_t;
+
+static inline uint64_t CAVM_CPRIX_AXC_RDY0_INT(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CPRIX_AXC_RDY0_INT(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=2))
+        return 0x864000000220ll + 0x1000000000ll * ((a) & 0x3);
+    __cavm_csr_fatal("CPRIX_AXC_RDY0_INT", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_CPRIX_AXC_RDY0_INT(a) cavm_cprix_axc_rdy0_int_t
+#define bustype_CAVM_CPRIX_AXC_RDY0_INT(a) CSR_TYPE_NCB
+#define basename_CAVM_CPRIX_AXC_RDY0_INT(a) "CPRIX_AXC_RDY0_INT"
+#define busnum_CAVM_CPRIX_AXC_RDY0_INT(a) (a)
+#define arguments_CAVM_CPRIX_AXC_RDY0_INT(a) (a),-1,-1,-1
+
+/**
+ * Register (NCB) cpri#_axc_rdy0_int_ena_w1c
+ *
+ * INTERNAL: CPRI MHB AXC 0 Ready Notification Enable Clear Register
+ *
+ * This register clears interrupt enable bits.
+ */
+union cavm_cprix_axc_rdy0_int_ena_w1c
+{
+    uint64_t u;
+    struct cavm_cprix_axc_rdy0_int_ena_w1c_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t axc_msg_rdy           : 64; /**< [ 63:  0](R/W1C/H) Reads or clears enable for CPRI(0..2)_AXC_RDY0_INT[AXC_MSG_RDY]. */
+#else /* Word 0 - Little Endian */
+        uint64_t axc_msg_rdy           : 64; /**< [ 63:  0](R/W1C/H) Reads or clears enable for CPRI(0..2)_AXC_RDY0_INT[AXC_MSG_RDY]. */
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_cprix_axc_rdy0_int_ena_w1c_s cn; */
+};
+typedef union cavm_cprix_axc_rdy0_int_ena_w1c cavm_cprix_axc_rdy0_int_ena_w1c_t;
+
+static inline uint64_t CAVM_CPRIX_AXC_RDY0_INT_ENA_W1C(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CPRIX_AXC_RDY0_INT_ENA_W1C(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=2))
+        return 0x864000000230ll + 0x1000000000ll * ((a) & 0x3);
+    __cavm_csr_fatal("CPRIX_AXC_RDY0_INT_ENA_W1C", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_CPRIX_AXC_RDY0_INT_ENA_W1C(a) cavm_cprix_axc_rdy0_int_ena_w1c_t
+#define bustype_CAVM_CPRIX_AXC_RDY0_INT_ENA_W1C(a) CSR_TYPE_NCB
+#define basename_CAVM_CPRIX_AXC_RDY0_INT_ENA_W1C(a) "CPRIX_AXC_RDY0_INT_ENA_W1C"
+#define busnum_CAVM_CPRIX_AXC_RDY0_INT_ENA_W1C(a) (a)
+#define arguments_CAVM_CPRIX_AXC_RDY0_INT_ENA_W1C(a) (a),-1,-1,-1
+
+/**
+ * Register (NCB) cpri#_axc_rdy0_int_ena_w1s
+ *
+ * INTERNAL: CPRI MHB AXC 0 Ready Notification Enable Set Register
+ *
+ * This register sets interrupt enable bits.
+ */
+union cavm_cprix_axc_rdy0_int_ena_w1s
+{
+    uint64_t u;
+    struct cavm_cprix_axc_rdy0_int_ena_w1s_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t axc_msg_rdy           : 64; /**< [ 63:  0](R/W1S/H) Reads or sets enable for CPRI(0..2)_AXC_RDY0_INT[AXC_MSG_RDY]. */
+#else /* Word 0 - Little Endian */
+        uint64_t axc_msg_rdy           : 64; /**< [ 63:  0](R/W1S/H) Reads or sets enable for CPRI(0..2)_AXC_RDY0_INT[AXC_MSG_RDY]. */
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_cprix_axc_rdy0_int_ena_w1s_s cn; */
+};
+typedef union cavm_cprix_axc_rdy0_int_ena_w1s cavm_cprix_axc_rdy0_int_ena_w1s_t;
+
+static inline uint64_t CAVM_CPRIX_AXC_RDY0_INT_ENA_W1S(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CPRIX_AXC_RDY0_INT_ENA_W1S(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=2))
+        return 0x864000000228ll + 0x1000000000ll * ((a) & 0x3);
+    __cavm_csr_fatal("CPRIX_AXC_RDY0_INT_ENA_W1S", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_CPRIX_AXC_RDY0_INT_ENA_W1S(a) cavm_cprix_axc_rdy0_int_ena_w1s_t
+#define bustype_CAVM_CPRIX_AXC_RDY0_INT_ENA_W1S(a) CSR_TYPE_NCB
+#define basename_CAVM_CPRIX_AXC_RDY0_INT_ENA_W1S(a) "CPRIX_AXC_RDY0_INT_ENA_W1S"
+#define busnum_CAVM_CPRIX_AXC_RDY0_INT_ENA_W1S(a) (a)
+#define arguments_CAVM_CPRIX_AXC_RDY0_INT_ENA_W1S(a) (a),-1,-1,-1
+
+/**
+ * Register (NCB) cpri#_axc_rdy0_int_w1s
+ *
+ * INTERNAL: CPRI MHB AXC 0 Ready Notification Set Register
+ *
+ * This register sets interrupt bits.
+ */
+union cavm_cprix_axc_rdy0_int_w1s
+{
+    uint64_t u;
+    struct cavm_cprix_axc_rdy0_int_w1s_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t axc_msg_rdy           : 64; /**< [ 63:  0](R/W1S/H) Reads or sets CPRI(0..2)_AXC_RDY0_INT[AXC_MSG_RDY]. */
+#else /* Word 0 - Little Endian */
+        uint64_t axc_msg_rdy           : 64; /**< [ 63:  0](R/W1S/H) Reads or sets CPRI(0..2)_AXC_RDY0_INT[AXC_MSG_RDY]. */
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_cprix_axc_rdy0_int_w1s_s cn; */
+};
+typedef union cavm_cprix_axc_rdy0_int_w1s cavm_cprix_axc_rdy0_int_w1s_t;
+
+static inline uint64_t CAVM_CPRIX_AXC_RDY0_INT_W1S(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CPRIX_AXC_RDY0_INT_W1S(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=2))
+        return 0x864000000238ll + 0x1000000000ll * ((a) & 0x3);
+    __cavm_csr_fatal("CPRIX_AXC_RDY0_INT_W1S", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_CPRIX_AXC_RDY0_INT_W1S(a) cavm_cprix_axc_rdy0_int_w1s_t
+#define bustype_CAVM_CPRIX_AXC_RDY0_INT_W1S(a) CSR_TYPE_NCB
+#define basename_CAVM_CPRIX_AXC_RDY0_INT_W1S(a) "CPRIX_AXC_RDY0_INT_W1S"
+#define busnum_CAVM_CPRIX_AXC_RDY0_INT_W1S(a) (a)
+#define arguments_CAVM_CPRIX_AXC_RDY0_INT_W1S(a) (a),-1,-1,-1
+
+/**
+ * Register (NCB) cpri#_axc_rdy1_int
+ *
+ * INTERNAL: CPRI MHB AXC 1 Ready Notification Register
+ *
+ * These registers record the individual AXC ready notification status for AXCs 64..127 of Lane 0.
+ * If any of these are set and if the interrupt is not masked,
+ * CPRIX_MHB_INT.RP3_UL_AXC_MSG_RDY is also set.
+ */
+union cavm_cprix_axc_rdy1_int
+{
+    uint64_t u;
+    struct cavm_cprix_axc_rdy1_int_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t axc_msg_rdy           : 64; /**< [ 63:  0](R/W1C/H) AXC Message Ready Notification for AXCs 64..127. Bit 0 corresponds to AXC64, Bit
+                                                                 1 corresponds to AXC65 and so on. This is an extension of the MHB_INT and causes
+                                                                 the same interrupt as MHB_INT */
+#else /* Word 0 - Little Endian */
+        uint64_t axc_msg_rdy           : 64; /**< [ 63:  0](R/W1C/H) AXC Message Ready Notification for AXCs 64..127. Bit 0 corresponds to AXC64, Bit
+                                                                 1 corresponds to AXC65 and so on. This is an extension of the MHB_INT and causes
+                                                                 the same interrupt as MHB_INT */
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_cprix_axc_rdy1_int_s cn; */
+};
+typedef union cavm_cprix_axc_rdy1_int cavm_cprix_axc_rdy1_int_t;
+
+static inline uint64_t CAVM_CPRIX_AXC_RDY1_INT(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CPRIX_AXC_RDY1_INT(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=2))
+        return 0x864000000240ll + 0x1000000000ll * ((a) & 0x3);
+    __cavm_csr_fatal("CPRIX_AXC_RDY1_INT", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_CPRIX_AXC_RDY1_INT(a) cavm_cprix_axc_rdy1_int_t
+#define bustype_CAVM_CPRIX_AXC_RDY1_INT(a) CSR_TYPE_NCB
+#define basename_CAVM_CPRIX_AXC_RDY1_INT(a) "CPRIX_AXC_RDY1_INT"
+#define busnum_CAVM_CPRIX_AXC_RDY1_INT(a) (a)
+#define arguments_CAVM_CPRIX_AXC_RDY1_INT(a) (a),-1,-1,-1
+
+/**
+ * Register (NCB) cpri#_axc_rdy1_int_ena_w1c
+ *
+ * INTERNAL: CPRI MHB AXC 1 Ready Notification Enable Clear Register
+ *
+ * This register clears interrupt enable bits.
+ */
+union cavm_cprix_axc_rdy1_int_ena_w1c
+{
+    uint64_t u;
+    struct cavm_cprix_axc_rdy1_int_ena_w1c_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t axc_msg_rdy           : 64; /**< [ 63:  0](R/W1C/H) Reads or clears enable for CPRI(0..2)_AXC_RDY1_INT[AXC_MSG_RDY]. */
+#else /* Word 0 - Little Endian */
+        uint64_t axc_msg_rdy           : 64; /**< [ 63:  0](R/W1C/H) Reads or clears enable for CPRI(0..2)_AXC_RDY1_INT[AXC_MSG_RDY]. */
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_cprix_axc_rdy1_int_ena_w1c_s cn; */
+};
+typedef union cavm_cprix_axc_rdy1_int_ena_w1c cavm_cprix_axc_rdy1_int_ena_w1c_t;
+
+static inline uint64_t CAVM_CPRIX_AXC_RDY1_INT_ENA_W1C(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CPRIX_AXC_RDY1_INT_ENA_W1C(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=2))
+        return 0x864000000250ll + 0x1000000000ll * ((a) & 0x3);
+    __cavm_csr_fatal("CPRIX_AXC_RDY1_INT_ENA_W1C", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_CPRIX_AXC_RDY1_INT_ENA_W1C(a) cavm_cprix_axc_rdy1_int_ena_w1c_t
+#define bustype_CAVM_CPRIX_AXC_RDY1_INT_ENA_W1C(a) CSR_TYPE_NCB
+#define basename_CAVM_CPRIX_AXC_RDY1_INT_ENA_W1C(a) "CPRIX_AXC_RDY1_INT_ENA_W1C"
+#define busnum_CAVM_CPRIX_AXC_RDY1_INT_ENA_W1C(a) (a)
+#define arguments_CAVM_CPRIX_AXC_RDY1_INT_ENA_W1C(a) (a),-1,-1,-1
+
+/**
+ * Register (NCB) cpri#_axc_rdy1_int_ena_w1s
+ *
+ * INTERNAL: CPRI MHB AXC 1 Ready Notification Enable Set Register
+ *
+ * This register sets interrupt enable bits.
+ */
+union cavm_cprix_axc_rdy1_int_ena_w1s
+{
+    uint64_t u;
+    struct cavm_cprix_axc_rdy1_int_ena_w1s_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t axc_msg_rdy           : 64; /**< [ 63:  0](R/W1S/H) Reads or sets enable for CPRI(0..2)_AXC_RDY1_INT[AXC_MSG_RDY]. */
+#else /* Word 0 - Little Endian */
+        uint64_t axc_msg_rdy           : 64; /**< [ 63:  0](R/W1S/H) Reads or sets enable for CPRI(0..2)_AXC_RDY1_INT[AXC_MSG_RDY]. */
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_cprix_axc_rdy1_int_ena_w1s_s cn; */
+};
+typedef union cavm_cprix_axc_rdy1_int_ena_w1s cavm_cprix_axc_rdy1_int_ena_w1s_t;
+
+static inline uint64_t CAVM_CPRIX_AXC_RDY1_INT_ENA_W1S(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CPRIX_AXC_RDY1_INT_ENA_W1S(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=2))
+        return 0x864000000248ll + 0x1000000000ll * ((a) & 0x3);
+    __cavm_csr_fatal("CPRIX_AXC_RDY1_INT_ENA_W1S", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_CPRIX_AXC_RDY1_INT_ENA_W1S(a) cavm_cprix_axc_rdy1_int_ena_w1s_t
+#define bustype_CAVM_CPRIX_AXC_RDY1_INT_ENA_W1S(a) CSR_TYPE_NCB
+#define basename_CAVM_CPRIX_AXC_RDY1_INT_ENA_W1S(a) "CPRIX_AXC_RDY1_INT_ENA_W1S"
+#define busnum_CAVM_CPRIX_AXC_RDY1_INT_ENA_W1S(a) (a)
+#define arguments_CAVM_CPRIX_AXC_RDY1_INT_ENA_W1S(a) (a),-1,-1,-1
+
+/**
+ * Register (NCB) cpri#_axc_rdy1_int_w1s
+ *
+ * INTERNAL: CPRI MHB AXC 1 Ready Notification Set Register
+ *
+ * This register sets interrupt bits.
+ */
+union cavm_cprix_axc_rdy1_int_w1s
+{
+    uint64_t u;
+    struct cavm_cprix_axc_rdy1_int_w1s_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t axc_msg_rdy           : 64; /**< [ 63:  0](R/W1S/H) Reads or sets CPRI(0..2)_AXC_RDY1_INT[AXC_MSG_RDY]. */
+#else /* Word 0 - Little Endian */
+        uint64_t axc_msg_rdy           : 64; /**< [ 63:  0](R/W1S/H) Reads or sets CPRI(0..2)_AXC_RDY1_INT[AXC_MSG_RDY]. */
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_cprix_axc_rdy1_int_w1s_s cn; */
+};
+typedef union cavm_cprix_axc_rdy1_int_w1s cavm_cprix_axc_rdy1_int_w1s_t;
+
+static inline uint64_t CAVM_CPRIX_AXC_RDY1_INT_W1S(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CPRIX_AXC_RDY1_INT_W1S(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=2))
+        return 0x864000000258ll + 0x1000000000ll * ((a) & 0x3);
+    __cavm_csr_fatal("CPRIX_AXC_RDY1_INT_W1S", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_CPRIX_AXC_RDY1_INT_W1S(a) cavm_cprix_axc_rdy1_int_w1s_t
+#define bustype_CAVM_CPRIX_AXC_RDY1_INT_W1S(a) CSR_TYPE_NCB
+#define basename_CAVM_CPRIX_AXC_RDY1_INT_W1S(a) "CPRIX_AXC_RDY1_INT_W1S"
+#define busnum_CAVM_CPRIX_AXC_RDY1_INT_W1S(a) (a)
+#define arguments_CAVM_CPRIX_AXC_RDY1_INT_W1S(a) (a),-1,-1,-1
+
+/**
+ * Register (NCB) cpri#_axc_rdy2_int
+ *
+ * INTERNAL: CPRI MHB AXC 2 Ready Notification Register
+ *
+ * These registers record the individual AXC ready notification status for AXCs 0..63 of Lane 1.
+ * If any of these are set and if the interrupt is not masked,
+ * CPRIX_MHB_INT.RP3_UL_AXC_MSG_RDY is also set.
+ */
+union cavm_cprix_axc_rdy2_int
+{
+    uint64_t u;
+    struct cavm_cprix_axc_rdy2_int_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t axc_msg_rdy           : 64; /**< [ 63:  0](R/W1C/H) AXC Message Ready Notification for AXCs 0..63  of Lane 1. Bit 0 corresponds to AXC0, Bit 1
+                                                                 corresponds to AXC1 and so on. This is an extension of the MHB_INT and causes
+                                                                 the same interrupt as MHB_INT */
+#else /* Word 0 - Little Endian */
+        uint64_t axc_msg_rdy           : 64; /**< [ 63:  0](R/W1C/H) AXC Message Ready Notification for AXCs 0..63  of Lane 1. Bit 0 corresponds to AXC0, Bit 1
+                                                                 corresponds to AXC1 and so on. This is an extension of the MHB_INT and causes
+                                                                 the same interrupt as MHB_INT */
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_cprix_axc_rdy2_int_s cn; */
+};
+typedef union cavm_cprix_axc_rdy2_int cavm_cprix_axc_rdy2_int_t;
+
+static inline uint64_t CAVM_CPRIX_AXC_RDY2_INT(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CPRIX_AXC_RDY2_INT(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=2))
+        return 0x864000000260ll + 0x1000000000ll * ((a) & 0x3);
+    __cavm_csr_fatal("CPRIX_AXC_RDY2_INT", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_CPRIX_AXC_RDY2_INT(a) cavm_cprix_axc_rdy2_int_t
+#define bustype_CAVM_CPRIX_AXC_RDY2_INT(a) CSR_TYPE_NCB
+#define basename_CAVM_CPRIX_AXC_RDY2_INT(a) "CPRIX_AXC_RDY2_INT"
+#define busnum_CAVM_CPRIX_AXC_RDY2_INT(a) (a)
+#define arguments_CAVM_CPRIX_AXC_RDY2_INT(a) (a),-1,-1,-1
+
+/**
+ * Register (NCB) cpri#_axc_rdy2_int_ena_w1c
+ *
+ * INTERNAL: CPRI MHB AXC 2 Ready Notification Enable Clear Register
+ *
+ * This register clears interrupt enable bits.
+ */
+union cavm_cprix_axc_rdy2_int_ena_w1c
+{
+    uint64_t u;
+    struct cavm_cprix_axc_rdy2_int_ena_w1c_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t axc_msg_rdy           : 64; /**< [ 63:  0](R/W1C/H) Reads or clears enable for CPRI(0..2)_AXC_RDY2_INT[AXC_MSG_RDY]. */
+#else /* Word 0 - Little Endian */
+        uint64_t axc_msg_rdy           : 64; /**< [ 63:  0](R/W1C/H) Reads or clears enable for CPRI(0..2)_AXC_RDY2_INT[AXC_MSG_RDY]. */
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_cprix_axc_rdy2_int_ena_w1c_s cn; */
+};
+typedef union cavm_cprix_axc_rdy2_int_ena_w1c cavm_cprix_axc_rdy2_int_ena_w1c_t;
+
+static inline uint64_t CAVM_CPRIX_AXC_RDY2_INT_ENA_W1C(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CPRIX_AXC_RDY2_INT_ENA_W1C(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=2))
+        return 0x864000000270ll + 0x1000000000ll * ((a) & 0x3);
+    __cavm_csr_fatal("CPRIX_AXC_RDY2_INT_ENA_W1C", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_CPRIX_AXC_RDY2_INT_ENA_W1C(a) cavm_cprix_axc_rdy2_int_ena_w1c_t
+#define bustype_CAVM_CPRIX_AXC_RDY2_INT_ENA_W1C(a) CSR_TYPE_NCB
+#define basename_CAVM_CPRIX_AXC_RDY2_INT_ENA_W1C(a) "CPRIX_AXC_RDY2_INT_ENA_W1C"
+#define busnum_CAVM_CPRIX_AXC_RDY2_INT_ENA_W1C(a) (a)
+#define arguments_CAVM_CPRIX_AXC_RDY2_INT_ENA_W1C(a) (a),-1,-1,-1
+
+/**
+ * Register (NCB) cpri#_axc_rdy2_int_ena_w1s
+ *
+ * INTERNAL: CPRI MHB AXC 2 Ready Notification Enable Set Register
+ *
+ * This register sets interrupt enable bits.
+ */
+union cavm_cprix_axc_rdy2_int_ena_w1s
+{
+    uint64_t u;
+    struct cavm_cprix_axc_rdy2_int_ena_w1s_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t axc_msg_rdy           : 64; /**< [ 63:  0](R/W1S/H) Reads or sets enable for CPRI(0..2)_AXC_RDY2_INT[AXC_MSG_RDY]. */
+#else /* Word 0 - Little Endian */
+        uint64_t axc_msg_rdy           : 64; /**< [ 63:  0](R/W1S/H) Reads or sets enable for CPRI(0..2)_AXC_RDY2_INT[AXC_MSG_RDY]. */
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_cprix_axc_rdy2_int_ena_w1s_s cn; */
+};
+typedef union cavm_cprix_axc_rdy2_int_ena_w1s cavm_cprix_axc_rdy2_int_ena_w1s_t;
+
+static inline uint64_t CAVM_CPRIX_AXC_RDY2_INT_ENA_W1S(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CPRIX_AXC_RDY2_INT_ENA_W1S(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=2))
+        return 0x864000000268ll + 0x1000000000ll * ((a) & 0x3);
+    __cavm_csr_fatal("CPRIX_AXC_RDY2_INT_ENA_W1S", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_CPRIX_AXC_RDY2_INT_ENA_W1S(a) cavm_cprix_axc_rdy2_int_ena_w1s_t
+#define bustype_CAVM_CPRIX_AXC_RDY2_INT_ENA_W1S(a) CSR_TYPE_NCB
+#define basename_CAVM_CPRIX_AXC_RDY2_INT_ENA_W1S(a) "CPRIX_AXC_RDY2_INT_ENA_W1S"
+#define busnum_CAVM_CPRIX_AXC_RDY2_INT_ENA_W1S(a) (a)
+#define arguments_CAVM_CPRIX_AXC_RDY2_INT_ENA_W1S(a) (a),-1,-1,-1
+
+/**
+ * Register (NCB) cpri#_axc_rdy2_int_w1s
+ *
+ * INTERNAL: CPRI MHB AXC 2 Ready Notification Set Register
+ *
+ * This register sets interrupt bits.
+ */
+union cavm_cprix_axc_rdy2_int_w1s
+{
+    uint64_t u;
+    struct cavm_cprix_axc_rdy2_int_w1s_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t axc_msg_rdy           : 64; /**< [ 63:  0](R/W1S/H) Reads or sets CPRI(0..2)_AXC_RDY2_INT[AXC_MSG_RDY]. */
+#else /* Word 0 - Little Endian */
+        uint64_t axc_msg_rdy           : 64; /**< [ 63:  0](R/W1S/H) Reads or sets CPRI(0..2)_AXC_RDY2_INT[AXC_MSG_RDY]. */
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_cprix_axc_rdy2_int_w1s_s cn; */
+};
+typedef union cavm_cprix_axc_rdy2_int_w1s cavm_cprix_axc_rdy2_int_w1s_t;
+
+static inline uint64_t CAVM_CPRIX_AXC_RDY2_INT_W1S(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CPRIX_AXC_RDY2_INT_W1S(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=2))
+        return 0x864000000278ll + 0x1000000000ll * ((a) & 0x3);
+    __cavm_csr_fatal("CPRIX_AXC_RDY2_INT_W1S", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_CPRIX_AXC_RDY2_INT_W1S(a) cavm_cprix_axc_rdy2_int_w1s_t
+#define bustype_CAVM_CPRIX_AXC_RDY2_INT_W1S(a) CSR_TYPE_NCB
+#define basename_CAVM_CPRIX_AXC_RDY2_INT_W1S(a) "CPRIX_AXC_RDY2_INT_W1S"
+#define busnum_CAVM_CPRIX_AXC_RDY2_INT_W1S(a) (a)
+#define arguments_CAVM_CPRIX_AXC_RDY2_INT_W1S(a) (a),-1,-1,-1
+
+/**
+ * Register (NCB) cpri#_axc_rdy3_int
+ *
+ * INTERNAL: CPRI MHB AXC 3 Ready Notification Register
+ *
+ * These registers record the individual AXC ready notification status for AXCs 64..127 of Lane 1.
+ * If any of these are set and if the interrupt is not masked,
+ * CPRIX_MHB_INT.RP3_UL_AXC_MSG_RDY is also set.
+ */
+union cavm_cprix_axc_rdy3_int
+{
+    uint64_t u;
+    struct cavm_cprix_axc_rdy3_int_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t axc_msg_rdy           : 64; /**< [ 63:  0](R/W1C/H) AXC Message Ready Notification for AXCs 64..127 of Lane 1. Bit 0 corresponds to AXC64, Bit
+                                                                 1 corresponds to AXC65 and so on. This is an extension of the MHB_INT and causes
+                                                                 the same interrupt as MHB_INT */
+#else /* Word 0 - Little Endian */
+        uint64_t axc_msg_rdy           : 64; /**< [ 63:  0](R/W1C/H) AXC Message Ready Notification for AXCs 64..127 of Lane 1. Bit 0 corresponds to AXC64, Bit
+                                                                 1 corresponds to AXC65 and so on. This is an extension of the MHB_INT and causes
+                                                                 the same interrupt as MHB_INT */
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_cprix_axc_rdy3_int_s cn; */
+};
+typedef union cavm_cprix_axc_rdy3_int cavm_cprix_axc_rdy3_int_t;
+
+static inline uint64_t CAVM_CPRIX_AXC_RDY3_INT(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CPRIX_AXC_RDY3_INT(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=2))
+        return 0x864000000280ll + 0x1000000000ll * ((a) & 0x3);
+    __cavm_csr_fatal("CPRIX_AXC_RDY3_INT", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_CPRIX_AXC_RDY3_INT(a) cavm_cprix_axc_rdy3_int_t
+#define bustype_CAVM_CPRIX_AXC_RDY3_INT(a) CSR_TYPE_NCB
+#define basename_CAVM_CPRIX_AXC_RDY3_INT(a) "CPRIX_AXC_RDY3_INT"
+#define busnum_CAVM_CPRIX_AXC_RDY3_INT(a) (a)
+#define arguments_CAVM_CPRIX_AXC_RDY3_INT(a) (a),-1,-1,-1
+
+/**
+ * Register (NCB) cpri#_axc_rdy3_int_ena_w1c
+ *
+ * INTERNAL: CPRI MHB AXC 3 Ready Notification Enable Clear Register
+ *
+ * This register clears interrupt enable bits.
+ */
+union cavm_cprix_axc_rdy3_int_ena_w1c
+{
+    uint64_t u;
+    struct cavm_cprix_axc_rdy3_int_ena_w1c_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t axc_msg_rdy           : 64; /**< [ 63:  0](R/W1C/H) Reads or clears enable for CPRI(0..2)_AXC_RDY3_INT[AXC_MSG_RDY]. */
+#else /* Word 0 - Little Endian */
+        uint64_t axc_msg_rdy           : 64; /**< [ 63:  0](R/W1C/H) Reads or clears enable for CPRI(0..2)_AXC_RDY3_INT[AXC_MSG_RDY]. */
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_cprix_axc_rdy3_int_ena_w1c_s cn; */
+};
+typedef union cavm_cprix_axc_rdy3_int_ena_w1c cavm_cprix_axc_rdy3_int_ena_w1c_t;
+
+static inline uint64_t CAVM_CPRIX_AXC_RDY3_INT_ENA_W1C(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CPRIX_AXC_RDY3_INT_ENA_W1C(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=2))
+        return 0x864000000290ll + 0x1000000000ll * ((a) & 0x3);
+    __cavm_csr_fatal("CPRIX_AXC_RDY3_INT_ENA_W1C", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_CPRIX_AXC_RDY3_INT_ENA_W1C(a) cavm_cprix_axc_rdy3_int_ena_w1c_t
+#define bustype_CAVM_CPRIX_AXC_RDY3_INT_ENA_W1C(a) CSR_TYPE_NCB
+#define basename_CAVM_CPRIX_AXC_RDY3_INT_ENA_W1C(a) "CPRIX_AXC_RDY3_INT_ENA_W1C"
+#define busnum_CAVM_CPRIX_AXC_RDY3_INT_ENA_W1C(a) (a)
+#define arguments_CAVM_CPRIX_AXC_RDY3_INT_ENA_W1C(a) (a),-1,-1,-1
+
+/**
+ * Register (NCB) cpri#_axc_rdy3_int_ena_w1s
+ *
+ * INTERNAL: CPRI MHB AXC 3 Ready Notification Enable Set Register
+ *
+ * This register sets interrupt enable bits.
+ */
+union cavm_cprix_axc_rdy3_int_ena_w1s
+{
+    uint64_t u;
+    struct cavm_cprix_axc_rdy3_int_ena_w1s_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t axc_msg_rdy           : 64; /**< [ 63:  0](R/W1S/H) Reads or sets enable for CPRI(0..2)_AXC_RDY3_INT[AXC_MSG_RDY]. */
+#else /* Word 0 - Little Endian */
+        uint64_t axc_msg_rdy           : 64; /**< [ 63:  0](R/W1S/H) Reads or sets enable for CPRI(0..2)_AXC_RDY3_INT[AXC_MSG_RDY]. */
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_cprix_axc_rdy3_int_ena_w1s_s cn; */
+};
+typedef union cavm_cprix_axc_rdy3_int_ena_w1s cavm_cprix_axc_rdy3_int_ena_w1s_t;
+
+static inline uint64_t CAVM_CPRIX_AXC_RDY3_INT_ENA_W1S(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CPRIX_AXC_RDY3_INT_ENA_W1S(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=2))
+        return 0x864000000288ll + 0x1000000000ll * ((a) & 0x3);
+    __cavm_csr_fatal("CPRIX_AXC_RDY3_INT_ENA_W1S", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_CPRIX_AXC_RDY3_INT_ENA_W1S(a) cavm_cprix_axc_rdy3_int_ena_w1s_t
+#define bustype_CAVM_CPRIX_AXC_RDY3_INT_ENA_W1S(a) CSR_TYPE_NCB
+#define basename_CAVM_CPRIX_AXC_RDY3_INT_ENA_W1S(a) "CPRIX_AXC_RDY3_INT_ENA_W1S"
+#define busnum_CAVM_CPRIX_AXC_RDY3_INT_ENA_W1S(a) (a)
+#define arguments_CAVM_CPRIX_AXC_RDY3_INT_ENA_W1S(a) (a),-1,-1,-1
+
+/**
+ * Register (NCB) cpri#_axc_rdy3_int_w1s
+ *
+ * INTERNAL: CPRI MHB AXC 3 Ready Notification Set Register
+ *
+ * This register sets interrupt bits.
+ */
+union cavm_cprix_axc_rdy3_int_w1s
+{
+    uint64_t u;
+    struct cavm_cprix_axc_rdy3_int_w1s_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t axc_msg_rdy           : 64; /**< [ 63:  0](R/W1S/H) Reads or sets CPRI(0..2)_AXC_RDY3_INT[AXC_MSG_RDY]. */
+#else /* Word 0 - Little Endian */
+        uint64_t axc_msg_rdy           : 64; /**< [ 63:  0](R/W1S/H) Reads or sets CPRI(0..2)_AXC_RDY3_INT[AXC_MSG_RDY]. */
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_cprix_axc_rdy3_int_w1s_s cn; */
+};
+typedef union cavm_cprix_axc_rdy3_int_w1s cavm_cprix_axc_rdy3_int_w1s_t;
+
+static inline uint64_t CAVM_CPRIX_AXC_RDY3_INT_W1S(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CPRIX_AXC_RDY3_INT_W1S(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=2))
+        return 0x864000000298ll + 0x1000000000ll * ((a) & 0x3);
+    __cavm_csr_fatal("CPRIX_AXC_RDY3_INT_W1S", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_CPRIX_AXC_RDY3_INT_W1S(a) cavm_cprix_axc_rdy3_int_w1s_t
+#define bustype_CAVM_CPRIX_AXC_RDY3_INT_W1S(a) CSR_TYPE_NCB
+#define basename_CAVM_CPRIX_AXC_RDY3_INT_W1S(a) "CPRIX_AXC_RDY3_INT_W1S"
+#define busnum_CAVM_CPRIX_AXC_RDY3_INT_W1S(a) (a)
+#define arguments_CAVM_CPRIX_AXC_RDY3_INT_W1S(a) (a),-1,-1,-1
+
+/**
  * Register (NCB) cpri#_axi_control
  *
  * INTERNAL: CPRI AXI_CONTROL Register
@@ -32,13 +632,11 @@ union cavm_cprix_axi_control
     struct cavm_cprix_axi_control_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_2_63         : 62;
-        uint64_t axi_gmii_bad_crc_drop_disable : 1;/**< [  1:  1](R/W) Disables dropping of UL GMII frames on Bad CRC */
-        uint64_t axi_wr_wait_on_resp_en : 1; /**< [  0:  0](R/W) Enables AXI slave to wait for Write Response before making the next request */
+        uint64_t reserved_1_63         : 63;
+        uint64_t axi_gmii_bad_crc_drop_disable : 1;/**< [  0:  0](R/W) Disables dropping of UL GMII frames on Bad CRC */
 #else /* Word 0 - Little Endian */
-        uint64_t axi_wr_wait_on_resp_en : 1; /**< [  0:  0](R/W) Enables AXI slave to wait for Write Response before making the next request */
-        uint64_t axi_gmii_bad_crc_drop_disable : 1;/**< [  1:  1](R/W) Disables dropping of UL GMII frames on Bad CRC */
-        uint64_t reserved_2_63         : 62;
+        uint64_t axi_gmii_bad_crc_drop_disable : 1;/**< [  0:  0](R/W) Disables dropping of UL GMII frames on Bad CRC */
+        uint64_t reserved_1_63         : 63;
 #endif /* Word 0 - End */
     } s;
     /* struct cavm_cprix_axi_control_s cn; */
@@ -11476,8 +12074,8 @@ typedef union cavm_cprix_cn4ipx_rp3_in1_0_lnx cavm_cprix_cn4ipx_rp3_in1_0_lnx_t;
 static inline uint64_t CAVM_CPRIX_CN4IPX_RP3_IN1_0_LNX(unsigned long a, unsigned long b, unsigned long c) __attribute__ ((pure, always_inline));
 static inline uint64_t CAVM_CPRIX_CN4IPX_RP3_IN1_0_LNX(unsigned long a, unsigned long b, unsigned long c)
 {
-    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=2) && (b<=1) && (c<=2)))
-        return 0x86400080f064ll + 0x1000000000ll * ((a) & 0x3) + 0x100000ll * ((b) & 0x1) + 0x14ll * ((c) & 0x3);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=2) && (b<=1) && (c<=1)))
+        return 0x86400080f064ll + 0x1000000000ll * ((a) & 0x3) + 0x100000ll * ((b) & 0x1) + 0x14ll * ((c) & 0x1);
     __cavm_csr_fatal("CPRIX_CN4IPX_RP3_IN1_0_LNX", 3, a, b, c, 0, 0, 0);
 }
 
@@ -11514,8 +12112,8 @@ typedef union cavm_cprix_cn4ipx_rp3_in1_1_lnx cavm_cprix_cn4ipx_rp3_in1_1_lnx_t;
 static inline uint64_t CAVM_CPRIX_CN4IPX_RP3_IN1_1_LNX(unsigned long a, unsigned long b, unsigned long c) __attribute__ ((pure, always_inline));
 static inline uint64_t CAVM_CPRIX_CN4IPX_RP3_IN1_1_LNX(unsigned long a, unsigned long b, unsigned long c)
 {
-    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=2) && (b<=1) && (c<=2)))
-        return 0x86400080f068ll + 0x1000000000ll * ((a) & 0x3) + 0x100000ll * ((b) & 0x1) + 0x14ll * ((c) & 0x3);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=2) && (b<=1) && (c<=1)))
+        return 0x86400080f068ll + 0x1000000000ll * ((a) & 0x3) + 0x100000ll * ((b) & 0x1) + 0x14ll * ((c) & 0x1);
     __cavm_csr_fatal("CPRIX_CN4IPX_RP3_IN1_1_LNX", 3, a, b, c, 0, 0, 0);
 }
 
@@ -11716,8 +12314,8 @@ typedef union cavm_cprix_cn4ipx_rp3_sn1_0_lnx cavm_cprix_cn4ipx_rp3_sn1_0_lnx_t;
 static inline uint64_t CAVM_CPRIX_CN4IPX_RP3_SN1_0_LNX(unsigned long a, unsigned long b, unsigned long c) __attribute__ ((pure, always_inline));
 static inline uint64_t CAVM_CPRIX_CN4IPX_RP3_SN1_0_LNX(unsigned long a, unsigned long b, unsigned long c)
 {
-    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=2) && (b<=1) && (c<=2)))
-        return 0x86400080f058ll + 0x1000000000ll * ((a) & 0x3) + 0x100000ll * ((b) & 0x1) + 0x14ll * ((c) & 0x3);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=2) && (b<=1) && (c<=1)))
+        return 0x86400080f058ll + 0x1000000000ll * ((a) & 0x3) + 0x100000ll * ((b) & 0x1) + 0x14ll * ((c) & 0x1);
     __cavm_csr_fatal("CPRIX_CN4IPX_RP3_SN1_0_LNX", 3, a, b, c, 0, 0, 0);
 }
 
@@ -11756,8 +12354,8 @@ typedef union cavm_cprix_cn4ipx_rp3_sn1_1_lnx cavm_cprix_cn4ipx_rp3_sn1_1_lnx_t;
 static inline uint64_t CAVM_CPRIX_CN4IPX_RP3_SN1_1_LNX(unsigned long a, unsigned long b, unsigned long c) __attribute__ ((pure, always_inline));
 static inline uint64_t CAVM_CPRIX_CN4IPX_RP3_SN1_1_LNX(unsigned long a, unsigned long b, unsigned long c)
 {
-    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=2) && (b<=1) && (c<=2)))
-        return 0x86400080f05cll + 0x1000000000ll * ((a) & 0x3) + 0x100000ll * ((b) & 0x1) + 0x14ll * ((c) & 0x3);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=2) && (b<=1) && (c<=1)))
+        return 0x86400080f05cll + 0x1000000000ll * ((a) & 0x3) + 0x100000ll * ((b) & 0x1) + 0x14ll * ((c) & 0x1);
     __cavm_csr_fatal("CPRIX_CN4IPX_RP3_SN1_1_LNX", 3, a, b, c, 0, 0, 0);
 }
 
@@ -11796,8 +12394,8 @@ typedef union cavm_cprix_cn4ipx_rp3_sn2_lnx cavm_cprix_cn4ipx_rp3_sn2_lnx_t;
 static inline uint64_t CAVM_CPRIX_CN4IPX_RP3_SN2_LNX(unsigned long a, unsigned long b, unsigned long c) __attribute__ ((pure, always_inline));
 static inline uint64_t CAVM_CPRIX_CN4IPX_RP3_SN2_LNX(unsigned long a, unsigned long b, unsigned long c)
 {
-    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=2) && (b<=1) && (c<=2)))
-        return 0x86400080f060ll + 0x1000000000ll * ((a) & 0x3) + 0x100000ll * ((b) & 0x1) + 0x14ll * ((c) & 0x3);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=2) && (b<=1) && (c<=1)))
+        return 0x86400080f060ll + 0x1000000000ll * ((a) & 0x3) + 0x100000ll * ((b) & 0x1) + 0x14ll * ((c) & 0x1);
     __cavm_csr_fatal("CPRIX_CN4IPX_RP3_SN2_LNX", 3, a, b, c, 0, 0, 0);
 }
 
@@ -17431,7 +18029,7 @@ static inline uint64_t CAVM_CPRIX_ETHX_BAD_CRC_CNT(unsigned long a, unsigned lon
 static inline uint64_t CAVM_CPRIX_ETHX_BAD_CRC_CNT(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=2) && (b<=3)))
-        return 0x864000000200ll + 0x1000000000ll * ((a) & 0x3) + 0x400ll * ((b) & 0x3);
+        return 0x864000000400ll + 0x1000000000ll * ((a) & 0x3) + 0x800ll * ((b) & 0x3);
     __cavm_csr_fatal("CPRIX_ETHX_BAD_CRC_CNT", 2, a, b, 0, 0, 0, 0);
 }
 
@@ -17467,7 +18065,7 @@ static inline uint64_t CAVM_CPRIX_ETHX_DL_GOCTETS_CNT(unsigned long a, unsigned 
 static inline uint64_t CAVM_CPRIX_ETHX_DL_GOCTETS_CNT(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=2) && (b<=3)))
-        return 0x864000000240ll + 0x1000000000ll * ((a) & 0x3) + 0x400ll * ((b) & 0x3);
+        return 0x864000000440ll + 0x1000000000ll * ((a) & 0x3) + 0x800ll * ((b) & 0x3);
     __cavm_csr_fatal("CPRIX_ETHX_DL_GOCTETS_CNT", 2, a, b, 0, 0, 0, 0);
 }
 
@@ -17503,7 +18101,7 @@ static inline uint64_t CAVM_CPRIX_ETHX_DL_GPKTS_CNT(unsigned long a, unsigned lo
 static inline uint64_t CAVM_CPRIX_ETHX_DL_GPKTS_CNT(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=2) && (b<=3)))
-        return 0x864000000248ll + 0x1000000000ll * ((a) & 0x3) + 0x400ll * ((b) & 0x3);
+        return 0x864000000448ll + 0x1000000000ll * ((a) & 0x3) + 0x800ll * ((b) & 0x3);
     __cavm_csr_fatal("CPRIX_ETHX_DL_GPKTS_CNT", 2, a, b, 0, 0, 0, 0);
 }
 
@@ -17541,7 +18139,7 @@ static inline uint64_t CAVM_CPRIX_ETHX_UL_BOCT_CNT(unsigned long a, unsigned lon
 static inline uint64_t CAVM_CPRIX_ETHX_UL_BOCT_CNT(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=2) && (b<=3)))
-        return 0x864000000230ll + 0x1000000000ll * ((a) & 0x3) + 0x400ll * ((b) & 0x3);
+        return 0x864000000430ll + 0x1000000000ll * ((a) & 0x3) + 0x800ll * ((b) & 0x3);
     __cavm_csr_fatal("CPRIX_ETHX_UL_BOCT_CNT", 2, a, b, 0, 0, 0, 0);
 }
 
@@ -17581,7 +18179,7 @@ static inline uint64_t CAVM_CPRIX_ETHX_UL_ERR_CNT(unsigned long a, unsigned long
 static inline uint64_t CAVM_CPRIX_ETHX_UL_ERR_CNT(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=2) && (b<=3)))
-        return 0x864000000208ll + 0x1000000000ll * ((a) & 0x3) + 0x400ll * ((b) & 0x3);
+        return 0x864000000408ll + 0x1000000000ll * ((a) & 0x3) + 0x800ll * ((b) & 0x3);
     __cavm_csr_fatal("CPRIX_ETHX_UL_ERR_CNT", 2, a, b, 0, 0, 0, 0);
 }
 
@@ -17617,7 +18215,7 @@ static inline uint64_t CAVM_CPRIX_ETHX_UL_FIFO_ORUN_CNT(unsigned long a, unsigne
 static inline uint64_t CAVM_CPRIX_ETHX_UL_FIFO_ORUN_CNT(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=2) && (b<=3)))
-        return 0x864000000220ll + 0x1000000000ll * ((a) & 0x3) + 0x400ll * ((b) & 0x3);
+        return 0x864000000420ll + 0x1000000000ll * ((a) & 0x3) + 0x800ll * ((b) & 0x3);
     __cavm_csr_fatal("CPRIX_ETHX_UL_FIFO_ORUN_CNT", 2, a, b, 0, 0, 0, 0);
 }
 
@@ -17655,7 +18253,7 @@ static inline uint64_t CAVM_CPRIX_ETHX_UL_GOCT_CNT(unsigned long a, unsigned lon
 static inline uint64_t CAVM_CPRIX_ETHX_UL_GOCT_CNT(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=2) && (b<=3)))
-        return 0x864000000238ll + 0x1000000000ll * ((a) & 0x3) + 0x400ll * ((b) & 0x3);
+        return 0x864000000438ll + 0x1000000000ll * ((a) & 0x3) + 0x800ll * ((b) & 0x3);
     __cavm_csr_fatal("CPRIX_ETHX_UL_GOCT_CNT", 2, a, b, 0, 0, 0, 0);
 }
 
@@ -17695,7 +18293,7 @@ static inline uint64_t CAVM_CPRIX_ETHX_UL_GPKTS_CNT(unsigned long a, unsigned lo
 static inline uint64_t CAVM_CPRIX_ETHX_UL_GPKTS_CNT(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=2) && (b<=3)))
-        return 0x864000000228ll + 0x1000000000ll * ((a) & 0x3) + 0x400ll * ((b) & 0x3);
+        return 0x864000000428ll + 0x1000000000ll * ((a) & 0x3) + 0x800ll * ((b) & 0x3);
     __cavm_csr_fatal("CPRIX_ETHX_UL_GPKTS_CNT", 2, a, b, 0, 0, 0, 0);
 }
 
@@ -17731,7 +18329,7 @@ static inline uint64_t CAVM_CPRIX_ETHX_UL_OSIZE_CNT(unsigned long a, unsigned lo
 static inline uint64_t CAVM_CPRIX_ETHX_UL_OSIZE_CNT(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=2) && (b<=3)))
-        return 0x864000000210ll + 0x1000000000ll * ((a) & 0x3) + 0x400ll * ((b) & 0x3);
+        return 0x864000000410ll + 0x1000000000ll * ((a) & 0x3) + 0x800ll * ((b) & 0x3);
     __cavm_csr_fatal("CPRIX_ETHX_UL_OSIZE_CNT", 2, a, b, 0, 0, 0, 0);
 }
 
@@ -17767,7 +18365,7 @@ static inline uint64_t CAVM_CPRIX_ETHX_UL_USIZE_CNT(unsigned long a, unsigned lo
 static inline uint64_t CAVM_CPRIX_ETHX_UL_USIZE_CNT(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=2) && (b<=3)))
-        return 0x864000000218ll + 0x1000000000ll * ((a) & 0x3) + 0x400ll * ((b) & 0x3);
+        return 0x864000000418ll + 0x1000000000ll * ((a) & 0x3) + 0x800ll * ((b) & 0x3);
     __cavm_csr_fatal("CPRIX_ETHX_UL_USIZE_CNT", 2, a, b, 0, 0, 0, 0);
 }
 
@@ -17790,14 +18388,13 @@ union cavm_cprix_ghb_control
     struct cavm_cprix_ghb_control_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_14_63        : 50;
-        uint64_t ghb_rd_weight         : 6;  /**< [ 13:  8](R/W) The weighted round-robin arbitration weight used in the GHAB when
+        uint64_t reserved_12_63        : 52;
+        uint64_t ghb_rd_weight         : 6;  /**< [ 11:  6](R/W) The weighted round-robin arbitration weight used in the GHAB when
                                                                  arbitrating for read requests from this MHAB. A value of zero will
                                                                  only allow requests when there are no competing requests from other
                                                                  MHABs in the same GHAB, or when all competing MHABs have an effective
                                                                  weight of zero. A higher weight guarantees a greater share of the GHAB
                                                                  bandwidth. */
-        uint64_t reserved_6_7          : 2;
         uint64_t ghb_wr_weight         : 6;  /**< [  5:  0](R/W) The weighted round-robin arbitration weight used in the GHAB when
                                                                  arbitrating for read requests from this MHAB. A value of zero will
                                                                  only allow requests when there are no competing requests from other
@@ -17811,14 +18408,13 @@ union cavm_cprix_ghb_control
                                                                  MHABs in the same GHAB, or when all competing MHABs have an effective
                                                                  weight of zero. A higher weight guarantees a greater share of the GHAB
                                                                  bandwidth. */
-        uint64_t reserved_6_7          : 2;
-        uint64_t ghb_rd_weight         : 6;  /**< [ 13:  8](R/W) The weighted round-robin arbitration weight used in the GHAB when
+        uint64_t ghb_rd_weight         : 6;  /**< [ 11:  6](R/W) The weighted round-robin arbitration weight used in the GHAB when
                                                                  arbitrating for read requests from this MHAB. A value of zero will
                                                                  only allow requests when there are no competing requests from other
                                                                  MHABs in the same GHAB, or when all competing MHABs have an effective
                                                                  weight of zero. A higher weight guarantees a greater share of the GHAB
                                                                  bandwidth. */
-        uint64_t reserved_14_63        : 50;
+        uint64_t reserved_12_63        : 52;
 #endif /* Word 0 - End */
     } s;
     /* struct cavm_cprix_ghb_control_s cn; */
@@ -18070,7 +18666,7 @@ static inline uint64_t CAVM_CPRIX_IPX_AXI_INT_W1S(unsigned long a, unsigned long
  * INTERNAL: CPRI MHB Interrupt Register
  *
  * These registers record interrupts due to different error events that occur in the
- * MHAB outside of the CONN004 IPs
+ * MHAB outside of the CONN004 IPs.
  */
 union cavm_cprix_mhb_int
 {
@@ -18078,18 +18674,27 @@ union cavm_cprix_mhb_int
     struct cavm_cprix_mhb_int_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_16_63        : 48;
-        uint64_t dl_rp3_fifo_ovfl      : 1;  /**< [ 15: 15](R/W1C/H) RP3 DL Request Fifo overflow inside TXDMA module */
-        uint64_t dl_rp3_dma_ferr       : 1;  /**< [ 14: 14](R/W1C/H) Fatal Error detected during RP3 DMA */
-        uint64_t dl_rp3_dma_nferr      : 1;  /**< [ 13: 13](R/W1C/H) Non-Fatal Error detected during RP3 DMA */
-        uint64_t gmii_dl_pkt_dma_ferr  : 1;  /**< [ 12: 12](R/W1C/H) Fatal Error detected during Packet DMA */
-        uint64_t gmii_dl_pkt_dma_nferr : 1;  /**< [ 11: 11](R/W1C/H) Non-Fatal Error detected during Packet DMA */
-        uint64_t ul_rp3_fifo_ovfl      : 1;  /**< [ 10: 10](R/W1C/H) RP3 UL FIFO overflow error inside RXDMA module */
-        uint64_t ul_pkt_fifo_ovfl      : 1;  /**< [  9:  9](R/W1C/H) GMII UL FIFO overflow err inside RXDMA module */
-        uint64_t ul_rp3_dma_ferr       : 1;  /**< [  8:  8](R/W1C/H) Fatal Error detected during RP3 DMA */
-        uint64_t ul_rp3_dma_nferr      : 1;  /**< [  7:  7](R/W1C/H) Non-Fatal Error detected during RP3 DMA */
-        uint64_t gmii_ul_pkt_dma_ferr  : 1;  /**< [  6:  6](R/W1C/H) Fatal Error detected during Packet DMA */
-        uint64_t gmii_ul_pkt_dma_nferr : 1;  /**< [  5:  5](R/W1C/H) Non-Fatal Error detected during Packet DMA */
+        uint64_t reserved_31_63        : 33;
+        uint64_t rp3_ul_axc_msg_rdy    : 1;  /**< [ 30: 30](R/W1C/H) AXC Message Ready Notification and is set on any of the enabled AXC message
+                                                                 notifications. The individual AXC status can be found in CPRI(0..2)_AXC_RDY*_INT
+                                                                 registers and the enabling is done by the corresponding INT_ENA registers. */
+        uint64_t rp3_ul_axc_nenabled   : 1;  /**< [ 29: 29](R/W1C/H) AXC is not enabled. */
+        uint64_t rp3_ul_axc_nfound     : 1;  /**< [ 28: 28](R/W1C/H) AXC is not found. */
+        uint64_t rp3_ul_ctrl_msg_rdy   : 1;  /**< [ 27: 27](R/W1C/H) Control Message Ready Notification. */
+        uint64_t rp3_ul_fifo_ovfl      : 2;  /**< [ 26: 25](R/W1C/H) FIFO Overflow. */
+        uint64_t rp3_ul_sw_msg_ovfl    : 1;  /**< [ 24: 24](R/W1C/H) SW Message Overflow. */
+        uint64_t reserved_16_23        : 8;
+        uint64_t dma_dl_rp3_fifo_ovfl  : 1;  /**< [ 15: 15](R/W1C/H) RP3 DL Request Fifo overflow inside TXDMA module */
+        uint64_t dma_dl_rp3_dma_ferr   : 1;  /**< [ 14: 14](R/W1C/H) Fatal Error detected during RP3 DMA */
+        uint64_t dma_dl_rp3_dma_nferr  : 1;  /**< [ 13: 13](R/W1C/H) Non-Fatal Error detected during RP3 DMA */
+        uint64_t dma_dl_pkt_ferr       : 1;  /**< [ 12: 12](R/W1C/H) Fatal Error detected during Packet DMA */
+        uint64_t dma_dl_pkt_nferr      : 1;  /**< [ 11: 11](R/W1C/H) Non-Fatal Error detected during Packet DMA */
+        uint64_t dma_ul_rp3_fifo_ovfl  : 1;  /**< [ 10: 10](R/W1C/H) RP3 UL FIFO overflow error inside RXDMA module */
+        uint64_t dma_ul_pkt_fifo_ovfl  : 1;  /**< [  9:  9](R/W1C/H) GMII UL FIFO overflow err inside RXDMA module */
+        uint64_t dma_ul_rp3_ferr       : 1;  /**< [  8:  8](R/W1C/H) Fatal Error detected during RP3 DMA */
+        uint64_t dma_ul_rp3_nferr      : 1;  /**< [  7:  7](R/W1C/H) Non-Fatal Error detected during RP3 DMA */
+        uint64_t dma_ul_pkt_ferr       : 1;  /**< [  6:  6](R/W1C/H) Fatal Error detected during Packet DMA */
+        uint64_t dma_ul_pkt_nferr      : 1;  /**< [  5:  5](R/W1C/H) Non-Fatal Error detected during Packet DMA */
         uint64_t gmii_ul_pkts_rcvd     : 1;  /**< [  4:  4](R/W1C/H) Packets received from the 4 lanes exceeded threshold */
         uint64_t axi_bad_wr_response_1 : 1;  /**< [  3:  3](R/W1C/H) Bad write response received from CONN004 IP#1 */
         uint64_t axi_bad_rd_response_1 : 1;  /**< [  2:  2](R/W1C/H) Bad read response received from IP#1 */
@@ -18101,18 +18706,27 @@ union cavm_cprix_mhb_int
         uint64_t axi_bad_rd_response_1 : 1;  /**< [  2:  2](R/W1C/H) Bad read response received from IP#1 */
         uint64_t axi_bad_wr_response_1 : 1;  /**< [  3:  3](R/W1C/H) Bad write response received from CONN004 IP#1 */
         uint64_t gmii_ul_pkts_rcvd     : 1;  /**< [  4:  4](R/W1C/H) Packets received from the 4 lanes exceeded threshold */
-        uint64_t gmii_ul_pkt_dma_nferr : 1;  /**< [  5:  5](R/W1C/H) Non-Fatal Error detected during Packet DMA */
-        uint64_t gmii_ul_pkt_dma_ferr  : 1;  /**< [  6:  6](R/W1C/H) Fatal Error detected during Packet DMA */
-        uint64_t ul_rp3_dma_nferr      : 1;  /**< [  7:  7](R/W1C/H) Non-Fatal Error detected during RP3 DMA */
-        uint64_t ul_rp3_dma_ferr       : 1;  /**< [  8:  8](R/W1C/H) Fatal Error detected during RP3 DMA */
-        uint64_t ul_pkt_fifo_ovfl      : 1;  /**< [  9:  9](R/W1C/H) GMII UL FIFO overflow err inside RXDMA module */
-        uint64_t ul_rp3_fifo_ovfl      : 1;  /**< [ 10: 10](R/W1C/H) RP3 UL FIFO overflow error inside RXDMA module */
-        uint64_t gmii_dl_pkt_dma_nferr : 1;  /**< [ 11: 11](R/W1C/H) Non-Fatal Error detected during Packet DMA */
-        uint64_t gmii_dl_pkt_dma_ferr  : 1;  /**< [ 12: 12](R/W1C/H) Fatal Error detected during Packet DMA */
-        uint64_t dl_rp3_dma_nferr      : 1;  /**< [ 13: 13](R/W1C/H) Non-Fatal Error detected during RP3 DMA */
-        uint64_t dl_rp3_dma_ferr       : 1;  /**< [ 14: 14](R/W1C/H) Fatal Error detected during RP3 DMA */
-        uint64_t dl_rp3_fifo_ovfl      : 1;  /**< [ 15: 15](R/W1C/H) RP3 DL Request Fifo overflow inside TXDMA module */
-        uint64_t reserved_16_63        : 48;
+        uint64_t dma_ul_pkt_nferr      : 1;  /**< [  5:  5](R/W1C/H) Non-Fatal Error detected during Packet DMA */
+        uint64_t dma_ul_pkt_ferr       : 1;  /**< [  6:  6](R/W1C/H) Fatal Error detected during Packet DMA */
+        uint64_t dma_ul_rp3_nferr      : 1;  /**< [  7:  7](R/W1C/H) Non-Fatal Error detected during RP3 DMA */
+        uint64_t dma_ul_rp3_ferr       : 1;  /**< [  8:  8](R/W1C/H) Fatal Error detected during RP3 DMA */
+        uint64_t dma_ul_pkt_fifo_ovfl  : 1;  /**< [  9:  9](R/W1C/H) GMII UL FIFO overflow err inside RXDMA module */
+        uint64_t dma_ul_rp3_fifo_ovfl  : 1;  /**< [ 10: 10](R/W1C/H) RP3 UL FIFO overflow error inside RXDMA module */
+        uint64_t dma_dl_pkt_nferr      : 1;  /**< [ 11: 11](R/W1C/H) Non-Fatal Error detected during Packet DMA */
+        uint64_t dma_dl_pkt_ferr       : 1;  /**< [ 12: 12](R/W1C/H) Fatal Error detected during Packet DMA */
+        uint64_t dma_dl_rp3_dma_nferr  : 1;  /**< [ 13: 13](R/W1C/H) Non-Fatal Error detected during RP3 DMA */
+        uint64_t dma_dl_rp3_dma_ferr   : 1;  /**< [ 14: 14](R/W1C/H) Fatal Error detected during RP3 DMA */
+        uint64_t dma_dl_rp3_fifo_ovfl  : 1;  /**< [ 15: 15](R/W1C/H) RP3 DL Request Fifo overflow inside TXDMA module */
+        uint64_t reserved_16_23        : 8;
+        uint64_t rp3_ul_sw_msg_ovfl    : 1;  /**< [ 24: 24](R/W1C/H) SW Message Overflow. */
+        uint64_t rp3_ul_fifo_ovfl      : 2;  /**< [ 26: 25](R/W1C/H) FIFO Overflow. */
+        uint64_t rp3_ul_ctrl_msg_rdy   : 1;  /**< [ 27: 27](R/W1C/H) Control Message Ready Notification. */
+        uint64_t rp3_ul_axc_nfound     : 1;  /**< [ 28: 28](R/W1C/H) AXC is not found. */
+        uint64_t rp3_ul_axc_nenabled   : 1;  /**< [ 29: 29](R/W1C/H) AXC is not enabled. */
+        uint64_t rp3_ul_axc_msg_rdy    : 1;  /**< [ 30: 30](R/W1C/H) AXC Message Ready Notification and is set on any of the enabled AXC message
+                                                                 notifications. The individual AXC status can be found in CPRI(0..2)_AXC_RDY*_INT
+                                                                 registers and the enabling is done by the corresponding INT_ENA registers. */
+        uint64_t reserved_31_63        : 33;
 #endif /* Word 0 - End */
     } s;
     /* struct cavm_cprix_mhb_int_s cn; */
@@ -18123,7 +18737,7 @@ static inline uint64_t CAVM_CPRIX_MHB_INT(unsigned long a) __attribute__ ((pure,
 static inline uint64_t CAVM_CPRIX_MHB_INT(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=2))
-        return 0x8640000001a0ll + 0x1000000000ll * ((a) & 0x3);
+        return 0x864000000200ll + 0x1000000000ll * ((a) & 0x3);
     __cavm_csr_fatal("CPRIX_MHB_INT", 1, a, 0, 0, 0, 0, 0);
 }
 
@@ -18146,18 +18760,25 @@ union cavm_cprix_mhb_int_ena_w1c
     struct cavm_cprix_mhb_int_ena_w1c_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_16_63        : 48;
-        uint64_t dl_rp3_fifo_ovfl      : 1;  /**< [ 15: 15](R/W1C/H) Reads or clears enable for CPRI(0..2)_MHB_INT[DL_RP3_FIFO_OVFL]. */
-        uint64_t dl_rp3_dma_ferr       : 1;  /**< [ 14: 14](R/W1C/H) Reads or clears enable for CPRI(0..2)_MHB_INT[DL_RP3_DMA_FERR]. */
-        uint64_t dl_rp3_dma_nferr      : 1;  /**< [ 13: 13](R/W1C/H) Reads or clears enable for CPRI(0..2)_MHB_INT[DL_RP3_DMA_NFERR]. */
-        uint64_t gmii_dl_pkt_dma_ferr  : 1;  /**< [ 12: 12](R/W1C/H) Reads or clears enable for CPRI(0..2)_MHB_INT[GMII_DL_PKT_DMA_FERR]. */
-        uint64_t gmii_dl_pkt_dma_nferr : 1;  /**< [ 11: 11](R/W1C/H) Reads or clears enable for CPRI(0..2)_MHB_INT[GMII_DL_PKT_DMA_NFERR]. */
-        uint64_t ul_rp3_fifo_ovfl      : 1;  /**< [ 10: 10](R/W1C/H) Reads or clears enable for CPRI(0..2)_MHB_INT[UL_RP3_FIFO_OVFL]. */
-        uint64_t ul_pkt_fifo_ovfl      : 1;  /**< [  9:  9](R/W1C/H) Reads or clears enable for CPRI(0..2)_MHB_INT[UL_PKT_FIFO_OVFL]. */
-        uint64_t ul_rp3_dma_ferr       : 1;  /**< [  8:  8](R/W1C/H) Reads or clears enable for CPRI(0..2)_MHB_INT[UL_RP3_DMA_FERR]. */
-        uint64_t ul_rp3_dma_nferr      : 1;  /**< [  7:  7](R/W1C/H) Reads or clears enable for CPRI(0..2)_MHB_INT[UL_RP3_DMA_NFERR]. */
-        uint64_t gmii_ul_pkt_dma_ferr  : 1;  /**< [  6:  6](R/W1C/H) Reads or clears enable for CPRI(0..2)_MHB_INT[GMII_UL_PKT_DMA_FERR]. */
-        uint64_t gmii_ul_pkt_dma_nferr : 1;  /**< [  5:  5](R/W1C/H) Reads or clears enable for CPRI(0..2)_MHB_INT[GMII_UL_PKT_DMA_NFERR]. */
+        uint64_t reserved_31_63        : 33;
+        uint64_t rp3_ul_axc_msg_rdy    : 1;  /**< [ 30: 30](R/W1C/H) Reads or clears enable for CPRI(0..2)_MHB_INT[RP3_UL_AXC_MSG_RDY]. */
+        uint64_t rp3_ul_axc_nenabled   : 1;  /**< [ 29: 29](R/W1C/H) Reads or clears enable for CPRI(0..2)_MHB_INT[RP3_UL_AXC_NENABLED]. */
+        uint64_t rp3_ul_axc_nfound     : 1;  /**< [ 28: 28](R/W1C/H) Reads or clears enable for CPRI(0..2)_MHB_INT[RP3_UL_AXC_NFOUND]. */
+        uint64_t rp3_ul_ctrl_msg_rdy   : 1;  /**< [ 27: 27](R/W1C/H) Reads or clears enable for CPRI(0..2)_MHB_INT[RP3_UL_CTRL_MSG_RDY]. */
+        uint64_t rp3_ul_fifo_ovfl      : 2;  /**< [ 26: 25](R/W1C/H) Reads or clears enable for CPRI(0..2)_MHB_INT[RP3_UL_FIFO_OVFL]. */
+        uint64_t rp3_ul_sw_msg_ovfl    : 1;  /**< [ 24: 24](R/W1C/H) Reads or clears enable for CPRI(0..2)_MHB_INT[RP3_UL_SW_MSG_OVFL]. */
+        uint64_t reserved_16_23        : 8;
+        uint64_t dma_dl_rp3_fifo_ovfl  : 1;  /**< [ 15: 15](R/W1C/H) Reads or clears enable for CPRI(0..2)_MHB_INT[DMA_DL_RP3_FIFO_OVFL]. */
+        uint64_t dma_dl_rp3_dma_ferr   : 1;  /**< [ 14: 14](R/W1C/H) Reads or clears enable for CPRI(0..2)_MHB_INT[DMA_DL_RP3_DMA_FERR]. */
+        uint64_t dma_dl_rp3_dma_nferr  : 1;  /**< [ 13: 13](R/W1C/H) Reads or clears enable for CPRI(0..2)_MHB_INT[DMA_DL_RP3_DMA_NFERR]. */
+        uint64_t dma_dl_pkt_ferr       : 1;  /**< [ 12: 12](R/W1C/H) Reads or clears enable for CPRI(0..2)_MHB_INT[DMA_DL_PKT_FERR]. */
+        uint64_t dma_dl_pkt_nferr      : 1;  /**< [ 11: 11](R/W1C/H) Reads or clears enable for CPRI(0..2)_MHB_INT[DMA_DL_PKT_NFERR]. */
+        uint64_t dma_ul_rp3_fifo_ovfl  : 1;  /**< [ 10: 10](R/W1C/H) Reads or clears enable for CPRI(0..2)_MHB_INT[DMA_UL_RP3_FIFO_OVFL]. */
+        uint64_t dma_ul_pkt_fifo_ovfl  : 1;  /**< [  9:  9](R/W1C/H) Reads or clears enable for CPRI(0..2)_MHB_INT[DMA_UL_PKT_FIFO_OVFL]. */
+        uint64_t dma_ul_rp3_ferr       : 1;  /**< [  8:  8](R/W1C/H) Reads or clears enable for CPRI(0..2)_MHB_INT[DMA_UL_RP3_FERR]. */
+        uint64_t dma_ul_rp3_nferr      : 1;  /**< [  7:  7](R/W1C/H) Reads or clears enable for CPRI(0..2)_MHB_INT[DMA_UL_RP3_NFERR]. */
+        uint64_t dma_ul_pkt_ferr       : 1;  /**< [  6:  6](R/W1C/H) Reads or clears enable for CPRI(0..2)_MHB_INT[DMA_UL_PKT_FERR]. */
+        uint64_t dma_ul_pkt_nferr      : 1;  /**< [  5:  5](R/W1C/H) Reads or clears enable for CPRI(0..2)_MHB_INT[DMA_UL_PKT_NFERR]. */
         uint64_t gmii_ul_pkts_rcvd     : 1;  /**< [  4:  4](R/W1C/H) Reads or clears enable for CPRI(0..2)_MHB_INT[GMII_UL_PKTS_RCVD]. */
         uint64_t axi_bad_wr_response_1 : 1;  /**< [  3:  3](R/W1C/H) Reads or clears enable for CPRI(0..2)_MHB_INT[AXI_BAD_WR_RESPONSE_1]. */
         uint64_t axi_bad_rd_response_1 : 1;  /**< [  2:  2](R/W1C/H) Reads or clears enable for CPRI(0..2)_MHB_INT[AXI_BAD_RD_RESPONSE_1]. */
@@ -18169,18 +18790,25 @@ union cavm_cprix_mhb_int_ena_w1c
         uint64_t axi_bad_rd_response_1 : 1;  /**< [  2:  2](R/W1C/H) Reads or clears enable for CPRI(0..2)_MHB_INT[AXI_BAD_RD_RESPONSE_1]. */
         uint64_t axi_bad_wr_response_1 : 1;  /**< [  3:  3](R/W1C/H) Reads or clears enable for CPRI(0..2)_MHB_INT[AXI_BAD_WR_RESPONSE_1]. */
         uint64_t gmii_ul_pkts_rcvd     : 1;  /**< [  4:  4](R/W1C/H) Reads or clears enable for CPRI(0..2)_MHB_INT[GMII_UL_PKTS_RCVD]. */
-        uint64_t gmii_ul_pkt_dma_nferr : 1;  /**< [  5:  5](R/W1C/H) Reads or clears enable for CPRI(0..2)_MHB_INT[GMII_UL_PKT_DMA_NFERR]. */
-        uint64_t gmii_ul_pkt_dma_ferr  : 1;  /**< [  6:  6](R/W1C/H) Reads or clears enable for CPRI(0..2)_MHB_INT[GMII_UL_PKT_DMA_FERR]. */
-        uint64_t ul_rp3_dma_nferr      : 1;  /**< [  7:  7](R/W1C/H) Reads or clears enable for CPRI(0..2)_MHB_INT[UL_RP3_DMA_NFERR]. */
-        uint64_t ul_rp3_dma_ferr       : 1;  /**< [  8:  8](R/W1C/H) Reads or clears enable for CPRI(0..2)_MHB_INT[UL_RP3_DMA_FERR]. */
-        uint64_t ul_pkt_fifo_ovfl      : 1;  /**< [  9:  9](R/W1C/H) Reads or clears enable for CPRI(0..2)_MHB_INT[UL_PKT_FIFO_OVFL]. */
-        uint64_t ul_rp3_fifo_ovfl      : 1;  /**< [ 10: 10](R/W1C/H) Reads or clears enable for CPRI(0..2)_MHB_INT[UL_RP3_FIFO_OVFL]. */
-        uint64_t gmii_dl_pkt_dma_nferr : 1;  /**< [ 11: 11](R/W1C/H) Reads or clears enable for CPRI(0..2)_MHB_INT[GMII_DL_PKT_DMA_NFERR]. */
-        uint64_t gmii_dl_pkt_dma_ferr  : 1;  /**< [ 12: 12](R/W1C/H) Reads or clears enable for CPRI(0..2)_MHB_INT[GMII_DL_PKT_DMA_FERR]. */
-        uint64_t dl_rp3_dma_nferr      : 1;  /**< [ 13: 13](R/W1C/H) Reads or clears enable for CPRI(0..2)_MHB_INT[DL_RP3_DMA_NFERR]. */
-        uint64_t dl_rp3_dma_ferr       : 1;  /**< [ 14: 14](R/W1C/H) Reads or clears enable for CPRI(0..2)_MHB_INT[DL_RP3_DMA_FERR]. */
-        uint64_t dl_rp3_fifo_ovfl      : 1;  /**< [ 15: 15](R/W1C/H) Reads or clears enable for CPRI(0..2)_MHB_INT[DL_RP3_FIFO_OVFL]. */
-        uint64_t reserved_16_63        : 48;
+        uint64_t dma_ul_pkt_nferr      : 1;  /**< [  5:  5](R/W1C/H) Reads or clears enable for CPRI(0..2)_MHB_INT[DMA_UL_PKT_NFERR]. */
+        uint64_t dma_ul_pkt_ferr       : 1;  /**< [  6:  6](R/W1C/H) Reads or clears enable for CPRI(0..2)_MHB_INT[DMA_UL_PKT_FERR]. */
+        uint64_t dma_ul_rp3_nferr      : 1;  /**< [  7:  7](R/W1C/H) Reads or clears enable for CPRI(0..2)_MHB_INT[DMA_UL_RP3_NFERR]. */
+        uint64_t dma_ul_rp3_ferr       : 1;  /**< [  8:  8](R/W1C/H) Reads or clears enable for CPRI(0..2)_MHB_INT[DMA_UL_RP3_FERR]. */
+        uint64_t dma_ul_pkt_fifo_ovfl  : 1;  /**< [  9:  9](R/W1C/H) Reads or clears enable for CPRI(0..2)_MHB_INT[DMA_UL_PKT_FIFO_OVFL]. */
+        uint64_t dma_ul_rp3_fifo_ovfl  : 1;  /**< [ 10: 10](R/W1C/H) Reads or clears enable for CPRI(0..2)_MHB_INT[DMA_UL_RP3_FIFO_OVFL]. */
+        uint64_t dma_dl_pkt_nferr      : 1;  /**< [ 11: 11](R/W1C/H) Reads or clears enable for CPRI(0..2)_MHB_INT[DMA_DL_PKT_NFERR]. */
+        uint64_t dma_dl_pkt_ferr       : 1;  /**< [ 12: 12](R/W1C/H) Reads or clears enable for CPRI(0..2)_MHB_INT[DMA_DL_PKT_FERR]. */
+        uint64_t dma_dl_rp3_dma_nferr  : 1;  /**< [ 13: 13](R/W1C/H) Reads or clears enable for CPRI(0..2)_MHB_INT[DMA_DL_RP3_DMA_NFERR]. */
+        uint64_t dma_dl_rp3_dma_ferr   : 1;  /**< [ 14: 14](R/W1C/H) Reads or clears enable for CPRI(0..2)_MHB_INT[DMA_DL_RP3_DMA_FERR]. */
+        uint64_t dma_dl_rp3_fifo_ovfl  : 1;  /**< [ 15: 15](R/W1C/H) Reads or clears enable for CPRI(0..2)_MHB_INT[DMA_DL_RP3_FIFO_OVFL]. */
+        uint64_t reserved_16_23        : 8;
+        uint64_t rp3_ul_sw_msg_ovfl    : 1;  /**< [ 24: 24](R/W1C/H) Reads or clears enable for CPRI(0..2)_MHB_INT[RP3_UL_SW_MSG_OVFL]. */
+        uint64_t rp3_ul_fifo_ovfl      : 2;  /**< [ 26: 25](R/W1C/H) Reads or clears enable for CPRI(0..2)_MHB_INT[RP3_UL_FIFO_OVFL]. */
+        uint64_t rp3_ul_ctrl_msg_rdy   : 1;  /**< [ 27: 27](R/W1C/H) Reads or clears enable for CPRI(0..2)_MHB_INT[RP3_UL_CTRL_MSG_RDY]. */
+        uint64_t rp3_ul_axc_nfound     : 1;  /**< [ 28: 28](R/W1C/H) Reads or clears enable for CPRI(0..2)_MHB_INT[RP3_UL_AXC_NFOUND]. */
+        uint64_t rp3_ul_axc_nenabled   : 1;  /**< [ 29: 29](R/W1C/H) Reads or clears enable for CPRI(0..2)_MHB_INT[RP3_UL_AXC_NENABLED]. */
+        uint64_t rp3_ul_axc_msg_rdy    : 1;  /**< [ 30: 30](R/W1C/H) Reads or clears enable for CPRI(0..2)_MHB_INT[RP3_UL_AXC_MSG_RDY]. */
+        uint64_t reserved_31_63        : 33;
 #endif /* Word 0 - End */
     } s;
     /* struct cavm_cprix_mhb_int_ena_w1c_s cn; */
@@ -18191,7 +18819,7 @@ static inline uint64_t CAVM_CPRIX_MHB_INT_ENA_W1C(unsigned long a) __attribute__
 static inline uint64_t CAVM_CPRIX_MHB_INT_ENA_W1C(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=2))
-        return 0x8640000001b0ll + 0x1000000000ll * ((a) & 0x3);
+        return 0x864000000210ll + 0x1000000000ll * ((a) & 0x3);
     __cavm_csr_fatal("CPRIX_MHB_INT_ENA_W1C", 1, a, 0, 0, 0, 0, 0);
 }
 
@@ -18214,18 +18842,25 @@ union cavm_cprix_mhb_int_ena_w1s
     struct cavm_cprix_mhb_int_ena_w1s_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_16_63        : 48;
-        uint64_t dl_rp3_fifo_ovfl      : 1;  /**< [ 15: 15](R/W1S/H) Reads or sets enable for CPRI(0..2)_MHB_INT[DL_RP3_FIFO_OVFL]. */
-        uint64_t dl_rp3_dma_ferr       : 1;  /**< [ 14: 14](R/W1S/H) Reads or sets enable for CPRI(0..2)_MHB_INT[DL_RP3_DMA_FERR]. */
-        uint64_t dl_rp3_dma_nferr      : 1;  /**< [ 13: 13](R/W1S/H) Reads or sets enable for CPRI(0..2)_MHB_INT[DL_RP3_DMA_NFERR]. */
-        uint64_t gmii_dl_pkt_dma_ferr  : 1;  /**< [ 12: 12](R/W1S/H) Reads or sets enable for CPRI(0..2)_MHB_INT[GMII_DL_PKT_DMA_FERR]. */
-        uint64_t gmii_dl_pkt_dma_nferr : 1;  /**< [ 11: 11](R/W1S/H) Reads or sets enable for CPRI(0..2)_MHB_INT[GMII_DL_PKT_DMA_NFERR]. */
-        uint64_t ul_rp3_fifo_ovfl      : 1;  /**< [ 10: 10](R/W1S/H) Reads or sets enable for CPRI(0..2)_MHB_INT[UL_RP3_FIFO_OVFL]. */
-        uint64_t ul_pkt_fifo_ovfl      : 1;  /**< [  9:  9](R/W1S/H) Reads or sets enable for CPRI(0..2)_MHB_INT[UL_PKT_FIFO_OVFL]. */
-        uint64_t ul_rp3_dma_ferr       : 1;  /**< [  8:  8](R/W1S/H) Reads or sets enable for CPRI(0..2)_MHB_INT[UL_RP3_DMA_FERR]. */
-        uint64_t ul_rp3_dma_nferr      : 1;  /**< [  7:  7](R/W1S/H) Reads or sets enable for CPRI(0..2)_MHB_INT[UL_RP3_DMA_NFERR]. */
-        uint64_t gmii_ul_pkt_dma_ferr  : 1;  /**< [  6:  6](R/W1S/H) Reads or sets enable for CPRI(0..2)_MHB_INT[GMII_UL_PKT_DMA_FERR]. */
-        uint64_t gmii_ul_pkt_dma_nferr : 1;  /**< [  5:  5](R/W1S/H) Reads or sets enable for CPRI(0..2)_MHB_INT[GMII_UL_PKT_DMA_NFERR]. */
+        uint64_t reserved_31_63        : 33;
+        uint64_t rp3_ul_axc_msg_rdy    : 1;  /**< [ 30: 30](R/W1S/H) Reads or sets enable for CPRI(0..2)_MHB_INT[RP3_UL_AXC_MSG_RDY]. */
+        uint64_t rp3_ul_axc_nenabled   : 1;  /**< [ 29: 29](R/W1S/H) Reads or sets enable for CPRI(0..2)_MHB_INT[RP3_UL_AXC_NENABLED]. */
+        uint64_t rp3_ul_axc_nfound     : 1;  /**< [ 28: 28](R/W1S/H) Reads or sets enable for CPRI(0..2)_MHB_INT[RP3_UL_AXC_NFOUND]. */
+        uint64_t rp3_ul_ctrl_msg_rdy   : 1;  /**< [ 27: 27](R/W1S/H) Reads or sets enable for CPRI(0..2)_MHB_INT[RP3_UL_CTRL_MSG_RDY]. */
+        uint64_t rp3_ul_fifo_ovfl      : 2;  /**< [ 26: 25](R/W1S/H) Reads or sets enable for CPRI(0..2)_MHB_INT[RP3_UL_FIFO_OVFL]. */
+        uint64_t rp3_ul_sw_msg_ovfl    : 1;  /**< [ 24: 24](R/W1S/H) Reads or sets enable for CPRI(0..2)_MHB_INT[RP3_UL_SW_MSG_OVFL]. */
+        uint64_t reserved_16_23        : 8;
+        uint64_t dma_dl_rp3_fifo_ovfl  : 1;  /**< [ 15: 15](R/W1S/H) Reads or sets enable for CPRI(0..2)_MHB_INT[DMA_DL_RP3_FIFO_OVFL]. */
+        uint64_t dma_dl_rp3_dma_ferr   : 1;  /**< [ 14: 14](R/W1S/H) Reads or sets enable for CPRI(0..2)_MHB_INT[DMA_DL_RP3_DMA_FERR]. */
+        uint64_t dma_dl_rp3_dma_nferr  : 1;  /**< [ 13: 13](R/W1S/H) Reads or sets enable for CPRI(0..2)_MHB_INT[DMA_DL_RP3_DMA_NFERR]. */
+        uint64_t dma_dl_pkt_ferr       : 1;  /**< [ 12: 12](R/W1S/H) Reads or sets enable for CPRI(0..2)_MHB_INT[DMA_DL_PKT_FERR]. */
+        uint64_t dma_dl_pkt_nferr      : 1;  /**< [ 11: 11](R/W1S/H) Reads or sets enable for CPRI(0..2)_MHB_INT[DMA_DL_PKT_NFERR]. */
+        uint64_t dma_ul_rp3_fifo_ovfl  : 1;  /**< [ 10: 10](R/W1S/H) Reads or sets enable for CPRI(0..2)_MHB_INT[DMA_UL_RP3_FIFO_OVFL]. */
+        uint64_t dma_ul_pkt_fifo_ovfl  : 1;  /**< [  9:  9](R/W1S/H) Reads or sets enable for CPRI(0..2)_MHB_INT[DMA_UL_PKT_FIFO_OVFL]. */
+        uint64_t dma_ul_rp3_ferr       : 1;  /**< [  8:  8](R/W1S/H) Reads or sets enable for CPRI(0..2)_MHB_INT[DMA_UL_RP3_FERR]. */
+        uint64_t dma_ul_rp3_nferr      : 1;  /**< [  7:  7](R/W1S/H) Reads or sets enable for CPRI(0..2)_MHB_INT[DMA_UL_RP3_NFERR]. */
+        uint64_t dma_ul_pkt_ferr       : 1;  /**< [  6:  6](R/W1S/H) Reads or sets enable for CPRI(0..2)_MHB_INT[DMA_UL_PKT_FERR]. */
+        uint64_t dma_ul_pkt_nferr      : 1;  /**< [  5:  5](R/W1S/H) Reads or sets enable for CPRI(0..2)_MHB_INT[DMA_UL_PKT_NFERR]. */
         uint64_t gmii_ul_pkts_rcvd     : 1;  /**< [  4:  4](R/W1S/H) Reads or sets enable for CPRI(0..2)_MHB_INT[GMII_UL_PKTS_RCVD]. */
         uint64_t axi_bad_wr_response_1 : 1;  /**< [  3:  3](R/W1S/H) Reads or sets enable for CPRI(0..2)_MHB_INT[AXI_BAD_WR_RESPONSE_1]. */
         uint64_t axi_bad_rd_response_1 : 1;  /**< [  2:  2](R/W1S/H) Reads or sets enable for CPRI(0..2)_MHB_INT[AXI_BAD_RD_RESPONSE_1]. */
@@ -18237,18 +18872,25 @@ union cavm_cprix_mhb_int_ena_w1s
         uint64_t axi_bad_rd_response_1 : 1;  /**< [  2:  2](R/W1S/H) Reads or sets enable for CPRI(0..2)_MHB_INT[AXI_BAD_RD_RESPONSE_1]. */
         uint64_t axi_bad_wr_response_1 : 1;  /**< [  3:  3](R/W1S/H) Reads or sets enable for CPRI(0..2)_MHB_INT[AXI_BAD_WR_RESPONSE_1]. */
         uint64_t gmii_ul_pkts_rcvd     : 1;  /**< [  4:  4](R/W1S/H) Reads or sets enable for CPRI(0..2)_MHB_INT[GMII_UL_PKTS_RCVD]. */
-        uint64_t gmii_ul_pkt_dma_nferr : 1;  /**< [  5:  5](R/W1S/H) Reads or sets enable for CPRI(0..2)_MHB_INT[GMII_UL_PKT_DMA_NFERR]. */
-        uint64_t gmii_ul_pkt_dma_ferr  : 1;  /**< [  6:  6](R/W1S/H) Reads or sets enable for CPRI(0..2)_MHB_INT[GMII_UL_PKT_DMA_FERR]. */
-        uint64_t ul_rp3_dma_nferr      : 1;  /**< [  7:  7](R/W1S/H) Reads or sets enable for CPRI(0..2)_MHB_INT[UL_RP3_DMA_NFERR]. */
-        uint64_t ul_rp3_dma_ferr       : 1;  /**< [  8:  8](R/W1S/H) Reads or sets enable for CPRI(0..2)_MHB_INT[UL_RP3_DMA_FERR]. */
-        uint64_t ul_pkt_fifo_ovfl      : 1;  /**< [  9:  9](R/W1S/H) Reads or sets enable for CPRI(0..2)_MHB_INT[UL_PKT_FIFO_OVFL]. */
-        uint64_t ul_rp3_fifo_ovfl      : 1;  /**< [ 10: 10](R/W1S/H) Reads or sets enable for CPRI(0..2)_MHB_INT[UL_RP3_FIFO_OVFL]. */
-        uint64_t gmii_dl_pkt_dma_nferr : 1;  /**< [ 11: 11](R/W1S/H) Reads or sets enable for CPRI(0..2)_MHB_INT[GMII_DL_PKT_DMA_NFERR]. */
-        uint64_t gmii_dl_pkt_dma_ferr  : 1;  /**< [ 12: 12](R/W1S/H) Reads or sets enable for CPRI(0..2)_MHB_INT[GMII_DL_PKT_DMA_FERR]. */
-        uint64_t dl_rp3_dma_nferr      : 1;  /**< [ 13: 13](R/W1S/H) Reads or sets enable for CPRI(0..2)_MHB_INT[DL_RP3_DMA_NFERR]. */
-        uint64_t dl_rp3_dma_ferr       : 1;  /**< [ 14: 14](R/W1S/H) Reads or sets enable for CPRI(0..2)_MHB_INT[DL_RP3_DMA_FERR]. */
-        uint64_t dl_rp3_fifo_ovfl      : 1;  /**< [ 15: 15](R/W1S/H) Reads or sets enable for CPRI(0..2)_MHB_INT[DL_RP3_FIFO_OVFL]. */
-        uint64_t reserved_16_63        : 48;
+        uint64_t dma_ul_pkt_nferr      : 1;  /**< [  5:  5](R/W1S/H) Reads or sets enable for CPRI(0..2)_MHB_INT[DMA_UL_PKT_NFERR]. */
+        uint64_t dma_ul_pkt_ferr       : 1;  /**< [  6:  6](R/W1S/H) Reads or sets enable for CPRI(0..2)_MHB_INT[DMA_UL_PKT_FERR]. */
+        uint64_t dma_ul_rp3_nferr      : 1;  /**< [  7:  7](R/W1S/H) Reads or sets enable for CPRI(0..2)_MHB_INT[DMA_UL_RP3_NFERR]. */
+        uint64_t dma_ul_rp3_ferr       : 1;  /**< [  8:  8](R/W1S/H) Reads or sets enable for CPRI(0..2)_MHB_INT[DMA_UL_RP3_FERR]. */
+        uint64_t dma_ul_pkt_fifo_ovfl  : 1;  /**< [  9:  9](R/W1S/H) Reads or sets enable for CPRI(0..2)_MHB_INT[DMA_UL_PKT_FIFO_OVFL]. */
+        uint64_t dma_ul_rp3_fifo_ovfl  : 1;  /**< [ 10: 10](R/W1S/H) Reads or sets enable for CPRI(0..2)_MHB_INT[DMA_UL_RP3_FIFO_OVFL]. */
+        uint64_t dma_dl_pkt_nferr      : 1;  /**< [ 11: 11](R/W1S/H) Reads or sets enable for CPRI(0..2)_MHB_INT[DMA_DL_PKT_NFERR]. */
+        uint64_t dma_dl_pkt_ferr       : 1;  /**< [ 12: 12](R/W1S/H) Reads or sets enable for CPRI(0..2)_MHB_INT[DMA_DL_PKT_FERR]. */
+        uint64_t dma_dl_rp3_dma_nferr  : 1;  /**< [ 13: 13](R/W1S/H) Reads or sets enable for CPRI(0..2)_MHB_INT[DMA_DL_RP3_DMA_NFERR]. */
+        uint64_t dma_dl_rp3_dma_ferr   : 1;  /**< [ 14: 14](R/W1S/H) Reads or sets enable for CPRI(0..2)_MHB_INT[DMA_DL_RP3_DMA_FERR]. */
+        uint64_t dma_dl_rp3_fifo_ovfl  : 1;  /**< [ 15: 15](R/W1S/H) Reads or sets enable for CPRI(0..2)_MHB_INT[DMA_DL_RP3_FIFO_OVFL]. */
+        uint64_t reserved_16_23        : 8;
+        uint64_t rp3_ul_sw_msg_ovfl    : 1;  /**< [ 24: 24](R/W1S/H) Reads or sets enable for CPRI(0..2)_MHB_INT[RP3_UL_SW_MSG_OVFL]. */
+        uint64_t rp3_ul_fifo_ovfl      : 2;  /**< [ 26: 25](R/W1S/H) Reads or sets enable for CPRI(0..2)_MHB_INT[RP3_UL_FIFO_OVFL]. */
+        uint64_t rp3_ul_ctrl_msg_rdy   : 1;  /**< [ 27: 27](R/W1S/H) Reads or sets enable for CPRI(0..2)_MHB_INT[RP3_UL_CTRL_MSG_RDY]. */
+        uint64_t rp3_ul_axc_nfound     : 1;  /**< [ 28: 28](R/W1S/H) Reads or sets enable for CPRI(0..2)_MHB_INT[RP3_UL_AXC_NFOUND]. */
+        uint64_t rp3_ul_axc_nenabled   : 1;  /**< [ 29: 29](R/W1S/H) Reads or sets enable for CPRI(0..2)_MHB_INT[RP3_UL_AXC_NENABLED]. */
+        uint64_t rp3_ul_axc_msg_rdy    : 1;  /**< [ 30: 30](R/W1S/H) Reads or sets enable for CPRI(0..2)_MHB_INT[RP3_UL_AXC_MSG_RDY]. */
+        uint64_t reserved_31_63        : 33;
 #endif /* Word 0 - End */
     } s;
     /* struct cavm_cprix_mhb_int_ena_w1s_s cn; */
@@ -18259,7 +18901,7 @@ static inline uint64_t CAVM_CPRIX_MHB_INT_ENA_W1S(unsigned long a) __attribute__
 static inline uint64_t CAVM_CPRIX_MHB_INT_ENA_W1S(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=2))
-        return 0x8640000001a8ll + 0x1000000000ll * ((a) & 0x3);
+        return 0x864000000208ll + 0x1000000000ll * ((a) & 0x3);
     __cavm_csr_fatal("CPRIX_MHB_INT_ENA_W1S", 1, a, 0, 0, 0, 0, 0);
 }
 
@@ -18295,7 +18937,7 @@ static inline uint64_t CAVM_CPRIX_MHB_INT_PSM_MSG_W0(unsigned long a) __attribut
 static inline uint64_t CAVM_CPRIX_MHB_INT_PSM_MSG_W0(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=2))
-        return 0x8640000001d0ll + 0x1000000000ll * ((a) & 0x3);
+        return 0x864000000300ll + 0x1000000000ll * ((a) & 0x3);
     __cavm_csr_fatal("CPRIX_MHB_INT_PSM_MSG_W0", 1, a, 0, 0, 0, 0, 0);
 }
 
@@ -18331,7 +18973,7 @@ static inline uint64_t CAVM_CPRIX_MHB_INT_PSM_MSG_W1(unsigned long a) __attribut
 static inline uint64_t CAVM_CPRIX_MHB_INT_PSM_MSG_W1(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=2))
-        return 0x8640000001d8ll + 0x1000000000ll * ((a) & 0x3);
+        return 0x864000000308ll + 0x1000000000ll * ((a) & 0x3);
     __cavm_csr_fatal("CPRIX_MHB_INT_PSM_MSG_W1", 1, a, 0, 0, 0, 0, 0);
 }
 
@@ -18354,18 +18996,25 @@ union cavm_cprix_mhb_int_w1s
     struct cavm_cprix_mhb_int_w1s_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_16_63        : 48;
-        uint64_t dl_rp3_fifo_ovfl      : 1;  /**< [ 15: 15](R/W1S/H) Reads or sets CPRI(0..2)_MHB_INT[DL_RP3_FIFO_OVFL]. */
-        uint64_t dl_rp3_dma_ferr       : 1;  /**< [ 14: 14](R/W1S/H) Reads or sets CPRI(0..2)_MHB_INT[DL_RP3_DMA_FERR]. */
-        uint64_t dl_rp3_dma_nferr      : 1;  /**< [ 13: 13](R/W1S/H) Reads or sets CPRI(0..2)_MHB_INT[DL_RP3_DMA_NFERR]. */
-        uint64_t gmii_dl_pkt_dma_ferr  : 1;  /**< [ 12: 12](R/W1S/H) Reads or sets CPRI(0..2)_MHB_INT[GMII_DL_PKT_DMA_FERR]. */
-        uint64_t gmii_dl_pkt_dma_nferr : 1;  /**< [ 11: 11](R/W1S/H) Reads or sets CPRI(0..2)_MHB_INT[GMII_DL_PKT_DMA_NFERR]. */
-        uint64_t ul_rp3_fifo_ovfl      : 1;  /**< [ 10: 10](R/W1S/H) Reads or sets CPRI(0..2)_MHB_INT[UL_RP3_FIFO_OVFL]. */
-        uint64_t ul_pkt_fifo_ovfl      : 1;  /**< [  9:  9](R/W1S/H) Reads or sets CPRI(0..2)_MHB_INT[UL_PKT_FIFO_OVFL]. */
-        uint64_t ul_rp3_dma_ferr       : 1;  /**< [  8:  8](R/W1S/H) Reads or sets CPRI(0..2)_MHB_INT[UL_RP3_DMA_FERR]. */
-        uint64_t ul_rp3_dma_nferr      : 1;  /**< [  7:  7](R/W1S/H) Reads or sets CPRI(0..2)_MHB_INT[UL_RP3_DMA_NFERR]. */
-        uint64_t gmii_ul_pkt_dma_ferr  : 1;  /**< [  6:  6](R/W1S/H) Reads or sets CPRI(0..2)_MHB_INT[GMII_UL_PKT_DMA_FERR]. */
-        uint64_t gmii_ul_pkt_dma_nferr : 1;  /**< [  5:  5](R/W1S/H) Reads or sets CPRI(0..2)_MHB_INT[GMII_UL_PKT_DMA_NFERR]. */
+        uint64_t reserved_31_63        : 33;
+        uint64_t rp3_ul_axc_msg_rdy    : 1;  /**< [ 30: 30](R/W1S/H) Reads or sets CPRI(0..2)_MHB_INT[RP3_UL_AXC_MSG_RDY]. */
+        uint64_t rp3_ul_axc_nenabled   : 1;  /**< [ 29: 29](R/W1S/H) Reads or sets CPRI(0..2)_MHB_INT[RP3_UL_AXC_NENABLED]. */
+        uint64_t rp3_ul_axc_nfound     : 1;  /**< [ 28: 28](R/W1S/H) Reads or sets CPRI(0..2)_MHB_INT[RP3_UL_AXC_NFOUND]. */
+        uint64_t rp3_ul_ctrl_msg_rdy   : 1;  /**< [ 27: 27](R/W1S/H) Reads or sets CPRI(0..2)_MHB_INT[RP3_UL_CTRL_MSG_RDY]. */
+        uint64_t rp3_ul_fifo_ovfl      : 2;  /**< [ 26: 25](R/W1S/H) Reads or sets CPRI(0..2)_MHB_INT[RP3_UL_FIFO_OVFL]. */
+        uint64_t rp3_ul_sw_msg_ovfl    : 1;  /**< [ 24: 24](R/W1S/H) Reads or sets CPRI(0..2)_MHB_INT[RP3_UL_SW_MSG_OVFL]. */
+        uint64_t reserved_16_23        : 8;
+        uint64_t dma_dl_rp3_fifo_ovfl  : 1;  /**< [ 15: 15](R/W1S/H) Reads or sets CPRI(0..2)_MHB_INT[DMA_DL_RP3_FIFO_OVFL]. */
+        uint64_t dma_dl_rp3_dma_ferr   : 1;  /**< [ 14: 14](R/W1S/H) Reads or sets CPRI(0..2)_MHB_INT[DMA_DL_RP3_DMA_FERR]. */
+        uint64_t dma_dl_rp3_dma_nferr  : 1;  /**< [ 13: 13](R/W1S/H) Reads or sets CPRI(0..2)_MHB_INT[DMA_DL_RP3_DMA_NFERR]. */
+        uint64_t dma_dl_pkt_ferr       : 1;  /**< [ 12: 12](R/W1S/H) Reads or sets CPRI(0..2)_MHB_INT[DMA_DL_PKT_FERR]. */
+        uint64_t dma_dl_pkt_nferr      : 1;  /**< [ 11: 11](R/W1S/H) Reads or sets CPRI(0..2)_MHB_INT[DMA_DL_PKT_NFERR]. */
+        uint64_t dma_ul_rp3_fifo_ovfl  : 1;  /**< [ 10: 10](R/W1S/H) Reads or sets CPRI(0..2)_MHB_INT[DMA_UL_RP3_FIFO_OVFL]. */
+        uint64_t dma_ul_pkt_fifo_ovfl  : 1;  /**< [  9:  9](R/W1S/H) Reads or sets CPRI(0..2)_MHB_INT[DMA_UL_PKT_FIFO_OVFL]. */
+        uint64_t dma_ul_rp3_ferr       : 1;  /**< [  8:  8](R/W1S/H) Reads or sets CPRI(0..2)_MHB_INT[DMA_UL_RP3_FERR]. */
+        uint64_t dma_ul_rp3_nferr      : 1;  /**< [  7:  7](R/W1S/H) Reads or sets CPRI(0..2)_MHB_INT[DMA_UL_RP3_NFERR]. */
+        uint64_t dma_ul_pkt_ferr       : 1;  /**< [  6:  6](R/W1S/H) Reads or sets CPRI(0..2)_MHB_INT[DMA_UL_PKT_FERR]. */
+        uint64_t dma_ul_pkt_nferr      : 1;  /**< [  5:  5](R/W1S/H) Reads or sets CPRI(0..2)_MHB_INT[DMA_UL_PKT_NFERR]. */
         uint64_t gmii_ul_pkts_rcvd     : 1;  /**< [  4:  4](R/W1S/H) Reads or sets CPRI(0..2)_MHB_INT[GMII_UL_PKTS_RCVD]. */
         uint64_t axi_bad_wr_response_1 : 1;  /**< [  3:  3](R/W1S/H) Reads or sets CPRI(0..2)_MHB_INT[AXI_BAD_WR_RESPONSE_1]. */
         uint64_t axi_bad_rd_response_1 : 1;  /**< [  2:  2](R/W1S/H) Reads or sets CPRI(0..2)_MHB_INT[AXI_BAD_RD_RESPONSE_1]. */
@@ -18377,18 +19026,25 @@ union cavm_cprix_mhb_int_w1s
         uint64_t axi_bad_rd_response_1 : 1;  /**< [  2:  2](R/W1S/H) Reads or sets CPRI(0..2)_MHB_INT[AXI_BAD_RD_RESPONSE_1]. */
         uint64_t axi_bad_wr_response_1 : 1;  /**< [  3:  3](R/W1S/H) Reads or sets CPRI(0..2)_MHB_INT[AXI_BAD_WR_RESPONSE_1]. */
         uint64_t gmii_ul_pkts_rcvd     : 1;  /**< [  4:  4](R/W1S/H) Reads or sets CPRI(0..2)_MHB_INT[GMII_UL_PKTS_RCVD]. */
-        uint64_t gmii_ul_pkt_dma_nferr : 1;  /**< [  5:  5](R/W1S/H) Reads or sets CPRI(0..2)_MHB_INT[GMII_UL_PKT_DMA_NFERR]. */
-        uint64_t gmii_ul_pkt_dma_ferr  : 1;  /**< [  6:  6](R/W1S/H) Reads or sets CPRI(0..2)_MHB_INT[GMII_UL_PKT_DMA_FERR]. */
-        uint64_t ul_rp3_dma_nferr      : 1;  /**< [  7:  7](R/W1S/H) Reads or sets CPRI(0..2)_MHB_INT[UL_RP3_DMA_NFERR]. */
-        uint64_t ul_rp3_dma_ferr       : 1;  /**< [  8:  8](R/W1S/H) Reads or sets CPRI(0..2)_MHB_INT[UL_RP3_DMA_FERR]. */
-        uint64_t ul_pkt_fifo_ovfl      : 1;  /**< [  9:  9](R/W1S/H) Reads or sets CPRI(0..2)_MHB_INT[UL_PKT_FIFO_OVFL]. */
-        uint64_t ul_rp3_fifo_ovfl      : 1;  /**< [ 10: 10](R/W1S/H) Reads or sets CPRI(0..2)_MHB_INT[UL_RP3_FIFO_OVFL]. */
-        uint64_t gmii_dl_pkt_dma_nferr : 1;  /**< [ 11: 11](R/W1S/H) Reads or sets CPRI(0..2)_MHB_INT[GMII_DL_PKT_DMA_NFERR]. */
-        uint64_t gmii_dl_pkt_dma_ferr  : 1;  /**< [ 12: 12](R/W1S/H) Reads or sets CPRI(0..2)_MHB_INT[GMII_DL_PKT_DMA_FERR]. */
-        uint64_t dl_rp3_dma_nferr      : 1;  /**< [ 13: 13](R/W1S/H) Reads or sets CPRI(0..2)_MHB_INT[DL_RP3_DMA_NFERR]. */
-        uint64_t dl_rp3_dma_ferr       : 1;  /**< [ 14: 14](R/W1S/H) Reads or sets CPRI(0..2)_MHB_INT[DL_RP3_DMA_FERR]. */
-        uint64_t dl_rp3_fifo_ovfl      : 1;  /**< [ 15: 15](R/W1S/H) Reads or sets CPRI(0..2)_MHB_INT[DL_RP3_FIFO_OVFL]. */
-        uint64_t reserved_16_63        : 48;
+        uint64_t dma_ul_pkt_nferr      : 1;  /**< [  5:  5](R/W1S/H) Reads or sets CPRI(0..2)_MHB_INT[DMA_UL_PKT_NFERR]. */
+        uint64_t dma_ul_pkt_ferr       : 1;  /**< [  6:  6](R/W1S/H) Reads or sets CPRI(0..2)_MHB_INT[DMA_UL_PKT_FERR]. */
+        uint64_t dma_ul_rp3_nferr      : 1;  /**< [  7:  7](R/W1S/H) Reads or sets CPRI(0..2)_MHB_INT[DMA_UL_RP3_NFERR]. */
+        uint64_t dma_ul_rp3_ferr       : 1;  /**< [  8:  8](R/W1S/H) Reads or sets CPRI(0..2)_MHB_INT[DMA_UL_RP3_FERR]. */
+        uint64_t dma_ul_pkt_fifo_ovfl  : 1;  /**< [  9:  9](R/W1S/H) Reads or sets CPRI(0..2)_MHB_INT[DMA_UL_PKT_FIFO_OVFL]. */
+        uint64_t dma_ul_rp3_fifo_ovfl  : 1;  /**< [ 10: 10](R/W1S/H) Reads or sets CPRI(0..2)_MHB_INT[DMA_UL_RP3_FIFO_OVFL]. */
+        uint64_t dma_dl_pkt_nferr      : 1;  /**< [ 11: 11](R/W1S/H) Reads or sets CPRI(0..2)_MHB_INT[DMA_DL_PKT_NFERR]. */
+        uint64_t dma_dl_pkt_ferr       : 1;  /**< [ 12: 12](R/W1S/H) Reads or sets CPRI(0..2)_MHB_INT[DMA_DL_PKT_FERR]. */
+        uint64_t dma_dl_rp3_dma_nferr  : 1;  /**< [ 13: 13](R/W1S/H) Reads or sets CPRI(0..2)_MHB_INT[DMA_DL_RP3_DMA_NFERR]. */
+        uint64_t dma_dl_rp3_dma_ferr   : 1;  /**< [ 14: 14](R/W1S/H) Reads or sets CPRI(0..2)_MHB_INT[DMA_DL_RP3_DMA_FERR]. */
+        uint64_t dma_dl_rp3_fifo_ovfl  : 1;  /**< [ 15: 15](R/W1S/H) Reads or sets CPRI(0..2)_MHB_INT[DMA_DL_RP3_FIFO_OVFL]. */
+        uint64_t reserved_16_23        : 8;
+        uint64_t rp3_ul_sw_msg_ovfl    : 1;  /**< [ 24: 24](R/W1S/H) Reads or sets CPRI(0..2)_MHB_INT[RP3_UL_SW_MSG_OVFL]. */
+        uint64_t rp3_ul_fifo_ovfl      : 2;  /**< [ 26: 25](R/W1S/H) Reads or sets CPRI(0..2)_MHB_INT[RP3_UL_FIFO_OVFL]. */
+        uint64_t rp3_ul_ctrl_msg_rdy   : 1;  /**< [ 27: 27](R/W1S/H) Reads or sets CPRI(0..2)_MHB_INT[RP3_UL_CTRL_MSG_RDY]. */
+        uint64_t rp3_ul_axc_nfound     : 1;  /**< [ 28: 28](R/W1S/H) Reads or sets CPRI(0..2)_MHB_INT[RP3_UL_AXC_NFOUND]. */
+        uint64_t rp3_ul_axc_nenabled   : 1;  /**< [ 29: 29](R/W1S/H) Reads or sets CPRI(0..2)_MHB_INT[RP3_UL_AXC_NENABLED]. */
+        uint64_t rp3_ul_axc_msg_rdy    : 1;  /**< [ 30: 30](R/W1S/H) Reads or sets CPRI(0..2)_MHB_INT[RP3_UL_AXC_MSG_RDY]. */
+        uint64_t reserved_31_63        : 33;
 #endif /* Word 0 - End */
     } s;
     /* struct cavm_cprix_mhb_int_w1s_s cn; */
@@ -18399,7 +19055,7 @@ static inline uint64_t CAVM_CPRIX_MHB_INT_W1S(unsigned long a) __attribute__ ((p
 static inline uint64_t CAVM_CPRIX_MHB_INT_W1S(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=2))
-        return 0x8640000001b8ll + 0x1000000000ll * ((a) & 0x3);
+        return 0x864000000218ll + 0x1000000000ll * ((a) & 0x3);
     __cavm_csr_fatal("CPRIX_MHB_INT_W1S", 1, a, 0, 0, 0, 0, 0);
 }
 
@@ -18479,7 +19135,7 @@ static inline uint64_t CAVM_CPRIX_RP3_DL_CTRL_CFG0(unsigned long a) __attribute_
 static inline uint64_t CAVM_CPRIX_RP3_DL_CTRL_CFG0(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=2))
-        return 0x864000010068ll + 0x1000000000ll * ((a) & 0x3);
+        return 0x864000010070ll + 0x1000000000ll * ((a) & 0x3);
     __cavm_csr_fatal("CPRIX_RP3_DL_CTRL_CFG0", 1, a, 0, 0, 0, 0, 0);
 }
 
@@ -18513,7 +19169,7 @@ static inline uint64_t CAVM_CPRIX_RP3_DL_CTRL_DATA0(unsigned long a) __attribute
 static inline uint64_t CAVM_CPRIX_RP3_DL_CTRL_DATA0(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=2))
-        return 0x864000010070ll + 0x1000000000ll * ((a) & 0x3);
+        return 0x864000010078ll + 0x1000000000ll * ((a) & 0x3);
     __cavm_csr_fatal("CPRIX_RP3_DL_CTRL_DATA0", 1, a, 0, 0, 0, 0, 0);
 }
 
@@ -18547,7 +19203,7 @@ static inline uint64_t CAVM_CPRIX_RP3_DL_CTRL_DATA1(unsigned long a) __attribute
 static inline uint64_t CAVM_CPRIX_RP3_DL_CTRL_DATA1(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=2))
-        return 0x864000010078ll + 0x1000000000ll * ((a) & 0x3);
+        return 0x864000010080ll + 0x1000000000ll * ((a) & 0x3);
     __cavm_csr_fatal("CPRIX_RP3_DL_CTRL_DATA1", 1, a, 0, 0, 0, 0, 0);
 }
 
@@ -18583,7 +19239,7 @@ static inline uint64_t CAVM_CPRIX_RP3_DL_CTRL_DATA2(unsigned long a) __attribute
 static inline uint64_t CAVM_CPRIX_RP3_DL_CTRL_DATA2(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=2))
-        return 0x864000010080ll + 0x1000000000ll * ((a) & 0x3);
+        return 0x864000010088ll + 0x1000000000ll * ((a) & 0x3);
     __cavm_csr_fatal("CPRIX_RP3_DL_CTRL_DATA2", 1, a, 0, 0, 0, 0, 0);
 }
 
@@ -18650,7 +19306,7 @@ static inline uint64_t CAVM_CPRIX_RP3_DL_IPX_AXC_CFG0X(unsigned long a, unsigned
 static inline uint64_t CAVM_CPRIX_RP3_DL_IPX_AXC_CFG0X(unsigned long a, unsigned long b, unsigned long c)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=2) && (b<=1) && (c<=127)))
-        return 0x864000010030ll + 0x1000000000ll * ((a) & 0x3) + 0x8000ll * ((b) & 0x1) + 0x100ll * ((c) & 0x7f);
+        return 0x864000010038ll + 0x1000000000ll * ((a) & 0x3) + 0x8000ll * ((b) & 0x1) + 0x100ll * ((c) & 0x7f);
     __cavm_csr_fatal("CPRIX_RP3_DL_IPX_AXC_CFG0X", 3, a, b, c, 0, 0, 0);
 }
 
@@ -18691,7 +19347,7 @@ static inline uint64_t CAVM_CPRIX_RP3_DL_IPX_AXC_CFG1X(unsigned long a, unsigned
 static inline uint64_t CAVM_CPRIX_RP3_DL_IPX_AXC_CFG1X(unsigned long a, unsigned long b, unsigned long c)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=2) && (b<=1) && (c<=127)))
-        return 0x864000010038ll + 0x1000000000ll * ((a) & 0x3) + 0x8000ll * ((b) & 0x1) + 0x100ll * ((c) & 0x7f);
+        return 0x864000010040ll + 0x1000000000ll * ((a) & 0x3) + 0x8000ll * ((b) & 0x1) + 0x100ll * ((c) & 0x7f);
     __cavm_csr_fatal("CPRIX_RP3_DL_IPX_AXC_CFG1X", 3, a, b, c, 0, 0, 0);
 }
 
@@ -18993,7 +19649,7 @@ static inline uint64_t CAVM_CPRIX_RP3_UL_AXC_MAP0X(unsigned long a, unsigned lon
 static inline uint64_t CAVM_CPRIX_RP3_UL_AXC_MAP0X(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=2) && (b<=127)))
-        return 0x864000010040ll + 0x1000000000ll * ((a) & 0x3) + 0x100ll * ((b) & 0x7f);
+        return 0x864000010048ll + 0x1000000000ll * ((a) & 0x3) + 0x100ll * ((b) & 0x7f);
     __cavm_csr_fatal("CPRIX_RP3_UL_AXC_MAP0X", 2, a, b, 0, 0, 0, 0);
 }
 
@@ -19033,7 +19689,7 @@ static inline uint64_t CAVM_CPRIX_RP3_UL_AXC_MAP1X(unsigned long a, unsigned lon
 static inline uint64_t CAVM_CPRIX_RP3_UL_AXC_MAP1X(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=2) && (b<=127)))
-        return 0x864000010048ll + 0x1000000000ll * ((a) & 0x3) + 0x100ll * ((b) & 0x7f);
+        return 0x864000010050ll + 0x1000000000ll * ((a) & 0x3) + 0x100ll * ((b) & 0x7f);
     __cavm_csr_fatal("CPRIX_RP3_UL_AXC_MAP1X", 2, a, b, 0, 0, 0, 0);
 }
 
@@ -19180,11 +19836,11 @@ union cavm_cprix_rp3_ul_ctrl_cfg
                                                                  0 = SMEM.
                                                                  1 = LLC/DRAM. */
         uint64_t cmd_type              : 2;  /**< [  3:  2](R/W) Write DMA command type. */
-        uint64_t sw_enable             : 1;  /**< [  1:  1](R/W) Enable switching the UL RP3 messages to another CPRI lane. */
+        uint64_t reserved_1            : 1;
         uint64_t buf_enable            : 1;  /**< [  0:  0](R/W) Enable buffering the UL RP3 messages to memory. */
 #else /* Word 0 - Little Endian */
         uint64_t buf_enable            : 1;  /**< [  0:  0](R/W) Enable buffering the UL RP3 messages to memory. */
-        uint64_t sw_enable             : 1;  /**< [  1:  1](R/W) Enable switching the UL RP3 messages to another CPRI lane. */
+        uint64_t reserved_1            : 1;
         uint64_t cmd_type              : 2;  /**< [  3:  2](R/W) Write DMA command type. */
         uint64_t dest_mem              : 1;  /**< [  4:  4](R/W) Destination memory:
                                                                  0 = SMEM.
@@ -19329,7 +19985,7 @@ static inline uint64_t CAVM_CPRIX_RP3_UL_CTRL_JD_CFG(unsigned long a) __attribut
 static inline uint64_t CAVM_CPRIX_RP3_UL_CTRL_JD_CFG(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=2))
-        return 0x864000010028ll + 0x1000000000ll * ((a) & 0x3);
+        return 0x864000010030ll + 0x1000000000ll * ((a) & 0x3);
     __cavm_csr_fatal("CPRIX_RP3_UL_CTRL_JD_CFG", 1, a, 0, 0, 0, 0, 0);
 }
 
@@ -19371,7 +20027,7 @@ static inline uint64_t CAVM_CPRIX_RP3_UL_CTRL_MAP0X(unsigned long a, unsigned lo
 static inline uint64_t CAVM_CPRIX_RP3_UL_CTRL_MAP0X(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=2) && (b<=63)))
-        return 0x864000010050ll + 0x1000000000ll * ((a) & 0x3) + 0x100ll * ((b) & 0x3f);
+        return 0x864000010058ll + 0x1000000000ll * ((a) & 0x3) + 0x100ll * ((b) & 0x3f);
     __cavm_csr_fatal("CPRIX_RP3_UL_CTRL_MAP0X", 2, a, b, 0, 0, 0, 0);
 }
 
@@ -19413,7 +20069,7 @@ static inline uint64_t CAVM_CPRIX_RP3_UL_CTRL_MAP1X(unsigned long a, unsigned lo
 static inline uint64_t CAVM_CPRIX_RP3_UL_CTRL_MAP1X(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=2) && (b<=63)))
-        return 0x864000010058ll + 0x1000000000ll * ((a) & 0x3) + 0x100ll * ((b) & 0x3f);
+        return 0x864000010060ll + 0x1000000000ll * ((a) & 0x3) + 0x100ll * ((b) & 0x3f);
     __cavm_csr_fatal("CPRIX_RP3_UL_CTRL_MAP1X", 2, a, b, 0, 0, 0, 0);
 }
 
@@ -19424,14 +20080,14 @@ static inline uint64_t CAVM_CPRIX_RP3_UL_CTRL_MAP1X(unsigned long a, unsigned lo
 #define arguments_CAVM_CPRIX_RP3_UL_CTRL_MAP1X(a,b) (a),(b),-1,-1
 
 /**
- * Register (NCB) cpri#_rp3_ul_ctrl_sw_cfg#
+ * Register (NCB) cpri#_rp3_ul_ctrl_sw_cfg0#
  *
  * CPRI RP3 UL Control Switch Configuration Register
  */
-union cavm_cprix_rp3_ul_ctrl_sw_cfgx
+union cavm_cprix_rp3_ul_ctrl_sw_cfg0x
 {
     uint64_t u;
-    struct cavm_cprix_rp3_ul_ctrl_sw_cfgx_s
+    struct cavm_cprix_rp3_ul_ctrl_sw_cfg0x_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_25_63        : 39;
@@ -19445,23 +20101,63 @@ union cavm_cprix_rp3_ul_ctrl_sw_cfgx
         uint64_t reserved_25_63        : 39;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_cprix_rp3_ul_ctrl_sw_cfgx_s cn; */
+    /* struct cavm_cprix_rp3_ul_ctrl_sw_cfg0x_s cn; */
 };
-typedef union cavm_cprix_rp3_ul_ctrl_sw_cfgx cavm_cprix_rp3_ul_ctrl_sw_cfgx_t;
+typedef union cavm_cprix_rp3_ul_ctrl_sw_cfg0x cavm_cprix_rp3_ul_ctrl_sw_cfg0x_t;
 
-static inline uint64_t CAVM_CPRIX_RP3_UL_CTRL_SW_CFGX(unsigned long a, unsigned long b) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_CPRIX_RP3_UL_CTRL_SW_CFGX(unsigned long a, unsigned long b)
+static inline uint64_t CAVM_CPRIX_RP3_UL_CTRL_SW_CFG0X(unsigned long a, unsigned long b) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CPRIX_RP3_UL_CTRL_SW_CFG0X(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=2) && (b<=63)))
         return 0x864000010020ll + 0x1000000000ll * ((a) & 0x3) + 0x100ll * ((b) & 0x3f);
-    __cavm_csr_fatal("CPRIX_RP3_UL_CTRL_SW_CFGX", 2, a, b, 0, 0, 0, 0);
+    __cavm_csr_fatal("CPRIX_RP3_UL_CTRL_SW_CFG0X", 2, a, b, 0, 0, 0, 0);
 }
 
-#define typedef_CAVM_CPRIX_RP3_UL_CTRL_SW_CFGX(a,b) cavm_cprix_rp3_ul_ctrl_sw_cfgx_t
-#define bustype_CAVM_CPRIX_RP3_UL_CTRL_SW_CFGX(a,b) CSR_TYPE_NCB
-#define basename_CAVM_CPRIX_RP3_UL_CTRL_SW_CFGX(a,b) "CPRIX_RP3_UL_CTRL_SW_CFGX"
-#define busnum_CAVM_CPRIX_RP3_UL_CTRL_SW_CFGX(a,b) (a)
-#define arguments_CAVM_CPRIX_RP3_UL_CTRL_SW_CFGX(a,b) (a),(b),-1,-1
+#define typedef_CAVM_CPRIX_RP3_UL_CTRL_SW_CFG0X(a,b) cavm_cprix_rp3_ul_ctrl_sw_cfg0x_t
+#define bustype_CAVM_CPRIX_RP3_UL_CTRL_SW_CFG0X(a,b) CSR_TYPE_NCB
+#define basename_CAVM_CPRIX_RP3_UL_CTRL_SW_CFG0X(a,b) "CPRIX_RP3_UL_CTRL_SW_CFG0X"
+#define busnum_CAVM_CPRIX_RP3_UL_CTRL_SW_CFG0X(a,b) (a)
+#define arguments_CAVM_CPRIX_RP3_UL_CTRL_SW_CFG0X(a,b) (a),(b),-1,-1
+
+/**
+ * Register (NCB) cpri#_rp3_ul_ctrl_sw_cfg1#
+ *
+ * CPRI RP3 UL Control Switch Configuration Register
+ */
+union cavm_cprix_rp3_ul_ctrl_sw_cfg1x
+{
+    uint64_t u;
+    struct cavm_cprix_rp3_ul_ctrl_sw_cfg1x_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_25_63        : 39;
+        uint64_t repl_addr             : 13; /**< [ 24: 12](R/W) Switched control message replacement address. */
+        uint64_t sw_msg_axc            : 8;  /**< [ 11:  4](R/W) Switched message CTRL ID (0-255). */
+        uint64_t sw_msg_dest           : 4;  /**< [  3:  0](R/W) Switched control message destination core (0-4). */
+#else /* Word 0 - Little Endian */
+        uint64_t sw_msg_dest           : 4;  /**< [  3:  0](R/W) Switched control message destination core (0-4). */
+        uint64_t sw_msg_axc            : 8;  /**< [ 11:  4](R/W) Switched message CTRL ID (0-255). */
+        uint64_t repl_addr             : 13; /**< [ 24: 12](R/W) Switched control message replacement address. */
+        uint64_t reserved_25_63        : 39;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_cprix_rp3_ul_ctrl_sw_cfg1x_s cn; */
+};
+typedef union cavm_cprix_rp3_ul_ctrl_sw_cfg1x cavm_cprix_rp3_ul_ctrl_sw_cfg1x_t;
+
+static inline uint64_t CAVM_CPRIX_RP3_UL_CTRL_SW_CFG1X(unsigned long a, unsigned long b) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_CPRIX_RP3_UL_CTRL_SW_CFG1X(unsigned long a, unsigned long b)
+{
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=2) && (b<=63)))
+        return 0x864000010028ll + 0x1000000000ll * ((a) & 0x3) + 0x100ll * ((b) & 0x3f);
+    __cavm_csr_fatal("CPRIX_RP3_UL_CTRL_SW_CFG1X", 2, a, b, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_CPRIX_RP3_UL_CTRL_SW_CFG1X(a,b) cavm_cprix_rp3_ul_ctrl_sw_cfg1x_t
+#define bustype_CAVM_CPRIX_RP3_UL_CTRL_SW_CFG1X(a,b) CSR_TYPE_NCB
+#define basename_CAVM_CPRIX_RP3_UL_CTRL_SW_CFG1X(a,b) "CPRIX_RP3_UL_CTRL_SW_CFG1X"
+#define busnum_CAVM_CPRIX_RP3_UL_CTRL_SW_CFG1X(a,b) (a)
+#define arguments_CAVM_CPRIX_RP3_UL_CTRL_SW_CFG1X(a,b) (a),(b),-1,-1
 
 /**
  * Register (NCB) cpri#_rp3_ul_ja_params
@@ -19507,7 +20203,7 @@ static inline uint64_t CAVM_CPRIX_RP3_UL_JA_PARAMS(unsigned long a) __attribute_
 static inline uint64_t CAVM_CPRIX_RP3_UL_JA_PARAMS(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=2))
-        return 0x864000010060ll + 0x1000000000ll * ((a) & 0x3);
+        return 0x864000010068ll + 0x1000000000ll * ((a) & 0x3);
     __cavm_csr_fatal("CPRIX_RP3_UL_JA_PARAMS", 1, a, 0, 0, 0, 0, 0);
 }
 

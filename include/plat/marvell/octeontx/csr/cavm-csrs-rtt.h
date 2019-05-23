@@ -31,15 +31,15 @@ union cavm_rtt_axi_ncbw_addr_fault
     struct cavm_rtt_axi_ncbw_addr_fault_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t addr                  : 60; /**< [ 63:  4](RO/H) Address that caused an SMMU fault. */
-        uint64_t reserved_1_3          : 3;
-        uint64_t fault                 : 1;  /**< [  0:  0](R/W1C/H) Set to one when an SMMU fault occurs on a store. Write one to clear
+        uint64_t fault                 : 1;  /**< [ 63: 63](RO/H) Set to one when an SMMU fault occurs on a store. Write one to clear
                                                                  after processing the fault. */
+        uint64_t reserved_53_62        : 10;
+        uint64_t addr                  : 53; /**< [ 52:  0](R/W1C/H) Address that caused an SMMU fault. Bits 52:4 of the address */
 #else /* Word 0 - Little Endian */
-        uint64_t fault                 : 1;  /**< [  0:  0](R/W1C/H) Set to one when an SMMU fault occurs on a store. Write one to clear
+        uint64_t addr                  : 53; /**< [ 52:  0](R/W1C/H) Address that caused an SMMU fault. Bits 52:4 of the address */
+        uint64_t reserved_53_62        : 10;
+        uint64_t fault                 : 1;  /**< [ 63: 63](RO/H) Set to one when an SMMU fault occurs on a store. Write one to clear
                                                                  after processing the fault. */
-        uint64_t reserved_1_3          : 3;
-        uint64_t addr                  : 60; /**< [ 63:  4](RO/H) Address that caused an SMMU fault. */
 #endif /* Word 0 - End */
     } s;
     /* struct cavm_rtt_axi_ncbw_addr_fault_s cn; */

@@ -202,6 +202,7 @@
 #define CAVM_PCC_DEV_IDL_E_GIC5 (0x71)
 #define CAVM_PCC_DEV_IDL_E_GPIO (0xa)
 #define CAVM_PCC_DEV_IDL_E_GSER (0x25)
+#define CAVM_PCC_DEV_IDL_E_GSERC (0x3b)
 #define CAVM_PCC_DEV_IDL_E_GSERN (0x28)
 #define CAVM_PCC_DEV_IDL_E_GSERP (0x3a)
 #define CAVM_PCC_DEV_IDL_E_GSERR (0x39)
@@ -359,8 +360,8 @@
 #define CAVM_PCC_PROD_E_CN98XX (0xb1)
 #define CAVM_PCC_PROD_E_CN99XX (0xaf)
 #define CAVM_PCC_PROD_E_CNF95XX (0xb3)
-#define CAVM_PCC_PROD_E_CNF95XXN (0xb4)
 #define CAVM_PCC_PROD_E_GEN (0xa0)
+#define CAVM_PCC_PROD_E_LOKI (0xb4)
 
 /**
  * Enumeration pcc_vendor_e

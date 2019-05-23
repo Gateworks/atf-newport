@@ -98,7 +98,7 @@ static inline uint64_t CAVM_ECMP_BP_TEST0_FUNC(void) __attribute__ ((pure, alway
 static inline uint64_t CAVM_ECMP_BP_TEST0_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_LOKI))
-        return 0x87e043c000d0ll;
+        return 0x87e0438000d0ll;
     __cavm_csr_fatal("ECMP_BP_TEST0", 0, 0, 0, 0, 0, 0, 0);
 }
 
@@ -176,7 +176,7 @@ static inline uint64_t CAVM_ECMP_BP_TEST1_FUNC(void) __attribute__ ((pure, alway
 static inline uint64_t CAVM_ECMP_BP_TEST1_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_LOKI))
-        return 0x87e043c000d8ll;
+        return 0x87e0438000d8ll;
     __cavm_csr_fatal("ECMP_BP_TEST1", 0, 0, 0, 0, 0, 0, 0);
 }
 
@@ -219,7 +219,7 @@ static inline uint64_t CAVM_ECMP_CONFIG_FUNC(void) __attribute__ ((pure, always_
 static inline uint64_t CAVM_ECMP_CONFIG_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_LOKI))
-        return 0x87e043c00008ll;
+        return 0x87e043800008ll;
     __cavm_csr_fatal("ECMP_CONFIG", 0, 0, 0, 0, 0, 0, 0);
 }
 
@@ -266,7 +266,7 @@ static inline uint64_t CAVM_ECMP_CONTROL_FUNC(void) __attribute__ ((pure, always
 static inline uint64_t CAVM_ECMP_CONTROL_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_LOKI))
-        return 0x87e043c00000ll;
+        return 0x87e043800000ll;
     __cavm_csr_fatal("ECMP_CONTROL", 0, 0, 0, 0, 0, 0, 0);
 }
 
@@ -305,7 +305,7 @@ static inline uint64_t CAVM_ECMP_ECO_FUNC(void) __attribute__ ((pure, always_inl
 static inline uint64_t CAVM_ECMP_ECO_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_LOKI))
-        return 0x87e043c00010ll;
+        return 0x87e043800010ll;
     __cavm_csr_fatal("ECMP_ECO", 0, 0, 0, 0, 0, 0, 0);
 }
 
@@ -361,7 +361,7 @@ static inline uint64_t CAVM_ECMP_ERROR_ENA_W1C_FUNC(void) __attribute__ ((pure, 
 static inline uint64_t CAVM_ECMP_ERROR_ENA_W1C_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_LOKI))
-        return 0x87e043c000c0ll;
+        return 0x87e0438000c0ll;
     __cavm_csr_fatal("ECMP_ERROR_ENA_W1C", 0, 0, 0, 0, 0, 0, 0);
 }
 
@@ -417,7 +417,7 @@ static inline uint64_t CAVM_ECMP_ERROR_ENA_W1S_FUNC(void) __attribute__ ((pure, 
 static inline uint64_t CAVM_ECMP_ERROR_ENA_W1S_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_LOKI))
-        return 0x87e043c000b8ll;
+        return 0x87e0438000b8ll;
     __cavm_csr_fatal("ECMP_ERROR_ENA_W1S", 0, 0, 0, 0, 0, 0, 0);
 }
 
@@ -463,7 +463,7 @@ static inline uint64_t CAVM_ECMP_ERROR_ENABLE0_FUNC(void) __attribute__ ((pure, 
 static inline uint64_t CAVM_ECMP_ERROR_ENABLE0_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_LOKI))
-        return 0x87e043c00040ll;
+        return 0x87e043800040ll;
     __cavm_csr_fatal("ECMP_ERROR_ENABLE0", 0, 0, 0, 0, 0, 0, 0);
 }
 
@@ -530,7 +530,7 @@ static inline uint64_t CAVM_ECMP_ERROR_INT_FUNC(void) __attribute__ ((pure, alwa
 static inline uint64_t CAVM_ECMP_ERROR_INT_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_LOKI))
-        return 0x87e043c000b0ll;
+        return 0x87e0438000b0ll;
     __cavm_csr_fatal("ECMP_ERROR_INT", 0, 0, 0, 0, 0, 0, 0);
 }
 
@@ -586,7 +586,7 @@ static inline uint64_t CAVM_ECMP_ERROR_INT_W1S_FUNC(void) __attribute__ ((pure, 
 static inline uint64_t CAVM_ECMP_ERROR_INT_W1S_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_LOKI))
-        return 0x87e043c000c8ll;
+        return 0x87e0438000c8ll;
     __cavm_csr_fatal("ECMP_ERROR_INT_W1S", 0, 0, 0, 0, 0, 0, 0);
 }
 
@@ -638,7 +638,7 @@ static inline uint64_t CAVM_ECMP_ERROR_SOURCE0_FUNC(void) __attribute__ ((pure, 
 static inline uint64_t CAVM_ECMP_ERROR_SOURCE0_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_LOKI))
-        return 0x87e043c00030ll;
+        return 0x87e043800030ll;
     __cavm_csr_fatal("ECMP_ERROR_SOURCE0", 0, 0, 0, 0, 0, 0, 0);
 }
 
@@ -697,7 +697,7 @@ static inline uint64_t CAVM_ECMP_JDXX_CFG(unsigned long a) __attribute__ ((pure,
 static inline uint64_t CAVM_ECMP_JDXX_CFG(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=2))
-        return 0x87e043c02000ll + 0x2000ll * ((a) & 0x3);
+        return 0x87e043802000ll + 0x2000ll * ((a) & 0x3);
     __cavm_csr_fatal("ECMP_JDXX_CFG", 1, a, 0, 0, 0, 0, 0);
 }
 
@@ -734,7 +734,7 @@ static inline uint64_t CAVM_ECMP_SCRATCH_FUNC(void) __attribute__ ((pure, always
 static inline uint64_t CAVM_ECMP_SCRATCH_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_LOKI))
-        return 0x87e043c00020ll;
+        return 0x87e043800020ll;
     __cavm_csr_fatal("ECMP_SCRATCH", 0, 0, 0, 0, 0, 0, 0);
 }
 
@@ -779,7 +779,7 @@ static inline uint64_t CAVM_ECMP_STATUS_FUNC(void) __attribute__ ((pure, always_
 static inline uint64_t CAVM_ECMP_STATUS_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_LOKI))
-        return 0x87e043c00018ll;
+        return 0x87e043800018ll;
     __cavm_csr_fatal("ECMP_STATUS", 0, 0, 0, 0, 0, 0, 0);
 }
 
