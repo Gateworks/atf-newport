@@ -32,6 +32,11 @@ static struct blk_entry block_map[] = {
 	{ .enabled = 0, .block = BLKADDR_NDC0 },
 	{ .enabled = 0, .block = BLKADDR_NDC1 },
 	{ .enabled = 0, .block = BLKADDR_NDC2 },
+	{ .enabled = 0, .block = BLKADDR_NDC3 },
+	{ .enabled = 0, .block = BLKADDR_NDC4 },
+	{ .enabled = 0, .block = BLKADDR_NDC5 },
+	{ .enabled = 0, .block = BLKADDR_NDC6 },
+	{ .enabled = 0, .block = BLKADDR_NDC7 },
 	{ 0 },
 };
 
