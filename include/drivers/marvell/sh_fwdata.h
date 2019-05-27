@@ -67,5 +67,7 @@ static inline uint64_t get_sh_fwdata_base(void)
 void sh_fwdata_init(void);
 void sh_fwdata_update_supported_fec(int cgx_id, int lmac_id);
 int sh_fwdata_get_supported_fec(int cgx_id, int lmac_id);
+void sh_fwdata_update_eeprom_data(int cgx_id, int lmac_id, uint16_t sff_id);
+void sh_fwdata_clear_eeprom_data(int cgx_id, int lmac_id, uint16_t sff_id);
 
 #endif

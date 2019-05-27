@@ -51,6 +51,15 @@ typedef enum {
 	I2C_BUS_OTHER
 } i2c_bus_type_e;
 
+/* SFF compliance revisions */
+typedef enum {
+	ETH_MODULE_SFF_NONE = 0,
+	ETH_MODULE_SFF_8079,
+	ETH_MODULE_SFF_8472,
+	ETH_MODULE_SFF_8636,
+	ETH_MODULE_SFF_8436
+} sff_id_e;
+
 typedef struct gpio_compat {
 	/* compatible string */
 	char compatible[64];
@@ -118,6 +127,8 @@ typedef enum sfp_mod_state_info {
 	SFP_MOD_STATE_ABSENT = 0,
 	/* Module connected */
 	SFP_MOD_STATE_PRESENT,
+	/* Update of EEPROM every 5s */
+	SFP_MOD_STATE_EEPROM_UPDATED,
 	/* Other state */
 	SFP_MOD_STATE_OTHER
 } sfp_mod_state_info_t;

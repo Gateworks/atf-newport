@@ -19,6 +19,7 @@
 #include <smi.h>
 #include <cgx_intf.h>
 #include <cgx.h>
+#include <sh_fwdata.h>
 
 /* define DEBUG_ATF_SFP_MGMT to enable debug logs */
 #undef DEBUG_ATF_SFP_MGMT	/* SFP/QSFP management */
@@ -86,6 +87,7 @@ void sfp_init_shmem(void)
 
 int sfp_get_mod_status(int cgx_id, int lmac_id)
 {
+	int retry_lock = 0;
 	sfp_context_t *ctx;
 	sfp_shared_data_t *sh_data = sfp_get_sh_mem_ptr(cgx_id, lmac_id);
 
@@ -94,8 +96,29 @@ int sfp_get_mod_status(int cgx_id, int lmac_id)
 		return -1;
 	}
 	ctx = &sh_data->sfp_ctx;
-	debug_sfp_mgmt("%s: %d:%d state %d\n", __func__, cgx_id,
-				lmac_id, ctx->mod_status);
+
+retry_acquire_lock:
+	if (ctx->lock == SFP_OWN_NONE) {
+		ctx->lock = SFP_OWN_AP;
+	} else {
+		if (retry_lock++ < 5) {
+			mdelay(1);
+			goto retry_acquire_lock;
+		}
+
+		debug_sfp_mgmt("%s %d:%d lock %d not available for AP\n",
+					__func__,
+					cgx_id, lmac_id, ctx->lock);
+		return -1;
+	}
+	debug_sfp_mgmt("%s: %d:%d ctx %p state %d\n", __func__, cgx_id,
+				lmac_id, ctx, ctx->mod_status);
+	ctx->lock = SFP_OWN_NONE;
+
+	if (ctx->mod_status == SFP_MOD_STATE_ABSENT)
+		debug_sfp_mgmt("%s: %d:%d module not present ctx %p\n",
+			__func__, cgx_id, lmac_id, ctx);
+
 	return ctx->mod_status;
 }
 
@@ -648,6 +671,8 @@ int sfp_get_an_capability(int cgx_id, int lmac_id)
 {
 	int an = 0;
 	sfp_cap_info_t *cap_info = &sfp_cap_info[cgx_id][lmac_id];
+	debug_sfp_mgmt("%s: %d:%d trans_type %d\n", __func__, cgx_id, lmac_id,
+			cap_info->trans_type);
 
 	switch (cap_info->trans_type) {
 	case SFP_TRANS_TYPE_25G_CA_N:
@@ -681,6 +706,8 @@ int sfp_get_fec_capability(int cgx_id, int lmac_id)
 	int fec = 0;
 	sfp_cap_info_t *cap_info = &sfp_cap_info[cgx_id][lmac_id];
 
+	debug_sfp_mgmt("%s: %d:%d trans_type %d\n", __func__, cgx_id, lmac_id,
+			cap_info->trans_type);
 	switch (cap_info->trans_type) {
 	case SFP_TRANS_TYPE_10G_SR:
 	case SFP_TRANS_TYPE_10G_LR:
@@ -705,6 +732,11 @@ int sfp_get_fec_capability(int cgx_id, int lmac_id)
 	case SFP_TRANS_TYPE_25G_ACC_L:
 	case SFP_TRANS_TYPE_25G_AOC:
 	case SFP_TRANS_TYPE_4x25G_CR:
+	/* FIXME for multi-rate */
+	case SFP_TRANS_TYPE_MULTI_RATE_40G_100G_SR:
+	case SFP_TRANS_TYPE_MULTI_RATE_40G_100G_CR:
+	case SFP_TRANS_TYPE_MULTI_RATE_40G_100G_LR:
+	case SFP_TRANS_TYPE_MULTI_RATE_40G_100G_AOC:
 		fec = SFP_FEC_MODE_RS_FIRECODE;
 		break;
 	case SFP_TRANS_TYPE_100G_AOC:
@@ -731,6 +763,8 @@ int sfp_get_speed_capability(int cgx_id, int lmac_id)
 	int max_speed = 0;
 	sfp_cap_info_t *cap_info = &sfp_cap_info[cgx_id][lmac_id];
 
+	debug_sfp_mgmt("%s: %d:%d trans_type %d\n", __func__, cgx_id, lmac_id,
+			cap_info->trans_type);
 	switch (cap_info->trans_type) {
 	case SFP_TRANS_TYPE_1G_PCC:
 	case SFP_TRANS_TYPE_1G_ACC:
@@ -880,10 +914,12 @@ int sfp_is_transceiver_active(int cgx_id, int lmac_id)
 int sfp_parse_eeprom_data(int cgx_id, int lmac_id)
 {
 	int flag = 0, ret = 0, retry_count = 0;
+	int retry_lock = 0;
 	sfp_context_t *ctx;
 	sfp_mod_info_t *mod_info;
 	sfp_shared_data_t *sh_data = sfp_get_sh_mem_ptr(cgx_id, lmac_id);
 	sfp_cap_info_t *cap_info = &sfp_cap_info[cgx_id][lmac_id];
+	uint16_t sff_id = 0;
 
 	debug_sfp_mgmt("%s: %d:%d\n", __func__, cgx_id, lmac_id);
 
@@ -897,6 +933,7 @@ int sfp_parse_eeprom_data(int cgx_id, int lmac_id)
 	/* Check if lock is free and if available, check the current state
 	 * to parse the buffer
 	 */
+retry_acquire_lock:
 	if (ctx->lock == SFP_OWN_NONE) {
 		ctx->lock = SFP_OWN_AP;
 retry_read_eeprom:
@@ -908,19 +945,25 @@ retry_read_eeprom:
 			case 0x3:
 				debug_sfp_mgmt("%s: SFP/SFP+/SFP28 inserted\n", __func__);
 				sfp_get_info(cgx_id, lmac_id);
+				ret = cap_info->trans_type;
+				sff_id = ETH_MODULE_SFF_8472;
 				break;
 			case 0xc:
 				debug_sfp_mgmt("%s: QSFP inserted\n", __func__);
 				qsfp_get_info(cgx_id, lmac_id);
+				ret = cap_info->trans_type;
+				sff_id = ETH_MODULE_SFF_8436;
 				flag = 1; /* fall through */
 			case 0xd:
 				if (flag == 0) {
 					debug_sfp_mgmt("%s: QSFP+ detected\n", __func__);
+					sff_id = ETH_MODULE_SFF_8436;
 					flag = 1; /* fall through */
 				}
 			case 0x11:
 				if (flag == 0) {
 					debug_sfp_mgmt("%s: QSFP-28 detected\n", __func__);
+					sff_id = ETH_MODULE_SFF_8636;
 					flag = 1;
 				}
 				/* INF-8438 Table 18 - Status Indicators
@@ -933,6 +976,7 @@ retry_read_eeprom:
 					debug_sfp_mgmt("%s: QSFP detected and transceiver ready\n",
 								__func__);
 					qsfp_get_info(cgx_id, lmac_id);
+					ret = cap_info->trans_type;
 				} else
 					debug_sfp_mgmt("%s: QSFP detected and transceiver not ready\n",
 								__func__);
@@ -943,26 +987,97 @@ retry_read_eeprom:
 			default:
 				ERROR("%s: %d:%d unknown transceiver type inserted\n", __func__,
 									cgx_id, lmac_id);
-				return SFP_TRANS_TYPE_NONE;
+				ret = SFP_TRANS_TYPE_NONE;
 			}
 		} else	{
-			if (retry_count++ < 5)
+			if (retry_count++ < 5) {
+				mdelay(1);
 				goto retry_read_eeprom;
+			}
 
-			WARN("%s %d:%d Valid EEPROM data is not available, state %d\n",
-					 __func__, cgx_id, lmac_id, ctx->data_status);
+			debug_sfp_mgmt("%s %d:%d EEPROM not valid state %d\n",
+					 __func__, cgx_id, lmac_id,
+					ctx->data_status);
 			ret = SFP_TRANS_TYPE_NONE;
 		}
 	} else {
-		WARN("%s %d:%d lock not available for AP to read\n", __func__,
-					cgx_id, lmac_id);
+		if (retry_lock++ < 5) {
+			mdelay(1);
+			goto retry_acquire_lock;
+		}
+		debug_sfp_mgmt("%s %d:%d lock %d not available for AP\n",
+					 __func__,
+					cgx_id, lmac_id, ctx->lock);
 		ret = SFP_TRANS_TYPE_NONE;
 	}
 
-	ret = cap_info->trans_type;
+	/* Copy the data to SH FW data
+	 * whenever valid EEPROM data is
+	 * obtained. Since the lock is owned
+	 * by AP, MCP is not updating the
+	 * buffer now.
+	 */
+
+	sh_fwdata_update_eeprom_data(cgx_id, lmac_id, sff_id);
 
 	/* set the lock to free */
 	ctx->lock = SFP_OWN_NONE;
 
 	return ret;
+}
+
+int sfp_validate_user_options(int cgx_id, int lmac_id)
+{
+	int speed_conf = 0;
+	cgx_lmac_config_t *lmac_cfg;
+	sfp_cap_info_t *cap_info = &sfp_cap_info[cgx_id][lmac_id];
+
+	debug_sfp_mgmt("%s: %d:%d\n", __func__, cgx_id, lmac_id);
+
+	lmac_cfg = &(plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id]);
+
+	if (lmac_cfg->autoneg_dis) {
+		/* Validate user options against QSFP/SFP module capabilities
+		 * in case of FIXED mode to check if it matches. If it doesn't
+		 * match, throw error to the user
+		 */
+		if ((lmac_cfg->fec != -1) && (lmac_cfg->fec != 0)) {
+			/* In this case, user has configured FEC and it needs
+			 * to be validated against CAP. If user has not
+			 * configured FEC or FEC is disabled, no need to
+			 * validate it
+			 */
+			if ((cap_info->fec_type & lmac_cfg->fec) == 0) {
+				ERROR("%s: %d:%d User has configured\t"
+				"FEC to be %d,\t"
+				"but module's FEC cap is %d\n", __func__,
+					cgx_id, lmac_id, lmac_cfg->fec,
+					cap_info->fec_type);
+				return 0;
+			}
+		}
+
+		speed_conf = cgx_get_lane_speed(cgx_id, lmac_id);
+		debug_sfp_mgmt("%s: speed configured %d\n", __func__,
+							speed_conf);
+
+		if (speed_conf > cap_info->speed_limit) {
+			ERROR("%s: %d:%d User has configured speed to be %d,\t"
+					"but module's speed limit is %d\n",
+					__func__, cgx_id, lmac_id, speed_conf,
+					cap_info->speed_limit);
+			return 0;
+		}
+	} else {
+		/* FIXME - AN mode */
+		if (cap_info->an_enable != (!lmac_cfg->autoneg_dis)) {
+			ERROR("%s: %d:%d User has configured AN to be %d,\t"
+					"but module's AN cap is %d\n",
+					__func__, cgx_id, lmac_id,
+					!lmac_cfg->autoneg_dis,
+					cap_info->an_enable);
+			return 0;
+		}
+	}
+	return 1;
 }

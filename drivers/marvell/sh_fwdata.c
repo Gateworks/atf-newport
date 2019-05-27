@@ -20,6 +20,7 @@
 #include <debug.h>
 #include <octeontx_utils.h>
 #include <plat_scfg.h>
+#include <sfp_mgmt.h>
 
 #ifdef NT_FW_CONFIG
 #include <plat_npc_mcam_profile.h>
@@ -114,6 +115,32 @@ void sh_fwdata_update_supported_fec(int cgx_id, int lmac_id)
 						lmac_id, fwdata->supported_fec);
 }
 
+void sh_fwdata_update_eeprom_data(int cgx_id, int lmac_id, uint16_t sff_id)
+{
+	struct cgx_lmac_fwdata_s *fwdata;
+	sfp_shared_data_t *sh_data = sfp_get_sh_mem_ptr(cgx_id, lmac_id);
+
+	fwdata = get_sh_cgx_fwdata_ptr(cgx_id, lmac_id);
+
+	fwdata->rw_valid = 0;
+
+	memcpy(fwdata->sfp_eeprom.buf, sh_data->buf, SFP_EEPROM_SIZE);
+
+	fwdata->sfp_eeprom.sff_id = sff_id;
+	fwdata->rw_valid = 1;
+}
+
+void sh_fwdata_clear_eeprom_data(int cgx_id, int lmac_id, uint16_t sff_id)
+{
+	struct cgx_lmac_fwdata_s *fwdata;
+
+	fwdata = get_sh_cgx_fwdata_ptr(cgx_id, lmac_id);
+
+	fwdata->rw_valid = 0;
+	fwdata->sfp_eeprom.sff_id = 0;
+	memset(fwdata->sfp_eeprom.buf, 0, SFP_EEPROM_SIZE);
+	fwdata->rw_valid = 1;
+}
 
 int sh_fwdata_get_supported_fec(int cgx_id, int lmac_id)
 {
