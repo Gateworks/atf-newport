@@ -14,7 +14,7 @@ System preparations (for both methods)
 --------------------------------------
 (1) Set the cross compiler::
 
-		> export CROSS_COMPILE=/path/to/toolchain/aarch64-linux-gnu-
+		> export CROSS_COMPILE=/path/to/toolchain/aarch64-marvell-linux-gnu-
 
 (2) Set path for MV_DDR component::
 
