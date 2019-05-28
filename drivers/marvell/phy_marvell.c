@@ -850,7 +850,7 @@ void phy_marvell_5113_config(int cgx_id, int lmac_id)
 	 * 88x5113 "line" side points to CN96
 	 * Patch : Received from Bruce(BDK)
 	 */
-	if (!strncmp(plat_octeontx_bcfg->bcfg.board_model, "ebb96", 5)) {
+	if (!strncmp(plat_octeontx_bcfg->bcfg.board_model, "ebb9", 4)) {
 		MXD_U16 HostRxPolarities[4] = {0, 1, 0, 1};
 		MXD_U16 HostTxPolarities[4] = {0, 0, 1, 0};
 		MXD_U16 LineRxPolarities[4] = {1, 1, 0, 0};
@@ -975,7 +975,7 @@ void phy_marvell_5113_get_link_status(int cgx_id, int lmac_id,
 
 	link->u64 = 0;
 
-	if (!strncmp(plat_octeontx_bcfg->bcfg.board_model, "ebb96", 5))
+	if (!strncmp(plat_octeontx_bcfg->bcfg.board_model, "ebb9", 4))
 		phy_side = MXD_HOST_SIDE;
 	else
 		phy_side = MXD_LINE_SIDE;
