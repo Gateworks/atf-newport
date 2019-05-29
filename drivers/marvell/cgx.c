@@ -406,7 +406,7 @@ static void cgx_lmac_init(int cgx_id, int lmac_id)
 			(((1ull << 1) - 1ull) << (lmac_id * MAX_CHAN_PER_LMAC))));
 }
 
-static int cgx_get_lane_speed(int cgx_id, int lmac_id)
+int cgx_get_lane_speed(int cgx_id, int lmac_id)
 {
 	int qlm, lane_id, lanes = 0, speed = 0;
 	cgx_lmac_config_t *lmac;
