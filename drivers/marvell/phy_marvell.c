@@ -333,39 +333,83 @@ void phy_marvell_5123_config(int cgx_id, int lmac_id)
 	phy = &lmac_cfg->phy_config;
 	port_num = phy->port;
 
-	debug_phy_driver("%s: port %d AN %d\n", __func__, port_num,
-			!lmac_cfg->autoneg_dis);
+	debug_phy_driver("%s: port %d AN %d FEC %d\n", __func__, port_num,
+			!lmac_cfg->autoneg_dis, lmac_cfg->fec);
 
 	if (!lmac_cfg->autoneg_dis)
 		marvell_5123_priv.port[port_num].use_an = 1;
 
-	switch (lmac_cfg->mode) {
-	case CAVM_CGX_LMAC_TYPES_E_TENG_R:
-		modesVector = MCD_AN_10GBase_KR;
-		op_mode = MCD_MODE_P10L;
-		fec_type = MCD_NO_FEC;
-		mode_str = "10GBASE-KR";
-	break;
-	case CAVM_CGX_LMAC_TYPES_E_TWENTYFIVEG_R:
-		modesVector = MCD_AN_25GBase_KR1S;
-		op_mode = MCD_MODE_P25S;
+	if (lmac_cfg->fec == CGX_FEC_RS)
 		fec_type = MCD_RS_FEC_HOST;
-		mode_str = "25GBASE-KR";
-	break;
-	case CAVM_CGX_LMAC_TYPES_E_FORTYG_R:
-		modesVector = MCD_AN_40GBASE_KR4;
+	else if (lmac_cfg->fec == CGX_FEC_BASE_R)
+		fec_type = MCD_FC_FEC_HOST;
+
+	switch (lmac_cfg->mode_idx) {
+	case QLM_MODE_XLAUI:
+	case QLM_MODE_XLAUI_C2M:
 		op_mode = MCD_MODE_P40L;
-		fec_type = MCD_NO_FEC;
-		mode_str = "40GBASE-KR4";
+		mode_str = "40G-BASE-R4";
 	break;
-	case CAVM_CGX_LMAC_TYPES_E_HUNDREDG_R:
+	case QLM_MODE_40G_KR4:
+		op_mode = MCD_MODE_P40L;
+		modesVector = MCD_AN_40GBASE_KR4;
+		mode_str = "40G-BASE-KR4";
+	break;
+	case QLM_MODE_XFI:
+	case QLM_MODE_SFI:
+		op_mode = MCD_MODE_P10L;
+		mode_str = "10G-BASE-R";
+	break;
+	case QLM_MODE_10G_KR:
+		op_mode = MCD_MODE_P10L;
+		modesVector = MCD_AN_10GBase_KR;
+		mode_str = "10G-BASE-KR";
+	break;
+	case QLM_MODE_20GAUI_C2C:
+		mode_str = "20G-BASE-R";
+		op_mode = MCD_MODE_P20S;
+	break;
+	case QLM_MODE_25GAUI_C2C:
+	case QLM_MODE_25GAUI_C2M:
+		op_mode = MCD_MODE_P25S;
+		mode_str = "25G-BASE-R";
+	break;
+	case QLM_MODE_25G_KR:
+		op_mode = MCD_MODE_P25S;
+		mode_str = "25G-BASE-KR";
+		modesVector = MCD_AN_25GBase_KR1S;
+	break;
+	case QLM_MODE_40GAUI_2_C2C:
+		op_mode = MCD_MODE_P40R2S;
+		mode_str = "40G-BASE-R";
+	break;
+	case QLM_MODE_50GAUI_2_C2C:
+	case QLM_MODE_50GAUI_2_C2M:
+		/* FIXME : to select the OP MODE for consortium/
+		 * non-standard
+		 */
+		op_mode = MCD_MODE_P50R2S;
+		mode_str = "50G-BASE-R2";
+	break;
+	case QLM_MODE_50G_KR2:
+		op_mode = MCD_MODE_P50R2S;
+		mode_str = "50G-BASE-KR2";
+		modesVector = MCD_AN_50GBase_KR2_CONSORTIUM;
+	break;
+	case QLM_MODE_CAUI_4_C2C:
+	case QLM_MODE_CAUI_4_C2M:
+		op_mode = MCD_MODE_P100S;
+		mode_str = "100G-BASE-R4";
+	break;
+	case QLM_MODE_100G_KR4:
 		modesVector = MCD_AN_100GBASE_KR4;
 		op_mode = MCD_MODE_P100S;
-		fec_type = MCD_RS_FEC_HOST;
-		mode_str = "100GBASE-KR4";
+		mode_str = "100G-BASE-KR4";
 	break;
-	/* FIXME for other modes */
 	default:
+		printf("%s: %d:%d mode %d not supported by 5123\n",
+			__func__, cgx_id, lmac_id, lmac_cfg->mode_idx);
+		return;
 	break;
 	}
 	printf("%s: port %d op_mode %d fec %d\n", __func__, port_num,
