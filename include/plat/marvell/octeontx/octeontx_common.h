@@ -19,6 +19,8 @@
 #pragma GCC diagnostic pop
 
 #define MIDR_REVISION(midr)     ((midr) & MIDR_REV_MASK)
+#define MIDR_VARIANT(midr)     \
+	(((midr) >> MIDR_VAR_SHIFT) & MIDR_VAR_MASK)
 #define MIDR_PARTNUM(midr)      \
         (((midr) >> MIDR_PN_SHIFT) & MIDR_PN_MASK)
 

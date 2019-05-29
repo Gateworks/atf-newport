@@ -42,6 +42,32 @@ void plat_octeontx_setup(void)
 	plat_flr_init();
 }
 
+/*
+ * Program REVID for PCIe devices.
+ * Bits 0..1: minor pass
+ * Bits 3..2: major pass
+ * Bits 7..4: midr id, 0:96, 1:95
+ */
+unsigned int plat_configure_rid(void)
+{
+	unsigned int val;
+	uint64_t midr;
+
+	val = 0;
+	midr = read_midr();
+
+	if (MIDR_PARTNUM(midr) == F95PARTNUM)
+		val = 1 << 4;
+
+	/* program minor pass */
+	val |= MIDR_REVISION(midr) & 0x3;
+
+	/* program major pass */
+	val |= MIDR_VARIANT(midr) & 0x3;
+
+	return val;
+}
+
 extern void *scmi_handle;
 
 void plat_pwrc_setup(void)
