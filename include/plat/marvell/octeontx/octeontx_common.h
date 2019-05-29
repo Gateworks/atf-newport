@@ -24,11 +24,12 @@
 #define MIDR_PARTNUM(midr)      \
         (((midr) >> MIDR_PN_SHIFT) & MIDR_PN_MASK)
 
-#define T81PARTNUM 0xA2
-#define T83PARTNUM 0xA3
-#define T98PARTNUM 0xB1
-#define T96PARTNUM 0xB2
-#define F95PARTNUM 0xB3
+#define T81PARTNUM	0xA2
+#define T83PARTNUM	0xA3
+#define T98PARTNUM	0xB1
+#define T96PARTNUM	0xB2
+#define F95PARTNUM	0xB3
+#define LOKIPARTNUM	0xB4
 
 /* Boot type definitions */
 #define OCTEONTX_BOOT_UNSUPPORTED	1
