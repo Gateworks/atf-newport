@@ -8314,6 +8314,60 @@ union cavm_nixx_af_lfx_rss_cfg
 
                                                                  Internal:
                                                                  Bypass NDC when all ones. */
+        uint64_t reserved_6_19         : 14;
+        uint64_t adder_is_tag_lsb      : 1;  /**< [  5:  5](R/W) Selects how a packet's RSS adder is computed from the flow tag.
+                                                                 When set, the RSS adder is the least significant byte of the flow tag.
+                                                                 When clear, the RSS adder is the exclusive OR of the flow tag bytes. See
+                                                                 pseudocode in NIX_AF_LF()_RSS_GRP()[SIZEM1]. */
+        uint64_t ena                   : 1;  /**< [  4:  4](R/W) RSS is enabled for the LF. */
+        uint64_t size                  : 4;  /**< [  3:  0](R/W) Specifies table size in NIX_RSSE_S entries of four bytes when [ENA] is set:
+                                                                 0x0 = 256 entries.
+                                                                 0x1 = 512 entries.
+                                                                 0x2 = 1K entries.
+                                                                 0x3 = 2K entries.
+                                                                 0x4-0xF = Reserved. */
+#else /* Word 0 - Little Endian */
+        uint64_t size                  : 4;  /**< [  3:  0](R/W) Specifies table size in NIX_RSSE_S entries of four bytes when [ENA] is set:
+                                                                 0x0 = 256 entries.
+                                                                 0x1 = 512 entries.
+                                                                 0x2 = 1K entries.
+                                                                 0x3 = 2K entries.
+                                                                 0x4-0xF = Reserved. */
+        uint64_t ena                   : 1;  /**< [  4:  4](R/W) RSS is enabled for the LF. */
+        uint64_t adder_is_tag_lsb      : 1;  /**< [  5:  5](R/W) Selects how a packet's RSS adder is computed from the flow tag.
+                                                                 When set, the RSS adder is the least significant byte of the flow tag.
+                                                                 When clear, the RSS adder is the exclusive OR of the flow tag bytes. See
+                                                                 pseudocode in NIX_AF_LF()_RSS_GRP()[SIZEM1]. */
+        uint64_t reserved_6_19         : 14;
+        uint64_t way_mask              : 16; /**< [ 35: 20](R/W) Way partitioning mask for allocating NIX_RSSE_S structures in NDC (1 means
+                                                                 do not use). All ones disables allocation in NDC.
+
+                                                                 Internal:
+                                                                 Bypass NDC when all ones. */
+        uint64_t caching               : 1;  /**< [ 36: 36](R/W) Selects the style of read for accessing NIX_RSSE_S structures in LLC/DRAM:
+                                                                 0 = NIX_RSSE_S reads will not allocate into the LLC.
+                                                                 1 = NIX_RSSE_S reads are allocated into the LLC.
+
+                                                                 NIX_RX_MCE_S writes that are not allocated in NDC will always allocate
+                                                                 into LLC. */
+        uint64_t reserved_37_63        : 27;
+#endif /* Word 0 - End */
+    } s;
+    struct cavm_nixx_af_lfx_rss_cfg_cn96xxp1
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_37_63        : 27;
+        uint64_t caching               : 1;  /**< [ 36: 36](R/W) Selects the style of read for accessing NIX_RSSE_S structures in LLC/DRAM:
+                                                                 0 = NIX_RSSE_S reads will not allocate into the LLC.
+                                                                 1 = NIX_RSSE_S reads are allocated into the LLC.
+
+                                                                 NIX_RX_MCE_S writes that are not allocated in NDC will always allocate
+                                                                 into LLC. */
+        uint64_t way_mask              : 16; /**< [ 35: 20](R/W) Way partitioning mask for allocating NIX_RSSE_S structures in NDC (1 means
+                                                                 do not use). All ones disables allocation in NDC.
+
+                                                                 Internal:
+                                                                 Bypass NDC when all ones. */
         uint64_t reserved_5_19         : 15;
         uint64_t ena                   : 1;  /**< [  4:  4](R/W) RSS is enabled for the LF. */
         uint64_t size                  : 4;  /**< [  3:  0](R/W) Specifies table size in NIX_RSSE_S entries of four bytes when [ENA] is set:
@@ -8344,8 +8398,10 @@ union cavm_nixx_af_lfx_rss_cfg
                                                                  into LLC. */
         uint64_t reserved_37_63        : 27;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_nixx_af_lfx_rss_cfg_s cn; */
+    } cn96xxp1;
+    /* struct cavm_nixx_af_lfx_rss_cfg_s cn96xxp3; */
+    /* struct cavm_nixx_af_lfx_rss_cfg_cn96xxp1 cnf95xx; */
+    /* struct cavm_nixx_af_lfx_rss_cfg_cn96xxp1 loki; */
 };
 typedef union cavm_nixx_af_lfx_rss_cfg cavm_nixx_af_lfx_rss_cfg_t;
 
@@ -15562,7 +15618,7 @@ union cavm_nixx_af_sdp_link_credit
 #endif /* Word 0 - End */
     } cn96xxp1_0;
     /* struct cavm_nixx_af_sdp_link_credit_s cn96xxp1_1; */
-    /* struct cavm_nixx_af_sdp_link_credit_s cn96xxp3; */
+    /* struct cavm_nixx_af_sdp_link_credit_cn96xxp1_0 cn96xxp3; */
     /* struct cavm_nixx_af_sdp_link_credit_s cnf95xx; */
     /* struct cavm_nixx_af_sdp_link_credit_s loki; */
 };
@@ -22275,6 +22331,40 @@ union cavm_nixx_af_tx_linkx_expr_credit
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_32_63        : 32;
+        uint64_t cc_unit_cnt           : 20; /**< [ 31: 12](R/W/H) see NIX_AF_TX_LINK(0..12)_NORM_CREDIT[CC_UNIT_CNT] */
+        uint64_t cc_packet_cnt         : 10; /**< [ 11:  2](R/W/H) see NIX_AF_TX_LINK(0..12)_NORM_CREDIT[CC_PACKET_CNT] */
+        uint64_t cc_enable             : 1;  /**< [  1:  1](R/W) see NIX_AF_TX_LINK(0..12)_NORM_CREDIT[CC_ENABLE] */
+        uint64_t reserved_0            : 1;
+#else /* Word 0 - Little Endian */
+        uint64_t reserved_0            : 1;
+        uint64_t cc_enable             : 1;  /**< [  1:  1](R/W) see NIX_AF_TX_LINK(0..12)_NORM_CREDIT[CC_ENABLE] */
+        uint64_t cc_packet_cnt         : 10; /**< [ 11:  2](R/W/H) see NIX_AF_TX_LINK(0..12)_NORM_CREDIT[CC_PACKET_CNT] */
+        uint64_t cc_unit_cnt           : 20; /**< [ 31: 12](R/W/H) see NIX_AF_TX_LINK(0..12)_NORM_CREDIT[CC_UNIT_CNT] */
+        uint64_t reserved_32_63        : 32;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_nixx_af_tx_linkx_expr_credit_s cn96xxp1_0; */
+    struct cavm_nixx_af_tx_linkx_expr_credit_cn96xxp1_1
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_32_63        : 32;
+        uint64_t cc_unit_cnt           : 20; /**< [ 31: 12](RAZ) Reserved. */
+        uint64_t cc_packet_cnt         : 10; /**< [ 11:  2](RAZ) Reserved. */
+        uint64_t cc_enable             : 1;  /**< [  1:  1](RAZ) Reserved. */
+        uint64_t reserved_0            : 1;
+#else /* Word 0 - Little Endian */
+        uint64_t reserved_0            : 1;
+        uint64_t cc_enable             : 1;  /**< [  1:  1](RAZ) Reserved. */
+        uint64_t cc_packet_cnt         : 10; /**< [ 11:  2](RAZ) Reserved. */
+        uint64_t cc_unit_cnt           : 20; /**< [ 31: 12](RAZ) Reserved. */
+        uint64_t reserved_32_63        : 32;
+#endif /* Word 0 - End */
+    } cn96xxp1_1;
+    /* struct cavm_nixx_af_tx_linkx_expr_credit_cn96xxp1_1 cn96xxp3; */
+    struct cavm_nixx_af_tx_linkx_expr_credit_cnf95xx
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_32_63        : 32;
         uint64_t cc_unit_cnt           : 20; /**< [ 31: 12](R/W/H) Link-credit unit count. This value, plus 1 MTU, represents the maximum outstanding
                                                                  credit units for this link. A credit unit is 16 bytes. Note that this
                                                                  20-bit field represents a two's complement signed value that decrements
@@ -22352,8 +22442,8 @@ union cavm_nixx_af_tx_linkx_expr_credit
                                                                  Note: maximum LBK in-fligh data = initial_value + MTU. */
         uint64_t reserved_32_63        : 32;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_nixx_af_tx_linkx_expr_credit_s cn; */
+    } cnf95xx;
+    /* struct cavm_nixx_af_tx_linkx_expr_credit_cnf95xx loki; */
 };
 typedef union cavm_nixx_af_tx_linkx_expr_credit cavm_nixx_af_tx_linkx_expr_credit_t;
 

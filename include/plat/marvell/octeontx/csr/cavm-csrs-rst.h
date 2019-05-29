@@ -7464,7 +7464,90 @@ union cavm_rst_refc_ctl
         uint64_t reserved_9_63         : 55;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_rst_refc_ctl_s cn; */
+    /* struct cavm_rst_refc_ctl_s cn96xxp1; */
+    struct cavm_rst_refc_ctl_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_9_63         : 55;
+        uint64_t cclk2_sel             : 2;  /**< [  8:  7](R/W) Common clock 2 termination select.
+                                                                 0x0 = No termination.
+                                                                 0x1 = LVPECL termination.
+                                                                 0x2 = Reserved.
+                                                                 0x3 = Reserved.
+
+                                                                 The field is initialized on a cold domain reset. */
+        uint64_t cclk2_pwdn            : 1;  /**< [  6:  6](R/W) Common clock 2 receiver power down.
+                                                                 When set, receiver is powered down.
+                                                                 The field is initialized on a cold domain reset.
+
+                                                                 Internal:
+                                                                 The receiver is also forced into powerdown when jtg__rst_pll.iddq_mode is set. */
+        uint64_t cclk1_sel             : 2;  /**< [  5:  4](R/W) Common clock 1 termination select.
+                                                                 0x0 = No termination.
+                                                                 0x1 = LVPECL termination.
+                                                                 0x2 = Reserved.
+                                                                 0x3 = Reserved.
+
+                                                                 The field is initialized on a cold domain reset. */
+        uint64_t cclk1_pwdn            : 1;  /**< [  3:  3](R/W) Common clock 1 receiver power down.
+                                                                 When set, receiver is powered down.
+                                                                 The field is initialized on a cold domain reset.
+
+                                                                 Internal:
+                                                                 The receiver is also forced into powerdown when jtg__rst_pll.iddq_mode is set. */
+        uint64_t cclk0_sel             : 2;  /**< [  2:  1](RO/H) Common clock 0 termination select determined by hardware.
+                                                                 0x0 = No termination.
+                                                                 0x1 = LVPECL termination.
+                                                                 0x2 = Reserved.
+                                                                 0x3 = HCSL termination.
+
+                                                                 The value is determined at DC_OK assertion from the straps
+                                                                 GPIO_STRAP_PIN_E::GSER_CLK0_TERM_SEL0 and 1. */
+        uint64_t cclk0_pwdn            : 1;  /**< [  0:  0](RAZ) Common clock 0 receiver power down.
+                                                                 Never powered down.  Reads as zero. */
+#else /* Word 0 - Little Endian */
+        uint64_t cclk0_pwdn            : 1;  /**< [  0:  0](RAZ) Common clock 0 receiver power down.
+                                                                 Never powered down.  Reads as zero. */
+        uint64_t cclk0_sel             : 2;  /**< [  2:  1](RO/H) Common clock 0 termination select determined by hardware.
+                                                                 0x0 = No termination.
+                                                                 0x1 = LVPECL termination.
+                                                                 0x2 = Reserved.
+                                                                 0x3 = HCSL termination.
+
+                                                                 The value is determined at DC_OK assertion from the straps
+                                                                 GPIO_STRAP_PIN_E::GSER_CLK0_TERM_SEL0 and 1. */
+        uint64_t cclk1_pwdn            : 1;  /**< [  3:  3](R/W) Common clock 1 receiver power down.
+                                                                 When set, receiver is powered down.
+                                                                 The field is initialized on a cold domain reset.
+
+                                                                 Internal:
+                                                                 The receiver is also forced into powerdown when jtg__rst_pll.iddq_mode is set. */
+        uint64_t cclk1_sel             : 2;  /**< [  5:  4](R/W) Common clock 1 termination select.
+                                                                 0x0 = No termination.
+                                                                 0x1 = LVPECL termination.
+                                                                 0x2 = Reserved.
+                                                                 0x3 = Reserved.
+
+                                                                 The field is initialized on a cold domain reset. */
+        uint64_t cclk2_pwdn            : 1;  /**< [  6:  6](R/W) Common clock 2 receiver power down.
+                                                                 When set, receiver is powered down.
+                                                                 The field is initialized on a cold domain reset.
+
+                                                                 Internal:
+                                                                 The receiver is also forced into powerdown when jtg__rst_pll.iddq_mode is set. */
+        uint64_t cclk2_sel             : 2;  /**< [  8:  7](R/W) Common clock 2 termination select.
+                                                                 0x0 = No termination.
+                                                                 0x1 = LVPECL termination.
+                                                                 0x2 = Reserved.
+                                                                 0x3 = Reserved.
+
+                                                                 The field is initialized on a cold domain reset. */
+        uint64_t reserved_9_63         : 55;
+#endif /* Word 0 - End */
+    } cn96xxp3;
+    /* struct cavm_rst_refc_ctl_s cnf95xxp1; */
+    /* struct cavm_rst_refc_ctl_cn96xxp3 cnf95xxp2; */
+    /* struct cavm_rst_refc_ctl_cn96xxp3 loki; */
 };
 typedef union cavm_rst_refc_ctl cavm_rst_refc_ctl_t;
 

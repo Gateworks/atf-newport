@@ -223,7 +223,7 @@ union cavm_cgx_spu_br_lane_train_status_s
 /**
  * Structure cgx_spu_br_train_cup_s
  *
- * CGX Lane Training Coeffiecient Structure
+ * CGX Lane Training Coefficient Structure
  * This is the coefficient update field of the BASE-R link training packet as defined in
  * IEEE 802.3, Table 72-4.
  */
@@ -17386,7 +17386,7 @@ union cavm_cgxx_spux_int
         uint64_t usx_an_lnk_st         : 1;  /**< [ 19: 19](R/W1C/H) Autonegotiation link good. Set when CGX()_SPU()_USX_AN_STATUS[LNK_ST] is set,
                                                                  indicating that autonegotiation has completed. This indicates the AN SM reached
                                                                  LINK_OK of Figure 7-6 in 802.3. */
-        uint64_t hi_ser                : 1;  /**< [ 18: 18](R/W1C/H) High symbol errror rate.
+        uint64_t hi_ser                : 1;  /**< [ 18: 18](R/W1C/H) High symbol error rate.
                                                                  Applicable only to modes implementing RS-FEC, USXGMII, 25G, 50G, 100G.
                                                                  See description of CGX()_SPU()_RSFEC_STATUS[HI_SER] for more details. */
         uint64_t rsfec_uncorr          : 1;  /**< [ 17: 17](R/W1C/H) Uncorrectable RS-FEC error.
@@ -17454,7 +17454,7 @@ union cavm_cgxx_spux_int
                                                                  cleared on the 10G or 25G lane or any 40G or 50G lane (see 802.3-2008 Figure 74-8).
                                                                  * 25G, 50G, 100GBASE-R, USXGMII with RS-FEC: Set when 3 consecutive uncorrected codewords
                                                                  are received and lock restarts (see 802.3bj-2014 Figure 91-9, 802.3by-2016 Figure 108-7). */
-        uint64_t bitlckls              : 1;  /**< [  3:  3](R/W1C/H) Bit lock lost on one or more serdes lanes associated with the LMAC/LPCS. */
+        uint64_t bitlckls              : 1;  /**< [  3:  3](R/W1C/H) Bit lock lost on one or more SerDes lanes associated with the LMAC/LPCS. */
         uint64_t err_blk               : 1;  /**< [  2:  2](R/W1C/H) Errored block received. Set when an errored BASE-R block is received as described for
                                                                  CGX()_SPU()_BR_STATUS2[ERR_BLKS]. Valid if the LPCS type selected by
                                                                  CGX()_CMR()_CONFIG[LMAC_TYPE] is 10G, 25G, 40G, 50G, 100GBASE-R, USXGMII, and never
@@ -17472,7 +17472,7 @@ union cavm_cgxx_spux_int
                                                                  CGX()_SPU()_BR_STATUS2[ERR_BLKS]. Valid if the LPCS type selected by
                                                                  CGX()_CMR()_CONFIG[LMAC_TYPE] is 10G, 25G, 40G, 50G, 100GBASE-R, USXGMII, and never
                                                                  set otherwise. */
-        uint64_t bitlckls              : 1;  /**< [  3:  3](R/W1C/H) Bit lock lost on one or more serdes lanes associated with the LMAC/LPCS. */
+        uint64_t bitlckls              : 1;  /**< [  3:  3](R/W1C/H) Bit lock lost on one or more SerDes lanes associated with the LMAC/LPCS. */
         uint64_t synlos                : 1;  /**< [  4:  4](R/W1C/H) Loss of lane sync. Lane code-group or block synchronization is lost on one or more lanes
                                                                  associated with the LMAC/LPCS. Set as follows based on the LPCS type selected by
                                                                  CGX()_CMR()_CONFIG[LMAC_TYPE], and whether FEC is enabled or disabled by
@@ -17538,7 +17538,7 @@ union cavm_cgxx_spux_int
                                                                  for each code-word that contains errors (when the bypass correction feature is supported
                                                                  and enabled) or contains errors that were not corrected (when the bypass
                                                                  correction feature is not supported or not enabled). */
-        uint64_t hi_ser                : 1;  /**< [ 18: 18](R/W1C/H) High symbol errror rate.
+        uint64_t hi_ser                : 1;  /**< [ 18: 18](R/W1C/H) High symbol error rate.
                                                                  Applicable only to modes implementing RS-FEC, USXGMII, 25G, 50G, 100G.
                                                                  See description of CGX()_SPU()_RSFEC_STATUS[HI_SER] for more details. */
         uint64_t usx_an_lnk_st         : 1;  /**< [ 19: 19](R/W1C/H) Autonegotiation link good. Set when CGX()_SPU()_USX_AN_STATUS[LNK_ST] is set,
@@ -18419,7 +18419,7 @@ union cavm_cgxx_spux_rsfec_status
         uint64_t fec_byp_cor_abil      : 1;  /**< [ 15: 15](RO/H) This variable is set to one to indicate that the decoder has the ability to bypass
                                                                  error correction (while possibly performing error detection only). The variable is
                                                                  set to zero if this ability is not supported. For more details see 802.3
-                                                                 91.5.3.3 and also also 802.3 91.6.3. */
+                                                                 91.5.3.3 and also 802.3 91.6.3. */
         uint64_t fec_byp_ind_abil      : 1;  /**< [ 14: 14](RO/H) This variable is set to one to indicate that the decoder has the ability to bypass
                                                                  error indication. The variable is set to zero if this ability is not supported.
                                                                  For more details see 802.3 91.5.3.3 and also 802.3 91.6.4. */
@@ -18472,7 +18472,7 @@ union cavm_cgxx_spux_rsfec_status
         uint64_t fec_byp_cor_abil      : 1;  /**< [ 15: 15](RO/H) This variable is set to one to indicate that the decoder has the ability to bypass
                                                                  error correction (while possibly performing error detection only). The variable is
                                                                  set to zero if this ability is not supported. For more details see 802.3
-                                                                 91.5.3.3 and also also 802.3 91.6.3. */
+                                                                 91.5.3.3 and also 802.3 91.6.3. */
         uint64_t reserved_16_63        : 48;
 #endif /* Word 0 - End */
     } s;
@@ -19976,9 +19976,9 @@ union cavm_cgxx_spu_dbg_control
                                                                  Only sensical value is 100 - 1 == 99 == 0x63.
                                                                  This is used by the BASE-R BER monitor timers. */
         uint64_t rf_cw_mon_erly_restart_dis : 1;/**< [ 31: 31](R/W) The pipe-stage where the FEC alignment state machine RF_CW_MON (802.3bj-2014 Figure 91-9,
-                                                                 802.3by-2016 Figure 108-6) resides will retain knowledge of uncorectable errors in the system
+                                                                 802.3by-2016 Figure 108-6) resides will retain knowledge of uncorrectable errors in the system
                                                                  from the moment the Reed-Solomon decoder is up and running and until the SM leaves
-                                                                 ALIGN_ACQUIRED. If any uncorrectable errors occur in theat interval the SM will go to THREE_BAD
+                                                                 ALIGN_ACQUIRED. If any uncorrectable errors occur in that interval, the SM will go to THREE_BAD
                                                                  and cause restart lock to occur. This behavior will be preempted if this bit is set to 1.
 
                                                                  Internal:
@@ -20117,9 +20117,9 @@ union cavm_cgxx_spu_dbg_control
                                                                  49-13 for 10G, 25GBASE-R, also used for USXGMII and 802.3ba-2010 Figure 82-13 for
                                                                  40G, 50G, 100GBASE-R. */
         uint64_t rf_cw_mon_erly_restart_dis : 1;/**< [ 31: 31](R/W) The pipe-stage where the FEC alignment state machine RF_CW_MON (802.3bj-2014 Figure 91-9,
-                                                                 802.3by-2016 Figure 108-6) resides will retain knowledge of uncorectable errors in the system
+                                                                 802.3by-2016 Figure 108-6) resides will retain knowledge of uncorrectable errors in the system
                                                                  from the moment the Reed-Solomon decoder is up and running and until the SM leaves
-                                                                 ALIGN_ACQUIRED. If any uncorrectable errors occur in theat interval the SM will go to THREE_BAD
+                                                                 ALIGN_ACQUIRED. If any uncorrectable errors occur in that interval, the SM will go to THREE_BAD
                                                                  and cause restart lock to occur. This behavior will be preempted if this bit is set to 1.
 
                                                                  Internal:

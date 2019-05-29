@@ -167,6 +167,71 @@ union cavm_scr_cmp_and_spin_s
 };
 
 /**
+ * Structure scr_dma_check_s
+ *
+ * ROM Script DMA Checksum Opcode Structure
+ * This opcode exits the script if the supplied checksum doesnt match the checksum
+ * accumulated duirng the previous SCR_DMA_S transfer.
+ */
+union cavm_scr_dma_check_s
+{
+    uint64_t u[2];
+    struct cavm_scr_dma_check_s_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t op                    : 8;  /**< [ 63: 56] Opcode. */
+        uint64_t reserved_32_55        : 24;
+        uint64_t checksum              : 32; /**< [ 31:  0] Checksum to be compared with that accumulated during the transfer. Uses the same
+                                                                 algorithm as the ROM script checksum. */
+#else /* Word 0 - Little Endian */
+        uint64_t checksum              : 32; /**< [ 31:  0] Checksum to be compared with that accumulated during the transfer. Uses the same
+                                                                 algorithm as the ROM script checksum. */
+        uint64_t reserved_32_55        : 24;
+        uint64_t op                    : 8;  /**< [ 63: 56] Opcode. */
+#endif /* Word 0 - End */
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 1 - Big Endian */
+        uint64_t reserved_64_127       : 64;
+#else /* Word 1 - Little Endian */
+        uint64_t reserved_64_127       : 64;
+#endif /* Word 1 - End */
+    } s;
+    /* struct cavm_scr_dma_check_s_s cn; */
+};
+
+/**
+ * Structure scr_dma_s
+ *
+ * ROM Script DMA Opcode Structure
+ * This opcode copies [COUNT] 64-bit words from the flash to the [DEST_ADDR].
+ */
+union cavm_scr_dma_s
+{
+    uint64_t u[2];
+    struct cavm_scr_dma_s_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t op                    : 8;  /**< [ 63: 56] Opcode. */
+        uint64_t dest_addr             : 56; /**< [ 55:  0] Destination Address. \<2:0\> must be zero. See rules in SCR_WRITE32_S[ADDR]. */
+#else /* Word 0 - Little Endian */
+        uint64_t dest_addr             : 56; /**< [ 55:  0] Destination Address. \<2:0\> must be zero. See rules in SCR_WRITE32_S[ADDR]. */
+        uint64_t op                    : 8;  /**< [ 63: 56] Opcode. */
+#endif /* Word 0 - End */
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 1 - Big Endian */
+        uint64_t reserved_120_127      : 8;
+        uint64_t src_addr              : 24; /**< [119: 96] Source Address in flash.  \<2:0\> must be zero. */
+        uint64_t reserved_80_95        : 16;
+        uint64_t count                 : 16; /**< [ 79: 64] Number of 64-bit words to copy. */
+#else /* Word 1 - Little Endian */
+        uint64_t count                 : 16; /**< [ 79: 64] Number of 64-bit words to copy. */
+        uint64_t reserved_80_95        : 16;
+        uint64_t src_addr              : 24; /**< [119: 96] Source Address in flash.  \<2:0\> must be zero. */
+        uint64_t reserved_120_127      : 8;
+#endif /* Word 1 - End */
+    } s;
+    /* struct cavm_scr_dma_s_s cn; */
+};
+
+/**
  * Structure scr_exit_s
  *
  * ROM Script Exit Opcode Structure
@@ -218,6 +283,35 @@ union cavm_scr_generic_s
 #endif /* Word 1 - End */
     } s;
     /* struct cavm_scr_generic_s_s cn; */
+};
+
+/**
+ * Structure scr_move64_s
+ *
+ * ROM Script 64-bit CSR to CSR Move Opcode Structure
+ * This opcode copies a 64-bit value from [SRC_ADDR] to [DEST_ADDR].
+ */
+union cavm_scr_move64_s
+{
+    uint64_t u[2];
+    struct cavm_scr_move64_s_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t op                    : 8;  /**< [ 63: 56] Opcode. */
+        uint64_t src_addr              : 56; /**< [ 55:  0] Address. \<2:0\> must be zero. See rules in SCR_WRITE32_S[ADDR]. */
+#else /* Word 0 - Little Endian */
+        uint64_t src_addr              : 56; /**< [ 55:  0] Address. \<2:0\> must be zero. See rules in SCR_WRITE32_S[ADDR]. */
+        uint64_t op                    : 8;  /**< [ 63: 56] Opcode. */
+#endif /* Word 0 - End */
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 1 - Big Endian */
+        uint64_t reserved_120_127      : 8;
+        uint64_t dest_addr             : 56; /**< [119: 64] Address. \<2:0\> must be zero. See rules in SCR_WRITE32_S[ADDR]. */
+#else /* Word 1 - Little Endian */
+        uint64_t dest_addr             : 56; /**< [119: 64] Address. \<2:0\> must be zero. See rules in SCR_WRITE32_S[ADDR]. */
+        uint64_t reserved_120_127      : 8;
+#endif /* Word 1 - End */
+    } s;
+    /* struct cavm_scr_move64_s_s cn; */
 };
 
 /**
@@ -333,6 +427,7 @@ union cavm_scr_write32_s
                                                                      o GPIO_TX_CLR, GPIO_TX1_CLR.
                                                                      o GPIO_TX_SET, GPIO_TX1_SET.
                                                                    * GSERN()_*.
+                                                                   * GSERP()_*.
                                                                    \<page\>
                                                                    * PEM():
                                                                      o PEM()_CFG.
@@ -369,6 +464,11 @@ union cavm_scr_write32_s
                                                                      o RST_OUT_CTL.
                                                                      o RST_REFC_CTL.
                                                                      o RST_SOFT_PRST().
+                                                                   * TSN:
+                                                                     o TSN()_TS_TEMP_NOFF_MC.
+                                                                     o TSN()_TS_TEMP_CONV_RESULT.
+                                                                     o TSN()_FUSE_BYPASS.
+                                                                   \<page\>
 
                                                                  Accesses are always nonsecure. The normal permission registers
                                                                  MRML_RSL()_PERMIT, MRML_NCB()_PERMIT, GPIO_PERMIT, etc. still apply, and must be
@@ -403,6 +503,7 @@ union cavm_scr_write32_s
                                                                      o GPIO_TX_CLR, GPIO_TX1_CLR.
                                                                      o GPIO_TX_SET, GPIO_TX1_SET.
                                                                    * GSERN()_*.
+                                                                   * GSERP()_*.
                                                                    \<page\>
                                                                    * PEM():
                                                                      o PEM()_CFG.
@@ -439,6 +540,11 @@ union cavm_scr_write32_s
                                                                      o RST_OUT_CTL.
                                                                      o RST_REFC_CTL.
                                                                      o RST_SOFT_PRST().
+                                                                   * TSN:
+                                                                     o TSN()_TS_TEMP_NOFF_MC.
+                                                                     o TSN()_TS_TEMP_CONV_RESULT.
+                                                                     o TSN()_FUSE_BYPASS.
+                                                                   \<page\>
 
                                                                  Accesses are always nonsecure. The normal permission registers
                                                                  MRML_RSL()_PERMIT, MRML_NCB()_PERMIT, GPIO_PERMIT, etc. still apply, and must be

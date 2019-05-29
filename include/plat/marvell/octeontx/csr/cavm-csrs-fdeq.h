@@ -44,7 +44,7 @@ union cavm_fdeq_rdcfg_rb_ant_layer_4l_s
         uint64_t ant_0_layer_0_rs2_irc_mode : 1;/**< [ 23: 23] Refer to [ANT_0_LAYER_0_RS0_IRC_MODE]. */
         uint64_t ant_0_layer_0_rs1_irc_mode : 1;/**< [ 22: 22] Refer to [ANT_0_LAYER_0_RS0_IRC_MODE]. */
         uint64_t ant_0_layer_0_rs0_irc_mode : 1;/**< [ 21: 21] In the name ANT_a_LAYER_l_RSr IRC_MODE, the triplet (a,l,r) refer to Receive
-                                                                 antenna index, layer index and RS index. If set to 0x0, the off diagonal elemets
+                                                                 antenna index, layer index and RS index. If set to 0x0, the off diagonal elements
                                                                  of the Rnn matrix of antenna a and layer l, for RS r are forced to zero. */
         uint64_t ant_0_g_fagc_rs_0     : 5;  /**< [ 20: 16] In the name  ANT_a_G_FAGC_RS_r, the tuple (a,r) refer to Receive antenna index
                                                                  and RS index. This specifies the FAGC value of  RS r for antenna a.
@@ -62,7 +62,7 @@ union cavm_fdeq_rdcfg_rb_ant_layer_4l_s
                                                                  and RS index. This specifies the FAGC value of  RS r for antenna a.
                                                                  Valid range is [-16,15]. */
         uint64_t ant_0_layer_0_rs0_irc_mode : 1;/**< [ 21: 21] In the name ANT_a_LAYER_l_RSr IRC_MODE, the triplet (a,l,r) refer to Receive
-                                                                 antenna index, layer index and RS index. If set to 0x0, the off diagonal elemets
+                                                                 antenna index, layer index and RS index. If set to 0x0, the off diagonal elements
                                                                  of the Rnn matrix of antenna a and layer l, for RS r are forced to zero. */
         uint64_t ant_0_layer_0_rs1_irc_mode : 1;/**< [ 22: 22] Refer to [ANT_0_LAYER_0_RS0_IRC_MODE]. */
         uint64_t ant_0_layer_0_rs2_irc_mode : 1;/**< [ 23: 23] Refer to [ANT_0_LAYER_0_RS0_IRC_MODE]. */
@@ -176,7 +176,7 @@ union cavm_fdeq_rdcfg_rb_ant_layer_8l_s
         uint64_t ant_0_layer_2_rs2_irc_mode : 1;/**< [ 87: 87] Refer to [ANT_0_LAYER_0_RS0 IRC_MODE]. */
         uint64_t ant_0_layer_2_rs1_irc_mode : 1;/**< [ 86: 86] Refer to [ANT_0_LAYER_0_RS0 IRC_MODE]. */
         uint64_t ant_0_layer_2_rs0_irc_mode : 1;/**< [ 85: 85] In the name ANT_a_LAYER_l_RSr IRC_MODE, the triplet (a,l,r) refer to Receive
-                                                                 antenna index, layer index and RS index. If set to 0x1, the off diagonal elemets
+                                                                 antenna index, layer index and RS index. If set to 0x1, the off diagonal elements
                                                                  of the Rnn matrix of antenna a and layer l, for RS r are forced to zero. */
         uint64_t ant_0_g_fagc_rs_2     : 5;  /**< [ 84: 80] In the name  ANT_a_G_FAGC_RS_r, the tuple (a,r) refer to Receive antenna index
                                                                  and RS index. This specifies the Specifies FAGC of RSr for antenna a.Valid range
@@ -192,7 +192,7 @@ union cavm_fdeq_rdcfg_rb_ant_layer_8l_s
                                                                  and RS index. This specifies the Specifies FAGC of RSr for antenna a.Valid range
                                                                  is [-16,15]. */
         uint64_t ant_0_layer_2_rs0_irc_mode : 1;/**< [ 85: 85] In the name ANT_a_LAYER_l_RSr IRC_MODE, the triplet (a,l,r) refer to Receive
-                                                                 antenna index, layer index and RS index. If set to 0x1, the off diagonal elemets
+                                                                 antenna index, layer index and RS index. If set to 0x1, the off diagonal elements
                                                                  of the Rnn matrix of antenna a and layer l, for RS r are forced to zero. */
         uint64_t ant_0_layer_2_rs1_irc_mode : 1;/**< [ 86: 86] Refer to [ANT_0_LAYER_0_RS0 IRC_MODE]. */
         uint64_t ant_0_layer_2_rs2_irc_mode : 1;/**< [ 87: 87] Refer to [ANT_0_LAYER_0_RS0 IRC_MODE]. */
@@ -251,7 +251,7 @@ union cavm_fdeq_rdcfg_rb_ant_layer_8l_s
         uint64_t ant_0_layer_8_rs2_irc_mode : 1;/**< [215:215] Refer to [ANT_0_LAYER_0_RS0 IRC_MODE]. */
         uint64_t ant_0_layer_8_rs1_irc_mode : 1;/**< [214:214] Refer to [ANT_0_LAYER_0_RS0 IRC_MODE]. */
         uint64_t ant_0_layer_8_rs0_irc_mode : 1;/**< [213:213] In the name ANT_a_LAYER_l_RSr IRC_MODE, the triplet (a,l,r) refer to Receive
-                                                                 antenna index, layer index and RS index. If set to 0x1, the off diagonal elemets
+                                                                 antenna index, layer index and RS index. If set to 0x1, the off diagonal elements
                                                                  of the Rnn matrix of antenna a and layer l, for RS r are forced to zero. */
         uint64_t reserved_206_212      : 7;
         uint64_t ant_0_layer_8_amplitude : 14;/**< [205:192] In the name ANT_0_LAYER_1_AMPLITUDE the tuple (a,r) refer to Receive antenna
@@ -261,7 +261,7 @@ union cavm_fdeq_rdcfg_rb_ant_layer_8l_s
                                                                  index, and RS index. If this is set to 0x1, the hrs for (a,r) are forced to 0. */
         uint64_t reserved_206_212      : 7;
         uint64_t ant_0_layer_8_rs0_irc_mode : 1;/**< [213:213] In the name ANT_a_LAYER_l_RSr IRC_MODE, the triplet (a,l,r) refer to Receive
-                                                                 antenna index, layer index and RS index. If set to 0x1, the off diagonal elemets
+                                                                 antenna index, layer index and RS index. If set to 0x1, the off diagonal elements
                                                                  of the Rnn matrix of antenna a and layer l, for RS r are forced to zero. */
         uint64_t ant_0_layer_8_rs1_irc_mode : 1;/**< [214:214] Refer to [ANT_0_LAYER_0_RS0 IRC_MODE]. */
         uint64_t ant_0_layer_8_rs2_irc_mode : 1;/**< [215:215] Refer to [ANT_0_LAYER_0_RS0 IRC_MODE]. */
@@ -327,7 +327,7 @@ union cavm_fdeq_rdcfg_rb_ant_layer_8l_s
         uint64_t ant_0_layer_2_rs2_irc_mode : 1;/**< [ 87: 87] Refer to [ANT_0_LAYER_0_RS0 IRC_MODE]. */
         uint64_t ant_0_layer_2_rs1_irc_mode : 1;/**< [ 86: 86] Refer to [ANT_0_LAYER_0_RS0 IRC_MODE]. */
         uint64_t ant_0_layer_2_rs0_irc_mode : 1;/**< [ 85: 85] In the name ANT_a_LAYER_l_RSr IRC_MODE, the triplet (a,l,r) refer to Receive
-                                                                 antenna index, layer index and RS index. If set to 0x1, the off diagonal elemets
+                                                                 antenna index, layer index and RS index. If set to 0x1, the off diagonal elements
                                                                  of the Rnn matrix of antenna a and layer l, for RS r are forced to zero. */
         uint64_t ant_0_g_fagc_rs_2     : 5;  /**< [ 84: 80] In the name  ANT_a_G_FAGC_RS_r, the tuple (a,r) refer to Receive antenna index
                                                                  and RS index. This specifies the Specifies FAGC of RSr for antenna a.Valid range
@@ -343,7 +343,7 @@ union cavm_fdeq_rdcfg_rb_ant_layer_8l_s
                                                                  and RS index. This specifies the Specifies FAGC of RSr for antenna a.Valid range
                                                                  is [-16,15]. */
         uint64_t ant_0_layer_2_rs0_irc_mode : 1;/**< [ 85: 85] In the name ANT_a_LAYER_l_RSr IRC_MODE, the triplet (a,l,r) refer to Receive
-                                                                 antenna index, layer index and RS index. If set to 0x1, the off diagonal elemets
+                                                                 antenna index, layer index and RS index. If set to 0x1, the off diagonal elements
                                                                  of the Rnn matrix of antenna a and layer l, for RS r are forced to zero. */
         uint64_t ant_0_layer_2_rs1_irc_mode : 1;/**< [ 86: 86] Refer to [ANT_0_LAYER_0_RS0 IRC_MODE]. */
         uint64_t ant_0_layer_2_rs2_irc_mode : 1;/**< [ 87: 87] Refer to [ANT_0_LAYER_0_RS0 IRC_MODE]. */
@@ -407,7 +407,7 @@ union cavm_fdeq_rdcfg_rb_ant_layer_8l_s
         uint64_t ant_0_layer_8_rs2_irc_mode : 1;/**< [215:215] Refer to [ANT_0_LAYER_0_RS0 IRC_MODE]. */
         uint64_t ant_0_layer_8_rs1_irc_mode : 1;/**< [214:214] Refer to [ANT_0_LAYER_0_RS0 IRC_MODE]. */
         uint64_t ant_0_layer_8_rs0_irc_mode : 1;/**< [213:213] In the name ANT_a_LAYER_l_RSr IRC_MODE, the triplet (a,l,r) refer to Receive
-                                                                 antenna index, layer index and RS index. If set to 0x1, the off diagonal elemets
+                                                                 antenna index, layer index and RS index. If set to 0x1, the off diagonal elements
                                                                  of the Rnn matrix of antenna a and layer l, for RS r are forced to zero. */
         uint64_t reserved_208_212      : 5;
         uint64_t reserved_206_207      : 2;
@@ -419,7 +419,7 @@ union cavm_fdeq_rdcfg_rb_ant_layer_8l_s
         uint64_t reserved_206_207      : 2;
         uint64_t reserved_208_212      : 5;
         uint64_t ant_0_layer_8_rs0_irc_mode : 1;/**< [213:213] In the name ANT_a_LAYER_l_RSr IRC_MODE, the triplet (a,l,r) refer to Receive
-                                                                 antenna index, layer index and RS index. If set to 0x1, the off diagonal elemets
+                                                                 antenna index, layer index and RS index. If set to 0x1, the off diagonal elements
                                                                  of the Rnn matrix of antenna a and layer l, for RS r are forced to zero. */
         uint64_t ant_0_layer_8_rs1_irc_mode : 1;/**< [214:214] Refer to [ANT_0_LAYER_0_RS0 IRC_MODE]. */
         uint64_t ant_0_layer_8_rs2_irc_mode : 1;/**< [215:215] Refer to [ANT_0_LAYER_0_RS0 IRC_MODE]. */
@@ -462,7 +462,7 @@ union cavm_fdeq_rdcfg_rb_ant_layer_s
         uint64_t ant_0_layer_0_rs2_irc_mode : 1;/**< [ 23: 23] Refer to [ANT_0_LAYER_0_RS0_IRC_MODE]. */
         uint64_t ant_0_layer_0_rs1_irc_mode : 1;/**< [ 22: 22] Refer to [ANT_0_LAYER_0_RS0_IRC_MODE]. */
         uint64_t ant_0_layer_0_rs0_irc_mode : 1;/**< [ 21: 21] In the name ANT_a_LAYER_l_RSr IRC_MODE, the triplet (a,l,r) refer to Receive
-                                                                 antenna index, layer index and RS index. If set to 0x0, the off diagonal elemets
+                                                                 antenna index, layer index and RS index. If set to 0x0, the off diagonal elements
                                                                  of the Rnn matrix of antenna a and layer l, for RS r are forced to zero. */
         uint64_t ant_0_g_fagc_rs_0     : 5;  /**< [ 20: 16] In the name  ANT_a_G_FAGC_RS_r, the tuple (a,r) refer to Receive antenna index
                                                                  and RS index. This specifies the FAGC value of  RS r for antenna a.
@@ -480,7 +480,7 @@ union cavm_fdeq_rdcfg_rb_ant_layer_s
                                                                  and RS index. This specifies the FAGC value of  RS r for antenna a.
                                                                  Valid range is [-16,15]. */
         uint64_t ant_0_layer_0_rs0_irc_mode : 1;/**< [ 21: 21] In the name ANT_a_LAYER_l_RSr IRC_MODE, the triplet (a,l,r) refer to Receive
-                                                                 antenna index, layer index and RS index. If set to 0x0, the off diagonal elemets
+                                                                 antenna index, layer index and RS index. If set to 0x0, the off diagonal elements
                                                                  of the Rnn matrix of antenna a and layer l, for RS r are forced to zero. */
         uint64_t ant_0_layer_0_rs1_irc_mode : 1;/**< [ 22: 22] Refer to [ANT_0_LAYER_0_RS0_IRC_MODE]. */
         uint64_t ant_0_layer_0_rs2_irc_mode : 1;/**< [ 23: 23] Refer to [ANT_0_LAYER_0_RS0_IRC_MODE]. */
@@ -1018,7 +1018,7 @@ union cavm_fdeq_rdcfg_rb_params_jt1_s
                                                                  This bitmap indicates the CRC of each DS of layer l and this RB. Valid when
                                                                  FDEQ()_JD_RS_GENERAL_PARAMETER[SIC_ON_OFF] = 1 and
                                                                  FDEQ()_JD_RS_GENERAL_PARAMETER[SIC_WITH_CRC_MAP] = 1. DS is indexed in
-                                                                 increasing order with LSB refering to DS0.
+                                                                 increasing order with LSB referring to DS0.
                                                                  0x0 = CRC PASS (SIC is performed).
                                                                  0x1 = CRC FAIL(SIC is not performed).
                                                                  Must be set to 1 when FDEQ()_JD_RS_GENERAL_PARAMETER[SIC_ON_OFF] = 1 */
@@ -1027,7 +1027,7 @@ union cavm_fdeq_rdcfg_rb_params_jt1_s
                                                                  This bitmap indicates the CRC of each DS of layer l and this RB. Valid when
                                                                  FDEQ()_JD_RS_GENERAL_PARAMETER[SIC_ON_OFF] = 1 and
                                                                  FDEQ()_JD_RS_GENERAL_PARAMETER[SIC_WITH_CRC_MAP] = 1. DS is indexed in
-                                                                 increasing order with LSB refering to DS0.
+                                                                 increasing order with LSB referring to DS0.
                                                                  0x0 = CRC PASS (SIC is performed).
                                                                  0x1 = CRC FAIL(SIC is not performed).
                                                                  Must be set to 1 when FDEQ()_JD_RS_GENERAL_PARAMETER[SIC_ON_OFF] = 1 */
@@ -1156,7 +1156,7 @@ union cavm_fdeq_rdcfg_rb_params_jt1_s
                                                                  This bitmap indicates the CRC of each RS of layer l and this RB. Valid when
                                                                  FDEQ()_JD_RS_GENERAL_PARAMETER[SIC_ON_OFF] = 1 and
                                                                  FDEQ()_JD_RS_GENERAL_PARAMETER[SIC_WITH_CRC_MAP] = 1. RS is indexed in
-                                                                 increasing order with LSB refering to RS0.
+                                                                 increasing order with LSB referring to RS0.
                                                                  0x0 = CRC PASS (SIC is performed).
                                                                  0x1 = CRC FAIL (SIC is not performed).
                                                                  Must be set to 0 for FDEQ_RDCFG_UE_PHYC_PARAMS_S[CP_OFDM_ON] = 0x1 (CP_OFDM).
@@ -1188,7 +1188,7 @@ union cavm_fdeq_rdcfg_rb_params_jt1_s
                                                                  This bitmap indicates the CRC of each RS of layer l and this RB. Valid when
                                                                  FDEQ()_JD_RS_GENERAL_PARAMETER[SIC_ON_OFF] = 1 and
                                                                  FDEQ()_JD_RS_GENERAL_PARAMETER[SIC_WITH_CRC_MAP] = 1. RS is indexed in
-                                                                 increasing order with LSB refering to RS0.
+                                                                 increasing order with LSB referring to RS0.
                                                                  0x0 = CRC PASS (SIC is performed).
                                                                  0x1 = CRC FAIL (SIC is not performed).
                                                                  Must be set to 0 for FDEQ_RDCFG_UE_PHYC_PARAMS_S[CP_OFDM_ON] = 0x1 (CP_OFDM).
@@ -1487,7 +1487,7 @@ union cavm_fdeq_rdcfg_rb_params_jt1_s
                                                                  This bitmap indicates the CRC of each DS of layer l and this RB. Valid when
                                                                  FDEQ()_JD_RS_GENERAL_PARAMETER[SIC_ON_OFF] = 1 and
                                                                  FDEQ()_JD_RS_GENERAL_PARAMETER[SIC_WITH_CRC_MAP] = 1. DS is indexed in
-                                                                 increasing order with LSB refering to DS0.
+                                                                 increasing order with LSB referring to DS0.
                                                                  0x0 = CRC PASS (SIC is performed).
                                                                  0x1 = CRC FAIL(SIC is not performed).
                                                                  Must be set to 1 when FDEQ()_JD_RS_GENERAL_PARAMETER[SIC_ON_OFF] = 1 */
@@ -1496,7 +1496,7 @@ union cavm_fdeq_rdcfg_rb_params_jt1_s
                                                                  This bitmap indicates the CRC of each DS of layer l and this RB. Valid when
                                                                  FDEQ()_JD_RS_GENERAL_PARAMETER[SIC_ON_OFF] = 1 and
                                                                  FDEQ()_JD_RS_GENERAL_PARAMETER[SIC_WITH_CRC_MAP] = 1. DS is indexed in
-                                                                 increasing order with LSB refering to DS0.
+                                                                 increasing order with LSB referring to DS0.
                                                                  0x0 = CRC PASS (SIC is performed).
                                                                  0x1 = CRC FAIL(SIC is not performed).
                                                                  Must be set to 1 when FDEQ()_JD_RS_GENERAL_PARAMETER[SIC_ON_OFF] = 1 */
@@ -1625,7 +1625,7 @@ union cavm_fdeq_rdcfg_rb_params_jt1_s
                                                                  This bitmap indicates the CRC of each RS of layer l and this RB. Valid when
                                                                  FDEQ()_JD_RS_GENERAL_PARAMETER[SIC_ON_OFF] = 1 and
                                                                  FDEQ()_JD_RS_GENERAL_PARAMETER[SIC_WITH_CRC_MAP] = 1. RS is indexed in
-                                                                 increasing order with LSB refering to RS0.
+                                                                 increasing order with LSB referring to RS0.
                                                                  0x0 = CRC PASS (SIC is performed).
                                                                  0x1 = CRC FAIL (SIC is not performed).
                                                                  Must be set to 0 for FDEQ_RDCFG_UE_PHYC_PARAMS_S[CP_OFDM_ON] = 0x1 (CP_OFDM).
@@ -1657,7 +1657,7 @@ union cavm_fdeq_rdcfg_rb_params_jt1_s
                                                                  This bitmap indicates the CRC of each RS of layer l and this RB. Valid when
                                                                  FDEQ()_JD_RS_GENERAL_PARAMETER[SIC_ON_OFF] = 1 and
                                                                  FDEQ()_JD_RS_GENERAL_PARAMETER[SIC_WITH_CRC_MAP] = 1. RS is indexed in
-                                                                 increasing order with LSB refering to RS0.
+                                                                 increasing order with LSB referring to RS0.
                                                                  0x0 = CRC PASS (SIC is performed).
                                                                  0x1 = CRC FAIL (SIC is not performed).
                                                                  Must be set to 0 for FDEQ_RDCFG_UE_PHYC_PARAMS_S[CP_OFDM_ON] = 0x1 (CP_OFDM).
@@ -1689,9 +1689,9 @@ union cavm_fdeq_rdcfg_twf_set_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_62_63        : 2;
-        uint64_t w1_symbol0_q_phase    : 14; /**< [ 61: 48] Q value of complex weight 1 for symbol 0 as a signed 14 bit Q12 representation [-8192,8191]. */
+        uint64_t w1_symbol0_q_phase    : 14; /**< [ 61: 48] Q value of complex weight 1 for symbol 0 as a signed 14-bit Q12 representation [-8192,8191]. */
         uint64_t reserved_46_47        : 2;
-        uint64_t w1_symbol0_i_phase    : 14; /**< [ 45: 32] I value of complex weight 1 for symbol 0  as a signed 14 bit Q12 representation [-8192,8191]. */
+        uint64_t w1_symbol0_i_phase    : 14; /**< [ 45: 32] I value of complex weight 1 for symbol 0  as a signed 14-bit Q12 representation [-8192,8191]. */
         uint64_t reserved_30_31        : 2;
         uint64_t w0_symbol0_q_phase    : 14; /**< [ 29: 16] Q value of complex weight 0 for symbol 0. */
         uint64_t reserved_14_15        : 2;
@@ -1701,28 +1701,28 @@ union cavm_fdeq_rdcfg_twf_set_s
         uint64_t reserved_14_15        : 2;
         uint64_t w0_symbol0_q_phase    : 14; /**< [ 29: 16] Q value of complex weight 0 for symbol 0. */
         uint64_t reserved_30_31        : 2;
-        uint64_t w1_symbol0_i_phase    : 14; /**< [ 45: 32] I value of complex weight 1 for symbol 0  as a signed 14 bit Q12 representation [-8192,8191]. */
+        uint64_t w1_symbol0_i_phase    : 14; /**< [ 45: 32] I value of complex weight 1 for symbol 0  as a signed 14-bit Q12 representation [-8192,8191]. */
         uint64_t reserved_46_47        : 2;
-        uint64_t w1_symbol0_q_phase    : 14; /**< [ 61: 48] Q value of complex weight 1 for symbol 0 as a signed 14 bit Q12 representation [-8192,8191]. */
+        uint64_t w1_symbol0_q_phase    : 14; /**< [ 61: 48] Q value of complex weight 1 for symbol 0 as a signed 14-bit Q12 representation [-8192,8191]. */
         uint64_t reserved_62_63        : 2;
 #endif /* Word 0 - End */
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 1 - Big Endian */
         uint64_t reserved_126_127      : 2;
-        uint64_t w1_symbol1_q_phase    : 14; /**< [125:112] Q value of complex weight 1 for symbol 1  as a signed 14 bit Q12 representation [-8192,8191]. */
+        uint64_t w1_symbol1_q_phase    : 14; /**< [125:112] Q value of complex weight 1 for symbol 1  as a signed 14-bit Q12 representation [-8192,8191]. */
         uint64_t reserved_110_111      : 2;
-        uint64_t w1_symbol1_i_phase    : 14; /**< [109: 96] I value of complex weight 1 for symbol 1  as a signed 14 bit Q12 representation [-8192,8191]. */
+        uint64_t w1_symbol1_i_phase    : 14; /**< [109: 96] I value of complex weight 1 for symbol 1  as a signed 14-bit Q12 representation [-8192,8191]. */
         uint64_t reserved_94_95        : 2;
-        uint64_t w0_symbol1_q_phase    : 14; /**< [ 93: 80] Q value of complex weight 0 for symbol 1  as a signed 14 bit Q12 representation [-8192,8191]. */
+        uint64_t w0_symbol1_q_phase    : 14; /**< [ 93: 80] Q value of complex weight 0 for symbol 1  as a signed 14-bit Q12 representation [-8192,8191]. */
         uint64_t reserved_78_79        : 2;
-        uint64_t w0_symbol1_i_phase    : 14; /**< [ 77: 64] I value of complex weight 0 for symbol 1  as a signed 14 bit Q12 representation [-8192,8191]. */
+        uint64_t w0_symbol1_i_phase    : 14; /**< [ 77: 64] I value of complex weight 0 for symbol 1  as a signed 14-bit Q12 representation [-8192,8191]. */
 #else /* Word 1 - Little Endian */
-        uint64_t w0_symbol1_i_phase    : 14; /**< [ 77: 64] I value of complex weight 0 for symbol 1  as a signed 14 bit Q12 representation [-8192,8191]. */
+        uint64_t w0_symbol1_i_phase    : 14; /**< [ 77: 64] I value of complex weight 0 for symbol 1  as a signed 14-bit Q12 representation [-8192,8191]. */
         uint64_t reserved_78_79        : 2;
-        uint64_t w0_symbol1_q_phase    : 14; /**< [ 93: 80] Q value of complex weight 0 for symbol 1  as a signed 14 bit Q12 representation [-8192,8191]. */
+        uint64_t w0_symbol1_q_phase    : 14; /**< [ 93: 80] Q value of complex weight 0 for symbol 1  as a signed 14-bit Q12 representation [-8192,8191]. */
         uint64_t reserved_94_95        : 2;
-        uint64_t w1_symbol1_i_phase    : 14; /**< [109: 96] I value of complex weight 1 for symbol 1  as a signed 14 bit Q12 representation [-8192,8191]. */
+        uint64_t w1_symbol1_i_phase    : 14; /**< [109: 96] I value of complex weight 1 for symbol 1  as a signed 14-bit Q12 representation [-8192,8191]. */
         uint64_t reserved_110_111      : 2;
-        uint64_t w1_symbol1_q_phase    : 14; /**< [125:112] Q value of complex weight 1 for symbol 1  as a signed 14 bit Q12 representation [-8192,8191]. */
+        uint64_t w1_symbol1_q_phase    : 14; /**< [125:112] Q value of complex weight 1 for symbol 1  as a signed 14-bit Q12 representation [-8192,8191]. */
         uint64_t reserved_126_127      : 2;
 #endif /* Word 1 - End */
     } s;
@@ -1748,7 +1748,7 @@ union cavm_fdeq_rdcfg_twf_to_16r_s
         uint64_t timewf_index_rs0_ant_1 : 4; /**< [ 31: 28] Refer [TIMEWF_INDEX_RS0_ANT_0] */
         uint64_t timeoffset_rs0_ant_1  : 12; /**< [ 27: 16] Refer [TIMEOFFSET_RS0_ANT_0] */
         uint64_t timewf_index_rs0_ant_0 : 4; /**< [ 15: 12] In the name TIMEWF_INDEX_RSs_ANT r, the tuple(s,r) refers to antenna index. This
-                                                                 parameter indicates the index of time domain weigth filter set used for antenna
+                                                                 parameter indicates the index of time domain weight filter set used for antenna
                                                                  r.  Only the one specified for the RS
                                                                  FDEQ(0..1)_JD_JOB_TYPE_RS_PARAM[HRS_SYMBOL_NUMBER] - 1 is valid and others are ignored.
                                                                  Valid range is (0, FDEQ(0..1)_JD_JOB_TYPE_RS_PARAM[TIMEWF_SET_NUMBER]-1). */
@@ -1760,7 +1760,7 @@ union cavm_fdeq_rdcfg_twf_to_16r_s
                                                                  index. This parameter indicates the indicates the phase due to time offset on RS
                                                                  s and antenna r. Valid range is [4095,0]. Unit is 2*pi/4096. */
         uint64_t timewf_index_rs0_ant_0 : 4; /**< [ 15: 12] In the name TIMEWF_INDEX_RSs_ANT r, the tuple(s,r) refers to antenna index. This
-                                                                 parameter indicates the index of time domain weigth filter set used for antenna
+                                                                 parameter indicates the index of time domain weight filter set used for antenna
                                                                  r.  Only the one specified for the RS
                                                                  FDEQ(0..1)_JD_JOB_TYPE_RS_PARAM[HRS_SYMBOL_NUMBER] - 1 is valid and others are ignored.
                                                                  Valid range is (0, FDEQ(0..1)_JD_JOB_TYPE_RS_PARAM[TIMEWF_SET_NUMBER]-1). */
@@ -2079,7 +2079,7 @@ union cavm_fdeq_rdcfg_twf_to_2r_s
         uint64_t timewf_index_rs0_ant_1 : 4; /**< [ 31: 28] Refer [TIMEWF_INDEX_RS0_ANT_0] */
         uint64_t timeoffset_rs0_ant_1  : 12; /**< [ 27: 16] Refer [TIMEOFFSET_RS0_ANT_0] */
         uint64_t timewf_index_rs0_ant_0 : 4; /**< [ 15: 12] In the name TIMEWF_INDEX_RSs_ANT r, the tuple(s,r) refers to antenna index. This
-                                                                 parameter indicates the index of time domain weigth filter set used for antenna
+                                                                 parameter indicates the index of time domain weight filter set used for antenna
                                                                  r.  Only the one specified for the RS
                                                                  FDEQ(0..1)_JD_JOB_TYPE_RS_PARAM[HRS_SYMBOL_NUMBER] - 1 is valid and others are ignored.
                                                                  Valid range is (0, FDEQ(0..1)_JD_JOB_TYPE_RS_PARAM[TIMEWF_SET_NUMBER]-1). */
@@ -2091,7 +2091,7 @@ union cavm_fdeq_rdcfg_twf_to_2r_s
                                                                  index. This parameter indicates the indicates the phase due to time offset on RS
                                                                  s and antenna r. Valid range is [4095,0]. Unit is 2*pi/4096. */
         uint64_t timewf_index_rs0_ant_0 : 4; /**< [ 15: 12] In the name TIMEWF_INDEX_RSs_ANT r, the tuple(s,r) refers to antenna index. This
-                                                                 parameter indicates the index of time domain weigth filter set used for antenna
+                                                                 parameter indicates the index of time domain weight filter set used for antenna
                                                                  r.  Only the one specified for the RS
                                                                  FDEQ(0..1)_JD_JOB_TYPE_RS_PARAM[HRS_SYMBOL_NUMBER] - 1 is valid and others are ignored.
                                                                  Valid range is (0, FDEQ(0..1)_JD_JOB_TYPE_RS_PARAM[TIMEWF_SET_NUMBER]-1). */
@@ -2144,7 +2144,7 @@ union cavm_fdeq_rdcfg_twf_to_4r_s
         uint64_t timewf_index_rs0_ant_1 : 4; /**< [ 31: 28] Refer [TIMEWF_INDEX_RS0_ANT_0] */
         uint64_t timeoffset_rs0_ant_1  : 12; /**< [ 27: 16] Refer [TIMEOFFSET_RS0_ANT_0] */
         uint64_t timewf_index_rs0_ant_0 : 4; /**< [ 15: 12] In the name TIMEWF_INDEX_RSs_ANT r, the tuple(s,r) refers to antenna index. This
-                                                                 parameter indicates the index of time domain weigth filter set used for antenna
+                                                                 parameter indicates the index of time domain weight filter set used for antenna
                                                                  r.  Only the one specified for the RS
                                                                  FDEQ(0..1)_JD_JOB_TYPE_RS_PARAM[HRS_SYMBOL_NUMBER] - 1 is valid and others are ignored.
                                                                  Valid range is (0, FDEQ(0..1)_JD_JOB_TYPE_RS_PARAM[TIMEWF_SET_NUMBER]-1). */
@@ -2156,7 +2156,7 @@ union cavm_fdeq_rdcfg_twf_to_4r_s
                                                                  index. This parameter indicates the indicates the phase due to time offset on RS
                                                                  s and antenna r. Valid range is [4095,0]. Unit is 2*pi/4096. */
         uint64_t timewf_index_rs0_ant_0 : 4; /**< [ 15: 12] In the name TIMEWF_INDEX_RSs_ANT r, the tuple(s,r) refers to antenna index. This
-                                                                 parameter indicates the index of time domain weigth filter set used for antenna
+                                                                 parameter indicates the index of time domain weight filter set used for antenna
                                                                  r.  Only the one specified for the RS
                                                                  FDEQ(0..1)_JD_JOB_TYPE_RS_PARAM[HRS_SYMBOL_NUMBER] - 1 is valid and others are ignored.
                                                                  Valid range is (0, FDEQ(0..1)_JD_JOB_TYPE_RS_PARAM[TIMEWF_SET_NUMBER]-1). */
@@ -2247,7 +2247,7 @@ union cavm_fdeq_rdcfg_twf_to_8r_s
         uint64_t timewf_index_rs0_ant_1 : 4; /**< [ 31: 28] Refer [TIMEWF_INDEX_RS0_ANT_0] */
         uint64_t timeoffset_rs0_ant_1  : 12; /**< [ 27: 16] Refer [TIMEOFFSET_RS0_ANT_0] */
         uint64_t timewf_index_rs0_ant_0 : 4; /**< [ 15: 12] In the name TIMEWF_INDEX_RSs_ANT r, the tuple(s,r) refers to antenna index. This
-                                                                 parameter indicates the index of time domain weigth filter set used for antenna
+                                                                 parameter indicates the index of time domain weight filter set used for antenna
                                                                  r.  Only the one specified for the RS
                                                                  FDEQ(0..1)_JD_JOB_TYPE_RS_PARAM[HRS_SYMBOL_NUMBER] - 1 is valid and others are ignored.
                                                                  Valid range is (0, FDEQ(0..1)_JD_JOB_TYPE_RS_PARAM[TIMEWF_SET_NUMBER]-1). */
@@ -2259,7 +2259,7 @@ union cavm_fdeq_rdcfg_twf_to_8r_s
                                                                  index. This parameter indicates the indicates the phase due to time offset on RS
                                                                  s and antenna r. Valid range is [4095,0]. Unit is 2*pi/4096. */
         uint64_t timewf_index_rs0_ant_0 : 4; /**< [ 15: 12] In the name TIMEWF_INDEX_RSs_ANT r, the tuple(s,r) refers to antenna index. This
-                                                                 parameter indicates the index of time domain weigth filter set used for antenna
+                                                                 parameter indicates the index of time domain weight filter set used for antenna
                                                                  r.  Only the one specified for the RS
                                                                  FDEQ(0..1)_JD_JOB_TYPE_RS_PARAM[HRS_SYMBOL_NUMBER] - 1 is valid and others are ignored.
                                                                  Valid range is (0, FDEQ(0..1)_JD_JOB_TYPE_RS_PARAM[TIMEWF_SET_NUMBER]-1). */
@@ -2423,13 +2423,13 @@ union cavm_fdeq_rdcfg_ue_phase_16r_s
         uint64_t phase_antenna_2       : 16; /**< [ 47: 32] Refer to [PHASE_ANTENNA_0]. */
         uint64_t phase_antenna_1       : 16; /**< [ 31: 16] Refer to [PHASE_ANTENNA_0]. */
         uint64_t phase_antenna_0       : 16; /**< [ 15:  0] In the name PHASE_ANTENNA_r, r refers to antenna index. This parameter defines
-                                                                 phase offset on this data symbol and antenna r due to Frequncy Offset.
+                                                                 phase offset on this data symbol and antenna r due to Frequency Offset.
                                                                  It is used FO compensation and recompensation in TDCE block.
                                                                  Valid range is [4095,0].
                                                                  Unit is 2*pi/4096. */
 #else /* Word 0 - Little Endian */
         uint64_t phase_antenna_0       : 16; /**< [ 15:  0] In the name PHASE_ANTENNA_r, r refers to antenna index. This parameter defines
-                                                                 phase offset on this data symbol and antenna r due to Frequncy Offset.
+                                                                 phase offset on this data symbol and antenna r due to Frequency Offset.
                                                                  It is used FO compensation and recompensation in TDCE block.
                                                                  Valid range is [4095,0].
                                                                  Unit is 2*pi/4096. */
@@ -2490,13 +2490,13 @@ union cavm_fdeq_rdcfg_ue_phase_8r_s
         uint64_t phase_antenna_2       : 16; /**< [ 47: 32] Refer to [PHASE_ANTENNA_0]. */
         uint64_t phase_antenna_1       : 16; /**< [ 31: 16] Refer to [PHASE_ANTENNA_0]. */
         uint64_t phase_antenna_0       : 16; /**< [ 15:  0] In the name PHASE_ANTENNA_r, r refers to antenna index. This parameter defines
-                                                                 phase offset on this data symbol and antenna r due to Frequncy Offset.
+                                                                 phase offset on this data symbol and antenna r due to Frequency Offset.
                                                                  It is used FO compensation and recompensation in TDCE block.
                                                                  Valid range is [4095,0].
                                                                  Unit is 2*pi/4096. */
 #else /* Word 0 - Little Endian */
         uint64_t phase_antenna_0       : 16; /**< [ 15:  0] In the name PHASE_ANTENNA_r, r refers to antenna index. This parameter defines
-                                                                 phase offset on this data symbol and antenna r due to Frequncy Offset.
+                                                                 phase offset on this data symbol and antenna r due to Frequency Offset.
                                                                  It is used FO compensation and recompensation in TDCE block.
                                                                  Valid range is [4095,0].
                                                                  Unit is 2*pi/4096. */
@@ -2560,7 +2560,7 @@ union cavm_fdeq_rdcfg_ue_phyc_params_s
         uint64_t rs_slot0_occ          : 1;  /**< [ 19: 19] Definition same as slot 1. */
         uint64_t cp_ofdm_on            : 1;  /**< [ 18: 18] 0x0 = DFTs-OFDM.
                                                                  0x1 = CP-OFDM. */
-        uint64_t antenna_on_off_bitmap : 16; /**< [ 17:  2] If the (15-n)th bit of the bitmap is 0, the hrs correponding to nth antenna is
+        uint64_t antenna_on_off_bitmap : 16; /**< [ 17:  2] If the (15-n)th bit of the bitmap is 0, the hrs corresponding to nth antenna is
                                                                  zeros out for the UE. */
         uint64_t reserved_1            : 1;
         uint64_t ue_enable             : 1;  /**< [  0:  0] If disabled, the UE is disabled. Disabled UE is not processed even if parameters
@@ -2569,7 +2569,7 @@ union cavm_fdeq_rdcfg_ue_phyc_params_s
         uint64_t ue_enable             : 1;  /**< [  0:  0] If disabled, the UE is disabled. Disabled UE is not processed even if parameters
                                                                  are given in this config. */
         uint64_t reserved_1            : 1;
-        uint64_t antenna_on_off_bitmap : 16; /**< [ 17:  2] If the (15-n)th bit of the bitmap is 0, the hrs correponding to nth antenna is
+        uint64_t antenna_on_off_bitmap : 16; /**< [ 17:  2] If the (15-n)th bit of the bitmap is 0, the hrs corresponding to nth antenna is
                                                                  zeros out for the UE. */
         uint64_t cp_ofdm_on            : 1;  /**< [ 18: 18] 0x0 = DFTs-OFDM.
                                                                  0x1 = CP-OFDM. */
@@ -2626,7 +2626,7 @@ union cavm_fdeq_rdcfg_ue_phyc_params_s
                                                                  Only valid if FDEQ()_JD_JOB_TYPE_RS_PARAM[HRS_SYMBOL_NUMBER] = 2 or 4. */
         uint64_t rhh_bitshift          : 3;  /**< [102:100] Indicates the amount of right shift on the internally calculated Rhh in internal
                                                                  calculation. Valid range is [7,0].Default value is 0. */
-        uint64_t ce_bitshift           : 2;  /**< [ 99: 98] Indiates the amount of right shift on Hrs in addition
+        uint64_t ce_bitshift           : 2;  /**< [ 99: 98] Indicates the amount of right shift on Hrs in addition
                                                                  FDEQ()_JD_RS_GENERAL_PARAMETER[H_DMRS_INPUT_BITSHIFT] and g_FAGC. Valid
                                                                  range is [3,0]. Default value is 0. */
         uint64_t r_diagloading_factor_0 : 10;/**< [ 97: 88] A bias factor applied to diagonal of the R matrix.
@@ -2666,7 +2666,7 @@ union cavm_fdeq_rdcfg_ue_phyc_params_s
         uint64_t r_diagloading_factor_0 : 10;/**< [ 97: 88] A bias factor applied to diagonal of the R matrix.
                                                                  Default value is 0x2.
                                                                  R_DIAGLOADING_FACTOR_0 must be greater than [R_DIAGLOADING_FACTOR_1]. */
-        uint64_t ce_bitshift           : 2;  /**< [ 99: 98] Indiates the amount of right shift on Hrs in addition
+        uint64_t ce_bitshift           : 2;  /**< [ 99: 98] Indicates the amount of right shift on Hrs in addition
                                                                  FDEQ()_JD_RS_GENERAL_PARAMETER[H_DMRS_INPUT_BITSHIFT] and g_FAGC. Valid
                                                                  range is [3,0]. Default value is 0. */
         uint64_t rhh_bitshift          : 3;  /**< [102:100] Indicates the amount of right shift on the internally calculated Rhh in internal
@@ -2700,16 +2700,16 @@ union cavm_fdeq_rdcfg_ue_phyc_params_s
                                                                  0x0 = DTX or data.
                                                                  0x1 = DMRS. */
         uint64_t reserved_174_176      : 3;
-        uint64_t rs_channel_phasecomp_on : 1;/**< [173:173] If enabled, Time Offset induced phase is compensated during  frequency domain
+        uint64_t rs_channel_phasecomp_on : 1;/**< [173:173] If enabled, Time Offset induced phase is compensated during frequency domain
                                                                  interpolation of Hrs on each RS symbol. */
         uint64_t tdce_phasecomp_on     : 1;  /**< [172:172] If enabled, Frequency offset induced phase is compensated prior to TDCE and reapplied after TDCE. */
-        uint64_t wscale_bitshift       : 3;  /**< [171:169] Indicate the amount of right shift on Weight in internal calucation.
+        uint64_t wscale_bitshift       : 3;  /**< [171:169] Indicate the amount of right shift on Weight in internal calculation.
                                                                  Valid range is [5,0].
                                                                  Must be log2([WEIGHT_SCALE]/32)
                                                                  Default value is 0 when FDEQ_RDCFG_UE_PHYC_PARAMS_S[CP_OFDM_ON]=1 and
                                                                  FDEQ_RDCFG_UE_PHYC_PARAMS_S[SIMO_RNN_BASED_IRC_ON] = 1. Otherwise it is 2. */
         uint64_t freq_hopping_on       : 1;  /**< [168:168] If enabled, UE has frequency hopping. */
-        uint64_t snrdb_offset          : 10; /**< [167:158] Offset value used to stabilize the final PSINR value by offseting value in internal stages. */
+        uint64_t snrdb_offset          : 10; /**< [167:158] Offset value used to stabilize the final PSINR value by offsetting value in internal stages. */
         uint64_t rs_omega              : 1;  /**< [157:157] Omega is used for DMRS generation. Valid when
                                                                  FDEQ()_JD_JOB_TYPE_RS_PARAM[RS_SEQUENCE_GENERATION_ENABLE]=1 and [RS_DELTA]=1.
                                                                  When this parameter is 1, DMRS is valid only on odd numbered subcarriers of an RB. */
@@ -2717,14 +2717,14 @@ union cavm_fdeq_rdcfg_ue_phyc_params_s
                                                                  FDEQ()_JD_JOB_TYPE_RS_PARAM[RS_SEQUENCE_GENERATION_ENABLE]=1.
                                                                  0x0 = IFDMA off.
                                                                  0x1 = IFDMA on.
-                                                                 When this paramter is 1, the subcarriers indicated by [RS_OMEGA] are used for DMRS */
+                                                                 When this parameter is 1, the subcarriers indicated by [RS_OMEGA] are used for DMRS */
         uint64_t rb_size_index         : 6;  /**< [155:150] RB Size index for DMRS generation.Valid when
                                                                  FDEQ()_JD_JOB_TYPE_RS_PARAM[RS_SEQUENCE_GENERATION_ENABLE]=1.
                                                                  0x0 = 1 RB.
                                                                  0x1 = 2 RB.
                                                                  0x22 = 108 RB.
                                                                  Valid range is [34,0] */
-        uint64_t noise_c               : 12; /**< [149:138] Stabilising bias term applied to the diagonal of the channel correlation matrix
+        uint64_t noise_c               : 12; /**< [149:138] Stabilizing bias term applied to the diagonal of the channel correlation matrix
                                                                  during the Rhh matrix normalization process.
                                                                  Valid range [4095,0].
                                                                  Default value 10. */
@@ -2741,7 +2741,7 @@ union cavm_fdeq_rdcfg_ue_phyc_params_s
         uint64_t noise_th              : 7;  /**< [137:131] Bias factor added to diagonal terms of the Rnn matrix after scaling (with and
                                                                  before thresholding).The maximum value of 1023 corresponds to biasing the 17-bit
                                                                  scaleddiag(Rnn) by 21 dB. */
-        uint64_t noise_c               : 12; /**< [149:138] Stabilising bias term applied to the diagonal of the channel correlation matrix
+        uint64_t noise_c               : 12; /**< [149:138] Stabilizing bias term applied to the diagonal of the channel correlation matrix
                                                                  during the Rhh matrix normalization process.
                                                                  Valid range [4095,0].
                                                                  Default value 10. */
@@ -2755,19 +2755,19 @@ union cavm_fdeq_rdcfg_ue_phyc_params_s
                                                                  FDEQ()_JD_JOB_TYPE_RS_PARAM[RS_SEQUENCE_GENERATION_ENABLE]=1.
                                                                  0x0 = IFDMA off.
                                                                  0x1 = IFDMA on.
-                                                                 When this paramter is 1, the subcarriers indicated by [RS_OMEGA] are used for DMRS */
+                                                                 When this parameter is 1, the subcarriers indicated by [RS_OMEGA] are used for DMRS */
         uint64_t rs_omega              : 1;  /**< [157:157] Omega is used for DMRS generation. Valid when
                                                                  FDEQ()_JD_JOB_TYPE_RS_PARAM[RS_SEQUENCE_GENERATION_ENABLE]=1 and [RS_DELTA]=1.
                                                                  When this parameter is 1, DMRS is valid only on odd numbered subcarriers of an RB. */
-        uint64_t snrdb_offset          : 10; /**< [167:158] Offset value used to stabilize the final PSINR value by offseting value in internal stages. */
+        uint64_t snrdb_offset          : 10; /**< [167:158] Offset value used to stabilize the final PSINR value by offsetting value in internal stages. */
         uint64_t freq_hopping_on       : 1;  /**< [168:168] If enabled, UE has frequency hopping. */
-        uint64_t wscale_bitshift       : 3;  /**< [171:169] Indicate the amount of right shift on Weight in internal calucation.
+        uint64_t wscale_bitshift       : 3;  /**< [171:169] Indicate the amount of right shift on Weight in internal calculation.
                                                                  Valid range is [5,0].
                                                                  Must be log2([WEIGHT_SCALE]/32)
                                                                  Default value is 0 when FDEQ_RDCFG_UE_PHYC_PARAMS_S[CP_OFDM_ON]=1 and
                                                                  FDEQ_RDCFG_UE_PHYC_PARAMS_S[SIMO_RNN_BASED_IRC_ON] = 1. Otherwise it is 2. */
         uint64_t tdce_phasecomp_on     : 1;  /**< [172:172] If enabled, Frequency offset induced phase is compensated prior to TDCE and reapplied after TDCE. */
-        uint64_t rs_channel_phasecomp_on : 1;/**< [173:173] If enabled, Time Offset induced phase is compensated during  frequency domain
+        uint64_t rs_channel_phasecomp_on : 1;/**< [173:173] If enabled, Time Offset induced phase is compensated during frequency domain
                                                                  interpolation of Hrs on each RS symbol. */
         uint64_t reserved_174_176      : 3;
         uint64_t dmrs_pattern_bitmap   : 12; /**< [188:177] A bitmap indicating the DMRS pattern in CP-OFDM RB. MSB corresponds to tone index 0.
@@ -2869,7 +2869,7 @@ union cavm_fdeq_rdcfg_ue_phyc_params_s
         uint64_t rs_slot0_occ          : 1;  /**< [ 19: 19] Definition same as slot 1. */
         uint64_t cp_ofdm_on            : 1;  /**< [ 18: 18] 0x0 = DFTs-OFDM.
                                                                  0x1 = CP-OFDM. */
-        uint64_t antenna_on_off_bitmap : 16; /**< [ 17:  2] If the (15-n)th bit of the bitmap is 0, the hrs correponding to nth antenna is
+        uint64_t antenna_on_off_bitmap : 16; /**< [ 17:  2] If the (15-n)th bit of the bitmap is 0, the hrs corresponding to nth antenna is
                                                                  zeros out for the UE. */
         uint64_t reserved_1            : 1;
         uint64_t ue_enable             : 1;  /**< [  0:  0] If disabled, the UE is disabled. Disabled UE is not processed even if parameters
@@ -2878,7 +2878,7 @@ union cavm_fdeq_rdcfg_ue_phyc_params_s
         uint64_t ue_enable             : 1;  /**< [  0:  0] If disabled, the UE is disabled. Disabled UE is not processed even if parameters
                                                                  are given in this config. */
         uint64_t reserved_1            : 1;
-        uint64_t antenna_on_off_bitmap : 16; /**< [ 17:  2] If the (15-n)th bit of the bitmap is 0, the hrs correponding to nth antenna is
+        uint64_t antenna_on_off_bitmap : 16; /**< [ 17:  2] If the (15-n)th bit of the bitmap is 0, the hrs corresponding to nth antenna is
                                                                  zeros out for the UE. */
         uint64_t cp_ofdm_on            : 1;  /**< [ 18: 18] 0x0 = DFTs-OFDM.
                                                                  0x1 = CP-OFDM. */
@@ -2936,7 +2936,7 @@ union cavm_fdeq_rdcfg_ue_phyc_params_s
                                                                  Only valid if FDEQ()_JD_JOB_TYPE_RS_PARAM[HRS_SYMBOL_NUMBER] = 2 or 4. */
         uint64_t rhh_bitshift          : 3;  /**< [102:100] Indicates the amount of right shift on the internally calculated Rhh in internal
                                                                  calculation. Valid range is [7,0].Default value is 0. */
-        uint64_t ce_bitshift           : 2;  /**< [ 99: 98] Indiates the amount of right shift on Hrs in addition
+        uint64_t ce_bitshift           : 2;  /**< [ 99: 98] Indicates the amount of right shift on Hrs in addition
                                                                  FDEQ()_JD_RS_GENERAL_PARAMETER[H_DMRS_INPUT_BITSHIFT] and g_FAGC. Valid
                                                                  range is [3,0]. Default value is 0. */
         uint64_t r_diagloading_factor_0 : 10;/**< [ 97: 88] A bias factor applied to diagonal of the R matrix.
@@ -2976,7 +2976,7 @@ union cavm_fdeq_rdcfg_ue_phyc_params_s
         uint64_t r_diagloading_factor_0 : 10;/**< [ 97: 88] A bias factor applied to diagonal of the R matrix.
                                                                  Default value is 0x2.
                                                                  R_DIAGLOADING_FACTOR_0 must be greater than [R_DIAGLOADING_FACTOR_1]. */
-        uint64_t ce_bitshift           : 2;  /**< [ 99: 98] Indiates the amount of right shift on Hrs in addition
+        uint64_t ce_bitshift           : 2;  /**< [ 99: 98] Indicates the amount of right shift on Hrs in addition
                                                                  FDEQ()_JD_RS_GENERAL_PARAMETER[H_DMRS_INPUT_BITSHIFT] and g_FAGC. Valid
                                                                  range is [3,0]. Default value is 0. */
         uint64_t rhh_bitshift          : 3;  /**< [102:100] Indicates the amount of right shift on the internally calculated Rhh in internal
@@ -3011,16 +3011,16 @@ union cavm_fdeq_rdcfg_ue_phyc_params_s
                                                                  0x0 = DTX or data.
                                                                  0x1 = DMRS. */
         uint64_t reserved_174_176      : 3;
-        uint64_t rs_channel_phasecomp_on : 1;/**< [173:173] If enabled, Time Offset induced phase is compensated during  frequency domain
+        uint64_t rs_channel_phasecomp_on : 1;/**< [173:173] If enabled, Time Offset induced phase is compensated during frequency domain
                                                                  interpolation of Hrs on each RS symbol. */
         uint64_t tdce_phasecomp_on     : 1;  /**< [172:172] If enabled, Frequency offset induced phase is compensated prior to TDCE and reapplied after TDCE. */
-        uint64_t wscale_bitshift       : 3;  /**< [171:169] Indicate the amount of right shift on Weight in internal calucation.
+        uint64_t wscale_bitshift       : 3;  /**< [171:169] Indicate the amount of right shift on Weight in internal calculation.
                                                                  Valid range is [5,0].
                                                                  Must be log2([WEIGHT_SCALE]/32)
                                                                  Default value is 0 when FDEQ_RDCFG_UE_PHYC_PARAMS_S[CP_OFDM_ON]=1 and
                                                                  FDEQ_RDCFG_UE_PHYC_PARAMS_S[SIMO_RNN_BASED_IRC_ON] = 1. Otherwise it is 2. */
         uint64_t freq_hopping_on       : 1;  /**< [168:168] If enabled, UE has frequency hopping. */
-        uint64_t snrdb_offset          : 10; /**< [167:158] Offset value used to stabilize the final PSINR value by offseting value in internal stages. */
+        uint64_t snrdb_offset          : 10; /**< [167:158] Offset value used to stabilize the final PSINR value by offsetting value in internal stages. */
         uint64_t rs_omega              : 1;  /**< [157:157] Omega is used for DMRS generation. Valid when
                                                                  FDEQ()_JD_JOB_TYPE_RS_PARAM[RS_SEQUENCE_GENERATION_ENABLE]=1 and [RS_DELTA]=1.
                                                                  When this parameter is 1, DMRS is valid only on odd numbered subcarriers of an RB. */
@@ -3028,14 +3028,14 @@ union cavm_fdeq_rdcfg_ue_phyc_params_s
                                                                  FDEQ()_JD_JOB_TYPE_RS_PARAM[RS_SEQUENCE_GENERATION_ENABLE]=1.
                                                                  0x0 = IFDMA off.
                                                                  0x1 = IFDMA on.
-                                                                 When this paramter is 1, the subcarriers indicated by [RS_OMEGA] are used for DMRS */
+                                                                 When this parameter is 1, the subcarriers indicated by [RS_OMEGA] are used for DMRS */
         uint64_t rb_size_index         : 6;  /**< [155:150] RB Size index for DMRS generation.Valid when
                                                                  FDEQ()_JD_JOB_TYPE_RS_PARAM[RS_SEQUENCE_GENERATION_ENABLE]=1.
                                                                  0x0 = 1 RB.
                                                                  0x1 = 2 RB.
                                                                  0x22 = 108 RB.
                                                                  Valid range is [34,0] */
-        uint64_t noise_c               : 12; /**< [149:138] Stabilising bias term applied to the diagonal of the channel correlation matrix
+        uint64_t noise_c               : 12; /**< [149:138] Stabilizing bias term applied to the diagonal of the channel correlation matrix
                                                                  during the Rhh matrix normalization process.
                                                                  Valid range [4095,0].
                                                                  Default value 10. */
@@ -3052,7 +3052,7 @@ union cavm_fdeq_rdcfg_ue_phyc_params_s
         uint64_t noise_th              : 7;  /**< [137:131] Bias factor added to diagonal terms of the Rnn matrix after scaling (with and
                                                                  before thresholding).The maximum value of 1023 corresponds to biasing the 17-bit
                                                                  scaleddiag(Rnn) by 21 dB. */
-        uint64_t noise_c               : 12; /**< [149:138] Stabilising bias term applied to the diagonal of the channel correlation matrix
+        uint64_t noise_c               : 12; /**< [149:138] Stabilizing bias term applied to the diagonal of the channel correlation matrix
                                                                  during the Rhh matrix normalization process.
                                                                  Valid range [4095,0].
                                                                  Default value 10. */
@@ -3066,19 +3066,19 @@ union cavm_fdeq_rdcfg_ue_phyc_params_s
                                                                  FDEQ()_JD_JOB_TYPE_RS_PARAM[RS_SEQUENCE_GENERATION_ENABLE]=1.
                                                                  0x0 = IFDMA off.
                                                                  0x1 = IFDMA on.
-                                                                 When this paramter is 1, the subcarriers indicated by [RS_OMEGA] are used for DMRS */
+                                                                 When this parameter is 1, the subcarriers indicated by [RS_OMEGA] are used for DMRS */
         uint64_t rs_omega              : 1;  /**< [157:157] Omega is used for DMRS generation. Valid when
                                                                  FDEQ()_JD_JOB_TYPE_RS_PARAM[RS_SEQUENCE_GENERATION_ENABLE]=1 and [RS_DELTA]=1.
                                                                  When this parameter is 1, DMRS is valid only on odd numbered subcarriers of an RB. */
-        uint64_t snrdb_offset          : 10; /**< [167:158] Offset value used to stabilize the final PSINR value by offseting value in internal stages. */
+        uint64_t snrdb_offset          : 10; /**< [167:158] Offset value used to stabilize the final PSINR value by offsetting value in internal stages. */
         uint64_t freq_hopping_on       : 1;  /**< [168:168] If enabled, UE has frequency hopping. */
-        uint64_t wscale_bitshift       : 3;  /**< [171:169] Indicate the amount of right shift on Weight in internal calucation.
+        uint64_t wscale_bitshift       : 3;  /**< [171:169] Indicate the amount of right shift on Weight in internal calculation.
                                                                  Valid range is [5,0].
                                                                  Must be log2([WEIGHT_SCALE]/32)
                                                                  Default value is 0 when FDEQ_RDCFG_UE_PHYC_PARAMS_S[CP_OFDM_ON]=1 and
                                                                  FDEQ_RDCFG_UE_PHYC_PARAMS_S[SIMO_RNN_BASED_IRC_ON] = 1. Otherwise it is 2. */
         uint64_t tdce_phasecomp_on     : 1;  /**< [172:172] If enabled, Frequency offset induced phase is compensated prior to TDCE and reapplied after TDCE. */
-        uint64_t rs_channel_phasecomp_on : 1;/**< [173:173] If enabled, Time Offset induced phase is compensated during  frequency domain
+        uint64_t rs_channel_phasecomp_on : 1;/**< [173:173] If enabled, Time Offset induced phase is compensated during frequency domain
                                                                  interpolation of Hrs on each RS symbol. */
         uint64_t reserved_174_176      : 3;
         uint64_t dmrs_pattern_bitmap   : 12; /**< [188:177] A bitmap indicating the DMRS pattern in CP-OFDM RB. MSB corresponds to tone index 0.
@@ -3177,12 +3177,12 @@ union cavm_fdeq_rdcfg_ue_tagc_s
         uint64_t reserved_13_15        : 3;
         uint64_t tagc_gain_ant_1       : 5;  /**< [ 12:  8] Refer to [TAGC_GAIN_ANT_0]. */
         uint64_t reserved_5_7          : 3;
-        uint64_t tagc_gain_ant_0       : 5;  /**< [  4:  0] Indicates the value of time domain AGC for the refered antenna. A TAGC value of
-                                                                 m is 2^(m-n) higher than an atenna with TAGC value of  n. Valid range is
+        uint64_t tagc_gain_ant_0       : 5;  /**< [  4:  0] Indicates the value of time domain AGC for the referred antenna. A TAGC value of
+                                                                 m is 2^(m-n) higher than an antenna with TAGC value of  n. Valid range is
                                                                  [-16,15]. */
 #else /* Word 0 - Little Endian */
-        uint64_t tagc_gain_ant_0       : 5;  /**< [  4:  0] Indicates the value of time domain AGC for the refered antenna. A TAGC value of
-                                                                 m is 2^(m-n) higher than an atenna with TAGC value of  n. Valid range is
+        uint64_t tagc_gain_ant_0       : 5;  /**< [  4:  0] Indicates the value of time domain AGC for the referred antenna. A TAGC value of
+                                                                 m is 2^(m-n) higher than an antenna with TAGC value of  n. Valid range is
                                                                  [-16,15]. */
         uint64_t reserved_5_7          : 3;
         uint64_t tagc_gain_ant_1       : 5;  /**< [ 12:  8] Refer to [TAGC_GAIN_ANT_0]. */
@@ -3258,7 +3258,7 @@ union cavm_fdeq_rdcfg_ue_twf_to_16r_s
         uint64_t timewf_index_ant_1    : 4;  /**< [ 31: 28] Refer [TIMEWF_INDEX_ANT_0]. */
         uint64_t timeoffset_rs0_ant_1  : 12; /**< [ 27: 16] Refer [TIMEOFFSET_RS0_ANT_0]. */
         uint64_t timewf_index_ant_0    : 4;  /**< [ 15: 12] In the name TIMEWF_INDEX_ANT_r, r refers to antenna index.
-                                                                 This parameter indicates the index of time domain weigth filter set used for antenna r.
+                                                                 This parameter indicates the index of time domain weight filter set used for antenna r.
                                                                  Valid range is [FDEQ()_JD_RS_GENERAL_PARAMETER[TIMEWF_SET_NUMBER]-1,0].
                                                                  Only the one specified for the RS
                                                                  FDEQ()_JD_JOB_TYPE_RS_PARAM[HRS_SYMBOL_NUMBER]-1 are valid and others are
@@ -3273,7 +3273,7 @@ union cavm_fdeq_rdcfg_ue_twf_to_16r_s
                                                                  Valid range is [4095,0].
                                                                  Unit is 2*pi/4096. */
         uint64_t timewf_index_ant_0    : 4;  /**< [ 15: 12] In the name TIMEWF_INDEX_ANT_r, r refers to antenna index.
-                                                                 This parameter indicates the index of time domain weigth filter set used for antenna r.
+                                                                 This parameter indicates the index of time domain weight filter set used for antenna r.
                                                                  Valid range is [FDEQ()_JD_RS_GENERAL_PARAMETER[TIMEWF_SET_NUMBER]-1,0].
                                                                  Only the one specified for the RS
                                                                  FDEQ()_JD_JOB_TYPE_RS_PARAM[HRS_SYMBOL_NUMBER]-1 are valid and others are
@@ -3365,7 +3365,7 @@ union cavm_fdeq_rdcfg_ue_twf_to_8r_s
         uint64_t timewf_index_ant_1    : 4;  /**< [ 31: 28] Refer [TIMEWF_INDEX_ANT_0]. */
         uint64_t timeoffset_rs0_ant_1  : 12; /**< [ 27: 16] Refer [TIMEOFFSET_RS0_ANT_0]. */
         uint64_t timewf_index_ant_0    : 4;  /**< [ 15: 12] In the name TIMEWF_INDEX_ANT_r, r refers to antenna index.
-                                                                 This parameter indicates the index of time domain weigth filter set used for antenna r.
+                                                                 This parameter indicates the index of time domain weight filter set used for antenna r.
                                                                  Valid range is [FDEQ()_JD_RS_GENERAL_PARAMETER[TIMEWF_SET_NUMBER]-1,0].
                                                                  Only the one specified for the RS
                                                                  FDEQ()_JD_JOB_TYPE_RS_PARAM[HRS_SYMBOL_NUMBER] - 1 are valid and others are
@@ -3380,7 +3380,7 @@ union cavm_fdeq_rdcfg_ue_twf_to_8r_s
                                                                  Valid range is [4095,0].
                                                                  Unit is 2*pi/4096. */
         uint64_t timewf_index_ant_0    : 4;  /**< [ 15: 12] In the name TIMEWF_INDEX_ANT_r, r refers to antenna index.
-                                                                 This parameter indicates the index of time domain weigth filter set used for antenna r.
+                                                                 This parameter indicates the index of time domain weight filter set used for antenna r.
                                                                  Valid range is [FDEQ()_JD_RS_GENERAL_PARAMETER[TIMEWF_SET_NUMBER]-1,0].
                                                                  Only the one specified for the RS
                                                                  FDEQ()_JD_JOB_TYPE_RS_PARAM[HRS_SYMBOL_NUMBER] - 1 are valid and others are
@@ -3418,7 +3418,7 @@ union cavm_fdeq_rdcfg_ue_twf_to_8r_s
 /**
  * Register (RSL) fdeq#_control
  *
- * Register
+ * FDEQ Control Register
  */
 union cavm_fdeqx_control
 {
@@ -3472,7 +3472,7 @@ static inline uint64_t CAVM_FDEQX_CONTROL(unsigned long a)
 /**
  * Register (RSL) fdeq#_error_source_register_0
  *
- * Register
+ * FDEQ Error Source 0 Register
  */
 union cavm_fdeqx_error_source_register_0
 {
@@ -3536,7 +3536,7 @@ static inline uint64_t CAVM_FDEQX_ERROR_SOURCE_REGISTER_0(unsigned long a)
 /**
  * Register (RSL) fdeq#_hab_status
  *
- * Register
+ * FDEQ HAB Status Register
  */
 union cavm_fdeqx_hab_status
 {
@@ -3588,7 +3588,7 @@ static inline uint64_t CAVM_FDEQX_HAB_STATUS(unsigned long a)
 /**
  * Register (RSL) fdeq#_jd_act_ue_num_for_hop
  *
- * Register
+ * FDEQ Job Descriptor Hop Parameters Register
  */
 union cavm_fdeqx_jd_act_ue_num_for_hop
 {
@@ -3650,7 +3650,7 @@ static inline uint64_t CAVM_FDEQX_JD_ACT_UE_NUM_FOR_HOP(unsigned long a)
 /**
  * Register (RSL) fdeq#_jd_hrs_buffer_param_0
  *
- * Register
+ * FDEQ Job Descriptor HRS Buffer Parameters 0 Register
  */
 union cavm_fdeqx_jd_hrs_buffer_param_0
 {
@@ -3730,7 +3730,7 @@ static inline uint64_t CAVM_FDEQX_JD_HRS_BUFFER_PARAM_0(unsigned long a)
 /**
  * Register (RSL) fdeq#_jd_hrs_buffer_param_1
  *
- * Register
+ * FDEQ Job Descriptor HRS Buffer Parameters 1 Register
  */
 union cavm_fdeqx_jd_hrs_buffer_param_1
 {
@@ -3798,7 +3798,7 @@ static inline uint64_t CAVM_FDEQX_JD_HRS_BUFFER_PARAM_1(unsigned long a)
 /**
  * Register (RSL) fdeq#_jd_hrs_offset_per_ant
  *
- * Register
+ * FDEQ Job Descriptor HRS Offset per-Antenna Register
  */
 union cavm_fdeqx_jd_hrs_offset_per_ant
 {
@@ -3808,7 +3808,7 @@ union cavm_fdeqx_jd_hrs_offset_per_ant
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_35_63        : 29;
         uint64_t gap_reduc_with_lim_rd_bw : 1;/**< [ 34: 34](R/W) Must be set to 1. If FDEQ()_JD_JOB_TYPE_RS_PARAM[DATA_ONLY_JOB_MODE_ENABLE]
-                                                                 = 1, this parameters toggles between succesive jobs.
+                                                                 = 1, this parameters toggles between successive jobs.
                                                                  Used only for FDEQ()_JD_JOB_TYPE_RS_PARAM[JOB_TYPE] = 0x1. */
         uint64_t rb_param_buff_page    : 1;  /**< [ 33: 33](R/W) If FDEQ()_JD_JOB_TYPE_RS_PARAM[DATA_ONLY_JOB_MODE_ENABLE] = 1.
                                                                  Used only for FDEQ()_JD_JOB_TYPE_RS_PARAM[JOB_TYPE] = 0x1. */
@@ -3840,7 +3840,7 @@ union cavm_fdeqx_jd_hrs_offset_per_ant
         uint64_t rb_param_buff_page    : 1;  /**< [ 33: 33](R/W) If FDEQ()_JD_JOB_TYPE_RS_PARAM[DATA_ONLY_JOB_MODE_ENABLE] = 1.
                                                                  Used only for FDEQ()_JD_JOB_TYPE_RS_PARAM[JOB_TYPE] = 0x1. */
         uint64_t gap_reduc_with_lim_rd_bw : 1;/**< [ 34: 34](R/W) Must be set to 1. If FDEQ()_JD_JOB_TYPE_RS_PARAM[DATA_ONLY_JOB_MODE_ENABLE]
-                                                                 = 1, this parameters toggles between succesive jobs.
+                                                                 = 1, this parameters toggles between successive jobs.
                                                                  Used only for FDEQ()_JD_JOB_TYPE_RS_PARAM[JOB_TYPE] = 0x1. */
         uint64_t reserved_35_63        : 29;
 #endif /* Word 0 - End */
@@ -3868,7 +3868,7 @@ static inline uint64_t CAVM_FDEQX_JD_HRS_OFFSET_PER_ANT(unsigned long a)
 /**
  * Register (RSL) fdeq#_jd_hrs_sym_idx_for_tdce
  *
- * Register
+ * FDEQ Job Descriptor HRS Index for Time-Domain Channel Estimation Register
  */
 union cavm_fdeqx_jd_hrs_sym_idx_for_tdce
 {
@@ -3974,7 +3974,7 @@ static inline uint64_t CAVM_FDEQX_JD_HRS_SYM_IDX_FOR_TDCE(unsigned long a)
 /**
  * Register (RSL) fdeq#_jd_job_type_rs_param
  *
- * Register
+ * FDEQ Job Descriptor Job Type General Parameters Set 1 Register
  */
 union cavm_fdeqx_jd_job_type_rs_param
 {
@@ -4008,7 +4008,7 @@ union cavm_fdeqx_jd_job_type_rs_param
                                                                  0x0 = RS+DS.
                                                                  0x1 = DS.
                                                                  Used only for [JOB_TYPE] = 0x1. */
-        uint64_t fdm_mode_enable       : 1;  /**< [ 17: 17](R/W) If set to 1, it generates FDE output for refrence and data tones on RS. Valid
+        uint64_t fdm_mode_enable       : 1;  /**< [ 17: 17](R/W) If set to 1, it generates FDE output for reference and data tones on RS. Valid
                                                                  for CPOFDM UEs for which FDEQ_RDCFG_UE_PHYC_PARAMS_S[CP_OFDM_ON] =1.
                                                                  Used only for [JOB_TYPE] = 0x1. */
         uint64_t rs_sequence_generation_enable : 1;/**< [ 16: 16](R/W) If set to 1, internal RS sequence generation is enabled (only for LTE). When
@@ -4050,7 +4050,7 @@ union cavm_fdeqx_jd_job_type_rs_param
                                                                  0x3 = 16R. */
         uint64_t rs_sequence_generation_enable : 1;/**< [ 16: 16](R/W) If set to 1, internal RS sequence generation is enabled (only for LTE). When
                                                                  disabled, RS sequence is read via port 1. Used only for [JOB_TYPE] = 0x1. */
-        uint64_t fdm_mode_enable       : 1;  /**< [ 17: 17](R/W) If set to 1, it generates FDE output for refrence and data tones on RS. Valid
+        uint64_t fdm_mode_enable       : 1;  /**< [ 17: 17](R/W) If set to 1, it generates FDE output for reference and data tones on RS. Valid
                                                                  for CPOFDM UEs for which FDEQ_RDCFG_UE_PHYC_PARAMS_S[CP_OFDM_ON] =1.
                                                                  Used only for [JOB_TYPE] = 0x1. */
         uint64_t data_only_job_indicator : 1;/**< [ 18: 18](R/W) Indicates if the job processes symbols that carry both DMRS and PUSCH or PUSCH
@@ -4104,7 +4104,7 @@ static inline uint64_t CAVM_FDEQX_JD_JOB_TYPE_RS_PARAM(unsigned long a)
 /**
  * Register (RSL) fdeq#_jd_rs_general_parameter
  *
- * Register
+ * FDEQ Job Descriptor General Parameters Set 2 Register
  */
 union cavm_fdeqx_jd_rs_general_parameter
 {
@@ -4113,7 +4113,7 @@ union cavm_fdeqx_jd_rs_general_parameter
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t if_frequency_sparse   : 1;  /**< [ 63: 63](R/W) If  set to one, hrs for only the odd numbered subcarrier (assuming tones are
-                                                                 indexed begining with 0).
+                                                                 indexed beginning with 0).
                                                                  are provided in job type 0. i.e. number of hrs per RB is 6. S */
         uint64_t rb_number_include_subprb : 8;/**< [ 62: 55](R/W) If FDEQ()_JD_HRS_OFFSET_PER_ANT[SUBPRB_JOB_ENABLE] is 1, number of non-
                                                                  subprb UEs + 4* number of subprb UEs otherwise, this is
@@ -4143,14 +4143,14 @@ union cavm_fdeqx_jd_rs_general_parameter
         uint64_t rs1_symbol_index      : 4;  /**< [ 22: 19](R/W) Index of RS1 within subframe. */
         uint64_t rs0_symbol_index      : 4;  /**< [ 18: 15](R/W) Index of RS0 within subframe. */
         uint64_t sic_on_off            : 1;  /**< [ 14: 14](R/W) If set to 1, SIC mode is enabled. */
-        uint64_t timewf_set_number     : 4;  /**< [ 13: 10](R/W) Number of Time doma in interpolation to choose from.
+        uint64_t timewf_set_number     : 4;  /**< [ 13: 10](R/W) Number of time-domain interpolation to choose from.
                                                                  Valid range is  [11,1] */
         uint64_t data_symbol_number    : 4;  /**< [  9:  6](R/W) Number of Data symbols in subframe. */
         uint64_t ue_number             : 6;  /**< [  5:  0](R/W) Number of UE in the job. */
 #else /* Word 0 - Little Endian */
         uint64_t ue_number             : 6;  /**< [  5:  0](R/W) Number of UE in the job. */
         uint64_t data_symbol_number    : 4;  /**< [  9:  6](R/W) Number of Data symbols in subframe. */
-        uint64_t timewf_set_number     : 4;  /**< [ 13: 10](R/W) Number of Time doma in interpolation to choose from.
+        uint64_t timewf_set_number     : 4;  /**< [ 13: 10](R/W) Number of time-domain interpolation to choose from.
                                                                  Valid range is  [11,1] */
         uint64_t sic_on_off            : 1;  /**< [ 14: 14](R/W) If set to 1, SIC mode is enabled. */
         uint64_t rs0_symbol_index      : 4;  /**< [ 18: 15](R/W) Index of RS0 within subframe. */
@@ -4181,7 +4181,7 @@ union cavm_fdeqx_jd_rs_general_parameter
                                                                  subprb UEs + 4* number of subprb UEs otherwise, this is
                                                                  FDEQ()_JD_JOB_TYPE_RS_PARAM[HRS_RB_NUMBER]. */
         uint64_t if_frequency_sparse   : 1;  /**< [ 63: 63](R/W) If  set to one, hrs for only the odd numbered subcarrier (assuming tones are
-                                                                 indexed begining with 0).
+                                                                 indexed beginning with 0).
                                                                  are provided in job type 0. i.e. number of hrs per RB is 6. S */
 #endif /* Word 0 - End */
     } s;
@@ -4208,7 +4208,7 @@ static inline uint64_t CAVM_FDEQX_JD_RS_GENERAL_PARAMETER(unsigned long a)
 /**
  * Register (RSL) fdeq#_jd_rs_sxbc_map_0
  *
- * Register
+ * FDEQ Job Descriptor SXBC Map 0 Register
  */
 union cavm_fdeqx_jd_rs_sxbc_map_0
 {
@@ -4248,7 +4248,7 @@ static inline uint64_t CAVM_FDEQX_JD_RS_SXBC_MAP_0(unsigned long a)
 /**
  * Register (RSL) fdeq#_jd_rs_sxbc_map_1
  *
- * Register
+ * FDEQ Job Descriptor SXBC Map 1 Register
  */
 union cavm_fdeqx_jd_rs_sxbc_map_1
 {

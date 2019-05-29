@@ -14708,7 +14708,31 @@ union cavm_pcieepx_gen4_lane_margining_1
         uint32_t reserved_30_31        : 2;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_pcieepx_gen4_lane_margining_1_s cn; */
+    /* struct cavm_pcieepx_gen4_lane_margining_1_s cn96xxp1; */
+    struct cavm_pcieepx_gen4_lane_margining_1_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t reserved_30_31        : 2;
+        uint32_t mvo                   : 6;  /**< [ 29: 24](R/W) Max voltage offset for lane margining at the receiver (Not supported). */
+        uint32_t reserved_23           : 1;
+        uint32_t nvs                   : 7;  /**< [ 22: 16](R/W) Num voltage steps for lane margining at the receiver. */
+        uint32_t reserved_14_15        : 2;
+        uint32_t mto                   : 6;  /**< [ 13:  8](R/W) Max timing offset for lane margining at the receiver. */
+        uint32_t reserved_6_7          : 2;
+        uint32_t nts                   : 6;  /**< [  5:  0](R/W) Num timing steps for lane margining at the receiver (Not supported). */
+#else /* Word 0 - Little Endian */
+        uint32_t nts                   : 6;  /**< [  5:  0](R/W) Num timing steps for lane margining at the receiver (Not supported). */
+        uint32_t reserved_6_7          : 2;
+        uint32_t mto                   : 6;  /**< [ 13:  8](R/W) Max timing offset for lane margining at the receiver. */
+        uint32_t reserved_14_15        : 2;
+        uint32_t nvs                   : 7;  /**< [ 22: 16](R/W) Num voltage steps for lane margining at the receiver. */
+        uint32_t reserved_23           : 1;
+        uint32_t mvo                   : 6;  /**< [ 29: 24](R/W) Max voltage offset for lane margining at the receiver (Not supported). */
+        uint32_t reserved_30_31        : 2;
+#endif /* Word 0 - End */
+    } cn96xxp3;
+    /* struct cavm_pcieepx_gen4_lane_margining_1_s cnf95xx; */
+    /* struct cavm_pcieepx_gen4_lane_margining_1_s loki; */
 };
 typedef union cavm_pcieepx_gen4_lane_margining_1 cavm_pcieepx_gen4_lane_margining_1_t;
 
@@ -14743,6 +14767,67 @@ union cavm_pcieepx_gen4_lane_margining_2
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_29_31        : 3;
         uint32_t ies                   : 1;  /**< [ 28: 28](R/W) Ind error sampler for lane margining at the receiver. */
+        uint32_t srm                   : 1;  /**< [ 27: 27](R/W) Sample reporting method for lane margining at the receiver.. */
+        uint32_t ilrt                  : 1;  /**< [ 26: 26](R/W) Ind left right timing for lane margining at the receiver. */
+        uint32_t iudv                  : 1;  /**< [ 25: 25](R/W) Ind up down voltage for lane margining at the receiver. */
+        uint32_t volt_sup              : 1;  /**< [ 24: 24](R/W) Voltage supported for lane margining at the receiver. */
+        uint32_t reserved_21_23        : 3;
+        uint32_t max_lanes             : 5;  /**< [ 20: 16](R/W) Max lanes for lane margining at the receiver. */
+        uint32_t reserved_14_15        : 2;
+        uint32_t srt                   : 6;  /**< [ 13:  8](R/W) Sample rate timing for lane margining at the receiver. */
+        uint32_t reserved_6_7          : 2;
+        uint32_t srv                   : 6;  /**< [  5:  0](R/W) Sample rate voltage for lane margining at the receiver. */
+#else /* Word 0 - Little Endian */
+        uint32_t srv                   : 6;  /**< [  5:  0](R/W) Sample rate voltage for lane margining at the receiver. */
+        uint32_t reserved_6_7          : 2;
+        uint32_t srt                   : 6;  /**< [ 13:  8](R/W) Sample rate timing for lane margining at the receiver. */
+        uint32_t reserved_14_15        : 2;
+        uint32_t max_lanes             : 5;  /**< [ 20: 16](R/W) Max lanes for lane margining at the receiver. */
+        uint32_t reserved_21_23        : 3;
+        uint32_t volt_sup              : 1;  /**< [ 24: 24](R/W) Voltage supported for lane margining at the receiver. */
+        uint32_t iudv                  : 1;  /**< [ 25: 25](R/W) Ind up down voltage for lane margining at the receiver. */
+        uint32_t ilrt                  : 1;  /**< [ 26: 26](R/W) Ind left right timing for lane margining at the receiver. */
+        uint32_t srm                   : 1;  /**< [ 27: 27](R/W) Sample reporting method for lane margining at the receiver.. */
+        uint32_t ies                   : 1;  /**< [ 28: 28](R/W) Ind error sampler for lane margining at the receiver. */
+        uint32_t reserved_29_31        : 3;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_pcieepx_gen4_lane_margining_2_s cn96xxp1; */
+    struct cavm_pcieepx_gen4_lane_margining_2_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t reserved_29_31        : 3;
+        uint32_t ies                   : 1;  /**< [ 28: 28](R/W) Ind error sampler for lane margining at the receiver (Not supported). */
+        uint32_t srm                   : 1;  /**< [ 27: 27](R/W) Sample reporting method for lane margining at the receiver (Not supported). */
+        uint32_t ilrt                  : 1;  /**< [ 26: 26](R/W) Ind left right timing for lane margining at the receiver (Not supported). */
+        uint32_t iudv                  : 1;  /**< [ 25: 25](R/W) Ind up down voltage for lane margining at the receiver (Not supported). */
+        uint32_t volt_sup              : 1;  /**< [ 24: 24](R/W) Voltage supported for lane margining at the receiver (Not supported). */
+        uint32_t reserved_21_23        : 3;
+        uint32_t max_lanes             : 5;  /**< [ 20: 16](R/W) Max lanes for lane margining at the receiver. */
+        uint32_t reserved_14_15        : 2;
+        uint32_t srt                   : 6;  /**< [ 13:  8](R/W) Sample rate timing for lane margining at the receiver. */
+        uint32_t reserved_6_7          : 2;
+        uint32_t srv                   : 6;  /**< [  5:  0](R/W) Sample rate voltage for lane margining at the receiver. */
+#else /* Word 0 - Little Endian */
+        uint32_t srv                   : 6;  /**< [  5:  0](R/W) Sample rate voltage for lane margining at the receiver. */
+        uint32_t reserved_6_7          : 2;
+        uint32_t srt                   : 6;  /**< [ 13:  8](R/W) Sample rate timing for lane margining at the receiver. */
+        uint32_t reserved_14_15        : 2;
+        uint32_t max_lanes             : 5;  /**< [ 20: 16](R/W) Max lanes for lane margining at the receiver. */
+        uint32_t reserved_21_23        : 3;
+        uint32_t volt_sup              : 1;  /**< [ 24: 24](R/W) Voltage supported for lane margining at the receiver (Not supported). */
+        uint32_t iudv                  : 1;  /**< [ 25: 25](R/W) Ind up down voltage for lane margining at the receiver (Not supported). */
+        uint32_t ilrt                  : 1;  /**< [ 26: 26](R/W) Ind left right timing for lane margining at the receiver (Not supported). */
+        uint32_t srm                   : 1;  /**< [ 27: 27](R/W) Sample reporting method for lane margining at the receiver (Not supported). */
+        uint32_t ies                   : 1;  /**< [ 28: 28](R/W) Ind error sampler for lane margining at the receiver (Not supported). */
+        uint32_t reserved_29_31        : 3;
+#endif /* Word 0 - End */
+    } cn96xxp3;
+    struct cavm_pcieepx_gen4_lane_margining_2_cnf95xx
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t reserved_29_31        : 3;
+        uint32_t ies                   : 1;  /**< [ 28: 28](R/W) Ind error sampler for lane margining at the receiver. */
         uint32_t srm                   : 1;  /**< [ 27: 27](R/W) Sample reporting method for lane margining at the receiver. */
         uint32_t ilrt                  : 1;  /**< [ 26: 26](R/W) Ind left right timing for lane margining at the receiver. */
         uint32_t iudv                  : 1;  /**< [ 25: 25](R/W) Ind up down voltage for lane margining at the receiver. */
@@ -14767,8 +14852,8 @@ union cavm_pcieepx_gen4_lane_margining_2
         uint32_t ies                   : 1;  /**< [ 28: 28](R/W) Ind error sampler for lane margining at the receiver. */
         uint32_t reserved_29_31        : 3;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_pcieepx_gen4_lane_margining_2_s cn; */
+    } cnf95xx;
+    /* struct cavm_pcieepx_gen4_lane_margining_2_cnf95xx loki; */
 };
 typedef union cavm_pcieepx_gen4_lane_margining_2 cavm_pcieepx_gen4_lane_margining_2_t;
 

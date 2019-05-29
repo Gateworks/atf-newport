@@ -38,6 +38,7 @@
 #define CAVM_DRO_BLOCKS_E_ROCX_CNF95XX(a) (8 + (a))
 #define CAVM_DRO_BLOCKS_E_ROCX_LOKI(a) (8 + (a))
 #define CAVM_DRO_BLOCKS_E_TSNX(a) (0 + (a))
+#define CAVM_DRO_BLOCKS_E_TSN10 (0xe)
 
 /**
  * Register (RSL) dro_blk#_broadcast_ack_ret
