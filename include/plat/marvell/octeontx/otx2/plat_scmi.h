@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Marvell International Ltd.
+ * Copyright (C) 2018-2019 Marvell International Ltd.
  *
  * SPDX-License-Identifier:     BSD-3-Clause
  * https://spdx.org/licenses
@@ -44,15 +44,6 @@
 
 #define SCMI_CAVM_SFP_CONFIG_MSG_LEN		12
 #define SCMI_CAVM_SFP_CONFIG_RESP_LEN		8
-
-#define SCMI_CAVM_NDC_RESET_MSG_LEN		12
-#define SCMI_CAVM_NDC_RESET_RESP_LEN		8
-
-#define SCMI_CAVM_NDC_SYNC_MSG_LEN		16
-#define SCMI_CAVM_NDC_SYNC_RESP_LEN		8
-
-#define SCMI_CAVM_NDC_STATUS_MSG_LEN		4
-#define SCMI_CAVM_NDC_STATUS_RESP_LEN		12
 
 /* SCMI message header format bit field */
 #define SCMI_MSG_ID_SHIFT		0
@@ -191,33 +182,6 @@
 /* SCMI custom Cavium configuration protocol message IDs */
 #define SCMI_CAVM_SHUTDOWN_CONFIG_MSG		0x4
 #define SCMI_CAVM_SFP_CONFIG_MSG		0x5
-#define SCMI_CAVM_NDC_RESET_MSG			0x6
-#define SCMI_CAVM_NDC_SYNC_MSG			0x7
-#define SCMI_CAVM_NDC_STATUS_MSG		0x8
-
-/* Valid RVU block types for NDC reset */
-#define SCMI_RVU_BLOCK_TYPE_NIX			CAVM_RVU_BLOCK_TYPE_E_NIX
-#define SCMI_RVU_BLOCK_TYPE_NPA			CAVM_RVU_BLOCK_TYPE_E_NPA
-
-/*
- * In NDC sync ndc block addr has to be NPA or NIX.
- * NPC is first block addr after last NIX.
- */
-#define SCMI_RVU_MIN_NDC_BLOCK_ADDR		CAVM_RVU_BLOCK_ADDR_E_NPA
-#define SCMI_RVU_MAX_NDC_BLOCK_ADDR		(CAVM_RVU_BLOCK_ADDR_E_NPC - 1)
-/* In NDC sync lf block addr cannot by higher than last RVU block addr */
-#define SCMI_RVU_MAX_LF_BLOCK_ADDR		0x1f
-
-/* NDC status return codes */
-#define SCMI_CAVM_NDC_RET_OK		0x0
-#define SCMI_CAVM_NDC_RET_ONGOING	0x1
-#define SCMI_CAVM_NDC_RET_FAIL		0x2
-
-/*
- * In NDC sync and reset lf idx is for NPA or NIX. In both cases the last valid
- * lf is 127
- */
-#define SCMI_RVU_MAX_LF				0x7f
 
 /* Helper structures for Cavium shutdown config command */
 #define SCMI_CAVM_SHUTDOWN_CONFIG_TYPE_NONE	0x0
@@ -352,12 +316,6 @@ void *scmi_init(scmi_channel_t *ch);
 int scmi_proto_msg_attr(void *p, uint32_t proto_id, uint32_t command_id,
 						uint32_t *attr);
 int scmi_proto_version(void *p, uint32_t proto_id, uint32_t *version);
-
-/* SCMI API to be used with SVC to implement errata 35094 */
-int scmi_octeontx_reset_ndc(void *p, uint64_t lf_idx, uint64_t block_type);
-int scmi_octeontx_sync_ndc(void *p, uint64_t lf_idx, uint64_t lf_block_addr,
-	uint64_t ndc_block_addr);
-int scmi_octeontx_status_ndc(void *p);
 
 /*
  * Power domain protocol commands. Refer to the SCMI specification for more

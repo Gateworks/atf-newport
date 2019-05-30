@@ -14,9 +14,6 @@
 #include <uuid.h>
 #include <bphy.h>
 #include <rvu.h>
-#include <plat_scmi.h>
-
-extern void *scmi_handle;
 
 uintptr_t plat_octeontx_svc_smc_handler(uint32_t smc_fid,
 					u_register_t x1,
@@ -32,26 +29,6 @@ uintptr_t plat_octeontx_svc_smc_handler(uint32_t smc_fid,
 	switch (smc_fid) {
 	case PLAT_OCTEONTX_DISABLE_RVU_LFS:
 		ret = octeontx2_clear_lf_to_pf_mapping(x1);
-		SMC_RET1(handle, ret);
-		break;
-
-	case PLAT_OCTEONTX_NDC_RESET:
-		INFO("SVC NDC_RESET: x1 = 0x%lx, x2 = 0x%lx\n", x1, x2);
-		ret = scmi_octeontx_reset_ndc(scmi_handle, x1, x2);
-		INFO("SVC NDC_RESET: ret 0x%llx\n", ret);
-		SMC_RET1(handle, ret);
-		break;
-
-	case PLAT_OCTEONTX_NDC_SYNC:
-		INFO("SVC NDC_SYNC: x1 = 0x%lx, x2 = 0x%lx, x3 = 0x%lx\n",
-			x1, x2, x3);
-		ret = scmi_octeontx_sync_ndc(scmi_handle, x1, x2, x3);
-		INFO("SVC NDC_SYNC: ret 0x%llx\n", ret);
-		SMC_RET1(handle, ret);
-		break;
-
-	case PLAT_OCTEONTX_NDC_STATUS:
-		ret = scmi_octeontx_status_ndc(scmi_handle);
 		SMC_RET1(handle, ret);
 		break;
 
