@@ -18,7 +18,7 @@
  * AMB Configuration
  *****************************************************************************
  */
-struct addr_map_win amb_memory_map[] = {
+struct addr_map_win amb_memory_map_cp0[] = {
 	/* CP0 SPI1 CS0 Direct Mode access */
 	{0xe800,	0x2000000,	AMB_SPI1_CS0_ID},
 };
@@ -26,13 +26,18 @@ struct addr_map_win amb_memory_map[] = {
 int marvell_get_amb_memory_map(struct addr_map_win **win, uint32_t *size,
 			       uintptr_t base)
 {
-	*win = amb_memory_map;
-	if (*win == NULL)
+	switch (base) {
+	case MVEBU_CP_REGS_BASE(0):
+		*win = amb_memory_map_cp0;
+		*size = ARRAY_SIZE(amb_memory_map_cp0);
+		return 0;
+	case MVEBU_CP_REGS_BASE(1):
+	case MVEBU_CP_REGS_BASE(2):
+	default:
 		*size = 0;
-	else
-		*size = ARRAY_SIZE(amb_memory_map);
-
-	return 0;
+		*win = 0;
+		return 1;
+	}
 }
 #endif
 
