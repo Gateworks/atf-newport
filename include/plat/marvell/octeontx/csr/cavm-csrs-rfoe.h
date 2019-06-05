@@ -293,6 +293,31 @@ union cavm_rfoe_ecpri_psw1_s
 };
 
 /**
+ * Structure rfoe_ecpri_seqid_s
+ *
+ * RFOE ECPRI SEQID Structure
+ */
+union cavm_rfoe_ecpri_seqid_s
+{
+    uint32_t u;
+    struct cavm_rfoe_ecpri_seqid_s_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t reserved_16_31        : 16;
+        uint32_t sequence_id           : 8;  /**< [ 15:  8] Sequence ID */
+        uint32_t e_bit                 : 1;  /**< [  7:  7] Indicates last message of subsequence */
+        uint32_t subsequence_id        : 7;  /**< [  6:  0] Subsequence ID */
+#else /* Word 0 - Little Endian */
+        uint32_t subsequence_id        : 7;  /**< [  6:  0] Subsequence ID */
+        uint32_t e_bit                 : 1;  /**< [  7:  7] Indicates last message of subsequence */
+        uint32_t sequence_id           : 8;  /**< [ 15:  8] Sequence ID */
+        uint32_t reserved_16_31        : 16;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rfoe_ecpri_seqid_s_s cn; */
+};
+
+/**
  * Structure rfoe_fd_cstm_hdr_s
  *
  * RFOE 0xfd Subtype Custom Header Structure
@@ -4801,16 +4826,44 @@ union cavm_rfoex_rx_ind_ftx_cfg
         uint64_t enable                : 1;  /**< [ 24: 24](R/W) Enable this flow. Drop packets when clear. */
         uint64_t reserved_23           : 1;
         uint64_t mbt_idx               : 11; /**< [ 22: 12](R/W) Pointer to RFOE()_RX_IND_MBT_CFG, RFOE()_RX_IND_MBT_ADDR for DMA write buffer
-                                                                 configurations. Valid range 0..1055 */
+                                                                 configurations. Valid range 0..1055.
+                                                                 0..1023 - full mbt/jdt.
+                                                                 1024..1039 - Illegal.  Used by RFOE_RX_DIR_CTL_PKT_TYPE_E[eCPRI] msg_type \> 0.
+                                                                 1040..1055 - only for RFOE_RX_DIR_CTL_PKT_TYPE_E[ALT, GENERIC*] types. Illegal
+                                                                 for all other RFOE_RX_DIR_CTL_PKT_TYPE_E.
+
+                                                                 Internal:
+                                                                 No seqnum, no sync_flow, no fd_state, no mbt_seg_state for [MBT_IDX] \> 1023. */
         uint64_t reserved_11           : 1;
         uint64_t flow_idx              : 11; /**< [ 10:  0](R/W) Pointer to RFOE()_RX_IND_JDT memories for job descriptor and flow configuration.
-                                                                 Valid range 0..1055 */
+                                                                 Valid range 0..1055.
+                                                                 0..1023 - full mbt/jdt.
+                                                                 1024..1039 - Illegal.  Used by RFOE_RX_DIR_CTL_PKT_TYPE_E[ECPRI] msg_type \> 0.
+                                                                 1040..1055 - only for RFOE_RX_DIR_CTL_PKT_TYPE_E[ALT, GENERIC*] types. Illegal
+                                                                 for all other RFOE_RX_DIR_CTL_PKT_TYPE_E.
+
+                                                                 Internal:
+                                                                 No seqnum, no sync_flow, no fd_state, no mbt_segstate for [FLOW_IDX] \> 1023. */
 #else /* Word 0 - Little Endian */
         uint64_t flow_idx              : 11; /**< [ 10:  0](R/W) Pointer to RFOE()_RX_IND_JDT memories for job descriptor and flow configuration.
-                                                                 Valid range 0..1055 */
+                                                                 Valid range 0..1055.
+                                                                 0..1023 - full mbt/jdt.
+                                                                 1024..1039 - Illegal.  Used by RFOE_RX_DIR_CTL_PKT_TYPE_E[ECPRI] msg_type \> 0.
+                                                                 1040..1055 - only for RFOE_RX_DIR_CTL_PKT_TYPE_E[ALT, GENERIC*] types. Illegal
+                                                                 for all other RFOE_RX_DIR_CTL_PKT_TYPE_E.
+
+                                                                 Internal:
+                                                                 No seqnum, no sync_flow, no fd_state, no mbt_segstate for [FLOW_IDX] \> 1023. */
         uint64_t reserved_11           : 1;
         uint64_t mbt_idx               : 11; /**< [ 22: 12](R/W) Pointer to RFOE()_RX_IND_MBT_CFG, RFOE()_RX_IND_MBT_ADDR for DMA write buffer
-                                                                 configurations. Valid range 0..1055 */
+                                                                 configurations. Valid range 0..1055.
+                                                                 0..1023 - full mbt/jdt.
+                                                                 1024..1039 - Illegal.  Used by RFOE_RX_DIR_CTL_PKT_TYPE_E[eCPRI] msg_type \> 0.
+                                                                 1040..1055 - only for RFOE_RX_DIR_CTL_PKT_TYPE_E[ALT, GENERIC*] types. Illegal
+                                                                 for all other RFOE_RX_DIR_CTL_PKT_TYPE_E.
+
+                                                                 Internal:
+                                                                 No seqnum, no sync_flow, no fd_state, no mbt_seg_state for [MBT_IDX] \> 1023. */
         uint64_t reserved_23           : 1;
         uint64_t enable                : 1;  /**< [ 24: 24](R/W) Enable this flow. Drop packets when clear. */
         uint64_t reserved_25_63        : 39;
@@ -4849,9 +4902,9 @@ static inline uint64_t CAVM_RFOEX_RX_IND_FTX_CFG(unsigned long a, unsigned long 
  * RFOE()_RX_INDIRECT_INDEX[INDEX].
  *
  * Incoming packets select an JDT entry based as follows:
- * *eCPRI msg_type==0 - index=RFOE()_RX_IND_FT()_CFG[FLOW_IDX].
- * *eCPRI msg_type!=0 - index=1024+msg_type.
+ * *eCPRI msg_type==0 - index=RFOE()_RX_ECPRI_FT_CFG[FLOW_IDX].
  * *eCPRI msg_type==1..15 - index=1023+msg_type.
+ * *eCPRI msg_type\>15 - index=1039
  * *Other             - index=RFOE()_RX_IND_FT()_CFG[FLOW_IDX].
  */
 union cavm_rfoex_rx_ind_jdt_cfg0
@@ -5261,9 +5314,9 @@ static inline uint64_t CAVM_RFOEX_RX_IND_JDT_CFG0(unsigned long a)
  * RFOE()_RX_INDIRECT_INDEX[INDEX].
  *
  * Incoming packets select an JDT entry based as follows:
- * *eCPRI msg_type==0 - index=RFOE()_RX_IND_FT()_CFG[FLOW_IDX].
+ * *eCPRI msg_type==0 - index=RFOE()_RX_ECPRI_FT_CFG[FLOW_IDX].
  * *eCPRI msg_type==1..15 - index=1023+msg_type.
- * *eCPRI msg_type==16 - index=1023
+ * *eCPRI msg_type\>15 - index=1039
  * *Other             - index=RFOE()_RX_IND_FT()_CFG[FLOW_IDX].
  */
 union cavm_rfoex_rx_ind_jdt_cfg1
@@ -5425,9 +5478,9 @@ static inline uint64_t CAVM_RFOEX_RX_IND_JDT_CFG1(unsigned long a)
  * RFOE()_RX_INDIRECT_INDEX[INDEX].
  *
  * Incoming packets select an JDT entry based as follows:
- * *eCPRI msg_type==0 - index=RFOE()_RX_IND_FT()_CFG[FLOW_IDX].
+ * *eCPRI msg_type==0 - index=RFOE()_RX_ECPRI_FT_CFG[FLOW_IDX].
  * *eCPRI msg_type==1..15 - index=1023+msg_type.
- * *eCPRI msg_type==16 - index=1023
+ * *eCPRI msg_type\>15 - index=1039
  * *Other             - index=RFOE()_RX_IND_FT()_CFG[FLOW_IDX].
  */
 union cavm_rfoex_rx_ind_jdt_psm_w0
@@ -5511,9 +5564,9 @@ static inline uint64_t CAVM_RFOEX_RX_IND_JDT_PSM_W1(unsigned long a)
  * RFOE()_RX_INDIRECT_INDEX[INDEX].
  *
  * Incoming packets select an JDT entry based as follows:
- * *eCPRI msg_type==0 - index=RFOE()_RX_IND_FT()_CFG[FLOW_IDX].
+ * *eCPRI msg_type==0 - index=RFOE()_RX_ECPRI_FT_CFG[FLOW_IDX].
  * *eCPRI msg_type==1..15 - index=1023+msg_type.
- * *eCPRI msg_type==16 - index=1023
+ * *eCPRI msg_type\>15 - index=1039
  * *Other             - index=RFOE()_RX_IND_FT()_CFG[FLOW_IDX].
  */
 union cavm_rfoex_rx_ind_jdt_ptr
@@ -5564,7 +5617,7 @@ static inline uint64_t CAVM_RFOEX_RX_IND_JDT_PTR(unsigned long a)
  * RFOE()_RX_INDIRECT_INDEX[INDEX].
  *
  * Incoming packets select an JDT entry based on
- * RFOE()_RX_IND_FT()_CFG[FLOW_IDX].
+ * RFOE()_RX_IND_FT()_CFG[FLOW_IDX] or RFOE()_RX_ECPRI_FT_CFG[FLOW_IDX].
  */
 union cavm_rfoex_rx_ind_jdt_seqnum_p_cfg
 {
@@ -5622,7 +5675,7 @@ static inline uint64_t CAVM_RFOEX_RX_IND_JDT_SEQNUM_P_CFG(unsigned long a)
  * RFOE()_RX_INDIRECT_INDEX[INDEX].
  *
  * Incoming packets select an JDT entry based on
- * RFOE()_RX_IND_FT()_CFG[FLOW_IDX].
+ * RFOE()_RX_IND_FT()_CFG[FLOW_IDX] or RFOE()_RX_ECPRI_FT_CFG[FLOW_IDX].
  */
 union cavm_rfoex_rx_ind_jdt_seqnum_q_cfg
 {
@@ -5681,7 +5734,7 @@ static inline uint64_t CAVM_RFOEX_RX_IND_JDT_SEQNUM_Q_CFG(unsigned long a)
  * RFOE()_RX_INDIRECT_INDEX[INDEX].
  *
  * Incoming packets select an JDT entry based on
- * RFOE()_RX_IND_FT()_CFG[FLOW_IDX].
+ * RFOE()_RX_IND_FT()_CFG[FLOW_IDX] or RFOE()_RX_ECPRI_FT_CFG[FLOW_IDX].
  */
 union cavm_rfoex_rx_ind_jdt_seqnum_state
 {
@@ -5743,7 +5796,7 @@ static inline uint64_t CAVM_RFOEX_RX_IND_JDT_SEQNUM_STATE(unsigned long a)
  * Incoming packets select an JDT entry based as follows:
  * *eCPRI msg_type==0 - index=RFOE()_RX_IND_FT()_CFG[FLOW_IDX].
  * *eCPRI msg_type==1..15 - index=1023+msg_type.
- * *eCPRI msg_type==16 - index=1023
+ * *eCPRI msg_type\>15 - index=1039
  * *Other             - index=RFOE()_RX_IND_FT()_CFG[FLOW_IDX].
  */
 union cavm_rfoex_rx_ind_jdt_state
@@ -5791,9 +5844,9 @@ static inline uint64_t CAVM_RFOEX_RX_IND_JDT_STATE(unsigned long a)
  * RFOE()_RX_INDIRECT_INDEX[INDEX].
  *
  * Incoming packets select an MBT entry based as follows:
- * *eCPRI msg_type==0 - index=RFOE()_RX_IND_FT()_CFG[MBT_IDX].
+ * *eCPRI msg_type==0 - index=RFOE()_RX_ECPRI_FT_CFG[MBT_IDX].
  * *eCPRI msg_type==1..15 - index=1023+msg_type.
- * *eCPRI msg_type==16 - index=1023
+ * *eCPRI msg_type\>15 - index=1039
  * *Other             - index=RFOE()_RX_IND_FT()_CFG[MBT_IDX].
  */
 union cavm_rfoex_rx_ind_mbt_addr
@@ -5849,9 +5902,9 @@ static inline uint64_t CAVM_RFOEX_RX_IND_MBT_ADDR(unsigned long a)
  * RFOE()_RX_INDIRECT_INDEX[INDEX].
  *
  * Incoming packets select an MBT entry based as follows:
- * *eCPRI msg_type==0 - index=RFOE()_RX_IND_FT()_CFG[MBT_IDX].
+ * *eCPRI msg_type==0 - index=RFOE()_RX_ECPRI_FT_CFG[MBT_IDX].
  * *eCPRI msg_type==1..15 - index=1023+msg_type.
- * *eCPRI msg_type==16 - index=1023
+ * *eCPRI msg_type\>15 - index=1039
  * *Other             - index=RFOE()_RX_IND_FT()_CFG[MBT_IDX].
  */
 union cavm_rfoex_rx_ind_mbt_cfg
@@ -5961,9 +6014,9 @@ static inline uint64_t CAVM_RFOEX_RX_IND_MBT_CFG(unsigned long a)
  * RFOE()_RX_INDIRECT_INDEX[INDEX].
  *
  * Incoming packets select an MBT entry based as follows:
- * *eCPRI msg_type==0 - index=RFOE()_RX_IND_FT()_CFG[MBT_IDX].
+ * *eCPRI msg_type==0 - index=RFOE()_RX_ECPRI_FT_CFG[MBT_IDX].
  * *eCPRI msg_type==1..15 - index=1023+msg_type.
- * *eCPRI msg_type==16 - index=1023
+ * *eCPRI msg_type\>15 - index=1039
  * *Other             - index=RFOE()_RX_IND_FT()_CFG[MBT_IDX].
  */
 union cavm_rfoex_rx_ind_mbt_seg_state
@@ -7929,9 +7982,10 @@ union cavm_rfoex_tx_lmac_cfgx
     struct cavm_rfoex_tx_lmac_cfgx_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_33_63        : 31;
-        uint64_t tx_pkt_log_en         : 1;  /**< [ 32: 32](R/W) Transmit packet logging Enable.
-                                                                 When set to 1, enables packet logging for packets transmitted. */
+        uint64_t reserved_52_63        : 12;
+        uint64_t cc_wd_period          : 20; /**< [ 51: 32](R/W) Watchdog timeout count for waiting for Channel Credits.
+                                                                 The timeout period is [CC_WD_PERIOD] timer ticks, where each
+                                                                 tick is 16 cycles of the bclk. */
         uint64_t cc_count_stat         : 12; /**< [ 31: 20](RO/H) Channel-credit current count status.
                                                                  This value represents the current Channel credits available for this LMAC.
                                                                  The value gets reloaded when [DATA_PKT_TX_LMAC_EN] is set to 1 and
@@ -7948,7 +8002,12 @@ union cavm_rfoex_tx_lmac_cfgx
                                                                  CGX()_CMR_TX_LMACS[LMACS]=0x4 (16 KB per LMAC), then [CC_COUNT] = 0xfff.
                                                                  [CC_COUNT] cannot be changed after [CC_ENABLE] is set to 0x2 or 0x3.
                                                                  When [CC_ENABLE] is set to 0x2 or 0x3 and setting [CC_COUNT]=0 is nonsensical. */
-        uint64_t reserved_3_7          : 5;
+        uint64_t reserved_5_7          : 3;
+        uint64_t cc_wd_timeout_stat    : 1;  /**< [  4:  4](R/W1C/H) Watchdog timeout event status
+                                                                 When set to 1, it indicates a [CC_WD_PERIOD] timeout event occured.
+                                                                 Software can clear this by writing a 1. */
+        uint64_t tx_pkt_log_en         : 1;  /**< [  3:  3](R/W) Transmit packet logging Enable.
+                                                                 When set to 1, enables packet logging for packets transmitted. */
         uint64_t cc_enable             : 2;  /**< [  2:  1](R/W) Channel Credit Check enable. Enables [CC_COUNT] channel credit processing for
                                                                  packets destined to this LMAC.
                                                                  _ [CC_ENABLE]=0 - Channel Credit Check is disabled.
@@ -7988,7 +8047,12 @@ union cavm_rfoex_tx_lmac_cfgx
                                                                  _                 If the current packet length is \<= [CC_COUNT_STAT], the packet is sent to CGX.
                                                                  _                 If the current packet length is \> [CC_COUNT_STAT], the
                                                                  _                 transmit state machine drops the packet. */
-        uint64_t reserved_3_7          : 5;
+        uint64_t tx_pkt_log_en         : 1;  /**< [  3:  3](R/W) Transmit packet logging Enable.
+                                                                 When set to 1, enables packet logging for packets transmitted. */
+        uint64_t cc_wd_timeout_stat    : 1;  /**< [  4:  4](R/W1C/H) Watchdog timeout event status
+                                                                 When set to 1, it indicates a [CC_WD_PERIOD] timeout event occured.
+                                                                 Software can clear this by writing a 1. */
+        uint64_t reserved_5_7          : 3;
         uint64_t cc_count              : 12; /**< [ 19:  8](R/W) Channel-credit unit count. This value indicates the maximum credit units allowed for
                                                                  this LMAC. One credit unit is one flit (up to 16 Bytes max) on the P2X bus.
                                                                  Packets are not allowed to flow when the cuurent value of [CC_COUNT_STAT] is less
@@ -8005,9 +8069,10 @@ union cavm_rfoex_tx_lmac_cfgx
                                                                  The value gets reloaded when [DATA_PKT_TX_LMAC_EN] is set to 1 and
                                                                  the value is reloaded after reset is deasserted.
                                                                  This value is valid when [CC_ENABLE] is 0x2 or 0x3. */
-        uint64_t tx_pkt_log_en         : 1;  /**< [ 32: 32](R/W) Transmit packet logging Enable.
-                                                                 When set to 1, enables packet logging for packets transmitted. */
-        uint64_t reserved_33_63        : 31;
+        uint64_t cc_wd_period          : 20; /**< [ 51: 32](R/W) Watchdog timeout count for waiting for Channel Credits.
+                                                                 The timeout period is [CC_WD_PERIOD] timer ticks, where each
+                                                                 tick is 16 cycles of the bclk. */
+        uint64_t reserved_52_63        : 12;
 #endif /* Word 0 - End */
     } s;
     struct cavm_rfoex_tx_lmac_cfgx_cnf95xx

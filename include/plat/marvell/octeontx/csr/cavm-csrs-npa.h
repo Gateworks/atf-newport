@@ -4206,7 +4206,7 @@ static inline uint64_t CAVM_NPA_LF_AURA_OP_CNT_FUNC(void)
  * Register (RVU_PFVF_BAR2) npa_lf_aura_op_free0
  *
  * NPA LF Aura Free Operation Register 0
- * A 128-bit write to NPA_LF_AURA_OP_FREE0 and NPA_LF_AURA_OP_FREE1
+ * A 128-bit write (STP) to NPA_LF_AURA_OP_FREE0 and NPA_LF_AURA_OP_FREE1
  * frees a pointer into a given aura's pool.
  * All other accesses to these registers (e.g. reads and 64-bit writes) are
  * RAZ/WI.
@@ -4979,7 +4979,7 @@ static inline uint64_t CAVM_NPA_LF_POOL_OP_PC_FUNC(void)
  * Register (RVU_PFVF_BAR2) npa_lf_pool_op_ptr_end0
  *
  * NPA LF Pool Pointer End Operation Register 0
- * A 128-bit write to the NPA_LF_POOL_OP_PTR_END0 and NPA_LF_POOL_OP_PTR_END1
+ * A 128-bit write (STP) to the NPA_LF_POOL_OP_PTR_END0 and NPA_LF_POOL_OP_PTR_END1
  * registers writes to a given pool's pointer end value.
  * All other accesses to these registers (e.g. reads and 64-bit writes) are
  * RAZ/WI.
@@ -5062,7 +5062,7 @@ static inline uint64_t CAVM_NPA_LF_POOL_OP_PTR_END1_FUNC(void)
  * Register (RVU_PFVF_BAR2) npa_lf_pool_op_ptr_start0
  *
  * NPA LF Pool Pointer Start Operation Register 0
- * A 128-bit write to the NPA_LF_POOL_OP_PTR_START0 and NPA_LF_POOL_OP_PTR_START1
+ * A 128-bit write (STP) to the NPA_LF_POOL_OP_PTR_START0 and NPA_LF_POOL_OP_PTR_START1
  * registers writes to a given pool's pointer start value.
  * All other accesses to these registers (e.g. reads and 64-bit writes) are
  * RAZ/WI.

@@ -1303,13 +1303,13 @@ union cavm_rst_boot
                                                                  Internal:
                                                                  Unused on 95xx. */
         uint64_t reserved_23           : 1;
-        uint64_t dsp_mul               : 7;  /**< [ 22: 16](RO/H) Current dsp-clock multiplier. Clock frequency = [DSP_MUL] * 50 MHz.
+        uint64_t dsp_mul               : 7;  /**< [ 22: 16](RO/H) Current DSP-clock multiplier. Clock frequency = [DSP_MUL] * 50 MHz.
                                                                  See RST_DSP_PLL for details on programming and initial values.
 
                                                                  Internal:
                                                                  [DSP_MUL] is a copy of RST_DSP_PLL[CUR_MUL]. */
         uint64_t reserved_15           : 1;
-        uint64_t bphy_mul              : 7;  /**< [ 14:  8](RO/H) Current bphy-clock multiplier. Clock frequency = [BPHY_MUL] * 50 MHz.
+        uint64_t bphy_mul              : 7;  /**< [ 14:  8](RO/H) Current BPHY-clock multiplier. Clock frequency = [BPHY_MUL] * 50 MHz.
                                                                  See RST_BPHY_PLL for details on programming and initial values.
 
                                                                  Internal:
@@ -1341,13 +1341,13 @@ union cavm_rst_boot
                                                                  Internal:
                                                                  This field is cleared when jtg__rst_disable_remote is active. */
         uint64_t reserved_2_7          : 6;
-        uint64_t bphy_mul              : 7;  /**< [ 14:  8](RO/H) Current bphy-clock multiplier. Clock frequency = [BPHY_MUL] * 50 MHz.
+        uint64_t bphy_mul              : 7;  /**< [ 14:  8](RO/H) Current BPHY-clock multiplier. Clock frequency = [BPHY_MUL] * 50 MHz.
                                                                  See RST_BPHY_PLL for details on programming and initial values.
 
                                                                  Internal:
                                                                  [BPHY_MUL] is a copy of RST_BPHY_PLL[CUR_MUL]. */
         uint64_t reserved_15           : 1;
-        uint64_t dsp_mul               : 7;  /**< [ 22: 16](RO/H) Current dsp-clock multiplier. Clock frequency = [DSP_MUL] * 50 MHz.
+        uint64_t dsp_mul               : 7;  /**< [ 22: 16](RO/H) Current DSP-clock multiplier. Clock frequency = [DSP_MUL] * 50 MHz.
                                                                  See RST_DSP_PLL for details on programming and initial values.
 
                                                                  Internal:
@@ -1512,17 +1512,17 @@ union cavm_rst_bphy_domain_w1c
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_1_63         : 63;
-        uint64_t soft_rst              : 1;  /**< [  0:  0](R/W1C/H) Clear softare-initiated reset of the BPHY processor and associated logic.
-                                                                 When set to one, the soft reset of the bphy is removed.
-                                                                 Reads of this register show the soft reset state.  Not the actual bphy domain reset.
+        uint64_t soft_rst              : 1;  /**< [  0:  0](R/W1C/H) Clear software-initiated reset of the BPHY processor and associated logic.
+                                                                 When set to one, the soft reset of the BPHY is removed.
+                                                                 Reads of this register show the soft reset state.  Not the actual BPHY domain reset.
                                                                  Other factors may keep the reset active, reading RST_RESET_ACTIVE[BPHY] shows
                                                                  the actual reset state.  To compensate for delays in reset, this field should only
                                                                  be set if RST_RESET_ACTIVE[BPHY] is set.
                                                                  This field is always reinitialized on a core domain reset. */
 #else /* Word 0 - Little Endian */
-        uint64_t soft_rst              : 1;  /**< [  0:  0](R/W1C/H) Clear softare-initiated reset of the BPHY processor and associated logic.
-                                                                 When set to one, the soft reset of the bphy is removed.
-                                                                 Reads of this register show the soft reset state.  Not the actual bphy domain reset.
+        uint64_t soft_rst              : 1;  /**< [  0:  0](R/W1C/H) Clear software-initiated reset of the BPHY processor and associated logic.
+                                                                 When set to one, the soft reset of the BPHY is removed.
+                                                                 Reads of this register show the soft reset state.  Not the actual BPHY domain reset.
                                                                  Other factors may keep the reset active, reading RST_RESET_ACTIVE[BPHY] shows
                                                                  the actual reset state.  To compensate for delays in reset, this field should only
                                                                  be set if RST_RESET_ACTIVE[BPHY] is set.
@@ -1566,15 +1566,15 @@ union cavm_rst_bphy_domain_w1s
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_1_63         : 63;
         uint64_t soft_rst              : 1;  /**< [  0:  0](R/W1S/H) Set software-initiated reset of BPHY associated logic.
-                                                                 When set to one, all logic associated with the bphy domain is placed in reset.
-                                                                 Reads of this register show the soft reset state.  Not the actual bphy domain reset.
+                                                                 When set to one, all logic associated with the BPHY domain is placed in reset.
+                                                                 Reads of this register show the soft reset state.  Not the actual BPHY domain reset.
                                                                  Other factors may keep the reset active, reading RST_RESET_ACTIVE[BPHY] shows
                                                                  the actual reset state.
                                                                  This field is always reinitialized on a core domain reset. */
 #else /* Word 0 - Little Endian */
         uint64_t soft_rst              : 1;  /**< [  0:  0](R/W1S/H) Set software-initiated reset of BPHY associated logic.
-                                                                 When set to one, all logic associated with the bphy domain is placed in reset.
-                                                                 Reads of this register show the soft reset state.  Not the actual bphy domain reset.
+                                                                 When set to one, all logic associated with the BPHY domain is placed in reset.
+                                                                 Reads of this register show the soft reset state.  Not the actual BPHY domain reset.
                                                                  Other factors may keep the reset active, reading RST_RESET_ACTIVE[BPHY] shows
                                                                  the actual reset state.
                                                                  This field is always reinitialized on a core domain reset. */
@@ -1623,7 +1623,7 @@ union cavm_rst_bphy_pll
                                                                    0x3 = PLL1 output divided by 32.
 
                                                                  This field is always reinitialized on a cold domain reset. */
-        uint64_t cout_reset            : 1;  /**< [ 48: 48](R/W) BPHY clockout reset. The bphy clockout should be placed in
+        uint64_t cout_reset            : 1;  /**< [ 48: 48](R/W) BPHY clockout reset. The BPHY clockout should be placed in
                                                                  reset at least 10 PLL reference clocks prior
                                                                  to changing [COUT_SEL]. It should remain under reset for at least 10
                                                                  PLL reference clocks after [COUT_SEL] changes.
@@ -1659,7 +1659,7 @@ union cavm_rst_bphy_pll
                                                                  This field maintains its current value when written with a zero.
                                                                  This field is always reinitialized on a cold domain reset. */
         uint64_t nxt_pgm               : 1;  /**< [ 15: 15](R/W/H) Program non-active PLL using [NXT_MUL]. Hardware automatically
-                                                                 clears bit when both pll is updated and any delay specified
+                                                                 clears bit when both PLL is updated and any delay specified
                                                                  in [DLY_SWITCH] has completed.
                                                                  This field is always reinitialized on a chip domain reset. */
         uint64_t nxt_mul               : 7;  /**< [ 14:  8](R/W) BPHY PLL frequency to be program in 50 MHz increments.  The
@@ -1682,7 +1682,7 @@ union cavm_rst_bphy_pll
                                                                  a minimum setting of 300 MHz.
                                                                  Value will match [INIT_MUL] immediately after a cold or chip domain reset. */
         uint64_t nxt_pgm               : 1;  /**< [ 15: 15](R/W/H) Program non-active PLL using [NXT_MUL]. Hardware automatically
-                                                                 clears bit when both pll is updated and any delay specified
+                                                                 clears bit when both PLL is updated and any delay specified
                                                                  in [DLY_SWITCH] has completed.
                                                                  This field is always reinitialized on a chip domain reset. */
         uint64_t init_mul              : 7;  /**< [ 22: 16](R/W) BPHY clock multiplier to be used during a core or chip domain
@@ -1715,7 +1715,7 @@ union cavm_rst_bphy_pll
                                                                  hardware.
                                                                  This field is always reinitialized on a cold domain reset. */
         uint64_t reserved_45_47        : 3;
-        uint64_t cout_reset            : 1;  /**< [ 48: 48](R/W) BPHY clockout reset. The bphy clockout should be placed in
+        uint64_t cout_reset            : 1;  /**< [ 48: 48](R/W) BPHY clockout reset. The BPHY clockout should be placed in
                                                                  reset at least 10 PLL reference clocks prior
                                                                  to changing [COUT_SEL]. It should remain under reset for at least 10
                                                                  PLL reference clocks after [COUT_SEL] changes.
@@ -3986,9 +3986,9 @@ union cavm_rst_debug
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_6_63         : 58;
         uint64_t suspend_rstpwr        : 1;  /**< [  5:  5](R/W) Stop RSTPWR bus.
-                                                                 Setting this field will stop AP Resets from getting to the cores.
+                                                                 Setting this field will stop AP resets from getting to the cores.
                                                                  Clearing this field will restart communication starting with AP0.
-                                                                 This will allow test sequencies to predicte AP resets with much greater accuracy.
+                                                                 This will allow test sequences to predict AP resets with much greater accuracy.
                                                                  For diagnostic and test use only.
 
                                                                  This field is always reinitialized on a cold domain reset. */
@@ -4050,9 +4050,9 @@ union cavm_rst_debug
                                                                  Internal:
                                                                  Currently only used in BPHY on f95n */
         uint64_t suspend_rstpwr        : 1;  /**< [  5:  5](R/W) Stop RSTPWR bus.
-                                                                 Setting this field will stop AP Resets from getting to the cores.
+                                                                 Setting this field will stop AP resets from getting to the cores.
                                                                  Clearing this field will restart communication starting with AP0.
-                                                                 This will allow test sequencies to predicte AP resets with much greater accuracy.
+                                                                 This will allow test sequences to predict AP resets with much greater accuracy.
                                                                  For diagnostic and test use only.
 
                                                                  This field is always reinitialized on a cold domain reset. */
@@ -4263,7 +4263,7 @@ union cavm_rst_dsp_pll
                                                                    0x3 = PLL1 output divided by 32.
 
                                                                  This field is always reinitialized on a cold domain reset. */
-        uint64_t cout_reset            : 1;  /**< [ 48: 48](R/W) DSP clockout reset. The dsp clockout should be placed in
+        uint64_t cout_reset            : 1;  /**< [ 48: 48](R/W) DSP clockout reset. The DSP clockout should be placed in
                                                                  reset at least 10 PLL reference clocks prior
                                                                  to changing [COUT_SEL]. It should remain under reset for at least 10
                                                                  PLL reference clocks after [COUT_SEL] changes.
@@ -4355,7 +4355,7 @@ union cavm_rst_dsp_pll
                                                                  hardware.
                                                                  This field is always reinitialized on a cold domain reset. */
         uint64_t reserved_45_47        : 3;
-        uint64_t cout_reset            : 1;  /**< [ 48: 48](R/W) DSP clockout reset. The dsp clockout should be placed in
+        uint64_t cout_reset            : 1;  /**< [ 48: 48](R/W) DSP clockout reset. The DSP clockout should be placed in
                                                                  reset at least 10 PLL reference clocks prior
                                                                  to changing [COUT_SEL]. It should remain under reset for at least 10
                                                                  PLL reference clocks after [COUT_SEL] changes.
@@ -5224,6 +5224,42 @@ union cavm_rst_lboot
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_50_63        : 14;
+        uint64_t lboot                 : 50; /**< [ 49:  0](R/W1C/H) Bit vector of last reset cause(es).
+                                                                 Bit numbers are enumerated by RST_SOURCE_E.
+                                                                 Unused bits always read as zero.
+
+                                                                 The value reset with a cold domain reset. */
+#else /* Word 0 - Little Endian */
+        uint64_t lboot                 : 50; /**< [ 49:  0](R/W1C/H) Bit vector of last reset cause(es).
+                                                                 Bit numbers are enumerated by RST_SOURCE_E.
+                                                                 Unused bits always read as zero.
+
+                                                                 The value reset with a cold domain reset. */
+        uint64_t reserved_50_63        : 14;
+#endif /* Word 0 - End */
+    } s;
+    struct cavm_rst_lboot_cn96xx
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_48_63        : 16;
+        uint64_t lboot                 : 48; /**< [ 47:  0](R/W1C/H) Bit vector of last reset cause(es).
+                                                                 Bit numbers are enumerated by RST_SOURCE_E.
+                                                                 Unused bits always read as zero.
+
+                                                                 The value reset with a cold domain reset. */
+#else /* Word 0 - Little Endian */
+        uint64_t lboot                 : 48; /**< [ 47:  0](R/W1C/H) Bit vector of last reset cause(es).
+                                                                 Bit numbers are enumerated by RST_SOURCE_E.
+                                                                 Unused bits always read as zero.
+
+                                                                 The value reset with a cold domain reset. */
+        uint64_t reserved_48_63        : 16;
+#endif /* Word 0 - End */
+    } cn96xx;
+    struct cavm_rst_lboot_cnf95xx
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_50_63        : 14;
         uint64_t lboot                 : 50; /**< [ 49:  0](R/W1C/H) Bit vector of last reset cause(es).  The value reset with a
                                                                  cold domain reset.
                                                                  Bit numbers are enumerated by RST_SOURCE_E. */
@@ -5233,23 +5269,8 @@ union cavm_rst_lboot
                                                                  Bit numbers are enumerated by RST_SOURCE_E. */
         uint64_t reserved_50_63        : 14;
 #endif /* Word 0 - End */
-    } s;
-    struct cavm_rst_lboot_cn96xx
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_48_63        : 16;
-        uint64_t lboot                 : 48; /**< [ 47:  0](R/W1C/H) Bit vector of last reset cause(es).  The value reset with a
-                                                                 cold domain reset.
-                                                                 Bit numbers are enumerated by RST_SOURCE_E. */
-#else /* Word 0 - Little Endian */
-        uint64_t lboot                 : 48; /**< [ 47:  0](R/W1C/H) Bit vector of last reset cause(es).  The value reset with a
-                                                                 cold domain reset.
-                                                                 Bit numbers are enumerated by RST_SOURCE_E. */
-        uint64_t reserved_48_63        : 16;
-#endif /* Word 0 - End */
-    } cn96xx;
-    /* struct cavm_rst_lboot_s cnf95xx; */
-    /* struct cavm_rst_lboot_s loki; */
+    } cnf95xx;
+    /* struct cavm_rst_lboot_cnf95xx loki; */
 };
 typedef union cavm_rst_lboot cavm_rst_lboot_t;
 

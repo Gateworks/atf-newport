@@ -8190,7 +8190,7 @@ union cavm_gits_typer
         uint64_t reserved_37_63        : 27;
 #endif /* Word 0 - End */
     } cn8;
-    struct cavm_gits_typer_cn96xxp1
+    struct cavm_gits_typer_cn9
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_37_63        : 27;
@@ -8255,75 +8255,7 @@ union cavm_gits_typer
                                                                  reads as zero and number of collections supported is reported by GITS_TYPER[HCC]. */
         uint64_t reserved_37_63        : 27;
 #endif /* Word 0 - End */
-    } cn96xxp1;
-    struct cavm_gits_typer_cn96xxp3
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_37_63        : 27;
-        uint64_t cil                   : 1;  /**< [ 36: 36](RAZ) 0 = ITS supports 16-bit collection ID, GITS_TYPER[CID_BITS] is RES0.
-                                                                 1 = GITS_TYPER[CID_BITS] indicates supported collection ID size
-                                                                 CNXXXX implementations do not support collections in external memory, this bit
-                                                                 reads as zero and number of collections supported is reported by GITS_TYPER[HCC]. */
-        uint64_t cid_bits              : 4;  /**< [ 35: 32](RAZ) Number of collection ID bits. The number of bits of collection ID - 1.
-                                                                 When GITS_TYPER.CIL==0, this field is RES0. */
-        uint64_t hcc                   : 8;  /**< [ 31: 24](RO) Hardware collection count. The number of collections supported by the ITS without
-                                                                 provisioning of external memory. If this field is nonzero,
-                                                                 collections in the range zero to (HCC minus one) are solely maintained in storage within
-                                                                 the ITS.
-                                                                 NOTE: Note when this field is nonzero and an ITS is dynamically powered-off and back
-                                                                 on, software must ensure that any hardware collections are remapped following power-on.
-                                                                 A powered back on event is defined as cold reset is asserted and the deasserted from ITS
-                                                                 point of view. */
-        uint64_t reserved_20_23        : 4;
-        uint64_t pta                   : 1;  /**< [ 19: 19](RO) Physical target addresses supported.
-                                                                   0 = Target addresses correspond to linear processor numbers.
-                                                                   1 = Target addresses correspond to the base physical address of redistributors. */
-        uint64_t seis                  : 1;  /**< [ 18: 18](RO) Locally-generated system error interrupts supported. */
-        uint64_t devbits               : 5;  /**< [ 17: 13](RO) The number of device identifier bits supported, minus one. The 24-bit device ID
-                                                                 is defined as {ecam_id[2:0], stream_id[15:0]}. */
-        uint64_t idbits                : 5;  /**< [ 12:  8](RO) The number of interrupt identifier bits supported, minus one. */
-        uint64_t itte_size             : 4;  /**< [  7:  4](RO) ITT entry size. Number of bytes per entry, minus one. The ITT entry size
-                                                                 implemented is four bytes (32-bit). */
-        uint64_t distributed           : 1;  /**< [  3:  3](RO) Distributed ITS implementation supported. */
-        uint64_t cct                   : 1;  /**< [  2:  2](RAZ) Memory backed collection is not supported. */
-        uint64_t vlpi                  : 1;  /**< [  1:  1](RAZ) Reserved. Virtual LPIs and direct injection of Virtual LPIs supported.
-                                                                 This field is zero in GICv3 implementations. */
-        uint64_t physical              : 1;  /**< [  0:  0](RO) Reserved, one. */
-#else /* Word 0 - Little Endian */
-        uint64_t physical              : 1;  /**< [  0:  0](RO) Reserved, one. */
-        uint64_t vlpi                  : 1;  /**< [  1:  1](RAZ) Reserved. Virtual LPIs and direct injection of Virtual LPIs supported.
-                                                                 This field is zero in GICv3 implementations. */
-        uint64_t cct                   : 1;  /**< [  2:  2](RAZ) Memory backed collection is not supported. */
-        uint64_t distributed           : 1;  /**< [  3:  3](RO) Distributed ITS implementation supported. */
-        uint64_t itte_size             : 4;  /**< [  7:  4](RO) ITT entry size. Number of bytes per entry, minus one. The ITT entry size
-                                                                 implemented is four bytes (32-bit). */
-        uint64_t idbits                : 5;  /**< [ 12:  8](RO) The number of interrupt identifier bits supported, minus one. */
-        uint64_t devbits               : 5;  /**< [ 17: 13](RO) The number of device identifier bits supported, minus one. The 24-bit device ID
-                                                                 is defined as {ecam_id[2:0], stream_id[15:0]}. */
-        uint64_t seis                  : 1;  /**< [ 18: 18](RO) Locally-generated system error interrupts supported. */
-        uint64_t pta                   : 1;  /**< [ 19: 19](RO) Physical target addresses supported.
-                                                                   0 = Target addresses correspond to linear processor numbers.
-                                                                   1 = Target addresses correspond to the base physical address of redistributors. */
-        uint64_t reserved_20_23        : 4;
-        uint64_t hcc                   : 8;  /**< [ 31: 24](RO) Hardware collection count. The number of collections supported by the ITS without
-                                                                 provisioning of external memory. If this field is nonzero,
-                                                                 collections in the range zero to (HCC minus one) are solely maintained in storage within
-                                                                 the ITS.
-                                                                 NOTE: Note when this field is nonzero and an ITS is dynamically powered-off and back
-                                                                 on, software must ensure that any hardware collections are remapped following power-on.
-                                                                 A powered back on event is defined as cold reset is asserted and the deasserted from ITS
-                                                                 point of view. */
-        uint64_t cid_bits              : 4;  /**< [ 35: 32](RAZ) Number of collection ID bits. The number of bits of collection ID - 1.
-                                                                 When GITS_TYPER.CIL==0, this field is RES0. */
-        uint64_t cil                   : 1;  /**< [ 36: 36](RAZ) 0 = ITS supports 16-bit collection ID, GITS_TYPER[CID_BITS] is RES0.
-                                                                 1 = GITS_TYPER[CID_BITS] indicates supported collection ID size
-                                                                 CNXXXX implementations do not support collections in external memory, this bit
-                                                                 reads as zero and number of collections supported is reported by GITS_TYPER[HCC]. */
-        uint64_t reserved_37_63        : 27;
-#endif /* Word 0 - End */
-    } cn96xxp3;
-    /* struct cavm_gits_typer_cn96xxp1 cnf95xx; */
-    /* struct cavm_gits_typer_cn96xxp1 loki; */
+    } cn9;
 };
 typedef union cavm_gits_typer cavm_gits_typer_t;
 

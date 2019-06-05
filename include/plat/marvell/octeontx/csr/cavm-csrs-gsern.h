@@ -10416,15 +10416,9 @@ union cavm_gsernx_lanex_rx_15_bcfg
         uint64_t c4_limit_lo           : 6;  /**< [ 23: 18](R/W) C4 postcursor limit low. */
         uint64_t c3_limit_lo           : 6;  /**< [ 17: 12](R/W) C3 postcursor limit low. */
         uint64_t c2_limit_lo           : 6;  /**< [ 11:  6](R/W) C2 postcursor limit low. */
-        uint64_t c1_limit_lo           : 6;  /**< [  5:  0](R/W) C1 postcursor limit low. When set to a negative value, the value should be modified
-                                                                 to be ((desired limit) + c1_q_adjust). When negative, hardware sets value in use to
-                                                                 the programmed value and not ((desired limit) + c1_q_adjust). Operates normally when
-                                                                 [C1_LIMIT_LO] is greater than or equal to zero. */
+        uint64_t c1_limit_lo           : 6;  /**< [  5:  0](R/W) C1 postcursor limit low. */
 #else /* Word 0 - Little Endian */
-        uint64_t c1_limit_lo           : 6;  /**< [  5:  0](R/W) C1 postcursor limit low. When set to a negative value, the value should be modified
-                                                                 to be ((desired limit) + c1_q_adjust). When negative, hardware sets value in use to
-                                                                 the programmed value and not ((desired limit) + c1_q_adjust). Operates normally when
-                                                                 [C1_LIMIT_LO] is greater than or equal to zero. */
+        uint64_t c1_limit_lo           : 6;  /**< [  5:  0](R/W) C1 postcursor limit low. */
         uint64_t c2_limit_lo           : 6;  /**< [ 11:  6](R/W) C2 postcursor limit low. */
         uint64_t c3_limit_lo           : 6;  /**< [ 17: 12](R/W) C3 postcursor limit low. */
         uint64_t c4_limit_lo           : 6;  /**< [ 23: 18](R/W) C4 postcursor limit low. */
@@ -10438,37 +10432,7 @@ union cavm_gsernx_lanex_rx_15_bcfg
         uint64_t reserved_62_63        : 2;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_gsernx_lanex_rx_15_bcfg_s cn96xx; */
-    struct cavm_gsernx_lanex_rx_15_bcfg_cnf95xx
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_62_63        : 2;
-        uint64_t c5_limit_hi           : 6;  /**< [ 61: 56](R/W) C5 postcursor limit high. */
-        uint64_t c4_limit_hi           : 6;  /**< [ 55: 50](R/W) C4 postcursor limit high. */
-        uint64_t c3_limit_hi           : 6;  /**< [ 49: 44](R/W) C3 postcursor limit high. */
-        uint64_t c2_limit_hi           : 6;  /**< [ 43: 38](R/W) C2 postcursor limit high. */
-        uint64_t c1_limit_hi           : 6;  /**< [ 37: 32](R/W) C1 postcursor limit high. */
-        uint64_t reserved_30_31        : 2;
-        uint64_t c5_limit_lo           : 6;  /**< [ 29: 24](R/W) C5 postcursor limit low. */
-        uint64_t c4_limit_lo           : 6;  /**< [ 23: 18](R/W) C4 postcursor limit low. */
-        uint64_t c3_limit_lo           : 6;  /**< [ 17: 12](R/W) C3 postcursor limit low. */
-        uint64_t c2_limit_lo           : 6;  /**< [ 11:  6](R/W) C2 postcursor limit low. */
-        uint64_t c1_limit_lo           : 6;  /**< [  5:  0](R/W) C1 postcursor limit low. */
-#else /* Word 0 - Little Endian */
-        uint64_t c1_limit_lo           : 6;  /**< [  5:  0](R/W) C1 postcursor limit low. */
-        uint64_t c2_limit_lo           : 6;  /**< [ 11:  6](R/W) C2 postcursor limit low. */
-        uint64_t c3_limit_lo           : 6;  /**< [ 17: 12](R/W) C3 postcursor limit low. */
-        uint64_t c4_limit_lo           : 6;  /**< [ 23: 18](R/W) C4 postcursor limit low. */
-        uint64_t c5_limit_lo           : 6;  /**< [ 29: 24](R/W) C5 postcursor limit low. */
-        uint64_t reserved_30_31        : 2;
-        uint64_t c1_limit_hi           : 6;  /**< [ 37: 32](R/W) C1 postcursor limit high. */
-        uint64_t c2_limit_hi           : 6;  /**< [ 43: 38](R/W) C2 postcursor limit high. */
-        uint64_t c3_limit_hi           : 6;  /**< [ 49: 44](R/W) C3 postcursor limit high. */
-        uint64_t c4_limit_hi           : 6;  /**< [ 55: 50](R/W) C4 postcursor limit high. */
-        uint64_t c5_limit_hi           : 6;  /**< [ 61: 56](R/W) C5 postcursor limit high. */
-        uint64_t reserved_62_63        : 2;
-#endif /* Word 0 - End */
-    } cnf95xx;
+    /* struct cavm_gsernx_lanex_rx_15_bcfg_s cn; */
 };
 typedef union cavm_gsernx_lanex_rx_15_bcfg cavm_gsernx_lanex_rx_15_bcfg_t;
 

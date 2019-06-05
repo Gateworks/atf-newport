@@ -18123,11 +18123,11 @@ union cavm_cprix_ethx_ul_boct_cnt
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_32_63        : 32;
-        uint64_t ul_boct_cnt           : 32; /**< [ 31:  0](RC/H) Number of Ethernet bad octets received. This includes Frames with bad Preamble
-                                                                 or SFD or FCS and undersize or oversize frames and overrun */
+        uint64_t ul_boct_cnt           : 32; /**< [ 31:  0](RC/H) Number of Ethernet bad octets received. This includes frames with bad
+                                                                 FCS and undersize,oversize, and overrun frames. */
 #else /* Word 0 - Little Endian */
-        uint64_t ul_boct_cnt           : 32; /**< [ 31:  0](RC/H) Number of Ethernet bad octets received. This includes Frames with bad Preamble
-                                                                 or SFD or FCS and undersize or oversize frames and overrun */
+        uint64_t ul_boct_cnt           : 32; /**< [ 31:  0](RC/H) Number of Ethernet bad octets received. This includes frames with bad
+                                                                 FCS and undersize,oversize, and overrun frames. */
         uint64_t reserved_32_63        : 32;
 #endif /* Word 0 - End */
     } s;
@@ -18162,12 +18162,10 @@ union cavm_cprix_ethx_ul_err_cnt
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_32_63        : 32;
         uint64_t ul_err_cnt            : 32; /**< [ 31:  0](RC/H) Count of Ethernet uplink error events detected. This counts all frames that were
-                                                                 dropped due to bad CRC or bad Preamble or SFD or overflow or undersize or
-                                                                 oversize */
+                                                                 dropped due to bad CRC, overflow, undersize, or oversize. */
 #else /* Word 0 - Little Endian */
         uint64_t ul_err_cnt            : 32; /**< [ 31:  0](RC/H) Count of Ethernet uplink error events detected. This counts all frames that were
-                                                                 dropped due to bad CRC or bad Preamble or SFD or overflow or undersize or
-                                                                 oversize */
+                                                                 dropped due to bad CRC, overflow, undersize, or oversize. */
         uint64_t reserved_32_63        : 32;
 #endif /* Word 0 - End */
     } s;
@@ -18237,11 +18235,11 @@ union cavm_cprix_ethx_ul_goct_cnt
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_32_63        : 32;
-        uint64_t ul_goct_cnt           : 32; /**< [ 31:  0](RC/H) Number of Ethernet good octets received. This excludes Frames with bad Preamble
-                                                                 or SFD or FCS and undersize or oversize frames and overrun */
+        uint64_t ul_goct_cnt           : 32; /**< [ 31:  0](RC/H) Number of Ethernet good octets received. This excludes Frames with bad
+                                                                 FCS and undersize, oversize, and overrun frames. */
 #else /* Word 0 - Little Endian */
-        uint64_t ul_goct_cnt           : 32; /**< [ 31:  0](RC/H) Number of Ethernet good octets received. This excludes Frames with bad Preamble
-                                                                 or SFD or FCS and undersize or oversize frames and overrun */
+        uint64_t ul_goct_cnt           : 32; /**< [ 31:  0](RC/H) Number of Ethernet good octets received. This excludes Frames with bad
+                                                                 FCS and undersize, oversize, and overrun frames. */
         uint64_t reserved_32_63        : 32;
 #endif /* Word 0 - End */
     } s;
@@ -18276,12 +18274,10 @@ union cavm_cprix_ethx_ul_gpkts_cnt
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_32_63        : 32;
         uint64_t ul_gpkts_cnt          : 32; /**< [ 31:  0](RC/H) Number of Ethernet good packets received from CONN004 IP for this link. This
-                                                                 excludes Frames with bad Preamble or SFD and undersize or oversize frames and
-                                                                 overrun. */
+                                                                 excludes undersize or oversize frames and frames with overrun. */
 #else /* Word 0 - Little Endian */
         uint64_t ul_gpkts_cnt          : 32; /**< [ 31:  0](RC/H) Number of Ethernet good packets received from CONN004 IP for this link. This
-                                                                 excludes Frames with bad Preamble or SFD and undersize or oversize frames and
-                                                                 overrun. */
+                                                                 excludes undersize or oversize frames and frames with overrun. */
         uint64_t reserved_32_63        : 32;
 #endif /* Word 0 - End */
     } s;
@@ -18683,12 +18679,16 @@ union cavm_cprix_mhb_int
         uint64_t rp3_ul_ctrl_msg_rdy   : 1;  /**< [ 27: 27](R/W1C/H) Control Message Ready Notification. */
         uint64_t rp3_ul_fifo_ovfl      : 2;  /**< [ 26: 25](R/W1C/H) FIFO Overflow. */
         uint64_t rp3_ul_sw_msg_ovfl    : 1;  /**< [ 24: 24](R/W1C/H) SW Message Overflow. */
-        uint64_t reserved_16_23        : 8;
-        uint64_t dma_dl_rp3_fifo_ovfl  : 1;  /**< [ 15: 15](R/W1C/H) RP3 DL Request Fifo overflow inside TXDMA module */
-        uint64_t dma_dl_rp3_dma_ferr   : 1;  /**< [ 14: 14](R/W1C/H) Fatal Error detected during RP3 DMA */
-        uint64_t dma_dl_rp3_dma_nferr  : 1;  /**< [ 13: 13](R/W1C/H) Non-Fatal Error detected during RP3 DMA */
-        uint64_t dma_dl_pkt_ferr       : 1;  /**< [ 12: 12](R/W1C/H) Fatal Error detected during Packet DMA */
-        uint64_t dma_dl_pkt_nferr      : 1;  /**< [ 11: 11](R/W1C/H) Non-Fatal Error detected during Packet DMA */
+        uint64_t reserved_20_23        : 4;
+        uint64_t dgmii_async_fifo_full_3 : 1;/**< [ 19: 19](R/W1C/H) Async fifo in transmit path of GMII got full for Lane 1 of IP 1. */
+        uint64_t dgmii_async_fifo_full_2 : 1;/**< [ 18: 18](R/W1C/H) Async fifo in transmit path of GMII got full for Lane 0 of IP 1. */
+        uint64_t dgmii_async_fifo_full_1 : 1;/**< [ 17: 17](R/W1C/H) Async fifo in transmit path of GMII got full for Lane 1 of IP 0. */
+        uint64_t dgmii_async_fifo_full_0 : 1;/**< [ 16: 16](R/W1C/H) Async fifo in transmit path of GMII got full for Lane 0 of IP 0. */
+        uint64_t dma_dl_rp3_fifo_ovfl  : 1;  /**< [ 15: 15](R/W1C/H) RP3 DL Request Fifo overflow inside TXDMA module. */
+        uint64_t dma_dl_rp3_dma_ferr   : 1;  /**< [ 14: 14](R/W1C/H) Fatal error detected during RP3 DMA. */
+        uint64_t dma_dl_rp3_dma_nferr  : 1;  /**< [ 13: 13](R/W1C/H) Non-fatal error detected during RP3 DMA. */
+        uint64_t dma_dl_pkt_ferr       : 1;  /**< [ 12: 12](R/W1C/H) Fatal error detected during packet DMA. */
+        uint64_t dma_dl_pkt_nferr      : 1;  /**< [ 11: 11](R/W1C/H) Non-fatal error detected during packet DMA. */
         uint64_t dma_ul_rp3_fifo_ovfl  : 1;  /**< [ 10: 10](R/W1C/H) RP3 UL FIFO overflow error inside RXDMA module */
         uint64_t dma_ul_pkt_fifo_ovfl  : 1;  /**< [  9:  9](R/W1C/H) GMII UL FIFO overflow err inside RXDMA module */
         uint64_t dma_ul_rp3_ferr       : 1;  /**< [  8:  8](R/W1C/H) Fatal Error detected during RP3 DMA */
@@ -18712,12 +18712,16 @@ union cavm_cprix_mhb_int
         uint64_t dma_ul_rp3_ferr       : 1;  /**< [  8:  8](R/W1C/H) Fatal Error detected during RP3 DMA */
         uint64_t dma_ul_pkt_fifo_ovfl  : 1;  /**< [  9:  9](R/W1C/H) GMII UL FIFO overflow err inside RXDMA module */
         uint64_t dma_ul_rp3_fifo_ovfl  : 1;  /**< [ 10: 10](R/W1C/H) RP3 UL FIFO overflow error inside RXDMA module */
-        uint64_t dma_dl_pkt_nferr      : 1;  /**< [ 11: 11](R/W1C/H) Non-Fatal Error detected during Packet DMA */
-        uint64_t dma_dl_pkt_ferr       : 1;  /**< [ 12: 12](R/W1C/H) Fatal Error detected during Packet DMA */
-        uint64_t dma_dl_rp3_dma_nferr  : 1;  /**< [ 13: 13](R/W1C/H) Non-Fatal Error detected during RP3 DMA */
-        uint64_t dma_dl_rp3_dma_ferr   : 1;  /**< [ 14: 14](R/W1C/H) Fatal Error detected during RP3 DMA */
-        uint64_t dma_dl_rp3_fifo_ovfl  : 1;  /**< [ 15: 15](R/W1C/H) RP3 DL Request Fifo overflow inside TXDMA module */
-        uint64_t reserved_16_23        : 8;
+        uint64_t dma_dl_pkt_nferr      : 1;  /**< [ 11: 11](R/W1C/H) Non-fatal error detected during packet DMA. */
+        uint64_t dma_dl_pkt_ferr       : 1;  /**< [ 12: 12](R/W1C/H) Fatal error detected during packet DMA. */
+        uint64_t dma_dl_rp3_dma_nferr  : 1;  /**< [ 13: 13](R/W1C/H) Non-fatal error detected during RP3 DMA. */
+        uint64_t dma_dl_rp3_dma_ferr   : 1;  /**< [ 14: 14](R/W1C/H) Fatal error detected during RP3 DMA. */
+        uint64_t dma_dl_rp3_fifo_ovfl  : 1;  /**< [ 15: 15](R/W1C/H) RP3 DL Request Fifo overflow inside TXDMA module. */
+        uint64_t dgmii_async_fifo_full_0 : 1;/**< [ 16: 16](R/W1C/H) Async fifo in transmit path of GMII got full for Lane 0 of IP 0. */
+        uint64_t dgmii_async_fifo_full_1 : 1;/**< [ 17: 17](R/W1C/H) Async fifo in transmit path of GMII got full for Lane 1 of IP 0. */
+        uint64_t dgmii_async_fifo_full_2 : 1;/**< [ 18: 18](R/W1C/H) Async fifo in transmit path of GMII got full for Lane 0 of IP 1. */
+        uint64_t dgmii_async_fifo_full_3 : 1;/**< [ 19: 19](R/W1C/H) Async fifo in transmit path of GMII got full for Lane 1 of IP 1. */
+        uint64_t reserved_20_23        : 4;
         uint64_t rp3_ul_sw_msg_ovfl    : 1;  /**< [ 24: 24](R/W1C/H) SW Message Overflow. */
         uint64_t rp3_ul_fifo_ovfl      : 2;  /**< [ 26: 25](R/W1C/H) FIFO Overflow. */
         uint64_t rp3_ul_ctrl_msg_rdy   : 1;  /**< [ 27: 27](R/W1C/H) Control Message Ready Notification. */
@@ -18767,7 +18771,11 @@ union cavm_cprix_mhb_int_ena_w1c
         uint64_t rp3_ul_ctrl_msg_rdy   : 1;  /**< [ 27: 27](R/W1C/H) Reads or clears enable for CPRI(0..2)_MHB_INT[RP3_UL_CTRL_MSG_RDY]. */
         uint64_t rp3_ul_fifo_ovfl      : 2;  /**< [ 26: 25](R/W1C/H) Reads or clears enable for CPRI(0..2)_MHB_INT[RP3_UL_FIFO_OVFL]. */
         uint64_t rp3_ul_sw_msg_ovfl    : 1;  /**< [ 24: 24](R/W1C/H) Reads or clears enable for CPRI(0..2)_MHB_INT[RP3_UL_SW_MSG_OVFL]. */
-        uint64_t reserved_16_23        : 8;
+        uint64_t reserved_20_23        : 4;
+        uint64_t dgmii_async_fifo_full_3 : 1;/**< [ 19: 19](R/W1C/H) Reads or clears enable for CPRI(0..2)_MHB_INT[DGMII_ASYNC_FIFO_FULL_3]. */
+        uint64_t dgmii_async_fifo_full_2 : 1;/**< [ 18: 18](R/W1C/H) Reads or clears enable for CPRI(0..2)_MHB_INT[DGMII_ASYNC_FIFO_FULL_2]. */
+        uint64_t dgmii_async_fifo_full_1 : 1;/**< [ 17: 17](R/W1C/H) Reads or clears enable for CPRI(0..2)_MHB_INT[DGMII_ASYNC_FIFO_FULL_1]. */
+        uint64_t dgmii_async_fifo_full_0 : 1;/**< [ 16: 16](R/W1C/H) Reads or clears enable for CPRI(0..2)_MHB_INT[DGMII_ASYNC_FIFO_FULL_0]. */
         uint64_t dma_dl_rp3_fifo_ovfl  : 1;  /**< [ 15: 15](R/W1C/H) Reads or clears enable for CPRI(0..2)_MHB_INT[DMA_DL_RP3_FIFO_OVFL]. */
         uint64_t dma_dl_rp3_dma_ferr   : 1;  /**< [ 14: 14](R/W1C/H) Reads or clears enable for CPRI(0..2)_MHB_INT[DMA_DL_RP3_DMA_FERR]. */
         uint64_t dma_dl_rp3_dma_nferr  : 1;  /**< [ 13: 13](R/W1C/H) Reads or clears enable for CPRI(0..2)_MHB_INT[DMA_DL_RP3_DMA_NFERR]. */
@@ -18801,7 +18809,11 @@ union cavm_cprix_mhb_int_ena_w1c
         uint64_t dma_dl_rp3_dma_nferr  : 1;  /**< [ 13: 13](R/W1C/H) Reads or clears enable for CPRI(0..2)_MHB_INT[DMA_DL_RP3_DMA_NFERR]. */
         uint64_t dma_dl_rp3_dma_ferr   : 1;  /**< [ 14: 14](R/W1C/H) Reads or clears enable for CPRI(0..2)_MHB_INT[DMA_DL_RP3_DMA_FERR]. */
         uint64_t dma_dl_rp3_fifo_ovfl  : 1;  /**< [ 15: 15](R/W1C/H) Reads or clears enable for CPRI(0..2)_MHB_INT[DMA_DL_RP3_FIFO_OVFL]. */
-        uint64_t reserved_16_23        : 8;
+        uint64_t dgmii_async_fifo_full_0 : 1;/**< [ 16: 16](R/W1C/H) Reads or clears enable for CPRI(0..2)_MHB_INT[DGMII_ASYNC_FIFO_FULL_0]. */
+        uint64_t dgmii_async_fifo_full_1 : 1;/**< [ 17: 17](R/W1C/H) Reads or clears enable for CPRI(0..2)_MHB_INT[DGMII_ASYNC_FIFO_FULL_1]. */
+        uint64_t dgmii_async_fifo_full_2 : 1;/**< [ 18: 18](R/W1C/H) Reads or clears enable for CPRI(0..2)_MHB_INT[DGMII_ASYNC_FIFO_FULL_2]. */
+        uint64_t dgmii_async_fifo_full_3 : 1;/**< [ 19: 19](R/W1C/H) Reads or clears enable for CPRI(0..2)_MHB_INT[DGMII_ASYNC_FIFO_FULL_3]. */
+        uint64_t reserved_20_23        : 4;
         uint64_t rp3_ul_sw_msg_ovfl    : 1;  /**< [ 24: 24](R/W1C/H) Reads or clears enable for CPRI(0..2)_MHB_INT[RP3_UL_SW_MSG_OVFL]. */
         uint64_t rp3_ul_fifo_ovfl      : 2;  /**< [ 26: 25](R/W1C/H) Reads or clears enable for CPRI(0..2)_MHB_INT[RP3_UL_FIFO_OVFL]. */
         uint64_t rp3_ul_ctrl_msg_rdy   : 1;  /**< [ 27: 27](R/W1C/H) Reads or clears enable for CPRI(0..2)_MHB_INT[RP3_UL_CTRL_MSG_RDY]. */
@@ -18849,7 +18861,11 @@ union cavm_cprix_mhb_int_ena_w1s
         uint64_t rp3_ul_ctrl_msg_rdy   : 1;  /**< [ 27: 27](R/W1S/H) Reads or sets enable for CPRI(0..2)_MHB_INT[RP3_UL_CTRL_MSG_RDY]. */
         uint64_t rp3_ul_fifo_ovfl      : 2;  /**< [ 26: 25](R/W1S/H) Reads or sets enable for CPRI(0..2)_MHB_INT[RP3_UL_FIFO_OVFL]. */
         uint64_t rp3_ul_sw_msg_ovfl    : 1;  /**< [ 24: 24](R/W1S/H) Reads or sets enable for CPRI(0..2)_MHB_INT[RP3_UL_SW_MSG_OVFL]. */
-        uint64_t reserved_16_23        : 8;
+        uint64_t reserved_20_23        : 4;
+        uint64_t dgmii_async_fifo_full_3 : 1;/**< [ 19: 19](R/W1S/H) Reads or sets enable for CPRI(0..2)_MHB_INT[DGMII_ASYNC_FIFO_FULL_3]. */
+        uint64_t dgmii_async_fifo_full_2 : 1;/**< [ 18: 18](R/W1S/H) Reads or sets enable for CPRI(0..2)_MHB_INT[DGMII_ASYNC_FIFO_FULL_2]. */
+        uint64_t dgmii_async_fifo_full_1 : 1;/**< [ 17: 17](R/W1S/H) Reads or sets enable for CPRI(0..2)_MHB_INT[DGMII_ASYNC_FIFO_FULL_1]. */
+        uint64_t dgmii_async_fifo_full_0 : 1;/**< [ 16: 16](R/W1S/H) Reads or sets enable for CPRI(0..2)_MHB_INT[DGMII_ASYNC_FIFO_FULL_0]. */
         uint64_t dma_dl_rp3_fifo_ovfl  : 1;  /**< [ 15: 15](R/W1S/H) Reads or sets enable for CPRI(0..2)_MHB_INT[DMA_DL_RP3_FIFO_OVFL]. */
         uint64_t dma_dl_rp3_dma_ferr   : 1;  /**< [ 14: 14](R/W1S/H) Reads or sets enable for CPRI(0..2)_MHB_INT[DMA_DL_RP3_DMA_FERR]. */
         uint64_t dma_dl_rp3_dma_nferr  : 1;  /**< [ 13: 13](R/W1S/H) Reads or sets enable for CPRI(0..2)_MHB_INT[DMA_DL_RP3_DMA_NFERR]. */
@@ -18883,7 +18899,11 @@ union cavm_cprix_mhb_int_ena_w1s
         uint64_t dma_dl_rp3_dma_nferr  : 1;  /**< [ 13: 13](R/W1S/H) Reads or sets enable for CPRI(0..2)_MHB_INT[DMA_DL_RP3_DMA_NFERR]. */
         uint64_t dma_dl_rp3_dma_ferr   : 1;  /**< [ 14: 14](R/W1S/H) Reads or sets enable for CPRI(0..2)_MHB_INT[DMA_DL_RP3_DMA_FERR]. */
         uint64_t dma_dl_rp3_fifo_ovfl  : 1;  /**< [ 15: 15](R/W1S/H) Reads or sets enable for CPRI(0..2)_MHB_INT[DMA_DL_RP3_FIFO_OVFL]. */
-        uint64_t reserved_16_23        : 8;
+        uint64_t dgmii_async_fifo_full_0 : 1;/**< [ 16: 16](R/W1S/H) Reads or sets enable for CPRI(0..2)_MHB_INT[DGMII_ASYNC_FIFO_FULL_0]. */
+        uint64_t dgmii_async_fifo_full_1 : 1;/**< [ 17: 17](R/W1S/H) Reads or sets enable for CPRI(0..2)_MHB_INT[DGMII_ASYNC_FIFO_FULL_1]. */
+        uint64_t dgmii_async_fifo_full_2 : 1;/**< [ 18: 18](R/W1S/H) Reads or sets enable for CPRI(0..2)_MHB_INT[DGMII_ASYNC_FIFO_FULL_2]. */
+        uint64_t dgmii_async_fifo_full_3 : 1;/**< [ 19: 19](R/W1S/H) Reads or sets enable for CPRI(0..2)_MHB_INT[DGMII_ASYNC_FIFO_FULL_3]. */
+        uint64_t reserved_20_23        : 4;
         uint64_t rp3_ul_sw_msg_ovfl    : 1;  /**< [ 24: 24](R/W1S/H) Reads or sets enable for CPRI(0..2)_MHB_INT[RP3_UL_SW_MSG_OVFL]. */
         uint64_t rp3_ul_fifo_ovfl      : 2;  /**< [ 26: 25](R/W1S/H) Reads or sets enable for CPRI(0..2)_MHB_INT[RP3_UL_FIFO_OVFL]. */
         uint64_t rp3_ul_ctrl_msg_rdy   : 1;  /**< [ 27: 27](R/W1S/H) Reads or sets enable for CPRI(0..2)_MHB_INT[RP3_UL_CTRL_MSG_RDY]. */
@@ -19003,7 +19023,11 @@ union cavm_cprix_mhb_int_w1s
         uint64_t rp3_ul_ctrl_msg_rdy   : 1;  /**< [ 27: 27](R/W1S/H) Reads or sets CPRI(0..2)_MHB_INT[RP3_UL_CTRL_MSG_RDY]. */
         uint64_t rp3_ul_fifo_ovfl      : 2;  /**< [ 26: 25](R/W1S/H) Reads or sets CPRI(0..2)_MHB_INT[RP3_UL_FIFO_OVFL]. */
         uint64_t rp3_ul_sw_msg_ovfl    : 1;  /**< [ 24: 24](R/W1S/H) Reads or sets CPRI(0..2)_MHB_INT[RP3_UL_SW_MSG_OVFL]. */
-        uint64_t reserved_16_23        : 8;
+        uint64_t reserved_20_23        : 4;
+        uint64_t dgmii_async_fifo_full_3 : 1;/**< [ 19: 19](R/W1S/H) Reads or sets CPRI(0..2)_MHB_INT[DGMII_ASYNC_FIFO_FULL_3]. */
+        uint64_t dgmii_async_fifo_full_2 : 1;/**< [ 18: 18](R/W1S/H) Reads or sets CPRI(0..2)_MHB_INT[DGMII_ASYNC_FIFO_FULL_2]. */
+        uint64_t dgmii_async_fifo_full_1 : 1;/**< [ 17: 17](R/W1S/H) Reads or sets CPRI(0..2)_MHB_INT[DGMII_ASYNC_FIFO_FULL_1]. */
+        uint64_t dgmii_async_fifo_full_0 : 1;/**< [ 16: 16](R/W1S/H) Reads or sets CPRI(0..2)_MHB_INT[DGMII_ASYNC_FIFO_FULL_0]. */
         uint64_t dma_dl_rp3_fifo_ovfl  : 1;  /**< [ 15: 15](R/W1S/H) Reads or sets CPRI(0..2)_MHB_INT[DMA_DL_RP3_FIFO_OVFL]. */
         uint64_t dma_dl_rp3_dma_ferr   : 1;  /**< [ 14: 14](R/W1S/H) Reads or sets CPRI(0..2)_MHB_INT[DMA_DL_RP3_DMA_FERR]. */
         uint64_t dma_dl_rp3_dma_nferr  : 1;  /**< [ 13: 13](R/W1S/H) Reads or sets CPRI(0..2)_MHB_INT[DMA_DL_RP3_DMA_NFERR]. */
@@ -19037,7 +19061,11 @@ union cavm_cprix_mhb_int_w1s
         uint64_t dma_dl_rp3_dma_nferr  : 1;  /**< [ 13: 13](R/W1S/H) Reads or sets CPRI(0..2)_MHB_INT[DMA_DL_RP3_DMA_NFERR]. */
         uint64_t dma_dl_rp3_dma_ferr   : 1;  /**< [ 14: 14](R/W1S/H) Reads or sets CPRI(0..2)_MHB_INT[DMA_DL_RP3_DMA_FERR]. */
         uint64_t dma_dl_rp3_fifo_ovfl  : 1;  /**< [ 15: 15](R/W1S/H) Reads or sets CPRI(0..2)_MHB_INT[DMA_DL_RP3_FIFO_OVFL]. */
-        uint64_t reserved_16_23        : 8;
+        uint64_t dgmii_async_fifo_full_0 : 1;/**< [ 16: 16](R/W1S/H) Reads or sets CPRI(0..2)_MHB_INT[DGMII_ASYNC_FIFO_FULL_0]. */
+        uint64_t dgmii_async_fifo_full_1 : 1;/**< [ 17: 17](R/W1S/H) Reads or sets CPRI(0..2)_MHB_INT[DGMII_ASYNC_FIFO_FULL_1]. */
+        uint64_t dgmii_async_fifo_full_2 : 1;/**< [ 18: 18](R/W1S/H) Reads or sets CPRI(0..2)_MHB_INT[DGMII_ASYNC_FIFO_FULL_2]. */
+        uint64_t dgmii_async_fifo_full_3 : 1;/**< [ 19: 19](R/W1S/H) Reads or sets CPRI(0..2)_MHB_INT[DGMII_ASYNC_FIFO_FULL_3]. */
+        uint64_t reserved_20_23        : 4;
         uint64_t rp3_ul_sw_msg_ovfl    : 1;  /**< [ 24: 24](R/W1S/H) Reads or sets CPRI(0..2)_MHB_INT[RP3_UL_SW_MSG_OVFL]. */
         uint64_t rp3_ul_fifo_ovfl      : 2;  /**< [ 26: 25](R/W1S/H) Reads or sets CPRI(0..2)_MHB_INT[RP3_UL_FIFO_OVFL]. */
         uint64_t rp3_ul_ctrl_msg_rdy   : 1;  /**< [ 27: 27](R/W1S/H) Reads or sets CPRI(0..2)_MHB_INT[RP3_UL_CTRL_MSG_RDY]. */
@@ -19404,7 +19432,13 @@ union cavm_cprix_rp3_ul_axc_cfg0x
     struct cavm_cprix_rp3_ul_axc_cfg0x_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_52_63        : 12;
+        uint64_t reserved_54_63        : 10;
+        uint64_t data_format           : 2;  /**< [ 53: 52](R/W) The data can be reformatted from two/four bytes big-endian with IQ
+                                                                 positioned as {I, Q}, to:
+                                                                 0 = No endianness change.
+                                                                 1 = Reformat to two bytes little-endian with 8-bit I and Q swapped.
+                                                                 2 = Reformat to four bytes little-endian with 16-bit I and Q swapped.
+                                                                 3 = Reserved. */
         uint64_t buf_idx               : 8;  /**< [ 51: 44](R/W) AXC buffer index. */
         uint64_t msg_cnt               : 16; /**< [ 43: 28](R/W/H) Current message count sent. A notification is sent when the message count
                                                                  reaches the NOTIF_THRES and the count is reset at that time. */
@@ -19440,7 +19474,13 @@ union cavm_cprix_rp3_ul_axc_cfg0x
         uint64_t msg_cnt               : 16; /**< [ 43: 28](R/W/H) Current message count sent. A notification is sent when the message count
                                                                  reaches the NOTIF_THRES and the count is reset at that time. */
         uint64_t buf_idx               : 8;  /**< [ 51: 44](R/W) AXC buffer index. */
-        uint64_t reserved_52_63        : 12;
+        uint64_t data_format           : 2;  /**< [ 53: 52](R/W) The data can be reformatted from two/four bytes big-endian with IQ
+                                                                 positioned as {I, Q}, to:
+                                                                 0 = No endianness change.
+                                                                 1 = Reformat to two bytes little-endian with 8-bit I and Q swapped.
+                                                                 2 = Reformat to four bytes little-endian with 16-bit I and Q swapped.
+                                                                 3 = Reserved. */
+        uint64_t reserved_54_63        : 10;
 #endif /* Word 0 - End */
     } s;
     /* struct cavm_cprix_rp3_ul_axc_cfg0x_s cn; */
@@ -19820,7 +19860,7 @@ union cavm_cprix_rp3_ul_ctrl_cfg
     struct cavm_cprix_rp3_ul_ctrl_cfg_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t buf_wptr_offset       : 16; /**< [ 63: 48](R/W/H) AXC buffer write pointer offset in the circular buffer indicated by the BUF_IDX. */
+        uint64_t buf_wptr_offset       : 16; /**< [ 63: 48](R/W/H) AXC buffer write pointer offset in the circular buffer. */
         uint64_t reserved_44_47        : 4;
         uint64_t msg_cnt               : 16; /**< [ 43: 28](R/W/H) Current message count sent. A notification is sent when the message count
                                                                  reaches the NOTIF_THRES and the count is reset at that time. */
@@ -19856,7 +19896,7 @@ union cavm_cprix_rp3_ul_ctrl_cfg
         uint64_t msg_cnt               : 16; /**< [ 43: 28](R/W/H) Current message count sent. A notification is sent when the message count
                                                                  reaches the NOTIF_THRES and the count is reset at that time. */
         uint64_t reserved_44_47        : 4;
-        uint64_t buf_wptr_offset       : 16; /**< [ 63: 48](R/W/H) AXC buffer write pointer offset in the circular buffer indicated by the BUF_IDX. */
+        uint64_t buf_wptr_offset       : 16; /**< [ 63: 48](R/W/H) AXC buffer write pointer offset in the circular buffer. */
 #endif /* Word 0 - End */
     } s;
     /* struct cavm_cprix_rp3_ul_ctrl_cfg_s cn; */
@@ -20352,9 +20392,11 @@ union cavm_cprix_rxd_gmii_ul_cbuf_cfg2
         uint64_t dswap                 : 3;  /**< [ 58: 56](R/W) The byte swap mode for DMA to LLC/DRAM. Enumerated in MHBW_PNB_DSWAP_E.
                                                                  DMA to BPHY SMEM ignores this field. */
         uint64_t reserved_53_55        : 3;
-        uint64_t cbuf_ptr              : 53; /**< [ 52:  0](R/W) GMII UL Circular Buffer base address (byte address). This should be 128 bit aligned address. */
+        uint64_t cbuf_ptr              : 53; /**< [ 52:  0](R/W) GMII UL circular buffer base address (byte address). This should be 128 bit
+                                                                 aligned address for SMEM; and 64 byte aligned address for DRAM/LLC. */
 #else /* Word 0 - Little Endian */
-        uint64_t cbuf_ptr              : 53; /**< [ 52:  0](R/W) GMII UL Circular Buffer base address (byte address). This should be 128 bit aligned address. */
+        uint64_t cbuf_ptr              : 53; /**< [ 52:  0](R/W) GMII UL circular buffer base address (byte address). This should be 128 bit
+                                                                 aligned address for SMEM; and 64 byte aligned address for DRAM/LLC. */
         uint64_t reserved_53_55        : 3;
         uint64_t dswap                 : 3;  /**< [ 58: 56](R/W) The byte swap mode for DMA to LLC/DRAM. Enumerated in MHBW_PNB_DSWAP_E.
                                                                  DMA to BPHY SMEM ignores this field. */
@@ -20630,9 +20672,11 @@ union cavm_cprix_txd_gmii_dl_cbuf_cfg2
         uint64_t dswap                 : 3;  /**< [ 58: 56](R/W) The byte swap mode for DMA to LLC/DRAM. Enumerated in MHBW_PNB_DSWAP_E.
                                                                  DMA to BPHY SMEM ignores this field. */
         uint64_t reserved_53_55        : 3;
-        uint64_t cbuf_ptr              : 53; /**< [ 52:  0](R/W) GMII DL Circular Buffer base address (byte address). This should be 128 bit aligned address. */
+        uint64_t cbuf_ptr              : 53; /**< [ 52:  0](R/W) GMII DL Circular Buffer base address (byte address). This should be 128 bit
+                                                                 aligned address for SMEM; and 64 byte aligned address for DDR. */
 #else /* Word 0 - Little Endian */
-        uint64_t cbuf_ptr              : 53; /**< [ 52:  0](R/W) GMII DL Circular Buffer base address (byte address). This should be 128 bit aligned address. */
+        uint64_t cbuf_ptr              : 53; /**< [ 52:  0](R/W) GMII DL Circular Buffer base address (byte address). This should be 128 bit
+                                                                 aligned address for SMEM; and 64 byte aligned address for DDR. */
         uint64_t reserved_53_55        : 3;
         uint64_t dswap                 : 3;  /**< [ 58: 56](R/W) The byte swap mode for DMA to LLC/DRAM. Enumerated in MHBW_PNB_DSWAP_E.
                                                                  DMA to BPHY SMEM ignores this field. */

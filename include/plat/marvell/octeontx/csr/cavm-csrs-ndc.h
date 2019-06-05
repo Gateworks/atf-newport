@@ -951,18 +951,39 @@ union cavm_ndcx_af_ctl
     struct cavm_ndcx_af_ctl_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_14_63        : 50;
+        uint64_t reserved_20_63        : 44;
+        uint64_t en_flush_on_inval     : 1;  /**< [ 19: 19](R/W) When set, invalidate requests will flush the corresponding entry back to
+                                                                 coherent memory if the entry is dirty.
+                                                                 For diagnostic use only. */
+        uint64_t dis_byp_on_inval_miss : 1;  /**< [ 18: 18](R/W) For diagnostic use only.
+                                                                 Internal:
+                                                                 When set, cause read miss + invalidate operations to allocate a
+                                                                 cache entry, which could result in flushing a dirty entry.  When clear
+                                                                 clear, read miss + invalidate operations will be treated as bypassed reads and
+                                                                 will not allocate a cache entry nor initiate any flushes.  See the description
+                                                                 of [DIS_INVAL_ON_BUSY] for more information about interactions between read miss
+                                                                 and invalidate requests. */
+        uint64_t dis_inval_on_busy     : 1;  /**< [ 17: 17](R/W) For diagnostic use only.
+                                                                 Internal:
+                                                                 When set, disable invalidate operations whenever the invalidate is
+                                                                 requested for a Read Hit where a prior read miss to the same cache line has not
+                                                                 yet been filled from coherent memory.  If the reset value of this bit is one,
+                                                                 that indicated that the design does not support invalidates when an entry is
+                                                                 busy (i.e., waiting for a fill to complete).  In that case, setting the bit to
+                                                                 zero will have no effect. */
+        uint64_t dis_inval             : 1;  /**< [ 16: 16](R/W) When one, disable all invalidate operations. For diagnostic use only. */
+        uint64_t reserved_14_15        : 2;
         uint64_t dis_sync_mods         : 1;  /**< [ 13: 13](R/W) For diagnostic use only.
                                                                  Internal:
-                                                                 Setting this bit will disable TBD late fixes introduced to
+                                                                 When set, disable TBD late fixes introduced to
                                                                  resolve issues with FLR.SYNC operations.  As the design team
                                                                  adds consumers of this bit, the description will be updated. */
         uint64_t dis_unjam_w3a         : 1;  /**< [ 12: 12](R/W) For diagnostic use only.
                                                                  Internal:
-                                                                 "Setting this bit will disable the fix for McBuggin #36640.
+                                                                 When set, disable the fix for McBuggin 36640.
                                                                  In short, the deadlock unjam mechanism will be disabled, such that
                                                                  the particular deadlock described in the bug becomes possible again;
-                                                                 however, any inadvertent bug introduced by the fix could be avoided." */
+                                                                 however, any inadvertent bug introduced by the fix could be avoided. */
         uint64_t perf_mode             : 4;  /**< [ 11:  8](R/W) For diagnostic use only.
                                                                  Internal:
                                                                  These bits will eventually be used to limit performance
@@ -1038,19 +1059,223 @@ union cavm_ndcx_af_ctl
                                                                  mode(s) avoid triggering bugs fixed late in the design cycle. */
         uint64_t dis_unjam_w3a         : 1;  /**< [ 12: 12](R/W) For diagnostic use only.
                                                                  Internal:
-                                                                 "Setting this bit will disable the fix for McBuggin #36640.
+                                                                 When set, disable the fix for McBuggin 36640.
                                                                  In short, the deadlock unjam mechanism will be disabled, such that
                                                                  the particular deadlock described in the bug becomes possible again;
-                                                                 however, any inadvertent bug introduced by the fix could be avoided." */
+                                                                 however, any inadvertent bug introduced by the fix could be avoided. */
         uint64_t dis_sync_mods         : 1;  /**< [ 13: 13](R/W) For diagnostic use only.
                                                                  Internal:
-                                                                 Setting this bit will disable TBD late fixes introduced to
+                                                                 When set, disable TBD late fixes introduced to
                                                                  resolve issues with FLR.SYNC operations.  As the design team
                                                                  adds consumers of this bit, the description will be updated. */
-        uint64_t reserved_14_63        : 50;
+        uint64_t reserved_14_15        : 2;
+        uint64_t dis_inval             : 1;  /**< [ 16: 16](R/W) When one, disable all invalidate operations. For diagnostic use only. */
+        uint64_t dis_inval_on_busy     : 1;  /**< [ 17: 17](R/W) For diagnostic use only.
+                                                                 Internal:
+                                                                 When set, disable invalidate operations whenever the invalidate is
+                                                                 requested for a Read Hit where a prior read miss to the same cache line has not
+                                                                 yet been filled from coherent memory.  If the reset value of this bit is one,
+                                                                 that indicated that the design does not support invalidates when an entry is
+                                                                 busy (i.e., waiting for a fill to complete).  In that case, setting the bit to
+                                                                 zero will have no effect. */
+        uint64_t dis_byp_on_inval_miss : 1;  /**< [ 18: 18](R/W) For diagnostic use only.
+                                                                 Internal:
+                                                                 When set, cause read miss + invalidate operations to allocate a
+                                                                 cache entry, which could result in flushing a dirty entry.  When clear
+                                                                 clear, read miss + invalidate operations will be treated as bypassed reads and
+                                                                 will not allocate a cache entry nor initiate any flushes.  See the description
+                                                                 of [DIS_INVAL_ON_BUSY] for more information about interactions between read miss
+                                                                 and invalidate requests. */
+        uint64_t en_flush_on_inval     : 1;  /**< [ 19: 19](R/W) When set, invalidate requests will flush the corresponding entry back to
+                                                                 coherent memory if the entry is dirty.
+                                                                 For diagnostic use only. */
+        uint64_t reserved_20_63        : 44;
 #endif /* Word 0 - End */
     } s;
     struct cavm_ndcx_af_ctl_cn96xxp1_0
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_20_63        : 44;
+        uint64_t reserved_16_19        : 4;
+        uint64_t reserved_14_15        : 2;
+        uint64_t reserved_8_13         : 6;
+        uint64_t reserved_5_7          : 3;
+        uint64_t lock_dis              : 1;  /**< [  4:  4](R/W) Lock disabled. When set, NDC will not execute any command with lock bit set and report an error
+                                                                 back to port if command has lock bit set. Unlock command is not effected by this CSR.
+                                                                 When cleared NDC will process any command with lock bit set. */
+        uint64_t way_select_dis        : 1;  /**< [  3:  3](R/W) Way select disable. Should be clear for normal operation.
+
+                                                                 When clear, the way selected on a cache miss is based on the corresponding
+                                                                 NIX_*[*WAY_MASK]/NPA_*[*WAY_MASK]; if way mask bit N is clear, any of NDC
+                                                                 ways 4*N through 4*N+3 may be selected, otherwise these ways are excluded
+                                                                 from selection.
+
+                                                                 When set on a cache miss with NIX_*[*WAY_MASK]/NPA_*[*WAY_MASK] != 0xFFFF,
+                                                                 NDC ignores the way mask and allows any way to be selected/allocated.
+
+                                                                 Requests with NIX_*[*WAY_MASK]/NPA_*[*WAY_MASK] == 0xFFFF bypass the
+                                                                 NDC cache and are not affected by this bit. */
+        uint64_t reserved_2            : 1;
+        uint64_t hash_dis              : 1;  /**< [  1:  1](R/W) Hash disable. When set, the address hash function defined by NDC_AF_HASH()
+                                                                 is not used.
+
+                                                                 For diagnostic use only. May only be modified when NDC is idle and has no
+                                                                 cached data.
+
+                                                                 Internal:
+                                                                 When set, iova \<18:15\> select the bank and \<14:13\> select the index within
+                                                                 bank. */
+        uint64_t byp_only              : 1;  /**< [  0:  0](R/W) Bypass only.
+                                                                 0 = Bypass only mode is disabled and NDC will steer port requests based on command
+                                                                 bits, either to cache, for cache accesses or to LLC for bypass accesses.
+                                                                 1 = All requests will be directed to LLC, similar to bypass operation. Software
+                                                                 must not use the NDC LOCK feature. */
+#else /* Word 0 - Little Endian */
+        uint64_t byp_only              : 1;  /**< [  0:  0](R/W) Bypass only.
+                                                                 0 = Bypass only mode is disabled and NDC will steer port requests based on command
+                                                                 bits, either to cache, for cache accesses or to LLC for bypass accesses.
+                                                                 1 = All requests will be directed to LLC, similar to bypass operation. Software
+                                                                 must not use the NDC LOCK feature. */
+        uint64_t hash_dis              : 1;  /**< [  1:  1](R/W) Hash disable. When set, the address hash function defined by NDC_AF_HASH()
+                                                                 is not used.
+
+                                                                 For diagnostic use only. May only be modified when NDC is idle and has no
+                                                                 cached data.
+
+                                                                 Internal:
+                                                                 When set, iova \<18:15\> select the bank and \<14:13\> select the index within
+                                                                 bank. */
+        uint64_t reserved_2            : 1;
+        uint64_t way_select_dis        : 1;  /**< [  3:  3](R/W) Way select disable. Should be clear for normal operation.
+
+                                                                 When clear, the way selected on a cache miss is based on the corresponding
+                                                                 NIX_*[*WAY_MASK]/NPA_*[*WAY_MASK]; if way mask bit N is clear, any of NDC
+                                                                 ways 4*N through 4*N+3 may be selected, otherwise these ways are excluded
+                                                                 from selection.
+
+                                                                 When set on a cache miss with NIX_*[*WAY_MASK]/NPA_*[*WAY_MASK] != 0xFFFF,
+                                                                 NDC ignores the way mask and allows any way to be selected/allocated.
+
+                                                                 Requests with NIX_*[*WAY_MASK]/NPA_*[*WAY_MASK] == 0xFFFF bypass the
+                                                                 NDC cache and are not affected by this bit. */
+        uint64_t lock_dis              : 1;  /**< [  4:  4](R/W) Lock disabled. When set, NDC will not execute any command with lock bit set and report an error
+                                                                 back to port if command has lock bit set. Unlock command is not effected by this CSR.
+                                                                 When cleared NDC will process any command with lock bit set. */
+        uint64_t reserved_5_7          : 3;
+        uint64_t reserved_8_13         : 6;
+        uint64_t reserved_14_15        : 2;
+        uint64_t reserved_16_19        : 4;
+        uint64_t reserved_20_63        : 44;
+#endif /* Word 0 - End */
+    } cn96xxp1_0;
+    struct cavm_ndcx_af_ctl_cn96xxp1_1
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_20_63        : 44;
+        uint64_t reserved_16_19        : 4;
+        uint64_t reserved_14_15        : 2;
+        uint64_t dis_sync_mods         : 1;  /**< [ 13: 13](R/W) For diagnostic use only.
+                                                                 Internal:
+                                                                 When set, disable TBD late fixes introduced to
+                                                                 resolve issues with FLR.SYNC operations.  As the design team
+                                                                 adds consumers of this bit, the description will be updated. */
+        uint64_t dis_unjam_w3a         : 1;  /**< [ 12: 12](R/W) For diagnostic use only.
+                                                                 Internal:
+                                                                 When set, disable the fix for McBuggin 36640.
+                                                                 In short, the deadlock unjam mechanism will be disabled, such that
+                                                                 the particular deadlock described in the bug becomes possible again;
+                                                                 however, any inadvertent bug introduced by the fix could be avoided. */
+        uint64_t perf_mode             : 4;  /**< [ 11:  8](R/W) For diagnostic use only.
+                                                                 Internal:
+                                                                 These bits will eventually be used to limit performance
+                                                                 -- in some TBD manner -- in hopes that the lower-performance
+                                                                 mode(s) avoid triggering bugs fixed late in the design cycle. */
+        uint64_t reserved_5_7          : 3;
+        uint64_t lock_dis              : 1;  /**< [  4:  4](R/W) Lock disabled. When set, NDC will not execute any command with lock bit set and report an error
+                                                                 back to port if command has lock bit set. Unlock command is not effected by this CSR.
+                                                                 When cleared NDC will process any command with lock bit set. */
+        uint64_t way_select_dis        : 1;  /**< [  3:  3](R/W) Way select disable. Should be clear for normal operation.
+
+                                                                 When clear, the way selected on a cache miss is based on the corresponding
+                                                                 NIX_*[*WAY_MASK]/NPA_*[*WAY_MASK]; if way mask bit N is clear, any of NDC
+                                                                 ways 4*N through 4*N+3 may be selected, otherwise these ways are excluded
+                                                                 from selection.
+
+                                                                 When set on a cache miss with NIX_*[*WAY_MASK]/NPA_*[*WAY_MASK] != 0xFFFF,
+                                                                 NDC ignores the way mask and allows any way to be selected/allocated.
+
+                                                                 Requests with NIX_*[*WAY_MASK]/NPA_*[*WAY_MASK] == 0xFFFF bypass the
+                                                                 NDC cache and are not affected by this bit. */
+        uint64_t reserved_2            : 1;
+        uint64_t hash_dis              : 1;  /**< [  1:  1](R/W) Hash disable. When set, the address hash function defined by NDC_AF_HASH()
+                                                                 is not used.
+
+                                                                 For diagnostic use only. May only be modified when NDC is idle and has no
+                                                                 cached data.
+
+                                                                 Internal:
+                                                                 When set, iova \<18:15\> select the bank and \<14:13\> select the index within
+                                                                 bank. */
+        uint64_t byp_only              : 1;  /**< [  0:  0](R/W) Bypass only.
+                                                                 0 = Bypass only mode is disabled and NDC will steer port requests based on command
+                                                                 bits, either to cache, for cache accesses or to LLC for bypass accesses.
+                                                                 1 = All requests will be directed to LLC, similar to bypass operation. Software
+                                                                 must not use the NDC LOCK feature. */
+#else /* Word 0 - Little Endian */
+        uint64_t byp_only              : 1;  /**< [  0:  0](R/W) Bypass only.
+                                                                 0 = Bypass only mode is disabled and NDC will steer port requests based on command
+                                                                 bits, either to cache, for cache accesses or to LLC for bypass accesses.
+                                                                 1 = All requests will be directed to LLC, similar to bypass operation. Software
+                                                                 must not use the NDC LOCK feature. */
+        uint64_t hash_dis              : 1;  /**< [  1:  1](R/W) Hash disable. When set, the address hash function defined by NDC_AF_HASH()
+                                                                 is not used.
+
+                                                                 For diagnostic use only. May only be modified when NDC is idle and has no
+                                                                 cached data.
+
+                                                                 Internal:
+                                                                 When set, iova \<18:15\> select the bank and \<14:13\> select the index within
+                                                                 bank. */
+        uint64_t reserved_2            : 1;
+        uint64_t way_select_dis        : 1;  /**< [  3:  3](R/W) Way select disable. Should be clear for normal operation.
+
+                                                                 When clear, the way selected on a cache miss is based on the corresponding
+                                                                 NIX_*[*WAY_MASK]/NPA_*[*WAY_MASK]; if way mask bit N is clear, any of NDC
+                                                                 ways 4*N through 4*N+3 may be selected, otherwise these ways are excluded
+                                                                 from selection.
+
+                                                                 When set on a cache miss with NIX_*[*WAY_MASK]/NPA_*[*WAY_MASK] != 0xFFFF,
+                                                                 NDC ignores the way mask and allows any way to be selected/allocated.
+
+                                                                 Requests with NIX_*[*WAY_MASK]/NPA_*[*WAY_MASK] == 0xFFFF bypass the
+                                                                 NDC cache and are not affected by this bit. */
+        uint64_t lock_dis              : 1;  /**< [  4:  4](R/W) Lock disabled. When set, NDC will not execute any command with lock bit set and report an error
+                                                                 back to port if command has lock bit set. Unlock command is not effected by this CSR.
+                                                                 When cleared NDC will process any command with lock bit set. */
+        uint64_t reserved_5_7          : 3;
+        uint64_t perf_mode             : 4;  /**< [ 11:  8](R/W) For diagnostic use only.
+                                                                 Internal:
+                                                                 These bits will eventually be used to limit performance
+                                                                 -- in some TBD manner -- in hopes that the lower-performance
+                                                                 mode(s) avoid triggering bugs fixed late in the design cycle. */
+        uint64_t dis_unjam_w3a         : 1;  /**< [ 12: 12](R/W) For diagnostic use only.
+                                                                 Internal:
+                                                                 When set, disable the fix for McBuggin 36640.
+                                                                 In short, the deadlock unjam mechanism will be disabled, such that
+                                                                 the particular deadlock described in the bug becomes possible again;
+                                                                 however, any inadvertent bug introduced by the fix could be avoided. */
+        uint64_t dis_sync_mods         : 1;  /**< [ 13: 13](R/W) For diagnostic use only.
+                                                                 Internal:
+                                                                 When set, disable TBD late fixes introduced to
+                                                                 resolve issues with FLR.SYNC operations.  As the design team
+                                                                 adds consumers of this bit, the description will be updated. */
+        uint64_t reserved_14_15        : 2;
+        uint64_t reserved_16_19        : 4;
+        uint64_t reserved_20_63        : 44;
+#endif /* Word 0 - End */
+    } cn96xxp1_1;
+    /* struct cavm_ndcx_af_ctl_s cn96xxp3; */
+    struct cavm_ndcx_af_ctl_cnf95xxp1
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_14_63        : 50;
@@ -1121,11 +1346,109 @@ union cavm_ndcx_af_ctl
         uint64_t reserved_8_13         : 6;
         uint64_t reserved_14_63        : 50;
 #endif /* Word 0 - End */
-    } cn96xxp1_0;
-    /* struct cavm_ndcx_af_ctl_s cn96xxp1_1; */
-    /* struct cavm_ndcx_af_ctl_s cn96xxp3; */
-    /* struct cavm_ndcx_af_ctl_cn96xxp1_0 cnf95xxp1; */
-    /* struct cavm_ndcx_af_ctl_s cnf95xxp2; */
+    } cnf95xxp1;
+    struct cavm_ndcx_af_ctl_cnf95xxp2
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_14_63        : 50;
+        uint64_t dis_sync_mods         : 1;  /**< [ 13: 13](R/W) For diagnostic use only.
+                                                                 Internal:
+                                                                 Setting this bit will disable TBD late fixes introduced to
+                                                                 resolve issues with FLR.SYNC operations.  As the design team
+                                                                 adds consumers of this bit, the description will be updated. */
+        uint64_t dis_unjam_w3a         : 1;  /**< [ 12: 12](R/W) For diagnostic use only.
+                                                                 Internal:
+                                                                 "Setting this bit will disable the fix for McBuggin #36640.
+                                                                 In short, the deadlock unjam mechanism will be disabled, such that
+                                                                 the particular deadlock described in the bug becomes possible again;
+                                                                 however, any inadvertent bug introduced by the fix could be avoided." */
+        uint64_t perf_mode             : 4;  /**< [ 11:  8](R/W) For diagnostic use only.
+                                                                 Internal:
+                                                                 These bits will eventually be used to limit performance
+                                                                 -- in some TBD manner -- in hopes that the lower-performance
+                                                                 mode(s) avoid triggering bugs fixed late in the design cycle. */
+        uint64_t reserved_5_7          : 3;
+        uint64_t lock_dis              : 1;  /**< [  4:  4](R/W) Lock disabled. When set, NDC will not execute any command with lock bit set and report an error
+                                                                 back to port if command has lock bit set. Unlock command is not effected by this CSR.
+                                                                 When cleared NDC will process any command with lock bit set. */
+        uint64_t way_select_dis        : 1;  /**< [  3:  3](R/W) Way select disable. Should be clear for normal operation.
+
+                                                                 When clear, the way selected on a cache miss is based on the corresponding
+                                                                 NIX_*[*WAY_MASK]/NPA_*[*WAY_MASK]; if way mask bit N is clear, any of NDC
+                                                                 ways 4*N through 4*N+3 may be selected, otherwise these ways are excluded
+                                                                 from selection.
+
+                                                                 When set on a cache miss with NIX_*[*WAY_MASK]/NPA_*[*WAY_MASK] != 0xFFFF,
+                                                                 NDC ignores the way mask and allows any way to be selected/allocated.
+
+                                                                 Requests with NIX_*[*WAY_MASK]/NPA_*[*WAY_MASK] == 0xFFFF bypass the
+                                                                 NDC cache and are not affected by this bit. */
+        uint64_t reserved_2            : 1;
+        uint64_t hash_dis              : 1;  /**< [  1:  1](R/W) Hash disable. When set, the address hash function defined by NDC_AF_HASH()
+                                                                 is not used.
+
+                                                                 For diagnostic use only. May only be modified when NDC is idle and has no
+                                                                 cached data.
+
+                                                                 Internal:
+                                                                 When set, iova \<18:15\> select the bank and \<14:13\> select the index within
+                                                                 bank. */
+        uint64_t byp_only              : 1;  /**< [  0:  0](R/W) Bypass only.
+                                                                 0 = Bypass only mode is disabled and NDC will steer port requests based on command
+                                                                 bits, either to cache, for cache accesses or to LLC for bypass accesses.
+                                                                 1 = All requests will be directed to LLC, similar to bypass operation. Software
+                                                                 must not use the NDC LOCK feature. */
+#else /* Word 0 - Little Endian */
+        uint64_t byp_only              : 1;  /**< [  0:  0](R/W) Bypass only.
+                                                                 0 = Bypass only mode is disabled and NDC will steer port requests based on command
+                                                                 bits, either to cache, for cache accesses or to LLC for bypass accesses.
+                                                                 1 = All requests will be directed to LLC, similar to bypass operation. Software
+                                                                 must not use the NDC LOCK feature. */
+        uint64_t hash_dis              : 1;  /**< [  1:  1](R/W) Hash disable. When set, the address hash function defined by NDC_AF_HASH()
+                                                                 is not used.
+
+                                                                 For diagnostic use only. May only be modified when NDC is idle and has no
+                                                                 cached data.
+
+                                                                 Internal:
+                                                                 When set, iova \<18:15\> select the bank and \<14:13\> select the index within
+                                                                 bank. */
+        uint64_t reserved_2            : 1;
+        uint64_t way_select_dis        : 1;  /**< [  3:  3](R/W) Way select disable. Should be clear for normal operation.
+
+                                                                 When clear, the way selected on a cache miss is based on the corresponding
+                                                                 NIX_*[*WAY_MASK]/NPA_*[*WAY_MASK]; if way mask bit N is clear, any of NDC
+                                                                 ways 4*N through 4*N+3 may be selected, otherwise these ways are excluded
+                                                                 from selection.
+
+                                                                 When set on a cache miss with NIX_*[*WAY_MASK]/NPA_*[*WAY_MASK] != 0xFFFF,
+                                                                 NDC ignores the way mask and allows any way to be selected/allocated.
+
+                                                                 Requests with NIX_*[*WAY_MASK]/NPA_*[*WAY_MASK] == 0xFFFF bypass the
+                                                                 NDC cache and are not affected by this bit. */
+        uint64_t lock_dis              : 1;  /**< [  4:  4](R/W) Lock disabled. When set, NDC will not execute any command with lock bit set and report an error
+                                                                 back to port if command has lock bit set. Unlock command is not effected by this CSR.
+                                                                 When cleared NDC will process any command with lock bit set. */
+        uint64_t reserved_5_7          : 3;
+        uint64_t perf_mode             : 4;  /**< [ 11:  8](R/W) For diagnostic use only.
+                                                                 Internal:
+                                                                 These bits will eventually be used to limit performance
+                                                                 -- in some TBD manner -- in hopes that the lower-performance
+                                                                 mode(s) avoid triggering bugs fixed late in the design cycle. */
+        uint64_t dis_unjam_w3a         : 1;  /**< [ 12: 12](R/W) For diagnostic use only.
+                                                                 Internal:
+                                                                 "Setting this bit will disable the fix for McBuggin #36640.
+                                                                 In short, the deadlock unjam mechanism will be disabled, such that
+                                                                 the particular deadlock described in the bug becomes possible again;
+                                                                 however, any inadvertent bug introduced by the fix could be avoided." */
+        uint64_t dis_sync_mods         : 1;  /**< [ 13: 13](R/W) For diagnostic use only.
+                                                                 Internal:
+                                                                 Setting this bit will disable TBD late fixes introduced to
+                                                                 resolve issues with FLR.SYNC operations.  As the design team
+                                                                 adds consumers of this bit, the description will be updated. */
+        uint64_t reserved_14_63        : 50;
+#endif /* Word 0 - End */
+    } cnf95xxp2;
     /* struct cavm_ndcx_af_ctl_s loki; */
 };
 typedef union cavm_ndcx_af_ctl cavm_ndcx_af_ctl_t;

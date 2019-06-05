@@ -22,13 +22,314 @@
 /**
  * Enumeration ecmp_comp_meth_e
  *
- * eCMP Compression Method Enumeration
- * Enumerates compression method.
+ * INTERNAL: ECMP Compression Method Enumeration
+ *
+ * Internal:
+ * FIXME remove, use ECPRI_COMP_METH_E instead.
  */
 #define CAVM_ECMP_COMP_METH_E_FBFPC (1)
 #define CAVM_ECMP_COMP_METH_E_FMC (4)
 #define CAVM_ECMP_COMP_METH_E_FULC (3)
 #define CAVM_ECMP_COMP_METH_E_FUNC (0)
+
+/**
+ * Enumeration ecpri_comp_meth_e
+ *
+ * eCPRI Compression Method Enumeration
+ * Enumerates values of ECPRI_SECTION_HDR_SW_S[UD_COMP_METH],
+ * ECMP_JDX()_CFG[COMP_METH], and EDEC_JDX()_CFG[COMP_METH].
+ */
+#define CAVM_ECPRI_COMP_METH_E_BFP (1)
+#define CAVM_ECPRI_COMP_METH_E_MODULATION (4)
+#define CAVM_ECPRI_COMP_METH_E_MU_LAW (3)
+#define CAVM_ECPRI_COMP_METH_E_NO_COMP (0)
+
+/**
+ * Structure ecpri_hdr_s
+ *
+ * eCPRI Transport Header Structure
+ * This structure specifies the format of the eCPRI transport header as specified
+ * by the eCPRI standard.
+ */
+union cavm_ecpri_hdr_s
+{
+    uint64_t u;
+    struct cavm_ecpri_hdr_s_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t ver                   : 4;  /**< [ 63: 60] eCPRI version. */
+        uint64_t reserved_57_59        : 3;
+        uint64_t concatenation         : 1;  /**< [ 56: 56] Concatenation indicator. */
+        uint64_t msg_type              : 8;  /**< [ 55: 48] Message type. */
+        uint64_t pyld_size             : 16; /**< [ 47: 32] Payload size in bytes. */
+        uint64_t pc_id                 : 16; /**< [ 31: 16] eAxC identifier. */
+        uint64_t seq_id                : 16; /**< [ 15:  0] Sequence identifier. */
+#else /* Word 0 - Little Endian */
+        uint64_t seq_id                : 16; /**< [ 15:  0] Sequence identifier. */
+        uint64_t pc_id                 : 16; /**< [ 31: 16] eAxC identifier. */
+        uint64_t pyld_size             : 16; /**< [ 47: 32] Payload size in bytes. */
+        uint64_t msg_type              : 8;  /**< [ 55: 48] Message type. */
+        uint64_t concatenation         : 1;  /**< [ 56: 56] Concatenation indicator. */
+        uint64_t reserved_57_59        : 3;
+        uint64_t ver                   : 4;  /**< [ 63: 60] eCPRI version. */
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_ecpri_hdr_s_s cn; */
+};
+
+/**
+ * Structure ecpri_hdr_sw_s
+ *
+ * eCPRI Transport Header Software Structure
+ * This structure specifies the format of the eCPRI transport header used by
+ * software for user plane packets processed by ECMP and EDEC.
+ */
+union cavm_ecpri_hdr_sw_s
+{
+    uint64_t u;
+    struct cavm_ecpri_hdr_sw_s_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t seq_id                : 16; /**< [ 63: 48] Sequence identifier. */
+        uint64_t pc_id                 : 16; /**< [ 47: 32] eAxC identifier. */
+        uint64_t pyld_size             : 16; /**< [ 31: 16] Payload size in bytes. */
+        uint64_t msg_type              : 8;  /**< [ 15:  8] Message type. */
+        uint64_t concatenation         : 1;  /**< [  7:  7] Concatenation indicator. */
+        uint64_t reserved_4_6          : 3;
+        uint64_t ver                   : 4;  /**< [  3:  0] eCPRI version. */
+#else /* Word 0 - Little Endian */
+        uint64_t ver                   : 4;  /**< [  3:  0] eCPRI version. */
+        uint64_t reserved_4_6          : 3;
+        uint64_t concatenation         : 1;  /**< [  7:  7] Concatenation indicator. */
+        uint64_t msg_type              : 8;  /**< [ 15:  8] Message type. */
+        uint64_t pyld_size             : 16; /**< [ 31: 16] Payload size in bytes. */
+        uint64_t pc_id                 : 16; /**< [ 47: 32] eAxC identifier. */
+        uint64_t seq_id                : 16; /**< [ 63: 48] Sequence identifier. */
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_ecpri_hdr_sw_s_s cn; */
+};
+
+/**
+ * Structure ecpri_section_hdr_s
+ *
+ * eCPRI Section Header Structure
+ * This structure specifies the format of the section header in eCPRI user plane
+ * packets as specified by the ORAN standard. There is one ECPRI_SECTION_HDR_S for
+ * each data section in the packet.
+ */
+union cavm_ecpri_section_hdr_s
+{
+    uint32_t u;
+    struct cavm_ecpri_section_hdr_s_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t section_id            : 12; /**< [ 31: 20] Section identifier. */
+        uint32_t rb                    : 1;  /**< [ 19: 19] Resource block indicator. */
+        uint32_t sym_inc               : 1;  /**< [ 18: 18] Symbol number increment. */
+        uint32_t start_prb             : 10; /**< [ 17:  8] Starting PRB in the associated data section. */
+        uint32_t num_prb               : 8;  /**< [  7:  0] Number of PRBs within the associated data section. */
+#else /* Word 0 - Little Endian */
+        uint32_t num_prb               : 8;  /**< [  7:  0] Number of PRBs within the associated data section. */
+        uint32_t start_prb             : 10; /**< [ 17:  8] Starting PRB in the associated data section. */
+        uint32_t sym_inc               : 1;  /**< [ 18: 18] Symbol number increment. */
+        uint32_t rb                    : 1;  /**< [ 19: 19] Resource block indicator. */
+        uint32_t section_id            : 12; /**< [ 31: 20] Section identifier. */
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_ecpri_section_hdr_s_s cn; */
+};
+
+/**
+ * Structure ecpri_section_hdr_sw_s
+ *
+ * eCPRI Section Header Software Structure
+ * This structure specifies the format of the eCPRI section header used by
+ * software for user plane packets processed by ECMP and EDEC.
+ */
+union cavm_ecpri_section_hdr_sw_s
+{
+    uint64_t u;
+    struct cavm_ecpri_section_hdr_sw_s_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_60_63        : 4;
+        uint64_t ud_iqwidth            : 4;  /**< [ 59: 56] User data I/Q width. Bit width of each compressed I and Q sample in the
+                                                                 associated data section in flexible compression mode.
+                                                                 Reserved in fixed compression mode.
+
+                                                                 For ECMP, valid when ECMP_JDX()_CFG[FIX_MODE_EN] is clear.
+                                                                 If [UD_COMP_METH] = ECPRI_COMP_METH_E::MODULATION and [UD_IQWIDTH] = 0x0,
+                                                                 indicates BPSK modulation compression with a compressed width of 2 bits for
+                                                                 each I and Q sample. [UD_IQWIDTH] = 0x0 indicates a compressed width of 16
+                                                                 bits for all other compression methods. */
+        uint64_t reserved_52_55        : 4;
+        uint64_t ud_comp_meth          : 4;  /**< [ 51: 48] User data compression method. Compression method for the associated data
+                                                                 section in flexible compression mode, enumerated by ECPRI_COMP_METH_E.
+                                                                 Reserved in fixed compression mode.
+
+                                                                 For ECMP, valid when ECMP_JDX()_CFG[FIX_MODE_EN] is clear. */
+        uint64_t num_prb               : 16; /**< [ 47: 32] Number of PRBs within the associated data section.
+
+                                                                 For ECMP, if [NUM_PRB]\<15\> is set, hardware will zero out the associated
+                                                                 ECPRI_SECTION_HDR_S[NUM_PRB] in the outgoing packet, indicating that the
+                                                                 section contains the rest of PRBs in TBD. */
+        uint64_t reserved_26_31        : 6;
+        uint64_t start_prb             : 10; /**< [ 25: 16] Starting PRB in the associated data section. */
+        uint64_t sym_inc               : 1;  /**< [ 15: 15] Symbol number increment. */
+        uint64_t reserved_13_14        : 2;
+        uint64_t rb                    : 1;  /**< [ 12: 12] Resource block indicator. */
+        uint64_t section_id            : 12; /**< [ 11:  0] Section identifier. */
+#else /* Word 0 - Little Endian */
+        uint64_t section_id            : 12; /**< [ 11:  0] Section identifier. */
+        uint64_t rb                    : 1;  /**< [ 12: 12] Resource block indicator. */
+        uint64_t reserved_13_14        : 2;
+        uint64_t sym_inc               : 1;  /**< [ 15: 15] Symbol number increment. */
+        uint64_t start_prb             : 10; /**< [ 25: 16] Starting PRB in the associated data section. */
+        uint64_t reserved_26_31        : 6;
+        uint64_t num_prb               : 16; /**< [ 47: 32] Number of PRBs within the associated data section.
+
+                                                                 For ECMP, if [NUM_PRB]\<15\> is set, hardware will zero out the associated
+                                                                 ECPRI_SECTION_HDR_S[NUM_PRB] in the outgoing packet, indicating that the
+                                                                 section contains the rest of PRBs in TBD. */
+        uint64_t ud_comp_meth          : 4;  /**< [ 51: 48] User data compression method. Compression method for the associated data
+                                                                 section in flexible compression mode, enumerated by ECPRI_COMP_METH_E.
+                                                                 Reserved in fixed compression mode.
+
+                                                                 For ECMP, valid when ECMP_JDX()_CFG[FIX_MODE_EN] is clear. */
+        uint64_t reserved_52_55        : 4;
+        uint64_t ud_iqwidth            : 4;  /**< [ 59: 56] User data I/Q width. Bit width of each compressed I and Q sample in the
+                                                                 associated data section in flexible compression mode.
+                                                                 Reserved in fixed compression mode.
+
+                                                                 For ECMP, valid when ECMP_JDX()_CFG[FIX_MODE_EN] is clear.
+                                                                 If [UD_COMP_METH] = ECPRI_COMP_METH_E::MODULATION and [UD_IQWIDTH] = 0x0,
+                                                                 indicates BPSK modulation compression with a compressed width of 2 bits for
+                                                                 each I and Q sample. [UD_IQWIDTH] = 0x0 indicates a compressed width of 16
+                                                                 bits for all other compression methods. */
+        uint64_t reserved_60_63        : 4;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_ecpri_section_hdr_sw_s_s cn; */
+};
+
+/**
+ * Structure ecpri_timing_hdr_s
+ *
+ * eCPRI Timing Header Structure
+ * This structure specifies the format of the eCPRI timing header as specified by
+ * the ORAN standard.
+ */
+union cavm_ecpri_timing_hdr_s
+{
+    uint32_t u;
+    struct cavm_ecpri_timing_hdr_s_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t data_direction        : 1;  /**< [ 31: 31] Data direction.
+                                                                 0 = Receive (uplink).
+                                                                 1 = Transmit (downlink). */
+        uint32_t payload_version       : 3;  /**< [ 30: 28] Payload version. Must be 0x1. */
+        uint32_t filter_index          : 4;  /**< [ 27: 24] Filter index. */
+        uint32_t frame_id              : 8;  /**< [ 23: 16] Frame identifier. */
+        uint32_t subframe_id           : 4;  /**< [ 15: 12] Subframe identifier. */
+        uint32_t slot_id               : 6;  /**< [ 11:  6] Slot identifier. */
+        uint32_t symbol_id             : 6;  /**< [  5:  0] Symbol identifier. */
+#else /* Word 0 - Little Endian */
+        uint32_t symbol_id             : 6;  /**< [  5:  0] Symbol identifier. */
+        uint32_t slot_id               : 6;  /**< [ 11:  6] Slot identifier. */
+        uint32_t subframe_id           : 4;  /**< [ 15: 12] Subframe identifier. */
+        uint32_t frame_id              : 8;  /**< [ 23: 16] Frame identifier. */
+        uint32_t filter_index          : 4;  /**< [ 27: 24] Filter index. */
+        uint32_t payload_version       : 3;  /**< [ 30: 28] Payload version. Must be 0x1. */
+        uint32_t data_direction        : 1;  /**< [ 31: 31] Data direction.
+                                                                 0 = Receive (uplink).
+                                                                 1 = Transmit (downlink). */
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_ecpri_timing_hdr_s_s cn; */
+};
+
+/**
+ * Structure ecpri_timing_hdr_sw_s
+ *
+ * eCPRI Timing Header Software Structure
+ * This structure specifies the format of the eCPRI timing header used by software
+ * for U-Plane packets processed by ECMP and EDEC.
+ */
+union cavm_ecpri_timing_hdr_sw_s
+{
+    uint64_t u;
+    struct cavm_ecpri_timing_hdr_sw_s_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_54_63        : 10;
+        uint64_t symbol_id             : 6;  /**< [ 53: 48] Symbol identifier. */
+        uint64_t reserved_46_47        : 2;
+        uint64_t slot_id               : 6;  /**< [ 45: 40] Slot identifier. */
+        uint64_t reserved_36_39        : 4;
+        uint64_t subframe_id           : 4;  /**< [ 35: 32] Subframe identifier. */
+        uint64_t frame_id              : 8;  /**< [ 31: 24] Frame identifier. */
+        uint64_t reserved_20_23        : 4;
+        uint64_t filter_index          : 4;  /**< [ 19: 16] Filter index. */
+        uint64_t reserved_11_15        : 5;
+        uint64_t payload_version       : 3;  /**< [ 10:  8] Payload version. Must be 0x1. */
+        uint64_t reserved_1_7          : 7;
+        uint64_t data_direction        : 1;  /**< [  0:  0] Data direction.
+                                                                 0 = Receive (uplink).
+                                                                 1 = Transmit (downlink). */
+#else /* Word 0 - Little Endian */
+        uint64_t data_direction        : 1;  /**< [  0:  0] Data direction.
+                                                                 0 = Receive (uplink).
+                                                                 1 = Transmit (downlink). */
+        uint64_t reserved_1_7          : 7;
+        uint64_t payload_version       : 3;  /**< [ 10:  8] Payload version. Must be 0x1. */
+        uint64_t reserved_11_15        : 5;
+        uint64_t filter_index          : 4;  /**< [ 19: 16] Filter index. */
+        uint64_t reserved_20_23        : 4;
+        uint64_t frame_id              : 8;  /**< [ 31: 24] Frame identifier. */
+        uint64_t subframe_id           : 4;  /**< [ 35: 32] Subframe identifier. */
+        uint64_t reserved_36_39        : 4;
+        uint64_t slot_id               : 6;  /**< [ 45: 40] Slot identifier. */
+        uint64_t reserved_46_47        : 2;
+        uint64_t symbol_id             : 6;  /**< [ 53: 48] Symbol identifier. */
+        uint64_t reserved_54_63        : 10;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_ecpri_timing_hdr_sw_s_s cn; */
+};
+
+/**
+ * Structure ecpri_ud_comp_hdr_s
+ *
+ * eCPRI User Data Compression Header Structure
+ * This structure specifies the format of the user data compression header
+ * (including reserved field) in eCPRI user plane packets as specified by the ORAN
+ * standard. Not present in packets with fixed compression. In packets with
+ * flexible compression, each packet section has a ECPRI_UD_COMP_HDR_S immediately
+ * following the associated ECPRI_SECTION_HDR_S.
+ */
+union cavm_ecpri_ud_comp_hdr_s
+{
+    uint32_t u;
+    struct cavm_ecpri_ud_comp_hdr_s_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t reserved_16_31        : 16;
+        uint32_t ud_iqwidth            : 4;  /**< [ 15: 12] User data I/Q width. Bit width of each compressed I and Q sample in the
+                                                                 associated data section. */
+        uint32_t ud_comp_meth          : 4;  /**< [ 11:  8] User data compression method enumerated by ECPRI_COMP_METH_E. */
+        uint32_t reserved_0_7          : 8;
+#else /* Word 0 - Little Endian */
+        uint32_t reserved_0_7          : 8;
+        uint32_t ud_comp_meth          : 4;  /**< [ 11:  8] User data compression method enumerated by ECPRI_COMP_METH_E. */
+        uint32_t ud_iqwidth            : 4;  /**< [ 15: 12] User data I/Q width. Bit width of each compressed I and Q sample in the
+                                                                 associated data section. */
+        uint32_t reserved_16_31        : 16;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_ecpri_ud_comp_hdr_s_s cn; */
+};
 
 /**
  * Register (RSL) ecmp_bp_test0
@@ -663,29 +964,57 @@ union cavm_ecmp_jdxx_cfg
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_32_63        : 32;
-        uint64_t num_sections          : 8;  /**< [ 31: 24](R/W) Number of sections in the packet. */
+        uint64_t num_sections          : 8;  /**< [ 31: 24](R/W) Number of data sections in the packet. Must be non-zero. */
         uint64_t reserved_16_23        : 8;
         uint64_t byte_swap_disable     : 1;  /**< [ 15: 15](R/W) Disables the byte swap toward MHBW. */
         uint64_t ecpri_hdr_present     : 1;  /**< [ 14: 14](R/W) eCPRI header present in input header buffer and assembled packet */
         uint64_t timing_hdr_present    : 1;  /**< [ 13: 13](R/W) Timing header present in input header buffer and assembled packet */
         uint64_t reserved_9_12         : 4;
-        uint64_t fix_mode_en           : 1;  /**< [  8:  8](R/W) When set, compression method is fixed and taken from [COMP_METH].
-                                                                 When clear, compression method is defined by packet's section headers. */
-        uint64_t iqwidth               : 4;  /**< [  7:  4](R/W) Width of compressed I/Q. Valid only when [FIX_MODE_EN] is set. */
-        uint64_t comp_meth             : 4;  /**< [  3:  0](R/W) Compression method. Enumerated by ECMP_COMP_METH_E Valid only when
-                                                                 [FIX_MODE_EN] is set. */
+        uint64_t fix_mode_en           : 1;  /**< [  8:  8](R/W) When set, the compression mode is fixed. The compression method and width
+                                                                 for the entire packet are specified by [COMP_METH] and [IQWIDTH], respectively.
+
+                                                                 When clear, the compression method and width are flexible. For each data
+                                                                 section in the packet, the compression method and width are specified by
+                                                                 ECPRI_SECTION_HDR_SW_S[UD_COMP_METH] and
+                                                                 ECPRI_SECTION_HDR_SW_S[UD_IQWIDTH] in the associated section header. */
+        uint64_t iqwidth               : 4;  /**< [  7:  4](R/W) I/Q width. Bit width of each compressed I and Q sample in the packet in
+                                                                 fixed compression mode. Valid when [FIX_MODE_EN] is set.
+
+                                                                 If [FIX_MODE_EN] is set, [COMP_METH] = ECPRI_COMP_METH_E::MODULATION and
+                                                                 [IQWIDTH] = 0, indicates BPSK modulation compression with a compressed
+                                                                 width of 2 bits for each I and Q sample. [IQWIDTH] = 0x0 indicates a
+                                                                 compressed width of 16 bits for all other compression methods. */
+        uint64_t comp_meth             : 4;  /**< [  3:  0](R/W) Compression method enumerated by ECPRI_COMP_METH_E. Valid when
+                                                                 [FIX_MODE_EN] is set.
+
+                                                                 Internal:
+                                                                 FIXME change enumerated_by value to "ECPRI_COMP_METH_E" */
 #else /* Word 0 - Little Endian */
-        uint64_t comp_meth             : 4;  /**< [  3:  0](R/W) Compression method. Enumerated by ECMP_COMP_METH_E Valid only when
-                                                                 [FIX_MODE_EN] is set. */
-        uint64_t iqwidth               : 4;  /**< [  7:  4](R/W) Width of compressed I/Q. Valid only when [FIX_MODE_EN] is set. */
-        uint64_t fix_mode_en           : 1;  /**< [  8:  8](R/W) When set, compression method is fixed and taken from [COMP_METH].
-                                                                 When clear, compression method is defined by packet's section headers. */
+        uint64_t comp_meth             : 4;  /**< [  3:  0](R/W) Compression method enumerated by ECPRI_COMP_METH_E. Valid when
+                                                                 [FIX_MODE_EN] is set.
+
+                                                                 Internal:
+                                                                 FIXME change enumerated_by value to "ECPRI_COMP_METH_E" */
+        uint64_t iqwidth               : 4;  /**< [  7:  4](R/W) I/Q width. Bit width of each compressed I and Q sample in the packet in
+                                                                 fixed compression mode. Valid when [FIX_MODE_EN] is set.
+
+                                                                 If [FIX_MODE_EN] is set, [COMP_METH] = ECPRI_COMP_METH_E::MODULATION and
+                                                                 [IQWIDTH] = 0, indicates BPSK modulation compression with a compressed
+                                                                 width of 2 bits for each I and Q sample. [IQWIDTH] = 0x0 indicates a
+                                                                 compressed width of 16 bits for all other compression methods. */
+        uint64_t fix_mode_en           : 1;  /**< [  8:  8](R/W) When set, the compression mode is fixed. The compression method and width
+                                                                 for the entire packet are specified by [COMP_METH] and [IQWIDTH], respectively.
+
+                                                                 When clear, the compression method and width are flexible. For each data
+                                                                 section in the packet, the compression method and width are specified by
+                                                                 ECPRI_SECTION_HDR_SW_S[UD_COMP_METH] and
+                                                                 ECPRI_SECTION_HDR_SW_S[UD_IQWIDTH] in the associated section header. */
         uint64_t reserved_9_12         : 4;
         uint64_t timing_hdr_present    : 1;  /**< [ 13: 13](R/W) Timing header present in input header buffer and assembled packet */
         uint64_t ecpri_hdr_present     : 1;  /**< [ 14: 14](R/W) eCPRI header present in input header buffer and assembled packet */
         uint64_t byte_swap_disable     : 1;  /**< [ 15: 15](R/W) Disables the byte swap toward MHBW. */
         uint64_t reserved_16_23        : 8;
-        uint64_t num_sections          : 8;  /**< [ 31: 24](R/W) Number of sections in the packet. */
+        uint64_t num_sections          : 8;  /**< [ 31: 24](R/W) Number of data sections in the packet. Must be non-zero. */
         uint64_t reserved_32_63        : 32;
 #endif /* Word 0 - End */
     } s;

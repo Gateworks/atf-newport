@@ -22,8 +22,11 @@
 /**
  * Enumeration edec_comp_meth_e
  *
- * eDEC Compression Method Enumeration
- * Enumerates compression method. See also xRAN v02.01 Table 6.4.
+ * INTERNAL: EDEC Compression Method Enumeration
+ *
+ * Enumerates compression method. See also ORAN v02.01 Table 6.4.
+ * Internal:
+ * FIXME remove, use ECPRI_COMP_METH_E instead.
  */
 #define CAVM_EDEC_COMP_METH_E_FBFPC (1)
 #define CAVM_EDEC_COMP_METH_E_FMC (4)
@@ -42,16 +45,15 @@ union cavm_edec_lut_csr0_s
     struct cavm_edec_lut_csr0_s_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_41_63        : 23;
+        uint64_t reserved_61_63        : 3;
+        uint64_t num_symbols_inv20     : 20; /**< [ 60: 41] Constant software needs to provide: 2**20 / NUM_SYMBOLS. */
         uint64_t next_buf_idx          : 8;  /**< [ 40: 33] Next available buffer index. This field is managed by hardware. */
-        uint64_t fix_udcomp_hdr        : 8;  /**< [ 32: 25] Same as udCompHdr = {udIQWidth (3:0), udCompMeth (3:0)} in XRAN spec. */
-        uint64_t en_dyn_comp           : 1;  /**< [ 24: 24] Enable dynamic computing.
+        uint64_t fix_udcomp_hdr        : 8;  /**< [ 32: 25] Same as udCompHdr = {udIQWidth (3:0), udCompMeth (3:0)} in ORAN spec. */
+        uint64_t fix_mode_en           : 1;  /**< [ 24: 24] Enable dynamic computing.
                                                                  0: Use Fixed Decompression method (described by [FIX_UDCOMP_HDR]).
                                                                  1: Use Dynamic Decompression method. */
         uint64_t num_slot_exp_1ms      : 2;  /**< [ 23: 22] Log base two of the number of slots per 1 ms.
-
                                                                  LTE: 0 or 1 (for 1 or 2 slots).
-
                                                                  5G-NR: 0, 1, 2, or 3 (for 1, 2, 4, or 8 slots). */
         uint64_t num_sym_per_slot      : 6;  /**< [ 21: 16] Number of symbols per slot minus 1. */
         uint64_t num_buffers           : 8;  /**< [ 15:  8] Number of buffers minus 1. */
@@ -64,17 +66,17 @@ union cavm_edec_lut_csr0_s
                                                                  are solely based on the base addresses, buffer sizes and buffer indexes
                                                                  specified for each FLOW_ID in the LUT. For more details, consult the
                                                                  "Header Circular Buffer Address Calculation" and "Data (PRBs) Circular Buffer
-                                                                 Address Calculation - EN_CALC_ADD = 0" sections of the technical specification
+                                                                 Address Calculation - EN_ADDR_CALC = 0" sections of the technical specification
                                                                  document.
 
-                                                                 When the address calculation is used, the PRD (data) address calculation
+                                                                 When the address calculation is used, the PRB (data) address calculation
                                                                  takes into account the subfrm_id, slot_id, and symbol_id from each timing header,
                                                                  symInc and rb from the section header
                                                                  as well as num_slot_exp_1ms, num_sym_per_slot, num_symbols, num_buffers,
                                                                  next_buf_id specified for each FLOW_ID in the LUT. The header address calculation
                                                                  remains the same as for the sequence ID case.
                                                                  For more details, consult the "Data (PRBs) Circular Buffer Address Calculation
-                                                                 - EN_CALC_ADD = 1" section of the technical specification document. */
+                                                                 - EN_ADDR_CALC = 1" section of the technical specification document. */
         uint64_t flow_en               : 1;  /**< [  0:  0] Flow enable.
                                                                  0 = Flow is disabled.
                                                                  1 = Flow is enabled. */
@@ -90,31 +92,30 @@ union cavm_edec_lut_csr0_s
                                                                  are solely based on the base addresses, buffer sizes and buffer indexes
                                                                  specified for each FLOW_ID in the LUT. For more details, consult the
                                                                  "Header Circular Buffer Address Calculation" and "Data (PRBs) Circular Buffer
-                                                                 Address Calculation - EN_CALC_ADD = 0" sections of the technical specification
+                                                                 Address Calculation - EN_ADDR_CALC = 0" sections of the technical specification
                                                                  document.
 
-                                                                 When the address calculation is used, the PRD (data) address calculation
+                                                                 When the address calculation is used, the PRB (data) address calculation
                                                                  takes into account the subfrm_id, slot_id, and symbol_id from each timing header,
                                                                  symInc and rb from the section header
                                                                  as well as num_slot_exp_1ms, num_sym_per_slot, num_symbols, num_buffers,
                                                                  next_buf_id specified for each FLOW_ID in the LUT. The header address calculation
                                                                  remains the same as for the sequence ID case.
                                                                  For more details, consult the "Data (PRBs) Circular Buffer Address Calculation
-                                                                 - EN_CALC_ADD = 1" section of the technical specification document. */
+                                                                 - EN_ADDR_CALC = 1" section of the technical specification document. */
         uint64_t num_symbols           : 6;  /**< [  7:  2] Number of symbols minus 1. */
         uint64_t num_buffers           : 8;  /**< [ 15:  8] Number of buffers minus 1. */
         uint64_t num_sym_per_slot      : 6;  /**< [ 21: 16] Number of symbols per slot minus 1. */
         uint64_t num_slot_exp_1ms      : 2;  /**< [ 23: 22] Log base two of the number of slots per 1 ms.
-
                                                                  LTE: 0 or 1 (for 1 or 2 slots).
-
                                                                  5G-NR: 0, 1, 2, or 3 (for 1, 2, 4, or 8 slots). */
-        uint64_t en_dyn_comp           : 1;  /**< [ 24: 24] Enable dynamic computing.
+        uint64_t fix_mode_en           : 1;  /**< [ 24: 24] Enable dynamic computing.
                                                                  0: Use Fixed Decompression method (described by [FIX_UDCOMP_HDR]).
                                                                  1: Use Dynamic Decompression method. */
-        uint64_t fix_udcomp_hdr        : 8;  /**< [ 32: 25] Same as udCompHdr = {udIQWidth (3:0), udCompMeth (3:0)} in XRAN spec. */
+        uint64_t fix_udcomp_hdr        : 8;  /**< [ 32: 25] Same as udCompHdr = {udIQWidth (3:0), udCompMeth (3:0)} in ORAN spec. */
         uint64_t next_buf_idx          : 8;  /**< [ 40: 33] Next available buffer index. This field is managed by hardware. */
-        uint64_t reserved_41_63        : 23;
+        uint64_t num_symbols_inv20     : 20; /**< [ 60: 41] Constant software needs to provide: 2**20 / NUM_SYMBOLS. */
+        uint64_t reserved_61_63        : 3;
 #endif /* Word 0 - End */
     } s;
     /* struct cavm_edec_lut_csr0_s_s cn; */
@@ -132,13 +133,23 @@ union cavm_edec_lut_csr1_s
     struct cavm_edec_lut_csr1_s_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t data_buffer_size      : 10; /**< [ 63: 54] Size of data buffers, expressed as number of 128-bit words minus 1. */
-        uint64_t target_mem            : 1;  /**< [ 53: 53] Specifies the target memory for the address, enumerated by MHBW_TMEM_SEL_E. */
-        uint64_t base_addr_data        : 53; /**< [ 52:  0] Base address for data. */
+        uint64_t reserved_63           : 1;
+        uint64_t data_write_hp         : 1;  /**< [ 62: 62] Send data write command with high priority when set. */
+        uint64_t data_write_cmd_type   : 2;  /**< [ 61: 60] Command to send when writing data to GHB.
+                                                                 Enumerated by chip_mhbw_pkg::MHBW_PNB_WR_CMD_E_t. */
+        uint64_t num_tot_prb           : 10; /**< [ 59: 50] Size of data buffers, expressed as number of 16-byte words minus 1. */
+        uint64_t data_target_mem       : 1;  /**< [ 49: 49] Specifies the target memory for the address.
+                                                                 Enumerated by MHBW_TMEM_SEL_E. */
+        uint64_t base_addr_data        : 49; /**< [ 48:  0] 49b 16-byte aligned base address for data. */
 #else /* Word 0 - Little Endian */
-        uint64_t base_addr_data        : 53; /**< [ 52:  0] Base address for data. */
-        uint64_t target_mem            : 1;  /**< [ 53: 53] Specifies the target memory for the address, enumerated by MHBW_TMEM_SEL_E. */
-        uint64_t data_buffer_size      : 10; /**< [ 63: 54] Size of data buffers, expressed as number of 128-bit words minus 1. */
+        uint64_t base_addr_data        : 49; /**< [ 48:  0] 49b 16-byte aligned base address for data. */
+        uint64_t data_target_mem       : 1;  /**< [ 49: 49] Specifies the target memory for the address.
+                                                                 Enumerated by MHBW_TMEM_SEL_E. */
+        uint64_t num_tot_prb           : 10; /**< [ 59: 50] Size of data buffers, expressed as number of 16-byte words minus 1. */
+        uint64_t data_write_cmd_type   : 2;  /**< [ 61: 60] Command to send when writing data to GHB.
+                                                                 Enumerated by chip_mhbw_pkg::MHBW_PNB_WR_CMD_E_t. */
+        uint64_t data_write_hp         : 1;  /**< [ 62: 62] Send data write command with high priority when set. */
+        uint64_t reserved_63           : 1;
 #endif /* Word 0 - End */
     } s;
     /* struct cavm_edec_lut_csr1_s_s cn; */
@@ -156,15 +167,27 @@ union cavm_edec_lut_csr2_s
     struct cavm_edec_lut_csr2_s_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_62_63        : 2;
-        uint64_t hdr_buffer_size       : 8;  /**< [ 61: 54] Size of header buffers, expressed as number of 128-bit words minus 1. */
-        uint64_t target_mem            : 1;  /**< [ 53: 53] Specifies the target memory for the address, enumerated by MHBW_TMEM_SEL_E. */
-        uint64_t base_addr_hdr         : 53; /**< [ 52:  0] Base address for headers. */
+        uint64_t reserved_63           : 1;
+        uint64_t hdr_write_hp          : 1;  /**< [ 62: 62] Send header write command with high priority when set. */
+        uint64_t hdr_read_cmd_type     : 2;  /**< [ 61: 60] Command to put in RD_RMA_CFG_WORD0 (see eDEC technical specification).
+                                                                 Enumerated by chip_mhbw_pkg::MHBW_PNB_RD_CMD_E_t. */
+        uint64_t hdr_write_cmd_type    : 2;  /**< [ 59: 58] Command to send when writing headers to GHB.
+                                                                 Enumerated by chip_mhbw_pkg::MHBW_PNB_WR_CMD_E_t. */
+        uint64_t hdr_buffer_size       : 8;  /**< [ 57: 50] Size of header buffers in 16 byte words minus 1. */
+        uint64_t hdr_target_mem        : 1;  /**< [ 49: 49] Specifies the target memory for the address.
+                                                                 Enumerated by MHBW_TMEM_SEL_E. */
+        uint64_t base_addr_hdr         : 49; /**< [ 48:  0] 49b 16-byte aligned base address for headers. */
 #else /* Word 0 - Little Endian */
-        uint64_t base_addr_hdr         : 53; /**< [ 52:  0] Base address for headers. */
-        uint64_t target_mem            : 1;  /**< [ 53: 53] Specifies the target memory for the address, enumerated by MHBW_TMEM_SEL_E. */
-        uint64_t hdr_buffer_size       : 8;  /**< [ 61: 54] Size of header buffers, expressed as number of 128-bit words minus 1. */
-        uint64_t reserved_62_63        : 2;
+        uint64_t base_addr_hdr         : 49; /**< [ 48:  0] 49b 16-byte aligned base address for headers. */
+        uint64_t hdr_target_mem        : 1;  /**< [ 49: 49] Specifies the target memory for the address.
+                                                                 Enumerated by MHBW_TMEM_SEL_E. */
+        uint64_t hdr_buffer_size       : 8;  /**< [ 57: 50] Size of header buffers in 16 byte words minus 1. */
+        uint64_t hdr_write_cmd_type    : 2;  /**< [ 59: 58] Command to send when writing headers to GHB.
+                                                                 Enumerated by chip_mhbw_pkg::MHBW_PNB_WR_CMD_E_t. */
+        uint64_t hdr_read_cmd_type     : 2;  /**< [ 61: 60] Command to put in RD_RMA_CFG_WORD0 (see eDEC technical specification).
+                                                                 Enumerated by chip_mhbw_pkg::MHBW_PNB_RD_CMD_E_t. */
+        uint64_t hdr_write_hp          : 1;  /**< [ 62: 62] Send header write command with high priority when set. */
+        uint64_t reserved_63           : 1;
 #endif /* Word 0 - End */
     } s;
     /* struct cavm_edec_lut_csr2_s_s cn; */
@@ -1464,19 +1487,9 @@ union cavm_edec_slotx_cfg
         uint64_t num_sections          : 8;  /**< [ 31: 24](R/W) Number of sections in the packet. */
         uint64_t reserved_16_23        : 8;
         uint64_t byte_swap_disable     : 1;  /**< [ 15: 15](R/W) Disables the byte swap toward MHBW. */
-        uint64_t reserved_9_14         : 6;
-        uint64_t fix_mode_en           : 1;  /**< [  8:  8](R/W) When set, compression method is fixed and taken from [COMP_METH].
-                                                                 When clear, compression method is defined by packet's section headers. */
-        uint64_t iqwidth               : 4;  /**< [  7:  4](R/W) Width of compressed I/Q. Valid only when [FIX_MODE_EN] is set. */
-        uint64_t comp_meth             : 4;  /**< [  3:  0](R/W) Compression method. Enumerated by EDEC_COMP_METH_E Valid only if
-                                                                 [FIX_MODE_EN] is set. */
+        uint64_t reserved_0_14         : 15;
 #else /* Word 0 - Little Endian */
-        uint64_t comp_meth             : 4;  /**< [  3:  0](R/W) Compression method. Enumerated by EDEC_COMP_METH_E Valid only if
-                                                                 [FIX_MODE_EN] is set. */
-        uint64_t iqwidth               : 4;  /**< [  7:  4](R/W) Width of compressed I/Q. Valid only when [FIX_MODE_EN] is set. */
-        uint64_t fix_mode_en           : 1;  /**< [  8:  8](R/W) When set, compression method is fixed and taken from [COMP_METH].
-                                                                 When clear, compression method is defined by packet's section headers. */
-        uint64_t reserved_9_14         : 6;
+        uint64_t reserved_0_14         : 15;
         uint64_t byte_swap_disable     : 1;  /**< [ 15: 15](R/W) Disables the byte swap toward MHBW. */
         uint64_t reserved_16_23        : 8;
         uint64_t num_sections          : 8;  /**< [ 31: 24](R/W) Number of sections in the packet. */
@@ -1505,7 +1518,7 @@ static inline uint64_t CAVM_EDEC_SLOTX_CFG(unsigned long a)
  * Register (RSL) edec_slot#_hdr_out_cfg_word0
  *
  * EDEC Output Configuration Word0 Register
- * This register contains data eDEC uses to form the first half of
+ * This register contains data EDEC uses to form the first half of
  * the AB configuration required to be written if so instructed by
  * LUT[FLOW_ID].psm_job_cmd_word0.opcode.
  */
@@ -1516,11 +1529,11 @@ union cavm_edec_slotx_hdr_out_cfg_word0
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t data                  : 64; /**< [ 63:  0](R/W) When LUT[FLOW_ID].psm_job_cmd_word0.opcode & 0x1f == 0x1,
-                                                                 eDEC writes out EDEC_SLOT(0..2)_HDR_OUT_CFG_WORD0[DATA] as
+                                                                 EDEC writes out EDEC_SLOT(0..2)_HDR_OUT_CFG_WORD0[DATA] as
                                                                  CFG_SECTION_WORD0 immediately after RD_DMA_CFG_WORD0,1. */
 #else /* Word 0 - Little Endian */
         uint64_t data                  : 64; /**< [ 63:  0](R/W) When LUT[FLOW_ID].psm_job_cmd_word0.opcode & 0x1f == 0x1,
-                                                                 eDEC writes out EDEC_SLOT(0..2)_HDR_OUT_CFG_WORD0[DATA] as
+                                                                 EDEC writes out EDEC_SLOT(0..2)_HDR_OUT_CFG_WORD0[DATA] as
                                                                  CFG_SECTION_WORD0 immediately after RD_DMA_CFG_WORD0,1. */
 #endif /* Word 0 - End */
     } s;
@@ -1546,7 +1559,7 @@ static inline uint64_t CAVM_EDEC_SLOTX_HDR_OUT_CFG_WORD0(unsigned long a)
  * Register (RSL) edec_slot#_hdr_out_cfg_word1
  *
  * EDEC Output Configuration Word1 Register
- * This register contains data eDEC uses to form the second half of
+ * This register contains data EDEC uses to form the second half of
  * the AB configuration required to be written if so instructed by
  * LUT[FLOW_ID].psm_job_cmd_word0.opcode.
  */
@@ -1557,17 +1570,17 @@ union cavm_edec_slotx_hdr_out_cfg_word1
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t data                  : 48; /**< [ 63: 16](R/W) When LUT[FLOW_ID].psm_job_cmd_word0.opcode & 0x1f == 0x1,
-                                                                 eDEC writes out EDEC_SLOT(0..2)_HDR_OUT_CFG_WORD1[DATA] as
+                                                                 EDEC writes out EDEC_SLOT(0..2)_HDR_OUT_CFG_WORD1[DATA] as
                                                                  CFG_SECTION_WORD1 immediately after CFG_SECTION_WORD0.
-                                                                 Note that eDEC will fill in CFG_SECTION_WORD1[15:0] with
+                                                                 Note that EDEC will fill in CFG_SECTION_WORD1[15:0] with
                                                                  NUM_SECTIONS[15:0]. */
         uint64_t reserved_0_15         : 16;
 #else /* Word 0 - Little Endian */
         uint64_t reserved_0_15         : 16;
         uint64_t data                  : 48; /**< [ 63: 16](R/W) When LUT[FLOW_ID].psm_job_cmd_word0.opcode & 0x1f == 0x1,
-                                                                 eDEC writes out EDEC_SLOT(0..2)_HDR_OUT_CFG_WORD1[DATA] as
+                                                                 EDEC writes out EDEC_SLOT(0..2)_HDR_OUT_CFG_WORD1[DATA] as
                                                                  CFG_SECTION_WORD1 immediately after CFG_SECTION_WORD0.
-                                                                 Note that eDEC will fill in CFG_SECTION_WORD1[15:0] with
+                                                                 Note that EDEC will fill in CFG_SECTION_WORD1[15:0] with
                                                                  NUM_SECTIONS[15:0]. */
 #endif /* Word 0 - End */
     } s;
@@ -1593,7 +1606,7 @@ static inline uint64_t CAVM_EDEC_SLOTX_HDR_OUT_CFG_WORD1(unsigned long a)
  * Register (RSL) edec_slot#_hdr_out_dsp_jd
  *
  * EDEC Output DSP Job Descriptor Register
- * This register contains data eDEC uses to form the job descriptor
+ * This register contains data EDEC uses to form the job descriptor
  * it will send to PSM for processing by DSP block if so instructed
  * by LUT[FLOW_ID].psm_job_cmd_word0.opcode.
  */
@@ -1604,20 +1617,20 @@ union cavm_edec_slotx_hdr_out_dsp_jd
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_8_63         : 56;
-        uint64_t toth                  : 4;  /**< [  7:  4](R/W) When LUT[FLOW_ID].psm_job_cmd_word0.opcode & 0x1f == 0x1, eDEC
+        uint64_t toth                  : 4;  /**< [  7:  4](R/W) When LUT[FLOW_ID].psm_job_cmd_word0.opcode & 0x1f == 0x1, EDEC
                                                                  will start header write-back with a job-descriptor containing
                                                                  6 64-bit words destined for DSP. TOTH goes to bits 60..57 of
                                                                  the first descriptor word, MDBW_JD_HDR_WORD0. */
-        uint64_t toth_tick             : 4;  /**< [  3:  0](R/W) When LUT[FLOW_ID].psm_job_cmd_word0.opcode & 0x1f == 0x1, eDEC
+        uint64_t toth_tick             : 4;  /**< [  3:  0](R/W) When LUT[FLOW_ID].psm_job_cmd_word0.opcode & 0x1f == 0x1, EDEC
                                                                  will start header write-back with a job-descriptor containing
                                                                  6 64-bit words destined for DSP. TOTH_TICK goes to bits 56..53
                                                                  of the first descriptor word, MDBW_JD_HDR_WORD0. */
 #else /* Word 0 - Little Endian */
-        uint64_t toth_tick             : 4;  /**< [  3:  0](R/W) When LUT[FLOW_ID].psm_job_cmd_word0.opcode & 0x1f == 0x1, eDEC
+        uint64_t toth_tick             : 4;  /**< [  3:  0](R/W) When LUT[FLOW_ID].psm_job_cmd_word0.opcode & 0x1f == 0x1, EDEC
                                                                  will start header write-back with a job-descriptor containing
                                                                  6 64-bit words destined for DSP. TOTH_TICK goes to bits 56..53
                                                                  of the first descriptor word, MDBW_JD_HDR_WORD0. */
-        uint64_t toth                  : 4;  /**< [  7:  4](R/W) When LUT[FLOW_ID].psm_job_cmd_word0.opcode & 0x1f == 0x1, eDEC
+        uint64_t toth                  : 4;  /**< [  7:  4](R/W) When LUT[FLOW_ID].psm_job_cmd_word0.opcode & 0x1f == 0x1, EDEC
                                                                  will start header write-back with a job-descriptor containing
                                                                  6 64-bit words destined for DSP. TOTH goes to bits 60..57 of
                                                                  the first descriptor word, MDBW_JD_HDR_WORD0. */
