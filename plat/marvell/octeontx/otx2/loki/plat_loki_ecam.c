@@ -34,7 +34,7 @@ extern const struct ecam_platform_defs plat_ops;
 /* Probe GSERNX_LANE_SCRATCHX[] for CGX config */
 static int is_qlm_configured_as_cgx(int qlm)
 {
-	octeontx_qlm_state_lane_t qlm_state;
+	qlm_state_lane_t qlm_state;
 	int lnum;
 
 	lnum = plat_octeontx_scfg->qlm_max_lane_num[qlm];
