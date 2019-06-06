@@ -9,6 +9,7 @@
 #include <platform_setup.h>
 #include <octeontx_common.h>
 
+#include <debug.h>
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
@@ -54,6 +55,13 @@ static int is_qlm_configured_as_cgx(int qlm)
 static int ecam_probe_cgx(unsigned long long arg)
 {
 	debug_plat_ecam("%s arg %lld\n", __func__, arg);
+
+	/*
+	 * FIXME: Reading from GSERN_LANE_SCRATCH doesn't work on loki platform
+	 *        so for now cgx probing is skipped.
+	 */
+	WARN("Probing CGX skipped\n");
+	return 0;
 
 	/* cgx to qlm mapping.
 	 * CGX0 - QLM1

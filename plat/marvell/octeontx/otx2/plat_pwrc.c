@@ -14,6 +14,7 @@
 #include <platform.h>
 #include <string.h>
 #include <octeontx_common.h>
+#include <octeontx_utils.h>
 #include <plat_scmi.h>
 #include <gicv3_setup.h>
 
@@ -331,7 +332,15 @@ int octeontx_pwrc_setup(void)
 
 	scmi_channel.info = &plat_octeontx_scmi_plat_info;
 	scmi_channel.lock = &octeontx_scmi_lock;
-	scmi_handle = scmi_init(&scmi_channel);
+
+	/*
+	 * FIXME: Until SCP will work in ASIM for loki platform, skip scmi init
+	 */
+	if (IS_OCTEONTX_PN(read_midr(), LOKIPARTNUM)) {
+		scmi_handle = NULL;
+	} else {
+		scmi_handle = scmi_init(&scmi_channel);
+	}
 	if (scmi_handle == NULL) {
 		NOTICE("SCMI Initialization failed, fallback to legacy PM\n");
 		return -1;

@@ -16,6 +16,7 @@
 #include <octeontx_board_cfg_bl1.h>
 #include <plat_scfg.h>
 #include <plat_otx2_configuration.h>
+#include <octeontx_utils.h>
 
 /* define DEBUG_ATF_DTS to enable debug logs */
 #undef DEBUG_ATF_DTS
@@ -588,6 +589,7 @@ static int octeontx2_parse_boot_device(const void *fdt, const int offset)
 	strncpy(boot_device, name, sizeof(boot_device));
 	boot_device[sizeof(boot_device) - 1] = '\0';
 
+	debug_dts("BOOT-DEVICE.N0: %s\n", boot_device);
 	/* Get boot type */
 	if (!strncmp("SPI", boot_device, 3))
 		val = OCTEONTX_BOOT_SPI;
@@ -1628,7 +1630,18 @@ static void octeontx2_fill_cgx_details(const void *fdt)
 	for (qlm_idx = 0; qlm_idx < plat_octeontx_get_gser_count(); qlm_idx++) {
 		lnum = plat_octeontx_scfg->qlm_max_lane_num[qlm_idx];
 		for (lane_idx = 0; lane_idx < lnum; lane_idx++) {
-			qlm_state.u = CSR_READ(CAVM_GSERNX_LANEX_SCRATCHX(qlm_idx, lane_idx, 0));
+			/*
+			 * FIXME: Reading from GSERN_LANE_SCRATCH doesn't work
+			 *        on loki platform, so for now read it as 0.
+			 */
+			if (IS_OCTEONTX_PN(read_midr(), LOKIPARTNUM)) {
+				WARN("Set QLM state to 0\n");
+				qlm_state.u = 0;
+			} else {
+				qlm_state.u = CSR_READ(
+						CAVM_GSERNX_LANEX_SCRATCHX(
+							qlm_idx, lane_idx, 0));
+			}
 			debug_dts("QLM%d.LANE%d: mode=%d:%s\n",
 					qlm_idx, lane_idx,
 					qlm_state.s.mode,
@@ -1718,6 +1731,19 @@ int plat_octeontx_fill_board_details(void)
 	if (rc) {
 		debug_dts("Using GPIO_STRAPX register for boot device\n");
 		octeontx2_boot_device_from_strapx();
+	}
+
+	/*
+	 * FIXME: When SCP is not present, BDK assumes that it is booting
+	 *        on Emulator and set boot device as EMMC_CS0. Until SCP will
+	 *        work in ASIM for loki platform, hardcode booting from
+	 *        SPI0_CS0.
+	 */
+	if (IS_OCTEONTX_PN(read_midr(), LOKIPARTNUM)) {
+		WARN("Boot device changed to SPI0_CS0\n");
+		plat_octeontx_bcfg->bcfg.boot_dev.boot_type = OCTEONTX_BOOT_SPI;
+		plat_octeontx_bcfg->bcfg.boot_dev.controller = 0;
+		plat_octeontx_bcfg->bcfg.boot_dev.cs = 0;
 	}
 
 	octeontx2_fill_cgx_details(fdt);
