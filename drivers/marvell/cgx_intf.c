@@ -995,7 +995,6 @@ void cgx_fw_intf_init(void)
 void cgx_fw_intf_shutdown(void)
 {
 	cgx_lmac_context_t *lmac_ctx;
-	cgx_lmac_config_t *lmac_cfg;
 	cavm_cgxx_cmrx_int_t cmrx_int;
 
 	debug_cgx_intf("%s\n", __func__);
@@ -1006,21 +1005,21 @@ void cgx_fw_intf_shutdown(void)
 	for (int cgx = 0; cgx < plat_octeontx_scfg->cgx_count; cgx++) {
 		for (int lmac = 0; lmac < MAX_LMAC_PER_CGX; lmac++) {
 			lmac_ctx = &lmac_context[cgx][lmac];
-			lmac_cfg = &plat_octeontx_bcfg->cgx_cfg[cgx].lmac_cfg[lmac];
-			/* bring down the link if link_enable is set */
-			if (lmac_ctx->s.link_enable)
+			/* Bring down the link if link_enable is set.
+			 * After bringing down the links, do one time
+			 * initialization of the LMACs that are enabled
+			 * so kernel can bring up the link
+			 */
+			if (lmac_ctx->s.link_enable) {
 				cgx_link_bringdown(cgx, lmac);
+				mdelay(1);
+				cgx_lmac_init_link(cgx, lmac);
+			}
 			CSR_WRITE(CAVM_CGXX_CMRX_SCRATCHX(
 					cgx, lmac, 0), 0);
 			CSR_WRITE(CAVM_CGXX_CMRX_SCRATCHX(
 					cgx, lmac, 1), 0);
 			lmac_ctx->u64 = 0;
-			/* After bringing down the links, do one time
-			 * initialization of the LMACs that are enabled
-			 * so kernel can bring up the link
-			 */
-			if (lmac_cfg->lmac_enable)
-				cgx_lmac_init_link(cgx, lmac);
 			/* Clear the interrupt during shutdown for all
 			 * LMACs as there might be a possibility that
 			 * interrupts are not cleared by u-boot

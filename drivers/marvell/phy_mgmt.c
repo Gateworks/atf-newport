@@ -61,9 +61,16 @@ int phy_get_link_status(int cgx_id, int lmac_id,
 		/* Append the current FEC to new link status */
 		link->s.fec = lmac->fec;
 
-		debug_nw_mgmt("link %d speed %d duplex %d\n", link->s.link_up,
-			link->s.speed, link->s.full_duplex);
-		return ret;
+		/* For non-SGMII cases, still continue to read the
+		 * CGX registers to know the link status
+		 */
+		if ((lmac->mode == CAVM_CGX_LMAC_TYPES_E_SGMII) ||
+			(lmac->mode == CAVM_CGX_LMAC_TYPES_E_QSGMII)) {
+			debug_nw_mgmt("link %d speed %d duplex %d\n",
+				link->s.link_up, link->s.speed,
+				link->s.full_duplex);
+			return ret;
+		}
 	}
 
 	if ((lmac->mode == CAVM_CGX_LMAC_TYPES_E_XAUI) ||
