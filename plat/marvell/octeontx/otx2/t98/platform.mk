@@ -22,10 +22,6 @@ PLAT_INCLUDES		+=	-Iinclude/plat/marvell/octeontx/otx2			\
 				-Iplat/marvell/octeontx/otx2/t98/include		\
 				-Ilib/libphy/marvell_88x5113/include			\
 				-Ilib/libphy/marvell_88x5113/serdes/src/include		\
-				-Ilib/libphy/marvell_88x5123/include			\
-				-Ilib/libphy/marvell_88x5123/serdes/include		\
-				-Ilib/libphy/marvell_88x5123/serdes/marvell		\
-				-Ilib/libphy/marvell_88x5123/serdes/marvell/sd28firmware\
 
 PLAT_BL_COMMON_SOURCES	+=	plat/marvell/octeontx/otx2/t98/plat_t98_setup.c		\
 				plat/marvell/octeontx/otx2/plat_security.c		\
@@ -50,17 +46,18 @@ BL2_SOURCES		+=	plat/marvell/octeontx/otx2/t98/plat_t98_ecam.c		\
 				plat/marvell/octeontx/otx2/plat_npc_mcam_profile.c	\
 
 BL31_LIBS               +=      lib/libphy/libphy_88x5113.a     \
-				lib/libphy/libphy_88x5123.a     \
 
 BL31_SOURCES		+=	plat/marvell/octeontx/otx2/aarch64/plat_octeontx_common.S	\
 				plat/marvell/octeontx/otx2/aarch64/plat_helpers.S	\
 				plat/marvell/octeontx/otx2/plat_topology.c		\
 				drivers/marvell/sh_fwdata.c		\
 				drivers/marvell/rvu.c		\
-				drivers/marvell/phy_gen.c		\
-				drivers/marvell/phy_vitesse.c		\
-				drivers/marvell/phy_marvell.c		\
-				drivers/marvell/phy_mgmt.c		\
+				drivers/marvell/phy/phy_gen.c		\
+				drivers/marvell/phy/phy_vitesse.c	\
+				drivers/marvell/phy/phy_marvell.c	\
+				drivers/marvell/phy/phy_marvell_1514.c	\
+				drivers/marvell/phy/phy_marvell_5113.c	\
+				drivers/marvell/phy/phy_mgmt.c		\
 				drivers/marvell/sfp_mgmt.c		\
 				drivers/marvell/cgx_intf.c		\
 				plat/marvell/octeontx/otx2/plat_pm.c			\
@@ -82,4 +79,5 @@ ifdef MARVELL_PHY_6141
     TF_CFLAGS_aarch64 += -DMARVELL_PHY_6141
     PLAT_INCLUDES     += -Ilib/libphy/marvell_88x6141/include
     BL31_LIBS         += lib/libphy/libphy_88x6141.a
+    BL31_SOURCES      += drivers/marvell/phy/phy_marvell_6141.c
 endif
