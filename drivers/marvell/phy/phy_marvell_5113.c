@@ -547,25 +547,219 @@ void phy_marvell_5113_supported_modes(int cgx_id, int lmac_id)
 }
 
 #ifdef DEBUG_ATF_ENABLE_SERDES_DIAGNOSTIC_CMDS
+static MXD_PRBS_SELECTOR_TYPE phy_marvell_5113_get_prbs_selector(int prbs)
+{
+	MXD_PRBS_SELECTOR_TYPE prbs_sel;
+
+	switch (prbs) {
+	case 7:
+		prbs_sel = MXD_PRBS7;
+		break;
+	case 9:
+		prbs_sel = MXD_PRBS9;
+		break;
+	case 13:
+		prbs_sel = MXD_PRBS13;
+		break;
+	case 15:
+		prbs_sel = MXD_PRBS15;
+		break;
+	case 23:
+		prbs_sel = MXD_PRBS23;
+		break;
+	case 31:
+		prbs_sel = MXD_PRBS31;
+		break;
+	default:
+		WARN("Unsupported PRBS mode %d, using 7\n", prbs);
+		prbs_sel = MXD_PRBS7;
+		break;
+	}
+
+	return prbs_sel;
+}
+
+
 static int phy_marvell_5113_enable_prbs(int cgx_id, int lmac_id, int host_side,
 	int prbs, int dir)
 {
+	MXD_STATUS status;
+	phy_config_t *phy;
+	int port_num;
+	cgx_lmac_config_t *lmac_cfg;
+	MXD_PRBS_SELECTOR_TYPE prbs_sel;
+	int host_line_swapped;
+	int enable_tx;
+	int enable_rx;
+
 	debug_phy_driver("%s: %d:%d\n", __func__, cgx_id, lmac_id);
+
+	lmac_cfg = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
+	phy = &lmac_cfg->phy_config;
+	port_num = phy->port;
+	prbs_sel = phy_marvell_5113_get_prbs_selector(prbs);
+	host_line_swapped =
+		!strncmp(plat_octeontx_bcfg->bcfg.board_model, "ebb9", 4);
+
+	status = mxdSetPRBSClearOnRead(
+		&marvell_5113_priv[cgx_id].mxddev,
+		phy->addr,
+		MXD_HOST_SIDE,
+		port_num,
+		1);
+	if (status != MXD_OK) {
+		WARN("CGX%d(%d): mxdSetPRBSClearOnRead() failed\n",
+			cgx_id, port_num);
+		return -1;
+	}
+
+	status = mxdSetPRBSClearOnRead(
+		&marvell_5113_priv[cgx_id].mxddev,
+		phy->addr,
+		MXD_LINE_SIDE,
+		port_num,
+		1);
+	if (status != MXD_OK) {
+		WARN("CGX%d(%d): mxdSetPRBSClearOnRead() failed\n",
+			cgx_id, port_num);
+		return -1;
+	}
+
+	status = mxdSetLineSidePRBSPattern(
+		&marvell_5113_priv[cgx_id].mxddev,
+		phy->addr,
+		port_num,
+		prbs_sel,
+		MXD_PRBS_NONE,
+		MXD_ALL_ZERO);
+	if (status != MXD_OK) {
+		WARN("CGX%d(%d): mxdSetLineSidePRBSPattern() failed\n",
+			cgx_id, port_num);
+		return -1;
+	}
+
+	status = mxdSetHostSidePRBSPattern(
+		&marvell_5113_priv[cgx_id].mxddev,
+		phy->addr,
+		port_num,
+		prbs_sel,
+		MXD_PRBS_NONE,
+		MXD_ALL_ZERO);
+	if (status != MXD_OK) {
+		WARN("CGX%d(%d): mxdSetHostSidePRBSPattern() failed\n",
+			cgx_id, port_num);
+		return -1;
+	}
+
+	enable_tx = (dir == QLM_DIRECTION_TX);
+	enable_rx = (dir == QLM_DIRECTION_RX);
+
+	status = mxdSetPRBSEnableTxRx(
+		&marvell_5113_priv[cgx_id].mxddev,
+		phy->addr,
+		(host_side ^ host_line_swapped) ? MXD_HOST_SIDE : MXD_LINE_SIDE,
+		port_num,
+		(enable_tx | enable_rx) ? MXD_ENABLE : MXD_DISABLE, /* TX */
+		(enable_rx) ? MXD_ENABLE : MXD_DISABLE); /* RX */
+	if (status != MXD_OK) {
+		WARN("CGX%d(%d): mxdSetPRBSEnableTxRx() failed\n",
+			cgx_id, port_num);
+		return -1;
+	}
 	return 0;
 }
 
 static int phy_marvell_5113_disable_prbs(int cgx_id, int lmac_id, int host_side,
 	int prbs)
 {
+	MXD_STATUS status;
+	phy_config_t *phy;
+	int port_num;
+	cgx_lmac_config_t *lmac_cfg;
+
 	debug_phy_driver("%s: %d:%d\n", __func__, cgx_id, lmac_id);
+
+	lmac_cfg = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
+	phy = &lmac_cfg->phy_config;
+	port_num = phy->port;
+
+	status = mxdSetPRBSEnableTxRx(
+		&marvell_5113_priv[cgx_id].mxddev,
+		phy->addr,
+		(host_side) ? MXD_HOST_SIDE : MXD_LINE_SIDE,
+		0, /* lane */
+		MXD_DISABLE, /* TX */
+		MXD_DISABLE); /* RX */
+	if (status != MXD_OK) {
+		WARN("CGX%d(%d): mxdSetPRBSEnableTxRx() failed\n",
+			cgx_id, port_num);
+		return -1;
+	}
 	return 0;
 }
 
 static uint64_t phy_marvell_5113_get_prbs_errors(int cgx_id, int lmac_id,
 	int host_side, int clear, int prbs)
 {
+	MXD_STATUS status;
+	phy_config_t *phy;
+	int port_num;
+	cgx_lmac_config_t *lmac_cfg;
+	MXD_U16 phy_side;
+	MXD_BOOL locked = 0;
+	MXD_U64 txBitCount;
+	MXD_U64 rxBitCount;
+	MXD_U64 rxBitErrorCount;
+	uint64_t errors;
+
 	debug_phy_driver("%s: %d:%d\n", __func__, cgx_id, lmac_id);
-	return 0;
+
+	lmac_cfg = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
+	phy = &lmac_cfg->phy_config;
+	port_num = phy->port;
+	if (!strncmp(plat_octeontx_bcfg->bcfg.board_model, "ebb9", 4))
+		phy_side = host_side ? MXD_LINE_SIDE : MXD_HOST_SIDE;
+	else
+		phy_side = host_side ? MXD_HOST_SIDE : MXD_LINE_SIDE;
+
+	status = mxdGetPRBSLocked(
+		&marvell_5113_priv[cgx_id].mxddev,
+		phy->addr,
+		phy_side,
+		port_num,
+		&locked);
+	if (status != MXD_OK) {
+		WARN("CGX%d(%d): mxdGetPRBSLocked() failed\n",
+			cgx_id, port_num);
+		return -1;
+	}
+
+	if (!locked)
+		return -1;
+
+	status = mxdGetPRBSCounts(
+		&marvell_5113_priv[cgx_id].mxddev,
+		phy->addr,
+		phy_side,
+		port_num,
+		&txBitCount,
+		&rxBitCount,
+		&rxBitErrorCount);
+	if (status != MXD_OK) {
+		WARN("CGX%d(%d): mxdGetPRBSCounts() failed\n",
+			cgx_id, port_num);
+		return -1;
+	}
+
+	if (host_side) {
+		errors = lmac_cfg->prbs_errors_host + rxBitErrorCount;
+		lmac_cfg->prbs_errors_host = (clear) ? 0 : errors;
+		return errors;
+	}
+
+	errors = lmac_cfg->prbs_errors_line + rxBitErrorCount;
+	lmac_cfg->prbs_errors_line = (clear) ? 0 : errors;
+	return errors;
 }
 #endif /* DEBUG_ATF_ENABLE_SERDES_DIAGNOSTIC_CMDS */
 
