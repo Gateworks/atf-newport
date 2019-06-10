@@ -423,25 +423,219 @@ void phy_marvell_5123_supported_modes(int cgx_id, int lmac_id)
 }
 
 #ifdef DEBUG_ATF_ENABLE_SERDES_DIAGNOSTIC_CMDS
+static MCD_PRBS_LINE_SELECTOR_TYPE phy_marvell_5123_get_prbs_line_selector(
+	int prbs)
+{
+	MCD_PRBS_LINE_SELECTOR_TYPE prbs_sel;
+
+	switch (prbs) {
+	case 7:
+		prbs_sel = MCD_LINE_PRBS7;
+		break;
+	case 9:
+		prbs_sel = MCD_LINE_PRBS9;
+		break;
+	case 13:
+		prbs_sel = MCD_LINE_PRBS11;
+		break;
+	case 15:
+		prbs_sel = MCD_LINE_PRBS15;
+		break;
+	case 23:
+		prbs_sel = MCD_LINE_PRBS23;
+		break;
+	case 31:
+		prbs_sel = MCD_LINE_PRBS31;
+		break;
+	default:
+		WARN("Unsupported PRBS mode %d, using 7\n", prbs);
+		prbs_sel = MCD_LINE_PRBS7;
+		break;
+	}
+
+	return prbs_sel;
+}
+
+static MCD_PRBS_HOST_SELECTOR_TYPE phy_marvell_5123_get_prbs_host_selector(
+	int prbs)
+{
+	MCD_PRBS_HOST_SELECTOR_TYPE prbs_sel;
+
+	switch (prbs) {
+	case 7:
+		prbs_sel = MCD_HOST_PRBS7;
+		break;
+	case 9:
+		prbs_sel = MCD_HOST_PRBS9;
+		break;
+	case 13:
+		prbs_sel = MCD_HOST_PRBS11;
+		break;
+	case 15:
+		prbs_sel = MCD_HOST_PRBS15;
+		break;
+	case 23:
+		prbs_sel = MCD_HOST_PRBS23;
+		break;
+	case 31:
+		prbs_sel = MCD_HOST_PRBS31;
+		break;
+	default:
+		WARN("Unsupported PRBS mode %d, using 7\n", prbs);
+		prbs_sel = MCD_HOST_PRBS7;
+		break;
+	}
+
+	return prbs_sel;
+}
+
 static int phy_marvell_5123_enable_prbs(int cgx_id, int lmac_id, int host_side,
 	int prbs, int dir)
 {
+	MCD_STATUS status;
+	phy_config_t *phy;
+	int port_num;
+	cgx_lmac_config_t *lmac_cfg;
+	MCD_PRBS_LINE_SELECTOR_TYPE linepat;
+	MCD_PRBS_HOST_SELECTOR_TYPE hostpat;
+	int enable_tx;
+	int enable_rx;
+
 	debug_phy_driver("%s: %d:%d\n", __func__, cgx_id, lmac_id);
+
+	lmac_cfg = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
+	phy = &lmac_cfg->phy_config;
+	port_num = phy->port;
+	linepat = phy_marvell_5123_get_prbs_line_selector(prbs);
+	hostpat = phy_marvell_5123_get_prbs_host_selector(prbs);
+
+	status = mcdSetLineSidePRBSPattern(
+		&marvell_5123_priv.mcddev,
+		port_num,
+		0, /* lane */
+		linepat,
+		MCD_LINE_PRBS_NONE);
+	if (status != MCD_OK) {
+		WARN("CGX%d(%d): mcdSetLineSidePRBSPattern() failed\n",
+			cgx_id, port_num);
+		return -1;
+	}
+	status = mcdSetHostSidePRBSPattern(
+		&marvell_5123_priv.mcddev,
+		port_num,
+		0, /* lane */
+		hostpat);
+	if (status != MCD_OK) {
+		WARN("CGX%d(%d): mcdSetHostSidePRBSPattern() failed\n",
+			cgx_id, port_num);
+		return -1;
+	}
+
+	enable_tx = (dir == QLM_DIRECTION_TX);
+	enable_rx = (dir == QLM_DIRECTION_RX);
+
+	status = mcdSetPRBSEnableTxRx(
+		&marvell_5123_priv.mcddev,
+		port_num,
+		(host_side) ? MCD_HOST_SIDE : MCD_LINE_SIDE,
+		0, /* lane */
+		(enable_tx | enable_rx) ? MCD_ENABLE : MCD_DISABLE, /* TX */
+		(enable_rx) ? MCD_ENABLE : MCD_DISABLE); /* RX */
+	if (status != MCD_OK) {
+		WARN("CGX%d(%d): mcdSetPRBSEnableTxRx() failed\n",
+			cgx_id, port_num);
+		return -1;
+	}
+
 	return 0;
 }
 
 static int phy_marvell_5123_disable_prbs(int cgx_id, int lmac_id, int host_side,
 	int prbs)
 {
+	MCD_STATUS status;
+	phy_config_t *phy;
+	int port_num;
+	cgx_lmac_config_t *lmac_cfg;
+
 	debug_phy_driver("%s: %d:%d\n", __func__, cgx_id, lmac_id);
+
+	lmac_cfg = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
+	phy = &lmac_cfg->phy_config;
+	port_num = phy->port;
+
+	status = mcdSetPRBSEnableTxRx(
+		&marvell_5123_priv.mcddev,
+		port_num,
+		(host_side) ? MCD_HOST_SIDE : MCD_LINE_SIDE,
+		0, /* lane */
+		MCD_DISABLE, /* TX */
+		MCD_DISABLE); /* RX */
+	if (status != MCD_OK) {
+		WARN("CGX%d(%d): mcdSetPRBSEnableTxRx() failed\n",
+			cgx_id, port_num);
+		return -1;
+	}
 	return 0;
 }
 
 static uint64_t phy_marvell_5123_get_prbs_errors(int cgx_id, int lmac_id,
 	int host_side, int clear, int prbs)
 {
+	MCD_STATUS status;
+	phy_config_t *phy;
+	int port_num;
+	cgx_lmac_config_t *lmac_cfg;
+	MCD_U64 txBitCount;
+	MCD_U64 rxBitCount;
+	MCD_U64 rxBitErrorCount;
+	uint64_t errors;
+
 	debug_phy_driver("%s: %d:%d\n", __func__, cgx_id, lmac_id);
-	return 0;
+
+	lmac_cfg = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
+	phy = &lmac_cfg->phy_config;
+	port_num = phy->port;
+
+	status = mcdGetPRBSCounts(
+		&marvell_5123_priv.mcddev,
+		port_num,
+		(host_side) ? MCD_HOST_SIDE : MCD_LINE_SIDE,
+		0, /* lane */
+		&txBitCount,
+		&rxBitCount,
+		&rxBitErrorCount);
+	if (status != MCD_OK) {
+		WARN("CGX%d(%d): mcdGetPRBSCounts() failed\n",
+			cgx_id, port_num);
+		return -1;
+	}
+
+	if (host_side) {
+		/*
+		 * 5123 API seems to return 0xffff when there isn't a lock.
+		 * Documentation is useless
+		 */
+		if (rxBitErrorCount == 0xffff) {
+			lmac_cfg->prbs_errors_host = 0;
+			return -1;
+		}
+		errors = lmac_cfg->prbs_errors_host + rxBitErrorCount;
+		lmac_cfg->prbs_errors_host = (clear) ? 0 : errors;
+		return errors;
+	}
+
+	/*
+	 * 5123 API seems to return 0xffff when there isn't a lock.
+	 * Documentation is useless
+	 */
+	if (rxBitErrorCount == 0xffff) {
+		lmac_cfg->prbs_errors_line = 0;
+		return -1;
+	}
+	errors = lmac_cfg->prbs_errors_line + rxBitErrorCount;
+	lmac_cfg->prbs_errors_line = (clear) ? 0 : errors;
+	return errors;
 }
 #endif /* DEBUG_ATF_ENABLE_SERDES_DIAGNOSTIC_CMDS */
 
