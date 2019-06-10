@@ -71,5 +71,9 @@
 #define GPIO_SPI_IRQ_NSEC_BASE	(GPIO_SPI_IRQ_BASE + GPIO_SPI_IRQS)
 #define GPIO_SPI_IRQ_NSEC(irq)	((irq) + GPIO_SPI_IRQ_NSEC_BASE)
 
+/* Default SPI to be used by per-core CWD GTI interrupt (range 0x3e - 0x55 )*/
+#define GTI_CWD_SPI_IRQS		0x18
+#define GTI_CWD_SPI_IRQ_BASE	(GPIO_SPI_IRQ_NSEC_BASE + GPIO_SPI_NSEC_IRQS)
+#define GTI_CWD_SPI_IRQ(irq)	((irq) + GTI_CWD_SPI_IRQ_BASE)
 
 #endif /* __PLATFORM_IRQS_DEF_H__ */
