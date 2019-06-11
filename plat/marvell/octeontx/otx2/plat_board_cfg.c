@@ -1733,19 +1733,6 @@ int plat_octeontx_fill_board_details(void)
 		octeontx2_boot_device_from_strapx();
 	}
 
-	/*
-	 * FIXME: When SCP is not present, BDK assumes that it is booting
-	 *        on Emulator and set boot device as EMMC_CS0. Until SCP will
-	 *        work in ASIM for loki platform, hardcode booting from
-	 *        SPI0_CS0.
-	 */
-	if (IS_OCTEONTX_PN(read_midr(), LOKIPARTNUM)) {
-		WARN("Boot device changed to SPI0_CS0\n");
-		plat_octeontx_bcfg->bcfg.boot_dev.boot_type = OCTEONTX_BOOT_SPI;
-		plat_octeontx_bcfg->bcfg.boot_dev.controller = 0;
-		plat_octeontx_bcfg->bcfg.boot_dev.cs = 0;
-	}
-
 	octeontx2_fill_cgx_details(fdt);
 	octeontx2_fill_qlm_details(fdt);
 
