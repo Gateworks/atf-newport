@@ -8,6 +8,7 @@
 #include <debug.h>
 #include <platform.h>
 #include <platform_def.h>
+#include <platform_dt.h>
 #include <platform_setup.h>
 #include <octeontx_common.h>
 #include <octeontx_ecam.h>
@@ -95,6 +96,21 @@ int plat_octeontx_get_pem_count(void)
 int plat_octeontx_get_gser_count(void)
 {
 	return 7;
+}
+
+int plat_octeontx_get_gsern_count(void)
+{
+	return 0;
+}
+
+int plat_octeontx_get_gserr_count(void)
+{
+	return 3;
+}
+
+int plat_octeontx_get_gserc_count(void)
+{
+	return 5;
 }
 
 int plat_octeontx_get_uaa_count(void)
@@ -265,10 +281,21 @@ void plat_add_mmio(void)
 				CAVM_PEM_BAR_E_PEMX_PF_BAR4_CN9_SIZE, attr);
 	}
 
-	device_type_count = plat_octeontx_get_gser_count();
+	device_type_count = plat_octeontx_get_gsern_count();
 	for (i = 0; i < device_type_count; i++)
 		add_map_record(CAVM_GSERN_BAR_E_GSERNX_PF_BAR0(i),
 			       CAVM_GSERN_BAR_E_GSERNX_PF_BAR0_SIZE, attr);
+
+	device_type_count = plat_octeontx_get_gserr_count();
+	for (i = 0; i < device_type_count; i++)
+		add_map_record(CAVM_GSERR_BAR_E_GSERRX_PF_BAR0(i),
+			       CAVM_GSERR_BAR_E_GSERRX_PF_BAR0_SIZE, attr);
+
+	device_type_count = plat_octeontx_get_gserc_count();
+	for (i = 0; i < device_type_count; i++)
+		add_map_record(CAVM_GSERC_BAR_E_GSERCX_PF_BAR0(i),
+			       CAVM_GSERC_BAR_E_GSERCX_PF_BAR0_SIZE, attr);
+
 
 	add_map_record(CAVM_DAP_BAR_E_DAP_PF_BAR0,
 			CAVM_DAP_BAR_E_DAP_PF_BAR0_SIZE, attr);

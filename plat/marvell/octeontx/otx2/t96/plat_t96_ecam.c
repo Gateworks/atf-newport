@@ -19,6 +19,7 @@
 #include <octeontx_utils.h>
 #include <plat_otx2_configuration.h>
 #include <rvu.h>
+#include <qlm.h>
 
 #undef DEBUG_ATF_PLAT_ECAM
 
@@ -42,7 +43,7 @@ static int ecam_probe_sata(unsigned long long arg)
 	if ((qlm == -1) || (lane == -1))
 		return 0;
 
-	qlm_state.u = CSR_READ(CAVM_GSERNX_LANEX_SCRATCHX(qlm, lane, 0));
+	qlm_state = plat_otx2_get_qlm_state_lane(qlm, lane);
 	if (qlm_state.s.sata) {
 		debug_plat_ecam("%s: SATA detected on qlm %d lane %d\n",
 			__func__, qlm, lane);

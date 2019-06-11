@@ -19,6 +19,7 @@
 #include <cgx.h>
 #include <octeontx_utils.h>
 #include <rvu.h>
+#include <qlm.h>
 
 #ifdef DEBUG_ATF_PLAT_ECAM
 #define debug_plat_ecam printf
@@ -32,7 +33,6 @@
 extern const struct ecam_platform_defs plat_ops;
 
 
-/* Probe GSERNX_LANE_SCRATCHX[] for CGX config */
 static int is_qlm_configured_as_cgx(int qlm)
 {
 	qlm_state_lane_t qlm_state;
@@ -40,8 +40,7 @@ static int is_qlm_configured_as_cgx(int qlm)
 
 	lnum = plat_octeontx_scfg->qlm_max_lane_num[qlm];
 	for (int lane = 0; lane < lnum; lane++) {
-		qlm_state.u = CSR_READ(CAVM_GSERNX_LANEX_SCRATCHX(
-								qlm, lane, 0));
+		qlm_state = plat_otx2_get_qlm_state_lane(qlm, lane);
 		if (qlm_state.s.cgx) {
 			debug_plat_ecam("%s: CGX detected on qlm %d lane %d\n",
 				__func__, qlm, lane);
@@ -55,13 +54,6 @@ static int is_qlm_configured_as_cgx(int qlm)
 static int ecam_probe_cgx(unsigned long long arg)
 {
 	debug_plat_ecam("%s arg %lld\n", __func__, arg);
-
-	/*
-	 * FIXME: Reading from GSERN_LANE_SCRATCH doesn't work on loki platform
-	 *        so for now cgx probing is skipped.
-	 */
-	WARN("Probing CGX skipped\n");
-	return 0;
 
 	/* cgx to qlm mapping.
 	 * CGX0 - QLM1

@@ -353,4 +353,8 @@ void qlm_init_gsern(void);
 int qlm_set_mode_gsern(int qlm, int lane, qlm_modes_t mode, int baud_mhz,
 	qlm_mode_flags_t flags);
 
+/* QLM platform specific API */
+
+qlm_state_lane_t plat_otx2_get_qlm_state_lane(int qlm, int lane);
+
 #endif /* _QLM_H_ */

@@ -123,6 +123,8 @@ void octeontx_security_setup(void)
 	lmc_mode = ccs_asc_attr.s.lmc_mode;
 	lmc_mask = ccs_asc_attr.s.lmc_mask;
 
+	INFO("BDK LMC mode = 0x%x; mask 0x%x\n", lmc_mode, lmc_mask);
+
 	while (region->number != LAST_CCS_REGION) {
 		dram_end = octeontx_dram_size() - 1;
 		if (region->end > dram_end)

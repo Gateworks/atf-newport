@@ -17,6 +17,7 @@
 #include <plat_scfg.h>
 #include <plat_otx2_configuration.h>
 #include <octeontx_utils.h>
+#include <qlm.h>
 
 /* define DEBUG_ATF_DTS to enable debug logs */
 #undef DEBUG_ATF_DTS
@@ -1630,18 +1631,8 @@ static void octeontx2_fill_cgx_details(const void *fdt)
 	for (qlm_idx = 0; qlm_idx < plat_octeontx_get_gser_count(); qlm_idx++) {
 		lnum = plat_octeontx_scfg->qlm_max_lane_num[qlm_idx];
 		for (lane_idx = 0; lane_idx < lnum; lane_idx++) {
-			/*
-			 * FIXME: Reading from GSERN_LANE_SCRATCH doesn't work
-			 *        on loki platform, so for now read it as 0.
-			 */
-			if (IS_OCTEONTX_PN(read_midr(), LOKIPARTNUM)) {
-				WARN("Set QLM state to 0\n");
-				qlm_state.u = 0;
-			} else {
-				qlm_state.u = CSR_READ(
-						CAVM_GSERNX_LANEX_SCRATCHX(
-							qlm_idx, lane_idx, 0));
-			}
+			qlm_state = plat_otx2_get_qlm_state_lane(
+							qlm_idx, lane_idx);
 			debug_dts("QLM%d.LANE%d: mode=%d:%s\n",
 					qlm_idx, lane_idx,
 					qlm_state.s.mode,

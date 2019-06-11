@@ -28,6 +28,7 @@ PLAT_INCLUDES		+=	-Iinclude/plat/marvell/octeontx/otx2			\
 				-Ilib/libphy/marvell_88x5123/serdes/marvell/sd28firmware\
 
 PLAT_BL_COMMON_SOURCES	+=	plat/marvell/octeontx/otx2/loki/plat_loki_setup.c	\
+				plat/marvell/octeontx/otx2/loki/plat_loki_qlm.c		\
 				plat/marvell/octeontx/otx2/plat_security.c		\
 				plat/marvell/octeontx/otx2/plat_bcfg_init.c		\
 				drivers/marvell/cgx.c		\

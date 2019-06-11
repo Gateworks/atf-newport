@@ -19,6 +19,7 @@
 #include <octeontx_utils.h>
 #include <rvu.h>
 #include <plat_otx2_configuration.h>
+#include <qlm.h>
 
 #ifdef DEBUG_ATF_PLAT_ECAM
 #define debug_plat_ecam printf
@@ -59,7 +60,7 @@ static int ecam_probe_cgx(unsigned long long arg)
 	lnum = plat_octeontx_scfg->qlm_max_lane_num[qlm];
 	while (qlm != -1) {
 		for (int lane = 0; lane < lnum; lane++) {
-			qlm_state.u = CSR_READ(CAVM_GSERNX_LANEX_SCRATCHX(qlm, lane, 0));
+			qlm_state = plat_otx2_get_qlm_state_lane(qlm, lane);
 			if (qlm_state.s.cgx) {
 				debug_plat_ecam("%s: CGX detected on qlm %d lane %d\n",
 					__func__, qlm, lane);

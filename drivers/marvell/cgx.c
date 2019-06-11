@@ -266,8 +266,7 @@ static int cgx_get_usxgmii_type(int cgx_id, int lmac_id)
 	debug_cgx("%s: cgx %d qlm %d lane %d mode %d\n", __func__, cgx_id,
 					lmac->qlm, lmac->lane, lmac->mode);
 
-	qlm_state.u = CSR_READ(CAVM_GSERNX_LANEX_SCRATCHX(lmac->qlm,
-					lmac->lane, 0));
+	qlm_state = plat_otx2_get_qlm_state_lane(lmac->qlm, lmac->lane);
 	/* get the USXGMII type based on baud rate
 	 * and LMACs per CGX
 	 */
@@ -420,8 +419,7 @@ int cgx_get_lane_speed(int cgx_id, int lmac_id)
 	debug_cgx("%s: cgx %d qlm %d lane %d mode %d\n", __func__, cgx_id,
 					qlm, lane_id, lmac->mode);
 
-	qlm_state.u = CSR_READ(CAVM_GSERNX_LANEX_SCRATCHX(qlm,
-					lane_id, 0));
+	qlm_state = plat_otx2_get_qlm_state_lane(qlm, lane_id);
 
 	/* Ref : Table 38-1 of T9X HRM for encoding, lanes
 	 * baud rate based on LMAC type
