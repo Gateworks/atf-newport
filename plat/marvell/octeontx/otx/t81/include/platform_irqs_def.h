@@ -61,4 +61,13 @@
 #define SMMU_SPI_IRQ_BASE		(PEM_SPI_IRQ_BASE + (PEM_SPI_IRQ_DEVS*PEM_SPI_IRQS_PER_DEV))
 #define SMMU_SPI_IRQ(dev, irq)	((dev) * SMMU_SPI_IRQS_PER_DEV + (irq) + SMMU_SPI_IRQ_BASE)
 
+#define MCC_SPI_IRQS		0x0
+#define MCC_SPI_IRQ_BASE	(SMMU_SPI_IRQ_BASE + \
+				 SMMU_SPI_IRQS_PER_DEV * SMMU_SPI_IRQ_DEVS)
+#define MCC_SPI_IRQ(irq)	(-1)
+
+#define MDC_SPI_IRQS		0x0
+#define MDC_SPI_IRQ_BASE	(MCC_SPI_IRQ_BASE + MCC_SPI_IRQS)
+#define MDC_SPI_IRQ()		(-1)
+
 #endif /* __PLATFORM_IRQS_DEF_H__ */

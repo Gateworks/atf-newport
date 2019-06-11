@@ -138,7 +138,7 @@
 							BPHY_PSM_DERR_IRQS)
 #define BPHY_PSM_AERR_IRQ(irq)		((irq) + BPHY_PSM_AERR_IRQ_BASE)
 
-/* range 0x4A - 0x4D */
+/* range 0x4A - 0x4C */
 #define BPHY_PSM_MTO_IRQS		0x3
 #define BPHY_PSM_MTO_IRQ_BASE		(BPHY_PSM_AERR_IRQ_BASE +	\
 							BPHY_PSM_AERR_IRQS)
@@ -148,5 +148,14 @@
 							BPHY_PSM_MTO_IRQS)
 /* End of BPHY PSM interrupts */
 
+/* Default SPI IRQs used by MCC (interrupt 0x4d - 0x55) */
+#define MCC_SPI_IRQS		0x8
+#define MCC_SPI_IRQ_BASE	(BPHY_PSM_MTO_IRQ_BASE + BPHY_PSM_MTO_IRQS)
+#define MCC_SPI_IRQ(irq)	((irq) + MCC_SPI_IRQ_BASE)
+
+/* Default SPI IRQs used by MDC (interrupt 0x56) */
+#define MDC_SPI_IRQS		0x1
+#define MDC_SPI_IRQ_BASE	(MCC_SPI_IRQ_BASE + MCC_SPI_IRQS)
+#define MDC_SPI_IRQ()		(MDC_SPI_IRQ_BASE)
 
 #endif /* __PLATFORM_IRQS_DEF_H__ */

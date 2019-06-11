@@ -125,4 +125,14 @@
 #define GTI_CWD_SPI_IRQ_BASE	(END_OF_BPHY_IRQS)
 #define GTI_CWD_SPI_IRQ(irq)	((irq) + GTI_CWD_SPI_IRQ_BASE)
 
+/* Default SPI IRQs used by MCC (interrupt 0x4d - 0x55) */
+#define MCC_SPI_IRQS		0x8
+#define MCC_SPI_IRQ_BASE	(GTI_CWD_SPI_IRQ_BASE + GTI_CWD_SPI_IRQS)
+#define MCC_SPI_IRQ(irq)	((irq) + MCC_SPI_IRQ_BASE)
+
+/* Default SPI IRQs used by MDC (interrupt 0x56) */
+#define MDC_SPI_IRQS		0x1
+#define MDC_SPI_IRQ_BASE	(MCC_SPI_IRQ_BASE + MCC_SPI_IRQS)
+#define MDC_SPI_IRQ()		(MDC_SPI_IRQ_BASE)
+
 #endif /* __PLATFORM_IRQS_DEF_H__ */

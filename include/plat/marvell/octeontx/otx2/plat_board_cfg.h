@@ -83,12 +83,18 @@ typedef struct qlm_config {
 	uint8_t lane_rx_prevga_gn_ovrd[MAX_LANES_PER_QLM];
 } qlm_config_t;
 
+typedef struct mcc_ras_config {
+	uint32_t lmcoe_count:8;
+	uint32_t enabled:1;
+} mcc_ras_config_t;
+
 typedef struct plat_octeontx_board_cfg {
 	board_cfg_t bcfg;
 	rvu_config_t rvu_config;
 	cgx_config_t cgx_cfg[MAX_CGX];
 	qlm_config_t qlm_cfg[MAX_QLM];
 	int qlm_voltage;
+	mcc_ras_config_t mcc_ras_cfg[MAX_MCC];
 	uint64_t pf_mac_base; /* PF MAC Address */
 	int pf_mac_num;
 } plat_octeontx_board_cfg_t;

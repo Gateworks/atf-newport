@@ -76,4 +76,13 @@
 #define GTI_CWD_SPI_IRQ_BASE	(GPIO_SPI_IRQ_NSEC_BASE + GPIO_SPI_NSEC_IRQS)
 #define GTI_CWD_SPI_IRQ(irq)	((irq) + GTI_CWD_SPI_IRQ_BASE)
 
+/* Dummy entries for OcteonTX */
+#define MCC_SPI_IRQS		0x0
+#define MCC_SPI_IRQ_BASE	(GPIO_SPI_IRQ_NSEC_BASE + GPIO_SPI_NSEC_IRQS)
+#define MCC_SPI_IRQ(irq)	(-1)
+
+#define MDC_SPI_IRQS		0x0
+#define MDC_SPI_IRQ_BASE	(MCC_SPI_IRQ_BASE + MCC_SPI_IRQS)
+#define MDC_SPI_IRQ()		(-1)
+
 #endif /* __PLATFORM_IRQS_DEF_H__ */

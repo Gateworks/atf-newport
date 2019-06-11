@@ -18,6 +18,7 @@
 #include <gpio_octeontx.h>
 #include <plat_board_cfg.h>
 #include <plat_flr.h>
+#include <lmc_ras.h>
 #include <plat_octeontx.h>
 #include <octeontx_utils.h>
 
@@ -38,8 +39,11 @@ void plat_octeontx_setup(void)
 	/* setup gpio interrupt handling */
 	plat_gpio_irq_setup();
 
+
 	/* Workaround for FLR handling on CN9xxx */
 	plat_flr_init();
+
+	plat_dram_ras_init();
 }
 
 /*
