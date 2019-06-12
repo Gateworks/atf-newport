@@ -485,26 +485,10 @@ union cavm_ap_ccsidr_el1
                                                                  For CNXXXX does not apply as hardware managed coherence. */
         uint32_t numsets               : 15; /**< [ 27: 13](RO) Number of sets in cache minus 1, therefore a value of 0
                                                                  indicates 1 set in the cache. The number of sets does not have
-                                                                 to be a power of 2.
-
-                                                                 For CNXXXX L1D (AP_CSSELR_EL1[LEVEL] = 0x0, AP_CSSELR_EL1[IND] = 0), is TBD.
-
-                                                                 For CNXXXX L1I (AP_CSSELR_EL1[LEVEL] = 0x0, AP_CSSELR_EL1[IND] = 1), is TBD.
-
-                                                                 For CN98XX L2 (AP_CSSELR_EL1[LEVEL] = 0x1, AP_CSSELR_EL1[IND] = 0), is TBD.
-
-                                                                 For CN98XX L3 (AP_CSSELR_EL1[LEVEL] = 0x2, AP_CSSELR_EL1[IND] = 0), is TBD. */
+                                                                 to be a power of 2. */
         uint32_t associativity         : 10; /**< [ 12:  3](RO) Associativity of cache minus 1, therefore a value of 0 indicates
                                                                  an associativity of 1. The associativity does not have to be a
-                                                                 power of 2.
-
-                                                                 For CNXXXX L1D (AP_CSSELR_EL1[LEVEL] = 0x0, AP_CSSELR_EL1[IND] = 0), is TBD.
-
-                                                                 For CNXXXX L1I (AP_CSSELR_EL1[LEVEL] = 0x0, AP_CSSELR_EL1[IND] = 1), is TBD.
-
-                                                                 For CN98XX L2 (AP_CSSELR_EL1[LEVEL] = 0x1, AP_CSSELR_EL1[IND] = 0), is TBD.
-
-                                                                 For CN98XX L3 (AP_CSSELR_EL1[LEVEL] = 0x1, AP_CSSELR_EL1[IND] = 0), is TBD. */
+                                                                 power of 2. */
         uint32_t linesize              : 3;  /**< [  2:  0](RO) Cache-line size, in (Log2(Number of bytes in cache line)) - 4.
 
                                                                  For CNXXXX, 128 bytes. */
@@ -514,26 +498,10 @@ union cavm_ap_ccsidr_el1
                                                                  For CNXXXX, 128 bytes. */
         uint32_t associativity         : 10; /**< [ 12:  3](RO) Associativity of cache minus 1, therefore a value of 0 indicates
                                                                  an associativity of 1. The associativity does not have to be a
-                                                                 power of 2.
-
-                                                                 For CNXXXX L1D (AP_CSSELR_EL1[LEVEL] = 0x0, AP_CSSELR_EL1[IND] = 0), is TBD.
-
-                                                                 For CNXXXX L1I (AP_CSSELR_EL1[LEVEL] = 0x0, AP_CSSELR_EL1[IND] = 1), is TBD.
-
-                                                                 For CN98XX L2 (AP_CSSELR_EL1[LEVEL] = 0x1, AP_CSSELR_EL1[IND] = 0), is TBD.
-
-                                                                 For CN98XX L3 (AP_CSSELR_EL1[LEVEL] = 0x1, AP_CSSELR_EL1[IND] = 0), is TBD. */
+                                                                 power of 2. */
         uint32_t numsets               : 15; /**< [ 27: 13](RO) Number of sets in cache minus 1, therefore a value of 0
                                                                  indicates 1 set in the cache. The number of sets does not have
-                                                                 to be a power of 2.
-
-                                                                 For CNXXXX L1D (AP_CSSELR_EL1[LEVEL] = 0x0, AP_CSSELR_EL1[IND] = 0), is TBD.
-
-                                                                 For CNXXXX L1I (AP_CSSELR_EL1[LEVEL] = 0x0, AP_CSSELR_EL1[IND] = 1), is TBD.
-
-                                                                 For CN98XX L2 (AP_CSSELR_EL1[LEVEL] = 0x1, AP_CSSELR_EL1[IND] = 0), is TBD.
-
-                                                                 For CN98XX L3 (AP_CSSELR_EL1[LEVEL] = 0x2, AP_CSSELR_EL1[IND] = 0), is TBD. */
+                                                                 to be a power of 2. */
         uint32_t wa                    : 1;  /**< [ 28: 28](RO) Indicates whether the selected cache level supports write-allocation.
                                                                  0 = Write-allocation not supported.
                                                                  1 = Write-allocation supported.

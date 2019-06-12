@@ -139,7 +139,7 @@
  * Enumerates the receive and transmit links, and LINK index of
  * NIX_AF_RX_LINK()_CFG, NIX_AF_RX_LINK()_WRR_CFG,
  * NIX_AF_TX_LINK()_NORM_CREDIT,
- * NIX_AF_TX_LINK()_HW_XOFF and NIX_AF_TX_LINK()_SW_XOFF,
+ * NIX_AF_TX_LINK()_HW_XOFF and
  * NIX_AF_TL3_TL2()_LINK()_CFG.
  */
 #define CAVM_NIX_LINK_E_CGXX_LMACX(a,b) (0 + 4 * (a) + (b))
@@ -14276,7 +14276,7 @@ union cavm_nixx_af_rx_ipsec_gen_cfg
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_51_63        : 13;
-        uint64_t egrp                  : 3;  /**< [ 50: 48](R/W) Reserved. */
+        uint64_t egrp                  : 3;  /**< [ 50: 48](R/W) CPT_INST_S[EGRP] value. */
         uint64_t opcode                : 16; /**< [ 47: 32](R/W) CPT_INST_S[OPCODE] value. */
         uint64_t param1                : 16; /**< [ 31: 16](R/W) CPT_INST_S[PARAM1] value. */
         uint64_t param2                : 16; /**< [ 15:  0](R/W) CPT_INST_S[PARAM2] value. */
@@ -14284,7 +14284,7 @@ union cavm_nixx_af_rx_ipsec_gen_cfg
         uint64_t param2                : 16; /**< [ 15:  0](R/W) CPT_INST_S[PARAM2] value. */
         uint64_t param1                : 16; /**< [ 31: 16](R/W) CPT_INST_S[PARAM1] value. */
         uint64_t opcode                : 16; /**< [ 47: 32](R/W) CPT_INST_S[OPCODE] value. */
-        uint64_t egrp                  : 3;  /**< [ 50: 48](R/W) Reserved. */
+        uint64_t egrp                  : 3;  /**< [ 50: 48](R/W) CPT_INST_S[EGRP] value. */
         uint64_t reserved_51_63        : 13;
 #endif /* Word 0 - End */
     } s;

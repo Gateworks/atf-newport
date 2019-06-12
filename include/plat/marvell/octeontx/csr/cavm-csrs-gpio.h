@@ -166,6 +166,8 @@
 #define CAVM_GPIO_PIN_SEL_E_GSERPX_BURNINX(a,b) (0x70c + 0x10 * (a) + (b))
 #define CAVM_GPIO_PIN_SEL_E_GSERPX_DTESTX(a,b) (0x700 + 0x10 * (a) + (b))
 #define CAVM_GPIO_PIN_SEL_E_GSERPX_SYNCEX(a,b) (0x580 + 5 * (a) + (b))
+#define CAVM_GPIO_PIN_SEL_E_GSERP16_PCS_DTESTX(a) (0x5f0 + (a))
+#define CAVM_GPIO_PIN_SEL_E_GSERP4_PCS_DTESTX(a) (0x5e0 + (a))
 #define CAVM_GPIO_PIN_SEL_E_GSERRX_BURNINX(a,b) (0x60c + 0x10 * (a) + (b))
 #define CAVM_GPIO_PIN_SEL_E_GSERRX_DTESTX(a,b) (0x600 + 0x10 * (a) + (b))
 #define CAVM_GPIO_PIN_SEL_E_LMCX_ECC_CN8(a) (0x237 + (a))
@@ -2620,7 +2622,7 @@ union cavm_gpio_pkg_ver
                                                                  If FUS_FUSE_NUM_E::CHIP_ID() fuses indicate pass C or later:
                                                                  0x0 = SKU package I = 50 x 50mm package, up to 3 DDR channels,
                                                                                        backwards A0 board-compatible.
-                                                                 0x7 = SKU package P = 50 x 50mm package, up to 3 DDR channels, for CN-to-be-numbered.
+                                                                 0x7 = SKU package P = 50 x 50mm package, up to 3 DDR channels.
 
                                                                  Internal:
                                                                  Architecturally defined, same encoding across same die.
@@ -2641,7 +2643,7 @@ union cavm_gpio_pkg_ver
                                                                  If FUS_FUSE_NUM_E::CHIP_ID() fuses indicate pass C or later:
                                                                  0x0 = SKU package I = 50 x 50mm package, up to 3 DDR channels,
                                                                                        backwards A0 board-compatible.
-                                                                 0x7 = SKU package P = 50 x 50mm package, up to 3 DDR channels, for CN-to-be-numbered.
+                                                                 0x7 = SKU package P = 50 x 50mm package, up to 3 DDR channels.
 
                                                                  Internal:
                                                                  Architecturally defined, same encoding across same die.
@@ -2660,6 +2662,26 @@ union cavm_gpio_pkg_ver
         uint64_t reserved_3_63         : 61;
         uint64_t pkg_ver               : 3;  /**< [  2:  0](RO/H) Reads the package version straps, which are set by the package.
                                                                  0x0 = SKU package A = 45 x 45mm package, up to 2 DDR channels, for CNF95XX.
+                                                                 0x1 = SKU package B = 45 x 45mm package, up to 2 DDR channels, for CNF95XX pass B0+.
+
+                                                                 Internal:
+                                                                 Architecturally defined, same encoding across same die. */
+#else /* Word 0 - Little Endian */
+        uint64_t pkg_ver               : 3;  /**< [  2:  0](RO/H) Reads the package version straps, which are set by the package.
+                                                                 0x0 = SKU package A = 45 x 45mm package, up to 2 DDR channels, for CNF95XX.
+                                                                 0x1 = SKU package B = 45 x 45mm package, up to 2 DDR channels, for CNF95XX pass B0+.
+
+                                                                 Internal:
+                                                                 Architecturally defined, same encoding across same die. */
+        uint64_t reserved_3_63         : 61;
+#endif /* Word 0 - End */
+    } cnf95xx;
+    struct cavm_gpio_pkg_ver_loki
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_3_63         : 61;
+        uint64_t pkg_ver               : 3;  /**< [  2:  0](RO/H) Reads the package version straps, which are set by the package.
+                                                                 0x0 = SKU package A = 45 x 45mm package, up to 2 DDR channels, for CNF95XX.
 
                                                                  Internal:
                                                                  Architecturally defined, same encoding across same die. */
@@ -2671,8 +2693,7 @@ union cavm_gpio_pkg_ver
                                                                  Architecturally defined, same encoding across same die. */
         uint64_t reserved_3_63         : 61;
 #endif /* Word 0 - End */
-    } cnf95xx;
-    /* struct cavm_gpio_pkg_ver_cnf95xx loki; */
+    } loki;
 };
 typedef union cavm_gpio_pkg_ver cavm_gpio_pkg_ver_t;
 

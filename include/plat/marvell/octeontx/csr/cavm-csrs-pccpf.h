@@ -52,6 +52,7 @@
 #define CAVM_PCC_DEV_CON_E_GPIO_CN8 (0x30)
 #define CAVM_PCC_DEV_CON_E_GPIO_CN9 (0x78)
 #define CAVM_PCC_DEV_CON_E_GSERX(a) (0x1e0 + (a))
+#define CAVM_PCC_DEV_CON_E_GSERCX(a) (0x1c0 + (a))
 #define CAVM_PCC_DEV_CON_E_GSERNX(a) (0x1f0 + (a))
 #define CAVM_PCC_DEV_CON_E_GSERPX(a) (0x1e0 + (a))
 #define CAVM_PCC_DEV_CON_E_GSERRX(a) (0x1f6 + (a))
@@ -129,6 +130,7 @@
 #define CAVM_PCC_DEV_CON_E_RNM_CN8 (0x200)
 #define CAVM_PCC_DEV_CON_E_RNM_CN9 (0x300)
 #define CAVM_PCC_DEV_CON_E_RST (0x101)
+#define CAVM_PCC_DEV_CON_E_RTT (0x110)
 #define CAVM_PCC_DEV_CON_E_RVUX(a) (0x20100 + 0x100 * (a))
 #define CAVM_PCC_DEV_CON_E_SATA0_CN81XX (0xb0)
 #define CAVM_PCC_DEV_CON_E_SATA0_CN83XX (0x10020)
@@ -172,6 +174,7 @@
  * The class_codes are formatted as defined by PCC_CLASS_CODE_S.
  */
 #define CAVM_PCC_DEV_IDL_E_AP5 (0x76)
+#define CAVM_PCC_DEV_IDL_E_AP6 (0x86)
 #define CAVM_PCC_DEV_IDL_E_AVS (0x6a)
 #define CAVM_PCC_DEV_IDL_E_BCH (0x43)
 #define CAVM_PCC_DEV_IDL_E_BCH_VF (0x44)

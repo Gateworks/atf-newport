@@ -21965,7 +21965,7 @@ union cavm_gsernx_lanex_tx_1_bcfg
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_57_63        : 7;
-        uint64_t tx_acjtag             : 1;  /**< [ 56: 56](R/W) TBD */
+        uint64_t tx_acjtag             : 1;  /**< [ 56: 56](R/W) ACJTAG bits. */
         uint64_t tx_dacj               : 8;  /**< [ 55: 48](R/W) ACJTAG block data bits (some redundant). */
         uint64_t reserved_41_47        : 7;
         uint64_t tx_enloop             : 1;  /**< [ 40: 40](R/W) Set to enable the DDR loopback mux in the custom transmitter to send a copy of
@@ -22113,7 +22113,7 @@ union cavm_gsernx_lanex_tx_1_bcfg
                                                                  transmitter and the receiver. GSERN()_LANE()_RX_ST_BCFG[EN_LB] must also be set. */
         uint64_t reserved_41_47        : 7;
         uint64_t tx_dacj               : 8;  /**< [ 55: 48](R/W) ACJTAG block data bits (some redundant). */
-        uint64_t tx_acjtag             : 1;  /**< [ 56: 56](R/W) TBD */
+        uint64_t tx_acjtag             : 1;  /**< [ 56: 56](R/W) ACJTAG bits. */
         uint64_t reserved_57_63        : 7;
 #endif /* Word 0 - End */
     } s;

@@ -10374,7 +10374,19 @@ union cavm_gsercx_lanex_status_bsts
     struct cavm_gsercx_lanex_status_bsts_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_19_63        : 45;
+        uint64_t reserved_21_63        : 43;
+        uint64_t ln_rx_fifo_full       : 1;  /**< [ 20: 20](RO/H) Reserved.
+                                                                 Internal:
+                                                                 When set indicates that the RX FIFO between the PHY SerDes and CGX if full. Indicates the
+                                                                 RX FIFO is overflowing.  This signal is not latched.  Used to debug cases in which the
+                                                                 sclk frequency may be set too low and CGX is not keeping up with the RX FIFO in GSERR.
+                                                                 For debug use only. */
+        uint64_t ln_tx_fifo_empty      : 1;  /**< [ 19: 19](RO/H) Reserved.
+                                                                 Internal:
+                                                                 When set indicates that the TX FIFO between the PHY SerDes and CGX if empty. Indicates the
+                                                                 TX FIFO is underflowing.  This signal is not latched.  Used to debug cases in which the
+                                                                 sclk frequency may be set too low and CGX is not keeping up with the TX FIFO in GSERR.
+                                                                 For debug use only. */
         uint64_t ln_an_stat_resolved   : 1;  /**< [ 18: 18](RO/H) Reserved.
                                                                  Internal:
                                                                  Indicates auto-negotiation has compledted the resolution of technology, pause enable,
@@ -10512,7 +10524,19 @@ union cavm_gsercx_lanex_status_bsts
                                                                  Indicates auto-negotiation has compledted the resolution of technology, pause enable,
                                                                  and FEC enable.  When asserted, [LN_AN_SEL[4:0]], [LN_AN_TX/RX_PAUSE_EN], [LN_AN_RS_FEC_EN],
                                                                  [LN_AN_BASE_FEC_EN], [LN_AN_RS_FEC_EN] are valid. */
-        uint64_t reserved_19_63        : 45;
+        uint64_t ln_tx_fifo_empty      : 1;  /**< [ 19: 19](RO/H) Reserved.
+                                                                 Internal:
+                                                                 When set indicates that the TX FIFO between the PHY SerDes and CGX if empty. Indicates the
+                                                                 TX FIFO is underflowing.  This signal is not latched.  Used to debug cases in which the
+                                                                 sclk frequency may be set too low and CGX is not keeping up with the TX FIFO in GSERR.
+                                                                 For debug use only. */
+        uint64_t ln_rx_fifo_full       : 1;  /**< [ 20: 20](RO/H) Reserved.
+                                                                 Internal:
+                                                                 When set indicates that the RX FIFO between the PHY SerDes and CGX if full. Indicates the
+                                                                 RX FIFO is overflowing.  This signal is not latched.  Used to debug cases in which the
+                                                                 sclk frequency may be set too low and CGX is not keeping up with the RX FIFO in GSERR.
+                                                                 For debug use only. */
+        uint64_t reserved_21_63        : 43;
 #endif /* Word 0 - End */
     } s;
     /* struct cavm_gsercx_lanex_status_bsts_s cn; */
