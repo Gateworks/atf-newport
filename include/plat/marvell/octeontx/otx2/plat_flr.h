@@ -59,8 +59,6 @@
 #define VA_OFFSET_MASK			ULL(0xfff)
 #define VA_OFFSET(x)			(((x) >> VA_OFFSET_SHIFT) & VA_OFFSET_MASK)
 
-#define MIDR_FLR_MASK			ULL(0xfffffff0)
-
 #define GP_REG_OFFSET			ULL(0x8)
 
 #define CAVM_TRAPOPC_INSN_SHIFT		ULL(0)

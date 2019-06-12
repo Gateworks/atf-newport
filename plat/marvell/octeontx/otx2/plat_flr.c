@@ -8,6 +8,8 @@
 #include <debug.h>
 #include <assert.h>
 #include <context.h>
+#include <octeontx_common.h>
+#include <octeontx_utils.h>
 #include <platform.h>
 #include <platform_def.h>
 #include <platform_setup.h>
@@ -104,10 +106,11 @@ static inline int is_block_disabled(int blk_id)
 static inline int is_flr_wa_applicable(void) {
 	uint64_t midr;
 
-	/* Mask out minor revision bits */
-	midr = read_midr() & MIDR_FLR_MASK;
+	midr = read_midr();
 
-	return (OCTEONTX2_CN96XX_MIDR == midr);
+	return IS_OCTEONTX_PN(midr, T96PARTNUM) ||
+		IS_OCTEONTX_PN(midr, F95PARTNUM) ||
+		IS_OCTEONTX_PN(midr, LOKIPARTNUM);
 }
 
 static inline void virt_to_phys_el0(uintptr_t va)
