@@ -40,6 +40,9 @@
 
 void el3_invoke_elx_kernel_callback(uint64_t kernel_cback, uint64_t spsr_el3,
 			 uint64_t scr_el3);
+#if defined(PLAT_t96)	/* FIXME: add support for T83 platform */
+static void gti_access_secure_memory_setup(int do_secure);
+#endif
 uint64_t g_kernel_cback;
 _Atomic int in_use_lock;
 
@@ -74,6 +77,8 @@ static void gti_watchdog_set(uint64_t timeout_ms, uint64_t cores)
 		union cavm_rst_boot rst_boot;
 		union cavm_gti_cwd_wdogx wdog;
 		cavm_gti_cwd_int_ena_set_t gti_cwd_ena;
+		uint64_t vector_ptr;
+		int intr_pinx;
 		int i, rc;
 
 		rst_boot.u = CSR_READ(CAVM_RST_BOOT);
@@ -101,12 +106,28 @@ static void gti_watchdog_set(uint64_t timeout_ms, uint64_t cores)
 
 		/* configure interrupt vectors */
 
-		for (i = 0; i < GTI_CWD_SPI_IRQS; i++) {
+		for (i = 0; i < PLATFORM_CORE_COUNT; i++) {
 
 			if (!(cores & (1 << i)))
 				continue;
 
-			plat_gti_irq_setup(i);
+			/* Get the offset of interrupt vector for this core */
+			intr_pinx = CAVM_GTI_INT_VEC_E_CORE_WDOGX_INT_CN9(i);
+
+			/* INTR_PINX vector address */
+			vector_ptr = CAVM_GTI_BAR_E_GTI_PF_BAR4_CN9 +
+					 (intr_pinx << 4);
+			debug_gti_watchdog("Watchdog: vector_ptr = %llx, ",
+					vector_ptr);
+			debug_gti_watchdog("Watchdog: intr_pinx = %d\n",
+					intr_pinx);
+
+			/* Enable SECVEC to make the vector secure */
+			octeontx_write64(vector_ptr, CAVM_GICD_SETSPI_SR | 1);
+			vector_ptr += 0x8;
+			debug_gti_watchdog("Watchdog: setvector ptr to 0x%x\n",
+					 GTI_CWD_SPI_IRQ(i));
+			octeontx_write64(vector_ptr, GTI_CWD_SPI_IRQ(i));
 		}
 
 		for (i = 0; i < GTI_CWD_SPI_IRQS; i++) {
@@ -124,7 +145,10 @@ static void gti_watchdog_set(uint64_t timeout_ms, uint64_t cores)
 			}
 		}
 
-		plat_gti_access_secure_memory_setup(1);
+		/* FIXME: add support for T83 platform */
+#if defined(PLAT_t96)
+		gti_access_secure_memory_setup(1);
+#endif
 
 		debug_gti_watchdog("Watchdog: Set to expire %llu SCLK cycles\n",
 					timeout_wdog << 18);
@@ -138,7 +162,7 @@ static void gti_watchdog_set(uint64_t timeout_ms, uint64_t cores)
 		 */
 		wdog.s.mode = 3;
 
-		for (i = 0; i < GTI_CWD_SPI_IRQS; i++) {
+		for (i = 0; i < PLATFORM_CORE_COUNT; i++) {
 			if (!(cores & (1 << i)))
 				continue;
 			CSR_WRITE(CAVM_GTI_CWD_WDOGX(i), wdog.u);
@@ -152,7 +176,7 @@ static void gti_watchdog_set(uint64_t timeout_ms, uint64_t cores)
  */
 void gti_watchdog_disable(void)
 {
-	for (int i = 0; i < GTI_CWD_SPI_IRQS; i++) {
+	for (int i = 0; i < PLATFORM_CORE_COUNT; i++) {
 		if (gti_watchdog_is_running(i)) {
 			debug_gti_watchdog("Disabling watchdog on core %d\n",
 					 i);
@@ -176,13 +200,63 @@ int gti_watchdog_is_running(int core)
 	return wdog.s.mode != 0;
 }
 
+/*
+ * This function configures IOBN to grant access for GTI to secure memory
+ */
+#if defined(PLAT_t96)	/* FIXME: add support for T83 platform */
+static void gti_access_secure_memory_setup(int do_secure)
+{
+	/*
+	 * dev_idx - Stream's dev number (stream_id<7:0>)
+	 * bus_idx - Stream's bus number (stream_id<15:8>).
+	 */
+	uint64_t bus_idx = (CAVM_PCC_DEV_CON_E_GTI_CN9 >> 8) & 0xFF;
+	uint64_t domain_idx = (CAVM_PCC_DEV_CON_E_GTI_CN9 >> 16) & 0xFF;
+	uint64_t dev_idx = (CAVM_PCC_DEV_CON_E_GTI_CN9 >> 3) & 0xFF;
+
+	cavm_iobnx_domx_busx_streams_t iobn_domx_busx_stream;
+	cavm_iobnx_domx_devx_streams_t iobn_domx_devx_stream;
+
+	debug_gti_watchdog("iobn count = %d\n", plat_octeontx_scfg->iobn_count);
+	for (int iobn_idx = 0; iobn_idx < plat_octeontx_scfg->iobn_count;
+				iobn_idx++) {
+
+		iobn_domx_busx_stream.u = CSR_READ(
+			CAVM_IOBNX_DOMX_BUSX_STREAMS(iobn_idx,
+			domain_idx, bus_idx));
+		debug_gti_watchdog("busx strm_nsec = %d, phys_nsec = %d\n",
+			iobn_domx_busx_stream.s.strm_nsec,
+			iobn_domx_busx_stream.s.phys_nsec);
+
+		if (do_secure) {
+			iobn_domx_busx_stream.s.strm_nsec = 0;
+			iobn_domx_busx_stream.s.phys_nsec = 0;
+			CSR_WRITE(CAVM_IOBNX_DOMX_BUSX_STREAMS(
+				iobn_idx, domain_idx, bus_idx),
+				iobn_domx_busx_stream.u);
+		}
+
+		iobn_domx_devx_stream.u = CSR_READ(
+			CAVM_IOBNX_DOMX_DEVX_STREAMS(iobn_idx,
+			domain_idx, dev_idx));
+		debug_gti_watchdog("devx strm_nsec = %d, phys_nsec = %d\n",
+			iobn_domx_devx_stream.s.strm_nsec,
+			iobn_domx_devx_stream.s.phys_nsec);
+
+		if (do_secure) {
+			iobn_domx_devx_stream.s.strm_nsec = 0;
+			iobn_domx_devx_stream.s.phys_nsec = 0;
+			CSR_WRITE(CAVM_IOBNX_DOMX_DEVX_STREAMS(
+				iobn_idx, domain_idx, dev_idx),
+				iobn_domx_devx_stream.u);
+		}
+	}
+}
+#endif
+
 int gti_wdog_remove_handler(void)
 {
 	int retval = 1;
-
-	if ((!IS_OCTEONTX_PN(read_midr(), T83PARTNUM)) &&
-		(!IS_OCTEONTX_PN(read_midr(), T96PARTNUM)))
-		return 0;
 
 	gti_watchdog_disable();
 
@@ -194,16 +268,12 @@ int gti_wdog_install_handler(uint64_t kernel_wdog_callback, uint64_t core,
 {
 	int retval = 1;
 
-	if ((!IS_OCTEONTX_PN(read_midr(), T83PARTNUM)) &&
-		(!IS_OCTEONTX_PN(read_midr(), T96PARTNUM)))
-		return 0;
-
 	g_kernel_cback = kernel_wdog_callback;
 
 	debug_gti_watchdog("Watchdog: core = %lld, mpidr = 0x%llx\n",
 			 core, read_mpidr());
 
-	if (core == GTI_CWD_SPI_IRQS) {
+	if (core == PLATFORM_CORE_COUNT) {
 		debug_gti_watchdog("Watchdog: kernel callback = 0x%llx, ",
 				 g_kernel_cback);
 		debug_gti_watchdog("timeout_ms = %lld, ",

@@ -16,8 +16,6 @@
 #include <octeontx_plat_configuration.h>
 #include <plat_otx2_configuration.h>
 #include <plat_octeontx.h>
-#include <octeontx_irqs_def.h>
-#include <plat_scfg.h>
 
 static uint64_t msix_addr_save;
 
@@ -383,66 +381,4 @@ void plat_gpio_irq_setup(void)
 
 	if (octeontx_register_gpio_handlers() < 0)
 		ERROR("Failed to register GPIO intercept handlers\n");
-}
-
-/*
- * This function configures IOBN to grant access for GTI to secure memory
- */
-void plat_gti_access_secure_memory_setup(int do_secure)
-{
-	/*
-	 * dev_idx - Stream's dev number (stream_id<7:0>)
-	 * bus_idx - Stream's bus number (stream_id<15:8>).
-	 */
-	uint64_t bus_idx = (CAVM_PCC_DEV_CON_E_GTI_CN9 >> 8) & 0xFF;
-	uint64_t domain_idx = (CAVM_PCC_DEV_CON_E_GTI_CN9 >> 16) & 0xFF;
-	uint64_t dev_idx = (CAVM_PCC_DEV_CON_E_GTI_CN9 >> 3) & 0xFF;
-
-	cavm_iobnx_domx_busx_streams_t iobn_domx_busx_stream;
-	cavm_iobnx_domx_devx_streams_t iobn_domx_devx_stream;
-
-	for (int iobn_idx = 0; iobn_idx < plat_octeontx_scfg->iobn_count;
-				iobn_idx++) {
-
-		iobn_domx_busx_stream.u = CSR_READ(
-			CAVM_IOBNX_DOMX_BUSX_STREAMS(iobn_idx,
-			domain_idx, bus_idx));
-
-		if (do_secure) {
-			iobn_domx_busx_stream.s.strm_nsec = 0;
-			iobn_domx_busx_stream.s.phys_nsec = 0;
-			CSR_WRITE(CAVM_IOBNX_DOMX_BUSX_STREAMS(
-				iobn_idx, domain_idx, bus_idx),
-				iobn_domx_busx_stream.u);
-		}
-
-		iobn_domx_devx_stream.u = CSR_READ(
-			CAVM_IOBNX_DOMX_DEVX_STREAMS(iobn_idx,
-			domain_idx, dev_idx));
-
-		if (do_secure) {
-			iobn_domx_devx_stream.s.strm_nsec = 0;
-			iobn_domx_devx_stream.s.phys_nsec = 0;
-			CSR_WRITE(CAVM_IOBNX_DOMX_DEVX_STREAMS(
-				iobn_idx, domain_idx, dev_idx),
-				iobn_domx_devx_stream.u);
-		}
-	}
-}
-
-void plat_gti_irq_setup(int core)
-{
-	uint64_t vector_ptr;
-	int intr_pinx;
-
-	/* Get the offset of interrupt vector for this core */
-	intr_pinx = CAVM_GTI_INT_VEC_E_CORE_WDOGX_INT_CN9(core);
-
-	/* INTR_PINX vector address */
-	vector_ptr = CAVM_GTI_BAR_E_GTI_PF_BAR4_CN9 + (intr_pinx << 4);
-
-	/* Enable SECVEC to make the vector secure */
-	octeontx_write64(vector_ptr, CAVM_GICD_SETSPI_SR | 1);
-	vector_ptr += 0x8;
-	octeontx_write64(vector_ptr, GTI_CWD_SPI_IRQ(core));
 }
