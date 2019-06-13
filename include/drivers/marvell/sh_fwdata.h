@@ -15,6 +15,7 @@ struct sfp_eeprom_s {
 #define SFP_EEPROM_SIZE 256
 	uint16_t sff_id;
 	uint8_t buf[SFP_EEPROM_SIZE];
+	uint64_t reserved;
 };
 
 struct cgx_lmac_fwdata_s {
@@ -32,6 +33,8 @@ struct cgx_lmac_fwdata_s {
 	uint64_t advertised_link_modes;
 	/* Only applicable if SFP/QSFP slot is present */
 	struct sfp_eeprom_s sfp_eeprom;
+	uint64_t reserved[RESERVED_MEM];
+
 };
 
 /* To be synced with linux/drivers/net/ethernet/marvell/octeontx2/af/rvu.h */
