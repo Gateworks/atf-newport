@@ -777,7 +777,7 @@ int qlm_rx_equalization_gsern(int qlm, int qlm_lane)
 	}
 
 	/* Stay in deep idle for 100us */
-	gsern_wait_usec(100);
+	udelay(100);
 
 	/* Take the lanes out of deep idle */
 	for (int lane = 0; lane < MAX_LANES; lane++)
@@ -816,7 +816,7 @@ int qlm_rx_equalization_gsern(int qlm, int qlm_lane)
 	}
 
 	/* Allow lanes to settle for 1ms */
-	gsern_wait_usec(1000); /* 1ms */
+	mdelay(1);
 
 	/* Undo the force idle detect */
 	for (int lane = 0; lane < MAX_LANES; lane++)

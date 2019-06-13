@@ -10,7 +10,7 @@
 
 int gsern_is_platform(int plat)
 {
-	return strncmp(plat_octeontx_bcfg->bcfg.board_model,
+	return !strncmp(plat_octeontx_bcfg->bcfg.board_model,
 		plat == GSERN_PLATFORM_ASIM ? "asim-" : "emul-", 5);
 }
 

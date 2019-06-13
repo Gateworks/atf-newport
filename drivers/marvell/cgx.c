@@ -20,6 +20,7 @@
 #include <cgx_intf.h>
 #include <qlm.h>
 #include <octeontx_utils.h>
+#include <gsern/gsern_internal.h>
 
 /* define DEBUG_ATF_CGX to enable debug logs */
 #undef DEBUG_ATF_CGX
@@ -1122,6 +1123,36 @@ int cgx_fec_change(int cgx_id, int lmac_id, int new_fec)
 	return 0;
 }
 
+uint64_t cgx_get_lane_mask(int qlm, int lane, int mode)
+{
+	uint64_t lane_mask = 0;
+
+	switch (mode) {
+	case CAVM_CGX_LMAC_TYPES_E_TENG_R:
+	case CAVM_CGX_LMAC_TYPES_E_TWENTYFIVEG_R:
+	case CAVM_CGX_LMAC_TYPES_E_USXGMII:
+		lane_mask = 1ULL << lane;
+	break;
+	case CAVM_CGX_LMAC_TYPES_E_RXAUI:
+	case CAVM_CGX_LMAC_TYPES_E_FIFTYG_R:
+		if (lane & 1)
+			lane_mask = 3ULL << (lane - 1);
+		else
+			lane_mask = 3ULL << lane;
+	break;
+	case CAVM_CGX_LMAC_TYPES_E_XAUI:
+	case CAVM_CGX_LMAC_TYPES_E_FORTYG_R:
+	case CAVM_CGX_LMAC_TYPES_E_HUNDREDG_R:
+		lane_mask = 0xF;
+	break;
+	default:
+		lane_mask = 0;
+	break;
+	}
+
+	return lane_mask;
+}
+
 static int cgx_complete_sw_an(int cgx_id, int lmac_id)
 {
 	int mode_req = 0, hcd_match = 0, fec_req = 0;
@@ -1612,12 +1643,15 @@ int cgx_xaui_init_link(int cgx_id, int lmac_id)
 
 int cgx_xaui_set_link_up(int cgx_id, int lmac_id)
 {
+	int qlm, lane, num_lanes;
+	uint64_t lane_mask;
 	cgx_lmac_config_t *lmac;
 	cavm_cgxx_spux_int_t spux_int;
 	cavm_cgxx_spux_status1_t spux_status1;
 	cavm_cgxx_spux_status2_t spux_status2;
 	cavm_cgxx_cmrx_config_t cmr_config;
 	cavm_cgxx_spux_br_status2_t br_status2;
+	cavm_cgxx_spux_control1_t spux_control1;
 
 	lmac = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
 
@@ -1665,26 +1699,40 @@ int cgx_xaui_set_link_up(int cgx_id, int lmac_id)
 		/* Perform RX EQU for non-KR interfaces and for the link
 		 * speed >= 10Gbaud - XAUI/XLAUI/XFI
 		 */
-#if 0
-		if (qlm_rx_equalization(cgx_id, lmac_id) == -1) {
-			debug_cgx("%s: %d:%d RX EQU failed\n", __func__,
-					cgx_id, lmac_id);
-			cgx_set_error_type(cgx_id, lmac_id,
-				CGX_ERR_RX_EQU_FAIL);
-			return -1;
+		qlm = lmac->qlm;
+		/* For some boards, lanes are swizzed and the lane
+		 * info in LMAC config structure might not have the
+		 * swapped lane info and hence read it from lane_to_sds
+		 */
+		lane = lmac->lane_to_sds & 0x3;
+		lane_mask = cgx_get_lane_mask(qlm, lane, lmac->mode);
+
+		/* Skip RX adaptation in internal loopback mode */
+		spux_control1.u = CSR_READ(CAVM_CGXX_SPUX_CONTROL1(
+					cgx_id, lmac_id));
+		if (spux_control1.s.loopbck)
+			lane_mask = 0;
+
+		while (lane_mask) {
+			num_lanes = qlm_get_lanes(qlm);
+			for (int lane = 0; lane < num_lanes; lane++) {
+				if (!(lane_mask & (1 << lane)))
+					continue;
+				if (qlm_rx_equalization_gsern(qlm, lane)
+							== -1) {
+					debug_cgx("%s:RX EQU failed %d:%d\n",
+						__func__, qlm, lane);
+					cgx_set_error_type(cgx_id, lmac_id,
+						CGX_ERR_RX_EQU_FAIL);
+					return -1;
+				}
+			}
+			lane_mask >>= num_lanes;
+			qlm++;
 		}
-#endif
 	}
 
-	/* bring the SPU out of reset */
-	if (cgx_poll_for_csr(CAVM_CGXX_SPUX_CONTROL1(cgx_id, lmac_id),
-			CGX_SPUX_RESET_MASK, 0, -1)) {
-		debug_cgx("%s: %d:%d SPUX reset not completed\n",
-				__func__, cgx_id, lmac_id);
-		cgx_set_error_type(cgx_id, lmac_id,
-				CGX_ERR_SPUX_RESET_FAIL);
-		return -1;
-	}
+	mdelay(1);
 
 	/* POLL for the status of the link by checking lane
 	 * alignment/block lock
