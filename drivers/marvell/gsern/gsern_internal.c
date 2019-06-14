@@ -135,7 +135,7 @@ static int gsern_config_get_qlm_tuning(int prop, const char *mode, int baud_mhz,
 
 	buf = fdt_getprop(fdt, offset, name, &len);
 	if (!buf) {
-		debug_cgx("No %s option is set in BDK DT.\n", prop);
+		debug_gsern("No %s option is set in BDK DT.\n", prop);
 		return -1;
 	}
 	return strtol(buf, NULL, 10);

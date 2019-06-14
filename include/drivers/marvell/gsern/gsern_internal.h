@@ -20,7 +20,7 @@
 #undef DEBUG_ATF_GSERN
 
 #ifdef DEBUG_ATF_GSERN
-#define debug_cgx printf
+#define debug_gsern printf
 /*
  * Define values to evaluate following expression to true:
  * gsern_trace_enables & (1ull << GSERN_TRACE_ENABLE_QLM)
@@ -28,7 +28,7 @@
 #define gsern_trace_enables	2
 #define GSERN_TRACE_ENABLE_QLM	1
 #else
-#define debug_cgx(...) ((void) (0))
+#define debug_gsern(...) ((void) (0))
 /*
  * Define values to evaluate following expression to false:
  * gsern_trace_enables & (1ull << GSERN_TRACE_ENABLE_QLM)
@@ -76,7 +76,7 @@
 #define gsern_qlm_get_lanes(q)	plat_octeontx_scfg->qlm_max_lane_num[q]
 #define qlm_get_lanes(q)	gsern_qlm_get_lanes(q)
 
-#define GSERN_TRACE(ignore, format, ...)	debug_cgx(format, ##__VA_ARGS__)
+#define GSERN_TRACE(ignore, format, ...)	debug_gsern(format, ##__VA_ARGS__)
 #define GSERN_CSR_MODIFY		CSR_MODIFY
 #define GSERN_CSR_INIT			CSR_INIT
 #define GSERN_CSR_WRITE			CSR_WRITE
