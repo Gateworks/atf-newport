@@ -33,6 +33,7 @@ struct cgx_lmac_fwdata_s {
 	uint64_t advertised_link_modes;
 	/* Only applicable if SFP/QSFP slot is present */
 	struct sfp_eeprom_s sfp_eeprom;
+ #define RESERVED_MEM 1024
 	uint64_t reserved[RESERVED_MEM];
 
 };
