@@ -151,7 +151,9 @@ int sdmmc_rw_data(int write, unsigned int addr, int size, uintptr_t buf, int buf
 		return -1;
 	}
 
-	round_size = ROUND_UP(size, mmc_drv.sector_size);
+	offset  = addr % mmc_drv.sector_size;
+
+	round_size = ROUND_UP(size + offset, mmc_drv.sector_size);
 	if (buf_size < size) {
 		printf("buf_size %d too small, need %d (aligned %d)\n",
 				buf_size, size, round_size);
@@ -160,10 +162,6 @@ int sdmmc_rw_data(int write, unsigned int addr, int size, uintptr_t buf, int buf
 	octeontx_configure_mmc_security(1); /* secure */
 
 	blk_cnt = round_size / mmc_drv.sector_size;
-	offset  = addr % mmc_drv.sector_size;
-
-	if ((size % mmc_drv.sector_size) + offset > 512)
-		blk_cnt++;
 
 	while (blk_cnt > 0) {
 		blks = (blk_cnt > 8) ? 8 : blk_cnt;
