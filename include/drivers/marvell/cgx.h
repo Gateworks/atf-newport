@@ -173,7 +173,9 @@ typedef union cgx_lmac_context {
 		uint64_t an:1;
 		/* current FEC type:2 */
 		uint64_t fec:2;
-		uint64_t reserved:31;
+		/* init link state */
+		uint64_t init_link:1;
+		uint64_t reserved:30;
 	} s;
 } cgx_lmac_context_t;
 
