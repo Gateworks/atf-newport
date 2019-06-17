@@ -1498,6 +1498,7 @@ int qlm_set_mode_gsern(int qlm, int lane, qlm_modes_t mode, int baud_mhz, qlm_mo
 			is_network = true;
 			break;
 		case QLM_MODE_RXAUI:
+		case QLM_MODE_25GAUI_2_C2C:
 		case QLM_MODE_40GAUI_2_C2C:
 		case QLM_MODE_50GAUI_2_C2C:
 		case QLM_MODE_50GAUI_2_C2M:
@@ -1512,6 +1513,7 @@ int qlm_set_mode_gsern(int qlm, int lane, qlm_modes_t mode, int baud_mhz, qlm_mo
 		case QLM_MODE_XLAUI_C2M:
 		case QLM_MODE_40G_CR4:
 		case QLM_MODE_40G_KR4:
+		case QLM_MODE_50GAUI_4_C2C:
 		case QLM_MODE_80GAUI_4_C2C:
 		case QLM_MODE_CAUI_4_C2C:
 		case QLM_MODE_CAUI_4_C2M:

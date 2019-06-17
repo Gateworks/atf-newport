@@ -66,6 +66,8 @@ typedef enum {
 	QLM_MODE_25G_CR,
 	/* 25GBASE-KR, 1 lane each */
 	QLM_MODE_25G_KR,
+	/* 25GAUI-2 chip to chip, 2 lanes each (CN9XXX) */
+	QLM_MODE_25GAUI_2_C2C,
 	/* 40GAUI-2 chip to chip, 2 lanes each (CN9XXX) */
 	QLM_MODE_40GAUI_2_C2C,
 	/* 50G chip to chip, 2 lanes each (CN93XX QLMs) */
@@ -76,6 +78,8 @@ typedef enum {
 	QLM_MODE_50G_CR2,
 	/* 50GBASE-KR2, 2 lanes each */
 	QLM_MODE_50G_KR2,
+	/* 50GAUI-2 chip to chip, 4 lanes each (CN9XXX) */
+	QLM_MODE_50GAUI_4_C2C,
 	/* 80GAUI-2 chip to chip, 4 lanes each (CN9XXX) */
 	QLM_MODE_80GAUI_4_C2C,
 	/* 100G chip-to-chip, 4 lanes each (CN93XX) */
