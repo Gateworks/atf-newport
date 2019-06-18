@@ -232,6 +232,77 @@ void phy_lookup(int cgx_id, int lmac_id, int type)
 			cgx_id, lmac_id, type);
 }
 
+#ifdef DEBUG_ATF_ENABLE_SERDES_DIAGNOSTIC_CMDS
+int phy_enable_prbs(int cgx_id, int lmac_id, int host_side, int prbs, int dir)
+{
+	phy_config_t *phy;
+	uint64_t ret = -1;
+
+	debug_nw_mgmt("%s: %d:%d\n", __func__, cgx_id, lmac_id);
+
+	phy = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id].phy_config;
+
+	if (phy->mux_switch)
+		smi_set_switch(phy, 1); /* Enable the switch */
+
+	/* Call PHY specific enable_prbs callback here */
+	if (phy->valid && phy->drv->enable_prbs)
+		ret = phy->drv->enable_prbs(cgx_id, lmac_id, host_side, prbs,
+					dir);
+
+	if (phy->mux_switch)
+		smi_set_switch(phy, 0); /* Disable the switch */
+
+	return ret;
+}
+
+int phy_disable_prbs(int cgx_id, int lmac_id, int host_side, int prbs)
+{
+	phy_config_t *phy;
+	uint64_t ret = -1;
+
+	debug_nw_mgmt("%s: %d:%d\n", __func__, cgx_id, lmac_id);
+
+	phy = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id].phy_config;
+
+	if (phy->mux_switch)
+		smi_set_switch(phy, 1); /* Enable the switch */
+
+	/* Call PHY specific disable_prbs callback here */
+	if (phy->valid && phy->drv->disable_prbs)
+		ret = phy->drv->disable_prbs(cgx_id, lmac_id, host_side, prbs);
+
+	if (phy->mux_switch)
+		smi_set_switch(phy, 0); /* Disable the switch */
+
+	return ret;
+}
+
+uint64_t phy_get_prbs_errors(int cgx_id, int lmac_id, int host_side,
+	int clear, int prbs)
+{
+	phy_config_t *phy;
+	uint64_t ret = -1;
+
+	debug_nw_mgmt("%s: %d:%d\n", __func__, cgx_id, lmac_id);
+
+	phy = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id].phy_config;
+
+	if (phy->mux_switch)
+		smi_set_switch(phy, 1); /* Enable the switch */
+
+	/* Call PHY specific get_prbs_errors callback here */
+	if (phy->valid && phy->drv->get_prbs_errors)
+		ret = phy->drv->get_prbs_errors(cgx_id, lmac_id, host_side,
+					clear, prbs);
+
+	if (phy->mux_switch)
+		smi_set_switch(phy, 0); /* Disable the switch */
+
+	return ret;
+}
+#endif /* DEBUG_ATF_ENABLE_SERDES_DIAGNOSTIC_CMDS */
+
 /* Wrapper APIs for SMI driver for now */
 void phy_set_switch(phy_config_t *phy, int enable)
 {

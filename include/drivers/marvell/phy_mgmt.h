@@ -8,6 +8,9 @@
 #ifndef __PHY_MGMT_H__
 #define __PHY_MGMT_H__
 
+/* Define DEBUG_ATF_ENABLE_SERDES_DIAGNOSTIC_CMDS to enable diagnostic cmds */
+#undef DEBUG_ATF_ENABLE_SERDES_DIAGNOSTIC_CMDS
+
 /* IEEE 802.3 spec CLAUSE 45 MDIO access
  * PMA/PMD control reg bits 6 & 13 determine
  * speed sel
@@ -118,6 +121,16 @@ typedef struct phy_drv {
 	void (*shutdown)(int cgx_id, int lmac_id); /* Function pointer to shutdown PHY */
 	/* Function pointer to obtain supported modes */
 	void (*set_supported_modes)(int cgx_id, int lmac_id);
+#ifdef DEBUG_ATF_ENABLE_SERDES_DIAGNOSTIC_CMDS
+	/* Function pointer to enable prbs */
+	int (*enable_prbs)(
+		int cgx_id, int lmac_id, int host_side, int prbs, int dir);
+	/* Function pointer to disable prbs */
+	int (*disable_prbs)(int cgx_id, int lmac_id, int host_side, int prbs);
+	/* Function pointer to get prbs errors */
+	uint64_t (*get_prbs_errors)(
+		int cgx_id, int lmac_id, int host_side, int clear, int prbs);
+#endif /* DEBUG_ATF_ENABLE_SERDES_DIAGNOSTIC_CMDS */
 } phy_drv_t;
 
 typedef struct phy_config {
@@ -155,6 +168,13 @@ void phy_set_switch(phy_config_t *phy, int enable);
 int phy_set_mod_type(int cgx_id, int lmac_id, phy_mod_type mod_type);
 void phy_set_supported_link_modes(int cgx_id, int lmac_id);
 void phy_reset(int cgx_id, int lmac_id);
+
+#ifdef DEBUG_ATF_ENABLE_SERDES_DIAGNOSTIC_CMDS
+int phy_enable_prbs(int cgx_id, int lmac_id, int host_side, int prbs, int dir);
+int phy_disable_prbs(int cgx_id, int lmac_id, int host_side, int prbs);
+uint64_t phy_get_prbs_errors(
+	int cgx_id, int lmac_id, int host_side, int clear, int prbs);
+#endif /* DEBUG_ATF_ENABLE_SERDES_DIAGNOSTIC_CMDS */
 
 /* Generic PHY driver APIs to be exposed to other PHY drivers */
 void phy_generic_probe(int cgx_id, int lmac_id);

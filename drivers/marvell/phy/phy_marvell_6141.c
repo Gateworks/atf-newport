@@ -338,6 +338,29 @@ void phy_marvell_6141_supported_modes(int cgx_id, int lmac_id)
 			(1 << CGX_MODE_50G_4_C2C_BIT));
 }
 
+#ifdef DEBUG_ATF_ENABLE_SERDES_DIAGNOSTIC_CMDS
+static int phy_marvell_6141_enable_prbs(int cgx_id, int lmac_id, int host_side,
+	int prbs, int dir)
+{
+	debug_phy_driver("%s: %d:%d\n", __func__, cgx_id, lmac_id);
+	return 0;
+}
+
+static int phy_marvell_6141_disable_prbs(int cgx_id, int lmac_id, int host_side,
+	int prbs)
+{
+	debug_phy_driver("%s: %d:%d\n", __func__, cgx_id, lmac_id);
+	return 0;
+}
+
+static uint64_t phy_marvell_6141_get_prbs_errors(int cgx_id, int lmac_id,
+	int host_side, int clear, int prbs)
+{
+	debug_phy_driver("%s: %d:%d\n", __func__, cgx_id, lmac_id);
+	return 0;
+}
+#endif /* DEBUG_ATF_ENABLE_SERDES_DIAGNOSTIC_CMDS */
+
 phy_drv_t marvell_6141_drv = {
 		.drv_name		= "MARVELL-88X6141",
 		.drv_type		= PHY_MARVELL_6141,
@@ -348,6 +371,11 @@ phy_drv_t marvell_6141_drv = {
 		.get_link_status	= phy_marvell_6141_get_link_status,
 		.set_supported_modes	= phy_marvell_6141_supported_modes,
 		.shutdown		= phy_generic_shutdown,
+#ifdef DEBUG_ATF_ENABLE_SERDES_DIAGNOSTIC_CMDS
+		.enable_prbs		= phy_marvell_6141_enable_prbs,
+		.disable_prbs		= phy_marvell_6141_disable_prbs,
+		.get_prbs_errors	= phy_marvell_6141_get_prbs_errors,
+#endif /* DEBUG_ATF_ENABLE_SERDES_DIAGNOSTIC_CMDS */
 	};
 
 phy_drv_t *marvell_6141_check_type(int type)

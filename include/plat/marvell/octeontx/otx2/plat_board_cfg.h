@@ -62,6 +62,10 @@ typedef struct cgx_lmac_config {
 	int sfp_slot;
 	int autoneg_dis;
 	int fec;
+#ifdef DEBUG_ATF_ENABLE_SERDES_DIAGNOSTIC_CMDS
+	int prbs_errors_host;
+	int prbs_errors_line;
+#endif /* DEBUG_ATF_ENABLE_SERDES_DIAGNOSTIC_CMDS */
 	uint8_t local_mac_address[6];
 	phy_config_t phy_config;
 	sfp_slot_info_t sfp_info;
