@@ -339,25 +339,223 @@ void phy_marvell_6141_supported_modes(int cgx_id, int lmac_id)
 }
 
 #ifdef DEBUG_ATF_ENABLE_SERDES_DIAGNOSTIC_CMDS
+static MYD_PRBS_SELECTOR_TYPE phy_marvell_6141_get_prbs_selector(int prbs)
+{
+	MYD_PRBS_SELECTOR_TYPE prbs_sel;
+
+	switch (prbs) {
+	case 7:
+		prbs_sel = MYD_PRBS7;
+		break;
+	case 9:
+		prbs_sel = MYD_PRBS9;
+		break;
+	case 13:
+		prbs_sel = MYD_PRBS13;
+		break;
+	case 15:
+		prbs_sel = MYD_PRBS15;
+		break;
+	case 23:
+		prbs_sel = MYD_PRBS23;
+		break;
+	case 31:
+		prbs_sel = MYD_PRBS31;
+		break;
+	default:
+		WARN("Unsupported PRBS mode %d, using 7\n", prbs);
+		prbs_sel = MYD_PRBS7;
+		break;
+	}
+
+	return prbs_sel;
+}
+
 static int phy_marvell_6141_enable_prbs(int cgx_id, int lmac_id, int host_side,
 	int prbs, int dir)
 {
+	MYD_STATUS status;
+	phy_config_t *phy;
+	MYD_U16 lane;
+	cgx_lmac_config_t *lmac_cfg;
+	MYD_PRBS_SELECTOR_TYPE prbs_sel;
+	int enable_tx;
+	int enable_rx;
+
 	debug_phy_driver("%s: %d:%d\n", __func__, cgx_id, lmac_id);
+
+	lmac_cfg = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
+	phy = &lmac_cfg->phy_config;
+	lane = lmac_cfg->lane_to_sds & 3;
+	prbs_sel = phy_marvell_6141_get_prbs_selector(prbs);
+
+	status = mydSetPRBSClearOnRead(
+		phy->priv,
+		phy->addr,
+		MYD_HOST_SIDE,
+		lane,
+		1);
+	if (status != MYD_OK) {
+		WARN(
+			"CGX%d(%d): mydSetPRBSClearOnRead() for host side failed\n",
+			cgx_id, lane);
+		return -1;
+	}
+
+	status = mydSetPRBSClearOnRead(
+		phy->priv,
+		phy->addr,
+		MYD_LINE_SIDE,
+		lane,
+		1);
+	if (status != MYD_OK) {
+		WARN(
+			"CGX%d(%d): mydSetPRBSClearOnRead() for line side failed\n",
+			cgx_id, lane);
+		return -1;
+	}
+
+	status = mydSetPRBSPattern(
+		phy->priv,
+		phy->addr,
+		MYD_LINE_SIDE,
+		lane,
+		prbs_sel,
+		MYD_PRBS_NONE);
+	if (status != MYD_OK) {
+		WARN("CGX%d(%d): mydSetPRBSPattern() for line side failed\n",
+			cgx_id, lane);
+		return -1;
+	}
+
+	status = mydSetPRBSPattern(
+		phy->priv,
+		phy->addr,
+		MYD_HOST_SIDE,
+		lane,
+		prbs_sel,
+		MYD_PRBS_NONE);
+	if (status != MYD_OK) {
+		WARN("CGX%d(%d): mydSetPRBSPattern() for host side failed\n",
+			cgx_id, lane);
+		return -1;
+	}
+
+	enable_tx = (dir == QLM_DIRECTION_TX);
+	enable_rx = (dir == QLM_DIRECTION_RX);
+
+	status = mydSetPRBSEnableTxRx(
+		phy->priv,
+		phy->addr,
+		host_side ? MYD_HOST_SIDE : MYD_LINE_SIDE,
+		lane,
+		(enable_tx | enable_rx) ? MYD_ENABLE : MYD_DISABLE, /* TX */
+		(enable_rx) ? MYD_ENABLE : MYD_DISABLE, /* RX */
+		prbs_sel);
+	if (status != MYD_OK) {
+		WARN("CGX%d(%d): mydSetPRBSEnableTxRx() failed\n",
+			cgx_id, lane);
+		return -1;
+	}
+
 	return 0;
 }
 
 static int phy_marvell_6141_disable_prbs(int cgx_id, int lmac_id, int host_side,
 	int prbs)
 {
+	MYD_STATUS status;
+	phy_config_t *phy;
+	cgx_lmac_config_t *lmac_cfg;
+	MYD_U16 lane;
+	MYD_PRBS_SELECTOR_TYPE prbs_sel;
+
 	debug_phy_driver("%s: %d:%d\n", __func__, cgx_id, lmac_id);
+
+	lmac_cfg = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
+	phy = &lmac_cfg->phy_config;
+	lane = lmac_cfg->lane_to_sds & 3;
+	prbs_sel = phy_marvell_6141_get_prbs_selector(prbs);
+
+	status = mydSetPRBSEnableTxRx(
+		phy->priv,
+		phy->addr,
+		host_side ? MYD_HOST_SIDE : MYD_LINE_SIDE,
+		lane,
+		MYD_DISABLE, /* TX */
+		MYD_DISABLE, /* RX */
+		prbs_sel);
+	if (status != MYD_OK) {
+		WARN("CGX%d(%d): mydSetPRBSEnableTxRx() failed\n",
+			cgx_id, lane);
+		return -1;
+	}
+
+	mydLaneSoftReset(
+		phy->priv,
+		phy->addr,
+		host_side ? MYD_HOST_SIDE : MYD_LINE_SIDE,
+		lane,
+		10);
+
 	return 0;
 }
 
 static uint64_t phy_marvell_6141_get_prbs_errors(int cgx_id, int lmac_id,
 	int host_side, int clear, int prbs)
 {
+	MYD_STATUS status;
+	phy_config_t *phy;
+	cgx_lmac_config_t *lmac_cfg;
+	MYD_U16 lane;
+	MYD_PRBS_SELECTOR_TYPE prbs_sel;
+	MYD_BOOL prbsLocked;
+	MYD_U64 txBitCount, rxBitCount, rxBitErrorCount;
+	uint64_t errors;
+
 	debug_phy_driver("%s: %d:%d\n", __func__, cgx_id, lmac_id);
-	return 0;
+
+	lmac_cfg = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
+	phy = &lmac_cfg->phy_config;
+	lane = lmac_cfg->lane_to_sds & 3;
+	prbs_sel = phy_marvell_6141_get_prbs_selector(prbs);
+
+	status = mydGetPRBSLocked(
+		phy->priv,
+		phy->addr,
+		host_side ? MYD_HOST_SIDE : MYD_LINE_SIDE,
+		lane,
+		&prbsLocked);
+	if (status != MYD_OK) {
+		WARN("CGX%d(%d): mydGetPRBSLocked() failed\n", cgx_id, lane);
+		return -1;
+	}
+	if (!prbsLocked) {
+		WARN("CGX%d(%d): did not get PRBS lock\n", cgx_id, lane);
+		return -1;
+	}
+
+	status = mydGetPRBSCounts(
+		phy->priv,
+		phy->addr,
+		host_side ? MYD_HOST_SIDE : MYD_LINE_SIDE,
+		lane,
+		prbs_sel,
+		&txBitCount, &rxBitCount, &rxBitErrorCount);
+	if (status != MYD_OK) {
+		WARN("CGX%d(%d): mydGetPRBSCounts() failed\n", cgx_id, lane);
+		return -1;
+	}
+
+	if (host_side) {
+		errors = lmac_cfg->prbs_errors_host + rxBitErrorCount;
+		lmac_cfg->prbs_errors_host = (clear) ? 0 : errors;
+		return errors;
+	}
+
+	errors = lmac_cfg->prbs_errors_line + rxBitErrorCount;
+	lmac_cfg->prbs_errors_line = (clear) ? 0 : errors;
+	return errors;
 }
 #endif /* DEBUG_ATF_ENABLE_SERDES_DIAGNOSTIC_CMDS */
 
