@@ -1728,7 +1728,6 @@ int cgx_xaui_set_link_up(int cgx_id, int lmac_id)
 				}
 			}
 			lane_mask >>= num_lanes;
-			qlm++;
 		}
 	}
 
