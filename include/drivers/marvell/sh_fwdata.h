@@ -18,6 +18,11 @@ struct sfp_eeprom_s {
 	uint64_t reserved;
 };
 
+struct phy_s {
+	uint64_t can_change_mod_type : 1;
+	uint64_t mod_type            : 1;
+};
+
 struct cgx_lmac_fwdata_s {
 	/* RO to kernel. FW to set rw_valid as 0 when updating this struct
 	 * indicating data is invalid. After copying the data, this bit needs
@@ -33,8 +38,9 @@ struct cgx_lmac_fwdata_s {
 	uint64_t advertised_link_modes;
 	/* Only applicable if SFP/QSFP slot is present */
 	struct sfp_eeprom_s sfp_eeprom;
- #define RESERVED_MEM 1024
-	uint64_t reserved[RESERVED_MEM];
+	struct phy_s phy;
+#define LMAC_FWDATA_RESERVED_MEM 1023
+	uint64_t reserved[LMAC_FWDATA_RESERVED_MEM];
 
 };
 
@@ -73,5 +79,7 @@ void sh_fwdata_update_supported_fec(int cgx_id, int lmac_id);
 int sh_fwdata_get_supported_fec(int cgx_id, int lmac_id);
 void sh_fwdata_update_eeprom_data(int cgx_id, int lmac_id, uint16_t sff_id);
 void sh_fwdata_clear_eeprom_data(int cgx_id, int lmac_id, uint16_t sff_id);
+void sh_fwdata_update_phy_mod_type(int cgx_id, int lmac_id);
+void sh_fwdata_update_phy_can_change_mod_type(int cgx_id, int lmac_id);
 
 #endif

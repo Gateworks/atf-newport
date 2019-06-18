@@ -155,3 +155,55 @@ int sh_fwdata_get_supported_fec(int cgx_id, int lmac_id)
 	return fwdata->supported_fec;
 }
 
+void sh_fwdata_update_phy_mod_type(int cgx_id, int lmac_id)
+{
+	struct cgx_lmac_fwdata_s *fwdata;
+	phy_config_t *phy;
+	cgx_lmac_config_t *lmac_cfg;
+
+	lmac_cfg = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
+	phy = &lmac_cfg->phy_config;
+	fwdata = get_sh_cgx_fwdata_ptr(cgx_id, lmac_id);
+
+	fwdata->rw_valid = 0;
+	/* Make sure Linux kernel sees rw_valid is cleared before changing
+	 * other fields of fwdata.
+	 */
+	WMB;
+
+	fwdata->phy.mod_type = phy->mod_type;
+	/* Make sure that the write to phy_mod_type is done before indicating
+	 * to Linux that fwdata is valid.
+	 */
+	WMB;
+
+	fwdata->rw_valid = 1;
+}
+
+void sh_fwdata_update_phy_can_change_mod_type(int cgx_id, int lmac_id)
+{
+	struct cgx_lmac_fwdata_s *fwdata;
+	phy_config_t *phy;
+	cgx_lmac_config_t *lmac_cfg;
+
+	lmac_cfg = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
+	phy = &lmac_cfg->phy_config;
+	fwdata = get_sh_cgx_fwdata_ptr(cgx_id, lmac_id);
+
+	fwdata->rw_valid = 0;
+	/* Make sure Linux kernel sees rw_valid is cleared before changing
+	 * other fields of fwdata.
+	 */
+	WMB;
+
+	if (phy->drv->flags & PHY_FLAG_SUPPORTS_CHANGING_MOD_TYPE)
+		fwdata->phy.can_change_mod_type = 1;
+	else
+		fwdata->phy.can_change_mod_type = 0;
+	/* Make sure that the write to phy.can_change_mod_type is done before
+	 * indicating to Linux that fwdata is valid.
+	 */
+	WMB;
+
+	fwdata->rw_valid = 1;
+}

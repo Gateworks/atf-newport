@@ -21,6 +21,7 @@
 #include <cgx.h>
 #include <phy_mgmt.h>
 #include <octeontx_utils.h>
+#include <sh_fwdata.h>
 
 /* define DEBUG_ATF_NW_MGMT to enable debug logs */
 #undef DEBUG_ATF_NW_MGMT	/* PHY, SFP/QSFP management */
@@ -113,6 +114,8 @@ void phy_probe(int cgx_id, int lmac_id)
 	if (phy->mux_switch)
 		smi_set_switch(phy, 0); /* Disable the switch */
 
+	sh_fwdata_update_phy_mod_type(cgx_id, lmac_id);
+	sh_fwdata_update_phy_can_change_mod_type(cgx_id, lmac_id);
 }
 
 void phy_config(int cgx_id, int lmac_id)
@@ -159,6 +162,7 @@ void phy_set_mod_type(int cgx_id, int lmac_id, phy_mod_type mod_type)
 	}
 
 	phy->mod_type = mod_type;
+	sh_fwdata_update_phy_mod_type(cgx_id, lmac_id);
 
 	lmac_type = plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id].mode;
 	if (lmac_type == CAVM_CGX_LMAC_TYPES_E_FIFTYG_R)
