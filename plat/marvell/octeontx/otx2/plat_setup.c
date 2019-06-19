@@ -46,19 +46,37 @@ void plat_octeontx_setup(void)
  * Program REVID for PCIe devices.
  * Bits 0..1: minor pass
  * Bits 3..2: major pass
- * Bits 7..4: midr id, 0:96, 1:95
+ * Bits 7..4: midr id, 0:96, 1:95, 2:loki, f:unknown
  */
 unsigned int plat_configure_rid(void)
 {
 	unsigned int val;
+	uint8_t midr_id;
 	uint64_t midr;
 
 	val = 0;
 	midr = read_midr();
 
-	if (MIDR_PARTNUM(midr) == F95PARTNUM)
-		val = 1 << 4;
+	switch (MIDR_PARTNUM(midr)) {
+	case T96PARTNUM:
+		midr_id = 0;
+		break;
 
+	case F95PARTNUM:
+		midr_id = 1;
+		break;
+
+	case LOKIPARTNUM:
+		midr_id = 2;
+		break;
+
+	default:
+		midr_id = 0xf;
+		WARN("Unknown partnum 0x%llx, set midr id in REVID to 0xf\n",
+			MIDR_PARTNUM(midr));
+	}
+
+	val = midr_id << 4;
 	/* program minor pass */
 	val |= MIDR_REVISION(midr) & 0x3;
 
