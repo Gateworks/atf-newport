@@ -18,7 +18,11 @@ uint64_t del3t_trap_handler;
 
 int gti_wdog_remove_handler(void);
 
-int gti_wdog_install_handler(uint64_t kernel_wdog_callback, uint64_t sp,
-				uint64_t x3, uint64_t x4);
+int gti_wdog_install_handler(uint64_t core);
+
+int gti_wdog_start(uint64_t kernel_wdog_callback, uint64_t watchdog_timeout_ms,
+			 uint64_t cores);
+
+int gti_wdog_restore_wdog_ctxt(void);
 
 #endif /* __GTI_WATCHDOG_H__ */

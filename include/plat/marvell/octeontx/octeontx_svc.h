@@ -37,7 +37,11 @@
 
 #define OCTEONTX_REMOVE_WDOG            0xc2000c02
 
-#define OCTEONTX_NUM_CALLS		10
+#define OCTEONTX_START_WDOG		0xc2000c03
+
+#define OCTEONTX_RESTORE_WDOG_CTXT	0xc2000c04
+
+#define OCTEONTX_NUM_CALLS		12
 
 /* API that allows to define family specific SMC CALLS */
 uintptr_t plat_octeontx_svc_smc_handler(uint32_t smc_fid,

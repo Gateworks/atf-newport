@@ -19,6 +19,8 @@
 #include <plat_scfg.h>
 #include <runtime_svc.h>
 #include <interrupt_mgmt.h>
+#include <context_mgmt.h>
+#include <string.h>
 
 #include <octeontx_ecam.h>
 #include <octeontx_svc.h>
@@ -39,20 +41,100 @@
 #define SCR_ISR		(SCR_NS_BIT | SCR_RW_BIT)
 
 void el3_invoke_elx_kernel_callback(uint64_t kernel_cback, uint64_t spsr_el3,
-			 uint64_t scr_el3);
+			 uint64_t scr_el3, int el_mode);
 uint64_t g_kernel_cback;
+el3_state_t g_el3state_save;
+gp_regs_t g_gpregs_save;
+uint64_t g_el2_sp_save;
+uint32_t g_intid;
 _Atomic int in_use_lock;
 
-void prepare_elx_kernel_callback(void)
+void prepare_elx_kernel_callback(int el_mode)
 {
-	if ((in_use_lock++) == 0)
-		el3_invoke_elx_kernel_callback(g_kernel_cback, SPSR_ISR,
-				 SCR_ISR);
+#if 0
+	/* For testing on ASIM only */
+	CSR_WRITE(CAVM_GTI_CWD_WDOGX(plat_my_core_pos()), 0);
+#endif
+
+	el3_invoke_elx_kernel_callback(g_kernel_cback, SPSR_ISR, SCR_ISR,
+				 el_mode);
+}
+
+int prepare_elx_restore_context(void)
+{
+	cpu_context_t *cm_ctxt;
+	el3_state_t *el3state_ctx;
+	gp_regs_t *gpregs_ctx;
+	uint64_t val;
+	int el_mode;
+
+	cm_ctxt = cm_get_context(NON_SECURE);
+
+	gpregs_ctx = get_gpregs_ctx(cm_ctxt);
+	el3state_ctx = get_el3state_ctx(cm_ctxt);
+
+	val = read_ctx_reg((el3state_ctx), (uint32_t)(CTX_SPSR_EL3));
+	el_mode = GET_EL(val);
+
+	memcpy((void *) &g_gpregs_save, (void *)gpregs_ctx, sizeof(gp_regs_t));
+	memcpy((void *) &g_el3state_save, (void *)el3state_ctx,
+			 sizeof(el3_state_t));
+
+	/*
+	 * NOTE: SP_EL2 will be modified during kernel nmi callback invocation,
+	 * hence, save it here and restore it back when we restore and resume
+	 * interrupted context.
+	 */
+
+	__asm__ __volatile__ ("mrs %0, sp_el2\n\t" : "=r"(g_el2_sp_save) : : );
+
+	return el_mode;
+}
+
+
+void restore_elx_context_and_return(void)
+{
+	cpu_context_t *cm_ctxt;
+	el3_state_t *el3state_ctx;
+	gp_regs_t *gpregs_ctx;
+
+	/*
+	 * We had shortcut the top-level interrupt handler path and invoked
+	 * the kernel nmi callback via a simulated exception return to EL2
+	 * from EL3, so when we return back we need to do interrupt completion.
+	 */
+
+	plat_ic_end_of_interrupt(g_intid);
+
+	cm_ctxt = cm_get_context(NON_SECURE);
+
+	gpregs_ctx = get_gpregs_ctx(cm_ctxt);
+	el3state_ctx = get_el3state_ctx(cm_ctxt);
+
+	memcpy(gpregs_ctx, (void *) &g_gpregs_save, sizeof(gp_regs_t));
+	memcpy(el3state_ctx, (void *) &g_el3state_save, sizeof(el3_state_t));
+
+	__asm__ __volatile__ ("msr sp_el2, %0\n\t" : : "r"(g_el2_sp_save));
+
+	/*
+	 * Ensure that the global save state is restored to the expired
+	 * watchdog core's context before it gets overwritten by another
+	 * watchdog expiration.
+	 */
+	in_use_lock--;
 }
 
 uint64_t gti_cwd_irq_handler(uint32_t id, uint32_t flags, void *cookie)
 {
-	prepare_elx_kernel_callback();
+	int el_mode;
+
+	if ((in_use_lock++) == 0) {
+		g_intid = id;
+		el_mode = prepare_elx_restore_context();
+		prepare_elx_kernel_callback(el_mode);
+		/* Does not return here */
+	}
+	in_use_lock--;
 	return 0;
 }
 
@@ -74,6 +156,7 @@ static void gti_watchdog_set(uint64_t timeout_ms, uint64_t cores)
 		union cavm_rst_boot rst_boot;
 		union cavm_gti_cwd_wdogx wdog;
 		cavm_gti_cwd_int_ena_set_t gti_cwd_ena;
+		static int intr_hndlrs_registered;
 		int i, rc;
 
 		rst_boot.u = CSR_READ(CAVM_RST_BOOT);
@@ -109,10 +192,12 @@ static void gti_watchdog_set(uint64_t timeout_ms, uint64_t cores)
 			plat_gti_irq_setup(i);
 		}
 
-		for (i = 0; i < GTI_CWD_SPI_IRQS; i++) {
+		if (intr_hndlrs_registered)
+			goto intr_hndlrs_already_registered;
+		else
+			intr_hndlrs_registered = 1;
 
-			if (!(cores & (1 << i)))
-				continue;
+		for (i = 0; i < GTI_CWD_SPI_IRQS; i++) {
 
 			rc = register_interrupt_handler(INTR_TYPE_EL3,
 							GTI_CWD_SPI_IRQ(i),
@@ -123,6 +208,7 @@ static void gti_watchdog_set(uint64_t timeout_ms, uint64_t cores)
 				return;
 			}
 		}
+intr_hndlrs_already_registered:
 
 		plat_gti_access_secure_memory_setup(1);
 
@@ -189,8 +275,7 @@ int gti_wdog_remove_handler(void)
 	return retval;
 }
 
-int gti_wdog_install_handler(uint64_t kernel_wdog_callback, uint64_t core,
-			 uint64_t watchdog_timeout_ms, uint64_t cores)
+int gti_wdog_install_handler(uint64_t core)
 {
 	int retval = 1;
 
@@ -198,22 +283,41 @@ int gti_wdog_install_handler(uint64_t kernel_wdog_callback, uint64_t core,
 		(!IS_OCTEONTX_PN(read_midr(), T96PARTNUM)))
 		return 0;
 
-	g_kernel_cback = kernel_wdog_callback;
-
 	debug_gti_watchdog("Watchdog: core = %lld, mpidr = 0x%llx\n",
 			 core, read_mpidr());
 
-	if (core == GTI_CWD_SPI_IRQS) {
-		debug_gti_watchdog("Watchdog: kernel callback = 0x%llx, ",
-				 g_kernel_cback);
-		debug_gti_watchdog("timeout_ms = %lld, ",
-				 watchdog_timeout_ms);
-		debug_gti_watchdog("cores = 0x%llx\n", cores);
-		gti_watchdog_set(watchdog_timeout_ms, cores);
-	} else {
-		gicv3_set_spi_routing(GTI_CWD_SPI_IRQ(core), GICV3_IRM_PE,
-			read_mpidr());
-	}
+	gicv3_set_spi_routing(GTI_CWD_SPI_IRQ(core), GICV3_IRM_PE,
+				read_mpidr());
 
 	return retval;
+}
+
+int gti_wdog_start(uint64_t kernel_wdog_callback, uint64_t watchdog_timeout_ms,
+			 uint64_t cores)
+{
+	if ((!IS_OCTEONTX_PN(read_midr(), T83PARTNUM)) &&
+		(!IS_OCTEONTX_PN(read_midr(), T96PARTNUM)))
+		return 0;
+
+	debug_gti_watchdog("timeout_ms = %lld, ",
+			 watchdog_timeout_ms);
+
+	debug_gti_watchdog("cores = 0x%llx\n", cores);
+
+	g_kernel_cback = kernel_wdog_callback;
+
+	gti_watchdog_set(watchdog_timeout_ms, cores);
+
+	return 1;
+}
+
+int gti_wdog_restore_wdog_ctxt(void)
+{
+	if ((!IS_OCTEONTX_PN(read_midr(), T83PARTNUM)) &&
+		(!IS_OCTEONTX_PN(read_midr(), T96PARTNUM)))
+		return 0;
+
+	restore_elx_context_and_return();
+
+	return 1;
 }

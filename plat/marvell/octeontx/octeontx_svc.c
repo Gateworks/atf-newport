@@ -115,12 +115,22 @@ uintptr_t octeontx_svc_smc_handler(uint32_t smc_fid,
 		break;
 
 	case OCTEONTX_INSTALL_WDOG:
-		ret = gti_wdog_install_handler(x1, x2, x3, x4);
+		ret = gti_wdog_install_handler(x1);
 		SMC_RET1(handle, ret);
 		break;
 
 	case OCTEONTX_REMOVE_WDOG:
 		ret = gti_wdog_remove_handler();
+		SMC_RET1(handle, ret);
+		break;
+
+	case OCTEONTX_START_WDOG:
+		ret = gti_wdog_start(x1, x2, x3);
+		SMC_RET1(handle, ret);
+		break;
+
+	case OCTEONTX_RESTORE_WDOG_CTXT:
+		ret = gti_wdog_restore_wdog_ctxt();
 		SMC_RET1(handle, ret);
 		break;
 
