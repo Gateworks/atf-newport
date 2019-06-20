@@ -175,3 +175,33 @@ void plat_gpio_irq_setup(void)
 			ERROR("Failed to register GPIO intercept handlers\n");
 	}
 }
+
+void plat_gti_access_secure_memory_setup(int do_secure)
+{
+	/*
+	 * simply, mark the MSI-X interrupts as physical
+	 * to bypass the SMMU, MSI-X interrupts already
+	 * set as physical in octeontx_ecam.c
+	 */
+}
+
+void plat_gti_irq_setup(int core)
+{
+	uint64_t vector_ptr;
+	int intr_pinx;
+
+	/* Get the offset of interrupt vector for this core */
+	intr_pinx = CAVM_GTI_INT_VEC_E_CORE_WDOGX_INT_CN8(core);
+	vector_ptr = CAVM_GTI_BAR_E_GTI_PF_BAR4_CN8 + (intr_pinx << 4);
+
+	/* Enable SECVEC to make the vector secure */
+	octeontx_write64(vector_ptr, CAVM_GICD_SETSPI_SR | 1);
+	vector_ptr += 0x8;
+	octeontx_write64(vector_ptr, GTI_CWD_SPI_IRQ(core));
+
+	/* INTR_PINX_CLEAR vector */
+	vector_ptr += 0x8;
+	octeontx_write64(vector_ptr, CAVM_GICD_CLRSPI_SR);
+	vector_ptr += 0x8;
+	octeontx_write64(vector_ptr, GTI_CWD_SPI_IRQ(core));
+}
