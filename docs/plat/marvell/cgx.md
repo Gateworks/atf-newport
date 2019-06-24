@@ -47,6 +47,21 @@ typedef enum cgx_fec_type {
 } fec_type_t;
 ```
 
+For an LMAC that's connected to a PHY that supports two different modulation
+types on the line-side:  `octeontx,phy-mod-type = <N>` where N can be 0 (meaning
+NRZ) or 1 (meaning PAM4).  The default is NRZ.
+
+> **Note**: On PHYs that support only one modulation type,
+`octeontx,phy-mod-type = <N>` has no effect.
+
+```c
+/* PHY modulation types */
+typedef enum phy_mod_type {
+        PHY_MOD_TYPE_NRZ,
+        PHY_MOD_TYPE_PAM4,
+} phy_mod_type;
+```
+
 **SFP (example slot info):**
 
 ```c
@@ -918,6 +933,7 @@ typedef struct phy_config {
         int port;       /* Optional : port num for Marvell PHYs */
         int valid;      /* If valid PHY driver found */
         int init;       /* Whether Initialization is already performed */
+        phy_mod_type mod_type; /* Line-side modulation type */
         phy_drv_t *drv; /* struct for PHY driver operations */
         void *priv;
         gpio_info_t mux_info; /* Details of switch details if MDIO is muxed */
