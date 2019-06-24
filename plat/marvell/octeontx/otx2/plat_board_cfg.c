@@ -1360,7 +1360,7 @@ static void octeontx2_cgx_lmacs_check_linux(const void *fdt,
 	const int *val;
 	int len, ret;
 	int lmac_offset, sfp_offset, qsfp_offset;
-	int req_vfs, req_fec;
+	int req_vfs, req_fec, phy_mod_type;
 	char sfpname[16], qsfpname[16];
 
 	for (lmac_idx = 0; lmac_idx < cgx->lmac_count; lmac_idx++) {
@@ -1441,6 +1441,22 @@ static void octeontx2_cgx_lmacs_check_linux(const void *fdt,
 			 * the default type.
 			 */
 			lmac->fec = -1;
+		}
+
+		/* Handle PHY line-side modulation type */
+		val = fdt_getprop(fdt, lmac_offset,
+				  "octeontx,phy-mod-type", &len);
+		if (val) {
+			phy_mod_type = fdt32_to_cpu(*val);
+			if (phy_mod_type == PHY_MOD_TYPE_PAM4)
+				lmac->phy_config.mod_type = PHY_MOD_TYPE_PAM4;
+			else
+				lmac->phy_config.mod_type = PHY_MOD_TYPE_NRZ;
+		} else {
+			/* User did not specify PHY modulation type in the DT.
+			 * Set it to NRZ, the default type.
+			 */
+			lmac->phy_config.mod_type = PHY_MOD_TYPE_NRZ;
 		}
 
 		/* Construct the proper node name for error handling */
