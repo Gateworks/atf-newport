@@ -60,10 +60,10 @@ struct sh_fwdata {
 	uint64_t rclk;
 	uint64_t mcam_addr;
 	uint64_t mcam_sz;
- #define RESERVED_MEM 1024
-	uint64_t reserved[RESERVED_MEM];
-
-#define CGX_MAX		3
+ #define FWDATA_RESERVED_MEM 1024
+	uint64_t reserved[FWDATA_RESERVED_MEM];
+	/* Do not add new fields below this line */
+#define CGX_MAX		4
 #define CGX_LMACS_MAX	4
 	struct cgx_lmac_fwdata_s cgx_fw_data[CGX_MAX][CGX_LMACS_MAX];
 };
