@@ -705,6 +705,8 @@ static void octeontx2_fdt_get_i2c_bus_info(const void *fdt, int offset,
 					offset, cgx_idx, lmac_idx);
 			} else { /* all other MUX/SWITCH cases */
 				i2c_info->is_mux = i2c_compat_list[i].mux_type;
+				i2c_info->enable_bit =
+					i2c_compat_list[i].enable;
 				i2c_info->channel = octeontx2_fdt_get_int32(fdt,
 							"reg", offset);
 				i2c_info->addr = octeontx2_fdt_get_int32(fdt,
@@ -712,7 +714,8 @@ static void octeontx2_fdt_get_i2c_bus_info(const void *fdt, int offset,
 				/* TWSI bus */
 				i2c_info->bus = octeontx2_fdt_get_bus(fdt,
 					parent, cgx_idx, lmac_idx);
-				debug_dts("CGX%d.LMAC%d: I2C SWITCH %d: channel %d addr 0x%x bus %d\n",
+				debug_dts(
+					"CGX%d.LMAC%d: I2C SWITCH %d: channel %d addr 0x%x bus %d\n",
 					cgx_idx, lmac_idx, !i2c_info->is_mux,
 					i2c_info->channel,
 					i2c_info->addr, i2c_info->bus);
@@ -1131,7 +1134,8 @@ static int octeontx2_fill_cgx_struct(int qlm, int lane, int mode_idx)
 				qlmmode_strmap[mode_idx].bdk_str);
 		return 0;
 	}
-	debug_dts("CGX%d: mode_idx %d needs %d lanes, %d lmacs\n", cgx_idx, mode_idx, lused, lcnt); 
+	debug_dts("CGX%d: mode_idx %d needs %d lanes, %d lmacs\n",
+		cgx_idx, mode_idx, lused, lcnt);
 	if (octeontx2_check_qlm_lmacs(cgx_idx, qlm, mode_idx, lcnt * lused))
 		return 0;
 	if (lane % (lcnt * lused)) {
