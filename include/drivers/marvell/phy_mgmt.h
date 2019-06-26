@@ -118,7 +118,7 @@ void phy_lookup(int cgx_id, int lmac_id, int type);
 int phy_mdio_read(phy_config_t *phy, int mode, int devad, int reg);
 void phy_mdio_write(phy_config_t *phy, int mode, int devad, int reg, int val);
 void phy_set_switch(phy_config_t *phy, int enable);
-void phy_set_mod_type(int cgx_id, int lmac_id, phy_mod_type mod_type);
+int phy_set_mod_type(int cgx_id, int lmac_id, phy_mod_type mod_type);
 
 /* Generic PHY driver APIs to be exposed to other PHY drivers */
 void phy_generic_probe(int cgx_id, int lmac_id);

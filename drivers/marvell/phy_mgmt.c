@@ -137,7 +137,7 @@ void phy_config(int cgx_id, int lmac_id)
 		smi_set_switch(phy, 0); /* Disable the switch */
 }
 
-void phy_set_mod_type(int cgx_id, int lmac_id, phy_mod_type mod_type)
+int phy_set_mod_type(int cgx_id, int lmac_id, phy_mod_type mod_type)
 {
 	phy_config_t *phy;
 	int lmac_type;
@@ -147,18 +147,18 @@ void phy_set_mod_type(int cgx_id, int lmac_id, phy_mod_type mod_type)
 	phy = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id].phy_config;
 
 	if (phy->mod_type == mod_type)
-		return; /* no change in mod_type */
+		return 0; /* no change in mod_type */
 
 	if (!(phy->drv->flags & PHY_FLAG_SUPPORTS_CHANGING_MOD_TYPE)) {
 		ERROR("%s: %d:%d Changing PHY modulation type not supported\n",
 		      __func__, cgx_id, lmac_id);
-		return;
+		return -1;
 	}
 
 	if (mod_type != PHY_MOD_TYPE_PAM4 && mod_type != PHY_MOD_TYPE_NRZ) {
 		ERROR("%s: %d:%d invalid mod_type %d\n", __func__, cgx_id,
 		      lmac_id, mod_type);
-		return;
+		return -1;
 	}
 
 	phy->mod_type = mod_type;
@@ -167,6 +167,7 @@ void phy_set_mod_type(int cgx_id, int lmac_id, phy_mod_type mod_type)
 	lmac_type = plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id].mode;
 	if (lmac_type == CAVM_CGX_LMAC_TYPES_E_FIFTYG_R)
 		phy_config(cgx_id, lmac_id);
+	return 0;
 }
 
 void phy_lookup(int cgx_id, int lmac_id, int type)

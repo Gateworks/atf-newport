@@ -179,6 +179,35 @@ typedef union cgx_lmac_context {
 	} s;
 } cgx_lmac_context_t;
 
+/* Flash handling for lmac params */
+typedef struct cgx_lmac_flash_ctx {
+	uint64_t u64;
+	struct cgx_lmac_flash_ctx_s {
+		uint64_t valid:1;
+		uint64_t cgx_id:3;
+		uint64_t lmac_id:3;
+		uint64_t rsvd1:1;
+		uint64_t qlm_mode:8;
+		uint64_t fec_valid:1;
+		uint64_t fec_type:2;
+		uint64_t mod_valid:1;
+		uint64_t mod_type:1;
+		uint64_t rsvd2:3;
+		uint64_t rsvd3:40;
+	} s;
+} cgx_lmac_flash_ctx_t;
+extern int spi_config(uint64_t spi_clk, uint32_t mode, int cpol, int cpha,
+		      int spi_con, int cs);
+extern int spi_nor_read(uint8_t *buf, int buf_size, uint32_t addr,
+			int addr_len, int spi_con, int cs);
+extern int spi_nor_write(uint8_t *buf, int buf_size, uint32_t addr,
+			int addr_len, int spi_con, int cs);
+extern int spi_nor_erase(uint32_t addr, int addr_len, int spi_con, int cs);
+
+int cgx_update_flash_fec_param(int cgx_id, int lmac_id, int fec);
+int cgx_update_flash_phy_mod_param(int cgx_id, int lmac_id, int phy_mod);
+
+
 /* CGX driver APIs */
 void cgx_hw_init(int cgx_id);
 int cgx_sgmii_set_link_speed(int cgx_id, int lmac_id,

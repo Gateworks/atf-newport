@@ -152,6 +152,9 @@ static const phy_compatible_type_t phy_compat_list[] = {
 	{ "ethernet-phy-ieee802.3-c45", PHY_GENERIC_8023_C45},
 };
 
+extern int cgx_read_flash_fec(int cgx_id, int lmac_id, int *fec);
+extern int cgx_read_flash_phy_mod(int cgx_id, int lmac_id, int *phy_mod);
+
 /* Output information specific for OCTEONTX2, for now only CGX. */
 void plat_octeontx_print_board_variables(void)
 {
@@ -1435,35 +1438,47 @@ static void octeontx2_cgx_lmacs_check_linux(const void *fdt,
 			}
 		}
 
-		/* Handle FEC types */
-		val = fdt_getprop(fdt, lmac_offset,
-				"octeontx,fec-type", &len);
-		if (val) {
-			req_fec = fdt32_to_cpu(*val);
-			lmac->fec = cgx_validate_fec_config(
-				lmac->mode, req_fec);
+		/* Override fec, phy-mod params from flash if exist on
+		 * same qlm mode.
+		 */
+		if (!cgx_read_flash_fec(cgx_idx, lmac_idx, &req_fec)) {
+			lmac->fec = req_fec;
 		} else {
-			/* User did not specify FEC type property
-			 * in the DT. set it to -1 to configure
-			 * the default type.
-			 */
-			lmac->fec = -1;
+			/* Handle FEC types */
+			val = fdt_getprop(fdt, lmac_offset,
+					  "octeontx,fec-type", &len);
+			if (val) {
+				req_fec = fdt32_to_cpu(*val);
+				lmac->fec = cgx_validate_fec_config(lmac->mode,
+								    req_fec);
+			} else {
+				/* User did not specify FEC type property
+				 * in the DT. set it to -1 to configure
+				 * the default type.
+				 */
+				lmac->fec = -1;
+			}
 		}
-
-		/* Handle PHY line-side modulation type */
-		val = fdt_getprop(fdt, lmac_offset,
-				  "octeontx,phy-mod-type", &len);
-		if (val) {
-			phy_mod_type = fdt32_to_cpu(*val);
-			if (phy_mod_type == PHY_MOD_TYPE_PAM4)
-				lmac->phy_config.mod_type = PHY_MOD_TYPE_PAM4;
-			else
-				lmac->phy_config.mod_type = PHY_MOD_TYPE_NRZ;
+		if (!cgx_read_flash_phy_mod(cgx_idx, lmac_idx,
+					    &phy_mod_type)) {
+			lmac->phy_config.mod_type =
+				(phy_mod_type == PHY_MOD_TYPE_PAM4) ?
+				PHY_MOD_TYPE_PAM4 : PHY_MOD_TYPE_NRZ;
 		} else {
-			/* User did not specify PHY modulation type in the DT.
-			 * Set it to NRZ, the default type.
-			 */
-			lmac->phy_config.mod_type = PHY_MOD_TYPE_NRZ;
+			/* Handle PHY line-side modulation type */
+			val = fdt_getprop(fdt, lmac_offset,
+					  "octeontx,phy-mod-type", &len);
+			if (val) {
+				phy_mod_type = fdt32_to_cpu(*val);
+				lmac->phy_config.mod_type =
+					(phy_mod_type == PHY_MOD_TYPE_PAM4) ?
+					PHY_MOD_TYPE_PAM4 : PHY_MOD_TYPE_NRZ;
+			} else {
+				/* User did not specify PHY modulation type
+				 * in the DT. Set it to NRZ, the default type.
+				 */
+				lmac->phy_config.mod_type = PHY_MOD_TYPE_NRZ;
+			}
 		}
 
 		/* Construct the proper node name for error handling */

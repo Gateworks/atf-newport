@@ -350,7 +350,7 @@ retry_link:
 	} else {
 		debug_cgx_intf("%s %d:%d mode %d not configured correctly,"
 			" cannot initialize link\n",
-			__func__, cgx_id, lmac_id lmac_id, lmac_cfg->mode);
+			__func__, cgx_id, lmac_id, lmac_cfg->mode);
 		cgx_set_error_type(cgx_id, lmac_id,
 			CGX_ERR_LMAC_MODE_INVALID);
 		return -1;
@@ -521,12 +521,35 @@ int cgx_set_fec_type(int cgx_id, int lmac_id, int req_fec)
 	return 0;
 }
 
+static int cgx_set_phy_mod_type(int cgx_id, int lmac_id, int phy_mod_type)
+{
+	cgx_lmac_config_t *lmac;
+
+	lmac = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
+
+	if (lmac->phy_present && lmac->phy_config.init &&
+	    lmac->phy_config.valid) {
+		if (!phy_set_mod_type(cgx_id, lmac_id, phy_mod_type)) {
+			if (cgx_update_flash_phy_mod_param(cgx_id,
+							   lmac_id,
+							   phy_mod_type)) {
+				debug_cgx_intf("Flash update phymod failed\n");
+				return -1;
+			}
+		}
+	} else {
+		debug_cgx_intf("phy not present for SET_PHY_MOD\n");
+		return -1;
+	}
+	return 0;
+}
+
 /* Note : this function executes with lock acquired */
 static int cgx_process_requests(int cgx_id, int lmac_id)
 {
 	int ret = 0;
 	int enable = 0; /* read from scratch1 - cmd_args */
-	int request_id = 0, err_type = 0, req_fec;
+	int request_id = 0, err_type = 0, req_fec, phy_mod_type;
 	union cgx_scratchx0 scratchx0;
 	union cgx_scratchx1 scratchx1;
 	link_state_t link;
@@ -676,10 +699,17 @@ static int cgx_process_requests(int cgx_id, int lmac_id)
 						cgx_id, lmac_id, req_fec);
 				ret = cgx_set_fec_type(cgx_id, lmac_id,
 								req_fec);
+				if (!cgx_get_error_type(cgx_id, lmac_id)) {
+					if (cgx_update_flash_fec_param(cgx_id,
+						lmac_id, req_fec))
+						debug_cgx_intf(
+						"Flash update fec failed\n");
+				}
 			break;
 			case CGX_CMD_SET_PHY_MOD_TYPE:
-				phy_set_mod_type(cgx_id, lmac_id,
-						 scratchx1.s.phy_mod_args.mod);
+				phy_mod_type = scratchx1.s.phy_mod_args.mod;
+				ret = cgx_set_phy_mod_type(cgx_id, lmac_id,
+							   phy_mod_type);
 			break;
 			case CGX_CMD_GET_PHY_MOD_TYPE:
 				scratchx0.u = 0;
