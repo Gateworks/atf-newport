@@ -10,6 +10,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
+#include <delay_timer.h>
 #include <octeontx_common.h>
 #include <io_storage.h>
 #include <assert.h>
@@ -57,7 +58,11 @@ static file_state_t current_file = { 0 };
 
 #define SPI_PAGE_SIZE			256
 
-static int spi_config(uint64_t spi_clk, uint32_t mode, int cpol, int cpha,
+#define SPI_NOR_PROGRAM_TIMEOUT		1000	/* 1 sec */
+#define SPI_NOR_ERASE_TIMEOUT		2000	/* 2 sec */
+#define CONFIG_SPI_FREQUENCY	16000000
+
+int spi_config(uint64_t spi_clk, uint32_t mode, int cpol, int cpha,
 		      int spi_con, int cs)
 {
 	uint64_t sclk;
@@ -168,7 +173,7 @@ static int spi_xfer(unsigned char *dout, unsigned char *din, int len,
 	return 0;
 }
 
-static int spi_nor_read(uint8_t *buf, int buf_size, uint32_t addr,
+int spi_nor_read(uint8_t *buf, int buf_size, uint32_t addr,
 			int addr_len, int spi_con, int cs)
 {
 	uint8_t cmd[9];
@@ -193,11 +198,100 @@ static int spi_nor_read(uint8_t *buf, int buf_size, uint32_t addr,
 	return buf_size;
 }
 
+int spi_nor_read_status(uint8_t *sr, int spi_con, int cs)
+{
+	uint8_t cmd[2];
+
+	cmd[0] = SPI_NOR_CMD_RDSR;
+	if (spi_xfer(cmd, NULL, 1, spi_con, cs, 0))
+		return -1;
+	if (spi_xfer(NULL, sr, 1, spi_con, cs, 1))
+		return -1;
+
+	return 0;
+}
+
+int spi_nor_write(uint8_t *buf, int buf_size, uint32_t addr,
+			int addr_len, int spi_con, int cs)
+{
+	uint8_t cmd[9], reg;
+	int i, timeout = SPI_NOR_PROGRAM_TIMEOUT;
+
+	if (addr_len != SPI_ADDRESSING_24BIT &&
+	    addr_len != SPI_ADDRESSING_32BIT) {
+		printf("Unsupported addressing mode %d\n", addr_len);
+		return -1;
+	}
+
+	cmd[0] = SPI_NOR_CMD_WREN;
+	if (spi_xfer(cmd, NULL, 1, spi_con, cs, 1))
+		return -1;
+
+	cmd[0] = SPI_NOR_CMD_PROGRAM;
+
+	for (i = 1; i <= (addr_len >> 3); i++)
+		cmd[i] = addr >> (addr_len - i * 8);
+
+	if (spi_xfer(cmd, NULL, (addr_len >> 3) + 1, spi_con, cs, 0))
+		return -1;
+
+	if (spi_xfer(buf, NULL, buf_size, spi_con, cs, 1))
+		return -1;
+
+	do {
+		i = spi_nor_read_status(&reg, spi_con, cs);
+		if (i < 0 || --timeout < 0)
+			return -1;
+		mdelay(1);
+	} while (reg & SPI_STATUS_WIP);
+
+	return buf_size;
+}
+
+int spi_nor_erase(uint32_t addr, int addr_len, int spi_con, int cs)
+{
+	uint8_t cmd[5], reg;
+	int i, timeout = SPI_NOR_ERASE_TIMEOUT;
+
+	if (addr_len != SPI_ADDRESSING_24BIT &&
+	    addr_len != SPI_ADDRESSING_32BIT) {
+		printf("Unsupported addressing mode %d\n", addr_len);
+		return -1;
+	}
+	if (addr & 0xFFF) {
+		printf("Address not 4K sector aligned %x\n", addr);
+		return -1;
+	}
+
+	cmd[0] = SPI_NOR_CMD_WREN;
+	if (spi_xfer(cmd, NULL, 1, spi_con, cs, 1)) {
+		printf("wren failed\n");
+		return -1;
+	}
+
+	cmd[0] = SPI_NOR_CMD_ERASE;
+	for (i = 1; i <= (addr_len >> 3); i++)
+		cmd[i] = addr >> (addr_len - i * 8);
+
+	if (spi_xfer(cmd, NULL, (addr_len >> 3) + 1, spi_con, cs, 1)) {
+		printf("erase failed\n");
+		return -1;
+	}
+	do {
+		i = spi_nor_read_status(&reg, spi_con, cs);
+		if (i < 0 || --timeout < 0) {
+			printf("status failed %x\n", reg);
+			return -1;
+		}
+		mdelay(1);
+	} while (reg & SPI_STATUS_WIP);
+
+	return 0;
+}
+
 /*
  * APIs to read from SPI NOR flash
  */
-
-#define CONFIG_SPI_FREQUENCY	16000000
 
 /* ---- */
 
