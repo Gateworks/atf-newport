@@ -19,6 +19,18 @@
 #include <plat_otx2_configuration.h>
 #include <plat_octeontx.h>
 
+#define CAVM_BPHY_BAR_E_BPHY_PF_BAR0 (0x860000000000ll)
+#define CAVM_BPHY_BAR_E_BPHY_PF_BAR0_SIZE 0x4000000000ull
+#define CAVM_BPHY_BAR_E_BPHY_PF_BAR2 (0x87e040000000ll)
+#define CAVM_BPHY_BAR_E_BPHY_PF_BAR2_SIZE 0x8000000ull
+#define CAVM_PSM_INT_VEC_E_GPINTX(a) (0 + (a))
+uint64_t CAVM_PSM_MSIX_VECX_ADDR(unsigned long a)
+{
+	if (a <= 26)
+		return 0x860000000000ll + 0x10ll * ((a) & 0x1f);
+	return 0;
+}
+
 static uint64_t msix_addr_save;
 
 int plat_octeontx_get_ecams_count(void)
