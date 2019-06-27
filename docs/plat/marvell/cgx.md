@@ -1001,7 +1001,9 @@ There are cases where some boards do have PHY integrated with SFP/QSFP slots. Co
 
 **TODO**
 
-## 9. User interface commands to change FEC via ethtool
+## 9. User interface commands
+
+### 9.1 Change FEC via ethtool
 
  > ethtool --show-fec ethX
 
@@ -1010,4 +1012,20 @@ There are cases where some boards do have PHY integrated with SFP/QSFP slots. Co
  > ethtool --set-fec ethX encoding <rs | baser | off>
 
 -- The above command provides option to user to change FEC type for a particular ethernet interface. Allowed FEC types depends on the protocol.
+
+
+### 9.2 Read QSFP/SFP module info via ethtool
+
+ > ethtool -m ethX
+
+-- The above command dumps the SFP/QSFP module EEPROM information for a particular ethernet interface.
+
+-- The above command displays all zeros in below cases:
+
+	* If the ethernet port do not have a QSFP/SFP slot (say, RJ45 slot)
+	* QSFP/SFP module is not SFF compliant
+	* If the corresponding LMAC node in DTS doesn't have sfp-slot or qsfp-slot
+	info (as quoted in section 2 in this doc)
+
+NOTE: this command is not yet supported on all boards
 
