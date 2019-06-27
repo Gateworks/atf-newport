@@ -1416,20 +1416,23 @@ static void octeontx2_cgx_lmacs_check_linux(const void *fdt,
 			}
 		}
 
-		/* Check for sfp-slot info */
-		sfp_offset = octeontx2_fdt_lookup_phandle(fdt,
-				lmac_offset, sfpname);
-		if (sfp_offset > 0) {
-			octeontx2_fdt_parse_sfp_info(fdt, sfp_offset,
-					cgx_idx, lmac_idx);
-		}
+		/* Enable SFP management only LIO3 board */
+		if (!strncmp(plat_octeontx_bcfg->bcfg.board_model, "cn33", 4)) {
+			/* Check for sfp-slot info */
+			sfp_offset = octeontx2_fdt_lookup_phandle(fdt,
+						lmac_offset, sfpname);
+			if (sfp_offset > 0) {
+				octeontx2_fdt_parse_sfp_info(fdt, sfp_offset,
+						cgx_idx, lmac_idx);
+			}
 
-		/* Check for qsfp-slot info */
-		qsfp_offset = octeontx2_fdt_lookup_phandle(fdt,
-				lmac_offset, qsfpname);
-		if (qsfp_offset > 0) {
-			octeontx2_fdt_parse_qsfp_info(fdt, qsfp_offset,
+			/* Check for qsfp-slot info */
+			qsfp_offset = octeontx2_fdt_lookup_phandle(fdt,
+					lmac_offset, qsfpname);
+			if (qsfp_offset > 0) {
+				octeontx2_fdt_parse_qsfp_info(fdt, qsfp_offset,
 					cgx_idx, lmac_idx);
+			}
 		}
 
 		/* Handle FEC types */
