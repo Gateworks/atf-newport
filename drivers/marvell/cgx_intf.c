@@ -297,14 +297,26 @@ static int cgx_link_bringup(int cgx_id, int lmac_id)
 		(lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_HUNDREDG_R) ||
 		(lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_USXGMII)) {
 
+retry_link:
 		if (lmac_cfg->phy_present) {
 			/* Get the link status */
 			phy_get_link_status(cgx_id, lmac_id, &link);
-			/* save the link status to program the rate */
-			cgx_set_link_state(cgx_id, lmac_id,
-				&link, 0);
+			if (!link.s.link_up) {
+				if (count++ < 5)
+					goto retry_link;
+
+				debug_cgx_intf("%s:%d:%d link status is down\n",
+					__func__, cgx_id, lmac_id);
+				/* PHY link is down */
+				link.s.link_up = 0;
+				link.s.full_duplex = 0;
+				link.s.speed = CGX_LINK_NONE;
+				count = 0; /* reset the counter */
+				goto cgx_err; /* To poll for the link */
+			}
+			cgx_set_link_state(cgx_id, lmac_id, &link, 0);
 		}
-retry_link:
+
 		if (cgx_xaui_set_link_up(cgx_id, lmac_id) == -1) {
 			/* if init link fails, retry */
 			if (count++ < 5) {

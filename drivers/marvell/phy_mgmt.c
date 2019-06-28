@@ -63,11 +63,14 @@ int phy_get_link_status(int cgx_id, int lmac_id,
 		link->s.fec = lmac->fec;
 
 		/* For non-SGMII cases, still continue to read the
-		 * CGX registers to know the link status
+		 * CGX registers to know the link status if the
+		 * link is UP
 		 */
-		if ((lmac->mode == CAVM_CGX_LMAC_TYPES_E_SGMII) ||
-			(lmac->mode == CAVM_CGX_LMAC_TYPES_E_QSGMII)) {
-			debug_nw_mgmt("link %d speed %d duplex %d\n",
+		if ((!link->s.link_up) ||
+			((lmac->mode == CAVM_CGX_LMAC_TYPES_E_SGMII) ||
+			(lmac->mode == CAVM_CGX_LMAC_TYPES_E_QSGMII))) {
+			debug_nw_mgmt("%s %d:%d link %d speed %d duplex %d\n",
+				__func__, cgx_id, lmac_id,
 				link->s.link_up, link->s.speed,
 				link->s.full_duplex);
 			return ret;
@@ -80,16 +83,19 @@ int phy_get_link_status(int cgx_id, int lmac_id,
 		(lmac->mode == CAVM_CGX_LMAC_TYPES_E_TWENTYFIVEG_R) ||
 		(lmac->mode == CAVM_CGX_LMAC_TYPES_E_FORTYG_R) ||
 		(lmac->mode == CAVM_CGX_LMAC_TYPES_E_FIFTYG_R) ||
-		(lmac->mode == CAVM_CGX_LMAC_TYPES_E_HUNDREDG_R)) {
+		(lmac->mode == CAVM_CGX_LMAC_TYPES_E_HUNDREDG_R) ||
+		(lmac->mode == CAVM_CGX_LMAC_TYPES_E_USXGMII)) {
 		/* Obtain the link status from CGX CSRs */
 		cgx_xaui_get_link(cgx_id, lmac_id, link);
-		debug_nw_mgmt("link %d speed %d duplex %d\n", link->s.link_up,
+		debug_nw_mgmt("%s: %d:%d link %d speed %d duplex %d\n",
+			__func__, cgx_id, lmac_id,
+			link->s.link_up,
 			link->s.speed, link->s.full_duplex);
 		return ret;
 	}
 
 	/* Other cases should not reach here */
-	ERROR("%s: Invalid reach\n", __func__);
+	ERROR("%s: %d:%d Invalid reach\n", __func__, cgx_id, lmac_id);
 	return -1;
 }
 
