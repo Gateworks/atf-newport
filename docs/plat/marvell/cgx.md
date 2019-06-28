@@ -1029,3 +1029,17 @@ There are cases where some boards do have PHY integrated with SFP/QSFP slots. Co
 
 NOTE: this command is not yet supported on all boards
 
+### 9.3 Set or show PHY line-side modulation type via ethtool private flag
+
+If the PHY supports changing line-side modulation type (NRZ or PAM4), the
+following commands are available:
+
+ > ethtool --set-priv-flags ethX pam4 off
+
+ > ethtool --set-priv-flags ethX pam4 on
+
+ > ethtool --show-priv-flags ethX
+
+Turning off PAM4 means setting modulation type to NRZ.
+
+ > **Note**: Only the 6141 PHY supports these commands, currently.
