@@ -158,6 +158,10 @@ typedef union cgx_lmac_context {
 		 * by timer #1 callback when there is a LINK UP/DOWN request
 		 */
 		uint64_t link_enable:1;
+		/* this variable will be used by timer #2 to know if there
+		 * was a LINK UP request sent but the link was not brought up
+		 */
+		uint64_t link_req:1;
 		/* internal loopback enable/disable */
 		uint64_t lbk1_enable:1;
 		/* link status */
@@ -175,7 +179,9 @@ typedef union cgx_lmac_context {
 		uint64_t fec:2;
 		/* init link state */
 		uint64_t init_link:1;
-		uint64_t reserved:30;
+		/* prev module status:2 */
+		uint64_t mod_stats:2;
+		uint64_t reserved:27;
 	} s;
 } cgx_lmac_context_t;
 

@@ -105,6 +105,27 @@ static void cgx_release_own_status(int cgx_id, int lmac_id)
 			own_status, CGX_OWN_NON_SECURE_SW); /* released the ownership */
 }
 
+static int cgx_sfp_obtain_capabilities(int cgx_id, int lmac_id)
+{
+	int trans_type;
+
+	/* Read the EEPROM to determine new module capabilities */
+	trans_type = sfp_parse_eeprom_data(cgx_id, lmac_id);
+
+	if (trans_type != SFP_TRANS_TYPE_NONE) {
+		/* If Valid transceiver found */
+		debug_cgx_intf("%s: %d:%d trans_type %d\n",
+				__func__, cgx_id, lmac_id,
+				trans_type);
+		return sfp_validate_user_options(cgx_id, lmac_id);
+	}
+
+	debug_cgx_intf("%s: %d:%d Valid transceiver not identified\n"
+		__func__, cgx_id, lmac_id);
+	cgx_set_error_type(cgx_id, lmac_id, CGX_ERR_MODULE_INVALID);
+	return 0;
+}
+
 static void cgx_set_link_state(int cgx_id, int lmac_id,
 					link_state_t *link, int err_type)
 {
@@ -176,6 +197,10 @@ static int cgx_link_change_req(int cgx_id, int lmac_id)
 	/* update the current link status along with any error type set */
 	cgx_set_link_state(cgx_id, lmac_id, &link, err_type);
 
+	lmac_ctx->s.link_up = link.s.link_up;
+	lmac_ctx->s.full_duplex = link.s.full_duplex;
+	lmac_ctx->s.speed = link.s.speed;
+
 	/* update the event status to evt_sts struct to notify kernel */
 	scratchx0.u = CSR_READ(CAVM_CGXX_CMRX_SCRATCHX(cgx_id, lmac_id, 0));
 	if (err_type & CGX_ERR_MASK)
@@ -191,14 +216,22 @@ static int cgx_link_change_req(int cgx_id, int lmac_id)
 	/* clear the link_change_req after handling it */
 	lmac_ctx->s.link_change_req = 0;
 
+	if (link.s.link_up) {
+		lmac_ctx->s.link_req = 0;
+		lmac_ctx->s.link_enable = 1;
+	}
 	return ret;
 }
 
 static int cgx_link_bringup(int cgx_id, int lmac_id)
 {
+	int mod_status = 0;
+	int sfp_count = 0;
+	int trans_type = 0;
+	int valid;
 	cgx_lmac_config_t *lmac_cfg;
 	cgx_lmac_context_t *lmac_ctx;
-	link_state_t link = {0};
+	link_state_t link;
 	int count = 0, count1 = 0;
 
 	/* get the lmac type and based on lmac
@@ -210,6 +243,7 @@ static int cgx_link_bringup(int cgx_id, int lmac_id)
 			lmac_id, lmac_cfg->mode);
 
 	lmac_ctx = &lmac_context[cgx_id][lmac_id];
+	link.u64 = 0;
 
 	/* link_enable will be set when the LINK UP req is processed.
 	 * To avoid processing duplication of requests, check for it
@@ -297,10 +331,60 @@ static int cgx_link_bringup(int cgx_id, int lmac_id)
 		(lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_HUNDREDG_R) ||
 		(lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_USXGMII)) {
 
+		if (lmac_cfg->sfp_slot == 1) {
+retry_mod_stat:
+			/* Obtain SFP module status */
+			mod_status = sfp_get_mod_status(cgx_id, lmac_id);
+			if ((mod_status == SFP_MOD_STATE_PRESENT) ||
+				(mod_status == SFP_MOD_STATE_EEPROM_UPDATED)) {
+				/* Read EEPROM to determine module capability */
+				trans_type = sfp_parse_eeprom_data(cgx_id,
+								lmac_id);
+				if (trans_type == SFP_TRANS_TYPE_NONE) {
+					cgx_set_error_type(cgx_id, lmac_id,
+						CGX_ERR_MODULE_INVALID);
+					/* set link_req to 1 to indicate
+					 * poll timer
+					 */
+					lmac_ctx->s.link_req = 1;
+					return -1;
+				}
+				/* Save the new mod status */
+				lmac_ctx->s.mod_stats = mod_status;
+
+				valid = sfp_validate_user_options(cgx_id,
+								lmac_id);
+				if (valid == 1) {
+					debug_cgx_intf("%s: %d:%d\t"
+					"trans_type %d\n",
+					__func__, cgx_id, lmac_id,
+					trans_type);
+				} else {
+					ERROR("%s: %d:%d User config\t"
+						"doesn't match EEPROM\n",
+						__func__, cgx_id, lmac_id);
+						lmac_ctx->s.link_req = 1;
+					return -1;
+				}
+			} else {
+				if (sfp_count++ < 5) {
+					mdelay(1);
+					goto retry_mod_stat;
+				}
+
+				debug_cgx_intf("%s: %d:%d Module not present\n",
+					__func__, cgx_id, lmac_id);
+				lmac_ctx->s.link_req = 1;
+				cgx_set_error_type(cgx_id, lmac_id,
+						CGX_ERR_MODULE_NOT_PRESENT);
+				return -1;
+			}
+		}
 retry_link:
 		if (lmac_cfg->phy_present) {
 			/* Get the link status */
 			phy_get_link_status(cgx_id, lmac_id, &link);
+
 			if (!link.s.link_up) {
 				if (count++ < 5)
 					goto retry_link;
@@ -780,7 +864,7 @@ static int cgx_process_requests(int cgx_id, int lmac_id)
 	return ret;
 }
 
-static int cgx_handle_link_change(int cgx_id, int lmac_id,
+static int cgx_handle_link_reqs(int cgx_id, int lmac_id,
 			link_state_t *new_link)
 {
 	int timeout = 10; /* check the moderate val */;
@@ -828,53 +912,98 @@ static int cgx_handle_link_change(int cgx_id, int lmac_id,
 	return 0;
 }
 
+static int cgx_check_sfp_mod_stat(int cgx_id, int lmac_id)
+{
+	int ret = 0, mod_status = 0;
+	cgx_lmac_context_t *lmac_ctx;
+
+	debug_cgx_intf("%s: %d:%d\n", __func__, cgx_id, lmac_id);
+
+	lmac_ctx = &lmac_context[cgx_id][lmac_id];
+
+	/* Obtain the module status */
+	mod_status = sfp_get_mod_status(cgx_id, lmac_id);
+
+	if (mod_status == -1)
+		return -1;
+
+	/* MCP updates EEPROM buffer every 5s if the user
+	 * hasn't un-plugged/plugged the transceiver. In this
+	 * case, just update the SH memory with the
+	 * data and do not handle any link change
+	 */
+	if (mod_status == SFP_MOD_STATE_EEPROM_UPDATED) {
+		lmac_ctx->s.mod_stats = mod_status;
+		sfp_parse_eeprom_data(cgx_id, lmac_id);
+		return 0;
+	}
+
+	if (mod_status != lmac_ctx->s.mod_stats) {
+		/* Update the new status */
+		lmac_ctx->s.mod_stats = mod_status;
+		if (mod_status == SFP_MOD_STATE_PRESENT) {
+			/* User has unplug and plug the module.
+			 * In this case, read the EEPROM capabilities
+			 * and configure CGX accordingly if there is
+			 * a change in capabilities.
+			 */
+			debug_cgx_intf("%s: %d:%d User has plugged module\n",
+				 __func__, cgx_id, lmac_id);
+
+			ret = cgx_sfp_obtain_capabilities(cgx_id, lmac_id);
+			if (ret != 1)
+				return -1;
+			return 1; /* Valid */
+		}
+		debug_cgx_intf("%s: %d:%d user has un-plugged cable\n",
+				__func__, cgx_id, lmac_id);
+		/* If Module is absent, clear the EEPROM data */
+		sh_fwdata_clear_eeprom_data(cgx_id, lmac_id, 0);
+	}
+	return 0;
+}
+
 /* Timer callback to periodically poll for link */
 static int cgx_poll_for_link_cb(int timer)
 {
+	int valid = 0;
 	cgx_lmac_config_t *lmac_cfg;
 	cgx_lmac_context_t *lmac_ctx;
-	link_state_t link = {0};
+	link_state_t link;
+
 	for (int cgx = 0; cgx < plat_octeontx_scfg->cgx_count; cgx++) {
 		for (int lmac = 0; lmac < MAX_LMAC_PER_CGX; lmac++) {
 			lmac_cfg = &plat_octeontx_bcfg->cgx_cfg[cgx].lmac_cfg[lmac];
 			lmac_ctx = &lmac_context[cgx][lmac];
 
-			if (lmac_ctx->s.link_enable) {
-				/* check if PHY/SFP slot is present, if not
-				 * return the default link status
-				 */
-				if ((!lmac_cfg->phy_present) &&
-					(!lmac_cfg->sfp_slot)) {
-#if 0
-					debug_cgx_intf("%s:%d:%d PHY not present\t", __func__, cgx, lmac);
-					debug_cgx_intf("link %d speed %d duplex %d\n",
-						lmac_ctx->s.link_up,
-						lmac_ctx->s.speed,
-						lmac_ctx->s.full_duplex);
-#endif
-					continue;
-				}
-				/* if PHY/SFP slot is present */
-#if 0
-				debug_cgx_intf("%s:%d:%d poll for link status\n",
-					__func__, cgx, lmac);
-#endif
+			link.u64 = 0;
+			valid = 0;
+
+			if ((lmac_ctx->s.link_enable) ||
+				(lmac_ctx->s.link_req)) {
+				if (lmac_cfg->sfp_slot)
+					valid = cgx_check_sfp_mod_stat(cgx,
+							lmac);
+
 				/* Get the link status */
 				phy_get_link_status(cgx, lmac, &link);
-				/* if the prev link change is not handled
+
+				/* If the prev link change is not handled
 				 * wait until it is handled as the reqs
 				 * are handled one at a time
 				 */
 				if ((!lmac_ctx->s.link_change_req) &&
-					((lmac_ctx->s.link_up !=
+				((valid == 1) || ((lmac_ctx->s.link_up !=
 					link.s.link_up) ||
 					(lmac_ctx->s.full_duplex !=
 					link.s.full_duplex) ||
 					(lmac_ctx->s.speed !=
-					link.s.speed))) {
-					debug_cgx_intf("%s:%d:%d link changed\n",
-						__func__, cgx, lmac);
-					cgx_handle_link_change(cgx, lmac, &link);
+					link.s.speed)))) {
+					debug_cgx_intf("%d:%d link changed%d\n",
+							cgx, lmac,
+							link.s.link_up);
+					cgx_handle_link_reqs(cgx, lmac,
+								&link);
 				}
 			}
 		}
