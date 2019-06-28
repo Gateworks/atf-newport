@@ -84,6 +84,7 @@ typedef enum {
 
 typedef enum {
 	SFP_TRANS_TYPE_NONE,
+	SFP_TRANS_TYPE_NON_COMP,
 	SFP_TRANS_TYPE_1G_PCC,	/* 1G Passive copper cable */
 	SFP_TRANS_TYPE_1G_ACC,	/* 1G Active copper cable */
 	SFP_TRANS_TYPE_1G_LX,

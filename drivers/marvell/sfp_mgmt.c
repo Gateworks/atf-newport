@@ -507,7 +507,7 @@ void qsfp_get_info(int cgx_id, int lmac_id)
 	case 0x0:
 		/* non-compliance cable : FIXME */
 		debug_sfp_mgmt("%s: Non-compliance cable detected\n", __func__);
-		cap_info->trans_type = SFP_TRANS_TYPE_NONE;
+		cap_info->trans_type = SFP_TRANS_TYPE_NON_COMP;
 		break;
 	case 0x1:
 		debug_sfp_mgmt("%s: 40G ACTIVE XLPPI detected\n", __func__);
@@ -611,12 +611,13 @@ void qsfp_get_info(int cgx_id, int lmac_id)
 			break;
 		default:
 			debug_sfp_mgmt("%s: unknown medium\n", __func__);
-			cap_info->trans_type = SFP_TRANS_TYPE_NONE;
+			cap_info->trans_type = SFP_TRANS_TYPE_UNKNOWN;
 			break;
 		}
+	break;
 	default:
 		debug_sfp_mgmt("%s: unknown medium\n", __func__);
-		cap_info->trans_type = SFP_TRANS_TYPE_NONE;
+		cap_info->trans_type = SFP_TRANS_TYPE_UNKNOWN;
 		break;
 	}
 	/* FIXME: If the above couldn't detect the cable type, try
@@ -650,7 +651,8 @@ void qsfp_get_info(int cgx_id, int lmac_id)
 
 	if (cap_info->trans_type == SFP_TRANS_TYPE_NONE) {
 		/* if transceiver type is not identified, throw error */
-		ERROR("%s : %d:%d unknown cable type\n", __func__, cgx_id,
+		debug_sfp_mgmt("%s : %d:%d unknown cable type\n",
+					__func__, cgx_id,
 						lmac_id);
 		return;
 	}
@@ -1017,8 +1019,8 @@ retry_read_eeprom:
 	 * by AP, MCP is not updating the
 	 * buffer now.
 	 */
-
-	sh_fwdata_update_eeprom_data(cgx_id, lmac_id, sff_id);
+	if (ret != SFP_TRANS_TYPE_NONE)
+		sh_fwdata_update_eeprom_data(cgx_id, lmac_id, sff_id);
 
 	/* set the lock to free */
 	ctx->lock = SFP_OWN_NONE;
@@ -1035,6 +1037,31 @@ int sfp_validate_user_options(int cgx_id, int lmac_id)
 	debug_sfp_mgmt("%s: %d:%d\n", __func__, cgx_id, lmac_id);
 
 	lmac_cfg = &(plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id]);
+
+	/* Obtain the module capabilities based on transceiver
+	 * type retrieved from EEPROM
+	 */
+	sfp_get_an_capability(cgx_id, lmac_id);
+	sfp_get_fec_capability(cgx_id, lmac_id);
+	sfp_get_speed_capability(cgx_id, lmac_id);
+	sfp_is_transceiver_active(cgx_id, lmac_id);
+	sfp_is_transceiver_optical(cgx_id, lmac_id);
+
+	debug_sfp_mgmt("%s: %d:%d AN %d FEC %d speed %d active %d optical %d\n",
+			__func__, cgx_id, lmac_id,
+			cap_info->an_enable,
+			cap_info->fec_type,
+			cap_info->speed_limit,
+			cap_info->active,
+			cap_info->optical);
+
+	/* FIXME: If transceiver detected is not SFF compliant
+	 * or unknown type from the supported list, don't validate
+	 * the user options against capabilities
+	 */
+	if ((cap_info->trans_type == SFP_TRANS_TYPE_UNKNOWN) ||
+		(cap_info->trans_type == SFP_TRANS_TYPE_NON_COMP))
+		return 1;
 
 	if (lmac_cfg->autoneg_dis) {
 		/* Validate user options against QSFP/SFP module capabilities
