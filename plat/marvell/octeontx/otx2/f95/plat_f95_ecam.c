@@ -40,7 +40,7 @@ static int ecam_probe_cgx(unsigned long long arg)
 
 	debug_plat_ecam("%s arg %lld\n", __func__, arg);
 
-	/* FIXME: cgx to qlm mapping.
+	/*
 	 * CGX0 - QLM1
 	 * CGX1 - QLM2
 	 * CGX2 - DLM3
@@ -56,6 +56,10 @@ static int ecam_probe_cgx(unsigned long long arg)
 		qlm = 3;
 		break;
 	}
+
+	/* Adjust cgx to qlm mapping for B0 pass */
+	if (!cavm_is_model(OCTEONTX_CNF95XX_PASS1_X))
+		qlm -= 1;
 
 	lnum = plat_octeontx_scfg->qlm_max_lane_num[qlm];
 	while (qlm != -1) {

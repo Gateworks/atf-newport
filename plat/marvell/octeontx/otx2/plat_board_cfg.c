@@ -1055,8 +1055,8 @@ static int octeontx2_check_qlm_lmacs(int cgx_idx,
 			}
 		}
 	} else if (cavm_is_model(OCTEONTX_CNF95XX)) {
-		/* Only 2 lanes are available for QLM3 in F95 */
-		if (qlm == 3) {
+		/* Only 2 lanes are available DLMs */
+		if (max_lanes == 2) {
 			lmac_avail = 2;
 			for (i = 0; i < cgx->lmac_count; i++) {
 				lmac = &cgx->lmac_cfg[i];

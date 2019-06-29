@@ -101,12 +101,16 @@ int plat_octeontx_get_cgx_count(void)
 
 int plat_octeontx_get_pem_count(void)
 {
-	return 1;
+	if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X))
+		return 1;
+	return 0;
 }
 
 int plat_octeontx_get_gser_count(void)
 {
-	return 4;
+	if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X))
+		return 4;
+	return 3;
 }
 
 int plat_octeontx_get_uaa_count(void)
@@ -127,15 +131,19 @@ int plat_octeontx_get_mcc_count(void)
 /* Return number of lanes available for different QLMs. */
 int plat_get_max_lane_num(int qlm)
 {
-	if (qlm == 3)
-		return 2;
-	return 4;
+	if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X))
+		return (qlm == 3) ? 2 : 4;
+	else
+		return (qlm == 2) ? 2 : 4;
 }
 
 /* Return the CGX<->QLM mapping */
 int plat_get_cgx_idx(int qlm)
 {
 	int idx;
+
+	if (!cavm_is_model(OCTEONTX_CNF95XX_PASS1_X))
+		return qlm;
 
 	switch (qlm) {
 	case 1:
@@ -246,9 +254,15 @@ void plat_add_mmio()
 	}
 
 	device_type_count = plat_octeontx_get_gser_count();
-	for (i = 0; i < device_type_count; i++)
-		add_map_record(CAVM_GSERN_BAR_E_GSERNX_PF_BAR0(i),
+	if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X)) {
+		for (i = 0; i < device_type_count; i++)
+			add_map_record(CAVM_GSERN_BAR_E_GSERNX_PF_BAR0(i),
 			       CAVM_GSERN_BAR_E_GSERNX_PF_BAR0_SIZE, attr);
+	} else {
+		for (i = 0; i < device_type_count; i++)
+			add_map_record(CAVM_GSERR_BAR_E_GSERRX_PF_BAR0(i),
+				CAVM_GSERR_BAR_E_GSERRX_PF_BAR0_SIZE, attr);
+	}
 
 	add_map_record(CAVM_DAP_BAR_E_DAP_PF_BAR0, CAVM_DAP_BAR_E_DAP_PF_BAR0_SIZE, attr);
 	add_map_record(CAVM_DAP_BAR_E_DAP_PF_BAR2_CN9, CAVM_DAP_BAR_E_DAP_PF_BAR2_CN9_SIZE, attr);

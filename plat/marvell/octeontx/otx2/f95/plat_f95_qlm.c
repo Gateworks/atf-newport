@@ -6,6 +6,7 @@
  */
 
 #include <octeontx_common.h>
+#include <plat_otx2_configuration.h>
 #include <platform_scfg.h>
 #include <qlm.h>
 
@@ -16,17 +17,27 @@
 qlm_state_lane_t plat_otx2_get_qlm_state_lane(int qlm, int lane)
 {
 	qlm_state_lane_t state;
-	int gsern_min, gsern_max;
 
-	gsern_min = GSERN_MIN_A0;
-	gsern_max = GSERN_MAX_A0;
+	if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X)) {
+		int gsern_min, gsern_max;
 
-	if (qlm >= gsern_min && qlm <= gsern_max) {
-		state.u = CSR_READ(CAVM_GSERNX_LANEX_SCRATCHX(
+		gsern_min = GSERN_MIN_A0;
+		gsern_max = GSERN_MAX_A0;
+
+		if (qlm >= gsern_min && qlm <= gsern_max) {
+			state.u = CSR_READ(CAVM_GSERNX_LANEX_SCRATCHX(
 						qlm - gsern_min, lane, 0));
+		} else {
+			state.u = 0;
+			state.s.mode = QLM_MODE_DISABLED;
+		}
 	} else {
-		state.u = 0;
-		state.s.mode = QLM_MODE_DISABLED;
+		if (qlm >= 0 && qlm <= plat_octeontx_get_gser_count())
+			state.u = CSR_READ(CAVM_GSERRX_SCRATCHX(qlm, lane));
+		else {
+			state.u = 0;
+			state.s.mode = QLM_MODE_DISABLED;
+		}
 	}
 
 	return state;
