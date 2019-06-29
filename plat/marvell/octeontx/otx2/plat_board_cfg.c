@@ -1668,7 +1668,7 @@ static void octeontx2_fill_cgx_details(const void *fdt)
 
 	octeontx2_fill_cgx_network_lane_order(fdt);
 
-	for (qlm_idx = 0; qlm_idx < plat_octeontx_get_gser_count(); qlm_idx++) {
+	for (qlm_idx = 0; qlm_idx < plat_octeontx_scfg->gser_count; qlm_idx++) {
 		lnum = plat_octeontx_scfg->qlm_max_lane_num[qlm_idx];
 		for (lane_idx = 0; lane_idx < lnum; lane_idx++) {
 			qlm_state = plat_otx2_get_qlm_state_lane(
@@ -1695,7 +1695,7 @@ static void octeontx2_fill_qlm_details(const void *fdt)
 	int qlm, lane, polarity, max_lanes, voltage;
 	char prop[64];
 
-	for (qlm = 0; qlm < MAX_QLM; qlm++) {
+	for (qlm = 0; qlm < plat_octeontx_scfg->gser_count; qlm++) {
 		max_lanes = plat_octeontx_scfg->qlm_max_lane_num[qlm];
 		for (lane = 0; lane < max_lanes; lane++) {
 			snprintf(prop, sizeof(prop),

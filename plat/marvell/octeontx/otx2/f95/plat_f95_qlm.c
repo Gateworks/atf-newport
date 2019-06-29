@@ -11,7 +11,7 @@
 
 /* QLMx => GSERx mapping for f95 A0 */
 #define GSERN_MIN_A0		0		/* QLM0 => GSERN */
-#define GSERN_MAX_A0		(MAX_QLM - 1)	/* QLM3 => GSERN */
+#define GSERN_MAX_A0		3		/* QLM3 => GSERN */
 
 qlm_state_lane_t plat_otx2_get_qlm_state_lane(int qlm, int lane)
 {
