@@ -39,6 +39,9 @@ static file_state_t current_file = { 0 };
 #define	SPI_3WIRE		0x10			/* SI/SO signals shared */
 #define MPI_MAX_DATA	8
 
+/* MPI_WIDE_BUF has 144 registers. Each is 64 bit, so contains 8 bytes. */
+#define MPI_MAX_DATA_CN9XXX	(144 * 8)
+
 #define SPI_NOR_CMD_READ		0x03
 #define SPI_NOR_CMD_READ_FAST		0x0b
 
@@ -62,21 +65,16 @@ static file_state_t current_file = { 0 };
 #define SPI_NOR_ERASE_TIMEOUT		2000	/* 2 sec */
 #define CONFIG_SPI_FREQUENCY	16000000
 
-int spi_config(uint64_t spi_clk, uint32_t mode, int cpol, int cpha,
-		      int spi_con, int cs)
+static int spi_config_cn8xxx(uint64_t spi_clk, uint32_t mode, int cpol,
+	int cpha, int spi_con, int cs)
 {
 	uint64_t sclk;
 	union cavm_rst_boot rst_boot;
 	union cavm_mpix_cfg mpi_cfg;
 
 	rst_boot.u = CSR_READ(CAVM_RST_BOOT);
-	if (cavm_is_model(OCTEONTX_CN8XXX))
-		mpi_cfg.u = CSR_READ(CAVM_MPI_CFG);
-	else if (cavm_is_model(OCTEONTX_CN9XXX)) {
-		mpi_cfg.u = CSR_READ(CAVM_MPIX_CFG(spi_con));
-		mpi_cfg.s.legacy_dis = 0;
-	} else
-		return -1;
+	mpi_cfg.u = CSR_READ(CAVM_MPI_CFG);
+
 	sclk = PLL_REF_CLK * rst_boot.s.pnr_mul;
 
 	switch (cs) {
@@ -102,16 +100,55 @@ int spi_config(uint64_t spi_clk, uint32_t mode, int cpol, int cpha,
 	mpi_cfg.s.idlelo = cpha != cpol;
 	mpi_cfg.s.cslate = cpha;
 	mpi_cfg.s.enable = 1;
-	if (cavm_is_model(OCTEONTX_CN8XXX))
-		CSR_WRITE(CAVM_MPI_CFG, mpi_cfg.u);
-	else if (cavm_is_model(OCTEONTX_CN9XXX))
-		CSR_WRITE(CAVM_MPIX_CFG(spi_con), mpi_cfg.u);
-	else
-		return -1;
+	CSR_WRITE(CAVM_MPI_CFG, mpi_cfg.u);
 	return 0;
 }
 
-static int spi_xfer(unsigned char *dout, unsigned char *din, int len,
+static int spi_config_cn9xxx(uint64_t spi_clk, uint32_t mode, int cpol,
+	int cpha, int spi_con, int cs)
+{
+	uint64_t sclk;
+	union cavm_rst_boot rst_boot;
+	union cavm_mpix_cfg mpi_cfg;
+
+	rst_boot.u = CSR_READ(CAVM_RST_BOOT);
+	mpi_cfg.u = CSR_READ(CAVM_MPIX_CFG(spi_con));
+
+	sclk = PLL_REF_CLK * rst_boot.s.pnr_mul;
+
+	mpi_cfg.s.tb100_en = 1; /* Use 100Mhz main reference */
+	mpi_cfg.s.cs_espi_en = 0; /* Not using eSPI mode */
+	mpi_cfg.s.legacy_dis = 1; /* We don't use legacy mode */
+	mpi_cfg.s.clkdiv = (sclk >> 1) / spi_clk;
+	mpi_cfg.s.csena3 = 1;
+	mpi_cfg.s.csena2 = 1;
+	mpi_cfg.s.csena1 = 1;
+	mpi_cfg.s.csena0 = 1;
+	mpi_cfg.s.cshi = !!(mode & SPI_CS_HIGH);
+	mpi_cfg.s.cs_sticky = 1;
+	mpi_cfg.s.lsbfirst = !!(mode & SPI_LSB_FIRST);
+	mpi_cfg.s.wireor = !!(mode & SPI_3WIRE);
+	mpi_cfg.s.idlelo = cpha != cpol;
+	mpi_cfg.s.enable = 1;
+	CSR_WRITE(CAVM_MPIX_CFG(spi_con), mpi_cfg.u);
+	return 0;
+}
+
+int spi_config(uint64_t spi_clk, uint32_t mode, int cpol, int cpha,
+		      int spi_con, int cs)
+{
+	if (cavm_is_model(OCTEONTX_CN8XXX)) {
+		return spi_config_cn8xxx(
+				spi_clk, mode, cpol, cpha, spi_con, cs);
+	} else if (cavm_is_model(OCTEONTX_CN9XXX)) {
+		return spi_config_cn9xxx(
+				spi_clk, mode, cpol, cpha, spi_con, cs);
+	} else {
+		return -1;
+	}
+}
+
+static int spi_xfer_legacy(unsigned char *dout, unsigned char *din, int len,
 		    int spi_con, int cs, int last_data)
 {
 	union cavm_mpi_tx mpi_tx;
@@ -172,6 +209,83 @@ static int spi_xfer(unsigned char *dout, unsigned char *din, int len,
 
 	return 0;
 }
+
+static int spi_xfer_cn9xxx(unsigned char *dout, unsigned char *din, int len,
+		    int spi_con, int cs, int last_data, int lsbfirst)
+{
+	union cavm_mpix_xmit mpi_tx;
+	union cavm_mpi_sts mpi_sts;
+	int i, j;
+	uint64_t data;
+
+	while (len > 0) {
+		int size = MIN(len, MPI_MAX_DATA_CN9XXX);
+
+		if (dout) {
+			for (i = 0; i * 8 < size; i++) {
+				data = 0;
+				for (j = 0; i * 8 + j < size && j < 8; j++) {
+					if (!lsbfirst) {
+						data += ((uint64_t)*dout++)
+								<< (j * 8);
+					} else {
+						data <<= 8;
+						data += *dout++;
+					}
+				}
+				CSR_WRITE(
+					CAVM_MPIX_WIDE_BUFX(spi_con, i), data);
+			}
+		}
+
+		len -= size;
+		mpi_tx.u = 0;
+		mpi_tx.s.csid = cs;
+		mpi_tx.s.leavecs = 1;
+
+		if (last_data && len <= 0)
+			mpi_tx.s.leavecs = 0;
+
+		mpi_tx.s.txnum = dout ? size : 0;
+		mpi_tx.s.totnum = size;
+		CSR_WRITE(CAVM_MPIX_XMIT(spi_con), mpi_tx.u);
+
+		/* Wait for tx/rx to complete */
+		do {
+			mpi_sts.u = CSR_READ(CAVM_MPIX_STS(spi_con));
+		} while (mpi_sts.s.busy != 0);
+
+		if (din) {
+			for (i = 0; i * 8 < size; i++) {
+				data = CSR_READ(
+					CAVM_MPIX_WIDE_BUFX(spi_con, i));
+				for (j = 0; i * 8 + j < size && j < 8; j++) {
+					*din++ = data & UINT8_MAX;
+					data >>= 8;
+				}
+			}
+		}
+	}
+
+	return 0;
+}
+
+static inline int spi_xfer(unsigned char *dout, unsigned char *din, int len,
+	int spi_con, int cs, int last_data)
+{
+	union cavm_mpix_cfg mpi_cfg;
+
+	if (cavm_is_model(OCTEONTX_CN9XXX)) {
+		mpi_cfg.u = CSR_READ(CAVM_MPIX_CFG(spi_con));
+		if (mpi_cfg.s.legacy_dis) {
+			return spi_xfer_cn9xxx(dout, din, len, spi_con, cs,
+						last_data, mpi_cfg.s.lsbfirst);
+		}
+	}
+
+	return spi_xfer_legacy(dout, din, len, spi_con, cs, last_data);
+}
+
 
 int spi_nor_read(uint8_t *buf, int buf_size, uint32_t addr,
 			int addr_len, int spi_con, int cs)
