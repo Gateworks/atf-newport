@@ -96,7 +96,7 @@ union cavm_ecam_cfg_addr_s
         uint64_t reserved_52_63        : 12;
 #endif /* Word 0 - End */
     } s;
-    struct cavm_ecam_cfg_addr_s_cn81xx
+    struct cavm_ecam_cfg_addr_s_cn8
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_48_63        : 16;
@@ -141,7 +141,8 @@ union cavm_ecam_cfg_addr_s
         uint64_t io                    : 1;  /**< [ 47: 47] Indicates I/O space. */
         uint64_t reserved_48_63        : 16;
 #endif /* Word 0 - End */
-    } cn81xx;
+    } cn8;
+    /* struct cavm_ecam_cfg_addr_s_cn8 cn81xx; */
     struct cavm_ecam_cfg_addr_s_cn83xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */

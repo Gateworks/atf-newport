@@ -189,6 +189,7 @@ union cavm_sli_s2m_op_s
         uint64_t reserved_48_63        : 16;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_sli_s2m_op_s_s cn8; */
     /* struct cavm_sli_s2m_op_s_s cn81xx; */
     struct cavm_sli_s2m_op_s_cn83xx
     {
@@ -3249,6 +3250,7 @@ union cavm_slix_bist_status
         uint64_t reserved_31_63        : 33;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_slix_bist_status_s cn8; */
     struct cavm_slix_bist_status_cn81xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -5248,6 +5250,7 @@ union cavm_slix_macx_int_ena_w1c
         uint64_t reserved_4_63         : 60;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_slix_macx_int_ena_w1c_s cn8; */
     /* struct cavm_slix_macx_int_ena_w1c_s cn81xx; */
     struct cavm_slix_macx_int_ena_w1c_cn83xx
     {
@@ -5310,6 +5313,7 @@ union cavm_slix_macx_int_ena_w1s
         uint64_t reserved_4_63         : 60;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_slix_macx_int_ena_w1s_s cn8; */
     /* struct cavm_slix_macx_int_ena_w1s_s cn81xx; */
     struct cavm_slix_macx_int_ena_w1s_cn83xx
     {
@@ -5384,6 +5388,7 @@ union cavm_slix_macx_int_sum
         uint64_t reserved_4_63         : 60;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_slix_macx_int_sum_s cn8; */
     /* struct cavm_slix_macx_int_sum_s cn81xx; */
     struct cavm_slix_macx_int_sum_cn83xx
     {
@@ -5454,6 +5459,7 @@ union cavm_slix_macx_int_sum_w1s
         uint64_t reserved_4_63         : 60;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_slix_macx_int_sum_w1s_s cn8; */
     /* struct cavm_slix_macx_int_sum_w1s_s cn81xx; */
     struct cavm_slix_macx_int_sum_w1s_cn83xx
     {
@@ -5602,6 +5608,7 @@ union cavm_slix_mbe_int_ena_w1c
         uint64_t reserved_0_63         : 64;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_slix_mbe_int_ena_w1c_s cn8; */
     struct cavm_slix_mbe_int_ena_w1c_cn81xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -5661,6 +5668,7 @@ union cavm_slix_mbe_int_ena_w1s
         uint64_t reserved_0_63         : 64;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_slix_mbe_int_ena_w1s_s cn8; */
     struct cavm_slix_mbe_int_ena_w1s_cn81xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -5720,6 +5728,7 @@ union cavm_slix_mbe_int_sum
         uint64_t reserved_0_63         : 64;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_slix_mbe_int_sum_s cn8; */
     struct cavm_slix_mbe_int_sum_cn81xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -5783,6 +5792,7 @@ union cavm_slix_mbe_int_sum_w1s
         uint64_t reserved_0_63         : 64;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_slix_mbe_int_sum_w1s_s cn8; */
     struct cavm_slix_mbe_int_sum_w1s_cn81xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -5842,6 +5852,7 @@ union cavm_slix_mem_ctl
         uint64_t reserved_0_63         : 64;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_slix_mem_ctl_s cn8; */
     struct cavm_slix_mem_ctl_cn81xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -6212,6 +6223,7 @@ union cavm_slix_s2m_macx_ctl
         uint64_t reserved_32_63        : 32;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_slix_s2m_macx_ctl_s cn8; */
     /* struct cavm_slix_s2m_macx_ctl_s cn81xx; */
     struct cavm_slix_s2m_macx_ctl_cn83xx
     {
@@ -6315,6 +6327,7 @@ union cavm_slix_s2m_regx_acc
         uint64_t reserved_55_63        : 9;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_slix_s2m_regx_acc_s cn8; */
     struct cavm_slix_s2m_regx_acc_cn81xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -6583,6 +6596,7 @@ union cavm_slix_sctl
         uint64_t reserved_1_63         : 63;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_slix_sctl_s cn8; */
     /* struct cavm_slix_sctl_s cn81xx; */
     struct cavm_slix_sctl_cn83xx
     {

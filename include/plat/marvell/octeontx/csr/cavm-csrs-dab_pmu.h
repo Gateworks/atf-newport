@@ -491,6 +491,8 @@ static inline uint64_t CAVM_PMUX_PMAUTHSTATUS(unsigned long a)
         return 0x87a008020fb8ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008020fb8ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008020fb8ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008020fb8ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -599,6 +601,8 @@ static inline uint64_t CAVM_PMUX_PMCCFILTR_EL0(unsigned long a)
         return 0x87a00802047cll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a00802047cll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a00802047cll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a00802047cll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -650,6 +654,8 @@ static inline uint64_t CAVM_PMUX_PMCCNTR_EL0_HI(unsigned long a)
         return 0x87a0080200fcll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a0080200fcll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a0080200fcll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a0080200fcll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -701,6 +707,8 @@ static inline uint64_t CAVM_PMUX_PMCCNTR_EL0_LO(unsigned long a)
         return 0x87a0080200f8ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a0080200f8ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a0080200f8ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a0080200f8ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -811,6 +819,8 @@ static inline uint64_t CAVM_PMUX_PMCEID0(unsigned long a)
         return 0x87a008020e20ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008020e20ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008020e20ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008020e20ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -941,6 +951,8 @@ static inline uint64_t CAVM_PMUX_PMCEID1(unsigned long a)
         return 0x87a008020e24ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008020e24ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008020e24ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008020e24ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -1011,6 +1023,8 @@ static inline uint64_t CAVM_PMUX_PMCEID2(unsigned long a)
         return 0x87a008020e28ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008020e28ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008020e28ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008020e28ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -1057,6 +1071,8 @@ static inline uint64_t CAVM_PMUX_PMCEID3(unsigned long a)
         return 0x87a008020e2cll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008020e2cll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008020e2cll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008020e2cll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -1152,6 +1168,8 @@ static inline uint64_t CAVM_PMUX_PMCFGR(unsigned long a)
         return 0x87a008020e00ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008020e00ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008020e00ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008020e00ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -1205,6 +1223,8 @@ static inline uint64_t CAVM_PMUX_PMCID1SR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008020208ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008020208ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008020208ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -1251,6 +1271,8 @@ static inline uint64_t CAVM_PMUX_PMCID1SR_ALIAS(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008020228ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008020228ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008020228ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -1298,6 +1320,8 @@ static inline uint64_t CAVM_PMUX_PMCID2SR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a00802022cll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a00802022cll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a00802022cll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -1343,6 +1367,8 @@ static inline uint64_t CAVM_PMUX_PMCIDR0(unsigned long a)
         return 0x87a008020ff0ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008020ff0ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008020ff0ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008020ff0ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -1390,6 +1416,8 @@ static inline uint64_t CAVM_PMUX_PMCIDR1(unsigned long a)
         return 0x87a008020ff4ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008020ff4ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008020ff4ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008020ff4ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -1435,6 +1463,8 @@ static inline uint64_t CAVM_PMUX_PMCIDR2(unsigned long a)
         return 0x87a008020ff8ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008020ff8ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008020ff8ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008020ff8ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -1480,6 +1510,8 @@ static inline uint64_t CAVM_PMUX_PMCIDR3(unsigned long a)
         return 0x87a008020ffcll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008020ffcll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008020ffcll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008020ffcll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -1549,6 +1581,8 @@ static inline uint64_t CAVM_PMUX_PMCNTENCLR_EL0(unsigned long a)
         return 0x87a008020c20ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008020c20ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008020c20ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008020c20ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -1618,6 +1652,8 @@ static inline uint64_t CAVM_PMUX_PMCNTENSET_EL0(unsigned long a)
         return 0x87a008020c00ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008020c00ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008020c00ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008020c00ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -1762,7 +1798,7 @@ union cavm_pmux_pmcr_el0
         uint32_t reserved_7_31         : 25;
 #endif /* Word 0 - End */
     } s;
-    struct cavm_pmux_pmcr_el0_cn
+    struct cavm_pmux_pmcr_el0_cn8
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_11_31        : 21;
@@ -1883,7 +1919,253 @@ union cavm_pmux_pmcr_el0
         uint32_t reserved_7_10         : 4;
         uint32_t reserved_11_31        : 21;
 #endif /* Word 0 - End */
-    } cn;
+    } cn8;
+    struct cavm_pmux_pmcr_el0_cn9
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t reserved_7_31         : 25;
+        uint32_t lc                    : 1;  /**< [  6:  6](R/W) Long cycle counter enable. Determines which PMU()_PMCCNTR_EL0 bit
+                                                                     generates an overflow recorded by PMOVSR[31].
+                                                                 ARM deprecates use of PMU()_PMCR_EL0[LC] = 0.
+                                                                 0 = Cycle counter overflow on increment that changes
+                                                                     PMU()_PMCCNTR_EL0[31] from one to zero.
+                                                                 1 = Cycle counter overflow on increment that changes
+                                                                     PMU()_PMCCNTR_EL0[63] from one to zero. */
+        uint32_t dp                    : 1;  /**< [  5:  5](R/W) Disable cycle counter when event counting is prohibited. The
+                                                                     possible values of this bit are:
+                                                                 Event counting is prohibited when
+                                                                     ProfilingProhibited(IsSecure(),PSTATE.EL) == TRUE. See the
+                                                                     "Performance Monitors and Security" section of the ARMv8 Debug
+                                                                     Specification, PRD03-PRDC-010486.
+                                                                 This bit is RW.
+                                                                 0 =  PMU()_PMCCNTR_EL0, if enabled, counts when event counting is
+                                                                     prohibited.
+                                                                 1 =  PMU()_PMCCNTR_EL0 does not count when event counting is prohibited. */
+        uint32_t x                     : 1;  /**< [  4:  4](R/W) Enable export of events in an implementation defined event
+                                                                     stream. The possible values of this bit are:
+                                                                 This bit is used to permit events to be exported to another
+                                                                     debug device, such as an OPTIONAL trace extension, over an
+                                                                     event bus. If the implementation does not include such an
+                                                                     event bus, this bit is RAZ/WI.
+                                                                 This bit does not affect the generation of performance
+                                                                     monitors overflow interrupt requests or signaling to a cross
+                                                                     trigger interface (CTI) that can be implemented as signals
+                                                                     exported from the processor.
+                                                                 If the implementation does not include an exported event
+                                                                     stream, this bit is RAZ/WI. Otherwise this bit is RW.
+                                                                 0 = Do not export events.
+                                                                 1 = Export events where not prohibited. */
+        uint32_t d_clk                 : 1;  /**< [  3:  3](R/W) Clock divider. The possible values of this bit are:
+                                                                 This bit is RW.
+                                                                 If PMU()_PMCR_EL0[LC] == 1, this bit is ignored and the cycle counter
+                                                                     counts every clock cycle.
+                                                                 ARM deprecates use of PMU()_PMCR[D] = 1.
+                                                                 0 = When enabled, PMU()_PMCCNTR_EL0 counts every clock cycle.
+                                                                 1 = When enabled, PMU()_PMCCNTR_EL0 counts once every 64 clock cycles. */
+        uint32_t c_rst                 : 1;  /**< [  2:  2](R/W) Cycle counter reset. This bit is WO. The effects of writing to
+                                                                     this bit are:
+                                                                 This bit always reads as zero.
+                                                                 Resetting PMU()_PMCCNTR_EL0 does not clear the PMU()_PMCCNTR_EL0 overflow
+                                                                     bit to zero.
+                                                                 0 = No action.
+                                                                 1 = Reset PMU()_PMCCNTR_EL0 to zero. */
+        uint32_t p                     : 1;  /**< [  1:  1](R/W) Event counter reset. This bit is WO. The effects of writing to
+                                                                     this bit are:
+                                                                 This bit always reads as zero.
+                                                                 Resetting the event counters does not clear any overflow bits
+                                                                     to zero.
+                                                                 0 = No action.
+                                                                 1 = Reset all event counters, not including PMU()_PMCCNTR_EL0, to zero. */
+        uint32_t en                    : 1;  /**< [  0:  0](R/W) Enable. The possible values of this bit are:
+                                                                 This bit is RW.
+                                                                 0 = All counters, including PMU()_PMCCNTR_EL0, are disabled.
+                                                                 1 = All counters are enabled by PMU()_PMCNTENSET_EL0. */
+#else /* Word 0 - Little Endian */
+        uint32_t en                    : 1;  /**< [  0:  0](R/W) Enable. The possible values of this bit are:
+                                                                 This bit is RW.
+                                                                 0 = All counters, including PMU()_PMCCNTR_EL0, are disabled.
+                                                                 1 = All counters are enabled by PMU()_PMCNTENSET_EL0. */
+        uint32_t p                     : 1;  /**< [  1:  1](R/W) Event counter reset. This bit is WO. The effects of writing to
+                                                                     this bit are:
+                                                                 This bit always reads as zero.
+                                                                 Resetting the event counters does not clear any overflow bits
+                                                                     to zero.
+                                                                 0 = No action.
+                                                                 1 = Reset all event counters, not including PMU()_PMCCNTR_EL0, to zero. */
+        uint32_t c_rst                 : 1;  /**< [  2:  2](R/W) Cycle counter reset. This bit is WO. The effects of writing to
+                                                                     this bit are:
+                                                                 This bit always reads as zero.
+                                                                 Resetting PMU()_PMCCNTR_EL0 does not clear the PMU()_PMCCNTR_EL0 overflow
+                                                                     bit to zero.
+                                                                 0 = No action.
+                                                                 1 = Reset PMU()_PMCCNTR_EL0 to zero. */
+        uint32_t d_clk                 : 1;  /**< [  3:  3](R/W) Clock divider. The possible values of this bit are:
+                                                                 This bit is RW.
+                                                                 If PMU()_PMCR_EL0[LC] == 1, this bit is ignored and the cycle counter
+                                                                     counts every clock cycle.
+                                                                 ARM deprecates use of PMU()_PMCR[D] = 1.
+                                                                 0 = When enabled, PMU()_PMCCNTR_EL0 counts every clock cycle.
+                                                                 1 = When enabled, PMU()_PMCCNTR_EL0 counts once every 64 clock cycles. */
+        uint32_t x                     : 1;  /**< [  4:  4](R/W) Enable export of events in an implementation defined event
+                                                                     stream. The possible values of this bit are:
+                                                                 This bit is used to permit events to be exported to another
+                                                                     debug device, such as an OPTIONAL trace extension, over an
+                                                                     event bus. If the implementation does not include such an
+                                                                     event bus, this bit is RAZ/WI.
+                                                                 This bit does not affect the generation of performance
+                                                                     monitors overflow interrupt requests or signaling to a cross
+                                                                     trigger interface (CTI) that can be implemented as signals
+                                                                     exported from the processor.
+                                                                 If the implementation does not include an exported event
+                                                                     stream, this bit is RAZ/WI. Otherwise this bit is RW.
+                                                                 0 = Do not export events.
+                                                                 1 = Export events where not prohibited. */
+        uint32_t dp                    : 1;  /**< [  5:  5](R/W) Disable cycle counter when event counting is prohibited. The
+                                                                     possible values of this bit are:
+                                                                 Event counting is prohibited when
+                                                                     ProfilingProhibited(IsSecure(),PSTATE.EL) == TRUE. See the
+                                                                     "Performance Monitors and Security" section of the ARMv8 Debug
+                                                                     Specification, PRD03-PRDC-010486.
+                                                                 This bit is RW.
+                                                                 0 =  PMU()_PMCCNTR_EL0, if enabled, counts when event counting is
+                                                                     prohibited.
+                                                                 1 =  PMU()_PMCCNTR_EL0 does not count when event counting is prohibited. */
+        uint32_t lc                    : 1;  /**< [  6:  6](R/W) Long cycle counter enable. Determines which PMU()_PMCCNTR_EL0 bit
+                                                                     generates an overflow recorded by PMOVSR[31].
+                                                                 ARM deprecates use of PMU()_PMCR_EL0[LC] = 0.
+                                                                 0 = Cycle counter overflow on increment that changes
+                                                                     PMU()_PMCCNTR_EL0[31] from one to zero.
+                                                                 1 = Cycle counter overflow on increment that changes
+                                                                     PMU()_PMCCNTR_EL0[63] from one to zero. */
+        uint32_t reserved_7_31         : 25;
+#endif /* Word 0 - End */
+    } cn9;
+    struct cavm_pmux_pmcr_el0_cn96xxp1
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t reserved_11_31        : 21;
+        uint32_t reserved_7_10         : 4;
+        uint32_t lc                    : 1;  /**< [  6:  6](R/W) Long cycle counter enable. Determines which PMU()_PMCCNTR_EL0 bit
+                                                                     generates an overflow recorded by PMOVSR[31].
+                                                                 ARM deprecates use of PMU()_PMCR_EL0[LC] = 0.
+                                                                 0 = Cycle counter overflow on increment that changes
+                                                                     PMU()_PMCCNTR_EL0[31] from one to zero.
+                                                                 1 = Cycle counter overflow on increment that changes
+                                                                     PMU()_PMCCNTR_EL0[63] from one to zero. */
+        uint32_t dp                    : 1;  /**< [  5:  5](R/W) Disable cycle counter when event counting is prohibited. The
+                                                                     possible values of this bit are:
+                                                                 Event counting is prohibited when
+                                                                     ProfilingProhibited(IsSecure(),PSTATE.EL) == TRUE. See the
+                                                                     "Performance Monitors and Security" section of the ARMv8 Debug
+                                                                     Specification, PRD03-PRDC-010486.
+                                                                 This bit is RW.
+                                                                 0 =  PMU()_PMCCNTR_EL0, if enabled, counts when event counting is
+                                                                     prohibited.
+                                                                 1 =  PMU()_PMCCNTR_EL0 does not count when event counting is prohibited. */
+        uint32_t x                     : 1;  /**< [  4:  4](R/W) Enable export of events in an implementation defined event
+                                                                     stream. The possible values of this bit are:
+                                                                 This bit is used to permit events to be exported to another
+                                                                     debug device, such as an OPTIONAL trace extension, over an
+                                                                     event bus. If the implementation does not include such an
+                                                                     event bus, this bit is RAZ/WI.
+                                                                 This bit does not affect the generation of performance
+                                                                     monitors overflow interrupt requests or signaling to a cross
+                                                                     trigger interface (CTI) that can be implemented as signals
+                                                                     exported from the processor.
+                                                                 If the implementation does not include an exported event
+                                                                     stream, this bit is RAZ/WI. Otherwise this bit is RW.
+                                                                 0 = Do not export events.
+                                                                 1 = Export events where not prohibited. */
+        uint32_t d_clk                 : 1;  /**< [  3:  3](R/W) Clock divider. The possible values of this bit are:
+                                                                 This bit is RW.
+                                                                 If PMU()_PMCR_EL0[LC] == 1, this bit is ignored and the cycle counter
+                                                                     counts every clock cycle.
+                                                                 ARM deprecates use of PMU()_PMCR[D] = 1.
+                                                                 0 = When enabled, PMU()_PMCCNTR_EL0 counts every clock cycle.
+                                                                 1 = When enabled, PMU()_PMCCNTR_EL0 counts once every 64 clock cycles. */
+        uint32_t c_rst                 : 1;  /**< [  2:  2](R/W) Cycle counter reset. This bit is WO. The effects of writing to
+                                                                     this bit are:
+                                                                 This bit always reads as zero.
+                                                                 Resetting PMU()_PMCCNTR_EL0 does not clear the PMU()_PMCCNTR_EL0 overflow
+                                                                     bit to zero.
+                                                                 0 = No action.
+                                                                 1 = Reset PMU()_PMCCNTR_EL0 to zero. */
+        uint32_t p                     : 1;  /**< [  1:  1](R/W) Event counter reset. This bit is WO. The effects of writing to
+                                                                     this bit are:
+                                                                 This bit always reads as zero.
+                                                                 Resetting the event counters does not clear any overflow bits
+                                                                     to zero.
+                                                                 0 = No action.
+                                                                 1 = Reset all event counters, not including PMU()_PMCCNTR_EL0, to zero. */
+        uint32_t en                    : 1;  /**< [  0:  0](R/W) Enable. The possible values of this bit are:
+                                                                 This bit is RW.
+                                                                 0 = All counters, including PMU()_PMCCNTR_EL0, are disabled.
+                                                                 1 = All counters are enabled by PMU()_PMCNTENSET_EL0. */
+#else /* Word 0 - Little Endian */
+        uint32_t en                    : 1;  /**< [  0:  0](R/W) Enable. The possible values of this bit are:
+                                                                 This bit is RW.
+                                                                 0 = All counters, including PMU()_PMCCNTR_EL0, are disabled.
+                                                                 1 = All counters are enabled by PMU()_PMCNTENSET_EL0. */
+        uint32_t p                     : 1;  /**< [  1:  1](R/W) Event counter reset. This bit is WO. The effects of writing to
+                                                                     this bit are:
+                                                                 This bit always reads as zero.
+                                                                 Resetting the event counters does not clear any overflow bits
+                                                                     to zero.
+                                                                 0 = No action.
+                                                                 1 = Reset all event counters, not including PMU()_PMCCNTR_EL0, to zero. */
+        uint32_t c_rst                 : 1;  /**< [  2:  2](R/W) Cycle counter reset. This bit is WO. The effects of writing to
+                                                                     this bit are:
+                                                                 This bit always reads as zero.
+                                                                 Resetting PMU()_PMCCNTR_EL0 does not clear the PMU()_PMCCNTR_EL0 overflow
+                                                                     bit to zero.
+                                                                 0 = No action.
+                                                                 1 = Reset PMU()_PMCCNTR_EL0 to zero. */
+        uint32_t d_clk                 : 1;  /**< [  3:  3](R/W) Clock divider. The possible values of this bit are:
+                                                                 This bit is RW.
+                                                                 If PMU()_PMCR_EL0[LC] == 1, this bit is ignored and the cycle counter
+                                                                     counts every clock cycle.
+                                                                 ARM deprecates use of PMU()_PMCR[D] = 1.
+                                                                 0 = When enabled, PMU()_PMCCNTR_EL0 counts every clock cycle.
+                                                                 1 = When enabled, PMU()_PMCCNTR_EL0 counts once every 64 clock cycles. */
+        uint32_t x                     : 1;  /**< [  4:  4](R/W) Enable export of events in an implementation defined event
+                                                                     stream. The possible values of this bit are:
+                                                                 This bit is used to permit events to be exported to another
+                                                                     debug device, such as an OPTIONAL trace extension, over an
+                                                                     event bus. If the implementation does not include such an
+                                                                     event bus, this bit is RAZ/WI.
+                                                                 This bit does not affect the generation of performance
+                                                                     monitors overflow interrupt requests or signaling to a cross
+                                                                     trigger interface (CTI) that can be implemented as signals
+                                                                     exported from the processor.
+                                                                 If the implementation does not include an exported event
+                                                                     stream, this bit is RAZ/WI. Otherwise this bit is RW.
+                                                                 0 = Do not export events.
+                                                                 1 = Export events where not prohibited. */
+        uint32_t dp                    : 1;  /**< [  5:  5](R/W) Disable cycle counter when event counting is prohibited. The
+                                                                     possible values of this bit are:
+                                                                 Event counting is prohibited when
+                                                                     ProfilingProhibited(IsSecure(),PSTATE.EL) == TRUE. See the
+                                                                     "Performance Monitors and Security" section of the ARMv8 Debug
+                                                                     Specification, PRD03-PRDC-010486.
+                                                                 This bit is RW.
+                                                                 0 =  PMU()_PMCCNTR_EL0, if enabled, counts when event counting is
+                                                                     prohibited.
+                                                                 1 =  PMU()_PMCCNTR_EL0 does not count when event counting is prohibited. */
+        uint32_t lc                    : 1;  /**< [  6:  6](R/W) Long cycle counter enable. Determines which PMU()_PMCCNTR_EL0 bit
+                                                                     generates an overflow recorded by PMOVSR[31].
+                                                                 ARM deprecates use of PMU()_PMCR_EL0[LC] = 0.
+                                                                 0 = Cycle counter overflow on increment that changes
+                                                                     PMU()_PMCCNTR_EL0[31] from one to zero.
+                                                                 1 = Cycle counter overflow on increment that changes
+                                                                     PMU()_PMCCNTR_EL0[63] from one to zero. */
+        uint32_t reserved_7_10         : 4;
+        uint32_t reserved_11_31        : 21;
+#endif /* Word 0 - End */
+    } cn96xxp1;
+    /* struct cavm_pmux_pmcr_el0_cn8 cn96xxp3; */
+    /* struct cavm_pmux_pmcr_el0_cn8 cn98xx; */
+    /* struct cavm_pmux_pmcr_el0_cn8 cnf95xx; */
+    /* struct cavm_pmux_pmcr_el0_cn8 loki; */
 };
 typedef union cavm_pmux_pmcr_el0 cavm_pmux_pmcr_el0_t;
 
@@ -1896,6 +2178,8 @@ static inline uint64_t CAVM_PMUX_PMCR_EL0(unsigned long a)
         return 0x87a008020e04ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008020e04ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008020e04ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008020e04ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -1948,6 +2232,8 @@ static inline uint64_t CAVM_PMUX_PMDEVAFF0(unsigned long a)
         return 0x87a008020fa8ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008020fa8ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008020fa8ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008020fa8ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -2000,6 +2286,8 @@ static inline uint64_t CAVM_PMUX_PMDEVAFF1(unsigned long a)
         return 0x87a008020facll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008020facll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008020facll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008020facll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -2067,7 +2355,58 @@ union cavm_pmux_pmdevarch
                                                                  Bits [27:21] are the JEP 106 ID code, 0x3B. */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_pmux_pmdevarch_s cn; */
+    /* struct cavm_pmux_pmdevarch_s cn8; */
+    struct cavm_pmux_pmdevarch_cn9
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t architect             : 11; /**< [ 31: 21](RO) Defines the architecture of the component. For performance
+                                                                     monitors, this is ARM limited.
+
+                                                                 Bits [31:28] are the JEP 106 continuation code, 0x4.
+
+                                                                 Bits [27:21] are the JEP 106 ID code, 0x3B. */
+        uint32_t present               : 1;  /**< [ 20: 20](RO) When set to one, indicates that the DEVARCH is present.
+                                                                 This field is 1 in v8-A. */
+        uint32_t revision              : 4;  /**< [ 19: 16](RO) Defines the architecture revision. For architectures defined
+                                                                     by ARM this is the minor revision.
+                                                                 For performance monitors, the revision defined by v8-A is 0x0.
+                                                                 All other values are reserved. */
+        uint32_t archid                : 16; /**< [ 15:  0](RO) Defines this part to be a v8-A debug component. For
+                                                                     architectures defined by ARM this is further subdivided.
+                                                                 For performance monitors:
+                                                                  Bits [15:12] are the architecture version, 0x2.
+                                                                  Bits [11:0] are the architecture part number, 0xA16.
+
+                                                                 This corresponds to performance monitors architecture version
+                                                                     PMUv3. */
+#else /* Word 0 - Little Endian */
+        uint32_t archid                : 16; /**< [ 15:  0](RO) Defines this part to be a v8-A debug component. For
+                                                                     architectures defined by ARM this is further subdivided.
+                                                                 For performance monitors:
+                                                                  Bits [15:12] are the architecture version, 0x2.
+                                                                  Bits [11:0] are the architecture part number, 0xA16.
+
+                                                                 This corresponds to performance monitors architecture version
+                                                                     PMUv3. */
+        uint32_t revision              : 4;  /**< [ 19: 16](RO) Defines the architecture revision. For architectures defined
+                                                                     by ARM this is the minor revision.
+                                                                 For performance monitors, the revision defined by v8-A is 0x0.
+                                                                 All other values are reserved. */
+        uint32_t present               : 1;  /**< [ 20: 20](RO) When set to one, indicates that the DEVARCH is present.
+                                                                 This field is 1 in v8-A. */
+        uint32_t architect             : 11; /**< [ 31: 21](RO) Defines the architecture of the component. For performance
+                                                                     monitors, this is ARM limited.
+
+                                                                 Bits [31:28] are the JEP 106 continuation code, 0x4.
+
+                                                                 Bits [27:21] are the JEP 106 ID code, 0x3B. */
+#endif /* Word 0 - End */
+    } cn9;
+    /* struct cavm_pmux_pmdevarch_cn9 cn96xxp1; */
+    /* struct cavm_pmux_pmdevarch_s cn96xxp3; */
+    /* struct cavm_pmux_pmdevarch_s cn98xx; */
+    /* struct cavm_pmux_pmdevarch_s cnf95xx; */
+    /* struct cavm_pmux_pmdevarch_s loki; */
 };
 typedef union cavm_pmux_pmdevarch cavm_pmux_pmdevarch_t;
 
@@ -2080,6 +2419,8 @@ static inline uint64_t CAVM_PMUX_PMDEVARCH(unsigned long a)
         return 0x87a008020fbcll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008020fbcll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008020fbcll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008020fbcll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -2123,6 +2464,8 @@ static inline uint64_t CAVM_PMUX_PMDEVID(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008020fc8ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008020fc8ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008020fc8ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -2171,6 +2514,8 @@ static inline uint64_t CAVM_PMUX_PMDEVTYPE(unsigned long a)
         return 0x87a008020fccll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008020fccll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008020fccll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008020fccll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -2216,6 +2561,8 @@ static inline uint64_t CAVM_PMUX_PMEVCNTRX_EL0(unsigned long a, unsigned long b)
         return 0x87a008020000ll + 0x80000ll * ((a) & 0x1f) + 8ll * ((b) & 0x7);
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=23) && (b<=5)))
         return 0x87a008020000ll + 0x80000ll * ((a) & 0x1f) + 8ll * ((b) & 0x7);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=35) && (b<=5)))
+        return 0x87a008020000ll + 0x80000ll * ((a) & 0x3f) + 8ll * ((b) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=5) && (b<=5)))
         return 0x87a008020000ll + 0x80000ll * ((a) & 0x7) + 8ll * ((b) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=5) && (b<=5)))
@@ -2408,6 +2755,123 @@ union cavm_pmux_pmevtyperx_el0
                                                                      privileged information.
                                                                   The value read back on evtCount is an unknown value with the
                                                                      same effect.
+                                                                 ARM recommends that the behavior across a family of
+                                                                     implementations is defined such that if a given implementation
+                                                                     does not include an event from a set of common implementation
+                                                                     defined events, then no event is counted and the value read
+                                                                     back on evtCount is the value written. */
+#else /* Word 0 - Little Endian */
+        uint32_t evtcount              : 16; /**< [ 15:  0](R/W) Event to count. The event number of the event that is counted
+                                                                     by event counter PMU()_PMEVCNTR()_EL0.
+                                                                 Enumerated by PMU_PERF_E.
+
+                                                                 Software must program this field with an event defined by the
+                                                                     processor or a common event defined by the architecture.
+                                                                 If evtCount is programmed to an event that is reserved or not
+                                                                     implemented, the behavior depends on the event type.
+                                                                 For common architectural and microarchitectural events:
+                                                                  no events are counted.
+                                                                  The value read back on evtCount is the value written.
+                                                                 For implementation defined events:
+                                                                  It is UNPREDICTABLE what event, if any, is counted.
+                                                                     UNPREDICTABLE in this case means the event must not expose
+                                                                     privileged information.
+                                                                  The value read back on evtCount is an unknown value with the
+                                                                     same effect.
+                                                                 ARM recommends that the behavior across a family of
+                                                                     implementations is defined such that if a given implementation
+                                                                     does not include an event from a set of common implementation
+                                                                     defined events, then no event is counted and the value read
+                                                                     back on evtCount is the value written. */
+        uint32_t reserved_16_25        : 10;
+        uint32_t m                     : 1;  /**< [ 26: 26](R/W) Secure EL3 filtering bit. Most applications can ignore this
+                                                                     bit and set the value to zero. If EL3 is not implemented, this
+                                                                     bit is RES0.
+                                                                 If the value of this bit is equal to the value of P, events in
+                                                                     secure EL3 are counted.
+                                                                 Otherwise, events in secure EL3 are not counted. */
+        uint32_t nsh                   : 1;  /**< [ 27: 27](R/W) Nonsecure hyp modes filtering bit. Controls counting in
+                                                                     nonsecure EL2. If EL2 is not implemented, this bit is RES0.
+                                                                 0 = Do not count events in EL2.
+                                                                 1 = Count events in EL2. */
+        uint32_t nsu                   : 1;  /**< [ 28: 28](R/W) Nonsecure user modes filtering bit. Controls counting in
+                                                                     nonsecure EL0. If EL3 is not implemented, this bit is RES0.
+                                                                 If the value of this bit is equal to the value of U, events in
+                                                                     nonsecure EL0 are counted.
+                                                                 Otherwise, events in nonsecure EL0 are not counted. */
+        uint32_t nsk                   : 1;  /**< [ 29: 29](R/W) Nonsecure kernel modes filtering bit. Controls counting in
+                                                                     nonsecure EL1. If EL3 is not implemented, this bit is RES0.
+                                                                 If the value of this bit is equal to the value of P, events in
+                                                                     nonsecure EL1 are counted.
+                                                                 Otherwise, events in nonsecure EL1 are not counted. */
+        uint32_t u                     : 1;  /**< [ 30: 30](R/W) EL0 filtering bit. Controls counting in EL0. If EL3 is
+                                                                     implemented, then counting in nonsecure EL0 is further
+                                                                     controlled by [NSU]. The possible values of this bit
+                                                                     are:
+                                                                 0 = Count events in EL0.
+                                                                 1 = Do not count events in EL0. */
+        uint32_t p                     : 1;  /**< [ 31: 31](R/W) EL1 modes filtering bit. Controls counting in EL1. If EL3 is
+                                                                     implemented, then counting in nonsecure EL1 is further
+                                                                     controlled by [NSK]. The possible values of this bit
+                                                                     are:
+                                                                 0 = Count events in EL1.
+                                                                 1 = Do not count events in EL1. */
+#endif /* Word 0 - End */
+    } cn9;
+    /* struct cavm_pmux_pmevtyperx_el0_cn9 cn96xxp1; */
+    struct cavm_pmux_pmevtyperx_el0_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t p                     : 1;  /**< [ 31: 31](R/W) EL1 modes filtering bit. Controls counting in EL1. If EL3 is
+                                                                     implemented, then counting in nonsecure EL1 is further
+                                                                     controlled by [NSK]. The possible values of this bit
+                                                                     are:
+                                                                 0 = Count events in EL1.
+                                                                 1 = Do not count events in EL1. */
+        uint32_t u                     : 1;  /**< [ 30: 30](R/W) EL0 filtering bit. Controls counting in EL0. If EL3 is
+                                                                     implemented, then counting in nonsecure EL0 is further
+                                                                     controlled by [NSU]. The possible values of this bit
+                                                                     are:
+                                                                 0 = Count events in EL0.
+                                                                 1 = Do not count events in EL0. */
+        uint32_t nsk                   : 1;  /**< [ 29: 29](R/W) Nonsecure kernel modes filtering bit. Controls counting in
+                                                                     nonsecure EL1. If EL3 is not implemented, this bit is RES0.
+                                                                 If the value of this bit is equal to the value of P, events in
+                                                                     nonsecure EL1 are counted.
+                                                                 Otherwise, events in nonsecure EL1 are not counted. */
+        uint32_t nsu                   : 1;  /**< [ 28: 28](R/W) Nonsecure user modes filtering bit. Controls counting in
+                                                                     nonsecure EL0. If EL3 is not implemented, this bit is RES0.
+                                                                 If the value of this bit is equal to the value of U, events in
+                                                                     nonsecure EL0 are counted.
+                                                                 Otherwise, events in nonsecure EL0 are not counted. */
+        uint32_t nsh                   : 1;  /**< [ 27: 27](R/W) Nonsecure hyp modes filtering bit. Controls counting in
+                                                                     nonsecure EL2. If EL2 is not implemented, this bit is RES0.
+                                                                 0 = Do not count events in EL2.
+                                                                 1 = Count events in EL2. */
+        uint32_t m                     : 1;  /**< [ 26: 26](R/W) Secure EL3 filtering bit. Most applications can ignore this
+                                                                     bit and set the value to zero. If EL3 is not implemented, this
+                                                                     bit is RES0.
+                                                                 If the value of this bit is equal to the value of P, events in
+                                                                     secure EL3 are counted.
+                                                                 Otherwise, events in secure EL3 are not counted. */
+        uint32_t reserved_16_25        : 10;
+        uint32_t evtcount              : 16; /**< [ 15:  0](R/W) Event to count. The event number of the event that is counted
+                                                                     by event counter PMU()_PMEVCNTR()_EL0.
+                                                                 Enumerated by PMU_PERF_E.
+
+                                                                 Software must program this field with an event defined by the
+                                                                     processor or a common event defined by the architecture.
+                                                                 If evtCount is programmed to an event that is reserved or not
+                                                                     implemented, the behavior depends on the event type.
+                                                                 For common architectural and microarchitectural events:
+                                                                  no events are counted.
+                                                                  The value read back on evtCount is the value written.
+                                                                 For implementation defined events:
+                                                                  It is UNPREDICTABLE what event, if any, is counted.
+                                                                     UNPREDICTABLE in this case means the event must not expose
+                                                                     privileged information.
+                                                                  The value read back on evtCount is an unknown value with the
+                                                                     same effect.
                                                                  Arm recommends that the behavior across a family of
                                                                      implementations is defined such that if a given implementation
                                                                      does not include an event from a set of common implementation
@@ -2470,7 +2934,10 @@ union cavm_pmux_pmevtyperx_el0
                                                                  0 = Count events in EL1.
                                                                  1 = Do not count events in EL1. */
 #endif /* Word 0 - End */
-    } cn9;
+    } cn96xxp3;
+    /* struct cavm_pmux_pmevtyperx_el0_cn96xxp3 cn98xx; */
+    /* struct cavm_pmux_pmevtyperx_el0_cn96xxp3 cnf95xx; */
+    /* struct cavm_pmux_pmevtyperx_el0_cn96xxp3 loki; */
 };
 typedef union cavm_pmux_pmevtyperx_el0 cavm_pmux_pmevtyperx_el0_t;
 
@@ -2483,6 +2950,8 @@ static inline uint64_t CAVM_PMUX_PMEVTYPERX_EL0(unsigned long a, unsigned long b
         return 0x87a008020400ll + 0x80000ll * ((a) & 0x1f) + 4ll * ((b) & 0x7);
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=23) && (b<=5)))
         return 0x87a008020400ll + 0x80000ll * ((a) & 0x1f) + 4ll * ((b) & 0x7);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=35) && (b<=5)))
+        return 0x87a008020400ll + 0x80000ll * ((a) & 0x3f) + 4ll * ((b) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=5) && (b<=5)))
         return 0x87a008020400ll + 0x80000ll * ((a) & 0x7) + 4ll * ((b) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=5) && (b<=5)))
@@ -2559,6 +3028,8 @@ static inline uint64_t CAVM_PMUX_PMINTENCLR_EL1(unsigned long a)
         return 0x87a008020c60ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008020c60ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008020c60ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008020c60ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -2635,6 +3106,8 @@ static inline uint64_t CAVM_PMUX_PMINTENSET_EL1(unsigned long a)
         return 0x87a008020c40ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008020c40ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008020c40ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008020c40ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -2713,6 +3186,8 @@ static inline uint64_t CAVM_PMUX_PMITCTRL(unsigned long a)
         return 0x87a008020f00ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008020f00ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008020f00ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008020f00ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -2761,6 +3236,8 @@ static inline uint64_t CAVM_PMUX_PMLAR(unsigned long a)
         return 0x87a008020fb0ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008020fb0ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008020fb0ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008020fb0ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -2839,6 +3316,8 @@ static inline uint64_t CAVM_PMUX_PMLSR(unsigned long a)
         return 0x87a008020fb4ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008020fb4ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008020fb4ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008020fb4ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -2911,6 +3390,8 @@ static inline uint64_t CAVM_PMUX_PMOVSCLR_EL0(unsigned long a)
         return 0x87a008020c80ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008020c80ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008020c80ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008020c80ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -2978,6 +3459,8 @@ static inline uint64_t CAVM_PMUX_PMOVSSET_EL0(unsigned long a)
         return 0x87a008020cc0ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008020cc0ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008020cc0ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008020cc0ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -3025,6 +3508,8 @@ static inline uint64_t CAVM_PMUX_PMPCSR_HI(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008020204ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008020204ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008020204ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -3069,6 +3554,8 @@ static inline uint64_t CAVM_PMUX_PMPCSR_HI_ALIAS(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008020224ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008020224ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008020224ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -3111,6 +3598,8 @@ static inline uint64_t CAVM_PMUX_PMPCSR_LO(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008020200ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008020200ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008020200ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -3149,6 +3638,8 @@ static inline uint64_t CAVM_PMUX_PMPCSR_LO_ALIAS(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008020220ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008020220ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008020220ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -3195,6 +3686,8 @@ static inline uint64_t CAVM_PMUX_PMPIDR0(unsigned long a)
         return 0x87a008020fe0ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008020fe0ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008020fe0ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008020fe0ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -3231,7 +3724,9 @@ union cavm_pmux_pmpidr1
 #endif /* Word 0 - End */
     } s;
     /* struct cavm_pmux_pmpidr1_s cn8; */
-    struct cavm_pmux_pmpidr1_cn9
+    /* struct cavm_pmux_pmpidr1_s cn9; */
+    /* struct cavm_pmux_pmpidr1_s cn96xxp1; */
+    struct cavm_pmux_pmpidr1_cn96xxp3
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_8_31         : 24;
@@ -3242,7 +3737,10 @@ union cavm_pmux_pmpidr1
         uint32_t des_0                 : 4;  /**< [  7:  4](RO) JEP106 identification code \<3:0\>. Marvell (Cavium) code is 0x4C. */
         uint32_t reserved_8_31         : 24;
 #endif /* Word 0 - End */
-    } cn9;
+    } cn96xxp3;
+    /* struct cavm_pmux_pmpidr1_cn96xxp3 cn98xx; */
+    /* struct cavm_pmux_pmpidr1_cn96xxp3 cnf95xx; */
+    /* struct cavm_pmux_pmpidr1_cn96xxp3 loki; */
 };
 typedef union cavm_pmux_pmpidr1 cavm_pmux_pmpidr1_t;
 
@@ -3255,6 +3753,8 @@ static inline uint64_t CAVM_PMUX_PMPIDR1(unsigned long a)
         return 0x87a008020fe4ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008020fe4ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008020fe4ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008020fe4ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -3297,6 +3797,21 @@ union cavm_pmux_pmpidr2
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_8_31         : 24;
+        uint32_t revision              : 4;  /**< [  7:  4](RO) Architectural revision, as assigned by ARM. */
+        uint32_t jedec                 : 1;  /**< [  3:  3](RO) JEDEC assigned. */
+        uint32_t des_1                 : 3;  /**< [  2:  0](RO) JEP106 identification code \<6:4\>. Cavium code is 0x4C. */
+#else /* Word 0 - Little Endian */
+        uint32_t des_1                 : 3;  /**< [  2:  0](RO) JEP106 identification code \<6:4\>. Cavium code is 0x4C. */
+        uint32_t jedec                 : 1;  /**< [  3:  3](RO) JEDEC assigned. */
+        uint32_t revision              : 4;  /**< [  7:  4](RO) Architectural revision, as assigned by ARM. */
+        uint32_t reserved_8_31         : 24;
+#endif /* Word 0 - End */
+    } cn9;
+    /* struct cavm_pmux_pmpidr2_cn9 cn96xxp1; */
+    struct cavm_pmux_pmpidr2_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t reserved_8_31         : 24;
         uint32_t revision              : 4;  /**< [  7:  4](RO) Architectural revision, as assigned by Arm. */
         uint32_t jedec                 : 1;  /**< [  3:  3](RO) JEDEC assigned. */
         uint32_t des_1                 : 3;  /**< [  2:  0](RO) JEP106 identification code \<6:4\>. Marvell (Cavium) code is 0x4C. */
@@ -3306,7 +3821,11 @@ union cavm_pmux_pmpidr2
         uint32_t revision              : 4;  /**< [  7:  4](RO) Architectural revision, as assigned by Arm. */
         uint32_t reserved_8_31         : 24;
 #endif /* Word 0 - End */
-    } cn9;
+    } cn96xxp3;
+    /* struct cavm_pmux_pmpidr2_s cn98xx; */
+    /* struct cavm_pmux_pmpidr2_s cnf95xxp1; */
+    /* struct cavm_pmux_pmpidr2_cn96xxp3 cnf95xxp2; */
+    /* struct cavm_pmux_pmpidr2_cn96xxp3 loki; */
 };
 typedef union cavm_pmux_pmpidr2 cavm_pmux_pmpidr2_t;
 
@@ -3319,6 +3838,8 @@ static inline uint64_t CAVM_PMUX_PMPIDR2(unsigned long a)
         return 0x87a008020fe8ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008020fe8ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008020fe8ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008020fe8ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -3369,6 +3890,8 @@ static inline uint64_t CAVM_PMUX_PMPIDR3(unsigned long a)
         return 0x87a008020fecll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008020fecll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008020fecll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008020fecll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -3409,7 +3932,9 @@ union cavm_pmux_pmpidr4
 #endif /* Word 0 - End */
     } s;
     /* struct cavm_pmux_pmpidr4_s cn8; */
-    struct cavm_pmux_pmpidr4_cn9
+    /* struct cavm_pmux_pmpidr4_s cn9; */
+    /* struct cavm_pmux_pmpidr4_s cn96xxp1; */
+    struct cavm_pmux_pmpidr4_cn96xxp3
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_8_31         : 24;
@@ -3424,7 +3949,11 @@ union cavm_pmux_pmpidr4
                                                                      component ID registers. */
         uint32_t reserved_8_31         : 24;
 #endif /* Word 0 - End */
-    } cn9;
+    } cn96xxp3;
+    /* struct cavm_pmux_pmpidr4_s cn98xx; */
+    /* struct cavm_pmux_pmpidr4_s cnf95xxp1; */
+    /* struct cavm_pmux_pmpidr4_cn96xxp3 cnf95xxp2; */
+    /* struct cavm_pmux_pmpidr4_cn96xxp3 loki; */
 };
 typedef union cavm_pmux_pmpidr4 cavm_pmux_pmpidr4_t;
 
@@ -3437,6 +3966,8 @@ static inline uint64_t CAVM_PMUX_PMPIDR4(unsigned long a)
         return 0x87a008020fd0ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008020fd0ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008020fd0ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008020fd0ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -3479,6 +4010,8 @@ static inline uint64_t CAVM_PMUX_PMPIDR5(unsigned long a)
         return 0x87a008020fd4ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008020fd4ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008020fd4ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008020fd4ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -3521,6 +4054,8 @@ static inline uint64_t CAVM_PMUX_PMPIDR6(unsigned long a)
         return 0x87a008020fd8ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008020fd8ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008020fd8ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008020fd8ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -3563,6 +4098,8 @@ static inline uint64_t CAVM_PMUX_PMPIDR7(unsigned long a)
         return 0x87a008020fdcll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008020fdcll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008020fdcll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008020fdcll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -3621,6 +4158,8 @@ static inline uint64_t CAVM_PMUX_PMSWINC_EL0(unsigned long a)
         return 0x87a008020ca0ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008020ca0ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008020ca0ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008020ca0ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -3668,6 +4207,8 @@ static inline uint64_t CAVM_PMUX_PMVIDSR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a00802020cll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a00802020cll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a00802020cll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))

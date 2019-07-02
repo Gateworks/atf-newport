@@ -185,6 +185,7 @@ union cavm_pemx_bar1_indexx
         uint64_t reserved_31_63        : 33;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_pemx_bar1_indexx_s cn8; */
     struct cavm_pemx_bar1_indexx_cn81xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -250,7 +251,7 @@ union cavm_pemx_bar2_mask
         uint64_t reserved_53_63        : 11;
 #endif /* Word 0 - End */
     } s;
-    struct cavm_pemx_bar2_mask_cn81xx
+    struct cavm_pemx_bar2_mask_cn8
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_49_63        : 15;
@@ -261,7 +262,8 @@ union cavm_pemx_bar2_mask
         uint64_t mask                  : 45; /**< [ 48:  4](R/W) The value to be ANDED with the address sent to memory. */
         uint64_t reserved_49_63        : 15;
 #endif /* Word 0 - End */
-    } cn81xx;
+    } cn8;
+    /* struct cavm_pemx_bar2_mask_cn8 cn81xx; */
     struct cavm_pemx_bar2_mask_cn83xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -298,7 +300,9 @@ static inline uint64_t CAVM_PEMX_BAR2_MASK(unsigned long a)
         return 0x87e0c00000b0ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x8e0000000048ll + 0x1000000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x8e0000000048ll + 0x1000000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x8e0000000048ll + 0x1000000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x8e0000000048ll + 0x1000000000ll * ((a) & 0x0);
@@ -353,7 +357,9 @@ static inline uint64_t CAVM_PEMX_BAR4_INDEXX(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=3) && (b<=15)))
         return 0x8e0000000700ll + 0x1000000000ll * ((a) & 0x3) + 8ll * ((b) & 0xf);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=15)))
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=4) && (b<=15)))
+        return 0x8e0000000700ll + 0x1000000000ll * ((a) & 0x7) + 8ll * ((b) & 0xf);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && ((a==0) && (b<=15)))
         return 0x8e0000000700ll + 0x1000000000ll * ((a) & 0x0) + 8ll * ((b) & 0xf);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=15)))
         return 0x8e0000000700ll + 0x1000000000ll * ((a) & 0x0) + 8ll * ((b) & 0xf);
@@ -631,6 +637,106 @@ union cavm_pemx_bar_ctl
         uint64_t reserved_38_63        : 26;
 #endif /* Word 0 - End */
     } s;
+    struct cavm_pemx_bar_ctl_cn8
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_25_63        : 39;
+        uint64_t bar2_ebit             : 6;  /**< [ 24: 19](R/W) Address bits for ESX\<1:0\> in a PCIe BAR2 address.
+
+                                                                 When [BAR2_EBIT] is zero, a PCIe BAR2 address does not contain an ESX\<1:0\> field,
+                                                                 and [BAR2_ESX] is the endian-swap used for all BAR2 requests.
+
+                                                                 When [BAR2_EBIT] is non-zero, it places ESX\<1:0\> (ESX\<0\> is at PCIe BAR2 address bit
+                                                                 [BAR2_EBIT], and ESX\<1\> is at PCIe BAR2 address bit [BAR2_EBIT]+1). [BAR2_EBIT] must
+                                                                 be in the range 16 .. [BAR2_SIZ]+18 and must not conflict with a non-zero
+                                                                 [BAR2_CBIT] in this case. [BAR2_ESX] XOR ESX\<1:0\> is the endian-swap
+                                                                 used for BAR2 requests in this case. If [BAR2_EBIT] \<= 48 in this case, then
+                                                                 one or two PCIe BAR2 address ESX field bit(s) are in the address forwarded to
+                                                                 SLI and the SMMU, in the same position. */
+        uint64_t bar2_cbit             : 6;  /**< [ 18: 13](R/W) Address bit for CAX in a PCIe BAR2 address.
+
+                                                                 When [BAR2_CBIT] is zero, a PCIe BAR2 address does not contain a CAX bit,
+                                                                 and [BAR2_CAX] is the cache allocation for all BAR2 requests.
+
+                                                                 When [BAR2_CBIT] is non-zero, the CAX bit is at bit [BAR2_CBIT] in the PCIe
+                                                                 BAR2 address. [BAR2_CBIT] must be in the range 16 .. [BAR2_SIZ]+19 and must
+                                                                 not conflict with a non-zero [BAR2_EBIT] in this case. [BAR2_CBIT] XOR CAX is
+                                                                 the cache allocation for BAR2 requests. If [BAR2_CBIT] \<= 48 in this
+                                                                 case, then the PCIe BAR2 address CAX bit is in the address forwarded to
+                                                                 SLI and the SMMU, in the same position. */
+        uint64_t bar2_siz              : 6;  /**< [ 12:  7](R/W) BAR2 size. Encoded identically to PCIEEP()_CFG190[RBARS]. Resets to 0x1D (512 TB).
+
+                                                                 In EP mode, [BAR2_SIZ] must equal the corresponding PCIEEP()_CFG190[RBARS].
+
+                                                                 In RC mode, [BAR2_SIZ] determines the PEM()_P2N_BAR2_START[ADDR] bits used/compared
+                                                                 to an incoming PCIe address.
+
+                                                                 On a BAR2 match, PEM zeroes the PCIe address bits outside [BAR2_SIZ], applies
+                                                                 [BAR2_EBIT,BAR2_CBIT], and forwards the request to SLI and the SMMU. */
+        uint64_t bar1_siz              : 3;  /**< [  6:  4](R/W) PCIe Port 0 BAR1 size.
+                                                                 0x0 = Reserved.
+                                                                 0x1 = 64 MB; 2^26.
+                                                                 0x2 = 128 MB; 2^27.
+                                                                 0x3 = 256 MB; 2^28.
+                                                                 0x4 = 512 MB; 2^29.
+                                                                 0x5 = 1024 MB; 2^30.
+                                                                 0x6 = 2048 MB; 2^31.
+                                                                 0x7 = Reserved. */
+        uint64_t bar2_enb              : 1;  /**< [  3:  3](R/W) When set to 1, BAR2 is enabled and will respond; when clear, BAR2 access will cause UR responses. */
+        uint64_t bar2_esx              : 2;  /**< [  2:  1](R/W) Value is XORed with PCIe addresses as defined by [BAR2_EBIT] to determine the
+                                                                 endian swap mode. */
+        uint64_t bar2_cax              : 1;  /**< [  0:  0](R/W) Value is XORed with PCIe address \<49\> to determine the L2 cache attribute. Not cached in
+                                                                 L2 if XOR result is 1. */
+#else /* Word 0 - Little Endian */
+        uint64_t bar2_cax              : 1;  /**< [  0:  0](R/W) Value is XORed with PCIe address \<49\> to determine the L2 cache attribute. Not cached in
+                                                                 L2 if XOR result is 1. */
+        uint64_t bar2_esx              : 2;  /**< [  2:  1](R/W) Value is XORed with PCIe addresses as defined by [BAR2_EBIT] to determine the
+                                                                 endian swap mode. */
+        uint64_t bar2_enb              : 1;  /**< [  3:  3](R/W) When set to 1, BAR2 is enabled and will respond; when clear, BAR2 access will cause UR responses. */
+        uint64_t bar1_siz              : 3;  /**< [  6:  4](R/W) PCIe Port 0 BAR1 size.
+                                                                 0x0 = Reserved.
+                                                                 0x1 = 64 MB; 2^26.
+                                                                 0x2 = 128 MB; 2^27.
+                                                                 0x3 = 256 MB; 2^28.
+                                                                 0x4 = 512 MB; 2^29.
+                                                                 0x5 = 1024 MB; 2^30.
+                                                                 0x6 = 2048 MB; 2^31.
+                                                                 0x7 = Reserved. */
+        uint64_t bar2_siz              : 6;  /**< [ 12:  7](R/W) BAR2 size. Encoded identically to PCIEEP()_CFG190[RBARS]. Resets to 0x1D (512 TB).
+
+                                                                 In EP mode, [BAR2_SIZ] must equal the corresponding PCIEEP()_CFG190[RBARS].
+
+                                                                 In RC mode, [BAR2_SIZ] determines the PEM()_P2N_BAR2_START[ADDR] bits used/compared
+                                                                 to an incoming PCIe address.
+
+                                                                 On a BAR2 match, PEM zeroes the PCIe address bits outside [BAR2_SIZ], applies
+                                                                 [BAR2_EBIT,BAR2_CBIT], and forwards the request to SLI and the SMMU. */
+        uint64_t bar2_cbit             : 6;  /**< [ 18: 13](R/W) Address bit for CAX in a PCIe BAR2 address.
+
+                                                                 When [BAR2_CBIT] is zero, a PCIe BAR2 address does not contain a CAX bit,
+                                                                 and [BAR2_CAX] is the cache allocation for all BAR2 requests.
+
+                                                                 When [BAR2_CBIT] is non-zero, the CAX bit is at bit [BAR2_CBIT] in the PCIe
+                                                                 BAR2 address. [BAR2_CBIT] must be in the range 16 .. [BAR2_SIZ]+19 and must
+                                                                 not conflict with a non-zero [BAR2_EBIT] in this case. [BAR2_CBIT] XOR CAX is
+                                                                 the cache allocation for BAR2 requests. If [BAR2_CBIT] \<= 48 in this
+                                                                 case, then the PCIe BAR2 address CAX bit is in the address forwarded to
+                                                                 SLI and the SMMU, in the same position. */
+        uint64_t bar2_ebit             : 6;  /**< [ 24: 19](R/W) Address bits for ESX\<1:0\> in a PCIe BAR2 address.
+
+                                                                 When [BAR2_EBIT] is zero, a PCIe BAR2 address does not contain an ESX\<1:0\> field,
+                                                                 and [BAR2_ESX] is the endian-swap used for all BAR2 requests.
+
+                                                                 When [BAR2_EBIT] is non-zero, it places ESX\<1:0\> (ESX\<0\> is at PCIe BAR2 address bit
+                                                                 [BAR2_EBIT], and ESX\<1\> is at PCIe BAR2 address bit [BAR2_EBIT]+1). [BAR2_EBIT] must
+                                                                 be in the range 16 .. [BAR2_SIZ]+18 and must not conflict with a non-zero
+                                                                 [BAR2_CBIT] in this case. [BAR2_ESX] XOR ESX\<1:0\> is the endian-swap
+                                                                 used for BAR2 requests in this case. If [BAR2_EBIT] \<= 48 in this case, then
+                                                                 one or two PCIe BAR2 address ESX field bit(s) are in the address forwarded to
+                                                                 SLI and the SMMU, in the same position. */
+        uint64_t reserved_25_63        : 39;
+#endif /* Word 0 - End */
+    } cn8;
     struct cavm_pemx_bar_ctl_cn81xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -1033,7 +1139,9 @@ static inline uint64_t CAVM_PEMX_BAR_CTL(unsigned long a)
         return 0x87e0c00000a8ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x8e0000000168ll + 0x1000000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x8e0000000168ll + 0x1000000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x8e0000000168ll + 0x1000000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x8e0000000168ll + 0x1000000000ll * ((a) & 0x0);
@@ -1084,6 +1192,7 @@ union cavm_pemx_bist_status
         uint64_t reserved_10_63        : 54;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_pemx_bist_status_s cn8; */
     struct cavm_pemx_bist_status_cn81xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -1279,7 +1388,9 @@ static inline uint64_t CAVM_PEMX_BP_TEST0(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x8e00000001e0ll + 0x1000000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x8e00000001e0ll + 0x1000000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x8e00000001e0ll + 0x1000000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x8e00000001e0ll + 0x1000000000ll * ((a) & 0x0);
@@ -1371,7 +1482,9 @@ static inline uint64_t CAVM_PEMX_BP_TEST1(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x8e00000001e8ll + 0x1000000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x8e00000001e8ll + 0x1000000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x8e00000001e8ll + 0x1000000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x8e00000001e8ll + 0x1000000000ll * ((a) & 0x0);
@@ -1460,7 +1573,9 @@ static inline uint64_t CAVM_PEMX_BP_TEST2(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x8e00000001f0ll + 0x1000000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x8e00000001f0ll + 0x1000000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x8e00000001f0ll + 0x1000000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x8e00000001f0ll + 0x1000000000ll * ((a) & 0x0);
@@ -1549,7 +1664,9 @@ static inline uint64_t CAVM_PEMX_BP_TEST3(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x8e00000001f8ll + 0x1000000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x8e00000001f8ll + 0x1000000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x8e00000001f8ll + 0x1000000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x8e00000001f8ll + 0x1000000000ll * ((a) & 0x0);
@@ -1636,7 +1753,9 @@ static inline uint64_t CAVM_PEMX_BP_TEST4(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x8e0000000200ll + 0x1000000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x8e0000000200ll + 0x1000000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x8e0000000200ll + 0x1000000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x8e0000000200ll + 0x1000000000ll * ((a) & 0x0);
@@ -1725,7 +1844,9 @@ static inline uint64_t CAVM_PEMX_BP_TEST5(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x8e0000000208ll + 0x1000000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x8e0000000208ll + 0x1000000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x8e0000000208ll + 0x1000000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x8e0000000208ll + 0x1000000000ll * ((a) & 0x0);
@@ -1812,7 +1933,9 @@ static inline uint64_t CAVM_PEMX_BP_TEST6(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x8e0000000210ll + 0x1000000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x8e0000000210ll + 0x1000000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x8e0000000210ll + 0x1000000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x8e0000000210ll + 0x1000000000ll * ((a) & 0x0);
@@ -1875,6 +1998,64 @@ union cavm_pemx_cfg
         uint64_t reserved_9_63         : 55;
 #endif /* Word 0 - End */
     } s;
+    struct cavm_pemx_cfg_cn8
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_6_63         : 58;
+        uint64_t lanes4                : 1;  /**< [  5:  5](R/W) Determines the number of lanes.
+                                                                 When set, the PEM is configured for a maximum of 4 lanes. When clear, the PEM is
+                                                                 configured for a maximum of 2 lanes. This value is used to set the maximum link width
+                                                                 field in the core's link capabilities register (CFG031) to indicate the maximum number of
+                                                                 lanes supported. Note that less lanes than the specified maximum can be configured for use
+                                                                 via the core's link control register (CFG032) negotiated link width field. */
+        uint64_t laneswap              : 1;  /**< [  4:  4](R/W) Determines lane swapping. When set, lane swapping is
+                                                                 performed to/from the SerDes. When clear, no lane swapping is performed. */
+        uint64_t lanes8                : 1;  /**< [  3:  3](R/W/H) Enables overwriting the value for the maximum number of lanes. The reset value
+                                                                 is captured on cold reset by the pin straps (see PEM()_STRAP[PILANES8]). When set, the
+                                                                 PEM is configured for a maximum of 8 lanes. When clear, the PEM is configured for a
+                                                                 maximum of 4 or 2 lanes. This value is used to set the maximum link width field in the
+                                                                 core's
+                                                                 link capabilities register (CFG031) to indicate the maximum number of lanes
+                                                                 supported. Note that less lanes than the specified maximum can be configured for use via
+                                                                 the core's link control register (CFG032) negotiated link width field. */
+        uint64_t hostmd                : 1;  /**< [  2:  2](R/W/H) Enables overwriting the value for host mode. The reset value is captured on
+                                                                 cold reset by the pin straps. (See PEM()_STRAP[PIMODE]. The HOSTMD reset value is the
+                                                                 bit-wise AND of the PIMODE straps.  When set, the PEM is configured to be a root complex.
+                                                                 When clear, the PEM is configured to be an end point. */
+        uint64_t md                    : 2;  /**< [  1:  0](R/W) Determines the speed.
+                                                                   0x0 = Gen1 speed.
+                                                                   0x1 = Gen2 speed.
+                                                                   0x2 = Gen3 speed.
+                                                                   0x3 = Gen3 speed. */
+#else /* Word 0 - Little Endian */
+        uint64_t md                    : 2;  /**< [  1:  0](R/W) Determines the speed.
+                                                                   0x0 = Gen1 speed.
+                                                                   0x1 = Gen2 speed.
+                                                                   0x2 = Gen3 speed.
+                                                                   0x3 = Gen3 speed. */
+        uint64_t hostmd                : 1;  /**< [  2:  2](R/W/H) Enables overwriting the value for host mode. The reset value is captured on
+                                                                 cold reset by the pin straps. (See PEM()_STRAP[PIMODE]. The HOSTMD reset value is the
+                                                                 bit-wise AND of the PIMODE straps.  When set, the PEM is configured to be a root complex.
+                                                                 When clear, the PEM is configured to be an end point. */
+        uint64_t lanes8                : 1;  /**< [  3:  3](R/W/H) Enables overwriting the value for the maximum number of lanes. The reset value
+                                                                 is captured on cold reset by the pin straps (see PEM()_STRAP[PILANES8]). When set, the
+                                                                 PEM is configured for a maximum of 8 lanes. When clear, the PEM is configured for a
+                                                                 maximum of 4 or 2 lanes. This value is used to set the maximum link width field in the
+                                                                 core's
+                                                                 link capabilities register (CFG031) to indicate the maximum number of lanes
+                                                                 supported. Note that less lanes than the specified maximum can be configured for use via
+                                                                 the core's link control register (CFG032) negotiated link width field. */
+        uint64_t laneswap              : 1;  /**< [  4:  4](R/W) Determines lane swapping. When set, lane swapping is
+                                                                 performed to/from the SerDes. When clear, no lane swapping is performed. */
+        uint64_t lanes4                : 1;  /**< [  5:  5](R/W) Determines the number of lanes.
+                                                                 When set, the PEM is configured for a maximum of 4 lanes. When clear, the PEM is
+                                                                 configured for a maximum of 2 lanes. This value is used to set the maximum link width
+                                                                 field in the core's link capabilities register (CFG031) to indicate the maximum number of
+                                                                 lanes supported. Note that less lanes than the specified maximum can be configured for use
+                                                                 via the core's link control register (CFG032) negotiated link width field. */
+        uint64_t reserved_6_63         : 58;
+#endif /* Word 0 - End */
+    } cn8;
     struct cavm_pemx_cfg_cn81xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -2133,7 +2314,9 @@ static inline uint64_t CAVM_PEMX_CFG(unsigned long a)
         return 0x87e0c0000410ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x8e00000000d8ll + 0x1000000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x8e00000000d8ll + 0x1000000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x8e00000000d8ll + 0x1000000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x8e00000000d8ll + 0x1000000000ll * ((a) & 0x0);
@@ -2178,6 +2361,7 @@ union cavm_pemx_cfg_rd
         uint64_t data                  : 32; /**< [ 63: 32](R/W/H) Data. */
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_pemx_cfg_rd_s cn8; */
     /* struct cavm_pemx_cfg_rd_s cn81xx; */
     struct cavm_pemx_cfg_rd_cn83xx
     {
@@ -2315,7 +2499,9 @@ static inline uint64_t CAVM_PEMX_CFG_RD(unsigned long a)
         return 0x87e0c0000030ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x8e0000000020ll + 0x1000000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x8e0000000020ll + 0x1000000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x8e0000000020ll + 0x1000000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x8e0000000020ll + 0x1000000000ll * ((a) & 0x0);
@@ -2399,7 +2585,9 @@ static inline uint64_t CAVM_PEMX_CFG_TBLX(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=3) && (b<=1023)))
         return 0x8e0000002000ll + 0x1000000000ll * ((a) & 0x3) + 8ll * ((b) & 0x3ff);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=1023)))
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=4) && (b<=1023)))
+        return 0x8e0000002000ll + 0x1000000000ll * ((a) & 0x7) + 8ll * ((b) & 0x3ff);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && ((a==0) && (b<=1023)))
         return 0x8e0000002000ll + 0x1000000000ll * ((a) & 0x0) + 8ll * ((b) & 0x3ff);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=1023)))
         return 0x8e0000002000ll + 0x1000000000ll * ((a) & 0x0) + 8ll * ((b) & 0x3ff);
@@ -2453,7 +2641,9 @@ static inline uint64_t CAVM_PEMX_CFG_TBL_SIZE(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x8e0000000220ll + 0x1000000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x8e0000000220ll + 0x1000000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x8e0000000220ll + 0x1000000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x8e0000000220ll + 0x1000000000ll * ((a) & 0x0);
@@ -2500,6 +2690,7 @@ union cavm_pemx_cfg_wr
         uint64_t data                  : 32; /**< [ 63: 32](R/W/H) Data to write. A write to this register starts a write operation. */
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_pemx_cfg_wr_s cn8; */
     /* struct cavm_pemx_cfg_wr_s cn81xx; */
     struct cavm_pemx_cfg_wr_cn83xx
     {
@@ -2649,7 +2840,9 @@ static inline uint64_t CAVM_PEMX_CFG_WR(unsigned long a)
         return 0x87e0c0000028ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x8e0000000018ll + 0x1000000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x8e0000000018ll + 0x1000000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x8e0000000018ll + 0x1000000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x8e0000000018ll + 0x1000000000ll * ((a) & 0x0);
@@ -2698,7 +2891,7 @@ union cavm_pemx_clk_en
         uint64_t reserved_5_63         : 59;
 #endif /* Word 0 - End */
     } s;
-    struct cavm_pemx_clk_en_cn81xx
+    struct cavm_pemx_clk_en_cn8
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_2_63         : 62;
@@ -2717,7 +2910,8 @@ union cavm_pemx_clk_en
                                                                  being used in order to reduce power. */
         uint64_t reserved_2_63         : 62;
 #endif /* Word 0 - End */
-    } cn81xx;
+    } cn8;
+    /* struct cavm_pemx_clk_en_cn8 cn81xx; */
     struct cavm_pemx_clk_en_cn83xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -2786,7 +2980,9 @@ static inline uint64_t CAVM_PEMX_CLK_EN(unsigned long a)
         return 0x87e0c0000400ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x8e00000000c8ll + 0x1000000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x8e00000000c8ll + 0x1000000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x8e00000000c8ll + 0x1000000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x8e00000000c8ll + 0x1000000000ll * ((a) & 0x0);
@@ -2833,7 +3029,9 @@ static inline uint64_t CAVM_PEMX_CMERGE_MERGED_PC(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x8e00000001b8ll + 0x1000000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x8e00000001b8ll + 0x1000000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x8e00000001b8ll + 0x1000000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x8e00000001b8ll + 0x1000000000ll * ((a) & 0x0);
@@ -2877,7 +3075,9 @@ static inline uint64_t CAVM_PEMX_CMERGE_RECEIVED_PC(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x8e00000001b0ll + 0x1000000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x8e00000001b0ll + 0x1000000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x8e00000001b0ll + 0x1000000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x8e00000001b0ll + 0x1000000000ll * ((a) & 0x0);
@@ -2927,7 +3127,9 @@ static inline uint64_t CAVM_PEMX_CONST_ACC(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x8e0000000218ll + 0x1000000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x8e0000000218ll + 0x1000000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x8e0000000218ll + 0x1000000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x8e0000000218ll + 0x1000000000ll * ((a) & 0x0);
@@ -2985,7 +3187,9 @@ static inline uint64_t CAVM_PEMX_CPL_LUT_VALID(unsigned long a)
         return 0x87e0c0000098ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x8e0000000040ll + 0x1000000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x8e0000000040ll + 0x1000000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x8e0000000040ll + 0x1000000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x8e0000000040ll + 0x1000000000ll * ((a) & 0x0);
@@ -3029,7 +3233,9 @@ static inline uint64_t CAVM_PEMX_CSCLK_ACTIVE_PC(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x8e0000000058ll + 0x1000000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x8e0000000058ll + 0x1000000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x8e0000000058ll + 0x1000000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x8e0000000058ll + 0x1000000000ll * ((a) & 0x0);
@@ -3150,6 +3356,82 @@ union cavm_pemx_ctl_status
         uint64_t reserved_55_63        : 9;
 #endif /* Word 0 - End */
     } s;
+    struct cavm_pemx_ctl_status_cn8
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_55_63        : 9;
+        uint64_t inb_grant_limit       : 3;  /**< [ 54: 52](R/W) The number of inbound TLPs allowed in flight in PEM.to improve
+                                                                 small TLP performance. */
+        uint64_t reserved_51           : 1;
+        uint64_t inv_dpar              : 1;  /**< [ 50: 50](R/W) Invert the generated parity to be written into the most significant data queue buffer RAM
+                                                                 block to force a parity error when it is later read. */
+        uint64_t reserved_48_49        : 2;
+        uint64_t auto_sd               : 1;  /**< [ 47: 47](RO/H) Link hardware autonomous speed disable. */
+        uint64_t dnum                  : 5;  /**< [ 46: 42](RO/H) Primary bus device number. */
+        uint64_t pbus                  : 8;  /**< [ 41: 34](RO/H) Primary bus number. */
+        uint64_t reserved_32_33        : 2;
+        uint64_t cfg_rtry              : 16; /**< [ 31: 16](R/W) The time in units of 0x10000 in coprocessor clocks to wait for a CPL to a
+                                                                 configuration read that does not carry a retry status. Until such time that the
+                                                                 timeout occurs and retry status is received for a configuration read, the read
+                                                                 will be resent. A value of 0 disables retries and treats a CPL retry as a CPL
+                                                                 UR.
+
+                                                                 To use, it is recommended [CFG_RTRY] be set value corresponding to 200ms or
+                                                                 less, although the PCI Express Base Specification allows up to 900ms for a
+                                                                 device to send a successful completion.  When enabled, only one CFG RD may be
+                                                                 issued until either successful completion or CPL UR. */
+        uint64_t spares                : 4;  /**< [ 15: 12](R/W) Spare flops. */
+        uint64_t pm_xtoff              : 1;  /**< [ 11: 11](R/W/H) When written with one, a single cycle pulse is sent to the PCIe core pm_xmt_turnoff port. RC mode. */
+        uint64_t pm_xpme               : 1;  /**< [ 10: 10](R/W/H) When written with one, a single cycle pulse is sent to the PCIe core pm_xmt_pme port. EP mode. */
+        uint64_t ob_p_cmd              : 1;  /**< [  9:  9](R/W/H) When written with one, a single cycle pulse is sent to the PCIe core outband_pwrup_cmd
+                                                                 port. EP mode. */
+        uint64_t reserved_7_8          : 2;
+        uint64_t nf_ecrc               : 1;  /**< [  6:  6](R/W) Do not forward peer-to-peer ECRC TLPs. */
+        uint64_t dly_one               : 1;  /**< [  5:  5](R/W/H) When set the output client state machines will wait one cycle before starting a new TLP out. */
+        uint64_t lnk_enb               : 1;  /**< [  4:  4](R/W) When set, the link is enabled; when clear (0) the link is disabled. This bit only is
+                                                                 active when in RC mode. */
+        uint64_t ro_ctlp               : 1;  /**< [  3:  3](R/W) When set, C-TLPs that have the RO bit set will not wait for P-TLPs that are normally sent first. */
+        uint64_t fast_lm               : 1;  /**< [  2:  2](R/W) When set, forces fast link mode. */
+        uint64_t inv_ecrc              : 1;  /**< [  1:  1](R/W) When set, causes the LSB of the ECRC to be inverted. */
+        uint64_t inv_lcrc              : 1;  /**< [  0:  0](R/W) When set, causes the LSB of the LCRC to be inverted. */
+#else /* Word 0 - Little Endian */
+        uint64_t inv_lcrc              : 1;  /**< [  0:  0](R/W) When set, causes the LSB of the LCRC to be inverted. */
+        uint64_t inv_ecrc              : 1;  /**< [  1:  1](R/W) When set, causes the LSB of the ECRC to be inverted. */
+        uint64_t fast_lm               : 1;  /**< [  2:  2](R/W) When set, forces fast link mode. */
+        uint64_t ro_ctlp               : 1;  /**< [  3:  3](R/W) When set, C-TLPs that have the RO bit set will not wait for P-TLPs that are normally sent first. */
+        uint64_t lnk_enb               : 1;  /**< [  4:  4](R/W) When set, the link is enabled; when clear (0) the link is disabled. This bit only is
+                                                                 active when in RC mode. */
+        uint64_t dly_one               : 1;  /**< [  5:  5](R/W/H) When set the output client state machines will wait one cycle before starting a new TLP out. */
+        uint64_t nf_ecrc               : 1;  /**< [  6:  6](R/W) Do not forward peer-to-peer ECRC TLPs. */
+        uint64_t reserved_7_8          : 2;
+        uint64_t ob_p_cmd              : 1;  /**< [  9:  9](R/W/H) When written with one, a single cycle pulse is sent to the PCIe core outband_pwrup_cmd
+                                                                 port. EP mode. */
+        uint64_t pm_xpme               : 1;  /**< [ 10: 10](R/W/H) When written with one, a single cycle pulse is sent to the PCIe core pm_xmt_pme port. EP mode. */
+        uint64_t pm_xtoff              : 1;  /**< [ 11: 11](R/W/H) When written with one, a single cycle pulse is sent to the PCIe core pm_xmt_turnoff port. RC mode. */
+        uint64_t spares                : 4;  /**< [ 15: 12](R/W) Spare flops. */
+        uint64_t cfg_rtry              : 16; /**< [ 31: 16](R/W) The time in units of 0x10000 in coprocessor clocks to wait for a CPL to a
+                                                                 configuration read that does not carry a retry status. Until such time that the
+                                                                 timeout occurs and retry status is received for a configuration read, the read
+                                                                 will be resent. A value of 0 disables retries and treats a CPL retry as a CPL
+                                                                 UR.
+
+                                                                 To use, it is recommended [CFG_RTRY] be set value corresponding to 200ms or
+                                                                 less, although the PCI Express Base Specification allows up to 900ms for a
+                                                                 device to send a successful completion.  When enabled, only one CFG RD may be
+                                                                 issued until either successful completion or CPL UR. */
+        uint64_t reserved_32_33        : 2;
+        uint64_t pbus                  : 8;  /**< [ 41: 34](RO/H) Primary bus number. */
+        uint64_t dnum                  : 5;  /**< [ 46: 42](RO/H) Primary bus device number. */
+        uint64_t auto_sd               : 1;  /**< [ 47: 47](RO/H) Link hardware autonomous speed disable. */
+        uint64_t reserved_48_49        : 2;
+        uint64_t inv_dpar              : 1;  /**< [ 50: 50](R/W) Invert the generated parity to be written into the most significant data queue buffer RAM
+                                                                 block to force a parity error when it is later read. */
+        uint64_t reserved_51           : 1;
+        uint64_t inb_grant_limit       : 3;  /**< [ 54: 52](R/W) The number of inbound TLPs allowed in flight in PEM.to improve
+                                                                 small TLP performance. */
+        uint64_t reserved_55_63        : 9;
+#endif /* Word 0 - End */
+    } cn8;
     struct cavm_pemx_ctl_status_cn81xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -3474,7 +3756,9 @@ static inline uint64_t CAVM_PEMX_CTL_STATUS(unsigned long a)
         return 0x87e0c0000000ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x8e0000000000ll + 0x1000000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x8e0000000000ll + 0x1000000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x8e0000000000ll + 0x1000000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x8e0000000000ll + 0x1000000000ll * ((a) & 0x0);
@@ -3623,7 +3907,9 @@ static inline uint64_t CAVM_PEMX_CTL_STATUS2(unsigned long a)
         return 0x87e0c0000008ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x8e0000000130ll + 0x1000000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x8e0000000130ll + 0x1000000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x8e0000000130ll + 0x1000000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x8e0000000130ll + 0x1000000000ll * ((a) & 0x0);
@@ -3954,6 +4240,7 @@ union cavm_pemx_dbg_ena_w1c
         uint64_t reserved_58_63        : 6;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_pemx_dbg_ena_w1c_s cn8; */
     struct cavm_pemx_dbg_ena_w1c_cn81xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -4693,6 +4980,7 @@ union cavm_pemx_dbg_ena_w1s
         uint64_t reserved_58_63        : 6;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_pemx_dbg_ena_w1s_s cn8; */
     struct cavm_pemx_dbg_ena_w1s_cn81xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -5420,6 +5708,264 @@ union cavm_pemx_dbg_info
         uint64_t reserved_58_63        : 6;
 #endif /* Word 0 - End */
     } s;
+    struct cavm_pemx_dbg_info_cn8
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_58_63        : 6;
+        uint64_t m2s_pe                : 1;  /**< [ 57: 57](R/W1C/H) Detected a M2S FIFO parity error. */
+        uint64_t qhdr_b1_dbe           : 1;  /**< [ 56: 56](R/W1C/H) Detected a core header queue bank1 double-bit error. */
+        uint64_t reserved_51_55        : 5;
+        uint64_t c_c_dbe               : 1;  /**< [ 50: 50](R/W1C/H) Detected a TLP CPL FIFO control double-bit error. */
+        uint64_t c_c_sbe               : 1;  /**< [ 49: 49](R/W1C/H) Detected a TLP CPL FIFO control single-bit error. */
+        uint64_t c_d1_dbe              : 1;  /**< [ 48: 48](R/W1C/H) Detected a TLP CPL FIFO data1 double-bit error. */
+        uint64_t c_d1_sbe              : 1;  /**< [ 47: 47](R/W1C/H) Detected a TLP CPL FIFO data1 single-bit error. */
+        uint64_t c_d0_dbe              : 1;  /**< [ 46: 46](R/W1C/H) Detected a TLP CPL FIFO data0 double-bit error. */
+        uint64_t c_d0_sbe              : 1;  /**< [ 45: 45](R/W1C/H) Detected a TLP CPL FIFO data0 single-bit error. */
+        uint64_t n_c_dbe               : 1;  /**< [ 44: 44](R/W1C/H) Detected a TLP NP FIFO control double-bit error. */
+        uint64_t n_c_sbe               : 1;  /**< [ 43: 43](R/W1C/H) Detected a TLP NP FIFO control single-bit error. */
+        uint64_t n_d1_dbe              : 1;  /**< [ 42: 42](R/W1C/H) Detected a TLP NP FIFO data1 double-bit error. */
+        uint64_t n_d1_sbe              : 1;  /**< [ 41: 41](R/W1C/H) Detected a TLP NP FIFO data1 single-bit error. */
+        uint64_t n_d0_dbe              : 1;  /**< [ 40: 40](R/W1C/H) Detected a TLP NP FIFO data0 double-bit error. */
+        uint64_t n_d0_sbe              : 1;  /**< [ 39: 39](R/W1C/H) Detected a TLP NP FIFO data0 single-bit error. */
+        uint64_t p_c_dbe               : 1;  /**< [ 38: 38](R/W1C/H) Detected a TLP posted FIFO control double-bit error. */
+        uint64_t p_c_sbe               : 1;  /**< [ 37: 37](R/W1C/H) Detected a TLP posted FIFO control single-bit error. */
+        uint64_t p_d1_dbe              : 1;  /**< [ 36: 36](R/W1C/H) Detected a TLP posted FIFO data1 double-bit error. */
+        uint64_t p_d1_sbe              : 1;  /**< [ 35: 35](R/W1C/H) Detected a TLP posted FIFO data1 single-bit error. */
+        uint64_t p_d0_dbe              : 1;  /**< [ 34: 34](R/W1C/H) Detected a TLP posted FIFO data0 double-bit error. */
+        uint64_t p_d0_sbe              : 1;  /**< [ 33: 33](R/W1C/H) Detected a TLP posted FIFO data0 single-bit error. */
+        uint64_t reserved_32           : 1;
+        uint64_t lofp                  : 1;  /**< [ 31: 31](R/W1C/H) Lack of forward progress at TLP FIFOs timeout occurred. */
+        uint64_t ecrc_e                : 1;  /**< [ 30: 30](R/W1C/H) Received an ECRC error. */
+        uint64_t rawwpp                : 1;  /**< [ 29: 29](R/W1C/H) Received a write with poisoned payload.
+                                                                 Internal:
+                                                                 radm_rcvd_wreq_poisoned. */
+        uint64_t racpp                 : 1;  /**< [ 28: 28](R/W1C/H) Received a completion with poisoned payload.
+                                                                 Internal:
+                                                                 radm_rcvd_cpl_poisoned. */
+        uint64_t ramtlp                : 1;  /**< [ 27: 27](R/W1C/H) Received a malformed TLP.
+                                                                 Internal:
+                                                                 radm_mlf_tlp_err. */
+        uint64_t rarwdns               : 1;  /**< [ 26: 26](R/W1C/H) Received a request which device does not support.
+                                                                 Internal:
+                                                                 radm_rcvd_ur_req. */
+        uint64_t caar                  : 1;  /**< [ 25: 25](R/W1C/H) Completer aborted a request. This bit is never set because CNXXXX does not generate
+                                                                 completer aborts. */
+        uint64_t racca                 : 1;  /**< [ 24: 24](R/W1C/H) Received a completion with CA status.
+                                                                 Internal:
+                                                                 radm_rcvd_cpl_ca. */
+        uint64_t racur                 : 1;  /**< [ 23: 23](R/W1C/H) Received a completion with UR status.
+                                                                 Internal:
+                                                                 radm_rcvd_cpl_ur. */
+        uint64_t rauc                  : 1;  /**< [ 22: 22](R/W1C/H) Received an unexpected completion.
+                                                                 Internal:
+                                                                 radm_unexp_cpl_err. */
+        uint64_t rqo                   : 1;  /**< [ 21: 21](R/W1C/H) Receive queue overflow. Normally happens only when flow control advertisements are
+                                                                 ignored.
+
+                                                                 Internal:
+                                                                 radm_qoverflow. */
+        uint64_t fcuv                  : 1;  /**< [ 20: 20](R/W1C/H) Flow control update violation.
+                                                                 Internal:
+                                                                 (opt. checks) int_xadm_fc_prot_err. */
+        uint64_t rpe                   : 1;  /**< [ 19: 19](R/W1C/H) PHY reported an 8 B/10 B decode error (RxStatus = 0x4) or disparity error (RxStatus =
+                                                                 0x7).
+
+                                                                 Internal:
+                                                                 rmlh_rcvd_err. */
+        uint64_t fcpvwt                : 1;  /**< [ 18: 18](R/W1C/H) Flow control protocol violation (watchdog timer).
+                                                                 Internal:
+                                                                 rtlh_fc_prot_err. */
+        uint64_t dpeoosd               : 1;  /**< [ 17: 17](R/W1C/H) DLLP protocol error (out of sequence DLLP).
+                                                                 Internal:
+                                                                 rdlh_prot_err. */
+        uint64_t rtwdle                : 1;  /**< [ 16: 16](R/W1C/H) Received TLP with datalink layer error.
+                                                                 Internal:
+                                                                 rdlh_bad_tlp_err. */
+        uint64_t rdwdle                : 1;  /**< [ 15: 15](R/W1C/H) Received DLLP with datalink layer error.
+                                                                 Internal:
+                                                                 rdlh_bad_dllp_err. */
+        uint64_t mre                   : 1;  /**< [ 14: 14](R/W1C/H) Maximum number of retries exceeded.
+                                                                 Internal:
+                                                                 xdlh_replay_num_rlover_err. */
+        uint64_t rte                   : 1;  /**< [ 13: 13](R/W1C/H) Replay timer expired. This bit is set when the REPLAY_TIMER expires in the PCIe core. The
+                                                                 probability of this bit being set increases with the traffic load.
+
+                                                                 Internal:
+                                                                 xdlh_replay_timeout_err. */
+        uint64_t acto                  : 1;  /**< [ 12: 12](R/W1C/H) A completion timeout occurred.
+                                                                 Internal:
+                                                                 pedc_radm_cpl_timeout. */
+        uint64_t rvdm                  : 1;  /**< [ 11: 11](R/W1C/H) Received vendor-defined message.
+                                                                 Internal:
+                                                                 pedc_radm_vendor_msg. */
+        uint64_t rumep                 : 1;  /**< [ 10: 10](R/W1C/H) Received unlock message (EP mode only).
+                                                                 Internal:
+                                                                 pedc_radm_msg_unlock. */
+        uint64_t rptamrc               : 1;  /**< [  9:  9](R/W1C/H) Received PME turnoff acknowledge message (RC mode only).
+                                                                 Internal:
+                                                                 pedc_radm_pm_to_ack. */
+        uint64_t rpmerc                : 1;  /**< [  8:  8](R/W1C/H) Received PME message (RC mode only).
+                                                                 Internal:
+                                                                 pedc_radm_pm_pme. */
+        uint64_t rfemrc                : 1;  /**< [  7:  7](R/W1C/H) Received fatal-error message (RC mode only). This bit is set when a message with ERR_FATAL
+                                                                 is set.
+
+                                                                 Internal:
+                                                                 pedc_radm_fatal_err. */
+        uint64_t rnfemrc               : 1;  /**< [  6:  6](R/W1C/H) Received nonfatal error message (RC mode only).
+                                                                 Internal:
+                                                                 pedc_radm_nonfatal_err. */
+        uint64_t rcemrc                : 1;  /**< [  5:  5](R/W1C/H) Received correctable error message (RC mode only).
+                                                                 Internal:
+                                                                 pedc_radm_correctable_err. */
+        uint64_t rpoison               : 1;  /**< [  4:  4](R/W1C/H) Received poisoned TLP.
+                                                                 Internal:
+                                                                 pedc__radm_trgt1_poisoned & pedc__radm_trgt1_hv. */
+        uint64_t recrce                : 1;  /**< [  3:  3](R/W1C/H) Received ECRC error.
+                                                                 Internal:
+                                                                 pedc_radm_trgt1_ecrc_err & pedc__radm_trgt1_eot. */
+        uint64_t rtlplle               : 1;  /**< [  2:  2](R/W1C/H) Received TLP has link layer error.
+                                                                 Internal:
+                                                                 pedc_radm_trgt1_dllp_abort &
+                                                                 pedc__radm_trgt1_eot. */
+        uint64_t rtlpmal               : 1;  /**< [  1:  1](R/W1C/H) Received TLP is malformed or a message. If the core receives a MSG (or Vendor Message) or
+                                                                 if a received AtomicOp violates address/length rules, this bit is set as well.
+
+                                                                 Internal:
+                                                                 pedc_radm_trgt1_tlp_abort & pedc__radm_trgt1_eot. */
+        uint64_t spoison               : 1;  /**< [  0:  0](R/W1C/H) Poisoned TLP sent.
+                                                                 Internal:
+                                                                 peai__client0_tlp_ep & peai__client0_tlp_hv or
+                                                                 peai__client1_tlp_ep & peai__client1_tlp_hv (atomic_op). */
+#else /* Word 0 - Little Endian */
+        uint64_t spoison               : 1;  /**< [  0:  0](R/W1C/H) Poisoned TLP sent.
+                                                                 Internal:
+                                                                 peai__client0_tlp_ep & peai__client0_tlp_hv or
+                                                                 peai__client1_tlp_ep & peai__client1_tlp_hv (atomic_op). */
+        uint64_t rtlpmal               : 1;  /**< [  1:  1](R/W1C/H) Received TLP is malformed or a message. If the core receives a MSG (or Vendor Message) or
+                                                                 if a received AtomicOp violates address/length rules, this bit is set as well.
+
+                                                                 Internal:
+                                                                 pedc_radm_trgt1_tlp_abort & pedc__radm_trgt1_eot. */
+        uint64_t rtlplle               : 1;  /**< [  2:  2](R/W1C/H) Received TLP has link layer error.
+                                                                 Internal:
+                                                                 pedc_radm_trgt1_dllp_abort &
+                                                                 pedc__radm_trgt1_eot. */
+        uint64_t recrce                : 1;  /**< [  3:  3](R/W1C/H) Received ECRC error.
+                                                                 Internal:
+                                                                 pedc_radm_trgt1_ecrc_err & pedc__radm_trgt1_eot. */
+        uint64_t rpoison               : 1;  /**< [  4:  4](R/W1C/H) Received poisoned TLP.
+                                                                 Internal:
+                                                                 pedc__radm_trgt1_poisoned & pedc__radm_trgt1_hv. */
+        uint64_t rcemrc                : 1;  /**< [  5:  5](R/W1C/H) Received correctable error message (RC mode only).
+                                                                 Internal:
+                                                                 pedc_radm_correctable_err. */
+        uint64_t rnfemrc               : 1;  /**< [  6:  6](R/W1C/H) Received nonfatal error message (RC mode only).
+                                                                 Internal:
+                                                                 pedc_radm_nonfatal_err. */
+        uint64_t rfemrc                : 1;  /**< [  7:  7](R/W1C/H) Received fatal-error message (RC mode only). This bit is set when a message with ERR_FATAL
+                                                                 is set.
+
+                                                                 Internal:
+                                                                 pedc_radm_fatal_err. */
+        uint64_t rpmerc                : 1;  /**< [  8:  8](R/W1C/H) Received PME message (RC mode only).
+                                                                 Internal:
+                                                                 pedc_radm_pm_pme. */
+        uint64_t rptamrc               : 1;  /**< [  9:  9](R/W1C/H) Received PME turnoff acknowledge message (RC mode only).
+                                                                 Internal:
+                                                                 pedc_radm_pm_to_ack. */
+        uint64_t rumep                 : 1;  /**< [ 10: 10](R/W1C/H) Received unlock message (EP mode only).
+                                                                 Internal:
+                                                                 pedc_radm_msg_unlock. */
+        uint64_t rvdm                  : 1;  /**< [ 11: 11](R/W1C/H) Received vendor-defined message.
+                                                                 Internal:
+                                                                 pedc_radm_vendor_msg. */
+        uint64_t acto                  : 1;  /**< [ 12: 12](R/W1C/H) A completion timeout occurred.
+                                                                 Internal:
+                                                                 pedc_radm_cpl_timeout. */
+        uint64_t rte                   : 1;  /**< [ 13: 13](R/W1C/H) Replay timer expired. This bit is set when the REPLAY_TIMER expires in the PCIe core. The
+                                                                 probability of this bit being set increases with the traffic load.
+
+                                                                 Internal:
+                                                                 xdlh_replay_timeout_err. */
+        uint64_t mre                   : 1;  /**< [ 14: 14](R/W1C/H) Maximum number of retries exceeded.
+                                                                 Internal:
+                                                                 xdlh_replay_num_rlover_err. */
+        uint64_t rdwdle                : 1;  /**< [ 15: 15](R/W1C/H) Received DLLP with datalink layer error.
+                                                                 Internal:
+                                                                 rdlh_bad_dllp_err. */
+        uint64_t rtwdle                : 1;  /**< [ 16: 16](R/W1C/H) Received TLP with datalink layer error.
+                                                                 Internal:
+                                                                 rdlh_bad_tlp_err. */
+        uint64_t dpeoosd               : 1;  /**< [ 17: 17](R/W1C/H) DLLP protocol error (out of sequence DLLP).
+                                                                 Internal:
+                                                                 rdlh_prot_err. */
+        uint64_t fcpvwt                : 1;  /**< [ 18: 18](R/W1C/H) Flow control protocol violation (watchdog timer).
+                                                                 Internal:
+                                                                 rtlh_fc_prot_err. */
+        uint64_t rpe                   : 1;  /**< [ 19: 19](R/W1C/H) PHY reported an 8 B/10 B decode error (RxStatus = 0x4) or disparity error (RxStatus =
+                                                                 0x7).
+
+                                                                 Internal:
+                                                                 rmlh_rcvd_err. */
+        uint64_t fcuv                  : 1;  /**< [ 20: 20](R/W1C/H) Flow control update violation.
+                                                                 Internal:
+                                                                 (opt. checks) int_xadm_fc_prot_err. */
+        uint64_t rqo                   : 1;  /**< [ 21: 21](R/W1C/H) Receive queue overflow. Normally happens only when flow control advertisements are
+                                                                 ignored.
+
+                                                                 Internal:
+                                                                 radm_qoverflow. */
+        uint64_t rauc                  : 1;  /**< [ 22: 22](R/W1C/H) Received an unexpected completion.
+                                                                 Internal:
+                                                                 radm_unexp_cpl_err. */
+        uint64_t racur                 : 1;  /**< [ 23: 23](R/W1C/H) Received a completion with UR status.
+                                                                 Internal:
+                                                                 radm_rcvd_cpl_ur. */
+        uint64_t racca                 : 1;  /**< [ 24: 24](R/W1C/H) Received a completion with CA status.
+                                                                 Internal:
+                                                                 radm_rcvd_cpl_ca. */
+        uint64_t caar                  : 1;  /**< [ 25: 25](R/W1C/H) Completer aborted a request. This bit is never set because CNXXXX does not generate
+                                                                 completer aborts. */
+        uint64_t rarwdns               : 1;  /**< [ 26: 26](R/W1C/H) Received a request which device does not support.
+                                                                 Internal:
+                                                                 radm_rcvd_ur_req. */
+        uint64_t ramtlp                : 1;  /**< [ 27: 27](R/W1C/H) Received a malformed TLP.
+                                                                 Internal:
+                                                                 radm_mlf_tlp_err. */
+        uint64_t racpp                 : 1;  /**< [ 28: 28](R/W1C/H) Received a completion with poisoned payload.
+                                                                 Internal:
+                                                                 radm_rcvd_cpl_poisoned. */
+        uint64_t rawwpp                : 1;  /**< [ 29: 29](R/W1C/H) Received a write with poisoned payload.
+                                                                 Internal:
+                                                                 radm_rcvd_wreq_poisoned. */
+        uint64_t ecrc_e                : 1;  /**< [ 30: 30](R/W1C/H) Received an ECRC error. */
+        uint64_t lofp                  : 1;  /**< [ 31: 31](R/W1C/H) Lack of forward progress at TLP FIFOs timeout occurred. */
+        uint64_t reserved_32           : 1;
+        uint64_t p_d0_sbe              : 1;  /**< [ 33: 33](R/W1C/H) Detected a TLP posted FIFO data0 single-bit error. */
+        uint64_t p_d0_dbe              : 1;  /**< [ 34: 34](R/W1C/H) Detected a TLP posted FIFO data0 double-bit error. */
+        uint64_t p_d1_sbe              : 1;  /**< [ 35: 35](R/W1C/H) Detected a TLP posted FIFO data1 single-bit error. */
+        uint64_t p_d1_dbe              : 1;  /**< [ 36: 36](R/W1C/H) Detected a TLP posted FIFO data1 double-bit error. */
+        uint64_t p_c_sbe               : 1;  /**< [ 37: 37](R/W1C/H) Detected a TLP posted FIFO control single-bit error. */
+        uint64_t p_c_dbe               : 1;  /**< [ 38: 38](R/W1C/H) Detected a TLP posted FIFO control double-bit error. */
+        uint64_t n_d0_sbe              : 1;  /**< [ 39: 39](R/W1C/H) Detected a TLP NP FIFO data0 single-bit error. */
+        uint64_t n_d0_dbe              : 1;  /**< [ 40: 40](R/W1C/H) Detected a TLP NP FIFO data0 double-bit error. */
+        uint64_t n_d1_sbe              : 1;  /**< [ 41: 41](R/W1C/H) Detected a TLP NP FIFO data1 single-bit error. */
+        uint64_t n_d1_dbe              : 1;  /**< [ 42: 42](R/W1C/H) Detected a TLP NP FIFO data1 double-bit error. */
+        uint64_t n_c_sbe               : 1;  /**< [ 43: 43](R/W1C/H) Detected a TLP NP FIFO control single-bit error. */
+        uint64_t n_c_dbe               : 1;  /**< [ 44: 44](R/W1C/H) Detected a TLP NP FIFO control double-bit error. */
+        uint64_t c_d0_sbe              : 1;  /**< [ 45: 45](R/W1C/H) Detected a TLP CPL FIFO data0 single-bit error. */
+        uint64_t c_d0_dbe              : 1;  /**< [ 46: 46](R/W1C/H) Detected a TLP CPL FIFO data0 double-bit error. */
+        uint64_t c_d1_sbe              : 1;  /**< [ 47: 47](R/W1C/H) Detected a TLP CPL FIFO data1 single-bit error. */
+        uint64_t c_d1_dbe              : 1;  /**< [ 48: 48](R/W1C/H) Detected a TLP CPL FIFO data1 double-bit error. */
+        uint64_t c_c_sbe               : 1;  /**< [ 49: 49](R/W1C/H) Detected a TLP CPL FIFO control single-bit error. */
+        uint64_t c_c_dbe               : 1;  /**< [ 50: 50](R/W1C/H) Detected a TLP CPL FIFO control double-bit error. */
+        uint64_t reserved_51_55        : 5;
+        uint64_t qhdr_b1_dbe           : 1;  /**< [ 56: 56](R/W1C/H) Detected a core header queue bank1 double-bit error. */
+        uint64_t m2s_pe                : 1;  /**< [ 57: 57](R/W1C/H) Detected a M2S FIFO parity error. */
+        uint64_t reserved_58_63        : 6;
+#endif /* Word 0 - End */
+    } cn8;
     struct cavm_pemx_dbg_info_cn81xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -5942,7 +6488,7 @@ union cavm_pemx_dbg_info
         uint64_t reserved_56_63        : 8;
 #endif /* Word 0 - End */
     } cn83xx;
-    struct cavm_pemx_dbg_info_cn96xx
+    struct cavm_pemx_dbg_info_cn9
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_50_63        : 14;
@@ -6131,7 +6677,9 @@ union cavm_pemx_dbg_info
                                                                  to a single QWord */
         uint64_t reserved_50_63        : 14;
 #endif /* Word 0 - End */
-    } cn96xx;
+    } cn9;
+    /* struct cavm_pemx_dbg_info_cn9 cn96xx; */
+    /* struct cavm_pemx_dbg_info_cn9 cn98xx; */
     struct cavm_pemx_dbg_info_cnf95xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -6335,7 +6883,9 @@ static inline uint64_t CAVM_PEMX_DBG_INFO(unsigned long a)
         return 0x87e0c0000448ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x8e0000000108ll + 0x1000000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x8e0000000108ll + 0x1000000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x8e0000000108ll + 0x1000000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x8e0000000108ll + 0x1000000000ll * ((a) & 0x0);
@@ -6594,6 +7144,7 @@ union cavm_pemx_dbg_info_w1s
         uint64_t reserved_58_63        : 6;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_pemx_dbg_info_w1s_s cn8; */
     struct cavm_pemx_dbg_info_w1s_cn81xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -7127,6 +7678,38 @@ union cavm_pemx_debug
         uint64_t reserved_31_63        : 33;
 #endif /* Word 0 - End */
     } s;
+    struct cavm_pemx_debug_cn8
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_40_63        : 24;
+        uint64_t n_tlp_cnt             : 8;  /**< [ 39: 32](RO/H) The current count (depth) of the outbound NP TLP FIFO.
+                                                                 The value represents the number of used credits out of a total of 32. */
+        uint64_t reserved_31           : 1;
+        uint64_t c_tlp_cnt             : 11; /**< [ 30: 20](RO/H) The current count (depth) of the outbound C TLP FIFO.
+                                                                 The value represents the number of used credits out of a total of 244. */
+        uint64_t reserved_19           : 1;
+        uint64_t p_tlp_cnt             : 11; /**< [ 18:  8](RO/H) The current count (depth) of the outbound P TLP FIFO.
+                                                                 The value represents the number of used credits out of a total of 244. */
+        uint64_t inv_m2s_par           : 1;  /**< [  7:  7](R/W) Invert the generated parity to be written into the M2S FIFO
+                                                                 to force a parity error when it is later read. */
+        uint64_t reserved_6            : 1;
+        uint64_t intval                : 6;  /**< [  5:  0](RO/H) Status of INTX, HP_PMEI, and AERI interrupts. */
+#else /* Word 0 - Little Endian */
+        uint64_t intval                : 6;  /**< [  5:  0](RO/H) Status of INTX, HP_PMEI, and AERI interrupts. */
+        uint64_t reserved_6            : 1;
+        uint64_t inv_m2s_par           : 1;  /**< [  7:  7](R/W) Invert the generated parity to be written into the M2S FIFO
+                                                                 to force a parity error when it is later read. */
+        uint64_t p_tlp_cnt             : 11; /**< [ 18:  8](RO/H) The current count (depth) of the outbound P TLP FIFO.
+                                                                 The value represents the number of used credits out of a total of 244. */
+        uint64_t reserved_19           : 1;
+        uint64_t c_tlp_cnt             : 11; /**< [ 30: 20](RO/H) The current count (depth) of the outbound C TLP FIFO.
+                                                                 The value represents the number of used credits out of a total of 244. */
+        uint64_t reserved_31           : 1;
+        uint64_t n_tlp_cnt             : 8;  /**< [ 39: 32](RO/H) The current count (depth) of the outbound NP TLP FIFO.
+                                                                 The value represents the number of used credits out of a total of 32. */
+        uint64_t reserved_40_63        : 24;
+#endif /* Word 0 - End */
+    } cn8;
     struct cavm_pemx_debug_cn81xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -7174,6 +7757,19 @@ union cavm_pemx_debug
     struct cavm_pemx_debug_cn9
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t ib_drop_why           : 32; /**< [ 63: 32](R/W1C/H) Reasons why inbound TLPs were dropped. */
+        uint64_t reserved_6_31         : 26;
+        uint64_t intval                : 6;  /**< [  5:  0](RO/H) Status of INTX, PMEI, and AERI interrupts. */
+#else /* Word 0 - Little Endian */
+        uint64_t intval                : 6;  /**< [  5:  0](RO/H) Status of INTX, PMEI, and AERI interrupts. */
+        uint64_t reserved_6_31         : 26;
+        uint64_t ib_drop_why           : 32; /**< [ 63: 32](R/W1C/H) Reasons why inbound TLPs were dropped. */
+#endif /* Word 0 - End */
+    } cn9;
+    /* struct cavm_pemx_debug_cn9 cn96xxp1; */
+    struct cavm_pemx_debug_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t ib_drop_why           : 32; /**< [ 63: 32](R/W1C/H) Reasons why inbound TLPs were dropped.
                                                                  \<32\> = No NCB. The TLP targets NCBI but there is no NCBI connected to PEM in this chip.
                                                                  \<33\> = No EBUS. The TLP targets EBI but there is no EBI connected to PEM in this chip.
@@ -7236,7 +7832,10 @@ union cavm_pemx_debug
                                                                  \<54\> = In FLR.  The TLP's function (PF/VF) was in Function Level Reset.  Same as bit 47.
                                                                  \<63:55\> = Reserved. */
 #endif /* Word 0 - End */
-    } cn9;
+    } cn96xxp3;
+    /* struct cavm_pemx_debug_cn96xxp3 cn98xx; */
+    /* struct cavm_pemx_debug_cn9 cnf95xx; */
+    /* struct cavm_pemx_debug_cn96xxp3 loki; */
 };
 typedef union cavm_pemx_debug cavm_pemx_debug_t;
 
@@ -7249,7 +7848,9 @@ static inline uint64_t CAVM_PEMX_DEBUG(unsigned long a)
         return 0x87e0c0000480ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x8e0000000110ll + 0x1000000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x8e0000000110ll + 0x1000000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x8e0000000110ll + 0x1000000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x8e0000000110ll + 0x1000000000ll * ((a) & 0x0);
@@ -7358,7 +7959,7 @@ union cavm_pemx_diag_status
         uint64_t reserved_20_63        : 44;
 #endif /* Word 0 - End */
     } s;
-    struct cavm_pemx_diag_status_cn81xx
+    struct cavm_pemx_diag_status_cn8
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_9_63         : 55;
@@ -7375,7 +7976,8 @@ union cavm_pemx_diag_status
         uint64_t pwrdwn                : 3;  /**< [  8:  6](RO/H) Current mac_phy_powerdown state. */
         uint64_t reserved_9_63         : 55;
 #endif /* Word 0 - End */
-    } cn81xx;
+    } cn8;
+    /* struct cavm_pemx_diag_status_cn8 cn81xx; */
     struct cavm_pemx_diag_status_cn83xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -7510,7 +8112,9 @@ static inline uint64_t CAVM_PEMX_DIAG_STATUS(unsigned long a)
         return 0x87e0c0000020ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x8e0000000010ll + 0x1000000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x8e0000000010ll + 0x1000000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x8e0000000010ll + 0x1000000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x8e0000000010ll + 0x1000000000ll * ((a) & 0x0);
@@ -7574,7 +8178,9 @@ static inline uint64_t CAVM_PEMX_DIS_PORT(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x8e0000000050ll + 0x1000000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x8e0000000050ll + 0x1000000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x8e0000000050ll + 0x1000000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x8e0000000050ll + 0x1000000000ll * ((a) & 0x0);
@@ -7632,7 +8238,9 @@ static inline uint64_t CAVM_PEMX_EBI_TLP_CREDITS(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x8e0000000028ll + 0x1000000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x8e0000000028ll + 0x1000000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x8e0000000028ll + 0x1000000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x8e0000000028ll + 0x1000000000ll * ((a) & 0x0);
@@ -7758,7 +8366,9 @@ static inline uint64_t CAVM_PEMX_EBO_FIFO_STATUS(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x8e0000000140ll + 0x1000000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x8e0000000140ll + 0x1000000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x8e0000000140ll + 0x1000000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x8e0000000140ll + 0x1000000000ll * ((a) & 0x0);
@@ -7900,7 +8510,9 @@ static inline uint64_t CAVM_PEMX_EBUS_CTL(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x8e0000000080ll + 0x1000000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x8e0000000080ll + 0x1000000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x8e0000000080ll + 0x1000000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x8e0000000080ll + 0x1000000000ll * ((a) & 0x0);
@@ -7961,6 +8573,7 @@ union cavm_pemx_ecc_ena
         uint64_t reserved_35_63        : 29;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_pemx_ecc_ena_s cn8; */
     struct cavm_pemx_ecc_ena_cn81xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -8092,6 +8705,7 @@ union cavm_pemx_ecc_synd_ctrl
         uint64_t reserved_38_63        : 26;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_pemx_ecc_synd_ctrl_s cn8; */
     struct cavm_pemx_ecc_synd_ctrl_cn81xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -8209,7 +8823,9 @@ static inline uint64_t CAVM_PEMX_ECO(unsigned long a)
         return 0x87e0c0000010ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x8e0000000008ll + 0x1000000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x8e0000000008ll + 0x1000000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x8e0000000008ll + 0x1000000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x8e0000000008ll + 0x1000000000ll * ((a) & 0x0);
@@ -8254,7 +8870,9 @@ static inline uint64_t CAVM_PEMX_ECO2(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x8e0000000238ll + 0x1000000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x8e0000000238ll + 0x1000000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x8e0000000238ll + 0x1000000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x8e0000000238ll + 0x1000000000ll * ((a) & 0x0);
@@ -8302,7 +8920,9 @@ static inline uint64_t CAVM_PEMX_END_MERGE(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x8e0000000188ll + 0x1000000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x8e0000000188ll + 0x1000000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x8e0000000188ll + 0x1000000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x8e0000000188ll + 0x1000000000ll * ((a) & 0x0);
@@ -8416,7 +9036,9 @@ static inline uint64_t CAVM_PEMX_EROM_BAR_ADDR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x8e0000000160ll + 0x1000000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x8e0000000160ll + 0x1000000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x8e0000000160ll + 0x1000000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x8e0000000160ll + 0x1000000000ll * ((a) & 0x0);
@@ -8484,7 +9106,9 @@ static inline uint64_t CAVM_PEMX_EROM_SIZE(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x8e0000000230ll + 0x1000000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x8e0000000230ll + 0x1000000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x8e0000000230ll + 0x1000000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x8e0000000230ll + 0x1000000000ll * ((a) & 0x0);
@@ -8562,7 +9186,9 @@ static inline uint64_t CAVM_PEMX_FLR_CTL(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x8e0000000070ll + 0x1000000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x8e0000000070ll + 0x1000000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x8e0000000070ll + 0x1000000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x8e0000000070ll + 0x1000000000ll * ((a) & 0x0);
@@ -8683,7 +9309,9 @@ static inline uint64_t CAVM_PEMX_FLR_PFX_STOPREQ(unsigned long a, unsigned long 
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=3) && (b<=15)))
         return 0x8e0000000c00ll + 0x1000000000ll * ((a) & 0x3) + 8ll * ((b) & 0xf);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=15)))
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=4) && (b<=15)))
+        return 0x8e0000000c00ll + 0x1000000000ll * ((a) & 0x7) + 8ll * ((b) & 0xf);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && ((a==0) && (b<=15)))
         return 0x8e0000000c00ll + 0x1000000000ll * ((a) & 0x0) + 8ll * ((b) & 0xf);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=15)))
         return 0x8e0000000c00ll + 0x1000000000ll * ((a) & 0x0) + 8ll * ((b) & 0xf);
@@ -8893,7 +9521,9 @@ static inline uint64_t CAVM_PEMX_FLR_STOPREQ_CTL(unsigned long a)
         return 0x87e0c0000238ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x8e0000000078ll + 0x1000000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x8e0000000078ll + 0x1000000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x8e0000000078ll + 0x1000000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x8e0000000078ll + 0x1000000000ll * ((a) & 0x0);
@@ -8962,7 +9592,9 @@ static inline uint64_t CAVM_PEMX_FLR_VFX_STOPREQ(unsigned long a, unsigned long 
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=3) && (b<=3)))
         return 0x8e0000000e00ll + 0x1000000000ll * ((a) & 0x3) + 8ll * ((b) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=3)))
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=4) && (b<=3)))
+        return 0x8e0000000e00ll + 0x1000000000ll * ((a) & 0x7) + 8ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && ((a==0) && (b<=3)))
         return 0x8e0000000e00ll + 0x1000000000ll * ((a) & 0x0) + 8ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=3)))
         return 0x8e0000000e00ll + 0x1000000000ll * ((a) & 0x0) + 8ll * ((b) & 0x3);
@@ -9082,7 +9714,9 @@ static inline uint64_t CAVM_PEMX_IB_MERGE_TIMER_CTL(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x8e00000001c0ll + 0x1000000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x8e00000001c0ll + 0x1000000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x8e00000001c0ll + 0x1000000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x8e00000001c0ll + 0x1000000000ll * ((a) & 0x0);
@@ -9128,7 +9762,9 @@ static inline uint64_t CAVM_PEMX_IB_WMERGE_MERGED_PC(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x8e00000001d0ll + 0x1000000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x8e00000001d0ll + 0x1000000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x8e00000001d0ll + 0x1000000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x8e00000001d0ll + 0x1000000000ll * ((a) & 0x0);
@@ -9172,7 +9808,9 @@ static inline uint64_t CAVM_PEMX_IB_WMERGE_RECEIVED_PC(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x8e00000001c8ll + 0x1000000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x8e00000001c8ll + 0x1000000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x8e00000001c8ll + 0x1000000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x8e00000001c8ll + 0x1000000000ll * ((a) & 0x0);
@@ -9261,6 +9899,48 @@ union cavm_pemx_int_ena_w1c
         uint64_t reserved_22_63        : 42;
 #endif /* Word 0 - End */
     } s;
+    struct cavm_pemx_int_ena_w1c_cn8
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_15_63        : 49;
+        uint64_t surp_down             : 1;  /**< [ 14: 14](R/W1C/H) Reads or clears enable for PEM(0..3)_INT_SUM[SURP_DOWN]. */
+        uint64_t crs_dr                : 1;  /**< [ 13: 13](R/W1C/H) Reads or clears enable for PEM(0..2)_INT_SUM[CRS_DR]. */
+        uint64_t crs_er                : 1;  /**< [ 12: 12](R/W1C/H) Reads or clears enable for PEM(0..2)_INT_SUM[CRS_ER]. */
+        uint64_t rdlk                  : 1;  /**< [ 11: 11](R/W1C/H) Reads or clears enable for PEM(0..2)_INT_SUM[RDLK]. */
+        uint64_t reserved_10           : 1;
+        uint64_t un_bx                 : 1;  /**< [  9:  9](R/W1C/H) Reads or clears enable for PEM(0..2)_INT_SUM[UN_BX]. */
+        uint64_t un_b2                 : 1;  /**< [  8:  8](R/W1C/H) Reads or clears enable for PEM(0..2)_INT_SUM[UN_B2]. */
+        uint64_t un_b1                 : 1;  /**< [  7:  7](R/W1C/H) Reads or clears enable for PEM(0..2)_INT_SUM[UN_B1]. */
+        uint64_t up_bx                 : 1;  /**< [  6:  6](R/W1C/H) Reads or clears enable for PEM(0..2)_INT_SUM[UP_BX]. */
+        uint64_t up_b2                 : 1;  /**< [  5:  5](R/W1C/H) Reads or clears enable for PEM(0..2)_INT_SUM[UP_B2]. */
+        uint64_t up_b1                 : 1;  /**< [  4:  4](R/W1C/H) Reads or clears enable for PEM(0..2)_INT_SUM[UP_B1]. */
+        uint64_t up_b3                 : 1;  /**< [  3:  3](R/W1C/H) Reads or clears enable for PEM(0..3)_INT_SUM[UP_B3]. */
+        uint64_t reserved_2            : 1;
+        uint64_t se                    : 1;  /**< [  1:  1](R/W1C/H) Reads or clears enable for PEM(0..2)_INT_SUM[SE].
+                                                                 Internal:
+                                                                 cfg_sys_err_rc. */
+        uint64_t reserved_0            : 1;
+#else /* Word 0 - Little Endian */
+        uint64_t reserved_0            : 1;
+        uint64_t se                    : 1;  /**< [  1:  1](R/W1C/H) Reads or clears enable for PEM(0..2)_INT_SUM[SE].
+                                                                 Internal:
+                                                                 cfg_sys_err_rc. */
+        uint64_t reserved_2            : 1;
+        uint64_t up_b3                 : 1;  /**< [  3:  3](R/W1C/H) Reads or clears enable for PEM(0..3)_INT_SUM[UP_B3]. */
+        uint64_t up_b1                 : 1;  /**< [  4:  4](R/W1C/H) Reads or clears enable for PEM(0..2)_INT_SUM[UP_B1]. */
+        uint64_t up_b2                 : 1;  /**< [  5:  5](R/W1C/H) Reads or clears enable for PEM(0..2)_INT_SUM[UP_B2]. */
+        uint64_t up_bx                 : 1;  /**< [  6:  6](R/W1C/H) Reads or clears enable for PEM(0..2)_INT_SUM[UP_BX]. */
+        uint64_t un_b1                 : 1;  /**< [  7:  7](R/W1C/H) Reads or clears enable for PEM(0..2)_INT_SUM[UN_B1]. */
+        uint64_t un_b2                 : 1;  /**< [  8:  8](R/W1C/H) Reads or clears enable for PEM(0..2)_INT_SUM[UN_B2]. */
+        uint64_t un_bx                 : 1;  /**< [  9:  9](R/W1C/H) Reads or clears enable for PEM(0..2)_INT_SUM[UN_BX]. */
+        uint64_t reserved_10           : 1;
+        uint64_t rdlk                  : 1;  /**< [ 11: 11](R/W1C/H) Reads or clears enable for PEM(0..2)_INT_SUM[RDLK]. */
+        uint64_t crs_er                : 1;  /**< [ 12: 12](R/W1C/H) Reads or clears enable for PEM(0..2)_INT_SUM[CRS_ER]. */
+        uint64_t crs_dr                : 1;  /**< [ 13: 13](R/W1C/H) Reads or clears enable for PEM(0..2)_INT_SUM[CRS_DR]. */
+        uint64_t surp_down             : 1;  /**< [ 14: 14](R/W1C/H) Reads or clears enable for PEM(0..3)_INT_SUM[SURP_DOWN]. */
+        uint64_t reserved_15_63        : 49;
+#endif /* Word 0 - End */
+    } cn8;
     struct cavm_pemx_int_ena_w1c_cn81xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -9341,7 +10021,7 @@ union cavm_pemx_int_ena_w1c
         uint64_t reserved_15_63        : 49;
 #endif /* Word 0 - End */
     } cn83xx;
-    struct cavm_pemx_int_ena_w1c_cn96xx
+    struct cavm_pemx_int_ena_w1c_cn9
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_22_63        : 42;
@@ -9396,7 +10076,64 @@ union cavm_pemx_int_ena_w1c
         uint64_t un_vf_b0              : 1;  /**< [ 21: 21](R/W1C/H) Reads or clears enable for PEM(0..3)_INT_SUM[UN_VF_B0]. */
         uint64_t reserved_22_63        : 42;
 #endif /* Word 0 - End */
-    } cn96xx;
+    } cn9;
+    /* struct cavm_pemx_int_ena_w1c_cn9 cn96xx; */
+    struct cavm_pemx_int_ena_w1c_cn98xx
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_22_63        : 42;
+        uint64_t un_vf_b0              : 1;  /**< [ 21: 21](R/W1C/H) Reads or clears enable for PEM(0..4)_INT_SUM[UN_VF_B0]. */
+        uint64_t un_vf_b2              : 1;  /**< [ 20: 20](R/W1C/H) Reads or clears enable for PEM(0..4)_INT_SUM[UN_VF_B2]. */
+        uint64_t un_vf_b4              : 1;  /**< [ 19: 19](R/W1C/H) Reads or clears enable for PEM(0..4)_INT_SUM[UN_VF_B4]. */
+        uint64_t up_vf_b0              : 1;  /**< [ 18: 18](R/W1C/H) Reads or clears enable for PEM(0..4)_INT_SUM[UP_VF_B0]. */
+        uint64_t up_vf_b2              : 1;  /**< [ 17: 17](R/W1C/H) Reads or clears enable for PEM(0..4)_INT_SUM[UP_VF_B2]. */
+        uint64_t up_vf_b4              : 1;  /**< [ 16: 16](R/W1C/H) Reads or clears enable for PEM(0..4)_INT_SUM[UP_VF_B4]. */
+        uint64_t ptm_rdy_val           : 1;  /**< [ 15: 15](R/W1C/H) Reads or clears enable for PEM(0..4)_INT_SUM[PTM_RDY_VAL]. */
+        uint64_t un_b0                 : 1;  /**< [ 14: 14](R/W1C/H) Reads or clears enable for PEM(0..4)_INT_SUM[UN_B0]. */
+        uint64_t up_b0                 : 1;  /**< [ 13: 13](R/W1C/H) Reads or clears enable for PEM(0..4)_INT_SUM[UP_B0]. */
+        uint64_t surp_down             : 1;  /**< [ 12: 12](R/W1C/H) Reads or clears enable for PEM(0..4)_INT_SUM[SURP_DOWN]. */
+        uint64_t cfg_inf               : 1;  /**< [ 11: 11](R/W1C/H) Reads or clears enable for PEM(0..4)_INT_SUM[CFG_INF]. */
+        uint64_t crs_dr                : 1;  /**< [ 10: 10](R/W1C/H) Reads or clears enable for PEM(0..4)_INT_SUM[CRS_DR]. */
+        uint64_t crs_er                : 1;  /**< [  9:  9](R/W1C/H) Reads or clears enable for PEM(0..4)_INT_SUM[CRS_ER]. */
+        uint64_t rdlk                  : 1;  /**< [  8:  8](R/W1C/H) Reads or clears enable for PEM(0..4)_INT_SUM[RDLK]. */
+        uint64_t un_bx                 : 1;  /**< [  7:  7](R/W1C/H) Reads or clears enable for PEM(0..4)_INT_SUM[UN_BX]. */
+        uint64_t un_b2                 : 1;  /**< [  6:  6](R/W1C/H) Reads or clears enable for PEM(0..4)_INT_SUM[UN_B2]. */
+        uint64_t un_b4                 : 1;  /**< [  5:  5](R/W1C/H) Reads or clears enable for PEM(0..4)_INT_SUM[UN_B4]. */
+        uint64_t up_bx                 : 1;  /**< [  4:  4](R/W1C/H) Reads or clears enable for PEM(0..4)_INT_SUM[UP_BX]. */
+        uint64_t up_b2                 : 1;  /**< [  3:  3](R/W1C/H) Reads or clears enable for PEM(0..4)_INT_SUM[UP_B2]. */
+        uint64_t up_b4                 : 1;  /**< [  2:  2](R/W1C/H) Reads or clears enable for PEM(0..4)_INT_SUM[UP_B4]. */
+        uint64_t up_b3                 : 1;  /**< [  1:  1](R/W1C/H) Reads or clears enable for PEM(0..4)_INT_SUM[UP_B3]. */
+        uint64_t se                    : 1;  /**< [  0:  0](R/W1C/H) Reads or clears enable for PEM(0..4)_INT_SUM[SE].
+                                                                 Internal:
+                                                                 cfg_sys_err_rc. */
+#else /* Word 0 - Little Endian */
+        uint64_t se                    : 1;  /**< [  0:  0](R/W1C/H) Reads or clears enable for PEM(0..4)_INT_SUM[SE].
+                                                                 Internal:
+                                                                 cfg_sys_err_rc. */
+        uint64_t up_b3                 : 1;  /**< [  1:  1](R/W1C/H) Reads or clears enable for PEM(0..4)_INT_SUM[UP_B3]. */
+        uint64_t up_b4                 : 1;  /**< [  2:  2](R/W1C/H) Reads or clears enable for PEM(0..4)_INT_SUM[UP_B4]. */
+        uint64_t up_b2                 : 1;  /**< [  3:  3](R/W1C/H) Reads or clears enable for PEM(0..4)_INT_SUM[UP_B2]. */
+        uint64_t up_bx                 : 1;  /**< [  4:  4](R/W1C/H) Reads or clears enable for PEM(0..4)_INT_SUM[UP_BX]. */
+        uint64_t un_b4                 : 1;  /**< [  5:  5](R/W1C/H) Reads or clears enable for PEM(0..4)_INT_SUM[UN_B4]. */
+        uint64_t un_b2                 : 1;  /**< [  6:  6](R/W1C/H) Reads or clears enable for PEM(0..4)_INT_SUM[UN_B2]. */
+        uint64_t un_bx                 : 1;  /**< [  7:  7](R/W1C/H) Reads or clears enable for PEM(0..4)_INT_SUM[UN_BX]. */
+        uint64_t rdlk                  : 1;  /**< [  8:  8](R/W1C/H) Reads or clears enable for PEM(0..4)_INT_SUM[RDLK]. */
+        uint64_t crs_er                : 1;  /**< [  9:  9](R/W1C/H) Reads or clears enable for PEM(0..4)_INT_SUM[CRS_ER]. */
+        uint64_t crs_dr                : 1;  /**< [ 10: 10](R/W1C/H) Reads or clears enable for PEM(0..4)_INT_SUM[CRS_DR]. */
+        uint64_t cfg_inf               : 1;  /**< [ 11: 11](R/W1C/H) Reads or clears enable for PEM(0..4)_INT_SUM[CFG_INF]. */
+        uint64_t surp_down             : 1;  /**< [ 12: 12](R/W1C/H) Reads or clears enable for PEM(0..4)_INT_SUM[SURP_DOWN]. */
+        uint64_t up_b0                 : 1;  /**< [ 13: 13](R/W1C/H) Reads or clears enable for PEM(0..4)_INT_SUM[UP_B0]. */
+        uint64_t un_b0                 : 1;  /**< [ 14: 14](R/W1C/H) Reads or clears enable for PEM(0..4)_INT_SUM[UN_B0]. */
+        uint64_t ptm_rdy_val           : 1;  /**< [ 15: 15](R/W1C/H) Reads or clears enable for PEM(0..4)_INT_SUM[PTM_RDY_VAL]. */
+        uint64_t up_vf_b4              : 1;  /**< [ 16: 16](R/W1C/H) Reads or clears enable for PEM(0..4)_INT_SUM[UP_VF_B4]. */
+        uint64_t up_vf_b2              : 1;  /**< [ 17: 17](R/W1C/H) Reads or clears enable for PEM(0..4)_INT_SUM[UP_VF_B2]. */
+        uint64_t up_vf_b0              : 1;  /**< [ 18: 18](R/W1C/H) Reads or clears enable for PEM(0..4)_INT_SUM[UP_VF_B0]. */
+        uint64_t un_vf_b4              : 1;  /**< [ 19: 19](R/W1C/H) Reads or clears enable for PEM(0..4)_INT_SUM[UN_VF_B4]. */
+        uint64_t un_vf_b2              : 1;  /**< [ 20: 20](R/W1C/H) Reads or clears enable for PEM(0..4)_INT_SUM[UN_VF_B2]. */
+        uint64_t un_vf_b0              : 1;  /**< [ 21: 21](R/W1C/H) Reads or clears enable for PEM(0..4)_INT_SUM[UN_VF_B0]. */
+        uint64_t reserved_22_63        : 42;
+#endif /* Word 0 - End */
+    } cn98xx;
     struct cavm_pemx_int_ena_w1c_cnf95xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -9466,7 +10203,9 @@ static inline uint64_t CAVM_PEMX_INT_ENA_W1C(unsigned long a)
         return 0x87e0c0000438ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x8e00000000f8ll + 0x1000000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x8e00000000f8ll + 0x1000000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x8e00000000f8ll + 0x1000000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x8e00000000f8ll + 0x1000000000ll * ((a) & 0x0);
@@ -9513,6 +10252,48 @@ union cavm_pemx_int_ena_w1s
         uint64_t reserved_22_63        : 42;
 #endif /* Word 0 - End */
     } s;
+    struct cavm_pemx_int_ena_w1s_cn8
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_15_63        : 49;
+        uint64_t surp_down             : 1;  /**< [ 14: 14](R/W1S/H) Reads or sets enable for PEM(0..3)_INT_SUM[SURP_DOWN]. */
+        uint64_t crs_dr                : 1;  /**< [ 13: 13](R/W1S/H) Reads or sets enable for PEM(0..2)_INT_SUM[CRS_DR]. */
+        uint64_t crs_er                : 1;  /**< [ 12: 12](R/W1S/H) Reads or sets enable for PEM(0..2)_INT_SUM[CRS_ER]. */
+        uint64_t rdlk                  : 1;  /**< [ 11: 11](R/W1S/H) Reads or sets enable for PEM(0..2)_INT_SUM[RDLK]. */
+        uint64_t reserved_10           : 1;
+        uint64_t un_bx                 : 1;  /**< [  9:  9](R/W1S/H) Reads or sets enable for PEM(0..2)_INT_SUM[UN_BX]. */
+        uint64_t un_b2                 : 1;  /**< [  8:  8](R/W1S/H) Reads or sets enable for PEM(0..2)_INT_SUM[UN_B2]. */
+        uint64_t un_b1                 : 1;  /**< [  7:  7](R/W1S/H) Reads or sets enable for PEM(0..2)_INT_SUM[UN_B1]. */
+        uint64_t up_bx                 : 1;  /**< [  6:  6](R/W1S/H) Reads or sets enable for PEM(0..2)_INT_SUM[UP_BX]. */
+        uint64_t up_b2                 : 1;  /**< [  5:  5](R/W1S/H) Reads or sets enable for PEM(0..2)_INT_SUM[UP_B2]. */
+        uint64_t up_b1                 : 1;  /**< [  4:  4](R/W1S/H) Reads or sets enable for PEM(0..2)_INT_SUM[UP_B1]. */
+        uint64_t up_b3                 : 1;  /**< [  3:  3](R/W1S/H) Reads or sets enable for PEM(0..3)_INT_SUM[UP_B3]. */
+        uint64_t reserved_2            : 1;
+        uint64_t se                    : 1;  /**< [  1:  1](R/W1S/H) Reads or sets enable for PEM(0..2)_INT_SUM[SE].
+                                                                 Internal:
+                                                                 cfg_sys_err_rc. */
+        uint64_t reserved_0            : 1;
+#else /* Word 0 - Little Endian */
+        uint64_t reserved_0            : 1;
+        uint64_t se                    : 1;  /**< [  1:  1](R/W1S/H) Reads or sets enable for PEM(0..2)_INT_SUM[SE].
+                                                                 Internal:
+                                                                 cfg_sys_err_rc. */
+        uint64_t reserved_2            : 1;
+        uint64_t up_b3                 : 1;  /**< [  3:  3](R/W1S/H) Reads or sets enable for PEM(0..3)_INT_SUM[UP_B3]. */
+        uint64_t up_b1                 : 1;  /**< [  4:  4](R/W1S/H) Reads or sets enable for PEM(0..2)_INT_SUM[UP_B1]. */
+        uint64_t up_b2                 : 1;  /**< [  5:  5](R/W1S/H) Reads or sets enable for PEM(0..2)_INT_SUM[UP_B2]. */
+        uint64_t up_bx                 : 1;  /**< [  6:  6](R/W1S/H) Reads or sets enable for PEM(0..2)_INT_SUM[UP_BX]. */
+        uint64_t un_b1                 : 1;  /**< [  7:  7](R/W1S/H) Reads or sets enable for PEM(0..2)_INT_SUM[UN_B1]. */
+        uint64_t un_b2                 : 1;  /**< [  8:  8](R/W1S/H) Reads or sets enable for PEM(0..2)_INT_SUM[UN_B2]. */
+        uint64_t un_bx                 : 1;  /**< [  9:  9](R/W1S/H) Reads or sets enable for PEM(0..2)_INT_SUM[UN_BX]. */
+        uint64_t reserved_10           : 1;
+        uint64_t rdlk                  : 1;  /**< [ 11: 11](R/W1S/H) Reads or sets enable for PEM(0..2)_INT_SUM[RDLK]. */
+        uint64_t crs_er                : 1;  /**< [ 12: 12](R/W1S/H) Reads or sets enable for PEM(0..2)_INT_SUM[CRS_ER]. */
+        uint64_t crs_dr                : 1;  /**< [ 13: 13](R/W1S/H) Reads or sets enable for PEM(0..2)_INT_SUM[CRS_DR]. */
+        uint64_t surp_down             : 1;  /**< [ 14: 14](R/W1S/H) Reads or sets enable for PEM(0..3)_INT_SUM[SURP_DOWN]. */
+        uint64_t reserved_15_63        : 49;
+#endif /* Word 0 - End */
+    } cn8;
     struct cavm_pemx_int_ena_w1s_cn81xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -9593,7 +10374,7 @@ union cavm_pemx_int_ena_w1s
         uint64_t reserved_15_63        : 49;
 #endif /* Word 0 - End */
     } cn83xx;
-    struct cavm_pemx_int_ena_w1s_cn96xx
+    struct cavm_pemx_int_ena_w1s_cn9
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_22_63        : 42;
@@ -9648,7 +10429,64 @@ union cavm_pemx_int_ena_w1s
         uint64_t un_vf_b0              : 1;  /**< [ 21: 21](R/W1S/H) Reads or sets enable for PEM(0..3)_INT_SUM[UN_VF_B0]. */
         uint64_t reserved_22_63        : 42;
 #endif /* Word 0 - End */
-    } cn96xx;
+    } cn9;
+    /* struct cavm_pemx_int_ena_w1s_cn9 cn96xx; */
+    struct cavm_pemx_int_ena_w1s_cn98xx
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_22_63        : 42;
+        uint64_t un_vf_b0              : 1;  /**< [ 21: 21](R/W1S/H) Reads or sets enable for PEM(0..4)_INT_SUM[UN_VF_B0]. */
+        uint64_t un_vf_b2              : 1;  /**< [ 20: 20](R/W1S/H) Reads or sets enable for PEM(0..4)_INT_SUM[UN_VF_B2]. */
+        uint64_t un_vf_b4              : 1;  /**< [ 19: 19](R/W1S/H) Reads or sets enable for PEM(0..4)_INT_SUM[UN_VF_B4]. */
+        uint64_t up_vf_b0              : 1;  /**< [ 18: 18](R/W1S/H) Reads or sets enable for PEM(0..4)_INT_SUM[UP_VF_B0]. */
+        uint64_t up_vf_b2              : 1;  /**< [ 17: 17](R/W1S/H) Reads or sets enable for PEM(0..4)_INT_SUM[UP_VF_B2]. */
+        uint64_t up_vf_b4              : 1;  /**< [ 16: 16](R/W1S/H) Reads or sets enable for PEM(0..4)_INT_SUM[UP_VF_B4]. */
+        uint64_t ptm_rdy_val           : 1;  /**< [ 15: 15](R/W1S/H) Reads or sets enable for PEM(0..4)_INT_SUM[PTM_RDY_VAL]. */
+        uint64_t un_b0                 : 1;  /**< [ 14: 14](R/W1S/H) Reads or sets enable for PEM(0..4)_INT_SUM[UN_B0]. */
+        uint64_t up_b0                 : 1;  /**< [ 13: 13](R/W1S/H) Reads or sets enable for PEM(0..4)_INT_SUM[UP_B0]. */
+        uint64_t surp_down             : 1;  /**< [ 12: 12](R/W1S/H) Reads or sets enable for PEM(0..4)_INT_SUM[SURP_DOWN]. */
+        uint64_t cfg_inf               : 1;  /**< [ 11: 11](R/W1S/H) Reads or sets enable for PEM(0..4)_INT_SUM[CFG_INF]. */
+        uint64_t crs_dr                : 1;  /**< [ 10: 10](R/W1S/H) Reads or sets enable for PEM(0..4)_INT_SUM[CRS_DR]. */
+        uint64_t crs_er                : 1;  /**< [  9:  9](R/W1S/H) Reads or sets enable for PEM(0..4)_INT_SUM[CRS_ER]. */
+        uint64_t rdlk                  : 1;  /**< [  8:  8](R/W1S/H) Reads or sets enable for PEM(0..4)_INT_SUM[RDLK]. */
+        uint64_t un_bx                 : 1;  /**< [  7:  7](R/W1S/H) Reads or sets enable for PEM(0..4)_INT_SUM[UN_BX]. */
+        uint64_t un_b2                 : 1;  /**< [  6:  6](R/W1S/H) Reads or sets enable for PEM(0..4)_INT_SUM[UN_B2]. */
+        uint64_t un_b4                 : 1;  /**< [  5:  5](R/W1S/H) Reads or sets enable for PEM(0..4)_INT_SUM[UN_B4]. */
+        uint64_t up_bx                 : 1;  /**< [  4:  4](R/W1S/H) Reads or sets enable for PEM(0..4)_INT_SUM[UP_BX]. */
+        uint64_t up_b2                 : 1;  /**< [  3:  3](R/W1S/H) Reads or sets enable for PEM(0..4)_INT_SUM[UP_B2]. */
+        uint64_t up_b4                 : 1;  /**< [  2:  2](R/W1S/H) Reads or sets enable for PEM(0..4)_INT_SUM[UP_B4]. */
+        uint64_t up_b3                 : 1;  /**< [  1:  1](R/W1S/H) Reads or sets enable for PEM(0..4)_INT_SUM[UP_B3]. */
+        uint64_t se                    : 1;  /**< [  0:  0](R/W1S/H) Reads or sets enable for PEM(0..4)_INT_SUM[SE].
+                                                                 Internal:
+                                                                 cfg_sys_err_rc. */
+#else /* Word 0 - Little Endian */
+        uint64_t se                    : 1;  /**< [  0:  0](R/W1S/H) Reads or sets enable for PEM(0..4)_INT_SUM[SE].
+                                                                 Internal:
+                                                                 cfg_sys_err_rc. */
+        uint64_t up_b3                 : 1;  /**< [  1:  1](R/W1S/H) Reads or sets enable for PEM(0..4)_INT_SUM[UP_B3]. */
+        uint64_t up_b4                 : 1;  /**< [  2:  2](R/W1S/H) Reads or sets enable for PEM(0..4)_INT_SUM[UP_B4]. */
+        uint64_t up_b2                 : 1;  /**< [  3:  3](R/W1S/H) Reads or sets enable for PEM(0..4)_INT_SUM[UP_B2]. */
+        uint64_t up_bx                 : 1;  /**< [  4:  4](R/W1S/H) Reads or sets enable for PEM(0..4)_INT_SUM[UP_BX]. */
+        uint64_t un_b4                 : 1;  /**< [  5:  5](R/W1S/H) Reads or sets enable for PEM(0..4)_INT_SUM[UN_B4]. */
+        uint64_t un_b2                 : 1;  /**< [  6:  6](R/W1S/H) Reads or sets enable for PEM(0..4)_INT_SUM[UN_B2]. */
+        uint64_t un_bx                 : 1;  /**< [  7:  7](R/W1S/H) Reads or sets enable for PEM(0..4)_INT_SUM[UN_BX]. */
+        uint64_t rdlk                  : 1;  /**< [  8:  8](R/W1S/H) Reads or sets enable for PEM(0..4)_INT_SUM[RDLK]. */
+        uint64_t crs_er                : 1;  /**< [  9:  9](R/W1S/H) Reads or sets enable for PEM(0..4)_INT_SUM[CRS_ER]. */
+        uint64_t crs_dr                : 1;  /**< [ 10: 10](R/W1S/H) Reads or sets enable for PEM(0..4)_INT_SUM[CRS_DR]. */
+        uint64_t cfg_inf               : 1;  /**< [ 11: 11](R/W1S/H) Reads or sets enable for PEM(0..4)_INT_SUM[CFG_INF]. */
+        uint64_t surp_down             : 1;  /**< [ 12: 12](R/W1S/H) Reads or sets enable for PEM(0..4)_INT_SUM[SURP_DOWN]. */
+        uint64_t up_b0                 : 1;  /**< [ 13: 13](R/W1S/H) Reads or sets enable for PEM(0..4)_INT_SUM[UP_B0]. */
+        uint64_t un_b0                 : 1;  /**< [ 14: 14](R/W1S/H) Reads or sets enable for PEM(0..4)_INT_SUM[UN_B0]. */
+        uint64_t ptm_rdy_val           : 1;  /**< [ 15: 15](R/W1S/H) Reads or sets enable for PEM(0..4)_INT_SUM[PTM_RDY_VAL]. */
+        uint64_t up_vf_b4              : 1;  /**< [ 16: 16](R/W1S/H) Reads or sets enable for PEM(0..4)_INT_SUM[UP_VF_B4]. */
+        uint64_t up_vf_b2              : 1;  /**< [ 17: 17](R/W1S/H) Reads or sets enable for PEM(0..4)_INT_SUM[UP_VF_B2]. */
+        uint64_t up_vf_b0              : 1;  /**< [ 18: 18](R/W1S/H) Reads or sets enable for PEM(0..4)_INT_SUM[UP_VF_B0]. */
+        uint64_t un_vf_b4              : 1;  /**< [ 19: 19](R/W1S/H) Reads or sets enable for PEM(0..4)_INT_SUM[UN_VF_B4]. */
+        uint64_t un_vf_b2              : 1;  /**< [ 20: 20](R/W1S/H) Reads or sets enable for PEM(0..4)_INT_SUM[UN_VF_B2]. */
+        uint64_t un_vf_b0              : 1;  /**< [ 21: 21](R/W1S/H) Reads or sets enable for PEM(0..4)_INT_SUM[UN_VF_B0]. */
+        uint64_t reserved_22_63        : 42;
+#endif /* Word 0 - End */
+    } cn98xx;
     struct cavm_pemx_int_ena_w1s_cnf95xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -9718,7 +10556,9 @@ static inline uint64_t CAVM_PEMX_INT_ENA_W1S(unsigned long a)
         return 0x87e0c0000440ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x8e0000000100ll + 0x1000000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x8e0000000100ll + 0x1000000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x8e0000000100ll + 0x1000000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x8e0000000100ll + 0x1000000000ll * ((a) & 0x0);
@@ -9787,6 +10627,48 @@ union cavm_pemx_int_sum
         uint64_t reserved_22_63        : 42;
 #endif /* Word 0 - End */
     } s;
+    struct cavm_pemx_int_sum_cn8
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_15_63        : 49;
+        uint64_t surp_down             : 1;  /**< [ 14: 14](R/W1C/H) Indicates that a surprise down event is occuring in the controller. */
+        uint64_t crs_dr                : 1;  /**< [ 13: 13](R/W1C/H) Had a CRS timeout when retries were disabled. */
+        uint64_t crs_er                : 1;  /**< [ 12: 12](R/W1C/H) Had a CRS timeout when retries were enabled. */
+        uint64_t rdlk                  : 1;  /**< [ 11: 11](R/W1C/H) Received read lock TLP. */
+        uint64_t reserved_10           : 1;
+        uint64_t un_bx                 : 1;  /**< [  9:  9](R/W1C/H) Received N-TLP for unknown BAR. */
+        uint64_t un_b2                 : 1;  /**< [  8:  8](R/W1C/H) Received N-TLP for BAR2 when BAR2 is disabled. */
+        uint64_t un_b1                 : 1;  /**< [  7:  7](R/W1C/H) Received N-TLP for BAR1 when BAR1 index valid is not set. */
+        uint64_t up_bx                 : 1;  /**< [  6:  6](R/W1C/H) Received P-TLP for an unknown BAR. */
+        uint64_t up_b2                 : 1;  /**< [  5:  5](R/W1C/H) Received P-TLP for BAR2 when BAR2 is disabled. */
+        uint64_t up_b1                 : 1;  /**< [  4:  4](R/W1C/H) Received P-TLP for BAR1 when BAR1 index valid is not set. */
+        uint64_t up_b3                 : 1;  /**< [  3:  3](R/W1C/H) Received P-TLP for Expansion ROM (BAR3 EP Mode). */
+        uint64_t reserved_2            : 1;
+        uint64_t se                    : 1;  /**< [  1:  1](R/W1C/H) System error, RC mode only.
+                                                                 Internal:
+                                                                 cfg_sys_err_rc. */
+        uint64_t reserved_0            : 1;
+#else /* Word 0 - Little Endian */
+        uint64_t reserved_0            : 1;
+        uint64_t se                    : 1;  /**< [  1:  1](R/W1C/H) System error, RC mode only.
+                                                                 Internal:
+                                                                 cfg_sys_err_rc. */
+        uint64_t reserved_2            : 1;
+        uint64_t up_b3                 : 1;  /**< [  3:  3](R/W1C/H) Received P-TLP for Expansion ROM (BAR3 EP Mode). */
+        uint64_t up_b1                 : 1;  /**< [  4:  4](R/W1C/H) Received P-TLP for BAR1 when BAR1 index valid is not set. */
+        uint64_t up_b2                 : 1;  /**< [  5:  5](R/W1C/H) Received P-TLP for BAR2 when BAR2 is disabled. */
+        uint64_t up_bx                 : 1;  /**< [  6:  6](R/W1C/H) Received P-TLP for an unknown BAR. */
+        uint64_t un_b1                 : 1;  /**< [  7:  7](R/W1C/H) Received N-TLP for BAR1 when BAR1 index valid is not set. */
+        uint64_t un_b2                 : 1;  /**< [  8:  8](R/W1C/H) Received N-TLP for BAR2 when BAR2 is disabled. */
+        uint64_t un_bx                 : 1;  /**< [  9:  9](R/W1C/H) Received N-TLP for unknown BAR. */
+        uint64_t reserved_10           : 1;
+        uint64_t rdlk                  : 1;  /**< [ 11: 11](R/W1C/H) Received read lock TLP. */
+        uint64_t crs_er                : 1;  /**< [ 12: 12](R/W1C/H) Had a CRS timeout when retries were enabled. */
+        uint64_t crs_dr                : 1;  /**< [ 13: 13](R/W1C/H) Had a CRS timeout when retries were disabled. */
+        uint64_t surp_down             : 1;  /**< [ 14: 14](R/W1C/H) Indicates that a surprise down event is occuring in the controller. */
+        uint64_t reserved_15_63        : 49;
+#endif /* Word 0 - End */
+    } cn8;
     struct cavm_pemx_int_sum_cn81xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -9825,48 +10707,7 @@ union cavm_pemx_int_sum
         uint64_t reserved_14_63        : 50;
 #endif /* Word 0 - End */
     } cn81xx;
-    struct cavm_pemx_int_sum_cn83xx
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_15_63        : 49;
-        uint64_t surp_down             : 1;  /**< [ 14: 14](R/W1C/H) Indicates that a surprise down event is occuring in the controller. */
-        uint64_t crs_dr                : 1;  /**< [ 13: 13](R/W1C/H) Had a CRS timeout when retries were disabled. */
-        uint64_t crs_er                : 1;  /**< [ 12: 12](R/W1C/H) Had a CRS timeout when retries were enabled. */
-        uint64_t rdlk                  : 1;  /**< [ 11: 11](R/W1C/H) Received read lock TLP. */
-        uint64_t reserved_10           : 1;
-        uint64_t un_bx                 : 1;  /**< [  9:  9](R/W1C/H) Received N-TLP for unknown BAR. */
-        uint64_t un_b2                 : 1;  /**< [  8:  8](R/W1C/H) Received N-TLP for BAR2 when BAR2 is disabled. */
-        uint64_t un_b1                 : 1;  /**< [  7:  7](R/W1C/H) Received N-TLP for BAR1 when BAR1 index valid is not set. */
-        uint64_t up_bx                 : 1;  /**< [  6:  6](R/W1C/H) Received P-TLP for an unknown BAR. */
-        uint64_t up_b2                 : 1;  /**< [  5:  5](R/W1C/H) Received P-TLP for BAR2 when BAR2 is disabled. */
-        uint64_t up_b1                 : 1;  /**< [  4:  4](R/W1C/H) Received P-TLP for BAR1 when BAR1 index valid is not set. */
-        uint64_t up_b3                 : 1;  /**< [  3:  3](R/W1C/H) Received P-TLP for Expansion ROM (BAR3 EP Mode). */
-        uint64_t reserved_2            : 1;
-        uint64_t se                    : 1;  /**< [  1:  1](R/W1C/H) System error, RC mode only.
-                                                                 Internal:
-                                                                 cfg_sys_err_rc. */
-        uint64_t reserved_0            : 1;
-#else /* Word 0 - Little Endian */
-        uint64_t reserved_0            : 1;
-        uint64_t se                    : 1;  /**< [  1:  1](R/W1C/H) System error, RC mode only.
-                                                                 Internal:
-                                                                 cfg_sys_err_rc. */
-        uint64_t reserved_2            : 1;
-        uint64_t up_b3                 : 1;  /**< [  3:  3](R/W1C/H) Received P-TLP for Expansion ROM (BAR3 EP Mode). */
-        uint64_t up_b1                 : 1;  /**< [  4:  4](R/W1C/H) Received P-TLP for BAR1 when BAR1 index valid is not set. */
-        uint64_t up_b2                 : 1;  /**< [  5:  5](R/W1C/H) Received P-TLP for BAR2 when BAR2 is disabled. */
-        uint64_t up_bx                 : 1;  /**< [  6:  6](R/W1C/H) Received P-TLP for an unknown BAR. */
-        uint64_t un_b1                 : 1;  /**< [  7:  7](R/W1C/H) Received N-TLP for BAR1 when BAR1 index valid is not set. */
-        uint64_t un_b2                 : 1;  /**< [  8:  8](R/W1C/H) Received N-TLP for BAR2 when BAR2 is disabled. */
-        uint64_t un_bx                 : 1;  /**< [  9:  9](R/W1C/H) Received N-TLP for unknown BAR. */
-        uint64_t reserved_10           : 1;
-        uint64_t rdlk                  : 1;  /**< [ 11: 11](R/W1C/H) Received read lock TLP. */
-        uint64_t crs_er                : 1;  /**< [ 12: 12](R/W1C/H) Had a CRS timeout when retries were enabled. */
-        uint64_t crs_dr                : 1;  /**< [ 13: 13](R/W1C/H) Had a CRS timeout when retries were disabled. */
-        uint64_t surp_down             : 1;  /**< [ 14: 14](R/W1C/H) Indicates that a surprise down event is occuring in the controller. */
-        uint64_t reserved_15_63        : 49;
-#endif /* Word 0 - End */
-    } cn83xx;
+    /* struct cavm_pemx_int_sum_cn8 cn83xx; */
     struct cavm_pemx_int_sum_cn9
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -9953,7 +10794,9 @@ static inline uint64_t CAVM_PEMX_INT_SUM(unsigned long a)
         return 0x87e0c0000428ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x8e00000000e8ll + 0x1000000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x8e00000000e8ll + 0x1000000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x8e00000000e8ll + 0x1000000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x8e00000000e8ll + 0x1000000000ll * ((a) & 0x0);
@@ -10000,6 +10843,48 @@ union cavm_pemx_int_sum_w1s
         uint64_t reserved_22_63        : 42;
 #endif /* Word 0 - End */
     } s;
+    struct cavm_pemx_int_sum_w1s_cn8
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_15_63        : 49;
+        uint64_t surp_down             : 1;  /**< [ 14: 14](R/W1S/H) Reads or sets PEM(0..3)_INT_SUM[SURP_DOWN]. */
+        uint64_t crs_dr                : 1;  /**< [ 13: 13](R/W1S/H) Reads or sets PEM(0..2)_INT_SUM[CRS_DR]. */
+        uint64_t crs_er                : 1;  /**< [ 12: 12](R/W1S/H) Reads or sets PEM(0..2)_INT_SUM[CRS_ER]. */
+        uint64_t rdlk                  : 1;  /**< [ 11: 11](R/W1S/H) Reads or sets PEM(0..2)_INT_SUM[RDLK]. */
+        uint64_t reserved_10           : 1;
+        uint64_t un_bx                 : 1;  /**< [  9:  9](R/W1S/H) Reads or sets PEM(0..2)_INT_SUM[UN_BX]. */
+        uint64_t un_b2                 : 1;  /**< [  8:  8](R/W1S/H) Reads or sets PEM(0..2)_INT_SUM[UN_B2]. */
+        uint64_t un_b1                 : 1;  /**< [  7:  7](R/W1S/H) Reads or sets PEM(0..2)_INT_SUM[UN_B1]. */
+        uint64_t up_bx                 : 1;  /**< [  6:  6](R/W1S/H) Reads or sets PEM(0..2)_INT_SUM[UP_BX]. */
+        uint64_t up_b2                 : 1;  /**< [  5:  5](R/W1S/H) Reads or sets PEM(0..2)_INT_SUM[UP_B2]. */
+        uint64_t up_b1                 : 1;  /**< [  4:  4](R/W1S/H) Reads or sets PEM(0..2)_INT_SUM[UP_B1]. */
+        uint64_t up_b3                 : 1;  /**< [  3:  3](R/W1S/H) Reads or sets PEM(0..3)_INT_SUM[UP_B3]. */
+        uint64_t reserved_2            : 1;
+        uint64_t se                    : 1;  /**< [  1:  1](R/W1S/H) Reads or sets PEM(0..2)_INT_SUM[SE].
+                                                                 Internal:
+                                                                 cfg_sys_err_rc. */
+        uint64_t reserved_0            : 1;
+#else /* Word 0 - Little Endian */
+        uint64_t reserved_0            : 1;
+        uint64_t se                    : 1;  /**< [  1:  1](R/W1S/H) Reads or sets PEM(0..2)_INT_SUM[SE].
+                                                                 Internal:
+                                                                 cfg_sys_err_rc. */
+        uint64_t reserved_2            : 1;
+        uint64_t up_b3                 : 1;  /**< [  3:  3](R/W1S/H) Reads or sets PEM(0..3)_INT_SUM[UP_B3]. */
+        uint64_t up_b1                 : 1;  /**< [  4:  4](R/W1S/H) Reads or sets PEM(0..2)_INT_SUM[UP_B1]. */
+        uint64_t up_b2                 : 1;  /**< [  5:  5](R/W1S/H) Reads or sets PEM(0..2)_INT_SUM[UP_B2]. */
+        uint64_t up_bx                 : 1;  /**< [  6:  6](R/W1S/H) Reads or sets PEM(0..2)_INT_SUM[UP_BX]. */
+        uint64_t un_b1                 : 1;  /**< [  7:  7](R/W1S/H) Reads or sets PEM(0..2)_INT_SUM[UN_B1]. */
+        uint64_t un_b2                 : 1;  /**< [  8:  8](R/W1S/H) Reads or sets PEM(0..2)_INT_SUM[UN_B2]. */
+        uint64_t un_bx                 : 1;  /**< [  9:  9](R/W1S/H) Reads or sets PEM(0..2)_INT_SUM[UN_BX]. */
+        uint64_t reserved_10           : 1;
+        uint64_t rdlk                  : 1;  /**< [ 11: 11](R/W1S/H) Reads or sets PEM(0..2)_INT_SUM[RDLK]. */
+        uint64_t crs_er                : 1;  /**< [ 12: 12](R/W1S/H) Reads or sets PEM(0..2)_INT_SUM[CRS_ER]. */
+        uint64_t crs_dr                : 1;  /**< [ 13: 13](R/W1S/H) Reads or sets PEM(0..2)_INT_SUM[CRS_DR]. */
+        uint64_t surp_down             : 1;  /**< [ 14: 14](R/W1S/H) Reads or sets PEM(0..3)_INT_SUM[SURP_DOWN]. */
+        uint64_t reserved_15_63        : 49;
+#endif /* Word 0 - End */
+    } cn8;
     struct cavm_pemx_int_sum_w1s_cn81xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -10080,7 +10965,7 @@ union cavm_pemx_int_sum_w1s
         uint64_t reserved_15_63        : 49;
 #endif /* Word 0 - End */
     } cn83xx;
-    struct cavm_pemx_int_sum_w1s_cn96xx
+    struct cavm_pemx_int_sum_w1s_cn9
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_22_63        : 42;
@@ -10135,7 +11020,64 @@ union cavm_pemx_int_sum_w1s
         uint64_t un_vf_b0              : 1;  /**< [ 21: 21](R/W1S/H) Reads or sets PEM(0..3)_INT_SUM[UN_VF_B0]. */
         uint64_t reserved_22_63        : 42;
 #endif /* Word 0 - End */
-    } cn96xx;
+    } cn9;
+    /* struct cavm_pemx_int_sum_w1s_cn9 cn96xx; */
+    struct cavm_pemx_int_sum_w1s_cn98xx
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_22_63        : 42;
+        uint64_t un_vf_b0              : 1;  /**< [ 21: 21](R/W1S/H) Reads or sets PEM(0..4)_INT_SUM[UN_VF_B0]. */
+        uint64_t un_vf_b2              : 1;  /**< [ 20: 20](R/W1S/H) Reads or sets PEM(0..4)_INT_SUM[UN_VF_B2]. */
+        uint64_t un_vf_b4              : 1;  /**< [ 19: 19](R/W1S/H) Reads or sets PEM(0..4)_INT_SUM[UN_VF_B4]. */
+        uint64_t up_vf_b0              : 1;  /**< [ 18: 18](R/W1S/H) Reads or sets PEM(0..4)_INT_SUM[UP_VF_B0]. */
+        uint64_t up_vf_b2              : 1;  /**< [ 17: 17](R/W1S/H) Reads or sets PEM(0..4)_INT_SUM[UP_VF_B2]. */
+        uint64_t up_vf_b4              : 1;  /**< [ 16: 16](R/W1S/H) Reads or sets PEM(0..4)_INT_SUM[UP_VF_B4]. */
+        uint64_t ptm_rdy_val           : 1;  /**< [ 15: 15](R/W1S/H) Reads or sets PEM(0..4)_INT_SUM[PTM_RDY_VAL]. */
+        uint64_t un_b0                 : 1;  /**< [ 14: 14](R/W1S/H) Reads or sets PEM(0..4)_INT_SUM[UN_B0]. */
+        uint64_t up_b0                 : 1;  /**< [ 13: 13](R/W1S/H) Reads or sets PEM(0..4)_INT_SUM[UP_B0]. */
+        uint64_t surp_down             : 1;  /**< [ 12: 12](R/W1S/H) Reads or sets PEM(0..4)_INT_SUM[SURP_DOWN]. */
+        uint64_t cfg_inf               : 1;  /**< [ 11: 11](R/W1S/H) Reads or sets PEM(0..4)_INT_SUM[CFG_INF]. */
+        uint64_t crs_dr                : 1;  /**< [ 10: 10](R/W1S/H) Reads or sets PEM(0..4)_INT_SUM[CRS_DR]. */
+        uint64_t crs_er                : 1;  /**< [  9:  9](R/W1S/H) Reads or sets PEM(0..4)_INT_SUM[CRS_ER]. */
+        uint64_t rdlk                  : 1;  /**< [  8:  8](R/W1S/H) Reads or sets PEM(0..4)_INT_SUM[RDLK]. */
+        uint64_t un_bx                 : 1;  /**< [  7:  7](R/W1S/H) Reads or sets PEM(0..4)_INT_SUM[UN_BX]. */
+        uint64_t un_b2                 : 1;  /**< [  6:  6](R/W1S/H) Reads or sets PEM(0..4)_INT_SUM[UN_B2]. */
+        uint64_t un_b4                 : 1;  /**< [  5:  5](R/W1S/H) Reads or sets PEM(0..4)_INT_SUM[UN_B4]. */
+        uint64_t up_bx                 : 1;  /**< [  4:  4](R/W1S/H) Reads or sets PEM(0..4)_INT_SUM[UP_BX]. */
+        uint64_t up_b2                 : 1;  /**< [  3:  3](R/W1S/H) Reads or sets PEM(0..4)_INT_SUM[UP_B2]. */
+        uint64_t up_b4                 : 1;  /**< [  2:  2](R/W1S/H) Reads or sets PEM(0..4)_INT_SUM[UP_B4]. */
+        uint64_t up_b3                 : 1;  /**< [  1:  1](R/W1S/H) Reads or sets PEM(0..4)_INT_SUM[UP_B3]. */
+        uint64_t se                    : 1;  /**< [  0:  0](R/W1S/H) Reads or sets PEM(0..4)_INT_SUM[SE].
+                                                                 Internal:
+                                                                 cfg_sys_err_rc. */
+#else /* Word 0 - Little Endian */
+        uint64_t se                    : 1;  /**< [  0:  0](R/W1S/H) Reads or sets PEM(0..4)_INT_SUM[SE].
+                                                                 Internal:
+                                                                 cfg_sys_err_rc. */
+        uint64_t up_b3                 : 1;  /**< [  1:  1](R/W1S/H) Reads or sets PEM(0..4)_INT_SUM[UP_B3]. */
+        uint64_t up_b4                 : 1;  /**< [  2:  2](R/W1S/H) Reads or sets PEM(0..4)_INT_SUM[UP_B4]. */
+        uint64_t up_b2                 : 1;  /**< [  3:  3](R/W1S/H) Reads or sets PEM(0..4)_INT_SUM[UP_B2]. */
+        uint64_t up_bx                 : 1;  /**< [  4:  4](R/W1S/H) Reads or sets PEM(0..4)_INT_SUM[UP_BX]. */
+        uint64_t un_b4                 : 1;  /**< [  5:  5](R/W1S/H) Reads or sets PEM(0..4)_INT_SUM[UN_B4]. */
+        uint64_t un_b2                 : 1;  /**< [  6:  6](R/W1S/H) Reads or sets PEM(0..4)_INT_SUM[UN_B2]. */
+        uint64_t un_bx                 : 1;  /**< [  7:  7](R/W1S/H) Reads or sets PEM(0..4)_INT_SUM[UN_BX]. */
+        uint64_t rdlk                  : 1;  /**< [  8:  8](R/W1S/H) Reads or sets PEM(0..4)_INT_SUM[RDLK]. */
+        uint64_t crs_er                : 1;  /**< [  9:  9](R/W1S/H) Reads or sets PEM(0..4)_INT_SUM[CRS_ER]. */
+        uint64_t crs_dr                : 1;  /**< [ 10: 10](R/W1S/H) Reads or sets PEM(0..4)_INT_SUM[CRS_DR]. */
+        uint64_t cfg_inf               : 1;  /**< [ 11: 11](R/W1S/H) Reads or sets PEM(0..4)_INT_SUM[CFG_INF]. */
+        uint64_t surp_down             : 1;  /**< [ 12: 12](R/W1S/H) Reads or sets PEM(0..4)_INT_SUM[SURP_DOWN]. */
+        uint64_t up_b0                 : 1;  /**< [ 13: 13](R/W1S/H) Reads or sets PEM(0..4)_INT_SUM[UP_B0]. */
+        uint64_t un_b0                 : 1;  /**< [ 14: 14](R/W1S/H) Reads or sets PEM(0..4)_INT_SUM[UN_B0]. */
+        uint64_t ptm_rdy_val           : 1;  /**< [ 15: 15](R/W1S/H) Reads or sets PEM(0..4)_INT_SUM[PTM_RDY_VAL]. */
+        uint64_t up_vf_b4              : 1;  /**< [ 16: 16](R/W1S/H) Reads or sets PEM(0..4)_INT_SUM[UP_VF_B4]. */
+        uint64_t up_vf_b2              : 1;  /**< [ 17: 17](R/W1S/H) Reads or sets PEM(0..4)_INT_SUM[UP_VF_B2]. */
+        uint64_t up_vf_b0              : 1;  /**< [ 18: 18](R/W1S/H) Reads or sets PEM(0..4)_INT_SUM[UP_VF_B0]. */
+        uint64_t un_vf_b4              : 1;  /**< [ 19: 19](R/W1S/H) Reads or sets PEM(0..4)_INT_SUM[UN_VF_B4]. */
+        uint64_t un_vf_b2              : 1;  /**< [ 20: 20](R/W1S/H) Reads or sets PEM(0..4)_INT_SUM[UN_VF_B2]. */
+        uint64_t un_vf_b0              : 1;  /**< [ 21: 21](R/W1S/H) Reads or sets PEM(0..4)_INT_SUM[UN_VF_B0]. */
+        uint64_t reserved_22_63        : 42;
+#endif /* Word 0 - End */
+    } cn98xx;
     struct cavm_pemx_int_sum_w1s_cnf95xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -10205,7 +11147,9 @@ static inline uint64_t CAVM_PEMX_INT_SUM_W1S(unsigned long a)
         return 0x87e0c0000430ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x8e00000000f0ll + 0x1000000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x8e00000000f0ll + 0x1000000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x8e00000000f0ll + 0x1000000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x8e00000000f0ll + 0x1000000000ll * ((a) & 0x0);
@@ -10273,7 +11217,9 @@ static inline uint64_t CAVM_PEMX_LATENCY_PC(unsigned long a)
         return 0x87e0c0000490ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x8e0000000118ll + 0x1000000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x8e0000000118ll + 0x1000000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x8e0000000118ll + 0x1000000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x8e0000000118ll + 0x1000000000ll * ((a) & 0x0);
@@ -10432,7 +11378,9 @@ static inline uint64_t CAVM_PEMX_LATENCY_PC_CTL(unsigned long a)
         return 0x87e0c00004c0ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x8e0000000128ll + 0x1000000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x8e0000000128ll + 0x1000000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x8e0000000128ll + 0x1000000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x8e0000000128ll + 0x1000000000ll * ((a) & 0x0);
@@ -10521,7 +11469,9 @@ static inline uint64_t CAVM_PEMX_LTR_LATENCY(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x8e00000000c0ll + 0x1000000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x8e00000000c0ll + 0x1000000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x8e00000000c0ll + 0x1000000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x8e00000000c0ll + 0x1000000000ll * ((a) & 0x0);
@@ -10570,7 +11520,9 @@ static inline uint64_t CAVM_PEMX_LTR_VALX(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=3) && (b<=1)))
         return 0x8e00000000b0ll + 0x1000000000ll * ((a) & 0x3) + 8ll * ((b) & 0x1);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=1)))
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=4) && (b<=1)))
+        return 0x8e00000000b0ll + 0x1000000000ll * ((a) & 0x7) + 8ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && ((a==0) && (b<=1)))
         return 0x8e00000000b0ll + 0x1000000000ll * ((a) & 0x0) + 8ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=1)))
         return 0x8e00000000b0ll + 0x1000000000ll * ((a) & 0x0) + 8ll * ((b) & 0x1);
@@ -10631,7 +11583,9 @@ static inline uint64_t CAVM_PEMX_MAC_LANEX_EQ(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=3) && (b<=15)))
         return 0x8e0000000780ll + 0x1000000000ll * ((a) & 0x3) + 8ll * ((b) & 0xf);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=15)))
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=4) && (b<=15)))
+        return 0x8e0000000780ll + 0x1000000000ll * ((a) & 0x7) + 8ll * ((b) & 0xf);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && ((a==0) && (b<=15)))
         return 0x8e0000000780ll + 0x1000000000ll * ((a) & 0x0) + 8ll * ((b) & 0xf);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=15)))
         return 0x8e0000000780ll + 0x1000000000ll * ((a) & 0x0) + 8ll * ((b) & 0xf);
@@ -10844,7 +11798,9 @@ static inline uint64_t CAVM_PEMX_MERGE_TIMER_CTL(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x8e0000000180ll + 0x1000000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x8e0000000180ll + 0x1000000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x8e0000000180ll + 0x1000000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x8e0000000180ll + 0x1000000000ll * ((a) & 0x0);
@@ -10894,7 +11850,9 @@ static inline uint64_t CAVM_PEMX_MSIX_PBAX(unsigned long a, unsigned long b)
         return 0x87e0c0ff0000ll + 0x1000000ll * ((a) & 0x3) + 8ll * ((b) & 0x0);
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=3) && (b==0)))
         return 0x8e0f000f0000ll + 0x1000000000ll * ((a) & 0x3) + 8ll * ((b) & 0x0);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b==0)))
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=4) && (b==0)))
+        return 0x8e0f000f0000ll + 0x1000000000ll * ((a) & 0x7) + 8ll * ((b) & 0x0);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && ((a==0) && (b==0)))
         return 0x8e0f000f0000ll + 0x1000000000ll * ((a) & 0x0) + 8ll * ((b) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b==0)))
         return 0x8e0f000f0000ll + 0x1000000000ll * ((a) & 0x0) + 8ll * ((b) & 0x0);
@@ -10951,7 +11909,7 @@ union cavm_pemx_msix_vecx_addr
         uint64_t reserved_53_63        : 11;
 #endif /* Word 0 - End */
     } s;
-    struct cavm_pemx_msix_vecx_addr_cn81xx
+    struct cavm_pemx_msix_vecx_addr_cn8
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_49_63        : 15;
@@ -10980,7 +11938,8 @@ union cavm_pemx_msix_vecx_addr
         uint64_t addr                  : 47; /**< [ 48:  2](R/W) IOVA to use for MSI-X delivery of this vector. */
         uint64_t reserved_49_63        : 15;
 #endif /* Word 0 - End */
-    } cn81xx;
+    } cn8;
+    /* struct cavm_pemx_msix_vecx_addr_cn8 cn81xx; */
     struct cavm_pemx_msix_vecx_addr_cn83xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -11083,7 +12042,9 @@ static inline uint64_t CAVM_PEMX_MSIX_VECX_ADDR(unsigned long a, unsigned long b
         return 0x8e0f00000000ll + 0x1000000000ll * ((a) & 0x3) + 0x10ll * ((b) & 0xf);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a<=3) && (b<=9)))
         return 0x8e0f00000000ll + 0x1000000000ll * ((a) & 0x3) + 0x10ll * ((b) & 0xf);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=8)))
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=4) && (b<=9)))
+        return 0x8e0f00000000ll + 0x1000000000ll * ((a) & 0x7) + 0x10ll * ((b) & 0xf);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && ((a==0) && (b<=8)))
         return 0x8e0f00000000ll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0xf);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=8)))
         return 0x8e0f00000000ll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0xf);
@@ -11151,7 +12112,9 @@ static inline uint64_t CAVM_PEMX_MSIX_VECX_CTL(unsigned long a, unsigned long b)
         return 0x8e0f00000008ll + 0x1000000000ll * ((a) & 0x3) + 0x10ll * ((b) & 0xf);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a<=3) && (b<=9)))
         return 0x8e0f00000008ll + 0x1000000000ll * ((a) & 0x3) + 0x10ll * ((b) & 0xf);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=8)))
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=4) && (b<=9)))
+        return 0x8e0f00000008ll + 0x1000000000ll * ((a) & 0x7) + 0x10ll * ((b) & 0xf);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && ((a==0) && (b<=8)))
         return 0x8e0f00000008ll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0xf);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=8)))
         return 0x8e0f00000008ll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0xf);
@@ -11311,7 +12274,9 @@ static inline uint64_t CAVM_PEMX_NCBI_CTL(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x8e0000000178ll + 0x1000000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x8e0000000178ll + 0x1000000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x8e0000000178ll + 0x1000000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x8e0000000178ll + 0x1000000000ll * ((a) & 0x0);
@@ -11369,7 +12334,9 @@ static inline uint64_t CAVM_PEMX_NCBI_TLP_CREDITS(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x8e0000000030ll + 0x1000000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x8e0000000030ll + 0x1000000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x8e0000000030ll + 0x1000000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x8e0000000030ll + 0x1000000000ll * ((a) & 0x0);
@@ -11443,7 +12410,9 @@ static inline uint64_t CAVM_PEMX_NCBO_FIFO_STATUS(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x8e0000000138ll + 0x1000000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x8e0000000138ll + 0x1000000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x8e0000000138ll + 0x1000000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x8e0000000138ll + 0x1000000000ll * ((a) & 0x0);
@@ -11513,7 +12482,9 @@ static inline uint64_t CAVM_PEMX_OB_CPL_FIFO_STATUS(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x8e0000000170ll + 0x1000000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x8e0000000170ll + 0x1000000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x8e0000000170ll + 0x1000000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x8e0000000170ll + 0x1000000000ll * ((a) & 0x0);
@@ -11591,7 +12562,9 @@ static inline uint64_t CAVM_PEMX_OBFF_CTL_STATUS(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x8e0000000088ll + 0x1000000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x8e0000000088ll + 0x1000000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x8e0000000088ll + 0x1000000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x8e0000000088ll + 0x1000000000ll * ((a) & 0x0);
@@ -11649,7 +12622,9 @@ static inline uint64_t CAVM_PEMX_OBFF_WAKE_CFG(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x8e0000000090ll + 0x1000000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x8e0000000090ll + 0x1000000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x8e0000000090ll + 0x1000000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x8e0000000090ll + 0x1000000000ll * ((a) & 0x0);
@@ -11758,7 +12733,9 @@ static inline uint64_t CAVM_PEMX_ON(unsigned long a)
         return 0x87e0c0000420ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x8e00000000e0ll + 0x1000000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x8e00000000e0ll + 0x1000000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x8e00000000e0ll + 0x1000000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x8e00000000e0ll + 0x1000000000ll * ((a) & 0x0);
@@ -11795,6 +12772,7 @@ union cavm_pemx_p2n_bar0_start
         uint64_t reserved_0_63         : 64;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_pemx_p2n_bar0_start_s cn8; */
     struct cavm_pemx_p2n_bar0_start_cn81xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -11839,7 +12817,9 @@ static inline uint64_t CAVM_PEMX_P2N_BAR0_START(unsigned long a)
         return 0x87e0c0000080ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x8e0000000158ll + 0x1000000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x8e0000000158ll + 0x1000000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x8e0000000158ll + 0x1000000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x8e0000000158ll + 0x1000000000ll * ((a) & 0x0);
@@ -11917,6 +12897,7 @@ union cavm_pemx_p2n_bar2_start
         uint64_t reserved_0_63         : 64;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_pemx_p2n_bar2_start_s cn8; */
     struct cavm_pemx_p2n_bar2_start_cn81xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -11969,7 +12950,9 @@ static inline uint64_t CAVM_PEMX_P2N_BAR2_START(unsigned long a)
         return 0x87e0c0000090ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x8e0000000150ll + 0x1000000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x8e0000000150ll + 0x1000000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x8e0000000150ll + 0x1000000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x8e0000000150ll + 0x1000000000ll * ((a) & 0x0);
@@ -12017,7 +13000,9 @@ static inline uint64_t CAVM_PEMX_P2N_BAR4_START(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x8e0000000148ll + 0x1000000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x8e0000000148ll + 0x1000000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x8e0000000148ll + 0x1000000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x8e0000000148ll + 0x1000000000ll * ((a) & 0x0);
@@ -12159,7 +13144,9 @@ static inline uint64_t CAVM_PEMX_PB_DATAX(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=3) && (b<=7)))
         return 0x8e0000000240ll + 0x1000000000ll * ((a) & 0x3) + 8ll * ((b) & 0x7);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=7)))
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=4) && (b<=7)))
+        return 0x8e0000000240ll + 0x1000000000ll * ((a) & 0x7) + 8ll * ((b) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && ((a==0) && (b<=7)))
         return 0x8e0000000240ll + 0x1000000000ll * ((a) & 0x0) + 8ll * ((b) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=7)))
         return 0x8e0000000240ll + 0x1000000000ll * ((a) & 0x0) + 8ll * ((b) & 0x7);
@@ -12229,7 +13216,9 @@ static inline uint64_t CAVM_PEMX_PERR_STATUS(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x8e00000001d8ll + 0x1000000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x8e00000001d8ll + 0x1000000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x8e00000001d8ll + 0x1000000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x8e00000001d8ll + 0x1000000000ll * ((a) & 0x0);
@@ -12277,7 +13266,9 @@ static inline uint64_t CAVM_PEMX_PFX_CLR_FLR_REQ(unsigned long a, unsigned long 
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=3) && (b<=15)))
         return 0x8e0000000a00ll + 0x1000000000ll * ((a) & 0x3) + 8ll * ((b) & 0xf);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=15)))
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=4) && (b<=15)))
+        return 0x8e0000000a00ll + 0x1000000000ll * ((a) & 0x7) + 8ll * ((b) & 0xf);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && ((a==0) && (b<=15)))
         return 0x8e0000000a00ll + 0x1000000000ll * ((a) & 0x0) + 8ll * ((b) & 0xf);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=15)))
         return 0x8e0000000a00ll + 0x1000000000ll * ((a) & 0x0) + 8ll * ((b) & 0xf);
@@ -12328,7 +13319,9 @@ static inline uint64_t CAVM_PEMX_PFX_CSX_PFCFGX(unsigned long a, unsigned long b
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=3) && (b<=15) && (c<=1) && (d<=511)))
         return 0x8e0000008000ll + 0x1000000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0xf) + 0x10000ll * ((c) & 0x1) + 8ll * ((d) & 0x1ff);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=15) && (c<=1) && (d<=511)))
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=4) && (b<=15) && (c<=1) && (d<=511)))
+        return 0x8e0000008000ll + 0x1000000000ll * ((a) & 0x7) + 0x40000ll * ((b) & 0xf) + 0x10000ll * ((c) & 0x1) + 8ll * ((d) & 0x1ff);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && ((a==0) && (b<=15) && (c<=1) && (d<=511)))
         return 0x8e0000008000ll + 0x1000000000ll * ((a) & 0x0) + 0x40000ll * ((b) & 0xf) + 0x10000ll * ((c) & 0x1) + 8ll * ((d) & 0x1ff);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=15) && (c<=1) && (d<=511)))
         return 0x8e0000008000ll + 0x1000000000ll * ((a) & 0x0) + 0x40000ll * ((b) & 0xf) + 0x10000ll * ((c) & 0x1) + 8ll * ((d) & 0x1ff);
@@ -12419,7 +13412,9 @@ static inline uint64_t CAVM_PEMX_PFX_CTL_STATUS(unsigned long a, unsigned long b
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=3) && (b<=15)))
         return 0x8e0000000800ll + 0x1000000000ll * ((a) & 0x3) + 8ll * ((b) & 0xf);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=15)))
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=4) && (b<=15)))
+        return 0x8e0000000800ll + 0x1000000000ll * ((a) & 0x7) + 8ll * ((b) & 0xf);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && ((a==0) && (b<=15)))
         return 0x8e0000000800ll + 0x1000000000ll * ((a) & 0x0) + 8ll * ((b) & 0xf);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=15)))
         return 0x8e0000000800ll + 0x1000000000ll * ((a) & 0x0) + 8ll * ((b) & 0xf);
@@ -12470,7 +13465,9 @@ static inline uint64_t CAVM_PEMX_PFX_VFX_VFCFGX(unsigned long a, unsigned long b
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=3) && (b<=15) && (c<=239) && (d<=511)))
         return 0x8e0000028000ll + 0x1000000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0xf) + 0x400000ll * ((c) & 0xff) + 8ll * ((d) & 0x1ff);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=15) && (c<=239) && (d<=511)))
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=4) && (b<=15) && (c<=239) && (d<=511)))
+        return 0x8e0000028000ll + 0x1000000000ll * ((a) & 0x7) + 0x40000ll * ((b) & 0xf) + 0x400000ll * ((c) & 0xff) + 8ll * ((d) & 0x1ff);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && ((a==0) && (b<=15) && (c<=239) && (d<=511)))
         return 0x8e0000028000ll + 0x1000000000ll * ((a) & 0x0) + 0x40000ll * ((b) & 0xf) + 0x400000ll * ((c) & 0xff) + 8ll * ((d) & 0x1ff);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=15) && (c<=239) && (d<=511)))
         return 0x8e0000028000ll + 0x1000000000ll * ((a) & 0x0) + 0x40000ll * ((b) & 0xf) + 0x400000ll * ((c) & 0xff) + 8ll * ((d) & 0x1ff);
@@ -12522,7 +13519,9 @@ static inline uint64_t CAVM_PEMX_PSPI_TLP_CREDITS(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x8e0000000038ll + 0x1000000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x8e0000000038ll + 0x1000000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x8e0000000038ll + 0x1000000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x8e0000000038ll + 0x1000000000ll * ((a) & 0x0);
@@ -12624,7 +13623,9 @@ static inline uint64_t CAVM_PEMX_PTM_CTL(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x8e0000000098ll + 0x1000000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x8e0000000098ll + 0x1000000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x8e0000000098ll + 0x1000000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x8e0000000098ll + 0x1000000000ll * ((a) & 0x0);
@@ -12672,7 +13673,9 @@ static inline uint64_t CAVM_PEMX_PTM_LCL_TIME(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x8e00000000a0ll + 0x1000000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x8e00000000a0ll + 0x1000000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x8e00000000a0ll + 0x1000000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x8e00000000a0ll + 0x1000000000ll * ((a) & 0x0);
@@ -12720,7 +13723,9 @@ static inline uint64_t CAVM_PEMX_PTM_MAS_TIME(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x8e00000000a8ll + 0x1000000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x8e00000000a8ll + 0x1000000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x8e00000000a8ll + 0x1000000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x8e00000000a8ll + 0x1000000000ll * ((a) & 0x0);
@@ -12868,7 +13873,9 @@ static inline uint64_t CAVM_PEMX_RAS_TBA_CTL(unsigned long a)
         return 0x87e0c0000240ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x8e0000000068ll + 0x1000000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x8e0000000068ll + 0x1000000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x8e0000000068ll + 0x1000000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x8e0000000068ll + 0x1000000000ll * ((a) & 0x0);
@@ -12944,7 +13951,9 @@ static inline uint64_t CAVM_PEMX_READS_PC(unsigned long a)
         return 0x87e0c0000498ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x8e0000000120ll + 0x1000000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x8e0000000120ll + 0x1000000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x8e0000000120ll + 0x1000000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x8e0000000120ll + 0x1000000000ll * ((a) & 0x0);
@@ -12992,7 +14001,9 @@ static inline uint64_t CAVM_PEMX_REG_CTL(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x8e0000000060ll + 0x1000000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x8e0000000060ll + 0x1000000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x8e0000000060ll + 0x1000000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x8e0000000060ll + 0x1000000000ll * ((a) & 0x0);
@@ -13107,7 +14118,9 @@ static inline uint64_t CAVM_PEMX_REG_HUGEX_ACC(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=3) && (b<=255)))
         return 0x8e0000006000ll + 0x1000000000ll * ((a) & 0x3) + 0x10ll * ((b) & 0xff);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=255)))
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=4) && (b<=255)))
+        return 0x8e0000006000ll + 0x1000000000ll * ((a) & 0x7) + 0x10ll * ((b) & 0xff);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && ((a==0) && (b<=255)))
         return 0x8e0000006000ll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0xff);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=255)))
         return 0x8e0000006000ll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0xff);
@@ -13152,7 +14165,9 @@ static inline uint64_t CAVM_PEMX_REG_HUGEX_ACC2(unsigned long a, unsigned long b
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=3) && (b<=255)))
         return 0x8e0000006008ll + 0x1000000000ll * ((a) & 0x3) + 0x10ll * ((b) & 0xff);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=255)))
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=4) && (b<=255)))
+        return 0x8e0000006008ll + 0x1000000000ll * ((a) & 0x7) + 0x10ll * ((b) & 0xff);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && ((a==0) && (b<=255)))
         return 0x8e0000006008ll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0xff);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=255)))
         return 0x8e0000006008ll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0xff);
@@ -13281,7 +14296,9 @@ static inline uint64_t CAVM_PEMX_REG_NORMX_ACC(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=3) && (b<=255)))
         return 0x8e0000004000ll + 0x1000000000ll * ((a) & 0x3) + 0x10ll * ((b) & 0xff);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=255)))
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=4) && (b<=255)))
+        return 0x8e0000004000ll + 0x1000000000ll * ((a) & 0x7) + 0x10ll * ((b) & 0xff);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && ((a==0) && (b<=255)))
         return 0x8e0000004000ll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0xff);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=255)))
         return 0x8e0000004000ll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0xff);
@@ -13323,7 +14340,9 @@ static inline uint64_t CAVM_PEMX_REG_NORMX_ACC2(unsigned long a, unsigned long b
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=3) && (b<=255)))
         return 0x8e0000004008ll + 0x1000000000ll * ((a) & 0x3) + 0x10ll * ((b) & 0xff);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=255)))
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=4) && (b<=255)))
+        return 0x8e0000004008ll + 0x1000000000ll * ((a) & 0x7) + 0x10ll * ((b) & 0xff);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && ((a==0) && (b<=255)))
         return 0x8e0000004008ll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0xff);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=255)))
         return 0x8e0000004008ll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0xff);
@@ -13369,7 +14388,9 @@ static inline uint64_t CAVM_PEMX_RMERGE_MERGED_PC(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x8e00000001a8ll + 0x1000000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x8e00000001a8ll + 0x1000000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x8e00000001a8ll + 0x1000000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x8e00000001a8ll + 0x1000000000ll * ((a) & 0x0);
@@ -13413,7 +14434,9 @@ static inline uint64_t CAVM_PEMX_RMERGE_RECEIVED_PC(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x8e00000001a0ll + 0x1000000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x8e00000001a0ll + 0x1000000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x8e00000001a0ll + 0x1000000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x8e00000001a0ll + 0x1000000000ll * ((a) & 0x0);
@@ -13431,7 +14454,7 @@ static inline uint64_t CAVM_PEMX_RMERGE_RECEIVED_PC(unsigned long a)
  * Register (NCB) pem#_rst_cold_state_w1c
  *
  * PEM Interrupt Summary Register
- * This register contains the state of PEM(0..3)_RST_INT through core domain reset.
+ * This register contains the state of PEM(0..4)_RST_INT through core domain reset.
  *
  * This register is not accessible through ROM scripts; see SCR_WRITE32_S[ADDR].
  *
@@ -13475,6 +14498,8 @@ static inline uint64_t CAVM_PEMX_RST_COLD_STATE_W1C(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a<=3))
         return 0x8e0000000320ll + 0x1000000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x8e0000000320ll + 0x1000000000ll * ((a) & 0x7);
     __cavm_csr_fatal("PEMX_RST_COLD_STATE_W1C", 1, a, 0, 0, 0, 0, 0);
 }
 
@@ -13528,6 +14553,8 @@ static inline uint64_t CAVM_PEMX_RST_COLD_STATE_W1S(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a<=3))
         return 0x8e0000000328ll + 0x1000000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x8e0000000328ll + 0x1000000000ll * ((a) & 0x7);
     __cavm_csr_fatal("PEMX_RST_COLD_STATE_W1S", 1, a, 0, 0, 0, 0, 0);
 }
 
@@ -13598,6 +14625,8 @@ static inline uint64_t CAVM_PEMX_RST_INT(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a<=3))
         return 0x8e0000000300ll + 0x1000000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x8e0000000300ll + 0x1000000000ll * ((a) & 0x7);
     __cavm_csr_fatal("PEMX_RST_INT", 1, a, 0, 0, 0, 0, 0);
 }
 
@@ -13631,7 +14660,22 @@ union cavm_pemx_rst_int_ena_w1c
         uint64_t reserved_3_63         : 61;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_pemx_rst_int_ena_w1c_s cn; */
+    /* struct cavm_pemx_rst_int_ena_w1c_s cn9; */
+    /* struct cavm_pemx_rst_int_ena_w1c_s cn96xx; */
+    struct cavm_pemx_rst_int_ena_w1c_cn98xx
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_3_63         : 61;
+        uint64_t l2                    : 1;  /**< [  2:  2](R/W1C/H) Reads or clears enable for PEM(0..4)_RST_INT[L2]. */
+        uint64_t linkdown              : 1;  /**< [  1:  1](R/W1C/H) Reads or clears enable for PEM(0..4)_RST_INT[LINKDOWN]. */
+        uint64_t perst                 : 1;  /**< [  0:  0](R/W1C/H) Reads or clears enable for PEM(0..4)_RST_INT[PERST]. */
+#else /* Word 0 - Little Endian */
+        uint64_t perst                 : 1;  /**< [  0:  0](R/W1C/H) Reads or clears enable for PEM(0..4)_RST_INT[PERST]. */
+        uint64_t linkdown              : 1;  /**< [  1:  1](R/W1C/H) Reads or clears enable for PEM(0..4)_RST_INT[LINKDOWN]. */
+        uint64_t l2                    : 1;  /**< [  2:  2](R/W1C/H) Reads or clears enable for PEM(0..4)_RST_INT[L2]. */
+        uint64_t reserved_3_63         : 61;
+#endif /* Word 0 - End */
+    } cn98xx;
 };
 typedef union cavm_pemx_rst_int_ena_w1c cavm_pemx_rst_int_ena_w1c_t;
 
@@ -13640,6 +14684,8 @@ static inline uint64_t CAVM_PEMX_RST_INT_ENA_W1C(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a<=3))
         return 0x8e0000000310ll + 0x1000000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x8e0000000310ll + 0x1000000000ll * ((a) & 0x7);
     __cavm_csr_fatal("PEMX_RST_INT_ENA_W1C", 1, a, 0, 0, 0, 0, 0);
 }
 
@@ -13673,7 +14719,22 @@ union cavm_pemx_rst_int_ena_w1s
         uint64_t reserved_3_63         : 61;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_pemx_rst_int_ena_w1s_s cn; */
+    /* struct cavm_pemx_rst_int_ena_w1s_s cn9; */
+    /* struct cavm_pemx_rst_int_ena_w1s_s cn96xx; */
+    struct cavm_pemx_rst_int_ena_w1s_cn98xx
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_3_63         : 61;
+        uint64_t l2                    : 1;  /**< [  2:  2](R/W1S/H) Reads or sets enable for PEM(0..4)_RST_INT[L2]. */
+        uint64_t linkdown              : 1;  /**< [  1:  1](R/W1S/H) Reads or sets enable for PEM(0..4)_RST_INT[LINKDOWN]. */
+        uint64_t perst                 : 1;  /**< [  0:  0](R/W1S/H) Reads or sets enable for PEM(0..4)_RST_INT[PERST]. */
+#else /* Word 0 - Little Endian */
+        uint64_t perst                 : 1;  /**< [  0:  0](R/W1S/H) Reads or sets enable for PEM(0..4)_RST_INT[PERST]. */
+        uint64_t linkdown              : 1;  /**< [  1:  1](R/W1S/H) Reads or sets enable for PEM(0..4)_RST_INT[LINKDOWN]. */
+        uint64_t l2                    : 1;  /**< [  2:  2](R/W1S/H) Reads or sets enable for PEM(0..4)_RST_INT[L2]. */
+        uint64_t reserved_3_63         : 61;
+#endif /* Word 0 - End */
+    } cn98xx;
 };
 typedef union cavm_pemx_rst_int_ena_w1s cavm_pemx_rst_int_ena_w1s_t;
 
@@ -13682,6 +14743,8 @@ static inline uint64_t CAVM_PEMX_RST_INT_ENA_W1S(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a<=3))
         return 0x8e0000000318ll + 0x1000000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x8e0000000318ll + 0x1000000000ll * ((a) & 0x7);
     __cavm_csr_fatal("PEMX_RST_INT_ENA_W1S", 1, a, 0, 0, 0, 0, 0);
 }
 
@@ -13715,7 +14778,22 @@ union cavm_pemx_rst_int_w1s
         uint64_t reserved_3_63         : 61;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_pemx_rst_int_w1s_s cn; */
+    /* struct cavm_pemx_rst_int_w1s_s cn9; */
+    /* struct cavm_pemx_rst_int_w1s_s cn96xx; */
+    struct cavm_pemx_rst_int_w1s_cn98xx
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_3_63         : 61;
+        uint64_t l2                    : 1;  /**< [  2:  2](R/W1S/H) Reads or sets PEM(0..4)_RST_INT[L2]. */
+        uint64_t linkdown              : 1;  /**< [  1:  1](R/W1S/H) Reads or sets PEM(0..4)_RST_INT[LINKDOWN]. */
+        uint64_t perst                 : 1;  /**< [  0:  0](R/W1S/H) Reads or sets PEM(0..4)_RST_INT[PERST]. */
+#else /* Word 0 - Little Endian */
+        uint64_t perst                 : 1;  /**< [  0:  0](R/W1S/H) Reads or sets PEM(0..4)_RST_INT[PERST]. */
+        uint64_t linkdown              : 1;  /**< [  1:  1](R/W1S/H) Reads or sets PEM(0..4)_RST_INT[LINKDOWN]. */
+        uint64_t l2                    : 1;  /**< [  2:  2](R/W1S/H) Reads or sets PEM(0..4)_RST_INT[L2]. */
+        uint64_t reserved_3_63         : 61;
+#endif /* Word 0 - End */
+    } cn98xx;
 };
 typedef union cavm_pemx_rst_int_w1s cavm_pemx_rst_int_w1s_t;
 
@@ -13724,6 +14802,8 @@ static inline uint64_t CAVM_PEMX_RST_INT_W1S(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a<=3))
         return 0x8e0000000308ll + 0x1000000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x8e0000000308ll + 0x1000000000ll * ((a) & 0x7);
     __cavm_csr_fatal("PEMX_RST_INT_W1S", 1, a, 0, 0, 0, 0, 0);
 }
 
@@ -13770,6 +14850,8 @@ static inline uint64_t CAVM_PEMX_RST_LBOOT(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a<=3))
         return 0x8e0000000280ll + 0x1000000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x8e0000000280ll + 0x1000000000ll * ((a) & 0x7);
     __cavm_csr_fatal("PEMX_RST_LBOOT", 1, a, 0, 0, 0, 0, 0);
 }
 
@@ -13818,6 +14900,8 @@ static inline uint64_t CAVM_PEMX_RST_MAC(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a<=3))
         return 0x8e0000000290ll + 0x1000000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x8e0000000290ll + 0x1000000000ll * ((a) & 0x7);
     __cavm_csr_fatal("PEMX_RST_MAC", 1, a, 0, 0, 0, 0, 0);
 }
 
@@ -13906,6 +14990,8 @@ static inline uint64_t CAVM_PEMX_RST_SOFT_PERST(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a<=3))
         return 0x8e0000000298ll + 0x1000000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x8e0000000298ll + 0x1000000000ll * ((a) & 0x7);
     __cavm_csr_fatal("PEMX_RST_SOFT_PERST", 1, a, 0, 0, 0, 0, 0);
 }
 
@@ -14161,7 +15247,242 @@ union cavm_pemx_s_rst_ctl
         uint64_t reserved_14_63        : 50;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_pemx_s_rst_ctl_s cn; */
+    /* struct cavm_pemx_s_rst_ctl_s cn9; */
+    /* struct cavm_pemx_s_rst_ctl_s cn96xx; */
+    struct cavm_pemx_s_rst_ctl_cn98xx
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_14_63        : 50;
+        uint64_t reset_type            : 1;  /**< [ 13: 13](SR/W) Type of reset generated internally by PCI MAC PF FLR, link down/hot reset, Powerdown  or
+                                                                 PERST events. See [PF_FLR_CHIP], [RST_LNKDWN], [RST_L2] and [RST_CHIP].
+
+                                                                 0 = Chip and core domain reset. (A chip domain reset always also causes a core
+                                                                 domain reset.)
+                                                                 1 = Core domain reset.
+
+                                                                 On cold reset, this field is initialized as follows:
+                                                                 _ 0 when PEM()_CFG.HOSTD = 0.
+                                                                 _ 1 when PEM()_CFG.HOSTD = 1. */
+        uint64_t rst_l2                : 1;  /**< [ 12: 12](SR/W) Powerdown event internal reset enable.
+                                                                 0 = PEM going into powerdown (L2) does not cause an internal reset.
+                                                                 1 = PEM going into powerdown (L2) causes the internal reset
+                                                                 specified by [RESET_TYPE].
+
+                                                                 On a cold reset, the field is initialized as follows:
+                                                                 _ 0 when PEM()_CFG.HOSTMD is set.
+                                                                 _ 1 when PEM()_CFG.HOSTMD is cleared.
+
+                                                                 1 = Upon a Powerdown event no L2 interrupt will occur, Regardless of RST_INT_ENA_W1S[RST_L2]
+                                                                 0 = Upon a Powerdown event RST_COLD_STATE_W1S[RST_L2] will be set.
+
+                                                                 Note that a powerdown event can never cause a domain reset when the
+                                                                 Mac is already in reset (i.e. when PEM()_ON[PEMOOR] is clear). */
+        uint64_t prst_l2               : 1;  /**< [ 11: 11](SR/W) PEM reset on power down.
+                                                                 0 = PEM entering L2/P2 power state will set RST_INT[RST_L2] for the
+                                                                 corresponding controller, and (provided properly configured) the link should
+                                                                 come back up automatically.
+                                                                 1 = PEM entering L2/P2 power state will set RST_INT[RST_L2] for
+                                                                 the corresponding controller and set PEM()_RST_SOFT_PERST[SOFT_PERST]. This will
+                                                                 hold the link in reset until software clears PEM()_RST_SOFT_PERST[SOFT_PERST].
+
+                                                                 A core/chip reset does not change this field. On cold reset, this field is
+                                                                 initialized to 0. */
+        uint64_t rst_pfflr             : 1;  /**< [ 10: 10](SR/W) PF FLR internal reset enable.
+                                                                 0 = PF FLR events will not cause an internal reset.
+                                                                 1 = A PF FLR event received by the PCIe logic causes the internal reset
+                                                                 specified by [RESET_TYPE].
+
+                                                                 On cold reset, this field is initialized as follows:
+                                                                 _ 0 when PEM()_CFG.HOSTMD = 1.
+                                                                 _ 1 when PEM()_CFG.HOSTMD = 0. */
+        uint64_t rst_lnkdwn            : 1;  /**< [  9:  9](SR/W) Link down / hot reset event internal reset enable.
+                                                                 0 = Link down or hot reset do not cause an internal reset.
+                                                                 1 = A link-down or hot-reset event on the PCIe interface causes the internal
+                                                                 reset specified by [RESET_TYPE].
+
+                                                                 On a cold reset, the field is initialized as follows:
+                                                                 _ 0 when PEM()_CFG.HOSTMD is set.
+                                                                 _ 1 when PEM()_CFG.HOSTMD is cleared.
+
+                                                                 1 = Upon a Linkdown event no LINKDWN interrupt will occur, Regardless of
+                                                                 RST_INT_ENA_W1S[RST_LINKDWN]
+                                                                 0 = Upon a Linkdown event RST_COLD_STATE_W1S[RST_LINKDWN] will be set.
+
+                                                                 Note that a link-down event can never cause a domain reset when the
+                                                                 Mac is already in reset (i.e. when PEM()_ON[PEMOOR] is clear). */
+        uint64_t prst_lnkdwn           : 1;  /**< [  8:  8](SR/W) PEM reset on link down.
+                                                                 0 = Link-down or hot-reset will set RST_INT[RST_LNKDWN] for the corresponding
+                                                                 controller, and (provided properly configured) the link should come back up
+                                                                 automatically.
+                                                                 1 = Link-down or hot-reset will set RST_INT[RST_LNKDWN[RST_LNKDWN] for the corresponding
+                                                                 controller, and set PEM_RST_SOFT_PERST()[SOFT_PERST]. This will hold the link in reset
+                                                                 until software clears PEM_RST_SOFT_PERST()[SOFT_PERST].
+
+                                                                 A core/chip reset does not change this field. On cold reset, this field is
+                                                                 initialized to 0. */
+        uint64_t rst_perst             : 1;  /**< [  7:  7](SR/W) PERST internal reset enable. When set along with [EN_PERST_RCV],
+                                                                 logic will generate an internal reset specified by [RESET_TYPE]
+                                                                 when the corresponding PERST_L pin is asserted.  When cleared or
+                                                                 when [EN_PERST_RCV] is cleared, the PERST_L does not cause an internal reset.
+
+                                                                 1 = Upon a PERST event no PERST interrupt will occur, Regardless of RST_INT_ENA_W1S[RST_PERST]
+                                                                 0 = Upon aPERST event RST_COLD_STATE_W1S[RST_PERST] will be set.
+
+                                                                 If this bit is written while PERST_L pin is asserted and [EN_PERST_RCV]=1 then an
+                                                                 internal reset can occur unexpectedly.
+
+                                                                 During a cold domain reset this field is initialized to zero. */
+        uint64_t reserved_3_6          : 4;
+        uint64_t en_perst_drv          : 1;  /**< [  2:  2](SR/W) Controls whether PERST_L is driven.
+                                                                 This field is always reinitialized on a cold domain reset.
+                                                                 The field is initialized as follows:
+                                                                 _ 0 when PEM()_CFG.HOSTMD is cleared.
+                                                                 _ 1 when PEM()_CFG.HOSTMD is set.
+
+                                                                 This bit must not be changed in the same write that sets [EN_PERST_RCV]=1; separate
+                                                                 writes to RST_CTL() are required to clear one bit and then set the other. */
+        uint64_t en_perst_rcv          : 1;  /**< [  1:  1](SR/W) Reset received. Controls whether PERST_L is received.
+                                                                 This field is always reinitialized on a cold domain reset.
+                                                                 The field is initialized as follows:
+                                                                 _ 0 when PEM()_CFG.HOSTMD is set.
+                                                                 _ 1 when PEM()_CFG.HOSTMD is cleared.
+
+                                                                 When [EN_PERST_RCV] = 1, the PERST_L value is received and can be used to reset the
+                                                                 controller and (optionally, based on [RST_CHIP]) cause a domain reset.
+
+                                                                 When [EN_PERST_RCV] = 1 (and [RST_CHIP] = 0), RST_INT[PERST] gets set when the PERST_L
+                                                                 pin asserts. (This interrupt can alert software whenever the external reset pin initiates
+                                                                 a controller reset sequence.)
+
+                                                                 [PERST_PIN] gives the PERST_L pin value when [EN_PERST_RCV] = 1.
+
+                                                                 When [EN_PERST_RCV] = 0, the PERST_L pin value is ignored and always returns a 1.
+
+                                                                 This bit must not be changed in the same write that sets [EN_PERST_DRV]=1; separate
+                                                                 writes to PEM_S_RST_CTL are required to clear one bit and then set the other.
+                                                                 If this bit is written while PERST_L pin is de-asserted then the MAC can come
+                                                                 out of reset unexpectedly. */
+        uint64_t perst_pin             : 1;  /**< [  0:  0](SRO/H) Read-only access to PERST (inverted PERST_L). Unpredictable when [EN_PERST_RCV] = 0.
+
+                                                                 Reads as 1 when [EN_PERST_RCV] = 1 and the PERST_L pin is asserted.
+                                                                 Reads as 0 when [EN_PERST_RCV] = 1 and the PERST_L pin is not asserted. */
+#else /* Word 0 - Little Endian */
+        uint64_t perst_pin             : 1;  /**< [  0:  0](SRO/H) Read-only access to PERST (inverted PERST_L). Unpredictable when [EN_PERST_RCV] = 0.
+
+                                                                 Reads as 1 when [EN_PERST_RCV] = 1 and the PERST_L pin is asserted.
+                                                                 Reads as 0 when [EN_PERST_RCV] = 1 and the PERST_L pin is not asserted. */
+        uint64_t en_perst_rcv          : 1;  /**< [  1:  1](SR/W) Reset received. Controls whether PERST_L is received.
+                                                                 This field is always reinitialized on a cold domain reset.
+                                                                 The field is initialized as follows:
+                                                                 _ 0 when PEM()_CFG.HOSTMD is set.
+                                                                 _ 1 when PEM()_CFG.HOSTMD is cleared.
+
+                                                                 When [EN_PERST_RCV] = 1, the PERST_L value is received and can be used to reset the
+                                                                 controller and (optionally, based on [RST_CHIP]) cause a domain reset.
+
+                                                                 When [EN_PERST_RCV] = 1 (and [RST_CHIP] = 0), RST_INT[PERST] gets set when the PERST_L
+                                                                 pin asserts. (This interrupt can alert software whenever the external reset pin initiates
+                                                                 a controller reset sequence.)
+
+                                                                 [PERST_PIN] gives the PERST_L pin value when [EN_PERST_RCV] = 1.
+
+                                                                 When [EN_PERST_RCV] = 0, the PERST_L pin value is ignored and always returns a 1.
+
+                                                                 This bit must not be changed in the same write that sets [EN_PERST_DRV]=1; separate
+                                                                 writes to PEM_S_RST_CTL are required to clear one bit and then set the other.
+                                                                 If this bit is written while PERST_L pin is de-asserted then the MAC can come
+                                                                 out of reset unexpectedly. */
+        uint64_t en_perst_drv          : 1;  /**< [  2:  2](SR/W) Controls whether PERST_L is driven.
+                                                                 This field is always reinitialized on a cold domain reset.
+                                                                 The field is initialized as follows:
+                                                                 _ 0 when PEM()_CFG.HOSTMD is cleared.
+                                                                 _ 1 when PEM()_CFG.HOSTMD is set.
+
+                                                                 This bit must not be changed in the same write that sets [EN_PERST_RCV]=1; separate
+                                                                 writes to RST_CTL() are required to clear one bit and then set the other. */
+        uint64_t reserved_3_6          : 4;
+        uint64_t rst_perst             : 1;  /**< [  7:  7](SR/W) PERST internal reset enable. When set along with [EN_PERST_RCV],
+                                                                 logic will generate an internal reset specified by [RESET_TYPE]
+                                                                 when the corresponding PERST_L pin is asserted.  When cleared or
+                                                                 when [EN_PERST_RCV] is cleared, the PERST_L does not cause an internal reset.
+
+                                                                 1 = Upon a PERST event no PERST interrupt will occur, Regardless of RST_INT_ENA_W1S[RST_PERST]
+                                                                 0 = Upon aPERST event RST_COLD_STATE_W1S[RST_PERST] will be set.
+
+                                                                 If this bit is written while PERST_L pin is asserted and [EN_PERST_RCV]=1 then an
+                                                                 internal reset can occur unexpectedly.
+
+                                                                 During a cold domain reset this field is initialized to zero. */
+        uint64_t prst_lnkdwn           : 1;  /**< [  8:  8](SR/W) PEM reset on link down.
+                                                                 0 = Link-down or hot-reset will set RST_INT[RST_LNKDWN] for the corresponding
+                                                                 controller, and (provided properly configured) the link should come back up
+                                                                 automatically.
+                                                                 1 = Link-down or hot-reset will set RST_INT[RST_LNKDWN[RST_LNKDWN] for the corresponding
+                                                                 controller, and set PEM_RST_SOFT_PERST()[SOFT_PERST]. This will hold the link in reset
+                                                                 until software clears PEM_RST_SOFT_PERST()[SOFT_PERST].
+
+                                                                 A core/chip reset does not change this field. On cold reset, this field is
+                                                                 initialized to 0. */
+        uint64_t rst_lnkdwn            : 1;  /**< [  9:  9](SR/W) Link down / hot reset event internal reset enable.
+                                                                 0 = Link down or hot reset do not cause an internal reset.
+                                                                 1 = A link-down or hot-reset event on the PCIe interface causes the internal
+                                                                 reset specified by [RESET_TYPE].
+
+                                                                 On a cold reset, the field is initialized as follows:
+                                                                 _ 0 when PEM()_CFG.HOSTMD is set.
+                                                                 _ 1 when PEM()_CFG.HOSTMD is cleared.
+
+                                                                 1 = Upon a Linkdown event no LINKDWN interrupt will occur, Regardless of
+                                                                 RST_INT_ENA_W1S[RST_LINKDWN]
+                                                                 0 = Upon a Linkdown event RST_COLD_STATE_W1S[RST_LINKDWN] will be set.
+
+                                                                 Note that a link-down event can never cause a domain reset when the
+                                                                 Mac is already in reset (i.e. when PEM()_ON[PEMOOR] is clear). */
+        uint64_t rst_pfflr             : 1;  /**< [ 10: 10](SR/W) PF FLR internal reset enable.
+                                                                 0 = PF FLR events will not cause an internal reset.
+                                                                 1 = A PF FLR event received by the PCIe logic causes the internal reset
+                                                                 specified by [RESET_TYPE].
+
+                                                                 On cold reset, this field is initialized as follows:
+                                                                 _ 0 when PEM()_CFG.HOSTMD = 1.
+                                                                 _ 1 when PEM()_CFG.HOSTMD = 0. */
+        uint64_t prst_l2               : 1;  /**< [ 11: 11](SR/W) PEM reset on power down.
+                                                                 0 = PEM entering L2/P2 power state will set RST_INT[RST_L2] for the
+                                                                 corresponding controller, and (provided properly configured) the link should
+                                                                 come back up automatically.
+                                                                 1 = PEM entering L2/P2 power state will set RST_INT[RST_L2] for
+                                                                 the corresponding controller and set PEM()_RST_SOFT_PERST[SOFT_PERST]. This will
+                                                                 hold the link in reset until software clears PEM()_RST_SOFT_PERST[SOFT_PERST].
+
+                                                                 A core/chip reset does not change this field. On cold reset, this field is
+                                                                 initialized to 0. */
+        uint64_t rst_l2                : 1;  /**< [ 12: 12](SR/W) Powerdown event internal reset enable.
+                                                                 0 = PEM going into powerdown (L2) does not cause an internal reset.
+                                                                 1 = PEM going into powerdown (L2) causes the internal reset
+                                                                 specified by [RESET_TYPE].
+
+                                                                 On a cold reset, the field is initialized as follows:
+                                                                 _ 0 when PEM()_CFG.HOSTMD is set.
+                                                                 _ 1 when PEM()_CFG.HOSTMD is cleared.
+
+                                                                 1 = Upon a Powerdown event no L2 interrupt will occur, Regardless of RST_INT_ENA_W1S[RST_L2]
+                                                                 0 = Upon a Powerdown event RST_COLD_STATE_W1S[RST_L2] will be set.
+
+                                                                 Note that a powerdown event can never cause a domain reset when the
+                                                                 Mac is already in reset (i.e. when PEM()_ON[PEMOOR] is clear). */
+        uint64_t reset_type            : 1;  /**< [ 13: 13](SR/W) Type of reset generated internally by PCI MAC PF FLR, link down/hot reset, Powerdown  or
+                                                                 PERST events. See [PF_FLR_CHIP], [RST_LNKDWN], [RST_L2] and [RST_CHIP].
+
+                                                                 0 = Chip and core domain reset. (A chip domain reset always also causes a core
+                                                                 domain reset.)
+                                                                 1 = Core domain reset.
+
+                                                                 On cold reset, this field is initialized as follows:
+                                                                 _ 0 when PEM()_CFG.HOSTD = 0.
+                                                                 _ 1 when PEM()_CFG.HOSTD = 1. */
+        uint64_t reserved_14_63        : 50;
+#endif /* Word 0 - End */
+    } cn98xx;
 };
 typedef union cavm_pemx_s_rst_ctl cavm_pemx_s_rst_ctl_t;
 
@@ -14170,6 +15491,8 @@ static inline uint64_t CAVM_PEMX_S_RST_CTL(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a<=3))
         return 0x8e0000000288ll + 0x1000000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x8e0000000288ll + 0x1000000000ll * ((a) & 0x7);
     __cavm_csr_fatal("PEMX_S_RST_CTL", 1, a, 0, 0, 0, 0, 0);
 }
 
@@ -14415,7 +15738,9 @@ static inline uint64_t CAVM_PEMX_STRAP(unsigned long a)
         return 0x87e0c0000408ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x8e00000000d0ll + 0x1000000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x8e00000000d0ll + 0x1000000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x8e00000000d0ll + 0x1000000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x8e00000000d0ll + 0x1000000000ll * ((a) & 0x0);
@@ -14454,6 +15779,7 @@ union cavm_pemx_tlp_credits
         uint64_t pem_cpl               : 12; /**< [ 63: 52](R/W) TLP 16 B credits for completion TLPs in the peer. Legal values are 0x42 to 0x104. */
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_pemx_tlp_credits_s cn8; */
     struct cavm_pemx_tlp_credits_cn81xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -14566,7 +15892,9 @@ static inline uint64_t CAVM_PEMX_VF_CLR_FLR_REQ(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x8e0000000228ll + 0x1000000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x8e0000000228ll + 0x1000000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x8e0000000228ll + 0x1000000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x8e0000000228ll + 0x1000000000ll * ((a) & 0x0);
@@ -14612,7 +15940,9 @@ static inline uint64_t CAVM_PEMX_WMERGE_MERGED_PC(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x8e0000000198ll + 0x1000000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x8e0000000198ll + 0x1000000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x8e0000000198ll + 0x1000000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x8e0000000198ll + 0x1000000000ll * ((a) & 0x0);
@@ -14656,7 +15986,9 @@ static inline uint64_t CAVM_PEMX_WMERGE_RECEIVED_PC(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x8e0000000190ll + 0x1000000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x8e0000000190ll + 0x1000000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x8e0000000190ll + 0x1000000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x8e0000000190ll + 0x1000000000ll * ((a) & 0x0);

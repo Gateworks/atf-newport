@@ -106,7 +106,9 @@ static inline uint64_t CAVM_PCIEEPX_ACK_FREQ(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x70cll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x70cll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x70cll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x70c + 0 * ((a) & 0x0);
@@ -128,6 +130,32 @@ union cavm_pcieepx_ack_timer
 {
     uint32_t u;
     struct cavm_pcieepx_ack_timer_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t rtl                   : 16; /**< [ 31: 16](R/W/H) Replay time limit. The replay timer expires when it reaches this limit. The PCI Express
+                                                                 bus initiates a replay upon reception of a NAK or when the replay timer expires. This
+                                                                 value is set correctly by the hardware out of reset or when the negotiated link width or
+                                                                 payload size changes. If the user changes this value
+                                                                 they should refer to the PCIe specification for the correct value. */
+        uint32_t rtltl                 : 16; /**< [ 15:  0](R/W/H) Round trip latency time limit. The ACK/NAK latency timer expires when it reaches this
+                                                                 limit. This value is set correctly by the hardware out of reset or when the negotiated
+                                                                 link width or payload size changes. If the user changes this value
+                                                                 they should refer to the PCIe specification for the correct value. */
+#else /* Word 0 - Little Endian */
+        uint32_t rtltl                 : 16; /**< [ 15:  0](R/W/H) Round trip latency time limit. The ACK/NAK latency timer expires when it reaches this
+                                                                 limit. This value is set correctly by the hardware out of reset or when the negotiated
+                                                                 link width or payload size changes. If the user changes this value
+                                                                 they should refer to the PCIe specification for the correct value. */
+        uint32_t rtl                   : 16; /**< [ 31: 16](R/W/H) Replay time limit. The replay timer expires when it reaches this limit. The PCI Express
+                                                                 bus initiates a replay upon reception of a NAK or when the replay timer expires. This
+                                                                 value is set correctly by the hardware out of reset or when the negotiated link width or
+                                                                 payload size changes. If the user changes this value
+                                                                 they should refer to the PCIe specification for the correct value. */
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_pcieepx_ack_timer_s cn9; */
+    /* struct cavm_pcieepx_ack_timer_s cn96xxp1; */
+    struct cavm_pcieepx_ack_timer_cn96xxp3
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t rtl                   : 16; /**< [ 31: 16](R/W/H) Replay time limit. The replay timer expires when it reaches this limit. The PCI Express
@@ -192,8 +220,10 @@ union cavm_pcieepx_ack_timer
                                                                  If the user changes this value, they should refer to the PCIe specification
                                                                  for the correct value. */
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_pcieepx_ack_timer_s cn; */
+    } cn96xxp3;
+    /* struct cavm_pcieepx_ack_timer_cn96xxp3 cn98xx; */
+    /* struct cavm_pcieepx_ack_timer_cn96xxp3 cnf95xx; */
+    /* struct cavm_pcieepx_ack_timer_cn96xxp3 loki; */
 };
 typedef union cavm_pcieepx_ack_timer cavm_pcieepx_ack_timer_t;
 
@@ -202,7 +232,9 @@ static inline uint64_t CAVM_PCIEEPX_ACK_TIMER(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x700ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x700ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x700ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x700 + 0 * ((a) & 0x0);
@@ -288,7 +320,9 @@ static inline uint64_t CAVM_PCIEEPX_ACS_CAP_CTL(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x2f0ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x2f0ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x2f0ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x2f0 + 0 * ((a) & 0x0);
@@ -352,7 +386,9 @@ static inline uint64_t CAVM_PCIEEPX_ACS_CAP_HDR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x2ecll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x2ecll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x2ecll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x2ec + 0 * ((a) & 0x0);
@@ -392,7 +428,9 @@ static inline uint64_t CAVM_PCIEEPX_ACS_EGR_CTL_VEC(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x2f4ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x2f4ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x2f4ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x2f4 + 0 * ((a) & 0x0);
@@ -446,7 +484,9 @@ static inline uint64_t CAVM_PCIEEPX_ADV_ERR_CAP_CNTRL(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x118ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x118ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x118ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x118 + 0 * ((a) & 0x0);
@@ -522,7 +562,9 @@ static inline uint64_t CAVM_PCIEEPX_ARI_CAP_CTL(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x16cll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x16cll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x16cll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x16c + 0 * ((a) & 0x0);
@@ -580,7 +622,9 @@ static inline uint64_t CAVM_PCIEEPX_ARI_CAP_HDR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x168ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x168ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x168ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x168 + 0 * ((a) & 0x0);
@@ -624,7 +668,9 @@ static inline uint64_t CAVM_PCIEEPX_AUX_CLK_FREQ(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0xb40ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0xb40ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0xb40ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0xb40 + 0 * ((a) & 0x0);
@@ -678,7 +724,9 @@ static inline uint64_t CAVM_PCIEEPX_BAR0_MASKL(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x10010ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x10010ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x10010ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x10010 + 0 * ((a) & 0x0);
@@ -718,7 +766,9 @@ static inline uint64_t CAVM_PCIEEPX_BAR0_MASKU(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x10014ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x10014ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x10014ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x10014 + 0 * ((a) & 0x0);
@@ -786,7 +836,9 @@ static inline uint64_t CAVM_PCIEEPX_BAR0L(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x10ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x10ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x10ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x10 + 0 * ((a) & 0x0);
@@ -824,7 +876,9 @@ static inline uint64_t CAVM_PCIEEPX_BAR0U(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x14ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x14ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x14ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x14 + 0 * ((a) & 0x0);
@@ -878,7 +932,9 @@ static inline uint64_t CAVM_PCIEEPX_BAR2_MASKL(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x10018ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x10018ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x10018ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x10018 + 0 * ((a) & 0x0);
@@ -918,7 +974,9 @@ static inline uint64_t CAVM_PCIEEPX_BAR2_MASKU(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x1001cll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x1001cll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x1001cll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x1001c + 0 * ((a) & 0x0);
@@ -986,7 +1044,9 @@ static inline uint64_t CAVM_PCIEEPX_BAR2L(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x18ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x18ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x18ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x18 + 0 * ((a) & 0x0);
@@ -1024,7 +1084,9 @@ static inline uint64_t CAVM_PCIEEPX_BAR2U(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x1cll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x1cll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x1cll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x1c + 0 * ((a) & 0x0);
@@ -1078,7 +1140,9 @@ static inline uint64_t CAVM_PCIEEPX_BAR4_MASKL(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x10020ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x10020ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x10020ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x10020 + 0 * ((a) & 0x0);
@@ -1118,7 +1182,9 @@ static inline uint64_t CAVM_PCIEEPX_BAR4_MASKU(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x10024ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x10024ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x10024ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x10024 + 0 * ((a) & 0x0);
@@ -1186,7 +1252,9 @@ static inline uint64_t CAVM_PCIEEPX_BAR4L(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x20ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x20ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x20ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x20 + 0 * ((a) & 0x0);
@@ -1224,7 +1292,9 @@ static inline uint64_t CAVM_PCIEEPX_BAR4U(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x24ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x24ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x24ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x24 + 0 * ((a) & 0x0);
@@ -1336,7 +1406,9 @@ static inline uint64_t CAVM_PCIEEPX_C_RCV_CREDIT(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x750ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x750ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x750ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x750 + 0 * ((a) & 0x0);
@@ -1382,7 +1454,9 @@ static inline uint64_t CAVM_PCIEEPX_C_XMIT_CREDIT(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x738ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x738ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x738ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x738 + 0 * ((a) & 0x0);
@@ -1424,7 +1498,9 @@ static inline uint64_t CAVM_PCIEEPX_CAP_PTR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x34ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x34ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x34ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x34 + 0 * ((a) & 0x0);
@@ -1462,7 +1538,9 @@ static inline uint64_t CAVM_PCIEEPX_CARDBUS(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x28ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x28ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x28ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x28 + 0 * ((a) & 0x0);
@@ -12443,7 +12521,9 @@ static inline uint64_t CAVM_PCIEEPX_CLK_GATING_CTL(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x88cll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x88cll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x88cll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x88c + 0 * ((a) & 0x0);
@@ -12503,7 +12583,9 @@ static inline uint64_t CAVM_PCIEEPX_CLSIZE(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0xcll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0xcll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0xcll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0xc + 0 * ((a) & 0x0);
@@ -12599,7 +12681,9 @@ static inline uint64_t CAVM_PCIEEPX_CMD(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 4ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 4ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 4ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 4 + 0 * ((a) & 0x0);
@@ -12657,7 +12741,9 @@ static inline uint64_t CAVM_PCIEEPX_COR_ERR_MSK(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x114ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x114ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x114ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x114 + 0 * ((a) & 0x0);
@@ -12715,7 +12801,9 @@ static inline uint64_t CAVM_PCIEEPX_COR_ERR_STAT(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x110ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x110ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x110ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x110 + 0 * ((a) & 0x0);
@@ -12762,7 +12850,9 @@ static inline uint64_t CAVM_PCIEEPX_CPL_LUT_DEL_ENT(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x8c8ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x8c8ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x8c8ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x8c8 + 0 * ((a) & 0x0);
@@ -12800,7 +12890,9 @@ static inline uint64_t CAVM_PCIEEPX_DBG0(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x728ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x728ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x728ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x728 + 0 * ((a) & 0x0);
@@ -12838,7 +12930,9 @@ static inline uint64_t CAVM_PCIEEPX_DBG1(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x72cll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x72cll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x72cll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x72c + 0 * ((a) & 0x0);
@@ -12904,7 +12998,9 @@ static inline uint64_t CAVM_PCIEEPX_DEV_CAP(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x74ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x74ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x74ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x74 + 0 * ((a) & 0x0);
@@ -13002,7 +13098,9 @@ static inline uint64_t CAVM_PCIEEPX_DEV_CAP2(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x94ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x94ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x94ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x94 + 0 * ((a) & 0x0);
@@ -13146,7 +13244,9 @@ static inline uint64_t CAVM_PCIEEPX_DEV_CTL(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x78ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x78ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x78ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x78 + 0 * ((a) & 0x0);
@@ -13168,6 +13268,76 @@ union cavm_pcieepx_dev_ctl2
 {
     uint32_t u;
     struct cavm_pcieepx_dev_ctl2_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t reserved_16_31        : 16;
+        uint32_t eetpb                 : 1;  /**< [ 15: 15](RO) End-end TLP prefix blocking. */
+        uint32_t obffe                 : 2;  /**< [ 14: 13](R/W/H) Optimized buffer flush fill (OBFF) enabled.
+                                                                 This field is R/W only for function 0.  All other functions this field is read only zero. */
+        uint32_t tag10b_req_en         : 1;  /**< [ 12: 12](R/W/H) 10-bit tag requester enable.
+
+                                                                 For UPEM, this bit is R/W and can be set to enable 10-bit
+                                                                 tag requester enable.
+
+                                                                 For BPEM, this bit is RO and cannot be written. */
+        uint32_t reserved_11           : 1;
+        uint32_t ltre                  : 1;  /**< [ 10: 10](R/W/H) Latency tolerance reporting (LTR) mechanism enable.
+                                                                 This field is R/W only for function 0.  All other functions this field is read only zero. */
+        uint32_t id0_cp                : 1;  /**< [  9:  9](R/W) ID based ordering completion enable */
+        uint32_t id0_rq                : 1;  /**< [  8:  8](R/W) ID based ordering request enable. */
+        uint32_t atom_op_eb            : 1;  /**< [  7:  7](RO) AtomicOp egress blocking. (not applicable for EP). */
+        uint32_t atom_op               : 1;  /**< [  6:  6](R/W) AtomicOp requester enable. */
+        uint32_t ari                   : 1;  /**< [  5:  5](RO) Alternate routing ID forwarding supported (not applicable for EP). */
+        uint32_t ctd                   : 1;  /**< [  4:  4](R/W) Completion timeout disable. */
+        uint32_t ctv                   : 4;  /**< [  3:  0](R/W) Completion timeout value.
+                                                                 0x0 = Default range: 16 ms to 55 ms.
+                                                                 0x1 = 50 us to 100 us.
+                                                                 0x2 = 1 ms to 10 ms.
+                                                                 0x3 = 16 ms to 55 ms.
+                                                                 0x6 = 65 ms to 210 ms.
+                                                                 0x9 = 260 ms to 900 ms.
+                                                                 0xA = 1 s to 3.5 s.
+                                                                 0xD = 4 s to 13 s.
+                                                                 0xE = 17 s to 64 s.
+
+                                                                 Values not defined are reserved. */
+#else /* Word 0 - Little Endian */
+        uint32_t ctv                   : 4;  /**< [  3:  0](R/W) Completion timeout value.
+                                                                 0x0 = Default range: 16 ms to 55 ms.
+                                                                 0x1 = 50 us to 100 us.
+                                                                 0x2 = 1 ms to 10 ms.
+                                                                 0x3 = 16 ms to 55 ms.
+                                                                 0x6 = 65 ms to 210 ms.
+                                                                 0x9 = 260 ms to 900 ms.
+                                                                 0xA = 1 s to 3.5 s.
+                                                                 0xD = 4 s to 13 s.
+                                                                 0xE = 17 s to 64 s.
+
+                                                                 Values not defined are reserved. */
+        uint32_t ctd                   : 1;  /**< [  4:  4](R/W) Completion timeout disable. */
+        uint32_t ari                   : 1;  /**< [  5:  5](RO) Alternate routing ID forwarding supported (not applicable for EP). */
+        uint32_t atom_op               : 1;  /**< [  6:  6](R/W) AtomicOp requester enable. */
+        uint32_t atom_op_eb            : 1;  /**< [  7:  7](RO) AtomicOp egress blocking. (not applicable for EP). */
+        uint32_t id0_rq                : 1;  /**< [  8:  8](R/W) ID based ordering request enable. */
+        uint32_t id0_cp                : 1;  /**< [  9:  9](R/W) ID based ordering completion enable */
+        uint32_t ltre                  : 1;  /**< [ 10: 10](R/W/H) Latency tolerance reporting (LTR) mechanism enable.
+                                                                 This field is R/W only for function 0.  All other functions this field is read only zero. */
+        uint32_t reserved_11           : 1;
+        uint32_t tag10b_req_en         : 1;  /**< [ 12: 12](R/W/H) 10-bit tag requester enable.
+
+                                                                 For UPEM, this bit is R/W and can be set to enable 10-bit
+                                                                 tag requester enable.
+
+                                                                 For BPEM, this bit is RO and cannot be written. */
+        uint32_t obffe                 : 2;  /**< [ 14: 13](R/W/H) Optimized buffer flush fill (OBFF) enabled.
+                                                                 This field is R/W only for function 0.  All other functions this field is read only zero. */
+        uint32_t eetpb                 : 1;  /**< [ 15: 15](RO) End-end TLP prefix blocking. */
+        uint32_t reserved_16_31        : 16;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_pcieepx_dev_ctl2_s cn9; */
+    /* struct cavm_pcieepx_dev_ctl2_s cn96xxp1; */
+    struct cavm_pcieepx_dev_ctl2_cn96xxp3
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_16_31        : 16;
@@ -13234,8 +13404,10 @@ union cavm_pcieepx_dev_ctl2
         uint32_t eetpb                 : 1;  /**< [ 15: 15](RO) End-end TLP prefix blocking. */
         uint32_t reserved_16_31        : 16;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_pcieepx_dev_ctl2_s cn; */
+    } cn96xxp3;
+    /* struct cavm_pcieepx_dev_ctl2_cn96xxp3 cn98xx; */
+    /* struct cavm_pcieepx_dev_ctl2_cn96xxp3 cnf95xx; */
+    /* struct cavm_pcieepx_dev_ctl2_cn96xxp3 loki; */
 };
 typedef union cavm_pcieepx_dev_ctl2 cavm_pcieepx_dev_ctl2_t;
 
@@ -13244,7 +13416,9 @@ static inline uint64_t CAVM_PCIEEPX_DEV_CTL2(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x98ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x98ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x98ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x98 + 0 * ((a) & 0x0);
@@ -13317,7 +13491,9 @@ static inline uint64_t CAVM_PCIEEPX_DL_FT_CAP_HDR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x450ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x450ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x450ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x450 + 0 * ((a) & 0x0);
@@ -13378,7 +13554,9 @@ static inline uint64_t CAVM_PCIEEPX_DLINK_CAP(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x454ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x454ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x454ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x454 + 0 * ((a) & 0x0);
@@ -13423,7 +13601,9 @@ static inline uint64_t CAVM_PCIEEPX_DLINK_FSTAT(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x458ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x458ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x458ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x458 + 0 * ((a) & 0x0);
@@ -13487,7 +13667,9 @@ static inline uint64_t CAVM_PCIEEPX_E_CAP_LIST(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x70ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x70ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x70ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x70 + 0 * ((a) & 0x0);
@@ -13529,7 +13711,9 @@ static inline uint64_t CAVM_PCIEEPX_EBAR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x30ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x30ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x30ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x30 + 0 * ((a) & 0x0);
@@ -13597,7 +13781,9 @@ static inline uint64_t CAVM_PCIEEPX_EQ_CTL01(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x184ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x184ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x184ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x184 + 0 * ((a) & 0x0);
@@ -13665,7 +13851,9 @@ static inline uint64_t CAVM_PCIEEPX_EQ_CTL1011(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x198ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x198ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x198ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x198 + 0 * ((a) & 0x0);
@@ -13733,7 +13921,9 @@ static inline uint64_t CAVM_PCIEEPX_EQ_CTL1213(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x19cll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x19cll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x19cll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x19c + 0 * ((a) & 0x0);
@@ -13801,7 +13991,9 @@ static inline uint64_t CAVM_PCIEEPX_EQ_CTL1415(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x1a0ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x1a0ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x1a0ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x1a0 + 0 * ((a) & 0x0);
@@ -13869,7 +14061,9 @@ static inline uint64_t CAVM_PCIEEPX_EQ_CTL23(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x188ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x188ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x188ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x188 + 0 * ((a) & 0x0);
@@ -13937,7 +14131,9 @@ static inline uint64_t CAVM_PCIEEPX_EQ_CTL45(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x18cll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x18cll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x18cll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x18c + 0 * ((a) & 0x0);
@@ -14005,7 +14201,9 @@ static inline uint64_t CAVM_PCIEEPX_EQ_CTL67(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x190ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x190ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x190ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x190 + 0 * ((a) & 0x0);
@@ -14073,7 +14271,9 @@ static inline uint64_t CAVM_PCIEEPX_EQ_CTL89(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x194ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x194ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x194ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x194 + 0 * ((a) & 0x0);
@@ -14121,7 +14321,9 @@ static inline uint64_t CAVM_PCIEEPX_EROM_MASK(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x10030ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x10030ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x10030ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x10030 + 0 * ((a) & 0x0);
@@ -14169,7 +14371,9 @@ static inline uint64_t CAVM_PCIEEPX_EXT_CAP(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x100ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x100ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x100ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x100 + 0 * ((a) & 0x0);
@@ -14223,7 +14427,9 @@ static inline uint64_t CAVM_PCIEEPX_FILT_MSK2(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x720ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x720ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x720ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x720 + 0 * ((a) & 0x0);
@@ -14245,6 +14451,116 @@ union cavm_pcieepx_gen2_port
 {
     uint32_t u;
     struct cavm_pcieepx_gen2_port_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t reserved_22_31        : 10;
+        uint32_t gen1_ei_inf           : 1;  /**< [ 21: 21](R/W) Electrical idle inference mode at Gen1 Rate. Programmable mode to determine
+                                                                 inferred electrical idle (EI) in Recovery.Speed or Loopback.Active (as slave)
+                                                                 state at Gen1 speed by looking for a one value on RxElecIdle instead of looking
+                                                                 for a zero on RxValid. If the PHY fails to deassert the RxValid signal in
+                                                                 Recovery.Speed or Loopback.Active (because of corrupted EIOS for example),
+                                                                 then EI cannot be inferred successfully in the controller by just detecting the
+                                                                 condition RxValid=0.
+                                                                   0 = Use RxElecIdle signal to infer electrical idle.
+                                                                   1 = Use RxValid signal to infer electrical idle. */
+        uint32_t s_d_e                 : 1;  /**< [ 20: 20](R/W) Set the deemphasis level for upstream ports.
+                                                                 0 = -6 dB.
+                                                                 1 = -3.5 dB. */
+        uint32_t ctcrb                 : 1;  /**< [ 19: 19](R/W) Config TX compliance receive bit. When set to one, signals LTSSM to transmit TS ordered sets
+                                                                 with the compliance receive bit assert (equal to one). */
+        uint32_t cpyts                 : 1;  /**< [ 18: 18](R/W) Config PHY TX swing. Indicates the voltage level that the PHY should drive. When set to one,
+                                                                 indicates low swing. When set to 0, indicates full swing. */
+        uint32_t dsc                   : 1;  /**< [ 17: 17](R/W/H) Directed speed change. A write of one initiates a speed change.
+                                                                 When the speed change occurs, the controller will clear the contents of this field. */
+        uint32_t alaneflip             : 1;  /**< [ 16: 16](R/W) Enable auto flipping of the lanes. */
+        uint32_t pdetlane              : 3;  /**< [ 15: 13](R/W) Predetermined lane for auto flip. This field defines which
+                                                                 physical lane is connected to logical Lane0 by the flip
+                                                                 operation performed in detect.
+                                                                   0x0 = Reserved.
+                                                                   0x1 = Connect logical Lane0 to physical lane 1.
+                                                                   0x2 = Connect logical Lane0 to physical lane 3.
+                                                                   0x3 = Connect logical Lane0 to physical lane 7.
+                                                                   0x4 = Connect logical Lane0 to physical lane 15.
+                                                                   0x5 - 0x7 = Reserved. */
+        uint32_t nlanes                : 5;  /**< [ 12:  8](R/W) Predetermined number of lanes.  Defines the number of
+                                                                 lanes which are connected and not bad. Used to limit the
+                                                                 effective link width to ignore 'broken" or "unused" lanes that
+                                                                 detect a receiver. Indicates the number of lanes to check for
+                                                                 exit from electrical idle in Polling.Active and L2.Idle.
+
+                                                                 0x1 = 1 lane.
+                                                                 0x2 = 2 lanes.
+                                                                 0x3 = 3 lanes.
+                                                                 _ ...
+                                                                 0x10 = 16 lanes.
+                                                                 0x11-0x1F = Reserved.
+
+                                                                 When you have unused lanes in your system, then you must
+                                                                 change the value in this register to reflect the number of
+                                                                 lanes. You must also change PCIEEP_PORT_CTL[LME]. */
+        uint32_t n_fts                 : 8;  /**< [  7:  0](R/W) Sets the number of fast training sequences (N_FTS) that the core advertises as its
+                                                                 N_FTS during GEN2 Link training. This value is used to inform the link partner about the
+                                                                 PHY's ability to recover synchronization after a low power state.
+
+                                                                 Do not set [N_FTS] to zero; doing so can cause the LTSSM to go into the recovery
+                                                                 state when exiting from L0s. */
+#else /* Word 0 - Little Endian */
+        uint32_t n_fts                 : 8;  /**< [  7:  0](R/W) Sets the number of fast training sequences (N_FTS) that the core advertises as its
+                                                                 N_FTS during GEN2 Link training. This value is used to inform the link partner about the
+                                                                 PHY's ability to recover synchronization after a low power state.
+
+                                                                 Do not set [N_FTS] to zero; doing so can cause the LTSSM to go into the recovery
+                                                                 state when exiting from L0s. */
+        uint32_t nlanes                : 5;  /**< [ 12:  8](R/W) Predetermined number of lanes.  Defines the number of
+                                                                 lanes which are connected and not bad. Used to limit the
+                                                                 effective link width to ignore 'broken" or "unused" lanes that
+                                                                 detect a receiver. Indicates the number of lanes to check for
+                                                                 exit from electrical idle in Polling.Active and L2.Idle.
+
+                                                                 0x1 = 1 lane.
+                                                                 0x2 = 2 lanes.
+                                                                 0x3 = 3 lanes.
+                                                                 _ ...
+                                                                 0x10 = 16 lanes.
+                                                                 0x11-0x1F = Reserved.
+
+                                                                 When you have unused lanes in your system, then you must
+                                                                 change the value in this register to reflect the number of
+                                                                 lanes. You must also change PCIEEP_PORT_CTL[LME]. */
+        uint32_t pdetlane              : 3;  /**< [ 15: 13](R/W) Predetermined lane for auto flip. This field defines which
+                                                                 physical lane is connected to logical Lane0 by the flip
+                                                                 operation performed in detect.
+                                                                   0x0 = Reserved.
+                                                                   0x1 = Connect logical Lane0 to physical lane 1.
+                                                                   0x2 = Connect logical Lane0 to physical lane 3.
+                                                                   0x3 = Connect logical Lane0 to physical lane 7.
+                                                                   0x4 = Connect logical Lane0 to physical lane 15.
+                                                                   0x5 - 0x7 = Reserved. */
+        uint32_t alaneflip             : 1;  /**< [ 16: 16](R/W) Enable auto flipping of the lanes. */
+        uint32_t dsc                   : 1;  /**< [ 17: 17](R/W/H) Directed speed change. A write of one initiates a speed change.
+                                                                 When the speed change occurs, the controller will clear the contents of this field. */
+        uint32_t cpyts                 : 1;  /**< [ 18: 18](R/W) Config PHY TX swing. Indicates the voltage level that the PHY should drive. When set to one,
+                                                                 indicates low swing. When set to 0, indicates full swing. */
+        uint32_t ctcrb                 : 1;  /**< [ 19: 19](R/W) Config TX compliance receive bit. When set to one, signals LTSSM to transmit TS ordered sets
+                                                                 with the compliance receive bit assert (equal to one). */
+        uint32_t s_d_e                 : 1;  /**< [ 20: 20](R/W) Set the deemphasis level for upstream ports.
+                                                                 0 = -6 dB.
+                                                                 1 = -3.5 dB. */
+        uint32_t gen1_ei_inf           : 1;  /**< [ 21: 21](R/W) Electrical idle inference mode at Gen1 Rate. Programmable mode to determine
+                                                                 inferred electrical idle (EI) in Recovery.Speed or Loopback.Active (as slave)
+                                                                 state at Gen1 speed by looking for a one value on RxElecIdle instead of looking
+                                                                 for a zero on RxValid. If the PHY fails to deassert the RxValid signal in
+                                                                 Recovery.Speed or Loopback.Active (because of corrupted EIOS for example),
+                                                                 then EI cannot be inferred successfully in the controller by just detecting the
+                                                                 condition RxValid=0.
+                                                                   0 = Use RxElecIdle signal to infer electrical idle.
+                                                                   1 = Use RxValid signal to infer electrical idle. */
+        uint32_t reserved_22_31        : 10;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_pcieepx_gen2_port_s cn9; */
+    /* struct cavm_pcieepx_gen2_port_s cn96xxp1; */
+    struct cavm_pcieepx_gen2_port_cn96xxp3
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_22_31        : 10;
@@ -14371,8 +14687,10 @@ union cavm_pcieepx_gen2_port
                                                                    1 = Use RxValid signal to infer electrical idle. */
         uint32_t reserved_22_31        : 10;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_pcieepx_gen2_port_s cn; */
+    } cn96xxp3;
+    /* struct cavm_pcieepx_gen2_port_cn96xxp3 cn98xx; */
+    /* struct cavm_pcieepx_gen2_port_cn96xxp3 cnf95xx; */
+    /* struct cavm_pcieepx_gen2_port_cn96xxp3 loki; */
 };
 typedef union cavm_pcieepx_gen2_port cavm_pcieepx_gen2_port_t;
 
@@ -14381,7 +14699,9 @@ static inline uint64_t CAVM_PCIEEPX_GEN2_PORT(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x80cll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x80cll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x80cll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x80c + 0 * ((a) & 0x0);
@@ -14543,7 +14863,9 @@ static inline uint64_t CAVM_PCIEEPX_GEN3_EQ_CTL(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x8a8ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x8a8ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x8a8ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x8a8 + 0 * ((a) & 0x0);
@@ -14623,7 +14945,9 @@ static inline uint64_t CAVM_PCIEEPX_GEN3_FB_MODE_DIR_CHG(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x8acll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x8acll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x8acll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x8ac + 0 * ((a) & 0x0);
@@ -14665,7 +14989,9 @@ static inline uint64_t CAVM_PCIEEPX_GEN3_PIPE_LB(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x8b8ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x8b8ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x8b8ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x8b8 + 0 * ((a) & 0x0);
@@ -14708,6 +15034,7 @@ union cavm_pcieepx_gen4_lane_margining_1
         uint32_t reserved_30_31        : 2;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_pcieepx_gen4_lane_margining_1_s cn9; */
     /* struct cavm_pcieepx_gen4_lane_margining_1_s cn96xxp1; */
     struct cavm_pcieepx_gen4_lane_margining_1_cn96xxp3
     {
@@ -14731,6 +15058,7 @@ union cavm_pcieepx_gen4_lane_margining_1
         uint32_t reserved_30_31        : 2;
 #endif /* Word 0 - End */
     } cn96xxp3;
+    /* struct cavm_pcieepx_gen4_lane_margining_1_cn96xxp3 cn98xx; */
     /* struct cavm_pcieepx_gen4_lane_margining_1_s cnf95xx; */
     /* struct cavm_pcieepx_gen4_lane_margining_1_s loki; */
 };
@@ -14741,7 +15069,9 @@ static inline uint64_t CAVM_PCIEEPX_GEN4_LANE_MARGINING_1(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0xb80ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0xb80ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0xb80ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0xb80 + 0 * ((a) & 0x0);
@@ -14767,7 +15097,7 @@ union cavm_pcieepx_gen4_lane_margining_2
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_29_31        : 3;
         uint32_t ies                   : 1;  /**< [ 28: 28](R/W) Ind error sampler for lane margining at the receiver. */
-        uint32_t srm                   : 1;  /**< [ 27: 27](R/W) Sample reporting method for lane margining at the receiver.. */
+        uint32_t srm                   : 1;  /**< [ 27: 27](R/W) Sample reporting method for lane margining at the receiver. */
         uint32_t ilrt                  : 1;  /**< [ 26: 26](R/W) Ind left right timing for lane margining at the receiver. */
         uint32_t iudv                  : 1;  /**< [ 25: 25](R/W) Ind up down voltage for lane margining at the receiver. */
         uint32_t volt_sup              : 1;  /**< [ 24: 24](R/W) Voltage supported for lane margining at the receiver. */
@@ -14787,11 +15117,12 @@ union cavm_pcieepx_gen4_lane_margining_2
         uint32_t volt_sup              : 1;  /**< [ 24: 24](R/W) Voltage supported for lane margining at the receiver. */
         uint32_t iudv                  : 1;  /**< [ 25: 25](R/W) Ind up down voltage for lane margining at the receiver. */
         uint32_t ilrt                  : 1;  /**< [ 26: 26](R/W) Ind left right timing for lane margining at the receiver. */
-        uint32_t srm                   : 1;  /**< [ 27: 27](R/W) Sample reporting method for lane margining at the receiver.. */
+        uint32_t srm                   : 1;  /**< [ 27: 27](R/W) Sample reporting method for lane margining at the receiver. */
         uint32_t ies                   : 1;  /**< [ 28: 28](R/W) Ind error sampler for lane margining at the receiver. */
         uint32_t reserved_29_31        : 3;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_pcieepx_gen4_lane_margining_2_s cn9; */
     /* struct cavm_pcieepx_gen4_lane_margining_2_s cn96xxp1; */
     struct cavm_pcieepx_gen4_lane_margining_2_cn96xxp3
     {
@@ -14823,37 +15154,9 @@ union cavm_pcieepx_gen4_lane_margining_2
         uint32_t reserved_29_31        : 3;
 #endif /* Word 0 - End */
     } cn96xxp3;
-    struct cavm_pcieepx_gen4_lane_margining_2_cnf95xx
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint32_t reserved_29_31        : 3;
-        uint32_t ies                   : 1;  /**< [ 28: 28](R/W) Ind error sampler for lane margining at the receiver. */
-        uint32_t srm                   : 1;  /**< [ 27: 27](R/W) Sample reporting method for lane margining at the receiver. */
-        uint32_t ilrt                  : 1;  /**< [ 26: 26](R/W) Ind left right timing for lane margining at the receiver. */
-        uint32_t iudv                  : 1;  /**< [ 25: 25](R/W) Ind up down voltage for lane margining at the receiver. */
-        uint32_t volt_sup              : 1;  /**< [ 24: 24](R/W) Voltage supported for lane margining at the receiver. */
-        uint32_t reserved_21_23        : 3;
-        uint32_t max_lanes             : 5;  /**< [ 20: 16](R/W) Max lanes for lane margining at the receiver. */
-        uint32_t reserved_14_15        : 2;
-        uint32_t srt                   : 6;  /**< [ 13:  8](R/W) Sample rate timing for lane margining at the receiver. */
-        uint32_t reserved_6_7          : 2;
-        uint32_t srv                   : 6;  /**< [  5:  0](R/W) Sample rate voltage for lane margining at the receiver. */
-#else /* Word 0 - Little Endian */
-        uint32_t srv                   : 6;  /**< [  5:  0](R/W) Sample rate voltage for lane margining at the receiver. */
-        uint32_t reserved_6_7          : 2;
-        uint32_t srt                   : 6;  /**< [ 13:  8](R/W) Sample rate timing for lane margining at the receiver. */
-        uint32_t reserved_14_15        : 2;
-        uint32_t max_lanes             : 5;  /**< [ 20: 16](R/W) Max lanes for lane margining at the receiver. */
-        uint32_t reserved_21_23        : 3;
-        uint32_t volt_sup              : 1;  /**< [ 24: 24](R/W) Voltage supported for lane margining at the receiver. */
-        uint32_t iudv                  : 1;  /**< [ 25: 25](R/W) Ind up down voltage for lane margining at the receiver. */
-        uint32_t ilrt                  : 1;  /**< [ 26: 26](R/W) Ind left right timing for lane margining at the receiver. */
-        uint32_t srm                   : 1;  /**< [ 27: 27](R/W) Sample reporting method for lane margining at the receiver. */
-        uint32_t ies                   : 1;  /**< [ 28: 28](R/W) Ind error sampler for lane margining at the receiver. */
-        uint32_t reserved_29_31        : 3;
-#endif /* Word 0 - End */
-    } cnf95xx;
-    /* struct cavm_pcieepx_gen4_lane_margining_2_cnf95xx loki; */
+    /* struct cavm_pcieepx_gen4_lane_margining_2_cn96xxp3 cn98xx; */
+    /* struct cavm_pcieepx_gen4_lane_margining_2_s cnf95xx; */
+    /* struct cavm_pcieepx_gen4_lane_margining_2_s loki; */
 };
 typedef union cavm_pcieepx_gen4_lane_margining_2 cavm_pcieepx_gen4_lane_margining_2_t;
 
@@ -14862,7 +15165,9 @@ static inline uint64_t CAVM_PCIEEPX_GEN4_LANE_MARGINING_2(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0xb84ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0xb84ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0xb84ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0xb84 + 0 * ((a) & 0x0);
@@ -14901,7 +15206,9 @@ static inline uint64_t CAVM_PCIEEPX_HDR_LOG1(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x11cll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x11cll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x11cll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x11c + 0 * ((a) & 0x0);
@@ -14940,7 +15247,9 @@ static inline uint64_t CAVM_PCIEEPX_HDR_LOG2(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x120ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x120ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x120ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x120 + 0 * ((a) & 0x0);
@@ -14979,7 +15288,9 @@ static inline uint64_t CAVM_PCIEEPX_HDR_LOG3(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x124ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x124ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x124ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x124 + 0 * ((a) & 0x0);
@@ -15018,7 +15329,9 @@ static inline uint64_t CAVM_PCIEEPX_HDR_LOG4(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x128ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x128ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x128ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x128 + 0 * ((a) & 0x0);
@@ -15118,7 +15431,9 @@ static inline uint64_t CAVM_PCIEEPX_HIDE_PF(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x8a0ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x8a0ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x8a0ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x8a0 + 0 * ((a) & 0x0);
@@ -15147,6 +15462,34 @@ union cavm_pcieepx_id
                                                                   _ \<15:8\> is typically set to the appropriate chip number, from the
                                                                  FUS_FUSE_NUM_E::CHIP_TYPE() fuses, and as enumerated by PCC_PROD_E::CNXXXX.
                                                                   _ \<7:0\> is typically set to PCC_DEV_IDL_E::PCIERC. */
+        uint32_t vendid                : 16; /**< [ 15:  0](RO/WRSL) Cavium's vendor ID, writable through PEM()_CFG_TBL().
+                                                                 During an EPROM Load, if a value of 0xFFFF is loaded to this field and
+                                                                 a value of 0xFFFF is loaded to the [DEVID] field of this register, the value will not be
+                                                                 loaded, EEPROM load will stop, and the FastLinkEnable bit will be set in the
+                                                                 PCIEEP_PORT_CTL register. */
+#else /* Word 0 - Little Endian */
+        uint32_t vendid                : 16; /**< [ 15:  0](RO/WRSL) Cavium's vendor ID, writable through PEM()_CFG_TBL().
+                                                                 During an EPROM Load, if a value of 0xFFFF is loaded to this field and
+                                                                 a value of 0xFFFF is loaded to the [DEVID] field of this register, the value will not be
+                                                                 loaded, EEPROM load will stop, and the FastLinkEnable bit will be set in the
+                                                                 PCIEEP_PORT_CTL register. */
+        uint32_t devid                 : 16; /**< [ 31: 16](RO/WRSL) Device ID for PCIERP, writable through PEM()_CFG_TBL().
+                                                                  Firmware must configure this field prior to starting the link.
+                                                                  _ \<15:8\> is typically set to the appropriate chip number, from the
+                                                                 FUS_FUSE_NUM_E::CHIP_TYPE() fuses, and as enumerated by PCC_PROD_E::CNXXXX.
+                                                                  _ \<7:0\> is typically set to PCC_DEV_IDL_E::PCIERC. */
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_pcieepx_id_s cn9; */
+    /* struct cavm_pcieepx_id_s cn96xxp1; */
+    struct cavm_pcieepx_id_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t devid                 : 16; /**< [ 31: 16](RO/WRSL) Device ID for PCIERP, writable through PEM()_CFG_TBL().
+                                                                  Firmware must configure this field prior to starting the link.
+                                                                  _ \<15:8\> is typically set to the appropriate chip number, from the
+                                                                 FUS_FUSE_NUM_E::CHIP_TYPE() fuses, and as enumerated by PCC_PROD_E::CNXXXX.
+                                                                  _ \<7:0\> is typically set to PCC_DEV_IDL_E::PCIERC. */
         uint32_t vendid                : 16; /**< [ 15:  0](RO/WRSL) Marvell (Cavium)'s vendor ID, writable through PEM()_CFG_TBL().
                                                                  During an EPROM Load, if a value of 0xFFFF is loaded to this field and
                                                                  a value of 0xFFFF is loaded to the [DEVID] field of this register, the value will not be
@@ -15164,8 +15507,10 @@ union cavm_pcieepx_id
                                                                  FUS_FUSE_NUM_E::CHIP_TYPE() fuses, and as enumerated by PCC_PROD_E::CNXXXX.
                                                                   _ \<7:0\> is typically set to PCC_DEV_IDL_E::PCIERC. */
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_pcieepx_id_s cn; */
+    } cn96xxp3;
+    /* struct cavm_pcieepx_id_cn96xxp3 cn98xx; */
+    /* struct cavm_pcieepx_id_cn96xxp3 cnf95xx; */
+    /* struct cavm_pcieepx_id_cn96xxp3 loki; */
 };
 typedef union cavm_pcieepx_id cavm_pcieepx_id_t;
 
@@ -15174,7 +15519,9 @@ static inline uint64_t CAVM_PCIEEPX_ID(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0 + 0 * ((a) & 0x0);
@@ -15220,7 +15567,9 @@ static inline uint64_t CAVM_PCIEEPX_INT(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x3cll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x3cll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x3cll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x3c + 0 * ((a) & 0x0);
@@ -15270,7 +15619,9 @@ static inline uint64_t CAVM_PCIEEPX_L1_SUBSTATES(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0xb44ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0xb44ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0xb44ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0xb44 + 0 * ((a) & 0x0);
@@ -15348,7 +15699,9 @@ static inline uint64_t CAVM_PCIEEPX_L1SUB_CAP(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x304ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x304ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x304ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x304 + 0 * ((a) & 0x0);
@@ -15396,7 +15749,9 @@ static inline uint64_t CAVM_PCIEEPX_L1SUB_CAP_HDR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x300ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x300ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x300ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x300 + 0 * ((a) & 0x0);
@@ -15450,7 +15805,9 @@ static inline uint64_t CAVM_PCIEEPX_L1SUB_CTL1(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x308ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x308ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x308ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x308 + 0 * ((a) & 0x0);
@@ -15508,7 +15865,9 @@ static inline uint64_t CAVM_PCIEEPX_L1SUB_CTL2(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x30cll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x30cll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x30cll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x30c + 0 * ((a) & 0x0);
@@ -15548,7 +15907,9 @@ static inline uint64_t CAVM_PCIEEPX_LANE_ERR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x180ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x180ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x180ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x180 + 0 * ((a) & 0x0);
@@ -15619,7 +15980,57 @@ union cavm_pcieepx_lane_skew
         uint32_t dlld                  : 1;  /**< [ 31: 31](R/W) Disable lane-to-lane deskew. Disables the internal lane-to-lane deskew logic. */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_pcieepx_lane_skew_s cn; */
+    /* struct cavm_pcieepx_lane_skew_s cn9; */
+    struct cavm_pcieepx_lane_skew_cn96xxp1
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t dlld                  : 1;  /**< [ 31: 31](R/W) Disable lane-to-lane deskew. Disables the internal lane-to-lane deskew logic. */
+        uint32_t inuml                 : 4;  /**< [ 30: 27](R/W) Implementation-specific number of lanes.
+                                                                   0x0 = 1 lane.
+                                                                   0x1 = 2 lanes.
+                                                                   0x3 = 4 lanes.
+                                                                   0x7 = 8 lanes.
+                                                                   0xF = 16 lanes.
+                                                                 The number of lanes to be used when in Loopback Master. The number of lanes
+                                                                 programmed must be equal to or less than the valid number of lanes set in
+                                                                 PCIEEP_PORT_CTL[LME]. You must configure this field before initiating Loopback by
+                                                                 writing PCIEEP_PORT_CTL[LE]. The controller will transition from Loopback.Entry
+                                                                 to Loopback.Active after receiving two consecutive TS1 Ordered Sets with the
+                                                                 Loopback bit asserted on the implementation specific number of lanes configured in this field. */
+        uint32_t reserved_26           : 1;
+        uint32_t ack_nak               : 1;  /**< [ 25: 25](R/W) ACK/NAK disable. Prevents the PCI Express bus from sending Ack and Nak DLLPs. */
+        uint32_t fcd                   : 1;  /**< [ 24: 24](R/W) Flow control disable. Prevents the PCI Express bus from sending FC DLLPs. */
+        uint32_t ilst                  : 24; /**< [ 23:  0](R/W) Insert lane skew for transmit (not supported for *16). Causes skew between lanes for test
+                                                                 purposes. There are three bits per lane. The value is in units of one symbol time. For
+                                                                 example, the value 0x2 for a lane forces a skew of two symbol times for that lane. The
+                                                                 maximum skew value for any lane is five symbol times. */
+#else /* Word 0 - Little Endian */
+        uint32_t ilst                  : 24; /**< [ 23:  0](R/W) Insert lane skew for transmit (not supported for *16). Causes skew between lanes for test
+                                                                 purposes. There are three bits per lane. The value is in units of one symbol time. For
+                                                                 example, the value 0x2 for a lane forces a skew of two symbol times for that lane. The
+                                                                 maximum skew value for any lane is five symbol times. */
+        uint32_t fcd                   : 1;  /**< [ 24: 24](R/W) Flow control disable. Prevents the PCI Express bus from sending FC DLLPs. */
+        uint32_t ack_nak               : 1;  /**< [ 25: 25](R/W) ACK/NAK disable. Prevents the PCI Express bus from sending Ack and Nak DLLPs. */
+        uint32_t reserved_26           : 1;
+        uint32_t inuml                 : 4;  /**< [ 30: 27](R/W) Implementation-specific number of lanes.
+                                                                   0x0 = 1 lane.
+                                                                   0x1 = 2 lanes.
+                                                                   0x3 = 4 lanes.
+                                                                   0x7 = 8 lanes.
+                                                                   0xF = 16 lanes.
+                                                                 The number of lanes to be used when in Loopback Master. The number of lanes
+                                                                 programmed must be equal to or less than the valid number of lanes set in
+                                                                 PCIEEP_PORT_CTL[LME]. You must configure this field before initiating Loopback by
+                                                                 writing PCIEEP_PORT_CTL[LE]. The controller will transition from Loopback.Entry
+                                                                 to Loopback.Active after receiving two consecutive TS1 Ordered Sets with the
+                                                                 Loopback bit asserted on the implementation specific number of lanes configured in this field. */
+        uint32_t dlld                  : 1;  /**< [ 31: 31](R/W) Disable lane-to-lane deskew. Disables the internal lane-to-lane deskew logic. */
+#endif /* Word 0 - End */
+    } cn96xxp1;
+    /* struct cavm_pcieepx_lane_skew_s cn96xxp3; */
+    /* struct cavm_pcieepx_lane_skew_s cn98xx; */
+    /* struct cavm_pcieepx_lane_skew_s cnf95xx; */
+    /* struct cavm_pcieepx_lane_skew_s loki; */
 };
 typedef union cavm_pcieepx_lane_skew cavm_pcieepx_lane_skew_t;
 
@@ -15628,7 +16039,9 @@ static inline uint64_t CAVM_PCIEEPX_LANE_SKEW(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x714ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x714ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x714ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x714 + 0 * ((a) & 0x0);
@@ -15732,7 +16145,9 @@ static inline uint64_t CAVM_PCIEEPX_LINK_CAP(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x7cll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x7cll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x7cll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x7c + 0 * ((a) & 0x0);
@@ -15812,7 +16227,9 @@ static inline uint64_t CAVM_PCIEEPX_LINK_CAP2(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x9cll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x9cll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x9cll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x9c + 0 * ((a) & 0x0);
@@ -15916,7 +16333,9 @@ static inline uint64_t CAVM_PCIEEPX_LINK_CTL(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x80ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x80ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x80ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x80 + 0 * ((a) & 0x0);
@@ -16138,7 +16557,9 @@ static inline uint64_t CAVM_PCIEEPX_LINK_CTL2(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0xa0ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0xa0ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0xa0ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0xa0 + 0 * ((a) & 0x0);
@@ -16180,7 +16601,9 @@ static inline uint64_t CAVM_PCIEEPX_LINK_CTL3(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x17cll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x17cll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x17cll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x17c + 0 * ((a) & 0x0);
@@ -16253,7 +16676,9 @@ static inline uint64_t CAVM_PCIEEPX_LTR_CAP_HDR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x2f8ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x2f8ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x2f8ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x2f8 + 0 * ((a) & 0x0);
@@ -16302,7 +16727,9 @@ static inline uint64_t CAVM_PCIEEPX_LTR_LAT(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x2fcll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x2fcll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x2fcll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x2fc + 0 * ((a) & 0x0);
@@ -16350,7 +16777,9 @@ static inline uint64_t CAVM_PCIEEPX_MARGIN_EXT_CAP_HDR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x1d8ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x1d8ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x1d8ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x1d8 + 0 * ((a) & 0x0);
@@ -16432,7 +16861,9 @@ static inline uint64_t CAVM_PCIEEPX_MISC_CTL1(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x8bcll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x8bcll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x8bcll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x8bc + 0 * ((a) & 0x0);
@@ -16488,7 +16919,9 @@ static inline uint64_t CAVM_PCIEEPX_MRG_LANE_CTL_STAT0(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x1e0ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x1e0ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x1e0ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x1e0 + 0 * ((a) & 0x0);
@@ -16544,7 +16977,9 @@ static inline uint64_t CAVM_PCIEEPX_MRG_LANE_CTL_STAT1(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x1e4ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x1e4ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x1e4ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x1e4 + 0 * ((a) & 0x0);
@@ -16600,7 +17035,9 @@ static inline uint64_t CAVM_PCIEEPX_MRG_LANE_CTL_STAT10(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x208ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x208ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x208ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x208 + 0 * ((a) & 0x0);
@@ -16656,7 +17093,9 @@ static inline uint64_t CAVM_PCIEEPX_MRG_LANE_CTL_STAT11(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x20cll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x20cll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x20cll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x20c + 0 * ((a) & 0x0);
@@ -16712,7 +17151,9 @@ static inline uint64_t CAVM_PCIEEPX_MRG_LANE_CTL_STAT12(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x210ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x210ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x210ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x210 + 0 * ((a) & 0x0);
@@ -16768,7 +17209,9 @@ static inline uint64_t CAVM_PCIEEPX_MRG_LANE_CTL_STAT13(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x214ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x214ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x214ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x214 + 0 * ((a) & 0x0);
@@ -16824,7 +17267,9 @@ static inline uint64_t CAVM_PCIEEPX_MRG_LANE_CTL_STAT14(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x218ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x218ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x218ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x218 + 0 * ((a) & 0x0);
@@ -16880,7 +17325,9 @@ static inline uint64_t CAVM_PCIEEPX_MRG_LANE_CTL_STAT15(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x21cll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x21cll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x21cll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x21c + 0 * ((a) & 0x0);
@@ -16936,7 +17383,9 @@ static inline uint64_t CAVM_PCIEEPX_MRG_LANE_CTL_STAT2(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x1e8ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x1e8ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x1e8ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x1e8 + 0 * ((a) & 0x0);
@@ -16992,7 +17441,9 @@ static inline uint64_t CAVM_PCIEEPX_MRG_LANE_CTL_STAT3(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x1ecll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x1ecll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x1ecll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x1ec + 0 * ((a) & 0x0);
@@ -17048,7 +17499,9 @@ static inline uint64_t CAVM_PCIEEPX_MRG_LANE_CTL_STAT4(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x1f0ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x1f0ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x1f0ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x1f0 + 0 * ((a) & 0x0);
@@ -17104,7 +17557,9 @@ static inline uint64_t CAVM_PCIEEPX_MRG_LANE_CTL_STAT5(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x1f4ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x1f4ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x1f4ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x1f4 + 0 * ((a) & 0x0);
@@ -17160,7 +17615,9 @@ static inline uint64_t CAVM_PCIEEPX_MRG_LANE_CTL_STAT6(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x1f8ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x1f8ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x1f8ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x1f8 + 0 * ((a) & 0x0);
@@ -17216,7 +17673,9 @@ static inline uint64_t CAVM_PCIEEPX_MRG_LANE_CTL_STAT7(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x1fcll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x1fcll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x1fcll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x1fc + 0 * ((a) & 0x0);
@@ -17272,7 +17731,9 @@ static inline uint64_t CAVM_PCIEEPX_MRG_LANE_CTL_STAT8(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x200ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x200ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x200ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x200 + 0 * ((a) & 0x0);
@@ -17328,7 +17789,9 @@ static inline uint64_t CAVM_PCIEEPX_MRG_LANE_CTL_STAT9(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x204ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x204ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x204ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x204 + 0 * ((a) & 0x0);
@@ -17374,7 +17837,9 @@ static inline uint64_t CAVM_PCIEEPX_MRG_PORT_CAP_STAT(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x1dcll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x1dcll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x1dcll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x1dc + 0 * ((a) & 0x0);
@@ -17434,7 +17899,9 @@ static inline uint64_t CAVM_PCIEEPX_MSIX_CAP_CNTRL(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0xb0ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0xb0ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0xb0ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0xb0 + 0 * ((a) & 0x0);
@@ -17478,7 +17945,9 @@ static inline uint64_t CAVM_PCIEEPX_MSIX_PBA(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0xb8ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0xb8ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0xb8ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0xb8 + 0 * ((a) & 0x0);
@@ -17522,7 +17991,9 @@ static inline uint64_t CAVM_PCIEEPX_MSIX_TABLE(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0xb4ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0xb4ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0xb4ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0xb4 + 0 * ((a) & 0x0);
@@ -17598,7 +18069,9 @@ static inline uint64_t CAVM_PCIEEPX_NP_RCV_CREDIT(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x74cll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x74cll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x74cll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x74c + 0 * ((a) & 0x0);
@@ -17644,7 +18117,9 @@ static inline uint64_t CAVM_PCIEEPX_NP_XMIT_CREDIT(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x734ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x734ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x734ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x734 + 0 * ((a) & 0x0);
@@ -17700,7 +18175,9 @@ static inline uint64_t CAVM_PCIEEPX_OMSG_PTR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x704ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x704ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x704ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x704 + 0 * ((a) & 0x0);
@@ -17758,7 +18235,9 @@ static inline uint64_t CAVM_PCIEEPX_ORD_RULE_CTRL(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x8b4ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x8b4ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x8b4ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x8b4 + 0 * ((a) & 0x0);
@@ -17868,7 +18347,9 @@ static inline uint64_t CAVM_PCIEEPX_P_RCV_CREDIT(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x748ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x748ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x748ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x748 + 0 * ((a) & 0x0);
@@ -17914,7 +18395,9 @@ static inline uint64_t CAVM_PCIEEPX_P_XMIT_CREDIT(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x730ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x730ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x730ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x730 + 0 * ((a) & 0x0);
@@ -17962,7 +18445,9 @@ static inline uint64_t CAVM_PCIEEPX_PASID_CAP_HDR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x310ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x310ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x310ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x310 + 0 * ((a) & 0x0);
@@ -18020,7 +18505,9 @@ static inline uint64_t CAVM_PCIEEPX_PASID_CTL_REG(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x314ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x314ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x314ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x314 + 0 * ((a) & 0x0);
@@ -18068,7 +18555,9 @@ static inline uint64_t CAVM_PCIEEPX_PB_BASE(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x158ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x158ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x158ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x158 + 0 * ((a) & 0x0);
@@ -18108,7 +18597,9 @@ static inline uint64_t CAVM_PCIEEPX_PB_CAP(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x164ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x164ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x164ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x164 + 0 * ((a) & 0x0);
@@ -18159,7 +18650,9 @@ static inline uint64_t CAVM_PCIEEPX_PB_DATA(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x160ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x160ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x160ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x160 + 0 * ((a) & 0x0);
@@ -18199,7 +18692,9 @@ static inline uint64_t CAVM_PCIEEPX_PB_DATA_SEL(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x15cll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x15cll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x15cll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x15c + 0 * ((a) & 0x0);
@@ -18237,7 +18732,9 @@ static inline uint64_t CAVM_PCIEEPX_PHY_CTL(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x814ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x814ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x814ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x814 + 0 * ((a) & 0x0);
@@ -18355,7 +18852,9 @@ static inline uint64_t CAVM_PCIEEPX_PHY_GEN3_CTL(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x890ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x890ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x890ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x890 + 0 * ((a) & 0x0);
@@ -18436,7 +18935,9 @@ static inline uint64_t CAVM_PCIEEPX_PHY_INTOP_CTL(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x8c4ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x8c4ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x8c4ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x8c4 + 0 * ((a) & 0x0);
@@ -18474,7 +18975,9 @@ static inline uint64_t CAVM_PCIEEPX_PHY_STATUS(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x810ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x810ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x810ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x810 + 0 * ((a) & 0x0);
@@ -18516,7 +19019,9 @@ static inline uint64_t CAVM_PCIEEPX_PIPE_REL(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0xb90ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0xb90ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0xb90ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0xb90 + 0 * ((a) & 0x0);
@@ -18554,7 +19059,9 @@ static inline uint64_t CAVM_PCIEEPX_PL16G_CAP(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x1acll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x1acll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x1acll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x1ac + 0 * ((a) & 0x0);
@@ -18592,7 +19099,9 @@ static inline uint64_t CAVM_PCIEEPX_PL16G_CTL(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x1b0ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x1b0ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x1b0ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x1b0 + 0 * ((a) & 0x0);
@@ -18644,7 +19153,9 @@ static inline uint64_t CAVM_PCIEEPX_PL16G_EQ_CTL0123(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x1c8ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x1c8ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x1c8ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x1c8 + 0 * ((a) & 0x0);
@@ -18696,7 +19207,9 @@ static inline uint64_t CAVM_PCIEEPX_PL16G_EQ_CTL12131415(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x1d4ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x1d4ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x1d4ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x1d4 + 0 * ((a) & 0x0);
@@ -18748,7 +19261,9 @@ static inline uint64_t CAVM_PCIEEPX_PL16G_EQ_CTL4567(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x1ccll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x1ccll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x1ccll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x1cc + 0 * ((a) & 0x0);
@@ -18800,7 +19315,9 @@ static inline uint64_t CAVM_PCIEEPX_PL16G_EQ_CTL891011(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x1d0ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x1d0ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x1d0ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x1d0 + 0 * ((a) & 0x0);
@@ -18848,7 +19365,9 @@ static inline uint64_t CAVM_PCIEEPX_PL16G_EXT_CAP_HDR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x1a8ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x1a8ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x1a8ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x1a8 + 0 * ((a) & 0x0);
@@ -18888,7 +19407,9 @@ static inline uint64_t CAVM_PCIEEPX_PL16G_FRET_DPAR_STAT(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x1bcll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x1bcll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x1bcll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x1bc + 0 * ((a) & 0x0);
@@ -18928,7 +19449,9 @@ static inline uint64_t CAVM_PCIEEPX_PL16G_LC_DPAR_STAT(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x1b8ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x1b8ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x1b8ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x1b8 + 0 * ((a) & 0x0);
@@ -18968,7 +19491,9 @@ static inline uint64_t CAVM_PCIEEPX_PL16G_SRET_DPAR_STAT(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x1c0ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x1c0ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x1c0ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x1c0 + 0 * ((a) & 0x0);
@@ -19016,7 +19541,9 @@ static inline uint64_t CAVM_PCIEEPX_PL16G_STATUS(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x1b4ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x1b4ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x1b4ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x1b4 + 0 * ((a) & 0x0);
@@ -19072,7 +19599,9 @@ static inline uint64_t CAVM_PCIEEPX_PL_LTR_LAT(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0xb30ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0xb30ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0xb30ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0xb30 + 0 * ((a) & 0x0);
@@ -19158,7 +19687,9 @@ static inline uint64_t CAVM_PCIEEPX_PM_CAP_ID(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x40ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x40ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x40ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x40 + 0 * ((a) & 0x0);
@@ -19230,7 +19761,9 @@ static inline uint64_t CAVM_PCIEEPX_PM_CTL(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x44ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x44ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x44ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x44 + 0 * ((a) & 0x0);
@@ -19252,6 +19785,92 @@ union cavm_pcieepx_port_ctl
 {
     uint32_t u;
     struct cavm_pcieepx_port_ctl_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t reserved_28_31        : 4;
+        uint32_t xlr_en                : 1;  /**< [ 27: 27](R/W) Transmit lane reversible enable.  Internally reserved field, do not set. */
+        uint32_t ex_synch              : 1;  /**< [ 26: 26](R/W) Extended synch.  Internally reserved field, do not set. */
+        uint32_t clcrc_en              : 1;  /**< [ 25: 25](R/W) Corrupt LCRC enable.  Internally reserved field, do not set. */
+        uint32_t beacon_en             : 1;  /**< [ 24: 24](R/W) Beacon enable.  Internally reserved field, do not set. */
+        uint32_t cle                   : 2;  /**< [ 23: 22](RAZ) Reserved. */
+        uint32_t lme                   : 6;  /**< [ 21: 16](R/W) Link mode enable set as follows:
+                                                                 0x1 = x1.
+                                                                 0x3 = x2.
+                                                                 0x7 = x4.
+                                                                 0xF = x8.
+                                                                 0x1F = x16.
+                                                                 0x3F = x32 (not supported).
+
+                                                                 This field indicates the maximum number of lanes supported by the PCIe port. The value can
+                                                                 be set less than 0x1F to limit the number of lanes that the PCIe will attempt to use. If
+                                                                 the value of 0xF set by the hardware is not desired, this field can be programmed to a
+                                                                 smaller value (i.e. EEPROM). See also PCIEEP_LINK_CAP[MLW].
+                                                                 The value of this field does not indicate the number of lanes in use by the PCIe. This
+                                                                 field sets the maximum number of lanes in the PCIe core that could be used. As per the
+                                                                 PCIe specification, the PCIe core can negotiate a smaller link width, so all of x16, x8,
+                                                                 x4, x2, and x1 are supported when [LME] = 0x1F, for example. */
+        uint32_t reserved_12_15        : 4;
+        uint32_t link_rate             : 4;  /**< [ 11:  8](RO/H) Reserved. */
+        uint32_t flm                   : 1;  /**< [  7:  7](R/W) Fast link mode. Sets all internal timers to fast mode for simulation purposes.
+                                                                 The scaling factor is configured by PCIEEP_TIMER_CTL[FLMSF]. */
+        uint32_t ldis                  : 1;  /**< [  6:  6](R/W) Link disable. Internally reserved field, do not set. */
+        uint32_t dllle                 : 1;  /**< [  5:  5](R/W) DLL link enable. Enables link initialization. If DLL link enable = 0, the PCI Express bus
+                                                                 does not transmit InitFC DLLPs and does not establish a link. */
+        uint32_t reserved_4            : 1;
+        uint32_t ra                    : 1;  /**< [  3:  3](R/W) Reset assert. Triggers a recovery and forces the LTSSM to the hot reset state (downstream
+                                                                 port only). */
+        uint32_t le                    : 1;  /**< [  2:  2](R/W) Loopback enable. Initiate loopback mode as a master. On a 0-\>1 transition, the PCIe core
+                                                                 sends TS ordered sets with the loopback bit set to cause the link partner to enter into
+                                                                 loopback mode as a slave. Normal transmission is not possible when LE=1. To exit loopback
+                                                                 mode, take the link through a reset sequence. */
+        uint32_t sd                    : 1;  /**< [  1:  1](R/W) Scramble disable. Setting this bit turns off data scrambling. */
+        uint32_t omr                   : 1;  /**< [  0:  0](WO/H) Other message request. When software writes a one to this bit, the PCI Express bus transmits
+                                                                 the message contained in the other message register. */
+#else /* Word 0 - Little Endian */
+        uint32_t omr                   : 1;  /**< [  0:  0](WO/H) Other message request. When software writes a one to this bit, the PCI Express bus transmits
+                                                                 the message contained in the other message register. */
+        uint32_t sd                    : 1;  /**< [  1:  1](R/W) Scramble disable. Setting this bit turns off data scrambling. */
+        uint32_t le                    : 1;  /**< [  2:  2](R/W) Loopback enable. Initiate loopback mode as a master. On a 0-\>1 transition, the PCIe core
+                                                                 sends TS ordered sets with the loopback bit set to cause the link partner to enter into
+                                                                 loopback mode as a slave. Normal transmission is not possible when LE=1. To exit loopback
+                                                                 mode, take the link through a reset sequence. */
+        uint32_t ra                    : 1;  /**< [  3:  3](R/W) Reset assert. Triggers a recovery and forces the LTSSM to the hot reset state (downstream
+                                                                 port only). */
+        uint32_t reserved_4            : 1;
+        uint32_t dllle                 : 1;  /**< [  5:  5](R/W) DLL link enable. Enables link initialization. If DLL link enable = 0, the PCI Express bus
+                                                                 does not transmit InitFC DLLPs and does not establish a link. */
+        uint32_t ldis                  : 1;  /**< [  6:  6](R/W) Link disable. Internally reserved field, do not set. */
+        uint32_t flm                   : 1;  /**< [  7:  7](R/W) Fast link mode. Sets all internal timers to fast mode for simulation purposes.
+                                                                 The scaling factor is configured by PCIEEP_TIMER_CTL[FLMSF]. */
+        uint32_t link_rate             : 4;  /**< [ 11:  8](RO/H) Reserved. */
+        uint32_t reserved_12_15        : 4;
+        uint32_t lme                   : 6;  /**< [ 21: 16](R/W) Link mode enable set as follows:
+                                                                 0x1 = x1.
+                                                                 0x3 = x2.
+                                                                 0x7 = x4.
+                                                                 0xF = x8.
+                                                                 0x1F = x16.
+                                                                 0x3F = x32 (not supported).
+
+                                                                 This field indicates the maximum number of lanes supported by the PCIe port. The value can
+                                                                 be set less than 0x1F to limit the number of lanes that the PCIe will attempt to use. If
+                                                                 the value of 0xF set by the hardware is not desired, this field can be programmed to a
+                                                                 smaller value (i.e. EEPROM). See also PCIEEP_LINK_CAP[MLW].
+                                                                 The value of this field does not indicate the number of lanes in use by the PCIe. This
+                                                                 field sets the maximum number of lanes in the PCIe core that could be used. As per the
+                                                                 PCIe specification, the PCIe core can negotiate a smaller link width, so all of x16, x8,
+                                                                 x4, x2, and x1 are supported when [LME] = 0x1F, for example. */
+        uint32_t cle                   : 2;  /**< [ 23: 22](RAZ) Reserved. */
+        uint32_t beacon_en             : 1;  /**< [ 24: 24](R/W) Beacon enable.  Internally reserved field, do not set. */
+        uint32_t clcrc_en              : 1;  /**< [ 25: 25](R/W) Corrupt LCRC enable.  Internally reserved field, do not set. */
+        uint32_t ex_synch              : 1;  /**< [ 26: 26](R/W) Extended synch.  Internally reserved field, do not set. */
+        uint32_t xlr_en                : 1;  /**< [ 27: 27](R/W) Transmit lane reversible enable.  Internally reserved field, do not set. */
+        uint32_t reserved_28_31        : 4;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_pcieepx_port_ctl_s cn9; */
+    /* struct cavm_pcieepx_port_ctl_s cn96xxp1; */
+    struct cavm_pcieepx_port_ctl_cn96xxp3
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_28_31        : 4;
@@ -19342,8 +19961,10 @@ union cavm_pcieepx_port_ctl
         uint32_t xlr_en                : 1;  /**< [ 27: 27](R/W) Transmit lane reversible enable.  Internally reserved field, do not set. */
         uint32_t reserved_28_31        : 4;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_pcieepx_port_ctl_s cn; */
+    } cn96xxp3;
+    /* struct cavm_pcieepx_port_ctl_cn96xxp3 cn98xx; */
+    /* struct cavm_pcieepx_port_ctl_s cnf95xx; */
+    /* struct cavm_pcieepx_port_ctl_cn96xxp3 loki; */
 };
 typedef union cavm_pcieepx_port_ctl cavm_pcieepx_port_ctl_t;
 
@@ -19352,7 +19973,9 @@ static inline uint64_t CAVM_PCIEEPX_PORT_CTL(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x710ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x710ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x710ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x710 + 0 * ((a) & 0x0);
@@ -19480,7 +20103,9 @@ static inline uint64_t CAVM_PCIEEPX_PORT_FLINK(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x708ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x708ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x708ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x708 + 0 * ((a) & 0x0);
@@ -19561,7 +20186,9 @@ static inline uint64_t CAVM_PCIEEPX_PTM_CAP(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x460ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x460ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x460ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x460 + 0 * ((a) & 0x0);
@@ -19634,7 +20261,9 @@ static inline uint64_t CAVM_PCIEEPX_PTM_CAP_HDR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x45cll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x45cll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x45cll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x45c + 0 * ((a) & 0x0);
@@ -19689,7 +20318,9 @@ static inline uint64_t CAVM_PCIEEPX_PTM_CTL(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x464ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x464ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x464ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x464 + 0 * ((a) & 0x0);
@@ -19737,7 +20368,9 @@ static inline uint64_t CAVM_PCIEEPX_PTM_REQ_CAP_HDR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x468ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x468ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x468ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x468 + 0 * ((a) & 0x0);
@@ -19823,7 +20456,9 @@ static inline uint64_t CAVM_PCIEEPX_PTM_REQ_CTL(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x470ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x470ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x470ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x470 + 0 * ((a) & 0x0);
@@ -19865,7 +20500,9 @@ static inline uint64_t CAVM_PCIEEPX_PTM_REQ_HDR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x46cll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x46cll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x46cll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x46c + 0 * ((a) & 0x0);
@@ -19903,7 +20540,9 @@ static inline uint64_t CAVM_PCIEEPX_PTM_REQ_LOCALL(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x478ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x478ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x478ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x478 + 0 * ((a) & 0x0);
@@ -19941,7 +20580,9 @@ static inline uint64_t CAVM_PCIEEPX_PTM_REQ_LOCALM(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x47cll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x47cll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x47cll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x47c + 0 * ((a) & 0x0);
@@ -19979,7 +20620,9 @@ static inline uint64_t CAVM_PCIEEPX_PTM_REQ_MAS1L(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x4acll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x4acll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x4acll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x4ac + 0 * ((a) & 0x0);
@@ -20017,7 +20660,9 @@ static inline uint64_t CAVM_PCIEEPX_PTM_REQ_MAS1M(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x4b0ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x4b0ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x4b0ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x4b0 + 0 * ((a) & 0x0);
@@ -20055,7 +20700,9 @@ static inline uint64_t CAVM_PCIEEPX_PTM_REQ_MASL(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x4a0ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x4a0ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x4a0ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x4a0 + 0 * ((a) & 0x0);
@@ -20093,7 +20740,9 @@ static inline uint64_t CAVM_PCIEEPX_PTM_REQ_MASM(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x4a4ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x4a4ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x4a4ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x4a4 + 0 * ((a) & 0x0);
@@ -20131,7 +20780,9 @@ static inline uint64_t CAVM_PCIEEPX_PTM_REQ_PDLY(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x4a8ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x4a8ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x4a8ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x4a8 + 0 * ((a) & 0x0);
@@ -20171,7 +20822,9 @@ static inline uint64_t CAVM_PCIEEPX_PTM_REQ_RLAT(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x4b8ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x4b8ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x4b8ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x4b8 + 0 * ((a) & 0x0);
@@ -20215,7 +20868,9 @@ static inline uint64_t CAVM_PCIEEPX_PTM_REQ_STAT(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x474ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x474ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x474ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x474 + 0 * ((a) & 0x0);
@@ -20253,7 +20908,9 @@ static inline uint64_t CAVM_PCIEEPX_PTM_REQ_T1L(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x480ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x480ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x480ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x480 + 0 * ((a) & 0x0);
@@ -20291,7 +20948,9 @@ static inline uint64_t CAVM_PCIEEPX_PTM_REQ_T1M(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x484ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x484ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x484ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x484 + 0 * ((a) & 0x0);
@@ -20329,7 +20988,9 @@ static inline uint64_t CAVM_PCIEEPX_PTM_REQ_T1PL(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x488ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x488ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x488ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x488 + 0 * ((a) & 0x0);
@@ -20367,7 +21028,9 @@ static inline uint64_t CAVM_PCIEEPX_PTM_REQ_T1PM(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x48cll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x48cll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x48cll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x48c + 0 * ((a) & 0x0);
@@ -20405,7 +21068,9 @@ static inline uint64_t CAVM_PCIEEPX_PTM_REQ_T4L(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x490ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x490ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x490ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x490 + 0 * ((a) & 0x0);
@@ -20443,7 +21108,9 @@ static inline uint64_t CAVM_PCIEEPX_PTM_REQ_T4M(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x494ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x494ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x494ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x494 + 0 * ((a) & 0x0);
@@ -20481,7 +21148,9 @@ static inline uint64_t CAVM_PCIEEPX_PTM_REQ_T4PL(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x498ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x498ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x498ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x498 + 0 * ((a) & 0x0);
@@ -20519,7 +21188,9 @@ static inline uint64_t CAVM_PCIEEPX_PTM_REQ_T4PM(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x49cll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x49cll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x49cll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x49c + 0 * ((a) & 0x0);
@@ -20559,7 +21230,9 @@ static inline uint64_t CAVM_PCIEEPX_PTM_REQ_TLAT(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x4b4ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x4b4ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x4b4ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x4b4 + 0 * ((a) & 0x0);
@@ -20635,7 +21308,9 @@ static inline uint64_t CAVM_PCIEEPX_QUEUE_STATUS(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x73cll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x73cll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x73cll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x73c + 0 * ((a) & 0x0);
@@ -20685,7 +21360,9 @@ static inline uint64_t CAVM_PCIEEPX_RAS_DES_CAP_HDR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x318ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x318ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x318ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x318 + 0 * ((a) & 0x0);
@@ -20793,7 +21470,9 @@ static inline uint64_t CAVM_PCIEEPX_RAS_EC_CTL(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x320ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x320ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x320ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x320 + 0 * ((a) & 0x0);
@@ -20835,7 +21514,9 @@ static inline uint64_t CAVM_PCIEEPX_RAS_EC_DATA(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x324ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x324ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x324ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x324 + 0 * ((a) & 0x0);
@@ -20921,7 +21602,9 @@ static inline uint64_t CAVM_PCIEEPX_RAS_EINJ_CTL0(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x34cll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x34cll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x34cll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x34c + 0 * ((a) & 0x0);
@@ -21011,7 +21694,9 @@ static inline uint64_t CAVM_PCIEEPX_RAS_EINJ_CTL1(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x350ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x350ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x350ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x350 + 0 * ((a) & 0x0);
@@ -21077,7 +21762,9 @@ static inline uint64_t CAVM_PCIEEPX_RAS_EINJ_CTL2(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x354ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x354ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x354ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x354 + 0 * ((a) & 0x0);
@@ -21151,7 +21838,9 @@ static inline uint64_t CAVM_PCIEEPX_RAS_EINJ_CTL3(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x358ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x358ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x358ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x358 + 0 * ((a) & 0x0);
@@ -21257,7 +21946,9 @@ static inline uint64_t CAVM_PCIEEPX_RAS_EINJ_CTL4(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x35cll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x35cll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x35cll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x35c + 0 * ((a) & 0x0);
@@ -21319,7 +22010,9 @@ static inline uint64_t CAVM_PCIEEPX_RAS_EINJ_CTL5(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x360ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x360ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x360ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x360 + 0 * ((a) & 0x0);
@@ -21361,7 +22054,9 @@ static inline uint64_t CAVM_PCIEEPX_RAS_EINJ_CTL6CHGP0(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x384ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x384ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x384ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x384 + 0 * ((a) & 0x0);
@@ -21403,7 +22098,9 @@ static inline uint64_t CAVM_PCIEEPX_RAS_EINJ_CTL6CHGP1(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x388ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x388ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x388ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x388 + 0 * ((a) & 0x0);
@@ -21445,7 +22142,9 @@ static inline uint64_t CAVM_PCIEEPX_RAS_EINJ_CTL6CHGP2(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x38cll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x38cll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x38cll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x38c + 0 * ((a) & 0x0);
@@ -21487,7 +22186,9 @@ static inline uint64_t CAVM_PCIEEPX_RAS_EINJ_CTL6CHGP3(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x390ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x390ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x390ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x390 + 0 * ((a) & 0x0);
@@ -21531,7 +22232,9 @@ static inline uint64_t CAVM_PCIEEPX_RAS_EINJ_CTL6CHGV0(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x394ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x394ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x394ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x394 + 0 * ((a) & 0x0);
@@ -21575,7 +22278,9 @@ static inline uint64_t CAVM_PCIEEPX_RAS_EINJ_CTL6CHGV1(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x398ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x398ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x398ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x398 + 0 * ((a) & 0x0);
@@ -21619,7 +22324,9 @@ static inline uint64_t CAVM_PCIEEPX_RAS_EINJ_CTL6CHGV2(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x39cll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x39cll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x39cll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x39c + 0 * ((a) & 0x0);
@@ -21663,7 +22370,9 @@ static inline uint64_t CAVM_PCIEEPX_RAS_EINJ_CTL6CHGV3(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x3a0ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x3a0ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x3a0ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x3a0 + 0 * ((a) & 0x0);
@@ -21709,7 +22418,9 @@ static inline uint64_t CAVM_PCIEEPX_RAS_EINJ_CTL6CMPP0(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x364ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x364ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x364ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x364 + 0 * ((a) & 0x0);
@@ -21755,7 +22466,9 @@ static inline uint64_t CAVM_PCIEEPX_RAS_EINJ_CTL6CMPP1(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x368ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x368ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x368ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x368 + 0 * ((a) & 0x0);
@@ -21801,7 +22514,9 @@ static inline uint64_t CAVM_PCIEEPX_RAS_EINJ_CTL6CMPP2(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x36cll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x36cll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x36cll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x36c + 0 * ((a) & 0x0);
@@ -21847,7 +22562,9 @@ static inline uint64_t CAVM_PCIEEPX_RAS_EINJ_CTL6CMPP3(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x370ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x370ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x370ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x370 + 0 * ((a) & 0x0);
@@ -21889,7 +22606,9 @@ static inline uint64_t CAVM_PCIEEPX_RAS_EINJ_CTL6CMPV0(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x374ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x374ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x374ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x374 + 0 * ((a) & 0x0);
@@ -21931,7 +22650,9 @@ static inline uint64_t CAVM_PCIEEPX_RAS_EINJ_CTL6CMPV1(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x378ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x378ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x378ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x378 + 0 * ((a) & 0x0);
@@ -21973,7 +22694,9 @@ static inline uint64_t CAVM_PCIEEPX_RAS_EINJ_CTL6CMPV2(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x37cll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x37cll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x37cll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x37c + 0 * ((a) & 0x0);
@@ -22015,7 +22738,9 @@ static inline uint64_t CAVM_PCIEEPX_RAS_EINJ_CTL6CMPV3(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x380ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x380ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x380ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x380 + 0 * ((a) & 0x0);
@@ -22093,7 +22818,9 @@ static inline uint64_t CAVM_PCIEEPX_RAS_EINJ_CTL6PE(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x3a4ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x3a4ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x3a4ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x3a4 + 0 * ((a) & 0x0);
@@ -22161,7 +22888,9 @@ static inline uint64_t CAVM_PCIEEPX_RAS_EINJ_EN(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x348ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x348ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x348ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x348 + 0 * ((a) & 0x0);
@@ -22203,7 +22932,9 @@ static inline uint64_t CAVM_PCIEEPX_RAS_HDR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x31cll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x31cll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x31cll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x31c + 0 * ((a) & 0x0);
@@ -22261,6 +22992,98 @@ union cavm_pcieepx_ras_sd_ctl1
                                                                  PHY during LTSSM detect state and uses
                                                                  [FORCE_DETECT_LANE]. */
         uint32_t force_detect_lane     : 16; /**< [ 15:  0](R/W) Force detect lane.
+                                                                 When set, the core
+                                                                 ignores receiver detection from PHY during LTSSM detect
+                                                                 state and uses this value instead.
+                                                                 0x0 = Lane0.
+                                                                 0x1 = Lane1.
+                                                                 0x2 = Lane2.
+
+                                                                 0x7 = Lane7. */
+#else /* Word 0 - Little Endian */
+        uint32_t force_detect_lane     : 16; /**< [ 15:  0](R/W) Force detect lane.
+                                                                 When set, the core
+                                                                 ignores receiver detection from PHY during LTSSM detect
+                                                                 state and uses this value instead.
+                                                                 0x0 = Lane0.
+                                                                 0x1 = Lane1.
+                                                                 0x2 = Lane2.
+
+                                                                 0x7 = Lane7. */
+        uint32_t force_detect_lane_en  : 1;  /**< [ 16: 16](R/W) Force detect lane enable.
+                                                                 When this bit is set, the core ignores receiver detection from
+                                                                 PHY during LTSSM detect state and uses
+                                                                 [FORCE_DETECT_LANE]. */
+        uint32_t reserved_17_19        : 3;
+        uint32_t tx_eios_num           : 2;  /**< [ 21: 20](R/W) Number of TX EIOS.
+                                                                 This register sets the number of transmit EIOS for L0s/L1
+                                                                 entry and disable/loopback/hot-reset exit. The core selects
+                                                                 the greater value between this register and the value defined
+                                                                 by the PCI-SIG specification.
+
+                                                                 Gen1 or Gen3
+                                                                 0x0 = 1.
+                                                                 0x1 = 4.
+                                                                 0x2 = 8.
+                                                                 0x3 - 16.
+
+                                                                 Gen2
+                                                                 0x0 = 2.
+                                                                 0x1 = 8.
+                                                                 0x2 = 16.
+                                                                 0x3 - 32. */
+        uint32_t lp_intv               : 2;  /**< [ 23: 22](R/W) Low power entry interval time.
+                                                                 Interval time that the core starts monitoring RXELECIDLE
+                                                                 signal after L0s/L1/L2 entry. You should set the value
+                                                                 according to the latency from receiving EIOS to,
+                                                                 RXELECIDLE assertion at the PHY
+
+                                                                 0x0 = 40ns.
+                                                                 0x1 = 160ns.
+                                                                 0x2 = 320ns.
+                                                                 0x3 - 640ns. */
+        uint32_t reserved_24_31        : 8;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_pcieepx_ras_sd_ctl1_s cn9; */
+    /* struct cavm_pcieepx_ras_sd_ctl1_s cn96xxp1; */
+    struct cavm_pcieepx_ras_sd_ctl1_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t reserved_24_31        : 8;
+        uint32_t lp_intv               : 2;  /**< [ 23: 22](R/W) Low power entry interval time.
+                                                                 Interval time that the core starts monitoring RXELECIDLE
+                                                                 signal after L0s/L1/L2 entry. You should set the value
+                                                                 according to the latency from receiving EIOS to,
+                                                                 RXELECIDLE assertion at the PHY
+
+                                                                 0x0 = 40ns.
+                                                                 0x1 = 160ns.
+                                                                 0x2 = 320ns.
+                                                                 0x3 - 640ns. */
+        uint32_t tx_eios_num           : 2;  /**< [ 21: 20](R/W) Number of TX EIOS.
+                                                                 This register sets the number of transmit EIOS for L0s/L1
+                                                                 entry and disable/loopback/hot-reset exit. The core selects
+                                                                 the greater value between this register and the value defined
+                                                                 by the PCI-SIG specification.
+
+                                                                 Gen1 or Gen3
+                                                                 0x0 = 1.
+                                                                 0x1 = 4.
+                                                                 0x2 = 8.
+                                                                 0x3 - 16.
+
+                                                                 Gen2
+                                                                 0x0 = 2.
+                                                                 0x1 = 8.
+                                                                 0x2 = 16.
+                                                                 0x3 - 32. */
+        uint32_t reserved_17_19        : 3;
+        uint32_t force_detect_lane_en  : 1;  /**< [ 16: 16](R/W) Force detect lane enable.
+                                                                 When this bit is set, the core ignores receiver detection from
+                                                                 PHY during LTSSM detect state and uses
+                                                                 [FORCE_DETECT_LANE]. */
+        uint32_t force_detect_lane     : 16; /**< [ 15:  0](R/W) Force detect lane.
                                                                  When set, the core ignores receiver detection from PHY
                                                                  during LTSSM detect state and uses this value instead.
                                                                  _ Bit \<0\> = Lane 0.
@@ -22311,8 +23134,10 @@ union cavm_pcieepx_ras_sd_ctl1
                                                                  0x3 - 640ns. */
         uint32_t reserved_24_31        : 8;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_pcieepx_ras_sd_ctl1_s cn; */
+    } cn96xxp3;
+    /* struct cavm_pcieepx_ras_sd_ctl1_cn96xxp3 cn98xx; */
+    /* struct cavm_pcieepx_ras_sd_ctl1_cn96xxp3 cnf95xx; */
+    /* struct cavm_pcieepx_ras_sd_ctl1_cn96xxp3 loki; */
 };
 typedef union cavm_pcieepx_ras_sd_ctl1 cavm_pcieepx_ras_sd_ctl1_t;
 
@@ -22321,7 +23146,9 @@ static inline uint64_t CAVM_PCIEEPX_RAS_SD_CTL1(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x3b8ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x3b8ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x3b8ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x3b8 + 0 * ((a) & 0x0);
@@ -22409,7 +23236,9 @@ static inline uint64_t CAVM_PCIEEPX_RAS_SD_CTL2(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x3bcll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x3bcll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x3bcll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x3bc + 0 * ((a) & 0x0);
@@ -22551,7 +23380,9 @@ static inline uint64_t CAVM_PCIEEPX_RAS_SD_EQ_CTL1(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x3e8ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x3e8ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x3e8ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x3e8 + 0 * ((a) & 0x0);
@@ -22641,7 +23472,9 @@ static inline uint64_t CAVM_PCIEEPX_RAS_SD_EQ_CTL2(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x3ecll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x3ecll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x3ecll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x3ec + 0 * ((a) & 0x0);
@@ -22723,7 +23556,9 @@ static inline uint64_t CAVM_PCIEEPX_RAS_SD_EQ_CTL3(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x3f0ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x3f0ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x3f0ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x3f0 + 0 * ((a) & 0x0);
@@ -22847,7 +23682,9 @@ static inline uint64_t CAVM_PCIEEPX_RAS_SD_EQ_STAT1(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x3f8ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x3f8ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x3f8ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x3f8 + 0 * ((a) & 0x0);
@@ -22905,7 +23742,9 @@ static inline uint64_t CAVM_PCIEEPX_RAS_SD_EQ_STAT2(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x3fcll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x3fcll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x3fcll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x3fc + 0 * ((a) & 0x0);
@@ -22963,7 +23802,9 @@ static inline uint64_t CAVM_PCIEEPX_RAS_SD_EQ_STAT3(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x400ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x400ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x400ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x400 + 0 * ((a) & 0x0);
@@ -23057,7 +23898,9 @@ static inline uint64_t CAVM_PCIEEPX_RAS_SD_L1LANE(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x3c8ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x3c8ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x3c8ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x3c8 + 0 * ((a) & 0x0);
@@ -23225,7 +24068,9 @@ static inline uint64_t CAVM_PCIEEPX_RAS_SD_L1LTSSM(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x3ccll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x3ccll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x3ccll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x3cc + 0 * ((a) & 0x0);
@@ -23287,7 +24132,9 @@ static inline uint64_t CAVM_PCIEEPX_RAS_SD_STATUSL2(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x3d4ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x3d4ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x3d4ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x3d4 + 0 * ((a) & 0x0);
@@ -23369,7 +24216,9 @@ static inline uint64_t CAVM_PCIEEPX_RAS_SD_STATUSL3(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x3dcll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x3dcll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x3dcll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x3dc + 0 * ((a) & 0x0);
@@ -23501,7 +24350,9 @@ static inline uint64_t CAVM_PCIEEPX_RAS_SD_STATUSL3FC(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x3d8ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x3d8ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x3d8ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x3d8 + 0 * ((a) & 0x0);
@@ -23667,7 +24518,9 @@ static inline uint64_t CAVM_PCIEEPX_RAS_SD_STATUSPM(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x3d0ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x3d0ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x3d0ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x3d0 + 0 * ((a) & 0x0);
@@ -23781,7 +24634,9 @@ static inline uint64_t CAVM_PCIEEPX_RAS_TBA_CTL(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x328ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x328ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x328ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x328 + 0 * ((a) & 0x0);
@@ -23823,7 +24678,9 @@ static inline uint64_t CAVM_PCIEEPX_RAS_TBA_DATA(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x32cll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x32cll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x32cll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x32c + 0 * ((a) & 0x0);
@@ -23885,7 +24742,9 @@ static inline uint64_t CAVM_PCIEEPX_RASDP_CAP_HDR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x418ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x418ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x418ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x418 + 0 * ((a) & 0x0);
@@ -23965,7 +24824,9 @@ static inline uint64_t CAVM_PCIEEPX_RASDP_CE_CTL(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x424ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x424ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x424ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x424 + 0 * ((a) & 0x0);
@@ -24031,7 +24892,9 @@ static inline uint64_t CAVM_PCIEEPX_RASDP_CE_ICTL(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x434ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x434ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x434ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x434 + 0 * ((a) & 0x0);
@@ -24135,7 +24998,9 @@ static inline uint64_t CAVM_PCIEEPX_RASDP_CE_LOC(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x438ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x438ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x438ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x438 + 0 * ((a) & 0x0);
@@ -24205,7 +25070,9 @@ static inline uint64_t CAVM_PCIEEPX_RASDP_CE_RP(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x428ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x428ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x428ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x428 + 0 * ((a) & 0x0);
@@ -24249,7 +25116,9 @@ static inline uint64_t CAVM_PCIEEPX_RASDP_DE_MC(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x444ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x444ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x444ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x444 + 0 * ((a) & 0x0);
@@ -24291,7 +25160,9 @@ static inline uint64_t CAVM_PCIEEPX_RASDP_DE_ME(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x440ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x440ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x440ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x440 + 0 * ((a) & 0x0);
@@ -24359,7 +25230,9 @@ static inline uint64_t CAVM_PCIEEPX_RASDP_EP_CTL(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x420ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x420ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x420ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x420 + 0 * ((a) & 0x0);
@@ -24401,7 +25274,9 @@ static inline uint64_t CAVM_PCIEEPX_RASDP_HDR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x41cll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x41cll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x41cll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x41c + 0 * ((a) & 0x0);
@@ -24443,7 +25318,9 @@ static inline uint64_t CAVM_PCIEEPX_RASDP_RADR_CE(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x448ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x448ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x448ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x448 + 0 * ((a) & 0x0);
@@ -24485,7 +25362,9 @@ static inline uint64_t CAVM_PCIEEPX_RASDP_RADR_UCE(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x44cll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x44cll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x44cll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x44c + 0 * ((a) & 0x0);
@@ -24565,7 +25444,9 @@ static inline uint64_t CAVM_PCIEEPX_RASDP_UCE_CTL(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x42cll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x42cll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x42cll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x42c + 0 * ((a) & 0x0);
@@ -24669,7 +25550,9 @@ static inline uint64_t CAVM_PCIEEPX_RASDP_UCE_LOC(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x43cll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x43cll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x43cll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x43c + 0 * ((a) & 0x0);
@@ -24739,7 +25622,9 @@ static inline uint64_t CAVM_PCIEEPX_RASDP_UCE_RP(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x430ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x430ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x430ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x430 + 0 * ((a) & 0x0);
@@ -24785,7 +25670,9 @@ static inline uint64_t CAVM_PCIEEPX_RBAR_CAP(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x4c0ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x4c0ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x4c0ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x4c0 + 0 * ((a) & 0x0);
@@ -24833,7 +25720,9 @@ static inline uint64_t CAVM_PCIEEPX_RBAR_CAP_HDR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x4bcll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x4bcll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x4bcll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x4bc + 0 * ((a) & 0x0);
@@ -24889,7 +25778,9 @@ static inline uint64_t CAVM_PCIEEPX_RBAR_CTL(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x4c4ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x4c4ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x4c4ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x4c4 + 0 * ((a) & 0x0);
@@ -24916,6 +25807,30 @@ union cavm_pcieepx_rev
         uint32_t bcc                   : 8;  /**< [ 31: 24](RO/WRSL) Base class code, writable through PEM()_CFG_TBL().
                                                                  0xB = Processor. */
         uint32_t sc                    : 8;  /**< [ 23: 16](RO/WRSL) Subclass code, writable through PEM()_CFG_TBL().
+                                                                 0x80 = Other processors (no encoding exists for ARM.) */
+        uint32_t pi                    : 8;  /**< [ 15:  8](RO/WRSL) Programming interface, writable through PEM()_CFG_TBL().
+                                                                 0x0 = No standard interface. */
+        uint32_t rid                   : 8;  /**< [  7:  0](RO/WRSL) Revision ID, writable through PEM()_CFG_TBL().
+                                                                 See FUS_FUSE_NUM_E::CHIP_ID() for more information. */
+#else /* Word 0 - Little Endian */
+        uint32_t rid                   : 8;  /**< [  7:  0](RO/WRSL) Revision ID, writable through PEM()_CFG_TBL().
+                                                                 See FUS_FUSE_NUM_E::CHIP_ID() for more information. */
+        uint32_t pi                    : 8;  /**< [ 15:  8](RO/WRSL) Programming interface, writable through PEM()_CFG_TBL().
+                                                                 0x0 = No standard interface. */
+        uint32_t sc                    : 8;  /**< [ 23: 16](RO/WRSL) Subclass code, writable through PEM()_CFG_TBL().
+                                                                 0x80 = Other processors (no encoding exists for ARM.) */
+        uint32_t bcc                   : 8;  /**< [ 31: 24](RO/WRSL) Base class code, writable through PEM()_CFG_TBL().
+                                                                 0xB = Processor. */
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_pcieepx_rev_s cn9; */
+    /* struct cavm_pcieepx_rev_s cn96xxp1; */
+    struct cavm_pcieepx_rev_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t bcc                   : 8;  /**< [ 31: 24](RO/WRSL) Base class code, writable through PEM()_CFG_TBL().
+                                                                 0xB = Processor. */
+        uint32_t sc                    : 8;  /**< [ 23: 16](RO/WRSL) Subclass code, writable through PEM()_CFG_TBL().
                                                                  0x80 = Other processors (no encoding exists for Arm.) */
         uint32_t pi                    : 8;  /**< [ 15:  8](RO/WRSL) Programming interface, writable through PEM()_CFG_TBL().
                                                                  0x0 = No standard interface. */
@@ -24935,8 +25850,10 @@ union cavm_pcieepx_rev
         uint32_t bcc                   : 8;  /**< [ 31: 24](RO/WRSL) Base class code, writable through PEM()_CFG_TBL().
                                                                  0xB = Processor. */
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_pcieepx_rev_s cn; */
+    } cn96xxp3;
+    /* struct cavm_pcieepx_rev_cn96xxp3 cn98xx; */
+    /* struct cavm_pcieepx_rev_cn96xxp3 cnf95xx; */
+    /* struct cavm_pcieepx_rev_cn96xxp3 loki; */
 };
 typedef union cavm_pcieepx_rev cavm_pcieepx_rev_t;
 
@@ -24945,7 +25862,9 @@ static inline uint64_t CAVM_PCIEEPX_REV(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 8ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 8ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 8ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 8 + 0 * ((a) & 0x0);
@@ -24991,7 +25910,9 @@ static inline uint64_t CAVM_PCIEEPX_RX_SER_Q_CTRL(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0xc00ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0xc00ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0xc00ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0xc00 + 0 * ((a) & 0x0);
@@ -25039,7 +25960,9 @@ static inline uint64_t CAVM_PCIEEPX_SCAP_HDR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x178ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x178ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x178ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x178 + 0 * ((a) & 0x0);
@@ -25087,7 +26010,9 @@ static inline uint64_t CAVM_PCIEEPX_SN_BASE(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x148ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x148ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x148ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x148 + 0 * ((a) & 0x0);
@@ -25125,7 +26050,9 @@ static inline uint64_t CAVM_PCIEEPX_SN_DW1(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x14cll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x14cll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x14cll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x14c + 0 * ((a) & 0x0);
@@ -25163,7 +26090,9 @@ static inline uint64_t CAVM_PCIEEPX_SN_DW2(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x150ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x150ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x150ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x150 + 0 * ((a) & 0x0);
@@ -25275,7 +26204,9 @@ static inline uint64_t CAVM_PCIEEPX_SRIOV_ARI_FO(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x10234ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x10234ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x10234ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x10234 + 0 * ((a) & 0x0);
@@ -25329,7 +26260,9 @@ static inline uint64_t CAVM_PCIEEPX_SRIOV_BAR0_MASKL(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x10244ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x10244ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x10244ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x10244 + 0 * ((a) & 0x0);
@@ -25369,7 +26302,9 @@ static inline uint64_t CAVM_PCIEEPX_SRIOV_BAR0_MASKU(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x10248ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x10248ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x10248ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x10248 + 0 * ((a) & 0x0);
@@ -25423,7 +26358,9 @@ static inline uint64_t CAVM_PCIEEPX_SRIOV_BAR0L(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x244ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x244ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x244ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x244 + 0 * ((a) & 0x0);
@@ -25461,7 +26398,9 @@ static inline uint64_t CAVM_PCIEEPX_SRIOV_BAR0U(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x248ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x248ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x248ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x248 + 0 * ((a) & 0x0);
@@ -25515,7 +26454,9 @@ static inline uint64_t CAVM_PCIEEPX_SRIOV_BAR2_MASKL(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x1024cll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x1024cll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x1024cll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x1024c + 0 * ((a) & 0x0);
@@ -25555,7 +26496,9 @@ static inline uint64_t CAVM_PCIEEPX_SRIOV_BAR2_MASKU(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x10250ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x10250ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x10250ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x10250 + 0 * ((a) & 0x0);
@@ -25605,7 +26548,9 @@ static inline uint64_t CAVM_PCIEEPX_SRIOV_BAR2L(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x24cll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x24cll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x24cll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x24c + 0 * ((a) & 0x0);
@@ -25643,7 +26588,9 @@ static inline uint64_t CAVM_PCIEEPX_SRIOV_BAR2U(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x250ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x250ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x250ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x250 + 0 * ((a) & 0x0);
@@ -25697,7 +26644,9 @@ static inline uint64_t CAVM_PCIEEPX_SRIOV_BAR4_MASKL(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x10254ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x10254ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x10254ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x10254 + 0 * ((a) & 0x0);
@@ -25737,7 +26686,9 @@ static inline uint64_t CAVM_PCIEEPX_SRIOV_BAR4_MASKU(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x10258ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x10258ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x10258ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x10258 + 0 * ((a) & 0x0);
@@ -25787,7 +26738,9 @@ static inline uint64_t CAVM_PCIEEPX_SRIOV_BAR4L(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x254ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x254ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x254ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x254 + 0 * ((a) & 0x0);
@@ -25825,7 +26778,9 @@ static inline uint64_t CAVM_PCIEEPX_SRIOV_BAR4U(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x258ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x258ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x258ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x258 + 0 * ((a) & 0x0);
@@ -25893,7 +26848,9 @@ static inline uint64_t CAVM_PCIEEPX_SRIOV_CAP(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x224ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x224ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x224ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x224 + 0 * ((a) & 0x0);
@@ -25935,7 +26892,9 @@ static inline uint64_t CAVM_PCIEEPX_SRIOV_CAP_HDR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x220ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x220ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x220ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x220 + 0 * ((a) & 0x0);
@@ -26009,7 +26968,9 @@ static inline uint64_t CAVM_PCIEEPX_SRIOV_CTL(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x228ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x228ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x228ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x228 + 0 * ((a) & 0x0);
@@ -26049,7 +27010,9 @@ static inline uint64_t CAVM_PCIEEPX_SRIOV_DEV(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x238ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x238ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x238ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x238 + 0 * ((a) & 0x0);
@@ -26139,7 +27102,9 @@ static inline uint64_t CAVM_PCIEEPX_SRIOV_FO(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x234ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x234ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x234ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x234 + 0 * ((a) & 0x0);
@@ -26179,7 +27144,9 @@ static inline uint64_t CAVM_PCIEEPX_SRIOV_MS(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x25cll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x25cll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x25cll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x25c + 0 * ((a) & 0x0);
@@ -26221,7 +27188,9 @@ static inline uint64_t CAVM_PCIEEPX_SRIOV_NVF(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x230ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x230ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x230ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x230 + 0 * ((a) & 0x0);
@@ -26259,7 +27228,9 @@ static inline uint64_t CAVM_PCIEEPX_SRIOV_PS(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x240ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x240ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x240ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x240 + 0 * ((a) & 0x0);
@@ -26297,7 +27268,9 @@ static inline uint64_t CAVM_PCIEEPX_SRIOV_SUPPS(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x23cll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x23cll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x23cll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x23c + 0 * ((a) & 0x0);
@@ -26347,7 +27320,9 @@ static inline uint64_t CAVM_PCIEEPX_SRIOV_VFS(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x22cll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x22cll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x22cll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x22c + 0 * ((a) & 0x0);
@@ -26391,7 +27366,9 @@ static inline uint64_t CAVM_PCIEEPX_SUBSYS(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x2cll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x2cll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x2cll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x2c + 0 * ((a) & 0x0);
@@ -26477,7 +27454,9 @@ static inline uint64_t CAVM_PCIEEPX_SYMB_TIMER(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x71cll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x71cll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x71cll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x71c + 0 * ((a) & 0x0);
@@ -26565,7 +27544,9 @@ static inline uint64_t CAVM_PCIEEPX_TIMER_CTL(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x718ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x718ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x718ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x718 + 0 * ((a) & 0x0);
@@ -26603,7 +27584,9 @@ static inline uint64_t CAVM_PCIEEPX_TLP_PLOG1(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x138ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x138ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x138ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x138 + 0 * ((a) & 0x0);
@@ -26641,7 +27624,9 @@ static inline uint64_t CAVM_PCIEEPX_TLP_PLOG2(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x13cll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x13cll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x13cll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x13c + 0 * ((a) & 0x0);
@@ -26679,7 +27664,9 @@ static inline uint64_t CAVM_PCIEEPX_TLP_PLOG3(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x140ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x140ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x140ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x140 + 0 * ((a) & 0x0);
@@ -26717,7 +27704,9 @@ static inline uint64_t CAVM_PCIEEPX_TLP_PLOG4(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x144ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x144ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x144ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x144 + 0 * ((a) & 0x0);
@@ -26765,7 +27754,9 @@ static inline uint64_t CAVM_PCIEEPX_TPH_EXT_CAP_HDR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x260ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x260ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x260ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x260 + 0 * ((a) & 0x0);
@@ -26827,7 +27818,9 @@ static inline uint64_t CAVM_PCIEEPX_TPH_REQ_CAP(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x264ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x264ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x264ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x264 + 0 * ((a) & 0x0);
@@ -26871,7 +27864,9 @@ static inline uint64_t CAVM_PCIEEPX_TPH_REQ_CTL(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x268ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x268ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x268ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x268 + 0 * ((a) & 0x0);
@@ -26913,7 +27908,9 @@ static inline uint64_t CAVM_PCIEEPX_TPH_ST_TABLE(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x26cll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x26cll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x26cll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x26c + 0 * ((a) & 0x0);
@@ -27032,7 +28029,9 @@ static inline uint64_t CAVM_PCIEEPX_UCOR_ERR_MSK(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x108ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x108ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x108ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x108 + 0 * ((a) & 0x0);
@@ -27151,7 +28150,9 @@ static inline uint64_t CAVM_PCIEEPX_UCOR_ERR_SEV(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x10cll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x10cll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x10cll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x10c + 0 * ((a) & 0x0);
@@ -27225,7 +28226,9 @@ static inline uint64_t CAVM_PCIEEPX_UCOR_ERR_STAT(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x104ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x104ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x104ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x104 + 0 * ((a) & 0x0);
@@ -27315,7 +28318,9 @@ static inline uint64_t CAVM_PCIEEPX_UPCONFIG(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x8c0ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x8c0ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x8c0ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x8c0 + 0 * ((a) & 0x0);
@@ -27353,7 +28358,9 @@ static inline uint64_t CAVM_PCIEEPX_VER_NUM(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x8f8ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x8f8ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x8f8ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x8f8 + 0 * ((a) & 0x0);
@@ -27391,7 +28398,9 @@ static inline uint64_t CAVM_PCIEEPX_VER_TYPE(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x8fcll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x8fcll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x8fcll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x8fc + 0 * ((a) & 0x0);
@@ -27439,7 +28448,9 @@ static inline uint64_t CAVM_PCIEEPX_VPD_BASE(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0xd0ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0xd0ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0xd0ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0xd0 + 0 * ((a) & 0x0);
@@ -27477,7 +28488,9 @@ static inline uint64_t CAVM_PCIEEPX_VPD_DATA(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0xd4ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0xd4ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0xd4ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0xd4 + 0 * ((a) & 0x0);
@@ -27525,7 +28538,9 @@ static inline uint64_t CAVM_PCIEEPX_VSECST_CAP_HDR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x4c8ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x4c8ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x4c8ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x4c8 + 0 * ((a) & 0x0);
@@ -27577,7 +28592,9 @@ static inline uint64_t CAVM_PCIEEPX_VSECST_CTL(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x4d0ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x4d0ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x4d0ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x4d0 + 0 * ((a) & 0x0);
@@ -27619,7 +28636,9 @@ static inline uint64_t CAVM_PCIEEPX_VSECST_HDR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x4ccll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x4ccll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x4ccll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x4cc + 0 * ((a) & 0x0);
@@ -27663,7 +28682,9 @@ static inline uint64_t CAVM_PCIEEPX_XMIT_ARB1(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x740ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x740ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x740ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x740 + 0 * ((a) & 0x0);
@@ -27707,7 +28728,9 @@ static inline uint64_t CAVM_PCIEEPX_XMIT_ARB2(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=3))
         return 0x744ll + 0x100000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
+        return 0x744ll + 0x100000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && (a==0))
         return 0x744ll + 0x100000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x744 + 0 * ((a) & 0x0);

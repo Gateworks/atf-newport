@@ -37,9 +37,15 @@
  * Enumerates the MSI-X interrupt vectors.
  */
 #define CAVM_MCC_INT_VEC_E_LMCOEX_INT(a) (2 + (a))
-#define CAVM_MCC_INT_VEC_E_LMCOEX_RAS_INT(a) (4 + (a))
+#define CAVM_MCC_INT_VEC_E_LMCOEX_RAS_INT_CN96XX(a) (4 + (a))
+#define CAVM_MCC_INT_VEC_E_LMCOEX_RAS_INT_CN98XX(a) (5 + (a))
+#define CAVM_MCC_INT_VEC_E_LMCOEX_RAS_INT_CNF95XX(a) (4 + (a))
+#define CAVM_MCC_INT_VEC_E_LMCOEX_RAS_INT_LOKI(a) (4 + (a))
 #define CAVM_MCC_INT_VEC_E_MCIX_INT(a) (0 + (a))
-#define CAVM_MCC_INT_VEC_E_MCIX_RAS_INT(a) (6 + (a))
+#define CAVM_MCC_INT_VEC_E_MCIX_RAS_INT_CN96XX(a) (6 + (a))
+#define CAVM_MCC_INT_VEC_E_MCIX_RAS_INT_CN98XX(a) (8 + (a))
+#define CAVM_MCC_INT_VEC_E_MCIX_RAS_INT_CNF95XX(a) (6 + (a))
+#define CAVM_MCC_INT_VEC_E_MCIX_RAS_INT_LOKI(a) (6 + (a))
 
 /**
  * Register (RSL) mcc#_config
@@ -110,7 +116,9 @@ union cavm_mccx_config
         uint64_t reserved_12_63        : 52;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_mccx_config_s cn9; */
     /* struct cavm_mccx_config_s cn96xx; */
+    /* struct cavm_mccx_config_s cn98xx; */
     struct cavm_mccx_config_cnf95xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -178,6 +186,8 @@ static inline uint64_t CAVM_MCCX_CONFIG(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x87e03c000060ll + 0x1000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
+        return 0x87e03c000060ll + 0x1000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x87e03c000060ll + 0x1000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
@@ -215,7 +225,22 @@ union cavm_mccx_const
         uint64_t reserved_8_63         : 56;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_mccx_const_s cn9; */
     /* struct cavm_mccx_const_s cn96xx; */
+    struct cavm_mccx_const_cn98xx
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_8_63         : 56;
+        uint64_t lmcs                  : 8;  /**< [  7:  0](RO/H) Number of LMCs attached to corresponding MCC.
+                                                                 _ MCC(0)_CONST[LMCS] = 0x3.
+                                                                 _ MCC(1)_CONST[LMCS] = 0x3. */
+#else /* Word 0 - Little Endian */
+        uint64_t lmcs                  : 8;  /**< [  7:  0](RO/H) Number of LMCs attached to corresponding MCC.
+                                                                 _ MCC(0)_CONST[LMCS] = 0x3.
+                                                                 _ MCC(1)_CONST[LMCS] = 0x3. */
+        uint64_t reserved_8_63         : 56;
+#endif /* Word 0 - End */
+    } cn98xx;
     struct cavm_mccx_const_cnf95xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -236,6 +261,8 @@ static inline uint64_t CAVM_MCCX_CONST(unsigned long a) __attribute__ ((pure, al
 static inline uint64_t CAVM_MCCX_CONST(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
+        return 0x87e03c000000ll + 0x1000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x87e03c000000ll + 0x1000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x87e03c000000ll + 0x1000000ll * ((a) & 0x0);
@@ -277,6 +304,8 @@ static inline uint64_t CAVM_MCCX_CTL_ACTIVE_PC(unsigned long a) __attribute__ ((
 static inline uint64_t CAVM_MCCX_CTL_ACTIVE_PC(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
+        return 0x87e03c000040ll + 0x1000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x87e03c000040ll + 0x1000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x87e03c000040ll + 0x1000000ll * ((a) & 0x0);
@@ -355,6 +384,8 @@ static inline uint64_t CAVM_MCCX_CTL_BP_TEST1(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x87e03c000460ll + 0x1000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
+        return 0x87e03c000460ll + 0x1000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x87e03c000460ll + 0x1000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
@@ -432,6 +463,8 @@ static inline uint64_t CAVM_MCCX_CTL_BP_TEST2(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x87e03c000468ll + 0x1000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
+        return 0x87e03c000468ll + 0x1000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x87e03c000468ll + 0x1000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
@@ -445,6 +478,79 @@ static inline uint64_t CAVM_MCCX_CTL_BP_TEST2(unsigned long a)
 #define device_bar_CAVM_MCCX_CTL_BP_TEST2(a) 0x0 /* PF_BAR0 */
 #define busnum_CAVM_MCCX_CTL_BP_TEST2(a) (a)
 #define arguments_CAVM_MCCX_CTL_BP_TEST2(a) (a),-1,-1,-1
+
+/**
+ * Register (RSL) mcc#_ctl_bp_test3
+ *
+ * INTERNAL: MCC CTL Backpressure Test Register 3
+ */
+union cavm_mccx_ctl_bp_test3
+{
+    uint64_t u;
+    struct cavm_mccx_ctl_bp_test3_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t enable                : 4;  /**< [ 63: 60](R/W) Enable test mode. For diagnostic use only.
+                                                                 Internal:
+                                                                 Once a bit is set, random backpressure is generated
+                                                                 at the corresponding point to allow for more frequent backpressure.
+                                                                 \<63\> = Reserved.
+                                                                 \<62\> = When set, disables popping of Read command to LMC2.
+                                                                 \<61\> = When set, disables popping of Write command to LMC2.
+                                                                 \<60\> = When set, disables popping of Read Response from LMC2. */
+        uint64_t reserved_24_59        : 36;
+        uint64_t bp_cfg                : 8;  /**< [ 23: 16](R/W) Backpressure weight. For diagnostic use only.
+                                                                 Internal:
+                                                                 There are 2 backpressure configuration bits per enable, with the two bits
+                                                                 defined as 0x0=100% of the time, 0x1=75% of the time, 0x2=50% of the time,
+                                                                 0x3=25% of the time.
+                                                                   \<23:22\> = Config 3.
+                                                                   \<21:20\> = Config 2.
+                                                                   \<19:18\> = Config 1.
+                                                                   \<17:16\> = Config 0. */
+        uint64_t reserved_12_15        : 4;
+        uint64_t lfsr_freq             : 12; /**< [ 11:  0](R/W) Test LFSR update frequency in coprocessor-clocks minus one. */
+#else /* Word 0 - Little Endian */
+        uint64_t lfsr_freq             : 12; /**< [ 11:  0](R/W) Test LFSR update frequency in coprocessor-clocks minus one. */
+        uint64_t reserved_12_15        : 4;
+        uint64_t bp_cfg                : 8;  /**< [ 23: 16](R/W) Backpressure weight. For diagnostic use only.
+                                                                 Internal:
+                                                                 There are 2 backpressure configuration bits per enable, with the two bits
+                                                                 defined as 0x0=100% of the time, 0x1=75% of the time, 0x2=50% of the time,
+                                                                 0x3=25% of the time.
+                                                                   \<23:22\> = Config 3.
+                                                                   \<21:20\> = Config 2.
+                                                                   \<19:18\> = Config 1.
+                                                                   \<17:16\> = Config 0. */
+        uint64_t reserved_24_59        : 36;
+        uint64_t enable                : 4;  /**< [ 63: 60](R/W) Enable test mode. For diagnostic use only.
+                                                                 Internal:
+                                                                 Once a bit is set, random backpressure is generated
+                                                                 at the corresponding point to allow for more frequent backpressure.
+                                                                 \<63\> = Reserved.
+                                                                 \<62\> = When set, disables popping of Read command to LMC2.
+                                                                 \<61\> = When set, disables popping of Write command to LMC2.
+                                                                 \<60\> = When set, disables popping of Read Response from LMC2. */
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_mccx_ctl_bp_test3_s cn; */
+};
+typedef union cavm_mccx_ctl_bp_test3 cavm_mccx_ctl_bp_test3_t;
+
+static inline uint64_t CAVM_MCCX_CTL_BP_TEST3(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_MCCX_CTL_BP_TEST3(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
+        return 0x87e03c000470ll + 0x1000000ll * ((a) & 0x1);
+    __cavm_csr_fatal("MCCX_CTL_BP_TEST3", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_MCCX_CTL_BP_TEST3(a) cavm_mccx_ctl_bp_test3_t
+#define bustype_CAVM_MCCX_CTL_BP_TEST3(a) CSR_TYPE_RSL
+#define basename_CAVM_MCCX_CTL_BP_TEST3(a) "MCCX_CTL_BP_TEST3"
+#define device_bar_CAVM_MCCX_CTL_BP_TEST3(a) 0x0 /* PF_BAR0 */
+#define busnum_CAVM_MCCX_CTL_BP_TEST3(a) (a)
+#define arguments_CAVM_MCCX_CTL_BP_TEST3(a) (a),-1,-1,-1
 
 /**
  * Register (RSL) mcc#_eco
@@ -472,6 +578,8 @@ static inline uint64_t CAVM_MCCX_ECO(unsigned long a) __attribute__ ((pure, alwa
 static inline uint64_t CAVM_MCCX_ECO(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
+        return 0x87e03c000080ll + 0x1000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x87e03c000080ll + 0x1000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x87e03c000080ll + 0x1000000ll * ((a) & 0x0);
@@ -543,6 +651,8 @@ static inline uint64_t CAVM_MCCX_LMCOEX_BSCRUB_CFG(unsigned long a, unsigned lon
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c000420ll + 0x1000000ll * ((a) & 0x1) + 8ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=2)))
+        return 0x87e03c000420ll + 0x1000000ll * ((a) & 0x1) + 8ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=1)))
         return 0x87e03c000420ll + 0x1000000ll * ((a) & 0x0) + 8ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=1)))
@@ -595,6 +705,8 @@ static inline uint64_t CAVM_MCCX_LMCOEX_BSCRUB_CFG2(unsigned long a, unsigned lo
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c000440ll + 0x1000000ll * ((a) & 0x1) + 8ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=2)))
+        return 0x87e03c000440ll + 0x1000000ll * ((a) & 0x1) + 8ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=1)))
         return 0x87e03c000440ll + 0x1000000ll * ((a) & 0x0) + 8ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=1)))
@@ -663,6 +775,8 @@ static inline uint64_t CAVM_MCCX_LMCOEX_CFG(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c000400ll + 0x1000000ll * ((a) & 0x1) + 8ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=2)))
+        return 0x87e03c000400ll + 0x1000000ll * ((a) & 0x1) + 8ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=1)))
         return 0x87e03c000400ll + 0x1000000ll * ((a) & 0x0) + 8ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=1)))
@@ -707,7 +821,30 @@ union cavm_mccx_lmcoex_const
         uint64_t reserved_8_63         : 56;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_mccx_lmcoex_const_s cn9; */
     /* struct cavm_mccx_lmcoex_const_s cn96xx; */
+    struct cavm_mccx_lmcoex_const_cn98xx
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_8_63         : 56;
+        uint64_t lmc                   : 8;  /**< [  7:  0](RO/H) Absolute LMC number attached to this MCC/LMCOE combination.
+                                                                 _ MCC(0)_LMCOE(0)_CONST[LMC] = 0x1 = LMC1.
+                                                                 _ MCC(0)_LMCOE(1)_CONST[LMC] = 0x3 = LMC3.
+                                                                 _ MCC(0)_LMCOE(2)_CONST[LMC] = 0x5 = LMC5.
+                                                                 _ MCC(1)_LMCOE(0)_CONST[LMC] = 0x0 = LMC0.
+                                                                 _ MCC(1)_LMCOE(1)_CONST[LMC] = 0x2 = LMC2.
+                                                                 _ MCC(1)_LMCOE(2)_CONST[LMC] = 0x4 = LMC4. */
+#else /* Word 0 - Little Endian */
+        uint64_t lmc                   : 8;  /**< [  7:  0](RO/H) Absolute LMC number attached to this MCC/LMCOE combination.
+                                                                 _ MCC(0)_LMCOE(0)_CONST[LMC] = 0x1 = LMC1.
+                                                                 _ MCC(0)_LMCOE(1)_CONST[LMC] = 0x3 = LMC3.
+                                                                 _ MCC(0)_LMCOE(2)_CONST[LMC] = 0x5 = LMC5.
+                                                                 _ MCC(1)_LMCOE(0)_CONST[LMC] = 0x0 = LMC0.
+                                                                 _ MCC(1)_LMCOE(1)_CONST[LMC] = 0x2 = LMC2.
+                                                                 _ MCC(1)_LMCOE(2)_CONST[LMC] = 0x4 = LMC4. */
+        uint64_t reserved_8_63         : 56;
+#endif /* Word 0 - End */
+    } cn98xx;
     struct cavm_mccx_lmcoex_const_cnf95xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -731,6 +868,8 @@ static inline uint64_t CAVM_MCCX_LMCOEX_CONST(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c000020ll + 0x1000000ll * ((a) & 0x1) + 8ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=2)))
+        return 0x87e03c000020ll + 0x1000000ll * ((a) & 0x1) + 8ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=1)))
         return 0x87e03c000020ll + 0x1000000ll * ((a) & 0x0) + 8ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=1)))
@@ -787,6 +926,8 @@ static inline uint64_t CAVM_MCCX_LMCOEX_INT(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c000200ll + 0x1000000ll * ((a) & 0x1) + 8ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=2)))
+        return 0x87e03c000200ll + 0x1000000ll * ((a) & 0x1) + 8ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=1)))
         return 0x87e03c000200ll + 0x1000000ll * ((a) & 0x0) + 8ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=1)))
@@ -822,7 +963,20 @@ union cavm_mccx_lmcoex_int_ena_w1c
         uint64_t reserved_2_63         : 62;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_mccx_lmcoex_int_ena_w1c_s cn9; */
     /* struct cavm_mccx_lmcoex_int_ena_w1c_s cn96xx; */
+    struct cavm_mccx_lmcoex_int_ena_w1c_cn98xx
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_2_63         : 62;
+        uint64_t wr_nxm                : 1;  /**< [  1:  1](R/W1C/H) Reads or clears enable for MCC(0..1)_LMCOE(0..2)_INT[WR_NXM]. */
+        uint64_t rd_nxm                : 1;  /**< [  0:  0](R/W1C/H) Reads or clears enable for MCC(0..1)_LMCOE(0..2)_INT[RD_NXM]. */
+#else /* Word 0 - Little Endian */
+        uint64_t rd_nxm                : 1;  /**< [  0:  0](R/W1C/H) Reads or clears enable for MCC(0..1)_LMCOE(0..2)_INT[RD_NXM]. */
+        uint64_t wr_nxm                : 1;  /**< [  1:  1](R/W1C/H) Reads or clears enable for MCC(0..1)_LMCOE(0..2)_INT[WR_NXM]. */
+        uint64_t reserved_2_63         : 62;
+#endif /* Word 0 - End */
+    } cn98xx;
     struct cavm_mccx_lmcoex_int_ena_w1c_cnf95xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -844,6 +998,8 @@ static inline uint64_t CAVM_MCCX_LMCOEX_INT_ENA_W1C(unsigned long a, unsigned lo
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c000240ll + 0x1000000ll * ((a) & 0x1) + 8ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=2)))
+        return 0x87e03c000240ll + 0x1000000ll * ((a) & 0x1) + 8ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=1)))
         return 0x87e03c000240ll + 0x1000000ll * ((a) & 0x0) + 8ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=1)))
@@ -879,7 +1035,20 @@ union cavm_mccx_lmcoex_int_ena_w1s
         uint64_t reserved_2_63         : 62;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_mccx_lmcoex_int_ena_w1s_s cn9; */
     /* struct cavm_mccx_lmcoex_int_ena_w1s_s cn96xx; */
+    struct cavm_mccx_lmcoex_int_ena_w1s_cn98xx
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_2_63         : 62;
+        uint64_t wr_nxm                : 1;  /**< [  1:  1](R/W1S/H) Reads or sets enable for MCC(0..1)_LMCOE(0..2)_INT[WR_NXM]. */
+        uint64_t rd_nxm                : 1;  /**< [  0:  0](R/W1S/H) Reads or sets enable for MCC(0..1)_LMCOE(0..2)_INT[RD_NXM]. */
+#else /* Word 0 - Little Endian */
+        uint64_t rd_nxm                : 1;  /**< [  0:  0](R/W1S/H) Reads or sets enable for MCC(0..1)_LMCOE(0..2)_INT[RD_NXM]. */
+        uint64_t wr_nxm                : 1;  /**< [  1:  1](R/W1S/H) Reads or sets enable for MCC(0..1)_LMCOE(0..2)_INT[WR_NXM]. */
+        uint64_t reserved_2_63         : 62;
+#endif /* Word 0 - End */
+    } cn98xx;
     struct cavm_mccx_lmcoex_int_ena_w1s_cnf95xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -901,6 +1070,8 @@ static inline uint64_t CAVM_MCCX_LMCOEX_INT_ENA_W1S(unsigned long a, unsigned lo
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c000260ll + 0x1000000ll * ((a) & 0x1) + 8ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=2)))
+        return 0x87e03c000260ll + 0x1000000ll * ((a) & 0x1) + 8ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=1)))
         return 0x87e03c000260ll + 0x1000000ll * ((a) & 0x0) + 8ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=1)))
@@ -936,7 +1107,20 @@ union cavm_mccx_lmcoex_int_w1s
         uint64_t reserved_2_63         : 62;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_mccx_lmcoex_int_w1s_s cn9; */
     /* struct cavm_mccx_lmcoex_int_w1s_s cn96xx; */
+    struct cavm_mccx_lmcoex_int_w1s_cn98xx
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_2_63         : 62;
+        uint64_t wr_nxm                : 1;  /**< [  1:  1](R/W1S/H) Reads or sets MCC(0..1)_LMCOE(0..2)_INT[WR_NXM]. */
+        uint64_t rd_nxm                : 1;  /**< [  0:  0](R/W1S/H) Reads or sets MCC(0..1)_LMCOE(0..2)_INT[RD_NXM]. */
+#else /* Word 0 - Little Endian */
+        uint64_t rd_nxm                : 1;  /**< [  0:  0](R/W1S/H) Reads or sets MCC(0..1)_LMCOE(0..2)_INT[RD_NXM]. */
+        uint64_t wr_nxm                : 1;  /**< [  1:  1](R/W1S/H) Reads or sets MCC(0..1)_LMCOE(0..2)_INT[WR_NXM]. */
+        uint64_t reserved_2_63         : 62;
+#endif /* Word 0 - End */
+    } cn98xx;
     struct cavm_mccx_lmcoex_int_w1s_cnf95xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -958,6 +1142,8 @@ static inline uint64_t CAVM_MCCX_LMCOEX_INT_W1S(unsigned long a, unsigned long b
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c000220ll + 0x1000000ll * ((a) & 0x1) + 8ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=2)))
+        return 0x87e03c000220ll + 0x1000000ll * ((a) & 0x1) + 8ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=1)))
         return 0x87e03c000220ll + 0x1000000ll * ((a) & 0x0) + 8ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=1)))
@@ -1052,6 +1238,8 @@ static inline uint64_t CAVM_MCCX_LMCOEX_RAS_ERR00ADDR(unsigned long a, unsigned 
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c010018ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=2)))
+        return 0x87e03c010018ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=1)))
         return 0x87e03c010018ll + 0x1000000ll * ((a) & 0x0) + 0x1000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=1)))
@@ -1240,6 +1428,8 @@ static inline uint64_t CAVM_MCCX_LMCOEX_RAS_ERR00CTLR(unsigned long a, unsigned 
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c010008ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=2)))
+        return 0x87e03c010008ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=1)))
         return 0x87e03c010008ll + 0x1000000ll * ((a) & 0x0) + 0x1000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=1)))
@@ -1345,6 +1535,176 @@ union cavm_mccx_lmcoex_ras_err00fr
         uint64_t imp_fe                : 2;  /**< [  3:  2](RO) Implementation defined.
                                                                  0x0 = No additional feature.
                                                                  0x1 = Reserved.
+                                                                 0x2 = Cavium force error feature is supported.
+                                                                 0x3 = Reserved. */
+        uint64_t ed                    : 2;  /**< [  1:  0](RO) Error detection and correction.
+                                                                 0x1 = Feature always enabled.
+                                                                 0x2 = Feature is controllable.
+
+                                                                 Internal:
+                                                                 Hardcoded. */
+#else /* Word 0 - Little Endian */
+        uint64_t ed                    : 2;  /**< [  1:  0](RO) Error detection and correction.
+                                                                 0x1 = Feature always enabled.
+                                                                 0x2 = Feature is controllable.
+
+                                                                 Internal:
+                                                                 Hardcoded. */
+        uint64_t imp_fe                : 2;  /**< [  3:  2](RO) Implementation defined.
+                                                                 0x0 = No additional feature.
+                                                                 0x1 = Reserved.
+                                                                 0x2 = Cavium force error feature is supported.
+                                                                 0x3 = Reserved. */
+        uint64_t ui                    : 2;  /**< [  5:  4](RO) Uncorrected error recovery interrupt.
+                                                                 0x0 = Does not support feature.
+                                                                 0x1 = Feature always enabled.
+                                                                 0x2 = Feature is controllable.
+                                                                 0x3 = Feature is controllable with independent controls for reads and writes.
+
+                                                                 Internal:
+                                                                 Hardcoded. */
+        uint64_t fi                    : 2;  /**< [  7:  6](RO) Fault handling interrupt.
+                                                                 0x0 = Does not support feature.
+                                                                 0x1 = Feature always enabled.
+                                                                 0x2 = Feature is controllable.
+                                                                 0x3 = Feature is controllable with independent controls for reads and writes.
+
+                                                                 Internal:
+                                                                 Hardcoded per record. */
+        uint64_t ue                    : 2;  /**< [  9:  8](RO) In-band uncorrected error reporting.
+                                                                 0x0 = Does not support feature.
+                                                                 0x1 = Feature always enabled.
+                                                                 0x2 = Feature is controllable.
+                                                                 0x3 = Feature is controllable with independent controls for reads and writes.
+
+                                                                 Internal:
+                                                                 Hardcoded per record. */
+        uint64_t cfi                   : 2;  /**< [ 11: 10](RO) Fault handling interrupt for corrected errors. If this feature is implemented,
+                                                                 then the fault handling interrupt must be implemented.
+                                                                 0x0 = Does not support feature.
+                                                                 0x1 = Reserved.
+                                                                 0x2 = Feature is controllable using ERR\<n\>CTLR.CFI.
+                                                                 0x3 = Feature is controllable with independent controls for reads and writes.
+
+                                                                 Internal:
+                                                                 Hardcoded per record. */
+        uint64_t cec                   : 3;  /**< [ 14: 12](RO) Indicates a standard correctable error counter mechanism in *_RAS_ERRnMISC0.
+                                                                 0x0 = Does not implement the standardized error counter model.
+                                                                 0x2 = Implements an 8-bit error counter in *_RAS_ERRnMISC0\<39:32\>.
+                                                                 0x4 = Implements a 16-bit error counter in *_RAS_ERRnMISC0\<47:32\>.
+                                                                 _ All other values are reserved.
+
+                                                                 Internal:
+                                                                 Hardcoded. */
+        uint64_t rp                    : 1;  /**< [ 15: 15](RO) Repeat counter. Indicates whether the node implements a repeat corrected error counter.
+                                                                 0 = A single CE counter is implemented.
+                                                                 1 = A first (repeat) counter and a second (other) counter are implemented. The
+                                                                 repeat counter is the same size as the primary error counter.
+
+                                                                 Internal:
+                                                                 Hardcoded. */
+        uint64_t dui                   : 2;  /**< [ 17: 16](RO) Error recovery interrupt for deferred errors. If this feature is implemented,
+                                                                 then the error recovery interrupt must be implemented.
+
+                                                                 0x0 = Does not support feature.
+                                                                 0x1 = Reserved.
+                                                                 0x2 = Feature is controllable.
+                                                                 0x3 = Feature is controllable with independent controls for reads and writes.
+
+                                                                 Internal:
+                                                                 Hardcoded. */
+        uint64_t ceo                   : 2;  /**< [ 19: 18](RO) Corrected error overwrite. Indicates the behavior when a second corrected error
+                                                                 is detected after a first corrected error has been recorded by the node.
+                                                                 0x0 = Count corrected error if a counter is implemented. Keep the previous error
+                                                                 syndrome. If the counter overflows, or no counter is
+                                                                 implemented. *_RAS_ERRnSTATUS[OF] is set to 1.
+                                                                 0x1 = Count corrected error. If *_RAS_ERRnSTATUS[OF] = 1 before the corrected
+                                                                 error is counted, keep the previous syndrome. Otherwise the previous syndrome is
+                                                                 overwritten. If the counter overflows, *_RAS_ERRnSTATUS[OF] is set to 1.
+
+                                                                 Internal:
+                                                                 Hardcoded. */
+        uint64_t reserved_20_63        : 44;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_mccx_lmcoex_ras_err00fr_s cn9; */
+    /* struct cavm_mccx_lmcoex_ras_err00fr_s cn96xxp1; */
+    struct cavm_mccx_lmcoex_ras_err00fr_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_20_63        : 44;
+        uint64_t ceo                   : 2;  /**< [ 19: 18](RO) Corrected error overwrite. Indicates the behavior when a second corrected error
+                                                                 is detected after a first corrected error has been recorded by the node.
+                                                                 0x0 = Count corrected error if a counter is implemented. Keep the previous error
+                                                                 syndrome. If the counter overflows, or no counter is
+                                                                 implemented. *_RAS_ERRnSTATUS[OF] is set to 1.
+                                                                 0x1 = Count corrected error. If *_RAS_ERRnSTATUS[OF] = 1 before the corrected
+                                                                 error is counted, keep the previous syndrome. Otherwise the previous syndrome is
+                                                                 overwritten. If the counter overflows, *_RAS_ERRnSTATUS[OF] is set to 1.
+
+                                                                 Internal:
+                                                                 Hardcoded. */
+        uint64_t dui                   : 2;  /**< [ 17: 16](RO) Error recovery interrupt for deferred errors. If this feature is implemented,
+                                                                 then the error recovery interrupt must be implemented.
+
+                                                                 0x0 = Does not support feature.
+                                                                 0x1 = Reserved.
+                                                                 0x2 = Feature is controllable.
+                                                                 0x3 = Feature is controllable with independent controls for reads and writes.
+
+                                                                 Internal:
+                                                                 Hardcoded. */
+        uint64_t rp                    : 1;  /**< [ 15: 15](RO) Repeat counter. Indicates whether the node implements a repeat corrected error counter.
+                                                                 0 = A single CE counter is implemented.
+                                                                 1 = A first (repeat) counter and a second (other) counter are implemented. The
+                                                                 repeat counter is the same size as the primary error counter.
+
+                                                                 Internal:
+                                                                 Hardcoded. */
+        uint64_t cec                   : 3;  /**< [ 14: 12](RO) Indicates a standard correctable error counter mechanism in *_RAS_ERRnMISC0.
+                                                                 0x0 = Does not implement the standardized error counter model.
+                                                                 0x2 = Implements an 8-bit error counter in *_RAS_ERRnMISC0\<39:32\>.
+                                                                 0x4 = Implements a 16-bit error counter in *_RAS_ERRnMISC0\<47:32\>.
+                                                                 _ All other values are reserved.
+
+                                                                 Internal:
+                                                                 Hardcoded. */
+        uint64_t cfi                   : 2;  /**< [ 11: 10](RO) Fault handling interrupt for corrected errors. If this feature is implemented,
+                                                                 then the fault handling interrupt must be implemented.
+                                                                 0x0 = Does not support feature.
+                                                                 0x1 = Reserved.
+                                                                 0x2 = Feature is controllable using ERR\<n\>CTLR.CFI.
+                                                                 0x3 = Feature is controllable with independent controls for reads and writes.
+
+                                                                 Internal:
+                                                                 Hardcoded per record. */
+        uint64_t ue                    : 2;  /**< [  9:  8](RO) In-band uncorrected error reporting.
+                                                                 0x0 = Does not support feature.
+                                                                 0x1 = Feature always enabled.
+                                                                 0x2 = Feature is controllable.
+                                                                 0x3 = Feature is controllable with independent controls for reads and writes.
+
+                                                                 Internal:
+                                                                 Hardcoded per record. */
+        uint64_t fi                    : 2;  /**< [  7:  6](RO) Fault handling interrupt.
+                                                                 0x0 = Does not support feature.
+                                                                 0x1 = Feature always enabled.
+                                                                 0x2 = Feature is controllable.
+                                                                 0x3 = Feature is controllable with independent controls for reads and writes.
+
+                                                                 Internal:
+                                                                 Hardcoded per record. */
+        uint64_t ui                    : 2;  /**< [  5:  4](RO) Uncorrected error recovery interrupt.
+                                                                 0x0 = Does not support feature.
+                                                                 0x1 = Feature always enabled.
+                                                                 0x2 = Feature is controllable.
+                                                                 0x3 = Feature is controllable with independent controls for reads and writes.
+
+                                                                 Internal:
+                                                                 Hardcoded. */
+        uint64_t imp_fe                : 2;  /**< [  3:  2](RO) Implementation defined.
+                                                                 0x0 = No additional feature.
+                                                                 0x1 = Reserved.
                                                                  0x2 = Marvell force error feature is supported.
                                                                  0x3 = Reserved. */
         uint64_t ed                    : 2;  /**< [  1:  0](RO) Error detection and correction.
@@ -1436,8 +1796,10 @@ union cavm_mccx_lmcoex_ras_err00fr
                                                                  Hardcoded. */
         uint64_t reserved_20_63        : 44;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_mccx_lmcoex_ras_err00fr_s cn; */
+    } cn96xxp3;
+    /* struct cavm_mccx_lmcoex_ras_err00fr_cn96xxp3 cn98xx; */
+    /* struct cavm_mccx_lmcoex_ras_err00fr_cn96xxp3 cnf95xx; */
+    /* struct cavm_mccx_lmcoex_ras_err00fr_cn96xxp3 loki; */
 };
 typedef union cavm_mccx_lmcoex_ras_err00fr cavm_mccx_lmcoex_ras_err00fr_t;
 
@@ -1446,6 +1808,8 @@ static inline uint64_t CAVM_MCCX_LMCOEX_RAS_ERR00FR(unsigned long a, unsigned lo
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c010000ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=2)))
+        return 0x87e03c010000ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=1)))
         return 0x87e03c010000ll + 0x1000000ll * ((a) & 0x0) + 0x1000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=1)))
@@ -1512,6 +1876,8 @@ static inline uint64_t CAVM_MCCX_LMCOEX_RAS_ERR00MISC0(unsigned long a, unsigned
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c010020ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=2)))
+        return 0x87e03c010020ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=1)))
         return 0x87e03c010020ll + 0x1000000ll * ((a) & 0x0) + 0x1000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=1)))
@@ -1564,6 +1930,8 @@ static inline uint64_t CAVM_MCCX_LMCOEX_RAS_ERR00MISC1(unsigned long a, unsigned
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c010028ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=2)))
+        return 0x87e03c010028ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=1)))
         return 0x87e03c010028ll + 0x1000000ll * ((a) & 0x0) + 0x1000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=1)))
@@ -1631,6 +1999,186 @@ union cavm_mccx_lmcoex_ras_err00status
                                                                  * A corrected error is detected and the corrected error counter overflows (or
                                                                  is not implemented).
 
+                                                                 For more information see the ARM RAS standard. */
+        uint64_t mv                    : 1;  /**< [ 26: 26](R/W1C/H) Miscellaneous registers valid. The *_RAS_ERRnMISC0 and *_RAS_ERRnMISC1 contains
+                                                                 additional information for an error recorded by this record.
+
+                                                                 Direct writes to this bit are ignored if any of [CE], [DE], or [UE] is set, and
+                                                                 the highest priority of these is not being cleared to 0 in the same write. This
+                                                                 bit is read/write-one-to-clear. */
+        uint64_t ce                    : 2;  /**< [ 25: 24](R/W1C/H) Corrected error:
+                                                                   0x0 = No corrected errors recorded.
+                                                                   0x1 = At least one transient corrected error recored.
+                                                                   0x2 = At least one corrected error recored.
+                                                                   0x3 = At least one persistent corrected error recored.
+
+                                                                 For CNXXXX, only codes 0x0 and 0x3 are used. */
+        uint64_t de                    : 1;  /**< [ 23: 23](R/W1C/H) Deferred error(s). At least one error was not corrected and deferred.
+
+                                                                 Direct writes to this bit are ignored if [OF] is set and is not being cleared
+                                                                 to 0 in the same write. */
+        uint64_t pn                    : 1;  /**< [ 22: 22](R/W1C/H) Poison.
+                                                                 0 = Uncorrected or deferred error from a corrupted value. If a node
+                                                                 detects a corrupted value and defers the error by producing poison, then this
+                                                                 bit is set to 0 at the producer node.
+
+                                                                 1 = Uncorrected error or Deferred error from a poisoned value. Indicates that an
+                                                                 error was due to detecting a poison value rather than detecting a corrupted
+                                                                 value. */
+        uint64_t uet                   : 2;  /**< [ 21: 20](R/W1C/H) Uncorrected error type. Describes the state of the component after detecting
+                                                                 or consuming an uncorrected error. Enumerated by RAS_UET_E.
+
+                                                                 Valid only if [UE] is set, otherwise 0x0.
+
+                                                                 Direct writes to this field are ignored if any of [CE], [DE], or [UE] is set,
+                                                                 and the highest priority of these is not being cleared to 0 in the same write. */
+        uint64_t reserved_16_19        : 4;
+        uint64_t ierr                  : 8;  /**< [ 15:  8](RO) Implementation-defined error code.
+
+                                                                 Direct writes to this field are ignored if any of the [CE], [DE], or [UE] is
+                                                                 set, and the highest priority of these is not being cleared to 0 in the same
+                                                                 write. */
+        uint64_t serr                  : 8;  /**< [  7:  0](RO) Architecturally-defined primary error code. Indicates the type of error
+                                                                 enumerated by RAS_SERR_E.
+
+                                                                 Direct writes to this field are ignored if any of the [CE], [DE], or [UE] is
+                                                                 set, and the highest priority of these is not being cleared to 0 in the same
+                                                                 write.
+
+                                                                 For CNXXXX, value depends on the error record. */
+#else /* Word 0 - Little Endian */
+        uint64_t serr                  : 8;  /**< [  7:  0](RO) Architecturally-defined primary error code. Indicates the type of error
+                                                                 enumerated by RAS_SERR_E.
+
+                                                                 Direct writes to this field are ignored if any of the [CE], [DE], or [UE] is
+                                                                 set, and the highest priority of these is not being cleared to 0 in the same
+                                                                 write.
+
+                                                                 For CNXXXX, value depends on the error record. */
+        uint64_t ierr                  : 8;  /**< [ 15:  8](RO) Implementation-defined error code.
+
+                                                                 Direct writes to this field are ignored if any of the [CE], [DE], or [UE] is
+                                                                 set, and the highest priority of these is not being cleared to 0 in the same
+                                                                 write. */
+        uint64_t reserved_16_19        : 4;
+        uint64_t uet                   : 2;  /**< [ 21: 20](R/W1C/H) Uncorrected error type. Describes the state of the component after detecting
+                                                                 or consuming an uncorrected error. Enumerated by RAS_UET_E.
+
+                                                                 Valid only if [UE] is set, otherwise 0x0.
+
+                                                                 Direct writes to this field are ignored if any of [CE], [DE], or [UE] is set,
+                                                                 and the highest priority of these is not being cleared to 0 in the same write. */
+        uint64_t pn                    : 1;  /**< [ 22: 22](R/W1C/H) Poison.
+                                                                 0 = Uncorrected or deferred error from a corrupted value. If a node
+                                                                 detects a corrupted value and defers the error by producing poison, then this
+                                                                 bit is set to 0 at the producer node.
+
+                                                                 1 = Uncorrected error or Deferred error from a poisoned value. Indicates that an
+                                                                 error was due to detecting a poison value rather than detecting a corrupted
+                                                                 value. */
+        uint64_t de                    : 1;  /**< [ 23: 23](R/W1C/H) Deferred error(s). At least one error was not corrected and deferred.
+
+                                                                 Direct writes to this bit are ignored if [OF] is set and is not being cleared
+                                                                 to 0 in the same write. */
+        uint64_t ce                    : 2;  /**< [ 25: 24](R/W1C/H) Corrected error:
+                                                                   0x0 = No corrected errors recorded.
+                                                                   0x1 = At least one transient corrected error recored.
+                                                                   0x2 = At least one corrected error recored.
+                                                                   0x3 = At least one persistent corrected error recored.
+
+                                                                 For CNXXXX, only codes 0x0 and 0x3 are used. */
+        uint64_t mv                    : 1;  /**< [ 26: 26](R/W1C/H) Miscellaneous registers valid. The *_RAS_ERRnMISC0 and *_RAS_ERRnMISC1 contains
+                                                                 additional information for an error recorded by this record.
+
+                                                                 Direct writes to this bit are ignored if any of [CE], [DE], or [UE] is set, and
+                                                                 the highest priority of these is not being cleared to 0 in the same write. This
+                                                                 bit is read/write-one-to-clear. */
+        uint64_t of                    : 1;  /**< [ 27: 27](R/W1C/H) Overflow. Multiple errors detected. This bit is set when:
+
+                                                                 * An uncorrected error is detected and the previous error syndrome is kept
+                                                                 because [UE] = 1.
+
+                                                                 * A deferred error is detected and the previous error syndrome is kept is
+                                                                 discarded because [DE] = 1.
+
+                                                                 * A corrected error is detected and the corrected error counter overflows (or
+                                                                 is not implemented).
+
+                                                                 For more information see the ARM RAS standard. */
+        uint64_t er                    : 1;  /**< [ 28: 28](RO) Error reported.
+                                                                 0 = No external abort reported.
+                                                                 1 = The applicable one of the *_RAS_ERRnCTLR[WUE],[RUE],[UE] bits was set when
+                                                                 an uncorrected error was detected, meaning an external abort was signaled to the
+                                                                 master making the access.
+
+                                                                 Direct writes to this bit are ignored if any of [CE], [DE], or [UE] is set, and
+                                                                 the highest priority of these is not being cleared to 0 in the same write.
+
+                                                                 Cleared for a corrected error. */
+        uint64_t ue                    : 1;  /**< [ 29: 29](R/W1C/H) Uncorrected error(s).
+                                                                 0 = No errors that could not be corrected or deferred.
+                                                                 1 = At least one error detected that has not been corrected or deferred.
+
+                                                                 Direct writes to this bit are ignored if [OF] is set and is not being cleared to
+                                                                 zero in the same write. */
+        uint64_t v                     : 1;  /**< [ 30: 30](R/W1C/H) Status register valid. *_RAS_ERRn_STATUS valid. At least one error
+                                                                 has been recorded.
+
+                                                                 Direct writes to this bit are ignored if any of the [UE], [DE], or [CE] bits is
+                                                                 set and is not being cleared to 0 in the same write. */
+        uint64_t av                    : 1;  /**< [ 31: 31](R/W1C/H) Address valid. *_RAS_ERRnSTATUS contains a physical address
+                                                                 associated with the highest priority error recorded by this record.
+
+                                                                 Direct writes to this bit are ignored if any of the [CE], [DE], or [UE] bits is
+                                                                 set, and the highest priority of these is not being cleared to 0 in the same
+                                                                 write. */
+        uint64_t reserved_32_63        : 32;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_mccx_lmcoex_ras_err00status_s cn9; */
+    /* struct cavm_mccx_lmcoex_ras_err00status_s cn96xxp1; */
+    struct cavm_mccx_lmcoex_ras_err00status_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_32_63        : 32;
+        uint64_t av                    : 1;  /**< [ 31: 31](R/W1C/H) Address valid. *_RAS_ERRnSTATUS contains a physical address
+                                                                 associated with the highest priority error recorded by this record.
+
+                                                                 Direct writes to this bit are ignored if any of the [CE], [DE], or [UE] bits is
+                                                                 set, and the highest priority of these is not being cleared to 0 in the same
+                                                                 write. */
+        uint64_t v                     : 1;  /**< [ 30: 30](R/W1C/H) Status register valid. *_RAS_ERRn_STATUS valid. At least one error
+                                                                 has been recorded.
+
+                                                                 Direct writes to this bit are ignored if any of the [UE], [DE], or [CE] bits is
+                                                                 set and is not being cleared to 0 in the same write. */
+        uint64_t ue                    : 1;  /**< [ 29: 29](R/W1C/H) Uncorrected error(s).
+                                                                 0 = No errors that could not be corrected or deferred.
+                                                                 1 = At least one error detected that has not been corrected or deferred.
+
+                                                                 Direct writes to this bit are ignored if [OF] is set and is not being cleared to
+                                                                 zero in the same write. */
+        uint64_t er                    : 1;  /**< [ 28: 28](RO) Error reported.
+                                                                 0 = No external abort reported.
+                                                                 1 = The applicable one of the *_RAS_ERRnCTLR[WUE],[RUE],[UE] bits was set when
+                                                                 an uncorrected error was detected, meaning an external abort was signaled to the
+                                                                 master making the access.
+
+                                                                 Direct writes to this bit are ignored if any of [CE], [DE], or [UE] is set, and
+                                                                 the highest priority of these is not being cleared to 0 in the same write.
+
+                                                                 Cleared for a corrected error. */
+        uint64_t of                    : 1;  /**< [ 27: 27](R/W1C/H) Overflow. Multiple errors detected. This bit is set when:
+
+                                                                 * An uncorrected error is detected and the previous error syndrome is kept
+                                                                 because [UE] = 1.
+
+                                                                 * A deferred error is detected and the previous error syndrome is kept is
+                                                                 discarded because [DE] = 1.
+
+                                                                 * A corrected error is detected and the corrected error counter overflows (or
+                                                                 is not implemented).
+
                                                                  For more information see the Arm RAS standard. */
         uint64_t mv                    : 1;  /**< [ 26: 26](R/W1C/H) Miscellaneous registers valid. The *_RAS_ERRnMISC0 and *_RAS_ERRnMISC1 contains
                                                                  additional information for an error recorded by this record.
@@ -1766,8 +2314,10 @@ union cavm_mccx_lmcoex_ras_err00status
                                                                  write. */
         uint64_t reserved_32_63        : 32;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_mccx_lmcoex_ras_err00status_s cn; */
+    } cn96xxp3;
+    /* struct cavm_mccx_lmcoex_ras_err00status_cn96xxp3 cn98xx; */
+    /* struct cavm_mccx_lmcoex_ras_err00status_cn96xxp3 cnf95xx; */
+    /* struct cavm_mccx_lmcoex_ras_err00status_cn96xxp3 loki; */
 };
 typedef union cavm_mccx_lmcoex_ras_err00status cavm_mccx_lmcoex_ras_err00status_t;
 
@@ -1776,6 +2326,8 @@ static inline uint64_t CAVM_MCCX_LMCOEX_RAS_ERR00STATUS(unsigned long a, unsigne
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c010010ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=2)))
+        return 0x87e03c010010ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=1)))
         return 0x87e03c010010ll + 0x1000000ll * ((a) & 0x0) + 0x1000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=1)))
@@ -1866,6 +2418,8 @@ static inline uint64_t CAVM_MCCX_LMCOEX_RAS_ERR01ADDR(unsigned long a, unsigned 
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c010058ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=2)))
+        return 0x87e03c010058ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=1)))
         return 0x87e03c010058ll + 0x1000000ll * ((a) & 0x0) + 0x1000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=1)))
@@ -1908,6 +2462,8 @@ static inline uint64_t CAVM_MCCX_LMCOEX_RAS_ERR01CTLR(unsigned long a, unsigned 
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c010048ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=2)))
+        return 0x87e03c010048ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=1)))
         return 0x87e03c010048ll + 0x1000000ll * ((a) & 0x0) + 0x1000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=1)))
@@ -1950,6 +2506,8 @@ static inline uint64_t CAVM_MCCX_LMCOEX_RAS_ERR01FR(unsigned long a, unsigned lo
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c010040ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=2)))
+        return 0x87e03c010040ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=1)))
         return 0x87e03c010040ll + 0x1000000ll * ((a) & 0x0) + 0x1000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=1)))
@@ -2012,6 +2570,8 @@ static inline uint64_t CAVM_MCCX_LMCOEX_RAS_ERR01MISC0(unsigned long a, unsigned
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c010060ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=2)))
+        return 0x87e03c010060ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=1)))
         return 0x87e03c010060ll + 0x1000000ll * ((a) & 0x0) + 0x1000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=1)))
@@ -2060,6 +2620,8 @@ static inline uint64_t CAVM_MCCX_LMCOEX_RAS_ERR01MISC1(unsigned long a, unsigned
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c010068ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=2)))
+        return 0x87e03c010068ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=1)))
         return 0x87e03c010068ll + 0x1000000ll * ((a) & 0x0) + 0x1000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=1)))
@@ -2125,6 +2687,186 @@ union cavm_mccx_lmcoex_ras_err01status
                                                                  * A corrected error is detected and the corrected error counter overflows (or
                                                                  is not implemented).
 
+                                                                 For more information see the ARM RAS standard. */
+        uint64_t mv                    : 1;  /**< [ 26: 26](R/W1C/H) Miscellaneous registers valid. The *_RAS_ERRnMISC0 and *_RAS_ERRnMISC1 contains
+                                                                 additional information for an error recorded by this record.
+
+                                                                 Direct writes to this bit are ignored if any of [CE], [DE], or [UE] is set, and
+                                                                 the highest priority of these is not being cleared to 0 in the same write. This
+                                                                 bit is read/write-one-to-clear. */
+        uint64_t ce                    : 2;  /**< [ 25: 24](R/W1C/H) Corrected error:
+                                                                   0x0 = No corrected errors recorded.
+                                                                   0x1 = At least one transient corrected error recored.
+                                                                   0x2 = At least one corrected error recored.
+                                                                   0x3 = At least one persistent corrected error recored.
+
+                                                                 For CNXXXX, only codes 0x0 and 0x3 are used. */
+        uint64_t de                    : 1;  /**< [ 23: 23](R/W1C/H) Deferred error(s). At least one error was not corrected and deferred.
+
+                                                                 Direct writes to this bit are ignored if [OF] is set and is not being cleared
+                                                                 to 0 in the same write. */
+        uint64_t pn                    : 1;  /**< [ 22: 22](R/W1C/H) Poison.
+                                                                 0 = Uncorrected or deferred error from a corrupted value. If a node
+                                                                 detects a corrupted value and defers the error by producing poison, then this
+                                                                 bit is set to 0 at the producer node.
+
+                                                                 1 = Uncorrected error or Deferred error from a poisoned value. Indicates that an
+                                                                 error was due to detecting a poison value rather than detecting a corrupted
+                                                                 value. */
+        uint64_t uet                   : 2;  /**< [ 21: 20](R/W1C/H) Uncorrected error type. Describes the state of the component after detecting
+                                                                 or consuming an uncorrected error. Enumerated by RAS_UET_E.
+
+                                                                 Valid only if [UE] is set, otherwise 0x0.
+
+                                                                 Direct writes to this field are ignored if any of [CE], [DE], or [UE] is set,
+                                                                 and the highest priority of these is not being cleared to 0 in the same write. */
+        uint64_t reserved_16_19        : 4;
+        uint64_t ierr                  : 8;  /**< [ 15:  8](RO) Implementation-defined error code.
+
+                                                                 Direct writes to this field are ignored if any of the [CE], [DE], or [UE] is
+                                                                 set, and the highest priority of these is not being cleared to 0 in the same
+                                                                 write. */
+        uint64_t serr                  : 8;  /**< [  7:  0](RO) Architecturally-defined primary error code. Indicates the type of error
+                                                                 enumerated by RAS_SERR_E.
+
+                                                                 Direct writes to this field are ignored if any of the [CE], [DE], or [UE] is
+                                                                 set, and the highest priority of these is not being cleared to 0 in the same
+                                                                 write.
+
+                                                                 For CNXXXX, value depends on the error record. */
+#else /* Word 0 - Little Endian */
+        uint64_t serr                  : 8;  /**< [  7:  0](RO) Architecturally-defined primary error code. Indicates the type of error
+                                                                 enumerated by RAS_SERR_E.
+
+                                                                 Direct writes to this field are ignored if any of the [CE], [DE], or [UE] is
+                                                                 set, and the highest priority of these is not being cleared to 0 in the same
+                                                                 write.
+
+                                                                 For CNXXXX, value depends on the error record. */
+        uint64_t ierr                  : 8;  /**< [ 15:  8](RO) Implementation-defined error code.
+
+                                                                 Direct writes to this field are ignored if any of the [CE], [DE], or [UE] is
+                                                                 set, and the highest priority of these is not being cleared to 0 in the same
+                                                                 write. */
+        uint64_t reserved_16_19        : 4;
+        uint64_t uet                   : 2;  /**< [ 21: 20](R/W1C/H) Uncorrected error type. Describes the state of the component after detecting
+                                                                 or consuming an uncorrected error. Enumerated by RAS_UET_E.
+
+                                                                 Valid only if [UE] is set, otherwise 0x0.
+
+                                                                 Direct writes to this field are ignored if any of [CE], [DE], or [UE] is set,
+                                                                 and the highest priority of these is not being cleared to 0 in the same write. */
+        uint64_t pn                    : 1;  /**< [ 22: 22](R/W1C/H) Poison.
+                                                                 0 = Uncorrected or deferred error from a corrupted value. If a node
+                                                                 detects a corrupted value and defers the error by producing poison, then this
+                                                                 bit is set to 0 at the producer node.
+
+                                                                 1 = Uncorrected error or Deferred error from a poisoned value. Indicates that an
+                                                                 error was due to detecting a poison value rather than detecting a corrupted
+                                                                 value. */
+        uint64_t de                    : 1;  /**< [ 23: 23](R/W1C/H) Deferred error(s). At least one error was not corrected and deferred.
+
+                                                                 Direct writes to this bit are ignored if [OF] is set and is not being cleared
+                                                                 to 0 in the same write. */
+        uint64_t ce                    : 2;  /**< [ 25: 24](R/W1C/H) Corrected error:
+                                                                   0x0 = No corrected errors recorded.
+                                                                   0x1 = At least one transient corrected error recored.
+                                                                   0x2 = At least one corrected error recored.
+                                                                   0x3 = At least one persistent corrected error recored.
+
+                                                                 For CNXXXX, only codes 0x0 and 0x3 are used. */
+        uint64_t mv                    : 1;  /**< [ 26: 26](R/W1C/H) Miscellaneous registers valid. The *_RAS_ERRnMISC0 and *_RAS_ERRnMISC1 contains
+                                                                 additional information for an error recorded by this record.
+
+                                                                 Direct writes to this bit are ignored if any of [CE], [DE], or [UE] is set, and
+                                                                 the highest priority of these is not being cleared to 0 in the same write. This
+                                                                 bit is read/write-one-to-clear. */
+        uint64_t of                    : 1;  /**< [ 27: 27](R/W1C/H) Overflow. Multiple errors detected. This bit is set when:
+
+                                                                 * An uncorrected error is detected and the previous error syndrome is kept
+                                                                 because [UE] = 1.
+
+                                                                 * A deferred error is detected and the previous error syndrome is kept is
+                                                                 discarded because [DE] = 1.
+
+                                                                 * A corrected error is detected and the corrected error counter overflows (or
+                                                                 is not implemented).
+
+                                                                 For more information see the ARM RAS standard. */
+        uint64_t er                    : 1;  /**< [ 28: 28](RO) Error reported.
+                                                                 0 = No external abort reported.
+                                                                 1 = The applicable one of the *_RAS_ERRnCTLR[WUE],[RUE],[UE] bits was set when
+                                                                 an uncorrected error was detected, meaning an external abort was signaled to the
+                                                                 master making the access.
+
+                                                                 Direct writes to this bit are ignored if any of [CE], [DE], or [UE] is set, and
+                                                                 the highest priority of these is not being cleared to 0 in the same write.
+
+                                                                 Cleared for a corrected error. */
+        uint64_t ue                    : 1;  /**< [ 29: 29](R/W1C/H) Uncorrected error(s).
+                                                                 0 = No errors that could not be corrected or deferred.
+                                                                 1 = At least one error detected that has not been corrected or deferred.
+
+                                                                 Direct writes to this bit are ignored if [OF] is set and is not being cleared to
+                                                                 zero in the same write. */
+        uint64_t v                     : 1;  /**< [ 30: 30](R/W1C/H) Status register valid. *_RAS_ERRn_STATUS valid. At least one error
+                                                                 has been recorded.
+
+                                                                 Direct writes to this bit are ignored if any of the [UE], [DE], or [CE] bits is
+                                                                 set and is not being cleared to 0 in the same write. */
+        uint64_t av                    : 1;  /**< [ 31: 31](R/W1C/H) Address valid. *_RAS_ERRnSTATUS contains a physical address
+                                                                 associated with the highest priority error recorded by this record.
+
+                                                                 Direct writes to this bit are ignored if any of the [CE], [DE], or [UE] bits is
+                                                                 set, and the highest priority of these is not being cleared to 0 in the same
+                                                                 write. */
+        uint64_t reserved_32_63        : 32;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_mccx_lmcoex_ras_err01status_s cn9; */
+    /* struct cavm_mccx_lmcoex_ras_err01status_s cn96xxp1; */
+    struct cavm_mccx_lmcoex_ras_err01status_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_32_63        : 32;
+        uint64_t av                    : 1;  /**< [ 31: 31](R/W1C/H) Address valid. *_RAS_ERRnSTATUS contains a physical address
+                                                                 associated with the highest priority error recorded by this record.
+
+                                                                 Direct writes to this bit are ignored if any of the [CE], [DE], or [UE] bits is
+                                                                 set, and the highest priority of these is not being cleared to 0 in the same
+                                                                 write. */
+        uint64_t v                     : 1;  /**< [ 30: 30](R/W1C/H) Status register valid. *_RAS_ERRn_STATUS valid. At least one error
+                                                                 has been recorded.
+
+                                                                 Direct writes to this bit are ignored if any of the [UE], [DE], or [CE] bits is
+                                                                 set and is not being cleared to 0 in the same write. */
+        uint64_t ue                    : 1;  /**< [ 29: 29](R/W1C/H) Uncorrected error(s).
+                                                                 0 = No errors that could not be corrected or deferred.
+                                                                 1 = At least one error detected that has not been corrected or deferred.
+
+                                                                 Direct writes to this bit are ignored if [OF] is set and is not being cleared to
+                                                                 zero in the same write. */
+        uint64_t er                    : 1;  /**< [ 28: 28](RO) Error reported.
+                                                                 0 = No external abort reported.
+                                                                 1 = The applicable one of the *_RAS_ERRnCTLR[WUE],[RUE],[UE] bits was set when
+                                                                 an uncorrected error was detected, meaning an external abort was signaled to the
+                                                                 master making the access.
+
+                                                                 Direct writes to this bit are ignored if any of [CE], [DE], or [UE] is set, and
+                                                                 the highest priority of these is not being cleared to 0 in the same write.
+
+                                                                 Cleared for a corrected error. */
+        uint64_t of                    : 1;  /**< [ 27: 27](R/W1C/H) Overflow. Multiple errors detected. This bit is set when:
+
+                                                                 * An uncorrected error is detected and the previous error syndrome is kept
+                                                                 because [UE] = 1.
+
+                                                                 * A deferred error is detected and the previous error syndrome is kept is
+                                                                 discarded because [DE] = 1.
+
+                                                                 * A corrected error is detected and the corrected error counter overflows (or
+                                                                 is not implemented).
+
                                                                  For more information see the Arm RAS standard. */
         uint64_t mv                    : 1;  /**< [ 26: 26](R/W1C/H) Miscellaneous registers valid. The *_RAS_ERRnMISC0 and *_RAS_ERRnMISC1 contains
                                                                  additional information for an error recorded by this record.
@@ -2260,8 +3002,10 @@ union cavm_mccx_lmcoex_ras_err01status
                                                                  write. */
         uint64_t reserved_32_63        : 32;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_mccx_lmcoex_ras_err01status_s cn; */
+    } cn96xxp3;
+    /* struct cavm_mccx_lmcoex_ras_err01status_cn96xxp3 cn98xx; */
+    /* struct cavm_mccx_lmcoex_ras_err01status_cn96xxp3 cnf95xx; */
+    /* struct cavm_mccx_lmcoex_ras_err01status_cn96xxp3 loki; */
 };
 typedef union cavm_mccx_lmcoex_ras_err01status cavm_mccx_lmcoex_ras_err01status_t;
 
@@ -2270,6 +3014,8 @@ static inline uint64_t CAVM_MCCX_LMCOEX_RAS_ERR01STATUS(unsigned long a, unsigne
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c010050ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=2)))
+        return 0x87e03c010050ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=1)))
         return 0x87e03c010050ll + 0x1000000ll * ((a) & 0x0) + 0x1000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=1)))
@@ -2360,6 +3106,8 @@ static inline uint64_t CAVM_MCCX_LMCOEX_RAS_ERR02ADDR(unsigned long a, unsigned 
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c010098ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=2)))
+        return 0x87e03c010098ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=1)))
         return 0x87e03c010098ll + 0x1000000ll * ((a) & 0x0) + 0x1000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=1)))
@@ -2400,6 +3148,8 @@ static inline uint64_t CAVM_MCCX_LMCOEX_RAS_ERR02CTLR(unsigned long a, unsigned 
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c010088ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=2)))
+        return 0x87e03c010088ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=1)))
         return 0x87e03c010088ll + 0x1000000ll * ((a) & 0x0) + 0x1000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=1)))
@@ -2440,6 +3190,8 @@ static inline uint64_t CAVM_MCCX_LMCOEX_RAS_ERR02FR(unsigned long a, unsigned lo
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c010080ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=2)))
+        return 0x87e03c010080ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=1)))
         return 0x87e03c010080ll + 0x1000000ll * ((a) & 0x0) + 0x1000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=1)))
@@ -2480,6 +3232,8 @@ static inline uint64_t CAVM_MCCX_LMCOEX_RAS_ERR02MISC0(unsigned long a, unsigned
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c0100a0ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=2)))
+        return 0x87e03c0100a0ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=1)))
         return 0x87e03c0100a0ll + 0x1000000ll * ((a) & 0x0) + 0x1000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=1)))
@@ -2528,6 +3282,8 @@ static inline uint64_t CAVM_MCCX_LMCOEX_RAS_ERR02MISC1(unsigned long a, unsigned
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c0100a8ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=2)))
+        return 0x87e03c0100a8ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=1)))
         return 0x87e03c0100a8ll + 0x1000000ll * ((a) & 0x0) + 0x1000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=1)))
@@ -2593,6 +3349,186 @@ union cavm_mccx_lmcoex_ras_err02status
                                                                  * A corrected error is detected and the corrected error counter overflows (or
                                                                  is not implemented).
 
+                                                                 For more information see the ARM RAS standard. */
+        uint64_t mv                    : 1;  /**< [ 26: 26](R/W1C/H) Miscellaneous registers valid. The *_RAS_ERRnMISC0 and *_RAS_ERRnMISC1 contains
+                                                                 additional information for an error recorded by this record.
+
+                                                                 Direct writes to this bit are ignored if any of [CE], [DE], or [UE] is set, and
+                                                                 the highest priority of these is not being cleared to 0 in the same write. This
+                                                                 bit is read/write-one-to-clear. */
+        uint64_t ce                    : 2;  /**< [ 25: 24](R/W1C/H) Corrected error:
+                                                                   0x0 = No corrected errors recorded.
+                                                                   0x1 = At least one transient corrected error recored.
+                                                                   0x2 = At least one corrected error recored.
+                                                                   0x3 = At least one persistent corrected error recored.
+
+                                                                 For CNXXXX, only codes 0x0 and 0x3 are used. */
+        uint64_t de                    : 1;  /**< [ 23: 23](R/W1C/H) Deferred error(s). At least one error was not corrected and deferred.
+
+                                                                 Direct writes to this bit are ignored if [OF] is set and is not being cleared
+                                                                 to 0 in the same write. */
+        uint64_t pn                    : 1;  /**< [ 22: 22](R/W1C/H) Poison.
+                                                                 0 = Uncorrected or deferred error from a corrupted value. If a node
+                                                                 detects a corrupted value and defers the error by producing poison, then this
+                                                                 bit is set to 0 at the producer node.
+
+                                                                 1 = Uncorrected error or Deferred error from a poisoned value. Indicates that an
+                                                                 error was due to detecting a poison value rather than detecting a corrupted
+                                                                 value. */
+        uint64_t uet                   : 2;  /**< [ 21: 20](R/W1C/H) Uncorrected error type. Describes the state of the component after detecting
+                                                                 or consuming an uncorrected error. Enumerated by RAS_UET_E.
+
+                                                                 Valid only if [UE] is set, otherwise 0x0.
+
+                                                                 Direct writes to this field are ignored if any of [CE], [DE], or [UE] is set,
+                                                                 and the highest priority of these is not being cleared to 0 in the same write. */
+        uint64_t reserved_16_19        : 4;
+        uint64_t ierr                  : 8;  /**< [ 15:  8](RO) Implementation-defined error code.
+
+                                                                 Direct writes to this field are ignored if any of the [CE], [DE], or [UE] is
+                                                                 set, and the highest priority of these is not being cleared to 0 in the same
+                                                                 write. */
+        uint64_t serr                  : 8;  /**< [  7:  0](RO) Architecturally-defined primary error code. Indicates the type of error
+                                                                 enumerated by RAS_SERR_E.
+
+                                                                 Direct writes to this field are ignored if any of the [CE], [DE], or [UE] is
+                                                                 set, and the highest priority of these is not being cleared to 0 in the same
+                                                                 write.
+
+                                                                 For CNXXXX, value depends on the error record. */
+#else /* Word 0 - Little Endian */
+        uint64_t serr                  : 8;  /**< [  7:  0](RO) Architecturally-defined primary error code. Indicates the type of error
+                                                                 enumerated by RAS_SERR_E.
+
+                                                                 Direct writes to this field are ignored if any of the [CE], [DE], or [UE] is
+                                                                 set, and the highest priority of these is not being cleared to 0 in the same
+                                                                 write.
+
+                                                                 For CNXXXX, value depends on the error record. */
+        uint64_t ierr                  : 8;  /**< [ 15:  8](RO) Implementation-defined error code.
+
+                                                                 Direct writes to this field are ignored if any of the [CE], [DE], or [UE] is
+                                                                 set, and the highest priority of these is not being cleared to 0 in the same
+                                                                 write. */
+        uint64_t reserved_16_19        : 4;
+        uint64_t uet                   : 2;  /**< [ 21: 20](R/W1C/H) Uncorrected error type. Describes the state of the component after detecting
+                                                                 or consuming an uncorrected error. Enumerated by RAS_UET_E.
+
+                                                                 Valid only if [UE] is set, otherwise 0x0.
+
+                                                                 Direct writes to this field are ignored if any of [CE], [DE], or [UE] is set,
+                                                                 and the highest priority of these is not being cleared to 0 in the same write. */
+        uint64_t pn                    : 1;  /**< [ 22: 22](R/W1C/H) Poison.
+                                                                 0 = Uncorrected or deferred error from a corrupted value. If a node
+                                                                 detects a corrupted value and defers the error by producing poison, then this
+                                                                 bit is set to 0 at the producer node.
+
+                                                                 1 = Uncorrected error or Deferred error from a poisoned value. Indicates that an
+                                                                 error was due to detecting a poison value rather than detecting a corrupted
+                                                                 value. */
+        uint64_t de                    : 1;  /**< [ 23: 23](R/W1C/H) Deferred error(s). At least one error was not corrected and deferred.
+
+                                                                 Direct writes to this bit are ignored if [OF] is set and is not being cleared
+                                                                 to 0 in the same write. */
+        uint64_t ce                    : 2;  /**< [ 25: 24](R/W1C/H) Corrected error:
+                                                                   0x0 = No corrected errors recorded.
+                                                                   0x1 = At least one transient corrected error recored.
+                                                                   0x2 = At least one corrected error recored.
+                                                                   0x3 = At least one persistent corrected error recored.
+
+                                                                 For CNXXXX, only codes 0x0 and 0x3 are used. */
+        uint64_t mv                    : 1;  /**< [ 26: 26](R/W1C/H) Miscellaneous registers valid. The *_RAS_ERRnMISC0 and *_RAS_ERRnMISC1 contains
+                                                                 additional information for an error recorded by this record.
+
+                                                                 Direct writes to this bit are ignored if any of [CE], [DE], or [UE] is set, and
+                                                                 the highest priority of these is not being cleared to 0 in the same write. This
+                                                                 bit is read/write-one-to-clear. */
+        uint64_t of                    : 1;  /**< [ 27: 27](R/W1C/H) Overflow. Multiple errors detected. This bit is set when:
+
+                                                                 * An uncorrected error is detected and the previous error syndrome is kept
+                                                                 because [UE] = 1.
+
+                                                                 * A deferred error is detected and the previous error syndrome is kept is
+                                                                 discarded because [DE] = 1.
+
+                                                                 * A corrected error is detected and the corrected error counter overflows (or
+                                                                 is not implemented).
+
+                                                                 For more information see the ARM RAS standard. */
+        uint64_t er                    : 1;  /**< [ 28: 28](RO) Error reported.
+                                                                 0 = No external abort reported.
+                                                                 1 = The applicable one of the *_RAS_ERRnCTLR[WUE],[RUE],[UE] bits was set when
+                                                                 an uncorrected error was detected, meaning an external abort was signaled to the
+                                                                 master making the access.
+
+                                                                 Direct writes to this bit are ignored if any of [CE], [DE], or [UE] is set, and
+                                                                 the highest priority of these is not being cleared to 0 in the same write.
+
+                                                                 Cleared for a corrected error. */
+        uint64_t ue                    : 1;  /**< [ 29: 29](R/W1C/H) Uncorrected error(s).
+                                                                 0 = No errors that could not be corrected or deferred.
+                                                                 1 = At least one error detected that has not been corrected or deferred.
+
+                                                                 Direct writes to this bit are ignored if [OF] is set and is not being cleared to
+                                                                 zero in the same write. */
+        uint64_t v                     : 1;  /**< [ 30: 30](R/W1C/H) Status register valid. *_RAS_ERRn_STATUS valid. At least one error
+                                                                 has been recorded.
+
+                                                                 Direct writes to this bit are ignored if any of the [UE], [DE], or [CE] bits is
+                                                                 set and is not being cleared to 0 in the same write. */
+        uint64_t av                    : 1;  /**< [ 31: 31](R/W1C/H) Address valid. *_RAS_ERRnSTATUS contains a physical address
+                                                                 associated with the highest priority error recorded by this record.
+
+                                                                 Direct writes to this bit are ignored if any of the [CE], [DE], or [UE] bits is
+                                                                 set, and the highest priority of these is not being cleared to 0 in the same
+                                                                 write. */
+        uint64_t reserved_32_63        : 32;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_mccx_lmcoex_ras_err02status_s cn9; */
+    /* struct cavm_mccx_lmcoex_ras_err02status_s cn96xxp1; */
+    struct cavm_mccx_lmcoex_ras_err02status_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_32_63        : 32;
+        uint64_t av                    : 1;  /**< [ 31: 31](R/W1C/H) Address valid. *_RAS_ERRnSTATUS contains a physical address
+                                                                 associated with the highest priority error recorded by this record.
+
+                                                                 Direct writes to this bit are ignored if any of the [CE], [DE], or [UE] bits is
+                                                                 set, and the highest priority of these is not being cleared to 0 in the same
+                                                                 write. */
+        uint64_t v                     : 1;  /**< [ 30: 30](R/W1C/H) Status register valid. *_RAS_ERRn_STATUS valid. At least one error
+                                                                 has been recorded.
+
+                                                                 Direct writes to this bit are ignored if any of the [UE], [DE], or [CE] bits is
+                                                                 set and is not being cleared to 0 in the same write. */
+        uint64_t ue                    : 1;  /**< [ 29: 29](R/W1C/H) Uncorrected error(s).
+                                                                 0 = No errors that could not be corrected or deferred.
+                                                                 1 = At least one error detected that has not been corrected or deferred.
+
+                                                                 Direct writes to this bit are ignored if [OF] is set and is not being cleared to
+                                                                 zero in the same write. */
+        uint64_t er                    : 1;  /**< [ 28: 28](RO) Error reported.
+                                                                 0 = No external abort reported.
+                                                                 1 = The applicable one of the *_RAS_ERRnCTLR[WUE],[RUE],[UE] bits was set when
+                                                                 an uncorrected error was detected, meaning an external abort was signaled to the
+                                                                 master making the access.
+
+                                                                 Direct writes to this bit are ignored if any of [CE], [DE], or [UE] is set, and
+                                                                 the highest priority of these is not being cleared to 0 in the same write.
+
+                                                                 Cleared for a corrected error. */
+        uint64_t of                    : 1;  /**< [ 27: 27](R/W1C/H) Overflow. Multiple errors detected. This bit is set when:
+
+                                                                 * An uncorrected error is detected and the previous error syndrome is kept
+                                                                 because [UE] = 1.
+
+                                                                 * A deferred error is detected and the previous error syndrome is kept is
+                                                                 discarded because [DE] = 1.
+
+                                                                 * A corrected error is detected and the corrected error counter overflows (or
+                                                                 is not implemented).
+
                                                                  For more information see the Arm RAS standard. */
         uint64_t mv                    : 1;  /**< [ 26: 26](R/W1C/H) Miscellaneous registers valid. The *_RAS_ERRnMISC0 and *_RAS_ERRnMISC1 contains
                                                                  additional information for an error recorded by this record.
@@ -2728,8 +3664,10 @@ union cavm_mccx_lmcoex_ras_err02status
                                                                  write. */
         uint64_t reserved_32_63        : 32;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_mccx_lmcoex_ras_err02status_s cn; */
+    } cn96xxp3;
+    /* struct cavm_mccx_lmcoex_ras_err02status_cn96xxp3 cn98xx; */
+    /* struct cavm_mccx_lmcoex_ras_err02status_cn96xxp3 cnf95xx; */
+    /* struct cavm_mccx_lmcoex_ras_err02status_cn96xxp3 loki; */
 };
 typedef union cavm_mccx_lmcoex_ras_err02status cavm_mccx_lmcoex_ras_err02status_t;
 
@@ -2738,6 +3676,8 @@ static inline uint64_t CAVM_MCCX_LMCOEX_RAS_ERR02STATUS(unsigned long a, unsigne
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c010090ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=2)))
+        return 0x87e03c010090ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=1)))
         return 0x87e03c010090ll + 0x1000000ll * ((a) & 0x0) + 0x1000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=1)))
@@ -2828,6 +3768,8 @@ static inline uint64_t CAVM_MCCX_LMCOEX_RAS_ERR03ADDR(unsigned long a, unsigned 
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c0100d8ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=2)))
+        return 0x87e03c0100d8ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=1)))
         return 0x87e03c0100d8ll + 0x1000000ll * ((a) & 0x0) + 0x1000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=1)))
@@ -2868,6 +3810,8 @@ static inline uint64_t CAVM_MCCX_LMCOEX_RAS_ERR03CTLR(unsigned long a, unsigned 
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c0100c8ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=2)))
+        return 0x87e03c0100c8ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=1)))
         return 0x87e03c0100c8ll + 0x1000000ll * ((a) & 0x0) + 0x1000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=1)))
@@ -2908,6 +3852,8 @@ static inline uint64_t CAVM_MCCX_LMCOEX_RAS_ERR03FR(unsigned long a, unsigned lo
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c0100c0ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=2)))
+        return 0x87e03c0100c0ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=1)))
         return 0x87e03c0100c0ll + 0x1000000ll * ((a) & 0x0) + 0x1000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=1)))
@@ -2948,6 +3894,8 @@ static inline uint64_t CAVM_MCCX_LMCOEX_RAS_ERR03MISC0(unsigned long a, unsigned
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c0100e0ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=2)))
+        return 0x87e03c0100e0ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=1)))
         return 0x87e03c0100e0ll + 0x1000000ll * ((a) & 0x0) + 0x1000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=1)))
@@ -2996,6 +3944,8 @@ static inline uint64_t CAVM_MCCX_LMCOEX_RAS_ERR03MISC1(unsigned long a, unsigned
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c0100e8ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=2)))
+        return 0x87e03c0100e8ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=1)))
         return 0x87e03c0100e8ll + 0x1000000ll * ((a) & 0x0) + 0x1000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=1)))
@@ -3061,6 +4011,186 @@ union cavm_mccx_lmcoex_ras_err03status
                                                                  * A corrected error is detected and the corrected error counter overflows (or
                                                                  is not implemented).
 
+                                                                 For more information see the ARM RAS standard. */
+        uint64_t mv                    : 1;  /**< [ 26: 26](R/W1C/H) Miscellaneous registers valid. The *_RAS_ERRnMISC0 and *_RAS_ERRnMISC1 contains
+                                                                 additional information for an error recorded by this record.
+
+                                                                 Direct writes to this bit are ignored if any of [CE], [DE], or [UE] is set, and
+                                                                 the highest priority of these is not being cleared to 0 in the same write. This
+                                                                 bit is read/write-one-to-clear. */
+        uint64_t ce                    : 2;  /**< [ 25: 24](R/W1C/H) Corrected error:
+                                                                   0x0 = No corrected errors recorded.
+                                                                   0x1 = At least one transient corrected error recored.
+                                                                   0x2 = At least one corrected error recored.
+                                                                   0x3 = At least one persistent corrected error recored.
+
+                                                                 For CNXXXX, only codes 0x0 and 0x3 are used. */
+        uint64_t de                    : 1;  /**< [ 23: 23](R/W1C/H) Deferred error(s). At least one error was not corrected and deferred.
+
+                                                                 Direct writes to this bit are ignored if [OF] is set and is not being cleared
+                                                                 to 0 in the same write. */
+        uint64_t pn                    : 1;  /**< [ 22: 22](R/W1C/H) Poison.
+                                                                 0 = Uncorrected or deferred error from a corrupted value. If a node
+                                                                 detects a corrupted value and defers the error by producing poison, then this
+                                                                 bit is set to 0 at the producer node.
+
+                                                                 1 = Uncorrected error or Deferred error from a poisoned value. Indicates that an
+                                                                 error was due to detecting a poison value rather than detecting a corrupted
+                                                                 value. */
+        uint64_t uet                   : 2;  /**< [ 21: 20](R/W1C/H) Uncorrected error type. Describes the state of the component after detecting
+                                                                 or consuming an uncorrected error. Enumerated by RAS_UET_E.
+
+                                                                 Valid only if [UE] is set, otherwise 0x0.
+
+                                                                 Direct writes to this field are ignored if any of [CE], [DE], or [UE] is set,
+                                                                 and the highest priority of these is not being cleared to 0 in the same write. */
+        uint64_t reserved_16_19        : 4;
+        uint64_t ierr                  : 8;  /**< [ 15:  8](RO) Implementation-defined error code.
+
+                                                                 Direct writes to this field are ignored if any of the [CE], [DE], or [UE] is
+                                                                 set, and the highest priority of these is not being cleared to 0 in the same
+                                                                 write. */
+        uint64_t serr                  : 8;  /**< [  7:  0](RO) Architecturally-defined primary error code. Indicates the type of error
+                                                                 enumerated by RAS_SERR_E.
+
+                                                                 Direct writes to this field are ignored if any of the [CE], [DE], or [UE] is
+                                                                 set, and the highest priority of these is not being cleared to 0 in the same
+                                                                 write.
+
+                                                                 For CNXXXX, value depends on the error record. */
+#else /* Word 0 - Little Endian */
+        uint64_t serr                  : 8;  /**< [  7:  0](RO) Architecturally-defined primary error code. Indicates the type of error
+                                                                 enumerated by RAS_SERR_E.
+
+                                                                 Direct writes to this field are ignored if any of the [CE], [DE], or [UE] is
+                                                                 set, and the highest priority of these is not being cleared to 0 in the same
+                                                                 write.
+
+                                                                 For CNXXXX, value depends on the error record. */
+        uint64_t ierr                  : 8;  /**< [ 15:  8](RO) Implementation-defined error code.
+
+                                                                 Direct writes to this field are ignored if any of the [CE], [DE], or [UE] is
+                                                                 set, and the highest priority of these is not being cleared to 0 in the same
+                                                                 write. */
+        uint64_t reserved_16_19        : 4;
+        uint64_t uet                   : 2;  /**< [ 21: 20](R/W1C/H) Uncorrected error type. Describes the state of the component after detecting
+                                                                 or consuming an uncorrected error. Enumerated by RAS_UET_E.
+
+                                                                 Valid only if [UE] is set, otherwise 0x0.
+
+                                                                 Direct writes to this field are ignored if any of [CE], [DE], or [UE] is set,
+                                                                 and the highest priority of these is not being cleared to 0 in the same write. */
+        uint64_t pn                    : 1;  /**< [ 22: 22](R/W1C/H) Poison.
+                                                                 0 = Uncorrected or deferred error from a corrupted value. If a node
+                                                                 detects a corrupted value and defers the error by producing poison, then this
+                                                                 bit is set to 0 at the producer node.
+
+                                                                 1 = Uncorrected error or Deferred error from a poisoned value. Indicates that an
+                                                                 error was due to detecting a poison value rather than detecting a corrupted
+                                                                 value. */
+        uint64_t de                    : 1;  /**< [ 23: 23](R/W1C/H) Deferred error(s). At least one error was not corrected and deferred.
+
+                                                                 Direct writes to this bit are ignored if [OF] is set and is not being cleared
+                                                                 to 0 in the same write. */
+        uint64_t ce                    : 2;  /**< [ 25: 24](R/W1C/H) Corrected error:
+                                                                   0x0 = No corrected errors recorded.
+                                                                   0x1 = At least one transient corrected error recored.
+                                                                   0x2 = At least one corrected error recored.
+                                                                   0x3 = At least one persistent corrected error recored.
+
+                                                                 For CNXXXX, only codes 0x0 and 0x3 are used. */
+        uint64_t mv                    : 1;  /**< [ 26: 26](R/W1C/H) Miscellaneous registers valid. The *_RAS_ERRnMISC0 and *_RAS_ERRnMISC1 contains
+                                                                 additional information for an error recorded by this record.
+
+                                                                 Direct writes to this bit are ignored if any of [CE], [DE], or [UE] is set, and
+                                                                 the highest priority of these is not being cleared to 0 in the same write. This
+                                                                 bit is read/write-one-to-clear. */
+        uint64_t of                    : 1;  /**< [ 27: 27](R/W1C/H) Overflow. Multiple errors detected. This bit is set when:
+
+                                                                 * An uncorrected error is detected and the previous error syndrome is kept
+                                                                 because [UE] = 1.
+
+                                                                 * A deferred error is detected and the previous error syndrome is kept is
+                                                                 discarded because [DE] = 1.
+
+                                                                 * A corrected error is detected and the corrected error counter overflows (or
+                                                                 is not implemented).
+
+                                                                 For more information see the ARM RAS standard. */
+        uint64_t er                    : 1;  /**< [ 28: 28](RO) Error reported.
+                                                                 0 = No external abort reported.
+                                                                 1 = The applicable one of the *_RAS_ERRnCTLR[WUE],[RUE],[UE] bits was set when
+                                                                 an uncorrected error was detected, meaning an external abort was signaled to the
+                                                                 master making the access.
+
+                                                                 Direct writes to this bit are ignored if any of [CE], [DE], or [UE] is set, and
+                                                                 the highest priority of these is not being cleared to 0 in the same write.
+
+                                                                 Cleared for a corrected error. */
+        uint64_t ue                    : 1;  /**< [ 29: 29](R/W1C/H) Uncorrected error(s).
+                                                                 0 = No errors that could not be corrected or deferred.
+                                                                 1 = At least one error detected that has not been corrected or deferred.
+
+                                                                 Direct writes to this bit are ignored if [OF] is set and is not being cleared to
+                                                                 zero in the same write. */
+        uint64_t v                     : 1;  /**< [ 30: 30](R/W1C/H) Status register valid. *_RAS_ERRn_STATUS valid. At least one error
+                                                                 has been recorded.
+
+                                                                 Direct writes to this bit are ignored if any of the [UE], [DE], or [CE] bits is
+                                                                 set and is not being cleared to 0 in the same write. */
+        uint64_t av                    : 1;  /**< [ 31: 31](R/W1C/H) Address valid. *_RAS_ERRnSTATUS contains a physical address
+                                                                 associated with the highest priority error recorded by this record.
+
+                                                                 Direct writes to this bit are ignored if any of the [CE], [DE], or [UE] bits is
+                                                                 set, and the highest priority of these is not being cleared to 0 in the same
+                                                                 write. */
+        uint64_t reserved_32_63        : 32;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_mccx_lmcoex_ras_err03status_s cn9; */
+    /* struct cavm_mccx_lmcoex_ras_err03status_s cn96xxp1; */
+    struct cavm_mccx_lmcoex_ras_err03status_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_32_63        : 32;
+        uint64_t av                    : 1;  /**< [ 31: 31](R/W1C/H) Address valid. *_RAS_ERRnSTATUS contains a physical address
+                                                                 associated with the highest priority error recorded by this record.
+
+                                                                 Direct writes to this bit are ignored if any of the [CE], [DE], or [UE] bits is
+                                                                 set, and the highest priority of these is not being cleared to 0 in the same
+                                                                 write. */
+        uint64_t v                     : 1;  /**< [ 30: 30](R/W1C/H) Status register valid. *_RAS_ERRn_STATUS valid. At least one error
+                                                                 has been recorded.
+
+                                                                 Direct writes to this bit are ignored if any of the [UE], [DE], or [CE] bits is
+                                                                 set and is not being cleared to 0 in the same write. */
+        uint64_t ue                    : 1;  /**< [ 29: 29](R/W1C/H) Uncorrected error(s).
+                                                                 0 = No errors that could not be corrected or deferred.
+                                                                 1 = At least one error detected that has not been corrected or deferred.
+
+                                                                 Direct writes to this bit are ignored if [OF] is set and is not being cleared to
+                                                                 zero in the same write. */
+        uint64_t er                    : 1;  /**< [ 28: 28](RO) Error reported.
+                                                                 0 = No external abort reported.
+                                                                 1 = The applicable one of the *_RAS_ERRnCTLR[WUE],[RUE],[UE] bits was set when
+                                                                 an uncorrected error was detected, meaning an external abort was signaled to the
+                                                                 master making the access.
+
+                                                                 Direct writes to this bit are ignored if any of [CE], [DE], or [UE] is set, and
+                                                                 the highest priority of these is not being cleared to 0 in the same write.
+
+                                                                 Cleared for a corrected error. */
+        uint64_t of                    : 1;  /**< [ 27: 27](R/W1C/H) Overflow. Multiple errors detected. This bit is set when:
+
+                                                                 * An uncorrected error is detected and the previous error syndrome is kept
+                                                                 because [UE] = 1.
+
+                                                                 * A deferred error is detected and the previous error syndrome is kept is
+                                                                 discarded because [DE] = 1.
+
+                                                                 * A corrected error is detected and the corrected error counter overflows (or
+                                                                 is not implemented).
+
                                                                  For more information see the Arm RAS standard. */
         uint64_t mv                    : 1;  /**< [ 26: 26](R/W1C/H) Miscellaneous registers valid. The *_RAS_ERRnMISC0 and *_RAS_ERRnMISC1 contains
                                                                  additional information for an error recorded by this record.
@@ -3196,8 +4326,10 @@ union cavm_mccx_lmcoex_ras_err03status
                                                                  write. */
         uint64_t reserved_32_63        : 32;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_mccx_lmcoex_ras_err03status_s cn; */
+    } cn96xxp3;
+    /* struct cavm_mccx_lmcoex_ras_err03status_cn96xxp3 cn98xx; */
+    /* struct cavm_mccx_lmcoex_ras_err03status_cn96xxp3 cnf95xx; */
+    /* struct cavm_mccx_lmcoex_ras_err03status_cn96xxp3 loki; */
 };
 typedef union cavm_mccx_lmcoex_ras_err03status cavm_mccx_lmcoex_ras_err03status_t;
 
@@ -3206,6 +4338,8 @@ static inline uint64_t CAVM_MCCX_LMCOEX_RAS_ERR03STATUS(unsigned long a, unsigne
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c0100d0ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=2)))
+        return 0x87e03c0100d0ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=1)))
         return 0x87e03c0100d0ll + 0x1000000ll * ((a) & 0x0) + 0x1000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=1)))
@@ -3296,6 +4430,8 @@ static inline uint64_t CAVM_MCCX_LMCOEX_RAS_ERR04ADDR(unsigned long a, unsigned 
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c010118ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=2)))
+        return 0x87e03c010118ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=1)))
         return 0x87e03c010118ll + 0x1000000ll * ((a) & 0x0) + 0x1000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=1)))
@@ -3336,6 +4472,8 @@ static inline uint64_t CAVM_MCCX_LMCOEX_RAS_ERR04CTLR(unsigned long a, unsigned 
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c010108ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=2)))
+        return 0x87e03c010108ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=1)))
         return 0x87e03c010108ll + 0x1000000ll * ((a) & 0x0) + 0x1000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=1)))
@@ -3376,6 +4514,8 @@ static inline uint64_t CAVM_MCCX_LMCOEX_RAS_ERR04FR(unsigned long a, unsigned lo
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c010100ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=2)))
+        return 0x87e03c010100ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=1)))
         return 0x87e03c010100ll + 0x1000000ll * ((a) & 0x0) + 0x1000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=1)))
@@ -3438,6 +4578,8 @@ static inline uint64_t CAVM_MCCX_LMCOEX_RAS_ERR04MISC0(unsigned long a, unsigned
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c010120ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=2)))
+        return 0x87e03c010120ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=1)))
         return 0x87e03c010120ll + 0x1000000ll * ((a) & 0x0) + 0x1000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=1)))
@@ -3486,6 +4628,8 @@ static inline uint64_t CAVM_MCCX_LMCOEX_RAS_ERR04MISC1(unsigned long a, unsigned
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c010128ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=2)))
+        return 0x87e03c010128ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=1)))
         return 0x87e03c010128ll + 0x1000000ll * ((a) & 0x0) + 0x1000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=1)))
@@ -3551,6 +4695,186 @@ union cavm_mccx_lmcoex_ras_err04status
                                                                  * A corrected error is detected and the corrected error counter overflows (or
                                                                  is not implemented).
 
+                                                                 For more information see the ARM RAS standard. */
+        uint64_t mv                    : 1;  /**< [ 26: 26](R/W1C/H) Miscellaneous registers valid. The *_RAS_ERRnMISC0 and *_RAS_ERRnMISC1 contains
+                                                                 additional information for an error recorded by this record.
+
+                                                                 Direct writes to this bit are ignored if any of [CE], [DE], or [UE] is set, and
+                                                                 the highest priority of these is not being cleared to 0 in the same write. This
+                                                                 bit is read/write-one-to-clear. */
+        uint64_t ce                    : 2;  /**< [ 25: 24](R/W1C/H) Corrected error:
+                                                                   0x0 = No corrected errors recorded.
+                                                                   0x1 = At least one transient corrected error recored.
+                                                                   0x2 = At least one corrected error recored.
+                                                                   0x3 = At least one persistent corrected error recored.
+
+                                                                 For CNXXXX, only codes 0x0 and 0x3 are used. */
+        uint64_t de                    : 1;  /**< [ 23: 23](R/W1C/H) Deferred error(s). At least one error was not corrected and deferred.
+
+                                                                 Direct writes to this bit are ignored if [OF] is set and is not being cleared
+                                                                 to 0 in the same write. */
+        uint64_t pn                    : 1;  /**< [ 22: 22](R/W1C/H) Poison.
+                                                                 0 = Uncorrected or deferred error from a corrupted value. If a node
+                                                                 detects a corrupted value and defers the error by producing poison, then this
+                                                                 bit is set to 0 at the producer node.
+
+                                                                 1 = Uncorrected error or Deferred error from a poisoned value. Indicates that an
+                                                                 error was due to detecting a poison value rather than detecting a corrupted
+                                                                 value. */
+        uint64_t uet                   : 2;  /**< [ 21: 20](R/W1C/H) Uncorrected error type. Describes the state of the component after detecting
+                                                                 or consuming an uncorrected error. Enumerated by RAS_UET_E.
+
+                                                                 Valid only if [UE] is set, otherwise 0x0.
+
+                                                                 Direct writes to this field are ignored if any of [CE], [DE], or [UE] is set,
+                                                                 and the highest priority of these is not being cleared to 0 in the same write. */
+        uint64_t reserved_16_19        : 4;
+        uint64_t ierr                  : 8;  /**< [ 15:  8](RO) Implementation-defined error code.
+
+                                                                 Direct writes to this field are ignored if any of the [CE], [DE], or [UE] is
+                                                                 set, and the highest priority of these is not being cleared to 0 in the same
+                                                                 write. */
+        uint64_t serr                  : 8;  /**< [  7:  0](RO) Architecturally-defined primary error code. Indicates the type of error
+                                                                 enumerated by RAS_SERR_E.
+
+                                                                 Direct writes to this field are ignored if any of the [CE], [DE], or [UE] is
+                                                                 set, and the highest priority of these is not being cleared to 0 in the same
+                                                                 write.
+
+                                                                 For CNXXXX, value depends on the error record. */
+#else /* Word 0 - Little Endian */
+        uint64_t serr                  : 8;  /**< [  7:  0](RO) Architecturally-defined primary error code. Indicates the type of error
+                                                                 enumerated by RAS_SERR_E.
+
+                                                                 Direct writes to this field are ignored if any of the [CE], [DE], or [UE] is
+                                                                 set, and the highest priority of these is not being cleared to 0 in the same
+                                                                 write.
+
+                                                                 For CNXXXX, value depends on the error record. */
+        uint64_t ierr                  : 8;  /**< [ 15:  8](RO) Implementation-defined error code.
+
+                                                                 Direct writes to this field are ignored if any of the [CE], [DE], or [UE] is
+                                                                 set, and the highest priority of these is not being cleared to 0 in the same
+                                                                 write. */
+        uint64_t reserved_16_19        : 4;
+        uint64_t uet                   : 2;  /**< [ 21: 20](R/W1C/H) Uncorrected error type. Describes the state of the component after detecting
+                                                                 or consuming an uncorrected error. Enumerated by RAS_UET_E.
+
+                                                                 Valid only if [UE] is set, otherwise 0x0.
+
+                                                                 Direct writes to this field are ignored if any of [CE], [DE], or [UE] is set,
+                                                                 and the highest priority of these is not being cleared to 0 in the same write. */
+        uint64_t pn                    : 1;  /**< [ 22: 22](R/W1C/H) Poison.
+                                                                 0 = Uncorrected or deferred error from a corrupted value. If a node
+                                                                 detects a corrupted value and defers the error by producing poison, then this
+                                                                 bit is set to 0 at the producer node.
+
+                                                                 1 = Uncorrected error or Deferred error from a poisoned value. Indicates that an
+                                                                 error was due to detecting a poison value rather than detecting a corrupted
+                                                                 value. */
+        uint64_t de                    : 1;  /**< [ 23: 23](R/W1C/H) Deferred error(s). At least one error was not corrected and deferred.
+
+                                                                 Direct writes to this bit are ignored if [OF] is set and is not being cleared
+                                                                 to 0 in the same write. */
+        uint64_t ce                    : 2;  /**< [ 25: 24](R/W1C/H) Corrected error:
+                                                                   0x0 = No corrected errors recorded.
+                                                                   0x1 = At least one transient corrected error recored.
+                                                                   0x2 = At least one corrected error recored.
+                                                                   0x3 = At least one persistent corrected error recored.
+
+                                                                 For CNXXXX, only codes 0x0 and 0x3 are used. */
+        uint64_t mv                    : 1;  /**< [ 26: 26](R/W1C/H) Miscellaneous registers valid. The *_RAS_ERRnMISC0 and *_RAS_ERRnMISC1 contains
+                                                                 additional information for an error recorded by this record.
+
+                                                                 Direct writes to this bit are ignored if any of [CE], [DE], or [UE] is set, and
+                                                                 the highest priority of these is not being cleared to 0 in the same write. This
+                                                                 bit is read/write-one-to-clear. */
+        uint64_t of                    : 1;  /**< [ 27: 27](R/W1C/H) Overflow. Multiple errors detected. This bit is set when:
+
+                                                                 * An uncorrected error is detected and the previous error syndrome is kept
+                                                                 because [UE] = 1.
+
+                                                                 * A deferred error is detected and the previous error syndrome is kept is
+                                                                 discarded because [DE] = 1.
+
+                                                                 * A corrected error is detected and the corrected error counter overflows (or
+                                                                 is not implemented).
+
+                                                                 For more information see the ARM RAS standard. */
+        uint64_t er                    : 1;  /**< [ 28: 28](RO) Error reported.
+                                                                 0 = No external abort reported.
+                                                                 1 = The applicable one of the *_RAS_ERRnCTLR[WUE],[RUE],[UE] bits was set when
+                                                                 an uncorrected error was detected, meaning an external abort was signaled to the
+                                                                 master making the access.
+
+                                                                 Direct writes to this bit are ignored if any of [CE], [DE], or [UE] is set, and
+                                                                 the highest priority of these is not being cleared to 0 in the same write.
+
+                                                                 Cleared for a corrected error. */
+        uint64_t ue                    : 1;  /**< [ 29: 29](R/W1C/H) Uncorrected error(s).
+                                                                 0 = No errors that could not be corrected or deferred.
+                                                                 1 = At least one error detected that has not been corrected or deferred.
+
+                                                                 Direct writes to this bit are ignored if [OF] is set and is not being cleared to
+                                                                 zero in the same write. */
+        uint64_t v                     : 1;  /**< [ 30: 30](R/W1C/H) Status register valid. *_RAS_ERRn_STATUS valid. At least one error
+                                                                 has been recorded.
+
+                                                                 Direct writes to this bit are ignored if any of the [UE], [DE], or [CE] bits is
+                                                                 set and is not being cleared to 0 in the same write. */
+        uint64_t av                    : 1;  /**< [ 31: 31](R/W1C/H) Address valid. *_RAS_ERRnSTATUS contains a physical address
+                                                                 associated with the highest priority error recorded by this record.
+
+                                                                 Direct writes to this bit are ignored if any of the [CE], [DE], or [UE] bits is
+                                                                 set, and the highest priority of these is not being cleared to 0 in the same
+                                                                 write. */
+        uint64_t reserved_32_63        : 32;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_mccx_lmcoex_ras_err04status_s cn9; */
+    /* struct cavm_mccx_lmcoex_ras_err04status_s cn96xxp1; */
+    struct cavm_mccx_lmcoex_ras_err04status_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_32_63        : 32;
+        uint64_t av                    : 1;  /**< [ 31: 31](R/W1C/H) Address valid. *_RAS_ERRnSTATUS contains a physical address
+                                                                 associated with the highest priority error recorded by this record.
+
+                                                                 Direct writes to this bit are ignored if any of the [CE], [DE], or [UE] bits is
+                                                                 set, and the highest priority of these is not being cleared to 0 in the same
+                                                                 write. */
+        uint64_t v                     : 1;  /**< [ 30: 30](R/W1C/H) Status register valid. *_RAS_ERRn_STATUS valid. At least one error
+                                                                 has been recorded.
+
+                                                                 Direct writes to this bit are ignored if any of the [UE], [DE], or [CE] bits is
+                                                                 set and is not being cleared to 0 in the same write. */
+        uint64_t ue                    : 1;  /**< [ 29: 29](R/W1C/H) Uncorrected error(s).
+                                                                 0 = No errors that could not be corrected or deferred.
+                                                                 1 = At least one error detected that has not been corrected or deferred.
+
+                                                                 Direct writes to this bit are ignored if [OF] is set and is not being cleared to
+                                                                 zero in the same write. */
+        uint64_t er                    : 1;  /**< [ 28: 28](RO) Error reported.
+                                                                 0 = No external abort reported.
+                                                                 1 = The applicable one of the *_RAS_ERRnCTLR[WUE],[RUE],[UE] bits was set when
+                                                                 an uncorrected error was detected, meaning an external abort was signaled to the
+                                                                 master making the access.
+
+                                                                 Direct writes to this bit are ignored if any of [CE], [DE], or [UE] is set, and
+                                                                 the highest priority of these is not being cleared to 0 in the same write.
+
+                                                                 Cleared for a corrected error. */
+        uint64_t of                    : 1;  /**< [ 27: 27](R/W1C/H) Overflow. Multiple errors detected. This bit is set when:
+
+                                                                 * An uncorrected error is detected and the previous error syndrome is kept
+                                                                 because [UE] = 1.
+
+                                                                 * A deferred error is detected and the previous error syndrome is kept is
+                                                                 discarded because [DE] = 1.
+
+                                                                 * A corrected error is detected and the corrected error counter overflows (or
+                                                                 is not implemented).
+
                                                                  For more information see the Arm RAS standard. */
         uint64_t mv                    : 1;  /**< [ 26: 26](R/W1C/H) Miscellaneous registers valid. The *_RAS_ERRnMISC0 and *_RAS_ERRnMISC1 contains
                                                                  additional information for an error recorded by this record.
@@ -3686,8 +5010,10 @@ union cavm_mccx_lmcoex_ras_err04status
                                                                  write. */
         uint64_t reserved_32_63        : 32;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_mccx_lmcoex_ras_err04status_s cn; */
+    } cn96xxp3;
+    /* struct cavm_mccx_lmcoex_ras_err04status_cn96xxp3 cn98xx; */
+    /* struct cavm_mccx_lmcoex_ras_err04status_cn96xxp3 cnf95xx; */
+    /* struct cavm_mccx_lmcoex_ras_err04status_cn96xxp3 loki; */
 };
 typedef union cavm_mccx_lmcoex_ras_err04status cavm_mccx_lmcoex_ras_err04status_t;
 
@@ -3696,6 +5022,8 @@ static inline uint64_t CAVM_MCCX_LMCOEX_RAS_ERR04STATUS(unsigned long a, unsigne
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c010110ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=2)))
+        return 0x87e03c010110ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=1)))
         return 0x87e03c010110ll + 0x1000000ll * ((a) & 0x0) + 0x1000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=1)))
@@ -3786,6 +5114,8 @@ static inline uint64_t CAVM_MCCX_LMCOEX_RAS_ERR05ADDR(unsigned long a, unsigned 
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c010158ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=2)))
+        return 0x87e03c010158ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=1)))
         return 0x87e03c010158ll + 0x1000000ll * ((a) & 0x0) + 0x1000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=1)))
@@ -3826,6 +5156,8 @@ static inline uint64_t CAVM_MCCX_LMCOEX_RAS_ERR05CTLR(unsigned long a, unsigned 
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c010148ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=2)))
+        return 0x87e03c010148ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=1)))
         return 0x87e03c010148ll + 0x1000000ll * ((a) & 0x0) + 0x1000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=1)))
@@ -3866,6 +5198,8 @@ static inline uint64_t CAVM_MCCX_LMCOEX_RAS_ERR05FR(unsigned long a, unsigned lo
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c010140ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=2)))
+        return 0x87e03c010140ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=1)))
         return 0x87e03c010140ll + 0x1000000ll * ((a) & 0x0) + 0x1000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=1)))
@@ -3928,6 +5262,8 @@ static inline uint64_t CAVM_MCCX_LMCOEX_RAS_ERR05MISC0(unsigned long a, unsigned
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c010160ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=2)))
+        return 0x87e03c010160ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=1)))
         return 0x87e03c010160ll + 0x1000000ll * ((a) & 0x0) + 0x1000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=1)))
@@ -3976,6 +5312,8 @@ static inline uint64_t CAVM_MCCX_LMCOEX_RAS_ERR05MISC1(unsigned long a, unsigned
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c010168ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=2)))
+        return 0x87e03c010168ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=1)))
         return 0x87e03c010168ll + 0x1000000ll * ((a) & 0x0) + 0x1000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=1)))
@@ -4041,6 +5379,186 @@ union cavm_mccx_lmcoex_ras_err05status
                                                                  * A corrected error is detected and the corrected error counter overflows (or
                                                                  is not implemented).
 
+                                                                 For more information see the ARM RAS standard. */
+        uint64_t mv                    : 1;  /**< [ 26: 26](R/W1C/H) Miscellaneous registers valid. The *_RAS_ERRnMISC0 and *_RAS_ERRnMISC1 contains
+                                                                 additional information for an error recorded by this record.
+
+                                                                 Direct writes to this bit are ignored if any of [CE], [DE], or [UE] is set, and
+                                                                 the highest priority of these is not being cleared to 0 in the same write. This
+                                                                 bit is read/write-one-to-clear. */
+        uint64_t ce                    : 2;  /**< [ 25: 24](R/W1C/H) Corrected error:
+                                                                   0x0 = No corrected errors recorded.
+                                                                   0x1 = At least one transient corrected error recored.
+                                                                   0x2 = At least one corrected error recored.
+                                                                   0x3 = At least one persistent corrected error recored.
+
+                                                                 For CNXXXX, only codes 0x0 and 0x3 are used. */
+        uint64_t de                    : 1;  /**< [ 23: 23](R/W1C/H) Deferred error(s). At least one error was not corrected and deferred.
+
+                                                                 Direct writes to this bit are ignored if [OF] is set and is not being cleared
+                                                                 to 0 in the same write. */
+        uint64_t pn                    : 1;  /**< [ 22: 22](R/W1C/H) Poison.
+                                                                 0 = Uncorrected or deferred error from a corrupted value. If a node
+                                                                 detects a corrupted value and defers the error by producing poison, then this
+                                                                 bit is set to 0 at the producer node.
+
+                                                                 1 = Uncorrected error or Deferred error from a poisoned value. Indicates that an
+                                                                 error was due to detecting a poison value rather than detecting a corrupted
+                                                                 value. */
+        uint64_t uet                   : 2;  /**< [ 21: 20](R/W1C/H) Uncorrected error type. Describes the state of the component after detecting
+                                                                 or consuming an uncorrected error. Enumerated by RAS_UET_E.
+
+                                                                 Valid only if [UE] is set, otherwise 0x0.
+
+                                                                 Direct writes to this field are ignored if any of [CE], [DE], or [UE] is set,
+                                                                 and the highest priority of these is not being cleared to 0 in the same write. */
+        uint64_t reserved_16_19        : 4;
+        uint64_t ierr                  : 8;  /**< [ 15:  8](RO) Implementation-defined error code.
+
+                                                                 Direct writes to this field are ignored if any of the [CE], [DE], or [UE] is
+                                                                 set, and the highest priority of these is not being cleared to 0 in the same
+                                                                 write. */
+        uint64_t serr                  : 8;  /**< [  7:  0](RO) Architecturally-defined primary error code. Indicates the type of error
+                                                                 enumerated by RAS_SERR_E.
+
+                                                                 Direct writes to this field are ignored if any of the [CE], [DE], or [UE] is
+                                                                 set, and the highest priority of these is not being cleared to 0 in the same
+                                                                 write.
+
+                                                                 For CNXXXX, value depends on the error record. */
+#else /* Word 0 - Little Endian */
+        uint64_t serr                  : 8;  /**< [  7:  0](RO) Architecturally-defined primary error code. Indicates the type of error
+                                                                 enumerated by RAS_SERR_E.
+
+                                                                 Direct writes to this field are ignored if any of the [CE], [DE], or [UE] is
+                                                                 set, and the highest priority of these is not being cleared to 0 in the same
+                                                                 write.
+
+                                                                 For CNXXXX, value depends on the error record. */
+        uint64_t ierr                  : 8;  /**< [ 15:  8](RO) Implementation-defined error code.
+
+                                                                 Direct writes to this field are ignored if any of the [CE], [DE], or [UE] is
+                                                                 set, and the highest priority of these is not being cleared to 0 in the same
+                                                                 write. */
+        uint64_t reserved_16_19        : 4;
+        uint64_t uet                   : 2;  /**< [ 21: 20](R/W1C/H) Uncorrected error type. Describes the state of the component after detecting
+                                                                 or consuming an uncorrected error. Enumerated by RAS_UET_E.
+
+                                                                 Valid only if [UE] is set, otherwise 0x0.
+
+                                                                 Direct writes to this field are ignored if any of [CE], [DE], or [UE] is set,
+                                                                 and the highest priority of these is not being cleared to 0 in the same write. */
+        uint64_t pn                    : 1;  /**< [ 22: 22](R/W1C/H) Poison.
+                                                                 0 = Uncorrected or deferred error from a corrupted value. If a node
+                                                                 detects a corrupted value and defers the error by producing poison, then this
+                                                                 bit is set to 0 at the producer node.
+
+                                                                 1 = Uncorrected error or Deferred error from a poisoned value. Indicates that an
+                                                                 error was due to detecting a poison value rather than detecting a corrupted
+                                                                 value. */
+        uint64_t de                    : 1;  /**< [ 23: 23](R/W1C/H) Deferred error(s). At least one error was not corrected and deferred.
+
+                                                                 Direct writes to this bit are ignored if [OF] is set and is not being cleared
+                                                                 to 0 in the same write. */
+        uint64_t ce                    : 2;  /**< [ 25: 24](R/W1C/H) Corrected error:
+                                                                   0x0 = No corrected errors recorded.
+                                                                   0x1 = At least one transient corrected error recored.
+                                                                   0x2 = At least one corrected error recored.
+                                                                   0x3 = At least one persistent corrected error recored.
+
+                                                                 For CNXXXX, only codes 0x0 and 0x3 are used. */
+        uint64_t mv                    : 1;  /**< [ 26: 26](R/W1C/H) Miscellaneous registers valid. The *_RAS_ERRnMISC0 and *_RAS_ERRnMISC1 contains
+                                                                 additional information for an error recorded by this record.
+
+                                                                 Direct writes to this bit are ignored if any of [CE], [DE], or [UE] is set, and
+                                                                 the highest priority of these is not being cleared to 0 in the same write. This
+                                                                 bit is read/write-one-to-clear. */
+        uint64_t of                    : 1;  /**< [ 27: 27](R/W1C/H) Overflow. Multiple errors detected. This bit is set when:
+
+                                                                 * An uncorrected error is detected and the previous error syndrome is kept
+                                                                 because [UE] = 1.
+
+                                                                 * A deferred error is detected and the previous error syndrome is kept is
+                                                                 discarded because [DE] = 1.
+
+                                                                 * A corrected error is detected and the corrected error counter overflows (or
+                                                                 is not implemented).
+
+                                                                 For more information see the ARM RAS standard. */
+        uint64_t er                    : 1;  /**< [ 28: 28](RO) Error reported.
+                                                                 0 = No external abort reported.
+                                                                 1 = The applicable one of the *_RAS_ERRnCTLR[WUE],[RUE],[UE] bits was set when
+                                                                 an uncorrected error was detected, meaning an external abort was signaled to the
+                                                                 master making the access.
+
+                                                                 Direct writes to this bit are ignored if any of [CE], [DE], or [UE] is set, and
+                                                                 the highest priority of these is not being cleared to 0 in the same write.
+
+                                                                 Cleared for a corrected error. */
+        uint64_t ue                    : 1;  /**< [ 29: 29](R/W1C/H) Uncorrected error(s).
+                                                                 0 = No errors that could not be corrected or deferred.
+                                                                 1 = At least one error detected that has not been corrected or deferred.
+
+                                                                 Direct writes to this bit are ignored if [OF] is set and is not being cleared to
+                                                                 zero in the same write. */
+        uint64_t v                     : 1;  /**< [ 30: 30](R/W1C/H) Status register valid. *_RAS_ERRn_STATUS valid. At least one error
+                                                                 has been recorded.
+
+                                                                 Direct writes to this bit are ignored if any of the [UE], [DE], or [CE] bits is
+                                                                 set and is not being cleared to 0 in the same write. */
+        uint64_t av                    : 1;  /**< [ 31: 31](R/W1C/H) Address valid. *_RAS_ERRnSTATUS contains a physical address
+                                                                 associated with the highest priority error recorded by this record.
+
+                                                                 Direct writes to this bit are ignored if any of the [CE], [DE], or [UE] bits is
+                                                                 set, and the highest priority of these is not being cleared to 0 in the same
+                                                                 write. */
+        uint64_t reserved_32_63        : 32;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_mccx_lmcoex_ras_err05status_s cn9; */
+    /* struct cavm_mccx_lmcoex_ras_err05status_s cn96xxp1; */
+    struct cavm_mccx_lmcoex_ras_err05status_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_32_63        : 32;
+        uint64_t av                    : 1;  /**< [ 31: 31](R/W1C/H) Address valid. *_RAS_ERRnSTATUS contains a physical address
+                                                                 associated with the highest priority error recorded by this record.
+
+                                                                 Direct writes to this bit are ignored if any of the [CE], [DE], or [UE] bits is
+                                                                 set, and the highest priority of these is not being cleared to 0 in the same
+                                                                 write. */
+        uint64_t v                     : 1;  /**< [ 30: 30](R/W1C/H) Status register valid. *_RAS_ERRn_STATUS valid. At least one error
+                                                                 has been recorded.
+
+                                                                 Direct writes to this bit are ignored if any of the [UE], [DE], or [CE] bits is
+                                                                 set and is not being cleared to 0 in the same write. */
+        uint64_t ue                    : 1;  /**< [ 29: 29](R/W1C/H) Uncorrected error(s).
+                                                                 0 = No errors that could not be corrected or deferred.
+                                                                 1 = At least one error detected that has not been corrected or deferred.
+
+                                                                 Direct writes to this bit are ignored if [OF] is set and is not being cleared to
+                                                                 zero in the same write. */
+        uint64_t er                    : 1;  /**< [ 28: 28](RO) Error reported.
+                                                                 0 = No external abort reported.
+                                                                 1 = The applicable one of the *_RAS_ERRnCTLR[WUE],[RUE],[UE] bits was set when
+                                                                 an uncorrected error was detected, meaning an external abort was signaled to the
+                                                                 master making the access.
+
+                                                                 Direct writes to this bit are ignored if any of [CE], [DE], or [UE] is set, and
+                                                                 the highest priority of these is not being cleared to 0 in the same write.
+
+                                                                 Cleared for a corrected error. */
+        uint64_t of                    : 1;  /**< [ 27: 27](R/W1C/H) Overflow. Multiple errors detected. This bit is set when:
+
+                                                                 * An uncorrected error is detected and the previous error syndrome is kept
+                                                                 because [UE] = 1.
+
+                                                                 * A deferred error is detected and the previous error syndrome is kept is
+                                                                 discarded because [DE] = 1.
+
+                                                                 * A corrected error is detected and the corrected error counter overflows (or
+                                                                 is not implemented).
+
                                                                  For more information see the Arm RAS standard. */
         uint64_t mv                    : 1;  /**< [ 26: 26](R/W1C/H) Miscellaneous registers valid. The *_RAS_ERRnMISC0 and *_RAS_ERRnMISC1 contains
                                                                  additional information for an error recorded by this record.
@@ -4176,8 +5694,10 @@ union cavm_mccx_lmcoex_ras_err05status
                                                                  write. */
         uint64_t reserved_32_63        : 32;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_mccx_lmcoex_ras_err05status_s cn; */
+    } cn96xxp3;
+    /* struct cavm_mccx_lmcoex_ras_err05status_cn96xxp3 cn98xx; */
+    /* struct cavm_mccx_lmcoex_ras_err05status_cn96xxp3 cnf95xx; */
+    /* struct cavm_mccx_lmcoex_ras_err05status_cn96xxp3 loki; */
 };
 typedef union cavm_mccx_lmcoex_ras_err05status cavm_mccx_lmcoex_ras_err05status_t;
 
@@ -4186,6 +5706,8 @@ static inline uint64_t CAVM_MCCX_LMCOEX_RAS_ERR05STATUS(unsigned long a, unsigne
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c010150ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=2)))
+        return 0x87e03c010150ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=1)))
         return 0x87e03c010150ll + 0x1000000ll * ((a) & 0x0) + 0x1000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=1)))
@@ -4276,6 +5798,8 @@ static inline uint64_t CAVM_MCCX_LMCOEX_RAS_ERR06ADDR(unsigned long a, unsigned 
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c010198ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=2)))
+        return 0x87e03c010198ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=1)))
         return 0x87e03c010198ll + 0x1000000ll * ((a) & 0x0) + 0x1000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=1)))
@@ -4316,6 +5840,8 @@ static inline uint64_t CAVM_MCCX_LMCOEX_RAS_ERR06CTLR(unsigned long a, unsigned 
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c010188ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=2)))
+        return 0x87e03c010188ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=1)))
         return 0x87e03c010188ll + 0x1000000ll * ((a) & 0x0) + 0x1000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=1)))
@@ -4356,6 +5882,8 @@ static inline uint64_t CAVM_MCCX_LMCOEX_RAS_ERR06FR(unsigned long a, unsigned lo
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c010180ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=2)))
+        return 0x87e03c010180ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=1)))
         return 0x87e03c010180ll + 0x1000000ll * ((a) & 0x0) + 0x1000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=1)))
@@ -4396,6 +5924,8 @@ static inline uint64_t CAVM_MCCX_LMCOEX_RAS_ERR06MISC0(unsigned long a, unsigned
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c0101a0ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=2)))
+        return 0x87e03c0101a0ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=1)))
         return 0x87e03c0101a0ll + 0x1000000ll * ((a) & 0x0) + 0x1000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=1)))
@@ -4444,6 +5974,8 @@ static inline uint64_t CAVM_MCCX_LMCOEX_RAS_ERR06MISC1(unsigned long a, unsigned
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c0101a8ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=2)))
+        return 0x87e03c0101a8ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=1)))
         return 0x87e03c0101a8ll + 0x1000000ll * ((a) & 0x0) + 0x1000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=1)))
@@ -4509,6 +6041,186 @@ union cavm_mccx_lmcoex_ras_err06status
                                                                  * A corrected error is detected and the corrected error counter overflows (or
                                                                  is not implemented).
 
+                                                                 For more information see the ARM RAS standard. */
+        uint64_t mv                    : 1;  /**< [ 26: 26](R/W1C/H) Miscellaneous registers valid. The *_RAS_ERRnMISC0 and *_RAS_ERRnMISC1 contains
+                                                                 additional information for an error recorded by this record.
+
+                                                                 Direct writes to this bit are ignored if any of [CE], [DE], or [UE] is set, and
+                                                                 the highest priority of these is not being cleared to 0 in the same write. This
+                                                                 bit is read/write-one-to-clear. */
+        uint64_t ce                    : 2;  /**< [ 25: 24](R/W1C/H) Corrected error:
+                                                                   0x0 = No corrected errors recorded.
+                                                                   0x1 = At least one transient corrected error recored.
+                                                                   0x2 = At least one corrected error recored.
+                                                                   0x3 = At least one persistent corrected error recored.
+
+                                                                 For CNXXXX, only codes 0x0 and 0x3 are used. */
+        uint64_t de                    : 1;  /**< [ 23: 23](R/W1C/H) Deferred error(s). At least one error was not corrected and deferred.
+
+                                                                 Direct writes to this bit are ignored if [OF] is set and is not being cleared
+                                                                 to 0 in the same write. */
+        uint64_t pn                    : 1;  /**< [ 22: 22](R/W1C/H) Poison.
+                                                                 0 = Uncorrected or deferred error from a corrupted value. If a node
+                                                                 detects a corrupted value and defers the error by producing poison, then this
+                                                                 bit is set to 0 at the producer node.
+
+                                                                 1 = Uncorrected error or Deferred error from a poisoned value. Indicates that an
+                                                                 error was due to detecting a poison value rather than detecting a corrupted
+                                                                 value. */
+        uint64_t uet                   : 2;  /**< [ 21: 20](R/W1C/H) Uncorrected error type. Describes the state of the component after detecting
+                                                                 or consuming an uncorrected error. Enumerated by RAS_UET_E.
+
+                                                                 Valid only if [UE] is set, otherwise 0x0.
+
+                                                                 Direct writes to this field are ignored if any of [CE], [DE], or [UE] is set,
+                                                                 and the highest priority of these is not being cleared to 0 in the same write. */
+        uint64_t reserved_16_19        : 4;
+        uint64_t ierr                  : 8;  /**< [ 15:  8](RO) Implementation-defined error code.
+
+                                                                 Direct writes to this field are ignored if any of the [CE], [DE], or [UE] is
+                                                                 set, and the highest priority of these is not being cleared to 0 in the same
+                                                                 write. */
+        uint64_t serr                  : 8;  /**< [  7:  0](RO) Architecturally-defined primary error code. Indicates the type of error
+                                                                 enumerated by RAS_SERR_E.
+
+                                                                 Direct writes to this field are ignored if any of the [CE], [DE], or [UE] is
+                                                                 set, and the highest priority of these is not being cleared to 0 in the same
+                                                                 write.
+
+                                                                 For CNXXXX, value depends on the error record. */
+#else /* Word 0 - Little Endian */
+        uint64_t serr                  : 8;  /**< [  7:  0](RO) Architecturally-defined primary error code. Indicates the type of error
+                                                                 enumerated by RAS_SERR_E.
+
+                                                                 Direct writes to this field are ignored if any of the [CE], [DE], or [UE] is
+                                                                 set, and the highest priority of these is not being cleared to 0 in the same
+                                                                 write.
+
+                                                                 For CNXXXX, value depends on the error record. */
+        uint64_t ierr                  : 8;  /**< [ 15:  8](RO) Implementation-defined error code.
+
+                                                                 Direct writes to this field are ignored if any of the [CE], [DE], or [UE] is
+                                                                 set, and the highest priority of these is not being cleared to 0 in the same
+                                                                 write. */
+        uint64_t reserved_16_19        : 4;
+        uint64_t uet                   : 2;  /**< [ 21: 20](R/W1C/H) Uncorrected error type. Describes the state of the component after detecting
+                                                                 or consuming an uncorrected error. Enumerated by RAS_UET_E.
+
+                                                                 Valid only if [UE] is set, otherwise 0x0.
+
+                                                                 Direct writes to this field are ignored if any of [CE], [DE], or [UE] is set,
+                                                                 and the highest priority of these is not being cleared to 0 in the same write. */
+        uint64_t pn                    : 1;  /**< [ 22: 22](R/W1C/H) Poison.
+                                                                 0 = Uncorrected or deferred error from a corrupted value. If a node
+                                                                 detects a corrupted value and defers the error by producing poison, then this
+                                                                 bit is set to 0 at the producer node.
+
+                                                                 1 = Uncorrected error or Deferred error from a poisoned value. Indicates that an
+                                                                 error was due to detecting a poison value rather than detecting a corrupted
+                                                                 value. */
+        uint64_t de                    : 1;  /**< [ 23: 23](R/W1C/H) Deferred error(s). At least one error was not corrected and deferred.
+
+                                                                 Direct writes to this bit are ignored if [OF] is set and is not being cleared
+                                                                 to 0 in the same write. */
+        uint64_t ce                    : 2;  /**< [ 25: 24](R/W1C/H) Corrected error:
+                                                                   0x0 = No corrected errors recorded.
+                                                                   0x1 = At least one transient corrected error recored.
+                                                                   0x2 = At least one corrected error recored.
+                                                                   0x3 = At least one persistent corrected error recored.
+
+                                                                 For CNXXXX, only codes 0x0 and 0x3 are used. */
+        uint64_t mv                    : 1;  /**< [ 26: 26](R/W1C/H) Miscellaneous registers valid. The *_RAS_ERRnMISC0 and *_RAS_ERRnMISC1 contains
+                                                                 additional information for an error recorded by this record.
+
+                                                                 Direct writes to this bit are ignored if any of [CE], [DE], or [UE] is set, and
+                                                                 the highest priority of these is not being cleared to 0 in the same write. This
+                                                                 bit is read/write-one-to-clear. */
+        uint64_t of                    : 1;  /**< [ 27: 27](R/W1C/H) Overflow. Multiple errors detected. This bit is set when:
+
+                                                                 * An uncorrected error is detected and the previous error syndrome is kept
+                                                                 because [UE] = 1.
+
+                                                                 * A deferred error is detected and the previous error syndrome is kept is
+                                                                 discarded because [DE] = 1.
+
+                                                                 * A corrected error is detected and the corrected error counter overflows (or
+                                                                 is not implemented).
+
+                                                                 For more information see the ARM RAS standard. */
+        uint64_t er                    : 1;  /**< [ 28: 28](RO) Error reported.
+                                                                 0 = No external abort reported.
+                                                                 1 = The applicable one of the *_RAS_ERRnCTLR[WUE],[RUE],[UE] bits was set when
+                                                                 an uncorrected error was detected, meaning an external abort was signaled to the
+                                                                 master making the access.
+
+                                                                 Direct writes to this bit are ignored if any of [CE], [DE], or [UE] is set, and
+                                                                 the highest priority of these is not being cleared to 0 in the same write.
+
+                                                                 Cleared for a corrected error. */
+        uint64_t ue                    : 1;  /**< [ 29: 29](R/W1C/H) Uncorrected error(s).
+                                                                 0 = No errors that could not be corrected or deferred.
+                                                                 1 = At least one error detected that has not been corrected or deferred.
+
+                                                                 Direct writes to this bit are ignored if [OF] is set and is not being cleared to
+                                                                 zero in the same write. */
+        uint64_t v                     : 1;  /**< [ 30: 30](R/W1C/H) Status register valid. *_RAS_ERRn_STATUS valid. At least one error
+                                                                 has been recorded.
+
+                                                                 Direct writes to this bit are ignored if any of the [UE], [DE], or [CE] bits is
+                                                                 set and is not being cleared to 0 in the same write. */
+        uint64_t av                    : 1;  /**< [ 31: 31](R/W1C/H) Address valid. *_RAS_ERRnSTATUS contains a physical address
+                                                                 associated with the highest priority error recorded by this record.
+
+                                                                 Direct writes to this bit are ignored if any of the [CE], [DE], or [UE] bits is
+                                                                 set, and the highest priority of these is not being cleared to 0 in the same
+                                                                 write. */
+        uint64_t reserved_32_63        : 32;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_mccx_lmcoex_ras_err06status_s cn9; */
+    /* struct cavm_mccx_lmcoex_ras_err06status_s cn96xxp1; */
+    struct cavm_mccx_lmcoex_ras_err06status_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_32_63        : 32;
+        uint64_t av                    : 1;  /**< [ 31: 31](R/W1C/H) Address valid. *_RAS_ERRnSTATUS contains a physical address
+                                                                 associated with the highest priority error recorded by this record.
+
+                                                                 Direct writes to this bit are ignored if any of the [CE], [DE], or [UE] bits is
+                                                                 set, and the highest priority of these is not being cleared to 0 in the same
+                                                                 write. */
+        uint64_t v                     : 1;  /**< [ 30: 30](R/W1C/H) Status register valid. *_RAS_ERRn_STATUS valid. At least one error
+                                                                 has been recorded.
+
+                                                                 Direct writes to this bit are ignored if any of the [UE], [DE], or [CE] bits is
+                                                                 set and is not being cleared to 0 in the same write. */
+        uint64_t ue                    : 1;  /**< [ 29: 29](R/W1C/H) Uncorrected error(s).
+                                                                 0 = No errors that could not be corrected or deferred.
+                                                                 1 = At least one error detected that has not been corrected or deferred.
+
+                                                                 Direct writes to this bit are ignored if [OF] is set and is not being cleared to
+                                                                 zero in the same write. */
+        uint64_t er                    : 1;  /**< [ 28: 28](RO) Error reported.
+                                                                 0 = No external abort reported.
+                                                                 1 = The applicable one of the *_RAS_ERRnCTLR[WUE],[RUE],[UE] bits was set when
+                                                                 an uncorrected error was detected, meaning an external abort was signaled to the
+                                                                 master making the access.
+
+                                                                 Direct writes to this bit are ignored if any of [CE], [DE], or [UE] is set, and
+                                                                 the highest priority of these is not being cleared to 0 in the same write.
+
+                                                                 Cleared for a corrected error. */
+        uint64_t of                    : 1;  /**< [ 27: 27](R/W1C/H) Overflow. Multiple errors detected. This bit is set when:
+
+                                                                 * An uncorrected error is detected and the previous error syndrome is kept
+                                                                 because [UE] = 1.
+
+                                                                 * A deferred error is detected and the previous error syndrome is kept is
+                                                                 discarded because [DE] = 1.
+
+                                                                 * A corrected error is detected and the corrected error counter overflows (or
+                                                                 is not implemented).
+
                                                                  For more information see the Arm RAS standard. */
         uint64_t mv                    : 1;  /**< [ 26: 26](R/W1C/H) Miscellaneous registers valid. The *_RAS_ERRnMISC0 and *_RAS_ERRnMISC1 contains
                                                                  additional information for an error recorded by this record.
@@ -4644,8 +6356,10 @@ union cavm_mccx_lmcoex_ras_err06status
                                                                  write. */
         uint64_t reserved_32_63        : 32;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_mccx_lmcoex_ras_err06status_s cn; */
+    } cn96xxp3;
+    /* struct cavm_mccx_lmcoex_ras_err06status_cn96xxp3 cn98xx; */
+    /* struct cavm_mccx_lmcoex_ras_err06status_cn96xxp3 cnf95xx; */
+    /* struct cavm_mccx_lmcoex_ras_err06status_cn96xxp3 loki; */
 };
 typedef union cavm_mccx_lmcoex_ras_err06status cavm_mccx_lmcoex_ras_err06status_t;
 
@@ -4654,6 +6368,8 @@ static inline uint64_t CAVM_MCCX_LMCOEX_RAS_ERR06STATUS(unsigned long a, unsigne
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c010190ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=2)))
+        return 0x87e03c010190ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=1)))
         return 0x87e03c010190ll + 0x1000000ll * ((a) & 0x0) + 0x1000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=1)))
@@ -4744,6 +6460,8 @@ static inline uint64_t CAVM_MCCX_LMCOEX_RAS_ERR07ADDR(unsigned long a, unsigned 
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c0101d8ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=2)))
+        return 0x87e03c0101d8ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=1)))
         return 0x87e03c0101d8ll + 0x1000000ll * ((a) & 0x0) + 0x1000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=1)))
@@ -4784,6 +6502,8 @@ static inline uint64_t CAVM_MCCX_LMCOEX_RAS_ERR07CTLR(unsigned long a, unsigned 
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c0101c8ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=2)))
+        return 0x87e03c0101c8ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=1)))
         return 0x87e03c0101c8ll + 0x1000000ll * ((a) & 0x0) + 0x1000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=1)))
@@ -4824,6 +6544,8 @@ static inline uint64_t CAVM_MCCX_LMCOEX_RAS_ERR07FR(unsigned long a, unsigned lo
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c0101c0ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=2)))
+        return 0x87e03c0101c0ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=1)))
         return 0x87e03c0101c0ll + 0x1000000ll * ((a) & 0x0) + 0x1000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=1)))
@@ -4864,6 +6586,8 @@ static inline uint64_t CAVM_MCCX_LMCOEX_RAS_ERR07MISC0(unsigned long a, unsigned
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c0101e0ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=2)))
+        return 0x87e03c0101e0ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=1)))
         return 0x87e03c0101e0ll + 0x1000000ll * ((a) & 0x0) + 0x1000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=1)))
@@ -4912,6 +6636,8 @@ static inline uint64_t CAVM_MCCX_LMCOEX_RAS_ERR07MISC1(unsigned long a, unsigned
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c0101e8ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=2)))
+        return 0x87e03c0101e8ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=1)))
         return 0x87e03c0101e8ll + 0x1000000ll * ((a) & 0x0) + 0x1000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=1)))
@@ -4977,6 +6703,186 @@ union cavm_mccx_lmcoex_ras_err07status
                                                                  * A corrected error is detected and the corrected error counter overflows (or
                                                                  is not implemented).
 
+                                                                 For more information see the ARM RAS standard. */
+        uint64_t mv                    : 1;  /**< [ 26: 26](R/W1C/H) Miscellaneous registers valid. The *_RAS_ERRnMISC0 and *_RAS_ERRnMISC1 contains
+                                                                 additional information for an error recorded by this record.
+
+                                                                 Direct writes to this bit are ignored if any of [CE], [DE], or [UE] is set, and
+                                                                 the highest priority of these is not being cleared to 0 in the same write. This
+                                                                 bit is read/write-one-to-clear. */
+        uint64_t ce                    : 2;  /**< [ 25: 24](R/W1C/H) Corrected error:
+                                                                   0x0 = No corrected errors recorded.
+                                                                   0x1 = At least one transient corrected error recored.
+                                                                   0x2 = At least one corrected error recored.
+                                                                   0x3 = At least one persistent corrected error recored.
+
+                                                                 For CNXXXX, only codes 0x0 and 0x3 are used. */
+        uint64_t de                    : 1;  /**< [ 23: 23](R/W1C/H) Deferred error(s). At least one error was not corrected and deferred.
+
+                                                                 Direct writes to this bit are ignored if [OF] is set and is not being cleared
+                                                                 to 0 in the same write. */
+        uint64_t pn                    : 1;  /**< [ 22: 22](R/W1C/H) Poison.
+                                                                 0 = Uncorrected or deferred error from a corrupted value. If a node
+                                                                 detects a corrupted value and defers the error by producing poison, then this
+                                                                 bit is set to 0 at the producer node.
+
+                                                                 1 = Uncorrected error or Deferred error from a poisoned value. Indicates that an
+                                                                 error was due to detecting a poison value rather than detecting a corrupted
+                                                                 value. */
+        uint64_t uet                   : 2;  /**< [ 21: 20](R/W1C/H) Uncorrected error type. Describes the state of the component after detecting
+                                                                 or consuming an uncorrected error. Enumerated by RAS_UET_E.
+
+                                                                 Valid only if [UE] is set, otherwise 0x0.
+
+                                                                 Direct writes to this field are ignored if any of [CE], [DE], or [UE] is set,
+                                                                 and the highest priority of these is not being cleared to 0 in the same write. */
+        uint64_t reserved_16_19        : 4;
+        uint64_t ierr                  : 8;  /**< [ 15:  8](RO) Implementation-defined error code.
+
+                                                                 Direct writes to this field are ignored if any of the [CE], [DE], or [UE] is
+                                                                 set, and the highest priority of these is not being cleared to 0 in the same
+                                                                 write. */
+        uint64_t serr                  : 8;  /**< [  7:  0](RO) Architecturally-defined primary error code. Indicates the type of error
+                                                                 enumerated by RAS_SERR_E.
+
+                                                                 Direct writes to this field are ignored if any of the [CE], [DE], or [UE] is
+                                                                 set, and the highest priority of these is not being cleared to 0 in the same
+                                                                 write.
+
+                                                                 For CNXXXX, value depends on the error record. */
+#else /* Word 0 - Little Endian */
+        uint64_t serr                  : 8;  /**< [  7:  0](RO) Architecturally-defined primary error code. Indicates the type of error
+                                                                 enumerated by RAS_SERR_E.
+
+                                                                 Direct writes to this field are ignored if any of the [CE], [DE], or [UE] is
+                                                                 set, and the highest priority of these is not being cleared to 0 in the same
+                                                                 write.
+
+                                                                 For CNXXXX, value depends on the error record. */
+        uint64_t ierr                  : 8;  /**< [ 15:  8](RO) Implementation-defined error code.
+
+                                                                 Direct writes to this field are ignored if any of the [CE], [DE], or [UE] is
+                                                                 set, and the highest priority of these is not being cleared to 0 in the same
+                                                                 write. */
+        uint64_t reserved_16_19        : 4;
+        uint64_t uet                   : 2;  /**< [ 21: 20](R/W1C/H) Uncorrected error type. Describes the state of the component after detecting
+                                                                 or consuming an uncorrected error. Enumerated by RAS_UET_E.
+
+                                                                 Valid only if [UE] is set, otherwise 0x0.
+
+                                                                 Direct writes to this field are ignored if any of [CE], [DE], or [UE] is set,
+                                                                 and the highest priority of these is not being cleared to 0 in the same write. */
+        uint64_t pn                    : 1;  /**< [ 22: 22](R/W1C/H) Poison.
+                                                                 0 = Uncorrected or deferred error from a corrupted value. If a node
+                                                                 detects a corrupted value and defers the error by producing poison, then this
+                                                                 bit is set to 0 at the producer node.
+
+                                                                 1 = Uncorrected error or Deferred error from a poisoned value. Indicates that an
+                                                                 error was due to detecting a poison value rather than detecting a corrupted
+                                                                 value. */
+        uint64_t de                    : 1;  /**< [ 23: 23](R/W1C/H) Deferred error(s). At least one error was not corrected and deferred.
+
+                                                                 Direct writes to this bit are ignored if [OF] is set and is not being cleared
+                                                                 to 0 in the same write. */
+        uint64_t ce                    : 2;  /**< [ 25: 24](R/W1C/H) Corrected error:
+                                                                   0x0 = No corrected errors recorded.
+                                                                   0x1 = At least one transient corrected error recored.
+                                                                   0x2 = At least one corrected error recored.
+                                                                   0x3 = At least one persistent corrected error recored.
+
+                                                                 For CNXXXX, only codes 0x0 and 0x3 are used. */
+        uint64_t mv                    : 1;  /**< [ 26: 26](R/W1C/H) Miscellaneous registers valid. The *_RAS_ERRnMISC0 and *_RAS_ERRnMISC1 contains
+                                                                 additional information for an error recorded by this record.
+
+                                                                 Direct writes to this bit are ignored if any of [CE], [DE], or [UE] is set, and
+                                                                 the highest priority of these is not being cleared to 0 in the same write. This
+                                                                 bit is read/write-one-to-clear. */
+        uint64_t of                    : 1;  /**< [ 27: 27](R/W1C/H) Overflow. Multiple errors detected. This bit is set when:
+
+                                                                 * An uncorrected error is detected and the previous error syndrome is kept
+                                                                 because [UE] = 1.
+
+                                                                 * A deferred error is detected and the previous error syndrome is kept is
+                                                                 discarded because [DE] = 1.
+
+                                                                 * A corrected error is detected and the corrected error counter overflows (or
+                                                                 is not implemented).
+
+                                                                 For more information see the ARM RAS standard. */
+        uint64_t er                    : 1;  /**< [ 28: 28](RO) Error reported.
+                                                                 0 = No external abort reported.
+                                                                 1 = The applicable one of the *_RAS_ERRnCTLR[WUE],[RUE],[UE] bits was set when
+                                                                 an uncorrected error was detected, meaning an external abort was signaled to the
+                                                                 master making the access.
+
+                                                                 Direct writes to this bit are ignored if any of [CE], [DE], or [UE] is set, and
+                                                                 the highest priority of these is not being cleared to 0 in the same write.
+
+                                                                 Cleared for a corrected error. */
+        uint64_t ue                    : 1;  /**< [ 29: 29](R/W1C/H) Uncorrected error(s).
+                                                                 0 = No errors that could not be corrected or deferred.
+                                                                 1 = At least one error detected that has not been corrected or deferred.
+
+                                                                 Direct writes to this bit are ignored if [OF] is set and is not being cleared to
+                                                                 zero in the same write. */
+        uint64_t v                     : 1;  /**< [ 30: 30](R/W1C/H) Status register valid. *_RAS_ERRn_STATUS valid. At least one error
+                                                                 has been recorded.
+
+                                                                 Direct writes to this bit are ignored if any of the [UE], [DE], or [CE] bits is
+                                                                 set and is not being cleared to 0 in the same write. */
+        uint64_t av                    : 1;  /**< [ 31: 31](R/W1C/H) Address valid. *_RAS_ERRnSTATUS contains a physical address
+                                                                 associated with the highest priority error recorded by this record.
+
+                                                                 Direct writes to this bit are ignored if any of the [CE], [DE], or [UE] bits is
+                                                                 set, and the highest priority of these is not being cleared to 0 in the same
+                                                                 write. */
+        uint64_t reserved_32_63        : 32;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_mccx_lmcoex_ras_err07status_s cn9; */
+    /* struct cavm_mccx_lmcoex_ras_err07status_s cn96xxp1; */
+    struct cavm_mccx_lmcoex_ras_err07status_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_32_63        : 32;
+        uint64_t av                    : 1;  /**< [ 31: 31](R/W1C/H) Address valid. *_RAS_ERRnSTATUS contains a physical address
+                                                                 associated with the highest priority error recorded by this record.
+
+                                                                 Direct writes to this bit are ignored if any of the [CE], [DE], or [UE] bits is
+                                                                 set, and the highest priority of these is not being cleared to 0 in the same
+                                                                 write. */
+        uint64_t v                     : 1;  /**< [ 30: 30](R/W1C/H) Status register valid. *_RAS_ERRn_STATUS valid. At least one error
+                                                                 has been recorded.
+
+                                                                 Direct writes to this bit are ignored if any of the [UE], [DE], or [CE] bits is
+                                                                 set and is not being cleared to 0 in the same write. */
+        uint64_t ue                    : 1;  /**< [ 29: 29](R/W1C/H) Uncorrected error(s).
+                                                                 0 = No errors that could not be corrected or deferred.
+                                                                 1 = At least one error detected that has not been corrected or deferred.
+
+                                                                 Direct writes to this bit are ignored if [OF] is set and is not being cleared to
+                                                                 zero in the same write. */
+        uint64_t er                    : 1;  /**< [ 28: 28](RO) Error reported.
+                                                                 0 = No external abort reported.
+                                                                 1 = The applicable one of the *_RAS_ERRnCTLR[WUE],[RUE],[UE] bits was set when
+                                                                 an uncorrected error was detected, meaning an external abort was signaled to the
+                                                                 master making the access.
+
+                                                                 Direct writes to this bit are ignored if any of [CE], [DE], or [UE] is set, and
+                                                                 the highest priority of these is not being cleared to 0 in the same write.
+
+                                                                 Cleared for a corrected error. */
+        uint64_t of                    : 1;  /**< [ 27: 27](R/W1C/H) Overflow. Multiple errors detected. This bit is set when:
+
+                                                                 * An uncorrected error is detected and the previous error syndrome is kept
+                                                                 because [UE] = 1.
+
+                                                                 * A deferred error is detected and the previous error syndrome is kept is
+                                                                 discarded because [DE] = 1.
+
+                                                                 * A corrected error is detected and the corrected error counter overflows (or
+                                                                 is not implemented).
+
                                                                  For more information see the Arm RAS standard. */
         uint64_t mv                    : 1;  /**< [ 26: 26](R/W1C/H) Miscellaneous registers valid. The *_RAS_ERRnMISC0 and *_RAS_ERRnMISC1 contains
                                                                  additional information for an error recorded by this record.
@@ -5112,8 +7018,10 @@ union cavm_mccx_lmcoex_ras_err07status
                                                                  write. */
         uint64_t reserved_32_63        : 32;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_mccx_lmcoex_ras_err07status_s cn; */
+    } cn96xxp3;
+    /* struct cavm_mccx_lmcoex_ras_err07status_cn96xxp3 cn98xx; */
+    /* struct cavm_mccx_lmcoex_ras_err07status_cn96xxp3 cnf95xx; */
+    /* struct cavm_mccx_lmcoex_ras_err07status_cn96xxp3 loki; */
 };
 typedef union cavm_mccx_lmcoex_ras_err07status cavm_mccx_lmcoex_ras_err07status_t;
 
@@ -5122,6 +7030,8 @@ static inline uint64_t CAVM_MCCX_LMCOEX_RAS_ERR07STATUS(unsigned long a, unsigne
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c0101d0ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=2)))
+        return 0x87e03c0101d0ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=1)))
         return 0x87e03c0101d0ll + 0x1000000ll * ((a) & 0x0) + 0x1000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=1)))
@@ -5164,6 +7074,8 @@ static inline uint64_t CAVM_MCCX_LMCOEX_RAS_ERRCIDR0(unsigned long a, unsigned l
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c010ff0ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=2)))
+        return 0x87e03c010ff0ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=1)))
         return 0x87e03c010ff0ll + 0x1000000ll * ((a) & 0x0) + 0x1000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=1)))
@@ -5208,6 +7120,8 @@ static inline uint64_t CAVM_MCCX_LMCOEX_RAS_ERRCIDR1(unsigned long a, unsigned l
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c010ff4ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=2)))
+        return 0x87e03c010ff4ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=1)))
         return 0x87e03c010ff4ll + 0x1000000ll * ((a) & 0x0) + 0x1000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=1)))
@@ -5250,6 +7164,8 @@ static inline uint64_t CAVM_MCCX_LMCOEX_RAS_ERRCIDR2(unsigned long a, unsigned l
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c010ff8ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=2)))
+        return 0x87e03c010ff8ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=1)))
         return 0x87e03c010ff8ll + 0x1000000ll * ((a) & 0x0) + 0x1000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=1)))
@@ -5292,6 +7208,8 @@ static inline uint64_t CAVM_MCCX_LMCOEX_RAS_ERRCIDR3(unsigned long a, unsigned l
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c010ffcll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=2)))
+        return 0x87e03c010ffcll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=1)))
         return 0x87e03c010ffcll + 0x1000000ll * ((a) & 0x0) + 0x1000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=1)))
@@ -5351,6 +7269,8 @@ static inline uint64_t CAVM_MCCX_LMCOEX_RAS_ERRDEVAFF(unsigned long a, unsigned 
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c010fa8ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=2)))
+        return 0x87e03c010fa8ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=1)))
         return 0x87e03c010fa8ll + 0x1000000ll * ((a) & 0x0) + 0x1000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=1)))
@@ -5377,6 +7297,30 @@ union cavm_mccx_lmcoex_ras_errdevarch
     struct cavm_mccx_lmcoex_ras_errdevarch_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t architect             : 11; /**< [ 31: 21](RO) Defines the architecture of the component. Indicates ARM. */
+        uint32_t present               : 1;  /**< [ 20: 20](RO) When set to 1, indicates that this register is present. */
+        uint32_t revision              : 4;  /**< [ 19: 16](RO) Defines the architecture revision.
+                                                                 0x0 = RAS system architecture v1.0. */
+        uint32_t archver               : 4;  /**< [ 15: 12](RO) Defines the architecture version of the component.
+                                                                 0x0 = RAS system architecture v1.0. */
+        uint32_t archpart              : 12; /**< [ 11:  0](RO) Defines the architecture of the component.
+                                                                 0xA00 = RAS system architecture. */
+#else /* Word 0 - Little Endian */
+        uint32_t archpart              : 12; /**< [ 11:  0](RO) Defines the architecture of the component.
+                                                                 0xA00 = RAS system architecture. */
+        uint32_t archver               : 4;  /**< [ 15: 12](RO) Defines the architecture version of the component.
+                                                                 0x0 = RAS system architecture v1.0. */
+        uint32_t revision              : 4;  /**< [ 19: 16](RO) Defines the architecture revision.
+                                                                 0x0 = RAS system architecture v1.0. */
+        uint32_t present               : 1;  /**< [ 20: 20](RO) When set to 1, indicates that this register is present. */
+        uint32_t architect             : 11; /**< [ 31: 21](RO) Defines the architecture of the component. Indicates ARM. */
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_mccx_lmcoex_ras_errdevarch_s cn9; */
+    /* struct cavm_mccx_lmcoex_ras_errdevarch_s cn96xxp1; */
+    struct cavm_mccx_lmcoex_ras_errdevarch_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t architect             : 11; /**< [ 31: 21](RO) Defines the architecture of the component. Indicates Arm. */
         uint32_t present               : 1;  /**< [ 20: 20](RO) When set to 1, indicates that this register is present. */
         uint32_t revision              : 4;  /**< [ 19: 16](RO) Defines the architecture revision.
@@ -5395,8 +7339,10 @@ union cavm_mccx_lmcoex_ras_errdevarch
         uint32_t present               : 1;  /**< [ 20: 20](RO) When set to 1, indicates that this register is present. */
         uint32_t architect             : 11; /**< [ 31: 21](RO) Defines the architecture of the component. Indicates Arm. */
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_mccx_lmcoex_ras_errdevarch_s cn; */
+    } cn96xxp3;
+    /* struct cavm_mccx_lmcoex_ras_errdevarch_cn96xxp3 cn98xx; */
+    /* struct cavm_mccx_lmcoex_ras_errdevarch_cn96xxp3 cnf95xx; */
+    /* struct cavm_mccx_lmcoex_ras_errdevarch_cn96xxp3 loki; */
 };
 typedef union cavm_mccx_lmcoex_ras_errdevarch cavm_mccx_lmcoex_ras_errdevarch_t;
 
@@ -5405,6 +7351,8 @@ static inline uint64_t CAVM_MCCX_LMCOEX_RAS_ERRDEVARCH(unsigned long a, unsigned
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c010fbcll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=2)))
+        return 0x87e03c010fbcll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=1)))
         return 0x87e03c010fbcll + 0x1000000ll * ((a) & 0x0) + 0x1000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=1)))
@@ -5448,6 +7396,8 @@ static inline uint64_t CAVM_MCCX_LMCOEX_RAS_ERRDEVID(unsigned long a, unsigned l
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c010fc8ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=2)))
+        return 0x87e03c010fc8ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=1)))
         return 0x87e03c010fc8ll + 0x1000000ll * ((a) & 0x0) + 0x1000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=1)))
@@ -5502,6 +7452,8 @@ static inline uint64_t CAVM_MCCX_LMCOEX_RAS_ERRGSR0(unsigned long a, unsigned lo
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c010e00ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=2)))
+        return 0x87e03c010e00ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=1)))
         return 0x87e03c010e00ll + 0x1000000ll * ((a) & 0x0) + 0x1000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=1)))
@@ -5548,6 +7500,8 @@ static inline uint64_t CAVM_MCCX_LMCOEX_RAS_ERRIRQCR0(unsigned long a, unsigned 
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c010e80ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=2)))
+        return 0x87e03c010e80ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=1)))
         return 0x87e03c010e80ll + 0x1000000ll * ((a) & 0x0) + 0x1000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=1)))
@@ -5588,6 +7542,8 @@ static inline uint64_t CAVM_MCCX_LMCOEX_RAS_ERRIRQCR1(unsigned long a, unsigned 
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c010e88ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=2)))
+        return 0x87e03c010e88ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=1)))
         return 0x87e03c010e88ll + 0x1000000ll * ((a) & 0x0) + 0x1000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=1)))
@@ -5628,6 +7584,8 @@ static inline uint64_t CAVM_MCCX_LMCOEX_RAS_ERRIRQCR2(unsigned long a, unsigned 
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c010e90ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=2)))
+        return 0x87e03c010e90ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=1)))
         return 0x87e03c010e90ll + 0x1000000ll * ((a) & 0x0) + 0x1000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=1)))
@@ -5668,6 +7626,8 @@ static inline uint64_t CAVM_MCCX_LMCOEX_RAS_ERRIRQCR3(unsigned long a, unsigned 
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c010e98ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=2)))
+        return 0x87e03c010e98ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=1)))
         return 0x87e03c010e98ll + 0x1000000ll * ((a) & 0x0) + 0x1000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=1)))
@@ -5764,6 +7724,8 @@ static inline uint64_t CAVM_MCCX_LMCOEX_RAS_ERRIRQSR(unsigned long a, unsigned l
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c010ef8ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=2)))
+        return 0x87e03c010ef8ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=1)))
         return 0x87e03c010ef8ll + 0x1000000ll * ((a) & 0x0) + 0x1000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=1)))
@@ -5806,6 +7768,8 @@ static inline uint64_t CAVM_MCCX_LMCOEX_RAS_ERRPIDR0(unsigned long a, unsigned l
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c010fe0ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=2)))
+        return 0x87e03c010fe0ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=1)))
         return 0x87e03c010fe0ll + 0x1000000ll * ((a) & 0x0) + 0x1000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=1)))
@@ -5833,6 +7797,20 @@ union cavm_mccx_lmcoex_ras_errpidr1
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_8_31         : 24;
+        uint32_t des_0                 : 4;  /**< [  7:  4](RO) JEP106 identification code \<3:0\>. Cavium code is 0x4C. */
+        uint32_t part_1                : 4;  /**< [  3:  0](RO) Part number \<11:8\>.  Indicates PCC_PIDR_PARTNUM1_E::COMP. */
+#else /* Word 0 - Little Endian */
+        uint32_t part_1                : 4;  /**< [  3:  0](RO) Part number \<11:8\>.  Indicates PCC_PIDR_PARTNUM1_E::COMP. */
+        uint32_t des_0                 : 4;  /**< [  7:  4](RO) JEP106 identification code \<3:0\>. Cavium code is 0x4C. */
+        uint32_t reserved_8_31         : 24;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_mccx_lmcoex_ras_errpidr1_s cn9; */
+    /* struct cavm_mccx_lmcoex_ras_errpidr1_s cn96xxp1; */
+    struct cavm_mccx_lmcoex_ras_errpidr1_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t reserved_8_31         : 24;
         uint32_t des_0                 : 4;  /**< [  7:  4](RO) JEP106 identification code \<3:0\>. Marvell (Cavium) code is 0x4C. */
         uint32_t part_1                : 4;  /**< [  3:  0](RO) Part number \<11:8\>.  Indicates PCC_PIDR_PARTNUM1_E::COMP. */
 #else /* Word 0 - Little Endian */
@@ -5840,8 +7818,10 @@ union cavm_mccx_lmcoex_ras_errpidr1
         uint32_t des_0                 : 4;  /**< [  7:  4](RO) JEP106 identification code \<3:0\>. Marvell (Cavium) code is 0x4C. */
         uint32_t reserved_8_31         : 24;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_mccx_lmcoex_ras_errpidr1_s cn; */
+    } cn96xxp3;
+    /* struct cavm_mccx_lmcoex_ras_errpidr1_cn96xxp3 cn98xx; */
+    /* struct cavm_mccx_lmcoex_ras_errpidr1_cn96xxp3 cnf95xx; */
+    /* struct cavm_mccx_lmcoex_ras_errpidr1_cn96xxp3 loki; */
 };
 typedef union cavm_mccx_lmcoex_ras_errpidr1 cavm_mccx_lmcoex_ras_errpidr1_t;
 
@@ -5850,6 +7830,8 @@ static inline uint64_t CAVM_MCCX_LMCOEX_RAS_ERRPIDR1(unsigned long a, unsigned l
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c010fe4ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=2)))
+        return 0x87e03c010fe4ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=1)))
         return 0x87e03c010fe4ll + 0x1000000ll * ((a) & 0x0) + 0x1000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=1)))
@@ -5879,30 +7861,33 @@ union cavm_mccx_lmcoex_ras_errpidr2
         uint32_t reserved_8_31         : 24;
         uint32_t revision              : 4;  /**< [  7:  4](RO) Implementation-defined RAS revision. */
         uint32_t jedec                 : 1;  /**< [  3:  3](RO) JEDEC assigned. */
-        uint32_t des_1                 : 3;  /**< [  2:  0](RO) JEP106 identification code \<6:4\>. Marvell (Cavium) code is 0x4C. */
+        uint32_t des_1                 : 3;  /**< [  2:  0](RO) JEP106 identification code \<6:4\>. Cavium code is 0x4C. */
 #else /* Word 0 - Little Endian */
-        uint32_t des_1                 : 3;  /**< [  2:  0](RO) JEP106 identification code \<6:4\>. Marvell (Cavium) code is 0x4C. */
+        uint32_t des_1                 : 3;  /**< [  2:  0](RO) JEP106 identification code \<6:4\>. Cavium code is 0x4C. */
         uint32_t jedec                 : 1;  /**< [  3:  3](RO) JEDEC assigned. */
         uint32_t revision              : 4;  /**< [  7:  4](RO) Implementation-defined RAS revision. */
         uint32_t reserved_8_31         : 24;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mccx_lmcoex_ras_errpidr2_s cn96xx; */
-    struct cavm_mccx_lmcoex_ras_errpidr2_cnf95xx
+    /* struct cavm_mccx_lmcoex_ras_errpidr2_s cn9; */
+    /* struct cavm_mccx_lmcoex_ras_errpidr2_s cn96xxp1; */
+    struct cavm_mccx_lmcoex_ras_errpidr2_cn96xxp3
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_8_31         : 24;
         uint32_t revision              : 4;  /**< [  7:  4](RO) Implementation-defined RAS revision. */
         uint32_t jedec                 : 1;  /**< [  3:  3](RO) JEDEC assigned. */
-        uint32_t des_1                 : 3;  /**< [  2:  0](RO) JEP106 identification code \<6:4\>. Cavium code is 0x4C. */
+        uint32_t des_1                 : 3;  /**< [  2:  0](RO) JEP106 identification code \<6:4\>. Marvell (Cavium) code is 0x4C. */
 #else /* Word 0 - Little Endian */
-        uint32_t des_1                 : 3;  /**< [  2:  0](RO) JEP106 identification code \<6:4\>. Cavium code is 0x4C. */
+        uint32_t des_1                 : 3;  /**< [  2:  0](RO) JEP106 identification code \<6:4\>. Marvell (Cavium) code is 0x4C. */
         uint32_t jedec                 : 1;  /**< [  3:  3](RO) JEDEC assigned. */
         uint32_t revision              : 4;  /**< [  7:  4](RO) Implementation-defined RAS revision. */
         uint32_t reserved_8_31         : 24;
 #endif /* Word 0 - End */
-    } cnf95xx;
-    /* struct cavm_mccx_lmcoex_ras_errpidr2_cnf95xx loki; */
+    } cn96xxp3;
+    /* struct cavm_mccx_lmcoex_ras_errpidr2_s cn98xx; */
+    /* struct cavm_mccx_lmcoex_ras_errpidr2_s cnf95xx; */
+    /* struct cavm_mccx_lmcoex_ras_errpidr2_s loki; */
 };
 typedef union cavm_mccx_lmcoex_ras_errpidr2 cavm_mccx_lmcoex_ras_errpidr2_t;
 
@@ -5911,6 +7896,8 @@ static inline uint64_t CAVM_MCCX_LMCOEX_RAS_ERRPIDR2(unsigned long a, unsigned l
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c010fe8ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=2)))
+        return 0x87e03c010fe8ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=1)))
         return 0x87e03c010fe8ll + 0x1000000ll * ((a) & 0x0) + 0x1000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=1)))
@@ -5957,6 +7944,8 @@ static inline uint64_t CAVM_MCCX_LMCOEX_RAS_ERRPIDR3(unsigned long a, unsigned l
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c010fecll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=2)))
+        return 0x87e03c010fecll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=1)))
         return 0x87e03c010fecll + 0x1000000ll * ((a) & 0x0) + 0x1000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=1)))
@@ -5986,30 +7975,33 @@ union cavm_mccx_lmcoex_ras_errpidr4
         uint32_t reserved_8_31         : 24;
         uint32_t fourkbcount           : 4;  /**< [  7:  4](RO) Size of the component. Log\<sub\>2\</sub\> of the number of 4 KB pages from the
                                                                  start of the component to the end of the component ID registers. */
-        uint32_t jep106cont            : 4;  /**< [  3:  0](RO) JEP106 continuation code, least significant nibble. Indicates Marvell (Cavium). */
+        uint32_t jep106cont            : 4;  /**< [  3:  0](RO) JEP106 continuation code, least significant nibble. Indicates Cavium. */
 #else /* Word 0 - Little Endian */
-        uint32_t jep106cont            : 4;  /**< [  3:  0](RO) JEP106 continuation code, least significant nibble. Indicates Marvell (Cavium). */
+        uint32_t jep106cont            : 4;  /**< [  3:  0](RO) JEP106 continuation code, least significant nibble. Indicates Cavium. */
         uint32_t fourkbcount           : 4;  /**< [  7:  4](RO) Size of the component. Log\<sub\>2\</sub\> of the number of 4 KB pages from the
                                                                  start of the component to the end of the component ID registers. */
         uint32_t reserved_8_31         : 24;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mccx_lmcoex_ras_errpidr4_s cn96xx; */
-    struct cavm_mccx_lmcoex_ras_errpidr4_cnf95xx
+    /* struct cavm_mccx_lmcoex_ras_errpidr4_s cn9; */
+    /* struct cavm_mccx_lmcoex_ras_errpidr4_s cn96xxp1; */
+    struct cavm_mccx_lmcoex_ras_errpidr4_cn96xxp3
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_8_31         : 24;
         uint32_t fourkbcount           : 4;  /**< [  7:  4](RO) Size of the component. Log\<sub\>2\</sub\> of the number of 4 KB pages from the
                                                                  start of the component to the end of the component ID registers. */
-        uint32_t jep106cont            : 4;  /**< [  3:  0](RO) JEP106 continuation code, least significant nibble. Indicates Cavium. */
+        uint32_t jep106cont            : 4;  /**< [  3:  0](RO) JEP106 continuation code, least significant nibble. Indicates Marvell (Cavium). */
 #else /* Word 0 - Little Endian */
-        uint32_t jep106cont            : 4;  /**< [  3:  0](RO) JEP106 continuation code, least significant nibble. Indicates Cavium. */
+        uint32_t jep106cont            : 4;  /**< [  3:  0](RO) JEP106 continuation code, least significant nibble. Indicates Marvell (Cavium). */
         uint32_t fourkbcount           : 4;  /**< [  7:  4](RO) Size of the component. Log\<sub\>2\</sub\> of the number of 4 KB pages from the
                                                                  start of the component to the end of the component ID registers. */
         uint32_t reserved_8_31         : 24;
 #endif /* Word 0 - End */
-    } cnf95xx;
-    /* struct cavm_mccx_lmcoex_ras_errpidr4_cnf95xx loki; */
+    } cn96xxp3;
+    /* struct cavm_mccx_lmcoex_ras_errpidr4_s cn98xx; */
+    /* struct cavm_mccx_lmcoex_ras_errpidr4_s cnf95xx; */
+    /* struct cavm_mccx_lmcoex_ras_errpidr4_s loki; */
 };
 typedef union cavm_mccx_lmcoex_ras_errpidr4 cavm_mccx_lmcoex_ras_errpidr4_t;
 
@@ -6018,6 +8010,8 @@ static inline uint64_t CAVM_MCCX_LMCOEX_RAS_ERRPIDR4(unsigned long a, unsigned l
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c010fd0ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=2)))
+        return 0x87e03c010fd0ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=1)))
         return 0x87e03c010fd0ll + 0x1000000ll * ((a) & 0x0) + 0x1000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=1)))
@@ -6058,6 +8052,8 @@ static inline uint64_t CAVM_MCCX_LMCOEX_RAS_ERRPIDR5(unsigned long a, unsigned l
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c010fd4ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=2)))
+        return 0x87e03c010fd4ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=1)))
         return 0x87e03c010fd4ll + 0x1000000ll * ((a) & 0x0) + 0x1000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=1)))
@@ -6098,6 +8094,8 @@ static inline uint64_t CAVM_MCCX_LMCOEX_RAS_ERRPIDR6(unsigned long a, unsigned l
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c010fd8ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=2)))
+        return 0x87e03c010fd8ll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=1)))
         return 0x87e03c010fd8ll + 0x1000000ll * ((a) & 0x0) + 0x1000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=1)))
@@ -6138,6 +8136,8 @@ static inline uint64_t CAVM_MCCX_LMCOEX_RAS_ERRPIDR7(unsigned long a, unsigned l
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c010fdcll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=2)))
+        return 0x87e03c010fdcll + 0x1000000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=1)))
         return 0x87e03c010fdcll + 0x1000000ll * ((a) & 0x0) + 0x1000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=1)))
@@ -6214,6 +8214,8 @@ static inline uint64_t CAVM_MCCX_LMCOEX_RAS_INT(unsigned long a, unsigned long b
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c000340ll + 0x1000000ll * ((a) & 0x1) + 8ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=2)))
+        return 0x87e03c000340ll + 0x1000000ll * ((a) & 0x1) + 8ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=1)))
         return 0x87e03c000340ll + 0x1000000ll * ((a) & 0x0) + 8ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=1)))
@@ -6261,7 +8263,32 @@ union cavm_mccx_lmcoex_ras_int_ena_w1c
         uint64_t reserved_8_63         : 56;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_mccx_lmcoex_ras_int_ena_w1c_s cn9; */
     /* struct cavm_mccx_lmcoex_ras_int_ena_w1c_s cn96xx; */
+    struct cavm_mccx_lmcoex_ras_int_ena_w1c_cn98xx
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_8_63         : 56;
+        uint64_t err07                 : 1;  /**< [  7:  7](R/W1C/H) Reads or clears enable for MCC(0..1)_LMCOE(0..2)_RAS_INT[ERR07]. */
+        uint64_t err06                 : 1;  /**< [  6:  6](R/W1C/H) Reads or clears enable for MCC(0..1)_LMCOE(0..2)_RAS_INT[ERR06]. */
+        uint64_t err05                 : 1;  /**< [  5:  5](R/W1C/H) Reads or clears enable for MCC(0..1)_LMCOE(0..2)_RAS_INT[ERR05]. */
+        uint64_t err04                 : 1;  /**< [  4:  4](R/W1C/H) Reads or clears enable for MCC(0..1)_LMCOE(0..2)_RAS_INT[ERR04]. */
+        uint64_t err03                 : 1;  /**< [  3:  3](R/W1C/H) Reads or clears enable for MCC(0..1)_LMCOE(0..2)_RAS_INT[ERR03]. */
+        uint64_t err02                 : 1;  /**< [  2:  2](R/W1C/H) Reads or clears enable for MCC(0..1)_LMCOE(0..2)_RAS_INT[ERR02]. */
+        uint64_t err01                 : 1;  /**< [  1:  1](R/W1C/H) Reads or clears enable for MCC(0..1)_LMCOE(0..2)_RAS_INT[ERR01]. */
+        uint64_t err00                 : 1;  /**< [  0:  0](R/W1C/H) Reads or clears enable for MCC(0..1)_LMCOE(0..2)_RAS_INT[ERR00]. */
+#else /* Word 0 - Little Endian */
+        uint64_t err00                 : 1;  /**< [  0:  0](R/W1C/H) Reads or clears enable for MCC(0..1)_LMCOE(0..2)_RAS_INT[ERR00]. */
+        uint64_t err01                 : 1;  /**< [  1:  1](R/W1C/H) Reads or clears enable for MCC(0..1)_LMCOE(0..2)_RAS_INT[ERR01]. */
+        uint64_t err02                 : 1;  /**< [  2:  2](R/W1C/H) Reads or clears enable for MCC(0..1)_LMCOE(0..2)_RAS_INT[ERR02]. */
+        uint64_t err03                 : 1;  /**< [  3:  3](R/W1C/H) Reads or clears enable for MCC(0..1)_LMCOE(0..2)_RAS_INT[ERR03]. */
+        uint64_t err04                 : 1;  /**< [  4:  4](R/W1C/H) Reads or clears enable for MCC(0..1)_LMCOE(0..2)_RAS_INT[ERR04]. */
+        uint64_t err05                 : 1;  /**< [  5:  5](R/W1C/H) Reads or clears enable for MCC(0..1)_LMCOE(0..2)_RAS_INT[ERR05]. */
+        uint64_t err06                 : 1;  /**< [  6:  6](R/W1C/H) Reads or clears enable for MCC(0..1)_LMCOE(0..2)_RAS_INT[ERR06]. */
+        uint64_t err07                 : 1;  /**< [  7:  7](R/W1C/H) Reads or clears enable for MCC(0..1)_LMCOE(0..2)_RAS_INT[ERR07]. */
+        uint64_t reserved_8_63         : 56;
+#endif /* Word 0 - End */
+    } cn98xx;
     struct cavm_mccx_lmcoex_ras_int_ena_w1c_cnf95xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -6295,6 +8322,8 @@ static inline uint64_t CAVM_MCCX_LMCOEX_RAS_INT_ENA_W1C(unsigned long a, unsigne
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c000380ll + 0x1000000ll * ((a) & 0x1) + 8ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=2)))
+        return 0x87e03c000380ll + 0x1000000ll * ((a) & 0x1) + 8ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=1)))
         return 0x87e03c000380ll + 0x1000000ll * ((a) & 0x0) + 8ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=1)))
@@ -6342,7 +8371,32 @@ union cavm_mccx_lmcoex_ras_int_ena_w1s
         uint64_t reserved_8_63         : 56;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_mccx_lmcoex_ras_int_ena_w1s_s cn9; */
     /* struct cavm_mccx_lmcoex_ras_int_ena_w1s_s cn96xx; */
+    struct cavm_mccx_lmcoex_ras_int_ena_w1s_cn98xx
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_8_63         : 56;
+        uint64_t err07                 : 1;  /**< [  7:  7](R/W1S/H) Reads or sets enable for MCC(0..1)_LMCOE(0..2)_RAS_INT[ERR07]. */
+        uint64_t err06                 : 1;  /**< [  6:  6](R/W1S/H) Reads or sets enable for MCC(0..1)_LMCOE(0..2)_RAS_INT[ERR06]. */
+        uint64_t err05                 : 1;  /**< [  5:  5](R/W1S/H) Reads or sets enable for MCC(0..1)_LMCOE(0..2)_RAS_INT[ERR05]. */
+        uint64_t err04                 : 1;  /**< [  4:  4](R/W1S/H) Reads or sets enable for MCC(0..1)_LMCOE(0..2)_RAS_INT[ERR04]. */
+        uint64_t err03                 : 1;  /**< [  3:  3](R/W1S/H) Reads or sets enable for MCC(0..1)_LMCOE(0..2)_RAS_INT[ERR03]. */
+        uint64_t err02                 : 1;  /**< [  2:  2](R/W1S/H) Reads or sets enable for MCC(0..1)_LMCOE(0..2)_RAS_INT[ERR02]. */
+        uint64_t err01                 : 1;  /**< [  1:  1](R/W1S/H) Reads or sets enable for MCC(0..1)_LMCOE(0..2)_RAS_INT[ERR01]. */
+        uint64_t err00                 : 1;  /**< [  0:  0](R/W1S/H) Reads or sets enable for MCC(0..1)_LMCOE(0..2)_RAS_INT[ERR00]. */
+#else /* Word 0 - Little Endian */
+        uint64_t err00                 : 1;  /**< [  0:  0](R/W1S/H) Reads or sets enable for MCC(0..1)_LMCOE(0..2)_RAS_INT[ERR00]. */
+        uint64_t err01                 : 1;  /**< [  1:  1](R/W1S/H) Reads or sets enable for MCC(0..1)_LMCOE(0..2)_RAS_INT[ERR01]. */
+        uint64_t err02                 : 1;  /**< [  2:  2](R/W1S/H) Reads or sets enable for MCC(0..1)_LMCOE(0..2)_RAS_INT[ERR02]. */
+        uint64_t err03                 : 1;  /**< [  3:  3](R/W1S/H) Reads or sets enable for MCC(0..1)_LMCOE(0..2)_RAS_INT[ERR03]. */
+        uint64_t err04                 : 1;  /**< [  4:  4](R/W1S/H) Reads or sets enable for MCC(0..1)_LMCOE(0..2)_RAS_INT[ERR04]. */
+        uint64_t err05                 : 1;  /**< [  5:  5](R/W1S/H) Reads or sets enable for MCC(0..1)_LMCOE(0..2)_RAS_INT[ERR05]. */
+        uint64_t err06                 : 1;  /**< [  6:  6](R/W1S/H) Reads or sets enable for MCC(0..1)_LMCOE(0..2)_RAS_INT[ERR06]. */
+        uint64_t err07                 : 1;  /**< [  7:  7](R/W1S/H) Reads or sets enable for MCC(0..1)_LMCOE(0..2)_RAS_INT[ERR07]. */
+        uint64_t reserved_8_63         : 56;
+#endif /* Word 0 - End */
+    } cn98xx;
     struct cavm_mccx_lmcoex_ras_int_ena_w1s_cnf95xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -6376,6 +8430,8 @@ static inline uint64_t CAVM_MCCX_LMCOEX_RAS_INT_ENA_W1S(unsigned long a, unsigne
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c0003a0ll + 0x1000000ll * ((a) & 0x1) + 8ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=2)))
+        return 0x87e03c0003a0ll + 0x1000000ll * ((a) & 0x1) + 8ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=1)))
         return 0x87e03c0003a0ll + 0x1000000ll * ((a) & 0x0) + 8ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=1)))
@@ -6447,6 +8503,8 @@ static inline uint64_t CAVM_MCCX_LMCOEX_RAS_INT_W1S(unsigned long a, unsigned lo
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c000360ll + 0x1000000ll * ((a) & 0x1) + 8ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=2)))
+        return 0x87e03c000360ll + 0x1000000ll * ((a) & 0x1) + 8ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=1)))
         return 0x87e03c000360ll + 0x1000000ll * ((a) & 0x0) + 8ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=1)))
@@ -6502,6 +8560,8 @@ static inline uint64_t CAVM_MCCX_LMCOEX_RDNXM_FADR(unsigned long a, unsigned lon
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c000300ll + 0x1000000ll * ((a) & 0x1) + 8ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=2)))
+        return 0x87e03c000300ll + 0x1000000ll * ((a) & 0x1) + 8ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=1)))
         return 0x87e03c000300ll + 0x1000000ll * ((a) & 0x0) + 8ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=1)))
@@ -6557,6 +8617,8 @@ static inline uint64_t CAVM_MCCX_LMCOEX_WRNXM_FADR(unsigned long a, unsigned lon
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c000320ll + 0x1000000ll * ((a) & 0x1) + 8ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=2)))
+        return 0x87e03c000320ll + 0x1000000ll * ((a) & 0x1) + 8ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=1)))
         return 0x87e03c000320ll + 0x1000000ll * ((a) & 0x0) + 8ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=1)))
@@ -6634,6 +8696,8 @@ static inline uint64_t CAVM_MCCX_MCIX_BP_TEST(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c400048ll + 0x1000000ll * ((a) & 0x1) + 0x100000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=1)))
+        return 0x87e03c400048ll + 0x1000000ll * ((a) & 0x1) + 0x100000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b==0)))
         return 0x87e03c400048ll + 0x1000000ll * ((a) & 0x0) + 0x100000ll * ((b) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b==0)))
@@ -6683,6 +8747,8 @@ static inline uint64_t CAVM_MCCX_MCIX_DBE_DBG_CNT(unsigned long a, unsigned long
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c400060ll + 0x1000000ll * ((a) & 0x1) + 0x100000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=1)))
+        return 0x87e03c400060ll + 0x1000000ll * ((a) & 0x1) + 0x100000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b==0)))
         return 0x87e03c400060ll + 0x1000000ll * ((a) & 0x0) + 0x100000ll * ((b) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b==0)))
@@ -6730,6 +8796,8 @@ static inline uint64_t CAVM_MCCX_MCIX_ECC_DBG_EN(unsigned long a, unsigned long 
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c400050ll + 0x1000000ll * ((a) & 0x1) + 0x100000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=1)))
+        return 0x87e03c400050ll + 0x1000000ll * ((a) & 0x1) + 0x100000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b==0)))
         return 0x87e03c400050ll + 0x1000000ll * ((a) & 0x0) + 0x100000ll * ((b) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b==0)))
@@ -6770,6 +8838,8 @@ static inline uint64_t CAVM_MCCX_MCIX_ECO(unsigned long a, unsigned long b) __at
 static inline uint64_t CAVM_MCCX_MCIX_ECO(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
+        return 0x87e03c400040ll + 0x1000000ll * ((a) & 0x1) + 0x100000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=1)))
         return 0x87e03c400040ll + 0x1000000ll * ((a) & 0x1) + 0x100000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b==0)))
         return 0x87e03c400040ll + 0x1000000ll * ((a) & 0x0) + 0x100000ll * ((b) & 0x0);
@@ -6849,6 +8919,8 @@ static inline uint64_t CAVM_MCCX_MCIX_INT(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c400200ll + 0x1000000ll * ((a) & 0x1) + 0x100000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=1)))
+        return 0x87e03c400200ll + 0x1000000ll * ((a) & 0x1) + 0x100000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b==0)))
         return 0x87e03c400200ll + 0x1000000ll * ((a) & 0x0) + 0x100000ll * ((b) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b==0)))
@@ -6894,7 +8966,9 @@ union cavm_mccx_mcix_int_ena_w1c
         uint64_t reserved_7_63         : 57;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_mccx_mcix_int_ena_w1c_s cn9; */
     /* struct cavm_mccx_mcix_int_ena_w1c_s cn96xx; */
+    /* struct cavm_mccx_mcix_int_ena_w1c_s cn98xx; */
     struct cavm_mccx_mcix_int_ena_w1c_cnf95xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -6925,6 +8999,8 @@ static inline uint64_t CAVM_MCCX_MCIX_INT_ENA_W1C(unsigned long a, unsigned long
 static inline uint64_t CAVM_MCCX_MCIX_INT_ENA_W1C(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
+        return 0x87e03c400210ll + 0x1000000ll * ((a) & 0x1) + 0x100000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=1)))
         return 0x87e03c400210ll + 0x1000000ll * ((a) & 0x1) + 0x100000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b==0)))
         return 0x87e03c400210ll + 0x1000000ll * ((a) & 0x0) + 0x100000ll * ((b) & 0x0);
@@ -6971,7 +9047,9 @@ union cavm_mccx_mcix_int_ena_w1s
         uint64_t reserved_7_63         : 57;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_mccx_mcix_int_ena_w1s_s cn9; */
     /* struct cavm_mccx_mcix_int_ena_w1s_s cn96xx; */
+    /* struct cavm_mccx_mcix_int_ena_w1s_s cn98xx; */
     struct cavm_mccx_mcix_int_ena_w1s_cnf95xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -7002,6 +9080,8 @@ static inline uint64_t CAVM_MCCX_MCIX_INT_ENA_W1S(unsigned long a, unsigned long
 static inline uint64_t CAVM_MCCX_MCIX_INT_ENA_W1S(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
+        return 0x87e03c400218ll + 0x1000000ll * ((a) & 0x1) + 0x100000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=1)))
         return 0x87e03c400218ll + 0x1000000ll * ((a) & 0x1) + 0x100000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b==0)))
         return 0x87e03c400218ll + 0x1000000ll * ((a) & 0x0) + 0x100000ll * ((b) & 0x0);
@@ -7048,7 +9128,9 @@ union cavm_mccx_mcix_int_w1s
         uint64_t reserved_7_63         : 57;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_mccx_mcix_int_w1s_s cn9; */
     /* struct cavm_mccx_mcix_int_w1s_s cn96xx; */
+    /* struct cavm_mccx_mcix_int_w1s_s cn98xx; */
     struct cavm_mccx_mcix_int_w1s_cnf95xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -7079,6 +9161,8 @@ static inline uint64_t CAVM_MCCX_MCIX_INT_W1S(unsigned long a, unsigned long b) 
 static inline uint64_t CAVM_MCCX_MCIX_INT_W1S(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
+        return 0x87e03c400208ll + 0x1000000ll * ((a) & 0x1) + 0x100000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=1)))
         return 0x87e03c400208ll + 0x1000000ll * ((a) & 0x1) + 0x100000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b==0)))
         return 0x87e03c400208ll + 0x1000000ll * ((a) & 0x0) + 0x100000ll * ((b) & 0x0);
@@ -7115,6 +9199,80 @@ union cavm_mccx_mcix_ras_err00addr
                                                                  1 = The address is nonsecure.
 
                                                                  Internal:
+                                                                 In ARM spec it is named NS. */
+        uint64_t si                    : 1;  /**< [ 62: 62](RO) Secure Incorrect. Indicates whether the NS bit is valid. The possible values of this bit are:
+
+                                                                 0 = The NS bit is correct. That is, it matches the programmers' view of the
+                                                                     Nonsecure attribute for this recorded location.
+                                                                 1 = The NS bit might not be correct, and might not match the programmers' view of the
+                                                                     Nonsecure attribute for the recorded location. */
+        uint64_t ai                    : 1;  /**< [ 61: 61](RO) Address Incorrect. Indicates whether the PADDR field is a valid physical address that is
+                                                                 known to match the programmers' view of the physical address for the recorded location.
+                                                                 The possible values of this bit are:
+
+                                                                 0 = The PADDR field is a valid physical address. That is, it matches the
+                                                                     programmers' view of the physical address for the recorded location.
+                                                                 1 = The PADDR field might not be a valid physical address, and might not
+                                                                     match the programmers' view of the physical address for the recorded location. */
+        uint64_t reserved_56_60        : 5;
+        uint64_t paddr                 : 56; /**< [ 55:  0](R/W/H) Physical Address. Address of the recorded location.
+                                                                 See CCS_ASC_REGION_* to extract system address.
+
+                                                                 [55:51] = 0x0.
+                                                                 [50:48] = FLMCMSK. Failing LMC mask.
+                                                                 [47]    = FLRBIT.  Failing left/right bit.
+                                                                 [46:43] = FAREM.   Failing address remainder number.
+                                                                 [42:39] = FREGION. Failing ASC region matched.
+                                                                 [38]    = FO.      Failing address bit 6 (Fill Order).
+                                                                 [37: 3] = FOFFSET. Failing LLC/LMC address offset number.
+                                                                 [2:0]   = FIDX.    Failing address cache-line index. */
+#else /* Word 0 - Little Endian */
+        uint64_t paddr                 : 56; /**< [ 55:  0](R/W/H) Physical Address. Address of the recorded location.
+                                                                 See CCS_ASC_REGION_* to extract system address.
+
+                                                                 [55:51] = 0x0.
+                                                                 [50:48] = FLMCMSK. Failing LMC mask.
+                                                                 [47]    = FLRBIT.  Failing left/right bit.
+                                                                 [46:43] = FAREM.   Failing address remainder number.
+                                                                 [42:39] = FREGION. Failing ASC region matched.
+                                                                 [38]    = FO.      Failing address bit 6 (Fill Order).
+                                                                 [37: 3] = FOFFSET. Failing LLC/LMC address offset number.
+                                                                 [2:0]   = FIDX.    Failing address cache-line index. */
+        uint64_t reserved_56_60        : 5;
+        uint64_t ai                    : 1;  /**< [ 61: 61](RO) Address Incorrect. Indicates whether the PADDR field is a valid physical address that is
+                                                                 known to match the programmers' view of the physical address for the recorded location.
+                                                                 The possible values of this bit are:
+
+                                                                 0 = The PADDR field is a valid physical address. That is, it matches the
+                                                                     programmers' view of the physical address for the recorded location.
+                                                                 1 = The PADDR field might not be a valid physical address, and might not
+                                                                     match the programmers' view of the physical address for the recorded location. */
+        uint64_t si                    : 1;  /**< [ 62: 62](RO) Secure Incorrect. Indicates whether the NS bit is valid. The possible values of this bit are:
+
+                                                                 0 = The NS bit is correct. That is, it matches the programmers' view of the
+                                                                     Nonsecure attribute for this recorded location.
+                                                                 1 = The NS bit might not be correct, and might not match the programmers' view of the
+                                                                     Nonsecure attribute for the recorded location. */
+        uint64_t nsec                  : 1;  /**< [ 63: 63](R/W/H) Non-secure attribute. The possible values of this bit are:
+
+                                                                 0 = The address is secure.
+                                                                 1 = The address is nonsecure.
+
+                                                                 Internal:
+                                                                 In ARM spec it is named NS. */
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_mccx_mcix_ras_err00addr_s cn9; */
+    /* struct cavm_mccx_mcix_ras_err00addr_s cn96xxp1; */
+    struct cavm_mccx_mcix_ras_err00addr_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t nsec                  : 1;  /**< [ 63: 63](R/W/H) Non-secure attribute. The possible values of this bit are:
+
+                                                                 0 = The address is secure.
+                                                                 1 = The address is nonsecure.
+
+                                                                 Internal:
                                                                  In Arm spec it is named NS. */
         uint64_t si                    : 1;  /**< [ 62: 62](RO) Secure Incorrect. Indicates whether the NS bit is valid. The possible values of this bit are:
 
@@ -7177,8 +9335,8 @@ union cavm_mccx_mcix_ras_err00addr
                                                                  Internal:
                                                                  In Arm spec it is named NS. */
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_mccx_mcix_ras_err00addr_s cn96xx; */
+    } cn96xxp3;
+    /* struct cavm_mccx_mcix_ras_err00addr_cn96xxp3 cn98xx; */
     struct cavm_mccx_mcix_ras_err00addr_cnf95xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -7259,6 +9417,8 @@ static inline uint64_t CAVM_MCCX_MCIX_RAS_ERR00ADDR(unsigned long a, unsigned lo
 static inline uint64_t CAVM_MCCX_MCIX_RAS_ERR00ADDR(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
+        return 0x87e03c410018ll + 0x1000000ll * ((a) & 0x1) + 0x100000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=1)))
         return 0x87e03c410018ll + 0x1000000ll * ((a) & 0x1) + 0x100000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b==0)))
         return 0x87e03c410018ll + 0x1000000ll * ((a) & 0x0) + 0x100000ll * ((b) & 0x0);
@@ -7454,6 +9614,8 @@ static inline uint64_t CAVM_MCCX_MCIX_RAS_ERR00CTLR(unsigned long a, unsigned lo
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c410008ll + 0x1000000ll * ((a) & 0x1) + 0x100000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=1)))
+        return 0x87e03c410008ll + 0x1000000ll * ((a) & 0x1) + 0x100000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b==0)))
         return 0x87e03c410008ll + 0x1000000ll * ((a) & 0x0) + 0x100000ll * ((b) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b==0)))
@@ -7562,6 +9724,194 @@ union cavm_mccx_mcix_ras_err00fr
         uint64_t imp_fe                : 2;  /**< [  3:  2](RO) Implementation defined.
                                                                  0x0 = No additional feature.
                                                                  0x1 = Reserved.
+                                                                 0x2 = Cavium force error feature is supported.
+                                                                 0x3 = Reserved.
+
+                                                                 For CNXXXX depends on the record.
+                                                                 * For records where forcing is supported, 0x2.
+                                                                 * For other records, 0x0. */
+        uint64_t ed                    : 2;  /**< [  1:  0](RO) Error detection and correction.
+                                                                 0x1 = Feature always enabled.
+                                                                 0x2 = Feature is controllable.
+
+                                                                 For CNXXXX all records controllable, always 0x2.
+
+                                                                 Internal:
+                                                                 Hardcoded. */
+#else /* Word 0 - Little Endian */
+        uint64_t ed                    : 2;  /**< [  1:  0](RO) Error detection and correction.
+                                                                 0x1 = Feature always enabled.
+                                                                 0x2 = Feature is controllable.
+
+                                                                 For CNXXXX all records controllable, always 0x2.
+
+                                                                 Internal:
+                                                                 Hardcoded. */
+        uint64_t imp_fe                : 2;  /**< [  3:  2](RO) Implementation defined.
+                                                                 0x0 = No additional feature.
+                                                                 0x1 = Reserved.
+                                                                 0x2 = Cavium force error feature is supported.
+                                                                 0x3 = Reserved.
+
+                                                                 For CNXXXX depends on the record.
+                                                                 * For records where forcing is supported, 0x2.
+                                                                 * For other records, 0x0. */
+        uint64_t ui                    : 2;  /**< [  5:  4](RO) Uncorrected error recovery interrupt.
+                                                                 0x0 = Does not support feature.
+                                                                 0x1 = Feature always enabled.
+                                                                 0x2 = Feature is controllable.
+                                                                 0x3 = Feature is controllable with independent controls for reads and writes.
+
+                                                                 Internal:
+                                                                 Hardcoded. */
+        uint64_t fi                    : 2;  /**< [  7:  6](RO) Fault handling interrupt.
+                                                                 0x0 = Does not support feature.
+                                                                 0x1 = Feature always enabled.
+                                                                 0x2 = Feature is controllable.
+                                                                 0x3 = Feature is controllable with independent controls for reads and writes.
+
+                                                                 Internal:
+                                                                 Hardcoded per record. */
+        uint64_t ue                    : 2;  /**< [  9:  8](RO) In-band uncorrected error reporting.
+                                                                 0x0 = Does not support feature.
+                                                                 0x1 = Feature always enabled.
+                                                                 0x2 = Feature is controllable.
+                                                                 0x3 = Feature is controllable with independent controls for reads and writes.
+
+                                                                 For CNXXXX depends on the record.
+                                                                 * For records corresponding to uncorrectable errors, 0x2.
+                                                                 * For other records, 0x0.
+
+                                                                 Internal:
+                                                                 Hardcoded per record. */
+        uint64_t cfi                   : 2;  /**< [ 11: 10](RO) Fault handling interrupt for corrected errors. If this feature is implemented,
+                                                                 then the fault handling interrupt must be implemented.
+                                                                 0x0 = Does not support feature.
+                                                                 0x1 = Reserved.
+                                                                 0x2 = Feature is controllable.
+                                                                 0x3 = Feature is controllable with independent controls for reads and writes.
+
+                                                                 For CNXXXX depends on the record.
+                                                                 * For records corresponding to correctable errors, 0x2.
+                                                                 * For other records, 0x0.
+
+                                                                 Internal:
+                                                                 Hardcoded per record. */
+        uint64_t cec                   : 3;  /**< [ 14: 12](RO) Indicates a standard correctable error counter mechanism in *_RAS_ERRnMISC0.
+                                                                 0x0 = Does not implement the standardized error counter model.
+                                                                 0x2 = Implements an 8-bit error counter in *_RAS_ERRnMISC0\<39:32\>.
+                                                                 0x4 = Implements a 16-bit error counter in *_RAS_ERRnMISC0\<47:32\>.
+                                                                 _ All other values are reserved.
+
+                                                                 Internal:
+                                                                 Hardcoded. */
+        uint64_t rp                    : 1;  /**< [ 15: 15](RO) Repeat counter. Indicates whether the node implements a repeat corrected error counter.
+                                                                 0 = A single CE counter is implemented.
+                                                                 1 = A first (repeat) counter and a second (other) counter are implemented. The
+                                                                 repeat counter is the same size as the primary error counter.
+
+                                                                 If [CEC] = 0x0, this bit is 0.
+
+                                                                 For CNXXXX no RP in any records, always 0. */
+        uint64_t dui                   : 2;  /**< [ 17: 16](RO) Error recovery interrupt for deferred errors. If this feature is implemented,
+                                                                 then the error recovery interrupt must be implemented.
+
+                                                                 0x0 = Does not support feature.
+                                                                 0x1 = Reserved.
+                                                                 0x2 = Feature is controllable.
+                                                                 0x3 = Feature is controllable with independent controls for reads and writes. */
+        uint64_t ceo                   : 2;  /**< [ 19: 18](RO) Corrected error overwrite. Indicates the behavior when a second corrected error
+                                                                 is detected after a first corrected error has been recorded by the node.
+                                                                 0x0 = Count corrected error if a counter is implemented. Keep the previous error
+                                                                 syndrome. If the counter overflows, or no counter is
+                                                                 implemented. MCC()_MCI()_RAS_ERRnSTATUS[OF] is set to 1.
+                                                                 0x1 = Count corrected error. If MCC()_MCI()_RAS_ERRnSTATUS[OF] = 1 before the corrected
+                                                                 error is counted, keep the previous syndrome. Otherwise the previous syndrome is
+                                                                 overwritten. If the counter overflows, MCC()_MCI()_RAS_ERRnSTATUS[OF] is set to 1. */
+        uint64_t reserved_20_63        : 44;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_mccx_mcix_ras_err00fr_s cn9; */
+    /* struct cavm_mccx_mcix_ras_err00fr_s cn96xxp1; */
+    struct cavm_mccx_mcix_ras_err00fr_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_20_63        : 44;
+        uint64_t ceo                   : 2;  /**< [ 19: 18](RO) Corrected error overwrite. Indicates the behavior when a second corrected error
+                                                                 is detected after a first corrected error has been recorded by the node.
+                                                                 0x0 = Count corrected error if a counter is implemented. Keep the previous error
+                                                                 syndrome. If the counter overflows, or no counter is
+                                                                 implemented. MCC()_MCI()_RAS_ERRnSTATUS[OF] is set to 1.
+                                                                 0x1 = Count corrected error. If MCC()_MCI()_RAS_ERRnSTATUS[OF] = 1 before the corrected
+                                                                 error is counted, keep the previous syndrome. Otherwise the previous syndrome is
+                                                                 overwritten. If the counter overflows, MCC()_MCI()_RAS_ERRnSTATUS[OF] is set to 1. */
+        uint64_t dui                   : 2;  /**< [ 17: 16](RO) Error recovery interrupt for deferred errors. If this feature is implemented,
+                                                                 then the error recovery interrupt must be implemented.
+
+                                                                 0x0 = Does not support feature.
+                                                                 0x1 = Reserved.
+                                                                 0x2 = Feature is controllable.
+                                                                 0x3 = Feature is controllable with independent controls for reads and writes. */
+        uint64_t rp                    : 1;  /**< [ 15: 15](RO) Repeat counter. Indicates whether the node implements a repeat corrected error counter.
+                                                                 0 = A single CE counter is implemented.
+                                                                 1 = A first (repeat) counter and a second (other) counter are implemented. The
+                                                                 repeat counter is the same size as the primary error counter.
+
+                                                                 If [CEC] = 0x0, this bit is 0.
+
+                                                                 For CNXXXX no RP in any records, always 0. */
+        uint64_t cec                   : 3;  /**< [ 14: 12](RO) Indicates a standard correctable error counter mechanism in *_RAS_ERRnMISC0.
+                                                                 0x0 = Does not implement the standardized error counter model.
+                                                                 0x2 = Implements an 8-bit error counter in *_RAS_ERRnMISC0\<39:32\>.
+                                                                 0x4 = Implements a 16-bit error counter in *_RAS_ERRnMISC0\<47:32\>.
+                                                                 _ All other values are reserved.
+
+                                                                 Internal:
+                                                                 Hardcoded. */
+        uint64_t cfi                   : 2;  /**< [ 11: 10](RO) Fault handling interrupt for corrected errors. If this feature is implemented,
+                                                                 then the fault handling interrupt must be implemented.
+                                                                 0x0 = Does not support feature.
+                                                                 0x1 = Reserved.
+                                                                 0x2 = Feature is controllable.
+                                                                 0x3 = Feature is controllable with independent controls for reads and writes.
+
+                                                                 For CNXXXX depends on the record.
+                                                                 * For records corresponding to correctable errors, 0x2.
+                                                                 * For other records, 0x0.
+
+                                                                 Internal:
+                                                                 Hardcoded per record. */
+        uint64_t ue                    : 2;  /**< [  9:  8](RO) In-band uncorrected error reporting.
+                                                                 0x0 = Does not support feature.
+                                                                 0x1 = Feature always enabled.
+                                                                 0x2 = Feature is controllable.
+                                                                 0x3 = Feature is controllable with independent controls for reads and writes.
+
+                                                                 For CNXXXX depends on the record.
+                                                                 * For records corresponding to uncorrectable errors, 0x2.
+                                                                 * For other records, 0x0.
+
+                                                                 Internal:
+                                                                 Hardcoded per record. */
+        uint64_t fi                    : 2;  /**< [  7:  6](RO) Fault handling interrupt.
+                                                                 0x0 = Does not support feature.
+                                                                 0x1 = Feature always enabled.
+                                                                 0x2 = Feature is controllable.
+                                                                 0x3 = Feature is controllable with independent controls for reads and writes.
+
+                                                                 Internal:
+                                                                 Hardcoded per record. */
+        uint64_t ui                    : 2;  /**< [  5:  4](RO) Uncorrected error recovery interrupt.
+                                                                 0x0 = Does not support feature.
+                                                                 0x1 = Feature always enabled.
+                                                                 0x2 = Feature is controllable.
+                                                                 0x3 = Feature is controllable with independent controls for reads and writes.
+
+                                                                 Internal:
+                                                                 Hardcoded. */
+        uint64_t imp_fe                : 2;  /**< [  3:  2](RO) Implementation defined.
+                                                                 0x0 = No additional feature.
+                                                                 0x1 = Reserved.
                                                                  0x2 = Marvell force error feature is supported.
                                                                  0x3 = Reserved.
 
@@ -7668,8 +10018,10 @@ union cavm_mccx_mcix_ras_err00fr
                                                                  overwritten. If the counter overflows, MCC()_MCI()_RAS_ERRnSTATUS[OF] is set to 1. */
         uint64_t reserved_20_63        : 44;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_mccx_mcix_ras_err00fr_s cn; */
+    } cn96xxp3;
+    /* struct cavm_mccx_mcix_ras_err00fr_cn96xxp3 cn98xx; */
+    /* struct cavm_mccx_mcix_ras_err00fr_cn96xxp3 cnf95xx; */
+    /* struct cavm_mccx_mcix_ras_err00fr_cn96xxp3 loki; */
 };
 typedef union cavm_mccx_mcix_ras_err00fr cavm_mccx_mcix_ras_err00fr_t;
 
@@ -7677,6 +10029,8 @@ static inline uint64_t CAVM_MCCX_MCIX_RAS_ERR00FR(unsigned long a, unsigned long
 static inline uint64_t CAVM_MCCX_MCIX_RAS_ERR00FR(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
+        return 0x87e03c410000ll + 0x1000000ll * ((a) & 0x1) + 0x100000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=1)))
         return 0x87e03c410000ll + 0x1000000ll * ((a) & 0x1) + 0x100000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b==0)))
         return 0x87e03c410000ll + 0x1000000ll * ((a) & 0x0) + 0x100000ll * ((b) & 0x0);
@@ -7743,6 +10097,7 @@ union cavm_mccx_mcix_ras_err00misc0
         uint64_t odd_synd1             : 8;  /**< [ 63: 56](R/W/H) Odd syndrome. */
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_mccx_mcix_ras_err00misc0_s cn9; */
     struct cavm_mccx_mcix_ras_err00misc0_cn96xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -7781,6 +10136,7 @@ union cavm_mccx_mcix_ras_err00misc0
         uint64_t reserved_48_63        : 16;
 #endif /* Word 0 - End */
     } cn96xx;
+    /* struct cavm_mccx_mcix_ras_err00misc0_cn96xx cn98xx; */
     struct cavm_mccx_mcix_ras_err00misc0_cnf95xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -7834,6 +10190,8 @@ static inline uint64_t CAVM_MCCX_MCIX_RAS_ERR00MISC0(unsigned long a, unsigned l
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c410020ll + 0x1000000ll * ((a) & 0x1) + 0x100000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=1)))
+        return 0x87e03c410020ll + 0x1000000ll * ((a) & 0x1) + 0x100000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b==0)))
         return 0x87e03c410020ll + 0x1000000ll * ((a) & 0x0) + 0x100000ll * ((b) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b==0)))
@@ -7877,6 +10235,8 @@ static inline uint64_t CAVM_MCCX_MCIX_RAS_ERR00MISC1(unsigned long a, unsigned l
 static inline uint64_t CAVM_MCCX_MCIX_RAS_ERR00MISC1(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
+        return 0x87e03c410028ll + 0x1000000ll * ((a) & 0x1) + 0x100000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=1)))
         return 0x87e03c410028ll + 0x1000000ll * ((a) & 0x1) + 0x100000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b==0)))
         return 0x87e03c410028ll + 0x1000000ll * ((a) & 0x0) + 0x100000ll * ((b) & 0x0);
@@ -7944,6 +10304,184 @@ union cavm_mccx_mcix_ras_err00status
                                                                  * A corrected error is detected and the corrected error counter overflows (or
                                                                  is not implemented).
 
+                                                                 For more information see the ARM RAS standard. */
+        uint64_t mv                    : 1;  /**< [ 26: 26](R/W1C/H) Miscellaneous registers valid. The *_RAS_ERRnMISC0 and *_RAS_ERRnMISC1 contains
+                                                                 additional information for an error recorded by this record.
+
+                                                                 Direct writes to this bit are ignored if any of [CE], [DE], or [UE] is set, and
+                                                                 the highest priority of these is not being cleared to 0 in the same write. This
+                                                                 bit is read/write-one-to-clear. */
+        uint64_t ce                    : 2;  /**< [ 25: 24](R/W1C/H) Corrected error:
+                                                                   0x0 = No corrected errors recorded.
+                                                                   0x1 = At least one transient corrected error recored.
+                                                                   0x2 = At least one corrected error recored.
+                                                                   0x3 = At least one persistent corrected error recored.
+
+                                                                 For CNXXXX, only codes 0x0 and 0x3 are used. */
+        uint64_t de                    : 1;  /**< [ 23: 23](R/W1C/H) Deferred error(s). At least one error was not corrected and deferred.
+
+                                                                 Direct writes to this bit are ignored if [OF] is set and is not being cleared
+                                                                 to 0 in the same write. */
+        uint64_t pn                    : 1;  /**< [ 22: 22](R/W1C/H) Poison.
+                                                                 0 = Uncorrected or deferred error from a corrupted value. If a node
+                                                                 detects a corrupted value and defers the error by producing poison, then this
+                                                                 bit is set to 0 at the producer node.
+
+                                                                 1 = Uncorrected error or Deferred error from a poisoned value. Indicates that an
+                                                                 error was due to detecting a poison value rather than detecting a corrupted
+                                                                 value. */
+        uint64_t uet                   : 2;  /**< [ 21: 20](R/W1C/H) Uncorrected error type. Describes the state of the component after detecting
+                                                                 or consuming an uncorrected error. Enumerated by RAS_UET_E.
+
+                                                                 Valid only if [UE] is set, otherwise 0x0.
+
+                                                                 Direct writes to this field are ignored if any of [CE], [DE], or [UE] is set,
+                                                                 and the highest priority of these is not being cleared to 0 in the same write. */
+        uint64_t reserved_16_19        : 4;
+        uint64_t ierr                  : 8;  /**< [ 15:  8](RO) Implementation-defined error code.
+
+                                                                 Direct writes to this field are ignored if any of the [CE], [DE], or [UE] is
+                                                                 set, and the highest priority of these is not being cleared to 0 in the same
+                                                                 write. */
+        uint64_t serr                  : 8;  /**< [  7:  0](RO) Architecturally-defined primary error code. Indicates the type of error
+                                                                 enumerated by RAS_SERR_E.
+
+                                                                 Direct writes to this field are ignored if any of the [CE], [DE], or [UE] is
+                                                                 set, and the highest priority of these is not being cleared to 0 in the same
+                                                                 write.
+
+                                                                 For CNXXXX, value depends on the error record. */
+#else /* Word 0 - Little Endian */
+        uint64_t serr                  : 8;  /**< [  7:  0](RO) Architecturally-defined primary error code. Indicates the type of error
+                                                                 enumerated by RAS_SERR_E.
+
+                                                                 Direct writes to this field are ignored if any of the [CE], [DE], or [UE] is
+                                                                 set, and the highest priority of these is not being cleared to 0 in the same
+                                                                 write.
+
+                                                                 For CNXXXX, value depends on the error record. */
+        uint64_t ierr                  : 8;  /**< [ 15:  8](RO) Implementation-defined error code.
+
+                                                                 Direct writes to this field are ignored if any of the [CE], [DE], or [UE] is
+                                                                 set, and the highest priority of these is not being cleared to 0 in the same
+                                                                 write. */
+        uint64_t reserved_16_19        : 4;
+        uint64_t uet                   : 2;  /**< [ 21: 20](R/W1C/H) Uncorrected error type. Describes the state of the component after detecting
+                                                                 or consuming an uncorrected error. Enumerated by RAS_UET_E.
+
+                                                                 Valid only if [UE] is set, otherwise 0x0.
+
+                                                                 Direct writes to this field are ignored if any of [CE], [DE], or [UE] is set,
+                                                                 and the highest priority of these is not being cleared to 0 in the same write. */
+        uint64_t pn                    : 1;  /**< [ 22: 22](R/W1C/H) Poison.
+                                                                 0 = Uncorrected or deferred error from a corrupted value. If a node
+                                                                 detects a corrupted value and defers the error by producing poison, then this
+                                                                 bit is set to 0 at the producer node.
+
+                                                                 1 = Uncorrected error or Deferred error from a poisoned value. Indicates that an
+                                                                 error was due to detecting a poison value rather than detecting a corrupted
+                                                                 value. */
+        uint64_t de                    : 1;  /**< [ 23: 23](R/W1C/H) Deferred error(s). At least one error was not corrected and deferred.
+
+                                                                 Direct writes to this bit are ignored if [OF] is set and is not being cleared
+                                                                 to 0 in the same write. */
+        uint64_t ce                    : 2;  /**< [ 25: 24](R/W1C/H) Corrected error:
+                                                                   0x0 = No corrected errors recorded.
+                                                                   0x1 = At least one transient corrected error recored.
+                                                                   0x2 = At least one corrected error recored.
+                                                                   0x3 = At least one persistent corrected error recored.
+
+                                                                 For CNXXXX, only codes 0x0 and 0x3 are used. */
+        uint64_t mv                    : 1;  /**< [ 26: 26](R/W1C/H) Miscellaneous registers valid. The *_RAS_ERRnMISC0 and *_RAS_ERRnMISC1 contains
+                                                                 additional information for an error recorded by this record.
+
+                                                                 Direct writes to this bit are ignored if any of [CE], [DE], or [UE] is set, and
+                                                                 the highest priority of these is not being cleared to 0 in the same write. This
+                                                                 bit is read/write-one-to-clear. */
+        uint64_t of                    : 1;  /**< [ 27: 27](R/W1C/H) Overflow. Multiple errors detected. This bit is set when:
+
+                                                                 * An uncorrected error is detected and the previous error syndrome is kept
+                                                                 because [UE] = 1.
+
+                                                                 * A deferred error is detected and the previous error syndrome is kept is
+                                                                 discarded because [DE] = 1.
+
+                                                                 * A corrected error is detected and the corrected error counter overflows (or
+                                                                 is not implemented).
+
+                                                                 For more information see the ARM RAS standard. */
+        uint64_t er                    : 1;  /**< [ 28: 28](RO) Error reported.
+                                                                 0 = No external abort reported.
+                                                                 1 = The applicable one of the *_RAS_ERRnCTLR[WUE],[RUE],[UE] bits was set when
+                                                                 an uncorrected error was detected, meaning an external abort was signaled to the
+                                                                 master making the access.
+
+                                                                 Direct writes to this bit are ignored if any of [CE], [DE], or [UE] is set, and
+                                                                 the highest priority of these is not being cleared to 0 in the same write.
+
+                                                                 Cleared for a corrected error. */
+        uint64_t ue                    : 1;  /**< [ 29: 29](R/W1C/H) Uncorrected error(s).
+                                                                 0 = No errors that could not be corrected or deferred.
+                                                                 1 = At least one error detected that has not been corrected or deferred.
+
+                                                                 Direct writes to this bit are ignored if [OF] is set and is not being cleared to
+                                                                 zero in the same write. */
+        uint64_t v                     : 1;  /**< [ 30: 30](R/W1C/H) Status register valid.  *_RAS_ERRnSTATUS valid. At least one error has been recorded.
+
+                                                                 Direct writes to this bit are ignored if any of the [UE], [DE], or [CE] bits is
+                                                                 set and is not being cleared to 0 in the same write. */
+        uint64_t av                    : 1;  /**< [ 31: 31](R/W1C/H) Address valid. *_RAS_ERRnADDR contains a physical address associated with the
+                                                                 highest priority error recorded by this record.
+
+                                                                 Direct writes to this bit are ignored if any of the [CE], [DE], or [UE] bits is
+                                                                 set, and the highest priority of these is not being cleared to 0 in the same
+                                                                 write. */
+        uint64_t reserved_32_63        : 32;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_mccx_mcix_ras_err00status_s cn9; */
+    /* struct cavm_mccx_mcix_ras_err00status_s cn96xxp1; */
+    struct cavm_mccx_mcix_ras_err00status_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_32_63        : 32;
+        uint64_t av                    : 1;  /**< [ 31: 31](R/W1C/H) Address valid. *_RAS_ERRnADDR contains a physical address associated with the
+                                                                 highest priority error recorded by this record.
+
+                                                                 Direct writes to this bit are ignored if any of the [CE], [DE], or [UE] bits is
+                                                                 set, and the highest priority of these is not being cleared to 0 in the same
+                                                                 write. */
+        uint64_t v                     : 1;  /**< [ 30: 30](R/W1C/H) Status register valid.  *_RAS_ERRnSTATUS valid. At least one error has been recorded.
+
+                                                                 Direct writes to this bit are ignored if any of the [UE], [DE], or [CE] bits is
+                                                                 set and is not being cleared to 0 in the same write. */
+        uint64_t ue                    : 1;  /**< [ 29: 29](R/W1C/H) Uncorrected error(s).
+                                                                 0 = No errors that could not be corrected or deferred.
+                                                                 1 = At least one error detected that has not been corrected or deferred.
+
+                                                                 Direct writes to this bit are ignored if [OF] is set and is not being cleared to
+                                                                 zero in the same write. */
+        uint64_t er                    : 1;  /**< [ 28: 28](RO) Error reported.
+                                                                 0 = No external abort reported.
+                                                                 1 = The applicable one of the *_RAS_ERRnCTLR[WUE],[RUE],[UE] bits was set when
+                                                                 an uncorrected error was detected, meaning an external abort was signaled to the
+                                                                 master making the access.
+
+                                                                 Direct writes to this bit are ignored if any of [CE], [DE], or [UE] is set, and
+                                                                 the highest priority of these is not being cleared to 0 in the same write.
+
+                                                                 Cleared for a corrected error. */
+        uint64_t of                    : 1;  /**< [ 27: 27](R/W1C/H) Overflow. Multiple errors detected. This bit is set when:
+
+                                                                 * An uncorrected error is detected and the previous error syndrome is kept
+                                                                 because [UE] = 1.
+
+                                                                 * A deferred error is detected and the previous error syndrome is kept is
+                                                                 discarded because [DE] = 1.
+
+                                                                 * A corrected error is detected and the corrected error counter overflows (or
+                                                                 is not implemented).
+
                                                                  For more information see the Arm RAS standard. */
         uint64_t mv                    : 1;  /**< [ 26: 26](R/W1C/H) Miscellaneous registers valid. The *_RAS_ERRnMISC0 and *_RAS_ERRnMISC1 contains
                                                                  additional information for an error recorded by this record.
@@ -8078,8 +10616,10 @@ union cavm_mccx_mcix_ras_err00status
                                                                  write. */
         uint64_t reserved_32_63        : 32;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_mccx_mcix_ras_err00status_s cn; */
+    } cn96xxp3;
+    /* struct cavm_mccx_mcix_ras_err00status_cn96xxp3 cn98xx; */
+    /* struct cavm_mccx_mcix_ras_err00status_cn96xxp3 cnf95xx; */
+    /* struct cavm_mccx_mcix_ras_err00status_cn96xxp3 loki; */
 };
 typedef union cavm_mccx_mcix_ras_err00status cavm_mccx_mcix_ras_err00status_t;
 
@@ -8087,6 +10627,8 @@ static inline uint64_t CAVM_MCCX_MCIX_RAS_ERR00STATUS(unsigned long a, unsigned 
 static inline uint64_t CAVM_MCCX_MCIX_RAS_ERR00STATUS(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
+        return 0x87e03c410010ll + 0x1000000ll * ((a) & 0x1) + 0x100000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=1)))
         return 0x87e03c410010ll + 0x1000000ll * ((a) & 0x1) + 0x100000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b==0)))
         return 0x87e03c410010ll + 0x1000000ll * ((a) & 0x0) + 0x100000ll * ((b) & 0x0);
@@ -8112,6 +10654,80 @@ union cavm_mccx_mcix_ras_err01addr
 {
     uint64_t u;
     struct cavm_mccx_mcix_ras_err01addr_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t nsec                  : 1;  /**< [ 63: 63](R/W/H) Non-secure attribute. The possible values of this bit are:
+
+                                                                 0 = The address is secure.
+                                                                 1 = The address is nonsecure.
+
+                                                                 Internal:
+                                                                 In ARM spec it is named NS. */
+        uint64_t si                    : 1;  /**< [ 62: 62](RO) Secure Incorrect. Indicates whether the NS bit is valid. The possible values of this bit are:
+
+                                                                 0 = The NS bit is correct. That is, it matches the programmers' view of the
+                                                                     Nonsecure attribute for this recorded location.
+                                                                 1 = The NS bit might not be correct, and might not match the programmers' view of the
+                                                                     Nonsecure attribute for the recorded location. */
+        uint64_t ai                    : 1;  /**< [ 61: 61](RO) Address Incorrect. Indicates whether the PADDR field is a valid physical address that is
+                                                                 known to match the programmers' view of the physical address for the recorded location.
+                                                                 The possible values of this bit are:
+
+                                                                 0 = The PADDR field is a valid physical address. That is, it matches the
+                                                                     programmers' view of the physical address for the recorded location.
+                                                                 1 = The PADDR field might not be a valid physical address, and might not
+                                                                     match the programmers' view of the physical address for the recorded location. */
+        uint64_t reserved_56_60        : 5;
+        uint64_t paddr                 : 56; /**< [ 55:  0](R/W/H) Physical Address. Address of the recorded location.
+                                                                 See CCS_ASC_REGION_* to extract system address.
+
+                                                                 [55:51] = 0x0.
+                                                                 [50:48] = FLMCMSK. Failing LMC mask.
+                                                                 [47]    = FLRBIT.  Failing left/right bit.
+                                                                 [46:43] = FAREM.   Failing address remainder number.
+                                                                 [42:39] = FREGION. Failing ASC region matched.
+                                                                 [38]    = FO.      Failing address bit 6 (Fill Order).
+                                                                 [37: 3] = FOFFSET. Failing LLC/LMC address offset number.
+                                                                 [2:0]   = FIDX.    Failing address cache-line index. */
+#else /* Word 0 - Little Endian */
+        uint64_t paddr                 : 56; /**< [ 55:  0](R/W/H) Physical Address. Address of the recorded location.
+                                                                 See CCS_ASC_REGION_* to extract system address.
+
+                                                                 [55:51] = 0x0.
+                                                                 [50:48] = FLMCMSK. Failing LMC mask.
+                                                                 [47]    = FLRBIT.  Failing left/right bit.
+                                                                 [46:43] = FAREM.   Failing address remainder number.
+                                                                 [42:39] = FREGION. Failing ASC region matched.
+                                                                 [38]    = FO.      Failing address bit 6 (Fill Order).
+                                                                 [37: 3] = FOFFSET. Failing LLC/LMC address offset number.
+                                                                 [2:0]   = FIDX.    Failing address cache-line index. */
+        uint64_t reserved_56_60        : 5;
+        uint64_t ai                    : 1;  /**< [ 61: 61](RO) Address Incorrect. Indicates whether the PADDR field is a valid physical address that is
+                                                                 known to match the programmers' view of the physical address for the recorded location.
+                                                                 The possible values of this bit are:
+
+                                                                 0 = The PADDR field is a valid physical address. That is, it matches the
+                                                                     programmers' view of the physical address for the recorded location.
+                                                                 1 = The PADDR field might not be a valid physical address, and might not
+                                                                     match the programmers' view of the physical address for the recorded location. */
+        uint64_t si                    : 1;  /**< [ 62: 62](RO) Secure Incorrect. Indicates whether the NS bit is valid. The possible values of this bit are:
+
+                                                                 0 = The NS bit is correct. That is, it matches the programmers' view of the
+                                                                     Nonsecure attribute for this recorded location.
+                                                                 1 = The NS bit might not be correct, and might not match the programmers' view of the
+                                                                     Nonsecure attribute for the recorded location. */
+        uint64_t nsec                  : 1;  /**< [ 63: 63](R/W/H) Non-secure attribute. The possible values of this bit are:
+
+                                                                 0 = The address is secure.
+                                                                 1 = The address is nonsecure.
+
+                                                                 Internal:
+                                                                 In ARM spec it is named NS. */
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_mccx_mcix_ras_err01addr_s cn9; */
+    /* struct cavm_mccx_mcix_ras_err01addr_s cn96xxp1; */
+    struct cavm_mccx_mcix_ras_err01addr_cn96xxp3
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t nsec                  : 1;  /**< [ 63: 63](R/W/H) Non-secure attribute. The possible values of this bit are:
@@ -8182,8 +10798,8 @@ union cavm_mccx_mcix_ras_err01addr
                                                                  Internal:
                                                                  In Arm spec it is named NS. */
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_mccx_mcix_ras_err01addr_s cn96xx; */
+    } cn96xxp3;
+    /* struct cavm_mccx_mcix_ras_err01addr_cn96xxp3 cn98xx; */
     struct cavm_mccx_mcix_ras_err01addr_cnf95xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -8265,6 +10881,8 @@ static inline uint64_t CAVM_MCCX_MCIX_RAS_ERR01ADDR(unsigned long a, unsigned lo
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c410058ll + 0x1000000ll * ((a) & 0x1) + 0x100000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=1)))
+        return 0x87e03c410058ll + 0x1000000ll * ((a) & 0x1) + 0x100000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b==0)))
         return 0x87e03c410058ll + 0x1000000ll * ((a) & 0x0) + 0x100000ll * ((b) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b==0)))
@@ -8305,6 +10923,8 @@ static inline uint64_t CAVM_MCCX_MCIX_RAS_ERR01CTLR(unsigned long a, unsigned lo
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c410048ll + 0x1000000ll * ((a) & 0x1) + 0x100000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=1)))
+        return 0x87e03c410048ll + 0x1000000ll * ((a) & 0x1) + 0x100000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b==0)))
         return 0x87e03c410048ll + 0x1000000ll * ((a) & 0x0) + 0x100000ll * ((b) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b==0)))
@@ -8344,6 +10964,8 @@ static inline uint64_t CAVM_MCCX_MCIX_RAS_ERR01FR(unsigned long a, unsigned long
 static inline uint64_t CAVM_MCCX_MCIX_RAS_ERR01FR(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
+        return 0x87e03c410040ll + 0x1000000ll * ((a) & 0x1) + 0x100000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=1)))
         return 0x87e03c410040ll + 0x1000000ll * ((a) & 0x1) + 0x100000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b==0)))
         return 0x87e03c410040ll + 0x1000000ll * ((a) & 0x0) + 0x100000ll * ((b) & 0x0);
@@ -8406,6 +11028,7 @@ union cavm_mccx_mcix_ras_err01misc0
         uint64_t odd_synd1             : 8;  /**< [ 63: 56](R/W/H) Odd syndrome. */
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_mccx_mcix_ras_err01misc0_s cn9; */
     struct cavm_mccx_mcix_ras_err01misc0_cn96xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -8444,6 +11067,7 @@ union cavm_mccx_mcix_ras_err01misc0
         uint64_t reserved_48_63        : 16;
 #endif /* Word 0 - End */
     } cn96xx;
+    /* struct cavm_mccx_mcix_ras_err01misc0_cn96xx cn98xx; */
     struct cavm_mccx_mcix_ras_err01misc0_cnf95xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -8497,6 +11121,8 @@ static inline uint64_t CAVM_MCCX_MCIX_RAS_ERR01MISC0(unsigned long a, unsigned l
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c410060ll + 0x1000000ll * ((a) & 0x1) + 0x100000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=1)))
+        return 0x87e03c410060ll + 0x1000000ll * ((a) & 0x1) + 0x100000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b==0)))
         return 0x87e03c410060ll + 0x1000000ll * ((a) & 0x0) + 0x100000ll * ((b) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b==0)))
@@ -8536,6 +11162,8 @@ static inline uint64_t CAVM_MCCX_MCIX_RAS_ERR01MISC1(unsigned long a, unsigned l
 static inline uint64_t CAVM_MCCX_MCIX_RAS_ERR01MISC1(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
+        return 0x87e03c410068ll + 0x1000000ll * ((a) & 0x1) + 0x100000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=1)))
         return 0x87e03c410068ll + 0x1000000ll * ((a) & 0x1) + 0x100000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b==0)))
         return 0x87e03c410068ll + 0x1000000ll * ((a) & 0x0) + 0x100000ll * ((b) & 0x0);
@@ -8601,6 +11229,184 @@ union cavm_mccx_mcix_ras_err01status
                                                                  * A corrected error is detected and the corrected error counter overflows (or
                                                                  is not implemented).
 
+                                                                 For more information see the ARM RAS standard. */
+        uint64_t mv                    : 1;  /**< [ 26: 26](R/W1C/H) Miscellaneous registers valid. The *_RAS_ERRnMISC0 and *_RAS_ERRnMISC1 contains
+                                                                 additional information for an error recorded by this record.
+
+                                                                 Direct writes to this bit are ignored if any of [CE], [DE], or [UE] is set, and
+                                                                 the highest priority of these is not being cleared to 0 in the same write. This
+                                                                 bit is read/write-one-to-clear. */
+        uint64_t ce                    : 2;  /**< [ 25: 24](R/W1C/H) Corrected error:
+                                                                   0x0 = No corrected errors recorded.
+                                                                   0x1 = At least one transient corrected error recored.
+                                                                   0x2 = At least one corrected error recored.
+                                                                   0x3 = At least one persistent corrected error recored.
+
+                                                                 For CNXXXX, only codes 0x0 and 0x3 are used. */
+        uint64_t de                    : 1;  /**< [ 23: 23](R/W1C/H) Deferred error(s). At least one error was not corrected and deferred.
+
+                                                                 Direct writes to this bit are ignored if [OF] is set and is not being cleared
+                                                                 to 0 in the same write. */
+        uint64_t pn                    : 1;  /**< [ 22: 22](R/W1C/H) Poison.
+                                                                 0 = Uncorrected or deferred error from a corrupted value. If a node
+                                                                 detects a corrupted value and defers the error by producing poison, then this
+                                                                 bit is set to 0 at the producer node.
+
+                                                                 1 = Uncorrected error or Deferred error from a poisoned value. Indicates that an
+                                                                 error was due to detecting a poison value rather than detecting a corrupted
+                                                                 value. */
+        uint64_t uet                   : 2;  /**< [ 21: 20](R/W1C/H) Uncorrected error type. Describes the state of the component after detecting
+                                                                 or consuming an uncorrected error. Enumerated by RAS_UET_E.
+
+                                                                 Valid only if [UE] is set, otherwise 0x0.
+
+                                                                 Direct writes to this field are ignored if any of [CE], [DE], or [UE] is set,
+                                                                 and the highest priority of these is not being cleared to 0 in the same write. */
+        uint64_t reserved_16_19        : 4;
+        uint64_t ierr                  : 8;  /**< [ 15:  8](RO) Implementation-defined error code.
+
+                                                                 Direct writes to this field are ignored if any of the [CE], [DE], or [UE] is
+                                                                 set, and the highest priority of these is not being cleared to 0 in the same
+                                                                 write. */
+        uint64_t serr                  : 8;  /**< [  7:  0](RO) Architecturally-defined primary error code. Indicates the type of error
+                                                                 enumerated by RAS_SERR_E.
+
+                                                                 Direct writes to this field are ignored if any of the [CE], [DE], or [UE] is
+                                                                 set, and the highest priority of these is not being cleared to 0 in the same
+                                                                 write.
+
+                                                                 For CNXXXX, value depends on the error record. */
+#else /* Word 0 - Little Endian */
+        uint64_t serr                  : 8;  /**< [  7:  0](RO) Architecturally-defined primary error code. Indicates the type of error
+                                                                 enumerated by RAS_SERR_E.
+
+                                                                 Direct writes to this field are ignored if any of the [CE], [DE], or [UE] is
+                                                                 set, and the highest priority of these is not being cleared to 0 in the same
+                                                                 write.
+
+                                                                 For CNXXXX, value depends on the error record. */
+        uint64_t ierr                  : 8;  /**< [ 15:  8](RO) Implementation-defined error code.
+
+                                                                 Direct writes to this field are ignored if any of the [CE], [DE], or [UE] is
+                                                                 set, and the highest priority of these is not being cleared to 0 in the same
+                                                                 write. */
+        uint64_t reserved_16_19        : 4;
+        uint64_t uet                   : 2;  /**< [ 21: 20](R/W1C/H) Uncorrected error type. Describes the state of the component after detecting
+                                                                 or consuming an uncorrected error. Enumerated by RAS_UET_E.
+
+                                                                 Valid only if [UE] is set, otherwise 0x0.
+
+                                                                 Direct writes to this field are ignored if any of [CE], [DE], or [UE] is set,
+                                                                 and the highest priority of these is not being cleared to 0 in the same write. */
+        uint64_t pn                    : 1;  /**< [ 22: 22](R/W1C/H) Poison.
+                                                                 0 = Uncorrected or deferred error from a corrupted value. If a node
+                                                                 detects a corrupted value and defers the error by producing poison, then this
+                                                                 bit is set to 0 at the producer node.
+
+                                                                 1 = Uncorrected error or Deferred error from a poisoned value. Indicates that an
+                                                                 error was due to detecting a poison value rather than detecting a corrupted
+                                                                 value. */
+        uint64_t de                    : 1;  /**< [ 23: 23](R/W1C/H) Deferred error(s). At least one error was not corrected and deferred.
+
+                                                                 Direct writes to this bit are ignored if [OF] is set and is not being cleared
+                                                                 to 0 in the same write. */
+        uint64_t ce                    : 2;  /**< [ 25: 24](R/W1C/H) Corrected error:
+                                                                   0x0 = No corrected errors recorded.
+                                                                   0x1 = At least one transient corrected error recored.
+                                                                   0x2 = At least one corrected error recored.
+                                                                   0x3 = At least one persistent corrected error recored.
+
+                                                                 For CNXXXX, only codes 0x0 and 0x3 are used. */
+        uint64_t mv                    : 1;  /**< [ 26: 26](R/W1C/H) Miscellaneous registers valid. The *_RAS_ERRnMISC0 and *_RAS_ERRnMISC1 contains
+                                                                 additional information for an error recorded by this record.
+
+                                                                 Direct writes to this bit are ignored if any of [CE], [DE], or [UE] is set, and
+                                                                 the highest priority of these is not being cleared to 0 in the same write. This
+                                                                 bit is read/write-one-to-clear. */
+        uint64_t of                    : 1;  /**< [ 27: 27](R/W1C/H) Overflow. Multiple errors detected. This bit is set when:
+
+                                                                 * An uncorrected error is detected and the previous error syndrome is kept
+                                                                 because [UE] = 1.
+
+                                                                 * A deferred error is detected and the previous error syndrome is kept is
+                                                                 discarded because [DE] = 1.
+
+                                                                 * A corrected error is detected and the corrected error counter overflows (or
+                                                                 is not implemented).
+
+                                                                 For more information see the ARM RAS standard. */
+        uint64_t er                    : 1;  /**< [ 28: 28](RO) Error reported.
+                                                                 0 = No external abort reported.
+                                                                 1 = The applicable one of the *_RAS_ERRnCTLR[WUE],[RUE],[UE] bits was set when
+                                                                 an uncorrected error was detected, meaning an external abort was signaled to the
+                                                                 master making the access.
+
+                                                                 Direct writes to this bit are ignored if any of [CE], [DE], or [UE] is set, and
+                                                                 the highest priority of these is not being cleared to 0 in the same write.
+
+                                                                 Cleared for a corrected error. */
+        uint64_t ue                    : 1;  /**< [ 29: 29](R/W1C/H) Uncorrected error(s).
+                                                                 0 = No errors that could not be corrected or deferred.
+                                                                 1 = At least one error detected that has not been corrected or deferred.
+
+                                                                 Direct writes to this bit are ignored if [OF] is set and is not being cleared to
+                                                                 zero in the same write. */
+        uint64_t v                     : 1;  /**< [ 30: 30](R/W1C/H) Status register valid.  *_RAS_ERRnSTATUS valid. At least one error has been recorded.
+
+                                                                 Direct writes to this bit are ignored if any of the [UE], [DE], or [CE] bits is
+                                                                 set and is not being cleared to 0 in the same write. */
+        uint64_t av                    : 1;  /**< [ 31: 31](R/W1C/H) Address valid. *_RAS_ERRnADDR contains a physical address associated with the
+                                                                 highest priority error recorded by this record.
+
+                                                                 Direct writes to this bit are ignored if any of the [CE], [DE], or [UE] bits is
+                                                                 set, and the highest priority of these is not being cleared to 0 in the same
+                                                                 write. */
+        uint64_t reserved_32_63        : 32;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_mccx_mcix_ras_err01status_s cn9; */
+    /* struct cavm_mccx_mcix_ras_err01status_s cn96xxp1; */
+    struct cavm_mccx_mcix_ras_err01status_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_32_63        : 32;
+        uint64_t av                    : 1;  /**< [ 31: 31](R/W1C/H) Address valid. *_RAS_ERRnADDR contains a physical address associated with the
+                                                                 highest priority error recorded by this record.
+
+                                                                 Direct writes to this bit are ignored if any of the [CE], [DE], or [UE] bits is
+                                                                 set, and the highest priority of these is not being cleared to 0 in the same
+                                                                 write. */
+        uint64_t v                     : 1;  /**< [ 30: 30](R/W1C/H) Status register valid.  *_RAS_ERRnSTATUS valid. At least one error has been recorded.
+
+                                                                 Direct writes to this bit are ignored if any of the [UE], [DE], or [CE] bits is
+                                                                 set and is not being cleared to 0 in the same write. */
+        uint64_t ue                    : 1;  /**< [ 29: 29](R/W1C/H) Uncorrected error(s).
+                                                                 0 = No errors that could not be corrected or deferred.
+                                                                 1 = At least one error detected that has not been corrected or deferred.
+
+                                                                 Direct writes to this bit are ignored if [OF] is set and is not being cleared to
+                                                                 zero in the same write. */
+        uint64_t er                    : 1;  /**< [ 28: 28](RO) Error reported.
+                                                                 0 = No external abort reported.
+                                                                 1 = The applicable one of the *_RAS_ERRnCTLR[WUE],[RUE],[UE] bits was set when
+                                                                 an uncorrected error was detected, meaning an external abort was signaled to the
+                                                                 master making the access.
+
+                                                                 Direct writes to this bit are ignored if any of [CE], [DE], or [UE] is set, and
+                                                                 the highest priority of these is not being cleared to 0 in the same write.
+
+                                                                 Cleared for a corrected error. */
+        uint64_t of                    : 1;  /**< [ 27: 27](R/W1C/H) Overflow. Multiple errors detected. This bit is set when:
+
+                                                                 * An uncorrected error is detected and the previous error syndrome is kept
+                                                                 because [UE] = 1.
+
+                                                                 * A deferred error is detected and the previous error syndrome is kept is
+                                                                 discarded because [DE] = 1.
+
+                                                                 * A corrected error is detected and the corrected error counter overflows (or
+                                                                 is not implemented).
+
                                                                  For more information see the Arm RAS standard. */
         uint64_t mv                    : 1;  /**< [ 26: 26](R/W1C/H) Miscellaneous registers valid. The *_RAS_ERRnMISC0 and *_RAS_ERRnMISC1 contains
                                                                  additional information for an error recorded by this record.
@@ -8735,8 +11541,10 @@ union cavm_mccx_mcix_ras_err01status
                                                                  write. */
         uint64_t reserved_32_63        : 32;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_mccx_mcix_ras_err01status_s cn; */
+    } cn96xxp3;
+    /* struct cavm_mccx_mcix_ras_err01status_cn96xxp3 cn98xx; */
+    /* struct cavm_mccx_mcix_ras_err01status_cn96xxp3 cnf95xx; */
+    /* struct cavm_mccx_mcix_ras_err01status_cn96xxp3 loki; */
 };
 typedef union cavm_mccx_mcix_ras_err01status cavm_mccx_mcix_ras_err01status_t;
 
@@ -8744,6 +11552,8 @@ static inline uint64_t CAVM_MCCX_MCIX_RAS_ERR01STATUS(unsigned long a, unsigned 
 static inline uint64_t CAVM_MCCX_MCIX_RAS_ERR01STATUS(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
+        return 0x87e03c410050ll + 0x1000000ll * ((a) & 0x1) + 0x100000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=1)))
         return 0x87e03c410050ll + 0x1000000ll * ((a) & 0x1) + 0x100000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b==0)))
         return 0x87e03c410050ll + 0x1000000ll * ((a) & 0x0) + 0x100000ll * ((b) & 0x0);
@@ -8786,6 +11596,8 @@ static inline uint64_t CAVM_MCCX_MCIX_RAS_ERRCIDR0(unsigned long a, unsigned lon
 static inline uint64_t CAVM_MCCX_MCIX_RAS_ERRCIDR0(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
+        return 0x87e03c410ff0ll + 0x1000000ll * ((a) & 0x1) + 0x100000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=1)))
         return 0x87e03c410ff0ll + 0x1000000ll * ((a) & 0x1) + 0x100000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b==0)))
         return 0x87e03c410ff0ll + 0x1000000ll * ((a) & 0x0) + 0x100000ll * ((b) & 0x0);
@@ -8831,6 +11643,8 @@ static inline uint64_t CAVM_MCCX_MCIX_RAS_ERRCIDR1(unsigned long a, unsigned lon
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c410ff4ll + 0x1000000ll * ((a) & 0x1) + 0x100000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=1)))
+        return 0x87e03c410ff4ll + 0x1000000ll * ((a) & 0x1) + 0x100000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b==0)))
         return 0x87e03c410ff4ll + 0x1000000ll * ((a) & 0x0) + 0x100000ll * ((b) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b==0)))
@@ -8873,6 +11687,8 @@ static inline uint64_t CAVM_MCCX_MCIX_RAS_ERRCIDR2(unsigned long a, unsigned lon
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c410ff8ll + 0x1000000ll * ((a) & 0x1) + 0x100000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=1)))
+        return 0x87e03c410ff8ll + 0x1000000ll * ((a) & 0x1) + 0x100000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b==0)))
         return 0x87e03c410ff8ll + 0x1000000ll * ((a) & 0x0) + 0x100000ll * ((b) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b==0)))
@@ -8914,6 +11730,8 @@ static inline uint64_t CAVM_MCCX_MCIX_RAS_ERRCIDR3(unsigned long a, unsigned lon
 static inline uint64_t CAVM_MCCX_MCIX_RAS_ERRCIDR3(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
+        return 0x87e03c410ffcll + 0x1000000ll * ((a) & 0x1) + 0x100000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=1)))
         return 0x87e03c410ffcll + 0x1000000ll * ((a) & 0x1) + 0x100000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b==0)))
         return 0x87e03c410ffcll + 0x1000000ll * ((a) & 0x0) + 0x100000ll * ((b) & 0x0);
@@ -8974,6 +11792,8 @@ static inline uint64_t CAVM_MCCX_MCIX_RAS_ERRDEVAFF(unsigned long a, unsigned lo
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c410fa8ll + 0x1000000ll * ((a) & 0x1) + 0x100000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=1)))
+        return 0x87e03c410fa8ll + 0x1000000ll * ((a) & 0x1) + 0x100000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b==0)))
         return 0x87e03c410fa8ll + 0x1000000ll * ((a) & 0x0) + 0x100000ll * ((b) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b==0)))
@@ -9000,6 +11820,30 @@ union cavm_mccx_mcix_ras_errdevarch
     struct cavm_mccx_mcix_ras_errdevarch_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t architect             : 11; /**< [ 31: 21](RO) Defines the architecture of the component. Indicates ARM. */
+        uint32_t present               : 1;  /**< [ 20: 20](RO) When set to 1, indicates that this register is present. */
+        uint32_t revision              : 4;  /**< [ 19: 16](RO) Defines the architecture revision.
+                                                                 0x0 = RAS system architecture v1.0. */
+        uint32_t archver               : 4;  /**< [ 15: 12](RO) Defines the architecture version of the component.
+                                                                 0x0 = RAS system architecture v1.0. */
+        uint32_t archpart              : 12; /**< [ 11:  0](RO) Defines the architecture of the component.
+                                                                 0xA00 = RAS system architecture. */
+#else /* Word 0 - Little Endian */
+        uint32_t archpart              : 12; /**< [ 11:  0](RO) Defines the architecture of the component.
+                                                                 0xA00 = RAS system architecture. */
+        uint32_t archver               : 4;  /**< [ 15: 12](RO) Defines the architecture version of the component.
+                                                                 0x0 = RAS system architecture v1.0. */
+        uint32_t revision              : 4;  /**< [ 19: 16](RO) Defines the architecture revision.
+                                                                 0x0 = RAS system architecture v1.0. */
+        uint32_t present               : 1;  /**< [ 20: 20](RO) When set to 1, indicates that this register is present. */
+        uint32_t architect             : 11; /**< [ 31: 21](RO) Defines the architecture of the component. Indicates ARM. */
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_mccx_mcix_ras_errdevarch_s cn9; */
+    /* struct cavm_mccx_mcix_ras_errdevarch_s cn96xxp1; */
+    struct cavm_mccx_mcix_ras_errdevarch_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t architect             : 11; /**< [ 31: 21](RO) Defines the architecture of the component. Indicates Arm. */
         uint32_t present               : 1;  /**< [ 20: 20](RO) When set to 1, indicates that this register is present. */
         uint32_t revision              : 4;  /**< [ 19: 16](RO) Defines the architecture revision.
@@ -9018,8 +11862,10 @@ union cavm_mccx_mcix_ras_errdevarch
         uint32_t present               : 1;  /**< [ 20: 20](RO) When set to 1, indicates that this register is present. */
         uint32_t architect             : 11; /**< [ 31: 21](RO) Defines the architecture of the component. Indicates Arm. */
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_mccx_mcix_ras_errdevarch_s cn; */
+    } cn96xxp3;
+    /* struct cavm_mccx_mcix_ras_errdevarch_cn96xxp3 cn98xx; */
+    /* struct cavm_mccx_mcix_ras_errdevarch_cn96xxp3 cnf95xx; */
+    /* struct cavm_mccx_mcix_ras_errdevarch_cn96xxp3 loki; */
 };
 typedef union cavm_mccx_mcix_ras_errdevarch cavm_mccx_mcix_ras_errdevarch_t;
 
@@ -9027,6 +11873,8 @@ static inline uint64_t CAVM_MCCX_MCIX_RAS_ERRDEVARCH(unsigned long a, unsigned l
 static inline uint64_t CAVM_MCCX_MCIX_RAS_ERRDEVARCH(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
+        return 0x87e03c410fbcll + 0x1000000ll * ((a) & 0x1) + 0x100000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=1)))
         return 0x87e03c410fbcll + 0x1000000ll * ((a) & 0x1) + 0x100000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b==0)))
         return 0x87e03c410fbcll + 0x1000000ll * ((a) & 0x0) + 0x100000ll * ((b) & 0x0);
@@ -9070,6 +11918,8 @@ static inline uint64_t CAVM_MCCX_MCIX_RAS_ERRDEVID(unsigned long a, unsigned lon
 static inline uint64_t CAVM_MCCX_MCIX_RAS_ERRDEVID(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
+        return 0x87e03c410fc8ll + 0x1000000ll * ((a) & 0x1) + 0x100000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=1)))
         return 0x87e03c410fc8ll + 0x1000000ll * ((a) & 0x1) + 0x100000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b==0)))
         return 0x87e03c410fc8ll + 0x1000000ll * ((a) & 0x0) + 0x100000ll * ((b) & 0x0);
@@ -9125,6 +11975,8 @@ static inline uint64_t CAVM_MCCX_MCIX_RAS_ERRGSR0(unsigned long a, unsigned long
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c410e00ll + 0x1000000ll * ((a) & 0x1) + 0x100000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=1)))
+        return 0x87e03c410e00ll + 0x1000000ll * ((a) & 0x1) + 0x100000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b==0)))
         return 0x87e03c410e00ll + 0x1000000ll * ((a) & 0x0) + 0x100000ll * ((b) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b==0)))
@@ -9171,6 +12023,8 @@ static inline uint64_t CAVM_MCCX_MCIX_RAS_ERRIRQCR0(unsigned long a, unsigned lo
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c410e80ll + 0x1000000ll * ((a) & 0x1) + 0x100000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=1)))
+        return 0x87e03c410e80ll + 0x1000000ll * ((a) & 0x1) + 0x100000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b==0)))
         return 0x87e03c410e80ll + 0x1000000ll * ((a) & 0x0) + 0x100000ll * ((b) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b==0)))
@@ -9210,6 +12064,8 @@ static inline uint64_t CAVM_MCCX_MCIX_RAS_ERRIRQCR1(unsigned long a, unsigned lo
 static inline uint64_t CAVM_MCCX_MCIX_RAS_ERRIRQCR1(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
+        return 0x87e03c410e88ll + 0x1000000ll * ((a) & 0x1) + 0x100000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=1)))
         return 0x87e03c410e88ll + 0x1000000ll * ((a) & 0x1) + 0x100000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b==0)))
         return 0x87e03c410e88ll + 0x1000000ll * ((a) & 0x0) + 0x100000ll * ((b) & 0x0);
@@ -9251,6 +12107,8 @@ static inline uint64_t CAVM_MCCX_MCIX_RAS_ERRIRQCR2(unsigned long a, unsigned lo
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c410e90ll + 0x1000000ll * ((a) & 0x1) + 0x100000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=1)))
+        return 0x87e03c410e90ll + 0x1000000ll * ((a) & 0x1) + 0x100000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b==0)))
         return 0x87e03c410e90ll + 0x1000000ll * ((a) & 0x0) + 0x100000ll * ((b) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b==0)))
@@ -9290,6 +12148,8 @@ static inline uint64_t CAVM_MCCX_MCIX_RAS_ERRIRQCR3(unsigned long a, unsigned lo
 static inline uint64_t CAVM_MCCX_MCIX_RAS_ERRIRQCR3(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
+        return 0x87e03c410e98ll + 0x1000000ll * ((a) & 0x1) + 0x100000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=1)))
         return 0x87e03c410e98ll + 0x1000000ll * ((a) & 0x1) + 0x100000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b==0)))
         return 0x87e03c410e98ll + 0x1000000ll * ((a) & 0x0) + 0x100000ll * ((b) & 0x0);
@@ -9387,6 +12247,8 @@ static inline uint64_t CAVM_MCCX_MCIX_RAS_ERRIRQSR(unsigned long a, unsigned lon
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c410ef8ll + 0x1000000ll * ((a) & 0x1) + 0x100000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=1)))
+        return 0x87e03c410ef8ll + 0x1000000ll * ((a) & 0x1) + 0x100000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b==0)))
         return 0x87e03c410ef8ll + 0x1000000ll * ((a) & 0x0) + 0x100000ll * ((b) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b==0)))
@@ -9429,6 +12291,8 @@ static inline uint64_t CAVM_MCCX_MCIX_RAS_ERRPIDR0(unsigned long a, unsigned lon
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c410fe0ll + 0x1000000ll * ((a) & 0x1) + 0x100000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=1)))
+        return 0x87e03c410fe0ll + 0x1000000ll * ((a) & 0x1) + 0x100000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b==0)))
         return 0x87e03c410fe0ll + 0x1000000ll * ((a) & 0x0) + 0x100000ll * ((b) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b==0)))
@@ -9456,6 +12320,20 @@ union cavm_mccx_mcix_ras_errpidr1
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_8_31         : 24;
+        uint32_t des_0                 : 4;  /**< [  7:  4](RO) JEP106 identification code \<3:0\>. Cavium code is 0x4C. */
+        uint32_t part_1                : 4;  /**< [  3:  0](RO) Part number \<11:8\>.  Indicates PCC_PIDR_PARTNUM1_E::COMP. */
+#else /* Word 0 - Little Endian */
+        uint32_t part_1                : 4;  /**< [  3:  0](RO) Part number \<11:8\>.  Indicates PCC_PIDR_PARTNUM1_E::COMP. */
+        uint32_t des_0                 : 4;  /**< [  7:  4](RO) JEP106 identification code \<3:0\>. Cavium code is 0x4C. */
+        uint32_t reserved_8_31         : 24;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_mccx_mcix_ras_errpidr1_s cn9; */
+    /* struct cavm_mccx_mcix_ras_errpidr1_s cn96xxp1; */
+    struct cavm_mccx_mcix_ras_errpidr1_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t reserved_8_31         : 24;
         uint32_t des_0                 : 4;  /**< [  7:  4](RO) JEP106 identification code \<3:0\>. Marvell (Cavium) code is 0x4C. */
         uint32_t part_1                : 4;  /**< [  3:  0](RO) Part number \<11:8\>.  Indicates PCC_PIDR_PARTNUM1_E::COMP. */
 #else /* Word 0 - Little Endian */
@@ -9463,8 +12341,10 @@ union cavm_mccx_mcix_ras_errpidr1
         uint32_t des_0                 : 4;  /**< [  7:  4](RO) JEP106 identification code \<3:0\>. Marvell (Cavium) code is 0x4C. */
         uint32_t reserved_8_31         : 24;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_mccx_mcix_ras_errpidr1_s cn; */
+    } cn96xxp3;
+    /* struct cavm_mccx_mcix_ras_errpidr1_cn96xxp3 cn98xx; */
+    /* struct cavm_mccx_mcix_ras_errpidr1_cn96xxp3 cnf95xx; */
+    /* struct cavm_mccx_mcix_ras_errpidr1_cn96xxp3 loki; */
 };
 typedef union cavm_mccx_mcix_ras_errpidr1 cavm_mccx_mcix_ras_errpidr1_t;
 
@@ -9472,6 +12352,8 @@ static inline uint64_t CAVM_MCCX_MCIX_RAS_ERRPIDR1(unsigned long a, unsigned lon
 static inline uint64_t CAVM_MCCX_MCIX_RAS_ERRPIDR1(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
+        return 0x87e03c410fe4ll + 0x1000000ll * ((a) & 0x1) + 0x100000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=1)))
         return 0x87e03c410fe4ll + 0x1000000ll * ((a) & 0x1) + 0x100000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b==0)))
         return 0x87e03c410fe4ll + 0x1000000ll * ((a) & 0x0) + 0x100000ll * ((b) & 0x0);
@@ -9502,30 +12384,33 @@ union cavm_mccx_mcix_ras_errpidr2
         uint32_t reserved_8_31         : 24;
         uint32_t revision              : 4;  /**< [  7:  4](RO) Implementation-defined RAS revision. */
         uint32_t jedec                 : 1;  /**< [  3:  3](RO) JEDEC assigned. */
-        uint32_t des_1                 : 3;  /**< [  2:  0](RO) JEP106 identification code \<6:4\>. Marvell (Cavium) code is 0x4C. */
+        uint32_t des_1                 : 3;  /**< [  2:  0](RO) JEP106 identification code \<6:4\>. Cavium code is 0x4C. */
 #else /* Word 0 - Little Endian */
-        uint32_t des_1                 : 3;  /**< [  2:  0](RO) JEP106 identification code \<6:4\>. Marvell (Cavium) code is 0x4C. */
+        uint32_t des_1                 : 3;  /**< [  2:  0](RO) JEP106 identification code \<6:4\>. Cavium code is 0x4C. */
         uint32_t jedec                 : 1;  /**< [  3:  3](RO) JEDEC assigned. */
         uint32_t revision              : 4;  /**< [  7:  4](RO) Implementation-defined RAS revision. */
         uint32_t reserved_8_31         : 24;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mccx_mcix_ras_errpidr2_s cn96xx; */
-    struct cavm_mccx_mcix_ras_errpidr2_cnf95xx
+    /* struct cavm_mccx_mcix_ras_errpidr2_s cn9; */
+    /* struct cavm_mccx_mcix_ras_errpidr2_s cn96xxp1; */
+    struct cavm_mccx_mcix_ras_errpidr2_cn96xxp3
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_8_31         : 24;
         uint32_t revision              : 4;  /**< [  7:  4](RO) Implementation-defined RAS revision. */
         uint32_t jedec                 : 1;  /**< [  3:  3](RO) JEDEC assigned. */
-        uint32_t des_1                 : 3;  /**< [  2:  0](RO) JEP106 identification code \<6:4\>. Cavium code is 0x4C. */
+        uint32_t des_1                 : 3;  /**< [  2:  0](RO) JEP106 identification code \<6:4\>. Marvell (Cavium) code is 0x4C. */
 #else /* Word 0 - Little Endian */
-        uint32_t des_1                 : 3;  /**< [  2:  0](RO) JEP106 identification code \<6:4\>. Cavium code is 0x4C. */
+        uint32_t des_1                 : 3;  /**< [  2:  0](RO) JEP106 identification code \<6:4\>. Marvell (Cavium) code is 0x4C. */
         uint32_t jedec                 : 1;  /**< [  3:  3](RO) JEDEC assigned. */
         uint32_t revision              : 4;  /**< [  7:  4](RO) Implementation-defined RAS revision. */
         uint32_t reserved_8_31         : 24;
 #endif /* Word 0 - End */
-    } cnf95xx;
-    /* struct cavm_mccx_mcix_ras_errpidr2_cnf95xx loki; */
+    } cn96xxp3;
+    /* struct cavm_mccx_mcix_ras_errpidr2_s cn98xx; */
+    /* struct cavm_mccx_mcix_ras_errpidr2_s cnf95xx; */
+    /* struct cavm_mccx_mcix_ras_errpidr2_s loki; */
 };
 typedef union cavm_mccx_mcix_ras_errpidr2 cavm_mccx_mcix_ras_errpidr2_t;
 
@@ -9533,6 +12418,8 @@ static inline uint64_t CAVM_MCCX_MCIX_RAS_ERRPIDR2(unsigned long a, unsigned lon
 static inline uint64_t CAVM_MCCX_MCIX_RAS_ERRPIDR2(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
+        return 0x87e03c410fe8ll + 0x1000000ll * ((a) & 0x1) + 0x100000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=1)))
         return 0x87e03c410fe8ll + 0x1000000ll * ((a) & 0x1) + 0x100000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b==0)))
         return 0x87e03c410fe8ll + 0x1000000ll * ((a) & 0x0) + 0x100000ll * ((b) & 0x0);
@@ -9580,6 +12467,8 @@ static inline uint64_t CAVM_MCCX_MCIX_RAS_ERRPIDR3(unsigned long a, unsigned lon
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c410fecll + 0x1000000ll * ((a) & 0x1) + 0x100000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=1)))
+        return 0x87e03c410fecll + 0x1000000ll * ((a) & 0x1) + 0x100000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b==0)))
         return 0x87e03c410fecll + 0x1000000ll * ((a) & 0x0) + 0x100000ll * ((b) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b==0)))
@@ -9609,30 +12498,33 @@ union cavm_mccx_mcix_ras_errpidr4
         uint32_t reserved_8_31         : 24;
         uint32_t fourkbcount           : 4;  /**< [  7:  4](RO) Size of the component. Log\<sub\>2\</sub\> of the number of 4 KB pages from the
                                                                  start of the component to the end of the component ID registers. */
-        uint32_t jep106cont            : 4;  /**< [  3:  0](RO) JEP106 continuation code, least significant nibble. Indicates Marvell (Cavium). */
+        uint32_t jep106cont            : 4;  /**< [  3:  0](RO) JEP106 continuation code, least significant nibble. Indicates Cavium. */
 #else /* Word 0 - Little Endian */
-        uint32_t jep106cont            : 4;  /**< [  3:  0](RO) JEP106 continuation code, least significant nibble. Indicates Marvell (Cavium). */
+        uint32_t jep106cont            : 4;  /**< [  3:  0](RO) JEP106 continuation code, least significant nibble. Indicates Cavium. */
         uint32_t fourkbcount           : 4;  /**< [  7:  4](RO) Size of the component. Log\<sub\>2\</sub\> of the number of 4 KB pages from the
                                                                  start of the component to the end of the component ID registers. */
         uint32_t reserved_8_31         : 24;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mccx_mcix_ras_errpidr4_s cn96xx; */
-    struct cavm_mccx_mcix_ras_errpidr4_cnf95xx
+    /* struct cavm_mccx_mcix_ras_errpidr4_s cn9; */
+    /* struct cavm_mccx_mcix_ras_errpidr4_s cn96xxp1; */
+    struct cavm_mccx_mcix_ras_errpidr4_cn96xxp3
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_8_31         : 24;
         uint32_t fourkbcount           : 4;  /**< [  7:  4](RO) Size of the component. Log\<sub\>2\</sub\> of the number of 4 KB pages from the
                                                                  start of the component to the end of the component ID registers. */
-        uint32_t jep106cont            : 4;  /**< [  3:  0](RO) JEP106 continuation code, least significant nibble. Indicates Cavium. */
+        uint32_t jep106cont            : 4;  /**< [  3:  0](RO) JEP106 continuation code, least significant nibble. Indicates Marvell (Cavium). */
 #else /* Word 0 - Little Endian */
-        uint32_t jep106cont            : 4;  /**< [  3:  0](RO) JEP106 continuation code, least significant nibble. Indicates Cavium. */
+        uint32_t jep106cont            : 4;  /**< [  3:  0](RO) JEP106 continuation code, least significant nibble. Indicates Marvell (Cavium). */
         uint32_t fourkbcount           : 4;  /**< [  7:  4](RO) Size of the component. Log\<sub\>2\</sub\> of the number of 4 KB pages from the
                                                                  start of the component to the end of the component ID registers. */
         uint32_t reserved_8_31         : 24;
 #endif /* Word 0 - End */
-    } cnf95xx;
-    /* struct cavm_mccx_mcix_ras_errpidr4_cnf95xx loki; */
+    } cn96xxp3;
+    /* struct cavm_mccx_mcix_ras_errpidr4_s cn98xx; */
+    /* struct cavm_mccx_mcix_ras_errpidr4_s cnf95xx; */
+    /* struct cavm_mccx_mcix_ras_errpidr4_s loki; */
 };
 typedef union cavm_mccx_mcix_ras_errpidr4 cavm_mccx_mcix_ras_errpidr4_t;
 
@@ -9640,6 +12532,8 @@ static inline uint64_t CAVM_MCCX_MCIX_RAS_ERRPIDR4(unsigned long a, unsigned lon
 static inline uint64_t CAVM_MCCX_MCIX_RAS_ERRPIDR4(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
+        return 0x87e03c410fd0ll + 0x1000000ll * ((a) & 0x1) + 0x100000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=1)))
         return 0x87e03c410fd0ll + 0x1000000ll * ((a) & 0x1) + 0x100000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b==0)))
         return 0x87e03c410fd0ll + 0x1000000ll * ((a) & 0x0) + 0x100000ll * ((b) & 0x0);
@@ -9681,6 +12575,8 @@ static inline uint64_t CAVM_MCCX_MCIX_RAS_ERRPIDR5(unsigned long a, unsigned lon
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c410fd4ll + 0x1000000ll * ((a) & 0x1) + 0x100000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=1)))
+        return 0x87e03c410fd4ll + 0x1000000ll * ((a) & 0x1) + 0x100000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b==0)))
         return 0x87e03c410fd4ll + 0x1000000ll * ((a) & 0x0) + 0x100000ll * ((b) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b==0)))
@@ -9721,6 +12617,8 @@ static inline uint64_t CAVM_MCCX_MCIX_RAS_ERRPIDR6(unsigned long a, unsigned lon
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c410fd8ll + 0x1000000ll * ((a) & 0x1) + 0x100000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=1)))
+        return 0x87e03c410fd8ll + 0x1000000ll * ((a) & 0x1) + 0x100000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b==0)))
         return 0x87e03c410fd8ll + 0x1000000ll * ((a) & 0x0) + 0x100000ll * ((b) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b==0)))
@@ -9760,6 +12658,8 @@ static inline uint64_t CAVM_MCCX_MCIX_RAS_ERRPIDR7(unsigned long a, unsigned lon
 static inline uint64_t CAVM_MCCX_MCIX_RAS_ERRPIDR7(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
+        return 0x87e03c410fdcll + 0x1000000ll * ((a) & 0x1) + 0x100000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=1)))
         return 0x87e03c410fdcll + 0x1000000ll * ((a) & 0x1) + 0x100000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b==0)))
         return 0x87e03c410fdcll + 0x1000000ll * ((a) & 0x0) + 0x100000ll * ((b) & 0x0);
@@ -9809,6 +12709,8 @@ static inline uint64_t CAVM_MCCX_MCIX_RAS_INT(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c400300ll + 0x1000000ll * ((a) & 0x1) + 0x100000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=1)))
+        return 0x87e03c400300ll + 0x1000000ll * ((a) & 0x1) + 0x100000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b==0)))
         return 0x87e03c400300ll + 0x1000000ll * ((a) & 0x0) + 0x100000ll * ((b) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b==0)))
@@ -9844,7 +12746,9 @@ union cavm_mccx_mcix_ras_int_ena_w1c
         uint64_t reserved_2_63         : 62;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_mccx_mcix_ras_int_ena_w1c_s cn9; */
     /* struct cavm_mccx_mcix_ras_int_ena_w1c_s cn96xx; */
+    /* struct cavm_mccx_mcix_ras_int_ena_w1c_s cn98xx; */
     struct cavm_mccx_mcix_ras_int_ena_w1c_cnf95xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -9865,6 +12769,8 @@ static inline uint64_t CAVM_MCCX_MCIX_RAS_INT_ENA_W1C(unsigned long a, unsigned 
 static inline uint64_t CAVM_MCCX_MCIX_RAS_INT_ENA_W1C(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
+        return 0x87e03c400310ll + 0x1000000ll * ((a) & 0x1) + 0x100000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=1)))
         return 0x87e03c400310ll + 0x1000000ll * ((a) & 0x1) + 0x100000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b==0)))
         return 0x87e03c400310ll + 0x1000000ll * ((a) & 0x0) + 0x100000ll * ((b) & 0x0);
@@ -9901,7 +12807,9 @@ union cavm_mccx_mcix_ras_int_ena_w1s
         uint64_t reserved_2_63         : 62;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_mccx_mcix_ras_int_ena_w1s_s cn9; */
     /* struct cavm_mccx_mcix_ras_int_ena_w1s_s cn96xx; */
+    /* struct cavm_mccx_mcix_ras_int_ena_w1s_s cn98xx; */
     struct cavm_mccx_mcix_ras_int_ena_w1s_cnf95xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -9922,6 +12830,8 @@ static inline uint64_t CAVM_MCCX_MCIX_RAS_INT_ENA_W1S(unsigned long a, unsigned 
 static inline uint64_t CAVM_MCCX_MCIX_RAS_INT_ENA_W1S(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
+        return 0x87e03c400318ll + 0x1000000ll * ((a) & 0x1) + 0x100000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=1)))
         return 0x87e03c400318ll + 0x1000000ll * ((a) & 0x1) + 0x100000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b==0)))
         return 0x87e03c400318ll + 0x1000000ll * ((a) & 0x0) + 0x100000ll * ((b) & 0x0);
@@ -9969,6 +12879,8 @@ static inline uint64_t CAVM_MCCX_MCIX_RAS_INT_W1S(unsigned long a, unsigned long
 static inline uint64_t CAVM_MCCX_MCIX_RAS_INT_W1S(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
+        return 0x87e03c400308ll + 0x1000000ll * ((a) & 0x1) + 0x100000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=1)))
         return 0x87e03c400308ll + 0x1000000ll * ((a) & 0x1) + 0x100000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b==0)))
         return 0x87e03c400308ll + 0x1000000ll * ((a) & 0x0) + 0x100000ll * ((b) & 0x0);
@@ -10023,6 +12935,8 @@ static inline uint64_t CAVM_MCCX_MCIX_RDDISLMC_FADR(unsigned long a, unsigned lo
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c400220ll + 0x1000000ll * ((a) & 0x1) + 0x100000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=1)))
+        return 0x87e03c400220ll + 0x1000000ll * ((a) & 0x1) + 0x100000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b==0)))
         return 0x87e03c400220ll + 0x1000000ll * ((a) & 0x0) + 0x100000ll * ((b) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b==0)))
@@ -10071,6 +12985,8 @@ static inline uint64_t CAVM_MCCX_MCIX_SBE_DBG_CNT(unsigned long a, unsigned long
 static inline uint64_t CAVM_MCCX_MCIX_SBE_DBG_CNT(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
+        return 0x87e03c400058ll + 0x1000000ll * ((a) & 0x1) + 0x100000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=1)))
         return 0x87e03c400058ll + 0x1000000ll * ((a) & 0x1) + 0x100000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b==0)))
         return 0x87e03c400058ll + 0x1000000ll * ((a) & 0x0) + 0x100000ll * ((b) & 0x0);
@@ -10125,6 +13041,8 @@ static inline uint64_t CAVM_MCCX_MCIX_WRDISLMC_FADR(unsigned long a, unsigned lo
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e03c400228ll + 0x1000000ll * ((a) & 0x1) + 0x100000ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=1)))
+        return 0x87e03c400228ll + 0x1000000ll * ((a) & 0x1) + 0x100000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b==0)))
         return 0x87e03c400228ll + 0x1000000ll * ((a) & 0x0) + 0x100000ll * ((b) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b==0)))
@@ -10167,6 +13085,8 @@ static inline uint64_t CAVM_MCCX_MSIX_PBAX(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b==0)))
         return 0x87e03cff0000ll + 0x1000000ll * ((a) & 0x1) + 8ll * ((b) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b==0)))
+        return 0x87e03cff0000ll + 0x1000000ll * ((a) & 0x1) + 8ll * ((b) & 0x0);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b==0)))
         return 0x87e03cff0000ll + 0x1000000ll * ((a) & 0x0) + 8ll * ((b) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b==0)))
@@ -10191,6 +13111,30 @@ union cavm_mccx_msix_vecx_addr
 {
     uint64_t u;
     struct cavm_mccx_msix_vecx_addr_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_53_63        : 11;
+        uint64_t addr                  : 51; /**< [ 52:  2](R/W) IOVA to use for MSI-X delivery of this vector. */
+        uint64_t reserved_1            : 1;
+        uint64_t secvec                : 1;  /**< [  0:  0](SR/W) Secure vector.
+                                                                 0 = This vector may be read or written by either secure or nonsecure states.
+                                                                 1 = This vector's MCC()_MSIX_VEC()_ADDR, MCC()_MSIX_VEC()_CTL, and corresponding
+                                                                 bit of MCC()_MSIX_PBA() are RAZ/WI and does not cause a fault when accessed
+                                                                 by the nonsecure world. */
+#else /* Word 0 - Little Endian */
+        uint64_t secvec                : 1;  /**< [  0:  0](SR/W) Secure vector.
+                                                                 0 = This vector may be read or written by either secure or nonsecure states.
+                                                                 1 = This vector's MCC()_MSIX_VEC()_ADDR, MCC()_MSIX_VEC()_CTL, and corresponding
+                                                                 bit of MCC()_MSIX_PBA() are RAZ/WI and does not cause a fault when accessed
+                                                                 by the nonsecure world. */
+        uint64_t reserved_1            : 1;
+        uint64_t addr                  : 51; /**< [ 52:  2](R/W) IOVA to use for MSI-X delivery of this vector. */
+        uint64_t reserved_53_63        : 11;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_mccx_msix_vecx_addr_s cn9; */
+    /* struct cavm_mccx_msix_vecx_addr_s cn96xxp1; */
+    struct cavm_mccx_msix_vecx_addr_cn96xxp3
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_53_63        : 11;
@@ -10239,8 +13183,10 @@ union cavm_mccx_msix_vecx_addr
         uint64_t addr                  : 51; /**< [ 52:  2](R/W) IOVA to use for MSI-X delivery of this vector. */
         uint64_t reserved_53_63        : 11;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_mccx_msix_vecx_addr_s cn; */
+    } cn96xxp3;
+    /* struct cavm_mccx_msix_vecx_addr_cn96xxp3 cn98xx; */
+    /* struct cavm_mccx_msix_vecx_addr_cn96xxp3 cnf95xx; */
+    /* struct cavm_mccx_msix_vecx_addr_cn96xxp3 loki; */
 };
 typedef union cavm_mccx_msix_vecx_addr cavm_mccx_msix_vecx_addr_t;
 
@@ -10249,6 +13195,8 @@ static inline uint64_t CAVM_MCCX_MSIX_VECX_ADDR(unsigned long a, unsigned long b
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=7)))
         return 0x87e03cf00000ll + 0x1000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x7);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=9)))
+        return 0x87e03cf00000ll + 0x1000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0xf);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=6)))
         return 0x87e03cf00000ll + 0x1000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=6)))
@@ -10293,6 +13241,8 @@ static inline uint64_t CAVM_MCCX_MSIX_VECX_CTL(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=7)))
         return 0x87e03cf00008ll + 0x1000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x7);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=9)))
+        return 0x87e03cf00008ll + 0x1000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0xf);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=6)))
         return 0x87e03cf00008ll + 0x1000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=6)))
@@ -10334,6 +13284,8 @@ static inline uint64_t CAVM_MCCX_SCRAMBLE_CFG0(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x87e03c000070ll + 0x1000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
+        return 0x87e03c000070ll + 0x1000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x87e03c000070ll + 0x1000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
@@ -10374,6 +13326,8 @@ static inline uint64_t CAVM_MCCX_SCRAMBLE_CFG1(unsigned long a) __attribute__ ((
 static inline uint64_t CAVM_MCCX_SCRAMBLE_CFG1(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
+        return 0x87e03c000078ll + 0x1000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x87e03c000078ll + 0x1000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x87e03c000078ll + 0x1000000ll * ((a) & 0x0);

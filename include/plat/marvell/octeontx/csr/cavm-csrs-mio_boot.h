@@ -120,6 +120,7 @@ union cavm_mio_boot_bist_stat
         uint64_t reserved_16_63        : 48;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_mio_boot_bist_stat_s cn8; */
     /* struct cavm_mio_boot_bist_stat_s cn81xx; */
     struct cavm_mio_boot_bist_stat_cn83xx
     {
@@ -235,6 +236,7 @@ union cavm_mio_boot_pin_defs
         uint64_t reserved_18_63        : 46;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_mio_boot_pin_defs_s cn8; */
     /* struct cavm_mio_boot_pin_defs_s cn81xx; */
     struct cavm_mio_boot_pin_defs_cn83xx
     {

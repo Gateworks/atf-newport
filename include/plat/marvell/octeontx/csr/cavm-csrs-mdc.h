@@ -74,6 +74,90 @@ union cavm_mdc_ras_entry_s
                                                                  If a memory in a future passes or products have the same function, but a
                                                                  different size, the [RAS_ID] should remain the same.  Memories with the same
                                                                  [RAS_ID] will typically have the same value for all MDC_RAS_ENTRY_S fields. */
+        uint64_t ras_serr              : 8;  /**< [ 31: 24] Type of errors, and ARM RAS error record type. Enumerated by
+                                                                 RAS_SERR_E. Software, if/when creating a ARM RAS error record, typically should
+                                                                 mark the record's error type (SERR) using this value.
+
+                                                                 Typically RAMs use either RAS_SERR_E::SRAM_DATA or RAS_SERR_E::REG_CTL. */
+        uint64_t ras_uet               : 3;  /**< [ 23: 21] ARM RAS uncorrected error type. Enumerated by MDC_RAS_UET_E. If a uncorrectable
+                                                                 error occurs in this memory, the uncorrected error type. Software, if/when
+                                                                 creating a ARM RAS error record, typically should mark the record's uncorrected
+                                                                 error field (UE) using this value. */
+        uint64_t ras_transient         : 1;  /**< [ 20: 20] Transient. This indicates that software, if/when creating a ARM RAS error record,
+                                                                 typically should mark the record's corrected error field (CE) as persistent
+                                                                 versus transient.
+                                                                 0 = Persistent. If a soft error occurs in this memory, multiple soft errors may
+                                                                 be seen until some action is taken, e.g. a software scrub. Typically memories
+                                                                 containing configuration data work this way.
+                                                                 1 = Transient. If a soft error occurs in this memory, it will generally be seen
+                                                                 only once then self-correct. Software never needs to take any action on single
+                                                                 bit errors to clean up. e.g. a RAM that has a hardware scrubber or is a FIFO. */
+        uint64_t ras_poison            : 2;  /**< [ 19: 18] Poison propagation.
+                                                                 0x0 = None. This memory does not support poisoning.
+                                                                 0x1 = Deferred. If a DBE occurs in this memory, the block sends out poison to
+                                                                 the consumer and does not otherwise consume the data. This indicates software,
+                                                                 if/when creating a ARM RAS error record, typically would mark the record's
+                                                                 deferred error field (DE) as true.
+                                                                 0x2 = Consumed. This memory is reporting it received a poison and is propagating
+                                                                 it. This indicates software, if/when creating a ARM RAS error record, typically
+                                                                 would mark the record's deferred error field (DE) as true, and the poison (PN)
+                                                                 field as true. */
+        uint64_t reserved_0_17         : 18;
+#else /* Word 0 - Little Endian */
+        uint64_t reserved_0_17         : 18;
+        uint64_t ras_poison            : 2;  /**< [ 19: 18] Poison propagation.
+                                                                 0x0 = None. This memory does not support poisoning.
+                                                                 0x1 = Deferred. If a DBE occurs in this memory, the block sends out poison to
+                                                                 the consumer and does not otherwise consume the data. This indicates software,
+                                                                 if/when creating a ARM RAS error record, typically would mark the record's
+                                                                 deferred error field (DE) as true.
+                                                                 0x2 = Consumed. This memory is reporting it received a poison and is propagating
+                                                                 it. This indicates software, if/when creating a ARM RAS error record, typically
+                                                                 would mark the record's deferred error field (DE) as true, and the poison (PN)
+                                                                 field as true. */
+        uint64_t ras_transient         : 1;  /**< [ 20: 20] Transient. This indicates that software, if/when creating a ARM RAS error record,
+                                                                 typically should mark the record's corrected error field (CE) as persistent
+                                                                 versus transient.
+                                                                 0 = Persistent. If a soft error occurs in this memory, multiple soft errors may
+                                                                 be seen until some action is taken, e.g. a software scrub. Typically memories
+                                                                 containing configuration data work this way.
+                                                                 1 = Transient. If a soft error occurs in this memory, it will generally be seen
+                                                                 only once then self-correct. Software never needs to take any action on single
+                                                                 bit errors to clean up. e.g. a RAM that has a hardware scrubber or is a FIFO. */
+        uint64_t ras_uet               : 3;  /**< [ 23: 21] ARM RAS uncorrected error type. Enumerated by MDC_RAS_UET_E. If a uncorrectable
+                                                                 error occurs in this memory, the uncorrected error type. Software, if/when
+                                                                 creating a ARM RAS error record, typically should mark the record's uncorrected
+                                                                 error field (UE) using this value. */
+        uint64_t ras_serr              : 8;  /**< [ 31: 24] Type of errors, and ARM RAS error record type. Enumerated by
+                                                                 RAS_SERR_E. Software, if/when creating a ARM RAS error record, typically should
+                                                                 mark the record's error type (SERR) using this value.
+
+                                                                 Typically RAMs use either RAS_SERR_E::SRAM_DATA or RAS_SERR_E::REG_CTL. */
+        uint64_t ras_id                : 32; /**< [ 63: 32] RAM identifier. Program-determined (non-human-readable hash) unique identifier
+                                                                 for this given RAM. Software typically uses this to indicate in an error record
+                                                                 which memory is reporting the error. Software may also use this value to
+                                                                 initiate special error handing routines, e.g. on a SBE determine the [RAS_ID] is
+                                                                 the LLC cache data, and thus initiate a LLC cache scrub.
+
+                                                                 If a memory in a future passes or products have the same function, but a
+                                                                 different size, the [RAS_ID] should remain the same.  Memories with the same
+                                                                 [RAS_ID] will typically have the same value for all MDC_RAS_ENTRY_S fields. */
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_mdc_ras_entry_s_s cn9; */
+    /* struct cavm_mdc_ras_entry_s_s cn96xxp1; */
+    struct cavm_mdc_ras_entry_s_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t ras_id                : 32; /**< [ 63: 32] RAM identifier. Program-determined (non-human-readable hash) unique identifier
+                                                                 for this given RAM. Software typically uses this to indicate in an error record
+                                                                 which memory is reporting the error. Software may also use this value to
+                                                                 initiate special error handing routines, e.g. on a SBE determine the [RAS_ID] is
+                                                                 the LLC cache data, and thus initiate a LLC cache scrub.
+
+                                                                 If a memory in a future passes or products have the same function, but a
+                                                                 different size, the [RAS_ID] should remain the same.  Memories with the same
+                                                                 [RAS_ID] will typically have the same value for all MDC_RAS_ENTRY_S fields. */
         uint64_t ras_serr              : 8;  /**< [ 31: 24] Type of errors, and Arm RAS error record type. Enumerated by
                                                                  RAS_SERR_E. Software, if/when creating a Arm RAS error record, typically should
                                                                  mark the record's error type (SERR) using this value.
@@ -143,8 +227,10 @@ union cavm_mdc_ras_entry_s
                                                                  different size, the [RAS_ID] should remain the same.  Memories with the same
                                                                  [RAS_ID] will typically have the same value for all MDC_RAS_ENTRY_S fields. */
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_mdc_ras_entry_s_s cn; */
+    } cn96xxp3;
+    /* struct cavm_mdc_ras_entry_s_cn96xxp3 cn98xx; */
+    /* struct cavm_mdc_ras_entry_s_cn96xxp3 cnf95xx; */
+    /* struct cavm_mdc_ras_entry_s_cn96xxp3 loki; */
 };
 
 /**
@@ -934,6 +1020,38 @@ union cavm_mdc_pf_msix_vecx_addr
         uint64_t reserved_1            : 1;
         uint64_t secvec                : 1;  /**< [  0:  0](SR/W) Secure vector.
                                                                  0 = This vector may be read or written by either secure or nonsecure states.
+                                                                 1 = This vector's MDC_PF_MSIX_VEC()_ADDR, MDC_PF_MSIX_VEC()_CTL, and corresponding
+                                                                 bit of MDC_PF_MSIX_PBA() are RAZ/WI and does not cause a fault when accessed
+                                                                 by the nonsecure world.
+
+                                                                 If PCCPF_MDC_VSEC_SCTL[MSIX_SEC] (for documentation, see
+                                                                 PCCPF_XXX_VSEC_SCTL[MSIX_SEC]) is set, all vectors are secure and function as if
+                                                                 [SECVEC] was set. */
+#else /* Word 0 - Little Endian */
+        uint64_t secvec                : 1;  /**< [  0:  0](SR/W) Secure vector.
+                                                                 0 = This vector may be read or written by either secure or nonsecure states.
+                                                                 1 = This vector's MDC_PF_MSIX_VEC()_ADDR, MDC_PF_MSIX_VEC()_CTL, and corresponding
+                                                                 bit of MDC_PF_MSIX_PBA() are RAZ/WI and does not cause a fault when accessed
+                                                                 by the nonsecure world.
+
+                                                                 If PCCPF_MDC_VSEC_SCTL[MSIX_SEC] (for documentation, see
+                                                                 PCCPF_XXX_VSEC_SCTL[MSIX_SEC]) is set, all vectors are secure and function as if
+                                                                 [SECVEC] was set. */
+        uint64_t reserved_1            : 1;
+        uint64_t addr                  : 51; /**< [ 52:  2](R/W) IOVA to use for MSI-X delivery of this vector. */
+        uint64_t reserved_53_63        : 11;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_mdc_pf_msix_vecx_addr_s cn9; */
+    /* struct cavm_mdc_pf_msix_vecx_addr_s cn96xxp1; */
+    struct cavm_mdc_pf_msix_vecx_addr_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_53_63        : 11;
+        uint64_t addr                  : 51; /**< [ 52:  2](R/W) IOVA to use for MSI-X delivery of this vector. */
+        uint64_t reserved_1            : 1;
+        uint64_t secvec                : 1;  /**< [  0:  0](SR/W) Secure vector.
+                                                                 0 = This vector may be read or written by either secure or nonsecure states.
                                                                  The vector's IOVA is sent to the SMMU as nonsecure (though this only affects
                                                                  physical addresses if PCCPF_XXX_VSEC_SCTL[MSIX_PHYS]=1).
 
@@ -983,8 +1101,10 @@ union cavm_mdc_pf_msix_vecx_addr
         uint64_t addr                  : 51; /**< [ 52:  2](R/W) IOVA to use for MSI-X delivery of this vector. */
         uint64_t reserved_53_63        : 11;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_mdc_pf_msix_vecx_addr_s cn; */
+    } cn96xxp3;
+    /* struct cavm_mdc_pf_msix_vecx_addr_cn96xxp3 cn98xx; */
+    /* struct cavm_mdc_pf_msix_vecx_addr_cn96xxp3 cnf95xx; */
+    /* struct cavm_mdc_pf_msix_vecx_addr_cn96xxp3 loki; */
 };
 typedef union cavm_mdc_pf_msix_vecx_addr cavm_mdc_pf_msix_vecx_addr_t;
 

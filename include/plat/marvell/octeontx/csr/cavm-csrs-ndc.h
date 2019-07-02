@@ -74,6 +74,8 @@ static inline uint64_t CAVM_NDCX_AF_ACTIVE_PC(unsigned long a)
         return 0x8400c0000078ll + 0x10000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a<=5))
         return 0x8400c0000078ll + 0x10000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x8400c0000078ll + 0x10000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x8400c0000078ll + 0x10000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -114,6 +116,8 @@ static inline uint64_t CAVM_NDCX_AF_BANKX_HIT_PC(unsigned long a, unsigned long 
     if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && ((a<=2) && (b<=15)))
         return 0x8400c0001000ll + 0x10000000ll * ((a) & 0x3) + 8ll * ((b) & 0xf);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a<=5) && (b<=15)))
+        return 0x8400c0001000ll + 0x10000000ll * ((a) & 0x7) + 8ll * ((b) & 0xf);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=5) && (b<=15)))
         return 0x8400c0001000ll + 0x10000000ll * ((a) & 0x7) + 8ll * ((b) & 0xf);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=5) && (b<=15)))
         return 0x8400c0001000ll + 0x10000000ll * ((a) & 0x7) + 8ll * ((b) & 0xf);
@@ -158,6 +162,8 @@ static inline uint64_t CAVM_NDCX_AF_BANKX_INDEXX_BUSY(unsigned long a, unsigned 
         return 0x8400c0000600ll + 0x10000000ll * ((a) & 0x3) + 0x20ll * ((b) & 0xf) + 8ll * ((c) & 0x3);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a<=5) && (b<=15) && (c<=3)))
         return 0x8400c0000600ll + 0x10000000ll * ((a) & 0x7) + 0x20ll * ((b) & 0xf) + 8ll * ((c) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=5) && (b<=15) && (c<=3)))
+        return 0x8400c0000600ll + 0x10000000ll * ((a) & 0x7) + 0x20ll * ((b) & 0xf) + 8ll * ((c) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=5) && (b<=15) && (c<=3)))
         return 0x8400c0000600ll + 0x10000000ll * ((a) & 0x7) + 0x20ll * ((b) & 0xf) + 8ll * ((c) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=5) && (b<=15) && (c<=3)))
@@ -200,6 +206,8 @@ static inline uint64_t CAVM_NDCX_AF_BANKX_INDEXX_DIRTY(unsigned long a, unsigned
     if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && ((a<=2) && (b<=15) && (c<=3)))
         return 0x8400c0000800ll + 0x10000000ll * ((a) & 0x3) + 0x20ll * ((b) & 0xf) + 8ll * ((c) & 0x3);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a<=5) && (b<=15) && (c<=3)))
+        return 0x8400c0000800ll + 0x10000000ll * ((a) & 0x7) + 0x20ll * ((b) & 0xf) + 8ll * ((c) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=5) && (b<=15) && (c<=3)))
         return 0x8400c0000800ll + 0x10000000ll * ((a) & 0x7) + 0x20ll * ((b) & 0xf) + 8ll * ((c) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=5) && (b<=15) && (c<=3)))
         return 0x8400c0000800ll + 0x10000000ll * ((a) & 0x7) + 0x20ll * ((b) & 0xf) + 8ll * ((c) & 0x3);
@@ -244,6 +252,8 @@ static inline uint64_t CAVM_NDCX_AF_BANKX_INDEXX_LOCK(unsigned long a, unsigned 
         return 0x8400c0000a00ll + 0x10000000ll * ((a) & 0x3) + 0x20ll * ((b) & 0xf) + 8ll * ((c) & 0x3);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a<=5) && (b<=15) && (c<=3)))
         return 0x8400c0000a00ll + 0x10000000ll * ((a) & 0x7) + 0x20ll * ((b) & 0xf) + 8ll * ((c) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=5) && (b<=15) && (c<=3)))
+        return 0x8400c0000a00ll + 0x10000000ll * ((a) & 0x7) + 0x20ll * ((b) & 0xf) + 8ll * ((c) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=5) && (b<=15) && (c<=3)))
         return 0x8400c0000a00ll + 0x10000000ll * ((a) & 0x7) + 0x20ll * ((b) & 0xf) + 8ll * ((c) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=5) && (b<=15) && (c<=3)))
@@ -286,6 +296,8 @@ static inline uint64_t CAVM_NDCX_AF_BANKX_INDEXX_VLD(unsigned long a, unsigned l
     if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && ((a<=2) && (b<=15) && (c<=3)))
         return 0x8400c0000400ll + 0x10000000ll * ((a) & 0x3) + 0x20ll * ((b) & 0xf) + 8ll * ((c) & 0x3);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a<=5) && (b<=15) && (c<=3)))
+        return 0x8400c0000400ll + 0x10000000ll * ((a) & 0x7) + 0x20ll * ((b) & 0xf) + 8ll * ((c) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=5) && (b<=15) && (c<=3)))
         return 0x8400c0000400ll + 0x10000000ll * ((a) & 0x7) + 0x20ll * ((b) & 0xf) + 8ll * ((c) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=5) && (b<=15) && (c<=3)))
         return 0x8400c0000400ll + 0x10000000ll * ((a) & 0x7) + 0x20ll * ((b) & 0xf) + 8ll * ((c) & 0x3);
@@ -346,6 +358,8 @@ static inline uint64_t CAVM_NDCX_AF_BANKX_LINEX_METADATA(unsigned long a, unsign
         return 0x8400c0010000ll + 0x10000000ll * ((a) & 0x3) + 0x1000ll * ((b) & 0xf) + 8ll * ((c) & 0xff);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a<=5) && (b<=15) && (c<=255)))
         return 0x8400c0010000ll + 0x10000000ll * ((a) & 0x7) + 0x1000ll * ((b) & 0xf) + 8ll * ((c) & 0xff);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=5) && (b<=15) && (c<=255)))
+        return 0x8400c0010000ll + 0x10000000ll * ((a) & 0x7) + 0x1000ll * ((b) & 0xf) + 8ll * ((c) & 0xff);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=5) && (b<=15) && (c<=255)))
         return 0x8400c0010000ll + 0x10000000ll * ((a) & 0x7) + 0x1000ll * ((b) & 0xf) + 8ll * ((c) & 0xff);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=5) && (b<=15) && (c<=255)))
@@ -389,6 +403,8 @@ static inline uint64_t CAVM_NDCX_AF_BANKX_LINEX_WORDX(unsigned long a, unsigned 
         return 0x8400c0100000ll + 0x10000000ll * ((a) & 0x3) + 0x8000ll * ((b) & 0xf) + 0x80ll * ((c) & 0xff) + 8ll * ((d) & 0xf);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a<=5) && (b<=15) && (c<=255) && (d<=15)))
         return 0x8400c0100000ll + 0x10000000ll * ((a) & 0x7) + 0x8000ll * ((b) & 0xf) + 0x80ll * ((c) & 0xff) + 8ll * ((d) & 0xf);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=5) && (b<=15) && (c<=255) && (d<=15)))
+        return 0x8400c0100000ll + 0x10000000ll * ((a) & 0x7) + 0x8000ll * ((b) & 0xf) + 0x80ll * ((c) & 0xff) + 8ll * ((d) & 0xf);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=5) && (b<=15) && (c<=255) && (d<=15)))
         return 0x8400c0100000ll + 0x10000000ll * ((a) & 0x7) + 0x8000ll * ((b) & 0xf) + 0x80ll * ((c) & 0xff) + 8ll * ((d) & 0xf);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=5) && (b<=15) && (c<=255) && (d<=15)))
@@ -429,6 +445,8 @@ static inline uint64_t CAVM_NDCX_AF_BANKX_MISS_PC(unsigned long a, unsigned long
     if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && ((a<=2) && (b<=15)))
         return 0x8400c0001100ll + 0x10000000ll * ((a) & 0x3) + 8ll * ((b) & 0xf);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a<=5) && (b<=15)))
+        return 0x8400c0001100ll + 0x10000000ll * ((a) & 0x7) + 8ll * ((b) & 0xf);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=5) && (b<=15)))
         return 0x8400c0001100ll + 0x10000000ll * ((a) & 0x7) + 8ll * ((b) & 0xf);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=5) && (b<=15)))
         return 0x8400c0001100ll + 0x10000000ll * ((a) & 0x7) + 8ll * ((b) & 0xf);
@@ -484,6 +502,8 @@ static inline uint64_t CAVM_NDCX_AF_BANK_CTL_DONE(unsigned long a)
     if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=2))
         return 0x8400c0000048ll + 0x10000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a<=5))
+        return 0x8400c0000048ll + 0x10000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
         return 0x8400c0000048ll + 0x10000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x8400c0000048ll + 0x10000000ll * ((a) & 0x7);
@@ -571,6 +591,8 @@ static inline uint64_t CAVM_NDCX_AF_BANKS_CTL(unsigned long a)
         return 0x8400c0000040ll + 0x10000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a<=5))
         return 0x8400c0000040ll + 0x10000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x8400c0000040ll + 0x10000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x8400c0000040ll + 0x10000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -621,6 +643,8 @@ static inline uint64_t CAVM_NDCX_AF_BLK_RST(unsigned long a)
     if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=2))
         return 0x8400c00002f0ll + 0x10000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a<=5))
+        return 0x8400c00002f0ll + 0x10000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
         return 0x8400c00002f0ll + 0x10000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x8400c00002f0ll + 0x10000000ll * ((a) & 0x7);
@@ -717,6 +741,8 @@ static inline uint64_t CAVM_NDCX_AF_BP_TESTX(unsigned long a, unsigned long b)
         return 0x8400c0000200ll + 0x10000000ll * ((a) & 0x3) + 8ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a<=5) && (b<=3)))
         return 0x8400c0000200ll + 0x10000000ll * ((a) & 0x7) + 8ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=5) && (b<=3)))
+        return 0x8400c0000200ll + 0x10000000ll * ((a) & 0x7) + 8ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=5) && (b<=3)))
         return 0x8400c0000200ll + 0x10000000ll * ((a) & 0x7) + 8ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=5) && (b<=3)))
@@ -769,6 +795,8 @@ static inline uint64_t CAVM_NDCX_AF_BP_TEST_ENABLE(unsigned long a)
     if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=2))
         return 0x8400c00001f8ll + 0x10000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a<=5))
+        return 0x8400c00001f8ll + 0x10000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
         return 0x8400c00001f8ll + 0x10000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x8400c00001f8ll + 0x10000000ll * ((a) & 0x7);
@@ -827,6 +855,8 @@ static inline uint64_t CAVM_NDCX_AF_CAMS_RD_INTERVAL(unsigned long a)
         return 0x8400c0000080ll + 0x10000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a<=5))
         return 0x8400c0000080ll + 0x10000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x8400c0000080ll + 0x10000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x8400c0000080ll + 0x10000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -873,6 +903,8 @@ static inline uint64_t CAVM_NDCX_AF_CLK_EN(unsigned long a)
     if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=2))
         return 0x8400c0000020ll + 0x10000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a<=5))
+        return 0x8400c0000020ll + 0x10000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
         return 0x8400c0000020ll + 0x10000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x8400c0000020ll + 0x10000000ll * ((a) & 0x7);
@@ -924,6 +956,8 @@ static inline uint64_t CAVM_NDCX_AF_CONST(unsigned long a)
     if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=2))
         return 0x8400c0000000ll + 0x10000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a<=5))
+        return 0x8400c0000000ll + 0x10000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
         return 0x8400c0000000ll + 0x10000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x8400c0000000ll + 0x10000000ll * ((a) & 0x7);
@@ -993,6 +1027,179 @@ union cavm_ndcx_af_ctl
         uint64_t lock_dis              : 1;  /**< [  4:  4](R/W) Lock disabled. When set, NDC will not execute any command with lock bit set and report an error
                                                                  back to port if command has lock bit set. Unlock command is not effected by this CSR.
                                                                  When cleared NDC will process any command with lock bit set. */
+        uint64_t way_select_dis        : 1;  /**< [  3:  3](R/W) Way select disabled. When set, all NDC's port command way select field
+                                                                 is forced to all-ones. When cleared way select field is driven by the port. */
+        uint64_t reserved_2            : 1;
+        uint64_t hash_dis              : 1;  /**< [  1:  1](R/W) Hash disable. When set, the address hash function defined by NDC_AF_HASH()
+                                                                 is not used.
+
+                                                                 For diagnostic use only. May only be modified when NDC is idle and has no
+                                                                 cached data.
+
+                                                                 Internal:
+                                                                 When set, iova \<18:15\> select the bank and \<14:13\> select the index within
+                                                                 bank. */
+        uint64_t byp_only              : 1;  /**< [  0:  0](R/W) Bypass only.
+                                                                 0 = Bypass only mode is disabled and NDC will steer port requests based on command
+                                                                 bits, either to cache, for cache accesses or to LLC for bypass accesses.
+                                                                 1 = All requests will be directed to LLC, similar to bypass operation. Software
+                                                                 must not use the NDC LOCK feature. */
+#else /* Word 0 - Little Endian */
+        uint64_t byp_only              : 1;  /**< [  0:  0](R/W) Bypass only.
+                                                                 0 = Bypass only mode is disabled and NDC will steer port requests based on command
+                                                                 bits, either to cache, for cache accesses or to LLC for bypass accesses.
+                                                                 1 = All requests will be directed to LLC, similar to bypass operation. Software
+                                                                 must not use the NDC LOCK feature. */
+        uint64_t hash_dis              : 1;  /**< [  1:  1](R/W) Hash disable. When set, the address hash function defined by NDC_AF_HASH()
+                                                                 is not used.
+
+                                                                 For diagnostic use only. May only be modified when NDC is idle and has no
+                                                                 cached data.
+
+                                                                 Internal:
+                                                                 When set, iova \<18:15\> select the bank and \<14:13\> select the index within
+                                                                 bank. */
+        uint64_t reserved_2            : 1;
+        uint64_t way_select_dis        : 1;  /**< [  3:  3](R/W) Way select disabled. When set, all NDC's port command way select field
+                                                                 is forced to all-ones. When cleared way select field is driven by the port. */
+        uint64_t lock_dis              : 1;  /**< [  4:  4](R/W) Lock disabled. When set, NDC will not execute any command with lock bit set and report an error
+                                                                 back to port if command has lock bit set. Unlock command is not effected by this CSR.
+                                                                 When cleared NDC will process any command with lock bit set. */
+        uint64_t reserved_5_7          : 3;
+        uint64_t perf_mode             : 4;  /**< [ 11:  8](R/W) For diagnostic use only.
+                                                                 Internal:
+                                                                 These bits will eventually be used to limit performance
+                                                                 -- in some TBD manner -- in hopes that the lower-performance
+                                                                 mode(s) avoid triggering bugs fixed late in the design cycle. */
+        uint64_t dis_unjam_w3a         : 1;  /**< [ 12: 12](R/W) For diagnostic use only.
+                                                                 Internal:
+                                                                 When set, disable the fix for McBuggin 36640.
+                                                                 In short, the deadlock unjam mechanism will be disabled, such that
+                                                                 the particular deadlock described in the bug becomes possible again;
+                                                                 however, any inadvertent bug introduced by the fix could be avoided. */
+        uint64_t dis_sync_mods         : 1;  /**< [ 13: 13](R/W) For diagnostic use only.
+                                                                 Internal:
+                                                                 When set, disable TBD late fixes introduced to
+                                                                 resolve issues with FLR.SYNC operations.  As the design team
+                                                                 adds consumers of this bit, the description will be updated. */
+        uint64_t reserved_14_15        : 2;
+        uint64_t dis_inval             : 1;  /**< [ 16: 16](R/W) When one, disable all invalidate operations. For diagnostic use only. */
+        uint64_t dis_inval_on_busy     : 1;  /**< [ 17: 17](R/W) For diagnostic use only.
+                                                                 Internal:
+                                                                 When set, disable invalidate operations whenever the invalidate is
+                                                                 requested for a Read Hit where a prior read miss to the same cache line has not
+                                                                 yet been filled from coherent memory.  If the reset value of this bit is one,
+                                                                 that indicated that the design does not support invalidates when an entry is
+                                                                 busy (i.e., waiting for a fill to complete).  In that case, setting the bit to
+                                                                 zero will have no effect. */
+        uint64_t dis_byp_on_inval_miss : 1;  /**< [ 18: 18](R/W) For diagnostic use only.
+                                                                 Internal:
+                                                                 When set, cause read miss + invalidate operations to allocate a
+                                                                 cache entry, which could result in flushing a dirty entry.  When clear
+                                                                 clear, read miss + invalidate operations will be treated as bypassed reads and
+                                                                 will not allocate a cache entry nor initiate any flushes.  See the description
+                                                                 of [DIS_INVAL_ON_BUSY] for more information about interactions between read miss
+                                                                 and invalidate requests. */
+        uint64_t en_flush_on_inval     : 1;  /**< [ 19: 19](R/W) When set, invalidate requests will flush the corresponding entry back to
+                                                                 coherent memory if the entry is dirty.
+                                                                 For diagnostic use only. */
+        uint64_t reserved_20_63        : 44;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_ndcx_af_ctl_s cn9; */
+    struct cavm_ndcx_af_ctl_cn96xxp1
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_5_63         : 59;
+        uint64_t lock_dis              : 1;  /**< [  4:  4](R/W) Lock disabled. When set, NDC will not execute any command with lock bit set and report an error
+                                                                 back to port if command has lock bit set. Unlock command is not effected by this CSR.
+                                                                 When cleared NDC will process any command with lock bit set. */
+        uint64_t way_select_dis        : 1;  /**< [  3:  3](R/W) Way select disabled. When set, all NDC's port command way select field
+                                                                 is forced to all-ones. When cleared way select field is driven by the port. */
+        uint64_t reserved_2            : 1;
+        uint64_t hash_dis              : 1;  /**< [  1:  1](R/W) Hash disable. When set, the address hash function defined by NDC_AF_HASH()
+                                                                 is not used.
+
+                                                                 For diagnostic use only. May only be modified when NDC is idle and has no
+                                                                 cached data.
+
+                                                                 Internal:
+                                                                 When set, iova \<18:15\> select the bank and \<14:13\> select the index within
+                                                                 bank. */
+        uint64_t byp_only              : 1;  /**< [  0:  0](R/W) Bypass only.
+                                                                 0 = Bypass only mode is disabled and NDC will steer port requests based on command
+                                                                 bits, either to cache, for cache accesses or to LLC for bypass accesses.
+                                                                 1 = All requests will be directed to LLC, similar to bypass operation. Software
+                                                                 must not use the NDC LOCK feature. */
+#else /* Word 0 - Little Endian */
+        uint64_t byp_only              : 1;  /**< [  0:  0](R/W) Bypass only.
+                                                                 0 = Bypass only mode is disabled and NDC will steer port requests based on command
+                                                                 bits, either to cache, for cache accesses or to LLC for bypass accesses.
+                                                                 1 = All requests will be directed to LLC, similar to bypass operation. Software
+                                                                 must not use the NDC LOCK feature. */
+        uint64_t hash_dis              : 1;  /**< [  1:  1](R/W) Hash disable. When set, the address hash function defined by NDC_AF_HASH()
+                                                                 is not used.
+
+                                                                 For diagnostic use only. May only be modified when NDC is idle and has no
+                                                                 cached data.
+
+                                                                 Internal:
+                                                                 When set, iova \<18:15\> select the bank and \<14:13\> select the index within
+                                                                 bank. */
+        uint64_t reserved_2            : 1;
+        uint64_t way_select_dis        : 1;  /**< [  3:  3](R/W) Way select disabled. When set, all NDC's port command way select field
+                                                                 is forced to all-ones. When cleared way select field is driven by the port. */
+        uint64_t lock_dis              : 1;  /**< [  4:  4](R/W) Lock disabled. When set, NDC will not execute any command with lock bit set and report an error
+                                                                 back to port if command has lock bit set. Unlock command is not effected by this CSR.
+                                                                 When cleared NDC will process any command with lock bit set. */
+        uint64_t reserved_5_63         : 59;
+#endif /* Word 0 - End */
+    } cn96xxp1;
+    struct cavm_ndcx_af_ctl_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_20_63        : 44;
+        uint64_t en_flush_on_inval     : 1;  /**< [ 19: 19](R/W) When set, invalidate requests will flush the corresponding entry back to
+                                                                 coherent memory if the entry is dirty.
+                                                                 For diagnostic use only. */
+        uint64_t dis_byp_on_inval_miss : 1;  /**< [ 18: 18](R/W) For diagnostic use only.
+                                                                 Internal:
+                                                                 When set, cause read miss + invalidate operations to allocate a
+                                                                 cache entry, which could result in flushing a dirty entry.  When clear
+                                                                 clear, read miss + invalidate operations will be treated as bypassed reads and
+                                                                 will not allocate a cache entry nor initiate any flushes.  See the description
+                                                                 of [DIS_INVAL_ON_BUSY] for more information about interactions between read miss
+                                                                 and invalidate requests. */
+        uint64_t dis_inval_on_busy     : 1;  /**< [ 17: 17](R/W) For diagnostic use only.
+                                                                 Internal:
+                                                                 When set, disable invalidate operations whenever the invalidate is
+                                                                 requested for a Read Hit where a prior read miss to the same cache line has not
+                                                                 yet been filled from coherent memory.  If the reset value of this bit is one,
+                                                                 that indicated that the design does not support invalidates when an entry is
+                                                                 busy (i.e., waiting for a fill to complete).  In that case, setting the bit to
+                                                                 zero will have no effect. */
+        uint64_t dis_inval             : 1;  /**< [ 16: 16](R/W) When one, disable all invalidate operations. For diagnostic use only. */
+        uint64_t reserved_14_15        : 2;
+        uint64_t dis_sync_mods         : 1;  /**< [ 13: 13](R/W) For diagnostic use only.
+                                                                 Internal:
+                                                                 When set, disable TBD late fixes introduced to
+                                                                 resolve issues with FLR.SYNC operations.  As the design team
+                                                                 adds consumers of this bit, the description will be updated. */
+        uint64_t dis_unjam_w3a         : 1;  /**< [ 12: 12](R/W) For diagnostic use only.
+                                                                 Internal:
+                                                                 When set, disable the fix for McBuggin 36640.
+                                                                 In short, the deadlock unjam mechanism will be disabled, such that
+                                                                 the particular deadlock described in the bug becomes possible again;
+                                                                 however, any inadvertent bug introduced by the fix could be avoided. */
+        uint64_t perf_mode             : 4;  /**< [ 11:  8](R/W) For diagnostic use only.
+                                                                 Internal:
+                                                                 These bits will eventually be used to limit performance
+                                                                 -- in some TBD manner -- in hopes that the lower-performance
+                                                                 mode(s) avoid triggering bugs fixed late in the design cycle. */
+        uint64_t reserved_5_7          : 3;
+        uint64_t lock_dis              : 1;  /**< [  4:  4](R/W) Lock disabled. When set, NDC will not execute any command with lock bit set and report an error
+                                                                 back to port if command has lock bit set. Unlock command is not effected by this CSR.
+                                                                 When cleared NDC will process any command with lock bit set. */
         uint64_t way_select_dis        : 1;  /**< [  3:  3](R/W) Way select disable. Should be clear for normal operation.
 
                                                                  When clear, the way selected on a cache miss is based on the corresponding
@@ -1091,262 +1298,9 @@ union cavm_ndcx_af_ctl
                                                                  For diagnostic use only. */
         uint64_t reserved_20_63        : 44;
 #endif /* Word 0 - End */
-    } s;
-    struct cavm_ndcx_af_ctl_cn96xxp1_0
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_20_63        : 44;
-        uint64_t reserved_16_19        : 4;
-        uint64_t reserved_14_15        : 2;
-        uint64_t reserved_8_13         : 6;
-        uint64_t reserved_5_7          : 3;
-        uint64_t lock_dis              : 1;  /**< [  4:  4](R/W) Lock disabled. When set, NDC will not execute any command with lock bit set and report an error
-                                                                 back to port if command has lock bit set. Unlock command is not effected by this CSR.
-                                                                 When cleared NDC will process any command with lock bit set. */
-        uint64_t way_select_dis        : 1;  /**< [  3:  3](R/W) Way select disable. Should be clear for normal operation.
-
-                                                                 When clear, the way selected on a cache miss is based on the corresponding
-                                                                 NIX_*[*WAY_MASK]/NPA_*[*WAY_MASK]; if way mask bit N is clear, any of NDC
-                                                                 ways 4*N through 4*N+3 may be selected, otherwise these ways are excluded
-                                                                 from selection.
-
-                                                                 When set on a cache miss with NIX_*[*WAY_MASK]/NPA_*[*WAY_MASK] != 0xFFFF,
-                                                                 NDC ignores the way mask and allows any way to be selected/allocated.
-
-                                                                 Requests with NIX_*[*WAY_MASK]/NPA_*[*WAY_MASK] == 0xFFFF bypass the
-                                                                 NDC cache and are not affected by this bit. */
-        uint64_t reserved_2            : 1;
-        uint64_t hash_dis              : 1;  /**< [  1:  1](R/W) Hash disable. When set, the address hash function defined by NDC_AF_HASH()
-                                                                 is not used.
-
-                                                                 For diagnostic use only. May only be modified when NDC is idle and has no
-                                                                 cached data.
-
-                                                                 Internal:
-                                                                 When set, iova \<18:15\> select the bank and \<14:13\> select the index within
-                                                                 bank. */
-        uint64_t byp_only              : 1;  /**< [  0:  0](R/W) Bypass only.
-                                                                 0 = Bypass only mode is disabled and NDC will steer port requests based on command
-                                                                 bits, either to cache, for cache accesses or to LLC for bypass accesses.
-                                                                 1 = All requests will be directed to LLC, similar to bypass operation. Software
-                                                                 must not use the NDC LOCK feature. */
-#else /* Word 0 - Little Endian */
-        uint64_t byp_only              : 1;  /**< [  0:  0](R/W) Bypass only.
-                                                                 0 = Bypass only mode is disabled and NDC will steer port requests based on command
-                                                                 bits, either to cache, for cache accesses or to LLC for bypass accesses.
-                                                                 1 = All requests will be directed to LLC, similar to bypass operation. Software
-                                                                 must not use the NDC LOCK feature. */
-        uint64_t hash_dis              : 1;  /**< [  1:  1](R/W) Hash disable. When set, the address hash function defined by NDC_AF_HASH()
-                                                                 is not used.
-
-                                                                 For diagnostic use only. May only be modified when NDC is idle and has no
-                                                                 cached data.
-
-                                                                 Internal:
-                                                                 When set, iova \<18:15\> select the bank and \<14:13\> select the index within
-                                                                 bank. */
-        uint64_t reserved_2            : 1;
-        uint64_t way_select_dis        : 1;  /**< [  3:  3](R/W) Way select disable. Should be clear for normal operation.
-
-                                                                 When clear, the way selected on a cache miss is based on the corresponding
-                                                                 NIX_*[*WAY_MASK]/NPA_*[*WAY_MASK]; if way mask bit N is clear, any of NDC
-                                                                 ways 4*N through 4*N+3 may be selected, otherwise these ways are excluded
-                                                                 from selection.
-
-                                                                 When set on a cache miss with NIX_*[*WAY_MASK]/NPA_*[*WAY_MASK] != 0xFFFF,
-                                                                 NDC ignores the way mask and allows any way to be selected/allocated.
-
-                                                                 Requests with NIX_*[*WAY_MASK]/NPA_*[*WAY_MASK] == 0xFFFF bypass the
-                                                                 NDC cache and are not affected by this bit. */
-        uint64_t lock_dis              : 1;  /**< [  4:  4](R/W) Lock disabled. When set, NDC will not execute any command with lock bit set and report an error
-                                                                 back to port if command has lock bit set. Unlock command is not effected by this CSR.
-                                                                 When cleared NDC will process any command with lock bit set. */
-        uint64_t reserved_5_7          : 3;
-        uint64_t reserved_8_13         : 6;
-        uint64_t reserved_14_15        : 2;
-        uint64_t reserved_16_19        : 4;
-        uint64_t reserved_20_63        : 44;
-#endif /* Word 0 - End */
-    } cn96xxp1_0;
-    struct cavm_ndcx_af_ctl_cn96xxp1_1
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_20_63        : 44;
-        uint64_t reserved_16_19        : 4;
-        uint64_t reserved_14_15        : 2;
-        uint64_t dis_sync_mods         : 1;  /**< [ 13: 13](R/W) For diagnostic use only.
-                                                                 Internal:
-                                                                 When set, disable TBD late fixes introduced to
-                                                                 resolve issues with FLR.SYNC operations.  As the design team
-                                                                 adds consumers of this bit, the description will be updated. */
-        uint64_t dis_unjam_w3a         : 1;  /**< [ 12: 12](R/W) For diagnostic use only.
-                                                                 Internal:
-                                                                 When set, disable the fix for McBuggin 36640.
-                                                                 In short, the deadlock unjam mechanism will be disabled, such that
-                                                                 the particular deadlock described in the bug becomes possible again;
-                                                                 however, any inadvertent bug introduced by the fix could be avoided. */
-        uint64_t perf_mode             : 4;  /**< [ 11:  8](R/W) For diagnostic use only.
-                                                                 Internal:
-                                                                 These bits will eventually be used to limit performance
-                                                                 -- in some TBD manner -- in hopes that the lower-performance
-                                                                 mode(s) avoid triggering bugs fixed late in the design cycle. */
-        uint64_t reserved_5_7          : 3;
-        uint64_t lock_dis              : 1;  /**< [  4:  4](R/W) Lock disabled. When set, NDC will not execute any command with lock bit set and report an error
-                                                                 back to port if command has lock bit set. Unlock command is not effected by this CSR.
-                                                                 When cleared NDC will process any command with lock bit set. */
-        uint64_t way_select_dis        : 1;  /**< [  3:  3](R/W) Way select disable. Should be clear for normal operation.
-
-                                                                 When clear, the way selected on a cache miss is based on the corresponding
-                                                                 NIX_*[*WAY_MASK]/NPA_*[*WAY_MASK]; if way mask bit N is clear, any of NDC
-                                                                 ways 4*N through 4*N+3 may be selected, otherwise these ways are excluded
-                                                                 from selection.
-
-                                                                 When set on a cache miss with NIX_*[*WAY_MASK]/NPA_*[*WAY_MASK] != 0xFFFF,
-                                                                 NDC ignores the way mask and allows any way to be selected/allocated.
-
-                                                                 Requests with NIX_*[*WAY_MASK]/NPA_*[*WAY_MASK] == 0xFFFF bypass the
-                                                                 NDC cache and are not affected by this bit. */
-        uint64_t reserved_2            : 1;
-        uint64_t hash_dis              : 1;  /**< [  1:  1](R/W) Hash disable. When set, the address hash function defined by NDC_AF_HASH()
-                                                                 is not used.
-
-                                                                 For diagnostic use only. May only be modified when NDC is idle and has no
-                                                                 cached data.
-
-                                                                 Internal:
-                                                                 When set, iova \<18:15\> select the bank and \<14:13\> select the index within
-                                                                 bank. */
-        uint64_t byp_only              : 1;  /**< [  0:  0](R/W) Bypass only.
-                                                                 0 = Bypass only mode is disabled and NDC will steer port requests based on command
-                                                                 bits, either to cache, for cache accesses or to LLC for bypass accesses.
-                                                                 1 = All requests will be directed to LLC, similar to bypass operation. Software
-                                                                 must not use the NDC LOCK feature. */
-#else /* Word 0 - Little Endian */
-        uint64_t byp_only              : 1;  /**< [  0:  0](R/W) Bypass only.
-                                                                 0 = Bypass only mode is disabled and NDC will steer port requests based on command
-                                                                 bits, either to cache, for cache accesses or to LLC for bypass accesses.
-                                                                 1 = All requests will be directed to LLC, similar to bypass operation. Software
-                                                                 must not use the NDC LOCK feature. */
-        uint64_t hash_dis              : 1;  /**< [  1:  1](R/W) Hash disable. When set, the address hash function defined by NDC_AF_HASH()
-                                                                 is not used.
-
-                                                                 For diagnostic use only. May only be modified when NDC is idle and has no
-                                                                 cached data.
-
-                                                                 Internal:
-                                                                 When set, iova \<18:15\> select the bank and \<14:13\> select the index within
-                                                                 bank. */
-        uint64_t reserved_2            : 1;
-        uint64_t way_select_dis        : 1;  /**< [  3:  3](R/W) Way select disable. Should be clear for normal operation.
-
-                                                                 When clear, the way selected on a cache miss is based on the corresponding
-                                                                 NIX_*[*WAY_MASK]/NPA_*[*WAY_MASK]; if way mask bit N is clear, any of NDC
-                                                                 ways 4*N through 4*N+3 may be selected, otherwise these ways are excluded
-                                                                 from selection.
-
-                                                                 When set on a cache miss with NIX_*[*WAY_MASK]/NPA_*[*WAY_MASK] != 0xFFFF,
-                                                                 NDC ignores the way mask and allows any way to be selected/allocated.
-
-                                                                 Requests with NIX_*[*WAY_MASK]/NPA_*[*WAY_MASK] == 0xFFFF bypass the
-                                                                 NDC cache and are not affected by this bit. */
-        uint64_t lock_dis              : 1;  /**< [  4:  4](R/W) Lock disabled. When set, NDC will not execute any command with lock bit set and report an error
-                                                                 back to port if command has lock bit set. Unlock command is not effected by this CSR.
-                                                                 When cleared NDC will process any command with lock bit set. */
-        uint64_t reserved_5_7          : 3;
-        uint64_t perf_mode             : 4;  /**< [ 11:  8](R/W) For diagnostic use only.
-                                                                 Internal:
-                                                                 These bits will eventually be used to limit performance
-                                                                 -- in some TBD manner -- in hopes that the lower-performance
-                                                                 mode(s) avoid triggering bugs fixed late in the design cycle. */
-        uint64_t dis_unjam_w3a         : 1;  /**< [ 12: 12](R/W) For diagnostic use only.
-                                                                 Internal:
-                                                                 When set, disable the fix for McBuggin 36640.
-                                                                 In short, the deadlock unjam mechanism will be disabled, such that
-                                                                 the particular deadlock described in the bug becomes possible again;
-                                                                 however, any inadvertent bug introduced by the fix could be avoided. */
-        uint64_t dis_sync_mods         : 1;  /**< [ 13: 13](R/W) For diagnostic use only.
-                                                                 Internal:
-                                                                 When set, disable TBD late fixes introduced to
-                                                                 resolve issues with FLR.SYNC operations.  As the design team
-                                                                 adds consumers of this bit, the description will be updated. */
-        uint64_t reserved_14_15        : 2;
-        uint64_t reserved_16_19        : 4;
-        uint64_t reserved_20_63        : 44;
-#endif /* Word 0 - End */
-    } cn96xxp1_1;
-    /* struct cavm_ndcx_af_ctl_s cn96xxp3; */
-    struct cavm_ndcx_af_ctl_cnf95xxp1
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_14_63        : 50;
-        uint64_t reserved_8_13         : 6;
-        uint64_t reserved_5_7          : 3;
-        uint64_t lock_dis              : 1;  /**< [  4:  4](R/W) Lock disabled. When set, NDC will not execute any command with lock bit set and report an error
-                                                                 back to port if command has lock bit set. Unlock command is not effected by this CSR.
-                                                                 When cleared NDC will process any command with lock bit set. */
-        uint64_t way_select_dis        : 1;  /**< [  3:  3](R/W) Way select disable. Should be clear for normal operation.
-
-                                                                 When clear, the way selected on a cache miss is based on the corresponding
-                                                                 NIX_*[*WAY_MASK]/NPA_*[*WAY_MASK]; if way mask bit N is clear, any of NDC
-                                                                 ways 4*N through 4*N+3 may be selected, otherwise these ways are excluded
-                                                                 from selection.
-
-                                                                 When set on a cache miss with NIX_*[*WAY_MASK]/NPA_*[*WAY_MASK] != 0xFFFF,
-                                                                 NDC ignores the way mask and allows any way to be selected/allocated.
-
-                                                                 Requests with NIX_*[*WAY_MASK]/NPA_*[*WAY_MASK] == 0xFFFF bypass the
-                                                                 NDC cache and are not affected by this bit. */
-        uint64_t reserved_2            : 1;
-        uint64_t hash_dis              : 1;  /**< [  1:  1](R/W) Hash disable. When set, the address hash function defined by NDC_AF_HASH()
-                                                                 is not used.
-
-                                                                 For diagnostic use only. May only be modified when NDC is idle and has no
-                                                                 cached data.
-
-                                                                 Internal:
-                                                                 When set, iova \<18:15\> select the bank and \<14:13\> select the index within
-                                                                 bank. */
-        uint64_t byp_only              : 1;  /**< [  0:  0](R/W) Bypass only.
-                                                                 0 = Bypass only mode is disabled and NDC will steer port requests based on command
-                                                                 bits, either to cache, for cache accesses or to LLC for bypass accesses.
-                                                                 1 = All requests will be directed to LLC, similar to bypass operation. Software
-                                                                 must not use the NDC LOCK feature. */
-#else /* Word 0 - Little Endian */
-        uint64_t byp_only              : 1;  /**< [  0:  0](R/W) Bypass only.
-                                                                 0 = Bypass only mode is disabled and NDC will steer port requests based on command
-                                                                 bits, either to cache, for cache accesses or to LLC for bypass accesses.
-                                                                 1 = All requests will be directed to LLC, similar to bypass operation. Software
-                                                                 must not use the NDC LOCK feature. */
-        uint64_t hash_dis              : 1;  /**< [  1:  1](R/W) Hash disable. When set, the address hash function defined by NDC_AF_HASH()
-                                                                 is not used.
-
-                                                                 For diagnostic use only. May only be modified when NDC is idle and has no
-                                                                 cached data.
-
-                                                                 Internal:
-                                                                 When set, iova \<18:15\> select the bank and \<14:13\> select the index within
-                                                                 bank. */
-        uint64_t reserved_2            : 1;
-        uint64_t way_select_dis        : 1;  /**< [  3:  3](R/W) Way select disable. Should be clear for normal operation.
-
-                                                                 When clear, the way selected on a cache miss is based on the corresponding
-                                                                 NIX_*[*WAY_MASK]/NPA_*[*WAY_MASK]; if way mask bit N is clear, any of NDC
-                                                                 ways 4*N through 4*N+3 may be selected, otherwise these ways are excluded
-                                                                 from selection.
-
-                                                                 When set on a cache miss with NIX_*[*WAY_MASK]/NPA_*[*WAY_MASK] != 0xFFFF,
-                                                                 NDC ignores the way mask and allows any way to be selected/allocated.
-
-                                                                 Requests with NIX_*[*WAY_MASK]/NPA_*[*WAY_MASK] == 0xFFFF bypass the
-                                                                 NDC cache and are not affected by this bit. */
-        uint64_t lock_dis              : 1;  /**< [  4:  4](R/W) Lock disabled. When set, NDC will not execute any command with lock bit set and report an error
-                                                                 back to port if command has lock bit set. Unlock command is not effected by this CSR.
-                                                                 When cleared NDC will process any command with lock bit set. */
-        uint64_t reserved_5_7          : 3;
-        uint64_t reserved_8_13         : 6;
-        uint64_t reserved_14_63        : 50;
-#endif /* Word 0 - End */
-    } cnf95xxp1;
+    } cn96xxp3;
+    /* struct cavm_ndcx_af_ctl_cn96xxp3 cn98xx; */
+    /* struct cavm_ndcx_af_ctl_cn96xxp1 cnf95xxp1; */
     struct cavm_ndcx_af_ctl_cnf95xxp2
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -1449,7 +1403,7 @@ union cavm_ndcx_af_ctl
         uint64_t reserved_14_63        : 50;
 #endif /* Word 0 - End */
     } cnf95xxp2;
-    /* struct cavm_ndcx_af_ctl_s loki; */
+    /* struct cavm_ndcx_af_ctl_cn96xxp3 loki; */
 };
 typedef union cavm_ndcx_af_ctl cavm_ndcx_af_ctl_t;
 
@@ -1459,6 +1413,8 @@ static inline uint64_t CAVM_NDCX_AF_CTL(unsigned long a)
     if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=2))
         return 0x8400c0000030ll + 0x10000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a<=5))
+        return 0x8400c0000030ll + 0x10000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
         return 0x8400c0000030ll + 0x10000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x8400c0000030ll + 0x10000000ll * ((a) & 0x7);
@@ -1502,6 +1458,8 @@ static inline uint64_t CAVM_NDCX_AF_ECO(unsigned long a)
     if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=2))
         return 0x8400c0000010ll + 0x10000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a<=5))
+        return 0x8400c0000010ll + 0x10000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
         return 0x8400c0000010ll + 0x10000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x8400c0000010ll + 0x10000000ll * ((a) & 0x7);
@@ -1602,6 +1560,8 @@ static inline uint64_t CAVM_NDCX_AF_HASHX(unsigned long a, unsigned long b)
         return 0x8400c0000300ll + 0x10000000ll * ((a) & 0x3) + 8ll * ((b) & 0x7);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a<=5) && (b<=5)))
         return 0x8400c0000300ll + 0x10000000ll * ((a) & 0x7) + 8ll * ((b) & 0x7);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=5) && (b<=5)))
+        return 0x8400c0000300ll + 0x10000000ll * ((a) & 0x7) + 8ll * ((b) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=5) && (b<=5)))
         return 0x8400c0000300ll + 0x10000000ll * ((a) & 0x7) + 8ll * ((b) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=5) && (b<=5)))
@@ -1657,6 +1617,8 @@ static inline uint64_t CAVM_NDCX_AF_INTR(unsigned long a)
         return 0x8400c0000058ll + 0x10000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a<=5))
         return 0x8400c0000058ll + 0x10000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x8400c0000058ll + 0x10000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x8400c0000058ll + 0x10000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -1704,6 +1666,8 @@ static inline uint64_t CAVM_NDCX_AF_INTR_ENA_W1C(unsigned long a)
     if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=2))
         return 0x8400c0000070ll + 0x10000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a<=5))
+        return 0x8400c0000070ll + 0x10000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
         return 0x8400c0000070ll + 0x10000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x8400c0000070ll + 0x10000000ll * ((a) & 0x7);
@@ -1753,6 +1717,8 @@ static inline uint64_t CAVM_NDCX_AF_INTR_ENA_W1S(unsigned long a)
         return 0x8400c0000068ll + 0x10000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a<=5))
         return 0x8400c0000068ll + 0x10000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x8400c0000068ll + 0x10000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x8400c0000068ll + 0x10000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -1800,6 +1766,8 @@ static inline uint64_t CAVM_NDCX_AF_INTR_W1S(unsigned long a)
     if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=2))
         return 0x8400c0000060ll + 0x10000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a<=5))
+        return 0x8400c0000060ll + 0x10000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
         return 0x8400c0000060ll + 0x10000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x8400c0000060ll + 0x10000000ll * ((a) & 0x7);
@@ -1870,6 +1838,8 @@ static inline uint64_t CAVM_NDCX_AF_PORTX_RTX_RWX_LAT_PC(unsigned long a, unsign
         return 0x8400c0000e00ll + 0x10000000ll * ((a) & 0x3) + 0x20ll * ((b) & 0x7) + 0x10ll * ((c) & 0x1) + 8ll * ((d) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a<=5) && (b<=5) && (c<=1) && (d<=1)))
         return 0x8400c0000e00ll + 0x10000000ll * ((a) & 0x7) + 0x20ll * ((b) & 0x7) + 0x10ll * ((c) & 0x1) + 8ll * ((d) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=5) && (b<=5) && (c<=1) && (d<=1)))
+        return 0x8400c0000e00ll + 0x10000000ll * ((a) & 0x7) + 0x20ll * ((b) & 0x7) + 0x10ll * ((c) & 0x1) + 8ll * ((d) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=5) && (b<=5) && (c<=1) && (d<=1)))
         return 0x8400c0000e00ll + 0x10000000ll * ((a) & 0x7) + 0x20ll * ((b) & 0x7) + 0x10ll * ((c) & 0x1) + 8ll * ((d) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=5) && (b<=5) && (c<=1) && (d<=1)))
@@ -1921,6 +1891,8 @@ static inline uint64_t CAVM_NDCX_AF_PORTX_RTX_RWX_OSTDN_PC(unsigned long a, unsi
         return 0x8400c0000d00ll + 0x10000000ll * ((a) & 0x3) + 0x20ll * ((b) & 0x7) + 0x10ll * ((c) & 0x1) + 8ll * ((d) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a<=5) && (b<=5) && (c<=1) && (d<=1)))
         return 0x8400c0000d00ll + 0x10000000ll * ((a) & 0x7) + 0x20ll * ((b) & 0x7) + 0x10ll * ((c) & 0x1) + 8ll * ((d) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=5) && (b<=5) && (c<=1) && (d<=1)))
+        return 0x8400c0000d00ll + 0x10000000ll * ((a) & 0x7) + 0x20ll * ((b) & 0x7) + 0x10ll * ((c) & 0x1) + 8ll * ((d) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=5) && (b<=5) && (c<=1) && (d<=1)))
         return 0x8400c0000d00ll + 0x10000000ll * ((a) & 0x7) + 0x20ll * ((b) & 0x7) + 0x10ll * ((c) & 0x1) + 8ll * ((d) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=5) && (b<=5) && (c<=1) && (d<=1)))
@@ -1971,6 +1943,8 @@ static inline uint64_t CAVM_NDCX_AF_PORTX_RTX_RWX_REQ_PC(unsigned long a, unsign
     if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && ((a<=2) && (b<=5) && (c<=1) && (d<=1)))
         return 0x8400c0000c00ll + 0x10000000ll * ((a) & 0x3) + 0x20ll * ((b) & 0x7) + 0x10ll * ((c) & 0x1) + 8ll * ((d) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a<=5) && (b<=5) && (c<=1) && (d<=1)))
+        return 0x8400c0000c00ll + 0x10000000ll * ((a) & 0x7) + 0x20ll * ((b) & 0x7) + 0x10ll * ((c) & 0x1) + 8ll * ((d) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=5) && (b<=5) && (c<=1) && (d<=1)))
         return 0x8400c0000c00ll + 0x10000000ll * ((a) & 0x7) + 0x20ll * ((b) & 0x7) + 0x10ll * ((c) & 0x1) + 8ll * ((d) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=5) && (b<=5) && (c<=1) && (d<=1)))
         return 0x8400c0000c00ll + 0x10000000ll * ((a) & 0x7) + 0x20ll * ((b) & 0x7) + 0x10ll * ((c) & 0x1) + 8ll * ((d) & 0x1);
@@ -2041,6 +2015,8 @@ static inline uint64_t CAVM_NDCX_AF_PORTX_RWX_CANT_ALLOC_PC(unsigned long a, uns
         return 0x8400c0000f00ll + 0x10000000ll * ((a) & 0x3) + 0x20ll * ((b) & 0x7) + 0x10ll * ((c) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a<=5) && (b<=5) && (c<=1)))
         return 0x8400c0000f00ll + 0x10000000ll * ((a) & 0x7) + 0x20ll * ((b) & 0x7) + 0x10ll * ((c) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=5) && (b<=5) && (c<=1)))
+        return 0x8400c0000f00ll + 0x10000000ll * ((a) & 0x7) + 0x20ll * ((b) & 0x7) + 0x10ll * ((c) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=5) && (b<=5) && (c<=1)))
         return 0x8400c0000f00ll + 0x10000000ll * ((a) & 0x7) + 0x20ll * ((b) & 0x7) + 0x10ll * ((c) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=5) && (b<=5) && (c<=1)))
@@ -2081,6 +2057,8 @@ static inline uint64_t CAVM_NDCX_AF_SCRATCH(unsigned long a)
     if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=2))
         return 0x8400c0000018ll + 0x10000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a<=5))
+        return 0x8400c0000018ll + 0x10000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
         return 0x8400c0000018ll + 0x10000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x8400c0000018ll + 0x10000000ll * ((a) & 0x7);
@@ -2136,6 +2114,8 @@ static inline uint64_t CAVM_NDCX_PRIV_AF_INT_CFG(unsigned long a)
     if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=2))
         return 0x8400c00002f8ll + 0x10000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a<=5))
+        return 0x8400c00002f8ll + 0x10000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
         return 0x8400c00002f8ll + 0x10000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x8400c00002f8ll + 0x10000000ll * ((a) & 0x7);

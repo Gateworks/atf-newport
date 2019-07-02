@@ -1227,7 +1227,9 @@ union cavm_ndf_msix_vecx_addr
         uint64_t reserved_49_63        : 15;
 #endif /* Word 0 - End */
     } cn8;
-    struct cavm_ndf_msix_vecx_addr_cn9
+    /* struct cavm_ndf_msix_vecx_addr_s cn9; */
+    /* struct cavm_ndf_msix_vecx_addr_s cn96xxp1; */
+    struct cavm_ndf_msix_vecx_addr_cn96xxp3
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_53_63        : 11;
@@ -1284,7 +1286,10 @@ union cavm_ndf_msix_vecx_addr
         uint64_t addr                  : 51; /**< [ 52:  2](R/W) IOVA to use for MSI-X delivery of this vector. */
         uint64_t reserved_53_63        : 11;
 #endif /* Word 0 - End */
-    } cn9;
+    } cn96xxp3;
+    /* struct cavm_ndf_msix_vecx_addr_cn96xxp3 cn98xx; */
+    /* struct cavm_ndf_msix_vecx_addr_cn96xxp3 cnf95xx; */
+    /* struct cavm_ndf_msix_vecx_addr_cn96xxp3 loki; */
 };
 typedef union cavm_ndf_msix_vecx_addr cavm_ndf_msix_vecx_addr_t;
 

@@ -529,6 +529,36 @@ union cavm_avs_msix_vecx_addr
         uint64_t reserved_1            : 1;
         uint64_t secvec                : 1;  /**< [  0:  0](SR/W) Secure vector.
                                                                  0 = This vector may be read or written by either secure or nonsecure states.
+                                                                 1 = This vector's AVS_MSIX_VEC()_ADDR, AVS_MSIX_VEC()_CTL, and corresponding
+                                                                 bit of AVS_MSIX_PBA() are RAZ/WI and does not cause a fault when accessed
+                                                                 by the nonsecure world.
+
+                                                                 If PCCPF_AVS_VSEC_SCTL[MSIX_SEC] (for documentation, see PCCPF_XXX_VSEC_SCTL[MSIX_SEC]) is
+                                                                 set, all vectors are secure and function as if [SECVEC] was set. */
+#else /* Word 0 - Little Endian */
+        uint64_t secvec                : 1;  /**< [  0:  0](SR/W) Secure vector.
+                                                                 0 = This vector may be read or written by either secure or nonsecure states.
+                                                                 1 = This vector's AVS_MSIX_VEC()_ADDR, AVS_MSIX_VEC()_CTL, and corresponding
+                                                                 bit of AVS_MSIX_PBA() are RAZ/WI and does not cause a fault when accessed
+                                                                 by the nonsecure world.
+
+                                                                 If PCCPF_AVS_VSEC_SCTL[MSIX_SEC] (for documentation, see PCCPF_XXX_VSEC_SCTL[MSIX_SEC]) is
+                                                                 set, all vectors are secure and function as if [SECVEC] was set. */
+        uint64_t reserved_1            : 1;
+        uint64_t addr                  : 51; /**< [ 52:  2](R/W) IOVA to use for MSI-X delivery of this vector. */
+        uint64_t reserved_53_63        : 11;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_avs_msix_vecx_addr_s cn9; */
+    /* struct cavm_avs_msix_vecx_addr_s cn96xxp1; */
+    struct cavm_avs_msix_vecx_addr_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_53_63        : 11;
+        uint64_t addr                  : 51; /**< [ 52:  2](R/W) IOVA to use for MSI-X delivery of this vector. */
+        uint64_t reserved_1            : 1;
+        uint64_t secvec                : 1;  /**< [  0:  0](SR/W) Secure vector.
+                                                                 0 = This vector may be read or written by either secure or nonsecure states.
                                                                  The vector's IOVA is sent to the SMMU as nonsecure (though this only affects
                                                                  physical addresses if PCCPF_XXX_VSEC_SCTL[MSIX_PHYS]=1).
 
@@ -576,8 +606,10 @@ union cavm_avs_msix_vecx_addr
         uint64_t addr                  : 51; /**< [ 52:  2](R/W) IOVA to use for MSI-X delivery of this vector. */
         uint64_t reserved_53_63        : 11;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_avs_msix_vecx_addr_s cn; */
+    } cn96xxp3;
+    /* struct cavm_avs_msix_vecx_addr_cn96xxp3 cn98xx; */
+    /* struct cavm_avs_msix_vecx_addr_cn96xxp3 cnf95xx; */
+    /* struct cavm_avs_msix_vecx_addr_cn96xxp3 loki; */
 };
 typedef union cavm_avs_msix_vecx_addr cavm_avs_msix_vecx_addr_t;
 

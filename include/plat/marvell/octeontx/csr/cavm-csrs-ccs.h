@@ -124,8 +124,15 @@
 #define CAVM_CCS_RID_E_CLU3_PIC (0xe)
 #define CAVM_CCS_RID_E_CLU3_TAD0 (0xc)
 #define CAVM_CCS_RID_E_CLU3_TAD1 (0xd)
+#define CAVM_CCS_RID_E_CLU4_PIC (0x12)
+#define CAVM_CCS_RID_E_CLU4_TAD0 (0x10)
+#define CAVM_CCS_RID_E_CLU4_TAD1 (0x11)
+#define CAVM_CCS_RID_E_CLU5_PIC (0x16)
+#define CAVM_CCS_RID_E_CLU5_TAD0 (0x14)
+#define CAVM_CCS_RID_E_CLU5_TAD1 (0x15)
 #define CAVM_CCS_RID_E_IOB0 (0x24)
 #define CAVM_CCS_RID_E_IOB1 (0x25)
+#define CAVM_CCS_RID_E_IOB2 (0x26)
 #define CAVM_CCS_RID_E_MCC0_MCI0 (0x28)
 #define CAVM_CCS_RID_E_MCC0_MCI1 (0x29)
 #define CAVM_CCS_RID_E_MCC1_MCI0 (0x2c)
@@ -305,7 +312,54 @@ union cavm_ccs_adr_tdsx
         uint64_t reserved_43_63        : 21;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_ccs_adr_tdsx_s cn9; */
     /* struct cavm_ccs_adr_tdsx_s cn96xx; */
+    struct cavm_ccs_adr_tdsx_cn98xx
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_43_63        : 21;
+        uint64_t en                    : 35; /**< [ 42:  8](R/W) Enable for each bit that is to participate (1 means participate, 0 means does
+                                                                 not participate) in the XORs for one of the bits that determines to which TAD
+                                                                 (within a left-right half) a memory-space physical address is sent. Index 0
+                                                                 determines bit 0 of the TAD number (excluding left-right), index 1 determines
+                                                                 bit 1 (excluding left-right).
+
+                                                                 The reset values are different for each index as follows:
+                                                                   * CCS_ADR_TDS(0)[EN] : 0x1601f725.
+                                                                   * CCS_ADR_TDS(1)[EN] : 0x3a03196e.
+                                                                   * CCS_ADR_TDS(2)[EN] : 0x6307c5f9.
+                                                                   * CCS_ADR_TDS(3)[EN] : 0xc70e8af3.
+                                                                   * CCS_ADR_TDS(4)[EN] : 0x991ce3c2.
+                                                                   * CCS_ADR_TDS(5)[EN] : 0x243831a0.
+                                                                   * CCS_ADR_TDS(6)[EN] : 0x49706240.
+                                                                   * CCS_ADR_TDS(7)[EN] : 0x85e133a5.
+
+                                                                 Internal:
+                                                                 Reset values from ccu_defs::CCS_ADR_TDS_REG_RST[n]. */
+        uint64_t reserved_0_7          : 8;
+#else /* Word 0 - Little Endian */
+        uint64_t reserved_0_7          : 8;
+        uint64_t en                    : 35; /**< [ 42:  8](R/W) Enable for each bit that is to participate (1 means participate, 0 means does
+                                                                 not participate) in the XORs for one of the bits that determines to which TAD
+                                                                 (within a left-right half) a memory-space physical address is sent. Index 0
+                                                                 determines bit 0 of the TAD number (excluding left-right), index 1 determines
+                                                                 bit 1 (excluding left-right).
+
+                                                                 The reset values are different for each index as follows:
+                                                                   * CCS_ADR_TDS(0)[EN] : 0x1601f725.
+                                                                   * CCS_ADR_TDS(1)[EN] : 0x3a03196e.
+                                                                   * CCS_ADR_TDS(2)[EN] : 0x6307c5f9.
+                                                                   * CCS_ADR_TDS(3)[EN] : 0xc70e8af3.
+                                                                   * CCS_ADR_TDS(4)[EN] : 0x991ce3c2.
+                                                                   * CCS_ADR_TDS(5)[EN] : 0x243831a0.
+                                                                   * CCS_ADR_TDS(6)[EN] : 0x49706240.
+                                                                   * CCS_ADR_TDS(7)[EN] : 0x85e133a5.
+
+                                                                 Internal:
+                                                                 Reset values from ccu_defs::CCS_ADR_TDS_REG_RST[n]. */
+        uint64_t reserved_43_63        : 21;
+#endif /* Word 0 - End */
+    } cn98xx;
     struct cavm_ccs_adr_tdsx_cnf95xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -347,7 +401,13 @@ typedef union cavm_ccs_adr_tdsx cavm_ccs_adr_tdsx_t;
 static inline uint64_t CAVM_CCS_ADR_TDSX(unsigned long a) __attribute__ ((pure, always_inline));
 static inline uint64_t CAVM_CCS_ADR_TDSX(unsigned long a)
 {
-    if (cavm_is_model(OCTEONTX_CN9XXX) && (a<=1))
+    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
+        return 0x87e087104000ll + 8ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=7))
+        return 0x87e087104000ll + 8ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=1))
+        return 0x87e087104000ll + 8ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=1))
         return 0x87e087104000ll + 8ll * ((a) & 0x1);
     __cavm_csr_fatal("CCS_ADR_TDSX", 1, a, 0, 0, 0, 0, 0);
 }
@@ -403,7 +463,46 @@ union cavm_ccs_asc_regionx_attr
         uint64_t reserved_9_63         : 55;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_ccs_asc_regionx_attr_s cn9; */
     /* struct cavm_ccs_asc_regionx_attr_s cn96xx; */
+    struct cavm_ccs_asc_regionx_attr_cn98xx
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_9_63         : 55;
+        uint64_t write_through         : 1;  /**< [  8:  8](R/W) When set addresses in the region are treated as write-through. All modifications
+                                                                 of a cache line will be sent to DRAM immediately. */
+        uint64_t lmc_mode              : 3;  /**< [  7:  5](R/W) Specifies how the LMCs in [LMC_MASK] are accessed for this region. Enumerated by
+                                                                 CCS_LMC_MODE_E. */
+        uint64_t lmc_mask              : 3;  /**< [  4:  2](R/W) Specifies which LMCs are used by this region. Each bit corresponds to a pair of
+                                                                 LMCs (one on each side) with bit \<0\> for LMC0/LMC1, \<1\> for LMC2/LMC3, and \<2\>
+                                                                 for LMC4/LMC5.
+
+                                                                 If [LMC_MODE] is CCS_LMC_MODE_E::FLAT_1, exactly one bit must be set, if
+                                                                 CCS_LMC_MODE_E::STRIPE_2 exactly two bits must be set, and if
+                                                                 CCS_LMC_MODE_E::STRIPE_3 all three bits must be set. */
+        uint64_t s_en                  : 1;  /**< [  1:  1](R/W) Enables secure access to region.
+                                                                 Undefined if both [S_EN] and [NS_EN] are set for the same region. */
+        uint64_t ns_en                 : 1;  /**< [  0:  0](R/W) Enables nonsecure access to region.
+                                                                 Undefined if both [S_EN] and [NS_EN] are set for the same region. */
+#else /* Word 0 - Little Endian */
+        uint64_t ns_en                 : 1;  /**< [  0:  0](R/W) Enables nonsecure access to region.
+                                                                 Undefined if both [S_EN] and [NS_EN] are set for the same region. */
+        uint64_t s_en                  : 1;  /**< [  1:  1](R/W) Enables secure access to region.
+                                                                 Undefined if both [S_EN] and [NS_EN] are set for the same region. */
+        uint64_t lmc_mask              : 3;  /**< [  4:  2](R/W) Specifies which LMCs are used by this region. Each bit corresponds to a pair of
+                                                                 LMCs (one on each side) with bit \<0\> for LMC0/LMC1, \<1\> for LMC2/LMC3, and \<2\>
+                                                                 for LMC4/LMC5.
+
+                                                                 If [LMC_MODE] is CCS_LMC_MODE_E::FLAT_1, exactly one bit must be set, if
+                                                                 CCS_LMC_MODE_E::STRIPE_2 exactly two bits must be set, and if
+                                                                 CCS_LMC_MODE_E::STRIPE_3 all three bits must be set. */
+        uint64_t lmc_mode              : 3;  /**< [  7:  5](R/W) Specifies how the LMCs in [LMC_MASK] are accessed for this region. Enumerated by
+                                                                 CCS_LMC_MODE_E. */
+        uint64_t write_through         : 1;  /**< [  8:  8](R/W) When set addresses in the region are treated as write-through. All modifications
+                                                                 of a cache line will be sent to DRAM immediately. */
+        uint64_t reserved_9_63         : 55;
+#endif /* Word 0 - End */
+    } cn98xx;
     struct cavm_ccs_asc_regionx_attr_cnf95xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -624,7 +723,9 @@ union cavm_ccs_bcst_rsp
         uint64_t reserved_4_63         : 60;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_ccs_bcst_rsp_s cn9; */
     /* struct cavm_ccs_bcst_rsp_s cn96xx; */
+    /* struct cavm_ccs_bcst_rsp_s cn98xx; */
     struct cavm_ccs_bcst_rsp_cnf95xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */

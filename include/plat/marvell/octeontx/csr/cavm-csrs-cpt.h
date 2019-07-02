@@ -778,9 +778,9 @@ union cavm_cpt_inst_s
         uint64_t res_addr              : 64; /**< [127: 64] Result IOVA. CPT always writes a CPT_RES_S to this location after it
                                                                  finishes executing the instruction. [RES_ADDR] must not be zero.
 
-                                                                 CPT writes the CPT_RES_S before any submit to SSO (see [WQE_PTR]),
-                                                                 before any final NIX TX descriptor submit (see [NIXTXL]), and before
-                                                                 any CPT_LF_DONE[DONE] increment ((see [DONEINT]).
+                                                                 CPT writes the CPT_RES_S for a CPT_INST_S before performing any of these actions
+                                                                 for the CPT_INST_S: a submit to SSO (see [WQE_PTR]), a final NIX TX descriptor
+                                                                 submit (see [NIXTXL]), or a CPT_LF_DONE[DONE] increment ((see [DONEINT]).
 
                                                                  CPT cannot write the CPT_RES_S until after it completes all LLC/DRAM writes
                                                                  related to executing the corresponding CPT_INST_S and clearing all possible
@@ -788,9 +788,10 @@ union cavm_cpt_inst_s
                                                                  CPT may write the CPT_RES_S's in any order, but will typically write each soon
                                                                  after the engine completes execution of the corresponding CPT_INST_S.
 
-                                                                 [QORD] has no direct affect on when CPT writes the CPT_RES_S. [NIXTXL]
-                                                                 can delay CPT_RES_S writes due to potential SMMU faults on NIX TX
-                                                                 descriptor reads, but otherwise may not affect CPT_RES_S write order.
+                                                                 [QORD] has no direct affect on the relative ordering of two CPT_RES_S writes of
+                                                                 two different CPT_INST_S's. [NIXTXL] can delay CPT_RES_S writes due to potential
+                                                                 SMMU faults on NIX TX descriptor reads, but otherwise may not affect CPT_RES_S
+                                                                 write order.
 
                                                                  The CPT_RES_S must reside in a naturally-aligned 128-bit / 16-byte word.
                                                                  [RES_ADDR]\<3:0\> must always be zero.
@@ -818,9 +819,9 @@ union cavm_cpt_inst_s
         uint64_t res_addr              : 64; /**< [127: 64] Result IOVA. CPT always writes a CPT_RES_S to this location after it
                                                                  finishes executing the instruction. [RES_ADDR] must not be zero.
 
-                                                                 CPT writes the CPT_RES_S before any submit to SSO (see [WQE_PTR]),
-                                                                 before any final NIX TX descriptor submit (see [NIXTXL]), and before
-                                                                 any CPT_LF_DONE[DONE] increment ((see [DONEINT]).
+                                                                 CPT writes the CPT_RES_S for a CPT_INST_S before performing any of these actions
+                                                                 for the CPT_INST_S: a submit to SSO (see [WQE_PTR]), a final NIX TX descriptor
+                                                                 submit (see [NIXTXL]), or a CPT_LF_DONE[DONE] increment ((see [DONEINT]).
 
                                                                  CPT cannot write the CPT_RES_S until after it completes all LLC/DRAM writes
                                                                  related to executing the corresponding CPT_INST_S and clearing all possible
@@ -828,9 +829,10 @@ union cavm_cpt_inst_s
                                                                  CPT may write the CPT_RES_S's in any order, but will typically write each soon
                                                                  after the engine completes execution of the corresponding CPT_INST_S.
 
-                                                                 [QORD] has no direct affect on when CPT writes the CPT_RES_S. [NIXTXL]
-                                                                 can delay CPT_RES_S writes due to potential SMMU faults on NIX TX
-                                                                 descriptor reads, but otherwise may not affect CPT_RES_S write order.
+                                                                 [QORD] has no direct affect on the relative ordering of two CPT_RES_S writes of
+                                                                 two different CPT_INST_S's. [NIXTXL] can delay CPT_RES_S writes due to potential
+                                                                 SMMU faults on NIX TX descriptor reads, but otherwise may not affect CPT_RES_S
+                                                                 write order.
 
                                                                  The CPT_RES_S must reside in a naturally-aligned 128-bit / 16-byte word.
                                                                  [RES_ADDR]\<3:0\> must always be zero.
@@ -913,13 +915,19 @@ union cavm_cpt_inst_s
                                                                  address equivalent). The start of the WQE must be aligned to a 64-bit / 8 byte
                                                                  boundary.
 
-                                                                 CPT adds the work to SSO after writing the CPT_RES_S (see [RES_ADDR]), but
-                                                                 unordered relative to any CPT_LF_DONE[DONE] increment (see [DONEINT]). CPT does
-                                                                 not add work to SSO when it sends a descriptor to NIX TX (see [NIXTXL]).
+                                                                 CPT always adds the work to SSO after writing the CPT_RES_S for this CPT_INST_S
+                                                                 (see [RES_ADDR]), but unordered relative to any CPT_LF_DONE[DONE] increment
+                                                                 (see [DONEINT]). Also, if [QORD]=1 for this CPT_INST_S, CPT adds SSO work
+                                                                 for this CPT_INST_S after it writes the CPT_RES_S's of all prior CPT_INST_S's
+                                                                 within the same LF/queue that have their CPT_INST_S[QORD]=1. CPT will not
+                                                                 order the CPT_RES_S writes of prior CPT_INST_S's that are either not in the
+                                                                 same LF/queue or have their CPT_INST_S[QORD]=0.
 
-                                                                 CPT adds SSO work from CPT_INST_S's in the same LF/queue that have [QORD]=1
-                                                                 in queue order. CPT may add to SSO in any order in all other situations, even
-                                                                 amongst instructions in the same queue.
+                                                                 CPT does not add work to SSO when it sends a descriptor to NIX TX (see [NIXTXL]).
+
+                                                                 CPT adds SSO work from CPT_INST_S's in the same LF/queue that have their
+                                                                 CPT_INST_S[QORD]=1 in queue order. CPT may add to SSO in any order in all
+                                                                 other situations, even amongst instructions in the same queue.
 
                                                                  CPT normally adds work to the function CPT_AF_LF()_CTL2[SSO_PF_FUNC]. But if
                                                                  CPT_AF_LF()_CTL[PF_FUNC_INST]=1 and CPT_AF_ECO[SSO_PF_FUNC_OVRD]=0, CPT
@@ -933,7 +941,7 @@ union cavm_cpt_inst_s
         uint64_t reserved_193_194      : 2;
         uint64_t qord                  : 1;  /**< [192:192] Queue ordering. When set, CPT adds the SSO WQE (see [WQE_PTR], [TAG], [TT],
                                                                  [GRP]) and submits to NIX TX (see [NIXTXL] and [NIXTX_ADDR]) in queue
-                                                                 order.
+                                                                 order. [QORD]=1 can also force CPT_RES_S write completion.
 
                                                                  [QORD] must be set when [NIXTXL]!=0x0. CPT sets CPT_LF_MISC_INT[NQERR]
                                                                  and signals CPT_COMP_E::INSTERR when this rule is violated. CPT sends NIX
@@ -943,19 +951,28 @@ union cavm_cpt_inst_s
                                                                  executes the two SSO add works in order. If [QORD]=0 or if the instructions
                                                                  are in different queues, CPT may reorder the add works.
 
-                                                                 [QORD] has no direct affect on when CPT writes the CPT_RES_S. See [RES_ADDR].
+                                                                 [QORD] may commonly be used to force NIX TX or SSO order amongst
+                                                                 instructions within a LF/queue. But [QORD]=1 additionally forces CPT_RES_S
+                                                                 write completion prior to a subsequent [QORD]=1 SSO add within the LF/queue.
+                                                                 See [WQE_PTR].
 
-                                                                 When [QORD]=1, at least one of [WQE_PTR]!=0x0 or [NIXTXL]!=0x0 must be true.
-                                                                 CPT sets CPT_LF_MISC_INT[NQERR] and signals CPT_COMP_E::INSTERR when this
-                                                                 rule is violated.
+                                                                 [QORD] has no direct affect on the relative ordering of two CPT_RES_S writes of
+                                                                 two different CPT_INST_S's. See [RES_ADDR].
 
                                                                  Internal:
                                                                  See the [RES_ADDR] internal description for details why the statement "QORD
-                                                                 has no direct affect on when CPT writes the CPT_RES_S" is appropriate. */
+                                                                 has no direct affect on when CPT writes the CPT_RES_S" is appropriate.
+
+                                                                 This next text was originally present (and implemented in T93 A0 and B0(A1)),
+                                                                 but removed later to improve VPP capabilities. See mcbuggin 36656:
+
+                                                                 When [QORD]=1, at least one of [WQE_PTR]!=0x0 or [NIXTXL]!=0x0 must be true.
+                                                                 CPT sets CPT_LF_MISC_INT[NQERR] and signals CPT_COMP_E::INSTERR when this
+                                                                 rule is violated. */
 #else /* Word 3 - Little Endian */
         uint64_t qord                  : 1;  /**< [192:192] Queue ordering. When set, CPT adds the SSO WQE (see [WQE_PTR], [TAG], [TT],
                                                                  [GRP]) and submits to NIX TX (see [NIXTXL] and [NIXTX_ADDR]) in queue
-                                                                 order.
+                                                                 order. [QORD]=1 can also force CPT_RES_S write completion.
 
                                                                  [QORD] must be set when [NIXTXL]!=0x0. CPT sets CPT_LF_MISC_INT[NQERR]
                                                                  and signals CPT_COMP_E::INSTERR when this rule is violated. CPT sends NIX
@@ -965,15 +982,24 @@ union cavm_cpt_inst_s
                                                                  executes the two SSO add works in order. If [QORD]=0 or if the instructions
                                                                  are in different queues, CPT may reorder the add works.
 
-                                                                 [QORD] has no direct affect on when CPT writes the CPT_RES_S. See [RES_ADDR].
+                                                                 [QORD] may commonly be used to force NIX TX or SSO order amongst
+                                                                 instructions within a LF/queue. But [QORD]=1 additionally forces CPT_RES_S
+                                                                 write completion prior to a subsequent [QORD]=1 SSO add within the LF/queue.
+                                                                 See [WQE_PTR].
 
-                                                                 When [QORD]=1, at least one of [WQE_PTR]!=0x0 or [NIXTXL]!=0x0 must be true.
-                                                                 CPT sets CPT_LF_MISC_INT[NQERR] and signals CPT_COMP_E::INSTERR when this
-                                                                 rule is violated.
+                                                                 [QORD] has no direct affect on the relative ordering of two CPT_RES_S writes of
+                                                                 two different CPT_INST_S's. See [RES_ADDR].
 
                                                                  Internal:
                                                                  See the [RES_ADDR] internal description for details why the statement "QORD
-                                                                 has no direct affect on when CPT writes the CPT_RES_S" is appropriate. */
+                                                                 has no direct affect on when CPT writes the CPT_RES_S" is appropriate.
+
+                                                                 This next text was originally present (and implemented in T93 A0 and B0(A1)),
+                                                                 but removed later to improve VPP capabilities. See mcbuggin 36656:
+
+                                                                 When [QORD]=1, at least one of [WQE_PTR]!=0x0 or [NIXTXL]!=0x0 must be true.
+                                                                 CPT sets CPT_LF_MISC_INT[NQERR] and signals CPT_COMP_E::INSTERR when this
+                                                                 rule is violated. */
         uint64_t reserved_193_194      : 2;
         uint64_t wqe_ptr               : 61; /**< [255:195] If [WQE_PTR] is nonzero, it is a pointer to a work-queue entry that CPT submits
                                                                  work to SSO (except sometimes when [NIXTXL]!=0x0) after all context, output data,
@@ -983,13 +1009,19 @@ union cavm_cpt_inst_s
                                                                  address equivalent). The start of the WQE must be aligned to a 64-bit / 8 byte
                                                                  boundary.
 
-                                                                 CPT adds the work to SSO after writing the CPT_RES_S (see [RES_ADDR]), but
-                                                                 unordered relative to any CPT_LF_DONE[DONE] increment (see [DONEINT]). CPT does
-                                                                 not add work to SSO when it sends a descriptor to NIX TX (see [NIXTXL]).
+                                                                 CPT always adds the work to SSO after writing the CPT_RES_S for this CPT_INST_S
+                                                                 (see [RES_ADDR]), but unordered relative to any CPT_LF_DONE[DONE] increment
+                                                                 (see [DONEINT]). Also, if [QORD]=1 for this CPT_INST_S, CPT adds SSO work
+                                                                 for this CPT_INST_S after it writes the CPT_RES_S's of all prior CPT_INST_S's
+                                                                 within the same LF/queue that have their CPT_INST_S[QORD]=1. CPT will not
+                                                                 order the CPT_RES_S writes of prior CPT_INST_S's that are either not in the
+                                                                 same LF/queue or have their CPT_INST_S[QORD]=0.
 
-                                                                 CPT adds SSO work from CPT_INST_S's in the same LF/queue that have [QORD]=1
-                                                                 in queue order. CPT may add to SSO in any order in all other situations, even
-                                                                 amongst instructions in the same queue.
+                                                                 CPT does not add work to SSO when it sends a descriptor to NIX TX (see [NIXTXL]).
+
+                                                                 CPT adds SSO work from CPT_INST_S's in the same LF/queue that have their
+                                                                 CPT_INST_S[QORD]=1 in queue order. CPT may add to SSO in any order in all
+                                                                 other situations, even amongst instructions in the same queue.
 
                                                                  CPT normally adds work to the function CPT_AF_LF()_CTL2[SSO_PF_FUNC]. But if
                                                                  CPT_AF_LF()_CTL[PF_FUNC_INST]=1 and CPT_AF_ECO[SSO_PF_FUNC_OVRD]=0, CPT
@@ -1341,6 +1373,8 @@ static inline uint64_t CAVM_CPTX_AF_ACTIVE_CYCLES_PC(unsigned long a)
         return 0x8400a001c000ll + 0x10000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a<=1))
         return 0x8400a001c000ll + 0x10000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
+        return 0x8400a001c000ll + 0x10000000ll * ((a) & 0x1);
     __cavm_csr_fatal("CPTX_AF_ACTIVE_CYCLES_PC", 1, a, 0, 0, 0, 0, 0);
 }
 
@@ -1382,6 +1416,8 @@ static inline uint64_t CAVM_CPTX_AF_BAR2_ALIASX(unsigned long a, unsigned long b
     if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && ((a==0) && (b<=131071)))
         return 0x8400a9100000ll + 0x10000000ll * ((a) & 0x0) + 8ll * ((b) & 0x1ffff);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a<=1) && (b<=131071)))
+        return 0x8400a9100000ll + 0x10000000ll * ((a) & 0x1) + 8ll * ((b) & 0x1ffff);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=131071)))
         return 0x8400a9100000ll + 0x10000000ll * ((a) & 0x1) + 8ll * ((b) & 0x1ffff);
     __cavm_csr_fatal("CPTX_AF_BAR2_ALIASX", 2, a, b, 0, 0, 0, 0);
 }
@@ -1428,6 +1464,8 @@ static inline uint64_t CAVM_CPTX_AF_BAR2_SEL(unsigned long a)
     if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a==0))
         return 0x8400a9000000ll + 0x10000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a<=1))
+        return 0x8400a9000000ll + 0x10000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x8400a9000000ll + 0x10000000ll * ((a) & 0x1);
     __cavm_csr_fatal("CPTX_AF_BAR2_SEL", 1, a, 0, 0, 0, 0, 0);
 }
@@ -1477,6 +1515,8 @@ static inline uint64_t CAVM_CPTX_AF_BLK_RST(unsigned long a)
     if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a==0))
         return 0x8400a0046000ll + 0x10000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a<=1))
+        return 0x8400a0046000ll + 0x10000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x8400a0046000ll + 0x10000000ll * ((a) & 0x1);
     __cavm_csr_fatal("CPTX_AF_BLK_RST", 1, a, 0, 0, 0, 0, 0);
 }
@@ -1643,6 +1683,8 @@ static inline uint64_t CAVM_CPTX_AF_BPX_TEST(unsigned long a, unsigned long b)
         return 0x8400a0005000ll + 0x10000000ll * ((a) & 0x0) + 8ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a<=1) && (b<=1)))
         return 0x8400a0005000ll + 0x10000000ll * ((a) & 0x1) + 8ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=1)))
+        return 0x8400a0005000ll + 0x10000000ll * ((a) & 0x1) + 8ll * ((b) & 0x1);
     __cavm_csr_fatal("CPTX_AF_BPX_TEST", 2, a, b, 0, 0, 0, 0);
 }
 
@@ -1690,6 +1732,8 @@ static inline uint64_t CAVM_CPTX_AF_CONSTANTS0(unsigned long a)
     if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a==0))
         return 0x8400a0000000ll + 0x10000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a<=1))
+        return 0x8400a0000000ll + 0x10000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x8400a0000000ll + 0x10000000ll * ((a) & 0x1);
     __cavm_csr_fatal("CPTX_AF_CONSTANTS0", 1, a, 0, 0, 0, 0, 0);
 }
@@ -1749,6 +1793,8 @@ static inline uint64_t CAVM_CPTX_AF_CONSTANTS1(unsigned long a)
         return 0x8400a0001000ll + 0x10000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a<=1))
         return 0x8400a0001000ll + 0x10000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
+        return 0x8400a0001000ll + 0x10000000ll * ((a) & 0x1);
     __cavm_csr_fatal("CPTX_AF_CONSTANTS1", 1, a, 0, 0, 0, 0, 0);
 }
 
@@ -1785,6 +1831,8 @@ static inline uint64_t CAVM_CPTX_AF_CPTCLK_CNT(unsigned long a)
     if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a==0))
         return 0x8400a002a000ll + 0x10000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a<=1))
+        return 0x8400a002a000ll + 0x10000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x8400a002a000ll + 0x10000000ll * ((a) & 0x1);
     __cavm_csr_fatal("CPTX_AF_CPTCLK_CNT", 1, a, 0, 0, 0, 0, 0);
 }
@@ -1889,6 +1937,8 @@ static inline uint64_t CAVM_CPTX_AF_CTL(unsigned long a)
         return 0x8400a002e000ll + 0x10000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a<=1))
         return 0x8400a002e000ll + 0x10000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
+        return 0x8400a002e000ll + 0x10000000ll * ((a) & 0x1);
     __cavm_csr_fatal("CPTX_AF_CTL", 1, a, 0, 0, 0, 0, 0);
 }
 
@@ -1947,6 +1997,7 @@ union cavm_cptx_af_diag
         uint64_t reserved_25_63        : 39;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_cptx_af_diag_s cn9; */
     struct cavm_cptx_af_diag_cn96xxp1
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -1982,6 +2033,7 @@ union cavm_cptx_af_diag
 #endif /* Word 0 - End */
     } cn96xxp1;
     /* struct cavm_cptx_af_diag_s cn96xxp3; */
+    /* struct cavm_cptx_af_diag_s cn98xx; */
 };
 typedef union cavm_cptx_af_diag cavm_cptx_af_diag_t;
 
@@ -1991,6 +2043,8 @@ static inline uint64_t CAVM_CPTX_AF_DIAG(unsigned long a)
     if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a==0))
         return 0x8400a0003000ll + 0x10000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a<=1))
+        return 0x8400a0003000ll + 0x10000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x8400a0003000ll + 0x10000000ll * ((a) & 0x1);
     __cavm_csr_fatal("CPTX_AF_DIAG", 1, a, 0, 0, 0, 0, 0);
 }
@@ -2054,6 +2108,8 @@ static inline uint64_t CAVM_CPTX_AF_ECO(unsigned long a)
     if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a==0))
         return 0x8400a0004000ll + 0x10000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a<=1))
+        return 0x8400a0004000ll + 0x10000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x8400a0004000ll + 0x10000000ll * ((a) & 0x1);
     __cavm_csr_fatal("CPTX_AF_ECO", 1, a, 0, 0, 0, 0, 0);
 }
@@ -2125,6 +2181,8 @@ static inline uint64_t CAVM_CPTX_AF_EXEX_ACTIVE(unsigned long a, unsigned long b
     if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && ((a==0) && (b<=127)))
         return 0x8400a0016000ll + 0x10000000ll * ((a) & 0x0) + 8ll * ((b) & 0x7f);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a<=1) && (b<=127)))
+        return 0x8400a0016000ll + 0x10000000ll * ((a) & 0x1) + 8ll * ((b) & 0x7f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=127)))
         return 0x8400a0016000ll + 0x10000000ll * ((a) & 0x1) + 8ll * ((b) & 0x7f);
     __cavm_csr_fatal("CPTX_AF_EXEX_ACTIVE", 2, a, b, 0, 0, 0, 0);
 }
@@ -2224,6 +2282,8 @@ static inline uint64_t CAVM_CPTX_AF_EXEX_CTL(unsigned long a, unsigned long b)
         return 0x8400a0020000ll + 0x10000000ll * ((a) & 0x0) + 8ll * ((b) & 0x7f);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a<=1) && (b<=127)))
         return 0x8400a0020000ll + 0x10000000ll * ((a) & 0x1) + 8ll * ((b) & 0x7f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=127)))
+        return 0x8400a0020000ll + 0x10000000ll * ((a) & 0x1) + 8ll * ((b) & 0x7f);
     __cavm_csr_fatal("CPTX_AF_EXEX_CTL", 2, a, b, 0, 0, 0, 0);
 }
 
@@ -2282,6 +2342,8 @@ static inline uint64_t CAVM_CPTX_AF_EXEX_CTL2(unsigned long a, unsigned long b)
     if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && ((a==0) && (b<=127)))
         return 0x8400a0012000ll + 0x10000000ll * ((a) & 0x0) + 8ll * ((b) & 0x7f);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a<=1) && (b<=127)))
+        return 0x8400a0012000ll + 0x10000000ll * ((a) & 0x1) + 8ll * ((b) & 0x7f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=127)))
         return 0x8400a0012000ll + 0x10000000ll * ((a) & 0x1) + 8ll * ((b) & 0x7f);
     __cavm_csr_fatal("CPTX_AF_EXEX_CTL2", 2, a, b, 0, 0, 0, 0);
 }
@@ -2348,6 +2410,8 @@ static inline uint64_t CAVM_CPTX_AF_EXEX_STS(unsigned long a, unsigned long b)
         return 0x8400a0013000ll + 0x10000000ll * ((a) & 0x0) + 8ll * ((b) & 0x7f);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a<=1) && (b<=127)))
         return 0x8400a0013000ll + 0x10000000ll * ((a) & 0x1) + 8ll * ((b) & 0x7f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=127)))
+        return 0x8400a0013000ll + 0x10000000ll * ((a) & 0x1) + 8ll * ((b) & 0x7f);
     __cavm_csr_fatal("CPTX_AF_EXEX_STS", 2, a, b, 0, 0, 0, 0);
 }
 
@@ -2397,6 +2461,8 @@ static inline uint64_t CAVM_CPTX_AF_EXEX_UCODE_BASE(unsigned long a, unsigned lo
         return 0x8400a0026000ll + 0x10000000ll * ((a) & 0x0) + 8ll * ((b) & 0x7f);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a<=1) && (b<=127)))
         return 0x8400a0026000ll + 0x10000000ll * ((a) & 0x1) + 8ll * ((b) & 0x7f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=127)))
+        return 0x8400a0026000ll + 0x10000000ll * ((a) & 0x1) + 8ll * ((b) & 0x7f);
     __cavm_csr_fatal("CPTX_AF_EXEX_UCODE_BASE", 2, a, b, 0, 0, 0, 0);
 }
 
@@ -2435,6 +2501,8 @@ static inline uint64_t CAVM_CPTX_AF_EXE_DBG_CNTX(unsigned long a, unsigned long 
     if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && ((a==0) && (b<=15)))
         return 0x8400a0022000ll + 0x10000000ll * ((a) & 0x0) + 8ll * ((b) & 0xf);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a<=1) && (b<=15)))
+        return 0x8400a0022000ll + 0x10000000ll * ((a) & 0x1) + 8ll * ((b) & 0xf);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=15)))
         return 0x8400a0022000ll + 0x10000000ll * ((a) & 0x1) + 8ll * ((b) & 0xf);
     __cavm_csr_fatal("CPTX_AF_EXE_DBG_CNTX", 2, a, b, 0, 0, 0, 0);
 }
@@ -2494,6 +2562,8 @@ static inline uint64_t CAVM_CPTX_AF_EXE_DBG_CTL(unsigned long a)
         return 0x8400a001d000ll + 0x10000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a<=1))
         return 0x8400a001d000ll + 0x10000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
+        return 0x8400a001d000ll + 0x10000000ll * ((a) & 0x1);
     __cavm_csr_fatal("CPTX_AF_EXE_DBG_CTL", 1, a, 0, 0, 0, 0, 0);
 }
 
@@ -2534,6 +2604,8 @@ static inline uint64_t CAVM_CPTX_AF_EXE_DBG_DATA(unsigned long a)
         return 0x8400a001e000ll + 0x10000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a<=1))
         return 0x8400a001e000ll + 0x10000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
+        return 0x8400a001e000ll + 0x10000000ll * ((a) & 0x1);
     __cavm_csr_fatal("CPTX_AF_EXE_DBG_DATA", 1, a, 0, 0, 0, 0, 0);
 }
 
@@ -2573,6 +2645,8 @@ static inline uint64_t CAVM_CPTX_AF_EXE_EPCI_INBX_CNT(unsigned long a, unsigned 
         return 0x8400a0024000ll + 0x10000000ll * ((a) & 0x0) + 8ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a<=1) && (b<=3)))
         return 0x8400a0024000ll + 0x10000000ll * ((a) & 0x1) + 8ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=3)))
+        return 0x8400a0024000ll + 0x10000000ll * ((a) & 0x1) + 8ll * ((b) & 0x3);
     __cavm_csr_fatal("CPTX_AF_EXE_EPCI_INBX_CNT", 2, a, b, 0, 0, 0, 0);
 }
 
@@ -2611,6 +2685,8 @@ static inline uint64_t CAVM_CPTX_AF_EXE_EPCI_OUTBX_CNT(unsigned long a, unsigned
     if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && ((a==0) && (b<=3)))
         return 0x8400a0025000ll + 0x10000000ll * ((a) & 0x0) + 8ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a<=1) && (b<=3)))
+        return 0x8400a0025000ll + 0x10000000ll * ((a) & 0x1) + 8ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=3)))
         return 0x8400a0025000ll + 0x10000000ll * ((a) & 0x1) + 8ll * ((b) & 0x3);
     __cavm_csr_fatal("CPTX_AF_EXE_EPCI_OUTBX_CNT", 2, a, b, 0, 0, 0, 0);
 }
@@ -2657,6 +2733,8 @@ static inline uint64_t CAVM_CPTX_AF_EXE_ERR_INFO(unsigned long a)
     if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a==0))
         return 0x8400a0014000ll + 0x10000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a<=1))
+        return 0x8400a0014000ll + 0x10000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x8400a0014000ll + 0x10000000ll * ((a) & 0x1);
     __cavm_csr_fatal("CPTX_AF_EXE_ERR_INFO", 1, a, 0, 0, 0, 0, 0);
 }
@@ -2707,6 +2785,8 @@ static inline uint64_t CAVM_CPTX_AF_EXE_PERF_CTL(unsigned long a)
     if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a==0))
         return 0x8400a0021000ll + 0x10000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a<=1))
+        return 0x8400a0021000ll + 0x10000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x8400a0021000ll + 0x10000000ll * ((a) & 0x1);
     __cavm_csr_fatal("CPTX_AF_EXE_PERF_CTL", 1, a, 0, 0, 0, 0, 0);
 }
@@ -2761,6 +2841,8 @@ static inline uint64_t CAVM_CPTX_AF_EXE_PERF_EVENT_CNT(unsigned long a)
         return 0x8400a0023000ll + 0x10000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a<=1))
         return 0x8400a0023000ll + 0x10000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
+        return 0x8400a0023000ll + 0x10000000ll * ((a) & 0x1);
     __cavm_csr_fatal("CPTX_AF_EXE_PERF_EVENT_CNT", 1, a, 0, 0, 0, 0, 0);
 }
 
@@ -2811,6 +2893,8 @@ static inline uint64_t CAVM_CPTX_AF_EXE_REQ_TIMER(unsigned long a)
     if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a==0))
         return 0x8400a001f000ll + 0x10000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a<=1))
+        return 0x8400a001f000ll + 0x10000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x8400a001f000ll + 0x10000000ll * ((a) & 0x1);
     __cavm_csr_fatal("CPTX_AF_EXE_REQ_TIMER", 1, a, 0, 0, 0, 0, 0);
 }
@@ -2921,6 +3005,8 @@ static inline uint64_t CAVM_CPTX_AF_FLTX_INT(unsigned long a, unsigned long b)
         return 0x8400a000a000ll + 0x10000000ll * ((a) & 0x0) + 8ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a<=1) && (b<=1)))
         return 0x8400a000a000ll + 0x10000000ll * ((a) & 0x1) + 8ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=1)))
+        return 0x8400a000a000ll + 0x10000000ll * ((a) & 0x1) + 8ll * ((b) & 0x1);
     __cavm_csr_fatal("CPTX_AF_FLTX_INT", 2, a, b, 0, 0, 0, 0);
 }
 
@@ -2972,6 +3058,8 @@ static inline uint64_t CAVM_CPTX_AF_FLTX_INT_ENA_W1C(unsigned long a, unsigned l
     if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && ((a==0) && (b<=1)))
         return 0x8400a000c000ll + 0x10000000ll * ((a) & 0x0) + 8ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a<=1) && (b<=1)))
+        return 0x8400a000c000ll + 0x10000000ll * ((a) & 0x1) + 8ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=1)))
         return 0x8400a000c000ll + 0x10000000ll * ((a) & 0x1) + 8ll * ((b) & 0x1);
     __cavm_csr_fatal("CPTX_AF_FLTX_INT_ENA_W1C", 2, a, b, 0, 0, 0, 0);
 }
@@ -3025,6 +3113,8 @@ static inline uint64_t CAVM_CPTX_AF_FLTX_INT_ENA_W1S(unsigned long a, unsigned l
         return 0x8400a000d000ll + 0x10000000ll * ((a) & 0x0) + 8ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a<=1) && (b<=1)))
         return 0x8400a000d000ll + 0x10000000ll * ((a) & 0x1) + 8ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=1)))
+        return 0x8400a000d000ll + 0x10000000ll * ((a) & 0x1) + 8ll * ((b) & 0x1);
     __cavm_csr_fatal("CPTX_AF_FLTX_INT_ENA_W1S", 2, a, b, 0, 0, 0, 0);
 }
 
@@ -3076,6 +3166,8 @@ static inline uint64_t CAVM_CPTX_AF_FLTX_INT_W1S(unsigned long a, unsigned long 
     if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && ((a==0) && (b<=1)))
         return 0x8400a000b000ll + 0x10000000ll * ((a) & 0x0) + 8ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a<=1) && (b<=1)))
+        return 0x8400a000b000ll + 0x10000000ll * ((a) & 0x1) + 8ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=1)))
         return 0x8400a000b000ll + 0x10000000ll * ((a) & 0x1) + 8ll * ((b) & 0x1);
     __cavm_csr_fatal("CPTX_AF_FLTX_INT_W1S", 2, a, b, 0, 0, 0, 0);
 }
@@ -3139,6 +3231,8 @@ static inline uint64_t CAVM_CPTX_AF_GRPX_THR(unsigned long a, unsigned long b)
         return 0x8400a002d000ll + 0x10000000ll * ((a) & 0x0) + 8ll * ((b) & 0x7);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a<=1) && (b<=7)))
         return 0x8400a002d000ll + 0x10000000ll * ((a) & 0x1) + 8ll * ((b) & 0x7);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=7)))
+        return 0x8400a002d000ll + 0x10000000ll * ((a) & 0x1) + 8ll * ((b) & 0x7);
     __cavm_csr_fatal("CPTX_AF_GRPX_THR", 2, a, b, 0, 0, 0, 0);
 }
 
@@ -3182,6 +3276,8 @@ static inline uint64_t CAVM_CPTX_AF_INST_LATENCY_PC(unsigned long a)
         return 0x8400a0018000ll + 0x10000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a<=1))
         return 0x8400a0018000ll + 0x10000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
+        return 0x8400a0018000ll + 0x10000000ll * ((a) & 0x1);
     __cavm_csr_fatal("CPTX_AF_INST_LATENCY_PC", 1, a, 0, 0, 0, 0, 0);
 }
 
@@ -3218,6 +3314,8 @@ static inline uint64_t CAVM_CPTX_AF_INST_REQ_PC(unsigned long a)
     if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a==0))
         return 0x8400a0017000ll + 0x10000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a<=1))
+        return 0x8400a0017000ll + 0x10000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x8400a0017000ll + 0x10000000ll * ((a) & 0x1);
     __cavm_csr_fatal("CPTX_AF_INST_REQ_PC", 1, a, 0, 0, 0, 0, 0);
 }
@@ -3317,6 +3415,209 @@ union cavm_cptx_af_lfx_ctl
                                                                  a queue with [PF_FUNC_INST]=1. See also [NIX_SEL] - when [PF_FUNC_INST]=1,
                                                                  [NIX_SEL] selects the NIX that CPT receives instructions from.
                                                                  No two queues can have [PF_FUNC_INST]=1 and the same [NIX_SEL] value. */
+        uint64_t nix_sel               : 1;  /**< [  8:  8](R/W) When [PF_FUNC_INST]=0, as is normal, [NIX_SEL] selects the destination NIX
+                                                                 for all outgoing NIX TX descriptor transfers from the queue/lf. See also
+                                                                 [NIXTX_EN], which must be set for successful NIX descriptor transfers,
+                                                                 and CPT_AF_LF()_CTL2[NIX_PF_FUNC], which selects the NIX function.
+
+                                                                 When [PF_FUNC_INST]=1, [NIX_SEL] selects the source NIX for all instructions
+                                                                 received at the queue/lf.
+
+                                                                 For successful instruction reception from a NIX to this queue/lf, [PF_FUNC_INST]
+                                                                 must be set, and NIX_AF_RX_CPT()_INST_QSEL[SLOT] and [NIX_SEL] configuration
+                                                                 must be consistent. If the NIX_AF_RX_CPT()_INST_QSEL[SLOT] in NIX A
+                                                                 corresponding to this CPT selects this queue/lf, then [NIX_SEL] must be A
+                                                                 for successful instruction reception from NIX A to this CPT. At most two
+                                                                 queues/lfs in this CPT can have [PF_FUNC_INST]=1: at most one with [NIX_SEL]=0,
+                                                                 plus at most one with [NIX_SEL]=1.
+
+                                                                 For t93, [NIX_SEL] must always be set to zero. */
+        uint64_t reserved_1_7          : 7;
+        uint64_t pri                   : 1;  /**< [  0:  0](R/W) Queue priority.
+                                                                 1 = This queue has higher priority. Round-robin between higher priority queues.
+                                                                 0 = This queue has lower priority. Round-robin between lower priority queues.
+
+                                                                 See also CPT_AF_EXE_REQ_TIMER[CNT]. */
+#else /* Word 0 - Little Endian */
+        uint64_t pri                   : 1;  /**< [  0:  0](R/W) Queue priority.
+                                                                 1 = This queue has higher priority. Round-robin between higher priority queues.
+                                                                 0 = This queue has lower priority. Round-robin between lower priority queues.
+
+                                                                 See also CPT_AF_EXE_REQ_TIMER[CNT]. */
+        uint64_t reserved_1_7          : 7;
+        uint64_t nix_sel               : 1;  /**< [  8:  8](R/W) When [PF_FUNC_INST]=0, as is normal, [NIX_SEL] selects the destination NIX
+                                                                 for all outgoing NIX TX descriptor transfers from the queue/lf. See also
+                                                                 [NIXTX_EN], which must be set for successful NIX descriptor transfers,
+                                                                 and CPT_AF_LF()_CTL2[NIX_PF_FUNC], which selects the NIX function.
+
+                                                                 When [PF_FUNC_INST]=1, [NIX_SEL] selects the source NIX for all instructions
+                                                                 received at the queue/lf.
+
+                                                                 For successful instruction reception from a NIX to this queue/lf, [PF_FUNC_INST]
+                                                                 must be set, and NIX_AF_RX_CPT()_INST_QSEL[SLOT] and [NIX_SEL] configuration
+                                                                 must be consistent. If the NIX_AF_RX_CPT()_INST_QSEL[SLOT] in NIX A
+                                                                 corresponding to this CPT selects this queue/lf, then [NIX_SEL] must be A
+                                                                 for successful instruction reception from NIX A to this CPT. At most two
+                                                                 queues/lfs in this CPT can have [PF_FUNC_INST]=1: at most one with [NIX_SEL]=0,
+                                                                 plus at most one with [NIX_SEL]=1.
+
+                                                                 For t93, [NIX_SEL] must always be set to zero. */
+        uint64_t pf_func_inst          : 1;  /**< [  9:  9](R/W) PFVF change allowed on instructions.
+
+                                                                 0 = CPT executes all CPT_INST_S's in the queue within the function
+                                                                 that owns the queue/LF (i.e. CPT_PRIV_LF()_CFG[PF_FUNC]). (But see SSO
+                                                                 and NIX exceptions below).
+
+                                                                 1 = CPT executes each CPT_INST_S in the queue within the function
+                                                                 CPT_INST_S[RVU_PF_FUNC] selected by the instruction. This is
+                                                                 used by the CPT queue that is performing NIX receive IPsec offload.
+
+                                                                 See also CPT_AF_LF()_CTL2[SSO_PF_FUNC]. When [PF_FUNC_INST]=0 or
+                                                                 CPT_AF_ECO[SSO_PF_FUNC_OVRD]=1, CPT uses CPT_AF_LF()_CTL2[SSO_PF_FUNC]
+                                                                 to add work to SSO. When [PF_FUNC_INST]=1 and CPT_AF_ECO[SSO_PF_FUNC_OVRD]=0,
+                                                                 CPT instead adds SSO work to the function CPT_INST_S[SSO_PF_FUNC/NIXTX_ADDR\<59:44\>]
+                                                                 selected by the instruction.
+
+                                                                 See also CPT_AF_LF()_CTL2[NIX_PF_FUNC]. [PF_FUNC_INST] has no effect on NIX
+                                                                 TX descriptor transfer, as instructions can't transfer to NIX TX when
+                                                                 [PF_FUNC_INST]=1.
+
+                                                                 [PF_FUNC_INST] has no effect on the memory reads and writes needed to
+                                                                 enqueue/dequeue the CPT_INST_S's themselves. CPT always uses the
+                                                                 queue-owning function, i.e. CPT_PRIV_LF()_CFG[PF_FUNC], to enqueue/dequeue
+                                                                 instructions.
+
+                                                                 [PF_FUNC_INST] has no effect on microcode fetches. CPT always uses
+                                                                 CPT_AF_PF_FUNC[PF_FUNC] to fetch microcode.
+
+                                                                 [PF_FUNC_INST] must not be set simultaneously with [NIXTX_EN].
+
+                                                                 [PF_FUNC_INST] must only be set for a CPT queue that receives CPT_INST_S's
+                                                                 from a NIX RX - NIX RX fills CPT_INST_S[RVU_PF_FUNC,SSO_PF_FUNC/NIXTX_ADDR\<59:44\>]
+                                                                 appropriately in the instructions it submits.  AP's must not add CPT_INST_S's to
+                                                                 a queue with [PF_FUNC_INST]=1. See also [NIX_SEL] - when [PF_FUNC_INST]=1,
+                                                                 [NIX_SEL] selects the NIX that CPT receives instructions from.
+                                                                 No two queues can have [PF_FUNC_INST]=1 and the same [NIX_SEL] value. */
+        uint64_t cont_err              : 1;  /**< [ 10: 10](R/W) Continue on error.
+
+                                                                 0 = When hardware or a CPT_LF_MISC_INT_W1S write sets any CPT_LF_MISC_INT
+                                                                 bit, CPT clears CPT_LF_CTL[ENA].  Due to pipelining,
+                                                                 additional instructions may have been processed between the instruction
+                                                                 causing the error and the next instruction in the disabled queue (the
+                                                                 instruction at CPT_LF_Q_INST_PTR). Note that clearing CPT_LF_CTL[ENA]
+                                                                 will indirectly cause CPT_LF_MISC_INT[NQERR] to be set if instructions
+                                                                 are still being enqueued.
+
+                                                                 1 = Ignore errors and continue processing instructions. The exception to
+                                                                 this rule is that CPT always clears CPT_LF_CTL[ENA] on a queue overflow
+                                                                 error. CPT_LF_MISC_INT[NQERR] and CPT_LF_Q_SIZE[SIZE_DIV40] describe a
+                                                                 queue overflow error. For diagnostic use only. */
+        uint64_t reserved_11_15        : 5;
+        uint64_t nixtx_en              : 1;  /**< [ 16: 16](R/W) Enable CPT to pass the descriptor to NIX TX. Software must only set this when
+                                                                 the function is allowed to enqueue descriptors via LMTSTs.
+
+                                                                 0 = When CPT receives an instruction for the LF/queue with CPT_INST_S[NIXTXL]!=0x0, it
+                                                                 sets CPT_LF_MISC_INT[NQERR], signals CPT_COMP_E::INSTERR, and will not pass a descriptor
+                                                                 to NIX TX for the instruction.
+
+                                                                 1 = When CPT receives an instruction for the LF/queue with CPT_INST_S[NIXTXL]!=0x0, it
+                                                                 can execute the instruction, which may involve passing its descriptor to NIX TX.
+                                                                 [NIX_SEL] selects the destination NIX, and CPT_AF_LF()_CTL2[NIX_PF_FUNC] selects
+                                                                 the NIX function.
+
+                                                                 [NIXTX_EN] must not be set simultaneously with [PF_FUNC_INST]. */
+        uint64_t reserved_17_47        : 31;
+        uint64_t grp                   : 8;  /**< [ 55: 48](R/W) Engine group mask. Each bit represents an engine group.
+
+                                                                 If [GRP\<x\>]=0, CPT will discard all instructions with x=CPT_INST_S[EGRP].
+                                                                 CPT sets CPT_LF_MISC_INT[NQERR] when this happens, and if CPT_AF_LF()_CTL[CONT_ERR]=0,
+                                                                 also clears CPT_LF_CTL[ENA], necessitating an LF/queue reset.
+
+                                                                 If [GRP\<x\>]=1, CPT can execute instructions with x=CPT_INST_S[EGRP].
+
+                                                                 See also CPT_INST_S[EGRP] and CPT_AF_EXE()_CTL2[GRP_EN]. */
+        uint64_t reserved_56_63        : 8;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_cptx_af_lfx_ctl_s cn9; */
+    struct cavm_cptx_af_lfx_ctl_cn96xx
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_56_63        : 8;
+        uint64_t grp                   : 8;  /**< [ 55: 48](R/W) Engine group mask. Each bit represents an engine group.
+
+                                                                 If [GRP\<x\>]=0, CPT will discard all instructions with x=CPT_INST_S[EGRP].
+                                                                 CPT sets CPT_LF_MISC_INT[NQERR] when this happens, and if CPT_AF_LF()_CTL[CONT_ERR]=0,
+                                                                 also clears CPT_LF_CTL[ENA], necessitating an LF/queue reset.
+
+                                                                 If [GRP\<x\>]=1, CPT can execute instructions with x=CPT_INST_S[EGRP].
+
+                                                                 See also CPT_INST_S[EGRP] and CPT_AF_EXE()_CTL2[GRP_EN]. */
+        uint64_t reserved_17_47        : 31;
+        uint64_t nixtx_en              : 1;  /**< [ 16: 16](R/W) Enable CPT to pass the descriptor to NIX TX. Software must only set this when
+                                                                 the function is allowed to enqueue descriptors via LMTSTs.
+
+                                                                 0 = When CPT receives an instruction for the LF/queue with CPT_INST_S[NIXTXL]!=0x0, it
+                                                                 sets CPT_LF_MISC_INT[NQERR], signals CPT_COMP_E::INSTERR, and will not pass a descriptor
+                                                                 to NIX TX for the instruction.
+
+                                                                 1 = When CPT receives an instruction for the LF/queue with CPT_INST_S[NIXTXL]!=0x0, it
+                                                                 can execute the instruction, which may involve passing its descriptor to NIX TX.
+                                                                 [NIX_SEL] selects the destination NIX, and CPT_AF_LF()_CTL2[NIX_PF_FUNC] selects
+                                                                 the NIX function.
+
+                                                                 [NIXTX_EN] must not be set simultaneously with [PF_FUNC_INST]. */
+        uint64_t reserved_11_15        : 5;
+        uint64_t cont_err              : 1;  /**< [ 10: 10](R/W) Continue on error.
+
+                                                                 0 = When hardware or a CPT_LF_MISC_INT_W1S write sets any CPT_LF_MISC_INT
+                                                                 bit, CPT clears CPT_LF_CTL[ENA].  Due to pipelining,
+                                                                 additional instructions may have been processed between the instruction
+                                                                 causing the error and the next instruction in the disabled queue (the
+                                                                 instruction at CPT_LF_Q_INST_PTR). Note that clearing CPT_LF_CTL[ENA]
+                                                                 will indirectly cause CPT_LF_MISC_INT[NQERR] to be set if instructions
+                                                                 are still being enqueued.
+
+                                                                 1 = Ignore errors and continue processing instructions. The exception to
+                                                                 this rule is that CPT always clears CPT_LF_CTL[ENA] on a queue overflow
+                                                                 error. CPT_LF_MISC_INT[NQERR] and CPT_LF_Q_SIZE[SIZE_DIV40] describe a
+                                                                 queue overflow error. For diagnostic use only. */
+        uint64_t pf_func_inst          : 1;  /**< [  9:  9](R/W) PFVF change allowed on instructions.
+
+                                                                 0 = CPT executes all CPT_INST_S's in the queue within the function
+                                                                 that owns the queue/LF (i.e. CPT_PRIV_LF()_CFG[PF_FUNC]). (But see SSO
+                                                                 and NIX exceptions below).
+
+                                                                 1 = CPT executes each CPT_INST_S in the queue within the function
+                                                                 CPT_INST_S[RVU_PF_FUNC] selected by the instruction. This is
+                                                                 used by the CPT queue that is performing NIX receive IPsec offload.
+
+                                                                 See also CPT_AF_LF()_CTL2[SSO_PF_FUNC]. When [PF_FUNC_INST]=0 or
+                                                                 CPT_AF_ECO[SSO_PF_FUNC_OVRD]=1, CPT uses CPT_AF_LF()_CTL2[SSO_PF_FUNC]
+                                                                 to add work to SSO. When [PF_FUNC_INST]=1 and CPT_AF_ECO[SSO_PF_FUNC_OVRD]=0,
+                                                                 CPT instead adds SSO work to the function CPT_INST_S[SSO_PF_FUNC/NIXTX_ADDR\<59:44\>]
+                                                                 selected by the instruction.
+
+                                                                 See also CPT_AF_LF()_CTL2[NIX_PF_FUNC]. [PF_FUNC_INST] has no effect on NIX
+                                                                 TX descriptor transfer, as instructions can't transfer to NIX TX when
+                                                                 [PF_FUNC_INST]=1.
+
+                                                                 [PF_FUNC_INST] has no effect on the memory reads and writes needed to
+                                                                 enqueue/dequeue the CPT_INST_S's themselves. CPT always uses the
+                                                                 queue-owning function, i.e. CPT_PRIV_LF()_CFG[PF_FUNC], to enqueue/dequeue
+                                                                 instructions.
+
+                                                                 [PF_FUNC_INST] has no effect on microcode fetches. CPT always uses
+                                                                 CPT_AF_PF_FUNC[PF_FUNC] to fetch microcode.
+
+                                                                 [PF_FUNC_INST] must not be set simultaneously with [NIXTX_EN].
+
+                                                                 [PF_FUNC_INST] must only be set for a CPT queue that receives CPT_INST_S's
+                                                                 from a NIX RX - NIX RX fills CPT_INST_S[RVU_PF_FUNC,SSO_PF_FUNC/NIXTX_ADDR\<59:44\>]
+                                                                 appropriately in the instructions it submits.  AP's must not add CPT_INST_S's to
+                                                                 a queue with [PF_FUNC_INST]=1. See also [NIX_SEL] - when [PF_FUNC_INST]=1,
+                                                                 [NIX_SEL] selects the NIX that CPT receives instructions from.
+                                                                 No two queues can have [PF_FUNC_INST]=1 and the same [NIX_SEL] value. */
         uint64_t reserved_1_8          : 8;
         uint64_t pri                   : 1;  /**< [  0:  0](R/W) Queue priority.
                                                                  1 = This queue has higher priority. Round-robin between higher priority queues.
@@ -3406,8 +3707,8 @@ union cavm_cptx_af_lfx_ctl
                                                                  See also CPT_INST_S[EGRP] and CPT_AF_EXE()_CTL2[GRP_EN]. */
         uint64_t reserved_56_63        : 8;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_cptx_af_lfx_ctl_s cn; */
+    } cn96xx;
+    /* struct cavm_cptx_af_lfx_ctl_s cn98xx; */
 };
 typedef union cavm_cptx_af_lfx_ctl cavm_cptx_af_lfx_ctl_t;
 
@@ -3417,6 +3718,8 @@ static inline uint64_t CAVM_CPTX_AF_LFX_CTL(unsigned long a, unsigned long b)
     if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && ((a==0) && (b<=63)))
         return 0x8400a0027000ll + 0x10000000ll * ((a) & 0x0) + 8ll * ((b) & 0x3f);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a<=1) && (b<=63)))
+        return 0x8400a0027000ll + 0x10000000ll * ((a) & 0x1) + 8ll * ((b) & 0x3f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=63)))
         return 0x8400a0027000ll + 0x10000000ll * ((a) & 0x1) + 8ll * ((b) & 0x3f);
     __cavm_csr_fatal("CPTX_AF_LFX_CTL", 2, a, b, 0, 0, 0, 0);
 }
@@ -3521,6 +3824,8 @@ static inline uint64_t CAVM_CPTX_AF_LFX_CTL2(unsigned long a, unsigned long b)
         return 0x8400a0029000ll + 0x10000000ll * ((a) & 0x0) + 8ll * ((b) & 0x3f);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a<=1) && (b<=63)))
         return 0x8400a0029000ll + 0x10000000ll * ((a) & 0x1) + 8ll * ((b) & 0x3f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=63)))
+        return 0x8400a0029000ll + 0x10000000ll * ((a) & 0x1) + 8ll * ((b) & 0x3f);
     __cavm_csr_fatal("CPTX_AF_LFX_CTL2", 2, a, b, 0, 0, 0, 0);
 }
 
@@ -3592,6 +3897,8 @@ static inline uint64_t CAVM_CPTX_AF_LFX_PTR_CTL(unsigned long a, unsigned long b
         return 0x8400a002c000ll + 0x10000000ll * ((a) & 0x0) + 8ll * ((b) & 0x3f);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a<=1) && (b<=63)))
         return 0x8400a002c000ll + 0x10000000ll * ((a) & 0x1) + 8ll * ((b) & 0x3f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=63)))
+        return 0x8400a002c000ll + 0x10000000ll * ((a) & 0x1) + 8ll * ((b) & 0x3f);
     __cavm_csr_fatal("CPTX_AF_LFX_PTR_CTL", 2, a, b, 0, 0, 0, 0);
 }
 
@@ -3659,6 +3966,8 @@ static inline uint64_t CAVM_CPTX_AF_LF_RST(unsigned long a)
         return 0x8400a0044000ll + 0x10000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a<=1))
         return 0x8400a0044000ll + 0x10000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
+        return 0x8400a0044000ll + 0x10000000ll * ((a) & 0x1);
     __cavm_csr_fatal("CPTX_AF_LF_RST", 1, a, 0, 0, 0, 0, 0);
 }
 
@@ -3701,6 +4010,8 @@ static inline uint64_t CAVM_CPTX_AF_PF_FUNC(unsigned long a)
     if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a==0))
         return 0x8400a002b000ll + 0x10000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a<=1))
+        return 0x8400a002b000ll + 0x10000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x8400a002b000ll + 0x10000000ll * ((a) & 0x1);
     __cavm_csr_fatal("CPTX_AF_PF_FUNC", 1, a, 0, 0, 0, 0, 0);
 }
@@ -3805,6 +4116,8 @@ static inline uint64_t CAVM_CPTX_AF_PSNX_EXE(unsigned long a, unsigned long b)
         return 0x8400a000e000ll + 0x10000000ll * ((a) & 0x0) + 8ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a<=1) && (b<=1)))
         return 0x8400a000e000ll + 0x10000000ll * ((a) & 0x1) + 8ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=1)))
+        return 0x8400a000e000ll + 0x10000000ll * ((a) & 0x1) + 8ll * ((b) & 0x1);
     __cavm_csr_fatal("CPTX_AF_PSNX_EXE", 2, a, b, 0, 0, 0, 0);
 }
 
@@ -3842,6 +4155,8 @@ static inline uint64_t CAVM_CPTX_AF_PSNX_EXE_W1S(unsigned long a, unsigned long 
     if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && ((a==0) && (b<=1)))
         return 0x8400a000f000ll + 0x10000000ll * ((a) & 0x0) + 8ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a<=1) && (b<=1)))
+        return 0x8400a000f000ll + 0x10000000ll * ((a) & 0x1) + 8ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=1)))
         return 0x8400a000f000ll + 0x10000000ll * ((a) & 0x1) + 8ll * ((b) & 0x1);
     __cavm_csr_fatal("CPTX_AF_PSNX_EXE_W1S", 2, a, b, 0, 0, 0, 0);
 }
@@ -3908,6 +4223,8 @@ static inline uint64_t CAVM_CPTX_AF_PSNX_LF(unsigned long a, unsigned long b)
         return 0x8400a0010000ll + 0x10000000ll * ((a) & 0x0) + 8ll * ((b) & 0x0);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a<=1) && (b==0)))
         return 0x8400a0010000ll + 0x10000000ll * ((a) & 0x1) + 8ll * ((b) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b==0)))
+        return 0x8400a0010000ll + 0x10000000ll * ((a) & 0x1) + 8ll * ((b) & 0x0);
     __cavm_csr_fatal("CPTX_AF_PSNX_LF", 2, a, b, 0, 0, 0, 0);
 }
 
@@ -3945,6 +4262,8 @@ static inline uint64_t CAVM_CPTX_AF_PSNX_LF_W1S(unsigned long a, unsigned long b
     if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && ((a==0) && (b==0)))
         return 0x8400a0011000ll + 0x10000000ll * ((a) & 0x0) + 8ll * ((b) & 0x0);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a<=1) && (b==0)))
+        return 0x8400a0011000ll + 0x10000000ll * ((a) & 0x1) + 8ll * ((b) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b==0)))
         return 0x8400a0011000ll + 0x10000000ll * ((a) & 0x1) + 8ll * ((b) & 0x0);
     __cavm_csr_fatal("CPTX_AF_PSNX_LF_W1S", 2, a, b, 0, 0, 0, 0);
 }
@@ -4004,6 +4323,8 @@ static inline uint64_t CAVM_CPTX_AF_RAS_INT(unsigned long a)
         return 0x8400a0047020ll + 0x10000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a<=1))
         return 0x8400a0047020ll + 0x10000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
+        return 0x8400a0047020ll + 0x10000000ll * ((a) & 0x1);
     __cavm_csr_fatal("CPTX_AF_RAS_INT", 1, a, 0, 0, 0, 0, 0);
 }
 
@@ -4045,6 +4366,8 @@ static inline uint64_t CAVM_CPTX_AF_RAS_INT_ENA_W1C(unsigned long a)
     if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a==0))
         return 0x8400a0047038ll + 0x10000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a<=1))
+        return 0x8400a0047038ll + 0x10000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x8400a0047038ll + 0x10000000ll * ((a) & 0x1);
     __cavm_csr_fatal("CPTX_AF_RAS_INT_ENA_W1C", 1, a, 0, 0, 0, 0, 0);
 }
@@ -4088,6 +4411,8 @@ static inline uint64_t CAVM_CPTX_AF_RAS_INT_ENA_W1S(unsigned long a)
         return 0x8400a0047030ll + 0x10000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a<=1))
         return 0x8400a0047030ll + 0x10000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
+        return 0x8400a0047030ll + 0x10000000ll * ((a) & 0x1);
     __cavm_csr_fatal("CPTX_AF_RAS_INT_ENA_W1S", 1, a, 0, 0, 0, 0, 0);
 }
 
@@ -4130,6 +4455,8 @@ static inline uint64_t CAVM_CPTX_AF_RAS_INT_W1S(unsigned long a)
         return 0x8400a0047028ll + 0x10000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a<=1))
         return 0x8400a0047028ll + 0x10000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
+        return 0x8400a0047028ll + 0x10000000ll * ((a) & 0x1);
     __cavm_csr_fatal("CPTX_AF_RAS_INT_W1S", 1, a, 0, 0, 0, 0, 0);
 }
 
@@ -4171,6 +4498,8 @@ static inline uint64_t CAVM_CPTX_AF_RD_LATENCY_PC(unsigned long a)
         return 0x8400a001a000ll + 0x10000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a<=1))
         return 0x8400a001a000ll + 0x10000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
+        return 0x8400a001a000ll + 0x10000000ll * ((a) & 0x1);
     __cavm_csr_fatal("CPTX_AF_RD_LATENCY_PC", 1, a, 0, 0, 0, 0, 0);
 }
 
@@ -4207,6 +4536,8 @@ static inline uint64_t CAVM_CPTX_AF_RD_REQ_PC(unsigned long a)
     if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a==0))
         return 0x8400a0019000ll + 0x10000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a<=1))
+        return 0x8400a0019000ll + 0x10000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x8400a0019000ll + 0x10000000ll * ((a) & 0x1);
     __cavm_csr_fatal("CPTX_AF_RD_REQ_PC", 1, a, 0, 0, 0, 0, 0);
 }
@@ -4246,6 +4577,8 @@ static inline uint64_t CAVM_CPTX_AF_RD_UC_PC(unsigned long a)
     if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a==0))
         return 0x8400a001b000ll + 0x10000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a<=1))
+        return 0x8400a001b000ll + 0x10000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x8400a001b000ll + 0x10000000ll * ((a) & 0x1);
     __cavm_csr_fatal("CPTX_AF_RD_UC_PC", 1, a, 0, 0, 0, 0, 0);
 }
@@ -4295,6 +4628,8 @@ static inline uint64_t CAVM_CPTX_AF_RVU_INT(unsigned long a)
         return 0x8400a0047000ll + 0x10000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a<=1))
         return 0x8400a0047000ll + 0x10000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
+        return 0x8400a0047000ll + 0x10000000ll * ((a) & 0x1);
     __cavm_csr_fatal("CPTX_AF_RVU_INT", 1, a, 0, 0, 0, 0, 0);
 }
 
@@ -4338,6 +4673,8 @@ static inline uint64_t CAVM_CPTX_AF_RVU_INT_ENA_W1C(unsigned long a)
     if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a==0))
         return 0x8400a0047018ll + 0x10000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a<=1))
+        return 0x8400a0047018ll + 0x10000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x8400a0047018ll + 0x10000000ll * ((a) & 0x1);
     __cavm_csr_fatal("CPTX_AF_RVU_INT_ENA_W1C", 1, a, 0, 0, 0, 0, 0);
 }
@@ -4383,6 +4720,8 @@ static inline uint64_t CAVM_CPTX_AF_RVU_INT_ENA_W1S(unsigned long a)
         return 0x8400a0047010ll + 0x10000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a<=1))
         return 0x8400a0047010ll + 0x10000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
+        return 0x8400a0047010ll + 0x10000000ll * ((a) & 0x1);
     __cavm_csr_fatal("CPTX_AF_RVU_INT_ENA_W1S", 1, a, 0, 0, 0, 0, 0);
 }
 
@@ -4426,6 +4765,8 @@ static inline uint64_t CAVM_CPTX_AF_RVU_INT_W1S(unsigned long a)
     if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a==0))
         return 0x8400a0047008ll + 0x10000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a<=1))
+        return 0x8400a0047008ll + 0x10000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x8400a0047008ll + 0x10000000ll * ((a) & 0x1);
     __cavm_csr_fatal("CPTX_AF_RVU_INT_W1S", 1, a, 0, 0, 0, 0, 0);
 }
@@ -4488,6 +4829,8 @@ static inline uint64_t CAVM_CPTX_AF_RVU_LF_CFG_DEBUG(unsigned long a)
         return 0x8400a0045000ll + 0x10000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a<=1))
         return 0x8400a0045000ll + 0x10000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
+        return 0x8400a0045000ll + 0x10000000ll * ((a) & 0x1);
     __cavm_csr_fatal("CPTX_AF_RVU_LF_CFG_DEBUG", 1, a, 0, 0, 0, 0, 0);
 }
 
@@ -4536,6 +4879,8 @@ static inline uint64_t CAVM_CPTX_AF_XEX_THR(unsigned long a, unsigned long b)
     if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && ((a==0) && (b<=2)))
         return 0x8400a002f000ll + 0x10000000ll * ((a) & 0x0) + 8ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a<=1) && (b<=2)))
+        return 0x8400a002f000ll + 0x10000000ll * ((a) & 0x1) + 8ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=2)))
         return 0x8400a002f000ll + 0x10000000ll * ((a) & 0x1) + 8ll * ((b) & 0x3);
     __cavm_csr_fatal("CPTX_AF_XEX_THR", 2, a, b, 0, 0, 0, 0);
 }
@@ -4915,6 +5260,8 @@ static inline uint64_t CAVM_CPTX_LF_CTL(unsigned long a)
         return 0x840200a00010ll + 0x100000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a<=1))
         return 0x840200a00010ll + 0x100000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
+        return 0x840200a00010ll + 0x100000ll * ((a) & 0x1);
     __cavm_csr_fatal("CPTX_LF_CTL", 1, a, 0, 0, 0, 0, 0);
 }
 
@@ -5047,6 +5394,8 @@ static inline uint64_t CAVM_CPTX_LF_DONE(unsigned long a)
         return 0x840200a00050ll + 0x100000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a<=1))
         return 0x840200a00050ll + 0x100000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
+        return 0x840200a00050ll + 0x100000ll * ((a) & 0x1);
     __cavm_csr_fatal("CPTX_LF_DONE", 1, a, 0, 0, 0, 0, 0);
 }
 
@@ -5100,6 +5449,8 @@ static inline uint64_t CAVM_CPTX_LF_DONE_ACK(unsigned long a)
     if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a==0))
         return 0x840200a00060ll + 0x100000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a<=1))
+        return 0x840200a00060ll + 0x100000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x840200a00060ll + 0x100000ll * ((a) & 0x1);
     __cavm_csr_fatal("CPTX_LF_DONE_ACK", 1, a, 0, 0, 0, 0, 0);
 }
@@ -5159,6 +5510,8 @@ static inline uint64_t CAVM_CPTX_LF_DONE_INT(unsigned long a)
         return 0x840200a00070ll + 0x100000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a<=1))
         return 0x840200a00070ll + 0x100000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
+        return 0x840200a00070ll + 0x100000ll * ((a) & 0x1);
     __cavm_csr_fatal("CPTX_LF_DONE_INT", 1, a, 0, 0, 0, 0, 0);
 }
 
@@ -5197,6 +5550,8 @@ static inline uint64_t CAVM_CPTX_LF_DONE_INT_ENA_W1C(unsigned long a)
     if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a==0))
         return 0x840200a000a0ll + 0x100000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a<=1))
+        return 0x840200a000a0ll + 0x100000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x840200a000a0ll + 0x100000ll * ((a) & 0x1);
     __cavm_csr_fatal("CPTX_LF_DONE_INT_ENA_W1C", 1, a, 0, 0, 0, 0, 0);
 }
@@ -5238,6 +5593,8 @@ static inline uint64_t CAVM_CPTX_LF_DONE_INT_ENA_W1S(unsigned long a)
     if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a==0))
         return 0x840200a00090ll + 0x100000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a<=1))
+        return 0x840200a00090ll + 0x100000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x840200a00090ll + 0x100000ll * ((a) & 0x1);
     __cavm_csr_fatal("CPTX_LF_DONE_INT_ENA_W1S", 1, a, 0, 0, 0, 0, 0);
 }
@@ -5297,6 +5654,8 @@ static inline uint64_t CAVM_CPTX_LF_DONE_INT_W1S(unsigned long a)
         return 0x840200a00080ll + 0x100000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a<=1))
         return 0x840200a00080ll + 0x100000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
+        return 0x840200a00080ll + 0x100000ll * ((a) & 0x1);
     __cavm_csr_fatal("CPTX_LF_DONE_INT_W1S", 1, a, 0, 0, 0, 0, 0);
 }
 
@@ -5350,6 +5709,8 @@ static inline uint64_t CAVM_CPTX_LF_DONE_WAIT(unsigned long a)
     if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a==0))
         return 0x840200a00030ll + 0x100000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a<=1))
+        return 0x840200a00030ll + 0x100000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x840200a00030ll + 0x100000ll * ((a) & 0x1);
     __cavm_csr_fatal("CPTX_LF_DONE_WAIT", 1, a, 0, 0, 0, 0, 0);
 }
@@ -5436,6 +5797,8 @@ static inline uint64_t CAVM_CPTX_LF_INPROG(unsigned long a)
     if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a==0))
         return 0x840200a00040ll + 0x100000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a<=1))
+        return 0x840200a00040ll + 0x100000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x840200a00040ll + 0x100000ll * ((a) & 0x1);
     __cavm_csr_fatal("CPTX_LF_INPROG", 1, a, 0, 0, 0, 0, 0);
 }
@@ -5538,10 +5901,6 @@ union cavm_cptx_lf_misc_int
                                                                  * CPT encountered a CPT_INST_S with CPT_INST_S[NIXTXL]!=0x0 and
                                                                  CPT_INST_S[QORD]=0. See CPT_COMP_E::INSTERR.
 
-                                                                 * CPT encountered a CPT_INST_S with CPT_INST_S[QORD]=1 and neither
-                                                                 CPT_INST_S[NIXTXL]!=0x0 nor CPT_INST_S[WQE_PTR]!=0x0. See
-                                                                 CPT_COMP_E::INSTERR.
-
                                                                  Note that when CPT_AF_LF()_CTL[CONT_ERR]=0, CPT clears CPT_LF_CTL[ENA]
                                                                  when any bit in this register gets set. This will indirectly
                                                                  cause [NQERR] to be set if instructions are simultaneously being
@@ -5551,6 +5910,13 @@ union cavm_cptx_lf_misc_int
                                                                  This error was too difficult to implement:
 
                                                                  * CPT received an instruction from an AP when CPT_AF_LF()_CTL[PF_FUNC_INST]=1.
+
+                                                                 This was originally included as an error above (and present in T93 A0 and B0(A1)
+                                                                 hardware), but removed to improve VPP capabilities. See mcbuggin 36656:
+
+                                                                 * CPT encountered a CPT_INST_S with CPT_INST_S[QORD]=1 and neither
+                                                                 CPT_INST_S[NIXTXL]!=0x0 nor CPT_INST_S[WQE_PTR]!=0x0. See
+                                                                 CPT_COMP_E::INSTERR.
 
                                                                  In the overflow case, the current CPT implementation writes the CPT_INST_S's to
                                                                  memory, but effectively drops them because it doesn't advance
@@ -5591,10 +5957,6 @@ union cavm_cptx_lf_misc_int
                                                                  * CPT encountered a CPT_INST_S with CPT_INST_S[NIXTXL]!=0x0 and
                                                                  CPT_INST_S[QORD]=0. See CPT_COMP_E::INSTERR.
 
-                                                                 * CPT encountered a CPT_INST_S with CPT_INST_S[QORD]=1 and neither
-                                                                 CPT_INST_S[NIXTXL]!=0x0 nor CPT_INST_S[WQE_PTR]!=0x0. See
-                                                                 CPT_COMP_E::INSTERR.
-
                                                                  Note that when CPT_AF_LF()_CTL[CONT_ERR]=0, CPT clears CPT_LF_CTL[ENA]
                                                                  when any bit in this register gets set. This will indirectly
                                                                  cause [NQERR] to be set if instructions are simultaneously being
@@ -5604,6 +5966,13 @@ union cavm_cptx_lf_misc_int
                                                                  This error was too difficult to implement:
 
                                                                  * CPT received an instruction from an AP when CPT_AF_LF()_CTL[PF_FUNC_INST]=1.
+
+                                                                 This was originally included as an error above (and present in T93 A0 and B0(A1)
+                                                                 hardware), but removed to improve VPP capabilities. See mcbuggin 36656:
+
+                                                                 * CPT encountered a CPT_INST_S with CPT_INST_S[QORD]=1 and neither
+                                                                 CPT_INST_S[NIXTXL]!=0x0 nor CPT_INST_S[WQE_PTR]!=0x0. See
+                                                                 CPT_COMP_E::INSTERR.
 
                                                                  In the overflow case, the current CPT implementation writes the CPT_INST_S's to
                                                                  memory, but effectively drops them because it doesn't advance
@@ -5679,6 +6048,8 @@ static inline uint64_t CAVM_CPTX_LF_MISC_INT(unsigned long a)
         return 0x840200a000b0ll + 0x100000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a<=1))
         return 0x840200a000b0ll + 0x100000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
+        return 0x840200a000b0ll + 0x100000ll * ((a) & 0x1);
     __cavm_csr_fatal("CPTX_LF_MISC_INT", 1, a, 0, 0, 0, 0, 0);
 }
 
@@ -5722,6 +6093,13 @@ union cavm_cptx_lf_misc_int_ena_w1c
 
                                                                  * CPT received an instruction from an AP when CPT_AF_LF()_CTL[PF_FUNC_INST]=1.
 
+                                                                 This was originally included as an error above (and present in T93 A0 and B0(A1)
+                                                                 hardware), but removed to improve VPP capabilities. See mcbuggin 36656:
+
+                                                                 * CPT encountered a CPT_INST_S with CPT_INST_S[QORD]=1 and neither
+                                                                 CPT_INST_S[NIXTXL]!=0x0 nor CPT_INST_S[WQE_PTR]!=0x0. See
+                                                                 CPT_COMP_E::INSTERR.
+
                                                                  In the overflow case, the current CPT implementation writes the CPT_INST_S's to
                                                                  memory, but effectively drops them because it doesn't advance
                                                                  CPT_LF_Q_INST_PTR[NQ_PTR].
@@ -5739,6 +6117,13 @@ union cavm_cptx_lf_misc_int_ena_w1c
                                                                  This error was too difficult to implement:
 
                                                                  * CPT received an instruction from an AP when CPT_AF_LF()_CTL[PF_FUNC_INST]=1.
+
+                                                                 This was originally included as an error above (and present in T93 A0 and B0(A1)
+                                                                 hardware), but removed to improve VPP capabilities. See mcbuggin 36656:
+
+                                                                 * CPT encountered a CPT_INST_S with CPT_INST_S[QORD]=1 and neither
+                                                                 CPT_INST_S[NIXTXL]!=0x0 nor CPT_INST_S[WQE_PTR]!=0x0. See
+                                                                 CPT_COMP_E::INSTERR.
 
                                                                  In the overflow case, the current CPT implementation writes the CPT_INST_S's to
                                                                  memory, but effectively drops them because it doesn't advance
@@ -5776,6 +6161,8 @@ static inline uint64_t CAVM_CPTX_LF_MISC_INT_ENA_W1C(unsigned long a)
     if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a==0))
         return 0x840200a000e0ll + 0x100000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a<=1))
+        return 0x840200a000e0ll + 0x100000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x840200a000e0ll + 0x100000ll * ((a) & 0x1);
     __cavm_csr_fatal("CPTX_LF_MISC_INT_ENA_W1C", 1, a, 0, 0, 0, 0, 0);
 }
@@ -5820,6 +6207,13 @@ union cavm_cptx_lf_misc_int_ena_w1s
 
                                                                  * CPT received an instruction from an AP when CPT_AF_LF()_CTL[PF_FUNC_INST]=1.
 
+                                                                 This was originally included as an error above (and present in T93 A0 and B0(A1)
+                                                                 hardware), but removed to improve VPP capabilities. See mcbuggin 36656:
+
+                                                                 * CPT encountered a CPT_INST_S with CPT_INST_S[QORD]=1 and neither
+                                                                 CPT_INST_S[NIXTXL]!=0x0 nor CPT_INST_S[WQE_PTR]!=0x0. See
+                                                                 CPT_COMP_E::INSTERR.
+
                                                                  In the overflow case, the current CPT implementation writes the CPT_INST_S's to
                                                                  memory, but effectively drops them because it doesn't advance
                                                                  CPT_LF_Q_INST_PTR[NQ_PTR].
@@ -5837,6 +6231,13 @@ union cavm_cptx_lf_misc_int_ena_w1s
                                                                  This error was too difficult to implement:
 
                                                                  * CPT received an instruction from an AP when CPT_AF_LF()_CTL[PF_FUNC_INST]=1.
+
+                                                                 This was originally included as an error above (and present in T93 A0 and B0(A1)
+                                                                 hardware), but removed to improve VPP capabilities. See mcbuggin 36656:
+
+                                                                 * CPT encountered a CPT_INST_S with CPT_INST_S[QORD]=1 and neither
+                                                                 CPT_INST_S[NIXTXL]!=0x0 nor CPT_INST_S[WQE_PTR]!=0x0. See
+                                                                 CPT_COMP_E::INSTERR.
 
                                                                  In the overflow case, the current CPT implementation writes the CPT_INST_S's to
                                                                  memory, but effectively drops them because it doesn't advance
@@ -5874,6 +6275,8 @@ static inline uint64_t CAVM_CPTX_LF_MISC_INT_ENA_W1S(unsigned long a)
     if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a==0))
         return 0x840200a000d0ll + 0x100000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a<=1))
+        return 0x840200a000d0ll + 0x100000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x840200a000d0ll + 0x100000ll * ((a) & 0x1);
     __cavm_csr_fatal("CPTX_LF_MISC_INT_ENA_W1S", 1, a, 0, 0, 0, 0, 0);
 }
@@ -5918,6 +6321,13 @@ union cavm_cptx_lf_misc_int_w1s
 
                                                                  * CPT received an instruction from an AP when CPT_AF_LF()_CTL[PF_FUNC_INST]=1.
 
+                                                                 This was originally included as an error above (and present in T93 A0 and B0(A1)
+                                                                 hardware), but removed to improve VPP capabilities. See mcbuggin 36656:
+
+                                                                 * CPT encountered a CPT_INST_S with CPT_INST_S[QORD]=1 and neither
+                                                                 CPT_INST_S[NIXTXL]!=0x0 nor CPT_INST_S[WQE_PTR]!=0x0. See
+                                                                 CPT_COMP_E::INSTERR.
+
                                                                  In the overflow case, the current CPT implementation writes the CPT_INST_S's to
                                                                  memory, but effectively drops them because it doesn't advance
                                                                  CPT_LF_Q_INST_PTR[NQ_PTR].
@@ -5935,6 +6345,13 @@ union cavm_cptx_lf_misc_int_w1s
                                                                  This error was too difficult to implement:
 
                                                                  * CPT received an instruction from an AP when CPT_AF_LF()_CTL[PF_FUNC_INST]=1.
+
+                                                                 This was originally included as an error above (and present in T93 A0 and B0(A1)
+                                                                 hardware), but removed to improve VPP capabilities. See mcbuggin 36656:
+
+                                                                 * CPT encountered a CPT_INST_S with CPT_INST_S[QORD]=1 and neither
+                                                                 CPT_INST_S[NIXTXL]!=0x0 nor CPT_INST_S[WQE_PTR]!=0x0. See
+                                                                 CPT_COMP_E::INSTERR.
 
                                                                  In the overflow case, the current CPT implementation writes the CPT_INST_S's to
                                                                  memory, but effectively drops them because it doesn't advance
@@ -5972,6 +6389,8 @@ static inline uint64_t CAVM_CPTX_LF_MISC_INT_W1S(unsigned long a)
     if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a==0))
         return 0x840200a000c0ll + 0x100000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a<=1))
+        return 0x840200a000c0ll + 0x100000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x840200a000c0ll + 0x100000ll * ((a) & 0x1);
     __cavm_csr_fatal("CPTX_LF_MISC_INT_W1S", 1, a, 0, 0, 0, 0, 0);
 }
@@ -6013,6 +6432,8 @@ static inline uint64_t CAVM_CPTX_LF_NQX(unsigned long a, unsigned long b)
     if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && ((a==0) && (b<=15)))
         return 0x840200a00400ll + 0x100000ll * ((a) & 0x0) + 8ll * ((b) & 0xf);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a<=1) && (b<=15)))
+        return 0x840200a00400ll + 0x100000ll * ((a) & 0x1) + 8ll * ((b) & 0xf);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=15)))
         return 0x840200a00400ll + 0x100000ll * ((a) & 0x1) + 8ll * ((b) & 0xf);
     __cavm_csr_fatal("CPTX_LF_NQX", 2, a, b, 0, 0, 0, 0);
 }
@@ -6095,6 +6516,8 @@ static inline uint64_t CAVM_CPTX_LF_Q_BASE(unsigned long a)
     if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a==0))
         return 0x840200a000f0ll + 0x100000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a<=1))
+        return 0x840200a000f0ll + 0x100000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x840200a000f0ll + 0x100000ll * ((a) & 0x1);
     __cavm_csr_fatal("CPTX_LF_Q_BASE", 1, a, 0, 0, 0, 0, 0);
 }
@@ -6182,6 +6605,8 @@ static inline uint64_t CAVM_CPTX_LF_Q_GRP_PTR(unsigned long a)
         return 0x840200a00120ll + 0x100000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a<=1))
         return 0x840200a00120ll + 0x100000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
+        return 0x840200a00120ll + 0x100000ll * ((a) & 0x1);
     __cavm_csr_fatal("CPTX_LF_Q_GRP_PTR", 1, a, 0, 0, 0, 0, 0);
 }
 
@@ -6268,6 +6693,8 @@ static inline uint64_t CAVM_CPTX_LF_Q_INST_PTR(unsigned long a)
         return 0x840200a00110ll + 0x100000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a<=1))
         return 0x840200a00110ll + 0x100000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
+        return 0x840200a00110ll + 0x100000ll * ((a) & 0x1);
     __cavm_csr_fatal("CPTX_LF_Q_INST_PTR", 1, a, 0, 0, 0, 0, 0);
 }
 
@@ -6333,6 +6760,8 @@ static inline uint64_t CAVM_CPTX_LF_Q_SIZE(unsigned long a)
     if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a==0))
         return 0x840200a00100ll + 0x100000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a<=1))
+        return 0x840200a00100ll + 0x100000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x840200a00100ll + 0x100000ll * ((a) & 0x1);
     __cavm_csr_fatal("CPTX_LF_Q_SIZE", 1, a, 0, 0, 0, 0, 0);
 }
@@ -6634,6 +7063,7 @@ union cavm_cptx_pf_constants
         uint64_t reserved_41_63        : 23;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_cptx_pf_constants_s cn8; */
     /* struct cavm_cptx_pf_constants_s cn81xx; */
     struct cavm_cptx_pf_constants_cn83xx
     {
@@ -6791,6 +7221,7 @@ union cavm_cptx_pf_ecc0_ena_w1c
         uint64_t dbe                   : 32; /**< [ 63: 32](R/W1C/H) Reads or clears enable for CPT(0)_PF_ECC0_INT[DBE]. */
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_cptx_pf_ecc0_ena_w1c_s cn8; */
     /* struct cavm_cptx_pf_ecc0_ena_w1c_s cn81xx; */
     struct cavm_cptx_pf_ecc0_ena_w1c_cn83xx
     {
@@ -6841,6 +7272,7 @@ union cavm_cptx_pf_ecc0_ena_w1s
         uint64_t dbe                   : 32; /**< [ 63: 32](R/W1S/H) Reads or sets enable for CPT(0)_PF_ECC0_INT[DBE]. */
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_cptx_pf_ecc0_ena_w1s_s cn8; */
     /* struct cavm_cptx_pf_ecc0_ena_w1s_s cn81xx; */
     struct cavm_cptx_pf_ecc0_ena_w1s_cn83xx
     {
@@ -6976,6 +7408,7 @@ union cavm_cptx_pf_ecc0_int_w1s
         uint64_t dbe                   : 32; /**< [ 63: 32](R/W1S/H) Reads or sets CPT(0)_PF_ECC0_INT[DBE]. */
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_cptx_pf_ecc0_int_w1s_s cn8; */
     /* struct cavm_cptx_pf_ecc0_int_w1s_s cn81xx; */
     struct cavm_cptx_pf_ecc0_int_w1s_cn83xx
     {
@@ -7113,6 +7546,7 @@ union cavm_cptx_pf_exe_bist_status
         uint64_t reserved_48_63        : 16;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_cptx_pf_exe_bist_status_s cn8; */
     struct cavm_cptx_pf_exe_bist_status_cn81xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -7724,6 +8158,7 @@ union cavm_cptx_pf_exec_ena_w1c
         uint64_t exec                  : 64; /**< [ 63:  0](R/W1C/H) Reads or clears enable for CPT(0)_PF_EXEC_INT[EXEC]. */
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_cptx_pf_exec_ena_w1c_s cn8; */
     /* struct cavm_cptx_pf_exec_ena_w1c_s cn81xx; */
     struct cavm_cptx_pf_exec_ena_w1c_cn83xx
     {
@@ -7770,6 +8205,7 @@ union cavm_cptx_pf_exec_ena_w1s
         uint64_t exec                  : 64; /**< [ 63:  0](R/W1S/H) Reads or sets enable for CPT(0)_PF_EXEC_INT[EXEC]. */
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_cptx_pf_exec_ena_w1s_s cn8; */
     /* struct cavm_cptx_pf_exec_ena_w1s_s cn81xx; */
     struct cavm_cptx_pf_exec_ena_w1s_cn83xx
     {
@@ -7866,6 +8302,7 @@ union cavm_cptx_pf_exec_info0
         uint64_t reserved_48_63        : 16;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_cptx_pf_exec_info0_s cn8; */
     struct cavm_cptx_pf_exec_info0_cn81xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -7916,6 +8353,7 @@ union cavm_cptx_pf_exec_info1
         uint64_t reserved_48_63        : 16;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_cptx_pf_exec_info1_s cn8; */
     struct cavm_cptx_pf_exec_info1_cn81xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -7969,6 +8407,7 @@ union cavm_cptx_pf_exec_int
                                                                   can be found in CPT()_PF_EXEC_INFO. */
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_cptx_pf_exec_int_s cn8; */
     /* struct cavm_cptx_pf_exec_int_s cn81xx; */
     struct cavm_cptx_pf_exec_int_cn83xx
     {
@@ -8023,6 +8462,7 @@ union cavm_cptx_pf_exec_int_w1s
         uint64_t exec                  : 64; /**< [ 63:  0](R/W1S/H) Reads or sets CPT(0)_PF_EXEC_INT[EXEC]. */
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_cptx_pf_exec_int_w1s_s cn8; */
     /* struct cavm_cptx_pf_exec_int_w1s_s cn81xx; */
     struct cavm_cptx_pf_exec_int_w1s_cn83xx
     {
@@ -8209,6 +8649,7 @@ union cavm_cptx_pf_mbox_ena_w1cx
         uint64_t mbox                  : 64; /**< [ 63:  0](R/W1C/H) Reads or clears enable for CPT(0)_PF_MBOX_INT(0)[MBOX]. */
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_cptx_pf_mbox_ena_w1cx_s cn8; */
     /* struct cavm_cptx_pf_mbox_ena_w1cx_s cn81xx; */
     struct cavm_cptx_pf_mbox_ena_w1cx_cn83xx
     {
@@ -8255,6 +8696,7 @@ union cavm_cptx_pf_mbox_ena_w1sx
         uint64_t mbox                  : 64; /**< [ 63:  0](R/W1S/H) Reads or sets enable for CPT(0)_PF_MBOX_INT(0)[MBOX]. */
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_cptx_pf_mbox_ena_w1sx_s cn8; */
     /* struct cavm_cptx_pf_mbox_ena_w1sx_s cn81xx; */
     struct cavm_cptx_pf_mbox_ena_w1sx_cn83xx
     {
@@ -8340,6 +8782,7 @@ union cavm_cptx_pf_mbox_int_w1sx
         uint64_t mbox                  : 64; /**< [ 63:  0](R/W1S/H) Reads or sets CPT(0)_PF_MBOX_INT(0)[MBOX]. */
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_cptx_pf_mbox_int_w1sx_s cn8; */
     /* struct cavm_cptx_pf_mbox_int_w1sx_s cn81xx; */
     struct cavm_cptx_pf_mbox_int_w1sx_cn83xx
     {
@@ -8608,6 +9051,7 @@ union cavm_cptx_pf_qx_ctl
         uint64_t reserved_60_63        : 4;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_cptx_pf_qx_ctl_s cn8; */
     /* struct cavm_cptx_pf_qx_ctl_s cn81xx; */
     struct cavm_cptx_pf_qx_ctl_cn83xx
     {
@@ -8822,6 +9266,7 @@ union cavm_cptx_pf_qx_gmctl
         uint64_t reserved_24_63        : 40;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_cptx_pf_qx_gmctl_s cn8; */
     /* struct cavm_cptx_pf_qx_gmctl_s cn81xx; */
     struct cavm_cptx_pf_qx_gmctl_cn83xx
     {
@@ -9271,6 +9716,8 @@ static inline uint64_t CAVM_CPTX_PRIV_AF_INT_CFG(unsigned long a)
         return 0x8400a0042000ll + 0x10000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a<=1))
         return 0x8400a0042000ll + 0x10000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
+        return 0x8400a0042000ll + 0x10000000ll * ((a) & 0x1);
     __cavm_csr_fatal("CPTX_PRIV_AF_INT_CFG", 1, a, 0, 0, 0, 0, 0);
 }
 
@@ -9326,6 +9773,8 @@ static inline uint64_t CAVM_CPTX_PRIV_LFX_CFG(unsigned long a, unsigned long b)
         return 0x8400a0041000ll + 0x10000000ll * ((a) & 0x0) + 8ll * ((b) & 0x3f);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a<=1) && (b<=63)))
         return 0x8400a0041000ll + 0x10000000ll * ((a) & 0x1) + 8ll * ((b) & 0x3f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=63)))
+        return 0x8400a0041000ll + 0x10000000ll * ((a) & 0x1) + 8ll * ((b) & 0x3f);
     __cavm_csr_fatal("CPTX_PRIV_LFX_CFG", 2, a, b, 0, 0, 0, 0);
 }
 
@@ -9378,6 +9827,8 @@ static inline uint64_t CAVM_CPTX_PRIV_LFX_INT_CFG(unsigned long a, unsigned long
     if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && ((a==0) && (b<=63)))
         return 0x8400a0043000ll + 0x10000000ll * ((a) & 0x0) + 8ll * ((b) & 0x3f);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a<=1) && (b<=63)))
+        return 0x8400a0043000ll + 0x10000000ll * ((a) & 0x1) + 8ll * ((b) & 0x3f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=63)))
         return 0x8400a0043000ll + 0x10000000ll * ((a) & 0x1) + 8ll * ((b) & 0x3f);
     __cavm_csr_fatal("CPTX_PRIV_LFX_INT_CFG", 2, a, b, 0, 0, 0, 0);
 }
@@ -10138,6 +10589,7 @@ union cavm_cptx_vqx_misc_ena_w1c
         uint64_t reserved_7_63         : 57;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_cptx_vqx_misc_ena_w1c_s cn8; */
     struct cavm_cptx_vqx_misc_ena_w1c_cn81xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -10229,6 +10681,7 @@ union cavm_cptx_vqx_misc_ena_w1s
         uint64_t reserved_7_63         : 57;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_cptx_vqx_misc_ena_w1s_s cn8; */
     struct cavm_cptx_vqx_misc_ena_w1s_cn81xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -10322,6 +10775,7 @@ union cavm_cptx_vqx_misc_int
         uint64_t reserved_7_63         : 57;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_cptx_vqx_misc_int_s cn8; */
     struct cavm_cptx_vqx_misc_int_cn81xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -10394,6 +10848,7 @@ union cavm_cptx_vqx_misc_int_w1s
         uint64_t reserved_7_63         : 57;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_cptx_vqx_misc_int_w1s_s cn8; */
     struct cavm_cptx_vqx_misc_int_w1s_cn81xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */

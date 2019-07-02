@@ -178,8 +178,7 @@ union cavm_fusf_ctl
                                                                  Internal:
                                                                  SPI safemode. Reads field fuses FUSF_FUSE_NUM_E::SPI_SAFEMODE. */
         uint64_t rom_script_disable    : 1;  /**< [ 30: 30](SRO) ROM script disable. Reads field fuses FUSF_FUSE_NUM_E::ROM_SCRIPT_DISABLE. */
-        uint64_t fuse17                : 13; /**< [ 29: 17](SRO) Reserved. */
-        uint64_t scan_disable          : 1;  /**< [ 16: 16](SRO) Scan disable.  Reads field fuse FUSF_FUSE_NUM_E::SCAN_DISABLE. */
+        uint64_t reserved_16_29        : 14;
         uint64_t crypt_ssk_dis         : 1;  /**< [ 15: 15](SRO) SSK crypt disable. Reads field fuse FUSF_FUSE_NUM_E::CRYPT_SSK_DIS. */
         uint64_t crypt_no_dis          : 1;  /**< [ 14: 14](SRO) No-crypt disable. Reads field fuse FUSF_FUSE_NUM_E::CRYPT_NO_DIS. */
         uint64_t fj_dis_huk            : 1;  /**< [ 13: 13](SRO) Flash-jump HUK secret hiding. Reads field fuse FUSF_FUSE_NUM_E::FJ_DIS_HUK. */
@@ -211,8 +210,7 @@ union cavm_fusf_ctl
         uint64_t fj_dis_huk            : 1;  /**< [ 13: 13](SRO) Flash-jump HUK secret hiding. Reads field fuse FUSF_FUSE_NUM_E::FJ_DIS_HUK. */
         uint64_t crypt_no_dis          : 1;  /**< [ 14: 14](SRO) No-crypt disable. Reads field fuse FUSF_FUSE_NUM_E::CRYPT_NO_DIS. */
         uint64_t crypt_ssk_dis         : 1;  /**< [ 15: 15](SRO) SSK crypt disable. Reads field fuse FUSF_FUSE_NUM_E::CRYPT_SSK_DIS. */
-        uint64_t scan_disable          : 1;  /**< [ 16: 16](SRO) Scan disable.  Reads field fuse FUSF_FUSE_NUM_E::SCAN_DISABLE. */
-        uint64_t fuse17                : 13; /**< [ 29: 17](SRO) Reserved. */
+        uint64_t reserved_16_29        : 14;
         uint64_t rom_script_disable    : 1;  /**< [ 30: 30](SRO) ROM script disable. Reads field fuses FUSF_FUSE_NUM_E::ROM_SCRIPT_DISABLE. */
         uint64_t spi_safemode          : 1;  /**< [ 31: 31](SRO) Reserved.
                                                                  Internal:
@@ -262,6 +260,102 @@ union cavm_fusf_ctl
                                                                  Internal:
                                                                  SPI safemode. Reads field fuses FUSF_FUSE_NUM_E::SPI_SAFEMODE. */
         uint64_t rom_script_disable    : 1;  /**< [ 30: 30](SRO) ROM script disable. Reads field fuses FUSF_FUSE_NUM_E::ROM_SCRIPT_DISABLE. */
+        uint64_t reserved_16_29        : 14;
+        uint64_t crypt_ssk_dis         : 1;  /**< [ 15: 15](SRO) SSK crypt disable. Reads field fuse FUSF_FUSE_NUM_E::CRYPT_SSK_DIS. */
+        uint64_t crypt_no_dis          : 1;  /**< [ 14: 14](SRO) No-crypt disable. Reads field fuse FUSF_FUSE_NUM_E::CRYPT_NO_DIS. */
+        uint64_t fj_dis_huk            : 1;  /**< [ 13: 13](SRO) Flash-jump HUK secret hiding. Reads field fuse FUSF_FUSE_NUM_E::DIS_HUK. */
+        uint64_t fj_core0              : 1;  /**< [ 12: 12](SRO) Flash-jump core 0 only. Reads field fuse FUSF_FUSE_NUM_E::FJ_CORE0. */
+        uint64_t fj_timeout            : 2;  /**< [ 11: 10](SRO) Flash-jump timeout. Reads field fuse FUSF_FUSE_NUM_E::FJ_TIMEOUT(). */
+        uint64_t fj_dis                : 1;  /**< [  9:  9](SRO) Flash-jump disable. Reads field fuse FUSF_FUSE_NUM_E::FJ_DIS. */
+        uint64_t tz_force2             : 1;  /**< [  8:  8](SRO) Trusted mode force override. Reads field fuse FUSF_FUSE_NUM_E::TZ_FORCE2. */
+        uint64_t trust_lvl_chk         : 1;  /**< [  7:  7](SRO) Trust level check. Reads field fuse FUSF_FUSE_NUM_E::TRUST_LVL_CHK. */
+        uint64_t mfg_lck               : 1;  /**< [  6:  6](SRO) Manufacturing lock. Reads field fuse FUSF_FUSE_NUM_E::MFG_LCK. */
+        uint64_t fuse5                 : 1;  /**< [  5:  5](SRO) Unallocated fuse. */
+        uint64_t trust_dis             : 1;  /**< [  4:  4](SRO) Disable Trustzone. Reads field fuse FUSF_FUSE_NUM_E::TRUST_DIS. */
+        uint64_t sw_lck                : 1;  /**< [  3:  3](SRO) Software fuse lockdown. Reads field fuse FUSF_FUSE_NUM_E::SW_LCK. */
+        uint64_t rot_lck               : 1;  /**< [  2:  2](SRO) Root-of-trust fuse lockdown. Reads field fuse FUSF_FUSE_NUM_E::ROT_LCK. */
+        uint64_t ssk_lck               : 1;  /**< [  1:  1](SRO) Secret symmetric key fuse lockdown. Reads field fuse FUSF_FUSE_NUM_E::SSK_LCK. */
+        uint64_t fusf_lck              : 1;  /**< [  0:  0](SRO) Total field fuse lockdown. Reads field fuse FUSF_FUSE_NUM_E::FUSF_LCK. */
+#else /* Word 0 - Little Endian */
+        uint64_t fusf_lck              : 1;  /**< [  0:  0](SRO) Total field fuse lockdown. Reads field fuse FUSF_FUSE_NUM_E::FUSF_LCK. */
+        uint64_t ssk_lck               : 1;  /**< [  1:  1](SRO) Secret symmetric key fuse lockdown. Reads field fuse FUSF_FUSE_NUM_E::SSK_LCK. */
+        uint64_t rot_lck               : 1;  /**< [  2:  2](SRO) Root-of-trust fuse lockdown. Reads field fuse FUSF_FUSE_NUM_E::ROT_LCK. */
+        uint64_t sw_lck                : 1;  /**< [  3:  3](SRO) Software fuse lockdown. Reads field fuse FUSF_FUSE_NUM_E::SW_LCK. */
+        uint64_t trust_dis             : 1;  /**< [  4:  4](SRO) Disable Trustzone. Reads field fuse FUSF_FUSE_NUM_E::TRUST_DIS. */
+        uint64_t fuse5                 : 1;  /**< [  5:  5](SRO) Unallocated fuse. */
+        uint64_t mfg_lck               : 1;  /**< [  6:  6](SRO) Manufacturing lock. Reads field fuse FUSF_FUSE_NUM_E::MFG_LCK. */
+        uint64_t trust_lvl_chk         : 1;  /**< [  7:  7](SRO) Trust level check. Reads field fuse FUSF_FUSE_NUM_E::TRUST_LVL_CHK. */
+        uint64_t tz_force2             : 1;  /**< [  8:  8](SRO) Trusted mode force override. Reads field fuse FUSF_FUSE_NUM_E::TZ_FORCE2. */
+        uint64_t fj_dis                : 1;  /**< [  9:  9](SRO) Flash-jump disable. Reads field fuse FUSF_FUSE_NUM_E::FJ_DIS. */
+        uint64_t fj_timeout            : 2;  /**< [ 11: 10](SRO) Flash-jump timeout. Reads field fuse FUSF_FUSE_NUM_E::FJ_TIMEOUT(). */
+        uint64_t fj_core0              : 1;  /**< [ 12: 12](SRO) Flash-jump core 0 only. Reads field fuse FUSF_FUSE_NUM_E::FJ_CORE0. */
+        uint64_t fj_dis_huk            : 1;  /**< [ 13: 13](SRO) Flash-jump HUK secret hiding. Reads field fuse FUSF_FUSE_NUM_E::DIS_HUK. */
+        uint64_t crypt_no_dis          : 1;  /**< [ 14: 14](SRO) No-crypt disable. Reads field fuse FUSF_FUSE_NUM_E::CRYPT_NO_DIS. */
+        uint64_t crypt_ssk_dis         : 1;  /**< [ 15: 15](SRO) SSK crypt disable. Reads field fuse FUSF_FUSE_NUM_E::CRYPT_SSK_DIS. */
+        uint64_t reserved_16_29        : 14;
+        uint64_t rom_script_disable    : 1;  /**< [ 30: 30](SRO) ROM script disable. Reads field fuses FUSF_FUSE_NUM_E::ROM_SCRIPT_DISABLE. */
+        uint64_t spi_safemode          : 1;  /**< [ 31: 31](SRO) Reserved.
+                                                                 Internal:
+                                                                 SPI safemode. Reads field fuses FUSF_FUSE_NUM_E::SPI_SAFEMODE. */
+        uint64_t rom_t_cnt             : 32; /**< [ 63: 32](SRO) ROM trusted counter. Reads field fuses FUSF_FUSE_NUM_E::ROM_T_CNT(). */
+#endif /* Word 0 - End */
+    } cn9;
+    struct cavm_fusf_ctl_cn96xxp1
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t rom_t_cnt             : 32; /**< [ 63: 32](SRO) ROM trusted counter. Reads field fuses FUSF_FUSE_NUM_E::ROM_T_CNT(). */
+        uint64_t spi_safemode          : 1;  /**< [ 31: 31](SRO) Reserved.
+                                                                 Internal:
+                                                                 SPI safemode. Reads field fuses FUSF_FUSE_NUM_E::SPI_SAFEMODE. */
+        uint64_t rom_script_disable    : 1;  /**< [ 30: 30](SRO) ROM script disable. Reads field fuses FUSF_FUSE_NUM_E::ROM_SCRIPT_DISABLE. */
+        uint64_t fuse16                : 14; /**< [ 29: 16](SRO) Reserved. */
+        uint64_t crypt_ssk_dis         : 1;  /**< [ 15: 15](SRO) SSK crypt disable. Reads field fuse FUSF_FUSE_NUM_E::CRYPT_SSK_DIS. */
+        uint64_t crypt_no_dis          : 1;  /**< [ 14: 14](SRO) No-crypt disable. Reads field fuse FUSF_FUSE_NUM_E::CRYPT_NO_DIS. */
+        uint64_t fj_dis_huk            : 1;  /**< [ 13: 13](SRO) Flash-jump HUK secret hiding. Reads field fuse FUSF_FUSE_NUM_E::DIS_HUK. */
+        uint64_t fj_core0              : 1;  /**< [ 12: 12](SRO) Flash-jump core 0 only. Reads field fuse FUSF_FUSE_NUM_E::FJ_CORE0. */
+        uint64_t fj_timeout            : 2;  /**< [ 11: 10](SRO) Flash-jump timeout. Reads field fuse FUSF_FUSE_NUM_E::FJ_TIMEOUT(). */
+        uint64_t fj_dis                : 1;  /**< [  9:  9](SRO) Flash-jump disable. Reads field fuse FUSF_FUSE_NUM_E::FJ_DIS. */
+        uint64_t tz_force2             : 1;  /**< [  8:  8](SRO) Trusted mode force override. Reads field fuse FUSF_FUSE_NUM_E::TZ_FORCE2. */
+        uint64_t trust_lvl_chk         : 1;  /**< [  7:  7](SRO) Trust level check. Reads field fuse FUSF_FUSE_NUM_E::TRUST_LVL_CHK. */
+        uint64_t mfg_lck               : 1;  /**< [  6:  6](SRO) Manufacturing lock. Reads field fuse FUSF_FUSE_NUM_E::MFG_LCK. */
+        uint64_t fuse5                 : 1;  /**< [  5:  5](SRO) Unallocated fuse. */
+        uint64_t trust_dis             : 1;  /**< [  4:  4](SRO) Disable Trustzone. Reads field fuse FUSF_FUSE_NUM_E::TRUST_DIS. */
+        uint64_t sw_lck                : 1;  /**< [  3:  3](SRO) Software fuse lockdown. Reads field fuse FUSF_FUSE_NUM_E::SW_LCK. */
+        uint64_t rot_lck               : 1;  /**< [  2:  2](SRO) Root-of-trust fuse lockdown. Reads field fuse FUSF_FUSE_NUM_E::ROT_LCK. */
+        uint64_t ssk_lck               : 1;  /**< [  1:  1](SRO) Secret symmetric key fuse lockdown. Reads field fuse FUSF_FUSE_NUM_E::SSK_LCK. */
+        uint64_t fusf_lck              : 1;  /**< [  0:  0](SRO) Total field fuse lockdown. Reads field fuse FUSF_FUSE_NUM_E::FUSF_LCK. */
+#else /* Word 0 - Little Endian */
+        uint64_t fusf_lck              : 1;  /**< [  0:  0](SRO) Total field fuse lockdown. Reads field fuse FUSF_FUSE_NUM_E::FUSF_LCK. */
+        uint64_t ssk_lck               : 1;  /**< [  1:  1](SRO) Secret symmetric key fuse lockdown. Reads field fuse FUSF_FUSE_NUM_E::SSK_LCK. */
+        uint64_t rot_lck               : 1;  /**< [  2:  2](SRO) Root-of-trust fuse lockdown. Reads field fuse FUSF_FUSE_NUM_E::ROT_LCK. */
+        uint64_t sw_lck                : 1;  /**< [  3:  3](SRO) Software fuse lockdown. Reads field fuse FUSF_FUSE_NUM_E::SW_LCK. */
+        uint64_t trust_dis             : 1;  /**< [  4:  4](SRO) Disable Trustzone. Reads field fuse FUSF_FUSE_NUM_E::TRUST_DIS. */
+        uint64_t fuse5                 : 1;  /**< [  5:  5](SRO) Unallocated fuse. */
+        uint64_t mfg_lck               : 1;  /**< [  6:  6](SRO) Manufacturing lock. Reads field fuse FUSF_FUSE_NUM_E::MFG_LCK. */
+        uint64_t trust_lvl_chk         : 1;  /**< [  7:  7](SRO) Trust level check. Reads field fuse FUSF_FUSE_NUM_E::TRUST_LVL_CHK. */
+        uint64_t tz_force2             : 1;  /**< [  8:  8](SRO) Trusted mode force override. Reads field fuse FUSF_FUSE_NUM_E::TZ_FORCE2. */
+        uint64_t fj_dis                : 1;  /**< [  9:  9](SRO) Flash-jump disable. Reads field fuse FUSF_FUSE_NUM_E::FJ_DIS. */
+        uint64_t fj_timeout            : 2;  /**< [ 11: 10](SRO) Flash-jump timeout. Reads field fuse FUSF_FUSE_NUM_E::FJ_TIMEOUT(). */
+        uint64_t fj_core0              : 1;  /**< [ 12: 12](SRO) Flash-jump core 0 only. Reads field fuse FUSF_FUSE_NUM_E::FJ_CORE0. */
+        uint64_t fj_dis_huk            : 1;  /**< [ 13: 13](SRO) Flash-jump HUK secret hiding. Reads field fuse FUSF_FUSE_NUM_E::DIS_HUK. */
+        uint64_t crypt_no_dis          : 1;  /**< [ 14: 14](SRO) No-crypt disable. Reads field fuse FUSF_FUSE_NUM_E::CRYPT_NO_DIS. */
+        uint64_t crypt_ssk_dis         : 1;  /**< [ 15: 15](SRO) SSK crypt disable. Reads field fuse FUSF_FUSE_NUM_E::CRYPT_SSK_DIS. */
+        uint64_t fuse16                : 14; /**< [ 29: 16](SRO) Reserved. */
+        uint64_t rom_script_disable    : 1;  /**< [ 30: 30](SRO) ROM script disable. Reads field fuses FUSF_FUSE_NUM_E::ROM_SCRIPT_DISABLE. */
+        uint64_t spi_safemode          : 1;  /**< [ 31: 31](SRO) Reserved.
+                                                                 Internal:
+                                                                 SPI safemode. Reads field fuses FUSF_FUSE_NUM_E::SPI_SAFEMODE. */
+        uint64_t rom_t_cnt             : 32; /**< [ 63: 32](SRO) ROM trusted counter. Reads field fuses FUSF_FUSE_NUM_E::ROM_T_CNT(). */
+#endif /* Word 0 - End */
+    } cn96xxp1;
+    struct cavm_fusf_ctl_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t rom_t_cnt             : 32; /**< [ 63: 32](SRO) ROM trusted counter. Reads field fuses FUSF_FUSE_NUM_E::ROM_T_CNT(). */
+        uint64_t spi_safemode          : 1;  /**< [ 31: 31](SRO) Reserved.
+                                                                 Internal:
+                                                                 SPI safemode. Reads field fuses FUSF_FUSE_NUM_E::SPI_SAFEMODE. */
+        uint64_t rom_script_disable    : 1;  /**< [ 30: 30](SRO) ROM script disable. Reads field fuses FUSF_FUSE_NUM_E::ROM_SCRIPT_DISABLE. */
         uint64_t fuse17                : 13; /**< [ 29: 17](SRO) Reserved. */
         uint64_t scan_disable          : 1;  /**< [ 16: 16](SRO) Scan disable.  Reads field fuse FUSF_FUSE_NUM_E::SCAN_DISABLE. */
         uint64_t crypt_ssk_dis         : 1;  /**< [ 15: 15](SRO) SSK crypt disable. Reads field fuse FUSF_FUSE_NUM_E::CRYPT_SSK_DIS. */
@@ -303,7 +397,10 @@ union cavm_fusf_ctl
                                                                  SPI safemode. Reads field fuses FUSF_FUSE_NUM_E::SPI_SAFEMODE. */
         uint64_t rom_t_cnt             : 32; /**< [ 63: 32](SRO) ROM trusted counter. Reads field fuses FUSF_FUSE_NUM_E::ROM_T_CNT(). */
 #endif /* Word 0 - End */
-    } cn9;
+    } cn96xxp3;
+    /* struct cavm_fusf_ctl_cn96xxp3 cn98xx; */
+    /* struct cavm_fusf_ctl_cn96xxp3 cnf95xx; */
+    /* struct cavm_fusf_ctl_cn96xxp3 loki; */
 };
 typedef union cavm_fusf_ctl cavm_fusf_ctl_t;
 

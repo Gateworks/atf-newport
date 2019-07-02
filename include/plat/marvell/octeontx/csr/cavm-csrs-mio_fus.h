@@ -434,6 +434,7 @@ union cavm_mio_fus_dat2
         uint64_t reserved_59_63        : 5;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_mio_fus_dat2_s cn8; */
     struct cavm_mio_fus_dat2_cn81xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -909,6 +910,7 @@ union cavm_mio_fus_dat3
                                                                  will XOR with this value. */
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_mio_fus_dat3_s cn8; */
     /* struct cavm_mio_fus_dat3_s cn81xx; */
     struct cavm_mio_fus_dat3_cn83xx
     {

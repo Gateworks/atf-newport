@@ -163,7 +163,13 @@ typedef union cavm_lbkx_bp_test cavm_lbkx_bp_test_t;
 static inline uint64_t CAVM_LBKX_BP_TEST(unsigned long a) __attribute__ ((pure, always_inline));
 static inline uint64_t CAVM_LBKX_BP_TEST(unsigned long a)
 {
-    if (cavm_is_model(OCTEONTX_CN9XXX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN96XX) && (a==0))
+        return 0x87e018000028ll + 0x1000000ll * ((a) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=3))
+        return 0x87e018000028ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+        return 0x87e018000028ll + 0x1000000ll * ((a) & 0x0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x87e018000028ll + 0x1000000ll * ((a) & 0x0);
     __cavm_csr_fatal("LBKX_BP_TEST", 1, a, 0, 0, 0, 0, 0);
 }
@@ -204,7 +210,13 @@ static inline uint64_t CAVM_LBKX_CHX_PKIND(unsigned long a, unsigned long b)
         return 0x87e018000200ll + 0x1000000ll * ((a) & 0x0) + 8ll * ((b) & 0x3f);
     if (cavm_is_model(OCTEONTX_CN83XX) && ((a<=3) && (b<=63)))
         return 0x87e018000200ll + 0x1000000ll * ((a) & 0x3) + 8ll * ((b) & 0x3f);
-    if (cavm_is_model(OCTEONTX_CN9XXX) && ((a==0) && (b<=63)))
+    if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=63)))
+        return 0x87e018000200ll + 0x1000000ll * ((a) & 0x0) + 8ll * ((b) & 0x3f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=63)))
+        return 0x87e018000200ll + 0x1000000ll * ((a) & 0x3) + 8ll * ((b) & 0x3f);
+    if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=63)))
+        return 0x87e018000200ll + 0x1000000ll * ((a) & 0x0) + 8ll * ((b) & 0x3f);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=63)))
         return 0x87e018000200ll + 0x1000000ll * ((a) & 0x0) + 8ll * ((b) & 0x3f);
     __cavm_csr_fatal("LBKX_CHX_PKIND", 2, a, b, 0, 0, 0, 0);
 }
@@ -258,7 +270,13 @@ static inline uint64_t CAVM_LBKX_CLK_GATE_CTL(unsigned long a)
         return 0x87e018000008ll + 0x1000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_CN83XX) && (a<=3))
         return 0x87e018000008ll + 0x1000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CN9XXX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN96XX) && (a==0))
+        return 0x87e018000008ll + 0x1000000ll * ((a) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=3))
+        return 0x87e018000008ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+        return 0x87e018000008ll + 0x1000000ll * ((a) & 0x0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x87e018000008ll + 0x1000000ll * ((a) & 0x0);
     __cavm_csr_fatal("LBKX_CLK_GATE_CTL", 1, a, 0, 0, 0, 0, 0);
 }
@@ -319,6 +337,7 @@ union cavm_lbkx_const
         uint64_t reserved_48_63        : 16;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_lbkx_const_s cn8; */
     /* struct cavm_lbkx_const_s cn81xx; */
     struct cavm_lbkx_const_cn83xx
     {
@@ -383,6 +402,47 @@ union cavm_lbkx_const
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_48_63        : 16;
         uint64_t chan                  : 16; /**< [ 47: 32](RO) Number of channels supported. */
+        uint64_t dest                  : 4;  /**< [ 31: 28](RO) What blocks this LBK transmits traffic to. Enumerated by LBK_CONNECT_E.
+                                                                 For LBK0, indicates LBK_CONNECT_E::NIX(0).
+
+                                                                 Internal:
+                                                                 lbk.v takes this from input straps set by the instantiation. */
+        uint64_t src                   : 4;  /**< [ 27: 24](RO) What blocks this LBK receives traffic from. Enumerated by LBK_CONNECT_E.
+                                                                 For LBK0, indicates LBK_CONNECT_E::NIX(0).
+
+                                                                 Internal:
+                                                                 lbk.v takes this from input straps set by the instantiation. */
+        uint64_t buf_size              : 24; /**< [ 23:  0](RO) Number of bytes in loopback data FIFO.
+                                                                 For LBK0, 0x3000 for each of FIFOs (express/non-express).
+
+                                                                 Internal:
+                                                                 lbk.v takes this from input straps set by the instantiation. */
+#else /* Word 0 - Little Endian */
+        uint64_t buf_size              : 24; /**< [ 23:  0](RO) Number of bytes in loopback data FIFO.
+                                                                 For LBK0, 0x3000 for each of FIFOs (express/non-express).
+
+                                                                 Internal:
+                                                                 lbk.v takes this from input straps set by the instantiation. */
+        uint64_t src                   : 4;  /**< [ 27: 24](RO) What blocks this LBK receives traffic from. Enumerated by LBK_CONNECT_E.
+                                                                 For LBK0, indicates LBK_CONNECT_E::NIX(0).
+
+                                                                 Internal:
+                                                                 lbk.v takes this from input straps set by the instantiation. */
+        uint64_t dest                  : 4;  /**< [ 31: 28](RO) What blocks this LBK transmits traffic to. Enumerated by LBK_CONNECT_E.
+                                                                 For LBK0, indicates LBK_CONNECT_E::NIX(0).
+
+                                                                 Internal:
+                                                                 lbk.v takes this from input straps set by the instantiation. */
+        uint64_t chan                  : 16; /**< [ 47: 32](RO) Number of channels supported. */
+        uint64_t reserved_48_63        : 16;
+#endif /* Word 0 - End */
+    } cn9;
+    /* struct cavm_lbkx_const_cn9 cn96xxp1; */
+    struct cavm_lbkx_const_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_48_63        : 16;
+        uint64_t chan                  : 16; /**< [ 47: 32](RO) Number of channels supported. */
         uint64_t dest                  : 4;  /**< [ 31: 28](RO) What block this LBK transmits traffic to. Enumerated by LBK_CONNECT_E.
                                                                  For LBK(0), indicates LBK_CONNECT_E::NIX(0).
 
@@ -413,7 +473,58 @@ union cavm_lbkx_const
         uint64_t chan                  : 16; /**< [ 47: 32](RO) Number of channels supported. */
         uint64_t reserved_48_63        : 16;
 #endif /* Word 0 - End */
-    } cn9;
+    } cn96xxp3;
+    struct cavm_lbkx_const_cn98xx
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_48_63        : 16;
+        uint64_t chan                  : 16; /**< [ 47: 32](RO) Number of channels supported. */
+        uint64_t dest                  : 4;  /**< [ 31: 28](RO) What block this LBK transmits traffic to. Enumerated by LBK_CONNECT_E.
+                                                                 For LBK(0), indicates LBK_CONNECT_E::NIX(0).
+                                                                 For LBK(1), indicates LBK_CONNECT_E::NIX(0).
+                                                                 For LBK(2), indicates LBK_CONNECT_E::NIX(1).
+                                                                 For LBK(3), indicates LBK_CONNECT_E::NIX(1).
+
+                                                                 Internal:
+                                                                 lbk.v takes this from input straps set by the instantiation. */
+        uint64_t src                   : 4;  /**< [ 27: 24](RO) What block this LBK receives traffic from. Enumerated by LBK_CONNECT_E.
+                                                                 For LBK(0), indicates LBK_CONNECT_E::NIX(0).
+                                                                 For LBK(1), indicates LBK_CONNECT_E::NIX(1).
+                                                                 For LBK(2), indicates LBK_CONNECT_E::NIX(0).
+                                                                 For LBK(3), indicates LBK_CONNECT_E::NIX(1).
+
+                                                                 Internal:
+                                                                 lbk.v takes this from input straps set by the instantiation. */
+        uint64_t buf_size              : 24; /**< [ 23:  0](RO) Number of bytes in each loopback data FIFO (express/non-express).
+                                                                 Internal:
+                                                                 lbk.v takes this from input straps set by the instantiation. */
+#else /* Word 0 - Little Endian */
+        uint64_t buf_size              : 24; /**< [ 23:  0](RO) Number of bytes in each loopback data FIFO (express/non-express).
+                                                                 Internal:
+                                                                 lbk.v takes this from input straps set by the instantiation. */
+        uint64_t src                   : 4;  /**< [ 27: 24](RO) What block this LBK receives traffic from. Enumerated by LBK_CONNECT_E.
+                                                                 For LBK(0), indicates LBK_CONNECT_E::NIX(0).
+                                                                 For LBK(1), indicates LBK_CONNECT_E::NIX(1).
+                                                                 For LBK(2), indicates LBK_CONNECT_E::NIX(0).
+                                                                 For LBK(3), indicates LBK_CONNECT_E::NIX(1).
+
+                                                                 Internal:
+                                                                 lbk.v takes this from input straps set by the instantiation. */
+        uint64_t dest                  : 4;  /**< [ 31: 28](RO) What block this LBK transmits traffic to. Enumerated by LBK_CONNECT_E.
+                                                                 For LBK(0), indicates LBK_CONNECT_E::NIX(0).
+                                                                 For LBK(1), indicates LBK_CONNECT_E::NIX(0).
+                                                                 For LBK(2), indicates LBK_CONNECT_E::NIX(1).
+                                                                 For LBK(3), indicates LBK_CONNECT_E::NIX(1).
+
+                                                                 Internal:
+                                                                 lbk.v takes this from input straps set by the instantiation. */
+        uint64_t chan                  : 16; /**< [ 47: 32](RO) Number of channels supported. */
+        uint64_t reserved_48_63        : 16;
+#endif /* Word 0 - End */
+    } cn98xx;
+    /* struct cavm_lbkx_const_cn9 cnf95xxp1; */
+    /* struct cavm_lbkx_const_cn96xxp3 cnf95xxp2; */
+    /* struct cavm_lbkx_const_cn96xxp3 loki; */
 };
 typedef union cavm_lbkx_const cavm_lbkx_const_t;
 
@@ -424,7 +535,13 @@ static inline uint64_t CAVM_LBKX_CONST(unsigned long a)
         return 0x87e018000010ll + 0x1000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_CN83XX) && (a<=3))
         return 0x87e018000010ll + 0x1000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CN9XXX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN96XX) && (a==0))
+        return 0x87e018000010ll + 0x1000000ll * ((a) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=3))
+        return 0x87e018000010ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+        return 0x87e018000010ll + 0x1000000ll * ((a) & 0x0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x87e018000010ll + 0x1000000ll * ((a) & 0x0);
     __cavm_csr_fatal("LBKX_CONST", 1, a, 0, 0, 0, 0, 0);
 }
@@ -464,7 +581,13 @@ static inline uint64_t CAVM_LBKX_CONST1(unsigned long a)
         return 0x87e018000018ll + 0x1000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_CN83XX) && (a<=3))
         return 0x87e018000018ll + 0x1000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CN9XXX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN96XX) && (a==0))
+        return 0x87e018000018ll + 0x1000000ll * ((a) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=3))
+        return 0x87e018000018ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+        return 0x87e018000018ll + 0x1000000ll * ((a) & 0x0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x87e018000018ll + 0x1000000ll * ((a) & 0x0);
     __cavm_csr_fatal("LBKX_CONST1", 1, a, 0, 0, 0, 0, 0);
 }
@@ -500,7 +623,13 @@ typedef union cavm_lbkx_csclk_active_pc cavm_lbkx_csclk_active_pc_t;
 static inline uint64_t CAVM_LBKX_CSCLK_ACTIVE_PC(unsigned long a) __attribute__ ((pure, always_inline));
 static inline uint64_t CAVM_LBKX_CSCLK_ACTIVE_PC(unsigned long a)
 {
-    if (cavm_is_model(OCTEONTX_CN9XXX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN96XX) && (a==0))
+        return 0x87e018000030ll + 0x1000000ll * ((a) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=3))
+        return 0x87e018000030ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+        return 0x87e018000030ll + 0x1000000ll * ((a) & 0x0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x87e018000030ll + 0x1000000ll * ((a) & 0x0);
     __cavm_csr_fatal("LBKX_CSCLK_ACTIVE_PC", 1, a, 0, 0, 0, 0, 0);
 }
@@ -633,6 +762,7 @@ union cavm_lbkx_err_int_ena_w1c
         uint64_t reserved_6_63         : 58;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_lbkx_err_int_ena_w1c_s cn8; */
     /* struct cavm_lbkx_err_int_ena_w1c_s cn81xx; */
     struct cavm_lbkx_err_int_ena_w1c_cn83xx
     {
@@ -703,6 +833,7 @@ union cavm_lbkx_err_int_ena_w1s
         uint64_t reserved_6_63         : 58;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_lbkx_err_int_ena_w1s_s cn8; */
     /* struct cavm_lbkx_err_int_ena_w1s_s cn81xx; */
     struct cavm_lbkx_err_int_ena_w1s_cn83xx
     {
@@ -773,6 +904,7 @@ union cavm_lbkx_err_int_w1s
         uint64_t reserved_6_63         : 58;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_lbkx_err_int_w1s_s cn8; */
     /* struct cavm_lbkx_err_int_w1s_s cn81xx; */
     struct cavm_lbkx_err_int_w1s_cn83xx
     {
@@ -987,7 +1119,13 @@ static inline uint64_t CAVM_LBKX_SFT_RST(unsigned long a)
         return 0x87e018000000ll + 0x1000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_CN83XX) && (a<=3))
         return 0x87e018000000ll + 0x1000000ll * ((a) & 0x3);
-    if (cavm_is_model(OCTEONTX_CN9XXX) && (a==0))
+    if (cavm_is_model(OCTEONTX_CN96XX) && (a==0))
+        return 0x87e018000000ll + 0x1000000ll * ((a) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=3))
+        return 0x87e018000000ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
+        return 0x87e018000000ll + 0x1000000ll * ((a) & 0x0);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x87e018000000ll + 0x1000000ll * ((a) & 0x0);
     __cavm_csr_fatal("LBKX_SFT_RST", 1, a, 0, 0, 0, 0, 0);
 }

@@ -846,7 +846,54 @@ union cavm_sysctix_ctidevarch
                                                                  Bits [27:21] are the JEP 106 ID code, 0x3B. */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_sysctix_ctidevarch_s cn; */
+    /* struct cavm_sysctix_ctidevarch_s cn8; */
+    struct cavm_sysctix_ctidevarch_cn9
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t architect             : 11; /**< [ 31: 21](RO) Defines the architecture of the component. This is ARM Limited.
+
+                                                                 Bits [31:28] are the JEP 106 continuation code, 0x4.
+
+                                                                 Bits [27:21] are the JEP 106 ID code, 0x3B. */
+        uint32_t present               : 1;  /**< [ 20: 20](RO) When set to one, indicates that the DEVARCH is present.
+                                                                 This field is one in v8-A. */
+        uint32_t revision              : 4;  /**< [ 19: 16](RO) Defines the architecture revision. For architectures defined
+                                                                     by ARM this is the minor revision.
+                                                                 For SYSCTI, the revision defined by v8-A is 0x0.
+                                                                 All other values are reserved. */
+        uint32_t archid                : 16; /**< [ 15:  0](RO) Defines this part to be a v8-A debug component. For
+                                                                     architectures defined by ARM this is further subdivided.
+                                                                 For SYSCTI:
+                                                                  Bits [15:12] are the architecture version, 0x1.
+                                                                  Bits [11:0] are the architecture part number, 0xA14.
+
+                                                                 This corresponds to SYSCTI architecture version SYSCTIv2. */
+#else /* Word 0 - Little Endian */
+        uint32_t archid                : 16; /**< [ 15:  0](RO) Defines this part to be a v8-A debug component. For
+                                                                     architectures defined by ARM this is further subdivided.
+                                                                 For SYSCTI:
+                                                                  Bits [15:12] are the architecture version, 0x1.
+                                                                  Bits [11:0] are the architecture part number, 0xA14.
+
+                                                                 This corresponds to SYSCTI architecture version SYSCTIv2. */
+        uint32_t revision              : 4;  /**< [ 19: 16](RO) Defines the architecture revision. For architectures defined
+                                                                     by ARM this is the minor revision.
+                                                                 For SYSCTI, the revision defined by v8-A is 0x0.
+                                                                 All other values are reserved. */
+        uint32_t present               : 1;  /**< [ 20: 20](RO) When set to one, indicates that the DEVARCH is present.
+                                                                 This field is one in v8-A. */
+        uint32_t architect             : 11; /**< [ 31: 21](RO) Defines the architecture of the component. This is ARM Limited.
+
+                                                                 Bits [31:28] are the JEP 106 continuation code, 0x4.
+
+                                                                 Bits [27:21] are the JEP 106 ID code, 0x3B. */
+#endif /* Word 0 - End */
+    } cn9;
+    /* struct cavm_sysctix_ctidevarch_cn9 cn96xxp1; */
+    /* struct cavm_sysctix_ctidevarch_s cn96xxp3; */
+    /* struct cavm_sysctix_ctidevarch_s cn98xx; */
+    /* struct cavm_sysctix_ctidevarch_s cnf95xx; */
+    /* struct cavm_sysctix_ctidevarch_s loki; */
 };
 typedef union cavm_sysctix_ctidevarch cavm_sysctix_ctidevarch_t;
 
@@ -1559,7 +1606,9 @@ union cavm_sysctix_ctipidr1
 #endif /* Word 0 - End */
     } s;
     /* struct cavm_sysctix_ctipidr1_s cn8; */
-    struct cavm_sysctix_ctipidr1_cn9
+    /* struct cavm_sysctix_ctipidr1_s cn9; */
+    /* struct cavm_sysctix_ctipidr1_s cn96xxp1; */
+    struct cavm_sysctix_ctipidr1_cn96xxp3
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_8_31         : 24;
@@ -1570,7 +1619,10 @@ union cavm_sysctix_ctipidr1
         uint32_t des_0                 : 4;  /**< [  7:  4](RO) JEP106 identification code \<3:0\>. Marvell (Cavium) code is 0x4C. */
         uint32_t reserved_8_31         : 24;
 #endif /* Word 0 - End */
-    } cn9;
+    } cn96xxp3;
+    /* struct cavm_sysctix_ctipidr1_cn96xxp3 cn98xx; */
+    /* struct cavm_sysctix_ctipidr1_cn96xxp3 cnf95xx; */
+    /* struct cavm_sysctix_ctipidr1_cn96xxp3 loki; */
 };
 typedef union cavm_sysctix_ctipidr1 cavm_sysctix_ctipidr1_t;
 
@@ -1618,6 +1670,21 @@ union cavm_sysctix_ctipidr2
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_8_31         : 24;
+        uint32_t revision              : 4;  /**< [  7:  4](RO) Architectural revision, as assigned by ARM. */
+        uint32_t jedec                 : 1;  /**< [  3:  3](RO) JEDEC assigned. */
+        uint32_t des_1                 : 3;  /**< [  2:  0](RO) JEP106 identification code \<6:4\>. Cavium code is 0x4C. */
+#else /* Word 0 - Little Endian */
+        uint32_t des_1                 : 3;  /**< [  2:  0](RO) JEP106 identification code \<6:4\>. Cavium code is 0x4C. */
+        uint32_t jedec                 : 1;  /**< [  3:  3](RO) JEDEC assigned. */
+        uint32_t revision              : 4;  /**< [  7:  4](RO) Architectural revision, as assigned by ARM. */
+        uint32_t reserved_8_31         : 24;
+#endif /* Word 0 - End */
+    } cn9;
+    /* struct cavm_sysctix_ctipidr2_cn9 cn96xxp1; */
+    struct cavm_sysctix_ctipidr2_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t reserved_8_31         : 24;
         uint32_t revision              : 4;  /**< [  7:  4](RO) Architectural revision, as assigned by Arm. */
         uint32_t jedec                 : 1;  /**< [  3:  3](RO) JEDEC assigned. */
         uint32_t des_1                 : 3;  /**< [  2:  0](RO) JEP106 identification code \<6:4\>. Marvell (Cavium) code is 0x4C. */
@@ -1627,7 +1694,10 @@ union cavm_sysctix_ctipidr2
         uint32_t revision              : 4;  /**< [  7:  4](RO) Architectural revision, as assigned by Arm. */
         uint32_t reserved_8_31         : 24;
 #endif /* Word 0 - End */
-    } cn9;
+    } cn96xxp3;
+    /* struct cavm_sysctix_ctipidr2_cn96xxp3 cn98xx; */
+    /* struct cavm_sysctix_ctipidr2_cn96xxp3 cnf95xx; */
+    /* struct cavm_sysctix_ctipidr2_cn96xxp3 loki; */
 };
 typedef union cavm_sysctix_ctipidr2 cavm_sysctix_ctipidr2_t;
 
@@ -1714,7 +1784,9 @@ union cavm_sysctix_ctipidr4
 #endif /* Word 0 - End */
     } s;
     /* struct cavm_sysctix_ctipidr4_s cn8; */
-    struct cavm_sysctix_ctipidr4_cn9
+    /* struct cavm_sysctix_ctipidr4_s cn9; */
+    /* struct cavm_sysctix_ctipidr4_s cn96xxp1; */
+    struct cavm_sysctix_ctipidr4_cn96xxp3
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_8_31         : 24;
@@ -1727,7 +1799,10 @@ union cavm_sysctix_ctipidr4
                                                                  start of the component to the end of the component ID registers. */
         uint32_t reserved_8_31         : 24;
 #endif /* Word 0 - End */
-    } cn9;
+    } cn96xxp3;
+    /* struct cavm_sysctix_ctipidr4_cn96xxp3 cn98xx; */
+    /* struct cavm_sysctix_ctipidr4_cn96xxp3 cnf95xx; */
+    /* struct cavm_sysctix_ctipidr4_cn96xxp3 loki; */
 };
 typedef union cavm_sysctix_ctipidr4 cavm_sysctix_ctipidr4_t;
 

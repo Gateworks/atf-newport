@@ -473,7 +473,9 @@ union cavm_gti_bz_pidr1
 #endif /* Word 0 - End */
     } s;
     /* struct cavm_gti_bz_pidr1_s cn8; */
-    struct cavm_gti_bz_pidr1_cn9
+    /* struct cavm_gti_bz_pidr1_s cn9; */
+    /* struct cavm_gti_bz_pidr1_s cn96xxp1; */
+    struct cavm_gti_bz_pidr1_cn96xxp3
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_8_31         : 24;
@@ -484,7 +486,10 @@ union cavm_gti_bz_pidr1
         uint32_t idcode                : 4;  /**< [  7:  4](RO) JEP106 identification code \<3:0\>. Marvell (Cavium) code is 0x4C. */
         uint32_t reserved_8_31         : 24;
 #endif /* Word 0 - End */
-    } cn9;
+    } cn96xxp3;
+    /* struct cavm_gti_bz_pidr1_cn96xxp3 cn98xx; */
+    /* struct cavm_gti_bz_pidr1_cn96xxp3 cnf95xx; */
+    /* struct cavm_gti_bz_pidr1_cn96xxp3 loki; */
 };
 typedef union cavm_gti_bz_pidr1 cavm_gti_bz_pidr1_t;
 
@@ -533,6 +538,21 @@ union cavm_gti_bz_pidr2
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_8_31         : 24;
+        uint32_t revision              : 4;  /**< [  7:  4](RO) Architectural revision, as assigned by ARM. */
+        uint32_t jedec                 : 1;  /**< [  3:  3](RO) JEDEC assigned. */
+        uint32_t idcode                : 3;  /**< [  2:  0](RO) JEP106 identification code \<6:4\>. Cavium code is 0x4C. */
+#else /* Word 0 - Little Endian */
+        uint32_t idcode                : 3;  /**< [  2:  0](RO) JEP106 identification code \<6:4\>. Cavium code is 0x4C. */
+        uint32_t jedec                 : 1;  /**< [  3:  3](RO) JEDEC assigned. */
+        uint32_t revision              : 4;  /**< [  7:  4](RO) Architectural revision, as assigned by ARM. */
+        uint32_t reserved_8_31         : 24;
+#endif /* Word 0 - End */
+    } cn9;
+    /* struct cavm_gti_bz_pidr2_cn9 cn96xxp1; */
+    struct cavm_gti_bz_pidr2_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t reserved_8_31         : 24;
         uint32_t revision              : 4;  /**< [  7:  4](RO) Architectural revision, as assigned by Arm. */
         uint32_t jedec                 : 1;  /**< [  3:  3](RO) JEDEC assigned. */
         uint32_t idcode                : 3;  /**< [  2:  0](RO) JEP106 identification code \<6:4\>. Marvell (Cavium) code is 0x4C. */
@@ -542,7 +562,10 @@ union cavm_gti_bz_pidr2
         uint32_t revision              : 4;  /**< [  7:  4](RO) Architectural revision, as assigned by Arm. */
         uint32_t reserved_8_31         : 24;
 #endif /* Word 0 - End */
-    } cn9;
+    } cn96xxp3;
+    /* struct cavm_gti_bz_pidr2_cn96xxp3 cn98xx; */
+    /* struct cavm_gti_bz_pidr2_cn96xxp3 cnf95xx; */
+    /* struct cavm_gti_bz_pidr2_cn96xxp3 loki; */
 };
 typedef union cavm_gti_bz_pidr2 cavm_gti_bz_pidr2_t;
 
@@ -629,7 +652,9 @@ union cavm_gti_bz_pidr4
 #endif /* Word 0 - End */
     } s;
     /* struct cavm_gti_bz_pidr4_s cn8; */
-    struct cavm_gti_bz_pidr4_cn9
+    /* struct cavm_gti_bz_pidr4_s cn9; */
+    /* struct cavm_gti_bz_pidr4_s cn96xxp1; */
+    struct cavm_gti_bz_pidr4_cn96xxp3
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_8_31         : 24;
@@ -640,7 +665,10 @@ union cavm_gti_bz_pidr4
         uint32_t pagecnt               : 4;  /**< [  7:  4](RO) Number of log-2 4 KB blocks occupied. */
         uint32_t reserved_8_31         : 24;
 #endif /* Word 0 - End */
-    } cn9;
+    } cn96xxp3;
+    /* struct cavm_gti_bz_pidr4_cn96xxp3 cn98xx; */
+    /* struct cavm_gti_bz_pidr4_cn96xxp3 cnf95xx; */
+    /* struct cavm_gti_bz_pidr4_cn96xxp3 loki; */
 };
 typedef union cavm_gti_bz_pidr4 cavm_gti_bz_pidr4_t;
 
@@ -1687,7 +1715,9 @@ union cavm_gti_cc_imp_ctl
 #endif /* Word 0 - End */
     } s;
     /* struct cavm_gti_cc_imp_ctl_s cn8; */
-    struct cavm_gti_cc_imp_ctl_cn96xx
+    /* struct cavm_gti_cc_imp_ctl_s cn9; */
+    /* struct cavm_gti_cc_imp_ctl_s cn96xxp1; */
+    struct cavm_gti_cc_imp_ctl_cn96xxp3
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_1_63         : 63;
@@ -1700,7 +1730,8 @@ union cavm_gti_cc_imp_ctl
                                                                  1 = PTP system clock. See MIO_PTP_SYSCK_THRESH_HI/LO. */
         uint64_t reserved_1_63         : 63;
 #endif /* Word 0 - End */
-    } cn96xx;
+    } cn96xxp3;
+    /* struct cavm_gti_cc_imp_ctl_s cn98xx; */
     /* struct cavm_gti_cc_imp_ctl_s cnf95xx; */
     /* struct cavm_gti_cc_imp_ctl_s loki; */
 };
@@ -1785,7 +1816,9 @@ union cavm_gti_cc_pidr1
 #endif /* Word 0 - End */
     } s;
     /* struct cavm_gti_cc_pidr1_s cn8; */
-    struct cavm_gti_cc_pidr1_cn9
+    /* struct cavm_gti_cc_pidr1_s cn9; */
+    /* struct cavm_gti_cc_pidr1_s cn96xxp1; */
+    struct cavm_gti_cc_pidr1_cn96xxp3
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_8_31         : 24;
@@ -1796,7 +1829,10 @@ union cavm_gti_cc_pidr1
         uint32_t idcode                : 4;  /**< [  7:  4](SRO) JEP106 identification code \<3:0\>. Marvell (Cavium) code is 0x4C. */
         uint32_t reserved_8_31         : 24;
 #endif /* Word 0 - End */
-    } cn9;
+    } cn96xxp3;
+    /* struct cavm_gti_cc_pidr1_cn96xxp3 cn98xx; */
+    /* struct cavm_gti_cc_pidr1_cn96xxp3 cnf95xx; */
+    /* struct cavm_gti_cc_pidr1_cn96xxp3 loki; */
 };
 typedef union cavm_gti_cc_pidr1 cavm_gti_cc_pidr1_t;
 
@@ -1845,6 +1881,21 @@ union cavm_gti_cc_pidr2
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_8_31         : 24;
+        uint32_t revision              : 4;  /**< [  7:  4](SRO) Architectural revision, as assigned by ARM. */
+        uint32_t jedec                 : 1;  /**< [  3:  3](SRO) JEDEC assigned. */
+        uint32_t idcode                : 3;  /**< [  2:  0](SRO) JEP106 identification code \<6:4\>. Cavium code is 0x4C. */
+#else /* Word 0 - Little Endian */
+        uint32_t idcode                : 3;  /**< [  2:  0](SRO) JEP106 identification code \<6:4\>. Cavium code is 0x4C. */
+        uint32_t jedec                 : 1;  /**< [  3:  3](SRO) JEDEC assigned. */
+        uint32_t revision              : 4;  /**< [  7:  4](SRO) Architectural revision, as assigned by ARM. */
+        uint32_t reserved_8_31         : 24;
+#endif /* Word 0 - End */
+    } cn9;
+    /* struct cavm_gti_cc_pidr2_cn9 cn96xxp1; */
+    struct cavm_gti_cc_pidr2_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t reserved_8_31         : 24;
         uint32_t revision              : 4;  /**< [  7:  4](SRO) Architectural revision, as assigned by Arm. */
         uint32_t jedec                 : 1;  /**< [  3:  3](SRO) JEDEC assigned. */
         uint32_t idcode                : 3;  /**< [  2:  0](SRO) JEP106 identification code \<6:4\>. Marvell (Cavium) code is 0x4C. */
@@ -1854,7 +1905,10 @@ union cavm_gti_cc_pidr2
         uint32_t revision              : 4;  /**< [  7:  4](SRO) Architectural revision, as assigned by Arm. */
         uint32_t reserved_8_31         : 24;
 #endif /* Word 0 - End */
-    } cn9;
+    } cn96xxp3;
+    /* struct cavm_gti_cc_pidr2_cn96xxp3 cn98xx; */
+    /* struct cavm_gti_cc_pidr2_cn96xxp3 cnf95xx; */
+    /* struct cavm_gti_cc_pidr2_cn96xxp3 loki; */
 };
 typedef union cavm_gti_cc_pidr2 cavm_gti_cc_pidr2_t;
 
@@ -1941,7 +1995,9 @@ union cavm_gti_cc_pidr4
 #endif /* Word 0 - End */
     } s;
     /* struct cavm_gti_cc_pidr4_s cn8; */
-    struct cavm_gti_cc_pidr4_cn9
+    /* struct cavm_gti_cc_pidr4_s cn9; */
+    /* struct cavm_gti_cc_pidr4_s cn96xxp1; */
+    struct cavm_gti_cc_pidr4_cn96xxp3
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_8_31         : 24;
@@ -1952,7 +2008,10 @@ union cavm_gti_cc_pidr4
         uint32_t pagecnt               : 4;  /**< [  7:  4](SRO) Number of log-2 4 KB blocks occupied. */
         uint32_t reserved_8_31         : 24;
 #endif /* Word 0 - End */
-    } cn9;
+    } cn96xxp3;
+    /* struct cavm_gti_cc_pidr4_cn96xxp3 cn98xx; */
+    /* struct cavm_gti_cc_pidr4_cn96xxp3 cnf95xx; */
+    /* struct cavm_gti_cc_pidr4_cn96xxp3 loki; */
 };
 typedef union cavm_gti_cc_pidr4 cavm_gti_cc_pidr4_t;
 
@@ -2511,7 +2570,9 @@ union cavm_gti_ctl_pidr1
 #endif /* Word 0 - End */
     } s;
     /* struct cavm_gti_ctl_pidr1_s cn8; */
-    struct cavm_gti_ctl_pidr1_cn9
+    /* struct cavm_gti_ctl_pidr1_s cn9; */
+    /* struct cavm_gti_ctl_pidr1_s cn96xxp1; */
+    struct cavm_gti_ctl_pidr1_cn96xxp3
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_8_31         : 24;
@@ -2522,7 +2583,10 @@ union cavm_gti_ctl_pidr1
         uint32_t idcode                : 4;  /**< [  7:  4](RO) JEP106 identification code \<3:0\>. Marvell (Cavium) code is 0x4C. */
         uint32_t reserved_8_31         : 24;
 #endif /* Word 0 - End */
-    } cn9;
+    } cn96xxp3;
+    /* struct cavm_gti_ctl_pidr1_cn96xxp3 cn98xx; */
+    /* struct cavm_gti_ctl_pidr1_cn96xxp3 cnf95xx; */
+    /* struct cavm_gti_ctl_pidr1_cn96xxp3 loki; */
 };
 typedef union cavm_gti_ctl_pidr1 cavm_gti_ctl_pidr1_t;
 
@@ -2571,6 +2635,21 @@ union cavm_gti_ctl_pidr2
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_8_31         : 24;
+        uint32_t revision              : 4;  /**< [  7:  4](RO) Architectural revision, as assigned by ARM. */
+        uint32_t jedec                 : 1;  /**< [  3:  3](RO) JEDEC assigned. */
+        uint32_t idcode                : 3;  /**< [  2:  0](RO) JEP106 identification code \<6:4\>. Cavium code is 0x4C. */
+#else /* Word 0 - Little Endian */
+        uint32_t idcode                : 3;  /**< [  2:  0](RO) JEP106 identification code \<6:4\>. Cavium code is 0x4C. */
+        uint32_t jedec                 : 1;  /**< [  3:  3](RO) JEDEC assigned. */
+        uint32_t revision              : 4;  /**< [  7:  4](RO) Architectural revision, as assigned by ARM. */
+        uint32_t reserved_8_31         : 24;
+#endif /* Word 0 - End */
+    } cn9;
+    /* struct cavm_gti_ctl_pidr2_cn9 cn96xxp1; */
+    struct cavm_gti_ctl_pidr2_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t reserved_8_31         : 24;
         uint32_t revision              : 4;  /**< [  7:  4](RO) Architectural revision, as assigned by Arm. */
         uint32_t jedec                 : 1;  /**< [  3:  3](RO) JEDEC assigned. */
         uint32_t idcode                : 3;  /**< [  2:  0](RO) JEP106 identification code \<6:4\>. Marvell (Cavium) code is 0x4C. */
@@ -2580,7 +2659,10 @@ union cavm_gti_ctl_pidr2
         uint32_t revision              : 4;  /**< [  7:  4](RO) Architectural revision, as assigned by Arm. */
         uint32_t reserved_8_31         : 24;
 #endif /* Word 0 - End */
-    } cn9;
+    } cn96xxp3;
+    /* struct cavm_gti_ctl_pidr2_cn96xxp3 cn98xx; */
+    /* struct cavm_gti_ctl_pidr2_cn96xxp3 cnf95xx; */
+    /* struct cavm_gti_ctl_pidr2_cn96xxp3 loki; */
 };
 typedef union cavm_gti_ctl_pidr2 cavm_gti_ctl_pidr2_t;
 
@@ -2667,7 +2749,9 @@ union cavm_gti_ctl_pidr4
 #endif /* Word 0 - End */
     } s;
     /* struct cavm_gti_ctl_pidr4_s cn8; */
-    struct cavm_gti_ctl_pidr4_cn9
+    /* struct cavm_gti_ctl_pidr4_s cn9; */
+    /* struct cavm_gti_ctl_pidr4_s cn96xxp1; */
+    struct cavm_gti_ctl_pidr4_cn96xxp3
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_8_31         : 24;
@@ -2678,7 +2762,10 @@ union cavm_gti_ctl_pidr4
         uint32_t pagecnt               : 4;  /**< [  7:  4](RO) Number of log-2 4 KB blocks occupied. */
         uint32_t reserved_8_31         : 24;
 #endif /* Word 0 - End */
-    } cn9;
+    } cn96xxp3;
+    /* struct cavm_gti_ctl_pidr4_cn96xxp3 cn98xx; */
+    /* struct cavm_gti_ctl_pidr4_cn96xxp3 cnf95xx; */
+    /* struct cavm_gti_ctl_pidr4_cn96xxp3 loki; */
 };
 typedef union cavm_gti_ctl_pidr4 cavm_gti_ctl_pidr4_t;
 
@@ -3962,7 +4049,9 @@ union cavm_gti_msix_vecx_addr
         uint64_t reserved_49_63        : 15;
 #endif /* Word 0 - End */
     } cn8;
-    struct cavm_gti_msix_vecx_addr_cn9
+    /* struct cavm_gti_msix_vecx_addr_s cn9; */
+    /* struct cavm_gti_msix_vecx_addr_s cn96xxp1; */
+    struct cavm_gti_msix_vecx_addr_cn96xxp3
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_53_63        : 11;
@@ -4017,7 +4106,10 @@ union cavm_gti_msix_vecx_addr
         uint64_t addr                  : 51; /**< [ 52:  2](R/W) IOVA to use for MSI-X delivery of this vector. */
         uint64_t reserved_53_63        : 11;
 #endif /* Word 0 - End */
-    } cn9;
+    } cn96xxp3;
+    /* struct cavm_gti_msix_vecx_addr_cn96xxp3 cn98xx; */
+    /* struct cavm_gti_msix_vecx_addr_cn96xxp3 cnf95xx; */
+    /* struct cavm_gti_msix_vecx_addr_cn96xxp3 loki; */
 };
 typedef union cavm_gti_msix_vecx_addr cavm_gti_msix_vecx_addr_t;
 
@@ -4365,7 +4457,9 @@ union cavm_gti_rd_pidr1
 #endif /* Word 0 - End */
     } s;
     /* struct cavm_gti_rd_pidr1_s cn8; */
-    struct cavm_gti_rd_pidr1_cn9
+    /* struct cavm_gti_rd_pidr1_s cn9; */
+    /* struct cavm_gti_rd_pidr1_s cn96xxp1; */
+    struct cavm_gti_rd_pidr1_cn96xxp3
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_8_31         : 24;
@@ -4376,7 +4470,10 @@ union cavm_gti_rd_pidr1
         uint32_t idcode                : 4;  /**< [  7:  4](RO) JEP106 identification code \<3:0\>. Marvell (Cavium) code is 0x4C. */
         uint32_t reserved_8_31         : 24;
 #endif /* Word 0 - End */
-    } cn9;
+    } cn96xxp3;
+    /* struct cavm_gti_rd_pidr1_cn96xxp3 cn98xx; */
+    /* struct cavm_gti_rd_pidr1_cn96xxp3 cnf95xx; */
+    /* struct cavm_gti_rd_pidr1_cn96xxp3 loki; */
 };
 typedef union cavm_gti_rd_pidr1 cavm_gti_rd_pidr1_t;
 
@@ -4425,6 +4522,21 @@ union cavm_gti_rd_pidr2
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_8_31         : 24;
+        uint32_t revision              : 4;  /**< [  7:  4](RO) Architectural revision, as assigned by ARM. */
+        uint32_t jedec                 : 1;  /**< [  3:  3](RO) JEDEC assigned. */
+        uint32_t idcode                : 3;  /**< [  2:  0](RO) JEP106 identification code \<6:4\>. Cavium code is 0x4C. */
+#else /* Word 0 - Little Endian */
+        uint32_t idcode                : 3;  /**< [  2:  0](RO) JEP106 identification code \<6:4\>. Cavium code is 0x4C. */
+        uint32_t jedec                 : 1;  /**< [  3:  3](RO) JEDEC assigned. */
+        uint32_t revision              : 4;  /**< [  7:  4](RO) Architectural revision, as assigned by ARM. */
+        uint32_t reserved_8_31         : 24;
+#endif /* Word 0 - End */
+    } cn9;
+    /* struct cavm_gti_rd_pidr2_cn9 cn96xxp1; */
+    struct cavm_gti_rd_pidr2_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t reserved_8_31         : 24;
         uint32_t revision              : 4;  /**< [  7:  4](RO) Architectural revision, as assigned by Arm. */
         uint32_t jedec                 : 1;  /**< [  3:  3](RO) JEDEC assigned. */
         uint32_t idcode                : 3;  /**< [  2:  0](RO) JEP106 identification code \<6:4\>. Marvell (Cavium) code is 0x4C. */
@@ -4434,7 +4546,10 @@ union cavm_gti_rd_pidr2
         uint32_t revision              : 4;  /**< [  7:  4](RO) Architectural revision, as assigned by Arm. */
         uint32_t reserved_8_31         : 24;
 #endif /* Word 0 - End */
-    } cn9;
+    } cn96xxp3;
+    /* struct cavm_gti_rd_pidr2_cn96xxp3 cn98xx; */
+    /* struct cavm_gti_rd_pidr2_cn96xxp3 cnf95xx; */
+    /* struct cavm_gti_rd_pidr2_cn96xxp3 loki; */
 };
 typedef union cavm_gti_rd_pidr2 cavm_gti_rd_pidr2_t;
 
@@ -4521,7 +4636,9 @@ union cavm_gti_rd_pidr4
 #endif /* Word 0 - End */
     } s;
     /* struct cavm_gti_rd_pidr4_s cn8; */
-    struct cavm_gti_rd_pidr4_cn9
+    /* struct cavm_gti_rd_pidr4_s cn9; */
+    /* struct cavm_gti_rd_pidr4_s cn96xxp1; */
+    struct cavm_gti_rd_pidr4_cn96xxp3
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_8_31         : 24;
@@ -4532,7 +4649,10 @@ union cavm_gti_rd_pidr4
         uint32_t pagecnt               : 4;  /**< [  7:  4](RO) Number of log-2 4 KB blocks occupied. */
         uint32_t reserved_8_31         : 24;
 #endif /* Word 0 - End */
-    } cn9;
+    } cn96xxp3;
+    /* struct cavm_gti_rd_pidr4_cn96xxp3 cn98xx; */
+    /* struct cavm_gti_rd_pidr4_cn96xxp3 cnf95xx; */
+    /* struct cavm_gti_rd_pidr4_cn96xxp3 loki; */
 };
 typedef union cavm_gti_rd_pidr4 cavm_gti_rd_pidr4_t;
 
@@ -4936,7 +5056,9 @@ union cavm_gti_wcx_pidr1
 #endif /* Word 0 - End */
     } s;
     /* struct cavm_gti_wcx_pidr1_s cn8; */
-    struct cavm_gti_wcx_pidr1_cn9
+    /* struct cavm_gti_wcx_pidr1_s cn9; */
+    /* struct cavm_gti_wcx_pidr1_s cn96xxp1; */
+    struct cavm_gti_wcx_pidr1_cn96xxp3
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_8_31         : 24;
@@ -4947,7 +5069,10 @@ union cavm_gti_wcx_pidr1
         uint32_t idcode                : 4;  /**< [  7:  4](RO) JEP106 identification code \<3:0\>. Marvell (Cavium) code is 0x4C. */
         uint32_t reserved_8_31         : 24;
 #endif /* Word 0 - End */
-    } cn9;
+    } cn96xxp3;
+    /* struct cavm_gti_wcx_pidr1_cn96xxp3 cn98xx; */
+    /* struct cavm_gti_wcx_pidr1_cn96xxp3 cnf95xx; */
+    /* struct cavm_gti_wcx_pidr1_cn96xxp3 loki; */
 };
 typedef union cavm_gti_wcx_pidr1 cavm_gti_wcx_pidr1_t;
 
@@ -4997,6 +5122,21 @@ union cavm_gti_wcx_pidr2
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_8_31         : 24;
+        uint32_t revision              : 4;  /**< [  7:  4](RO) Architectural revision, as assigned by ARM. */
+        uint32_t jedec                 : 1;  /**< [  3:  3](RO) JEDEC assigned. */
+        uint32_t idcode                : 3;  /**< [  2:  0](RO) JEP106 identification code \<6:4\>. Cavium code is 0x4C. */
+#else /* Word 0 - Little Endian */
+        uint32_t idcode                : 3;  /**< [  2:  0](RO) JEP106 identification code \<6:4\>. Cavium code is 0x4C. */
+        uint32_t jedec                 : 1;  /**< [  3:  3](RO) JEDEC assigned. */
+        uint32_t revision              : 4;  /**< [  7:  4](RO) Architectural revision, as assigned by ARM. */
+        uint32_t reserved_8_31         : 24;
+#endif /* Word 0 - End */
+    } cn9;
+    /* struct cavm_gti_wcx_pidr2_cn9 cn96xxp1; */
+    struct cavm_gti_wcx_pidr2_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t reserved_8_31         : 24;
         uint32_t revision              : 4;  /**< [  7:  4](RO) Architectural revision, as assigned by Arm. */
         uint32_t jedec                 : 1;  /**< [  3:  3](RO) JEDEC assigned. */
         uint32_t idcode                : 3;  /**< [  2:  0](RO) JEP106 identification code \<6:4\>. Marvell (Cavium) code is 0x4C. */
@@ -5006,7 +5146,10 @@ union cavm_gti_wcx_pidr2
         uint32_t revision              : 4;  /**< [  7:  4](RO) Architectural revision, as assigned by Arm. */
         uint32_t reserved_8_31         : 24;
 #endif /* Word 0 - End */
-    } cn9;
+    } cn96xxp3;
+    /* struct cavm_gti_wcx_pidr2_cn96xxp3 cn98xx; */
+    /* struct cavm_gti_wcx_pidr2_cn96xxp3 cnf95xx; */
+    /* struct cavm_gti_wcx_pidr2_cn96xxp3 loki; */
 };
 typedef union cavm_gti_wcx_pidr2 cavm_gti_wcx_pidr2_t;
 
@@ -5095,7 +5238,9 @@ union cavm_gti_wcx_pidr4
 #endif /* Word 0 - End */
     } s;
     /* struct cavm_gti_wcx_pidr4_s cn8; */
-    struct cavm_gti_wcx_pidr4_cn9
+    /* struct cavm_gti_wcx_pidr4_s cn9; */
+    /* struct cavm_gti_wcx_pidr4_s cn96xxp1; */
+    struct cavm_gti_wcx_pidr4_cn96xxp3
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_8_31         : 24;
@@ -5106,7 +5251,10 @@ union cavm_gti_wcx_pidr4
         uint32_t pagecnt               : 4;  /**< [  7:  4](RO) Number of log-2 4 KB blocks occupied. */
         uint32_t reserved_8_31         : 24;
 #endif /* Word 0 - End */
-    } cn9;
+    } cn96xxp3;
+    /* struct cavm_gti_wcx_pidr4_cn96xxp3 cn98xx; */
+    /* struct cavm_gti_wcx_pidr4_cn96xxp3 cnf95xx; */
+    /* struct cavm_gti_wcx_pidr4_cn96xxp3 loki; */
 };
 typedef union cavm_gti_wcx_pidr4 cavm_gti_wcx_pidr4_t;
 
@@ -5273,7 +5421,9 @@ union cavm_gti_wcx_w_iidr
 #endif /* Word 0 - End */
     } s;
     /* struct cavm_gti_wcx_w_iidr_s cn8; */
-    struct cavm_gti_wcx_w_iidr_cn9
+    /* struct cavm_gti_wcx_w_iidr_s cn9; */
+    /* struct cavm_gti_wcx_w_iidr_s cn96xxp1; */
+    struct cavm_gti_wcx_w_iidr_cn96xxp3
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t productid             : 8;  /**< [ 31: 24](RO) An implementation defined product number for the device.
@@ -5296,7 +5446,10 @@ union cavm_gti_wcx_w_iidr
         uint32_t productid             : 8;  /**< [ 31: 24](RO) An implementation defined product number for the device.
                                                                  In CNXXXX, enumerated by PCC_PROD_E. */
 #endif /* Word 0 - End */
-    } cn9;
+    } cn96xxp3;
+    /* struct cavm_gti_wcx_w_iidr_cn96xxp3 cn98xx; */
+    /* struct cavm_gti_wcx_w_iidr_cn96xxp3 cnf95xx; */
+    /* struct cavm_gti_wcx_w_iidr_cn96xxp3 loki; */
 };
 typedef union cavm_gti_wcx_w_iidr cavm_gti_wcx_w_iidr_t;
 
@@ -5682,7 +5835,9 @@ union cavm_gti_wrx_pidr1
 #endif /* Word 0 - End */
     } s;
     /* struct cavm_gti_wrx_pidr1_s cn8; */
-    struct cavm_gti_wrx_pidr1_cn9
+    /* struct cavm_gti_wrx_pidr1_s cn9; */
+    /* struct cavm_gti_wrx_pidr1_s cn96xxp1; */
+    struct cavm_gti_wrx_pidr1_cn96xxp3
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_8_31         : 24;
@@ -5693,7 +5848,10 @@ union cavm_gti_wrx_pidr1
         uint32_t idcode                : 4;  /**< [  7:  4](RO) JEP106 identification code \<3:0\>. Marvell (Cavium) code is 0x4C. */
         uint32_t reserved_8_31         : 24;
 #endif /* Word 0 - End */
-    } cn9;
+    } cn96xxp3;
+    /* struct cavm_gti_wrx_pidr1_cn96xxp3 cn98xx; */
+    /* struct cavm_gti_wrx_pidr1_cn96xxp3 cnf95xx; */
+    /* struct cavm_gti_wrx_pidr1_cn96xxp3 loki; */
 };
 typedef union cavm_gti_wrx_pidr1 cavm_gti_wrx_pidr1_t;
 
@@ -5741,6 +5899,21 @@ union cavm_gti_wrx_pidr2
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_8_31         : 24;
+        uint32_t revision              : 4;  /**< [  7:  4](RO) Architectural revision, as assigned by ARM. */
+        uint32_t jedec                 : 1;  /**< [  3:  3](RO) JEDEC assigned. */
+        uint32_t idcode                : 3;  /**< [  2:  0](RO) JEP106 identification code \<6:4\>. Cavium code is 0x4C. */
+#else /* Word 0 - Little Endian */
+        uint32_t idcode                : 3;  /**< [  2:  0](RO) JEP106 identification code \<6:4\>. Cavium code is 0x4C. */
+        uint32_t jedec                 : 1;  /**< [  3:  3](RO) JEDEC assigned. */
+        uint32_t revision              : 4;  /**< [  7:  4](RO) Architectural revision, as assigned by ARM. */
+        uint32_t reserved_8_31         : 24;
+#endif /* Word 0 - End */
+    } cn9;
+    /* struct cavm_gti_wrx_pidr2_cn9 cn96xxp1; */
+    struct cavm_gti_wrx_pidr2_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t reserved_8_31         : 24;
         uint32_t revision              : 4;  /**< [  7:  4](RO) Architectural revision, as assigned by Arm. */
         uint32_t jedec                 : 1;  /**< [  3:  3](RO) JEDEC assigned. */
         uint32_t idcode                : 3;  /**< [  2:  0](RO) JEP106 identification code \<6:4\>. Marvell (Cavium) code is 0x4C. */
@@ -5750,7 +5923,10 @@ union cavm_gti_wrx_pidr2
         uint32_t revision              : 4;  /**< [  7:  4](RO) Architectural revision, as assigned by Arm. */
         uint32_t reserved_8_31         : 24;
 #endif /* Word 0 - End */
-    } cn9;
+    } cn96xxp3;
+    /* struct cavm_gti_wrx_pidr2_cn96xxp3 cn98xx; */
+    /* struct cavm_gti_wrx_pidr2_cn96xxp3 cnf95xx; */
+    /* struct cavm_gti_wrx_pidr2_cn96xxp3 loki; */
 };
 typedef union cavm_gti_wrx_pidr2 cavm_gti_wrx_pidr2_t;
 
@@ -5835,7 +6011,9 @@ union cavm_gti_wrx_pidr4
 #endif /* Word 0 - End */
     } s;
     /* struct cavm_gti_wrx_pidr4_s cn8; */
-    struct cavm_gti_wrx_pidr4_cn9
+    /* struct cavm_gti_wrx_pidr4_s cn9; */
+    /* struct cavm_gti_wrx_pidr4_s cn96xxp1; */
+    struct cavm_gti_wrx_pidr4_cn96xxp3
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_8_31         : 24;
@@ -5846,7 +6024,10 @@ union cavm_gti_wrx_pidr4
         uint32_t pagecnt               : 4;  /**< [  7:  4](RO) Number of log-2 4 KB blocks occupied. */
         uint32_t reserved_8_31         : 24;
 #endif /* Word 0 - End */
-    } cn9;
+    } cn96xxp3;
+    /* struct cavm_gti_wrx_pidr4_cn96xxp3 cn98xx; */
+    /* struct cavm_gti_wrx_pidr4_cn96xxp3 cnf95xx; */
+    /* struct cavm_gti_wrx_pidr4_cn96xxp3 loki; */
 };
 typedef union cavm_gti_wrx_pidr4 cavm_gti_wrx_pidr4_t;
 
@@ -6013,7 +6194,9 @@ union cavm_gti_wrx_w_iidr
 #endif /* Word 0 - End */
     } s;
     /* struct cavm_gti_wrx_w_iidr_s cn8; */
-    struct cavm_gti_wrx_w_iidr_cn9
+    /* struct cavm_gti_wrx_w_iidr_s cn9; */
+    /* struct cavm_gti_wrx_w_iidr_s cn96xxp1; */
+    struct cavm_gti_wrx_w_iidr_cn96xxp3
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t productid             : 8;  /**< [ 31: 24](RO) An implementation defined product number for the device.
@@ -6036,7 +6219,10 @@ union cavm_gti_wrx_w_iidr
         uint32_t productid             : 8;  /**< [ 31: 24](RO) An implementation defined product number for the device.
                                                                  In CNXXXX, enumerated by PCC_PROD_E. */
 #endif /* Word 0 - End */
-    } cn9;
+    } cn96xxp3;
+    /* struct cavm_gti_wrx_w_iidr_cn96xxp3 cn98xx; */
+    /* struct cavm_gti_wrx_w_iidr_cn96xxp3 cnf95xx; */
+    /* struct cavm_gti_wrx_w_iidr_cn96xxp3 loki; */
 };
 typedef union cavm_gti_wrx_w_iidr cavm_gti_wrx_w_iidr_t;
 

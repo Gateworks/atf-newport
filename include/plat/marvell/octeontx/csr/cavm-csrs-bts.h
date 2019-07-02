@@ -803,6 +803,36 @@ union cavm_bts_msix_vecx_addr
         uint64_t reserved_1            : 1;
         uint64_t secvec                : 1;  /**< [  0:  0](SR/W) Secure vector.
                                                                  0 = This vector may be read or written by either secure or nonsecure states.
+                                                                 1 = This vector's BTS_MSIX_VEC()_ADDR, BTS_MSIX_VEC()_CTL, and corresponding
+                                                                 bit of BTS_MSIX_PBA() are RAZ/WI and does not cause a fault when accessed
+                                                                 by the nonsecure world.
+
+                                                                 If PCCPF_BTS_VSEC_SCTL[MSIX_SEC] (for documentation, see PCCPF_XXX_VSEC_SCTL[MSIX_SEC]) is
+                                                                 set, all vectors are secure and function as if [SECVEC] was set. */
+#else /* Word 0 - Little Endian */
+        uint64_t secvec                : 1;  /**< [  0:  0](SR/W) Secure vector.
+                                                                 0 = This vector may be read or written by either secure or nonsecure states.
+                                                                 1 = This vector's BTS_MSIX_VEC()_ADDR, BTS_MSIX_VEC()_CTL, and corresponding
+                                                                 bit of BTS_MSIX_PBA() are RAZ/WI and does not cause a fault when accessed
+                                                                 by the nonsecure world.
+
+                                                                 If PCCPF_BTS_VSEC_SCTL[MSIX_SEC] (for documentation, see PCCPF_XXX_VSEC_SCTL[MSIX_SEC]) is
+                                                                 set, all vectors are secure and function as if [SECVEC] was set. */
+        uint64_t reserved_1            : 1;
+        uint64_t addr                  : 51; /**< [ 52:  2](R/W) IOVA to use for MSI-X delivery of this vector. */
+        uint64_t reserved_53_63        : 11;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_bts_msix_vecx_addr_s cn9; */
+    /* struct cavm_bts_msix_vecx_addr_s cn96xxp1; */
+    struct cavm_bts_msix_vecx_addr_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_53_63        : 11;
+        uint64_t addr                  : 51; /**< [ 52:  2](R/W) IOVA to use for MSI-X delivery of this vector. */
+        uint64_t reserved_1            : 1;
+        uint64_t secvec                : 1;  /**< [  0:  0](SR/W) Secure vector.
+                                                                 0 = This vector may be read or written by either secure or nonsecure states.
                                                                  The vector's IOVA is sent to the SMMU as nonsecure (though this only affects
                                                                  physical addresses if PCCPF_XXX_VSEC_SCTL[MSIX_PHYS]=1).
 
@@ -850,8 +880,10 @@ union cavm_bts_msix_vecx_addr
         uint64_t addr                  : 51; /**< [ 52:  2](R/W) IOVA to use for MSI-X delivery of this vector. */
         uint64_t reserved_53_63        : 11;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_bts_msix_vecx_addr_s cn; */
+    } cn96xxp3;
+    /* struct cavm_bts_msix_vecx_addr_cn96xxp3 cn98xx; */
+    /* struct cavm_bts_msix_vecx_addr_cn96xxp3 cnf95xx; */
+    /* struct cavm_bts_msix_vecx_addr_cn96xxp3 loki; */
 };
 typedef union cavm_bts_msix_vecx_addr cavm_bts_msix_vecx_addr_t;
 
@@ -1759,6 +1791,114 @@ union cavm_bts_tp_mux_sel
                                                                  0xB = PD bank 3 PD negative clear.
                                                                  0xC = PD bank 4 PD negative clear.
                                                                  0xD = PD bank 5 PD negative clear.
+                                                                 0xE-0xF = Reserved. */
+        uint64_t tp3_sel               : 4;  /**< [ 11:  8](R/W) Select the source for the BTS_TP3 output signal:
+                                                                 0x0 = PD bank 0 PD positive clear.
+                                                                 0x1 = PD bank 1 PD positive clear.
+                                                                 0x2 = PD bank 2 PD positive clear.
+                                                                 0x3 = PD bank 3 PD positive clear.
+                                                                 0x4 = PD bank 4 PD positive clear.
+                                                                 0x5 = PD bank 5 PD positive clear.
+                                                                 0x6 = CG_1pps.
+                                                                 0x7 = Reserved.
+                                                                 0x8 = PD bank 0 PD negative done.
+                                                                 0x9 = PD bank 1 PD negative done.
+                                                                 0xA = PD bank 2 PD negative done.
+                                                                 0xB = PD bank 3 PD negative done.
+                                                                 0xC = PD bank 4 PD negative done.
+                                                                 0xD = PD bank 5 PD negative done.
+                                                                 0xE-0xF = Reserved. */
+        uint64_t tp2_sel               : 4;  /**< [  7:  4](R/W) Select the source for the BTS_TP2 output signal:
+                                                                 0x0 = PD bank 0 LOOP_1pps.
+                                                                 0x1 = PD bank 1 LOOP_1pps.
+                                                                 0x2 = PD bank 2 LOOP_1pps.
+                                                                 0x3 = PD bank 3 LOOP_1pps.
+                                                                 0x4 = PD bank 4 LOOP_1pps.
+                                                                 0x5 = PD bank 5 LOOP_1pps.
+                                                                 0x6 = PLL out clk /16.
+                                                                 0x7-0xF = Reserved. */
+        uint64_t tp1_sel               : 4;  /**< [  3:  0](R/W) Select the source for the BTS_TP1 output signal:
+                                                                 0x0 = PD bank 0 REF_1pps.
+                                                                 0x1 = PD bank 1 REF_1pps.
+                                                                 0x2 = PD bank 2 REF_1pps.
+                                                                 0x3 = PD bank 3 REF_1pps.
+                                                                 0x4 = PD bank 4 REF_1pps.
+                                                                 0x5 = PD bank 5 REF_1pps.
+                                                                 0x6-0xF = Reserved. */
+#else /* Word 0 - Little Endian */
+        uint64_t tp1_sel               : 4;  /**< [  3:  0](R/W) Select the source for the BTS_TP1 output signal:
+                                                                 0x0 = PD bank 0 REF_1pps.
+                                                                 0x1 = PD bank 1 REF_1pps.
+                                                                 0x2 = PD bank 2 REF_1pps.
+                                                                 0x3 = PD bank 3 REF_1pps.
+                                                                 0x4 = PD bank 4 REF_1pps.
+                                                                 0x5 = PD bank 5 REF_1pps.
+                                                                 0x6-0xF = Reserved. */
+        uint64_t tp2_sel               : 4;  /**< [  7:  4](R/W) Select the source for the BTS_TP2 output signal:
+                                                                 0x0 = PD bank 0 LOOP_1pps.
+                                                                 0x1 = PD bank 1 LOOP_1pps.
+                                                                 0x2 = PD bank 2 LOOP_1pps.
+                                                                 0x3 = PD bank 3 LOOP_1pps.
+                                                                 0x4 = PD bank 4 LOOP_1pps.
+                                                                 0x5 = PD bank 5 LOOP_1pps.
+                                                                 0x6 = PLL out clk /16.
+                                                                 0x7-0xF = Reserved. */
+        uint64_t tp3_sel               : 4;  /**< [ 11:  8](R/W) Select the source for the BTS_TP3 output signal:
+                                                                 0x0 = PD bank 0 PD positive clear.
+                                                                 0x1 = PD bank 1 PD positive clear.
+                                                                 0x2 = PD bank 2 PD positive clear.
+                                                                 0x3 = PD bank 3 PD positive clear.
+                                                                 0x4 = PD bank 4 PD positive clear.
+                                                                 0x5 = PD bank 5 PD positive clear.
+                                                                 0x6 = CG_1pps.
+                                                                 0x7 = Reserved.
+                                                                 0x8 = PD bank 0 PD negative done.
+                                                                 0x9 = PD bank 1 PD negative done.
+                                                                 0xA = PD bank 2 PD negative done.
+                                                                 0xB = PD bank 3 PD negative done.
+                                                                 0xC = PD bank 4 PD negative done.
+                                                                 0xD = PD bank 5 PD negative done.
+                                                                 0xE-0xF = Reserved. */
+        uint64_t tp4_sel               : 4;  /**< [ 15: 12](R/W) Select the source for the BTS_TP4 output signal:
+                                                                 0x0 = PD bank 0 PD positive done.
+                                                                 0x1 = PD bank 1 PD positive done.
+                                                                 0x2 = PD bank 2 PD positive done.
+                                                                 0x3 = PD bank 3 PD positive done.
+                                                                 0x4 = PD bank 4 PD positive done.
+                                                                 0x5 = PD bank 5 PD positive done.
+                                                                 0x6 = PD_1PPS.
+                                                                 0x7 = Reserved.
+                                                                 0x8 = PD bank 0 PD negative clear.
+                                                                 0x9 = PD bank 1 PD negative clear.
+                                                                 0xA = PD bank 2 PD negative clear.
+                                                                 0xB = PD bank 3 PD negative clear.
+                                                                 0xC = PD bank 4 PD negative clear.
+                                                                 0xD = PD bank 5 PD negative clear.
+                                                                 0xE-0xF = Reserved. */
+        uint64_t reserved_16_63        : 48;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_bts_tp_mux_sel_s cn9; */
+    /* struct cavm_bts_tp_mux_sel_s cn96xxp1; */
+    struct cavm_bts_tp_mux_sel_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_16_63        : 48;
+        uint64_t tp4_sel               : 4;  /**< [ 15: 12](R/W) Select the source for the BTS_TP4 output signal:
+                                                                 0x0 = PD bank 0 PD positive done.
+                                                                 0x1 = PD bank 1 PD positive done.
+                                                                 0x2 = PD bank 2 PD positive done.
+                                                                 0x3 = PD bank 3 PD positive done.
+                                                                 0x4 = PD bank 4 PD positive done.
+                                                                 0x5 = PD bank 5 PD positive done.
+                                                                 0x6 = PD_1PPS.
+                                                                 0x7 = Reserved.
+                                                                 0x8 = PD bank 0 PD negative clear.
+                                                                 0x9 = PD bank 1 PD negative clear.
+                                                                 0xA = PD bank 2 PD negative clear.
+                                                                 0xB = PD bank 3 PD negative clear.
+                                                                 0xC = PD bank 4 PD negative clear.
+                                                                 0xD = PD bank 5 PD negative clear.
                                                                  0xE = Reserved.
                                                                  0xF = 0. */
         uint64_t tp3_sel               : 4;  /**< [ 11:  8](R/W) Select the source for the BTS_TP3 output signal:
@@ -1853,8 +1993,10 @@ union cavm_bts_tp_mux_sel
                                                                  0xF = 0. */
         uint64_t reserved_16_63        : 48;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_bts_tp_mux_sel_s cn; */
+    } cn96xxp3;
+    /* struct cavm_bts_tp_mux_sel_cn96xxp3 cn98xx; */
+    /* struct cavm_bts_tp_mux_sel_cn96xxp3 cnf95xx; */
+    /* struct cavm_bts_tp_mux_sel_cn96xxp3 loki; */
 };
 typedef union cavm_bts_tp_mux_sel cavm_bts_tp_mux_sel_t;
 

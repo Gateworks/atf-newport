@@ -335,7 +335,13 @@ typedef union cavm_rvu_af_afpfx_mboxx cavm_rvu_af_afpfx_mboxx_t;
 static inline uint64_t CAVM_RVU_AF_AFPFX_MBOXX(unsigned long a, unsigned long b) __attribute__ ((pure, always_inline));
 static inline uint64_t CAVM_RVU_AF_AFPFX_MBOXX(unsigned long a, unsigned long b)
 {
-    if (cavm_is_model(OCTEONTX_CN9XXX) && ((a<=15) && (b<=1)))
+    if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=15) && (b<=1)))
+        return 0x840000002000ll + 0x10ll * ((a) & 0xf) + 8ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=23) && (b<=1)))
+        return 0x840000002000ll + 0x10ll * ((a) & 0x1f) + 8ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=15) && (b<=1)))
+        return 0x840000002000ll + 0x10ll * ((a) & 0xf) + 8ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=15) && (b<=1)))
         return 0x840000002000ll + 0x10ll * ((a) & 0xf) + 8ll * ((b) & 0x1);
     __cavm_csr_fatal("RVU_AF_AFPFX_MBOXX", 2, a, b, 0, 0, 0, 0);
 }
@@ -887,6 +893,34 @@ union cavm_rvu_af_pfx_vf_bar4_addr
     struct cavm_rvu_af_pfx_vf_bar4_addr_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t addr                  : 48; /**< [ 63: 16](SR/W) When RVU_PRIV_PF()_CFG[PF_VF_IO_BAR4] is set, programmable base physical
+                                                                 address of the PF/VF mailbox memory, consisting of RVU_PRIV_PF()_CFG[NVF]
+                                                                 consecutive 64 KB pages in LLC/DRAM.
+
+                                                                 May be used as VF/PF mailbox memory in addition to
+                                                                 RVU_PF_VF()_PFVF_MBOX()/RVU_VF_VFPF_MBOX().
+
+                                                                 Not used when RVU_PRIV_PF()_CFG[PF_VF_IO_BAR4] is clear
+                                                                 (RVU_PF_VF_BAR4_ADDR is used instead). */
+        uint64_t reserved_0_15         : 16;
+#else /* Word 0 - Little Endian */
+        uint64_t reserved_0_15         : 16;
+        uint64_t addr                  : 48; /**< [ 63: 16](SR/W) When RVU_PRIV_PF()_CFG[PF_VF_IO_BAR4] is set, programmable base physical
+                                                                 address of the PF/VF mailbox memory, consisting of RVU_PRIV_PF()_CFG[NVF]
+                                                                 consecutive 64 KB pages in LLC/DRAM.
+
+                                                                 May be used as VF/PF mailbox memory in addition to
+                                                                 RVU_PF_VF()_PFVF_MBOX()/RVU_VF_VFPF_MBOX().
+
+                                                                 Not used when RVU_PRIV_PF()_CFG[PF_VF_IO_BAR4] is clear
+                                                                 (RVU_PF_VF_BAR4_ADDR is used instead). */
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rvu_af_pfx_vf_bar4_addr_s cn9; */
+    /* struct cavm_rvu_af_pfx_vf_bar4_addr_s cn96xx; */
+    struct cavm_rvu_af_pfx_vf_bar4_addr_cn98xx
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t addr                  : 48; /**< [ 63: 16](R/W) When RVU_PRIV_PF()_CFG[PF_VF_IO_BAR4] is set, programmable base physical
                                                                  address of the PF/VF mailbox memory, consisting of RVU_PRIV_PF()_CFG[NVF]
                                                                  consecutive 64 KB pages in LLC/DRAM.
@@ -909,8 +943,7 @@ union cavm_rvu_af_pfx_vf_bar4_addr
                                                                  Not used when RVU_PRIV_PF()_CFG[PF_VF_IO_BAR4] is clear
                                                                  (RVU_PF_VF_BAR4_ADDR is used instead). */
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_rvu_af_pfx_vf_bar4_addr_s cn; */
+    } cn98xx;
 };
 typedef union cavm_rvu_af_pfx_vf_bar4_addr cavm_rvu_af_pfx_vf_bar4_addr_t;
 
@@ -919,6 +952,8 @@ static inline uint64_t CAVM_RVU_AF_PFX_VF_BAR4_ADDR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a<=15))
         return 0x840000001000ll + 0x10ll * ((a) & 0xf);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=23))
+        return 0x840000001000ll + 0x10ll * ((a) & 0x1f);
     __cavm_csr_fatal("RVU_AF_PFX_VF_BAR4_ADDR", 1, a, 0, 0, 0, 0, 0);
 }
 
@@ -993,6 +1028,31 @@ union cavm_rvu_af_pf_rst
                                                                  RVU_PRIV_PF()_MSIX_CFG[PF_MSIXT_OFFSET,PF_MSIXT_SIZEM1].
                                                                  Hardware clears this bit when done.
                                                                  Note this does not reset HWVFs which are mapped to the PF. */
+        uint64_t reserved_5_11         : 7;
+        uint64_t pf                    : 5;  /**< [  4:  0](R/W) Physical function that is reset when [EXEC] is set. */
+#else /* Word 0 - Little Endian */
+        uint64_t pf                    : 5;  /**< [  4:  0](R/W) Physical function that is reset when [EXEC] is set. */
+        uint64_t reserved_5_11         : 7;
+        uint64_t exec                  : 1;  /**< [ 12: 12](R/W1S/H) Execute PF software-initiated reset. When software writes a one to set this bit, hardware
+                                                                 resets the RVUM physical function selected by [PF] and the
+                                                                 associated MSI-X table in LLC/DRAM specified by
+                                                                 RVU_PRIV_PF()_MSIX_CFG[PF_MSIXT_OFFSET,PF_MSIXT_SIZEM1].
+                                                                 Hardware clears this bit when done.
+                                                                 Note this does not reset HWVFs which are mapped to the PF. */
+        uint64_t reserved_13_63        : 51;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rvu_af_pf_rst_s cn9; */
+    struct cavm_rvu_af_pf_rst_cn96xx
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_13_63        : 51;
+        uint64_t exec                  : 1;  /**< [ 12: 12](R/W1S/H) Execute PF software-initiated reset. When software writes a one to set this bit, hardware
+                                                                 resets the RVUM physical function selected by [PF] and the
+                                                                 associated MSI-X table in LLC/DRAM specified by
+                                                                 RVU_PRIV_PF()_MSIX_CFG[PF_MSIXT_OFFSET,PF_MSIXT_SIZEM1].
+                                                                 Hardware clears this bit when done.
+                                                                 Note this does not reset HWVFs which are mapped to the PF. */
         uint64_t reserved_4_11         : 8;
         uint64_t pf                    : 4;  /**< [  3:  0](R/W) Physical function that is reset when [EXEC] is set. */
 #else /* Word 0 - Little Endian */
@@ -1006,8 +1066,10 @@ union cavm_rvu_af_pf_rst
                                                                  Note this does not reset HWVFs which are mapped to the PF. */
         uint64_t reserved_13_63        : 51;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_rvu_af_pf_rst_s cn; */
+    } cn96xx;
+    /* struct cavm_rvu_af_pf_rst_s cn98xx; */
+    /* struct cavm_rvu_af_pf_rst_cn96xx cnf95xx; */
+    /* struct cavm_rvu_af_pf_rst_cn96xx loki; */
 };
 typedef union cavm_rvu_af_pf_rst cavm_rvu_af_pf_rst_t;
 
@@ -1038,6 +1100,21 @@ union cavm_rvu_af_pfaf_mbox_int
     struct cavm_rvu_af_pfaf_mbox_int_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_24_63        : 40;
+        uint64_t mbox                  : 24; /**< [ 23:  0](R/W1C/H) Mailbox interrupt bit per PF.
+                                                                 Each bit is set when the PF writes to the corresponding
+                                                                 RVU_PF_PFAF_MBOX(1) register. */
+#else /* Word 0 - Little Endian */
+        uint64_t mbox                  : 24; /**< [ 23:  0](R/W1C/H) Mailbox interrupt bit per PF.
+                                                                 Each bit is set when the PF writes to the corresponding
+                                                                 RVU_PF_PFAF_MBOX(1) register. */
+        uint64_t reserved_24_63        : 40;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rvu_af_pfaf_mbox_int_s cn9; */
+    struct cavm_rvu_af_pfaf_mbox_int_cn96xx
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_16_63        : 48;
         uint64_t mbox                  : 16; /**< [ 15:  0](R/W1C/H) Mailbox interrupt bit per PF.
                                                                  Each bit is set when the PF writes to the corresponding
@@ -1048,8 +1125,10 @@ union cavm_rvu_af_pfaf_mbox_int
                                                                  RVU_PF_PFAF_MBOX(1) register. */
         uint64_t reserved_16_63        : 48;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_rvu_af_pfaf_mbox_int_s cn; */
+    } cn96xx;
+    /* struct cavm_rvu_af_pfaf_mbox_int_s cn98xx; */
+    /* struct cavm_rvu_af_pfaf_mbox_int_cn96xx cnf95xx; */
+    /* struct cavm_rvu_af_pfaf_mbox_int_cn96xx loki; */
 };
 typedef union cavm_rvu_af_pfaf_mbox_int cavm_rvu_af_pfaf_mbox_int_t;
 
@@ -1081,14 +1160,27 @@ union cavm_rvu_af_pfaf_mbox_int_ena_w1c
     struct cavm_rvu_af_pfaf_mbox_int_ena_w1c_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_24_63        : 40;
+        uint64_t mbox                  : 24; /**< [ 23:  0](R/W1C/H) Reads or clears enable for RVU_AF_PFAF_MBOX_INT[MBOX]. */
+#else /* Word 0 - Little Endian */
+        uint64_t mbox                  : 24; /**< [ 23:  0](R/W1C/H) Reads or clears enable for RVU_AF_PFAF_MBOX_INT[MBOX]. */
+        uint64_t reserved_24_63        : 40;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rvu_af_pfaf_mbox_int_ena_w1c_s cn9; */
+    struct cavm_rvu_af_pfaf_mbox_int_ena_w1c_cn96xx
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_16_63        : 48;
         uint64_t mbox                  : 16; /**< [ 15:  0](R/W1C/H) Reads or clears enable for RVU_AF_PFAF_MBOX_INT[MBOX]. */
 #else /* Word 0 - Little Endian */
         uint64_t mbox                  : 16; /**< [ 15:  0](R/W1C/H) Reads or clears enable for RVU_AF_PFAF_MBOX_INT[MBOX]. */
         uint64_t reserved_16_63        : 48;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_rvu_af_pfaf_mbox_int_ena_w1c_s cn; */
+    } cn96xx;
+    /* struct cavm_rvu_af_pfaf_mbox_int_ena_w1c_s cn98xx; */
+    /* struct cavm_rvu_af_pfaf_mbox_int_ena_w1c_cn96xx cnf95xx; */
+    /* struct cavm_rvu_af_pfaf_mbox_int_ena_w1c_cn96xx loki; */
 };
 typedef union cavm_rvu_af_pfaf_mbox_int_ena_w1c cavm_rvu_af_pfaf_mbox_int_ena_w1c_t;
 
@@ -1120,14 +1212,27 @@ union cavm_rvu_af_pfaf_mbox_int_ena_w1s
     struct cavm_rvu_af_pfaf_mbox_int_ena_w1s_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_24_63        : 40;
+        uint64_t mbox                  : 24; /**< [ 23:  0](R/W1S/H) Reads or sets enable for RVU_AF_PFAF_MBOX_INT[MBOX]. */
+#else /* Word 0 - Little Endian */
+        uint64_t mbox                  : 24; /**< [ 23:  0](R/W1S/H) Reads or sets enable for RVU_AF_PFAF_MBOX_INT[MBOX]. */
+        uint64_t reserved_24_63        : 40;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rvu_af_pfaf_mbox_int_ena_w1s_s cn9; */
+    struct cavm_rvu_af_pfaf_mbox_int_ena_w1s_cn96xx
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_16_63        : 48;
         uint64_t mbox                  : 16; /**< [ 15:  0](R/W1S/H) Reads or sets enable for RVU_AF_PFAF_MBOX_INT[MBOX]. */
 #else /* Word 0 - Little Endian */
         uint64_t mbox                  : 16; /**< [ 15:  0](R/W1S/H) Reads or sets enable for RVU_AF_PFAF_MBOX_INT[MBOX]. */
         uint64_t reserved_16_63        : 48;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_rvu_af_pfaf_mbox_int_ena_w1s_s cn; */
+    } cn96xx;
+    /* struct cavm_rvu_af_pfaf_mbox_int_ena_w1s_s cn98xx; */
+    /* struct cavm_rvu_af_pfaf_mbox_int_ena_w1s_cn96xx cnf95xx; */
+    /* struct cavm_rvu_af_pfaf_mbox_int_ena_w1s_cn96xx loki; */
 };
 typedef union cavm_rvu_af_pfaf_mbox_int_ena_w1s cavm_rvu_af_pfaf_mbox_int_ena_w1s_t;
 
@@ -1159,14 +1264,27 @@ union cavm_rvu_af_pfaf_mbox_int_w1s
     struct cavm_rvu_af_pfaf_mbox_int_w1s_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_24_63        : 40;
+        uint64_t mbox                  : 24; /**< [ 23:  0](R/W1S/H) Reads or sets RVU_AF_PFAF_MBOX_INT[MBOX]. */
+#else /* Word 0 - Little Endian */
+        uint64_t mbox                  : 24; /**< [ 23:  0](R/W1S/H) Reads or sets RVU_AF_PFAF_MBOX_INT[MBOX]. */
+        uint64_t reserved_24_63        : 40;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rvu_af_pfaf_mbox_int_w1s_s cn9; */
+    struct cavm_rvu_af_pfaf_mbox_int_w1s_cn96xx
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_16_63        : 48;
         uint64_t mbox                  : 16; /**< [ 15:  0](R/W1S/H) Reads or sets RVU_AF_PFAF_MBOX_INT[MBOX]. */
 #else /* Word 0 - Little Endian */
         uint64_t mbox                  : 16; /**< [ 15:  0](R/W1S/H) Reads or sets RVU_AF_PFAF_MBOX_INT[MBOX]. */
         uint64_t reserved_16_63        : 48;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_rvu_af_pfaf_mbox_int_w1s_s cn; */
+    } cn96xx;
+    /* struct cavm_rvu_af_pfaf_mbox_int_w1s_s cn98xx; */
+    /* struct cavm_rvu_af_pfaf_mbox_int_w1s_cn96xx cnf95xx; */
+    /* struct cavm_rvu_af_pfaf_mbox_int_w1s_cn96xx loki; */
 };
 typedef union cavm_rvu_af_pfaf_mbox_int_w1s cavm_rvu_af_pfaf_mbox_int_w1s_t;
 
@@ -1197,6 +1315,27 @@ union cavm_rvu_af_pfflr_int
     struct cavm_rvu_af_pfflr_int_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_24_63        : 40;
+        uint64_t flr                   : 24; /**< [ 23:  0](R/W1C/H) FLR interrupt bit per PF.
+
+                                                                 If RVU_PRIV_PF()_CFG[ME_FLR_ENA] is set, each bit is set along with
+                                                                 the corresponding bit in RVU_AF_PFTRPEND when function level reset is
+                                                                 initiated for the associated PF, i.e. a one is written to
+                                                                 PCCPF_XXX_E_DEV_CTL[BCR_FLR]. */
+#else /* Word 0 - Little Endian */
+        uint64_t flr                   : 24; /**< [ 23:  0](R/W1C/H) FLR interrupt bit per PF.
+
+                                                                 If RVU_PRIV_PF()_CFG[ME_FLR_ENA] is set, each bit is set along with
+                                                                 the corresponding bit in RVU_AF_PFTRPEND when function level reset is
+                                                                 initiated for the associated PF, i.e. a one is written to
+                                                                 PCCPF_XXX_E_DEV_CTL[BCR_FLR]. */
+        uint64_t reserved_24_63        : 40;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rvu_af_pfflr_int_s cn9; */
+    struct cavm_rvu_af_pfflr_int_cn96xx
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_16_63        : 48;
         uint64_t flr                   : 16; /**< [ 15:  0](R/W1C/H) FLR interrupt bit per PF.
 
@@ -1213,8 +1352,10 @@ union cavm_rvu_af_pfflr_int
                                                                  PCCPF_XXX_E_DEV_CTL[BCR_FLR]. */
         uint64_t reserved_16_63        : 48;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_rvu_af_pfflr_int_s cn; */
+    } cn96xx;
+    /* struct cavm_rvu_af_pfflr_int_s cn98xx; */
+    /* struct cavm_rvu_af_pfflr_int_cn96xx cnf95xx; */
+    /* struct cavm_rvu_af_pfflr_int_cn96xx loki; */
 };
 typedef union cavm_rvu_af_pfflr_int cavm_rvu_af_pfflr_int_t;
 
@@ -1246,14 +1387,27 @@ union cavm_rvu_af_pfflr_int_ena_w1c
     struct cavm_rvu_af_pfflr_int_ena_w1c_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_24_63        : 40;
+        uint64_t flr                   : 24; /**< [ 23:  0](R/W1C/H) Reads or clears enable for RVU_AF_PFFLR_INT[FLR]. */
+#else /* Word 0 - Little Endian */
+        uint64_t flr                   : 24; /**< [ 23:  0](R/W1C/H) Reads or clears enable for RVU_AF_PFFLR_INT[FLR]. */
+        uint64_t reserved_24_63        : 40;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rvu_af_pfflr_int_ena_w1c_s cn9; */
+    struct cavm_rvu_af_pfflr_int_ena_w1c_cn96xx
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_16_63        : 48;
         uint64_t flr                   : 16; /**< [ 15:  0](R/W1C/H) Reads or clears enable for RVU_AF_PFFLR_INT[FLR]. */
 #else /* Word 0 - Little Endian */
         uint64_t flr                   : 16; /**< [ 15:  0](R/W1C/H) Reads or clears enable for RVU_AF_PFFLR_INT[FLR]. */
         uint64_t reserved_16_63        : 48;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_rvu_af_pfflr_int_ena_w1c_s cn; */
+    } cn96xx;
+    /* struct cavm_rvu_af_pfflr_int_ena_w1c_s cn98xx; */
+    /* struct cavm_rvu_af_pfflr_int_ena_w1c_cn96xx cnf95xx; */
+    /* struct cavm_rvu_af_pfflr_int_ena_w1c_cn96xx loki; */
 };
 typedef union cavm_rvu_af_pfflr_int_ena_w1c cavm_rvu_af_pfflr_int_ena_w1c_t;
 
@@ -1285,14 +1439,27 @@ union cavm_rvu_af_pfflr_int_ena_w1s
     struct cavm_rvu_af_pfflr_int_ena_w1s_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_24_63        : 40;
+        uint64_t flr                   : 24; /**< [ 23:  0](R/W1S/H) Reads or sets enable for RVU_AF_PFFLR_INT[FLR]. */
+#else /* Word 0 - Little Endian */
+        uint64_t flr                   : 24; /**< [ 23:  0](R/W1S/H) Reads or sets enable for RVU_AF_PFFLR_INT[FLR]. */
+        uint64_t reserved_24_63        : 40;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rvu_af_pfflr_int_ena_w1s_s cn9; */
+    struct cavm_rvu_af_pfflr_int_ena_w1s_cn96xx
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_16_63        : 48;
         uint64_t flr                   : 16; /**< [ 15:  0](R/W1S/H) Reads or sets enable for RVU_AF_PFFLR_INT[FLR]. */
 #else /* Word 0 - Little Endian */
         uint64_t flr                   : 16; /**< [ 15:  0](R/W1S/H) Reads or sets enable for RVU_AF_PFFLR_INT[FLR]. */
         uint64_t reserved_16_63        : 48;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_rvu_af_pfflr_int_ena_w1s_s cn; */
+    } cn96xx;
+    /* struct cavm_rvu_af_pfflr_int_ena_w1s_s cn98xx; */
+    /* struct cavm_rvu_af_pfflr_int_ena_w1s_cn96xx cnf95xx; */
+    /* struct cavm_rvu_af_pfflr_int_ena_w1s_cn96xx loki; */
 };
 typedef union cavm_rvu_af_pfflr_int_ena_w1s cavm_rvu_af_pfflr_int_ena_w1s_t;
 
@@ -1324,14 +1491,27 @@ union cavm_rvu_af_pfflr_int_w1s
     struct cavm_rvu_af_pfflr_int_w1s_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_24_63        : 40;
+        uint64_t flr                   : 24; /**< [ 23:  0](R/W1S/H) Reads or sets RVU_AF_PFFLR_INT[FLR]. */
+#else /* Word 0 - Little Endian */
+        uint64_t flr                   : 24; /**< [ 23:  0](R/W1S/H) Reads or sets RVU_AF_PFFLR_INT[FLR]. */
+        uint64_t reserved_24_63        : 40;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rvu_af_pfflr_int_w1s_s cn9; */
+    struct cavm_rvu_af_pfflr_int_w1s_cn96xx
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_16_63        : 48;
         uint64_t flr                   : 16; /**< [ 15:  0](R/W1S/H) Reads or sets RVU_AF_PFFLR_INT[FLR]. */
 #else /* Word 0 - Little Endian */
         uint64_t flr                   : 16; /**< [ 15:  0](R/W1S/H) Reads or sets RVU_AF_PFFLR_INT[FLR]. */
         uint64_t reserved_16_63        : 48;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_rvu_af_pfflr_int_w1s_s cn; */
+    } cn96xx;
+    /* struct cavm_rvu_af_pfflr_int_w1s_s cn98xx; */
+    /* struct cavm_rvu_af_pfflr_int_w1s_cn96xx cnf95xx; */
+    /* struct cavm_rvu_af_pfflr_int_w1s_cn96xx loki; */
 };
 typedef union cavm_rvu_af_pfflr_int_w1s cavm_rvu_af_pfflr_int_w1s_t;
 
@@ -1360,6 +1540,41 @@ union cavm_rvu_af_pfme_int
 {
     uint64_t u;
     struct cavm_rvu_af_pfme_int_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_24_63        : 40;
+        uint64_t me                    : 24; /**< [ 23:  0](R/W1C/H) Master enable interrupt bit per PF.
+                                                                 A device-dependent AF driver typically uses these bits to handle state
+                                                                 changes to PCCPF_XXX_CMD[ME], which are typically modified by
+                                                                 non-device-dependent software only.
+
+                                                                 If RVU_PRIV_PF()_CFG[ME_FLR_ENA] is set, each bit is set when the
+                                                                 corresponding PCCPF_XXX_CMD[ME] bit is either set or cleared for the
+                                                                 associated PF. The corresponding bit in RVU_AF_PFME_STATUS returns the
+                                                                 current value of PCCPF_XXX_CMD[ME].
+
+                                                                 Note that if RVU_PRIV_PF()_CFG[ME_FLR_ENA] is set, the corresponding
+                                                                 bit in RVU_AF_PFTRPEND is also set when PCCPF_XXX_CMD[ME] is set, but not
+                                                                 when PCCPF_XXX_CMD[ME] is cleared. */
+#else /* Word 0 - Little Endian */
+        uint64_t me                    : 24; /**< [ 23:  0](R/W1C/H) Master enable interrupt bit per PF.
+                                                                 A device-dependent AF driver typically uses these bits to handle state
+                                                                 changes to PCCPF_XXX_CMD[ME], which are typically modified by
+                                                                 non-device-dependent software only.
+
+                                                                 If RVU_PRIV_PF()_CFG[ME_FLR_ENA] is set, each bit is set when the
+                                                                 corresponding PCCPF_XXX_CMD[ME] bit is either set or cleared for the
+                                                                 associated PF. The corresponding bit in RVU_AF_PFME_STATUS returns the
+                                                                 current value of PCCPF_XXX_CMD[ME].
+
+                                                                 Note that if RVU_PRIV_PF()_CFG[ME_FLR_ENA] is set, the corresponding
+                                                                 bit in RVU_AF_PFTRPEND is also set when PCCPF_XXX_CMD[ME] is set, but not
+                                                                 when PCCPF_XXX_CMD[ME] is cleared. */
+        uint64_t reserved_24_63        : 40;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rvu_af_pfme_int_s cn9; */
+    struct cavm_rvu_af_pfme_int_cn96xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_16_63        : 48;
@@ -1392,8 +1607,10 @@ union cavm_rvu_af_pfme_int
                                                                  when PCCPF_XXX_CMD[ME] is cleared. */
         uint64_t reserved_16_63        : 48;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_rvu_af_pfme_int_s cn; */
+    } cn96xx;
+    /* struct cavm_rvu_af_pfme_int_s cn98xx; */
+    /* struct cavm_rvu_af_pfme_int_cn96xx cnf95xx; */
+    /* struct cavm_rvu_af_pfme_int_cn96xx loki; */
 };
 typedef union cavm_rvu_af_pfme_int cavm_rvu_af_pfme_int_t;
 
@@ -1425,14 +1642,27 @@ union cavm_rvu_af_pfme_int_ena_w1c
     struct cavm_rvu_af_pfme_int_ena_w1c_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_24_63        : 40;
+        uint64_t me                    : 24; /**< [ 23:  0](R/W1C/H) Reads or clears enable for RVU_AF_PFME_INT[ME]. */
+#else /* Word 0 - Little Endian */
+        uint64_t me                    : 24; /**< [ 23:  0](R/W1C/H) Reads or clears enable for RVU_AF_PFME_INT[ME]. */
+        uint64_t reserved_24_63        : 40;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rvu_af_pfme_int_ena_w1c_s cn9; */
+    struct cavm_rvu_af_pfme_int_ena_w1c_cn96xx
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_16_63        : 48;
         uint64_t me                    : 16; /**< [ 15:  0](R/W1C/H) Reads or clears enable for RVU_AF_PFME_INT[ME]. */
 #else /* Word 0 - Little Endian */
         uint64_t me                    : 16; /**< [ 15:  0](R/W1C/H) Reads or clears enable for RVU_AF_PFME_INT[ME]. */
         uint64_t reserved_16_63        : 48;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_rvu_af_pfme_int_ena_w1c_s cn; */
+    } cn96xx;
+    /* struct cavm_rvu_af_pfme_int_ena_w1c_s cn98xx; */
+    /* struct cavm_rvu_af_pfme_int_ena_w1c_cn96xx cnf95xx; */
+    /* struct cavm_rvu_af_pfme_int_ena_w1c_cn96xx loki; */
 };
 typedef union cavm_rvu_af_pfme_int_ena_w1c cavm_rvu_af_pfme_int_ena_w1c_t;
 
@@ -1464,14 +1694,27 @@ union cavm_rvu_af_pfme_int_ena_w1s
     struct cavm_rvu_af_pfme_int_ena_w1s_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_24_63        : 40;
+        uint64_t me                    : 24; /**< [ 23:  0](R/W1S/H) Reads or sets enable for RVU_AF_PFME_INT[ME]. */
+#else /* Word 0 - Little Endian */
+        uint64_t me                    : 24; /**< [ 23:  0](R/W1S/H) Reads or sets enable for RVU_AF_PFME_INT[ME]. */
+        uint64_t reserved_24_63        : 40;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rvu_af_pfme_int_ena_w1s_s cn9; */
+    struct cavm_rvu_af_pfme_int_ena_w1s_cn96xx
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_16_63        : 48;
         uint64_t me                    : 16; /**< [ 15:  0](R/W1S/H) Reads or sets enable for RVU_AF_PFME_INT[ME]. */
 #else /* Word 0 - Little Endian */
         uint64_t me                    : 16; /**< [ 15:  0](R/W1S/H) Reads or sets enable for RVU_AF_PFME_INT[ME]. */
         uint64_t reserved_16_63        : 48;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_rvu_af_pfme_int_ena_w1s_s cn; */
+    } cn96xx;
+    /* struct cavm_rvu_af_pfme_int_ena_w1s_s cn98xx; */
+    /* struct cavm_rvu_af_pfme_int_ena_w1s_cn96xx cnf95xx; */
+    /* struct cavm_rvu_af_pfme_int_ena_w1s_cn96xx loki; */
 };
 typedef union cavm_rvu_af_pfme_int_ena_w1s cavm_rvu_af_pfme_int_ena_w1s_t;
 
@@ -1503,14 +1746,27 @@ union cavm_rvu_af_pfme_int_w1s
     struct cavm_rvu_af_pfme_int_w1s_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_24_63        : 40;
+        uint64_t me                    : 24; /**< [ 23:  0](R/W1S/H) Reads or sets RVU_AF_PFME_INT[ME]. */
+#else /* Word 0 - Little Endian */
+        uint64_t me                    : 24; /**< [ 23:  0](R/W1S/H) Reads or sets RVU_AF_PFME_INT[ME]. */
+        uint64_t reserved_24_63        : 40;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rvu_af_pfme_int_w1s_s cn9; */
+    struct cavm_rvu_af_pfme_int_w1s_cn96xx
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_16_63        : 48;
         uint64_t me                    : 16; /**< [ 15:  0](R/W1S/H) Reads or sets RVU_AF_PFME_INT[ME]. */
 #else /* Word 0 - Little Endian */
         uint64_t me                    : 16; /**< [ 15:  0](R/W1S/H) Reads or sets RVU_AF_PFME_INT[ME]. */
         uint64_t reserved_16_63        : 48;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_rvu_af_pfme_int_w1s_s cn; */
+    } cn96xx;
+    /* struct cavm_rvu_af_pfme_int_w1s_s cn98xx; */
+    /* struct cavm_rvu_af_pfme_int_w1s_cn96xx cnf95xx; */
+    /* struct cavm_rvu_af_pfme_int_w1s_cn96xx loki; */
 };
 typedef union cavm_rvu_af_pfme_int_w1s cavm_rvu_af_pfme_int_w1s_t;
 
@@ -1541,6 +1797,19 @@ union cavm_rvu_af_pfme_status
     struct cavm_rvu_af_pfme_status_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_24_63        : 40;
+        uint64_t me                    : 24; /**< [ 23:  0](RO/H) Bus master enable bit per PF. Each bit returns the PF's
+                                                                 PCCPF_XXX_CMD[ME] value. */
+#else /* Word 0 - Little Endian */
+        uint64_t me                    : 24; /**< [ 23:  0](RO/H) Bus master enable bit per PF. Each bit returns the PF's
+                                                                 PCCPF_XXX_CMD[ME] value. */
+        uint64_t reserved_24_63        : 40;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rvu_af_pfme_status_s cn9; */
+    struct cavm_rvu_af_pfme_status_cn96xx
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_16_63        : 48;
         uint64_t me                    : 16; /**< [ 15:  0](RO/H) Bus master enable bit per PF. Each bit returns the PF's
                                                                  PCCPF_XXX_CMD[ME] value. */
@@ -1549,8 +1818,10 @@ union cavm_rvu_af_pfme_status
                                                                  PCCPF_XXX_CMD[ME] value. */
         uint64_t reserved_16_63        : 48;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_rvu_af_pfme_status_s cn; */
+    } cn96xx;
+    /* struct cavm_rvu_af_pfme_status_s cn98xx; */
+    /* struct cavm_rvu_af_pfme_status_cn96xx cnf95xx; */
+    /* struct cavm_rvu_af_pfme_status_cn96xx loki; */
 };
 typedef union cavm_rvu_af_pfme_status cavm_rvu_af_pfme_status_t;
 
@@ -1581,6 +1852,37 @@ union cavm_rvu_af_pftrpend
     struct cavm_rvu_af_pftrpend_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_24_63        : 40;
+        uint64_t trpend                : 24; /**< [ 23:  0](R/W1C/H) Transaction pending bit per PF.
+
+                                                                 A PF's bit is set when RVU_PRIV_PF()_CFG[ME_FLR_ENA] is set and:
+                                                                 * A one is written to the corresponding PCCPF_XXX_E_DEV_CTL[BCR_FLR], or
+                                                                 * PCCPF_XXX_CMD[ME] is set or cleared.
+
+                                                                 When a PF's bit is set, forces the corresponding
+                                                                 PCCPF_XXX_E_DEV_CTL[TRPEND] to be set.
+
+                                                                 Software (typically a device-dependent AF driver) can clear the bit by
+                                                                 writing a 1. */
+#else /* Word 0 - Little Endian */
+        uint64_t trpend                : 24; /**< [ 23:  0](R/W1C/H) Transaction pending bit per PF.
+
+                                                                 A PF's bit is set when RVU_PRIV_PF()_CFG[ME_FLR_ENA] is set and:
+                                                                 * A one is written to the corresponding PCCPF_XXX_E_DEV_CTL[BCR_FLR], or
+                                                                 * PCCPF_XXX_CMD[ME] is set or cleared.
+
+                                                                 When a PF's bit is set, forces the corresponding
+                                                                 PCCPF_XXX_E_DEV_CTL[TRPEND] to be set.
+
+                                                                 Software (typically a device-dependent AF driver) can clear the bit by
+                                                                 writing a 1. */
+        uint64_t reserved_24_63        : 40;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rvu_af_pftrpend_s cn9; */
+    struct cavm_rvu_af_pftrpend_cn96xx
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_16_63        : 48;
         uint64_t trpend                : 16; /**< [ 15:  0](R/W1C/H) Transaction pending bit per PF.
 
@@ -1607,8 +1909,10 @@ union cavm_rvu_af_pftrpend
                                                                  writing a 1. */
         uint64_t reserved_16_63        : 48;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_rvu_af_pftrpend_s cn; */
+    } cn96xx;
+    /* struct cavm_rvu_af_pftrpend_s cn98xx; */
+    /* struct cavm_rvu_af_pftrpend_cn96xx cnf95xx; */
+    /* struct cavm_rvu_af_pftrpend_cn96xx loki; */
 };
 typedef union cavm_rvu_af_pftrpend cavm_rvu_af_pftrpend_t;
 
@@ -1640,14 +1944,27 @@ union cavm_rvu_af_pftrpend_w1s
     struct cavm_rvu_af_pftrpend_w1s_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_24_63        : 40;
+        uint64_t trpend                : 24; /**< [ 23:  0](R/W1S/H) Reads or sets RVU_AF_PFTRPEND[TRPEND]. */
+#else /* Word 0 - Little Endian */
+        uint64_t trpend                : 24; /**< [ 23:  0](R/W1S/H) Reads or sets RVU_AF_PFTRPEND[TRPEND]. */
+        uint64_t reserved_24_63        : 40;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rvu_af_pftrpend_w1s_s cn9; */
+    struct cavm_rvu_af_pftrpend_w1s_cn96xx
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_16_63        : 48;
         uint64_t trpend                : 16; /**< [ 15:  0](R/W1S/H) Reads or sets RVU_AF_PFTRPEND[TRPEND]. */
 #else /* Word 0 - Little Endian */
         uint64_t trpend                : 16; /**< [ 15:  0](R/W1S/H) Reads or sets RVU_AF_PFTRPEND[TRPEND]. */
         uint64_t reserved_16_63        : 48;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_rvu_af_pftrpend_w1s_s cn; */
+    } cn96xx;
+    /* struct cavm_rvu_af_pftrpend_w1s_s cn98xx; */
+    /* struct cavm_rvu_af_pftrpend_w1s_cn96xx cnf95xx; */
+    /* struct cavm_rvu_af_pftrpend_w1s_cn96xx loki; */
 };
 typedef union cavm_rvu_af_pftrpend_w1s cavm_rvu_af_pftrpend_w1s_t;
 
@@ -2202,8 +2519,9 @@ union cavm_rvu_pf_msix_vecx_addr
         uint64_t reserved_53_63        : 11;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_rvu_pf_msix_vecx_addr_s cn9; */
     /* struct cavm_rvu_pf_msix_vecx_addr_s cn96xx; */
-    struct cavm_rvu_pf_msix_vecx_addr_cnf95xx
+    struct cavm_rvu_pf_msix_vecx_addr_cn98xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_53_63        : 11;
@@ -2232,8 +2550,9 @@ union cavm_rvu_pf_msix_vecx_addr
         uint64_t addr                  : 51; /**< [ 52:  2](R/W) PF IOVA to use for MSI-X delivery of this vector. */
         uint64_t reserved_53_63        : 11;
 #endif /* Word 0 - End */
-    } cnf95xx;
-    /* struct cavm_rvu_pf_msix_vecx_addr_cnf95xx loki; */
+    } cn98xx;
+    /* struct cavm_rvu_pf_msix_vecx_addr_cn98xx cnf95xx; */
+    /* struct cavm_rvu_pf_msix_vecx_addr_cn98xx loki; */
 };
 typedef union cavm_rvu_pf_msix_vecx_addr cavm_rvu_pf_msix_vecx_addr_t;
 
@@ -2397,53 +2716,56 @@ union cavm_rvu_pf_vf_bar4_addr
     struct cavm_rvu_pf_vf_bar4_addr_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t addr                  : 48; /**< [ 63: 16](R/W) When RVU_PRIV_PF()_CFG[PF_VF_IO_BAR4] is clear, programmable base physical
-                                                                 address of the PF/VF mailbox memory, consisting of RVU_PRIV_PF()_CFG[NVF]
-                                                                 consecutive 64 KB pages in LLC/DRAM.
-                                                                 Provides PCC_EA_ENTRY_S[BASEH,BASEL] value advertised by VF BAR4's entry in
-                                                                 PCCPF_XXX_EA_ENTRY().
-
-                                                                 May be used as VF/PF mailbox memory in addition to
+        uint64_t addr                  : 48; /**< [ 63: 16](R/W) Programmable base address of RVU_PRIV_PF()_CFG[NVF] consecutive 64 KB
+                                                                 pages in DRAM. May be used as VF/PF mailbox memory in addition to
                                                                  RVU_PF_VF()_PFVF_MBOX()/RVU_VF_VFPF_MBOX().
-
-                                                                 Not used when RVU_PRIV_PF()_CFG[PF_VF_IO_BAR4] is set
-                                                                 (RVU_AF_PF()_VF_BAR4_ADDR is used instead). */
+                                                                 Provides PCC_EA_ENTRY_S[BASEH,BASEL] value advertised by VF BAR4's entry in
+                                                                 PCCPF_XXX_EA_ENTRY(). */
         uint64_t reserved_0_15         : 16;
 #else /* Word 0 - Little Endian */
         uint64_t reserved_0_15         : 16;
-        uint64_t addr                  : 48; /**< [ 63: 16](R/W) When RVU_PRIV_PF()_CFG[PF_VF_IO_BAR4] is clear, programmable base physical
-                                                                 address of the PF/VF mailbox memory, consisting of RVU_PRIV_PF()_CFG[NVF]
-                                                                 consecutive 64 KB pages in LLC/DRAM.
-                                                                 Provides PCC_EA_ENTRY_S[BASEH,BASEL] value advertised by VF BAR4's entry in
-                                                                 PCCPF_XXX_EA_ENTRY().
-
-                                                                 May be used as VF/PF mailbox memory in addition to
+        uint64_t addr                  : 48; /**< [ 63: 16](R/W) Programmable base address of RVU_PRIV_PF()_CFG[NVF] consecutive 64 KB
+                                                                 pages in DRAM. May be used as VF/PF mailbox memory in addition to
                                                                  RVU_PF_VF()_PFVF_MBOX()/RVU_VF_VFPF_MBOX().
-
-                                                                 Not used when RVU_PRIV_PF()_CFG[PF_VF_IO_BAR4] is set
-                                                                 (RVU_AF_PF()_VF_BAR4_ADDR is used instead). */
+                                                                 Provides PCC_EA_ENTRY_S[BASEH,BASEL] value advertised by VF BAR4's entry in
+                                                                 PCCPF_XXX_EA_ENTRY(). */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_rvu_pf_vf_bar4_addr_s cn96xx; */
-    struct cavm_rvu_pf_vf_bar4_addr_cnf95xx
+    /* struct cavm_rvu_pf_vf_bar4_addr_s cn9; */
+    /* struct cavm_rvu_pf_vf_bar4_addr_s cn96xxp1; */
+    struct cavm_rvu_pf_vf_bar4_addr_cn96xxp3
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t addr                  : 48; /**< [ 63: 16](R/W) Programmable base address of RVU_PRIV_PF()_CFG[NVF] consecutive 64 KB
-                                                                 pages in DRAM. May be used as VF/PF mailbox memory in addition to
-                                                                 RVU_PF_VF()_PFVF_MBOX()/RVU_VF_VFPF_MBOX().
+        uint64_t addr                  : 48; /**< [ 63: 16](R/W) When RVU_PRIV_PF()_CFG[PF_VF_IO_BAR4] is clear, programmable base physical
+                                                                 address of the PF/VF mailbox memory, consisting of RVU_PRIV_PF()_CFG[NVF]
+                                                                 consecutive 64 KB pages in LLC/DRAM.
                                                                  Provides PCC_EA_ENTRY_S[BASEH,BASEL] value advertised by VF BAR4's entry in
-                                                                 PCCPF_XXX_EA_ENTRY(). */
+                                                                 PCCPF_XXX_EA_ENTRY().
+
+                                                                 May be used as VF/PF mailbox memory in addition to
+                                                                 RVU_PF_VF()_PFVF_MBOX()/RVU_VF_VFPF_MBOX().
+
+                                                                 Not used when RVU_PRIV_PF()_CFG[PF_VF_IO_BAR4] is set
+                                                                 (RVU_AF_PF()_VF_BAR4_ADDR is used instead). */
         uint64_t reserved_0_15         : 16;
 #else /* Word 0 - Little Endian */
         uint64_t reserved_0_15         : 16;
-        uint64_t addr                  : 48; /**< [ 63: 16](R/W) Programmable base address of RVU_PRIV_PF()_CFG[NVF] consecutive 64 KB
-                                                                 pages in DRAM. May be used as VF/PF mailbox memory in addition to
-                                                                 RVU_PF_VF()_PFVF_MBOX()/RVU_VF_VFPF_MBOX().
+        uint64_t addr                  : 48; /**< [ 63: 16](R/W) When RVU_PRIV_PF()_CFG[PF_VF_IO_BAR4] is clear, programmable base physical
+                                                                 address of the PF/VF mailbox memory, consisting of RVU_PRIV_PF()_CFG[NVF]
+                                                                 consecutive 64 KB pages in LLC/DRAM.
                                                                  Provides PCC_EA_ENTRY_S[BASEH,BASEL] value advertised by VF BAR4's entry in
-                                                                 PCCPF_XXX_EA_ENTRY(). */
+                                                                 PCCPF_XXX_EA_ENTRY().
+
+                                                                 May be used as VF/PF mailbox memory in addition to
+                                                                 RVU_PF_VF()_PFVF_MBOX()/RVU_VF_VFPF_MBOX().
+
+                                                                 Not used when RVU_PRIV_PF()_CFG[PF_VF_IO_BAR4] is set
+                                                                 (RVU_AF_PF()_VF_BAR4_ADDR is used instead). */
 #endif /* Word 0 - End */
-    } cnf95xx;
-    /* struct cavm_rvu_pf_vf_bar4_addr_cnf95xx loki; */
+    } cn96xxp3;
+    /* struct cavm_rvu_pf_vf_bar4_addr_cn96xxp3 cn98xx; */
+    /* struct cavm_rvu_pf_vf_bar4_addr_s cnf95xx; */
+    /* struct cavm_rvu_pf_vf_bar4_addr_s loki; */
 };
 typedef union cavm_rvu_pf_vf_bar4_addr cavm_rvu_pf_vf_bar4_addr_t;
 
@@ -3217,8 +3539,9 @@ union cavm_rvu_priv_const
         uint64_t reserved_48_63        : 16;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_rvu_priv_const_s cn9; */
     /* struct cavm_rvu_priv_const_s cn96xx; */
-    struct cavm_rvu_priv_const_cnf95xx
+    struct cavm_rvu_priv_const_cn98xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_48_63        : 16;
@@ -3283,8 +3606,9 @@ union cavm_rvu_priv_const
         uint64_t max_vfs_per_pf        : 8;  /**< [ 47: 40](RO) Maximum number of VFs per RVU PF. */
         uint64_t reserved_48_63        : 16;
 #endif /* Word 0 - End */
-    } cnf95xx;
-    /* struct cavm_rvu_priv_const_cnf95xx loki; */
+    } cn98xx;
+    /* struct cavm_rvu_priv_const_cn98xx cnf95xx; */
+    /* struct cavm_rvu_priv_const_cn98xx loki; */
 };
 typedef union cavm_rvu_priv_const cavm_rvu_priv_const_t;
 
@@ -3374,7 +3698,13 @@ typedef union cavm_rvu_priv_hwvfx_cptx_cfg cavm_rvu_priv_hwvfx_cptx_cfg_t;
 static inline uint64_t CAVM_RVU_PRIV_HWVFX_CPTX_CFG(unsigned long a, unsigned long b) __attribute__ ((pure, always_inline));
 static inline uint64_t CAVM_RVU_PRIV_HWVFX_CPTX_CFG(unsigned long a, unsigned long b)
 {
-    if (cavm_is_model(OCTEONTX_CN9XXX) && ((a<=255) && (b==0)))
+    if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=255) && (b==0)))
+        return 0x840008001350ll + 0x10000ll * ((a) & 0xff) + 8ll * ((b) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=255) && (b<=1)))
+        return 0x840008001350ll + 0x10000ll * ((a) & 0xff) + 8ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=255) && (b==0)))
+        return 0x840008001350ll + 0x10000ll * ((a) & 0xff) + 8ll * ((b) & 0x0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=255) && (b==0)))
         return 0x840008001350ll + 0x10000ll * ((a) & 0xff) + 8ll * ((b) & 0x0);
     __cavm_csr_fatal("RVU_PRIV_HWVFX_CPTX_CFG", 2, a, b, 0, 0, 0, 0);
 }
@@ -3464,7 +3794,13 @@ typedef union cavm_rvu_priv_hwvfx_nixx_cfg cavm_rvu_priv_hwvfx_nixx_cfg_t;
 static inline uint64_t CAVM_RVU_PRIV_HWVFX_NIXX_CFG(unsigned long a, unsigned long b) __attribute__ ((pure, always_inline));
 static inline uint64_t CAVM_RVU_PRIV_HWVFX_NIXX_CFG(unsigned long a, unsigned long b)
 {
-    if (cavm_is_model(OCTEONTX_CN9XXX) && ((a<=255) && (b==0)))
+    if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=255) && (b==0)))
+        return 0x840008001300ll + 0x10000ll * ((a) & 0xff) + 8ll * ((b) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=255) && (b<=1)))
+        return 0x840008001300ll + 0x10000ll * ((a) & 0xff) + 8ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=255) && (b==0)))
+        return 0x840008001300ll + 0x10000ll * ((a) & 0xff) + 8ll * ((b) & 0x0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=255) && (b==0)))
         return 0x840008001300ll + 0x10000ll * ((a) & 0xff) + 8ll * ((b) & 0x0);
     __cavm_csr_fatal("RVU_PRIV_HWVFX_NIXX_CFG", 2, a, b, 0, 0, 0, 0);
 }
@@ -3513,6 +3849,46 @@ static inline uint64_t CAVM_RVU_PRIV_HWVFX_NPA_CFG(unsigned long a)
 #define device_bar_CAVM_RVU_PRIV_HWVFX_NPA_CFG(a) 0x0 /* RVU_BAR0 */
 #define busnum_CAVM_RVU_PRIV_HWVFX_NPA_CFG(a) (a)
 #define arguments_CAVM_RVU_PRIV_HWVFX_NPA_CFG(a) (a),-1,-1,-1
+
+/**
+ * Register (RVU_PF_BAR0) rvu_priv_hwvf#_ree#_cfg
+ *
+ * RVU Privileged Hardware VF REE Configuration Registers
+ * Similar to RVU_PRIV_HWVF()_NIX()_CFG, but for REE({a}) block.
+ */
+union cavm_rvu_priv_hwvfx_reex_cfg
+{
+    uint64_t u;
+    struct cavm_rvu_priv_hwvfx_reex_cfg_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_9_63         : 55;
+        uint64_t num_lfs               : 9;  /**< [  8:  0](R/W) Number of LFs from the block that are provisioned to the PF/VF. When non-zero,
+                                                                 the provisioned LFs are mapped to slots 0 to [NUM_LFS]-1 in the block. */
+#else /* Word 0 - Little Endian */
+        uint64_t num_lfs               : 9;  /**< [  8:  0](R/W) Number of LFs from the block that are provisioned to the PF/VF. When non-zero,
+                                                                 the provisioned LFs are mapped to slots 0 to [NUM_LFS]-1 in the block. */
+        uint64_t reserved_9_63         : 55;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rvu_priv_hwvfx_reex_cfg_s cn; */
+};
+typedef union cavm_rvu_priv_hwvfx_reex_cfg cavm_rvu_priv_hwvfx_reex_cfg_t;
+
+static inline uint64_t CAVM_RVU_PRIV_HWVFX_REEX_CFG(unsigned long a, unsigned long b) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_RVU_PRIV_HWVFX_REEX_CFG(unsigned long a, unsigned long b)
+{
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=255) && (b<=1)))
+        return 0x840008001360ll + 0x10000ll * ((a) & 0xff) + 8ll * ((b) & 0x1);
+    __cavm_csr_fatal("RVU_PRIV_HWVFX_REEX_CFG", 2, a, b, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_RVU_PRIV_HWVFX_REEX_CFG(a,b) cavm_rvu_priv_hwvfx_reex_cfg_t
+#define bustype_CAVM_RVU_PRIV_HWVFX_REEX_CFG(a,b) CSR_TYPE_RVU_PF_BAR0
+#define basename_CAVM_RVU_PRIV_HWVFX_REEX_CFG(a,b) "RVU_PRIV_HWVFX_REEX_CFG"
+#define device_bar_CAVM_RVU_PRIV_HWVFX_REEX_CFG(a,b) 0x0 /* RVU_BAR0 */
+#define busnum_CAVM_RVU_PRIV_HWVFX_REEX_CFG(a,b) (a)
+#define arguments_CAVM_RVU_PRIV_HWVFX_REEX_CFG(a,b) (a),(b),-1,-1
 
 /**
  * Register (RVU_PF_BAR0) rvu_priv_hwvf#_sso_cfg
@@ -3646,7 +4022,29 @@ union cavm_rvu_priv_pfx_cfg
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_24_63        : 40;
-        uint64_t pf_vf_io_bar4         : 1;  /**< [ 23: 23](RAZ) Reserved. */
+        uint64_t pf_vf_io_bar4         : 1;  /**< [ 23: 23](R/W) Selects how the PF/VF mailbox memory in LLC/DRAM is configured accessed by
+                                                                 the VFs. The mailbox memory consists of RVU_PRIV_PF()_CFG[NVF] consecutive
+                                                                 64 KB pages in LLC/DRAM (one page per VF).
+
+                                                                 0 = The PF/VF mailbox memory is at physical address RVU_PF_VF_BAR4_ADDR.
+                                                                 The VF's BAR4 in the PCIe EA capability header points to the VF's page
+                                                                 (RVU_PF_VF_ADDR[ADDR] + vf_num*64K). Both the PF and VF  drivers directly
+                                                                 access the mailbox memory in LLC/DRAM, which is never accessed by RVU
+                                                                 hardware.
+
+                                                                 1 = The PF/VF mailbox memory is at physical address
+                                                                 RVU_AF_PF()_VF_BAR4_ADDR. The VF's BAR4 in the PCIe EA capability header
+                                                                 points to the VF's BAR4 (RVU_BAR_E::RVU_PF()_FUNC()_BAR4). The PF driver
+                                                                 directly accesses the mailbox memory in LLC/DRAM, but the VF driver
+                                                                 accesses the mailbox memory through RVU hardware.
+
+                                                                 Internal:
+                                                                 "* When set, RVU hardware aliases a VF BAR4 access to a physical memory access
+                                                                 (ncbi_cmd.paddr = 1) relative to RVU_AF_PF()_VF_BAR4_ADDR + vf_num*64K.
+                                                                 * When RVU_PRIV_PF()_CFG[PF_VF_IO_BAR4] is set, RVU_AF_PF()_VF_BAR4_ADDR is
+                                                                 used instead of RVU_PF_VF_BAR4_ADDR for security reasons. An EL0 PF driver
+                                                                 could write an arbitrary PA to RVU_PF_VF_BAR4_ADDR, and using it would have
+                                                                 allowed an EL0 VF driver to access a 64KB region at that PA." */
         uint64_t me_flr_ena            : 1;  /**< [ 22: 22](R/W) Bus master enable (ME) and function level reset (FLR) enable. This bit
                                                                  should be set when the PF is configured and associated PF and/or AF drivers
                                                                  that manage VF and/or PF ME/FLR are loaded.
@@ -3722,140 +4120,34 @@ union cavm_rvu_priv_pfx_cfg
                                                                  events are additionally enabled:
                                                                  RVU_PF_VFTRPEND(), RVU_PF_VFFLR_INT(), RVU_PF_VFME_INT(),
                                                                  RVU_AF_PFTRPEND, RVU_AF_PFFLR_INT, and RVU_AF_PFFLR_INT. */
-        uint64_t pf_vf_io_bar4         : 1;  /**< [ 23: 23](RAZ) Reserved. */
+        uint64_t pf_vf_io_bar4         : 1;  /**< [ 23: 23](R/W) Selects how the PF/VF mailbox memory in LLC/DRAM is configured accessed by
+                                                                 the VFs. The mailbox memory consists of RVU_PRIV_PF()_CFG[NVF] consecutive
+                                                                 64 KB pages in LLC/DRAM (one page per VF).
+
+                                                                 0 = The PF/VF mailbox memory is at physical address RVU_PF_VF_BAR4_ADDR.
+                                                                 The VF's BAR4 in the PCIe EA capability header points to the VF's page
+                                                                 (RVU_PF_VF_ADDR[ADDR] + vf_num*64K). Both the PF and VF  drivers directly
+                                                                 access the mailbox memory in LLC/DRAM, which is never accessed by RVU
+                                                                 hardware.
+
+                                                                 1 = The PF/VF mailbox memory is at physical address
+                                                                 RVU_AF_PF()_VF_BAR4_ADDR. The VF's BAR4 in the PCIe EA capability header
+                                                                 points to the VF's BAR4 (RVU_BAR_E::RVU_PF()_FUNC()_BAR4). The PF driver
+                                                                 directly accesses the mailbox memory in LLC/DRAM, but the VF driver
+                                                                 accesses the mailbox memory through RVU hardware.
+
+                                                                 Internal:
+                                                                 "* When set, RVU hardware aliases a VF BAR4 access to a physical memory access
+                                                                 (ncbi_cmd.paddr = 1) relative to RVU_AF_PF()_VF_BAR4_ADDR + vf_num*64K.
+                                                                 * When RVU_PRIV_PF()_CFG[PF_VF_IO_BAR4] is set, RVU_AF_PF()_VF_BAR4_ADDR is
+                                                                 used instead of RVU_PF_VF_BAR4_ADDR for security reasons. An EL0 PF driver
+                                                                 could write an arbitrary PA to RVU_PF_VF_BAR4_ADDR, and using it would have
+                                                                 allowed an EL0 VF driver to access a 64KB region at that PA." */
         uint64_t reserved_24_63        : 40;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_rvu_priv_pfx_cfg_s cn96xxp1; */
-    struct cavm_rvu_priv_pfx_cfg_cn96xxp3
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_24_63        : 40;
-        uint64_t pf_vf_io_bar4         : 1;  /**< [ 23: 23](R/W) Selects how the PF/VF mailbox memory in LLC/DRAM is configured accessed by
-                                                                 the VFs. The mailbox memory consists of RVU_PRIV_PF()_CFG[NVF] consecutive
-                                                                 64 KB pages in LLC/DRAM (one page per VF).
-
-                                                                 0 = The PF/VF mailbox memory is at physical address RVU_PF_VF_BAR4_ADDR.
-                                                                 The VF's BAR4 in the PCIe EA capability header points to the VF's page
-                                                                 (RVU_PF_VF_ADDR[ADDR] + vf_num*64K). Both the PF and VF  drivers directly
-                                                                 access the mailbox memory in LLC/DRAM, which is never accessed by RVU
-                                                                 hardware.
-
-                                                                 1 = The PF/VF mailbox memory is at physical address
-                                                                 RVU_AF_PF()_VF_BAR4_ADDR. The VF's BAR4 in the PCIe EA capability header
-                                                                 points to the VF's BAR4 (RVU_BAR_E::RVU_PF()_FUNC()_BAR4). The PF driver
-                                                                 directly accesses the mailbox memory in LLC/DRAM, but the VF driver
-                                                                 accesses the mailbox memory through RVU hardware.
-
-                                                                 Internal:
-                                                                 "* When set, RVU hardware aliases a VF BAR4 access to a physical memory access
-                                                                 (ncbi_cmd.paddr = 1) relative to RVU_AF_PF()_VF_BAR4_ADDR + vf_num*64K.
-                                                                 * When RVU_PRIV_PF()_CFG[PF_VF_IO_BAR4] is set, RVU_AF_PF()_VF_BAR4_ADDR is
-                                                                 used instead of RVU_PF_VF_BAR4_ADDR for security reasons. An EL0 PF driver
-                                                                 could write an arbitrary PA to RVU_PF_VF_BAR4_ADDR, and using it would have
-                                                                 allowed an EL0 VF driver to access a 64KB region at that PA." */
-        uint64_t me_flr_ena            : 1;  /**< [ 22: 22](R/W) Bus master enable (ME) and function level reset (FLR) enable. This bit
-                                                                 should be set when the PF is configured and associated PF and/or AF drivers
-                                                                 that manage VF and/or PF ME/FLR are loaded.
-
-                                                                 When clear, PCCPF/PCCVF_XXX_CMD[ME] state changes are ignored, and
-                                                                 PCCPF/PCCVF_XXX_E_DEV_CTL[BCR_FLR] reset the PF/VF configuration space.
-
-                                                                 When set, hardware updates to the following registers in response to ME/FLR
-                                                                 events are additionally enabled:
-                                                                 RVU_PF_VFTRPEND(), RVU_PF_VFFLR_INT(), RVU_PF_VFME_INT(),
-                                                                 RVU_AF_PFTRPEND, RVU_AF_PFFLR_INT, and RVU_AF_PFFLR_INT. */
-        uint64_t af_ena                : 1;  /**< [ 21: 21](R/W) Admin function enable. When set, the PF is allowed to access AF (RVU PF
-                                                                 BAR0) registers in all RVU blocks. When clear, BAR0 is hidden in the PF's
-                                                                 PCI configuration EA capability header, and accesses to the PF's BAR0 are
-                                                                 RAZ/WI or will fault.
-
-                                                                 Must be clear when [ENA] is clear. Software should keep this bit set for
-                                                                 PF(0) when RVU is used.
-
-                                                                 Internal:
-                                                                 BAR0 accesses to RVUM registers are RAZ/WI. BAR0 accesses to all other RVU
-                                                                 blocks will fault. */
-        uint64_t ena                   : 1;  /**< [ 20: 20](R/W) Enable the PF. When clear, the PF is unused and hidden in the PCI config
-                                                                 space. A BAR2 access to any function in the PF is RAZ/WI and sets
-                                                                 RVU_AF_GEN_INT[UNMAPPED].
-
-                                                                 When set, the PF is enabled and remaining fields in this register are
-                                                                 valid.
-
-                                                                 Software should keep this bit set for PF(0) when RVU is used. Hardware
-                                                                 delivers all AF interrupts to PF(0). */
-        uint64_t nvf                   : 8;  /**< [ 19: 12](R/W) Number of VFs in the PF. Must be less than or equal to
-                                                                 RVU_PRIV_CONST[MAX_VFS_PER_PF]. */
-        uint64_t first_hwvf            : 12; /**< [ 11:  0](R/W) HWVF index of the PF's first VF.  Valid when [NVF] is non-zero. The HWVF
-                                                                 index range for the PF is [FIRST_HWVF] to [FIRST_HWVF]+[NVF]-1, inclusive.
-                                                                 Different PFs must have non-overlapping HWVF ranges, and the maximum HWVF
-                                                                 index in any range must be less than RVU_PRIV_CONST[HWVFS]. */
-#else /* Word 0 - Little Endian */
-        uint64_t first_hwvf            : 12; /**< [ 11:  0](R/W) HWVF index of the PF's first VF.  Valid when [NVF] is non-zero. The HWVF
-                                                                 index range for the PF is [FIRST_HWVF] to [FIRST_HWVF]+[NVF]-1, inclusive.
-                                                                 Different PFs must have non-overlapping HWVF ranges, and the maximum HWVF
-                                                                 index in any range must be less than RVU_PRIV_CONST[HWVFS]. */
-        uint64_t nvf                   : 8;  /**< [ 19: 12](R/W) Number of VFs in the PF. Must be less than or equal to
-                                                                 RVU_PRIV_CONST[MAX_VFS_PER_PF]. */
-        uint64_t ena                   : 1;  /**< [ 20: 20](R/W) Enable the PF. When clear, the PF is unused and hidden in the PCI config
-                                                                 space. A BAR2 access to any function in the PF is RAZ/WI and sets
-                                                                 RVU_AF_GEN_INT[UNMAPPED].
-
-                                                                 When set, the PF is enabled and remaining fields in this register are
-                                                                 valid.
-
-                                                                 Software should keep this bit set for PF(0) when RVU is used. Hardware
-                                                                 delivers all AF interrupts to PF(0). */
-        uint64_t af_ena                : 1;  /**< [ 21: 21](R/W) Admin function enable. When set, the PF is allowed to access AF (RVU PF
-                                                                 BAR0) registers in all RVU blocks. When clear, BAR0 is hidden in the PF's
-                                                                 PCI configuration EA capability header, and accesses to the PF's BAR0 are
-                                                                 RAZ/WI or will fault.
-
-                                                                 Must be clear when [ENA] is clear. Software should keep this bit set for
-                                                                 PF(0) when RVU is used.
-
-                                                                 Internal:
-                                                                 BAR0 accesses to RVUM registers are RAZ/WI. BAR0 accesses to all other RVU
-                                                                 blocks will fault. */
-        uint64_t me_flr_ena            : 1;  /**< [ 22: 22](R/W) Bus master enable (ME) and function level reset (FLR) enable. This bit
-                                                                 should be set when the PF is configured and associated PF and/or AF drivers
-                                                                 that manage VF and/or PF ME/FLR are loaded.
-
-                                                                 When clear, PCCPF/PCCVF_XXX_CMD[ME] state changes are ignored, and
-                                                                 PCCPF/PCCVF_XXX_E_DEV_CTL[BCR_FLR] reset the PF/VF configuration space.
-
-                                                                 When set, hardware updates to the following registers in response to ME/FLR
-                                                                 events are additionally enabled:
-                                                                 RVU_PF_VFTRPEND(), RVU_PF_VFFLR_INT(), RVU_PF_VFME_INT(),
-                                                                 RVU_AF_PFTRPEND, RVU_AF_PFFLR_INT, and RVU_AF_PFFLR_INT. */
-        uint64_t pf_vf_io_bar4         : 1;  /**< [ 23: 23](R/W) Selects how the PF/VF mailbox memory in LLC/DRAM is configured accessed by
-                                                                 the VFs. The mailbox memory consists of RVU_PRIV_PF()_CFG[NVF] consecutive
-                                                                 64 KB pages in LLC/DRAM (one page per VF).
-
-                                                                 0 = The PF/VF mailbox memory is at physical address RVU_PF_VF_BAR4_ADDR.
-                                                                 The VF's BAR4 in the PCIe EA capability header points to the VF's page
-                                                                 (RVU_PF_VF_ADDR[ADDR] + vf_num*64K). Both the PF and VF  drivers directly
-                                                                 access the mailbox memory in LLC/DRAM, which is never accessed by RVU
-                                                                 hardware.
-
-                                                                 1 = The PF/VF mailbox memory is at physical address
-                                                                 RVU_AF_PF()_VF_BAR4_ADDR. The VF's BAR4 in the PCIe EA capability header
-                                                                 points to the VF's BAR4 (RVU_BAR_E::RVU_PF()_FUNC()_BAR4). The PF driver
-                                                                 directly accesses the mailbox memory in LLC/DRAM, but the VF driver
-                                                                 accesses the mailbox memory through RVU hardware.
-
-                                                                 Internal:
-                                                                 "* When set, RVU hardware aliases a VF BAR4 access to a physical memory access
-                                                                 (ncbi_cmd.paddr = 1) relative to RVU_AF_PF()_VF_BAR4_ADDR + vf_num*64K.
-                                                                 * When RVU_PRIV_PF()_CFG[PF_VF_IO_BAR4] is set, RVU_AF_PF()_VF_BAR4_ADDR is
-                                                                 used instead of RVU_PF_VF_BAR4_ADDR for security reasons. An EL0 PF driver
-                                                                 could write an arbitrary PA to RVU_PF_VF_BAR4_ADDR, and using it would have
-                                                                 allowed an EL0 VF driver to access a 64KB region at that PA." */
-        uint64_t reserved_24_63        : 40;
-#endif /* Word 0 - End */
-    } cn96xxp3;
-    struct cavm_rvu_priv_pfx_cfg_cnf95xx
+    /* struct cavm_rvu_priv_pfx_cfg_s cn9; */
+    struct cavm_rvu_priv_pfx_cfg_cn96xxp1
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_23_63        : 41;
@@ -3936,15 +4228,147 @@ union cavm_rvu_priv_pfx_cfg
                                                                  RVU_AF_PFTRPEND, RVU_AF_PFFLR_INT, and RVU_AF_PFFLR_INT. */
         uint64_t reserved_23_63        : 41;
 #endif /* Word 0 - End */
-    } cnf95xx;
-    /* struct cavm_rvu_priv_pfx_cfg_cnf95xx loki; */
+    } cn96xxp1;
+    /* struct cavm_rvu_priv_pfx_cfg_s cn96xxp3; */
+    struct cavm_rvu_priv_pfx_cfg_cn98xx
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_24_63        : 40;
+        uint64_t pf_vf_io_bar4         : 1;  /**< [ 23: 23](R/W) "Selects how the PF/VF mailbox memory in LLC/DRAM is configured accessed by
+                                                                 the VFs. The mailbox memory consists of RVU_PRIV_PF()_CFG[NVF] consecutive
+                                                                 64 KB pages in LLC/DRAM (one page per VF).
+                                                                 0 = The PF/VF mailbox memory is at physical address RVU_PF_VF_BAR4_ADDR.
+                                                                 The VF's BAR4 in the PCIe EA capability header points to the VF's page
+                                                                 (RVU_PF_VF_ADDR[ADDR] + (VF#)*64K). Both the PF and VF  drivers directly
+                                                                 access the mailbox memory in LLC/DRAM, which is never accessed by RVU
+                                                                 hardware.
+                                                                 1 = The PF/VF mailbox memory is at physical address
+                                                                 RVU_AF_PF()_VF_BAR4_ADDR. The VF's BAR4 in the PCIe EA capability header
+                                                                 points to the VF's BAR4 (RVU_BAR_E::RVU_PF()_FUNC()_BAR4). The PF driver
+                                                                 directly accesses the mailbox memory in LLC/DRAM, but the VF driver
+                                                                 accesses the mailbox memory through RVU hardware."
+
+                                                                 Internal:
+                                                                 "* When set, RVU hardware aliases a VF BAR4 access to a physical memory access
+                                                                 (ncbi_cmd.paddr = 1) relative to RVU_AF_PF()_VF_BAR4_ADDR + (VF#)*64K.
+                                                                 * When RVU_PRIV_PF()_CFG[PF_VF_IO_BAR4] is set, RVU_AF_PF()_VF_BAR4_ADDR is
+                                                                 used instead of RVU_PF_VF_BAR4_ADDR for security reasons. An EL0 PF driver
+                                                                 could write an arbitrary PA to RVU_PF_VF_BAR4_ADDR, and using it would have
+                                                                 allowed an EL0 VF driver to access a 64KB region at that PA." */
+        uint64_t me_flr_ena            : 1;  /**< [ 22: 22](R/W) Bus master enable (ME) and function level reset (FLR) enable. This bit
+                                                                 should be set when the PF is configured and associated PF and/or AF drivers
+                                                                 that manage VF and/or PF ME/FLR are loaded.
+
+                                                                 When clear, PCCPF/PCCVF_XXX_CMD[ME] state changes are ignored, and
+                                                                 PCCPF/PCCVF_XXX_E_DEV_CTL[BCR_FLR] reset the PF/VF configuration space.
+
+                                                                 When set, hardware updates to the following registers in response to ME/FLR
+                                                                 events are additionally enabled:
+                                                                 RVU_PF_VFTRPEND(), RVU_PF_VFFLR_INT(), RVU_PF_VFME_INT(),
+                                                                 RVU_AF_PFTRPEND, RVU_AF_PFFLR_INT, and RVU_AF_PFFLR_INT. */
+        uint64_t af_ena                : 1;  /**< [ 21: 21](R/W) Admin function enable. When set, the PF is allowed to access AF (RVU PF
+                                                                 BAR0) registers in all RVU blocks. When clear, BAR0 is hidden in the PF's
+                                                                 PCI configuration EA capability header, and accesses to the PF's BAR0 are
+                                                                 RAZ/WI or will fault.
+
+                                                                 Must be clear when [ENA] is clear. Software should keep this bit set for
+                                                                 PF(0) when RVU is used.
+
+                                                                 Internal:
+                                                                 BAR0 accesses to RVUM registers are RAZ/WI. BAR0 accesses to all other RVU
+                                                                 blocks will fault. */
+        uint64_t ena                   : 1;  /**< [ 20: 20](R/W) Enable the PF. When clear, the PF is unused and hidden in the PCI config
+                                                                 space. A BAR2 access to any function in the PF is RAZ/WI and sets
+                                                                 RVU_AF_GEN_INT[UNMAPPED].
+
+                                                                 When set, the PF is enabled and remaining fields in this register are
+                                                                 valid.
+
+                                                                 Software should keep this bit set for PF(0) when RVU is used. Hardware
+                                                                 delivers all AF interrupts to PF(0). */
+        uint64_t nvf                   : 8;  /**< [ 19: 12](R/W) Number of VFs in the PF. Must be less than or equal to
+                                                                 RVU_PRIV_CONST[MAX_VFS_PER_PF]. */
+        uint64_t first_hwvf            : 12; /**< [ 11:  0](R/W) HWVF index of the PF's first VF.  Valid when [NVF] is non-zero. The HWVF
+                                                                 index range for the PF is [FIRST_HWVF] to [FIRST_HWVF]+[NVF]-1, inclusive.
+                                                                 Different PFs must have non-overlapping HWVF ranges, and the maximum HWVF
+                                                                 index in any range must be less than RVU_PRIV_CONST[HWVFS]. */
+#else /* Word 0 - Little Endian */
+        uint64_t first_hwvf            : 12; /**< [ 11:  0](R/W) HWVF index of the PF's first VF.  Valid when [NVF] is non-zero. The HWVF
+                                                                 index range for the PF is [FIRST_HWVF] to [FIRST_HWVF]+[NVF]-1, inclusive.
+                                                                 Different PFs must have non-overlapping HWVF ranges, and the maximum HWVF
+                                                                 index in any range must be less than RVU_PRIV_CONST[HWVFS]. */
+        uint64_t nvf                   : 8;  /**< [ 19: 12](R/W) Number of VFs in the PF. Must be less than or equal to
+                                                                 RVU_PRIV_CONST[MAX_VFS_PER_PF]. */
+        uint64_t ena                   : 1;  /**< [ 20: 20](R/W) Enable the PF. When clear, the PF is unused and hidden in the PCI config
+                                                                 space. A BAR2 access to any function in the PF is RAZ/WI and sets
+                                                                 RVU_AF_GEN_INT[UNMAPPED].
+
+                                                                 When set, the PF is enabled and remaining fields in this register are
+                                                                 valid.
+
+                                                                 Software should keep this bit set for PF(0) when RVU is used. Hardware
+                                                                 delivers all AF interrupts to PF(0). */
+        uint64_t af_ena                : 1;  /**< [ 21: 21](R/W) Admin function enable. When set, the PF is allowed to access AF (RVU PF
+                                                                 BAR0) registers in all RVU blocks. When clear, BAR0 is hidden in the PF's
+                                                                 PCI configuration EA capability header, and accesses to the PF's BAR0 are
+                                                                 RAZ/WI or will fault.
+
+                                                                 Must be clear when [ENA] is clear. Software should keep this bit set for
+                                                                 PF(0) when RVU is used.
+
+                                                                 Internal:
+                                                                 BAR0 accesses to RVUM registers are RAZ/WI. BAR0 accesses to all other RVU
+                                                                 blocks will fault. */
+        uint64_t me_flr_ena            : 1;  /**< [ 22: 22](R/W) Bus master enable (ME) and function level reset (FLR) enable. This bit
+                                                                 should be set when the PF is configured and associated PF and/or AF drivers
+                                                                 that manage VF and/or PF ME/FLR are loaded.
+
+                                                                 When clear, PCCPF/PCCVF_XXX_CMD[ME] state changes are ignored, and
+                                                                 PCCPF/PCCVF_XXX_E_DEV_CTL[BCR_FLR] reset the PF/VF configuration space.
+
+                                                                 When set, hardware updates to the following registers in response to ME/FLR
+                                                                 events are additionally enabled:
+                                                                 RVU_PF_VFTRPEND(), RVU_PF_VFFLR_INT(), RVU_PF_VFME_INT(),
+                                                                 RVU_AF_PFTRPEND, RVU_AF_PFFLR_INT, and RVU_AF_PFFLR_INT. */
+        uint64_t pf_vf_io_bar4         : 1;  /**< [ 23: 23](R/W) "Selects how the PF/VF mailbox memory in LLC/DRAM is configured accessed by
+                                                                 the VFs. The mailbox memory consists of RVU_PRIV_PF()_CFG[NVF] consecutive
+                                                                 64 KB pages in LLC/DRAM (one page per VF).
+                                                                 0 = The PF/VF mailbox memory is at physical address RVU_PF_VF_BAR4_ADDR.
+                                                                 The VF's BAR4 in the PCIe EA capability header points to the VF's page
+                                                                 (RVU_PF_VF_ADDR[ADDR] + (VF#)*64K). Both the PF and VF  drivers directly
+                                                                 access the mailbox memory in LLC/DRAM, which is never accessed by RVU
+                                                                 hardware.
+                                                                 1 = The PF/VF mailbox memory is at physical address
+                                                                 RVU_AF_PF()_VF_BAR4_ADDR. The VF's BAR4 in the PCIe EA capability header
+                                                                 points to the VF's BAR4 (RVU_BAR_E::RVU_PF()_FUNC()_BAR4). The PF driver
+                                                                 directly accesses the mailbox memory in LLC/DRAM, but the VF driver
+                                                                 accesses the mailbox memory through RVU hardware."
+
+                                                                 Internal:
+                                                                 "* When set, RVU hardware aliases a VF BAR4 access to a physical memory access
+                                                                 (ncbi_cmd.paddr = 1) relative to RVU_AF_PF()_VF_BAR4_ADDR + (VF#)*64K.
+                                                                 * When RVU_PRIV_PF()_CFG[PF_VF_IO_BAR4] is set, RVU_AF_PF()_VF_BAR4_ADDR is
+                                                                 used instead of RVU_PF_VF_BAR4_ADDR for security reasons. An EL0 PF driver
+                                                                 could write an arbitrary PA to RVU_PF_VF_BAR4_ADDR, and using it would have
+                                                                 allowed an EL0 VF driver to access a 64KB region at that PA." */
+        uint64_t reserved_24_63        : 40;
+#endif /* Word 0 - End */
+    } cn98xx;
+    /* struct cavm_rvu_priv_pfx_cfg_cn96xxp1 cnf95xx; */
+    /* struct cavm_rvu_priv_pfx_cfg_cn96xxp1 loki; */
 };
 typedef union cavm_rvu_priv_pfx_cfg cavm_rvu_priv_pfx_cfg_t;
 
 static inline uint64_t CAVM_RVU_PRIV_PFX_CFG(unsigned long a) __attribute__ ((pure, always_inline));
 static inline uint64_t CAVM_RVU_PRIV_PFX_CFG(unsigned long a)
 {
-    if (cavm_is_model(OCTEONTX_CN9XXX) && (a<=15))
+    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=15))
+        return 0x840008000100ll + 0x10000ll * ((a) & 0xf);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=23))
+        return 0x840008000100ll + 0x10000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=15))
+        return 0x840008000100ll + 0x10000ll * ((a) & 0xf);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x840008000100ll + 0x10000ll * ((a) & 0xf);
     __cavm_csr_fatal("RVU_PRIV_PFX_CFG", 1, a, 0, 0, 0, 0, 0);
 }
@@ -3984,7 +4408,13 @@ typedef union cavm_rvu_priv_pfx_cptx_cfg cavm_rvu_priv_pfx_cptx_cfg_t;
 static inline uint64_t CAVM_RVU_PRIV_PFX_CPTX_CFG(unsigned long a, unsigned long b) __attribute__ ((pure, always_inline));
 static inline uint64_t CAVM_RVU_PRIV_PFX_CPTX_CFG(unsigned long a, unsigned long b)
 {
-    if (cavm_is_model(OCTEONTX_CN9XXX) && ((a<=15) && (b==0)))
+    if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=15) && (b==0)))
+        return 0x840008000350ll + 0x10000ll * ((a) & 0xf) + 8ll * ((b) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=23) && (b<=1)))
+        return 0x840008000350ll + 0x10000ll * ((a) & 0x1f) + 8ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=15) && (b==0)))
+        return 0x840008000350ll + 0x10000ll * ((a) & 0xf) + 8ll * ((b) & 0x0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=15) && (b==0)))
         return 0x840008000350ll + 0x10000ll * ((a) & 0xf) + 8ll * ((b) & 0x0);
     __cavm_csr_fatal("RVU_PRIV_PFX_CPTX_CFG", 2, a, b, 0, 0, 0, 0);
 }
@@ -4035,7 +4465,13 @@ typedef union cavm_rvu_priv_pfx_id_cfg cavm_rvu_priv_pfx_id_cfg_t;
 static inline uint64_t CAVM_RVU_PRIV_PFX_ID_CFG(unsigned long a) __attribute__ ((pure, always_inline));
 static inline uint64_t CAVM_RVU_PRIV_PFX_ID_CFG(unsigned long a)
 {
-    if (cavm_is_model(OCTEONTX_CN9XXX) && (a<=15))
+    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=15))
+        return 0x840008000120ll + 0x10000ll * ((a) & 0xf);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=23))
+        return 0x840008000120ll + 0x10000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=15))
+        return 0x840008000120ll + 0x10000ll * ((a) & 0xf);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x840008000120ll + 0x10000ll * ((a) & 0xf);
     __cavm_csr_fatal("RVU_PRIV_PFX_ID_CFG", 1, a, 0, 0, 0, 0, 0);
 }
@@ -4092,7 +4528,13 @@ typedef union cavm_rvu_priv_pfx_int_cfg cavm_rvu_priv_pfx_int_cfg_t;
 static inline uint64_t CAVM_RVU_PRIV_PFX_INT_CFG(unsigned long a) __attribute__ ((pure, always_inline));
 static inline uint64_t CAVM_RVU_PRIV_PFX_INT_CFG(unsigned long a)
 {
-    if (cavm_is_model(OCTEONTX_CN9XXX) && (a<=15))
+    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=15))
+        return 0x840008000200ll + 0x10000ll * ((a) & 0xf);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=23))
+        return 0x840008000200ll + 0x10000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=15))
+        return 0x840008000200ll + 0x10000ll * ((a) & 0xf);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x840008000200ll + 0x10000ll * ((a) & 0xf);
     __cavm_csr_fatal("RVU_PRIV_PFX_INT_CFG", 1, a, 0, 0, 0, 0, 0);
 }
@@ -4168,7 +4610,13 @@ typedef union cavm_rvu_priv_pfx_msix_cfg cavm_rvu_priv_pfx_msix_cfg_t;
 static inline uint64_t CAVM_RVU_PRIV_PFX_MSIX_CFG(unsigned long a) __attribute__ ((pure, always_inline));
 static inline uint64_t CAVM_RVU_PRIV_PFX_MSIX_CFG(unsigned long a)
 {
-    if (cavm_is_model(OCTEONTX_CN9XXX) && (a<=15))
+    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=15))
+        return 0x840008000110ll + 0x10000ll * ((a) & 0xf);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=23))
+        return 0x840008000110ll + 0x10000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=15))
+        return 0x840008000110ll + 0x10000ll * ((a) & 0xf);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x840008000110ll + 0x10000ll * ((a) & 0xf);
     __cavm_csr_fatal("RVU_PRIV_PFX_MSIX_CFG", 1, a, 0, 0, 0, 0, 0);
 }
@@ -4209,7 +4657,13 @@ typedef union cavm_rvu_priv_pfx_nixx_cfg cavm_rvu_priv_pfx_nixx_cfg_t;
 static inline uint64_t CAVM_RVU_PRIV_PFX_NIXX_CFG(unsigned long a, unsigned long b) __attribute__ ((pure, always_inline));
 static inline uint64_t CAVM_RVU_PRIV_PFX_NIXX_CFG(unsigned long a, unsigned long b)
 {
-    if (cavm_is_model(OCTEONTX_CN9XXX) && ((a<=15) && (b==0)))
+    if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=15) && (b==0)))
+        return 0x840008000300ll + 0x10000ll * ((a) & 0xf) + 8ll * ((b) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=23) && (b<=1)))
+        return 0x840008000300ll + 0x10000ll * ((a) & 0x1f) + 8ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=15) && (b==0)))
+        return 0x840008000300ll + 0x10000ll * ((a) & 0xf) + 8ll * ((b) & 0x0);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=15) && (b==0)))
         return 0x840008000300ll + 0x10000ll * ((a) & 0xf) + 8ll * ((b) & 0x0);
     __cavm_csr_fatal("RVU_PRIV_PFX_NIXX_CFG", 2, a, b, 0, 0, 0, 0);
 }
@@ -4247,7 +4701,13 @@ typedef union cavm_rvu_priv_pfx_npa_cfg cavm_rvu_priv_pfx_npa_cfg_t;
 static inline uint64_t CAVM_RVU_PRIV_PFX_NPA_CFG(unsigned long a) __attribute__ ((pure, always_inline));
 static inline uint64_t CAVM_RVU_PRIV_PFX_NPA_CFG(unsigned long a)
 {
-    if (cavm_is_model(OCTEONTX_CN9XXX) && (a<=15))
+    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=15))
+        return 0x840008000310ll + 0x10000ll * ((a) & 0xf);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=23))
+        return 0x840008000310ll + 0x10000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=15))
+        return 0x840008000310ll + 0x10000ll * ((a) & 0xf);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x840008000310ll + 0x10000ll * ((a) & 0xf);
     __cavm_csr_fatal("RVU_PRIV_PFX_NPA_CFG", 1, a, 0, 0, 0, 0, 0);
 }
@@ -4258,6 +4718,46 @@ static inline uint64_t CAVM_RVU_PRIV_PFX_NPA_CFG(unsigned long a)
 #define device_bar_CAVM_RVU_PRIV_PFX_NPA_CFG(a) 0x0 /* RVU_BAR0 */
 #define busnum_CAVM_RVU_PRIV_PFX_NPA_CFG(a) (a)
 #define arguments_CAVM_RVU_PRIV_PFX_NPA_CFG(a) (a),-1,-1,-1
+
+/**
+ * Register (RVU_PF_BAR0) rvu_priv_pf#_ree#_cfg
+ *
+ * RVU Privileged PF REE Configuration Registers
+ * Similar to RVU_PRIV_PF()_NIX()_CFG, but for REE({a}) block.
+ */
+union cavm_rvu_priv_pfx_reex_cfg
+{
+    uint64_t u;
+    struct cavm_rvu_priv_pfx_reex_cfg_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_9_63         : 55;
+        uint64_t num_lfs               : 9;  /**< [  8:  0](R/W) Number of LFs from the block that are provisioned to the PF/VF. When non-zero,
+                                                                 the provisioned LFs are mapped to slots 0 to [NUM_LFS]-1 in the block. */
+#else /* Word 0 - Little Endian */
+        uint64_t num_lfs               : 9;  /**< [  8:  0](R/W) Number of LFs from the block that are provisioned to the PF/VF. When non-zero,
+                                                                 the provisioned LFs are mapped to slots 0 to [NUM_LFS]-1 in the block. */
+        uint64_t reserved_9_63         : 55;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rvu_priv_pfx_reex_cfg_s cn; */
+};
+typedef union cavm_rvu_priv_pfx_reex_cfg cavm_rvu_priv_pfx_reex_cfg_t;
+
+static inline uint64_t CAVM_RVU_PRIV_PFX_REEX_CFG(unsigned long a, unsigned long b) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_RVU_PRIV_PFX_REEX_CFG(unsigned long a, unsigned long b)
+{
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=23) && (b<=1)))
+        return 0x840008000360ll + 0x10000ll * ((a) & 0x1f) + 8ll * ((b) & 0x1);
+    __cavm_csr_fatal("RVU_PRIV_PFX_REEX_CFG", 2, a, b, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_RVU_PRIV_PFX_REEX_CFG(a,b) cavm_rvu_priv_pfx_reex_cfg_t
+#define bustype_CAVM_RVU_PRIV_PFX_REEX_CFG(a,b) CSR_TYPE_RVU_PF_BAR0
+#define basename_CAVM_RVU_PRIV_PFX_REEX_CFG(a,b) "RVU_PRIV_PFX_REEX_CFG"
+#define device_bar_CAVM_RVU_PRIV_PFX_REEX_CFG(a,b) 0x0 /* RVU_BAR0 */
+#define busnum_CAVM_RVU_PRIV_PFX_REEX_CFG(a,b) (a)
+#define arguments_CAVM_RVU_PRIV_PFX_REEX_CFG(a,b) (a),(b),-1,-1
 
 /**
  * Register (RVU_PF_BAR0) rvu_priv_pf#_sso_cfg
@@ -4287,7 +4787,13 @@ typedef union cavm_rvu_priv_pfx_sso_cfg cavm_rvu_priv_pfx_sso_cfg_t;
 static inline uint64_t CAVM_RVU_PRIV_PFX_SSO_CFG(unsigned long a) __attribute__ ((pure, always_inline));
 static inline uint64_t CAVM_RVU_PRIV_PFX_SSO_CFG(unsigned long a)
 {
-    if (cavm_is_model(OCTEONTX_CN9XXX) && (a<=15))
+    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=15))
+        return 0x840008000320ll + 0x10000ll * ((a) & 0xf);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=23))
+        return 0x840008000320ll + 0x10000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=15))
+        return 0x840008000320ll + 0x10000ll * ((a) & 0xf);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x840008000320ll + 0x10000ll * ((a) & 0xf);
     __cavm_csr_fatal("RVU_PRIV_PFX_SSO_CFG", 1, a, 0, 0, 0, 0, 0);
 }
@@ -4327,7 +4833,13 @@ typedef union cavm_rvu_priv_pfx_ssow_cfg cavm_rvu_priv_pfx_ssow_cfg_t;
 static inline uint64_t CAVM_RVU_PRIV_PFX_SSOW_CFG(unsigned long a) __attribute__ ((pure, always_inline));
 static inline uint64_t CAVM_RVU_PRIV_PFX_SSOW_CFG(unsigned long a)
 {
-    if (cavm_is_model(OCTEONTX_CN9XXX) && (a<=15))
+    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=15))
+        return 0x840008000330ll + 0x10000ll * ((a) & 0xf);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=23))
+        return 0x840008000330ll + 0x10000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=15))
+        return 0x840008000330ll + 0x10000ll * ((a) & 0xf);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x840008000330ll + 0x10000ll * ((a) & 0xf);
     __cavm_csr_fatal("RVU_PRIV_PFX_SSOW_CFG", 1, a, 0, 0, 0, 0, 0);
 }
@@ -4367,7 +4879,13 @@ typedef union cavm_rvu_priv_pfx_tim_cfg cavm_rvu_priv_pfx_tim_cfg_t;
 static inline uint64_t CAVM_RVU_PRIV_PFX_TIM_CFG(unsigned long a) __attribute__ ((pure, always_inline));
 static inline uint64_t CAVM_RVU_PRIV_PFX_TIM_CFG(unsigned long a)
 {
-    if (cavm_is_model(OCTEONTX_CN9XXX) && (a<=15))
+    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=15))
+        return 0x840008000340ll + 0x10000ll * ((a) & 0xf);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=23))
+        return 0x840008000340ll + 0x10000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=15))
+        return 0x840008000340ll + 0x10000ll * ((a) & 0xf);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=15))
         return 0x840008000340ll + 0x10000ll * ((a) & 0xf);
     __cavm_csr_fatal("RVU_PRIV_PFX_TIM_CFG", 1, a, 0, 0, 0, 0, 0);
 }

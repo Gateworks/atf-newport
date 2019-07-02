@@ -95,6 +95,7 @@ union cavm_l2c_tadx_int_ena_w1c
         uint64_t reserved_36_63        : 28;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_l2c_tadx_int_ena_w1c_s cn8; */
     /* struct cavm_l2c_tadx_int_ena_w1c_s cn81xx; */
     struct cavm_l2c_tadx_int_ena_w1c_cn83xx
     {
@@ -221,6 +222,7 @@ union cavm_l2c_tadx_int_ena_w1s
         uint64_t reserved_36_63        : 28;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_l2c_tadx_int_ena_w1s_s cn8; */
     /* struct cavm_l2c_tadx_int_ena_w1s_s cn81xx; */
     struct cavm_l2c_tadx_int_ena_w1s_cn83xx
     {
@@ -515,6 +517,7 @@ union cavm_l2c_tadx_int_w1c
         uint64_t reserved_36_63        : 28;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_l2c_tadx_int_w1c_s cn8; */
     /* struct cavm_l2c_tadx_int_w1c_s cn81xx; */
     struct cavm_l2c_tadx_int_w1c_cn83xx
     {
@@ -813,6 +816,7 @@ union cavm_l2c_tadx_int_w1s
         uint64_t reserved_36_63        : 28;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_l2c_tadx_int_w1s_s cn8; */
     /* struct cavm_l2c_tadx_int_w1s_s cn81xx; */
     struct cavm_l2c_tadx_int_w1s_cn83xx
     {
@@ -1206,6 +1210,7 @@ union cavm_l2c_tadx_ttg_bist_status
         uint64_t reserved_50_63        : 14;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_l2c_tadx_ttg_bist_status_s cn8; */
     /* struct cavm_l2c_tadx_ttg_bist_status_s cn81xx; */
     struct cavm_l2c_tadx_ttg_bist_status_cn83xx
     {
@@ -1277,6 +1282,7 @@ union cavm_l2c_tadx_ttg_err
         uint64_t tagdbe                : 1;  /**< [ 63: 63](RO/H) Information refers to a double-bit TAG ECC error. */
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_l2c_tadx_ttg_err_s cn8; */
     struct cavm_l2c_tadx_ttg_err_cn81xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */

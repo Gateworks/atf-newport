@@ -3587,6 +3587,7 @@ union cavm_smmux_err_ena_w1c
         uint64_t reserved_53_63        : 11;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_smmux_err_ena_w1c_s cn8; */
     /* struct cavm_smmux_err_ena_w1c_s cn81xx; */
     struct cavm_smmux_err_ena_w1c_cn83xx
     {
@@ -3653,6 +3654,7 @@ union cavm_smmux_err_ena_w1s
         uint64_t reserved_53_63        : 11;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_smmux_err_ena_w1s_s cn8; */
     /* struct cavm_smmux_err_ena_w1s_s cn81xx; */
     struct cavm_smmux_err_ena_w1s_cn83xx
     {
@@ -3813,6 +3815,7 @@ union cavm_smmux_err_int_w1s
         uint64_t reserved_53_63        : 11;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_smmux_err_int_w1s_s cn8; */
     /* struct cavm_smmux_err_int_w1s_s cn81xx; */
     struct cavm_smmux_err_int_w1s_cn83xx
     {
@@ -5937,6 +5940,56 @@ union cavm_smmux_iidr
                                                                  Internal:
                                                                  RTL: This comes from the fuse chain. gbl_fus__capt.chip_id[3:0] */
         uint32_t implementer           : 12; /**< [ 11:  0](RO) Contains the JEP106 code of the company that implemented the SMMU:
+                                                                    0x34C = Cavium.
+
+                                                                 Matches the SMMU()_PIDR1/2/4[DES_{0,1,2}] fields. */
+#else /* Word 0 - Little Endian */
+        uint32_t implementer           : 12; /**< [ 11:  0](RO) Contains the JEP106 code of the company that implemented the SMMU:
+                                                                    0x34C = Cavium.
+
+                                                                 Matches the SMMU()_PIDR1/2/4[DES_{0,1,2}] fields. */
+        uint32_t revision              : 4;  /**< [ 15: 12](RO) Indicates the minor revision or variant of the product.
+                                                                 On CNXXXX, this is the minor revision. See FUS_FUSE_NUM_E::CHIP_ID().
+
+                                                                 Internal:
+                                                                 RTL: This comes from the fuse chain. gbl_fus__capt.chip_id[3:0] */
+        uint32_t variant               : 4;  /**< [ 19: 16](RO) Indicates the major revision or variant of the product.
+                                                                 On CNXXXX, this is the major revision. See FUS_FUSE_NUM_E::CHIP_ID().
+
+                                                                 Internal:
+                                                                 RTL: This comes from the fuse chain. gbl_fus__capt.chip_id[7:4] */
+        uint32_t productid             : 12; /**< [ 31: 20](RO) An implementation defined product number for the device.
+                                                                 In CNXXXX:
+                                                                   \<31:28\> is PCC_PIDR_PARTNUM1_E::COMP (0x2).
+                                                                   \<27:20\> is enumerated by PCC_PROD_E.
+
+                                                                 Internal:
+                                                                 RTL: This comes from the fuse chain.  {`PCC_PIDR_PARTNUM1_E__COMP_M, gbl_fus__capt.chip_type} */
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_smmux_iidr_s cn9; */
+    /* struct cavm_smmux_iidr_s cn96xxp1; */
+    struct cavm_smmux_iidr_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t productid             : 12; /**< [ 31: 20](RO) An implementation defined product number for the device.
+                                                                 In CNXXXX:
+                                                                   \<31:28\> is PCC_PIDR_PARTNUM1_E::COMP (0x2).
+                                                                   \<27:20\> is enumerated by PCC_PROD_E.
+
+                                                                 Internal:
+                                                                 RTL: This comes from the fuse chain.  {`PCC_PIDR_PARTNUM1_E__COMP_M, gbl_fus__capt.chip_type} */
+        uint32_t variant               : 4;  /**< [ 19: 16](RO) Indicates the major revision or variant of the product.
+                                                                 On CNXXXX, this is the major revision. See FUS_FUSE_NUM_E::CHIP_ID().
+
+                                                                 Internal:
+                                                                 RTL: This comes from the fuse chain. gbl_fus__capt.chip_id[7:4] */
+        uint32_t revision              : 4;  /**< [ 15: 12](RO) Indicates the minor revision or variant of the product.
+                                                                 On CNXXXX, this is the minor revision. See FUS_FUSE_NUM_E::CHIP_ID().
+
+                                                                 Internal:
+                                                                 RTL: This comes from the fuse chain. gbl_fus__capt.chip_id[3:0] */
+        uint32_t implementer           : 12; /**< [ 11:  0](RO) Contains the JEP106 code of the company that implemented the SMMU:
                                                                     0x34C = Marvell (Cavium).
 
                                                                  Matches the SMMU()_PIDR1/2/4[DES_{0,1,2}] fields. */
@@ -5963,8 +6016,10 @@ union cavm_smmux_iidr
                                                                  Internal:
                                                                  RTL: This comes from the fuse chain.  {`PCC_PIDR_PARTNUM1_E__COMP_M, gbl_fus__capt.chip_type} */
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_smmux_iidr_s cn; */
+    } cn96xxp3;
+    /* struct cavm_smmux_iidr_cn96xxp3 cn98xx; */
+    /* struct cavm_smmux_iidr_cn96xxp3 cnf95xx; */
+    /* struct cavm_smmux_iidr_cn96xxp3 loki; */
 };
 typedef union cavm_smmux_iidr cavm_smmux_iidr_t;
 
@@ -6473,6 +6528,7 @@ union cavm_smmux_msix_vecx_addr
         uint64_t reserved_49_63        : 15;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_smmux_msix_vecx_addr_s cn8; */
     /* struct cavm_smmux_msix_vecx_addr_s cn81xx; */
     struct cavm_smmux_msix_vecx_addr_cn83xx
     {
@@ -7616,7 +7672,9 @@ union cavm_smmux_pidr1
 #endif /* Word 0 - End */
     } s;
     /* struct cavm_smmux_pidr1_s cn8; */
-    struct cavm_smmux_pidr1_cn9
+    /* struct cavm_smmux_pidr1_s cn9; */
+    /* struct cavm_smmux_pidr1_s cn96xxp1; */
+    struct cavm_smmux_pidr1_cn96xxp3
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_8_31         : 24;
@@ -7627,7 +7685,10 @@ union cavm_smmux_pidr1
         uint32_t idcode                : 4;  /**< [  7:  4](RO) JEP106 identification code \<3:0\>. Marvell (Cavium) code is 0x4C. */
         uint32_t reserved_8_31         : 24;
 #endif /* Word 0 - End */
-    } cn9;
+    } cn96xxp3;
+    /* struct cavm_smmux_pidr1_cn96xxp3 cn98xx; */
+    /* struct cavm_smmux_pidr1_cn96xxp3 cnf95xx; */
+    /* struct cavm_smmux_pidr1_cn96xxp3 loki; */
 };
 typedef union cavm_smmux_pidr1 cavm_smmux_pidr1_t;
 
@@ -7686,6 +7747,27 @@ union cavm_smmux_pidr2
                                                                  0x1 = SMMUv2.
                                                                  0x2 = SMMUv3. */
         uint32_t jedec                 : 1;  /**< [  3:  3](RO) JEDEC assigned. */
+        uint32_t idcode                : 3;  /**< [  2:  0](RO) JEP106 identification code \<6:4\>. Cavium code is 0x4C. */
+#else /* Word 0 - Little Endian */
+        uint32_t idcode                : 3;  /**< [  2:  0](RO) JEP106 identification code \<6:4\>. Cavium code is 0x4C. */
+        uint32_t jedec                 : 1;  /**< [  3:  3](RO) JEDEC assigned. */
+        uint32_t revision              : 4;  /**< [  7:  4](RO) SMMU Revision.
+                                                                 0x0 = SMMUv1.
+                                                                 0x1 = SMMUv2.
+                                                                 0x2 = SMMUv3. */
+        uint32_t reserved_8_31         : 24;
+#endif /* Word 0 - End */
+    } cn9;
+    /* struct cavm_smmux_pidr2_cn9 cn96xxp1; */
+    struct cavm_smmux_pidr2_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t reserved_8_31         : 24;
+        uint32_t revision              : 4;  /**< [  7:  4](RO) SMMU Revision.
+                                                                 0x0 = SMMUv1.
+                                                                 0x1 = SMMUv2.
+                                                                 0x2 = SMMUv3. */
+        uint32_t jedec                 : 1;  /**< [  3:  3](RO) JEDEC assigned. */
         uint32_t idcode                : 3;  /**< [  2:  0](RO) JEP106 identification code \<6:4\>. Marvell (Cavium) code is 0x4C. */
 #else /* Word 0 - Little Endian */
         uint32_t idcode                : 3;  /**< [  2:  0](RO) JEP106 identification code \<6:4\>. Marvell (Cavium) code is 0x4C. */
@@ -7696,7 +7778,10 @@ union cavm_smmux_pidr2
                                                                  0x2 = SMMUv3. */
         uint32_t reserved_8_31         : 24;
 #endif /* Word 0 - End */
-    } cn9;
+    } cn96xxp3;
+    /* struct cavm_smmux_pidr2_cn96xxp3 cn98xx; */
+    /* struct cavm_smmux_pidr2_cn96xxp3 cnf95xx; */
+    /* struct cavm_smmux_pidr2_cn96xxp3 loki; */
 };
 typedef union cavm_smmux_pidr2 cavm_smmux_pidr2_t;
 
@@ -7785,7 +7870,9 @@ union cavm_smmux_pidr4
 #endif /* Word 0 - End */
     } s;
     /* struct cavm_smmux_pidr4_s cn8; */
-    struct cavm_smmux_pidr4_cn9
+    /* struct cavm_smmux_pidr4_s cn9; */
+    /* struct cavm_smmux_pidr4_s cn96xxp1; */
+    struct cavm_smmux_pidr4_cn96xxp3
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_8_31         : 24;
@@ -7796,7 +7883,10 @@ union cavm_smmux_pidr4
         uint32_t pagecnt               : 4;  /**< [  7:  4](RO) Number of log-2 4 KB blocks occupied. */
         uint32_t reserved_8_31         : 24;
 #endif /* Word 0 - End */
-    } cn9;
+    } cn96xxp3;
+    /* struct cavm_smmux_pidr4_cn96xxp3 cn98xx; */
+    /* struct cavm_smmux_pidr4_cn96xxp3 cnf95xx; */
+    /* struct cavm_smmux_pidr4_cn96xxp3 loki; */
 };
 typedef union cavm_smmux_pidr4 cavm_smmux_pidr4_t;
 

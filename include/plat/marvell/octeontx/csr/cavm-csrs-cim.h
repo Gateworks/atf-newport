@@ -113,6 +113,8 @@ static inline uint64_t CAVM_CIMX_ICC_AP0R0_EL1(unsigned long a)
         return 0x87b000063220ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87b000063220ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87b000063220ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87b000063220ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=47))
@@ -231,6 +233,8 @@ static inline uint64_t CAVM_CIMX_ICC_AP1R0_EL1_NS(unsigned long a)
         return 0x87b000063240ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87b000063240ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87b000063240ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87b000063240ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=47))
@@ -347,6 +351,8 @@ static inline uint64_t CAVM_CIMX_ICC_AP1R0_EL1_S(unsigned long a)
         return 0x87b000067240ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87b000067240ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87b000067240ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87b000067240ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=47))
@@ -453,6 +459,8 @@ static inline uint64_t CAVM_CIMX_ICC_ASGI1R_EL1(unsigned long a)
         return 0x87b0000632f8ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87b0000632f8ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87b0000632f8ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87b0000632f8ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=47))
@@ -638,6 +646,8 @@ static inline uint64_t CAVM_CIMX_ICC_BPR0_EL1(unsigned long a)
         return 0x87b000063218ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87b000063218ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87b000063218ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87b000063218ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=47))
@@ -792,6 +802,8 @@ static inline uint64_t CAVM_CIMX_ICC_BPR1_EL1_NS(unsigned long a)
         return 0x87b000063318ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87b000063318ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87b000063318ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87b000063318ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=47))
@@ -942,6 +954,8 @@ static inline uint64_t CAVM_CIMX_ICC_BPR1_EL1_S(unsigned long a)
         return 0x87b000067318ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87b000067318ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87b000067318ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87b000067318ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=47))
@@ -1039,6 +1053,8 @@ static inline uint64_t CAVM_CIMX_ICC_CTLR_EL1_NS(unsigned long a)
         return 0x87b000063320ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87b000063320ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87b000063320ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87b000063320ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=47))
@@ -1136,6 +1152,8 @@ static inline uint64_t CAVM_CIMX_ICC_CTLR_EL1_S(unsigned long a)
         return 0x87b000067320ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87b000067320ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87b000067320ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87b000067320ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=47))
@@ -1247,6 +1265,8 @@ static inline uint64_t CAVM_CIMX_ICC_CTLR_EL3(unsigned long a)
         return 0x87b00007b320ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87b00007b320ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87b00007b320ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87b00007b320ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=47))
@@ -1349,6 +1369,8 @@ static inline uint64_t CAVM_CIMX_ICC_DIR_EL1(unsigned long a)
         return 0x87b0000632c8ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87b0000632c8ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87b0000632c8ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87b0000632c8ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=47))
@@ -1462,6 +1484,8 @@ static inline uint64_t CAVM_CIMX_ICC_EOIR0_EL1(unsigned long a)
         return 0x87b000063208ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87b000063208ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87b000063208ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87b000063208ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=47))
@@ -1581,6 +1605,8 @@ static inline uint64_t CAVM_CIMX_ICC_EOIR1_EL1(unsigned long a)
         return 0x87b000063308ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87b000063308ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87b000063308ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87b000063308ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=47))
@@ -1647,7 +1673,54 @@ union cavm_cimx_icc_hppir0_el1
         uint64_t reserved_24_63        : 40;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_cimx_icc_hppir0_el1_s cn; */
+    /* struct cavm_cimx_icc_hppir0_el1_s cn8; */
+    struct cavm_cimx_icc_hppir0_el1_cn9
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_24_63        : 40;
+        uint64_t pendintid             : 24; /**< [ 23:  0](RO/H) Pending interrupt ID.
+                                                                 Whether the value returned by a read of CIM()_ICC_HPPIR0_EL1 is a valid interrupt ID
+                                                                 can depend on:
+
+                                                                 1. Whether the highest priority pending interrupt is configured as a group 0 or a group 1
+                                                                 interrupt.
+
+                                                                 2. Whether the register access is secure or nonsecure.
+
+                                                                 Reads of the CIM()_ICC_HPPIR0_EL1 that do not return a valid interrupt ID return a
+                                                                 spurious interrupt ID, ID 1022 or 1023.
+
+                                                                 The lowest exception level at which this register may be accessed is governed by the
+                                                                 exception level to which FIQ is routed.
+
+                                                                 ARM clarified CIM()_ICC_HPPIR0_EL1 is agnostic of level/edge triggering therefore
+                                                                 "active and pending" means "active" only for CIM. */
+#else /* Word 0 - Little Endian */
+        uint64_t pendintid             : 24; /**< [ 23:  0](RO/H) Pending interrupt ID.
+                                                                 Whether the value returned by a read of CIM()_ICC_HPPIR0_EL1 is a valid interrupt ID
+                                                                 can depend on:
+
+                                                                 1. Whether the highest priority pending interrupt is configured as a group 0 or a group 1
+                                                                 interrupt.
+
+                                                                 2. Whether the register access is secure or nonsecure.
+
+                                                                 Reads of the CIM()_ICC_HPPIR0_EL1 that do not return a valid interrupt ID return a
+                                                                 spurious interrupt ID, ID 1022 or 1023.
+
+                                                                 The lowest exception level at which this register may be accessed is governed by the
+                                                                 exception level to which FIQ is routed.
+
+                                                                 ARM clarified CIM()_ICC_HPPIR0_EL1 is agnostic of level/edge triggering therefore
+                                                                 "active and pending" means "active" only for CIM. */
+        uint64_t reserved_24_63        : 40;
+#endif /* Word 0 - End */
+    } cn9;
+    /* struct cavm_cimx_icc_hppir0_el1_cn9 cn96xxp1; */
+    /* struct cavm_cimx_icc_hppir0_el1_s cn96xxp3; */
+    /* struct cavm_cimx_icc_hppir0_el1_s cn98xx; */
+    /* struct cavm_cimx_icc_hppir0_el1_s cnf95xx; */
+    /* struct cavm_cimx_icc_hppir0_el1_s loki; */
 };
 typedef union cavm_cimx_icc_hppir0_el1 cavm_cimx_icc_hppir0_el1_t;
 
@@ -1660,6 +1733,8 @@ static inline uint64_t CAVM_CIMX_ICC_HPPIR0_EL1(unsigned long a)
         return 0x87b000063210ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87b000063210ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87b000063210ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87b000063210ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=47))
@@ -1726,7 +1801,54 @@ union cavm_cimx_icc_hppir1_el1
         uint64_t reserved_24_63        : 40;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_cimx_icc_hppir1_el1_s cn; */
+    /* struct cavm_cimx_icc_hppir1_el1_s cn8; */
+    struct cavm_cimx_icc_hppir1_el1_cn9
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_24_63        : 40;
+        uint64_t pendintid             : 24; /**< [ 23:  0](RO/H) Pending interrupt ID.
+                                                                 Whether the value returned by a read of CIM()_ICC_HPPIR0_EL1 is a valid interrupt ID
+                                                                 can depend on:
+
+                                                                 1. Whether the highest priority pending interrupt is configured as a group 0 or a group 1
+                                                                 interrupt.
+
+                                                                 2. Whether the register access is secure or nonsecure.
+
+                                                                 Reads of the CIM()_ICC_HPPIR0_EL1 that do not return a valid interrupt ID return a
+                                                                 spurious interrupt ID, ID 1022 or 1023.
+
+                                                                 The lowest exception level at which this register may be accessed is governed by the
+                                                                 exception level to which FIQ is routed.
+
+                                                                 ARM clarified CIM()_ICC_HPPIR0_EL1 is agnostic of level/edge triggering therefore
+                                                                 "active and pending" means "active" only for CIM. */
+#else /* Word 0 - Little Endian */
+        uint64_t pendintid             : 24; /**< [ 23:  0](RO/H) Pending interrupt ID.
+                                                                 Whether the value returned by a read of CIM()_ICC_HPPIR0_EL1 is a valid interrupt ID
+                                                                 can depend on:
+
+                                                                 1. Whether the highest priority pending interrupt is configured as a group 0 or a group 1
+                                                                 interrupt.
+
+                                                                 2. Whether the register access is secure or nonsecure.
+
+                                                                 Reads of the CIM()_ICC_HPPIR0_EL1 that do not return a valid interrupt ID return a
+                                                                 spurious interrupt ID, ID 1022 or 1023.
+
+                                                                 The lowest exception level at which this register may be accessed is governed by the
+                                                                 exception level to which FIQ is routed.
+
+                                                                 ARM clarified CIM()_ICC_HPPIR0_EL1 is agnostic of level/edge triggering therefore
+                                                                 "active and pending" means "active" only for CIM. */
+        uint64_t reserved_24_63        : 40;
+#endif /* Word 0 - End */
+    } cn9;
+    /* struct cavm_cimx_icc_hppir1_el1_cn9 cn96xxp1; */
+    /* struct cavm_cimx_icc_hppir1_el1_s cn96xxp3; */
+    /* struct cavm_cimx_icc_hppir1_el1_s cn98xx; */
+    /* struct cavm_cimx_icc_hppir1_el1_s cnf95xx; */
+    /* struct cavm_cimx_icc_hppir1_el1_s loki; */
 };
 typedef union cavm_cimx_icc_hppir1_el1 cavm_cimx_icc_hppir1_el1_t;
 
@@ -1739,6 +1861,8 @@ static inline uint64_t CAVM_CIMX_ICC_HPPIR1_EL1(unsigned long a)
         return 0x87b000063310ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87b000063310ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87b000063310ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87b000063310ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=47))
@@ -1806,6 +1930,8 @@ static inline uint64_t CAVM_CIMX_ICC_IAR0_EL1(unsigned long a)
         return 0x87b000063200ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87b000063200ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87b000063200ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87b000063200ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=47))
@@ -1871,6 +1997,8 @@ static inline uint64_t CAVM_CIMX_ICC_IAR1_EL1(unsigned long a)
         return 0x87b000063300ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87b000063300ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87b000063300ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87b000063300ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=47))
@@ -1933,6 +2061,8 @@ static inline uint64_t CAVM_CIMX_ICC_IGRPEN0_EL1(unsigned long a)
         return 0x87b000063330ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87b000063330ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87b000063330ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87b000063330ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=47))
@@ -1997,6 +2127,8 @@ static inline uint64_t CAVM_CIMX_ICC_IGRPEN1_EL1_NS(unsigned long a)
         return 0x87b000063338ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87b000063338ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87b000063338ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87b000063338ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=47))
@@ -2061,6 +2193,8 @@ static inline uint64_t CAVM_CIMX_ICC_IGRPEN1_EL1_S(unsigned long a)
         return 0x87b000067338ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87b000067338ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87b000067338ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87b000067338ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=47))
@@ -2120,6 +2254,8 @@ static inline uint64_t CAVM_CIMX_ICC_IGRPEN1_EL3(unsigned long a)
         return 0x87b00007b338ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87b00007b338ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87b00007b338ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87b00007b338ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=47))
@@ -2176,6 +2312,8 @@ static inline uint64_t CAVM_CIMX_ICC_IMP0(unsigned long a)
         return 0x87b00007c000ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87b00007c000ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87b00007c000ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87b00007c000ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=47))
@@ -2293,6 +2431,8 @@ static inline uint64_t CAVM_CIMX_ICC_PMR_EL1(unsigned long a)
         return 0x87b000061180ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87b000061180ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87b000061180ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87b000061180ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=47))
@@ -2353,7 +2493,50 @@ union cavm_cimx_icc_rpr_el1
         uint64_t reserved_8_63         : 56;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_cimx_icc_rpr_el1_s cn; */
+    /* struct cavm_cimx_icc_rpr_el1_s cn8; */
+    struct cavm_cimx_icc_rpr_el1_cn9
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_8_63         : 56;
+        uint64_t pri                   : 8;  /**< [  7:  0](RO/H) Priority.
+                                                                 The current running priority on the CPU interface.
+                                                                 ARM clarified that this register returns the "normal" priority (not group priority) of the
+                                                                 current active interrupt.
+                                                                 If there is no active interrupt on the CPU interface, the value returned is the idle
+                                                                 priority.
+
+                                                                 The value returned by a nonsecure read of the priority field is:
+
+                                                                   1. 0x0 if the field value is less than 0x80
+
+                                                                   2. The nonsecure view of the priority value if the field value is 0x80 or more.
+
+                                                                 Virtual accesses to this register trap to EL2 (HYP_TRAP) if
+                                                                 CIM()_ICH_HCR_EL2[TC] == 1. */
+#else /* Word 0 - Little Endian */
+        uint64_t pri                   : 8;  /**< [  7:  0](RO/H) Priority.
+                                                                 The current running priority on the CPU interface.
+                                                                 ARM clarified that this register returns the "normal" priority (not group priority) of the
+                                                                 current active interrupt.
+                                                                 If there is no active interrupt on the CPU interface, the value returned is the idle
+                                                                 priority.
+
+                                                                 The value returned by a nonsecure read of the priority field is:
+
+                                                                   1. 0x0 if the field value is less than 0x80
+
+                                                                   2. The nonsecure view of the priority value if the field value is 0x80 or more.
+
+                                                                 Virtual accesses to this register trap to EL2 (HYP_TRAP) if
+                                                                 CIM()_ICH_HCR_EL2[TC] == 1. */
+        uint64_t reserved_8_63         : 56;
+#endif /* Word 0 - End */
+    } cn9;
+    /* struct cavm_cimx_icc_rpr_el1_cn9 cn96xxp1; */
+    /* struct cavm_cimx_icc_rpr_el1_s cn96xxp3; */
+    /* struct cavm_cimx_icc_rpr_el1_s cn98xx; */
+    /* struct cavm_cimx_icc_rpr_el1_s cnf95xx; */
+    /* struct cavm_cimx_icc_rpr_el1_s loki; */
 };
 typedef union cavm_cimx_icc_rpr_el1 cavm_cimx_icc_rpr_el1_t;
 
@@ -2366,6 +2549,8 @@ static inline uint64_t CAVM_CIMX_ICC_RPR_EL1(unsigned long a)
         return 0x87b0000632d8ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87b0000632d8ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87b0000632d8ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87b0000632d8ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=47))
@@ -2473,6 +2658,8 @@ static inline uint64_t CAVM_CIMX_ICC_SGI0R_EL1(unsigned long a)
         return 0x87b0000632e8ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87b0000632e8ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87b0000632e8ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87b0000632e8ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=47))
@@ -2581,6 +2768,8 @@ static inline uint64_t CAVM_CIMX_ICC_SGI1R_EL1(unsigned long a)
         return 0x87b0000632f0ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87b0000632f0ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87b0000632f0ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87b0000632f0ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=47))
@@ -2637,6 +2826,8 @@ static inline uint64_t CAVM_CIMX_ICC_SRE_EL1_NS(unsigned long a)
         return 0x87b000063328ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87b000063328ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87b000063328ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87b000063328ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=47))
@@ -2693,6 +2884,8 @@ static inline uint64_t CAVM_CIMX_ICC_SRE_EL1_S(unsigned long a)
         return 0x87b000067328ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87b000067328ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87b000067328ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87b000067328ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=47))
@@ -2759,6 +2952,8 @@ static inline uint64_t CAVM_CIMX_ICC_SRE_EL2(unsigned long a)
         return 0x87b000073268ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87b000073268ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87b000073268ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87b000073268ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=47))
@@ -2821,6 +3016,8 @@ static inline uint64_t CAVM_CIMX_ICC_SRE_EL3(unsigned long a)
         return 0x87b00007b328ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87b00007b328ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87b00007b328ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87b00007b328ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=47))
@@ -2896,6 +3093,8 @@ static inline uint64_t CAVM_CIMX_ICH_AP0R0_EL2(unsigned long a)
         return 0x87b000073200ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87b000073200ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87b000073200ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87b000073200ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=47))
@@ -2959,6 +3158,8 @@ static inline uint64_t CAVM_CIMX_ICH_AP1R0_EL2(unsigned long a)
         return 0x87b000073240ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87b000073240ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87b000073240ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87b000073240ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=47))
@@ -3017,6 +3218,8 @@ static inline uint64_t CAVM_CIMX_ICH_EISR_EL2(unsigned long a)
         return 0x87b0000732d8ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87b0000732d8ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87b0000732d8ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87b0000732d8ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=47))
@@ -3091,6 +3294,8 @@ static inline uint64_t CAVM_CIMX_ICH_ELSR_EL2(unsigned long a)
         return 0x87b0000732e8ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87b0000732e8ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87b0000732e8ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87b0000732e8ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=47))
@@ -3324,6 +3529,8 @@ static inline uint64_t CAVM_CIMX_ICH_HCR_EL2(unsigned long a)
         return 0x87b0000732c0ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87b0000732c0ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87b0000732c0ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87b0000732c0ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=47))
@@ -3556,6 +3763,8 @@ static inline uint64_t CAVM_CIMX_ICH_LRX_EL2(unsigned long a, unsigned long b)
         return 0x87b000073300ll + 0x80000ll * ((a) & 0x1f) + 8ll * ((b) & 0xf);
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=23) && (b<=15)))
         return 0x87b000073300ll + 0x80000ll * ((a) & 0x1f) + 8ll * ((b) & 0xf);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=35) && (b<=15)))
+        return 0x87b000073300ll + 0x80000ll * ((a) & 0x3f) + 8ll * ((b) & 0xf);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=5) && (b<=15)))
         return 0x87b000073300ll + 0x80000ll * ((a) & 0x7) + 8ll * ((b) & 0xf);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=47) && (b<=15)))
@@ -3637,6 +3846,8 @@ static inline uint64_t CAVM_CIMX_ICH_MISR_EL2(unsigned long a)
         return 0x87b0000732d0ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87b0000732d0ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87b0000732d0ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87b0000732d0ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=47))
@@ -3738,6 +3949,8 @@ static inline uint64_t CAVM_CIMX_ICH_VMCR_EL2(unsigned long a)
         return 0x87b0000732f8ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87b0000732f8ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87b0000732f8ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87b0000732f8ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=47))
@@ -3857,6 +4070,8 @@ static inline uint64_t CAVM_CIMX_ICH_VTR_EL2(unsigned long a)
         return 0x87b0000732c8ll + 0x80000ll * ((a) & 0x1f);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87b0000732c8ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87b0000732c8ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87b0000732c8ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=47))

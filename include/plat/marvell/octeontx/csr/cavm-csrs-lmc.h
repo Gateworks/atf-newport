@@ -119,6 +119,8 @@ static inline uint64_t CAVM_LMCX_ADR_SCRAMBLE(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e088000328ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e088000328ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e088000328ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -182,6 +184,8 @@ static inline uint64_t CAVM_LMCX_BANK_CONFLICT1(unsigned long a)
         return 0x87e088000360ll + 0x1000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e088000360ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e088000360ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e088000360ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -245,6 +249,8 @@ static inline uint64_t CAVM_LMCX_BANK_CONFLICT2(unsigned long a)
         return 0x87e088000368ll + 0x1000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e088000368ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e088000368ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e088000368ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -374,6 +380,8 @@ static inline uint64_t CAVM_LMCX_BP_TEST(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e088000400ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e088000400ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e088000400ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -415,6 +423,8 @@ static inline uint64_t CAVM_LMCX_CDCLK_ACTIVE_PC(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e088000020ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e088000020ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e088000020ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -572,6 +582,8 @@ static inline uint64_t CAVM_LMCX_CHAR_CTL(unsigned long a)
         return 0x87e088000220ll + 0x1000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e088000220ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e088000220ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e088000220ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -618,6 +630,8 @@ static inline uint64_t CAVM_LMCX_CHAR_DQ_ERR_COUNT(unsigned long a)
         return 0x87e088000040ll + 0x1000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e088000040ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e088000040ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e088000040ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -670,6 +684,8 @@ static inline uint64_t CAVM_LMCX_CHAR_MASK0(unsigned long a)
         return 0x87e088000228ll + 0x1000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e088000228ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e088000228ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e088000228ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -717,6 +733,8 @@ static inline uint64_t CAVM_LMCX_CHAR_MASK1(unsigned long a)
         return 0x87e088000230ll + 0x1000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e088000230ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e088000230ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e088000230ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -769,6 +787,8 @@ static inline uint64_t CAVM_LMCX_CHAR_MASK2(unsigned long a)
         return 0x87e088000238ll + 0x1000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e088000238ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e088000238ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e088000238ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -840,6 +860,8 @@ static inline uint64_t CAVM_LMCX_CHAR_MASK3(unsigned long a)
         return 0x87e088000240ll + 0x1000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e088000240ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e088000240ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e088000240ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -1053,6 +1075,8 @@ static inline uint64_t CAVM_LMCX_CHAR_MASK4(unsigned long a)
         return 0x87e088000318ll + 0x1000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e088000318ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e088000318ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e088000318ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -1331,7 +1355,7 @@ union cavm_lmcx_comp_ctl2
         uint64_t reserved_56_63        : 8;
 #endif /* Word 0 - End */
     } s;
-    struct cavm_lmcx_comp_ctl2_cn81xx
+    struct cavm_lmcx_comp_ctl2_cn8
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_51_63        : 13;
@@ -1558,7 +1582,8 @@ union cavm_lmcx_comp_ctl2
                                                                  Select core clock characterization mode. */
         uint64_t reserved_51_63        : 13;
 #endif /* Word 0 - End */
-    } cn81xx;
+    } cn8;
+    /* struct cavm_lmcx_comp_ctl2_cn8 cn81xx; */
     struct cavm_lmcx_comp_ctl2_cn83xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -1973,6 +1998,8 @@ static inline uint64_t CAVM_LMCX_COMP_CTL2(unsigned long a)
         return 0x87e0880001b8ll + 0x1000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e0880001b8ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e0880001b8ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e0880001b8ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -2425,7 +2452,7 @@ union cavm_lmcx_config
                                                                  Load reduced DIMM enable. When set allows the use of JEDEC DDR4 LRDIMMs. */
 #endif /* Word 0 - End */
     } s;
-    struct cavm_lmcx_config_cn81xx
+    struct cavm_lmcx_config_cn8
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t lrdimm_ena            : 1;  /**< [ 63: 63](R/W) Reserved.
@@ -2846,7 +2873,8 @@ union cavm_lmcx_config
                                                                  Internal:
                                                                  Load reduced DIMM enable. When set allows the use of JEDEC DDR4 LRDIMMs. */
 #endif /* Word 0 - End */
-    } cn81xx;
+    } cn8;
+    /* struct cavm_lmcx_config_cn8 cn81xx; */
     struct cavm_lmcx_config_cn83xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -3679,6 +3707,8 @@ static inline uint64_t CAVM_LMCX_CONFIG(unsigned long a)
         return 0x87e088000188ll + 0x1000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e088000188ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e088000188ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e088000188ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -4113,6 +4143,8 @@ static inline uint64_t CAVM_LMCX_CONTROL(unsigned long a)
         return 0x87e088000190ll + 0x1000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e088000190ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e088000190ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e088000190ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -4296,6 +4328,8 @@ static inline uint64_t CAVM_LMCX_CTL(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e0880001c0ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e0880001c0ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e0880001c0ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -4332,7 +4366,7 @@ union cavm_lmcx_dbtrain_ctl
         uint64_t reserved_0_63         : 64;
 #endif /* Word 0 - End */
     } s;
-    struct cavm_lmcx_dbtrain_ctl_cn81xx
+    struct cavm_lmcx_dbtrain_ctl_cn8
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_63           : 1;
@@ -4465,7 +4499,8 @@ union cavm_lmcx_dbtrain_ctl
                                                                  The LFSR polynomials are programmed by LMC()_CHAR_CTL[PRBS]. */
         uint64_t reserved_63           : 1;
 #endif /* Word 0 - End */
-    } cn81xx;
+    } cn8;
+    /* struct cavm_lmcx_dbtrain_ctl_cn8 cn81xx; */
     struct cavm_lmcx_dbtrain_ctl_cn83xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -4738,6 +4773,8 @@ static inline uint64_t CAVM_LMCX_DBTRAIN_CTL(unsigned long a)
         return 0x87e0880003f8ll + 0x1000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e0880003f8ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e0880003f8ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e0880003f8ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -4781,6 +4818,8 @@ static inline uint64_t CAVM_LMCX_DCLK_CNT(unsigned long a)
         return 0x87e0880001e0ll + 0x1000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e0880001e0ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e0880001e0ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e0880001e0ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -4877,6 +4916,7 @@ union cavm_lmcx_ddr4_dimm_ctl
         uint64_t reserved_28_63        : 36;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_lmcx_ddr4_dimm_ctl_s cn8; */
     /* struct cavm_lmcx_ddr4_dimm_ctl_s cn81xx; */
     struct cavm_lmcx_ddr4_dimm_ctl_cn83xx
     {
@@ -5010,6 +5050,8 @@ static inline uint64_t CAVM_LMCX_DDR4_DIMM_CTL(unsigned long a)
         return 0x87e0880003f0ll + 0x1000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e0880003f0ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e0880003f0ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e0880003f0ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -5103,7 +5145,7 @@ union cavm_lmcx_ddr_pll_ctl
         uint64_t reserved_45_63        : 19;
 #endif /* Word 0 - End */
     } s;
-    struct cavm_lmcx_ddr_pll_ctl_cn81xx
+    struct cavm_lmcx_ddr_pll_ctl_cn8
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_45_63        : 19;
@@ -5200,7 +5242,8 @@ union cavm_lmcx_ddr_pll_ctl
         uint64_t dclk_alt_refclk_sel   : 1;  /**< [ 44: 44](R/W) Select alternate reference clock for DCLK PLL. */
         uint64_t reserved_45_63        : 19;
 #endif /* Word 0 - End */
-    } cn81xx;
+    } cn8;
+    /* struct cavm_lmcx_ddr_pll_ctl_cn8 cn81xx; */
     struct cavm_lmcx_ddr_pll_ctl_cn83xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -5310,6 +5353,139 @@ union cavm_lmcx_ddr_pll_ctl
                                                                  0 = Select PLL output clock phase 0, 120, and 240.
                                                                  1 = Select PLL output clock phase 180, 300, and 60. */
         uint64_t rep                   : 1;  /**< [ 38: 38](R/W) Regamp internal setting. */
+        uint64_t pll_ref_oct           : 1;  /**< [ 37: 37](R/W) Termination.
+                                                                 0 = Disable 50 Ohm on chip termination.
+                                                                 1 = Enable 50 Ohm on chip termination. */
+        uint64_t pll_ref_hcsl          : 1;  /**< [ 36: 36](R/W) Reference termination.
+                                                                 0 = disable HCSL reference clock termination.
+                                                                 1 = enable HCSL reference clock termination when [PLL_REF_OCT] is 1. */
+        uint64_t pll_ref_bypass        : 1;  /**< [ 35: 35](R/W) Bypass reference clock with bypass_clk_n/p. */
+        uint64_t pll_diffamp           : 4;  /**< [ 34: 31](R/W) Diffamp bias current setting. */
+        uint64_t cpamp                 : 1;  /**< [ 30: 30](R/W) Charge pump internal opamp setting. */
+        uint64_t pll_cps               : 4;  /**< [ 29: 26](R/W) Charge pump current setting for Cs. */
+        uint64_t pll_cpb               : 4;  /**< [ 25: 22](R/W) Charge pump current setting for Cb. */
+        uint64_t bg_div16_en           : 1;  /**< [ 21: 21](R/W) Bandgap clock frequency.
+                                                                 0 = Reference clock divided by 4.
+                                                                 1 = Reference clock divided by 16. */
+        uint64_t bg_clk_en             : 1;  /**< [ 20: 20](R/W) Bandgap gap chopping enable. */
+        uint64_t prediv                : 2;  /**< [ 19: 18](R/W) Reference clock divider. See [CLKF].
+                                                                 0x0 = Reference clock divides down by 1.
+                                                                 0x1 = Reference clock divides down by 1.
+                                                                 0x2 = Reference clock divides down by 2.
+                                                                 0x3 = Reference clock divides down by 3. */
+        uint64_t pll_bypass            : 1;  /**< [ 17: 17](R/W) Bypass PLL output with bypass_clk_n/p. */
+        uint64_t postdiv               : 2;  /**< [ 16: 15](R/W) DDR postscalar divide ratio. See [CLKF].
+                                                                 0x0 =  2.
+                                                                 0x1 =  4.
+                                                                 0x2 =  8.
+                                                                 0x3 = 16. */
+        uint64_t pll_sel               : 2;  /**< [ 14: 13](R/W) PLL output select.
+                                                                 0x0 = Off.
+                                                                 0x1 = Runt pulse clock.
+                                                                 0x2 = Reserved.
+                                                                 0x3 = PLL. */
+        uint64_t update                : 1;  /**< [ 12: 12](WO) PLL programming update. This is a one-shot operation; it automatically returns
+                                                                 to 0 after a write to 1. */
+        uint64_t pd                    : 1;  /**< [ 11: 11](R/W) Powerdown PLL. */
+        uint64_t ps_reset              : 1;  /**< [ 10: 10](R/W) Post scalar reset. */
+        uint64_t pll_reset             : 1;  /**< [  9:  9](R/W) PLL reset. */
+        uint64_t clkf                  : 9;  /**< [  8:  0](R/W) Multiply divided down reference by CLKF. CLKF is applied after
+                                                                 LMC()_DDR_PLL_CTL[PREDIV] divides down the reference clock.
+                                                                 Assuming a 100 MHz reference clock and [PREDIV] = 0x3, or 33.33 MHz, the typical
+                                                                 range of values will be 96 \<= [CLKF] \<= 172.
+
+                                                                 [CLKF], [PREDIV] and [POSTDIV] determine the DDR clock as follows:
+
+                                                                 VCO frequency = (100 MHz / [PREDIV]) * [CLKF].
+
+                                                                 This typically must result in a VCO frequency between 3.2 GHz and 5.7 GHz.
+
+                                                                 Final DDR frequency = VCO frequency / [POSTDIV]-decoded.
+
+                                                                 Typical settings ([PREDIV] always 0x3):
+                                                                   800 MHz:  [CLKF] = 0x60  (96), [POSTDIV] = 0x1 (4).
+                                                                   933 MHz:  [CLKF] = 0x70 (112), [POSTDIV] = 0x1 (4).
+                                                                   1067 MHz: [CLKF] = 0x80 (128), [POSTDIV] = 0x1 (4).
+                                                                   1200 MHz: [CLKF] = 0x90 (144), [POSTDIV] = 0x1 (4).
+                                                                   1333 MHz: [CLKF] = 0xA0 (160), [POSTDIV] = 0x1 (4). */
+#else /* Word 0 - Little Endian */
+        uint64_t clkf                  : 9;  /**< [  8:  0](R/W) Multiply divided down reference by CLKF. CLKF is applied after
+                                                                 LMC()_DDR_PLL_CTL[PREDIV] divides down the reference clock.
+                                                                 Assuming a 100 MHz reference clock and [PREDIV] = 0x3, or 33.33 MHz, the typical
+                                                                 range of values will be 96 \<= [CLKF] \<= 172.
+
+                                                                 [CLKF], [PREDIV] and [POSTDIV] determine the DDR clock as follows:
+
+                                                                 VCO frequency = (100 MHz / [PREDIV]) * [CLKF].
+
+                                                                 This typically must result in a VCO frequency between 3.2 GHz and 5.7 GHz.
+
+                                                                 Final DDR frequency = VCO frequency / [POSTDIV]-decoded.
+
+                                                                 Typical settings ([PREDIV] always 0x3):
+                                                                   800 MHz:  [CLKF] = 0x60  (96), [POSTDIV] = 0x1 (4).
+                                                                   933 MHz:  [CLKF] = 0x70 (112), [POSTDIV] = 0x1 (4).
+                                                                   1067 MHz: [CLKF] = 0x80 (128), [POSTDIV] = 0x1 (4).
+                                                                   1200 MHz: [CLKF] = 0x90 (144), [POSTDIV] = 0x1 (4).
+                                                                   1333 MHz: [CLKF] = 0xA0 (160), [POSTDIV] = 0x1 (4). */
+        uint64_t pll_reset             : 1;  /**< [  9:  9](R/W) PLL reset. */
+        uint64_t ps_reset              : 1;  /**< [ 10: 10](R/W) Post scalar reset. */
+        uint64_t pd                    : 1;  /**< [ 11: 11](R/W) Powerdown PLL. */
+        uint64_t update                : 1;  /**< [ 12: 12](WO) PLL programming update. This is a one-shot operation; it automatically returns
+                                                                 to 0 after a write to 1. */
+        uint64_t pll_sel               : 2;  /**< [ 14: 13](R/W) PLL output select.
+                                                                 0x0 = Off.
+                                                                 0x1 = Runt pulse clock.
+                                                                 0x2 = Reserved.
+                                                                 0x3 = PLL. */
+        uint64_t postdiv               : 2;  /**< [ 16: 15](R/W) DDR postscalar divide ratio. See [CLKF].
+                                                                 0x0 =  2.
+                                                                 0x1 =  4.
+                                                                 0x2 =  8.
+                                                                 0x3 = 16. */
+        uint64_t pll_bypass            : 1;  /**< [ 17: 17](R/W) Bypass PLL output with bypass_clk_n/p. */
+        uint64_t prediv                : 2;  /**< [ 19: 18](R/W) Reference clock divider. See [CLKF].
+                                                                 0x0 = Reference clock divides down by 1.
+                                                                 0x1 = Reference clock divides down by 1.
+                                                                 0x2 = Reference clock divides down by 2.
+                                                                 0x3 = Reference clock divides down by 3. */
+        uint64_t bg_clk_en             : 1;  /**< [ 20: 20](R/W) Bandgap gap chopping enable. */
+        uint64_t bg_div16_en           : 1;  /**< [ 21: 21](R/W) Bandgap clock frequency.
+                                                                 0 = Reference clock divided by 4.
+                                                                 1 = Reference clock divided by 16. */
+        uint64_t pll_cpb               : 4;  /**< [ 25: 22](R/W) Charge pump current setting for Cb. */
+        uint64_t pll_cps               : 4;  /**< [ 29: 26](R/W) Charge pump current setting for Cs. */
+        uint64_t cpamp                 : 1;  /**< [ 30: 30](R/W) Charge pump internal opamp setting. */
+        uint64_t pll_diffamp           : 4;  /**< [ 34: 31](R/W) Diffamp bias current setting. */
+        uint64_t pll_ref_bypass        : 1;  /**< [ 35: 35](R/W) Bypass reference clock with bypass_clk_n/p. */
+        uint64_t pll_ref_hcsl          : 1;  /**< [ 36: 36](R/W) Reference termination.
+                                                                 0 = disable HCSL reference clock termination.
+                                                                 1 = enable HCSL reference clock termination when [PLL_REF_OCT] is 1. */
+        uint64_t pll_ref_oct           : 1;  /**< [ 37: 37](R/W) Termination.
+                                                                 0 = Disable 50 Ohm on chip termination.
+                                                                 1 = Enable 50 Ohm on chip termination. */
+        uint64_t rep                   : 1;  /**< [ 38: 38](R/W) Regamp internal setting. */
+        uint64_t dclk_invert           : 1;  /**< [ 39: 39](R/W) Invert DCLK that feeds LMC/DDRs at the same side of the chip.
+                                                                 Internal:
+                                                                 Phase select.
+                                                                 0 = Select PLL output clock phase 0, 120, and 240.
+                                                                 1 = Select PLL output clock phase 180, 300, and 60. */
+        uint64_t phy_dcok              : 1;  /**< [ 40: 40](R/W) Set to power up PHY logic. */
+        uint64_t reserved_41_63        : 23;
+#endif /* Word 0 - End */
+    } cn9;
+    /* struct cavm_lmcx_ddr_pll_ctl_cn9 cn96xxp1; */
+    struct cavm_lmcx_ddr_pll_ctl_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_41_63        : 23;
+        uint64_t phy_dcok              : 1;  /**< [ 40: 40](R/W) Set to power up PHY logic. */
+        uint64_t dclk_invert           : 1;  /**< [ 39: 39](R/W) Invert DCLK that feeds LMC/DDRs at the same side of the chip.
+                                                                 Internal:
+                                                                 Phase select.
+                                                                 0 = Select PLL output clock phase 0, 120, and 240.
+                                                                 1 = Select PLL output clock phase 180, 300, and 60. */
+        uint64_t rep                   : 1;  /**< [ 38: 38](R/W) Regamp internal setting. */
         uint64_t pll_ref_oct           : 1;  /**< [ 37: 37](R/W) Reserved.
                                                                  Internal:
                                                                  Termination. For diagnostic use only.
@@ -5438,7 +5614,10 @@ union cavm_lmcx_ddr_pll_ctl
         uint64_t phy_dcok              : 1;  /**< [ 40: 40](R/W) Set to power up PHY logic. */
         uint64_t reserved_41_63        : 23;
 #endif /* Word 0 - End */
-    } cn9;
+    } cn96xxp3;
+    /* struct cavm_lmcx_ddr_pll_ctl_cn96xxp3 cn98xx; */
+    /* struct cavm_lmcx_ddr_pll_ctl_cn96xxp3 cnf95xx; */
+    /* struct cavm_lmcx_ddr_pll_ctl_cn96xxp3 loki; */
 };
 typedef union cavm_lmcx_ddr_pll_ctl cavm_lmcx_ddr_pll_ctl_t;
 
@@ -5451,6 +5630,8 @@ static inline uint64_t CAVM_LMCX_DDR_PLL_CTL(unsigned long a)
         return 0x87e088000258ll + 0x1000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e088000258ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e088000258ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e088000258ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -5532,6 +5713,8 @@ static inline uint64_t CAVM_LMCX_DIMMX_DDR4_PARAMS0(unsigned long a, unsigned lo
         return 0x87e0880000d0ll + 0x1000000ll * ((a) & 0x1) + 8ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=1)))
         return 0x87e0880000f0ll + 0x1000000ll * ((a) & 0x3) + 8ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=5) && (b<=1)))
+        return 0x87e0880000f0ll + 0x1000000ll * ((a) & 0x7) + 8ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (((a==0) || (a==2)) && (b<=1)))
         return 0x87e0880000f0ll + 0x1000000ll * ((a) & 0x3) + 8ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && (((a==0) || (a==2)) && (b<=1)))
@@ -5597,6 +5780,8 @@ static inline uint64_t CAVM_LMCX_DIMMX_DDR4_PARAMS1(unsigned long a, unsigned lo
         return 0x87e088000140ll + 0x1000000ll * ((a) & 0x1) + 8ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=1)))
         return 0x87e088000140ll + 0x1000000ll * ((a) & 0x3) + 8ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=5) && (b<=1)))
+        return 0x87e088000140ll + 0x1000000ll * ((a) & 0x7) + 8ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (((a==0) || (a==2)) && (b<=1)))
         return 0x87e088000140ll + 0x1000000ll * ((a) & 0x3) + 8ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && (((a==0) || (a==2)) && (b<=1)))
@@ -5713,6 +5898,8 @@ static inline uint64_t CAVM_LMCX_DIMMX_PARAMS(unsigned long a, unsigned long b)
         return 0x87e088000270ll + 0x1000000ll * ((a) & 0x1) + 8ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=1)))
         return 0x87e088000270ll + 0x1000000ll * ((a) & 0x3) + 8ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=5) && (b<=1)))
+        return 0x87e088000270ll + 0x1000000ll * ((a) & 0x7) + 8ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (((a==0) || (a==2)) && (b<=1)))
         return 0x87e088000270ll + 0x1000000ll * ((a) & 0x3) + 8ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && (((a==0) || (a==2)) && (b<=1)))
@@ -5771,7 +5958,7 @@ union cavm_lmcx_dimm_ctl
         uint64_t reserved_45_63        : 19;
 #endif /* Word 0 - End */
     } s;
-    struct cavm_lmcx_dimm_ctl_cn81xx
+    struct cavm_lmcx_dimm_ctl_cn8
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_46_63        : 18;
@@ -5810,7 +5997,8 @@ union cavm_lmcx_dimm_ctl
                                                                  part. When Par_In is grounded, PARITY should be cleared to 0." */
         uint64_t reserved_46_63        : 18;
 #endif /* Word 0 - End */
-    } cn81xx;
+    } cn8;
+    /* struct cavm_lmcx_dimm_ctl_cn8 cn81xx; */
     struct cavm_lmcx_dimm_ctl_cn83xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -5901,6 +6089,8 @@ static inline uint64_t CAVM_LMCX_DIMM_CTL(unsigned long a)
         return 0x87e088000310ll + 0x1000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e088000310ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e088000310ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e088000310ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -6008,7 +6198,7 @@ union cavm_lmcx_dll_ctl2
 #endif /* Word 0 - End */
     } s;
     /* struct cavm_lmcx_dll_ctl2_s cn8; */
-    struct cavm_lmcx_dll_ctl2_cn96xx
+    struct cavm_lmcx_dll_ctl2_cn9
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_17_63        : 47;
@@ -6065,7 +6255,64 @@ union cavm_lmcx_dll_ctl2
         uint64_t intf_en               : 1;  /**< [ 16: 16](R/W) Interface enable. */
         uint64_t reserved_17_63        : 47;
 #endif /* Word 0 - End */
-    } cn96xx;
+    } cn9;
+    /* struct cavm_lmcx_dll_ctl2_cn9 cn96xx; */
+    struct cavm_lmcx_dll_ctl2_cn98xx
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_17_63        : 47;
+        uint64_t intf_en               : 1;  /**< [ 16: 16](R/W) Interface enable. */
+        uint64_t dll_bringup           : 1;  /**< [ 15: 15](R/W) DLL bring up. */
+        uint64_t dreset                : 1;  /**< [ 14: 14](R/W) System memory clock domain reset. The reset signal that is used by the
+                                                                 system memory clock domain is (DRESET -OR- core-clock reset). */
+        uint64_t quad_dll_ena          : 1;  /**< [ 13: 13](R/W) DLL enable. */
+        uint64_t byp_sel               : 4;  /**< [ 12:  9](R/W) Reserved; must be zero.
+                                                                 Internal:
+                                                                 Bypass select.
+                                                                 0x0 = no byte.
+                                                                 0x1 = byte 0.
+                                                                 ...
+                                                                 0x9 = byte 8.
+                                                                 0xA = all bytes.
+                                                                 0xB-0xF = Reserved. */
+        uint64_t byp_setting           : 9;  /**< [  8:  0](R/W) Reserved; must be zero.
+                                                                 Internal:
+                                                                 Bypass setting.
+                                                                 DDR clock period 1250 ps: 0x6B.
+                                                                 DDR clock period 1070 ps: 0x53.
+                                                                 DDR clock period 938 ps: 0x43.
+                                                                 DDR clock period 833 ps: 0x34.
+                                                                 DDR clock period 750 ps: 0x28.
+                                                                 DDR clock period 682 ps: 0x1F.
+                                                                 DDR clock period 625 ps: 0x18. */
+#else /* Word 0 - Little Endian */
+        uint64_t byp_setting           : 9;  /**< [  8:  0](R/W) Reserved; must be zero.
+                                                                 Internal:
+                                                                 Bypass setting.
+                                                                 DDR clock period 1250 ps: 0x6B.
+                                                                 DDR clock period 1070 ps: 0x53.
+                                                                 DDR clock period 938 ps: 0x43.
+                                                                 DDR clock period 833 ps: 0x34.
+                                                                 DDR clock period 750 ps: 0x28.
+                                                                 DDR clock period 682 ps: 0x1F.
+                                                                 DDR clock period 625 ps: 0x18. */
+        uint64_t byp_sel               : 4;  /**< [ 12:  9](R/W) Reserved; must be zero.
+                                                                 Internal:
+                                                                 Bypass select.
+                                                                 0x0 = no byte.
+                                                                 0x1 = byte 0.
+                                                                 ...
+                                                                 0x9 = byte 8.
+                                                                 0xA = all bytes.
+                                                                 0xB-0xF = Reserved. */
+        uint64_t quad_dll_ena          : 1;  /**< [ 13: 13](R/W) DLL enable. */
+        uint64_t dreset                : 1;  /**< [ 14: 14](R/W) System memory clock domain reset. The reset signal that is used by the
+                                                                 system memory clock domain is (DRESET -OR- core-clock reset). */
+        uint64_t dll_bringup           : 1;  /**< [ 15: 15](R/W) DLL bring up. */
+        uint64_t intf_en               : 1;  /**< [ 16: 16](R/W) Interface enable. */
+        uint64_t reserved_17_63        : 47;
+#endif /* Word 0 - End */
+    } cn98xx;
     struct cavm_lmcx_dll_ctl2_cnf95xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -6139,6 +6386,8 @@ static inline uint64_t CAVM_LMCX_DLL_CTL2(unsigned long a)
         return 0x87e0880001c8ll + 0x1000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e0880001c8ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e0880001c8ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e0880001c8ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -6483,6 +6732,236 @@ union cavm_lmcx_dll_ctl3
         uint64_t reserved_50_63        : 14;
 #endif /* Word 0 - End */
     } cn8;
+    struct cavm_lmcx_dll_ctl3_cn9
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_63           : 1;
+        uint64_t rd_deskew_mem_ld      : 1;  /**< [ 62: 62](WO) Reserved.
+                                                                 Internal:
+                                                                 Provides manual control of the loading of the read deskew settings where
+                                                                 otherwise controlled by the LMC_SEQ_SEL_E::VREF_INT hardware sequence with
+                                                                 LMC()_EXT_CONFIG[VREFINT_SEQ_DESKEW] set high.
+                                                                 When set, all DQ bit read deskew settings in DDR PHY are loaded into their corresponding
+                                                                 rank deskew storage. The rank is chosen by the CSR LMC()_MR_MPR_CTL[MR_WR_RANK]. This is a
+                                                                 oneshot operation and clears itself each time it is set.
+                                                                 Note this has to be done during the bring-up state where there isn't yet any
+                                                                 traffic to DRAM. Also software need to ensure not to to run any sequence when
+                                                                 setting this field high. */
+        uint64_t rd_deskew_mem_sel_dis : 1;  /**< [ 61: 61](R/W) By default, LMC always selects per-rank deskew settings that are stored inside
+                                                                 PHY's read_mem module.
+                                                                 Set to one to manually disable this feature and that the common
+                                                                 deskew setting inside the PHY's state machine will get selected instead.
+
+                                                                 This field is only reset on cold reset. */
+        uint64_t wr_deskew_mem_sel     : 1;  /**< [ 60: 60](R/W) Reserved.
+                                                                 Internal:
+                                                                 Only relevant when [WR_DESKEW_ENA] is set.
+                                                                 0 = Selects the common deskew settings stored in each DQ bit. All writes to any package
+                                                                 rank uses this common settings to deskew the data bits.
+                                                                 1 = Selects the stored per-package rank deskew settings. Write to a particular
+                                                                 package rank uses the corresponding stored setting for that rank.
+
+                                                                 This field is only reset on cold reset. */
+        uint64_t wr_deskew_mem_ld      : 1;  /**< [ 59: 59](WO) Reserved.
+                                                                 Internal:
+                                                                 When set, all DQ bit write deskew settings in DDR PHY are loaded into their corresponding
+                                                                 rank deskew storage. The rank is chosen by the CSR LMC()_MR_MPR_CTL[MR_WR_RANK]. This is a
+                                                                 oneshot operation and clears itself each time it is set. Note this has to be done during
+                                                                 the bring-up state where there isn't yet any traffic to DRAM. */
+        uint64_t offset                : 9;  /**< [ 58: 50](R/W) Reserved; must be zero.
+                                                                 Internal:
+                                                                 Write/read offset setting. \<8:0\>: offset (not
+                                                                 two's-complement), \<8\>: 0 = increment, 1 = decrement. */
+        uint64_t wr_deskew_ena         : 1;  /**< [ 49: 49](R/W) When set, it enables the write bit deskew feature. */
+        uint64_t wr_deskew_ld          : 1;  /**< [ 48: 48](WO) When set, the bit deskew settings in LMC()_DLL_CTL3[OFFSET] gets loaded to
+                                                                 the designated byte LMC()_DLL_CTL3[BYTE_SEL] and bit LMC()_DLL_CTL3[BIT_SELECT]
+                                                                 for write bit deskew. This is a oneshot and clears itself each time
+                                                                 it is set. */
+        uint64_t bit_select            : 4;  /**< [ 47: 44](R/W) 0x0-0x7 = Selects bit 0 - bit 8 for write deskew setting assignment.
+                                                                 0x8 = Selects dbi for write deskew setting assignment.
+                                                                 0x9 = No-op.
+                                                                 0xA = Reuse deskew setting on.
+                                                                 0xB = Reuse deskew setting off.
+                                                                 0xC = Vref bypass setting load.
+                                                                 0xD = Vref bypass on.
+                                                                 0xE = Vref bypass off.
+                                                                 0xF = Bit select reset. Clear write deskew settings to default value 0x40 in each DQ bit.
+                                                                 Also sets Vref bypass to off and deskew reuse setting to off. */
+        uint64_t reserved_40_43        : 4;
+        uint64_t quad_dll_ena_override : 1;  /**< [ 39: 39](R/W) Reserved.
+                                                                 Internal:
+                                                                 When set, the VREF INT hardware sequence takes control over the
+                                                                 quad_dll_ena signal driven to the PHY. This is used for the DAC Calibration
+                                                                 Training using DLL. Software also needs to ensure that
+                                                                 LMC()_EXT_CONFIG[VREFINT_SEQ_DESKEW] gets cleared to 0 before running
+                                                                 LMC_SEQ_SEL_E::VREF_INT
+                                                                 sequence to ensure that hardware correctly asserts the quad_dll_ena signal. If
+                                                                 LMC()_EXT_CONFIG[VREFINT_SEQ_DESKEW] = 1 instead, hardware will not change the
+                                                                 value of quad_dll_ena and will just retain its value.
+
+                                                                 In summary, to ensure that DAC Calibration training using DLL is done properly,
+                                                                 Software needs to first configure the following CSRs before running
+                                                                 LMC_SEQ_SEL_E::VREF_INT sequence:
+
+                                                                 * LMC()_PHY_CTL3[VREF_CAL_OVERWRITE] = 1.
+                                                                 * LMC()_PHY_CTL3[VREF_CAL_ON] = 0.
+                                                                 * LMC()_PHY_CTL[DOUBLE_VREF_TRAINING] = 1.
+                                                                 * LMC()_EXT_CONFIG[VREFINT_SEQ_DESKEW] = 0.
+                                                                 * LMC()_DLL_CTL3[QUAD_DLL_ENA_OVERRIDE] = 1. */
+        uint64_t dll_fast              : 9;  /**< [ 38: 30](RO/H) Reserved; must be zero.
+                                                                 Internal:
+                                                                 DLL lock, 0=DLL locked. */
+        uint64_t dll90_setting         : 9;  /**< [ 29: 21](RO/H) Reserved; must be zero.
+                                                                 Internal:
+                                                                 Encoded DLL settings. Works in conjunction with [DLL90_BYTE_SEL]. MSB returns 0. */
+        uint64_t fine_tune_mode        : 1;  /**< [ 20: 20](R/W) DLL fine tune mode. 0 = disabled; 1 = enable. When enabled, calibrate internal PHY DLL
+                                                                 every LMC()_CONFIG[REF_ZQCS_INT] CK cycles.
+
+                                                                 This field is only reset on cold reset. */
+        uint64_t dll_mode              : 1;  /**< [ 19: 19](R/W) Reserved; must be zero.
+                                                                 Internal:
+                                                                 DLL mode. */
+        uint64_t dll90_byte_sel        : 4;  /**< [ 18: 15](R/W) Observe DLL settings for selected byte.
+                                                                 0x0 = byte 0.
+                                                                 0x1 = byte 1.
+                                                                 ...
+                                                                 0x8 = ECC byte.
+                                                                 0x9-0xF = Reserved. */
+        uint64_t offset_ena            : 1;  /**< [ 14: 14](R/W) Reserved; must be zero.
+                                                                 Internal:
+                                                                 Offset enable.
+
+                                                                 This field is only reset on cold reset. */
+        uint64_t load_offset           : 1;  /**< [ 13: 13](WO) Reserved; must be zero.
+                                                                 Internal:
+                                                                 Load offset. 0=disable, 1=generate a one cycle pulse to
+                                                                 the PHY. This field is a oneshot and clears itself each time it is set. */
+        uint64_t mode_sel              : 2;  /**< [ 12: 11](R/W) Reserved; must be zero.
+                                                                 Internal:
+                                                                 Mode select. 0x0 = reset, 0x1 = write, 0x2 = read, 0x3 =
+                                                                 write and read.
+
+                                                                 This field is only reset on cold reset. */
+        uint64_t byte_sel              : 4;  /**< [ 10:  7](R/W) Reserved; must be zero.
+                                                                 Internal:
+                                                                 Byte select. 0x0 = no byte, 0x1 = byte 0, ..., 0x9 =
+                                                                 byte 8, 0xA = all bytes, 0xB-0xF = Reserved. */
+        uint64_t reserved_0_6          : 7;
+#else /* Word 0 - Little Endian */
+        uint64_t reserved_0_6          : 7;
+        uint64_t byte_sel              : 4;  /**< [ 10:  7](R/W) Reserved; must be zero.
+                                                                 Internal:
+                                                                 Byte select. 0x0 = no byte, 0x1 = byte 0, ..., 0x9 =
+                                                                 byte 8, 0xA = all bytes, 0xB-0xF = Reserved. */
+        uint64_t mode_sel              : 2;  /**< [ 12: 11](R/W) Reserved; must be zero.
+                                                                 Internal:
+                                                                 Mode select. 0x0 = reset, 0x1 = write, 0x2 = read, 0x3 =
+                                                                 write and read.
+
+                                                                 This field is only reset on cold reset. */
+        uint64_t load_offset           : 1;  /**< [ 13: 13](WO) Reserved; must be zero.
+                                                                 Internal:
+                                                                 Load offset. 0=disable, 1=generate a one cycle pulse to
+                                                                 the PHY. This field is a oneshot and clears itself each time it is set. */
+        uint64_t offset_ena            : 1;  /**< [ 14: 14](R/W) Reserved; must be zero.
+                                                                 Internal:
+                                                                 Offset enable.
+
+                                                                 This field is only reset on cold reset. */
+        uint64_t dll90_byte_sel        : 4;  /**< [ 18: 15](R/W) Observe DLL settings for selected byte.
+                                                                 0x0 = byte 0.
+                                                                 0x1 = byte 1.
+                                                                 ...
+                                                                 0x8 = ECC byte.
+                                                                 0x9-0xF = Reserved. */
+        uint64_t dll_mode              : 1;  /**< [ 19: 19](R/W) Reserved; must be zero.
+                                                                 Internal:
+                                                                 DLL mode. */
+        uint64_t fine_tune_mode        : 1;  /**< [ 20: 20](R/W) DLL fine tune mode. 0 = disabled; 1 = enable. When enabled, calibrate internal PHY DLL
+                                                                 every LMC()_CONFIG[REF_ZQCS_INT] CK cycles.
+
+                                                                 This field is only reset on cold reset. */
+        uint64_t dll90_setting         : 9;  /**< [ 29: 21](RO/H) Reserved; must be zero.
+                                                                 Internal:
+                                                                 Encoded DLL settings. Works in conjunction with [DLL90_BYTE_SEL]. MSB returns 0. */
+        uint64_t dll_fast              : 9;  /**< [ 38: 30](RO/H) Reserved; must be zero.
+                                                                 Internal:
+                                                                 DLL lock, 0=DLL locked. */
+        uint64_t quad_dll_ena_override : 1;  /**< [ 39: 39](R/W) Reserved.
+                                                                 Internal:
+                                                                 When set, the VREF INT hardware sequence takes control over the
+                                                                 quad_dll_ena signal driven to the PHY. This is used for the DAC Calibration
+                                                                 Training using DLL. Software also needs to ensure that
+                                                                 LMC()_EXT_CONFIG[VREFINT_SEQ_DESKEW] gets cleared to 0 before running
+                                                                 LMC_SEQ_SEL_E::VREF_INT
+                                                                 sequence to ensure that hardware correctly asserts the quad_dll_ena signal. If
+                                                                 LMC()_EXT_CONFIG[VREFINT_SEQ_DESKEW] = 1 instead, hardware will not change the
+                                                                 value of quad_dll_ena and will just retain its value.
+
+                                                                 In summary, to ensure that DAC Calibration training using DLL is done properly,
+                                                                 Software needs to first configure the following CSRs before running
+                                                                 LMC_SEQ_SEL_E::VREF_INT sequence:
+
+                                                                 * LMC()_PHY_CTL3[VREF_CAL_OVERWRITE] = 1.
+                                                                 * LMC()_PHY_CTL3[VREF_CAL_ON] = 0.
+                                                                 * LMC()_PHY_CTL[DOUBLE_VREF_TRAINING] = 1.
+                                                                 * LMC()_EXT_CONFIG[VREFINT_SEQ_DESKEW] = 0.
+                                                                 * LMC()_DLL_CTL3[QUAD_DLL_ENA_OVERRIDE] = 1. */
+        uint64_t reserved_40_43        : 4;
+        uint64_t bit_select            : 4;  /**< [ 47: 44](R/W) 0x0-0x7 = Selects bit 0 - bit 8 for write deskew setting assignment.
+                                                                 0x8 = Selects dbi for write deskew setting assignment.
+                                                                 0x9 = No-op.
+                                                                 0xA = Reuse deskew setting on.
+                                                                 0xB = Reuse deskew setting off.
+                                                                 0xC = Vref bypass setting load.
+                                                                 0xD = Vref bypass on.
+                                                                 0xE = Vref bypass off.
+                                                                 0xF = Bit select reset. Clear write deskew settings to default value 0x40 in each DQ bit.
+                                                                 Also sets Vref bypass to off and deskew reuse setting to off. */
+        uint64_t wr_deskew_ld          : 1;  /**< [ 48: 48](WO) When set, the bit deskew settings in LMC()_DLL_CTL3[OFFSET] gets loaded to
+                                                                 the designated byte LMC()_DLL_CTL3[BYTE_SEL] and bit LMC()_DLL_CTL3[BIT_SELECT]
+                                                                 for write bit deskew. This is a oneshot and clears itself each time
+                                                                 it is set. */
+        uint64_t wr_deskew_ena         : 1;  /**< [ 49: 49](R/W) When set, it enables the write bit deskew feature. */
+        uint64_t offset                : 9;  /**< [ 58: 50](R/W) Reserved; must be zero.
+                                                                 Internal:
+                                                                 Write/read offset setting. \<8:0\>: offset (not
+                                                                 two's-complement), \<8\>: 0 = increment, 1 = decrement. */
+        uint64_t wr_deskew_mem_ld      : 1;  /**< [ 59: 59](WO) Reserved.
+                                                                 Internal:
+                                                                 When set, all DQ bit write deskew settings in DDR PHY are loaded into their corresponding
+                                                                 rank deskew storage. The rank is chosen by the CSR LMC()_MR_MPR_CTL[MR_WR_RANK]. This is a
+                                                                 oneshot operation and clears itself each time it is set. Note this has to be done during
+                                                                 the bring-up state where there isn't yet any traffic to DRAM. */
+        uint64_t wr_deskew_mem_sel     : 1;  /**< [ 60: 60](R/W) Reserved.
+                                                                 Internal:
+                                                                 Only relevant when [WR_DESKEW_ENA] is set.
+                                                                 0 = Selects the common deskew settings stored in each DQ bit. All writes to any package
+                                                                 rank uses this common settings to deskew the data bits.
+                                                                 1 = Selects the stored per-package rank deskew settings. Write to a particular
+                                                                 package rank uses the corresponding stored setting for that rank.
+
+                                                                 This field is only reset on cold reset. */
+        uint64_t rd_deskew_mem_sel_dis : 1;  /**< [ 61: 61](R/W) By default, LMC always selects per-rank deskew settings that are stored inside
+                                                                 PHY's read_mem module.
+                                                                 Set to one to manually disable this feature and that the common
+                                                                 deskew setting inside the PHY's state machine will get selected instead.
+
+                                                                 This field is only reset on cold reset. */
+        uint64_t rd_deskew_mem_ld      : 1;  /**< [ 62: 62](WO) Reserved.
+                                                                 Internal:
+                                                                 Provides manual control of the loading of the read deskew settings where
+                                                                 otherwise controlled by the LMC_SEQ_SEL_E::VREF_INT hardware sequence with
+                                                                 LMC()_EXT_CONFIG[VREFINT_SEQ_DESKEW] set high.
+                                                                 When set, all DQ bit read deskew settings in DDR PHY are loaded into their corresponding
+                                                                 rank deskew storage. The rank is chosen by the CSR LMC()_MR_MPR_CTL[MR_WR_RANK]. This is a
+                                                                 oneshot operation and clears itself each time it is set.
+                                                                 Note this has to be done during the bring-up state where there isn't yet any
+                                                                 traffic to DRAM. Also software need to ensure not to to run any sequence when
+                                                                 setting this field high. */
+        uint64_t reserved_63           : 1;
+#endif /* Word 0 - End */
+    } cn9;
     struct cavm_lmcx_dll_ctl3_cn96xxp1
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -6538,8 +7017,7 @@ union cavm_lmcx_dll_ctl3
                                                                  0xE = Vref bypass off.
                                                                  0xF = Bit select reset. Clear write deskew settings to default value 0x40 in each DQ bit.
                                                                  Also sets Vref bypass to off and deskew reuse setting to off. */
-        uint64_t reserved_40_43        : 4;
-        uint64_t quad_dll_ena_override : 1;  /**< [ 39: 39](RO) Reserved. */
+        uint64_t reserved_39_43        : 5;
         uint64_t dll_fast              : 9;  /**< [ 38: 30](RO/H) Reserved; must be zero.
                                                                  Internal:
                                                                  DLL lock, 0=DLL locked. */
@@ -6619,8 +7097,7 @@ union cavm_lmcx_dll_ctl3
         uint64_t dll_fast              : 9;  /**< [ 38: 30](RO/H) Reserved; must be zero.
                                                                  Internal:
                                                                  DLL lock, 0=DLL locked. */
-        uint64_t quad_dll_ena_override : 1;  /**< [ 39: 39](RO) Reserved. */
-        uint64_t reserved_40_43        : 4;
+        uint64_t reserved_39_43        : 5;
         uint64_t bit_select            : 4;  /**< [ 47: 44](R/W) 0x0-0x7 = Selects bit 0 - bit 8 for write deskew setting assignment.
                                                                  0x8 = Selects dbi for write deskew setting assignment.
                                                                  0x9 = No-op.
@@ -6675,7 +7152,8 @@ union cavm_lmcx_dll_ctl3
         uint64_t reserved_63           : 1;
 #endif /* Word 0 - End */
     } cn96xxp1;
-    struct cavm_lmcx_dll_ctl3_cn96xxp3
+    /* struct cavm_lmcx_dll_ctl3_cn9 cn96xxp3; */
+    struct cavm_lmcx_dll_ctl3_cn98xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_63           : 1;
@@ -6745,7 +7223,6 @@ union cavm_lmcx_dll_ctl3
                                                                  In summary, to ensure that DAC Calibration training using DLL is done properly,
                                                                  Software needs to first configure the following CSRs before running
                                                                  LMC_SEQ_SEL_E::VREF_INT sequence:
-
                                                                  * LMC()_PHY_CTL3[VREF_CAL_OVERWRITE] = 1.
                                                                  * LMC()_PHY_CTL3[VREF_CAL_ON] = 0.
                                                                  * LMC()_PHY_CTL[DOUBLE_VREF_TRAINING] = 1.
@@ -6844,7 +7321,6 @@ union cavm_lmcx_dll_ctl3
                                                                  In summary, to ensure that DAC Calibration training using DLL is done properly,
                                                                  Software needs to first configure the following CSRs before running
                                                                  LMC_SEQ_SEL_E::VREF_INT sequence:
-
                                                                  * LMC()_PHY_CTL3[VREF_CAL_OVERWRITE] = 1.
                                                                  * LMC()_PHY_CTL3[VREF_CAL_ON] = 0.
                                                                  * LMC()_PHY_CTL[DOUBLE_VREF_TRAINING] = 1.
@@ -6904,7 +7380,7 @@ union cavm_lmcx_dll_ctl3
                                                                  setting this field high. */
         uint64_t reserved_63           : 1;
 #endif /* Word 0 - End */
-    } cn96xxp3;
+    } cn98xx;
     struct cavm_lmcx_dll_ctl3_cnf95xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -7142,6 +7618,8 @@ static inline uint64_t CAVM_LMCX_DLL_CTL3(unsigned long a)
         return 0x87e088000218ll + 0x1000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e088000218ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e088000218ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e088000218ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -7214,6 +7692,8 @@ static inline uint64_t CAVM_LMCX_DUAL_MEMCFG(unsigned long a)
         return 0x87e088000098ll + 0x1000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e088000098ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e088000098ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e088000098ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -7318,6 +7798,8 @@ static inline uint64_t CAVM_LMCX_ECC_PARITY_TEST(unsigned long a)
         return 0x87e088000108ll + 0x1000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e088000108ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e088000108ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e088000108ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -7412,6 +7894,8 @@ static inline uint64_t CAVM_LMCX_ECO_DCLK(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e088000410ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e088000410ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e088000410ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -7453,6 +7937,8 @@ static inline uint64_t CAVM_LMCX_ECO_RCLK(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e088000408ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e088000408ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e088000408ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -7766,7 +8252,7 @@ union cavm_lmcx_ext_config
         uint64_t reserved_59_63        : 5;
 #endif /* Word 0 - End */
     } s;
-    struct cavm_lmcx_ext_config_cn81xx
+    struct cavm_lmcx_ext_config_cn8
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_61_63        : 3;
@@ -8059,7 +8545,8 @@ union cavm_lmcx_ext_config
                                                                    every time it sends out a BC4 Write operation. */
         uint64_t reserved_61_63        : 3;
 #endif /* Word 0 - End */
-    } cn81xx;
+    } cn8;
+    /* struct cavm_lmcx_ext_config_cn8 cn81xx; */
     struct cavm_lmcx_ext_config_cn83xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -8624,6 +9111,8 @@ static inline uint64_t CAVM_LMCX_EXT_CONFIG(unsigned long a)
         return 0x87e088000030ll + 0x1000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e088000030ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e088000030ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e088000030ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -8983,6 +9472,8 @@ static inline uint64_t CAVM_LMCX_EXT_CONFIG2(unsigned long a)
         return 0x87e088000090ll + 0x1000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e088000090ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e088000090ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e088000090ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -9033,6 +9524,8 @@ static inline uint64_t CAVM_LMCX_EXT_CONFIG3(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e088000120ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e088000120ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e088000120ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -9079,6 +9572,8 @@ static inline uint64_t CAVM_LMCX_EXT_CONFIG4(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e088000128ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e088000128ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e088000128ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -9127,6 +9622,8 @@ static inline uint64_t CAVM_LMCX_EXT_CONFIG5(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e088000130ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e088000130ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e088000130ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -9193,6 +9690,7 @@ union cavm_lmcx_fadr
         uint64_t reserved_43_63        : 21;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_lmcx_fadr_s cn8; */
     /* struct cavm_lmcx_fadr_s cn81xx; */
     struct cavm_lmcx_fadr_cn83xx
     {
@@ -9313,6 +9811,8 @@ static inline uint64_t CAVM_LMCX_FFE_CTLE_CTL(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e0880002f0ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e0880002f0ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e0880002f0ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -9388,6 +9888,8 @@ static inline uint64_t CAVM_LMCX_FFE_CTLE_SETTINGS(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e0880002e0ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e0880002e0ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e0880002e0ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -9446,6 +9948,8 @@ static inline uint64_t CAVM_LMCX_GENERAL_PURPOSE0(unsigned long a)
         return 0x87e088000340ll + 0x1000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e088000340ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e088000340ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e088000340ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -9504,6 +10008,8 @@ static inline uint64_t CAVM_LMCX_GENERAL_PURPOSE1(unsigned long a)
         return 0x87e088000348ll + 0x1000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e088000348ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e088000348ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e088000348ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -9560,6 +10066,8 @@ static inline uint64_t CAVM_LMCX_GENERAL_PURPOSE2(unsigned long a)
         return 0x87e088000350ll + 0x1000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e088000350ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e088000350ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e088000350ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -9605,6 +10113,8 @@ static inline uint64_t CAVM_LMCX_IFB_CNT(unsigned long a)
         return 0x87e0880001d0ll + 0x1000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e0880001d0ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e0880001d0ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e0880001d0ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -9920,6 +10430,8 @@ static inline uint64_t CAVM_LMCX_INT(unsigned long a)
         return 0x87e0880001f0ll + 0x1000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e0880001f0ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e0880001f0ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e0880001f0ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -9965,7 +10477,7 @@ union cavm_lmcx_int_ena_w1c
         uint64_t reserved_14_63        : 50;
 #endif /* Word 0 - End */
     } s;
-    struct cavm_lmcx_int_ena_w1c_cn81xx
+    struct cavm_lmcx_int_ena_w1c_cn8
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_14_63        : 50;
@@ -9988,7 +10500,8 @@ union cavm_lmcx_int_ena_w1c
         uint64_t macram_ded_err        : 1;  /**< [ 13: 13](R/W1C/H) Reads or clears enable for LMC(0)_INT[MACRAM_DED_ERR]. */
         uint64_t reserved_14_63        : 50;
 #endif /* Word 0 - End */
-    } cn81xx;
+    } cn8;
+    /* struct cavm_lmcx_int_ena_w1c_cn8 cn81xx; */
     struct cavm_lmcx_int_ena_w1c_cn83xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -10013,7 +10526,7 @@ union cavm_lmcx_int_ena_w1c
         uint64_t reserved_14_63        : 50;
 #endif /* Word 0 - End */
     } cn83xx;
-    struct cavm_lmcx_int_ena_w1c_cn96xx
+    struct cavm_lmcx_int_ena_w1c_cn9
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_12_63        : 52;
@@ -10028,7 +10541,24 @@ union cavm_lmcx_int_ena_w1c
         uint64_t ddr_err               : 1;  /**< [ 11: 11](R/W1C/H) Reads or clears enable for LMC(0..2)_INT[DDR_ERR]. */
         uint64_t reserved_12_63        : 52;
 #endif /* Word 0 - End */
-    } cn96xx;
+    } cn9;
+    /* struct cavm_lmcx_int_ena_w1c_cn9 cn96xx; */
+    struct cavm_lmcx_int_ena_w1c_cn98xx
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_12_63        : 52;
+        uint64_t ddr_err               : 1;  /**< [ 11: 11](R/W1C/H) Reads or clears enable for LMC(0..5)_INT[DDR_ERR]. */
+        uint64_t reserved_2_10         : 9;
+        uint64_t ref_pend_max1         : 1;  /**< [  1:  1](R/W1C/H) Reads or clears enable for LMC(0..5)_INT[REF_PEND_MAX1]. */
+        uint64_t ref_pend_max0         : 1;  /**< [  0:  0](R/W1C/H) Reads or clears enable for LMC(0..5)_INT[REF_PEND_MAX0]. */
+#else /* Word 0 - Little Endian */
+        uint64_t ref_pend_max0         : 1;  /**< [  0:  0](R/W1C/H) Reads or clears enable for LMC(0..5)_INT[REF_PEND_MAX0]. */
+        uint64_t ref_pend_max1         : 1;  /**< [  1:  1](R/W1C/H) Reads or clears enable for LMC(0..5)_INT[REF_PEND_MAX1]. */
+        uint64_t reserved_2_10         : 9;
+        uint64_t ddr_err               : 1;  /**< [ 11: 11](R/W1C/H) Reads or clears enable for LMC(0..5)_INT[DDR_ERR]. */
+        uint64_t reserved_12_63        : 52;
+#endif /* Word 0 - End */
+    } cn98xx;
     struct cavm_lmcx_int_ena_w1c_cnf95xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -10058,6 +10588,8 @@ static inline uint64_t CAVM_LMCX_INT_ENA_W1C(unsigned long a)
         return 0x87e088000158ll + 0x1000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e088000158ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e088000158ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e088000158ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -10103,7 +10635,7 @@ union cavm_lmcx_int_ena_w1s
         uint64_t reserved_14_63        : 50;
 #endif /* Word 0 - End */
     } s;
-    struct cavm_lmcx_int_ena_w1s_cn81xx
+    struct cavm_lmcx_int_ena_w1s_cn8
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_14_63        : 50;
@@ -10126,7 +10658,8 @@ union cavm_lmcx_int_ena_w1s
         uint64_t macram_ded_err        : 1;  /**< [ 13: 13](R/W1S/H) Reads or sets enable for LMC(0)_INT[MACRAM_DED_ERR]. */
         uint64_t reserved_14_63        : 50;
 #endif /* Word 0 - End */
-    } cn81xx;
+    } cn8;
+    /* struct cavm_lmcx_int_ena_w1s_cn8 cn81xx; */
     struct cavm_lmcx_int_ena_w1s_cn83xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -10151,7 +10684,7 @@ union cavm_lmcx_int_ena_w1s
         uint64_t reserved_14_63        : 50;
 #endif /* Word 0 - End */
     } cn83xx;
-    struct cavm_lmcx_int_ena_w1s_cn96xx
+    struct cavm_lmcx_int_ena_w1s_cn9
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_12_63        : 52;
@@ -10166,7 +10699,24 @@ union cavm_lmcx_int_ena_w1s
         uint64_t ddr_err               : 1;  /**< [ 11: 11](R/W1S/H) Reads or sets enable for LMC(0..2)_INT[DDR_ERR]. */
         uint64_t reserved_12_63        : 52;
 #endif /* Word 0 - End */
-    } cn96xx;
+    } cn9;
+    /* struct cavm_lmcx_int_ena_w1s_cn9 cn96xx; */
+    struct cavm_lmcx_int_ena_w1s_cn98xx
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_12_63        : 52;
+        uint64_t ddr_err               : 1;  /**< [ 11: 11](R/W1S/H) Reads or sets enable for LMC(0..5)_INT[DDR_ERR]. */
+        uint64_t reserved_2_10         : 9;
+        uint64_t ref_pend_max1         : 1;  /**< [  1:  1](R/W1S/H) Reads or sets enable for LMC(0..5)_INT[REF_PEND_MAX1]. */
+        uint64_t ref_pend_max0         : 1;  /**< [  0:  0](R/W1S/H) Reads or sets enable for LMC(0..5)_INT[REF_PEND_MAX0]. */
+#else /* Word 0 - Little Endian */
+        uint64_t ref_pend_max0         : 1;  /**< [  0:  0](R/W1S/H) Reads or sets enable for LMC(0..5)_INT[REF_PEND_MAX0]. */
+        uint64_t ref_pend_max1         : 1;  /**< [  1:  1](R/W1S/H) Reads or sets enable for LMC(0..5)_INT[REF_PEND_MAX1]. */
+        uint64_t reserved_2_10         : 9;
+        uint64_t ddr_err               : 1;  /**< [ 11: 11](R/W1S/H) Reads or sets enable for LMC(0..5)_INT[DDR_ERR]. */
+        uint64_t reserved_12_63        : 52;
+#endif /* Word 0 - End */
+    } cn98xx;
     struct cavm_lmcx_int_ena_w1s_cnf95xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -10196,6 +10746,8 @@ static inline uint64_t CAVM_LMCX_INT_ENA_W1S(unsigned long a)
         return 0x87e088000160ll + 0x1000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e088000160ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e088000160ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e088000160ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -10241,7 +10793,7 @@ union cavm_lmcx_int_w1s
         uint64_t reserved_14_63        : 50;
 #endif /* Word 0 - End */
     } s;
-    struct cavm_lmcx_int_w1s_cn81xx
+    struct cavm_lmcx_int_w1s_cn8
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_14_63        : 50;
@@ -10264,7 +10816,8 @@ union cavm_lmcx_int_w1s
         uint64_t macram_ded_err        : 1;  /**< [ 13: 13](R/W1S/H) Reads or sets LMC(0)_INT[MACRAM_DED_ERR]. */
         uint64_t reserved_14_63        : 50;
 #endif /* Word 0 - End */
-    } cn81xx;
+    } cn8;
+    /* struct cavm_lmcx_int_w1s_cn8 cn81xx; */
     struct cavm_lmcx_int_w1s_cn83xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -10289,7 +10842,7 @@ union cavm_lmcx_int_w1s
         uint64_t reserved_14_63        : 50;
 #endif /* Word 0 - End */
     } cn83xx;
-    struct cavm_lmcx_int_w1s_cn96xx
+    struct cavm_lmcx_int_w1s_cn9
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_12_63        : 52;
@@ -10304,7 +10857,24 @@ union cavm_lmcx_int_w1s
         uint64_t ddr_err               : 1;  /**< [ 11: 11](R/W1S/H) Reads or sets LMC(0..2)_INT[DDR_ERR]. */
         uint64_t reserved_12_63        : 52;
 #endif /* Word 0 - End */
-    } cn96xx;
+    } cn9;
+    /* struct cavm_lmcx_int_w1s_cn9 cn96xx; */
+    struct cavm_lmcx_int_w1s_cn98xx
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_12_63        : 52;
+        uint64_t ddr_err               : 1;  /**< [ 11: 11](R/W1S/H) Reads or sets LMC(0..5)_INT[DDR_ERR]. */
+        uint64_t reserved_2_10         : 9;
+        uint64_t ref_pend_max1         : 1;  /**< [  1:  1](R/W1S/H) Reads or sets LMC(0..5)_INT[REF_PEND_MAX1]. */
+        uint64_t ref_pend_max0         : 1;  /**< [  0:  0](R/W1S/H) Reads or sets LMC(0..5)_INT[REF_PEND_MAX0]. */
+#else /* Word 0 - Little Endian */
+        uint64_t ref_pend_max0         : 1;  /**< [  0:  0](R/W1S/H) Reads or sets LMC(0..5)_INT[REF_PEND_MAX0]. */
+        uint64_t ref_pend_max1         : 1;  /**< [  1:  1](R/W1S/H) Reads or sets LMC(0..5)_INT[REF_PEND_MAX1]. */
+        uint64_t reserved_2_10         : 9;
+        uint64_t ddr_err               : 1;  /**< [ 11: 11](R/W1S/H) Reads or sets LMC(0..5)_INT[DDR_ERR]. */
+        uint64_t reserved_12_63        : 52;
+#endif /* Word 0 - End */
+    } cn98xx;
     struct cavm_lmcx_int_w1s_cnf95xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -10334,6 +10904,8 @@ static inline uint64_t CAVM_LMCX_INT_W1S(unsigned long a)
         return 0x87e088000150ll + 0x1000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e088000150ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e088000150ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e088000150ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -10415,6 +10987,8 @@ static inline uint64_t CAVM_LMCX_LANEX_CRC_SWIZ(unsigned long a, unsigned long b
         return 0x87e088000380ll + 0x1000000ll * ((a) & 0x1) + 8ll * ((b) & 0xf);
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=8)))
         return 0x87e088000380ll + 0x1000000ll * ((a) & 0x3) + 8ll * ((b) & 0xf);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=5) && (b<=8)))
+        return 0x87e088000380ll + 0x1000000ll * ((a) & 0x7) + 8ll * ((b) & 0xf);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (((a==0) || (a==2)) && (b<=8)))
         return 0x87e088000380ll + 0x1000000ll * ((a) & 0x3) + 8ll * ((b) & 0xf);
     if (cavm_is_model(OCTEONTX_LOKI) && (((a==0) || (a==2)) && (b<=8)))
@@ -11392,6 +11966,8 @@ static inline uint64_t CAVM_LMCX_MODEREG_PARAMS0(unsigned long a)
         return 0x87e0880001a8ll + 0x1000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e0880001a8ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e0880001a8ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e0880001a8ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -11591,7 +12167,7 @@ union cavm_lmcx_modereg_params1
         uint64_t reserved_55_63        : 9;
 #endif /* Word 0 - End */
     } s;
-    struct cavm_lmcx_modereg_params1_cn81xx
+    struct cavm_lmcx_modereg_params1_cn8
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_55_63        : 9;
@@ -11944,7 +12520,8 @@ union cavm_lmcx_modereg_params1
                                                                  RTT_WR rank 3 extension bit for DDR4. */
         uint64_t reserved_55_63        : 9;
 #endif /* Word 0 - End */
-    } cn81xx;
+    } cn8;
+    /* struct cavm_lmcx_modereg_params1_cn8 cn81xx; */
     struct cavm_lmcx_modereg_params1_cn83xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -12433,6 +13010,8 @@ static inline uint64_t CAVM_LMCX_MODEREG_PARAMS1(unsigned long a)
         return 0x87e088000260ll + 0x1000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e088000260ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e088000260ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e088000260ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -12503,6 +13082,8 @@ static inline uint64_t CAVM_LMCX_MODEREG_PARAMS2(unsigned long a)
         return 0x87e088000050ll + 0x1000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e088000050ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e088000050ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e088000050ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -12818,6 +13399,8 @@ static inline uint64_t CAVM_LMCX_MODEREG_PARAMS3(unsigned long a)
         return 0x87e088000058ll + 0x1000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e088000058ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e088000058ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e088000058ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -12880,6 +13463,8 @@ static inline uint64_t CAVM_LMCX_MPR_DATA0(unsigned long a)
         return 0x87e088000070ll + 0x1000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e088000070ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e088000070ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e088000070ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -12944,6 +13529,8 @@ static inline uint64_t CAVM_LMCX_MPR_DATA1(unsigned long a)
         return 0x87e088000078ll + 0x1000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e088000078ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e088000078ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e088000078ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -13006,6 +13593,8 @@ static inline uint64_t CAVM_LMCX_MPR_DATA2(unsigned long a)
         return 0x87e088000080ll + 0x1000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e088000080ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e088000080ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e088000080ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -13252,6 +13841,8 @@ static inline uint64_t CAVM_LMCX_MR_MPR_CTL(unsigned long a)
         return 0x87e088000068ll + 0x1000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e088000068ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e088000068ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e088000068ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -13298,6 +13889,8 @@ static inline uint64_t CAVM_LMCX_MSIX_PBAX(unsigned long a, unsigned long b)
         return 0x87e088ff0000ll + 0x1000000ll * ((a) & 0x1) + 8ll * ((b) & 0x0);
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b==0)))
         return 0x87e088ff0000ll + 0x1000000ll * ((a) & 0x3) + 8ll * ((b) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=5) && (b==0)))
+        return 0x87e088ff0000ll + 0x1000000ll * ((a) & 0x7) + 8ll * ((b) & 0x0);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (((a==0) || (a==2)) && (b==0)))
         return 0x87e088ff0000ll + 0x1000000ll * ((a) & 0x3) + 8ll * ((b) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (((a==0) || (a==2)) && (b==0)))
@@ -13365,7 +13958,9 @@ union cavm_lmcx_msix_vecx_addr
         uint64_t reserved_49_63        : 15;
 #endif /* Word 0 - End */
     } cn8;
-    struct cavm_lmcx_msix_vecx_addr_cn9
+    /* struct cavm_lmcx_msix_vecx_addr_s cn9; */
+    /* struct cavm_lmcx_msix_vecx_addr_s cn96xxp1; */
+    struct cavm_lmcx_msix_vecx_addr_cn96xxp3
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_53_63        : 11;
@@ -13414,7 +14009,10 @@ union cavm_lmcx_msix_vecx_addr
         uint64_t addr                  : 51; /**< [ 52:  2](R/W) IOVA to use for MSI-X delivery of this vector. */
         uint64_t reserved_53_63        : 11;
 #endif /* Word 0 - End */
-    } cn9;
+    } cn96xxp3;
+    /* struct cavm_lmcx_msix_vecx_addr_cn96xxp3 cn98xx; */
+    /* struct cavm_lmcx_msix_vecx_addr_cn96xxp3 cnf95xx; */
+    /* struct cavm_lmcx_msix_vecx_addr_cn96xxp3 loki; */
 };
 typedef union cavm_lmcx_msix_vecx_addr cavm_lmcx_msix_vecx_addr_t;
 
@@ -13427,6 +14025,8 @@ static inline uint64_t CAVM_LMCX_MSIX_VECX_ADDR(unsigned long a, unsigned long b
         return 0x87e088f00000ll + 0x1000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x0);
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=1)))
         return 0x87e088f00000ll + 0x1000000ll * ((a) & 0x3) + 0x10ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=5) && (b<=1)))
+        return 0x87e088f00000ll + 0x1000000ll * ((a) & 0x7) + 0x10ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (((a==0) || (a==2)) && (b<=1)))
         return 0x87e088f00000ll + 0x1000000ll * ((a) & 0x3) + 0x10ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && (((a==0) || (a==2)) && (b<=1)))
@@ -13489,6 +14089,8 @@ static inline uint64_t CAVM_LMCX_MSIX_VECX_CTL(unsigned long a, unsigned long b)
         return 0x87e088f00008ll + 0x1000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x0);
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=1)))
         return 0x87e088f00008ll + 0x1000000ll * ((a) & 0x3) + 0x10ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=5) && (b<=1)))
+        return 0x87e088f00008ll + 0x1000000ll * ((a) & 0x7) + 0x10ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (((a==0) || (a==2)) && (b<=1)))
         return 0x87e088f00008ll + 0x1000000ll * ((a) & 0x3) + 0x10ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && (((a==0) || (a==2)) && (b<=1)))
@@ -13652,6 +14254,7 @@ union cavm_lmcx_nxm
         uint64_t reserved_24_63        : 40;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_lmcx_nxm_s cn8; */
     /* struct cavm_lmcx_nxm_s cn81xx; */
     struct cavm_lmcx_nxm_cn83xx
     {
@@ -13718,6 +14321,8 @@ static inline uint64_t CAVM_LMCX_NXM(unsigned long a)
         return 0x87e0880000c8ll + 0x1000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e0880000d0ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e0880000d0ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e0880000d0ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -13835,6 +14440,8 @@ static inline uint64_t CAVM_LMCX_OPS_CNT(unsigned long a)
         return 0x87e0880001d8ll + 0x1000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e0880001d8ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e0880001d8ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e0880001d8ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -14163,7 +14770,7 @@ union cavm_lmcx_phy_ctl
                                                                  average of two as the final Vref training result. */
 #endif /* Word 0 - End */
     } s;
-    struct cavm_lmcx_phy_ctl_cn81xx
+    struct cavm_lmcx_phy_ctl_cn8
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_62_63        : 2;
@@ -14508,7 +15115,8 @@ union cavm_lmcx_phy_ctl
         uint64_t phy_dsk_lock_en       : 1;  /**< [ 61: 61](RO) Reserved. */
         uint64_t reserved_62_63        : 2;
 #endif /* Word 0 - End */
-    } cn81xx;
+    } cn8;
+    /* struct cavm_lmcx_phy_ctl_cn8 cn81xx; */
     struct cavm_lmcx_phy_ctl_cn83xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -14859,7 +15467,420 @@ union cavm_lmcx_phy_ctl
         uint64_t reserved_62_63        : 2;
 #endif /* Word 0 - End */
     } cn83xx;
-    struct cavm_lmcx_phy_ctl_cn96xx
+    struct cavm_lmcx_phy_ctl_cn9
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t rx_vref_sel           : 1;  /**< [ 63: 63](R/W) Run Vref training twice, sampling from DQ3 and DQ4 sequentially, then use the
+                                                                 average of two as the final Vref training result. */
+        uint64_t double_vref_training  : 1;  /**< [ 62: 62](R/W) Vref longer training.
+                                                                 0 = Normal training period.
+                                                                 1 = Double training period. */
+        uint64_t phy_dsk_lock_en       : 1;  /**< [ 61: 61](R/W) When set, the PHY attempts to lock all DQ/DBI bit deskew settings once alignment is
+                                                                 achieved.
+
+                                                                 When clear, LMC disengages the PHY bit deskew lock control mechanism. This
+                                                                 causes the PHY to continuously perform and/or adjust the read deskew training on
+                                                                 all DQ/DBI bits during any read operations. For diagnostic use only.
+
+                                                                 This field is only reset on cold reset.
+
+                                                                 Internal:
+                                                                 "When clear it has the following limitation:
+                                                                 1. It can only track timing for single-rank.
+                                                                 2. Deskew settings can be altered in the event of a fault (Parity/CRC) on a
+                                                                 returned DQS from DRAM.  See Bug #35079 for more detail." */
+        uint64_t dsk_dbg_load_dis      : 1;  /**< [ 60: 60](R/W) Reserved.
+                                                                 Internal:
+                                                                 When set, LMC prevents PHY from loading the deskew shift
+                                                                 registers with its internal settings. When Read Deskew sequence is kicked off
+                                                                 by setting [DSK_DBG_START] = 1 and [DSK_DBG_WR_MODE] = 0, this field determines
+                                                                 whether or not to load the shift register with PHY's internal settings before
+                                                                 the shifting process. */
+        uint64_t dsk_dbg_overwrt_ena   : 1;  /**< [ 59: 59](R/W) Reserved.
+                                                                 Internal:
+                                                                 When set high, PHY selects all of the preloaded data
+                                                                 when configuring the read deskew settings. */
+        uint64_t dsk_dbg_wr_mode       : 1;  /**< [ 58: 58](R/W) Reserved.
+                                                                 Internal:
+                                                                 When set high along with [DSK_DBG_START], LMC kicks off Deskew
+                                                                 Overwrite sequence to shift out one whole byte worth of deskew settings.
+                                                                 Note that there are a total of 9 bytes and the chain structure are split into two
+                                                                 halves such that the top chain covers byte 7,6,5,4 and bottom chain cover byte
+                                                                 ECC,3,2,1,0.
+                                                                 Each byte has 10 DQs (DQ7,DQ6,DQ5,DQ4,DBI,DAC,DQ3,DQ2,DQ1,DQ0) and that each
+                                                                 DQ has 10-bits deskew setting.
+                                                                 The CSR LMC()_GENERAL_PURPOSE0[DATA] is used to store a byte worth of deskew
+                                                                 settings. Before running Deskew Overwrite sequence, the CSR needs to be program
+                                                                 as follows:
+                                                                 DATA\<6:0\>   = DQ0 deskew setting.
+                                                                 DATA\<13:7\>  = DQ1 deskew setting.
+                                                                 DATA\<20:14\> = DQ2 deskew setting.
+                                                                 DATA\<27:21\> = DQ3 deskew setting.
+                                                                 DATA\<34:28\> = DQ4 deskew setting.
+                                                                 DATA\<41:35\> = DQ5 deskew setting.
+                                                                 DATA\<48:42\> = DQ6 deskew setting.
+                                                                 DATA\<55:49\> = DQ7 deskew setting.
+                                                                 DATA\<62:56\> = DBI deskew setting. */
+        uint64_t data_rate_loopback    : 1;  /**< [ 57: 57](R/W) Reserved.
+                                                                 Internal:
+                                                                 DQ data rate loopback, working in conjunction with LOOPBACK assertion.
+                                                                 When asserted, incoming PRBS at even DQ can be set at data rate, and the data is loop
+                                                                 backed out through odd DQ at the same rate.
+                                                                 When de-asserted, LOOPBACK assertion is working along with [LOOPBACK_POS] to check on even
+                                                                 DQ against each DQS edge seperately. This is done at the clock rate. */
+        uint64_t dq_shallow_loopback   : 1;  /**< [ 56: 56](R/W) Reserved.
+                                                                 Internal:
+                                                                 DQ shallow loopback, working in conjunction with LOOPBACK assertion.
+                                                                 When asserted, even DQ inputs can be loop-backed out through its adjacent odd DQ outputs
+                                                                 without being flop'd by DQS. Need to make sure LMC()_PHY_CTL[PHY_DSK_BYP] is set and
+                                                                 LMC()_PHY_CTL[INT_PHY_LOOPBACK_ENA] is unset. */
+        uint64_t dm_disable            : 1;  /**< [ 55: 55](R/W) Write to one to disable the DRAM data mask feature by having LMC driving a constant value
+                                                                 on
+                                                                 the DDR_DQS\<17:9\>_P pins of the chip during write operations. LMC drives a constant one.
+                                                                 Note that setting this field high is NOT allowed when LMC has the write DBI feature turned
+                                                                 on (LMC()_MODEREG_PARAMS3[WR_DBI]=1). */
+        uint64_t cke1_odt1_dis         : 1;  /**< [ 54: 54](R/W) Reserved.
+                                                                 Internal:
+                                                                 Used for NVDIMM-P. When one, LMC disables both DIMM's CKE1 and ODT1 pins
+                                                                 and uses them as inputs instead. */
+        uint64_t c1_cs3_switch         : 1;  /**< [ 53: 53](R/W) 0 = Routes C1 data to the C1 output pin, and
+                                                                     routes CS3 data to the CS3 output pin.
+
+                                                                 1 = Routes C1 data to the CS3 output pin, and
+                                                                     routes CS3 data to the C1 output pin. */
+        uint64_t c0_cs2_switch         : 1;  /**< [ 52: 52](R/W) 0 = Routes C0/TEN data to the C0/TEN output pin, and routes CS2 data to the CS2 output pin.
+                                                                 1 = Routes C0/TEN data to the CS2 output pin, and routes CS2 data to the C0/TEN output pin. */
+        uint64_t ten_sel               : 1;  /**< [ 51: 51](R/W) DDR PHY test enable select signal. When asserted, LMC drives C0/TEN pin with the value set
+                                                                 in LMC()_PHY_CTL[TEN] as part of any commands being sent out. */
+        uint64_t phy_reset             : 1;  /**< [ 50: 50](WO) Reserved.
+                                                                 Internal:
+                                                                 Write to one to reset the PHY, one-shot operation, will automatically
+                                                                 clear to value of zero. */
+        uint64_t dsk_dbg_rd_complete   : 1;  /**< [ 49: 49](RO/H) Reserved.
+                                                                 Internal:
+                                                                 Indicates completion of a read operation, will clear to zero when a read
+                                                                 operation is started, then set to one when operation is complete. */
+        uint64_t dsk_dbg_rd_data       : 10; /**< [ 48: 39](RO/H) Reserved.
+                                                                 Internal:
+                                                                 Data from a deskew read operation. Only valid when the
+                                                                 LMC()_PHY_CTL[DSK_DBG_RD_COMPLETE] bit is set. */
+        uint64_t dsk_dbg_start         : 1;  /**< [ 38: 38](WO/H) Reserved.
+                                                                 Internal:
+                                                                 Write one to start deskew data read/write operation, will automatically clear
+                                                                 to zero. Write to one will also clear the complete bit. */
+        uint64_t dsk_dbg_clk_scaler    : 2;  /**< [ 37: 36](R/W) Reserved.
+                                                                 Internal:
+                                                                 Adjust clock toggle rate for reading deskew debug information:
+                                                                 0x0 = Deskew read clock toggles every 4 DCLKs.
+                                                                 0x1 = Deskew read clock toggles every 8 DCLKs.
+                                                                 0x2 = Deskew read clock toggles every 12 DCLKs.
+                                                                 0x3 = Deskew read clock toggles every 16 DCLKs. */
+        uint64_t dsk_dbg_offset        : 2;  /**< [ 35: 34](R/W) Reserved.
+                                                                 Internal:
+                                                                 Offset to change delay of deskew debug data return time to LMC from
+                                                                 DDR PHY. */
+        uint64_t dsk_dbg_byte_rd       : 1;  /**< [ 33: 33](R/W) Reserved.
+                                                                 Internal:
+                                                                 Personality bit to tell deskew sequence read a byte worth of deskew settings.
+                                                                 Note that [DSK_DBG_BYTE_SEL] must be set to 0 when sequentially reading from
+                                                                 byte0, byte1, byte2, byte3 and ECC. [DSK_DBG_LOAD_DIS] needs to be cleared to 0
+                                                                 in the first run of reading byte0 and set to 1 there after.
+                                                                 Likewise, [DSK_DBG_BYTE_SEL] must be set to 4 when sequentially reading from
+                                                                 byte4, byte5, byte6 and byte 7. [DSK_DBG_LOAD_DIS] needs to be cleared to 0 in
+                                                                 the first run of reading byte4 and set to 1 there after.
+                                                                 After each deskew sequence run, the byte's deskew settings are stored in LMC()_GENERAL_PURPOSE0 and
+                                                                 LMC()_GENERAL_PURPOSE1 registers. */
+        uint64_t dsk_dbg_byte_sel      : 4;  /**< [ 32: 29](R/W) Reserved.
+                                                                 Internal:
+                                                                 Deskew debug byte select for read operation. Values 0-3 correspond to
+                                                                 byte lanes 0-3, 4 is for ECC, 5-8 are byte lanes 4-7. */
+        uint64_t dsk_dbg_bit_sel       : 4;  /**< [ 28: 25](R/W) Reserved.
+                                                                 Internal:
+                                                                 Deskew debug bit select for dsk read operation.
+                                                                 0x0 = DQ0.
+                                                                 0x1 = DQ1.
+                                                                 0x2 = DQ2.
+                                                                 0x3 = DQ3.
+                                                                 0x4 = DAC.
+                                                                 0x5 = DBI/DQS1.
+                                                                 0x6 = DQ4.
+                                                                 0x7 = DQ5.
+                                                                 0x8 = DQ6.
+                                                                 0x9 = DQ7. */
+        uint64_t dbi_mode_ena          : 1;  /**< [ 24: 24](R/W) Enable DBI mode for PHY. */
+        uint64_t ddr_error_n_ena       : 1;  /**< [ 23: 23](R/W) Enable error_alert_n signal for PHY. */
+        uint64_t ref_pin_on            : 1;  /**< [ 22: 22](R/W) Reserved.
+                                                                 Internal:
+                                                                 Voltage reference pin enabled. */
+        uint64_t dac_on                : 1;  /**< [ 21: 21](R/W) Reserved.
+                                                                 Internal:
+                                                                 PHY DAC on. */
+        uint64_t int_pad_loopback_ena  : 1;  /**< [ 20: 20](R/W) Reserved.
+                                                                 Internal:
+                                                                 DDR pad loopback enable.  Also must set LMC()_PHY_CTL[PHY_DSK_BYP]
+                                                                 when loopback is enabled. */
+        uint64_t int_phy_loopback_ena  : 1;  /**< [ 19: 19](R/W) Reserved.
+                                                                 Internal:
+                                                                 PHY loopback enable. */
+        uint64_t phy_dsk_reset         : 1;  /**< [ 18: 18](R/W) PHY deskew reset. When set, the deskew reset signal goes active if the Vrefint/deskew
+                                                                 training sequence is in the idle state.
+
+                                                                 This field is only reset on cold reset. */
+        uint64_t phy_dsk_byp           : 1;  /**< [ 17: 17](R/W) PHY deskew bypass. */
+        uint64_t phy_pwr_save_disable  : 1;  /**< [ 16: 16](R/W) DDR PHY power save disable. */
+        uint64_t ten                   : 1;  /**< [ 15: 15](R/W) DDR PHY test enable pin. */
+        uint64_t rx_always_on          : 1;  /**< [ 14: 14](R/W) Reserved; must be zero.
+                                                                 Internal:
+                                                                 Set to force read_enable to PHY active all the time.
+                                                                 This bit MUST not be set when LMC initialization is in progress. Internal VREF and
+                                                                 Deskew training requires normal operation on the dqx/s read_enable signals. */
+        uint64_t dqs1_loopback         : 1;  /**< [ 13: 13](R/W) Reserved; must be zero.
+                                                                 Internal:
+                                                                 The same as [LOOPBACK] except DQS1 is loopbacked through DQS0. */
+        uint64_t ck_tune1              : 1;  /**< [ 12: 12](R/W) Reserved; must be zero.
+                                                                 Internal:
+                                                                 Clock tune. */
+        uint64_t ck_dlyout1            : 4;  /**< [ 11:  8](R/W) Reserved; must be zero.
+                                                                 Internal:
+                                                                 Clock delay out.
+
+                                                                 CNXXXX uses only bits \<10:8\>. */
+        uint64_t ck_tune0              : 1;  /**< [  7:  7](R/W) Reserved; must be zero.
+                                                                 Internal:
+                                                                 Clock tune. */
+        uint64_t ck_dlyout0            : 4;  /**< [  6:  3](R/W) Reserved; must be zero.
+                                                                 Internal:
+                                                                 Clock delay out.
+
+                                                                 CNXXXX uses only bits \<5:3\>. */
+        uint64_t loopback              : 1;  /**< [  2:  2](R/W) Reserved; must be zero.
+                                                                 Internal:
+                                                                 external loopback enable. when asserted, Rx is on at DQS0 and data at even DQ
+                                                                 bits
+                                                                 are loop-backed out through odd DQ bits. For DQS, when LMC()_PHY_CTL[PHY_DSK_BYP] and
+                                                                 LMC()_CONFIG[MODE_X4DEV] are asserted along with LOOPBACK, DQS0 input of a given byte
+                                                                 can be loop-backed out through DQS1 of the same byte. For DQ, when
+                                                                 LMC()_PHY_CTL[DQ_SHALLOW_LOOPBACK] is asserted, DQ bits are loop-backed out without being
+                                                                 flop'd by incoming DQS. When LMC()_PHY_CTL[DQ_SHALLOW_LOOPBACK] is deasserted, DQ bits are
+                                                                 loop-backed out after being flop'd by incoming DQS. */
+        uint64_t loopback_pos          : 1;  /**< [  1:  1](R/W) Reserved; must be zero.
+                                                                 Internal:
+                                                                 Loopback pos mode. This works in conjunction with
+                                                                 LMC()_PHY_CTL[LOOPBACK] mentioned above. */
+        uint64_t ts_stagger            : 1;  /**< [  0:  0](R/W) TS stagger mode. This mode configures output drivers with two-stage drive strength to
+                                                                 avoid undershoot issues on the bus when strong drivers are suddenly turned on. When this
+                                                                 mode is asserted, CNXXXX will configure output drivers to be weak drivers (60 ohm output
+                                                                 impedance) at the first CK cycle, and change drivers to the designated drive strengths
+                                                                 specified in LMC()_COMP_CTL2[CMD_CTL], LMC()_COMP_CTL2[CK_CTL],
+                                                                 LMC()_COMP_CTL2[DQX_CTL] starting at the following cycle. */
+#else /* Word 0 - Little Endian */
+        uint64_t ts_stagger            : 1;  /**< [  0:  0](R/W) TS stagger mode. This mode configures output drivers with two-stage drive strength to
+                                                                 avoid undershoot issues on the bus when strong drivers are suddenly turned on. When this
+                                                                 mode is asserted, CNXXXX will configure output drivers to be weak drivers (60 ohm output
+                                                                 impedance) at the first CK cycle, and change drivers to the designated drive strengths
+                                                                 specified in LMC()_COMP_CTL2[CMD_CTL], LMC()_COMP_CTL2[CK_CTL],
+                                                                 LMC()_COMP_CTL2[DQX_CTL] starting at the following cycle. */
+        uint64_t loopback_pos          : 1;  /**< [  1:  1](R/W) Reserved; must be zero.
+                                                                 Internal:
+                                                                 Loopback pos mode. This works in conjunction with
+                                                                 LMC()_PHY_CTL[LOOPBACK] mentioned above. */
+        uint64_t loopback              : 1;  /**< [  2:  2](R/W) Reserved; must be zero.
+                                                                 Internal:
+                                                                 external loopback enable. when asserted, Rx is on at DQS0 and data at even DQ
+                                                                 bits
+                                                                 are loop-backed out through odd DQ bits. For DQS, when LMC()_PHY_CTL[PHY_DSK_BYP] and
+                                                                 LMC()_CONFIG[MODE_X4DEV] are asserted along with LOOPBACK, DQS0 input of a given byte
+                                                                 can be loop-backed out through DQS1 of the same byte. For DQ, when
+                                                                 LMC()_PHY_CTL[DQ_SHALLOW_LOOPBACK] is asserted, DQ bits are loop-backed out without being
+                                                                 flop'd by incoming DQS. When LMC()_PHY_CTL[DQ_SHALLOW_LOOPBACK] is deasserted, DQ bits are
+                                                                 loop-backed out after being flop'd by incoming DQS. */
+        uint64_t ck_dlyout0            : 4;  /**< [  6:  3](R/W) Reserved; must be zero.
+                                                                 Internal:
+                                                                 Clock delay out.
+
+                                                                 CNXXXX uses only bits \<5:3\>. */
+        uint64_t ck_tune0              : 1;  /**< [  7:  7](R/W) Reserved; must be zero.
+                                                                 Internal:
+                                                                 Clock tune. */
+        uint64_t ck_dlyout1            : 4;  /**< [ 11:  8](R/W) Reserved; must be zero.
+                                                                 Internal:
+                                                                 Clock delay out.
+
+                                                                 CNXXXX uses only bits \<10:8\>. */
+        uint64_t ck_tune1              : 1;  /**< [ 12: 12](R/W) Reserved; must be zero.
+                                                                 Internal:
+                                                                 Clock tune. */
+        uint64_t dqs1_loopback         : 1;  /**< [ 13: 13](R/W) Reserved; must be zero.
+                                                                 Internal:
+                                                                 The same as [LOOPBACK] except DQS1 is loopbacked through DQS0. */
+        uint64_t rx_always_on          : 1;  /**< [ 14: 14](R/W) Reserved; must be zero.
+                                                                 Internal:
+                                                                 Set to force read_enable to PHY active all the time.
+                                                                 This bit MUST not be set when LMC initialization is in progress. Internal VREF and
+                                                                 Deskew training requires normal operation on the dqx/s read_enable signals. */
+        uint64_t ten                   : 1;  /**< [ 15: 15](R/W) DDR PHY test enable pin. */
+        uint64_t phy_pwr_save_disable  : 1;  /**< [ 16: 16](R/W) DDR PHY power save disable. */
+        uint64_t phy_dsk_byp           : 1;  /**< [ 17: 17](R/W) PHY deskew bypass. */
+        uint64_t phy_dsk_reset         : 1;  /**< [ 18: 18](R/W) PHY deskew reset. When set, the deskew reset signal goes active if the Vrefint/deskew
+                                                                 training sequence is in the idle state.
+
+                                                                 This field is only reset on cold reset. */
+        uint64_t int_phy_loopback_ena  : 1;  /**< [ 19: 19](R/W) Reserved.
+                                                                 Internal:
+                                                                 PHY loopback enable. */
+        uint64_t int_pad_loopback_ena  : 1;  /**< [ 20: 20](R/W) Reserved.
+                                                                 Internal:
+                                                                 DDR pad loopback enable.  Also must set LMC()_PHY_CTL[PHY_DSK_BYP]
+                                                                 when loopback is enabled. */
+        uint64_t dac_on                : 1;  /**< [ 21: 21](R/W) Reserved.
+                                                                 Internal:
+                                                                 PHY DAC on. */
+        uint64_t ref_pin_on            : 1;  /**< [ 22: 22](R/W) Reserved.
+                                                                 Internal:
+                                                                 Voltage reference pin enabled. */
+        uint64_t ddr_error_n_ena       : 1;  /**< [ 23: 23](R/W) Enable error_alert_n signal for PHY. */
+        uint64_t dbi_mode_ena          : 1;  /**< [ 24: 24](R/W) Enable DBI mode for PHY. */
+        uint64_t dsk_dbg_bit_sel       : 4;  /**< [ 28: 25](R/W) Reserved.
+                                                                 Internal:
+                                                                 Deskew debug bit select for dsk read operation.
+                                                                 0x0 = DQ0.
+                                                                 0x1 = DQ1.
+                                                                 0x2 = DQ2.
+                                                                 0x3 = DQ3.
+                                                                 0x4 = DAC.
+                                                                 0x5 = DBI/DQS1.
+                                                                 0x6 = DQ4.
+                                                                 0x7 = DQ5.
+                                                                 0x8 = DQ6.
+                                                                 0x9 = DQ7. */
+        uint64_t dsk_dbg_byte_sel      : 4;  /**< [ 32: 29](R/W) Reserved.
+                                                                 Internal:
+                                                                 Deskew debug byte select for read operation. Values 0-3 correspond to
+                                                                 byte lanes 0-3, 4 is for ECC, 5-8 are byte lanes 4-7. */
+        uint64_t dsk_dbg_byte_rd       : 1;  /**< [ 33: 33](R/W) Reserved.
+                                                                 Internal:
+                                                                 Personality bit to tell deskew sequence read a byte worth of deskew settings.
+                                                                 Note that [DSK_DBG_BYTE_SEL] must be set to 0 when sequentially reading from
+                                                                 byte0, byte1, byte2, byte3 and ECC. [DSK_DBG_LOAD_DIS] needs to be cleared to 0
+                                                                 in the first run of reading byte0 and set to 1 there after.
+                                                                 Likewise, [DSK_DBG_BYTE_SEL] must be set to 4 when sequentially reading from
+                                                                 byte4, byte5, byte6 and byte 7. [DSK_DBG_LOAD_DIS] needs to be cleared to 0 in
+                                                                 the first run of reading byte4 and set to 1 there after.
+                                                                 After each deskew sequence run, the byte's deskew settings are stored in LMC()_GENERAL_PURPOSE0 and
+                                                                 LMC()_GENERAL_PURPOSE1 registers. */
+        uint64_t dsk_dbg_offset        : 2;  /**< [ 35: 34](R/W) Reserved.
+                                                                 Internal:
+                                                                 Offset to change delay of deskew debug data return time to LMC from
+                                                                 DDR PHY. */
+        uint64_t dsk_dbg_clk_scaler    : 2;  /**< [ 37: 36](R/W) Reserved.
+                                                                 Internal:
+                                                                 Adjust clock toggle rate for reading deskew debug information:
+                                                                 0x0 = Deskew read clock toggles every 4 DCLKs.
+                                                                 0x1 = Deskew read clock toggles every 8 DCLKs.
+                                                                 0x2 = Deskew read clock toggles every 12 DCLKs.
+                                                                 0x3 = Deskew read clock toggles every 16 DCLKs. */
+        uint64_t dsk_dbg_start         : 1;  /**< [ 38: 38](WO/H) Reserved.
+                                                                 Internal:
+                                                                 Write one to start deskew data read/write operation, will automatically clear
+                                                                 to zero. Write to one will also clear the complete bit. */
+        uint64_t dsk_dbg_rd_data       : 10; /**< [ 48: 39](RO/H) Reserved.
+                                                                 Internal:
+                                                                 Data from a deskew read operation. Only valid when the
+                                                                 LMC()_PHY_CTL[DSK_DBG_RD_COMPLETE] bit is set. */
+        uint64_t dsk_dbg_rd_complete   : 1;  /**< [ 49: 49](RO/H) Reserved.
+                                                                 Internal:
+                                                                 Indicates completion of a read operation, will clear to zero when a read
+                                                                 operation is started, then set to one when operation is complete. */
+        uint64_t phy_reset             : 1;  /**< [ 50: 50](WO) Reserved.
+                                                                 Internal:
+                                                                 Write to one to reset the PHY, one-shot operation, will automatically
+                                                                 clear to value of zero. */
+        uint64_t ten_sel               : 1;  /**< [ 51: 51](R/W) DDR PHY test enable select signal. When asserted, LMC drives C0/TEN pin with the value set
+                                                                 in LMC()_PHY_CTL[TEN] as part of any commands being sent out. */
+        uint64_t c0_cs2_switch         : 1;  /**< [ 52: 52](R/W) 0 = Routes C0/TEN data to the C0/TEN output pin, and routes CS2 data to the CS2 output pin.
+                                                                 1 = Routes C0/TEN data to the CS2 output pin, and routes CS2 data to the C0/TEN output pin. */
+        uint64_t c1_cs3_switch         : 1;  /**< [ 53: 53](R/W) 0 = Routes C1 data to the C1 output pin, and
+                                                                     routes CS3 data to the CS3 output pin.
+
+                                                                 1 = Routes C1 data to the CS3 output pin, and
+                                                                     routes CS3 data to the C1 output pin. */
+        uint64_t cke1_odt1_dis         : 1;  /**< [ 54: 54](R/W) Reserved.
+                                                                 Internal:
+                                                                 Used for NVDIMM-P. When one, LMC disables both DIMM's CKE1 and ODT1 pins
+                                                                 and uses them as inputs instead. */
+        uint64_t dm_disable            : 1;  /**< [ 55: 55](R/W) Write to one to disable the DRAM data mask feature by having LMC driving a constant value
+                                                                 on
+                                                                 the DDR_DQS\<17:9\>_P pins of the chip during write operations. LMC drives a constant one.
+                                                                 Note that setting this field high is NOT allowed when LMC has the write DBI feature turned
+                                                                 on (LMC()_MODEREG_PARAMS3[WR_DBI]=1). */
+        uint64_t dq_shallow_loopback   : 1;  /**< [ 56: 56](R/W) Reserved.
+                                                                 Internal:
+                                                                 DQ shallow loopback, working in conjunction with LOOPBACK assertion.
+                                                                 When asserted, even DQ inputs can be loop-backed out through its adjacent odd DQ outputs
+                                                                 without being flop'd by DQS. Need to make sure LMC()_PHY_CTL[PHY_DSK_BYP] is set and
+                                                                 LMC()_PHY_CTL[INT_PHY_LOOPBACK_ENA] is unset. */
+        uint64_t data_rate_loopback    : 1;  /**< [ 57: 57](R/W) Reserved.
+                                                                 Internal:
+                                                                 DQ data rate loopback, working in conjunction with LOOPBACK assertion.
+                                                                 When asserted, incoming PRBS at even DQ can be set at data rate, and the data is loop
+                                                                 backed out through odd DQ at the same rate.
+                                                                 When de-asserted, LOOPBACK assertion is working along with [LOOPBACK_POS] to check on even
+                                                                 DQ against each DQS edge seperately. This is done at the clock rate. */
+        uint64_t dsk_dbg_wr_mode       : 1;  /**< [ 58: 58](R/W) Reserved.
+                                                                 Internal:
+                                                                 When set high along with [DSK_DBG_START], LMC kicks off Deskew
+                                                                 Overwrite sequence to shift out one whole byte worth of deskew settings.
+                                                                 Note that there are a total of 9 bytes and the chain structure are split into two
+                                                                 halves such that the top chain covers byte 7,6,5,4 and bottom chain cover byte
+                                                                 ECC,3,2,1,0.
+                                                                 Each byte has 10 DQs (DQ7,DQ6,DQ5,DQ4,DBI,DAC,DQ3,DQ2,DQ1,DQ0) and that each
+                                                                 DQ has 10-bits deskew setting.
+                                                                 The CSR LMC()_GENERAL_PURPOSE0[DATA] is used to store a byte worth of deskew
+                                                                 settings. Before running Deskew Overwrite sequence, the CSR needs to be program
+                                                                 as follows:
+                                                                 DATA\<6:0\>   = DQ0 deskew setting.
+                                                                 DATA\<13:7\>  = DQ1 deskew setting.
+                                                                 DATA\<20:14\> = DQ2 deskew setting.
+                                                                 DATA\<27:21\> = DQ3 deskew setting.
+                                                                 DATA\<34:28\> = DQ4 deskew setting.
+                                                                 DATA\<41:35\> = DQ5 deskew setting.
+                                                                 DATA\<48:42\> = DQ6 deskew setting.
+                                                                 DATA\<55:49\> = DQ7 deskew setting.
+                                                                 DATA\<62:56\> = DBI deskew setting. */
+        uint64_t dsk_dbg_overwrt_ena   : 1;  /**< [ 59: 59](R/W) Reserved.
+                                                                 Internal:
+                                                                 When set high, PHY selects all of the preloaded data
+                                                                 when configuring the read deskew settings. */
+        uint64_t dsk_dbg_load_dis      : 1;  /**< [ 60: 60](R/W) Reserved.
+                                                                 Internal:
+                                                                 When set, LMC prevents PHY from loading the deskew shift
+                                                                 registers with its internal settings. When Read Deskew sequence is kicked off
+                                                                 by setting [DSK_DBG_START] = 1 and [DSK_DBG_WR_MODE] = 0, this field determines
+                                                                 whether or not to load the shift register with PHY's internal settings before
+                                                                 the shifting process. */
+        uint64_t phy_dsk_lock_en       : 1;  /**< [ 61: 61](R/W) When set, the PHY attempts to lock all DQ/DBI bit deskew settings once alignment is
+                                                                 achieved.
+
+                                                                 When clear, LMC disengages the PHY bit deskew lock control mechanism. This
+                                                                 causes the PHY to continuously perform and/or adjust the read deskew training on
+                                                                 all DQ/DBI bits during any read operations. For diagnostic use only.
+
+                                                                 This field is only reset on cold reset.
+
+                                                                 Internal:
+                                                                 "When clear it has the following limitation:
+                                                                 1. It can only track timing for single-rank.
+                                                                 2. Deskew settings can be altered in the event of a fault (Parity/CRC) on a
+                                                                 returned DQS from DRAM.  See Bug #35079 for more detail." */
+        uint64_t double_vref_training  : 1;  /**< [ 62: 62](R/W) Vref longer training.
+                                                                 0 = Normal training period.
+                                                                 1 = Double training period. */
+        uint64_t rx_vref_sel           : 1;  /**< [ 63: 63](R/W) Run Vref training twice, sampling from DQ3 and DQ4 sequentially, then use the
+                                                                 average of two as the final Vref training result. */
+#endif /* Word 0 - End */
+    } cn9;
+    /* struct cavm_lmcx_phy_ctl_cn9 cn96xxp1; */
+    struct cavm_lmcx_phy_ctl_cn96xxp3
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t rx_vref_sel           : 1;  /**< [ 63: 63](R/W) Run Vref training twice, sampling from DQ3 and DQ4 sequentially, then use the
@@ -15272,7 +16293,413 @@ union cavm_lmcx_phy_ctl
         uint64_t rx_vref_sel           : 1;  /**< [ 63: 63](R/W) Run Vref training twice, sampling from DQ3 and DQ4 sequentially, then use the
                                                                  average of two as the final Vref training result. */
 #endif /* Word 0 - End */
-    } cn96xx;
+    } cn96xxp3;
+    struct cavm_lmcx_phy_ctl_cn98xx
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t rx_vref_sel           : 1;  /**< [ 63: 63](R/W) Run Vref training twice, sampling from DQ3 and DQ4 sequentially, then use the
+                                                                 average of two as the final Vref training result. */
+        uint64_t double_vref_training  : 1;  /**< [ 62: 62](R/W) Vref longer training.
+                                                                 0 = Normal training period.
+                                                                 1 = Double training period. */
+        uint64_t phy_dsk_lock_en       : 1;  /**< [ 61: 61](R/W) When set, the PHY attempts to lock all DQ/DBI bit deskew settings once alignment is
+                                                                 achieved.
+
+                                                                 When clear, LMC disengages the PHY bit deskew lock control mechanism. This
+                                                                 causes the PHY to continuously perform and/or adjust the read deskew training on
+                                                                 all DQ/DBI bits during any read operations. For diagnostic use only.
+
+                                                                 This field is only reset on cold reset.
+
+                                                                 Internal:
+                                                                 "When clear it has the following limitation:
+                                                                 1. It can only track timing for single-rank.
+                                                                 2. Deskew settings can be altered in the event of a fault (Parity/CRC) on a
+                                                                 returned DQS from DRAM.  See Bug #35079 for more detail." */
+        uint64_t dsk_dbg_load_dis      : 1;  /**< [ 60: 60](R/W) Reserved.
+                                                                 Internal:
+                                                                 When set, LMC prevents PHY from loading the deskew shift
+                                                                 registers with its internal settings. When Read Deskew sequence is kicked off
+                                                                 by setting [DSK_DBG_START] = 1 and [DSK_DBG_WR_MODE] = 0, this field determines
+                                                                 whether or not to load the shift register with PHY's internal settings before
+                                                                 the shifting process. */
+        uint64_t dsk_dbg_overwrt_ena   : 1;  /**< [ 59: 59](R/W) Reserved.
+                                                                 Internal:
+                                                                 When set high, PHY selects all of the preloaded data
+                                                                 when configuring the read deskew settings. */
+        uint64_t dsk_dbg_wr_mode       : 1;  /**< [ 58: 58](R/W) Reserved.
+                                                                 Internal:
+                                                                 When set high along with [DSK_DBG_START], LMC kicks off Deskew
+                                                                 Overwrite sequence to shift out one whole byte worth of deskew settings.
+                                                                 Note that there are a total of 9 bytes and the chain structure are split into two
+                                                                 halves such that the top chain covers byte 7,6,5,4 and bottom chain cover byte
+                                                                 ECC,3,2,1,0.
+                                                                 Each byte has 10 DQs (DQ7,DQ6,DQ5,DQ4,DBI,DAC,DQ3,DQ2,DQ1,DQ0) and that each
+                                                                 DQ has 10-bits deskew setting.
+                                                                 The CSR LMC()_GENERAL_PURPOSE0[DATA] is used to store a byte worth of deskew
+                                                                 settings. Before running Deskew Overwrite sequence, the CSR needs to be program
+                                                                 as follows:
+                                                                 DATA\<6:0\>   = DQ0 deskew setting.
+                                                                 DATA\<13:7\>  = DQ1 deskew setting.
+                                                                 DATA\<20:14\> = DQ2 deskew setting.
+                                                                 DATA\<27:21\> = DQ3 deskew setting.
+                                                                 DATA\<34:28\> = DQ4 deskew setting.
+                                                                 DATA\<41:35\> = DQ5 deskew setting.
+                                                                 DATA\<48:42\> = DQ6 deskew setting.
+                                                                 DATA\<55:49\> = DQ7 deskew setting.
+                                                                 DATA\<62:56\> = DBI deskew setting. */
+        uint64_t data_rate_loopback    : 1;  /**< [ 57: 57](R/W) Reserved.
+                                                                 Internal:
+                                                                 DQ data rate loopback, working in conjunction with LOOPBACK assertion.
+                                                                 When asserted, incoming PRBS at even DQ can be set at data rate, and the data is loop
+                                                                 backed out through odd DQ at the same rate.
+                                                                 When de-asserted, LOOPBACK assertion is working along with [LOOPBACK_POS] to check on even
+                                                                 DQ against each DQS edge seperately. This is done at the clock rate. */
+        uint64_t dq_shallow_loopback   : 1;  /**< [ 56: 56](R/W) Reserved.
+                                                                 Internal:
+                                                                 DQ shallow loopback, working in conjunction with LOOPBACK assertion.
+                                                                 When asserted, even DQ inputs can be loop-backed out through its adjacent odd DQ outputs
+                                                                 without being flop'd by DQS. Need to make sure LMC()_PHY_CTL[PHY_DSK_BYP] is set and
+                                                                 LMC()_PHY_CTL[INT_PHY_LOOPBACK_ENA] is unset. */
+        uint64_t dm_disable            : 1;  /**< [ 55: 55](R/W) Write to one to disable the DRAM data mask feature by having LMC driving a constant value
+                                                                 on
+                                                                 the DDR_DQS\<17:9\>_P pins of the chip during write operations. LMC drives a constant one.
+                                                                 Note that setting this field high is NOT allowed when LMC has the write DBI feature turned
+                                                                 on (LMC()_MODEREG_PARAMS3[WR_DBI]=1). */
+        uint64_t cke1_odt1_dis         : 1;  /**< [ 54: 54](R/W) Reserved.
+                                                                 Internal:
+                                                                 Used for NVDIMM-P. When one, LMC disables both DIMM's CKE1 and ODT1 pins
+                                                                 and uses them as inputs instead. */
+        uint64_t c1_cs3_switch         : 1;  /**< [ 53: 53](R/W) 0 = Routes C1 data to the C1 output pin, and
+                                                                     routes CS3 data to the CS3 output pin.
+
+                                                                 1 = Routes C1 data to the CS3 output pin, and
+                                                                     routes CS3 data to the C1 output pin. */
+        uint64_t c0_cs2_switch         : 1;  /**< [ 52: 52](R/W) 0 = Routes C0/TEN data to the C0/TEN output pin, and routes CS2 data to the CS2 output pin.
+                                                                 1 = Routes C0/TEN data to the CS2 output pin, and routes CS2 data to the C0/TEN output pin. */
+        uint64_t ten_sel               : 1;  /**< [ 51: 51](R/W) DDR PHY test enable select signal. When asserted, LMC drives C0/TEN pin with the value set
+                                                                 in LMC()_PHY_CTL[TEN] as part of any commands being sent out. */
+        uint64_t phy_reset             : 1;  /**< [ 50: 50](WO) Reserved.
+                                                                 Internal:
+                                                                 Write to one to reset the PHY, one-shot operation, will automatically
+                                                                 clear to value of zero. */
+        uint64_t dsk_dbg_rd_complete   : 1;  /**< [ 49: 49](RO/H) Reserved.
+                                                                 Internal:
+                                                                 Indicates completion of a read operation, will clear to zero when a read
+                                                                 operation is started, then set to one when operation is complete. */
+        uint64_t dsk_dbg_rd_data       : 10; /**< [ 48: 39](RO/H) Reserved.
+                                                                 Internal:
+                                                                 Data from a deskew read operation. Only valid when the
+                                                                 LMC()_PHY_CTL[DSK_DBG_RD_COMPLETE] bit is set. */
+        uint64_t dsk_dbg_start         : 1;  /**< [ 38: 38](WO/H) Reserved.
+                                                                 Internal:
+                                                                 Write one to start deskew data read/write operation, will automatically clear
+                                                                 to zero. Write to one will also clear the complete bit. */
+        uint64_t dsk_dbg_clk_scaler    : 2;  /**< [ 37: 36](R/W) Reserved.
+                                                                 Internal:
+                                                                 Adjust clock toggle rate for reading deskew debug information:
+                                                                 0x0 = Deskew read clock toggles every 4 DCLKs.
+                                                                 0x1 = Deskew read clock toggles every 8 DCLKs.
+                                                                 0x2 = Deskew read clock toggles every 12 DCLKs.
+                                                                 0x3 = Deskew read clock toggles every 16 DCLKs. */
+        uint64_t dsk_dbg_offset        : 2;  /**< [ 35: 34](R/W) Reserved.
+                                                                 Internal:
+                                                                 Offset to change delay of deskew debug data return time to LMC from
+                                                                 DDR PHY. */
+        uint64_t dsk_dbg_byte_rd       : 1;  /**< [ 33: 33](R/W) Reserved.
+                                                                 Internal:
+                                                                 Personality bit to tell deskew sequence read a byte worth of deskew settings.
+                                                                 Note that [DSK_DBG_BYTE_SEL] must be set to 0 when sequentially reading from
+                                                                 byte0, byte1, byte2, byte3 and ECC. [DSK_DBG_LOAD_DIS] needs to be cleared to 0
+                                                                 in the first run of reading byte0 and set to 1 there after.
+                                                                 Likewise, [DSK_DBG_BYTE_SEL] must be set to 4 when sequentially reading from
+                                                                 byte4, byte5, byte6 and byte 7. [DSK_DBG_LOAD_DIS] needs to be cleared to 0 in
+                                                                 the first run of reading byte4 and set to 1 there after.
+                                                                 After each deskew sequence run, the byte's deskew settings are stored in LMC()_GENERAL_PURPOSE0 and
+                                                                 LMC()_GENERAL_PURPOSE1 registers. */
+        uint64_t dsk_dbg_byte_sel      : 4;  /**< [ 32: 29](R/W) Reserved.
+                                                                 Internal:
+                                                                 Deskew debug byte select for read operation. Values 0-3 correspond to
+                                                                 byte lanes 0-3, 4 is for ECC, 5-8 are byte lanes 4-7. */
+        uint64_t dsk_dbg_bit_sel       : 4;  /**< [ 28: 25](R/W) Reserved.
+                                                                 Internal:
+                                                                 Deskew debug bit select for dsk read operation.
+                                                                 0x0 = DQ0.
+                                                                 0x1 = DQ1.
+                                                                 0x2 = DQ2.
+                                                                 0x3 = DQ3.
+                                                                 0x4 = DAC.
+                                                                 0x5 = DBI/DQS1.
+                                                                 0x6 = DQ4.
+                                                                 0x7 = DQ5.
+                                                                 0x8 = DQ6.
+                                                                 0x9 = DQ7. */
+        uint64_t dbi_mode_ena          : 1;  /**< [ 24: 24](R/W) Enable DBI mode for PHY. */
+        uint64_t ddr_error_n_ena       : 1;  /**< [ 23: 23](R/W) Enable error_alert_n signal for PHY. */
+        uint64_t ref_pin_on            : 1;  /**< [ 22: 22](R/W) Reserved.
+                                                                 Internal:
+                                                                 Voltage reference pin enabled. */
+        uint64_t dac_on                : 1;  /**< [ 21: 21](R/W) Reserved.
+                                                                 Internal:
+                                                                 PHY DAC on. */
+        uint64_t int_pad_loopback_ena  : 1;  /**< [ 20: 20](R/W) Reserved.
+                                                                 Internal:
+                                                                 DDR pad loopback enable.  Also must set LMC()_PHY_CTL[PHY_DSK_BYP]
+                                                                 when loopback is enabled. */
+        uint64_t int_phy_loopback_ena  : 1;  /**< [ 19: 19](R/W) Reserved.
+                                                                 Internal:
+                                                                 PHY loopback enable. */
+        uint64_t phy_dsk_reset         : 1;  /**< [ 18: 18](R/W) PHY deskew reset. When set, the deskew reset signal goes active if the Vrefint/deskew
+                                                                 training sequence is in the idle state.
+
+                                                                 This field is only reset on cold reset. */
+        uint64_t phy_dsk_byp           : 1;  /**< [ 17: 17](R/W) PHY deskew bypass. */
+        uint64_t phy_pwr_save_disable  : 1;  /**< [ 16: 16](R/W) DDR PHY power save disable. */
+        uint64_t ten                   : 1;  /**< [ 15: 15](R/W) DDR PHY test enable pin. */
+        uint64_t rx_always_on          : 1;  /**< [ 14: 14](R/W) Reserved; must be zero.
+                                                                 Internal:
+                                                                 Set to force read_enable to PHY active all the time.
+                                                                 This bit MUST not be set when LMC initialization is in progress. Internal VREF and
+                                                                 Deskew training requires normal operation on the dqx/s read_enable signals.
+                                                                 If set to 1, software needs to ensure that it is set after the DCC training steps are completed. */
+        uint64_t dqs1_loopback         : 1;  /**< [ 13: 13](R/W) Reserved; must be zero.
+                                                                 Internal:
+                                                                 The same as [LOOPBACK] except DQS1 is loopbacked through DQS0. */
+        uint64_t ck_tune1              : 1;  /**< [ 12: 12](R/W) Reserved; must be zero.
+                                                                 Internal:
+                                                                 Clock tune. */
+        uint64_t ck_dlyout1            : 4;  /**< [ 11:  8](R/W) Reserved; must be zero.
+                                                                 Internal:
+                                                                 Clock delay out. */
+        uint64_t ck_tune0              : 1;  /**< [  7:  7](R/W) Reserved; must be zero.
+                                                                 Internal:
+                                                                 Clock tune. */
+        uint64_t ck_dlyout0            : 4;  /**< [  6:  3](R/W) Reserved; must be zero.
+                                                                 Internal:
+                                                                 Clock delay out. */
+        uint64_t loopback              : 1;  /**< [  2:  2](R/W) Reserved; must be zero.
+                                                                 Internal:
+                                                                 external loopback enable. when asserted, Rx is on at DQS0 and data at even DQ
+                                                                 bits
+                                                                 are loop-backed out through odd DQ bits. For DQS, when LMC()_PHY_CTL[PHY_DSK_BYP] and
+                                                                 LMC()_CONFIG[MODE_X4DEV] are asserted along with LOOPBACK, DQS0 input of a given byte
+                                                                 can be loop-backed out through DQS1 of the same byte. For DQ, when
+                                                                 LMC()_PHY_CTL[DQ_SHALLOW_LOOPBACK] is asserted, DQ bits are loop-backed out without being
+                                                                 flop'd by incoming DQS. When LMC()_PHY_CTL[DQ_SHALLOW_LOOPBACK] is deasserted, DQ bits are
+                                                                 loop-backed out after being flop'd by incoming DQS. */
+        uint64_t loopback_pos          : 1;  /**< [  1:  1](R/W) Reserved; must be zero.
+                                                                 Internal:
+                                                                 Loopback pos mode. This works in conjunction with
+                                                                 LMC()_PHY_CTL[LOOPBACK] mentioned above. */
+        uint64_t ts_stagger            : 1;  /**< [  0:  0](R/W) TS stagger mode. This mode configures output drivers with two-stage drive strength to
+                                                                 avoid undershoot issues on the bus when strong drivers are suddenly turned on. When this
+                                                                 mode is asserted, CNXXXX will configure output drivers to be weak drivers (60 ohm output
+                                                                 impedance) at the first CK cycle, and change drivers to the designated drive strengths
+                                                                 specified in LMC()_COMP_CTL2[CMD_CTL], LMC()_COMP_CTL2[CK_CTL],
+                                                                 LMC()_COMP_CTL2[DQX_CTL] starting at the following cycle. */
+#else /* Word 0 - Little Endian */
+        uint64_t ts_stagger            : 1;  /**< [  0:  0](R/W) TS stagger mode. This mode configures output drivers with two-stage drive strength to
+                                                                 avoid undershoot issues on the bus when strong drivers are suddenly turned on. When this
+                                                                 mode is asserted, CNXXXX will configure output drivers to be weak drivers (60 ohm output
+                                                                 impedance) at the first CK cycle, and change drivers to the designated drive strengths
+                                                                 specified in LMC()_COMP_CTL2[CMD_CTL], LMC()_COMP_CTL2[CK_CTL],
+                                                                 LMC()_COMP_CTL2[DQX_CTL] starting at the following cycle. */
+        uint64_t loopback_pos          : 1;  /**< [  1:  1](R/W) Reserved; must be zero.
+                                                                 Internal:
+                                                                 Loopback pos mode. This works in conjunction with
+                                                                 LMC()_PHY_CTL[LOOPBACK] mentioned above. */
+        uint64_t loopback              : 1;  /**< [  2:  2](R/W) Reserved; must be zero.
+                                                                 Internal:
+                                                                 external loopback enable. when asserted, Rx is on at DQS0 and data at even DQ
+                                                                 bits
+                                                                 are loop-backed out through odd DQ bits. For DQS, when LMC()_PHY_CTL[PHY_DSK_BYP] and
+                                                                 LMC()_CONFIG[MODE_X4DEV] are asserted along with LOOPBACK, DQS0 input of a given byte
+                                                                 can be loop-backed out through DQS1 of the same byte. For DQ, when
+                                                                 LMC()_PHY_CTL[DQ_SHALLOW_LOOPBACK] is asserted, DQ bits are loop-backed out without being
+                                                                 flop'd by incoming DQS. When LMC()_PHY_CTL[DQ_SHALLOW_LOOPBACK] is deasserted, DQ bits are
+                                                                 loop-backed out after being flop'd by incoming DQS. */
+        uint64_t ck_dlyout0            : 4;  /**< [  6:  3](R/W) Reserved; must be zero.
+                                                                 Internal:
+                                                                 Clock delay out. */
+        uint64_t ck_tune0              : 1;  /**< [  7:  7](R/W) Reserved; must be zero.
+                                                                 Internal:
+                                                                 Clock tune. */
+        uint64_t ck_dlyout1            : 4;  /**< [ 11:  8](R/W) Reserved; must be zero.
+                                                                 Internal:
+                                                                 Clock delay out. */
+        uint64_t ck_tune1              : 1;  /**< [ 12: 12](R/W) Reserved; must be zero.
+                                                                 Internal:
+                                                                 Clock tune. */
+        uint64_t dqs1_loopback         : 1;  /**< [ 13: 13](R/W) Reserved; must be zero.
+                                                                 Internal:
+                                                                 The same as [LOOPBACK] except DQS1 is loopbacked through DQS0. */
+        uint64_t rx_always_on          : 1;  /**< [ 14: 14](R/W) Reserved; must be zero.
+                                                                 Internal:
+                                                                 Set to force read_enable to PHY active all the time.
+                                                                 This bit MUST not be set when LMC initialization is in progress. Internal VREF and
+                                                                 Deskew training requires normal operation on the dqx/s read_enable signals.
+                                                                 If set to 1, software needs to ensure that it is set after the DCC training steps are completed. */
+        uint64_t ten                   : 1;  /**< [ 15: 15](R/W) DDR PHY test enable pin. */
+        uint64_t phy_pwr_save_disable  : 1;  /**< [ 16: 16](R/W) DDR PHY power save disable. */
+        uint64_t phy_dsk_byp           : 1;  /**< [ 17: 17](R/W) PHY deskew bypass. */
+        uint64_t phy_dsk_reset         : 1;  /**< [ 18: 18](R/W) PHY deskew reset. When set, the deskew reset signal goes active if the Vrefint/deskew
+                                                                 training sequence is in the idle state.
+
+                                                                 This field is only reset on cold reset. */
+        uint64_t int_phy_loopback_ena  : 1;  /**< [ 19: 19](R/W) Reserved.
+                                                                 Internal:
+                                                                 PHY loopback enable. */
+        uint64_t int_pad_loopback_ena  : 1;  /**< [ 20: 20](R/W) Reserved.
+                                                                 Internal:
+                                                                 DDR pad loopback enable.  Also must set LMC()_PHY_CTL[PHY_DSK_BYP]
+                                                                 when loopback is enabled. */
+        uint64_t dac_on                : 1;  /**< [ 21: 21](R/W) Reserved.
+                                                                 Internal:
+                                                                 PHY DAC on. */
+        uint64_t ref_pin_on            : 1;  /**< [ 22: 22](R/W) Reserved.
+                                                                 Internal:
+                                                                 Voltage reference pin enabled. */
+        uint64_t ddr_error_n_ena       : 1;  /**< [ 23: 23](R/W) Enable error_alert_n signal for PHY. */
+        uint64_t dbi_mode_ena          : 1;  /**< [ 24: 24](R/W) Enable DBI mode for PHY. */
+        uint64_t dsk_dbg_bit_sel       : 4;  /**< [ 28: 25](R/W) Reserved.
+                                                                 Internal:
+                                                                 Deskew debug bit select for dsk read operation.
+                                                                 0x0 = DQ0.
+                                                                 0x1 = DQ1.
+                                                                 0x2 = DQ2.
+                                                                 0x3 = DQ3.
+                                                                 0x4 = DAC.
+                                                                 0x5 = DBI/DQS1.
+                                                                 0x6 = DQ4.
+                                                                 0x7 = DQ5.
+                                                                 0x8 = DQ6.
+                                                                 0x9 = DQ7. */
+        uint64_t dsk_dbg_byte_sel      : 4;  /**< [ 32: 29](R/W) Reserved.
+                                                                 Internal:
+                                                                 Deskew debug byte select for read operation. Values 0-3 correspond to
+                                                                 byte lanes 0-3, 4 is for ECC, 5-8 are byte lanes 4-7. */
+        uint64_t dsk_dbg_byte_rd       : 1;  /**< [ 33: 33](R/W) Reserved.
+                                                                 Internal:
+                                                                 Personality bit to tell deskew sequence read a byte worth of deskew settings.
+                                                                 Note that [DSK_DBG_BYTE_SEL] must be set to 0 when sequentially reading from
+                                                                 byte0, byte1, byte2, byte3 and ECC. [DSK_DBG_LOAD_DIS] needs to be cleared to 0
+                                                                 in the first run of reading byte0 and set to 1 there after.
+                                                                 Likewise, [DSK_DBG_BYTE_SEL] must be set to 4 when sequentially reading from
+                                                                 byte4, byte5, byte6 and byte 7. [DSK_DBG_LOAD_DIS] needs to be cleared to 0 in
+                                                                 the first run of reading byte4 and set to 1 there after.
+                                                                 After each deskew sequence run, the byte's deskew settings are stored in LMC()_GENERAL_PURPOSE0 and
+                                                                 LMC()_GENERAL_PURPOSE1 registers. */
+        uint64_t dsk_dbg_offset        : 2;  /**< [ 35: 34](R/W) Reserved.
+                                                                 Internal:
+                                                                 Offset to change delay of deskew debug data return time to LMC from
+                                                                 DDR PHY. */
+        uint64_t dsk_dbg_clk_scaler    : 2;  /**< [ 37: 36](R/W) Reserved.
+                                                                 Internal:
+                                                                 Adjust clock toggle rate for reading deskew debug information:
+                                                                 0x0 = Deskew read clock toggles every 4 DCLKs.
+                                                                 0x1 = Deskew read clock toggles every 8 DCLKs.
+                                                                 0x2 = Deskew read clock toggles every 12 DCLKs.
+                                                                 0x3 = Deskew read clock toggles every 16 DCLKs. */
+        uint64_t dsk_dbg_start         : 1;  /**< [ 38: 38](WO/H) Reserved.
+                                                                 Internal:
+                                                                 Write one to start deskew data read/write operation, will automatically clear
+                                                                 to zero. Write to one will also clear the complete bit. */
+        uint64_t dsk_dbg_rd_data       : 10; /**< [ 48: 39](RO/H) Reserved.
+                                                                 Internal:
+                                                                 Data from a deskew read operation. Only valid when the
+                                                                 LMC()_PHY_CTL[DSK_DBG_RD_COMPLETE] bit is set. */
+        uint64_t dsk_dbg_rd_complete   : 1;  /**< [ 49: 49](RO/H) Reserved.
+                                                                 Internal:
+                                                                 Indicates completion of a read operation, will clear to zero when a read
+                                                                 operation is started, then set to one when operation is complete. */
+        uint64_t phy_reset             : 1;  /**< [ 50: 50](WO) Reserved.
+                                                                 Internal:
+                                                                 Write to one to reset the PHY, one-shot operation, will automatically
+                                                                 clear to value of zero. */
+        uint64_t ten_sel               : 1;  /**< [ 51: 51](R/W) DDR PHY test enable select signal. When asserted, LMC drives C0/TEN pin with the value set
+                                                                 in LMC()_PHY_CTL[TEN] as part of any commands being sent out. */
+        uint64_t c0_cs2_switch         : 1;  /**< [ 52: 52](R/W) 0 = Routes C0/TEN data to the C0/TEN output pin, and routes CS2 data to the CS2 output pin.
+                                                                 1 = Routes C0/TEN data to the CS2 output pin, and routes CS2 data to the C0/TEN output pin. */
+        uint64_t c1_cs3_switch         : 1;  /**< [ 53: 53](R/W) 0 = Routes C1 data to the C1 output pin, and
+                                                                     routes CS3 data to the CS3 output pin.
+
+                                                                 1 = Routes C1 data to the CS3 output pin, and
+                                                                     routes CS3 data to the C1 output pin. */
+        uint64_t cke1_odt1_dis         : 1;  /**< [ 54: 54](R/W) Reserved.
+                                                                 Internal:
+                                                                 Used for NVDIMM-P. When one, LMC disables both DIMM's CKE1 and ODT1 pins
+                                                                 and uses them as inputs instead. */
+        uint64_t dm_disable            : 1;  /**< [ 55: 55](R/W) Write to one to disable the DRAM data mask feature by having LMC driving a constant value
+                                                                 on
+                                                                 the DDR_DQS\<17:9\>_P pins of the chip during write operations. LMC drives a constant one.
+                                                                 Note that setting this field high is NOT allowed when LMC has the write DBI feature turned
+                                                                 on (LMC()_MODEREG_PARAMS3[WR_DBI]=1). */
+        uint64_t dq_shallow_loopback   : 1;  /**< [ 56: 56](R/W) Reserved.
+                                                                 Internal:
+                                                                 DQ shallow loopback, working in conjunction with LOOPBACK assertion.
+                                                                 When asserted, even DQ inputs can be loop-backed out through its adjacent odd DQ outputs
+                                                                 without being flop'd by DQS. Need to make sure LMC()_PHY_CTL[PHY_DSK_BYP] is set and
+                                                                 LMC()_PHY_CTL[INT_PHY_LOOPBACK_ENA] is unset. */
+        uint64_t data_rate_loopback    : 1;  /**< [ 57: 57](R/W) Reserved.
+                                                                 Internal:
+                                                                 DQ data rate loopback, working in conjunction with LOOPBACK assertion.
+                                                                 When asserted, incoming PRBS at even DQ can be set at data rate, and the data is loop
+                                                                 backed out through odd DQ at the same rate.
+                                                                 When de-asserted, LOOPBACK assertion is working along with [LOOPBACK_POS] to check on even
+                                                                 DQ against each DQS edge seperately. This is done at the clock rate. */
+        uint64_t dsk_dbg_wr_mode       : 1;  /**< [ 58: 58](R/W) Reserved.
+                                                                 Internal:
+                                                                 When set high along with [DSK_DBG_START], LMC kicks off Deskew
+                                                                 Overwrite sequence to shift out one whole byte worth of deskew settings.
+                                                                 Note that there are a total of 9 bytes and the chain structure are split into two
+                                                                 halves such that the top chain covers byte 7,6,5,4 and bottom chain cover byte
+                                                                 ECC,3,2,1,0.
+                                                                 Each byte has 10 DQs (DQ7,DQ6,DQ5,DQ4,DBI,DAC,DQ3,DQ2,DQ1,DQ0) and that each
+                                                                 DQ has 10-bits deskew setting.
+                                                                 The CSR LMC()_GENERAL_PURPOSE0[DATA] is used to store a byte worth of deskew
+                                                                 settings. Before running Deskew Overwrite sequence, the CSR needs to be program
+                                                                 as follows:
+                                                                 DATA\<6:0\>   = DQ0 deskew setting.
+                                                                 DATA\<13:7\>  = DQ1 deskew setting.
+                                                                 DATA\<20:14\> = DQ2 deskew setting.
+                                                                 DATA\<27:21\> = DQ3 deskew setting.
+                                                                 DATA\<34:28\> = DQ4 deskew setting.
+                                                                 DATA\<41:35\> = DQ5 deskew setting.
+                                                                 DATA\<48:42\> = DQ6 deskew setting.
+                                                                 DATA\<55:49\> = DQ7 deskew setting.
+                                                                 DATA\<62:56\> = DBI deskew setting. */
+        uint64_t dsk_dbg_overwrt_ena   : 1;  /**< [ 59: 59](R/W) Reserved.
+                                                                 Internal:
+                                                                 When set high, PHY selects all of the preloaded data
+                                                                 when configuring the read deskew settings. */
+        uint64_t dsk_dbg_load_dis      : 1;  /**< [ 60: 60](R/W) Reserved.
+                                                                 Internal:
+                                                                 When set, LMC prevents PHY from loading the deskew shift
+                                                                 registers with its internal settings. When Read Deskew sequence is kicked off
+                                                                 by setting [DSK_DBG_START] = 1 and [DSK_DBG_WR_MODE] = 0, this field determines
+                                                                 whether or not to load the shift register with PHY's internal settings before
+                                                                 the shifting process. */
+        uint64_t phy_dsk_lock_en       : 1;  /**< [ 61: 61](R/W) When set, the PHY attempts to lock all DQ/DBI bit deskew settings once alignment is
+                                                                 achieved.
+
+                                                                 When clear, LMC disengages the PHY bit deskew lock control mechanism. This
+                                                                 causes the PHY to continuously perform and/or adjust the read deskew training on
+                                                                 all DQ/DBI bits during any read operations. For diagnostic use only.
+
+                                                                 This field is only reset on cold reset.
+
+                                                                 Internal:
+                                                                 "When clear it has the following limitation:
+                                                                 1. It can only track timing for single-rank.
+                                                                 2. Deskew settings can be altered in the event of a fault (Parity/CRC) on a
+                                                                 returned DQS from DRAM.  See Bug #35079 for more detail." */
+        uint64_t double_vref_training  : 1;  /**< [ 62: 62](R/W) Vref longer training.
+                                                                 0 = Normal training period.
+                                                                 1 = Double training period. */
+        uint64_t rx_vref_sel           : 1;  /**< [ 63: 63](R/W) Run Vref training twice, sampling from DQ3 and DQ4 sequentially, then use the
+                                                                 average of two as the final Vref training result. */
+#endif /* Word 0 - End */
+    } cn98xx;
     struct cavm_lmcx_phy_ctl_cnf95xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -15702,6 +17129,8 @@ static inline uint64_t CAVM_LMCX_PHY_CTL(unsigned long a)
         return 0x87e088000210ll + 0x1000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e088000210ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e088000210ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e088000210ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -15862,6 +17291,8 @@ static inline uint64_t CAVM_LMCX_PHY_CTL2(unsigned long a)
         return 0x87e088000250ll + 0x1000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e088000250ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e088000250ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e088000250ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -16001,6 +17432,8 @@ static inline uint64_t CAVM_LMCX_PHY_CTL3(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e0880002f8ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e0880002f8ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e0880002f8ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -16068,6 +17501,8 @@ static inline uint64_t CAVM_LMCX_POW_MPR_CTL(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e0880000b0ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e0880000b0ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e0880000b0ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -16111,6 +17546,8 @@ static inline uint64_t CAVM_LMCX_POW_MPR_DATA0(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e0880000b8ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e0880000b8ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e0880000b8ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -16154,6 +17591,8 @@ static inline uint64_t CAVM_LMCX_POW_MPR_DATA1(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e0880000c0ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e0880000c0ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e0880000c0ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -16199,6 +17638,8 @@ static inline uint64_t CAVM_LMCX_POW_MPR_DATA2(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e0880000c8ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e0880000c8ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e0880000c8ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -16424,6 +17865,8 @@ static inline uint64_t CAVM_LMCX_PPR_CTL(unsigned long a)
         return 0x87e0880003e0ll + 0x1000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e0880003e0ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e0880003e0ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e0880003e0ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -16500,6 +17943,8 @@ static inline uint64_t CAVM_LMCX_RAS_ERR00ADDR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e088001018ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e088001018ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e088001018ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -16682,6 +18127,8 @@ static inline uint64_t CAVM_LMCX_RAS_ERR00CTLR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e088001008ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e088001008ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e088001008ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -16787,6 +18234,176 @@ union cavm_lmcx_ras_err00fr
         uint64_t imp_fe                : 2;  /**< [  3:  2](RO) Implementation defined.
                                                                  0x0 = No additional feature.
                                                                  0x1 = Reserved.
+                                                                 0x2 = Cavium force error feature is supported.
+                                                                 0x3 = Reserved. */
+        uint64_t ed                    : 2;  /**< [  1:  0](RO) Error detection and correction.
+                                                                 0x1 = Feature always enabled.
+                                                                 0x2 = Feature is controllable.
+
+                                                                 Internal:
+                                                                 Hardcoded. */
+#else /* Word 0 - Little Endian */
+        uint64_t ed                    : 2;  /**< [  1:  0](RO) Error detection and correction.
+                                                                 0x1 = Feature always enabled.
+                                                                 0x2 = Feature is controllable.
+
+                                                                 Internal:
+                                                                 Hardcoded. */
+        uint64_t imp_fe                : 2;  /**< [  3:  2](RO) Implementation defined.
+                                                                 0x0 = No additional feature.
+                                                                 0x1 = Reserved.
+                                                                 0x2 = Cavium force error feature is supported.
+                                                                 0x3 = Reserved. */
+        uint64_t ui                    : 2;  /**< [  5:  4](RO) Uncorrected error recovery interrupt.
+                                                                 0x0 = Does not support feature.
+                                                                 0x1 = Feature always enabled.
+                                                                 0x2 = Feature is controllable.
+                                                                 0x3 = Feature is controllable with independent controls for reads and writes.
+
+                                                                 Internal:
+                                                                 Hardcoded. */
+        uint64_t fi                    : 2;  /**< [  7:  6](RO) Fault handling interrupt.
+                                                                 0x0 = Does not support feature.
+                                                                 0x1 = Feature always enabled.
+                                                                 0x2 = Feature is controllable.
+                                                                 0x3 = Feature is controllable with independent controls for reads and writes.
+
+                                                                 Internal:
+                                                                 Hardcoded per record. Only CFI needed for this record. */
+        uint64_t ue                    : 2;  /**< [  9:  8](RO) In-band uncorrected error reporting.
+                                                                 0x0 = Does not support feature.
+                                                                 0x1 = Feature always enabled.
+                                                                 0x2 = Feature is controllable.
+                                                                 0x3 = Feature is controllable with independent controls for reads and writes.
+
+                                                                 Internal:
+                                                                 Hardcoded per record. */
+        uint64_t cfi                   : 2;  /**< [ 11: 10](RO) Fault handling interrupt for corrected errors. If this feature is implemented,
+                                                                 then the fault handling interrupt must be implemented.
+                                                                 0x0 = Does not support feature.
+                                                                 0x1 = Reserved.
+                                                                 0x2 = Feature is controllable using ERR\<n\>CTLR.CFI.
+                                                                 0x3 = Feature is controllable with independent controls for reads and writes.
+
+                                                                 Internal:
+                                                                 Hardcoded per record. */
+        uint64_t cec                   : 3;  /**< [ 14: 12](RO) Indicates a standard correctable error counter mechanism in LMC()_RAS_ERR00MISC0.
+                                                                 0x0 = Does not implement the standardized error counter model.
+                                                                 0x2 = Implements an 8-bit error counter in LMC()_RAS_ERR00MISC0\<39:32\>.
+                                                                 0x4 = Implements a 16-bit error counter in LMC()_RAS_ERR00MISC0\<47:32\>.
+                                                                 _ All other values are reserved.
+
+                                                                 Internal:
+                                                                 Hardcoded. */
+        uint64_t rp                    : 1;  /**< [ 15: 15](RO) Repeat counter. Indicates whether the node implements a repeat corrected error counter.
+                                                                 0 = A single CE counter is implemented.
+                                                                 1 = A first (repeat) counter and a second (other) counter are implemented. The
+                                                                 repeat counter is the same size as the primary error counter.
+
+                                                                 Internal:
+                                                                 Hardcoded. */
+        uint64_t dui                   : 2;  /**< [ 17: 16](RO) Error recovery interrupt for deferred errors. If this feature is implemented,
+                                                                 then the error recovery interrupt must be implemented.
+
+                                                                 0x0 = Does not support feature.
+                                                                 0x1 = Reserved.
+                                                                 0x2 = Feature is controllable.
+                                                                 0x3 = Feature is controllable with independent controls for reads and writes.
+
+                                                                 Internal:
+                                                                 Hardcoded. */
+        uint64_t ceo                   : 2;  /**< [ 19: 18](RO) Corrected error overwrite. Indicates the behavior when a second corrected error
+                                                                 is detected after a first corrected error has been recorded by the node.
+                                                                 0x0 = Count corrected error if a counter is implemented. Keep the previous error
+                                                                 syndrome. If the counter overflows, or no counter is
+                                                                 implemented. LMC()_RAS_ERRnSTATUS[OF] is set to 1.
+                                                                 0x1 = Count corrected error. If LMC()_RAS_ERRnSTATUS[OF] = 1 before the corrected
+                                                                 error is counted, keep the previous syndrome. Otherwise the previous syndrome is
+                                                                 overwritten. If the counter overflows, LMC()_RAS_ERRnSTATUS[OF] is set to 1.
+
+                                                                 Internal:
+                                                                 Hardcoded. */
+        uint64_t reserved_20_63        : 44;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_lmcx_ras_err00fr_s cn9; */
+    /* struct cavm_lmcx_ras_err00fr_s cn96xxp1; */
+    struct cavm_lmcx_ras_err00fr_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_20_63        : 44;
+        uint64_t ceo                   : 2;  /**< [ 19: 18](RO) Corrected error overwrite. Indicates the behavior when a second corrected error
+                                                                 is detected after a first corrected error has been recorded by the node.
+                                                                 0x0 = Count corrected error if a counter is implemented. Keep the previous error
+                                                                 syndrome. If the counter overflows, or no counter is
+                                                                 implemented. LMC()_RAS_ERRnSTATUS[OF] is set to 1.
+                                                                 0x1 = Count corrected error. If LMC()_RAS_ERRnSTATUS[OF] = 1 before the corrected
+                                                                 error is counted, keep the previous syndrome. Otherwise the previous syndrome is
+                                                                 overwritten. If the counter overflows, LMC()_RAS_ERRnSTATUS[OF] is set to 1.
+
+                                                                 Internal:
+                                                                 Hardcoded. */
+        uint64_t dui                   : 2;  /**< [ 17: 16](RO) Error recovery interrupt for deferred errors. If this feature is implemented,
+                                                                 then the error recovery interrupt must be implemented.
+
+                                                                 0x0 = Does not support feature.
+                                                                 0x1 = Reserved.
+                                                                 0x2 = Feature is controllable.
+                                                                 0x3 = Feature is controllable with independent controls for reads and writes.
+
+                                                                 Internal:
+                                                                 Hardcoded. */
+        uint64_t rp                    : 1;  /**< [ 15: 15](RO) Repeat counter. Indicates whether the node implements a repeat corrected error counter.
+                                                                 0 = A single CE counter is implemented.
+                                                                 1 = A first (repeat) counter and a second (other) counter are implemented. The
+                                                                 repeat counter is the same size as the primary error counter.
+
+                                                                 Internal:
+                                                                 Hardcoded. */
+        uint64_t cec                   : 3;  /**< [ 14: 12](RO) Indicates a standard correctable error counter mechanism in LMC()_RAS_ERR00MISC0.
+                                                                 0x0 = Does not implement the standardized error counter model.
+                                                                 0x2 = Implements an 8-bit error counter in LMC()_RAS_ERR00MISC0\<39:32\>.
+                                                                 0x4 = Implements a 16-bit error counter in LMC()_RAS_ERR00MISC0\<47:32\>.
+                                                                 _ All other values are reserved.
+
+                                                                 Internal:
+                                                                 Hardcoded. */
+        uint64_t cfi                   : 2;  /**< [ 11: 10](RO) Fault handling interrupt for corrected errors. If this feature is implemented,
+                                                                 then the fault handling interrupt must be implemented.
+                                                                 0x0 = Does not support feature.
+                                                                 0x1 = Reserved.
+                                                                 0x2 = Feature is controllable using ERR\<n\>CTLR.CFI.
+                                                                 0x3 = Feature is controllable with independent controls for reads and writes.
+
+                                                                 Internal:
+                                                                 Hardcoded per record. */
+        uint64_t ue                    : 2;  /**< [  9:  8](RO) In-band uncorrected error reporting.
+                                                                 0x0 = Does not support feature.
+                                                                 0x1 = Feature always enabled.
+                                                                 0x2 = Feature is controllable.
+                                                                 0x3 = Feature is controllable with independent controls for reads and writes.
+
+                                                                 Internal:
+                                                                 Hardcoded per record. */
+        uint64_t fi                    : 2;  /**< [  7:  6](RO) Fault handling interrupt.
+                                                                 0x0 = Does not support feature.
+                                                                 0x1 = Feature always enabled.
+                                                                 0x2 = Feature is controllable.
+                                                                 0x3 = Feature is controllable with independent controls for reads and writes.
+
+                                                                 Internal:
+                                                                 Hardcoded per record. Only CFI needed for this record. */
+        uint64_t ui                    : 2;  /**< [  5:  4](RO) Uncorrected error recovery interrupt.
+                                                                 0x0 = Does not support feature.
+                                                                 0x1 = Feature always enabled.
+                                                                 0x2 = Feature is controllable.
+                                                                 0x3 = Feature is controllable with independent controls for reads and writes.
+
+                                                                 Internal:
+                                                                 Hardcoded. */
+        uint64_t imp_fe                : 2;  /**< [  3:  2](RO) Implementation defined.
+                                                                 0x0 = No additional feature.
+                                                                 0x1 = Reserved.
                                                                  0x2 = Marvell force error feature is supported.
                                                                  0x3 = Reserved. */
         uint64_t ed                    : 2;  /**< [  1:  0](RO) Error detection and correction.
@@ -16878,8 +18495,10 @@ union cavm_lmcx_ras_err00fr
                                                                  Hardcoded. */
         uint64_t reserved_20_63        : 44;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_lmcx_ras_err00fr_s cn; */
+    } cn96xxp3;
+    /* struct cavm_lmcx_ras_err00fr_cn96xxp3 cn98xx; */
+    /* struct cavm_lmcx_ras_err00fr_cn96xxp3 cnf95xx; */
+    /* struct cavm_lmcx_ras_err00fr_cn96xxp3 loki; */
 };
 typedef union cavm_lmcx_ras_err00fr cavm_lmcx_ras_err00fr_t;
 
@@ -16888,6 +18507,8 @@ static inline uint64_t CAVM_LMCX_RAS_ERR00FR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e088001000ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e088001000ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e088001000ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -16954,6 +18575,8 @@ static inline uint64_t CAVM_LMCX_RAS_ERR00MISC0(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e088001020ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e088001020ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e088001020ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -16998,6 +18621,8 @@ static inline uint64_t CAVM_LMCX_RAS_ERR00MISC1(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e088001028ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e088001028ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e088001028ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -17064,6 +18689,184 @@ union cavm_lmcx_ras_err00status
                                                                  * A corrected error is detected and the corrected error counter overflows (or
                                                                  is not implemented).
 
+                                                                 For more information see the ARM RAS standard. */
+        uint64_t mv                    : 1;  /**< [ 26: 26](R/W1C/H) Miscellaneous registers valid. The LMC()_RAS_ERRnMISC0 and LMC()_RAS_ERRnMISC1 contains
+                                                                 additional information for an error recorded by this record.
+
+                                                                 Direct writes to this bit are ignored if any of [CE], [DE], or [UE] is set, and
+                                                                 the highest priority of these is not being cleared to 0 in the same write. This
+                                                                 bit is read/write-one-to-clear. */
+        uint64_t ce                    : 2;  /**< [ 25: 24](R/W1C/H) Corrected error:
+                                                                   0x0 = No corrected errors recorded.
+                                                                   0x1 = At least one transient corrected error recored.
+                                                                   0x2 = At least one corrected error recored.
+                                                                   0x3 = At least one persistent corrected error recored.
+
+                                                                 For CNXXXX, only codes 0x0 and 0x3 are used. */
+        uint64_t de                    : 1;  /**< [ 23: 23](R/W1C/H) Deferred error(s). At least one error was not corrected and deferred.
+
+                                                                 Direct writes to this bit are ignored if [OF] is set and is not being cleared
+                                                                 to 0 in the same write. */
+        uint64_t pn                    : 1;  /**< [ 22: 22](R/W1C/H) Poison.
+                                                                 0 = Uncorrected or deferred error from a corrupted value. If a node
+                                                                 detects a corrupted value and defers the error by producing poison, then this
+                                                                 bit is set to 0 at the producer node.
+
+                                                                 1 = Uncorrected error or Deferred error from a poisoned value. Indicates that an
+                                                                 error was due to detecting a poison value rather than detecting a corrupted
+                                                                 value. */
+        uint64_t uet                   : 2;  /**< [ 21: 20](R/W1C/H) Uncorrected error type. Describes the state of the component after detecting
+                                                                 or consuming an uncorrected error. Enumerated by RAS_UET_E.
+
+                                                                 Valid only if [UE] is set, otherwise 0x0.
+
+                                                                 Direct writes to this field are ignored if any of [CE], [DE], or [UE] is set,
+                                                                 and the highest priority of these is not being cleared to 0 in the same write. */
+        uint64_t reserved_16_19        : 4;
+        uint64_t ierr                  : 8;  /**< [ 15:  8](RO) Implementation defined error code.
+
+                                                                 Direct writes to this field are ignored if any of the [CE], [DE], or [UE] is
+                                                                 set, and the highest priority of these is not being cleared to 0 in the same
+                                                                 write. */
+        uint64_t serr                  : 8;  /**< [  7:  0](RO) Architecturally-defined primary error code. Indicates the type of error
+                                                                 enumerated by RAS_SERR_E.
+
+                                                                 Direct writes to this field are ignored if any of the [CE], [DE], or [UE] is
+                                                                 set, and the highest priority of these is not being cleared to 0 in the same
+                                                                 write.
+
+                                                                 For CNXXXX, value depends on the error record. */
+#else /* Word 0 - Little Endian */
+        uint64_t serr                  : 8;  /**< [  7:  0](RO) Architecturally-defined primary error code. Indicates the type of error
+                                                                 enumerated by RAS_SERR_E.
+
+                                                                 Direct writes to this field are ignored if any of the [CE], [DE], or [UE] is
+                                                                 set, and the highest priority of these is not being cleared to 0 in the same
+                                                                 write.
+
+                                                                 For CNXXXX, value depends on the error record. */
+        uint64_t ierr                  : 8;  /**< [ 15:  8](RO) Implementation defined error code.
+
+                                                                 Direct writes to this field are ignored if any of the [CE], [DE], or [UE] is
+                                                                 set, and the highest priority of these is not being cleared to 0 in the same
+                                                                 write. */
+        uint64_t reserved_16_19        : 4;
+        uint64_t uet                   : 2;  /**< [ 21: 20](R/W1C/H) Uncorrected error type. Describes the state of the component after detecting
+                                                                 or consuming an uncorrected error. Enumerated by RAS_UET_E.
+
+                                                                 Valid only if [UE] is set, otherwise 0x0.
+
+                                                                 Direct writes to this field are ignored if any of [CE], [DE], or [UE] is set,
+                                                                 and the highest priority of these is not being cleared to 0 in the same write. */
+        uint64_t pn                    : 1;  /**< [ 22: 22](R/W1C/H) Poison.
+                                                                 0 = Uncorrected or deferred error from a corrupted value. If a node
+                                                                 detects a corrupted value and defers the error by producing poison, then this
+                                                                 bit is set to 0 at the producer node.
+
+                                                                 1 = Uncorrected error or Deferred error from a poisoned value. Indicates that an
+                                                                 error was due to detecting a poison value rather than detecting a corrupted
+                                                                 value. */
+        uint64_t de                    : 1;  /**< [ 23: 23](R/W1C/H) Deferred error(s). At least one error was not corrected and deferred.
+
+                                                                 Direct writes to this bit are ignored if [OF] is set and is not being cleared
+                                                                 to 0 in the same write. */
+        uint64_t ce                    : 2;  /**< [ 25: 24](R/W1C/H) Corrected error:
+                                                                   0x0 = No corrected errors recorded.
+                                                                   0x1 = At least one transient corrected error recored.
+                                                                   0x2 = At least one corrected error recored.
+                                                                   0x3 = At least one persistent corrected error recored.
+
+                                                                 For CNXXXX, only codes 0x0 and 0x3 are used. */
+        uint64_t mv                    : 1;  /**< [ 26: 26](R/W1C/H) Miscellaneous registers valid. The LMC()_RAS_ERRnMISC0 and LMC()_RAS_ERRnMISC1 contains
+                                                                 additional information for an error recorded by this record.
+
+                                                                 Direct writes to this bit are ignored if any of [CE], [DE], or [UE] is set, and
+                                                                 the highest priority of these is not being cleared to 0 in the same write. This
+                                                                 bit is read/write-one-to-clear. */
+        uint64_t of                    : 1;  /**< [ 27: 27](R/W1C/H) Overflow. Multiple errors detected. This bit is set when:
+
+                                                                 * An uncorrected error is detected and the previous error syndrome is kept
+                                                                 because [UE] = 1.
+
+                                                                 * A deferred error is detected and the previous error syndrome is kept is
+                                                                 discarded because [DE] = 1.
+
+                                                                 * A corrected error is detected and the corrected error counter overflows (or
+                                                                 is not implemented).
+
+                                                                 For more information see the ARM RAS standard. */
+        uint64_t er                    : 1;  /**< [ 28: 28](RO) Error reported.
+                                                                 0 = No external abort reported.
+                                                                 1 = The applicable one of the LMC_RAS_ERRnCTLR{WUE},[RUE],[UE] bits was set when
+                                                                 an uncorrected error was detected, meaning an external abort was signaled to the
+                                                                 master making the access.
+
+                                                                 Direct writes to this bit are ignored if any of [CE], [DE], or [UE] is set, and
+                                                                 the highest priority of these is not being cleared to 0 in the same write.
+
+                                                                 Cleared for a corrected error. */
+        uint64_t ue                    : 1;  /**< [ 29: 29](R/W1C/H) Uncorrected error(s).
+                                                                 0 = No errors that could not be corrected or deferred.
+                                                                 1 = At least one error detected that has not been corrected or deferred.
+
+                                                                 Direct writes to this bit are ignored if [OF] is set and is not being cleared to
+                                                                 zero in the same write. */
+        uint64_t v                     : 1;  /**< [ 30: 30](R/W1C/H) Status register valid.  LMC()_RAS_ERRnSTATUS valid. At least one error has been recorded.
+
+                                                                 Direct writes to this bit are ignored if any of the [UE], [DE], or [CE] bits is
+                                                                 set and is not being cleared to 0 in the same write. */
+        uint64_t av                    : 1;  /**< [ 31: 31](R/W1C/H) Address valid. LMC()_RAS_ERRnADDR contains a physical address associated with the
+                                                                 highest priority error recorded by this record.
+
+                                                                 Direct writes to this bit are ignored if any of the [CE], [DE], or [UE] bits is
+                                                                 set, and the highest priority of these is not being cleared to 0 in the same
+                                                                 write. */
+        uint64_t reserved_32_63        : 32;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_lmcx_ras_err00status_s cn9; */
+    /* struct cavm_lmcx_ras_err00status_s cn96xxp1; */
+    struct cavm_lmcx_ras_err00status_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_32_63        : 32;
+        uint64_t av                    : 1;  /**< [ 31: 31](R/W1C/H) Address valid. LMC()_RAS_ERRnADDR contains a physical address associated with the
+                                                                 highest priority error recorded by this record.
+
+                                                                 Direct writes to this bit are ignored if any of the [CE], [DE], or [UE] bits is
+                                                                 set, and the highest priority of these is not being cleared to 0 in the same
+                                                                 write. */
+        uint64_t v                     : 1;  /**< [ 30: 30](R/W1C/H) Status register valid.  LMC()_RAS_ERRnSTATUS valid. At least one error has been recorded.
+
+                                                                 Direct writes to this bit are ignored if any of the [UE], [DE], or [CE] bits is
+                                                                 set and is not being cleared to 0 in the same write. */
+        uint64_t ue                    : 1;  /**< [ 29: 29](R/W1C/H) Uncorrected error(s).
+                                                                 0 = No errors that could not be corrected or deferred.
+                                                                 1 = At least one error detected that has not been corrected or deferred.
+
+                                                                 Direct writes to this bit are ignored if [OF] is set and is not being cleared to
+                                                                 zero in the same write. */
+        uint64_t er                    : 1;  /**< [ 28: 28](RO) Error reported.
+                                                                 0 = No external abort reported.
+                                                                 1 = The applicable one of the LMC_RAS_ERRnCTLR{WUE},[RUE],[UE] bits was set when
+                                                                 an uncorrected error was detected, meaning an external abort was signaled to the
+                                                                 master making the access.
+
+                                                                 Direct writes to this bit are ignored if any of [CE], [DE], or [UE] is set, and
+                                                                 the highest priority of these is not being cleared to 0 in the same write.
+
+                                                                 Cleared for a corrected error. */
+        uint64_t of                    : 1;  /**< [ 27: 27](R/W1C/H) Overflow. Multiple errors detected. This bit is set when:
+
+                                                                 * An uncorrected error is detected and the previous error syndrome is kept
+                                                                 because [UE] = 1.
+
+                                                                 * A deferred error is detected and the previous error syndrome is kept is
+                                                                 discarded because [DE] = 1.
+
+                                                                 * A corrected error is detected and the corrected error counter overflows (or
+                                                                 is not implemented).
+
                                                                  For more information see the Arm RAS standard. */
         uint64_t mv                    : 1;  /**< [ 26: 26](R/W1C/H) Miscellaneous registers valid. The LMC()_RAS_ERRnMISC0 and LMC()_RAS_ERRnMISC1 contains
                                                                  additional information for an error recorded by this record.
@@ -17198,8 +19001,10 @@ union cavm_lmcx_ras_err00status
                                                                  write. */
         uint64_t reserved_32_63        : 32;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_lmcx_ras_err00status_s cn; */
+    } cn96xxp3;
+    /* struct cavm_lmcx_ras_err00status_cn96xxp3 cn98xx; */
+    /* struct cavm_lmcx_ras_err00status_cn96xxp3 cnf95xx; */
+    /* struct cavm_lmcx_ras_err00status_cn96xxp3 loki; */
 };
 typedef union cavm_lmcx_ras_err00status cavm_lmcx_ras_err00status_t;
 
@@ -17208,6 +19013,8 @@ static inline uint64_t CAVM_LMCX_RAS_ERR00STATUS(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e088001010ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e088001010ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e088001010ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -17250,6 +19057,8 @@ static inline uint64_t CAVM_LMCX_RAS_ERRCIDR0(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e088001ff0ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e088001ff0ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e088001ff0ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -17294,6 +19103,8 @@ static inline uint64_t CAVM_LMCX_RAS_ERRCIDR1(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e088001ff4ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e088001ff4ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e088001ff4ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -17336,6 +19147,8 @@ static inline uint64_t CAVM_LMCX_RAS_ERRCIDR2(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e088001ff8ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e088001ff8ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e088001ff8ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -17378,6 +19191,8 @@ static inline uint64_t CAVM_LMCX_RAS_ERRCIDR3(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e088001ffcll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e088001ffcll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e088001ffcll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -17437,6 +19252,8 @@ static inline uint64_t CAVM_LMCX_RAS_ERRDEVAFF(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e088001fa8ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e088001fa8ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e088001fa8ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -17463,6 +19280,30 @@ union cavm_lmcx_ras_errdevarch
     struct cavm_lmcx_ras_errdevarch_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t architect             : 11; /**< [ 31: 21](RO) Defines the architecture of the component. Indicates ARM. */
+        uint32_t present               : 1;  /**< [ 20: 20](RO) When set to 1, indicates that this register is present. */
+        uint32_t revision              : 4;  /**< [ 19: 16](RO) Defines the architecture revision.
+                                                                 0x0 = RAS system architecture v1.0. */
+        uint32_t archver               : 4;  /**< [ 15: 12](RO) Defines the architecture version of the component.
+                                                                 0x0 = RAS system architecture v1.0. */
+        uint32_t archpart              : 12; /**< [ 11:  0](RO) Defines the architecture of the component.
+                                                                 0xA00 = RAS system architecture. */
+#else /* Word 0 - Little Endian */
+        uint32_t archpart              : 12; /**< [ 11:  0](RO) Defines the architecture of the component.
+                                                                 0xA00 = RAS system architecture. */
+        uint32_t archver               : 4;  /**< [ 15: 12](RO) Defines the architecture version of the component.
+                                                                 0x0 = RAS system architecture v1.0. */
+        uint32_t revision              : 4;  /**< [ 19: 16](RO) Defines the architecture revision.
+                                                                 0x0 = RAS system architecture v1.0. */
+        uint32_t present               : 1;  /**< [ 20: 20](RO) When set to 1, indicates that this register is present. */
+        uint32_t architect             : 11; /**< [ 31: 21](RO) Defines the architecture of the component. Indicates ARM. */
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_lmcx_ras_errdevarch_s cn9; */
+    /* struct cavm_lmcx_ras_errdevarch_s cn96xxp1; */
+    struct cavm_lmcx_ras_errdevarch_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t architect             : 11; /**< [ 31: 21](RO) Defines the architecture of the component. Indicates Arm. */
         uint32_t present               : 1;  /**< [ 20: 20](RO) When set to 1, indicates that this register is present. */
         uint32_t revision              : 4;  /**< [ 19: 16](RO) Defines the architecture revision.
@@ -17481,8 +19322,10 @@ union cavm_lmcx_ras_errdevarch
         uint32_t present               : 1;  /**< [ 20: 20](RO) When set to 1, indicates that this register is present. */
         uint32_t architect             : 11; /**< [ 31: 21](RO) Defines the architecture of the component. Indicates Arm. */
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_lmcx_ras_errdevarch_s cn; */
+    } cn96xxp3;
+    /* struct cavm_lmcx_ras_errdevarch_cn96xxp3 cn98xx; */
+    /* struct cavm_lmcx_ras_errdevarch_cn96xxp3 cnf95xx; */
+    /* struct cavm_lmcx_ras_errdevarch_cn96xxp3 loki; */
 };
 typedef union cavm_lmcx_ras_errdevarch cavm_lmcx_ras_errdevarch_t;
 
@@ -17491,6 +19334,8 @@ static inline uint64_t CAVM_LMCX_RAS_ERRDEVARCH(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e088001fbcll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e088001fbcll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e088001fbcll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -17534,6 +19379,8 @@ static inline uint64_t CAVM_LMCX_RAS_ERRDEVID(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e088001fc8ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e088001fc8ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e088001fc8ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -17588,6 +19435,8 @@ static inline uint64_t CAVM_LMCX_RAS_ERRGSR0(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e088001e00ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e088001e00ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e088001e00ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -17634,6 +19483,8 @@ static inline uint64_t CAVM_LMCX_RAS_ERRIRQCR0(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e088001e80ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e088001e80ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e088001e80ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -17680,6 +19531,8 @@ static inline uint64_t CAVM_LMCX_RAS_ERRIRQCR1(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e088001e88ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e088001e88ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e088001e88ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -17720,6 +19573,8 @@ static inline uint64_t CAVM_LMCX_RAS_ERRIRQCR2(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e088001e90ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e088001e90ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e088001e90ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -17760,6 +19615,8 @@ static inline uint64_t CAVM_LMCX_RAS_ERRIRQCR3(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e088001e98ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e088001e98ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e088001e98ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -17856,6 +19713,8 @@ static inline uint64_t CAVM_LMCX_RAS_ERRIRQSR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e088001ef8ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e088001ef8ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e088001ef8ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -17898,6 +19757,8 @@ static inline uint64_t CAVM_LMCX_RAS_ERRPIDR0(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e088001fe0ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e088001fe0ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e088001fe0ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -17925,6 +19786,20 @@ union cavm_lmcx_ras_errpidr1
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_8_31         : 24;
+        uint32_t des_0                 : 4;  /**< [  7:  4](RO) JEP106 identification code \<3:0\>. Cavium code is 0x4C. */
+        uint32_t part_1                : 4;  /**< [  3:  0](RO) Part number \<11:8\>.  Indicates PCC_PIDR_PARTNUM1_E::COMP. */
+#else /* Word 0 - Little Endian */
+        uint32_t part_1                : 4;  /**< [  3:  0](RO) Part number \<11:8\>.  Indicates PCC_PIDR_PARTNUM1_E::COMP. */
+        uint32_t des_0                 : 4;  /**< [  7:  4](RO) JEP106 identification code \<3:0\>. Cavium code is 0x4C. */
+        uint32_t reserved_8_31         : 24;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_lmcx_ras_errpidr1_s cn9; */
+    /* struct cavm_lmcx_ras_errpidr1_s cn96xxp1; */
+    struct cavm_lmcx_ras_errpidr1_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t reserved_8_31         : 24;
         uint32_t des_0                 : 4;  /**< [  7:  4](RO) JEP106 identification code \<3:0\>. Marvell (Cavium) code is 0x4C. */
         uint32_t part_1                : 4;  /**< [  3:  0](RO) Part number \<11:8\>.  Indicates PCC_PIDR_PARTNUM1_E::COMP. */
 #else /* Word 0 - Little Endian */
@@ -17932,8 +19807,10 @@ union cavm_lmcx_ras_errpidr1
         uint32_t des_0                 : 4;  /**< [  7:  4](RO) JEP106 identification code \<3:0\>. Marvell (Cavium) code is 0x4C. */
         uint32_t reserved_8_31         : 24;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_lmcx_ras_errpidr1_s cn; */
+    } cn96xxp3;
+    /* struct cavm_lmcx_ras_errpidr1_cn96xxp3 cn98xx; */
+    /* struct cavm_lmcx_ras_errpidr1_cn96xxp3 cnf95xx; */
+    /* struct cavm_lmcx_ras_errpidr1_cn96xxp3 loki; */
 };
 typedef union cavm_lmcx_ras_errpidr1 cavm_lmcx_ras_errpidr1_t;
 
@@ -17942,6 +19819,8 @@ static inline uint64_t CAVM_LMCX_RAS_ERRPIDR1(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e088001fe4ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e088001fe4ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e088001fe4ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -17971,30 +19850,33 @@ union cavm_lmcx_ras_errpidr2
         uint32_t reserved_8_31         : 24;
         uint32_t revision              : 4;  /**< [  7:  4](RO) Implementation-defined RAS revision. */
         uint32_t jedec                 : 1;  /**< [  3:  3](RO) JEDEC assigned. */
-        uint32_t des_1                 : 3;  /**< [  2:  0](RO) JEP106 identification code \<6:4\>. Marvell (Cavium) code is 0x4C. */
+        uint32_t des_1                 : 3;  /**< [  2:  0](RO) JEP106 identification code \<6:4\>. Cavium code is 0x4C. */
 #else /* Word 0 - Little Endian */
-        uint32_t des_1                 : 3;  /**< [  2:  0](RO) JEP106 identification code \<6:4\>. Marvell (Cavium) code is 0x4C. */
+        uint32_t des_1                 : 3;  /**< [  2:  0](RO) JEP106 identification code \<6:4\>. Cavium code is 0x4C. */
         uint32_t jedec                 : 1;  /**< [  3:  3](RO) JEDEC assigned. */
         uint32_t revision              : 4;  /**< [  7:  4](RO) Implementation-defined RAS revision. */
         uint32_t reserved_8_31         : 24;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_lmcx_ras_errpidr2_s cn96xx; */
-    struct cavm_lmcx_ras_errpidr2_cnf95xx
+    /* struct cavm_lmcx_ras_errpidr2_s cn9; */
+    /* struct cavm_lmcx_ras_errpidr2_s cn96xxp1; */
+    struct cavm_lmcx_ras_errpidr2_cn96xxp3
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_8_31         : 24;
         uint32_t revision              : 4;  /**< [  7:  4](RO) Implementation-defined RAS revision. */
         uint32_t jedec                 : 1;  /**< [  3:  3](RO) JEDEC assigned. */
-        uint32_t des_1                 : 3;  /**< [  2:  0](RO) JEP106 identification code \<6:4\>. Cavium code is 0x4C. */
+        uint32_t des_1                 : 3;  /**< [  2:  0](RO) JEP106 identification code \<6:4\>. Marvell (Cavium) code is 0x4C. */
 #else /* Word 0 - Little Endian */
-        uint32_t des_1                 : 3;  /**< [  2:  0](RO) JEP106 identification code \<6:4\>. Cavium code is 0x4C. */
+        uint32_t des_1                 : 3;  /**< [  2:  0](RO) JEP106 identification code \<6:4\>. Marvell (Cavium) code is 0x4C. */
         uint32_t jedec                 : 1;  /**< [  3:  3](RO) JEDEC assigned. */
         uint32_t revision              : 4;  /**< [  7:  4](RO) Implementation-defined RAS revision. */
         uint32_t reserved_8_31         : 24;
 #endif /* Word 0 - End */
-    } cnf95xx;
-    /* struct cavm_lmcx_ras_errpidr2_cnf95xx loki; */
+    } cn96xxp3;
+    /* struct cavm_lmcx_ras_errpidr2_s cn98xx; */
+    /* struct cavm_lmcx_ras_errpidr2_s cnf95xx; */
+    /* struct cavm_lmcx_ras_errpidr2_s loki; */
 };
 typedef union cavm_lmcx_ras_errpidr2 cavm_lmcx_ras_errpidr2_t;
 
@@ -18003,6 +19885,8 @@ static inline uint64_t CAVM_LMCX_RAS_ERRPIDR2(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e088001fe8ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e088001fe8ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e088001fe8ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -18049,6 +19933,8 @@ static inline uint64_t CAVM_LMCX_RAS_ERRPIDR3(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e088001fecll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e088001fecll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e088001fecll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -18078,30 +19964,33 @@ union cavm_lmcx_ras_errpidr4
         uint32_t reserved_8_31         : 24;
         uint32_t fourkbcount           : 4;  /**< [  7:  4](RO) Size of the component. Log\<sub\>2\</sub\> of the number of 4 KB pages from the
                                                                  start of the component to the end of the component ID registers. */
-        uint32_t jep106cont            : 4;  /**< [  3:  0](RO) JEP106 continuation code, least significant nibble. Indicates Marvell (Cavium). */
+        uint32_t jep106cont            : 4;  /**< [  3:  0](RO) JEP106 continuation code, least significant nibble. Indicates Cavium. */
 #else /* Word 0 - Little Endian */
-        uint32_t jep106cont            : 4;  /**< [  3:  0](RO) JEP106 continuation code, least significant nibble. Indicates Marvell (Cavium). */
+        uint32_t jep106cont            : 4;  /**< [  3:  0](RO) JEP106 continuation code, least significant nibble. Indicates Cavium. */
         uint32_t fourkbcount           : 4;  /**< [  7:  4](RO) Size of the component. Log\<sub\>2\</sub\> of the number of 4 KB pages from the
                                                                  start of the component to the end of the component ID registers. */
         uint32_t reserved_8_31         : 24;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_lmcx_ras_errpidr4_s cn96xx; */
-    struct cavm_lmcx_ras_errpidr4_cnf95xx
+    /* struct cavm_lmcx_ras_errpidr4_s cn9; */
+    /* struct cavm_lmcx_ras_errpidr4_s cn96xxp1; */
+    struct cavm_lmcx_ras_errpidr4_cn96xxp3
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_8_31         : 24;
         uint32_t fourkbcount           : 4;  /**< [  7:  4](RO) Size of the component. Log\<sub\>2\</sub\> of the number of 4 KB pages from the
                                                                  start of the component to the end of the component ID registers. */
-        uint32_t jep106cont            : 4;  /**< [  3:  0](RO) JEP106 continuation code, least significant nibble. Indicates Cavium. */
+        uint32_t jep106cont            : 4;  /**< [  3:  0](RO) JEP106 continuation code, least significant nibble. Indicates Marvell (Cavium). */
 #else /* Word 0 - Little Endian */
-        uint32_t jep106cont            : 4;  /**< [  3:  0](RO) JEP106 continuation code, least significant nibble. Indicates Cavium. */
+        uint32_t jep106cont            : 4;  /**< [  3:  0](RO) JEP106 continuation code, least significant nibble. Indicates Marvell (Cavium). */
         uint32_t fourkbcount           : 4;  /**< [  7:  4](RO) Size of the component. Log\<sub\>2\</sub\> of the number of 4 KB pages from the
                                                                  start of the component to the end of the component ID registers. */
         uint32_t reserved_8_31         : 24;
 #endif /* Word 0 - End */
-    } cnf95xx;
-    /* struct cavm_lmcx_ras_errpidr4_cnf95xx loki; */
+    } cn96xxp3;
+    /* struct cavm_lmcx_ras_errpidr4_s cn98xx; */
+    /* struct cavm_lmcx_ras_errpidr4_s cnf95xx; */
+    /* struct cavm_lmcx_ras_errpidr4_s loki; */
 };
 typedef union cavm_lmcx_ras_errpidr4 cavm_lmcx_ras_errpidr4_t;
 
@@ -18110,6 +19999,8 @@ static inline uint64_t CAVM_LMCX_RAS_ERRPIDR4(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e088001fd0ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e088001fd0ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e088001fd0ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -18150,6 +20041,8 @@ static inline uint64_t CAVM_LMCX_RAS_ERRPIDR5(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e088001fd4ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e088001fd4ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e088001fd4ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -18190,6 +20083,8 @@ static inline uint64_t CAVM_LMCX_RAS_ERRPIDR6(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e088001fd8ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e088001fd8ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e088001fd8ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -18230,6 +20125,8 @@ static inline uint64_t CAVM_LMCX_RAS_ERRPIDR7(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e088001fdcll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e088001fdcll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e088001fdcll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -18276,6 +20173,8 @@ static inline uint64_t CAVM_LMCX_RAS_INT(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e088000418ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e088000418ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e088000418ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -18309,7 +20208,18 @@ union cavm_lmcx_ras_int_ena_w1c
         uint64_t reserved_1_63         : 63;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_lmcx_ras_int_ena_w1c_s cn9; */
     /* struct cavm_lmcx_ras_int_ena_w1c_s cn96xx; */
+    struct cavm_lmcx_ras_int_ena_w1c_cn98xx
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_1_63         : 63;
+        uint64_t err00                 : 1;  /**< [  0:  0](R/W1C/H) Reads or clears enable for LMC(0..5)_RAS_INT[ERR00]. */
+#else /* Word 0 - Little Endian */
+        uint64_t err00                 : 1;  /**< [  0:  0](R/W1C/H) Reads or clears enable for LMC(0..5)_RAS_INT[ERR00]. */
+        uint64_t reserved_1_63         : 63;
+#endif /* Word 0 - End */
+    } cn98xx;
     struct cavm_lmcx_ras_int_ena_w1c_cnf95xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -18329,6 +20239,8 @@ static inline uint64_t CAVM_LMCX_RAS_INT_ENA_W1C(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e088000428ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e088000428ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e088000428ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -18362,7 +20274,18 @@ union cavm_lmcx_ras_int_ena_w1s
         uint64_t reserved_1_63         : 63;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_lmcx_ras_int_ena_w1s_s cn9; */
     /* struct cavm_lmcx_ras_int_ena_w1s_s cn96xx; */
+    struct cavm_lmcx_ras_int_ena_w1s_cn98xx
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_1_63         : 63;
+        uint64_t err00                 : 1;  /**< [  0:  0](R/W1S/H) Reads or sets enable for LMC(0..5)_RAS_INT[ERR00]. */
+#else /* Word 0 - Little Endian */
+        uint64_t err00                 : 1;  /**< [  0:  0](R/W1S/H) Reads or sets enable for LMC(0..5)_RAS_INT[ERR00]. */
+        uint64_t reserved_1_63         : 63;
+#endif /* Word 0 - End */
+    } cn98xx;
     struct cavm_lmcx_ras_int_ena_w1s_cnf95xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -18382,6 +20305,8 @@ static inline uint64_t CAVM_LMCX_RAS_INT_ENA_W1S(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e088000430ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e088000430ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e088000430ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -18415,7 +20340,18 @@ union cavm_lmcx_ras_int_w1s
         uint64_t reserved_1_63         : 63;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_lmcx_ras_int_w1s_s cn9; */
     /* struct cavm_lmcx_ras_int_w1s_s cn96xx; */
+    struct cavm_lmcx_ras_int_w1s_cn98xx
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_1_63         : 63;
+        uint64_t err00                 : 1;  /**< [  0:  0](RO/H) Reads or sets LMC(0..5)_RAS_INT[ERR00]. */
+#else /* Word 0 - Little Endian */
+        uint64_t err00                 : 1;  /**< [  0:  0](RO/H) Reads or sets LMC(0..5)_RAS_INT[ERR00]. */
+        uint64_t reserved_1_63         : 63;
+#endif /* Word 0 - End */
+    } cn98xx;
     struct cavm_lmcx_ras_int_w1s_cnf95xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -18435,6 +20371,8 @@ static inline uint64_t CAVM_LMCX_RAS_INT_W1S(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e088000420ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e088000420ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e088000420ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -18462,7 +20400,15 @@ union cavm_lmcx_ref_config
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_32_63        : 32;
-        uint64_t ref_stagger           : 1;  /**< [ 31: 31](RO) Reserved. */
+        uint64_t ref_stagger           : 1;  /**< [ 31: 31](R/W) When set, refresh commands to all package ranks are staggered by TRFC. The default
+                                                                 behavior is to send a refresh command to all package ranks and wait TRFC.
+                                                                 Asserting this bit forces LMC to stagger refresh command by waiting TRFC for each rank.
+                                                                 For 3DS DIMMs, this mode will refresh all logical ranks for one package rank before moving
+                                                                 to the next package rank. Note, software is responsible for determining whether staggering
+                                                                 refresh by TRFC (and TRFC_dlr) is greater than TREFI which would cause refresh to never catch up.
+
+                                                                 It is not recommended to use this mode with 8H 3DS, fine granularity refresh mode, or extended
+                                                                 temperature mode. This mode cannot be combined with LMC()_REF_CONFIG[PAIR_REF_MODE]. */
         uint64_t zqcs_rankmask1        : 4;  /**< [ 30: 27](R/W) Selects which ranks get ZQCS command when servicing the second pair refresh. */
         uint64_t zqcs_rankmask0        : 4;  /**< [ 26: 23](R/W) Selects which ranks get ZQCS command when servicing the first pair refresh. */
         uint64_t pair_zqcs             : 1;  /**< [ 22: 22](R/W) When set, uses LMC()_REF_CONFIG[ZQCS_RANKMASK0] and LMC()_REF_CONFIG[ZQCS_RANKMASK1]
@@ -18620,194 +20566,20 @@ union cavm_lmcx_ref_config
                                                                  This bit can only be asserted if LMC()_REF_CONFIG[PAIR_REF_MODE] is non-zero. */
         uint64_t zqcs_rankmask0        : 4;  /**< [ 26: 23](R/W) Selects which ranks get ZQCS command when servicing the first pair refresh. */
         uint64_t zqcs_rankmask1        : 4;  /**< [ 30: 27](R/W) Selects which ranks get ZQCS command when servicing the second pair refresh. */
-        uint64_t ref_stagger           : 1;  /**< [ 31: 31](RO) Reserved. */
+        uint64_t ref_stagger           : 1;  /**< [ 31: 31](R/W) When set, refresh commands to all package ranks are staggered by TRFC. The default
+                                                                 behavior is to send a refresh command to all package ranks and wait TRFC.
+                                                                 Asserting this bit forces LMC to stagger refresh command by waiting TRFC for each rank.
+                                                                 For 3DS DIMMs, this mode will refresh all logical ranks for one package rank before moving
+                                                                 to the next package rank. Note, software is responsible for determining whether staggering
+                                                                 refresh by TRFC (and TRFC_dlr) is greater than TREFI which would cause refresh to never catch up.
+
+                                                                 It is not recommended to use this mode with 8H 3DS, fine granularity refresh mode, or extended
+                                                                 temperature mode. This mode cannot be combined with LMC()_REF_CONFIG[PAIR_REF_MODE]. */
         uint64_t reserved_32_63        : 32;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_lmcx_ref_config_s cn96xxp1; */
-    struct cavm_lmcx_ref_config_cn96xxp3
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_32_63        : 32;
-        uint64_t ref_stagger           : 1;  /**< [ 31: 31](R/W) When set, refresh commands to all package ranks are staggered by TRFC. The default
-                                                                 behavior is to send a refresh command to all package ranks and wait TRFC.
-                                                                 Asserting this bit forces LMC to stagger refresh command by waiting TRFC for each rank.
-                                                                 For 3DS DIMMs, this mode will refresh all logical ranks for one package rank before moving
-                                                                 to the next package rank. Note, software is responsible for determining whether staggering
-                                                                 refresh by TRFC (and TRFC_dlr) is greater than TREFI which would cause refresh to never catch up.
-
-                                                                 It is not recommended to use this mode with 8H 3DS, fine granularity refresh mode, or extended
-                                                                 temperature mode. This mode cannot be combined with LMC()_REF_CONFIG[PAIR_REF_MODE]. */
-        uint64_t zqcs_rankmask1        : 4;  /**< [ 30: 27](R/W) Selects which ranks get ZQCS command when servicing the second pair refresh. */
-        uint64_t zqcs_rankmask0        : 4;  /**< [ 26: 23](R/W) Selects which ranks get ZQCS command when servicing the first pair refresh. */
-        uint64_t pair_zqcs             : 1;  /**< [ 22: 22](R/W) When set, uses LMC()_REF_CONFIG[ZQCS_RANKMASK0] and LMC()_REF_CONFIG[ZQCS_RANKMASK1]
-                                                                 to select which ranks get ZQCS command on the pair refresh interval that expires
-                                                                 the ZQCS count. Ranks selected by [ZQCS_RANKMASK0] get serviced on first pair refresh
-                                                                 then [ZQCS_RANKMASK1] get serviced on second pair refresh. Note [ZQCS_RANKMASK0] and
-                                                                 [ZQCS_RANKMASK1] should be mutually exclusive.
-
-                                                                 If not set, all available ranks get ZQCS commands on the first pair refresh.
-
-                                                                 This bit can only be asserted if LMC()_REF_CONFIG[PAIR_REF_MODE] is non-zero. */
-        uint64_t ref_rank_all          : 1;  /**< [ 21: 21](R/W) Reserved.
-                                                                 Internal:
-                                                                 When set, cycles through all ranks during the refresh sequence disregarding rank
-                                                                 availability status. For diagnostic use only. */
-        uint64_t pair_ref_mode         : 2;  /**< [ 20: 19](R/W) Selects the pair refresh mode.
-                                                                 0x0 = All ranks get refreshed together at the end of TREFI and all traffic is halted.
-                                                                 0x1 = Ranks are refreshed in pairs during TREFI window. At TREFI/2, ranks 1 & 3
-                                                                     are refreshed while allowing traffic to 0 & 2. At TREFI, ranks 0 & 2 are
-                                                                     refreshed while allowing traffic to 1 & 3.
-                                                                 0x2 = Ranks are refreshed in pairs during TREFI window. All traffic is halted
-                                                                     whenever each pair is refreshed. */
-        uint64_t ref_block             : 1;  /**< [ 18: 18](R/W) When set, LMC is blocked to initiate any refresh sequence. LMC then only
-                                                                 allows refresh sequence to start when LMC()_REF_STATUS[REF_COUNT0] or
-                                                                 LMC()_REF_STATUS[REF_COUNT1] has reached the maximum value of 0x7. */
-        uint64_t fgrm_trefi_div        : 2;  /**< [ 17: 16](R/W) Divides TREFI base programmed in LMC()_CONFIG[REF_ZQCS_INT].
-                                                                 This CSR can only be used if LMC()_MODEREG_PARAMS3[FGRM] is set.
-
-                                                                 0x0 = TREFI.
-                                                                 0x1 = TREFI/2.
-                                                                 0x2 = TREFI/4.
-                                                                 0x3 = TREFI/8.
-
-                                                                 If changing refresh rate with FGRM set to on-the-fly, this must be programmed at
-                                                                 the same time as LMC()_REF_CONFIG[OTF_REF_MODE]. */
-        uint64_t otf_ref_mode          : 2;  /**< [ 15: 14](R/W) Refresh mode for on-the-fly refresh. This CSR must be programmed to switch
-                                                                 to the modes between 1X/2X or 1X/4X as set by LMC()_MODEREG_PARAMS3[FGRM].
-                                                                 0x0 = REF 1X.
-                                                                 0x1 = REF 2X.
-                                                                 0x2 = REF 4x.
-
-                                                                 The status of the mode switch can be read back in LMC()_REF_STATUS[OTF_REF_STATUS]. */
-        uint64_t fgrm_trfc_dlr         : 7;  /**< [ 13:  7](R/W) Indicates tRFC_DLR2 or tRFC_DLR4 constraints for Fine-Granularity Refresh.
-                                                                 Set this field as follows:
-
-                                                                 _ RNDUP[tRFC_DLRx(ns) / (8 * TCYC(ns))]
-
-                                                                 where tRFC_DLR2 or tRFC_DLR4 is from the JEDEC 3D stacked SDRAM spec, and TCYC(ns) is the DDR clock
-                                                                 frequency (not data rate).
-
-                                                                 TYP = 90-120 ns.
-
-                                                                 0x0 = reserved.
-                                                                 0x1 = 8 TCYC.
-                                                                 0x2 = 16 TCYC.
-                                                                 0x3 = 24 TCYC.
-                                                                 0x4 = 32 TCYC.
-                                                                 ...
-                                                                 0x7E = 1008 TCYC.
-                                                                 0x7F = 1016 TCYC. */
-        uint64_t fgrm_trfc             : 7;  /**< [  6:  0](R/W) Indicates TRFC2 or TRFC4 constraints for Fine-Granularity Refresh.
-                                                                 Set this field as follows:
-
-                                                                 _ RNDUP[TRFCx(ns) / (8 * TCYC(ns))]
-
-                                                                 where TRFC2 or TRFC4 is from the JEDEC DDR4 spec, and TCYC(ns) is the DDR clock
-                                                                 frequency (not data rate).
-
-                                                                 TYP = 90-350 ns
-
-                                                                 0x0 = reserved.
-                                                                 0x1 = 8 TCYC.
-                                                                 0x2 = 16 TCYC.
-                                                                 0x3 = 24 TCYC.
-                                                                 0x4 = 32 TCYC.
-                                                                 ...
-                                                                 0x7E = 1008 TCYC.
-                                                                 0x7F = 1016 TCYC. */
-#else /* Word 0 - Little Endian */
-        uint64_t fgrm_trfc             : 7;  /**< [  6:  0](R/W) Indicates TRFC2 or TRFC4 constraints for Fine-Granularity Refresh.
-                                                                 Set this field as follows:
-
-                                                                 _ RNDUP[TRFCx(ns) / (8 * TCYC(ns))]
-
-                                                                 where TRFC2 or TRFC4 is from the JEDEC DDR4 spec, and TCYC(ns) is the DDR clock
-                                                                 frequency (not data rate).
-
-                                                                 TYP = 90-350 ns
-
-                                                                 0x0 = reserved.
-                                                                 0x1 = 8 TCYC.
-                                                                 0x2 = 16 TCYC.
-                                                                 0x3 = 24 TCYC.
-                                                                 0x4 = 32 TCYC.
-                                                                 ...
-                                                                 0x7E = 1008 TCYC.
-                                                                 0x7F = 1016 TCYC. */
-        uint64_t fgrm_trfc_dlr         : 7;  /**< [ 13:  7](R/W) Indicates tRFC_DLR2 or tRFC_DLR4 constraints for Fine-Granularity Refresh.
-                                                                 Set this field as follows:
-
-                                                                 _ RNDUP[tRFC_DLRx(ns) / (8 * TCYC(ns))]
-
-                                                                 where tRFC_DLR2 or tRFC_DLR4 is from the JEDEC 3D stacked SDRAM spec, and TCYC(ns) is the DDR clock
-                                                                 frequency (not data rate).
-
-                                                                 TYP = 90-120 ns.
-
-                                                                 0x0 = reserved.
-                                                                 0x1 = 8 TCYC.
-                                                                 0x2 = 16 TCYC.
-                                                                 0x3 = 24 TCYC.
-                                                                 0x4 = 32 TCYC.
-                                                                 ...
-                                                                 0x7E = 1008 TCYC.
-                                                                 0x7F = 1016 TCYC. */
-        uint64_t otf_ref_mode          : 2;  /**< [ 15: 14](R/W) Refresh mode for on-the-fly refresh. This CSR must be programmed to switch
-                                                                 to the modes between 1X/2X or 1X/4X as set by LMC()_MODEREG_PARAMS3[FGRM].
-                                                                 0x0 = REF 1X.
-                                                                 0x1 = REF 2X.
-                                                                 0x2 = REF 4x.
-
-                                                                 The status of the mode switch can be read back in LMC()_REF_STATUS[OTF_REF_STATUS]. */
-        uint64_t fgrm_trefi_div        : 2;  /**< [ 17: 16](R/W) Divides TREFI base programmed in LMC()_CONFIG[REF_ZQCS_INT].
-                                                                 This CSR can only be used if LMC()_MODEREG_PARAMS3[FGRM] is set.
-
-                                                                 0x0 = TREFI.
-                                                                 0x1 = TREFI/2.
-                                                                 0x2 = TREFI/4.
-                                                                 0x3 = TREFI/8.
-
-                                                                 If changing refresh rate with FGRM set to on-the-fly, this must be programmed at
-                                                                 the same time as LMC()_REF_CONFIG[OTF_REF_MODE]. */
-        uint64_t ref_block             : 1;  /**< [ 18: 18](R/W) When set, LMC is blocked to initiate any refresh sequence. LMC then only
-                                                                 allows refresh sequence to start when LMC()_REF_STATUS[REF_COUNT0] or
-                                                                 LMC()_REF_STATUS[REF_COUNT1] has reached the maximum value of 0x7. */
-        uint64_t pair_ref_mode         : 2;  /**< [ 20: 19](R/W) Selects the pair refresh mode.
-                                                                 0x0 = All ranks get refreshed together at the end of TREFI and all traffic is halted.
-                                                                 0x1 = Ranks are refreshed in pairs during TREFI window. At TREFI/2, ranks 1 & 3
-                                                                     are refreshed while allowing traffic to 0 & 2. At TREFI, ranks 0 & 2 are
-                                                                     refreshed while allowing traffic to 1 & 3.
-                                                                 0x2 = Ranks are refreshed in pairs during TREFI window. All traffic is halted
-                                                                     whenever each pair is refreshed. */
-        uint64_t ref_rank_all          : 1;  /**< [ 21: 21](R/W) Reserved.
-                                                                 Internal:
-                                                                 When set, cycles through all ranks during the refresh sequence disregarding rank
-                                                                 availability status. For diagnostic use only. */
-        uint64_t pair_zqcs             : 1;  /**< [ 22: 22](R/W) When set, uses LMC()_REF_CONFIG[ZQCS_RANKMASK0] and LMC()_REF_CONFIG[ZQCS_RANKMASK1]
-                                                                 to select which ranks get ZQCS command on the pair refresh interval that expires
-                                                                 the ZQCS count. Ranks selected by [ZQCS_RANKMASK0] get serviced on first pair refresh
-                                                                 then [ZQCS_RANKMASK1] get serviced on second pair refresh. Note [ZQCS_RANKMASK0] and
-                                                                 [ZQCS_RANKMASK1] should be mutually exclusive.
-
-                                                                 If not set, all available ranks get ZQCS commands on the first pair refresh.
-
-                                                                 This bit can only be asserted if LMC()_REF_CONFIG[PAIR_REF_MODE] is non-zero. */
-        uint64_t zqcs_rankmask0        : 4;  /**< [ 26: 23](R/W) Selects which ranks get ZQCS command when servicing the first pair refresh. */
-        uint64_t zqcs_rankmask1        : 4;  /**< [ 30: 27](R/W) Selects which ranks get ZQCS command when servicing the second pair refresh. */
-        uint64_t ref_stagger           : 1;  /**< [ 31: 31](R/W) When set, refresh commands to all package ranks are staggered by TRFC. The default
-                                                                 behavior is to send a refresh command to all package ranks and wait TRFC.
-                                                                 Asserting this bit forces LMC to stagger refresh command by waiting TRFC for each rank.
-                                                                 For 3DS DIMMs, this mode will refresh all logical ranks for one package rank before moving
-                                                                 to the next package rank. Note, software is responsible for determining whether staggering
-                                                                 refresh by TRFC (and TRFC_dlr) is greater than TREFI which would cause refresh to never catch up.
-
-                                                                 It is not recommended to use this mode with 8H 3DS, fine granularity refresh mode, or extended
-                                                                 temperature mode. This mode cannot be combined with LMC()_REF_CONFIG[PAIR_REF_MODE]. */
-        uint64_t reserved_32_63        : 32;
-#endif /* Word 0 - End */
-    } cn96xxp3;
-    struct cavm_lmcx_ref_config_cnf95xx
+    /* struct cavm_lmcx_ref_config_s cn9; */
+    struct cavm_lmcx_ref_config_cn96xxp1
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_31_63        : 33;
@@ -18970,8 +20742,11 @@ union cavm_lmcx_ref_config
         uint64_t zqcs_rankmask1        : 4;  /**< [ 30: 27](R/W) Selects which ranks get ZQCS command when servicing the second pair refresh. */
         uint64_t reserved_31_63        : 33;
 #endif /* Word 0 - End */
-    } cnf95xx;
-    /* struct cavm_lmcx_ref_config_cnf95xx loki; */
+    } cn96xxp1;
+    /* struct cavm_lmcx_ref_config_s cn96xxp3; */
+    /* struct cavm_lmcx_ref_config_s cn98xx; */
+    /* struct cavm_lmcx_ref_config_cn96xxp1 cnf95xx; */
+    /* struct cavm_lmcx_ref_config_cn96xxp1 loki; */
 };
 typedef union cavm_lmcx_ref_config cavm_lmcx_ref_config_t;
 
@@ -18980,6 +20755,8 @@ static inline uint64_t CAVM_LMCX_REF_CONFIG(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e0880000a0ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e0880000a0ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e0880000a0ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -19129,6 +20906,8 @@ static inline uint64_t CAVM_LMCX_REF_STATUS(unsigned long a)
         return 0x87e0880000a0ll + 0x1000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e0880000a8ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e0880000a8ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e0880000a8ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -19360,6 +21139,8 @@ static inline uint64_t CAVM_LMCX_RESET_CTL(unsigned long a)
         return 0x87e088000180ll + 0x1000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e088000180ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e088000180ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e088000180ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -19482,6 +21263,8 @@ static inline uint64_t CAVM_LMCX_RETRY_CONFIG(unsigned long a)
         return 0x87e088000110ll + 0x1000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e088000110ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e088000110ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e088000110ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -19616,6 +21399,8 @@ static inline uint64_t CAVM_LMCX_RETRY_STATUS(unsigned long a)
         return 0x87e088000118ll + 0x1000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e088000118ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e088000118ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e088000118ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -19891,6 +21676,8 @@ static inline uint64_t CAVM_LMCX_RLEVEL_CTL(unsigned long a)
         return 0x87e0880002a0ll + 0x1000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e0880002a0ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e0880002a0ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e0880002a0ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -19953,6 +21740,8 @@ static inline uint64_t CAVM_LMCX_RLEVEL_DBG(unsigned long a)
         return 0x87e0880002a8ll + 0x1000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e0880002a8ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e0880002a8ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e0880002a8ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -20001,6 +21790,8 @@ static inline uint64_t CAVM_LMCX_RLEVEL_DBG2(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e0880002b0ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e0880002b0ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e0880002b0ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -20067,7 +21858,7 @@ union cavm_lmcx_rlevel_rankx
         uint64_t reserved_56_63        : 8;
 #endif /* Word 0 - End */
     } s;
-    struct cavm_lmcx_rlevel_rankx_cn81xx
+    struct cavm_lmcx_rlevel_rankx_cn8
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_56_63        : 8;
@@ -20114,7 +21905,8 @@ union cavm_lmcx_rlevel_rankx
                                                                  0x3 = BYTEn values came from a complete read leveling sequence. */
         uint64_t reserved_56_63        : 8;
 #endif /* Word 0 - End */
-    } cn81xx;
+    } cn8;
+    /* struct cavm_lmcx_rlevel_rankx_cn8 cn81xx; */
     struct cavm_lmcx_rlevel_rankx_cn83xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -20211,6 +22003,8 @@ static inline uint64_t CAVM_LMCX_RLEVEL_RANKX(unsigned long a, unsigned long b)
         return 0x87e088000280ll + 0x1000000ll * ((a) & 0x1) + 8ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e088000280ll + 0x1000000ll * ((a) & 0x3) + 8ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=5) && (b<=3)))
+        return 0x87e088000280ll + 0x1000000ll * ((a) & 0x7) + 8ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (((a==0) || (a==2)) && (b<=3)))
         return 0x87e088000280ll + 0x1000000ll * ((a) & 0x3) + 8ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && (((a==0) || (a==2)) && (b<=3)))
@@ -20290,6 +22084,7 @@ union cavm_lmcx_rodt_mask
         uint64_t reserved_28_63        : 36;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_lmcx_rodt_mask_s cn8; */
     /* struct cavm_lmcx_rodt_mask_s cn81xx; */
     struct cavm_lmcx_rodt_mask_cn83xx
     {
@@ -20338,6 +22133,8 @@ static inline uint64_t CAVM_LMCX_RODT_MASK(unsigned long a)
         return 0x87e088000268ll + 0x1000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e088000268ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e088000268ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e088000268ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -20525,6 +22322,7 @@ union cavm_lmcx_scrambled_fadr
         uint64_t reserved_43_63        : 21;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_lmcx_scrambled_fadr_s cn8; */
     /* struct cavm_lmcx_scrambled_fadr_s cn81xx; */
     struct cavm_lmcx_scrambled_fadr_cn83xx
     {
@@ -20763,6 +22561,8 @@ static inline uint64_t CAVM_LMCX_SEQ_CTL(unsigned long a)
         return 0x87e088000048ll + 0x1000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e088000048ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e088000048ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e088000048ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -20821,7 +22621,7 @@ union cavm_lmcx_slot_ctl0
         uint64_t reserved_50_63        : 14;
 #endif /* Word 0 - End */
     } s;
-    struct cavm_lmcx_slot_ctl0_cn81xx
+    struct cavm_lmcx_slot_ctl0_cn8
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_50_63        : 14;
@@ -20864,7 +22664,8 @@ union cavm_lmcx_slot_ctl0
         uint64_t w2r_l_init_ext        : 1;  /**< [ 49: 49](R/W/H) A 1-bit extension to the [W2R_L_INIT] register. */
         uint64_t reserved_50_63        : 14;
 #endif /* Word 0 - End */
-    } cn81xx;
+    } cn8;
+    /* struct cavm_lmcx_slot_ctl0_cn8 cn81xx; */
     struct cavm_lmcx_slot_ctl0_cn83xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -20961,6 +22762,8 @@ static inline uint64_t CAVM_LMCX_SLOT_CTL0(unsigned long a)
         return 0x87e0880001f8ll + 0x1000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e0880001f8ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e0880001f8ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e0880001f8ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -21073,6 +22876,8 @@ static inline uint64_t CAVM_LMCX_SLOT_CTL1(unsigned long a)
         return 0x87e088000200ll + 0x1000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e088000200ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e088000200ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e088000200ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -21184,6 +22989,8 @@ static inline uint64_t CAVM_LMCX_SLOT_CTL2(unsigned long a)
         return 0x87e088000208ll + 0x1000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e088000208ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e088000208ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e088000208ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -21337,6 +23144,8 @@ static inline uint64_t CAVM_LMCX_SLOT_CTL3(unsigned long a)
         return 0x87e088000248ll + 0x1000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e088000248ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e088000248ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e088000248ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -21769,6 +23578,8 @@ static inline uint64_t CAVM_LMCX_TIMING_PARAMS0(unsigned long a)
         return 0x87e088000198ll + 0x1000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e088000198ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e088000198ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e088000198ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -22155,6 +23966,329 @@ union cavm_lmcx_timing_params1
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_62_63        : 2;
+        uint64_t tpdm_full_cycle_ena   : 1;  /**< [ 61: 61](R/W) When set, this field enables the addition of a one cycle delay to the
+                                                                 write/read latency calculation. This is to compensate the case when
+                                                                 tPDM delay in the RCD of an RDIMM is greater than one-cycle.
+                                                                 Only valid in RDIMM  (LMC()_CONTROL[RDIMM_ENA]=1). */
+        uint64_t trfc_dlr              : 7;  /**< [ 60: 54](R/W) Indicates tRFC_DLR constraints. Set this field as follows:
+
+                                                                 _ RNDUP[tRFC_DLR(ns) / (8 * TCYC(ns))]
+
+                                                                 where tRFC_DLR is from the JEDEC 3D stacked SDRAM spec, and TCYC(ns) is the DDR clock
+                                                                 frequency (not data rate).
+
+                                                                 TYP = 90-120 ns.
+
+                                                                 0x0 = reserved.
+                                                                 0x1 = 8 TCYC.
+                                                                 0x2 = 16 TCYC.
+                                                                 0x3 = 24 TCYC.
+                                                                 0x4 = 32 TCYC.
+                                                                 ...
+                                                                 0x7E = 1008 TCYC.
+                                                                 0x7F = 1016 TCYC. */
+        uint64_t txpdll                : 5;  /**< [ 53: 49](R/W) Indicates TXPDLL constraints. Set this field as follows:
+
+                                                                 _ RNDUP[TXPDLL(ns) / TCYC(ns)] - 1
+
+                                                                 where TXPDLL is from the JEDEC DDR4 spec, and TCYC(ns) is the DDR clock
+                                                                 frequency (not data rate).
+
+                                                                 TYP=max(10nCK, 24 ns). */
+        uint64_t tfaw                  : 5;  /**< [ 48: 44](R/W) Indicates TFAW constraints. Set this field as follows:
+
+                                                                 _ RNDUP[TFAW(ns) / (4 * TCYC(ns))]
+
+                                                                 where TFAW is from the JEDEC DDR4 spec, and TCYC(ns) is the DDR clock
+                                                                 frequency (not data rate).
+
+                                                                 TYP = 30-40 ns
+
+                                                                 Internal:
+                                                                 When interfacing with DIMMs that contain 3DS DRAMs, set this field as follows:
+
+                                                                 _ RNDUP[tFAW_SLR(ns) / (4 * TCYC(ns))]
+
+                                                                 where tFAW_SLR is the Four activate window to the same logical rank from the
+                                                                 JEDEC DDR4 3D Stacked spec. */
+        uint64_t twldqsen              : 4;  /**< [ 43: 40](R/W) Indicates TWLDQSEN constraints. Set this field as follows:
+
+                                                                 _ RNDUP[TWLDQSEN(ns) / (4 * TCYC(ns))]
+
+                                                                 where TWLDQSEN is from the JEDEC DDR4 spec, and TCYC(ns) is the DDR clock
+                                                                 frequency (not data rate).
+
+                                                                 TYP = max(25nCK). */
+        uint64_t twlmrd                : 4;  /**< [ 39: 36](R/W) Indicates TWLMRD constraints. Set this field as follows:
+
+                                                                 _ RNDUP[TWLMRD(ns) / (4 * TCYC(ns))]
+
+                                                                 where TWLMRD is from the JEDEC DDR4 spec, and TCYC(ns) is the DDR clock
+                                                                 frequency (not data rate).
+
+                                                                 TYP = max(40nCK). */
+        uint64_t txp                   : 4;  /**< [ 35: 32](R/W) Indicates TXP constraints. Set this field as follows:
+
+                                                                 _ RNDUP[TXP(ns) / TCYC(ns)] - 1
+
+                                                                 where TXP is from the JEDEC DDR4 spec, and TCYC(ns) is the DDR clock
+                                                                 frequency (not data rate).
+
+                                                                 TYP=max(3nCK, 7.5 ns). */
+        uint64_t trrd                  : 4;  /**< [ 31: 28](R/W) Indicates TRRD constraints. Set this field as follows:
+
+                                                                 _ RNDUP[TRRD(ns) / TCYC(ns)] - 2,
+
+                                                                 where TRRD is from the JEDEC DDR4 spec, and TCYC(ns) is the DDR clock
+                                                                 frequency (not data rate).
+
+                                                                 TYP = max(4nCK, 10 ns).
+
+                                                                 0x0 = Reserved.
+                                                                 0x1 = 3 TCYC.
+                                                                 ...
+                                                                 0x6 = 8 TCYC.
+                                                                 0x7 = 9 TCYC.
+
+                                                                 For DDR4, this is the tRRD_S parameter. */
+        uint64_t trfc                  : 7;  /**< [ 27: 21](R/W) Indicates TRFC constraints. Set this field as follows:
+
+                                                                 _ RNDUP[TRFC(ns) / (8 * TCYC(ns))]
+
+                                                                 where TRFC is from the JEDEC DDR4 spec, and TCYC(ns) is the DDR clock
+                                                                 frequency (not data rate).
+
+                                                                 TYP = 90-350 ns
+
+                                                                 0x0 = reserved.
+                                                                 0x1 = 8 TCYC.
+                                                                 0x2 = 16 TCYC.
+                                                                 0x3 = 24 TCYC.
+                                                                 0x4 = 32 TCYC.
+                                                                 ...
+                                                                 0x7E = 1008 TCYC.
+                                                                 0x7F = 1016 TCYC. */
+        uint64_t twtr                  : 4;  /**< [ 20: 17](R/W) Indicates TWTR constraints. Set this field as follows:
+
+                                                                 _ RNDUP[TWTR(ns) / TCYC(ns)] - 1
+
+                                                                 where TWTR is from the JEDEC DDR4 spec, and TCYC(ns) is the DDR clock
+                                                                 frequency (not data rate).
+
+                                                                 TYP = max(4nCK, 7.5 ns).
+
+                                                                 For DDR4, this CSR field represents tWTR_S.
+
+                                                                 0x0 = Reserved.
+                                                                 0x1 = 2.
+                                                                 ...
+                                                                 0x7 = 8.
+                                                                 0x8-0xF = Reserved. */
+        uint64_t trcd                  : 6;  /**< [ 16: 11](R/W) Indicates TRCD constraints. Set this field as follows:
+
+                                                                 _ RNDUP[TRCD(ns) / TCYC(ns)]
+
+                                                                 where TRCD is from the JEDEC DDR4 spec, and TCYC(ns) is the DDR clock
+                                                                 frequency (not data rate).
+
+                                                                 TYP = 10-15 ns
+
+                                                                 0x0 = Reserved.
+                                                                 0x1 = 2 (2 is the smallest value allowed).
+                                                                 0x2 = 2.
+                                                                 ...
+                                                                 0x1F = 31.
+                                                                 0x20-0x3F = Reserved.
+
+                                                                 In 2T mode, make this register TRCD - 1, not going below 2. */
+        uint64_t tras                  : 7;  /**< [ 10:  4](R/W) Indicates TRAS constraints. Set TRAS (CSR field) as follows:
+
+                                                                 _ RNDUP[TRAS(ns)/TCYC(ns)] - 1,
+
+                                                                 where TRAS is from the DDR4 spec, and TCYC(ns) is the DDR clock frequency (not data
+                                                                 rate).
+
+                                                                 TYP = 35ns - 9 * TREFI.
+
+                                                                 0x0 = reserved.
+                                                                 0x1 = 2 TCYC.
+                                                                 0x2 = 3 TCYC.
+                                                                 ...
+                                                                 0x7F = 128 TCYC. */
+        uint64_t tmprr                 : 4;  /**< [  3:  0](R/W) Indicates TMPRR constraints. Set this field as follows:
+
+                                                                 _ RNDUP[TMPRR(ns) / TCYC(ns)] - 1
+
+                                                                 where TMPRR is from the JEDEC DDR4 spec, and TCYC(ns) is the DDR clock
+                                                                 frequency (not data rate).
+
+                                                                 TYP = 1 nCK. */
+#else /* Word 0 - Little Endian */
+        uint64_t tmprr                 : 4;  /**< [  3:  0](R/W) Indicates TMPRR constraints. Set this field as follows:
+
+                                                                 _ RNDUP[TMPRR(ns) / TCYC(ns)] - 1
+
+                                                                 where TMPRR is from the JEDEC DDR4 spec, and TCYC(ns) is the DDR clock
+                                                                 frequency (not data rate).
+
+                                                                 TYP = 1 nCK. */
+        uint64_t tras                  : 7;  /**< [ 10:  4](R/W) Indicates TRAS constraints. Set TRAS (CSR field) as follows:
+
+                                                                 _ RNDUP[TRAS(ns)/TCYC(ns)] - 1,
+
+                                                                 where TRAS is from the DDR4 spec, and TCYC(ns) is the DDR clock frequency (not data
+                                                                 rate).
+
+                                                                 TYP = 35ns - 9 * TREFI.
+
+                                                                 0x0 = reserved.
+                                                                 0x1 = 2 TCYC.
+                                                                 0x2 = 3 TCYC.
+                                                                 ...
+                                                                 0x7F = 128 TCYC. */
+        uint64_t trcd                  : 6;  /**< [ 16: 11](R/W) Indicates TRCD constraints. Set this field as follows:
+
+                                                                 _ RNDUP[TRCD(ns) / TCYC(ns)]
+
+                                                                 where TRCD is from the JEDEC DDR4 spec, and TCYC(ns) is the DDR clock
+                                                                 frequency (not data rate).
+
+                                                                 TYP = 10-15 ns
+
+                                                                 0x0 = Reserved.
+                                                                 0x1 = 2 (2 is the smallest value allowed).
+                                                                 0x2 = 2.
+                                                                 ...
+                                                                 0x1F = 31.
+                                                                 0x20-0x3F = Reserved.
+
+                                                                 In 2T mode, make this register TRCD - 1, not going below 2. */
+        uint64_t twtr                  : 4;  /**< [ 20: 17](R/W) Indicates TWTR constraints. Set this field as follows:
+
+                                                                 _ RNDUP[TWTR(ns) / TCYC(ns)] - 1
+
+                                                                 where TWTR is from the JEDEC DDR4 spec, and TCYC(ns) is the DDR clock
+                                                                 frequency (not data rate).
+
+                                                                 TYP = max(4nCK, 7.5 ns).
+
+                                                                 For DDR4, this CSR field represents tWTR_S.
+
+                                                                 0x0 = Reserved.
+                                                                 0x1 = 2.
+                                                                 ...
+                                                                 0x7 = 8.
+                                                                 0x8-0xF = Reserved. */
+        uint64_t trfc                  : 7;  /**< [ 27: 21](R/W) Indicates TRFC constraints. Set this field as follows:
+
+                                                                 _ RNDUP[TRFC(ns) / (8 * TCYC(ns))]
+
+                                                                 where TRFC is from the JEDEC DDR4 spec, and TCYC(ns) is the DDR clock
+                                                                 frequency (not data rate).
+
+                                                                 TYP = 90-350 ns
+
+                                                                 0x0 = reserved.
+                                                                 0x1 = 8 TCYC.
+                                                                 0x2 = 16 TCYC.
+                                                                 0x3 = 24 TCYC.
+                                                                 0x4 = 32 TCYC.
+                                                                 ...
+                                                                 0x7E = 1008 TCYC.
+                                                                 0x7F = 1016 TCYC. */
+        uint64_t trrd                  : 4;  /**< [ 31: 28](R/W) Indicates TRRD constraints. Set this field as follows:
+
+                                                                 _ RNDUP[TRRD(ns) / TCYC(ns)] - 2,
+
+                                                                 where TRRD is from the JEDEC DDR4 spec, and TCYC(ns) is the DDR clock
+                                                                 frequency (not data rate).
+
+                                                                 TYP = max(4nCK, 10 ns).
+
+                                                                 0x0 = Reserved.
+                                                                 0x1 = 3 TCYC.
+                                                                 ...
+                                                                 0x6 = 8 TCYC.
+                                                                 0x7 = 9 TCYC.
+
+                                                                 For DDR4, this is the tRRD_S parameter. */
+        uint64_t txp                   : 4;  /**< [ 35: 32](R/W) Indicates TXP constraints. Set this field as follows:
+
+                                                                 _ RNDUP[TXP(ns) / TCYC(ns)] - 1
+
+                                                                 where TXP is from the JEDEC DDR4 spec, and TCYC(ns) is the DDR clock
+                                                                 frequency (not data rate).
+
+                                                                 TYP=max(3nCK, 7.5 ns). */
+        uint64_t twlmrd                : 4;  /**< [ 39: 36](R/W) Indicates TWLMRD constraints. Set this field as follows:
+
+                                                                 _ RNDUP[TWLMRD(ns) / (4 * TCYC(ns))]
+
+                                                                 where TWLMRD is from the JEDEC DDR4 spec, and TCYC(ns) is the DDR clock
+                                                                 frequency (not data rate).
+
+                                                                 TYP = max(40nCK). */
+        uint64_t twldqsen              : 4;  /**< [ 43: 40](R/W) Indicates TWLDQSEN constraints. Set this field as follows:
+
+                                                                 _ RNDUP[TWLDQSEN(ns) / (4 * TCYC(ns))]
+
+                                                                 where TWLDQSEN is from the JEDEC DDR4 spec, and TCYC(ns) is the DDR clock
+                                                                 frequency (not data rate).
+
+                                                                 TYP = max(25nCK). */
+        uint64_t tfaw                  : 5;  /**< [ 48: 44](R/W) Indicates TFAW constraints. Set this field as follows:
+
+                                                                 _ RNDUP[TFAW(ns) / (4 * TCYC(ns))]
+
+                                                                 where TFAW is from the JEDEC DDR4 spec, and TCYC(ns) is the DDR clock
+                                                                 frequency (not data rate).
+
+                                                                 TYP = 30-40 ns
+
+                                                                 Internal:
+                                                                 When interfacing with DIMMs that contain 3DS DRAMs, set this field as follows:
+
+                                                                 _ RNDUP[tFAW_SLR(ns) / (4 * TCYC(ns))]
+
+                                                                 where tFAW_SLR is the Four activate window to the same logical rank from the
+                                                                 JEDEC DDR4 3D Stacked spec. */
+        uint64_t txpdll                : 5;  /**< [ 53: 49](R/W) Indicates TXPDLL constraints. Set this field as follows:
+
+                                                                 _ RNDUP[TXPDLL(ns) / TCYC(ns)] - 1
+
+                                                                 where TXPDLL is from the JEDEC DDR4 spec, and TCYC(ns) is the DDR clock
+                                                                 frequency (not data rate).
+
+                                                                 TYP=max(10nCK, 24 ns). */
+        uint64_t trfc_dlr              : 7;  /**< [ 60: 54](R/W) Indicates tRFC_DLR constraints. Set this field as follows:
+
+                                                                 _ RNDUP[tRFC_DLR(ns) / (8 * TCYC(ns))]
+
+                                                                 where tRFC_DLR is from the JEDEC 3D stacked SDRAM spec, and TCYC(ns) is the DDR clock
+                                                                 frequency (not data rate).
+
+                                                                 TYP = 90-120 ns.
+
+                                                                 0x0 = reserved.
+                                                                 0x1 = 8 TCYC.
+                                                                 0x2 = 16 TCYC.
+                                                                 0x3 = 24 TCYC.
+                                                                 0x4 = 32 TCYC.
+                                                                 ...
+                                                                 0x7E = 1008 TCYC.
+                                                                 0x7F = 1016 TCYC. */
+        uint64_t tpdm_full_cycle_ena   : 1;  /**< [ 61: 61](R/W) When set, this field enables the addition of a one cycle delay to the
+                                                                 write/read latency calculation. This is to compensate the case when
+                                                                 tPDM delay in the RCD of an RDIMM is greater than one-cycle.
+                                                                 Only valid in RDIMM  (LMC()_CONTROL[RDIMM_ENA]=1). */
+        uint64_t reserved_62_63        : 2;
+#endif /* Word 0 - End */
+    } cn9;
+    /* struct cavm_lmcx_timing_params1_cn9 cn96xxp1; */
+    struct cavm_lmcx_timing_params1_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_62_63        : 2;
         uint64_t tpdm_full_cycle_ena   : 1;  /**< [ 61: 61](R/W) When set, this field enables the addition of a one cycle delay to the write/read
                                                                  latency calculation. This is to compensate for the tPDM (and hence tSTAOFF)
                                                                  delay in the RCD module of an RDIMM. Only valid for RDIMM application
@@ -22474,7 +24608,11 @@ union cavm_lmcx_timing_params1
                                                                  Set this field to 1 if tPDM \>= 0.5*TCYC, where TCYC is the DDR clock period. */
         uint64_t reserved_62_63        : 2;
 #endif /* Word 0 - End */
-    } cn9;
+    } cn96xxp3;
+    /* struct cavm_lmcx_timing_params1_cn96xxp3 cn98xx; */
+    /* struct cavm_lmcx_timing_params1_cn9 cnf95xxp1; */
+    /* struct cavm_lmcx_timing_params1_cn96xxp3 cnf95xxp2; */
+    /* struct cavm_lmcx_timing_params1_cn96xxp3 loki; */
 };
 typedef union cavm_lmcx_timing_params1 cavm_lmcx_timing_params1_t;
 
@@ -22487,6 +24625,8 @@ static inline uint64_t CAVM_LMCX_TIMING_PARAMS1(unsigned long a)
         return 0x87e0880001a0ll + 0x1000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e0880001a0ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e0880001a0ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e0880001a0ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -22838,6 +24978,8 @@ static inline uint64_t CAVM_LMCX_TIMING_PARAMS2(unsigned long a)
         return 0x87e088000060ll + 0x1000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e088000060ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e088000060ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e088000060ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -22965,6 +25107,8 @@ static inline uint64_t CAVM_LMCX_WLEVEL_CTL(unsigned long a)
         return 0x87e088000300ll + 0x1000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e088000300ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e088000300ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e088000300ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -23067,6 +25211,8 @@ static inline uint64_t CAVM_LMCX_WLEVEL_DBG(unsigned long a)
         return 0x87e088000308ll + 0x1000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e088000308ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e088000308ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e088000308ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))
@@ -23169,6 +25315,7 @@ union cavm_lmcx_wlevel_rankx
         uint64_t reserved_47_63        : 17;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_lmcx_wlevel_rankx_s cn8; */
     /* struct cavm_lmcx_wlevel_rankx_s cn81xx; */
     struct cavm_lmcx_wlevel_rankx_cn83xx
     {
@@ -23282,6 +25429,8 @@ static inline uint64_t CAVM_LMCX_WLEVEL_RANKX(unsigned long a, unsigned long b)
         return 0x87e0880002c0ll + 0x1000000ll * ((a) & 0x1) + 8ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0880002c0ll + 0x1000000ll * ((a) & 0x3) + 8ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=5) && (b<=3)))
+        return 0x87e0880002c0ll + 0x1000000ll * ((a) & 0x7) + 8ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (((a==0) || (a==2)) && (b<=3)))
         return 0x87e0880002c0ll + 0x1000000ll * ((a) & 0x3) + 8ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && (((a==0) || (a==2)) && (b<=3)))
@@ -23353,6 +25502,7 @@ union cavm_lmcx_wodt_mask
         uint64_t reserved_28_63        : 36;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_lmcx_wodt_mask_s cn8; */
     /* struct cavm_lmcx_wodt_mask_s cn81xx; */
     struct cavm_lmcx_wodt_mask_cn83xx
     {
@@ -23393,6 +25543,8 @@ static inline uint64_t CAVM_LMCX_WODT_MASK(unsigned long a)
         return 0x87e0880001b0ll + 0x1000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e0880001b0ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=5))
+        return 0x87e0880001b0ll + 0x1000000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) || (a==2)))
         return 0x87e0880001b0ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) || (a==2)))

@@ -316,6 +316,91 @@ union cavm_dap_imp_dar
         uint32_t deviceen              : 1;  /**< [  5:  5](R/W) Set this bit to use CVM-AP inside DAP for CNXXXX addressing accesses.
 
                                                                  When in trusted mode or RST_BOOT[JTAGDIS]=1 resets to zero, else one. */
+        uint32_t dabdeviceen           : 1;  /**< [  4:  4](R/W) Set this bit to use ARM-AP inside DAP for DAB serial bus accesses.
+
+                                                                 When in trusted mode or RST_BOOT[JTAGDIS]=1 resets to zero, else one. */
+        uint32_t spniden               : 1;  /**< [  3:  3](R/W) Set this bit to enable secure noninvasive debug enable.
+
+                                                                 When in trusted mode or RST_BOOT[JTAGDIS]=1 resets to zero, else one. */
+        uint32_t spiden                : 1;  /**< [  2:  2](R/W) Set this bit to enable secure invasive debug enable.
+
+                                                                 When in trusted mode or RST_BOOT[JTAGDIS]=1 resets to zero, else one. */
+        uint32_t niden                 : 1;  /**< [  1:  1](R/W) Set this bit to enable nonsecure invasive debug enable.
+
+                                                                 When in trusted mode or RST_BOOT[JTAGDIS]=1 resets to zero, else one. */
+        uint32_t dbgen                 : 1;  /**< [  0:  0](R/W) Set this bit to enable debug enable.
+
+                                                                 When in trusted mode or RST_BOOT[JTAGDIS]=1 resets to zero, else one. */
+#else /* Word 0 - Little Endian */
+        uint32_t dbgen                 : 1;  /**< [  0:  0](R/W) Set this bit to enable debug enable.
+
+                                                                 When in trusted mode or RST_BOOT[JTAGDIS]=1 resets to zero, else one. */
+        uint32_t niden                 : 1;  /**< [  1:  1](R/W) Set this bit to enable nonsecure invasive debug enable.
+
+                                                                 When in trusted mode or RST_BOOT[JTAGDIS]=1 resets to zero, else one. */
+        uint32_t spiden                : 1;  /**< [  2:  2](R/W) Set this bit to enable secure invasive debug enable.
+
+                                                                 When in trusted mode or RST_BOOT[JTAGDIS]=1 resets to zero, else one. */
+        uint32_t spniden               : 1;  /**< [  3:  3](R/W) Set this bit to enable secure noninvasive debug enable.
+
+                                                                 When in trusted mode or RST_BOOT[JTAGDIS]=1 resets to zero, else one. */
+        uint32_t dabdeviceen           : 1;  /**< [  4:  4](R/W) Set this bit to use ARM-AP inside DAP for DAB serial bus accesses.
+
+                                                                 When in trusted mode or RST_BOOT[JTAGDIS]=1 resets to zero, else one. */
+        uint32_t deviceen              : 1;  /**< [  5:  5](R/W) Set this bit to use CVM-AP inside DAP for CNXXXX addressing accesses.
+
+                                                                 When in trusted mode or RST_BOOT[JTAGDIS]=1 resets to zero, else one. */
+        uint32_t reserved_6_8          : 3;
+        uint32_t caben                 : 1;  /**< [  9:  9](R/W) Enable CAB accesses from NCB and RSL devices.
+                                                                 0 = Return fault for all CAB accesses.
+                                                                 1 = Enable all CAB accesses.
+
+                                                                 When in trusted mode or RST_BOOT[JTAGDIS]=1, resets to zero, else one. */
+        uint32_t cabnsen               : 1;  /**< [ 10: 10](R/W) Enable nonsecure CAB accesses from NCB and RSL devices.
+                                                                 0 = Return fault on nonsecure CAB accesses.
+                                                                 1 = Enable nonsecure CAB accesses. */
+        uint32_t reserved_11_27        : 17;
+        uint32_t distrace              : 1;  /**< [ 28: 28](RO) Trace unit is always discoverable in CNXXXX.
+                                                                 0 = Trace unit is discoverable by software.
+                                                                 1 = Trace unit is hidden.
+
+                                                                 In CNXXXX, always discoverable. */
+        uint32_t distracefeature       : 1;  /**< [ 29: 29](R/W) Reserved.
+                                                                 Internal:
+                                                                 Passed to trace unit, but not presently used.
+                                                                 0 = Future trace feature enabled.
+                                                                 1 = Future trace feature disabled. */
+        uint32_t reserved_30_31        : 2;
+#endif /* Word 0 - End */
+    } cn9;
+    /* struct cavm_dap_imp_dar_cn9 cn96xxp1; */
+    struct cavm_dap_imp_dar_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t reserved_30_31        : 2;
+        uint32_t distracefeature       : 1;  /**< [ 29: 29](R/W) Reserved.
+                                                                 Internal:
+                                                                 Passed to trace unit, but not presently used.
+                                                                 0 = Future trace feature enabled.
+                                                                 1 = Future trace feature disabled. */
+        uint32_t distrace              : 1;  /**< [ 28: 28](RO) Trace unit is always discoverable in CNXXXX.
+                                                                 0 = Trace unit is discoverable by software.
+                                                                 1 = Trace unit is hidden.
+
+                                                                 In CNXXXX, always discoverable. */
+        uint32_t reserved_11_27        : 17;
+        uint32_t cabnsen               : 1;  /**< [ 10: 10](R/W) Enable nonsecure CAB accesses from NCB and RSL devices.
+                                                                 0 = Return fault on nonsecure CAB accesses.
+                                                                 1 = Enable nonsecure CAB accesses. */
+        uint32_t caben                 : 1;  /**< [  9:  9](R/W) Enable CAB accesses from NCB and RSL devices.
+                                                                 0 = Return fault for all CAB accesses.
+                                                                 1 = Enable all CAB accesses.
+
+                                                                 When in trusted mode or RST_BOOT[JTAGDIS]=1, resets to zero, else one. */
+        uint32_t reserved_6_8          : 3;
+        uint32_t deviceen              : 1;  /**< [  5:  5](R/W) Set this bit to use CVM-AP inside DAP for CNXXXX addressing accesses.
+
+                                                                 When in trusted mode or RST_BOOT[JTAGDIS]=1 resets to zero, else one. */
         uint32_t dabdeviceen           : 1;  /**< [  4:  4](R/W) Set this bit to use Arm-AP inside DAP for DAB serial bus accesses.
 
                                                                  When in trusted mode or RST_BOOT[JTAGDIS]=1 resets to zero, else one. */
@@ -372,7 +457,10 @@ union cavm_dap_imp_dar
                                                                  1 = Future trace feature disabled. */
         uint32_t reserved_30_31        : 2;
 #endif /* Word 0 - End */
-    } cn9;
+    } cn96xxp3;
+    /* struct cavm_dap_imp_dar_cn96xxp3 cn98xx; */
+    /* struct cavm_dap_imp_dar_cn96xxp3 cnf95xx; */
+    /* struct cavm_dap_imp_dar_cn96xxp3 loki; */
 };
 typedef union cavm_dap_imp_dar cavm_dap_imp_dar_t;
 

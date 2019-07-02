@@ -358,6 +358,115 @@ union cavm_npc_result_s
         uint64_t l2m                   : 1;  /**< [ 32: 32] Set when the packet's destination MAC address field in the outer L2 header
                                                                  is a multicast address (i.e. the LSB of the first byte of the destination
                                                                  MAC is set, and the address is not a broadcast address - see [L2B]). */
+        uint64_t errcode               : 8;  /**< [ 31: 24] When zero, indicates no error. When nonzero, contains a software-defined
+                                                                 opcode identifying the error reason, [ERRLEV] specifies the lowest protocol
+                                                                 layer containing the error, and software should ignore all parse information
+                                                                 for layers higher than [ERRLEV], e.g. ignore [LF], [LG] and [LH] when
+                                                                 [ERRCODE] is nonzero and [ERRLEV]=NPC_ERRLEV_E::LE. */
+        uint64_t errlev                : 4;  /**< [ 23: 20] When [ERRCODE] is nonzero, specifies the lowest protocol layer containing
+                                                                 an error, and [ERRCODE] indicates the error reason. Enumerated by
+                                                                 NPC_ERRLEV_E. */
+        uint64_t chan                  : 12; /**< [ 19:  8] Logical channel that the inbound (RX) packet arrived from. This is the
+                                                                 channel or port number on which NIX received the packet, optionally
+                                                                 adjusted by a port to channel adder using the CPI algorithm. See
+                                                                 NPC_AF_PKIND()_CPI_DEF()[ENA]. Always zero for an outbound (TX) packet. */
+        uint64_t pkind                 : 6;  /**< [  7:  2] Packet's port kind supplied by the NIX interface. */
+        uint64_t intf                  : 2;  /**< [  1:  0] NPC interface enumerated by NPC_INTF_E. */
+#else /* Word 0 - Little Endian */
+        uint64_t intf                  : 2;  /**< [  1:  0] NPC interface enumerated by NPC_INTF_E. */
+        uint64_t pkind                 : 6;  /**< [  7:  2] Packet's port kind supplied by the NIX interface. */
+        uint64_t chan                  : 12; /**< [ 19:  8] Logical channel that the inbound (RX) packet arrived from. This is the
+                                                                 channel or port number on which NIX received the packet, optionally
+                                                                 adjusted by a port to channel adder using the CPI algorithm. See
+                                                                 NPC_AF_PKIND()_CPI_DEF()[ENA]. Always zero for an outbound (TX) packet. */
+        uint64_t errlev                : 4;  /**< [ 23: 20] When [ERRCODE] is nonzero, specifies the lowest protocol layer containing
+                                                                 an error, and [ERRCODE] indicates the error reason. Enumerated by
+                                                                 NPC_ERRLEV_E. */
+        uint64_t errcode               : 8;  /**< [ 31: 24] When zero, indicates no error. When nonzero, contains a software-defined
+                                                                 opcode identifying the error reason, [ERRLEV] specifies the lowest protocol
+                                                                 layer containing the error, and software should ignore all parse information
+                                                                 for layers higher than [ERRLEV], e.g. ignore [LF], [LG] and [LH] when
+                                                                 [ERRCODE] is nonzero and [ERRLEV]=NPC_ERRLEV_E::LE. */
+        uint64_t l2m                   : 1;  /**< [ 32: 32] Set when the packet's destination MAC address field in the outer L2 header
+                                                                 is a multicast address (i.e. the LSB of the first byte of the destination
+                                                                 MAC is set, and the address is not a broadcast address - see [L2B]). */
+        uint64_t l2b                   : 1;  /**< [ 33: 33] Set when the packet's destination MAC address field in the outer L2 header
+                                                                 is the broadcast address (i.e. all 1s). */
+        uint64_t l3m                   : 1;  /**< [ 34: 34] Set when the outer IP indicates multicast, i.e. the IPv4 destination address
+                                                                 \<31:28\> = 0xE, or the IPv6 MSB of the 128-bit destination address = 0xFF. */
+        uint64_t l3b                   : 1;  /**< [ 35: 35] Set when the outer IP4 indicates broadcast, i.e. the destination address is all
+                                                                 ones. Broadcast is not defined for IPv6. */
+        uint64_t eoh_ptr               : 8;  /**< [ 43: 36] End-of-header pointer. Byte offset from packet start to first byte after
+                                                                 last parsed layer. Always even. */
+        uint64_t reserved_44_63        : 20;
+#endif /* Word 0 - End */
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 1 - Big Endian */
+        uint64_t action                : 64; /**< [127: 64] Match action from MCAM. Format is NIX_RX_ACTION_S for RX packet
+                                                                 ([INTF]=NPC_INTF_E::NIX(n)_RX), NIX_TX_ACTION_S for TX packet
+                                                                 ([INTF]=NPC_INTF_E::NIX(n)_TX). */
+#else /* Word 1 - Little Endian */
+        uint64_t action                : 64; /**< [127: 64] Match action from MCAM. Format is NIX_RX_ACTION_S for RX packet
+                                                                 ([INTF]=NPC_INTF_E::NIX(n)_RX), NIX_TX_ACTION_S for TX packet
+                                                                 ([INTF]=NPC_INTF_E::NIX(n)_TX). */
+#endif /* Word 1 - End */
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 2 - Big Endian */
+        uint64_t vtag_action           : 64; /**< [191:128] Match Vtag action from MCAM. Format is NIX_RX_VTAG_ACTION_S for RX
+                                                                 packet ([INTF]=NPC_INTF_E::NIX(n)_RX), NIX_TX_VTAG_ACTION_S for TX
+                                                                 packet ([INTF]=NPC_INTF_E::NIX(n)_TX). */
+#else /* Word 2 - Little Endian */
+        uint64_t vtag_action           : 64; /**< [191:128] Match Vtag action from MCAM. Format is NIX_RX_VTAG_ACTION_S for RX
+                                                                 packet ([INTF]=NPC_INTF_E::NIX(n)_RX), NIX_TX_VTAG_ACTION_S for TX
+                                                                 packet ([INTF]=NPC_INTF_E::NIX(n)_TX). */
+#endif /* Word 2 - End */
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 3 - Big Endian */
+        uint64_t reserved_252_255      : 4;
+        uint64_t lc                    : 20; /**< [251:232] Layer C parse information. Format specified by NPC_LAYER_INFO_S. */
+        uint64_t lb                    : 20; /**< [231:212] Layer B parse information. Format specified by NPC_LAYER_INFO_S. */
+        uint64_t la                    : 20; /**< [211:192] Layer A parse information. Format specified by NPC_LAYER_INFO_S. */
+#else /* Word 3 - Little Endian */
+        uint64_t la                    : 20; /**< [211:192] Layer A parse information. Format specified by NPC_LAYER_INFO_S. */
+        uint64_t lb                    : 20; /**< [231:212] Layer B parse information. Format specified by NPC_LAYER_INFO_S. */
+        uint64_t lc                    : 20; /**< [251:232] Layer C parse information. Format specified by NPC_LAYER_INFO_S. */
+        uint64_t reserved_252_255      : 4;
+#endif /* Word 3 - End */
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 4 - Big Endian */
+        uint64_t reserved_316_319      : 4;
+        uint64_t lf                    : 20; /**< [315:296] Layer F parse information. Format specified by NPC_LAYER_INFO_S. */
+        uint64_t le                    : 20; /**< [295:276] Layer E parse information. Format specified by NPC_LAYER_INFO_S. */
+        uint64_t ld                    : 20; /**< [275:256] Layer D parse information. Format specified by NPC_LAYER_INFO_S. */
+#else /* Word 4 - Little Endian */
+        uint64_t ld                    : 20; /**< [275:256] Layer D parse information. Format specified by NPC_LAYER_INFO_S. */
+        uint64_t le                    : 20; /**< [295:276] Layer E parse information. Format specified by NPC_LAYER_INFO_S. */
+        uint64_t lf                    : 20; /**< [315:296] Layer F parse information. Format specified by NPC_LAYER_INFO_S. */
+        uint64_t reserved_316_319      : 4;
+#endif /* Word 4 - End */
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 5 - Big Endian */
+        uint64_t reserved_360_383      : 24;
+        uint64_t lh                    : 20; /**< [359:340] Layer H parse information. Format specified by NPC_LAYER_INFO_S. */
+        uint64_t lg                    : 20; /**< [339:320] Layer G parse information. Format specified by NPC_LAYER_INFO_S. */
+#else /* Word 5 - Little Endian */
+        uint64_t lg                    : 20; /**< [339:320] Layer G parse information. Format specified by NPC_LAYER_INFO_S. */
+        uint64_t lh                    : 20; /**< [359:340] Layer H parse information. Format specified by NPC_LAYER_INFO_S. */
+        uint64_t reserved_360_383      : 24;
+#endif /* Word 5 - End */
+    } s;
+    /* struct cavm_npc_result_s_s cn9; */
+    /* struct cavm_npc_result_s_s cn96xxp1; */
+    struct cavm_npc_result_s_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_44_63        : 20;
+        uint64_t eoh_ptr               : 8;  /**< [ 43: 36] End-of-header pointer. Byte offset from packet start to first byte after
+                                                                 last parsed layer. Always even. */
+        uint64_t l3b                   : 1;  /**< [ 35: 35] Set when the outer IP4 indicates broadcast, i.e. the destination address is all
+                                                                 ones. Broadcast is not defined for IPv6. */
+        uint64_t l3m                   : 1;  /**< [ 34: 34] Set when the outer IP indicates multicast, i.e. the IPv4 destination address
+                                                                 \<31:28\> = 0xE, or the IPv6 MSB of the 128-bit destination address = 0xFF. */
+        uint64_t l2b                   : 1;  /**< [ 33: 33] Set when the packet's destination MAC address field in the outer L2 header
+                                                                 is the broadcast address (i.e. all 1s). */
+        uint64_t l2m                   : 1;  /**< [ 32: 32] Set when the packet's destination MAC address field in the outer L2 header
+                                                                 is a multicast address (i.e. the LSB of the first byte of the destination
+                                                                 MAC is set, and the address is not a broadcast address - see [L2B]). */
         uint64_t errcode               : 8;  /**< [ 31: 24] When both [ERRLEV] and [ERRCODE] are zero, indicates no error. Otherwise,
                                                                  contains a software-defined
                                                                  opcode identifying the error reason, [ERRLEV] specifies the lowest protocol
@@ -451,8 +560,10 @@ union cavm_npc_result_s
         uint64_t lh                    : 20; /**< [359:340] Layer H parse information. Format specified by NPC_LAYER_INFO_S. */
         uint64_t reserved_360_383      : 24;
 #endif /* Word 5 - End */
-    } s;
-    /* struct cavm_npc_result_s_s cn; */
+    } cn96xxp3;
+    /* struct cavm_npc_result_s_cn96xxp3 cn98xx; */
+    /* struct cavm_npc_result_s_cn96xxp3 cnf95xx; */
+    /* struct cavm_npc_result_s_cn96xxp3 loki; */
 };
 
 /**
@@ -1036,6 +1147,76 @@ union cavm_npc_af_ikpu_err_ctl
                                                                  is beyond the end of packet's header. */
         uint64_t errlev                : 4;  /**< [  3:  0](R/W) Value captured in NPC_RESULT_S[ERRLEV] when an error specified by other
                                                                  fields in this register is detected. A capture for any of these errors
+                                                                 terminates the header parse and sets NPC_AF_KPU()_ENTRY()_ACTION0[PARSE_DONE].
+                                                                 The error capture priority is as follows (highest to lowest):
+                                                                 * [VAR_LEN_OFFSET_ERRCODE] in current KPU.
+                                                                 * [PTR_ADVANCE_ERRCODE] in current KPU.
+                                                                 * [DP_OFFSET_ERRCODE] in next non-bypassed KPU. */
+#else /* Word 0 - Little Endian */
+        uint64_t errlev                : 4;  /**< [  3:  0](R/W) Value captured in NPC_RESULT_S[ERRLEV] when an error specified by other
+                                                                 fields in this register is detected. A capture for any of these errors
+                                                                 terminates the header parse and sets NPC_AF_KPU()_ENTRY()_ACTION0[PARSE_DONE].
+                                                                 The error capture priority is as follows (highest to lowest):
+                                                                 * [VAR_LEN_OFFSET_ERRCODE] in current KPU.
+                                                                 * [PTR_ADVANCE_ERRCODE] in current KPU.
+                                                                 * [DP_OFFSET_ERRCODE] in next non-bypassed KPU. */
+        uint64_t dp_offset_errcode     : 8;  /**< [ 11:  4](R/W) Decision point offset error code. Value captured in NPC_RESULT_S[ERRCODE]
+                                                                 when at least one byte of a decision point from the previous
+                                                                 non-bypassed KPU is beyond the end of packet's header (smaller of 256 bytes
+                                                                 or end of packet).
+
+                                                                 Note that this error is captured by the KPU which would have extracted the
+                                                                 decision point data from the previous non-bypassed KPU, i.e. when the
+                                                                 following conditions are true:
+                                                                 * NPC_AF_KPU()_ENTRY()_ACTION0[PARSE_DONE] is clear.
+                                                                 * NPC_AF_KPU()_CFG[ENA] is set.
+                                                                 * Remaining NPC_AF_KPU()_ENTRY()_ACTION0[BYP_COUNT] after decrementing by the
+                                                                 number of bypassed KPUs is zero.
+                                                                 * At least one decision point byte (specified by
+                                                                 NPC_AF_KPU()_ENTRY()_ACTION1[DP*_OFFSET] from the previous non-bypassed KPU)
+                                                                 is beyond the end of packet's header. */
+        uint64_t ptr_advance_errcode   : 8;  /**< [ 19: 12](R/W) Pointer advance error code. Value captured in NPC_RESULT_S[ERRCODE] when
+                                                                 the updated NPC_RESULT_S[EOH_PTR] value (see
+                                                                 NPC_AF_KPU()_ENTRY()_ACTION0[VAR_LEN_OFFSET]) is greater than the packet
+                                                                 length or greater than 255. */
+        uint64_t var_len_offset_errcode : 8; /**< [ 27: 20](R/W) Variable length offset error code. Value captured in NPC_RESULT_S[ERRCODE]
+                                                                 when a required variable offset byte as defined by
+                                                                 NPC_AF_KPU()_ENTRY()_ACTION0[VAR_LEN_OFFSET], if any, is beyond the end of
+                                                                 packet's header (smaller of 256 bytes or end of packet). */
+        uint64_t reserved_28_63        : 36;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_npc_af_ikpu_err_ctl_s cn9; */
+    /* struct cavm_npc_af_ikpu_err_ctl_s cn96xxp1; */
+    struct cavm_npc_af_ikpu_err_ctl_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_28_63        : 36;
+        uint64_t var_len_offset_errcode : 8; /**< [ 27: 20](R/W) Variable length offset error code. Value captured in NPC_RESULT_S[ERRCODE]
+                                                                 when a required variable offset byte as defined by
+                                                                 NPC_AF_KPU()_ENTRY()_ACTION0[VAR_LEN_OFFSET], if any, is beyond the end of
+                                                                 packet's header (smaller of 256 bytes or end of packet). */
+        uint64_t ptr_advance_errcode   : 8;  /**< [ 19: 12](R/W) Pointer advance error code. Value captured in NPC_RESULT_S[ERRCODE] when
+                                                                 the updated NPC_RESULT_S[EOH_PTR] value (see
+                                                                 NPC_AF_KPU()_ENTRY()_ACTION0[VAR_LEN_OFFSET]) is greater than the packet
+                                                                 length or greater than 255. */
+        uint64_t dp_offset_errcode     : 8;  /**< [ 11:  4](R/W) Decision point offset error code. Value captured in NPC_RESULT_S[ERRCODE]
+                                                                 when at least one byte of a decision point from the previous
+                                                                 non-bypassed KPU is beyond the end of packet's header (smaller of 256 bytes
+                                                                 or end of packet).
+
+                                                                 Note that this error is captured by the KPU which would have extracted the
+                                                                 decision point data from the previous non-bypassed KPU, i.e. when the
+                                                                 following conditions are true:
+                                                                 * NPC_AF_KPU()_ENTRY()_ACTION0[PARSE_DONE] is clear.
+                                                                 * NPC_AF_KPU()_CFG[ENA] is set.
+                                                                 * Remaining NPC_AF_KPU()_ENTRY()_ACTION0[BYP_COUNT] after decrementing by the
+                                                                 number of bypassed KPUs is zero.
+                                                                 * At least one decision point byte (specified by
+                                                                 NPC_AF_KPU()_ENTRY()_ACTION1[DP*_OFFSET] from the previous non-bypassed KPU)
+                                                                 is beyond the end of packet's header. */
+        uint64_t errlev                : 4;  /**< [  3:  0](R/W) Value captured in NPC_RESULT_S[ERRLEV] when an error specified by other
+                                                                 fields in this register is detected. A capture for any of these errors
                                                                  terminates the header parse.
                                                                  The error capture priority is as follows (highest to lowest):
                                                                  * [VAR_LEN_OFFSET_ERRCODE] in current KPU.
@@ -1074,8 +1255,10 @@ union cavm_npc_af_ikpu_err_ctl
                                                                  packet's header (smaller of 256 bytes or end of packet). */
         uint64_t reserved_28_63        : 36;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_npc_af_ikpu_err_ctl_s cn; */
+    } cn96xxp3;
+    /* struct cavm_npc_af_ikpu_err_ctl_cn96xxp3 cn98xx; */
+    /* struct cavm_npc_af_ikpu_err_ctl_cn96xxp3 cnf95xx; */
+    /* struct cavm_npc_af_ikpu_err_ctl_cn96xxp3 loki; */
 };
 typedef union cavm_npc_af_ikpu_err_ctl cavm_npc_af_ikpu_err_ctl_t;
 
@@ -1134,7 +1317,13 @@ typedef union cavm_npc_af_intfx_kex_cfg cavm_npc_af_intfx_kex_cfg_t;
 static inline uint64_t CAVM_NPC_AF_INTFX_KEX_CFG(unsigned long a) __attribute__ ((pure, always_inline));
 static inline uint64_t CAVM_NPC_AF_INTFX_KEX_CFG(unsigned long a)
 {
-    if (cavm_is_model(OCTEONTX_CN9XXX) && (a<=1))
+    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
+        return 0x840060001010ll + 0x100ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=3))
+        return 0x840060001010ll + 0x100ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=1))
+        return 0x840060001010ll + 0x100ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=1))
         return 0x840060001010ll + 0x100ll * ((a) & 0x1);
     __cavm_csr_fatal("NPC_AF_INTFX_KEX_CFG", 1, a, 0, 0, 0, 0, 0);
 }
@@ -1185,7 +1374,13 @@ typedef union cavm_npc_af_intfx_ldatax_flagsx_cfg cavm_npc_af_intfx_ldatax_flags
 static inline uint64_t CAVM_NPC_AF_INTFX_LDATAX_FLAGSX_CFG(unsigned long a, unsigned long b, unsigned long c) __attribute__ ((pure, always_inline));
 static inline uint64_t CAVM_NPC_AF_INTFX_LDATAX_FLAGSX_CFG(unsigned long a, unsigned long b, unsigned long c)
 {
-    if (cavm_is_model(OCTEONTX_CN9XXX) && ((a<=1) && (b<=1) && (c<=15)))
+    if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1) && (c<=15)))
+        return 0x840060980000ll + 0x10000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x1) + 8ll * ((c) & 0xf);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=1) && (c<=15)))
+        return 0x840060980000ll + 0x10000ll * ((a) & 0x3) + 0x1000ll * ((b) & 0x1) + 8ll * ((c) & 0xf);
+    if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=1) && (b<=1) && (c<=15)))
+        return 0x840060980000ll + 0x10000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x1) + 8ll * ((c) & 0xf);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=1) && (b<=1) && (c<=15)))
         return 0x840060980000ll + 0x10000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x1) + 8ll * ((c) & 0xf);
     __cavm_csr_fatal("NPC_AF_INTFX_LDATAX_FLAGSX_CFG", 3, a, b, c, 0, 0, 0);
 }
@@ -1281,7 +1476,13 @@ typedef union cavm_npc_af_intfx_lidx_ltx_ldx_cfg cavm_npc_af_intfx_lidx_ltx_ldx_
 static inline uint64_t CAVM_NPC_AF_INTFX_LIDX_LTX_LDX_CFG(unsigned long a, unsigned long b, unsigned long c, unsigned long d) __attribute__ ((pure, always_inline));
 static inline uint64_t CAVM_NPC_AF_INTFX_LIDX_LTX_LDX_CFG(unsigned long a, unsigned long b, unsigned long c, unsigned long d)
 {
-    if (cavm_is_model(OCTEONTX_CN9XXX) && ((a<=1) && (b<=7) && (c<=15) && (d<=1)))
+    if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=7) && (c<=15) && (d<=1)))
+        return 0x840060900000ll + 0x10000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x7) + 0x20ll * ((c) & 0xf) + 8ll * ((d) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=7) && (c<=15) && (d<=1)))
+        return 0x840060900000ll + 0x10000ll * ((a) & 0x3) + 0x1000ll * ((b) & 0x7) + 0x20ll * ((c) & 0xf) + 8ll * ((d) & 0x1);
+    if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=1) && (b<=7) && (c<=15) && (d<=1)))
+        return 0x840060900000ll + 0x10000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x7) + 0x20ll * ((c) & 0xf) + 8ll * ((d) & 0x1);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=1) && (b<=7) && (c<=15) && (d<=1)))
         return 0x840060900000ll + 0x10000ll * ((a) & 0x1) + 0x1000ll * ((b) & 0x7) + 0x20ll * ((c) & 0xf) + 8ll * ((d) & 0x1);
     __cavm_csr_fatal("NPC_AF_INTFX_LIDX_LTX_LDX_CFG", 4, a, b, c, d, 0, 0);
 }
@@ -1321,7 +1522,13 @@ typedef union cavm_npc_af_intfx_miss_act cavm_npc_af_intfx_miss_act_t;
 static inline uint64_t CAVM_NPC_AF_INTFX_MISS_ACT(unsigned long a) __attribute__ ((pure, always_inline));
 static inline uint64_t CAVM_NPC_AF_INTFX_MISS_ACT(unsigned long a)
 {
-    if (cavm_is_model(OCTEONTX_CN9XXX) && (a<=1))
+    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
+        return 0x840061a00000ll + 0x10ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=3))
+        return 0x840061a00000ll + 0x10ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=1))
+        return 0x840061a00000ll + 0x10ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=1))
         return 0x840061a00000ll + 0x10ll * ((a) & 0x1);
     __cavm_csr_fatal("NPC_AF_INTFX_MISS_ACT", 1, a, 0, 0, 0, 0, 0);
 }
@@ -1364,7 +1571,13 @@ typedef union cavm_npc_af_intfx_miss_stat_act cavm_npc_af_intfx_miss_stat_act_t;
 static inline uint64_t CAVM_NPC_AF_INTFX_MISS_STAT_ACT(unsigned long a) __attribute__ ((pure, always_inline));
 static inline uint64_t CAVM_NPC_AF_INTFX_MISS_STAT_ACT(unsigned long a)
 {
-    if (cavm_is_model(OCTEONTX_CN9XXX) && (a<=1))
+    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
+        return 0x840061880040ll + 8ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=3))
+        return 0x840061880040ll + 8ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=1))
+        return 0x840061880040ll + 8ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=1))
         return 0x840061880040ll + 8ll * ((a) & 0x1);
     __cavm_csr_fatal("NPC_AF_INTFX_MISS_STAT_ACT", 1, a, 0, 0, 0, 0, 0);
 }
@@ -1405,7 +1618,13 @@ typedef union cavm_npc_af_intfx_miss_tag_act cavm_npc_af_intfx_miss_tag_act_t;
 static inline uint64_t CAVM_NPC_AF_INTFX_MISS_TAG_ACT(unsigned long a) __attribute__ ((pure, always_inline));
 static inline uint64_t CAVM_NPC_AF_INTFX_MISS_TAG_ACT(unsigned long a)
 {
-    if (cavm_is_model(OCTEONTX_CN9XXX) && (a<=1))
+    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
+        return 0x840061b00008ll + 0x10ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=3))
+        return 0x840061b00008ll + 0x10ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=1))
+        return 0x840061b00008ll + 0x10ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=1))
         return 0x840061b00008ll + 0x10ll * ((a) & 0x1);
     __cavm_csr_fatal("NPC_AF_INTFX_MISS_TAG_ACT", 1, a, 0, 0, 0, 0, 0);
 }
@@ -1443,7 +1662,13 @@ typedef union cavm_npc_af_intfx_stat cavm_npc_af_intfx_stat_t;
 static inline uint64_t CAVM_NPC_AF_INTFX_STAT(unsigned long a) __attribute__ ((pure, always_inline));
 static inline uint64_t CAVM_NPC_AF_INTFX_STAT(unsigned long a)
 {
-    if (cavm_is_model(OCTEONTX_CN9XXX) && (a<=1))
+    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
+        return 0x840062000800ll + 0x10ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=3))
+        return 0x840062000800ll + 0x10ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=1))
+        return 0x840062000800ll + 0x10ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=1))
         return 0x840062000800ll + 0x10ll * ((a) & 0x1);
     __cavm_csr_fatal("NPC_AF_INTFX_STAT", 1, a, 0, 0, 0, 0, 0);
 }
@@ -1609,6 +1834,22 @@ union cavm_npc_af_kpux_dbg
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_9_63         : 55;
+        uint64_t byp                   : 1;  /**< [  8:  8](RO/H) Set if KPU was bypassed due to NPC_AF_KPU()_ENTRY()_ACTION0[PARSE_DONE] set or
+                                                                 non-zero NPC_AF_KPU()_ENTRY()_ACTION0[BYP_COUNT] in a previous stage. */
+        uint64_t hit_entry             : 8;  /**< [  7:  0](RO/H) KPU hit entry index. Valid when [BYP] is clear. */
+#else /* Word 0 - Little Endian */
+        uint64_t hit_entry             : 8;  /**< [  7:  0](RO/H) KPU hit entry index. Valid when [BYP] is clear. */
+        uint64_t byp                   : 1;  /**< [  8:  8](RO/H) Set if KPU was bypassed due to NPC_AF_KPU()_ENTRY()_ACTION0[PARSE_DONE] set or
+                                                                 non-zero NPC_AF_KPU()_ENTRY()_ACTION0[BYP_COUNT] in a previous stage. */
+        uint64_t reserved_9_63         : 55;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_npc_af_kpux_dbg_s cn9; */
+    /* struct cavm_npc_af_kpux_dbg_s cn96xxp1; */
+    struct cavm_npc_af_kpux_dbg_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_9_63         : 55;
         uint64_t byp                   : 1;  /**< [  8:  8](RO/H) Set if KPU was bypassed due to NPC_AF_KPU()_ENTRY()_ACTION0[PARSE_DONE] set,
                                                                  non-zero NPC_AF_KPU()_ENTRY()_ACTION0[BYP_COUNT] in a previous stage, or if
                                                                  parsing was terminated by a prior KPU due to a header parse error.
@@ -1628,8 +1869,10 @@ union cavm_npc_af_kpux_dbg
                                                                  ptr_advance_violation, or dp_offset_violation. */
         uint64_t reserved_9_63         : 55;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_npc_af_kpux_dbg_s cn; */
+    } cn96xxp3;
+    /* struct cavm_npc_af_kpux_dbg_cn96xxp3 cn98xx; */
+    /* struct cavm_npc_af_kpux_dbg_cn96xxp3 cnf95xx; */
+    /* struct cavm_npc_af_kpux_dbg_cn96xxp3 loki; */
 };
 typedef union cavm_npc_af_kpux_dbg cavm_npc_af_kpux_dbg_t;
 
@@ -1994,6 +2237,76 @@ union cavm_npc_af_kpux_err_ctl
                                                                  is beyond the end of packet's header. */
         uint64_t errlev                : 4;  /**< [  3:  0](R/W) Value captured in NPC_RESULT_S[ERRLEV] when an error specified by other
                                                                  fields in this register is detected. A capture for any of these errors
+                                                                 terminates the header parse and sets NPC_AF_KPU()_ENTRY()_ACTION0[PARSE_DONE].
+                                                                 The error capture priority is as follows (highest to lowest):
+                                                                 * [VAR_LEN_OFFSET_ERRCODE] in current KPU.
+                                                                 * [PTR_ADVANCE_ERRCODE] in current KPU.
+                                                                 * [DP_OFFSET_ERRCODE] in next non-bypassed KPU. */
+#else /* Word 0 - Little Endian */
+        uint64_t errlev                : 4;  /**< [  3:  0](R/W) Value captured in NPC_RESULT_S[ERRLEV] when an error specified by other
+                                                                 fields in this register is detected. A capture for any of these errors
+                                                                 terminates the header parse and sets NPC_AF_KPU()_ENTRY()_ACTION0[PARSE_DONE].
+                                                                 The error capture priority is as follows (highest to lowest):
+                                                                 * [VAR_LEN_OFFSET_ERRCODE] in current KPU.
+                                                                 * [PTR_ADVANCE_ERRCODE] in current KPU.
+                                                                 * [DP_OFFSET_ERRCODE] in next non-bypassed KPU. */
+        uint64_t dp_offset_errcode     : 8;  /**< [ 11:  4](R/W) Decision point offset error code. Value captured in NPC_RESULT_S[ERRCODE]
+                                                                 when at least one byte of a decision point from the previous
+                                                                 non-bypassed KPU is beyond the end of packet's header (smaller of 256 bytes
+                                                                 or end of packet).
+
+                                                                 Note that this error is captured by the KPU which would have extracted the
+                                                                 decision point data from the previous non-bypassed KPU, i.e. when the
+                                                                 following conditions are true:
+                                                                 * NPC_AF_KPU()_ENTRY()_ACTION0[PARSE_DONE] is clear.
+                                                                 * NPC_AF_KPU()_CFG[ENA] is set.
+                                                                 * Remaining NPC_AF_KPU()_ENTRY()_ACTION0[BYP_COUNT] after decrementing by the
+                                                                 number of bypassed KPUs is zero.
+                                                                 * At least one decision point byte (specified by
+                                                                 NPC_AF_KPU()_ENTRY()_ACTION1[DP*_OFFSET] from the previous non-bypassed KPU)
+                                                                 is beyond the end of packet's header. */
+        uint64_t ptr_advance_errcode   : 8;  /**< [ 19: 12](R/W) Pointer advance error code. Value captured in NPC_RESULT_S[ERRCODE] when
+                                                                 the updated NPC_RESULT_S[EOH_PTR] value (see
+                                                                 NPC_AF_KPU()_ENTRY()_ACTION0[VAR_LEN_OFFSET]) is greater than the packet
+                                                                 length or greater than 255. */
+        uint64_t var_len_offset_errcode : 8; /**< [ 27: 20](R/W) Variable length offset error code. Value captured in NPC_RESULT_S[ERRCODE]
+                                                                 when a required variable offset byte as defined by
+                                                                 NPC_AF_KPU()_ENTRY()_ACTION0[VAR_LEN_OFFSET], if any, is beyond the end of
+                                                                 packet's header (smaller of 256 bytes or end of packet). */
+        uint64_t reserved_28_63        : 36;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_npc_af_kpux_err_ctl_s cn9; */
+    /* struct cavm_npc_af_kpux_err_ctl_s cn96xxp1; */
+    struct cavm_npc_af_kpux_err_ctl_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_28_63        : 36;
+        uint64_t var_len_offset_errcode : 8; /**< [ 27: 20](R/W) Variable length offset error code. Value captured in NPC_RESULT_S[ERRCODE]
+                                                                 when a required variable offset byte as defined by
+                                                                 NPC_AF_KPU()_ENTRY()_ACTION0[VAR_LEN_OFFSET], if any, is beyond the end of
+                                                                 packet's header (smaller of 256 bytes or end of packet). */
+        uint64_t ptr_advance_errcode   : 8;  /**< [ 19: 12](R/W) Pointer advance error code. Value captured in NPC_RESULT_S[ERRCODE] when
+                                                                 the updated NPC_RESULT_S[EOH_PTR] value (see
+                                                                 NPC_AF_KPU()_ENTRY()_ACTION0[VAR_LEN_OFFSET]) is greater than the packet
+                                                                 length or greater than 255. */
+        uint64_t dp_offset_errcode     : 8;  /**< [ 11:  4](R/W) Decision point offset error code. Value captured in NPC_RESULT_S[ERRCODE]
+                                                                 when at least one byte of a decision point from the previous
+                                                                 non-bypassed KPU is beyond the end of packet's header (smaller of 256 bytes
+                                                                 or end of packet).
+
+                                                                 Note that this error is captured by the KPU which would have extracted the
+                                                                 decision point data from the previous non-bypassed KPU, i.e. when the
+                                                                 following conditions are true:
+                                                                 * NPC_AF_KPU()_ENTRY()_ACTION0[PARSE_DONE] is clear.
+                                                                 * NPC_AF_KPU()_CFG[ENA] is set.
+                                                                 * Remaining NPC_AF_KPU()_ENTRY()_ACTION0[BYP_COUNT] after decrementing by the
+                                                                 number of bypassed KPUs is zero.
+                                                                 * At least one decision point byte (specified by
+                                                                 NPC_AF_KPU()_ENTRY()_ACTION1[DP*_OFFSET] from the previous non-bypassed KPU)
+                                                                 is beyond the end of packet's header. */
+        uint64_t errlev                : 4;  /**< [  3:  0](R/W) Value captured in NPC_RESULT_S[ERRLEV] when an error specified by other
+                                                                 fields in this register is detected. A capture for any of these errors
                                                                  terminates the header parse.
                                                                  The error capture priority is as follows (highest to lowest):
                                                                  * [VAR_LEN_OFFSET_ERRCODE] in current KPU.
@@ -2032,8 +2345,10 @@ union cavm_npc_af_kpux_err_ctl
                                                                  packet's header (smaller of 256 bytes or end of packet). */
         uint64_t reserved_28_63        : 36;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_npc_af_kpux_err_ctl_s cn; */
+    } cn96xxp3;
+    /* struct cavm_npc_af_kpux_err_ctl_cn96xxp3 cn98xx; */
+    /* struct cavm_npc_af_kpux_err_ctl_cn96xxp3 cnf95xx; */
+    /* struct cavm_npc_af_kpux_err_ctl_cn96xxp3 loki; */
 };
 typedef union cavm_npc_af_kpux_err_ctl cavm_npc_af_kpux_err_ctl_t;
 
@@ -2091,6 +2406,8 @@ static inline uint64_t CAVM_NPC_AF_KPU_DIAG_FUNC(void) __attribute__ ((pure, alw
 static inline uint64_t CAVM_NPC_AF_KPU_DIAG_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X))
+        return 0x840063002000ll;
+    if (cavm_is_model(OCTEONTX_CN98XX))
         return 0x840063002000ll;
     __cavm_csr_fatal("NPC_AF_KPU_DIAG", 0, 0, 0, 0, 0, 0, 0);
 }
@@ -3391,6 +3708,44 @@ union cavm_npc_af_pkindx_cpi_defx
     struct cavm_npc_af_pkindx_cpi_defx_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t ena                   : 1;  /**< [ 63: 63](R/W) Enable port to channel adder. */
+        uint64_t reserved_59_62        : 4;
+        uint64_t lid                   : 3;  /**< [ 58: 56](R/W) Layer ID. Enumerated by NPC_LID_E. */
+        uint64_t ltype_match           : 4;  /**< [ 55: 52](R/W) Layer type match value. */
+        uint64_t ltype_mask            : 4;  /**< [ 51: 48](R/W) Layer type mask. */
+        uint64_t flags_match           : 8;  /**< [ 47: 40](R/W) Layer flags match value. */
+        uint64_t flags_mask            : 8;  /**< [ 39: 32](R/W) Layer flags mask. */
+        uint64_t add_offset            : 8;  /**< [ 31: 24](R/W) Add nibble offset. Nibble offset of packet byte that supplies a CPI
+                                                                 add value, relative to the start of the matching layer
+                                                                 (NPC_LAYER_INFO_S[LPTR]). */
+        uint64_t add_mask              : 8;  /**< [ 23: 16](R/W) Add mask. */
+        uint64_t reserved_15           : 1;
+        uint64_t add_shift             : 3;  /**< [ 14: 12](R/W) Add right shift. */
+        uint64_t reserved_10_11        : 2;
+        uint64_t cpi_base              : 10; /**< [  9:  0](R/W) Base index into NPC_AF_CPI()_CFG. */
+#else /* Word 0 - Little Endian */
+        uint64_t cpi_base              : 10; /**< [  9:  0](R/W) Base index into NPC_AF_CPI()_CFG. */
+        uint64_t reserved_10_11        : 2;
+        uint64_t add_shift             : 3;  /**< [ 14: 12](R/W) Add right shift. */
+        uint64_t reserved_15           : 1;
+        uint64_t add_mask              : 8;  /**< [ 23: 16](R/W) Add mask. */
+        uint64_t add_offset            : 8;  /**< [ 31: 24](R/W) Add nibble offset. Nibble offset of packet byte that supplies a CPI
+                                                                 add value, relative to the start of the matching layer
+                                                                 (NPC_LAYER_INFO_S[LPTR]). */
+        uint64_t flags_mask            : 8;  /**< [ 39: 32](R/W) Layer flags mask. */
+        uint64_t flags_match           : 8;  /**< [ 47: 40](R/W) Layer flags match value. */
+        uint64_t ltype_mask            : 4;  /**< [ 51: 48](R/W) Layer type mask. */
+        uint64_t ltype_match           : 4;  /**< [ 55: 52](R/W) Layer type match value. */
+        uint64_t lid                   : 3;  /**< [ 58: 56](R/W) Layer ID. Enumerated by NPC_LID_E. */
+        uint64_t reserved_59_62        : 4;
+        uint64_t ena                   : 1;  /**< [ 63: 63](R/W) Enable port to channel adder. */
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_npc_af_pkindx_cpi_defx_s cn9; */
+    /* struct cavm_npc_af_pkindx_cpi_defx_s cn96xxp1; */
+    struct cavm_npc_af_pkindx_cpi_defx_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t ena                   : 1;  /**< [ 63: 63](R/W) Enable. */
         uint64_t reserved_59_62        : 4;
         uint64_t lid                   : 3;  /**< [ 58: 56](R/W) Layer ID. Enumerated by NPC_LID_E. */
@@ -3423,8 +3778,10 @@ union cavm_npc_af_pkindx_cpi_defx
         uint64_t reserved_59_62        : 4;
         uint64_t ena                   : 1;  /**< [ 63: 63](R/W) Enable. */
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_npc_af_pkindx_cpi_defx_s cn; */
+    } cn96xxp3;
+    /* struct cavm_npc_af_pkindx_cpi_defx_cn96xxp3 cn98xx; */
+    /* struct cavm_npc_af_pkindx_cpi_defx_cn96xxp3 cnf95xx; */
+    /* struct cavm_npc_af_pkindx_cpi_defx_cn96xxp3 loki; */
 };
 typedef union cavm_npc_af_pkindx_cpi_defx cavm_npc_af_pkindx_cpi_defx_t;
 

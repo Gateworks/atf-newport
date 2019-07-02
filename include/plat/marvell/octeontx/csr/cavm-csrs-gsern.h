@@ -534,6 +534,44 @@ union cavm_gsernx_common_refclk_bcfg
                                                                  LVPECL on-chip termination. */
         uint64_t oct                   : 1;  /**< [  3:  3](R/W) Enable on chip termination (OCT) in the receiver of the off-chip reference
                                                                  clock. */
+        uint64_t pwdn                  : 1;  /**< [  2:  2](R/W) Power down.
+                                                                 0 = Power on. Set to 0 if any lanes in this module will be used.
+                                                                 1 = All paths through the common block reference clock receiver will be powered
+                                                                 off and no reference clock will reach the common PLL (or its bypass path). */
+        uint64_t cclksel               : 2;  /**< [  1:  0](R/W) Selection controls for the reference clock
+                                                                   0x0 = Choose on-chip common clock zero.
+                                                                   0x1 = Choose on-chip common clock one.
+                                                                   0x2 = Choose on-chip common clock two.
+                                                                   0x3 = Choose the off-chip reference clock (requires that [PWDN] be low). */
+#else /* Word 0 - Little Endian */
+        uint64_t cclksel               : 2;  /**< [  1:  0](R/W) Selection controls for the reference clock
+                                                                   0x0 = Choose on-chip common clock zero.
+                                                                   0x1 = Choose on-chip common clock one.
+                                                                   0x2 = Choose on-chip common clock two.
+                                                                   0x3 = Choose the off-chip reference clock (requires that [PWDN] be low). */
+        uint64_t pwdn                  : 1;  /**< [  2:  2](R/W) Power down.
+                                                                 0 = Power on. Set to 0 if any lanes in this module will be used.
+                                                                 1 = All paths through the common block reference clock receiver will be powered
+                                                                 off and no reference clock will reach the common PLL (or its bypass path). */
+        uint64_t oct                   : 1;  /**< [  3:  3](R/W) Enable on chip termination (OCT) in the receiver of the off-chip reference
+                                                                 clock. */
+        uint64_t hcsl                  : 1;  /**< [  4:  4](R/W) Enable [HCSL] and [OCT] to set HCSL on chip termination in the receiver of the
+                                                                 off-chip reference clock, e.g., for a PCIe reference clock. Leave [HCSL] low for
+                                                                 LVPECL on-chip termination. */
+        uint64_t reserved_5_63         : 59;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_gsernx_common_refclk_bcfg_s cn9; */
+    /* struct cavm_gsernx_common_refclk_bcfg_s cn96xx; */
+    struct cavm_gsernx_common_refclk_bcfg_cnf95xx
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_5_63         : 59;
+        uint64_t hcsl                  : 1;  /**< [  4:  4](R/W) Enable [HCSL] and [OCT] to set HCSL on chip termination in the receiver of the
+                                                                 off-chip reference clock, e.g., for a PCIe reference clock. Leave [HCSL] low for
+                                                                 LVPECL on-chip termination. */
+        uint64_t oct                   : 1;  /**< [  3:  3](R/W) Enable on chip termination (OCT) in the receiver of the off-chip reference
+                                                                 clock. */
         uint64_t pwdn                  : 1;  /**< [  2:  2](R/W) Power down GSER-specific reference clock.
                                                                  0 = Power on. Set to 0 if any lanes in this module will use the GSER-specific
                                                                  reference clock.
@@ -562,8 +600,7 @@ union cavm_gsernx_common_refclk_bcfg
                                                                  LVPECL on-chip termination. */
         uint64_t reserved_5_63         : 59;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_gsernx_common_refclk_bcfg_s cn; */
+    } cnf95xx;
 };
 typedef union cavm_gsernx_common_refclk_bcfg cavm_gsernx_common_refclk_bcfg_t;
 
@@ -2692,6 +2729,350 @@ union cavm_gsernx_lanex_lt_bcfg
         uint64_t core_loopback_mode    : 1;  /**< [ 25: 25](R/W/H) Enable the core-side loopback mode; controller transmit data are
                                                                  looped back to the controller as receive data in the PCS lite layer.
                                                                  This value must only be changed while lite layer is in reset. */
+        uint64_t sloop_mode            : 1;  /**< [ 24: 24](R/W/H) Reserved.
+                                                                 Internal:
+                                                                 Enable shallow loopback mode (SerDes receive data looped back to SerDes transmit
+                                                                 in the PCS lite layer). This value must only be changed while lite layer is in
+                                                                 reset. [TX_FIFO_POP_START_ADDR] will need to be adjusted when [SLOOP_MODE] is
+                                                                 set. For diagnostic use only. */
+        uint64_t reserved_23           : 1;
+        uint64_t bitstuff_rx_drop_even : 1;  /**< [ 22: 22](R/W/H) Tells the PCS lite receive datapath to drop even bits
+                                                                 in the vector of received data from the PMA when [BITSTUFF_RX_EN] is
+                                                                 set:
+                                                                   0 = Drop bits 1, 3, 5, 7, ...
+                                                                   1 = Drop bits 0, 2, 4, 6, ...
+
+                                                                 This bit is also used in the eye monitor to mask out the dropped
+                                                                 bits when counting mismatches.
+                                                                 This value must only be changed while lite layer is in reset. */
+        uint64_t bitstuff_rx_en        : 1;  /**< [ 21: 21](R/W/H) Set to expect duplicates on the PMA RX data and drop bits after
+                                                                 alignment & ordering for PCS layer to consume. The drop ordering is
+                                                                 determined by [BITSTUFF_RX_DROP_EVEN]. This value must only be changed
+                                                                 while lite layer is in reset. */
+        uint64_t inv_rx_polarity       : 1;  /**< [ 20: 20](R/W/H) Set to invert the polarity of the received data bits. Note that
+                                                                 the PCS-lite PRBS checker will require [INV_RX_POLARITY] to be asserted
+                                                                 when it is in use to check standard PRBS data from an external
+                                                                 source. This value must only be changed while lite layer is in
+                                                                 reset. */
+        uint64_t reverse_rx_bit_order  : 1;  /**< [ 19: 19](R/W/H) While asserted, the normal receive order (lowest valid bit index
+                                                                 received first, highest valid index last) is reversed so the highest
+                                                                 valid bit index is received first and lowest valid index is received
+                                                                 last. This control needs to be asserted for PRBS testing using the
+                                                                 PRBS checker in the GSER macro and for PCIe Gen-1 and Gen-2. */
+        uint64_t reserved_18           : 1;
+        uint64_t fifo_algn_qlm_mask_rsvd : 4;/**< [ 17: 14](R/W) Reserved.
+                                                                 Internal:
+                                                                 No longer used. Was selection control for which QLMs in this QLM's link group to
+                                                                 align in timing the deassertion of reset to this lane's transmitter's clock
+                                                                 alignment FIFO.
+                                                                 \<0\> = Wait for QLM 0.
+                                                                 \<1\> = Wait for QLM 1.
+                                                                 \<2\> = Wait for QLM 2.
+                                                                 \<3\> = Wait for QLM 3.
+
+                                                                 If a link is made up of lanes in multiple QLMs, the mask in each lane must
+                                                                 include all active QLMs (including the QLM containing the current lane). */
+        uint64_t fifo_algn_lane_mask_rsvd : 4;/**< [ 13: 10](R/W) Reserved.
+                                                                 Internal:
+                                                                 No longer used. Was selection control for which lanes in the current QLM to
+                                                                 align in timing the deassertion of reset to this lane's transmitter's clock
+                                                                 alignment FIFO.
+                                                                 \<0\> = Wait for Lane 0.
+                                                                 \<1\> = Wait for Lane 1.
+                                                                 \<2\> = Wait for Lane 2.
+                                                                 \<3\> = Wait for Lane 3.
+
+                                                                 The bit corresponding to the current Lane is ignored. */
+        uint64_t fifo_bypass_en        : 1;  /**< [  9:  9](R/W) For diagnostic use only.
+                                                                 Internal:
+                                                                 This control is currently inactive and is left as a placeholder for
+                                                                 possible re-inclusion in 7nm.
+
+                                                                 Set to bypass the PCS lite layer transmit asynchronous FIFO
+                                                                 with a single flop. This saves 1-2 cycles of latency in the transmit
+                                                                 path, but imposes additional constraints on static timing
+                                                                 closure. Note that shallow loopback data cannot bypass the FIFO. */
+        uint64_t tx_fifo_pop_start_addr : 4; /**< [  8:  5](R/W) Reserved.
+                                                                 Internal:
+                                                                 Starting address for lite transmit FIFO pops (reads). Changing this allows
+                                                                 shifting the latency through the FIFO in steps of 1 txdivclk cycle (8, 10, 16,
+                                                                 20, 32, or 40 UI, depending on data path width setting). When [SLOOP_MODE] is
+                                                                 set, [TX_FIFO_POP_START_ADDR] should typically be set to 0. For diagnostic use
+                                                                 only.
+
+                                                                 Due to round trip latency requirements for SATA, this should be set to 0x9 to
+                                                                 minimize the FIFO delay while still ensuring sufficient distance between the
+                                                                 read and write pointers. */
+        uint64_t reserved_4            : 1;
+        uint64_t fifo_rst_n            : 1;  /**< [  3:  3](R/W/H) Clear to hold the PCS lite layer transmit asynchronous FIFO in
+                                                                 reset. */
+        uint64_t bitstuff_tx_en        : 1;  /**< [  2:  2](R/W/H) Set to duplicate the first 20 bits of TX data before
+                                                                 alignment & ordering for lower data rates. This could be PCS TX
+                                                                 data, PRBS data, or shallow-loopback RX data depending on mode.
+                                                                 This value must only be changed while lite layer is in reset. */
+        uint64_t inv_tx_polarity       : 1;  /**< [  1:  1](R/W/H) Set to invert the polarity of the transmit data bits. Note
+                                                                 that the PCS-lite PRBS generator will require [INV_TX_POLARITY] to be
+                                                                 asserted when PRBS data are being transmitted to match the expected
+                                                                 polarity of the standard PRBS patterns.
+                                                                 This value must only be changed while lite layer is in reset. */
+        uint64_t reverse_tx_bit_order  : 1;  /**< [  0:  0](R/W/H) Assertion causes the normal transmit order (lowest valid bit index
+                                                                 transmitted first, highest valid index last) to be reversed so the
+                                                                 highest valid bit index is transmitted first and lowest valid index
+                                                                 is transmitted last. Note that the PCS-lite PRBS generator will
+                                                                 require [REVERSE_TX_BIT_ORDER] to be asserted.
+                                                                 This value must only be changed while lite layer is in reset. */
+#else /* Word 0 - Little Endian */
+        uint64_t reverse_tx_bit_order  : 1;  /**< [  0:  0](R/W/H) Assertion causes the normal transmit order (lowest valid bit index
+                                                                 transmitted first, highest valid index last) to be reversed so the
+                                                                 highest valid bit index is transmitted first and lowest valid index
+                                                                 is transmitted last. Note that the PCS-lite PRBS generator will
+                                                                 require [REVERSE_TX_BIT_ORDER] to be asserted.
+                                                                 This value must only be changed while lite layer is in reset. */
+        uint64_t inv_tx_polarity       : 1;  /**< [  1:  1](R/W/H) Set to invert the polarity of the transmit data bits. Note
+                                                                 that the PCS-lite PRBS generator will require [INV_TX_POLARITY] to be
+                                                                 asserted when PRBS data are being transmitted to match the expected
+                                                                 polarity of the standard PRBS patterns.
+                                                                 This value must only be changed while lite layer is in reset. */
+        uint64_t bitstuff_tx_en        : 1;  /**< [  2:  2](R/W/H) Set to duplicate the first 20 bits of TX data before
+                                                                 alignment & ordering for lower data rates. This could be PCS TX
+                                                                 data, PRBS data, or shallow-loopback RX data depending on mode.
+                                                                 This value must only be changed while lite layer is in reset. */
+        uint64_t fifo_rst_n            : 1;  /**< [  3:  3](R/W/H) Clear to hold the PCS lite layer transmit asynchronous FIFO in
+                                                                 reset. */
+        uint64_t reserved_4            : 1;
+        uint64_t tx_fifo_pop_start_addr : 4; /**< [  8:  5](R/W) Reserved.
+                                                                 Internal:
+                                                                 Starting address for lite transmit FIFO pops (reads). Changing this allows
+                                                                 shifting the latency through the FIFO in steps of 1 txdivclk cycle (8, 10, 16,
+                                                                 20, 32, or 40 UI, depending on data path width setting). When [SLOOP_MODE] is
+                                                                 set, [TX_FIFO_POP_START_ADDR] should typically be set to 0. For diagnostic use
+                                                                 only.
+
+                                                                 Due to round trip latency requirements for SATA, this should be set to 0x9 to
+                                                                 minimize the FIFO delay while still ensuring sufficient distance between the
+                                                                 read and write pointers. */
+        uint64_t fifo_bypass_en        : 1;  /**< [  9:  9](R/W) For diagnostic use only.
+                                                                 Internal:
+                                                                 This control is currently inactive and is left as a placeholder for
+                                                                 possible re-inclusion in 7nm.
+
+                                                                 Set to bypass the PCS lite layer transmit asynchronous FIFO
+                                                                 with a single flop. This saves 1-2 cycles of latency in the transmit
+                                                                 path, but imposes additional constraints on static timing
+                                                                 closure. Note that shallow loopback data cannot bypass the FIFO. */
+        uint64_t fifo_algn_lane_mask_rsvd : 4;/**< [ 13: 10](R/W) Reserved.
+                                                                 Internal:
+                                                                 No longer used. Was selection control for which lanes in the current QLM to
+                                                                 align in timing the deassertion of reset to this lane's transmitter's clock
+                                                                 alignment FIFO.
+                                                                 \<0\> = Wait for Lane 0.
+                                                                 \<1\> = Wait for Lane 1.
+                                                                 \<2\> = Wait for Lane 2.
+                                                                 \<3\> = Wait for Lane 3.
+
+                                                                 The bit corresponding to the current Lane is ignored. */
+        uint64_t fifo_algn_qlm_mask_rsvd : 4;/**< [ 17: 14](R/W) Reserved.
+                                                                 Internal:
+                                                                 No longer used. Was selection control for which QLMs in this QLM's link group to
+                                                                 align in timing the deassertion of reset to this lane's transmitter's clock
+                                                                 alignment FIFO.
+                                                                 \<0\> = Wait for QLM 0.
+                                                                 \<1\> = Wait for QLM 1.
+                                                                 \<2\> = Wait for QLM 2.
+                                                                 \<3\> = Wait for QLM 3.
+
+                                                                 If a link is made up of lanes in multiple QLMs, the mask in each lane must
+                                                                 include all active QLMs (including the QLM containing the current lane). */
+        uint64_t reserved_18           : 1;
+        uint64_t reverse_rx_bit_order  : 1;  /**< [ 19: 19](R/W/H) While asserted, the normal receive order (lowest valid bit index
+                                                                 received first, highest valid index last) is reversed so the highest
+                                                                 valid bit index is received first and lowest valid index is received
+                                                                 last. This control needs to be asserted for PRBS testing using the
+                                                                 PRBS checker in the GSER macro and for PCIe Gen-1 and Gen-2. */
+        uint64_t inv_rx_polarity       : 1;  /**< [ 20: 20](R/W/H) Set to invert the polarity of the received data bits. Note that
+                                                                 the PCS-lite PRBS checker will require [INV_RX_POLARITY] to be asserted
+                                                                 when it is in use to check standard PRBS data from an external
+                                                                 source. This value must only be changed while lite layer is in
+                                                                 reset. */
+        uint64_t bitstuff_rx_en        : 1;  /**< [ 21: 21](R/W/H) Set to expect duplicates on the PMA RX data and drop bits after
+                                                                 alignment & ordering for PCS layer to consume. The drop ordering is
+                                                                 determined by [BITSTUFF_RX_DROP_EVEN]. This value must only be changed
+                                                                 while lite layer is in reset. */
+        uint64_t bitstuff_rx_drop_even : 1;  /**< [ 22: 22](R/W/H) Tells the PCS lite receive datapath to drop even bits
+                                                                 in the vector of received data from the PMA when [BITSTUFF_RX_EN] is
+                                                                 set:
+                                                                   0 = Drop bits 1, 3, 5, 7, ...
+                                                                   1 = Drop bits 0, 2, 4, 6, ...
+
+                                                                 This bit is also used in the eye monitor to mask out the dropped
+                                                                 bits when counting mismatches.
+                                                                 This value must only be changed while lite layer is in reset. */
+        uint64_t reserved_23           : 1;
+        uint64_t sloop_mode            : 1;  /**< [ 24: 24](R/W/H) Reserved.
+                                                                 Internal:
+                                                                 Enable shallow loopback mode (SerDes receive data looped back to SerDes transmit
+                                                                 in the PCS lite layer). This value must only be changed while lite layer is in
+                                                                 reset. [TX_FIFO_POP_START_ADDR] will need to be adjusted when [SLOOP_MODE] is
+                                                                 set. For diagnostic use only. */
+        uint64_t core_loopback_mode    : 1;  /**< [ 25: 25](R/W/H) Enable the core-side loopback mode; controller transmit data are
+                                                                 looped back to the controller as receive data in the PCS lite layer.
+                                                                 This value must only be changed while lite layer is in reset. */
+        uint64_t reserved_26_31        : 6;
+        uint64_t tx_dp_width           : 3;  /**< [ 34: 32](R/W/H) Tells the PCS lite layer logic what width to use in the transmit
+                                                                 data path between the lite layer FIFO and the analog macro, hence
+                                                                 what data bits of the tx_data[39:0] bus are in use. Values:
+                                                                   0x0 = 8 (reserved; debug only).
+                                                                   0x1 = 10 (reserved; debug only).
+                                                                   0x2 = 16.
+                                                                   0x3 = 20.
+                                                                   0x4 = 32.
+                                                                   0x5 = 40.
+
+                                                                 This value must only be changed while lite layer is in reset. */
+        uint64_t rx_dp_width           : 3;  /**< [ 37: 35](R/W/H) Tells the PCS lite layer logic what width to use in the receive data
+                                                                 path between the analog macro and downstream logic, hence what
+                                                                 data bits of the doutq[39:0] bus are in use.
+                                                                   0x0 = 8 (reserved; debug only).
+                                                                   0x1 = 10 (reserved; debug only).
+                                                                   0x2 = 16.
+                                                                   0x3 = 20.
+                                                                   0x4 = 32.
+                                                                   0x5 = 40.
+
+                                                                 This value must only be changed while lite layer is in reset. */
+        uint64_t prbs_dp_width         : 3;  /**< [ 40: 38](R/W/H) Tells the PCS lite layer PRBS logic what width to use in the
+                                                                 generator and checker data paths.
+                                                                   0x0 = 8 (requires bit-stuffing/unstuffing or for debug).
+                                                                   0x1 = 10 (requires bit-stuffing/unstuffing or for debug).
+                                                                   0x2 = 16.
+                                                                   0x3 = 20.
+                                                                   0x4 = 32.
+                                                                   0x5 = 40. */
+        uint64_t pat_dp_width          : 3;  /**< [ 43: 41](R/W/H) Tells the pattern memory generator/checker logic what width to use
+                                                                 in the generator and checker data paths.
+                                                                   0x0 = 8 (requires bit-stuffing/unstuffing or for debug).
+                                                                   0x1 = 10 (requires bit-stuffing/unstuffing or for debug).
+                                                                   0x2 = 16.
+                                                                   0x3 = 20.
+                                                                   0x4 = 32.
+                                                                   0x5 = 40.
+
+                                                                 Checking of received data
+                                                                 works correctly only for clock divider ratios of 10, 20, and 40. The
+                                                                 transmit data sequence is correct for all clock ratios. */
+        uint64_t reserved_44_47        : 4;
+        uint64_t inj_err_burst_len     : 6;  /**< [ 53: 48](R/W) Tells the PCS lite error injection logic what length the burst error
+                                                                 mask should be. The max value is set by the valid data width
+                                                                 transmitted. For example, if 8 bits of valid data are transmitted
+                                                                 each cycle, only from 1-8 bits of contiguous errors can be set. The
+                                                                 same for 10, 16, 20, 32, and 40 bits. */
+        uint64_t inj_err_burst_en      : 1;  /**< [ 54: 54](R/W) PCS will inject a contiguous set of error bits in the transmit data
+                                                                 stream at some time following an assertion of [INJ_ERR_BURST_EN]. The
+                                                                 length of contiguous errors is set by [INJ_ERR_BURST_LEN]. Injection
+                                                                 of a second set of errors will require deasserting and then
+                                                                 asserting [INJ_ERR_BURST_EN] again. This mode should be used separately
+                                                                 from [INJ_ERR_CNT_EN] and only one of them can be asserted at any time. */
+        uint64_t reserved_55           : 1;
+        uint64_t inj_err_cnt_len       : 6;  /**< [ 61: 56](R/W) Tells the PCS lite error injection logic the total number of bit errors
+                                                                 to insert in a walking pattern. Every other cycle 1 bit error will be
+                                                                 inserted in a walking index up to the count value specified. The max
+                                                                 value is set by the valid data width transmitted. For example, if 8
+                                                                 bits of valid data are transmitted each cycle only from 1-8 count
+                                                                 values can be set. The same for 10, 16, 20, 32, and 40 bits. */
+        uint64_t inj_err_cnt_en        : 1;  /**< [ 62: 62](R/W) PCS will inject a single bit error every other cycle in the transmit
+                                                                 data stream at some time following an assertion of
+                                                                 [INJ_ERR_CNT_EN]. The number of error cycles to insert is set by
+                                                                 [INJ_ERR_CNT_LEN] and it increments the error bit index each
+                                                                 cycle. Once all the errors have been transmitted GSER sets
+                                                                 GSERN()_LANE()_LT_BSTS[INJ_ERR_CNT_DONE]. Injection of a second set of
+                                                                 errors will require clearing the counter by holding [INJ_ERR_CNT_RST_N],
+                                                                 asserting [INJ_ERR_CNT_EN], then releasing [INJ_ERR_CNT_RST_N]. This mode
+                                                                 should be used separately from [INJ_ERR_BURST_EN] and only one of them
+                                                                 can be asserted at any time. */
+        uint64_t inj_err_cnt_rst_n     : 1;  /**< [ 63: 63](R/W/H) Set to zero to hold the error injection counter in reset. */
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_gsernx_lanex_lt_bcfg_s cn9; */
+    /* struct cavm_gsernx_lanex_lt_bcfg_s cn96xx; */
+    struct cavm_gsernx_lanex_lt_bcfg_cnf95xx
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t inj_err_cnt_rst_n     : 1;  /**< [ 63: 63](R/W/H) Set to zero to hold the error injection counter in reset. */
+        uint64_t inj_err_cnt_en        : 1;  /**< [ 62: 62](R/W) PCS will inject a single bit error every other cycle in the transmit
+                                                                 data stream at some time following an assertion of
+                                                                 [INJ_ERR_CNT_EN]. The number of error cycles to insert is set by
+                                                                 [INJ_ERR_CNT_LEN] and it increments the error bit index each
+                                                                 cycle. Once all the errors have been transmitted GSER sets
+                                                                 GSERN()_LANE()_LT_BSTS[INJ_ERR_CNT_DONE]. Injection of a second set of
+                                                                 errors will require clearing the counter by holding [INJ_ERR_CNT_RST_N],
+                                                                 asserting [INJ_ERR_CNT_EN], then releasing [INJ_ERR_CNT_RST_N]. This mode
+                                                                 should be used separately from [INJ_ERR_BURST_EN] and only one of them
+                                                                 can be asserted at any time. */
+        uint64_t inj_err_cnt_len       : 6;  /**< [ 61: 56](R/W) Tells the PCS lite error injection logic the total number of bit errors
+                                                                 to insert in a walking pattern. Every other cycle 1 bit error will be
+                                                                 inserted in a walking index up to the count value specified. The max
+                                                                 value is set by the valid data width transmitted. For example, if 8
+                                                                 bits of valid data are transmitted each cycle only from 1-8 count
+                                                                 values can be set. The same for 10, 16, 20, 32, and 40 bits. */
+        uint64_t reserved_55           : 1;
+        uint64_t inj_err_burst_en      : 1;  /**< [ 54: 54](R/W) PCS will inject a contiguous set of error bits in the transmit data
+                                                                 stream at some time following an assertion of [INJ_ERR_BURST_EN]. The
+                                                                 length of contiguous errors is set by [INJ_ERR_BURST_LEN]. Injection
+                                                                 of a second set of errors will require deasserting and then
+                                                                 asserting [INJ_ERR_BURST_EN] again. This mode should be used separately
+                                                                 from [INJ_ERR_CNT_EN] and only one of them can be asserted at any time. */
+        uint64_t inj_err_burst_len     : 6;  /**< [ 53: 48](R/W) Tells the PCS lite error injection logic what length the burst error
+                                                                 mask should be. The max value is set by the valid data width
+                                                                 transmitted. For example, if 8 bits of valid data are transmitted
+                                                                 each cycle, only from 1-8 bits of contiguous errors can be set. The
+                                                                 same for 10, 16, 20, 32, and 40 bits. */
+        uint64_t reserved_44_47        : 4;
+        uint64_t pat_dp_width          : 3;  /**< [ 43: 41](R/W/H) Tells the pattern memory generator/checker logic what width to use
+                                                                 in the generator and checker data paths.
+                                                                   0x0 = 8 (requires bit-stuffing/unstuffing or for debug).
+                                                                   0x1 = 10 (requires bit-stuffing/unstuffing or for debug).
+                                                                   0x2 = 16.
+                                                                   0x3 = 20.
+                                                                   0x4 = 32.
+                                                                   0x5 = 40.
+
+                                                                 Checking of received data
+                                                                 works correctly only for clock divider ratios of 10, 20, and 40. The
+                                                                 transmit data sequence is correct for all clock ratios. */
+        uint64_t prbs_dp_width         : 3;  /**< [ 40: 38](R/W/H) Tells the PCS lite layer PRBS logic what width to use in the
+                                                                 generator and checker data paths.
+                                                                   0x0 = 8 (requires bit-stuffing/unstuffing or for debug).
+                                                                   0x1 = 10 (requires bit-stuffing/unstuffing or for debug).
+                                                                   0x2 = 16.
+                                                                   0x3 = 20.
+                                                                   0x4 = 32.
+                                                                   0x5 = 40. */
+        uint64_t rx_dp_width           : 3;  /**< [ 37: 35](R/W/H) Tells the PCS lite layer logic what width to use in the receive data
+                                                                 path between the analog macro and downstream logic, hence what
+                                                                 data bits of the doutq[39:0] bus are in use.
+                                                                   0x0 = 8 (reserved; debug only).
+                                                                   0x1 = 10 (reserved; debug only).
+                                                                   0x2 = 16.
+                                                                   0x3 = 20.
+                                                                   0x4 = 32.
+                                                                   0x5 = 40.
+
+                                                                 This value must only be changed while lite layer is in reset. */
+        uint64_t tx_dp_width           : 3;  /**< [ 34: 32](R/W/H) Tells the PCS lite layer logic what width to use in the transmit
+                                                                 data path between the lite layer FIFO and the analog macro, hence
+                                                                 what data bits of the tx_data[39:0] bus are in use. Values:
+                                                                   0x0 = 8 (reserved; debug only).
+                                                                   0x1 = 10 (reserved; debug only).
+                                                                   0x2 = 16.
+                                                                   0x3 = 20.
+                                                                   0x4 = 32.
+                                                                   0x5 = 40.
+
+                                                                 This value must only be changed while lite layer is in reset. */
+        uint64_t reserved_26_31        : 6;
+        uint64_t core_loopback_mode    : 1;  /**< [ 25: 25](R/W/H) Enable the core-side loopback mode; controller transmit data are
+                                                                 looped back to the controller as receive data in the PCS lite layer.
+                                                                 This value must only be changed while lite layer is in reset. */
         uint64_t sloop_mode            : 1;  /**< [ 24: 24](R/W/H) Enable shallow loopback mode (SerDes receive data looped back to SerDes transmit
                                                                  in the PCS lite layer). This value must only be changed while lite layer is in
                                                                  reset. For diagnostic use only.
@@ -2960,8 +3341,7 @@ union cavm_gsernx_lanex_lt_bcfg
                                                                  can be asserted at any time. */
         uint64_t inj_err_cnt_rst_n     : 1;  /**< [ 63: 63](R/W/H) Set to zero to hold the error injection counter in reset. */
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_gsernx_lanex_lt_bcfg_s cn; */
+    } cnf95xx;
 };
 typedef union cavm_gsernx_lanex_lt_bcfg cavm_gsernx_lanex_lt_bcfg_t;
 
@@ -4422,7 +4802,66 @@ union cavm_gsernx_lanex_pcie_pcs_bsts
         uint64_t reserved_28_63        : 36;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_gsernx_lanex_pcie_pcs_bsts_s cn; */
+    /* struct cavm_gsernx_lanex_pcie_pcs_bsts_s cn9; */
+    struct cavm_gsernx_lanex_pcie_pcs_bsts_cn96xx
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_28_63        : 36;
+        uint64_t pcs_rx_eq_raw_fom     : 12; /**< [ 27: 16](RO/H) Raw 12-bit figure of merit for last receiver equalization evaluation. */
+        uint64_t reserved_5_15         : 11;
+        uint64_t pcs_8b10b_disp_error  : 1;  /**< [  4:  4](R/W1C/H) 8B10B disparity error (PCIe Gen1/2 only).
+                                                                 A valid 8B10B code word was received with invalid disparity. */
+        uint64_t pcs_decode_error      : 1;  /**< [  3:  3](R/W1C/H) 8B10B decode error (PCIe Gen1/2).
+                                                                 An invalid 8B10B code word was detected. The invalid code word was
+                                                                 replaced by an EDB symbol (0xFE).
+
+                                                                 128B130B decode error (PCIe Gen3/4).
+                                                                 An error was detected in the first 4N+1 symbols of a SKP ordered set. */
+        uint64_t es_underflow          : 1;  /**< [  2:  2](R/W1C/H) Elastic store underflow.
+                                                                 A read was attempted from the receive Elastic Store while it was empty.
+                                                                 This would indicate a receive data rate slower than supported or a
+                                                                 lack of SKP ordered sets to allow SKP symbol additions. */
+        uint64_t es_overflow           : 1;  /**< [  1:  1](R/W1C/H) Elastic store overflow.
+                                                                 A write was attempted to the receive Elastic Store while it was full.
+                                                                 This would indicate a receive data rate faster than supported or a
+                                                                 lack of SKP ordered sets to allow SKP symbol deletions. */
+        uint64_t align_error           : 1;  /**< [  0:  0](R/W1C/H) Alignment error.
+                                                                 The receive aligner has detected an error. For PCIe Gen1/2, an error is
+                                                                 declared if GSERN()_LANE()_PCIE_PCS_BCFG[ERROR_THR]
+                                                                 COMMA characters are detected at a 10 bit rotation that does not match
+                                                                 the active rotation. The COMMAs do not have to all be at the same rotation.
+                                                                 For PCIe Gen3/4, an error is declared if GSERN()_LANE()_PCIE_PCS_BCFG[ERROR_THR]
+                                                                 invalid sync headers are detected at the current block alignment. */
+#else /* Word 0 - Little Endian */
+        uint64_t align_error           : 1;  /**< [  0:  0](R/W1C/H) Alignment error.
+                                                                 The receive aligner has detected an error. For PCIe Gen1/2, an error is
+                                                                 declared if GSERN()_LANE()_PCIE_PCS_BCFG[ERROR_THR]
+                                                                 COMMA characters are detected at a 10 bit rotation that does not match
+                                                                 the active rotation. The COMMAs do not have to all be at the same rotation.
+                                                                 For PCIe Gen3/4, an error is declared if GSERN()_LANE()_PCIE_PCS_BCFG[ERROR_THR]
+                                                                 invalid sync headers are detected at the current block alignment. */
+        uint64_t es_overflow           : 1;  /**< [  1:  1](R/W1C/H) Elastic store overflow.
+                                                                 A write was attempted to the receive Elastic Store while it was full.
+                                                                 This would indicate a receive data rate faster than supported or a
+                                                                 lack of SKP ordered sets to allow SKP symbol deletions. */
+        uint64_t es_underflow          : 1;  /**< [  2:  2](R/W1C/H) Elastic store underflow.
+                                                                 A read was attempted from the receive Elastic Store while it was empty.
+                                                                 This would indicate a receive data rate slower than supported or a
+                                                                 lack of SKP ordered sets to allow SKP symbol additions. */
+        uint64_t pcs_decode_error      : 1;  /**< [  3:  3](R/W1C/H) 8B10B decode error (PCIe Gen1/2).
+                                                                 An invalid 8B10B code word was detected. The invalid code word was
+                                                                 replaced by an EDB symbol (0xFE).
+
+                                                                 128B130B decode error (PCIe Gen3/4).
+                                                                 An error was detected in the first 4N+1 symbols of a SKP ordered set. */
+        uint64_t pcs_8b10b_disp_error  : 1;  /**< [  4:  4](R/W1C/H) 8B10B disparity error (PCIe Gen1/2 only).
+                                                                 A valid 8B10B code word was received with invalid disparity. */
+        uint64_t reserved_5_15         : 11;
+        uint64_t pcs_rx_eq_raw_fom     : 12; /**< [ 27: 16](RO/H) Raw 12-bit figure of merit for last receiver equalization evaluation. */
+        uint64_t reserved_28_63        : 36;
+#endif /* Word 0 - End */
+    } cn96xx;
+    /* struct cavm_gsernx_lanex_pcie_pcs_bsts_s cnf95xx; */
 };
 typedef union cavm_gsernx_lanex_pcie_pcs_bsts cavm_gsernx_lanex_pcie_pcs_bsts_t;
 
@@ -5407,6 +5846,7 @@ union cavm_gsernx_lanex_pcie_rxeq1_3_bcfg
         uint64_t reserved_62_63        : 2;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_gsernx_lanex_pcie_rxeq1_3_bcfg_s cn9; */
     /* struct cavm_gsernx_lanex_pcie_rxeq1_3_bcfg_s cn96xx; */
     struct cavm_gsernx_lanex_pcie_rxeq1_3_bcfg_cnf95xx
     {
@@ -5762,6 +6202,7 @@ union cavm_gsernx_lanex_pcie_rxeq2_3_bcfg
         uint64_t reserved_62_63        : 2;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_gsernx_lanex_pcie_rxeq2_3_bcfg_s cn9; */
     /* struct cavm_gsernx_lanex_pcie_rxeq2_3_bcfg_s cn96xx; */
     struct cavm_gsernx_lanex_pcie_rxeq2_3_bcfg_cnf95xx
     {
@@ -6117,6 +6558,7 @@ union cavm_gsernx_lanex_pcie_rxeq3_3_bcfg
         uint64_t reserved_62_63        : 2;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_gsernx_lanex_pcie_rxeq3_3_bcfg_s cn9; */
     /* struct cavm_gsernx_lanex_pcie_rxeq3_3_bcfg_s cn96xx; */
     struct cavm_gsernx_lanex_pcie_rxeq3_3_bcfg_cnf95xx
     {
@@ -6472,6 +6914,7 @@ union cavm_gsernx_lanex_pcie_rxeq4_3_bcfg
         uint64_t reserved_62_63        : 2;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_gsernx_lanex_pcie_rxeq4_3_bcfg_s cn9; */
     /* struct cavm_gsernx_lanex_pcie_rxeq4_3_bcfg_s cn96xx; */
     struct cavm_gsernx_lanex_pcie_rxeq4_3_bcfg_cnf95xx
     {
@@ -10416,6 +10859,44 @@ union cavm_gsernx_lanex_rx_15_bcfg
         uint64_t c4_limit_lo           : 6;  /**< [ 23: 18](R/W) C4 postcursor limit low. */
         uint64_t c3_limit_lo           : 6;  /**< [ 17: 12](R/W) C3 postcursor limit low. */
         uint64_t c2_limit_lo           : 6;  /**< [ 11:  6](R/W) C2 postcursor limit low. */
+        uint64_t c1_limit_lo           : 6;  /**< [  5:  0](R/W) C1 postcursor limit low. When set to a negative value, the value should be modified
+                                                                 to be ((desired limit) + c1_q_adjust). When negative, hardware sets value in use to
+                                                                 the programmed value and not ((desired limit) + c1_q_adjust). Operates normally when
+                                                                 [C1_LIMIT_LO] is greater than or equal to zero. */
+#else /* Word 0 - Little Endian */
+        uint64_t c1_limit_lo           : 6;  /**< [  5:  0](R/W) C1 postcursor limit low. When set to a negative value, the value should be modified
+                                                                 to be ((desired limit) + c1_q_adjust). When negative, hardware sets value in use to
+                                                                 the programmed value and not ((desired limit) + c1_q_adjust). Operates normally when
+                                                                 [C1_LIMIT_LO] is greater than or equal to zero. */
+        uint64_t c2_limit_lo           : 6;  /**< [ 11:  6](R/W) C2 postcursor limit low. */
+        uint64_t c3_limit_lo           : 6;  /**< [ 17: 12](R/W) C3 postcursor limit low. */
+        uint64_t c4_limit_lo           : 6;  /**< [ 23: 18](R/W) C4 postcursor limit low. */
+        uint64_t c5_limit_lo           : 6;  /**< [ 29: 24](R/W) C5 postcursor limit low. */
+        uint64_t reserved_30_31        : 2;
+        uint64_t c1_limit_hi           : 6;  /**< [ 37: 32](R/W) C1 postcursor limit high. */
+        uint64_t c2_limit_hi           : 6;  /**< [ 43: 38](R/W) C2 postcursor limit high. */
+        uint64_t c3_limit_hi           : 6;  /**< [ 49: 44](R/W) C3 postcursor limit high. */
+        uint64_t c4_limit_hi           : 6;  /**< [ 55: 50](R/W) C4 postcursor limit high. */
+        uint64_t c5_limit_hi           : 6;  /**< [ 61: 56](R/W) C5 postcursor limit high. */
+        uint64_t reserved_62_63        : 2;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_gsernx_lanex_rx_15_bcfg_s cn9; */
+    /* struct cavm_gsernx_lanex_rx_15_bcfg_s cn96xx; */
+    struct cavm_gsernx_lanex_rx_15_bcfg_cnf95xx
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_62_63        : 2;
+        uint64_t c5_limit_hi           : 6;  /**< [ 61: 56](R/W) C5 postcursor limit high. */
+        uint64_t c4_limit_hi           : 6;  /**< [ 55: 50](R/W) C4 postcursor limit high. */
+        uint64_t c3_limit_hi           : 6;  /**< [ 49: 44](R/W) C3 postcursor limit high. */
+        uint64_t c2_limit_hi           : 6;  /**< [ 43: 38](R/W) C2 postcursor limit high. */
+        uint64_t c1_limit_hi           : 6;  /**< [ 37: 32](R/W) C1 postcursor limit high. */
+        uint64_t reserved_30_31        : 2;
+        uint64_t c5_limit_lo           : 6;  /**< [ 29: 24](R/W) C5 postcursor limit low. */
+        uint64_t c4_limit_lo           : 6;  /**< [ 23: 18](R/W) C4 postcursor limit low. */
+        uint64_t c3_limit_lo           : 6;  /**< [ 17: 12](R/W) C3 postcursor limit low. */
+        uint64_t c2_limit_lo           : 6;  /**< [ 11:  6](R/W) C2 postcursor limit low. */
         uint64_t c1_limit_lo           : 6;  /**< [  5:  0](R/W) C1 postcursor limit low. */
 #else /* Word 0 - Little Endian */
         uint64_t c1_limit_lo           : 6;  /**< [  5:  0](R/W) C1 postcursor limit low. */
@@ -10431,8 +10912,7 @@ union cavm_gsernx_lanex_rx_15_bcfg
         uint64_t c5_limit_hi           : 6;  /**< [ 61: 56](R/W) C5 postcursor limit high. */
         uint64_t reserved_62_63        : 2;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_gsernx_lanex_rx_15_bcfg_s cn; */
+    } cnf95xx;
 };
 typedef union cavm_gsernx_lanex_rx_15_bcfg cavm_gsernx_lanex_rx_15_bcfg_t;
 
@@ -21965,7 +22445,7 @@ union cavm_gsernx_lanex_tx_1_bcfg
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_57_63        : 7;
-        uint64_t tx_acjtag             : 1;  /**< [ 56: 56](R/W) ACJTAG bits. */
+        uint64_t tx_acjtag             : 1;  /**< [ 56: 56](R/W) TBD */
         uint64_t tx_dacj               : 8;  /**< [ 55: 48](R/W) ACJTAG block data bits (some redundant). */
         uint64_t reserved_41_47        : 7;
         uint64_t tx_enloop             : 1;  /**< [ 40: 40](R/W) Set to enable the DDR loopback mux in the custom transmitter to send a copy of
@@ -22113,7 +22593,7 @@ union cavm_gsernx_lanex_tx_1_bcfg
                                                                  transmitter and the receiver. GSERN()_LANE()_RX_ST_BCFG[EN_LB] must also be set. */
         uint64_t reserved_41_47        : 7;
         uint64_t tx_dacj               : 8;  /**< [ 55: 48](R/W) ACJTAG block data bits (some redundant). */
-        uint64_t tx_acjtag             : 1;  /**< [ 56: 56](R/W) ACJTAG bits. */
+        uint64_t tx_acjtag             : 1;  /**< [ 56: 56](R/W) TBD */
         uint64_t reserved_57_63        : 7;
 #endif /* Word 0 - End */
     } s;

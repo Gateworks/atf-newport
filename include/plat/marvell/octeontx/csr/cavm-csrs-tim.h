@@ -1823,6 +1823,20 @@ union cavm_tim_af_rvu_int
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_1_63         : 63;
         uint64_t unmapped_slot         : 1;  /**< [  0:  0](R/W1C/H) Unmapped slot. Received an I/O request to a VF/PF slot in BAR2 that is not
+                                                                 reverse mapped to an LF. See TIM_PRIV_LF()_CFG and TIM_AF_RVU_LF_CFG_DEBUG. */
+#else /* Word 0 - Little Endian */
+        uint64_t unmapped_slot         : 1;  /**< [  0:  0](R/W1C/H) Unmapped slot. Received an I/O request to a VF/PF slot in BAR2 that is not
+                                                                 reverse mapped to an LF. See TIM_PRIV_LF()_CFG and TIM_AF_RVU_LF_CFG_DEBUG. */
+        uint64_t reserved_1_63         : 63;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_tim_af_rvu_int_s cn9; */
+    /* struct cavm_tim_af_rvu_int_s cn96xxp1; */
+    struct cavm_tim_af_rvu_int_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_1_63         : 63;
+        uint64_t unmapped_slot         : 1;  /**< [  0:  0](R/W1C/H) Unmapped slot. Received an I/O request to a VF/PF slot in BAR2 that is not
                                                                  reverse mapped to an LF. See TIM_PRIV_LF()_CFG.
 
                                                                  Internal:
@@ -1835,8 +1849,10 @@ union cavm_tim_af_rvu_int
                                                                  A reverse lookup using TIM_AF_RVU_LF_CFG_DEBUG will never set this bit. */
         uint64_t reserved_1_63         : 63;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_tim_af_rvu_int_s cn; */
+    } cn96xxp3;
+    /* struct cavm_tim_af_rvu_int_cn96xxp3 cn98xx; */
+    /* struct cavm_tim_af_rvu_int_cn96xxp3 cnf95xx; */
+    /* struct cavm_tim_af_rvu_int_cn96xxp3 loki; */
 };
 typedef union cavm_tim_af_rvu_int cavm_tim_af_rvu_int_t;
 
@@ -1869,6 +1885,18 @@ union cavm_tim_af_rvu_int_ena_w1c
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_1_63         : 63;
+        uint64_t unmapped_slot         : 1;  /**< [  0:  0](R/W1C/H) Reads or clears enable for TIM_AF_RVU_INT[UNMAPPED_SLOT]. */
+#else /* Word 0 - Little Endian */
+        uint64_t unmapped_slot         : 1;  /**< [  0:  0](R/W1C/H) Reads or clears enable for TIM_AF_RVU_INT[UNMAPPED_SLOT]. */
+        uint64_t reserved_1_63         : 63;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_tim_af_rvu_int_ena_w1c_s cn9; */
+    /* struct cavm_tim_af_rvu_int_ena_w1c_s cn96xxp1; */
+    struct cavm_tim_af_rvu_int_ena_w1c_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_1_63         : 63;
         uint64_t unmapped_slot         : 1;  /**< [  0:  0](R/W1C/H) Reads or clears enable for TIM_AF_RVU_INT[UNMAPPED_SLOT].
                                                                  Internal:
                                                                  A reverse lookup using TIM_AF_RVU_LF_CFG_DEBUG will never set this bit. */
@@ -1878,8 +1906,10 @@ union cavm_tim_af_rvu_int_ena_w1c
                                                                  A reverse lookup using TIM_AF_RVU_LF_CFG_DEBUG will never set this bit. */
         uint64_t reserved_1_63         : 63;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_tim_af_rvu_int_ena_w1c_s cn; */
+    } cn96xxp3;
+    /* struct cavm_tim_af_rvu_int_ena_w1c_cn96xxp3 cn98xx; */
+    /* struct cavm_tim_af_rvu_int_ena_w1c_cn96xxp3 cnf95xx; */
+    /* struct cavm_tim_af_rvu_int_ena_w1c_cn96xxp3 loki; */
 };
 typedef union cavm_tim_af_rvu_int_ena_w1c cavm_tim_af_rvu_int_ena_w1c_t;
 
@@ -1912,6 +1942,18 @@ union cavm_tim_af_rvu_int_ena_w1s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_1_63         : 63;
+        uint64_t unmapped_slot         : 1;  /**< [  0:  0](R/W1S/H) Reads or sets enable for TIM_AF_RVU_INT[UNMAPPED_SLOT]. */
+#else /* Word 0 - Little Endian */
+        uint64_t unmapped_slot         : 1;  /**< [  0:  0](R/W1S/H) Reads or sets enable for TIM_AF_RVU_INT[UNMAPPED_SLOT]. */
+        uint64_t reserved_1_63         : 63;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_tim_af_rvu_int_ena_w1s_s cn9; */
+    /* struct cavm_tim_af_rvu_int_ena_w1s_s cn96xxp1; */
+    struct cavm_tim_af_rvu_int_ena_w1s_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_1_63         : 63;
         uint64_t unmapped_slot         : 1;  /**< [  0:  0](R/W1S/H) Reads or sets enable for TIM_AF_RVU_INT[UNMAPPED_SLOT].
                                                                  Internal:
                                                                  A reverse lookup using TIM_AF_RVU_LF_CFG_DEBUG will never set this bit. */
@@ -1921,8 +1963,10 @@ union cavm_tim_af_rvu_int_ena_w1s
                                                                  A reverse lookup using TIM_AF_RVU_LF_CFG_DEBUG will never set this bit. */
         uint64_t reserved_1_63         : 63;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_tim_af_rvu_int_ena_w1s_s cn; */
+    } cn96xxp3;
+    /* struct cavm_tim_af_rvu_int_ena_w1s_cn96xxp3 cn98xx; */
+    /* struct cavm_tim_af_rvu_int_ena_w1s_cn96xxp3 cnf95xx; */
+    /* struct cavm_tim_af_rvu_int_ena_w1s_cn96xxp3 loki; */
 };
 typedef union cavm_tim_af_rvu_int_ena_w1s cavm_tim_af_rvu_int_ena_w1s_t;
 
@@ -1955,6 +1999,18 @@ union cavm_tim_af_rvu_int_w1s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_1_63         : 63;
+        uint64_t unmapped_slot         : 1;  /**< [  0:  0](R/W1S/H) Reads or sets TIM_AF_RVU_INT[UNMAPPED_SLOT]. */
+#else /* Word 0 - Little Endian */
+        uint64_t unmapped_slot         : 1;  /**< [  0:  0](R/W1S/H) Reads or sets TIM_AF_RVU_INT[UNMAPPED_SLOT]. */
+        uint64_t reserved_1_63         : 63;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_tim_af_rvu_int_w1s_s cn9; */
+    /* struct cavm_tim_af_rvu_int_w1s_s cn96xxp1; */
+    struct cavm_tim_af_rvu_int_w1s_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_1_63         : 63;
         uint64_t unmapped_slot         : 1;  /**< [  0:  0](R/W1S/H) Reads or sets TIM_AF_RVU_INT[UNMAPPED_SLOT].
                                                                  Internal:
                                                                  A reverse lookup using TIM_AF_RVU_LF_CFG_DEBUG will never set this bit. */
@@ -1964,8 +2020,10 @@ union cavm_tim_af_rvu_int_w1s
                                                                  A reverse lookup using TIM_AF_RVU_LF_CFG_DEBUG will never set this bit. */
         uint64_t reserved_1_63         : 63;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_tim_af_rvu_int_w1s_s cn; */
+    } cn96xxp3;
+    /* struct cavm_tim_af_rvu_int_w1s_cn96xxp3 cn98xx; */
+    /* struct cavm_tim_af_rvu_int_w1s_cn96xxp3 cnf95xx; */
+    /* struct cavm_tim_af_rvu_int_w1s_cn96xxp3 loki; */
 };
 typedef union cavm_tim_af_rvu_int_w1s cavm_tim_af_rvu_int_w1s_t;
 
@@ -3854,6 +3912,52 @@ union cavm_tim_lf_ring_rel
                                                                  ticks. When [TIMERCOUNT] reaches 0x0, the ring's interval expired and the
                                                                  hardware forces a bucket traversal (and increments [LATE_COUNT]).
 
+                                                                 Typical initialization value should be interval/constant; Cavium recommends that
+                                                                 the constant be unique per ring. This creates an offset between the rings.
+                                                                 [TIMERCOUNT] becomes and remains unpredictable whenever TIM_AF_RING()_CTL1[ENA] = 0
+                                                                 or TIM_AF_RING()_CTL1[CLK_SRC] changes, until TIM_AF_RING()_CTL0 is updated. */
+#else /* Word 0 - Little Endian */
+        uint64_t timercount            : 32; /**< [ 31:  0](RO/H) Timer count indicates how many timer ticks are left until the interval
+                                                                 expiration, calculated as TIM_AF_RING()_CTL0[EXPIRE_OFFSET] minus current time
+                                                                 (TIM_FR_RN_TENNS, TIM_FR_RN_GPIOS, TIM_FR_RN_GTI, or TIM_FR_RN_PTP).
+
+                                                                 Once TIM_AF_RING()_CTL1[ENA] = 1, [TIMERCOUNT] will be observed to count down timer
+                                                                 ticks. When [TIMERCOUNT] reaches 0x0, the ring's interval expired and the
+                                                                 hardware forces a bucket traversal (and increments [LATE_COUNT]).
+
+                                                                 Typical initialization value should be interval/constant; Cavium recommends that
+                                                                 the constant be unique per ring. This creates an offset between the rings.
+                                                                 [TIMERCOUNT] becomes and remains unpredictable whenever TIM_AF_RING()_CTL1[ENA] = 0
+                                                                 or TIM_AF_RING()_CTL1[CLK_SRC] changes, until TIM_AF_RING()_CTL0 is updated. */
+        uint64_t late_count            : 11; /**< [ 42: 32](RO/H) Identical to TIM_AF_RING()_LATE[COUNT]\<10:0\>. If [LATE_COUNT_MSBS] is zero,
+                                                                 it indicates how many bucket are late to be scheduled per ring. See the HRM body
+                                                                 text with regards to how software should consider TIM_AF_RING()_LATE[COUNT] when
+                                                                 inserting an entry. */
+        uint64_t late_count_msbs       : 1;  /**< [ 43: 43](RO/H) Set when TIM_AF_RING()_LATE[COUNT]\<19:11\> != 0x0. Software should read
+                                                                 TIM_AF_RING()_LATE[COUNT] to find how many buckets a ring is late. */
+        uint64_t cur_bucket            : 20; /**< [ 63: 44](RO/H) Current bucket. Indicates the ring's current bucket. See TIM_AF_RING()_CTL1[BUCKET]. */
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_tim_lf_ring_rel_s cn9; */
+    /* struct cavm_tim_lf_ring_rel_s cn96xxp1; */
+    struct cavm_tim_lf_ring_rel_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t cur_bucket            : 20; /**< [ 63: 44](RO/H) Current bucket. Indicates the ring's current bucket. See TIM_AF_RING()_CTL1[BUCKET]. */
+        uint64_t late_count_msbs       : 1;  /**< [ 43: 43](RO/H) Set when TIM_AF_RING()_LATE[COUNT]\<19:11\> != 0x0. Software should read
+                                                                 TIM_AF_RING()_LATE[COUNT] to find how many buckets a ring is late. */
+        uint64_t late_count            : 11; /**< [ 42: 32](RO/H) Identical to TIM_AF_RING()_LATE[COUNT]\<10:0\>. If [LATE_COUNT_MSBS] is zero,
+                                                                 it indicates how many bucket are late to be scheduled per ring. See the HRM body
+                                                                 text with regards to how software should consider TIM_AF_RING()_LATE[COUNT] when
+                                                                 inserting an entry. */
+        uint64_t timercount            : 32; /**< [ 31:  0](RO/H) Timer count indicates how many timer ticks are left until the interval
+                                                                 expiration, calculated as TIM_AF_RING()_CTL0[EXPIRE_OFFSET] minus current time
+                                                                 (TIM_FR_RN_TENNS, TIM_FR_RN_GPIOS, TIM_FR_RN_GTI, or TIM_FR_RN_PTP).
+
+                                                                 Once TIM_AF_RING()_CTL1[ENA] = 1, [TIMERCOUNT] will be observed to count down timer
+                                                                 ticks. When [TIMERCOUNT] reaches 0x0, the ring's interval expired and the
+                                                                 hardware forces a bucket traversal (and increments [LATE_COUNT]).
+
                                                                  Typical initialization value should be interval/constant; Marvell recommends that
                                                                  the constant be unique per ring. This creates an offset between the rings.
                                                                  [TIMERCOUNT] becomes and remains unpredictable whenever TIM_AF_RING()_CTL1[ENA] = 0
@@ -3879,8 +3983,10 @@ union cavm_tim_lf_ring_rel
                                                                  TIM_AF_RING()_LATE[COUNT] to find how many buckets a ring is late. */
         uint64_t cur_bucket            : 20; /**< [ 63: 44](RO/H) Current bucket. Indicates the ring's current bucket. See TIM_AF_RING()_CTL1[BUCKET]. */
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_tim_lf_ring_rel_s cn; */
+    } cn96xxp3;
+    /* struct cavm_tim_lf_ring_rel_cn96xxp3 cn98xx; */
+    /* struct cavm_tim_lf_ring_rel_cn96xxp3 cnf95xx; */
+    /* struct cavm_tim_lf_ring_rel_cn96xxp3 loki; */
 };
 typedef union cavm_tim_lf_ring_rel cavm_tim_lf_ring_rel_t;
 

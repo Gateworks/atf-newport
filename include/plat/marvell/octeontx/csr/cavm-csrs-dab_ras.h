@@ -87,6 +87,8 @@ static inline uint64_t CAVM_RASX_CIDR0(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008050ff0ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008050ff0ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050ff0ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -130,6 +132,8 @@ static inline uint64_t CAVM_RASX_CIDR1(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008050ff4ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008050ff4ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050ff4ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -171,6 +175,8 @@ static inline uint64_t CAVM_RASX_CIDR2(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008050ff8ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008050ff8ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050ff8ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -212,6 +218,8 @@ static inline uint64_t CAVM_RASX_CIDR3(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008050ffcll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008050ffcll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050ffcll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -279,6 +287,8 @@ static inline uint64_t CAVM_RASX_ERR00ADDR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008050018ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008050018ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050018ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -306,6 +316,154 @@ union cavm_rasx_err00ctlr
 {
     uint64_t u;
     struct cavm_rasx_err00ctlr_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_12_63        : 52;
+        uint64_t wdui                  : 1;  /**< [ 11: 11](SRO) Error recovery interrupt for deferred errors on writes. See [DUI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t dui                   : 1;  /**< [ 10: 10](SR/W) Error recovery for deferred read error interrupt enable. When enabled the error
+                                                                 recovery interrupt is also generated for all deferred read errors.
+
+                                                                 The interrupt is generated even if the error syndrome is discarded because the
+                                                                 error record already records a higher priority error. */
+        uint64_t wcfi                  : 1;  /**< [  9:  9](SRO) Fault handling interrupt for corrected errors on writes. See [CFI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t cfi                   : 1;  /**< [  8:  8](SR/W) Fault handling interrupt for corrected errors enable.
+                                                                 When enabled:
+
+                                                                 * If the node implements a corrected error counter, the fault handling interrupt
+                                                                 is only generated when the counter overflows and the overflow bit is set.
+
+                                                                 * Otherwise the fault handling interrupt is also generated for all detected
+                                                                 corrected errors.
+
+                                                                 For CNXXXX depends on the record.
+                                                                 * For records corresponding to correctable errors, SR/W.
+                                                                 * For other records, always 0. */
+        uint64_t wue                   : 1;  /**< [  7:  7](SRO) Error reporting on writes. See [RU].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t wfi                   : 1;  /**< [  6:  6](SRO) Fault handling interrupt on writes. See [FI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t wui                   : 1;  /**< [  5:  5](SRO) Error recovery interrupt on writes. See [UI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t ue                    : 1;  /**< [  4:  4](SR/W) Uncorrected error reporting enable. When enabled, responses to
+                                                                 transactions that detect an uncorrected error that cannot be deferred are
+                                                                 signaled as a detected error (external abort).
+
+                                                                 0 = External abort response for uncorrected errors disabled.
+                                                                 1 = External abort response for uncorrected errors enabled.
+
+                                                                 For CNXXXX depends on the record.
+                                                                 * For records corresponding to correctable errors, SR/W.
+                                                                 * For other records, always 0. */
+        uint64_t fi                    : 1;  /**< [  3:  3](SR/W) Fault handling interrupt enable. When enabled the fault handling interrupt
+                                                                 is generated for all detected deferred errors and uncorrected errors.
+
+                                                                 The interrupt is generated even if the error syndrome is discarded because the
+                                                                 error record already records a higher priority error. The fault handling
+                                                                 interrupt is never generated for consumed errors. */
+        uint64_t ui                    : 1;  /**< [  2:  2](SR/W) Uncorrected error recovery interrupt enable. When enabled, the error
+                                                                 recovery interrupt is generated for all detected uncorrected errors that are not
+                                                                 deferred.
+
+                                                                 The interrupt is generated even if the error syndrome is discarded because the
+                                                                 error record already records a higher priority error.
+
+                                                                 For CNXXXX depends on the record.
+                                                                 * For records corresponding to uncorrectable errors, SR/W.
+                                                                 * For other records, always 0. */
+        uint64_t imp_fe                : 1;  /**< [  1:  1](SR/W) Implementation defined.
+
+                                                                 For CNXXXX force error.
+                                                                 * For records where RAS()_ERRn[IMP_FE] = 0x2, this bit is R/W and when set
+                                                                 injects an error.
+                                                                 * For other records, reserved. */
+        uint64_t ed                    : 1;  /**< [  0:  0](SR/W) Enable error detection and correction at the node.
+                                                                 0 = Error detection and correction disabled.
+                                                                 1 = Error detection and correction enabled.
+
+                                                                 For CNXXXX, all records similar. */
+#else /* Word 0 - Little Endian */
+        uint64_t ed                    : 1;  /**< [  0:  0](SR/W) Enable error detection and correction at the node.
+                                                                 0 = Error detection and correction disabled.
+                                                                 1 = Error detection and correction enabled.
+
+                                                                 For CNXXXX, all records similar. */
+        uint64_t imp_fe                : 1;  /**< [  1:  1](SR/W) Implementation defined.
+
+                                                                 For CNXXXX force error.
+                                                                 * For records where RAS()_ERRn[IMP_FE] = 0x2, this bit is R/W and when set
+                                                                 injects an error.
+                                                                 * For other records, reserved. */
+        uint64_t ui                    : 1;  /**< [  2:  2](SR/W) Uncorrected error recovery interrupt enable. When enabled, the error
+                                                                 recovery interrupt is generated for all detected uncorrected errors that are not
+                                                                 deferred.
+
+                                                                 The interrupt is generated even if the error syndrome is discarded because the
+                                                                 error record already records a higher priority error.
+
+                                                                 For CNXXXX depends on the record.
+                                                                 * For records corresponding to uncorrectable errors, SR/W.
+                                                                 * For other records, always 0. */
+        uint64_t fi                    : 1;  /**< [  3:  3](SR/W) Fault handling interrupt enable. When enabled the fault handling interrupt
+                                                                 is generated for all detected deferred errors and uncorrected errors.
+
+                                                                 The interrupt is generated even if the error syndrome is discarded because the
+                                                                 error record already records a higher priority error. The fault handling
+                                                                 interrupt is never generated for consumed errors. */
+        uint64_t ue                    : 1;  /**< [  4:  4](SR/W) Uncorrected error reporting enable. When enabled, responses to
+                                                                 transactions that detect an uncorrected error that cannot be deferred are
+                                                                 signaled as a detected error (external abort).
+
+                                                                 0 = External abort response for uncorrected errors disabled.
+                                                                 1 = External abort response for uncorrected errors enabled.
+
+                                                                 For CNXXXX depends on the record.
+                                                                 * For records corresponding to correctable errors, SR/W.
+                                                                 * For other records, always 0. */
+        uint64_t wui                   : 1;  /**< [  5:  5](SRO) Error recovery interrupt on writes. See [UI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t wfi                   : 1;  /**< [  6:  6](SRO) Fault handling interrupt on writes. See [FI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t wue                   : 1;  /**< [  7:  7](SRO) Error reporting on writes. See [RU].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t cfi                   : 1;  /**< [  8:  8](SR/W) Fault handling interrupt for corrected errors enable.
+                                                                 When enabled:
+
+                                                                 * If the node implements a corrected error counter, the fault handling interrupt
+                                                                 is only generated when the counter overflows and the overflow bit is set.
+
+                                                                 * Otherwise the fault handling interrupt is also generated for all detected
+                                                                 corrected errors.
+
+                                                                 For CNXXXX depends on the record.
+                                                                 * For records corresponding to correctable errors, SR/W.
+                                                                 * For other records, always 0. */
+        uint64_t wcfi                  : 1;  /**< [  9:  9](SRO) Fault handling interrupt for corrected errors on writes. See [CFI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t dui                   : 1;  /**< [ 10: 10](SR/W) Error recovery for deferred read error interrupt enable. When enabled the error
+                                                                 recovery interrupt is also generated for all deferred read errors.
+
+                                                                 The interrupt is generated even if the error syndrome is discarded because the
+                                                                 error record already records a higher priority error. */
+        uint64_t wdui                  : 1;  /**< [ 11: 11](SRO) Error recovery interrupt for deferred errors on writes. See [DUI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t reserved_12_63        : 52;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rasx_err00ctlr_s cn9; */
+    /* struct cavm_rasx_err00ctlr_s cn96xxp1; */
+    struct cavm_rasx_err00ctlr_cn96xxp3
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_12_63        : 52;
@@ -450,8 +608,10 @@ union cavm_rasx_err00ctlr
                                                                  For CNXXXX does not distinguish between reads and writes, so always 0. */
         uint64_t reserved_12_63        : 52;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_rasx_err00ctlr_s cn; */
+    } cn96xxp3;
+    /* struct cavm_rasx_err00ctlr_cn96xxp3 cn98xx; */
+    /* struct cavm_rasx_err00ctlr_cn96xxp3 cnf95xx; */
+    /* struct cavm_rasx_err00ctlr_cn96xxp3 loki; */
 };
 typedef union cavm_rasx_err00ctlr cavm_rasx_err00ctlr_t;
 
@@ -460,6 +620,8 @@ static inline uint64_t CAVM_RASX_ERR00CTLR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008050008ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008050008ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050008ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -577,6 +739,220 @@ union cavm_rasx_err00fr
         uint64_t imp_fe                : 2;  /**< [  3:  2](SRO) Implementation defined.
                                                                  0x0 = No additional feature.
                                                                  0x1 = Reserved.
+                                                                 0x2 = Cavium force error feature is supported.
+                                                                 0x3 = Reserved.
+
+                                                                 For CNXXXX depends on the record.
+                                                                 * For records where forcing is supported, 0x2.
+                                                                 * For other records, 0x0. */
+        uint64_t ed                    : 2;  /**< [  1:  0](SRO) Error detection and correction.
+                                                                 0x1 = Feature always enabled.
+                                                                 0x2 = Feature is controllable.
+
+                                                                 For CNXXXX all records controllable, always 0x2.
+
+                                                                 Internal:
+                                                                 Hardcoded. */
+#else /* Word 0 - Little Endian */
+        uint64_t ed                    : 2;  /**< [  1:  0](SRO) Error detection and correction.
+                                                                 0x1 = Feature always enabled.
+                                                                 0x2 = Feature is controllable.
+
+                                                                 For CNXXXX all records controllable, always 0x2.
+
+                                                                 Internal:
+                                                                 Hardcoded. */
+        uint64_t imp_fe                : 2;  /**< [  3:  2](SRO) Implementation defined.
+                                                                 0x0 = No additional feature.
+                                                                 0x1 = Reserved.
+                                                                 0x2 = Cavium force error feature is supported.
+                                                                 0x3 = Reserved.
+
+                                                                 For CNXXXX depends on the record.
+                                                                 * For records where forcing is supported, 0x2.
+                                                                 * For other records, 0x0. */
+        uint64_t ui                    : 2;  /**< [  5:  4](SRO) Uncorrected error recovery interrupt.
+                                                                 0x0 = Does not support feature. See [FI].
+                                                                 0x1 = Feature always enabled.
+                                                                 0x2 = Feature is controllable.
+                                                                 0x3 = Feature is controllable with independent controls for reads and writes.
+
+                                                                 Internal:
+                                                                 Hardcoded. */
+        uint64_t fi                    : 2;  /**< [  7:  6](SRO) Fault handling interrupt.
+                                                                 0x0 = Does not support feature.
+                                                                 0x1 = Feature always enabled.
+                                                                 0x2 = Feature is controllable.
+                                                                 0x3 = Feature is controllable with independent controls for reads and writes.
+
+                                                                 Internal:
+                                                                 Hardcoded per record. */
+        uint64_t ue                    : 2;  /**< [  9:  8](SRO) Uncorrected error reporting.
+                                                                 0x0 = Does not support feature.
+                                                                 0x1 = Feature always enabled.
+                                                                 0x2 = Feature is controllable.
+                                                                 0x3 = Feature is controllable with independent controls for reads and writes.
+
+                                                                 For CNXXXX depends on the record.
+                                                                 * For records corresponding to uncorrectable errors, 0x2.
+                                                                 * For other records, 0x0.
+
+                                                                 Internal:
+                                                                 Hardcoded per record. */
+        uint64_t cfi                   : 2;  /**< [ 11: 10](SRO) Fault handling interrupt for corrected errors. If this feature is implemented,
+                                                                 then the fault handling interrupt must be implemented.
+                                                                 0x0 = Does not support feature.
+                                                                 0x1 = Reserved.
+                                                                 0x2 = Feature is controllable.
+                                                                 0x3 = Feature is controllable with independent controls for reads and writes.
+
+                                                                 For CNXXXX depends on the record.
+                                                                 * For records corresponding to correctable errors, 0x2.
+                                                                 * For other records, 0x0.
+
+                                                                 Internal:
+                                                                 Hardcoded per record. */
+        uint64_t cec                   : 3;  /**< [ 14: 12](SRO) Indicates a standard correctable error counter mechanism in CDC_ERR()_MISC0.
+                                                                 0x0 = Does not implement the standardized error counter model.
+                                                                 0x2 = Implements an 8-bit error counter in CDC_ERR()_MISC0\<39:32\>.
+                                                                 0x4 = Implements a 16-bit error counter in CDC_ERR()_MISC0\<47:32\>.
+                                                                 _ All other values are reserved.
+
+                                                                 For CNXXXX no CEC in any records, always 0x0.
+
+                                                                 Internal:
+                                                                 Hardcoded. */
+        uint64_t rp                    : 1;  /**< [ 15: 15](SRO) Repeat counter. Indicates whether the node implements a repeat corrected error counter.
+                                                                 0 = A single CE counter is implemented.
+                                                                 1 = A first (repeat) counter and a second (other) counter are implemented. The
+                                                                 repeat counter is the same size as the primary error counter.
+
+                                                                 If [CEC] = 0x0, this bit is 0.
+
+                                                                 For CNXXXX no CEC in any records, always 0.
+
+                                                                 Internal:
+                                                                 Hardcoded. */
+        uint64_t dui                   : 2;  /**< [ 17: 16](SRO) Error recovery interrupt for deferred errors. If this feature is implemented,
+                                                                 then the error recovery interrupt must be implemented.
+
+                                                                 0x0 = Does not support feature separately.  See [FI].
+                                                                 0x1 = Reserved.
+                                                                 0x2 = Feature is controllable.
+                                                                 0x3 = Feature is controllable with independent controls for reads and writes.
+
+                                                                 Internal:
+                                                                 Hardcoded. */
+        uint64_t ceo                   : 2;  /**< [ 19: 18](SRO) Corrected error overwrite. Indicates the behavior when a second corrected error
+                                                                 is detected after a first corrected error has been recorded by the node.
+                                                                 0x0 = Count corrected error if a counter is implemented. Keep the previous error
+                                                                 syndrome. If the counter overflows, or no counter is
+                                                                 implemented. RAS()_ERR\<n\>STATUS[OF] is set to 1.
+                                                                 0x1 = Count corrected error. If RAS()_ERR\<n\>STATUS[OF] = 1 before the corrected
+                                                                 error is counted, keep the previous syndrome. Otherwise the previous syndrome is
+                                                                 overwritten. If the counter overflows, RAS()_ERR\<n\>STATUS[OF] is set to 1.
+
+                                                                 In CNXXXX, no corrected error counter is implemented in any records, always 0x0.
+
+                                                                 Internal:
+                                                                 Hardcoded. */
+        uint64_t reserved_20_63        : 44;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rasx_err00fr_s cn9; */
+    /* struct cavm_rasx_err00fr_s cn96xxp1; */
+    struct cavm_rasx_err00fr_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_20_63        : 44;
+        uint64_t ceo                   : 2;  /**< [ 19: 18](SRO) Corrected error overwrite. Indicates the behavior when a second corrected error
+                                                                 is detected after a first corrected error has been recorded by the node.
+                                                                 0x0 = Count corrected error if a counter is implemented. Keep the previous error
+                                                                 syndrome. If the counter overflows, or no counter is
+                                                                 implemented. RAS()_ERR\<n\>STATUS[OF] is set to 1.
+                                                                 0x1 = Count corrected error. If RAS()_ERR\<n\>STATUS[OF] = 1 before the corrected
+                                                                 error is counted, keep the previous syndrome. Otherwise the previous syndrome is
+                                                                 overwritten. If the counter overflows, RAS()_ERR\<n\>STATUS[OF] is set to 1.
+
+                                                                 In CNXXXX, no corrected error counter is implemented in any records, always 0x0.
+
+                                                                 Internal:
+                                                                 Hardcoded. */
+        uint64_t dui                   : 2;  /**< [ 17: 16](SRO) Error recovery interrupt for deferred errors. If this feature is implemented,
+                                                                 then the error recovery interrupt must be implemented.
+
+                                                                 0x0 = Does not support feature separately.  See [FI].
+                                                                 0x1 = Reserved.
+                                                                 0x2 = Feature is controllable.
+                                                                 0x3 = Feature is controllable with independent controls for reads and writes.
+
+                                                                 Internal:
+                                                                 Hardcoded. */
+        uint64_t rp                    : 1;  /**< [ 15: 15](SRO) Repeat counter. Indicates whether the node implements a repeat corrected error counter.
+                                                                 0 = A single CE counter is implemented.
+                                                                 1 = A first (repeat) counter and a second (other) counter are implemented. The
+                                                                 repeat counter is the same size as the primary error counter.
+
+                                                                 If [CEC] = 0x0, this bit is 0.
+
+                                                                 For CNXXXX no CEC in any records, always 0.
+
+                                                                 Internal:
+                                                                 Hardcoded. */
+        uint64_t cec                   : 3;  /**< [ 14: 12](SRO) Indicates a standard correctable error counter mechanism in CDC_ERR()_MISC0.
+                                                                 0x0 = Does not implement the standardized error counter model.
+                                                                 0x2 = Implements an 8-bit error counter in CDC_ERR()_MISC0\<39:32\>.
+                                                                 0x4 = Implements a 16-bit error counter in CDC_ERR()_MISC0\<47:32\>.
+                                                                 _ All other values are reserved.
+
+                                                                 For CNXXXX no CEC in any records, always 0x0.
+
+                                                                 Internal:
+                                                                 Hardcoded. */
+        uint64_t cfi                   : 2;  /**< [ 11: 10](SRO) Fault handling interrupt for corrected errors. If this feature is implemented,
+                                                                 then the fault handling interrupt must be implemented.
+                                                                 0x0 = Does not support feature.
+                                                                 0x1 = Reserved.
+                                                                 0x2 = Feature is controllable.
+                                                                 0x3 = Feature is controllable with independent controls for reads and writes.
+
+                                                                 For CNXXXX depends on the record.
+                                                                 * For records corresponding to correctable errors, 0x2.
+                                                                 * For other records, 0x0.
+
+                                                                 Internal:
+                                                                 Hardcoded per record. */
+        uint64_t ue                    : 2;  /**< [  9:  8](SRO) Uncorrected error reporting.
+                                                                 0x0 = Does not support feature.
+                                                                 0x1 = Feature always enabled.
+                                                                 0x2 = Feature is controllable.
+                                                                 0x3 = Feature is controllable with independent controls for reads and writes.
+
+                                                                 For CNXXXX depends on the record.
+                                                                 * For records corresponding to uncorrectable errors, 0x2.
+                                                                 * For other records, 0x0.
+
+                                                                 Internal:
+                                                                 Hardcoded per record. */
+        uint64_t fi                    : 2;  /**< [  7:  6](SRO) Fault handling interrupt.
+                                                                 0x0 = Does not support feature.
+                                                                 0x1 = Feature always enabled.
+                                                                 0x2 = Feature is controllable.
+                                                                 0x3 = Feature is controllable with independent controls for reads and writes.
+
+                                                                 Internal:
+                                                                 Hardcoded per record. */
+        uint64_t ui                    : 2;  /**< [  5:  4](SRO) Uncorrected error recovery interrupt.
+                                                                 0x0 = Does not support feature. See [FI].
+                                                                 0x1 = Feature always enabled.
+                                                                 0x2 = Feature is controllable.
+                                                                 0x3 = Feature is controllable with independent controls for reads and writes.
+
+                                                                 Internal:
+                                                                 Hardcoded. */
+        uint64_t imp_fe                : 2;  /**< [  3:  2](SRO) Implementation defined.
+                                                                 0x0 = No additional feature.
+                                                                 0x1 = Reserved.
                                                                  0x2 = Marvell force error feature is supported.
                                                                  0x3 = Reserved.
 
@@ -696,8 +1072,10 @@ union cavm_rasx_err00fr
                                                                  Hardcoded. */
         uint64_t reserved_20_63        : 44;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_rasx_err00fr_s cn; */
+    } cn96xxp3;
+    /* struct cavm_rasx_err00fr_cn96xxp3 cn98xx; */
+    /* struct cavm_rasx_err00fr_cn96xxp3 cnf95xx; */
+    /* struct cavm_rasx_err00fr_cn96xxp3 loki; */
 };
 typedef union cavm_rasx_err00fr cavm_rasx_err00fr_t;
 
@@ -706,6 +1084,8 @@ static inline uint64_t CAVM_RASX_ERR00FR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008050000ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008050000ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050000ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -779,6 +1159,8 @@ static inline uint64_t CAVM_RASX_ERR00MISC0(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008050020ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008050020ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050020ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -822,6 +1204,8 @@ static inline uint64_t CAVM_RASX_ERR00MISC1(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008050028ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008050028ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050028ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -887,6 +1271,184 @@ union cavm_rasx_err00status
                                                                  * A corrected error is detected and the corrected error counter overflows (or
                                                                  is not implemented).
 
+                                                                 For more information see the ARM RAS standard. */
+        uint64_t mv                    : 1;  /**< [ 26: 26](SR/W1C/H) Miscellaneous registers valid. The CER_ERR()_MISC0 and CER_ERR()_MISC1 contains
+                                                                 additional information for an error recorded by this record.
+
+                                                                 Direct writes to this bit are ignored if any of [CE], [DE], or [UE] is set, and
+                                                                 the highest priority of these is not being cleared to 0 in the same write. This
+                                                                 bit is read/write-one-to-clear. */
+        uint64_t ce                    : 2;  /**< [ 25: 24](SR/W1C/H) Corrected error:
+                                                                   0x0 = No corrected errors recorded.
+                                                                   0x1 = At least one transient corrected error recored.
+                                                                   0x2 = At least one corrected error recored.
+                                                                   0x3 = At least one persistent corrected error recored.
+
+                                                                 For CNXXXX, only codes 0x0 and 0x3 are used. */
+        uint64_t de                    : 1;  /**< [ 23: 23](SR/W1C/H) Deferred error(s). At least one error was not corrected and deferred.
+
+                                                                 Direct writes to this bit are ignored if [OF] is set and is not being cleared
+                                                                 to 0 in the same write. */
+        uint64_t pn                    : 1;  /**< [ 22: 22](SR/W1C/H) Poison.
+                                                                 0 = Uncorrected or deferred error from a corrupted value. If a node
+                                                                 detects a corrupted value and defers the error by producing poison, then this
+                                                                 bit is set to 0 at the producer node.
+
+                                                                 1 = Uncorrected error or Deferred error from a poisoned value. Indicates that an
+                                                                 error was due to detecting a poison value rather than detecting a corrupted
+                                                                 value. */
+        uint64_t uet                   : 2;  /**< [ 21: 20](SR/W1C/H) Uncorrected error type. Describes the state of the component after detecting
+                                                                 or consuming an uncorrected error. Enumerated by RAS_UET_E.
+
+                                                                 Valid only if [UE] is set, otherwise 0x0.
+
+                                                                 Direct writes to this field are ignored if any of [CE], [DE], or [UE] is set,
+                                                                 and the highest priority of these is not being cleared to 0 in the same write. */
+        uint64_t reserved_16_19        : 4;
+        uint64_t ierr                  : 8;  /**< [ 15:  8](SR/W) Implementation-defined error code.
+
+                                                                 Direct writes to this field are ignored if any of the [CE], [DE], or [UE] is
+                                                                 set, and the highest priority of these is not being cleared to 0 in the same
+                                                                 write. */
+        uint64_t serr                  : 8;  /**< [  7:  0](SR/W) Architecturally-defined primary error code. Indicates the type of error
+                                                                 enumerated by RAS_SERR_E.
+
+                                                                 Direct writes to this field are ignored if any of the [CE], [DE], or [UE] is
+                                                                 set, and the highest priority of these is not being cleared to 0 in the same
+                                                                 write.
+
+                                                                 For CNXXXX, value depends on the error record. */
+#else /* Word 0 - Little Endian */
+        uint64_t serr                  : 8;  /**< [  7:  0](SR/W) Architecturally-defined primary error code. Indicates the type of error
+                                                                 enumerated by RAS_SERR_E.
+
+                                                                 Direct writes to this field are ignored if any of the [CE], [DE], or [UE] is
+                                                                 set, and the highest priority of these is not being cleared to 0 in the same
+                                                                 write.
+
+                                                                 For CNXXXX, value depends on the error record. */
+        uint64_t ierr                  : 8;  /**< [ 15:  8](SR/W) Implementation-defined error code.
+
+                                                                 Direct writes to this field are ignored if any of the [CE], [DE], or [UE] is
+                                                                 set, and the highest priority of these is not being cleared to 0 in the same
+                                                                 write. */
+        uint64_t reserved_16_19        : 4;
+        uint64_t uet                   : 2;  /**< [ 21: 20](SR/W1C/H) Uncorrected error type. Describes the state of the component after detecting
+                                                                 or consuming an uncorrected error. Enumerated by RAS_UET_E.
+
+                                                                 Valid only if [UE] is set, otherwise 0x0.
+
+                                                                 Direct writes to this field are ignored if any of [CE], [DE], or [UE] is set,
+                                                                 and the highest priority of these is not being cleared to 0 in the same write. */
+        uint64_t pn                    : 1;  /**< [ 22: 22](SR/W1C/H) Poison.
+                                                                 0 = Uncorrected or deferred error from a corrupted value. If a node
+                                                                 detects a corrupted value and defers the error by producing poison, then this
+                                                                 bit is set to 0 at the producer node.
+
+                                                                 1 = Uncorrected error or Deferred error from a poisoned value. Indicates that an
+                                                                 error was due to detecting a poison value rather than detecting a corrupted
+                                                                 value. */
+        uint64_t de                    : 1;  /**< [ 23: 23](SR/W1C/H) Deferred error(s). At least one error was not corrected and deferred.
+
+                                                                 Direct writes to this bit are ignored if [OF] is set and is not being cleared
+                                                                 to 0 in the same write. */
+        uint64_t ce                    : 2;  /**< [ 25: 24](SR/W1C/H) Corrected error:
+                                                                   0x0 = No corrected errors recorded.
+                                                                   0x1 = At least one transient corrected error recored.
+                                                                   0x2 = At least one corrected error recored.
+                                                                   0x3 = At least one persistent corrected error recored.
+
+                                                                 For CNXXXX, only codes 0x0 and 0x3 are used. */
+        uint64_t mv                    : 1;  /**< [ 26: 26](SR/W1C/H) Miscellaneous registers valid. The CER_ERR()_MISC0 and CER_ERR()_MISC1 contains
+                                                                 additional information for an error recorded by this record.
+
+                                                                 Direct writes to this bit are ignored if any of [CE], [DE], or [UE] is set, and
+                                                                 the highest priority of these is not being cleared to 0 in the same write. This
+                                                                 bit is read/write-one-to-clear. */
+        uint64_t of                    : 1;  /**< [ 27: 27](SR/W1C/H) Overflow. Multiple errors detected. This bit is set when:
+
+                                                                 * An uncorrected error is detected and the previous error syndrome is kept
+                                                                 because [UE] = 1.
+
+                                                                 * A deferred error is detected and the previous error syndrome is kept is
+                                                                 discarded because [DE] = 1.
+
+                                                                 * A corrected error is detected and the corrected error counter overflows (or
+                                                                 is not implemented).
+
+                                                                 For more information see the ARM RAS standard. */
+        uint64_t er                    : 1;  /**< [ 28: 28](SR/W1C/H) Error reported.
+                                                                 0 = No external abort reported.
+                                                                 1 = The applicable one of the CER_ERR()_CTLR{WUE},[RUE],[UE] bits was set when
+                                                                 an uncorrected error was detected, meaning an external abort was signaled to the
+                                                                 master making the access.
+
+                                                                 Direct writes to this bit are ignored if any of [CE], [DE], or [UE] is set, and
+                                                                 the highest priority of these is not being cleared to 0 in the same write.
+
+                                                                 Cleared for a corrected error. */
+        uint64_t ue                    : 1;  /**< [ 29: 29](SR/W1C/H) Uncorrected error(s).
+                                                                 0 = No errors that could not be corrected or deferred.
+                                                                 1 = At least one error detected that has not been corrected or deferred.
+
+                                                                 Direct writes to this bit are ignored if [OF] is set and is not being cleared to
+                                                                 zero in the same write. */
+        uint64_t v                     : 1;  /**< [ 30: 30](SR/W1C/H) Status register valid.  CER_ERR()_STATUS valid. At least one error has been recorded.
+
+                                                                 Direct writes to this bit are ignored if any of the [UE], [DE], or [CE] bits is
+                                                                 set and is not being cleared to 0 in the same write. */
+        uint64_t av                    : 1;  /**< [ 31: 31](SR/W1C/H) Address valid. CER_ERR()_ADDR contains a physical address associated with the
+                                                                 highest priority error recorded by this record.
+
+                                                                 Direct writes to this bit are ignored if any of the [CE], [DE], or [UE] bits is
+                                                                 set, and the highest priority of these is not being cleared to 0 in the same
+                                                                 write. */
+        uint64_t reserved_32_63        : 32;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rasx_err00status_s cn9; */
+    /* struct cavm_rasx_err00status_s cn96xxp1; */
+    struct cavm_rasx_err00status_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_32_63        : 32;
+        uint64_t av                    : 1;  /**< [ 31: 31](SR/W1C/H) Address valid. CER_ERR()_ADDR contains a physical address associated with the
+                                                                 highest priority error recorded by this record.
+
+                                                                 Direct writes to this bit are ignored if any of the [CE], [DE], or [UE] bits is
+                                                                 set, and the highest priority of these is not being cleared to 0 in the same
+                                                                 write. */
+        uint64_t v                     : 1;  /**< [ 30: 30](SR/W1C/H) Status register valid.  CER_ERR()_STATUS valid. At least one error has been recorded.
+
+                                                                 Direct writes to this bit are ignored if any of the [UE], [DE], or [CE] bits is
+                                                                 set and is not being cleared to 0 in the same write. */
+        uint64_t ue                    : 1;  /**< [ 29: 29](SR/W1C/H) Uncorrected error(s).
+                                                                 0 = No errors that could not be corrected or deferred.
+                                                                 1 = At least one error detected that has not been corrected or deferred.
+
+                                                                 Direct writes to this bit are ignored if [OF] is set and is not being cleared to
+                                                                 zero in the same write. */
+        uint64_t er                    : 1;  /**< [ 28: 28](SR/W1C/H) Error reported.
+                                                                 0 = No external abort reported.
+                                                                 1 = The applicable one of the CER_ERR()_CTLR{WUE},[RUE],[UE] bits was set when
+                                                                 an uncorrected error was detected, meaning an external abort was signaled to the
+                                                                 master making the access.
+
+                                                                 Direct writes to this bit are ignored if any of [CE], [DE], or [UE] is set, and
+                                                                 the highest priority of these is not being cleared to 0 in the same write.
+
+                                                                 Cleared for a corrected error. */
+        uint64_t of                    : 1;  /**< [ 27: 27](SR/W1C/H) Overflow. Multiple errors detected. This bit is set when:
+
+                                                                 * An uncorrected error is detected and the previous error syndrome is kept
+                                                                 because [UE] = 1.
+
+                                                                 * A deferred error is detected and the previous error syndrome is kept is
+                                                                 discarded because [DE] = 1.
+
+                                                                 * A corrected error is detected and the corrected error counter overflows (or
+                                                                 is not implemented).
+
                                                                  For more information see the Arm RAS standard. */
         uint64_t mv                    : 1;  /**< [ 26: 26](SR/W1C/H) Miscellaneous registers valid. The CER_ERR()_MISC0 and CER_ERR()_MISC1 contains
                                                                  additional information for an error recorded by this record.
@@ -1021,8 +1583,10 @@ union cavm_rasx_err00status
                                                                  write. */
         uint64_t reserved_32_63        : 32;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_rasx_err00status_s cn; */
+    } cn96xxp3;
+    /* struct cavm_rasx_err00status_cn96xxp3 cn98xx; */
+    /* struct cavm_rasx_err00status_cn96xxp3 cnf95xx; */
+    /* struct cavm_rasx_err00status_cn96xxp3 loki; */
 };
 typedef union cavm_rasx_err00status cavm_rasx_err00status_t;
 
@@ -1031,6 +1595,8 @@ static inline uint64_t CAVM_RASX_ERR00STATUS(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008050010ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008050010ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050010ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -1094,6 +1660,8 @@ static inline uint64_t CAVM_RASX_ERR01ADDR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008050058ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008050058ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050058ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -1117,6 +1685,60 @@ union cavm_rasx_err01ctlr
 {
     uint64_t u;
     struct cavm_rasx_err01ctlr_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_12_63        : 52;
+        uint64_t wdui                  : 1;  /**< [ 11: 11](SRO) Error recovery interrupt for deferred errors on writes. See [DUI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t dui                   : 1;  /**< [ 10: 10](SR/W) See RAS()_ERR00CTLR[DUI]. */
+        uint64_t wcfi                  : 1;  /**< [  9:  9](SRO) Fault handling interrupt for corrected errors on writes. See [CFI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t cfi                   : 1;  /**< [  8:  8](SR/W) See RAS()_ERR00CTLR[CFI]. */
+        uint64_t wue                   : 1;  /**< [  7:  7](SRO) Error reporting on writes. See [RU].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t wfi                   : 1;  /**< [  6:  6](SRO) Fault handling interrupt on writes. See [FI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t wui                   : 1;  /**< [  5:  5](SRO) Error recovery interrupt on writes. See [UI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t ue                    : 1;  /**< [  4:  4](SR/W) See RAS()_ERR00CTLR[UE]. */
+        uint64_t fi                    : 1;  /**< [  3:  3](SR/W) See RAS()_ERR00CTLR[FI]. */
+        uint64_t ui                    : 1;  /**< [  2:  2](SR/W) See RAS()_ERR00CTLR[UI]. */
+        uint64_t imp_fe                : 1;  /**< [  1:  1](SR/W) See RAS()_ERR00CTLR[IMP_FE]. */
+        uint64_t ed                    : 1;  /**< [  0:  0](SR/W) See RAS()_ERR00CTLR[ED]. */
+#else /* Word 0 - Little Endian */
+        uint64_t ed                    : 1;  /**< [  0:  0](SR/W) See RAS()_ERR00CTLR[ED]. */
+        uint64_t imp_fe                : 1;  /**< [  1:  1](SR/W) See RAS()_ERR00CTLR[IMP_FE]. */
+        uint64_t ui                    : 1;  /**< [  2:  2](SR/W) See RAS()_ERR00CTLR[UI]. */
+        uint64_t fi                    : 1;  /**< [  3:  3](SR/W) See RAS()_ERR00CTLR[FI]. */
+        uint64_t ue                    : 1;  /**< [  4:  4](SR/W) See RAS()_ERR00CTLR[UE]. */
+        uint64_t wui                   : 1;  /**< [  5:  5](SRO) Error recovery interrupt on writes. See [UI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t wfi                   : 1;  /**< [  6:  6](SRO) Fault handling interrupt on writes. See [FI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t wue                   : 1;  /**< [  7:  7](SRO) Error reporting on writes. See [RU].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t cfi                   : 1;  /**< [  8:  8](SR/W) See RAS()_ERR00CTLR[CFI]. */
+        uint64_t wcfi                  : 1;  /**< [  9:  9](SRO) Fault handling interrupt for corrected errors on writes. See [CFI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t dui                   : 1;  /**< [ 10: 10](SR/W) See RAS()_ERR00CTLR[DUI]. */
+        uint64_t wdui                  : 1;  /**< [ 11: 11](SRO) Error recovery interrupt for deferred errors on writes. See [DUI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t reserved_12_63        : 52;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rasx_err01ctlr_s cn9; */
+    /* struct cavm_rasx_err01ctlr_s cn96xxp1; */
+    struct cavm_rasx_err01ctlr_cn96xxp3
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_12_63        : 52;
@@ -1167,8 +1789,10 @@ union cavm_rasx_err01ctlr
                                                                  For CNXXXX does not distinguish between reads and writes, so always 0. */
         uint64_t reserved_12_63        : 52;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_rasx_err01ctlr_s cn; */
+    } cn96xxp3;
+    /* struct cavm_rasx_err01ctlr_cn96xxp3 cn98xx; */
+    /* struct cavm_rasx_err01ctlr_cn96xxp3 cnf95xx; */
+    /* struct cavm_rasx_err01ctlr_cn96xxp3 loki; */
 };
 typedef union cavm_rasx_err01ctlr cavm_rasx_err01ctlr_t;
 
@@ -1177,6 +1801,8 @@ static inline uint64_t CAVM_RASX_ERR01CTLR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008050048ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008050048ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050048ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -1213,6 +1839,36 @@ union cavm_rasx_err01fr
         uint64_t ue                    : 2;  /**< [  9:  8](SRO) See RAS()_ERR00FR[UE]. */
         uint64_t fi                    : 2;  /**< [  7:  6](SRO) See RAS()_ERR00FR[FI]. */
         uint64_t ui                    : 2;  /**< [  5:  4](SRO) See RAS()_ERR00FR[UI]. */
+        uint64_t imp_fe                : 2;  /**< [  3:  2](SRO) See RAS()_ERR00FR[FE]. */
+        uint64_t ed                    : 2;  /**< [  1:  0](SRO) See RAS()_ERR00FR[ED]. */
+#else /* Word 0 - Little Endian */
+        uint64_t ed                    : 2;  /**< [  1:  0](SRO) See RAS()_ERR00FR[ED]. */
+        uint64_t imp_fe                : 2;  /**< [  3:  2](SRO) See RAS()_ERR00FR[FE]. */
+        uint64_t ui                    : 2;  /**< [  5:  4](SRO) See RAS()_ERR00FR[UI]. */
+        uint64_t fi                    : 2;  /**< [  7:  6](SRO) See RAS()_ERR00FR[FI]. */
+        uint64_t ue                    : 2;  /**< [  9:  8](SRO) See RAS()_ERR00FR[UE]. */
+        uint64_t cfi                   : 2;  /**< [ 11: 10](SRO) See RAS()_ERR00FR[CFI]. */
+        uint64_t cec                   : 3;  /**< [ 14: 12](SRO) See RAS()_ERR00FR[CEC]. */
+        uint64_t rp                    : 1;  /**< [ 15: 15](SRO) See RAS()_ERR00FR[RP]. */
+        uint64_t dui                   : 2;  /**< [ 17: 16](SRO) See RAS()_ERR00FR[DUI]. */
+        uint64_t ceo                   : 2;  /**< [ 19: 18](SRO) See RAS()_ERR00FR[CEO]. */
+        uint64_t reserved_20_63        : 44;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rasx_err01fr_s cn9; */
+    /* struct cavm_rasx_err01fr_s cn96xxp1; */
+    struct cavm_rasx_err01fr_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_20_63        : 44;
+        uint64_t ceo                   : 2;  /**< [ 19: 18](SRO) See RAS()_ERR00FR[CEO]. */
+        uint64_t dui                   : 2;  /**< [ 17: 16](SRO) See RAS()_ERR00FR[DUI]. */
+        uint64_t rp                    : 1;  /**< [ 15: 15](SRO) See RAS()_ERR00FR[RP]. */
+        uint64_t cec                   : 3;  /**< [ 14: 12](SRO) See RAS()_ERR00FR[CEC]. */
+        uint64_t cfi                   : 2;  /**< [ 11: 10](SRO) See RAS()_ERR00FR[CFI]. */
+        uint64_t ue                    : 2;  /**< [  9:  8](SRO) See RAS()_ERR00FR[UE]. */
+        uint64_t fi                    : 2;  /**< [  7:  6](SRO) See RAS()_ERR00FR[FI]. */
+        uint64_t ui                    : 2;  /**< [  5:  4](SRO) See RAS()_ERR00FR[UI]. */
         uint64_t imp_fe                : 2;  /**< [  3:  2](SRO) See RAS()_ERR00FR[IMP_FE]. */
         uint64_t ed                    : 2;  /**< [  1:  0](SRO) See RAS()_ERR00FR[ED]. */
 #else /* Word 0 - Little Endian */
@@ -1228,8 +1884,10 @@ union cavm_rasx_err01fr
         uint64_t ceo                   : 2;  /**< [ 19: 18](SRO) See RAS()_ERR00FR[CEO]. */
         uint64_t reserved_20_63        : 44;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_rasx_err01fr_s cn; */
+    } cn96xxp3;
+    /* struct cavm_rasx_err01fr_cn96xxp3 cn98xx; */
+    /* struct cavm_rasx_err01fr_cn96xxp3 cnf95xx; */
+    /* struct cavm_rasx_err01fr_cn96xxp3 loki; */
 };
 typedef union cavm_rasx_err01fr cavm_rasx_err01fr_t;
 
@@ -1238,6 +1896,8 @@ static inline uint64_t CAVM_RASX_ERR01FR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008050040ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008050040ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050040ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -1287,6 +1947,8 @@ static inline uint64_t CAVM_RASX_ERR01MISC0(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008050060ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008050060ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050060ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -1326,6 +1988,8 @@ static inline uint64_t CAVM_RASX_ERR01MISC1(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008050068ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008050068ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050068ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -1349,6 +2013,42 @@ union cavm_rasx_err01status
 {
     uint64_t u;
     struct cavm_rasx_err01status_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_32_63        : 32;
+        uint64_t av                    : 1;  /**< [ 31: 31](SR/W1C/H) See RAS()_ERR00STATUS[AV]. */
+        uint64_t v                     : 1;  /**< [ 30: 30](SR/W1C/H) See RAS()_ERR00STATUS[V]. */
+        uint64_t ue                    : 1;  /**< [ 29: 29](SR/W1C/H) See RAS()_ERR00STATUS[UE]. */
+        uint64_t er                    : 1;  /**< [ 28: 28](SR/W1C/H) See RAS()_ERR00STATUS[ER]. */
+        uint64_t of                    : 1;  /**< [ 27: 27](SR/W1C/H) See RAS()_ERR00STATUS[OV]. */
+        uint64_t mv                    : 1;  /**< [ 26: 26](SR/W1C/H) See RAS()_ERR00STATUS[MV]. */
+        uint64_t ce                    : 2;  /**< [ 25: 24](SR/W1C/H) See RAS()_ERR00STATUS[CE]. */
+        uint64_t de                    : 1;  /**< [ 23: 23](SR/W1C/H) See RAS()_ERR00STATUS[DE]. */
+        uint64_t pn                    : 1;  /**< [ 22: 22](SR/W1C/H) See RAS()_ERR00STATUS[PN]. */
+        uint64_t uet                   : 2;  /**< [ 21: 20](SR/W1C/H) See RAS()_ERR00STATUS[UET]. */
+        uint64_t reserved_16_19        : 4;
+        uint64_t ierr                  : 8;  /**< [ 15:  8](SR/W) See RAS()_ERR00STATUS[IERR]. */
+        uint64_t serr                  : 8;  /**< [  7:  0](SR/W) See RAS()_ERR00STATUS[SERR]. */
+#else /* Word 0 - Little Endian */
+        uint64_t serr                  : 8;  /**< [  7:  0](SR/W) See RAS()_ERR00STATUS[SERR]. */
+        uint64_t ierr                  : 8;  /**< [ 15:  8](SR/W) See RAS()_ERR00STATUS[IERR]. */
+        uint64_t reserved_16_19        : 4;
+        uint64_t uet                   : 2;  /**< [ 21: 20](SR/W1C/H) See RAS()_ERR00STATUS[UET]. */
+        uint64_t pn                    : 1;  /**< [ 22: 22](SR/W1C/H) See RAS()_ERR00STATUS[PN]. */
+        uint64_t de                    : 1;  /**< [ 23: 23](SR/W1C/H) See RAS()_ERR00STATUS[DE]. */
+        uint64_t ce                    : 2;  /**< [ 25: 24](SR/W1C/H) See RAS()_ERR00STATUS[CE]. */
+        uint64_t mv                    : 1;  /**< [ 26: 26](SR/W1C/H) See RAS()_ERR00STATUS[MV]. */
+        uint64_t of                    : 1;  /**< [ 27: 27](SR/W1C/H) See RAS()_ERR00STATUS[OV]. */
+        uint64_t er                    : 1;  /**< [ 28: 28](SR/W1C/H) See RAS()_ERR00STATUS[ER]. */
+        uint64_t ue                    : 1;  /**< [ 29: 29](SR/W1C/H) See RAS()_ERR00STATUS[UE]. */
+        uint64_t v                     : 1;  /**< [ 30: 30](SR/W1C/H) See RAS()_ERR00STATUS[V]. */
+        uint64_t av                    : 1;  /**< [ 31: 31](SR/W1C/H) See RAS()_ERR00STATUS[AV]. */
+        uint64_t reserved_32_63        : 32;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rasx_err01status_s cn9; */
+    /* struct cavm_rasx_err01status_s cn96xxp1; */
+    struct cavm_rasx_err01status_cn96xxp3
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_32_63        : 32;
@@ -1381,8 +2081,10 @@ union cavm_rasx_err01status
         uint64_t av                    : 1;  /**< [ 31: 31](SR/W1C/H) See RAS()_ERR00STATUS[AV]. */
         uint64_t reserved_32_63        : 32;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_rasx_err01status_s cn; */
+    } cn96xxp3;
+    /* struct cavm_rasx_err01status_cn96xxp3 cn98xx; */
+    /* struct cavm_rasx_err01status_cn96xxp3 cnf95xx; */
+    /* struct cavm_rasx_err01status_cn96xxp3 loki; */
 };
 typedef union cavm_rasx_err01status cavm_rasx_err01status_t;
 
@@ -1391,6 +2093,8 @@ static inline uint64_t CAVM_RASX_ERR01STATUS(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008050050ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008050050ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050050ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -1454,6 +2158,8 @@ static inline uint64_t CAVM_RASX_ERR02ADDR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008050098ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008050098ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050098ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -1477,6 +2183,60 @@ union cavm_rasx_err02ctlr
 {
     uint64_t u;
     struct cavm_rasx_err02ctlr_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_12_63        : 52;
+        uint64_t wdui                  : 1;  /**< [ 11: 11](SRO) Error recovery interrupt for deferred errors on writes. See [DUI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t dui                   : 1;  /**< [ 10: 10](SR/W) See RAS()_ERR00CTLR[DUI]. */
+        uint64_t wcfi                  : 1;  /**< [  9:  9](SRO) Fault handling interrupt for corrected errors on writes. See [CFI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t cfi                   : 1;  /**< [  8:  8](SR/W) See RAS()_ERR00CTLR[CFI]. */
+        uint64_t wue                   : 1;  /**< [  7:  7](SRO) Error reporting on writes. See [RU].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t wfi                   : 1;  /**< [  6:  6](SRO) Fault handling interrupt on writes. See [FI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t wui                   : 1;  /**< [  5:  5](SRO) Error recovery interrupt on writes. See [UI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t ue                    : 1;  /**< [  4:  4](SR/W) See RAS()_ERR00CTLR[UE]. */
+        uint64_t fi                    : 1;  /**< [  3:  3](SR/W) See RAS()_ERR00CTLR[FI]. */
+        uint64_t ui                    : 1;  /**< [  2:  2](SR/W) See RAS()_ERR00CTLR[UI]. */
+        uint64_t imp_fe                : 1;  /**< [  1:  1](SR/W) See RAS()_ERR00CTLR[IMP_FE]. */
+        uint64_t ed                    : 1;  /**< [  0:  0](SR/W) See RAS()_ERR00CTLR[ED]. */
+#else /* Word 0 - Little Endian */
+        uint64_t ed                    : 1;  /**< [  0:  0](SR/W) See RAS()_ERR00CTLR[ED]. */
+        uint64_t imp_fe                : 1;  /**< [  1:  1](SR/W) See RAS()_ERR00CTLR[IMP_FE]. */
+        uint64_t ui                    : 1;  /**< [  2:  2](SR/W) See RAS()_ERR00CTLR[UI]. */
+        uint64_t fi                    : 1;  /**< [  3:  3](SR/W) See RAS()_ERR00CTLR[FI]. */
+        uint64_t ue                    : 1;  /**< [  4:  4](SR/W) See RAS()_ERR00CTLR[UE]. */
+        uint64_t wui                   : 1;  /**< [  5:  5](SRO) Error recovery interrupt on writes. See [UI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t wfi                   : 1;  /**< [  6:  6](SRO) Fault handling interrupt on writes. See [FI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t wue                   : 1;  /**< [  7:  7](SRO) Error reporting on writes. See [RU].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t cfi                   : 1;  /**< [  8:  8](SR/W) See RAS()_ERR00CTLR[CFI]. */
+        uint64_t wcfi                  : 1;  /**< [  9:  9](SRO) Fault handling interrupt for corrected errors on writes. See [CFI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t dui                   : 1;  /**< [ 10: 10](SR/W) See RAS()_ERR00CTLR[DUI]. */
+        uint64_t wdui                  : 1;  /**< [ 11: 11](SRO) Error recovery interrupt for deferred errors on writes. See [DUI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t reserved_12_63        : 52;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rasx_err02ctlr_s cn9; */
+    /* struct cavm_rasx_err02ctlr_s cn96xxp1; */
+    struct cavm_rasx_err02ctlr_cn96xxp3
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_12_63        : 52;
@@ -1527,8 +2287,10 @@ union cavm_rasx_err02ctlr
                                                                  For CNXXXX does not distinguish between reads and writes, so always 0. */
         uint64_t reserved_12_63        : 52;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_rasx_err02ctlr_s cn; */
+    } cn96xxp3;
+    /* struct cavm_rasx_err02ctlr_cn96xxp3 cn98xx; */
+    /* struct cavm_rasx_err02ctlr_cn96xxp3 cnf95xx; */
+    /* struct cavm_rasx_err02ctlr_cn96xxp3 loki; */
 };
 typedef union cavm_rasx_err02ctlr cavm_rasx_err02ctlr_t;
 
@@ -1537,6 +2299,8 @@ static inline uint64_t CAVM_RASX_ERR02CTLR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008050088ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008050088ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050088ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -1573,6 +2337,36 @@ union cavm_rasx_err02fr
         uint64_t ue                    : 2;  /**< [  9:  8](SRO) See RAS()_ERR00FR[UE]. */
         uint64_t fi                    : 2;  /**< [  7:  6](SRO) See RAS()_ERR00FR[FI]. */
         uint64_t ui                    : 2;  /**< [  5:  4](SRO) See RAS()_ERR00FR[UI]. */
+        uint64_t imp_fe                : 2;  /**< [  3:  2](SRO) See RAS()_ERR00FR[FE]. */
+        uint64_t ed                    : 2;  /**< [  1:  0](SRO) See RAS()_ERR00FR[ED]. */
+#else /* Word 0 - Little Endian */
+        uint64_t ed                    : 2;  /**< [  1:  0](SRO) See RAS()_ERR00FR[ED]. */
+        uint64_t imp_fe                : 2;  /**< [  3:  2](SRO) See RAS()_ERR00FR[FE]. */
+        uint64_t ui                    : 2;  /**< [  5:  4](SRO) See RAS()_ERR00FR[UI]. */
+        uint64_t fi                    : 2;  /**< [  7:  6](SRO) See RAS()_ERR00FR[FI]. */
+        uint64_t ue                    : 2;  /**< [  9:  8](SRO) See RAS()_ERR00FR[UE]. */
+        uint64_t cfi                   : 2;  /**< [ 11: 10](SRO) See RAS()_ERR00FR[CFI]. */
+        uint64_t cec                   : 3;  /**< [ 14: 12](SRO) See RAS()_ERR00FR[CEC]. */
+        uint64_t rp                    : 1;  /**< [ 15: 15](SRO) See RAS()_ERR00FR[RP]. */
+        uint64_t dui                   : 2;  /**< [ 17: 16](SRO) See RAS()_ERR00FR[DUI]. */
+        uint64_t ceo                   : 2;  /**< [ 19: 18](SRO) See RAS()_ERR00FR[CEO]. */
+        uint64_t reserved_20_63        : 44;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rasx_err02fr_s cn9; */
+    /* struct cavm_rasx_err02fr_s cn96xxp1; */
+    struct cavm_rasx_err02fr_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_20_63        : 44;
+        uint64_t ceo                   : 2;  /**< [ 19: 18](SRO) See RAS()_ERR00FR[CEO]. */
+        uint64_t dui                   : 2;  /**< [ 17: 16](SRO) See RAS()_ERR00FR[DUI]. */
+        uint64_t rp                    : 1;  /**< [ 15: 15](SRO) See RAS()_ERR00FR[RP]. */
+        uint64_t cec                   : 3;  /**< [ 14: 12](SRO) See RAS()_ERR00FR[CEC]. */
+        uint64_t cfi                   : 2;  /**< [ 11: 10](SRO) See RAS()_ERR00FR[CFI]. */
+        uint64_t ue                    : 2;  /**< [  9:  8](SRO) See RAS()_ERR00FR[UE]. */
+        uint64_t fi                    : 2;  /**< [  7:  6](SRO) See RAS()_ERR00FR[FI]. */
+        uint64_t ui                    : 2;  /**< [  5:  4](SRO) See RAS()_ERR00FR[UI]. */
         uint64_t imp_fe                : 2;  /**< [  3:  2](SRO) See RAS()_ERR00FR[IMP_FE]. */
         uint64_t ed                    : 2;  /**< [  1:  0](SRO) See RAS()_ERR00FR[ED]. */
 #else /* Word 0 - Little Endian */
@@ -1588,8 +2382,10 @@ union cavm_rasx_err02fr
         uint64_t ceo                   : 2;  /**< [ 19: 18](SRO) See RAS()_ERR00FR[CEO]. */
         uint64_t reserved_20_63        : 44;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_rasx_err02fr_s cn; */
+    } cn96xxp3;
+    /* struct cavm_rasx_err02fr_cn96xxp3 cn98xx; */
+    /* struct cavm_rasx_err02fr_cn96xxp3 cnf95xx; */
+    /* struct cavm_rasx_err02fr_cn96xxp3 loki; */
 };
 typedef union cavm_rasx_err02fr cavm_rasx_err02fr_t;
 
@@ -1598,6 +2394,8 @@ static inline uint64_t CAVM_RASX_ERR02FR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008050080ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008050080ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050080ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -1647,6 +2445,8 @@ static inline uint64_t CAVM_RASX_ERR02MISC0(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a0080500a0ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a0080500a0ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a0080500a0ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -1686,6 +2486,8 @@ static inline uint64_t CAVM_RASX_ERR02MISC1(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a0080500a8ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a0080500a8ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a0080500a8ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -1709,6 +2511,42 @@ union cavm_rasx_err02status
 {
     uint64_t u;
     struct cavm_rasx_err02status_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_32_63        : 32;
+        uint64_t av                    : 1;  /**< [ 31: 31](SR/W1C/H) See RAS()_ERR00STATUS[AV]. */
+        uint64_t v                     : 1;  /**< [ 30: 30](SR/W1C/H) See RAS()_ERR00STATUS[V]. */
+        uint64_t ue                    : 1;  /**< [ 29: 29](SR/W1C/H) See RAS()_ERR00STATUS[UE]. */
+        uint64_t er                    : 1;  /**< [ 28: 28](SR/W1C/H) See RAS()_ERR00STATUS[ER]. */
+        uint64_t of                    : 1;  /**< [ 27: 27](SR/W1C/H) See RAS()_ERR00STATUS[OV]. */
+        uint64_t mv                    : 1;  /**< [ 26: 26](SR/W1C/H) See RAS()_ERR00STATUS[MV]. */
+        uint64_t ce                    : 2;  /**< [ 25: 24](SR/W1C/H) See RAS()_ERR00STATUS[CE]. */
+        uint64_t de                    : 1;  /**< [ 23: 23](SR/W1C/H) See RAS()_ERR00STATUS[DE]. */
+        uint64_t pn                    : 1;  /**< [ 22: 22](SR/W1C/H) See RAS()_ERR00STATUS[PN]. */
+        uint64_t uet                   : 2;  /**< [ 21: 20](SR/W1C/H) See RAS()_ERR00STATUS[UET]. */
+        uint64_t reserved_16_19        : 4;
+        uint64_t ierr                  : 8;  /**< [ 15:  8](SR/W) See RAS()_ERR00STATUS[IERR]. */
+        uint64_t serr                  : 8;  /**< [  7:  0](SR/W) See RAS()_ERR00STATUS[SERR]. */
+#else /* Word 0 - Little Endian */
+        uint64_t serr                  : 8;  /**< [  7:  0](SR/W) See RAS()_ERR00STATUS[SERR]. */
+        uint64_t ierr                  : 8;  /**< [ 15:  8](SR/W) See RAS()_ERR00STATUS[IERR]. */
+        uint64_t reserved_16_19        : 4;
+        uint64_t uet                   : 2;  /**< [ 21: 20](SR/W1C/H) See RAS()_ERR00STATUS[UET]. */
+        uint64_t pn                    : 1;  /**< [ 22: 22](SR/W1C/H) See RAS()_ERR00STATUS[PN]. */
+        uint64_t de                    : 1;  /**< [ 23: 23](SR/W1C/H) See RAS()_ERR00STATUS[DE]. */
+        uint64_t ce                    : 2;  /**< [ 25: 24](SR/W1C/H) See RAS()_ERR00STATUS[CE]. */
+        uint64_t mv                    : 1;  /**< [ 26: 26](SR/W1C/H) See RAS()_ERR00STATUS[MV]. */
+        uint64_t of                    : 1;  /**< [ 27: 27](SR/W1C/H) See RAS()_ERR00STATUS[OV]. */
+        uint64_t er                    : 1;  /**< [ 28: 28](SR/W1C/H) See RAS()_ERR00STATUS[ER]. */
+        uint64_t ue                    : 1;  /**< [ 29: 29](SR/W1C/H) See RAS()_ERR00STATUS[UE]. */
+        uint64_t v                     : 1;  /**< [ 30: 30](SR/W1C/H) See RAS()_ERR00STATUS[V]. */
+        uint64_t av                    : 1;  /**< [ 31: 31](SR/W1C/H) See RAS()_ERR00STATUS[AV]. */
+        uint64_t reserved_32_63        : 32;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rasx_err02status_s cn9; */
+    /* struct cavm_rasx_err02status_s cn96xxp1; */
+    struct cavm_rasx_err02status_cn96xxp3
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_32_63        : 32;
@@ -1741,8 +2579,10 @@ union cavm_rasx_err02status
         uint64_t av                    : 1;  /**< [ 31: 31](SR/W1C/H) See RAS()_ERR00STATUS[AV]. */
         uint64_t reserved_32_63        : 32;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_rasx_err02status_s cn; */
+    } cn96xxp3;
+    /* struct cavm_rasx_err02status_cn96xxp3 cn98xx; */
+    /* struct cavm_rasx_err02status_cn96xxp3 cnf95xx; */
+    /* struct cavm_rasx_err02status_cn96xxp3 loki; */
 };
 typedef union cavm_rasx_err02status cavm_rasx_err02status_t;
 
@@ -1751,6 +2591,8 @@ static inline uint64_t CAVM_RASX_ERR02STATUS(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008050090ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008050090ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050090ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -1814,6 +2656,8 @@ static inline uint64_t CAVM_RASX_ERR03ADDR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a0080500d8ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a0080500d8ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a0080500d8ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -1837,6 +2681,60 @@ union cavm_rasx_err03ctlr
 {
     uint64_t u;
     struct cavm_rasx_err03ctlr_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_12_63        : 52;
+        uint64_t wdui                  : 1;  /**< [ 11: 11](SRO) Error recovery interrupt for deferred errors on writes. See [DUI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t dui                   : 1;  /**< [ 10: 10](SR/W) See RAS()_ERR00CTLR[DUI]. */
+        uint64_t wcfi                  : 1;  /**< [  9:  9](SRO) Fault handling interrupt for corrected errors on writes. See [CFI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t cfi                   : 1;  /**< [  8:  8](SR/W) See RAS()_ERR00CTLR[CFI]. */
+        uint64_t wue                   : 1;  /**< [  7:  7](SRO) Error reporting on writes. See [RU].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t wfi                   : 1;  /**< [  6:  6](SRO) Fault handling interrupt on writes. See [FI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t wui                   : 1;  /**< [  5:  5](SRO) Error recovery interrupt on writes. See [UI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t ue                    : 1;  /**< [  4:  4](SR/W) See RAS()_ERR00CTLR[UE]. */
+        uint64_t fi                    : 1;  /**< [  3:  3](SR/W) See RAS()_ERR00CTLR[FI]. */
+        uint64_t ui                    : 1;  /**< [  2:  2](SR/W) See RAS()_ERR00CTLR[UI]. */
+        uint64_t imp_fe                : 1;  /**< [  1:  1](SR/W) See RAS()_ERR00CTLR[IMP_FE]. */
+        uint64_t ed                    : 1;  /**< [  0:  0](SR/W) See RAS()_ERR00CTLR[ED]. */
+#else /* Word 0 - Little Endian */
+        uint64_t ed                    : 1;  /**< [  0:  0](SR/W) See RAS()_ERR00CTLR[ED]. */
+        uint64_t imp_fe                : 1;  /**< [  1:  1](SR/W) See RAS()_ERR00CTLR[IMP_FE]. */
+        uint64_t ui                    : 1;  /**< [  2:  2](SR/W) See RAS()_ERR00CTLR[UI]. */
+        uint64_t fi                    : 1;  /**< [  3:  3](SR/W) See RAS()_ERR00CTLR[FI]. */
+        uint64_t ue                    : 1;  /**< [  4:  4](SR/W) See RAS()_ERR00CTLR[UE]. */
+        uint64_t wui                   : 1;  /**< [  5:  5](SRO) Error recovery interrupt on writes. See [UI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t wfi                   : 1;  /**< [  6:  6](SRO) Fault handling interrupt on writes. See [FI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t wue                   : 1;  /**< [  7:  7](SRO) Error reporting on writes. See [RU].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t cfi                   : 1;  /**< [  8:  8](SR/W) See RAS()_ERR00CTLR[CFI]. */
+        uint64_t wcfi                  : 1;  /**< [  9:  9](SRO) Fault handling interrupt for corrected errors on writes. See [CFI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t dui                   : 1;  /**< [ 10: 10](SR/W) See RAS()_ERR00CTLR[DUI]. */
+        uint64_t wdui                  : 1;  /**< [ 11: 11](SRO) Error recovery interrupt for deferred errors on writes. See [DUI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t reserved_12_63        : 52;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rasx_err03ctlr_s cn9; */
+    /* struct cavm_rasx_err03ctlr_s cn96xxp1; */
+    struct cavm_rasx_err03ctlr_cn96xxp3
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_12_63        : 52;
@@ -1887,8 +2785,10 @@ union cavm_rasx_err03ctlr
                                                                  For CNXXXX does not distinguish between reads and writes, so always 0. */
         uint64_t reserved_12_63        : 52;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_rasx_err03ctlr_s cn; */
+    } cn96xxp3;
+    /* struct cavm_rasx_err03ctlr_cn96xxp3 cn98xx; */
+    /* struct cavm_rasx_err03ctlr_cn96xxp3 cnf95xx; */
+    /* struct cavm_rasx_err03ctlr_cn96xxp3 loki; */
 };
 typedef union cavm_rasx_err03ctlr cavm_rasx_err03ctlr_t;
 
@@ -1897,6 +2797,8 @@ static inline uint64_t CAVM_RASX_ERR03CTLR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a0080500c8ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a0080500c8ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a0080500c8ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -1933,6 +2835,36 @@ union cavm_rasx_err03fr
         uint64_t ue                    : 2;  /**< [  9:  8](SRO) See RAS()_ERR00FR[UE]. */
         uint64_t fi                    : 2;  /**< [  7:  6](SRO) See RAS()_ERR00FR[FI]. */
         uint64_t ui                    : 2;  /**< [  5:  4](SRO) See RAS()_ERR00FR[UI]. */
+        uint64_t imp_fe                : 2;  /**< [  3:  2](SRO) See RAS()_ERR00FR[FE]. */
+        uint64_t ed                    : 2;  /**< [  1:  0](SRO) See RAS()_ERR00FR[ED]. */
+#else /* Word 0 - Little Endian */
+        uint64_t ed                    : 2;  /**< [  1:  0](SRO) See RAS()_ERR00FR[ED]. */
+        uint64_t imp_fe                : 2;  /**< [  3:  2](SRO) See RAS()_ERR00FR[FE]. */
+        uint64_t ui                    : 2;  /**< [  5:  4](SRO) See RAS()_ERR00FR[UI]. */
+        uint64_t fi                    : 2;  /**< [  7:  6](SRO) See RAS()_ERR00FR[FI]. */
+        uint64_t ue                    : 2;  /**< [  9:  8](SRO) See RAS()_ERR00FR[UE]. */
+        uint64_t cfi                   : 2;  /**< [ 11: 10](SRO) See RAS()_ERR00FR[CFI]. */
+        uint64_t cec                   : 3;  /**< [ 14: 12](SRO) See RAS()_ERR00FR[CEC]. */
+        uint64_t rp                    : 1;  /**< [ 15: 15](SRO) See RAS()_ERR00FR[RP]. */
+        uint64_t dui                   : 2;  /**< [ 17: 16](SRO) See RAS()_ERR00FR[DUI]. */
+        uint64_t ceo                   : 2;  /**< [ 19: 18](SRO) See RAS()_ERR00FR[CEO]. */
+        uint64_t reserved_20_63        : 44;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rasx_err03fr_s cn9; */
+    /* struct cavm_rasx_err03fr_s cn96xxp1; */
+    struct cavm_rasx_err03fr_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_20_63        : 44;
+        uint64_t ceo                   : 2;  /**< [ 19: 18](SRO) See RAS()_ERR00FR[CEO]. */
+        uint64_t dui                   : 2;  /**< [ 17: 16](SRO) See RAS()_ERR00FR[DUI]. */
+        uint64_t rp                    : 1;  /**< [ 15: 15](SRO) See RAS()_ERR00FR[RP]. */
+        uint64_t cec                   : 3;  /**< [ 14: 12](SRO) See RAS()_ERR00FR[CEC]. */
+        uint64_t cfi                   : 2;  /**< [ 11: 10](SRO) See RAS()_ERR00FR[CFI]. */
+        uint64_t ue                    : 2;  /**< [  9:  8](SRO) See RAS()_ERR00FR[UE]. */
+        uint64_t fi                    : 2;  /**< [  7:  6](SRO) See RAS()_ERR00FR[FI]. */
+        uint64_t ui                    : 2;  /**< [  5:  4](SRO) See RAS()_ERR00FR[UI]. */
         uint64_t imp_fe                : 2;  /**< [  3:  2](SRO) See RAS()_ERR00FR[IMP_FE]. */
         uint64_t ed                    : 2;  /**< [  1:  0](SRO) See RAS()_ERR00FR[ED]. */
 #else /* Word 0 - Little Endian */
@@ -1948,8 +2880,10 @@ union cavm_rasx_err03fr
         uint64_t ceo                   : 2;  /**< [ 19: 18](SRO) See RAS()_ERR00FR[CEO]. */
         uint64_t reserved_20_63        : 44;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_rasx_err03fr_s cn; */
+    } cn96xxp3;
+    /* struct cavm_rasx_err03fr_cn96xxp3 cn98xx; */
+    /* struct cavm_rasx_err03fr_cn96xxp3 cnf95xx; */
+    /* struct cavm_rasx_err03fr_cn96xxp3 loki; */
 };
 typedef union cavm_rasx_err03fr cavm_rasx_err03fr_t;
 
@@ -1958,6 +2892,8 @@ static inline uint64_t CAVM_RASX_ERR03FR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a0080500c0ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a0080500c0ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a0080500c0ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -2007,6 +2943,8 @@ static inline uint64_t CAVM_RASX_ERR03MISC0(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a0080500e0ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a0080500e0ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a0080500e0ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -2046,6 +2984,8 @@ static inline uint64_t CAVM_RASX_ERR03MISC1(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a0080500e8ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a0080500e8ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a0080500e8ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -2069,6 +3009,42 @@ union cavm_rasx_err03status
 {
     uint64_t u;
     struct cavm_rasx_err03status_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_32_63        : 32;
+        uint64_t av                    : 1;  /**< [ 31: 31](SR/W1C/H) See RAS()_ERR00STATUS[AV]. */
+        uint64_t v                     : 1;  /**< [ 30: 30](SR/W1C/H) See RAS()_ERR00STATUS[V]. */
+        uint64_t ue                    : 1;  /**< [ 29: 29](SR/W1C/H) See RAS()_ERR00STATUS[UE]. */
+        uint64_t er                    : 1;  /**< [ 28: 28](SR/W1C/H) See RAS()_ERR00STATUS[ER]. */
+        uint64_t of                    : 1;  /**< [ 27: 27](SR/W1C/H) See RAS()_ERR00STATUS[OV]. */
+        uint64_t mv                    : 1;  /**< [ 26: 26](SR/W1C/H) See RAS()_ERR00STATUS[MV]. */
+        uint64_t ce                    : 2;  /**< [ 25: 24](SR/W1C/H) See RAS()_ERR00STATUS[CE]. */
+        uint64_t de                    : 1;  /**< [ 23: 23](SR/W1C/H) See RAS()_ERR00STATUS[DE]. */
+        uint64_t pn                    : 1;  /**< [ 22: 22](SR/W1C/H) See RAS()_ERR00STATUS[PN]. */
+        uint64_t uet                   : 2;  /**< [ 21: 20](SR/W1C/H) See RAS()_ERR00STATUS[UET]. */
+        uint64_t reserved_16_19        : 4;
+        uint64_t ierr                  : 8;  /**< [ 15:  8](SR/W) See RAS()_ERR00STATUS[IERR]. */
+        uint64_t serr                  : 8;  /**< [  7:  0](SR/W) See RAS()_ERR00STATUS[SERR]. */
+#else /* Word 0 - Little Endian */
+        uint64_t serr                  : 8;  /**< [  7:  0](SR/W) See RAS()_ERR00STATUS[SERR]. */
+        uint64_t ierr                  : 8;  /**< [ 15:  8](SR/W) See RAS()_ERR00STATUS[IERR]. */
+        uint64_t reserved_16_19        : 4;
+        uint64_t uet                   : 2;  /**< [ 21: 20](SR/W1C/H) See RAS()_ERR00STATUS[UET]. */
+        uint64_t pn                    : 1;  /**< [ 22: 22](SR/W1C/H) See RAS()_ERR00STATUS[PN]. */
+        uint64_t de                    : 1;  /**< [ 23: 23](SR/W1C/H) See RAS()_ERR00STATUS[DE]. */
+        uint64_t ce                    : 2;  /**< [ 25: 24](SR/W1C/H) See RAS()_ERR00STATUS[CE]. */
+        uint64_t mv                    : 1;  /**< [ 26: 26](SR/W1C/H) See RAS()_ERR00STATUS[MV]. */
+        uint64_t of                    : 1;  /**< [ 27: 27](SR/W1C/H) See RAS()_ERR00STATUS[OV]. */
+        uint64_t er                    : 1;  /**< [ 28: 28](SR/W1C/H) See RAS()_ERR00STATUS[ER]. */
+        uint64_t ue                    : 1;  /**< [ 29: 29](SR/W1C/H) See RAS()_ERR00STATUS[UE]. */
+        uint64_t v                     : 1;  /**< [ 30: 30](SR/W1C/H) See RAS()_ERR00STATUS[V]. */
+        uint64_t av                    : 1;  /**< [ 31: 31](SR/W1C/H) See RAS()_ERR00STATUS[AV]. */
+        uint64_t reserved_32_63        : 32;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rasx_err03status_s cn9; */
+    /* struct cavm_rasx_err03status_s cn96xxp1; */
+    struct cavm_rasx_err03status_cn96xxp3
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_32_63        : 32;
@@ -2101,8 +3077,10 @@ union cavm_rasx_err03status
         uint64_t av                    : 1;  /**< [ 31: 31](SR/W1C/H) See RAS()_ERR00STATUS[AV]. */
         uint64_t reserved_32_63        : 32;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_rasx_err03status_s cn; */
+    } cn96xxp3;
+    /* struct cavm_rasx_err03status_cn96xxp3 cn98xx; */
+    /* struct cavm_rasx_err03status_cn96xxp3 cnf95xx; */
+    /* struct cavm_rasx_err03status_cn96xxp3 loki; */
 };
 typedef union cavm_rasx_err03status cavm_rasx_err03status_t;
 
@@ -2111,6 +3089,8 @@ static inline uint64_t CAVM_RASX_ERR03STATUS(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a0080500d0ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a0080500d0ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a0080500d0ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -2174,6 +3154,8 @@ static inline uint64_t CAVM_RASX_ERR04ADDR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008050118ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008050118ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050118ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -2197,6 +3179,60 @@ union cavm_rasx_err04ctlr
 {
     uint64_t u;
     struct cavm_rasx_err04ctlr_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_12_63        : 52;
+        uint64_t wdui                  : 1;  /**< [ 11: 11](SRO) Error recovery interrupt for deferred errors on writes. See [DUI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t dui                   : 1;  /**< [ 10: 10](SR/W) See RAS()_ERR00CTLR[DUI]. */
+        uint64_t wcfi                  : 1;  /**< [  9:  9](SRO) Fault handling interrupt for corrected errors on writes. See [CFI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t cfi                   : 1;  /**< [  8:  8](SR/W) See RAS()_ERR00CTLR[CFI]. */
+        uint64_t wue                   : 1;  /**< [  7:  7](SRO) Error reporting on writes. See [RU].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t wfi                   : 1;  /**< [  6:  6](SRO) Fault handling interrupt on writes. See [FI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t wui                   : 1;  /**< [  5:  5](SRO) Error recovery interrupt on writes. See [UI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t ue                    : 1;  /**< [  4:  4](SR/W) See RAS()_ERR00CTLR[UE]. */
+        uint64_t fi                    : 1;  /**< [  3:  3](SR/W) See RAS()_ERR00CTLR[FI]. */
+        uint64_t ui                    : 1;  /**< [  2:  2](SR/W) See RAS()_ERR00CTLR[UI]. */
+        uint64_t imp_fe                : 1;  /**< [  1:  1](SR/W) See RAS()_ERR00CTLR[IMP_FE]. */
+        uint64_t ed                    : 1;  /**< [  0:  0](SR/W) See RAS()_ERR00CTLR[ED]. */
+#else /* Word 0 - Little Endian */
+        uint64_t ed                    : 1;  /**< [  0:  0](SR/W) See RAS()_ERR00CTLR[ED]. */
+        uint64_t imp_fe                : 1;  /**< [  1:  1](SR/W) See RAS()_ERR00CTLR[IMP_FE]. */
+        uint64_t ui                    : 1;  /**< [  2:  2](SR/W) See RAS()_ERR00CTLR[UI]. */
+        uint64_t fi                    : 1;  /**< [  3:  3](SR/W) See RAS()_ERR00CTLR[FI]. */
+        uint64_t ue                    : 1;  /**< [  4:  4](SR/W) See RAS()_ERR00CTLR[UE]. */
+        uint64_t wui                   : 1;  /**< [  5:  5](SRO) Error recovery interrupt on writes. See [UI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t wfi                   : 1;  /**< [  6:  6](SRO) Fault handling interrupt on writes. See [FI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t wue                   : 1;  /**< [  7:  7](SRO) Error reporting on writes. See [RU].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t cfi                   : 1;  /**< [  8:  8](SR/W) See RAS()_ERR00CTLR[CFI]. */
+        uint64_t wcfi                  : 1;  /**< [  9:  9](SRO) Fault handling interrupt for corrected errors on writes. See [CFI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t dui                   : 1;  /**< [ 10: 10](SR/W) See RAS()_ERR00CTLR[DUI]. */
+        uint64_t wdui                  : 1;  /**< [ 11: 11](SRO) Error recovery interrupt for deferred errors on writes. See [DUI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t reserved_12_63        : 52;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rasx_err04ctlr_s cn9; */
+    /* struct cavm_rasx_err04ctlr_s cn96xxp1; */
+    struct cavm_rasx_err04ctlr_cn96xxp3
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_12_63        : 52;
@@ -2247,8 +3283,10 @@ union cavm_rasx_err04ctlr
                                                                  For CNXXXX does not distinguish between reads and writes, so always 0. */
         uint64_t reserved_12_63        : 52;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_rasx_err04ctlr_s cn; */
+    } cn96xxp3;
+    /* struct cavm_rasx_err04ctlr_cn96xxp3 cn98xx; */
+    /* struct cavm_rasx_err04ctlr_cn96xxp3 cnf95xx; */
+    /* struct cavm_rasx_err04ctlr_cn96xxp3 loki; */
 };
 typedef union cavm_rasx_err04ctlr cavm_rasx_err04ctlr_t;
 
@@ -2257,6 +3295,8 @@ static inline uint64_t CAVM_RASX_ERR04CTLR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008050108ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008050108ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050108ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -2293,6 +3333,36 @@ union cavm_rasx_err04fr
         uint64_t ue                    : 2;  /**< [  9:  8](SRO) See RAS()_ERR00FR[UE]. */
         uint64_t fi                    : 2;  /**< [  7:  6](SRO) See RAS()_ERR00FR[FI]. */
         uint64_t ui                    : 2;  /**< [  5:  4](SRO) See RAS()_ERR00FR[UI]. */
+        uint64_t imp_fe                : 2;  /**< [  3:  2](SRO) See RAS()_ERR00FR[FE]. */
+        uint64_t ed                    : 2;  /**< [  1:  0](SRO) See RAS()_ERR00FR[ED]. */
+#else /* Word 0 - Little Endian */
+        uint64_t ed                    : 2;  /**< [  1:  0](SRO) See RAS()_ERR00FR[ED]. */
+        uint64_t imp_fe                : 2;  /**< [  3:  2](SRO) See RAS()_ERR00FR[FE]. */
+        uint64_t ui                    : 2;  /**< [  5:  4](SRO) See RAS()_ERR00FR[UI]. */
+        uint64_t fi                    : 2;  /**< [  7:  6](SRO) See RAS()_ERR00FR[FI]. */
+        uint64_t ue                    : 2;  /**< [  9:  8](SRO) See RAS()_ERR00FR[UE]. */
+        uint64_t cfi                   : 2;  /**< [ 11: 10](SRO) See RAS()_ERR00FR[CFI]. */
+        uint64_t cec                   : 3;  /**< [ 14: 12](SRO) See RAS()_ERR00FR[CEC]. */
+        uint64_t rp                    : 1;  /**< [ 15: 15](SRO) See RAS()_ERR00FR[RP]. */
+        uint64_t dui                   : 2;  /**< [ 17: 16](SRO) See RAS()_ERR00FR[DUI]. */
+        uint64_t ceo                   : 2;  /**< [ 19: 18](SRO) See RAS()_ERR00FR[CEO]. */
+        uint64_t reserved_20_63        : 44;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rasx_err04fr_s cn9; */
+    /* struct cavm_rasx_err04fr_s cn96xxp1; */
+    struct cavm_rasx_err04fr_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_20_63        : 44;
+        uint64_t ceo                   : 2;  /**< [ 19: 18](SRO) See RAS()_ERR00FR[CEO]. */
+        uint64_t dui                   : 2;  /**< [ 17: 16](SRO) See RAS()_ERR00FR[DUI]. */
+        uint64_t rp                    : 1;  /**< [ 15: 15](SRO) See RAS()_ERR00FR[RP]. */
+        uint64_t cec                   : 3;  /**< [ 14: 12](SRO) See RAS()_ERR00FR[CEC]. */
+        uint64_t cfi                   : 2;  /**< [ 11: 10](SRO) See RAS()_ERR00FR[CFI]. */
+        uint64_t ue                    : 2;  /**< [  9:  8](SRO) See RAS()_ERR00FR[UE]. */
+        uint64_t fi                    : 2;  /**< [  7:  6](SRO) See RAS()_ERR00FR[FI]. */
+        uint64_t ui                    : 2;  /**< [  5:  4](SRO) See RAS()_ERR00FR[UI]. */
         uint64_t imp_fe                : 2;  /**< [  3:  2](SRO) See RAS()_ERR00FR[IMP_FE]. */
         uint64_t ed                    : 2;  /**< [  1:  0](SRO) See RAS()_ERR00FR[ED]. */
 #else /* Word 0 - Little Endian */
@@ -2308,8 +3378,10 @@ union cavm_rasx_err04fr
         uint64_t ceo                   : 2;  /**< [ 19: 18](SRO) See RAS()_ERR00FR[CEO]. */
         uint64_t reserved_20_63        : 44;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_rasx_err04fr_s cn; */
+    } cn96xxp3;
+    /* struct cavm_rasx_err04fr_cn96xxp3 cn98xx; */
+    /* struct cavm_rasx_err04fr_cn96xxp3 cnf95xx; */
+    /* struct cavm_rasx_err04fr_cn96xxp3 loki; */
 };
 typedef union cavm_rasx_err04fr cavm_rasx_err04fr_t;
 
@@ -2318,6 +3390,8 @@ static inline uint64_t CAVM_RASX_ERR04FR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008050100ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008050100ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050100ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -2367,6 +3441,8 @@ static inline uint64_t CAVM_RASX_ERR04MISC0(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008050120ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008050120ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050120ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -2406,6 +3482,8 @@ static inline uint64_t CAVM_RASX_ERR04MISC1(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008050128ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008050128ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050128ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -2429,6 +3507,42 @@ union cavm_rasx_err04status
 {
     uint64_t u;
     struct cavm_rasx_err04status_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_32_63        : 32;
+        uint64_t av                    : 1;  /**< [ 31: 31](SR/W1C/H) See RAS()_ERR00STATUS[AV]. */
+        uint64_t v                     : 1;  /**< [ 30: 30](SR/W1C/H) See RAS()_ERR00STATUS[V]. */
+        uint64_t ue                    : 1;  /**< [ 29: 29](SR/W1C/H) See RAS()_ERR00STATUS[UE]. */
+        uint64_t er                    : 1;  /**< [ 28: 28](SR/W1C/H) See RAS()_ERR00STATUS[ER]. */
+        uint64_t of                    : 1;  /**< [ 27: 27](SR/W1C/H) See RAS()_ERR00STATUS[OV]. */
+        uint64_t mv                    : 1;  /**< [ 26: 26](SR/W1C/H) See RAS()_ERR00STATUS[MV]. */
+        uint64_t ce                    : 2;  /**< [ 25: 24](SR/W1C/H) See RAS()_ERR00STATUS[CE]. */
+        uint64_t de                    : 1;  /**< [ 23: 23](SR/W1C/H) See RAS()_ERR00STATUS[DE]. */
+        uint64_t pn                    : 1;  /**< [ 22: 22](SR/W1C/H) See RAS()_ERR00STATUS[PN]. */
+        uint64_t uet                   : 2;  /**< [ 21: 20](SR/W1C/H) See RAS()_ERR00STATUS[UET]. */
+        uint64_t reserved_16_19        : 4;
+        uint64_t ierr                  : 8;  /**< [ 15:  8](SR/W) See RAS()_ERR00STATUS[IERR]. */
+        uint64_t serr                  : 8;  /**< [  7:  0](SR/W) See RAS()_ERR00STATUS[SERR]. */
+#else /* Word 0 - Little Endian */
+        uint64_t serr                  : 8;  /**< [  7:  0](SR/W) See RAS()_ERR00STATUS[SERR]. */
+        uint64_t ierr                  : 8;  /**< [ 15:  8](SR/W) See RAS()_ERR00STATUS[IERR]. */
+        uint64_t reserved_16_19        : 4;
+        uint64_t uet                   : 2;  /**< [ 21: 20](SR/W1C/H) See RAS()_ERR00STATUS[UET]. */
+        uint64_t pn                    : 1;  /**< [ 22: 22](SR/W1C/H) See RAS()_ERR00STATUS[PN]. */
+        uint64_t de                    : 1;  /**< [ 23: 23](SR/W1C/H) See RAS()_ERR00STATUS[DE]. */
+        uint64_t ce                    : 2;  /**< [ 25: 24](SR/W1C/H) See RAS()_ERR00STATUS[CE]. */
+        uint64_t mv                    : 1;  /**< [ 26: 26](SR/W1C/H) See RAS()_ERR00STATUS[MV]. */
+        uint64_t of                    : 1;  /**< [ 27: 27](SR/W1C/H) See RAS()_ERR00STATUS[OV]. */
+        uint64_t er                    : 1;  /**< [ 28: 28](SR/W1C/H) See RAS()_ERR00STATUS[ER]. */
+        uint64_t ue                    : 1;  /**< [ 29: 29](SR/W1C/H) See RAS()_ERR00STATUS[UE]. */
+        uint64_t v                     : 1;  /**< [ 30: 30](SR/W1C/H) See RAS()_ERR00STATUS[V]. */
+        uint64_t av                    : 1;  /**< [ 31: 31](SR/W1C/H) See RAS()_ERR00STATUS[AV]. */
+        uint64_t reserved_32_63        : 32;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rasx_err04status_s cn9; */
+    /* struct cavm_rasx_err04status_s cn96xxp1; */
+    struct cavm_rasx_err04status_cn96xxp3
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_32_63        : 32;
@@ -2461,8 +3575,10 @@ union cavm_rasx_err04status
         uint64_t av                    : 1;  /**< [ 31: 31](SR/W1C/H) See RAS()_ERR00STATUS[AV]. */
         uint64_t reserved_32_63        : 32;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_rasx_err04status_s cn; */
+    } cn96xxp3;
+    /* struct cavm_rasx_err04status_cn96xxp3 cn98xx; */
+    /* struct cavm_rasx_err04status_cn96xxp3 cnf95xx; */
+    /* struct cavm_rasx_err04status_cn96xxp3 loki; */
 };
 typedef union cavm_rasx_err04status cavm_rasx_err04status_t;
 
@@ -2471,6 +3587,8 @@ static inline uint64_t CAVM_RASX_ERR04STATUS(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008050110ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008050110ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050110ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -2534,6 +3652,8 @@ static inline uint64_t CAVM_RASX_ERR05ADDR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008050158ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008050158ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050158ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -2557,6 +3677,60 @@ union cavm_rasx_err05ctlr
 {
     uint64_t u;
     struct cavm_rasx_err05ctlr_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_12_63        : 52;
+        uint64_t wdui                  : 1;  /**< [ 11: 11](SRO) Error recovery interrupt for deferred errors on writes. See [DUI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t dui                   : 1;  /**< [ 10: 10](SR/W) See RAS()_ERR00CTLR[DUI]. */
+        uint64_t wcfi                  : 1;  /**< [  9:  9](SRO) Fault handling interrupt for corrected errors on writes. See [CFI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t cfi                   : 1;  /**< [  8:  8](SR/W) See RAS()_ERR00CTLR[CFI]. */
+        uint64_t wue                   : 1;  /**< [  7:  7](SRO) Error reporting on writes. See [RU].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t wfi                   : 1;  /**< [  6:  6](SRO) Fault handling interrupt on writes. See [FI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t wui                   : 1;  /**< [  5:  5](SRO) Error recovery interrupt on writes. See [UI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t ue                    : 1;  /**< [  4:  4](SR/W) See RAS()_ERR00CTLR[UE]. */
+        uint64_t fi                    : 1;  /**< [  3:  3](SR/W) See RAS()_ERR00CTLR[FI]. */
+        uint64_t ui                    : 1;  /**< [  2:  2](SR/W) See RAS()_ERR00CTLR[UI]. */
+        uint64_t imp_fe                : 1;  /**< [  1:  1](SR/W) See RAS()_ERR00CTLR[IMP_FE]. */
+        uint64_t ed                    : 1;  /**< [  0:  0](SR/W) See RAS()_ERR00CTLR[ED]. */
+#else /* Word 0 - Little Endian */
+        uint64_t ed                    : 1;  /**< [  0:  0](SR/W) See RAS()_ERR00CTLR[ED]. */
+        uint64_t imp_fe                : 1;  /**< [  1:  1](SR/W) See RAS()_ERR00CTLR[IMP_FE]. */
+        uint64_t ui                    : 1;  /**< [  2:  2](SR/W) See RAS()_ERR00CTLR[UI]. */
+        uint64_t fi                    : 1;  /**< [  3:  3](SR/W) See RAS()_ERR00CTLR[FI]. */
+        uint64_t ue                    : 1;  /**< [  4:  4](SR/W) See RAS()_ERR00CTLR[UE]. */
+        uint64_t wui                   : 1;  /**< [  5:  5](SRO) Error recovery interrupt on writes. See [UI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t wfi                   : 1;  /**< [  6:  6](SRO) Fault handling interrupt on writes. See [FI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t wue                   : 1;  /**< [  7:  7](SRO) Error reporting on writes. See [RU].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t cfi                   : 1;  /**< [  8:  8](SR/W) See RAS()_ERR00CTLR[CFI]. */
+        uint64_t wcfi                  : 1;  /**< [  9:  9](SRO) Fault handling interrupt for corrected errors on writes. See [CFI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t dui                   : 1;  /**< [ 10: 10](SR/W) See RAS()_ERR00CTLR[DUI]. */
+        uint64_t wdui                  : 1;  /**< [ 11: 11](SRO) Error recovery interrupt for deferred errors on writes. See [DUI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t reserved_12_63        : 52;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rasx_err05ctlr_s cn9; */
+    /* struct cavm_rasx_err05ctlr_s cn96xxp1; */
+    struct cavm_rasx_err05ctlr_cn96xxp3
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_12_63        : 52;
@@ -2607,8 +3781,10 @@ union cavm_rasx_err05ctlr
                                                                  For CNXXXX does not distinguish between reads and writes, so always 0. */
         uint64_t reserved_12_63        : 52;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_rasx_err05ctlr_s cn; */
+    } cn96xxp3;
+    /* struct cavm_rasx_err05ctlr_cn96xxp3 cn98xx; */
+    /* struct cavm_rasx_err05ctlr_cn96xxp3 cnf95xx; */
+    /* struct cavm_rasx_err05ctlr_cn96xxp3 loki; */
 };
 typedef union cavm_rasx_err05ctlr cavm_rasx_err05ctlr_t;
 
@@ -2617,6 +3793,8 @@ static inline uint64_t CAVM_RASX_ERR05CTLR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008050148ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008050148ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050148ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -2653,6 +3831,36 @@ union cavm_rasx_err05fr
         uint64_t ue                    : 2;  /**< [  9:  8](SRO) See RAS()_ERR00FR[UE]. */
         uint64_t fi                    : 2;  /**< [  7:  6](SRO) See RAS()_ERR00FR[FI]. */
         uint64_t ui                    : 2;  /**< [  5:  4](SRO) See RAS()_ERR00FR[UI]. */
+        uint64_t imp_fe                : 2;  /**< [  3:  2](SRO) See RAS()_ERR00FR[FE]. */
+        uint64_t ed                    : 2;  /**< [  1:  0](SRO) See RAS()_ERR00FR[ED]. */
+#else /* Word 0 - Little Endian */
+        uint64_t ed                    : 2;  /**< [  1:  0](SRO) See RAS()_ERR00FR[ED]. */
+        uint64_t imp_fe                : 2;  /**< [  3:  2](SRO) See RAS()_ERR00FR[FE]. */
+        uint64_t ui                    : 2;  /**< [  5:  4](SRO) See RAS()_ERR00FR[UI]. */
+        uint64_t fi                    : 2;  /**< [  7:  6](SRO) See RAS()_ERR00FR[FI]. */
+        uint64_t ue                    : 2;  /**< [  9:  8](SRO) See RAS()_ERR00FR[UE]. */
+        uint64_t cfi                   : 2;  /**< [ 11: 10](SRO) See RAS()_ERR00FR[CFI]. */
+        uint64_t cec                   : 3;  /**< [ 14: 12](SRO) See RAS()_ERR00FR[CEC]. */
+        uint64_t rp                    : 1;  /**< [ 15: 15](SRO) See RAS()_ERR00FR[RP]. */
+        uint64_t dui                   : 2;  /**< [ 17: 16](SRO) See RAS()_ERR00FR[DUI]. */
+        uint64_t ceo                   : 2;  /**< [ 19: 18](SRO) See RAS()_ERR00FR[CEO]. */
+        uint64_t reserved_20_63        : 44;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rasx_err05fr_s cn9; */
+    /* struct cavm_rasx_err05fr_s cn96xxp1; */
+    struct cavm_rasx_err05fr_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_20_63        : 44;
+        uint64_t ceo                   : 2;  /**< [ 19: 18](SRO) See RAS()_ERR00FR[CEO]. */
+        uint64_t dui                   : 2;  /**< [ 17: 16](SRO) See RAS()_ERR00FR[DUI]. */
+        uint64_t rp                    : 1;  /**< [ 15: 15](SRO) See RAS()_ERR00FR[RP]. */
+        uint64_t cec                   : 3;  /**< [ 14: 12](SRO) See RAS()_ERR00FR[CEC]. */
+        uint64_t cfi                   : 2;  /**< [ 11: 10](SRO) See RAS()_ERR00FR[CFI]. */
+        uint64_t ue                    : 2;  /**< [  9:  8](SRO) See RAS()_ERR00FR[UE]. */
+        uint64_t fi                    : 2;  /**< [  7:  6](SRO) See RAS()_ERR00FR[FI]. */
+        uint64_t ui                    : 2;  /**< [  5:  4](SRO) See RAS()_ERR00FR[UI]. */
         uint64_t imp_fe                : 2;  /**< [  3:  2](SRO) See RAS()_ERR00FR[IMP_FE]. */
         uint64_t ed                    : 2;  /**< [  1:  0](SRO) See RAS()_ERR00FR[ED]. */
 #else /* Word 0 - Little Endian */
@@ -2668,8 +3876,10 @@ union cavm_rasx_err05fr
         uint64_t ceo                   : 2;  /**< [ 19: 18](SRO) See RAS()_ERR00FR[CEO]. */
         uint64_t reserved_20_63        : 44;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_rasx_err05fr_s cn; */
+    } cn96xxp3;
+    /* struct cavm_rasx_err05fr_cn96xxp3 cn98xx; */
+    /* struct cavm_rasx_err05fr_cn96xxp3 cnf95xx; */
+    /* struct cavm_rasx_err05fr_cn96xxp3 loki; */
 };
 typedef union cavm_rasx_err05fr cavm_rasx_err05fr_t;
 
@@ -2678,6 +3888,8 @@ static inline uint64_t CAVM_RASX_ERR05FR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008050140ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008050140ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050140ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -2727,6 +3939,8 @@ static inline uint64_t CAVM_RASX_ERR05MISC0(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008050160ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008050160ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050160ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -2766,6 +3980,8 @@ static inline uint64_t CAVM_RASX_ERR05MISC1(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008050168ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008050168ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050168ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -2789,6 +4005,42 @@ union cavm_rasx_err05status
 {
     uint64_t u;
     struct cavm_rasx_err05status_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_32_63        : 32;
+        uint64_t av                    : 1;  /**< [ 31: 31](SR/W1C/H) See RAS()_ERR00STATUS[AV]. */
+        uint64_t v                     : 1;  /**< [ 30: 30](SR/W1C/H) See RAS()_ERR00STATUS[V]. */
+        uint64_t ue                    : 1;  /**< [ 29: 29](SR/W1C/H) See RAS()_ERR00STATUS[UE]. */
+        uint64_t er                    : 1;  /**< [ 28: 28](SR/W1C/H) See RAS()_ERR00STATUS[ER]. */
+        uint64_t of                    : 1;  /**< [ 27: 27](SR/W1C/H) See RAS()_ERR00STATUS[OV]. */
+        uint64_t mv                    : 1;  /**< [ 26: 26](SR/W1C/H) See RAS()_ERR00STATUS[MV]. */
+        uint64_t ce                    : 2;  /**< [ 25: 24](SR/W1C/H) See RAS()_ERR00STATUS[CE]. */
+        uint64_t de                    : 1;  /**< [ 23: 23](SR/W1C/H) See RAS()_ERR00STATUS[DE]. */
+        uint64_t pn                    : 1;  /**< [ 22: 22](SR/W1C/H) See RAS()_ERR00STATUS[PN]. */
+        uint64_t uet                   : 2;  /**< [ 21: 20](SR/W1C/H) See RAS()_ERR00STATUS[UET]. */
+        uint64_t reserved_16_19        : 4;
+        uint64_t ierr                  : 8;  /**< [ 15:  8](SR/W) See RAS()_ERR00STATUS[IERR]. */
+        uint64_t serr                  : 8;  /**< [  7:  0](SR/W) See RAS()_ERR00STATUS[SERR]. */
+#else /* Word 0 - Little Endian */
+        uint64_t serr                  : 8;  /**< [  7:  0](SR/W) See RAS()_ERR00STATUS[SERR]. */
+        uint64_t ierr                  : 8;  /**< [ 15:  8](SR/W) See RAS()_ERR00STATUS[IERR]. */
+        uint64_t reserved_16_19        : 4;
+        uint64_t uet                   : 2;  /**< [ 21: 20](SR/W1C/H) See RAS()_ERR00STATUS[UET]. */
+        uint64_t pn                    : 1;  /**< [ 22: 22](SR/W1C/H) See RAS()_ERR00STATUS[PN]. */
+        uint64_t de                    : 1;  /**< [ 23: 23](SR/W1C/H) See RAS()_ERR00STATUS[DE]. */
+        uint64_t ce                    : 2;  /**< [ 25: 24](SR/W1C/H) See RAS()_ERR00STATUS[CE]. */
+        uint64_t mv                    : 1;  /**< [ 26: 26](SR/W1C/H) See RAS()_ERR00STATUS[MV]. */
+        uint64_t of                    : 1;  /**< [ 27: 27](SR/W1C/H) See RAS()_ERR00STATUS[OV]. */
+        uint64_t er                    : 1;  /**< [ 28: 28](SR/W1C/H) See RAS()_ERR00STATUS[ER]. */
+        uint64_t ue                    : 1;  /**< [ 29: 29](SR/W1C/H) See RAS()_ERR00STATUS[UE]. */
+        uint64_t v                     : 1;  /**< [ 30: 30](SR/W1C/H) See RAS()_ERR00STATUS[V]. */
+        uint64_t av                    : 1;  /**< [ 31: 31](SR/W1C/H) See RAS()_ERR00STATUS[AV]. */
+        uint64_t reserved_32_63        : 32;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rasx_err05status_s cn9; */
+    /* struct cavm_rasx_err05status_s cn96xxp1; */
+    struct cavm_rasx_err05status_cn96xxp3
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_32_63        : 32;
@@ -2821,8 +4073,10 @@ union cavm_rasx_err05status
         uint64_t av                    : 1;  /**< [ 31: 31](SR/W1C/H) See RAS()_ERR00STATUS[AV]. */
         uint64_t reserved_32_63        : 32;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_rasx_err05status_s cn; */
+    } cn96xxp3;
+    /* struct cavm_rasx_err05status_cn96xxp3 cn98xx; */
+    /* struct cavm_rasx_err05status_cn96xxp3 cnf95xx; */
+    /* struct cavm_rasx_err05status_cn96xxp3 loki; */
 };
 typedef union cavm_rasx_err05status cavm_rasx_err05status_t;
 
@@ -2831,6 +4085,8 @@ static inline uint64_t CAVM_RASX_ERR05STATUS(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008050150ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008050150ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050150ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -2894,6 +4150,8 @@ static inline uint64_t CAVM_RASX_ERR06ADDR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008050198ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008050198ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050198ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -2917,6 +4175,60 @@ union cavm_rasx_err06ctlr
 {
     uint64_t u;
     struct cavm_rasx_err06ctlr_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_12_63        : 52;
+        uint64_t wdui                  : 1;  /**< [ 11: 11](SRO) Error recovery interrupt for deferred errors on writes. See [DUI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t dui                   : 1;  /**< [ 10: 10](SR/W) See RAS()_ERR00CTLR[DUI]. */
+        uint64_t wcfi                  : 1;  /**< [  9:  9](SRO) Fault handling interrupt for corrected errors on writes. See [CFI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t cfi                   : 1;  /**< [  8:  8](SR/W) See RAS()_ERR00CTLR[CFI]. */
+        uint64_t wue                   : 1;  /**< [  7:  7](SRO) Error reporting on writes. See [RU].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t wfi                   : 1;  /**< [  6:  6](SRO) Fault handling interrupt on writes. See [FI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t wui                   : 1;  /**< [  5:  5](SRO) Error recovery interrupt on writes. See [UI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t ue                    : 1;  /**< [  4:  4](SR/W) See RAS()_ERR00CTLR[UE]. */
+        uint64_t fi                    : 1;  /**< [  3:  3](SR/W) See RAS()_ERR00CTLR[FI]. */
+        uint64_t ui                    : 1;  /**< [  2:  2](SR/W) See RAS()_ERR00CTLR[UI]. */
+        uint64_t imp_fe                : 1;  /**< [  1:  1](SR/W) See RAS()_ERR00CTLR[IMP_FE]. */
+        uint64_t ed                    : 1;  /**< [  0:  0](SR/W) See RAS()_ERR00CTLR[ED]. */
+#else /* Word 0 - Little Endian */
+        uint64_t ed                    : 1;  /**< [  0:  0](SR/W) See RAS()_ERR00CTLR[ED]. */
+        uint64_t imp_fe                : 1;  /**< [  1:  1](SR/W) See RAS()_ERR00CTLR[IMP_FE]. */
+        uint64_t ui                    : 1;  /**< [  2:  2](SR/W) See RAS()_ERR00CTLR[UI]. */
+        uint64_t fi                    : 1;  /**< [  3:  3](SR/W) See RAS()_ERR00CTLR[FI]. */
+        uint64_t ue                    : 1;  /**< [  4:  4](SR/W) See RAS()_ERR00CTLR[UE]. */
+        uint64_t wui                   : 1;  /**< [  5:  5](SRO) Error recovery interrupt on writes. See [UI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t wfi                   : 1;  /**< [  6:  6](SRO) Fault handling interrupt on writes. See [FI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t wue                   : 1;  /**< [  7:  7](SRO) Error reporting on writes. See [RU].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t cfi                   : 1;  /**< [  8:  8](SR/W) See RAS()_ERR00CTLR[CFI]. */
+        uint64_t wcfi                  : 1;  /**< [  9:  9](SRO) Fault handling interrupt for corrected errors on writes. See [CFI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t dui                   : 1;  /**< [ 10: 10](SR/W) See RAS()_ERR00CTLR[DUI]. */
+        uint64_t wdui                  : 1;  /**< [ 11: 11](SRO) Error recovery interrupt for deferred errors on writes. See [DUI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t reserved_12_63        : 52;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rasx_err06ctlr_s cn9; */
+    /* struct cavm_rasx_err06ctlr_s cn96xxp1; */
+    struct cavm_rasx_err06ctlr_cn96xxp3
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_12_63        : 52;
@@ -2967,8 +4279,10 @@ union cavm_rasx_err06ctlr
                                                                  For CNXXXX does not distinguish between reads and writes, so always 0. */
         uint64_t reserved_12_63        : 52;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_rasx_err06ctlr_s cn; */
+    } cn96xxp3;
+    /* struct cavm_rasx_err06ctlr_cn96xxp3 cn98xx; */
+    /* struct cavm_rasx_err06ctlr_cn96xxp3 cnf95xx; */
+    /* struct cavm_rasx_err06ctlr_cn96xxp3 loki; */
 };
 typedef union cavm_rasx_err06ctlr cavm_rasx_err06ctlr_t;
 
@@ -2977,6 +4291,8 @@ static inline uint64_t CAVM_RASX_ERR06CTLR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008050188ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008050188ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050188ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -3013,6 +4329,36 @@ union cavm_rasx_err06fr
         uint64_t ue                    : 2;  /**< [  9:  8](SRO) See RAS()_ERR00FR[UE]. */
         uint64_t fi                    : 2;  /**< [  7:  6](SRO) See RAS()_ERR00FR[FI]. */
         uint64_t ui                    : 2;  /**< [  5:  4](SRO) See RAS()_ERR00FR[UI]. */
+        uint64_t imp_fe                : 2;  /**< [  3:  2](SRO) See RAS()_ERR00FR[FE]. */
+        uint64_t ed                    : 2;  /**< [  1:  0](SRO) See RAS()_ERR00FR[ED]. */
+#else /* Word 0 - Little Endian */
+        uint64_t ed                    : 2;  /**< [  1:  0](SRO) See RAS()_ERR00FR[ED]. */
+        uint64_t imp_fe                : 2;  /**< [  3:  2](SRO) See RAS()_ERR00FR[FE]. */
+        uint64_t ui                    : 2;  /**< [  5:  4](SRO) See RAS()_ERR00FR[UI]. */
+        uint64_t fi                    : 2;  /**< [  7:  6](SRO) See RAS()_ERR00FR[FI]. */
+        uint64_t ue                    : 2;  /**< [  9:  8](SRO) See RAS()_ERR00FR[UE]. */
+        uint64_t cfi                   : 2;  /**< [ 11: 10](SRO) See RAS()_ERR00FR[CFI]. */
+        uint64_t cec                   : 3;  /**< [ 14: 12](SRO) See RAS()_ERR00FR[CEC]. */
+        uint64_t rp                    : 1;  /**< [ 15: 15](SRO) See RAS()_ERR00FR[RP]. */
+        uint64_t dui                   : 2;  /**< [ 17: 16](SRO) See RAS()_ERR00FR[DUI]. */
+        uint64_t ceo                   : 2;  /**< [ 19: 18](SRO) See RAS()_ERR00FR[CEO]. */
+        uint64_t reserved_20_63        : 44;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rasx_err06fr_s cn9; */
+    /* struct cavm_rasx_err06fr_s cn96xxp1; */
+    struct cavm_rasx_err06fr_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_20_63        : 44;
+        uint64_t ceo                   : 2;  /**< [ 19: 18](SRO) See RAS()_ERR00FR[CEO]. */
+        uint64_t dui                   : 2;  /**< [ 17: 16](SRO) See RAS()_ERR00FR[DUI]. */
+        uint64_t rp                    : 1;  /**< [ 15: 15](SRO) See RAS()_ERR00FR[RP]. */
+        uint64_t cec                   : 3;  /**< [ 14: 12](SRO) See RAS()_ERR00FR[CEC]. */
+        uint64_t cfi                   : 2;  /**< [ 11: 10](SRO) See RAS()_ERR00FR[CFI]. */
+        uint64_t ue                    : 2;  /**< [  9:  8](SRO) See RAS()_ERR00FR[UE]. */
+        uint64_t fi                    : 2;  /**< [  7:  6](SRO) See RAS()_ERR00FR[FI]. */
+        uint64_t ui                    : 2;  /**< [  5:  4](SRO) See RAS()_ERR00FR[UI]. */
         uint64_t imp_fe                : 2;  /**< [  3:  2](SRO) See RAS()_ERR00FR[IMP_FE]. */
         uint64_t ed                    : 2;  /**< [  1:  0](SRO) See RAS()_ERR00FR[ED]. */
 #else /* Word 0 - Little Endian */
@@ -3028,8 +4374,10 @@ union cavm_rasx_err06fr
         uint64_t ceo                   : 2;  /**< [ 19: 18](SRO) See RAS()_ERR00FR[CEO]. */
         uint64_t reserved_20_63        : 44;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_rasx_err06fr_s cn; */
+    } cn96xxp3;
+    /* struct cavm_rasx_err06fr_cn96xxp3 cn98xx; */
+    /* struct cavm_rasx_err06fr_cn96xxp3 cnf95xx; */
+    /* struct cavm_rasx_err06fr_cn96xxp3 loki; */
 };
 typedef union cavm_rasx_err06fr cavm_rasx_err06fr_t;
 
@@ -3038,6 +4386,8 @@ static inline uint64_t CAVM_RASX_ERR06FR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008050180ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008050180ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050180ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -3083,6 +4433,8 @@ static inline uint64_t CAVM_RASX_ERR06MISC0(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a0080501a0ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a0080501a0ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a0080501a0ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -3122,6 +4474,8 @@ static inline uint64_t CAVM_RASX_ERR06MISC1(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a0080501a8ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a0080501a8ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a0080501a8ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -3145,6 +4499,42 @@ union cavm_rasx_err06status
 {
     uint64_t u;
     struct cavm_rasx_err06status_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_32_63        : 32;
+        uint64_t av                    : 1;  /**< [ 31: 31](SR/W1C/H) See RAS()_ERR00STATUS[AV]. */
+        uint64_t v                     : 1;  /**< [ 30: 30](SR/W1C/H) See RAS()_ERR00STATUS[V]. */
+        uint64_t ue                    : 1;  /**< [ 29: 29](SR/W1C/H) See RAS()_ERR00STATUS[UE]. */
+        uint64_t er                    : 1;  /**< [ 28: 28](SR/W1C/H) See RAS()_ERR00STATUS[ER]. */
+        uint64_t of                    : 1;  /**< [ 27: 27](SR/W1C/H) See RAS()_ERR00STATUS[OV]. */
+        uint64_t mv                    : 1;  /**< [ 26: 26](SR/W1C/H) See RAS()_ERR00STATUS[MV]. */
+        uint64_t ce                    : 2;  /**< [ 25: 24](SR/W1C/H) See RAS()_ERR00STATUS[CE]. */
+        uint64_t de                    : 1;  /**< [ 23: 23](SR/W1C/H) See RAS()_ERR00STATUS[DE]. */
+        uint64_t pn                    : 1;  /**< [ 22: 22](SR/W1C/H) See RAS()_ERR00STATUS[PN]. */
+        uint64_t uet                   : 2;  /**< [ 21: 20](SR/W1C/H) See RAS()_ERR00STATUS[UET]. */
+        uint64_t reserved_16_19        : 4;
+        uint64_t ierr                  : 8;  /**< [ 15:  8](SR/W) See RAS()_ERR00STATUS[IERR]. */
+        uint64_t serr                  : 8;  /**< [  7:  0](SR/W) See RAS()_ERR00STATUS[SERR]. */
+#else /* Word 0 - Little Endian */
+        uint64_t serr                  : 8;  /**< [  7:  0](SR/W) See RAS()_ERR00STATUS[SERR]. */
+        uint64_t ierr                  : 8;  /**< [ 15:  8](SR/W) See RAS()_ERR00STATUS[IERR]. */
+        uint64_t reserved_16_19        : 4;
+        uint64_t uet                   : 2;  /**< [ 21: 20](SR/W1C/H) See RAS()_ERR00STATUS[UET]. */
+        uint64_t pn                    : 1;  /**< [ 22: 22](SR/W1C/H) See RAS()_ERR00STATUS[PN]. */
+        uint64_t de                    : 1;  /**< [ 23: 23](SR/W1C/H) See RAS()_ERR00STATUS[DE]. */
+        uint64_t ce                    : 2;  /**< [ 25: 24](SR/W1C/H) See RAS()_ERR00STATUS[CE]. */
+        uint64_t mv                    : 1;  /**< [ 26: 26](SR/W1C/H) See RAS()_ERR00STATUS[MV]. */
+        uint64_t of                    : 1;  /**< [ 27: 27](SR/W1C/H) See RAS()_ERR00STATUS[OV]. */
+        uint64_t er                    : 1;  /**< [ 28: 28](SR/W1C/H) See RAS()_ERR00STATUS[ER]. */
+        uint64_t ue                    : 1;  /**< [ 29: 29](SR/W1C/H) See RAS()_ERR00STATUS[UE]. */
+        uint64_t v                     : 1;  /**< [ 30: 30](SR/W1C/H) See RAS()_ERR00STATUS[V]. */
+        uint64_t av                    : 1;  /**< [ 31: 31](SR/W1C/H) See RAS()_ERR00STATUS[AV]. */
+        uint64_t reserved_32_63        : 32;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rasx_err06status_s cn9; */
+    /* struct cavm_rasx_err06status_s cn96xxp1; */
+    struct cavm_rasx_err06status_cn96xxp3
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_32_63        : 32;
@@ -3177,8 +4567,10 @@ union cavm_rasx_err06status
         uint64_t av                    : 1;  /**< [ 31: 31](SR/W1C/H) See RAS()_ERR00STATUS[AV]. */
         uint64_t reserved_32_63        : 32;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_rasx_err06status_s cn; */
+    } cn96xxp3;
+    /* struct cavm_rasx_err06status_cn96xxp3 cn98xx; */
+    /* struct cavm_rasx_err06status_cn96xxp3 cnf95xx; */
+    /* struct cavm_rasx_err06status_cn96xxp3 loki; */
 };
 typedef union cavm_rasx_err06status cavm_rasx_err06status_t;
 
@@ -3187,6 +4579,8 @@ static inline uint64_t CAVM_RASX_ERR06STATUS(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008050190ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008050190ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050190ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -3250,6 +4644,8 @@ static inline uint64_t CAVM_RASX_ERR07ADDR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a0080501d8ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a0080501d8ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a0080501d8ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -3273,6 +4669,60 @@ union cavm_rasx_err07ctlr
 {
     uint64_t u;
     struct cavm_rasx_err07ctlr_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_12_63        : 52;
+        uint64_t wdui                  : 1;  /**< [ 11: 11](SRO) Error recovery interrupt for deferred errors on writes. See [DUI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t dui                   : 1;  /**< [ 10: 10](SR/W) See RAS()_ERR00CTLR[DUI]. */
+        uint64_t wcfi                  : 1;  /**< [  9:  9](SRO) Fault handling interrupt for corrected errors on writes. See [CFI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t cfi                   : 1;  /**< [  8:  8](SR/W) See RAS()_ERR00CTLR[CFI]. */
+        uint64_t wue                   : 1;  /**< [  7:  7](SRO) Error reporting on writes. See [RU].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t wfi                   : 1;  /**< [  6:  6](SRO) Fault handling interrupt on writes. See [FI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t wui                   : 1;  /**< [  5:  5](SRO) Error recovery interrupt on writes. See [UI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t ue                    : 1;  /**< [  4:  4](SR/W) See RAS()_ERR00CTLR[UE]. */
+        uint64_t fi                    : 1;  /**< [  3:  3](SR/W) See RAS()_ERR00CTLR[FI]. */
+        uint64_t ui                    : 1;  /**< [  2:  2](SR/W) See RAS()_ERR00CTLR[UI]. */
+        uint64_t imp_fe                : 1;  /**< [  1:  1](SR/W) See RAS()_ERR00CTLR[IMP_FE]. */
+        uint64_t ed                    : 1;  /**< [  0:  0](SR/W) See RAS()_ERR00CTLR[ED]. */
+#else /* Word 0 - Little Endian */
+        uint64_t ed                    : 1;  /**< [  0:  0](SR/W) See RAS()_ERR00CTLR[ED]. */
+        uint64_t imp_fe                : 1;  /**< [  1:  1](SR/W) See RAS()_ERR00CTLR[IMP_FE]. */
+        uint64_t ui                    : 1;  /**< [  2:  2](SR/W) See RAS()_ERR00CTLR[UI]. */
+        uint64_t fi                    : 1;  /**< [  3:  3](SR/W) See RAS()_ERR00CTLR[FI]. */
+        uint64_t ue                    : 1;  /**< [  4:  4](SR/W) See RAS()_ERR00CTLR[UE]. */
+        uint64_t wui                   : 1;  /**< [  5:  5](SRO) Error recovery interrupt on writes. See [UI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t wfi                   : 1;  /**< [  6:  6](SRO) Fault handling interrupt on writes. See [FI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t wue                   : 1;  /**< [  7:  7](SRO) Error reporting on writes. See [RU].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t cfi                   : 1;  /**< [  8:  8](SR/W) See RAS()_ERR00CTLR[CFI]. */
+        uint64_t wcfi                  : 1;  /**< [  9:  9](SRO) Fault handling interrupt for corrected errors on writes. See [CFI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t dui                   : 1;  /**< [ 10: 10](SR/W) See RAS()_ERR00CTLR[DUI]. */
+        uint64_t wdui                  : 1;  /**< [ 11: 11](SRO) Error recovery interrupt for deferred errors on writes. See [DUI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t reserved_12_63        : 52;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rasx_err07ctlr_s cn9; */
+    /* struct cavm_rasx_err07ctlr_s cn96xxp1; */
+    struct cavm_rasx_err07ctlr_cn96xxp3
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_12_63        : 52;
@@ -3323,8 +4773,10 @@ union cavm_rasx_err07ctlr
                                                                  For CNXXXX does not distinguish between reads and writes, so always 0. */
         uint64_t reserved_12_63        : 52;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_rasx_err07ctlr_s cn; */
+    } cn96xxp3;
+    /* struct cavm_rasx_err07ctlr_cn96xxp3 cn98xx; */
+    /* struct cavm_rasx_err07ctlr_cn96xxp3 cnf95xx; */
+    /* struct cavm_rasx_err07ctlr_cn96xxp3 loki; */
 };
 typedef union cavm_rasx_err07ctlr cavm_rasx_err07ctlr_t;
 
@@ -3333,6 +4785,8 @@ static inline uint64_t CAVM_RASX_ERR07CTLR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a0080501c8ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a0080501c8ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a0080501c8ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -3369,6 +4823,36 @@ union cavm_rasx_err07fr
         uint64_t ue                    : 2;  /**< [  9:  8](SRO) See RAS()_ERR00FR[UE]. */
         uint64_t fi                    : 2;  /**< [  7:  6](SRO) See RAS()_ERR00FR[FI]. */
         uint64_t ui                    : 2;  /**< [  5:  4](SRO) See RAS()_ERR00FR[UI]. */
+        uint64_t imp_fe                : 2;  /**< [  3:  2](SRO) See RAS()_ERR00FR[FE]. */
+        uint64_t ed                    : 2;  /**< [  1:  0](SRO) See RAS()_ERR00FR[ED]. */
+#else /* Word 0 - Little Endian */
+        uint64_t ed                    : 2;  /**< [  1:  0](SRO) See RAS()_ERR00FR[ED]. */
+        uint64_t imp_fe                : 2;  /**< [  3:  2](SRO) See RAS()_ERR00FR[FE]. */
+        uint64_t ui                    : 2;  /**< [  5:  4](SRO) See RAS()_ERR00FR[UI]. */
+        uint64_t fi                    : 2;  /**< [  7:  6](SRO) See RAS()_ERR00FR[FI]. */
+        uint64_t ue                    : 2;  /**< [  9:  8](SRO) See RAS()_ERR00FR[UE]. */
+        uint64_t cfi                   : 2;  /**< [ 11: 10](SRO) See RAS()_ERR00FR[CFI]. */
+        uint64_t cec                   : 3;  /**< [ 14: 12](SRO) See RAS()_ERR00FR[CEC]. */
+        uint64_t rp                    : 1;  /**< [ 15: 15](SRO) See RAS()_ERR00FR[RP]. */
+        uint64_t dui                   : 2;  /**< [ 17: 16](SRO) See RAS()_ERR00FR[DUI]. */
+        uint64_t ceo                   : 2;  /**< [ 19: 18](SRO) See RAS()_ERR00FR[CEO]. */
+        uint64_t reserved_20_63        : 44;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rasx_err07fr_s cn9; */
+    /* struct cavm_rasx_err07fr_s cn96xxp1; */
+    struct cavm_rasx_err07fr_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_20_63        : 44;
+        uint64_t ceo                   : 2;  /**< [ 19: 18](SRO) See RAS()_ERR00FR[CEO]. */
+        uint64_t dui                   : 2;  /**< [ 17: 16](SRO) See RAS()_ERR00FR[DUI]. */
+        uint64_t rp                    : 1;  /**< [ 15: 15](SRO) See RAS()_ERR00FR[RP]. */
+        uint64_t cec                   : 3;  /**< [ 14: 12](SRO) See RAS()_ERR00FR[CEC]. */
+        uint64_t cfi                   : 2;  /**< [ 11: 10](SRO) See RAS()_ERR00FR[CFI]. */
+        uint64_t ue                    : 2;  /**< [  9:  8](SRO) See RAS()_ERR00FR[UE]. */
+        uint64_t fi                    : 2;  /**< [  7:  6](SRO) See RAS()_ERR00FR[FI]. */
+        uint64_t ui                    : 2;  /**< [  5:  4](SRO) See RAS()_ERR00FR[UI]. */
         uint64_t imp_fe                : 2;  /**< [  3:  2](SRO) See RAS()_ERR00FR[IMP_FE]. */
         uint64_t ed                    : 2;  /**< [  1:  0](SRO) See RAS()_ERR00FR[ED]. */
 #else /* Word 0 - Little Endian */
@@ -3384,8 +4868,10 @@ union cavm_rasx_err07fr
         uint64_t ceo                   : 2;  /**< [ 19: 18](SRO) See RAS()_ERR00FR[CEO]. */
         uint64_t reserved_20_63        : 44;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_rasx_err07fr_s cn; */
+    } cn96xxp3;
+    /* struct cavm_rasx_err07fr_cn96xxp3 cn98xx; */
+    /* struct cavm_rasx_err07fr_cn96xxp3 cnf95xx; */
+    /* struct cavm_rasx_err07fr_cn96xxp3 loki; */
 };
 typedef union cavm_rasx_err07fr cavm_rasx_err07fr_t;
 
@@ -3394,6 +4880,8 @@ static inline uint64_t CAVM_RASX_ERR07FR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a0080501c0ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a0080501c0ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a0080501c0ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -3441,6 +4929,8 @@ static inline uint64_t CAVM_RASX_ERR07MISC0(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a0080501e0ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a0080501e0ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a0080501e0ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -3480,6 +4970,8 @@ static inline uint64_t CAVM_RASX_ERR07MISC1(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a0080501e8ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a0080501e8ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a0080501e8ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -3503,6 +4995,42 @@ union cavm_rasx_err07status
 {
     uint64_t u;
     struct cavm_rasx_err07status_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_32_63        : 32;
+        uint64_t av                    : 1;  /**< [ 31: 31](SR/W1C/H) See RAS()_ERR00STATUS[AV]. */
+        uint64_t v                     : 1;  /**< [ 30: 30](SR/W1C/H) See RAS()_ERR00STATUS[V]. */
+        uint64_t ue                    : 1;  /**< [ 29: 29](SR/W1C/H) See RAS()_ERR00STATUS[UE]. */
+        uint64_t er                    : 1;  /**< [ 28: 28](SR/W1C/H) See RAS()_ERR00STATUS[ER]. */
+        uint64_t of                    : 1;  /**< [ 27: 27](SR/W1C/H) See RAS()_ERR00STATUS[OV]. */
+        uint64_t mv                    : 1;  /**< [ 26: 26](SR/W1C/H) See RAS()_ERR00STATUS[MV]. */
+        uint64_t ce                    : 2;  /**< [ 25: 24](SR/W1C/H) See RAS()_ERR00STATUS[CE]. */
+        uint64_t de                    : 1;  /**< [ 23: 23](SR/W1C/H) See RAS()_ERR00STATUS[DE]. */
+        uint64_t pn                    : 1;  /**< [ 22: 22](SR/W1C/H) See RAS()_ERR00STATUS[PN]. */
+        uint64_t uet                   : 2;  /**< [ 21: 20](SR/W1C/H) See RAS()_ERR00STATUS[UET]. */
+        uint64_t reserved_16_19        : 4;
+        uint64_t ierr                  : 8;  /**< [ 15:  8](SR/W) See RAS()_ERR00STATUS[IERR]. */
+        uint64_t serr                  : 8;  /**< [  7:  0](SR/W) See RAS()_ERR00STATUS[SERR]. */
+#else /* Word 0 - Little Endian */
+        uint64_t serr                  : 8;  /**< [  7:  0](SR/W) See RAS()_ERR00STATUS[SERR]. */
+        uint64_t ierr                  : 8;  /**< [ 15:  8](SR/W) See RAS()_ERR00STATUS[IERR]. */
+        uint64_t reserved_16_19        : 4;
+        uint64_t uet                   : 2;  /**< [ 21: 20](SR/W1C/H) See RAS()_ERR00STATUS[UET]. */
+        uint64_t pn                    : 1;  /**< [ 22: 22](SR/W1C/H) See RAS()_ERR00STATUS[PN]. */
+        uint64_t de                    : 1;  /**< [ 23: 23](SR/W1C/H) See RAS()_ERR00STATUS[DE]. */
+        uint64_t ce                    : 2;  /**< [ 25: 24](SR/W1C/H) See RAS()_ERR00STATUS[CE]. */
+        uint64_t mv                    : 1;  /**< [ 26: 26](SR/W1C/H) See RAS()_ERR00STATUS[MV]. */
+        uint64_t of                    : 1;  /**< [ 27: 27](SR/W1C/H) See RAS()_ERR00STATUS[OV]. */
+        uint64_t er                    : 1;  /**< [ 28: 28](SR/W1C/H) See RAS()_ERR00STATUS[ER]. */
+        uint64_t ue                    : 1;  /**< [ 29: 29](SR/W1C/H) See RAS()_ERR00STATUS[UE]. */
+        uint64_t v                     : 1;  /**< [ 30: 30](SR/W1C/H) See RAS()_ERR00STATUS[V]. */
+        uint64_t av                    : 1;  /**< [ 31: 31](SR/W1C/H) See RAS()_ERR00STATUS[AV]. */
+        uint64_t reserved_32_63        : 32;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rasx_err07status_s cn9; */
+    /* struct cavm_rasx_err07status_s cn96xxp1; */
+    struct cavm_rasx_err07status_cn96xxp3
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_32_63        : 32;
@@ -3535,8 +5063,10 @@ union cavm_rasx_err07status
         uint64_t av                    : 1;  /**< [ 31: 31](SR/W1C/H) See RAS()_ERR00STATUS[AV]. */
         uint64_t reserved_32_63        : 32;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_rasx_err07status_s cn; */
+    } cn96xxp3;
+    /* struct cavm_rasx_err07status_cn96xxp3 cn98xx; */
+    /* struct cavm_rasx_err07status_cn96xxp3 cnf95xx; */
+    /* struct cavm_rasx_err07status_cn96xxp3 loki; */
 };
 typedef union cavm_rasx_err07status cavm_rasx_err07status_t;
 
@@ -3545,6 +5075,8 @@ static inline uint64_t CAVM_RASX_ERR07STATUS(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a0080501d0ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a0080501d0ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a0080501d0ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -3608,6 +5140,8 @@ static inline uint64_t CAVM_RASX_ERR08ADDR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008050218ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008050218ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050218ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -3631,6 +5165,60 @@ union cavm_rasx_err08ctlr
 {
     uint64_t u;
     struct cavm_rasx_err08ctlr_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_12_63        : 52;
+        uint64_t wdui                  : 1;  /**< [ 11: 11](SRO) Error recovery interrupt for deferred errors on writes. See [DUI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t dui                   : 1;  /**< [ 10: 10](SR/W) See RAS()_ERR00CTLR[DUI]. */
+        uint64_t wcfi                  : 1;  /**< [  9:  9](SRO) Fault handling interrupt for corrected errors on writes. See [CFI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t cfi                   : 1;  /**< [  8:  8](SR/W) See RAS()_ERR00CTLR[CFI]. */
+        uint64_t wue                   : 1;  /**< [  7:  7](SRO) Error reporting on writes. See [RU].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t wfi                   : 1;  /**< [  6:  6](SRO) Fault handling interrupt on writes. See [FI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t wui                   : 1;  /**< [  5:  5](SRO) Error recovery interrupt on writes. See [UI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t ue                    : 1;  /**< [  4:  4](SR/W) See RAS()_ERR00CTLR[UE]. */
+        uint64_t fi                    : 1;  /**< [  3:  3](SR/W) See RAS()_ERR00CTLR[FI]. */
+        uint64_t ui                    : 1;  /**< [  2:  2](SR/W) See RAS()_ERR00CTLR[UI]. */
+        uint64_t imp_fe                : 1;  /**< [  1:  1](SR/W) See RAS()_ERR00CTLR[IMP_FE]. */
+        uint64_t ed                    : 1;  /**< [  0:  0](SR/W) See RAS()_ERR00CTLR[ED]. */
+#else /* Word 0 - Little Endian */
+        uint64_t ed                    : 1;  /**< [  0:  0](SR/W) See RAS()_ERR00CTLR[ED]. */
+        uint64_t imp_fe                : 1;  /**< [  1:  1](SR/W) See RAS()_ERR00CTLR[IMP_FE]. */
+        uint64_t ui                    : 1;  /**< [  2:  2](SR/W) See RAS()_ERR00CTLR[UI]. */
+        uint64_t fi                    : 1;  /**< [  3:  3](SR/W) See RAS()_ERR00CTLR[FI]. */
+        uint64_t ue                    : 1;  /**< [  4:  4](SR/W) See RAS()_ERR00CTLR[UE]. */
+        uint64_t wui                   : 1;  /**< [  5:  5](SRO) Error recovery interrupt on writes. See [UI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t wfi                   : 1;  /**< [  6:  6](SRO) Fault handling interrupt on writes. See [FI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t wue                   : 1;  /**< [  7:  7](SRO) Error reporting on writes. See [RU].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t cfi                   : 1;  /**< [  8:  8](SR/W) See RAS()_ERR00CTLR[CFI]. */
+        uint64_t wcfi                  : 1;  /**< [  9:  9](SRO) Fault handling interrupt for corrected errors on writes. See [CFI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t dui                   : 1;  /**< [ 10: 10](SR/W) See RAS()_ERR00CTLR[DUI]. */
+        uint64_t wdui                  : 1;  /**< [ 11: 11](SRO) Error recovery interrupt for deferred errors on writes. See [DUI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t reserved_12_63        : 52;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rasx_err08ctlr_s cn9; */
+    /* struct cavm_rasx_err08ctlr_s cn96xxp1; */
+    struct cavm_rasx_err08ctlr_cn96xxp3
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_12_63        : 52;
@@ -3681,8 +5269,10 @@ union cavm_rasx_err08ctlr
                                                                  For CNXXXX does not distinguish between reads and writes, so always 0. */
         uint64_t reserved_12_63        : 52;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_rasx_err08ctlr_s cn; */
+    } cn96xxp3;
+    /* struct cavm_rasx_err08ctlr_cn96xxp3 cn98xx; */
+    /* struct cavm_rasx_err08ctlr_cn96xxp3 cnf95xx; */
+    /* struct cavm_rasx_err08ctlr_cn96xxp3 loki; */
 };
 typedef union cavm_rasx_err08ctlr cavm_rasx_err08ctlr_t;
 
@@ -3691,6 +5281,8 @@ static inline uint64_t CAVM_RASX_ERR08CTLR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008050208ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008050208ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050208ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -3727,6 +5319,36 @@ union cavm_rasx_err08fr
         uint64_t ue                    : 2;  /**< [  9:  8](SRO) See RAS()_ERR00FR[UE]. */
         uint64_t fi                    : 2;  /**< [  7:  6](SRO) See RAS()_ERR00FR[FI]. */
         uint64_t ui                    : 2;  /**< [  5:  4](SRO) See RAS()_ERR00FR[UI]. */
+        uint64_t imp_fe                : 2;  /**< [  3:  2](SRO) See RAS()_ERR00FR[FE]. */
+        uint64_t ed                    : 2;  /**< [  1:  0](SRO) See RAS()_ERR00FR[ED]. */
+#else /* Word 0 - Little Endian */
+        uint64_t ed                    : 2;  /**< [  1:  0](SRO) See RAS()_ERR00FR[ED]. */
+        uint64_t imp_fe                : 2;  /**< [  3:  2](SRO) See RAS()_ERR00FR[FE]. */
+        uint64_t ui                    : 2;  /**< [  5:  4](SRO) See RAS()_ERR00FR[UI]. */
+        uint64_t fi                    : 2;  /**< [  7:  6](SRO) See RAS()_ERR00FR[FI]. */
+        uint64_t ue                    : 2;  /**< [  9:  8](SRO) See RAS()_ERR00FR[UE]. */
+        uint64_t cfi                   : 2;  /**< [ 11: 10](SRO) See RAS()_ERR00FR[CFI]. */
+        uint64_t cec                   : 3;  /**< [ 14: 12](SRO) See RAS()_ERR00FR[CEC]. */
+        uint64_t rp                    : 1;  /**< [ 15: 15](SRO) See RAS()_ERR00FR[RP]. */
+        uint64_t dui                   : 2;  /**< [ 17: 16](SRO) See RAS()_ERR00FR[DUI]. */
+        uint64_t ceo                   : 2;  /**< [ 19: 18](SRO) See RAS()_ERR00FR[CEO]. */
+        uint64_t reserved_20_63        : 44;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rasx_err08fr_s cn9; */
+    /* struct cavm_rasx_err08fr_s cn96xxp1; */
+    struct cavm_rasx_err08fr_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_20_63        : 44;
+        uint64_t ceo                   : 2;  /**< [ 19: 18](SRO) See RAS()_ERR00FR[CEO]. */
+        uint64_t dui                   : 2;  /**< [ 17: 16](SRO) See RAS()_ERR00FR[DUI]. */
+        uint64_t rp                    : 1;  /**< [ 15: 15](SRO) See RAS()_ERR00FR[RP]. */
+        uint64_t cec                   : 3;  /**< [ 14: 12](SRO) See RAS()_ERR00FR[CEC]. */
+        uint64_t cfi                   : 2;  /**< [ 11: 10](SRO) See RAS()_ERR00FR[CFI]. */
+        uint64_t ue                    : 2;  /**< [  9:  8](SRO) See RAS()_ERR00FR[UE]. */
+        uint64_t fi                    : 2;  /**< [  7:  6](SRO) See RAS()_ERR00FR[FI]. */
+        uint64_t ui                    : 2;  /**< [  5:  4](SRO) See RAS()_ERR00FR[UI]. */
         uint64_t imp_fe                : 2;  /**< [  3:  2](SRO) See RAS()_ERR00FR[IMP_FE]. */
         uint64_t ed                    : 2;  /**< [  1:  0](SRO) See RAS()_ERR00FR[ED]. */
 #else /* Word 0 - Little Endian */
@@ -3742,8 +5364,10 @@ union cavm_rasx_err08fr
         uint64_t ceo                   : 2;  /**< [ 19: 18](SRO) See RAS()_ERR00FR[CEO]. */
         uint64_t reserved_20_63        : 44;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_rasx_err08fr_s cn; */
+    } cn96xxp3;
+    /* struct cavm_rasx_err08fr_cn96xxp3 cn98xx; */
+    /* struct cavm_rasx_err08fr_cn96xxp3 cnf95xx; */
+    /* struct cavm_rasx_err08fr_cn96xxp3 loki; */
 };
 typedef union cavm_rasx_err08fr cavm_rasx_err08fr_t;
 
@@ -3752,6 +5376,8 @@ static inline uint64_t CAVM_RASX_ERR08FR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008050200ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008050200ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050200ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -3799,6 +5425,8 @@ static inline uint64_t CAVM_RASX_ERR08MISC0(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008050220ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008050220ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050220ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -3838,6 +5466,8 @@ static inline uint64_t CAVM_RASX_ERR08MISC1(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008050228ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008050228ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050228ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -3861,6 +5491,42 @@ union cavm_rasx_err08status
 {
     uint64_t u;
     struct cavm_rasx_err08status_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_32_63        : 32;
+        uint64_t av                    : 1;  /**< [ 31: 31](SR/W1C/H) See RAS()_ERR00STATUS[AV]. */
+        uint64_t v                     : 1;  /**< [ 30: 30](SR/W1C/H) See RAS()_ERR00STATUS[V]. */
+        uint64_t ue                    : 1;  /**< [ 29: 29](SR/W1C/H) See RAS()_ERR00STATUS[UE]. */
+        uint64_t er                    : 1;  /**< [ 28: 28](SR/W1C/H) See RAS()_ERR00STATUS[ER]. */
+        uint64_t of                    : 1;  /**< [ 27: 27](SR/W1C/H) See RAS()_ERR00STATUS[OV]. */
+        uint64_t mv                    : 1;  /**< [ 26: 26](SR/W1C/H) See RAS()_ERR00STATUS[MV]. */
+        uint64_t ce                    : 2;  /**< [ 25: 24](SR/W1C/H) See RAS()_ERR00STATUS[CE]. */
+        uint64_t de                    : 1;  /**< [ 23: 23](SR/W1C/H) See RAS()_ERR00STATUS[DE]. */
+        uint64_t pn                    : 1;  /**< [ 22: 22](SR/W1C/H) See RAS()_ERR00STATUS[PN]. */
+        uint64_t uet                   : 2;  /**< [ 21: 20](SR/W1C/H) See RAS()_ERR00STATUS[UET]. */
+        uint64_t reserved_16_19        : 4;
+        uint64_t ierr                  : 8;  /**< [ 15:  8](SR/W) See RAS()_ERR00STATUS[IERR]. */
+        uint64_t serr                  : 8;  /**< [  7:  0](SR/W) See RAS()_ERR00STATUS[SERR]. */
+#else /* Word 0 - Little Endian */
+        uint64_t serr                  : 8;  /**< [  7:  0](SR/W) See RAS()_ERR00STATUS[SERR]. */
+        uint64_t ierr                  : 8;  /**< [ 15:  8](SR/W) See RAS()_ERR00STATUS[IERR]. */
+        uint64_t reserved_16_19        : 4;
+        uint64_t uet                   : 2;  /**< [ 21: 20](SR/W1C/H) See RAS()_ERR00STATUS[UET]. */
+        uint64_t pn                    : 1;  /**< [ 22: 22](SR/W1C/H) See RAS()_ERR00STATUS[PN]. */
+        uint64_t de                    : 1;  /**< [ 23: 23](SR/W1C/H) See RAS()_ERR00STATUS[DE]. */
+        uint64_t ce                    : 2;  /**< [ 25: 24](SR/W1C/H) See RAS()_ERR00STATUS[CE]. */
+        uint64_t mv                    : 1;  /**< [ 26: 26](SR/W1C/H) See RAS()_ERR00STATUS[MV]. */
+        uint64_t of                    : 1;  /**< [ 27: 27](SR/W1C/H) See RAS()_ERR00STATUS[OV]. */
+        uint64_t er                    : 1;  /**< [ 28: 28](SR/W1C/H) See RAS()_ERR00STATUS[ER]. */
+        uint64_t ue                    : 1;  /**< [ 29: 29](SR/W1C/H) See RAS()_ERR00STATUS[UE]. */
+        uint64_t v                     : 1;  /**< [ 30: 30](SR/W1C/H) See RAS()_ERR00STATUS[V]. */
+        uint64_t av                    : 1;  /**< [ 31: 31](SR/W1C/H) See RAS()_ERR00STATUS[AV]. */
+        uint64_t reserved_32_63        : 32;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rasx_err08status_s cn9; */
+    /* struct cavm_rasx_err08status_s cn96xxp1; */
+    struct cavm_rasx_err08status_cn96xxp3
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_32_63        : 32;
@@ -3893,8 +5559,10 @@ union cavm_rasx_err08status
         uint64_t av                    : 1;  /**< [ 31: 31](SR/W1C/H) See RAS()_ERR00STATUS[AV]. */
         uint64_t reserved_32_63        : 32;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_rasx_err08status_s cn; */
+    } cn96xxp3;
+    /* struct cavm_rasx_err08status_cn96xxp3 cn98xx; */
+    /* struct cavm_rasx_err08status_cn96xxp3 cnf95xx; */
+    /* struct cavm_rasx_err08status_cn96xxp3 loki; */
 };
 typedef union cavm_rasx_err08status cavm_rasx_err08status_t;
 
@@ -3903,6 +5571,8 @@ static inline uint64_t CAVM_RASX_ERR08STATUS(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008050210ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008050210ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050210ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -3966,6 +5636,8 @@ static inline uint64_t CAVM_RASX_ERR09ADDR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008050258ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008050258ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050258ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -3989,6 +5661,60 @@ union cavm_rasx_err09ctlr
 {
     uint64_t u;
     struct cavm_rasx_err09ctlr_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_12_63        : 52;
+        uint64_t wdui                  : 1;  /**< [ 11: 11](SRO) Error recovery interrupt for deferred errors on writes. See [DUI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t dui                   : 1;  /**< [ 10: 10](SR/W) See RAS()_ERR00CTLR[DUI]. */
+        uint64_t wcfi                  : 1;  /**< [  9:  9](SRO) Fault handling interrupt for corrected errors on writes. See [CFI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t cfi                   : 1;  /**< [  8:  8](SR/W) See RAS()_ERR00CTLR[CFI]. */
+        uint64_t wue                   : 1;  /**< [  7:  7](SRO) Error reporting on writes. See [RU].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t wfi                   : 1;  /**< [  6:  6](SRO) Fault handling interrupt on writes. See [FI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t wui                   : 1;  /**< [  5:  5](SRO) Error recovery interrupt on writes. See [UI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t ue                    : 1;  /**< [  4:  4](SR/W) See RAS()_ERR00CTLR[UE]. */
+        uint64_t fi                    : 1;  /**< [  3:  3](SR/W) See RAS()_ERR00CTLR[FI]. */
+        uint64_t ui                    : 1;  /**< [  2:  2](SR/W) See RAS()_ERR00CTLR[UI]. */
+        uint64_t imp_fe                : 1;  /**< [  1:  1](SR/W) See RAS()_ERR00CTLR[IMP_FE]. */
+        uint64_t ed                    : 1;  /**< [  0:  0](SR/W) See RAS()_ERR00CTLR[ED]. */
+#else /* Word 0 - Little Endian */
+        uint64_t ed                    : 1;  /**< [  0:  0](SR/W) See RAS()_ERR00CTLR[ED]. */
+        uint64_t imp_fe                : 1;  /**< [  1:  1](SR/W) See RAS()_ERR00CTLR[IMP_FE]. */
+        uint64_t ui                    : 1;  /**< [  2:  2](SR/W) See RAS()_ERR00CTLR[UI]. */
+        uint64_t fi                    : 1;  /**< [  3:  3](SR/W) See RAS()_ERR00CTLR[FI]. */
+        uint64_t ue                    : 1;  /**< [  4:  4](SR/W) See RAS()_ERR00CTLR[UE]. */
+        uint64_t wui                   : 1;  /**< [  5:  5](SRO) Error recovery interrupt on writes. See [UI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t wfi                   : 1;  /**< [  6:  6](SRO) Fault handling interrupt on writes. See [FI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t wue                   : 1;  /**< [  7:  7](SRO) Error reporting on writes. See [RU].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t cfi                   : 1;  /**< [  8:  8](SR/W) See RAS()_ERR00CTLR[CFI]. */
+        uint64_t wcfi                  : 1;  /**< [  9:  9](SRO) Fault handling interrupt for corrected errors on writes. See [CFI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t dui                   : 1;  /**< [ 10: 10](SR/W) See RAS()_ERR00CTLR[DUI]. */
+        uint64_t wdui                  : 1;  /**< [ 11: 11](SRO) Error recovery interrupt for deferred errors on writes. See [DUI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t reserved_12_63        : 52;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rasx_err09ctlr_s cn9; */
+    /* struct cavm_rasx_err09ctlr_s cn96xxp1; */
+    struct cavm_rasx_err09ctlr_cn96xxp3
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_12_63        : 52;
@@ -4039,8 +5765,10 @@ union cavm_rasx_err09ctlr
                                                                  For CNXXXX does not distinguish between reads and writes, so always 0. */
         uint64_t reserved_12_63        : 52;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_rasx_err09ctlr_s cn; */
+    } cn96xxp3;
+    /* struct cavm_rasx_err09ctlr_cn96xxp3 cn98xx; */
+    /* struct cavm_rasx_err09ctlr_cn96xxp3 cnf95xx; */
+    /* struct cavm_rasx_err09ctlr_cn96xxp3 loki; */
 };
 typedef union cavm_rasx_err09ctlr cavm_rasx_err09ctlr_t;
 
@@ -4049,6 +5777,8 @@ static inline uint64_t CAVM_RASX_ERR09CTLR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008050248ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008050248ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050248ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -4085,6 +5815,36 @@ union cavm_rasx_err09fr
         uint64_t ue                    : 2;  /**< [  9:  8](SRO) See RAS()_ERR00FR[UE]. */
         uint64_t fi                    : 2;  /**< [  7:  6](SRO) See RAS()_ERR00FR[FI]. */
         uint64_t ui                    : 2;  /**< [  5:  4](SRO) See RAS()_ERR00FR[UI]. */
+        uint64_t imp_fe                : 2;  /**< [  3:  2](SRO) See RAS()_ERR00FR[FE]. */
+        uint64_t ed                    : 2;  /**< [  1:  0](SRO) See RAS()_ERR00FR[ED]. */
+#else /* Word 0 - Little Endian */
+        uint64_t ed                    : 2;  /**< [  1:  0](SRO) See RAS()_ERR00FR[ED]. */
+        uint64_t imp_fe                : 2;  /**< [  3:  2](SRO) See RAS()_ERR00FR[FE]. */
+        uint64_t ui                    : 2;  /**< [  5:  4](SRO) See RAS()_ERR00FR[UI]. */
+        uint64_t fi                    : 2;  /**< [  7:  6](SRO) See RAS()_ERR00FR[FI]. */
+        uint64_t ue                    : 2;  /**< [  9:  8](SRO) See RAS()_ERR00FR[UE]. */
+        uint64_t cfi                   : 2;  /**< [ 11: 10](SRO) See RAS()_ERR00FR[CFI]. */
+        uint64_t cec                   : 3;  /**< [ 14: 12](SRO) See RAS()_ERR00FR[CEC]. */
+        uint64_t rp                    : 1;  /**< [ 15: 15](SRO) See RAS()_ERR00FR[RP]. */
+        uint64_t dui                   : 2;  /**< [ 17: 16](SRO) See RAS()_ERR00FR[DUI]. */
+        uint64_t ceo                   : 2;  /**< [ 19: 18](SRO) See RAS()_ERR00FR[CEO]. */
+        uint64_t reserved_20_63        : 44;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rasx_err09fr_s cn9; */
+    /* struct cavm_rasx_err09fr_s cn96xxp1; */
+    struct cavm_rasx_err09fr_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_20_63        : 44;
+        uint64_t ceo                   : 2;  /**< [ 19: 18](SRO) See RAS()_ERR00FR[CEO]. */
+        uint64_t dui                   : 2;  /**< [ 17: 16](SRO) See RAS()_ERR00FR[DUI]. */
+        uint64_t rp                    : 1;  /**< [ 15: 15](SRO) See RAS()_ERR00FR[RP]. */
+        uint64_t cec                   : 3;  /**< [ 14: 12](SRO) See RAS()_ERR00FR[CEC]. */
+        uint64_t cfi                   : 2;  /**< [ 11: 10](SRO) See RAS()_ERR00FR[CFI]. */
+        uint64_t ue                    : 2;  /**< [  9:  8](SRO) See RAS()_ERR00FR[UE]. */
+        uint64_t fi                    : 2;  /**< [  7:  6](SRO) See RAS()_ERR00FR[FI]. */
+        uint64_t ui                    : 2;  /**< [  5:  4](SRO) See RAS()_ERR00FR[UI]. */
         uint64_t imp_fe                : 2;  /**< [  3:  2](SRO) See RAS()_ERR00FR[IMP_FE]. */
         uint64_t ed                    : 2;  /**< [  1:  0](SRO) See RAS()_ERR00FR[ED]. */
 #else /* Word 0 - Little Endian */
@@ -4100,8 +5860,10 @@ union cavm_rasx_err09fr
         uint64_t ceo                   : 2;  /**< [ 19: 18](SRO) See RAS()_ERR00FR[CEO]. */
         uint64_t reserved_20_63        : 44;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_rasx_err09fr_s cn; */
+    } cn96xxp3;
+    /* struct cavm_rasx_err09fr_cn96xxp3 cn98xx; */
+    /* struct cavm_rasx_err09fr_cn96xxp3 cnf95xx; */
+    /* struct cavm_rasx_err09fr_cn96xxp3 loki; */
 };
 typedef union cavm_rasx_err09fr cavm_rasx_err09fr_t;
 
@@ -4110,6 +5872,8 @@ static inline uint64_t CAVM_RASX_ERR09FR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008050240ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008050240ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050240ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -4157,6 +5921,8 @@ static inline uint64_t CAVM_RASX_ERR09MISC0(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008050260ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008050260ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050260ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -4196,6 +5962,8 @@ static inline uint64_t CAVM_RASX_ERR09MISC1(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008050268ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008050268ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050268ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -4219,6 +5987,42 @@ union cavm_rasx_err09status
 {
     uint64_t u;
     struct cavm_rasx_err09status_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_32_63        : 32;
+        uint64_t av                    : 1;  /**< [ 31: 31](SR/W1C/H) See RAS()_ERR00STATUS[AV]. */
+        uint64_t v                     : 1;  /**< [ 30: 30](SR/W1C/H) See RAS()_ERR00STATUS[V]. */
+        uint64_t ue                    : 1;  /**< [ 29: 29](SR/W1C/H) See RAS()_ERR00STATUS[UE]. */
+        uint64_t er                    : 1;  /**< [ 28: 28](SR/W1C/H) See RAS()_ERR00STATUS[ER]. */
+        uint64_t of                    : 1;  /**< [ 27: 27](SR/W1C/H) See RAS()_ERR00STATUS[OV]. */
+        uint64_t mv                    : 1;  /**< [ 26: 26](SR/W1C/H) See RAS()_ERR00STATUS[MV]. */
+        uint64_t ce                    : 2;  /**< [ 25: 24](SR/W1C/H) See RAS()_ERR00STATUS[CE]. */
+        uint64_t de                    : 1;  /**< [ 23: 23](SR/W1C/H) See RAS()_ERR00STATUS[DE]. */
+        uint64_t pn                    : 1;  /**< [ 22: 22](SR/W1C/H) See RAS()_ERR00STATUS[PN]. */
+        uint64_t uet                   : 2;  /**< [ 21: 20](SR/W1C/H) See RAS()_ERR00STATUS[UET]. */
+        uint64_t reserved_16_19        : 4;
+        uint64_t ierr                  : 8;  /**< [ 15:  8](SR/W) See RAS()_ERR00STATUS[IERR]. */
+        uint64_t serr                  : 8;  /**< [  7:  0](SR/W) See RAS()_ERR00STATUS[SERR]. */
+#else /* Word 0 - Little Endian */
+        uint64_t serr                  : 8;  /**< [  7:  0](SR/W) See RAS()_ERR00STATUS[SERR]. */
+        uint64_t ierr                  : 8;  /**< [ 15:  8](SR/W) See RAS()_ERR00STATUS[IERR]. */
+        uint64_t reserved_16_19        : 4;
+        uint64_t uet                   : 2;  /**< [ 21: 20](SR/W1C/H) See RAS()_ERR00STATUS[UET]. */
+        uint64_t pn                    : 1;  /**< [ 22: 22](SR/W1C/H) See RAS()_ERR00STATUS[PN]. */
+        uint64_t de                    : 1;  /**< [ 23: 23](SR/W1C/H) See RAS()_ERR00STATUS[DE]. */
+        uint64_t ce                    : 2;  /**< [ 25: 24](SR/W1C/H) See RAS()_ERR00STATUS[CE]. */
+        uint64_t mv                    : 1;  /**< [ 26: 26](SR/W1C/H) See RAS()_ERR00STATUS[MV]. */
+        uint64_t of                    : 1;  /**< [ 27: 27](SR/W1C/H) See RAS()_ERR00STATUS[OV]. */
+        uint64_t er                    : 1;  /**< [ 28: 28](SR/W1C/H) See RAS()_ERR00STATUS[ER]. */
+        uint64_t ue                    : 1;  /**< [ 29: 29](SR/W1C/H) See RAS()_ERR00STATUS[UE]. */
+        uint64_t v                     : 1;  /**< [ 30: 30](SR/W1C/H) See RAS()_ERR00STATUS[V]. */
+        uint64_t av                    : 1;  /**< [ 31: 31](SR/W1C/H) See RAS()_ERR00STATUS[AV]. */
+        uint64_t reserved_32_63        : 32;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rasx_err09status_s cn9; */
+    /* struct cavm_rasx_err09status_s cn96xxp1; */
+    struct cavm_rasx_err09status_cn96xxp3
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_32_63        : 32;
@@ -4251,8 +6055,10 @@ union cavm_rasx_err09status
         uint64_t av                    : 1;  /**< [ 31: 31](SR/W1C/H) See RAS()_ERR00STATUS[AV]. */
         uint64_t reserved_32_63        : 32;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_rasx_err09status_s cn; */
+    } cn96xxp3;
+    /* struct cavm_rasx_err09status_cn96xxp3 cn98xx; */
+    /* struct cavm_rasx_err09status_cn96xxp3 cnf95xx; */
+    /* struct cavm_rasx_err09status_cn96xxp3 loki; */
 };
 typedef union cavm_rasx_err09status cavm_rasx_err09status_t;
 
@@ -4261,6 +6067,8 @@ static inline uint64_t CAVM_RASX_ERR09STATUS(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008050250ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008050250ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050250ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -4324,6 +6132,8 @@ static inline uint64_t CAVM_RASX_ERR10ADDR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008050298ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008050298ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050298ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -4347,6 +6157,60 @@ union cavm_rasx_err10ctlr
 {
     uint64_t u;
     struct cavm_rasx_err10ctlr_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_12_63        : 52;
+        uint64_t wdui                  : 1;  /**< [ 11: 11](SRO) Error recovery interrupt for deferred errors on writes. See [DUI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t dui                   : 1;  /**< [ 10: 10](SR/W) See RAS()_ERR00CTLR[DUI]. */
+        uint64_t wcfi                  : 1;  /**< [  9:  9](SRO) Fault handling interrupt for corrected errors on writes. See [CFI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t cfi                   : 1;  /**< [  8:  8](SR/W) See RAS()_ERR00CTLR[CFI]. */
+        uint64_t wue                   : 1;  /**< [  7:  7](SRO) Error reporting on writes. See [RU].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t wfi                   : 1;  /**< [  6:  6](SRO) Fault handling interrupt on writes. See [FI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t wui                   : 1;  /**< [  5:  5](SRO) Error recovery interrupt on writes. See [UI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t ue                    : 1;  /**< [  4:  4](SR/W) See RAS()_ERR00CTLR[UE]. */
+        uint64_t fi                    : 1;  /**< [  3:  3](SR/W) See RAS()_ERR00CTLR[FI]. */
+        uint64_t ui                    : 1;  /**< [  2:  2](SR/W) See RAS()_ERR00CTLR[UI]. */
+        uint64_t imp_fe                : 1;  /**< [  1:  1](SR/W) See RAS()_ERR00CTLR[IMP_FE]. */
+        uint64_t ed                    : 1;  /**< [  0:  0](SR/W) See RAS()_ERR00CTLR[ED]. */
+#else /* Word 0 - Little Endian */
+        uint64_t ed                    : 1;  /**< [  0:  0](SR/W) See RAS()_ERR00CTLR[ED]. */
+        uint64_t imp_fe                : 1;  /**< [  1:  1](SR/W) See RAS()_ERR00CTLR[IMP_FE]. */
+        uint64_t ui                    : 1;  /**< [  2:  2](SR/W) See RAS()_ERR00CTLR[UI]. */
+        uint64_t fi                    : 1;  /**< [  3:  3](SR/W) See RAS()_ERR00CTLR[FI]. */
+        uint64_t ue                    : 1;  /**< [  4:  4](SR/W) See RAS()_ERR00CTLR[UE]. */
+        uint64_t wui                   : 1;  /**< [  5:  5](SRO) Error recovery interrupt on writes. See [UI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t wfi                   : 1;  /**< [  6:  6](SRO) Fault handling interrupt on writes. See [FI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t wue                   : 1;  /**< [  7:  7](SRO) Error reporting on writes. See [RU].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t cfi                   : 1;  /**< [  8:  8](SR/W) See RAS()_ERR00CTLR[CFI]. */
+        uint64_t wcfi                  : 1;  /**< [  9:  9](SRO) Fault handling interrupt for corrected errors on writes. See [CFI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t dui                   : 1;  /**< [ 10: 10](SR/W) See RAS()_ERR00CTLR[DUI]. */
+        uint64_t wdui                  : 1;  /**< [ 11: 11](SRO) Error recovery interrupt for deferred errors on writes. See [DUI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t reserved_12_63        : 52;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rasx_err10ctlr_s cn9; */
+    /* struct cavm_rasx_err10ctlr_s cn96xxp1; */
+    struct cavm_rasx_err10ctlr_cn96xxp3
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_12_63        : 52;
@@ -4397,8 +6261,10 @@ union cavm_rasx_err10ctlr
                                                                  For CNXXXX does not distinguish between reads and writes, so always 0. */
         uint64_t reserved_12_63        : 52;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_rasx_err10ctlr_s cn; */
+    } cn96xxp3;
+    /* struct cavm_rasx_err10ctlr_cn96xxp3 cn98xx; */
+    /* struct cavm_rasx_err10ctlr_cn96xxp3 cnf95xx; */
+    /* struct cavm_rasx_err10ctlr_cn96xxp3 loki; */
 };
 typedef union cavm_rasx_err10ctlr cavm_rasx_err10ctlr_t;
 
@@ -4407,6 +6273,8 @@ static inline uint64_t CAVM_RASX_ERR10CTLR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008050288ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008050288ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050288ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -4443,6 +6311,36 @@ union cavm_rasx_err10fr
         uint64_t ue                    : 2;  /**< [  9:  8](SRO) See RAS()_ERR00FR[UE]. */
         uint64_t fi                    : 2;  /**< [  7:  6](SRO) See RAS()_ERR00FR[FI]. */
         uint64_t ui                    : 2;  /**< [  5:  4](SRO) See RAS()_ERR00FR[UI]. */
+        uint64_t imp_fe                : 2;  /**< [  3:  2](SRO) See RAS()_ERR00FR[FE]. */
+        uint64_t ed                    : 2;  /**< [  1:  0](SRO) See RAS()_ERR00FR[ED]. */
+#else /* Word 0 - Little Endian */
+        uint64_t ed                    : 2;  /**< [  1:  0](SRO) See RAS()_ERR00FR[ED]. */
+        uint64_t imp_fe                : 2;  /**< [  3:  2](SRO) See RAS()_ERR00FR[FE]. */
+        uint64_t ui                    : 2;  /**< [  5:  4](SRO) See RAS()_ERR00FR[UI]. */
+        uint64_t fi                    : 2;  /**< [  7:  6](SRO) See RAS()_ERR00FR[FI]. */
+        uint64_t ue                    : 2;  /**< [  9:  8](SRO) See RAS()_ERR00FR[UE]. */
+        uint64_t cfi                   : 2;  /**< [ 11: 10](SRO) See RAS()_ERR00FR[CFI]. */
+        uint64_t cec                   : 3;  /**< [ 14: 12](SRO) See RAS()_ERR00FR[CEC]. */
+        uint64_t rp                    : 1;  /**< [ 15: 15](SRO) See RAS()_ERR00FR[RP]. */
+        uint64_t dui                   : 2;  /**< [ 17: 16](SRO) See RAS()_ERR00FR[DUI]. */
+        uint64_t ceo                   : 2;  /**< [ 19: 18](SRO) See RAS()_ERR00FR[CEO]. */
+        uint64_t reserved_20_63        : 44;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rasx_err10fr_s cn9; */
+    /* struct cavm_rasx_err10fr_s cn96xxp1; */
+    struct cavm_rasx_err10fr_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_20_63        : 44;
+        uint64_t ceo                   : 2;  /**< [ 19: 18](SRO) See RAS()_ERR00FR[CEO]. */
+        uint64_t dui                   : 2;  /**< [ 17: 16](SRO) See RAS()_ERR00FR[DUI]. */
+        uint64_t rp                    : 1;  /**< [ 15: 15](SRO) See RAS()_ERR00FR[RP]. */
+        uint64_t cec                   : 3;  /**< [ 14: 12](SRO) See RAS()_ERR00FR[CEC]. */
+        uint64_t cfi                   : 2;  /**< [ 11: 10](SRO) See RAS()_ERR00FR[CFI]. */
+        uint64_t ue                    : 2;  /**< [  9:  8](SRO) See RAS()_ERR00FR[UE]. */
+        uint64_t fi                    : 2;  /**< [  7:  6](SRO) See RAS()_ERR00FR[FI]. */
+        uint64_t ui                    : 2;  /**< [  5:  4](SRO) See RAS()_ERR00FR[UI]. */
         uint64_t imp_fe                : 2;  /**< [  3:  2](SRO) See RAS()_ERR00FR[IMP_FE]. */
         uint64_t ed                    : 2;  /**< [  1:  0](SRO) See RAS()_ERR00FR[ED]. */
 #else /* Word 0 - Little Endian */
@@ -4458,8 +6356,10 @@ union cavm_rasx_err10fr
         uint64_t ceo                   : 2;  /**< [ 19: 18](SRO) See RAS()_ERR00FR[CEO]. */
         uint64_t reserved_20_63        : 44;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_rasx_err10fr_s cn; */
+    } cn96xxp3;
+    /* struct cavm_rasx_err10fr_cn96xxp3 cn98xx; */
+    /* struct cavm_rasx_err10fr_cn96xxp3 cnf95xx; */
+    /* struct cavm_rasx_err10fr_cn96xxp3 loki; */
 };
 typedef union cavm_rasx_err10fr cavm_rasx_err10fr_t;
 
@@ -4468,6 +6368,8 @@ static inline uint64_t CAVM_RASX_ERR10FR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008050280ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008050280ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050280ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -4513,6 +6415,8 @@ static inline uint64_t CAVM_RASX_ERR10MISC0(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a0080502a0ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a0080502a0ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a0080502a0ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -4552,6 +6456,8 @@ static inline uint64_t CAVM_RASX_ERR10MISC1(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a0080502a8ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a0080502a8ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a0080502a8ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -4575,6 +6481,42 @@ union cavm_rasx_err10status
 {
     uint64_t u;
     struct cavm_rasx_err10status_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_32_63        : 32;
+        uint64_t av                    : 1;  /**< [ 31: 31](SR/W1C/H) See RAS()_ERR00STATUS[AV]. */
+        uint64_t v                     : 1;  /**< [ 30: 30](SR/W1C/H) See RAS()_ERR00STATUS[V]. */
+        uint64_t ue                    : 1;  /**< [ 29: 29](SR/W1C/H) See RAS()_ERR00STATUS[UE]. */
+        uint64_t er                    : 1;  /**< [ 28: 28](SR/W1C/H) See RAS()_ERR00STATUS[ER]. */
+        uint64_t of                    : 1;  /**< [ 27: 27](SR/W1C/H) See RAS()_ERR00STATUS[OV]. */
+        uint64_t mv                    : 1;  /**< [ 26: 26](SR/W1C/H) See RAS()_ERR00STATUS[MV]. */
+        uint64_t ce                    : 2;  /**< [ 25: 24](SR/W1C/H) See RAS()_ERR00STATUS[CE]. */
+        uint64_t de                    : 1;  /**< [ 23: 23](SR/W1C/H) See RAS()_ERR00STATUS[DE]. */
+        uint64_t pn                    : 1;  /**< [ 22: 22](SR/W1C/H) See RAS()_ERR00STATUS[PN]. */
+        uint64_t uet                   : 2;  /**< [ 21: 20](SR/W1C/H) See RAS()_ERR00STATUS[UET]. */
+        uint64_t reserved_16_19        : 4;
+        uint64_t ierr                  : 8;  /**< [ 15:  8](SR/W) See RAS()_ERR00STATUS[IERR]. */
+        uint64_t serr                  : 8;  /**< [  7:  0](SR/W) See RAS()_ERR00STATUS[SERR]. */
+#else /* Word 0 - Little Endian */
+        uint64_t serr                  : 8;  /**< [  7:  0](SR/W) See RAS()_ERR00STATUS[SERR]. */
+        uint64_t ierr                  : 8;  /**< [ 15:  8](SR/W) See RAS()_ERR00STATUS[IERR]. */
+        uint64_t reserved_16_19        : 4;
+        uint64_t uet                   : 2;  /**< [ 21: 20](SR/W1C/H) See RAS()_ERR00STATUS[UET]. */
+        uint64_t pn                    : 1;  /**< [ 22: 22](SR/W1C/H) See RAS()_ERR00STATUS[PN]. */
+        uint64_t de                    : 1;  /**< [ 23: 23](SR/W1C/H) See RAS()_ERR00STATUS[DE]. */
+        uint64_t ce                    : 2;  /**< [ 25: 24](SR/W1C/H) See RAS()_ERR00STATUS[CE]. */
+        uint64_t mv                    : 1;  /**< [ 26: 26](SR/W1C/H) See RAS()_ERR00STATUS[MV]. */
+        uint64_t of                    : 1;  /**< [ 27: 27](SR/W1C/H) See RAS()_ERR00STATUS[OV]. */
+        uint64_t er                    : 1;  /**< [ 28: 28](SR/W1C/H) See RAS()_ERR00STATUS[ER]. */
+        uint64_t ue                    : 1;  /**< [ 29: 29](SR/W1C/H) See RAS()_ERR00STATUS[UE]. */
+        uint64_t v                     : 1;  /**< [ 30: 30](SR/W1C/H) See RAS()_ERR00STATUS[V]. */
+        uint64_t av                    : 1;  /**< [ 31: 31](SR/W1C/H) See RAS()_ERR00STATUS[AV]. */
+        uint64_t reserved_32_63        : 32;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rasx_err10status_s cn9; */
+    /* struct cavm_rasx_err10status_s cn96xxp1; */
+    struct cavm_rasx_err10status_cn96xxp3
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_32_63        : 32;
@@ -4607,8 +6549,10 @@ union cavm_rasx_err10status
         uint64_t av                    : 1;  /**< [ 31: 31](SR/W1C/H) See RAS()_ERR00STATUS[AV]. */
         uint64_t reserved_32_63        : 32;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_rasx_err10status_s cn; */
+    } cn96xxp3;
+    /* struct cavm_rasx_err10status_cn96xxp3 cn98xx; */
+    /* struct cavm_rasx_err10status_cn96xxp3 cnf95xx; */
+    /* struct cavm_rasx_err10status_cn96xxp3 loki; */
 };
 typedef union cavm_rasx_err10status cavm_rasx_err10status_t;
 
@@ -4617,6 +6561,8 @@ static inline uint64_t CAVM_RASX_ERR10STATUS(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008050290ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008050290ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050290ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -4680,6 +6626,8 @@ static inline uint64_t CAVM_RASX_ERR11ADDR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a0080502d8ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a0080502d8ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a0080502d8ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -4703,6 +6651,60 @@ union cavm_rasx_err11ctlr
 {
     uint64_t u;
     struct cavm_rasx_err11ctlr_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_12_63        : 52;
+        uint64_t wdui                  : 1;  /**< [ 11: 11](SRO) Error recovery interrupt for deferred errors on writes. See [DUI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t dui                   : 1;  /**< [ 10: 10](SR/W) See RAS()_ERR00CTLR[DUI]. */
+        uint64_t wcfi                  : 1;  /**< [  9:  9](SRO) Fault handling interrupt for corrected errors on writes. See [CFI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t cfi                   : 1;  /**< [  8:  8](SR/W) See RAS()_ERR00CTLR[CFI]. */
+        uint64_t wue                   : 1;  /**< [  7:  7](SRO) Error reporting on writes. See [RU].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t wfi                   : 1;  /**< [  6:  6](SRO) Fault handling interrupt on writes. See [FI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t wui                   : 1;  /**< [  5:  5](SRO) Error recovery interrupt on writes. See [UI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t ue                    : 1;  /**< [  4:  4](SR/W) See RAS()_ERR00CTLR[UE]. */
+        uint64_t fi                    : 1;  /**< [  3:  3](SR/W) See RAS()_ERR00CTLR[FI]. */
+        uint64_t ui                    : 1;  /**< [  2:  2](SR/W) See RAS()_ERR00CTLR[UI]. */
+        uint64_t imp_fe                : 1;  /**< [  1:  1](SR/W) See RAS()_ERR00CTLR[IMP_FE]. */
+        uint64_t ed                    : 1;  /**< [  0:  0](SR/W) See RAS()_ERR00CTLR[ED]. */
+#else /* Word 0 - Little Endian */
+        uint64_t ed                    : 1;  /**< [  0:  0](SR/W) See RAS()_ERR00CTLR[ED]. */
+        uint64_t imp_fe                : 1;  /**< [  1:  1](SR/W) See RAS()_ERR00CTLR[IMP_FE]. */
+        uint64_t ui                    : 1;  /**< [  2:  2](SR/W) See RAS()_ERR00CTLR[UI]. */
+        uint64_t fi                    : 1;  /**< [  3:  3](SR/W) See RAS()_ERR00CTLR[FI]. */
+        uint64_t ue                    : 1;  /**< [  4:  4](SR/W) See RAS()_ERR00CTLR[UE]. */
+        uint64_t wui                   : 1;  /**< [  5:  5](SRO) Error recovery interrupt on writes. See [UI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t wfi                   : 1;  /**< [  6:  6](SRO) Fault handling interrupt on writes. See [FI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t wue                   : 1;  /**< [  7:  7](SRO) Error reporting on writes. See [RU].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t cfi                   : 1;  /**< [  8:  8](SR/W) See RAS()_ERR00CTLR[CFI]. */
+        uint64_t wcfi                  : 1;  /**< [  9:  9](SRO) Fault handling interrupt for corrected errors on writes. See [CFI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t dui                   : 1;  /**< [ 10: 10](SR/W) See RAS()_ERR00CTLR[DUI]. */
+        uint64_t wdui                  : 1;  /**< [ 11: 11](SRO) Error recovery interrupt for deferred errors on writes. See [DUI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t reserved_12_63        : 52;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rasx_err11ctlr_s cn9; */
+    /* struct cavm_rasx_err11ctlr_s cn96xxp1; */
+    struct cavm_rasx_err11ctlr_cn96xxp3
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_12_63        : 52;
@@ -4753,8 +6755,10 @@ union cavm_rasx_err11ctlr
                                                                  For CNXXXX does not distinguish between reads and writes, so always 0. */
         uint64_t reserved_12_63        : 52;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_rasx_err11ctlr_s cn; */
+    } cn96xxp3;
+    /* struct cavm_rasx_err11ctlr_cn96xxp3 cn98xx; */
+    /* struct cavm_rasx_err11ctlr_cn96xxp3 cnf95xx; */
+    /* struct cavm_rasx_err11ctlr_cn96xxp3 loki; */
 };
 typedef union cavm_rasx_err11ctlr cavm_rasx_err11ctlr_t;
 
@@ -4763,6 +6767,8 @@ static inline uint64_t CAVM_RASX_ERR11CTLR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a0080502c8ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a0080502c8ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a0080502c8ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -4799,6 +6805,36 @@ union cavm_rasx_err11fr
         uint64_t ue                    : 2;  /**< [  9:  8](SRO) See RAS()_ERR00FR[UE]. */
         uint64_t fi                    : 2;  /**< [  7:  6](SRO) See RAS()_ERR00FR[FI]. */
         uint64_t ui                    : 2;  /**< [  5:  4](SRO) See RAS()_ERR00FR[UI]. */
+        uint64_t imp_fe                : 2;  /**< [  3:  2](SRO) See RAS()_ERR00FR[FE]. */
+        uint64_t ed                    : 2;  /**< [  1:  0](SRO) See RAS()_ERR00FR[ED]. */
+#else /* Word 0 - Little Endian */
+        uint64_t ed                    : 2;  /**< [  1:  0](SRO) See RAS()_ERR00FR[ED]. */
+        uint64_t imp_fe                : 2;  /**< [  3:  2](SRO) See RAS()_ERR00FR[FE]. */
+        uint64_t ui                    : 2;  /**< [  5:  4](SRO) See RAS()_ERR00FR[UI]. */
+        uint64_t fi                    : 2;  /**< [  7:  6](SRO) See RAS()_ERR00FR[FI]. */
+        uint64_t ue                    : 2;  /**< [  9:  8](SRO) See RAS()_ERR00FR[UE]. */
+        uint64_t cfi                   : 2;  /**< [ 11: 10](SRO) See RAS()_ERR00FR[CFI]. */
+        uint64_t cec                   : 3;  /**< [ 14: 12](SRO) See RAS()_ERR00FR[CEC]. */
+        uint64_t rp                    : 1;  /**< [ 15: 15](SRO) See RAS()_ERR00FR[RP]. */
+        uint64_t dui                   : 2;  /**< [ 17: 16](SRO) See RAS()_ERR00FR[DUI]. */
+        uint64_t ceo                   : 2;  /**< [ 19: 18](SRO) See RAS()_ERR00FR[CEO]. */
+        uint64_t reserved_20_63        : 44;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rasx_err11fr_s cn9; */
+    /* struct cavm_rasx_err11fr_s cn96xxp1; */
+    struct cavm_rasx_err11fr_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_20_63        : 44;
+        uint64_t ceo                   : 2;  /**< [ 19: 18](SRO) See RAS()_ERR00FR[CEO]. */
+        uint64_t dui                   : 2;  /**< [ 17: 16](SRO) See RAS()_ERR00FR[DUI]. */
+        uint64_t rp                    : 1;  /**< [ 15: 15](SRO) See RAS()_ERR00FR[RP]. */
+        uint64_t cec                   : 3;  /**< [ 14: 12](SRO) See RAS()_ERR00FR[CEC]. */
+        uint64_t cfi                   : 2;  /**< [ 11: 10](SRO) See RAS()_ERR00FR[CFI]. */
+        uint64_t ue                    : 2;  /**< [  9:  8](SRO) See RAS()_ERR00FR[UE]. */
+        uint64_t fi                    : 2;  /**< [  7:  6](SRO) See RAS()_ERR00FR[FI]. */
+        uint64_t ui                    : 2;  /**< [  5:  4](SRO) See RAS()_ERR00FR[UI]. */
         uint64_t imp_fe                : 2;  /**< [  3:  2](SRO) See RAS()_ERR00FR[IMP_FE]. */
         uint64_t ed                    : 2;  /**< [  1:  0](SRO) See RAS()_ERR00FR[ED]. */
 #else /* Word 0 - Little Endian */
@@ -4814,8 +6850,10 @@ union cavm_rasx_err11fr
         uint64_t ceo                   : 2;  /**< [ 19: 18](SRO) See RAS()_ERR00FR[CEO]. */
         uint64_t reserved_20_63        : 44;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_rasx_err11fr_s cn; */
+    } cn96xxp3;
+    /* struct cavm_rasx_err11fr_cn96xxp3 cn98xx; */
+    /* struct cavm_rasx_err11fr_cn96xxp3 cnf95xx; */
+    /* struct cavm_rasx_err11fr_cn96xxp3 loki; */
 };
 typedef union cavm_rasx_err11fr cavm_rasx_err11fr_t;
 
@@ -4824,6 +6862,8 @@ static inline uint64_t CAVM_RASX_ERR11FR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a0080502c0ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a0080502c0ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a0080502c0ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -4869,6 +6909,8 @@ static inline uint64_t CAVM_RASX_ERR11MISC0(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a0080502e0ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a0080502e0ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a0080502e0ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -4908,6 +6950,8 @@ static inline uint64_t CAVM_RASX_ERR11MISC1(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a0080502e8ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a0080502e8ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a0080502e8ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -4931,6 +6975,42 @@ union cavm_rasx_err11status
 {
     uint64_t u;
     struct cavm_rasx_err11status_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_32_63        : 32;
+        uint64_t av                    : 1;  /**< [ 31: 31](SR/W1C/H) See RAS()_ERR00STATUS[AV]. */
+        uint64_t v                     : 1;  /**< [ 30: 30](SR/W1C/H) See RAS()_ERR00STATUS[V]. */
+        uint64_t ue                    : 1;  /**< [ 29: 29](SR/W1C/H) See RAS()_ERR00STATUS[UE]. */
+        uint64_t er                    : 1;  /**< [ 28: 28](SR/W1C/H) See RAS()_ERR00STATUS[ER]. */
+        uint64_t of                    : 1;  /**< [ 27: 27](SR/W1C/H) See RAS()_ERR00STATUS[OV]. */
+        uint64_t mv                    : 1;  /**< [ 26: 26](SR/W1C/H) See RAS()_ERR00STATUS[MV]. */
+        uint64_t ce                    : 2;  /**< [ 25: 24](SR/W1C/H) See RAS()_ERR00STATUS[CE]. */
+        uint64_t de                    : 1;  /**< [ 23: 23](SR/W1C/H) See RAS()_ERR00STATUS[DE]. */
+        uint64_t pn                    : 1;  /**< [ 22: 22](SR/W1C/H) See RAS()_ERR00STATUS[PN] */
+        uint64_t uet                   : 2;  /**< [ 21: 20](SR/W1C/H) See RAS()_ERR00STATUS[UET]. */
+        uint64_t reserved_16_19        : 4;
+        uint64_t ierr                  : 8;  /**< [ 15:  8](SR/W) See RAS()_ERR00STATUS[IERR]. */
+        uint64_t serr                  : 8;  /**< [  7:  0](SR/W) See RAS()_ERR00STATUS[SERR]. */
+#else /* Word 0 - Little Endian */
+        uint64_t serr                  : 8;  /**< [  7:  0](SR/W) See RAS()_ERR00STATUS[SERR]. */
+        uint64_t ierr                  : 8;  /**< [ 15:  8](SR/W) See RAS()_ERR00STATUS[IERR]. */
+        uint64_t reserved_16_19        : 4;
+        uint64_t uet                   : 2;  /**< [ 21: 20](SR/W1C/H) See RAS()_ERR00STATUS[UET]. */
+        uint64_t pn                    : 1;  /**< [ 22: 22](SR/W1C/H) See RAS()_ERR00STATUS[PN] */
+        uint64_t de                    : 1;  /**< [ 23: 23](SR/W1C/H) See RAS()_ERR00STATUS[DE]. */
+        uint64_t ce                    : 2;  /**< [ 25: 24](SR/W1C/H) See RAS()_ERR00STATUS[CE]. */
+        uint64_t mv                    : 1;  /**< [ 26: 26](SR/W1C/H) See RAS()_ERR00STATUS[MV]. */
+        uint64_t of                    : 1;  /**< [ 27: 27](SR/W1C/H) See RAS()_ERR00STATUS[OV]. */
+        uint64_t er                    : 1;  /**< [ 28: 28](SR/W1C/H) See RAS()_ERR00STATUS[ER]. */
+        uint64_t ue                    : 1;  /**< [ 29: 29](SR/W1C/H) See RAS()_ERR00STATUS[UE]. */
+        uint64_t v                     : 1;  /**< [ 30: 30](SR/W1C/H) See RAS()_ERR00STATUS[V]. */
+        uint64_t av                    : 1;  /**< [ 31: 31](SR/W1C/H) See RAS()_ERR00STATUS[AV]. */
+        uint64_t reserved_32_63        : 32;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rasx_err11status_s cn9; */
+    /* struct cavm_rasx_err11status_s cn96xxp1; */
+    struct cavm_rasx_err11status_cn96xxp3
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_32_63        : 32;
@@ -4963,8 +7043,10 @@ union cavm_rasx_err11status
         uint64_t av                    : 1;  /**< [ 31: 31](SR/W1C/H) See RAS()_ERR00STATUS[AV]. */
         uint64_t reserved_32_63        : 32;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_rasx_err11status_s cn; */
+    } cn96xxp3;
+    /* struct cavm_rasx_err11status_cn96xxp3 cn98xx; */
+    /* struct cavm_rasx_err11status_cn96xxp3 cnf95xx; */
+    /* struct cavm_rasx_err11status_cn96xxp3 loki; */
 };
 typedef union cavm_rasx_err11status cavm_rasx_err11status_t;
 
@@ -4973,6 +7055,8 @@ static inline uint64_t CAVM_RASX_ERR11STATUS(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a0080502d0ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a0080502d0ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a0080502d0ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -5036,6 +7120,8 @@ static inline uint64_t CAVM_RASX_ERR12ADDR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008050318ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008050318ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050318ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -5059,6 +7145,60 @@ union cavm_rasx_err12ctlr
 {
     uint64_t u;
     struct cavm_rasx_err12ctlr_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_12_63        : 52;
+        uint64_t wdui                  : 1;  /**< [ 11: 11](SRO) Error recovery interrupt for deferred errors on writes. See [DUI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t dui                   : 1;  /**< [ 10: 10](SR/W) See RAS()_ERR00CTLR[DUI]. */
+        uint64_t wcfi                  : 1;  /**< [  9:  9](SRO) Fault handling interrupt for corrected errors on writes. See [CFI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t cfi                   : 1;  /**< [  8:  8](SR/W) See RAS()_ERR00CTLR[CFI]. */
+        uint64_t wue                   : 1;  /**< [  7:  7](SRO) Error reporting on writes. See [RU].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t wfi                   : 1;  /**< [  6:  6](SRO) Fault handling interrupt on writes. See [FI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t wui                   : 1;  /**< [  5:  5](SRO) Error recovery interrupt on writes. See [UI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t ue                    : 1;  /**< [  4:  4](SR/W) See RAS()_ERR00CTLR[UE]. */
+        uint64_t fi                    : 1;  /**< [  3:  3](SR/W) See RAS()_ERR00CTLR[FI]. */
+        uint64_t ui                    : 1;  /**< [  2:  2](SR/W) See RAS()_ERR00CTLR[UI]. */
+        uint64_t imp_fe                : 1;  /**< [  1:  1](SR/W) See RAS()_ERR00CTLR[IMP_FE]. */
+        uint64_t ed                    : 1;  /**< [  0:  0](SR/W) See RAS()_ERR00CTLR[ED]. */
+#else /* Word 0 - Little Endian */
+        uint64_t ed                    : 1;  /**< [  0:  0](SR/W) See RAS()_ERR00CTLR[ED]. */
+        uint64_t imp_fe                : 1;  /**< [  1:  1](SR/W) See RAS()_ERR00CTLR[IMP_FE]. */
+        uint64_t ui                    : 1;  /**< [  2:  2](SR/W) See RAS()_ERR00CTLR[UI]. */
+        uint64_t fi                    : 1;  /**< [  3:  3](SR/W) See RAS()_ERR00CTLR[FI]. */
+        uint64_t ue                    : 1;  /**< [  4:  4](SR/W) See RAS()_ERR00CTLR[UE]. */
+        uint64_t wui                   : 1;  /**< [  5:  5](SRO) Error recovery interrupt on writes. See [UI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t wfi                   : 1;  /**< [  6:  6](SRO) Fault handling interrupt on writes. See [FI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t wue                   : 1;  /**< [  7:  7](SRO) Error reporting on writes. See [RU].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t cfi                   : 1;  /**< [  8:  8](SR/W) See RAS()_ERR00CTLR[CFI]. */
+        uint64_t wcfi                  : 1;  /**< [  9:  9](SRO) Fault handling interrupt for corrected errors on writes. See [CFI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t dui                   : 1;  /**< [ 10: 10](SR/W) See RAS()_ERR00CTLR[DUI]. */
+        uint64_t wdui                  : 1;  /**< [ 11: 11](SRO) Error recovery interrupt for deferred errors on writes. See [DUI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t reserved_12_63        : 52;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rasx_err12ctlr_s cn9; */
+    /* struct cavm_rasx_err12ctlr_s cn96xxp1; */
+    struct cavm_rasx_err12ctlr_cn96xxp3
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_12_63        : 52;
@@ -5109,8 +7249,10 @@ union cavm_rasx_err12ctlr
                                                                  For CNXXXX does not distinguish between reads and writes, so always 0. */
         uint64_t reserved_12_63        : 52;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_rasx_err12ctlr_s cn; */
+    } cn96xxp3;
+    /* struct cavm_rasx_err12ctlr_cn96xxp3 cn98xx; */
+    /* struct cavm_rasx_err12ctlr_cn96xxp3 cnf95xx; */
+    /* struct cavm_rasx_err12ctlr_cn96xxp3 loki; */
 };
 typedef union cavm_rasx_err12ctlr cavm_rasx_err12ctlr_t;
 
@@ -5119,6 +7261,8 @@ static inline uint64_t CAVM_RASX_ERR12CTLR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008050308ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008050308ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050308ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -5155,6 +7299,36 @@ union cavm_rasx_err12fr
         uint64_t ue                    : 2;  /**< [  9:  8](SRO) See RAS()_ERR00FR[UE]. */
         uint64_t fi                    : 2;  /**< [  7:  6](SRO) See RAS()_ERR00FR[FI]. */
         uint64_t ui                    : 2;  /**< [  5:  4](SRO) See RAS()_ERR00FR[UI]. */
+        uint64_t imp_fe                : 2;  /**< [  3:  2](SRO) See RAS()_ERR00FR[FE]. */
+        uint64_t ed                    : 2;  /**< [  1:  0](SRO) See RAS()_ERR00FR[ED]. */
+#else /* Word 0 - Little Endian */
+        uint64_t ed                    : 2;  /**< [  1:  0](SRO) See RAS()_ERR00FR[ED]. */
+        uint64_t imp_fe                : 2;  /**< [  3:  2](SRO) See RAS()_ERR00FR[FE]. */
+        uint64_t ui                    : 2;  /**< [  5:  4](SRO) See RAS()_ERR00FR[UI]. */
+        uint64_t fi                    : 2;  /**< [  7:  6](SRO) See RAS()_ERR00FR[FI]. */
+        uint64_t ue                    : 2;  /**< [  9:  8](SRO) See RAS()_ERR00FR[UE]. */
+        uint64_t cfi                   : 2;  /**< [ 11: 10](SRO) See RAS()_ERR00FR[CFI]. */
+        uint64_t cec                   : 3;  /**< [ 14: 12](SRO) See RAS()_ERR00FR[CEC]. */
+        uint64_t rp                    : 1;  /**< [ 15: 15](SRO) See RAS()_ERR00FR[RP]. */
+        uint64_t dui                   : 2;  /**< [ 17: 16](SRO) See RAS()_ERR00FR[DUI]. */
+        uint64_t ceo                   : 2;  /**< [ 19: 18](SRO) See RAS()_ERR00FR[CEO]. */
+        uint64_t reserved_20_63        : 44;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rasx_err12fr_s cn9; */
+    /* struct cavm_rasx_err12fr_s cn96xxp1; */
+    struct cavm_rasx_err12fr_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_20_63        : 44;
+        uint64_t ceo                   : 2;  /**< [ 19: 18](SRO) See RAS()_ERR00FR[CEO]. */
+        uint64_t dui                   : 2;  /**< [ 17: 16](SRO) See RAS()_ERR00FR[DUI]. */
+        uint64_t rp                    : 1;  /**< [ 15: 15](SRO) See RAS()_ERR00FR[RP]. */
+        uint64_t cec                   : 3;  /**< [ 14: 12](SRO) See RAS()_ERR00FR[CEC]. */
+        uint64_t cfi                   : 2;  /**< [ 11: 10](SRO) See RAS()_ERR00FR[CFI]. */
+        uint64_t ue                    : 2;  /**< [  9:  8](SRO) See RAS()_ERR00FR[UE]. */
+        uint64_t fi                    : 2;  /**< [  7:  6](SRO) See RAS()_ERR00FR[FI]. */
+        uint64_t ui                    : 2;  /**< [  5:  4](SRO) See RAS()_ERR00FR[UI]. */
         uint64_t imp_fe                : 2;  /**< [  3:  2](SRO) See RAS()_ERR00FR[IMP_FE]. */
         uint64_t ed                    : 2;  /**< [  1:  0](SRO) See RAS()_ERR00FR[ED]. */
 #else /* Word 0 - Little Endian */
@@ -5170,8 +7344,10 @@ union cavm_rasx_err12fr
         uint64_t ceo                   : 2;  /**< [ 19: 18](SRO) See RAS()_ERR00FR[CEO]. */
         uint64_t reserved_20_63        : 44;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_rasx_err12fr_s cn; */
+    } cn96xxp3;
+    /* struct cavm_rasx_err12fr_cn96xxp3 cn98xx; */
+    /* struct cavm_rasx_err12fr_cn96xxp3 cnf95xx; */
+    /* struct cavm_rasx_err12fr_cn96xxp3 loki; */
 };
 typedef union cavm_rasx_err12fr cavm_rasx_err12fr_t;
 
@@ -5180,6 +7356,8 @@ static inline uint64_t CAVM_RASX_ERR12FR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008050300ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008050300ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050300ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -5237,6 +7415,8 @@ static inline uint64_t CAVM_RASX_ERR12MISC0(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008050320ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008050320ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050320ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -5276,6 +7456,8 @@ static inline uint64_t CAVM_RASX_ERR12MISC1(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008050328ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008050328ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050328ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -5299,6 +7481,42 @@ union cavm_rasx_err12status
 {
     uint64_t u;
     struct cavm_rasx_err12status_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_32_63        : 32;
+        uint64_t av                    : 1;  /**< [ 31: 31](SR/W1C/H) See RAS()_ERR00STATUS[AV]. */
+        uint64_t v                     : 1;  /**< [ 30: 30](SR/W1C/H) See RAS()_ERR00STATUS[V]. */
+        uint64_t ue                    : 1;  /**< [ 29: 29](SR/W1C/H) See RAS()_ERR00STATUS[UE]. */
+        uint64_t er                    : 1;  /**< [ 28: 28](SR/W1C/H) See RAS()_ERR00STATUS[ER]. */
+        uint64_t of                    : 1;  /**< [ 27: 27](SR/W1C/H) See RAS()_ERR00STATUS[OV]. */
+        uint64_t mv                    : 1;  /**< [ 26: 26](SR/W1C/H) See RAS()_ERR00STATUS[MV]. */
+        uint64_t ce                    : 2;  /**< [ 25: 24](SR/W1C/H) See RAS()_ERR00STATUS[CE]. */
+        uint64_t de                    : 1;  /**< [ 23: 23](SR/W1C/H) See RAS()_ERR00STATUS[DE]. */
+        uint64_t pn                    : 1;  /**< [ 22: 22](SR/W1C/H) See RAS()_ERR00STATUS[PN]. */
+        uint64_t uet                   : 2;  /**< [ 21: 20](SR/W1C/H) See RAS()_ERR00STATUS[UET]. */
+        uint64_t reserved_16_19        : 4;
+        uint64_t ierr                  : 8;  /**< [ 15:  8](SR/W) See RAS()_ERR00STATUS[IERR]. */
+        uint64_t serr                  : 8;  /**< [  7:  0](SR/W) See RAS()_ERR00STATUS[SERR]. */
+#else /* Word 0 - Little Endian */
+        uint64_t serr                  : 8;  /**< [  7:  0](SR/W) See RAS()_ERR00STATUS[SERR]. */
+        uint64_t ierr                  : 8;  /**< [ 15:  8](SR/W) See RAS()_ERR00STATUS[IERR]. */
+        uint64_t reserved_16_19        : 4;
+        uint64_t uet                   : 2;  /**< [ 21: 20](SR/W1C/H) See RAS()_ERR00STATUS[UET]. */
+        uint64_t pn                    : 1;  /**< [ 22: 22](SR/W1C/H) See RAS()_ERR00STATUS[PN]. */
+        uint64_t de                    : 1;  /**< [ 23: 23](SR/W1C/H) See RAS()_ERR00STATUS[DE]. */
+        uint64_t ce                    : 2;  /**< [ 25: 24](SR/W1C/H) See RAS()_ERR00STATUS[CE]. */
+        uint64_t mv                    : 1;  /**< [ 26: 26](SR/W1C/H) See RAS()_ERR00STATUS[MV]. */
+        uint64_t of                    : 1;  /**< [ 27: 27](SR/W1C/H) See RAS()_ERR00STATUS[OV]. */
+        uint64_t er                    : 1;  /**< [ 28: 28](SR/W1C/H) See RAS()_ERR00STATUS[ER]. */
+        uint64_t ue                    : 1;  /**< [ 29: 29](SR/W1C/H) See RAS()_ERR00STATUS[UE]. */
+        uint64_t v                     : 1;  /**< [ 30: 30](SR/W1C/H) See RAS()_ERR00STATUS[V]. */
+        uint64_t av                    : 1;  /**< [ 31: 31](SR/W1C/H) See RAS()_ERR00STATUS[AV]. */
+        uint64_t reserved_32_63        : 32;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rasx_err12status_s cn9; */
+    /* struct cavm_rasx_err12status_s cn96xxp1; */
+    struct cavm_rasx_err12status_cn96xxp3
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_32_63        : 32;
@@ -5331,8 +7549,10 @@ union cavm_rasx_err12status
         uint64_t av                    : 1;  /**< [ 31: 31](SR/W1C/H) See RAS()_ERR00STATUS[AV]. */
         uint64_t reserved_32_63        : 32;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_rasx_err12status_s cn; */
+    } cn96xxp3;
+    /* struct cavm_rasx_err12status_cn96xxp3 cn98xx; */
+    /* struct cavm_rasx_err12status_cn96xxp3 cnf95xx; */
+    /* struct cavm_rasx_err12status_cn96xxp3 loki; */
 };
 typedef union cavm_rasx_err12status cavm_rasx_err12status_t;
 
@@ -5341,6 +7561,8 @@ static inline uint64_t CAVM_RASX_ERR12STATUS(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008050310ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008050310ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050310ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -5404,6 +7626,8 @@ static inline uint64_t CAVM_RASX_ERR13ADDR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008050358ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008050358ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050358ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -5427,6 +7651,60 @@ union cavm_rasx_err13ctlr
 {
     uint64_t u;
     struct cavm_rasx_err13ctlr_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_12_63        : 52;
+        uint64_t wdui                  : 1;  /**< [ 11: 11](SRO) Error recovery interrupt for deferred errors on writes. See [DUI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t dui                   : 1;  /**< [ 10: 10](SR/W) See RAS()_ERR00CTLR[DUI]. */
+        uint64_t wcfi                  : 1;  /**< [  9:  9](SRO) Fault handling interrupt for corrected errors on writes. See [CFI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t cfi                   : 1;  /**< [  8:  8](SR/W) See RAS()_ERR00CTLR[CFI]. */
+        uint64_t wue                   : 1;  /**< [  7:  7](SRO) Error reporting on writes. See [RU].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t wfi                   : 1;  /**< [  6:  6](SRO) Fault handling interrupt on writes. See [FI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t wui                   : 1;  /**< [  5:  5](SRO) Error recovery interrupt on writes. See [UI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t ue                    : 1;  /**< [  4:  4](SR/W) See RAS()_ERR00CTLR[UE]. */
+        uint64_t fi                    : 1;  /**< [  3:  3](SR/W) See RAS()_ERR00CTLR[FI]. */
+        uint64_t ui                    : 1;  /**< [  2:  2](SR/W) See RAS()_ERR00CTLR[UI]. */
+        uint64_t imp_fe                : 1;  /**< [  1:  1](SR/W) See RAS()_ERR00CTLR[IMP_FE]. */
+        uint64_t ed                    : 1;  /**< [  0:  0](SR/W) See RAS()_ERR00CTLR[ED]. */
+#else /* Word 0 - Little Endian */
+        uint64_t ed                    : 1;  /**< [  0:  0](SR/W) See RAS()_ERR00CTLR[ED]. */
+        uint64_t imp_fe                : 1;  /**< [  1:  1](SR/W) See RAS()_ERR00CTLR[IMP_FE]. */
+        uint64_t ui                    : 1;  /**< [  2:  2](SR/W) See RAS()_ERR00CTLR[UI]. */
+        uint64_t fi                    : 1;  /**< [  3:  3](SR/W) See RAS()_ERR00CTLR[FI]. */
+        uint64_t ue                    : 1;  /**< [  4:  4](SR/W) See RAS()_ERR00CTLR[UE]. */
+        uint64_t wui                   : 1;  /**< [  5:  5](SRO) Error recovery interrupt on writes. See [UI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t wfi                   : 1;  /**< [  6:  6](SRO) Fault handling interrupt on writes. See [FI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t wue                   : 1;  /**< [  7:  7](SRO) Error reporting on writes. See [RU].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t cfi                   : 1;  /**< [  8:  8](SR/W) See RAS()_ERR00CTLR[CFI]. */
+        uint64_t wcfi                  : 1;  /**< [  9:  9](SRO) Fault handling interrupt for corrected errors on writes. See [CFI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t dui                   : 1;  /**< [ 10: 10](SR/W) See RAS()_ERR00CTLR[DUI]. */
+        uint64_t wdui                  : 1;  /**< [ 11: 11](SRO) Error recovery interrupt for deferred errors on writes. See [DUI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t reserved_12_63        : 52;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rasx_err13ctlr_s cn9; */
+    /* struct cavm_rasx_err13ctlr_s cn96xxp1; */
+    struct cavm_rasx_err13ctlr_cn96xxp3
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_12_63        : 52;
@@ -5477,8 +7755,10 @@ union cavm_rasx_err13ctlr
                                                                  For CNXXXX does not distinguish between reads and writes, so always 0. */
         uint64_t reserved_12_63        : 52;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_rasx_err13ctlr_s cn; */
+    } cn96xxp3;
+    /* struct cavm_rasx_err13ctlr_cn96xxp3 cn98xx; */
+    /* struct cavm_rasx_err13ctlr_cn96xxp3 cnf95xx; */
+    /* struct cavm_rasx_err13ctlr_cn96xxp3 loki; */
 };
 typedef union cavm_rasx_err13ctlr cavm_rasx_err13ctlr_t;
 
@@ -5487,6 +7767,8 @@ static inline uint64_t CAVM_RASX_ERR13CTLR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008050348ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008050348ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050348ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -5523,6 +7805,36 @@ union cavm_rasx_err13fr
         uint64_t ue                    : 2;  /**< [  9:  8](SRO) See RAS()_ERR00FR[UE]. */
         uint64_t fi                    : 2;  /**< [  7:  6](SRO) See RAS()_ERR00FR[FI]. */
         uint64_t ui                    : 2;  /**< [  5:  4](SRO) See RAS()_ERR00FR[UI]. */
+        uint64_t imp_fe                : 2;  /**< [  3:  2](SRO) See RAS()_ERR00FR[FE]. */
+        uint64_t ed                    : 2;  /**< [  1:  0](SRO) See RAS()_ERR00FR[ED]. */
+#else /* Word 0 - Little Endian */
+        uint64_t ed                    : 2;  /**< [  1:  0](SRO) See RAS()_ERR00FR[ED]. */
+        uint64_t imp_fe                : 2;  /**< [  3:  2](SRO) See RAS()_ERR00FR[FE]. */
+        uint64_t ui                    : 2;  /**< [  5:  4](SRO) See RAS()_ERR00FR[UI]. */
+        uint64_t fi                    : 2;  /**< [  7:  6](SRO) See RAS()_ERR00FR[FI]. */
+        uint64_t ue                    : 2;  /**< [  9:  8](SRO) See RAS()_ERR00FR[UE]. */
+        uint64_t cfi                   : 2;  /**< [ 11: 10](SRO) See RAS()_ERR00FR[CFI]. */
+        uint64_t cec                   : 3;  /**< [ 14: 12](SRO) See RAS()_ERR00FR[CEC]. */
+        uint64_t rp                    : 1;  /**< [ 15: 15](SRO) See RAS()_ERR00FR[RP]. */
+        uint64_t dui                   : 2;  /**< [ 17: 16](SRO) See RAS()_ERR00FR[DUI]. */
+        uint64_t ceo                   : 2;  /**< [ 19: 18](SRO) See RAS()_ERR00FR[CEO]. */
+        uint64_t reserved_20_63        : 44;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rasx_err13fr_s cn9; */
+    /* struct cavm_rasx_err13fr_s cn96xxp1; */
+    struct cavm_rasx_err13fr_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_20_63        : 44;
+        uint64_t ceo                   : 2;  /**< [ 19: 18](SRO) See RAS()_ERR00FR[CEO]. */
+        uint64_t dui                   : 2;  /**< [ 17: 16](SRO) See RAS()_ERR00FR[DUI]. */
+        uint64_t rp                    : 1;  /**< [ 15: 15](SRO) See RAS()_ERR00FR[RP]. */
+        uint64_t cec                   : 3;  /**< [ 14: 12](SRO) See RAS()_ERR00FR[CEC]. */
+        uint64_t cfi                   : 2;  /**< [ 11: 10](SRO) See RAS()_ERR00FR[CFI]. */
+        uint64_t ue                    : 2;  /**< [  9:  8](SRO) See RAS()_ERR00FR[UE]. */
+        uint64_t fi                    : 2;  /**< [  7:  6](SRO) See RAS()_ERR00FR[FI]. */
+        uint64_t ui                    : 2;  /**< [  5:  4](SRO) See RAS()_ERR00FR[UI]. */
         uint64_t imp_fe                : 2;  /**< [  3:  2](SRO) See RAS()_ERR00FR[IMP_FE]. */
         uint64_t ed                    : 2;  /**< [  1:  0](SRO) See RAS()_ERR00FR[ED]. */
 #else /* Word 0 - Little Endian */
@@ -5538,8 +7850,10 @@ union cavm_rasx_err13fr
         uint64_t ceo                   : 2;  /**< [ 19: 18](SRO) See RAS()_ERR00FR[CEO]. */
         uint64_t reserved_20_63        : 44;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_rasx_err13fr_s cn; */
+    } cn96xxp3;
+    /* struct cavm_rasx_err13fr_cn96xxp3 cn98xx; */
+    /* struct cavm_rasx_err13fr_cn96xxp3 cnf95xx; */
+    /* struct cavm_rasx_err13fr_cn96xxp3 loki; */
 };
 typedef union cavm_rasx_err13fr cavm_rasx_err13fr_t;
 
@@ -5548,6 +7862,8 @@ static inline uint64_t CAVM_RASX_ERR13FR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008050340ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008050340ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050340ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -5593,6 +7909,8 @@ static inline uint64_t CAVM_RASX_ERR13MISC0(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008050360ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008050360ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050360ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -5632,6 +7950,8 @@ static inline uint64_t CAVM_RASX_ERR13MISC1(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008050368ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008050368ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050368ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -5655,6 +7975,42 @@ union cavm_rasx_err13status
 {
     uint64_t u;
     struct cavm_rasx_err13status_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_32_63        : 32;
+        uint64_t av                    : 1;  /**< [ 31: 31](SR/W1C/H) See RAS()_ERR00STATUS[AV]. */
+        uint64_t v                     : 1;  /**< [ 30: 30](SR/W1C/H) See RAS()_ERR00STATUS[V]. */
+        uint64_t ue                    : 1;  /**< [ 29: 29](SR/W1C/H) See RAS()_ERR00STATUS[UE]. */
+        uint64_t er                    : 1;  /**< [ 28: 28](SR/W1C/H) See RAS()_ERR00STATUS[ER]. */
+        uint64_t of                    : 1;  /**< [ 27: 27](SR/W1C/H) See RAS()_ERR00STATUS[OV]. */
+        uint64_t mv                    : 1;  /**< [ 26: 26](SR/W1C/H) See RAS()_ERR00STATUS[MV]. */
+        uint64_t ce                    : 2;  /**< [ 25: 24](SR/W1C/H) See RAS()_ERR00STATUS[CE]. */
+        uint64_t de                    : 1;  /**< [ 23: 23](SR/W1C/H) See RAS()_ERR00STATUS[DE]. */
+        uint64_t pn                    : 1;  /**< [ 22: 22](SR/W1C/H) See RAS()_ERR00STATUS[PN]. */
+        uint64_t uet                   : 2;  /**< [ 21: 20](SR/W1C/H) See RAS()_ERR00STATUS[UET]. */
+        uint64_t reserved_16_19        : 4;
+        uint64_t ierr                  : 8;  /**< [ 15:  8](SR/W) See RAS()_ERR00STATUS[IERR]. */
+        uint64_t serr                  : 8;  /**< [  7:  0](SR/W) See RAS()_ERR00STATUS[SERR]. */
+#else /* Word 0 - Little Endian */
+        uint64_t serr                  : 8;  /**< [  7:  0](SR/W) See RAS()_ERR00STATUS[SERR]. */
+        uint64_t ierr                  : 8;  /**< [ 15:  8](SR/W) See RAS()_ERR00STATUS[IERR]. */
+        uint64_t reserved_16_19        : 4;
+        uint64_t uet                   : 2;  /**< [ 21: 20](SR/W1C/H) See RAS()_ERR00STATUS[UET]. */
+        uint64_t pn                    : 1;  /**< [ 22: 22](SR/W1C/H) See RAS()_ERR00STATUS[PN]. */
+        uint64_t de                    : 1;  /**< [ 23: 23](SR/W1C/H) See RAS()_ERR00STATUS[DE]. */
+        uint64_t ce                    : 2;  /**< [ 25: 24](SR/W1C/H) See RAS()_ERR00STATUS[CE]. */
+        uint64_t mv                    : 1;  /**< [ 26: 26](SR/W1C/H) See RAS()_ERR00STATUS[MV]. */
+        uint64_t of                    : 1;  /**< [ 27: 27](SR/W1C/H) See RAS()_ERR00STATUS[OV]. */
+        uint64_t er                    : 1;  /**< [ 28: 28](SR/W1C/H) See RAS()_ERR00STATUS[ER]. */
+        uint64_t ue                    : 1;  /**< [ 29: 29](SR/W1C/H) See RAS()_ERR00STATUS[UE]. */
+        uint64_t v                     : 1;  /**< [ 30: 30](SR/W1C/H) See RAS()_ERR00STATUS[V]. */
+        uint64_t av                    : 1;  /**< [ 31: 31](SR/W1C/H) See RAS()_ERR00STATUS[AV]. */
+        uint64_t reserved_32_63        : 32;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rasx_err13status_s cn9; */
+    /* struct cavm_rasx_err13status_s cn96xxp1; */
+    struct cavm_rasx_err13status_cn96xxp3
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_32_63        : 32;
@@ -5687,8 +8043,10 @@ union cavm_rasx_err13status
         uint64_t av                    : 1;  /**< [ 31: 31](SR/W1C/H) See RAS()_ERR00STATUS[AV]. */
         uint64_t reserved_32_63        : 32;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_rasx_err13status_s cn; */
+    } cn96xxp3;
+    /* struct cavm_rasx_err13status_cn96xxp3 cn98xx; */
+    /* struct cavm_rasx_err13status_cn96xxp3 cnf95xx; */
+    /* struct cavm_rasx_err13status_cn96xxp3 loki; */
 };
 typedef union cavm_rasx_err13status cavm_rasx_err13status_t;
 
@@ -5697,6 +8055,8 @@ static inline uint64_t CAVM_RASX_ERR13STATUS(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008050350ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008050350ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050350ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -5744,6 +8104,8 @@ static inline uint64_t CAVM_RASX_ERR14ADDR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008050398ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008050398ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050398ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -5767,6 +8129,60 @@ union cavm_rasx_err14ctlr
 {
     uint64_t u;
     struct cavm_rasx_err14ctlr_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_12_63        : 52;
+        uint64_t wdui                  : 1;  /**< [ 11: 11](SRO) Error recovery interrupt for deferred errors on writes. See [DUI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t dui                   : 1;  /**< [ 10: 10](SR/W) See RAS()_ERR00CTLR[DUI]. */
+        uint64_t wcfi                  : 1;  /**< [  9:  9](SRO) Fault handling interrupt for corrected errors on writes. See [CFI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t cfi                   : 1;  /**< [  8:  8](SR/W) See RAS()_ERR00CTLR[CFI]. */
+        uint64_t wue                   : 1;  /**< [  7:  7](SRO) Error reporting on writes. See [RU].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t wfi                   : 1;  /**< [  6:  6](SRO) Fault handling interrupt on writes. See [FI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t wui                   : 1;  /**< [  5:  5](SRO) Error recovery interrupt on writes. See [UI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t ue                    : 1;  /**< [  4:  4](SR/W) See RAS()_ERR00CTLR[UE]. */
+        uint64_t fi                    : 1;  /**< [  3:  3](SR/W) See RAS()_ERR00CTLR[FI]. */
+        uint64_t ui                    : 1;  /**< [  2:  2](SR/W) See RAS()_ERR00CTLR[UI]. */
+        uint64_t imp_fe                : 1;  /**< [  1:  1](SR/W) See RAS()_ERR00CTLR[IMP_FE]. */
+        uint64_t ed                    : 1;  /**< [  0:  0](SR/W) See RAS()_ERR00CTLR[ED]. */
+#else /* Word 0 - Little Endian */
+        uint64_t ed                    : 1;  /**< [  0:  0](SR/W) See RAS()_ERR00CTLR[ED]. */
+        uint64_t imp_fe                : 1;  /**< [  1:  1](SR/W) See RAS()_ERR00CTLR[IMP_FE]. */
+        uint64_t ui                    : 1;  /**< [  2:  2](SR/W) See RAS()_ERR00CTLR[UI]. */
+        uint64_t fi                    : 1;  /**< [  3:  3](SR/W) See RAS()_ERR00CTLR[FI]. */
+        uint64_t ue                    : 1;  /**< [  4:  4](SR/W) See RAS()_ERR00CTLR[UE]. */
+        uint64_t wui                   : 1;  /**< [  5:  5](SRO) Error recovery interrupt on writes. See [UI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t wfi                   : 1;  /**< [  6:  6](SRO) Fault handling interrupt on writes. See [FI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t wue                   : 1;  /**< [  7:  7](SRO) Error reporting on writes. See [RU].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t cfi                   : 1;  /**< [  8:  8](SR/W) See RAS()_ERR00CTLR[CFI]. */
+        uint64_t wcfi                  : 1;  /**< [  9:  9](SRO) Fault handling interrupt for corrected errors on writes. See [CFI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t dui                   : 1;  /**< [ 10: 10](SR/W) See RAS()_ERR00CTLR[DUI]. */
+        uint64_t wdui                  : 1;  /**< [ 11: 11](SRO) Error recovery interrupt for deferred errors on writes. See [DUI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t reserved_12_63        : 52;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rasx_err14ctlr_s cn9; */
+    /* struct cavm_rasx_err14ctlr_s cn96xxp1; */
+    struct cavm_rasx_err14ctlr_cn96xxp3
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_12_63        : 52;
@@ -5817,8 +8233,10 @@ union cavm_rasx_err14ctlr
                                                                  For CNXXXX does not distinguish between reads and writes, so always 0. */
         uint64_t reserved_12_63        : 52;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_rasx_err14ctlr_s cn; */
+    } cn96xxp3;
+    /* struct cavm_rasx_err14ctlr_cn96xxp3 cn98xx; */
+    /* struct cavm_rasx_err14ctlr_cn96xxp3 cnf95xx; */
+    /* struct cavm_rasx_err14ctlr_cn96xxp3 loki; */
 };
 typedef union cavm_rasx_err14ctlr cavm_rasx_err14ctlr_t;
 
@@ -5827,6 +8245,8 @@ static inline uint64_t CAVM_RASX_ERR14CTLR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008050388ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008050388ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050388ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -5863,6 +8283,36 @@ union cavm_rasx_err14fr
         uint64_t ue                    : 2;  /**< [  9:  8](SRO) See RAS()_ERR00FR[UE]. */
         uint64_t fi                    : 2;  /**< [  7:  6](SRO) See RAS()_ERR00FR[FI]. */
         uint64_t ui                    : 2;  /**< [  5:  4](SRO) See RAS()_ERR00FR[UI]. */
+        uint64_t imp_fe                : 2;  /**< [  3:  2](SRO) See RAS()_ERR00FR[FE]. */
+        uint64_t ed                    : 2;  /**< [  1:  0](SRO) See RAS()_ERR00FR[ED]. */
+#else /* Word 0 - Little Endian */
+        uint64_t ed                    : 2;  /**< [  1:  0](SRO) See RAS()_ERR00FR[ED]. */
+        uint64_t imp_fe                : 2;  /**< [  3:  2](SRO) See RAS()_ERR00FR[FE]. */
+        uint64_t ui                    : 2;  /**< [  5:  4](SRO) See RAS()_ERR00FR[UI]. */
+        uint64_t fi                    : 2;  /**< [  7:  6](SRO) See RAS()_ERR00FR[FI]. */
+        uint64_t ue                    : 2;  /**< [  9:  8](SRO) See RAS()_ERR00FR[UE]. */
+        uint64_t cfi                   : 2;  /**< [ 11: 10](SRO) See RAS()_ERR00FR[CFI]. */
+        uint64_t cec                   : 3;  /**< [ 14: 12](SRO) See RAS()_ERR00FR[CEC]. */
+        uint64_t rp                    : 1;  /**< [ 15: 15](SRO) See RAS()_ERR00FR[RP]. */
+        uint64_t dui                   : 2;  /**< [ 17: 16](SRO) See RAS()_ERR00FR[DUI]. */
+        uint64_t ceo                   : 2;  /**< [ 19: 18](SRO) See RAS()_ERR00FR[CEO]. */
+        uint64_t reserved_20_63        : 44;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rasx_err14fr_s cn9; */
+    /* struct cavm_rasx_err14fr_s cn96xxp1; */
+    struct cavm_rasx_err14fr_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_20_63        : 44;
+        uint64_t ceo                   : 2;  /**< [ 19: 18](SRO) See RAS()_ERR00FR[CEO]. */
+        uint64_t dui                   : 2;  /**< [ 17: 16](SRO) See RAS()_ERR00FR[DUI]. */
+        uint64_t rp                    : 1;  /**< [ 15: 15](SRO) See RAS()_ERR00FR[RP]. */
+        uint64_t cec                   : 3;  /**< [ 14: 12](SRO) See RAS()_ERR00FR[CEC]. */
+        uint64_t cfi                   : 2;  /**< [ 11: 10](SRO) See RAS()_ERR00FR[CFI]. */
+        uint64_t ue                    : 2;  /**< [  9:  8](SRO) See RAS()_ERR00FR[UE]. */
+        uint64_t fi                    : 2;  /**< [  7:  6](SRO) See RAS()_ERR00FR[FI]. */
+        uint64_t ui                    : 2;  /**< [  5:  4](SRO) See RAS()_ERR00FR[UI]. */
         uint64_t imp_fe                : 2;  /**< [  3:  2](SRO) See RAS()_ERR00FR[IMP_FE]. */
         uint64_t ed                    : 2;  /**< [  1:  0](SRO) See RAS()_ERR00FR[ED]. */
 #else /* Word 0 - Little Endian */
@@ -5878,8 +8328,10 @@ union cavm_rasx_err14fr
         uint64_t ceo                   : 2;  /**< [ 19: 18](SRO) See RAS()_ERR00FR[CEO]. */
         uint64_t reserved_20_63        : 44;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_rasx_err14fr_s cn; */
+    } cn96xxp3;
+    /* struct cavm_rasx_err14fr_cn96xxp3 cn98xx; */
+    /* struct cavm_rasx_err14fr_cn96xxp3 cnf95xx; */
+    /* struct cavm_rasx_err14fr_cn96xxp3 loki; */
 };
 typedef union cavm_rasx_err14fr cavm_rasx_err14fr_t;
 
@@ -5888,6 +8340,8 @@ static inline uint64_t CAVM_RASX_ERR14FR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008050380ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008050380ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050380ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -5935,6 +8389,8 @@ static inline uint64_t CAVM_RASX_ERR14MISC0(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a0080503a0ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a0080503a0ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a0080503a0ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -5974,6 +8430,8 @@ static inline uint64_t CAVM_RASX_ERR14MISC1(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a0080503a8ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a0080503a8ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a0080503a8ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -5997,6 +8455,42 @@ union cavm_rasx_err14status
 {
     uint64_t u;
     struct cavm_rasx_err14status_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_32_63        : 32;
+        uint64_t av                    : 1;  /**< [ 31: 31](SR/W1C/H) See RAS()_ERR00STATUS[AV]. */
+        uint64_t v                     : 1;  /**< [ 30: 30](SR/W1C/H) See RAS()_ERR00STATUS[V]. */
+        uint64_t ue                    : 1;  /**< [ 29: 29](SR/W1C/H) See RAS()_ERR00STATUS[UE]. */
+        uint64_t er                    : 1;  /**< [ 28: 28](SR/W1C/H) See RAS()_ERR00STATUS[ER]. */
+        uint64_t of                    : 1;  /**< [ 27: 27](SR/W1C/H) See RAS()_ERR00STATUS[OV]. */
+        uint64_t mv                    : 1;  /**< [ 26: 26](SR/W1C/H) See RAS()_ERR00STATUS[MV]. */
+        uint64_t ce                    : 2;  /**< [ 25: 24](SR/W1C/H) See RAS()_ERR00STATUS[CE]. */
+        uint64_t de                    : 1;  /**< [ 23: 23](SR/W1C/H) See RAS()_ERR00STATUS[DE]. */
+        uint64_t pn                    : 1;  /**< [ 22: 22](SR/W1C/H) See RAS()_ERR00STATUS[PN]. */
+        uint64_t uet                   : 2;  /**< [ 21: 20](SR/W1C/H) See RAS()_ERR00STATUS[UET]. */
+        uint64_t reserved_16_19        : 4;
+        uint64_t ierr                  : 8;  /**< [ 15:  8](SR/W) See RAS()_ERR00STATUS[IERR]. */
+        uint64_t serr                  : 8;  /**< [  7:  0](SR/W) See RAS()_ERR00STATUS[SERR]. */
+#else /* Word 0 - Little Endian */
+        uint64_t serr                  : 8;  /**< [  7:  0](SR/W) See RAS()_ERR00STATUS[SERR]. */
+        uint64_t ierr                  : 8;  /**< [ 15:  8](SR/W) See RAS()_ERR00STATUS[IERR]. */
+        uint64_t reserved_16_19        : 4;
+        uint64_t uet                   : 2;  /**< [ 21: 20](SR/W1C/H) See RAS()_ERR00STATUS[UET]. */
+        uint64_t pn                    : 1;  /**< [ 22: 22](SR/W1C/H) See RAS()_ERR00STATUS[PN]. */
+        uint64_t de                    : 1;  /**< [ 23: 23](SR/W1C/H) See RAS()_ERR00STATUS[DE]. */
+        uint64_t ce                    : 2;  /**< [ 25: 24](SR/W1C/H) See RAS()_ERR00STATUS[CE]. */
+        uint64_t mv                    : 1;  /**< [ 26: 26](SR/W1C/H) See RAS()_ERR00STATUS[MV]. */
+        uint64_t of                    : 1;  /**< [ 27: 27](SR/W1C/H) See RAS()_ERR00STATUS[OV]. */
+        uint64_t er                    : 1;  /**< [ 28: 28](SR/W1C/H) See RAS()_ERR00STATUS[ER]. */
+        uint64_t ue                    : 1;  /**< [ 29: 29](SR/W1C/H) See RAS()_ERR00STATUS[UE]. */
+        uint64_t v                     : 1;  /**< [ 30: 30](SR/W1C/H) See RAS()_ERR00STATUS[V]. */
+        uint64_t av                    : 1;  /**< [ 31: 31](SR/W1C/H) See RAS()_ERR00STATUS[AV]. */
+        uint64_t reserved_32_63        : 32;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rasx_err14status_s cn9; */
+    /* struct cavm_rasx_err14status_s cn96xxp1; */
+    struct cavm_rasx_err14status_cn96xxp3
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_32_63        : 32;
@@ -6029,8 +8523,10 @@ union cavm_rasx_err14status
         uint64_t av                    : 1;  /**< [ 31: 31](SR/W1C/H) See RAS()_ERR00STATUS[AV]. */
         uint64_t reserved_32_63        : 32;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_rasx_err14status_s cn; */
+    } cn96xxp3;
+    /* struct cavm_rasx_err14status_cn96xxp3 cn98xx; */
+    /* struct cavm_rasx_err14status_cn96xxp3 cnf95xx; */
+    /* struct cavm_rasx_err14status_cn96xxp3 loki; */
 };
 typedef union cavm_rasx_err14status cavm_rasx_err14status_t;
 
@@ -6039,6 +8535,8 @@ static inline uint64_t CAVM_RASX_ERR14STATUS(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008050390ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008050390ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050390ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -6102,6 +8600,8 @@ static inline uint64_t CAVM_RASX_ERR15ADDR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a0080503d8ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a0080503d8ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a0080503d8ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -6125,6 +8625,60 @@ union cavm_rasx_err15ctlr
 {
     uint64_t u;
     struct cavm_rasx_err15ctlr_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_12_63        : 52;
+        uint64_t wdui                  : 1;  /**< [ 11: 11](SRO) Error recovery interrupt for deferred errors on writes. See [DUI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t dui                   : 1;  /**< [ 10: 10](SR/W) See RAS()_ERR00CTLR[DUI]. */
+        uint64_t wcfi                  : 1;  /**< [  9:  9](SRO) Fault handling interrupt for corrected errors on writes. See [CFI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t cfi                   : 1;  /**< [  8:  8](SR/W) See RAS()_ERR00CTLR[CFI]. */
+        uint64_t wue                   : 1;  /**< [  7:  7](SRO) Error reporting on writes. See [RU].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t wfi                   : 1;  /**< [  6:  6](SRO) Fault handling interrupt on writes. See [FI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t wui                   : 1;  /**< [  5:  5](SRO) Error recovery interrupt on writes. See [UI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t ue                    : 1;  /**< [  4:  4](SR/W) See RAS()_ERR00CTLR[UE]. */
+        uint64_t fi                    : 1;  /**< [  3:  3](SR/W) See RAS()_ERR00CTLR[FI]. */
+        uint64_t ui                    : 1;  /**< [  2:  2](SR/W) See RAS()_ERR00CTLR[UI]. */
+        uint64_t imp_fe                : 1;  /**< [  1:  1](SR/W) See RAS()_ERR00CTLR[IMP_FE]. */
+        uint64_t ed                    : 1;  /**< [  0:  0](SR/W) See RAS()_ERR00CTLR[ED]. */
+#else /* Word 0 - Little Endian */
+        uint64_t ed                    : 1;  /**< [  0:  0](SR/W) See RAS()_ERR00CTLR[ED]. */
+        uint64_t imp_fe                : 1;  /**< [  1:  1](SR/W) See RAS()_ERR00CTLR[IMP_FE]. */
+        uint64_t ui                    : 1;  /**< [  2:  2](SR/W) See RAS()_ERR00CTLR[UI]. */
+        uint64_t fi                    : 1;  /**< [  3:  3](SR/W) See RAS()_ERR00CTLR[FI]. */
+        uint64_t ue                    : 1;  /**< [  4:  4](SR/W) See RAS()_ERR00CTLR[UE]. */
+        uint64_t wui                   : 1;  /**< [  5:  5](SRO) Error recovery interrupt on writes. See [UI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t wfi                   : 1;  /**< [  6:  6](SRO) Fault handling interrupt on writes. See [FI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t wue                   : 1;  /**< [  7:  7](SRO) Error reporting on writes. See [RU].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t cfi                   : 1;  /**< [  8:  8](SR/W) See RAS()_ERR00CTLR[CFI]. */
+        uint64_t wcfi                  : 1;  /**< [  9:  9](SRO) Fault handling interrupt for corrected errors on writes. See [CFI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t dui                   : 1;  /**< [ 10: 10](SR/W) See RAS()_ERR00CTLR[DUI]. */
+        uint64_t wdui                  : 1;  /**< [ 11: 11](SRO) Error recovery interrupt for deferred errors on writes. See [DUI].
+
+                                                                 For CNXXXX does not distinguish between reads and writes, so always 0. */
+        uint64_t reserved_12_63        : 52;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rasx_err15ctlr_s cn9; */
+    /* struct cavm_rasx_err15ctlr_s cn96xxp1; */
+    struct cavm_rasx_err15ctlr_cn96xxp3
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_12_63        : 52;
@@ -6175,8 +8729,10 @@ union cavm_rasx_err15ctlr
                                                                  For CNXXXX does not distinguish between reads and writes, so always 0. */
         uint64_t reserved_12_63        : 52;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_rasx_err15ctlr_s cn; */
+    } cn96xxp3;
+    /* struct cavm_rasx_err15ctlr_cn96xxp3 cn98xx; */
+    /* struct cavm_rasx_err15ctlr_cn96xxp3 cnf95xx; */
+    /* struct cavm_rasx_err15ctlr_cn96xxp3 loki; */
 };
 typedef union cavm_rasx_err15ctlr cavm_rasx_err15ctlr_t;
 
@@ -6185,6 +8741,8 @@ static inline uint64_t CAVM_RASX_ERR15CTLR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a0080503c8ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a0080503c8ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a0080503c8ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -6221,6 +8779,36 @@ union cavm_rasx_err15fr
         uint64_t ue                    : 2;  /**< [  9:  8](SRO) See RAS()_ERR00FR[UE]. */
         uint64_t fi                    : 2;  /**< [  7:  6](SRO) See RAS()_ERR00FR[FI]. */
         uint64_t ui                    : 2;  /**< [  5:  4](SRO) See RAS()_ERR00FR[UI]. */
+        uint64_t imp_fe                : 2;  /**< [  3:  2](SRO) See RAS()_ERR00FR[FE]. */
+        uint64_t ed                    : 2;  /**< [  1:  0](SRO) See RAS()_ERR00FR[ED]. */
+#else /* Word 0 - Little Endian */
+        uint64_t ed                    : 2;  /**< [  1:  0](SRO) See RAS()_ERR00FR[ED]. */
+        uint64_t imp_fe                : 2;  /**< [  3:  2](SRO) See RAS()_ERR00FR[FE]. */
+        uint64_t ui                    : 2;  /**< [  5:  4](SRO) See RAS()_ERR00FR[UI]. */
+        uint64_t fi                    : 2;  /**< [  7:  6](SRO) See RAS()_ERR00FR[FI]. */
+        uint64_t ue                    : 2;  /**< [  9:  8](SRO) See RAS()_ERR00FR[UE]. */
+        uint64_t cfi                   : 2;  /**< [ 11: 10](SRO) See RAS()_ERR00FR[CFI]. */
+        uint64_t cec                   : 3;  /**< [ 14: 12](SRO) See RAS()_ERR00FR[CEC]. */
+        uint64_t rp                    : 1;  /**< [ 15: 15](SRO) See RAS()_ERR00FR[RP]. */
+        uint64_t dui                   : 2;  /**< [ 17: 16](SRO) See RAS()_ERR00FR[DUI]. */
+        uint64_t ceo                   : 2;  /**< [ 19: 18](SRO) See RAS()_ERR00FR[CEO]. */
+        uint64_t reserved_20_63        : 44;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rasx_err15fr_s cn9; */
+    /* struct cavm_rasx_err15fr_s cn96xxp1; */
+    struct cavm_rasx_err15fr_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_20_63        : 44;
+        uint64_t ceo                   : 2;  /**< [ 19: 18](SRO) See RAS()_ERR00FR[CEO]. */
+        uint64_t dui                   : 2;  /**< [ 17: 16](SRO) See RAS()_ERR00FR[DUI]. */
+        uint64_t rp                    : 1;  /**< [ 15: 15](SRO) See RAS()_ERR00FR[RP]. */
+        uint64_t cec                   : 3;  /**< [ 14: 12](SRO) See RAS()_ERR00FR[CEC]. */
+        uint64_t cfi                   : 2;  /**< [ 11: 10](SRO) See RAS()_ERR00FR[CFI]. */
+        uint64_t ue                    : 2;  /**< [  9:  8](SRO) See RAS()_ERR00FR[UE]. */
+        uint64_t fi                    : 2;  /**< [  7:  6](SRO) See RAS()_ERR00FR[FI]. */
+        uint64_t ui                    : 2;  /**< [  5:  4](SRO) See RAS()_ERR00FR[UI]. */
         uint64_t imp_fe                : 2;  /**< [  3:  2](SRO) See RAS()_ERR00FR[IMP_FE]. */
         uint64_t ed                    : 2;  /**< [  1:  0](SRO) See RAS()_ERR00FR[ED]. */
 #else /* Word 0 - Little Endian */
@@ -6236,8 +8824,10 @@ union cavm_rasx_err15fr
         uint64_t ceo                   : 2;  /**< [ 19: 18](SRO) See RAS()_ERR00FR[CEO]. */
         uint64_t reserved_20_63        : 44;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_rasx_err15fr_s cn; */
+    } cn96xxp3;
+    /* struct cavm_rasx_err15fr_cn96xxp3 cn98xx; */
+    /* struct cavm_rasx_err15fr_cn96xxp3 cnf95xx; */
+    /* struct cavm_rasx_err15fr_cn96xxp3 loki; */
 };
 typedef union cavm_rasx_err15fr cavm_rasx_err15fr_t;
 
@@ -6246,6 +8836,8 @@ static inline uint64_t CAVM_RASX_ERR15FR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a0080503c0ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a0080503c0ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a0080503c0ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -6291,6 +8883,8 @@ static inline uint64_t CAVM_RASX_ERR15MISC0(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a0080503e0ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a0080503e0ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a0080503e0ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -6330,6 +8924,8 @@ static inline uint64_t CAVM_RASX_ERR15MISC1(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a0080503e8ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a0080503e8ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a0080503e8ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -6353,6 +8949,42 @@ union cavm_rasx_err15status
 {
     uint64_t u;
     struct cavm_rasx_err15status_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_32_63        : 32;
+        uint64_t av                    : 1;  /**< [ 31: 31](SR/W1C/H) See RAS()_ERR00STATUS[AV]. */
+        uint64_t v                     : 1;  /**< [ 30: 30](SR/W1C/H) See RAS()_ERR00STATUS[V]. */
+        uint64_t ue                    : 1;  /**< [ 29: 29](SR/W1C/H) See RAS()_ERR00STATUS[UE]. */
+        uint64_t er                    : 1;  /**< [ 28: 28](SR/W1C/H) See RAS()_ERR00STATUS[ER]. */
+        uint64_t of                    : 1;  /**< [ 27: 27](SR/W1C/H) See RAS()_ERR00STATUS[OV]. */
+        uint64_t mv                    : 1;  /**< [ 26: 26](SR/W1C/H) See RAS()_ERR00STATUS[MV]. */
+        uint64_t ce                    : 2;  /**< [ 25: 24](SR/W1C/H) See RAS()_ERR00STATUS[CE]. */
+        uint64_t de                    : 1;  /**< [ 23: 23](SR/W1C/H) See RAS()_ERR00STATUS[DE]. */
+        uint64_t pn                    : 1;  /**< [ 22: 22](SR/W1C/H) See RAS()_ERR00STATUS[PN]. */
+        uint64_t uet                   : 2;  /**< [ 21: 20](SR/W1C/H) See RAS()_ERR00STATUS[UET]. */
+        uint64_t reserved_16_19        : 4;
+        uint64_t ierr                  : 8;  /**< [ 15:  8](SR/W) See RAS()_ERR00STATUS[IERR]. */
+        uint64_t serr                  : 8;  /**< [  7:  0](SR/W) See RAS()_ERR00STATUS[SERR]. */
+#else /* Word 0 - Little Endian */
+        uint64_t serr                  : 8;  /**< [  7:  0](SR/W) See RAS()_ERR00STATUS[SERR]. */
+        uint64_t ierr                  : 8;  /**< [ 15:  8](SR/W) See RAS()_ERR00STATUS[IERR]. */
+        uint64_t reserved_16_19        : 4;
+        uint64_t uet                   : 2;  /**< [ 21: 20](SR/W1C/H) See RAS()_ERR00STATUS[UET]. */
+        uint64_t pn                    : 1;  /**< [ 22: 22](SR/W1C/H) See RAS()_ERR00STATUS[PN]. */
+        uint64_t de                    : 1;  /**< [ 23: 23](SR/W1C/H) See RAS()_ERR00STATUS[DE]. */
+        uint64_t ce                    : 2;  /**< [ 25: 24](SR/W1C/H) See RAS()_ERR00STATUS[CE]. */
+        uint64_t mv                    : 1;  /**< [ 26: 26](SR/W1C/H) See RAS()_ERR00STATUS[MV]. */
+        uint64_t of                    : 1;  /**< [ 27: 27](SR/W1C/H) See RAS()_ERR00STATUS[OV]. */
+        uint64_t er                    : 1;  /**< [ 28: 28](SR/W1C/H) See RAS()_ERR00STATUS[ER]. */
+        uint64_t ue                    : 1;  /**< [ 29: 29](SR/W1C/H) See RAS()_ERR00STATUS[UE]. */
+        uint64_t v                     : 1;  /**< [ 30: 30](SR/W1C/H) See RAS()_ERR00STATUS[V]. */
+        uint64_t av                    : 1;  /**< [ 31: 31](SR/W1C/H) See RAS()_ERR00STATUS[AV]. */
+        uint64_t reserved_32_63        : 32;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rasx_err15status_s cn9; */
+    /* struct cavm_rasx_err15status_s cn96xxp1; */
+    struct cavm_rasx_err15status_cn96xxp3
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_32_63        : 32;
@@ -6385,8 +9017,10 @@ union cavm_rasx_err15status
         uint64_t av                    : 1;  /**< [ 31: 31](SR/W1C/H) See RAS()_ERR00STATUS[AV]. */
         uint64_t reserved_32_63        : 32;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_rasx_err15status_s cn; */
+    } cn96xxp3;
+    /* struct cavm_rasx_err15status_cn96xxp3 cn98xx; */
+    /* struct cavm_rasx_err15status_cn96xxp3 cnf95xx; */
+    /* struct cavm_rasx_err15status_cn96xxp3 loki; */
 };
 typedef union cavm_rasx_err15status cavm_rasx_err15status_t;
 
@@ -6395,6 +9029,8 @@ static inline uint64_t CAVM_RASX_ERR15STATUS(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a0080503d0ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a0080503d0ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a0080503d0ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -6453,6 +9089,8 @@ static inline uint64_t CAVM_RASX_ERRDEVAFF(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008050fa8ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008050fa8ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050fa8ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -6478,6 +9116,30 @@ union cavm_rasx_errdevarch
     struct cavm_rasx_errdevarch_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t architect             : 11; /**< [ 31: 21](SRO) Defines the architecture of the component. Indicates ARM. */
+        uint32_t present               : 1;  /**< [ 20: 20](SRO) When set to 1, indicates that this register is present. */
+        uint32_t revision              : 4;  /**< [ 19: 16](SRO) Defines the architecture revision.
+                                                                 0x0 = RAS system architecture v1.0. */
+        uint32_t archver               : 4;  /**< [ 15: 12](SRO) Defines the architecture version of the component.
+                                                                 0x0 = RAS system architecture v1.0. */
+        uint32_t archpart              : 12; /**< [ 11:  0](SRO) Defines the architecture of the component.
+                                                                 0xA00 = RAS system architecture. */
+#else /* Word 0 - Little Endian */
+        uint32_t archpart              : 12; /**< [ 11:  0](SRO) Defines the architecture of the component.
+                                                                 0xA00 = RAS system architecture. */
+        uint32_t archver               : 4;  /**< [ 15: 12](SRO) Defines the architecture version of the component.
+                                                                 0x0 = RAS system architecture v1.0. */
+        uint32_t revision              : 4;  /**< [ 19: 16](SRO) Defines the architecture revision.
+                                                                 0x0 = RAS system architecture v1.0. */
+        uint32_t present               : 1;  /**< [ 20: 20](SRO) When set to 1, indicates that this register is present. */
+        uint32_t architect             : 11; /**< [ 31: 21](SRO) Defines the architecture of the component. Indicates ARM. */
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rasx_errdevarch_s cn9; */
+    /* struct cavm_rasx_errdevarch_s cn96xxp1; */
+    struct cavm_rasx_errdevarch_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t architect             : 11; /**< [ 31: 21](SRO) Defines the architecture of the component. Indicates Arm. */
         uint32_t present               : 1;  /**< [ 20: 20](SRO) When set to 1, indicates that this register is present. */
         uint32_t revision              : 4;  /**< [ 19: 16](SRO) Defines the architecture revision.
@@ -6496,8 +9158,10 @@ union cavm_rasx_errdevarch
         uint32_t present               : 1;  /**< [ 20: 20](SRO) When set to 1, indicates that this register is present. */
         uint32_t architect             : 11; /**< [ 31: 21](SRO) Defines the architecture of the component. Indicates Arm. */
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_rasx_errdevarch_s cn; */
+    } cn96xxp3;
+    /* struct cavm_rasx_errdevarch_cn96xxp3 cn98xx; */
+    /* struct cavm_rasx_errdevarch_cn96xxp3 cnf95xx; */
+    /* struct cavm_rasx_errdevarch_cn96xxp3 loki; */
 };
 typedef union cavm_rasx_errdevarch cavm_rasx_errdevarch_t;
 
@@ -6506,6 +9170,8 @@ static inline uint64_t CAVM_RASX_ERRDEVARCH(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008050fbcll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008050fbcll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050fbcll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -6548,6 +9214,8 @@ static inline uint64_t CAVM_RASX_ERRDEVID(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008050fc8ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008050fc8ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050fc8ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -6593,6 +9261,8 @@ static inline uint64_t CAVM_RASX_ERRFHICR0(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008050e80ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008050e80ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050e80ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -6632,6 +9302,8 @@ static inline uint64_t CAVM_RASX_ERRFHICR1(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008050e88ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008050e88ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050e88ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -6699,6 +9371,8 @@ static inline uint64_t CAVM_RASX_ERRFHICR2(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008050e8cll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008050e8cll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050e8cll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -6752,6 +9426,8 @@ static inline uint64_t CAVM_RASX_ERRGSR0(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008050e00ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008050e00ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050e00ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -6847,6 +9523,8 @@ static inline uint64_t CAVM_RASX_ERRIRQSR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008050ef8ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008050ef8ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050ef8ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -6894,6 +9572,8 @@ static inline uint64_t CAVM_RASX_PIDR0(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008050fe0ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008050fe0ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050fe0ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -6920,6 +9600,20 @@ union cavm_rasx_pidr1
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t reserved_8_31         : 24;
+        uint32_t des_0                 : 4;  /**< [  7:  4](RO) JEP106 identification code \<3:0\>. Cavium code is 0x4C. */
+        uint32_t part_1                : 4;  /**< [  3:  0](RO) Part number \<11:8\>.  Indicates PCC_PIDR_PARTNUM1_E::COMP. */
+#else /* Word 0 - Little Endian */
+        uint32_t part_1                : 4;  /**< [  3:  0](RO) Part number \<11:8\>.  Indicates PCC_PIDR_PARTNUM1_E::COMP. */
+        uint32_t des_0                 : 4;  /**< [  7:  4](RO) JEP106 identification code \<3:0\>. Cavium code is 0x4C. */
+        uint32_t reserved_8_31         : 24;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rasx_pidr1_s cn9; */
+    /* struct cavm_rasx_pidr1_s cn96xxp1; */
+    struct cavm_rasx_pidr1_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t reserved_8_31         : 24;
         uint32_t des_0                 : 4;  /**< [  7:  4](RO) JEP106 identification code \<3:0\>. Marvell (Cavium) code is 0x4C. */
         uint32_t part_1                : 4;  /**< [  3:  0](RO) Part number \<11:8\>.  Indicates PCC_PIDR_PARTNUM1_E::COMP. */
 #else /* Word 0 - Little Endian */
@@ -6927,8 +9621,10 @@ union cavm_rasx_pidr1
         uint32_t des_0                 : 4;  /**< [  7:  4](RO) JEP106 identification code \<3:0\>. Marvell (Cavium) code is 0x4C. */
         uint32_t reserved_8_31         : 24;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_rasx_pidr1_s cn; */
+    } cn96xxp3;
+    /* struct cavm_rasx_pidr1_cn96xxp3 cn98xx; */
+    /* struct cavm_rasx_pidr1_cn96xxp3 cnf95xx; */
+    /* struct cavm_rasx_pidr1_cn96xxp3 loki; */
 };
 typedef union cavm_rasx_pidr1 cavm_rasx_pidr1_t;
 
@@ -6937,6 +9633,8 @@ static inline uint64_t CAVM_RASX_PIDR1(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008050fe4ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008050fe4ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050fe4ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -6965,6 +9663,22 @@ union cavm_rasx_pidr2
         uint32_t reserved_8_31         : 24;
         uint32_t revision              : 4;  /**< [  7:  4](RO) Implementation-defined RAS revision. */
         uint32_t jedec                 : 1;  /**< [  3:  3](RO) JEDEC assigned. */
+        uint32_t des_1                 : 3;  /**< [  2:  0](RO) JEP106 identification code \<6:4\>. Cavium code is 0x4C. */
+#else /* Word 0 - Little Endian */
+        uint32_t des_1                 : 3;  /**< [  2:  0](RO) JEP106 identification code \<6:4\>. Cavium code is 0x4C. */
+        uint32_t jedec                 : 1;  /**< [  3:  3](RO) JEDEC assigned. */
+        uint32_t revision              : 4;  /**< [  7:  4](RO) Implementation-defined RAS revision. */
+        uint32_t reserved_8_31         : 24;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rasx_pidr2_s cn9; */
+    /* struct cavm_rasx_pidr2_s cn96xxp1; */
+    struct cavm_rasx_pidr2_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t reserved_8_31         : 24;
+        uint32_t revision              : 4;  /**< [  7:  4](RO) Implementation-defined RAS revision. */
+        uint32_t jedec                 : 1;  /**< [  3:  3](RO) JEDEC assigned. */
         uint32_t des_1                 : 3;  /**< [  2:  0](RO) JEP106 identification code \<6:4\>. Marvell (Cavium) code is 0x4C. */
 #else /* Word 0 - Little Endian */
         uint32_t des_1                 : 3;  /**< [  2:  0](RO) JEP106 identification code \<6:4\>. Marvell (Cavium) code is 0x4C. */
@@ -6972,8 +9686,11 @@ union cavm_rasx_pidr2
         uint32_t revision              : 4;  /**< [  7:  4](RO) Implementation-defined RAS revision. */
         uint32_t reserved_8_31         : 24;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_rasx_pidr2_s cn; */
+    } cn96xxp3;
+    /* struct cavm_rasx_pidr2_s cn98xx; */
+    /* struct cavm_rasx_pidr2_s cnf95xxp1; */
+    /* struct cavm_rasx_pidr2_cn96xxp3 cnf95xxp2; */
+    /* struct cavm_rasx_pidr2_cn96xxp3 loki; */
 };
 typedef union cavm_rasx_pidr2 cavm_rasx_pidr2_t;
 
@@ -6982,6 +9699,8 @@ static inline uint64_t CAVM_RASX_PIDR2(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008050fe8ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008050fe8ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050fe8ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -7027,6 +9746,8 @@ static inline uint64_t CAVM_RASX_PIDR3(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008050fecll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008050fecll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050fecll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -7055,6 +9776,22 @@ union cavm_rasx_pidr4
         uint32_t reserved_8_31         : 24;
         uint32_t fourkbcount           : 4;  /**< [  7:  4](RO) Size of the component. Log\<sub\>2\</sub\> of the number of 4 KB pages from the
                                                                  start of the component to the end of the component ID registers. */
+        uint32_t jep106cont            : 4;  /**< [  3:  0](RO) JEP106 continuation code, least significant nibble. Indicates Cavium. */
+#else /* Word 0 - Little Endian */
+        uint32_t jep106cont            : 4;  /**< [  3:  0](RO) JEP106 continuation code, least significant nibble. Indicates Cavium. */
+        uint32_t fourkbcount           : 4;  /**< [  7:  4](RO) Size of the component. Log\<sub\>2\</sub\> of the number of 4 KB pages from the
+                                                                 start of the component to the end of the component ID registers. */
+        uint32_t reserved_8_31         : 24;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rasx_pidr4_s cn9; */
+    /* struct cavm_rasx_pidr4_s cn96xxp1; */
+    struct cavm_rasx_pidr4_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t reserved_8_31         : 24;
+        uint32_t fourkbcount           : 4;  /**< [  7:  4](RO) Size of the component. Log\<sub\>2\</sub\> of the number of 4 KB pages from the
+                                                                 start of the component to the end of the component ID registers. */
         uint32_t jep106cont            : 4;  /**< [  3:  0](RO) JEP106 continuation code, least significant nibble. Indicates Marvell (Cavium). */
 #else /* Word 0 - Little Endian */
         uint32_t jep106cont            : 4;  /**< [  3:  0](RO) JEP106 continuation code, least significant nibble. Indicates Marvell (Cavium). */
@@ -7062,8 +9799,11 @@ union cavm_rasx_pidr4
                                                                  start of the component to the end of the component ID registers. */
         uint32_t reserved_8_31         : 24;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_rasx_pidr4_s cn; */
+    } cn96xxp3;
+    /* struct cavm_rasx_pidr4_s cn98xx; */
+    /* struct cavm_rasx_pidr4_s cnf95xxp1; */
+    /* struct cavm_rasx_pidr4_cn96xxp3 cnf95xxp2; */
+    /* struct cavm_rasx_pidr4_cn96xxp3 loki; */
 };
 typedef union cavm_rasx_pidr4 cavm_rasx_pidr4_t;
 
@@ -7072,6 +9812,8 @@ static inline uint64_t CAVM_RASX_PIDR4(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008050fd0ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008050fd0ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050fd0ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -7111,6 +9853,8 @@ static inline uint64_t CAVM_RASX_PIDR5(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008050fd4ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008050fd4ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050fd4ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -7150,6 +9894,8 @@ static inline uint64_t CAVM_RASX_PIDR6(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008050fd8ll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008050fd8ll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050fd8ll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -7189,6 +9935,8 @@ static inline uint64_t CAVM_RASX_PIDR7(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87a008050fdcll + 0x80000ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87a008050fdcll + 0x80000ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87a008050fdcll + 0x80000ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))

@@ -434,6 +434,8 @@ static inline uint64_t CAVM_CGXX_ACTIVE_PC(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e0e0002010ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=3))
+        return 0x87e0e0002010ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=2))
         return 0x87e0e0002010ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=3))
@@ -484,6 +486,8 @@ static inline uint64_t CAVM_CGXX_CMRX_ACTIVITY(unsigned long a, unsigned long b)
 static inline uint64_t CAVM_CGXX_CMRX_ACTIVITY(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e00005f8ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e00005f8ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e00005f8ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -809,8 +813,250 @@ union cavm_cgxx_cmrx_config
         uint64_t reserved_62_63        : 2;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_cgxx_cmrx_config_s cn9; */
     /* struct cavm_cgxx_cmrx_config_s cn96xx; */
-    struct cavm_cgxx_cmrx_config_cnf95xx
+    struct cavm_cgxx_cmrx_config_cn98xx
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_62_63        : 2;
+        uint64_t p2x_select            : 3;  /**< [ 61: 59](R/W) Selects interior side P2X interface over which the LMAC will communicate:
+                                                                 \<pre\>
+                                                                   [P2X_SELECT]      Name      Connected block
+                                                                   -------------------------------------------
+                                                                   0                 --        Reserved
+                                                                   1                 P2X1      NIX0
+                                                                   2                 P2X2      NIX1
+                                                                   3..7              --        Reserved
+                                                                 \</pre\> */
+        uint64_t x2p_select            : 3;  /**< [ 58: 56](R/W) Selects interior side X2P interface over which the LMAC will communicate:
+                                                                 \<pre\>
+                                                                   [X2P_SELECT]      Name      Connected block
+                                                                   -------------------------------------------
+                                                                   0                 --        Reserved
+                                                                   1                 X2P1      NIX0
+                                                                   2                 X2P2      NIX1
+                                                                   3..7              --        Reserved
+                                                                 \</pre\> */
+        uint64_t enable                : 1;  /**< [ 55: 55](R/W) Logical MAC/PCS enable. This is the master enable for the LMAC. When clear, all the
+                                                                 dedicated CGX context state for the LMAC (state machines, FIFOs, counters, etc.) is reset,
+                                                                 and LMAC access to shared CGX resources (data path, SerDes lanes) is disabled.
+
+                                                                 When set, LMAC operation is enabled, including link bring-up, synchronization, and
+                                                                 transmit/receive of idles and fault sequences. Note that configuration registers for an
+                                                                 LMAC are not reset when this bit is clear, allowing software to program them before
+                                                                 setting this bit to enable the LMAC. This bit together with [LMAC_TYPE] is also used to
+                                                                 enable the clocking to the GMP and/or blocks of the Super path (SMU and SPU). CMR clocking
+                                                                 is enabled when any of the paths are enabled. */
+        uint64_t data_pkt_rx_en        : 1;  /**< [ 54: 54](R/W) Data packet receive enable. When [ENABLE] = 1 and [DATA_PKT_RX_EN] = 1, the reception of
+                                                                 data packets is enabled in the MAC layer. When [ENABLE] = 1 and [DATA_PKT_RX_EN] = 0, the
+                                                                 MAC layer drops received data and flow-control packets. */
+        uint64_t data_pkt_tx_en        : 1;  /**< [ 53: 53](R/W) Data packet transmit enable. When [ENABLE] = 1 and [DATA_PKT_TX_EN] = 1, the transmission
+                                                                 of data packets is enabled in the MAC layer. When [ENABLE] = 1 and [DATA_PKT_TX_EN] = 0,
+                                                                 the MAC layer suppresses the transmission of new data and packets for the LMAC. */
+        uint64_t int_beat_gen          : 1;  /**< [ 52: 52](R/W) Internal beat generation. This bit is used for debug/test purposes and should be clear
+                                                                 during normal operation. When set, the LMAC's PCS layer ignores RXVALID and
+                                                                 TXREADY/TXCREDIT from the associated SerDes lanes, internally generates fake (idle)
+                                                                 RXVALID and TXCREDIT pulses, and suppresses transmission to the SerDes. */
+        uint64_t unused                : 8;  /**< [ 51: 44](RAZ) Reserved. */
+        uint64_t lmac_type             : 4;  /**< [ 43: 40](R/W) Logical MAC/PCS/port type:
+
+                                                                 \<pre\>
+                                                                   LMAC_TYPE  Name     Description          NUM_LOG_LANES
+                                                                   ---------  -------  -------------------  -------------
+                                                                   0x0        SGMII    SGMII/1000BASE-X             1
+                                                                   0x1        XAUI     10GBASE-X/XAUI or DXAUI      4
+                                                                   0x2        RXAUI    Reduced XAUI                 2
+                                                                   0x3        10G_R    10GBASE-R                    1
+                                                                   0x4        40G_R    40GBASE-R                    4
+                                                                   0x5        --       Reserved                     -
+                                                                   0x6        QSGMII   QSGMII                       1
+                                                                   0x7        25G_R    25GBASE-R                    1
+                                                                   0x8        50G_R    50GBASE-R                    2
+                                                                   0x9        100G_R   100GBASE-R                   4
+                                                                   0xa        USXGMII  USXGMII                      1
+                                                                   Other      --       Reserved                     -
+                                                                 \</pre\>
+
+                                                                 NUM_LOG_LANES specifies the number of logical lanes that are valid for
+                                                                 each type. Each valid logical lane is mapped to a physical SerDes lane
+                                                                 based on the programming of [LANE_TO_SDS], except in USXGMII mode.
+
+                                                                 This field must be programmed to its final value before [ENABLE] is set, and must not
+                                                                 be changed when [ENABLE] = 1.
+
+                                                                 When LMAC_TYPE = CGX_LMAC_TYPES_E::USXGMII and optional PCH headers
+                                                                 are present in the received frames, the following must be set:
+                                                                 * CGX()_SMU()_RX_FRM_CTL[PRE_CHK]  = 0.
+                                                                 * CGX()_SMU()_RX_FRM_CTL[PRE_STRP] = 0.
+                                                                 * CGX()_SMU()_RX_UDD_SKP[LEN]      = 8.
+                                                                 * CGX()_SMU()_RX_UDD_SKP[FCSSEL]   = 1. */
+        uint64_t reserved_8_39         : 32;
+        uint64_t lane_to_sds           : 8;  /**< [  7:  0](R/W) Logical lane-to-SerDes lane mapping.
+                                                                 This is an array of 2-bit values that map each logical PCS lane in the LMAC to a
+                                                                 physical SerDes lane, as follows:
+
+                                                                 \<pre\>
+                                                                   Bits     Description                Reset value
+                                                                   -------  -------------------------  -----------
+                                                                   \<07:06\>  Logical lane 03 SerDes ID       0x3
+                                                                   \<05:04\>  Logical lane 02 SerDes ID       0x2
+                                                                   \<03:02\>  Logical lane 01 SerDes ID       0x1
+                                                                   \<01:00\>  Logical lane 00 SerDes ID       0x0
+                                                                 \</pre\>
+                                                                 \<page\>
+
+                                                                 Logical PCS lanes 0 through NUM_LOG_LANES-1 are valid, where NUM_LOG_LANES is a
+                                                                 function of the logical MAC/PCS type (see [LMAC_TYPE]). For example, when
+                                                                 [LMAC_TYPE] = SGMII, then there is only one PCS lane per LMAC (NUM_LOG_LANES =
+                                                                 1), and it will be logical PCS lane 0, and the associated physical SerDes lanes
+                                                                 are selected by bits \<1:0\>.
+
+                                                                 For 40GBASE-R ([LMAC_TYPE] = 40G_R), all four logical lanes are valid, and the PCS lane
+                                                                 IDs determine the block distribution order and associated alignment markers on the
+                                                                 transmit side. This is not necessarily the order in which logical lanes receive data
+                                                                 because 802.3 allows multilane BASE-R receive lanes to be reordered. When a lane
+                                                                 (called service interface (or lane) in 802.3) has achieved alignment marker lock on the
+                                                                 receive side (i.e. the associated CGX()_SPU()_BR_ALGN_STATUS[MARKER_LOCK] = 1), then
+                                                                 the actual detected RX PCS lane number is recorded in the corresponding
+                                                                 CGX()_SPU()_BR_LANE_MAP()[LN_MAPPING].
+
+                                                                 Above also applies to 100GBASE-R ([LMAC_TYPE] = 100G_R) which also uses all four logical
+                                                                 lanes which fan into 20 service lanes. The 20 service lanes map to 20 PCS lanes via
+                                                                 CGX()_SPU()_BR_LANE_MAP()[LN_MAPPING].
+
+                                                                 Above also applies individually for each of up to two 50GBASE-R LMACs ([LMAC_TYPE] =
+                                                                 50G_R) each of which uses 2 logical lanes and 2 SerDes.
+
+                                                                 For QSGMII, [LANE_TO_SDS]\<1:0\> for LMAC 0 selects the physical SerDes lane shared by four
+                                                                 LMACs, and [LANE_TO_SDS]\<1:0\> must be unique for each of the four LMACs.
+
+                                                                 For USXGMII, [LANE_TO_SDS] is ignored.  For SerDes mapping in USXGMII mode, see
+                                                                 CGX()_SPU_USXGMII_CONTROL[SDS_ID].
+
+                                                                 This field must be programmed to its final value before [ENABLE] is set, and
+                                                                 must not be changed when [ENABLE] = 1. */
+#else /* Word 0 - Little Endian */
+        uint64_t lane_to_sds           : 8;  /**< [  7:  0](R/W) Logical lane-to-SerDes lane mapping.
+                                                                 This is an array of 2-bit values that map each logical PCS lane in the LMAC to a
+                                                                 physical SerDes lane, as follows:
+
+                                                                 \<pre\>
+                                                                   Bits     Description                Reset value
+                                                                   -------  -------------------------  -----------
+                                                                   \<07:06\>  Logical lane 03 SerDes ID       0x3
+                                                                   \<05:04\>  Logical lane 02 SerDes ID       0x2
+                                                                   \<03:02\>  Logical lane 01 SerDes ID       0x1
+                                                                   \<01:00\>  Logical lane 00 SerDes ID       0x0
+                                                                 \</pre\>
+                                                                 \<page\>
+
+                                                                 Logical PCS lanes 0 through NUM_LOG_LANES-1 are valid, where NUM_LOG_LANES is a
+                                                                 function of the logical MAC/PCS type (see [LMAC_TYPE]). For example, when
+                                                                 [LMAC_TYPE] = SGMII, then there is only one PCS lane per LMAC (NUM_LOG_LANES =
+                                                                 1), and it will be logical PCS lane 0, and the associated physical SerDes lanes
+                                                                 are selected by bits \<1:0\>.
+
+                                                                 For 40GBASE-R ([LMAC_TYPE] = 40G_R), all four logical lanes are valid, and the PCS lane
+                                                                 IDs determine the block distribution order and associated alignment markers on the
+                                                                 transmit side. This is not necessarily the order in which logical lanes receive data
+                                                                 because 802.3 allows multilane BASE-R receive lanes to be reordered. When a lane
+                                                                 (called service interface (or lane) in 802.3) has achieved alignment marker lock on the
+                                                                 receive side (i.e. the associated CGX()_SPU()_BR_ALGN_STATUS[MARKER_LOCK] = 1), then
+                                                                 the actual detected RX PCS lane number is recorded in the corresponding
+                                                                 CGX()_SPU()_BR_LANE_MAP()[LN_MAPPING].
+
+                                                                 Above also applies to 100GBASE-R ([LMAC_TYPE] = 100G_R) which also uses all four logical
+                                                                 lanes which fan into 20 service lanes. The 20 service lanes map to 20 PCS lanes via
+                                                                 CGX()_SPU()_BR_LANE_MAP()[LN_MAPPING].
+
+                                                                 Above also applies individually for each of up to two 50GBASE-R LMACs ([LMAC_TYPE] =
+                                                                 50G_R) each of which uses 2 logical lanes and 2 SerDes.
+
+                                                                 For QSGMII, [LANE_TO_SDS]\<1:0\> for LMAC 0 selects the physical SerDes lane shared by four
+                                                                 LMACs, and [LANE_TO_SDS]\<1:0\> must be unique for each of the four LMACs.
+
+                                                                 For USXGMII, [LANE_TO_SDS] is ignored.  For SerDes mapping in USXGMII mode, see
+                                                                 CGX()_SPU_USXGMII_CONTROL[SDS_ID].
+
+                                                                 This field must be programmed to its final value before [ENABLE] is set, and
+                                                                 must not be changed when [ENABLE] = 1. */
+        uint64_t reserved_8_39         : 32;
+        uint64_t lmac_type             : 4;  /**< [ 43: 40](R/W) Logical MAC/PCS/port type:
+
+                                                                 \<pre\>
+                                                                   LMAC_TYPE  Name     Description          NUM_LOG_LANES
+                                                                   ---------  -------  -------------------  -------------
+                                                                   0x0        SGMII    SGMII/1000BASE-X             1
+                                                                   0x1        XAUI     10GBASE-X/XAUI or DXAUI      4
+                                                                   0x2        RXAUI    Reduced XAUI                 2
+                                                                   0x3        10G_R    10GBASE-R                    1
+                                                                   0x4        40G_R    40GBASE-R                    4
+                                                                   0x5        --       Reserved                     -
+                                                                   0x6        QSGMII   QSGMII                       1
+                                                                   0x7        25G_R    25GBASE-R                    1
+                                                                   0x8        50G_R    50GBASE-R                    2
+                                                                   0x9        100G_R   100GBASE-R                   4
+                                                                   0xa        USXGMII  USXGMII                      1
+                                                                   Other      --       Reserved                     -
+                                                                 \</pre\>
+
+                                                                 NUM_LOG_LANES specifies the number of logical lanes that are valid for
+                                                                 each type. Each valid logical lane is mapped to a physical SerDes lane
+                                                                 based on the programming of [LANE_TO_SDS], except in USXGMII mode.
+
+                                                                 This field must be programmed to its final value before [ENABLE] is set, and must not
+                                                                 be changed when [ENABLE] = 1.
+
+                                                                 When LMAC_TYPE = CGX_LMAC_TYPES_E::USXGMII and optional PCH headers
+                                                                 are present in the received frames, the following must be set:
+                                                                 * CGX()_SMU()_RX_FRM_CTL[PRE_CHK]  = 0.
+                                                                 * CGX()_SMU()_RX_FRM_CTL[PRE_STRP] = 0.
+                                                                 * CGX()_SMU()_RX_UDD_SKP[LEN]      = 8.
+                                                                 * CGX()_SMU()_RX_UDD_SKP[FCSSEL]   = 1. */
+        uint64_t unused                : 8;  /**< [ 51: 44](RAZ) Reserved. */
+        uint64_t int_beat_gen          : 1;  /**< [ 52: 52](R/W) Internal beat generation. This bit is used for debug/test purposes and should be clear
+                                                                 during normal operation. When set, the LMAC's PCS layer ignores RXVALID and
+                                                                 TXREADY/TXCREDIT from the associated SerDes lanes, internally generates fake (idle)
+                                                                 RXVALID and TXCREDIT pulses, and suppresses transmission to the SerDes. */
+        uint64_t data_pkt_tx_en        : 1;  /**< [ 53: 53](R/W) Data packet transmit enable. When [ENABLE] = 1 and [DATA_PKT_TX_EN] = 1, the transmission
+                                                                 of data packets is enabled in the MAC layer. When [ENABLE] = 1 and [DATA_PKT_TX_EN] = 0,
+                                                                 the MAC layer suppresses the transmission of new data and packets for the LMAC. */
+        uint64_t data_pkt_rx_en        : 1;  /**< [ 54: 54](R/W) Data packet receive enable. When [ENABLE] = 1 and [DATA_PKT_RX_EN] = 1, the reception of
+                                                                 data packets is enabled in the MAC layer. When [ENABLE] = 1 and [DATA_PKT_RX_EN] = 0, the
+                                                                 MAC layer drops received data and flow-control packets. */
+        uint64_t enable                : 1;  /**< [ 55: 55](R/W) Logical MAC/PCS enable. This is the master enable for the LMAC. When clear, all the
+                                                                 dedicated CGX context state for the LMAC (state machines, FIFOs, counters, etc.) is reset,
+                                                                 and LMAC access to shared CGX resources (data path, SerDes lanes) is disabled.
+
+                                                                 When set, LMAC operation is enabled, including link bring-up, synchronization, and
+                                                                 transmit/receive of idles and fault sequences. Note that configuration registers for an
+                                                                 LMAC are not reset when this bit is clear, allowing software to program them before
+                                                                 setting this bit to enable the LMAC. This bit together with [LMAC_TYPE] is also used to
+                                                                 enable the clocking to the GMP and/or blocks of the Super path (SMU and SPU). CMR clocking
+                                                                 is enabled when any of the paths are enabled. */
+        uint64_t x2p_select            : 3;  /**< [ 58: 56](R/W) Selects interior side X2P interface over which the LMAC will communicate:
+                                                                 \<pre\>
+                                                                   [X2P_SELECT]      Name      Connected block
+                                                                   -------------------------------------------
+                                                                   0                 --        Reserved
+                                                                   1                 X2P1      NIX0
+                                                                   2                 X2P2      NIX1
+                                                                   3..7              --        Reserved
+                                                                 \</pre\> */
+        uint64_t p2x_select            : 3;  /**< [ 61: 59](R/W) Selects interior side P2X interface over which the LMAC will communicate:
+                                                                 \<pre\>
+                                                                   [P2X_SELECT]      Name      Connected block
+                                                                   -------------------------------------------
+                                                                   0                 --        Reserved
+                                                                   1                 P2X1      NIX0
+                                                                   2                 P2X2      NIX1
+                                                                   3..7              --        Reserved
+                                                                 \</pre\> */
+        uint64_t reserved_62_63        : 2;
+#endif /* Word 0 - End */
+    } cn98xx;
+    /* struct cavm_cgxx_cmrx_config_s cnf95xxp1; */
+    struct cavm_cgxx_cmrx_config_cnf95xxp2
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_62_63        : 2;
@@ -1045,8 +1291,8 @@ union cavm_cgxx_cmrx_config
                                                                  \</pre\> */
         uint64_t reserved_62_63        : 2;
 #endif /* Word 0 - End */
-    } cnf95xx;
-    /* struct cavm_cgxx_cmrx_config_cnf95xx loki; */
+    } cnf95xxp2;
+    /* struct cavm_cgxx_cmrx_config_cnf95xxp2 loki; */
 };
 typedef union cavm_cgxx_cmrx_config cavm_cgxx_cmrx_config_t;
 
@@ -1054,6 +1300,8 @@ static inline uint64_t CAVM_CGXX_CMRX_CONFIG(unsigned long a, unsigned long b) _
 static inline uint64_t CAVM_CGXX_CMRX_CONFIG(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e0000000ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e0000000ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0000000ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -1132,6 +1380,8 @@ static inline uint64_t CAVM_CGXX_CMRX_INT(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0000040ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e0000040ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0000040ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -1185,9 +1435,9 @@ union cavm_cgxx_cmrx_int_ena_w1c
         uint64_t reserved_7_63         : 57;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_cgxx_cmrx_int_ena_w1c_s cn9; */
     /* struct cavm_cgxx_cmrx_int_ena_w1c_s cn96xx; */
-    /* struct cavm_cgxx_cmrx_int_ena_w1c_s cnf95xx; */
-    struct cavm_cgxx_cmrx_int_ena_w1c_loki
+    struct cavm_cgxx_cmrx_int_ena_w1c_cn98xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_7_63         : 57;
@@ -1216,7 +1466,9 @@ union cavm_cgxx_cmrx_int_ena_w1c
         uint64_t nix1_e_nxc            : 1;  /**< [  6:  6](R/W1C/H) Reads or clears enable for CGX(0..3)_CMR(0..3)_INT[NIX1_E_NXC]. */
         uint64_t reserved_7_63         : 57;
 #endif /* Word 0 - End */
-    } loki;
+    } cn98xx;
+    /* struct cavm_cgxx_cmrx_int_ena_w1c_s cnf95xx; */
+    /* struct cavm_cgxx_cmrx_int_ena_w1c_cn98xx loki; */
 };
 typedef union cavm_cgxx_cmrx_int_ena_w1c cavm_cgxx_cmrx_int_ena_w1c_t;
 
@@ -1224,6 +1476,8 @@ static inline uint64_t CAVM_CGXX_CMRX_INT_ENA_W1C(unsigned long a, unsigned long
 static inline uint64_t CAVM_CGXX_CMRX_INT_ENA_W1C(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e0000050ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e0000050ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0000050ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -1278,9 +1532,9 @@ union cavm_cgxx_cmrx_int_ena_w1s
         uint64_t reserved_7_63         : 57;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_cgxx_cmrx_int_ena_w1s_s cn9; */
     /* struct cavm_cgxx_cmrx_int_ena_w1s_s cn96xx; */
-    /* struct cavm_cgxx_cmrx_int_ena_w1s_s cnf95xx; */
-    struct cavm_cgxx_cmrx_int_ena_w1s_loki
+    struct cavm_cgxx_cmrx_int_ena_w1s_cn98xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_7_63         : 57;
@@ -1309,7 +1563,9 @@ union cavm_cgxx_cmrx_int_ena_w1s
         uint64_t nix1_e_nxc            : 1;  /**< [  6:  6](R/W1S/H) Reads or sets enable for CGX(0..3)_CMR(0..3)_INT[NIX1_E_NXC]. */
         uint64_t reserved_7_63         : 57;
 #endif /* Word 0 - End */
-    } loki;
+    } cn98xx;
+    /* struct cavm_cgxx_cmrx_int_ena_w1s_s cnf95xx; */
+    /* struct cavm_cgxx_cmrx_int_ena_w1s_cn98xx loki; */
 };
 typedef union cavm_cgxx_cmrx_int_ena_w1s cavm_cgxx_cmrx_int_ena_w1s_t;
 
@@ -1317,6 +1573,8 @@ static inline uint64_t CAVM_CGXX_CMRX_INT_ENA_W1S(unsigned long a, unsigned long
 static inline uint64_t CAVM_CGXX_CMRX_INT_ENA_W1S(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e0000058ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e0000058ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0000058ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -1371,9 +1629,9 @@ union cavm_cgxx_cmrx_int_w1s
         uint64_t reserved_7_63         : 57;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_cgxx_cmrx_int_w1s_s cn9; */
     /* struct cavm_cgxx_cmrx_int_w1s_s cn96xx; */
-    /* struct cavm_cgxx_cmrx_int_w1s_s cnf95xx; */
-    struct cavm_cgxx_cmrx_int_w1s_loki
+    struct cavm_cgxx_cmrx_int_w1s_cn98xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_7_63         : 57;
@@ -1402,7 +1660,9 @@ union cavm_cgxx_cmrx_int_w1s
         uint64_t nix1_e_nxc            : 1;  /**< [  6:  6](R/W1S/H) Reads or sets CGX(0..3)_CMR(0..3)_INT[NIX1_E_NXC]. */
         uint64_t reserved_7_63         : 57;
 #endif /* Word 0 - End */
-    } loki;
+    } cn98xx;
+    /* struct cavm_cgxx_cmrx_int_w1s_s cnf95xx; */
+    /* struct cavm_cgxx_cmrx_int_w1s_cn98xx loki; */
 };
 typedef union cavm_cgxx_cmrx_int_w1s cavm_cgxx_cmrx_int_w1s_t;
 
@@ -1410,6 +1670,8 @@ static inline uint64_t CAVM_CGXX_CMRX_INT_W1S(unsigned long a, unsigned long b) 
 static inline uint64_t CAVM_CGXX_CMRX_INT_W1S(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e0000048ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e0000048ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0000048ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -1482,6 +1744,8 @@ static inline uint64_t CAVM_CGXX_CMRX_LED_TIMING(unsigned long a, unsigned long 
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e00005f0ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e00005f0ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e00005f0ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -1536,6 +1800,8 @@ static inline uint64_t CAVM_CGXX_CMRX_PRT_CBFC_CTL(unsigned long a, unsigned lon
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0000608ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e0000608ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0000608ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -1585,6 +1851,8 @@ static inline uint64_t CAVM_CGXX_CMRX_RX_BP_DROP(unsigned long a, unsigned long 
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e00000d8ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e00000d8ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e00000d8ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -1627,6 +1895,8 @@ static inline uint64_t CAVM_CGXX_CMRX_RX_BP_OFF(unsigned long a, unsigned long b
 static inline uint64_t CAVM_CGXX_CMRX_RX_BP_OFF(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e00000e8ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e00000e8ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e00000e8ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -1693,6 +1963,8 @@ static inline uint64_t CAVM_CGXX_CMRX_RX_BP_ON(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e00000e0ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e00000e0ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e00000e0ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -1737,6 +2009,8 @@ static inline uint64_t CAVM_CGXX_CMRX_RX_BP_STATUS(unsigned long a, unsigned lon
 static inline uint64_t CAVM_CGXX_CMRX_RX_BP_STATUS(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e00000f0ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e00000f0ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e00000f0ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -1832,6 +2106,8 @@ static inline uint64_t CAVM_CGXX_CMRX_RX_DMAC_CTL0(unsigned long a, unsigned lon
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e00001f8ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e00001f8ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e00001f8ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -1901,6 +2177,8 @@ static inline uint64_t CAVM_CGXX_CMRX_RX_DMAC_CTL1(unsigned long a, unsigned lon
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e00003f8ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e00003f8ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e00003f8ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -1951,6 +2229,8 @@ static inline uint64_t CAVM_CGXX_CMRX_RX_FIFO_LEN(unsigned long a, unsigned long
 static inline uint64_t CAVM_CGXX_CMRX_RX_FIFO_LEN(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e0000108ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e0000108ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0000108ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -2022,6 +2302,8 @@ static inline uint64_t CAVM_CGXX_CMRX_RX_ID_MAP(unsigned long a, unsigned long b
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0000060ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e0000060ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0000060ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -2071,6 +2353,8 @@ static inline uint64_t CAVM_CGXX_CMRX_RX_LOGL_XOFF(unsigned long a, unsigned lon
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e00000f8ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e00000f8ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e00000f8ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -2118,6 +2402,8 @@ static inline uint64_t CAVM_CGXX_CMRX_RX_LOGL_XON(unsigned long a, unsigned long
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0000100ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e0000100ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0000100ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -2162,6 +2448,8 @@ static inline uint64_t CAVM_CGXX_CMRX_RX_MERGE_STAT0(unsigned long a, unsigned l
 static inline uint64_t CAVM_CGXX_CMRX_RX_MERGE_STAT0(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e0000138ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e0000138ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0000138ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -2208,6 +2496,8 @@ static inline uint64_t CAVM_CGXX_CMRX_RX_MERGE_STAT1(unsigned long a, unsigned l
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0000140ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e0000140ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0000140ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -2253,6 +2543,8 @@ static inline uint64_t CAVM_CGXX_CMRX_RX_MERGE_STAT2(unsigned long a, unsigned l
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0000148ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e0000148ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0000148ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -2295,6 +2587,8 @@ static inline uint64_t CAVM_CGXX_CMRX_RX_MERGE_STAT3(unsigned long a, unsigned l
 static inline uint64_t CAVM_CGXX_CMRX_RX_MERGE_STAT3(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e0000150ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e0000150ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0000150ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -2341,6 +2635,8 @@ static inline uint64_t CAVM_CGXX_CMRX_RX_MERGE_STAT4(unsigned long a, unsigned l
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0000158ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e0000158ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0000158ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -2383,6 +2679,8 @@ static inline uint64_t CAVM_CGXX_CMRX_RX_PAUSE_DROP_TIME(unsigned long a, unsign
 static inline uint64_t CAVM_CGXX_CMRX_RX_PAUSE_DROP_TIME(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e0000068ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e0000068ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0000068ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -2448,6 +2746,8 @@ static inline uint64_t CAVM_CGXX_CMRX_RX_STAT0(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0000070ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e0000070ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0000070ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -2491,6 +2791,8 @@ static inline uint64_t CAVM_CGXX_CMRX_RX_STAT1(unsigned long a, unsigned long b)
 static inline uint64_t CAVM_CGXX_CMRX_RX_STAT1(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e0000078ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e0000078ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0000078ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -2542,6 +2844,8 @@ static inline uint64_t CAVM_CGXX_CMRX_RX_STAT2(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0000080ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e0000080ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0000080ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -2585,6 +2889,8 @@ static inline uint64_t CAVM_CGXX_CMRX_RX_STAT3(unsigned long a, unsigned long b)
 static inline uint64_t CAVM_CGXX_CMRX_RX_STAT3(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e0000088ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e0000088ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0000088ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -2642,6 +2948,8 @@ static inline uint64_t CAVM_CGXX_CMRX_RX_STAT4(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0000090ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e0000090ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0000090ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -2687,6 +2995,8 @@ static inline uint64_t CAVM_CGXX_CMRX_RX_STAT5(unsigned long a, unsigned long b)
 static inline uint64_t CAVM_CGXX_CMRX_RX_STAT5(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e0000098ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e0000098ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0000098ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -2741,6 +3051,8 @@ static inline uint64_t CAVM_CGXX_CMRX_RX_STAT6(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e00000a0ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e00000a0ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e00000a0ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -2786,6 +3098,8 @@ static inline uint64_t CAVM_CGXX_CMRX_RX_STAT7(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e00000a8ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e00000a8ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e00000a8ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -2830,6 +3144,8 @@ static inline uint64_t CAVM_CGXX_CMRX_RX_STAT8(unsigned long a, unsigned long b)
 static inline uint64_t CAVM_CGXX_CMRX_RX_STAT8(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e00000b0ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e00000b0ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e00000b0ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -2878,6 +3194,8 @@ static inline uint64_t CAVM_CGXX_CMRX_RX_STAT_PRIX_XOFF(unsigned long a, unsigne
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3) && (c<=7)))
         return 0x87e0e00007c0ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3) + 8ll * ((c) & 0x7);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3) && (c<=7)))
+        return 0x87e0e00007c0ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3) + 8ll * ((c) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3) && (c<=7)))
         return 0x87e0e00007c0ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3) + 8ll * ((c) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3) && (c<=7)))
@@ -2916,6 +3234,8 @@ static inline uint64_t CAVM_CGXX_CMRX_SCRATCHX(unsigned long a, unsigned long b,
 static inline uint64_t CAVM_CGXX_CMRX_SCRATCHX(unsigned long a, unsigned long b, unsigned long c)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3) && (c<=1)))
+        return 0x87e0e0001050ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3) + 8ll * ((c) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3) && (c<=1)))
         return 0x87e0e0001050ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3) + 8ll * ((c) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3) && (c<=1)))
         return 0x87e0e0001050ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3) + 8ll * ((c) & 0x1);
@@ -2958,6 +3278,8 @@ static inline uint64_t CAVM_CGXX_CMRX_SW_INT(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a<=2) && (b<=3)))
         return 0x87e0e0000180ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e0000180ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     __cavm_csr_fatal("CGXX_CMRX_SW_INT", 2, a, b, 0, 0, 0, 0);
 }
 
@@ -2987,7 +3309,18 @@ union cavm_cgxx_cmrx_sw_int_ena_w1c
         uint64_t reserved_1_63         : 63;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_cgxx_cmrx_sw_int_ena_w1c_s cn; */
+    /* struct cavm_cgxx_cmrx_sw_int_ena_w1c_s cn9; */
+    /* struct cavm_cgxx_cmrx_sw_int_ena_w1c_s cn96xx; */
+    struct cavm_cgxx_cmrx_sw_int_ena_w1c_cn98xx
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_1_63         : 63;
+        uint64_t sw_set                : 1;  /**< [  0:  0](R/W1C/H) Reads or clears enable for CGX(0..3)_CMR(0..3)_SW_INT[SW_SET]. */
+#else /* Word 0 - Little Endian */
+        uint64_t sw_set                : 1;  /**< [  0:  0](R/W1C/H) Reads or clears enable for CGX(0..3)_CMR(0..3)_SW_INT[SW_SET]. */
+        uint64_t reserved_1_63         : 63;
+#endif /* Word 0 - End */
+    } cn98xx;
 };
 typedef union cavm_cgxx_cmrx_sw_int_ena_w1c cavm_cgxx_cmrx_sw_int_ena_w1c_t;
 
@@ -2995,6 +3328,8 @@ static inline uint64_t CAVM_CGXX_CMRX_SW_INT_ENA_W1C(unsigned long a, unsigned l
 static inline uint64_t CAVM_CGXX_CMRX_SW_INT_ENA_W1C(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a<=2) && (b<=3)))
+        return 0x87e0e0000190ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e0000190ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     __cavm_csr_fatal("CGXX_CMRX_SW_INT_ENA_W1C", 2, a, b, 0, 0, 0, 0);
 }
@@ -3025,7 +3360,18 @@ union cavm_cgxx_cmrx_sw_int_ena_w1s
         uint64_t reserved_1_63         : 63;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_cgxx_cmrx_sw_int_ena_w1s_s cn; */
+    /* struct cavm_cgxx_cmrx_sw_int_ena_w1s_s cn9; */
+    /* struct cavm_cgxx_cmrx_sw_int_ena_w1s_s cn96xx; */
+    struct cavm_cgxx_cmrx_sw_int_ena_w1s_cn98xx
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_1_63         : 63;
+        uint64_t sw_set                : 1;  /**< [  0:  0](R/W1S/H) Reads or sets enable for CGX(0..3)_CMR(0..3)_SW_INT[SW_SET]. */
+#else /* Word 0 - Little Endian */
+        uint64_t sw_set                : 1;  /**< [  0:  0](R/W1S/H) Reads or sets enable for CGX(0..3)_CMR(0..3)_SW_INT[SW_SET]. */
+        uint64_t reserved_1_63         : 63;
+#endif /* Word 0 - End */
+    } cn98xx;
 };
 typedef union cavm_cgxx_cmrx_sw_int_ena_w1s cavm_cgxx_cmrx_sw_int_ena_w1s_t;
 
@@ -3033,6 +3379,8 @@ static inline uint64_t CAVM_CGXX_CMRX_SW_INT_ENA_W1S(unsigned long a, unsigned l
 static inline uint64_t CAVM_CGXX_CMRX_SW_INT_ENA_W1S(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a<=2) && (b<=3)))
+        return 0x87e0e0000198ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e0000198ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     __cavm_csr_fatal("CGXX_CMRX_SW_INT_ENA_W1S", 2, a, b, 0, 0, 0, 0);
 }
@@ -3063,7 +3411,18 @@ union cavm_cgxx_cmrx_sw_int_w1s
         uint64_t reserved_1_63         : 63;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_cgxx_cmrx_sw_int_w1s_s cn; */
+    /* struct cavm_cgxx_cmrx_sw_int_w1s_s cn9; */
+    /* struct cavm_cgxx_cmrx_sw_int_w1s_s cn96xx; */
+    struct cavm_cgxx_cmrx_sw_int_w1s_cn98xx
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_1_63         : 63;
+        uint64_t sw_set                : 1;  /**< [  0:  0](R/W1S/H) Reads or sets CGX(0..3)_CMR(0..3)_SW_INT[SW_SET]. */
+#else /* Word 0 - Little Endian */
+        uint64_t sw_set                : 1;  /**< [  0:  0](R/W1S/H) Reads or sets CGX(0..3)_CMR(0..3)_SW_INT[SW_SET]. */
+        uint64_t reserved_1_63         : 63;
+#endif /* Word 0 - End */
+    } cn98xx;
 };
 typedef union cavm_cgxx_cmrx_sw_int_w1s cavm_cgxx_cmrx_sw_int_w1s_t;
 
@@ -3071,6 +3430,8 @@ static inline uint64_t CAVM_CGXX_CMRX_SW_INT_W1S(unsigned long a, unsigned long 
 static inline uint64_t CAVM_CGXX_CMRX_SW_INT_W1S(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a<=2) && (b<=3)))
+        return 0x87e0e0000188ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e0000188ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     __cavm_csr_fatal("CGXX_CMRX_SW_INT_W1S", 2, a, b, 0, 0, 0, 0);
 }
@@ -3112,6 +3473,8 @@ static inline uint64_t CAVM_CGXX_CMRX_TX_CHANNEL(unsigned long a, unsigned long 
 static inline uint64_t CAVM_CGXX_CMRX_TX_CHANNEL(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e0000600ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e0000600ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0000600ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -3168,6 +3531,8 @@ static inline uint64_t CAVM_CGXX_CMRX_TX_FIFO_LEN(unsigned long a, unsigned long
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0000618ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e0000618ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0000618ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -3217,6 +3582,8 @@ static inline uint64_t CAVM_CGXX_CMRX_TX_HG2_STATUS(unsigned long a, unsigned lo
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0000610ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e0000610ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0000610ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -3259,6 +3626,8 @@ static inline uint64_t CAVM_CGXX_CMRX_TX_MERGE_STAT0(unsigned long a, unsigned l
 static inline uint64_t CAVM_CGXX_CMRX_TX_MERGE_STAT0(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e0000160ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e0000160ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0000160ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -3306,6 +3675,8 @@ static inline uint64_t CAVM_CGXX_CMRX_TX_OVR_BP(unsigned long a, unsigned long b
 static inline uint64_t CAVM_CGXX_CMRX_TX_OVR_BP(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e0000620ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e0000620ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0000620ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -3358,6 +3729,8 @@ static inline uint64_t CAVM_CGXX_CMRX_TX_STAT0(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0000700ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e0000700ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0000700ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -3408,6 +3781,8 @@ static inline uint64_t CAVM_CGXX_CMRX_TX_STAT1(unsigned long a, unsigned long b)
 static inline uint64_t CAVM_CGXX_CMRX_TX_STAT1(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e0000708ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e0000708ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0000708ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -3460,6 +3835,8 @@ static inline uint64_t CAVM_CGXX_CMRX_TX_STAT10(unsigned long a, unsigned long b
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0000750ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e0000750ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0000750ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -3510,6 +3887,8 @@ static inline uint64_t CAVM_CGXX_CMRX_TX_STAT11(unsigned long a, unsigned long b
 static inline uint64_t CAVM_CGXX_CMRX_TX_STAT11(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e0000758ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e0000758ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0000758ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -3562,6 +3941,8 @@ static inline uint64_t CAVM_CGXX_CMRX_TX_STAT12(unsigned long a, unsigned long b
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0000760ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e0000760ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0000760ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -3612,6 +3993,8 @@ static inline uint64_t CAVM_CGXX_CMRX_TX_STAT13(unsigned long a, unsigned long b
 static inline uint64_t CAVM_CGXX_CMRX_TX_STAT13(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e0000768ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e0000768ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0000768ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -3672,6 +4055,8 @@ static inline uint64_t CAVM_CGXX_CMRX_TX_STAT14(unsigned long a, unsigned long b
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0000770ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e0000770ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0000770ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -3731,6 +4116,8 @@ static inline uint64_t CAVM_CGXX_CMRX_TX_STAT15(unsigned long a, unsigned long b
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0000778ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e0000778ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0000778ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -3777,6 +4164,8 @@ static inline uint64_t CAVM_CGXX_CMRX_TX_STAT16(unsigned long a, unsigned long b
 static inline uint64_t CAVM_CGXX_CMRX_TX_STAT16(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e0000780ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e0000780ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0000780ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -3829,6 +4218,8 @@ static inline uint64_t CAVM_CGXX_CMRX_TX_STAT17(unsigned long a, unsigned long b
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0000788ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e0000788ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0000788ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -3880,6 +4271,8 @@ static inline uint64_t CAVM_CGXX_CMRX_TX_STAT2(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0000710ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e0000710ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0000710ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -3928,6 +4321,8 @@ static inline uint64_t CAVM_CGXX_CMRX_TX_STAT3(unsigned long a, unsigned long b)
 static inline uint64_t CAVM_CGXX_CMRX_TX_STAT3(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e0000718ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e0000718ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0000718ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -3986,6 +4381,8 @@ static inline uint64_t CAVM_CGXX_CMRX_TX_STAT4(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0000720ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e0000720ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0000720ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -4036,6 +4433,8 @@ static inline uint64_t CAVM_CGXX_CMRX_TX_STAT5(unsigned long a, unsigned long b)
 static inline uint64_t CAVM_CGXX_CMRX_TX_STAT5(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e0000728ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e0000728ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0000728ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -4090,6 +4489,8 @@ static inline uint64_t CAVM_CGXX_CMRX_TX_STAT6(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0000730ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e0000730ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0000730ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -4143,6 +4544,8 @@ static inline uint64_t CAVM_CGXX_CMRX_TX_STAT7(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0000738ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e0000738ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0000738ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -4193,6 +4596,8 @@ static inline uint64_t CAVM_CGXX_CMRX_TX_STAT8(unsigned long a, unsigned long b)
 static inline uint64_t CAVM_CGXX_CMRX_TX_STAT8(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e0000740ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e0000740ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0000740ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -4245,6 +4650,8 @@ static inline uint64_t CAVM_CGXX_CMRX_TX_STAT9(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0000748ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e0000748ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0000748ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -4292,6 +4699,8 @@ static inline uint64_t CAVM_CGXX_CMRX_TX_STAT_PRIX_XOFF(unsigned long a, unsigne
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3) && (c<=7)))
         return 0x87e0e0000800ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3) + 8ll * ((c) & 0x7);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3) && (c<=7)))
+        return 0x87e0e0000800ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3) + 8ll * ((c) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3) && (c<=7)))
         return 0x87e0e0000800ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3) + 8ll * ((c) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3) && (c<=7)))
@@ -4332,6 +4741,8 @@ static inline uint64_t CAVM_CGXX_CMR_BAD(unsigned long a) __attribute__ ((pure, 
 static inline uint64_t CAVM_CGXX_CMR_BAD(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
+        return 0x87e0e0001020ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=3))
         return 0x87e0e0001020ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=2))
         return 0x87e0e0001020ll + 0x1000000ll * ((a) & 0x3);
@@ -4392,6 +4803,8 @@ static inline uint64_t CAVM_CGXX_CMR_CHAN_MSK_AND(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e0e0000110ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=3))
+        return 0x87e0e0000110ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=2))
         return 0x87e0e0000110ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=3))
@@ -4451,6 +4864,8 @@ static inline uint64_t CAVM_CGXX_CMR_CHAN_MSK_OR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e0e0000118ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=3))
+        return 0x87e0e0000118ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=2))
         return 0x87e0e0000118ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=3))
@@ -4491,6 +4906,8 @@ static inline uint64_t CAVM_CGXX_CMR_ECO(unsigned long a) __attribute__ ((pure, 
 static inline uint64_t CAVM_CGXX_CMR_ECO(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
+        return 0x87e0e0001028ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=3))
         return 0x87e0e0001028ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=2))
         return 0x87e0e0001028ll + 0x1000000ll * ((a) & 0x3);
@@ -4626,6 +5043,8 @@ static inline uint64_t CAVM_CGXX_CMR_GLOBAL_CONFIG(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e0e0000008ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=3))
+        return 0x87e0e0000008ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=2))
         return 0x87e0e0000008ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=3))
@@ -4669,6 +5088,8 @@ static inline uint64_t CAVM_CGXX_CMR_MEM_INT(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e0e0000010ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=3))
+        return 0x87e0e0000010ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=2))
         return 0x87e0e0000010ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=3))
@@ -4704,9 +5125,9 @@ union cavm_cgxx_cmr_mem_int_ena_w1c
         uint64_t reserved_2_63         : 62;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_cgxx_cmr_mem_int_ena_w1c_s cn9; */
     /* struct cavm_cgxx_cmr_mem_int_ena_w1c_s cn96xx; */
-    /* struct cavm_cgxx_cmr_mem_int_ena_w1c_s cnf95xx; */
-    struct cavm_cgxx_cmr_mem_int_ena_w1c_loki
+    struct cavm_cgxx_cmr_mem_int_ena_w1c_cn98xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_2_63         : 62;
@@ -4717,7 +5138,9 @@ union cavm_cgxx_cmr_mem_int_ena_w1c
         uint64_t smu_in_overfl         : 1;  /**< [  1:  1](R/W1C/H) Reads or clears enable for CGX(0..3)_CMR_MEM_INT[SMU_IN_OVERFL]. */
         uint64_t reserved_2_63         : 62;
 #endif /* Word 0 - End */
-    } loki;
+    } cn98xx;
+    /* struct cavm_cgxx_cmr_mem_int_ena_w1c_s cnf95xx; */
+    /* struct cavm_cgxx_cmr_mem_int_ena_w1c_cn98xx loki; */
 };
 typedef union cavm_cgxx_cmr_mem_int_ena_w1c cavm_cgxx_cmr_mem_int_ena_w1c_t;
 
@@ -4725,6 +5148,8 @@ static inline uint64_t CAVM_CGXX_CMR_MEM_INT_ENA_W1C(unsigned long a) __attribut
 static inline uint64_t CAVM_CGXX_CMR_MEM_INT_ENA_W1C(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
+        return 0x87e0e0000020ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=3))
         return 0x87e0e0000020ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=2))
         return 0x87e0e0000020ll + 0x1000000ll * ((a) & 0x3);
@@ -4761,9 +5186,9 @@ union cavm_cgxx_cmr_mem_int_ena_w1s
         uint64_t reserved_2_63         : 62;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_cgxx_cmr_mem_int_ena_w1s_s cn9; */
     /* struct cavm_cgxx_cmr_mem_int_ena_w1s_s cn96xx; */
-    /* struct cavm_cgxx_cmr_mem_int_ena_w1s_s cnf95xx; */
-    struct cavm_cgxx_cmr_mem_int_ena_w1s_loki
+    struct cavm_cgxx_cmr_mem_int_ena_w1s_cn98xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_2_63         : 62;
@@ -4774,7 +5199,9 @@ union cavm_cgxx_cmr_mem_int_ena_w1s
         uint64_t smu_in_overfl         : 1;  /**< [  1:  1](R/W1S/H) Reads or sets enable for CGX(0..3)_CMR_MEM_INT[SMU_IN_OVERFL]. */
         uint64_t reserved_2_63         : 62;
 #endif /* Word 0 - End */
-    } loki;
+    } cn98xx;
+    /* struct cavm_cgxx_cmr_mem_int_ena_w1s_s cnf95xx; */
+    /* struct cavm_cgxx_cmr_mem_int_ena_w1s_cn98xx loki; */
 };
 typedef union cavm_cgxx_cmr_mem_int_ena_w1s cavm_cgxx_cmr_mem_int_ena_w1s_t;
 
@@ -4782,6 +5209,8 @@ static inline uint64_t CAVM_CGXX_CMR_MEM_INT_ENA_W1S(unsigned long a) __attribut
 static inline uint64_t CAVM_CGXX_CMR_MEM_INT_ENA_W1S(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
+        return 0x87e0e0000028ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=3))
         return 0x87e0e0000028ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=2))
         return 0x87e0e0000028ll + 0x1000000ll * ((a) & 0x3);
@@ -4818,9 +5247,9 @@ union cavm_cgxx_cmr_mem_int_w1s
         uint64_t reserved_2_63         : 62;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_cgxx_cmr_mem_int_w1s_s cn9; */
     /* struct cavm_cgxx_cmr_mem_int_w1s_s cn96xx; */
-    /* struct cavm_cgxx_cmr_mem_int_w1s_s cnf95xx; */
-    struct cavm_cgxx_cmr_mem_int_w1s_loki
+    struct cavm_cgxx_cmr_mem_int_w1s_cn98xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_2_63         : 62;
@@ -4831,7 +5260,9 @@ union cavm_cgxx_cmr_mem_int_w1s
         uint64_t smu_in_overfl         : 1;  /**< [  1:  1](R/W1S/H) Reads or sets CGX(0..3)_CMR_MEM_INT[SMU_IN_OVERFL]. */
         uint64_t reserved_2_63         : 62;
 #endif /* Word 0 - End */
-    } loki;
+    } cn98xx;
+    /* struct cavm_cgxx_cmr_mem_int_w1s_s cnf95xx; */
+    /* struct cavm_cgxx_cmr_mem_int_w1s_cn98xx loki; */
 };
 typedef union cavm_cgxx_cmr_mem_int_w1s cavm_cgxx_cmr_mem_int_w1s_t;
 
@@ -4839,6 +5270,8 @@ static inline uint64_t CAVM_CGXX_CMR_MEM_INT_W1S(unsigned long a) __attribute__ 
 static inline uint64_t CAVM_CGXX_CMR_MEM_INT_W1S(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
+        return 0x87e0e0000018ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=3))
         return 0x87e0e0000018ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=2))
         return 0x87e0e0000018ll + 0x1000000ll * ((a) & 0x3);
@@ -4882,6 +5315,8 @@ static inline uint64_t CAVM_CGXX_CMR_NIC_NXC_ADR(unsigned long a) __attribute__ 
 static inline uint64_t CAVM_CGXX_CMR_NIC_NXC_ADR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
+        return 0x87e0e0001030ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=3))
         return 0x87e0e0001030ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=2))
         return 0x87e0e0001030ll + 0x1000000ll * ((a) & 0x3);
@@ -4930,6 +5365,8 @@ static inline uint64_t CAVM_CGXX_CMR_NIX0_NXC_ADR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e0e0001038ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=3))
+        return 0x87e0e0001038ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=2))
         return 0x87e0e0001038ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=3))
@@ -4977,6 +5414,8 @@ static inline uint64_t CAVM_CGXX_CMR_NIX1_NXC_ADR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e0e0001040ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=3))
+        return 0x87e0e0001040ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=2))
         return 0x87e0e0001040ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=3))
@@ -5015,6 +5454,8 @@ static inline uint64_t CAVM_CGXX_CMR_P2XX_COUNT(unsigned long a, unsigned long b
 static inline uint64_t CAVM_CGXX_CMR_P2XX_COUNT(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=2)))
+        return 0x87e0e0000168ll + 0x1000000ll * ((a) & 0x3) + 0x1000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=2)))
         return 0x87e0e0000168ll + 0x1000000ll * ((a) & 0x3) + 0x1000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=2)))
         return 0x87e0e0000168ll + 0x1000000ll * ((a) & 0x3) + 0x1000ll * ((b) & 0x3);
@@ -5099,6 +5540,8 @@ static inline uint64_t CAVM_CGXX_CMR_RX_DMACX_CAM0(unsigned long a, unsigned lon
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=31)))
         return 0x87e0e0000200ll + 0x1000000ll * ((a) & 0x3) + 8ll * ((b) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=31)))
+        return 0x87e0e0000200ll + 0x1000000ll * ((a) & 0x3) + 8ll * ((b) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=31)))
         return 0x87e0e0000200ll + 0x1000000ll * ((a) & 0x3) + 8ll * ((b) & 0x1f);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=31)))
@@ -5156,6 +5599,8 @@ static inline uint64_t CAVM_CGXX_CMR_RX_DMACX_CAM1(unsigned long a, unsigned lon
 static inline uint64_t CAVM_CGXX_CMR_RX_DMACX_CAM1(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=31)))
+        return 0x87e0e0000400ll + 0x1000000ll * ((a) & 0x3) + 8ll * ((b) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=31)))
         return 0x87e0e0000400ll + 0x1000000ll * ((a) & 0x3) + 8ll * ((b) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=31)))
         return 0x87e0e0000400ll + 0x1000000ll * ((a) & 0x3) + 8ll * ((b) & 0x1f);
@@ -5234,6 +5679,8 @@ static inline uint64_t CAVM_CGXX_CMR_RX_LMACS(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e0e0000128ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=3))
+        return 0x87e0e0000128ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=2))
         return 0x87e0e0000128ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=3))
@@ -5304,6 +5751,8 @@ static inline uint64_t CAVM_CGXX_CMR_RX_OVR_BP(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e0e0000130ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=3))
+        return 0x87e0e0000130ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=2))
         return 0x87e0e0000130ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=3))
@@ -5349,6 +5798,8 @@ static inline uint64_t CAVM_CGXX_CMR_RX_STAT10(unsigned long a) __attribute__ ((
 static inline uint64_t CAVM_CGXX_CMR_RX_STAT10(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
+        return 0x87e0e00000c0ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=3))
         return 0x87e0e00000c0ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=2))
         return 0x87e0e00000c0ll + 0x1000000ll * ((a) & 0x3);
@@ -5397,6 +5848,8 @@ static inline uint64_t CAVM_CGXX_CMR_RX_STAT11(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e0e00000c8ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=3))
+        return 0x87e0e00000c8ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=2))
         return 0x87e0e00000c8ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=3))
@@ -5440,6 +5893,8 @@ static inline uint64_t CAVM_CGXX_CMR_RX_STAT12(unsigned long a) __attribute__ ((
 static inline uint64_t CAVM_CGXX_CMR_RX_STAT12(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
+        return 0x87e0e00000d0ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=3))
         return 0x87e0e00000d0ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=2))
         return 0x87e0e00000d0ll + 0x1000000ll * ((a) & 0x3);
@@ -5495,6 +5950,8 @@ static inline uint64_t CAVM_CGXX_CMR_RX_STAT9(unsigned long a) __attribute__ ((p
 static inline uint64_t CAVM_CGXX_CMR_RX_STAT9(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
+        return 0x87e0e00000b8ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=3))
         return 0x87e0e00000b8ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=2))
         return 0x87e0e00000b8ll + 0x1000000ll * ((a) & 0x3);
@@ -5583,6 +6040,8 @@ static inline uint64_t CAVM_CGXX_CMR_RX_STEERING0X(unsigned long a, unsigned lon
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=7)))
         return 0x87e0e0000300ll + 0x1000000ll * ((a) & 0x3) + 8ll * ((b) & 0x7);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=7)))
+        return 0x87e0e0000300ll + 0x1000000ll * ((a) & 0x3) + 8ll * ((b) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=7)))
         return 0x87e0e0000300ll + 0x1000000ll * ((a) & 0x3) + 8ll * ((b) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=7)))
@@ -5651,6 +6110,8 @@ static inline uint64_t CAVM_CGXX_CMR_RX_STEERING1X(unsigned long a, unsigned lon
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=7)))
         return 0x87e0e0000500ll + 0x1000000ll * ((a) & 0x3) + 8ll * ((b) & 0x7);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=7)))
+        return 0x87e0e0000500ll + 0x1000000ll * ((a) & 0x3) + 8ll * ((b) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=7)))
         return 0x87e0e0000500ll + 0x1000000ll * ((a) & 0x3) + 8ll * ((b) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=7)))
@@ -5697,6 +6158,8 @@ static inline uint64_t CAVM_CGXX_CMR_RX_STEERING_DEFAULT0(unsigned long a) __att
 static inline uint64_t CAVM_CGXX_CMR_RX_STEERING_DEFAULT0(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
+        return 0x87e0e00003f0ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=3))
         return 0x87e0e00003f0ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=2))
         return 0x87e0e00003f0ll + 0x1000000ll * ((a) & 0x3);
@@ -5745,6 +6208,8 @@ static inline uint64_t CAVM_CGXX_CMR_RX_STEERING_DEFAULT1(unsigned long a) __att
 static inline uint64_t CAVM_CGXX_CMR_RX_STEERING_DEFAULT1(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
+        return 0x87e0e00005e0ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=3))
         return 0x87e0e00005e0ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=2))
         return 0x87e0e00005e0ll + 0x1000000ll * ((a) & 0x3);
@@ -5809,6 +6274,8 @@ static inline uint64_t CAVM_CGXX_CMR_RX_STEERING_VETYPE0X(unsigned long a, unsig
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=7)))
         return 0x87e0e0000380ll + 0x1000000ll * ((a) & 0x3) + 8ll * ((b) & 0x7);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=7)))
+        return 0x87e0e0000380ll + 0x1000000ll * ((a) & 0x3) + 8ll * ((b) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=7)))
         return 0x87e0e0000380ll + 0x1000000ll * ((a) & 0x3) + 8ll * ((b) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=7)))
@@ -5872,6 +6339,8 @@ static inline uint64_t CAVM_CGXX_CMR_RX_STEERING_VETYPE1X(unsigned long a, unsig
 static inline uint64_t CAVM_CGXX_CMR_RX_STEERING_VETYPE1X(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=7)))
+        return 0x87e0e0000580ll + 0x1000000ll * ((a) & 0x3) + 8ll * ((b) & 0x7);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=7)))
         return 0x87e0e0000580ll + 0x1000000ll * ((a) & 0x3) + 8ll * ((b) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=7)))
         return 0x87e0e0000580ll + 0x1000000ll * ((a) & 0x3) + 8ll * ((b) & 0x7);
@@ -5952,6 +6421,8 @@ static inline uint64_t CAVM_CGXX_CMR_TX_LMACS(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e0e0001000ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=3))
+        return 0x87e0e0001000ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=2))
         return 0x87e0e0001000ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=3))
@@ -5990,6 +6461,8 @@ static inline uint64_t CAVM_CGXX_CMR_X2PX_COUNT(unsigned long a, unsigned long b
 static inline uint64_t CAVM_CGXX_CMR_X2PX_COUNT(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=2)))
+        return 0x87e0e0000170ll + 0x1000000ll * ((a) & 0x3) + 0x1000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=2)))
         return 0x87e0e0000170ll + 0x1000000ll * ((a) & 0x3) + 0x1000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=2)))
         return 0x87e0e0000170ll + 0x1000000ll * ((a) & 0x3) + 0x1000ll * ((b) & 0x3);
@@ -6041,6 +6514,8 @@ static inline uint64_t CAVM_CGXX_CONST(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e0e0002000ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=3))
+        return 0x87e0e0002000ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=2))
         return 0x87e0e0002000ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=3))
@@ -6088,6 +6563,8 @@ static inline uint64_t CAVM_CGXX_CONST1(unsigned long a) __attribute__ ((pure, a
 static inline uint64_t CAVM_CGXX_CONST1(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
+        return 0x87e0e0002008ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=3))
         return 0x87e0e0002008ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=2))
         return 0x87e0e0002008ll + 0x1000000ll * ((a) & 0x3);
@@ -6138,6 +6615,8 @@ static inline uint64_t CAVM_CGXX_GMP_GMIX_RX_WOL_CTRL0(unsigned long a, unsigned
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0038a00ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e0038a00ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0038a00ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -6178,6 +6657,8 @@ static inline uint64_t CAVM_CGXX_GMP_GMIX_RX_WOL_CTRL1(unsigned long a, unsigned
 static inline uint64_t CAVM_CGXX_GMP_GMIX_RX_WOL_CTRL1(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e0038a08ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e0038a08ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0038a08ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -6383,6 +6864,8 @@ static inline uint64_t CAVM_CGXX_GMP_GMIX_TX_EEE(unsigned long a, unsigned long 
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0038800ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e0038800ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0038800ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -6535,6 +7018,8 @@ static inline uint64_t CAVM_CGXX_GMP_GMIX_TX_EEE_CFG1(unsigned long a, unsigned 
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0038808ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e0038808ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0038808ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -6577,6 +7062,8 @@ static inline uint64_t CAVM_CGXX_GMP_GMIX_WOL_INT(unsigned long a, unsigned long
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0038a80ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e0038a80ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0038a80ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -6610,9 +7097,9 @@ union cavm_cgxx_gmp_gmix_wol_int_ena_w1c
         uint64_t reserved_1_63         : 63;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_cgxx_gmp_gmix_wol_int_ena_w1c_s cn9; */
     /* struct cavm_cgxx_gmp_gmix_wol_int_ena_w1c_s cn96xx; */
-    /* struct cavm_cgxx_gmp_gmix_wol_int_ena_w1c_s cnf95xx; */
-    struct cavm_cgxx_gmp_gmix_wol_int_ena_w1c_loki
+    struct cavm_cgxx_gmp_gmix_wol_int_ena_w1c_cn98xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_1_63         : 63;
@@ -6621,7 +7108,9 @@ union cavm_cgxx_gmp_gmix_wol_int_ena_w1c
         uint64_t wol_rcvd              : 1;  /**< [  0:  0](R/W1C/H) Reads or clears enable for CGX(0..3)_GMP_GMI(0..3)_WOL_INT[WOL_RCVD]. */
         uint64_t reserved_1_63         : 63;
 #endif /* Word 0 - End */
-    } loki;
+    } cn98xx;
+    /* struct cavm_cgxx_gmp_gmix_wol_int_ena_w1c_s cnf95xx; */
+    /* struct cavm_cgxx_gmp_gmix_wol_int_ena_w1c_cn98xx loki; */
 };
 typedef union cavm_cgxx_gmp_gmix_wol_int_ena_w1c cavm_cgxx_gmp_gmix_wol_int_ena_w1c_t;
 
@@ -6629,6 +7118,8 @@ static inline uint64_t CAVM_CGXX_GMP_GMIX_WOL_INT_ENA_W1C(unsigned long a, unsig
 static inline uint64_t CAVM_CGXX_GMP_GMIX_WOL_INT_ENA_W1C(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e0038a90ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e0038a90ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0038a90ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -6663,9 +7154,9 @@ union cavm_cgxx_gmp_gmix_wol_int_ena_w1s
         uint64_t reserved_1_63         : 63;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_cgxx_gmp_gmix_wol_int_ena_w1s_s cn9; */
     /* struct cavm_cgxx_gmp_gmix_wol_int_ena_w1s_s cn96xx; */
-    /* struct cavm_cgxx_gmp_gmix_wol_int_ena_w1s_s cnf95xx; */
-    struct cavm_cgxx_gmp_gmix_wol_int_ena_w1s_loki
+    struct cavm_cgxx_gmp_gmix_wol_int_ena_w1s_cn98xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_1_63         : 63;
@@ -6674,7 +7165,9 @@ union cavm_cgxx_gmp_gmix_wol_int_ena_w1s
         uint64_t wol_rcvd              : 1;  /**< [  0:  0](R/W1S/H) Reads or sets enable for CGX(0..3)_GMP_GMI(0..3)_WOL_INT[WOL_RCVD]. */
         uint64_t reserved_1_63         : 63;
 #endif /* Word 0 - End */
-    } loki;
+    } cn98xx;
+    /* struct cavm_cgxx_gmp_gmix_wol_int_ena_w1s_s cnf95xx; */
+    /* struct cavm_cgxx_gmp_gmix_wol_int_ena_w1s_cn98xx loki; */
 };
 typedef union cavm_cgxx_gmp_gmix_wol_int_ena_w1s cavm_cgxx_gmp_gmix_wol_int_ena_w1s_t;
 
@@ -6682,6 +7175,8 @@ static inline uint64_t CAVM_CGXX_GMP_GMIX_WOL_INT_ENA_W1S(unsigned long a, unsig
 static inline uint64_t CAVM_CGXX_GMP_GMIX_WOL_INT_ENA_W1S(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e0038a98ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e0038a98ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0038a98ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -6716,9 +7211,9 @@ union cavm_cgxx_gmp_gmix_wol_int_w1s
         uint64_t reserved_1_63         : 63;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_cgxx_gmp_gmix_wol_int_w1s_s cn9; */
     /* struct cavm_cgxx_gmp_gmix_wol_int_w1s_s cn96xx; */
-    /* struct cavm_cgxx_gmp_gmix_wol_int_w1s_s cnf95xx; */
-    struct cavm_cgxx_gmp_gmix_wol_int_w1s_loki
+    struct cavm_cgxx_gmp_gmix_wol_int_w1s_cn98xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_1_63         : 63;
@@ -6727,7 +7222,9 @@ union cavm_cgxx_gmp_gmix_wol_int_w1s
         uint64_t wol_rcvd              : 1;  /**< [  0:  0](R/W1S/H) Reads or sets CGX(0..3)_GMP_GMI(0..3)_WOL_INT[WOL_RCVD]. */
         uint64_t reserved_1_63         : 63;
 #endif /* Word 0 - End */
-    } loki;
+    } cn98xx;
+    /* struct cavm_cgxx_gmp_gmix_wol_int_w1s_s cnf95xx; */
+    /* struct cavm_cgxx_gmp_gmix_wol_int_w1s_cn98xx loki; */
 };
 typedef union cavm_cgxx_gmp_gmix_wol_int_w1s cavm_cgxx_gmp_gmix_wol_int_w1s_t;
 
@@ -6735,6 +7232,8 @@ static inline uint64_t CAVM_CGXX_GMP_GMIX_WOL_INT_W1S(unsigned long a, unsigned 
 static inline uint64_t CAVM_CGXX_GMP_GMIX_WOL_INT_W1S(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e0038a88ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e0038a88ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0038a88ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -6814,6 +7313,8 @@ static inline uint64_t CAVM_CGXX_GMP_GMI_PRTX_CFG(unsigned long a, unsigned long
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0038020ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e0038020ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0038020ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -6881,6 +7382,8 @@ static inline uint64_t CAVM_CGXX_GMP_GMI_RXX_DECISION(unsigned long a, unsigned 
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0038040ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e0038040ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0038040ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -6935,6 +7438,8 @@ static inline uint64_t CAVM_CGXX_GMP_GMI_RXX_FRM_CHK(unsigned long a, unsigned l
 static inline uint64_t CAVM_CGXX_GMP_GMI_RXX_FRM_CHK(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e0038030ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e0038030ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0038030ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -7179,6 +7684,8 @@ static inline uint64_t CAVM_CGXX_GMP_GMI_RXX_FRM_CTL(unsigned long a, unsigned l
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0038028ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e0038028ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0038028ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -7236,6 +7743,8 @@ static inline uint64_t CAVM_CGXX_GMP_GMI_RXX_IFG(unsigned long a, unsigned long 
 static inline uint64_t CAVM_CGXX_GMP_GMI_RXX_IFG(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e0038058ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e0038058ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0038058ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -7445,6 +7954,8 @@ static inline uint64_t CAVM_CGXX_GMP_GMI_RXX_INT(unsigned long a, unsigned long 
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0038000ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e0038000ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0038000ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -7500,6 +8011,7 @@ union cavm_cgxx_gmp_gmi_rxx_int_ena_w1c
         uint64_t reserved_12_63        : 52;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_cgxx_gmp_gmi_rxx_int_ena_w1c_s cn9; */
     struct cavm_cgxx_gmp_gmi_rxx_int_ena_w1c_cn96xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -7534,8 +8046,7 @@ union cavm_cgxx_gmp_gmi_rxx_int_ena_w1c
         uint64_t reserved_16_63        : 48;
 #endif /* Word 0 - End */
     } cn96xx;
-    /* struct cavm_cgxx_gmp_gmi_rxx_int_ena_w1c_cn96xx cnf95xx; */
-    struct cavm_cgxx_gmp_gmi_rxx_int_ena_w1c_loki
+    struct cavm_cgxx_gmp_gmi_rxx_int_ena_w1c_cn98xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_16_63        : 48;
@@ -7568,7 +8079,9 @@ union cavm_cgxx_gmp_gmi_rxx_int_ena_w1c
         uint64_t reserved_12_15        : 4;
         uint64_t reserved_16_63        : 48;
 #endif /* Word 0 - End */
-    } loki;
+    } cn98xx;
+    /* struct cavm_cgxx_gmp_gmi_rxx_int_ena_w1c_cn96xx cnf95xx; */
+    /* struct cavm_cgxx_gmp_gmi_rxx_int_ena_w1c_cn98xx loki; */
 };
 typedef union cavm_cgxx_gmp_gmi_rxx_int_ena_w1c cavm_cgxx_gmp_gmi_rxx_int_ena_w1c_t;
 
@@ -7576,6 +8089,8 @@ static inline uint64_t CAVM_CGXX_GMP_GMI_RXX_INT_ENA_W1C(unsigned long a, unsign
 static inline uint64_t CAVM_CGXX_GMP_GMI_RXX_INT_ENA_W1C(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e0038010ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e0038010ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0038010ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -7632,6 +8147,7 @@ union cavm_cgxx_gmp_gmi_rxx_int_ena_w1s
         uint64_t reserved_12_63        : 52;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_cgxx_gmp_gmi_rxx_int_ena_w1s_s cn9; */
     struct cavm_cgxx_gmp_gmi_rxx_int_ena_w1s_cn96xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -7666,8 +8182,7 @@ union cavm_cgxx_gmp_gmi_rxx_int_ena_w1s
         uint64_t reserved_16_63        : 48;
 #endif /* Word 0 - End */
     } cn96xx;
-    /* struct cavm_cgxx_gmp_gmi_rxx_int_ena_w1s_cn96xx cnf95xx; */
-    struct cavm_cgxx_gmp_gmi_rxx_int_ena_w1s_loki
+    struct cavm_cgxx_gmp_gmi_rxx_int_ena_w1s_cn98xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_16_63        : 48;
@@ -7700,7 +8215,9 @@ union cavm_cgxx_gmp_gmi_rxx_int_ena_w1s
         uint64_t reserved_12_15        : 4;
         uint64_t reserved_16_63        : 48;
 #endif /* Word 0 - End */
-    } loki;
+    } cn98xx;
+    /* struct cavm_cgxx_gmp_gmi_rxx_int_ena_w1s_cn96xx cnf95xx; */
+    /* struct cavm_cgxx_gmp_gmi_rxx_int_ena_w1s_cn98xx loki; */
 };
 typedef union cavm_cgxx_gmp_gmi_rxx_int_ena_w1s cavm_cgxx_gmp_gmi_rxx_int_ena_w1s_t;
 
@@ -7708,6 +8225,8 @@ static inline uint64_t CAVM_CGXX_GMP_GMI_RXX_INT_ENA_W1S(unsigned long a, unsign
 static inline uint64_t CAVM_CGXX_GMP_GMI_RXX_INT_ENA_W1S(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e0038018ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e0038018ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0038018ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -7764,6 +8283,7 @@ union cavm_cgxx_gmp_gmi_rxx_int_w1s
         uint64_t reserved_12_63        : 52;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_cgxx_gmp_gmi_rxx_int_w1s_s cn9; */
     struct cavm_cgxx_gmp_gmi_rxx_int_w1s_cn96xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -7798,8 +8318,7 @@ union cavm_cgxx_gmp_gmi_rxx_int_w1s
         uint64_t reserved_16_63        : 48;
 #endif /* Word 0 - End */
     } cn96xx;
-    /* struct cavm_cgxx_gmp_gmi_rxx_int_w1s_cn96xx cnf95xx; */
-    struct cavm_cgxx_gmp_gmi_rxx_int_w1s_loki
+    struct cavm_cgxx_gmp_gmi_rxx_int_w1s_cn98xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_16_63        : 48;
@@ -7832,7 +8351,9 @@ union cavm_cgxx_gmp_gmi_rxx_int_w1s
         uint64_t reserved_12_15        : 4;
         uint64_t reserved_16_63        : 48;
 #endif /* Word 0 - End */
-    } loki;
+    } cn98xx;
+    /* struct cavm_cgxx_gmp_gmi_rxx_int_w1s_cn96xx cnf95xx; */
+    /* struct cavm_cgxx_gmp_gmi_rxx_int_w1s_cn98xx loki; */
 };
 typedef union cavm_cgxx_gmp_gmi_rxx_int_w1s cavm_cgxx_gmp_gmi_rxx_int_w1s_t;
 
@@ -7840,6 +8361,8 @@ static inline uint64_t CAVM_CGXX_GMP_GMI_RXX_INT_W1S(unsigned long a, unsigned l
 static inline uint64_t CAVM_CGXX_GMP_GMI_RXX_INT_W1S(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e0038008ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e0038008ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0038008ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -7886,6 +8409,8 @@ static inline uint64_t CAVM_CGXX_GMP_GMI_RXX_JABBER(unsigned long a, unsigned lo
 static inline uint64_t CAVM_CGXX_GMP_GMI_RXX_JABBER(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e0038038ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e0038038ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0038038ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -7980,6 +8505,8 @@ static inline uint64_t CAVM_CGXX_GMP_GMI_RXX_UDD_SKP(unsigned long a, unsigned l
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0038048ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e0038048ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0038048ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -8020,6 +8547,8 @@ static inline uint64_t CAVM_CGXX_GMP_GMI_SMACX(unsigned long a, unsigned long b)
 static inline uint64_t CAVM_CGXX_GMP_GMI_SMACX(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e0038230ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e0038230ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0038230ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -8067,6 +8596,8 @@ static inline uint64_t CAVM_CGXX_GMP_GMI_TXX_APPEND(unsigned long a, unsigned lo
 static inline uint64_t CAVM_CGXX_GMP_GMI_TXX_APPEND(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e0038218ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e0038218ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0038218ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -8116,6 +8647,8 @@ static inline uint64_t CAVM_CGXX_GMP_GMI_TXX_BURST(unsigned long a, unsigned lon
 static inline uint64_t CAVM_CGXX_GMP_GMI_TXX_BURST(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e0038228ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e0038228ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0038228ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -8171,6 +8704,8 @@ static inline uint64_t CAVM_CGXX_GMP_GMI_TXX_CTL(unsigned long a, unsigned long 
 static inline uint64_t CAVM_CGXX_GMP_GMI_TXX_CTL(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e0038270ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e0038270ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0038270ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -8242,6 +8777,8 @@ static inline uint64_t CAVM_CGXX_GMP_GMI_TXX_INT(unsigned long a, unsigned long 
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0038500ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e0038500ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0038500ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -8283,6 +8820,7 @@ union cavm_cgxx_gmp_gmi_txx_int_ena_w1c
         uint64_t reserved_5_63         : 59;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_cgxx_gmp_gmi_txx_int_ena_w1c_s cn9; */
     struct cavm_cgxx_gmp_gmi_txx_int_ena_w1c_cn96xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -8305,8 +8843,7 @@ union cavm_cgxx_gmp_gmi_txx_int_ena_w1c
         uint64_t reserved_9_63         : 55;
 #endif /* Word 0 - End */
     } cn96xx;
-    /* struct cavm_cgxx_gmp_gmi_txx_int_ena_w1c_cn96xx cnf95xx; */
-    struct cavm_cgxx_gmp_gmi_txx_int_ena_w1c_loki
+    struct cavm_cgxx_gmp_gmi_txx_int_ena_w1c_cn98xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_9_63         : 55;
@@ -8327,7 +8864,9 @@ union cavm_cgxx_gmp_gmi_txx_int_ena_w1c
         uint64_t reserved_8            : 1;
         uint64_t reserved_9_63         : 55;
 #endif /* Word 0 - End */
-    } loki;
+    } cn98xx;
+    /* struct cavm_cgxx_gmp_gmi_txx_int_ena_w1c_cn96xx cnf95xx; */
+    /* struct cavm_cgxx_gmp_gmi_txx_int_ena_w1c_cn98xx loki; */
 };
 typedef union cavm_cgxx_gmp_gmi_txx_int_ena_w1c cavm_cgxx_gmp_gmi_txx_int_ena_w1c_t;
 
@@ -8335,6 +8874,8 @@ static inline uint64_t CAVM_CGXX_GMP_GMI_TXX_INT_ENA_W1C(unsigned long a, unsign
 static inline uint64_t CAVM_CGXX_GMP_GMI_TXX_INT_ENA_W1C(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e0038510ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e0038510ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0038510ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -8377,6 +8918,7 @@ union cavm_cgxx_gmp_gmi_txx_int_ena_w1s
         uint64_t reserved_5_63         : 59;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_cgxx_gmp_gmi_txx_int_ena_w1s_s cn9; */
     struct cavm_cgxx_gmp_gmi_txx_int_ena_w1s_cn96xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -8399,8 +8941,7 @@ union cavm_cgxx_gmp_gmi_txx_int_ena_w1s
         uint64_t reserved_9_63         : 55;
 #endif /* Word 0 - End */
     } cn96xx;
-    /* struct cavm_cgxx_gmp_gmi_txx_int_ena_w1s_cn96xx cnf95xx; */
-    struct cavm_cgxx_gmp_gmi_txx_int_ena_w1s_loki
+    struct cavm_cgxx_gmp_gmi_txx_int_ena_w1s_cn98xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_9_63         : 55;
@@ -8421,7 +8962,9 @@ union cavm_cgxx_gmp_gmi_txx_int_ena_w1s
         uint64_t reserved_8            : 1;
         uint64_t reserved_9_63         : 55;
 #endif /* Word 0 - End */
-    } loki;
+    } cn98xx;
+    /* struct cavm_cgxx_gmp_gmi_txx_int_ena_w1s_cn96xx cnf95xx; */
+    /* struct cavm_cgxx_gmp_gmi_txx_int_ena_w1s_cn98xx loki; */
 };
 typedef union cavm_cgxx_gmp_gmi_txx_int_ena_w1s cavm_cgxx_gmp_gmi_txx_int_ena_w1s_t;
 
@@ -8429,6 +8972,8 @@ static inline uint64_t CAVM_CGXX_GMP_GMI_TXX_INT_ENA_W1S(unsigned long a, unsign
 static inline uint64_t CAVM_CGXX_GMP_GMI_TXX_INT_ENA_W1S(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e0038518ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e0038518ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0038518ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -8471,6 +9016,7 @@ union cavm_cgxx_gmp_gmi_txx_int_w1s
         uint64_t reserved_5_63         : 59;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_cgxx_gmp_gmi_txx_int_w1s_s cn9; */
     struct cavm_cgxx_gmp_gmi_txx_int_w1s_cn96xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -8493,8 +9039,7 @@ union cavm_cgxx_gmp_gmi_txx_int_w1s
         uint64_t reserved_9_63         : 55;
 #endif /* Word 0 - End */
     } cn96xx;
-    /* struct cavm_cgxx_gmp_gmi_txx_int_w1s_cn96xx cnf95xx; */
-    struct cavm_cgxx_gmp_gmi_txx_int_w1s_loki
+    struct cavm_cgxx_gmp_gmi_txx_int_w1s_cn98xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_9_63         : 55;
@@ -8515,7 +9060,9 @@ union cavm_cgxx_gmp_gmi_txx_int_w1s
         uint64_t reserved_8            : 1;
         uint64_t reserved_9_63         : 55;
 #endif /* Word 0 - End */
-    } loki;
+    } cn98xx;
+    /* struct cavm_cgxx_gmp_gmi_txx_int_w1s_cn96xx cnf95xx; */
+    /* struct cavm_cgxx_gmp_gmi_txx_int_w1s_cn98xx loki; */
 };
 typedef union cavm_cgxx_gmp_gmi_txx_int_w1s cavm_cgxx_gmp_gmi_txx_int_w1s_t;
 
@@ -8523,6 +9070,8 @@ static inline uint64_t CAVM_CGXX_GMP_GMI_TXX_INT_W1S(unsigned long a, unsigned l
 static inline uint64_t CAVM_CGXX_GMP_GMI_TXX_INT_W1S(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e0038508ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e0038508ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0038508ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -8576,6 +9125,8 @@ static inline uint64_t CAVM_CGXX_GMP_GMI_TXX_MIN_PKT(unsigned long a, unsigned l
 static inline uint64_t CAVM_CGXX_GMP_GMI_TXX_MIN_PKT(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e0038240ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e0038240ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0038240ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -8648,6 +9199,8 @@ static inline uint64_t CAVM_CGXX_GMP_GMI_TXX_PAUSE_PKT_INTERVAL(unsigned long a,
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0038248ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e0038248ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0038248ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -8697,6 +9250,8 @@ static inline uint64_t CAVM_CGXX_GMP_GMI_TXX_PAUSE_PKT_TIME(unsigned long a, uns
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0038238ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e0038238ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0038238ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -8737,6 +9292,8 @@ static inline uint64_t CAVM_CGXX_GMP_GMI_TXX_PAUSE_TOGO(unsigned long a, unsigne
 static inline uint64_t CAVM_CGXX_GMP_GMI_TXX_PAUSE_TOGO(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e0038258ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e0038258ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0038258ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -8782,6 +9339,8 @@ static inline uint64_t CAVM_CGXX_GMP_GMI_TXX_PAUSE_ZERO(unsigned long a, unsigne
 static inline uint64_t CAVM_CGXX_GMP_GMI_TXX_PAUSE_ZERO(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e0038260ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e0038260ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0038260ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -8848,6 +9407,8 @@ static inline uint64_t CAVM_CGXX_GMP_GMI_TXX_SGMII_CTL(unsigned long a, unsigned
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0038300ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e0038300ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0038300ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -8897,6 +9458,8 @@ static inline uint64_t CAVM_CGXX_GMP_GMI_TXX_SLOT(unsigned long a, unsigned long
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0038220ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e0038220ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0038220ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -8939,6 +9502,8 @@ static inline uint64_t CAVM_CGXX_GMP_GMI_TXX_SOFT_PAUSE(unsigned long a, unsigne
 static inline uint64_t CAVM_CGXX_GMP_GMI_TXX_SOFT_PAUSE(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e0038250ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e0038250ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0038250ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -8991,6 +9556,8 @@ static inline uint64_t CAVM_CGXX_GMP_GMI_TXX_THRESH(unsigned long a, unsigned lo
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0038210ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e0038210ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0038210ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -9031,6 +9598,8 @@ static inline uint64_t CAVM_CGXX_GMP_GMI_TX_COL_ATTEMPT(unsigned long a) __attri
 static inline uint64_t CAVM_CGXX_GMP_GMI_TX_COL_ATTEMPT(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
+        return 0x87e0e0039010ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=3))
         return 0x87e0e0039010ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=2))
         return 0x87e0e0039010ll + 0x1000000ll * ((a) & 0x3);
@@ -9090,6 +9659,8 @@ static inline uint64_t CAVM_CGXX_GMP_GMI_TX_IFG(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e0e0039000ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=3))
+        return 0x87e0e0039000ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=2))
         return 0x87e0e0039000ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=3))
@@ -9131,6 +9702,8 @@ static inline uint64_t CAVM_CGXX_GMP_GMI_TX_JAM(unsigned long a) __attribute__ (
 static inline uint64_t CAVM_CGXX_GMP_GMI_TX_JAM(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
+        return 0x87e0e0039008ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=3))
         return 0x87e0e0039008ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=2))
         return 0x87e0e0039008ll + 0x1000000ll * ((a) & 0x3);
@@ -9177,6 +9750,8 @@ static inline uint64_t CAVM_CGXX_GMP_GMI_TX_LFSR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
         return 0x87e0e0039028ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=3))
+        return 0x87e0e0039028ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=2))
         return 0x87e0e0039028ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=3))
@@ -9217,6 +9792,8 @@ static inline uint64_t CAVM_CGXX_GMP_GMI_TX_PAUSE_PKT_DMAC(unsigned long a) __at
 static inline uint64_t CAVM_CGXX_GMP_GMI_TX_PAUSE_PKT_DMAC(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
+        return 0x87e0e0039018ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=3))
         return 0x87e0e0039018ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=2))
         return 0x87e0e0039018ll + 0x1000000ll * ((a) & 0x3);
@@ -9259,6 +9836,8 @@ static inline uint64_t CAVM_CGXX_GMP_GMI_TX_PAUSE_PKT_TYPE(unsigned long a) __at
 static inline uint64_t CAVM_CGXX_GMP_GMI_TX_PAUSE_PKT_TYPE(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
+        return 0x87e0e0039020ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=3))
         return 0x87e0e0039020ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=2))
         return 0x87e0e0039020ll + 0x1000000ll * ((a) & 0x3);
@@ -9508,6 +10087,8 @@ static inline uint64_t CAVM_CGXX_GMP_MISCX_CFG(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0034000ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e0034000ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0034000ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -9567,6 +10148,8 @@ static inline uint64_t CAVM_CGXX_GMP_PCSX_AN_EXPANSION(unsigned long a, unsigned
 static inline uint64_t CAVM_CGXX_GMP_PCSX_AN_EXPANSION(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e0030a60ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e0030a60ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0030a60ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -9634,6 +10217,8 @@ static inline uint64_t CAVM_CGXX_GMP_PCSX_AN_LP_ABIL_NP(unsigned long a, unsigne
 static inline uint64_t CAVM_CGXX_GMP_PCSX_AN_LP_ABIL_NP(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e0030a80ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e0030a80ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0030a80ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -9704,6 +10289,8 @@ static inline uint64_t CAVM_CGXX_GMP_PCSX_AN_NP_TX(unsigned long a, unsigned lon
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0030a70ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e0030a70ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0030a70ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -9758,6 +10345,8 @@ static inline uint64_t CAVM_CGXX_GMP_PCSX_DBG_CONTROL(unsigned long a, unsigned 
 static inline uint64_t CAVM_CGXX_GMP_PCSX_DBG_CONTROL(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e0031000ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e0031000ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0031000ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -9820,6 +10409,8 @@ static inline uint64_t CAVM_CGXX_GMP_PCSX_RX_EEE_WAKE(unsigned long a, unsigned 
 static inline uint64_t CAVM_CGXX_GMP_PCSX_RX_EEE_WAKE(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e0030910ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e0030910ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0030910ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -9909,6 +10500,8 @@ static inline uint64_t CAVM_CGXX_GMP_PCSX_RX_LPI_TIMING(unsigned long a, unsigne
 static inline uint64_t CAVM_CGXX_GMP_PCSX_RX_LPI_TIMING(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e0030900ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e0030900ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0030900ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -10018,6 +10611,8 @@ static inline uint64_t CAVM_CGXX_GMP_PCSX_STATUS1(unsigned long a, unsigned long
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0030880ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e0030880ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0030880ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -10103,6 +10698,8 @@ static inline uint64_t CAVM_CGXX_GMP_PCSX_TX_LPI_TIMING(unsigned long a, unsigne
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0030800ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e0030800ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0030800ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -10176,6 +10773,8 @@ static inline uint64_t CAVM_CGXX_GMP_PCS_ANX_ADV(unsigned long a, unsigned long 
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0030010ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e0030010ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0030010ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -10224,6 +10823,8 @@ static inline uint64_t CAVM_CGXX_GMP_PCS_ANX_EXT_ST(unsigned long a, unsigned lo
 static inline uint64_t CAVM_CGXX_GMP_PCS_ANX_EXT_ST(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e0030028ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e0030028ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0030028ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -10301,6 +10902,8 @@ static inline uint64_t CAVM_CGXX_GMP_PCS_ANX_LP_ABIL(unsigned long a, unsigned l
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0030018ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e0030018ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0030018ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -10376,6 +10979,8 @@ static inline uint64_t CAVM_CGXX_GMP_PCS_ANX_RESULTS(unsigned long a, unsigned l
 static inline uint64_t CAVM_CGXX_GMP_PCS_ANX_RESULTS(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e0030020ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e0030020ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0030020ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -10500,6 +11105,8 @@ static inline uint64_t CAVM_CGXX_GMP_PCS_INTX(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0030080ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e0030080ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0030080ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -10593,9 +11200,9 @@ union cavm_cgxx_gmp_pcs_intx_ena_w1c
         uint64_t reserved_23_63        : 41;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_cgxx_gmp_pcs_intx_ena_w1c_s cn9; */
     /* struct cavm_cgxx_gmp_pcs_intx_ena_w1c_s cn96xx; */
-    /* struct cavm_cgxx_gmp_pcs_intx_ena_w1c_s cnf95xx; */
-    struct cavm_cgxx_gmp_pcs_intx_ena_w1c_loki
+    struct cavm_cgxx_gmp_pcs_intx_ena_w1c_cn98xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_23_63        : 41;
@@ -10664,7 +11271,9 @@ union cavm_cgxx_gmp_pcs_intx_ena_w1c
                                                                  in 802.3-2012 Figure 36-7c has being violated. */
         uint64_t reserved_23_63        : 41;
 #endif /* Word 0 - End */
-    } loki;
+    } cn98xx;
+    /* struct cavm_cgxx_gmp_pcs_intx_ena_w1c_s cnf95xx; */
+    /* struct cavm_cgxx_gmp_pcs_intx_ena_w1c_cn98xx loki; */
 };
 typedef union cavm_cgxx_gmp_pcs_intx_ena_w1c cavm_cgxx_gmp_pcs_intx_ena_w1c_t;
 
@@ -10672,6 +11281,8 @@ static inline uint64_t CAVM_CGXX_GMP_PCS_INTX_ENA_W1C(unsigned long a, unsigned 
 static inline uint64_t CAVM_CGXX_GMP_PCS_INTX_ENA_W1C(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e0030090ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e0030090ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0030090ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -10766,9 +11377,9 @@ union cavm_cgxx_gmp_pcs_intx_ena_w1s
         uint64_t reserved_23_63        : 41;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_cgxx_gmp_pcs_intx_ena_w1s_s cn9; */
     /* struct cavm_cgxx_gmp_pcs_intx_ena_w1s_s cn96xx; */
-    /* struct cavm_cgxx_gmp_pcs_intx_ena_w1s_s cnf95xx; */
-    struct cavm_cgxx_gmp_pcs_intx_ena_w1s_loki
+    struct cavm_cgxx_gmp_pcs_intx_ena_w1s_cn98xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_23_63        : 41;
@@ -10837,7 +11448,9 @@ union cavm_cgxx_gmp_pcs_intx_ena_w1s
                                                                  in 802.3-2012 Figure 36-7c has being violated. */
         uint64_t reserved_23_63        : 41;
 #endif /* Word 0 - End */
-    } loki;
+    } cn98xx;
+    /* struct cavm_cgxx_gmp_pcs_intx_ena_w1s_s cnf95xx; */
+    /* struct cavm_cgxx_gmp_pcs_intx_ena_w1s_cn98xx loki; */
 };
 typedef union cavm_cgxx_gmp_pcs_intx_ena_w1s cavm_cgxx_gmp_pcs_intx_ena_w1s_t;
 
@@ -10845,6 +11458,8 @@ static inline uint64_t CAVM_CGXX_GMP_PCS_INTX_ENA_W1S(unsigned long a, unsigned 
 static inline uint64_t CAVM_CGXX_GMP_PCS_INTX_ENA_W1S(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e0030098ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e0030098ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0030098ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -10939,9 +11554,9 @@ union cavm_cgxx_gmp_pcs_intx_w1s
         uint64_t reserved_23_63        : 41;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_cgxx_gmp_pcs_intx_w1s_s cn9; */
     /* struct cavm_cgxx_gmp_pcs_intx_w1s_s cn96xx; */
-    /* struct cavm_cgxx_gmp_pcs_intx_w1s_s cnf95xx; */
-    struct cavm_cgxx_gmp_pcs_intx_w1s_loki
+    struct cavm_cgxx_gmp_pcs_intx_w1s_cn98xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_23_63        : 41;
@@ -11010,7 +11625,9 @@ union cavm_cgxx_gmp_pcs_intx_w1s
                                                                  in 802.3-2012 Figure 36-7c has being violated. */
         uint64_t reserved_23_63        : 41;
 #endif /* Word 0 - End */
-    } loki;
+    } cn98xx;
+    /* struct cavm_cgxx_gmp_pcs_intx_w1s_s cnf95xx; */
+    /* struct cavm_cgxx_gmp_pcs_intx_w1s_cn98xx loki; */
 };
 typedef union cavm_cgxx_gmp_pcs_intx_w1s cavm_cgxx_gmp_pcs_intx_w1s_t;
 
@@ -11018,6 +11635,8 @@ static inline uint64_t CAVM_CGXX_GMP_PCS_INTX_W1S(unsigned long a, unsigned long
 static inline uint64_t CAVM_CGXX_GMP_PCS_INTX_W1S(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e0030088ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e0030088ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0030088ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -11064,6 +11683,8 @@ static inline uint64_t CAVM_CGXX_GMP_PCS_LINKX_TIMER(unsigned long a, unsigned l
 static inline uint64_t CAVM_CGXX_GMP_PCS_LINKX_TIMER(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e0030040ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e0030040ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0030040ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -11285,6 +11906,8 @@ static inline uint64_t CAVM_CGXX_GMP_PCS_MISCX_CTL(unsigned long a, unsigned lon
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0030078ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e0030078ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0030078ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -11422,6 +12045,8 @@ static inline uint64_t CAVM_CGXX_GMP_PCS_MRX_CONTROL(unsigned long a, unsigned l
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0030000ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e0030000ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0030000ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -11521,6 +12146,8 @@ static inline uint64_t CAVM_CGXX_GMP_PCS_MRX_STATUS(unsigned long a, unsigned lo
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0030008ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e0030008ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0030008ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -11572,6 +12199,8 @@ static inline uint64_t CAVM_CGXX_GMP_PCS_RXX_STATES(unsigned long a, unsigned lo
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0030058ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e0030058ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0030058ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -11614,6 +12243,8 @@ static inline uint64_t CAVM_CGXX_GMP_PCS_RXX_SYNC(unsigned long a, unsigned long
 static inline uint64_t CAVM_CGXX_GMP_PCS_RXX_SYNC(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e0030050ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e0030050ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0030050ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -11680,6 +12311,8 @@ static inline uint64_t CAVM_CGXX_GMP_PCS_SGMX_AN_ADV(unsigned long a, unsigned l
 static inline uint64_t CAVM_CGXX_GMP_PCS_SGMX_AN_ADV(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e0030068ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e0030068ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0030068ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -11771,6 +12404,8 @@ static inline uint64_t CAVM_CGXX_GMP_PCS_SGMX_LP_ADV(unsigned long a, unsigned l
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0030070ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e0030070ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0030070ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -11821,6 +12456,8 @@ static inline uint64_t CAVM_CGXX_GMP_PCS_TXX_STATES(unsigned long a, unsigned lo
 static inline uint64_t CAVM_CGXX_GMP_PCS_TXX_STATES(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e0030060ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e0030060ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0030060ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -11886,6 +12523,8 @@ static inline uint64_t CAVM_CGXX_GMP_PCS_TX_RXX_POLARITY(unsigned long a, unsign
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0030048ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e0030048ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0030048ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -11929,6 +12568,8 @@ static inline uint64_t CAVM_CGXX_MSIX_PBAX(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b==0)))
         return 0x87e0e04f0000ll + 0x1000000ll * ((a) & 0x3) + 8ll * ((b) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b==0)))
+        return 0x87e0e04f0000ll + 0x1000000ll * ((a) & 0x3) + 8ll * ((b) & 0x0);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b==0)))
         return 0x87e0e04f0000ll + 0x1000000ll * ((a) & 0x3) + 8ll * ((b) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b==0)))
@@ -11953,6 +12594,36 @@ union cavm_cgxx_msix_vecx_addr
 {
     uint64_t u;
     struct cavm_cgxx_msix_vecx_addr_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_53_63        : 11;
+        uint64_t addr                  : 51; /**< [ 52:  2](R/W) IOVA to use for MSI-X delivery of this vector. */
+        uint64_t reserved_1            : 1;
+        uint64_t secvec                : 1;  /**< [  0:  0](SR/W) Secure vector.
+                                                                 0 = This vector may be read or written by either secure or nonsecure states.
+                                                                 1 = This vector's CGX()_MSIX_VEC()_ADDR, CGX()_MSIX_VEC()_CTL, and corresponding
+                                                                 bit of CGX()_MSIX_PBA() are RAZ/WI and does not cause a fault when accessed
+                                                                 by the nonsecure world.
+
+                                                                 If PCCPF_CGX()_VSEC_SCTL[MSIX_SEC] (for documentation, see PCCPF_XXX_VSEC_SCTL[MSIX_SEC])
+                                                                 is set, all vectors are secure and function as if [SECVEC] was set. */
+#else /* Word 0 - Little Endian */
+        uint64_t secvec                : 1;  /**< [  0:  0](SR/W) Secure vector.
+                                                                 0 = This vector may be read or written by either secure or nonsecure states.
+                                                                 1 = This vector's CGX()_MSIX_VEC()_ADDR, CGX()_MSIX_VEC()_CTL, and corresponding
+                                                                 bit of CGX()_MSIX_PBA() are RAZ/WI and does not cause a fault when accessed
+                                                                 by the nonsecure world.
+
+                                                                 If PCCPF_CGX()_VSEC_SCTL[MSIX_SEC] (for documentation, see PCCPF_XXX_VSEC_SCTL[MSIX_SEC])
+                                                                 is set, all vectors are secure and function as if [SECVEC] was set. */
+        uint64_t reserved_1            : 1;
+        uint64_t addr                  : 51; /**< [ 52:  2](R/W) IOVA to use for MSI-X delivery of this vector. */
+        uint64_t reserved_53_63        : 11;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_cgxx_msix_vecx_addr_s cn9; */
+    /* struct cavm_cgxx_msix_vecx_addr_s cn96xxp1; */
+    struct cavm_cgxx_msix_vecx_addr_cn96xxp3
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_53_63        : 11;
@@ -12007,8 +12678,10 @@ union cavm_cgxx_msix_vecx_addr
         uint64_t addr                  : 51; /**< [ 52:  2](R/W) IOVA to use for MSI-X delivery of this vector. */
         uint64_t reserved_53_63        : 11;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_cgxx_msix_vecx_addr_s cn; */
+    } cn96xxp3;
+    /* struct cavm_cgxx_msix_vecx_addr_cn96xxp3 cn98xx; */
+    /* struct cavm_cgxx_msix_vecx_addr_cn96xxp3 cnf95xx; */
+    /* struct cavm_cgxx_msix_vecx_addr_cn96xxp3 loki; */
 };
 typedef union cavm_cgxx_msix_vecx_addr cavm_cgxx_msix_vecx_addr_t;
 
@@ -12018,6 +12691,8 @@ static inline uint64_t CAVM_CGXX_MSIX_VECX_ADDR(unsigned long a, unsigned long b
     if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && ((a<=2) && (b<=37)))
         return 0x87e0e0400000ll + 0x1000000ll * ((a) & 0x3) + 0x10ll * ((b) & 0x3f);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a<=2) && (b<=41)))
+        return 0x87e0e0400000ll + 0x1000000ll * ((a) & 0x3) + 0x10ll * ((b) & 0x3f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=41)))
         return 0x87e0e0400000ll + 0x1000000ll * ((a) & 0x3) + 0x10ll * ((b) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=37)))
         return 0x87e0e0400000ll + 0x1000000ll * ((a) & 0x3) + 0x10ll * ((b) & 0x3f);
@@ -12064,6 +12739,8 @@ static inline uint64_t CAVM_CGXX_MSIX_VECX_CTL(unsigned long a, unsigned long b)
     if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && ((a<=2) && (b<=37)))
         return 0x87e0e0400008ll + 0x1000000ll * ((a) & 0x3) + 0x10ll * ((b) & 0x3f);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a<=2) && (b<=41)))
+        return 0x87e0e0400008ll + 0x1000000ll * ((a) & 0x3) + 0x10ll * ((b) & 0x3f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=41)))
         return 0x87e0e0400008ll + 0x1000000ll * ((a) & 0x3) + 0x10ll * ((b) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=37)))
         return 0x87e0e0400008ll + 0x1000000ll * ((a) & 0x3) + 0x10ll * ((b) & 0x3f);
@@ -12154,6 +12831,8 @@ static inline uint64_t CAVM_CGXX_SMUX_BP_TEST(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0020230ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e0020230ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0020230ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -12220,6 +12899,8 @@ static inline uint64_t CAVM_CGXX_SMUX_CBFC_CTL(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0020218ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e0020218ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0020218ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -12266,6 +12947,8 @@ static inline uint64_t CAVM_CGXX_SMUX_CTRL(unsigned long a, unsigned long b) __a
 static inline uint64_t CAVM_CGXX_SMUX_CTRL(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e0020200ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e0020200ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0020200ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -12321,6 +13004,8 @@ static inline uint64_t CAVM_CGXX_SMUX_EXT_LOOPBACK(unsigned long a, unsigned lon
 static inline uint64_t CAVM_CGXX_SMUX_EXT_LOOPBACK(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e0020208ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e0020208ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0020208ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -12401,6 +13086,8 @@ static inline uint64_t CAVM_CGXX_SMUX_HG2_CONTROL(unsigned long a, unsigned long
 static inline uint64_t CAVM_CGXX_SMUX_HG2_CONTROL(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e0020210ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e0020210ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0020210ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -12514,6 +13201,8 @@ static inline uint64_t CAVM_CGXX_SMUX_MMSI_CTL_STA(unsigned long a, unsigned lon
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0020220ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e0020220ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0020220ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -12561,6 +13250,8 @@ static inline uint64_t CAVM_CGXX_SMUX_RX_BAD_COL_CTRL(unsigned long a, unsigned 
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0020060ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e0020060ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0020060ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -12602,6 +13293,8 @@ static inline uint64_t CAVM_CGXX_SMUX_RX_BAD_COL_DATA_HI(unsigned long a, unsign
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0020058ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e0020058ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0020058ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -12642,6 +13335,8 @@ static inline uint64_t CAVM_CGXX_SMUX_RX_BAD_COL_DATA_LO(unsigned long a, unsign
 static inline uint64_t CAVM_CGXX_SMUX_RX_BAD_COL_DATA_LO(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e0020050ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e0020050ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0020050ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -12692,6 +13387,8 @@ static inline uint64_t CAVM_CGXX_SMUX_RX_CTL(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0020048ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e0020048ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0020048ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -12737,6 +13434,8 @@ static inline uint64_t CAVM_CGXX_SMUX_RX_DECISION(unsigned long a, unsigned long
 static inline uint64_t CAVM_CGXX_SMUX_RX_DECISION(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e0020038ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e0020038ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0020038ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -12791,6 +13490,8 @@ static inline uint64_t CAVM_CGXX_SMUX_RX_FRM_CHK(unsigned long a, unsigned long 
 static inline uint64_t CAVM_CGXX_SMUX_RX_FRM_CHK(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e0020028ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e0020028ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0020028ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -12919,6 +13620,8 @@ static inline uint64_t CAVM_CGXX_SMUX_RX_FRM_CTL(unsigned long a, unsigned long 
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0020020ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e0020020ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0020020ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -13035,6 +13738,8 @@ static inline uint64_t CAVM_CGXX_SMUX_RX_INT(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0020000ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e0020000ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0020000ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -13094,9 +13799,9 @@ union cavm_cgxx_smux_rx_int_ena_w1c
         uint64_t reserved_14_63        : 50;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_cgxx_smux_rx_int_ena_w1c_s cn9; */
     /* struct cavm_cgxx_smux_rx_int_ena_w1c_s cn96xx; */
-    /* struct cavm_cgxx_smux_rx_int_ena_w1c_s cnf95xx; */
-    struct cavm_cgxx_smux_rx_int_ena_w1c_loki
+    struct cavm_cgxx_smux_rx_int_ena_w1c_cn98xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_14_63        : 50;
@@ -13131,7 +13836,9 @@ union cavm_cgxx_smux_rx_int_ena_w1c
         uint64_t badrsp                : 1;  /**< [ 13: 13](R/W1C/H) Reads or clears enable for CGX(0..3)_SMU(0..3)_RX_INT[BADRSP]. */
         uint64_t reserved_14_63        : 50;
 #endif /* Word 0 - End */
-    } loki;
+    } cn98xx;
+    /* struct cavm_cgxx_smux_rx_int_ena_w1c_s cnf95xx; */
+    /* struct cavm_cgxx_smux_rx_int_ena_w1c_cn98xx loki; */
 };
 typedef union cavm_cgxx_smux_rx_int_ena_w1c cavm_cgxx_smux_rx_int_ena_w1c_t;
 
@@ -13139,6 +13846,8 @@ static inline uint64_t CAVM_CGXX_SMUX_RX_INT_ENA_W1C(unsigned long a, unsigned l
 static inline uint64_t CAVM_CGXX_SMUX_RX_INT_ENA_W1C(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e0020010ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e0020010ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0020010ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -13199,9 +13908,9 @@ union cavm_cgxx_smux_rx_int_ena_w1s
         uint64_t reserved_14_63        : 50;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_cgxx_smux_rx_int_ena_w1s_s cn9; */
     /* struct cavm_cgxx_smux_rx_int_ena_w1s_s cn96xx; */
-    /* struct cavm_cgxx_smux_rx_int_ena_w1s_s cnf95xx; */
-    struct cavm_cgxx_smux_rx_int_ena_w1s_loki
+    struct cavm_cgxx_smux_rx_int_ena_w1s_cn98xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_14_63        : 50;
@@ -13236,7 +13945,9 @@ union cavm_cgxx_smux_rx_int_ena_w1s
         uint64_t badrsp                : 1;  /**< [ 13: 13](R/W1S/H) Reads or sets enable for CGX(0..3)_SMU(0..3)_RX_INT[BADRSP]. */
         uint64_t reserved_14_63        : 50;
 #endif /* Word 0 - End */
-    } loki;
+    } cn98xx;
+    /* struct cavm_cgxx_smux_rx_int_ena_w1s_s cnf95xx; */
+    /* struct cavm_cgxx_smux_rx_int_ena_w1s_cn98xx loki; */
 };
 typedef union cavm_cgxx_smux_rx_int_ena_w1s cavm_cgxx_smux_rx_int_ena_w1s_t;
 
@@ -13244,6 +13955,8 @@ static inline uint64_t CAVM_CGXX_SMUX_RX_INT_ENA_W1S(unsigned long a, unsigned l
 static inline uint64_t CAVM_CGXX_SMUX_RX_INT_ENA_W1S(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e0020018ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e0020018ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0020018ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -13304,9 +14017,9 @@ union cavm_cgxx_smux_rx_int_w1s
         uint64_t reserved_14_63        : 50;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_cgxx_smux_rx_int_w1s_s cn9; */
     /* struct cavm_cgxx_smux_rx_int_w1s_s cn96xx; */
-    /* struct cavm_cgxx_smux_rx_int_w1s_s cnf95xx; */
-    struct cavm_cgxx_smux_rx_int_w1s_loki
+    struct cavm_cgxx_smux_rx_int_w1s_cn98xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_14_63        : 50;
@@ -13341,7 +14054,9 @@ union cavm_cgxx_smux_rx_int_w1s
         uint64_t badrsp                : 1;  /**< [ 13: 13](R/W1S/H) Reads or sets CGX(0..3)_SMU(0..3)_RX_INT[BADRSP]. */
         uint64_t reserved_14_63        : 50;
 #endif /* Word 0 - End */
-    } loki;
+    } cn98xx;
+    /* struct cavm_cgxx_smux_rx_int_w1s_s cnf95xx; */
+    /* struct cavm_cgxx_smux_rx_int_w1s_cn98xx loki; */
 };
 typedef union cavm_cgxx_smux_rx_int_w1s cavm_cgxx_smux_rx_int_w1s_t;
 
@@ -13349,6 +14064,8 @@ static inline uint64_t CAVM_CGXX_SMUX_RX_INT_W1S(unsigned long a, unsigned long 
 static inline uint64_t CAVM_CGXX_SMUX_RX_INT_W1S(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e0020008ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e0020008ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0020008ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -13399,6 +14116,8 @@ static inline uint64_t CAVM_CGXX_SMUX_RX_JABBER(unsigned long a, unsigned long b
 static inline uint64_t CAVM_CGXX_SMUX_RX_JABBER(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e0020030ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e0020030ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0020030ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -13499,6 +14218,8 @@ static inline uint64_t CAVM_CGXX_SMUX_RX_UDD_SKP(unsigned long a, unsigned long 
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0020040ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e0020040ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0020040ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -13548,6 +14269,8 @@ static inline uint64_t CAVM_CGXX_SMUX_RX_WOL_CTRL0(unsigned long a, unsigned lon
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0020068ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e0020068ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0020068ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -13588,6 +14311,8 @@ static inline uint64_t CAVM_CGXX_SMUX_RX_WOL_CTRL1(unsigned long a, unsigned lon
 static inline uint64_t CAVM_CGXX_SMUX_RX_WOL_CTRL1(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e0020070ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e0020070ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0020070ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -13631,6 +14356,8 @@ static inline uint64_t CAVM_CGXX_SMUX_RX_WOL_INT(unsigned long a, unsigned long 
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0020078ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e0020078ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0020078ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -13664,9 +14391,9 @@ union cavm_cgxx_smux_rx_wol_int_ena_w1c
         uint64_t reserved_1_63         : 63;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_cgxx_smux_rx_wol_int_ena_w1c_s cn9; */
     /* struct cavm_cgxx_smux_rx_wol_int_ena_w1c_s cn96xx; */
-    /* struct cavm_cgxx_smux_rx_wol_int_ena_w1c_s cnf95xx; */
-    struct cavm_cgxx_smux_rx_wol_int_ena_w1c_loki
+    struct cavm_cgxx_smux_rx_wol_int_ena_w1c_cn98xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_1_63         : 63;
@@ -13675,7 +14402,9 @@ union cavm_cgxx_smux_rx_wol_int_ena_w1c
         uint64_t wol_rcvd              : 1;  /**< [  0:  0](R/W1C/H) Reads or clears enable for CGX(0..3)_SMU(0..3)_RX_WOL_INT[WOL_RCVD]. */
         uint64_t reserved_1_63         : 63;
 #endif /* Word 0 - End */
-    } loki;
+    } cn98xx;
+    /* struct cavm_cgxx_smux_rx_wol_int_ena_w1c_s cnf95xx; */
+    /* struct cavm_cgxx_smux_rx_wol_int_ena_w1c_cn98xx loki; */
 };
 typedef union cavm_cgxx_smux_rx_wol_int_ena_w1c cavm_cgxx_smux_rx_wol_int_ena_w1c_t;
 
@@ -13683,6 +14412,8 @@ static inline uint64_t CAVM_CGXX_SMUX_RX_WOL_INT_ENA_W1C(unsigned long a, unsign
 static inline uint64_t CAVM_CGXX_SMUX_RX_WOL_INT_ENA_W1C(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e0020088ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e0020088ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0020088ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -13717,9 +14448,9 @@ union cavm_cgxx_smux_rx_wol_int_ena_w1s
         uint64_t reserved_1_63         : 63;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_cgxx_smux_rx_wol_int_ena_w1s_s cn9; */
     /* struct cavm_cgxx_smux_rx_wol_int_ena_w1s_s cn96xx; */
-    /* struct cavm_cgxx_smux_rx_wol_int_ena_w1s_s cnf95xx; */
-    struct cavm_cgxx_smux_rx_wol_int_ena_w1s_loki
+    struct cavm_cgxx_smux_rx_wol_int_ena_w1s_cn98xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_1_63         : 63;
@@ -13728,7 +14459,9 @@ union cavm_cgxx_smux_rx_wol_int_ena_w1s
         uint64_t wol_rcvd              : 1;  /**< [  0:  0](R/W1S/H) Reads or sets enable for CGX(0..3)_SMU(0..3)_RX_WOL_INT[WOL_RCVD]. */
         uint64_t reserved_1_63         : 63;
 #endif /* Word 0 - End */
-    } loki;
+    } cn98xx;
+    /* struct cavm_cgxx_smux_rx_wol_int_ena_w1s_s cnf95xx; */
+    /* struct cavm_cgxx_smux_rx_wol_int_ena_w1s_cn98xx loki; */
 };
 typedef union cavm_cgxx_smux_rx_wol_int_ena_w1s cavm_cgxx_smux_rx_wol_int_ena_w1s_t;
 
@@ -13736,6 +14469,8 @@ static inline uint64_t CAVM_CGXX_SMUX_RX_WOL_INT_ENA_W1S(unsigned long a, unsign
 static inline uint64_t CAVM_CGXX_SMUX_RX_WOL_INT_ENA_W1S(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e0020090ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e0020090ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0020090ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -13770,9 +14505,9 @@ union cavm_cgxx_smux_rx_wol_int_w1s
         uint64_t reserved_1_63         : 63;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_cgxx_smux_rx_wol_int_w1s_s cn9; */
     /* struct cavm_cgxx_smux_rx_wol_int_w1s_s cn96xx; */
-    /* struct cavm_cgxx_smux_rx_wol_int_w1s_s cnf95xx; */
-    struct cavm_cgxx_smux_rx_wol_int_w1s_loki
+    struct cavm_cgxx_smux_rx_wol_int_w1s_cn98xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_1_63         : 63;
@@ -13781,7 +14516,9 @@ union cavm_cgxx_smux_rx_wol_int_w1s
         uint64_t wol_rcvd              : 1;  /**< [  0:  0](R/W1S/H) Reads or sets CGX(0..3)_SMU(0..3)_RX_WOL_INT[WOL_RCVD]. */
         uint64_t reserved_1_63         : 63;
 #endif /* Word 0 - End */
-    } loki;
+    } cn98xx;
+    /* struct cavm_cgxx_smux_rx_wol_int_w1s_s cnf95xx; */
+    /* struct cavm_cgxx_smux_rx_wol_int_w1s_cn98xx loki; */
 };
 typedef union cavm_cgxx_smux_rx_wol_int_w1s cavm_cgxx_smux_rx_wol_int_w1s_t;
 
@@ -13789,6 +14526,8 @@ static inline uint64_t CAVM_CGXX_SMUX_RX_WOL_INT_W1S(unsigned long a, unsigned l
 static inline uint64_t CAVM_CGXX_SMUX_RX_WOL_INT_W1S(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e0020080ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e0020080ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0020080ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -13830,6 +14569,8 @@ static inline uint64_t CAVM_CGXX_SMUX_SMAC(unsigned long a, unsigned long b) __a
 static inline uint64_t CAVM_CGXX_SMUX_SMAC(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e0020108ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e0020108ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0020108ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -13883,6 +14624,8 @@ static inline uint64_t CAVM_CGXX_SMUX_TX_APPEND(unsigned long a, unsigned long b
 static inline uint64_t CAVM_CGXX_SMUX_TX_APPEND(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e0020100ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e0020100ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0020100ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -13991,6 +14734,8 @@ static inline uint64_t CAVM_CGXX_SMUX_TX_CTL(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0020178ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e0020178ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0020178ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -14033,6 +14778,8 @@ static inline uint64_t CAVM_CGXX_SMUX_TX_DACK(unsigned long a, unsigned long b) 
 static inline uint64_t CAVM_CGXX_SMUX_TX_DACK(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e00201b0ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e00201b0ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e00201b0ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -14078,6 +14825,8 @@ static inline uint64_t CAVM_CGXX_SMUX_TX_DCNT(unsigned long a, unsigned long b) 
 static inline uint64_t CAVM_CGXX_SMUX_TX_DCNT(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e00201a8ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e00201a8ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e00201a8ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -14199,6 +14948,8 @@ static inline uint64_t CAVM_CGXX_SMUX_TX_EEE(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0020190ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e0020190ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0020190ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -14265,6 +15016,8 @@ static inline uint64_t CAVM_CGXX_SMUX_TX_EEE_TIMER_STATUS(unsigned long a, unsig
 static inline uint64_t CAVM_CGXX_SMUX_TX_EEE_TIMER_STATUS(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e00201a0ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e00201a0ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e00201a0ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -14340,6 +15093,8 @@ static inline uint64_t CAVM_CGXX_SMUX_TX_EEE_TIMING(unsigned long a, unsigned lo
 static inline uint64_t CAVM_CGXX_SMUX_TX_EEE_TIMING(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e0020198ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e0020198ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0020198ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -14434,6 +15189,8 @@ static inline uint64_t CAVM_CGXX_SMUX_TX_IFG(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0020160ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e0020160ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0020160ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -14487,6 +15244,8 @@ static inline uint64_t CAVM_CGXX_SMUX_TX_INT(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0020140ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e0020140ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0020140ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -14530,9 +15289,9 @@ union cavm_cgxx_smux_tx_int_ena_w1c
         uint64_t reserved_6_63         : 58;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_cgxx_smux_tx_int_ena_w1c_s cn9; */
     /* struct cavm_cgxx_smux_tx_int_ena_w1c_s cn96xx; */
-    /* struct cavm_cgxx_smux_tx_int_ena_w1c_s cnf95xx; */
-    struct cavm_cgxx_smux_tx_int_ena_w1c_loki
+    struct cavm_cgxx_smux_tx_int_ena_w1c_cn98xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_6_63         : 58;
@@ -14551,7 +15310,9 @@ union cavm_cgxx_smux_tx_int_ena_w1c
         uint64_t dpi_sdrop             : 1;  /**< [  5:  5](R/W1C/H) Reads or clears enable for CGX(0..3)_SMU(0..3)_TX_INT[DPI_SDROP]. */
         uint64_t reserved_6_63         : 58;
 #endif /* Word 0 - End */
-    } loki;
+    } cn98xx;
+    /* struct cavm_cgxx_smux_tx_int_ena_w1c_s cnf95xx; */
+    /* struct cavm_cgxx_smux_tx_int_ena_w1c_cn98xx loki; */
 };
 typedef union cavm_cgxx_smux_tx_int_ena_w1c cavm_cgxx_smux_tx_int_ena_w1c_t;
 
@@ -14559,6 +15320,8 @@ static inline uint64_t CAVM_CGXX_SMUX_TX_INT_ENA_W1C(unsigned long a, unsigned l
 static inline uint64_t CAVM_CGXX_SMUX_TX_INT_ENA_W1C(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e0020150ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e0020150ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0020150ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -14603,9 +15366,9 @@ union cavm_cgxx_smux_tx_int_ena_w1s
         uint64_t reserved_6_63         : 58;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_cgxx_smux_tx_int_ena_w1s_s cn9; */
     /* struct cavm_cgxx_smux_tx_int_ena_w1s_s cn96xx; */
-    /* struct cavm_cgxx_smux_tx_int_ena_w1s_s cnf95xx; */
-    struct cavm_cgxx_smux_tx_int_ena_w1s_loki
+    struct cavm_cgxx_smux_tx_int_ena_w1s_cn98xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_6_63         : 58;
@@ -14624,7 +15387,9 @@ union cavm_cgxx_smux_tx_int_ena_w1s
         uint64_t dpi_sdrop             : 1;  /**< [  5:  5](R/W1S/H) Reads or sets enable for CGX(0..3)_SMU(0..3)_TX_INT[DPI_SDROP]. */
         uint64_t reserved_6_63         : 58;
 #endif /* Word 0 - End */
-    } loki;
+    } cn98xx;
+    /* struct cavm_cgxx_smux_tx_int_ena_w1s_s cnf95xx; */
+    /* struct cavm_cgxx_smux_tx_int_ena_w1s_cn98xx loki; */
 };
 typedef union cavm_cgxx_smux_tx_int_ena_w1s cavm_cgxx_smux_tx_int_ena_w1s_t;
 
@@ -14632,6 +15397,8 @@ static inline uint64_t CAVM_CGXX_SMUX_TX_INT_ENA_W1S(unsigned long a, unsigned l
 static inline uint64_t CAVM_CGXX_SMUX_TX_INT_ENA_W1S(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e0020158ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e0020158ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0020158ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -14676,9 +15443,9 @@ union cavm_cgxx_smux_tx_int_w1s
         uint64_t reserved_6_63         : 58;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_cgxx_smux_tx_int_w1s_s cn9; */
     /* struct cavm_cgxx_smux_tx_int_w1s_s cn96xx; */
-    /* struct cavm_cgxx_smux_tx_int_w1s_s cnf95xx; */
-    struct cavm_cgxx_smux_tx_int_w1s_loki
+    struct cavm_cgxx_smux_tx_int_w1s_cn98xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_6_63         : 58;
@@ -14697,7 +15464,9 @@ union cavm_cgxx_smux_tx_int_w1s
         uint64_t dpi_sdrop             : 1;  /**< [  5:  5](R/W1S/H) Reads or sets CGX(0..3)_SMU(0..3)_TX_INT[DPI_SDROP]. */
         uint64_t reserved_6_63         : 58;
 #endif /* Word 0 - End */
-    } loki;
+    } cn98xx;
+    /* struct cavm_cgxx_smux_tx_int_w1s_s cnf95xx; */
+    /* struct cavm_cgxx_smux_tx_int_w1s_cn98xx loki; */
 };
 typedef union cavm_cgxx_smux_tx_int_w1s cavm_cgxx_smux_tx_int_w1s_t;
 
@@ -14705,6 +15474,8 @@ static inline uint64_t CAVM_CGXX_SMUX_TX_INT_W1S(unsigned long a, unsigned long 
 static inline uint64_t CAVM_CGXX_SMUX_TX_INT_W1S(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e0020148ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e0020148ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0020148ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -14753,6 +15524,8 @@ static inline uint64_t CAVM_CGXX_SMUX_TX_MIN_PKT(unsigned long a, unsigned long 
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0020118ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e0020118ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0020118ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -14794,6 +15567,8 @@ static inline uint64_t CAVM_CGXX_SMUX_TX_PAUSE_PKT_DMAC(unsigned long a, unsigne
 static inline uint64_t CAVM_CGXX_SMUX_TX_PAUSE_PKT_DMAC(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e0020168ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e0020168ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0020168ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -14857,6 +15632,8 @@ static inline uint64_t CAVM_CGXX_SMUX_TX_PAUSE_PKT_INTERVAL(unsigned long a, uns
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0020120ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e0020120ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0020120ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -14904,6 +15681,8 @@ static inline uint64_t CAVM_CGXX_SMUX_TX_PAUSE_PKT_TIME(unsigned long a, unsigne
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0020110ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e0020110ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0020110ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -14945,6 +15724,8 @@ static inline uint64_t CAVM_CGXX_SMUX_TX_PAUSE_PKT_TYPE(unsigned long a, unsigne
 static inline uint64_t CAVM_CGXX_SMUX_TX_PAUSE_PKT_TYPE(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e0020170ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e0020170ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0020170ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -14991,6 +15772,8 @@ static inline uint64_t CAVM_CGXX_SMUX_TX_PAUSE_TOGO(unsigned long a, unsigned lo
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0020130ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e0020130ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0020130ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -15034,6 +15817,8 @@ static inline uint64_t CAVM_CGXX_SMUX_TX_PAUSE_ZERO(unsigned long a, unsigned lo
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0020138ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e0020138ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0020138ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -15074,6 +15859,8 @@ static inline uint64_t CAVM_CGXX_SMUX_TX_SOFT_PAUSE(unsigned long a, unsigned lo
 static inline uint64_t CAVM_CGXX_SMUX_TX_SOFT_PAUSE(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e0020128ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e0020128ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0020128ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -15153,6 +15940,8 @@ static inline uint64_t CAVM_CGXX_SMUX_TX_THRESH(unsigned long a, unsigned long b
 static inline uint64_t CAVM_CGXX_SMUX_TX_THRESH(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e0020180ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e0020180ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0020180ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -15255,6 +16044,8 @@ static inline uint64_t CAVM_CGXX_SPUX_AN_ADV(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0010198ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e0010198ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0010198ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -15334,6 +16125,8 @@ static inline uint64_t CAVM_CGXX_SPUX_AN_BP_STATUS(unsigned long a, unsigned lon
 static inline uint64_t CAVM_CGXX_SPUX_AN_BP_STATUS(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e00101b8ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e00101b8ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e00101b8ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -15480,6 +16273,8 @@ static inline uint64_t CAVM_CGXX_SPUX_AN_CONTROL(unsigned long a, unsigned long 
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0010188ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e0010188ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0010188ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -15572,6 +16367,8 @@ static inline uint64_t CAVM_CGXX_SPUX_AN_LP_BASE(unsigned long a, unsigned long 
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e00101a0ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e00101a0ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e00101a0ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -15626,6 +16423,8 @@ static inline uint64_t CAVM_CGXX_SPUX_AN_LP_XNP(unsigned long a, unsigned long b
 static inline uint64_t CAVM_CGXX_SPUX_AN_LP_XNP(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e00101b0ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e00101b0ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e00101b0ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -15722,6 +16521,8 @@ static inline uint64_t CAVM_CGXX_SPUX_AN_STATUS(unsigned long a, unsigned long b
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0010190ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e0010190ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0010190ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -15794,6 +16595,8 @@ static inline uint64_t CAVM_CGXX_SPUX_AN_XNP_TX(unsigned long a, unsigned long b
 static inline uint64_t CAVM_CGXX_SPUX_AN_XNP_TX(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e00101a8ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e00101a8ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e00101a8ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -15883,6 +16686,8 @@ static inline uint64_t CAVM_CGXX_SPUX_BR_ALGN_STATUS(unsigned long a, unsigned l
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0010050ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e0010050ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0010050ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -15949,6 +16754,8 @@ static inline uint64_t CAVM_CGXX_SPUX_BR_LANE_MAPX(unsigned long a, unsigned lon
 static inline uint64_t CAVM_CGXX_SPUX_BR_LANE_MAPX(unsigned long a, unsigned long b, unsigned long c)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3) && (c<=19)))
+        return 0x87e0e0010600ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3) + 8ll * ((c) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3) && (c<=19)))
         return 0x87e0e0010600ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3) + 8ll * ((c) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3) && (c<=19)))
         return 0x87e0e0010600ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3) + 8ll * ((c) & 0x1f);
@@ -16026,7 +16833,8 @@ union cavm_cgxx_spux_br_pmd_control
         uint64_t reserved_4_63         : 60;
 #endif /* Word 0 - End */
     } s;
-    struct cavm_cgxx_spux_br_pmd_control_cn96xxp1_0
+    /* struct cavm_cgxx_spux_br_pmd_control_s cn9; */
+    struct cavm_cgxx_spux_br_pmd_control_cn96xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_3_63         : 61;
@@ -16051,12 +16859,11 @@ union cavm_cgxx_spux_br_pmd_control
                                                                  92.7.12 will be used. */
         uint64_t reserved_3_63         : 61;
 #endif /* Word 0 - End */
-    } cn96xxp1_0;
-    /* struct cavm_cgxx_spux_br_pmd_control_s cn96xxp1_1; */
-    /* struct cavm_cgxx_spux_br_pmd_control_s cn96xxp3; */
+    } cn96xx;
+    /* struct cavm_cgxx_spux_br_pmd_control_cn96xx cn98xx; */
     /* struct cavm_cgxx_spux_br_pmd_control_s cnf95xxp1; */
-    /* struct cavm_cgxx_spux_br_pmd_control_cn96xxp1_0 cnf95xxp2; */
-    /* struct cavm_cgxx_spux_br_pmd_control_cn96xxp1_0 loki; */
+    /* struct cavm_cgxx_spux_br_pmd_control_cn96xx cnf95xxp2; */
+    /* struct cavm_cgxx_spux_br_pmd_control_cn96xx loki; */
 };
 typedef union cavm_cgxx_spux_br_pmd_control cavm_cgxx_spux_br_pmd_control_t;
 
@@ -16064,6 +16871,8 @@ static inline uint64_t CAVM_CGXX_SPUX_BR_PMD_CONTROL(unsigned long a, unsigned l
 static inline uint64_t CAVM_CGXX_SPUX_BR_PMD_CONTROL(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e00100a8ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e00100a8ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e00100a8ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -16127,6 +16936,8 @@ static inline uint64_t CAVM_CGXX_SPUX_BR_PMD_LD_CUP(unsigned long a, unsigned lo
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e00100c8ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e00100c8ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e00100c8ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -16189,6 +17000,8 @@ static inline uint64_t CAVM_CGXX_SPUX_BR_PMD_LD_REP(unsigned long a, unsigned lo
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e00100d0ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e00100d0ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e00100d0ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -16244,6 +17057,8 @@ static inline uint64_t CAVM_CGXX_SPUX_BR_PMD_LP_CUP(unsigned long a, unsigned lo
 static inline uint64_t CAVM_CGXX_SPUX_BR_PMD_LP_CUP(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e00100b8ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e00100b8ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e00100b8ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -16301,6 +17116,8 @@ static inline uint64_t CAVM_CGXX_SPUX_BR_PMD_LP_REP(unsigned long a, unsigned lo
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e00100c0ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e00100c0ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e00100c0ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -16351,6 +17168,8 @@ static inline uint64_t CAVM_CGXX_SPUX_BR_PMD_STATUS(unsigned long a, unsigned lo
 static inline uint64_t CAVM_CGXX_SPUX_BR_PMD_STATUS(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e00100b0ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e00100b0ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e00100b0ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -16461,6 +17280,8 @@ static inline uint64_t CAVM_CGXX_SPUX_BR_STATUS1(unsigned long a, unsigned long 
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0010030ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e0010030ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0010030ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -16566,6 +17387,8 @@ static inline uint64_t CAVM_CGXX_SPUX_BR_STATUS2(unsigned long a, unsigned long 
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0010038ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e0010038ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0010038ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -16648,6 +17471,8 @@ static inline uint64_t CAVM_CGXX_SPUX_BR_TP_CONTROL(unsigned long a, unsigned lo
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0010040ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e0010040ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0010040ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -16704,6 +17529,8 @@ static inline uint64_t CAVM_CGXX_SPUX_BR_TP_ERR_CNT(unsigned long a, unsigned lo
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0010048ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e0010048ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0010048ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -16746,6 +17573,8 @@ static inline uint64_t CAVM_CGXX_SPUX_BR_TP_SEED_A(unsigned long a, unsigned lon
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0010060ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e0010060ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0010060ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -16787,6 +17616,8 @@ static inline uint64_t CAVM_CGXX_SPUX_BR_TP_SEED_B(unsigned long a, unsigned lon
 static inline uint64_t CAVM_CGXX_SPUX_BR_TP_SEED_B(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e0010068ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e0010068ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0010068ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -16845,6 +17676,8 @@ static inline uint64_t CAVM_CGXX_SPUX_BX_STATUS(unsigned long a, unsigned long b
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0010028ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e0010028ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0010028ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -16901,6 +17734,104 @@ union cavm_cgxx_spux_control1
                                                                  follows:
 
                                                                  \<pre\>
+                                                                   LMAC_TYPE   Speed       SPD Read Value    Comment
+                                                                   ------------------------------------------------------
+                                                                   XAUI        10G/20G     0x0               20G if DXAUI
+                                                                   RXAUI       10G         0x0
+                                                                   10G_R       10G         0x0               802.3by Table 45-120 / 45.2.3.1
+                                                                   40G_R       40G         0x3               802.3by Table 45-120 / 45.2.3.1
+                                                                   100G_R      100G        0x4               802.3by Table 45-120 / 45.2.3.1
+                                                                   25G_R       25G         0x5               802.3by Table 45-120 / 45.2.3.1
+                                                                   50G_R       50G         0x6               802.3cd Table 45-120 / 45.2.3.1
+                                                                   USXGMII     various     0xD               802.3cd Table 45-120 / 45.2.3.1
+                                                                                                             (0xB-0xF reserved, assigning 0xD)
+                                                                   Other       -           X
+                                                                 \</pre\> */
+        uint64_t reserved_0_1          : 2;
+#else /* Word 0 - Little Endian */
+        uint64_t reserved_0_1          : 2;
+        uint64_t spd                   : 4;  /**< [  5:  2](RO/H) Speed selection.
+                                                                 Note that this is a read-only field rather than read/write as
+                                                                 specified in 802.3.
+                                                                 The LPCS speed is instead configured by the associated
+                                                                 CGX()_CMR()_CONFIG[LMAC_TYPE]. The read values returned by this field are as
+                                                                 follows:
+
+                                                                 \<pre\>
+                                                                   LMAC_TYPE   Speed       SPD Read Value    Comment
+                                                                   ------------------------------------------------------
+                                                                   XAUI        10G/20G     0x0               20G if DXAUI
+                                                                   RXAUI       10G         0x0
+                                                                   10G_R       10G         0x0               802.3by Table 45-120 / 45.2.3.1
+                                                                   40G_R       40G         0x3               802.3by Table 45-120 / 45.2.3.1
+                                                                   100G_R      100G        0x4               802.3by Table 45-120 / 45.2.3.1
+                                                                   25G_R       25G         0x5               802.3by Table 45-120 / 45.2.3.1
+                                                                   50G_R       50G         0x6               802.3cd Table 45-120 / 45.2.3.1
+                                                                   USXGMII     various     0xD               802.3cd Table 45-120 / 45.2.3.1
+                                                                                                             (0xB-0xF reserved, assigning 0xD)
+                                                                   Other       -           X
+                                                                 \</pre\> */
+        uint64_t spdsel0               : 1;  /**< [  6:  6](RO/H) Speed select 0: always 1. */
+        uint64_t reserved_7_10         : 4;
+        uint64_t lo_pwr                : 1;  /**< [ 11: 11](R/W) Low power enable. When set, the LPCS is disabled (overriding the associated
+                                                                 CGX()_CMR()_CONFIG[ENABLE]), and the SerDes lanes associated with the LPCS are
+                                                                 reset. */
+        uint64_t reserved_12           : 1;
+        uint64_t spdsel1               : 1;  /**< [ 13: 13](RO/H) Speed select 1: always 1. */
+        uint64_t loopbck               : 1;  /**< [ 14: 14](R/W) TX-to-RX loopback enable. When set, transmit data for each SerDes lane is looped back as
+                                                                 receive data. */
+        uint64_t reset                 : 1;  /**< [ 15: 15](R/W1S/H) Reset. Setting this bit or CGX()_SPU()_AN_CONTROL[AN_RESET] or
+                                                                 CGX()_SPU()_USX_AN_CONTROL[AN_RESET] to 1 causes the following events to occur:
+                                                                 * Resets the logical PCS (LPCS).
+                                                                 * Sets the IEEE 802.3 PCS, FEC and AN registers for the LPCS to their default states.
+                                                                 * Resets the associated SerDes lanes.
+
+                                                                 It takes up to 32 coprocessor-clock cycles to reset the LPCS, after which RESET is
+                                                                 automatically cleared. */
+        uint64_t usxgmii_type          : 3;  /**< [ 18: 16](RO/H) USXGMII port sub-type. Read-only field from
+                                                                 CGX()_SPU_USXGMII_CONTROL[USXGMII_TYPE]. Ignored if
+                                                                 CGX()_CMR()_CONFIG[LMAC_TYPE] is not USXGMII. Enumerated by CGX_USXGMII_TYPE_E. */
+        uint64_t usxgmii_rate          : 3;  /**< [ 21: 19](R/W/H) USXGMII port rate. Ignored if CGX()_CMR()_CONFIG[LMAC_TYPE] is not
+                                                                 USXGMII. Enumerated by CGX_USXGMII_RATE_E. */
+        uint64_t reserved_22_63        : 42;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_cgxx_spux_control1_s cn9; */
+    /* struct cavm_cgxx_spux_control1_s cn96xxp1; */
+    struct cavm_cgxx_spux_control1_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_22_63        : 42;
+        uint64_t usxgmii_rate          : 3;  /**< [ 21: 19](R/W/H) USXGMII port rate. Ignored if CGX()_CMR()_CONFIG[LMAC_TYPE] is not
+                                                                 USXGMII. Enumerated by CGX_USXGMII_RATE_E. */
+        uint64_t usxgmii_type          : 3;  /**< [ 18: 16](RO/H) USXGMII port sub-type. Read-only field from
+                                                                 CGX()_SPU_USXGMII_CONTROL[USXGMII_TYPE]. Ignored if
+                                                                 CGX()_CMR()_CONFIG[LMAC_TYPE] is not USXGMII. Enumerated by CGX_USXGMII_TYPE_E. */
+        uint64_t reset                 : 1;  /**< [ 15: 15](R/W1S/H) Reset. Setting this bit or CGX()_SPU()_AN_CONTROL[AN_RESET] or
+                                                                 CGX()_SPU()_USX_AN_CONTROL[AN_RESET] to 1 causes the following events to occur:
+                                                                 * Resets the logical PCS (LPCS).
+                                                                 * Sets the IEEE 802.3 PCS, FEC and AN registers for the LPCS to their default states.
+                                                                 * Resets the associated SerDes lanes.
+
+                                                                 It takes up to 32 coprocessor-clock cycles to reset the LPCS, after which RESET is
+                                                                 automatically cleared. */
+        uint64_t loopbck               : 1;  /**< [ 14: 14](R/W) TX-to-RX loopback enable. When set, transmit data for each SerDes lane is looped back as
+                                                                 receive data. */
+        uint64_t spdsel1               : 1;  /**< [ 13: 13](RO/H) Speed select 1: always 1. */
+        uint64_t reserved_12           : 1;
+        uint64_t lo_pwr                : 1;  /**< [ 11: 11](R/W) Low power enable. When set, the LPCS is disabled (overriding the associated
+                                                                 CGX()_CMR()_CONFIG[ENABLE]), and the SerDes lanes associated with the LPCS are
+                                                                 reset. */
+        uint64_t reserved_7_10         : 4;
+        uint64_t spdsel0               : 1;  /**< [  6:  6](RO/H) Speed select 0: always 1. */
+        uint64_t spd                   : 4;  /**< [  5:  2](RO/H) Speed selection.
+                                                                 Note that this is a read-only field rather than read/write as
+                                                                 specified in 802.3.
+                                                                 The LPCS speed is instead configured by the associated
+                                                                 CGX()_CMR()_CONFIG[LMAC_TYPE]. The read values returned by this field are as
+                                                                 follows:
+
+                                                                 \<pre\>
                                                                    LMAC_TYPE  Speed    SPD    Comment
                                                                                        Read
                                                                                        Value
@@ -16980,8 +17911,10 @@ union cavm_cgxx_spux_control1
                                                                  USXGMII. Enumerated by CGX_USXGMII_RATE_E. */
         uint64_t reserved_22_63        : 42;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_cgxx_spux_control1_s cn; */
+    } cn96xxp3;
+    /* struct cavm_cgxx_spux_control1_cn96xxp3 cn98xx; */
+    /* struct cavm_cgxx_spux_control1_cn96xxp3 cnf95xx; */
+    /* struct cavm_cgxx_spux_control1_cn96xxp3 loki; */
 };
 typedef union cavm_cgxx_spux_control1 cavm_cgxx_spux_control1_t;
 
@@ -16989,6 +17922,8 @@ static inline uint64_t CAVM_CGXX_SPUX_CONTROL1(unsigned long a, unsigned long b)
 static inline uint64_t CAVM_CGXX_SPUX_CONTROL1(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e0010000ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e0010000ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0010000ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -17013,6 +17948,60 @@ union cavm_cgxx_spux_control2
 {
     uint64_t u;
     struct cavm_cgxx_spux_control2_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_4_63         : 60;
+        uint64_t pcs_type              : 4;  /**< [  3:  0](RO/H) PCS type selection.
+                                                                 Note that this is a read-only field rather than read/write as
+                                                                 specified in 802.3.
+                                                                 The LPCS speed is instead configured by the associated
+                                                                 CGX()_CMR()_CONFIG[LMAC_TYPE]. The read values returned by this field are as
+                                                                 follows:
+
+                                                                 \<pre\>
+                                                                               [PCS_TYPE]
+                                                                   LMAC_TYPE   Read Value      Comment
+                                                                   -----------------------------------------------------------------------
+                                                                   XAUI        0x1             10GBASE-X PCS type
+                                                                   RXAUI       0x1             10GBASE-X PCS type
+                                                                   10G_R       0x0             10GBASE-R PCS type
+                                                                   40G_R       0x4             40GBASE-R PCS type
+                                                                   100G_R      0x5             802.3by Table 45-123 / 45.2.3.6
+                                                                   25G_R       0x7             802.3by Table 45-120 / 45.2.3.1
+                                                                   50G_R       0x8             802.3cd Table 45-120 / 45.2.3.6
+                                                                   USXGMII     0xE             802.3cd Table 45-120 / 45.2.3.6
+                                                                                               (0xE, 0xF reserved)
+                                                                   Other       Undefined       Reserved
+                                                                 \</pre\> */
+#else /* Word 0 - Little Endian */
+        uint64_t pcs_type              : 4;  /**< [  3:  0](RO/H) PCS type selection.
+                                                                 Note that this is a read-only field rather than read/write as
+                                                                 specified in 802.3.
+                                                                 The LPCS speed is instead configured by the associated
+                                                                 CGX()_CMR()_CONFIG[LMAC_TYPE]. The read values returned by this field are as
+                                                                 follows:
+
+                                                                 \<pre\>
+                                                                               [PCS_TYPE]
+                                                                   LMAC_TYPE   Read Value      Comment
+                                                                   -----------------------------------------------------------------------
+                                                                   XAUI        0x1             10GBASE-X PCS type
+                                                                   RXAUI       0x1             10GBASE-X PCS type
+                                                                   10G_R       0x0             10GBASE-R PCS type
+                                                                   40G_R       0x4             40GBASE-R PCS type
+                                                                   100G_R      0x5             802.3by Table 45-123 / 45.2.3.6
+                                                                   25G_R       0x7             802.3by Table 45-120 / 45.2.3.1
+                                                                   50G_R       0x8             802.3cd Table 45-120 / 45.2.3.6
+                                                                   USXGMII     0xE             802.3cd Table 45-120 / 45.2.3.6
+                                                                                               (0xE, 0xF reserved)
+                                                                   Other       Undefined       Reserved
+                                                                 \</pre\> */
+        uint64_t reserved_4_63         : 60;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_cgxx_spux_control2_s cn9; */
+    /* struct cavm_cgxx_spux_control2_s cn96xxp1; */
+    struct cavm_cgxx_spux_control2_cn96xxp3
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_4_63         : 60;
@@ -17063,8 +18052,10 @@ union cavm_cgxx_spux_control2
                                                                  \</pre\> */
         uint64_t reserved_4_63         : 60;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_cgxx_spux_control2_s cn; */
+    } cn96xxp3;
+    /* struct cavm_cgxx_spux_control2_cn96xxp3 cn98xx; */
+    /* struct cavm_cgxx_spux_control2_cn96xxp3 cnf95xx; */
+    /* struct cavm_cgxx_spux_control2_cn96xxp3 loki; */
 };
 typedef union cavm_cgxx_spux_control2 cavm_cgxx_spux_control2_t;
 
@@ -17072,6 +18063,8 @@ static inline uint64_t CAVM_CGXX_SPUX_CONTROL2(unsigned long a, unsigned long b)
 static inline uint64_t CAVM_CGXX_SPUX_CONTROL2(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e0010018ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e0010018ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0010018ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -17123,6 +18116,8 @@ static inline uint64_t CAVM_CGXX_SPUX_FEC_ABIL(unsigned long a, unsigned long b)
 static inline uint64_t CAVM_CGXX_SPUX_FEC_ABIL(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e00100d8ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e00100d8ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e00100d8ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -17189,6 +18184,116 @@ union cavm_cgxx_spux_fec_control
                                                                  values.
 
                                                                  \<pre\>
+                                                                   Value     LMAC_TYPE         Comment
+                                                                   -------   ---------------   ------------
+                                                                   0x0       All BASE-R        No FEC
+                                                                   0x1       25G_R, 50G_R,     BASE-R FEC enabled
+                                                                   0x2       25G_R, 50G_R,     RS-FEC enabled
+                                                                   0x3       25G_R, 50G_R,     UNDEFINED
+                                                                   0x2,0x3   100G_R, USXGMII   RS-FEC enabled
+                                                                   0x2       10G_R, 40G_R      No FEC. 10G_R, 40G_R may only use BASE-R FEC
+                                                                   0x1,0x3   10G_R, 40G_R      BASE-R FEC
+                                                                   0x1       100G_R            No FEC. 100G_R  may only use RS-FEC
+                                                                 \</pre\> */
+#else /* Word 0 - Little Endian */
+        uint64_t fec_en                : 2;  /**< [  1:  0](R/W) FEC enable. Bit 0 enables BASE-R FEC. Bit 1 enables RS-FEC (Reed-Solomon FEC).
+                                                                 Some LMAC types allow either mode to be selected whereas others allow only one.
+                                                                 The two algorithms may not run concurrently. For modes where both are permitted,
+                                                                 RS-FEC takes precedence over BASE-R FEC if both are selected.
+
+                                                                 BASE-R FEC enable. When this bit is set and the LPCS type is BASE-R
+                                                                 forward error correction is enabled. BASE-R FEC is disabled otherwise. BASE-R
+                                                                 forward error correction is defined in IEEE 802.3 Clause 74.
+
+                                                                 RS-FEC enable. When this bit is set and the LPCS type is BASE-R
+                                                                 Reed-Solomon forward error correction is enabled. RS-FEC is disabled otherwise. RS
+                                                                 forward error correction is defined in IEEE 802.3 Clause 91 and further
+                                                                 specified for 25GBASE-R in 802.3by Clause 108.
+
+                                                                 The following table specifies the behavior for each BASE-R LMAC type for all [FEC_EN]
+                                                                 values.
+
+                                                                 \<pre\>
+                                                                   Value     LMAC_TYPE         Comment
+                                                                   -------   ---------------   ------------
+                                                                   0x0       All BASE-R        No FEC
+                                                                   0x1       25G_R, 50G_R,     BASE-R FEC enabled
+                                                                   0x2       25G_R, 50G_R,     RS-FEC enabled
+                                                                   0x3       25G_R, 50G_R,     UNDEFINED
+                                                                   0x2,0x3   100G_R, USXGMII   RS-FEC enabled
+                                                                   0x2       10G_R, 40G_R      No FEC. 10G_R, 40G_R may only use BASE-R FEC
+                                                                   0x1,0x3   10G_R, 40G_R      BASE-R FEC
+                                                                   0x1       100G_R            No FEC. 100G_R  may only use RS-FEC
+                                                                 \</pre\> */
+        uint64_t err_en                : 1;  /**< [  2:  2](R/W) BASE-R FEC error-indication enable. This bit corresponds to FEC_Enable_Error_to_PCS
+                                                                 variable for BASE-R as defined in IEEE 802.3 Clause 74. When FEC is enabled ([FEC_EN]\<0\>
+                                                                 is set) and this bit is set, the FEC decoder on the receive side signals an
+                                                                 uncorrectable FEC error to the BASE-R decoder by driving a value of 0x3 on the sync bits
+                                                                 for some of the 32 64/66 bit blocks belonging to the uncorrectable FEC block. See
+                                                                 IEEE 802.3 section 74.7.4.5.1 for more details. */
+        uint64_t fec_byp_ind_en        : 1;  /**< [  3:  3](R/W) This variable is set to one to bypass the error indication function when this ability is
+                                                                 supported. When this variable is set to zero, the decoder indicates errors to the PCS
+                                                                 sublayer if RS-FEC is enabled ([FEC_EN]\<1\> is set) for applicable LMAC types. This variable
+                                                                 has no effect (the decoder does not bypass error indication) if FEC bypass correction enable
+                                                                 is set to one.
+
+                                                                 When this bit is set, if the number of RS-FEC symbol errors in a window of 8192
+                                                                 codewords exceeds the threshold (417 for CR4/KR4, see IEEE 802.3 91.5.3.3)
+                                                                 CGX()_SPU()_RSFEC_STATUS[HI_SER] is set and the Reed-Solomon decoder shall cause
+                                                                 synchronization header rx_coded\<1:0\> of each subsequent 66-bit block that is delivered to
+                                                                 the PCS to be assigned a value of 00 or 11 for a period of 60 ms to 75 ms.
+                                                                 See also 802.3 91.5.3.3, 91.6.2, and 91.6.5. */
+        uint64_t fec_byp_cor_en        : 1;  /**< [  4:  4](R/W) When this variable is set to one, the Reed-Solomon decoder performs error detection
+                                                                 without error correction. When this variable is set to zero, the decoder also performs
+                                                                 error correction. For more details see IEEE 802.3 91.5.3.3 and 91.6.1. */
+        uint64_t reserved_5_63         : 59;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_cgxx_spux_fec_control_s cn9; */
+    /* struct cavm_cgxx_spux_fec_control_s cn96xxp1; */
+    struct cavm_cgxx_spux_fec_control_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_5_63         : 59;
+        uint64_t fec_byp_cor_en        : 1;  /**< [  4:  4](R/W) When this variable is set to one, the Reed-Solomon decoder performs error detection
+                                                                 without error correction. When this variable is set to zero, the decoder also performs
+                                                                 error correction. For more details see IEEE 802.3 91.5.3.3 and 91.6.1. */
+        uint64_t fec_byp_ind_en        : 1;  /**< [  3:  3](R/W) This variable is set to one to bypass the error indication function when this ability is
+                                                                 supported. When this variable is set to zero, the decoder indicates errors to the PCS
+                                                                 sublayer if RS-FEC is enabled ([FEC_EN]\<1\> is set) for applicable LMAC types. This variable
+                                                                 has no effect (the decoder does not bypass error indication) if FEC bypass correction enable
+                                                                 is set to one.
+
+                                                                 When this bit is set, if the number of RS-FEC symbol errors in a window of 8192
+                                                                 codewords exceeds the threshold (417 for CR4/KR4, see IEEE 802.3 91.5.3.3)
+                                                                 CGX()_SPU()_RSFEC_STATUS[HI_SER] is set and the Reed-Solomon decoder shall cause
+                                                                 synchronization header rx_coded\<1:0\> of each subsequent 66-bit block that is delivered to
+                                                                 the PCS to be assigned a value of 00 or 11 for a period of 60 ms to 75 ms.
+                                                                 See also 802.3 91.5.3.3, 91.6.2, and 91.6.5. */
+        uint64_t err_en                : 1;  /**< [  2:  2](R/W) BASE-R FEC error-indication enable. This bit corresponds to FEC_Enable_Error_to_PCS
+                                                                 variable for BASE-R as defined in IEEE 802.3 Clause 74. When FEC is enabled ([FEC_EN]\<0\>
+                                                                 is set) and this bit is set, the FEC decoder on the receive side signals an
+                                                                 uncorrectable FEC error to the BASE-R decoder by driving a value of 0x3 on the sync bits
+                                                                 for some of the 32 64/66 bit blocks belonging to the uncorrectable FEC block. See
+                                                                 IEEE 802.3 section 74.7.4.5.1 for more details. */
+        uint64_t fec_en                : 2;  /**< [  1:  0](R/W) FEC enable. Bit 0 enables BASE-R FEC. Bit 1 enables RS-FEC (Reed-Solomon FEC).
+                                                                 Some LMAC types allow either mode to be selected whereas others allow only one.
+                                                                 The two algorithms may not run concurrently. For modes where both are permitted,
+                                                                 RS-FEC takes precedence over BASE-R FEC if both are selected.
+
+                                                                 BASE-R FEC enable. When this bit is set and the LPCS type is BASE-R
+                                                                 forward error correction is enabled. BASE-R FEC is disabled otherwise. BASE-R
+                                                                 forward error correction is defined in IEEE 802.3 Clause 74.
+
+                                                                 RS-FEC enable. When this bit is set and the LPCS type is BASE-R
+                                                                 Reed-Solomon forward error correction is enabled. RS-FEC is disabled otherwise. RS
+                                                                 forward error correction is defined in IEEE 802.3 Clause 91 and further
+                                                                 specified for 25GBASE-R in 802.3by Clause 108.
+
+                                                                 The following table specifies the behavior for each BASE-R LMAC type for all [FEC_EN]
+                                                                 values.
+
+                                                                 \<pre\>
                                                                    Value    LMAC_TYPE        Comment
                                                                    -------  ---------------  -----------------------
                                                                    0x0      All BASE-R       No FEC
@@ -17257,8 +18362,10 @@ union cavm_cgxx_spux_fec_control
                                                                  error correction. For more details see IEEE 802.3 91.5.3.3 and 91.6.1. */
         uint64_t reserved_5_63         : 59;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_cgxx_spux_fec_control_s cn; */
+    } cn96xxp3;
+    /* struct cavm_cgxx_spux_fec_control_cn96xxp3 cn98xx; */
+    /* struct cavm_cgxx_spux_fec_control_cn96xxp3 cnf95xx; */
+    /* struct cavm_cgxx_spux_fec_control_cn96xxp3 loki; */
 };
 typedef union cavm_cgxx_spux_fec_control cavm_cgxx_spux_fec_control_t;
 
@@ -17266,6 +18373,8 @@ static inline uint64_t CAVM_CGXX_SPUX_FEC_CONTROL(unsigned long a, unsigned long
 static inline uint64_t CAVM_CGXX_SPUX_FEC_CONTROL(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e00100e0ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e00100e0ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e00100e0ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -17320,6 +18429,8 @@ static inline uint64_t CAVM_CGXX_SPUX_FEC_LNX_RSFEC_ERR(unsigned long a, unsigne
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3) && (c<=3)))
         return 0x87e0e0010900ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3) + 8ll * ((c) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3) && (c<=3)))
+        return 0x87e0e0010900ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3) + 8ll * ((c) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3) && (c<=3)))
         return 0x87e0e0010900ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3) + 8ll * ((c) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3) && (c<=3)))
@@ -17343,6 +18454,184 @@ union cavm_cgxx_spux_int
 {
     uint64_t u;
     struct cavm_cgxx_spux_int_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_21_63        : 43;
+        uint64_t usx_an_cpt            : 1;  /**< [ 20: 20](R/W1C/H) USXGMII autonegotiation complete. Set when CGX()_SPU()_USX_AN_STATUS[AN_CPT] is set,
+                                                                 indicating that the autonegotiation process has been completed. This indicates the
+                                                                 AN SM is in IDLE_DETECT of Figure 7-6 in 802.3. In order to start link_timer and
+                                                                 progress to LINK_OK, software needs to set CGX()_SPU()_AN_CONTROL[USX_AN_ARB_LINK_CHK_EN] */
+        uint64_t usx_an_lnk_st         : 1;  /**< [ 19: 19](R/W1C/H) Autonegotiation link good. Set when CGX()_SPU()_USX_AN_STATUS[LNK_ST] is set,
+                                                                 indicating that autonegotiation has completed. This indicates the AN SM reached
+                                                                 LINK_OK of Figure 7-6 in 802.3. */
+        uint64_t hi_ser                : 1;  /**< [ 18: 18](R/W1C/H) High symbol errror rate.
+                                                                 Applicable only to modes implementing RS-FEC, USXGMII, 25G, 50G, 100G.
+                                                                 See description of CGX()_SPU()_RSFEC_STATUS[HI_SER] for more details. */
+        uint64_t rsfec_uncorr          : 1;  /**< [ 17: 17](R/W1C/H) Uncorrectable RS-FEC error.
+                                                                 Applicable only to modes implementing RS-FEC, USXGMII, 25G, 50G, 100G.
+                                                                 Set when CGX()_SPU()_RSFEC_STATUS[FEC_ALIGN_STATUS] is true,
+                                                                 for each code-word that contains errors (when the bypass correction feature is supported
+                                                                 and enabled) or contains errors that were not corrected (when the bypass
+                                                                 correction feature is not supported or not enabled). */
+        uint64_t rsfec_corr            : 1;  /**< [ 16: 16](R/W1C/H) Correctable RS-FEC error.
+                                                                 Applicable only to modes implementing RS-FEC, USXGMII, 25G, 50G, 100G.
+                                                                 Set when CGX()_SPU()_RSFEC_STATUS[FEC_ALIGN_STATUS] is true,
+                                                                 for each code-word that contains errors and was corrected. */
+        uint64_t fec_align_status      : 1;  /**< [ 15: 15](R/W1C/H) Applicable only to modes implementing RS-FEC, USXGMII, 25G, 50G, 100G.
+                                                                 Indicates the FEC alignment state machine RF_CW_MON reached ALIGN_ACQUIRED. See also
+                                                                 CGX()_SPU()_RSFEC_STATUS[FEC_ALIGN_STATUS]. */
+        uint64_t training_failure      : 1;  /**< [ 14: 14](R/W1C/H) BASE-R PMD training failure. Set when BASE-R PMD link training has failed on the 10G
+                                                                 or 25GBASE-R lane or any 40G, 50G, 100GBASE-R lane. Valid if the LPCS type selected
+                                                                 by CGX()_CMR()_CONFIG[LMAC_TYPE] is 10G, 25G, 40G, 50G or 100GBASE-R and
+                                                                 CGX()_SPU()_BR_PMD_CONTROL[TRAIN_EN] is 1, and never set otherwise. */
+        uint64_t training_done         : 1;  /**< [ 13: 13](R/W1C/H) BASE-R PMD training done. Set when the 10G or 25GBASE-R lane or all 40G, 50G,
+                                                                 100GBASE-R lanes have successfully completed BASE-R PMD link training. Valid
+                                                                 if the LPCS type selected by
+                                                                 CGX()_CMR()_CONFIG[LMAC_TYPE] is 10G, 25G, 40G, 50G or 100GBASE-R and
+                                                                 CGX()_SPU()_BR_PMD_CONTROL[TRAIN_EN] is 1, and never set otherwise. */
+        uint64_t an_complete           : 1;  /**< [ 12: 12](R/W1C/H) Autonegotiation complete. Set when CGX()_SPU()_AN_STATUS[AN_COMPLETE] is set,
+                                                                 indicating that the autonegotiation process has been completed and the link is up and
+                                                                 running using the negotiated highest common denominator (HCD) technology. */
+        uint64_t an_link_good          : 1;  /**< [ 11: 11](R/W1C/H) Autonegotiation link good. Set when the an_link_good variable is set as defined in
+                                                                 802.3 Figure 73-11, indicating that autonegotiation has completed. */
+        uint64_t an_page_rx            : 1;  /**< [ 10: 10](R/W1C/H) Autonegotiation page received. This bit is set along with
+                                                                 CGX()_SPU()_AN_STATUS[PAGE_RX] when a new page has been received and stored in
+                                                                 CGX()_SPU()_AN_LP_BASE or CGX()_SPU()_AN_LP_XNP. */
+        uint64_t fec_uncorr            : 1;  /**< [  9:  9](R/W1C/H) Uncorrectable FEC error. Set when an FEC block with an uncorrectable error is received on
+                                                                 the 10G or 25GBASE-R lane or any 40G or 50GBASE-R lane. Valid if the LPCS type selected by
+                                                                 CGX()_CMR()_CONFIG[LMAC_TYPE] is 10G, 25G, 40G or 50GBASE-R and never set otherwise. */
+        uint64_t fec_corr              : 1;  /**< [  8:  8](R/W1C/H) Correctable FEC error. Set when an FEC block with a correctable error is received on the
+                                                                 10G or 25GBASE-R lane or any 40G or 50GBASE-R lane. Valid if the LPCS type selected by
+                                                                 CGX()_CMR()_CONFIG[LMAC_TYPE] is 10G, 25G, 40G or 50GBASE-R and never set otherwise. */
+        uint64_t bip_err               : 1;  /**< [  7:  7](R/W1C/H) Bit interleaved parity error. Set when a BIP error is detected on any lane.
+                                                                 Valid if the LPCS type selected by CGX()_CMR()_CONFIG[LMAC_TYPE] is 40G, 50G or 100GBASE-R. */
+        uint64_t dbg_sync              : 1;  /**< [  6:  6](R/W1C/H) Sync failure debug. This interrupt is provided for link problem debugging help. It is set
+                                                                 as follows based on the LPCS type selected by CGX()_CMR()_CONFIG[LMAC_TYPE], and
+                                                                 whether FEC is enabled or disabled by CGX()_SPU()_FEC_CONTROL[FEC_EN]:
+                                                                 * XAUI or RXAUI: Set when any lane's PCS synchronization state transitions from
+                                                                 SYNC_ACQUIRED_1 to SYNC_ACQUIRED_2 (see 802.3-2008 Figure 48-7).
+                                                                 * 10G, 25G, 40G, 50G, 100GBASE-R, USXGMII with FEC disabled: Set when sh_invalid_cnt
+                                                                 increments to 1 while block_lock is 1 (see 802.3-2008 Figure 49-12 and 802.3ba-2010 Figure 82-20).
+                                                                 * 10G, 25G, 40G, 50GBASE-R with BASE-R FEC enabled: Set when parity_invalid_cnt increments to 1
+                                                                 while fec_block_lock is 1 (see 802.3-2008 Figure 74-8).
+                                                                 * 25G, 50G, 100GBASE-R, USXGMII with RS-FEC: Set when 3 consecutive uncorrected codewords
+                                                                 are received and lock restarts (see 802.3bj-2014 Figure 91-9, 802.3by-2016 Figure 108-7). */
+        uint64_t algnlos               : 1;  /**< [  5:  5](R/W1C/H) Loss of lane alignment. Set when lane-to-lane alignment is lost. This is only valid if the
+                                                                 logical PCS is a multilane type (i.e. XAUI, RXAUI, 40G, 50G or 100GBASE-R is selected by
+                                                                 CGX()_CMR()_CONFIG[LMAC_TYPE]), and is never set otherwise. */
+        uint64_t synlos                : 1;  /**< [  4:  4](R/W1C/H) Loss of lane sync. Lane code-group or block synchronization is lost on one or more lanes
+                                                                 associated with the LMAC/LPCS. Set as follows based on the LPCS type selected by
+                                                                 CGX()_CMR()_CONFIG[LMAC_TYPE], and whether FEC is enabled or disabled by
+                                                                 CGX()_SPU()_FEC_CONTROL[FEC_EN]:
+                                                                 * XAUI or RXAUI: Set when any lane's PCS synchronization state transitions to LOSS_OF_SYNC
+                                                                 (see 802.3-2008 Figure 48-7).
+                                                                 * 10G, 25G, 40G, 50G, 100GBASE-R, USXGMII with FEC disabled: set when the block_lock
+                                                                 variable is cleared on the 10G, 25G or USXGMII lane or any 40G, 50G or 100G lane
+                                                                 (see 802.3-2008 Figure 49-12 and 802.3ba-2010 Figure 82-20).
+                                                                 * 10G, 25G, 40G, 50GBASE-R  with BASE-R FEC enabled: set when the fec_block_lock variable is
+                                                                 cleared on the 10G or 25G lane or any 40G or 50G lane (see 802.3-2008 Figure 74-8).
+                                                                 * 25G, 50G, 100GBASE-R, USXGMII with RS-FEC: Set when 3 consecutive uncorrected codewords
+                                                                 are received and lock restarts (see 802.3bj-2014 Figure 91-9, 802.3by-2016 Figure 108-7). */
+        uint64_t bitlckls              : 1;  /**< [  3:  3](R/W1C/H) Bit lock lost on one or more serdes lanes associated with the LMAC/LPCS. */
+        uint64_t err_blk               : 1;  /**< [  2:  2](R/W1C/H) Errored block received. Set when an errored BASE-R block is received as described for
+                                                                 CGX()_SPU()_BR_STATUS2[ERR_BLKS]. Valid if the LPCS type selected by
+                                                                 CGX()_CMR()_CONFIG[LMAC_TYPE] is 10G, 25G, 40G, 50G, 100GBASE-R, USXGMII, and never
+                                                                 set otherwise. */
+        uint64_t rx_link_down          : 1;  /**< [  1:  1](R/W1C/H) Set when the receive link goes down, which is the same condition that sets
+                                                                 CGX()_SPU()_STATUS2[RCVFLT]. */
+        uint64_t rx_link_up            : 1;  /**< [  0:  0](R/W1C/H) Set when the receive link comes up, which is the same condition that allows the setting of
+                                                                 CGX()_SPU()_STATUS1[RCV_LNK]. */
+#else /* Word 0 - Little Endian */
+        uint64_t rx_link_up            : 1;  /**< [  0:  0](R/W1C/H) Set when the receive link comes up, which is the same condition that allows the setting of
+                                                                 CGX()_SPU()_STATUS1[RCV_LNK]. */
+        uint64_t rx_link_down          : 1;  /**< [  1:  1](R/W1C/H) Set when the receive link goes down, which is the same condition that sets
+                                                                 CGX()_SPU()_STATUS2[RCVFLT]. */
+        uint64_t err_blk               : 1;  /**< [  2:  2](R/W1C/H) Errored block received. Set when an errored BASE-R block is received as described for
+                                                                 CGX()_SPU()_BR_STATUS2[ERR_BLKS]. Valid if the LPCS type selected by
+                                                                 CGX()_CMR()_CONFIG[LMAC_TYPE] is 10G, 25G, 40G, 50G, 100GBASE-R, USXGMII, and never
+                                                                 set otherwise. */
+        uint64_t bitlckls              : 1;  /**< [  3:  3](R/W1C/H) Bit lock lost on one or more serdes lanes associated with the LMAC/LPCS. */
+        uint64_t synlos                : 1;  /**< [  4:  4](R/W1C/H) Loss of lane sync. Lane code-group or block synchronization is lost on one or more lanes
+                                                                 associated with the LMAC/LPCS. Set as follows based on the LPCS type selected by
+                                                                 CGX()_CMR()_CONFIG[LMAC_TYPE], and whether FEC is enabled or disabled by
+                                                                 CGX()_SPU()_FEC_CONTROL[FEC_EN]:
+                                                                 * XAUI or RXAUI: Set when any lane's PCS synchronization state transitions to LOSS_OF_SYNC
+                                                                 (see 802.3-2008 Figure 48-7).
+                                                                 * 10G, 25G, 40G, 50G, 100GBASE-R, USXGMII with FEC disabled: set when the block_lock
+                                                                 variable is cleared on the 10G, 25G or USXGMII lane or any 40G, 50G or 100G lane
+                                                                 (see 802.3-2008 Figure 49-12 and 802.3ba-2010 Figure 82-20).
+                                                                 * 10G, 25G, 40G, 50GBASE-R  with BASE-R FEC enabled: set when the fec_block_lock variable is
+                                                                 cleared on the 10G or 25G lane or any 40G or 50G lane (see 802.3-2008 Figure 74-8).
+                                                                 * 25G, 50G, 100GBASE-R, USXGMII with RS-FEC: Set when 3 consecutive uncorrected codewords
+                                                                 are received and lock restarts (see 802.3bj-2014 Figure 91-9, 802.3by-2016 Figure 108-7). */
+        uint64_t algnlos               : 1;  /**< [  5:  5](R/W1C/H) Loss of lane alignment. Set when lane-to-lane alignment is lost. This is only valid if the
+                                                                 logical PCS is a multilane type (i.e. XAUI, RXAUI, 40G, 50G or 100GBASE-R is selected by
+                                                                 CGX()_CMR()_CONFIG[LMAC_TYPE]), and is never set otherwise. */
+        uint64_t dbg_sync              : 1;  /**< [  6:  6](R/W1C/H) Sync failure debug. This interrupt is provided for link problem debugging help. It is set
+                                                                 as follows based on the LPCS type selected by CGX()_CMR()_CONFIG[LMAC_TYPE], and
+                                                                 whether FEC is enabled or disabled by CGX()_SPU()_FEC_CONTROL[FEC_EN]:
+                                                                 * XAUI or RXAUI: Set when any lane's PCS synchronization state transitions from
+                                                                 SYNC_ACQUIRED_1 to SYNC_ACQUIRED_2 (see 802.3-2008 Figure 48-7).
+                                                                 * 10G, 25G, 40G, 50G, 100GBASE-R, USXGMII with FEC disabled: Set when sh_invalid_cnt
+                                                                 increments to 1 while block_lock is 1 (see 802.3-2008 Figure 49-12 and 802.3ba-2010 Figure 82-20).
+                                                                 * 10G, 25G, 40G, 50GBASE-R with BASE-R FEC enabled: Set when parity_invalid_cnt increments to 1
+                                                                 while fec_block_lock is 1 (see 802.3-2008 Figure 74-8).
+                                                                 * 25G, 50G, 100GBASE-R, USXGMII with RS-FEC: Set when 3 consecutive uncorrected codewords
+                                                                 are received and lock restarts (see 802.3bj-2014 Figure 91-9, 802.3by-2016 Figure 108-7). */
+        uint64_t bip_err               : 1;  /**< [  7:  7](R/W1C/H) Bit interleaved parity error. Set when a BIP error is detected on any lane.
+                                                                 Valid if the LPCS type selected by CGX()_CMR()_CONFIG[LMAC_TYPE] is 40G, 50G or 100GBASE-R. */
+        uint64_t fec_corr              : 1;  /**< [  8:  8](R/W1C/H) Correctable FEC error. Set when an FEC block with a correctable error is received on the
+                                                                 10G or 25GBASE-R lane or any 40G or 50GBASE-R lane. Valid if the LPCS type selected by
+                                                                 CGX()_CMR()_CONFIG[LMAC_TYPE] is 10G, 25G, 40G or 50GBASE-R and never set otherwise. */
+        uint64_t fec_uncorr            : 1;  /**< [  9:  9](R/W1C/H) Uncorrectable FEC error. Set when an FEC block with an uncorrectable error is received on
+                                                                 the 10G or 25GBASE-R lane or any 40G or 50GBASE-R lane. Valid if the LPCS type selected by
+                                                                 CGX()_CMR()_CONFIG[LMAC_TYPE] is 10G, 25G, 40G or 50GBASE-R and never set otherwise. */
+        uint64_t an_page_rx            : 1;  /**< [ 10: 10](R/W1C/H) Autonegotiation page received. This bit is set along with
+                                                                 CGX()_SPU()_AN_STATUS[PAGE_RX] when a new page has been received and stored in
+                                                                 CGX()_SPU()_AN_LP_BASE or CGX()_SPU()_AN_LP_XNP. */
+        uint64_t an_link_good          : 1;  /**< [ 11: 11](R/W1C/H) Autonegotiation link good. Set when the an_link_good variable is set as defined in
+                                                                 802.3 Figure 73-11, indicating that autonegotiation has completed. */
+        uint64_t an_complete           : 1;  /**< [ 12: 12](R/W1C/H) Autonegotiation complete. Set when CGX()_SPU()_AN_STATUS[AN_COMPLETE] is set,
+                                                                 indicating that the autonegotiation process has been completed and the link is up and
+                                                                 running using the negotiated highest common denominator (HCD) technology. */
+        uint64_t training_done         : 1;  /**< [ 13: 13](R/W1C/H) BASE-R PMD training done. Set when the 10G or 25GBASE-R lane or all 40G, 50G,
+                                                                 100GBASE-R lanes have successfully completed BASE-R PMD link training. Valid
+                                                                 if the LPCS type selected by
+                                                                 CGX()_CMR()_CONFIG[LMAC_TYPE] is 10G, 25G, 40G, 50G or 100GBASE-R and
+                                                                 CGX()_SPU()_BR_PMD_CONTROL[TRAIN_EN] is 1, and never set otherwise. */
+        uint64_t training_failure      : 1;  /**< [ 14: 14](R/W1C/H) BASE-R PMD training failure. Set when BASE-R PMD link training has failed on the 10G
+                                                                 or 25GBASE-R lane or any 40G, 50G, 100GBASE-R lane. Valid if the LPCS type selected
+                                                                 by CGX()_CMR()_CONFIG[LMAC_TYPE] is 10G, 25G, 40G, 50G or 100GBASE-R and
+                                                                 CGX()_SPU()_BR_PMD_CONTROL[TRAIN_EN] is 1, and never set otherwise. */
+        uint64_t fec_align_status      : 1;  /**< [ 15: 15](R/W1C/H) Applicable only to modes implementing RS-FEC, USXGMII, 25G, 50G, 100G.
+                                                                 Indicates the FEC alignment state machine RF_CW_MON reached ALIGN_ACQUIRED. See also
+                                                                 CGX()_SPU()_RSFEC_STATUS[FEC_ALIGN_STATUS]. */
+        uint64_t rsfec_corr            : 1;  /**< [ 16: 16](R/W1C/H) Correctable RS-FEC error.
+                                                                 Applicable only to modes implementing RS-FEC, USXGMII, 25G, 50G, 100G.
+                                                                 Set when CGX()_SPU()_RSFEC_STATUS[FEC_ALIGN_STATUS] is true,
+                                                                 for each code-word that contains errors and was corrected. */
+        uint64_t rsfec_uncorr          : 1;  /**< [ 17: 17](R/W1C/H) Uncorrectable RS-FEC error.
+                                                                 Applicable only to modes implementing RS-FEC, USXGMII, 25G, 50G, 100G.
+                                                                 Set when CGX()_SPU()_RSFEC_STATUS[FEC_ALIGN_STATUS] is true,
+                                                                 for each code-word that contains errors (when the bypass correction feature is supported
+                                                                 and enabled) or contains errors that were not corrected (when the bypass
+                                                                 correction feature is not supported or not enabled). */
+        uint64_t hi_ser                : 1;  /**< [ 18: 18](R/W1C/H) High symbol errror rate.
+                                                                 Applicable only to modes implementing RS-FEC, USXGMII, 25G, 50G, 100G.
+                                                                 See description of CGX()_SPU()_RSFEC_STATUS[HI_SER] for more details. */
+        uint64_t usx_an_lnk_st         : 1;  /**< [ 19: 19](R/W1C/H) Autonegotiation link good. Set when CGX()_SPU()_USX_AN_STATUS[LNK_ST] is set,
+                                                                 indicating that autonegotiation has completed. This indicates the AN SM reached
+                                                                 LINK_OK of Figure 7-6 in 802.3. */
+        uint64_t usx_an_cpt            : 1;  /**< [ 20: 20](R/W1C/H) USXGMII autonegotiation complete. Set when CGX()_SPU()_USX_AN_STATUS[AN_CPT] is set,
+                                                                 indicating that the autonegotiation process has been completed. This indicates the
+                                                                 AN SM is in IDLE_DETECT of Figure 7-6 in 802.3. In order to start link_timer and
+                                                                 progress to LINK_OK, software needs to set CGX()_SPU()_AN_CONTROL[USX_AN_ARB_LINK_CHK_EN] */
+        uint64_t reserved_21_63        : 43;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_cgxx_spux_int_s cn9; */
+    /* struct cavm_cgxx_spux_int_s cn96xxp1; */
+    struct cavm_cgxx_spux_int_cn96xxp3
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_21_63        : 43;
@@ -17517,8 +18806,11 @@ union cavm_cgxx_spux_int
                                                                  progress to LINK_OK, software needs to set CGX()_SPU()_AN_CONTROL[USX_AN_ARB_LINK_CHK_EN] */
         uint64_t reserved_21_63        : 43;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_cgxx_spux_int_s cn; */
+    } cn96xxp3;
+    /* struct cavm_cgxx_spux_int_cn96xxp3 cn98xx; */
+    /* struct cavm_cgxx_spux_int_s cnf95xxp1; */
+    /* struct cavm_cgxx_spux_int_cn96xxp3 cnf95xxp2; */
+    /* struct cavm_cgxx_spux_int_cn96xxp3 loki; */
 };
 typedef union cavm_cgxx_spux_int cavm_cgxx_spux_int_t;
 
@@ -17526,6 +18818,8 @@ static inline uint64_t CAVM_CGXX_SPUX_INT(unsigned long a, unsigned long b) __at
 static inline uint64_t CAVM_CGXX_SPUX_INT(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e0010220ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e0010220ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0010220ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -17600,9 +18894,9 @@ union cavm_cgxx_spux_int_ena_w1c
         uint64_t reserved_21_63        : 43;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_cgxx_spux_int_ena_w1c_s cn9; */
     /* struct cavm_cgxx_spux_int_ena_w1c_s cn96xx; */
-    /* struct cavm_cgxx_spux_int_ena_w1c_s cnf95xx; */
-    struct cavm_cgxx_spux_int_ena_w1c_loki
+    struct cavm_cgxx_spux_int_ena_w1c_cn98xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_21_63        : 43;
@@ -17651,7 +18945,9 @@ union cavm_cgxx_spux_int_ena_w1c
         uint64_t usx_an_cpt            : 1;  /**< [ 20: 20](R/W1C/H) Reads or clears enable for CGX(0..3)_SPU(0..3)_INT[USX_AN_CPT]. */
         uint64_t reserved_21_63        : 43;
 #endif /* Word 0 - End */
-    } loki;
+    } cn98xx;
+    /* struct cavm_cgxx_spux_int_ena_w1c_s cnf95xx; */
+    /* struct cavm_cgxx_spux_int_ena_w1c_cn98xx loki; */
 };
 typedef union cavm_cgxx_spux_int_ena_w1c cavm_cgxx_spux_int_ena_w1c_t;
 
@@ -17659,6 +18955,8 @@ static inline uint64_t CAVM_CGXX_SPUX_INT_ENA_W1C(unsigned long a, unsigned long
 static inline uint64_t CAVM_CGXX_SPUX_INT_ENA_W1C(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e0010230ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e0010230ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0010230ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -17733,9 +19031,9 @@ union cavm_cgxx_spux_int_ena_w1s
         uint64_t reserved_21_63        : 43;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_cgxx_spux_int_ena_w1s_s cn9; */
     /* struct cavm_cgxx_spux_int_ena_w1s_s cn96xx; */
-    /* struct cavm_cgxx_spux_int_ena_w1s_s cnf95xx; */
-    struct cavm_cgxx_spux_int_ena_w1s_loki
+    struct cavm_cgxx_spux_int_ena_w1s_cn98xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_21_63        : 43;
@@ -17784,7 +19082,9 @@ union cavm_cgxx_spux_int_ena_w1s
         uint64_t usx_an_cpt            : 1;  /**< [ 20: 20](R/W1S/H) Reads or sets enable for CGX(0..3)_SPU(0..3)_INT[USX_AN_CPT]. */
         uint64_t reserved_21_63        : 43;
 #endif /* Word 0 - End */
-    } loki;
+    } cn98xx;
+    /* struct cavm_cgxx_spux_int_ena_w1s_s cnf95xx; */
+    /* struct cavm_cgxx_spux_int_ena_w1s_cn98xx loki; */
 };
 typedef union cavm_cgxx_spux_int_ena_w1s cavm_cgxx_spux_int_ena_w1s_t;
 
@@ -17792,6 +19092,8 @@ static inline uint64_t CAVM_CGXX_SPUX_INT_ENA_W1S(unsigned long a, unsigned long
 static inline uint64_t CAVM_CGXX_SPUX_INT_ENA_W1S(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e0010238ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e0010238ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0010238ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -17866,9 +19168,9 @@ union cavm_cgxx_spux_int_w1s
         uint64_t reserved_21_63        : 43;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_cgxx_spux_int_w1s_s cn9; */
     /* struct cavm_cgxx_spux_int_w1s_s cn96xx; */
-    /* struct cavm_cgxx_spux_int_w1s_s cnf95xx; */
-    struct cavm_cgxx_spux_int_w1s_loki
+    struct cavm_cgxx_spux_int_w1s_cn98xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_21_63        : 43;
@@ -17917,7 +19219,9 @@ union cavm_cgxx_spux_int_w1s
         uint64_t usx_an_cpt            : 1;  /**< [ 20: 20](R/W1S/H) Reads or sets CGX(0..3)_SPU(0..3)_INT[USX_AN_CPT]. */
         uint64_t reserved_21_63        : 43;
 #endif /* Word 0 - End */
-    } loki;
+    } cn98xx;
+    /* struct cavm_cgxx_spux_int_w1s_s cnf95xx; */
+    /* struct cavm_cgxx_spux_int_w1s_cn98xx loki; */
 };
 typedef union cavm_cgxx_spux_int_w1s cavm_cgxx_spux_int_w1s_t;
 
@@ -17925,6 +19229,8 @@ static inline uint64_t CAVM_CGXX_SPUX_INT_W1S(unsigned long a, unsigned long b) 
 static inline uint64_t CAVM_CGXX_SPUX_INT_W1S(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e0010228ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e0010228ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0010228ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -17981,6 +19287,8 @@ static inline uint64_t CAVM_CGXX_SPUX_LNX_BR_BIP_ERR_CNT(unsigned long a, unsign
 static inline uint64_t CAVM_CGXX_SPUX_LNX_BR_BIP_ERR_CNT(unsigned long a, unsigned long b, unsigned long c)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3) && (c<=19)))
+        return 0x87e0e0010500ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3) + 8ll * ((c) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3) && (c<=19)))
         return 0x87e0e0010500ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3) + 8ll * ((c) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3) && (c<=19)))
         return 0x87e0e0010500ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3) + 8ll * ((c) & 0x1f);
@@ -18045,6 +19353,8 @@ static inline uint64_t CAVM_CGXX_SPUX_LNX_FEC_CORR_BLKS(unsigned long a, unsigne
 static inline uint64_t CAVM_CGXX_SPUX_LNX_FEC_CORR_BLKS(unsigned long a, unsigned long b, unsigned long c)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3) && (c<=19)))
+        return 0x87e0e0010700ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3) + 8ll * ((c) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3) && (c<=19)))
         return 0x87e0e0010700ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3) + 8ll * ((c) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3) && (c<=19)))
         return 0x87e0e0010700ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3) + 8ll * ((c) & 0x1f);
@@ -18112,6 +19422,8 @@ static inline uint64_t CAVM_CGXX_SPUX_LNX_FEC_UNCORR_BLKS(unsigned long a, unsig
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3) && (c<=19)))
         return 0x87e0e0010800ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3) + 8ll * ((c) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3) && (c<=19)))
+        return 0x87e0e0010800ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3) + 8ll * ((c) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3) && (c<=19)))
         return 0x87e0e0010800ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3) + 8ll * ((c) & 0x1f);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3) && (c<=19)))
@@ -18162,6 +19474,8 @@ static inline uint64_t CAVM_CGXX_SPUX_LPCS_STATES(unsigned long a, unsigned long
 static inline uint64_t CAVM_CGXX_SPUX_LPCS_STATES(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e0010208ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e0010208ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0010208ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -18302,6 +19616,8 @@ static inline uint64_t CAVM_CGXX_SPUX_MISC_CONTROL(unsigned long a, unsigned lon
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0010218ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e0010218ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0010218ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -18354,6 +19670,8 @@ static inline uint64_t CAVM_CGXX_SPUX_RSFEC_CORR(unsigned long a, unsigned long 
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0010088ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e0010088ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0010088ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -18380,6 +19698,72 @@ union cavm_cgxx_spux_rsfec_status
 {
     uint64_t u;
     struct cavm_cgxx_spux_rsfec_status_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_16_63        : 48;
+        uint64_t fec_byp_cor_abil      : 1;  /**< [ 15: 15](RO/H) This variable is set to one to indicate that the decoder has the ability to bypass
+                                                                 error correction (while possibly performing error detection only). The variable is
+                                                                 set to zero if this ability is not supported. For more details see 802.3
+                                                                 91.5.3.3 and also also 802.3 91.6.3. */
+        uint64_t fec_byp_ind_abil      : 1;  /**< [ 14: 14](RO/H) This variable is set to one to indicate that the decoder has the ability to bypass
+                                                                 error indication. The variable is set to zero if this ability is not supported.
+                                                                 For more details see 802.3 91.5.3.3 and also 802.3 91.6.4. */
+        uint64_t hi_ser                : 1;  /**< [ 13: 13](RO/H) Value defined only when [FEC_BYP_IND_ABIL] is set. When
+                                                                 CGX()_SPU()_FEC_CONTROL[FEC_BYP_IND_EN] is set to one,
+                                                                 this bit is set to one if the number of RS-FEC symbol errors in a window of 8192
+                                                                 codewords exceeds the threshold (417 for CR4/KR4, see 802.3 91.5.3.3) and is
+                                                                 set to zero otherwise. See also 802.3 91.6.5. */
+        uint64_t amps_lock             : 4;  /**< [ 12:  9](RO/H) Marker-locked status for FEC lanes 3..0 as achieved by AM-lock FSM (COUNT_2).
+                                                                 0 = Not locked.
+                                                                 1 = Locked.
+
+                                                                 This information is also available in
+                                                                 CGX()_SPU()_BR_ALGN_STATUS[MARKER_LOCK]\<3:0\>. See also 802.3bj-2014 91.6.6. */
+        uint64_t fec_align_status      : 1;  /**< [  8:  8](RO/H) Indicates the FEC alignment state machine RF_CW_MON reached ALIGN_ACQUIRED (802.3bj-2014
+                                                                 Figure 91-9, 802.3by-2016 Figure 108-6). See also 802.3bj-2014 section 91.6.7. */
+        uint64_t fec_lane_mapping      : 8;  /**< [  7:  0](RO/H) FEC lane number received on service interface N where N is the (0..3) offset used to
+                                                                 access one of four fields in this register.
+
+                                                                 _ CGX()_SPU()_BR_LANE_MAP()[LN_MAPPING] = {FEC_lane_idx(SVC_lane_3)[1:0],..
+                                                                 FEC_lane_idx(SVC_lane_0)[1:0]}.
+
+                                                                 This information is also available in CGX()_SPU()_BR_LANE_MAP()[LN_MAPPING]. See
+                                                                 also 802.3bj-2014 section 91.6.10. */
+#else /* Word 0 - Little Endian */
+        uint64_t fec_lane_mapping      : 8;  /**< [  7:  0](RO/H) FEC lane number received on service interface N where N is the (0..3) offset used to
+                                                                 access one of four fields in this register.
+
+                                                                 _ CGX()_SPU()_BR_LANE_MAP()[LN_MAPPING] = {FEC_lane_idx(SVC_lane_3)[1:0],..
+                                                                 FEC_lane_idx(SVC_lane_0)[1:0]}.
+
+                                                                 This information is also available in CGX()_SPU()_BR_LANE_MAP()[LN_MAPPING]. See
+                                                                 also 802.3bj-2014 section 91.6.10. */
+        uint64_t fec_align_status      : 1;  /**< [  8:  8](RO/H) Indicates the FEC alignment state machine RF_CW_MON reached ALIGN_ACQUIRED (802.3bj-2014
+                                                                 Figure 91-9, 802.3by-2016 Figure 108-6). See also 802.3bj-2014 section 91.6.7. */
+        uint64_t amps_lock             : 4;  /**< [ 12:  9](RO/H) Marker-locked status for FEC lanes 3..0 as achieved by AM-lock FSM (COUNT_2).
+                                                                 0 = Not locked.
+                                                                 1 = Locked.
+
+                                                                 This information is also available in
+                                                                 CGX()_SPU()_BR_ALGN_STATUS[MARKER_LOCK]\<3:0\>. See also 802.3bj-2014 91.6.6. */
+        uint64_t hi_ser                : 1;  /**< [ 13: 13](RO/H) Value defined only when [FEC_BYP_IND_ABIL] is set. When
+                                                                 CGX()_SPU()_FEC_CONTROL[FEC_BYP_IND_EN] is set to one,
+                                                                 this bit is set to one if the number of RS-FEC symbol errors in a window of 8192
+                                                                 codewords exceeds the threshold (417 for CR4/KR4, see 802.3 91.5.3.3) and is
+                                                                 set to zero otherwise. See also 802.3 91.6.5. */
+        uint64_t fec_byp_ind_abil      : 1;  /**< [ 14: 14](RO/H) This variable is set to one to indicate that the decoder has the ability to bypass
+                                                                 error indication. The variable is set to zero if this ability is not supported.
+                                                                 For more details see 802.3 91.5.3.3 and also 802.3 91.6.4. */
+        uint64_t fec_byp_cor_abil      : 1;  /**< [ 15: 15](RO/H) This variable is set to one to indicate that the decoder has the ability to bypass
+                                                                 error correction (while possibly performing error detection only). The variable is
+                                                                 set to zero if this ability is not supported. For more details see 802.3
+                                                                 91.5.3.3 and also also 802.3 91.6.3. */
+        uint64_t reserved_16_63        : 48;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_cgxx_spux_rsfec_status_s cn9; */
+    /* struct cavm_cgxx_spux_rsfec_status_s cn96xxp1; */
+    struct cavm_cgxx_spux_rsfec_status_cn96xxp3
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_16_63        : 48;
@@ -18442,8 +19826,11 @@ union cavm_cgxx_spux_rsfec_status
                                                                  91.5.3.3 and also 802.3 91.6.3. */
         uint64_t reserved_16_63        : 48;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_cgxx_spux_rsfec_status_s cn; */
+    } cn96xxp3;
+    /* struct cavm_cgxx_spux_rsfec_status_cn96xxp3 cn98xx; */
+    /* struct cavm_cgxx_spux_rsfec_status_s cnf95xxp1; */
+    /* struct cavm_cgxx_spux_rsfec_status_cn96xxp3 cnf95xxp2; */
+    /* struct cavm_cgxx_spux_rsfec_status_cn96xxp3 loki; */
 };
 typedef union cavm_cgxx_spux_rsfec_status cavm_cgxx_spux_rsfec_status_t;
 
@@ -18451,6 +19838,8 @@ static inline uint64_t CAVM_CGXX_SPUX_RSFEC_STATUS(unsigned long a, unsigned lon
 static inline uint64_t CAVM_CGXX_SPUX_RSFEC_STATUS(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e0010080ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e0010080ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0010080ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -18512,6 +19901,8 @@ static inline uint64_t CAVM_CGXX_SPUX_RSFEC_UNCORR(unsigned long a, unsigned lon
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0010090ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e0010090ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0010090ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -18561,6 +19952,8 @@ static inline uint64_t CAVM_CGXX_SPUX_RX_EEE_WAKE(unsigned long a, unsigned long
 static inline uint64_t CAVM_CGXX_SPUX_RX_EEE_WAKE(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e00103e0ll + 0x1000000ll * ((a) & 0x3) + 8ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e00103e0ll + 0x1000000ll * ((a) & 0x3) + 8ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e00103e0ll + 0x1000000ll * ((a) & 0x3) + 8ll * ((b) & 0x3);
@@ -18669,6 +20062,8 @@ static inline uint64_t CAVM_CGXX_SPUX_RX_LPI_TIMING(unsigned long a, unsigned lo
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e00103c0ll + 0x1000000ll * ((a) & 0x3) + 8ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e00103c0ll + 0x1000000ll * ((a) & 0x3) + 8ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e00103c0ll + 0x1000000ll * ((a) & 0x3) + 8ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -18721,6 +20116,8 @@ static inline uint64_t CAVM_CGXX_SPUX_RX_LPI_TIMING2(unsigned long a, unsigned l
 static inline uint64_t CAVM_CGXX_SPUX_RX_LPI_TIMING2(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e0010420ll + 0x1000000ll * ((a) & 0x3) + 8ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e0010420ll + 0x1000000ll * ((a) & 0x3) + 8ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0010420ll + 0x1000000ll * ((a) & 0x3) + 8ll * ((b) & 0x3);
@@ -18782,6 +20179,114 @@ union cavm_cgxx_spux_rx_mrk_cnt
                                                                  The following values should always be used for normal operation:
 
                                                                  \<pre\>
+                                                                   Value    LMAC_TYPE                            Comment
+                                                                   -------  -----------------------------------  ---------------------------------
+                                                                   0x3fff   10G_R, 25G_R   w/        BASE-R-FEC  No markers w/o FEC 10G_R, 25G_R
+                                                                            40G_R, 50G_R   w/ or w/o BASE-R-FEC
+                                                                            100G_R         w/ or w/o RS-FEC      No BASE-R-FEC for 100G_R
+                                                                   0x13ffc  25G_R, USXGMII w/        RS-FEC      Ignored by 25G_R if RS-FEC
+                                                                                                                 disabled
+                                                                                                                 See below for USXGMII w/o RSFEC
+                                                                   0x4010   USXGMII        w/o       RS-FEC      USXGMII w/o RSFEC uses \<\> from
+                                                                                                                 RSFEC mode
+                                                                                                                 No BASE-R-FEC for USXGMII
+                                                                   0x4fff   50G_R          w/        RS-FEC
+                                                                 \</pre\>
+
+                                                                 In USXGMII mode hardware only uses the value specified for LMAC0. */
+#else /* Word 0 - Little Endian */
+        uint64_t mrk_cnt               : 20; /**< [ 19:  0](R/W) 10, 25, 40, 50, 100GBASE-R and USXGMII receive marker interval count, used by all
+                                                                 defined FEC modes (non-FEC as well as BASE-R FEC, RS-FEC where available).
+                                                                 Specifies the interval (number of 66-bit BASE-R blocks) at which the receive logic
+                                                                 expects alignment markers. Ignored when not in any of the aforementioned modes.
+                                                                 This value applies to each virtual lane (PCSL), and so, for example, the hardware
+                                                                 expects 4 markers after 4*[MRK_CNT] (40GBASE-R) or 20 markers after 20*[MRK_CNT]
+                                                                 (100GBASE-R) blocks. An internal counter in SPU RX is initialized to this value, counts
+                                                                 down for each BASE-R block received by SPU RX, and wraps back to the initial value from 0.
+                                                                 The SPU RX receive logic expects alignment markers for lanes 0, 1, 2 and 3, respectively,
+                                                                 in the last four BASE-R blocks before the counter wraps (3, 2, 1, 0) for 40G. The default
+                                                                 value corresponds to an alignment marker period of 16383 blocks (exclusive) per lane, as
+                                                                 specified in IEEE 802.3 Clause 82.
+                                                                 The following values should always be used for normal operation:
+
+                                                                 \<pre\>
+                                                                   Value    LMAC_TYPE                            Comment
+                                                                   -------  -----------------------------------  ---------------------------------
+                                                                   0x3fff   10G_R, 25G_R   w/        BASE-R-FEC  No markers w/o FEC 10G_R, 25G_R
+                                                                            40G_R, 50G_R   w/ or w/o BASE-R-FEC
+                                                                            100G_R         w/ or w/o RS-FEC      No BASE-R-FEC for 100G_R
+                                                                   0x13ffc  25G_R, USXGMII w/        RS-FEC      Ignored by 25G_R if RS-FEC
+                                                                                                                 disabled
+                                                                                                                 See below for USXGMII w/o RSFEC
+                                                                   0x4010   USXGMII        w/o       RS-FEC      USXGMII w/o RSFEC uses \<\> from
+                                                                                                                 RSFEC mode
+                                                                                                                 No BASE-R-FEC for USXGMII
+                                                                   0x4fff   50G_R          w/        RS-FEC
+                                                                 \</pre\>
+
+                                                                 In USXGMII mode hardware only uses the value specified for LMAC0. */
+        uint64_t reserved_20_43        : 24;
+        uint64_t by_mrk_100g           : 1;  /**< [ 44: 44](R/W) Use alignment marker from 802.3 Table 82-2 (100G) PCS lane 0 as first (of four)
+                                                                 RS-FEC CWMs for 25G, 50G and USXGMII LMAC types if this bit is set and if RS-FEC
+                                                                 is enabled. Lane 0 marker from 802.3 Table 82-3 (40G)
+                                                                 is used as first marker otherwise. The remaining three markers are always selected
+                                                                 from Table 82-3 (PCS lanes 1-3). This bit was introduced to cover both possible
+                                                                 interpretations of a confusing statement in 802.3by 108.5.2.4 bullet a) (to be compared
+                                                                 to bullets b), c) and d)). Irrelevant for non- 25G, 50G or USXGMII LMAC types,
+                                                                 or if RS-FEC is not enabled. */
+        uint64_t reserved_45_47        : 3;
+        uint64_t ram_mrk_cnt           : 8;  /**< [ 55: 48](R/W) Reserved.
+                                                                 Internal:
+                                                                 BASE-R rapid alignment marker receive period for EEE support. For a multilane
+                                                                 40,50,100GBASE-R
+                                                                 logical PCS, this field specifies the expected rapid alignment marker receive period per
+                                                                 lane, i.e. the expected number of received 66b non-marker blocks between consecutive
+                                                                 markers on the same lane. The default value corresponds to a period of 15 blocks
+                                                                 (exclusive) as specified in 802.3bj-2014 Figure 82-9a for 40G, 50G. Should be programmed to
+                                                                 0x7 for 100G per 802.3bj-2014. */
+        uint64_t reserved_56_63        : 8;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_cgxx_spux_rx_mrk_cnt_s cn9; */
+    /* struct cavm_cgxx_spux_rx_mrk_cnt_s cn96xxp1; */
+    struct cavm_cgxx_spux_rx_mrk_cnt_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_56_63        : 8;
+        uint64_t ram_mrk_cnt           : 8;  /**< [ 55: 48](R/W) Reserved.
+                                                                 Internal:
+                                                                 BASE-R rapid alignment marker receive period for EEE support. For a multilane
+                                                                 40,50,100GBASE-R
+                                                                 logical PCS, this field specifies the expected rapid alignment marker receive period per
+                                                                 lane, i.e. the expected number of received 66b non-marker blocks between consecutive
+                                                                 markers on the same lane. The default value corresponds to a period of 15 blocks
+                                                                 (exclusive) as specified in 802.3bj-2014 Figure 82-9a for 40G, 50G. Should be programmed to
+                                                                 0x7 for 100G per 802.3bj-2014. */
+        uint64_t reserved_45_47        : 3;
+        uint64_t by_mrk_100g           : 1;  /**< [ 44: 44](R/W) Use alignment marker from 802.3 Table 82-2 (100G) PCS lane 0 as first (of four)
+                                                                 RS-FEC CWMs for 25G, 50G and USXGMII LMAC types if this bit is set and if RS-FEC
+                                                                 is enabled. Lane 0 marker from 802.3 Table 82-3 (40G)
+                                                                 is used as first marker otherwise. The remaining three markers are always selected
+                                                                 from Table 82-3 (PCS lanes 1-3). This bit was introduced to cover both possible
+                                                                 interpretations of a confusing statement in 802.3by 108.5.2.4 bullet a) (to be compared
+                                                                 to bullets b), c) and d)). Irrelevant for non- 25G, 50G or USXGMII LMAC types,
+                                                                 or if RS-FEC is not enabled. */
+        uint64_t reserved_20_43        : 24;
+        uint64_t mrk_cnt               : 20; /**< [ 19:  0](R/W) 10, 25, 40, 50, 100GBASE-R and USXGMII receive marker interval count, used by all
+                                                                 defined FEC modes (non-FEC as well as BASE-R FEC, RS-FEC where available).
+                                                                 Specifies the interval (number of 66-bit BASE-R blocks) at which the receive logic
+                                                                 expects alignment markers. Ignored when not in any of the aforementioned modes.
+                                                                 This value applies to each virtual lane (PCSL), and so, for example, the hardware
+                                                                 expects 4 markers after 4*[MRK_CNT] (40GBASE-R) or 20 markers after 20*[MRK_CNT]
+                                                                 (100GBASE-R) blocks. An internal counter in SPU RX is initialized to this value, counts
+                                                                 down for each BASE-R block received by SPU RX, and wraps back to the initial value from 0.
+                                                                 The SPU RX receive logic expects alignment markers for lanes 0, 1, 2 and 3, respectively,
+                                                                 in the last four BASE-R blocks before the counter wraps (3, 2, 1, 0) for 40G. The default
+                                                                 value corresponds to an alignment marker period of 16383 blocks (exclusive) per lane, as
+                                                                 specified in IEEE 802.3 Clause 82.
+                                                                 The following values should always be used for normal operation:
+
+                                                                 \<pre\>
                                                                    Value    LMAC_TYPE          Comment
                                                                    -------  -----------------  --------------------------
                                                                    0x3fff   10G_R, 25G_R w/    No markers w/o FEC 10G_R,
@@ -18857,8 +20362,10 @@ union cavm_cgxx_spux_rx_mrk_cnt
                                                                  0x7 for 100G per 802.3bj-2014. */
         uint64_t reserved_56_63        : 8;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_cgxx_spux_rx_mrk_cnt_s cn; */
+    } cn96xxp3;
+    /* struct cavm_cgxx_spux_rx_mrk_cnt_cn96xxp3 cn98xx; */
+    /* struct cavm_cgxx_spux_rx_mrk_cnt_cn96xxp3 cnf95xx; */
+    /* struct cavm_cgxx_spux_rx_mrk_cnt_cn96xxp3 loki; */
 };
 typedef union cavm_cgxx_spux_rx_mrk_cnt cavm_cgxx_spux_rx_mrk_cnt_t;
 
@@ -18866,6 +20373,8 @@ static inline uint64_t CAVM_CGXX_SPUX_RX_MRK_CNT(unsigned long a, unsigned long 
 static inline uint64_t CAVM_CGXX_SPUX_RX_MRK_CNT(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e00103a0ll + 0x1000000ll * ((a) & 0x3) + 8ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e00103a0ll + 0x1000000ll * ((a) & 0x3) + 8ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e00103a0ll + 0x1000000ll * ((a) & 0x3) + 8ll * ((b) & 0x3);
@@ -18919,6 +20428,8 @@ static inline uint64_t CAVM_CGXX_SPUX_SPD_ABIL(unsigned long a, unsigned long b)
 static inline uint64_t CAVM_CGXX_SPUX_SPD_ABIL(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e0010010ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e0010010ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0010010ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -19033,6 +20544,8 @@ static inline uint64_t CAVM_CGXX_SPUX_STATUS1(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0010008ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e0010008ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0010008ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -19101,6 +20614,8 @@ static inline uint64_t CAVM_CGXX_SPUX_STATUS2(unsigned long a, unsigned long b) 
 static inline uint64_t CAVM_CGXX_SPUX_STATUS2(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e0010020ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e0010020ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0010020ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -19215,6 +20730,8 @@ static inline uint64_t CAVM_CGXX_SPUX_TX_LPI_TIMING(unsigned long a, unsigned lo
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0010400ll + 0x1000000ll * ((a) & 0x3) + 8ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e0010400ll + 0x1000000ll * ((a) & 0x3) + 8ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0010400ll + 0x1000000ll * ((a) & 0x3) + 8ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -19304,6 +20821,8 @@ static inline uint64_t CAVM_CGXX_SPUX_TX_LPI_TIMING2(unsigned long a, unsigned l
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0010440ll + 0x1000000ll * ((a) & 0x3) + 8ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e0010440ll + 0x1000000ll * ((a) & 0x3) + 8ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0010440ll + 0x1000000ll * ((a) & 0x3) + 8ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -19327,6 +20846,108 @@ union cavm_cgxx_spux_tx_mrk_cnt
 {
     uint64_t u;
     struct cavm_cgxx_spux_tx_mrk_cnt_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_56_63        : 8;
+        uint64_t ram_mrk_cnt           : 8;  /**< [ 55: 48](R/W) Reserved.
+                                                                 Internal:
+                                                                 BASE-R rapid alignment marker transmit period for EEE support. For a multilane
+                                                                 40,50,100GBASE-R
+                                                                 logical PCS, this field specifies the rapid alignment marker period per lane used by the
+                                                                 transmitter, i.e. the number of 66b non-marker blocks transmitted between consecutive
+                                                                 markers on the same lane. The default value corresponds to a period of 15 blocks
+                                                                 (exclusive) as specified in 802.3bj-2014 Figure 82-9a for 40G, 50G. Should be programmed to
+                                                                 0x7 for 100G per 802.3bj-2014. */
+        uint64_t reserved_45_47        : 3;
+        uint64_t by_mrk_100g           : 1;  /**< [ 44: 44](R/W) Use alignment marker from 802.3-2012 Table 82-2 (100G) PCS lane 0 as first (of four)
+                                                                 RS-FEC CWMs for 25G, 50G and USXGMII LMAC types if this bit is set and if RS-FEC
+                                                                 is enabled. Lane 0 marker from 802.3-2012 Table 82-3 (40G)
+                                                                 is used as first marker otherwise. The remaining three markers are always selected
+                                                                 from Table 82-3 (PCS lanes 1-3). This bit was introduced to cover both possible
+                                                                 interpretations of a confusing statement in 802.3by 108.5.2.4 bullet a) (to be compared
+                                                                 to bullets b), c) and d)). Irrelevant for non- 25G, 50G or USXGMII LMAC types,
+                                                                 or if RS-FEC is not enabled. */
+        uint64_t reserved_20_43        : 24;
+        uint64_t mrk_cnt               : 20; /**< [ 19:  0](R/W) 10, 25, 40, 50, 100GBASE-R and USXGMII transmit marker interval count, used by all
+                                                                 defined FEC modes (non-FEC as well as BASE-R FEC, RS-FEC where available).
+                                                                 Specifies the interval (number of 66-bit BASE-R blocks) at which the transmit logic
+                                                                 inserts alignment markers. Ignored when not in any of the aforementioned modes.
+                                                                 This value applies to each virtual lane (PCSL), and so, for example, the hardware
+                                                                 inserts 4 markers after 4*[MRK_CNT] (40GBASE-R) or 20 markers after 20*[MRK_CNT]
+                                                                 (100GBASE-R) blocks. An internal counter in SPU TX is initialized to this value, counts
+                                                                 down for each BASE-R block transmitted by SPU TX, and wraps back to the initial value from
+                                                                 0. The SPU TX transmit logic inserts alignment markers for lanes 0, 1, 2 and 3,
+                                                                 respectively, in the last four BASE-R blocks before the counter wraps (3, 2, 1, 0) for
+                                                                 40G. The default value corresponds to an alignment marker period of 16383 blocks
+                                                                 (exclusive) per lane, as specified in IEEE 802.3 Clause 82.
+                                                                 The following values should always be used for normal operation:
+
+                                                                 \<pre\>
+                                                                   Value    LMAC_TYPE                            Comment
+                                                                   -------  -----------------------------------  ----------------------
+                                                                   0x3fff   10G_R, 25G_R   w/        BASE-R-FEC  No markers w/o FEC 10G_R, 25G_R
+                                                                            40G_R, 50G_R   w/ or w/o BASE-R-FEC
+                                                                            100G_R         w/ or w/o RS-FEC      No BASE-R-FEC for 100G_R
+                                                                   0x13ffc  25G_R, USXGMII w/        RS-FEC      Ignored by 25G_R and USXGMII if
+                                                                                                                 RS-FEC disabled
+                                                                                                                 No BASE-R-FEC for USXGMII
+                                                                   0x4fff   50G_R          w/        RS-FEC
+                                                                 \</pre\>
+
+                                                                 In USXGMII mode hardware only uses the value specified for LMAC0. */
+#else /* Word 0 - Little Endian */
+        uint64_t mrk_cnt               : 20; /**< [ 19:  0](R/W) 10, 25, 40, 50, 100GBASE-R and USXGMII transmit marker interval count, used by all
+                                                                 defined FEC modes (non-FEC as well as BASE-R FEC, RS-FEC where available).
+                                                                 Specifies the interval (number of 66-bit BASE-R blocks) at which the transmit logic
+                                                                 inserts alignment markers. Ignored when not in any of the aforementioned modes.
+                                                                 This value applies to each virtual lane (PCSL), and so, for example, the hardware
+                                                                 inserts 4 markers after 4*[MRK_CNT] (40GBASE-R) or 20 markers after 20*[MRK_CNT]
+                                                                 (100GBASE-R) blocks. An internal counter in SPU TX is initialized to this value, counts
+                                                                 down for each BASE-R block transmitted by SPU TX, and wraps back to the initial value from
+                                                                 0. The SPU TX transmit logic inserts alignment markers for lanes 0, 1, 2 and 3,
+                                                                 respectively, in the last four BASE-R blocks before the counter wraps (3, 2, 1, 0) for
+                                                                 40G. The default value corresponds to an alignment marker period of 16383 blocks
+                                                                 (exclusive) per lane, as specified in IEEE 802.3 Clause 82.
+                                                                 The following values should always be used for normal operation:
+
+                                                                 \<pre\>
+                                                                   Value    LMAC_TYPE                            Comment
+                                                                   -------  -----------------------------------  ----------------------
+                                                                   0x3fff   10G_R, 25G_R   w/        BASE-R-FEC  No markers w/o FEC 10G_R, 25G_R
+                                                                            40G_R, 50G_R   w/ or w/o BASE-R-FEC
+                                                                            100G_R         w/ or w/o RS-FEC      No BASE-R-FEC for 100G_R
+                                                                   0x13ffc  25G_R, USXGMII w/        RS-FEC      Ignored by 25G_R and USXGMII if
+                                                                                                                 RS-FEC disabled
+                                                                                                                 No BASE-R-FEC for USXGMII
+                                                                   0x4fff   50G_R          w/        RS-FEC
+                                                                 \</pre\>
+
+                                                                 In USXGMII mode hardware only uses the value specified for LMAC0. */
+        uint64_t reserved_20_43        : 24;
+        uint64_t by_mrk_100g           : 1;  /**< [ 44: 44](R/W) Use alignment marker from 802.3-2012 Table 82-2 (100G) PCS lane 0 as first (of four)
+                                                                 RS-FEC CWMs for 25G, 50G and USXGMII LMAC types if this bit is set and if RS-FEC
+                                                                 is enabled. Lane 0 marker from 802.3-2012 Table 82-3 (40G)
+                                                                 is used as first marker otherwise. The remaining three markers are always selected
+                                                                 from Table 82-3 (PCS lanes 1-3). This bit was introduced to cover both possible
+                                                                 interpretations of a confusing statement in 802.3by 108.5.2.4 bullet a) (to be compared
+                                                                 to bullets b), c) and d)). Irrelevant for non- 25G, 50G or USXGMII LMAC types,
+                                                                 or if RS-FEC is not enabled. */
+        uint64_t reserved_45_47        : 3;
+        uint64_t ram_mrk_cnt           : 8;  /**< [ 55: 48](R/W) Reserved.
+                                                                 Internal:
+                                                                 BASE-R rapid alignment marker transmit period for EEE support. For a multilane
+                                                                 40,50,100GBASE-R
+                                                                 logical PCS, this field specifies the rapid alignment marker period per lane used by the
+                                                                 transmitter, i.e. the number of 66b non-marker blocks transmitted between consecutive
+                                                                 markers on the same lane. The default value corresponds to a period of 15 blocks
+                                                                 (exclusive) as specified in 802.3bj-2014 Figure 82-9a for 40G, 50G. Should be programmed to
+                                                                 0x7 for 100G per 802.3bj-2014. */
+        uint64_t reserved_56_63        : 8;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_cgxx_spux_tx_mrk_cnt_s cn9; */
+    /* struct cavm_cgxx_spux_tx_mrk_cnt_s cn96xxp1; */
+    struct cavm_cgxx_spux_tx_mrk_cnt_cn96xxp3
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_56_63        : 8;
@@ -19431,8 +21052,10 @@ union cavm_cgxx_spux_tx_mrk_cnt
                                                                  0x7 for 100G per 802.3bj-2014. */
         uint64_t reserved_56_63        : 8;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_cgxx_spux_tx_mrk_cnt_s cn; */
+    } cn96xxp3;
+    /* struct cavm_cgxx_spux_tx_mrk_cnt_cn96xxp3 cn98xx; */
+    /* struct cavm_cgxx_spux_tx_mrk_cnt_cn96xxp3 cnf95xx; */
+    /* struct cavm_cgxx_spux_tx_mrk_cnt_cn96xxp3 loki; */
 };
 typedef union cavm_cgxx_spux_tx_mrk_cnt cavm_cgxx_spux_tx_mrk_cnt_t;
 
@@ -19440,6 +21063,8 @@ static inline uint64_t CAVM_CGXX_SPUX_TX_MRK_CNT(unsigned long a, unsigned long 
 static inline uint64_t CAVM_CGXX_SPUX_TX_MRK_CNT(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e0010380ll + 0x1000000ll * ((a) & 0x3) + 8ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e0010380ll + 0x1000000ll * ((a) & 0x3) + 8ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0010380ll + 0x1000000ll * ((a) & 0x3) + 8ll * ((b) & 0x3);
@@ -19530,6 +21155,8 @@ static inline uint64_t CAVM_CGXX_SPUX_USX_AN_ADV(unsigned long a, unsigned long 
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e00101d0ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e00101d0ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e00101d0ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -19599,6 +21226,8 @@ static inline uint64_t CAVM_CGXX_SPUX_USX_AN_CONTROL(unsigned long a, unsigned l
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e00101c0ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e00101c0ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e00101c0ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -19652,6 +21281,8 @@ static inline uint64_t CAVM_CGXX_SPUX_USX_AN_EXPANSION(unsigned long a, unsigned
 static inline uint64_t CAVM_CGXX_SPUX_USX_AN_EXPANSION(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e00101e0ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e00101e0ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e00101e0ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -19707,6 +21338,8 @@ static inline uint64_t CAVM_CGXX_SPUX_USX_AN_FLOW_CTRL(unsigned long a, unsigned
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e00101e8ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e00101e8ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e00101e8ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -19752,6 +21385,8 @@ static inline uint64_t CAVM_CGXX_SPUX_USX_AN_LINK_TIMER(unsigned long a, unsigne
 static inline uint64_t CAVM_CGXX_SPUX_USX_AN_LINK_TIMER(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e00101f0ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e00101f0ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e00101f0ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -19839,6 +21474,8 @@ static inline uint64_t CAVM_CGXX_SPUX_USX_AN_LP_ABIL(unsigned long a, unsigned l
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e00101d8ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e00101d8ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e00101d8ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -19909,6 +21546,8 @@ static inline uint64_t CAVM_CGXX_SPUX_USX_AN_STATUS(unsigned long a, unsigned lo
 static inline uint64_t CAVM_CGXX_SPUX_USX_AN_STATUS(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e00101c8ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e00101c8ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e00101c8ll + 0x1000000ll * ((a) & 0x3) + 0x40000ll * ((b) & 0x3);
@@ -20100,6 +21739,7 @@ union cavm_cgxx_spu_dbg_control
         uint64_t reserved_56_63        : 8;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_cgxx_spu_dbg_control_s cn9; */
     struct cavm_cgxx_spu_dbg_control_cn96xxp1
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -20255,6 +21895,7 @@ union cavm_cgxx_spu_dbg_control
 #endif /* Word 0 - End */
     } cn96xxp1;
     /* struct cavm_cgxx_spu_dbg_control_s cn96xxp3; */
+    /* struct cavm_cgxx_spu_dbg_control_s cn98xx; */
     /* struct cavm_cgxx_spu_dbg_control_cn96xxp1 cnf95xxp1; */
     /* struct cavm_cgxx_spu_dbg_control_s cnf95xxp2; */
     /* struct cavm_cgxx_spu_dbg_control_s loki; */
@@ -20265,6 +21906,8 @@ static inline uint64_t CAVM_CGXX_SPU_DBG_CONTROL(unsigned long a) __attribute__ 
 static inline uint64_t CAVM_CGXX_SPU_DBG_CONTROL(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
+        return 0x87e0e0010300ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=3))
         return 0x87e0e0010300ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=2))
         return 0x87e0e0010300ll + 0x1000000ll * ((a) & 0x3);
@@ -20307,6 +21950,8 @@ static inline uint64_t CAVM_CGXX_SPU_SDSX_SKEW_STATUS(unsigned long a, unsigned 
 static inline uint64_t CAVM_CGXX_SPU_SDSX_SKEW_STATUS(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
+        return 0x87e0e0010340ll + 0x1000000ll * ((a) & 0x3) + 8ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
         return 0x87e0e0010340ll + 0x1000000ll * ((a) & 0x3) + 8ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0010340ll + 0x1000000ll * ((a) & 0x3) + 8ll * ((b) & 0x3);
@@ -20386,6 +22031,8 @@ static inline uint64_t CAVM_CGXX_SPU_SDSX_STATES(unsigned long a, unsigned long 
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0010360ll + 0x1000000ll * ((a) & 0x3) + 8ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=3) && (b<=3)))
+        return 0x87e0e0010360ll + 0x1000000ll * ((a) & 0x3) + 8ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=2) && (b<=3)))
         return 0x87e0e0010360ll + 0x1000000ll * ((a) & 0x3) + 8ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=3) && (b<=3)))
@@ -20457,6 +22104,8 @@ static inline uint64_t CAVM_CGXX_SPU_USXGMII_CONTROL(unsigned long a) __attribut
 static inline uint64_t CAVM_CGXX_SPU_USXGMII_CONTROL(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=2))
+        return 0x87e0e0010920ll + 0x1000000ll * ((a) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=3))
         return 0x87e0e0010920ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=2))
         return 0x87e0e0010920ll + 0x1000000ll * ((a) & 0x3);

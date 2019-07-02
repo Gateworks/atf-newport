@@ -855,6 +855,136 @@ union cavm_iobnx_arbidx_ctl
                                                                  1 = The inbound scheduler can accelerate transaction scheduling by considering
                                                                  PRs ordered when the transaction is scheduled to the memory interface.
                                                                  [SOW_DIS] should be set when [FAST_ORD] is set for a given ARBID.
+                                                                 Reset value represents the typical usage.  Set for all non-PEM ARBIDs.
+
+                                                                 Internal:
+                                                                 Normally, IOW considers an inbound transaction ordered when it receives the
+                                                                 ack.cmt from mesh via the relwrflid.rel/flid interface. The mesh interface will
+                                                                 inform IOW when a transaction has been slotted to the mesh interface via the
+                                                                 relwrflid.ord/flid fields. */
+        uint64_t sow_dis               : 1;  /**< [  8:  8](R/W) Disables the PCIe store widget for memory store performance. Does not affect
+                                                                 observable ordering. No impact on IO stores.  For diagnostic use only.
+                                                                 0 = Performance optimization on. Issue prefetches on stores to improve
+                                                                 store-store ordering.
+                                                                 1 = Performance optimization off. No prefetches.
+                                                                 [SOW_DIS] should be set when [FAST_ORD] is set for a given ARBID.
+                                                                 Reset value represents the typical usage.  Set for all non-PEM ARBIDs.
+
+                                                                 Internal:
+                                                                 The SOW is only available on the NCB2/256b devices which include PEMs, CPT,
+                                                                 DPI. The expectation is that CPT and DPI use the RelaxOrder bit so they will
+                                                                 only use the widget when the VA address CAM detects and promotes two
+                                                                 transactions to the same memory cacheline. */
+        uint64_t crppr_ena             : 2;  /**< [  7:  6](R/W) For Inbound ordering controls the ability of CRs to pass PRs for PEMs.
+                                                                 All CRs can pass PRs for Non-PEMs. For Outbound impacts the cycle-type
+                                                                 the CR will have to the NCB device:
+                                                                 0x0 = For Outbound CR use the NCB device's relaxed order request that the CR is
+                                                                 associated to (from the inbound NCB bus). For Inbound CR, use relaxed order.
+                                                                 0x1 = Reserved.
+                                                                 0x2 = Force 0.
+                                                                 0x3 = Force 1. */
+        uint64_t prefetch_dis          : 1;  /**< [  5:  5](R/W) Disables mesh prefetches. For diagnostic use only.
+                                                                 0 = Store-store ordered transactions will issue prefetches before the second
+                                                                 store to improve performance.
+                                                                 1 = No prefetches. */
+        uint64_t pr_iova_dis           : 1;  /**< [  4:  4](R/W) PR queue IOVA comparison disable. For diagnostic use only.
+                                                                 0 = PR will not pass a younger PR with the same IOVA.
+                                                                 1 = PR may pass a younger PR with the same IOVA, if the relaxed ordering request
+                                                                 and [RO_DIS] bit allow it.
+                                                                 Reset value represents the typical usage.  Clear for all non-PEM ARBIDs. */
+        uint64_t ro_dis                : 1;  /**< [  3:  3](R/W) Disable relaxed ordering. For diagnostic use only.
+                                                                 0 = Relaxed ordering is performed if the NCB device requests it.
+                                                                 1 = IOB ignores the relaxed ordering request bit and treats all requests as
+                                                                 strictly ordered. */
+        uint64_t st_ld_ord             : 1;  /**< [  2:  2](R/W) NPRs and PRs are sent in order they are received on the NCBI.
+                                                                 [LD_LD_ORD] and [ST_ST_ORD] must also be set or unpredictable results will occur.
+                                                                 For the 256-bit NCBI this does NOT imply the order a
+                                                                 NCB device makes request to use the NCBI will be the order sent to the memory/IO
+                                                                 space because the NGNT allows grants for PRs to pass grants for NPRs.
+                                                                 For diagnostic use only. */
+        uint64_t st_st_ord             : 1;  /**< [  1:  1](R/W) PRs are sent in order they are received on the NCBI (RO ignored).
+                                                                 For diagnostic use only. */
+        uint64_t ld_ld_ord             : 1;  /**< [  0:  0](R/W) Load-load ordering. For diagnostic use only.
+                                                                 0 = NPR may pass NPR under some cases. The ordering is based on SMMU completion
+                                                                 ordering.
+                                                                 1 = NPR never passes NPR; the NPR ordering is based strictly on NCB arrival order.
+                                                                 This may harm performance. */
+#else /* Word 0 - Little Endian */
+        uint64_t ld_ld_ord             : 1;  /**< [  0:  0](R/W) Load-load ordering. For diagnostic use only.
+                                                                 0 = NPR may pass NPR under some cases. The ordering is based on SMMU completion
+                                                                 ordering.
+                                                                 1 = NPR never passes NPR; the NPR ordering is based strictly on NCB arrival order.
+                                                                 This may harm performance. */
+        uint64_t st_st_ord             : 1;  /**< [  1:  1](R/W) PRs are sent in order they are received on the NCBI (RO ignored).
+                                                                 For diagnostic use only. */
+        uint64_t st_ld_ord             : 1;  /**< [  2:  2](R/W) NPRs and PRs are sent in order they are received on the NCBI.
+                                                                 [LD_LD_ORD] and [ST_ST_ORD] must also be set or unpredictable results will occur.
+                                                                 For the 256-bit NCBI this does NOT imply the order a
+                                                                 NCB device makes request to use the NCBI will be the order sent to the memory/IO
+                                                                 space because the NGNT allows grants for PRs to pass grants for NPRs.
+                                                                 For diagnostic use only. */
+        uint64_t ro_dis                : 1;  /**< [  3:  3](R/W) Disable relaxed ordering. For diagnostic use only.
+                                                                 0 = Relaxed ordering is performed if the NCB device requests it.
+                                                                 1 = IOB ignores the relaxed ordering request bit and treats all requests as
+                                                                 strictly ordered. */
+        uint64_t pr_iova_dis           : 1;  /**< [  4:  4](R/W) PR queue IOVA comparison disable. For diagnostic use only.
+                                                                 0 = PR will not pass a younger PR with the same IOVA.
+                                                                 1 = PR may pass a younger PR with the same IOVA, if the relaxed ordering request
+                                                                 and [RO_DIS] bit allow it.
+                                                                 Reset value represents the typical usage.  Clear for all non-PEM ARBIDs. */
+        uint64_t prefetch_dis          : 1;  /**< [  5:  5](R/W) Disables mesh prefetches. For diagnostic use only.
+                                                                 0 = Store-store ordered transactions will issue prefetches before the second
+                                                                 store to improve performance.
+                                                                 1 = No prefetches. */
+        uint64_t crppr_ena             : 2;  /**< [  7:  6](R/W) For Inbound ordering controls the ability of CRs to pass PRs for PEMs.
+                                                                 All CRs can pass PRs for Non-PEMs. For Outbound impacts the cycle-type
+                                                                 the CR will have to the NCB device:
+                                                                 0x0 = For Outbound CR use the NCB device's relaxed order request that the CR is
+                                                                 associated to (from the inbound NCB bus). For Inbound CR, use relaxed order.
+                                                                 0x1 = Reserved.
+                                                                 0x2 = Force 0.
+                                                                 0x3 = Force 1. */
+        uint64_t sow_dis               : 1;  /**< [  8:  8](R/W) Disables the PCIe store widget for memory store performance. Does not affect
+                                                                 observable ordering. No impact on IO stores.  For diagnostic use only.
+                                                                 0 = Performance optimization on. Issue prefetches on stores to improve
+                                                                 store-store ordering.
+                                                                 1 = Performance optimization off. No prefetches.
+                                                                 [SOW_DIS] should be set when [FAST_ORD] is set for a given ARBID.
+                                                                 Reset value represents the typical usage.  Set for all non-PEM ARBIDs.
+
+                                                                 Internal:
+                                                                 The SOW is only available on the NCB2/256b devices which include PEMs, CPT,
+                                                                 DPI. The expectation is that CPT and DPI use the RelaxOrder bit so they will
+                                                                 only use the widget when the VA address CAM detects and promotes two
+                                                                 transactions to the same memory cacheline. */
+        uint64_t fast_ord              : 1;  /**< [  9:  9](R/W) Fast order mode. Should only be set for non-PEM ARBIDs.
+                                                                 0 = The inbound scheduler requires the PR to be visible in memory for ordering
+                                                                 which can have an adverse effect on PR-to-NPR performance.
+                                                                 1 = The inbound scheduler can accelerate transaction scheduling by considering
+                                                                 PRs ordered when the transaction is scheduled to the memory interface.
+                                                                 [SOW_DIS] should be set when [FAST_ORD] is set for a given ARBID.
+                                                                 Reset value represents the typical usage.  Set for all non-PEM ARBIDs.
+
+                                                                 Internal:
+                                                                 Normally, IOW considers an inbound transaction ordered when it receives the
+                                                                 ack.cmt from mesh via the relwrflid.rel/flid interface. The mesh interface will
+                                                                 inform IOW when a transaction has been slotted to the mesh interface via the
+                                                                 relwrflid.ord/flid fields. */
+        uint64_t reserved_10_63        : 54;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_iobnx_arbidx_ctl_s cn9; */
+    /* struct cavm_iobnx_arbidx_ctl_s cn96xxp1; */
+    struct cavm_iobnx_arbidx_ctl_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_10_63        : 54;
+        uint64_t fast_ord              : 1;  /**< [  9:  9](R/W) Fast order mode. Should only be set for non-PEM ARBIDs.
+                                                                 0 = The inbound scheduler requires the PR to be visible in memory for ordering
+                                                                 which can have an adverse effect on PR-to-NPR performance.
+                                                                 1 = The inbound scheduler can accelerate transaction scheduling by considering
+                                                                 PRs ordered when the transaction is scheduled to the memory interface.
+                                                                 [SOW_DIS] should be set when [FAST_ORD] is set for a given ARBID.
 
                                                                  Reset value represents the typical usage.  Set for all non-PEM ARBIDs.
 
@@ -982,8 +1112,11 @@ union cavm_iobnx_arbidx_ctl
                                                                  relwrflid.ord/flid fields. */
         uint64_t reserved_10_63        : 54;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_iobnx_arbidx_ctl_s cn; */
+    } cn96xxp3;
+    /* struct cavm_iobnx_arbidx_ctl_cn96xxp3 cn98xx; */
+    /* struct cavm_iobnx_arbidx_ctl_s cnf95xxp1; */
+    /* struct cavm_iobnx_arbidx_ctl_cn96xxp3 cnf95xxp2; */
+    /* struct cavm_iobnx_arbidx_ctl_cn96xxp3 loki; */
 };
 typedef union cavm_iobnx_arbidx_ctl cavm_iobnx_arbidx_ctl_t;
 
@@ -992,6 +1125,8 @@ static inline uint64_t CAVM_IOBNX_ARBIDX_CTL(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=15)))
         return 0x87e0f0002100ll + 0x1000000ll * ((a) & 0x1) + 8ll * ((b) & 0xf);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=2) && (b<=15)))
+        return 0x87e0f0002100ll + 0x1000000ll * ((a) & 0x3) + 8ll * ((b) & 0xf);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=15)))
         return 0x87e0f0002100ll + 0x1000000ll * ((a) & 0x0) + 8ll * ((b) & 0xf);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=15)))
@@ -1065,6 +1200,7 @@ union cavm_iobnx_bistr_reg
         uint64_t reserved_22_63        : 42;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_iobnx_bistr_reg_s cn8; */
     struct cavm_iobnx_bistr_reg_cn81xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -1234,6 +1370,7 @@ union cavm_iobnx_bists_reg
         uint64_t reserved_11_63        : 53;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_iobnx_bists_reg_s cn8; */
     /* struct cavm_iobnx_bists_reg_s cn81xx; */
     struct cavm_iobnx_bists_reg_cn83xx
     {
@@ -1475,7 +1612,186 @@ union cavm_iobnx_bp_testx
                                                                  \<56\> = irf__ill_rtn_crd1.ps. */
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_iobnx_bp_testx_s cn9; */
     /* struct cavm_iobnx_bp_testx_s cn96xx; */
+    struct cavm_iobnx_bp_testx_cn98xx
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t enable                : 8;  /**< [ 63: 56](R/W) Enable test mode. For diagnostic use only.
+                                                                 Internal:
+                                                                 Once a bit is set, random backpressure is generated
+                                                                 at the corresponding point to allow for more frequent backpressure.
+
+                                                                 IOBN()_BP_TEST(0) - INRF: Defined by iobn_defs::inrf_bp_test_t.
+                                                                 \<63\> = iow_imi_io_debit  - backpressure credit returns from imi to iow for io credits.
+                                                                 \<62\> = iow_imi_mem_debit - backpressure credit returns from imi to iow for mem credits.
+                                                                 \<61\> = TBD.
+                                                                 \<60\> = TBD.
+                                                                 \<59\> = TBD.
+                                                                 \<58\> = TBD.
+                                                                 \<57\> = TBD.
+                                                                 \<56\> = TBD.
+
+                                                                 \<page\>
+                                                                 IOBN()_BP_TEST(1) - INRM: Defined by iobn_defs::inrm_bp_test_t
+                                                                 \<63\> = Stall CMT processing for outbound LBK transactions.
+                                                                 \<62\> = Stall CMT processing for outbound MSH transactions.
+                                                                 \<61\> = Fast_ord_cmt FIFO BP.
+                                                                 \<60\> = imi_dat_fif - Backpressure VCC return counters (OMP).
+                                                                 \<59\> = SLC - VCC.
+                                                                 \<58\> = SLC - ACK.
+                                                                 \<57\> = SLC - DAT.
+                                                                 \<56\> = SLC - CMD.
+
+                                                                 \<page\>
+                                                                 IOBN()_BP_TEST(2) - INRF: Defined by iobn_defs::inrf_bp_test_t.
+                                                                 \<63\> = NCB2 ADD FLID - stop flow of NCBI FLID and CPID info from being passed to IOW.
+                                                                 \<62\> = NCB1 ADD FLID - stop flow of NCBI FLID and CPID info from being passed to IOW.
+                                                                 \<61\> = NCB0 ADD FLID - stop flow of NCBI FLID and CPID info from being passed to IOW.
+                                                                 \<60\> = TBD.
+                                                                 \<59\> = TBD.
+                                                                 \<58\> = TBD.
+                                                                 \<57\> = TBD.
+                                                                 \<56\> = TBD.
+
+                                                                 \<page\>
+                                                                 IOBN()_BP_TEST(3) - INRF: Defined by iobn_defs::inrm_bp_test_t.
+                                                                 \<63\> = Backpressure OMP OSIDq(CMD) LBK FIFO.
+                                                                 \<62\> = Backpressure OMP OSIDq(CMD) MSH FIFO.
+                                                                 \<61\> = TBD.
+                                                                 \<60\> = Backpressure OMP RDFLIDq (RSP) FIFO.
+                                                                 \<59\> = VCC - DAT (VIC).
+                                                                 \<58\> = VCC - DAT (REQ/REQH).
+                                                                 \<57\> = VCC - CMD (VIC).
+                                                                 \<56\> = VCC - CMD (REQ/RQH).
+
+                                                                 \<page\>
+                                                                 IOBN()_BP_TEST(4) - INRF: Defined by iobn_defs::inrm_bp_test_t.
+                                                                 \<63\> = TBD.
+                                                                 \<62\> = TBD.
+                                                                 \<61\> = TBD.
+                                                                 \<60\> = OMP SLC.
+                                                                 \<59\> = TBD.
+                                                                 \<58\> = REQ - FWD.
+                                                                 \<57\> = REQ - SOW.
+                                                                 \<56\> = REQ - IOW.
+
+                                                                 \<page\>
+                                                                 IOBN()_BP_TEST(5) - INRF: Defined by iobn_defs::iow_ill_bp_test_t. See
+                                                                 IOBN(0..2)_ILL_BPTEST_SEL for how to map outputs to a ncb arbid.
+                                                                 \<63\> = irf__ill_rtn_crd0.cr.
+                                                                 \<62\> = irf__ill_rtn_crd0.np.
+                                                                 \<61\> = irf__ill_rtn_crd0.pr.
+                                                                 \<60\> = irf__ill_rtn_crd0.ps.
+                                                                 \<59\> = irf__ill_rtn_crd1.cr.
+                                                                 \<58\> = irf__ill_rtn_crd1.np.
+                                                                 \<57\> = irf__ill_rtn_crd1.pr.
+                                                                 \<56\> = irf__ill_rtn_crd1.ps. */
+        uint64_t reserved_32_55        : 24;
+        uint64_t bp_cfg                : 16; /**< [ 31: 16](R/W) Backpressure weight. For diagnostic use only.
+                                                                 Internal:
+                                                                 There are 2 backpressure configuration bits per enable, with the two bits
+                                                                 defined as 0x0=100% of the time, 0x1=75% of the time, 0x2=50% of the time,
+                                                                 0x3=25% of the time.
+                                                                   \<31:30\> = Config 7.
+                                                                   \<29:28\> = Config 6.
+                                                                   \<27:26\> = Config 5.
+                                                                   \<25:24\> = Config 4.
+                                                                   \<23:22\> = Config 3.
+                                                                   \<21:20\> = Config 2.
+                                                                   \<19:18\> = Config 1.
+                                                                   \<17:16\> = Config 0. */
+        uint64_t reserved_12_15        : 4;
+        uint64_t lfsr_freq             : 12; /**< [ 11:  0](R/W) Test LFSR update frequency in coprocessor-clocks minus one. */
+#else /* Word 0 - Little Endian */
+        uint64_t lfsr_freq             : 12; /**< [ 11:  0](R/W) Test LFSR update frequency in coprocessor-clocks minus one. */
+        uint64_t reserved_12_15        : 4;
+        uint64_t bp_cfg                : 16; /**< [ 31: 16](R/W) Backpressure weight. For diagnostic use only.
+                                                                 Internal:
+                                                                 There are 2 backpressure configuration bits per enable, with the two bits
+                                                                 defined as 0x0=100% of the time, 0x1=75% of the time, 0x2=50% of the time,
+                                                                 0x3=25% of the time.
+                                                                   \<31:30\> = Config 7.
+                                                                   \<29:28\> = Config 6.
+                                                                   \<27:26\> = Config 5.
+                                                                   \<25:24\> = Config 4.
+                                                                   \<23:22\> = Config 3.
+                                                                   \<21:20\> = Config 2.
+                                                                   \<19:18\> = Config 1.
+                                                                   \<17:16\> = Config 0. */
+        uint64_t reserved_32_55        : 24;
+        uint64_t enable                : 8;  /**< [ 63: 56](R/W) Enable test mode. For diagnostic use only.
+                                                                 Internal:
+                                                                 Once a bit is set, random backpressure is generated
+                                                                 at the corresponding point to allow for more frequent backpressure.
+
+                                                                 IOBN()_BP_TEST(0) - INRF: Defined by iobn_defs::inrf_bp_test_t.
+                                                                 \<63\> = iow_imi_io_debit  - backpressure credit returns from imi to iow for io credits.
+                                                                 \<62\> = iow_imi_mem_debit - backpressure credit returns from imi to iow for mem credits.
+                                                                 \<61\> = TBD.
+                                                                 \<60\> = TBD.
+                                                                 \<59\> = TBD.
+                                                                 \<58\> = TBD.
+                                                                 \<57\> = TBD.
+                                                                 \<56\> = TBD.
+
+                                                                 \<page\>
+                                                                 IOBN()_BP_TEST(1) - INRM: Defined by iobn_defs::inrm_bp_test_t
+                                                                 \<63\> = Stall CMT processing for outbound LBK transactions.
+                                                                 \<62\> = Stall CMT processing for outbound MSH transactions.
+                                                                 \<61\> = Fast_ord_cmt FIFO BP.
+                                                                 \<60\> = imi_dat_fif - Backpressure VCC return counters (OMP).
+                                                                 \<59\> = SLC - VCC.
+                                                                 \<58\> = SLC - ACK.
+                                                                 \<57\> = SLC - DAT.
+                                                                 \<56\> = SLC - CMD.
+
+                                                                 \<page\>
+                                                                 IOBN()_BP_TEST(2) - INRF: Defined by iobn_defs::inrf_bp_test_t.
+                                                                 \<63\> = NCB2 ADD FLID - stop flow of NCBI FLID and CPID info from being passed to IOW.
+                                                                 \<62\> = NCB1 ADD FLID - stop flow of NCBI FLID and CPID info from being passed to IOW.
+                                                                 \<61\> = NCB0 ADD FLID - stop flow of NCBI FLID and CPID info from being passed to IOW.
+                                                                 \<60\> = TBD.
+                                                                 \<59\> = TBD.
+                                                                 \<58\> = TBD.
+                                                                 \<57\> = TBD.
+                                                                 \<56\> = TBD.
+
+                                                                 \<page\>
+                                                                 IOBN()_BP_TEST(3) - INRF: Defined by iobn_defs::inrm_bp_test_t.
+                                                                 \<63\> = Backpressure OMP OSIDq(CMD) LBK FIFO.
+                                                                 \<62\> = Backpressure OMP OSIDq(CMD) MSH FIFO.
+                                                                 \<61\> = TBD.
+                                                                 \<60\> = Backpressure OMP RDFLIDq (RSP) FIFO.
+                                                                 \<59\> = VCC - DAT (VIC).
+                                                                 \<58\> = VCC - DAT (REQ/REQH).
+                                                                 \<57\> = VCC - CMD (VIC).
+                                                                 \<56\> = VCC - CMD (REQ/RQH).
+
+                                                                 \<page\>
+                                                                 IOBN()_BP_TEST(4) - INRF: Defined by iobn_defs::inrm_bp_test_t.
+                                                                 \<63\> = TBD.
+                                                                 \<62\> = TBD.
+                                                                 \<61\> = TBD.
+                                                                 \<60\> = OMP SLC.
+                                                                 \<59\> = TBD.
+                                                                 \<58\> = REQ - FWD.
+                                                                 \<57\> = REQ - SOW.
+                                                                 \<56\> = REQ - IOW.
+
+                                                                 \<page\>
+                                                                 IOBN()_BP_TEST(5) - INRF: Defined by iobn_defs::iow_ill_bp_test_t. See
+                                                                 IOBN(0..2)_ILL_BPTEST_SEL for how to map outputs to a ncb arbid.
+                                                                 \<63\> = irf__ill_rtn_crd0.cr.
+                                                                 \<62\> = irf__ill_rtn_crd0.np.
+                                                                 \<61\> = irf__ill_rtn_crd0.pr.
+                                                                 \<60\> = irf__ill_rtn_crd0.ps.
+                                                                 \<59\> = irf__ill_rtn_crd1.cr.
+                                                                 \<58\> = irf__ill_rtn_crd1.np.
+                                                                 \<57\> = irf__ill_rtn_crd1.pr.
+                                                                 \<56\> = irf__ill_rtn_crd1.ps. */
+#endif /* Word 0 - End */
+    } cn98xx;
     struct cavm_iobnx_bp_testx_cnf95xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -1663,6 +1979,8 @@ static inline uint64_t CAVM_IOBNX_BP_TESTX(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=5)))
         return 0x87e0f0003800ll + 0x1000000ll * ((a) & 0x1) + 8ll * ((b) & 0x7);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=2) && (b<=5)))
+        return 0x87e0f0003800ll + 0x1000000ll * ((a) & 0x3) + 8ll * ((b) & 0x7);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=5)))
         return 0x87e0f0003800ll + 0x1000000ll * ((a) & 0x0) + 8ll * ((b) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=5)))
@@ -1712,6 +2030,8 @@ static inline uint64_t CAVM_IOBNX_CFG0(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x87e0f0002000ll + 0x1000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=2))
+        return 0x87e0f0002000ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x87e0f0002000ll + 0x1000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
@@ -1761,6 +2081,8 @@ static inline uint64_t CAVM_IOBNX_CFG1(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x87e0f0002010ll + 0x1000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=2))
+        return 0x87e0f0002010ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x87e0f0002010ll + 0x1000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
@@ -2179,6 +2501,8 @@ static inline uint64_t CAVM_IOBNX_CONST(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x87e0f0000000ll + 0x1000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=2))
+        return 0x87e0f0000000ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x87e0f0000000ll + 0x1000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
@@ -2234,6 +2558,7 @@ union cavm_iobnx_core_bist_status
         uint64_t reserved_24_63        : 40;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_iobnx_core_bist_status_s cn8; */
     struct cavm_iobnx_core_bist_status_cn81xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -2395,6 +2720,7 @@ union cavm_iobnx_dis_ncbi_io
         uint64_t reserved_6_63         : 58;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_iobnx_dis_ncbi_io_s cn8; */
     struct cavm_iobnx_dis_ncbi_io_cn81xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -2567,6 +2893,8 @@ static inline uint64_t CAVM_IOBNX_DLL(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x87e0f00ff000ll + 0x1000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=2))
+        return 0x87e0f00ff000ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x87e0f00ff000ll + 0x1000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
@@ -2674,6 +3002,8 @@ static inline uint64_t CAVM_IOBNX_DOMX_BUSX_STREAMS(unsigned long a, unsigned lo
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=6) && (c<=255)))
         return 0x87e0f0040000ll + 0x1000000ll * ((a) & 0x1) + 0x800ll * ((b) & 0x7) + 8ll * ((c) & 0xff);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=2) && (b<=6) && (c<=255)))
+        return 0x87e0f0040000ll + 0x1000000ll * ((a) & 0x3) + 0x800ll * ((b) & 0x7) + 8ll * ((c) & 0xff);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=6) && (c<=255)))
         return 0x87e0f0040000ll + 0x1000000ll * ((a) & 0x0) + 0x800ll * ((b) & 0x7) + 8ll * ((c) & 0xff);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=6) && (c<=255)))
@@ -2777,6 +3107,8 @@ static inline uint64_t CAVM_IOBNX_DOMX_DEVX_STREAMS(unsigned long a, unsigned lo
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=6) && (c<=31)))
         return 0x87e0f0010000ll + 0x1000000ll * ((a) & 0x1) + 0x100ll * ((b) & 0x7) + 8ll * ((c) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=2) && (b<=6) && (c<=31)))
+        return 0x87e0f0010000ll + 0x1000000ll * ((a) & 0x3) + 0x100ll * ((b) & 0x7) + 8ll * ((c) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=6) && (c<=31)))
         return 0x87e0f0010000ll + 0x1000000ll * ((a) & 0x0) + 0x100ll * ((b) & 0x7) + 8ll * ((c) & 0x1f);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=6) && (c<=31)))
@@ -2816,6 +3148,8 @@ static inline uint64_t CAVM_IOBNX_ECO_RCLK(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x87e0f0003038ll + 0x1000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=2))
+        return 0x87e0f0003038ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x87e0f0003038ll + 0x1000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
@@ -2855,6 +3189,8 @@ static inline uint64_t CAVM_IOBNX_ECO_SCLK(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x87e0f0003030ll + 0x1000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=2))
+        return 0x87e0f0003030ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x87e0f0003030ll + 0x1000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
@@ -2901,6 +3237,8 @@ static inline uint64_t CAVM_IOBNX_ERR_ENA(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x87e0f0003080ll + 0x1000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=2))
+        return 0x87e0f0003080ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x87e0f0003080ll + 0x1000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
@@ -3036,6 +3374,8 @@ static inline uint64_t CAVM_IOBNX_ILL_BPTEST_SEL(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x87e0f0003098ll + 0x1000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=2))
+        return 0x87e0f0003098ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x87e0f0003098ll + 0x1000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
@@ -3090,6 +3430,8 @@ static inline uint64_t CAVM_IOBNX_INB_ERR_STATUS(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x87e0f0003088ll + 0x1000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=2))
+        return 0x87e0f0003088ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x87e0f0003088ll + 0x1000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
@@ -3138,6 +3480,8 @@ static inline uint64_t CAVM_IOBNX_INT1(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x87e0f000a000ll + 0x1000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=2))
+        return 0x87e0f000a000ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x87e0f000a000ll + 0x1000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
@@ -3171,7 +3515,18 @@ union cavm_iobnx_int1_ena_w1c
         uint64_t reserved_1_63         : 63;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_iobnx_int1_ena_w1c_s cn9; */
     /* struct cavm_iobnx_int1_ena_w1c_s cn96xx; */
+    struct cavm_iobnx_int1_ena_w1c_cn98xx
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_1_63         : 63;
+        uint64_t gibm_f                : 1;  /**< [  0:  0](R/W1C/H) Reads or clears enable for IOBN(0..2)_INT1[GIBM_F]. */
+#else /* Word 0 - Little Endian */
+        uint64_t gibm_f                : 1;  /**< [  0:  0](R/W1C/H) Reads or clears enable for IOBN(0..2)_INT1[GIBM_F]. */
+        uint64_t reserved_1_63         : 63;
+#endif /* Word 0 - End */
+    } cn98xx;
     struct cavm_iobnx_int1_ena_w1c_cnf95xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -3191,6 +3546,8 @@ static inline uint64_t CAVM_IOBNX_INT1_ENA_W1C(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x87e0f000a010ll + 0x1000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=2))
+        return 0x87e0f000a010ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x87e0f000a010ll + 0x1000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
@@ -3224,7 +3581,18 @@ union cavm_iobnx_int1_ena_w1s
         uint64_t reserved_1_63         : 63;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_iobnx_int1_ena_w1s_s cn9; */
     /* struct cavm_iobnx_int1_ena_w1s_s cn96xx; */
+    struct cavm_iobnx_int1_ena_w1s_cn98xx
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_1_63         : 63;
+        uint64_t gibm_f                : 1;  /**< [  0:  0](R/W1S/H) Reads or sets enable for IOBN(0..2)_INT1[GIBM_F]. */
+#else /* Word 0 - Little Endian */
+        uint64_t gibm_f                : 1;  /**< [  0:  0](R/W1S/H) Reads or sets enable for IOBN(0..2)_INT1[GIBM_F]. */
+        uint64_t reserved_1_63         : 63;
+#endif /* Word 0 - End */
+    } cn98xx;
     struct cavm_iobnx_int1_ena_w1s_cnf95xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -3244,6 +3612,8 @@ static inline uint64_t CAVM_IOBNX_INT1_ENA_W1S(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x87e0f000a018ll + 0x1000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=2))
+        return 0x87e0f000a018ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x87e0f000a018ll + 0x1000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
@@ -3277,7 +3647,18 @@ union cavm_iobnx_int1_w1s
         uint64_t reserved_1_63         : 63;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_iobnx_int1_w1s_s cn9; */
     /* struct cavm_iobnx_int1_w1s_s cn96xx; */
+    struct cavm_iobnx_int1_w1s_cn98xx
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_1_63         : 63;
+        uint64_t gibm_f                : 1;  /**< [  0:  0](R/W1S/H) Reads or sets IOBN(0..2)_INT1[GIBM_F]. */
+#else /* Word 0 - Little Endian */
+        uint64_t gibm_f                : 1;  /**< [  0:  0](R/W1S/H) Reads or sets IOBN(0..2)_INT1[GIBM_F]. */
+        uint64_t reserved_1_63         : 63;
+#endif /* Word 0 - End */
+    } cn98xx;
     struct cavm_iobnx_int1_w1s_cnf95xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -3297,6 +3678,8 @@ static inline uint64_t CAVM_IOBNX_INT1_W1S(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x87e0f000a008ll + 0x1000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=2))
+        return 0x87e0f000a008ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x87e0f000a008ll + 0x1000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
@@ -3392,6 +3775,140 @@ union cavm_iobnx_int_ena_w1c
         uint64_t pem_sie               : 1;  /**< [ 63: 63](R/W1C/H) Reads or clears enable for IOBN(0)_INT_SUM[PEM_SIE]. */
 #endif /* Word 0 - End */
     } s;
+    struct cavm_iobnx_int_ena_w1c_cn8
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t pem_sie               : 1;  /**< [ 63: 63](R/W1C/H) Reads or clears enable for IOBN(0)_INT_SUM[PEM_SIE]. */
+        uint64_t ied0_dbe              : 31; /**< [ 62: 32](R/W1C/H) Reads or clears enable for IOBN(0)_INT_SUM[IED0_DBE].
+                                                                 Internal:
+                                                                 iob_mem_data_xmd_sbe_sclk,
+                                                                      gmr_ixofifo_dbe_sclk,
+                                                                      icc0_xmc_fif_dbe,
+                                                                      icc1_xmc_fif_dbe,
+                                                                      icc_xmc_fifo_ecc_dbe,
+                                                                      sli_preq_0_dbe_sclk,
+                                                                      sli_req_0_dbe_sclk,
+                                                                      sli_preq_1_dbe_sclk,
+                                                                      sli_req_1_dbe_sclk,
+                                                                      sli_preq_2_dbe_sclk,
+                                                                      sli_req_2_dbe_sclk,
+                                                                      ixo_smmu_mem0_dbe_sclk,
+                                                                      iop_breq_fifo0_dbe,
+                                                                      iop_breq_fifo1_dbe ,
+                                                                      iop_breq_fifo2_dbe,
+                                                                      iop_breq_fifo3_dbe ,
+                                                                      iop_ffifo_dbe_sclk,
+                                                                      rsd_mem0_dbe,
+                                                                      rsd_mem1_dbe,
+                                                                      ics_cmd_fifo_dbe_sclk,
+                                                                      ixo_xmd_mem1_dbe_sclk,
+                                                                      ixo_xmd_mem0_dbe_sclk,
+                                                                      iobn_iorn_ffifo0__dbe_sclk,
+                                                                      iobn_iorn_ffifo1__dbe_sclk,
+                                                                      irp1_flid_mem_dbe,
+                                                                      irp0_flid_mem_dbe,
+                                                                      ixo_icc_fifo0_dbe_in_sclk,
+                                                                      ixo_icc_fifo1_dbe_in_sclk,
+                                                                      ixo_ics_mem_dbe_in_sclk. */
+        uint64_t reserved_31           : 1;
+        uint64_t ied0_sbe              : 31; /**< [ 30:  0](R/W1C/H) Reads or clears enable for IOBN(0)_INT_SUM[IED0_SBE].
+                                                                 Internal:
+                                                                 iob_mem_data_xmd_sbe_sclk,
+                                                                       gmr_ixofifo_sbe_sclk,
+                                                                       icc0_xmc_fif_sbe,
+                                                                       icc1_xmc_fif_sbe,
+                                                                       icc_xmc_fifo_ecc_sbe,
+                                                                       sli_preq_0_sbe_sclk,
+                                                                       sli_req_0_sbe_sclk,
+                                                                       sli_preq_1_sbe_sclk,
+                                                                       sli_req_1_sbe_sclk,
+                                                                       sli_preq_2_sbe_sclk,
+                                                                       sli_req_2_sbe_sclk,
+                                                                       ixo_smmu_mem0_sbe_sclk,
+                                                                       iop_breq_fifo0_sbe,
+                                                                       iop_breq_fifo1_sbe ,
+                                                                       iop_breq_fifo2_sbe,
+                                                                       iop_breq_fifo3_sbe ,
+                                                                       iop_ffifo_sbe_sclk,
+                                                                       rsd_mem0_sbe,
+                                                                       rsd_mem1_sbe,
+                                                                       ics_cmd_fifo_sbe_sclk,
+                                                                       ixo_xmd_mem1_sbe_sclk,
+                                                                       ixo_xmd_mem0_sbe_sclk,
+                                                                       iobn_iorn_ffifo0__sbe_sclk,
+                                                                       iobn_iorn_ffifo1__sbe_sclk,
+                                                                       irp1_flid_mem_sbe,
+                                                                       irp0_flid_mem_sbe,
+                                                                       ixo_icc_fifo0_sbe_in_sclk,
+                                                                       ixo_icc_fifo1_sbe_in_sclk,
+                                                                       ixo_ics_mem_sbe_in_sclk. */
+#else /* Word 0 - Little Endian */
+        uint64_t ied0_sbe              : 31; /**< [ 30:  0](R/W1C/H) Reads or clears enable for IOBN(0)_INT_SUM[IED0_SBE].
+                                                                 Internal:
+                                                                 iob_mem_data_xmd_sbe_sclk,
+                                                                       gmr_ixofifo_sbe_sclk,
+                                                                       icc0_xmc_fif_sbe,
+                                                                       icc1_xmc_fif_sbe,
+                                                                       icc_xmc_fifo_ecc_sbe,
+                                                                       sli_preq_0_sbe_sclk,
+                                                                       sli_req_0_sbe_sclk,
+                                                                       sli_preq_1_sbe_sclk,
+                                                                       sli_req_1_sbe_sclk,
+                                                                       sli_preq_2_sbe_sclk,
+                                                                       sli_req_2_sbe_sclk,
+                                                                       ixo_smmu_mem0_sbe_sclk,
+                                                                       iop_breq_fifo0_sbe,
+                                                                       iop_breq_fifo1_sbe ,
+                                                                       iop_breq_fifo2_sbe,
+                                                                       iop_breq_fifo3_sbe ,
+                                                                       iop_ffifo_sbe_sclk,
+                                                                       rsd_mem0_sbe,
+                                                                       rsd_mem1_sbe,
+                                                                       ics_cmd_fifo_sbe_sclk,
+                                                                       ixo_xmd_mem1_sbe_sclk,
+                                                                       ixo_xmd_mem0_sbe_sclk,
+                                                                       iobn_iorn_ffifo0__sbe_sclk,
+                                                                       iobn_iorn_ffifo1__sbe_sclk,
+                                                                       irp1_flid_mem_sbe,
+                                                                       irp0_flid_mem_sbe,
+                                                                       ixo_icc_fifo0_sbe_in_sclk,
+                                                                       ixo_icc_fifo1_sbe_in_sclk,
+                                                                       ixo_ics_mem_sbe_in_sclk. */
+        uint64_t reserved_31           : 1;
+        uint64_t ied0_dbe              : 31; /**< [ 62: 32](R/W1C/H) Reads or clears enable for IOBN(0)_INT_SUM[IED0_DBE].
+                                                                 Internal:
+                                                                 iob_mem_data_xmd_sbe_sclk,
+                                                                      gmr_ixofifo_dbe_sclk,
+                                                                      icc0_xmc_fif_dbe,
+                                                                      icc1_xmc_fif_dbe,
+                                                                      icc_xmc_fifo_ecc_dbe,
+                                                                      sli_preq_0_dbe_sclk,
+                                                                      sli_req_0_dbe_sclk,
+                                                                      sli_preq_1_dbe_sclk,
+                                                                      sli_req_1_dbe_sclk,
+                                                                      sli_preq_2_dbe_sclk,
+                                                                      sli_req_2_dbe_sclk,
+                                                                      ixo_smmu_mem0_dbe_sclk,
+                                                                      iop_breq_fifo0_dbe,
+                                                                      iop_breq_fifo1_dbe ,
+                                                                      iop_breq_fifo2_dbe,
+                                                                      iop_breq_fifo3_dbe ,
+                                                                      iop_ffifo_dbe_sclk,
+                                                                      rsd_mem0_dbe,
+                                                                      rsd_mem1_dbe,
+                                                                      ics_cmd_fifo_dbe_sclk,
+                                                                      ixo_xmd_mem1_dbe_sclk,
+                                                                      ixo_xmd_mem0_dbe_sclk,
+                                                                      iobn_iorn_ffifo0__dbe_sclk,
+                                                                      iobn_iorn_ffifo1__dbe_sclk,
+                                                                      irp1_flid_mem_dbe,
+                                                                      irp0_flid_mem_dbe,
+                                                                      ixo_icc_fifo0_dbe_in_sclk,
+                                                                      ixo_icc_fifo1_dbe_in_sclk,
+                                                                      ixo_ics_mem_dbe_in_sclk. */
+        uint64_t pem_sie               : 1;  /**< [ 63: 63](R/W1C/H) Reads or clears enable for IOBN(0)_INT_SUM[PEM_SIE]. */
+#endif /* Word 0 - End */
+    } cn8;
     struct cavm_iobnx_int_ena_w1c_cn81xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -3670,7 +4187,7 @@ union cavm_iobnx_int_ena_w1c
         uint64_t pem_sie               : 1;  /**< [ 63: 63](R/W1C/H) Reads or clears enable for IOBN(0..1)_INT_SUM[PEM_SIE]. */
 #endif /* Word 0 - End */
     } cn83xx;
-    struct cavm_iobnx_int_ena_w1c_cn96xx
+    struct cavm_iobnx_int_ena_w1c_cn9
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_16_63        : 48;
@@ -3703,7 +4220,42 @@ union cavm_iobnx_int_ena_w1c
         uint64_t smmu_rsp_dat_dbe      : 1;  /**< [ 15: 15](R/W1C/H) Reads or clears enable for IOBN(0..1)_INT_SUM[SMMU_RSP_DAT_DBE]. */
         uint64_t reserved_16_63        : 48;
 #endif /* Word 0 - End */
-    } cn96xx;
+    } cn9;
+    /* struct cavm_iobnx_int_ena_w1c_cn9 cn96xx; */
+    struct cavm_iobnx_int_ena_w1c_cn98xx
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_16_63        : 48;
+        uint64_t smmu_rsp_dat_dbe      : 1;  /**< [ 15: 15](R/W1C/H) Reads or clears enable for IOBN(0..2)_INT_SUM[SMMU_RSP_DAT_DBE]. */
+        uint64_t smmu_rsp_dat_sbe      : 1;  /**< [ 14: 14](R/W1C/H) Reads or clears enable for IOBN(0..2)_INT_SUM[SMMU_RSP_DAT_SBE]. */
+        uint64_t ncbo_rsp_dat_dbe      : 1;  /**< [ 13: 13](R/W1C/H) Reads or clears enable for IOBN(0..2)_INT_SUM[NCBO_RSP_DAT_DBE]. */
+        uint64_t ncbo_rsp_dat_sbe      : 1;  /**< [ 12: 12](R/W1C/H) Reads or clears enable for IOBN(0..2)_INT_SUM[NCBO_RSP_DAT_SBE]. */
+        uint64_t smmu_req_dat_dbe      : 1;  /**< [ 11: 11](R/W1C/H) Reads or clears enable for IOBN(0..2)_INT_SUM[SMMU_REQ_DAT_DBE]. */
+        uint64_t smmu_req_dat_sbe      : 1;  /**< [ 10: 10](R/W1C/H) Reads or clears enable for IOBN(0..2)_INT_SUM[SMMU_REQ_DAT_SBE]. */
+        uint64_t ncbo_req_dat_dbe      : 1;  /**< [  9:  9](R/W1C/H) Reads or clears enable for IOBN(0..2)_INT_SUM[NCBO_REQ_DAT_DBE]. */
+        uint64_t ncbo_req_dat_sbe      : 1;  /**< [  8:  8](R/W1C/H) Reads or clears enable for IOBN(0..2)_INT_SUM[NCBO_REQ_DAT_SBE]. */
+        uint64_t reserved_4_7          : 4;
+        uint64_t ncbo_ncb2_psn         : 1;  /**< [  3:  3](R/W1C/H) Reads or clears enable for IOBN(0..2)_INT_SUM[NCBO_NCB2_PSN]. */
+        uint64_t ncbo_ncb1_psn         : 1;  /**< [  2:  2](R/W1C/H) Reads or clears enable for IOBN(0..2)_INT_SUM[NCBO_NCB1_PSN]. */
+        uint64_t ncbo_ncb0_psn         : 1;  /**< [  1:  1](R/W1C/H) Reads or clears enable for IOBN(0..2)_INT_SUM[NCBO_NCB0_PSN]. */
+        uint64_t ncbo_to               : 1;  /**< [  0:  0](R/W1C/H) Reads or clears enable for IOBN(0..2)_INT_SUM[NCBO_TO]. */
+#else /* Word 0 - Little Endian */
+        uint64_t ncbo_to               : 1;  /**< [  0:  0](R/W1C/H) Reads or clears enable for IOBN(0..2)_INT_SUM[NCBO_TO]. */
+        uint64_t ncbo_ncb0_psn         : 1;  /**< [  1:  1](R/W1C/H) Reads or clears enable for IOBN(0..2)_INT_SUM[NCBO_NCB0_PSN]. */
+        uint64_t ncbo_ncb1_psn         : 1;  /**< [  2:  2](R/W1C/H) Reads or clears enable for IOBN(0..2)_INT_SUM[NCBO_NCB1_PSN]. */
+        uint64_t ncbo_ncb2_psn         : 1;  /**< [  3:  3](R/W1C/H) Reads or clears enable for IOBN(0..2)_INT_SUM[NCBO_NCB2_PSN]. */
+        uint64_t reserved_4_7          : 4;
+        uint64_t ncbo_req_dat_sbe      : 1;  /**< [  8:  8](R/W1C/H) Reads or clears enable for IOBN(0..2)_INT_SUM[NCBO_REQ_DAT_SBE]. */
+        uint64_t ncbo_req_dat_dbe      : 1;  /**< [  9:  9](R/W1C/H) Reads or clears enable for IOBN(0..2)_INT_SUM[NCBO_REQ_DAT_DBE]. */
+        uint64_t smmu_req_dat_sbe      : 1;  /**< [ 10: 10](R/W1C/H) Reads or clears enable for IOBN(0..2)_INT_SUM[SMMU_REQ_DAT_SBE]. */
+        uint64_t smmu_req_dat_dbe      : 1;  /**< [ 11: 11](R/W1C/H) Reads or clears enable for IOBN(0..2)_INT_SUM[SMMU_REQ_DAT_DBE]. */
+        uint64_t ncbo_rsp_dat_sbe      : 1;  /**< [ 12: 12](R/W1C/H) Reads or clears enable for IOBN(0..2)_INT_SUM[NCBO_RSP_DAT_SBE]. */
+        uint64_t ncbo_rsp_dat_dbe      : 1;  /**< [ 13: 13](R/W1C/H) Reads or clears enable for IOBN(0..2)_INT_SUM[NCBO_RSP_DAT_DBE]. */
+        uint64_t smmu_rsp_dat_sbe      : 1;  /**< [ 14: 14](R/W1C/H) Reads or clears enable for IOBN(0..2)_INT_SUM[SMMU_RSP_DAT_SBE]. */
+        uint64_t smmu_rsp_dat_dbe      : 1;  /**< [ 15: 15](R/W1C/H) Reads or clears enable for IOBN(0..2)_INT_SUM[SMMU_RSP_DAT_DBE]. */
+        uint64_t reserved_16_63        : 48;
+#endif /* Word 0 - End */
+    } cn98xx;
     struct cavm_iobnx_int_ena_w1c_cnf95xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -3751,6 +4303,8 @@ static inline uint64_t CAVM_IOBNX_INT_ENA_W1C(unsigned long a)
         return 0x87e0f0008000ll + 0x1000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x87e0f0008000ll + 0x1000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=2))
+        return 0x87e0f0008000ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x87e0f0008000ll + 0x1000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
@@ -3846,6 +4400,140 @@ union cavm_iobnx_int_ena_w1s
         uint64_t pem_sie               : 1;  /**< [ 63: 63](R/W1S/H) Reads or sets enable for IOBN(0)_INT_SUM[PEM_SIE]. */
 #endif /* Word 0 - End */
     } s;
+    struct cavm_iobnx_int_ena_w1s_cn8
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t pem_sie               : 1;  /**< [ 63: 63](R/W1S/H) Reads or sets enable for IOBN(0)_INT_SUM[PEM_SIE]. */
+        uint64_t ied0_dbe              : 31; /**< [ 62: 32](R/W1S/H) Reads or sets enable for IOBN(0)_INT_SUM[IED0_DBE].
+                                                                 Internal:
+                                                                 iob_mem_data_xmd_sbe_sclk,
+                                                                      gmr_ixofifo_dbe_sclk,
+                                                                      icc0_xmc_fif_dbe,
+                                                                      icc1_xmc_fif_dbe,
+                                                                      icc_xmc_fifo_ecc_dbe,
+                                                                      sli_preq_0_dbe_sclk,
+                                                                      sli_req_0_dbe_sclk,
+                                                                      sli_preq_1_dbe_sclk,
+                                                                      sli_req_1_dbe_sclk,
+                                                                      sli_preq_2_dbe_sclk,
+                                                                      sli_req_2_dbe_sclk,
+                                                                      ixo_smmu_mem0_dbe_sclk,
+                                                                      iop_breq_fifo0_dbe,
+                                                                      iop_breq_fifo1_dbe ,
+                                                                      iop_breq_fifo2_dbe,
+                                                                      iop_breq_fifo3_dbe ,
+                                                                      iop_ffifo_dbe_sclk,
+                                                                      rsd_mem0_dbe,
+                                                                      rsd_mem1_dbe,
+                                                                      ics_cmd_fifo_dbe_sclk,
+                                                                      ixo_xmd_mem1_dbe_sclk,
+                                                                      ixo_xmd_mem0_dbe_sclk,
+                                                                      iobn_iorn_ffifo0__dbe_sclk,
+                                                                      iobn_iorn_ffifo1__dbe_sclk,
+                                                                      irp1_flid_mem_dbe,
+                                                                      irp0_flid_mem_dbe,
+                                                                      ixo_icc_fifo0_dbe_in_sclk,
+                                                                      ixo_icc_fifo1_dbe_in_sclk,
+                                                                      ixo_ics_mem_dbe_in_sclk. */
+        uint64_t reserved_31           : 1;
+        uint64_t ied0_sbe              : 31; /**< [ 30:  0](R/W1S/H) Reads or sets enable for IOBN(0)_INT_SUM[IED0_SBE].
+                                                                 Internal:
+                                                                 iob_mem_data_xmd_sbe_sclk,
+                                                                       gmr_ixofifo_sbe_sclk,
+                                                                       icc0_xmc_fif_sbe,
+                                                                       icc1_xmc_fif_sbe,
+                                                                       icc_xmc_fifo_ecc_sbe,
+                                                                       sli_preq_0_sbe_sclk,
+                                                                       sli_req_0_sbe_sclk,
+                                                                       sli_preq_1_sbe_sclk,
+                                                                       sli_req_1_sbe_sclk,
+                                                                       sli_preq_2_sbe_sclk,
+                                                                       sli_req_2_sbe_sclk,
+                                                                       ixo_smmu_mem0_sbe_sclk,
+                                                                       iop_breq_fifo0_sbe,
+                                                                       iop_breq_fifo1_sbe ,
+                                                                       iop_breq_fifo2_sbe,
+                                                                       iop_breq_fifo3_sbe ,
+                                                                       iop_ffifo_sbe_sclk,
+                                                                       rsd_mem0_sbe,
+                                                                       rsd_mem1_sbe,
+                                                                       ics_cmd_fifo_sbe_sclk,
+                                                                       ixo_xmd_mem1_sbe_sclk,
+                                                                       ixo_xmd_mem0_sbe_sclk,
+                                                                       iobn_iorn_ffifo0__sbe_sclk,
+                                                                       iobn_iorn_ffifo1__sbe_sclk,
+                                                                       irp1_flid_mem_sbe,
+                                                                       irp0_flid_mem_sbe,
+                                                                       ixo_icc_fifo0_sbe_in_sclk,
+                                                                       ixo_icc_fifo1_sbe_in_sclk,
+                                                                       ixo_ics_mem_sbe_in_sclk. */
+#else /* Word 0 - Little Endian */
+        uint64_t ied0_sbe              : 31; /**< [ 30:  0](R/W1S/H) Reads or sets enable for IOBN(0)_INT_SUM[IED0_SBE].
+                                                                 Internal:
+                                                                 iob_mem_data_xmd_sbe_sclk,
+                                                                       gmr_ixofifo_sbe_sclk,
+                                                                       icc0_xmc_fif_sbe,
+                                                                       icc1_xmc_fif_sbe,
+                                                                       icc_xmc_fifo_ecc_sbe,
+                                                                       sli_preq_0_sbe_sclk,
+                                                                       sli_req_0_sbe_sclk,
+                                                                       sli_preq_1_sbe_sclk,
+                                                                       sli_req_1_sbe_sclk,
+                                                                       sli_preq_2_sbe_sclk,
+                                                                       sli_req_2_sbe_sclk,
+                                                                       ixo_smmu_mem0_sbe_sclk,
+                                                                       iop_breq_fifo0_sbe,
+                                                                       iop_breq_fifo1_sbe ,
+                                                                       iop_breq_fifo2_sbe,
+                                                                       iop_breq_fifo3_sbe ,
+                                                                       iop_ffifo_sbe_sclk,
+                                                                       rsd_mem0_sbe,
+                                                                       rsd_mem1_sbe,
+                                                                       ics_cmd_fifo_sbe_sclk,
+                                                                       ixo_xmd_mem1_sbe_sclk,
+                                                                       ixo_xmd_mem0_sbe_sclk,
+                                                                       iobn_iorn_ffifo0__sbe_sclk,
+                                                                       iobn_iorn_ffifo1__sbe_sclk,
+                                                                       irp1_flid_mem_sbe,
+                                                                       irp0_flid_mem_sbe,
+                                                                       ixo_icc_fifo0_sbe_in_sclk,
+                                                                       ixo_icc_fifo1_sbe_in_sclk,
+                                                                       ixo_ics_mem_sbe_in_sclk. */
+        uint64_t reserved_31           : 1;
+        uint64_t ied0_dbe              : 31; /**< [ 62: 32](R/W1S/H) Reads or sets enable for IOBN(0)_INT_SUM[IED0_DBE].
+                                                                 Internal:
+                                                                 iob_mem_data_xmd_sbe_sclk,
+                                                                      gmr_ixofifo_dbe_sclk,
+                                                                      icc0_xmc_fif_dbe,
+                                                                      icc1_xmc_fif_dbe,
+                                                                      icc_xmc_fifo_ecc_dbe,
+                                                                      sli_preq_0_dbe_sclk,
+                                                                      sli_req_0_dbe_sclk,
+                                                                      sli_preq_1_dbe_sclk,
+                                                                      sli_req_1_dbe_sclk,
+                                                                      sli_preq_2_dbe_sclk,
+                                                                      sli_req_2_dbe_sclk,
+                                                                      ixo_smmu_mem0_dbe_sclk,
+                                                                      iop_breq_fifo0_dbe,
+                                                                      iop_breq_fifo1_dbe ,
+                                                                      iop_breq_fifo2_dbe,
+                                                                      iop_breq_fifo3_dbe ,
+                                                                      iop_ffifo_dbe_sclk,
+                                                                      rsd_mem0_dbe,
+                                                                      rsd_mem1_dbe,
+                                                                      ics_cmd_fifo_dbe_sclk,
+                                                                      ixo_xmd_mem1_dbe_sclk,
+                                                                      ixo_xmd_mem0_dbe_sclk,
+                                                                      iobn_iorn_ffifo0__dbe_sclk,
+                                                                      iobn_iorn_ffifo1__dbe_sclk,
+                                                                      irp1_flid_mem_dbe,
+                                                                      irp0_flid_mem_dbe,
+                                                                      ixo_icc_fifo0_dbe_in_sclk,
+                                                                      ixo_icc_fifo1_dbe_in_sclk,
+                                                                      ixo_ics_mem_dbe_in_sclk. */
+        uint64_t pem_sie               : 1;  /**< [ 63: 63](R/W1S/H) Reads or sets enable for IOBN(0)_INT_SUM[PEM_SIE]. */
+#endif /* Word 0 - End */
+    } cn8;
     struct cavm_iobnx_int_ena_w1s_cn81xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -4124,7 +4812,7 @@ union cavm_iobnx_int_ena_w1s
         uint64_t pem_sie               : 1;  /**< [ 63: 63](R/W1S/H) Reads or sets enable for IOBN(0..1)_INT_SUM[PEM_SIE]. */
 #endif /* Word 0 - End */
     } cn83xx;
-    struct cavm_iobnx_int_ena_w1s_cn96xx
+    struct cavm_iobnx_int_ena_w1s_cn9
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_16_63        : 48;
@@ -4157,7 +4845,42 @@ union cavm_iobnx_int_ena_w1s
         uint64_t smmu_rsp_dat_dbe      : 1;  /**< [ 15: 15](R/W1S/H) Reads or sets enable for IOBN(0..1)_INT_SUM[SMMU_RSP_DAT_DBE]. */
         uint64_t reserved_16_63        : 48;
 #endif /* Word 0 - End */
-    } cn96xx;
+    } cn9;
+    /* struct cavm_iobnx_int_ena_w1s_cn9 cn96xx; */
+    struct cavm_iobnx_int_ena_w1s_cn98xx
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_16_63        : 48;
+        uint64_t smmu_rsp_dat_dbe      : 1;  /**< [ 15: 15](R/W1S/H) Reads or sets enable for IOBN(0..2)_INT_SUM[SMMU_RSP_DAT_DBE]. */
+        uint64_t smmu_rsp_dat_sbe      : 1;  /**< [ 14: 14](R/W1S/H) Reads or sets enable for IOBN(0..2)_INT_SUM[SMMU_RSP_DAT_SBE]. */
+        uint64_t ncbo_rsp_dat_dbe      : 1;  /**< [ 13: 13](R/W1S/H) Reads or sets enable for IOBN(0..2)_INT_SUM[NCBO_RSP_DAT_DBE]. */
+        uint64_t ncbo_rsp_dat_sbe      : 1;  /**< [ 12: 12](R/W1S/H) Reads or sets enable for IOBN(0..2)_INT_SUM[NCBO_RSP_DAT_SBE]. */
+        uint64_t smmu_req_dat_dbe      : 1;  /**< [ 11: 11](R/W1S/H) Reads or sets enable for IOBN(0..2)_INT_SUM[SMMU_REQ_DAT_DBE]. */
+        uint64_t smmu_req_dat_sbe      : 1;  /**< [ 10: 10](R/W1S/H) Reads or sets enable for IOBN(0..2)_INT_SUM[SMMU_REQ_DAT_SBE]. */
+        uint64_t ncbo_req_dat_dbe      : 1;  /**< [  9:  9](R/W1S/H) Reads or sets enable for IOBN(0..2)_INT_SUM[NCBO_REQ_DAT_DBE]. */
+        uint64_t ncbo_req_dat_sbe      : 1;  /**< [  8:  8](R/W1S/H) Reads or sets enable for IOBN(0..2)_INT_SUM[NCBO_REQ_DAT_SBE]. */
+        uint64_t reserved_4_7          : 4;
+        uint64_t ncbo_ncb2_psn         : 1;  /**< [  3:  3](R/W1S/H) Reads or sets enable for IOBN(0..2)_INT_SUM[NCBO_NCB2_PSN]. */
+        uint64_t ncbo_ncb1_psn         : 1;  /**< [  2:  2](R/W1S/H) Reads or sets enable for IOBN(0..2)_INT_SUM[NCBO_NCB1_PSN]. */
+        uint64_t ncbo_ncb0_psn         : 1;  /**< [  1:  1](R/W1S/H) Reads or sets enable for IOBN(0..2)_INT_SUM[NCBO_NCB0_PSN]. */
+        uint64_t ncbo_to               : 1;  /**< [  0:  0](R/W1S/H) Reads or sets enable for IOBN(0..2)_INT_SUM[NCBO_TO]. */
+#else /* Word 0 - Little Endian */
+        uint64_t ncbo_to               : 1;  /**< [  0:  0](R/W1S/H) Reads or sets enable for IOBN(0..2)_INT_SUM[NCBO_TO]. */
+        uint64_t ncbo_ncb0_psn         : 1;  /**< [  1:  1](R/W1S/H) Reads or sets enable for IOBN(0..2)_INT_SUM[NCBO_NCB0_PSN]. */
+        uint64_t ncbo_ncb1_psn         : 1;  /**< [  2:  2](R/W1S/H) Reads or sets enable for IOBN(0..2)_INT_SUM[NCBO_NCB1_PSN]. */
+        uint64_t ncbo_ncb2_psn         : 1;  /**< [  3:  3](R/W1S/H) Reads or sets enable for IOBN(0..2)_INT_SUM[NCBO_NCB2_PSN]. */
+        uint64_t reserved_4_7          : 4;
+        uint64_t ncbo_req_dat_sbe      : 1;  /**< [  8:  8](R/W1S/H) Reads or sets enable for IOBN(0..2)_INT_SUM[NCBO_REQ_DAT_SBE]. */
+        uint64_t ncbo_req_dat_dbe      : 1;  /**< [  9:  9](R/W1S/H) Reads or sets enable for IOBN(0..2)_INT_SUM[NCBO_REQ_DAT_DBE]. */
+        uint64_t smmu_req_dat_sbe      : 1;  /**< [ 10: 10](R/W1S/H) Reads or sets enable for IOBN(0..2)_INT_SUM[SMMU_REQ_DAT_SBE]. */
+        uint64_t smmu_req_dat_dbe      : 1;  /**< [ 11: 11](R/W1S/H) Reads or sets enable for IOBN(0..2)_INT_SUM[SMMU_REQ_DAT_DBE]. */
+        uint64_t ncbo_rsp_dat_sbe      : 1;  /**< [ 12: 12](R/W1S/H) Reads or sets enable for IOBN(0..2)_INT_SUM[NCBO_RSP_DAT_SBE]. */
+        uint64_t ncbo_rsp_dat_dbe      : 1;  /**< [ 13: 13](R/W1S/H) Reads or sets enable for IOBN(0..2)_INT_SUM[NCBO_RSP_DAT_DBE]. */
+        uint64_t smmu_rsp_dat_sbe      : 1;  /**< [ 14: 14](R/W1S/H) Reads or sets enable for IOBN(0..2)_INT_SUM[SMMU_RSP_DAT_SBE]. */
+        uint64_t smmu_rsp_dat_dbe      : 1;  /**< [ 15: 15](R/W1S/H) Reads or sets enable for IOBN(0..2)_INT_SUM[SMMU_RSP_DAT_DBE]. */
+        uint64_t reserved_16_63        : 48;
+#endif /* Word 0 - End */
+    } cn98xx;
     struct cavm_iobnx_int_ena_w1s_cnf95xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -4205,6 +4928,8 @@ static inline uint64_t CAVM_IOBNX_INT_ENA_W1S(unsigned long a)
         return 0x87e0f0009000ll + 0x1000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x87e0f0009000ll + 0x1000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=2))
+        return 0x87e0f0009000ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x87e0f0009000ll + 0x1000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
@@ -4303,6 +5028,142 @@ union cavm_iobnx_int_sum
                                                                  notification only. */
 #endif /* Word 0 - End */
     } s;
+    struct cavm_iobnx_int_sum_cn8
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t pem_sie               : 1;  /**< [ 63: 63](R/W1C/H) PEM sent in an invalid stream ID, the transaction was returned with fault. Advisory
+                                                                 notification only. */
+        uint64_t ied0_dbe              : 31; /**< [ 62: 32](R/W1C/H) IED0 double-bit error. When set, an IED0 double-bit error has occurred.
+                                                                 Internal:
+                                                                 iob_mem_data_xmd_sbe_sclk,
+                                                                      gmr_ixofifo_dbe_sclk,
+                                                                      icc0_xmc_fif_dbe,
+                                                                      icc1_xmc_fif_dbe,
+                                                                      icc_xmc_fifo_ecc_dbe,
+                                                                      sli_preq_0_dbe_sclk,
+                                                                      sli_req_0_dbe_sclk,
+                                                                      sli_preq_1_dbe_sclk,
+                                                                      sli_req_1_dbe_sclk,
+                                                                      sli_preq_2_dbe_sclk,
+                                                                      sli_req_2_dbe_sclk,
+                                                                      ixo_smmu_mem0_dbe_sclk,
+                                                                      iop_breq_fifo0_dbe,
+                                                                      iop_breq_fifo1_dbe ,
+                                                                      iop_breq_fifo2_dbe,
+                                                                      iop_breq_fifo3_dbe ,
+                                                                      iop_ffifo_dbe_sclk,
+                                                                      rsd_mem0_dbe,
+                                                                      rsd_mem1_dbe,
+                                                                      ics_cmd_fifo_dbe_sclk,
+                                                                      ixo_xmd_mem1_dbe_sclk,
+                                                                      ixo_xmd_mem0_dbe_sclk,
+                                                                      iobn_iorn_ffifo0__dbe_sclk,
+                                                                      iobn_iorn_ffifo1__dbe_sclk,
+                                                                      irp1_flid_mem_dbe,
+                                                                      irp0_flid_mem_dbe,
+                                                                      ixo_icc_fifo0_dbe_in_sclk,
+                                                                      ixo_icc_fifo1_dbe_in_sclk,
+                                                                      ixo_ics_mem_dbe_in_sclk. */
+        uint64_t reserved_31           : 1;
+        uint64_t ied0_sbe              : 31; /**< [ 30:  0](R/W1C/H) IED0 single-bit error. When set, an IED0 single-bit error has occurred.
+                                                                 Internal:
+                                                                 iob_mem_data_xmd_sbe_sclk,
+                                                                       gmr_ixofifo_sbe_sclk,
+                                                                       icc0_xmc_fif_sbe,
+                                                                       icc1_xmc_fif_sbe,
+                                                                       icc_xmc_fifo_ecc_sbe,
+                                                                       sli_preq_0_sbe_sclk,
+                                                                       sli_req_0_sbe_sclk,
+                                                                       sli_preq_1_sbe_sclk,
+                                                                       sli_req_1_sbe_sclk,
+                                                                       sli_preq_2_sbe_sclk,
+                                                                       sli_req_2_sbe_sclk,
+                                                                       ixo_smmu_mem0_sbe_sclk,
+                                                                       iop_breq_fifo0_sbe,
+                                                                       iop_breq_fifo1_sbe ,
+                                                                       iop_breq_fifo2_sbe,
+                                                                       iop_breq_fifo3_sbe ,
+                                                                       iop_ffifo_sbe_sclk,
+                                                                       rsd_mem0_sbe,
+                                                                       rsd_mem1_sbe,
+                                                                       ics_cmd_fifo_sbe_sclk,
+                                                                       ixo_xmd_mem1_sbe_sclk,
+                                                                       ixo_xmd_mem0_sbe_sclk,
+                                                                       iobn_iorn_ffifo0__sbe_sclk,
+                                                                       iobn_iorn_ffifo1__sbe_sclk,
+                                                                       irp1_flid_mem_sbe,
+                                                                       irp0_flid_mem_sbe,
+                                                                       ixo_icc_fifo0_sbe_in_sclk,
+                                                                       ixo_icc_fifo1_sbe_in_sclk,
+                                                                       ixo_ics_mem_sbe_in_sclk. */
+#else /* Word 0 - Little Endian */
+        uint64_t ied0_sbe              : 31; /**< [ 30:  0](R/W1C/H) IED0 single-bit error. When set, an IED0 single-bit error has occurred.
+                                                                 Internal:
+                                                                 iob_mem_data_xmd_sbe_sclk,
+                                                                       gmr_ixofifo_sbe_sclk,
+                                                                       icc0_xmc_fif_sbe,
+                                                                       icc1_xmc_fif_sbe,
+                                                                       icc_xmc_fifo_ecc_sbe,
+                                                                       sli_preq_0_sbe_sclk,
+                                                                       sli_req_0_sbe_sclk,
+                                                                       sli_preq_1_sbe_sclk,
+                                                                       sli_req_1_sbe_sclk,
+                                                                       sli_preq_2_sbe_sclk,
+                                                                       sli_req_2_sbe_sclk,
+                                                                       ixo_smmu_mem0_sbe_sclk,
+                                                                       iop_breq_fifo0_sbe,
+                                                                       iop_breq_fifo1_sbe ,
+                                                                       iop_breq_fifo2_sbe,
+                                                                       iop_breq_fifo3_sbe ,
+                                                                       iop_ffifo_sbe_sclk,
+                                                                       rsd_mem0_sbe,
+                                                                       rsd_mem1_sbe,
+                                                                       ics_cmd_fifo_sbe_sclk,
+                                                                       ixo_xmd_mem1_sbe_sclk,
+                                                                       ixo_xmd_mem0_sbe_sclk,
+                                                                       iobn_iorn_ffifo0__sbe_sclk,
+                                                                       iobn_iorn_ffifo1__sbe_sclk,
+                                                                       irp1_flid_mem_sbe,
+                                                                       irp0_flid_mem_sbe,
+                                                                       ixo_icc_fifo0_sbe_in_sclk,
+                                                                       ixo_icc_fifo1_sbe_in_sclk,
+                                                                       ixo_ics_mem_sbe_in_sclk. */
+        uint64_t reserved_31           : 1;
+        uint64_t ied0_dbe              : 31; /**< [ 62: 32](R/W1C/H) IED0 double-bit error. When set, an IED0 double-bit error has occurred.
+                                                                 Internal:
+                                                                 iob_mem_data_xmd_sbe_sclk,
+                                                                      gmr_ixofifo_dbe_sclk,
+                                                                      icc0_xmc_fif_dbe,
+                                                                      icc1_xmc_fif_dbe,
+                                                                      icc_xmc_fifo_ecc_dbe,
+                                                                      sli_preq_0_dbe_sclk,
+                                                                      sli_req_0_dbe_sclk,
+                                                                      sli_preq_1_dbe_sclk,
+                                                                      sli_req_1_dbe_sclk,
+                                                                      sli_preq_2_dbe_sclk,
+                                                                      sli_req_2_dbe_sclk,
+                                                                      ixo_smmu_mem0_dbe_sclk,
+                                                                      iop_breq_fifo0_dbe,
+                                                                      iop_breq_fifo1_dbe ,
+                                                                      iop_breq_fifo2_dbe,
+                                                                      iop_breq_fifo3_dbe ,
+                                                                      iop_ffifo_dbe_sclk,
+                                                                      rsd_mem0_dbe,
+                                                                      rsd_mem1_dbe,
+                                                                      ics_cmd_fifo_dbe_sclk,
+                                                                      ixo_xmd_mem1_dbe_sclk,
+                                                                      ixo_xmd_mem0_dbe_sclk,
+                                                                      iobn_iorn_ffifo0__dbe_sclk,
+                                                                      iobn_iorn_ffifo1__dbe_sclk,
+                                                                      irp1_flid_mem_dbe,
+                                                                      irp0_flid_mem_dbe,
+                                                                      ixo_icc_fifo0_dbe_in_sclk,
+                                                                      ixo_icc_fifo1_dbe_in_sclk,
+                                                                      ixo_ics_mem_dbe_in_sclk. */
+        uint64_t pem_sie               : 1;  /**< [ 63: 63](R/W1C/H) PEM sent in an invalid stream ID, the transaction was returned with fault. Advisory
+                                                                 notification only. */
+#endif /* Word 0 - End */
+    } cn8;
     struct cavm_iobnx_int_sum_cn81xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -4633,6 +5494,8 @@ static inline uint64_t CAVM_IOBNX_INT_SUM(unsigned long a)
         return 0x87e0f0006000ll + 0x1000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x87e0f0006000ll + 0x1000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=2))
+        return 0x87e0f0006000ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x87e0f0006000ll + 0x1000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
@@ -4728,6 +5591,140 @@ union cavm_iobnx_int_sum_w1s
         uint64_t pem_sie               : 1;  /**< [ 63: 63](R/W1S/H) Reads or sets IOBN(0)_INT_SUM[PEM_SIE]. */
 #endif /* Word 0 - End */
     } s;
+    struct cavm_iobnx_int_sum_w1s_cn8
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t pem_sie               : 1;  /**< [ 63: 63](R/W1S/H) Reads or sets IOBN(0)_INT_SUM[PEM_SIE]. */
+        uint64_t ied0_dbe              : 31; /**< [ 62: 32](R/W1S/H) Reads or sets IOBN(0)_INT_SUM[IED0_DBE].
+                                                                 Internal:
+                                                                 iob_mem_data_xmd_sbe_sclk,
+                                                                      gmr_ixofifo_dbe_sclk,
+                                                                      icc0_xmc_fif_dbe,
+                                                                      icc1_xmc_fif_dbe,
+                                                                      icc_xmc_fifo_ecc_dbe,
+                                                                      sli_preq_0_dbe_sclk,
+                                                                      sli_req_0_dbe_sclk,
+                                                                      sli_preq_1_dbe_sclk,
+                                                                      sli_req_1_dbe_sclk,
+                                                                      sli_preq_2_dbe_sclk,
+                                                                      sli_req_2_dbe_sclk,
+                                                                      ixo_smmu_mem0_dbe_sclk,
+                                                                      iop_breq_fifo0_dbe,
+                                                                      iop_breq_fifo1_dbe ,
+                                                                      iop_breq_fifo2_dbe,
+                                                                      iop_breq_fifo3_dbe ,
+                                                                      iop_ffifo_dbe_sclk,
+                                                                      rsd_mem0_dbe,
+                                                                      rsd_mem1_dbe,
+                                                                      ics_cmd_fifo_dbe_sclk,
+                                                                      ixo_xmd_mem1_dbe_sclk,
+                                                                      ixo_xmd_mem0_dbe_sclk,
+                                                                      iobn_iorn_ffifo0__dbe_sclk,
+                                                                      iobn_iorn_ffifo1__dbe_sclk,
+                                                                      irp1_flid_mem_dbe,
+                                                                      irp0_flid_mem_dbe,
+                                                                      ixo_icc_fifo0_dbe_in_sclk,
+                                                                      ixo_icc_fifo1_dbe_in_sclk,
+                                                                      ixo_ics_mem_dbe_in_sclk. */
+        uint64_t reserved_31           : 1;
+        uint64_t ied0_sbe              : 31; /**< [ 30:  0](R/W1S/H) Reads or sets IOBN(0)_INT_SUM[IED0_SBE].
+                                                                 Internal:
+                                                                 iob_mem_data_xmd_sbe_sclk,
+                                                                       gmr_ixofifo_sbe_sclk,
+                                                                       icc0_xmc_fif_sbe,
+                                                                       icc1_xmc_fif_sbe,
+                                                                       icc_xmc_fifo_ecc_sbe,
+                                                                       sli_preq_0_sbe_sclk,
+                                                                       sli_req_0_sbe_sclk,
+                                                                       sli_preq_1_sbe_sclk,
+                                                                       sli_req_1_sbe_sclk,
+                                                                       sli_preq_2_sbe_sclk,
+                                                                       sli_req_2_sbe_sclk,
+                                                                       ixo_smmu_mem0_sbe_sclk,
+                                                                       iop_breq_fifo0_sbe,
+                                                                       iop_breq_fifo1_sbe ,
+                                                                       iop_breq_fifo2_sbe,
+                                                                       iop_breq_fifo3_sbe ,
+                                                                       iop_ffifo_sbe_sclk,
+                                                                       rsd_mem0_sbe,
+                                                                       rsd_mem1_sbe,
+                                                                       ics_cmd_fifo_sbe_sclk,
+                                                                       ixo_xmd_mem1_sbe_sclk,
+                                                                       ixo_xmd_mem0_sbe_sclk,
+                                                                       iobn_iorn_ffifo0__sbe_sclk,
+                                                                       iobn_iorn_ffifo1__sbe_sclk,
+                                                                       irp1_flid_mem_sbe,
+                                                                       irp0_flid_mem_sbe,
+                                                                       ixo_icc_fifo0_sbe_in_sclk,
+                                                                       ixo_icc_fifo1_sbe_in_sclk,
+                                                                       ixo_ics_mem_sbe_in_sclk. */
+#else /* Word 0 - Little Endian */
+        uint64_t ied0_sbe              : 31; /**< [ 30:  0](R/W1S/H) Reads or sets IOBN(0)_INT_SUM[IED0_SBE].
+                                                                 Internal:
+                                                                 iob_mem_data_xmd_sbe_sclk,
+                                                                       gmr_ixofifo_sbe_sclk,
+                                                                       icc0_xmc_fif_sbe,
+                                                                       icc1_xmc_fif_sbe,
+                                                                       icc_xmc_fifo_ecc_sbe,
+                                                                       sli_preq_0_sbe_sclk,
+                                                                       sli_req_0_sbe_sclk,
+                                                                       sli_preq_1_sbe_sclk,
+                                                                       sli_req_1_sbe_sclk,
+                                                                       sli_preq_2_sbe_sclk,
+                                                                       sli_req_2_sbe_sclk,
+                                                                       ixo_smmu_mem0_sbe_sclk,
+                                                                       iop_breq_fifo0_sbe,
+                                                                       iop_breq_fifo1_sbe ,
+                                                                       iop_breq_fifo2_sbe,
+                                                                       iop_breq_fifo3_sbe ,
+                                                                       iop_ffifo_sbe_sclk,
+                                                                       rsd_mem0_sbe,
+                                                                       rsd_mem1_sbe,
+                                                                       ics_cmd_fifo_sbe_sclk,
+                                                                       ixo_xmd_mem1_sbe_sclk,
+                                                                       ixo_xmd_mem0_sbe_sclk,
+                                                                       iobn_iorn_ffifo0__sbe_sclk,
+                                                                       iobn_iorn_ffifo1__sbe_sclk,
+                                                                       irp1_flid_mem_sbe,
+                                                                       irp0_flid_mem_sbe,
+                                                                       ixo_icc_fifo0_sbe_in_sclk,
+                                                                       ixo_icc_fifo1_sbe_in_sclk,
+                                                                       ixo_ics_mem_sbe_in_sclk. */
+        uint64_t reserved_31           : 1;
+        uint64_t ied0_dbe              : 31; /**< [ 62: 32](R/W1S/H) Reads or sets IOBN(0)_INT_SUM[IED0_DBE].
+                                                                 Internal:
+                                                                 iob_mem_data_xmd_sbe_sclk,
+                                                                      gmr_ixofifo_dbe_sclk,
+                                                                      icc0_xmc_fif_dbe,
+                                                                      icc1_xmc_fif_dbe,
+                                                                      icc_xmc_fifo_ecc_dbe,
+                                                                      sli_preq_0_dbe_sclk,
+                                                                      sli_req_0_dbe_sclk,
+                                                                      sli_preq_1_dbe_sclk,
+                                                                      sli_req_1_dbe_sclk,
+                                                                      sli_preq_2_dbe_sclk,
+                                                                      sli_req_2_dbe_sclk,
+                                                                      ixo_smmu_mem0_dbe_sclk,
+                                                                      iop_breq_fifo0_dbe,
+                                                                      iop_breq_fifo1_dbe ,
+                                                                      iop_breq_fifo2_dbe,
+                                                                      iop_breq_fifo3_dbe ,
+                                                                      iop_ffifo_dbe_sclk,
+                                                                      rsd_mem0_dbe,
+                                                                      rsd_mem1_dbe,
+                                                                      ics_cmd_fifo_dbe_sclk,
+                                                                      ixo_xmd_mem1_dbe_sclk,
+                                                                      ixo_xmd_mem0_dbe_sclk,
+                                                                      iobn_iorn_ffifo0__dbe_sclk,
+                                                                      iobn_iorn_ffifo1__dbe_sclk,
+                                                                      irp1_flid_mem_dbe,
+                                                                      irp0_flid_mem_dbe,
+                                                                      ixo_icc_fifo0_dbe_in_sclk,
+                                                                      ixo_icc_fifo1_dbe_in_sclk,
+                                                                      ixo_ics_mem_dbe_in_sclk. */
+        uint64_t pem_sie               : 1;  /**< [ 63: 63](R/W1S/H) Reads or sets IOBN(0)_INT_SUM[PEM_SIE]. */
+#endif /* Word 0 - End */
+    } cn8;
     struct cavm_iobnx_int_sum_w1s_cn81xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -5006,7 +6003,7 @@ union cavm_iobnx_int_sum_w1s
         uint64_t pem_sie               : 1;  /**< [ 63: 63](R/W1S/H) Reads or sets IOBN(0..1)_INT_SUM[PEM_SIE]. */
 #endif /* Word 0 - End */
     } cn83xx;
-    struct cavm_iobnx_int_sum_w1s_cn96xx
+    struct cavm_iobnx_int_sum_w1s_cn9
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_16_63        : 48;
@@ -5039,7 +6036,42 @@ union cavm_iobnx_int_sum_w1s
         uint64_t smmu_rsp_dat_dbe      : 1;  /**< [ 15: 15](R/W1S/H) Reads or sets IOBN(0..1)_INT_SUM[SMMU_RSP_DAT_DBE]. */
         uint64_t reserved_16_63        : 48;
 #endif /* Word 0 - End */
-    } cn96xx;
+    } cn9;
+    /* struct cavm_iobnx_int_sum_w1s_cn9 cn96xx; */
+    struct cavm_iobnx_int_sum_w1s_cn98xx
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_16_63        : 48;
+        uint64_t smmu_rsp_dat_dbe      : 1;  /**< [ 15: 15](R/W1S/H) Reads or sets IOBN(0..2)_INT_SUM[SMMU_RSP_DAT_DBE]. */
+        uint64_t smmu_rsp_dat_sbe      : 1;  /**< [ 14: 14](R/W1S/H) Reads or sets IOBN(0..2)_INT_SUM[SMMU_RSP_DAT_SBE]. */
+        uint64_t ncbo_rsp_dat_dbe      : 1;  /**< [ 13: 13](R/W1S/H) Reads or sets IOBN(0..2)_INT_SUM[NCBO_RSP_DAT_DBE]. */
+        uint64_t ncbo_rsp_dat_sbe      : 1;  /**< [ 12: 12](R/W1S/H) Reads or sets IOBN(0..2)_INT_SUM[NCBO_RSP_DAT_SBE]. */
+        uint64_t smmu_req_dat_dbe      : 1;  /**< [ 11: 11](R/W1S/H) Reads or sets IOBN(0..2)_INT_SUM[SMMU_REQ_DAT_DBE]. */
+        uint64_t smmu_req_dat_sbe      : 1;  /**< [ 10: 10](R/W1S/H) Reads or sets IOBN(0..2)_INT_SUM[SMMU_REQ_DAT_SBE]. */
+        uint64_t ncbo_req_dat_dbe      : 1;  /**< [  9:  9](R/W1S/H) Reads or sets IOBN(0..2)_INT_SUM[NCBO_REQ_DAT_DBE]. */
+        uint64_t ncbo_req_dat_sbe      : 1;  /**< [  8:  8](R/W1S/H) Reads or sets IOBN(0..2)_INT_SUM[NCBO_REQ_DAT_SBE]. */
+        uint64_t reserved_4_7          : 4;
+        uint64_t ncbo_ncb2_psn         : 1;  /**< [  3:  3](R/W1S/H) Reads or sets IOBN(0..2)_INT_SUM[NCBO_NCB2_PSN]. */
+        uint64_t ncbo_ncb1_psn         : 1;  /**< [  2:  2](R/W1S/H) Reads or sets IOBN(0..2)_INT_SUM[NCBO_NCB1_PSN]. */
+        uint64_t ncbo_ncb0_psn         : 1;  /**< [  1:  1](R/W1S/H) Reads or sets IOBN(0..2)_INT_SUM[NCBO_NCB0_PSN]. */
+        uint64_t ncbo_to               : 1;  /**< [  0:  0](R/W1S/H) Reads or sets IOBN(0..2)_INT_SUM[NCBO_TO]. */
+#else /* Word 0 - Little Endian */
+        uint64_t ncbo_to               : 1;  /**< [  0:  0](R/W1S/H) Reads or sets IOBN(0..2)_INT_SUM[NCBO_TO]. */
+        uint64_t ncbo_ncb0_psn         : 1;  /**< [  1:  1](R/W1S/H) Reads or sets IOBN(0..2)_INT_SUM[NCBO_NCB0_PSN]. */
+        uint64_t ncbo_ncb1_psn         : 1;  /**< [  2:  2](R/W1S/H) Reads or sets IOBN(0..2)_INT_SUM[NCBO_NCB1_PSN]. */
+        uint64_t ncbo_ncb2_psn         : 1;  /**< [  3:  3](R/W1S/H) Reads or sets IOBN(0..2)_INT_SUM[NCBO_NCB2_PSN]. */
+        uint64_t reserved_4_7          : 4;
+        uint64_t ncbo_req_dat_sbe      : 1;  /**< [  8:  8](R/W1S/H) Reads or sets IOBN(0..2)_INT_SUM[NCBO_REQ_DAT_SBE]. */
+        uint64_t ncbo_req_dat_dbe      : 1;  /**< [  9:  9](R/W1S/H) Reads or sets IOBN(0..2)_INT_SUM[NCBO_REQ_DAT_DBE]. */
+        uint64_t smmu_req_dat_sbe      : 1;  /**< [ 10: 10](R/W1S/H) Reads or sets IOBN(0..2)_INT_SUM[SMMU_REQ_DAT_SBE]. */
+        uint64_t smmu_req_dat_dbe      : 1;  /**< [ 11: 11](R/W1S/H) Reads or sets IOBN(0..2)_INT_SUM[SMMU_REQ_DAT_DBE]. */
+        uint64_t ncbo_rsp_dat_sbe      : 1;  /**< [ 12: 12](R/W1S/H) Reads or sets IOBN(0..2)_INT_SUM[NCBO_RSP_DAT_SBE]. */
+        uint64_t ncbo_rsp_dat_dbe      : 1;  /**< [ 13: 13](R/W1S/H) Reads or sets IOBN(0..2)_INT_SUM[NCBO_RSP_DAT_DBE]. */
+        uint64_t smmu_rsp_dat_sbe      : 1;  /**< [ 14: 14](R/W1S/H) Reads or sets IOBN(0..2)_INT_SUM[SMMU_RSP_DAT_SBE]. */
+        uint64_t smmu_rsp_dat_dbe      : 1;  /**< [ 15: 15](R/W1S/H) Reads or sets IOBN(0..2)_INT_SUM[SMMU_RSP_DAT_DBE]. */
+        uint64_t reserved_16_63        : 48;
+#endif /* Word 0 - End */
+    } cn98xx;
     struct cavm_iobnx_int_sum_w1s_cnf95xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -5087,6 +6119,8 @@ static inline uint64_t CAVM_IOBNX_INT_SUM_W1S(unsigned long a)
         return 0x87e0f0007000ll + 0x1000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x87e0f0007000ll + 0x1000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=2))
+        return 0x87e0f0007000ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x87e0f0007000ll + 0x1000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
@@ -5188,6 +6222,7 @@ union cavm_iobnx_mctlr_reg
         uint64_t reserved_49_63        : 15;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_iobnx_mctlr_reg_s cn8; */
     struct cavm_iobnx_mctlr_reg_cn81xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -5496,6 +6531,8 @@ static inline uint64_t CAVM_IOBNX_MSIX_PBAX(unsigned long a, unsigned long b)
         return 0x87e0f0ff0000ll + 0x1000000ll * ((a) & 0x1) + 8ll * ((b) & 0x0);
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b==0)))
         return 0x87e0f0ff0000ll + 0x1000000ll * ((a) & 0x1) + 8ll * ((b) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=2) && (b==0)))
+        return 0x87e0f0ff0000ll + 0x1000000ll * ((a) & 0x3) + 8ll * ((b) & 0x0);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b==0)))
         return 0x87e0f0ff0000ll + 0x1000000ll * ((a) & 0x0) + 8ll * ((b) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b==0)))
@@ -5583,6 +6620,35 @@ union cavm_iobnx_msix_vecx_addr
         uint64_t reserved_1            : 1;
         uint64_t secvec                : 1;  /**< [  0:  0](SR/W) Secure vector.
                                                                  0 = This vector may be read or written by either secure or nonsecure states.
+                                                                 1 = This vector's IOBN()_MSIX_VEC()_ADDR, IOBN()_MSIX_VEC()_CTL, and
+                                                                 corresponding bit of IOBN()_MSIX_PBA() are RAZ/WI and does not cause a fault
+                                                                 when accessed by the nonsecure world.
+
+                                                                 If PCCPF_IOBN_VSEC_SCTL[MSIX_SEC] (for documentation, see PCCPF_XXX_VSEC_SCTL[MSIX_SEC])
+                                                                 is set, all vectors are secure and function as if [SECVEC] was set. */
+#else /* Word 0 - Little Endian */
+        uint64_t secvec                : 1;  /**< [  0:  0](SR/W) Secure vector.
+                                                                 0 = This vector may be read or written by either secure or nonsecure states.
+                                                                 1 = This vector's IOBN()_MSIX_VEC()_ADDR, IOBN()_MSIX_VEC()_CTL, and
+                                                                 corresponding bit of IOBN()_MSIX_PBA() are RAZ/WI and does not cause a fault
+                                                                 when accessed by the nonsecure world.
+
+                                                                 If PCCPF_IOBN_VSEC_SCTL[MSIX_SEC] (for documentation, see PCCPF_XXX_VSEC_SCTL[MSIX_SEC])
+                                                                 is set, all vectors are secure and function as if [SECVEC] was set. */
+        uint64_t reserved_1            : 1;
+        uint64_t addr                  : 51; /**< [ 52:  2](R/W) IOVA to use for MSI-X delivery of this vector. */
+        uint64_t reserved_53_63        : 11;
+#endif /* Word 0 - End */
+    } cn9;
+    /* struct cavm_iobnx_msix_vecx_addr_cn9 cn96xxp1; */
+    struct cavm_iobnx_msix_vecx_addr_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_53_63        : 11;
+        uint64_t addr                  : 51; /**< [ 52:  2](R/W) IOVA to use for MSI-X delivery of this vector. */
+        uint64_t reserved_1            : 1;
+        uint64_t secvec                : 1;  /**< [  0:  0](SR/W) Secure vector.
+                                                                 0 = This vector may be read or written by either secure or nonsecure states.
                                                                  The vector's IOVA is sent to the SMMU as nonsecure (though this only affects
                                                                  physical addresses if PCCPF_XXX_VSEC_SCTL[MSIX_PHYS]=1).
 
@@ -5630,7 +6696,10 @@ union cavm_iobnx_msix_vecx_addr
         uint64_t addr                  : 51; /**< [ 52:  2](R/W) IOVA to use for MSI-X delivery of this vector. */
         uint64_t reserved_53_63        : 11;
 #endif /* Word 0 - End */
-    } cn9;
+    } cn96xxp3;
+    /* struct cavm_iobnx_msix_vecx_addr_cn96xxp3 cn98xx; */
+    /* struct cavm_iobnx_msix_vecx_addr_cn96xxp3 cnf95xx; */
+    /* struct cavm_iobnx_msix_vecx_addr_cn96xxp3 loki; */
 };
 typedef union cavm_iobnx_msix_vecx_addr cavm_iobnx_msix_vecx_addr_t;
 
@@ -5643,6 +6712,8 @@ static inline uint64_t CAVM_IOBNX_MSIX_VECX_ADDR(unsigned long a, unsigned long 
         return 0x87e0f0f00000ll + 0x1000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x0);
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e0f0f00000ll + 0x1000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=2) && (b<=1)))
+        return 0x87e0f0f00000ll + 0x1000000ll * ((a) & 0x3) + 0x10ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=1)))
         return 0x87e0f0f00000ll + 0x1000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=1)))
@@ -5705,6 +6776,8 @@ static inline uint64_t CAVM_IOBNX_MSIX_VECX_CTL(unsigned long a, unsigned long b
         return 0x87e0f0f00008ll + 0x1000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x0);
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
         return 0x87e0f0f00008ll + 0x1000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=2) && (b<=1)))
+        return 0x87e0f0f00008ll + 0x1000000ll * ((a) & 0x3) + 0x10ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=1)))
         return 0x87e0f0f00008ll + 0x1000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=1)))
@@ -5769,6 +6842,8 @@ static inline uint64_t CAVM_IOBNX_NCBX_ACC(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=255)))
         return 0x87e0f0080000ll + 0x1000000ll * ((a) & 0x1) + 8ll * ((b) & 0xff);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=2) && (b<=255)))
+        return 0x87e0f0080000ll + 0x1000000ll * ((a) & 0x3) + 8ll * ((b) & 0xff);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=255)))
         return 0x87e0f0080000ll + 0x1000000ll * ((a) & 0x0) + 8ll * ((b) & 0xff);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=255)))
@@ -5833,8 +6908,9 @@ union cavm_iobnx_ncbx_arbx_crds
         uint64_t reserved_17_63        : 47;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_iobnx_ncbx_arbx_crds_s cn9; */
     /* struct cavm_iobnx_ncbx_arbx_crds_s cn96xx; */
-    struct cavm_iobnx_ncbx_arbx_crds_cnf95xx
+    struct cavm_iobnx_ncbx_arbx_crds_cn98xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_17_63        : 47;
@@ -5873,8 +6949,9 @@ union cavm_iobnx_ncbx_arbx_crds
                                                                  deadlocks. (i.e. Class B devices, as defined by wiki) */
         uint64_t reserved_17_63        : 47;
 #endif /* Word 0 - End */
-    } cnf95xx;
-    /* struct cavm_iobnx_ncbx_arbx_crds_cnf95xx loki; */
+    } cn98xx;
+    /* struct cavm_iobnx_ncbx_arbx_crds_cn98xx cnf95xx; */
+    /* struct cavm_iobnx_ncbx_arbx_crds_cn98xx loki; */
 };
 typedef union cavm_iobnx_ncbx_arbx_crds cavm_iobnx_ncbx_arbx_crds_t;
 
@@ -5883,6 +6960,8 @@ static inline uint64_t CAVM_IOBNX_NCBX_ARBX_CRDS(unsigned long a, unsigned long 
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=2) && (c<=15)))
         return 0x87e0f00f0000ll + 0x1000000ll * ((a) & 0x1) + 0x400ll * ((b) & 0x3) + 8ll * ((c) & 0xf);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=2) && (b<=2) && (c<=15)))
+        return 0x87e0f00f0000ll + 0x1000000ll * ((a) & 0x3) + 0x400ll * ((b) & 0x3) + 8ll * ((c) & 0xf);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=2) && (c<=19)))
         return 0x87e0f00f0000ll + 0x1000000ll * ((a) & 0x0) + 0x400ll * ((b) & 0x3) + 8ll * ((c) & 0x1f);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=2) && (c<=19)))
@@ -5940,6 +7019,8 @@ static inline uint64_t CAVM_IOBNX_NCBX_ARBX_RWX_LAT_PC(unsigned long a, unsigned
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=2) && (c<=15) && (d<=1)))
         return 0x87e0f00f4000ll + 0x1000000ll * ((a) & 0x1) + 0x400ll * ((b) & 0x3) + 0x20ll * ((c) & 0xf) + 8ll * ((d) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=2) && (b<=2) && (c<=19) && (d<=1)))
+        return 0x87e0f00f4000ll + 0x1000000ll * ((a) & 0x3) + 0x400ll * ((b) & 0x3) + 0x20ll * ((c) & 0x1f) + 8ll * ((d) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=2) && (c<=19) && (d<=1)))
         return 0x87e0f00f4000ll + 0x1000000ll * ((a) & 0x0) + 0x400ll * ((b) & 0x3) + 0x20ll * ((c) & 0x1f) + 8ll * ((d) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=2) && (c<=19) && (d<=1)))
@@ -5989,6 +7070,8 @@ static inline uint64_t CAVM_IOBNX_NCBX_ARBX_RWX_REQ_PC(unsigned long a, unsigned
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=2) && (c<=15) && (d<=1)))
         return 0x87e0f00f2000ll + 0x1000000ll * ((a) & 0x1) + 0x400ll * ((b) & 0x3) + 0x20ll * ((c) & 0xf) + 8ll * ((d) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=2) && (b<=2) && (c<=19) && (d<=1)))
+        return 0x87e0f00f2000ll + 0x1000000ll * ((a) & 0x3) + 0x400ll * ((b) & 0x3) + 0x20ll * ((c) & 0x1f) + 8ll * ((d) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=2) && (c<=19) && (d<=1)))
         return 0x87e0f00f2000ll + 0x1000000ll * ((a) & 0x0) + 0x400ll * ((b) & 0x3) + 0x20ll * ((c) & 0x1f) + 8ll * ((d) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=2) && (c<=19) && (d<=1)))
@@ -6046,6 +7129,8 @@ static inline uint64_t CAVM_IOBNX_NCBX_BP_TEST(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=2)))
         return 0x87e0f00f8000ll + 0x1000000ll * ((a) & 0x1) + 0x400ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=2) && (b<=2)))
+        return 0x87e0f00f8000ll + 0x1000000ll * ((a) & 0x3) + 0x400ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=2)))
         return 0x87e0f00f8000ll + 0x1000000ll * ((a) & 0x0) + 0x400ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=2)))
@@ -6090,6 +7175,7 @@ union cavm_iobnx_ncbx_const
         uint64_t reserved_32_63        : 32;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_iobnx_ncbx_const_s cn9; */
     struct cavm_iobnx_ncbx_const_cn96xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -6108,6 +7194,7 @@ union cavm_iobnx_ncbx_const
         uint64_t reserved_24_63        : 40;
 #endif /* Word 0 - End */
     } cn96xx;
+    /* struct cavm_iobnx_ncbx_const_cn96xx cn98xx; */
     /* struct cavm_iobnx_ncbx_const_s cnf95xx; */
     /* struct cavm_iobnx_ncbx_const_s loki; */
 };
@@ -6118,6 +7205,8 @@ static inline uint64_t CAVM_IOBNX_NCBX_CONST(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=255)))
         return 0x87e0f0001000ll + 0x1000000ll * ((a) & 0x1) + 8ll * ((b) & 0xff);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=2) && (b<=255)))
+        return 0x87e0f0001000ll + 0x1000000ll * ((a) & 0x3) + 8ll * ((b) & 0xff);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=255)))
         return 0x87e0f0001000ll + 0x1000000ll * ((a) & 0x0) + 8ll * ((b) & 0xff);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=255)))
@@ -6272,6 +7361,8 @@ static inline uint64_t CAVM_IOBNX_NCBX_CTL(unsigned long a, unsigned long b)
         return 0x87e0f0004000ll + 0x1000000ll * ((a) & 0x1) + 0x100ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=2)))
         return 0x87e0f00f6000ll + 0x1000000ll * ((a) & 0x1) + 0x400ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=2) && (b<=2)))
+        return 0x87e0f00f6000ll + 0x1000000ll * ((a) & 0x3) + 0x400ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=2)))
         return 0x87e0f00f6000ll + 0x1000000ll * ((a) & 0x0) + 0x400ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=2)))
@@ -6326,6 +7417,8 @@ static inline uint64_t CAVM_IOBNX_NCBX_MRML_PERMIT_SHADOW(unsigned long a, unsig
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=255)))
         return 0x87e0f0090000ll + 0x1000000ll * ((a) & 0x1) + 8ll * ((b) & 0xff);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=2) && (b<=255)))
+        return 0x87e0f0090000ll + 0x1000000ll * ((a) & 0x3) + 8ll * ((b) & 0xff);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=255)))
         return 0x87e0f0090000ll + 0x1000000ll * ((a) & 0x0) + 8ll * ((b) & 0xff);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=255)))
@@ -6417,6 +7510,8 @@ static inline uint64_t CAVM_IOBNX_NCBX_RWX_LAT_PC(unsigned long a, unsigned long
         return 0x87e0f000d000ll + 0x1000000ll * ((a) & 0x1) + 0x100ll * ((b) & 0x1) + 0x10ll * ((c) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=2) && (c<=1)))
         return 0x87e0f000d000ll + 0x1000000ll * ((a) & 0x1) + 0x100ll * ((b) & 0x3) + 0x10ll * ((c) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=2) && (b<=2) && (c<=1)))
+        return 0x87e0f000d000ll + 0x1000000ll * ((a) & 0x3) + 0x100ll * ((b) & 0x3) + 0x10ll * ((c) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=2) && (c<=1)))
         return 0x87e0f000d000ll + 0x1000000ll * ((a) & 0x0) + 0x100ll * ((b) & 0x3) + 0x10ll * ((c) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=2) && (c<=1)))
@@ -6484,6 +7579,8 @@ static inline uint64_t CAVM_IOBNX_NCBX_RWX_REQ_PC(unsigned long a, unsigned long
         return 0x87e0f000c000ll + 0x1000000ll * ((a) & 0x1) + 0x100ll * ((b) & 0x1) + 0x10ll * ((c) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=2) && (c<=1)))
         return 0x87e0f000c000ll + 0x1000000ll * ((a) & 0x1) + 0x100ll * ((b) & 0x3) + 0x10ll * ((c) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=2) && (b<=2) && (c<=1)))
+        return 0x87e0f000c000ll + 0x1000000ll * ((a) & 0x3) + 0x100ll * ((b) & 0x3) + 0x10ll * ((c) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=2) && (c<=1)))
         return 0x87e0f000c000ll + 0x1000000ll * ((a) & 0x0) + 0x100ll * ((b) & 0x3) + 0x10ll * ((c) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=2) && (c<=1)))
@@ -6575,6 +7672,8 @@ static inline uint64_t CAVM_IOBNX_NCBX_RWX_SMMU_LAT_PC(unsigned long a, unsigned
         return 0x87e0f000e000ll + 0x1000000ll * ((a) & 0x1) + 0x100ll * ((b) & 0x1) + 0x10ll * ((c) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=2) && (c<=1)))
         return 0x87e0f000e000ll + 0x1000000ll * ((a) & 0x1) + 0x100ll * ((b) & 0x3) + 0x10ll * ((c) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=2) && (b<=2) && (c<=1)))
+        return 0x87e0f000e000ll + 0x1000000ll * ((a) & 0x3) + 0x100ll * ((b) & 0x3) + 0x10ll * ((c) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=2) && (c<=1)))
         return 0x87e0f000e000ll + 0x1000000ll * ((a) & 0x0) + 0x100ll * ((b) & 0x3) + 0x10ll * ((c) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=2) && (c<=1)))
@@ -6613,6 +7712,7 @@ union cavm_iobnx_ncb0_hp
         uint64_t reserved_4_63         : 60;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_iobnx_ncb0_hp_s cn8; */
     /* struct cavm_iobnx_ncb0_hp_s cn81xx; */
     struct cavm_iobnx_ncb0_hp_cn83xx
     {
@@ -6782,6 +7882,7 @@ union cavm_iobnx_ncb_status
         uint64_t reserved_21_63        : 43;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_iobnx_ncb_status_s cn9; */
     struct cavm_iobnx_ncb_status_cn96xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -6798,6 +7899,7 @@ union cavm_iobnx_ncb_status
         uint64_t reserved_16_63        : 48;
 #endif /* Word 0 - End */
     } cn96xx;
+    /* struct cavm_iobnx_ncb_status_cn96xx cn98xx; */
     struct cavm_iobnx_ncb_status_cnf95xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -6823,6 +7925,8 @@ static inline uint64_t CAVM_IOBNX_NCB_STATUS(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x87e0f0002300ll + 0x1000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=2))
+        return 0x87e0f0002300ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x87e0f0002300ll + 0x1000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
@@ -6868,6 +7972,8 @@ static inline uint64_t CAVM_IOBNX_NCBOX_PSN_STATUS(unsigned long a, unsigned lon
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=2)))
         return 0x87e0f0003060ll + 0x1000000ll * ((a) & 0x1) + 8ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=2) && (b<=2)))
+        return 0x87e0f0003060ll + 0x1000000ll * ((a) & 0x3) + 8ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=2)))
         return 0x87e0f0003060ll + 0x1000000ll * ((a) & 0x0) + 8ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=2)))
@@ -6924,6 +8030,8 @@ static inline uint64_t CAVM_IOBNX_NCBO_CTL(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x87e0f0002200ll + 0x1000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=2))
+        return 0x87e0f0002200ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x87e0f0002200ll + 0x1000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
@@ -6972,6 +8080,8 @@ static inline uint64_t CAVM_IOBNX_NCBO_TO(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x87e0f0000008ll + 0x1000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=2))
+        return 0x87e0f0000008ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x87e0f0000008ll + 0x1000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
@@ -7019,6 +8129,8 @@ static inline uint64_t CAVM_IOBNX_NCBO_TO_ERR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x87e0f00a0000ll + 0x1000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=2))
+        return 0x87e0f00a0000ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x87e0f00a0000ll + 0x1000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
@@ -7073,6 +8185,8 @@ static inline uint64_t CAVM_IOBNX_OUTB_ERR_STATUS(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x87e0f0003090ll + 0x1000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=2))
+        return 0x87e0f0003090ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x87e0f0003090ll + 0x1000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
@@ -7116,6 +8230,8 @@ static inline uint64_t CAVM_IOBNX_PSN_CTL(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x87e0f0003050ll + 0x1000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=2))
+        return 0x87e0f0003050ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x87e0f0003050ll + 0x1000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
@@ -7212,6 +8328,8 @@ static inline uint64_t CAVM_IOBNX_RPERF_CNTRX(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=3)))
         return 0x87e0f00b0080ll + 0x1000000ll * ((a) & 0x1) + 8ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=2) && (b<=3)))
+        return 0x87e0f00b0080ll + 0x1000000ll * ((a) & 0x3) + 8ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=3)))
         return 0x87e0f00b0080ll + 0x1000000ll * ((a) & 0x0) + 8ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=3)))
@@ -7296,6 +8414,8 @@ static inline uint64_t CAVM_IOBNX_RPERF_CTRLX(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=3)))
         return 0x87e0f00b0000ll + 0x1000000ll * ((a) & 0x1) + 8ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=2) && (b<=3)))
+        return 0x87e0f00b0000ll + 0x1000000ll * ((a) & 0x3) + 8ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=3)))
         return 0x87e0f00b0000ll + 0x1000000ll * ((a) & 0x0) + 8ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=3)))
@@ -7358,6 +8478,8 @@ static inline uint64_t CAVM_IOBNX_RPERF_INRMX(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b==0)))
         return 0x87e0f00c0000ll + 0x1000000ll * ((a) & 0x1) + 8ll * ((b) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=2) && (b==0)))
+        return 0x87e0f00c0000ll + 0x1000000ll * ((a) & 0x3) + 8ll * ((b) & 0x0);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b==0)))
         return 0x87e0f00c0000ll + 0x1000000ll * ((a) & 0x0) + 8ll * ((b) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b==0)))
@@ -7460,6 +8582,8 @@ static inline uint64_t CAVM_IOBNX_RSLX_STREAMS(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=255)))
         return 0x87e0f0002800ll + 0x1000000ll * ((a) & 0x1) + 8ll * ((b) & 0xff);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=2) && (b<=255)))
+        return 0x87e0f0002800ll + 0x1000000ll * ((a) & 0x3) + 8ll * ((b) & 0xff);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=255)))
         return 0x87e0f0002800ll + 0x1000000ll * ((a) & 0x0) + 8ll * ((b) & 0xff);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=255)))
@@ -7505,6 +8629,7 @@ union cavm_iobnx_rvu_blockx_const
         uint64_t reserved_32_63        : 32;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_iobnx_rvu_blockx_const_s cn9; */
     struct cavm_iobnx_rvu_blockx_const_cn96xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -7523,6 +8648,7 @@ union cavm_iobnx_rvu_blockx_const
         uint64_t reserved_24_63        : 40;
 #endif /* Word 0 - End */
     } cn96xx;
+    /* struct cavm_iobnx_rvu_blockx_const_cn96xx cn98xx; */
     /* struct cavm_iobnx_rvu_blockx_const_s cnf95xx; */
     /* struct cavm_iobnx_rvu_blockx_const_s loki; */
 };
@@ -7533,6 +8659,8 @@ static inline uint64_t CAVM_IOBNX_RVU_BLOCKX_CONST(unsigned long a, unsigned lon
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=31)))
         return 0x87e0f0001800ll + 0x1000000ll * ((a) & 0x1) + 8ll * ((b) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=2) && (b<=31)))
+        return 0x87e0f0001800ll + 0x1000000ll * ((a) & 0x3) + 8ll * ((b) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=31)))
         return 0x87e0f0001800ll + 0x1000000ll * ((a) & 0x0) + 8ll * ((b) & 0x1f);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=31)))
@@ -7576,6 +8704,8 @@ static inline uint64_t CAVM_IOBNX_SCRATCH(unsigned long a)
         return 0x87e0f0003020ll + 0x1000000ll * ((a) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x87e0f0003020ll + 0x1000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=2))
+        return 0x87e0f0003020ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x87e0f0003020ll + 0x1000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
@@ -7645,6 +8775,7 @@ union cavm_iobnx_slitagx_control
         uint64_t reserved_9_63         : 55;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_iobnx_slitagx_control_s cn8; */
     /* struct cavm_iobnx_slitagx_control_s cn81xx; */
     struct cavm_iobnx_slitagx_control_cn83xx
     {
@@ -7749,6 +8880,8 @@ static inline uint64_t CAVM_IOBNX_SOW_ORD_DIS(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
         return 0x87e0f00030a0ll + 0x1000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=2))
+        return 0x87e0f00030a0ll + 0x1000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
         return 0x87e0f00030a0ll + 0x1000000ll * ((a) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && (a==0))

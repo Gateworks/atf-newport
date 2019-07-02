@@ -1018,6 +1018,37 @@ union cavm_uaax_msix_vecx_addr
         uint64_t reserved_1            : 1;
         uint64_t secvec                : 1;  /**< [  0:  0](SR/W) Secure vector.
                                                                  0 = This vector may be read or written by either secure or nonsecure states.
+                                                                 1 = This vector's UAA()_MSIX_VEC()_ADDR, UAA()_MSIX_VEC()_CTL, and
+                                                                 corresponding bit of UAA()_MSIX_PBA() are RAZ/WI and does not cause a fault when accessed
+                                                                 by the nonsecure world.
+
+                                                                 If PCCPF_UAA()_VSEC_SCTL[MSIX_SEC] (for documentation, see
+                                                                 PCCPF_XXX_VSEC_SCTL[MSIX_SEC]) is set, all vectors are secure and function as if [SECVEC]
+                                                                 was set. */
+#else /* Word 0 - Little Endian */
+        uint64_t secvec                : 1;  /**< [  0:  0](SR/W) Secure vector.
+                                                                 0 = This vector may be read or written by either secure or nonsecure states.
+                                                                 1 = This vector's UAA()_MSIX_VEC()_ADDR, UAA()_MSIX_VEC()_CTL, and
+                                                                 corresponding bit of UAA()_MSIX_PBA() are RAZ/WI and does not cause a fault when accessed
+                                                                 by the nonsecure world.
+
+                                                                 If PCCPF_UAA()_VSEC_SCTL[MSIX_SEC] (for documentation, see
+                                                                 PCCPF_XXX_VSEC_SCTL[MSIX_SEC]) is set, all vectors are secure and function as if [SECVEC]
+                                                                 was set. */
+        uint64_t reserved_1            : 1;
+        uint64_t addr                  : 51; /**< [ 52:  2](R/W) IOVA to use for MSI-X delivery of this vector. */
+        uint64_t reserved_53_63        : 11;
+#endif /* Word 0 - End */
+    } cn9;
+    /* struct cavm_uaax_msix_vecx_addr_cn9 cn96xxp1; */
+    struct cavm_uaax_msix_vecx_addr_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_53_63        : 11;
+        uint64_t addr                  : 51; /**< [ 52:  2](R/W) IOVA to use for MSI-X delivery of this vector. */
+        uint64_t reserved_1            : 1;
+        uint64_t secvec                : 1;  /**< [  0:  0](SR/W) Secure vector.
+                                                                 0 = This vector may be read or written by either secure or nonsecure states.
                                                                  The vector's IOVA is sent to the SMMU as nonsecure (though this only affects
                                                                  physical addresses if PCCPF_XXX_VSEC_SCTL[MSIX_PHYS]=1).
 
@@ -1067,7 +1098,10 @@ union cavm_uaax_msix_vecx_addr
         uint64_t addr                  : 51; /**< [ 52:  2](R/W) IOVA to use for MSI-X delivery of this vector. */
         uint64_t reserved_53_63        : 11;
 #endif /* Word 0 - End */
-    } cn9;
+    } cn96xxp3;
+    /* struct cavm_uaax_msix_vecx_addr_cn96xxp3 cn98xx; */
+    /* struct cavm_uaax_msix_vecx_addr_cn96xxp3 cnf95xx; */
+    /* struct cavm_uaax_msix_vecx_addr_cn96xxp3 loki; */
 };
 typedef union cavm_uaax_msix_vecx_addr cavm_uaax_msix_vecx_addr_t;
 
@@ -1162,7 +1196,22 @@ union cavm_uaax_pidr0
         uint32_t reserved_8_31         : 24;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_uaax_pidr0_s cn; */
+    /* struct cavm_uaax_pidr0_s cn8; */
+    struct cavm_uaax_pidr0_cn9
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t reserved_8_31         : 24;
+        uint32_t partnum0              : 8;  /**< [  7:  0](RO) Part number \<7:0\>.  ARM-assigned PL011 compatible. */
+#else /* Word 0 - Little Endian */
+        uint32_t partnum0              : 8;  /**< [  7:  0](RO) Part number \<7:0\>.  ARM-assigned PL011 compatible. */
+        uint32_t reserved_8_31         : 24;
+#endif /* Word 0 - End */
+    } cn9;
+    /* struct cavm_uaax_pidr0_cn9 cn96xxp1; */
+    /* struct cavm_uaax_pidr0_s cn96xxp3; */
+    /* struct cavm_uaax_pidr0_s cn98xx; */
+    /* struct cavm_uaax_pidr0_s cnf95xx; */
+    /* struct cavm_uaax_pidr0_s loki; */
 };
 typedef union cavm_uaax_pidr0 cavm_uaax_pidr0_t;
 
@@ -1203,7 +1252,24 @@ union cavm_uaax_pidr1
         uint32_t reserved_8_31         : 24;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_uaax_pidr1_s cn; */
+    /* struct cavm_uaax_pidr1_s cn8; */
+    struct cavm_uaax_pidr1_cn9
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t reserved_8_31         : 24;
+        uint32_t idcode                : 4;  /**< [  7:  4](RO) ARM identification. */
+        uint32_t partnum1              : 4;  /**< [  3:  0](RO) Part number \<11:8\>.  ARM-assigned PL011 compatible. */
+#else /* Word 0 - Little Endian */
+        uint32_t partnum1              : 4;  /**< [  3:  0](RO) Part number \<11:8\>.  ARM-assigned PL011 compatible. */
+        uint32_t idcode                : 4;  /**< [  7:  4](RO) ARM identification. */
+        uint32_t reserved_8_31         : 24;
+#endif /* Word 0 - End */
+    } cn9;
+    /* struct cavm_uaax_pidr1_cn9 cn96xxp1; */
+    /* struct cavm_uaax_pidr1_s cn96xxp3; */
+    /* struct cavm_uaax_pidr1_s cn98xx; */
+    /* struct cavm_uaax_pidr1_s cnf95xx; */
+    /* struct cavm_uaax_pidr1_s loki; */
 };
 typedef union cavm_uaax_pidr1 cavm_uaax_pidr1_t;
 
@@ -1248,7 +1314,28 @@ union cavm_uaax_pidr2
         uint32_t reserved_8_31         : 24;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_uaax_pidr2_s cn; */
+    /* struct cavm_uaax_pidr2_s cn8; */
+    struct cavm_uaax_pidr2_cn9
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t reserved_8_31         : 24;
+        uint32_t revision              : 4;  /**< [  7:  4](RO) UART architectural revision.
+                                                                 0x3 = r1p5. */
+        uint32_t jedec                 : 1;  /**< [  3:  3](RO) JEDEC assigned. 0 = Legacy UART assignment. */
+        uint32_t idcode                : 3;  /**< [  2:  0](RO) ARM-design compatible. */
+#else /* Word 0 - Little Endian */
+        uint32_t idcode                : 3;  /**< [  2:  0](RO) ARM-design compatible. */
+        uint32_t jedec                 : 1;  /**< [  3:  3](RO) JEDEC assigned. 0 = Legacy UART assignment. */
+        uint32_t revision              : 4;  /**< [  7:  4](RO) UART architectural revision.
+                                                                 0x3 = r1p5. */
+        uint32_t reserved_8_31         : 24;
+#endif /* Word 0 - End */
+    } cn9;
+    /* struct cavm_uaax_pidr2_cn9 cn96xxp1; */
+    /* struct cavm_uaax_pidr2_s cn96xxp3; */
+    /* struct cavm_uaax_pidr2_s cn98xx; */
+    /* struct cavm_uaax_pidr2_s cnf95xx; */
+    /* struct cavm_uaax_pidr2_s loki; */
 };
 typedef union cavm_uaax_pidr2 cavm_uaax_pidr2_t;
 

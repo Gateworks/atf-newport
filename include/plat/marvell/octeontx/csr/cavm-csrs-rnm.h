@@ -388,14 +388,23 @@ union cavm_rnm_ctl_status
         uint64_t reserved_12_63        : 52;
 #endif /* Word 0 - End */
     } cn8;
-    struct cavm_rnm_ctl_status_cn96xxp1
+    struct cavm_rnm_ctl_status_cn9
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_15_63        : 49;
-        uint64_t reserved_13_14        : 2;
+        uint64_t lower_bandwidth_higher_entropy : 1;/**< [ 14: 14](SR/W) When clear, a new 64-bit random word is produced every 81 cycles. When set a new
+                                                                 64-bit random word is produced every 8*81=648 cycles. The slower operation
+                                                                 allows 8 times the entropy to be accumulated in each output. */
+        uint64_t xor_entropy_25x       : 1;  /**< [ 13: 13](SR/W) When set, entropy is increased 25 times. This puts the RNG unit in a mode
+                                                                 compatible with prior chip generations. However, because this XOR's the output
+                                                                 of multiple ring oscillators, this may not be compatible with FIPS 800-90B.
+
+                                                                 Internal:
+                                                                 When set, exporting raw entropy will result in ent_val being ignored and the
+                                                                 internal 5 bit XOR'd entropy being sent out (padded to 8 bits). */
         uint64_t force_clk             : 1;  /**< [ 12: 12](SR/W) When set, conditional clock is always on. For diagnostic use only. */
         uint64_t zuc_en                : 1;  /**< [ 11: 11](SR/W) Enable output of all ZUC engines. Before setting this bit software must write to
-                                                                 all RNM_ZUC()_INIT_LFSR(), and all RNM_ZUC()_INIT_NLF() registers. */
+                                                                 all RNM_ZUC()_INIT_LFSR() and all RNM_ZUC()_INIT_NLF() registers. */
         uint64_t eer_lck               : 1;  /**< [ 10: 10](SRO/H) Encryption enable register locked. */
         uint64_t eer_val               : 1;  /**< [  9:  9](SRO/H) Dormant encryption key match. */
         uint64_t ent_sel               : 4;  /**< [  8:  5](SR/W) Select input to RNM FIFO.
@@ -426,9 +435,9 @@ union cavm_rnm_ctl_status
                                                                  not automatically cleared. When [RNG_RST] = 1, reading RNM_RANDOM is unpredictable. */
         uint64_t rnm_rst               : 1;  /**< [  2:  2](SRO) Reserved. Writes are ignored for backward compatibility. */
         uint64_t rng_en                : 1;  /**< [  1:  1](SR/W) Enables the output of the RNG. When [RNG_RST] = 1, reading RNM_RANDOM is unpredictable. */
-        uint64_t ent_en                : 1;  /**< [  0:  0](SR/W) Turns off entropy source leading to deterministic non-random output. */
+        uint64_t ent_en                : 1;  /**< [  0:  0](SR/W) Entropy enable for random number generator. When [EXP_ENT] = 1, [ENT_EN] must be set to 1. */
 #else /* Word 0 - Little Endian */
-        uint64_t ent_en                : 1;  /**< [  0:  0](SR/W) Turns off entropy source leading to deterministic non-random output. */
+        uint64_t ent_en                : 1;  /**< [  0:  0](SR/W) Entropy enable for random number generator. When [EXP_ENT] = 1, [ENT_EN] must be set to 1. */
         uint64_t rng_en                : 1;  /**< [  1:  1](SR/W) Enables the output of the RNG. When [RNG_RST] = 1, reading RNM_RANDOM is unpredictable. */
         uint64_t rnm_rst               : 1;  /**< [  2:  2](SRO) Reserved. Writes are ignored for backward compatibility. */
         uint64_t rng_rst               : 1;  /**< [  3:  3](SR/W) Reset the RNG. Setting this bit to one cancels the generation of the current random
@@ -460,10 +469,95 @@ union cavm_rnm_ctl_status
         uint64_t eer_val               : 1;  /**< [  9:  9](SRO/H) Dormant encryption key match. */
         uint64_t eer_lck               : 1;  /**< [ 10: 10](SRO/H) Encryption enable register locked. */
         uint64_t zuc_en                : 1;  /**< [ 11: 11](SR/W) Enable output of all ZUC engines. Before setting this bit software must write to
-                                                                 all RNM_ZUC()_INIT_LFSR(), and all RNM_ZUC()_INIT_NLF() registers. */
+                                                                 all RNM_ZUC()_INIT_LFSR() and all RNM_ZUC()_INIT_NLF() registers. */
         uint64_t force_clk             : 1;  /**< [ 12: 12](SR/W) When set, conditional clock is always on. For diagnostic use only. */
-        uint64_t reserved_13_14        : 2;
+        uint64_t xor_entropy_25x       : 1;  /**< [ 13: 13](SR/W) When set, entropy is increased 25 times. This puts the RNG unit in a mode
+                                                                 compatible with prior chip generations. However, because this XOR's the output
+                                                                 of multiple ring oscillators, this may not be compatible with FIPS 800-90B.
+
+                                                                 Internal:
+                                                                 When set, exporting raw entropy will result in ent_val being ignored and the
+                                                                 internal 5 bit XOR'd entropy being sent out (padded to 8 bits). */
+        uint64_t lower_bandwidth_higher_entropy : 1;/**< [ 14: 14](SR/W) When clear, a new 64-bit random word is produced every 81 cycles. When set a new
+                                                                 64-bit random word is produced every 8*81=648 cycles. The slower operation
+                                                                 allows 8 times the entropy to be accumulated in each output. */
         uint64_t reserved_15_63        : 49;
+#endif /* Word 0 - End */
+    } cn9;
+    struct cavm_rnm_ctl_status_cn96xxp1
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_13_63        : 51;
+        uint64_t force_clk             : 1;  /**< [ 12: 12](SR/W) When set, conditional clock is always on. For diagnostic use only. */
+        uint64_t zuc_en                : 1;  /**< [ 11: 11](SR/W) Enable output of all ZUC engines. Before setting this bit software must write to
+                                                                 all RNM_ZUC()_INIT_LFSR() and all RNM_ZUC()_INIT_NLF() registers. */
+        uint64_t eer_lck               : 1;  /**< [ 10: 10](SRO/H) Encryption enable register locked. */
+        uint64_t eer_val               : 1;  /**< [  9:  9](SRO/H) Dormant encryption key match. */
+        uint64_t ent_sel               : 4;  /**< [  8:  5](SR/W) Select input to RNM FIFO.
+                                                                 0x0 = 0-7.
+                                                                 0x1 = 8-15.
+                                                                 0x2 = 16-23.
+                                                                 0x3 = 24-31.
+                                                                 0x4 = 32-39.
+                                                                 0x5 = 40-47.
+                                                                 0x6 = 48-55.
+                                                                 0x7 = 56-63.
+                                                                 0x8 = 64-71.
+                                                                 0x9 = 72-79.
+                                                                 0xA = 80-87.
+                                                                 0xB = 88-95.
+                                                                 0xC = 96-103.
+                                                                 0xD = 104-111.
+                                                                 0xE = 112-119.
+                                                                 0xF = 120-127. */
+        uint64_t exp_ent               : 1;  /**< [  4:  4](SR/W) Exported entropy enable for random number generator. The next random number is
+                                                                 available 80 coprocessor-clock cycles after switching this bit from zero to one. The
+                                                                 next random number is available 730 coprocessor-clock cycles after switching this
+                                                                 bit from one to zero. When [EXP_ENT] = 1, [ENT_EN] must be set to 1. For diagnostic use only. */
+        uint64_t rng_rst               : 1;  /**< [  3:  3](SR/W) Reset the RNG. Setting this bit to one cancels the generation of the current random
+                                                                 number. The next random number is available 730 coprocessor-clock cycles after this
+                                                                 bit is cleared if [EXP_ENT] is set to zero. The next random number is available 80
+                                                                 coprocessor-clock cycles after this bit is cleared if [EXP_ENT] is set to one. This bit is
+                                                                 not automatically cleared. When [RNG_RST] = 1, reading RNM_RANDOM is unpredictable. */
+        uint64_t rnm_rst               : 1;  /**< [  2:  2](SRO) Reserved. Writes are ignored for backward compatibility. */
+        uint64_t rng_en                : 1;  /**< [  1:  1](SR/W) Enables the output of the RNG. When [RNG_RST] = 1, reading RNM_RANDOM is unpredictable. */
+        uint64_t ent_en                : 1;  /**< [  0:  0](SR/W) Entropy enable for random number generator. When [EXP_ENT] = 1, [ENT_EN] must be set to 1. */
+#else /* Word 0 - Little Endian */
+        uint64_t ent_en                : 1;  /**< [  0:  0](SR/W) Entropy enable for random number generator. When [EXP_ENT] = 1, [ENT_EN] must be set to 1. */
+        uint64_t rng_en                : 1;  /**< [  1:  1](SR/W) Enables the output of the RNG. When [RNG_RST] = 1, reading RNM_RANDOM is unpredictable. */
+        uint64_t rnm_rst               : 1;  /**< [  2:  2](SRO) Reserved. Writes are ignored for backward compatibility. */
+        uint64_t rng_rst               : 1;  /**< [  3:  3](SR/W) Reset the RNG. Setting this bit to one cancels the generation of the current random
+                                                                 number. The next random number is available 730 coprocessor-clock cycles after this
+                                                                 bit is cleared if [EXP_ENT] is set to zero. The next random number is available 80
+                                                                 coprocessor-clock cycles after this bit is cleared if [EXP_ENT] is set to one. This bit is
+                                                                 not automatically cleared. When [RNG_RST] = 1, reading RNM_RANDOM is unpredictable. */
+        uint64_t exp_ent               : 1;  /**< [  4:  4](SR/W) Exported entropy enable for random number generator. The next random number is
+                                                                 available 80 coprocessor-clock cycles after switching this bit from zero to one. The
+                                                                 next random number is available 730 coprocessor-clock cycles after switching this
+                                                                 bit from one to zero. When [EXP_ENT] = 1, [ENT_EN] must be set to 1. For diagnostic use only. */
+        uint64_t ent_sel               : 4;  /**< [  8:  5](SR/W) Select input to RNM FIFO.
+                                                                 0x0 = 0-7.
+                                                                 0x1 = 8-15.
+                                                                 0x2 = 16-23.
+                                                                 0x3 = 24-31.
+                                                                 0x4 = 32-39.
+                                                                 0x5 = 40-47.
+                                                                 0x6 = 48-55.
+                                                                 0x7 = 56-63.
+                                                                 0x8 = 64-71.
+                                                                 0x9 = 72-79.
+                                                                 0xA = 80-87.
+                                                                 0xB = 88-95.
+                                                                 0xC = 96-103.
+                                                                 0xD = 104-111.
+                                                                 0xE = 112-119.
+                                                                 0xF = 120-127. */
+        uint64_t eer_val               : 1;  /**< [  9:  9](SRO/H) Dormant encryption key match. */
+        uint64_t eer_lck               : 1;  /**< [ 10: 10](SRO/H) Encryption enable register locked. */
+        uint64_t zuc_en                : 1;  /**< [ 11: 11](SR/W) Enable output of all ZUC engines. Before setting this bit software must write to
+                                                                 all RNM_ZUC()_INIT_LFSR() and all RNM_ZUC()_INIT_NLF() registers. */
+        uint64_t force_clk             : 1;  /**< [ 12: 12](SR/W) When set, conditional clock is always on. For diagnostic use only. */
+        uint64_t reserved_13_63        : 51;
 #endif /* Word 0 - End */
     } cn96xxp1;
     struct cavm_rnm_ctl_status_cn96xxp3
@@ -566,83 +660,9 @@ union cavm_rnm_ctl_status
         uint64_t reserved_15_63        : 49;
 #endif /* Word 0 - End */
     } cn96xxp3;
-    struct cavm_rnm_ctl_status_cnf95xx
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_13_63        : 51;
-        uint64_t force_clk             : 1;  /**< [ 12: 12](SR/W) When set, conditional clock is always on. For diagnostic use only. */
-        uint64_t zuc_en                : 1;  /**< [ 11: 11](SR/W) Enable output of all ZUC engines. Before setting this bit software must write to
-                                                                 all RNM_ZUC()_INIT_LFSR() and all RNM_ZUC()_INIT_NLF() registers. */
-        uint64_t eer_lck               : 1;  /**< [ 10: 10](SRO/H) Encryption enable register locked. */
-        uint64_t eer_val               : 1;  /**< [  9:  9](SRO/H) Dormant encryption key match. */
-        uint64_t ent_sel               : 4;  /**< [  8:  5](SR/W) Select input to RNM FIFO.
-                                                                 0x0 = 0-7.
-                                                                 0x1 = 8-15.
-                                                                 0x2 = 16-23.
-                                                                 0x3 = 24-31.
-                                                                 0x4 = 32-39.
-                                                                 0x5 = 40-47.
-                                                                 0x6 = 48-55.
-                                                                 0x7 = 56-63.
-                                                                 0x8 = 64-71.
-                                                                 0x9 = 72-79.
-                                                                 0xA = 80-87.
-                                                                 0xB = 88-95.
-                                                                 0xC = 96-103.
-                                                                 0xD = 104-111.
-                                                                 0xE = 112-119.
-                                                                 0xF = 120-127. */
-        uint64_t exp_ent               : 1;  /**< [  4:  4](SR/W) Exported entropy enable for random number generator. The next random number is
-                                                                 available 80 coprocessor-clock cycles after switching this bit from zero to one. The
-                                                                 next random number is available 730 coprocessor-clock cycles after switching this
-                                                                 bit from one to zero. When [EXP_ENT] = 1, [ENT_EN] must be set to 1. For diagnostic use only. */
-        uint64_t rng_rst               : 1;  /**< [  3:  3](SR/W) Reset the RNG. Setting this bit to one cancels the generation of the current random
-                                                                 number. The next random number is available 730 coprocessor-clock cycles after this
-                                                                 bit is cleared if [EXP_ENT] is set to zero. The next random number is available 80
-                                                                 coprocessor-clock cycles after this bit is cleared if [EXP_ENT] is set to one. This bit is
-                                                                 not automatically cleared. When [RNG_RST] = 1, reading RNM_RANDOM is unpredictable. */
-        uint64_t rnm_rst               : 1;  /**< [  2:  2](SRO) Reserved. Writes are ignored for backward compatibility. */
-        uint64_t rng_en                : 1;  /**< [  1:  1](SR/W) Enables the output of the RNG. When [RNG_RST] = 1, reading RNM_RANDOM is unpredictable. */
-        uint64_t ent_en                : 1;  /**< [  0:  0](SR/W) Entropy enable for random number generator. When [EXP_ENT] = 1, [ENT_EN] must be set to 1. */
-#else /* Word 0 - Little Endian */
-        uint64_t ent_en                : 1;  /**< [  0:  0](SR/W) Entropy enable for random number generator. When [EXP_ENT] = 1, [ENT_EN] must be set to 1. */
-        uint64_t rng_en                : 1;  /**< [  1:  1](SR/W) Enables the output of the RNG. When [RNG_RST] = 1, reading RNM_RANDOM is unpredictable. */
-        uint64_t rnm_rst               : 1;  /**< [  2:  2](SRO) Reserved. Writes are ignored for backward compatibility. */
-        uint64_t rng_rst               : 1;  /**< [  3:  3](SR/W) Reset the RNG. Setting this bit to one cancels the generation of the current random
-                                                                 number. The next random number is available 730 coprocessor-clock cycles after this
-                                                                 bit is cleared if [EXP_ENT] is set to zero. The next random number is available 80
-                                                                 coprocessor-clock cycles after this bit is cleared if [EXP_ENT] is set to one. This bit is
-                                                                 not automatically cleared. When [RNG_RST] = 1, reading RNM_RANDOM is unpredictable. */
-        uint64_t exp_ent               : 1;  /**< [  4:  4](SR/W) Exported entropy enable for random number generator. The next random number is
-                                                                 available 80 coprocessor-clock cycles after switching this bit from zero to one. The
-                                                                 next random number is available 730 coprocessor-clock cycles after switching this
-                                                                 bit from one to zero. When [EXP_ENT] = 1, [ENT_EN] must be set to 1. For diagnostic use only. */
-        uint64_t ent_sel               : 4;  /**< [  8:  5](SR/W) Select input to RNM FIFO.
-                                                                 0x0 = 0-7.
-                                                                 0x1 = 8-15.
-                                                                 0x2 = 16-23.
-                                                                 0x3 = 24-31.
-                                                                 0x4 = 32-39.
-                                                                 0x5 = 40-47.
-                                                                 0x6 = 48-55.
-                                                                 0x7 = 56-63.
-                                                                 0x8 = 64-71.
-                                                                 0x9 = 72-79.
-                                                                 0xA = 80-87.
-                                                                 0xB = 88-95.
-                                                                 0xC = 96-103.
-                                                                 0xD = 104-111.
-                                                                 0xE = 112-119.
-                                                                 0xF = 120-127. */
-        uint64_t eer_val               : 1;  /**< [  9:  9](SRO/H) Dormant encryption key match. */
-        uint64_t eer_lck               : 1;  /**< [ 10: 10](SRO/H) Encryption enable register locked. */
-        uint64_t zuc_en                : 1;  /**< [ 11: 11](SR/W) Enable output of all ZUC engines. Before setting this bit software must write to
-                                                                 all RNM_ZUC()_INIT_LFSR() and all RNM_ZUC()_INIT_NLF() registers. */
-        uint64_t force_clk             : 1;  /**< [ 12: 12](SR/W) When set, conditional clock is always on. For diagnostic use only. */
-        uint64_t reserved_13_63        : 51;
-#endif /* Word 0 - End */
-    } cnf95xx;
-    /* struct cavm_rnm_ctl_status_cnf95xx loki; */
+    /* struct cavm_rnm_ctl_status_cn96xxp3 cn98xx; */
+    /* struct cavm_rnm_ctl_status_cn96xxp1 cnf95xx; */
+    /* struct cavm_rnm_ctl_status_cn96xxp1 loki; */
 };
 typedef union cavm_rnm_ctl_status cavm_rnm_ctl_status_t;
 
@@ -741,6 +761,8 @@ static inline uint64_t CAVM_RNM_HEALTH_STATUS_FUNC(void) __attribute__ ((pure, a
 static inline uint64_t CAVM_RNM_HEALTH_STATUS_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X))
+        return 0x87e00f000038ll;
+    if (cavm_is_model(OCTEONTX_CN98XX))
         return 0x87e00f000038ll;
     __cavm_csr_fatal("RNM_HEALTH_STATUS", 0, 0, 0, 0, 0, 0, 0);
 }
@@ -877,7 +899,13 @@ typedef union cavm_rnm_zucx_init_lfsrx cavm_rnm_zucx_init_lfsrx_t;
 static inline uint64_t CAVM_RNM_ZUCX_INIT_LFSRX(unsigned long a, unsigned long b) __attribute__ ((pure, always_inline));
 static inline uint64_t CAVM_RNM_ZUCX_INIT_LFSRX(unsigned long a, unsigned long b)
 {
-    if (cavm_is_model(OCTEONTX_CN9XXX) && ((a==0) && (b<=15)))
+    if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=15)))
+        return 0x87e00f000100ll + 0x400ll * ((a) & 0x0) + 8ll * ((b) & 0xf);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=15)))
+        return 0x87e00f000100ll + 0x400ll * ((a) & 0x1) + 8ll * ((b) & 0xf);
+    if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=15)))
+        return 0x87e00f000100ll + 0x400ll * ((a) & 0x0) + 8ll * ((b) & 0xf);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=15)))
         return 0x87e00f000100ll + 0x400ll * ((a) & 0x0) + 8ll * ((b) & 0xf);
     __cavm_csr_fatal("RNM_ZUCX_INIT_LFSRX", 2, a, b, 0, 0, 0, 0);
 }
@@ -921,7 +949,13 @@ typedef union cavm_rnm_zucx_init_nlfx cavm_rnm_zucx_init_nlfx_t;
 static inline uint64_t CAVM_RNM_ZUCX_INIT_NLFX(unsigned long a, unsigned long b) __attribute__ ((pure, always_inline));
 static inline uint64_t CAVM_RNM_ZUCX_INIT_NLFX(unsigned long a, unsigned long b)
 {
-    if (cavm_is_model(OCTEONTX_CN9XXX) && ((a==0) && (b<=1)))
+    if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=1)))
+        return 0x87e00f000200ll + 0x400ll * ((a) & 0x0) + 8ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=1)))
+        return 0x87e00f000200ll + 0x400ll * ((a) & 0x1) + 8ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=1)))
+        return 0x87e00f000200ll + 0x400ll * ((a) & 0x0) + 8ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=1)))
         return 0x87e00f000200ll + 0x400ll * ((a) & 0x0) + 8ll * ((b) & 0x1);
     __cavm_csr_fatal("RNM_ZUCX_INIT_NLFX", 2, a, b, 0, 0, 0, 0);
 }

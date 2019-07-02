@@ -834,7 +834,9 @@ union cavm_mio_twsx_msix_vecx_addr
         uint64_t reserved_49_63        : 15;
 #endif /* Word 0 - End */
     } cn8;
-    struct cavm_mio_twsx_msix_vecx_addr_cn9
+    /* struct cavm_mio_twsx_msix_vecx_addr_s cn9; */
+    /* struct cavm_mio_twsx_msix_vecx_addr_s cn96xxp1; */
+    struct cavm_mio_twsx_msix_vecx_addr_cn96xxp3
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_53_63        : 11;
@@ -891,7 +893,10 @@ union cavm_mio_twsx_msix_vecx_addr
         uint64_t addr                  : 51; /**< [ 52:  2](R/W) IOVA to use for MSI-X delivery of this vector. */
         uint64_t reserved_53_63        : 11;
 #endif /* Word 0 - End */
-    } cn9;
+    } cn96xxp3;
+    /* struct cavm_mio_twsx_msix_vecx_addr_cn96xxp3 cn98xx; */
+    /* struct cavm_mio_twsx_msix_vecx_addr_cn96xxp3 cnf95xx; */
+    /* struct cavm_mio_twsx_msix_vecx_addr_cn96xxp3 loki; */
 };
 typedef union cavm_mio_twsx_msix_vecx_addr cavm_mio_twsx_msix_vecx_addr_t;
 
@@ -1430,6 +1435,40 @@ union cavm_mio_twsx_twsi_block_ctl
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_33_63        : 31;
+        uint64_t slave_vbyte           : 1;  /**< [ 32: 32](R/W) When this mode set to 1 in block mode, slave mode read response will include
+                                                                 an extra V byte rest of the data transmission. The definition of V byte is compatible
+                                                                 with 1 byte/4 byte slave response. */
+        uint64_t reserved_27_31        : 5;
+        uint64_t block_thresh          : 11; /**< [ 26: 16](R/W) Block mode interrupt threshold, from 0-1024, 0x0 disables the
+                                                                 interrupt. MIO_TWS()_INT[BLOCK_INT] interrupt will fire when the number of
+                                                                 remaining bytes to be sent/received is less than threshold. If the number of
+                                                                 bytes to be sent/received is less than threshold [BLOCK_THRESH], the interrupt
+                                                                 will fire immediately. This interrupt is enabled only in HLC block mode. */
+        uint64_t reserved_10_15        : 6;
+        uint64_t block_size            : 10; /**< [  9:  0](R/W) Block mode FIFO transmission/receiving data size minus one,
+                                                                 valid value from 0-1023, corresponding to 1-1024 bytes to be sent/received. */
+#else /* Word 0 - Little Endian */
+        uint64_t block_size            : 10; /**< [  9:  0](R/W) Block mode FIFO transmission/receiving data size minus one,
+                                                                 valid value from 0-1023, corresponding to 1-1024 bytes to be sent/received. */
+        uint64_t reserved_10_15        : 6;
+        uint64_t block_thresh          : 11; /**< [ 26: 16](R/W) Block mode interrupt threshold, from 0-1024, 0x0 disables the
+                                                                 interrupt. MIO_TWS()_INT[BLOCK_INT] interrupt will fire when the number of
+                                                                 remaining bytes to be sent/received is less than threshold. If the number of
+                                                                 bytes to be sent/received is less than threshold [BLOCK_THRESH], the interrupt
+                                                                 will fire immediately. This interrupt is enabled only in HLC block mode. */
+        uint64_t reserved_27_31        : 5;
+        uint64_t slave_vbyte           : 1;  /**< [ 32: 32](R/W) When this mode set to 1 in block mode, slave mode read response will include
+                                                                 an extra V byte rest of the data transmission. The definition of V byte is compatible
+                                                                 with 1 byte/4 byte slave response. */
+        uint64_t reserved_33_63        : 31;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_mio_twsx_twsi_block_ctl_s cn9; */
+    /* struct cavm_mio_twsx_twsi_block_ctl_s cn96xxp1; */
+    struct cavm_mio_twsx_twsi_block_ctl_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_33_63        : 31;
         uint64_t slave_vbyte           : 1;  /**< [ 32: 32](R/W) Reserved. */
         uint64_t reserved_27_31        : 5;
         uint64_t block_thresh          : 11; /**< [ 26: 16](R/W) Block mode interrupt threshold, from 0-1024, 0x0 disables the
@@ -1453,8 +1492,11 @@ union cavm_mio_twsx_twsi_block_ctl
         uint64_t slave_vbyte           : 1;  /**< [ 32: 32](R/W) Reserved. */
         uint64_t reserved_33_63        : 31;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_mio_twsx_twsi_block_ctl_s cn; */
+    } cn96xxp3;
+    /* struct cavm_mio_twsx_twsi_block_ctl_cn96xxp3 cn98xx; */
+    /* struct cavm_mio_twsx_twsi_block_ctl_s cnf95xxp1; */
+    /* struct cavm_mio_twsx_twsi_block_ctl_cn96xxp3 cnf95xxp2; */
+    /* struct cavm_mio_twsx_twsi_block_ctl_cn96xxp3 loki; */
 };
 typedef union cavm_mio_twsx_twsi_block_ctl cavm_mio_twsx_twsi_block_ctl_t;
 

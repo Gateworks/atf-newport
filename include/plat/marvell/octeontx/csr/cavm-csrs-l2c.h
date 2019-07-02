@@ -1494,6 +1494,7 @@ union cavm_l2c_tadx_prf
         uint64_t reserved_32_63        : 32;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_l2c_tadx_prf_s cn8; */
     /* struct cavm_l2c_tadx_prf_s cn81xx; */
     struct cavm_l2c_tadx_prf_cn83xx
     {
@@ -1628,6 +1629,7 @@ union cavm_l2c_tadx_tag
                                                                  (0), [SBLKDTY] must be 0 or operation is undefined. */
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_l2c_tadx_tag_s cn8; */
     struct cavm_l2c_tadx_tag_cn81xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */

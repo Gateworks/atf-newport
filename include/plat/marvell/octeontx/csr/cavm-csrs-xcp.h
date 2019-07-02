@@ -1122,6 +1122,46 @@ union cavm_xcpx_cwd_wdog
     struct cavm_xcpx_cwd_wdog_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t gstop                 : 1;  /**< [ 31: 31](R/W) Global-stop enable. Global stop is asserted if the other XCP or any of the ARM
+                                                                 cores are in debug mode. */
+        uint32_t dstop                 : 1;  /**< [ 30: 30](R/W) Debug-stop enable. Debug stop is asserted if the local XCP is in debug mode. */
+        uint32_t cnt                   : 17; /**< [ 29: 13](R/W/H) Number of 10,240 us intervals until next watchdog expiration. Set on write to
+                                                                 associated XCP()_CWD_POKE.
+
+                                                                 Typically on each write to XCP()_CWD_WDOG, [CNT] should be set to [LEN] * 0x100. */
+        uint32_t len                   : 9;  /**< [ 12:  4](R/W) Watchdog time-expiration length. The most-significant nine bits of a 17-bit value to be
+                                                                 decremented every 10,240 us. */
+        uint32_t state                 : 2;  /**< [  3:  2](R/W/H) Watchdog state. The number of watchdog time expirations since last core poke. Cleared on
+                                                                 write to associated XCP()_CWD_POKE. */
+        uint32_t mode                  : 2;  /**< [  1:  0](R/W) Watchdog mode:
+                                                                 0x0 = Off.
+                                                                 0x1 = (Maskable) Interrupt only.
+                                                                 0x2 = (Maskable) Interrupt + NMI.
+                                                                 0x3 = (Maskable) Interrupt + NMI + MCP or SCP domain reset. */
+#else /* Word 0 - Little Endian */
+        uint32_t mode                  : 2;  /**< [  1:  0](R/W) Watchdog mode:
+                                                                 0x0 = Off.
+                                                                 0x1 = (Maskable) Interrupt only.
+                                                                 0x2 = (Maskable) Interrupt + NMI.
+                                                                 0x3 = (Maskable) Interrupt + NMI + MCP or SCP domain reset. */
+        uint32_t state                 : 2;  /**< [  3:  2](R/W/H) Watchdog state. The number of watchdog time expirations since last core poke. Cleared on
+                                                                 write to associated XCP()_CWD_POKE. */
+        uint32_t len                   : 9;  /**< [ 12:  4](R/W) Watchdog time-expiration length. The most-significant nine bits of a 17-bit value to be
+                                                                 decremented every 10,240 us. */
+        uint32_t cnt                   : 17; /**< [ 29: 13](R/W/H) Number of 10,240 us intervals until next watchdog expiration. Set on write to
+                                                                 associated XCP()_CWD_POKE.
+
+                                                                 Typically on each write to XCP()_CWD_WDOG, [CNT] should be set to [LEN] * 0x100. */
+        uint32_t dstop                 : 1;  /**< [ 30: 30](R/W) Debug-stop enable. Debug stop is asserted if the local XCP is in debug mode. */
+        uint32_t gstop                 : 1;  /**< [ 31: 31](R/W) Global-stop enable. Global stop is asserted if the other XCP or any of the ARM
+                                                                 cores are in debug mode. */
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_xcpx_cwd_wdog_s cn9; */
+    /* struct cavm_xcpx_cwd_wdog_s cn96xxp1; */
+    struct cavm_xcpx_cwd_wdog_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t gstop                 : 1;  /**< [ 31: 31](R/W) Global-stop enable. Global stop is asserted if the other XCP or any of the Arm
                                                                  cores are in debug mode. */
         uint32_t dstop                 : 1;  /**< [ 30: 30](R/W) Debug-stop enable. Debug stop is asserted if the local XCP is in debug mode. */
@@ -1156,8 +1196,10 @@ union cavm_xcpx_cwd_wdog
         uint32_t gstop                 : 1;  /**< [ 31: 31](R/W) Global-stop enable. Global stop is asserted if the other XCP or any of the Arm
                                                                  cores are in debug mode. */
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_xcpx_cwd_wdog_s cn; */
+    } cn96xxp3;
+    /* struct cavm_xcpx_cwd_wdog_cn96xxp3 cn98xx; */
+    /* struct cavm_xcpx_cwd_wdog_cn96xxp3 cnf95xx; */
+    /* struct cavm_xcpx_cwd_wdog_cn96xxp3 loki; */
 };
 typedef union cavm_xcpx_cwd_wdog cavm_xcpx_cwd_wdog_t;
 
@@ -1826,6 +1868,36 @@ union cavm_xcpx_msix_vecx_addr
         uint64_t reserved_1            : 1;
         uint64_t secvec                : 1;  /**< [  0:  0](SR/W) Secure vector.
                                                                  0 = This vector may be read or written by either secure or nonsecure states.
+                                                                 1 = This vector's XCP()_MSIX_VEC()_ADDR, XCP()_MSIX_VEC()_CTL, and corresponding
+                                                                 bit of XCP()_MSIX_PBA() are RAZ/WI and does not cause a fault when accessed
+                                                                 by the nonsecure world.
+
+                                                                 If PCCPF_XCP_VSEC_SCTL[MSIX_SEC] (for documentation, see PCCPF_XXX_VSEC_SCTL[MSIX_SEC]) is
+                                                                 set, all vectors are secure and function as if [SECVEC] was set. */
+#else /* Word 0 - Little Endian */
+        uint64_t secvec                : 1;  /**< [  0:  0](SR/W) Secure vector.
+                                                                 0 = This vector may be read or written by either secure or nonsecure states.
+                                                                 1 = This vector's XCP()_MSIX_VEC()_ADDR, XCP()_MSIX_VEC()_CTL, and corresponding
+                                                                 bit of XCP()_MSIX_PBA() are RAZ/WI and does not cause a fault when accessed
+                                                                 by the nonsecure world.
+
+                                                                 If PCCPF_XCP_VSEC_SCTL[MSIX_SEC] (for documentation, see PCCPF_XXX_VSEC_SCTL[MSIX_SEC]) is
+                                                                 set, all vectors are secure and function as if [SECVEC] was set. */
+        uint64_t reserved_1            : 1;
+        uint64_t addr                  : 51; /**< [ 52:  2](R/W) IOVA to use for MSI-X delivery of this vector. */
+        uint64_t reserved_53_63        : 11;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_xcpx_msix_vecx_addr_s cn9; */
+    /* struct cavm_xcpx_msix_vecx_addr_s cn96xxp1; */
+    struct cavm_xcpx_msix_vecx_addr_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_53_63        : 11;
+        uint64_t addr                  : 51; /**< [ 52:  2](R/W) IOVA to use for MSI-X delivery of this vector. */
+        uint64_t reserved_1            : 1;
+        uint64_t secvec                : 1;  /**< [  0:  0](SR/W) Secure vector.
+                                                                 0 = This vector may be read or written by either secure or nonsecure states.
                                                                  The vector's IOVA is sent to the SMMU as nonsecure (though this only affects
                                                                  physical addresses if PCCPF_XXX_VSEC_SCTL[MSIX_PHYS]=1).
 
@@ -1873,8 +1945,10 @@ union cavm_xcpx_msix_vecx_addr
         uint64_t addr                  : 51; /**< [ 52:  2](R/W) IOVA to use for MSI-X delivery of this vector. */
         uint64_t reserved_53_63        : 11;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_xcpx_msix_vecx_addr_s cn; */
+    } cn96xxp3;
+    /* struct cavm_xcpx_msix_vecx_addr_cn96xxp3 cn98xx; */
+    /* struct cavm_xcpx_msix_vecx_addr_cn96xxp3 cnf95xx; */
+    /* struct cavm_xcpx_msix_vecx_addr_cn96xxp3 loki; */
 };
 typedef union cavm_xcpx_msix_vecx_addr cavm_xcpx_msix_vecx_addr_t;
 

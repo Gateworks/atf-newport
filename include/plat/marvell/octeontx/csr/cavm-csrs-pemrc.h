@@ -81,7 +81,9 @@ static inline uint64_t CAVM_PEMRCX_MSIX_PBAX(unsigned long a, unsigned long b)
         return 0x87e0c0ef0000ll + 0x1000000ll * ((a) & 0x3) + 8ll * ((b) & 0x0);
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=3) && (b==0)))
         return 0x8e0e000f0000ll + 0x1000000000ll * ((a) & 0x3) + 8ll * ((b) & 0x0);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b==0)))
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=4) && (b==0)))
+        return 0x8e0e000f0000ll + 0x1000000000ll * ((a) & 0x7) + 8ll * ((b) & 0x0);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && ((a==0) && (b==0)))
         return 0x8e0e000f0000ll + 0x1000000000ll * ((a) & 0x0) + 8ll * ((b) & 0x0);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b==0)))
         return 0x8e0e000f0000ll + 0x1000000000ll * ((a) & 0x0) + 8ll * ((b) & 0x0);
@@ -134,7 +136,7 @@ union cavm_pemrcx_msix_vecx_addr
         uint64_t reserved_53_63        : 11;
 #endif /* Word 0 - End */
     } s;
-    struct cavm_pemrcx_msix_vecx_addr_cn81xx
+    struct cavm_pemrcx_msix_vecx_addr_cn8
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_49_63        : 15;
@@ -163,7 +165,8 @@ union cavm_pemrcx_msix_vecx_addr
         uint64_t addr                  : 47; /**< [ 48:  2](R/W) IOVA to use for MSI-X delivery of this vector. */
         uint64_t reserved_49_63        : 15;
 #endif /* Word 0 - End */
-    } cn81xx;
+    } cn8;
+    /* struct cavm_pemrcx_msix_vecx_addr_cn8 cn81xx; */
     struct cavm_pemrcx_msix_vecx_addr_cn83xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -202,6 +205,37 @@ union cavm_pemrcx_msix_vecx_addr
         uint64_t reserved_1            : 1;
         uint64_t secvec                : 1;  /**< [  0:  0](SR/W) Secure vector.
                                                                  0 = This vector may be read or written by either secure or nonsecure states.
+                                                                 1 = This vector's PEM()_MSIX_VEC()_ADDR, PEM()_MSIX_VEC()_CTL, and
+                                                                 corresponding bit of PEM()_MSIX_PBA() are RAZ/WI and does not cause a fault when accessed
+                                                                 by the nonsecure world.
+
+                                                                 If PCCPF_PEM()_VSEC_SCTL[MSIX_SEC] (for documentation, see
+                                                                 PCCPF_XXX_VSEC_SCTL[MSIX_SEC]) is
+                                                                 set, all vectors are secure and function as if [SECVEC] was set. */
+#else /* Word 0 - Little Endian */
+        uint64_t secvec                : 1;  /**< [  0:  0](SR/W) Secure vector.
+                                                                 0 = This vector may be read or written by either secure or nonsecure states.
+                                                                 1 = This vector's PEM()_MSIX_VEC()_ADDR, PEM()_MSIX_VEC()_CTL, and
+                                                                 corresponding bit of PEM()_MSIX_PBA() are RAZ/WI and does not cause a fault when accessed
+                                                                 by the nonsecure world.
+
+                                                                 If PCCPF_PEM()_VSEC_SCTL[MSIX_SEC] (for documentation, see
+                                                                 PCCPF_XXX_VSEC_SCTL[MSIX_SEC]) is
+                                                                 set, all vectors are secure and function as if [SECVEC] was set. */
+        uint64_t reserved_1            : 1;
+        uint64_t addr                  : 51; /**< [ 52:  2](R/W) IOVA to use for MSI-X delivery of this vector. */
+        uint64_t reserved_53_63        : 11;
+#endif /* Word 0 - End */
+    } cn9;
+    /* struct cavm_pemrcx_msix_vecx_addr_cn9 cn96xxp1; */
+    struct cavm_pemrcx_msix_vecx_addr_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_53_63        : 11;
+        uint64_t addr                  : 51; /**< [ 52:  2](R/W) IOVA to use for MSI-X delivery of this vector. */
+        uint64_t reserved_1            : 1;
+        uint64_t secvec                : 1;  /**< [  0:  0](SR/W) Secure vector.
+                                                                 0 = This vector may be read or written by either secure or nonsecure states.
                                                                  The vector's IOVA is sent to the SMMU as nonsecure (though this only affects
                                                                  physical addresses if PCCPF_XXX_VSEC_SCTL[MSIX_PHYS]=1).
 
@@ -251,7 +285,10 @@ union cavm_pemrcx_msix_vecx_addr
         uint64_t addr                  : 51; /**< [ 52:  2](R/W) IOVA to use for MSI-X delivery of this vector. */
         uint64_t reserved_53_63        : 11;
 #endif /* Word 0 - End */
-    } cn9;
+    } cn96xxp3;
+    /* struct cavm_pemrcx_msix_vecx_addr_cn96xxp3 cn98xx; */
+    /* struct cavm_pemrcx_msix_vecx_addr_cn96xxp3 cnf95xx; */
+    /* struct cavm_pemrcx_msix_vecx_addr_cn96xxp3 loki; */
 };
 typedef union cavm_pemrcx_msix_vecx_addr cavm_pemrcx_msix_vecx_addr_t;
 
@@ -264,7 +301,9 @@ static inline uint64_t CAVM_PEMRCX_MSIX_VECX_ADDR(unsigned long a, unsigned long
         return 0x87e0c0e00000ll + 0x1000000ll * ((a) & 0x3) + 0x10ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=3) && (b<=1)))
         return 0x8e0e00000000ll + 0x1000000000ll * ((a) & 0x3) + 0x10ll * ((b) & 0x1);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=1)))
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=4) && (b<=1)))
+        return 0x8e0e00000000ll + 0x1000000000ll * ((a) & 0x7) + 0x10ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && ((a==0) && (b<=1)))
         return 0x8e0e00000000ll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=1)))
         return 0x8e0e00000000ll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0x1);
@@ -326,7 +365,9 @@ static inline uint64_t CAVM_PEMRCX_MSIX_VECX_CTL(unsigned long a, unsigned long 
         return 0x87e0c0e00008ll + 0x1000000ll * ((a) & 0x3) + 0x10ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=3) && (b<=1)))
         return 0x8e0e00000008ll + 0x1000000000ll * ((a) & 0x3) + 0x10ll * ((b) & 0x1);
-    if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=1)))
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=4) && (b<=1)))
+        return 0x8e0e00000008ll + 0x1000000000ll * ((a) & 0x7) + 0x10ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && ((a==0) && (b<=1)))
         return 0x8e0e00000008ll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=1)))
         return 0x8e0e00000008ll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0x1);

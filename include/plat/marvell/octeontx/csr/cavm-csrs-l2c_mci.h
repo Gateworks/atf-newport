@@ -59,6 +59,7 @@ union cavm_l2c_mcix_int_ena_w1c
         uint64_t reserved_2_63         : 62;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_l2c_mcix_int_ena_w1c_s cn8; */
     /* struct cavm_l2c_mcix_int_ena_w1c_s cn81xx; */
     struct cavm_l2c_mcix_int_ena_w1c_cn83xx
     {
@@ -113,6 +114,7 @@ union cavm_l2c_mcix_int_ena_w1s
         uint64_t reserved_2_63         : 62;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_l2c_mcix_int_ena_w1s_s cn8; */
     /* struct cavm_l2c_mcix_int_ena_w1s_s cn81xx; */
     struct cavm_l2c_mcix_int_ena_w1s_cn83xx
     {
@@ -213,6 +215,7 @@ union cavm_l2c_mcix_int_w1s
         uint64_t reserved_2_63         : 62;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_l2c_mcix_int_w1s_s cn8; */
     /* struct cavm_l2c_mcix_int_w1s_s cn81xx; */
     struct cavm_l2c_mcix_int_w1s_cn83xx
     {

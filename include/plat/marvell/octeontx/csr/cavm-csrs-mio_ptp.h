@@ -40,7 +40,11 @@
  */
 #define CAVM_MIO_PTP_EXT_SEL_E_BTS_REF_CLK (1)
 #define CAVM_MIO_PTP_EXT_SEL_E_GPIO (0)
-#define CAVM_MIO_PTP_EXT_SEL_E_QLM_REFX(a) (0x38 + (a))
+#define CAVM_MIO_PTP_EXT_SEL_E_QLM_REFX_CN8(a) (0x38 + (a))
+#define CAVM_MIO_PTP_EXT_SEL_E_QLM_REFX_CN96XX(a) (0x38 + (a))
+#define CAVM_MIO_PTP_EXT_SEL_E_QLM_REFX_CN98XX(a) (0x10 + (a))
+#define CAVM_MIO_PTP_EXT_SEL_E_QLM_REFX_CNF95XX(a) (0x38 + (a))
+#define CAVM_MIO_PTP_EXT_SEL_E_QLM_REFX_LOKI(a) (0x38 + (a))
 
 /**
  * Enumeration mio_ptp_int_vec_e
@@ -282,15 +286,13 @@ union cavm_mio_ptp_clock_cfg
                                                                  0x1 = Divided by 2.
                                                                  0x2 = Divided by 4.
                                                                  0x3 = Divided by 8. */
-        uint64_t refclk_src            : 1;  /**< [ 33: 33](R/W) Reserved.
-                                                                 Internal:
-                                                                 Internal reference clock source used to generate PTP clock.
+        uint64_t refclk_src            : 1;  /**< [ 33: 33](R/W) Internal reference clock source used to generate PTP clock.
                                                                    0 = Use the coprocessor-clock to generates PTP clock.  To provide sufficient
                                                                    resolution the coprocessor clock is typically required, however if the
                                                                    frequency of the coprocessor-clock is changed, this may result in time drift
                                                                    which must be recompensated by software, perhaps by redoing the IEEE 1588
                                                                    synchronization.
-                                                                   1 = Not recommended. (100 MHz input reference clock). */
+                                                                   1 = Use 100 MHz input reference clock to generate the PTP clock. */
         uint64_t sysck_en              : 1;  /**< [ 32: 32](R/W) Enable PTP SYSCK. (For output pin selection see GPIO_BIT_CFG().) */
         uint64_t pps_inv               : 1;  /**< [ 31: 31](R/W) Invert PTP PPS.
                                                                  0 = Don't invert.
@@ -336,15 +338,13 @@ union cavm_mio_ptp_clock_cfg
                                                                  0 = Don't invert.
                                                                  1 = Invert. */
         uint64_t sysck_en              : 1;  /**< [ 32: 32](R/W) Enable PTP SYSCK. (For output pin selection see GPIO_BIT_CFG().) */
-        uint64_t refclk_src            : 1;  /**< [ 33: 33](R/W) Reserved.
-                                                                 Internal:
-                                                                 Internal reference clock source used to generate PTP clock.
+        uint64_t refclk_src            : 1;  /**< [ 33: 33](R/W) Internal reference clock source used to generate PTP clock.
                                                                    0 = Use the coprocessor-clock to generates PTP clock.  To provide sufficient
                                                                    resolution the coprocessor clock is typically required, however if the
                                                                    frequency of the coprocessor-clock is changed, this may result in time drift
                                                                    which must be recompensated by software, perhaps by redoing the IEEE 1588
                                                                    synchronization.
-                                                                   1 = Not recommended. (100 MHz input reference clock). */
+                                                                   1 = Use 100 MHz input reference clock to generate the PTP clock. */
         uint64_t bts_clk_div           : 2;  /**< [ 35: 34](R/W) External BTS PLL clock divider before edge detect:
                                                                  0x0 = Original external clock.
                                                                  0x1 = Divided by 2.
@@ -429,6 +429,109 @@ union cavm_mio_ptp_clock_cfg
 #endif /* Word 0 - End */
     } cn8;
     /* struct cavm_mio_ptp_clock_cfg_s cn9; */
+    /* struct cavm_mio_ptp_clock_cfg_s cn96xxp1; */
+    struct cavm_mio_ptp_clock_cfg_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_43_63        : 21;
+        uint64_t sysck                 : 1;  /**< [ 42: 42](RO/H) PTP SYSCK; reflects ptp__sysck. */
+        uint64_t ckout                 : 1;  /**< [ 41: 41](RO/H) PTP CKOUT; reflects ptp__ckout after [CKOUT_INV] inverter. */
+        uint64_t pps                   : 1;  /**< [ 40: 40](RO/H) PTP PPS output; reflects ptp__pps after [PPS_INV] inverter. */
+        uint64_t ext_clk_edge          : 2;  /**< [ 39: 38](R/W) External clock input edge:
+                                                                 0x0 = Rising edge.
+                                                                 0x1 = Falling edge.
+                                                                 0x2 = Both rising and falling edge.
+                                                                 0x3 = Reserved. */
+        uint64_t reserved_36_37        : 2;
+        uint64_t bts_clk_div           : 2;  /**< [ 35: 34](R/W) External BTS PLL clock divider before edge detect:
+                                                                 0x0 = Original external clock.
+                                                                 0x1 = Divided by 2.
+                                                                 0x2 = Divided by 4.
+                                                                 0x3 = Divided by 8. */
+        uint64_t refclk_src            : 1;  /**< [ 33: 33](R/W) Reserved.
+                                                                 Internal:
+                                                                 Internal reference clock source used to generate PTP clock.
+                                                                   0 = Use the coprocessor-clock to generates PTP clock.  To provide sufficient
+                                                                   resolution the coprocessor clock is typically required, however if the
+                                                                   frequency of the coprocessor-clock is changed, this may result in time drift
+                                                                   which must be recompensated by software, perhaps by redoing the IEEE 1588
+                                                                   synchronization.
+                                                                   1 = Not recommended. (100 MHz input reference clock). */
+        uint64_t sysck_en              : 1;  /**< [ 32: 32](R/W) Enable PTP SYSCK. (For output pin selection see GPIO_BIT_CFG().) */
+        uint64_t pps_inv               : 1;  /**< [ 31: 31](R/W) Invert PTP PPS.
+                                                                 0 = Don't invert.
+                                                                 1 = Invert. */
+        uint64_t pps_en                : 1;  /**< [ 30: 30](R/W) Enable PTP PPS. (For output pin selection see GPIO_BIT_CFG().) */
+        uint64_t reserved_26_29        : 4;
+        uint64_t ckout_inv             : 1;  /**< [ 25: 25](R/W) Invert PTP CKOUT.
+                                                                 0 = Don't invert.
+                                                                 1 = Invert. */
+        uint64_t ckout_en              : 1;  /**< [ 24: 24](R/W) Enable PTP CKOUT. (For output pin selection see GPIO_BIT_CFG().) */
+        uint64_t evcnt_in              : 6;  /**< [ 23: 18](R/W) Source for event counter input:
+                                                                 Enumerated by MIO_PTP_EXT_SEL_E. */
+        uint64_t evcnt_edge            : 1;  /**< [ 17: 17](R/W) Event counter input edge: 0 = falling edge, 1 = rising edge. */
+        uint64_t evcnt_en              : 1;  /**< [ 16: 16](R/W) Enable event counter. */
+        uint64_t tstmp_in              : 6;  /**< [ 15: 10](R/W) Source for timestamp input:
+                                                                 Enumerated by MIO_PTP_EXT_SEL_E. */
+        uint64_t tstmp_edge            : 1;  /**< [  9:  9](R/W) External timestamp input edge: 0 = falling edge, 1 = rising edge. */
+        uint64_t tstmp_en              : 1;  /**< [  8:  8](R/W) Enable external timestamp. */
+        uint64_t ext_clk_in            : 6;  /**< [  7:  2](R/W) Source for external clock when [EXT_CLK_EN] is set:
+                                                                 Enumerated by MIO_PTP_EXT_SEL_E. */
+        uint64_t ext_clk_en            : 1;  /**< [  1:  1](R/W) Use external clock for PTP clock. */
+        uint64_t ptp_en                : 1;  /**< [  0:  0](R/W) Enable PTP module. */
+#else /* Word 0 - Little Endian */
+        uint64_t ptp_en                : 1;  /**< [  0:  0](R/W) Enable PTP module. */
+        uint64_t ext_clk_en            : 1;  /**< [  1:  1](R/W) Use external clock for PTP clock. */
+        uint64_t ext_clk_in            : 6;  /**< [  7:  2](R/W) Source for external clock when [EXT_CLK_EN] is set:
+                                                                 Enumerated by MIO_PTP_EXT_SEL_E. */
+        uint64_t tstmp_en              : 1;  /**< [  8:  8](R/W) Enable external timestamp. */
+        uint64_t tstmp_edge            : 1;  /**< [  9:  9](R/W) External timestamp input edge: 0 = falling edge, 1 = rising edge. */
+        uint64_t tstmp_in              : 6;  /**< [ 15: 10](R/W) Source for timestamp input:
+                                                                 Enumerated by MIO_PTP_EXT_SEL_E. */
+        uint64_t evcnt_en              : 1;  /**< [ 16: 16](R/W) Enable event counter. */
+        uint64_t evcnt_edge            : 1;  /**< [ 17: 17](R/W) Event counter input edge: 0 = falling edge, 1 = rising edge. */
+        uint64_t evcnt_in              : 6;  /**< [ 23: 18](R/W) Source for event counter input:
+                                                                 Enumerated by MIO_PTP_EXT_SEL_E. */
+        uint64_t ckout_en              : 1;  /**< [ 24: 24](R/W) Enable PTP CKOUT. (For output pin selection see GPIO_BIT_CFG().) */
+        uint64_t ckout_inv             : 1;  /**< [ 25: 25](R/W) Invert PTP CKOUT.
+                                                                 0 = Don't invert.
+                                                                 1 = Invert. */
+        uint64_t reserved_26_29        : 4;
+        uint64_t pps_en                : 1;  /**< [ 30: 30](R/W) Enable PTP PPS. (For output pin selection see GPIO_BIT_CFG().) */
+        uint64_t pps_inv               : 1;  /**< [ 31: 31](R/W) Invert PTP PPS.
+                                                                 0 = Don't invert.
+                                                                 1 = Invert. */
+        uint64_t sysck_en              : 1;  /**< [ 32: 32](R/W) Enable PTP SYSCK. (For output pin selection see GPIO_BIT_CFG().) */
+        uint64_t refclk_src            : 1;  /**< [ 33: 33](R/W) Reserved.
+                                                                 Internal:
+                                                                 Internal reference clock source used to generate PTP clock.
+                                                                   0 = Use the coprocessor-clock to generates PTP clock.  To provide sufficient
+                                                                   resolution the coprocessor clock is typically required, however if the
+                                                                   frequency of the coprocessor-clock is changed, this may result in time drift
+                                                                   which must be recompensated by software, perhaps by redoing the IEEE 1588
+                                                                   synchronization.
+                                                                   1 = Not recommended. (100 MHz input reference clock). */
+        uint64_t bts_clk_div           : 2;  /**< [ 35: 34](R/W) External BTS PLL clock divider before edge detect:
+                                                                 0x0 = Original external clock.
+                                                                 0x1 = Divided by 2.
+                                                                 0x2 = Divided by 4.
+                                                                 0x3 = Divided by 8. */
+        uint64_t reserved_36_37        : 2;
+        uint64_t ext_clk_edge          : 2;  /**< [ 39: 38](R/W) External clock input edge:
+                                                                 0x0 = Rising edge.
+                                                                 0x1 = Falling edge.
+                                                                 0x2 = Both rising and falling edge.
+                                                                 0x3 = Reserved. */
+        uint64_t pps                   : 1;  /**< [ 40: 40](RO/H) PTP PPS output; reflects ptp__pps after [PPS_INV] inverter. */
+        uint64_t ckout                 : 1;  /**< [ 41: 41](RO/H) PTP CKOUT; reflects ptp__ckout after [CKOUT_INV] inverter. */
+        uint64_t sysck                 : 1;  /**< [ 42: 42](RO/H) PTP SYSCK; reflects ptp__sysck. */
+        uint64_t reserved_43_63        : 21;
+#endif /* Word 0 - End */
+    } cn96xxp3;
+    /* struct cavm_mio_ptp_clock_cfg_cn96xxp3 cn98xx; */
+    /* struct cavm_mio_ptp_clock_cfg_s cnf95xxp1; */
+    /* struct cavm_mio_ptp_clock_cfg_cn96xxp3 cnf95xxp2; */
+    /* struct cavm_mio_ptp_clock_cfg_cn96xxp3 loki; */
 };
 typedef union cavm_mio_ptp_clock_cfg cavm_mio_ptp_clock_cfg_t;
 
@@ -990,7 +1093,9 @@ union cavm_mio_ptp_msix_vecx_addr
         uint64_t reserved_49_63        : 15;
 #endif /* Word 0 - End */
     } cn8;
-    struct cavm_mio_ptp_msix_vecx_addr_cn9
+    /* struct cavm_mio_ptp_msix_vecx_addr_s cn9; */
+    /* struct cavm_mio_ptp_msix_vecx_addr_s cn96xxp1; */
+    struct cavm_mio_ptp_msix_vecx_addr_cn96xxp3
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_53_63        : 11;
@@ -1049,7 +1154,10 @@ union cavm_mio_ptp_msix_vecx_addr
         uint64_t addr                  : 51; /**< [ 52:  2](R/W) IOVA to use for MSI-X delivery of this vector. */
         uint64_t reserved_53_63        : 11;
 #endif /* Word 0 - End */
-    } cn9;
+    } cn96xxp3;
+    /* struct cavm_mio_ptp_msix_vecx_addr_cn96xxp3 cn98xx; */
+    /* struct cavm_mio_ptp_msix_vecx_addr_cn96xxp3 cnf95xx; */
+    /* struct cavm_mio_ptp_msix_vecx_addr_cn96xxp3 loki; */
 };
 typedef union cavm_mio_ptp_msix_vecx_addr cavm_mio_ptp_msix_vecx_addr_t;
 

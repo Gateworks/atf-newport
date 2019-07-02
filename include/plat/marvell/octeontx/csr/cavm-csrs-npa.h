@@ -95,6 +95,8 @@
 #define CAVM_NPA_INPQ_E_AURA_OP (0xe)
 #define CAVM_NPA_INPQ_E_BPHY (7)
 #define CAVM_NPA_INPQ_E_DPI (6)
+#define CAVM_NPA_INPQ_E_DPI0 (6)
+#define CAVM_NPA_INPQ_E_DPI1 (7)
 #define CAVM_NPA_INPQ_E_INTERNAL_RSV (0xf)
 #define CAVM_NPA_INPQ_E_NIXX_RX(a) (0 + 2 * (a))
 #define CAVM_NPA_INPQ_E_NIXX_TX(a) (1 + 2 * (a))
@@ -3163,7 +3165,8 @@ union cavm_npa_af_lfx_auras_cfg
         uint64_t reserved_61_63        : 3;
 #endif /* Word 0 - End */
     } s;
-    struct cavm_npa_af_lfx_auras_cfg_cn96xxp1_0
+    /* struct cavm_npa_af_lfx_auras_cfg_s cn9; */
+    struct cavm_npa_af_lfx_auras_cfg_cn96xxp1
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_61_63        : 3;
@@ -3304,9 +3307,9 @@ union cavm_npa_af_lfx_auras_cfg
                                                                  [LOC_AURA_OFFSET]. */
         uint64_t reserved_61_63        : 3;
 #endif /* Word 0 - End */
-    } cn96xxp1_0;
-    /* struct cavm_npa_af_lfx_auras_cfg_s cn96xxp1_1; */
+    } cn96xxp1;
     /* struct cavm_npa_af_lfx_auras_cfg_s cn96xxp3; */
+    /* struct cavm_npa_af_lfx_auras_cfg_s cn98xx; */
     /* struct cavm_npa_af_lfx_auras_cfg_s cnf95xx; */
     /* struct cavm_npa_af_lfx_auras_cfg_s loki; */
 };

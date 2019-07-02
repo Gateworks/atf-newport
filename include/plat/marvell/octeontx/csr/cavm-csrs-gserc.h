@@ -10045,7 +10045,12 @@ union cavm_gsercx_lanex_control_bcfg
     struct cavm_gsercx_lanex_control_bcfg_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_42_63        : 22;
+        uint64_t reserved_44_63        : 20;
+        uint64_t rx_bitstrip_cfg       : 1;  /**< [ 43: 43](R/W) Configures the sampling position for the div 4 bit stripping logic at the 2.4G CPRI rate:
+                                                                   0x0 = 135 degree sample.
+                                                                   0x1 = 225 degree sample. */
+        uint64_t rx_bitstrip_en        : 1;  /**< [ 42: 42](R/W) Enables the bit stripping logic used in the 2.4G CPRI rate.  Clear to a 0 to reset the bit strip
+                                                                 pattern lock FSM. */
         uint64_t rx_wpk_order          : 1;  /**< [ 41: 41](R/W) Receiver word packing order. Used when the GSERC()_LANE()_CONTROL_BCFG[LN_CTRL_RX_WIDTH]
                                                                  is set to 0x3 to configure the GSERC PHY to 20-bit receive path data width
                                                                  for the 10.3125Gbuad and lower Ethernet data rates.
@@ -10341,7 +10346,12 @@ union cavm_gsercx_lanex_control_bcfg
                                                                  When [RX_WPK_ORDER] is cleared to 0 the 20-bit word packing order within the 40-bit word
                                                                  is swapped. Set [RX_WUP_ORDER] to 1 for normal Ethernet receive data to the CGX Ethernet MAC.
                                                                  For diagnostic use only. */
-        uint64_t reserved_42_63        : 22;
+        uint64_t rx_bitstrip_en        : 1;  /**< [ 42: 42](R/W) Enables the bit stripping logic used in the 2.4G CPRI rate.  Clear to a 0 to reset the bit strip
+                                                                 pattern lock FSM. */
+        uint64_t rx_bitstrip_cfg       : 1;  /**< [ 43: 43](R/W) Configures the sampling position for the div 4 bit stripping logic at the 2.4G CPRI rate:
+                                                                   0x0 = 135 degree sample.
+                                                                   0x1 = 225 degree sample. */
+        uint64_t reserved_44_63        : 20;
 #endif /* Word 0 - End */
     } s;
     /* struct cavm_gsercx_lanex_control_bcfg_s cn; */
@@ -10374,7 +10384,9 @@ union cavm_gsercx_lanex_status_bsts
     struct cavm_gsercx_lanex_status_bsts_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_21_63        : 43;
+        uint64_t reserved_22_63        : 42;
+        uint64_t ln_rx_bitstrip_err    : 1;  /**< [ 21: 21](RO/H) Sticky bit that signals when the rx div4 fail counter has saturated when
+                                                                 trying to lock to the bit stuffed rxdata. */
         uint64_t ln_rx_fifo_full       : 1;  /**< [ 20: 20](RO/H) Reserved.
                                                                  Internal:
                                                                  When set indicates that the RX FIFO between the PHY SerDes and CGX if full. Indicates the
@@ -10536,7 +10548,9 @@ union cavm_gsercx_lanex_status_bsts
                                                                  RX FIFO is overflowing.  This signal is not latched.  Used to debug cases in which the
                                                                  sclk frequency may be set too low and CGX is not keeping up with the RX FIFO in GSERR.
                                                                  For debug use only. */
-        uint64_t reserved_21_63        : 43;
+        uint64_t ln_rx_bitstrip_err    : 1;  /**< [ 21: 21](RO/H) Sticky bit that signals when the rx div4 fail counter has saturated when
+                                                                 trying to lock to the bit stuffed rxdata. */
+        uint64_t reserved_22_63        : 42;
 #endif /* Word 0 - End */
     } s;
     /* struct cavm_gsercx_lanex_status_bsts_s cn; */

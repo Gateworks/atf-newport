@@ -166,7 +166,11 @@ typedef union cavm_usbdrdx_bp_test0 cavm_usbdrdx_bp_test0_t;
 static inline uint64_t CAVM_USBDRDX_BP_TEST0(unsigned long a) __attribute__ ((pure, always_inline));
 static inline uint64_t CAVM_USBDRDX_BP_TEST0(unsigned long a)
 {
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=1))
+        return 0x868000100070ll + 0x1000000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a==0))
+        return 0x868000100070ll + 0x1000000000ll * ((a) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x868000100070ll + 0x1000000000ll * ((a) & 0x1);
     __cavm_csr_fatal("USBDRDX_BP_TEST0", 1, a, 0, 0, 0, 0, 0);
 }
@@ -201,7 +205,11 @@ typedef union cavm_usbdrdx_const cavm_usbdrdx_const_t;
 static inline uint64_t CAVM_USBDRDX_CONST(unsigned long a) __attribute__ ((pure, always_inline));
 static inline uint64_t CAVM_USBDRDX_CONST(unsigned long a)
 {
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=1))
+        return 0x868000100078ll + 0x1000000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a==0))
+        return 0x868000100078ll + 0x1000000000ll * ((a) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x868000100078ll + 0x1000000000ll * ((a) & 0x1);
     __cavm_csr_fatal("USBDRDX_CONST", 1, a, 0, 0, 0, 0, 0);
 }
@@ -244,7 +252,11 @@ static inline uint64_t CAVM_USBDRDX_MSIX_PBAX(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && ((a<=1) && (b==0)))
         return 0x8680002f0000ll + 0x1000000000ll * ((a) & 0x1) + 8ll * ((b) & 0x0);
-    if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b==0)))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && ((a<=1) && (b==0)))
+        return 0x8680002f0000ll + 0x1000000000ll * ((a) & 0x1) + 8ll * ((b) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a==0) && (b==0)))
+        return 0x8680002f0000ll + 0x1000000000ll * ((a) & 0x0) + 8ll * ((b) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b==0)))
         return 0x8680002f0000ll + 0x1000000000ll * ((a) & 0x1) + 8ll * ((b) & 0x0);
     __cavm_csr_fatal("USBDRDX_MSIX_PBAX", 2, a, b, 0, 0, 0, 0);
 }
@@ -329,7 +341,9 @@ union cavm_usbdrdx_msix_vecx_addr
         uint64_t reserved_49_63        : 15;
 #endif /* Word 0 - End */
     } cn8;
-    struct cavm_usbdrdx_msix_vecx_addr_cn9
+    /* struct cavm_usbdrdx_msix_vecx_addr_s cn9; */
+    /* struct cavm_usbdrdx_msix_vecx_addr_s cn96xxp1; */
+    struct cavm_usbdrdx_msix_vecx_addr_cn96xxp3
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_53_63        : 11;
@@ -388,7 +402,8 @@ union cavm_usbdrdx_msix_vecx_addr
         uint64_t addr                  : 51; /**< [ 52:  2](R/W) Address to use for MSI-X delivery of this vector. */
         uint64_t reserved_53_63        : 11;
 #endif /* Word 0 - End */
-    } cn9;
+    } cn96xxp3;
+    /* struct cavm_usbdrdx_msix_vecx_addr_cn96xxp3 cn98xx; */
 };
 typedef union cavm_usbdrdx_msix_vecx_addr cavm_usbdrdx_msix_vecx_addr_t;
 
@@ -397,7 +412,11 @@ static inline uint64_t CAVM_USBDRDX_MSIX_VECX_ADDR(unsigned long a, unsigned lon
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && ((a<=1) && (b<=3)))
         return 0x868000200000ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x3);
-    if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=4)))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && ((a<=1) && (b<=4)))
+        return 0x868000200000ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x7);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a==0) && (b<=4)))
+        return 0x868000200000ll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0x7);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=4)))
         return 0x868000200000ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x7);
     __cavm_csr_fatal("USBDRDX_MSIX_VECX_ADDR", 2, a, b, 0, 0, 0, 0);
 }
@@ -453,7 +472,11 @@ static inline uint64_t CAVM_USBDRDX_MSIX_VECX_CTL(unsigned long a, unsigned long
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && ((a<=1) && (b<=3)))
         return 0x868000200008ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x3);
-    if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=4)))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && ((a<=1) && (b<=4)))
+        return 0x868000200008ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x7);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a==0) && (b<=4)))
+        return 0x868000200008ll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0x7);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=4)))
         return 0x868000200008ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x7);
     __cavm_csr_fatal("USBDRDX_MSIX_VECX_CTL", 2, a, b, 0, 0, 0, 0);
 }
@@ -497,7 +520,11 @@ static inline uint64_t CAVM_USBDRDX_UAHC_CAPLENGTH(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && (a<=1))
         return 0x868000000000ll + 0x1000000000ll * ((a) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=1))
+        return 0x868000000000ll + 0x1000000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a==0))
+        return 0x868000000000ll + 0x1000000000ll * ((a) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x868000000000ll + 0x1000000000ll * ((a) & 0x1);
     __cavm_csr_fatal("USBDRDX_UAHC_CAPLENGTH", 1, a, 0, 0, 0, 0, 0);
 }
@@ -543,7 +570,11 @@ static inline uint64_t CAVM_USBDRDX_UAHC_CONFIG(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && (a<=1))
         return 0x868000000058ll + 0x1000000000ll * ((a) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=1))
+        return 0x868000000058ll + 0x1000000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a==0))
+        return 0x868000000058ll + 0x1000000000ll * ((a) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x868000000058ll + 0x1000000000ll * ((a) & 0x1);
     __cavm_csr_fatal("USBDRDX_UAHC_CONFIG", 1, a, 0, 0, 0, 0, 0);
 }
@@ -596,7 +627,11 @@ static inline uint64_t CAVM_USBDRDX_UAHC_CRCR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && (a<=1))
         return 0x868000000038ll + 0x1000000000ll * ((a) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=1))
+        return 0x868000000038ll + 0x1000000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a==0))
+        return 0x868000000038ll + 0x1000000000ll * ((a) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x868000000038ll + 0x1000000000ll * ((a) & 0x1);
     __cavm_csr_fatal("USBDRDX_UAHC_CRCR", 1, a, 0, 0, 0, 0, 0);
 }
@@ -687,7 +722,11 @@ static inline uint64_t CAVM_USBDRDX_UAHC_DALEPENA(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && (a<=1))
         return 0x86800000c720ll + 0x1000000000ll * ((a) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=1))
+        return 0x86800000c720ll + 0x1000000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a==0))
+        return 0x86800000c720ll + 0x1000000000ll * ((a) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x86800000c720ll + 0x1000000000ll * ((a) & 0x1);
     __cavm_csr_fatal("USBDRDX_UAHC_DALEPENA", 1, a, 0, 0, 0, 0, 0);
 }
@@ -738,7 +777,11 @@ static inline uint64_t CAVM_USBDRDX_UAHC_DBX(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && ((a<=1) && (b<=64)))
         return 0x868000000480ll + 0x1000000000ll * ((a) & 0x1) + 4ll * ((b) & 0x7f);
-    if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=64)))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && ((a<=1) && (b<=64)))
+        return 0x868000000480ll + 0x1000000000ll * ((a) & 0x1) + 4ll * ((b) & 0x7f);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a==0) && (b<=64)))
+        return 0x868000000480ll + 0x1000000000ll * ((a) & 0x0) + 4ll * ((b) & 0x7f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=64)))
         return 0x868000000480ll + 0x1000000000ll * ((a) & 0x1) + 4ll * ((b) & 0x7f);
     __cavm_csr_fatal("USBDRDX_UAHC_DBX", 2, a, b, 0, 0, 0, 0);
 }
@@ -779,7 +822,11 @@ static inline uint64_t CAVM_USBDRDX_UAHC_DBOFF(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && (a<=1))
         return 0x868000000014ll + 0x1000000000ll * ((a) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=1))
+        return 0x868000000014ll + 0x1000000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a==0))
+        return 0x868000000014ll + 0x1000000000ll * ((a) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x868000000014ll + 0x1000000000ll * ((a) & 0x1);
     __cavm_csr_fatal("USBDRDX_UAHC_DBOFF", 1, a, 0, 0, 0, 0, 0);
 }
@@ -827,7 +874,11 @@ static inline uint64_t CAVM_USBDRDX_UAHC_DCBAAP(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && (a<=1))
         return 0x868000000050ll + 0x1000000000ll * ((a) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=1))
+        return 0x868000000050ll + 0x1000000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a==0))
+        return 0x868000000050ll + 0x1000000000ll * ((a) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x868000000050ll + 0x1000000000ll * ((a) & 0x1);
     __cavm_csr_fatal("USBDRDX_UAHC_DCBAAP", 1, a, 0, 0, 0, 0, 0);
 }
@@ -1087,7 +1138,11 @@ static inline uint64_t CAVM_USBDRDX_UAHC_DCFG(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && (a<=1))
         return 0x86800000c700ll + 0x1000000000ll * ((a) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=1))
+        return 0x86800000c700ll + 0x1000000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a==0))
+        return 0x86800000c700ll + 0x1000000000ll * ((a) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x86800000c700ll + 0x1000000000ll * ((a) & 0x1);
     __cavm_csr_fatal("USBDRDX_UAHC_DCFG", 1, a, 0, 0, 0, 0, 0);
 }
@@ -1504,7 +1559,11 @@ static inline uint64_t CAVM_USBDRDX_UAHC_DCTL(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && (a<=1))
         return 0x86800000c704ll + 0x1000000000ll * ((a) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=1))
+        return 0x86800000c704ll + 0x1000000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a==0))
+        return 0x86800000c704ll + 0x1000000000ll * ((a) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x86800000c704ll + 0x1000000000ll * ((a) & 0x1);
     __cavm_csr_fatal("USBDRDX_UAHC_DCTL", 1, a, 0, 0, 0, 0, 0);
 }
@@ -1820,7 +1879,11 @@ static inline uint64_t CAVM_USBDRDX_UAHC_DEPCMDX(unsigned long a, unsigned long 
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && ((a<=1) && (b<=15)))
         return 0x86800000c80cll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0xf);
-    if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=15)))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && ((a<=1) && (b<=15)))
+        return 0x86800000c80cll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0xf);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a==0) && (b<=15)))
+        return 0x86800000c80cll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0xf);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=15)))
         return 0x86800000c80cll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0xf);
     __cavm_csr_fatal("USBDRDX_UAHC_DEPCMDX", 2, a, b, 0, 0, 0, 0);
 }
@@ -1867,7 +1930,11 @@ static inline uint64_t CAVM_USBDRDX_UAHC_DEPCMDPAR0_X(unsigned long a, unsigned 
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && ((a<=1) && (b<=15)))
         return 0x86800000c808ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0xf);
-    if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=15)))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && ((a<=1) && (b<=15)))
+        return 0x86800000c808ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0xf);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a==0) && (b<=15)))
+        return 0x86800000c808ll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0xf);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=15)))
         return 0x86800000c808ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0xf);
     __cavm_csr_fatal("USBDRDX_UAHC_DEPCMDPAR0_X", 2, a, b, 0, 0, 0, 0);
 }
@@ -1914,7 +1981,11 @@ static inline uint64_t CAVM_USBDRDX_UAHC_DEPCMDPAR1_X(unsigned long a, unsigned 
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && ((a<=1) && (b<=15)))
         return 0x86800000c804ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0xf);
-    if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=15)))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && ((a<=1) && (b<=15)))
+        return 0x86800000c804ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0xf);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a==0) && (b<=15)))
+        return 0x86800000c804ll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0xf);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=15)))
         return 0x86800000c804ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0xf);
     __cavm_csr_fatal("USBDRDX_UAHC_DEPCMDPAR1_X", 2, a, b, 0, 0, 0, 0);
 }
@@ -1961,7 +2032,11 @@ static inline uint64_t CAVM_USBDRDX_UAHC_DEPCMDPAR2_X(unsigned long a, unsigned 
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && ((a<=1) && (b<=15)))
         return 0x86800000c800ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0xf);
-    if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=15)))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && ((a<=1) && (b<=15)))
+        return 0x86800000c800ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0xf);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a==0) && (b<=15)))
+        return 0x86800000c800ll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0xf);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=15)))
         return 0x86800000c800ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0xf);
     __cavm_csr_fatal("USBDRDX_UAHC_DEPCMDPAR2_X", 2, a, b, 0, 0, 0, 0);
 }
@@ -2006,7 +2081,11 @@ typedef union cavm_usbdrdx_uahc_dev_imodx cavm_usbdrdx_uahc_dev_imodx_t;
 static inline uint64_t CAVM_USBDRDX_UAHC_DEV_IMODX(unsigned long a, unsigned long b) __attribute__ ((pure, always_inline));
 static inline uint64_t CAVM_USBDRDX_UAHC_DEV_IMODX(unsigned long a, unsigned long b)
 {
-    if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=15)))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && ((a<=1) && (b<=15)))
+        return 0x86800000ca00ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0xf);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a==0) && (b<=15)))
+        return 0x86800000ca00ll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0xf);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=15)))
         return 0x86800000ca00ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0xf);
     __cavm_csr_fatal("USBDRDX_UAHC_DEV_IMODX", 2, a, b, 0, 0, 0, 0);
 }
@@ -2122,7 +2201,11 @@ static inline uint64_t CAVM_USBDRDX_UAHC_DEVTEN(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && (a<=1))
         return 0x86800000c708ll + 0x1000000000ll * ((a) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=1))
+        return 0x86800000c708ll + 0x1000000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a==0))
+        return 0x86800000c708ll + 0x1000000000ll * ((a) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x86800000c708ll + 0x1000000000ll * ((a) & 0x1);
     __cavm_csr_fatal("USBDRDX_UAHC_DEVTEN", 1, a, 0, 0, 0, 0, 0);
 }
@@ -2205,7 +2288,11 @@ static inline uint64_t CAVM_USBDRDX_UAHC_DGCMD(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && (a<=1))
         return 0x86800000c714ll + 0x1000000000ll * ((a) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=1))
+        return 0x86800000c714ll + 0x1000000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a==0))
+        return 0x86800000c714ll + 0x1000000000ll * ((a) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x86800000c714ll + 0x1000000000ll * ((a) & 0x1);
     __cavm_csr_fatal("USBDRDX_UAHC_DGCMD", 1, a, 0, 0, 0, 0, 0);
 }
@@ -2256,7 +2343,11 @@ static inline uint64_t CAVM_USBDRDX_UAHC_DGCMDPAR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && (a<=1))
         return 0x86800000c710ll + 0x1000000000ll * ((a) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=1))
+        return 0x86800000c710ll + 0x1000000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a==0))
+        return 0x86800000c710ll + 0x1000000000ll * ((a) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x86800000c710ll + 0x1000000000ll * ((a) & 0x1);
     __cavm_csr_fatal("USBDRDX_UAHC_DGCMDPAR", 1, a, 0, 0, 0, 0, 0);
 }
@@ -2304,7 +2395,11 @@ static inline uint64_t CAVM_USBDRDX_UAHC_DNCTRL(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && (a<=1))
         return 0x868000000034ll + 0x1000000000ll * ((a) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=1))
+        return 0x868000000034ll + 0x1000000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a==0))
+        return 0x868000000034ll + 0x1000000000ll * ((a) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x868000000034ll + 0x1000000000ll * ((a) & 0x1);
     __cavm_csr_fatal("USBDRDX_UAHC_DNCTRL", 1, a, 0, 0, 0, 0, 0);
 }
@@ -2520,7 +2615,11 @@ static inline uint64_t CAVM_USBDRDX_UAHC_DSTS(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && (a<=1))
         return 0x86800000c70cll + 0x1000000000ll * ((a) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=1))
+        return 0x86800000c70cll + 0x1000000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a==0))
+        return 0x86800000c70cll + 0x1000000000ll * ((a) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x86800000c70cll + 0x1000000000ll * ((a) & 0x1);
     __cavm_csr_fatal("USBDRDX_UAHC_DSTS", 1, a, 0, 0, 0, 0, 0);
 }
@@ -2567,7 +2666,11 @@ static inline uint64_t CAVM_USBDRDX_UAHC_ERDPX(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && ((a<=1) && (b==0)))
         return 0x868000000478ll + 0x1000000000ll * ((a) & 0x1) + 0ll * ((b) & 0x0);
-    if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b==0)))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && ((a<=1) && (b==0)))
+        return 0x868000000478ll + 0x1000000000ll * ((a) & 0x1) + 0ll * ((b) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a==0) && (b==0)))
+        return 0x868000000478ll + 0x1000000000ll * ((a) & 0x0) + 0ll * ((b) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b==0)))
         return 0x868000000478ll + 0x1000000000ll * ((a) & 0x1) + 0ll * ((b) & 0x0);
     __cavm_csr_fatal("USBDRDX_UAHC_ERDPX", 2, a, b, 0, 0, 0, 0);
 }
@@ -2612,7 +2715,11 @@ static inline uint64_t CAVM_USBDRDX_UAHC_ERSTBAX(unsigned long a, unsigned long 
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && ((a<=1) && (b==0)))
         return 0x868000000470ll + 0x1000000000ll * ((a) & 0x1) + 0ll * ((b) & 0x0);
-    if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b==0)))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && ((a<=1) && (b==0)))
+        return 0x868000000470ll + 0x1000000000ll * ((a) & 0x1) + 0ll * ((b) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a==0) && (b==0)))
+        return 0x868000000470ll + 0x1000000000ll * ((a) & 0x0) + 0ll * ((b) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b==0)))
         return 0x868000000470ll + 0x1000000000ll * ((a) & 0x1) + 0ll * ((b) & 0x0);
     __cavm_csr_fatal("USBDRDX_UAHC_ERSTBAX", 2, a, b, 0, 0, 0, 0);
 }
@@ -2657,7 +2764,11 @@ static inline uint64_t CAVM_USBDRDX_UAHC_ERSTSZX(unsigned long a, unsigned long 
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && ((a<=1) && (b==0)))
         return 0x868000000468ll + 0x1000000000ll * ((a) & 0x1) + 0ll * ((b) & 0x0);
-    if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b==0)))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && ((a<=1) && (b==0)))
+        return 0x868000000468ll + 0x1000000000ll * ((a) & 0x1) + 0ll * ((b) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a==0) && (b==0)))
+        return 0x868000000468ll + 0x1000000000ll * ((a) & 0x0) + 0ll * ((b) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b==0)))
         return 0x868000000468ll + 0x1000000000ll * ((a) & 0x1) + 0ll * ((b) & 0x0);
     __cavm_csr_fatal("USBDRDX_UAHC_ERSTSZX", 2, a, b, 0, 0, 0, 0);
 }
@@ -2718,7 +2829,11 @@ static inline uint64_t CAVM_USBDRDX_UAHC_GBUSERRADDR(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && (a<=1))
         return 0x86800000c130ll + 0x1000000000ll * ((a) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=1))
+        return 0x86800000c130ll + 0x1000000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a==0))
+        return 0x86800000c130ll + 0x1000000000ll * ((a) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x86800000c130ll + 0x1000000000ll * ((a) & 0x1);
     __cavm_csr_fatal("USBDRDX_UAHC_GBUSERRADDR", 1, a, 0, 0, 0, 0, 0);
 }
@@ -3321,7 +3436,9 @@ union cavm_usbdrdx_uahc_gctl
                                                                  frequency used). */
 #endif /* Word 0 - End */
     } cn8;
-    struct cavm_usbdrdx_uahc_gctl_cn9
+    /* struct cavm_usbdrdx_uahc_gctl_s cn9; */
+    /* struct cavm_usbdrdx_uahc_gctl_s cn96xxp1; */
+    struct cavm_usbdrdx_uahc_gctl_cn96xxp3
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t pwrdnscale            : 13; /**< [ 31: 19](R/W) Power down scale. The USB3 suspend-clock input replaces pipe3_rx_pclk as a clock source to
@@ -3610,7 +3727,8 @@ union cavm_usbdrdx_uahc_gctl
                                                                  needs to programmed is: power down scale = 10500/16 = 657 (rounded up; and fastest
                                                                  frequency used). */
 #endif /* Word 0 - End */
-    } cn9;
+    } cn96xxp3;
+    /* struct cavm_usbdrdx_uahc_gctl_cn96xxp3 cn98xx; */
 };
 typedef union cavm_usbdrdx_uahc_gctl cavm_usbdrdx_uahc_gctl_t;
 
@@ -3619,7 +3737,11 @@ static inline uint64_t CAVM_USBDRDX_UAHC_GCTL(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && (a<=1))
         return 0x86800000c110ll + 0x1000000000ll * ((a) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=1))
+        return 0x86800000c110ll + 0x1000000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a==0))
+        return 0x86800000c110ll + 0x1000000000ll * ((a) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x86800000c110ll + 0x1000000000ll * ((a) & 0x1);
     __cavm_csr_fatal("USBDRDX_UAHC_GCTL", 1, a, 0, 0, 0, 0, 0);
 }
@@ -3666,7 +3788,11 @@ static inline uint64_t CAVM_USBDRDX_UAHC_GDBGBMU(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && (a<=1))
         return 0x86800000c16cll + 0x1000000000ll * ((a) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=1))
+        return 0x86800000c16cll + 0x1000000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a==0))
+        return 0x86800000c16cll + 0x1000000000ll * ((a) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x86800000c16cll + 0x1000000000ll * ((a) & 0x1);
     __cavm_csr_fatal("USBDRDX_UAHC_GDBGBMU", 1, a, 0, 0, 0, 0, 0);
 }
@@ -3706,7 +3832,11 @@ static inline uint64_t CAVM_USBDRDX_UAHC_GDBGEPINFO(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && (a<=1))
         return 0x86800000c178ll + 0x1000000000ll * ((a) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=1))
+        return 0x86800000c178ll + 0x1000000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a==0))
+        return 0x86800000c178ll + 0x1000000000ll * ((a) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x86800000c178ll + 0x1000000000ll * ((a) & 0x1);
     __cavm_csr_fatal("USBDRDX_UAHC_GDBGEPINFO", 1, a, 0, 0, 0, 0, 0);
 }
@@ -3784,7 +3914,11 @@ static inline uint64_t CAVM_USBDRDX_UAHC_GDBGFIFOSPACE(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && (a<=1))
         return 0x86800000c160ll + 0x1000000000ll * ((a) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=1))
+        return 0x86800000c160ll + 0x1000000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a==0))
+        return 0x86800000c160ll + 0x1000000000ll * ((a) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x86800000c160ll + 0x1000000000ll * ((a) & 0x1);
     __cavm_csr_fatal("USBDRDX_UAHC_GDBGFIFOSPACE", 1, a, 0, 0, 0, 0, 0);
 }
@@ -3833,7 +3967,11 @@ static inline uint64_t CAVM_USBDRDX_UAHC_GDBGLNMCC(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && (a<=1))
         return 0x86800000c168ll + 0x1000000000ll * ((a) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=1))
+        return 0x86800000c168ll + 0x1000000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a==0))
+        return 0x86800000c168ll + 0x1000000000ll * ((a) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x86800000c168ll + 0x1000000000ll * ((a) & 0x1);
     __cavm_csr_fatal("USBDRDX_UAHC_GDBGLNMCC", 1, a, 0, 0, 0, 0, 0);
 }
@@ -3873,7 +4011,11 @@ static inline uint64_t CAVM_USBDRDX_UAHC_GDBGLSP(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && (a<=1))
         return 0x86800000c174ll + 0x1000000000ll * ((a) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=1))
+        return 0x86800000c174ll + 0x1000000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a==0))
+        return 0x86800000c174ll + 0x1000000000ll * ((a) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x86800000c174ll + 0x1000000000ll * ((a) & 0x1);
     __cavm_csr_fatal("USBDRDX_UAHC_GDBGLSP", 1, a, 0, 0, 0, 0, 0);
 }
@@ -3941,7 +4083,11 @@ static inline uint64_t CAVM_USBDRDX_UAHC_GDBGLSPMUX(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && (a<=1))
         return 0x86800000c170ll + 0x1000000000ll * ((a) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=1))
+        return 0x86800000c170ll + 0x1000000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a==0))
+        return 0x86800000c170ll + 0x1000000000ll * ((a) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x86800000c170ll + 0x1000000000ll * ((a) & 0x1);
     __cavm_csr_fatal("USBDRDX_UAHC_GDBGLSPMUX", 1, a, 0, 0, 0, 0, 0);
 }
@@ -4047,7 +4193,11 @@ static inline uint64_t CAVM_USBDRDX_UAHC_GDBGLTSSM(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && (a<=1))
         return 0x86800000c164ll + 0x1000000000ll * ((a) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=1))
+        return 0x86800000c164ll + 0x1000000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a==0))
+        return 0x86800000c164ll + 0x1000000000ll * ((a) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x86800000c164ll + 0x1000000000ll * ((a) & 0x1);
     __cavm_csr_fatal("USBDRDX_UAHC_GDBGLTSSM", 1, a, 0, 0, 0, 0, 0);
 }
@@ -4113,7 +4263,11 @@ static inline uint64_t CAVM_USBDRDX_UAHC_GDMAHLRATIO(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && (a<=1))
         return 0x86800000c624ll + 0x1000000000ll * ((a) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=1))
+        return 0x86800000c624ll + 0x1000000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a==0))
+        return 0x86800000c624ll + 0x1000000000ll * ((a) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x86800000c624ll + 0x1000000000ll * ((a) & 0x1);
     __cavm_csr_fatal("USBDRDX_UAHC_GDMAHLRATIO", 1, a, 0, 0, 0, 0, 0);
 }
@@ -4167,7 +4321,11 @@ static inline uint64_t CAVM_USBDRDX_UAHC_GEVNTADRX(unsigned long a, unsigned lon
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && ((a<=1) && (b==0)))
         return 0x86800000c400ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x0);
-    if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b==0)))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && ((a<=1) && (b==0)))
+        return 0x86800000c400ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a==0) && (b==0)))
+        return 0x86800000c400ll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b==0)))
         return 0x86800000c400ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x0);
     __cavm_csr_fatal("USBDRDX_UAHC_GEVNTADRX", 2, a, b, 0, 0, 0, 0);
 }
@@ -4230,7 +4388,11 @@ static inline uint64_t CAVM_USBDRDX_UAHC_GEVNTCOUNTX(unsigned long a, unsigned l
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && ((a<=1) && (b==0)))
         return 0x86800000c40cll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x0);
-    if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b==0)))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && ((a<=1) && (b==0)))
+        return 0x86800000c40cll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a==0) && (b==0)))
+        return 0x86800000c40cll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b==0)))
         return 0x86800000c40cll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x0);
     __cavm_csr_fatal("USBDRDX_UAHC_GEVNTCOUNTX", 2, a, b, 0, 0, 0, 0);
 }
@@ -4290,7 +4452,11 @@ static inline uint64_t CAVM_USBDRDX_UAHC_GEVNTSIZX(unsigned long a, unsigned lon
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && ((a<=1) && (b==0)))
         return 0x86800000c408ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x0);
-    if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b==0)))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && ((a<=1) && (b==0)))
+        return 0x86800000c408ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a==0) && (b==0)))
+        return 0x86800000c408ll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b==0)))
         return 0x86800000c408ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x0);
     __cavm_csr_fatal("USBDRDX_UAHC_GEVNTSIZX", 2, a, b, 0, 0, 0, 0);
 }
@@ -4516,7 +4682,11 @@ static inline uint64_t CAVM_USBDRDX_UAHC_GFLADJ(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && (a<=1))
         return 0x86800000c630ll + 0x1000000000ll * ((a) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=1))
+        return 0x86800000c630ll + 0x1000000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a==0))
+        return 0x86800000c630ll + 0x1000000000ll * ((a) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x86800000c630ll + 0x1000000000ll * ((a) & 0x1);
     __cavm_csr_fatal("USBDRDX_UAHC_GFLADJ", 1, a, 0, 0, 0, 0, 0);
 }
@@ -4562,7 +4732,11 @@ static inline uint64_t CAVM_USBDRDX_UAHC_GGPIO(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && (a<=1))
         return 0x86800000c124ll + 0x1000000000ll * ((a) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=1))
+        return 0x86800000c124ll + 0x1000000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a==0))
+        return 0x86800000c124ll + 0x1000000000ll * ((a) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x86800000c124ll + 0x1000000000ll * ((a) & 0x1);
     __cavm_csr_fatal("USBDRDX_UAHC_GGPIO", 1, a, 0, 0, 0, 0, 0);
 }
@@ -4613,7 +4787,11 @@ static inline uint64_t CAVM_USBDRDX_UAHC_GHWPARAMS0(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && (a<=1))
         return 0x86800000c140ll + 0x1000000000ll * ((a) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=1))
+        return 0x86800000c140ll + 0x1000000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a==0))
+        return 0x86800000c140ll + 0x1000000000ll * ((a) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x86800000c140ll + 0x1000000000ll * ((a) & 0x1);
     __cavm_csr_fatal("USBDRDX_UAHC_GHWPARAMS0", 1, a, 0, 0, 0, 0, 0);
 }
@@ -4692,7 +4870,11 @@ static inline uint64_t CAVM_USBDRDX_UAHC_GHWPARAMS1(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && (a<=1))
         return 0x86800000c144ll + 0x1000000000ll * ((a) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=1))
+        return 0x86800000c144ll + 0x1000000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a==0))
+        return 0x86800000c144ll + 0x1000000000ll * ((a) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x86800000c144ll + 0x1000000000ll * ((a) & 0x1);
     __cavm_csr_fatal("USBDRDX_UAHC_GHWPARAMS1", 1, a, 0, 0, 0, 0, 0);
 }
@@ -4733,7 +4915,11 @@ static inline uint64_t CAVM_USBDRDX_UAHC_GHWPARAMS2(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && (a<=1))
         return 0x86800000c148ll + 0x1000000000ll * ((a) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=1))
+        return 0x86800000c148ll + 0x1000000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a==0))
+        return 0x86800000c148ll + 0x1000000000ll * ((a) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x86800000c148ll + 0x1000000000ll * ((a) & 0x1);
     __cavm_csr_fatal("USBDRDX_UAHC_GHWPARAMS2", 1, a, 0, 0, 0, 0, 0);
 }
@@ -4793,7 +4979,11 @@ static inline uint64_t CAVM_USBDRDX_UAHC_GHWPARAMS3(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && (a<=1))
         return 0x86800000c14cll + 0x1000000000ll * ((a) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=1))
+        return 0x86800000c14cll + 0x1000000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a==0))
+        return 0x86800000c14cll + 0x1000000000ll * ((a) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x86800000c14cll + 0x1000000000ll * ((a) & 0x1);
     __cavm_csr_fatal("USBDRDX_UAHC_GHWPARAMS3", 1, a, 0, 0, 0, 0, 0);
 }
@@ -4850,7 +5040,11 @@ static inline uint64_t CAVM_USBDRDX_UAHC_GHWPARAMS4(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && (a<=1))
         return 0x86800000c150ll + 0x1000000000ll * ((a) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=1))
+        return 0x86800000c150ll + 0x1000000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a==0))
+        return 0x86800000c150ll + 0x1000000000ll * ((a) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x86800000c150ll + 0x1000000000ll * ((a) & 0x1);
     __cavm_csr_fatal("USBDRDX_UAHC_GHWPARAMS4", 1, a, 0, 0, 0, 0, 0);
 }
@@ -4901,7 +5095,11 @@ static inline uint64_t CAVM_USBDRDX_UAHC_GHWPARAMS5(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && (a<=1))
         return 0x86800000c154ll + 0x1000000000ll * ((a) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=1))
+        return 0x86800000c154ll + 0x1000000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a==0))
+        return 0x86800000c154ll + 0x1000000000ll * ((a) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x86800000c154ll + 0x1000000000ll * ((a) & 0x1);
     __cavm_csr_fatal("USBDRDX_UAHC_GHWPARAMS5", 1, a, 0, 0, 0, 0, 0);
 }
@@ -4962,7 +5160,11 @@ static inline uint64_t CAVM_USBDRDX_UAHC_GHWPARAMS6(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && (a<=1))
         return 0x86800000c158ll + 0x1000000000ll * ((a) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=1))
+        return 0x86800000c158ll + 0x1000000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a==0))
+        return 0x86800000c158ll + 0x1000000000ll * ((a) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x86800000c158ll + 0x1000000000ll * ((a) & 0x1);
     __cavm_csr_fatal("USBDRDX_UAHC_GHWPARAMS6", 1, a, 0, 0, 0, 0, 0);
 }
@@ -5005,7 +5207,11 @@ static inline uint64_t CAVM_USBDRDX_UAHC_GHWPARAMS7(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && (a<=1))
         return 0x86800000c15cll + 0x1000000000ll * ((a) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=1))
+        return 0x86800000c15cll + 0x1000000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a==0))
+        return 0x86800000c15cll + 0x1000000000ll * ((a) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x86800000c15cll + 0x1000000000ll * ((a) & 0x1);
     __cavm_csr_fatal("USBDRDX_UAHC_GHWPARAMS7", 1, a, 0, 0, 0, 0, 0);
 }
@@ -5046,7 +5252,11 @@ static inline uint64_t CAVM_USBDRDX_UAHC_GHWPARAMS8(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && (a<=1))
         return 0x86800000c600ll + 0x1000000000ll * ((a) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=1))
+        return 0x86800000c600ll + 0x1000000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a==0))
+        return 0x86800000c600ll + 0x1000000000ll * ((a) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x86800000c600ll + 0x1000000000ll * ((a) & 0x1);
     __cavm_csr_fatal("USBDRDX_UAHC_GHWPARAMS8", 1, a, 0, 0, 0, 0, 0);
 }
@@ -5132,7 +5342,11 @@ static inline uint64_t CAVM_USBDRDX_UAHC_GPMSTS(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && (a<=1))
         return 0x86800000c114ll + 0x1000000000ll * ((a) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=1))
+        return 0x86800000c114ll + 0x1000000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a==0))
+        return 0x86800000c114ll + 0x1000000000ll * ((a) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x86800000c114ll + 0x1000000000ll * ((a) & 0x1);
     __cavm_csr_fatal("USBDRDX_UAHC_GPMSTS", 1, a, 0, 0, 0, 0, 0);
 }
@@ -5181,7 +5395,11 @@ static inline uint64_t CAVM_USBDRDX_UAHC_GPRTBIMAP(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && (a<=1))
         return 0x86800000c138ll + 0x1000000000ll * ((a) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=1))
+        return 0x86800000c138ll + 0x1000000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a==0))
+        return 0x86800000c138ll + 0x1000000000ll * ((a) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x86800000c138ll + 0x1000000000ll * ((a) & 0x1);
     __cavm_csr_fatal("USBDRDX_UAHC_GPRTBIMAP", 1, a, 0, 0, 0, 0, 0);
 }
@@ -5230,7 +5448,11 @@ static inline uint64_t CAVM_USBDRDX_UAHC_GPRTBIMAP_FS(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && (a<=1))
         return 0x86800000c188ll + 0x1000000000ll * ((a) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=1))
+        return 0x86800000c188ll + 0x1000000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a==0))
+        return 0x86800000c188ll + 0x1000000000ll * ((a) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x86800000c188ll + 0x1000000000ll * ((a) & 0x1);
     __cavm_csr_fatal("USBDRDX_UAHC_GPRTBIMAP_FS", 1, a, 0, 0, 0, 0, 0);
 }
@@ -5279,7 +5501,11 @@ static inline uint64_t CAVM_USBDRDX_UAHC_GPRTBIMAP_HS(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && (a<=1))
         return 0x86800000c180ll + 0x1000000000ll * ((a) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=1))
+        return 0x86800000c180ll + 0x1000000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a==0))
+        return 0x86800000c180ll + 0x1000000000ll * ((a) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x86800000c180ll + 0x1000000000ll * ((a) & 0x1);
     __cavm_csr_fatal("USBDRDX_UAHC_GPRTBIMAP_HS", 1, a, 0, 0, 0, 0, 0);
 }
@@ -5348,7 +5574,11 @@ static inline uint64_t CAVM_USBDRDX_UAHC_GRLSID(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && (a<=1))
         return 0x86800000c120ll + 0x1000000000ll * ((a) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=1))
+        return 0x86800000c120ll + 0x1000000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a==0))
+        return 0x86800000c120ll + 0x1000000000ll * ((a) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x86800000c120ll + 0x1000000000ll * ((a) & 0x1);
     __cavm_csr_fatal("USBDRDX_UAHC_GRLSID", 1, a, 0, 0, 0, 0, 0);
 }
@@ -5412,7 +5642,11 @@ static inline uint64_t CAVM_USBDRDX_UAHC_GRXFIFOPRIHST(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && (a<=1))
         return 0x86800000c61cll + 0x1000000000ll * ((a) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=1))
+        return 0x86800000c61cll + 0x1000000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a==0))
+        return 0x86800000c61cll + 0x1000000000ll * ((a) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x86800000c61cll + 0x1000000000ll * ((a) & 0x1);
     __cavm_csr_fatal("USBDRDX_UAHC_GRXFIFOPRIHST", 1, a, 0, 0, 0, 0, 0);
 }
@@ -5477,7 +5711,11 @@ static inline uint64_t CAVM_USBDRDX_UAHC_GRXFIFOSIZX(unsigned long a, unsigned l
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && ((a<=1) && (b<=2)))
         return 0x86800000c380ll + 0x1000000000ll * ((a) & 0x1) + 4ll * ((b) & 0x3);
-    if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=2)))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && ((a<=1) && (b<=2)))
+        return 0x86800000c380ll + 0x1000000000ll * ((a) & 0x1) + 4ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a==0) && (b<=2)))
+        return 0x86800000c380ll + 0x1000000000ll * ((a) & 0x0) + 4ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=2)))
         return 0x86800000c380ll + 0x1000000000ll * ((a) & 0x1) + 4ll * ((b) & 0x3);
     __cavm_csr_fatal("USBDRDX_UAHC_GRXFIFOSIZX", 2, a, b, 0, 0, 0, 0);
 }
@@ -5653,7 +5891,11 @@ static inline uint64_t CAVM_USBDRDX_UAHC_GRXTHRCFG(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && (a<=1))
         return 0x86800000c10cll + 0x1000000000ll * ((a) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=1))
+        return 0x86800000c10cll + 0x1000000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a==0))
+        return 0x86800000c10cll + 0x1000000000ll * ((a) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x86800000c10cll + 0x1000000000ll * ((a) & 0x1);
     __cavm_csr_fatal("USBDRDX_UAHC_GRXTHRCFG", 1, a, 0, 0, 0, 0, 0);
 }
@@ -5826,7 +6068,11 @@ static inline uint64_t CAVM_USBDRDX_UAHC_GSBUSCFG0(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && (a<=1))
         return 0x86800000c100ll + 0x1000000000ll * ((a) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=1))
+        return 0x86800000c100ll + 0x1000000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a==0))
+        return 0x86800000c100ll + 0x1000000000ll * ((a) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x86800000c100ll + 0x1000000000ll * ((a) & 0x1);
     __cavm_csr_fatal("USBDRDX_UAHC_GSBUSCFG0", 1, a, 0, 0, 0, 0, 0);
 }
@@ -5904,7 +6150,11 @@ static inline uint64_t CAVM_USBDRDX_UAHC_GSBUSCFG1(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && (a<=1))
         return 0x86800000c104ll + 0x1000000000ll * ((a) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=1))
+        return 0x86800000c104ll + 0x1000000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a==0))
+        return 0x86800000c104ll + 0x1000000000ll * ((a) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x86800000c104ll + 0x1000000000ll * ((a) & 0x1);
     __cavm_csr_fatal("USBDRDX_UAHC_GSBUSCFG1", 1, a, 0, 0, 0, 0, 0);
 }
@@ -5968,7 +6218,11 @@ static inline uint64_t CAVM_USBDRDX_UAHC_GSTS(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && (a<=1))
         return 0x86800000c118ll + 0x1000000000ll * ((a) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=1))
+        return 0x86800000c118ll + 0x1000000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a==0))
+        return 0x86800000c118ll + 0x1000000000ll * ((a) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x86800000c118ll + 0x1000000000ll * ((a) & 0x1);
     __cavm_csr_fatal("USBDRDX_UAHC_GSTS", 1, a, 0, 0, 0, 0, 0);
 }
@@ -6035,7 +6289,11 @@ static inline uint64_t CAVM_USBDRDX_UAHC_GTXFIFOPRIDEV(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && (a<=1))
         return 0x86800000c610ll + 0x1000000000ll * ((a) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=1))
+        return 0x86800000c610ll + 0x1000000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a==0))
+        return 0x86800000c610ll + 0x1000000000ll * ((a) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x86800000c610ll + 0x1000000000ll * ((a) & 0x1);
     __cavm_csr_fatal("USBDRDX_UAHC_GTXFIFOPRIDEV", 1, a, 0, 0, 0, 0, 0);
 }
@@ -6104,7 +6362,11 @@ static inline uint64_t CAVM_USBDRDX_UAHC_GTXFIFOPRIHST(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && (a<=1))
         return 0x86800000c618ll + 0x1000000000ll * ((a) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=1))
+        return 0x86800000c618ll + 0x1000000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a==0))
+        return 0x86800000c618ll + 0x1000000000ll * ((a) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x86800000c618ll + 0x1000000000ll * ((a) & 0x1);
     __cavm_csr_fatal("USBDRDX_UAHC_GTXFIFOPRIHST", 1, a, 0, 0, 0, 0, 0);
 }
@@ -6170,7 +6432,11 @@ static inline uint64_t CAVM_USBDRDX_UAHC_GTXFIFOSIZX(unsigned long a, unsigned l
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && ((a<=1) && (b<=3)))
         return 0x86800000c300ll + 0x1000000000ll * ((a) & 0x1) + 4ll * ((b) & 0x3);
-    if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=3)))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && ((a<=1) && (b<=3)))
+        return 0x86800000c300ll + 0x1000000000ll * ((a) & 0x1) + 4ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a==0) && (b<=3)))
+        return 0x86800000c300ll + 0x1000000000ll * ((a) & 0x0) + 4ll * ((b) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=3)))
         return 0x86800000c300ll + 0x1000000000ll * ((a) & 0x1) + 4ll * ((b) & 0x3);
     __cavm_csr_fatal("USBDRDX_UAHC_GTXFIFOSIZX", 2, a, b, 0, 0, 0, 0);
 }
@@ -6321,7 +6587,11 @@ static inline uint64_t CAVM_USBDRDX_UAHC_GTXTHRCFG(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && (a<=1))
         return 0x86800000c108ll + 0x1000000000ll * ((a) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=1))
+        return 0x86800000c108ll + 0x1000000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a==0))
+        return 0x86800000c108ll + 0x1000000000ll * ((a) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x86800000c108ll + 0x1000000000ll * ((a) & 0x1);
     __cavm_csr_fatal("USBDRDX_UAHC_GTXTHRCFG", 1, a, 0, 0, 0, 0, 0);
 }
@@ -6571,7 +6841,11 @@ static inline uint64_t CAVM_USBDRDX_UAHC_GUCTL(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && (a<=1))
         return 0x86800000c12cll + 0x1000000000ll * ((a) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=1))
+        return 0x86800000c12cll + 0x1000000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a==0))
+        return 0x86800000c12cll + 0x1000000000ll * ((a) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x86800000c12cll + 0x1000000000ll * ((a) & 0x1);
     __cavm_csr_fatal("USBDRDX_UAHC_GUCTL", 1, a, 0, 0, 0, 0, 0);
 }
@@ -6685,7 +6959,11 @@ static inline uint64_t CAVM_USBDRDX_UAHC_GUCTL1(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && (a<=1))
         return 0x86800000c11cll + 0x1000000000ll * ((a) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=1))
+        return 0x86800000c11cll + 0x1000000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a==0))
+        return 0x86800000c11cll + 0x1000000000ll * ((a) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x86800000c11cll + 0x1000000000ll * ((a) & 0x1);
     __cavm_csr_fatal("USBDRDX_UAHC_GUCTL1", 1, a, 0, 0, 0, 0, 0);
 }
@@ -6735,7 +7013,11 @@ typedef union cavm_usbdrdx_uahc_guctl2 cavm_usbdrdx_uahc_guctl2_t;
 static inline uint64_t CAVM_USBDRDX_UAHC_GUCTL2(unsigned long a) __attribute__ ((pure, always_inline));
 static inline uint64_t CAVM_USBDRDX_UAHC_GUCTL2(unsigned long a)
 {
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=1))
+        return 0x86800000c19cll + 0x1000000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a==0))
+        return 0x86800000c19cll + 0x1000000000ll * ((a) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x86800000c19cll + 0x1000000000ll * ((a) & 0x1);
     __cavm_csr_fatal("USBDRDX_UAHC_GUCTL2", 1, a, 0, 0, 0, 0, 0);
 }
@@ -6783,7 +7065,11 @@ static inline uint64_t CAVM_USBDRDX_UAHC_GUID(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && (a<=1))
         return 0x86800000c128ll + 0x1000000000ll * ((a) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=1))
+        return 0x86800000c128ll + 0x1000000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a==0))
+        return 0x86800000c128ll + 0x1000000000ll * ((a) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x86800000c128ll + 0x1000000000ll * ((a) & 0x1);
     __cavm_csr_fatal("USBDRDX_UAHC_GUID", 1, a, 0, 0, 0, 0, 0);
 }
@@ -6826,7 +7112,11 @@ static inline uint64_t CAVM_USBDRDX_UAHC_GUSB2I2CCTLX(unsigned long a, unsigned 
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && ((a<=1) && (b==0)))
         return 0x86800000c240ll + 0x1000000000ll * ((a) & 0x1) + 4ll * ((b) & 0x0);
-    if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b==0)))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && ((a<=1) && (b==0)))
+        return 0x86800000c240ll + 0x1000000000ll * ((a) & 0x1) + 4ll * ((b) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a==0) && (b==0)))
+        return 0x86800000c240ll + 0x1000000000ll * ((a) & 0x0) + 4ll * ((b) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b==0)))
         return 0x86800000c240ll + 0x1000000000ll * ((a) & 0x1) + 4ll * ((b) & 0x0);
     __cavm_csr_fatal("USBDRDX_UAHC_GUSB2I2CCTLX", 2, a, b, 0, 0, 0, 0);
 }
@@ -7175,7 +7465,11 @@ static inline uint64_t CAVM_USBDRDX_UAHC_GUSB2PHYCFGX(unsigned long a, unsigned 
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && ((a<=1) && (b==0)))
         return 0x86800000c200ll + 0x1000000000ll * ((a) & 0x1) + 4ll * ((b) & 0x0);
-    if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b==0)))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && ((a<=1) && (b==0)))
+        return 0x86800000c200ll + 0x1000000000ll * ((a) & 0x1) + 4ll * ((b) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a==0) && (b==0)))
+        return 0x86800000c200ll + 0x1000000000ll * ((a) & 0x0) + 4ll * ((b) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b==0)))
         return 0x86800000c200ll + 0x1000000000ll * ((a) & 0x1) + 4ll * ((b) & 0x0);
     __cavm_csr_fatal("USBDRDX_UAHC_GUSB2PHYCFGX", 2, a, b, 0, 0, 0, 0);
 }
@@ -7532,6 +7826,7 @@ union cavm_usbdrdx_uahc_gusb3pipectlx
                                                                  this bit to 1, the software needs to clear this bit. */
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_usbdrdx_uahc_gusb3pipectlx_s cn8; */
     /* struct cavm_usbdrdx_uahc_gusb3pipectlx_s cn81xx; */
     struct cavm_usbdrdx_uahc_gusb3pipectlx_cn83xx
     {
@@ -7880,7 +8175,11 @@ static inline uint64_t CAVM_USBDRDX_UAHC_GUSB3PIPECTLX(unsigned long a, unsigned
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && ((a<=1) && (b==0)))
         return 0x86800000c2c0ll + 0x1000000000ll * ((a) & 0x1) + 4ll * ((b) & 0x0);
-    if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b==0)))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && ((a<=1) && (b==0)))
+        return 0x86800000c2c0ll + 0x1000000000ll * ((a) & 0x1) + 4ll * ((b) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a==0) && (b==0)))
+        return 0x86800000c2c0ll + 0x1000000000ll * ((a) & 0x0) + 4ll * ((b) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b==0)))
         return 0x86800000c2c0ll + 0x1000000000ll * ((a) & 0x1) + 4ll * ((b) & 0x0);
     __cavm_csr_fatal("USBDRDX_UAHC_GUSB3PIPECTLX", 2, a, b, 0, 0, 0, 0);
 }
@@ -8004,7 +8303,11 @@ typedef union cavm_usbdrdx_uahc_hccparams1 cavm_usbdrdx_uahc_hccparams1_t;
 static inline uint64_t CAVM_USBDRDX_UAHC_HCCPARAMS1(unsigned long a) __attribute__ ((pure, always_inline));
 static inline uint64_t CAVM_USBDRDX_UAHC_HCCPARAMS1(unsigned long a)
 {
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=1))
+        return 0x868000000010ll + 0x1000000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a==0))
+        return 0x868000000010ll + 0x1000000000ll * ((a) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x868000000010ll + 0x1000000000ll * ((a) & 0x1);
     __cavm_csr_fatal("USBDRDX_UAHC_HCCPARAMS1", 1, a, 0, 0, 0, 0, 0);
 }
@@ -8053,7 +8356,11 @@ typedef union cavm_usbdrdx_uahc_hccparams2 cavm_usbdrdx_uahc_hccparams2_t;
 static inline uint64_t CAVM_USBDRDX_UAHC_HCCPARAMS2(unsigned long a) __attribute__ ((pure, always_inline));
 static inline uint64_t CAVM_USBDRDX_UAHC_HCCPARAMS2(unsigned long a)
 {
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=1))
+        return 0x86800000001cll + 0x1000000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a==0))
+        return 0x86800000001cll + 0x1000000000ll * ((a) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x86800000001cll + 0x1000000000ll * ((a) & 0x1);
     __cavm_csr_fatal("USBDRDX_UAHC_HCCPARAMS2", 1, a, 0, 0, 0, 0, 0);
 }
@@ -8099,7 +8406,11 @@ static inline uint64_t CAVM_USBDRDX_UAHC_HCSPARAMS1(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && (a<=1))
         return 0x868000000004ll + 0x1000000000ll * ((a) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=1))
+        return 0x868000000004ll + 0x1000000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a==0))
+        return 0x868000000004ll + 0x1000000000ll * ((a) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x868000000004ll + 0x1000000000ll * ((a) & 0x1);
     __cavm_csr_fatal("USBDRDX_UAHC_HCSPARAMS1", 1, a, 0, 0, 0, 0, 0);
 }
@@ -8148,7 +8459,11 @@ static inline uint64_t CAVM_USBDRDX_UAHC_HCSPARAMS2(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && (a<=1))
         return 0x868000000008ll + 0x1000000000ll * ((a) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=1))
+        return 0x868000000008ll + 0x1000000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a==0))
+        return 0x868000000008ll + 0x1000000000ll * ((a) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x868000000008ll + 0x1000000000ll * ((a) & 0x1);
     __cavm_csr_fatal("USBDRDX_UAHC_HCSPARAMS2", 1, a, 0, 0, 0, 0, 0);
 }
@@ -8190,7 +8505,11 @@ static inline uint64_t CAVM_USBDRDX_UAHC_HCSPARAMS3(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && (a<=1))
         return 0x86800000000cll + 0x1000000000ll * ((a) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=1))
+        return 0x86800000000cll + 0x1000000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a==0))
+        return 0x86800000000cll + 0x1000000000ll * ((a) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x86800000000cll + 0x1000000000ll * ((a) & 0x1);
     __cavm_csr_fatal("USBDRDX_UAHC_HCSPARAMS3", 1, a, 0, 0, 0, 0, 0);
 }
@@ -8237,7 +8556,11 @@ static inline uint64_t CAVM_USBDRDX_UAHC_IMANX(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && ((a<=1) && (b==0)))
         return 0x868000000460ll + 0x1000000000ll * ((a) & 0x1) + 0ll * ((b) & 0x0);
-    if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b==0)))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && ((a<=1) && (b==0)))
+        return 0x868000000460ll + 0x1000000000ll * ((a) & 0x1) + 0ll * ((b) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a==0) && (b==0)))
+        return 0x868000000460ll + 0x1000000000ll * ((a) & 0x0) + 0ll * ((b) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b==0)))
         return 0x868000000460ll + 0x1000000000ll * ((a) & 0x1) + 0ll * ((b) & 0x0);
     __cavm_csr_fatal("USBDRDX_UAHC_IMANX", 2, a, b, 0, 0, 0, 0);
 }
@@ -8282,7 +8605,11 @@ static inline uint64_t CAVM_USBDRDX_UAHC_IMODX(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && ((a<=1) && (b==0)))
         return 0x868000000464ll + 0x1000000000ll * ((a) & 0x1) + 0ll * ((b) & 0x0);
-    if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b==0)))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && ((a<=1) && (b==0)))
+        return 0x868000000464ll + 0x1000000000ll * ((a) & 0x1) + 0ll * ((b) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a==0) && (b==0)))
+        return 0x868000000464ll + 0x1000000000ll * ((a) & 0x0) + 0ll * ((b) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b==0)))
         return 0x868000000464ll + 0x1000000000ll * ((a) & 0x1) + 0ll * ((b) & 0x0);
     __cavm_csr_fatal("USBDRDX_UAHC_IMODX", 2, a, b, 0, 0, 0, 0);
 }
@@ -8327,7 +8654,11 @@ static inline uint64_t CAVM_USBDRDX_UAHC_MFINDEX(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && (a<=1))
         return 0x868000000440ll + 0x1000000000ll * ((a) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=1))
+        return 0x868000000440ll + 0x1000000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a==0))
+        return 0x868000000440ll + 0x1000000000ll * ((a) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x868000000440ll + 0x1000000000ll * ((a) & 0x1);
     __cavm_csr_fatal("USBDRDX_UAHC_MFINDEX", 1, a, 0, 0, 0, 0, 0);
 }
@@ -8367,7 +8698,11 @@ static inline uint64_t CAVM_USBDRDX_UAHC_PAGESIZE(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && (a<=1))
         return 0x868000000028ll + 0x1000000000ll * ((a) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=1))
+        return 0x868000000028ll + 0x1000000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a==0))
+        return 0x868000000028ll + 0x1000000000ll * ((a) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x868000000028ll + 0x1000000000ll * ((a) & 0x1);
     __cavm_csr_fatal("USBDRDX_UAHC_PAGESIZE", 1, a, 0, 0, 0, 0, 0);
 }
@@ -8438,7 +8773,11 @@ static inline uint64_t CAVM_USBDRDX_UAHC_PORTHLPMC_20X(unsigned long a, unsigned
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && ((a<=1) && (b==0)))
         return 0x86800000042cll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x0);
-    if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b==0)))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && ((a<=1) && (b==0)))
+        return 0x86800000042cll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a==0) && (b==0)))
+        return 0x86800000042cll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b==0)))
         return 0x86800000042cll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x0);
     __cavm_csr_fatal("USBDRDX_UAHC_PORTHLPMC_20X", 2, a, b, 0, 0, 0, 0);
 }
@@ -8482,7 +8821,11 @@ static inline uint64_t CAVM_USBDRDX_UAHC_PORTHLPMC_SSX(unsigned long a, unsigned
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && ((a<=1) && (b==1)))
         return 0x86800000042cll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b==1)))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && ((a<=1) && (b==1)))
+        return 0x86800000042cll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a==0) && (b==1)))
+        return 0x86800000042cll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b==1)))
         return 0x86800000042cll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x1);
     __cavm_csr_fatal("USBDRDX_UAHC_PORTHLPMC_SSX", 2, a, b, 0, 0, 0, 0);
 }
@@ -8520,7 +8863,11 @@ static inline uint64_t CAVM_USBDRDX_UAHC_PORTLI_20X(unsigned long a, unsigned lo
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && ((a<=1) && (b==0)))
         return 0x868000000428ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x0);
-    if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b==0)))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && ((a<=1) && (b==0)))
+        return 0x868000000428ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a==0) && (b==0)))
+        return 0x868000000428ll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b==0)))
         return 0x868000000428ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x0);
     __cavm_csr_fatal("USBDRDX_UAHC_PORTLI_20X", 2, a, b, 0, 0, 0, 0);
 }
@@ -8560,7 +8907,11 @@ static inline uint64_t CAVM_USBDRDX_UAHC_PORTLI_SSX(unsigned long a, unsigned lo
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && ((a<=1) && (b==1)))
         return 0x868000000428ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b==1)))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && ((a<=1) && (b==1)))
+        return 0x868000000428ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a==0) && (b==1)))
+        return 0x868000000428ll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b==1)))
         return 0x868000000428ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x1);
     __cavm_csr_fatal("USBDRDX_UAHC_PORTLI_SSX", 2, a, b, 0, 0, 0, 0);
 }
@@ -8615,7 +8966,11 @@ static inline uint64_t CAVM_USBDRDX_UAHC_PORTPMSC_20X(unsigned long a, unsigned 
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && ((a<=1) && (b==0)))
         return 0x868000000424ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x0);
-    if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b==0)))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && ((a<=1) && (b==0)))
+        return 0x868000000424ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a==0) && (b==0)))
+        return 0x868000000424ll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b==0)))
         return 0x868000000424ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x0);
     __cavm_csr_fatal("USBDRDX_UAHC_PORTPMSC_20X", 2, a, b, 0, 0, 0, 0);
 }
@@ -8664,7 +9019,11 @@ static inline uint64_t CAVM_USBDRDX_UAHC_PORTPMSC_SSX(unsigned long a, unsigned 
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && ((a<=1) && (b==1)))
         return 0x868000000424ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b==1)))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && ((a<=1) && (b==1)))
+        return 0x868000000424ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a==0) && (b==1)))
+        return 0x868000000424ll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b==1)))
         return 0x868000000424ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x1);
     __cavm_csr_fatal("USBDRDX_UAHC_PORTPMSC_SSX", 2, a, b, 0, 0, 0, 0);
 }
@@ -8754,7 +9113,11 @@ static inline uint64_t CAVM_USBDRDX_UAHC_PORTSCX(unsigned long a, unsigned long 
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && ((a<=1) && (b<=1)))
         return 0x868000000420ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b<=1)))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && ((a<=1) && (b<=1)))
+        return 0x868000000420ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a==0) && (b<=1)))
+        return 0x868000000420ll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=1)))
         return 0x868000000420ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x1);
     __cavm_csr_fatal("USBDRDX_UAHC_PORTSCX", 2, a, b, 0, 0, 0, 0);
 }
@@ -8795,7 +9158,11 @@ static inline uint64_t CAVM_USBDRDX_UAHC_RTSOFF(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && (a<=1))
         return 0x868000000018ll + 0x1000000000ll * ((a) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=1))
+        return 0x868000000018ll + 0x1000000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a==0))
+        return 0x868000000018ll + 0x1000000000ll * ((a) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x868000000018ll + 0x1000000000ll * ((a) & 0x1);
     __cavm_csr_fatal("USBDRDX_UAHC_RTSOFF", 1, a, 0, 0, 0, 0, 0);
 }
@@ -8839,7 +9206,11 @@ static inline uint64_t CAVM_USBDRDX_UAHC_SUPTPRT2_DW0(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && (a<=1))
         return 0x868000000890ll + 0x1000000000ll * ((a) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=1))
+        return 0x868000000890ll + 0x1000000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a==0))
+        return 0x868000000890ll + 0x1000000000ll * ((a) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x868000000890ll + 0x1000000000ll * ((a) & 0x1);
     __cavm_csr_fatal("USBDRDX_UAHC_SUPTPRT2_DW0", 1, a, 0, 0, 0, 0, 0);
 }
@@ -8877,7 +9248,11 @@ static inline uint64_t CAVM_USBDRDX_UAHC_SUPTPRT2_DW1(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && (a<=1))
         return 0x868000000894ll + 0x1000000000ll * ((a) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=1))
+        return 0x868000000894ll + 0x1000000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a==0))
+        return 0x868000000894ll + 0x1000000000ll * ((a) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x868000000894ll + 0x1000000000ll * ((a) & 0x1);
     __cavm_csr_fatal("USBDRDX_UAHC_SUPTPRT2_DW1", 1, a, 0, 0, 0, 0, 0);
 }
@@ -8931,7 +9306,11 @@ static inline uint64_t CAVM_USBDRDX_UAHC_SUPTPRT2_DW2(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && (a<=1))
         return 0x868000000898ll + 0x1000000000ll * ((a) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=1))
+        return 0x868000000898ll + 0x1000000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a==0))
+        return 0x868000000898ll + 0x1000000000ll * ((a) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x868000000898ll + 0x1000000000ll * ((a) & 0x1);
     __cavm_csr_fatal("USBDRDX_UAHC_SUPTPRT2_DW2", 1, a, 0, 0, 0, 0, 0);
 }
@@ -8971,7 +9350,11 @@ static inline uint64_t CAVM_USBDRDX_UAHC_SUPTPRT2_DW3(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && (a<=1))
         return 0x86800000089cll + 0x1000000000ll * ((a) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=1))
+        return 0x86800000089cll + 0x1000000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a==0))
+        return 0x86800000089cll + 0x1000000000ll * ((a) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x86800000089cll + 0x1000000000ll * ((a) & 0x1);
     __cavm_csr_fatal("USBDRDX_UAHC_SUPTPRT2_DW3", 1, a, 0, 0, 0, 0, 0);
 }
@@ -9021,7 +9404,11 @@ static inline uint64_t CAVM_USBDRDX_UAHC_SUPTPRT3_DW0(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && (a<=1))
         return 0x8680000008a0ll + 0x1000000000ll * ((a) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=1))
+        return 0x8680000008a0ll + 0x1000000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a==0))
+        return 0x8680000008a0ll + 0x1000000000ll * ((a) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x8680000008a0ll + 0x1000000000ll * ((a) & 0x1);
     __cavm_csr_fatal("USBDRDX_UAHC_SUPTPRT3_DW0", 1, a, 0, 0, 0, 0, 0);
 }
@@ -9059,7 +9446,11 @@ static inline uint64_t CAVM_USBDRDX_UAHC_SUPTPRT3_DW1(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && (a<=1))
         return 0x8680000008a4ll + 0x1000000000ll * ((a) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=1))
+        return 0x8680000008a4ll + 0x1000000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a==0))
+        return 0x8680000008a4ll + 0x1000000000ll * ((a) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x8680000008a4ll + 0x1000000000ll * ((a) & 0x1);
     __cavm_csr_fatal("USBDRDX_UAHC_SUPTPRT3_DW1", 1, a, 0, 0, 0, 0, 0);
 }
@@ -9103,7 +9494,11 @@ static inline uint64_t CAVM_USBDRDX_UAHC_SUPTPRT3_DW2(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && (a<=1))
         return 0x8680000008a8ll + 0x1000000000ll * ((a) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=1))
+        return 0x8680000008a8ll + 0x1000000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a==0))
+        return 0x8680000008a8ll + 0x1000000000ll * ((a) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x8680000008a8ll + 0x1000000000ll * ((a) & 0x1);
     __cavm_csr_fatal("USBDRDX_UAHC_SUPTPRT3_DW2", 1, a, 0, 0, 0, 0, 0);
 }
@@ -9143,7 +9538,11 @@ static inline uint64_t CAVM_USBDRDX_UAHC_SUPTPRT3_DW3(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && (a<=1))
         return 0x8680000008acll + 0x1000000000ll * ((a) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=1))
+        return 0x8680000008acll + 0x1000000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a==0))
+        return 0x8680000008acll + 0x1000000000ll * ((a) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x8680000008acll + 0x1000000000ll * ((a) & 0x1);
     __cavm_csr_fatal("USBDRDX_UAHC_SUPTPRT3_DW3", 1, a, 0, 0, 0, 0, 0);
 }
@@ -9209,7 +9608,11 @@ static inline uint64_t CAVM_USBDRDX_UAHC_USBCMD(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && (a<=1))
         return 0x868000000020ll + 0x1000000000ll * ((a) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=1))
+        return 0x868000000020ll + 0x1000000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a==0))
+        return 0x868000000020ll + 0x1000000000ll * ((a) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x868000000020ll + 0x1000000000ll * ((a) & 0x1);
     __cavm_csr_fatal("USBDRDX_UAHC_USBCMD", 1, a, 0, 0, 0, 0, 0);
 }
@@ -9297,7 +9700,11 @@ static inline uint64_t CAVM_USBDRDX_UAHC_USBLEGCTLSTS(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && (a<=1))
         return 0x868000000884ll + 0x1000000000ll * ((a) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=1))
+        return 0x868000000884ll + 0x1000000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a==0))
+        return 0x868000000884ll + 0x1000000000ll * ((a) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x868000000884ll + 0x1000000000ll * ((a) & 0x1);
     __cavm_csr_fatal("USBDRDX_UAHC_USBLEGCTLSTS", 1, a, 0, 0, 0, 0, 0);
 }
@@ -9350,7 +9757,11 @@ static inline uint64_t CAVM_USBDRDX_UAHC_USBLEGSUP(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && (a<=1))
         return 0x868000000880ll + 0x1000000000ll * ((a) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=1))
+        return 0x868000000880ll + 0x1000000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a==0))
+        return 0x868000000880ll + 0x1000000000ll * ((a) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x868000000880ll + 0x1000000000ll * ((a) & 0x1);
     __cavm_csr_fatal("USBDRDX_UAHC_USBLEGSUP", 1, a, 0, 0, 0, 0, 0);
 }
@@ -9416,7 +9827,11 @@ static inline uint64_t CAVM_USBDRDX_UAHC_USBSTS(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && (a<=1))
         return 0x868000000024ll + 0x1000000000ll * ((a) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=1))
+        return 0x868000000024ll + 0x1000000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a==0))
+        return 0x868000000024ll + 0x1000000000ll * ((a) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x868000000024ll + 0x1000000000ll * ((a) & 0x1);
     __cavm_csr_fatal("USBDRDX_UAHC_USBSTS", 1, a, 0, 0, 0, 0, 0);
 }
@@ -9517,7 +9932,11 @@ typedef union cavm_usbdrdx_uctl_csclk_active_pc cavm_usbdrdx_uctl_csclk_active_p
 static inline uint64_t CAVM_USBDRDX_UCTL_CSCLK_ACTIVE_PC(unsigned long a) __attribute__ ((pure, always_inline));
 static inline uint64_t CAVM_USBDRDX_UCTL_CSCLK_ACTIVE_PC(unsigned long a)
 {
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=1))
+        return 0x868000100028ll + 0x1000000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a==0))
+        return 0x868000100028ll + 0x1000000000ll * ((a) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x868000100028ll + 0x1000000000ll * ((a) & 0x1);
     __cavm_csr_fatal("USBDRDX_UCTL_CSCLK_ACTIVE_PC", 1, a, 0, 0, 0, 0, 0);
 }
@@ -10200,7 +10619,7 @@ union cavm_usbdrdx_uctl_ctl
                                                                  takes almost 2,000 controller-clock cycles for the largest RAM. */
 #endif /* Word 0 - End */
     } s;
-    struct cavm_usbdrdx_uctl_ctl_cn81xx
+    struct cavm_usbdrdx_uctl_ctl_cn8
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t clear_bist            : 1;  /**< [ 63: 63](R/W) BIST fast-clear mode select. A BIST run with this bit set clears all entries in USBDRD
@@ -10843,7 +11262,8 @@ union cavm_usbdrdx_uctl_ctl
                                                                  CLEAR BIST completion is indicated by USBDRD()_UCTL_BIST_STATUS. A BIST clear operation
                                                                  takes almost 2,000 controller-clock cycles for the largest RAM. */
 #endif /* Word 0 - End */
-    } cn81xx;
+    } cn8;
+    /* struct cavm_usbdrdx_uctl_ctl_cn8 cn81xx; */
     struct cavm_usbdrdx_uctl_ctl_cn83xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -11446,6 +11866,535 @@ union cavm_usbdrdx_uctl_ctl
 
                                                                  As [REF_CLK_SEL] = 0x0, the legal values are:
 
+                                                                   0x19 = 100  MHz on DLMC_REF_CLK*.
+
+                                                                 All other values are reserved.
+
+                                                                 This value may only be changed during [UPHY_RST].
+
+                                                                 Internal:
+                                                                 If [REF_CLK_SEL] = 0x0, 0x1 or 0x2, then:
+                                                                   0x19 = 100  MHz on DLMC_REF_CLK*.
+                                                                   0x68 =  24  MHz on DLMC_REF_CLK*.
+                                                                   0x7D =  20  MHz on DLMC_REF_CLK*.
+                                                                   0x02 =  19.2MHz on DLMC_REF_CLK*.
+
+                                                                 If [REF_CLK_SEL] = 0x4 or 0x5 or 0x06, then:
+                                                                   0x02 =  19.2MHz on DLMC_REF_CLK*.
+                                                                   0x7D =  20  MHz on DLMC_REF_CLK*.
+                                                                   0x68 =  24  MHz on DLMC_REF_CLK*.
+                                                                   0x64 =  25  MHz on DLMC_REF_CLK*.
+                                                                   0x60 =  26  MHz on DLMC_REF_CLK*.
+                                                                   0x41 =  38.4MHz on DLMC_REF_CLK*.
+                                                                   0x7D =  40  MHz on DLMC_REF_CLK*.
+                                                                   0x34 =  48  MHz on DLMC_REF_CLK*.
+                                                                   0x32 =  50  MHz on DLMC_REF_CLK*.
+                                                                   0x30 =  52  MHz on DLMC_REF_CLK*.
+                                                                   0x41 =  76.8MHz on DLMC_REF_CLK*.
+                                                                   0x1A =  96  MHz on DLMC_REF_CLK*.
+                                                                   0x19 =  100 MHz on DLMC_REF_CLK*.
+                                                                   0x30 =  104 MHz on DLMC_REF_CLK* if [REF_CLK_DIV2] = 0x1.
+                                                                   0x18 =  104 MHz on DLMC_REF_CLK* if [REF_CLK_DIV2] = 0x0.
+                                                                   0x28 =  125 MHz on DLMC_REF_CLK*.
+                                                                   0x19 =  200 MHz on DLMC_REF_CLK*. */
+        uint64_t ref_ssp_en            : 1;  /**< [ 39: 39](R/W) Enables reference clock to the prescaler for SuperSpeed function. This should always be
+                                                                 enabled since this output clock is used to drive the UAHC suspend-mode clock during
+                                                                 low-power states.
+
+                                                                 This value can be changed only during UPHY_RST or during low-power states.
+                                                                 The reference clock must be running and stable before [UPHY_RST] is deasserted and before
+                                                                 [REF_SSP_EN] is asserted. */
+        uint64_t ref_clk_div2          : 1;  /**< [ 38: 38](R/W) Divides the reference clock by two before feeding it into the REF_CLK_FSEL divider.
+
+                                                                 As [REF_CLK_SEL] = 0x0, the legal value is 0x0.
+
+                                                                 This value can be changed only during UPHY_RST.
+
+                                                                 Internal:
+                                                                 If [REF_CLK_SEL] = 0x0, 0x1 or 0x2 then:
+                                                                   all DLMC_REF_CLK* frequencies: 0x0 is the only legal value.
+
+                                                                 If [REF_CLK_SEL] = 0x4 or 0x5 or 0x6, then:
+                                                                   0x1: if DLMC_REF_CLK* is 125MHz.
+                                                                   0x1: if DLMC_REF_CLK* is 40MHz, 76.8MHz, or 200MHz.
+                                                                   0x0, 0x1 if DLMC_REF_CLK* is 104MHz (depending on [MPLL_MULTIPLIER]).
+                                                                   0x0: if DLMC_REF_CLK* is another supported frequency (see list in
+                                                                   [MPLL_MULTIPLIER] description). */
+        uint64_t ref_clk_fsel          : 6;  /**< [ 37: 32](R/W) Selects the reference clock frequency for the SuperSpeed and high-speed PLL blocks.
+
+                                                                 As [REF_CLK_SEL] = 0x0, the legal values are:
+
+                                                                   0x27 = 100  MHz on DLMC_REF_CLK*.
+
+                                                                 All other values are reserved.
+
+                                                                 This value may only be changed during [UPHY_RST].
+
+                                                                 Internal:
+                                                                 If [REF_CLK_SEL] = 0x0, 0x1 or 0x2 then:
+                                                                   0x27 = 100  MHz on DLMC_REF_CLK*.
+                                                                   0x2A =  24  MHz on DLMC_REF_CLK*.
+                                                                   0x31 =  20  MHz on DLMC_REF_CLK*.
+                                                                   0x38 =  19.2MHz on DLMC_REF_CLK*.
+
+                                                                 If [REF_CLK_SEL] = 0x4 or 0x5 or 0x6 then:
+                                                                   0x07 is the only legal value. */
+        uint64_t cmd_flr_en            : 1;  /**< [ 31: 31](R/W) The host controller will stop accepting commands if this bit is set. This bit is
+                                                                 for host_mode only.
+
+                                                                 In normal FLR, this bit should be set to 0. If software wants the command to
+                                                                 finish before FLR, write this bit to 1 and poll USBDRD()_UAHC_USBSTS[HCH] to
+                                                                 make sure the command is finished before disabling USBDRD's PCCPF_XXX_CMD[ME]. */
+        uint64_t h_clk_en              : 1;  /**< [ 30: 30](R/W) Controller-clock enable. When set to 1, the controller clock is generated. This also
+                                                                 enables access to UCTL registers 0x30-0xF8. */
+        uint64_t h_clk_byp_sel         : 1;  /**< [ 29: 29](R/W) Select the bypass input to the controller-clock divider.
+                                                                 0 = Use the divided coprocessor clock from the H_CLKDIV divider.
+                                                                 1 = Use the bypass clock from the GPIO pins.
+
+                                                                 This signal is just a multiplexer-select signal; it does not enable the controller clock.
+                                                                 You must still set H_CLKDIV_EN separately. [H_CLK_BYP_SEL] select should not be changed
+                                                                 unless H_CLKDIV_EN is disabled.
+
+                                                                 The bypass clock can be selected and running even if the controller-clock dividers are not
+                                                                 running.
+
+                                                                 Internal:
+                                                                 Generally bypass is only used for scan purposes. */
+        uint64_t h_clkdiv_rst          : 1;  /**< [ 28: 28](R/W) Controller clock divider reset. Divided clocks are not generated while the divider is
+                                                                 being reset.
+                                                                 This also resets the suspend-clock divider. */
+        uint64_t reserved_27           : 1;
+        uint64_t h_clkdiv_sel          : 3;  /**< [ 26: 24](R/W) Controller clock-frequency-divider select. The controller-clock frequency is the
+                                                                 coprocessor-clock frequency divided by [H_CLKDIV_SEL] and must be at or below 300 MHz.
+                                                                 The divider values are the following:
+                                                                 0x0 = divide by 1.
+                                                                 0x1 = divide by 2.
+                                                                 0x2 = divide by 4.
+                                                                 0x3 = divide by 6.
+                                                                 0x4 = divide by 8.
+                                                                 0x5 = divide by 16.
+                                                                 0x6 = divide by 24.
+                                                                 0x7 = divide by 32.
+
+                                                                 The HCLK frequency must be at or below 300 MHz.
+                                                                 The HCLK frequency must be at or above 150 MHz for full-rate USB3
+                                                                 operation.
+                                                                 The HCLK frequency must be at or above 125 MHz for any USB3
+                                                                 functionality.
+
+                                                                 If [DRD_MODE] = DEVICE, the HCLK frequency must be at or above 125 MHz for
+                                                                 correct USB2 functionality.
+
+                                                                 If [DRD_MODE] = HOST, the HCLK frequency must be at or above 90 MHz
+                                                                 for full-rate USB2 operation.
+
+                                                                 If [DRD_MODE] = HOST, the HCLK frequency must be at or above 62.5 MHz
+                                                                 for any USB2 operation.
+
+                                                                 This field can be changed only when [H_CLKDIV_RST] = 1.
+
+                                                                 Internal:
+                                                                 150MHz is from the maximum of:
+                                                                             Synopsys DWC_usb3 Databook v2.80a, table A-16, row 1, col 12.
+                                                                             Synopsys DWC_usb3 Databook v2.80a, table A-17, row 7, col 9.
+                                                                             Synopsys DWC_usb3 Databook v2.80a, table A-16, row 7, col 9.
+                                                                           DEVICE\>125MHz is from Synopsys DWC_usb3 Databook v2.80a, section A.12.4.
+                                                                           HOST2\>62.5MHz in HOST mode is from Synopsys DWC_usb3 Databook v2.80a,
+                                                                             section A.12.5, 3rd bullet in Note on page 894.
+                                                                           HOST2\>90MHz was arrived at from some math: 62.5MHz +
+                                                                             (diff between row 1 and 2, col 12 of table A-16). */
+        uint64_t reserved_22_23        : 2;
+        uint64_t usb3_port_perm_attach : 1;  /**< [ 21: 21](R/W) Indicates this port is permanently attached. This is a strap signal; it should be modified
+                                                                 only when [UPHY_RST] is asserted. */
+        uint64_t usb2_port_perm_attach : 1;  /**< [ 20: 20](R/W) Indicates this port is permanently attached. This is a strap signal; it should be modified
+                                                                 only when [UPHY_RST] is asserted. */
+        uint64_t reserved_19           : 1;
+        uint64_t usb3_port_disable     : 1;  /**< [ 18: 18](R/W) Disables the USB3 (SuperSpeed) portion of this PHY. When set to 1, this signal stops
+                                                                 reporting connect/disconnect events on the port and keeps the port in disabled state. This
+                                                                 could be used for security reasons where hardware can disable a port regardless of whether
+                                                                 xHCI driver enables a port or not.
+                                                                 USBDRD()_UAHC_HCSPARAMS1[MAXPORTS] is not affected by this signal.
+
+                                                                 This is a strap signal; it should be modified only when [UPHY_RST] is asserted. */
+        uint64_t reserved_17           : 1;
+        uint64_t usb2_port_disable     : 1;  /**< [ 16: 16](R/W) Disables USB2 (high-speed/full-speed/low-speed) portion of this PHY. When set to 1, this
+                                                                 signal stops reporting connect/disconnect events on the port and keeps the port in
+                                                                 disabled state. This could be used for security reasons where hardware can disable a port
+                                                                 regardless of whether xHCI driver enables a port or not.
+                                                                 USBDRD()_UAHC_HCSPARAMS1[MAXPORTS] is not affected by this signal.
+
+                                                                 This is a strap signal; it should only be modified when [UPHY_RST] is asserted.
+                                                                 If Port0 is required to be disabled, ensure that the utmi_clk[0] is running at the normal
+                                                                 speed. Also, all the enabled USB2.0 ports should have the same clock frequency as Port0. */
+        uint64_t reserved_15           : 1;
+        uint64_t ss_power_en           : 1;  /**< [ 14: 14](R/W) PHY SuperSpeed block power enable.
+                                                                 This is a strap signal; it should only be modified when [UPHY_RST] is asserted. */
+        uint64_t reserved_13           : 1;
+        uint64_t hs_power_en           : 1;  /**< [ 12: 12](R/W) PHY high-speed block power enable.
+                                                                 This is a strap signal; it should only be modified when [UPHY_RST] is asserted. */
+        uint64_t ref_clk_sel           : 3;  /**< [ 11:  9](R/W) Reference clock select. Choose reference-clock source for the SuperSpeed and high-speed
+                                                                 PLL blocks.
+                                                                 0x0 = Reference clock sources for both PLLs come from GSERC_REF_CLK0_P/N.
+                                                                 0x1 = Reserved.
+                                                                 0x2 = Reserved.
+                                                                 0x3 = Reserved.
+                                                                 0x4 = Reserved.
+                                                                 0x5 = Reserved.
+                                                                 0x6 = Reserved.
+                                                                 0x7 = Reserved.
+
+                                                                 This value can be changed only during UPHY_RST.
+
+                                                                 The reference clock selected cannot be spread-spectrum.
+
+                                                                 Internal:
+                                                                 For the 0x6 selection, reference clock source for SuperSpeed PLL is from the USB
+                                                                 pads, reference clock source for high-speed PLL is PLL_REF_CLK. But in CNXXXX,
+                                                                 PLL_REF_CLK cannot be routed to USB without violating jitter requirements
+
+                                                                 0x1 was for clock sources for both PLLs come from USBDRD PADs; not connected in
+                                                                 CNXXXX. */
+        uint64_t reserved_6_8          : 3;
+        uint64_t dma_psn_ign           : 1;  /**< [  5:  5](R/W) Handling of poison indication on DMA read responses.
+                                                                 0 = Treat poison data the same way as fault, sending an AXI error to the USB
+                                                                 controller.
+                                                                 1 = Ignore poison and proceed with the transaction as if no problems. */
+        uint64_t csclk_force           : 1;  /**< [  4:  4](R/W) Force conditional clock and NCBI conditional clock to be running. For diagnostic
+                                                                 use only.
+                                                                 0 = No override.
+                                                                 1 = Override the enable of conditional clock to force it running. */
+        uint64_t drd_mode              : 1;  /**< [  3:  3](R/W) Switches between host or device mode for USBDRD.
+                                                                  0 = Host.
+                                                                  1 = Device. */
+        uint64_t uphy_rst              : 1;  /**< [  2:  2](R/W) PHY reset; resets UPHY; active-high. */
+        uint64_t uahc_rst              : 1;  /**< [  1:  1](R/W) Software reset; resets UAHC; active-high.
+                                                                 Internal:
+                                                                 Note that soft-resetting the UAHC while it is active may cause violations of RSL
+                                                                 or NCB protocols. */
+        uint64_t uctl_rst              : 1;  /**< [  0:  0](R/W) Software reset; resets UCTL; active-high.
+                                                                 Resets UAHC DMA and register shims. Resets UCTL registers 0x30-0xF8.
+                                                                 Does not reset UCTL registers 0x0-0x28.
+                                                                 UCTL registers starting from 0x30 can be accessed only after the controller clock is
+                                                                 active and [UCTL_RST] is deasserted.
+
+                                                                 Internal:
+                                                                 Note that soft-resetting the UCTL while it is active may cause violations of
+                                                                 RSL, NCB, and CIB protocols. */
+#else /* Word 0 - Little Endian */
+        uint64_t uctl_rst              : 1;  /**< [  0:  0](R/W) Software reset; resets UCTL; active-high.
+                                                                 Resets UAHC DMA and register shims. Resets UCTL registers 0x30-0xF8.
+                                                                 Does not reset UCTL registers 0x0-0x28.
+                                                                 UCTL registers starting from 0x30 can be accessed only after the controller clock is
+                                                                 active and [UCTL_RST] is deasserted.
+
+                                                                 Internal:
+                                                                 Note that soft-resetting the UCTL while it is active may cause violations of
+                                                                 RSL, NCB, and CIB protocols. */
+        uint64_t uahc_rst              : 1;  /**< [  1:  1](R/W) Software reset; resets UAHC; active-high.
+                                                                 Internal:
+                                                                 Note that soft-resetting the UAHC while it is active may cause violations of RSL
+                                                                 or NCB protocols. */
+        uint64_t uphy_rst              : 1;  /**< [  2:  2](R/W) PHY reset; resets UPHY; active-high. */
+        uint64_t drd_mode              : 1;  /**< [  3:  3](R/W) Switches between host or device mode for USBDRD.
+                                                                  0 = Host.
+                                                                  1 = Device. */
+        uint64_t csclk_force           : 1;  /**< [  4:  4](R/W) Force conditional clock and NCBI conditional clock to be running. For diagnostic
+                                                                 use only.
+                                                                 0 = No override.
+                                                                 1 = Override the enable of conditional clock to force it running. */
+        uint64_t dma_psn_ign           : 1;  /**< [  5:  5](R/W) Handling of poison indication on DMA read responses.
+                                                                 0 = Treat poison data the same way as fault, sending an AXI error to the USB
+                                                                 controller.
+                                                                 1 = Ignore poison and proceed with the transaction as if no problems. */
+        uint64_t reserved_6_8          : 3;
+        uint64_t ref_clk_sel           : 3;  /**< [ 11:  9](R/W) Reference clock select. Choose reference-clock source for the SuperSpeed and high-speed
+                                                                 PLL blocks.
+                                                                 0x0 = Reference clock sources for both PLLs come from GSERC_REF_CLK0_P/N.
+                                                                 0x1 = Reserved.
+                                                                 0x2 = Reserved.
+                                                                 0x3 = Reserved.
+                                                                 0x4 = Reserved.
+                                                                 0x5 = Reserved.
+                                                                 0x6 = Reserved.
+                                                                 0x7 = Reserved.
+
+                                                                 This value can be changed only during UPHY_RST.
+
+                                                                 The reference clock selected cannot be spread-spectrum.
+
+                                                                 Internal:
+                                                                 For the 0x6 selection, reference clock source for SuperSpeed PLL is from the USB
+                                                                 pads, reference clock source for high-speed PLL is PLL_REF_CLK. But in CNXXXX,
+                                                                 PLL_REF_CLK cannot be routed to USB without violating jitter requirements
+
+                                                                 0x1 was for clock sources for both PLLs come from USBDRD PADs; not connected in
+                                                                 CNXXXX. */
+        uint64_t hs_power_en           : 1;  /**< [ 12: 12](R/W) PHY high-speed block power enable.
+                                                                 This is a strap signal; it should only be modified when [UPHY_RST] is asserted. */
+        uint64_t reserved_13           : 1;
+        uint64_t ss_power_en           : 1;  /**< [ 14: 14](R/W) PHY SuperSpeed block power enable.
+                                                                 This is a strap signal; it should only be modified when [UPHY_RST] is asserted. */
+        uint64_t reserved_15           : 1;
+        uint64_t usb2_port_disable     : 1;  /**< [ 16: 16](R/W) Disables USB2 (high-speed/full-speed/low-speed) portion of this PHY. When set to 1, this
+                                                                 signal stops reporting connect/disconnect events on the port and keeps the port in
+                                                                 disabled state. This could be used for security reasons where hardware can disable a port
+                                                                 regardless of whether xHCI driver enables a port or not.
+                                                                 USBDRD()_UAHC_HCSPARAMS1[MAXPORTS] is not affected by this signal.
+
+                                                                 This is a strap signal; it should only be modified when [UPHY_RST] is asserted.
+                                                                 If Port0 is required to be disabled, ensure that the utmi_clk[0] is running at the normal
+                                                                 speed. Also, all the enabled USB2.0 ports should have the same clock frequency as Port0. */
+        uint64_t reserved_17           : 1;
+        uint64_t usb3_port_disable     : 1;  /**< [ 18: 18](R/W) Disables the USB3 (SuperSpeed) portion of this PHY. When set to 1, this signal stops
+                                                                 reporting connect/disconnect events on the port and keeps the port in disabled state. This
+                                                                 could be used for security reasons where hardware can disable a port regardless of whether
+                                                                 xHCI driver enables a port or not.
+                                                                 USBDRD()_UAHC_HCSPARAMS1[MAXPORTS] is not affected by this signal.
+
+                                                                 This is a strap signal; it should be modified only when [UPHY_RST] is asserted. */
+        uint64_t reserved_19           : 1;
+        uint64_t usb2_port_perm_attach : 1;  /**< [ 20: 20](R/W) Indicates this port is permanently attached. This is a strap signal; it should be modified
+                                                                 only when [UPHY_RST] is asserted. */
+        uint64_t usb3_port_perm_attach : 1;  /**< [ 21: 21](R/W) Indicates this port is permanently attached. This is a strap signal; it should be modified
+                                                                 only when [UPHY_RST] is asserted. */
+        uint64_t reserved_22_23        : 2;
+        uint64_t h_clkdiv_sel          : 3;  /**< [ 26: 24](R/W) Controller clock-frequency-divider select. The controller-clock frequency is the
+                                                                 coprocessor-clock frequency divided by [H_CLKDIV_SEL] and must be at or below 300 MHz.
+                                                                 The divider values are the following:
+                                                                 0x0 = divide by 1.
+                                                                 0x1 = divide by 2.
+                                                                 0x2 = divide by 4.
+                                                                 0x3 = divide by 6.
+                                                                 0x4 = divide by 8.
+                                                                 0x5 = divide by 16.
+                                                                 0x6 = divide by 24.
+                                                                 0x7 = divide by 32.
+
+                                                                 The HCLK frequency must be at or below 300 MHz.
+                                                                 The HCLK frequency must be at or above 150 MHz for full-rate USB3
+                                                                 operation.
+                                                                 The HCLK frequency must be at or above 125 MHz for any USB3
+                                                                 functionality.
+
+                                                                 If [DRD_MODE] = DEVICE, the HCLK frequency must be at or above 125 MHz for
+                                                                 correct USB2 functionality.
+
+                                                                 If [DRD_MODE] = HOST, the HCLK frequency must be at or above 90 MHz
+                                                                 for full-rate USB2 operation.
+
+                                                                 If [DRD_MODE] = HOST, the HCLK frequency must be at or above 62.5 MHz
+                                                                 for any USB2 operation.
+
+                                                                 This field can be changed only when [H_CLKDIV_RST] = 1.
+
+                                                                 Internal:
+                                                                 150MHz is from the maximum of:
+                                                                             Synopsys DWC_usb3 Databook v2.80a, table A-16, row 1, col 12.
+                                                                             Synopsys DWC_usb3 Databook v2.80a, table A-17, row 7, col 9.
+                                                                             Synopsys DWC_usb3 Databook v2.80a, table A-16, row 7, col 9.
+                                                                           DEVICE\>125MHz is from Synopsys DWC_usb3 Databook v2.80a, section A.12.4.
+                                                                           HOST2\>62.5MHz in HOST mode is from Synopsys DWC_usb3 Databook v2.80a,
+                                                                             section A.12.5, 3rd bullet in Note on page 894.
+                                                                           HOST2\>90MHz was arrived at from some math: 62.5MHz +
+                                                                             (diff between row 1 and 2, col 12 of table A-16). */
+        uint64_t reserved_27           : 1;
+        uint64_t h_clkdiv_rst          : 1;  /**< [ 28: 28](R/W) Controller clock divider reset. Divided clocks are not generated while the divider is
+                                                                 being reset.
+                                                                 This also resets the suspend-clock divider. */
+        uint64_t h_clk_byp_sel         : 1;  /**< [ 29: 29](R/W) Select the bypass input to the controller-clock divider.
+                                                                 0 = Use the divided coprocessor clock from the H_CLKDIV divider.
+                                                                 1 = Use the bypass clock from the GPIO pins.
+
+                                                                 This signal is just a multiplexer-select signal; it does not enable the controller clock.
+                                                                 You must still set H_CLKDIV_EN separately. [H_CLK_BYP_SEL] select should not be changed
+                                                                 unless H_CLKDIV_EN is disabled.
+
+                                                                 The bypass clock can be selected and running even if the controller-clock dividers are not
+                                                                 running.
+
+                                                                 Internal:
+                                                                 Generally bypass is only used for scan purposes. */
+        uint64_t h_clk_en              : 1;  /**< [ 30: 30](R/W) Controller-clock enable. When set to 1, the controller clock is generated. This also
+                                                                 enables access to UCTL registers 0x30-0xF8. */
+        uint64_t cmd_flr_en            : 1;  /**< [ 31: 31](R/W) The host controller will stop accepting commands if this bit is set. This bit is
+                                                                 for host_mode only.
+
+                                                                 In normal FLR, this bit should be set to 0. If software wants the command to
+                                                                 finish before FLR, write this bit to 1 and poll USBDRD()_UAHC_USBSTS[HCH] to
+                                                                 make sure the command is finished before disabling USBDRD's PCCPF_XXX_CMD[ME]. */
+        uint64_t ref_clk_fsel          : 6;  /**< [ 37: 32](R/W) Selects the reference clock frequency for the SuperSpeed and high-speed PLL blocks.
+
+                                                                 As [REF_CLK_SEL] = 0x0, the legal values are:
+
+                                                                   0x27 = 100  MHz on DLMC_REF_CLK*.
+
+                                                                 All other values are reserved.
+
+                                                                 This value may only be changed during [UPHY_RST].
+
+                                                                 Internal:
+                                                                 If [REF_CLK_SEL] = 0x0, 0x1 or 0x2 then:
+                                                                   0x27 = 100  MHz on DLMC_REF_CLK*.
+                                                                   0x2A =  24  MHz on DLMC_REF_CLK*.
+                                                                   0x31 =  20  MHz on DLMC_REF_CLK*.
+                                                                   0x38 =  19.2MHz on DLMC_REF_CLK*.
+
+                                                                 If [REF_CLK_SEL] = 0x4 or 0x5 or 0x6 then:
+                                                                   0x07 is the only legal value. */
+        uint64_t ref_clk_div2          : 1;  /**< [ 38: 38](R/W) Divides the reference clock by two before feeding it into the REF_CLK_FSEL divider.
+
+                                                                 As [REF_CLK_SEL] = 0x0, the legal value is 0x0.
+
+                                                                 This value can be changed only during UPHY_RST.
+
+                                                                 Internal:
+                                                                 If [REF_CLK_SEL] = 0x0, 0x1 or 0x2 then:
+                                                                   all DLMC_REF_CLK* frequencies: 0x0 is the only legal value.
+
+                                                                 If [REF_CLK_SEL] = 0x4 or 0x5 or 0x6, then:
+                                                                   0x1: if DLMC_REF_CLK* is 125MHz.
+                                                                   0x1: if DLMC_REF_CLK* is 40MHz, 76.8MHz, or 200MHz.
+                                                                   0x0, 0x1 if DLMC_REF_CLK* is 104MHz (depending on [MPLL_MULTIPLIER]).
+                                                                   0x0: if DLMC_REF_CLK* is another supported frequency (see list in
+                                                                   [MPLL_MULTIPLIER] description). */
+        uint64_t ref_ssp_en            : 1;  /**< [ 39: 39](R/W) Enables reference clock to the prescaler for SuperSpeed function. This should always be
+                                                                 enabled since this output clock is used to drive the UAHC suspend-mode clock during
+                                                                 low-power states.
+
+                                                                 This value can be changed only during UPHY_RST or during low-power states.
+                                                                 The reference clock must be running and stable before [UPHY_RST] is deasserted and before
+                                                                 [REF_SSP_EN] is asserted. */
+        uint64_t mpll_multiplier       : 7;  /**< [ 46: 40](R/W) Multiplies the reference clock to a frequency suitable for intended operating speed.
+
+                                                                 As [REF_CLK_SEL] = 0x0, the legal values are:
+
+                                                                   0x19 = 100  MHz on DLMC_REF_CLK*.
+
+                                                                 All other values are reserved.
+
+                                                                 This value may only be changed during [UPHY_RST].
+
+                                                                 Internal:
+                                                                 If [REF_CLK_SEL] = 0x0, 0x1 or 0x2, then:
+                                                                   0x19 = 100  MHz on DLMC_REF_CLK*.
+                                                                   0x68 =  24  MHz on DLMC_REF_CLK*.
+                                                                   0x7D =  20  MHz on DLMC_REF_CLK*.
+                                                                   0x02 =  19.2MHz on DLMC_REF_CLK*.
+
+                                                                 If [REF_CLK_SEL] = 0x4 or 0x5 or 0x06, then:
+                                                                   0x02 =  19.2MHz on DLMC_REF_CLK*.
+                                                                   0x7D =  20  MHz on DLMC_REF_CLK*.
+                                                                   0x68 =  24  MHz on DLMC_REF_CLK*.
+                                                                   0x64 =  25  MHz on DLMC_REF_CLK*.
+                                                                   0x60 =  26  MHz on DLMC_REF_CLK*.
+                                                                   0x41 =  38.4MHz on DLMC_REF_CLK*.
+                                                                   0x7D =  40  MHz on DLMC_REF_CLK*.
+                                                                   0x34 =  48  MHz on DLMC_REF_CLK*.
+                                                                   0x32 =  50  MHz on DLMC_REF_CLK*.
+                                                                   0x30 =  52  MHz on DLMC_REF_CLK*.
+                                                                   0x41 =  76.8MHz on DLMC_REF_CLK*.
+                                                                   0x1A =  96  MHz on DLMC_REF_CLK*.
+                                                                   0x19 =  100 MHz on DLMC_REF_CLK*.
+                                                                   0x30 =  104 MHz on DLMC_REF_CLK* if [REF_CLK_DIV2] = 0x1.
+                                                                   0x18 =  104 MHz on DLMC_REF_CLK* if [REF_CLK_DIV2] = 0x0.
+                                                                   0x28 =  125 MHz on DLMC_REF_CLK*.
+                                                                   0x19 =  200 MHz on DLMC_REF_CLK*. */
+        uint64_t ssc_ref_clk_sel       : 9;  /**< [ 55: 47](R/W) Enables non-standard oscillator frequencies to generate targeted MPLL output rates. Input
+                                                                 corresponds to the frequency-synthesis coefficient.
+
+                                                                 [55:53]: modulus - 1,
+                                                                 [52:47]: 2's complement push amount.
+
+                                                                 A value of 0x0 means this feature is disabled.
+
+                                                                 The legal values are 0x0.
+
+                                                                 All other values are reserved.
+
+                                                                 This value may only be changed during [UPHY_RST].
+
+                                                                 Internal:
+                                                                 If [REF_CLK_SEL] = 0x0, 0x1 or 0x2, then:
+                                                                 *  0x0 is the only legal value.
+
+                                                                 If [REF_CLK_SEL] = 0x4 or 0x5 or 0x6, then:
+                                                                 *  0x108: if DLMC_REF_CLK* is 19.2MHz, 24MHz, 26MHz, 38.4MHz, 48MHz,
+                                                                              52MHz, 76.8MHz, 96MHz, 104MHz.
+                                                                 *  0x0:   if DLMC_REF_CLK* is another supported frequency (see list in
+                                                                              [MPLL_MULTIPLIER] description). */
+        uint64_t ssc_range             : 3;  /**< [ 58: 56](R/W) Spread-spectrum clock range. Selects the range of spread-spectrum modulation when SSC_EN
+                                                                 is asserted and the PHY is spreading the SuperSpeed transmit clocks.
+                                                                 Applies a fixed offset to the phase accumulator.
+                                                                 0x0 = -4980 ppm downspread of clock.
+                                                                 0x1 = -4492 ppm.
+                                                                 0x2 = -4003 ppm.
+                                                                 0x3-0x7 = reserved.
+
+                                                                 All of these settings are within the USB 3.0 specification. The amount of EMI emission
+                                                                 reduction might decrease as the [SSC_RANGE] increases; therefore, the [SSC_RANGE] settings
+                                                                 can
+                                                                 be registered to enable the amount of spreading to be adjusted on a per-application basis.
+                                                                 This value can be changed only during UPHY_RST. */
+        uint64_t ssc_en                : 1;  /**< [ 59: 59](R/W) Spread-spectrum clock enable. Enables spread-spectrum clock production in the SuperSpeed
+                                                                 function. If the input reference clock for the SuperSpeed PLL is already spread-spectrum,
+                                                                 then do not enable this feature. The clocks sourced to the SuperSpeed function must have
+                                                                 spread-spectrum to be compliant with the USB specification.
+
+                                                                 This value may only be changed during [UPHY_RST]. */
+        uint64_t reserved_60_63        : 4;
+#endif /* Word 0 - End */
+    } cn9;
+    /* struct cavm_usbdrdx_uctl_ctl_cn9 cn96xxp1; */
+    struct cavm_usbdrdx_uctl_ctl_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_60_63        : 4;
+        uint64_t ssc_en                : 1;  /**< [ 59: 59](R/W) Spread-spectrum clock enable. Enables spread-spectrum clock production in the SuperSpeed
+                                                                 function. If the input reference clock for the SuperSpeed PLL is already spread-spectrum,
+                                                                 then do not enable this feature. The clocks sourced to the SuperSpeed function must have
+                                                                 spread-spectrum to be compliant with the USB specification.
+
+                                                                 This value may only be changed during [UPHY_RST]. */
+        uint64_t ssc_range             : 3;  /**< [ 58: 56](R/W) Spread-spectrum clock range. Selects the range of spread-spectrum modulation when SSC_EN
+                                                                 is asserted and the PHY is spreading the SuperSpeed transmit clocks.
+                                                                 Applies a fixed offset to the phase accumulator.
+                                                                 0x0 = -4980 ppm downspread of clock.
+                                                                 0x1 = -4492 ppm.
+                                                                 0x2 = -4003 ppm.
+                                                                 0x3-0x7 = reserved.
+
+                                                                 All of these settings are within the USB 3.0 specification. The amount of EMI emission
+                                                                 reduction might decrease as the [SSC_RANGE] increases; therefore, the [SSC_RANGE] settings
+                                                                 can
+                                                                 be registered to enable the amount of spreading to be adjusted on a per-application basis.
+                                                                 This value can be changed only during UPHY_RST. */
+        uint64_t ssc_ref_clk_sel       : 9;  /**< [ 55: 47](R/W) Enables non-standard oscillator frequencies to generate targeted MPLL output rates. Input
+                                                                 corresponds to the frequency-synthesis coefficient.
+
+                                                                 [55:53]: modulus - 1,
+                                                                 [52:47]: 2's complement push amount.
+
+                                                                 A value of 0x0 means this feature is disabled.
+
+                                                                 The legal values are 0x0.
+
+                                                                 All other values are reserved.
+
+                                                                 This value may only be changed during [UPHY_RST].
+
+                                                                 Internal:
+                                                                 If [REF_CLK_SEL] = 0x0, 0x1 or 0x2, then:
+                                                                 *  0x0 is the only legal value.
+
+                                                                 If [REF_CLK_SEL] = 0x4 or 0x5 or 0x6, then:
+                                                                 *  0x108: if DLMC_REF_CLK* is 19.2MHz, 24MHz, 26MHz, 38.4MHz, 48MHz,
+                                                                              52MHz, 76.8MHz, 96MHz, 104MHz.
+                                                                 *  0x0:   if DLMC_REF_CLK* is another supported frequency (see list in
+                                                                              [MPLL_MULTIPLIER] description). */
+        uint64_t mpll_multiplier       : 7;  /**< [ 46: 40](R/W) Multiplies the reference clock to a frequency suitable for intended operating speed.
+
+                                                                 As [REF_CLK_SEL] = 0x0, the legal values are:
+
                                                                    0x00 = 100  MHz on DLMC_REF_CLK*.
 
                                                                  All other values are reserved.
@@ -11899,7 +12848,8 @@ union cavm_usbdrdx_uctl_ctl
                                                                  This value may only be changed during [UPHY_RST]. */
         uint64_t reserved_60_63        : 4;
 #endif /* Word 0 - End */
-    } cn9;
+    } cn96xxp3;
+    /* struct cavm_usbdrdx_uctl_ctl_cn96xxp3 cn98xx; */
 };
 typedef union cavm_usbdrdx_uctl_ctl cavm_usbdrdx_uctl_ctl_t;
 
@@ -11908,7 +12858,11 @@ static inline uint64_t CAVM_USBDRDX_UCTL_CTL(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && (a<=1))
         return 0x868000100000ll + 0x1000000000ll * ((a) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=1))
+        return 0x868000100000ll + 0x1000000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a==0))
+        return 0x868000100000ll + 0x1000000000ll * ((a) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x868000100000ll + 0x1000000000ll * ((a) & 0x1);
     __cavm_csr_fatal("USBDRDX_UCTL_CTL", 1, a, 0, 0, 0, 0, 0);
 }
@@ -12139,7 +13093,11 @@ static inline uint64_t CAVM_USBDRDX_UCTL_HOST_CFG(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && (a<=1))
         return 0x8680001000e0ll + 0x1000000000ll * ((a) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=1))
+        return 0x8680001000e0ll + 0x1000000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a==0))
+        return 0x8680001000e0ll + 0x1000000000ll * ((a) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x8680001000e0ll + 0x1000000000ll * ((a) & 0x1);
     __cavm_csr_fatal("USBDRDX_UCTL_HOST_CFG", 1, a, 0, 0, 0, 0, 0);
 }
@@ -12272,6 +13230,30 @@ union cavm_usbdrdx_uctl_intena_w1c
         uint64_t reserved_8_63         : 56;
 #endif /* Word 0 - End */
     } cn9;
+    /* struct cavm_usbdrdx_uctl_intena_w1c_cn9 cn96xxp1; */
+    struct cavm_usbdrdx_uctl_intena_w1c_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_8_63         : 56;
+        uint64_t dma_rd_err            : 1;  /**< [  7:  7](R/W1C/H) Reads or clears enable for USBDRD(0)_UCTL_INTSTAT[DMA_RD_ERR]. */
+        uint64_t dma_wr_err            : 1;  /**< [  6:  6](R/W1C/H) Reads or clears enable for USBDRD(0)_UCTL_INTSTAT[DMA_WR_ERR]. */
+        uint64_t dma_psn               : 1;  /**< [  5:  5](R/W1C/H) Reads or clears enable for USBDRD(0)_UCTL_INTSTAT[DMA_PSN]. */
+        uint64_t reserved_3_4          : 2;
+        uint64_t xm_bad_dma            : 1;  /**< [  2:  2](R/W1C/H) Reads or clears enable for USBDRD(0)_UCTL_INTSTAT[XM_BAD_DMA]. */
+        uint64_t xs_ncb_oob            : 1;  /**< [  1:  1](R/W1C/H) Reads or clears enable for USBDRD(0)_UCTL_INTSTAT[XS_NCB_OOB]. */
+        uint64_t reserved_0            : 1;
+#else /* Word 0 - Little Endian */
+        uint64_t reserved_0            : 1;
+        uint64_t xs_ncb_oob            : 1;  /**< [  1:  1](R/W1C/H) Reads or clears enable for USBDRD(0)_UCTL_INTSTAT[XS_NCB_OOB]. */
+        uint64_t xm_bad_dma            : 1;  /**< [  2:  2](R/W1C/H) Reads or clears enable for USBDRD(0)_UCTL_INTSTAT[XM_BAD_DMA]. */
+        uint64_t reserved_3_4          : 2;
+        uint64_t dma_psn               : 1;  /**< [  5:  5](R/W1C/H) Reads or clears enable for USBDRD(0)_UCTL_INTSTAT[DMA_PSN]. */
+        uint64_t dma_wr_err            : 1;  /**< [  6:  6](R/W1C/H) Reads or clears enable for USBDRD(0)_UCTL_INTSTAT[DMA_WR_ERR]. */
+        uint64_t dma_rd_err            : 1;  /**< [  7:  7](R/W1C/H) Reads or clears enable for USBDRD(0)_UCTL_INTSTAT[DMA_RD_ERR]. */
+        uint64_t reserved_8_63         : 56;
+#endif /* Word 0 - End */
+    } cn96xxp3;
+    /* struct cavm_usbdrdx_uctl_intena_w1c_cn9 cn98xx; */
 };
 typedef union cavm_usbdrdx_uctl_intena_w1c cavm_usbdrdx_uctl_intena_w1c_t;
 
@@ -12280,7 +13262,11 @@ static inline uint64_t CAVM_USBDRDX_UCTL_INTENA_W1C(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && (a<=1))
         return 0x868000100040ll + 0x1000000000ll * ((a) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=1))
+        return 0x868000100040ll + 0x1000000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a==0))
+        return 0x868000100040ll + 0x1000000000ll * ((a) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x868000100040ll + 0x1000000000ll * ((a) & 0x1);
     __cavm_csr_fatal("USBDRDX_UCTL_INTENA_W1C", 1, a, 0, 0, 0, 0, 0);
 }
@@ -12413,6 +13399,30 @@ union cavm_usbdrdx_uctl_intena_w1s
         uint64_t reserved_8_63         : 56;
 #endif /* Word 0 - End */
     } cn9;
+    /* struct cavm_usbdrdx_uctl_intena_w1s_cn9 cn96xxp1; */
+    struct cavm_usbdrdx_uctl_intena_w1s_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_8_63         : 56;
+        uint64_t dma_rd_err            : 1;  /**< [  7:  7](R/W1S/H) Reads or sets enable for USBDRD(0)_UCTL_INTSTAT[DMA_RD_ERR]. */
+        uint64_t dma_wr_err            : 1;  /**< [  6:  6](R/W1S/H) Reads or sets enable for USBDRD(0)_UCTL_INTSTAT[DMA_WR_ERR]. */
+        uint64_t dma_psn               : 1;  /**< [  5:  5](R/W1S/H) Reads or sets enable for USBDRD(0)_UCTL_INTSTAT[DMA_PSN]. */
+        uint64_t reserved_3_4          : 2;
+        uint64_t xm_bad_dma            : 1;  /**< [  2:  2](R/W1S/H) Reads or sets enable for USBDRD(0)_UCTL_INTSTAT[XM_BAD_DMA]. */
+        uint64_t xs_ncb_oob            : 1;  /**< [  1:  1](R/W1S/H) Reads or sets enable for USBDRD(0)_UCTL_INTSTAT[XS_NCB_OOB]. */
+        uint64_t reserved_0            : 1;
+#else /* Word 0 - Little Endian */
+        uint64_t reserved_0            : 1;
+        uint64_t xs_ncb_oob            : 1;  /**< [  1:  1](R/W1S/H) Reads or sets enable for USBDRD(0)_UCTL_INTSTAT[XS_NCB_OOB]. */
+        uint64_t xm_bad_dma            : 1;  /**< [  2:  2](R/W1S/H) Reads or sets enable for USBDRD(0)_UCTL_INTSTAT[XM_BAD_DMA]. */
+        uint64_t reserved_3_4          : 2;
+        uint64_t dma_psn               : 1;  /**< [  5:  5](R/W1S/H) Reads or sets enable for USBDRD(0)_UCTL_INTSTAT[DMA_PSN]. */
+        uint64_t dma_wr_err            : 1;  /**< [  6:  6](R/W1S/H) Reads or sets enable for USBDRD(0)_UCTL_INTSTAT[DMA_WR_ERR]. */
+        uint64_t dma_rd_err            : 1;  /**< [  7:  7](R/W1S/H) Reads or sets enable for USBDRD(0)_UCTL_INTSTAT[DMA_RD_ERR]. */
+        uint64_t reserved_8_63         : 56;
+#endif /* Word 0 - End */
+    } cn96xxp3;
+    /* struct cavm_usbdrdx_uctl_intena_w1s_cn9 cn98xx; */
 };
 typedef union cavm_usbdrdx_uctl_intena_w1s cavm_usbdrdx_uctl_intena_w1s_t;
 
@@ -12421,7 +13431,11 @@ static inline uint64_t CAVM_USBDRDX_UCTL_INTENA_W1S(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && (a<=1))
         return 0x868000100048ll + 0x1000000000ll * ((a) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=1))
+        return 0x868000100048ll + 0x1000000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a==0))
+        return 0x868000100048ll + 0x1000000000ll * ((a) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x868000100048ll + 0x1000000000ll * ((a) & 0x1);
     __cavm_csr_fatal("USBDRDX_UCTL_INTENA_W1S", 1, a, 0, 0, 0, 0, 0);
 }
@@ -12628,7 +13642,11 @@ static inline uint64_t CAVM_USBDRDX_UCTL_INTSTAT(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && (a<=1))
         return 0x868000100030ll + 0x1000000000ll * ((a) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=1))
+        return 0x868000100030ll + 0x1000000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a==0))
+        return 0x868000100030ll + 0x1000000000ll * ((a) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x868000100030ll + 0x1000000000ll * ((a) & 0x1);
     __cavm_csr_fatal("USBDRDX_UCTL_INTSTAT", 1, a, 0, 0, 0, 0, 0);
 }
@@ -12761,6 +13779,30 @@ union cavm_usbdrdx_uctl_intstat_w1s
         uint64_t reserved_8_63         : 56;
 #endif /* Word 0 - End */
     } cn9;
+    /* struct cavm_usbdrdx_uctl_intstat_w1s_cn9 cn96xxp1; */
+    struct cavm_usbdrdx_uctl_intstat_w1s_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_8_63         : 56;
+        uint64_t dma_rd_err            : 1;  /**< [  7:  7](R/W1S/H) Reads or sets USBDRD(0)_UCTL_INTSTAT[DMA_RD_ERR]. */
+        uint64_t dma_wr_err            : 1;  /**< [  6:  6](R/W1S/H) Reads or sets USBDRD(0)_UCTL_INTSTAT[DMA_WR_ERR]. */
+        uint64_t dma_psn               : 1;  /**< [  5:  5](R/W1S/H) Reads or sets USBDRD(0)_UCTL_INTSTAT[DMA_PSN]. */
+        uint64_t reserved_3_4          : 2;
+        uint64_t xm_bad_dma            : 1;  /**< [  2:  2](R/W1S/H) Reads or sets USBDRD(0)_UCTL_INTSTAT[XM_BAD_DMA]. */
+        uint64_t xs_ncb_oob            : 1;  /**< [  1:  1](R/W1S/H) Reads or sets USBDRD(0)_UCTL_INTSTAT[XS_NCB_OOB]. */
+        uint64_t reserved_0            : 1;
+#else /* Word 0 - Little Endian */
+        uint64_t reserved_0            : 1;
+        uint64_t xs_ncb_oob            : 1;  /**< [  1:  1](R/W1S/H) Reads or sets USBDRD(0)_UCTL_INTSTAT[XS_NCB_OOB]. */
+        uint64_t xm_bad_dma            : 1;  /**< [  2:  2](R/W1S/H) Reads or sets USBDRD(0)_UCTL_INTSTAT[XM_BAD_DMA]. */
+        uint64_t reserved_3_4          : 2;
+        uint64_t dma_psn               : 1;  /**< [  5:  5](R/W1S/H) Reads or sets USBDRD(0)_UCTL_INTSTAT[DMA_PSN]. */
+        uint64_t dma_wr_err            : 1;  /**< [  6:  6](R/W1S/H) Reads or sets USBDRD(0)_UCTL_INTSTAT[DMA_WR_ERR]. */
+        uint64_t dma_rd_err            : 1;  /**< [  7:  7](R/W1S/H) Reads or sets USBDRD(0)_UCTL_INTSTAT[DMA_RD_ERR]. */
+        uint64_t reserved_8_63         : 56;
+#endif /* Word 0 - End */
+    } cn96xxp3;
+    /* struct cavm_usbdrdx_uctl_intstat_w1s_cn9 cn98xx; */
 };
 typedef union cavm_usbdrdx_uctl_intstat_w1s cavm_usbdrdx_uctl_intstat_w1s_t;
 
@@ -12769,7 +13811,11 @@ static inline uint64_t CAVM_USBDRDX_UCTL_INTSTAT_W1S(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && (a<=1))
         return 0x868000100038ll + 0x1000000000ll * ((a) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=1))
+        return 0x868000100038ll + 0x1000000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a==0))
+        return 0x868000100038ll + 0x1000000000ll * ((a) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x868000100038ll + 0x1000000000ll * ((a) & 0x1);
     __cavm_csr_fatal("USBDRDX_UCTL_INTSTAT_W1S", 1, a, 0, 0, 0, 0, 0);
 }
@@ -12807,7 +13853,11 @@ typedef union cavm_usbdrdx_uctl_pipeclk_counter cavm_usbdrdx_uctl_pipeclk_counte
 static inline uint64_t CAVM_USBDRDX_UCTL_PIPECLK_COUNTER(unsigned long a) __attribute__ ((pure, always_inline));
 static inline uint64_t CAVM_USBDRDX_UCTL_PIPECLK_COUNTER(unsigned long a)
 {
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=1))
+        return 0x868000100020ll + 0x1000000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a==0))
+        return 0x868000100020ll + 0x1000000000ll * ((a) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x868000100020ll + 0x1000000000ll * ((a) & 0x1);
     __cavm_csr_fatal("USBDRDX_UCTL_PIPECLK_COUNTER", 1, a, 0, 0, 0, 0, 0);
 }
@@ -13393,7 +14443,11 @@ static inline uint64_t CAVM_USBDRDX_UCTL_PORTX_CFG_HS(unsigned long a, unsigned 
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && ((a<=1) && (b==0)))
         return 0x868000100050ll + 0x1000000000ll * ((a) & 0x1) + 0x20ll * ((b) & 0x0);
-    if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b==0)))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && ((a<=1) && (b==0)))
+        return 0x868000100050ll + 0x1000000000ll * ((a) & 0x1) + 0x20ll * ((b) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a==0) && (b==0)))
+        return 0x868000100050ll + 0x1000000000ll * ((a) & 0x0) + 0x20ll * ((b) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b==0)))
         return 0x868000100050ll + 0x1000000000ll * ((a) & 0x1) + 0x20ll * ((b) & 0x0);
     __cavm_csr_fatal("USBDRDX_UCTL_PORTX_CFG_HS", 2, a, b, 0, 0, 0, 0);
 }
@@ -13664,7 +14718,11 @@ static inline uint64_t CAVM_USBDRDX_UCTL_PORTX_CFG_SS(unsigned long a, unsigned 
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && ((a<=1) && (b==0)))
         return 0x868000100058ll + 0x1000000000ll * ((a) & 0x1) + 0x20ll * ((b) & 0x0);
-    if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b==0)))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && ((a<=1) && (b==0)))
+        return 0x868000100058ll + 0x1000000000ll * ((a) & 0x1) + 0x20ll * ((b) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a==0) && (b==0)))
+        return 0x868000100058ll + 0x1000000000ll * ((a) & 0x0) + 0x20ll * ((b) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b==0)))
         return 0x868000100058ll + 0x1000000000ll * ((a) & 0x1) + 0x20ll * ((b) & 0x0);
     __cavm_csr_fatal("USBDRDX_UCTL_PORTX_CFG_SS", 2, a, b, 0, 0, 0, 0);
 }
@@ -13775,7 +14833,11 @@ static inline uint64_t CAVM_USBDRDX_UCTL_PORTX_CR_DBG_CFG(unsigned long a, unsig
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && ((a<=1) && (b==0)))
         return 0x868000100060ll + 0x1000000000ll * ((a) & 0x1) + 0ll * ((b) & 0x0);
-    if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b==0)))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && ((a<=1) && (b==0)))
+        return 0x868000100060ll + 0x1000000000ll * ((a) & 0x1) + 0ll * ((b) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a==0) && (b==0)))
+        return 0x868000100060ll + 0x1000000000ll * ((a) & 0x0) + 0ll * ((b) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b==0)))
         return 0x868000100060ll + 0x1000000000ll * ((a) & 0x1) + 0ll * ((b) & 0x0);
     __cavm_csr_fatal("USBDRDX_UCTL_PORTX_CR_DBG_CFG", 2, a, b, 0, 0, 0, 0);
 }
@@ -13824,7 +14886,11 @@ static inline uint64_t CAVM_USBDRDX_UCTL_PORTX_CR_DBG_STATUS(unsigned long a, un
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && ((a<=1) && (b==0)))
         return 0x868000100068ll + 0x1000000000ll * ((a) & 0x1) + 0ll * ((b) & 0x0);
-    if (cavm_is_model(OCTEONTX_CN96XX) && ((a<=1) && (b==0)))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && ((a<=1) && (b==0)))
+        return 0x868000100068ll + 0x1000000000ll * ((a) & 0x1) + 0ll * ((b) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a==0) && (b==0)))
+        return 0x868000100068ll + 0x1000000000ll * ((a) & 0x0) + 0ll * ((b) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b==0)))
         return 0x868000100068ll + 0x1000000000ll * ((a) & 0x1) + 0ll * ((b) & 0x0);
     __cavm_csr_fatal("USBDRDX_UCTL_PORTX_CR_DBG_STATUS", 2, a, b, 0, 0, 0, 0);
 }
@@ -13865,7 +14931,11 @@ typedef union cavm_usbdrdx_uctl_ras cavm_usbdrdx_uctl_ras_t;
 static inline uint64_t CAVM_USBDRDX_UCTL_RAS(unsigned long a) __attribute__ ((pure, always_inline));
 static inline uint64_t CAVM_USBDRDX_UCTL_RAS(unsigned long a)
 {
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=1))
+        return 0x868000100080ll + 0x1000000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a==0))
+        return 0x868000100080ll + 0x1000000000ll * ((a) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x868000100080ll + 0x1000000000ll * ((a) & 0x1);
     __cavm_csr_fatal("USBDRDX_UCTL_RAS", 1, a, 0, 0, 0, 0, 0);
 }
@@ -13896,14 +14966,30 @@ union cavm_usbdrdx_uctl_ras_w1s
         uint64_t reserved_1_63         : 63;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_usbdrdx_uctl_ras_w1s_s cn; */
+    /* struct cavm_usbdrdx_uctl_ras_w1s_s cn9; */
+    /* struct cavm_usbdrdx_uctl_ras_w1s_s cn96xxp1; */
+    struct cavm_usbdrdx_uctl_ras_w1s_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_1_63         : 63;
+        uint64_t dma_psn               : 1;  /**< [  0:  0](R/W1S/H) Reads or sets USBDRD(0)_UCTL_RAS[DMA_PSN]. */
+#else /* Word 0 - Little Endian */
+        uint64_t dma_psn               : 1;  /**< [  0:  0](R/W1S/H) Reads or sets USBDRD(0)_UCTL_RAS[DMA_PSN]. */
+        uint64_t reserved_1_63         : 63;
+#endif /* Word 0 - End */
+    } cn96xxp3;
+    /* struct cavm_usbdrdx_uctl_ras_w1s_s cn98xx; */
 };
 typedef union cavm_usbdrdx_uctl_ras_w1s cavm_usbdrdx_uctl_ras_w1s_t;
 
 static inline uint64_t CAVM_USBDRDX_UCTL_RAS_W1S(unsigned long a) __attribute__ ((pure, always_inline));
 static inline uint64_t CAVM_USBDRDX_UCTL_RAS_W1S(unsigned long a)
 {
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=1))
+        return 0x868000100088ll + 0x1000000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a==0))
+        return 0x868000100088ll + 0x1000000000ll * ((a) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x868000100088ll + 0x1000000000ll * ((a) & 0x1);
     __cavm_csr_fatal("USBDRDX_UCTL_RAS_W1S", 1, a, 0, 0, 0, 0, 0);
 }
@@ -13934,14 +15020,30 @@ union cavm_usbdrdx_uctl_rasena_w1c
         uint64_t reserved_1_63         : 63;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_usbdrdx_uctl_rasena_w1c_s cn; */
+    /* struct cavm_usbdrdx_uctl_rasena_w1c_s cn9; */
+    /* struct cavm_usbdrdx_uctl_rasena_w1c_s cn96xxp1; */
+    struct cavm_usbdrdx_uctl_rasena_w1c_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_1_63         : 63;
+        uint64_t dma_psn               : 1;  /**< [  0:  0](R/W1C/H) Reads or clears enable for USBDRD(0)_UCTL_RAS[DMA_PSN]. */
+#else /* Word 0 - Little Endian */
+        uint64_t dma_psn               : 1;  /**< [  0:  0](R/W1C/H) Reads or clears enable for USBDRD(0)_UCTL_RAS[DMA_PSN]. */
+        uint64_t reserved_1_63         : 63;
+#endif /* Word 0 - End */
+    } cn96xxp3;
+    /* struct cavm_usbdrdx_uctl_rasena_w1c_s cn98xx; */
 };
 typedef union cavm_usbdrdx_uctl_rasena_w1c cavm_usbdrdx_uctl_rasena_w1c_t;
 
 static inline uint64_t CAVM_USBDRDX_UCTL_RASENA_W1C(unsigned long a) __attribute__ ((pure, always_inline));
 static inline uint64_t CAVM_USBDRDX_UCTL_RASENA_W1C(unsigned long a)
 {
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=1))
+        return 0x868000100090ll + 0x1000000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a==0))
+        return 0x868000100090ll + 0x1000000000ll * ((a) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x868000100090ll + 0x1000000000ll * ((a) & 0x1);
     __cavm_csr_fatal("USBDRDX_UCTL_RASENA_W1C", 1, a, 0, 0, 0, 0, 0);
 }
@@ -13972,14 +15074,30 @@ union cavm_usbdrdx_uctl_rasena_w1s
         uint64_t reserved_1_63         : 63;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_usbdrdx_uctl_rasena_w1s_s cn; */
+    /* struct cavm_usbdrdx_uctl_rasena_w1s_s cn9; */
+    /* struct cavm_usbdrdx_uctl_rasena_w1s_s cn96xxp1; */
+    struct cavm_usbdrdx_uctl_rasena_w1s_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_1_63         : 63;
+        uint64_t dma_psn               : 1;  /**< [  0:  0](R/W1S/H) Reads or sets enable for USBDRD(0)_UCTL_RAS[DMA_PSN]. */
+#else /* Word 0 - Little Endian */
+        uint64_t dma_psn               : 1;  /**< [  0:  0](R/W1S/H) Reads or sets enable for USBDRD(0)_UCTL_RAS[DMA_PSN]. */
+        uint64_t reserved_1_63         : 63;
+#endif /* Word 0 - End */
+    } cn96xxp3;
+    /* struct cavm_usbdrdx_uctl_rasena_w1s_s cn98xx; */
 };
 typedef union cavm_usbdrdx_uctl_rasena_w1s cavm_usbdrdx_uctl_rasena_w1s_t;
 
 static inline uint64_t CAVM_USBDRDX_UCTL_RASENA_W1S(unsigned long a) __attribute__ ((pure, always_inline));
 static inline uint64_t CAVM_USBDRDX_UCTL_RASENA_W1S(unsigned long a)
 {
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=1))
+        return 0x868000100098ll + 0x1000000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a==0))
+        return 0x868000100098ll + 0x1000000000ll * ((a) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x868000100098ll + 0x1000000000ll * ((a) & 0x1);
     __cavm_csr_fatal("USBDRDX_UCTL_RASENA_W1S", 1, a, 0, 0, 0, 0, 0);
 }
@@ -14062,7 +15180,11 @@ static inline uint64_t CAVM_USBDRDX_UCTL_SHIM_CFG(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && (a<=1))
         return 0x8680001000e8ll + 0x1000000000ll * ((a) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=1))
+        return 0x8680001000e8ll + 0x1000000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a==0))
+        return 0x8680001000e8ll + 0x1000000000ll * ((a) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x8680001000e8ll + 0x1000000000ll * ((a) & 0x1);
     __cavm_csr_fatal("USBDRDX_UCTL_SHIM_CFG", 1, a, 0, 0, 0, 0, 0);
 }
@@ -14101,7 +15223,11 @@ static inline uint64_t CAVM_USBDRDX_UCTL_SPARE0(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && (a<=1))
         return 0x868000100010ll + 0x1000000000ll * ((a) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=1))
+        return 0x868000100010ll + 0x1000000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a==0))
+        return 0x868000100010ll + 0x1000000000ll * ((a) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x868000100010ll + 0x1000000000ll * ((a) & 0x1);
     __cavm_csr_fatal("USBDRDX_UCTL_SPARE0", 1, a, 0, 0, 0, 0, 0);
 }
@@ -14142,7 +15268,11 @@ static inline uint64_t CAVM_USBDRDX_UCTL_SPARE1(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN8XXX) && (a<=1))
         return 0x8680001000f8ll + 0x1000000000ll * ((a) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=1))
+        return 0x8680001000f8ll + 0x1000000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a==0))
+        return 0x8680001000f8ll + 0x1000000000ll * ((a) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x8680001000f8ll + 0x1000000000ll * ((a) & 0x1);
     __cavm_csr_fatal("USBDRDX_UCTL_SPARE1", 1, a, 0, 0, 0, 0, 0);
 }
@@ -14180,7 +15310,11 @@ typedef union cavm_usbdrdx_uctl_utmiclk_counter cavm_usbdrdx_uctl_utmiclk_counte
 static inline uint64_t CAVM_USBDRDX_UCTL_UTMICLK_COUNTER(unsigned long a) __attribute__ ((pure, always_inline));
 static inline uint64_t CAVM_USBDRDX_UCTL_UTMICLK_COUNTER(unsigned long a)
 {
-    if (cavm_is_model(OCTEONTX_CN96XX) && (a<=1))
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=1))
+        return 0x868000100018ll + 0x1000000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a==0))
+        return 0x868000100018ll + 0x1000000000ll * ((a) & 0x0);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
         return 0x868000100018ll + 0x1000000000ll * ((a) & 0x1);
     __cavm_csr_fatal("USBDRDX_UCTL_UTMICLK_COUNTER", 1, a, 0, 0, 0, 0, 0);
 }

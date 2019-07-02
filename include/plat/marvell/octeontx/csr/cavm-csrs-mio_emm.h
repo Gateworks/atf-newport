@@ -201,6 +201,32 @@ union cavm_mio_emm_calb
         uint64_t reserved_1_63         : 63;
         uint64_t start                 : 1;  /**< [  0:  0](R/W/H) Start calibration. Writes to this register send a pattern through the
                                                                  internal delay lines and is used to estimate delay.  Setting START
+                                                                 will begin the process.  Calbration is complete when MIO_EMM_TAP
+                                                                 has a non-zero value.  This step is typically preformed when the
+                                                                 device is at operating temperature and voltage.  Clearing the START
+                                                                 will clear the MIO_EMM_TAP register and allow a new calbration to
+                                                                 occur.  This field should not be set unless MIO_EMM_CFG[BUS_ENA] is
+                                                                 zero. */
+#else /* Word 0 - Little Endian */
+        uint64_t start                 : 1;  /**< [  0:  0](R/W/H) Start calibration. Writes to this register send a pattern through the
+                                                                 internal delay lines and is used to estimate delay.  Setting START
+                                                                 will begin the process.  Calbration is complete when MIO_EMM_TAP
+                                                                 has a non-zero value.  This step is typically preformed when the
+                                                                 device is at operating temperature and voltage.  Clearing the START
+                                                                 will clear the MIO_EMM_TAP register and allow a new calbration to
+                                                                 occur.  This field should not be set unless MIO_EMM_CFG[BUS_ENA] is
+                                                                 zero. */
+        uint64_t reserved_1_63         : 63;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_mio_emm_calb_s cn9; */
+    /* struct cavm_mio_emm_calb_s cn96xxp1; */
+    struct cavm_mio_emm_calb_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_1_63         : 63;
+        uint64_t start                 : 1;  /**< [  0:  0](R/W/H) Start calibration. Writes to this register send a pattern through the
+                                                                 internal delay lines and is used to estimate delay.  Setting START
                                                                  will begin the process.  Calibration is complete when MIO_EMM_TAP
                                                                  has a non-zero value.  This step is typically preformed when the
                                                                  device is at operating temperature and voltage.  Clearing the START
@@ -218,8 +244,10 @@ union cavm_mio_emm_calb
                                                                  zero. */
         uint64_t reserved_1_63         : 63;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_mio_emm_calb_s cn; */
+    } cn96xxp3;
+    /* struct cavm_mio_emm_calb_cn96xxp3 cn98xx; */
+    /* struct cavm_mio_emm_calb_cn96xxp3 cnf95xx; */
+    /* struct cavm_mio_emm_calb_cn96xxp3 loki; */
 };
 typedef union cavm_mio_emm_calb cavm_mio_emm_calb_t;
 
@@ -489,11 +517,11 @@ union cavm_mio_emm_debug
         uint64_t reserved_22_63        : 42;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_mio_emm_debug_s cn9; */
     struct cavm_mio_emm_debug_cn96xxp1
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_22_63        : 42;
-        uint64_t reserved_20_21        : 2;
+        uint64_t reserved_20_63        : 44;
         uint64_t dma_sm                : 4;  /**< [ 19: 16](RO) DMA state.
                                                                  For diagnostic use only. */
         uint64_t data_sm               : 4;  /**< [ 15: 12](RO) Data transfer state.
@@ -513,37 +541,12 @@ union cavm_mio_emm_debug
                                                                  For diagnostic use only. */
         uint64_t dma_sm                : 4;  /**< [ 19: 16](RO) DMA state.
                                                                  For diagnostic use only. */
-        uint64_t reserved_20_21        : 2;
-        uint64_t reserved_22_63        : 42;
+        uint64_t reserved_20_63        : 44;
 #endif /* Word 0 - End */
     } cn96xxp1;
     /* struct cavm_mio_emm_debug_s cn96xxp3; */
-    struct cavm_mio_emm_debug_cnf95xx
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_20_63        : 44;
-        uint64_t dma_sm                : 4;  /**< [ 19: 16](RO) DMA state.
-                                                                 For diagnostic use only. */
-        uint64_t data_sm               : 4;  /**< [ 15: 12](RO) Data transfer state.
-                                                                 For diagnostic use only. */
-        uint64_t cmd_sm                : 4;  /**< [ 11:  8](RO) Command state.
-                                                                 For diagnostic use only. */
-        uint64_t reserved_1_7          : 7;
-        uint64_t clk_on                : 1;  /**< [  0:  0](R/W) Force eMMC related conditional clocks to always be on.
-                                                                 For diagnostic use only. */
-#else /* Word 0 - Little Endian */
-        uint64_t clk_on                : 1;  /**< [  0:  0](R/W) Force eMMC related conditional clocks to always be on.
-                                                                 For diagnostic use only. */
-        uint64_t reserved_1_7          : 7;
-        uint64_t cmd_sm                : 4;  /**< [ 11:  8](RO) Command state.
-                                                                 For diagnostic use only. */
-        uint64_t data_sm               : 4;  /**< [ 15: 12](RO) Data transfer state.
-                                                                 For diagnostic use only. */
-        uint64_t dma_sm                : 4;  /**< [ 19: 16](RO) DMA state.
-                                                                 For diagnostic use only. */
-        uint64_t reserved_20_63        : 44;
-#endif /* Word 0 - End */
-    } cnf95xx;
+    /* struct cavm_mio_emm_debug_s cn98xx; */
+    /* struct cavm_mio_emm_debug_cn96xxp1 cnf95xx; */
     /* struct cavm_mio_emm_debug_s loki; */
 };
 typedef union cavm_mio_emm_debug cavm_mio_emm_debug_t;
@@ -815,8 +818,9 @@ union cavm_mio_emm_dma_arg
                                                                  CMD23 to set the number of blocks.  This field is ignored if MIO_EMM_DMA[MULTI]
                                                                  is clear since that feature already skips CMD23 and issues multiple commands. */
         uint64_t alt_cmd               : 6;  /**< [ 21: 16](R/W) Alternate command.  When non-zero this fields supplies the command used for the DMA
-                                                                 Transfer.  Typically this would be CMD17/CMD18 in the case of a read operation or a
-                                                                 CMD24/CMD25 in the case of a write operation. */
+                                                                 Transfer.  Typically this would be CMD18 in the case of Corresponds to bit 31 of
+                                                                 CMD23 (SET_BLOCK_COUNT)
+                                                                 for a multiple block. */
         uint64_t rel_wr                : 1;  /**< [ 15: 15](R/W) Reliable write.  Corresponds to bit 31 of CMD23 (SET_BLOCK_COUNT)
                                                                  for a multiple block. */
         uint64_t pack_cmd              : 1;  /**< [ 14: 14](R/W) Packed command enable.
@@ -875,8 +879,9 @@ union cavm_mio_emm_dma_arg
         uint64_t rel_wr                : 1;  /**< [ 15: 15](R/W) Reliable write.  Corresponds to bit 31 of CMD23 (SET_BLOCK_COUNT)
                                                                  for a multiple block. */
         uint64_t alt_cmd               : 6;  /**< [ 21: 16](R/W) Alternate command.  When non-zero this fields supplies the command used for the DMA
-                                                                 Transfer.  Typically this would be CMD17/CMD18 in the case of a read operation or a
-                                                                 CMD24/CMD25 in the case of a write operation. */
+                                                                 Transfer.  Typically this would be CMD18 in the case of Corresponds to bit 31 of
+                                                                 CMD23 (SET_BLOCK_COUNT)
+                                                                 for a multiple block. */
         uint64_t skip_blk_cmd          : 1;  /**< [ 22: 22](R/W) When set DMA will ignore issuing CMD23 (Set Block Count) command and instead
                                                                  issue a stop command when the number of blocks have expired. This flag would
                                                                  typically be set with SD devices and with an alternate command that does not use
@@ -888,8 +893,9 @@ union cavm_mio_emm_dma_arg
                                                                  used in conjunction with [ALT_CMD]. */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_mio_emm_dma_arg_s cn96xx; */
-    struct cavm_mio_emm_dma_arg_cnf95xx
+    /* struct cavm_mio_emm_dma_arg_s cn9; */
+    /* struct cavm_mio_emm_dma_arg_s cn96xxp1; */
+    struct cavm_mio_emm_dma_arg_cn96xxp3
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t alt_cmd_arg           : 32; /**< [ 63: 32](R/W) Alternate command arguments. When nonzero this field is used at the 24-bit
@@ -902,9 +908,8 @@ union cavm_mio_emm_dma_arg
                                                                  CMD23 to set the number of blocks.  This field is ignored if MIO_EMM_DMA[MULTI]
                                                                  is clear since that feature already skips CMD23 and issues multiple commands. */
         uint64_t alt_cmd               : 6;  /**< [ 21: 16](R/W) Alternate command.  When non-zero this fields supplies the command used for the DMA
-                                                                 Transfer.  Typically this would be CMD18 in the case of Corresponds to bit 31 of
-                                                                 CMD23 (SET_BLOCK_COUNT)
-                                                                 for a multiple block. */
+                                                                 Transfer.  Typically this would be CMD17/CMD18 in the case of a read operation or a
+                                                                 CMD24/CMD25 in the case of a write operation. */
         uint64_t rel_wr                : 1;  /**< [ 15: 15](R/W) Reliable write.  Corresponds to bit 31 of CMD23 (SET_BLOCK_COUNT)
                                                                  for a multiple block. */
         uint64_t pack_cmd              : 1;  /**< [ 14: 14](R/W) Packed command enable.
@@ -963,9 +968,8 @@ union cavm_mio_emm_dma_arg
         uint64_t rel_wr                : 1;  /**< [ 15: 15](R/W) Reliable write.  Corresponds to bit 31 of CMD23 (SET_BLOCK_COUNT)
                                                                  for a multiple block. */
         uint64_t alt_cmd               : 6;  /**< [ 21: 16](R/W) Alternate command.  When non-zero this fields supplies the command used for the DMA
-                                                                 Transfer.  Typically this would be CMD18 in the case of Corresponds to bit 31 of
-                                                                 CMD23 (SET_BLOCK_COUNT)
-                                                                 for a multiple block. */
+                                                                 Transfer.  Typically this would be CMD17/CMD18 in the case of a read operation or a
+                                                                 CMD24/CMD25 in the case of a write operation. */
         uint64_t skip_blk_cmd          : 1;  /**< [ 22: 22](R/W) When set DMA will ignore issuing CMD23 (Set Block Count) command and instead
                                                                  issue a stop command when the number of blocks have expired. This flag would
                                                                  typically be set with SD devices and with an alternate command that does not use
@@ -976,8 +980,10 @@ union cavm_mio_emm_dma_arg
                                                                  argument for the DMA command instead of the address. This feature is typically
                                                                  used in conjunction with [ALT_CMD]. */
 #endif /* Word 0 - End */
-    } cnf95xx;
-    /* struct cavm_mio_emm_dma_arg_s loki; */
+    } cn96xxp3;
+    /* struct cavm_mio_emm_dma_arg_cn96xxp3 cn98xx; */
+    /* struct cavm_mio_emm_dma_arg_s cnf95xx; */
+    /* struct cavm_mio_emm_dma_arg_cn96xxp3 loki; */
 };
 typedef union cavm_mio_emm_dma_arg cavm_mio_emm_dma_arg_t;
 
@@ -1909,7 +1915,8 @@ union cavm_mio_emm_modex
         uint64_t reserved_49_63        : 15;
 #endif /* Word 0 - End */
     } cn8;
-    struct cavm_mio_emm_modex_cn96xxp1_0
+    /* struct cavm_mio_emm_modex_s cn9; */
+    struct cavm_mio_emm_modex_cn96xxp1
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_51_63        : 13;
@@ -1934,8 +1941,7 @@ union cavm_mio_emm_modex
                                                                  0x6 = 8-bit data bus (dual data rate).
                                                                  0x7 = Reserved.
                                                                  0x8 = Reserved. */
-        uint64_t reserved_37_39        : 3;
-        uint64_t reserved_36           : 1;
+        uint64_t reserved_36_39        : 4;
         uint64_t power_class           : 4;  /**< [ 35: 32](RO/H) Out of reset, the card power class is 0, which is the minimum current consumption class
                                                                  for the card. EXT_CSD bytes [203:200] and [239:238] contain the power class for different
                                                                  BUS_WITDH and CLK frequencies. Software should write this field with the 4-bit field from
@@ -1949,8 +1955,7 @@ union cavm_mio_emm_modex
                                                                  for the card. EXT_CSD bytes [203:200] and [239:238] contain the power class for different
                                                                  BUS_WITDH and CLK frequencies. Software should write this field with the 4-bit field from
                                                                  the EXT_CSD bytes corresponding to the selected operating mode. */
-        uint64_t reserved_36           : 1;
-        uint64_t reserved_37_39        : 3;
+        uint64_t reserved_36_39        : 4;
         uint64_t bus_width             : 3;  /**< [ 42: 40](RO/H) Current card bus width mode. Out of reset, the card is in 1-bit data bus mode.
                                                                  0x0 = 1-bit data bus (power on).
                                                                  0x1 = 4-bit data bus.
@@ -1974,9 +1979,9 @@ union cavm_mio_emm_modex
                                                                  Bus width of 8-bit data bus (dual data rate) required. */
         uint64_t reserved_51_63        : 13;
 #endif /* Word 0 - End */
-    } cn96xxp1_0;
-    /* struct cavm_mio_emm_modex_s cn96xxp1_1; */
+    } cn96xxp1;
     /* struct cavm_mio_emm_modex_s cn96xxp3; */
+    /* struct cavm_mio_emm_modex_s cn98xx; */
     /* struct cavm_mio_emm_modex_s cnf95xx; */
     /* struct cavm_mio_emm_modex_s loki; */
 };
@@ -2105,7 +2110,9 @@ union cavm_mio_emm_msix_vecx_addr
         uint64_t reserved_49_63        : 15;
 #endif /* Word 0 - End */
     } cn8;
-    struct cavm_mio_emm_msix_vecx_addr_cn9
+    /* struct cavm_mio_emm_msix_vecx_addr_s cn9; */
+    /* struct cavm_mio_emm_msix_vecx_addr_s cn96xxp1; */
+    struct cavm_mio_emm_msix_vecx_addr_cn96xxp3
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_53_63        : 11;
@@ -2162,7 +2169,10 @@ union cavm_mio_emm_msix_vecx_addr
         uint64_t addr                  : 51; /**< [ 52:  2](R/W) IOVA to use for MSI-X delivery of this vector. */
         uint64_t reserved_53_63        : 11;
 #endif /* Word 0 - End */
-    } cn9;
+    } cn96xxp3;
+    /* struct cavm_mio_emm_msix_vecx_addr_cn96xxp3 cn98xx; */
+    /* struct cavm_mio_emm_msix_vecx_addr_cn96xxp3 cnf95xx; */
+    /* struct cavm_mio_emm_msix_vecx_addr_cn96xxp3 loki; */
 };
 typedef union cavm_mio_emm_msix_vecx_addr cavm_mio_emm_msix_vecx_addr_t;
 
@@ -2820,7 +2830,8 @@ union cavm_mio_emm_switch
         uint64_t reserved_62_63        : 2;
 #endif /* Word 0 - End */
     } cn8;
-    struct cavm_mio_emm_switch_cn96xxp1_0
+    /* struct cavm_mio_emm_switch_s cn9; */
+    struct cavm_mio_emm_switch_cn96xxp1
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_62_63        : 2;
@@ -2834,15 +2845,15 @@ union cavm_mio_emm_switch
 
                                                                  * First, the power class switch is performed. If it fails,
                                                                  [SWITCH_ERR0] is set and the remaining SWITCH operations are not
-                                                                 performed. If it succeeds, [POWER_CLASS] is updated and the BUS_WIDTH switch is
+                                                                 performed. If it succeeds, [POWER_CLASS] is updated and the HS_TIMING switch is
                                                                  performed.
 
-                                                                 * If the BUS_WIDTH switch operation fails, [SWITCH_ERR2] is set and the remaining
-                                                                 SWITCH operations are not performed. If it succeeds, the BUS_WIDTH is updated and
-                                                                 the HS_TIMING switch is preformed.
+                                                                 * If the HS_TIMING switch fails, [SWITCH_ERR1] is set and the remaining SWITCH operations
+                                                                 are not performed. If it succeeds, [HS_TIMING] is updated and the BUS_WIDTH switch
+                                                                 operation is performed.
 
-                                                                 * If the HS_TIMING switch fails, [SWITCH_ERR1] is set. If it succeeds the HS_TIMING,
-                                                                 HS200_TIMING and HS400_TIMING fields are updated and any CLK updates are preformed.
+                                                                 * If the BUS_WIDTH switch operation fails, [SWITCH_ERR2] is set. If it succeeds, the
+                                                                 BUS_WITDH is updated.
 
                                                                  Changes to CLK_HI and CLK_LO are discarded if any MIO_EMM_INT[SWITCH_ERR] occurs. */
         uint64_t switch_err0           : 1;  /**< [ 58: 58](RO/H) Error encountered while performing POWER_CLASS switch. See MIO_EMM_RSP_STS. */
@@ -2854,8 +2865,7 @@ union cavm_mio_emm_switch
         uint64_t hs_timing             : 1;  /**< [ 48: 48](R/W) Requested update to HS_TIMING. */
         uint64_t reserved_43_47        : 5;
         uint64_t bus_width             : 3;  /**< [ 42: 40](R/W) Requested update to BUS_WIDTH. */
-        uint64_t reserved_37_39        : 3;
-        uint64_t reserved_36           : 1;
+        uint64_t reserved_36_39        : 4;
         uint64_t power_class           : 4;  /**< [ 35: 32](R/W) Requested update to POWER_CLASS. */
         uint64_t clk_hi                : 16; /**< [ 31: 16](R/W) Requested update to CLK_HI. */
         uint64_t clk_lo                : 16; /**< [ 15:  0](R/W) Requested update to CLK_LO. */
@@ -2863,8 +2873,7 @@ union cavm_mio_emm_switch
         uint64_t clk_lo                : 16; /**< [ 15:  0](R/W) Requested update to CLK_LO. */
         uint64_t clk_hi                : 16; /**< [ 31: 16](R/W) Requested update to CLK_HI. */
         uint64_t power_class           : 4;  /**< [ 35: 32](R/W) Requested update to POWER_CLASS. */
-        uint64_t reserved_36           : 1;
-        uint64_t reserved_37_39        : 3;
+        uint64_t reserved_36_39        : 4;
         uint64_t bus_width             : 3;  /**< [ 42: 40](R/W) Requested update to BUS_WIDTH. */
         uint64_t reserved_43_47        : 5;
         uint64_t hs_timing             : 1;  /**< [ 48: 48](R/W) Requested update to HS_TIMING. */
@@ -2883,22 +2892,22 @@ union cavm_mio_emm_switch
 
                                                                  * First, the power class switch is performed. If it fails,
                                                                  [SWITCH_ERR0] is set and the remaining SWITCH operations are not
-                                                                 performed. If it succeeds, [POWER_CLASS] is updated and the BUS_WIDTH switch is
+                                                                 performed. If it succeeds, [POWER_CLASS] is updated and the HS_TIMING switch is
                                                                  performed.
 
-                                                                 * If the BUS_WIDTH switch operation fails, [SWITCH_ERR2] is set and the remaining
-                                                                 SWITCH operations are not performed. If it succeeds, the BUS_WIDTH is updated and
-                                                                 the HS_TIMING switch is preformed.
+                                                                 * If the HS_TIMING switch fails, [SWITCH_ERR1] is set and the remaining SWITCH operations
+                                                                 are not performed. If it succeeds, [HS_TIMING] is updated and the BUS_WIDTH switch
+                                                                 operation is performed.
 
-                                                                 * If the HS_TIMING switch fails, [SWITCH_ERR1] is set. If it succeeds the HS_TIMING,
-                                                                 HS200_TIMING and HS400_TIMING fields are updated and any CLK updates are preformed.
+                                                                 * If the BUS_WIDTH switch operation fails, [SWITCH_ERR2] is set. If it succeeds, the
+                                                                 BUS_WITDH is updated.
 
                                                                  Changes to CLK_HI and CLK_LO are discarded if any MIO_EMM_INT[SWITCH_ERR] occurs. */
         uint64_t bus_id                : 2;  /**< [ 61: 60](R/W/H) Specifies the eMMC bus ID. */
         uint64_t reserved_62_63        : 2;
 #endif /* Word 0 - End */
-    } cn96xxp1_0;
-    struct cavm_mio_emm_switch_cn96xxp1_1
+    } cn96xxp1;
+    struct cavm_mio_emm_switch_cn96xxp3
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_62_63        : 2;
@@ -2983,10 +2992,10 @@ union cavm_mio_emm_switch
         uint64_t bus_id                : 2;  /**< [ 61: 60](R/W/H) Specifies the eMMC bus ID. */
         uint64_t reserved_62_63        : 2;
 #endif /* Word 0 - End */
-    } cn96xxp1_1;
-    /* struct cavm_mio_emm_switch_cn96xxp1_1 cn96xxp3; */
-    /* struct cavm_mio_emm_switch_cn96xxp1_1 cnf95xx; */
-    /* struct cavm_mio_emm_switch_cn96xxp1_1 loki; */
+    } cn96xxp3;
+    /* struct cavm_mio_emm_switch_cn96xxp3 cn98xx; */
+    /* struct cavm_mio_emm_switch_cn96xxp3 cnf95xx; */
+    /* struct cavm_mio_emm_switch_cn96xxp3 loki; */
 };
 typedef union cavm_mio_emm_switch cavm_mio_emm_switch_t;
 

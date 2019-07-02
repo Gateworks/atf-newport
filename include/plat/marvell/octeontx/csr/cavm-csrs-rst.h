@@ -92,17 +92,35 @@
  */
 #define CAVM_RST_DEV_E_AVS (1)
 #define CAVM_RST_DEV_E_CGXX(a) (0x12 + (a))
-#define CAVM_RST_DEV_E_EMMC (0x19)
+#define CAVM_RST_DEV_E_EMMC_CN96XX (0x19)
+#define CAVM_RST_DEV_E_EMMC_CN98XX (0x1a)
+#define CAVM_RST_DEV_E_EMMC_CNF95XX (0x19)
+#define CAVM_RST_DEV_E_EMMC_LOKI (0x19)
 #define CAVM_RST_DEV_E_GSERX(a) (0x1a + (a))
-#define CAVM_RST_DEV_E_GSERRX(a) (0x20 + (a))
+#define CAVM_RST_DEV_E_GSERRX_CN96XX(a) (0x20 + (a))
+#define CAVM_RST_DEV_E_GSERRX_CN98XX(a) (0x24 + (a))
+#define CAVM_RST_DEV_E_GSERRX_CNF95XX(a) (0x20 + (a))
+#define CAVM_RST_DEV_E_GSERRX_LOKI(a) (0x20 + (a))
 #define CAVM_RST_DEV_E_MPIX(a) (2 + (a))
 #define CAVM_RST_DEV_E_NCSI (0)
-#define CAVM_RST_DEV_E_PEMX(a) (0x28 + (a))
+#define CAVM_RST_DEV_E_PEMX_CN96XX(a) (0x28 + (a))
+#define CAVM_RST_DEV_E_PEMX_CN98XX(a) (0x29 + (a))
+#define CAVM_RST_DEV_E_PEMX_CNF95XX(a) (0x28 + (a))
+#define CAVM_RST_DEV_E_PEMX_LOKI(a) (0x28 + (a))
 #define CAVM_RST_DEV_E_RFIFX_CNF95XX(a) (0x26 + (a))
 #define CAVM_RST_DEV_E_RFIFX_LOKI(a) (0x21 + (a))
-#define CAVM_RST_DEV_E_ROC_OCLA (0x18)
-#define CAVM_RST_DEV_E_SGPIO (0x17)
-#define CAVM_RST_DEV_E_SMI (0x16)
+#define CAVM_RST_DEV_E_ROC_OCLA_CN96XX (0x18)
+#define CAVM_RST_DEV_E_ROC_OCLA_CN98XX (0x19)
+#define CAVM_RST_DEV_E_ROC_OCLA_CNF95XX (0x18)
+#define CAVM_RST_DEV_E_ROC_OCLA_LOKI (0x18)
+#define CAVM_RST_DEV_E_SGPIO_CN96XX (0x17)
+#define CAVM_RST_DEV_E_SGPIO_CN98XX (0x18)
+#define CAVM_RST_DEV_E_SGPIO_CNF95XX (0x17)
+#define CAVM_RST_DEV_E_SGPIO_LOKI (0x17)
+#define CAVM_RST_DEV_E_SMI_CN96XX (0x16)
+#define CAVM_RST_DEV_E_SMI_CN98XX (0x17)
+#define CAVM_RST_DEV_E_SMI_CNF95XX (0x16)
+#define CAVM_RST_DEV_E_SMI_LOKI (0x16)
 #define CAVM_RST_DEV_E_TWSX(a) (4 + (a))
 #define CAVM_RST_DEV_E_UAAX(a) (0xa + (a))
 
@@ -293,6 +311,8 @@ static inline uint64_t CAVM_RST_APX_AFFINITY_CONST(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=23))
         return 0x87e006001000ll + 8ll * ((a) & 0x1f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=35))
+        return 0x87e006001000ll + 8ll * ((a) & 0x3f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=5))
         return 0x87e006001000ll + 8ll * ((a) & 0x7);
     if (cavm_is_model(OCTEONTX_LOKI) && (a<=5))
@@ -466,7 +486,88 @@ union cavm_rst_bist_active
         uint64_t reserved_7_63         : 57;
 #endif /* Word 0 - End */
     } s;
-    struct cavm_rst_bist_active_cn96xx
+    /* struct cavm_rst_bist_active_s cn9; */
+    struct cavm_rst_bist_active_cn96xxp1
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_6_63         : 58;
+        uint64_t ap                    : 1;  /**< [  5:  5](RO/H) BIST in progress due to AP cores being put into reset.  When set, memories
+                                                                 associated with this group are being tested.
+
+                                                                 This field is reinitialized on a cold domain reset.
+
+                                                                 Internal:
+                                                                 This field is reinitialized on the falling edge of dcok. */
+        uint64_t csr                   : 1;  /**< [  4:  4](RO/H) BIST in progress due to access to RST_DEV_MAP().  When set, memories
+                                                                 associated with this access are being tested.
+
+                                                                 This field is reinitialized on a cold domain reset.
+
+                                                                 Internal:
+                                                                 This field is reinitialized on the falling edge of dcok. */
+        uint64_t scp                   : 1;  /**< [  3:  3](RO/H) SCP domain BIST in progress.  When set, memories associated with
+                                                                 the SCP domain are being tested.
+
+                                                                 This field is reinitialized on a cold domain reset.
+
+                                                                 Internal:
+                                                                 This field is reinitialized on the falling edge of dcok. */
+        uint64_t mcp                   : 1;  /**< [  2:  2](RO/H) MCP domain BIST in progress.  When set, memories associated with
+                                                                 the MCP domain are being tested.
+
+                                                                 This field is reinitialized on a cold domain reset.
+
+                                                                 Internal:
+                                                                 This field is reinitialized on the falling edge of dcok. */
+        uint64_t core                  : 1;  /**< [  1:  1](RO/H) Core domain BIST in progress.  When set, memories associated with
+                                                                 the core domain are being tested.
+
+                                                                 This field is reinitialized on a cold domain reset.
+
+                                                                 Internal:
+                                                                 This field is reinitialized on the falling edge of dcok. */
+        uint64_t reserved_0            : 1;
+#else /* Word 0 - Little Endian */
+        uint64_t reserved_0            : 1;
+        uint64_t core                  : 1;  /**< [  1:  1](RO/H) Core domain BIST in progress.  When set, memories associated with
+                                                                 the core domain are being tested.
+
+                                                                 This field is reinitialized on a cold domain reset.
+
+                                                                 Internal:
+                                                                 This field is reinitialized on the falling edge of dcok. */
+        uint64_t mcp                   : 1;  /**< [  2:  2](RO/H) MCP domain BIST in progress.  When set, memories associated with
+                                                                 the MCP domain are being tested.
+
+                                                                 This field is reinitialized on a cold domain reset.
+
+                                                                 Internal:
+                                                                 This field is reinitialized on the falling edge of dcok. */
+        uint64_t scp                   : 1;  /**< [  3:  3](RO/H) SCP domain BIST in progress.  When set, memories associated with
+                                                                 the SCP domain are being tested.
+
+                                                                 This field is reinitialized on a cold domain reset.
+
+                                                                 Internal:
+                                                                 This field is reinitialized on the falling edge of dcok. */
+        uint64_t csr                   : 1;  /**< [  4:  4](RO/H) BIST in progress due to access to RST_DEV_MAP().  When set, memories
+                                                                 associated with this access are being tested.
+
+                                                                 This field is reinitialized on a cold domain reset.
+
+                                                                 Internal:
+                                                                 This field is reinitialized on the falling edge of dcok. */
+        uint64_t ap                    : 1;  /**< [  5:  5](RO/H) BIST in progress due to AP cores being put into reset.  When set, memories
+                                                                 associated with this group are being tested.
+
+                                                                 This field is reinitialized on a cold domain reset.
+
+                                                                 Internal:
+                                                                 This field is reinitialized on the falling edge of dcok. */
+        uint64_t reserved_6_63         : 58;
+#endif /* Word 0 - End */
+    } cn96xxp1;
+    struct cavm_rst_bist_active_cn96xxp3
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_6_63         : 58;
@@ -545,7 +646,8 @@ union cavm_rst_bist_active
                                                                  This field is reinitialized on the falling edge of dcok. */
         uint64_t reserved_6_63         : 58;
 #endif /* Word 0 - End */
-    } cn96xx;
+    } cn96xxp3;
+    /* struct cavm_rst_bist_active_cn96xxp3 cn98xx; */
     /* struct cavm_rst_bist_active_s cnf95xx; */
     /* struct cavm_rst_bist_active_s loki; */
 };
@@ -760,6 +862,172 @@ union cavm_rst_boot
                                                                  RST_CKILL[TIMER]. This feature is effectively a delayed warm reset. */
 #endif /* Word 0 - End */
     } s;
+    struct cavm_rst_boot_cn8
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t chipkill              : 1;  /**< [ 63: 63](R/W1S) A 0-to-1 transition of CHIPKILL starts the CHIPKILL timer. When CHIPKILL=1 and the timer
+                                                                 expires, chip reset is asserted internally. The CHIPKILL timer can be stopped only by
+                                                                 a reset (cold, warm, soft). The length of the CHIPKILL timer is specified by
+                                                                 RST_CKILL[TIMER]. This feature is effectively a delayed warm reset. */
+        uint64_t jtcsrdis              : 1;  /**< [ 62: 62](R/W) JTAG CSR disable. When set to 1, during the next warm or soft reset the JTAG TAP
+                                                                 controller will be disabled, i.e. DAP_IMP_DAR will be 0. This field resets to 1
+                                                                 in trusted-mode, else 0. */
+        uint64_t ejtagdis              : 1;  /**< [ 61: 61](R/W) Reserved. */
+        uint64_t trusted_mode          : 1;  /**< [ 60: 60](RO) When set, chip is operating as a trusted device. This bit is asserted when
+                                                                 either MIO_FUS_DAT2[TRUSTZONE_EN], FUSF_CTL[TZ_FORCE2], or the trusted-mode
+                                                                 strap GPIO_STRAP\<10\> are set. */
+        uint64_t ckill_ppdis           : 1;  /**< [ 59: 59](R/W) Chipkill core disable. When set to 1, cores other than core 0 will immediately
+                                                                 be disabled when RST_BOOT[CHIPKILL] is set. Writes have no effect when
+                                                                 RST_BOOT[CHIPKILL]=1. */
+        uint64_t jt_tstmode            : 1;  /**< [ 58: 58](RO) JTAG test mode. */
+        uint64_t vrm_err               : 1;  /**< [ 57: 57](RO) Reserved. */
+        uint64_t dis_huk               : 1;  /**< [ 56: 56](R/W1S) Disable HUK. Secure only and W1S set-only. When set FUSF_SSK(),
+                                                                 FUSF_HUK(), FUSF_EK(), and FUSF_SW() cannot be read.
+                                                                 Resets to (!trusted_mode && FUSF_CTL[FJ_DIS_HUK]).
+
+                                                                 Software must write a one to this bit when the chain of trust is broken. */
+        uint64_t dis_scan              : 1;  /**< [ 55: 55](R/W1S) Disable scan. When written to 1, and FUSF_CTL[ROT_LCK] = 1, reads as 1 and scan is not
+                                                                 allowed in the part.
+                                                                 This state persists across soft and warm resets.
+
+                                                                 Internal:
+                                                                 This state will persist across a simulation */
+        uint64_t reserved_47_54        : 8;
+        uint64_t c_mul                 : 7;  /**< [ 46: 40](RO/H) Core-clock multiplier. [C_MUL] = (core-clock speed) / (ref-clock speed). The value
+                                                                 ref-clock speed should always be 50 MHz.
+
+                                                                 Internal:
+                                                                 [C_MUL] is set from the pi_pll_mul pins plus 6 and is limited by a set of
+                                                                 fuses[127:123]. If the fuse value is \> 0, it is compared with the pi_pll_mul[5:1]
+                                                                 pins and the smaller value is used. */
+        uint64_t reserved_39           : 1;
+        uint64_t pnr_mul               : 6;  /**< [ 38: 33](RO/H) Coprocessor-clock multiplier. [PNR_MUL] = (coprocessor-clock speed) /(ref-clock speed).
+                                                                 The value ref-clock speed should always be 50 MHz.
+
+                                                                 Internal:
+                                                                 [PNR_MUL] is set from the pi_pnr_pll_mul pins plus 6 and is limited by a set of
+                                                                 fuses[122:119]. If the fuse value is \> 0, it is compared with the pi_pnr_pll_mul[4:1]
+                                                                 pins and the smaller value is used. */
+        uint64_t lboot_oci             : 3;  /**< [ 32: 30](R/W1C/H) Reserved.
+                                                                 Internal:
+                                                                 Last boot cause mask for CCPI; resets only with PLL_DC_OK.
+                                                                 \<32\> = Warm reset due to CCPI link 2 going down.
+                                                                 \<31\> = Warm reset due to CCPI link 1 going down.
+                                                                 \<30\> = Warm reset due to CCPI link 0 going down. */
+        uint64_t lboot_pf_flr          : 4;  /**< [ 29: 26](R/W1C/H) Last boot cause was caused by a PF Function Level Reset event.
+                                                                 \<29\> = Warm reset due to PF FLR on PEM3.
+                                                                 \<28\> = Warm reset due to PF FLR on PEM2.
+                                                                 \<27\> = Warm reset due to PF FLR on PEM1.
+                                                                 \<26\> = Warm reset due to PF FLR on PEM0. */
+        uint64_t lboot_ckill           : 1;  /**< [ 25: 25](R/W1C/H) Last boot cause was chip kill timer expiring.  See RST_BOOT[CHIPKILL]. */
+        uint64_t lboot_jtg             : 1;  /**< [ 24: 24](R/W1C/H) Last boot cause was write to JTG reset. */
+        uint64_t lboot_ext45           : 6;  /**< [ 23: 18](R/W1C/H) Reserved. */
+        uint64_t lboot_ext23           : 6;  /**< [ 17: 12](R/W1C/H) Last boot cause mask for PEM2; resets only with PLL_DC_OK.
+                                                                 \<17\> = Reserved
+                                                                 \<16\> = Warm reset due to Cntl2 link-down or hot-reset.
+                                                                 \<15\> = Reserved
+                                                                 \<14\> = Cntl2 reset due to PERST2_L pin.
+                                                                 \<13\> = Reserved
+                                                                 \<12\> = Warm reset due to PERST2_L pin. */
+        uint64_t lboot                 : 10; /**< [ 11:  2](R/W1C/H) Last boot cause mask for PEM1 and PEM0; resets only with PLL_DC_OK.
+                                                                 \<11\> = Soft reset due to watchdog.
+                                                                 \<10\> = Soft reset due to RST_SOFT_RST write.
+                                                                 \<9\> = Warm reset due to Cntl1 link-down or hot-reset.
+                                                                 \<8\> = Warm reset due to Cntl0 link-down or hot-reset.
+                                                                 \<7\> = Cntl1 reset due to PERST1_L pin.
+                                                                 \<6\> = Cntl0 reset due to PERST0_L pin.
+                                                                 \<5\> = Warm reset due to PERST1_L pin.
+                                                                 \<4\> = Warm reset due to PERST0_L pin.
+                                                                 \<3\> = Warm reset due to CHIP_RESET_L pin.
+                                                                 \<2\> = Cold reset due to PLL_DC_OK pin. */
+        uint64_t rboot                 : 1;  /**< [  1:  1](R/W) Remote boot. If set, indicates that core 0 will remain in reset after a
+                                                                 chip warm/soft reset. The initial value mimics the setting of the [RBOOT_PIN]. */
+        uint64_t rboot_pin             : 1;  /**< [  0:  0](RO/H) Remote Boot strap. Indicates the state of remote boot as initially determined by
+                                                                 GPIO_STRAP\<2:0\> = RST_BOOT_METHOD_E::REMOTE. If set core 0 will remain in reset
+                                                                 for the cold reset. */
+#else /* Word 0 - Little Endian */
+        uint64_t rboot_pin             : 1;  /**< [  0:  0](RO/H) Remote Boot strap. Indicates the state of remote boot as initially determined by
+                                                                 GPIO_STRAP\<2:0\> = RST_BOOT_METHOD_E::REMOTE. If set core 0 will remain in reset
+                                                                 for the cold reset. */
+        uint64_t rboot                 : 1;  /**< [  1:  1](R/W) Remote boot. If set, indicates that core 0 will remain in reset after a
+                                                                 chip warm/soft reset. The initial value mimics the setting of the [RBOOT_PIN]. */
+        uint64_t lboot                 : 10; /**< [ 11:  2](R/W1C/H) Last boot cause mask for PEM1 and PEM0; resets only with PLL_DC_OK.
+                                                                 \<11\> = Soft reset due to watchdog.
+                                                                 \<10\> = Soft reset due to RST_SOFT_RST write.
+                                                                 \<9\> = Warm reset due to Cntl1 link-down or hot-reset.
+                                                                 \<8\> = Warm reset due to Cntl0 link-down or hot-reset.
+                                                                 \<7\> = Cntl1 reset due to PERST1_L pin.
+                                                                 \<6\> = Cntl0 reset due to PERST0_L pin.
+                                                                 \<5\> = Warm reset due to PERST1_L pin.
+                                                                 \<4\> = Warm reset due to PERST0_L pin.
+                                                                 \<3\> = Warm reset due to CHIP_RESET_L pin.
+                                                                 \<2\> = Cold reset due to PLL_DC_OK pin. */
+        uint64_t lboot_ext23           : 6;  /**< [ 17: 12](R/W1C/H) Last boot cause mask for PEM2; resets only with PLL_DC_OK.
+                                                                 \<17\> = Reserved
+                                                                 \<16\> = Warm reset due to Cntl2 link-down or hot-reset.
+                                                                 \<15\> = Reserved
+                                                                 \<14\> = Cntl2 reset due to PERST2_L pin.
+                                                                 \<13\> = Reserved
+                                                                 \<12\> = Warm reset due to PERST2_L pin. */
+        uint64_t lboot_ext45           : 6;  /**< [ 23: 18](R/W1C/H) Reserved. */
+        uint64_t lboot_jtg             : 1;  /**< [ 24: 24](R/W1C/H) Last boot cause was write to JTG reset. */
+        uint64_t lboot_ckill           : 1;  /**< [ 25: 25](R/W1C/H) Last boot cause was chip kill timer expiring.  See RST_BOOT[CHIPKILL]. */
+        uint64_t lboot_pf_flr          : 4;  /**< [ 29: 26](R/W1C/H) Last boot cause was caused by a PF Function Level Reset event.
+                                                                 \<29\> = Warm reset due to PF FLR on PEM3.
+                                                                 \<28\> = Warm reset due to PF FLR on PEM2.
+                                                                 \<27\> = Warm reset due to PF FLR on PEM1.
+                                                                 \<26\> = Warm reset due to PF FLR on PEM0. */
+        uint64_t lboot_oci             : 3;  /**< [ 32: 30](R/W1C/H) Reserved.
+                                                                 Internal:
+                                                                 Last boot cause mask for CCPI; resets only with PLL_DC_OK.
+                                                                 \<32\> = Warm reset due to CCPI link 2 going down.
+                                                                 \<31\> = Warm reset due to CCPI link 1 going down.
+                                                                 \<30\> = Warm reset due to CCPI link 0 going down. */
+        uint64_t pnr_mul               : 6;  /**< [ 38: 33](RO/H) Coprocessor-clock multiplier. [PNR_MUL] = (coprocessor-clock speed) /(ref-clock speed).
+                                                                 The value ref-clock speed should always be 50 MHz.
+
+                                                                 Internal:
+                                                                 [PNR_MUL] is set from the pi_pnr_pll_mul pins plus 6 and is limited by a set of
+                                                                 fuses[122:119]. If the fuse value is \> 0, it is compared with the pi_pnr_pll_mul[4:1]
+                                                                 pins and the smaller value is used. */
+        uint64_t reserved_39           : 1;
+        uint64_t c_mul                 : 7;  /**< [ 46: 40](RO/H) Core-clock multiplier. [C_MUL] = (core-clock speed) / (ref-clock speed). The value
+                                                                 ref-clock speed should always be 50 MHz.
+
+                                                                 Internal:
+                                                                 [C_MUL] is set from the pi_pll_mul pins plus 6 and is limited by a set of
+                                                                 fuses[127:123]. If the fuse value is \> 0, it is compared with the pi_pll_mul[5:1]
+                                                                 pins and the smaller value is used. */
+        uint64_t reserved_47_54        : 8;
+        uint64_t dis_scan              : 1;  /**< [ 55: 55](R/W1S) Disable scan. When written to 1, and FUSF_CTL[ROT_LCK] = 1, reads as 1 and scan is not
+                                                                 allowed in the part.
+                                                                 This state persists across soft and warm resets.
+
+                                                                 Internal:
+                                                                 This state will persist across a simulation */
+        uint64_t dis_huk               : 1;  /**< [ 56: 56](R/W1S) Disable HUK. Secure only and W1S set-only. When set FUSF_SSK(),
+                                                                 FUSF_HUK(), FUSF_EK(), and FUSF_SW() cannot be read.
+                                                                 Resets to (!trusted_mode && FUSF_CTL[FJ_DIS_HUK]).
+
+                                                                 Software must write a one to this bit when the chain of trust is broken. */
+        uint64_t vrm_err               : 1;  /**< [ 57: 57](RO) Reserved. */
+        uint64_t jt_tstmode            : 1;  /**< [ 58: 58](RO) JTAG test mode. */
+        uint64_t ckill_ppdis           : 1;  /**< [ 59: 59](R/W) Chipkill core disable. When set to 1, cores other than core 0 will immediately
+                                                                 be disabled when RST_BOOT[CHIPKILL] is set. Writes have no effect when
+                                                                 RST_BOOT[CHIPKILL]=1. */
+        uint64_t trusted_mode          : 1;  /**< [ 60: 60](RO) When set, chip is operating as a trusted device. This bit is asserted when
+                                                                 either MIO_FUS_DAT2[TRUSTZONE_EN], FUSF_CTL[TZ_FORCE2], or the trusted-mode
+                                                                 strap GPIO_STRAP\<10\> are set. */
+        uint64_t ejtagdis              : 1;  /**< [ 61: 61](R/W) Reserved. */
+        uint64_t jtcsrdis              : 1;  /**< [ 62: 62](R/W) JTAG CSR disable. When set to 1, during the next warm or soft reset the JTAG TAP
+                                                                 controller will be disabled, i.e. DAP_IMP_DAR will be 0. This field resets to 1
+                                                                 in trusted-mode, else 0. */
+        uint64_t chipkill              : 1;  /**< [ 63: 63](R/W1S) A 0-to-1 transition of CHIPKILL starts the CHIPKILL timer. When CHIPKILL=1 and the timer
+                                                                 expires, chip reset is asserted internally. The CHIPKILL timer can be stopped only by
+                                                                 a reset (cold, warm, soft). The length of the CHIPKILL timer is specified by
+                                                                 RST_CKILL[TIMER]. This feature is effectively a delayed warm reset. */
+#endif /* Word 0 - End */
+    } cn8;
     struct cavm_rst_boot_cn81xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -1086,7 +1354,7 @@ union cavm_rst_boot
                                                                  RST_CKILL[TIMER]. This feature is effectively a delayed warm reset. */
 #endif /* Word 0 - End */
     } cn83xx;
-    struct cavm_rst_boot_cn96xx
+    struct cavm_rst_boot_cn9
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t chipkill              : 1;  /**< [ 63: 63](R/W1S) A zero-to-one transition of CHIPKILL starts the CHIPKILL timer. When set and the timer
@@ -1239,8 +1507,361 @@ union cavm_rst_boot
                                                                  This feature is effectively a delayed reset.
                                                                  This field is reinitialized with a chip domain reset. */
 #endif /* Word 0 - End */
-    } cn96xx;
-    struct cavm_rst_boot_cnf95xx
+    } cn9;
+    /* struct cavm_rst_boot_cn9 cn96xx; */
+    struct cavm_rst_boot_cn98xx
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t chipkill              : 1;  /**< [ 63: 63](R/W1S) A zero-to-one transition of CHIPKILL starts the CHIPKILL timer. When set and the timer
+                                                                 expires, chip domain reset is asserted.
+                                                                 The length of the CHIPKILL timer is specified by RST_CKILL[TIMER].
+                                                                 This feature is effectively a delayed reset.
+                                                                 This field is reinitialized with a chip domain reset. */
+        uint64_t jtagdis               : 1;  /**< [ 62: 62](R/W/H) JTAG access disable. When set, the debug access port of the
+                                                                 JTAG TAP controller will be disabled, i.e. DAP_IMP_DAR will be zero.
+                                                                 This field resets to one in trusted mode otherwise it is cleared.
+                                                                 This field is reinitialized with a cold domain reset. */
+        uint64_t scp_jtagdis           : 1;  /**< [ 61: 61](R/W/H) SCP JTAG debugger disable. When set, the SCP debug interface of
+                                                                 the EJTAG TAP controller will be disabled. This field does not
+                                                                 control the MCP EJTAG interface (See [MCP_JTAGDIS]).
+                                                                 This field resets to one in trusted mode otherwise it is cleared.
+                                                                 This field is reinitialized with a cold domain reset. */
+        uint64_t trusted_mode          : 1;  /**< [ 60: 60](RO/H) When set, chip is operating as a trusted device. This bit is asserted when
+                                                                 either FUSF_CTL[TZ_FORCE2], or the trusted mode strap on GPIO number
+                                                                 GPIO_STRAP_PIN_E::TRUSTED_MODE is set. */
+        uint64_t reserved_58_59        : 2;
+        uint64_t vrm_err               : 1;  /**< [ 57: 57](R/W1) Reserved. */
+        uint64_t dis_huk               : 1;  /**< [ 56: 56](R/W1S) Disable HUK. Secure only and W1S set-only. When set, FUSF_SSK(),
+                                                                 FUSF_HUK(), FUSF_EK(), and FUSF_SW() cannot be read.
+                                                                 Resets to one if FUSF_CTL[FJ_DIS_HUK] is set and not in trusted mode.
+                                                                 It is also set anytime scan mode is activated while FUSF_CTL[FJ_DIS_HUK] is set.
+                                                                 Software must set this bit when the chain of trust is broken.
+                                                                 This field is reinitialized with either a cold or chip domain reset. */
+        uint64_t dis_scan              : 1;  /**< [ 55: 55](R/W1S/H) Disable scan.  When set and FUSF_CTL[ROT_LCK] = 1, scan is not
+                                                                 allowed in the part. Read requests return current disable scan status.
+
+                                                                 Internal:
+                                                                 The field is actually reset only after DCOK has been left
+                                                                 deasserted for an extended period of time. */
+        uint64_t mcp_jtagdis           : 1;  /**< [ 54: 54](R/W/H) MCP JTAG debugger disable. When set, the MCP Debug interface of
+                                                                 the EJTAG TAP controller will be disabled. This field does not
+                                                                 control the SCP EJTAG interface (See EJTAGDIS).
+                                                                 This field resets to one in trusted mode otherwise it is cleared.
+                                                                 This field is reinitialized with a cold domain reset. */
+        uint64_t gpio_ejtag            : 1;  /**< [ 53: 53](R/W/H) Use GPIO pins for EJTAG.  When set, the EJTAG chain consisting
+                                                                 of MCP and SCP devices is routed directly to GPIO pins.  When
+                                                                 cleared these devices are included in the standard JTAG chain.
+                                                                 The specific GPIO pins are selected with GPIO_BIT_CFG()[PIN_SEL].
+                                                                 This field is reinitialized with a cold domain reset.
+                                                                 Reset value is determined by GPIO strap pin number
+                                                                 GPIO_STRAP_PIN_E::MCP_DBG_ON_GPIO. */
+        uint64_t reserved_47_52        : 6;
+        uint64_t c_mul                 : 7;  /**< [ 46: 40](RO/H) Current core-clock multiplier. Clock frequency = [C_MUL] * 50 MHz.
+                                                                 See RST_CORE_PLL for details on programming and initial values.
+
+                                                                 Internal:
+                                                                 [C_MUL] is a copy of RST_CORE_PLL[CUR_MUL]. */
+        uint64_t reserved_39           : 1;
+        uint64_t pnr_mul               : 6;  /**< [ 38: 33](RO/H) Current coprocessor-clock multiplier. Clock frequency = [PNR_MUL] * 50 MHz.
+                                                                 See RST_PNR_PLL for details on programming and initial values.
+
+                                                                 Internal:
+                                                                 [PNR_MUL] is a copy of RST_PNR_PLL[CUR_MUL]. */
+        uint64_t reserved_31_32        : 2;
+        uint64_t cpt_mul               : 7;  /**< [ 30: 24](RO/H) Current crypto-clock multiplier for CPT0. Clock frequency = [CPT_MUL] * 50 MHz.
+                                                                 See RST_CPT_PLL for details on programming and initial values.
+
+                                                                 Internal:
+                                                                 [CPT_MUL] is a copy of RST_CPT_PLL[CUR_MUL]. */
+        uint64_t reserved_23           : 1;
+        uint64_t cpt1_mul              : 7;  /**< [ 22: 16](RO/H) Current crypto-clock multiplier for CPT1. Clock frequency = [CPT1_MUL] * 50 MHz.
+                                                                 See RST_CPT1_PLL for details on programming and initial values.
+
+                                                                 Internal:
+                                                                 [CPT1_MUL] is a copy of RST_CPT1_PLL[CUR_MUL]. */
+        uint64_t reserved_15           : 1;
+        uint64_t rxp_mul               : 7;  /**< [ 14:  8](RO/H) Current RXP clock multiplier. Clock frequency = [RXP_MUL] * 50 MHz.
+                                                                 See RST_RXP_PLL for details on programming and initial values.
+
+                                                                 Internal:
+                                                                 [RXP_MUL] is a copy of RST_RXP_PLL[CUR_MUL]. */
+        uint64_t reserved_2_7          : 6;
+        uint64_t rboot                 : 1;  /**< [  1:  1](R/W/H) Remote boot. If set, indicates that SCP will require a write to
+                                                                 RST_SCP_DOMAIN_W1C to bring it out of reset.  Otherwise it
+                                                                 will automatically come out of reset once the reset source has
+                                                                 been deasserted.
+                                                                 The initial value is set when [RBOOT_PIN] is true and
+                                                                 trustzone has not been enabled.
+                                                                 This field is reinitialized with a cold domain reset.
+
+                                                                 Internal:
+                                                                 This field is cleared when jtg__rst_disable_remote is active. */
+        uint64_t rboot_pin             : 1;  /**< [  0:  0](RO) Remote boot strap. The value is set when primary boot method is RST_BOOT_METHOD_E::REMOTE
+                                                                 when the GPIO pins are sampled on the rising edge of PLL_DCOK. */
+#else /* Word 0 - Little Endian */
+        uint64_t rboot_pin             : 1;  /**< [  0:  0](RO) Remote boot strap. The value is set when primary boot method is RST_BOOT_METHOD_E::REMOTE
+                                                                 when the GPIO pins are sampled on the rising edge of PLL_DCOK. */
+        uint64_t rboot                 : 1;  /**< [  1:  1](R/W/H) Remote boot. If set, indicates that SCP will require a write to
+                                                                 RST_SCP_DOMAIN_W1C to bring it out of reset.  Otherwise it
+                                                                 will automatically come out of reset once the reset source has
+                                                                 been deasserted.
+                                                                 The initial value is set when [RBOOT_PIN] is true and
+                                                                 trustzone has not been enabled.
+                                                                 This field is reinitialized with a cold domain reset.
+
+                                                                 Internal:
+                                                                 This field is cleared when jtg__rst_disable_remote is active. */
+        uint64_t reserved_2_7          : 6;
+        uint64_t rxp_mul               : 7;  /**< [ 14:  8](RO/H) Current RXP clock multiplier. Clock frequency = [RXP_MUL] * 50 MHz.
+                                                                 See RST_RXP_PLL for details on programming and initial values.
+
+                                                                 Internal:
+                                                                 [RXP_MUL] is a copy of RST_RXP_PLL[CUR_MUL]. */
+        uint64_t reserved_15           : 1;
+        uint64_t cpt1_mul              : 7;  /**< [ 22: 16](RO/H) Current crypto-clock multiplier for CPT1. Clock frequency = [CPT1_MUL] * 50 MHz.
+                                                                 See RST_CPT1_PLL for details on programming and initial values.
+
+                                                                 Internal:
+                                                                 [CPT1_MUL] is a copy of RST_CPT1_PLL[CUR_MUL]. */
+        uint64_t reserved_23           : 1;
+        uint64_t cpt_mul               : 7;  /**< [ 30: 24](RO/H) Current crypto-clock multiplier for CPT0. Clock frequency = [CPT_MUL] * 50 MHz.
+                                                                 See RST_CPT_PLL for details on programming and initial values.
+
+                                                                 Internal:
+                                                                 [CPT_MUL] is a copy of RST_CPT_PLL[CUR_MUL]. */
+        uint64_t reserved_31_32        : 2;
+        uint64_t pnr_mul               : 6;  /**< [ 38: 33](RO/H) Current coprocessor-clock multiplier. Clock frequency = [PNR_MUL] * 50 MHz.
+                                                                 See RST_PNR_PLL for details on programming and initial values.
+
+                                                                 Internal:
+                                                                 [PNR_MUL] is a copy of RST_PNR_PLL[CUR_MUL]. */
+        uint64_t reserved_39           : 1;
+        uint64_t c_mul                 : 7;  /**< [ 46: 40](RO/H) Current core-clock multiplier. Clock frequency = [C_MUL] * 50 MHz.
+                                                                 See RST_CORE_PLL for details on programming and initial values.
+
+                                                                 Internal:
+                                                                 [C_MUL] is a copy of RST_CORE_PLL[CUR_MUL]. */
+        uint64_t reserved_47_52        : 6;
+        uint64_t gpio_ejtag            : 1;  /**< [ 53: 53](R/W/H) Use GPIO pins for EJTAG.  When set, the EJTAG chain consisting
+                                                                 of MCP and SCP devices is routed directly to GPIO pins.  When
+                                                                 cleared these devices are included in the standard JTAG chain.
+                                                                 The specific GPIO pins are selected with GPIO_BIT_CFG()[PIN_SEL].
+                                                                 This field is reinitialized with a cold domain reset.
+                                                                 Reset value is determined by GPIO strap pin number
+                                                                 GPIO_STRAP_PIN_E::MCP_DBG_ON_GPIO. */
+        uint64_t mcp_jtagdis           : 1;  /**< [ 54: 54](R/W/H) MCP JTAG debugger disable. When set, the MCP Debug interface of
+                                                                 the EJTAG TAP controller will be disabled. This field does not
+                                                                 control the SCP EJTAG interface (See EJTAGDIS).
+                                                                 This field resets to one in trusted mode otherwise it is cleared.
+                                                                 This field is reinitialized with a cold domain reset. */
+        uint64_t dis_scan              : 1;  /**< [ 55: 55](R/W1S/H) Disable scan.  When set and FUSF_CTL[ROT_LCK] = 1, scan is not
+                                                                 allowed in the part. Read requests return current disable scan status.
+
+                                                                 Internal:
+                                                                 The field is actually reset only after DCOK has been left
+                                                                 deasserted for an extended period of time. */
+        uint64_t dis_huk               : 1;  /**< [ 56: 56](R/W1S) Disable HUK. Secure only and W1S set-only. When set, FUSF_SSK(),
+                                                                 FUSF_HUK(), FUSF_EK(), and FUSF_SW() cannot be read.
+                                                                 Resets to one if FUSF_CTL[FJ_DIS_HUK] is set and not in trusted mode.
+                                                                 It is also set anytime scan mode is activated while FUSF_CTL[FJ_DIS_HUK] is set.
+                                                                 Software must set this bit when the chain of trust is broken.
+                                                                 This field is reinitialized with either a cold or chip domain reset. */
+        uint64_t vrm_err               : 1;  /**< [ 57: 57](R/W1) Reserved. */
+        uint64_t reserved_58_59        : 2;
+        uint64_t trusted_mode          : 1;  /**< [ 60: 60](RO/H) When set, chip is operating as a trusted device. This bit is asserted when
+                                                                 either FUSF_CTL[TZ_FORCE2], or the trusted mode strap on GPIO number
+                                                                 GPIO_STRAP_PIN_E::TRUSTED_MODE is set. */
+        uint64_t scp_jtagdis           : 1;  /**< [ 61: 61](R/W/H) SCP JTAG debugger disable. When set, the SCP debug interface of
+                                                                 the EJTAG TAP controller will be disabled. This field does not
+                                                                 control the MCP EJTAG interface (See [MCP_JTAGDIS]).
+                                                                 This field resets to one in trusted mode otherwise it is cleared.
+                                                                 This field is reinitialized with a cold domain reset. */
+        uint64_t jtagdis               : 1;  /**< [ 62: 62](R/W/H) JTAG access disable. When set, the debug access port of the
+                                                                 JTAG TAP controller will be disabled, i.e. DAP_IMP_DAR will be zero.
+                                                                 This field resets to one in trusted mode otherwise it is cleared.
+                                                                 This field is reinitialized with a cold domain reset. */
+        uint64_t chipkill              : 1;  /**< [ 63: 63](R/W1S) A zero-to-one transition of CHIPKILL starts the CHIPKILL timer. When set and the timer
+                                                                 expires, chip domain reset is asserted.
+                                                                 The length of the CHIPKILL timer is specified by RST_CKILL[TIMER].
+                                                                 This feature is effectively a delayed reset.
+                                                                 This field is reinitialized with a chip domain reset. */
+#endif /* Word 0 - End */
+    } cn98xx;
+    struct cavm_rst_boot_cnf95xxp1
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t chipkill              : 1;  /**< [ 63: 63](R/W1S) A zero-to-one transition of CHIPKILL starts the CHIPKILL timer. When set and the timer
+                                                                 expires, chip domain reset is asserted.
+                                                                 The length of the CHIPKILL timer is specified by RST_CKILL[TIMER].
+                                                                 This feature is effectively a delayed reset.
+                                                                 This field is reinitialized with a chip domain reset. */
+        uint64_t jtagdis               : 1;  /**< [ 62: 62](R/W/H) JTAG access disable. When set, the debug access port of the
+                                                                 JTAG TAP controller will be disabled, i.e. DAP_IMP_DAR will be zero.
+                                                                 This field resets to one in trusted mode otherwise it is cleared.
+                                                                 This field is reinitialized with a cold domain reset. */
+        uint64_t scp_jtagdis           : 1;  /**< [ 61: 61](R/W/H) SCP JTAG debugger disable. When set, the SCP debug interface of
+                                                                 the EJTAG TAP controller will be disabled. This field does not
+                                                                 control the MCP EJTAG interface (See [MCP_JTAGDIS]).
+                                                                 This field resets to one in trusted mode otherwise it is cleared.
+                                                                 This field is reinitialized with a cold domain reset. */
+        uint64_t trusted_mode          : 1;  /**< [ 60: 60](RO/H) When set, chip is operating as a trusted device. This bit is asserted when
+                                                                 either FUSF_CTL[TZ_FORCE2], or the trusted mode strap on GPIO number
+                                                                 GPIO_STRAP_PIN_E::TRUSTED_MODE is set. */
+        uint64_t reserved_58_59        : 2;
+        uint64_t vrm_err               : 1;  /**< [ 57: 57](R/W1) Reserved. */
+        uint64_t dis_huk               : 1;  /**< [ 56: 56](R/W1S) Disable HUK. Secure only and W1S set-only. When set, FUSF_SSK(),
+                                                                 FUSF_HUK(), FUSF_EK(), and FUSF_SW() cannot be read.
+                                                                 Resets to one if FUSF_CTL[FJ_DIS_HUK] is set and not in trusted mode.
+                                                                 It is also set anytime scan mode is activated while FUSF_CTL[FJ_DIS_HUK] is set.
+                                                                 Software must set this bit when the chain of trust is broken.
+                                                                 This field is reinitialized with either a cold or chip domain reset. */
+        uint64_t dis_scan              : 1;  /**< [ 55: 55](R/W1S/H) Disable scan.  When set and FUSF_CTL[ROT_LCK] = 1, scan is not
+                                                                 allowed in the part. Read requests return current disable scan status.
+
+                                                                 Internal:
+                                                                 The field is actually reset only after DCOK has been left
+                                                                 deasserted for an extended period of time. */
+        uint64_t mcp_jtagdis           : 1;  /**< [ 54: 54](R/W/H) MCP JTAG debugger disable. When set, the MCP Debug interface of
+                                                                 the EJTAG TAP controller will be disabled. This field does not
+                                                                 control the SCP EJTAG interface (See EJTAGDIS).
+                                                                 This field resets to one in trusted mode otherwise it is cleared.
+                                                                 This field is reinitialized with a cold domain reset. */
+        uint64_t gpio_ejtag            : 1;  /**< [ 53: 53](R/W/H) Use GPIO pins for EJTAG.  When set, the EJTAG chain consisting
+                                                                 of MCP and SCP devices is routed directly to GPIO pins.  When
+                                                                 cleared these devices are included in the standard JTAG chain.
+                                                                 The specific GPIO pins are selected with GPIO_BIT_CFG()[PIN_SEL].
+                                                                 This field is reinitialized with a cold domain reset.
+                                                                 Reset value is determined by GPIO strap pin number
+                                                                 GPIO_STRAP_PIN_E::MCP_DBG_ON_GPIO. */
+        uint64_t reserved_47_52        : 6;
+        uint64_t c_mul                 : 7;  /**< [ 46: 40](RO/H) Current core-clock multiplier. Clock frequency = [C_MUL] * 50 MHz.
+                                                                 See RST_CORE_PLL for details on programming and initial values.
+
+                                                                 Internal:
+                                                                 [C_MUL] is a copy of RST_CORE_PLL[CUR_MUL]. */
+        uint64_t reserved_39           : 1;
+        uint64_t pnr_mul               : 6;  /**< [ 38: 33](RO/H) Current coprocessor-clock multiplier. Clock frequency = [PNR_MUL] * 50 MHz.
+                                                                 See RST_PNR_PLL for details on programming and initial values.
+
+                                                                 Internal:
+                                                                 [PNR_MUL] is a copy of RST_PNR_PLL[CUR_MUL]. */
+        uint64_t reserved_31_32        : 2;
+        uint64_t cpt_mul               : 7;  /**< [ 30: 24](RO/H) Reserved.
+                                                                 Internal:
+                                                                 Unused on 95xx. */
+        uint64_t reserved_23           : 1;
+        uint64_t dsp_mul               : 7;  /**< [ 22: 16](RO/H) Current dsp-clock multiplier. Clock frequency = [DSP_MUL] * 50 MHz.
+                                                                 See RST_DSP_PLL for details on programming and initial values.
+
+                                                                 Internal:
+                                                                 [DSP_MUL] is a copy of RST_DSP_PLL[CUR_MUL]. */
+        uint64_t reserved_15           : 1;
+        uint64_t bphy_mul              : 7;  /**< [ 14:  8](RO/H) Current bphy-clock multiplier. Clock frequency = [BPHY_MUL] * 50 MHz.
+                                                                 See RST_BPHY_PLL for details on programming and initial values.
+
+                                                                 Internal:
+                                                                 [BPHY_MUL] is a copy of RST_BPHY_PLL[CUR_MUL]. */
+        uint64_t reserved_2_7          : 6;
+        uint64_t rboot                 : 1;  /**< [  1:  1](R/W/H) Remote boot. If set, indicates that SCP will require a write to
+                                                                 RST_SCP_DOMAIN_W1C to bring it out of reset.  Otherwise it
+                                                                 will automatically come out of reset once the reset source has
+                                                                 been deasserted.
+                                                                 The initial value is set when [RBOOT_PIN] is true and
+                                                                 trustzone has not been enabled.
+                                                                 This field is reinitialized with a cold domain reset.
+
+                                                                 Internal:
+                                                                 This field is cleared when jtg__rst_disable_remote is active. */
+        uint64_t rboot_pin             : 1;  /**< [  0:  0](RO) Remote boot strap. The value is set when primary boot method is RST_BOOT_METHOD_E::REMOTE
+                                                                 when the GPIO pins are sampled on the rising edge of PLL_DCOK. */
+#else /* Word 0 - Little Endian */
+        uint64_t rboot_pin             : 1;  /**< [  0:  0](RO) Remote boot strap. The value is set when primary boot method is RST_BOOT_METHOD_E::REMOTE
+                                                                 when the GPIO pins are sampled on the rising edge of PLL_DCOK. */
+        uint64_t rboot                 : 1;  /**< [  1:  1](R/W/H) Remote boot. If set, indicates that SCP will require a write to
+                                                                 RST_SCP_DOMAIN_W1C to bring it out of reset.  Otherwise it
+                                                                 will automatically come out of reset once the reset source has
+                                                                 been deasserted.
+                                                                 The initial value is set when [RBOOT_PIN] is true and
+                                                                 trustzone has not been enabled.
+                                                                 This field is reinitialized with a cold domain reset.
+
+                                                                 Internal:
+                                                                 This field is cleared when jtg__rst_disable_remote is active. */
+        uint64_t reserved_2_7          : 6;
+        uint64_t bphy_mul              : 7;  /**< [ 14:  8](RO/H) Current bphy-clock multiplier. Clock frequency = [BPHY_MUL] * 50 MHz.
+                                                                 See RST_BPHY_PLL for details on programming and initial values.
+
+                                                                 Internal:
+                                                                 [BPHY_MUL] is a copy of RST_BPHY_PLL[CUR_MUL]. */
+        uint64_t reserved_15           : 1;
+        uint64_t dsp_mul               : 7;  /**< [ 22: 16](RO/H) Current dsp-clock multiplier. Clock frequency = [DSP_MUL] * 50 MHz.
+                                                                 See RST_DSP_PLL for details on programming and initial values.
+
+                                                                 Internal:
+                                                                 [DSP_MUL] is a copy of RST_DSP_PLL[CUR_MUL]. */
+        uint64_t reserved_23           : 1;
+        uint64_t cpt_mul               : 7;  /**< [ 30: 24](RO/H) Reserved.
+                                                                 Internal:
+                                                                 Unused on 95xx. */
+        uint64_t reserved_31_32        : 2;
+        uint64_t pnr_mul               : 6;  /**< [ 38: 33](RO/H) Current coprocessor-clock multiplier. Clock frequency = [PNR_MUL] * 50 MHz.
+                                                                 See RST_PNR_PLL for details on programming and initial values.
+
+                                                                 Internal:
+                                                                 [PNR_MUL] is a copy of RST_PNR_PLL[CUR_MUL]. */
+        uint64_t reserved_39           : 1;
+        uint64_t c_mul                 : 7;  /**< [ 46: 40](RO/H) Current core-clock multiplier. Clock frequency = [C_MUL] * 50 MHz.
+                                                                 See RST_CORE_PLL for details on programming and initial values.
+
+                                                                 Internal:
+                                                                 [C_MUL] is a copy of RST_CORE_PLL[CUR_MUL]. */
+        uint64_t reserved_47_52        : 6;
+        uint64_t gpio_ejtag            : 1;  /**< [ 53: 53](R/W/H) Use GPIO pins for EJTAG.  When set, the EJTAG chain consisting
+                                                                 of MCP and SCP devices is routed directly to GPIO pins.  When
+                                                                 cleared these devices are included in the standard JTAG chain.
+                                                                 The specific GPIO pins are selected with GPIO_BIT_CFG()[PIN_SEL].
+                                                                 This field is reinitialized with a cold domain reset.
+                                                                 Reset value is determined by GPIO strap pin number
+                                                                 GPIO_STRAP_PIN_E::MCP_DBG_ON_GPIO. */
+        uint64_t mcp_jtagdis           : 1;  /**< [ 54: 54](R/W/H) MCP JTAG debugger disable. When set, the MCP Debug interface of
+                                                                 the EJTAG TAP controller will be disabled. This field does not
+                                                                 control the SCP EJTAG interface (See EJTAGDIS).
+                                                                 This field resets to one in trusted mode otherwise it is cleared.
+                                                                 This field is reinitialized with a cold domain reset. */
+        uint64_t dis_scan              : 1;  /**< [ 55: 55](R/W1S/H) Disable scan.  When set and FUSF_CTL[ROT_LCK] = 1, scan is not
+                                                                 allowed in the part. Read requests return current disable scan status.
+
+                                                                 Internal:
+                                                                 The field is actually reset only after DCOK has been left
+                                                                 deasserted for an extended period of time. */
+        uint64_t dis_huk               : 1;  /**< [ 56: 56](R/W1S) Disable HUK. Secure only and W1S set-only. When set, FUSF_SSK(),
+                                                                 FUSF_HUK(), FUSF_EK(), and FUSF_SW() cannot be read.
+                                                                 Resets to one if FUSF_CTL[FJ_DIS_HUK] is set and not in trusted mode.
+                                                                 It is also set anytime scan mode is activated while FUSF_CTL[FJ_DIS_HUK] is set.
+                                                                 Software must set this bit when the chain of trust is broken.
+                                                                 This field is reinitialized with either a cold or chip domain reset. */
+        uint64_t vrm_err               : 1;  /**< [ 57: 57](R/W1) Reserved. */
+        uint64_t reserved_58_59        : 2;
+        uint64_t trusted_mode          : 1;  /**< [ 60: 60](RO/H) When set, chip is operating as a trusted device. This bit is asserted when
+                                                                 either FUSF_CTL[TZ_FORCE2], or the trusted mode strap on GPIO number
+                                                                 GPIO_STRAP_PIN_E::TRUSTED_MODE is set. */
+        uint64_t scp_jtagdis           : 1;  /**< [ 61: 61](R/W/H) SCP JTAG debugger disable. When set, the SCP debug interface of
+                                                                 the EJTAG TAP controller will be disabled. This field does not
+                                                                 control the MCP EJTAG interface (See [MCP_JTAGDIS]).
+                                                                 This field resets to one in trusted mode otherwise it is cleared.
+                                                                 This field is reinitialized with a cold domain reset. */
+        uint64_t jtagdis               : 1;  /**< [ 62: 62](R/W/H) JTAG access disable. When set, the debug access port of the
+                                                                 JTAG TAP controller will be disabled, i.e. DAP_IMP_DAR will be zero.
+                                                                 This field resets to one in trusted mode otherwise it is cleared.
+                                                                 This field is reinitialized with a cold domain reset. */
+        uint64_t chipkill              : 1;  /**< [ 63: 63](R/W1S) A zero-to-one transition of CHIPKILL starts the CHIPKILL timer. When set and the timer
+                                                                 expires, chip domain reset is asserted.
+                                                                 The length of the CHIPKILL timer is specified by RST_CKILL[TIMER].
+                                                                 This feature is effectively a delayed reset.
+                                                                 This field is reinitialized with a chip domain reset. */
+#endif /* Word 0 - End */
+    } cnf95xxp1;
+    struct cavm_rst_boot_cnf95xxp2
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t chipkill              : 1;  /**< [ 63: 63](R/W1S) A zero-to-one transition of CHIPKILL starts the CHIPKILL timer. When set and the timer
@@ -1413,8 +2034,8 @@ union cavm_rst_boot
                                                                  This feature is effectively a delayed reset.
                                                                  This field is reinitialized with a chip domain reset. */
 #endif /* Word 0 - End */
-    } cnf95xx;
-    /* struct cavm_rst_boot_cnf95xx loki; */
+    } cnf95xxp2;
+    /* struct cavm_rst_boot_cnf95xxp2 loki; */
 };
 typedef union cavm_rst_boot cavm_rst_boot_t;
 
@@ -1512,6 +2133,30 @@ union cavm_rst_bphy_domain_w1c
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_1_63         : 63;
+        uint64_t soft_rst              : 1;  /**< [  0:  0](R/W1C/H) Clear softare-initiated reset of the BPHY processor and associated logic.
+                                                                 When set to one, the soft reset of the bphy is removed.
+                                                                 Reads of this register show the soft reset state.  Not the actual bphy domain reset.
+                                                                 Other factors may keep the reset active, reading RST_RESET_ACTIVE[BPHY] shows
+                                                                 the actual reset state.  To compensate for delays in reset, this field should only
+                                                                 be set if RST_RESET_ACTIVE[BPHY] is set.
+                                                                 This field is always reinitialized on a core domain reset. */
+#else /* Word 0 - Little Endian */
+        uint64_t soft_rst              : 1;  /**< [  0:  0](R/W1C/H) Clear softare-initiated reset of the BPHY processor and associated logic.
+                                                                 When set to one, the soft reset of the bphy is removed.
+                                                                 Reads of this register show the soft reset state.  Not the actual bphy domain reset.
+                                                                 Other factors may keep the reset active, reading RST_RESET_ACTIVE[BPHY] shows
+                                                                 the actual reset state.  To compensate for delays in reset, this field should only
+                                                                 be set if RST_RESET_ACTIVE[BPHY] is set.
+                                                                 This field is always reinitialized on a core domain reset. */
+        uint64_t reserved_1_63         : 63;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rst_bphy_domain_w1c_s cn9; */
+    /* struct cavm_rst_bphy_domain_w1c_s cnf95xxp1; */
+    struct cavm_rst_bphy_domain_w1c_cnf95xxp2
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_1_63         : 63;
         uint64_t soft_rst              : 1;  /**< [  0:  0](R/W1C/H) Clear software-initiated reset of the BPHY processor and associated logic.
                                                                  When set to one, the soft reset of the BPHY is removed.
                                                                  Reads of this register show the soft reset state.  Not the actual BPHY domain reset.
@@ -1529,8 +2174,8 @@ union cavm_rst_bphy_domain_w1c
                                                                  This field is always reinitialized on a core domain reset. */
         uint64_t reserved_1_63         : 63;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_rst_bphy_domain_w1c_s cn; */
+    } cnf95xxp2;
+    /* struct cavm_rst_bphy_domain_w1c_cnf95xxp2 loki; */
 };
 typedef union cavm_rst_bphy_domain_w1c cavm_rst_bphy_domain_w1c_t;
 
@@ -1566,6 +2211,28 @@ union cavm_rst_bphy_domain_w1s
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_1_63         : 63;
         uint64_t soft_rst              : 1;  /**< [  0:  0](R/W1S/H) Set software-initiated reset of BPHY associated logic.
+                                                                 When set to one, all logic associated with the bphy domain is placed in reset.
+                                                                 Reads of this register show the soft reset state.  Not the actual bphy domain reset.
+                                                                 Other factors may keep the reset active, reading RST_RESET_ACTIVE[BPHY] shows
+                                                                 the actual reset state.
+                                                                 This field is always reinitialized on a core domain reset. */
+#else /* Word 0 - Little Endian */
+        uint64_t soft_rst              : 1;  /**< [  0:  0](R/W1S/H) Set software-initiated reset of BPHY associated logic.
+                                                                 When set to one, all logic associated with the bphy domain is placed in reset.
+                                                                 Reads of this register show the soft reset state.  Not the actual bphy domain reset.
+                                                                 Other factors may keep the reset active, reading RST_RESET_ACTIVE[BPHY] shows
+                                                                 the actual reset state.
+                                                                 This field is always reinitialized on a core domain reset. */
+        uint64_t reserved_1_63         : 63;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rst_bphy_domain_w1s_s cn9; */
+    /* struct cavm_rst_bphy_domain_w1s_s cnf95xxp1; */
+    struct cavm_rst_bphy_domain_w1s_cnf95xxp2
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_1_63         : 63;
+        uint64_t soft_rst              : 1;  /**< [  0:  0](R/W1S/H) Set software-initiated reset of BPHY associated logic.
                                                                  When set to one, all logic associated with the BPHY domain is placed in reset.
                                                                  Reads of this register show the soft reset state.  Not the actual BPHY domain reset.
                                                                  Other factors may keep the reset active, reading RST_RESET_ACTIVE[BPHY] shows
@@ -1580,8 +2247,8 @@ union cavm_rst_bphy_domain_w1s
                                                                  This field is always reinitialized on a core domain reset. */
         uint64_t reserved_1_63         : 63;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_rst_bphy_domain_w1s_s cn; */
+    } cnf95xxp2;
+    /* struct cavm_rst_bphy_domain_w1s_cnf95xxp2 loki; */
 };
 typedef union cavm_rst_bphy_domain_w1s cavm_rst_bphy_domain_w1s_t;
 
@@ -1623,6 +2290,126 @@ union cavm_rst_bphy_pll
                                                                    0x3 = PLL1 output divided by 32.
 
                                                                  This field is always reinitialized on a cold domain reset. */
+        uint64_t cout_reset            : 1;  /**< [ 48: 48](R/W) BPHY clockout reset. The bphy clockout should be placed in
+                                                                 reset at least 10 PLL reference clocks prior
+                                                                 to changing [COUT_SEL]. It should remain under reset for at least 10
+                                                                 PLL reference clocks after [COUT_SEL] changes.
+                                                                 This field is always reinitialized on a cold domain reset. */
+        uint64_t reserved_45_47        : 3;
+        uint64_t pd_switch             : 1;  /**< [ 44: 44](R/W) PLL powerdown on switch.  When set, hardware automatically
+                                                                 powers down the inactive PLL after the switch has occurred.
+                                                                 When cleared, the inactive PLL remains in operation.
+                                                                 If [PD_SWITCH] is written to a one while both [DLY_SWITCH] and
+                                                                 [NXT_PGM] are cleared then the inactive PLL will immediately powerdown.
+
+                                                                 Note that a powered-down PLL requires an additional 575 reference
+                                                                 clocks to become active.  This time is automatically added by the
+                                                                 hardware.
+                                                                 This field is always reinitialized on a cold domain reset. */
+        uint64_t dly_switch            : 12; /**< [ 43: 32](R/W/H) Switch the active PLL after delaying this number of 100 MHz clocks.
+                                                                 When set to a nonzero value, the hardware will wait for
+                                                                 any PLL programming to complete and then switch to the inactive
+                                                                 PLL after the specified number of PLL reference clocks. Hardware
+                                                                 will add additional clocks if required.
+                                                                 This field is always reinitialized on a cold domain reset.
+
+                                                                 Internal:
+                                                                 Hardware will add counts to maintain 256 bclk/dsp_clk/sclk notification to hardware.
+                                                                 Additional time will be added to wake up powered-down AP cores but that
+                                                                 time not be included in this count. */
+        uint64_t pll1_pd               : 1;  /**< [ 31: 31](RO) BPHY PLL1 power down.  When set PLL is currently powered down. */
+        uint64_t pll0_pd               : 1;  /**< [ 30: 30](RO) BPHY PLL0 power down.  When set PLL is currently powered down. */
+        uint64_t reserved_23_29        : 7;
+        uint64_t init_mul              : 7;  /**< [ 22: 16](R/W) BPHY clock multiplier to be used during a core or chip domain
+                                                                 reset.  Actual frequency is [INIT_MUL] * 50 MHz.  The actual value
+                                                                 used is limited by RST_PLL_LIMIT[BPHY_MAX_MUL].
+                                                                 This field maintains its current value when written with a zero.
+                                                                 This field is always reinitialized on a cold domain reset. */
+        uint64_t nxt_pgm               : 1;  /**< [ 15: 15](R/W/H) Program non-active PLL using [NXT_MUL]. Hardware automatically
+                                                                 clears bit when both pll is updated and any delay specified
+                                                                 in [DLY_SWITCH] has completed.
+                                                                 This field is always reinitialized on a chip domain reset. */
+        uint64_t nxt_mul               : 7;  /**< [ 14:  8](R/W) BPHY PLL frequency to be program in 50 MHz increments.  The
+                                                                 actual value used is limited by RST_PLL_LIMIT[BPHY_MAX_MUL] and
+                                                                 a minimum setting of 300 MHz.
+                                                                 Value will match [INIT_MUL] immediately after a cold or chip domain reset. */
+        uint64_t active_pll            : 1;  /**< [  7:  7](RO) Indicates which physical PLL is in use. For diagnostic use only. */
+        uint64_t cur_mul               : 7;  /**< [  6:  0](RO/H) BPHY clock frequency.  Actual frequency is [CUR_MUL] * 50 MHz.
+                                                                 Value will reflect [NXT_MUL] after [DLY_SWITCH] has completed or [INIT_MUL]
+                                                                 immediately after a cold or chip domain reset.  In both cases, value
+                                                                 is limited by RST_PLL_LIMIT[BPHY_MAX_MUL]. */
+#else /* Word 0 - Little Endian */
+        uint64_t cur_mul               : 7;  /**< [  6:  0](RO/H) BPHY clock frequency.  Actual frequency is [CUR_MUL] * 50 MHz.
+                                                                 Value will reflect [NXT_MUL] after [DLY_SWITCH] has completed or [INIT_MUL]
+                                                                 immediately after a cold or chip domain reset.  In both cases, value
+                                                                 is limited by RST_PLL_LIMIT[BPHY_MAX_MUL]. */
+        uint64_t active_pll            : 1;  /**< [  7:  7](RO) Indicates which physical PLL is in use. For diagnostic use only. */
+        uint64_t nxt_mul               : 7;  /**< [ 14:  8](R/W) BPHY PLL frequency to be program in 50 MHz increments.  The
+                                                                 actual value used is limited by RST_PLL_LIMIT[BPHY_MAX_MUL] and
+                                                                 a minimum setting of 300 MHz.
+                                                                 Value will match [INIT_MUL] immediately after a cold or chip domain reset. */
+        uint64_t nxt_pgm               : 1;  /**< [ 15: 15](R/W/H) Program non-active PLL using [NXT_MUL]. Hardware automatically
+                                                                 clears bit when both pll is updated and any delay specified
+                                                                 in [DLY_SWITCH] has completed.
+                                                                 This field is always reinitialized on a chip domain reset. */
+        uint64_t init_mul              : 7;  /**< [ 22: 16](R/W) BPHY clock multiplier to be used during a core or chip domain
+                                                                 reset.  Actual frequency is [INIT_MUL] * 50 MHz.  The actual value
+                                                                 used is limited by RST_PLL_LIMIT[BPHY_MAX_MUL].
+                                                                 This field maintains its current value when written with a zero.
+                                                                 This field is always reinitialized on a cold domain reset. */
+        uint64_t reserved_23_29        : 7;
+        uint64_t pll0_pd               : 1;  /**< [ 30: 30](RO) BPHY PLL0 power down.  When set PLL is currently powered down. */
+        uint64_t pll1_pd               : 1;  /**< [ 31: 31](RO) BPHY PLL1 power down.  When set PLL is currently powered down. */
+        uint64_t dly_switch            : 12; /**< [ 43: 32](R/W/H) Switch the active PLL after delaying this number of 100 MHz clocks.
+                                                                 When set to a nonzero value, the hardware will wait for
+                                                                 any PLL programming to complete and then switch to the inactive
+                                                                 PLL after the specified number of PLL reference clocks. Hardware
+                                                                 will add additional clocks if required.
+                                                                 This field is always reinitialized on a cold domain reset.
+
+                                                                 Internal:
+                                                                 Hardware will add counts to maintain 256 bclk/dsp_clk/sclk notification to hardware.
+                                                                 Additional time will be added to wake up powered-down AP cores but that
+                                                                 time not be included in this count. */
+        uint64_t pd_switch             : 1;  /**< [ 44: 44](R/W) PLL powerdown on switch.  When set, hardware automatically
+                                                                 powers down the inactive PLL after the switch has occurred.
+                                                                 When cleared, the inactive PLL remains in operation.
+                                                                 If [PD_SWITCH] is written to a one while both [DLY_SWITCH] and
+                                                                 [NXT_PGM] are cleared then the inactive PLL will immediately powerdown.
+
+                                                                 Note that a powered-down PLL requires an additional 575 reference
+                                                                 clocks to become active.  This time is automatically added by the
+                                                                 hardware.
+                                                                 This field is always reinitialized on a cold domain reset. */
+        uint64_t reserved_45_47        : 3;
+        uint64_t cout_reset            : 1;  /**< [ 48: 48](R/W) BPHY clockout reset. The bphy clockout should be placed in
+                                                                 reset at least 10 PLL reference clocks prior
+                                                                 to changing [COUT_SEL]. It should remain under reset for at least 10
+                                                                 PLL reference clocks after [COUT_SEL] changes.
+                                                                 This field is always reinitialized on a cold domain reset. */
+        uint64_t cout_sel              : 2;  /**< [ 50: 49](R/W) BPHY clockout select.
+                                                                   0x0 = BPHY clock divided by 32.
+                                                                   0x1 = BPHY clock tree output divided by 32.
+                                                                   0x2 = PLL0 output divided by 32.
+                                                                   0x3 = PLL1 output divided by 32.
+
+                                                                 This field is always reinitialized on a cold domain reset. */
+        uint64_t reserved_51_63        : 13;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rst_bphy_pll_s cn9; */
+    /* struct cavm_rst_bphy_pll_s cnf95xxp1; */
+    struct cavm_rst_bphy_pll_cnf95xxp2
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_51_63        : 13;
+        uint64_t cout_sel              : 2;  /**< [ 50: 49](R/W) BPHY clockout select.
+                                                                   0x0 = BPHY clock divided by 32.
+                                                                   0x1 = BPHY clock tree output divided by 32.
+                                                                   0x2 = PLL0 output divided by 32.
+                                                                   0x3 = PLL1 output divided by 32.
+
+                                                                 This field is always reinitialized on a cold domain reset. */
         uint64_t cout_reset            : 1;  /**< [ 48: 48](R/W) BPHY clockout reset. The BPHY clockout should be placed in
                                                                  reset at least 10 PLL reference clocks prior
                                                                  to changing [COUT_SEL]. It should remain under reset for at least 10
@@ -1729,8 +2516,8 @@ union cavm_rst_bphy_pll
                                                                  This field is always reinitialized on a cold domain reset. */
         uint64_t reserved_51_63        : 13;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_rst_bphy_pll_s cn; */
+    } cnf95xxp2;
+    /* struct cavm_rst_bphy_pll_cnf95xxp2 loki; */
 };
 typedef union cavm_rst_bphy_pll cavm_rst_bphy_pll_t;
 
@@ -2064,6 +2851,7 @@ union cavm_rst_const
         uint64_t reserved_16_63        : 48;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_rst_const_s cn9; */
     /* struct cavm_rst_const_s cn96xxp1; */
     struct cavm_rst_const_cn96xxp3
     {
@@ -2077,6 +2865,7 @@ union cavm_rst_const
         uint64_t reserved_16_63        : 48;
 #endif /* Word 0 - End */
     } cn96xxp3;
+    /* struct cavm_rst_const_cn96xxp3 cn98xx; */
     /* struct cavm_rst_const_s cnf95xx; */
     /* struct cavm_rst_const_s loki; */
 };
@@ -2327,7 +3116,126 @@ union cavm_rst_core_pll
         uint64_t reserved_51_63        : 13;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_rst_core_pll_s cn9; */
     /* struct cavm_rst_core_pll_s cn96xx; */
+    struct cavm_rst_core_pll_cn98xx
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_51_63        : 13;
+        uint64_t cout_sel              : 2;  /**< [ 50: 49](R/W) Core clockout select.
+                                                                   0x0 = Core clock divided by 32.
+                                                                   0x1 = Core clock tree output divided by 32.
+                                                                   0x2 = PLL0 output divided by 32.
+                                                                   0x3 = PLL1 output divided by 32.
+
+                                                                 This field is always reinitialized on a cold domain reset. */
+        uint64_t cout_reset            : 1;  /**< [ 48: 48](R/W) Core clockout reset. The core clockout should be placed in
+                                                                 reset at least 10 PLL reference clocks prior
+                                                                 to changing [COUT_SEL]. It should remain under reset for at least 10
+                                                                 PLL reference clocks after [COUT_SEL] changes.
+                                                                 This field is always reinitialized on a cold domain reset. */
+        uint64_t reserved_45_47        : 3;
+        uint64_t pd_switch             : 1;  /**< [ 44: 44](R/W) PLL powerdown on switch.  When set, hardware automatically
+                                                                 powers down the inactive PLL after the switch has occurred.
+                                                                 When cleared, the inactive PLL remains in operation.
+                                                                 If [PD_SWITCH] is written to a one while both [DLY_SWITCH] and
+                                                                 [NXT_PGM] are cleared then the inactive PLL will immediately powerdown.
+
+                                                                 Note that a powered-down PLL requires an additional 575 reference
+                                                                 clocks to become active.  This time is automatically added by the
+                                                                 hardware.
+                                                                 This field is always reinitialized on a cold domain reset. */
+        uint64_t dly_switch            : 12; /**< [ 43: 32](R/W/H) Switch the active PLL after delaying this number of 100 MHz clocks.
+                                                                 When set to a nonzero value, the hardware will wait for
+                                                                 any PLL programming to complete and then switch to the inactive
+                                                                 PLL after the specified number of PLL reference clocks. Hardware
+                                                                 will add additional clocks if required.
+                                                                 This field is always reinitialized on a cold domain reset.
+
+                                                                 Internal:
+                                                                 Hardware will add counts to maintain 256 rxp_clk/cpt_clk/sclk/rclk notification to
+                                                                 hardware.  Additional time will be added to wake up powered-down AP cores but that
+                                                                 time not be included in this count. */
+        uint64_t pll1_pd               : 1;  /**< [ 31: 31](RO) Core PLL1 power down.  When set PLL is currently powered down. */
+        uint64_t pll0_pd               : 1;  /**< [ 30: 30](RO) Core PLL0 power down.  When set PLL is currently powered down. */
+        uint64_t reserved_23_29        : 7;
+        uint64_t init_mul              : 7;  /**< [ 22: 16](R/W) Core clock multiplier to be used during a core or chip domain
+                                                                 reset.  Actual frequency is [INIT_MUL] * 50 MHz.  The actual value
+                                                                 used is limited by RST_PLL_LIMIT[CORE_MAX_MUL].
+                                                                 This field maintains its current value when written with a zero.
+                                                                 This field is always reinitialized on a cold domain reset. */
+        uint64_t nxt_pgm               : 1;  /**< [ 15: 15](R/W/H) Program non-active PLL using [NXT_MUL]. Hardware automatically
+                                                                 clears bit when both PLL is updated and any delay specified
+                                                                 in [DLY_SWITCH] has completed.
+                                                                 This field is always reinitialized on a chip domain reset. */
+        uint64_t nxt_mul               : 7;  /**< [ 14:  8](R/W) Core PLL frequency to be program in 50 MHz increments.  The
+                                                                 actual value used is limited by RST_PLL_LIMIT[CORE_MAX_MUL] and
+                                                                 a minimum setting of 300 MHz.
+                                                                 Value will match [INIT_MUL] immediately after a cold or chip domain reset. */
+        uint64_t active_pll            : 1;  /**< [  7:  7](RO) Indicates which physical PLL is in use. For diagnostic use only. */
+        uint64_t cur_mul               : 7;  /**< [  6:  0](RO/H) Core clock frequency.  Actual frequency is [CUR_MUL] * 50 MHz.
+                                                                 Value will reflect [NXT_MUL] after [DLY_SWITCH] has completed or [INIT_MUL]
+                                                                 immediately after a cold or chip domain reset.  In both cases, value
+                                                                 is limited by RST_PLL_LIMIT[CORE_MAX_MUL]. */
+#else /* Word 0 - Little Endian */
+        uint64_t cur_mul               : 7;  /**< [  6:  0](RO/H) Core clock frequency.  Actual frequency is [CUR_MUL] * 50 MHz.
+                                                                 Value will reflect [NXT_MUL] after [DLY_SWITCH] has completed or [INIT_MUL]
+                                                                 immediately after a cold or chip domain reset.  In both cases, value
+                                                                 is limited by RST_PLL_LIMIT[CORE_MAX_MUL]. */
+        uint64_t active_pll            : 1;  /**< [  7:  7](RO) Indicates which physical PLL is in use. For diagnostic use only. */
+        uint64_t nxt_mul               : 7;  /**< [ 14:  8](R/W) Core PLL frequency to be program in 50 MHz increments.  The
+                                                                 actual value used is limited by RST_PLL_LIMIT[CORE_MAX_MUL] and
+                                                                 a minimum setting of 300 MHz.
+                                                                 Value will match [INIT_MUL] immediately after a cold or chip domain reset. */
+        uint64_t nxt_pgm               : 1;  /**< [ 15: 15](R/W/H) Program non-active PLL using [NXT_MUL]. Hardware automatically
+                                                                 clears bit when both PLL is updated and any delay specified
+                                                                 in [DLY_SWITCH] has completed.
+                                                                 This field is always reinitialized on a chip domain reset. */
+        uint64_t init_mul              : 7;  /**< [ 22: 16](R/W) Core clock multiplier to be used during a core or chip domain
+                                                                 reset.  Actual frequency is [INIT_MUL] * 50 MHz.  The actual value
+                                                                 used is limited by RST_PLL_LIMIT[CORE_MAX_MUL].
+                                                                 This field maintains its current value when written with a zero.
+                                                                 This field is always reinitialized on a cold domain reset. */
+        uint64_t reserved_23_29        : 7;
+        uint64_t pll0_pd               : 1;  /**< [ 30: 30](RO) Core PLL0 power down.  When set PLL is currently powered down. */
+        uint64_t pll1_pd               : 1;  /**< [ 31: 31](RO) Core PLL1 power down.  When set PLL is currently powered down. */
+        uint64_t dly_switch            : 12; /**< [ 43: 32](R/W/H) Switch the active PLL after delaying this number of 100 MHz clocks.
+                                                                 When set to a nonzero value, the hardware will wait for
+                                                                 any PLL programming to complete and then switch to the inactive
+                                                                 PLL after the specified number of PLL reference clocks. Hardware
+                                                                 will add additional clocks if required.
+                                                                 This field is always reinitialized on a cold domain reset.
+
+                                                                 Internal:
+                                                                 Hardware will add counts to maintain 256 rxp_clk/cpt_clk/sclk/rclk notification to
+                                                                 hardware.  Additional time will be added to wake up powered-down AP cores but that
+                                                                 time not be included in this count. */
+        uint64_t pd_switch             : 1;  /**< [ 44: 44](R/W) PLL powerdown on switch.  When set, hardware automatically
+                                                                 powers down the inactive PLL after the switch has occurred.
+                                                                 When cleared, the inactive PLL remains in operation.
+                                                                 If [PD_SWITCH] is written to a one while both [DLY_SWITCH] and
+                                                                 [NXT_PGM] are cleared then the inactive PLL will immediately powerdown.
+
+                                                                 Note that a powered-down PLL requires an additional 575 reference
+                                                                 clocks to become active.  This time is automatically added by the
+                                                                 hardware.
+                                                                 This field is always reinitialized on a cold domain reset. */
+        uint64_t reserved_45_47        : 3;
+        uint64_t cout_reset            : 1;  /**< [ 48: 48](R/W) Core clockout reset. The core clockout should be placed in
+                                                                 reset at least 10 PLL reference clocks prior
+                                                                 to changing [COUT_SEL]. It should remain under reset for at least 10
+                                                                 PLL reference clocks after [COUT_SEL] changes.
+                                                                 This field is always reinitialized on a cold domain reset. */
+        uint64_t cout_sel              : 2;  /**< [ 50: 49](R/W) Core clockout select.
+                                                                   0x0 = Core clock divided by 32.
+                                                                   0x1 = Core clock tree output divided by 32.
+                                                                   0x2 = PLL0 output divided by 32.
+                                                                   0x3 = PLL1 output divided by 32.
+
+                                                                 This field is always reinitialized on a cold domain reset. */
+        uint64_t reserved_51_63        : 13;
+#endif /* Word 0 - End */
+    } cn98xx;
     struct cavm_rst_core_pll_cnf95xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -2467,6 +3375,160 @@ static inline uint64_t CAVM_RST_CORE_PLL_FUNC(void)
 #define arguments_CAVM_RST_CORE_PLL -1,-1,-1,-1
 
 /**
+ * Register (RSL) rst_cpt1_pll
+ *
+ * RST Crypto Clock1 PLL Control Register
+ */
+union cavm_rst_cpt1_pll
+{
+    uint64_t u;
+    struct cavm_rst_cpt1_pll_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_51_63        : 13;
+        uint64_t cout_sel              : 2;  /**< [ 50: 49](R/W) Crypto clockout select.
+                                                                   0x0 = Crypto clock divided by 32.
+                                                                   0x1 = Crypto clock tree output divided by 32.
+                                                                   0x2 = PLL0 output divided by 32.
+                                                                   0x3 = PLL1 output divided by 32.
+
+                                                                 This field is always reinitialized on a cold domain reset. */
+        uint64_t cout_reset            : 1;  /**< [ 48: 48](R/W) Crypto clockout reset. The crypto clockout should be placed in
+                                                                 reset at least 10 PLL reference clocks prior
+                                                                 to changing [COUT_SEL]. It should remain under reset for at least 10
+                                                                 PLL reference clocks after [COUT_SEL] changes.
+                                                                 This field is always reinitialized on a cold domain reset. */
+        uint64_t reserved_45_47        : 3;
+        uint64_t pd_switch             : 1;  /**< [ 44: 44](R/W) PLL powerdown on switch.  When set, hardware automatically
+                                                                 powers down the inactive PLL after the switch has occurred.
+                                                                 When cleared, the inactive PLL remains in operation.
+                                                                 If [PD_SWITCH] is written to a one while both [DLY_SWITCH] and
+                                                                 [NXT_PGM] are cleared then the inactive PLL will immediately powerdown.
+
+                                                                 Note that a powered-down PLL requires an additional 575 reference
+                                                                 clocks to become active.  This time is automatically added by the
+                                                                 hardware.
+
+                                                                 This field is always reinitialized on a cold domain reset. */
+        uint64_t dly_switch            : 12; /**< [ 43: 32](R/W/H) Switch the active PLL after delaying this number of 100 MHz clocks.
+                                                                 The bit is typically used in conjunction with [NXT_PGM].
+                                                                 When [DLY_SWITCH] is zero, [NXT_PGM] can be used to program the inactive
+                                                                 PLL and that PLL will remain inactive.  When set to a nonzero value, the
+                                                                 hardware will wait for any PLL programming to complete ([NXT_PGM]) and then
+                                                                 switch to the inactive PLL after the specified number of PLL reference clocks.
+                                                                 Hardware will add additional clocks if required.
+
+                                                                 This field is always reinitialized to 0x0 on a cold domain reset.
+
+                                                                 Internal:
+                                                                 Hardware will add counts to maintain 256 rxp_clk/cpt_clk/sclk/rclk notification to
+                                                                 hardware.  Additional delay will also be added to wakeup powered down AP cores during
+                                                                 a chip reset but that time is not reflected in this count. */
+        uint64_t pll1_pd               : 1;  /**< [ 31: 31](RO) CPT PLL1 power down.  When set PLL is currently powered down. */
+        uint64_t pll0_pd               : 1;  /**< [ 30: 30](RO) CPT PLL0 power down.  When set PLL is currently powered down. */
+        uint64_t reserved_23_29        : 7;
+        uint64_t init_mul              : 7;  /**< [ 22: 16](R/W) Crypto clock multiplier to be used during a core or chip domain
+                                                                 reset.  Actual frequency is [INIT_MUL] * 50 MHz.  The actual value
+                                                                 used is limited by RST_PLL_LIMIT[CPT_MAX_MUL].
+                                                                 This field maintains its current value when written with a zero.
+                                                                 This field is always reinitialized on a cold domain reset. */
+        uint64_t nxt_pgm               : 1;  /**< [ 15: 15](R/W/H) Program non-active PLL using [NXT_MUL]. Hardware automatically
+                                                                 clears bit when both PLL is updated and any delay specified
+                                                                 in [DLY_SWITCH] has completed.
+                                                                 This field is always reinitialized on a chip domain reset. */
+        uint64_t nxt_mul               : 7;  /**< [ 14:  8](R/W) Crypto PLL frequency to be program in 50 MHz increments.  The
+                                                                 actual value used is limited by RST_PLL_LIMIT[CPT_MAX_MUL] and
+                                                                 a minimum setting of 200 MHz.
+                                                                 Value will match [INIT_MUL] immediately after a cold or chip domain reset. */
+        uint64_t active_pll            : 1;  /**< [  7:  7](RO) Indicates which physical PLL is in use. For diagnostic use only. */
+        uint64_t cur_mul               : 7;  /**< [  6:  0](RO/H) Crypto clock frequency.  Actual frequency is [CUR_MUL] * 50 MHz.
+                                                                 Value will reflect [NXT_MUL] after [DLY_SWITCH] has completed or [INIT_MUL]
+                                                                 immediately after a cold or chip domain reset.  In both cases, value
+                                                                 is limited by RST_PLL_LIMIT[CPT_MAX_MUL]. */
+#else /* Word 0 - Little Endian */
+        uint64_t cur_mul               : 7;  /**< [  6:  0](RO/H) Crypto clock frequency.  Actual frequency is [CUR_MUL] * 50 MHz.
+                                                                 Value will reflect [NXT_MUL] after [DLY_SWITCH] has completed or [INIT_MUL]
+                                                                 immediately after a cold or chip domain reset.  In both cases, value
+                                                                 is limited by RST_PLL_LIMIT[CPT_MAX_MUL]. */
+        uint64_t active_pll            : 1;  /**< [  7:  7](RO) Indicates which physical PLL is in use. For diagnostic use only. */
+        uint64_t nxt_mul               : 7;  /**< [ 14:  8](R/W) Crypto PLL frequency to be program in 50 MHz increments.  The
+                                                                 actual value used is limited by RST_PLL_LIMIT[CPT_MAX_MUL] and
+                                                                 a minimum setting of 200 MHz.
+                                                                 Value will match [INIT_MUL] immediately after a cold or chip domain reset. */
+        uint64_t nxt_pgm               : 1;  /**< [ 15: 15](R/W/H) Program non-active PLL using [NXT_MUL]. Hardware automatically
+                                                                 clears bit when both PLL is updated and any delay specified
+                                                                 in [DLY_SWITCH] has completed.
+                                                                 This field is always reinitialized on a chip domain reset. */
+        uint64_t init_mul              : 7;  /**< [ 22: 16](R/W) Crypto clock multiplier to be used during a core or chip domain
+                                                                 reset.  Actual frequency is [INIT_MUL] * 50 MHz.  The actual value
+                                                                 used is limited by RST_PLL_LIMIT[CPT_MAX_MUL].
+                                                                 This field maintains its current value when written with a zero.
+                                                                 This field is always reinitialized on a cold domain reset. */
+        uint64_t reserved_23_29        : 7;
+        uint64_t pll0_pd               : 1;  /**< [ 30: 30](RO) CPT PLL0 power down.  When set PLL is currently powered down. */
+        uint64_t pll1_pd               : 1;  /**< [ 31: 31](RO) CPT PLL1 power down.  When set PLL is currently powered down. */
+        uint64_t dly_switch            : 12; /**< [ 43: 32](R/W/H) Switch the active PLL after delaying this number of 100 MHz clocks.
+                                                                 The bit is typically used in conjunction with [NXT_PGM].
+                                                                 When [DLY_SWITCH] is zero, [NXT_PGM] can be used to program the inactive
+                                                                 PLL and that PLL will remain inactive.  When set to a nonzero value, the
+                                                                 hardware will wait for any PLL programming to complete ([NXT_PGM]) and then
+                                                                 switch to the inactive PLL after the specified number of PLL reference clocks.
+                                                                 Hardware will add additional clocks if required.
+
+                                                                 This field is always reinitialized to 0x0 on a cold domain reset.
+
+                                                                 Internal:
+                                                                 Hardware will add counts to maintain 256 rxp_clk/cpt_clk/sclk/rclk notification to
+                                                                 hardware.  Additional delay will also be added to wakeup powered down AP cores during
+                                                                 a chip reset but that time is not reflected in this count. */
+        uint64_t pd_switch             : 1;  /**< [ 44: 44](R/W) PLL powerdown on switch.  When set, hardware automatically
+                                                                 powers down the inactive PLL after the switch has occurred.
+                                                                 When cleared, the inactive PLL remains in operation.
+                                                                 If [PD_SWITCH] is written to a one while both [DLY_SWITCH] and
+                                                                 [NXT_PGM] are cleared then the inactive PLL will immediately powerdown.
+
+                                                                 Note that a powered-down PLL requires an additional 575 reference
+                                                                 clocks to become active.  This time is automatically added by the
+                                                                 hardware.
+
+                                                                 This field is always reinitialized on a cold domain reset. */
+        uint64_t reserved_45_47        : 3;
+        uint64_t cout_reset            : 1;  /**< [ 48: 48](R/W) Crypto clockout reset. The crypto clockout should be placed in
+                                                                 reset at least 10 PLL reference clocks prior
+                                                                 to changing [COUT_SEL]. It should remain under reset for at least 10
+                                                                 PLL reference clocks after [COUT_SEL] changes.
+                                                                 This field is always reinitialized on a cold domain reset. */
+        uint64_t cout_sel              : 2;  /**< [ 50: 49](R/W) Crypto clockout select.
+                                                                   0x0 = Crypto clock divided by 32.
+                                                                   0x1 = Crypto clock tree output divided by 32.
+                                                                   0x2 = PLL0 output divided by 32.
+                                                                   0x3 = PLL1 output divided by 32.
+
+                                                                 This field is always reinitialized on a cold domain reset. */
+        uint64_t reserved_51_63        : 13;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rst_cpt1_pll_s cn; */
+};
+typedef union cavm_rst_cpt1_pll cavm_rst_cpt1_pll_t;
+
+#define CAVM_RST_CPT1_PLL CAVM_RST_CPT1_PLL_FUNC()
+static inline uint64_t CAVM_RST_CPT1_PLL_FUNC(void) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_RST_CPT1_PLL_FUNC(void)
+{
+    if (cavm_is_model(OCTEONTX_CN98XX))
+        return 0x87e00a0017a0ll;
+    __cavm_csr_fatal("RST_CPT1_PLL", 0, 0, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_RST_CPT1_PLL cavm_rst_cpt1_pll_t
+#define bustype_CAVM_RST_CPT1_PLL CSR_TYPE_RSL
+#define basename_CAVM_RST_CPT1_PLL "RST_CPT1_PLL"
+#define device_bar_CAVM_RST_CPT1_PLL 0x2 /* PF_BAR2 */
+#define busnum_CAVM_RST_CPT1_PLL 0
+#define arguments_CAVM_RST_CPT1_PLL -1,-1,-1,-1
+
+/**
  * Register (RSL) rst_cpt_pll
  *
  * RST Crypto Clock PLL Control Register
@@ -2601,7 +3663,134 @@ union cavm_rst_cpt_pll
         uint64_t reserved_51_63        : 13;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_rst_cpt_pll_s cn; */
+    /* struct cavm_rst_cpt_pll_s cn9; */
+    /* struct cavm_rst_cpt_pll_s cn96xx; */
+    struct cavm_rst_cpt_pll_cn98xx
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_51_63        : 13;
+        uint64_t cout_sel              : 2;  /**< [ 50: 49](R/W) Crypto clockout select.
+                                                                   0x0 = Crypto clock divided by 32.
+                                                                   0x1 = Crypto clock tree output divided by 32.
+                                                                   0x2 = PLL0 output divided by 32.
+                                                                   0x3 = PLL1 output divided by 32.
+
+                                                                 This field is always reinitialized on a cold domain reset. */
+        uint64_t cout_reset            : 1;  /**< [ 48: 48](R/W) Crypto clockout reset. The crypto clockout should be placed in
+                                                                 reset at least 10 PLL reference clocks prior
+                                                                 to changing [COUT_SEL]. It should remain under reset for at least 10
+                                                                 PLL reference clocks after [COUT_SEL] changes.
+                                                                 This field is always reinitialized on a cold domain reset. */
+        uint64_t reserved_45_47        : 3;
+        uint64_t pd_switch             : 1;  /**< [ 44: 44](R/W) PLL powerdown on switch.  When set, hardware automatically
+                                                                 powers down the inactive PLL after the switch has occurred.
+                                                                 When cleared, the inactive PLL remains in operation.
+                                                                 If [PD_SWITCH] is written to a one while both [DLY_SWITCH] and
+                                                                 [NXT_PGM] are cleared then the inactive PLL will immediately powerdown.
+
+                                                                 Note that a powered-down PLL requires an additional 575 reference
+                                                                 clocks to become active.  This time is automatically added by the
+                                                                 hardware.
+
+                                                                 This field is always reinitialized on a cold domain reset. */
+        uint64_t dly_switch            : 12; /**< [ 43: 32](R/W/H) Switch the active PLL after delaying this number of 100 MHz clocks.
+                                                                 The bit is typically used in conjunction with [NXT_PGM].
+                                                                 When [DLY_SWITCH] is zero, [NXT_PGM] can be used to program the inactive
+                                                                 PLL and that PLL will remain inactive.  When set to a nonzero value, the
+                                                                 hardware will wait for any PLL programming to complete ([NXT_PGM]) and then
+                                                                 switch to the inactive PLL after the specified number of PLL reference clocks.
+                                                                 Hardware will add additional clocks if required.
+
+                                                                 This field is always reinitialized to 0x0 on a cold domain reset.
+
+                                                                 Internal:
+                                                                 Hardware will add counts to maintain 256 rxp_clk/cpt_clk/sclk/rclk notification to
+                                                                 hardware.  Additional delay will also be added to wakeup powered down AP cores during
+                                                                 a chip reset but that time is not reflected in this count. */
+        uint64_t pll1_pd               : 1;  /**< [ 31: 31](RO) CPT PLL1 power down.  When set PLL is currently powered down. */
+        uint64_t pll0_pd               : 1;  /**< [ 30: 30](RO) CPT PLL0 power down.  When set PLL is currently powered down. */
+        uint64_t reserved_23_29        : 7;
+        uint64_t init_mul              : 7;  /**< [ 22: 16](R/W) Crypto clock multiplier to be used during a core or chip domain
+                                                                 reset.  Actual frequency is [INIT_MUL] * 50 MHz.  The actual value
+                                                                 used is limited by RST_PLL_LIMIT[CPT_MAX_MUL].
+                                                                 This field maintains its current value when written with a zero.
+                                                                 This field is always reinitialized on a cold domain reset. */
+        uint64_t nxt_pgm               : 1;  /**< [ 15: 15](R/W/H) Program non-active PLL using [NXT_MUL]. Hardware automatically
+                                                                 clears bit when both PLL is updated and any delay specified
+                                                                 in [DLY_SWITCH] has completed.
+                                                                 This field is always reinitialized on a chip domain reset. */
+        uint64_t nxt_mul               : 7;  /**< [ 14:  8](R/W) Crypto PLL frequency to be program in 50 MHz increments.  The
+                                                                 actual value used is limited by RST_PLL_LIMIT[CPT_MAX_MUL] and
+                                                                 a minimum setting of 200 MHz.
+                                                                 Value will match [INIT_MUL] immediately after a cold or chip domain reset. */
+        uint64_t active_pll            : 1;  /**< [  7:  7](RO) Indicates which physical PLL is in use. For diagnostic use only. */
+        uint64_t cur_mul               : 7;  /**< [  6:  0](RO/H) Crypto clock frequency.  Actual frequency is [CUR_MUL] * 50 MHz.
+                                                                 Value will reflect [NXT_MUL] after [DLY_SWITCH] has completed or [INIT_MUL]
+                                                                 immediately after a cold or chip domain reset.  In both cases, value
+                                                                 is limited by RST_PLL_LIMIT[CPT_MAX_MUL]. */
+#else /* Word 0 - Little Endian */
+        uint64_t cur_mul               : 7;  /**< [  6:  0](RO/H) Crypto clock frequency.  Actual frequency is [CUR_MUL] * 50 MHz.
+                                                                 Value will reflect [NXT_MUL] after [DLY_SWITCH] has completed or [INIT_MUL]
+                                                                 immediately after a cold or chip domain reset.  In both cases, value
+                                                                 is limited by RST_PLL_LIMIT[CPT_MAX_MUL]. */
+        uint64_t active_pll            : 1;  /**< [  7:  7](RO) Indicates which physical PLL is in use. For diagnostic use only. */
+        uint64_t nxt_mul               : 7;  /**< [ 14:  8](R/W) Crypto PLL frequency to be program in 50 MHz increments.  The
+                                                                 actual value used is limited by RST_PLL_LIMIT[CPT_MAX_MUL] and
+                                                                 a minimum setting of 200 MHz.
+                                                                 Value will match [INIT_MUL] immediately after a cold or chip domain reset. */
+        uint64_t nxt_pgm               : 1;  /**< [ 15: 15](R/W/H) Program non-active PLL using [NXT_MUL]. Hardware automatically
+                                                                 clears bit when both PLL is updated and any delay specified
+                                                                 in [DLY_SWITCH] has completed.
+                                                                 This field is always reinitialized on a chip domain reset. */
+        uint64_t init_mul              : 7;  /**< [ 22: 16](R/W) Crypto clock multiplier to be used during a core or chip domain
+                                                                 reset.  Actual frequency is [INIT_MUL] * 50 MHz.  The actual value
+                                                                 used is limited by RST_PLL_LIMIT[CPT_MAX_MUL].
+                                                                 This field maintains its current value when written with a zero.
+                                                                 This field is always reinitialized on a cold domain reset. */
+        uint64_t reserved_23_29        : 7;
+        uint64_t pll0_pd               : 1;  /**< [ 30: 30](RO) CPT PLL0 power down.  When set PLL is currently powered down. */
+        uint64_t pll1_pd               : 1;  /**< [ 31: 31](RO) CPT PLL1 power down.  When set PLL is currently powered down. */
+        uint64_t dly_switch            : 12; /**< [ 43: 32](R/W/H) Switch the active PLL after delaying this number of 100 MHz clocks.
+                                                                 The bit is typically used in conjunction with [NXT_PGM].
+                                                                 When [DLY_SWITCH] is zero, [NXT_PGM] can be used to program the inactive
+                                                                 PLL and that PLL will remain inactive.  When set to a nonzero value, the
+                                                                 hardware will wait for any PLL programming to complete ([NXT_PGM]) and then
+                                                                 switch to the inactive PLL after the specified number of PLL reference clocks.
+                                                                 Hardware will add additional clocks if required.
+
+                                                                 This field is always reinitialized to 0x0 on a cold domain reset.
+
+                                                                 Internal:
+                                                                 Hardware will add counts to maintain 256 rxp_clk/cpt_clk/sclk/rclk notification to
+                                                                 hardware.  Additional delay will also be added to wakeup powered down AP cores during
+                                                                 a chip reset but that time is not reflected in this count. */
+        uint64_t pd_switch             : 1;  /**< [ 44: 44](R/W) PLL powerdown on switch.  When set, hardware automatically
+                                                                 powers down the inactive PLL after the switch has occurred.
+                                                                 When cleared, the inactive PLL remains in operation.
+                                                                 If [PD_SWITCH] is written to a one while both [DLY_SWITCH] and
+                                                                 [NXT_PGM] are cleared then the inactive PLL will immediately powerdown.
+
+                                                                 Note that a powered-down PLL requires an additional 575 reference
+                                                                 clocks to become active.  This time is automatically added by the
+                                                                 hardware.
+
+                                                                 This field is always reinitialized on a cold domain reset. */
+        uint64_t reserved_45_47        : 3;
+        uint64_t cout_reset            : 1;  /**< [ 48: 48](R/W) Crypto clockout reset. The crypto clockout should be placed in
+                                                                 reset at least 10 PLL reference clocks prior
+                                                                 to changing [COUT_SEL]. It should remain under reset for at least 10
+                                                                 PLL reference clocks after [COUT_SEL] changes.
+                                                                 This field is always reinitialized on a cold domain reset. */
+        uint64_t cout_sel              : 2;  /**< [ 50: 49](R/W) Crypto clockout select.
+                                                                   0x0 = Crypto clock divided by 32.
+                                                                   0x1 = Crypto clock tree output divided by 32.
+                                                                   0x2 = PLL0 output divided by 32.
+                                                                   0x3 = PLL1 output divided by 32.
+
+                                                                 This field is always reinitialized on a cold domain reset. */
+        uint64_t reserved_51_63        : 13;
+#endif /* Word 0 - End */
+    } cn98xx;
 };
 typedef union cavm_rst_cpt_pll cavm_rst_cpt_pll_t;
 
@@ -2610,6 +3799,8 @@ static inline uint64_t CAVM_RST_CPT_PLL_FUNC(void) __attribute__ ((pure, always_
 static inline uint64_t CAVM_RST_CPT_PLL_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN96XX))
+        return 0x87e00a001778ll;
+    if (cavm_is_model(OCTEONTX_CN98XX))
         return 0x87e00a001778ll;
     __cavm_csr_fatal("RST_CPT_PLL", 0, 0, 0, 0, 0, 0, 0);
 }
@@ -2842,6 +4033,156 @@ union cavm_rst_ctlx
         uint64_t reserved_14_63        : 50;
 #endif /* Word 0 - End */
     } s;
+    struct cavm_rst_ctlx_cn8
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_11_63        : 53;
+        uint64_t pf_flr_chip           : 1;  /**< [ 10: 10](R/W) Controls whether corresponding controller PF Function Level Reset causes a chip warm
+                                                                 reset like CHIP_RESET_L. A warm/soft reset does not change this field.
+                                                                 On cold reset, this field is initialized as follows:
+
+                                                                 _ 0 when RST_CTL()[HOST_MODE] = 1.
+
+                                                                 _ 1 when RST_CTL()[HOST_MODE] = 0. */
+        uint64_t prst_link             : 1;  /**< [  9:  9](R/W) PEM reset on link down.
+                                                                 0 = Link-down or hot-reset will set RST_INT[RST_LINK] for the corresponding
+                                                                 controller, and (provided properly configured) the link should come back up
+                                                                 automatically.
+                                                                 1 = Link-down or hot-reset will set RST_INT[RST_LINK] for the corresponding
+                                                                 controller, and set RST_SOFT_PRST()[SOFT_PRST]. This will hold the link in reset
+                                                                 until software clears RST_SOFT_PRST()[SOFT_PRST].
+
+                                                                 A warm/soft reset does not change this field. On cold reset, this field is initialized to
+                                                                 0. */
+        uint64_t rst_done              : 1;  /**< [  8:  8](RO/H) Reset done. Indicates the controller reset status. [RST_DONE] is always 0
+                                                                 (i.e. the controller is held in reset) when
+                                                                 * RST_SOFT_PRST()[SOFT_PRST] = 1, or
+                                                                 * [RST_RCV] = 1 and PERST*_L pin is asserted. */
+        uint64_t rst_link              : 1;  /**< [  7:  7](R/W) Reset on link down. When set, a corresponding controller link-down reset or hot
+                                                                 reset causes a warm chip reset.
+
+                                                                 On cold reset, this field is initialized as follows:
+
+                                                                 _ 0 when RST_CTL()[HOST_MODE] = 1.
+
+                                                                 _ 1 when RST_CTL()[HOST_MODE] = 0.
+
+                                                                 Note that a link-down or hot-reset event can never cause a warm chip reset when the
+                                                                 controller is in reset (i.e. can never cause a warm reset when [RST_DONE] = 0). */
+        uint64_t host_mode             : 1;  /**< [  6:  6](RO) For all controllers this field is set as host. */
+        uint64_t reserved_4_5          : 2;
+        uint64_t rst_drv               : 1;  /**< [  3:  3](R/W) Controls whether PERST*_L is driven. A warm/soft reset does not change this field. On cold
+                                                                 reset, this field is initialized as follows:
+
+                                                                 _ 0 when RST_CTL()[HOST_MODE] = 0.
+
+                                                                 _ 1 when RST_CTL()[HOST_MODE] = 1.
+
+                                                                 When set, CNXXXX drives the corresponding PERST*_L pin. Otherwise, CNXXXX does not drive
+                                                                 the corresponding PERST*_L pin. */
+        uint64_t rst_rcv               : 1;  /**< [  2:  2](R/W) Reset received. Controls whether PERST*_L is received. A warm/soft reset does
+                                                                 not change this field. On cold reset, this field is initialized as follows:
+
+                                                                 _ 0 when RST_CTL()[HOST_MODE] = 1.
+
+                                                                 _ 1 when RST_CTL()[HOST_MODE] = 0.
+
+                                                                 When [RST_RCV] = 1, the PERST*_L value is received and can be used to reset the
+                                                                 controller and (optionally, based on [RST_CHIP]) warm reset the chip.
+
+                                                                 When [RST_RCV] = 1 (and [RST_CHIP] = 0), RST_INT[PERST*] gets set when the PERST*_L
+                                                                 pin asserts. (This interrupt can alert software whenever the external reset pin initiates
+                                                                 a controller reset sequence.)
+
+                                                                 [RST_VAL] gives the PERST*_L pin value when [RST_RCV] = 1.
+
+                                                                 When [RST_RCV] = 0, the PERST*_L pin value is ignored. */
+        uint64_t rst_chip              : 1;  /**< [  1:  1](R/W) Controls whether PERST*_L causes a chip warm reset like CHIP_RESET_L. A warm/soft reset
+                                                                 does not change this field. On cold reset, this field is initialized to 0.
+
+                                                                 When [RST_RCV] = 0, [RST_CHIP] is ignored.
+
+                                                                 When [RST_RCV] = 1, [RST_CHIP] = 1, and PERST*_L asserts, a chip warm reset is generated. */
+        uint64_t rst_val               : 1;  /**< [  0:  0](RO/H) Read-only access to PERST*_L. Unpredictable when [RST_RCV] = 0.
+
+                                                                 Reads as 1 when [RST_RCV] = 1 and the PERST*_L pin is asserted.
+
+                                                                 Reads as 0 when [RST_RCV] = 1 and the PERST*_L pin is not asserted. */
+#else /* Word 0 - Little Endian */
+        uint64_t rst_val               : 1;  /**< [  0:  0](RO/H) Read-only access to PERST*_L. Unpredictable when [RST_RCV] = 0.
+
+                                                                 Reads as 1 when [RST_RCV] = 1 and the PERST*_L pin is asserted.
+
+                                                                 Reads as 0 when [RST_RCV] = 1 and the PERST*_L pin is not asserted. */
+        uint64_t rst_chip              : 1;  /**< [  1:  1](R/W) Controls whether PERST*_L causes a chip warm reset like CHIP_RESET_L. A warm/soft reset
+                                                                 does not change this field. On cold reset, this field is initialized to 0.
+
+                                                                 When [RST_RCV] = 0, [RST_CHIP] is ignored.
+
+                                                                 When [RST_RCV] = 1, [RST_CHIP] = 1, and PERST*_L asserts, a chip warm reset is generated. */
+        uint64_t rst_rcv               : 1;  /**< [  2:  2](R/W) Reset received. Controls whether PERST*_L is received. A warm/soft reset does
+                                                                 not change this field. On cold reset, this field is initialized as follows:
+
+                                                                 _ 0 when RST_CTL()[HOST_MODE] = 1.
+
+                                                                 _ 1 when RST_CTL()[HOST_MODE] = 0.
+
+                                                                 When [RST_RCV] = 1, the PERST*_L value is received and can be used to reset the
+                                                                 controller and (optionally, based on [RST_CHIP]) warm reset the chip.
+
+                                                                 When [RST_RCV] = 1 (and [RST_CHIP] = 0), RST_INT[PERST*] gets set when the PERST*_L
+                                                                 pin asserts. (This interrupt can alert software whenever the external reset pin initiates
+                                                                 a controller reset sequence.)
+
+                                                                 [RST_VAL] gives the PERST*_L pin value when [RST_RCV] = 1.
+
+                                                                 When [RST_RCV] = 0, the PERST*_L pin value is ignored. */
+        uint64_t rst_drv               : 1;  /**< [  3:  3](R/W) Controls whether PERST*_L is driven. A warm/soft reset does not change this field. On cold
+                                                                 reset, this field is initialized as follows:
+
+                                                                 _ 0 when RST_CTL()[HOST_MODE] = 0.
+
+                                                                 _ 1 when RST_CTL()[HOST_MODE] = 1.
+
+                                                                 When set, CNXXXX drives the corresponding PERST*_L pin. Otherwise, CNXXXX does not drive
+                                                                 the corresponding PERST*_L pin. */
+        uint64_t reserved_4_5          : 2;
+        uint64_t host_mode             : 1;  /**< [  6:  6](RO) For all controllers this field is set as host. */
+        uint64_t rst_link              : 1;  /**< [  7:  7](R/W) Reset on link down. When set, a corresponding controller link-down reset or hot
+                                                                 reset causes a warm chip reset.
+
+                                                                 On cold reset, this field is initialized as follows:
+
+                                                                 _ 0 when RST_CTL()[HOST_MODE] = 1.
+
+                                                                 _ 1 when RST_CTL()[HOST_MODE] = 0.
+
+                                                                 Note that a link-down or hot-reset event can never cause a warm chip reset when the
+                                                                 controller is in reset (i.e. can never cause a warm reset when [RST_DONE] = 0). */
+        uint64_t rst_done              : 1;  /**< [  8:  8](RO/H) Reset done. Indicates the controller reset status. [RST_DONE] is always 0
+                                                                 (i.e. the controller is held in reset) when
+                                                                 * RST_SOFT_PRST()[SOFT_PRST] = 1, or
+                                                                 * [RST_RCV] = 1 and PERST*_L pin is asserted. */
+        uint64_t prst_link             : 1;  /**< [  9:  9](R/W) PEM reset on link down.
+                                                                 0 = Link-down or hot-reset will set RST_INT[RST_LINK] for the corresponding
+                                                                 controller, and (provided properly configured) the link should come back up
+                                                                 automatically.
+                                                                 1 = Link-down or hot-reset will set RST_INT[RST_LINK] for the corresponding
+                                                                 controller, and set RST_SOFT_PRST()[SOFT_PRST]. This will hold the link in reset
+                                                                 until software clears RST_SOFT_PRST()[SOFT_PRST].
+
+                                                                 A warm/soft reset does not change this field. On cold reset, this field is initialized to
+                                                                 0. */
+        uint64_t pf_flr_chip           : 1;  /**< [ 10: 10](R/W) Controls whether corresponding controller PF Function Level Reset causes a chip warm
+                                                                 reset like CHIP_RESET_L. A warm/soft reset does not change this field.
+                                                                 On cold reset, this field is initialized as follows:
+
+                                                                 _ 0 when RST_CTL()[HOST_MODE] = 1.
+
+                                                                 _ 1 when RST_CTL()[HOST_MODE] = 0. */
+        uint64_t reserved_11_63        : 53;
+#endif /* Word 0 - End */
+    } cn8;
     struct cavm_rst_ctlx_cn81xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -3132,7 +4473,234 @@ union cavm_rst_ctlx
         uint64_t reserved_11_63        : 53;
 #endif /* Word 0 - End */
     } cn83xx;
-    struct cavm_rst_ctlx_cn96xx
+    struct cavm_rst_ctlx_cn9
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_14_63        : 50;
+        uint64_t reset_type            : 1;  /**< [ 13: 13](R/W) Type of reset generated internally by PCI MAC PF FLR, link down/hot reset, Powerdown  or
+                                                                 PERST events. See [PF_FLR_CHIP], [RST_LINK], [RST_PWRDWN] and [RST_CHIP].
+
+                                                                 0 = Chip and core domain reset. (A chip domain reset always also causes a core
+                                                                 domain reset.)
+                                                                 1 = Core domain reset.
+
+                                                                 On cold reset, this field is initialized as follows:
+                                                                 _ 0 when RST_CTL()[HOST_MODE] = 0.
+                                                                 _ 1 when RST_CTL()[HOST_MODE] = 1. */
+        uint64_t rst_pwrdwn            : 1;  /**< [ 12: 12](R/W) Powerdown event internal reset enable.
+                                                                 0 = PEM going into powerdown (L2) does not cause an internal reset.
+                                                                 1 = PEM going into powerdown (L2) causes the internal reset
+                                                                 specified by [RESET_TYPE].
+
+                                                                 On a cold reset, the field is initialized as follows:
+                                                                 _ 0 when RST_CTL()[HOST_MODE] is set.
+                                                                 _ 1 when RST_CTL()[HOST_MODE] is cleared.
+
+                                                                 Note that a powerdown event can never cause a domain reset when the
+                                                                 controller is already in reset (i.e. when [RST_DONE] = 0). */
+        uint64_t prst_pwrdwn           : 1;  /**< [ 11: 11](R/W) PEM reset on power down.
+                                                                 0 = PEM entering L2/P2 power state will set RST_INT[RST_PWRDWN] for the
+                                                                 corresponding controller, and (provided properly configured) the link should
+                                                                 come back up automatically.
+                                                                 1 = PEM entering L2/P2 power state will set RST_INT[RST_PWRDWN] for
+                                                                 the corresponding controller and set RST_SOFT_PRST()[SOFT_PRST]. This will
+                                                                 hold the link in reset until software clears RST_SOFT_PRST()[SOFT_PRST].
+
+                                                                 A core/chip reset does not change this field. On cold reset, this field is
+                                                                 initialized to 0. */
+        uint64_t pf_flr_chip           : 1;  /**< [ 10: 10](R/W) PF FLR internal reset enable.
+                                                                 0 = PF FLR events will not cause an internal reset.
+                                                                 1 = A PF FLR event received by the PCIe logic causes the internal reset
+                                                                 specified by [RESET_TYPE].
+
+                                                                 On cold reset, this field is initialized as follows:
+                                                                 _ 0 when RST_CTL()[HOST_MODE] = 1.
+                                                                 _ 1 when RST_CTL()[HOST_MODE] = 0. */
+        uint64_t prst_link             : 1;  /**< [  9:  9](R/W) PEM reset on link down.
+                                                                 0 = Link-down or hot-reset will set RST_INT[RST_LINK] for the corresponding
+                                                                 controller, and (provided properly configured) the link should come back up
+                                                                 automatically.
+                                                                 1 = Link-down or hot-reset will set RST_INT[RST_LINK] for the corresponding
+                                                                 controller, and set RST_SOFT_PRST()[SOFT_PRST]. This will hold the link in reset
+                                                                 until software clears RST_SOFT_PRST()[SOFT_PRST].
+
+                                                                 A core/chip reset does not change this field. On cold reset, this field is
+                                                                 initialized to 0. */
+        uint64_t rst_done              : 1;  /**< [  8:  8](RO/H) Reset done. Indicates the controller reset status. [RST_DONE] is always 0
+                                                                 (i.e. the controller is held in reset) when
+                                                                 * RST_SOFT_PRST()[SOFT_PRST] = 1, or
+                                                                 * [RST_RCV] = 1 and PERST*_L pin is asserted. */
+        uint64_t rst_link              : 1;  /**< [  7:  7](R/W) Link down / hot reset event internal reset enable.
+                                                                 0 = Link down or hot reset do not cause an internal reset.
+                                                                 1 = A link-down or hot-reset event on the PCIe interface causes the internal
+                                                                 reset specified by [RESET_TYPE].
+
+                                                                 On a cold reset, the field is initialized as follows:
+                                                                 _ 0 when RST_CTL()[HOST_MODE] is set.
+                                                                 _ 1 when RST_CTL()[HOST_MODE] is cleared.
+
+                                                                 Note that a link-down or hot reset event can never cause a domain reset when the
+                                                                 controller is already in reset (i.e. when [RST_DONE] = 0). */
+        uint64_t host_mode             : 1;  /**< [  6:  6](RO/H) Read-only access to the corresponding PEM()_CFG[HOSTMD] field
+                                                                 indicating PEMn is root complex (host). */
+        uint64_t reserved_4_5          : 2;
+        uint64_t rst_drv               : 1;  /**< [  3:  3](R/W) Controls whether PERST*_L is driven.
+                                                                 This field is always reinitialized on a cold domain reset.
+                                                                 The field is initialized as follows:
+                                                                 _ 0 when RST_CTL()[HOST_MODE] is cleared.
+                                                                 _ 1 when RST_CTL()[HOST_MODE] is set.
+
+                                                                 This bit must not be changed in the same write that sets [RST_RCV]=1; separate
+                                                                 writes to RST_CTL() are required to clear one bit and then set the other. */
+        uint64_t rst_rcv               : 1;  /**< [  2:  2](R/W) Reset received. Controls whether PERST*_L is received.
+                                                                 This field is always reinitialized on a cold domain reset.
+                                                                 The field is initialized as follows:
+                                                                 _ 0 when RST_CTL()[HOST_MODE] is set.
+                                                                 _ 1 when RST_CTL()[HOST_MODE] is cleared.
+
+                                                                 When [RST_RCV] = 1, the PERST*_L value is received and can be used to reset the
+                                                                 controller and (optionally, based on [RST_CHIP]) cause a domain reset.
+
+                                                                 When [RST_RCV] = 1 (and [RST_CHIP] = 0), RST_INT[PERST*] gets set when the PERST*_L
+                                                                 pin asserts. (This interrupt can alert software whenever the external reset pin initiates
+                                                                 a controller reset sequence.)
+
+                                                                 [RST_VAL] gives the PERST*_L pin value when [RST_RCV] = 1.
+
+                                                                 When [RST_RCV] = 0, the PERST*_L pin value is ignored.
+
+                                                                 This bit must not be changed in the same write that sets [RST_DRV]=1; separate
+                                                                 writes to RST_CTL() are required to clear one bit and then set the other.
+                                                                 If this bit is written while PERSTx_L pin is de-asserted then the MAC can come
+                                                                 out of reset unexpectedly. */
+        uint64_t rst_chip              : 1;  /**< [  1:  1](R/W) PERST internal reset enable. When set along with [RST_RCV],
+                                                                 logic will generate an internal reset specified by [RESET_TYPE]
+                                                                 when the corresponding PERST*_L pin is asserted.  When cleared or
+                                                                 when [RST_RCV] is cleared, the PERST*_L does not cause an internal reset.
+
+                                                                 If this bit is written while PERSTx_L pin is asserted and [RST_RCV]=1 then an
+                                                                 internal reset can occur unexpectedly.
+
+                                                                 During a cold domain reset this field is initialized to zero. */
+        uint64_t rst_val               : 1;  /**< [  0:  0](RO/H) Read-only access to PERST*_L. Unpredictable when [RST_RCV] = 0.
+
+                                                                 Reads as 1 when [RST_RCV] = 1 and the PERST*_L pin is asserted.
+                                                                 Reads as 0 when [RST_RCV] = 1 and the PERST*_L pin is not asserted. */
+#else /* Word 0 - Little Endian */
+        uint64_t rst_val               : 1;  /**< [  0:  0](RO/H) Read-only access to PERST*_L. Unpredictable when [RST_RCV] = 0.
+
+                                                                 Reads as 1 when [RST_RCV] = 1 and the PERST*_L pin is asserted.
+                                                                 Reads as 0 when [RST_RCV] = 1 and the PERST*_L pin is not asserted. */
+        uint64_t rst_chip              : 1;  /**< [  1:  1](R/W) PERST internal reset enable. When set along with [RST_RCV],
+                                                                 logic will generate an internal reset specified by [RESET_TYPE]
+                                                                 when the corresponding PERST*_L pin is asserted.  When cleared or
+                                                                 when [RST_RCV] is cleared, the PERST*_L does not cause an internal reset.
+
+                                                                 If this bit is written while PERSTx_L pin is asserted and [RST_RCV]=1 then an
+                                                                 internal reset can occur unexpectedly.
+
+                                                                 During a cold domain reset this field is initialized to zero. */
+        uint64_t rst_rcv               : 1;  /**< [  2:  2](R/W) Reset received. Controls whether PERST*_L is received.
+                                                                 This field is always reinitialized on a cold domain reset.
+                                                                 The field is initialized as follows:
+                                                                 _ 0 when RST_CTL()[HOST_MODE] is set.
+                                                                 _ 1 when RST_CTL()[HOST_MODE] is cleared.
+
+                                                                 When [RST_RCV] = 1, the PERST*_L value is received and can be used to reset the
+                                                                 controller and (optionally, based on [RST_CHIP]) cause a domain reset.
+
+                                                                 When [RST_RCV] = 1 (and [RST_CHIP] = 0), RST_INT[PERST*] gets set when the PERST*_L
+                                                                 pin asserts. (This interrupt can alert software whenever the external reset pin initiates
+                                                                 a controller reset sequence.)
+
+                                                                 [RST_VAL] gives the PERST*_L pin value when [RST_RCV] = 1.
+
+                                                                 When [RST_RCV] = 0, the PERST*_L pin value is ignored.
+
+                                                                 This bit must not be changed in the same write that sets [RST_DRV]=1; separate
+                                                                 writes to RST_CTL() are required to clear one bit and then set the other.
+                                                                 If this bit is written while PERSTx_L pin is de-asserted then the MAC can come
+                                                                 out of reset unexpectedly. */
+        uint64_t rst_drv               : 1;  /**< [  3:  3](R/W) Controls whether PERST*_L is driven.
+                                                                 This field is always reinitialized on a cold domain reset.
+                                                                 The field is initialized as follows:
+                                                                 _ 0 when RST_CTL()[HOST_MODE] is cleared.
+                                                                 _ 1 when RST_CTL()[HOST_MODE] is set.
+
+                                                                 This bit must not be changed in the same write that sets [RST_RCV]=1; separate
+                                                                 writes to RST_CTL() are required to clear one bit and then set the other. */
+        uint64_t reserved_4_5          : 2;
+        uint64_t host_mode             : 1;  /**< [  6:  6](RO/H) Read-only access to the corresponding PEM()_CFG[HOSTMD] field
+                                                                 indicating PEMn is root complex (host). */
+        uint64_t rst_link              : 1;  /**< [  7:  7](R/W) Link down / hot reset event internal reset enable.
+                                                                 0 = Link down or hot reset do not cause an internal reset.
+                                                                 1 = A link-down or hot-reset event on the PCIe interface causes the internal
+                                                                 reset specified by [RESET_TYPE].
+
+                                                                 On a cold reset, the field is initialized as follows:
+                                                                 _ 0 when RST_CTL()[HOST_MODE] is set.
+                                                                 _ 1 when RST_CTL()[HOST_MODE] is cleared.
+
+                                                                 Note that a link-down or hot reset event can never cause a domain reset when the
+                                                                 controller is already in reset (i.e. when [RST_DONE] = 0). */
+        uint64_t rst_done              : 1;  /**< [  8:  8](RO/H) Reset done. Indicates the controller reset status. [RST_DONE] is always 0
+                                                                 (i.e. the controller is held in reset) when
+                                                                 * RST_SOFT_PRST()[SOFT_PRST] = 1, or
+                                                                 * [RST_RCV] = 1 and PERST*_L pin is asserted. */
+        uint64_t prst_link             : 1;  /**< [  9:  9](R/W) PEM reset on link down.
+                                                                 0 = Link-down or hot-reset will set RST_INT[RST_LINK] for the corresponding
+                                                                 controller, and (provided properly configured) the link should come back up
+                                                                 automatically.
+                                                                 1 = Link-down or hot-reset will set RST_INT[RST_LINK] for the corresponding
+                                                                 controller, and set RST_SOFT_PRST()[SOFT_PRST]. This will hold the link in reset
+                                                                 until software clears RST_SOFT_PRST()[SOFT_PRST].
+
+                                                                 A core/chip reset does not change this field. On cold reset, this field is
+                                                                 initialized to 0. */
+        uint64_t pf_flr_chip           : 1;  /**< [ 10: 10](R/W) PF FLR internal reset enable.
+                                                                 0 = PF FLR events will not cause an internal reset.
+                                                                 1 = A PF FLR event received by the PCIe logic causes the internal reset
+                                                                 specified by [RESET_TYPE].
+
+                                                                 On cold reset, this field is initialized as follows:
+                                                                 _ 0 when RST_CTL()[HOST_MODE] = 1.
+                                                                 _ 1 when RST_CTL()[HOST_MODE] = 0. */
+        uint64_t prst_pwrdwn           : 1;  /**< [ 11: 11](R/W) PEM reset on power down.
+                                                                 0 = PEM entering L2/P2 power state will set RST_INT[RST_PWRDWN] for the
+                                                                 corresponding controller, and (provided properly configured) the link should
+                                                                 come back up automatically.
+                                                                 1 = PEM entering L2/P2 power state will set RST_INT[RST_PWRDWN] for
+                                                                 the corresponding controller and set RST_SOFT_PRST()[SOFT_PRST]. This will
+                                                                 hold the link in reset until software clears RST_SOFT_PRST()[SOFT_PRST].
+
+                                                                 A core/chip reset does not change this field. On cold reset, this field is
+                                                                 initialized to 0. */
+        uint64_t rst_pwrdwn            : 1;  /**< [ 12: 12](R/W) Powerdown event internal reset enable.
+                                                                 0 = PEM going into powerdown (L2) does not cause an internal reset.
+                                                                 1 = PEM going into powerdown (L2) causes the internal reset
+                                                                 specified by [RESET_TYPE].
+
+                                                                 On a cold reset, the field is initialized as follows:
+                                                                 _ 0 when RST_CTL()[HOST_MODE] is set.
+                                                                 _ 1 when RST_CTL()[HOST_MODE] is cleared.
+
+                                                                 Note that a powerdown event can never cause a domain reset when the
+                                                                 controller is already in reset (i.e. when [RST_DONE] = 0). */
+        uint64_t reset_type            : 1;  /**< [ 13: 13](R/W) Type of reset generated internally by PCI MAC PF FLR, link down/hot reset, Powerdown  or
+                                                                 PERST events. See [PF_FLR_CHIP], [RST_LINK], [RST_PWRDWN] and [RST_CHIP].
+
+                                                                 0 = Chip and core domain reset. (A chip domain reset always also causes a core
+                                                                 domain reset.)
+                                                                 1 = Core domain reset.
+
+                                                                 On cold reset, this field is initialized as follows:
+                                                                 _ 0 when RST_CTL()[HOST_MODE] = 0.
+                                                                 _ 1 when RST_CTL()[HOST_MODE] = 1. */
+        uint64_t reserved_14_63        : 50;
+#endif /* Word 0 - End */
+    } cn9;
+    /* struct cavm_rst_ctlx_cn9 cn96xx; */
+    struct cavm_rst_ctlx_cnf95xxp1
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_14_63        : 50;
@@ -3355,8 +4923,8 @@ union cavm_rst_ctlx
                                                                  _ 1 when RST_CTL()[HOST_MODE] = 1. */
         uint64_t reserved_14_63        : 50;
 #endif /* Word 0 - End */
-    } cn96xx;
-    struct cavm_rst_ctlx_cnf95xx
+    } cnf95xxp1;
+    struct cavm_rst_ctlx_cnf95xxp2
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_14_63        : 50;
@@ -3651,8 +5219,8 @@ union cavm_rst_ctlx
                                                                  _ 1 when RST_CTL()[HOST_MODE] = 1. */
         uint64_t reserved_14_63        : 50;
 #endif /* Word 0 - End */
-    } cnf95xx;
-    /* struct cavm_rst_ctlx_cnf95xx loki; */
+    } cnf95xxp2;
+    /* struct cavm_rst_ctlx_cnf95xxp2 loki; */
 };
 typedef union cavm_rst_ctlx cavm_rst_ctlx_t;
 
@@ -3700,6 +5268,7 @@ union cavm_rst_dbg_reset
         uint64_t reserved_24_63        : 40;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_rst_dbg_reset_s cn8; */
     struct cavm_rst_dbg_reset_cn81xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -3823,12 +5392,26 @@ union cavm_rst_debug
         uint64_t reserved_1_63         : 63;
 #endif /* Word 0 - End */
     } cn8;
-    struct cavm_rst_debug_cn96xxp1
+    struct cavm_rst_debug_cn9
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_6_63         : 58;
-        uint64_t reserved_5            : 1;
-        uint64_t reserved_4            : 1;
+        uint64_t suspend_rstpwr        : 1;  /**< [  5:  5](R/W) Stop RSTPWR bus.
+                                                                 Setting this field will stop AP Resets from getting to the cores.
+                                                                 Clearing this field will restart communication starting with AP0.
+                                                                 This will allow test sequencies to predicte AP resets with much greater accuracy.
+                                                                 For diagnostic and test use only.
+
+                                                                 This field is always reinitialized on a cold domain reset. */
+        uint64_t div_clk_rst           : 1;  /**< [  4:  4](R/W) Forces Clock Divider Reset.
+                                                                 Setting this field will force fixed clock dividers into reset.
+                                                                 Clearing this field will enable clock dividers.
+                                                                 For diagnostic use only.
+
+                                                                 This field is always reinitialized on a cold domain reset.
+
+                                                                 Internal:
+                                                                 Currently only used in BPHY on f95n */
         uint64_t dll_csr_wakeup        : 1;  /**< [  3:  3](R/W) Forces DLL setting to unlock.
                                                                  Setting this field will force all DLLs to track clock changes.
                                                                  For diagnostic use only.
@@ -3868,9 +5451,69 @@ union cavm_rst_debug
                                                                  For diagnostic use only.
 
                                                                  This field is always reinitialized on a cold domain reset. */
-        uint64_t reserved_4            : 1;
-        uint64_t reserved_5            : 1;
+        uint64_t div_clk_rst           : 1;  /**< [  4:  4](R/W) Forces Clock Divider Reset.
+                                                                 Setting this field will force fixed clock dividers into reset.
+                                                                 Clearing this field will enable clock dividers.
+                                                                 For diagnostic use only.
+
+                                                                 This field is always reinitialized on a cold domain reset.
+
+                                                                 Internal:
+                                                                 Currently only used in BPHY on f95n */
+        uint64_t suspend_rstpwr        : 1;  /**< [  5:  5](R/W) Stop RSTPWR bus.
+                                                                 Setting this field will stop AP Resets from getting to the cores.
+                                                                 Clearing this field will restart communication starting with AP0.
+                                                                 This will allow test sequencies to predicte AP resets with much greater accuracy.
+                                                                 For diagnostic and test use only.
+
+                                                                 This field is always reinitialized on a cold domain reset. */
         uint64_t reserved_6_63         : 58;
+#endif /* Word 0 - End */
+    } cn9;
+    struct cavm_rst_debug_cn96xxp1
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_4_63         : 60;
+        uint64_t dll_csr_wakeup        : 1;  /**< [  3:  3](R/W) Forces DLL setting to unlock.
+                                                                 Setting this field will force all DLLs to track clock changes.
+                                                                 For diagnostic use only.
+
+                                                                 This field is always reinitialized on a cold domain reset. */
+        uint64_t clkena_on             : 1;  /**< [  2:  2](R/W) Force global clock enable on.
+                                                                 Setting this field will force all clocks on while they are in reset and
+                                                                 will dramatically increase power consumption.
+                                                                 For diagnostic use only.
+                                                                 This field is always reinitialized on a cold domain reset. */
+        uint64_t clk_cng               : 1;  /**< [  1:  1](R/W) Force clock-changing indicator on.
+                                                                 For diagnostic use only.
+                                                                 This field is always reinitialized on a cold domain reset.
+
+                                                                 Internal:
+                                                                 Forces store-n-forward across clock domains. */
+        uint64_t clk_on                : 1;  /**< [  0:  0](R/W) Force conditional clock used for interrupt logic to always be on.
+                                                                 For diagnostic use only.
+                                                                 This field is always reinitialized on a cold domain reset. */
+#else /* Word 0 - Little Endian */
+        uint64_t clk_on                : 1;  /**< [  0:  0](R/W) Force conditional clock used for interrupt logic to always be on.
+                                                                 For diagnostic use only.
+                                                                 This field is always reinitialized on a cold domain reset. */
+        uint64_t clk_cng               : 1;  /**< [  1:  1](R/W) Force clock-changing indicator on.
+                                                                 For diagnostic use only.
+                                                                 This field is always reinitialized on a cold domain reset.
+
+                                                                 Internal:
+                                                                 Forces store-n-forward across clock domains. */
+        uint64_t clkena_on             : 1;  /**< [  2:  2](R/W) Force global clock enable on.
+                                                                 Setting this field will force all clocks on while they are in reset and
+                                                                 will dramatically increase power consumption.
+                                                                 For diagnostic use only.
+                                                                 This field is always reinitialized on a cold domain reset. */
+        uint64_t dll_csr_wakeup        : 1;  /**< [  3:  3](R/W) Forces DLL setting to unlock.
+                                                                 Setting this field will force all DLLs to track clock changes.
+                                                                 For diagnostic use only.
+
+                                                                 This field is always reinitialized on a cold domain reset. */
+        uint64_t reserved_4_63         : 60;
 #endif /* Word 0 - End */
     } cn96xxp1;
     struct cavm_rst_debug_cn96xxp3
@@ -3935,52 +5578,8 @@ union cavm_rst_debug
         uint64_t reserved_6_63         : 58;
 #endif /* Word 0 - End */
     } cn96xxp3;
-    struct cavm_rst_debug_cnf95xx
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_4_63         : 60;
-        uint64_t dll_csr_wakeup        : 1;  /**< [  3:  3](R/W) Forces DLL setting to unlock.
-                                                                 Setting this field will force all DLLs to track clock changes.
-                                                                 For diagnostic use only.
-
-                                                                 This field is always reinitialized on a cold domain reset. */
-        uint64_t clkena_on             : 1;  /**< [  2:  2](R/W) Force global clock enable on.
-                                                                 Setting this field will force all clocks on while they are in reset and
-                                                                 will dramatically increase power consumption.
-                                                                 For diagnostic use only.
-                                                                 This field is always reinitialized on a cold domain reset. */
-        uint64_t clk_cng               : 1;  /**< [  1:  1](R/W) Force clock-changing indicator on.
-                                                                 For diagnostic use only.
-                                                                 This field is always reinitialized on a cold domain reset.
-
-                                                                 Internal:
-                                                                 Forces store-n-forward across clock domains. */
-        uint64_t clk_on                : 1;  /**< [  0:  0](R/W) Force conditional clock used for interrupt logic to always be on.
-                                                                 For diagnostic use only.
-                                                                 This field is always reinitialized on a cold domain reset. */
-#else /* Word 0 - Little Endian */
-        uint64_t clk_on                : 1;  /**< [  0:  0](R/W) Force conditional clock used for interrupt logic to always be on.
-                                                                 For diagnostic use only.
-                                                                 This field is always reinitialized on a cold domain reset. */
-        uint64_t clk_cng               : 1;  /**< [  1:  1](R/W) Force clock-changing indicator on.
-                                                                 For diagnostic use only.
-                                                                 This field is always reinitialized on a cold domain reset.
-
-                                                                 Internal:
-                                                                 Forces store-n-forward across clock domains. */
-        uint64_t clkena_on             : 1;  /**< [  2:  2](R/W) Force global clock enable on.
-                                                                 Setting this field will force all clocks on while they are in reset and
-                                                                 will dramatically increase power consumption.
-                                                                 For diagnostic use only.
-                                                                 This field is always reinitialized on a cold domain reset. */
-        uint64_t dll_csr_wakeup        : 1;  /**< [  3:  3](R/W) Forces DLL setting to unlock.
-                                                                 Setting this field will force all DLLs to track clock changes.
-                                                                 For diagnostic use only.
-
-                                                                 This field is always reinitialized on a cold domain reset. */
-        uint64_t reserved_4_63         : 60;
-#endif /* Word 0 - End */
-    } cnf95xx;
+    /* struct cavm_rst_debug_cn96xxp3 cn98xx; */
+    /* struct cavm_rst_debug_cn96xxp1 cnf95xx; */
     struct cavm_rst_debug_loki
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -4134,6 +5733,25 @@ union cavm_rst_delay
         uint64_t rst_dly               : 16; /**< [ 15:  0](R/W) Reset delay. Chip and core domain resets immediately causes an early reset
                                                                  notification to the DDR interface.  The assertion of the domain reset is delayed
                                                                  by this many 100 MHz PLL reference clocks. The minimum value is 1 uS.
+                                                                 Typical value is 4 uS once DDR has been initialized.
+                                                                 This field is reinitialized with a cold domain reset. */
+#else /* Word 0 - Little Endian */
+        uint64_t rst_dly               : 16; /**< [ 15:  0](R/W) Reset delay. Chip and core domain resets immediately causes an early reset
+                                                                 notification to the DDR interface.  The assertion of the domain reset is delayed
+                                                                 by this many 100 MHz PLL reference clocks. The minimum value is 1 uS.
+                                                                 Typical value is 4 uS once DDR has been initialized.
+                                                                 This field is reinitialized with a cold domain reset. */
+        uint64_t reserved_16_63        : 48;
+#endif /* Word 0 - End */
+    } cn9;
+    /* struct cavm_rst_delay_cn9 cn96xxp1; */
+    struct cavm_rst_delay_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_16_63        : 48;
+        uint64_t rst_dly               : 16; /**< [ 15:  0](R/W) Reset delay. Chip and core domain resets immediately causes an early reset
+                                                                 notification to the DDR interface.  The assertion of the domain reset is delayed
+                                                                 by this many 100 MHz PLL reference clocks. The minimum value is 1 uS.
                                                                  Typical value is 5 uS once core domain has been brought out of reset.
                                                                  This field is reinitialized with a cold domain reset. */
 #else /* Word 0 - Little Endian */
@@ -4144,7 +5762,10 @@ union cavm_rst_delay
                                                                  This field is reinitialized with a cold domain reset. */
         uint64_t reserved_16_63        : 48;
 #endif /* Word 0 - End */
-    } cn9;
+    } cn96xxp3;
+    /* struct cavm_rst_delay_cn96xxp3 cn98xx; */
+    /* struct cavm_rst_delay_cn96xxp3 cnf95xx; */
+    /* struct cavm_rst_delay_cn96xxp3 loki; */
 };
 typedef union cavm_rst_delay cavm_rst_delay_t;
 
@@ -4263,6 +5884,126 @@ union cavm_rst_dsp_pll
                                                                    0x3 = PLL1 output divided by 32.
 
                                                                  This field is always reinitialized on a cold domain reset. */
+        uint64_t cout_reset            : 1;  /**< [ 48: 48](R/W) DSP clockout reset. The dsp clockout should be placed in
+                                                                 reset at least 10 PLL reference clocks prior
+                                                                 to changing [COUT_SEL]. It should remain under reset for at least 10
+                                                                 PLL reference clocks after [COUT_SEL] changes.
+                                                                 This field is always reinitialized on a cold domain reset. */
+        uint64_t reserved_45_47        : 3;
+        uint64_t pd_switch             : 1;  /**< [ 44: 44](R/W) PLL powerdown on switch.  When set, hardware automatically
+                                                                 powers down the inactive PLL after the switch has occured.
+                                                                 When cleared, the inactive PLL remains in operation.
+                                                                 If [PD_SWITCH] is written to a one while both [DLY_SWITCH] and
+                                                                 [NXT_PGM] are cleared then the inactive PLL will immediately powerdown.
+
+                                                                 Note that a powered-down PLL requires an additional 575 reference
+                                                                 clocks to become active.  This time is automatically added by the
+                                                                 hardware.
+                                                                 This field is always reinitialized on a cold domain reset. */
+        uint64_t dly_switch            : 12; /**< [ 43: 32](R/W/H) Switch the active PLL after delaying this number of 100 MHz clocks.
+                                                                 When set to a nonzero value, the hardware will wait for
+                                                                 any PLL programming to complete and then switch to the inactive
+                                                                 PLL after the specified number of PLL reference clocks. Hardware
+                                                                 will add additional clocks if required.
+                                                                 This field is always reinitialized on a cold domain reset.
+
+                                                                 Internal:
+                                                                 Hardware will add counts to maintain 256 bclk/dsp_clk/sclk notification to hardware.
+                                                                 Additional time will be added to wake up powered-down AP cores but that
+                                                                 time not be included in this count. */
+        uint64_t pll1_pd               : 1;  /**< [ 31: 31](RO) DSP PLL1 power down.  When set PLL is currently powered down. */
+        uint64_t pll0_pd               : 1;  /**< [ 30: 30](RO) DSP PLL0 power down.  When set PLL is currently powered down. */
+        uint64_t reserved_23_29        : 7;
+        uint64_t init_mul              : 7;  /**< [ 22: 16](R/W) DSP clock multiplier to be used during a core or chip domain
+                                                                 reset.  Actual frequency is [INIT_MUL] * 50 MHz.  The actual value
+                                                                 used is limited by RST_PLL_LIMIT[DSP_MAX_MUL].
+                                                                 This field maintains its current value when written with a zero.
+                                                                 This field is always reinitialized on a cold domain reset. */
+        uint64_t nxt_pgm               : 1;  /**< [ 15: 15](R/W/H) Program non-active PLL using [NXT_MUL]. Hardware automatically
+                                                                 clears bit when both PLL is updated and any delay specified
+                                                                 in [DLY_SWITCH] has completed.
+                                                                 This field is always reinitialized on a chip domain reset. */
+        uint64_t nxt_mul               : 7;  /**< [ 14:  8](R/W) DSP PLL frequency to be program in 50 MHz increments.  The
+                                                                 actual value used is limited by RST_PLL_LIMIT[DSP_MAX_MUL] and
+                                                                 a minimum setting of 300 MHz.
+                                                                 Value will match [INIT_MUL] immediately after a cold or chip domain reset. */
+        uint64_t active_pll            : 1;  /**< [  7:  7](RO) Indicates which physical PLL is in use. For diagnostic use only. */
+        uint64_t cur_mul               : 7;  /**< [  6:  0](RO/H) DSP clock frequency.  Actual frequency is [CUR_MUL] * 50 MHz.
+                                                                 Value will reflect [NXT_MUL] after [DLY_SWITCH] has completed or [INIT_MUL]
+                                                                 immediately after a cold or chip domain reset.  In both cases, value
+                                                                 is limited by RST_PLL_LIMIT[DSP_MAX_MUL]. */
+#else /* Word 0 - Little Endian */
+        uint64_t cur_mul               : 7;  /**< [  6:  0](RO/H) DSP clock frequency.  Actual frequency is [CUR_MUL] * 50 MHz.
+                                                                 Value will reflect [NXT_MUL] after [DLY_SWITCH] has completed or [INIT_MUL]
+                                                                 immediately after a cold or chip domain reset.  In both cases, value
+                                                                 is limited by RST_PLL_LIMIT[DSP_MAX_MUL]. */
+        uint64_t active_pll            : 1;  /**< [  7:  7](RO) Indicates which physical PLL is in use. For diagnostic use only. */
+        uint64_t nxt_mul               : 7;  /**< [ 14:  8](R/W) DSP PLL frequency to be program in 50 MHz increments.  The
+                                                                 actual value used is limited by RST_PLL_LIMIT[DSP_MAX_MUL] and
+                                                                 a minimum setting of 300 MHz.
+                                                                 Value will match [INIT_MUL] immediately after a cold or chip domain reset. */
+        uint64_t nxt_pgm               : 1;  /**< [ 15: 15](R/W/H) Program non-active PLL using [NXT_MUL]. Hardware automatically
+                                                                 clears bit when both PLL is updated and any delay specified
+                                                                 in [DLY_SWITCH] has completed.
+                                                                 This field is always reinitialized on a chip domain reset. */
+        uint64_t init_mul              : 7;  /**< [ 22: 16](R/W) DSP clock multiplier to be used during a core or chip domain
+                                                                 reset.  Actual frequency is [INIT_MUL] * 50 MHz.  The actual value
+                                                                 used is limited by RST_PLL_LIMIT[DSP_MAX_MUL].
+                                                                 This field maintains its current value when written with a zero.
+                                                                 This field is always reinitialized on a cold domain reset. */
+        uint64_t reserved_23_29        : 7;
+        uint64_t pll0_pd               : 1;  /**< [ 30: 30](RO) DSP PLL0 power down.  When set PLL is currently powered down. */
+        uint64_t pll1_pd               : 1;  /**< [ 31: 31](RO) DSP PLL1 power down.  When set PLL is currently powered down. */
+        uint64_t dly_switch            : 12; /**< [ 43: 32](R/W/H) Switch the active PLL after delaying this number of 100 MHz clocks.
+                                                                 When set to a nonzero value, the hardware will wait for
+                                                                 any PLL programming to complete and then switch to the inactive
+                                                                 PLL after the specified number of PLL reference clocks. Hardware
+                                                                 will add additional clocks if required.
+                                                                 This field is always reinitialized on a cold domain reset.
+
+                                                                 Internal:
+                                                                 Hardware will add counts to maintain 256 bclk/dsp_clk/sclk notification to hardware.
+                                                                 Additional time will be added to wake up powered-down AP cores but that
+                                                                 time not be included in this count. */
+        uint64_t pd_switch             : 1;  /**< [ 44: 44](R/W) PLL powerdown on switch.  When set, hardware automatically
+                                                                 powers down the inactive PLL after the switch has occured.
+                                                                 When cleared, the inactive PLL remains in operation.
+                                                                 If [PD_SWITCH] is written to a one while both [DLY_SWITCH] and
+                                                                 [NXT_PGM] are cleared then the inactive PLL will immediately powerdown.
+
+                                                                 Note that a powered-down PLL requires an additional 575 reference
+                                                                 clocks to become active.  This time is automatically added by the
+                                                                 hardware.
+                                                                 This field is always reinitialized on a cold domain reset. */
+        uint64_t reserved_45_47        : 3;
+        uint64_t cout_reset            : 1;  /**< [ 48: 48](R/W) DSP clockout reset. The dsp clockout should be placed in
+                                                                 reset at least 10 PLL reference clocks prior
+                                                                 to changing [COUT_SEL]. It should remain under reset for at least 10
+                                                                 PLL reference clocks after [COUT_SEL] changes.
+                                                                 This field is always reinitialized on a cold domain reset. */
+        uint64_t cout_sel              : 2;  /**< [ 50: 49](R/W) DSP clockout select.
+                                                                   0x0 = DSP clock divided by 32.
+                                                                   0x1 = DSP clock tree output divided by 32.
+                                                                   0x2 = PLL0 output divided by 32.
+                                                                   0x3 = PLL1 output divided by 32.
+
+                                                                 This field is always reinitialized on a cold domain reset. */
+        uint64_t reserved_51_63        : 13;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rst_dsp_pll_s cn9; */
+    /* struct cavm_rst_dsp_pll_s cnf95xxp1; */
+    struct cavm_rst_dsp_pll_cnf95xxp2
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_51_63        : 13;
+        uint64_t cout_sel              : 2;  /**< [ 50: 49](R/W) DSP clockout select.
+                                                                   0x0 = DSP clock divided by 32.
+                                                                   0x1 = DSP clock tree output divided by 32.
+                                                                   0x2 = PLL0 output divided by 32.
+                                                                   0x3 = PLL1 output divided by 32.
+
+                                                                 This field is always reinitialized on a cold domain reset. */
         uint64_t cout_reset            : 1;  /**< [ 48: 48](R/W) DSP clockout reset. The DSP clockout should be placed in
                                                                  reset at least 10 PLL reference clocks prior
                                                                  to changing [COUT_SEL]. It should remain under reset for at least 10
@@ -4369,8 +6110,8 @@ union cavm_rst_dsp_pll
                                                                  This field is always reinitialized on a cold domain reset. */
         uint64_t reserved_51_63        : 13;
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_rst_dsp_pll_s cn; */
+    } cnf95xxp2;
+    /* struct cavm_rst_dsp_pll_cnf95xxp2 loki; */
 };
 typedef union cavm_rst_dsp_pll cavm_rst_dsp_pll_t;
 
@@ -4488,7 +6229,9 @@ union cavm_rst_gclk_pll
         uint64_t reserved_16_63        : 48;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_rst_gclk_pll_s cn9; */
     /* struct cavm_rst_gclk_pll_s cn96xx; */
+    /* struct cavm_rst_gclk_pll_s cn98xx; */
     /* struct cavm_rst_gclk_pll_s cnf95xx; */
     struct cavm_rst_gclk_pll_loki
     {
@@ -4534,6 +6277,8 @@ static inline uint64_t CAVM_RST_GCLK_PLL_FUNC(void) __attribute__ ((pure, always
 static inline uint64_t CAVM_RST_GCLK_PLL_FUNC(void)
 {
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X))
+        return 0x87e00a0017f8ll;
+    if (cavm_is_model(OCTEONTX_CN98XX))
         return 0x87e00a0017f8ll;
     if (cavm_is_model(OCTEONTX_CNF95XX_PASS2_X))
         return 0x87e00a0017f8ll;
@@ -4596,6 +6341,24 @@ union cavm_rst_int
         uint64_t reserved_52_63        : 12;
 #endif /* Word 0 - End */
     } s;
+    struct cavm_rst_int_cn8
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_12_63        : 52;
+        uint64_t perst                 : 4;  /**< [ 11:  8](R/W1C/H) PERST*_L asserted while RST_CTL()[RST_RCV] = 1 and RST_CTL()[RST_CHIP] = 0. One bit
+                                                                 corresponds to each controller. */
+        uint64_t reserved_4_7          : 4;
+        uint64_t rst_link              : 4;  /**< [  3:  0](R/W1C/H) A controller link-down/hot-reset occurred while RST_CTL()[RST_LINK] = 0. Software must
+                                                                 assert then deassert RST_SOFT_PRST()[SOFT_PRST]. One bit corresponds to each controller. */
+#else /* Word 0 - Little Endian */
+        uint64_t rst_link              : 4;  /**< [  3:  0](R/W1C/H) A controller link-down/hot-reset occurred while RST_CTL()[RST_LINK] = 0. Software must
+                                                                 assert then deassert RST_SOFT_PRST()[SOFT_PRST]. One bit corresponds to each controller. */
+        uint64_t reserved_4_7          : 4;
+        uint64_t perst                 : 4;  /**< [ 11:  8](R/W1C/H) PERST*_L asserted while RST_CTL()[RST_RCV] = 1 and RST_CTL()[RST_CHIP] = 0. One bit
+                                                                 corresponds to each controller. */
+        uint64_t reserved_12_63        : 52;
+#endif /* Word 0 - End */
+    } cn8;
     struct cavm_rst_int_cn81xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -4614,24 +6377,55 @@ union cavm_rst_int
         uint64_t reserved_11_63        : 53;
 #endif /* Word 0 - End */
     } cn81xx;
-    struct cavm_rst_int_cn83xx
+    /* struct cavm_rst_int_cn8 cn83xx; */
+    struct cavm_rst_int_cn9
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_12_63        : 52;
-        uint64_t perst                 : 4;  /**< [ 11:  8](R/W1C/H) PERST*_L asserted while RST_CTL()[RST_RCV] = 1 and RST_CTL()[RST_CHIP] = 0. One bit
-                                                                 corresponds to each controller. */
-        uint64_t reserved_4_7          : 4;
+        uint64_t reserved_52_63        : 12;
+        uint64_t bphy_reset            : 1;  /**< [ 51: 51](R/W1C/H) BPHY domain entered reset.
+                                                                 This field is reinitialized with a chip domain reset. */
+        uint64_t scp_reset             : 1;  /**< [ 50: 50](R/W1C/H) SCP domain entered reset.
+                                                                 This field is reinitialized with a chip domain reset. */
+        uint64_t mcp_reset             : 1;  /**< [ 49: 49](R/W1C/H) MCP domain entered reset.
+                                                                 This field is reinitialized with a chip domain reset. */
+        uint64_t core_reset            : 1;  /**< [ 48: 48](R/W1C/H) Core domain entered reset.
+                                                                 This field is reinitialized with a chip domain reset. */
+        uint64_t reserved_36_47        : 12;
+        uint64_t rst_pwrdwn            : 4;  /**< [ 35: 32](R/W1C/H) A controller power down (PEM in L2 state) occurred while RST_CTL()[RST_PWRDWN] = 0. Software must
+                                                                 assert then deassert RST_SOFT_PRST()[SOFT_PRST]. One bit corresponds to each controller.
+                                                                 This field is reinitialized with a chip domain reset. */
+        uint64_t reserved_20_31        : 12;
+        uint64_t perst                 : 4;  /**< [ 19: 16](R/W1C/H) PERST*_L asserted while RST_CTL()[RST_RCV] = 1 and RST_CTL()[RST_CHIP] = 0. One bit
+                                                                 corresponds to each controller.
+                                                                 This field is reinitialized with a chip domain reset. */
+        uint64_t reserved_4_15         : 12;
         uint64_t rst_link              : 4;  /**< [  3:  0](R/W1C/H) A controller link-down/hot-reset occurred while RST_CTL()[RST_LINK] = 0. Software must
-                                                                 assert then deassert RST_SOFT_PRST()[SOFT_PRST]. One bit corresponds to each controller. */
+                                                                 assert then deassert RST_SOFT_PRST()[SOFT_PRST]. One bit corresponds to each controller.
+                                                                 This field is reinitialized with a chip domain reset. */
 #else /* Word 0 - Little Endian */
         uint64_t rst_link              : 4;  /**< [  3:  0](R/W1C/H) A controller link-down/hot-reset occurred while RST_CTL()[RST_LINK] = 0. Software must
-                                                                 assert then deassert RST_SOFT_PRST()[SOFT_PRST]. One bit corresponds to each controller. */
-        uint64_t reserved_4_7          : 4;
-        uint64_t perst                 : 4;  /**< [ 11:  8](R/W1C/H) PERST*_L asserted while RST_CTL()[RST_RCV] = 1 and RST_CTL()[RST_CHIP] = 0. One bit
-                                                                 corresponds to each controller. */
-        uint64_t reserved_12_63        : 52;
+                                                                 assert then deassert RST_SOFT_PRST()[SOFT_PRST]. One bit corresponds to each controller.
+                                                                 This field is reinitialized with a chip domain reset. */
+        uint64_t reserved_4_15         : 12;
+        uint64_t perst                 : 4;  /**< [ 19: 16](R/W1C/H) PERST*_L asserted while RST_CTL()[RST_RCV] = 1 and RST_CTL()[RST_CHIP] = 0. One bit
+                                                                 corresponds to each controller.
+                                                                 This field is reinitialized with a chip domain reset. */
+        uint64_t reserved_20_31        : 12;
+        uint64_t rst_pwrdwn            : 4;  /**< [ 35: 32](R/W1C/H) A controller power down (PEM in L2 state) occurred while RST_CTL()[RST_PWRDWN] = 0. Software must
+                                                                 assert then deassert RST_SOFT_PRST()[SOFT_PRST]. One bit corresponds to each controller.
+                                                                 This field is reinitialized with a chip domain reset. */
+        uint64_t reserved_36_47        : 12;
+        uint64_t core_reset            : 1;  /**< [ 48: 48](R/W1C/H) Core domain entered reset.
+                                                                 This field is reinitialized with a chip domain reset. */
+        uint64_t mcp_reset             : 1;  /**< [ 49: 49](R/W1C/H) MCP domain entered reset.
+                                                                 This field is reinitialized with a chip domain reset. */
+        uint64_t scp_reset             : 1;  /**< [ 50: 50](R/W1C/H) SCP domain entered reset.
+                                                                 This field is reinitialized with a chip domain reset. */
+        uint64_t bphy_reset            : 1;  /**< [ 51: 51](R/W1C/H) BPHY domain entered reset.
+                                                                 This field is reinitialized with a chip domain reset. */
+        uint64_t reserved_52_63        : 12;
 #endif /* Word 0 - End */
-    } cn83xx;
+    } cn9;
     struct cavm_rst_int_cn96xxp1
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -4698,6 +6492,7 @@ union cavm_rst_int
         uint64_t reserved_51_63        : 13;
 #endif /* Word 0 - End */
     } cn96xxp3;
+    /* struct cavm_rst_int_cn96xxp3 cn98xx; */
     struct cavm_rst_int_cnf95xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -4797,6 +6592,20 @@ union cavm_rst_int_ena_w1c
         uint64_t reserved_52_63        : 12;
 #endif /* Word 0 - End */
     } s;
+    struct cavm_rst_int_ena_w1c_cn8
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_12_63        : 52;
+        uint64_t perst                 : 4;  /**< [ 11:  8](R/W1C/H) Reads or clears enable for RST_INT[PERST]. */
+        uint64_t reserved_4_7          : 4;
+        uint64_t rst_link              : 4;  /**< [  3:  0](R/W1C/H) Reads or clears enable for RST_INT[RST_LINK]. */
+#else /* Word 0 - Little Endian */
+        uint64_t rst_link              : 4;  /**< [  3:  0](R/W1C/H) Reads or clears enable for RST_INT[RST_LINK]. */
+        uint64_t reserved_4_7          : 4;
+        uint64_t perst                 : 4;  /**< [ 11:  8](R/W1C/H) Reads or clears enable for RST_INT[PERST]. */
+        uint64_t reserved_12_63        : 52;
+#endif /* Word 0 - End */
+    } cn8;
     struct cavm_rst_int_ena_w1c_cn81xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -4811,20 +6620,35 @@ union cavm_rst_int_ena_w1c
         uint64_t reserved_11_63        : 53;
 #endif /* Word 0 - End */
     } cn81xx;
-    struct cavm_rst_int_ena_w1c_cn83xx
+    /* struct cavm_rst_int_ena_w1c_cn8 cn83xx; */
+    struct cavm_rst_int_ena_w1c_cn9
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_12_63        : 52;
-        uint64_t perst                 : 4;  /**< [ 11:  8](R/W1C/H) Reads or clears enable for RST_INT[PERST]. */
-        uint64_t reserved_4_7          : 4;
+        uint64_t reserved_52_63        : 12;
+        uint64_t bphy_reset            : 1;  /**< [ 51: 51](R/W1C/H) Reads or clears enable for RST_INT[BPHY_RESET]. */
+        uint64_t scp_reset             : 1;  /**< [ 50: 50](R/W1C/H) Reads or clears enable for RST_INT[SCP_RESET]. */
+        uint64_t mcp_reset             : 1;  /**< [ 49: 49](R/W1C/H) Reads or clears enable for RST_INT[MCP_RESET]. */
+        uint64_t core_reset            : 1;  /**< [ 48: 48](R/W1C/H) Reads or clears enable for RST_INT[CORE_RESET]. */
+        uint64_t reserved_36_47        : 12;
+        uint64_t rst_pwrdwn            : 4;  /**< [ 35: 32](R/W1C/H) Reads or clears enable for RST_INT[RST_PWRDWN]. */
+        uint64_t reserved_20_31        : 12;
+        uint64_t perst                 : 4;  /**< [ 19: 16](R/W1C/H) Reads or clears enable for RST_INT[PERST]. */
+        uint64_t reserved_4_15         : 12;
         uint64_t rst_link              : 4;  /**< [  3:  0](R/W1C/H) Reads or clears enable for RST_INT[RST_LINK]. */
 #else /* Word 0 - Little Endian */
         uint64_t rst_link              : 4;  /**< [  3:  0](R/W1C/H) Reads or clears enable for RST_INT[RST_LINK]. */
-        uint64_t reserved_4_7          : 4;
-        uint64_t perst                 : 4;  /**< [ 11:  8](R/W1C/H) Reads or clears enable for RST_INT[PERST]. */
-        uint64_t reserved_12_63        : 52;
+        uint64_t reserved_4_15         : 12;
+        uint64_t perst                 : 4;  /**< [ 19: 16](R/W1C/H) Reads or clears enable for RST_INT[PERST]. */
+        uint64_t reserved_20_31        : 12;
+        uint64_t rst_pwrdwn            : 4;  /**< [ 35: 32](R/W1C/H) Reads or clears enable for RST_INT[RST_PWRDWN]. */
+        uint64_t reserved_36_47        : 12;
+        uint64_t core_reset            : 1;  /**< [ 48: 48](R/W1C/H) Reads or clears enable for RST_INT[CORE_RESET]. */
+        uint64_t mcp_reset             : 1;  /**< [ 49: 49](R/W1C/H) Reads or clears enable for RST_INT[MCP_RESET]. */
+        uint64_t scp_reset             : 1;  /**< [ 50: 50](R/W1C/H) Reads or clears enable for RST_INT[SCP_RESET]. */
+        uint64_t bphy_reset            : 1;  /**< [ 51: 51](R/W1C/H) Reads or clears enable for RST_INT[BPHY_RESET]. */
+        uint64_t reserved_52_63        : 12;
 #endif /* Word 0 - End */
-    } cn83xx;
+    } cn9;
     struct cavm_rst_int_ena_w1c_cn96xxp1
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -4867,6 +6691,7 @@ union cavm_rst_int_ena_w1c
         uint64_t reserved_51_63        : 13;
 #endif /* Word 0 - End */
     } cn96xxp3;
+    /* struct cavm_rst_int_ena_w1c_cn96xxp3 cn98xx; */
     struct cavm_rst_int_ena_w1c_cnf95xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -4946,6 +6771,20 @@ union cavm_rst_int_ena_w1s
         uint64_t reserved_52_63        : 12;
 #endif /* Word 0 - End */
     } s;
+    struct cavm_rst_int_ena_w1s_cn8
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_12_63        : 52;
+        uint64_t perst                 : 4;  /**< [ 11:  8](R/W1S/H) Reads or sets enable for RST_INT[PERST]. */
+        uint64_t reserved_4_7          : 4;
+        uint64_t rst_link              : 4;  /**< [  3:  0](R/W1S/H) Reads or sets enable for RST_INT[RST_LINK]. */
+#else /* Word 0 - Little Endian */
+        uint64_t rst_link              : 4;  /**< [  3:  0](R/W1S/H) Reads or sets enable for RST_INT[RST_LINK]. */
+        uint64_t reserved_4_7          : 4;
+        uint64_t perst                 : 4;  /**< [ 11:  8](R/W1S/H) Reads or sets enable for RST_INT[PERST]. */
+        uint64_t reserved_12_63        : 52;
+#endif /* Word 0 - End */
+    } cn8;
     struct cavm_rst_int_ena_w1s_cn81xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -4960,20 +6799,35 @@ union cavm_rst_int_ena_w1s
         uint64_t reserved_11_63        : 53;
 #endif /* Word 0 - End */
     } cn81xx;
-    struct cavm_rst_int_ena_w1s_cn83xx
+    /* struct cavm_rst_int_ena_w1s_cn8 cn83xx; */
+    struct cavm_rst_int_ena_w1s_cn9
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_12_63        : 52;
-        uint64_t perst                 : 4;  /**< [ 11:  8](R/W1S/H) Reads or sets enable for RST_INT[PERST]. */
-        uint64_t reserved_4_7          : 4;
+        uint64_t reserved_52_63        : 12;
+        uint64_t bphy_reset            : 1;  /**< [ 51: 51](R/W1S/H) Reads or sets enable for RST_INT[BPHY_RESET]. */
+        uint64_t scp_reset             : 1;  /**< [ 50: 50](R/W1S/H) Reads or sets enable for RST_INT[SCP_RESET]. */
+        uint64_t mcp_reset             : 1;  /**< [ 49: 49](R/W1S/H) Reads or sets enable for RST_INT[MCP_RESET]. */
+        uint64_t core_reset            : 1;  /**< [ 48: 48](R/W1S/H) Reads or sets enable for RST_INT[CORE_RESET]. */
+        uint64_t reserved_36_47        : 12;
+        uint64_t rst_pwrdwn            : 4;  /**< [ 35: 32](R/W1S/H) Reads or sets enable for RST_INT[RST_PWRDWN]. */
+        uint64_t reserved_20_31        : 12;
+        uint64_t perst                 : 4;  /**< [ 19: 16](R/W1S/H) Reads or sets enable for RST_INT[PERST]. */
+        uint64_t reserved_4_15         : 12;
         uint64_t rst_link              : 4;  /**< [  3:  0](R/W1S/H) Reads or sets enable for RST_INT[RST_LINK]. */
 #else /* Word 0 - Little Endian */
         uint64_t rst_link              : 4;  /**< [  3:  0](R/W1S/H) Reads or sets enable for RST_INT[RST_LINK]. */
-        uint64_t reserved_4_7          : 4;
-        uint64_t perst                 : 4;  /**< [ 11:  8](R/W1S/H) Reads or sets enable for RST_INT[PERST]. */
-        uint64_t reserved_12_63        : 52;
+        uint64_t reserved_4_15         : 12;
+        uint64_t perst                 : 4;  /**< [ 19: 16](R/W1S/H) Reads or sets enable for RST_INT[PERST]. */
+        uint64_t reserved_20_31        : 12;
+        uint64_t rst_pwrdwn            : 4;  /**< [ 35: 32](R/W1S/H) Reads or sets enable for RST_INT[RST_PWRDWN]. */
+        uint64_t reserved_36_47        : 12;
+        uint64_t core_reset            : 1;  /**< [ 48: 48](R/W1S/H) Reads or sets enable for RST_INT[CORE_RESET]. */
+        uint64_t mcp_reset             : 1;  /**< [ 49: 49](R/W1S/H) Reads or sets enable for RST_INT[MCP_RESET]. */
+        uint64_t scp_reset             : 1;  /**< [ 50: 50](R/W1S/H) Reads or sets enable for RST_INT[SCP_RESET]. */
+        uint64_t bphy_reset            : 1;  /**< [ 51: 51](R/W1S/H) Reads or sets enable for RST_INT[BPHY_RESET]. */
+        uint64_t reserved_52_63        : 12;
 #endif /* Word 0 - End */
-    } cn83xx;
+    } cn9;
     struct cavm_rst_int_ena_w1s_cn96xxp1
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -5016,6 +6870,7 @@ union cavm_rst_int_ena_w1s
         uint64_t reserved_51_63        : 13;
 #endif /* Word 0 - End */
     } cn96xxp3;
+    /* struct cavm_rst_int_ena_w1s_cn96xxp3 cn98xx; */
     struct cavm_rst_int_ena_w1s_cnf95xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -5095,6 +6950,20 @@ union cavm_rst_int_w1s
         uint64_t reserved_52_63        : 12;
 #endif /* Word 0 - End */
     } s;
+    struct cavm_rst_int_w1s_cn8
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_12_63        : 52;
+        uint64_t perst                 : 4;  /**< [ 11:  8](R/W1S/H) Reads or sets RST_INT[PERST]. */
+        uint64_t reserved_4_7          : 4;
+        uint64_t rst_link              : 4;  /**< [  3:  0](R/W1S/H) Reads or sets RST_INT[RST_LINK]. */
+#else /* Word 0 - Little Endian */
+        uint64_t rst_link              : 4;  /**< [  3:  0](R/W1S/H) Reads or sets RST_INT[RST_LINK]. */
+        uint64_t reserved_4_7          : 4;
+        uint64_t perst                 : 4;  /**< [ 11:  8](R/W1S/H) Reads or sets RST_INT[PERST]. */
+        uint64_t reserved_12_63        : 52;
+#endif /* Word 0 - End */
+    } cn8;
     struct cavm_rst_int_w1s_cn81xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -5109,20 +6978,35 @@ union cavm_rst_int_w1s
         uint64_t reserved_11_63        : 53;
 #endif /* Word 0 - End */
     } cn81xx;
-    struct cavm_rst_int_w1s_cn83xx
+    /* struct cavm_rst_int_w1s_cn8 cn83xx; */
+    struct cavm_rst_int_w1s_cn9
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_12_63        : 52;
-        uint64_t perst                 : 4;  /**< [ 11:  8](R/W1S/H) Reads or sets RST_INT[PERST]. */
-        uint64_t reserved_4_7          : 4;
+        uint64_t reserved_52_63        : 12;
+        uint64_t bphy_reset            : 1;  /**< [ 51: 51](R/W1S/H) Reads or sets RST_INT[BPHY_RESET]. */
+        uint64_t scp_reset             : 1;  /**< [ 50: 50](R/W1S/H) Reads or sets RST_INT[SCP_RESET]. */
+        uint64_t mcp_reset             : 1;  /**< [ 49: 49](R/W1S/H) Reads or sets RST_INT[MCP_RESET]. */
+        uint64_t core_reset            : 1;  /**< [ 48: 48](R/W1S/H) Reads or sets RST_INT[CORE_RESET]. */
+        uint64_t reserved_36_47        : 12;
+        uint64_t rst_pwrdwn            : 4;  /**< [ 35: 32](R/W1S/H) Reads or sets RST_INT[RST_PWRDWN]. */
+        uint64_t reserved_20_31        : 12;
+        uint64_t perst                 : 4;  /**< [ 19: 16](R/W1S/H) Reads or sets RST_INT[PERST]. */
+        uint64_t reserved_4_15         : 12;
         uint64_t rst_link              : 4;  /**< [  3:  0](R/W1S/H) Reads or sets RST_INT[RST_LINK]. */
 #else /* Word 0 - Little Endian */
         uint64_t rst_link              : 4;  /**< [  3:  0](R/W1S/H) Reads or sets RST_INT[RST_LINK]. */
-        uint64_t reserved_4_7          : 4;
-        uint64_t perst                 : 4;  /**< [ 11:  8](R/W1S/H) Reads or sets RST_INT[PERST]. */
-        uint64_t reserved_12_63        : 52;
+        uint64_t reserved_4_15         : 12;
+        uint64_t perst                 : 4;  /**< [ 19: 16](R/W1S/H) Reads or sets RST_INT[PERST]. */
+        uint64_t reserved_20_31        : 12;
+        uint64_t rst_pwrdwn            : 4;  /**< [ 35: 32](R/W1S/H) Reads or sets RST_INT[RST_PWRDWN]. */
+        uint64_t reserved_36_47        : 12;
+        uint64_t core_reset            : 1;  /**< [ 48: 48](R/W1S/H) Reads or sets RST_INT[CORE_RESET]. */
+        uint64_t mcp_reset             : 1;  /**< [ 49: 49](R/W1S/H) Reads or sets RST_INT[MCP_RESET]. */
+        uint64_t scp_reset             : 1;  /**< [ 50: 50](R/W1S/H) Reads or sets RST_INT[SCP_RESET]. */
+        uint64_t bphy_reset            : 1;  /**< [ 51: 51](R/W1S/H) Reads or sets RST_INT[BPHY_RESET]. */
+        uint64_t reserved_52_63        : 12;
 #endif /* Word 0 - End */
-    } cn83xx;
+    } cn9;
     struct cavm_rst_int_w1s_cn96xxp1
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -5165,6 +7049,7 @@ union cavm_rst_int_w1s
         uint64_t reserved_51_63        : 13;
 #endif /* Word 0 - End */
     } cn96xxp3;
+    /* struct cavm_rst_int_w1s_cn96xxp3 cn98xx; */
     struct cavm_rst_int_w1s_cnf95xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -5224,21 +7109,32 @@ union cavm_rst_lboot
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_50_63        : 14;
-        uint64_t lboot                 : 50; /**< [ 49:  0](R/W1C/H) Bit vector of last reset cause(es).
-                                                                 Bit numbers are enumerated by RST_SOURCE_E.
-                                                                 Unused bits always read as zero.
-
-                                                                 The value reset with a cold domain reset. */
+        uint64_t lboot                 : 50; /**< [ 49:  0](R/W1C/H) Bit vector of last reset cause(es).  The value reset with a
+                                                                 cold domain reset.
+                                                                 Bit numbers are enumerated by RST_SOURCE_E. */
 #else /* Word 0 - Little Endian */
-        uint64_t lboot                 : 50; /**< [ 49:  0](R/W1C/H) Bit vector of last reset cause(es).
-                                                                 Bit numbers are enumerated by RST_SOURCE_E.
-                                                                 Unused bits always read as zero.
-
-                                                                 The value reset with a cold domain reset. */
+        uint64_t lboot                 : 50; /**< [ 49:  0](R/W1C/H) Bit vector of last reset cause(es).  The value reset with a
+                                                                 cold domain reset.
+                                                                 Bit numbers are enumerated by RST_SOURCE_E. */
         uint64_t reserved_50_63        : 14;
 #endif /* Word 0 - End */
     } s;
-    struct cavm_rst_lboot_cn96xx
+    /* struct cavm_rst_lboot_s cn9; */
+    struct cavm_rst_lboot_cn96xxp1
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_48_63        : 16;
+        uint64_t lboot                 : 48; /**< [ 47:  0](R/W1C/H) Bit vector of last reset cause(es).  The value reset with a
+                                                                 cold domain reset.
+                                                                 Bit numbers are enumerated by RST_SOURCE_E. */
+#else /* Word 0 - Little Endian */
+        uint64_t lboot                 : 48; /**< [ 47:  0](R/W1C/H) Bit vector of last reset cause(es).  The value reset with a
+                                                                 cold domain reset.
+                                                                 Bit numbers are enumerated by RST_SOURCE_E. */
+        uint64_t reserved_48_63        : 16;
+#endif /* Word 0 - End */
+    } cn96xxp1;
+    struct cavm_rst_lboot_cn96xxp3
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_48_63        : 16;
@@ -5255,22 +7151,23 @@ union cavm_rst_lboot
                                                                  The value reset with a cold domain reset. */
         uint64_t reserved_48_63        : 16;
 #endif /* Word 0 - End */
-    } cn96xx;
-    struct cavm_rst_lboot_cnf95xx
+    } cn96xxp3;
+    struct cavm_rst_lboot_cn98xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_50_63        : 14;
-        uint64_t lboot                 : 50; /**< [ 49:  0](R/W1C/H) Bit vector of last reset cause(es).  The value reset with a
+        uint64_t reserved_32_63        : 32;
+        uint64_t lboot                 : 32; /**< [ 31:  0](R/W1C/H) Bit vector of last reset cause(es).  The value reset with a
                                                                  cold domain reset.
                                                                  Bit numbers are enumerated by RST_SOURCE_E. */
 #else /* Word 0 - Little Endian */
-        uint64_t lboot                 : 50; /**< [ 49:  0](R/W1C/H) Bit vector of last reset cause(es).  The value reset with a
+        uint64_t lboot                 : 32; /**< [ 31:  0](R/W1C/H) Bit vector of last reset cause(es).  The value reset with a
                                                                  cold domain reset.
                                                                  Bit numbers are enumerated by RST_SOURCE_E. */
-        uint64_t reserved_50_63        : 14;
+        uint64_t reserved_32_63        : 32;
 #endif /* Word 0 - End */
-    } cnf95xx;
-    /* struct cavm_rst_lboot_cnf95xx loki; */
+    } cn98xx;
+    /* struct cavm_rst_lboot_s cnf95xx; */
+    /* struct cavm_rst_lboot_s loki; */
 };
 typedef union cavm_rst_lboot cavm_rst_lboot_t;
 
@@ -5524,6 +7421,41 @@ union cavm_rst_msix_vecx_addr
                                                                  This field is always reinitialized on a chip domain reset. */
         uint64_t reserved_1            : 1;
         uint64_t secvec                : 1;  /**< [  0:  0](SR/W) Secure vector.
+                                                                   0 = This vector can be read or written by either secure or nonsecure states.
+                                                                   1 = This vector's RST_MSIX_VEC()_ADDR, RST_MSIX_VEC()_CTL, and
+                                                                       corresponding bit of RST_MSIX_PBA() are RAZ/WI and does not cause
+                                                                       a fault when accessed by the nonsecure world.
+
+                                                                 If PCCPF_RST_VSEC_SCTL[MSIX_SEC] (for documentation, see
+                                                                 PCCPF_XXX_VSEC_SCTL[MSIX_SEC]) is
+                                                                 set, all vectors are secure and function as if [SECVEC] was set.
+                                                                 This field is always reinitialized on a chip domain reset. */
+#else /* Word 0 - Little Endian */
+        uint64_t secvec                : 1;  /**< [  0:  0](SR/W) Secure vector.
+                                                                   0 = This vector can be read or written by either secure or nonsecure states.
+                                                                   1 = This vector's RST_MSIX_VEC()_ADDR, RST_MSIX_VEC()_CTL, and
+                                                                       corresponding bit of RST_MSIX_PBA() are RAZ/WI and does not cause
+                                                                       a fault when accessed by the nonsecure world.
+
+                                                                 If PCCPF_RST_VSEC_SCTL[MSIX_SEC] (for documentation, see
+                                                                 PCCPF_XXX_VSEC_SCTL[MSIX_SEC]) is
+                                                                 set, all vectors are secure and function as if [SECVEC] was set.
+                                                                 This field is always reinitialized on a chip domain reset. */
+        uint64_t reserved_1            : 1;
+        uint64_t addr                  : 51; /**< [ 52:  2](R/W) IOVA to use for MSI-X delivery of this vector.
+                                                                 This field is always reinitialized on a chip domain reset. */
+        uint64_t reserved_53_63        : 11;
+#endif /* Word 0 - End */
+    } cn9;
+    /* struct cavm_rst_msix_vecx_addr_cn9 cn96xxp1; */
+    struct cavm_rst_msix_vecx_addr_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_53_63        : 11;
+        uint64_t addr                  : 51; /**< [ 52:  2](R/W) IOVA to use for MSI-X delivery of this vector.
+                                                                 This field is always reinitialized on a chip domain reset. */
+        uint64_t reserved_1            : 1;
+        uint64_t secvec                : 1;  /**< [  0:  0](SR/W) Secure vector.
                                                                  0 = This vector may be read or written by either secure or nonsecure states.
                                                                  The vector's IOVA is sent to the SMMU as nonsecure (though this only affects
                                                                  physical addresses if PCCPF_XXX_VSEC_SCTL[MSIX_PHYS]=1).
@@ -5577,7 +7509,10 @@ union cavm_rst_msix_vecx_addr
                                                                  This field is always reinitialized on a chip domain reset. */
         uint64_t reserved_53_63        : 11;
 #endif /* Word 0 - End */
-    } cn9;
+    } cn96xxp3;
+    /* struct cavm_rst_msix_vecx_addr_cn96xxp3 cn98xx; */
+    /* struct cavm_rst_msix_vecx_addr_cn96xxp3 cnf95xx; */
+    /* struct cavm_rst_msix_vecx_addr_cn96xxp3 loki; */
 };
 typedef union cavm_rst_msix_vecx_addr cavm_rst_msix_vecx_addr_t;
 
@@ -5862,6 +7797,72 @@ union cavm_rst_out_ctl
         uint64_t reserved_1_63         : 63;
 #endif /* Word 0 - End */
     } cn8;
+    struct cavm_rst_out_ctl_cn9
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_5_63         : 59;
+        uint64_t bphy_rst              : 1;  /**< [  4:  4](R/W) BPHY reset output. When set by software, this field drives the GPIO_PIN_SEL_E::BPHY_RESET_OUT
+                                                                 selectable pin active. The pin can be assigned using GPIO_BIT_CFG(). If this
+                                                                 field is set by software then it must also be cleared to deassert the pin.
+                                                                 The pin is also automatically asserted and deasserted by hardware during a BPHY
+                                                                 domain reset.
+                                                                 This field is always reinitialized on a BPHY domain reset. */
+        uint64_t scp_rst               : 1;  /**< [  3:  3](R/W) SCP reset output. When set by software, this field drives the GPIO_PIN_SEL_E::SCP_RESET_OUT
+                                                                 selectable pin active. The pin can be assigned using GPIO_BIT_CFG(). If this
+                                                                 field is set by software then it must also be cleared to deassert the pin.
+                                                                 The pin is also automatically asserted and deasserted by hardware during a SCP
+                                                                 domain reset.
+                                                                 This field is always reinitialized on an SCP domain reset. */
+        uint64_t mcp_rst               : 1;  /**< [  2:  2](R/W) MCP reset output. When set by software, this field drives the GPIO_PIN_SEL_E::MCP_RESET_OUT
+                                                                 selectable pin active. The pin can be assigned using GPIO_BIT_CFG(). If this
+                                                                 field is set by software then it must also be cleared to deassert the pin.
+                                                                 The pin is also automatically asserted and deasserted by hardware during a MCP
+                                                                 domain reset.
+                                                                 This field is always reinitialized on an MCP domain reset. */
+        uint64_t core_rst              : 1;  /**< [  1:  1](R/W) Core reset output. When set by software, this field drives the GPIO_PIN_SEL_E::CORE_RESET_OUT
+                                                                 selectable pin active. The pin can be assigned using GPIO_BIT_CFG(). If this
+                                                                 field is set by software then it must also be cleared to deassert the pin.
+                                                                 The pin is also automatically asserted and deasserted by hardware during a core
+                                                                 domain reset.
+                                                                 This field is always reinitialized on a core domain reset. */
+        uint64_t chip_rst              : 1;  /**< [  0:  0](R/W) Chip domain reset output. When set to one by software, this field drives the
+                                                                 CHIP_RESET_OUT_L pin active low. If this field is set my software then it must also be
+                                                                 cleared to deassert the pin. The pin is also automatically asserted and deasserted by
+                                                                 hardware during a chip domain reset.
+                                                                 This field is always reinitialized on a chip domain reset. */
+#else /* Word 0 - Little Endian */
+        uint64_t chip_rst              : 1;  /**< [  0:  0](R/W) Chip domain reset output. When set to one by software, this field drives the
+                                                                 CHIP_RESET_OUT_L pin active low. If this field is set my software then it must also be
+                                                                 cleared to deassert the pin. The pin is also automatically asserted and deasserted by
+                                                                 hardware during a chip domain reset.
+                                                                 This field is always reinitialized on a chip domain reset. */
+        uint64_t core_rst              : 1;  /**< [  1:  1](R/W) Core reset output. When set by software, this field drives the GPIO_PIN_SEL_E::CORE_RESET_OUT
+                                                                 selectable pin active. The pin can be assigned using GPIO_BIT_CFG(). If this
+                                                                 field is set by software then it must also be cleared to deassert the pin.
+                                                                 The pin is also automatically asserted and deasserted by hardware during a core
+                                                                 domain reset.
+                                                                 This field is always reinitialized on a core domain reset. */
+        uint64_t mcp_rst               : 1;  /**< [  2:  2](R/W) MCP reset output. When set by software, this field drives the GPIO_PIN_SEL_E::MCP_RESET_OUT
+                                                                 selectable pin active. The pin can be assigned using GPIO_BIT_CFG(). If this
+                                                                 field is set by software then it must also be cleared to deassert the pin.
+                                                                 The pin is also automatically asserted and deasserted by hardware during a MCP
+                                                                 domain reset.
+                                                                 This field is always reinitialized on an MCP domain reset. */
+        uint64_t scp_rst               : 1;  /**< [  3:  3](R/W) SCP reset output. When set by software, this field drives the GPIO_PIN_SEL_E::SCP_RESET_OUT
+                                                                 selectable pin active. The pin can be assigned using GPIO_BIT_CFG(). If this
+                                                                 field is set by software then it must also be cleared to deassert the pin.
+                                                                 The pin is also automatically asserted and deasserted by hardware during a SCP
+                                                                 domain reset.
+                                                                 This field is always reinitialized on an SCP domain reset. */
+        uint64_t bphy_rst              : 1;  /**< [  4:  4](R/W) BPHY reset output. When set by software, this field drives the GPIO_PIN_SEL_E::BPHY_RESET_OUT
+                                                                 selectable pin active. The pin can be assigned using GPIO_BIT_CFG(). If this
+                                                                 field is set by software then it must also be cleared to deassert the pin.
+                                                                 The pin is also automatically asserted and deasserted by hardware during a BPHY
+                                                                 domain reset.
+                                                                 This field is always reinitialized on a BPHY domain reset. */
+        uint64_t reserved_5_63         : 59;
+#endif /* Word 0 - End */
+    } cn9;
     struct cavm_rst_out_ctl_cn96xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -5916,73 +7917,9 @@ union cavm_rst_out_ctl
         uint64_t reserved_4_63         : 60;
 #endif /* Word 0 - End */
     } cn96xx;
-    struct cavm_rst_out_ctl_cnf95xx
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_5_63         : 59;
-        uint64_t bphy_rst              : 1;  /**< [  4:  4](R/W) BPHY reset output. When set by software, this field drives the GPIO_PIN_SEL_E::BPHY_RESET_OUT
-                                                                 selectable pin active. The pin can be assigned using GPIO_BIT_CFG(). If this
-                                                                 field is set by software then it must also be cleared to deassert the pin.
-                                                                 The pin is also automatically asserted and deasserted by hardware during a BPHY
-                                                                 domain reset.
-                                                                 This field is always reinitialized on a BPHY domain reset. */
-        uint64_t scp_rst               : 1;  /**< [  3:  3](R/W) SCP reset output. When set by software, this field drives the GPIO_PIN_SEL_E::SCP_RESET_OUT
-                                                                 selectable pin active. The pin can be assigned using GPIO_BIT_CFG(). If this
-                                                                 field is set by software then it must also be cleared to deassert the pin.
-                                                                 The pin is also automatically asserted and deasserted by hardware during a SCP
-                                                                 domain reset.
-                                                                 This field is always reinitialized on an SCP domain reset. */
-        uint64_t mcp_rst               : 1;  /**< [  2:  2](R/W) MCP reset output. When set by software, this field drives the GPIO_PIN_SEL_E::MCP_RESET_OUT
-                                                                 selectable pin active. The pin can be assigned using GPIO_BIT_CFG(). If this
-                                                                 field is set by software then it must also be cleared to deassert the pin.
-                                                                 The pin is also automatically asserted and deasserted by hardware during a MCP
-                                                                 domain reset.
-                                                                 This field is always reinitialized on an MCP domain reset. */
-        uint64_t core_rst              : 1;  /**< [  1:  1](R/W) Core reset output. When set by software, this field drives the GPIO_PIN_SEL_E::CORE_RESET_OUT
-                                                                 selectable pin active. The pin can be assigned using GPIO_BIT_CFG(). If this
-                                                                 field is set by software then it must also be cleared to deassert the pin.
-                                                                 The pin is also automatically asserted and deasserted by hardware during a core
-                                                                 domain reset.
-                                                                 This field is always reinitialized on a core domain reset. */
-        uint64_t chip_rst              : 1;  /**< [  0:  0](R/W) Chip domain reset output. When set to one by software, this field drives the
-                                                                 CHIP_RESET_OUT_L pin active low. If this field is set my software then it must also be
-                                                                 cleared to deassert the pin. The pin is also automatically asserted and deasserted by
-                                                                 hardware during a chip domain reset.
-                                                                 This field is always reinitialized on a chip domain reset. */
-#else /* Word 0 - Little Endian */
-        uint64_t chip_rst              : 1;  /**< [  0:  0](R/W) Chip domain reset output. When set to one by software, this field drives the
-                                                                 CHIP_RESET_OUT_L pin active low. If this field is set my software then it must also be
-                                                                 cleared to deassert the pin. The pin is also automatically asserted and deasserted by
-                                                                 hardware during a chip domain reset.
-                                                                 This field is always reinitialized on a chip domain reset. */
-        uint64_t core_rst              : 1;  /**< [  1:  1](R/W) Core reset output. When set by software, this field drives the GPIO_PIN_SEL_E::CORE_RESET_OUT
-                                                                 selectable pin active. The pin can be assigned using GPIO_BIT_CFG(). If this
-                                                                 field is set by software then it must also be cleared to deassert the pin.
-                                                                 The pin is also automatically asserted and deasserted by hardware during a core
-                                                                 domain reset.
-                                                                 This field is always reinitialized on a core domain reset. */
-        uint64_t mcp_rst               : 1;  /**< [  2:  2](R/W) MCP reset output. When set by software, this field drives the GPIO_PIN_SEL_E::MCP_RESET_OUT
-                                                                 selectable pin active. The pin can be assigned using GPIO_BIT_CFG(). If this
-                                                                 field is set by software then it must also be cleared to deassert the pin.
-                                                                 The pin is also automatically asserted and deasserted by hardware during a MCP
-                                                                 domain reset.
-                                                                 This field is always reinitialized on an MCP domain reset. */
-        uint64_t scp_rst               : 1;  /**< [  3:  3](R/W) SCP reset output. When set by software, this field drives the GPIO_PIN_SEL_E::SCP_RESET_OUT
-                                                                 selectable pin active. The pin can be assigned using GPIO_BIT_CFG(). If this
-                                                                 field is set by software then it must also be cleared to deassert the pin.
-                                                                 The pin is also automatically asserted and deasserted by hardware during a SCP
-                                                                 domain reset.
-                                                                 This field is always reinitialized on an SCP domain reset. */
-        uint64_t bphy_rst              : 1;  /**< [  4:  4](R/W) BPHY reset output. When set by software, this field drives the GPIO_PIN_SEL_E::BPHY_RESET_OUT
-                                                                 selectable pin active. The pin can be assigned using GPIO_BIT_CFG(). If this
-                                                                 field is set by software then it must also be cleared to deassert the pin.
-                                                                 The pin is also automatically asserted and deasserted by hardware during a BPHY
-                                                                 domain reset.
-                                                                 This field is always reinitialized on a BPHY domain reset. */
-        uint64_t reserved_5_63         : 59;
-#endif /* Word 0 - End */
-    } cnf95xx;
-    /* struct cavm_rst_out_ctl_cnf95xx loki; */
+    /* struct cavm_rst_out_ctl_cn96xx cn98xx; */
+    /* struct cavm_rst_out_ctl_cn9 cnf95xx; */
+    /* struct cavm_rst_out_ctl_cn9 loki; */
 };
 typedef union cavm_rst_out_ctl cavm_rst_out_ctl_t;
 
@@ -6012,27 +7949,7 @@ union cavm_rst_pll_limit
     struct cavm_rst_pll_limit_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_39_63        : 25;
-        uint64_t bphy_max_mul          : 7;  /**< [ 38: 32](R/W/H) BPHY clock maximum PLL multiplier.
-                                                                 This field is used to limit the RST_DSP_PLL[CUR_MUL] value.
-                                                                 A value of zero is considered unlimited.  Once the value
-                                                                 of this field is nonzero, any new values written into this field
-                                                                 cannot exceed the previous value.  Values 1-5 are considered illegal
-                                                                 since the minimum PLL frequency is 300 MHz.
-
-                                                                 Internal:
-                                                                 The field is initialized to FUS_FUSE_NUM_E::BPHY_MAX_MUL() fuses on a chip domain reset. */
-        uint64_t reserved_31           : 1;
-        uint64_t dsp_max_mul           : 7;  /**< [ 30: 24](R/W/H) DSP clock maximum PLL multiplier.
-                                                                 This field is used to limit the RST_DSP_PLL[CUR_MUL] value.
-                                                                 A value of zero is considered unlimited.  Once the value
-                                                                 of this field is nonzero, any new values written into this field
-                                                                 cannot exceed the previous value.  Values 1-5 are considered illegal
-                                                                 since the minimum PLL frequency is 300 MHz.
-
-                                                                 Internal:
-                                                                 The field is initialized to FUS_FUSE_NUM_E::DSP_MAX_MUL() fuses on a chip domain reset. */
-        uint64_t reserved_23           : 1;
+        uint64_t reserved_23_63        : 41;
         uint64_t cpt_max_mul           : 7;  /**< [ 22: 16](R/W/H) Crypto clock maximum PLL multiplier.
                                                                  This field is used to limit the RST_CPT_PLL[CUR_MUL] value.
                                                                  A value of zero is considered unlimited.  Once the value
@@ -6094,34 +8011,36 @@ union cavm_rst_pll_limit
 
                                                                  Internal:
                                                                  The field is initialized to FUS_FUSE_NUM_E::CPT_MAX_MUL() fuses on a chip domain reset. */
-        uint64_t reserved_23           : 1;
-        uint64_t dsp_max_mul           : 7;  /**< [ 30: 24](R/W/H) DSP clock maximum PLL multiplier.
-                                                                 This field is used to limit the RST_DSP_PLL[CUR_MUL] value.
-                                                                 A value of zero is considered unlimited.  Once the value
-                                                                 of this field is nonzero, any new values written into this field
-                                                                 cannot exceed the previous value.  Values 1-5 are considered illegal
-                                                                 since the minimum PLL frequency is 300 MHz.
-
-                                                                 Internal:
-                                                                 The field is initialized to FUS_FUSE_NUM_E::DSP_MAX_MUL() fuses on a chip domain reset. */
-        uint64_t reserved_31           : 1;
-        uint64_t bphy_max_mul          : 7;  /**< [ 38: 32](R/W/H) BPHY clock maximum PLL multiplier.
-                                                                 This field is used to limit the RST_DSP_PLL[CUR_MUL] value.
-                                                                 A value of zero is considered unlimited.  Once the value
-                                                                 of this field is nonzero, any new values written into this field
-                                                                 cannot exceed the previous value.  Values 1-5 are considered illegal
-                                                                 since the minimum PLL frequency is 300 MHz.
-
-                                                                 Internal:
-                                                                 The field is initialized to FUS_FUSE_NUM_E::BPHY_MAX_MUL() fuses on a chip domain reset. */
-        uint64_t reserved_39_63        : 25;
+        uint64_t reserved_23_63        : 41;
 #endif /* Word 0 - End */
     } s;
-    struct cavm_rst_pll_limit_cn96xx
+    /* struct cavm_rst_pll_limit_s cn9; */
+    /* struct cavm_rst_pll_limit_s cn96xx; */
+    struct cavm_rst_pll_limit_cn98xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_23_63        : 41;
-        uint64_t cpt_max_mul           : 7;  /**< [ 22: 16](R/W/H) Crypto clock maximum PLL multiplier.
+        uint64_t reserved_39_63        : 25;
+        uint64_t rxp_max_mul           : 7;  /**< [ 38: 32](R/W/H) RXP clock maximum PLL multiplier.
+                                                                 This field is used to limit the RST_RXP_PLL[CUR_MUL] value.
+                                                                 A value of zero is considered unlimited.  Once the value
+                                                                 of this field is nonzero, any new values written into this field
+                                                                 cannot exceed the previous value. Values 1-3 are considered illegal
+                                                                 since the minimum PLL frequency is 200 MHz.
+
+                                                                 Internal:
+                                                                 The field is initialized to FUS_FUSE_NUM_E::RXP_MAX_MUL() fuses on a chip domain reset. */
+        uint64_t reserved_31           : 1;
+        uint64_t cpt1_max_mul          : 7;  /**< [ 30: 24](R/W/H) Crypto clock maximum PLL multiplier for CPT1.
+                                                                 This field is used to limit the RST_CPT1_PLL[CUR_MUL] value.
+                                                                 A value of zero is considered unlimited.  Once the value
+                                                                 of this field is nonzero, any new values written into this field
+                                                                 cannot exceed the previous value. Values 1-3 are considered illegal
+                                                                 since the minimum PLL frequency is 200 MHz.
+
+                                                                 Internal:
+                                                                 The field is initialized to FUS_FUSE_NUM_E::CPT_MAX_MUL() fuses on a chip domain reset. */
+        uint64_t reserved_23           : 1;
+        uint64_t cpt_max_mul           : 7;  /**< [ 22: 16](R/W/H) Crypto clock maximum PLL multiplier for CPT0.
                                                                  This field is used to limit the RST_CPT_PLL[CUR_MUL] value.
                                                                  A value of zero is considered unlimited.  Once the value
                                                                  of this field is nonzero, any new values written into this field
@@ -6173,7 +8092,7 @@ union cavm_rst_pll_limit
                                                                  Internal:
                                                                  The field is initialized to FUS_FUSE_NUM_E::CORE_MAX_MUL() fuses on a chip domain reset. */
         uint64_t reserved_15           : 1;
-        uint64_t cpt_max_mul           : 7;  /**< [ 22: 16](R/W/H) Crypto clock maximum PLL multiplier.
+        uint64_t cpt_max_mul           : 7;  /**< [ 22: 16](R/W/H) Crypto clock maximum PLL multiplier for CPT0.
                                                                  This field is used to limit the RST_CPT_PLL[CUR_MUL] value.
                                                                  A value of zero is considered unlimited.  Once the value
                                                                  of this field is nonzero, any new values written into this field
@@ -6182,9 +8101,29 @@ union cavm_rst_pll_limit
 
                                                                  Internal:
                                                                  The field is initialized to FUS_FUSE_NUM_E::CPT_MAX_MUL() fuses on a chip domain reset. */
-        uint64_t reserved_23_63        : 41;
+        uint64_t reserved_23           : 1;
+        uint64_t cpt1_max_mul          : 7;  /**< [ 30: 24](R/W/H) Crypto clock maximum PLL multiplier for CPT1.
+                                                                 This field is used to limit the RST_CPT1_PLL[CUR_MUL] value.
+                                                                 A value of zero is considered unlimited.  Once the value
+                                                                 of this field is nonzero, any new values written into this field
+                                                                 cannot exceed the previous value. Values 1-3 are considered illegal
+                                                                 since the minimum PLL frequency is 200 MHz.
+
+                                                                 Internal:
+                                                                 The field is initialized to FUS_FUSE_NUM_E::CPT_MAX_MUL() fuses on a chip domain reset. */
+        uint64_t reserved_31           : 1;
+        uint64_t rxp_max_mul           : 7;  /**< [ 38: 32](R/W/H) RXP clock maximum PLL multiplier.
+                                                                 This field is used to limit the RST_RXP_PLL[CUR_MUL] value.
+                                                                 A value of zero is considered unlimited.  Once the value
+                                                                 of this field is nonzero, any new values written into this field
+                                                                 cannot exceed the previous value. Values 1-3 are considered illegal
+                                                                 since the minimum PLL frequency is 200 MHz.
+
+                                                                 Internal:
+                                                                 The field is initialized to FUS_FUSE_NUM_E::RXP_MAX_MUL() fuses on a chip domain reset. */
+        uint64_t reserved_39_63        : 25;
 #endif /* Word 0 - End */
-    } cn96xx;
+    } cn98xx;
     struct cavm_rst_pll_limit_cnf95xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -6432,7 +8371,130 @@ union cavm_rst_pnr_pll
         uint64_t reserved_51_63        : 13;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_rst_pnr_pll_s cn9; */
     /* struct cavm_rst_pnr_pll_s cn96xx; */
+    struct cavm_rst_pnr_pll_cn98xx
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_51_63        : 13;
+        uint64_t cout_sel              : 2;  /**< [ 50: 49](R/W) Coprocessor clockout select.
+                                                                   0x0 = Coprocessor clock divided by 32.
+                                                                   0x1 = Coprocessor clock tree output divided by 32.
+                                                                   0x2 = PLL0 output divided by 32.
+                                                                   0x3 = PLL1 output divided by 32.
+
+                                                                 This field is always reinitialized on a cold domain reset. */
+        uint64_t cout_reset            : 1;  /**< [ 48: 48](R/W) Coprocessor clockout reset. The coprocessor clockout should be placed in
+                                                                 reset at least 10 PLL reference clocks prior
+                                                                 to changing [COUT_SEL]. It should remain under reset for at least 10
+                                                                 PLL reference clocks after [COUT_SEL] changes.
+                                                                 This field is always reinitialized on a cold domain reset. */
+        uint64_t reserved_45_47        : 3;
+        uint64_t pd_switch             : 1;  /**< [ 44: 44](R/W) PLL powerdown on switch.  When set, hardware automatically
+                                                                 powers down the inactive PLL after the switch has occurred.
+                                                                 When cleared, the inactive PLL remains in operation.
+                                                                 If [PD_SWITCH] is written to a one while both [DLY_SWITCH] and
+                                                                 [NXT_PGM] are cleared then the inactive PLL will immediately powerdown.
+
+                                                                 Note that a powered-down PLL requires an additional 575 reference
+                                                                 clocks to become active.  This time is automatically added by the
+                                                                 hardware.
+
+                                                                 This field is always reinitialized on a cold domain reset. */
+        uint64_t dly_switch            : 12; /**< [ 43: 32](R/W/H) Switch the active PLL after delaying this number of 100 MHz clocks.
+                                                                 When set to a nonzero value, the hardware will wait for
+                                                                 any PLL programming to complete and then switch to the inactive
+                                                                 PLL after the specified number of PLL reference clocks. Hardware
+                                                                 will add additional clocks if required.
+
+                                                                 This field is always reinitialized on a cold domain reset.
+
+                                                                 Internal:
+                                                                 Hardware will add counts to maintain 256 rxp_clk/cpt_clk/sclk/rclk notification to
+                                                                 hardware.  Additional time will be added to wake up powered-down AP cores but that
+                                                                 time not be included in this count. */
+        uint64_t pll1_pd               : 1;  /**< [ 31: 31](RO) PNR PLL1 power down.  When set PLL is currently powered down. */
+        uint64_t pll0_pd               : 1;  /**< [ 30: 30](RO) PNR PLL0 power down.  When set PLL is currently powered down. */
+        uint64_t reserved_23_29        : 7;
+        uint64_t init_mul              : 7;  /**< [ 22: 16](R/W) Coprocessor clock multiplier to be used during a core or chip domain
+                                                                 reset.  Actual frequency is [INIT_MUL] * 50 MHz.  The actual value
+                                                                 used is limited by RST_PLL_LIMIT[PNR_MAX_MUL].
+                                                                 This field maintains its current value when written with a zero.
+                                                                 This field is always reinitialized on a cold domain reset. */
+        uint64_t nxt_pgm               : 1;  /**< [ 15: 15](R/W/H) Program non-active PLL using [NXT_MUL]. Hardware automatically
+                                                                 clears bit when both PLLs are updated and any delay specified
+                                                                 in [DLY_SWITCH] has completed.
+                                                                 This field is always reinitialized on a chip domain reset. */
+        uint64_t nxt_mul               : 7;  /**< [ 14:  8](R/W) Coprocessor PLL frequency to be program in 50 MHz increments.  The
+                                                                 actual value used is limited by RST_PLL_LIMIT[PNR_MAX_MUL] and
+                                                                 a minimum setting of 300 MHz.
+                                                                 Value will match [INIT_MUL] immediately after a cold or chip domain reset. */
+        uint64_t active_pll            : 1;  /**< [  7:  7](RO) Indicates which physical PLL is in use. For diagnostic use only. */
+        uint64_t cur_mul               : 7;  /**< [  6:  0](RO/H) Coprocessor clock frequency.  Actual frequency is [CUR_MUL] * 50 MHz.
+                                                                 Value will reflect [NXT_MUL] after [DLY_SWITCH] has completed or [INIT_MUL]
+                                                                 immediately after a cold or chip domain reset.  In both cases, value
+                                                                 is limited by RST_PLL_LIMIT[PNR_MAX_MUL]. */
+#else /* Word 0 - Little Endian */
+        uint64_t cur_mul               : 7;  /**< [  6:  0](RO/H) Coprocessor clock frequency.  Actual frequency is [CUR_MUL] * 50 MHz.
+                                                                 Value will reflect [NXT_MUL] after [DLY_SWITCH] has completed or [INIT_MUL]
+                                                                 immediately after a cold or chip domain reset.  In both cases, value
+                                                                 is limited by RST_PLL_LIMIT[PNR_MAX_MUL]. */
+        uint64_t active_pll            : 1;  /**< [  7:  7](RO) Indicates which physical PLL is in use. For diagnostic use only. */
+        uint64_t nxt_mul               : 7;  /**< [ 14:  8](R/W) Coprocessor PLL frequency to be program in 50 MHz increments.  The
+                                                                 actual value used is limited by RST_PLL_LIMIT[PNR_MAX_MUL] and
+                                                                 a minimum setting of 300 MHz.
+                                                                 Value will match [INIT_MUL] immediately after a cold or chip domain reset. */
+        uint64_t nxt_pgm               : 1;  /**< [ 15: 15](R/W/H) Program non-active PLL using [NXT_MUL]. Hardware automatically
+                                                                 clears bit when both PLLs are updated and any delay specified
+                                                                 in [DLY_SWITCH] has completed.
+                                                                 This field is always reinitialized on a chip domain reset. */
+        uint64_t init_mul              : 7;  /**< [ 22: 16](R/W) Coprocessor clock multiplier to be used during a core or chip domain
+                                                                 reset.  Actual frequency is [INIT_MUL] * 50 MHz.  The actual value
+                                                                 used is limited by RST_PLL_LIMIT[PNR_MAX_MUL].
+                                                                 This field maintains its current value when written with a zero.
+                                                                 This field is always reinitialized on a cold domain reset. */
+        uint64_t reserved_23_29        : 7;
+        uint64_t pll0_pd               : 1;  /**< [ 30: 30](RO) PNR PLL0 power down.  When set PLL is currently powered down. */
+        uint64_t pll1_pd               : 1;  /**< [ 31: 31](RO) PNR PLL1 power down.  When set PLL is currently powered down. */
+        uint64_t dly_switch            : 12; /**< [ 43: 32](R/W/H) Switch the active PLL after delaying this number of 100 MHz clocks.
+                                                                 When set to a nonzero value, the hardware will wait for
+                                                                 any PLL programming to complete and then switch to the inactive
+                                                                 PLL after the specified number of PLL reference clocks. Hardware
+                                                                 will add additional clocks if required.
+
+                                                                 This field is always reinitialized on a cold domain reset.
+
+                                                                 Internal:
+                                                                 Hardware will add counts to maintain 256 rxp_clk/cpt_clk/sclk/rclk notification to
+                                                                 hardware.  Additional time will be added to wake up powered-down AP cores but that
+                                                                 time not be included in this count. */
+        uint64_t pd_switch             : 1;  /**< [ 44: 44](R/W) PLL powerdown on switch.  When set, hardware automatically
+                                                                 powers down the inactive PLL after the switch has occurred.
+                                                                 When cleared, the inactive PLL remains in operation.
+                                                                 If [PD_SWITCH] is written to a one while both [DLY_SWITCH] and
+                                                                 [NXT_PGM] are cleared then the inactive PLL will immediately powerdown.
+
+                                                                 Note that a powered-down PLL requires an additional 575 reference
+                                                                 clocks to become active.  This time is automatically added by the
+                                                                 hardware.
+
+                                                                 This field is always reinitialized on a cold domain reset. */
+        uint64_t reserved_45_47        : 3;
+        uint64_t cout_reset            : 1;  /**< [ 48: 48](R/W) Coprocessor clockout reset. The coprocessor clockout should be placed in
+                                                                 reset at least 10 PLL reference clocks prior
+                                                                 to changing [COUT_SEL]. It should remain under reset for at least 10
+                                                                 PLL reference clocks after [COUT_SEL] changes.
+                                                                 This field is always reinitialized on a cold domain reset. */
+        uint64_t cout_sel              : 2;  /**< [ 50: 49](R/W) Coprocessor clockout select.
+                                                                   0x0 = Coprocessor clock divided by 32.
+                                                                   0x1 = Coprocessor clock tree output divided by 32.
+                                                                   0x2 = PLL0 output divided by 32.
+                                                                   0x3 = PLL1 output divided by 32.
+
+                                                                 This field is always reinitialized on a cold domain reset. */
+        uint64_t reserved_51_63        : 13;
+#endif /* Word 0 - End */
+    } cn98xx;
     struct cavm_rst_pnr_pll_cnf95xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -6629,13 +8691,23 @@ union cavm_rst_pp_available
     struct cavm_rst_pp_available_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_36_63        : 28;
+        uint64_t present               : 36; /**< [ 35:  0](RO) Each bit set indicates a physical core is present. */
+#else /* Word 0 - Little Endian */
+        uint64_t present               : 36; /**< [ 35:  0](RO) Each bit set indicates a physical core is present. */
+        uint64_t reserved_36_63        : 28;
+#endif /* Word 0 - End */
+    } s;
+    struct cavm_rst_pp_available_cn8
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_24_63        : 40;
         uint64_t present               : 24; /**< [ 23:  0](RO) Each bit set indicates a physical core is present. */
 #else /* Word 0 - Little Endian */
         uint64_t present               : 24; /**< [ 23:  0](RO) Each bit set indicates a physical core is present. */
         uint64_t reserved_24_63        : 40;
 #endif /* Word 0 - End */
-    } s;
+    } cn8;
     struct cavm_rst_pp_available_cn81xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -6646,8 +8718,10 @@ union cavm_rst_pp_available
         uint64_t reserved_4_63         : 60;
 #endif /* Word 0 - End */
     } cn81xx;
-    /* struct cavm_rst_pp_available_s cn83xx; */
-    /* struct cavm_rst_pp_available_s cn96xx; */
+    /* struct cavm_rst_pp_available_cn8 cn83xx; */
+    /* struct cavm_rst_pp_available_s cn9; */
+    /* struct cavm_rst_pp_available_cn8 cn96xx; */
+    /* struct cavm_rst_pp_available_s cn98xx; */
     struct cavm_rst_pp_available_cnf95xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -6690,6 +8764,28 @@ union cavm_rst_pp_pending
     struct cavm_rst_pp_pending_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_36_63        : 28;
+        uint64_t pend                  : 36; /**< [ 35:  0](RO/H) Set if corresponding core is waiting to change its reset state. Normally a reset change
+                                                                 occurs immediately but if RST_PP_POWER[GATE] = 1 and the core is released from
+                                                                 reset a delay of 64K core-clock cycles between each core reset applies to satisfy power
+                                                                 management.
+
+                                                                 The upper bits of this field remain accessible but will have no effect if the cores
+                                                                 are disabled. The number of bits set in RST_PP_AVAILABLE indicate the number of cores. */
+#else /* Word 0 - Little Endian */
+        uint64_t pend                  : 36; /**< [ 35:  0](RO/H) Set if corresponding core is waiting to change its reset state. Normally a reset change
+                                                                 occurs immediately but if RST_PP_POWER[GATE] = 1 and the core is released from
+                                                                 reset a delay of 64K core-clock cycles between each core reset applies to satisfy power
+                                                                 management.
+
+                                                                 The upper bits of this field remain accessible but will have no effect if the cores
+                                                                 are disabled. The number of bits set in RST_PP_AVAILABLE indicate the number of cores. */
+        uint64_t reserved_36_63        : 28;
+#endif /* Word 0 - End */
+    } s;
+    struct cavm_rst_pp_pending_cn8
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_24_63        : 40;
         uint64_t pend                  : 24; /**< [ 23:  0](RO/H) Set if corresponding core is waiting to change its reset state. Normally a reset change
                                                                  occurs immediately but if RST_PP_POWER[GATE] = 1 and the core is released from
@@ -6708,7 +8804,7 @@ union cavm_rst_pp_pending
                                                                  are disabled. The number of bits set in RST_PP_AVAILABLE indicate the number of cores. */
         uint64_t reserved_24_63        : 40;
 #endif /* Word 0 - End */
-    } s;
+    } cn8;
     struct cavm_rst_pp_pending_cn81xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -6731,7 +8827,31 @@ union cavm_rst_pp_pending
         uint64_t reserved_4_63         : 60;
 #endif /* Word 0 - End */
     } cn81xx;
-    /* struct cavm_rst_pp_pending_s cn83xx; */
+    /* struct cavm_rst_pp_pending_cn8 cn83xx; */
+    struct cavm_rst_pp_pending_cn9
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_36_63        : 28;
+        uint64_t pend                  : 36; /**< [ 35:  0](RO/H) Set if corresponding core is waiting to change its reset state. Normally a reset change
+                                                                 occurs immediately but if RST_PP_POWER[GATE] = 1 and the core is released from
+                                                                 reset a delay of 32K core-clock cycles between each core reset applies to satisfy power
+                                                                 management.
+                                                                 This field is always reinitialized on a core domain reset.
+
+                                                                 The upper bits of this field remain accessible but will have no effect if the cores
+                                                                 are disabled. The number of bits set in RST_PP_AVAILABLE indicate the number of cores. */
+#else /* Word 0 - Little Endian */
+        uint64_t pend                  : 36; /**< [ 35:  0](RO/H) Set if corresponding core is waiting to change its reset state. Normally a reset change
+                                                                 occurs immediately but if RST_PP_POWER[GATE] = 1 and the core is released from
+                                                                 reset a delay of 32K core-clock cycles between each core reset applies to satisfy power
+                                                                 management.
+                                                                 This field is always reinitialized on a core domain reset.
+
+                                                                 The upper bits of this field remain accessible but will have no effect if the cores
+                                                                 are disabled. The number of bits set in RST_PP_AVAILABLE indicate the number of cores. */
+        uint64_t reserved_36_63        : 28;
+#endif /* Word 0 - End */
+    } cn9;
     struct cavm_rst_pp_pending_cn96xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -6756,6 +8876,7 @@ union cavm_rst_pp_pending
         uint64_t reserved_24_63        : 40;
 #endif /* Word 0 - End */
     } cn96xx;
+    /* struct cavm_rst_pp_pending_cn9 cn98xx; */
     struct cavm_rst_pp_pending_cnf95xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -6810,6 +8931,32 @@ union cavm_rst_pp_power
     struct cavm_rst_pp_power_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_36_63        : 28;
+        uint64_t gate                  : 36; /**< [ 35:  0](R/W) Power down enable. When a bit in this field and the corresponding RST_PP_RESET bit are
+                                                                 set,
+                                                                 the core
+                                                                 has voltage removed to save power. In typical operation these bits are set up during
+                                                                 initialization and core resets are controlled through RST_PP_RESET. These bits can only be
+                                                                 changed when the corresponding core is in reset.
+
+                                                                 The upper bits of this field remain accessible but will have no effect if the cores
+                                                                 are disabled. The number of bits set in RST_PP_AVAILABLE indicate the number of cores. */
+#else /* Word 0 - Little Endian */
+        uint64_t gate                  : 36; /**< [ 35:  0](R/W) Power down enable. When a bit in this field and the corresponding RST_PP_RESET bit are
+                                                                 set,
+                                                                 the core
+                                                                 has voltage removed to save power. In typical operation these bits are set up during
+                                                                 initialization and core resets are controlled through RST_PP_RESET. These bits can only be
+                                                                 changed when the corresponding core is in reset.
+
+                                                                 The upper bits of this field remain accessible but will have no effect if the cores
+                                                                 are disabled. The number of bits set in RST_PP_AVAILABLE indicate the number of cores. */
+        uint64_t reserved_36_63        : 28;
+#endif /* Word 0 - End */
+    } s;
+    struct cavm_rst_pp_power_cn8
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_24_63        : 40;
         uint64_t gate                  : 24; /**< [ 23:  0](R/W) Power down enable. When a bit in this field and the corresponding RST_PP_RESET bit are
                                                                  set,
@@ -6832,7 +8979,7 @@ union cavm_rst_pp_power
                                                                  are disabled. The number of bits set in RST_PP_AVAILABLE indicate the number of cores. */
         uint64_t reserved_24_63        : 40;
 #endif /* Word 0 - End */
-    } s;
+    } cn8;
     struct cavm_rst_pp_power_cn81xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -6859,7 +9006,41 @@ union cavm_rst_pp_power
         uint64_t reserved_4_63         : 60;
 #endif /* Word 0 - End */
     } cn81xx;
-    /* struct cavm_rst_pp_power_s cn83xx; */
+    /* struct cavm_rst_pp_power_cn8 cn83xx; */
+    struct cavm_rst_pp_power_cn9
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_36_63        : 28;
+        uint64_t gate                  : 36; /**< [ 35:  0](R/W) When a bit in this field and the corresponding
+                                                                 RST_PP_RESET bit are set, the AP core is reduced to minimum power consumption.
+                                                                 In typical operation these bits are set up during initialization and the
+                                                                 AP core resets are controlled through RST_PP_RESET. These bits can only be
+                                                                 changed when the corresponding AP core is in reset.
+
+                                                                 The upper bits of this field remain accessible but will have no effect if the cores
+                                                                 are disabled. The number of bits set in RST_PP_AVAILABLE indicate the number of cores.
+                                                                 This field is always reinitialized on a core domain reset.
+
+                                                                 Internal:
+                                                                 Note this does not power off the cores, but only reduces power. There is no
+                                                                 per-core power gating in CNXXXX. */
+#else /* Word 0 - Little Endian */
+        uint64_t gate                  : 36; /**< [ 35:  0](R/W) When a bit in this field and the corresponding
+                                                                 RST_PP_RESET bit are set, the AP core is reduced to minimum power consumption.
+                                                                 In typical operation these bits are set up during initialization and the
+                                                                 AP core resets are controlled through RST_PP_RESET. These bits can only be
+                                                                 changed when the corresponding AP core is in reset.
+
+                                                                 The upper bits of this field remain accessible but will have no effect if the cores
+                                                                 are disabled. The number of bits set in RST_PP_AVAILABLE indicate the number of cores.
+                                                                 This field is always reinitialized on a core domain reset.
+
+                                                                 Internal:
+                                                                 Note this does not power off the cores, but only reduces power. There is no
+                                                                 per-core power gating in CNXXXX. */
+        uint64_t reserved_36_63        : 28;
+#endif /* Word 0 - End */
+    } cn9;
     struct cavm_rst_pp_power_cn96xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -6894,6 +9075,7 @@ union cavm_rst_pp_power
         uint64_t reserved_24_63        : 40;
 #endif /* Word 0 - End */
     } cn96xx;
+    /* struct cavm_rst_pp_power_cn9 cn98xx; */
     struct cavm_rst_pp_power_cnf95xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -6958,6 +9140,32 @@ union cavm_rst_pp_power_stat
     struct cavm_rst_pp_power_stat_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_36_63        : 28;
+        uint64_t down                  : 36; /**< [ 35:  0](RO/H) Reserved.
+                                                                 Internal:
+                                                                 Core Powerdown. When set, each bit indicates the core is currently powered down.
+                                                                 Typically this occurs when the corresponding RST_PP_RESET and RST_PP_POWER bits are set.
+                                                                 If the core is powered down when RST_PP_PENDING and RST_PP_RESET are both clear then the
+                                                                 core should be reset again by setting the RST_PP_RESET and then clearing it.
+
+                                                                 The upper bits of this field remain accessible but will have no effect if the cores
+                                                                 are disabled. The number of bits set in RST_PP_AVAILABLE indicate the number of cores. */
+#else /* Word 0 - Little Endian */
+        uint64_t down                  : 36; /**< [ 35:  0](RO/H) Reserved.
+                                                                 Internal:
+                                                                 Core Powerdown. When set, each bit indicates the core is currently powered down.
+                                                                 Typically this occurs when the corresponding RST_PP_RESET and RST_PP_POWER bits are set.
+                                                                 If the core is powered down when RST_PP_PENDING and RST_PP_RESET are both clear then the
+                                                                 core should be reset again by setting the RST_PP_RESET and then clearing it.
+
+                                                                 The upper bits of this field remain accessible but will have no effect if the cores
+                                                                 are disabled. The number of bits set in RST_PP_AVAILABLE indicate the number of cores. */
+        uint64_t reserved_36_63        : 28;
+#endif /* Word 0 - End */
+    } s;
+    struct cavm_rst_pp_power_stat_cn8
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_24_63        : 40;
         uint64_t down                  : 24; /**< [ 23:  0](RO/H) Reserved.
                                                                  Internal:
@@ -6980,7 +9188,7 @@ union cavm_rst_pp_power_stat
                                                                  are disabled. The number of bits set in RST_PP_AVAILABLE indicate the number of cores. */
         uint64_t reserved_24_63        : 40;
 #endif /* Word 0 - End */
-    } s;
+    } cn8;
     struct cavm_rst_pp_power_stat_cn81xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -7007,7 +9215,37 @@ union cavm_rst_pp_power_stat
         uint64_t reserved_4_63         : 60;
 #endif /* Word 0 - End */
     } cn81xx;
-    /* struct cavm_rst_pp_power_stat_s cn83xx; */
+    /* struct cavm_rst_pp_power_stat_cn8 cn83xx; */
+    struct cavm_rst_pp_power_stat_cn9
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_36_63        : 28;
+        uint64_t down                  : 36; /**< [ 35:  0](RO/H) Reserved.
+                                                                 Internal:
+                                                                 Core Powerdown. When set, each bit indicates the core is currently powered down.
+                                                                 Typically this occurs when the corresponding RST_PP_RESET and RST_PP_POWER bits are set.
+                                                                 If the core is powered down when RST_PP_PENDING and RST_PP_RESET are both clear then the
+                                                                 core should be reset again by setting the RST_PP_RESET and then clearing it.
+
+                                                                 The upper bits of this field remain accessible but will have no effect if the cores
+                                                                 are disabled. The number of bits set in RST_PP_AVAILABLE indicate the number of cores.
+
+                                                                 This field is reinitialized on a cold domain reset. */
+#else /* Word 0 - Little Endian */
+        uint64_t down                  : 36; /**< [ 35:  0](RO/H) Reserved.
+                                                                 Internal:
+                                                                 Core Powerdown. When set, each bit indicates the core is currently powered down.
+                                                                 Typically this occurs when the corresponding RST_PP_RESET and RST_PP_POWER bits are set.
+                                                                 If the core is powered down when RST_PP_PENDING and RST_PP_RESET are both clear then the
+                                                                 core should be reset again by setting the RST_PP_RESET and then clearing it.
+
+                                                                 The upper bits of this field remain accessible but will have no effect if the cores
+                                                                 are disabled. The number of bits set in RST_PP_AVAILABLE indicate the number of cores.
+
+                                                                 This field is reinitialized on a cold domain reset. */
+        uint64_t reserved_36_63        : 28;
+#endif /* Word 0 - End */
+    } cn9;
     struct cavm_rst_pp_power_stat_cn96xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -7038,6 +9276,7 @@ union cavm_rst_pp_power_stat
         uint64_t reserved_24_63        : 40;
 #endif /* Word 0 - End */
     } cn96xx;
+    /* struct cavm_rst_pp_power_stat_cn9 cn98xx; */
     struct cavm_rst_pp_power_stat_cnf95xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -7107,6 +9346,30 @@ union cavm_rst_pp_reset
         uint64_t reserved_0_63         : 64;
 #endif /* Word 0 - End */
     } s;
+    struct cavm_rst_pp_reset_cn8
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_24_63        : 40;
+        uint64_t rst                   : 23; /**< [ 23:  1](R/W/H) Core reset for cores 1 and above. Writing a 1 holds the corresponding core in reset,
+                                                                 writing a 0 releases from reset. These bits may also be cleared by either DAP or CIC
+                                                                 activity.
+
+                                                                 The upper bits of this field remain accessible but will have no effect if the cores
+                                                                 are disabled. The number of bits set in RST_PP_AVAILABLE indicate the number of cores. */
+        uint64_t rst0                  : 1;  /**< [  0:  0](R/W/H) Core reset for core 0, depends on if GPIO_STRAP\<2:0\> = RST_BOOT_METHOD_E::REMOTE.
+                                                                 This bit may also be cleared by either DAP or CIC activity. */
+#else /* Word 0 - Little Endian */
+        uint64_t rst0                  : 1;  /**< [  0:  0](R/W/H) Core reset for core 0, depends on if GPIO_STRAP\<2:0\> = RST_BOOT_METHOD_E::REMOTE.
+                                                                 This bit may also be cleared by either DAP or CIC activity. */
+        uint64_t rst                   : 23; /**< [ 23:  1](R/W/H) Core reset for cores 1 and above. Writing a 1 holds the corresponding core in reset,
+                                                                 writing a 0 releases from reset. These bits may also be cleared by either DAP or CIC
+                                                                 activity.
+
+                                                                 The upper bits of this field remain accessible but will have no effect if the cores
+                                                                 are disabled. The number of bits set in RST_PP_AVAILABLE indicate the number of cores. */
+        uint64_t reserved_24_63        : 40;
+#endif /* Word 0 - End */
+    } cn8;
     struct cavm_rst_pp_reset_cn81xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -7131,30 +9394,23 @@ union cavm_rst_pp_reset
         uint64_t reserved_4_63         : 60;
 #endif /* Word 0 - End */
     } cn81xx;
-    struct cavm_rst_pp_reset_cn83xx
+    /* struct cavm_rst_pp_reset_cn8 cn83xx; */
+    struct cavm_rst_pp_reset_cn9
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_24_63        : 40;
-        uint64_t rst                   : 23; /**< [ 23:  1](R/W/H) Core reset for cores 1 and above. Writing a 1 holds the corresponding core in reset,
-                                                                 writing a 0 releases from reset. These bits may also be cleared by either DAP or CIC
-                                                                 activity.
-
-                                                                 The upper bits of this field remain accessible but will have no effect if the cores
-                                                                 are disabled. The number of bits set in RST_PP_AVAILABLE indicate the number of cores. */
-        uint64_t rst0                  : 1;  /**< [  0:  0](R/W/H) Core reset for core 0, depends on if GPIO_STRAP\<2:0\> = RST_BOOT_METHOD_E::REMOTE.
-                                                                 This bit may also be cleared by either DAP or CIC activity. */
+        uint64_t reserved_36_63        : 28;
+        uint64_t rst                   : 36; /**< [ 35:  0](R/W/H) AP core resets. Writing a one holds the corresponding AP core in reset,
+                                                                 writing a zero releases it from reset. These bits may also be cleared by
+                                                                 either DAP or CIC activity.
+                                                                 This field is always reinitialized on a core domain reset. */
 #else /* Word 0 - Little Endian */
-        uint64_t rst0                  : 1;  /**< [  0:  0](R/W/H) Core reset for core 0, depends on if GPIO_STRAP\<2:0\> = RST_BOOT_METHOD_E::REMOTE.
-                                                                 This bit may also be cleared by either DAP or CIC activity. */
-        uint64_t rst                   : 23; /**< [ 23:  1](R/W/H) Core reset for cores 1 and above. Writing a 1 holds the corresponding core in reset,
-                                                                 writing a 0 releases from reset. These bits may also be cleared by either DAP or CIC
-                                                                 activity.
-
-                                                                 The upper bits of this field remain accessible but will have no effect if the cores
-                                                                 are disabled. The number of bits set in RST_PP_AVAILABLE indicate the number of cores. */
-        uint64_t reserved_24_63        : 40;
+        uint64_t rst                   : 36; /**< [ 35:  0](R/W/H) AP core resets. Writing a one holds the corresponding AP core in reset,
+                                                                 writing a zero releases it from reset. These bits may also be cleared by
+                                                                 either DAP or CIC activity.
+                                                                 This field is always reinitialized on a core domain reset. */
+        uint64_t reserved_36_63        : 28;
 #endif /* Word 0 - End */
-    } cn83xx;
+    } cn9;
     struct cavm_rst_pp_reset_cn96xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -7171,6 +9427,7 @@ union cavm_rst_pp_reset
         uint64_t reserved_24_63        : 40;
 #endif /* Word 0 - End */
     } cn96xx;
+    /* struct cavm_rst_pp_reset_cn9 cn98xx; */
     struct cavm_rst_pp_reset_cnf95xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -7243,6 +9500,7 @@ union cavm_rst_ref_check
                                                                  * Reference clock increased or decreased in frequency. */
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_rst_ref_check_s cn8; */
     struct cavm_rst_ref_check_cn81xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -7485,6 +9743,7 @@ union cavm_rst_refc_ctl
         uint64_t reserved_9_63         : 55;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_rst_refc_ctl_s cn9; */
     /* struct cavm_rst_refc_ctl_s cn96xxp1; */
     struct cavm_rst_refc_ctl_cn96xxp3
     {
@@ -7566,6 +9825,7 @@ union cavm_rst_refc_ctl
         uint64_t reserved_9_63         : 55;
 #endif /* Word 0 - End */
     } cn96xxp3;
+    /* struct cavm_rst_refc_ctl_cn96xxp3 cn98xx; */
     /* struct cavm_rst_refc_ctl_s cnf95xxp1; */
     /* struct cavm_rst_refc_ctl_cn96xxp3 cnf95xxp2; */
     /* struct cavm_rst_refc_ctl_cn96xxp3 loki; */
@@ -7623,7 +9883,30 @@ union cavm_rst_reset_active
         uint64_t reserved_5_63         : 59;
 #endif /* Word 0 - End */
     } s;
-    struct cavm_rst_reset_active_cn96xx
+    /* struct cavm_rst_reset_active_s cn9; */
+    struct cavm_rst_reset_active_cn96xxp1
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_4_63         : 60;
+        uint64_t scp                   : 1;  /**< [  3:  3](RO/H) SCP domain reset status.  When set, SCP domain is in reset.
+                                                                 Default reset value is zero after a chip reset. */
+        uint64_t mcp                   : 1;  /**< [  2:  2](RO/H) MCP domain reset status.  When set, MCP domain is in reset.
+                                                                 Default reset value is one after a chip reset. */
+        uint64_t core                  : 1;  /**< [  1:  1](RO/H) Core domain reset status.  When set, core domain is in reset.
+                                                                 Default reset value is one after a chip reset. */
+        uint64_t reserved_0            : 1;
+#else /* Word 0 - Little Endian */
+        uint64_t reserved_0            : 1;
+        uint64_t core                  : 1;  /**< [  1:  1](RO/H) Core domain reset status.  When set, core domain is in reset.
+                                                                 Default reset value is one after a chip reset. */
+        uint64_t mcp                   : 1;  /**< [  2:  2](RO/H) MCP domain reset status.  When set, MCP domain is in reset.
+                                                                 Default reset value is one after a chip reset. */
+        uint64_t scp                   : 1;  /**< [  3:  3](RO/H) SCP domain reset status.  When set, SCP domain is in reset.
+                                                                 Default reset value is zero after a chip reset. */
+        uint64_t reserved_4_63         : 60;
+#endif /* Word 0 - End */
+    } cn96xxp1;
+    struct cavm_rst_reset_active_cn96xxp3
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_4_63         : 60;
@@ -7644,7 +9927,8 @@ union cavm_rst_reset_active
                                                                  Default reset value is zero after a chip reset. */
         uint64_t reserved_4_63         : 60;
 #endif /* Word 0 - End */
-    } cn96xx;
+    } cn96xxp3;
+    /* struct cavm_rst_reset_active_cn96xxp3 cn98xx; */
     /* struct cavm_rst_reset_active_s cnf95xx; */
     /* struct cavm_rst_reset_active_s loki; */
 };
@@ -7665,6 +9949,153 @@ static inline uint64_t CAVM_RST_RESET_ACTIVE_FUNC(void)
 #define device_bar_CAVM_RST_RESET_ACTIVE 0x0 /* PF_BAR0 */
 #define busnum_CAVM_RST_RESET_ACTIVE 0
 #define arguments_CAVM_RST_RESET_ACTIVE -1,-1,-1,-1
+
+/**
+ * Register (RSL) rst_rxp_pll
+ *
+ * RST Regular Expression Clock PLL Control Register
+ * This register is not accessible through ROM scripts; see SCR_WRITE32_S[ADDR].
+ */
+union cavm_rst_rxp_pll
+{
+    uint64_t u;
+    struct cavm_rst_rxp_pll_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_51_63        : 13;
+        uint64_t cout_sel              : 2;  /**< [ 50: 49](R/W) RXP clockout select.
+                                                                   0x0 = RXP clock divided by 32.
+                                                                   0x1 = RXP clock tree output divided by 32.
+                                                                   0x2 = PLL0 output divided by 32.
+                                                                   0x3 = PLL1 output divided by 32.
+
+                                                                 This field is always reinitialized on a cold domain reset. */
+        uint64_t cout_reset            : 1;  /**< [ 48: 48](R/W) RXP clockout reset. The RXP clockout should be placed in
+                                                                 reset at least 10 PLL reference clocks prior
+                                                                 to changing [COUT_SEL]. It should remain under reset for at least 10
+                                                                 PLL reference clocks after [COUT_SEL] changes.
+                                                                 This field is always reinitialized on a cold domain reset. */
+        uint64_t reserved_45_47        : 3;
+        uint64_t pd_switch             : 1;  /**< [ 44: 44](R/W) PLL powerdown on switch.  When set, hardware automatically
+                                                                 powers down the inactive PLL after the switch has occurred.
+                                                                 When cleared, the inactive PLL remains in operation.
+                                                                 If [PD_SWITCH] is written to a one while both [DLY_SWITCH] and
+                                                                 [NXT_PGM] are cleared then the inactive PLL will immediately powerdown.
+
+                                                                 Note that a powered-down PLL requires an additional 575 reference
+                                                                 clocks to become active.  This time is automatically added by the
+                                                                 hardware.
+                                                                 This field is always reinitialized on a cold domain reset. */
+        uint64_t dly_switch            : 12; /**< [ 43: 32](R/W/H) Switch the active PLL after delaying this number of 100 MHz clocks.
+                                                                 When set to a nonzero value, the hardware will wait for
+                                                                 any PLL programming to complete and then switch to the inactive
+                                                                 PLL after the specified number of PLL reference clocks. Hardware
+                                                                 will add additional clocks if required.
+                                                                 This field is always reinitialized on a cold domain reset.
+
+                                                                 Internal:
+                                                                 Hardware will add counts to maintain 256 rxp_clk/cpt_clk/sclk/rclk notification to
+                                                                 hardware.  Additional time will be added to wake up powered-down AP cores but that
+                                                                 time not be included in this count. */
+        uint64_t pll1_pd               : 1;  /**< [ 31: 31](RO) RXP PLL1 power down.  When set PLL is currently powered down. */
+        uint64_t pll0_pd               : 1;  /**< [ 30: 30](RO) RXP PLL0 power down.  When set PLL is currently powered down. */
+        uint64_t reserved_23_29        : 7;
+        uint64_t init_mul              : 7;  /**< [ 22: 16](R/W) RXP clock multiplier to be used during a core or chip domain
+                                                                 reset.  Actual frequency is [INIT_MUL] * 50 MHz.  The actual value
+                                                                 used is limited by RST_PLL_LIMIT[RXP_MAX_MUL].
+                                                                 This field maintains its current value when written with a zero.
+                                                                 This field is always reinitialized on a cold domain reset. */
+        uint64_t nxt_pgm               : 1;  /**< [ 15: 15](R/W/H) Program non-active PLL using [NXT_MUL]. Hardware automatically
+                                                                 clears bit when both PLL is updated and any delay specified
+                                                                 in [DLY_SWITCH] has completed.
+                                                                 This field is always reinitialized on a chip domain reset. */
+        uint64_t nxt_mul               : 7;  /**< [ 14:  8](R/W) RXP PLL frequency to be program in 50 MHz increments.  The
+                                                                 actual value used is limited by RST_PLL_LIMIT[RXP_MAX_MUL] and
+                                                                 a minimum setting of 200 MHz.
+                                                                 Value will match [INIT_MUL] immediately after a cold or chip domain reset. */
+        uint64_t active_pll            : 1;  /**< [  7:  7](RO) Indicates which physical PLL is in use. For diagnostic use only. */
+        uint64_t cur_mul               : 7;  /**< [  6:  0](RO/H) RXP clock frequency.  Actual frequency is [CUR_MUL] * 50 MHz.
+                                                                 Value will reflect [NXT_MUL] after [DLY_SWITCH] has completed or [INIT_MUL]
+                                                                 immediately after a cold or chip domain reset.  In both cases, value
+                                                                 is limited by RST_PLL_LIMIT[RXP_MAX_MUL]. */
+#else /* Word 0 - Little Endian */
+        uint64_t cur_mul               : 7;  /**< [  6:  0](RO/H) RXP clock frequency.  Actual frequency is [CUR_MUL] * 50 MHz.
+                                                                 Value will reflect [NXT_MUL] after [DLY_SWITCH] has completed or [INIT_MUL]
+                                                                 immediately after a cold or chip domain reset.  In both cases, value
+                                                                 is limited by RST_PLL_LIMIT[RXP_MAX_MUL]. */
+        uint64_t active_pll            : 1;  /**< [  7:  7](RO) Indicates which physical PLL is in use. For diagnostic use only. */
+        uint64_t nxt_mul               : 7;  /**< [ 14:  8](R/W) RXP PLL frequency to be program in 50 MHz increments.  The
+                                                                 actual value used is limited by RST_PLL_LIMIT[RXP_MAX_MUL] and
+                                                                 a minimum setting of 200 MHz.
+                                                                 Value will match [INIT_MUL] immediately after a cold or chip domain reset. */
+        uint64_t nxt_pgm               : 1;  /**< [ 15: 15](R/W/H) Program non-active PLL using [NXT_MUL]. Hardware automatically
+                                                                 clears bit when both PLL is updated and any delay specified
+                                                                 in [DLY_SWITCH] has completed.
+                                                                 This field is always reinitialized on a chip domain reset. */
+        uint64_t init_mul              : 7;  /**< [ 22: 16](R/W) RXP clock multiplier to be used during a core or chip domain
+                                                                 reset.  Actual frequency is [INIT_MUL] * 50 MHz.  The actual value
+                                                                 used is limited by RST_PLL_LIMIT[RXP_MAX_MUL].
+                                                                 This field maintains its current value when written with a zero.
+                                                                 This field is always reinitialized on a cold domain reset. */
+        uint64_t reserved_23_29        : 7;
+        uint64_t pll0_pd               : 1;  /**< [ 30: 30](RO) RXP PLL0 power down.  When set PLL is currently powered down. */
+        uint64_t pll1_pd               : 1;  /**< [ 31: 31](RO) RXP PLL1 power down.  When set PLL is currently powered down. */
+        uint64_t dly_switch            : 12; /**< [ 43: 32](R/W/H) Switch the active PLL after delaying this number of 100 MHz clocks.
+                                                                 When set to a nonzero value, the hardware will wait for
+                                                                 any PLL programming to complete and then switch to the inactive
+                                                                 PLL after the specified number of PLL reference clocks. Hardware
+                                                                 will add additional clocks if required.
+                                                                 This field is always reinitialized on a cold domain reset.
+
+                                                                 Internal:
+                                                                 Hardware will add counts to maintain 256 rxp_clk/cpt_clk/sclk/rclk notification to
+                                                                 hardware.  Additional time will be added to wake up powered-down AP cores but that
+                                                                 time not be included in this count. */
+        uint64_t pd_switch             : 1;  /**< [ 44: 44](R/W) PLL powerdown on switch.  When set, hardware automatically
+                                                                 powers down the inactive PLL after the switch has occurred.
+                                                                 When cleared, the inactive PLL remains in operation.
+                                                                 If [PD_SWITCH] is written to a one while both [DLY_SWITCH] and
+                                                                 [NXT_PGM] are cleared then the inactive PLL will immediately powerdown.
+
+                                                                 Note that a powered-down PLL requires an additional 575 reference
+                                                                 clocks to become active.  This time is automatically added by the
+                                                                 hardware.
+                                                                 This field is always reinitialized on a cold domain reset. */
+        uint64_t reserved_45_47        : 3;
+        uint64_t cout_reset            : 1;  /**< [ 48: 48](R/W) RXP clockout reset. The RXP clockout should be placed in
+                                                                 reset at least 10 PLL reference clocks prior
+                                                                 to changing [COUT_SEL]. It should remain under reset for at least 10
+                                                                 PLL reference clocks after [COUT_SEL] changes.
+                                                                 This field is always reinitialized on a cold domain reset. */
+        uint64_t cout_sel              : 2;  /**< [ 50: 49](R/W) RXP clockout select.
+                                                                   0x0 = RXP clock divided by 32.
+                                                                   0x1 = RXP clock tree output divided by 32.
+                                                                   0x2 = PLL0 output divided by 32.
+                                                                   0x3 = PLL1 output divided by 32.
+
+                                                                 This field is always reinitialized on a cold domain reset. */
+        uint64_t reserved_51_63        : 13;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_rst_rxp_pll_s cn; */
+};
+typedef union cavm_rst_rxp_pll cavm_rst_rxp_pll_t;
+
+#define CAVM_RST_RXP_PLL CAVM_RST_RXP_PLL_FUNC()
+static inline uint64_t CAVM_RST_RXP_PLL_FUNC(void) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_RST_RXP_PLL_FUNC(void)
+{
+    if (cavm_is_model(OCTEONTX_CN98XX))
+        return 0x87e00a0017a8ll;
+    __cavm_csr_fatal("RST_RXP_PLL", 0, 0, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_RST_RXP_PLL cavm_rst_rxp_pll_t
+#define bustype_CAVM_RST_RXP_PLL CSR_TYPE_RSL
+#define basename_CAVM_RST_RXP_PLL "RST_RXP_PLL"
+#define device_bar_CAVM_RST_RXP_PLL 0x2 /* PF_BAR2 */
+#define busnum_CAVM_RST_RXP_PLL 0
+#define arguments_CAVM_RST_RXP_PLL -1,-1,-1,-1
 
 /**
  * Register (RSL) rst_scp_domain_w1c
@@ -7810,7 +10241,7 @@ union cavm_rst_soft_prstx
 #endif /* Word 0 - End */
     } s;
     /* struct cavm_rst_soft_prstx_s cn8; */
-    struct cavm_rst_soft_prstx_cn96xx
+    struct cavm_rst_soft_prstx_cn9
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_1_63         : 63;
@@ -7867,8 +10298,10 @@ union cavm_rst_soft_prstx
                                                                  This bit is also forced high if the corresponding PEM cripple fuse is set. */
         uint64_t reserved_1_63         : 63;
 #endif /* Word 0 - End */
-    } cn96xx;
-    struct cavm_rst_soft_prstx_cnf95xx
+    } cn9;
+    /* struct cavm_rst_soft_prstx_cn9 cn96xx; */
+    /* struct cavm_rst_soft_prstx_cn9 cnf95xxp1; */
+    struct cavm_rst_soft_prstx_cnf95xxp2
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_1_63         : 63;
@@ -7927,8 +10360,8 @@ union cavm_rst_soft_prstx
                                                                  This bit is also forced high if the corresponding PEM cripple fuse is set. */
         uint64_t reserved_1_63         : 63;
 #endif /* Word 0 - End */
-    } cnf95xx;
-    /* struct cavm_rst_soft_prstx_cnf95xx loki; */
+    } cnf95xxp2;
+    /* struct cavm_rst_soft_prstx_cnf95xxp2 loki; */
 };
 typedef union cavm_rst_soft_prstx cavm_rst_soft_prstx_t;
 
@@ -8146,7 +10579,9 @@ union cavm_rst_src_map
         uint64_t reserved_13_63        : 51;
 #endif /* Word 0 - End */
     } s;
+    /* struct cavm_rst_src_map_s cn9; */
     /* struct cavm_rst_src_map_s cn96xx; */
+    /* struct cavm_rst_src_map_s cn98xx; */
     struct cavm_rst_src_map_cnf95xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */

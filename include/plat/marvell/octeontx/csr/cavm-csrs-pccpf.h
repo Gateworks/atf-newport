@@ -35,6 +35,7 @@
 #define CAVM_PCC_DEV_CON_E_BGXX(a) (0x180 + (a))
 #define CAVM_PCC_DEV_CON_E_BPHY (0x600)
 #define CAVM_PCC_DEV_CON_E_BTS (0x141)
+#define CAVM_PCC_DEV_CON_E_CCS (0x109)
 #define CAVM_PCC_DEV_CON_E_CCUX(a) (0x120 + (a))
 #define CAVM_PCC_DEV_CON_E_CGXX(a) (0x180 + (a))
 #define CAVM_PCC_DEV_CON_E_CPC (0xd0)
@@ -44,6 +45,7 @@
 #define CAVM_PCC_DEV_CON_E_DDF0 (0x10500)
 #define CAVM_PCC_DEV_CON_E_DPI0_CN8 (0xb00)
 #define CAVM_PCC_DEV_CON_E_DPI0_CN9 (0x500)
+#define CAVM_PCC_DEV_CON_E_DPI1 (0x600)
 #define CAVM_PCC_DEV_CON_E_FPA (0x900)
 #define CAVM_PCC_DEV_CON_E_FUS (0x103)
 #define CAVM_PCC_DEV_CON_E_FUSF (0x104)
@@ -91,6 +93,7 @@
 #define CAVM_PCC_DEV_CON_E_PCCBR_CPT1 (0x68)
 #define CAVM_PCC_DEV_CON_E_PCCBR_DDF0 (0x100a0)
 #define CAVM_PCC_DEV_CON_E_PCCBR_DPI0 (0xa0)
+#define CAVM_PCC_DEV_CON_E_PCCBR_DPI1 (0xa8)
 #define CAVM_PCC_DEV_CON_E_PCCBR_FPA (0x90)
 #define CAVM_PCC_DEV_CON_E_PCCBR_MRML (8)
 #define CAVM_PCC_DEV_CON_E_PCCBR_NIC_CN81XX (0x78)
@@ -105,6 +108,7 @@
 #define CAVM_PCC_DEV_CON_E_PCCBR_TIM (0x98)
 #define CAVM_PCC_DEV_CON_E_PCCBR_ZIP_CN8 (0x10098)
 #define CAVM_PCC_DEV_CON_E_PCCBR_ZIP_CN9 (0x10058)
+#define CAVM_PCC_DEV_CON_E_PCCBR_ZIP0 (0x10048)
 #define CAVM_PCC_DEV_CON_E_PCIERC0_CN81XX (0xc0)
 #define CAVM_PCC_DEV_CON_E_PCIERC0_CN83XX (0xc8)
 #define CAVM_PCC_DEV_CON_E_PCIERC0_CN9 (0x30000)
@@ -116,12 +120,14 @@
 #define CAVM_PCC_DEV_CON_E_PCIERC2_CN9 (0x50000)
 #define CAVM_PCC_DEV_CON_E_PCIERC3_CN8 (0xe0)
 #define CAVM_PCC_DEV_CON_E_PCIERC3_CN9 (0x60000)
+#define CAVM_PCC_DEV_CON_E_PCIERC4 (0x70000)
 #define CAVM_PCC_DEV_CON_E_PCM (0x68)
 #define CAVM_PCC_DEV_CON_E_PEMX(a) (0x170 + (a))
 #define CAVM_PCC_DEV_CON_E_PEM0 (0x10080)
 #define CAVM_PCC_DEV_CON_E_PEM1 (0x10088)
 #define CAVM_PCC_DEV_CON_E_PEM2 (0x10090)
 #define CAVM_PCC_DEV_CON_E_PEM3 (0x10098)
+#define CAVM_PCC_DEV_CON_E_PEM4 (0x100a0)
 #define CAVM_PCC_DEV_CON_E_PKI (0x10200)
 #define CAVM_PCC_DEV_CON_E_PKO (0x10300)
 #define CAVM_PCC_DEV_CON_E_PSBM (0x107)
@@ -162,6 +168,7 @@
 #define CAVM_PCC_DEV_CON_E_XCPX(a) (0xe0 + 8 * (a))
 #define CAVM_PCC_DEV_CON_E_XCVX(a) (0x110 + (a))
 #define CAVM_PCC_DEV_CON_E_ZIP (0x10400)
+#define CAVM_PCC_DEV_CON_E_ZIP0 (0x10400)
 
 /**
  * Enumeration pcc_dev_idl_e
@@ -360,9 +367,11 @@
 #define CAVM_PCC_PROD_E_CN83XX (0xa3)
 #define CAVM_PCC_PROD_E_CN88XX (0xa1)
 #define CAVM_PCC_PROD_E_CN93XX (0xb2)
+#define CAVM_PCC_PROD_E_CN95XX (0xb3)
 #define CAVM_PCC_PROD_E_CN98XX (0xb1)
 #define CAVM_PCC_PROD_E_CN99XX (0xaf)
 #define CAVM_PCC_PROD_E_CNF95XX (0xb3)
+#define CAVM_PCC_PROD_E_CNF95XXN (0xb4)
 #define CAVM_PCC_PROD_E_GEN (0xa0)
 #define CAVM_PCC_PROD_E_LOKI (0xb4)
 
@@ -1814,6 +1823,35 @@ union cavm_pccpf_xxx_ea_cap_hdr
                                                                    0x2 = 2 nonzero normal or SR-IOV BARs.
                                                                    0x3 = 3 nonzero normal or SR-IOV BARs.
                                                                    0x4 = 4 nonzero normal or SR-IOV BARs.
+
+                                                                 CNXXXX never has more than four normal or SR-IOV BARs. */
+        uint32_t ncp                   : 8;  /**< [ 15:  8](RO) Next capability pointer.  No next capability. */
+        uint32_t pcieid                : 8;  /**< [  7:  0](RO) Enhanced allocation capability ID. */
+#else /* Word 0 - Little Endian */
+        uint32_t pcieid                : 8;  /**< [  7:  0](RO) Enhanced allocation capability ID. */
+        uint32_t ncp                   : 8;  /**< [ 15:  8](RO) Next capability pointer.  No next capability. */
+        uint32_t num_entries           : 6;  /**< [ 21: 16](RO/H) Number of enhanced entries:
+                                                                   0x0 = No nonzero BARs.
+                                                                   0x1 = 1 nonzero normal or SR-IOV BARs.
+                                                                   0x2 = 2 nonzero normal or SR-IOV BARs.
+                                                                   0x3 = 3 nonzero normal or SR-IOV BARs.
+                                                                   0x4 = 4 nonzero normal or SR-IOV BARs.
+
+                                                                 CNXXXX never has more than four normal or SR-IOV BARs. */
+        uint32_t reserved_22_31        : 10;
+#endif /* Word 0 - End */
+    } cn9;
+    /* struct cavm_pccpf_xxx_ea_cap_hdr_cn9 cn96xxp1; */
+    struct cavm_pccpf_xxx_ea_cap_hdr_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t reserved_22_31        : 10;
+        uint32_t num_entries           : 6;  /**< [ 21: 16](RO/H) Number of enhanced entries:
+                                                                   0x0 = No nonzero BARs.
+                                                                   0x1 = 1 nonzero normal or SR-IOV BARs.
+                                                                   0x2 = 2 nonzero normal or SR-IOV BARs.
+                                                                   0x3 = 3 nonzero normal or SR-IOV BARs.
+                                                                   0x4 = 4 nonzero normal or SR-IOV BARs.
                                                                    0x5 = 5 nonzero normal or SR-IOV BARs. */
         uint32_t ncp                   : 8;  /**< [ 15:  8](RO) Next capability pointer.  No next capability. */
         uint32_t pcieid                : 8;  /**< [  7:  0](RO) Enhanced allocation capability ID. */
@@ -1829,7 +1867,10 @@ union cavm_pccpf_xxx_ea_cap_hdr
                                                                    0x5 = 5 nonzero normal or SR-IOV BARs. */
         uint32_t reserved_22_31        : 10;
 #endif /* Word 0 - End */
-    } cn9;
+    } cn96xxp3;
+    /* struct cavm_pccpf_xxx_ea_cap_hdr_cn96xxp3 cn98xx; */
+    /* struct cavm_pccpf_xxx_ea_cap_hdr_cn96xxp3 cnf95xx; */
+    /* struct cavm_pccpf_xxx_ea_cap_hdr_cn96xxp3 loki; */
 };
 typedef union cavm_pccpf_xxx_ea_cap_hdr cavm_pccpf_xxx_ea_cap_hdr_t;
 
@@ -1921,6 +1962,23 @@ union cavm_pccpf_xxx_id
 
                                                                  Internal:
                                                                  Unit from PCC's tie__pfunitid. */
+        uint32_t vendid                : 16; /**< [ 15:  0](RO) Cavium's vendor ID. Enumerated by PCC_VENDOR_E::CAVIUM. */
+#else /* Word 0 - Little Endian */
+        uint32_t vendid                : 16; /**< [ 15:  0](RO) Cavium's vendor ID. Enumerated by PCC_VENDOR_E::CAVIUM. */
+        uint32_t devid                 : 16; /**< [ 31: 16](RO/H) Device ID. \<15:8\> is PCC_PROD_E::GEN. \<7:0\> enumerated by PCC_DEV_IDL_E.
+
+                                                                 Internal:
+                                                                 Unit from PCC's tie__pfunitid. */
+#endif /* Word 0 - End */
+    } cn9;
+    /* struct cavm_pccpf_xxx_id_cn9 cn96xxp1; */
+    struct cavm_pccpf_xxx_id_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t devid                 : 16; /**< [ 31: 16](RO/H) Device ID. \<15:8\> is PCC_PROD_E::GEN. \<7:0\> enumerated by PCC_DEV_IDL_E.
+
+                                                                 Internal:
+                                                                 Unit from PCC's tie__pfunitid. */
         uint32_t vendid                : 16; /**< [ 15:  0](RO) Marvell (Cavium)'s vendor ID. Enumerated by PCC_VENDOR_E::CAVIUM. */
 #else /* Word 0 - Little Endian */
         uint32_t vendid                : 16; /**< [ 15:  0](RO) Marvell (Cavium)'s vendor ID. Enumerated by PCC_VENDOR_E::CAVIUM. */
@@ -1929,7 +1987,10 @@ union cavm_pccpf_xxx_id
                                                                  Internal:
                                                                  Unit from PCC's tie__pfunitid. */
 #endif /* Word 0 - End */
-    } cn9;
+    } cn96xxp3;
+    /* struct cavm_pccpf_xxx_id_cn96xxp3 cn98xx; */
+    /* struct cavm_pccpf_xxx_id_cn96xxp3 cnf95xx; */
+    /* struct cavm_pccpf_xxx_id_cn96xxp3 loki; */
 };
 typedef union cavm_pccpf_xxx_id cavm_pccpf_xxx_id_t;
 
@@ -2323,7 +2384,7 @@ union cavm_pccpf_xxx_sriov_bar0l
         uint32_t reserved_0_31         : 32;
 #endif /* Word 0 - End */
     } s;
-    struct cavm_pccpf_xxx_sriov_bar0l_cn81xx
+    struct cavm_pccpf_xxx_sriov_bar0l_cn8
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint32_t lbab                  : 16; /**< [ 31: 16](R/W/H) Lower bits of the VF BAR 0 base address. See additional BAR related notes in
@@ -2356,7 +2417,8 @@ union cavm_pccpf_xxx_sriov_bar0l
                                                                  From PCC's tie__vfbar0_rbsz and
                                                                  tie__vfbar0_offset. */
 #endif /* Word 0 - End */
-    } cn81xx;
+    } cn8;
+    /* struct cavm_pccpf_xxx_sriov_bar0l_cn8 cn81xx; */
     struct cavm_pccpf_xxx_sriov_bar0l_cn83xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
@@ -3200,6 +3262,23 @@ union cavm_pccpf_xxx_subid
 
                                                                  Internal:
                                                                  \<15:8\> from PCC's tie__prod. */
+        uint32_t ssvid                 : 16; /**< [ 15:  0](RO) Subsystem vendor ID. Cavium = 0x177D. */
+#else /* Word 0 - Little Endian */
+        uint32_t ssvid                 : 16; /**< [ 15:  0](RO) Subsystem vendor ID. Cavium = 0x177D. */
+        uint32_t ssid                  : 16; /**< [ 31: 16](RO) Subsystem ID. \<15:8\> enumerated by PCC_PROD_E. \<7:0\> = 0x0.
+
+                                                                 Internal:
+                                                                 \<15:8\> from PCC's tie__prod. */
+#endif /* Word 0 - End */
+    } cn9;
+    /* struct cavm_pccpf_xxx_subid_cn9 cn96xxp1; */
+    struct cavm_pccpf_xxx_subid_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint32_t ssid                  : 16; /**< [ 31: 16](RO) Subsystem ID. \<15:8\> enumerated by PCC_PROD_E. \<7:0\> = 0x0.
+
+                                                                 Internal:
+                                                                 \<15:8\> from PCC's tie__prod. */
         uint32_t ssvid                 : 16; /**< [ 15:  0](RO) Subsystem vendor ID. Marvell (Cavium) = 0x177D. */
 #else /* Word 0 - Little Endian */
         uint32_t ssvid                 : 16; /**< [ 15:  0](RO) Subsystem vendor ID. Marvell (Cavium) = 0x177D. */
@@ -3208,7 +3287,10 @@ union cavm_pccpf_xxx_subid
                                                                  Internal:
                                                                  \<15:8\> from PCC's tie__prod. */
 #endif /* Word 0 - End */
-    } cn9;
+    } cn96xxp3;
+    /* struct cavm_pccpf_xxx_subid_cn96xxp3 cn98xx; */
+    /* struct cavm_pccpf_xxx_subid_cn96xxp3 cnf95xx; */
+    /* struct cavm_pccpf_xxx_subid_cn96xxp3 loki; */
 };
 typedef union cavm_pccpf_xxx_subid cavm_pccpf_xxx_subid_t;
 
