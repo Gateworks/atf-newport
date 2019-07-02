@@ -29,29 +29,6 @@
 #define debug_plat_ecam(...) ((void) (0))
 #endif
 
-/* Probe GSERNX_LANE_SCRATCHX[] for SATA config */
-static int ecam_probe_sata(unsigned long long arg)
-{
-	qlm_state_lane_t qlm_state;
-	int qlm = 0, lane = 0;
-
-	debug_plat_ecam("%s arg %lld\n", __func__, arg);
-
-	qlm = plat_octeontx_scfg->scfg.sata_cfg.to_gser[arg];
-	lane = plat_octeontx_scfg->scfg.sata_cfg.to_lane[arg];
-
-	if ((qlm == -1) || (lane == -1))
-		return 0;
-
-	qlm_state = plat_otx2_get_qlm_state_lane(qlm, lane);
-	if (qlm_state.s.sata) {
-		debug_plat_ecam("%s: SATA detected on qlm %d lane %d\n",
-			__func__, qlm, lane);
-		return 1;
-	}
-	return 0;
-}
-
 /* Probe GSERNX_LANE_SCRATCHX[] for CGX config */
 static int ecam_probe_cgx(unsigned long long arg)
 {
@@ -117,7 +94,6 @@ static int ecam_probe_cgx(unsigned long long arg)
 
 struct ecam_probe_callback probe_callbacks[] = {
 	{0xa059, 0x177d, ecam_probe_cgx, 0},
-	{0xa084, 0x177d, ecam_probe_sata, 0}, /* SATA5 */
 	{ECAM_INVALID_DEV_ID, 0, 0, 0}
 };
 
