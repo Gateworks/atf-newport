@@ -18,6 +18,7 @@
 #include <plat_octeontx.h>
 #include <octeontx_irqs_def.h>
 #include <plat_scfg.h>
+#include <qlm.h>
 
 static uint64_t msix_addr_save;
 
@@ -107,6 +108,15 @@ int plat_octeontx_get_gser_count(void)
 		return 6;
 
 	return 8;
+}
+
+qlm_state_lane_t plat_otx2_get_qlm_state_lane(int qlm, int lane)
+{
+	qlm_state_lane_t state;
+
+	state.u = CSR_READ(CAVM_GSERNX_LANEX_SCRATCHX(qlm, lane, 0));
+
+	return state;
 }
 
 int plat_octeontx_get_uaa_count(void)

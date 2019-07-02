@@ -18,6 +18,7 @@
 #include <octeontx_plat_configuration.h>
 #include <plat_otx2_configuration.h>
 #include <plat_octeontx.h>
+#include <qlm.h>
 
 #define CAVM_BPHY_BAR_E_BPHY_PF_BAR0 (0x860000000000ll)
 #define CAVM_BPHY_BAR_E_BPHY_PF_BAR0_SIZE 0x4000000000ull
@@ -97,7 +98,7 @@ int plat_octeontx_get_cpt_count(void)
 
 int plat_octeontx_get_cgx_count(void)
 {
-	return 3;
+	return 4;
 }
 
 int plat_octeontx_get_pem_count(void)
@@ -110,19 +111,30 @@ int plat_octeontx_get_gser_count(void)
 	return 7;
 }
 
-int plat_octeontx_get_gsern_count(void)
-{
-	return 0;
-}
-
 int plat_octeontx_get_gserr_count(void)
 {
-	return 3;
+	return 1;
 }
 
 int plat_octeontx_get_gserc_count(void)
 {
 	return 5;
+}
+
+qlm_state_lane_t plat_otx2_get_qlm_state_lane(int qlm, int lane)
+{
+	qlm_state_lane_t state;
+
+	if (qlm == 1)
+		state.u = CSR_READ(CAVM_GSERRX_SCRATCHX(qlm, lane));
+	else if (qlm >= 2 && qlm <= 6)
+		state.u = CSR_READ(CAVM_GSERCX_SCRATCHX(qlm, lane));
+	else {
+		state.u = 0;
+		state.s.mode = QLM_MODE_DISABLED;
+	}
+
+	return state;
 }
 
 int plat_octeontx_get_uaa_count(void)
@@ -280,11 +292,6 @@ void plat_add_mmio(void)
 		add_map_record(CAVM_PEM_BAR_E_PEMX_PF_BAR4_CN9(i),
 				CAVM_PEM_BAR_E_PEMX_PF_BAR4_CN9_SIZE, attr);
 	}
-
-	device_type_count = plat_octeontx_get_gsern_count();
-	for (i = 0; i < device_type_count; i++)
-		add_map_record(CAVM_GSERN_BAR_E_GSERNX_PF_BAR0(i),
-			       CAVM_GSERN_BAR_E_GSERNX_PF_BAR0_SIZE, attr);
 
 	device_type_count = plat_octeontx_get_gserr_count();
 	for (i = 0; i < device_type_count; i++)

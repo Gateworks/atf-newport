@@ -17,6 +17,7 @@
 #include <octeontx_plat_configuration.h>
 #include <plat_otx2_configuration.h>
 #include <plat_octeontx.h>
+#include <qlm.h>
 
 #define CAVM_BPHY_BAR_E_BPHY_PF_BAR0 (0x860000000000ll)
 #define CAVM_BPHY_BAR_E_BPHY_PF_BAR0_SIZE 0x4000000000ull
@@ -111,6 +112,23 @@ int plat_octeontx_get_gser_count(void)
 	if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X))
 		return 4;
 	return 3;
+}
+
+qlm_state_lane_t plat_otx2_get_qlm_state_lane(int qlm, int lane)
+{
+	qlm_state_lane_t state;
+
+	if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X))
+		state.u = CSR_READ(CAVM_GSERNX_LANEX_SCRATCHX(
+					qlm, lane, 0));
+	else if (qlm >= 0 && qlm < 3)
+		state.u = CSR_READ(CAVM_GSERRX_SCRATCHX(qlm, lane));
+	else {
+		state.u = 0;
+		state.s.mode = QLM_MODE_DISABLED;
+	}
+
+	return state;
 }
 
 int plat_octeontx_get_uaa_count(void)
