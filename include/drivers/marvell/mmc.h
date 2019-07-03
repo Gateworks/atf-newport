@@ -22,6 +22,8 @@
 #define MMC_WATCHDOG_MS 750 /* In milliseconds */
 #define MMC_CLOCK_HZ    10000000
 
+#define SIZE_2GB	0x80000000
+
 #define REF_FREQ	50000 /* number of reference cycles in a millisecond */
 #define INIT_MAX_RETRY	20
 #define MMC_SECTOR_SIZE	512
@@ -35,7 +37,7 @@
 #define RESP_R3		3
 #define RESP_R4		4
 #define RESP_R5		5
-#define RESP_R6   0
+#define RESP_R6		0
 
 #define BUS_1_BIT	0
 #define BUS_4_BIT	1
@@ -226,7 +228,7 @@ typedef struct {
 	 * Use the 'in_use' flag as any value for base and file_pos could be
 	 * valid.
 	 */
-	int		in_use;
+	int	in_use;
 	size_t	file_pos;
 	size_t	offset_address;
 } file_state_t;

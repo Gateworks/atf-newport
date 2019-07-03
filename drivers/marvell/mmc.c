@@ -30,8 +30,7 @@ static mio_emm_driver_t mmc_drv = { 0 };
 static void wait(uint64_t delay)
 {
 	uint64_t count = CSR_READ(CAVM_RST_REF_CNTR);
-	uint64_t start = count;
-	uint64_t end = start + delay;
+	uint64_t end = count + delay;
 
 	do {
 		count = CSR_READ(CAVM_RST_REF_CNTR);
@@ -78,8 +77,7 @@ static uint64_t mio_emm_cmd(uint32_t cmd_idx, uint32_t ctype_xor,
 {
 	uint64_t cmd;
 	int cmd_error = 0;
-
-	uint64_t emm_rsp_sts;
+	uint64_t emm_rsp_sts = 0;
 
 	cmd = 0;
 	cmd = MIO_EMM_CMD_SET_CMD_VAL(cmd);
@@ -97,27 +95,25 @@ static uint64_t mio_emm_cmd(uint32_t cmd_idx, uint32_t ctype_xor,
 
 	if (RSP_STS_GET_RSP_VAL(emm_rsp_sts) ||
 	    RSP_STS_GET_STP_VAL(emm_rsp_sts)) {
-
 		cmd_error = print_rsp_sts_errors(emm_rsp_sts);
 		if (cmd_error)
 			return emm_rsp_sts;
 	} else {
 		if (cmd_idx != MMC_CMD_GO_IDLE_STATE &&
 		    cmd_idx != MMC_CMD_SET_DSR) {
-			ERROR("MMC: No valid response\n");
-			ERROR("MMC: cmd     = 0x%016llx\n",
-				(unsigned long long)cmd);
-			ERROR("MMC: rsp_sts = 0x%016llx\n",
-				(unsigned long long)emm_rsp_sts);
+			ERROR("MMC: No valid response\n"
+				"              cmd     = 0x%016llx\n"
+				"              rsp_sts = 0x%016llx\n",
+				cmd, emm_rsp_sts);
+
 			return emm_rsp_sts;
 		}
 	}
 
-	emm_rsp_sts = 0;
-	return emm_rsp_sts;
+	return 0;
 }
 
-static int sdmmc_rw_block(int write, unsigned int addr, int blk_cnt,
+static int sdmmc_rw_block(int write, uint64_t addr, uint32_t blk_cnt,
 	uintptr_t buf)
 {
 	int blks;
@@ -130,6 +126,7 @@ static int sdmmc_rw_block(int write, unsigned int addr, int blk_cnt,
 
 	if (buf == 0) {
 		WARN("%s: buf is NULL\n", __func__);
+
 		return -1;
 	}
 
@@ -184,10 +181,10 @@ static int sdmmc_rw_block(int write, unsigned int addr, int blk_cnt,
 			dma_retry_count < 3) {
 
 			dma_retry_count++;
-			INFO("MMC: DMA error, retry %d\n", dma_retry_count);
-			INFO("MMC:   rsp_sts: 0x%016llx\n",
-				(unsigned long long)emm_rsp_sts);
-			INFO("MMC:   rsp_lo : 0x%016llx\n",
+			INFO("MMC: DMA error, retry %d\n"
+				"                rsp_sts: 0x%016llx\n"
+				"                rsp_lo : 0x%016llx\n",
+				dma_retry_count, emm_rsp_sts,
 				(unsigned long long)CSR_READ(
 							CAVM_MIO_EMM_RSP_LO));
 			print_rsp_sts_errors(emm_rsp_sts);
@@ -210,7 +207,7 @@ static int sdmmc_rw_block(int write, unsigned int addr, int blk_cnt,
 				emm_rsp_sts = CSR_READ(CAVM_MIO_EMM_RSP_STS);
 			} while (RSP_STS_GET_DMA_VAL(emm_rsp_sts));
 
-			return -1;
+			return -2;
 		}
 
 		do {
@@ -236,9 +233,26 @@ static int sdmmc_rw_data(int write, unsigned int addr, int size, uintptr_t buf)
 	int unaligned_buf;
 
 	if (size == 0) {
-		printf("Invalid size %d\n", size);
+		WARN("Invalid size %d\n", size);
 		return -1;
 	}
+
+	if (mmc_drv.sector_mode &&
+	   (uint64_t)addr + size > UINT32_MAX * (uint64_t)mmc_drv.sector_size) {
+		WARN("Range 0x%llx - 0x%llx is to big for sector mode card\n",
+			(uint64_t)addr, (uint64_t)addr + size);
+
+		return -2;
+	}
+
+	if (!mmc_drv.sector_mode &&
+	   (uint64_t)addr + size > SIZE_2GB) {
+		WARN("Range 0x%llx - 0x%llx is to big for byte mode card\n",
+			(uint64_t)addr, (uint64_t)addr + size);
+
+		return -3;
+	}
+
 
 	offset = addr % mmc_drv.sector_size;
 	unaligned_buf = ((buf - offset) & 0x7);
@@ -257,14 +271,14 @@ static int sdmmc_rw_data(int write, unsigned int addr, int size, uintptr_t buf)
 		/* First block must be copied to tmp_buf */
 		if (sdmmc_rw_block(/* write = */ 0, addr,
 			/* blk_cnt = */ 1, (uintptr_t)tmp_buf))
-			return -1;
+			return -4;
 		/* Number of bytes to read/write from first block */
 		bytes = MIN(size, mmc_drv.sector_size - offset);
 		if (write) {
 			memcpy((void *)(tmp_buf + offset), (void *)buf, bytes);
 			if (sdmmc_rw_block(/* write = */ 1, addr,
 				/* blk_cnt = */ 1, (uintptr_t)tmp_buf))
-				return -1;
+				return -5;
 		} else {
 			memcpy((void *)buf, (void *)(tmp_buf + offset), bytes);
 		}
@@ -505,9 +519,9 @@ static inline void sdmmc_power_cycle(void)
 	sdmmc_set_watchdog(MMC_WATCHDOG_MS);
 }
 
-static inline uint64_t reset_card(void)
+static inline void reset_card(void)
 {
-	return mio_emm_cmd(MMC_CMD_GO_IDLE_STATE, CMD_NO_DATA, RESP_NONE, 0);
+	mio_emm_cmd(MMC_CMD_GO_IDLE_STATE, CMD_NO_DATA, RESP_NONE, 0);
 }
 
 static inline uint64_t sdmmc_all_send_cid(void)
