@@ -49,7 +49,6 @@ CASSERT(MSIX_TABLE_BASE + MSIX_TABLE_SIZE <= SH_FWDATA_BASE,
 /* It is Generic System Peripheral with subclass System peripheral */
 #define GSP_CLASS_CODE	0x088000
 
-#define MAX_RVU_PFS			16
 #define MAX_RVU_VFS_PER_PF		128
 #define SSO_TIM_TO_NPA_PFS_FACTOR	3/4
 #define RVU_MSIX_VEC_SIZE 		16
@@ -86,22 +85,13 @@ struct rvu_device {
 };
 
 typedef enum {
-	RVU_AF,
-	RVU_CGX0_LMAC0,
-	RVU_CGX0_LMAC1,
-	RVU_CGX0_LMAC2,
-	RVU_CGX0_LMAC3,
-	RVU_CGX1_LMAC0,
-	RVU_CGX1_LMAC1,
-	RVU_CGX1_LMAC2,
-	RVU_CGX1_LMAC3,
-	RVU_CGX2_LMAC0,
-	RVU_CGX2_LMAC1,
-	RVU_CGX2_LMAC2,
-	RVU_CGX2_LMAC3,
-	RVU_SSO_TIM,
-	RVU_NPA,
-	RVU_PF15,	/* It is not fixed, can be changed via fuses */
+	RVU_AF 		= 0,
+	RVU_CGX_FIRST	= 1,
+	RVU_CGX_LAST	= MAX_RVU_PFS - 4,
+	RVU_SSO_TIM	= MAX_RVU_PFS - 3,
+	RVU_NPA		= MAX_RVU_PFS - 2,
+	/* It is not fixed, can be changed via fuses */
+	RVU_LAST	= MAX_RVU_PFS - 1,
 } rvu_device;
 
 

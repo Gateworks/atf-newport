@@ -152,13 +152,13 @@ static int octeontx_init_rvu_from_fdt(void)
 	if (plat_octeontx_bcfg->rvu_config.cpt_dis)
 		uninit_pfs = 1;
 	else {
-		/* Init RVU15 - as CPT if present */
-		octeontx_init_rvu_fixed(&current_hwvf, RVU_PF15,
+		/* Init last RVU - as CPT if present */
+		octeontx_init_rvu_fixed(&current_hwvf, RVU_LAST,
 				SW_RVU_CPT_PF, TRUE);
 	}
 
 	/* Initialize CGX PF */
-	pf = RVU_CGX0_LMAC0;
+	pf = RVU_CGX_FIRST;
 	for (cgx_id = 0; cgx_id < MAX_CGX; cgx_id++) {
 		cgx = &(plat_octeontx_bcfg->cgx_cfg[cgx_id]);
 		if (cgx->enable && !cgx->is_rfoe) {
@@ -193,16 +193,16 @@ static int octeontx_init_rvu_from_fdt(void)
 	sso_tim_pfs = uninit_pfs * SSO_TIM_TO_NPA_PFS_FACTOR;
 	npa_pfs = uninit_pfs - sso_tim_pfs;
 	while (sso_tim_pfs > 0) {
-		if (pf > RVU_CGX2_LMAC3)
-			pf = RVU_PF15;
+		if (pf > RVU_CGX_LAST)
+			pf = RVU_LAST;
 		octeontx_init_rvu_fixed(&current_hwvf, pf++,
 					SW_RVU_SSO_TIM_PF, FALSE);
 		sso_tim_pfs--;
 	}
 
 	while (npa_pfs > 0) {
-		if (pf > RVU_CGX2_LMAC3)
-			pf = RVU_PF15;
+		if (pf > RVU_CGX_LAST)
+			pf = RVU_LAST;
 		octeontx_init_rvu_fixed(&current_hwvf, pf++,
 					SW_RVU_NPA_PF, FALSE);
 		npa_pfs--;

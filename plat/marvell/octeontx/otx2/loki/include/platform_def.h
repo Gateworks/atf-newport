@@ -189,4 +189,6 @@
 /* Number of MBOX for AFPF and PFVF */
 #define RVU_MBOX_NUM		2
 
+#define MAX_RVU_PFS		16
+
 #endif
