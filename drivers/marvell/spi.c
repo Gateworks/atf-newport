@@ -44,6 +44,7 @@ static file_state_t current_file = { 0 };
 
 #define SPI_NOR_CMD_READ		0x03
 #define SPI_NOR_CMD_READ_FAST		0x0b
+#define SPI_NOR_CMD_QREAD		0x6b
 
 #define SPI_NOR_CMD_WREN		0x06
 #define SPI_NOR_CMD_WRDI		0x04
@@ -129,6 +130,7 @@ static int spi_config_cn9xxx(uint64_t spi_clk, uint32_t mode, int cpol,
 	mpi_cfg.s.lsbfirst = !!(mode & SPI_LSB_FIRST);
 	mpi_cfg.s.wireor = !!(mode & SPI_3WIRE);
 	mpi_cfg.s.idlelo = cpha != cpol;
+	mpi_cfg.s.iomode = CAVM_MPI_IOMODE_E_X1_UNIDIR;
 	mpi_cfg.s.enable = 1;
 	CSR_WRITE(CAVM_MPIX_CFG(spi_con), mpi_cfg.u);
 	return 0;
@@ -292,22 +294,46 @@ int spi_nor_read(uint8_t *buf, int buf_size, uint32_t addr,
 {
 	uint8_t cmd[9];
 	int i;
+	int len;
+	union cavm_mpix_cfg mpi_cfg;
 
 	if (addr_len != SPI_ADDRESSING_24BIT && addr_len != SPI_ADDRESSING_32BIT) {
 		printf("Unsupported addressing mode %d\n", addr_len);
 		return -1;
 	}
 
-	cmd[0] = SPI_NOR_CMD_READ;
-
 	for (i = 1; i <= (addr_len >> 3); i++)
 		cmd[i] = addr >> (addr_len - i * 8);
 
-	if (spi_xfer(cmd, NULL, (addr_len >> 3) + 1, spi_con, cs, 0))
-		return -1;
+	/* Address len + command byte */
+	len = (addr_len >> 3) + 1;
 
-	if (spi_xfer(NULL, buf, buf_size, spi_con, cs, 1))
-		return -1;
+	if (cavm_is_model(OCTEONTX_CN9XXX)) {
+		cmd[0] = SPI_NOR_CMD_QREAD;
+		/* Dummy byte after command is required in Quad SPI mode */
+		len++;
+		if (spi_xfer(cmd, NULL, len, spi_con, cs, 0))
+			return -1;
+
+		/* Set Quad SPI mode for read */
+		mpi_cfg.u = CSR_READ(CAVM_MPIX_CFG(spi_con));
+		mpi_cfg.s.iomode = CAVM_MPI_IOMODE_E_X4_BIDIR;
+		CSR_WRITE(CAVM_MPIX_CFG(spi_con), mpi_cfg.u);
+
+		if (spi_xfer(NULL, buf, buf_size, spi_con, cs, 1))
+			return -1;
+
+		/* Set X1 mode back */
+		mpi_cfg.s.iomode = CAVM_MPI_IOMODE_E_X1_UNIDIR;
+		CSR_WRITE(CAVM_MPIX_CFG(spi_con), mpi_cfg.u);
+	} else {
+		cmd[0] = SPI_NOR_CMD_READ;
+		if (spi_xfer(cmd, NULL, len, spi_con, cs, 0))
+			return -1;
+
+		if (spi_xfer(NULL, buf, buf_size, spi_con, cs, 1))
+			return -1;
+	}
 
 	return buf_size;
 }
