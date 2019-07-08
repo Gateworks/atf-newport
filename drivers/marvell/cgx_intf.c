@@ -261,6 +261,11 @@ static int cgx_link_bringup(int cgx_id, int lmac_id)
 		return 0;
 	}
 
+	if (!lmac_ctx->s.init_link) {
+		cgx_lmac_init_link(cgx_id, lmac_id);
+		lmac_ctx->s.init_link = 1;
+	}
+
 	/* Save the current FEC what is configured by the user */
 	link.s.fec = lmac_ctx->s.fec = lmac_cfg->fec;
 
@@ -310,10 +315,11 @@ static int cgx_link_bringup(int cgx_id, int lmac_id)
 			return 0;
 
 		} else {
-			/* if the link is not up, return error */
+			/* if the link is not up, return success with
+			 * LINK as down
+			 */
 			debug_cgx_intf("%s : %d:%d PHY link status is down\n",
 				__func__, cgx_id, lmac_id);
-			cgx_set_error_type(cgx_id, lmac_id, CGX_ERR_PHY_LINK_DOWN);
 			goto cgx_err; /* To poll for the link again */
 		}
 	} else if ((lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_XAUI) ||
@@ -435,8 +441,6 @@ retry_link:
 			/* link is down */
 			debug_cgx_intf("%s: %d:%d link status is down\n",
 				__func__, cgx_id, lmac_id);
-			cgx_set_error_type(cgx_id, lmac_id,
-					CGX_ERR_PHY_LINK_DOWN);
 			goto cgx_err; /* Poll timer to poll for the link */
 		}
 	} else {
@@ -531,6 +535,7 @@ static int cgx_link_bringdown(int cgx_id, int lmac_id)
 			cgx_get_error_type(cgx_id, lmac_id));
 
 	lmac_ctx->s.link_enable = 0;
+	lmac_ctx->s.init_link = 0;
 
 	return 0;
 }
@@ -1106,6 +1111,7 @@ void cgx_fw_intf_init(void)
 {
 	cgx_config_t *cgx_cfg;
 	cgx_lmac_config_t *lmac_cfg;
+	cgx_lmac_context_t *lmac_ctx;
 
 	debug_cgx_intf("%s\n", __func__);
 
@@ -1115,6 +1121,7 @@ void cgx_fw_intf_init(void)
 		if (cgx_cfg->enable) {
 			for (int lmac = 0; lmac < MAX_LMAC_PER_CGX; lmac++) {
 				lmac_cfg = &plat_octeontx_bcfg->cgx_cfg[cgx].lmac_cfg[lmac];
+				lmac_ctx = &lmac_context[cgx][lmac];
 				if (lmac_cfg->lmac_enable) {
 					if (lmac_cfg->phy_present) {
 						/* If PHY is present, look up for PHY
@@ -1130,6 +1137,7 @@ void cgx_fw_intf_init(void)
 					}
 					/* Enable LMAC */
 					cgx_lmac_init_link(cgx, lmac);
+					lmac_ctx->s.init_link = 1;
 					/* If PHY is initialized, configure
 					 * the PHY. For ex: to set in
 					 * particular mode
@@ -1165,6 +1173,7 @@ void cgx_fw_intf_init(void)
  */
 void cgx_fw_intf_shutdown(void)
 {
+	int init = 0;
 	cgx_lmac_context_t *lmac_ctx;
 	cavm_cgxx_cmrx_int_t cmrx_int;
 
@@ -1181,16 +1190,24 @@ void cgx_fw_intf_shutdown(void)
 			 * initialization of the LMACs that are enabled
 			 * so kernel can bring up the link
 			 */
+			init = 0;
 			if (lmac_ctx->s.link_enable) {
 				cgx_link_bringdown(cgx, lmac);
 				mdelay(1);
 				cgx_lmac_init_link(cgx, lmac);
+				/* Set to indicate the link is
+				 * initialized as the LMAC
+				 * context structure will be reset
+				 */
+				init = 1;
 			}
 			CSR_WRITE(CAVM_CGXX_CMRX_SCRATCHX(
 					cgx, lmac, 0), 0);
 			CSR_WRITE(CAVM_CGXX_CMRX_SCRATCHX(
 					cgx, lmac, 1), 0);
 			lmac_ctx->u64 = 0;
+			if (init)
+				lmac_ctx->s.init_link = 1;
 			/* Clear the interrupt during shutdown for all
 			 * LMACs as there might be a possibility that
 			 * interrupts are not cleared by u-boot

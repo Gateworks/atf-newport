@@ -356,8 +356,8 @@ Refer to [cgx_scratchx0](#cgx_scratchx0) structure.
 - If PHY is present : 
   - Check the link status
   - If PHY link is up, CGX configured based on the link status
-  - If PHY link is down, error type will be set as `CGX_ERR_PHY_LINK_DOWN`
-    and link status is set with the current PHY status
+  - If PHY link is down, CMD_SUCCESS is returned with the link status as down
+(In both the cases, link_enable is set for the poll timer to poll for the link)
 
 - If PHY is not present: 
   - default link status is updated and CGX is configured
