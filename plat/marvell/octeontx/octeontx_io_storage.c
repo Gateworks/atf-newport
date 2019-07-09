@@ -41,7 +41,9 @@
 #include <platform_def.h>
 #include <string.h>
 #include <octeontx_common.h>
+#include <octeontx_utils.h>
 #include <plat_board_cfg.h>
+#include <spi.h>
 
 #include <cavm-arch.h>
 #include <octeontx_io_storage.h>
@@ -146,6 +148,14 @@ static const io_uuid_spec_t nt_fw_cert_uuid_spec = {
 	.uuid = UUID_NON_TRUSTED_FW_CONTENT_CERT,
 };
 #endif /* TRUSTED_BOARD_BOOT */
+
+static int spi_boot_try;
+
+static const int spi_boot_method[] = {
+	0,				/* Use native mode */
+	SPI_FORCE_X1_READ,		/* Disable QuadSPI read */
+	SPI_FORCE_LEGACY_MODE		/* Force legacy mode */
+};
 
 
 static int open_fip(const uintptr_t spec);
@@ -289,7 +299,8 @@ static int open_spi(const uintptr_t spec)
 	int result;
 	uintptr_t local_image_handle;
 
-	result = io_dev_init(spi_dev_handle, (uintptr_t)NULL);
+	result = io_dev_init(spi_dev_handle,
+		(uintptr_t)&(spi_boot_method[spi_boot_try]));
 	if (result == 0) {
 		result = io_open(spi_dev_handle, spec, &local_image_handle);
 		if (result == 0) {
@@ -334,6 +345,32 @@ static int open_memmap(const uintptr_t spec)
 	return result;
 }
 
+
+
+int plat_try_next_boot_source(void)
+{
+	uint64_t midr;
+
+	midr = read_midr();
+
+	if (IS_OCTEONTX_PN(midr, T96PARTNUM) ||
+		IS_OCTEONTX_PN(midr, F95PARTNUM) ||
+		IS_OCTEONTX_PN(midr, LOKIPARTNUM)) {
+
+		switch (plat_octeontx_bcfg->bcfg.boot_dev.boot_type) {
+		case OCTEONTX_BOOT_SPI:
+			NOTICE("Could not load image using SPI in %d mode\n",
+				spi_boot_try);
+			spi_boot_try++;
+			if (spi_boot_try < ARRAY_SIZE(spi_boot_method)) {
+				NOTICE("Try SPI %d mode\n", spi_boot_try);
+				return 1;
+			}
+		}
+	}
+
+	return 0;
+}
 
 void octeontx_io_setup(void)
 {

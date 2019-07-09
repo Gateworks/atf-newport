@@ -10,6 +10,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
+#include <spi.h>
 #include <delay_timer.h>
 #include <octeontx_common.h>
 #include <io_storage.h>
@@ -18,53 +19,9 @@
 #include <debug.h>
 #include <plat_board_cfg.h>
 
-#define PLL_REF_CLK 50000000	/* 50 MHz */
-
-
-typedef struct {
-	/* Use the 'in_use' flag as any value for base and file_pos could be
-	 * valid.
-	 */
-	int		in_use;
-	unsigned	spi_con;
-	unsigned	cs;
-	size_t		file_pos;
-	size_t		offset_address;
-} file_state_t;
-
 static file_state_t current_file = { 0 };
 
-#define	SPI_CS_HIGH		0x04			/* CS active high */
-#define	SPI_LSB_FIRST	0x08			/* per-word bits-on-wire */
-#define	SPI_3WIRE		0x10			/* SI/SO signals shared */
-#define MPI_MAX_DATA	8
-
-/* MPI_WIDE_BUF has 144 registers. Each is 64 bit, so contains 8 bytes. */
-#define MPI_MAX_DATA_CN9XXX	(144 * 8)
-
-#define SPI_NOR_CMD_READ		0x03
-#define SPI_NOR_CMD_READ_FAST		0x0b
-#define SPI_NOR_CMD_QREAD		0x6b
-
-#define SPI_NOR_CMD_WREN		0x06
-#define SPI_NOR_CMD_WRDI		0x04
-
-#define SPI_NOR_CMD_PROGRAM		0x02
-
-#define SPI_NOR_CMD_ERASE		0x20
-
-#define SPI_NOR_CMD_RDSR		0x5
-
-#define SPI_STATUS_WIP			(1 << 0)
-
-#define SPI_ADDRESSING_24BIT		24
-#define SPI_ADDRESSING_32BIT		32
-
-#define SPI_PAGE_SIZE			256
-
-#define SPI_NOR_PROGRAM_TIMEOUT		1000	/* 1 sec */
-#define SPI_NOR_ERASE_TIMEOUT		2000	/* 2 sec */
-#define CONFIG_SPI_FREQUENCY	16000000
+static uint32_t spi_mode;
 
 static int spi_config_cn8xxx(uint64_t spi_clk, uint32_t mode, int cpol,
 	int cpha, int spi_con, int cs)
@@ -76,7 +33,7 @@ static int spi_config_cn8xxx(uint64_t spi_clk, uint32_t mode, int cpol,
 	rst_boot.u = CSR_READ(CAVM_RST_BOOT);
 	mpi_cfg.u = CSR_READ(CAVM_MPI_CFG);
 
-	sclk = PLL_REF_CLK * rst_boot.s.pnr_mul;
+	sclk = PLL_REF_CLK_CN8XXX * rst_boot.s.pnr_mul;
 
 	switch (cs) {
 	case 0:
@@ -112,27 +69,32 @@ static int spi_config_cn9xxx(uint64_t spi_clk, uint32_t mode, int cpol,
 	union cavm_rst_boot rst_boot;
 	union cavm_mpix_cfg mpi_cfg;
 
-	rst_boot.u = CSR_READ(CAVM_RST_BOOT);
 	mpi_cfg.u = CSR_READ(CAVM_MPIX_CFG(spi_con));
 
-	sclk = PLL_REF_CLK * rst_boot.s.pnr_mul;
-
-	mpi_cfg.s.tb100_en = 1; /* Use 100Mhz main reference */
-	mpi_cfg.s.cs_espi_en = 0; /* Not using eSPI mode */
-	mpi_cfg.s.legacy_dis = 1; /* We don't use legacy mode */
+	if (mode & SPI_FORCE_LEGACY_MODE) {
+		rst_boot.u = CSR_READ(CAVM_RST_BOOT);
+		sclk = PLL_REF_CLK_CN9XXX * rst_boot.s.pnr_mul;
+		mpi_cfg.s.legacy_dis = 0; /* Use legacy mode */
+	} else {
+		sclk = PLL_REF_CLK_CN9XXX; /* With tb100_en use always 100Mhz */
+		mpi_cfg.s.legacy_dis = 1; /* We don't use legacy mode */
+		mpi_cfg.s.tb100_en = 1; /* Use 100Mhz main reference */
+		mpi_cfg.s.cs_espi_en = 0; /* Not using eSPI mode */
+		mpi_cfg.s.iomode = CAVM_MPI_IOMODE_E_X1_UNIDIR;
+		mpi_cfg.s.cs_sticky = 1;
+	}
 	mpi_cfg.s.clkdiv = (sclk >> 1) / spi_clk;
 	mpi_cfg.s.csena3 = 1;
 	mpi_cfg.s.csena2 = 1;
 	mpi_cfg.s.csena1 = 1;
 	mpi_cfg.s.csena0 = 1;
 	mpi_cfg.s.cshi = !!(mode & SPI_CS_HIGH);
-	mpi_cfg.s.cs_sticky = 1;
 	mpi_cfg.s.lsbfirst = !!(mode & SPI_LSB_FIRST);
 	mpi_cfg.s.wireor = !!(mode & SPI_3WIRE);
 	mpi_cfg.s.idlelo = cpha != cpol;
-	mpi_cfg.s.iomode = CAVM_MPI_IOMODE_E_X1_UNIDIR;
 	mpi_cfg.s.enable = 1;
 	CSR_WRITE(CAVM_MPIX_CFG(spi_con), mpi_cfg.u);
+
 	return 0;
 }
 
@@ -308,7 +270,10 @@ int spi_nor_read(uint8_t *buf, int buf_size, uint32_t addr,
 	/* Address len + command byte */
 	len = (addr_len >> 3) + 1;
 
-	if (cavm_is_model(OCTEONTX_CN9XXX)) {
+	if (cavm_is_model(OCTEONTX_CN9XXX) &&
+		!(spi_mode & SPI_FORCE_X1_READ) &&
+		!(spi_mode & SPI_FORCE_LEGACY_MODE)) {
+
 		cmd[0] = SPI_NOR_CMD_QREAD;
 		/* Dummy byte after command is required in Quad SPI mode */
 		len++;
@@ -464,7 +429,7 @@ static int spi_block_open(io_dev_info_t *dev_info, const uintptr_t spec,
 		current_file.cs = plat_octeontx_bcfg->bcfg.boot_dev.cs;
 		entity->info = (uintptr_t)&current_file;
 
-		return spi_config(CONFIG_SPI_FREQUENCY, 0, 0, 0,
+		return spi_config(CONFIG_SPI_FREQUENCY, spi_mode, 0, 0,
 				  current_file.spi_con, current_file.cs);
 	} else {
 		WARN("An SPI device is already active. Close first.\n");
@@ -533,6 +498,13 @@ static int spi_block_close(io_entity_t *entity)
 	return 0;
 }
 
+static int spi_dev_init(io_dev_info_t *dev_info, const uintptr_t init_params)
+{
+	if (init_params != (uintptr_t)NULL)
+		spi_mode = *(int *)init_params;
+	return 0;
+}
+
 static int spi_dev_close(io_dev_info_t *dev_info)
 {
 	/* NOP */
@@ -549,7 +521,7 @@ static const io_dev_funcs_t spi_dev_funcs = {
 	.read = spi_block_read,
 	.write = NULL,
 	.close = spi_block_close,
-	.dev_init = NULL,
+	.dev_init = spi_dev_init,
 	.dev_close = spi_dev_close,
 };
 
