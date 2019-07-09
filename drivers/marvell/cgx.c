@@ -1700,11 +1700,22 @@ int cgx_xaui_set_link_up(int cgx_id, int lmac_id)
 		 * speed >= 10Gbaud - XAUI/XLAUI/XFI
 		 */
 		qlm = lmac->qlm;
-		/* For some boards, lanes are swizzed and the lane
+		/* For some boards, lanes are swizzled and the lane
 		 * info in LMAC config structure might not have the
 		 * swapped lane info and hence read it from lane_to_sds
 		 */
 		lane = lmac->lane_to_sds & 0x3;
+		/* Special case for EBB9604 for DLM4/5. Lanes are
+		 * swizzled on EBB9604 and hence for DLM 4/5 case,
+		 * even the QLM is different
+		 */
+		if (!strncmp(plat_octeontx_bcfg->bcfg.board_model,
+					"ebb96", 5)) {
+			if (lmac->qlm == 4)
+				qlm = 5;
+			else if (lmac->qlm == 5)
+				qlm = 4;
+		}
 		lane_mask = cgx_get_lane_mask(qlm, lane, lmac->mode);
 
 		/* Skip RX adaptation in internal loopback mode */
