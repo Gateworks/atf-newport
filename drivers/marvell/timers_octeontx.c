@@ -11,6 +11,7 @@
 #include <interrupt_mgmt.h>
 #include <stdio.h>
 #include <octeontx_common.h>
+#include <octeontx_utils.h>
 #include <hw_timers.h>
 #include <delay_timer.h>
 #include <octeontx_irqs_def.h>
@@ -160,10 +161,12 @@ void plat_timer_set_period(uint64_t period)
 
 static uint32_t plat_get_timer_value(void)
 {
-	/* Generic delay timer implementation expects the timer to be a down
-	 * counter. We apply bitwise NOT operator to the tick values returned
-	 * by read_cntpct_el0() to simulate the down counter. */
-	volatile uint64_t count = CSR_READ(CAVM_RST_REF_CNTR);
+	/*
+	 * Generic delay timer implementation expects the timer to be a down
+	 * counter. We apply bitwise NOT operator to the tick values in the
+	 * RST_REF_CNTR register to simulate the down counter.
+	 */
+	volatile uint64_t count = ~CSR_READ(CAVM_RST_REF_CNTR);
 
 	return count;
 }
@@ -172,11 +175,23 @@ static timer_ops_t plat_timer_ops;
 
 int plat_timers_init(void)
 {
+	uint64_t midr;
+
+	midr = read_midr();
+
 	plat_timer_enable(0);
 
 	plat_timer_ops.get_timer_value	= plat_get_timer_value;
 	plat_timer_ops.clk_mult		= 1;
-	plat_timer_ops.clk_div		= 50;
+
+	if (IS_OCTEONTX_PN(midr, T96PARTNUM) ||
+		IS_OCTEONTX_PN(midr, F95PARTNUM) ||
+		IS_OCTEONTX_PN(midr, LOKIPARTNUM)) {
+
+		plat_timer_ops.clk_div	= 100;
+	} else {
+		plat_timer_ops.clk_div	= 50;
+	}
 
 	timer_init(&plat_timer_ops);
 
