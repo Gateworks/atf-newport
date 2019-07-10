@@ -1043,3 +1043,35 @@ following commands are available:
 Turning off PAM4 means setting modulation type to NRZ.
 
  > **Note**: Only the 6141 PHY supports these commands, currently.
+
+### 9.4 Change FEC or PHY line-side modulation type via U-Boot
+
+ > ethlist
+
+-- Command to display available network interface info
+
+ > set_fec <ethX> [type]
+
+-- Modify fec type for selected ethernet interface
+-- Example - set_fec <ethX> [type]
+-- Set FEC type for any of RVU PF based network interfaces
+	* where type - 0 [NO FEC] 1 [BASER_FEC] 2 [RS_FEC]
+
+ > get_fec <ethX>
+
+-- Display fec type for selected ethernet interface
+-- Example - get_fec <ethX>
+-- Get FEC type for any of RVU PF based network interfaces
+
+ > get_phymod <ethX>
+
+-- Display line side phy-mod type for selected ethernet interface
+-- Example - get_phymod <ethX>
+-- Get PHY MOD type for any of RVU PF based network interfaces
+
+ > set_phymod <ethX> [type]
+
+-- Modify line side phy-mod type for selected ethernet interface
+-- Example - set_phymod <ethX> [type]
+-- Set PHY MOD type for any of RVU PF based network interfaces
+	* where type - 0 [NRZ] 1 [PAM4]
