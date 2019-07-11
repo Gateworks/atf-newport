@@ -85,6 +85,7 @@
 #define false				0
 #define true				1
 #define gsern_error			WARN
+#define gsern_warn			WARN
 #define gsern_wait_usec			udelay
 #define gsern_is_model			cavm_is_model
 #define gsern_clock_get_count(...)	read_cntpct_el0()

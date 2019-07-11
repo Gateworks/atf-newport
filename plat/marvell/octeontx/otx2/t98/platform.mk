@@ -32,6 +32,7 @@ PLAT_BL_COMMON_SOURCES	+=	plat/marvell/octeontx/otx2/t98/plat_t98_setup.c		\
 				drivers/marvell/gsern/gsern_init_network.c	\
 				drivers/marvell/gsern/gsern_api.c		\
 				drivers/marvell/gsern/gsern_internal.c		\
+				drivers/marvell/gsern/gsern_eye.c		\
 				drivers/marvell/qlm.c		\
 				plat/marvell/octeontx/otx2/plat_setup.c		\
 
