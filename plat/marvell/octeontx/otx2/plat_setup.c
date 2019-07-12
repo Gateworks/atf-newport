@@ -231,6 +231,12 @@ void plat_octeontx_cpu_setup(void)
 		set_bit(cvmctl2_el1, 3);
 	}
 
+	/* Errata AP-36933 */
+	if (IS_OCTEONTX_VAR(midr, T96PARTNUM, 1)
+	    || IS_OCTEONTX_VAR(midr, F95PARTNUM, 1))
+		/* cvmctl_el1[54] = DISABLE_LDP_STP_FISS */
+		set_bit(cvmctl_el1, 54);
+
 	/*
 	 * Set cvm_ctl_el1[5] to workaround debug state execution in
 	 * incorrect EL
