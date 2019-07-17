@@ -97,18 +97,26 @@ void sh_fwdata_init(void)
 
 void sh_fwdata_update_supported_fec(int cgx_id, int lmac_id)
 {
+	int val;
 	struct cgx_lmac_fwdata_s *fwdata;
+	cgx_lmac_config_t *lmac_cfg;
+
+	lmac_cfg = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
 
 	fwdata = get_sh_cgx_fwdata_ptr(cgx_id, lmac_id);
 
 	fwdata->rw_valid = 0;
 
-	/* FIXME: For now, return the FEC type based on PCS. when SFP mgmt
-	 * is integrated fully, then supported FEC should be based on
-	 * transceiver capabilities as well
+	/* If SFP slot is present, supported FEC should
+	 * be returned based on transceiver capabilities.
+	 * If not, return based on PCS supported type
 	 */
-	fwdata->supported_fec = cgx_get_supported_fec_type(cgx_id, lmac_id);
+	if (lmac_cfg->sfp_slot)
+		val = sfp_get_fec_capability(cgx_id, lmac_id);
+	else
+		val = cgx_get_supported_fec_type(cgx_id, lmac_id);
 
+	fwdata->supported_fec = val;
 	fwdata->rw_valid = 1;
 	debug_shmem_mgmt("%s: %d:%d fwdata->supported_fec %llx\n", __func__,
 						cgx_id,

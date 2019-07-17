@@ -646,7 +646,7 @@ static int cgx_set_phy_mod_type(int cgx_id, int lmac_id, int phy_mod_type)
 /* Note : this function executes with lock acquired */
 static int cgx_process_requests(int cgx_id, int lmac_id)
 {
-	int ret = 0;
+	int ret = 0, val = 0;
 	int enable = 0; /* read from scratch1 - cmd_args */
 	int request_id = 0, err_type = 0, req_fec, phy_mod_type;
 	union cgx_scratchx0 scratchx0;
@@ -755,6 +755,7 @@ static int cgx_process_requests(int cgx_id, int lmac_id)
 				link.s.link_up = lmac_ctx->s.link_up;
 				link.s.full_duplex = lmac_ctx->s.full_duplex;
 				link.s.speed = lmac_ctx->s.speed;
+				link.s.fec = lmac->fec;
 				cgx_set_link_state(cgx_id, lmac_id, &link,
 					lmac_ctx->s.error_type);
 				break;
@@ -778,9 +779,20 @@ static int cgx_process_requests(int cgx_id, int lmac_id)
 				break;
 			case CGX_CMD_GET_SUPPORTED_FEC:
 				scratchx0.u = 0;
-				scratchx0.s.supported_fec.fec =
-						sh_fwdata_get_supported_fec(
+				/* SFP EEPROM info will be available only when
+				 * link is brought UP. If the link_enable is set
+				 * in case of SFP slot, supported FEC should
+				 * be returned based on transceiver capabilities
+				 * If not, return PCS supported FEC types
+				 */
+				if ((lmac_ctx->s.link_enable) &&
+						(lmac->sfp_slot))
+					val = sfp_get_fec_capability(cgx_id,
+								lmac_id);
+				else
+					val = cgx_get_supported_fec_type(
 							cgx_id, lmac_id);
+				scratchx0.s.supported_fec.fec = val;
 				debug_cgx_intf("%s: %d:%d supported FEC %d\n",
 					__func__, cgx_id, lmac_id,
 					scratchx0.s.supported_fec.fec);
