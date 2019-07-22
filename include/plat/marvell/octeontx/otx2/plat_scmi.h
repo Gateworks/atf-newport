@@ -357,10 +357,14 @@ void scmi_get_channel(scmi_channel_t *ch);
 void scmi_send_sync_command(scmi_channel_t *ch);
 void scmi_put_channel(scmi_channel_t *ch);
 
-static inline void validate_scmi_channel(scmi_channel_t *ch)
+static inline int validate_scmi_channel(scmi_channel_t *ch)
 {
-	assert(ch && ch->is_initialized);
-	assert(ch->info && ch->info->scmi_mbx_mem);
+	if (ch && ch->is_initialized) {
+		if (ch->info && ch->info->scmi_mbx_mem)
+			return 0;
+	}
+
+	return 1;
 }
 
 #endif	/* __PLAT_SCMI_H__ */
