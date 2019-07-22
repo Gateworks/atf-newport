@@ -720,7 +720,419 @@ union cavm_npa_aura_s
         uint64_t reserved_448_511      : 64;
 #endif /* Word 7 - End */
     } s;
-    /* struct cavm_npa_aura_s_s cn; */
+    /* struct cavm_npa_aura_s_s cn9; */
+    /* struct cavm_npa_aura_s_s cn96xxp1; */
+    struct cavm_npa_aura_s_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t pool_addr             : 64; /**< [ 63:  0] AF IOVA of the associated pool's NPA_POOL_HW_S structure in NDC/LLC/DRAM. The
+                                                                 size of the structure is 1 \<\< NPA_AF_CONST1[POOL_LOG2BYTES] bytes.
+
+                                                                 Bits \<5:0\> must be zero; address must be 64-byte aligned. Bits \<63:53\> are
+                                                                 ignored by hardware; software should use a sign-extended bit \<52\> for forward
+                                                                 compatibility.
+
+                                                                 Internal:
+                                                                 Bits \<63:53\>, \<5:0\> are ignored by hardware, treated as always 0x0. */
+#else /* Word 0 - Little Endian */
+        uint64_t pool_addr             : 64; /**< [ 63:  0] AF IOVA of the associated pool's NPA_POOL_HW_S structure in NDC/LLC/DRAM. The
+                                                                 size of the structure is 1 \<\< NPA_AF_CONST1[POOL_LOG2BYTES] bytes.
+
+                                                                 Bits \<5:0\> must be zero; address must be 64-byte aligned. Bits \<63:53\> are
+                                                                 ignored by hardware; software should use a sign-extended bit \<52\> for forward
+                                                                 compatibility.
+
+                                                                 Internal:
+                                                                 Bits \<63:53\>, \<5:0\> are ignored by hardware, treated as always 0x0. */
+#endif /* Word 0 - End */
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 1 - Big Endian */
+        uint64_t avg_level             : 8;  /**< [127:120] Current moving average of the 8-bit shifted and saturated aura count. The
+                                                                 higher [AVG_LEVEL] is, the more free resources. The lower levels indicate
+                                                                 buffer exhaustion. See [SHIFT] and [AVG_CON].
+
+                                                                 NPA_INPQ_E::NIX()_RX uses [AVG_LEVEL] in receive queue QOS calculations. */
+        uint64_t reserved_118_119      : 2;
+        uint64_t shift                 : 6;  /**< [117:112] Right shift to aura [COUNT] to create a narrower depth for aura QOS and backpressure
+                                                                 calculations. NPA saturates the aura [COUNT] to 8 bits for the aura, and compares this
+                                                                 8-bit shifted and saturated count directly to [AURA_DROP] and [BP]. */
+        uint64_t aura_drop             : 8;  /**< [111:104] If [AURA_DROP_ENA] is set and DROP processing is requested, the packet will
+                                                                 be dropped if the current 8-bit shifted and saturated aura count is equal
+                                                                 to or greater than this value. */
+        uint64_t reserved_98_103       : 6;
+        uint64_t bp_ena                : 2;  /**< [ 97: 96] Enable aura backpressure to NIX-RX based on [BP] level. One bit per
+                                                                 NIX-RX; index enumerated by NPA_BPINTF_E. */
+        uint64_t aura_drop_ena         : 1;  /**< [ 95: 95] Enable aura DROP based on the [AURA_DROP] level. */
+        uint64_t pool_drop_ena         : 1;  /**< [ 94: 94] Enable aura-unique pool DROP based on the [POOL_DROP] level. */
+        uint64_t reserved_93           : 1;
+        uint64_t avg_con               : 9;  /**< [ 92: 84] This value controls how much of the present average resource level is used
+                                                                 to calculate the new resource level. The value is a number from 0 to 256,
+                                                                 which represents [AVG_CON]/256 of the average resource level that will be
+                                                                 used in the calculation.
+
+                                                                 Must be less than or equal to 240 (0xF0).
+
+                                                                 NPA updates the average resource level as follows whenever the immediate resource
+                                                                 count changes:
+
+                                                                 \<pre\>
+                                                                 // norm_CNT = 255 - (8-bit shifted and saturated aura count); see [SHIFT].
+                                                                 adjusted_CON = [AVG_CON] \>\> log2(NPA_AF_AVG_DELAY[AVG_TIMER] - [UPDATE_TIME]);
+                                                                 [AVG_LEVEL] = (adjusted_CON * [AVG_LEVEL] + (256 - adjusted_CON) * norm_CNT) / 256;
+                                                                 [UPDATE_TIME] = NPA_AF_AVG_DELAY[AVG_TIMER];
+                                                                 \</pre\>
+
+                                                                 Note that setting this value to zero will disable averaging, and always use the most
+                                                                 immediate levels. NPA_AF_AVG_DELAY[AVG_DLY] controls the periodicity of the level
+                                                                 calculations.
+
+                                                                 The average timer (NPA_AF_AVG_DELAY[AVG_TIMER]) wraps around approximately
+                                                                 every 65*( NPA_AF_AVG_DELAY[AVG_DLY]+1) milliseconds. For large values of
+                                                                 [AVG_CON], [AVG_LEVEL] accuracy is reduced if the aura state is unchanged
+                                                                 long enough for the average timer to wrap around and cross [UPDATE_TIME].
+                                                                 For higher accuracy, software can periodically write
+                                                                 NPA_LF_AURA_OP_CNT[CNT_ADD,COUNT] = {1,0x0} to ensure that the average
+                                                                 timer does not cross [UPDATE_TIME].
+
+                                                                 Internal:
+                                                                 Setting [AVG_CON] \<= 240 ensures that [AVG_LEVEL] is properly updated when
+                                                                 the shifted and saturated aura count is less than 15/16 of the saturation
+                                                                 value. With a higher [AVG_CON] value, if [AVG_LEVEL] reaches 0, it may
+                                                                 remain stuck at 0 because the following expression may evaluate to 0 due to
+                                                                 integer truncation:
+                                                                 _ ((256 - adjusted_CON)*shifted_CNT) / 256. */
+        uint64_t pool_way_mask         : 16; /**< [ 83: 68] Way partitioning mask for allocating associated NPA_POOL_HW_S in NDC (1 means do not use).
+                                                                 Internal:
+                                                                 Bypass NDC when all ones. */
+        uint64_t pool_caching          : 1;  /**< [ 67: 67] Selects the style read for accessing NPA_POOL_HW_S in LLC/DRAM:
+                                                                 0x0 = NPA_POOL_HW_S reads will not allocate into the LLC.
+                                                                 0x1 = NPA_POOL_HW_S reads are allocated into the LLC.
+
+                                                                 NPA_POOL_HW_S writes that are not allocated in NDC will always allocate
+                                                                 into LLC. */
+        uint64_t reserved_65_66        : 2;
+        uint64_t ena                   : 1;  /**< [ 64: 64] Enable. If clear, any allocations will fail and returns will be dropped. */
+#else /* Word 1 - Little Endian */
+        uint64_t ena                   : 1;  /**< [ 64: 64] Enable. If clear, any allocations will fail and returns will be dropped. */
+        uint64_t reserved_65_66        : 2;
+        uint64_t pool_caching          : 1;  /**< [ 67: 67] Selects the style read for accessing NPA_POOL_HW_S in LLC/DRAM:
+                                                                 0x0 = NPA_POOL_HW_S reads will not allocate into the LLC.
+                                                                 0x1 = NPA_POOL_HW_S reads are allocated into the LLC.
+
+                                                                 NPA_POOL_HW_S writes that are not allocated in NDC will always allocate
+                                                                 into LLC. */
+        uint64_t pool_way_mask         : 16; /**< [ 83: 68] Way partitioning mask for allocating associated NPA_POOL_HW_S in NDC (1 means do not use).
+                                                                 Internal:
+                                                                 Bypass NDC when all ones. */
+        uint64_t avg_con               : 9;  /**< [ 92: 84] This value controls how much of the present average resource level is used
+                                                                 to calculate the new resource level. The value is a number from 0 to 256,
+                                                                 which represents [AVG_CON]/256 of the average resource level that will be
+                                                                 used in the calculation.
+
+                                                                 Must be less than or equal to 240 (0xF0).
+
+                                                                 NPA updates the average resource level as follows whenever the immediate resource
+                                                                 count changes:
+
+                                                                 \<pre\>
+                                                                 // norm_CNT = 255 - (8-bit shifted and saturated aura count); see [SHIFT].
+                                                                 adjusted_CON = [AVG_CON] \>\> log2(NPA_AF_AVG_DELAY[AVG_TIMER] - [UPDATE_TIME]);
+                                                                 [AVG_LEVEL] = (adjusted_CON * [AVG_LEVEL] + (256 - adjusted_CON) * norm_CNT) / 256;
+                                                                 [UPDATE_TIME] = NPA_AF_AVG_DELAY[AVG_TIMER];
+                                                                 \</pre\>
+
+                                                                 Note that setting this value to zero will disable averaging, and always use the most
+                                                                 immediate levels. NPA_AF_AVG_DELAY[AVG_DLY] controls the periodicity of the level
+                                                                 calculations.
+
+                                                                 The average timer (NPA_AF_AVG_DELAY[AVG_TIMER]) wraps around approximately
+                                                                 every 65*( NPA_AF_AVG_DELAY[AVG_DLY]+1) milliseconds. For large values of
+                                                                 [AVG_CON], [AVG_LEVEL] accuracy is reduced if the aura state is unchanged
+                                                                 long enough for the average timer to wrap around and cross [UPDATE_TIME].
+                                                                 For higher accuracy, software can periodically write
+                                                                 NPA_LF_AURA_OP_CNT[CNT_ADD,COUNT] = {1,0x0} to ensure that the average
+                                                                 timer does not cross [UPDATE_TIME].
+
+                                                                 Internal:
+                                                                 Setting [AVG_CON] \<= 240 ensures that [AVG_LEVEL] is properly updated when
+                                                                 the shifted and saturated aura count is less than 15/16 of the saturation
+                                                                 value. With a higher [AVG_CON] value, if [AVG_LEVEL] reaches 0, it may
+                                                                 remain stuck at 0 because the following expression may evaluate to 0 due to
+                                                                 integer truncation:
+                                                                 _ ((256 - adjusted_CON)*shifted_CNT) / 256. */
+        uint64_t reserved_93           : 1;
+        uint64_t pool_drop_ena         : 1;  /**< [ 94: 94] Enable aura-unique pool DROP based on the [POOL_DROP] level. */
+        uint64_t aura_drop_ena         : 1;  /**< [ 95: 95] Enable aura DROP based on the [AURA_DROP] level. */
+        uint64_t bp_ena                : 2;  /**< [ 97: 96] Enable aura backpressure to NIX-RX based on [BP] level. One bit per
+                                                                 NIX-RX; index enumerated by NPA_BPINTF_E. */
+        uint64_t reserved_98_103       : 6;
+        uint64_t aura_drop             : 8;  /**< [111:104] If [AURA_DROP_ENA] is set and DROP processing is requested, the packet will
+                                                                 be dropped if the current 8-bit shifted and saturated aura count is equal
+                                                                 to or greater than this value. */
+        uint64_t shift                 : 6;  /**< [117:112] Right shift to aura [COUNT] to create a narrower depth for aura QOS and backpressure
+                                                                 calculations. NPA saturates the aura [COUNT] to 8 bits for the aura, and compares this
+                                                                 8-bit shifted and saturated count directly to [AURA_DROP] and [BP]. */
+        uint64_t reserved_118_119      : 2;
+        uint64_t avg_level             : 8;  /**< [127:120] Current moving average of the 8-bit shifted and saturated aura count. The
+                                                                 higher [AVG_LEVEL] is, the more free resources. The lower levels indicate
+                                                                 buffer exhaustion. See [SHIFT] and [AVG_CON].
+
+                                                                 NPA_INPQ_E::NIX()_RX uses [AVG_LEVEL] in receive queue QOS calculations. */
+#endif /* Word 1 - End */
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 2 - Big Endian */
+        uint64_t reserved_189_191      : 3;
+        uint64_t nix1_bpid             : 9;  /**< [188:180] Reserved.
+                                                                 Internal:
+                                                                 NIX(1) RX BPID (BPID index of NIX_AF_RX_BPID()_STATUS) to which backpressure
+                                                                 is asserted when the corresponding [BP_ENA] bit is set. */
+        uint64_t reserved_177_179      : 3;
+        uint64_t nix0_bpid             : 9;  /**< [176:168] NIX(0) RX BPID (BPID index of NIX_AF_RX_BPID()_STATUS) to which backpressure
+                                                                 is asserted when the corresponding [BP_ENA] bit is set. */
+        uint64_t reserved_164_167      : 4;
+        uint64_t count                 : 36; /**< [163:128] Number of pointers allocated to the aura. Increments on ALLOC and decrements on FREE. */
+#else /* Word 2 - Little Endian */
+        uint64_t count                 : 36; /**< [163:128] Number of pointers allocated to the aura. Increments on ALLOC and decrements on FREE. */
+        uint64_t reserved_164_167      : 4;
+        uint64_t nix0_bpid             : 9;  /**< [176:168] NIX(0) RX BPID (BPID index of NIX_AF_RX_BPID()_STATUS) to which backpressure
+                                                                 is asserted when the corresponding [BP_ENA] bit is set. */
+        uint64_t reserved_177_179      : 3;
+        uint64_t nix1_bpid             : 9;  /**< [188:180] Reserved.
+                                                                 Internal:
+                                                                 NIX(1) RX BPID (BPID index of NIX_AF_RX_BPID()_STATUS) to which backpressure
+                                                                 is asserted when the corresponding [BP_ENA] bit is set. */
+        uint64_t reserved_189_191      : 3;
+#endif /* Word 2 - End */
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 3 - Big Endian */
+        uint64_t reserved_252_255      : 4;
+        uint64_t fc_hyst_bits          : 4;  /**< [251:248] Flow control hysteresis bits. Use hysteresis to reduce the number of stores that
+                                                                 NPA does to update [COUNT] in LLC/DRAM. Hysteresis is accomplished by monitoring
+                                                                 a range of least significant bits of [COUNT] and triggering stores as follows:
+
+                                                                 * When [FC_HYST_BITS] == 0, no count bits are monitored.
+
+                                                                 * Otherwise, count bits \<[FC_HYST_BITS]-1:0\> are monitored.
+
+                                                                 For purposes of describing the hysteresis algorithm, a down-crossing is defined
+                                                                 as the case where a count decrement causes the specified LSB range to transition
+                                                                 from all zeros to all ones, and an up-crossing as the case where a count
+                                                                 increment causes the specified LSB range to transition from all ones to all
+                                                                 zeros. A zero-crossing is defined as a down-crossing or up-crossing.
+
+                                                                 The hysteresis algorithm triggers stores upon down-crossings that follow a
+                                                                 down-crossing and upon up-crossings that follow an up-crossing. Conversely
+                                                                 down-crossings that follow an up-crossing and up-crossings that follow a
+                                                                 down-crossing do not trigger stores. This prevents the repeated updates that
+                                                                 would otherwise occur if the count oscillated around some zero-crossing. When
+                                                                 [FC_HYST_BITS] = 0, there is no hysteresis and all count updates trigger stores. */
+        uint64_t fc_stype              : 2;  /**< [247:246] Type of store to write [COUNT] in LLC/DRAM:
+                                                                 0x0 = Store full cache line, allocate cache (STF).
+                                                                 0x1 = Store full cache line, no allocate (STT).
+                                                                 0x2 = Store partial cache line, allocate cache (STP).
+                                                                 0x3 = Reserved. */
+        uint64_t fc_up_crossing        : 1;  /**< [245:245] Flow control up-crossing flag. Set on an aura count up-crossing, and cleared on
+                                                                 a down-crossing. see [FC_HYST_BITS]. NPA maintains this value and software may
+                                                                 ignore it. */
+        uint64_t fc_ena                : 1;  /**< [244:244] Enable flow control. When enabled, NPA will periodically store the [COUNT] value
+                                                                 as an unsigned 64-bit to the LF IOVA specified by [FC_ADDR] for flow control
+                                                                 purposes. The frequency of the stores is controlled via [FC_HYST_BITS].
+
+                                                                 When set, software should also enable the associated pool's flow control
+                                                                 with NPA_POOL_S[FC_ENA] and monitor the pool level stored in LLC/DRAM. */
+        uint64_t reserved_240_243      : 4;
+        uint64_t bp                    : 8;  /**< [239:232] Backpressure to [NIX0_BPID]/[NIX1_BPID] NPA_BPINTF_E::NIX()_RX is asserted if
+                                                                 the corresponding [BP_ENA] bit is set and the current 8-bit shifted and
+                                                                 saturated aura [COUNT] is greater than or equal to this value.
+
+                                                                 Backpressure must not be asserted when the admin queue initializes the aura
+                                                                 context (NPA_AQ_INST_S[OP] = NPA_AQ_INSTOP_E::INIT and NPA_AQ_INST_S[CTYPE]
+                                                                 = NPA_AQ_CTYPE_E::AURA). Thus, [BP_ENA] must be clear when initializing an
+                                                                 aura context if the 8-bit shifted and saturated aura [COUNT] is greater
+                                                                 than or equal to [BP]. If appropriate, software may subsequently set
+                                                                 [BP_ENA] with an admin queue WRITE instruction. */
+        uint64_t reserved_228_231      : 4;
+        uint64_t limit                 : 36; /**< [227:192] When the aura [COUNT] is equal to or greater than this value, any allocations
+                                                                 using this aura will fail. This allows a hard resource division between multiple
+                                                                 auras sharing a common pool. */
+#else /* Word 3 - Little Endian */
+        uint64_t limit                 : 36; /**< [227:192] When the aura [COUNT] is equal to or greater than this value, any allocations
+                                                                 using this aura will fail. This allows a hard resource division between multiple
+                                                                 auras sharing a common pool. */
+        uint64_t reserved_228_231      : 4;
+        uint64_t bp                    : 8;  /**< [239:232] Backpressure to [NIX0_BPID]/[NIX1_BPID] NPA_BPINTF_E::NIX()_RX is asserted if
+                                                                 the corresponding [BP_ENA] bit is set and the current 8-bit shifted and
+                                                                 saturated aura [COUNT] is greater than or equal to this value.
+
+                                                                 Backpressure must not be asserted when the admin queue initializes the aura
+                                                                 context (NPA_AQ_INST_S[OP] = NPA_AQ_INSTOP_E::INIT and NPA_AQ_INST_S[CTYPE]
+                                                                 = NPA_AQ_CTYPE_E::AURA). Thus, [BP_ENA] must be clear when initializing an
+                                                                 aura context if the 8-bit shifted and saturated aura [COUNT] is greater
+                                                                 than or equal to [BP]. If appropriate, software may subsequently set
+                                                                 [BP_ENA] with an admin queue WRITE instruction. */
+        uint64_t reserved_240_243      : 4;
+        uint64_t fc_ena                : 1;  /**< [244:244] Enable flow control. When enabled, NPA will periodically store the [COUNT] value
+                                                                 as an unsigned 64-bit to the LF IOVA specified by [FC_ADDR] for flow control
+                                                                 purposes. The frequency of the stores is controlled via [FC_HYST_BITS].
+
+                                                                 When set, software should also enable the associated pool's flow control
+                                                                 with NPA_POOL_S[FC_ENA] and monitor the pool level stored in LLC/DRAM. */
+        uint64_t fc_up_crossing        : 1;  /**< [245:245] Flow control up-crossing flag. Set on an aura count up-crossing, and cleared on
+                                                                 a down-crossing. see [FC_HYST_BITS]. NPA maintains this value and software may
+                                                                 ignore it. */
+        uint64_t fc_stype              : 2;  /**< [247:246] Type of store to write [COUNT] in LLC/DRAM:
+                                                                 0x0 = Store full cache line, allocate cache (STF).
+                                                                 0x1 = Store full cache line, no allocate (STT).
+                                                                 0x2 = Store partial cache line, allocate cache (STP).
+                                                                 0x3 = Reserved. */
+        uint64_t fc_hyst_bits          : 4;  /**< [251:248] Flow control hysteresis bits. Use hysteresis to reduce the number of stores that
+                                                                 NPA does to update [COUNT] in LLC/DRAM. Hysteresis is accomplished by monitoring
+                                                                 a range of least significant bits of [COUNT] and triggering stores as follows:
+
+                                                                 * When [FC_HYST_BITS] == 0, no count bits are monitored.
+
+                                                                 * Otherwise, count bits \<[FC_HYST_BITS]-1:0\> are monitored.
+
+                                                                 For purposes of describing the hysteresis algorithm, a down-crossing is defined
+                                                                 as the case where a count decrement causes the specified LSB range to transition
+                                                                 from all zeros to all ones, and an up-crossing as the case where a count
+                                                                 increment causes the specified LSB range to transition from all ones to all
+                                                                 zeros. A zero-crossing is defined as a down-crossing or up-crossing.
+
+                                                                 The hysteresis algorithm triggers stores upon down-crossings that follow a
+                                                                 down-crossing and upon up-crossings that follow an up-crossing. Conversely
+                                                                 down-crossings that follow an up-crossing and up-crossings that follow a
+                                                                 down-crossing do not trigger stores. This prevents the repeated updates that
+                                                                 would otherwise occur if the count oscillated around some zero-crossing. When
+                                                                 [FC_HYST_BITS] = 0, there is no hysteresis and all count updates trigger stores. */
+        uint64_t reserved_252_255      : 4;
+#endif /* Word 3 - End */
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 4 - Big Endian */
+        uint64_t fc_addr               : 64; /**< [319:256] Flow control address. LF IOVA in LLC/DRAM to write the count. See also
+                                                                 [FC_ENA] and [FC_STYPE]. Must be on a dedicated 128-byte cache line when
+                                                                 [FC_STYPE] indicates full cache line.
+
+                                                                 Bits \<2:0\> must be zero; address must be 8-byte aligned.
+                                                                 Bits \<63:53\> are ignored by hardware; software should use a sign-extended bit \<52\> for
+                                                                 forward compatibility.
+
+                                                                 Internal:
+                                                                 Bits \<63:53\>, \<2:0\> are ignored by hardware, treated as always 0x0. */
+#else /* Word 4 - Little Endian */
+        uint64_t fc_addr               : 64; /**< [319:256] Flow control address. LF IOVA in LLC/DRAM to write the count. See also
+                                                                 [FC_ENA] and [FC_STYPE]. Must be on a dedicated 128-byte cache line when
+                                                                 [FC_STYPE] indicates full cache line.
+
+                                                                 Bits \<2:0\> must be zero; address must be 8-byte aligned.
+                                                                 Bits \<63:53\> are ignored by hardware; software should use a sign-extended bit \<52\> for
+                                                                 forward compatibility.
+
+                                                                 Internal:
+                                                                 Bits \<63:53\>, \<2:0\> are ignored by hardware, treated as always 0x0. */
+#endif /* Word 4 - End */
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 5 - Big Endian */
+        uint64_t reserved_379_383      : 5;
+        uint64_t err_qint_idx          : 7;  /**< [378:372] Error queue interrupt index. Select the QINT within VF/PF (QINT index of
+                                                                 NPA_LF_QINT()_INT) which receives [ERR_INT] events. */
+        uint64_t reserved_371          : 1;
+        uint64_t thresh_qint_idx       : 7;  /**< [370:364] Threshold queue interrupt index. Select the QINT within VF/PF (QINT index
+                                                                 of NPA_LF_QINT()_INT) which receives [THRESH_INT] events. */
+        uint64_t reserved_363          : 1;
+        uint64_t thresh_up             : 1;  /**< [362:362] Threshold up direction. When set, [THRESH_INT] is set when [COUNT] rises to
+                                                                 or above [THRESH]. When clear, [THRESH_INT] is set when [COUNT] drops below
+                                                                 [THRESH]. Software can read or write this bit with
+                                                                 NPA_LF_AURA_OP_THRESH. */
+        uint64_t thresh_int_ena        : 1;  /**< [361:361] Threshold interrupt enable. Software can read, set, or clear this bit with
+                                                                 NPA_LF_AURA_OP_INT. */
+        uint64_t thresh_int            : 1;  /**< [360:360] Threshold interrupt. When [THRESH_UP] is set, hardware sets this bit when
+                                                                 [COUNT] goes to or above [THRESH]. When [THRESH_UP] is clear, hardware sets
+                                                                 this bit when [COUNT] drops below [THRESH].
+
+                                                                 Software can read, set, or clear this bit with NPA_LF_AURA_OP_INT.
+
+                                                                 Internal:
+                                                                 "When [THRESH_UP]==0:
+                                                                 * Interrupt set to QINT when ([THRESH_INT] &
+                                                                 [THRESH_INT_ENA]) goes from 0 to 1.
+                                                                 * Interrupt clear to QINT when ([THRESH_INT] &
+                                                                 [THRESH_INT_ENA]) goes from 1 to 0.
+                                                                 * Interrupt resend to QINT when [THRESH_INT_ENA] = 1, software clears
+                                                                 [THRESH_INT], and [COUNT] \< [THRESH].
+                                                                 Similar when [THRESH_UP]==1, except:
+                                                                 * Interrupt resend to QINT when [THRESH_INT_ENA] = 1, software clears
+                                                                 [THRESH_INT], and [COUNT] \>= [THRESH].
+                                                                 " */
+        uint64_t err_int_ena           : 8;  /**< [359:352] Error interrupt enables. Bits enumerated by NPA_AURA_ERR_INT_E. Software
+                                                                 can read, set or clear these bits with NPA_LF_AURA_OP_INT. */
+        uint64_t err_int               : 8;  /**< [351:344] Error interrupts. Bits enumerated by NPA_AURA_ERR_INT_E, which also defines
+                                                                 when hardware sets each bit. Software can read, set, or clear these bits
+                                                                 with NPA_LF_AURA_OP_INT. */
+        uint64_t update_time           : 16; /**< [343:328] NPA_AF_AVG_DELAY[AVG_TIMER] value captured when [AVG_LEVEL] is updated.
+                                                                 NPA maintains this value and software may ignore it. */
+        uint64_t pool_drop             : 8;  /**< [327:320] If [POOL_DROP_ENA] is set and DROP processing is requested, the packet will
+                                                                 be dropped if the current 8-bit shifted and saturated free pointer count in
+                                                                 the aura's pool is less than or equal this value. See
+                                                                 NPA_POOL_S[SHIFT] and NPA_POOL_S[STACK_PAGES]. */
+#else /* Word 5 - Little Endian */
+        uint64_t pool_drop             : 8;  /**< [327:320] If [POOL_DROP_ENA] is set and DROP processing is requested, the packet will
+                                                                 be dropped if the current 8-bit shifted and saturated free pointer count in
+                                                                 the aura's pool is less than or equal this value. See
+                                                                 NPA_POOL_S[SHIFT] and NPA_POOL_S[STACK_PAGES]. */
+        uint64_t update_time           : 16; /**< [343:328] NPA_AF_AVG_DELAY[AVG_TIMER] value captured when [AVG_LEVEL] is updated.
+                                                                 NPA maintains this value and software may ignore it. */
+        uint64_t err_int               : 8;  /**< [351:344] Error interrupts. Bits enumerated by NPA_AURA_ERR_INT_E, which also defines
+                                                                 when hardware sets each bit. Software can read, set, or clear these bits
+                                                                 with NPA_LF_AURA_OP_INT. */
+        uint64_t err_int_ena           : 8;  /**< [359:352] Error interrupt enables. Bits enumerated by NPA_AURA_ERR_INT_E. Software
+                                                                 can read, set or clear these bits with NPA_LF_AURA_OP_INT. */
+        uint64_t thresh_int            : 1;  /**< [360:360] Threshold interrupt. When [THRESH_UP] is set, hardware sets this bit when
+                                                                 [COUNT] goes to or above [THRESH]. When [THRESH_UP] is clear, hardware sets
+                                                                 this bit when [COUNT] drops below [THRESH].
+
+                                                                 Software can read, set, or clear this bit with NPA_LF_AURA_OP_INT.
+
+                                                                 Internal:
+                                                                 "When [THRESH_UP]==0:
+                                                                 * Interrupt set to QINT when ([THRESH_INT] &
+                                                                 [THRESH_INT_ENA]) goes from 0 to 1.
+                                                                 * Interrupt clear to QINT when ([THRESH_INT] &
+                                                                 [THRESH_INT_ENA]) goes from 1 to 0.
+                                                                 * Interrupt resend to QINT when [THRESH_INT_ENA] = 1, software clears
+                                                                 [THRESH_INT], and [COUNT] \< [THRESH].
+                                                                 Similar when [THRESH_UP]==1, except:
+                                                                 * Interrupt resend to QINT when [THRESH_INT_ENA] = 1, software clears
+                                                                 [THRESH_INT], and [COUNT] \>= [THRESH].
+                                                                 " */
+        uint64_t thresh_int_ena        : 1;  /**< [361:361] Threshold interrupt enable. Software can read, set, or clear this bit with
+                                                                 NPA_LF_AURA_OP_INT. */
+        uint64_t thresh_up             : 1;  /**< [362:362] Threshold up direction. When set, [THRESH_INT] is set when [COUNT] rises to
+                                                                 or above [THRESH]. When clear, [THRESH_INT] is set when [COUNT] drops below
+                                                                 [THRESH]. Software can read or write this bit with
+                                                                 NPA_LF_AURA_OP_THRESH. */
+        uint64_t reserved_363          : 1;
+        uint64_t thresh_qint_idx       : 7;  /**< [370:364] Threshold queue interrupt index. Select the QINT within VF/PF (QINT index
+                                                                 of NPA_LF_QINT()_INT) which receives [THRESH_INT] events. */
+        uint64_t reserved_371          : 1;
+        uint64_t err_qint_idx          : 7;  /**< [378:372] Error queue interrupt index. Select the QINT within VF/PF (QINT index of
+                                                                 NPA_LF_QINT()_INT) which receives [ERR_INT] events. */
+        uint64_t reserved_379_383      : 5;
+#endif /* Word 5 - End */
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 6 - Big Endian */
+        uint64_t reserved_420_447      : 28;
+        uint64_t thresh                : 36; /**< [419:384] Interrupt threshold count. See [THRESH_INT]. Software can read or write
+                                                                 this field with NPA_LF_AURA_OP_THRESH. */
+#else /* Word 6 - Little Endian */
+        uint64_t thresh                : 36; /**< [419:384] Interrupt threshold count. See [THRESH_INT]. Software can read or write
+                                                                 this field with NPA_LF_AURA_OP_THRESH. */
+        uint64_t reserved_420_447      : 28;
+#endif /* Word 6 - End */
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 7 - Big Endian */
+        uint64_t reserved_448_511      : 64;
+#else /* Word 7 - Little Endian */
+        uint64_t reserved_448_511      : 64;
+#endif /* Word 7 - End */
+    } cn96xxp3;
+    /* struct cavm_npa_aura_s_cn96xxp3 cn98xx; */
+    /* struct cavm_npa_aura_s_s cnf95xxp1; */
+    /* struct cavm_npa_aura_s_cn96xxp3 cnf95xxp2; */
+    /* struct cavm_npa_aura_s_cn96xxp3 loki; */
 };
 
 /**

@@ -3540,7 +3540,7 @@ union cavm_cptx_af_lfx_ctl
 #endif /* Word 0 - End */
     } s;
     /* struct cavm_cptx_af_lfx_ctl_s cn9; */
-    struct cavm_cptx_af_lfx_ctl_cn96xx
+    struct cavm_cptx_af_lfx_ctl_cn96xxp1
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_56_63        : 8;
@@ -3707,7 +3707,8 @@ union cavm_cptx_af_lfx_ctl
                                                                  See also CPT_INST_S[EGRP] and CPT_AF_EXE()_CTL2[GRP_EN]. */
         uint64_t reserved_56_63        : 8;
 #endif /* Word 0 - End */
-    } cn96xx;
+    } cn96xxp1;
+    /* struct cavm_cptx_af_lfx_ctl_s cn96xxp3; */
     /* struct cavm_cptx_af_lfx_ctl_s cn98xx; */
 };
 typedef union cavm_cptx_af_lfx_ctl cavm_cptx_af_lfx_ctl_t;

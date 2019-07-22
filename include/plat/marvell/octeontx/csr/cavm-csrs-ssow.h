@@ -636,7 +636,7 @@ union cavm_ssow_lf_gws_int
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_12_63        : 52;
-        uint64_t swtag_dis             : 1;  /**< [ 11: 11](R/W1C/H) Received UPD_WQP_GRP/SWTAG_FULL/SWTAG_DESCH when SSO_AF_HWGRP()_AW_CFG[SWTAG_DIS] was set. */
+        uint64_t swtag_dis             : 1;  /**< [ 11: 11](R/W1C/H) Received UPD_WQP_GRP/SWTAG_FULL/SWTAG_DESCHED when SSO_AF_HWGRP()_AW_CFG[SWTAG_DIS] was set. */
         uint64_t illegal_ld            : 1;  /**< [ 10: 10](R/W1C/H) Received illegal load for workslot op. */
         uint64_t illegal_st            : 1;  /**< [  9:  9](R/W1C/H) Received illegal store for workslot op. */
         uint64_t wqp_space             : 1;  /**< [  8:  8](R/W1C/H) Received UPD_WQP_GRP referencing a different tag space than currently held by workslot. */
@@ -672,7 +672,7 @@ union cavm_ssow_lf_gws_int
         uint64_t wqp_space             : 1;  /**< [  8:  8](R/W1C/H) Received UPD_WQP_GRP referencing a different tag space than currently held by workslot. */
         uint64_t illegal_st            : 1;  /**< [  9:  9](R/W1C/H) Received illegal store for workslot op. */
         uint64_t illegal_ld            : 1;  /**< [ 10: 10](R/W1C/H) Received illegal load for workslot op. */
-        uint64_t swtag_dis             : 1;  /**< [ 11: 11](R/W1C/H) Received UPD_WQP_GRP/SWTAG_FULL/SWTAG_DESCH when SSO_AF_HWGRP()_AW_CFG[SWTAG_DIS] was set. */
+        uint64_t swtag_dis             : 1;  /**< [ 11: 11](R/W1C/H) Received UPD_WQP_GRP/SWTAG_FULL/SWTAG_DESCHED when SSO_AF_HWGRP()_AW_CFG[SWTAG_DIS] was set. */
         uint64_t reserved_12_63        : 52;
 #endif /* Word 0 - End */
     } s;

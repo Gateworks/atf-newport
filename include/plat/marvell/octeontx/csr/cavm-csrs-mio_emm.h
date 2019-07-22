@@ -485,7 +485,7 @@ union cavm_mio_emm_debug
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_22_63        : 42;
-        uint64_t rdsync_rst            : 1;  /**< [ 21: 21](R/W) eMMC Read Syncronizer logic reset.
+        uint64_t rdsync_rst            : 1;  /**< [ 21: 21](R/W) eMMC Read Synchronizer logic reset.
                                                                  Must set/cleared only when [EMMC_CLK_DISABLE] is set.
                                                                  For diagnostic use only. */
         uint64_t emmc_clk_disable      : 1;  /**< [ 20: 20](R/W) Disable eMMC clock.
@@ -511,7 +511,7 @@ union cavm_mio_emm_debug
                                                                  For diagnostic use only. */
         uint64_t emmc_clk_disable      : 1;  /**< [ 20: 20](R/W) Disable eMMC clock.
                                                                  Required when MIO_EMM_TIMING[*_IN_TAP] changes. */
-        uint64_t rdsync_rst            : 1;  /**< [ 21: 21](R/W) eMMC Read Syncronizer logic reset.
+        uint64_t rdsync_rst            : 1;  /**< [ 21: 21](R/W) eMMC Read Synchronizer logic reset.
                                                                  Must set/cleared only when [EMMC_CLK_DISABLE] is set.
                                                                  For diagnostic use only. */
         uint64_t reserved_22_63        : 42;

@@ -1101,6 +1101,8 @@ union cavm_nix_cq_ctx_s
                                                                  which represents [AVG_CON]/256 of the average resource level that will be
                                                                  used in the calculation.
 
+                                                                 Must be less than or equal to 240 (0xF0).
+
                                                                  NIX updates the average resource level as follows whenever the immediate resource
                                                                  count changes:
 
@@ -1122,14 +1124,29 @@ union cavm_nix_cq_ctx_s
                                                                  immediate levels. NIX_AF_AVG_DELAY[AVG_DLY] controls the periodicity of the level
                                                                  calculations.
 
+                                                                 The average timer (NIX_AF_AVG_DELAY[AVG_TIMER]) wraps around approximately
+                                                                 every 65*( NIX_AF_AVG_DELAY[AVG_DLY]+1) milliseconds. For large values of
+                                                                 [AVG_CON], [AVG_LEVEL] accuracy is reduced if the CQ state is unchanged
+                                                                 long enough for the average timer to wrap around and cross [UPDATE_TIME].
+                                                                 For higher accuracy, software can periodically write
+                                                                 NIX_LF_CQ_OP_DOOR[COUNT] = 0 to ensure that the average timer does not
+                                                                 cross [UPDATE_TIME].
+
                                                                  A full CQ is indicated as follows:
                                                                  * shifted_CNT = 0 when [QSIZE] \>= 2.
                                                                  * shifted_CNT = 3 when [QSIZE] = 1.
                                                                  * shifted_CNT = 15 when [QSIZE] = 0.
 
-                                                                 Software should CQ threshold fields which are compared with shifted_CNT or
+                                                                 Software should set CQ threshold fields which are compared with shifted_CNT or
                                                                  [AVG_LEVEL] accordingly, including [BP], [DROP], NIX_RQ_CTX_S[XQE_DROP] and
-                                                                 NIX_RQ_CTX_S[XQE_PASS]. */
+                                                                 NIX_RQ_CTX_S[XQE_PASS].
+
+                                                                 Internal:
+                                                                 Setting [AVG_CON] \<= 240 ensures that [AVG_LEVEL] is properly updated when
+                                                                 the CQ is less than 15/16 full. With a higher [AVG_CON] value, if
+                                                                 [AVG_LEVEL] reaches 0, it may remain stuck at 0 because the following
+                                                                 expression may evaluate to 0 due to integer truncation:
+                                                                 _ ((256 - adjusted_CON)*shifted_CNT) / 256. */
         uint64_t cint_idx              : 7;  /**< [ 98: 92] Completion interrupt index. Select the CINT within LF (index {a} of
                                                                  NIX_LF_CINT()*) which receives completion events for
                                                                  this CQ. */
@@ -1170,6 +1187,8 @@ union cavm_nix_cq_ctx_s
                                                                  which represents [AVG_CON]/256 of the average resource level that will be
                                                                  used in the calculation.
 
+                                                                 Must be less than or equal to 240 (0xF0).
+
                                                                  NIX updates the average resource level as follows whenever the immediate resource
                                                                  count changes:
 
@@ -1191,14 +1210,29 @@ union cavm_nix_cq_ctx_s
                                                                  immediate levels. NIX_AF_AVG_DELAY[AVG_DLY] controls the periodicity of the level
                                                                  calculations.
 
+                                                                 The average timer (NIX_AF_AVG_DELAY[AVG_TIMER]) wraps around approximately
+                                                                 every 65*( NIX_AF_AVG_DELAY[AVG_DLY]+1) milliseconds. For large values of
+                                                                 [AVG_CON], [AVG_LEVEL] accuracy is reduced if the CQ state is unchanged
+                                                                 long enough for the average timer to wrap around and cross [UPDATE_TIME].
+                                                                 For higher accuracy, software can periodically write
+                                                                 NIX_LF_CQ_OP_DOOR[COUNT] = 0 to ensure that the average timer does not
+                                                                 cross [UPDATE_TIME].
+
                                                                  A full CQ is indicated as follows:
                                                                  * shifted_CNT = 0 when [QSIZE] \>= 2.
                                                                  * shifted_CNT = 3 when [QSIZE] = 1.
                                                                  * shifted_CNT = 15 when [QSIZE] = 0.
 
-                                                                 Software should CQ threshold fields which are compared with shifted_CNT or
+                                                                 Software should set CQ threshold fields which are compared with shifted_CNT or
                                                                  [AVG_LEVEL] accordingly, including [BP], [DROP], NIX_RQ_CTX_S[XQE_DROP] and
-                                                                 NIX_RQ_CTX_S[XQE_PASS]. */
+                                                                 NIX_RQ_CTX_S[XQE_PASS].
+
+                                                                 Internal:
+                                                                 Setting [AVG_CON] \<= 240 ensures that [AVG_LEVEL] is properly updated when
+                                                                 the CQ is less than 15/16 full. With a higher [AVG_CON] value, if
+                                                                 [AVG_LEVEL] reaches 0, it may remain stuck at 0 because the following
+                                                                 expression may evaluate to 0 due to integer truncation:
+                                                                 _ ((256 - adjusted_CON)*shifted_CNT) / 256. */
         uint64_t wrptr                 : 20; /**< [127:108] Internal pointer for writing to the CQ ring. */
 #endif /* Word 1 - End */
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 2 - Big Endian */
@@ -13883,17 +13917,19 @@ union cavm_nixx_af_pqx_dbg_arb_link_exp
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_7_63         : 57;
-        uint64_t rr_mask               : 1;  /**< [  6:  6](R/W/H) rr_mask */
+        uint64_t rr_mask               : 1;  /**< [  6:  6](R/W/H) Debug state of rr_mask, the mask off active link when RR Round Over asserted. */
         uint64_t reserved_4_5          : 2;
-        uint64_t cnt                   : 2;  /**< [  3:  2](R/W/H) cnt */
-        uint64_t act_c_con             : 1;  /**< [  1:  1](R/W/H) act_c_con */
-        uint64_t req                   : 1;  /**< [  0:  0](R/W/H) link_req */
+        uint64_t cnt                   : 2;  /**< [  3:  2](R/W/H) Debug state of cnt, a 2-bit counter for each packet type for each link. */
+        uint64_t act_c_con             : 1;  /**< [  1:  1](R/W/H) Debug state of act_c_con, a bit that gets cleared when link_cnt decrements to 0. */
+        uint64_t req                   : 1;  /**< [  0:  0](R/W/H) Debug state of link_req, a bit that together with all indexes in this
+                                                                 register forms the request vector for the arb. */
 #else /* Word 0 - Little Endian */
-        uint64_t req                   : 1;  /**< [  0:  0](R/W/H) link_req */
-        uint64_t act_c_con             : 1;  /**< [  1:  1](R/W/H) act_c_con */
-        uint64_t cnt                   : 2;  /**< [  3:  2](R/W/H) cnt */
+        uint64_t req                   : 1;  /**< [  0:  0](R/W/H) Debug state of link_req, a bit that together with all indexes in this
+                                                                 register forms the request vector for the arb. */
+        uint64_t act_c_con             : 1;  /**< [  1:  1](R/W/H) Debug state of act_c_con, a bit that gets cleared when link_cnt decrements to 0. */
+        uint64_t cnt                   : 2;  /**< [  3:  2](R/W/H) Debug state of cnt, a 2-bit counter for each packet type for each link. */
         uint64_t reserved_4_5          : 2;
-        uint64_t rr_mask               : 1;  /**< [  6:  6](R/W/H) rr_mask */
+        uint64_t rr_mask               : 1;  /**< [  6:  6](R/W/H) Debug state of rr_mask, the mask off active link when RR Round Over asserted. */
         uint64_t reserved_7_63         : 57;
 #endif /* Word 0 - End */
     } s;
@@ -13928,17 +13964,19 @@ union cavm_nixx_af_pqx_dbg_arb_link_nrm
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_7_63         : 57;
-        uint64_t rr_mask               : 1;  /**< [  6:  6](R/W/H) rr_mask */
+        uint64_t rr_mask               : 1;  /**< [  6:  6](R/W/H) Debug state of rr_mask, the mask off active link when RR Round Over asserted. */
         uint64_t reserved_4_5          : 2;
-        uint64_t cnt                   : 2;  /**< [  3:  2](R/W/H) cnt */
-        uint64_t act_c_con             : 1;  /**< [  1:  1](R/W/H) act_c_con */
-        uint64_t req                   : 1;  /**< [  0:  0](R/W/H) link_req */
+        uint64_t cnt                   : 2;  /**< [  3:  2](R/W/H) Debug state of cnt, a 2-bit counter for each packet type for each link. */
+        uint64_t act_c_con             : 1;  /**< [  1:  1](R/W/H) Debug state of act_c_con, a bit that gets cleared when link_cnt decrements to 0. */
+        uint64_t req                   : 1;  /**< [  0:  0](R/W/H) Debug state of link_req, a bit that together with all indexes in this
+                                                                 register forms the request vector for the arb. */
 #else /* Word 0 - Little Endian */
-        uint64_t req                   : 1;  /**< [  0:  0](R/W/H) link_req */
-        uint64_t act_c_con             : 1;  /**< [  1:  1](R/W/H) act_c_con */
-        uint64_t cnt                   : 2;  /**< [  3:  2](R/W/H) cnt */
+        uint64_t req                   : 1;  /**< [  0:  0](R/W/H) Debug state of link_req, a bit that together with all indexes in this
+                                                                 register forms the request vector for the arb. */
+        uint64_t act_c_con             : 1;  /**< [  1:  1](R/W/H) Debug state of act_c_con, a bit that gets cleared when link_cnt decrements to 0. */
+        uint64_t cnt                   : 2;  /**< [  3:  2](R/W/H) Debug state of cnt, a 2-bit counter for each packet type for each link. */
         uint64_t reserved_4_5          : 2;
-        uint64_t rr_mask               : 1;  /**< [  6:  6](R/W/H) rr_mask */
+        uint64_t rr_mask               : 1;  /**< [  6:  6](R/W/H) Debug state of rr_mask, the mask off active link when RR Round Over asserted. */
         uint64_t reserved_7_63         : 57;
 #endif /* Word 0 - End */
     } s;
@@ -13973,17 +14011,19 @@ union cavm_nixx_af_pqx_dbg_arb_link_sdp
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_7_63         : 57;
-        uint64_t rr_mask               : 1;  /**< [  6:  6](R/W/H) rr_mask */
+        uint64_t rr_mask               : 1;  /**< [  6:  6](R/W/H) Debug state of rr_mask, the mask off active link when RR Round Over asserted. */
         uint64_t reserved_4_5          : 2;
-        uint64_t cnt                   : 2;  /**< [  3:  2](R/W/H) cnt */
-        uint64_t act_c_con             : 1;  /**< [  1:  1](R/W/H) act_c_con */
-        uint64_t req                   : 1;  /**< [  0:  0](R/W/H) link_req */
+        uint64_t cnt                   : 2;  /**< [  3:  2](R/W/H) Debug state of cnt, a 2-bit counter for each packet type for each link. */
+        uint64_t act_c_con             : 1;  /**< [  1:  1](R/W/H) Debug state of act_c_con, a bit that gets cleared when link_cnt decrements to 0. */
+        uint64_t req                   : 1;  /**< [  0:  0](R/W/H) Debug state of link_req, a bit that together with all indexes in this
+                                                                 register forms the request vector for the arb. */
 #else /* Word 0 - Little Endian */
-        uint64_t req                   : 1;  /**< [  0:  0](R/W/H) link_req */
-        uint64_t act_c_con             : 1;  /**< [  1:  1](R/W/H) act_c_con */
-        uint64_t cnt                   : 2;  /**< [  3:  2](R/W/H) cnt */
+        uint64_t req                   : 1;  /**< [  0:  0](R/W/H) Debug state of link_req, a bit that together with all indexes in this
+                                                                 register forms the request vector for the arb. */
+        uint64_t act_c_con             : 1;  /**< [  1:  1](R/W/H) Debug state of act_c_con, a bit that gets cleared when link_cnt decrements to 0. */
+        uint64_t cnt                   : 2;  /**< [  3:  2](R/W/H) Debug state of cnt, a 2-bit counter for each packet type for each link. */
         uint64_t reserved_4_5          : 2;
-        uint64_t rr_mask               : 1;  /**< [  6:  6](R/W/H) rr_mask */
+        uint64_t rr_mask               : 1;  /**< [  6:  6](R/W/H) Debug state of rr_mask, the mask off active link when RR Round Over asserted. */
         uint64_t reserved_7_63         : 57;
 #endif /* Word 0 - End */
     } s;
@@ -14007,6 +14047,215 @@ static inline uint64_t CAVM_NIXX_AF_PQX_DBG_ARB_LINK_SDP(unsigned long a, unsign
 #define arguments_CAVM_NIXX_AF_PQX_DBG_ARB_LINK_SDP(a,b) (a),(b),-1,-1
 
 /**
+ * Register (RVU_PF_BAR0) nix#_af_pq_arb_crd_rdy_debug
+ *
+ * INTERNAL: NIX AF PQ_ARB Node Credit Ready Registers
+ *
+ * NIX AF PQ ARB Credit ready register
+ */
+union cavm_nixx_af_pq_arb_crd_rdy_debug
+{
+    uint64_t u;
+    struct cavm_nixx_af_pq_arb_crd_rdy_debug_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_28_63        : 36;
+        uint64_t node_crd_rdy          : 28; /**< [ 27:  0](RO/H) pq_arb physical nodes that have credit ready. */
+#else /* Word 0 - Little Endian */
+        uint64_t node_crd_rdy          : 28; /**< [ 27:  0](RO/H) pq_arb physical nodes that have credit ready. */
+        uint64_t reserved_28_63        : 36;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_nixx_af_pq_arb_crd_rdy_debug_s cn; */
+};
+typedef union cavm_nixx_af_pq_arb_crd_rdy_debug cavm_nixx_af_pq_arb_crd_rdy_debug_t;
+
+static inline uint64_t CAVM_NIXX_AF_PQ_ARB_CRD_RDY_DEBUG(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_NIXX_AF_PQ_ARB_CRD_RDY_DEBUG(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a<=1))
+        return 0x840040000f10ll + 0x10000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
+        return 0x840040000f10ll + 0x10000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=1))
+        return 0x840040000f10ll + 0x10000000ll * ((a) & 0x1);
+    __cavm_csr_fatal("NIXX_AF_PQ_ARB_CRD_RDY_DEBUG", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_NIXX_AF_PQ_ARB_CRD_RDY_DEBUG(a) cavm_nixx_af_pq_arb_crd_rdy_debug_t
+#define bustype_CAVM_NIXX_AF_PQ_ARB_CRD_RDY_DEBUG(a) CSR_TYPE_RVU_PF_BAR0
+#define basename_CAVM_NIXX_AF_PQ_ARB_CRD_RDY_DEBUG(a) "NIXX_AF_PQ_ARB_CRD_RDY_DEBUG"
+#define device_bar_CAVM_NIXX_AF_PQ_ARB_CRD_RDY_DEBUG(a) 0x0 /* RVU_BAR0 */
+#define busnum_CAVM_NIXX_AF_PQ_ARB_CRD_RDY_DEBUG(a) (a)
+#define arguments_CAVM_NIXX_AF_PQ_ARB_CRD_RDY_DEBUG(a) (a),-1,-1,-1
+
+/**
+ * Register (RVU_PF_BAR0) nix#_af_pq_arb_dwrr_msk_debug
+ *
+ * INTERNAL: NIX AF PQ_ARB DWRR mask set read only debug Registers
+ */
+union cavm_nixx_af_pq_arb_dwrr_msk_debug
+{
+    uint64_t u;
+    struct cavm_nixx_af_pq_arb_dwrr_msk_debug_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_28_63        : 36;
+        uint64_t node_dwrr_mask_set    : 28; /**< [ 27:  0](RO/H) pq_arb - set if any DWRR mask is set for a node */
+#else /* Word 0 - Little Endian */
+        uint64_t node_dwrr_mask_set    : 28; /**< [ 27:  0](RO/H) pq_arb - set if any DWRR mask is set for a node */
+        uint64_t reserved_28_63        : 36;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_nixx_af_pq_arb_dwrr_msk_debug_s cn; */
+};
+typedef union cavm_nixx_af_pq_arb_dwrr_msk_debug cavm_nixx_af_pq_arb_dwrr_msk_debug_t;
+
+static inline uint64_t CAVM_NIXX_AF_PQ_ARB_DWRR_MSK_DEBUG(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_NIXX_AF_PQ_ARB_DWRR_MSK_DEBUG(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a<=1))
+        return 0x840040000f30ll + 0x10000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
+        return 0x840040000f30ll + 0x10000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=1))
+        return 0x840040000f30ll + 0x10000000ll * ((a) & 0x1);
+    __cavm_csr_fatal("NIXX_AF_PQ_ARB_DWRR_MSK_DEBUG", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_NIXX_AF_PQ_ARB_DWRR_MSK_DEBUG(a) cavm_nixx_af_pq_arb_dwrr_msk_debug_t
+#define bustype_CAVM_NIXX_AF_PQ_ARB_DWRR_MSK_DEBUG(a) CSR_TYPE_RVU_PF_BAR0
+#define basename_CAVM_NIXX_AF_PQ_ARB_DWRR_MSK_DEBUG(a) "NIXX_AF_PQ_ARB_DWRR_MSK_DEBUG"
+#define device_bar_CAVM_NIXX_AF_PQ_ARB_DWRR_MSK_DEBUG(a) 0x0 /* RVU_BAR0 */
+#define busnum_CAVM_NIXX_AF_PQ_ARB_DWRR_MSK_DEBUG(a) (a)
+#define arguments_CAVM_NIXX_AF_PQ_ARB_DWRR_MSK_DEBUG(a) (a),-1,-1,-1
+
+/**
+ * Register (RVU_PF_BAR0) nix#_af_pq_arb_node_gnt_debug
+ *
+ * INTERNAL: NIX AF PQ_ARB Node Grant vector Registers
+ */
+union cavm_nixx_af_pq_arb_node_gnt_debug
+{
+    uint64_t u;
+    struct cavm_nixx_af_pq_arb_node_gnt_debug_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_28_63        : 36;
+        uint64_t node_grant_vec        : 28; /**< [ 27:  0](RO/H) pq_arb Node grant vector. */
+#else /* Word 0 - Little Endian */
+        uint64_t node_grant_vec        : 28; /**< [ 27:  0](RO/H) pq_arb Node grant vector. */
+        uint64_t reserved_28_63        : 36;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_nixx_af_pq_arb_node_gnt_debug_s cn; */
+};
+typedef union cavm_nixx_af_pq_arb_node_gnt_debug cavm_nixx_af_pq_arb_node_gnt_debug_t;
+
+static inline uint64_t CAVM_NIXX_AF_PQ_ARB_NODE_GNT_DEBUG(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_NIXX_AF_PQ_ARB_NODE_GNT_DEBUG(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a<=1))
+        return 0x840040000f20ll + 0x10000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
+        return 0x840040000f20ll + 0x10000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=1))
+        return 0x840040000f20ll + 0x10000000ll * ((a) & 0x1);
+    __cavm_csr_fatal("NIXX_AF_PQ_ARB_NODE_GNT_DEBUG", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_NIXX_AF_PQ_ARB_NODE_GNT_DEBUG(a) cavm_nixx_af_pq_arb_node_gnt_debug_t
+#define bustype_CAVM_NIXX_AF_PQ_ARB_NODE_GNT_DEBUG(a) CSR_TYPE_RVU_PF_BAR0
+#define basename_CAVM_NIXX_AF_PQ_ARB_NODE_GNT_DEBUG(a) "NIXX_AF_PQ_ARB_NODE_GNT_DEBUG"
+#define device_bar_CAVM_NIXX_AF_PQ_ARB_NODE_GNT_DEBUG(a) 0x0 /* RVU_BAR0 */
+#define busnum_CAVM_NIXX_AF_PQ_ARB_NODE_GNT_DEBUG(a) (a)
+#define arguments_CAVM_NIXX_AF_PQ_ARB_NODE_GNT_DEBUG(a) (a),-1,-1,-1
+
+/**
+ * Register (RVU_PF_BAR0) nix#_af_pq_arb_node_req_debug
+ *
+ * INTERNAL: NIX AF PQ_ARB Node Request Debug Registers
+ *
+ * NIX AF PQ ARB Node Request Debug register
+ */
+union cavm_nixx_af_pq_arb_node_req_debug
+{
+    uint64_t u;
+    struct cavm_nixx_af_pq_arb_node_req_debug_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_28_63        : 36;
+        uint64_t node_req              : 28; /**< [ 27:  0](R/W/H) pq_arb node_request debug, vector of requesting nodes. */
+#else /* Word 0 - Little Endian */
+        uint64_t node_req              : 28; /**< [ 27:  0](R/W/H) pq_arb node_request debug, vector of requesting nodes. */
+        uint64_t reserved_28_63        : 36;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_nixx_af_pq_arb_node_req_debug_s cn; */
+};
+typedef union cavm_nixx_af_pq_arb_node_req_debug cavm_nixx_af_pq_arb_node_req_debug_t;
+
+static inline uint64_t CAVM_NIXX_AF_PQ_ARB_NODE_REQ_DEBUG(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_NIXX_AF_PQ_ARB_NODE_REQ_DEBUG(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a<=1))
+        return 0x840040000f00ll + 0x10000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
+        return 0x840040000f00ll + 0x10000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=1))
+        return 0x840040000f00ll + 0x10000000ll * ((a) & 0x1);
+    __cavm_csr_fatal("NIXX_AF_PQ_ARB_NODE_REQ_DEBUG", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_NIXX_AF_PQ_ARB_NODE_REQ_DEBUG(a) cavm_nixx_af_pq_arb_node_req_debug_t
+#define bustype_CAVM_NIXX_AF_PQ_ARB_NODE_REQ_DEBUG(a) CSR_TYPE_RVU_PF_BAR0
+#define basename_CAVM_NIXX_AF_PQ_ARB_NODE_REQ_DEBUG(a) "NIXX_AF_PQ_ARB_NODE_REQ_DEBUG"
+#define device_bar_CAVM_NIXX_AF_PQ_ARB_NODE_REQ_DEBUG(a) 0x0 /* RVU_BAR0 */
+#define busnum_CAVM_NIXX_AF_PQ_ARB_NODE_REQ_DEBUG(a) (a)
+#define arguments_CAVM_NIXX_AF_PQ_ARB_NODE_REQ_DEBUG(a) (a),-1,-1,-1
+
+/**
+ * Register (RVU_PF_BAR0) nix#_af_pq_arb_shape_vld_dbg
+ *
+ * INTERNAL: NIX AF PQ_ARB shape valid set Register
+ */
+union cavm_nixx_af_pq_arb_shape_vld_dbg
+{
+    uint64_t u;
+    struct cavm_nixx_af_pq_arb_shape_vld_dbg_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_28_63        : 36;
+        uint64_t node_shape_vld_set    : 28; /**< [ 27:  0](R/W/H) pq_arb shape valid bit is set for a given node. */
+#else /* Word 0 - Little Endian */
+        uint64_t node_shape_vld_set    : 28; /**< [ 27:  0](R/W/H) pq_arb shape valid bit is set for a given node. */
+        uint64_t reserved_28_63        : 36;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_nixx_af_pq_arb_shape_vld_dbg_s cn; */
+};
+typedef union cavm_nixx_af_pq_arb_shape_vld_dbg cavm_nixx_af_pq_arb_shape_vld_dbg_t;
+
+static inline uint64_t CAVM_NIXX_AF_PQ_ARB_SHAPE_VLD_DBG(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_NIXX_AF_PQ_ARB_SHAPE_VLD_DBG(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && (a<=1))
+        return 0x840040000f40ll + 0x10000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
+        return 0x840040000f40ll + 0x10000000ll * ((a) & 0x1);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a<=1))
+        return 0x840040000f40ll + 0x10000000ll * ((a) & 0x1);
+    __cavm_csr_fatal("NIXX_AF_PQ_ARB_SHAPE_VLD_DBG", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_NIXX_AF_PQ_ARB_SHAPE_VLD_DBG(a) cavm_nixx_af_pq_arb_shape_vld_dbg_t
+#define bustype_CAVM_NIXX_AF_PQ_ARB_SHAPE_VLD_DBG(a) CSR_TYPE_RVU_PF_BAR0
+#define basename_CAVM_NIXX_AF_PQ_ARB_SHAPE_VLD_DBG(a) "NIXX_AF_PQ_ARB_SHAPE_VLD_DBG"
+#define device_bar_CAVM_NIXX_AF_PQ_ARB_SHAPE_VLD_DBG(a) 0x0 /* RVU_BAR0 */
+#define busnum_CAVM_NIXX_AF_PQ_ARB_SHAPE_VLD_DBG(a) (a)
+#define arguments_CAVM_NIXX_AF_PQ_ARB_SHAPE_VLD_DBG(a) (a),-1,-1,-1
+
+/**
  * Register (RVU_PF_BAR0) nix#_af_pq_dbg_arb_0
  *
  * INTERNAL: NIX AF PQ Arb Debug 0 Register
@@ -14018,9 +14267,9 @@ union cavm_nixx_af_pq_dbg_arb_0
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_1_63         : 63;
-        uint64_t rr_mask_clr           : 1;  /**< [  0:  0](R/W/H) rr_mask_clr */
+        uint64_t rr_mask_clr           : 1;  /**< [  0:  0](R/W/H) Debug state of rr_mask_clr, the signal that clears the rr_mask. */
 #else /* Word 0 - Little Endian */
-        uint64_t rr_mask_clr           : 1;  /**< [  0:  0](R/W/H) rr_mask_clr */
+        uint64_t rr_mask_clr           : 1;  /**< [  0:  0](R/W/H) Debug state of rr_mask_clr, the signal that clears the rr_mask. */
         uint64_t reserved_1_63         : 63;
 #endif /* Word 0 - End */
     } s;
@@ -14042,6 +14291,47 @@ static inline uint64_t CAVM_NIXX_AF_PQ_DBG_ARB_0(unsigned long a)
 #define device_bar_CAVM_NIXX_AF_PQ_DBG_ARB_0(a) 0x0 /* RVU_BAR0 */
 #define busnum_CAVM_NIXX_AF_PQ_DBG_ARB_0(a) (a)
 #define arguments_CAVM_NIXX_AF_PQ_DBG_ARB_0(a) (a),-1,-1,-1
+
+/**
+ * Register (RVU_PF_BAR0) nix#_af_pq_lnk_#_dwrr_msk_dbg
+ *
+ * INTERNAL: NIX AF PQ_ARB Physical Link DWRR MASK Registers
+ */
+union cavm_nixx_af_pq_lnk_x_dwrr_msk_dbg
+{
+    uint64_t u;
+    struct cavm_nixx_af_pq_lnk_x_dwrr_msk_dbg_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_28_63        : 36;
+        uint64_t link_dwrr_mask_set    : 28; /**< [ 27:  0](R/W/H) pq_arb DWRR mask set/clr for each link (2 bits per link). */
+#else /* Word 0 - Little Endian */
+        uint64_t link_dwrr_mask_set    : 28; /**< [ 27:  0](R/W/H) pq_arb DWRR mask set/clr for each link (2 bits per link). */
+        uint64_t reserved_28_63        : 36;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_nixx_af_pq_lnk_x_dwrr_msk_dbg_s cn; */
+};
+typedef union cavm_nixx_af_pq_lnk_x_dwrr_msk_dbg cavm_nixx_af_pq_lnk_x_dwrr_msk_dbg_t;
+
+static inline uint64_t CAVM_NIXX_AF_PQ_LNK_X_DWRR_MSK_DBG(unsigned long a, unsigned long b) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_NIXX_AF_PQ_LNK_X_DWRR_MSK_DBG(unsigned long a, unsigned long b)
+{
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a<=1) && (b<=13)))
+        return 0x840040001100ll + 0x10000000ll * ((a) & 0x1) + 0x10000ll * ((b) & 0xf);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=13)))
+        return 0x840040001100ll + 0x10000000ll * ((a) & 0x1) + 0x10000ll * ((b) & 0xf);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=1) && (b<=13)))
+        return 0x840040001100ll + 0x10000000ll * ((a) & 0x1) + 0x10000ll * ((b) & 0xf);
+    __cavm_csr_fatal("NIXX_AF_PQ_LNK_X_DWRR_MSK_DBG", 2, a, b, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_NIXX_AF_PQ_LNK_X_DWRR_MSK_DBG(a,b) cavm_nixx_af_pq_lnk_x_dwrr_msk_dbg_t
+#define bustype_CAVM_NIXX_AF_PQ_LNK_X_DWRR_MSK_DBG(a,b) CSR_TYPE_RVU_PF_BAR0
+#define basename_CAVM_NIXX_AF_PQ_LNK_X_DWRR_MSK_DBG(a,b) "NIXX_AF_PQ_LNK_X_DWRR_MSK_DBG"
+#define device_bar_CAVM_NIXX_AF_PQ_LNK_X_DWRR_MSK_DBG(a,b) 0x0 /* RVU_BAR0 */
+#define busnum_CAVM_NIXX_AF_PQ_LNK_X_DWRR_MSK_DBG(a,b) (a)
+#define arguments_CAVM_NIXX_AF_PQ_LNK_X_DWRR_MSK_DBG(a,b) (a),(b),-1,-1
 
 /**
  * Register (RVU_PF_BAR0) nix#_af_pse_400_rate_divider
@@ -14155,6 +14445,17 @@ union cavm_nixx_af_pse_bp_test0
     struct cavm_nixx_af_pse_bp_test0_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_12_63        : 52;
+        uint64_t lfsr_freq             : 12; /**< [ 11:  0](R/W) Test LFSR update frequency in coprocessor-clocks minus one. */
+#else /* Word 0 - Little Endian */
+        uint64_t lfsr_freq             : 12; /**< [ 11:  0](R/W) Test LFSR update frequency in coprocessor-clocks minus one. */
+        uint64_t reserved_12_63        : 52;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_nixx_af_pse_bp_test0_s cn9; */
+    struct cavm_nixx_af_pse_bp_test0_cn96xxp1
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t enable                : 4;  /**< [ 63: 60](R/W) Enable test mode. For diagnostic use only.
                                                                  Internal:
                                                                  Once a bit is set, random backpressure is generated
@@ -14203,8 +14504,124 @@ union cavm_nixx_af_pse_bp_test0
                                                                  \<60\> = When set, enables backpressure on SQM to MDQ FIFO interface, MDQ does
                                                                  not return FIFO credits and recived packets are not poped from FIFO. */
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_nixx_af_pse_bp_test0_s cn; */
+    } cn96xxp1;
+    struct cavm_nixx_af_pse_bp_test0_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t enable                : 6;  /**< [ 63: 58](R/W) Enable test mode. For diagnostic use only.
+                                                                 Internal:
+                                                                 Once a bit is set, random backpressure is generated
+                                                                 at PQ and Misc level.
+                                                                 \<63\> = When set, backpressure ADD request from child to PQ PE's.
+                                                                 \<62\> = When set, backpressure GET request from PQ_ARB.
+                                                                 \<61\> = When set, backpressure PE to PE request at PQ level.
+                                                                 \<60\> = When set, backpressure Time-Wheel ADD request to PQ PE's.
+                                                                 \<59\> = When set, backpressure Normal Output FIFO.
+                                                                 \<58\> = When set, backpressure SDP Output FIFO. */
+        uint64_t reserved_56_57        : 2;
+        uint64_t reserved_32_55        : 24;
+        uint64_t bp_cfg                : 12; /**< [ 31: 20](R/W) Backpressure weight. For diagnostic use only.
+                                                                 Internal:
+                                                                 There are 2 backpressure configuration bits per enable, with the two bits
+                                                                 defined as 0x0=100% of the time, 0x1=75% of the time, 0x2=50% of the time,
+                                                                 0x3=25% of the time.
+                                                                 \<31:30\> = Config for Enable bit [63].
+                                                                 \<29:28\> = Config for Enable bit [62].
+                                                                 \<27:26\> = Config for Enable bit [61].
+                                                                 \<25:24\> = Config for Enable bit [60].
+                                                                 \<23:22\> = Config for Enable bit [59].
+                                                                 \<21:20\> = Config for Enable bit [58]. */
+        uint64_t reserved_16_19        : 4;
+        uint64_t reserved_12_15        : 4;
+        uint64_t lfsr_freq             : 12; /**< [ 11:  0](R/W) Test LFSR update frequency in coprocessor-clocks minus one. */
+#else /* Word 0 - Little Endian */
+        uint64_t lfsr_freq             : 12; /**< [ 11:  0](R/W) Test LFSR update frequency in coprocessor-clocks minus one. */
+        uint64_t reserved_12_15        : 4;
+        uint64_t reserved_16_19        : 4;
+        uint64_t bp_cfg                : 12; /**< [ 31: 20](R/W) Backpressure weight. For diagnostic use only.
+                                                                 Internal:
+                                                                 There are 2 backpressure configuration bits per enable, with the two bits
+                                                                 defined as 0x0=100% of the time, 0x1=75% of the time, 0x2=50% of the time,
+                                                                 0x3=25% of the time.
+                                                                 \<31:30\> = Config for Enable bit [63].
+                                                                 \<29:28\> = Config for Enable bit [62].
+                                                                 \<27:26\> = Config for Enable bit [61].
+                                                                 \<25:24\> = Config for Enable bit [60].
+                                                                 \<23:22\> = Config for Enable bit [59].
+                                                                 \<21:20\> = Config for Enable bit [58]. */
+        uint64_t reserved_32_55        : 24;
+        uint64_t reserved_56_57        : 2;
+        uint64_t enable                : 6;  /**< [ 63: 58](R/W) Enable test mode. For diagnostic use only.
+                                                                 Internal:
+                                                                 Once a bit is set, random backpressure is generated
+                                                                 at PQ and Misc level.
+                                                                 \<63\> = When set, backpressure ADD request from child to PQ PE's.
+                                                                 \<62\> = When set, backpressure GET request from PQ_ARB.
+                                                                 \<61\> = When set, backpressure PE to PE request at PQ level.
+                                                                 \<60\> = When set, backpressure Time-Wheel ADD request to PQ PE's.
+                                                                 \<59\> = When set, backpressure Normal Output FIFO.
+                                                                 \<58\> = When set, backpressure SDP Output FIFO. */
+#endif /* Word 0 - End */
+    } cn96xxp3;
+    /* struct cavm_nixx_af_pse_bp_test0_cn96xxp3 cn98xx; */
+    /* struct cavm_nixx_af_pse_bp_test0_cn96xxp1 cnf95xxp1; */
+    struct cavm_nixx_af_pse_bp_test0_cnf95xxp2
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t enable                : 4;  /**< [ 63: 60](R/W) Enable test mode. For diagnostic use only.
+                                                                 Internal:
+                                                                 Once a bit is set, random backpressure is generated
+                                                                 at the corresponding point to allow for more frequent backpressure.
+                                                                 \<63\> = When set, enables SDP credit FIFO grant backpressure, credit requests
+                                                                 waiting in FIFO is not granted
+                                                                 even if there are credits available.
+                                                                 \<62\> = When set, enables SDP wake up backpressure, credits granted already, delaying TW request.
+                                                                 \<61\> = When set, enables MDQ PKT_ADD backpressure, MDQ stops requesting PKT_ADD to TL4.
+                                                                 \<60\> = When set, enables backpressure on SQM to MDQ FIFO interface, MDQ does
+                                                                 not return FIFO credits and recived packets are not poped from FIFO. */
+        uint64_t reserved_56_59        : 4;
+        uint64_t reserved_32_55        : 24;
+        uint64_t reserved_24_31        : 8;
+        uint64_t bp_cfg                : 8;  /**< [ 23: 16](R/W) Backpressure weight. For diagnostic use only.
+                                                                 Internal:
+                                                                 There are 2 backpressure configuration bits per enable, with the two bits
+                                                                 defined as 0x0=100% of the time, 0x1=75% of the time, 0x2=50% of the time,
+                                                                 0x3=25% of the time.
+                                                                   \<23:22\> = Config 3.
+                                                                   \<21:20\> = Config 2.
+                                                                   \<19:18\> = Config 1.
+                                                                   \<17:16\> = Config 0. */
+        uint64_t reserved_12_15        : 4;
+        uint64_t lfsr_freq             : 12; /**< [ 11:  0](R/W) Test LFSR update frequency in coprocessor-clocks minus one. */
+#else /* Word 0 - Little Endian */
+        uint64_t lfsr_freq             : 12; /**< [ 11:  0](R/W) Test LFSR update frequency in coprocessor-clocks minus one. */
+        uint64_t reserved_12_15        : 4;
+        uint64_t bp_cfg                : 8;  /**< [ 23: 16](R/W) Backpressure weight. For diagnostic use only.
+                                                                 Internal:
+                                                                 There are 2 backpressure configuration bits per enable, with the two bits
+                                                                 defined as 0x0=100% of the time, 0x1=75% of the time, 0x2=50% of the time,
+                                                                 0x3=25% of the time.
+                                                                   \<23:22\> = Config 3.
+                                                                   \<21:20\> = Config 2.
+                                                                   \<19:18\> = Config 1.
+                                                                   \<17:16\> = Config 0. */
+        uint64_t reserved_24_31        : 8;
+        uint64_t reserved_32_55        : 24;
+        uint64_t reserved_56_59        : 4;
+        uint64_t enable                : 4;  /**< [ 63: 60](R/W) Enable test mode. For diagnostic use only.
+                                                                 Internal:
+                                                                 Once a bit is set, random backpressure is generated
+                                                                 at the corresponding point to allow for more frequent backpressure.
+                                                                 \<63\> = When set, enables SDP credit FIFO grant backpressure, credit requests
+                                                                 waiting in FIFO is not granted
+                                                                 even if there are credits available.
+                                                                 \<62\> = When set, enables SDP wake up backpressure, credits granted already, delaying TW request.
+                                                                 \<61\> = When set, enables MDQ PKT_ADD backpressure, MDQ stops requesting PKT_ADD to TL4.
+                                                                 \<60\> = When set, enables backpressure on SQM to MDQ FIFO interface, MDQ does
+                                                                 not return FIFO credits and recived packets are not poped from FIFO. */
+#endif /* Word 0 - End */
+    } cnf95xxp2;
+    /* struct cavm_nixx_af_pse_bp_test0_cn96xxp3 loki; */
 };
 typedef union cavm_nixx_af_pse_bp_test0 cavm_nixx_af_pse_bp_test0_t;
 
@@ -14242,6 +14659,37 @@ union cavm_nixx_af_pse_bp_test1
     struct cavm_nixx_af_pse_bp_test1_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_26_63        : 38;
+        uint64_t bp_cfg                : 10; /**< [ 25: 16](R/W) Backpressure weight. For diagnostic use only.
+                                                                 Internal:
+                                                                 There are 2 backpressure configuration bits per enable, with the two bits
+                                                                 defined as 0x0=100% of the time, 0x1=75% of the time, 0x2=50% of the time,
+                                                                 0x3=25% of the time.
+                                                                   \<23:22\> = Reserved.
+                                                                   \<21:20\> = Config 2.
+                                                                   \<19:18\> = Config 1.
+                                                                   \<17:16\> = Config 0. */
+        uint64_t reserved_12_15        : 4;
+        uint64_t lfsr_freq             : 12; /**< [ 11:  0](R/W) Test LFSR update frequency in coprocessor-clocks minus one. */
+#else /* Word 0 - Little Endian */
+        uint64_t lfsr_freq             : 12; /**< [ 11:  0](R/W) Test LFSR update frequency in coprocessor-clocks minus one. */
+        uint64_t reserved_12_15        : 4;
+        uint64_t bp_cfg                : 10; /**< [ 25: 16](R/W) Backpressure weight. For diagnostic use only.
+                                                                 Internal:
+                                                                 There are 2 backpressure configuration bits per enable, with the two bits
+                                                                 defined as 0x0=100% of the time, 0x1=75% of the time, 0x2=50% of the time,
+                                                                 0x3=25% of the time.
+                                                                   \<23:22\> = Reserved.
+                                                                   \<21:20\> = Config 2.
+                                                                   \<19:18\> = Config 1.
+                                                                   \<17:16\> = Config 0. */
+        uint64_t reserved_26_63        : 38;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_nixx_af_pse_bp_test1_s cn9; */
+    struct cavm_nixx_af_pse_bp_test1_cn96xxp1
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t enable                : 4;  /**< [ 63: 60](R/W) Enable test mode. For diagnostic use only.
                                                                  Internal:
                                                                  Once a bit is set, random backpressure is generated
@@ -14284,8 +14732,114 @@ union cavm_nixx_af_pse_bp_test1
                                                                  \<61\> = When set, enables Express packet backpressure from PSE to SQM, SQM credits are ignored.
                                                                  \<60\> = When set, enables Normal packet backpressure from PSE to SQM, SQM credits are ignored. */
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_nixx_af_pse_bp_test1_s cn; */
+    } cn96xxp1;
+    struct cavm_nixx_af_pse_bp_test1_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t enable                : 5;  /**< [ 63: 59](R/W) Enable test mode. For diagnostic use only.
+                                                                 Internal:
+                                                                 Once a bit is set, random backpressure is generated
+                                                                 at PQ and Misc level.
+                                                                 \<63\> = When set, backpressure ADD request from child to TL1 PE's.
+                                                                 \<62\> = When set, backpressure GET request from PQ PE's to TL1 PE's.
+                                                                 \<61\> = When set, backpressure PE to PE request at TL1 level.
+                                                                 \<60\> = When set, backpressure Time-Wheel ADD request to TL1 PE's.
+                                                                 \<59\> = When set, backpressure BP ADD request to TL1 PE's */
+        uint64_t reserved_56_58        : 3;
+        uint64_t reserved_32_55        : 24;
+        uint64_t reserved_26_31        : 6;
+        uint64_t bp_cfg                : 10; /**< [ 25: 16](R/W) Backpressure weight. For diagnostic use only.
+                                                                 Internal:
+                                                                 There are 2 backpressure configuration bits per enable, with the two bits
+                                                                 defined as 0x0=100% of the time, 0x1=75% of the time, 0x2=50% of the time,
+                                                                 0x3=25% of the time.
+                                                                 \<25:24\> = Config for Enable bit [63].
+                                                                 \<23:22\> = Config for Enable bit [62].
+                                                                 \<21:20\> = Config for Enable bit [61].
+                                                                 \<19:18\> = Config for Enable bit [60].
+                                                                 \<17:16\> = Config for Enable bit [59]. */
+        uint64_t reserved_12_15        : 4;
+        uint64_t lfsr_freq             : 12; /**< [ 11:  0](R/W) Test LFSR update frequency in coprocessor-clocks minus one. */
+#else /* Word 0 - Little Endian */
+        uint64_t lfsr_freq             : 12; /**< [ 11:  0](R/W) Test LFSR update frequency in coprocessor-clocks minus one. */
+        uint64_t reserved_12_15        : 4;
+        uint64_t bp_cfg                : 10; /**< [ 25: 16](R/W) Backpressure weight. For diagnostic use only.
+                                                                 Internal:
+                                                                 There are 2 backpressure configuration bits per enable, with the two bits
+                                                                 defined as 0x0=100% of the time, 0x1=75% of the time, 0x2=50% of the time,
+                                                                 0x3=25% of the time.
+                                                                 \<25:24\> = Config for Enable bit [63].
+                                                                 \<23:22\> = Config for Enable bit [62].
+                                                                 \<21:20\> = Config for Enable bit [61].
+                                                                 \<19:18\> = Config for Enable bit [60].
+                                                                 \<17:16\> = Config for Enable bit [59]. */
+        uint64_t reserved_26_31        : 6;
+        uint64_t reserved_32_55        : 24;
+        uint64_t reserved_56_58        : 3;
+        uint64_t enable                : 5;  /**< [ 63: 59](R/W) Enable test mode. For diagnostic use only.
+                                                                 Internal:
+                                                                 Once a bit is set, random backpressure is generated
+                                                                 at PQ and Misc level.
+                                                                 \<63\> = When set, backpressure ADD request from child to TL1 PE's.
+                                                                 \<62\> = When set, backpressure GET request from PQ PE's to TL1 PE's.
+                                                                 \<61\> = When set, backpressure PE to PE request at TL1 level.
+                                                                 \<60\> = When set, backpressure Time-Wheel ADD request to TL1 PE's.
+                                                                 \<59\> = When set, backpressure BP ADD request to TL1 PE's */
+#endif /* Word 0 - End */
+    } cn96xxp3;
+    /* struct cavm_nixx_af_pse_bp_test1_cn96xxp3 cn98xx; */
+    /* struct cavm_nixx_af_pse_bp_test1_cn96xxp1 cnf95xxp1; */
+    struct cavm_nixx_af_pse_bp_test1_cnf95xxp2
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t enable                : 4;  /**< [ 63: 60](R/W) Enable test mode. For diagnostic use only.
+                                                                 Internal:
+                                                                 Once a bit is set, random backpressure is generated
+                                                                 at the corresponding point to allow for more frequent backpressure.
+                                                                 \<63\> = Reserved.
+                                                                 \<62\> = When set, enables SDP packet backpressure from PSE to SQM, SQM credits are ignored.
+                                                                 \<61\> = When set, enables Express packet backpressure from PSE to SQM, SQM credits are ignored.
+                                                                 \<60\> = When set, enables Normal packet backpressure from PSE to SQM, SQM credits are ignored. */
+        uint64_t reserved_56_59        : 4;
+        uint64_t reserved_32_55        : 24;
+        uint64_t reserved_24_31        : 8;
+        uint64_t bp_cfg                : 8;  /**< [ 23: 16](R/W) Backpressure weight. For diagnostic use only.
+                                                                 Internal:
+                                                                 There are 2 backpressure configuration bits per enable, with the two bits
+                                                                 defined as 0x0=100% of the time, 0x1=75% of the time, 0x2=50% of the time,
+                                                                 0x3=25% of the time.
+                                                                   \<23:22\> = Reserved.
+                                                                   \<21:20\> = Config 2.
+                                                                   \<19:18\> = Config 1.
+                                                                   \<17:16\> = Config 0. */
+        uint64_t reserved_12_15        : 4;
+        uint64_t lfsr_freq             : 12; /**< [ 11:  0](R/W) Test LFSR update frequency in coprocessor-clocks minus one. */
+#else /* Word 0 - Little Endian */
+        uint64_t lfsr_freq             : 12; /**< [ 11:  0](R/W) Test LFSR update frequency in coprocessor-clocks minus one. */
+        uint64_t reserved_12_15        : 4;
+        uint64_t bp_cfg                : 8;  /**< [ 23: 16](R/W) Backpressure weight. For diagnostic use only.
+                                                                 Internal:
+                                                                 There are 2 backpressure configuration bits per enable, with the two bits
+                                                                 defined as 0x0=100% of the time, 0x1=75% of the time, 0x2=50% of the time,
+                                                                 0x3=25% of the time.
+                                                                   \<23:22\> = Reserved.
+                                                                   \<21:20\> = Config 2.
+                                                                   \<19:18\> = Config 1.
+                                                                   \<17:16\> = Config 0. */
+        uint64_t reserved_24_31        : 8;
+        uint64_t reserved_32_55        : 24;
+        uint64_t reserved_56_59        : 4;
+        uint64_t enable                : 4;  /**< [ 63: 60](R/W) Enable test mode. For diagnostic use only.
+                                                                 Internal:
+                                                                 Once a bit is set, random backpressure is generated
+                                                                 at the corresponding point to allow for more frequent backpressure.
+                                                                 \<63\> = Reserved.
+                                                                 \<62\> = When set, enables SDP packet backpressure from PSE to SQM, SQM credits are ignored.
+                                                                 \<61\> = When set, enables Express packet backpressure from PSE to SQM, SQM credits are ignored.
+                                                                 \<60\> = When set, enables Normal packet backpressure from PSE to SQM, SQM credits are ignored. */
+#endif /* Word 0 - End */
+    } cnf95xxp2;
+    /* struct cavm_nixx_af_pse_bp_test1_cn96xxp3 loki; */
 };
 typedef union cavm_nixx_af_pse_bp_test1 cavm_nixx_af_pse_bp_test1_t;
 
@@ -14323,6 +14877,37 @@ union cavm_nixx_af_pse_bp_test2
     struct cavm_nixx_af_pse_bp_test2_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_26_63        : 38;
+        uint64_t bp_cfg                : 10; /**< [ 25: 16](R/W) Backpressure weight. For diagnostic use only.
+                                                                 Internal:
+                                                                 There are 2 backpressure configuration bits per enable, with the two bits
+                                                                 defined as 0x0=100% of the time, 0x1=75% of the time, 0x2=50% of the time,
+                                                                 0x3=25% of the time.
+                                                                   \<23:22\> = Config 3.
+                                                                   \<21:20\> = Config 2.
+                                                                   \<19:18\> = Config 1.
+                                                                   \<17:16\> = Config 0. */
+        uint64_t reserved_12_15        : 4;
+        uint64_t lfsr_freq             : 12; /**< [ 11:  0](R/W) Test LFSR update frequency in coprocessor-clocks minus one. */
+#else /* Word 0 - Little Endian */
+        uint64_t lfsr_freq             : 12; /**< [ 11:  0](R/W) Test LFSR update frequency in coprocessor-clocks minus one. */
+        uint64_t reserved_12_15        : 4;
+        uint64_t bp_cfg                : 10; /**< [ 25: 16](R/W) Backpressure weight. For diagnostic use only.
+                                                                 Internal:
+                                                                 There are 2 backpressure configuration bits per enable, with the two bits
+                                                                 defined as 0x0=100% of the time, 0x1=75% of the time, 0x2=50% of the time,
+                                                                 0x3=25% of the time.
+                                                                   \<23:22\> = Config 3.
+                                                                   \<21:20\> = Config 2.
+                                                                   \<19:18\> = Config 1.
+                                                                   \<17:16\> = Config 0. */
+        uint64_t reserved_26_63        : 38;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_nixx_af_pse_bp_test2_s cn9; */
+    struct cavm_nixx_af_pse_bp_test2_cn96xxp1
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t enable                : 4;  /**< [ 63: 60](R/W) Enable test mode. For diagnostic use only.
                                                                  Internal:
                                                                  Once a bit is set, random backpressure is generated
@@ -14365,8 +14950,114 @@ union cavm_nixx_af_pse_bp_test2
                                                                  \<61\> = When set, enables TL3 TW1 request backpressure, TW does not requests PKT_ADD to PEx.
                                                                  \<60\> = When set, enables TL3 TW0 request backpressure, TW does not requests PKT_ADD to PEx. */
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_nixx_af_pse_bp_test2_s cn; */
+    } cn96xxp1;
+    struct cavm_nixx_af_pse_bp_test2_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t enable                : 5;  /**< [ 63: 59](R/W) Enable test mode. For diagnostic use only.
+                                                                 Internal:
+                                                                 Once a bit is set, random backpressure is generated
+                                                                 at TL2 level.
+                                                                 \<63\> = When set, backpressure ADD request from child to TL2 PE's.
+                                                                 \<62\> = When set, backpressure GET request from TL1 PE's to TL2 PE's.
+                                                                 \<61\> = When set, backpressure PE to PE request at TL2 level.
+                                                                 \<60\> = When set, backpressure Time-Wheel ADD request to TL2 PE's.
+                                                                 \<59\> = When set, backpressure BP ADD request to TL2 PE's */
+        uint64_t reserved_56_58        : 3;
+        uint64_t reserved_32_55        : 24;
+        uint64_t reserved_26_31        : 6;
+        uint64_t bp_cfg                : 10; /**< [ 25: 16](R/W) Backpressure weight. For diagnostic use only.
+                                                                 Internal:
+                                                                 There are 2 backpressure configuration bits per enable, with the two bits
+                                                                 defined as 0x0=100% of the time, 0x1=75% of the time, 0x2=50% of the time,
+                                                                 0x3=25% of the time.
+                                                                 \<25:24\> = Config for Enable bit [63].
+                                                                 \<23:22\> = Config for Enable bit [62].
+                                                                 \<21:20\> = Config for Enable bit [61].
+                                                                 \<19:18\> = Config for Enable bit [60].
+                                                                 \<17:16\> = Config for Enable bit [59]. */
+        uint64_t reserved_12_15        : 4;
+        uint64_t lfsr_freq             : 12; /**< [ 11:  0](R/W) Test LFSR update frequency in coprocessor-clocks minus one. */
+#else /* Word 0 - Little Endian */
+        uint64_t lfsr_freq             : 12; /**< [ 11:  0](R/W) Test LFSR update frequency in coprocessor-clocks minus one. */
+        uint64_t reserved_12_15        : 4;
+        uint64_t bp_cfg                : 10; /**< [ 25: 16](R/W) Backpressure weight. For diagnostic use only.
+                                                                 Internal:
+                                                                 There are 2 backpressure configuration bits per enable, with the two bits
+                                                                 defined as 0x0=100% of the time, 0x1=75% of the time, 0x2=50% of the time,
+                                                                 0x3=25% of the time.
+                                                                 \<25:24\> = Config for Enable bit [63].
+                                                                 \<23:22\> = Config for Enable bit [62].
+                                                                 \<21:20\> = Config for Enable bit [61].
+                                                                 \<19:18\> = Config for Enable bit [60].
+                                                                 \<17:16\> = Config for Enable bit [59]. */
+        uint64_t reserved_26_31        : 6;
+        uint64_t reserved_32_55        : 24;
+        uint64_t reserved_56_58        : 3;
+        uint64_t enable                : 5;  /**< [ 63: 59](R/W) Enable test mode. For diagnostic use only.
+                                                                 Internal:
+                                                                 Once a bit is set, random backpressure is generated
+                                                                 at TL2 level.
+                                                                 \<63\> = When set, backpressure ADD request from child to TL2 PE's.
+                                                                 \<62\> = When set, backpressure GET request from TL1 PE's to TL2 PE's.
+                                                                 \<61\> = When set, backpressure PE to PE request at TL2 level.
+                                                                 \<60\> = When set, backpressure Time-Wheel ADD request to TL2 PE's.
+                                                                 \<59\> = When set, backpressure BP ADD request to TL2 PE's */
+#endif /* Word 0 - End */
+    } cn96xxp3;
+    /* struct cavm_nixx_af_pse_bp_test2_cn96xxp3 cn98xx; */
+    /* struct cavm_nixx_af_pse_bp_test2_cn96xxp1 cnf95xxp1; */
+    struct cavm_nixx_af_pse_bp_test2_cnf95xxp2
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t enable                : 4;  /**< [ 63: 60](R/W) Enable test mode. For diagnostic use only.
+                                                                 Internal:
+                                                                 Once a bit is set, random backpressure is generated
+                                                                 at the corresponding point to allow for more frequent backpressure.
+                                                                 \<63\> = When set, enables TL4 TW1 request backpressure, TW does not requests PKT_ADD to PEx.
+                                                                 \<62\> = When set, enables TL4 TW0 request backpressure, TW does not requests PKT_ADD to PEx.
+                                                                 \<61\> = When set, enables TL3 TW1 request backpressure, TW does not requests PKT_ADD to PEx.
+                                                                 \<60\> = When set, enables TL3 TW0 request backpressure, TW does not requests PKT_ADD to PEx. */
+        uint64_t reserved_56_59        : 4;
+        uint64_t reserved_32_55        : 24;
+        uint64_t reserved_24_31        : 8;
+        uint64_t bp_cfg                : 8;  /**< [ 23: 16](R/W) Backpressure weight. For diagnostic use only.
+                                                                 Internal:
+                                                                 There are 2 backpressure configuration bits per enable, with the two bits
+                                                                 defined as 0x0=100% of the time, 0x1=75% of the time, 0x2=50% of the time,
+                                                                 0x3=25% of the time.
+                                                                   \<23:22\> = Config 3.
+                                                                   \<21:20\> = Config 2.
+                                                                   \<19:18\> = Config 1.
+                                                                   \<17:16\> = Config 0. */
+        uint64_t reserved_12_15        : 4;
+        uint64_t lfsr_freq             : 12; /**< [ 11:  0](R/W) Test LFSR update frequency in coprocessor-clocks minus one. */
+#else /* Word 0 - Little Endian */
+        uint64_t lfsr_freq             : 12; /**< [ 11:  0](R/W) Test LFSR update frequency in coprocessor-clocks minus one. */
+        uint64_t reserved_12_15        : 4;
+        uint64_t bp_cfg                : 8;  /**< [ 23: 16](R/W) Backpressure weight. For diagnostic use only.
+                                                                 Internal:
+                                                                 There are 2 backpressure configuration bits per enable, with the two bits
+                                                                 defined as 0x0=100% of the time, 0x1=75% of the time, 0x2=50% of the time,
+                                                                 0x3=25% of the time.
+                                                                   \<23:22\> = Config 3.
+                                                                   \<21:20\> = Config 2.
+                                                                   \<19:18\> = Config 1.
+                                                                   \<17:16\> = Config 0. */
+        uint64_t reserved_24_31        : 8;
+        uint64_t reserved_32_55        : 24;
+        uint64_t reserved_56_59        : 4;
+        uint64_t enable                : 4;  /**< [ 63: 60](R/W) Enable test mode. For diagnostic use only.
+                                                                 Internal:
+                                                                 Once a bit is set, random backpressure is generated
+                                                                 at the corresponding point to allow for more frequent backpressure.
+                                                                 \<63\> = When set, enables TL4 TW1 request backpressure, TW does not requests PKT_ADD to PEx.
+                                                                 \<62\> = When set, enables TL4 TW0 request backpressure, TW does not requests PKT_ADD to PEx.
+                                                                 \<61\> = When set, enables TL3 TW1 request backpressure, TW does not requests PKT_ADD to PEx.
+                                                                 \<60\> = When set, enables TL3 TW0 request backpressure, TW does not requests PKT_ADD to PEx. */
+#endif /* Word 0 - End */
+    } cnf95xxp2;
+    /* struct cavm_nixx_af_pse_bp_test2_cn96xxp3 loki; */
 };
 typedef union cavm_nixx_af_pse_bp_test2 cavm_nixx_af_pse_bp_test2_t;
 
@@ -14402,6 +15093,37 @@ union cavm_nixx_af_pse_bp_test3
 {
     uint64_t u;
     struct cavm_nixx_af_pse_bp_test3_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_26_63        : 38;
+        uint64_t bp_cfg                : 10; /**< [ 25: 16](R/W) Backpressure weight. For diagnostic use only.
+                                                                 Internal:
+                                                                 There are 2 backpressure configuration bits per enable, with the two bits
+                                                                 defined as 0x0=100% of the time, 0x1=75% of the time, 0x2=50% of the time,
+                                                                 0x3=25% of the time.
+                                                                   \<23:22\> = Reserved.
+                                                                   \<21:20\> = Config 2.
+                                                                   \<19:18\> = Config 1.
+                                                                   \<17:16\> = Config 0. */
+        uint64_t reserved_12_15        : 4;
+        uint64_t lfsr_freq             : 12; /**< [ 11:  0](R/W) Test LFSR update frequency in coprocessor-clocks minus one. */
+#else /* Word 0 - Little Endian */
+        uint64_t lfsr_freq             : 12; /**< [ 11:  0](R/W) Test LFSR update frequency in coprocessor-clocks minus one. */
+        uint64_t reserved_12_15        : 4;
+        uint64_t bp_cfg                : 10; /**< [ 25: 16](R/W) Backpressure weight. For diagnostic use only.
+                                                                 Internal:
+                                                                 There are 2 backpressure configuration bits per enable, with the two bits
+                                                                 defined as 0x0=100% of the time, 0x1=75% of the time, 0x2=50% of the time,
+                                                                 0x3=25% of the time.
+                                                                   \<23:22\> = Reserved.
+                                                                   \<21:20\> = Config 2.
+                                                                   \<19:18\> = Config 1.
+                                                                   \<17:16\> = Config 0. */
+        uint64_t reserved_26_63        : 38;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_nixx_af_pse_bp_test3_s cn9; */
+    struct cavm_nixx_af_pse_bp_test3_cn96xxp1
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t enable                : 4;  /**< [ 63: 60](R/W) Enable test mode. For diagnostic use only.
@@ -14446,8 +15168,114 @@ union cavm_nixx_af_pse_bp_test3
                                                                  \<61\> = When set, enables TL1 TW request backpressure, TW does not requests PKT_ADD to PEx.
                                                                  \<60\> = When set, enables PQ TW request backpressure, TW does not requests PKT_ADD to PEx. */
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_nixx_af_pse_bp_test3_s cn; */
+    } cn96xxp1;
+    struct cavm_nixx_af_pse_bp_test3_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t enable                : 5;  /**< [ 63: 59](R/W) Enable test mode. For diagnostic use only.
+                                                                 Internal:
+                                                                 Once a bit is set, random backpressure is generated
+                                                                 at TL3 level.
+                                                                 \<63\> = When set, backpressure ADD request from child to TL3 PE's.
+                                                                 \<62\> = When set, backpressure GET request from TL2 PE's to TL3 PE's.
+                                                                 \<61\> = When set, backpressure PE to PE request at TL3 level.
+                                                                 \<60\> = When set, backpressure Time-Wheel ADD request to TL3 PE's.
+                                                                 \<59\> = When set, backpressure BP ADD request to TL3 PE's */
+        uint64_t reserved_56_58        : 3;
+        uint64_t reserved_32_55        : 24;
+        uint64_t reserved_26_31        : 6;
+        uint64_t bp_cfg                : 10; /**< [ 25: 16](R/W) Backpressure weight. For diagnostic use only.
+                                                                 Internal:
+                                                                 There are 2 backpressure configuration bits per enable, with the two bits
+                                                                 defined as 0x0=100% of the time, 0x1=75% of the time, 0x2=50% of the time,
+                                                                 0x3=25% of the time.
+                                                                 \<25:24\> = Config for Enable bit [63].
+                                                                 \<23:22\> = Config for Enable bit [62].
+                                                                 \<21:20\> = Config for Enable bit [61].
+                                                                 \<19:18\> = Config for Enable bit [60].
+                                                                 \<17:16\> = Config for Enable bit [59]. */
+        uint64_t reserved_12_15        : 4;
+        uint64_t lfsr_freq             : 12; /**< [ 11:  0](R/W) Test LFSR update frequency in coprocessor-clocks minus one. */
+#else /* Word 0 - Little Endian */
+        uint64_t lfsr_freq             : 12; /**< [ 11:  0](R/W) Test LFSR update frequency in coprocessor-clocks minus one. */
+        uint64_t reserved_12_15        : 4;
+        uint64_t bp_cfg                : 10; /**< [ 25: 16](R/W) Backpressure weight. For diagnostic use only.
+                                                                 Internal:
+                                                                 There are 2 backpressure configuration bits per enable, with the two bits
+                                                                 defined as 0x0=100% of the time, 0x1=75% of the time, 0x2=50% of the time,
+                                                                 0x3=25% of the time.
+                                                                 \<25:24\> = Config for Enable bit [63].
+                                                                 \<23:22\> = Config for Enable bit [62].
+                                                                 \<21:20\> = Config for Enable bit [61].
+                                                                 \<19:18\> = Config for Enable bit [60].
+                                                                 \<17:16\> = Config for Enable bit [59]. */
+        uint64_t reserved_26_31        : 6;
+        uint64_t reserved_32_55        : 24;
+        uint64_t reserved_56_58        : 3;
+        uint64_t enable                : 5;  /**< [ 63: 59](R/W) Enable test mode. For diagnostic use only.
+                                                                 Internal:
+                                                                 Once a bit is set, random backpressure is generated
+                                                                 at TL3 level.
+                                                                 \<63\> = When set, backpressure ADD request from child to TL3 PE's.
+                                                                 \<62\> = When set, backpressure GET request from TL2 PE's to TL3 PE's.
+                                                                 \<61\> = When set, backpressure PE to PE request at TL3 level.
+                                                                 \<60\> = When set, backpressure Time-Wheel ADD request to TL3 PE's.
+                                                                 \<59\> = When set, backpressure BP ADD request to TL3 PE's */
+#endif /* Word 0 - End */
+    } cn96xxp3;
+    /* struct cavm_nixx_af_pse_bp_test3_cn96xxp3 cn98xx; */
+    /* struct cavm_nixx_af_pse_bp_test3_cn96xxp1 cnf95xxp1; */
+    struct cavm_nixx_af_pse_bp_test3_cnf95xxp2
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t enable                : 4;  /**< [ 63: 60](R/W) Enable test mode. For diagnostic use only.
+                                                                 Internal:
+                                                                 Once a bit is set, random backpressure is generated
+                                                                 at the corresponding point to allow for more frequent backpressure.
+                                                                 \<63\> = Reserved.
+                                                                 \<62\> = When set, enables TL2 TW request backpressure, TW does not requests PKT_ADD to PEx.
+                                                                 \<61\> = When set, enables TL1 TW request backpressure, TW does not requests PKT_ADD to PEx.
+                                                                 \<60\> = When set, enables PQ TW request backpressure, TW does not requests PKT_ADD to PEx. */
+        uint64_t reserved_56_59        : 4;
+        uint64_t reserved_32_55        : 24;
+        uint64_t reserved_24_31        : 8;
+        uint64_t bp_cfg                : 8;  /**< [ 23: 16](R/W) Backpressure weight. For diagnostic use only.
+                                                                 Internal:
+                                                                 There are 2 backpressure configuration bits per enable, with the two bits
+                                                                 defined as 0x0=100% of the time, 0x1=75% of the time, 0x2=50% of the time,
+                                                                 0x3=25% of the time.
+                                                                   \<23:22\> = Reserved.
+                                                                   \<21:20\> = Config 2.
+                                                                   \<19:18\> = Config 1.
+                                                                   \<17:16\> = Config 0. */
+        uint64_t reserved_12_15        : 4;
+        uint64_t lfsr_freq             : 12; /**< [ 11:  0](R/W) Test LFSR update frequency in coprocessor-clocks minus one. */
+#else /* Word 0 - Little Endian */
+        uint64_t lfsr_freq             : 12; /**< [ 11:  0](R/W) Test LFSR update frequency in coprocessor-clocks minus one. */
+        uint64_t reserved_12_15        : 4;
+        uint64_t bp_cfg                : 8;  /**< [ 23: 16](R/W) Backpressure weight. For diagnostic use only.
+                                                                 Internal:
+                                                                 There are 2 backpressure configuration bits per enable, with the two bits
+                                                                 defined as 0x0=100% of the time, 0x1=75% of the time, 0x2=50% of the time,
+                                                                 0x3=25% of the time.
+                                                                   \<23:22\> = Reserved.
+                                                                   \<21:20\> = Config 2.
+                                                                   \<19:18\> = Config 1.
+                                                                   \<17:16\> = Config 0. */
+        uint64_t reserved_24_31        : 8;
+        uint64_t reserved_32_55        : 24;
+        uint64_t reserved_56_59        : 4;
+        uint64_t enable                : 4;  /**< [ 63: 60](R/W) Enable test mode. For diagnostic use only.
+                                                                 Internal:
+                                                                 Once a bit is set, random backpressure is generated
+                                                                 at the corresponding point to allow for more frequent backpressure.
+                                                                 \<63\> = Reserved.
+                                                                 \<62\> = When set, enables TL2 TW request backpressure, TW does not requests PKT_ADD to PEx.
+                                                                 \<61\> = When set, enables TL1 TW request backpressure, TW does not requests PKT_ADD to PEx.
+                                                                 \<60\> = When set, enables PQ TW request backpressure, TW does not requests PKT_ADD to PEx. */
+#endif /* Word 0 - End */
+    } cnf95xxp2;
+    /* struct cavm_nixx_af_pse_bp_test3_cn96xxp3 loki; */
 };
 typedef union cavm_nixx_af_pse_bp_test3 cavm_nixx_af_pse_bp_test3_t;
 
@@ -14825,6 +15653,61 @@ union cavm_nixx_af_pse_norm_bp_test
     struct cavm_nixx_af_pse_norm_bp_test_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_48_63        : 16;
+        uint64_t bp_cfg                : 32; /**< [ 47: 16](R/W) Backpressure weight. For diagnostic use only.
+                                                                 Internal:
+                                                                 There are 2 backpressure configuration bits per enable, with the two bits
+                                                                 defined as 0x0=100% of the time, 0x1=75% of the time, 0x2=50% of the time,
+                                                                 0x3=25% of the time.
+                                                                   \<47:46\> = Reserved.
+                                                                   \<45:44\> = Config 14.
+                                                                   \<43:42\> = Config 13.
+                                                                   \<41:40\> = Config 12.
+                                                                   \<39:38\> = Config 11.
+                                                                   \<37:36\> = Config 10.
+                                                                   \<35:34\> = Config 9.
+                                                                   \<33:32\> = Config 8.
+                                                                   \<31:30\> = Config 7.
+                                                                   \<29:28\> = Config 6.
+                                                                   \<27:26\> = Config 5.
+                                                                   \<25:24\> = Config 4.
+                                                                   \<23:22\> = Config 3.
+                                                                   \<21:20\> = Config 2.
+                                                                   \<19:18\> = Config 1.
+                                                                   \<17:16\> = Config 0. */
+        uint64_t reserved_12_15        : 4;
+        uint64_t lfsr_freq             : 12; /**< [ 11:  0](R/W) Test LFSR update frequency in coprocessor-clocks minus one. */
+#else /* Word 0 - Little Endian */
+        uint64_t lfsr_freq             : 12; /**< [ 11:  0](R/W) Test LFSR update frequency in coprocessor-clocks minus one. */
+        uint64_t reserved_12_15        : 4;
+        uint64_t bp_cfg                : 32; /**< [ 47: 16](R/W) Backpressure weight. For diagnostic use only.
+                                                                 Internal:
+                                                                 There are 2 backpressure configuration bits per enable, with the two bits
+                                                                 defined as 0x0=100% of the time, 0x1=75% of the time, 0x2=50% of the time,
+                                                                 0x3=25% of the time.
+                                                                   \<47:46\> = Reserved.
+                                                                   \<45:44\> = Config 14.
+                                                                   \<43:42\> = Config 13.
+                                                                   \<41:40\> = Config 12.
+                                                                   \<39:38\> = Config 11.
+                                                                   \<37:36\> = Config 10.
+                                                                   \<35:34\> = Config 9.
+                                                                   \<33:32\> = Config 8.
+                                                                   \<31:30\> = Config 7.
+                                                                   \<29:28\> = Config 6.
+                                                                   \<27:26\> = Config 5.
+                                                                   \<25:24\> = Config 4.
+                                                                   \<23:22\> = Config 3.
+                                                                   \<21:20\> = Config 2.
+                                                                   \<19:18\> = Config 1.
+                                                                   \<17:16\> = Config 0. */
+        uint64_t reserved_48_63        : 16;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_nixx_af_pse_norm_bp_test_s cn9; */
+    struct cavm_nixx_af_pse_norm_bp_test_cn96xxp1
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t enable                : 16; /**< [ 63: 48](R/W) Enable test mode. For diagnostic use only.
                                                                  Internal:
                                                                  Once a bit is set, random backpressure is generated
@@ -14915,8 +15798,66 @@ union cavm_nixx_af_pse_norm_bp_test
                                                                  \<48\> = When set, enables Normal wake up FIFO backpressure, delay TW request.
                                                                  Applies to packet, link granted and link request FIFOs. */
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_nixx_af_pse_norm_bp_test_s cn; */
+    } cn96xxp1;
+    struct cavm_nixx_af_pse_norm_bp_test_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t enable                : 6;  /**< [ 63: 58](R/W) Enable test mode. For diagnostic use only.
+                                                                 Internal:
+                                                                 Once a bit is set, random backpressure is generated
+                                                                 at the corresponding point to allow for more frequent backpressure.
+                                                                 \<63\> = When set, backpressure ADD request from child to TL4 PE's.
+                                                                 \<62\> = When set, backpressure GET request from TL3 PE's to TL4 PE's.
+                                                                 \<61\> = When set, backpressure PE to PE request at TL4 level.
+                                                                 \<60\> = When set, backpressure Time-Wheel ADD request to TL4 PE's.
+                                                                 \<59\> = When set, backpressure Popping of Interface FIFO SQM-\>PSE and this would
+                                                                 prevent returning Interface credits as well.
+                                                                 \<58\> = When set, backpressure Popping of Command FIFO and this would backpressure all MDQs. */
+        uint64_t reserved_28_57        : 30;
+        uint64_t bp_cfg                : 12; /**< [ 27: 16](R/W) Backpressure weight. For diagnostic use only.
+                                                                 Internal:
+                                                                 There are 2 backpressure configuration bits per enable, with the two bits
+                                                                 defined as 0x0=100% of the time, 0x1=75% of the time, 0x2=50% of the time,
+                                                                 0x3=25% of the time.
+                                                                 \<27:26\> = Config for Enable bit [63].
+                                                                 \<25:24\> = Config for Enable bit [62].
+                                                                 \<23:22\> = Config for Enable bit [61].
+                                                                 \<21:20\> = Config for Enable bit [60].
+                                                                 \<19:18\> = Config for Enable bit [59].
+                                                                 \<17:16\> = Config for Enable bit [58]. */
+        uint64_t reserved_12_15        : 4;
+        uint64_t lfsr_freq             : 12; /**< [ 11:  0](R/W) Test LFSR update frequency in coprocessor-clocks minus one. */
+#else /* Word 0 - Little Endian */
+        uint64_t lfsr_freq             : 12; /**< [ 11:  0](R/W) Test LFSR update frequency in coprocessor-clocks minus one. */
+        uint64_t reserved_12_15        : 4;
+        uint64_t bp_cfg                : 12; /**< [ 27: 16](R/W) Backpressure weight. For diagnostic use only.
+                                                                 Internal:
+                                                                 There are 2 backpressure configuration bits per enable, with the two bits
+                                                                 defined as 0x0=100% of the time, 0x1=75% of the time, 0x2=50% of the time,
+                                                                 0x3=25% of the time.
+                                                                 \<27:26\> = Config for Enable bit [63].
+                                                                 \<25:24\> = Config for Enable bit [62].
+                                                                 \<23:22\> = Config for Enable bit [61].
+                                                                 \<21:20\> = Config for Enable bit [60].
+                                                                 \<19:18\> = Config for Enable bit [59].
+                                                                 \<17:16\> = Config for Enable bit [58]. */
+        uint64_t reserved_28_57        : 30;
+        uint64_t enable                : 6;  /**< [ 63: 58](R/W) Enable test mode. For diagnostic use only.
+                                                                 Internal:
+                                                                 Once a bit is set, random backpressure is generated
+                                                                 at the corresponding point to allow for more frequent backpressure.
+                                                                 \<63\> = When set, backpressure ADD request from child to TL4 PE's.
+                                                                 \<62\> = When set, backpressure GET request from TL3 PE's to TL4 PE's.
+                                                                 \<61\> = When set, backpressure PE to PE request at TL4 level.
+                                                                 \<60\> = When set, backpressure Time-Wheel ADD request to TL4 PE's.
+                                                                 \<59\> = When set, backpressure Popping of Interface FIFO SQM-\>PSE and this would
+                                                                 prevent returning Interface credits as well.
+                                                                 \<58\> = When set, backpressure Popping of Command FIFO and this would backpressure all MDQs. */
+#endif /* Word 0 - End */
+    } cn96xxp3;
+    /* struct cavm_nixx_af_pse_norm_bp_test_cn96xxp3 cn98xx; */
+    /* struct cavm_nixx_af_pse_norm_bp_test_cn96xxp1 cnf95xx; */
+    /* struct cavm_nixx_af_pse_norm_bp_test_cn96xxp3 loki; */
 };
 typedef union cavm_nixx_af_pse_norm_bp_test cavm_nixx_af_pse_norm_bp_test_t;
 
@@ -15358,7 +16299,7 @@ static inline uint64_t CAVM_NIXX_AF_REB_BP_TESTX(unsigned long a, unsigned long 
         return 0x840040004840ll + 0x10000000ll * ((a) & 0x0) + 0x10000ll * ((b) & 0x1f);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a<=1) && (b<=28)))
         return 0x840040004840ll + 0x10000000ll * ((a) & 0x1) + 0x10000ll * ((b) & 0x1f);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=28)))
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=24)))
         return 0x840040004840ll + 0x10000000ll * ((a) & 0x1) + 0x10000ll * ((b) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=1) && (b<=28)))
         return 0x840040004840ll + 0x10000000ll * ((a) & 0x1) + 0x10000ll * ((b) & 0x1f);
@@ -15865,7 +16806,7 @@ static inline uint64_t CAVM_NIXX_AF_RX_ACTIVE_CYCLES_PCX(unsigned long a, unsign
         return 0x840040004800ll + 0x10000000ll * ((a) & 0x0) + 0x10000ll * ((b) & 0x1f);
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a<=1) && (b<=30)))
         return 0x840040004800ll + 0x10000000ll * ((a) & 0x1) + 0x10000ll * ((b) & 0x1f);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=30)))
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=26)))
         return 0x840040004800ll + 0x10000000ll * ((a) & 0x1) + 0x10000ll * ((b) & 0x1f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a<=1) && (b<=30)))
         return 0x840040004800ll + 0x10000000ll * ((a) & 0x1) + 0x10000ll * ((b) & 0x1f);
@@ -19656,33 +20597,7 @@ union cavm_nixx_af_smqx_cfg
                                                                  from SDP. If the backpressure does not go away, software may need to
                                                                  disable it at the destination link(s), e.g. by clearing
                                                                  CGX()_SMU()_RX_FRM_CTL[CTL_BCK] to disable physical backpressure from a
-                                                                 10G+ CGX LMAC.
-
-                                                                 Internal:
-                                                                 Software may use the following software-managed flush sequence as an
-                                                                 alternative to [FLUSH].
-
-                                                                 Pre-flush setup:
-                                                                 * Set up a "flush SQ" for the SMQ which is only used for sending "flush
-                                                                 packets" that are dropped.
-                                                                 * Configure NPC to drop all packets from the flush SQ (return
-                                                                 NIX_TX_ACTION_S[OP] = NIX_TX_ACTIONOP_E::DROP, e.g. based on matching
-                                                                 NIX_INST_HDR_S[PF_FUNC,SQ]).
-
-                                                                 Software-managed flush sequence:
-                                                                 * Set [ENQ_XOFF].
-                                                                 * For each SQ that feeds the SMQ other than the flush SQ, set
-                                                                 NIX_SQ_CTX_S[XOFF] by writing NIX_LF_SQ_OP_INT[SETOP] = 1 and
-                                                                 NIX_LF_SQ_OP_INT[XOFF] = 1.
-                                                                 * Enqueue a packet to the flush SQ with a unique completion
-                                                                 notification, e.g. a CQE with a unique NIX_SEND_COMP_S[SQE_ID] (from
-                                                                 NIX_SEND_HDR_S[SQE_ID]) or a unique WQE (from NIX_SEND_WORK_S[ADDR]).
-                                                                 * Clear [ENQ_XOFF].
-                                                                 * As in the case of a hardware-managed [FLUSH], the flush packet may stall
-                                                                 if the downstream TL3/TL2 or TL4 queue is backpressured from CGX/LBK or
-                                                                 SDP, respectively. If appropriate, software may need to disable
-                                                                 backpressure from the destination link(s).
-                                                                 * Wait for the flush completion notification. */
+                                                                 10G+ CGX LMAC. */
         uint64_t express               : 1;  /**< [ 48: 48](R/W) Reserved. Must be zero.
                                                                  Internal:
                                                                  802.3br frame preemption/express path is defeatured.
@@ -19820,33 +20735,7 @@ union cavm_nixx_af_smqx_cfg
                                                                  from SDP. If the backpressure does not go away, software may need to
                                                                  disable it at the destination link(s), e.g. by clearing
                                                                  CGX()_SMU()_RX_FRM_CTL[CTL_BCK] to disable physical backpressure from a
-                                                                 10G+ CGX LMAC.
-
-                                                                 Internal:
-                                                                 Software may use the following software-managed flush sequence as an
-                                                                 alternative to [FLUSH].
-
-                                                                 Pre-flush setup:
-                                                                 * Set up a "flush SQ" for the SMQ which is only used for sending "flush
-                                                                 packets" that are dropped.
-                                                                 * Configure NPC to drop all packets from the flush SQ (return
-                                                                 NIX_TX_ACTION_S[OP] = NIX_TX_ACTIONOP_E::DROP, e.g. based on matching
-                                                                 NIX_INST_HDR_S[PF_FUNC,SQ]).
-
-                                                                 Software-managed flush sequence:
-                                                                 * Set [ENQ_XOFF].
-                                                                 * For each SQ that feeds the SMQ other than the flush SQ, set
-                                                                 NIX_SQ_CTX_S[XOFF] by writing NIX_LF_SQ_OP_INT[SETOP] = 1 and
-                                                                 NIX_LF_SQ_OP_INT[XOFF] = 1.
-                                                                 * Enqueue a packet to the flush SQ with a unique completion
-                                                                 notification, e.g. a CQE with a unique NIX_SEND_COMP_S[SQE_ID] (from
-                                                                 NIX_SEND_HDR_S[SQE_ID]) or a unique WQE (from NIX_SEND_WORK_S[ADDR]).
-                                                                 * Clear [ENQ_XOFF].
-                                                                 * As in the case of a hardware-managed [FLUSH], the flush packet may stall
-                                                                 if the downstream TL3/TL2 or TL4 queue is backpressured from CGX/LBK or
-                                                                 SDP, respectively. If appropriate, software may need to disable
-                                                                 backpressure from the destination link(s).
-                                                                 * Wait for the flush completion notification. */
+                                                                 10G+ CGX LMAC. */
         uint64_t enq_xoff              : 1;  /**< [ 50: 50](R/W) Enqueue transmit off. When set, hardware will not enqueue meta-descriptors
                                                                  to the SMQ. */
         uint64_t pri_thr               : 6;  /**< [ 56: 51](R/W) SMQ enqueue priority threshold. When NIX_AF_SMQ()_STATUS[LEVEL] is less
@@ -20281,7 +21170,10 @@ union cavm_nixx_af_sqm_dbg_ctl_status
     struct cavm_nixx_af_sqm_dbg_ctl_status_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_25_63        : 39;
+        uint64_t reserved_26_63        : 38;
+        uint64_t tm13                  : 1;  /**< [ 25: 25](R/W) Enable locking on SQE reads by engine.
+                                                                 Internal:
+                                                                 Performance optimization that reduced DSE's SQE read miss rate. */
         uint64_t tm12                  : 1;  /**< [ 24: 24](R/W) Enable multi Q to Single Q transition in the engine while in sticky mode.
                                                                  Internal:
                                                                  This handles for the corner case where the SMQ linked-list transitions from 2Q
@@ -20294,7 +21186,7 @@ union cavm_nixx_af_sqm_dbg_ctl_status
 
                                                                  Internal:
                                                                  See bug 36650 for more details. */
-        uint64_t tm10                  : 1;  /**< [ 22: 22](R/W) Enable DSE SQE_RD invalidates to NDC. */
+        uint64_t tm10                  : 1;  /**< [ 22: 22](R/W) Enable DSE SQE RD invalidates to NDC. */
         uint64_t tm9                   : 1;  /**< [ 21: 21](R/W) Control flow clk. */
         uint64_t tm8                   : 1;  /**< [ 20: 20](R/W) Control DQ context writes. */
         uint64_t tm7                   : 4;  /**< [ 19: 16](R/W) Control multi-q refetch delay. */
@@ -20314,7 +21206,7 @@ union cavm_nixx_af_sqm_dbg_ctl_status
         uint64_t tm7                   : 4;  /**< [ 19: 16](R/W) Control multi-q refetch delay. */
         uint64_t tm8                   : 1;  /**< [ 20: 20](R/W) Control DQ context writes. */
         uint64_t tm9                   : 1;  /**< [ 21: 21](R/W) Control flow clk. */
-        uint64_t tm10                  : 1;  /**< [ 22: 22](R/W) Enable DSE SQE_RD invalidates to NDC. */
+        uint64_t tm10                  : 1;  /**< [ 22: 22](R/W) Enable DSE SQE RD invalidates to NDC. */
         uint64_t tm11                  : 1;  /**< [ 23: 23](R/W) Disable the parser from issuing a NO_ERR_POS_DWRR_E re-enqueue command unless
                                                                  specified by the engine. This sacrifices DWRR fairness in certain cases, but
                                                                  guarantees linked-list correctness for certain dynamic sticky to non-sticky
@@ -20327,7 +21219,10 @@ union cavm_nixx_af_sqm_dbg_ctl_status
                                                                  This handles for the corner case where the SMQ linked-list transitions from 2Q
                                                                  to 1Q, while the engine is in sticky mode. See bug 36601 message 24 for more
                                                                  details. */
-        uint64_t reserved_25_63        : 39;
+        uint64_t tm13                  : 1;  /**< [ 25: 25](R/W) Enable locking on SQE reads by engine.
+                                                                 Internal:
+                                                                 Performance optimization that reduced DSE's SQE read miss rate. */
+        uint64_t reserved_26_63        : 38;
 #endif /* Word 0 - End */
     } s;
     /* struct cavm_nixx_af_sqm_dbg_ctl_status_s cn9; */
@@ -20359,7 +21254,41 @@ union cavm_nixx_af_sqm_dbg_ctl_status
     } cn96xxp1;
     /* struct cavm_nixx_af_sqm_dbg_ctl_status_s cn96xxp3; */
     /* struct cavm_nixx_af_sqm_dbg_ctl_status_s cn98xx; */
-    /* struct cavm_nixx_af_sqm_dbg_ctl_status_cn96xxp1 cnf95xx; */
+    /* struct cavm_nixx_af_sqm_dbg_ctl_status_cn96xxp1 cnf95xxp1; */
+    struct cavm_nixx_af_sqm_dbg_ctl_status_cnf95xxp2
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_26_63        : 38;
+        uint64_t reserved_25           : 1;
+        uint64_t reserved_24           : 1;
+        uint64_t reserved_23           : 1;
+        uint64_t reserved_22           : 1;
+        uint64_t tm9                   : 1;  /**< [ 21: 21](R/W) Control flow clk. */
+        uint64_t tm8                   : 1;  /**< [ 20: 20](R/W) Control DQ context writes. */
+        uint64_t tm7                   : 4;  /**< [ 19: 16](R/W) Control multi-q refetch delay. */
+        uint64_t tm6                   : 1;  /**< [ 15: 15](R/W) Enable sticky mode across all flows. */
+        uint64_t tm5                   : 1;  /**< [ 14: 14](R/W) Enable sticky mode unset */
+        uint64_t tm4                   : 1;  /**< [ 13: 13](R/W) Control multi-q op. */
+        uint64_t tm3                   : 4;  /**< [ 12:  9](R/W) Control single-q refetch delay. */
+        uint64_t tm2                   : 1;  /**< [  8:  8](R/W) Control arb. */
+        uint64_t tm1                   : 8;  /**< [  7:  0](R/W) Control flow engines. */
+#else /* Word 0 - Little Endian */
+        uint64_t tm1                   : 8;  /**< [  7:  0](R/W) Control flow engines. */
+        uint64_t tm2                   : 1;  /**< [  8:  8](R/W) Control arb. */
+        uint64_t tm3                   : 4;  /**< [ 12:  9](R/W) Control single-q refetch delay. */
+        uint64_t tm4                   : 1;  /**< [ 13: 13](R/W) Control multi-q op. */
+        uint64_t tm5                   : 1;  /**< [ 14: 14](R/W) Enable sticky mode unset */
+        uint64_t tm6                   : 1;  /**< [ 15: 15](R/W) Enable sticky mode across all flows. */
+        uint64_t tm7                   : 4;  /**< [ 19: 16](R/W) Control multi-q refetch delay. */
+        uint64_t tm8                   : 1;  /**< [ 20: 20](R/W) Control DQ context writes. */
+        uint64_t tm9                   : 1;  /**< [ 21: 21](R/W) Control flow clk. */
+        uint64_t reserved_22           : 1;
+        uint64_t reserved_23           : 1;
+        uint64_t reserved_24           : 1;
+        uint64_t reserved_25           : 1;
+        uint64_t reserved_26_63        : 38;
+#endif /* Word 0 - End */
+    } cnf95xxp2;
     /* struct cavm_nixx_af_sqm_dbg_ctl_status_s loki; */
 };
 typedef union cavm_nixx_af_sqm_dbg_ctl_status cavm_nixx_af_sqm_dbg_ctl_status_t;
@@ -26942,8 +27871,24 @@ union cavm_nixx_af_tx_linkx_expr_credit
         uint64_t reserved_32_63        : 32;
 #endif /* Word 0 - End */
     } cn96xxp3;
-    /* struct cavm_nixx_af_tx_linkx_expr_credit_s cn98xx; */
-    /* struct cavm_nixx_af_tx_linkx_expr_credit_s cnf95xx; */
+    /* struct cavm_nixx_af_tx_linkx_expr_credit_cn96xxp3 cn98xx; */
+    /* struct cavm_nixx_af_tx_linkx_expr_credit_s cnf95xxp1; */
+    struct cavm_nixx_af_tx_linkx_expr_credit_cnf95xxp2
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_32_63        : 32;
+        uint64_t cc_unit_cnt           : 20; /**< [ 31: 12](R/W/H) see NIX_AF_TX_LINK(0..12)_NORM_CREDIT[CC_UNIT_CNT] */
+        uint64_t cc_packet_cnt         : 10; /**< [ 11:  2](R/W/H) see NIX_AF_TX_LINK(0..12)_NORM_CREDIT[CC_PACKET_CNT] */
+        uint64_t cc_enable             : 1;  /**< [  1:  1](R/W) see NIX_AF_TX_LINK(0..12)_NORM_CREDIT[CC_ENABLE] */
+        uint64_t reserved_0            : 1;
+#else /* Word 0 - Little Endian */
+        uint64_t reserved_0            : 1;
+        uint64_t cc_enable             : 1;  /**< [  1:  1](R/W) see NIX_AF_TX_LINK(0..12)_NORM_CREDIT[CC_ENABLE] */
+        uint64_t cc_packet_cnt         : 10; /**< [ 11:  2](R/W/H) see NIX_AF_TX_LINK(0..12)_NORM_CREDIT[CC_PACKET_CNT] */
+        uint64_t cc_unit_cnt           : 20; /**< [ 31: 12](R/W/H) see NIX_AF_TX_LINK(0..12)_NORM_CREDIT[CC_UNIT_CNT] */
+        uint64_t reserved_32_63        : 32;
+#endif /* Word 0 - End */
+    } cnf95xxp2;
     /* struct cavm_nixx_af_tx_linkx_expr_credit_cn96xxp3 loki; */
 };
 typedef union cavm_nixx_af_tx_linkx_expr_credit cavm_nixx_af_tx_linkx_expr_credit_t;

@@ -10045,7 +10045,10 @@ union cavm_gsercx_lanex_control_bcfg
     struct cavm_gsercx_lanex_control_bcfg_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_44_63        : 20;
+        uint64_t reserved_45_63        : 19;
+        uint64_t cfg_cpri              : 1;  /**< [ 44: 44](R/W) Select for the lane tx clock and data muxes:
+                                                                   0x0 = Ethernet ln_txclk and ln_txdata
+                                                                   0x1 = CPRI ln_txclk and ln_txdata */
         uint64_t rx_bitstrip_cfg       : 1;  /**< [ 43: 43](R/W) Configures the sampling position for the div 4 bit stripping logic at the 2.4G CPRI rate:
                                                                    0x0 = 135 degree sample.
                                                                    0x1 = 225 degree sample. */
@@ -10351,7 +10354,10 @@ union cavm_gsercx_lanex_control_bcfg
         uint64_t rx_bitstrip_cfg       : 1;  /**< [ 43: 43](R/W) Configures the sampling position for the div 4 bit stripping logic at the 2.4G CPRI rate:
                                                                    0x0 = 135 degree sample.
                                                                    0x1 = 225 degree sample. */
-        uint64_t reserved_44_63        : 20;
+        uint64_t cfg_cpri              : 1;  /**< [ 44: 44](R/W) Select for the lane tx clock and data muxes:
+                                                                   0x0 = Ethernet ln_txclk and ln_txdata
+                                                                   0x1 = CPRI ln_txclk and ln_txdata */
+        uint64_t reserved_45_63        : 19;
 #endif /* Word 0 - End */
     } s;
     /* struct cavm_gsercx_lanex_control_bcfg_s cn; */

@@ -606,6 +606,175 @@ union cavm_scr_write32_s
                                                                      o PEM()_STRAP.
                                                                      o PEM()_CFG_TBL().
                                                                      o PEM()_CFG_TBL_SIZE.
+                                                                     o PEM()_S_RST_CTL.
+                                                                     o PEM()_RST_SOFT_PERST.
+                                                                     o PEM()_S_RST_MAX.
+                                                                   \<page\>
+                                                                   * PCIEPVF_* config space via PEM()_PF()_VF()_VFCFG() (or legacy PEM()_CFG_WR
+                                                                     and PEM()_CFG_RD).
+                                                                   * PCIEP_* config space via PEM()_PF()_CS()_PFCFG() (or legacy PEM()_CFG_WR
+                                                                     and PEM()_CFG_RD).
+                                                                   * PCIRC_* config space via PEM()_PF()_CS()_PFCFG() (or legacy PEM()_CFG_WR
+                                                                     and PEM()_CFG_RD).
+                                                                   * RST:
+                                                                     o RST_CONST.
+                                                                     o RST_OUT_CTL.
+                                                                     o RST_REFC_CTL.
+                                                                   * TSN:
+                                                                     o TSN()_TS_TEMP_NOFF_MC.
+                                                                     o TSN()_TS_TEMP_CONV_RESULT.
+                                                                     o TSN()_FUSE_BYPASS.
+                                                                   \<page\>
+
+                                                                 Accesses are always nonsecure. The normal permission registers
+                                                                 MRML_RSL()_PERMIT, MRML_NCB()_PERMIT, GPIO_PERMIT, etc. still apply, and must be
+                                                                 appropriately permissive for the script access to the corresponding device to
+                                                                 succeed.
+
+                                                                 Internal:
+                                                                 This list corresponds to rom.c's script_access_allowed().  Verification has a
+                                                                 similar vkit function to insure PEM subsystem configuration writes are allowed
+                                                                 by this function (to insure it doesn't omit an important register needed for
+                                                                 configuration.)
+
+                                                                 The description of each register listed above contains a cross reference to this
+                                                                 text.
+
+                                                                 This list must never contain registers that could enable a memory write to an
+                                                                 arbitrary address, e.g. no MSI-X registers. */
+#else /* Word 0 - Little Endian */
+        uint64_t addr                  : 56; /**< [ 55:  0] Address. The address must be to a permitted address, or the write will be
+                                                                 silently dropped and reads will return zeros. The permitted registers are:
+                                                                   * GPIO:
+                                                                     o GPIO_BIT_CFG().
+                                                                     o GPIO_BLINK_CFG.
+                                                                     o GPIO_BLINK_FREQ.
+                                                                     o GPIO_CLK_GEN().
+                                                                     o GPIO_IO_CTL.
+                                                                     o GPIO_CONST.
+                                                                     o GPIO_PSPI_CTL.
+                                                                     o GPIO_MISC_STRAP.
+                                                                     o GPIO_RX_DAT, GPIO_RX1_DAT.
+                                                                     o GPIO_STRAP, GPIO_STRAP1.
+                                                                     o GPIO_TX_CLR, GPIO_TX1_CLR.
+                                                                     o GPIO_TX_SET, GPIO_TX1_SET.
+                                                                   * GSERN()_*.
+                                                                   * GSERP()_*.
+                                                                   \<page\>
+                                                                   * PEM():
+                                                                     o PEM()_CFG.
+                                                                     o PEM()_CFG_RD (legacy).
+                                                                     o PEM()_CFG_WR (legacy).
+                                                                     o PEM()_CLK_EN.
+                                                                     o PEM()_CTL_STATUS.
+                                                                     o PEM()_CTL_STATUS2.
+                                                                     o PEM()_DBG_INFO.
+                                                                     o PEM()_DIAG_STATUS.
+                                                                     o PEM()_DIS_PORT.
+                                                                     o PEM()_EBI_TLP_CREDITS.
+                                                                     o PEM()_EBUS_CTL.
+                                                                     o PEM()_LTR_VAL().
+                                                                     o PEM()_MAC_LANE()_EQ.
+                                                                     o PEM()_NCBI_TLP_CREDITS.
+                                                                     o PEM()_ON.
+                                                                     o PEM()_PF()_CS()_PFCFG().
+                                                                     o PEM()_PF()_CTL_STATUS.
+                                                                     o PEM()_PF()_VF()_VFCFG().
+                                                                     o PEM()_STRAP.
+                                                                     o PEM()_CFG_TBL().
+                                                                     o PEM()_CFG_TBL_SIZE.
+                                                                     o PEM()_S_RST_CTL.
+                                                                     o PEM()_RST_SOFT_PERST.
+                                                                     o PEM()_S_RST_MAX.
+                                                                   \<page\>
+                                                                   * PCIEPVF_* config space via PEM()_PF()_VF()_VFCFG() (or legacy PEM()_CFG_WR
+                                                                     and PEM()_CFG_RD).
+                                                                   * PCIEP_* config space via PEM()_PF()_CS()_PFCFG() (or legacy PEM()_CFG_WR
+                                                                     and PEM()_CFG_RD).
+                                                                   * PCIRC_* config space via PEM()_PF()_CS()_PFCFG() (or legacy PEM()_CFG_WR
+                                                                     and PEM()_CFG_RD).
+                                                                   * RST:
+                                                                     o RST_CONST.
+                                                                     o RST_OUT_CTL.
+                                                                     o RST_REFC_CTL.
+                                                                   * TSN:
+                                                                     o TSN()_TS_TEMP_NOFF_MC.
+                                                                     o TSN()_TS_TEMP_CONV_RESULT.
+                                                                     o TSN()_FUSE_BYPASS.
+                                                                   \<page\>
+
+                                                                 Accesses are always nonsecure. The normal permission registers
+                                                                 MRML_RSL()_PERMIT, MRML_NCB()_PERMIT, GPIO_PERMIT, etc. still apply, and must be
+                                                                 appropriately permissive for the script access to the corresponding device to
+                                                                 succeed.
+
+                                                                 Internal:
+                                                                 This list corresponds to rom.c's script_access_allowed().  Verification has a
+                                                                 similar vkit function to insure PEM subsystem configuration writes are allowed
+                                                                 by this function (to insure it doesn't omit an important register needed for
+                                                                 configuration.)
+
+                                                                 The description of each register listed above contains a cross reference to this
+                                                                 text.
+
+                                                                 This list must never contain registers that could enable a memory write to an
+                                                                 arbitrary address, e.g. no MSI-X registers. */
+        uint64_t op                    : 8;  /**< [ 63: 56] Opcode. */
+#endif /* Word 0 - End */
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 1 - Big Endian */
+        uint64_t reserved_96_127       : 32;
+        uint64_t data                  : 32; /**< [ 95: 64] Write data. */
+#else /* Word 1 - Little Endian */
+        uint64_t data                  : 32; /**< [ 95: 64] Write data. */
+        uint64_t reserved_96_127       : 32;
+#endif /* Word 1 - End */
+    } cn96xxp3;
+    /* struct cavm_scr_write32_s_cn96xxp3 cn98xx; */
+    /* struct cavm_scr_write32_s_s cnf95xxp1; */
+    struct cavm_scr_write32_s_cnf95xxp2
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t op                    : 8;  /**< [ 63: 56] Opcode. */
+        uint64_t addr                  : 56; /**< [ 55:  0] Address. The address must be to a permitted address, or the write will be
+                                                                 silently dropped and reads will return zeros. The permitted registers are:
+                                                                   * GPIO:
+                                                                     o GPIO_BIT_CFG().
+                                                                     o GPIO_BLINK_CFG.
+                                                                     o GPIO_BLINK_FREQ.
+                                                                     o GPIO_CLK_GEN().
+                                                                     o GPIO_IO_CTL.
+                                                                     o GPIO_CONST.
+                                                                     o GPIO_PSPI_CTL.
+                                                                     o GPIO_MISC_STRAP.
+                                                                     o GPIO_RX_DAT, GPIO_RX1_DAT.
+                                                                     o GPIO_STRAP, GPIO_STRAP1.
+                                                                     o GPIO_TX_CLR, GPIO_TX1_CLR.
+                                                                     o GPIO_TX_SET, GPIO_TX1_SET.
+                                                                   * GSERN()_*.
+                                                                   * GSERP()_*.
+                                                                   \<page\>
+                                                                   * PEM():
+                                                                     o PEM()_CFG.
+                                                                     o PEM()_CFG_RD (legacy).
+                                                                     o PEM()_CFG_WR (legacy).
+                                                                     o PEM()_CLK_EN.
+                                                                     o PEM()_CTL_STATUS.
+                                                                     o PEM()_CTL_STATUS2.
+                                                                     o PEM()_DBG_INFO.
+                                                                     o PEM()_DIAG_STATUS.
+                                                                     o PEM()_DIS_PORT.
+                                                                     o PEM()_EBI_TLP_CREDITS.
+                                                                     o PEM()_EBUS_CTL.
+                                                                     o PEM()_LTR_VAL().
+                                                                     o PEM()_MAC_LANE()_EQ.
+                                                                     o PEM()_NCBI_TLP_CREDITS.
+                                                                     o PEM()_ON.
+                                                                     o PEM()_PF()_CS()_PFCFG().
+                                                                     o PEM()_PF()_CTL_STATUS.
+                                                                     o PEM()_PF()_VF()_VFCFG().
+                                                                     o PEM()_STRAP.
+                                                                     o PEM()_CFG_TBL().
+                                                                     o PEM()_CFG_TBL_SIZE.
                                                                    \<page\>
                                                                    * PCIEPVF_* config space via PEM()_PF()_VF()_VFCFG() (or legacy PEM()_CFG_WR
                                                                      and PEM()_CFG_RD).
@@ -726,10 +895,7 @@ union cavm_scr_write32_s
         uint64_t data                  : 32; /**< [ 95: 64] Write data. */
         uint64_t reserved_96_127       : 32;
 #endif /* Word 1 - End */
-    } cn96xxp3;
-    /* struct cavm_scr_write32_s_cn96xxp3 cn98xx; */
-    /* struct cavm_scr_write32_s_s cnf95xxp1; */
-    /* struct cavm_scr_write32_s_cn96xxp3 cnf95xxp2; */
+    } cnf95xxp2;
     /* struct cavm_scr_write32_s_cn96xxp3 loki; */
 };
 
@@ -758,6 +924,39 @@ union cavm_scr_write64_s
 #endif /* Word 1 - End */
     } s;
     /* struct cavm_scr_write64_s_s cn; */
+};
+
+/**
+ * Structure scr_write_temp_s
+ *
+ * ROM Script Write Temperature in GSERP Opcode Structure
+ * This opcode writes the current GSERP temperature into the 8 bit GSERP register at
+ * [ADDR]. It writes an 8-bit unsigned integer representing the Celsius temperature +
+ * 40C, e.g. where value of 0 represents -40 C, 65 represents 25 C. Note that the TSN
+ * requires ~4ms to initialize after the NOFF MC calibration is written, so write NOFF
+ * MC first, then DMA the GSERP firmware, then use SCR_WRITE_TEMP_S.
+ */
+union cavm_scr_write_temp_s
+{
+    uint64_t u[2];
+    struct cavm_scr_write_temp_s_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t op                    : 8;  /**< [ 63: 56] Opcode. */
+        uint64_t addr                  : 56; /**< [ 55:  0] Address. See rules in SCR_WRITE32_S[ADDR]. */
+#else /* Word 0 - Little Endian */
+        uint64_t addr                  : 56; /**< [ 55:  0] Address. See rules in SCR_WRITE32_S[ADDR]. */
+        uint64_t op                    : 8;  /**< [ 63: 56] Opcode. */
+#endif /* Word 0 - End */
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 1 - Big Endian */
+        uint64_t reserved_68_127       : 60;
+        uint64_t tsn                   : 4;  /**< [ 67: 64] The TSN instance to use for the temperature.  Choose the one nearest the GSERP. */
+#else /* Word 1 - Little Endian */
+        uint64_t tsn                   : 4;  /**< [ 67: 64] The TSN instance to use for the temperature.  Choose the one nearest the GSERP. */
+        uint64_t reserved_68_127       : 60;
+#endif /* Word 1 - End */
+    } s;
+    /* struct cavm_scr_write_temp_s_s cn; */
 };
 
 #endif /* __CAVM_CSRS_SCR_H__ */

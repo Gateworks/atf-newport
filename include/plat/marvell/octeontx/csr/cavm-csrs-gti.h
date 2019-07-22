@@ -1731,9 +1731,10 @@ union cavm_gti_cc_imp_ctl
         uint64_t reserved_1_63         : 63;
 #endif /* Word 0 - End */
     } cn96xxp3;
-    /* struct cavm_gti_cc_imp_ctl_s cn98xx; */
-    /* struct cavm_gti_cc_imp_ctl_s cnf95xx; */
-    /* struct cavm_gti_cc_imp_ctl_s loki; */
+    /* struct cavm_gti_cc_imp_ctl_cn96xxp3 cn98xx; */
+    /* struct cavm_gti_cc_imp_ctl_s cnf95xxp1; */
+    /* struct cavm_gti_cc_imp_ctl_cn96xxp3 cnf95xxp2; */
+    /* struct cavm_gti_cc_imp_ctl_cn96xxp3 loki; */
 };
 typedef union cavm_gti_cc_imp_ctl cavm_gti_cc_imp_ctl_t;
 

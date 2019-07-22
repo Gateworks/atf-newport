@@ -1824,8 +1824,8 @@ static inline uint64_t CAVM_NPC_AF_KPUX_CFG(unsigned long a)
  * NPC AF KPU Debug Registers
  * This register contains information for the last packet/lookup for which debug
  * is enabled by NPC_AF_DBG_CTL[INTF_DBG,LKUP_DBG].
- * The register contents are undefined and should be ignored for a software key
- * lookup (NPC_AF_LKUP_CTL[OP] = NPC_LKUPOP_E::KEY)
+ * The register contents are undefined when debug information is captured for a
+ * software key lookup (NPC_AF_LKUP_CTL[OP] = NPC_LKUPOP_E::KEY).
  */
 union cavm_npc_af_kpux_dbg
 {
@@ -2015,7 +2015,128 @@ union cavm_npc_af_kpux_entryx_action0
         uint64_t reserved_57_63        : 7;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_npc_af_kpux_entryx_action0_s cn; */
+    /* struct cavm_npc_af_kpux_entryx_action0_s cn9; */
+    /* struct cavm_npc_af_kpux_entryx_action0_s cn96xxp1; */
+    struct cavm_npc_af_kpux_entryx_action0_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_57_63        : 7;
+        uint64_t byp_count             : 3;  /**< [ 56: 54](R/W) Bypass count. When nonzero, specifies the number of enabled KPUs to be
+                                                                 bypassed. For example, if the bypass count is two in the matching entry for
+                                                                 KPU 3, NPC_AF_KPU(4,6,7)_CFG[ENA] = 1 and NPC_AF_KPU(5)_CFG[ENA] = 0, then:
+                                                                 * KPUs 4 and 6 are bypassed.
+                                                                 * The matching entry's [NEXT_STATE] and
+                                                                 NPC_AF_KPU()_ENTRY()_ACTION1[DP*_OFFSET] in KPU 3 are used for the lookup in
+                                                                 KPU 7. */
+        uint64_t capture_ena           : 1;  /**< [ 53: 53](R/W) Layer capture enable. When set, layer information is captured in
+                                                                 NPC_RESULT_S. When clear, layer information is not captured by the KPU. */
+        uint64_t parse_done            : 1;  /**< [ 52: 52](R/W) Parse done. When set, terminate parse after this KPU and bypass subsequent KPUs. */
+        uint64_t next_state            : 8;  /**< [ 51: 44](R/W) Search value for ternary comparison with the next KPU's
+                                                                 NPC_AF_KPU()_ENTRY()_CAM()[STATE]. */
+        uint64_t reserved_43           : 1;
+        uint64_t capture_lid           : 3;  /**< [ 42: 40](R/W) Capture layer ID. Specifies the layer for which information is captured in
+                                                                 NPC_RESULT_S. Enumerated by NPC_LID_E. */
+        uint64_t capture_ltype         : 4;  /**< [ 39: 36](R/W) Capture layer type. When [CAPTURE_ENA] is set, specifies
+                                                                 NPC_LAYER_INFO_S[LTYPE] value captured in the appropriate layer within
+                                                                 NPC_RESULT_S. */
+        uint64_t capture_flags         : 8;  /**< [ 35: 28](R/W) Capture flags. When nonzero, specifies which NPC_LAYER_INFO_S[FLAGS] bits
+                                                                 to set in the appropriate layer within
+                                                                 NPC_RESULT_S, as follows:
+                                                                 _ NPC_LAYER_INFO_S[FLAGS] |= [CAPTURE_FLAGS]
+
+                                                                 Note that flags are captured irrespective of the [CAPTURE_ENA] value. */
+        uint64_t ptr_advance           : 8;  /**< [ 27: 20](R/W) Pointer advance. Fixed value added to NPC_RESULT_S[EOH_PTR]. Must be
+                                                                 even. See also [VAR_LEN_OFFSET]. */
+        uint64_t var_len_offset        : 8;  /**< [ 19: 12](R/W) Variable length byte offset. When [VAR_LEN_MASK] is nonzero, byte offset
+                                                                 from current header pointer of the packet byte that supplies a variable
+                                                                 pointer advance value.
+
+                                                                 Must be zero when [VAR_LEN_MASK] is zero.
+
+                                                                 The pointer advance algorithm is as follows:
+
+                                                                 \<pre\>
+                                                                 var_len_byte = packet byte at (NPC_RESULT_S[EOH_PTR] + [VAR_LEN_OFFSET]);
+                                                                 masked_var_len_byte = var_len_byte & [VAR_LEN_MASK];
+
+                                                                 if ([VAR_LEN_RIGHT])
+                                                                    var_len_advance = masked_var_len_byte \>\> [VAR_LEN_SHIFT];
+                                                                 else
+                                                                    var_len_advance = masked_var_len_byte \<\< [VAR_LEN_SHIFT];
+
+                                                                 NPC_RESULT_S[EOH_PTR] += ([PTR_ADVANCE] + var_len_advance);
+                                                                 \</pre\>
+
+                                                                 NPC_RESULT_S[EOH_PTR] must always be even. Therefore,
+                                                                 [VAR_LEN_SHIFT], [VAR_LEN_RIGHT] and [VAR_LEN_MASK] must produce an
+                                                                 even var_len_advance value. */
+        uint64_t var_len_mask          : 8;  /**< [ 11:  4](R/W) Variable length mask. See [VAR_LEN_OFFSET]. */
+        uint64_t var_len_right         : 1;  /**< [  3:  3](R/W) Variable length shift direction.
+                                                                 0 = Left shift.
+                                                                 1 = Right shift. */
+        uint64_t var_len_shift         : 3;  /**< [  2:  0](R/W) Variable length shift size in bits. See [VAR_LEN_OFFSET]. */
+#else /* Word 0 - Little Endian */
+        uint64_t var_len_shift         : 3;  /**< [  2:  0](R/W) Variable length shift size in bits. See [VAR_LEN_OFFSET]. */
+        uint64_t var_len_right         : 1;  /**< [  3:  3](R/W) Variable length shift direction.
+                                                                 0 = Left shift.
+                                                                 1 = Right shift. */
+        uint64_t var_len_mask          : 8;  /**< [ 11:  4](R/W) Variable length mask. See [VAR_LEN_OFFSET]. */
+        uint64_t var_len_offset        : 8;  /**< [ 19: 12](R/W) Variable length byte offset. When [VAR_LEN_MASK] is nonzero, byte offset
+                                                                 from current header pointer of the packet byte that supplies a variable
+                                                                 pointer advance value.
+
+                                                                 Must be zero when [VAR_LEN_MASK] is zero.
+
+                                                                 The pointer advance algorithm is as follows:
+
+                                                                 \<pre\>
+                                                                 var_len_byte = packet byte at (NPC_RESULT_S[EOH_PTR] + [VAR_LEN_OFFSET]);
+                                                                 masked_var_len_byte = var_len_byte & [VAR_LEN_MASK];
+
+                                                                 if ([VAR_LEN_RIGHT])
+                                                                    var_len_advance = masked_var_len_byte \>\> [VAR_LEN_SHIFT];
+                                                                 else
+                                                                    var_len_advance = masked_var_len_byte \<\< [VAR_LEN_SHIFT];
+
+                                                                 NPC_RESULT_S[EOH_PTR] += ([PTR_ADVANCE] + var_len_advance);
+                                                                 \</pre\>
+
+                                                                 NPC_RESULT_S[EOH_PTR] must always be even. Therefore,
+                                                                 [VAR_LEN_SHIFT], [VAR_LEN_RIGHT] and [VAR_LEN_MASK] must produce an
+                                                                 even var_len_advance value. */
+        uint64_t ptr_advance           : 8;  /**< [ 27: 20](R/W) Pointer advance. Fixed value added to NPC_RESULT_S[EOH_PTR]. Must be
+                                                                 even. See also [VAR_LEN_OFFSET]. */
+        uint64_t capture_flags         : 8;  /**< [ 35: 28](R/W) Capture flags. When nonzero, specifies which NPC_LAYER_INFO_S[FLAGS] bits
+                                                                 to set in the appropriate layer within
+                                                                 NPC_RESULT_S, as follows:
+                                                                 _ NPC_LAYER_INFO_S[FLAGS] |= [CAPTURE_FLAGS]
+
+                                                                 Note that flags are captured irrespective of the [CAPTURE_ENA] value. */
+        uint64_t capture_ltype         : 4;  /**< [ 39: 36](R/W) Capture layer type. When [CAPTURE_ENA] is set, specifies
+                                                                 NPC_LAYER_INFO_S[LTYPE] value captured in the appropriate layer within
+                                                                 NPC_RESULT_S. */
+        uint64_t capture_lid           : 3;  /**< [ 42: 40](R/W) Capture layer ID. Specifies the layer for which information is captured in
+                                                                 NPC_RESULT_S. Enumerated by NPC_LID_E. */
+        uint64_t reserved_43           : 1;
+        uint64_t next_state            : 8;  /**< [ 51: 44](R/W) Search value for ternary comparison with the next KPU's
+                                                                 NPC_AF_KPU()_ENTRY()_CAM()[STATE]. */
+        uint64_t parse_done            : 1;  /**< [ 52: 52](R/W) Parse done. When set, terminate parse after this KPU and bypass subsequent KPUs. */
+        uint64_t capture_ena           : 1;  /**< [ 53: 53](R/W) Layer capture enable. When set, layer information is captured in
+                                                                 NPC_RESULT_S. When clear, layer information is not captured by the KPU. */
+        uint64_t byp_count             : 3;  /**< [ 56: 54](R/W) Bypass count. When nonzero, specifies the number of enabled KPUs to be
+                                                                 bypassed. For example, if the bypass count is two in the matching entry for
+                                                                 KPU 3, NPC_AF_KPU(4,6,7)_CFG[ENA] = 1 and NPC_AF_KPU(5)_CFG[ENA] = 0, then:
+                                                                 * KPUs 4 and 6 are bypassed.
+                                                                 * The matching entry's [NEXT_STATE] and
+                                                                 NPC_AF_KPU()_ENTRY()_ACTION1[DP*_OFFSET] in KPU 3 are used for the lookup in
+                                                                 KPU 7. */
+        uint64_t reserved_57_63        : 7;
+#endif /* Word 0 - End */
+    } cn96xxp3;
+    /* struct cavm_npc_af_kpux_entryx_action0_cn96xxp3 cn98xx; */
+    /* struct cavm_npc_af_kpux_entryx_action0_s cnf95xxp1; */
+    /* struct cavm_npc_af_kpux_entryx_action0_cn96xxp3 cnf95xxp2; */
+    /* struct cavm_npc_af_kpux_entryx_action0_cn96xxp3 loki; */
 };
 typedef union cavm_npc_af_kpux_entryx_action0 cavm_npc_af_kpux_entryx_action0_t;
 
@@ -2408,6 +2529,8 @@ static inline uint64_t CAVM_NPC_AF_KPU_DIAG_FUNC(void)
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X))
         return 0x840063002000ll;
     if (cavm_is_model(OCTEONTX_CN98XX))
+        return 0x840063002000ll;
+    if (cavm_is_model(OCTEONTX_LOKI))
         return 0x840063002000ll;
     __cavm_csr_fatal("NPC_AF_KPU_DIAG", 0, 0, 0, 0, 0, 0, 0);
 }
@@ -3589,7 +3712,128 @@ union cavm_npc_af_pkindx_action0
         uint64_t reserved_57_63        : 7;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_npc_af_pkindx_action0_s cn; */
+    /* struct cavm_npc_af_pkindx_action0_s cn9; */
+    /* struct cavm_npc_af_pkindx_action0_s cn96xxp1; */
+    struct cavm_npc_af_pkindx_action0_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_57_63        : 7;
+        uint64_t byp_count             : 3;  /**< [ 56: 54](R/W) Bypass count. When nonzero, specifies the number of enabled KPUs to be
+                                                                 bypassed. For example, if the bypass count is two in the matching entry for
+                                                                 KPU 3, NPC_AF_KPU(4,6,7)_CFG[ENA] = 1 and NPC_AF_KPU(5)_CFG[ENA] = 0, then:
+                                                                 * KPUs 4 and 6 are bypassed.
+                                                                 * The matching entry's [NEXT_STATE] and
+                                                                 NPC_AF_KPU()_ENTRY()_ACTION1[DP*_OFFSET] in KPU 3 are used for the lookup in
+                                                                 KPU 7. */
+        uint64_t capture_ena           : 1;  /**< [ 53: 53](R/W) Layer capture enable. When set, layer information is captured in
+                                                                 NPC_RESULT_S. When clear, layer information is not captured by the KPU. */
+        uint64_t parse_done            : 1;  /**< [ 52: 52](R/W) Parse done. When set, terminate parse after this KPU and bypass subsequent KPUs. */
+        uint64_t next_state            : 8;  /**< [ 51: 44](R/W) Search value for ternary comparison with the next KPU's
+                                                                 NPC_AF_KPU()_ENTRY()_CAM()[STATE]. */
+        uint64_t reserved_43           : 1;
+        uint64_t capture_lid           : 3;  /**< [ 42: 40](R/W) Capture layer ID. Specifies the layer for which information is captured in
+                                                                 NPC_RESULT_S. Enumerated by NPC_LID_E. */
+        uint64_t capture_ltype         : 4;  /**< [ 39: 36](R/W) Capture layer type. When [CAPTURE_ENA] is set, specifies
+                                                                 NPC_LAYER_INFO_S[LTYPE] value captured in the appropriate layer within
+                                                                 NPC_RESULT_S. */
+        uint64_t capture_flags         : 8;  /**< [ 35: 28](R/W) Capture flags. When nonzero, specifies which NPC_LAYER_INFO_S[FLAGS] bits
+                                                                 to set in the appropriate layer within
+                                                                 NPC_RESULT_S, as follows:
+                                                                 _ NPC_LAYER_INFO_S[FLAGS] |= [CAPTURE_FLAGS]
+
+                                                                 Note that flags are captured irrespective of the [CAPTURE_ENA] value. */
+        uint64_t ptr_advance           : 8;  /**< [ 27: 20](R/W) Pointer advance. Fixed value added to NPC_RESULT_S[EOH_PTR]. Must be
+                                                                 even. See also [VAR_LEN_OFFSET]. */
+        uint64_t var_len_offset        : 8;  /**< [ 19: 12](R/W) Variable length byte offset. When [VAR_LEN_MASK] is nonzero, byte offset
+                                                                 from current header pointer of the packet byte that supplies a variable
+                                                                 pointer advance value.
+
+                                                                 Must be zero when [VAR_LEN_MASK] is zero.
+
+                                                                 The pointer advance algorithm is as follows:
+
+                                                                 \<pre\>
+                                                                 var_len_byte = packet byte at (NPC_RESULT_S[EOH_PTR] + [VAR_LEN_OFFSET]);
+                                                                 masked_var_len_byte = var_len_byte & [VAR_LEN_MASK];
+
+                                                                 if ([VAR_LEN_RIGHT])
+                                                                    var_len_advance = masked_var_len_byte \>\> [VAR_LEN_SHIFT];
+                                                                 else
+                                                                    var_len_advance = masked_var_len_byte \<\< [VAR_LEN_SHIFT];
+
+                                                                 NPC_RESULT_S[EOH_PTR] += ([PTR_ADVANCE] + var_len_advance);
+                                                                 \</pre\>
+
+                                                                 NPC_RESULT_S[EOH_PTR] must always be even. Therefore,
+                                                                 [VAR_LEN_SHIFT], [VAR_LEN_RIGHT] and [VAR_LEN_MASK] must produce an
+                                                                 even var_len_advance value. */
+        uint64_t var_len_mask          : 8;  /**< [ 11:  4](R/W) Variable length mask. See [VAR_LEN_OFFSET]. */
+        uint64_t var_len_right         : 1;  /**< [  3:  3](R/W) Variable length shift direction.
+                                                                 0 = Left shift.
+                                                                 1 = Right shift. */
+        uint64_t var_len_shift         : 3;  /**< [  2:  0](R/W) Variable length shift size in bits. See [VAR_LEN_OFFSET]. */
+#else /* Word 0 - Little Endian */
+        uint64_t var_len_shift         : 3;  /**< [  2:  0](R/W) Variable length shift size in bits. See [VAR_LEN_OFFSET]. */
+        uint64_t var_len_right         : 1;  /**< [  3:  3](R/W) Variable length shift direction.
+                                                                 0 = Left shift.
+                                                                 1 = Right shift. */
+        uint64_t var_len_mask          : 8;  /**< [ 11:  4](R/W) Variable length mask. See [VAR_LEN_OFFSET]. */
+        uint64_t var_len_offset        : 8;  /**< [ 19: 12](R/W) Variable length byte offset. When [VAR_LEN_MASK] is nonzero, byte offset
+                                                                 from current header pointer of the packet byte that supplies a variable
+                                                                 pointer advance value.
+
+                                                                 Must be zero when [VAR_LEN_MASK] is zero.
+
+                                                                 The pointer advance algorithm is as follows:
+
+                                                                 \<pre\>
+                                                                 var_len_byte = packet byte at (NPC_RESULT_S[EOH_PTR] + [VAR_LEN_OFFSET]);
+                                                                 masked_var_len_byte = var_len_byte & [VAR_LEN_MASK];
+
+                                                                 if ([VAR_LEN_RIGHT])
+                                                                    var_len_advance = masked_var_len_byte \>\> [VAR_LEN_SHIFT];
+                                                                 else
+                                                                    var_len_advance = masked_var_len_byte \<\< [VAR_LEN_SHIFT];
+
+                                                                 NPC_RESULT_S[EOH_PTR] += ([PTR_ADVANCE] + var_len_advance);
+                                                                 \</pre\>
+
+                                                                 NPC_RESULT_S[EOH_PTR] must always be even. Therefore,
+                                                                 [VAR_LEN_SHIFT], [VAR_LEN_RIGHT] and [VAR_LEN_MASK] must produce an
+                                                                 even var_len_advance value. */
+        uint64_t ptr_advance           : 8;  /**< [ 27: 20](R/W) Pointer advance. Fixed value added to NPC_RESULT_S[EOH_PTR]. Must be
+                                                                 even. See also [VAR_LEN_OFFSET]. */
+        uint64_t capture_flags         : 8;  /**< [ 35: 28](R/W) Capture flags. When nonzero, specifies which NPC_LAYER_INFO_S[FLAGS] bits
+                                                                 to set in the appropriate layer within
+                                                                 NPC_RESULT_S, as follows:
+                                                                 _ NPC_LAYER_INFO_S[FLAGS] |= [CAPTURE_FLAGS]
+
+                                                                 Note that flags are captured irrespective of the [CAPTURE_ENA] value. */
+        uint64_t capture_ltype         : 4;  /**< [ 39: 36](R/W) Capture layer type. When [CAPTURE_ENA] is set, specifies
+                                                                 NPC_LAYER_INFO_S[LTYPE] value captured in the appropriate layer within
+                                                                 NPC_RESULT_S. */
+        uint64_t capture_lid           : 3;  /**< [ 42: 40](R/W) Capture layer ID. Specifies the layer for which information is captured in
+                                                                 NPC_RESULT_S. Enumerated by NPC_LID_E. */
+        uint64_t reserved_43           : 1;
+        uint64_t next_state            : 8;  /**< [ 51: 44](R/W) Search value for ternary comparison with the next KPU's
+                                                                 NPC_AF_KPU()_ENTRY()_CAM()[STATE]. */
+        uint64_t parse_done            : 1;  /**< [ 52: 52](R/W) Parse done. When set, terminate parse after this KPU and bypass subsequent KPUs. */
+        uint64_t capture_ena           : 1;  /**< [ 53: 53](R/W) Layer capture enable. When set, layer information is captured in
+                                                                 NPC_RESULT_S. When clear, layer information is not captured by the KPU. */
+        uint64_t byp_count             : 3;  /**< [ 56: 54](R/W) Bypass count. When nonzero, specifies the number of enabled KPUs to be
+                                                                 bypassed. For example, if the bypass count is two in the matching entry for
+                                                                 KPU 3, NPC_AF_KPU(4,6,7)_CFG[ENA] = 1 and NPC_AF_KPU(5)_CFG[ENA] = 0, then:
+                                                                 * KPUs 4 and 6 are bypassed.
+                                                                 * The matching entry's [NEXT_STATE] and
+                                                                 NPC_AF_KPU()_ENTRY()_ACTION1[DP*_OFFSET] in KPU 3 are used for the lookup in
+                                                                 KPU 7. */
+        uint64_t reserved_57_63        : 7;
+#endif /* Word 0 - End */
+    } cn96xxp3;
+    /* struct cavm_npc_af_pkindx_action0_cn96xxp3 cn98xx; */
+    /* struct cavm_npc_af_pkindx_action0_s cnf95xxp1; */
+    /* struct cavm_npc_af_pkindx_action0_cn96xxp3 cnf95xxp2; */
+    /* struct cavm_npc_af_pkindx_action0_cn96xxp3 loki; */
 };
 typedef union cavm_npc_af_pkindx_action0 cavm_npc_af_pkindx_action0_t;
 

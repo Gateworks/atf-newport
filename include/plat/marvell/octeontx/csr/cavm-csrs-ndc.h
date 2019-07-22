@@ -48,6 +48,16 @@
 #define CAVM_NDC_IDX_E_NPA_UX(a) (2 + (a))
 
 /**
+ * Enumeration ndc_inval_res_e
+ *
+ * NDC Invalidate Result Enumeration
+ * Enumerates possible results from Invalidate requests, and IT index of NDC_AF_PORT()_IT()_INVAL_PC
+ */
+#define CAVM_NDC_INVAL_RES_E_BUSY (2)
+#define CAVM_NDC_INVAL_RES_E_MISS (1)
+#define CAVM_NDC_INVAL_RES_E_SUCCESS (0)
+
+/**
  * Register (RVU_PF_BAR0) ndc#_af_active_pc
  *
  * NDC AF Active Cycles Register
@@ -1784,6 +1794,151 @@ static inline uint64_t CAVM_NDCX_AF_INTR_W1S(unsigned long a)
 #define arguments_CAVM_NDCX_AF_INTR_W1S(a) (a),-1,-1,-1
 
 /**
+ * Register (RVU_PF_BAR0) ndc#_af_port#_busy_rd_pc
+ *
+ * NDC AF Per-port invalidate Performance Counter Registers
+ */
+union cavm_ndcx_af_portx_busy_rd_pc
+{
+    uint64_t u;
+    struct cavm_ndcx_af_portx_busy_rd_pc_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t count                 : 64; /**< [ 63:  0](R/W/H) Per-port counters tracking read hit references that must wait for an already-
+                                                                 launched read fetch to return over NCB. */
+#else /* Word 0 - Little Endian */
+        uint64_t count                 : 64; /**< [ 63:  0](R/W/H) Per-port counters tracking read hit references that must wait for an already-
+                                                                 launched read fetch to return over NCB. */
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_ndcx_af_portx_busy_rd_pc_s cn; */
+};
+typedef union cavm_ndcx_af_portx_busy_rd_pc cavm_ndcx_af_portx_busy_rd_pc_t;
+
+static inline uint64_t CAVM_NDCX_AF_PORTX_BUSY_RD_PC(unsigned long a, unsigned long b) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_NDCX_AF_PORTX_BUSY_RD_PC(unsigned long a, unsigned long b)
+{
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a<=5) && (b<=5)))
+        return 0x8400c0001318ll + 0x10000000ll * ((a) & 0x7) + 0x20ll * ((b) & 0x7);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=5) && (b<=5)))
+        return 0x8400c0001318ll + 0x10000000ll * ((a) & 0x7) + 0x20ll * ((b) & 0x7);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=5) && (b<=5)))
+        return 0x8400c0001318ll + 0x10000000ll * ((a) & 0x7) + 0x20ll * ((b) & 0x7);
+    __cavm_csr_fatal("NDCX_AF_PORTX_BUSY_RD_PC", 2, a, b, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_NDCX_AF_PORTX_BUSY_RD_PC(a,b) cavm_ndcx_af_portx_busy_rd_pc_t
+#define bustype_CAVM_NDCX_AF_PORTX_BUSY_RD_PC(a,b) CSR_TYPE_RVU_PF_BAR0
+#define basename_CAVM_NDCX_AF_PORTX_BUSY_RD_PC(a,b) "NDCX_AF_PORTX_BUSY_RD_PC"
+#define device_bar_CAVM_NDCX_AF_PORTX_BUSY_RD_PC(a,b) 0x0 /* RVU_BAR0 */
+#define busnum_CAVM_NDCX_AF_PORTX_BUSY_RD_PC(a,b) (a)
+#define arguments_CAVM_NDCX_AF_PORTX_BUSY_RD_PC(a,b) (a),(b),-1,-1
+
+/**
+ * Register (RVU_PF_BAR0) ndc#_af_port#_hm#_rw#_req_pc
+ *
+ * NDC AF Per-port hit/miss Performance Counter Registers
+ */
+union cavm_ndcx_af_portx_hmx_rwx_req_pc
+{
+    uint64_t u;
+    struct cavm_ndcx_af_portx_hmx_rwx_req_pc_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t count                 : 64; /**< [ 63:  0](R/W/H) Per-port counters tracking references that hit or allocated.
+
+                                                                 The register index indicates the type of request that is counted:
+                                                                   _ HM(0) registers increment on requests that hit in the cache.
+                                                                   _ HM(1) registers increment on requests that caused a cache allocation.
+                                                                   _ RW(0) registers increment on read  transaction entering NDC on given request port.
+                                                                   _ RW(1) registers increment on write transaction entering NDC on given request port.
+
+                                                                 Note that requests treated as bypass. All partial write misses or any
+                                                                 reference that cannot allocate a new cache line may be counted in
+                                                                 NDC_AF_PORT()_RT(1)_RW()_REQ_PC and NDC_AF_PORT()_RW()_CANT_ALLOC_PC. */
+#else /* Word 0 - Little Endian */
+        uint64_t count                 : 64; /**< [ 63:  0](R/W/H) Per-port counters tracking references that hit or allocated.
+
+                                                                 The register index indicates the type of request that is counted:
+                                                                   _ HM(0) registers increment on requests that hit in the cache.
+                                                                   _ HM(1) registers increment on requests that caused a cache allocation.
+                                                                   _ RW(0) registers increment on read  transaction entering NDC on given request port.
+                                                                   _ RW(1) registers increment on write transaction entering NDC on given request port.
+
+                                                                 Note that requests treated as bypass. All partial write misses or any
+                                                                 reference that cannot allocate a new cache line may be counted in
+                                                                 NDC_AF_PORT()_RT(1)_RW()_REQ_PC and NDC_AF_PORT()_RW()_CANT_ALLOC_PC. */
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_ndcx_af_portx_hmx_rwx_req_pc_s cn; */
+};
+typedef union cavm_ndcx_af_portx_hmx_rwx_req_pc cavm_ndcx_af_portx_hmx_rwx_req_pc_t;
+
+static inline uint64_t CAVM_NDCX_AF_PORTX_HMX_RWX_REQ_PC(unsigned long a, unsigned long b, unsigned long c, unsigned long d) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_NDCX_AF_PORTX_HMX_RWX_REQ_PC(unsigned long a, unsigned long b, unsigned long c, unsigned long d)
+{
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a<=5) && (b<=5) && (c<=1) && (d<=1)))
+        return 0x8400c0001200ll + 0x10000000ll * ((a) & 0x7) + 0x20ll * ((b) & 0x7) + 0x10ll * ((c) & 0x1) + 8ll * ((d) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=5) && (b<=5) && (c<=1) && (d<=1)))
+        return 0x8400c0001200ll + 0x10000000ll * ((a) & 0x7) + 0x20ll * ((b) & 0x7) + 0x10ll * ((c) & 0x1) + 8ll * ((d) & 0x1);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=5) && (b<=5) && (c<=1) && (d<=1)))
+        return 0x8400c0001200ll + 0x10000000ll * ((a) & 0x7) + 0x20ll * ((b) & 0x7) + 0x10ll * ((c) & 0x1) + 8ll * ((d) & 0x1);
+    __cavm_csr_fatal("NDCX_AF_PORTX_HMX_RWX_REQ_PC", 4, a, b, c, d, 0, 0);
+}
+
+#define typedef_CAVM_NDCX_AF_PORTX_HMX_RWX_REQ_PC(a,b,c,d) cavm_ndcx_af_portx_hmx_rwx_req_pc_t
+#define bustype_CAVM_NDCX_AF_PORTX_HMX_RWX_REQ_PC(a,b,c,d) CSR_TYPE_RVU_PF_BAR0
+#define basename_CAVM_NDCX_AF_PORTX_HMX_RWX_REQ_PC(a,b,c,d) "NDCX_AF_PORTX_HMX_RWX_REQ_PC"
+#define device_bar_CAVM_NDCX_AF_PORTX_HMX_RWX_REQ_PC(a,b,c,d) 0x0 /* RVU_BAR0 */
+#define busnum_CAVM_NDCX_AF_PORTX_HMX_RWX_REQ_PC(a,b,c,d) (a)
+#define arguments_CAVM_NDCX_AF_PORTX_HMX_RWX_REQ_PC(a,b,c,d) (a),(b),(c),(d)
+
+/**
+ * Register (RVU_PF_BAR0) ndc#_af_port#_it#_inval_pc
+ *
+ * NDC AF Per-port invalidate Performance Counter Registers
+ */
+union cavm_ndcx_af_portx_itx_inval_pc
+{
+    uint64_t u;
+    struct cavm_ndcx_af_portx_itx_inval_pc_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t count                 : 64; /**< [ 63:  0](R/W/H) Per-port counters tracking invalidate references.
+
+                                                                 The register index indicates the type of request that is counted:
+                                                                   _ IT(0..2) is enumerated by NDC_INVAL_RES_E. */
+#else /* Word 0 - Little Endian */
+        uint64_t count                 : 64; /**< [ 63:  0](R/W/H) Per-port counters tracking invalidate references.
+
+                                                                 The register index indicates the type of request that is counted:
+                                                                   _ IT(0..2) is enumerated by NDC_INVAL_RES_E. */
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_ndcx_af_portx_itx_inval_pc_s cn; */
+};
+typedef union cavm_ndcx_af_portx_itx_inval_pc cavm_ndcx_af_portx_itx_inval_pc_t;
+
+static inline uint64_t CAVM_NDCX_AF_PORTX_ITX_INVAL_PC(unsigned long a, unsigned long b, unsigned long c) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_NDCX_AF_PORTX_ITX_INVAL_PC(unsigned long a, unsigned long b, unsigned long c)
+{
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a<=5) && (b<=5) && (c<=2)))
+        return 0x8400c0001300ll + 0x10000000ll * ((a) & 0x7) + 0x20ll * ((b) & 0x7) + 8ll * ((c) & 0x3);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=5) && (b<=5) && (c<=2)))
+        return 0x8400c0001300ll + 0x10000000ll * ((a) & 0x7) + 0x20ll * ((b) & 0x7) + 8ll * ((c) & 0x3);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=5) && (b<=5) && (c<=2)))
+        return 0x8400c0001300ll + 0x10000000ll * ((a) & 0x7) + 0x20ll * ((b) & 0x7) + 8ll * ((c) & 0x3);
+    __cavm_csr_fatal("NDCX_AF_PORTX_ITX_INVAL_PC", 3, a, b, c, 0, 0, 0);
+}
+
+#define typedef_CAVM_NDCX_AF_PORTX_ITX_INVAL_PC(a,b,c) cavm_ndcx_af_portx_itx_inval_pc_t
+#define bustype_CAVM_NDCX_AF_PORTX_ITX_INVAL_PC(a,b,c) CSR_TYPE_RVU_PF_BAR0
+#define basename_CAVM_NDCX_AF_PORTX_ITX_INVAL_PC(a,b,c) "NDCX_AF_PORTX_ITX_INVAL_PC"
+#define device_bar_CAVM_NDCX_AF_PORTX_ITX_INVAL_PC(a,b,c) 0x0 /* RVU_BAR0 */
+#define busnum_CAVM_NDCX_AF_PORTX_ITX_INVAL_PC(a,b,c) (a)
+#define arguments_CAVM_NDCX_AF_PORTX_ITX_INVAL_PC(a,b,c) (a),(b),(c),-1
+
+/**
  * Register (RVU_PF_BAR0) ndc#_af_port#_rt#_rw#_lat_pc
  *
  * NDC AF Per-port Latency Performance Counter Registers
@@ -2030,6 +2185,57 @@ static inline uint64_t CAVM_NDCX_AF_PORTX_RWX_CANT_ALLOC_PC(unsigned long a, uns
 #define device_bar_CAVM_NDCX_AF_PORTX_RWX_CANT_ALLOC_PC(a,b,c) 0x0 /* RVU_BAR0 */
 #define busnum_CAVM_NDCX_AF_PORTX_RWX_CANT_ALLOC_PC(a,b,c) (a)
 #define arguments_CAVM_NDCX_AF_PORTX_RWX_CANT_ALLOC_PC(a,b,c) (a),(b),(c),-1
+
+/**
+ * Register (RVU_PF_BAR0) ndc#_af_port#_rw#_flush_pc
+ *
+ * NDC AF Per-port Flush Performance Counter Registers
+ */
+union cavm_ndcx_af_portx_rwx_flush_pc
+{
+    uint64_t u;
+    struct cavm_ndcx_af_portx_rwx_flush_pc_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t count                 : 64; /**< [ 63:  0](R/W/H) Per-port counters tracking dirty lines flushed by new cacheline allocations.
+
+                                                                 The register index indicates the type of request that is counted:
+                                                                   _ RW(0) registers increment on flushes caused by read  transactions entering
+                                                                 NDC on given request port.
+                                                                   _ RW(1) registers increment on flushes caused by write transactions entering
+                                                                 NDC on given request port. */
+#else /* Word 0 - Little Endian */
+        uint64_t count                 : 64; /**< [ 63:  0](R/W/H) Per-port counters tracking dirty lines flushed by new cacheline allocations.
+
+                                                                 The register index indicates the type of request that is counted:
+                                                                   _ RW(0) registers increment on flushes caused by read  transactions entering
+                                                                 NDC on given request port.
+                                                                   _ RW(1) registers increment on flushes caused by write transactions entering
+                                                                 NDC on given request port. */
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_ndcx_af_portx_rwx_flush_pc_s cn; */
+};
+typedef union cavm_ndcx_af_portx_rwx_flush_pc cavm_ndcx_af_portx_rwx_flush_pc_t;
+
+static inline uint64_t CAVM_NDCX_AF_PORTX_RWX_FLUSH_PC(unsigned long a, unsigned long b, unsigned long c) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_NDCX_AF_PORTX_RWX_FLUSH_PC(unsigned long a, unsigned long b, unsigned long c)
+{
+    if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a<=5) && (b<=5) && (c<=1)))
+        return 0x8400c0001400ll + 0x10000000ll * ((a) & 0x7) + 0x20ll * ((b) & 0x7) + 0x10ll * ((c) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=5) && (b<=5) && (c<=1)))
+        return 0x8400c0001400ll + 0x10000000ll * ((a) & 0x7) + 0x20ll * ((b) & 0x7) + 0x10ll * ((c) & 0x1);
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a<=5) && (b<=5) && (c<=1)))
+        return 0x8400c0001400ll + 0x10000000ll * ((a) & 0x7) + 0x20ll * ((b) & 0x7) + 0x10ll * ((c) & 0x1);
+    __cavm_csr_fatal("NDCX_AF_PORTX_RWX_FLUSH_PC", 3, a, b, c, 0, 0, 0);
+}
+
+#define typedef_CAVM_NDCX_AF_PORTX_RWX_FLUSH_PC(a,b,c) cavm_ndcx_af_portx_rwx_flush_pc_t
+#define bustype_CAVM_NDCX_AF_PORTX_RWX_FLUSH_PC(a,b,c) CSR_TYPE_RVU_PF_BAR0
+#define basename_CAVM_NDCX_AF_PORTX_RWX_FLUSH_PC(a,b,c) "NDCX_AF_PORTX_RWX_FLUSH_PC"
+#define device_bar_CAVM_NDCX_AF_PORTX_RWX_FLUSH_PC(a,b,c) 0x0 /* RVU_BAR0 */
+#define busnum_CAVM_NDCX_AF_PORTX_RWX_FLUSH_PC(a,b,c) (a)
+#define arguments_CAVM_NDCX_AF_PORTX_RWX_FLUSH_PC(a,b,c) (a),(b),(c),-1
 
 /**
  * Register (RVU_PF_BAR0) ndc#_af_scratch
