@@ -1173,7 +1173,7 @@ void phy_marvell_6141_config(int cgx_id, int lmac_id)
 	}
 
 	lane = lmac_cfg->lane_to_sds & 3;
-	mode_option = MYD_MODE_ICAL_EFFORT_0 | MYD_MODE_FORCE_RECONFIG;
+	mode_option = MYD_MODE_FORCE_RECONFIG;
 	status = mydSetModeSelection(phy->priv, phy->addr, lane, host_mode,
 				     line_mode, mode_option,
 				     &result);
