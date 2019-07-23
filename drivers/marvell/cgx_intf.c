@@ -120,7 +120,7 @@ static int cgx_sfp_obtain_capabilities(int cgx_id, int lmac_id)
 		return sfp_validate_user_options(cgx_id, lmac_id);
 	}
 
-	debug_cgx_intf("%s: %d:%d Valid transceiver not identified\n"
+	debug_cgx_intf("%s: %d:%d Valid transceiver not identified\n",
 		__func__, cgx_id, lmac_id);
 	cgx_set_error_type(cgx_id, lmac_id, CGX_ERR_MODULE_INVALID);
 	return 0;
@@ -486,9 +486,12 @@ static int cgx_link_bringdown(int cgx_id, int lmac_id)
 
 	/* link_enable will be cleared when the LINK DOWN req is processed
 	 * To avoid processing duplication of requests, check for it
-	 * and return the previous link status
+	 * and return the previous link status.
+	 * In case of QSGMII, always bring down the link even
+	 * if the link was not brought up
 	 */
-	if (lmac_ctx->s.link_enable == 0) {
+	if ((lmac_ctx->s.link_enable == 0) && (lmac_cfg->mode !=
+				CAVM_CGX_LMAC_TYPES_E_QSGMII)) {
 		debug_cgx_intf("%s: Link status for %d:%d is already down\n",
 			__func__, cgx_id, lmac_id);
 		link.s.link_up = lmac_ctx->s.link_up;
@@ -1175,6 +1178,8 @@ void cgx_fw_intf_shutdown(void)
 {
 	int init = 0;
 	cgx_lmac_context_t *lmac_ctx;
+	cgx_lmac_config_t *lmac_cfg;
+
 	cavm_cgxx_cmrx_int_t cmrx_int;
 
 	debug_cgx_intf("%s\n", __func__);
@@ -1185,16 +1190,20 @@ void cgx_fw_intf_shutdown(void)
 	for (int cgx = 0; cgx < plat_octeontx_scfg->cgx_count; cgx++) {
 		for (int lmac = 0; lmac < MAX_LMAC_PER_CGX; lmac++) {
 			lmac_ctx = &lmac_context[cgx][lmac];
+			lmac_cfg = &plat_octeontx_bcfg->cgx_cfg[cgx]
+							.lmac_cfg[lmac];
 			/* Bring down the link if link_enable is set.
 			 * After bringing down the links, do one time
 			 * initialization of the LMACs that are enabled
-			 * so kernel can bring up the link
+			 * so kernel can bring up the link.
+			 * In case of QSGMII, always bring down the link
+			 * for all the LMACs associated with the CGX
 			 */
 			init = 0;
-			if (lmac_ctx->s.link_enable) {
+			if ((lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_QSGMII) ||
+				(lmac_ctx->s.link_enable)) {
 				cgx_link_bringdown(cgx, lmac);
 				mdelay(1);
-				cgx_lmac_init_link(cgx, lmac);
 				/* Set to indicate the link is
 				 * initialized as the LMAC
 				 * context structure will be reset
@@ -1217,6 +1226,15 @@ void cgx_fw_intf_shutdown(void)
 			cmrx_int.s.overflw = 1;
 			CSR_WRITE(CAVM_CGXX_CMRX_INT(cgx, lmac),
 					cmrx_int.u);
+		}
+		/* Now for each CGX, initialize the link for each LMAC
+		 * if the link was brought down
+		 */
+		for (int lmac = 0; lmac < MAX_LMAC_PER_CGX; lmac++) {
+
+			lmac_ctx = &lmac_context[cgx][lmac];
+			if (lmac_ctx->s.init_link)
+				cgx_lmac_init_link(cgx, lmac);
 		}
 	}
 }
