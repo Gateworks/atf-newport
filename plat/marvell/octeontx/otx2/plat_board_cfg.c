@@ -63,7 +63,12 @@ static struct qlm_mode_strmap_s qlmmode_strmap[] = {
 	{CAVM_CGX_LMAC_TYPES_E_TWENTYFIVEG_R, "25GAUI_C2M", "25g"},
 	{CAVM_CGX_LMAC_TYPES_E_TWENTYFIVEG_R, "25G_CR", "25g"},
 	{CAVM_CGX_LMAC_TYPES_E_TWENTYFIVEG_R, "25G_KR", "25g"},
-	{CAVM_CGX_LMAC_TYPES_E_TWENTYFIVEG_R, "25GAUI_2_C2C", "25g"},
+	/* 25GAUI_2_C2C uses a non-standard PCS:  25GBASE-R2, which is a scaled
+	 * down version of 50GBASE-R2.  T9x was not designed to support
+	 * 25GBASE-R2, but T9x can be hacked to support it by making CGX use
+	 * LMAC_TYPES_E_FIFTYG_R and setting GSER speed to 12.890 Gbd.
+	 */
+	{CAVM_CGX_LMAC_TYPES_E_FIFTYG_R, "25GAUI_2_C2C", "25g"},
 	{CAVM_CGX_LMAC_TYPES_E_FIFTYG_R, "40GAUI_2_C2C", "40gaui"},
 	{CAVM_CGX_LMAC_TYPES_E_FIFTYG_R, "50GAUI_2_C2C", "50g"},
 	{CAVM_CGX_LMAC_TYPES_E_FIFTYG_R, "50GAUI_2_C2M", "50g"},
@@ -981,6 +986,7 @@ static void octeontx2_lmac_num_touse(int mode_idx, int *cnt, int *touse)
 		*touse = 4;
 		break;
 	case QLM_MODE_RXAUI:
+	case QLM_MODE_25GAUI_2_C2C:
 	case QLM_MODE_40GAUI_2_C2C:
 	case QLM_MODE_50GAUI_2_C2C:
 	case QLM_MODE_50GAUI_2_C2M:
@@ -1245,6 +1251,7 @@ static int octeontx2_fill_cgx_struct(int qlm, int lane, int mode_idx)
 		case QLM_MODE_20GAUI_C2C:
 		case QLM_MODE_25GAUI_C2C:
 		case QLM_MODE_25GAUI_C2M:
+		case QLM_MODE_25GAUI_2_C2C:
 		case QLM_MODE_40GAUI_2_C2C:
 		case QLM_MODE_50GAUI_2_C2C:
 		case QLM_MODE_50GAUI_2_C2M:
