@@ -110,8 +110,8 @@ void octeontx_security_setup(void)
 
 	midr = read_midr();
 
-	if ((IS_OCTEONTX_PASS(midr, T96PARTNUM, 1, 0)) ||
-		(IS_OCTEONTX_PASS(midr, F95PARTNUM, 1, 0))) {
+	if ((IS_OCTEONTX_PN(midr, T96PARTNUM)) ||
+		(IS_OCTEONTX_PN(midr, F95PARTNUM))) {
 		disable_poison();
 	}
 

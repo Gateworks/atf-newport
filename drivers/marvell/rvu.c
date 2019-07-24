@@ -682,7 +682,8 @@ void octeontx_rvu_init()
 	int npalf_id = 0, nixlf_id = 0;
 
 	/* This is workaround for errata RVU-35948 */
-	if (IS_OCTEONTX_PASS(read_midr(), T96PARTNUM, 1, 0) ||
+	if (IS_OCTEONTX_VAR(read_midr(), T96PARTNUM, 1) ||
+	    IS_OCTEONTX_PASS(read_midr(), T96PARTNUM, 2, 0) ||
 	    IS_OCTEONTX_PASS(read_midr(), F95PARTNUM, 1, 0))
 		rvu_errata_35948();
 
