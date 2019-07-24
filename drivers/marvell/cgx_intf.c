@@ -23,6 +23,7 @@
 #include <sh_fwdata.h>
 #include <gsern/gsern_internal.h>
 #include <platform_setup.h>
+#include <gsern.h>
 
 #ifdef NT_FW_CONFIG
 #include <plat_npc_mcam_profile.h>
@@ -1163,6 +1164,124 @@ static int do_prbs(int qlm, int mode, int time)
 
 	return 0;
 }
+
+/*
+ * Square root by abacus algorithm, Martin Guy @ UKC, June 1985.
+ * From a book on programming abaci by Mr C. Woo.
+ */
+static uint64_t isqrt(uint64_t num)
+{
+	uint64_t result = 0;
+	/* The second-to-top bit is set: 1 << 62 for 64 bits */
+	uint64_t bit = 1ull << 62;
+
+	/* "bit" starts at the highest power of four <= the argument. */
+	while (bit > num)
+		bit >>= 2;
+
+	while (bit != 0) {
+		if (num >= result + bit) {
+			num -= result + bit;
+			result = (result >> 1) + bit;
+		} else {
+			result >>= 1;
+		}
+		bit >>= 2;
+	}
+
+	return result;
+}
+
+static uint64_t log10(uint64_t num)
+{
+	uint64_t result = 0;
+
+	while (num > 10) {
+		num /= 10;
+		result++;
+	}
+	if (num >= 5)
+		result++;
+
+	return result;
+}
+
+/* This structure has over 32KiB and cannot be stored on stack */
+static gsern_qlm_eye_t eye;
+
+static int do_eye(int qlm, int qlm_lane)
+{
+	int x, y, width, height, last_color, level, deltay, deltax, dy, dx;
+	int dist, color;
+	int eye_area = 0;
+	int eye_width = 0;
+	int eye_height = 0;
+	char color_str[] = "\33[40m"; /* Note: This is modified, not constant */
+
+	if (gsern_eye_capture(qlm, qlm_lane, &eye))
+		return -1;
+
+	/* Calculate the max eye width */
+	for (y = 0; y < eye.height; y++) {
+		width = 0;
+		for (x = 0; x < eye.width; x++) {
+			if (eye.data[y][x] == 0) {
+				width++;
+				eye_area++;
+			}
+		}
+		if (width > eye_width)
+			eye_width = width;
+	}
+
+	/* Calculate the max eye height */
+	for (x = 0; x < eye.width; x++) {
+		height = 0;
+		for (y = 0; y < eye.height; y++) {
+			if (eye.data[y][x] == 0) {
+				height++;
+				eye_area++;
+			}
+		}
+		if (height > eye_height)
+			eye_height = height;
+	}
+
+	printf("\nEye Diagram for QLM %d, Lane %d\n", qlm, qlm_lane);
+
+	last_color = -1;
+	for (y = 0; y < eye.height; y++) {
+		for (x = 0; x < eye.width; x++) {
+			level = log10(eye.data[y][x] + 1);
+			if (level > 9)
+				level = 9;
+			#define DIFF(a, b) (a < b) ? b-a : a-b
+			deltay = (y == (eye.height - 1)) ? -1 : 1;
+			deltax = (x == (eye.width - 1)) ? -1 : 1;
+			dy = DIFF(eye.data[y][x], eye.data[y + deltay][x]);
+			dx = DIFF(eye.data[y][x], eye.data[y][x + deltax]);
+			#undef DIFF
+			dist = dx * dx + dy * dy;
+			color = log10(isqrt(dist) + 1);
+			if (color > 6)
+				color = 6;
+			if (level == 0)
+				color = 0;
+			if (color != last_color) {
+				color_str[3] = '0' + color;
+				printf("%s", color_str);
+				last_color = color;
+			}
+			printf("%c", '0' + level);
+		}
+		printf("\33[0m\n");
+		last_color = -1;
+	}
+	printf("\nEye Width %d, Height %d, Area %d\n",
+		eye_width, eye_height, eye_area);
+
+	return 0;
+}
 #endif /* DEBUG_ATF_ENABLE_SERDES_DIAGNOSTIC_CMDS */
 
 /* Note : this function executes with lock acquired */
@@ -1263,7 +1382,8 @@ static int cgx_process_requests(int cgx_id, int lmac_id)
 			break;
 
 		case CGX_CMD_DISPLAY_EYE:
-			NOTICE("Display Eye not implemented yet.\n");
+			do_eye(scratchx1.s.dsp_eye_args.qlm,
+				scratchx1.s.dsp_eye_args.lane);
 			break;
 #endif /* DEBUG_ATF_ENABLE_SERDES_DIAGNOSTIC_CMDS */
 		}
