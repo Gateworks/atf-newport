@@ -870,7 +870,7 @@ int cgx_handle_mode_change(int cgx_id, int lmac_id,
 						lmac->mode);
 
 			/* Configure SerDes for new QLM mode */
-			qlm_state_lane_t state = qlm_build_state_gsern(qlm_mode, baud_mhz, flags);
+			qlm_state_lane_t state = qlm_build_state(qlm_mode, baud_mhz, flags);
 			qlm_set_mode_gsern(qlm, lmac->rev_lane, qlm_mode, baud_mhz, 0);
 
 			/* Update the SCRATCHX register with the new link info to the

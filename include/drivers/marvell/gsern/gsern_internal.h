@@ -98,6 +98,15 @@ static inline int64_t gsern_extract_smag(uint64_t v, int lsb, int msb)
 		r = -r;
 	return r;
 }
+
+static inline int qlm_get_gbaud_mhz(int qlm, int lane)
+{
+	qlm_state_lane_t state;
+
+	state = plat_otx2_get_qlm_state_lane(qlm, lane);
+	return state.s.baud_mhz;
+}
+
 /* Internal functions */
 extern int gsern_voltage;
 

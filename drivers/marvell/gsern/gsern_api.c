@@ -60,6 +60,9 @@ int gsern_set_mode(int qlm, int qlm_lane, enum gsern_mode mode, bool is_first, i
 				case 1250:
 					lane_mode = GSERN_SGMII_01250000000;
 					break;
+				case 2500:
+					lane_mode = GSERN_PCIE_02500000000;
+					break;
 				case 3125:
 					lane_mode = GSERN_GEN_03125000000;
 					break;
@@ -71,6 +74,9 @@ int gsern_set_mode(int qlm, int qlm_lane, enum gsern_mode mode, bool is_first, i
 					break;
 				case 10312:
 					lane_mode = GSERN_GEN_10312500000;
+					break;
+				case 12890:
+					lane_mode = GSERN_GEN_12890625000;
 					break;
 				case 20625:
 					lane_mode = GSERN_GEN_20625000000;

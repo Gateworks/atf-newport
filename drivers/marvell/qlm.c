@@ -66,11 +66,13 @@ static const default_tuning_t DEF_TUNING[] = {
 	{ QLM_MODE_25GAUI_C2M,   25781, 42, 6,  0, 42 },
 	{ QLM_MODE_25G_CR,	   25781, 42, 6,  0, 42 },
 	{ QLM_MODE_25G_KR,	   25781, 42, 6,  0, 42 },
+	{ QLM_MODE_25GAUI_2_C2C, 12890, 42, 6,  0, 42 },
 	{ QLM_MODE_40GAUI_2_C2C, 20625, 42, 6,  0, 42 },
 	{ QLM_MODE_50GAUI_2_C2C, 25781, 42, 6,  0, 42 },
 	{ QLM_MODE_50GAUI_2_C2M, 25781, 42, 6,  0, 42 },
 	{ QLM_MODE_50G_CR2,	  25781, 42, 6,  0, 42 },
 	{ QLM_MODE_50G_KR2,	  25781, 42, 6,  0, 42 },
+	{ QLM_MODE_50GAUI_4_C2C, 12890, 42, 6,  0, 42 },
 	{ QLM_MODE_80GAUI_4_C2C, 20625, 42, 6,  0, 42 },
 	{ QLM_MODE_CAUI_4_C2C,   25781, 42, 6,  0, 42 },
 	{ QLM_MODE_CAUI_4_C2M,   25781, 42, 6,  0, 42 },
@@ -81,27 +83,6 @@ static const default_tuning_t DEF_TUNING[] = {
 	{ QLM_MODE_USXGMII_1X1,  10312, 48, 0,  0, 42 },
 	{ QLM_MODE_DISABLED,		 0,  0, 0,  0,  0 }
 };
-
-/**
- * Setup the PEM to either driver or receive reset from PRST based on RC or EP
- *
- * @param node   Node to use in a Numa setup
- * @param pem	Which PEM to setuo
- * @param is_endpoint
- *			   Non zero if PEM is a EP
- */
-qlm_state_lane_t qlm_build_state_gsern(qlm_modes_t mode, int baud_mhz, qlm_mode_flags_t flags)
-{
-	qlm_state_lane_t state;
-	state.u = 0;
-	state.s.mode = mode;
-	state.s.baud_mhz = baud_mhz;
-	state.s.flags = flags;
-	state.s.pcie = (mode > QLM_MODE_DISABLED) && (mode <= QLM_MODE_PCIE_X16);
-	state.s.sata = (mode == QLM_MODE_SATA);
-	state.s.cgx = (mode >= QLM_MODE_SGMII) && (mode < QLM_MODE_LAST);
-	return state;
-}
 
 /**
  * Setup the PEM to either driver or receive reset from PRST based on RC or EP
@@ -299,59 +280,105 @@ int qlm_enable_prbs_gsern(int qlm, int prbs, qlm_direction_t dir)
 			prbs_type = 8;
 			break;
 	}
-	int tx_cmain;
-	int tx_cpre;
-	int tx_cpost;
 	int num_lanes = qlm_get_lanes(qlm);
 	int is_pattern = (prbs_type == -1);
 	for (int lane = 0; lane < num_lanes; lane++)
 	{
-		GSERN_CSR_MODIFY(c, CAVM_GSERNX_LANEX_PAT_CTRL(qlm, lane),
-			if (enable_tx)
-				c.s.tx_rst_n = is_pattern;
-			if (enable_rx)
-				c.s.rx_rst_n = is_pattern;
-			c.s.en = is_pattern;
-			c.s.cycle_cnt_en = 0;
-			c.s.cycle_cnt = 0);
 		/* PRBS polarity is inverted internally. Need to invert the current polarity */
 		GSERN_CSR_INIT(lt_bcfg, CAVM_GSERNX_LANEX_LT_BCFG(qlm, lane));
 		if (enable_rx)
-			lt_bcfg.s.inv_rx_polarity = ~lt_bcfg.s.inv_rx_polarity;
+			lt_bcfg.s.inv_rx_polarity = ~(gsern_config_get_int(GSERN_CONFIG_QLM_LANE_RX_POLARITY, qlm, lane));
 		if (enable_tx)
-			lt_bcfg.s.inv_tx_polarity = ~lt_bcfg.s.inv_tx_polarity;
+			lt_bcfg.s.inv_tx_polarity = ~(gsern_config_get_int(GSERN_CONFIG_QLM_LANE_TX_POLARITY, qlm, lane));
 		GSERN_CSR_WRITE(CAVM_GSERNX_LANEX_LT_BCFG(qlm, lane), lt_bcfg.u);
-		/* Capture the current Tx equalization settings */
-		GSERN_CSR_INIT(tx_drv_bsts, CAVM_GSERNX_LANEX_TX_DRV_BSTS(qlm, lane));
-		extract_tx_tuning(tx_drv_bsts, &tx_cmain, &tx_cpre, &tx_cpost);
-		GSERN_CSR_MODIFY(c, CAVM_GSERNX_LANEX_LT_PRBS1_BCFG(qlm, lane),
+
+		if (enable_tx)
+		{
+			/* Enable Bias Override and Tx Driver */
+			GSERN_CSR_MODIFY(c, CAVM_GSERNX_LANEX_TX_DRV_BCFG(qlm, lane),
+				c.s.en_tx_bs = 1;  //Enable the TX_BS override
+				c.s.en_tx_drv = 1);  //Enable the Tx Driver
+		}
+
+		if (is_pattern)
+		{
+			GSERN_CSR_MODIFY(c, CAVM_GSERNX_LANEX_PAT_CTRL(qlm, lane),
+				if (enable_tx)
+					c.s.tx_rst_n = is_pattern;
+				if (enable_rx)
+					c.s.rx_rst_n = is_pattern;
+				c.s.en = is_pattern;
+				c.s.cycle_cnt_en = 0;
+				c.s.cycle_cnt = 0);
+		}
+		else
+		{
+			/* Check if the prbs_type has changed.  This requires a PRBS reset */
+			bool prbs_type_changed = false;
+			GSERN_CSR_INIT(lt_prbs1_bcfg, CAVM_GSERNX_LANEX_LT_PRBS1_BCFG(qlm, lane));
+			if (enable_rx && (lt_prbs1_bcfg.s.prbs_type_rx != prbs_type))
+			{
+				lt_prbs1_bcfg.s.prbs_rx_rst_n = 0;
+				prbs_type_changed = true;
+			}
+			if (enable_tx && (lt_prbs1_bcfg.s.prbs_type_rx != prbs_type))
+			{
+				lt_prbs1_bcfg.s.prbs_tx_rst_n = 0;
+				prbs_type_changed = true;
+			}
+			GSERN_CSR_WRITE(CAVM_GSERNX_LANEX_LT_PRBS1_BCFG(qlm, lane), lt_prbs1_bcfg.u);
+			if (prbs_type_changed)
+				gsern_wait_usec(1);
+
+			lt_prbs1_bcfg.u = GSERN_CSR_READ(CAVM_GSERNX_LANEX_LT_PRBS1_BCFG(qlm, lane));
 			if (enable_rx)
 			{
-				c.s.prbs_rx_rst_n = !is_pattern;
-				c.s.prbs_rx_mode = !is_pattern;
-				c.s.prbs_type_rx = prbs_type;
+				lt_prbs1_bcfg.s.prbs_rx_mode = !is_pattern;
+				lt_prbs1_bcfg.s.prbs_type_rx = prbs_type;
 			}
 			if (enable_tx)
 			{
-				c.s.prbs_tx_rst_n = !is_pattern;
-				c.s.prbs_tx_mode = !is_pattern;
-				c.s.prbs_type_tx = prbs_type;
+				lt_prbs1_bcfg.s.prbs_tx_mode = !is_pattern;
+				lt_prbs1_bcfg.s.prbs_type_tx = prbs_type;
 			}
-			c.s.cycle_cnt_en = 0;
-			c.s.cycle_cnt = 0);
+			lt_prbs1_bcfg.s.cycle_cnt_en = 0;
+			lt_prbs1_bcfg.s.cycle_cnt = 0;
+			GSERN_CSR_WRITE(CAVM_GSERNX_LANEX_LT_PRBS1_BCFG(qlm, lane), lt_prbs1_bcfg.u);
+
+			gsern_wait_usec(1);
+
+			if (enable_rx)
+			{
+				lt_prbs1_bcfg.s.prbs_rx_rst_n = !is_pattern;
+			}
+			if (enable_tx)
+			{
+				lt_prbs1_bcfg.s.prbs_tx_rst_n = !is_pattern;
+			}
+			GSERN_CSR_WRITE(CAVM_GSERNX_LANEX_LT_PRBS1_BCFG(qlm, lane), lt_prbs1_bcfg.u);
+
+			GSERN_CSR_MODIFY(c, CAVM_GSERNX_LANEX_LT_PRBS1_BCFG(qlm, lane),
+				if (enable_rx)
+				{
+					c.s.prbs_rx_rst_n = !is_pattern;
+					c.s.prbs_rx_mode = !is_pattern;
+					c.s.prbs_type_rx = prbs_type;
+				}
+				if (enable_tx)
+				{
+					c.s.prbs_tx_rst_n = !is_pattern;
+					c.s.prbs_tx_mode = !is_pattern;
+					c.s.prbs_type_tx = prbs_type;
+				}
+				c.s.cycle_cnt_en = 0;
+				c.s.cycle_cnt = 0);
+		}
+
 		if (enable_tx)
 		{
 			GSERN_CSR_MODIFY(c, CAVM_GSERNX_LANEX_SRCMX_BCFG(qlm, lane),
 				c.s.tx_ctrl_sel =  is_pattern ? 0x10 : 0;
 				c.s.tx_data_sel = is_pattern ? 0x10 : 0);
-		}
-
-		/* Program the captured Tx equalization settings unless they are invalid */
-		/* If invalid program the Tx equalization setting to main = 48, pre = 0, post = 0, bs = 42*/
-		if ((tx_cmain != TX_TUNING_IDLE) &&
-			qlm_tune_lane_tx_gsern(qlm, lane, tx_cmain, tx_cpre, tx_cpost, tx_drv_bsts.s.tx_bs, -1))
-		{
-			qlm_tune_lane_tx_gsern(qlm, lane, 48, 0, 0, 42, -1);
 		}
 	}
 	return 0;
@@ -376,14 +403,17 @@ int qlm_disable_prbs_gsern(int qlm)
 			c.s.en = 0);
 		/* PRBS requires the polarity to be inverted. Need to set back to the original polarity */
 		GSERN_CSR_INIT(lt_bcfg, CAVM_GSERNX_LANEX_LT_BCFG(qlm, lane));
-		lt_bcfg.s.inv_rx_polarity = ~lt_bcfg.s.inv_rx_polarity;
-		lt_bcfg.s.inv_tx_polarity = ~lt_bcfg.s.inv_tx_polarity;
+		lt_bcfg.s.inv_rx_polarity = gsern_config_get_int(GSERN_CONFIG_QLM_LANE_RX_POLARITY, qlm, lane);
+		lt_bcfg.s.inv_tx_polarity = gsern_config_get_int(GSERN_CONFIG_QLM_LANE_TX_POLARITY, qlm, lane);
 		GSERN_CSR_WRITE(CAVM_GSERNX_LANEX_LT_BCFG(qlm, lane), lt_bcfg.u);
-
+		/* Put the PRBS Tx/Rx in Reset */
 		GSERN_CSR_MODIFY(c, CAVM_GSERNX_LANEX_LT_PRBS1_BCFG(qlm, lane),
 			c.s.prbs_rx_rst_n = 0;
+			c.s.prbs_tx_rst_n = 0);
+		gsern_wait_usec(1);
+		/* Disable Rx/Tx PRBS mode */
+		GSERN_CSR_MODIFY(c, CAVM_GSERNX_LANEX_LT_PRBS1_BCFG(qlm, lane),
 			c.s.prbs_rx_mode = 0;
-			c.s.prbs_tx_rst_n = 0;
 			c.s.prbs_tx_mode = 0;
 			c.s.cycle_cnt_en = 0);
 		/* Clear the TX_DRV CSR Tx EQ overrides */
@@ -433,7 +463,7 @@ uint64_t qlm_get_prbs_errors_gsern(int qlm, int lane, int clear)
 			GSERN_CSR_MODIFY(c, CAVM_GSERNX_LANEX_PAT_CTRL(qlm, lane),
 				c.s.rx_rst_n = 1);
 		}
-		if (!pat_dat.s.framing_match || pat_dat.s.err_cnt_ovf)
+		if (!pat_dat.s.lock || pat_dat.s.err_cnt_ovf)
 			return -1;
 		return pat_dat.s.err_cnt;
 	}
@@ -560,6 +590,65 @@ int qlm_get_gbaud_mhz_pem_gsern(int pem)
 }
 
 /**
+ * Calculate the Raw FOM for a given QLM lane
+ *
+ * @param node	 Node to use in numa setup
+ * @param qlm	  QLM to use
+ * @param qlm_lane Lane to use
+ * @param fom_type Raw FOM type (0 or 1)
+ *
+ * @return Raw FOM value on success, negative on failure
+ */
+int qlm_calculate_fom_gsern(int qlm, int qlm_lane, int fom_type)
+{
+	const int TIMEOUT = 10000; /* 10ms */
+
+	/* 1. Write GSERN()_LANE()_TRAIN_10_BCFG to select FOM measurement */
+	GSERN_CSR_MODIFY(c, CAVM_GSERNX_LANEX_TRAIN_10_BCFG(qlm, qlm_lane),
+		c.s.fom_type = fom_type);
+
+	/* 2. Setup FOM divider and FOM eye cycles */
+	/* Setup for PCIe */
+	GSERN_CSR_MODIFY(c, CAVM_GSERNX_LANEX_TRAIN_8_BCFG(qlm, qlm_lane),
+		c.s.pcie_ecnt_div_val = 6;
+		c.s.pcie_ecnt_div_en = 1;
+		c.s.pcie_eye_cnt_val = 32760;
+		c.s.pcie_eye_cnt_en = 1);
+	/* Setup for Networking */
+	GSERN_CSR_MODIFY(c, CAVM_GSERNX_LANEX_TRAIN_4_BCFG(qlm, qlm_lane),
+		c.s.err_cnt_div_ovrrd_val = 7;
+		c.s.err_cnt_div_ovrrd_en = 1;
+		c.s.eye_cnt_ovrrd_val = 26208;
+		c.s.eye_cnt_ovrrd_en = 1);
+
+	/* 3. Enable the equalization override */
+	GSERN_CSR_MODIFY(c, CAVM_GSERNX_LANEX_TRAIN_4_BCFG(qlm, qlm_lane),
+		c.s.eq_eval_ovrrd_en = 1);
+
+	/* 4. Generate a SW based EQ FOM request */
+	GSERN_CSR_MODIFY(c, CAVM_GSERNX_LANEX_TRAIN_4_BCFG(qlm, qlm_lane),
+		c.s.eq_eval_ovrrd_req = 1);
+
+	/* 5. Wait for equalization acknowledgement to read back as 1 */
+	if (GSERN_CSR_WAIT_FOR_FIELD(CAVM_GSERNX_LANEX_TRAIN_5_BCFG(qlm, qlm_lane),
+		GSERNX_LANEX_TRAIN_5_BCFG_EQ_EVAL_ACK, ==, 1, TIMEOUT))
+	{
+		GSERN_TRACE(QLM, "N0.QLM%d.LANE%d: Error calculating RAW FOM\n", qlm, qlm_lane);
+		return -1;
+	}
+
+	/* 6. Read the Raw FOM (12-bit) value */
+	GSERN_CSR_INIT(train_5_bcfg, CAVM_GSERNX_LANEX_TRAIN_5_BCFG(qlm, qlm_lane));
+
+	/* 7. Clear the Equalization Evaluation request to release the eye monitor */
+	GSERN_CSR_MODIFY(c, CAVM_GSERNX_LANEX_TRAIN_4_BCFG(qlm, qlm_lane),
+		c.s.eq_eval_ovrrd_req = 0;
+		c.s.eq_eval_ovrrd_en = 0);
+
+	return train_5_bcfg.s.raw_fom;
+}
+
+/**
  * Display the current settings of a QLM lane
  *
  * @param node	 Node the QLM is on
@@ -570,6 +659,30 @@ int qlm_get_gbaud_mhz_pem_gsern(int pem)
  */
 void qlm_display_settings_gsern(int qlm, int qlm_lane, bool show_tx, bool show_rx)
 {
+	if (show_rx)
+	{
+		bool is_pcie = false;
+		/* Check to see if GSER is in PCIe mode */
+		GSERN_CSR_INIT(srcmx_bcfg, CAVM_GSERNX_LANEX_SRCMX_BCFG(qlm, qlm_lane));
+		if (srcmx_bcfg.s.tx_ctrl_sel == 1)
+			is_pcie = true;
+
+		/* Generate the RAW FOM */
+		if (is_pcie)
+		{
+			/* Determine the negotiated PCIe speed */
+			/* If Gen3 or above use FOM = 1 */
+			qlm_calculate_fom_gsern(qlm, qlm_lane, 1);
+		}
+		else
+		{
+			int speed = qlm_get_gbaud_mhz(qlm, qlm_lane);
+			if (speed < 8000)
+				qlm_calculate_fom_gsern(qlm, qlm_lane, 0);
+			else
+				qlm_calculate_fom_gsern(qlm, qlm_lane, 1);
+		}
+	}
 	GSERN_CSR_INIT(c_bias_bcfg, CAVM_GSERNX_COMMON_BIAS_BCFG(qlm));
 	GSERN_CSR_INIT(c_pll_1_bcfg, CAVM_GSERNX_COMMON_PLL_1_BCFG(qlm));
 	GSERN_CSR_INIT(c_pll_2_bcfg, CAVM_GSERNX_COMMON_PLL_2_BCFG(qlm));
@@ -777,7 +890,7 @@ int qlm_rx_equalization_gsern(int qlm, int qlm_lane)
 	}
 
 	/* Stay in deep idle for 100us */
-	udelay(100);
+	gsern_wait_usec(100);
 
 	/* Take the lanes out of deep idle */
 	for (int lane = 0; lane < MAX_LANES; lane++)
@@ -816,7 +929,7 @@ int qlm_rx_equalization_gsern(int qlm, int qlm_lane)
 	}
 
 	/* Allow lanes to settle for 1ms */
-	mdelay(1);
+	gsern_wait_usec(1000); /* 1ms */
 
 	/* Undo the force idle detect */
 	for (int lane = 0; lane < MAX_LANES; lane++)
@@ -990,6 +1103,258 @@ int qlm_tune_lane_tx_gsern(int qlm, int lane, int tx_cmain, int tx_cpre, int tx_
 		return -1;
 	}
 
+	/* Override the Transmitter Equalizer using the GSERNX_LANEX_TX_DRV_BCFG CSR
+	   and compute the decoded raw Tx EQ fields from the tx_cpre, tx_cmain, tx_cpost values passed in */
+
+	int _i_en = 1;   //tx_drv enable
+	int _stuff = 0;  //FIXME bitstuffing is off.  Add check if we are in bitstuffing mode and set this flag
+	int _cpre;
+	int _cmain;
+	int _cpost;
+
+	//Decoded Tx EQ variables to write to the GSERNX_LANEX_TX_DRV_BCFG CSR
+	int enpre = 0;
+	int cprea;
+	int cpreb;
+	int muxpre;
+	int enmain;
+	int cmaind;
+	int muxmain;
+	int enpost;
+	int cposta;
+	int cpostb;
+	int muxpost;
+
+	//internal variables
+	int cpre, cmain, cpost;
+	int en;
+	int cprea_int, cpreb_int, cmaind_int, cposta_int, cpostb_int;
+	int enpre_int = 0;
+	int enmain_int, enpost_int;
+	int cppru;  // =(cpre>>3) + (|cpre[2:0]) + (cpost>>3) + (|cpost[2:0]); range: 0..4
+	int cmainx; // possible values are 0 to 24 (6'h18)
+	int cmainx_x_21; // possible values are 0 to 504
+	int cmaindiff;
+
+	enmain_int = 0;
+	muxmain = 0;
+	enpre_int = 0;
+	muxpre = 0;
+	enpost_int  = 0;
+	muxpost = 0;
+	cprea_int = 1;
+	cpreb_int = 1;
+	cmaind_int = 1;
+	cposta_int = 1;
+	cpostb_int = 1;
+	cpre =  tx_cpre;  // start with passed-in values
+	cmain = tx_cmain;  // start with passed-in values
+	cpost = tx_cpost;  // start with passed-in values
+	_cpre =  tx_cpre;  // start with passed-in values
+	_cmain = tx_cmain;  // start with passed-in values
+	_cpost = tx_cpost;  // start with passed-in values
+	en = _i_en;	  // start with passed-in values
+
+	// Check & fix 'invalid' settings
+	if (_stuff == 1) {
+		// No precursor during bit-stuffing
+		if (_cpre != 0) { // if ( (|_cpre) ) {
+			cpre = 0;
+		}
+	} else {
+		// Precursor out of range (not-stuffed)
+		if (_cpre > 12) {
+			cpre = 12;
+		}
+	} // else: !if( _stuff )
+
+	// Postcursor out of range
+	if (_cpost > 16) {
+		cpost = 16;
+	}
+
+	// Main cursor too large
+	if (_cmain > 48) {
+		cmain = 48;
+	}
+
+	// Main cursor too small
+	if (_cmain < 24) {
+		cmain = 24;
+	}
+
+	// check for too many blocks in use
+	//original c code comment may work directly here if ((ceil(cprei/8)+ceil(cmaini/8)+ceil(cposti/8))>8) begin
+	//original code from sv	   cppru = (cpre[4:3]) + (|cpre[2:0]) + (cpost[4:3]) + (|cpost[2:0]);  // max possible value is 4, so
+
+	int tmp_cpost1 = 0;
+	int tmp_cpre = 0;
+
+	tmp_cpost1 = (cpost >> 3) & (0x3);					// (cpost[4:3])
+	tmp_cpre = (cpre & 7) > 0  ?  1 : 0;	  // (|cpre[2:0])
+
+	cppru = (cpre >> 3) & 0x3;								 //(cpre[4:3])
+	cppru = (cppru + tmp_cpre + tmp_cpost1 + tmp_cpost1) & 0x3;
+
+	//from sv		   if ( ( (_cmain[5:3]) + (|_cmain[2:0]) + cppru ) > 8 ) begin
+	int tmp__cmain = 0;
+
+	tmp__cmain = ((_cmain & 7) > 0 ) ? 1 : 0;
+	if ( (((_cmain >> 3) & 7) + tmp__cmain + cppru ) > 8) {
+		cmain = 64 - (cppru << 3); // cmain = 'd64 - {cppru, 3'h0};  // result here must be =<63, so
+	}
+
+	// Set tap weights
+	if (_stuff > 0) {
+		// Common tap weights for all valid bit stuffing settings
+		enpre_int  &= ~(1<<1); cpreb_int = 0; muxpre  |= (1<<1);  // enpre_int[1]  = '0;  cpreb_int = 'd0;   muxpre[1] = '1;   // Never used -- only E and ~L taps possible
+		enmain_int |= 1;	   muxmain &= ~(1);	// enmain_int[0] = '1;  muxmain[0] = '0;  // Choose E
+		enmain_int |= (1<<1);  muxmain &= ~(1<<1); // enmain_int[1] = '1;  muxmain[1] = '0;  // Choose E
+		enmain_int |= (1<<2);  muxmain &= ~(1<<2); // enmain_int[2] = '1;  muxmain[2] = '0;  // Choose E
+
+		cmainx = cmain - 24;  // cmain=<48, so cmainx=<24
+
+		// Set up postcursor tap weights
+		if (cpost <= 8) {   // All tap weight on cpostb
+			enpost_int &= ~(1); cposta_int = 0; muxpost &= ~(1);
+			if (cpost > 0)
+				enpost_int |= (1 << 1);
+			else
+				enpost_int &= ~(1 << 1);
+			cpostb_int = cpost;  muxpost &= ~(1<<1);
+		} else {			// Split tap weights between cpostb and cposta
+			enpost_int |= 1;	  cposta_int = (cpost>>1) + (cpost & 1);  muxpost &= ~(1);
+			enpost_int |= (1<<1); cpostb_int = cpost - cposta_int;		muxpost &= ~(1<<1);
+		}  // cpost
+
+		// Set up main cursor tap weights for bit stuffing
+		if (cmainx <= 8) {		  // All tap weight on cmaind
+			if (cmainx != 0)
+				enmain_int |= (1 << 3);
+			else
+				enmain_int &= ~(1 << 3);
+			cmaind_int = cmainx;  muxmain &= ~(1<<3);
+			enpre_int  &= ~(1); cprea_int  = 0; muxpre |= 1;
+		} else if (cmainx <= 16) {  // Split tap weight between cmaind and cprea
+			enmain_int |= (1<<3);
+			cmaind_int = (cmainx>>1) + (cmainx & 1);   muxmain &= ~(1<<3);
+			enpre_int  |= 1;  cprea_int  = cmainx - cmaind_int; muxpre  |= 1;
+		} else {					// Split tap weight between cmaind, cprea, and cpost a
+
+			// Need cmaind_int=ceil(cmainx/3); use (21*cmainx)>>6 + |frac_bits
+			cmainx_x_21 = ((cmainx << 4) & 0x1ff) + ((cmainx << 2) & 0x1ff) + cmainx;
+			int tmp_cmainx_x_21 = (cmainx_x_21 & 0x3f) ? 1 : 0;
+			enmain_int |= (1<<3);
+			cmaind_int = ((cmainx_x_21>>6) & 7) + tmp_cmainx_x_21;  muxmain &= ~(1<<3);
+			cmaindiff = cmainx - ( cmaind_int&(0xf));
+			enpre_int  |= 1;
+			cprea_int  = (((cmaindiff >> 1) & 0xf) + (cmaindiff & 1)) & 0xf;  muxpre  |= 1;
+			enpost_int |= 1;
+			cposta_int = (cmainx - cmaind_int - cprea_int) & 0xf;  muxpost |= 1;
+		}  // cmain
+	} else { // if ( _stuff )
+
+		// Common tap weights for all valid settings
+		enmain_int |= 1;	   muxmain |= 1;  // Choose M
+		enmain_int |= (1<<1);  muxmain |= (1<<1);  // Choose M
+		enmain_int |= (1<<2);  muxmain |= (1<<2);  // Choose M
+		cmainx = cmain - 24;
+
+		// Set up precursor tap weights
+		if ( cpre <= 8) {
+			enpre_int = (cpre>0) ? (enpre_int | 1) : (enpre & ~(1));  cprea_int = cpre;  muxpre &= ~(1);	//enpre_int[0] = (cpre>0);  cprea_int = cpre;  muxpre[0] = '0;  // Choose ~E
+			enpre_int &= ~(1<<1);  cpreb_int = 0;	muxpre &= ~(1<<1);  // Choose ~E
+		} else {
+			enpre_int |= 1;  cprea_int = (cpre>>1) + (cpre & (1));  muxpre &= ~(1);		  //enpre_int[0] = '1;  cprea_int = (cpre>>1) + cpre[0];  muxpre[0] = '0;  // Choose ~E
+			enpre_int |= (1<<1);  cpreb_int = cpre - cprea_int;	 muxpre &= ~(1<<1);	//enpre_int[1] = '1;  cpreb_int = cpre - cprea_int;	 muxpre[1] = '0;  // Choose ~E
+		}  // cpre
+
+		// Set up postcursor tap weights (common with normal and bit stuffing)
+		if (cpost <= 8) {
+			if (cpost > 0)
+				enpost_int |= 1;
+			else
+				enpost_int &= ~(1);
+			cposta_int = cpost;  muxpost &= ~(1);  //enpost_int[0] = (cpost>0);  cposta_int = cpost;  muxpost[0] = '0;  // Choose ~L
+			enpost_int &= ~(1<<1); cpostb_int = 0; muxpost &= ~(1<<1);	  //enpost_int[1] = '0;		 cpostb_int = '0;				  muxpost[1] = '0;  // Choose ~L
+		} else {
+			enpost_int |= 1; cposta_int = (cpost>>1) + (cpost & (1)); muxpost &= ~(1);	  //enpost_int[0] = '1;  cposta_int = (cpost>>1) + cpost[0]; muxpost[0] = '0;  // Choose ~L
+			enpost_int |= (1<<1);	cpostb_int = cpost - cposta_int;  muxpost &= ~(1<<1);   //enpost_int[1] = '1;  cpostb_int = cpost - cposta_int;  muxpost[1] = '0;  // Choose ~L
+		}   // cpost
+
+		// Set up main cursor tap weights
+		if (cmainx <= 8) {			// <=8,  only use 4th main block
+			if (cmainx > 0)
+				enmain_int |= (1 << 3);
+			else
+				enmain_int &= ~(1 << 3);
+			cmaind_int = cmainx; muxmain |= (1 << 3);  //enmain_int[3] = (cmainx>0);  cmaind_int = cmainx;  muxmain[3] = '1; // Choose M
+		} else if (cmainx <= 16) {  // >8, <=16,  use 4th main block and one from pre or post
+			enmain_int |= (1<<3); cmaind_int = (cmainx>>1) + (cmainx & (1)); muxmain |= (1<<3);  //enmain_int[3] = '1; cmaind_int = (cmainx>>1) + cmainx[0]; muxmain[3] = '1;// Choose M
+
+			// Decide where to put the last block
+			if (enpre_int&(1<<1)) {
+				enpost_int |= (1<<1);  cpostb_int = (cmainx - cmaind_int) & 0xf;	 muxpost |= (1<<1); // Choose M
+			} else {
+				enpre_int  |= (1<<1);  cpreb_int  = (cmainx - cmaind_int) & 0xf;	 muxpre  |= (1<<1); //enpre_int[1]  = '1;  cpreb_int  = cmainx - cmaind_int;	 muxpre[1]  = '1; // Choose M
+			}
+		} else {				 // >16, use 4th main block and one from pre & post
+			cmainx_x_21 = ((cmainx << 4) & 0x1ff) + ((cmainx << 2) &0x1ff)  + cmainx;
+
+			//enmain_int[3] = '1; cmaind_int = (cmainx_x_21[8:6]) + (|cmainx_x_21[5:0]); muxmain[3] = '1;  // Choose M
+			int tmp_cmainx_x_21 = (cmainx_x_21 & 0x3f) ? 1 : 0;
+			enmain_int |= (1<<3);
+			cmaind_int = ((cmainx_x_21>>6) & 7) + tmp_cmainx_x_21;  muxmain |= (1<<3);
+
+			cmaindiff = cmainx - ( cmaind_int&(0xf));  //cmaindiff = cmainx - {1'b0, cmaind_int};  //cmaindiff = cmainx - {1'b0, cmaind_int};
+			enpre_int  |= (1<<1);  cpreb_int  =  ((cmaindiff >> 1) &0xf) + (cmaindiff &(1)); muxpre  |= (1<<1);  //enpre_int[1]  = '1; cpreb_int  = (cmaindiff[4:1]) + cmaindiff[0];		  muxpre[1]  = '1;  // Choose M
+			enpost_int |= (1<<1);   cpostb_int = cmainx - cmaind_int - cpreb_int;  muxpost |= 1<<1; //enpost_int[1] = '1; cpostb_int = cmainx - cmaind_int - cpreb_int;  muxpost[1] = '1;  // Choose M
+		}
+	} // else: !if( stuff )
+
+	// max value for *_int is 8, so the c*-1 will all fit into 3b
+	// corresponding en* is 0 when c* is zero, so the muxes may not be needed
+	cprea =  (en > 0) ?  (  (cprea_int > 0)   ? cprea_int -1 : 0 ) : 0;	// cprea  = {4{en}} & ( (|cprea_int)  ? cprea_int  - 1 : '0 );
+	cpreb =  (en > 0) ?  (  (cpreb_int > 0)   ? cpreb_int -1 : 0 ) : 0;	// cpreb  = {4{en}} & ( (|cpreb_int)  ? cpreb_int  - 1 : '0 );
+	cmaind = (en > 0) ?  (  (cmaind_int > 0)  ? cmaind_int -1 : 0 ) : 0;   // cmaind = {4{en}} & ( (|cmaind_int) ? cmaind_int - 1 : '0 );
+	cposta = (en > 0) ?  (  (cposta_int > 0)  ? cposta_int -1 : 0 ) : 0;   // cposta = {4{en}} & ( (|cposta_int) ? cposta_int - 1 : '0 );
+	cpostb = (en > 0) ?  (  (cpostb_int > 0)  ? cpostb_int -1 : 0 ) : 0;   // cpostb = {4{en}} & ( (|cpostb_int) ? cpostb_int - 1 : '0 );
+
+	enpre  = (en > 0) ? enpre_int : 0;	 // enpre  = {2{en}} & enpre_int;
+	enmain = (en > 0) ? enmain_int : 0;	// enmain = {4{en}} & enmain_int;
+	enpost = (en > 0) ? enpost_int : 0;	// enpost = {2{en}} & enpost_int;
+
+	/* Now Update the TX_DRV CSR with the decoded Tx EQ override values */
+	GSERN_CSR_MODIFY(c, CAVM_GSERNX_LANEX_TX_DRV_BCFG(qlm, lane),
+		if (tx_bs != -1)
+			c.s.tx_bs = tx_bs;
+		//Post EQ Tap
+		if (muxpost != -1)
+			c.s.muxpost = muxpost;
+		if (cpostb != -1)
+			c.s.cpostb = cpostb;
+		if (cposta != -1)
+			c.s.cposta = cposta;
+		if (enpost != -1)
+			c.s.enpost = enpost;
+		// Main EQ Tap
+		if (muxmain != -1)
+			c.s.muxmain = muxmain;
+		if (cmaind != -1)
+			c.s.cmaind = cmaind;
+		if (enmain != -1)
+			c.s.enmain = enmain;
+		// PRE EQ Tap
+		if (muxpre != -1)
+			c.s.muxpre = muxpre;
+		if (cpreb != -1)
+			c.s.cpreb = cpreb;
+		if (cprea != -1)
+			c.s.cprea = cprea;
+		if (enpre != -1)
+			c.s.enpre = enpre;
+		);
+
 	cavm_gsernx_lanex_srcmx_bcfg_t gsernx_lanex_srcmx_bcfg;
 	gsernx_lanex_srcmx_bcfg.u = GSERN_CSR_READ(CAVM_GSERNX_LANEX_SRCMX_BCFG(qlm, lane));
 	/* Check if GSER lane is configured in PCIe mode */
@@ -1051,270 +1416,11 @@ int qlm_tune_lane_tx_gsern(int qlm, int lane, int tx_cmain, int tx_cpre, int tx_
 			);
 		return 0;
 	}
-	/* Check if GSER lane is configured in PRBS or Pattern memory mode */
-	else if (gsernx_lanex_srcmx_bcfg.s.tx_ctrl_sel == 0 ||
-			 gsernx_lanex_srcmx_bcfg.s.tx_ctrl_sel == 0x10)
-	{
-		/* Override the Transmitter Equalizer using the GSERNX_LANEX_TX_DRV_BCFG CSR
-		   and compute the decoded raw Tx EQ fields from the tx_cpre, tx_cmain, tx_cpost values passed in */
-
-		int _i_en = 1;   //tx_drv enable
-		int _stuff = 0;  //FIXME bitstuffing is off.  Add check if we are in bitstuffing mode and set this flag
-		int _cpre;
-		int _cmain;
-		int _cpost;
-
-		//Decoded Tx EQ variables to write to the GSERNX_LANEX_TX_DRV_BCFG CSR
-		int enpre = 0;
-		int cprea;
-		int cpreb;
-		int muxpre;
-		int enmain;
-		int cmaind;
-		int muxmain;
-		int enpost;
-		int cposta;
-		int cpostb;
-		int muxpost;
-
-		//internal variables
-		int cpre, cmain, cpost;
-		int en;
-		int cprea_int, cpreb_int, cmaind_int, cposta_int, cpostb_int;
-		int enpre_int = 0;
-		int enmain_int, enpost_int;
-		int cppru;  // =(cpre>>3) + (|cpre[2:0]) + (cpost>>3) + (|cpost[2:0]); range: 0..4
-		int cmainx; // possible values are 0 to 24 (6'h18)
-		int cmainx_x_21; // possible values are 0 to 504
-		int cmaindiff;
-
-		enmain_int = 0;
-		muxmain = 0;
-		enpre_int = 0;
-		muxpre = 0;
-		enpost_int  = 0;
-		muxpost = 0;
-		cprea_int = 1;
-		cpreb_int = 1;
-		cmaind_int = 1;
-		cposta_int = 1;
-		cpostb_int = 1;
-		cpre =  tx_cpre;  // start with passed-in values
-		cmain = tx_cmain;  // start with passed-in values
-		cpost = tx_cpost;  // start with passed-in values
-		_cpre =  tx_cpre;  // start with passed-in values
-		_cmain = tx_cmain;  // start with passed-in values
-		_cpost = tx_cpost;  // start with passed-in values
-		en = _i_en;	  // start with passed-in values
-
-		// Check & fix 'invalid' settings
-		if (_stuff == 1) {
-			// No precursor during bit-stuffing
-			if (_cpre != 0) { // if ( (|_cpre) ) {
-				cpre = 0;
-			}
-		} else {
-			// Precursor out of range (not-stuffed)
-			if (_cpre > 12) {
-				cpre = 12;
-			}
-		} // else: !if( _stuff )
-
-		// Postcursor out of range
-		if (_cpost > 16) {
-			cpost = 16;
-		}
-
-		// Main cursor too large
-		if (_cmain > 48) {
-			cmain = 48;
-		}
-
-		// Main cursor too small
-		if (_cmain < 24) {
-			cmain = 24;
-		}
-
-		// check for too many blocks in use
-		//original c code comment may work directly here if ((ceil(cprei/8)+ceil(cmaini/8)+ceil(cposti/8))>8) begin
-		//original code from sv	   cppru = (cpre[4:3]) + (|cpre[2:0]) + (cpost[4:3]) + (|cpost[2:0]);  // max possible value is 4, so
-
-		int tmp_cpost1 = 0;
-		int tmp_cpre = 0;
-
-		tmp_cpost1 = (cpost >> 3) & (0x3);					// (cpost[4:3])
-		tmp_cpre = (cpre & 7) > 0  ?  1 : 0;	  // (|cpre[2:0])
-
-		cppru = (cpre >> 3) & 0x3;								 //(cpre[4:3])
-		cppru = (cppru + tmp_cpre + tmp_cpost1 + tmp_cpost1) & 0x3;
-
-		//from sv		   if ( ( (_cmain[5:3]) + (|_cmain[2:0]) + cppru ) > 8 ) begin
-		int tmp__cmain = 0;
-
-		tmp__cmain = ((_cmain & 7) > 0 ) ? 1 : 0;
-		if ( (((_cmain >> 3) & 7) + tmp__cmain + cppru ) > 8) {
-			cmain = 64 - (cppru << 3); // cmain = 'd64 - {cppru, 3'h0};  // result here must be =<63, so
-		}
-
-		// Set tap weights
-		if (_stuff > 0) {
-			// Common tap weights for all valid bit stuffing settings
-			enpre_int  &= ~(1<<1); cpreb_int = 0; muxpre  |= (1<<1);  // enpre_int[1]  = '0;  cpreb_int = 'd0;   muxpre[1] = '1;   // Never used -- only E and ~L taps possible
-			enmain_int |= 1;	   muxmain &= ~(1);	// enmain_int[0] = '1;  muxmain[0] = '0;  // Choose E
-			enmain_int |= (1<<1);  muxmain &= ~(1<<1); // enmain_int[1] = '1;  muxmain[1] = '0;  // Choose E
-			enmain_int |= (1<<2);  muxmain &= ~(1<<2); // enmain_int[2] = '1;  muxmain[2] = '0;  // Choose E
-
-			cmainx = cmain - 24;  // cmain=<48, so cmainx=<24
-
-			// Set up postcursor tap weights
-			if (cpost <= 8) {   // All tap weight on cpostb
-				enpost_int &= ~(1); cposta_int = 0; muxpost &= ~(1);
-				if (cpost > 0)
-					enpost_int |= (1 << 1);
-				else
-					enpost_int &= ~(1 << 1);
-				cpostb_int = cpost;  muxpost &= ~(1<<1);
-			} else {			// Split tap weights between cpostb and cposta
-				enpost_int |= 1;	  cposta_int = (cpost>>1) + (cpost & 1);  muxpost &= ~(1);
-				enpost_int |= (1<<1); cpostb_int = cpost - cposta_int;		muxpost &= ~(1<<1);
-			}  // cpost
-
-			// Set up main cursor tap weights for bit stuffing
-			if (cmainx <= 8) {		  // All tap weight on cmaind
-				if (cmainx != 0)
-					enmain_int |= (1 << 3);
-				else
-					enmain_int &= ~(1 << 3);
-				cmaind_int = cmainx;  muxmain &= ~(1<<3);
-				enpre_int  &= ~(1); cprea_int  = 0; muxpre |= 1;
-			} else if (cmainx <= 16) {  // Split tap weight between cmaind and cprea
-				enmain_int |= (1<<3);
-				cmaind_int = (cmainx>>1) + (cmainx & 1);   muxmain &= ~(1<<3);
-				enpre_int  |= 1;  cprea_int  = cmainx - cmaind_int; muxpre  |= 1;
-			} else {					// Split tap weight between cmaind, cprea, and cpost a
-
-				// Need cmaind_int=ceil(cmainx/3); use (21*cmainx)>>6 + |frac_bits
-				cmainx_x_21 = ((cmainx << 4) & 0x1ff) + ((cmainx << 2) & 0x1ff) + cmainx;
-				int tmp_cmainx_x_21 = (cmainx_x_21 & 0x3f) ? 1 : 0;
-				enmain_int |= (1<<3);
-				cmaind_int = ((cmainx_x_21>>6) & 7) + tmp_cmainx_x_21;  muxmain &= ~(1<<3);
-				cmaindiff = cmainx - ( cmaind_int&(0xf));
-				enpre_int  |= 1;
-				cprea_int  = (((cmaindiff >> 1) & 0xf) + (cmaindiff & 1)) & 0xf;  muxpre  |= 1;
-				enpost_int |= 1;
-				cposta_int = (cmainx - cmaind_int - cprea_int) & 0xf;  muxpost |= 1;
-			}  // cmain
-		} else { // if ( _stuff )
-
-			// Common tap weights for all valid settings
-			enmain_int |= 1;	   muxmain |= 1;  // Choose M
-			enmain_int |= (1<<1);  muxmain |= (1<<1);  // Choose M
-			enmain_int |= (1<<2);  muxmain |= (1<<2);  // Choose M
-			cmainx = cmain - 24;
-
-			// Set up precursor tap weights
-			if ( cpre <= 8) {
-				enpre_int = (cpre>0) ? (enpre_int | 1) : (enpre & ~(1));  cprea_int = cpre;  muxpre &= ~(1);	//enpre_int[0] = (cpre>0);  cprea_int = cpre;  muxpre[0] = '0;  // Choose ~E
-				enpre_int &= ~(1<<1);  cpreb_int = 0;	muxpre &= ~(1<<1);  // Choose ~E
-			} else {
-				enpre_int |= 1;  cprea_int = (cpre>>1) + (cpre & (1));  muxpre &= ~(1);		  //enpre_int[0] = '1;  cprea_int = (cpre>>1) + cpre[0];  muxpre[0] = '0;  // Choose ~E
-				enpre_int |= (1<<1);  cpreb_int = cpre - cprea_int;	 muxpre &= ~(1<<1);	//enpre_int[1] = '1;  cpreb_int = cpre - cprea_int;	 muxpre[1] = '0;  // Choose ~E
-			}  // cpre
-
-			// Set up postcursor tap weights (common with normal and bit stuffing)
-			if (cpost <= 8) {
-				if (cpost > 0)
-					enpost_int |= 1;
-				else
-					enpost_int &= ~(1);
-				cposta_int = cpost;  muxpost &= ~(1);  //enpost_int[0] = (cpost>0);  cposta_int = cpost;  muxpost[0] = '0;  // Choose ~L
-				enpost_int &= ~(1<<1); cpostb_int = 0; muxpost &= ~(1<<1);	  //enpost_int[1] = '0;		 cpostb_int = '0;				  muxpost[1] = '0;  // Choose ~L
-			} else {
-				enpost_int |= 1; cposta_int = (cpost>>1) + (cpost & (1)); muxpost &= ~(1);	  //enpost_int[0] = '1;  cposta_int = (cpost>>1) + cpost[0]; muxpost[0] = '0;  // Choose ~L
-				enpost_int |= (1<<1);	cpostb_int = cpost - cposta_int;  muxpost &= ~(1<<1);   //enpost_int[1] = '1;  cpostb_int = cpost - cposta_int;  muxpost[1] = '0;  // Choose ~L
-			}   // cpost
-
-			// Set up main cursor tap weights
-			if (cmainx <= 8) {			// <=8,  only use 4th main block
-				if (cmainx > 0)
-					enmain_int |= (1 << 3);
-				else
-					enmain_int &= ~(1 << 3);
-				cmaind_int = cmainx; muxmain |= (1 << 3);  //enmain_int[3] = (cmainx>0);  cmaind_int = cmainx;  muxmain[3] = '1; // Choose M
-			} else if (cmainx <= 16) {  // >8, <=16,  use 4th main block and one from pre or post
-				enmain_int |= (1<<3); cmaind_int = (cmainx>>1) + (cmainx & (1)); muxmain |= (1<<3);  //enmain_int[3] = '1; cmaind_int = (cmainx>>1) + cmainx[0]; muxmain[3] = '1;// Choose M
-
-				// Decide where to put the last block
-				if (enpre_int&(1<<1)) {
-					enpost_int |= (1<<1);  cpostb_int = (cmainx - cmaind_int) & 0xf;	 muxpost |= (1<<1); // Choose M
-				} else {
-					enpre_int  |= (1<<1);  cpreb_int  = (cmainx - cmaind_int) & 0xf;	 muxpre  |= (1<<1); //enpre_int[1]  = '1;  cpreb_int  = cmainx - cmaind_int;	 muxpre[1]  = '1; // Choose M
-				}
-			} else {				 // >16, use 4th main block and one from pre & post
-				cmainx_x_21 = ((cmainx << 4) & 0x1ff) + ((cmainx << 2) &0x1ff)  + cmainx;
-
-				//enmain_int[3] = '1; cmaind_int = (cmainx_x_21[8:6]) + (|cmainx_x_21[5:0]); muxmain[3] = '1;  // Choose M
-				int tmp_cmainx_x_21 = (cmainx_x_21 & 0x3f) ? 1 : 0;
-				enmain_int |= (1<<3);
-				cmaind_int = ((cmainx_x_21>>6) & 7) + tmp_cmainx_x_21;  muxmain |= (1<<3);
-
-				cmaindiff = cmainx - ( cmaind_int&(0xf));  //cmaindiff = cmainx - {1'b0, cmaind_int};  //cmaindiff = cmainx - {1'b0, cmaind_int};
-				enpre_int  |= (1<<1);  cpreb_int  =  ((cmaindiff >> 1) &0xf) + (cmaindiff &(1)); muxpre  |= (1<<1);  //enpre_int[1]  = '1; cpreb_int  = (cmaindiff[4:1]) + cmaindiff[0];		  muxpre[1]  = '1;  // Choose M
-				enpost_int |= (1<<1);   cpostb_int = cmainx - cmaind_int - cpreb_int;  muxpost |= 1<<1; //enpost_int[1] = '1; cpostb_int = cmainx - cmaind_int - cpreb_int;  muxpost[1] = '1;  // Choose M
-			}
-		} // else: !if( stuff )
-
-		// max value for *_int is 8, so the c*-1 will all fit into 3b
-		// corresponding en* is 0 when c* is zero, so the muxes may not be needed
-		cprea =  (en > 0) ?  (  (cprea_int > 0)   ? cprea_int -1 : 0 ) : 0;	// cprea  = {4{en}} & ( (|cprea_int)  ? cprea_int  - 1 : '0 );
-		cpreb =  (en > 0) ?  (  (cpreb_int > 0)   ? cpreb_int -1 : 0 ) : 0;	// cpreb  = {4{en}} & ( (|cpreb_int)  ? cpreb_int  - 1 : '0 );
-		cmaind = (en > 0) ?  (  (cmaind_int > 0)  ? cmaind_int -1 : 0 ) : 0;   // cmaind = {4{en}} & ( (|cmaind_int) ? cmaind_int - 1 : '0 );
-		cposta = (en > 0) ?  (  (cposta_int > 0)  ? cposta_int -1 : 0 ) : 0;   // cposta = {4{en}} & ( (|cposta_int) ? cposta_int - 1 : '0 );
-		cpostb = (en > 0) ?  (  (cpostb_int > 0)  ? cpostb_int -1 : 0 ) : 0;   // cpostb = {4{en}} & ( (|cpostb_int) ? cpostb_int - 1 : '0 );
-
-		enpre  = (en > 0) ? enpre_int : 0;	 // enpre  = {2{en}} & enpre_int;
-		enmain = (en > 0) ? enmain_int : 0;	// enmain = {4{en}} & enmain_int;
-		enpost = (en > 0) ? enpost_int : 0;	// enpost = {2{en}} & enpost_int;
-
-		/* Now Update the TX_DRV CSR with the decoded Tx EQ override values */
-		GSERN_CSR_MODIFY(c, CAVM_GSERNX_LANEX_TX_DRV_BCFG(qlm, lane),
-			if (tx_bs != -1)
-				c.s.tx_bs = tx_bs;
-			//Post EQ Tap
-			if (muxpost != -1)
-				c.s.muxpost = muxpost;
-			if (cpostb != -1)
-				c.s.cpostb = cpostb;
-			if (cposta != -1)
-				c.s.cposta = cposta;
-			if (enpost != -1)
-				c.s.enpost = enpost;
-			// Main EQ Tap
-			if (muxmain != -1)
-				c.s.muxmain = muxmain;
-			if (cmaind != -1)
-				c.s.cmaind = cmaind;
-			if (enmain != -1)
-				c.s.enmain = enmain;
-			// PRE EQ Tap
-			if (muxpre != -1)
-				c.s.muxpre = muxpre;
-			if (cpreb != -1)
-				c.s.cpreb = cpreb;
-			if (cprea != -1)
-				c.s.cprea = cprea;
-			if (enpre != -1)
-				c.s.enpre = enpre;
-			// Enable Bias Override and Tx Driver
-			c.s.en_tx_bs = 1;  //Enable the TX_BS override
-			c.s.en_tx_drv = 1;  //Enable the Tx Driver
-			);
-	}
 	else
-	{
-		gsern_error("N0.QLM%d: Mode not programmed before tuning call\n", qlm);
-		return -1;
-	}
+		/* Enable Bias Override and Tx Driver */
+		GSERN_CSR_MODIFY(c, CAVM_GSERNX_LANEX_TX_DRV_BCFG(qlm, lane),
+			c.s.en_tx_bs = 1;  //Enable the TX_BS override
+			c.s.en_tx_drv = 1);  //Enable the Tx Driver
 
 	return 0;
 }
@@ -1435,6 +1541,10 @@ void qlm_init_gsern()
  */
 int qlm_set_mode_gsern(int qlm, int lane, qlm_modes_t mode, int baud_mhz, qlm_mode_flags_t flags)
 {
+	/*
+	 * Delete in qlm.patch applied by gsern-update script in SDK
+	 */
+	// qlm_state_lane_t state = qlm_build_state(mode, baud_mhz, flags);
 	int num_lanes = qlm_get_lanes(qlm);
 	enum gsern_mode gsern_mode = GSERN_MODE_DISABLED;
 	enum gsern_flags gsern_flags = GSERN_FLAGS_NONE;
@@ -1540,6 +1650,10 @@ int qlm_set_mode_gsern(int qlm, int lane, qlm_modes_t mode, int baud_mhz, qlm_mo
 			if (gsern_set_mode(qlm, l, gsern_mode, is_first, baud_mhz, gsern_flags))
 				return -1;
 		}
+		/*
+		 * Delete in qlm.patch applied by gsern-update script in SDK
+		 */
+		// GSERN_CSR_WRITE(CAVM_GSERNX_LANEX_SCRATCHX(qlm, l, 0), state.u);
 		qlm_tune_gsern(qlm, l, mode, baud_mhz);
 	}
 

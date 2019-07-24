@@ -156,8 +156,21 @@ typedef enum {
  * @param is_endpoint
  *			   Non zero if PEM is a EP
  */
-qlm_state_lane_t qlm_build_state_gsern(qlm_modes_t mode, int baud_mhz,
-	qlm_mode_flags_t flags);
+static inline qlm_state_lane_t qlm_build_state(qlm_modes_t mode, int baud_mhz,
+	qlm_mode_flags_t flags)
+{
+	qlm_state_lane_t state;
+
+	state.u = 0;
+	state.s.mode = mode;
+	state.s.baud_mhz = baud_mhz;
+	state.s.flags = flags;
+	state.s.pcie =
+		(mode > QLM_MODE_DISABLED) && (mode <= QLM_MODE_PCIE_X16);
+	state.s.sata = (mode == QLM_MODE_SATA);
+	state.s.cgx = (mode >= QLM_MODE_SGMII) && (mode < QLM_MODE_LAST);
+	return state;
+}
 
 /*
  * Setup the PEM to either driver or receive reset from PRST based on RC or EP

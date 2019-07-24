@@ -73,6 +73,17 @@ int gsern_init_network(int qlm, int qlm_lane, enum gsern_flags flags, enum gsern
 {
 	bool use_dual = (flags & GSERN_FLAGS_DUAL) != 0;
 	bool use_quad = (flags & GSERN_FLAGS_QUAD) != 0;
+	bool use_slow = (mode == GSERN_PCIE_02500000000) || (mode == GSERN_SGMII_01250000000);
+
+	/* 2.5G is the same as 1.25G for the SERDES, but 20bit isn't used. This
+	   if statement marks that we really want 2.5G, but changes the mode to
+	   the needed 1.25G */
+	bool sgmii_2p5 = false;
+	if (mode == GSERN_PCIE_02500000000)
+	{
+		mode = GSERN_SGMII_01250000000;
+		sgmii_2p5 = true;
+	}
 
 	/* Check if the common pll is setup. Only setup once */
 	GSERN_CSR_INIT(bias_cfg, CAVM_GSERNX_COMMON_BIAS_BCFG(qlm));
@@ -130,8 +141,7 @@ int gsern_init_network(int qlm, int qlm_lane, enum gsern_flags flags, enum gsern
 	   approach might be to add the Lane PLL values to the
 	   gsern_lane_modes table and index it by mode */
 	bool qsgmii = (mode == GSERN_QSGMII_05000000000);
-	bool sgmii_1p25 = (mode == GSERN_SGMII_01250000000);
-	bool sgmii_2p5 = (mode == GSERN_PCIE_02500000000);
+	bool sgmii_1p25 = !sgmii_2p5 && (mode == GSERN_SGMII_01250000000);
 	//bool sgmii_3p125 = (mode == GSERN_GEN_03125000000) && !use_dual && !use_quad;
 	bool usxgmii_20p625 = (mode == GSERN_GEN_20625000000);
 	bool usxgmii_10p3125 = (mode == GSERN_GEN_10312500000);
@@ -251,6 +261,26 @@ int gsern_init_network(int qlm, int qlm_lane, enum gsern_flags flags, enum gsern
 			c.s.div_n = 0x19;
 			c.s.div_f = 0);
 	}
+	else if (mode == GSERN_GEN_12890625000)
+	{
+		GSERN_CSR_MODIFY(c, CAVM_GSERNX_LANEX_PLL_1_BCFG(qlm, qlm_lane),
+			c.s.cal_cp_mult = 1;
+			c.s.cp = 0xc;
+			c.s.cp_overide = 0;
+			c.s.band_ppm = 2;
+			c.s.band = 3;
+			c.s.band_limits = 0;
+			c.s.band_overide = 0;
+			c.s.bg_div16 = 0;
+			c.s.bg_clk_en = 0;
+			c.s.dither_en = 1;
+			c.s.cal_sel = 0;
+			c.s.vco_sel = 0;
+			c.s.sdm_en = 0;
+			c.s.post_div = 1;
+			c.s.div_n = 0x19;
+			c.s.div_f = 0);
+	}
 	else
 		gsern_error("N0.QLm%d: Lane PLL setup not implemented\n", qlm);
 
@@ -359,9 +389,9 @@ int gsern_init_network(int qlm, int qlm_lane, enum gsern_flags flags, enum gsern
 		c.s.rx_pd_qac_e = gsern_lane_rx_pd_qac_e;
 		c.s.rx_pd_idle = 1;
 		c.s.rx_rst_deser = 0;
-		c.s.rx_rst_dcc_q = 0;
-		c.s.rx_rst_dcc_i = 0;
-		c.s.rx_rst_dcc_e = 0;
+		c.s.rx_rst_dcc_q = (use_slow) ? 1 : 0;
+		c.s.rx_rst_dcc_i = (use_slow) ? 1 : 0;
+		c.s.rx_rst_dcc_e = (use_slow) ? 1 : 0;
 		c.s.idle = 0;
 		c.s.rx_rst_qac_q = 0;
 		c.s.rx_rst_qac_e = 0;
@@ -564,9 +594,9 @@ int gsern_init_network(int qlm, int qlm_lane, enum gsern_flags flags, enum gsern
 		c.s.c11_ovrd = gsern_lane_c11_ovrd;
 		c.s.c10_ovrd_en = gsern_lane_c10_ovrd_en;
 		c.s.c10_ovrd = gsern_lane_c10_ovrd);
-	/* C1_LIMIT_LO has an errata on CN96XX A0 and requires a special value. The
-	   errata is fixed in following chips, requiring hte HW default */
-	int c1_limit_lo = gsern_is_model(OCTEONTX_CN96XX_PASS1_0) ? gsern_lane_c1_limit_lo[mode] : 63;
+	int c1_limit_lo = gsern_is_model(OCTEONTX_CN96XX_PASS1_X) ?
+		gsern_lane_c1_limit_lo_cn96xx[mode] :
+		gsern_lane_c1_limit_lo_cnf95xx[mode];
 	GSERN_CSR_MODIFY(c, CAVM_GSERNX_LANEX_RX_15_BCFG(qlm, qlm_lane),
 		c.s.c1_limit_lo = c1_limit_lo;
 		c.s.c1_limit_hi = gsern_lane_c1_limit_hi[mode];
@@ -683,7 +713,7 @@ int gsern_init_network(int qlm, int qlm_lane, enum gsern_flags flags, enum gsern
 		c.s.tx_dcc_lowf = gsern_lane_tx_dcc_lowf[mode];
 		c.s.tx_idle = 0;
 		c.s.tx_div_rst = 0;
-		c.s.tx_dcc_rst = 0;
+		c.s.tx_dcc_rst = (use_slow) ? 1 : 0;
 		c.s.tx_enctl = 1;
 		c.s.tx_cdrdiv3 = gsern_lane_tx_cdrdiv3[mode];
 		c.s.tx_endiv5 = 1;
@@ -781,9 +811,9 @@ int gsern_init_network(int qlm, int qlm_lane, enum gsern_flags flags, enum gsern
 		c.s.rx_pd_qac_e = gsern_lane_rx_pd_qac_e;
 		c.s.rx_pd_idle = 0;
 		c.s.rx_rst_deser = 0;
-		c.s.rx_rst_dcc_q = 0;
-		c.s.rx_rst_dcc_i = 0;
-		c.s.rx_rst_dcc_e = 0;
+		c.s.rx_rst_dcc_q = (use_slow) ? 1 : 0;
+		c.s.rx_rst_dcc_i = (use_slow) ? 1 : 0;
+		c.s.rx_rst_dcc_e = (use_slow) ? 1 : 0;
 		c.s.idle = 0;
 		c.s.rx_rst_qac_q = 0;
 		c.s.rx_rst_qac_e = 0;
@@ -849,7 +879,7 @@ int gsern_init_network(int qlm, int qlm_lane, enum gsern_flags flags, enum gsern
 		c.s.tx_dcc_lowf = gsern_lane_tx_dcc_lowf[mode];
 		c.s.tx_idle = 0;
 		c.s.tx_div_rst = 0;
-		c.s.tx_dcc_rst = 0;
+		c.s.tx_dcc_rst = (use_slow) ? 1 : 0;
 		c.s.tx_enctl = 1;
 		c.s.tx_cdrdiv3 = gsern_lane_tx_cdrdiv3[mode];
 		c.s.tx_endiv5 = 1;
