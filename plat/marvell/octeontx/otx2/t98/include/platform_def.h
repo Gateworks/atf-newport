@@ -82,7 +82,7 @@
 #define PLATFORM_MAX_CLUSTERS_PER_NODE	6
 #define PLATFORM_CORE_PER_CLUSTER	6
 
-#define MAX_XLAT_TABLES			64
+#define MAX_XLAT_TABLES			72
 
 /* Location of trusted dram on the base OcteonTX2 */
 #define TZDRAM_BASE			0x00000000

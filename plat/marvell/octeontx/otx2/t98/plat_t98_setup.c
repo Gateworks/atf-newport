@@ -115,7 +115,7 @@ int plat_octeontx_get_uaa_count(void)
 
 int plat_octeontx_get_rvu_count(void)
 {
-	return 16;
+	return 24;
 }
 
 int plat_octeontx_get_mcc_count(void)
