@@ -74,7 +74,12 @@ static struct qlm_mode_strmap_s qlmmode_strmap[] = {
 	{CAVM_CGX_LMAC_TYPES_E_FIFTYG_R, "50GAUI_2_C2M", "50g"},
 	{CAVM_CGX_LMAC_TYPES_E_FIFTYG_R, "50G_CR2", "50g"},
 	{CAVM_CGX_LMAC_TYPES_E_FIFTYG_R, "50G_KR2", "50g"},
-	{CAVM_CGX_LMAC_TYPES_E_FIFTYG_R, "50GAUI_4_C2C", "50g"},
+	/* 50GAUI_4_C2C uses a non-standard PCS:  50GBASE-R4, which is a scaled
+	 * up version of 40GBASE-R4.  T9x was not designed to support
+	 * 50GBASE-R4, but T9x can be hacked to support it by making CGX use
+	 * LMAC_TYPES_E_FORTYG_R and setting GSER speed to 12.890 Gbd.
+	 */
+	{CAVM_CGX_LMAC_TYPES_E_FORTYG_R, "50GAUI_4_C2C", "50g"},
 	{CAVM_CGX_LMAC_TYPES_E_HUNDREDG_R, "80GAUI_4_C2C", "80gaui"},
 	{CAVM_CGX_LMAC_TYPES_E_HUNDREDG_R, "CAUI_4_C2C", "100g"},
 	{CAVM_CGX_LMAC_TYPES_E_HUNDREDG_R, "CAUI_4_C2M", "100g"},
@@ -981,6 +986,7 @@ static void octeontx2_lmac_num_touse(int mode_idx, int *cnt, int *touse)
 	case QLM_MODE_XLAUI_C2M:
 	case QLM_MODE_40G_CR4:
 	case QLM_MODE_40G_KR4:
+	case QLM_MODE_50GAUI_4_C2C:
 	case QLM_MODE_80GAUI_4_C2C:
 	case QLM_MODE_CAUI_4_C2C:
 	case QLM_MODE_CAUI_4_C2M:
@@ -1276,6 +1282,7 @@ static int octeontx2_fill_cgx_struct(int qlm, int lane, int mode_idx)
 		case QLM_MODE_40GAUI_2_C2C:
 		case QLM_MODE_50GAUI_2_C2C:
 		case QLM_MODE_50GAUI_2_C2M:
+		case QLM_MODE_50GAUI_4_C2C:
 		case QLM_MODE_80GAUI_4_C2C:
 		case QLM_MODE_CAUI_4_C2C:
 		case QLM_MODE_CAUI_4_C2M:

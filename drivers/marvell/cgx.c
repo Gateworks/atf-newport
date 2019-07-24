@@ -459,8 +459,12 @@ int cgx_get_lane_speed(int cgx_id, int lmac_id)
 		break;
 	case CAVM_CGX_LMAC_TYPES_E_FORTYG_R:
 	case CAVM_CGX_LMAC_TYPES_E_HUNDREDG_R:
-		/* Using 64b66b symbol encoding */
-		speed = (qlm_state.s.baud_mhz * 64 + 33) / 66;
+		if (lmac->mode_idx == QLM_MODE_50GAUI_4_C2C) {
+			speed = 12500;
+		} else {
+			/* Using 64b66b symbol encoding */
+			speed = (qlm_state.s.baud_mhz * 64 + 33) / 66;
+		}
 		lanes = 4;
 		break;
 	case CAVM_CGX_LMAC_TYPES_E_USXGMII:
@@ -832,8 +836,11 @@ static void cgx_set_fec(int cgx_id, int lmac_id, int req_fec)
 			}
 		}
 
-		if (lmac->mode_idx == QLM_MODE_25GAUI_2_C2C) {
-			/* Our proprietary 25GBASE-R2 has no FEC support */
+		if (lmac->mode_idx == QLM_MODE_25GAUI_2_C2C ||
+		    lmac->mode_idx == QLM_MODE_50GAUI_4_C2C) {
+			/* Our proprietary 25GBASE-R2 and 50GBASE-R4 do not
+			 * support FEC.
+			 */
 			val = CGX_FEC_NONE;
 		}
 	}
@@ -1807,11 +1814,13 @@ int cgx_xaui_set_link_up(int cgx_id, int lmac_id)
 		if (strncmp(plat_octeontx_bcfg->bcfg.board_model, "asim-", 5)) {
 		/* Not simulated on ASIM */
 			/* If RS-FEC is enabled, check the alignment status.
-			 * This does not apply to QLM_MODE_25GAUI_2_C2C's
-			 * proprietary PCS (25GBASE-R2) which does not support
+			 * This does not apply to QLM_MODE_25GAUI_2_C2C and
+			 * QLM_MODE_50GAUI_4_C2C becuase they use proprietary
+			 * PCS (25GBASE-R2 and 50GBASE-R4) which do not support
 			 * FEC.
 			 */
 			if (lmac->mode_idx != QLM_MODE_25GAUI_2_C2C &&
+			    lmac->mode_idx != QLM_MODE_50GAUI_4_C2C &&
 			    lmac->fec == CGX_FEC_RS) {
 				if (cgx_poll_for_csr(CAVM_CGXX_SPUX_RSFEC_STATUS(
 						cgx_id, lmac_id),
