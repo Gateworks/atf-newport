@@ -1145,6 +1145,23 @@ void phy_marvell_6141_config(int cgx_id, int lmac_id)
 		}
 		break;
 
+	case QLM_MODE_25GAUI_2_C2C:
+		host_mode = MYD_P25YN; /* 25GBASE-R2, no FEC, no AN */
+
+		switch (lmac_cfg->fec) {
+		case CGX_FEC_RS:
+			line_mode = MYD_P25LR;
+			break;
+		case CGX_FEC_BASE_R:
+			line_mode = MYD_P25LF;
+			break;
+		case CGX_FEC_NONE:
+		default:
+			line_mode = MYD_P25LN;
+			break;
+		}
+		break;
+
 	case QLM_MODE_50GAUI_2_C2C:
 		host_mode = MYD_P50MR; /* 50GBASE-R2, RS-FEC, no AN */
 
@@ -1177,8 +1194,24 @@ void phy_marvell_6141_config(int cgx_id, int lmac_id)
 	status = mydSetModeSelection(phy->priv, phy->addr, lane, host_mode,
 				     line_mode, mode_option,
 				     &result);
-	if (status == MYD_OK)
+	if (status == MYD_OK) {
+		if (host_mode == MYD_P25YN) {
+			/* Hack the 6141's P25YN mode to make its 25GBASE-R2 PCS
+			 * conform to the T9x's "implementation" of 25GBASE-R2
+			 * (which looks like a scaled down 50GBASE-R2 with CGX
+			 * LMAC type set to FIFTYG_R and GSER speed at
+			 * 12.89 Gbd).
+			 * The settings below came from the 6141 design team.
+			 */
+
+			/* fix alignment markers */
+			myd_write_mdio(phy->priv, phy->addr, 4, 0xF06C, 0xF000);
+
+			/* host-side sw reset */
+			myd_write_mdio(phy->priv, phy->addr,31, 0xF003, 0x0080);
+		}
 		return;
+	}
 
 	ERROR("%s: %d:%d mydSetModeSelection() failed, lane=%hu, result=%hu\n",
 	      __func__, cgx_id, lmac_id, lane, result);
