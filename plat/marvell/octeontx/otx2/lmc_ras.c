@@ -464,7 +464,6 @@ uint64_t ras_ccs_convert_lmc_to_pa_algorithm(
 static uint64_t ras_ccs_convert_lmc_to_pa(uint64_t _lmc_addr)
 {
 	int region;
-	uint64_t phys_addr;
 	uint64_t internal_lmc_addr;
 	int found_good_addr = 0;
 	uint64_t final_phys_addr = 0;
@@ -498,6 +497,7 @@ static uint64_t ras_ccs_convert_lmc_to_pa(uint64_t _lmc_addr)
 		if (attr.s.ns_en || attr.s.s_en) {
 			union cavm_ccs_adr_ctl adr_ctl;
 			union cavm_ccs_asc_regionx_offset offset;
+			uint64_t phys_addr;
 
 			debug_ras("ASC%d: Checking Conversion from LMC to PA\n",
 				  region);
@@ -519,10 +519,14 @@ static uint64_t ras_ccs_convert_lmc_to_pa(uint64_t _lmc_addr)
 			}
 			offset.u = CSR_READ(
 					CAVM_CCS_ASC_REGIONX_OFFSET(region));
-			final_phys_addr = phys_addr + (offset.s.offset << 17);
-			found_good_addr++;
+			phys_addr += (offset.s.offset << 17);
 			debug_ras("ASC%d: Found Phys Addr: 0x%016llx\n",
-				  region, final_phys_addr);
+				  region, phys_addr);
+			/* duplicate translations are OK */
+			if (found_good_addr && final_phys_addr == phys_addr)
+				continue;
+			found_good_addr++;
+			final_phys_addr = phys_addr;
 		}
 	}
 
