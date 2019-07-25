@@ -150,6 +150,9 @@ static const phy_compatible_type_t phy_compat_list[] = {
 #ifdef MARVELL_PHY_6141
 	{ "marvell,88x6141", PHY_MARVELL_6141},
 #endif /* MARVELL_PHY_6141 */
+#ifdef MARVELL_PHY_1548
+	{ "marvell,88e1548", PHY_MARVELL_88E1548},
+#endif
 	{ "marvell,88e1514", PHY_MARVELL_88E1514},
 	{ "marvell,88e1512", PHY_MARVELL_88E1514},
 	{ "vitesse,vsc8574", PHY_VITESSE_8574},

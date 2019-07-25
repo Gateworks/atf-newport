@@ -16,6 +16,7 @@
 #include <cgx_intf.h>
 #include <phy_mgmt.h>
 #include <smi.h>
+#include <libfdt.h>
 
 /* 5123 includes */
 #include "mcdApiTypes.h"
@@ -88,6 +89,11 @@ typedef struct {
 	} port[4];
 } phy_mxd_priv_t;
 
+/* Maps link speed bits to QLM link speed */
+static const enum cgx_link_speed mv_1g_link_speed[4] = {
+	CGX_LINK_10M, CGX_LINK_100M, CGX_LINK_1G, CGX_LINK_NONE,
+};
+
 phy_mcd_priv_t marvell_5123_priv;
 
 /* Allow multiple instances of PHY driver to run on different QLMs */
@@ -151,6 +157,18 @@ static MYD_STATUS myd_write_mdio(MYD_DEV_PTR pDev, MYD_U16 mdioPort,
 }
 #endif /* MARVELL_PHY_6141 */
 
+/* Set the register page number to use for Marvell clause 22 phys */
+static void marvell_set_22_page(phy_config_t *phy, int page)
+{
+	/* Do nothing if we're not switching pages */
+	if (page == phy->last_page)
+		return;
+
+	smi_write(phy->mdio_bus, phy->addr, -1, CLAUSE22,
+		  MII_MARVELL_22_PAGE_REG, page);
+	phy->last_page = page;
+}
+
 /* One time initialization for the PHY if required */
 void phy_marvell_1514_probe(int cgx_id, int lmac_id)
 {
@@ -171,7 +189,7 @@ void phy_marvell_1514_probe(int cgx_id, int lmac_id)
 					phy->addr, val);
 
 	/* EEE initialization */
-	smi_write(phy->mdio_bus, phy->addr, -1, CLAUSE22, 22, 0x00FF);
+	marvell_set_22_page(phy, 0xff);
 	smi_write(phy->mdio_bus, phy->addr, -1, CLAUSE22, 17, 0x214B);
 	smi_write(phy->mdio_bus, phy->addr, -1, CLAUSE22, 16, 0x2144);
 	smi_write(phy->mdio_bus, phy->addr, -1, CLAUSE22, 17, 0x0C28);
@@ -180,11 +198,11 @@ void phy_marvell_1514_probe(int cgx_id, int lmac_id)
 	smi_write(phy->mdio_bus, phy->addr, -1, CLAUSE22, 16, 0x214D);
 	smi_write(phy->mdio_bus, phy->addr, -1, CLAUSE22, 17, 0xCC0C);
 	smi_write(phy->mdio_bus, phy->addr, -1, CLAUSE22, 16, 0x2159);
-	smi_write(phy->mdio_bus, phy->addr, -1, CLAUSE22, 22, 0x0000);
+	marvell_set_22_page(phy, 0x00);
 
 	/* SGMII-to-Copper mode initialization */
 	/* Select page 18 */
-	smi_write(phy->mdio_bus, phy->addr, -1, CLAUSE22, 22, 0x0012);
+	marvell_set_22_page(phy, 18);
 
 	/* In reg 20, write MODE[2:0] = 0x1 (SGMII to Copper) */
 	val = smi_read(phy->mdio_bus, CLAUSE22, phy->addr, -1, 20);
@@ -199,7 +217,7 @@ void phy_marvell_1514_probe(int cgx_id, int lmac_id)
 	udelay(100);
 
 	/* Reset page selection */
-	smi_write(phy->mdio_bus, phy->addr, -1, CLAUSE22, 22, 0x0);
+	marvell_set_22_page(phy, 0);
 }
 
 /* To obtain link status for 88e1514 */
@@ -228,7 +246,7 @@ void phy_marvell_1514_get_link_status(int cgx_id, int lmac_id,
 	 * reg 17 should be read once for the current link status
 	 */
 	status = smi_read(mdio, CLAUSE22, addr, -1, MII_88E1514_STATUS_REG);
-	debug_phy_driver("%s: status 0x%x\n", __func__, status);
+	debug_phy_driver("%s: 88E1514 status 0x%x\n", __func__, status);
 	if (!(status & (1 << 10)))	/* Check bit 10 for real time status */
 		return;			/* Link is down, return link down */
 
@@ -238,32 +256,222 @@ void phy_marvell_1514_get_link_status(int cgx_id, int lmac_id,
 	 * AN is enabled or AN is disabled
 	 */
 	if (status & (1 << 11)) {
-		/* Bit 14:15 for speed
-		 * 11 = Reserved
-		 * 10 = 1000 Mbps
-		 * 01 = 100 Mbps
-		 * 00 = 10 Mbps
-		 */
-		switch ((status >> 14) & 0x3) {
-		case 0:
-			link->s.speed = CGX_LINK_10M;
-			break;
-		case 1:
-			link->s.speed = CGX_LINK_100M;
-			break;
-		case 2:
-			link->s.speed = CGX_LINK_1G;
-			break;
-		default:
-			link->s.speed = CGX_LINK_NONE;
+		link->s.speed = mv_1g_link_speed[(status >> 14) & 0x3];
+		if (link->s.speed == CGX_LINK_NONE)
 			return;
-		}
+
 		link->s.link_up = 1;
 		/* Bit 13 for duplex */
 		link->s.full_duplex = ((status >> 13) & 1);
 	}
-
 }
+
+#ifdef MARVELL_PHY_1548
+void phy_marvell_1548_probe(int cgx_id, int lmac_id)
+{
+	phy_config_t *phy;
+	int mdio, addr;
+	int val;
+
+	phy = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id].phy_config;
+	mdio = phy->mdio_bus;
+	addr = phy->addr;
+
+	debug_phy_driver("%s: %d:%d\n", __func__, mdio, addr);
+
+	/* Make sure we're on page 0 (though 1 works too) */
+	marvell_set_22_page(phy, 0);
+	val = smi_read(mdio, CLAUSE22, addr, -1, MII_PHY_ID1_REG);
+	NOTICE("%s: bus %d addr 0x%x PHY ID1 0x%x\n",
+	       __func__, mdio, addr, val);
+
+	val = smi_read(mdio, CLAUSE22, addr, -1, MII_PHY_ID2_REG);
+	NOTICE("%s: bus %d addr 0x%x PHY ID2 0x%x\n",
+	       __func__, mdio, addr, val);
+
+	/* Find out what our mode and preferences are */
+	marvell_set_22_page(phy, 18);
+	val = smi_read(mdio, CLAUSE22, addr, -1, MII_88E1548_GENERAL_CONTROL_1);
+
+	phy->marvell_88e1548_mode = val & 0x0007;
+	phy->marvell_88e1548_media_pref = (val >> 4) & 0x0003;
+
+	/* Set last copper based on the mode. */
+	switch (phy->marvell_88e1548_mode) {
+	case PHY_MEDIA_QSGMII_TO_1000BASE_X:
+	case PHY_MEDIA_QSGMII_TO_100BASE_FX:
+		/* These modes are only fiber */
+		phy->last_copper = 0;
+		break;
+	case PHY_MEDIA_QSGMII_TO_AUTO_COPPER_SGMII:
+	case PHY_MEDIA_QSGMII_TO_AUTO_COPPER_1000BASE_X:
+		/* These modes support both copper and fiber */
+		switch (phy->marvell_88e1548_media_pref) {
+		case PHY_PREFERENCE_FIRST_MEDIA:
+		case PHY_PREFERENCE_COPPER:
+			phy->last_copper = 1;
+			break;
+		default:
+			phy->last_copper = 0;
+			break;
+		}
+	default:
+		/* All other modes are copper only */
+		phy->last_copper = 1;
+		break;
+	}
+	marvell_set_22_page(phy, phy->last_copper ? 0 : 1);
+}
+
+/*
+ * Get the phy link status for the Marvell 1548 phy
+ */
+void phy_marvell_1548_get_fiber_link_status(phy_config_t *phy,
+					    link_state_t *link)
+{
+	int addr = phy->addr;
+	int mdio = phy->mdio_bus;
+	int status;
+
+	if ((mdio == -1) || (addr == -1)) {
+		ERROR("%s: mdio bus/addr not valid\n", __func__);
+		return;
+	}
+	debug_phy_driver("%s: mdio_bus %d phy_addr %#x\n", __func__, mdio, addr);
+
+	link->u64 = 0;
+
+	/* The fiber link status is a little different than the copper link
+	 * status since there is no need to check for autonegotiation
+	 * completing, unlike the 88E1514.
+	 */
+	/* Use 1.17 for current current status */
+	marvell_set_22_page(phy, 1);
+	status = smi_read(mdio, CLAUSE22, addr, -1, MII_88E1514_STATUS_REG);
+	if (!(status & (1 << 10)))	/* Check link */
+		return;
+
+	link->s.speed = mv_1g_link_speed[(status >> 14) & 0x3];
+	if (link->s.speed == CGX_LINK_NONE)
+		return;
+
+	link->s.full_duplex = 1;
+	link->s.link_up = 1;
+}
+
+/* To obtain link status for 88e1548 */
+void phy_marvell_1548_get_link_status(int cgx_id, int lmac_id,
+				      link_state_t *link)
+{
+	phy_config_t *phy;
+	int is_auto = 0;
+	int mdio, addr;
+
+	phy = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id].phy_config;
+	addr = phy->addr;
+	mdio = phy->mdio_bus;
+
+	if ((mdio == -1) || (addr == -1)) {
+		ERROR("%s: mdio bus/addr not valid\n", __func__);
+		return;
+	}
+	debug_phy_driver("%s: mdio_bus %d, phy_addr 0x%x\n", __func__,
+			 mdio, addr);
+
+	switch (phy->marvell_88e1548_mode) {
+	/* Some modes force the link type */
+	case PHY_MEDIA_QSGMII_TO_COPPER:
+	case PHY_MEDIA_SGMII_TO_COPPER:
+	case PHY_MEDIA_QSGMII_TO_SGMII:
+	case PHY_MEDIA_SGMII_TO_QSGMII:
+		/* Must be copper */
+		phy->last_copper = 1;
+		break;
+	case PHY_MEDIA_QSGMII_TO_1000BASE_X:
+	case PHY_MEDIA_QSGMII_TO_100BASE_FX:
+		/* Must be fiber */
+		phy->last_copper = 0;
+		break;
+	case PHY_MEDIA_QSGMII_TO_AUTO_COPPER_SGMII:
+	case PHY_MEDIA_QSGMII_TO_AUTO_COPPER_1000BASE_X:
+		/* Can be copper or fiber */
+		is_auto = 1;
+		break;
+	default:
+		ERROR("%s: Unknown 88e1548 media mode %#x\n",
+		      __func__, phy->marvell_88e1548_mode);
+		return;
+	}
+
+	/* The 88E1548 copper link status is the same as the 88E1514 however
+	 * fiber links can ignore speed and duplex resolved bit as long as
+	 * the link is up.  We keep track of the last link up port and
+	 * continue to poll that port (as an optimization) rather than
+	 * both ports. If the link is still up, we're good.
+	 */
+	if (phy->last_copper) {
+		marvell_set_22_page(phy, 0);
+		phy_marvell_1514_get_link_status(cgx_id, lmac_id, link);
+	} else {
+		phy_marvell_1548_get_fiber_link_status(phy, link);
+	}
+
+	if (link->s.link_up)
+		return;
+
+	/* The 88E1548 can automatically switch between copper and fiber
+	 * so if it is in one of these ports and the link is down, check
+	 * the link on the other port.  The last_copper field indicates
+	 * if we expect to see link up with copper or fiber.  If the link
+	 * is down and the interface is in auto mode, then check the other
+	 * interface type.
+	 */
+	if (is_auto) {
+		if (phy->last_copper) {
+			/* Check fiber if copper is down */
+			phy_marvell_1548_get_fiber_link_status(phy, link);
+		} else {
+			/* Check copper if fiber is down */
+			marvell_set_22_page(phy, 0);
+			phy_marvell_1514_get_link_status(cgx_id, lmac_id, link);
+		}
+		if (link->s.link_up) {
+			/* Link is up, so we switch the last interface type */
+			phy->last_copper = !phy->last_copper;
+		} else {
+			/* Both links are down.  Set to start with the
+			 * preferred type.
+			 */
+			switch (phy->marvell_88e1548_media_pref) {
+			case PHY_PREFERENCE_COPPER:
+				phy->last_copper = 1;
+				break;
+			case PHY_PREFERENCE_FIBER:
+				phy->last_copper = 0;
+				break;
+			default:
+				/* No preference, leave as-is */
+				break;
+			}
+		}
+	}
+}
+
+void phy_marvell_1548_set_an(int cgx_id, int lmac_id)
+{
+	debug_phy_driver("%s: %d:%d\n", __func__, cgx_id, lmac_id);
+}
+
+void phy_marvell_1548_reset(int cgx_id, int lmac_id)
+{
+	debug_phy_driver("%s: %d:%d\n", __func__, cgx_id, lmac_id);
+}
+
+void phy_marvell_1548_shutdown(int cgx_id, int lmac_id)
+{
+	debug_phy_driver("%s: %d:%d\n", __func__, cgx_id, lmac_id);
+}
+#endif
 
 /* One time initialization for the PHY if required */
 void phy_marvell_5123_probe(int cgx_id, int lmac_id)
@@ -602,7 +810,7 @@ void phy_marvell_5113_probe(int cgx_id, int lmac_id)
 	MXD_STATUS status;
 	phy_config_t *phy;
 	cgx_lmac_config_t *lmac;
-	
+
 	phy = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id].phy_config;
 	debug_phy_driver("%s: %d:%d addr 0x%x\n", __func__, cgx_id,
 						lmac_id, phy->addr);
@@ -1317,6 +1525,18 @@ phy_drv_t marvell_drv[] = {
 		.shutdown		= phy_generic_shutdown,
 	},
 #endif /* MARVELL_PHY_6141 */
+#ifdef MARVELL_PHY_1548
+	{
+		.drv_name		= "MARVELL-88E1548",
+		.drv_type		= PHY_MARVELL_88E1548,
+		.flags			= 0,
+		.probe			= phy_marvell_1548_probe,
+		.config			= phy_generic_config,
+		.reset			= phy_marvell_1548_reset,
+		.get_link_status	= phy_marvell_1548_get_link_status,
+		.shutdown		= phy_marvell_1548_shutdown,
+	}
+#endif
 };
 
 phy_drv_t *phy_marvell_drv_lookup(int type)

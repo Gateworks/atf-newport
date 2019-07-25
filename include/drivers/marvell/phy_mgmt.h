@@ -34,7 +34,11 @@
 #define MII_STATUS_REG			1
 #define MII_PHY_ID1_REG			2
 #define MII_PHY_ID2_REG			3
+#define MII_AUTONEG_ADV_REG		4
 #define MII_88E1514_STATUS_REG		17
+#define MII_88E1548_STATUS_REG		17
+#define MII_88E1548_GENERAL_CONTROL_1	20	/* page 18 */
+#define MII_MARVELL_22_PAGE_REG		22	/* Clause 22 page register */
 
 /* PHY Identifies for various PHYs supported */
 #define PHY_VSC8574_ID1			0x0007
@@ -52,6 +56,7 @@ typedef enum phy_mod_type {
 /* PHY types */
 typedef enum phy_type {
 	PHY_NONE = 0,
+	PHY_MARVELL_88E1548,
 	PHY_MARVELL_5123,
 	PHY_MARVELL_5113,
 	PHY_MARVELL_6141,
@@ -76,6 +81,25 @@ typedef enum phy_vsc8574_media_mode {
 	PHY_MEDIA_1000BX,
 	PHY_MEDIA_100FX
 } phy_vsc8574_media_mode_t;
+
+#ifdef MARVELL_PHY_1548
+typedef enum phy_88e1548_media_mode {
+	PHY_MEDIA_QSGMII_TO_COPPER = 0,
+	PHY_MEDIA_SGMII_TO_COPPER,
+	PHY_MEDIA_QSGMII_TO_1000BASE_X,
+	PHY_MEDIA_QSGMII_TO_100BASE_FX,
+	PHY_MEDIA_QSGMII_TO_SGMII,
+	PHY_MEDIA_SGMII_TO_QSGMII,
+	PHY_MEDIA_QSGMII_TO_AUTO_COPPER_SGMII,
+	PHY_MEDIA_QSGMII_TO_AUTO_COPPER_1000BASE_X,
+} phy_88e1548_media_mode_t;
+
+typedef enum phy_88e1548_media_preference {
+	PHY_PREFERENCE_FIRST_MEDIA = 0,
+	PHY_PREFERENCE_COPPER,
+	PHY_PREFERENCE_FIBER
+} phy_88e1548_media_preference_t;
+#endif
 
 typedef struct phy_compat {
 	char compatible[64];	/* compatible string */
@@ -107,6 +131,12 @@ typedef struct phy_config {
 	phy_drv_t *drv; /* struct for PHY driver operations */
 	void *priv;
 	gpio_info_t mux_info; /* Details of switch details if MDIO is muxed */
+	int last_page;	/* Last page selected for Marvell 88E15xx Clause 22 */
+#ifdef MARVELL_PHY_1548
+	phy_88e1548_media_mode_t marvell_88e1548_mode;
+	phy_88e1548_media_preference_t marvell_88e1548_media_pref;
+	int last_copper; /* True if last link up was copper, used for polling */
+#endif
 } phy_config_t;
 
 /* APIs */

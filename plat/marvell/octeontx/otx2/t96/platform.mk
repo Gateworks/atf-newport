@@ -90,3 +90,7 @@ ifdef MARVELL_PHY_6141
     PLAT_INCLUDES     += -Ilib/libphy/marvell_88x6141/include
     BL31_LIBS         += lib/libphy/libphy_88x6141.a
 endif
+MARVELL_PHY_1548 := 1
+ifdef MARVELL_PHY_1548
+    TF_CFLAGS_aarch64 += -DMARVELL_PHY_1548
+endif
