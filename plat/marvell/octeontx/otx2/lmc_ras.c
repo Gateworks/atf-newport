@@ -23,6 +23,7 @@
 #include <uuid.h>
 #include <platform.h>
 #include <lmc_ras.h>
+#include <timers.h>
 
 #ifdef DEBUG_ATF_RAS
 # define debug_ras printf
@@ -93,6 +94,12 @@ ecc_syndrome_to_bytebit[256] = {
 
 int64_t __ras_dram_ecc_single_bit_errors[RAS_MAX_MEM_CHAINS];
 int64_t __ras_dram_ecc_double_bit_errors[RAS_MAX_MEM_CHAINS];
+
+#define EDAC_POLLED	/* do not rely on IRQs */
+#ifdef EDAC_POLLED
+static int edac_timer = -1; /* periodic poll */
+#endif
+static int edac_alive; /* protect against EDAC_POLLED early polling */
 
 /**
  * Atomically adds a signed value to a 64 bit (aligned) memory location.
@@ -906,20 +913,18 @@ static void check_cn9xxx_mdc(void)
 static uint64_t tx2_mdc_isr(uint32_t id, uint32_t flags, void *cookie)
 {
 	union cavm_mdc_ecc_status stat;
-	static union cavm_mdc_ecc_status was;
 	uint64_t mdc_int = CSR_READ(CAVM_MDC_INT_W1C);
 
 	if (!mdc_int)
 		return 0;
 
 	stat.u = CSR_READ(CAVM_MDC_ECC_STATUS);
-	if (stat.u != was.u) {
-		ERROR("%s: ecc_status: %llx r: %x c: %x h:%x n: %x db:%d+%d sb%d+%d\n",
+	if (stat.u && edac_alive) {
+		INFO("%s: ecc_status: %llx r: %x c: %x h:%x n: %x db:%d+%d sb%d+%d\n",
 		      __func__, stat.u, stat.s.row, stat.s.chain_id,
 		      stat.s.hub_id, stat.s.node_id,
 		      stat.s.dbe_plus, stat.s.dbe,
 		      stat.s.sbe_plus, stat.s.sbe);
-		was = stat;
 		check_cn9xxx_mdc();
 	}
 	CSR_WRITE(CAVM_MDC_INT_W1C, mdc_int);
@@ -932,22 +937,29 @@ static uint64_t tx2_mcc_isr(uint32_t id, uint32_t flags, void *cookie)
 	union cavm_mccx_const mcc_const;
 	int mcc, lmcoe;
 
-	INFO("%s(0x%x, 0x%x, %p)\n", __func__, id, flags, cookie);
 	for (mcc = 0; mcc < NUM_MCC; mcc++) {
 		mcc_const.u = CSR_READ(CAVM_MCCX_CONST(mcc));
 		for (lmcoe = 0; lmcoe < mcc_const.s.lmcs ; lmcoe++) {
 			lmcoe_ras_int.u = CSR_READ(CAVM_MCCX_LMCOEX_RAS_INT(mcc,
 									lmcoe));
 			if (lmcoe_ras_int.u)
-				ERROR("%s(0x%x, 0x%x, %p) lmcoe_ras_int: 0x%llx\n",
+				INFO("%s(0x%x, 0x%x, %p) lmcoe_ras_int: 0x%llx\n",
 				      __func__, id, flags, cookie,
 				      lmcoe_ras_int.u);
 		}
 	}
-	INFO("%s: Checking for errors\n", __func__);
 	ras_check_ecc_errors_cn9xxx();
 	return 0;
 }
+
+#ifdef EDAC_POLLED
+static int edac_poll(int hd)
+{
+	/* one call sufficient, it doesn't inspect args ... */
+	tx2_mcc_isr(0, 0, NULL);
+	return 0;
+}
+#endif
 
 static int ras_init_mcc(int mcc)
 {
@@ -1043,6 +1055,18 @@ static int ras_init_mccs(void)
 
 	CSR_WRITE(CAVM_MDC_INT_W1C, 1ULL);
 	CSR_WRITE(CAVM_MDC_INT_ENA_W1S, 1ULL);
+
+#ifdef EDAC_POLLED
+	/* until all IRQs serviced correctly, use 1Hz poll */
+	if (edac_timer < 0)
+		edac_timer = timer_create(TM_PERIODIC, 1000, edac_poll);
+	if (edac_timer >= 0)
+		timer_start(edac_timer);
+	else
+		ERROR("edac_timer error %d\n", edac_timer);
+#endif
+
+	edac_alive = 1;
 
 	return 0;
 }
