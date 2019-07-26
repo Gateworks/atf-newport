@@ -24,6 +24,7 @@
 #include <platform.h>
 #include <lmc_ras.h>
 #include <timers.h>
+#include <delay_timer.h>
 
 #ifdef DEBUG_ATF_RAS
 # define debug_ras printf
@@ -674,6 +675,33 @@ static int ras_print_syndrome(char *str, int len, uint8_t syn,
 	return 0;
 }
 
+/*
+ * Sketch a fatal-error handler
+ * platfoms may override
+ * this should move to pm_ops
+ */
+#pragma weak handle_fatal_ecc_by_reboot
+int handle_fatal_ecc_by_reboot = 1;
+
+#pragma weak handle_fatal
+void handle_fatal(void)
+{
+	extern void __dead2 octeontx_scp_sys_reboot(void);
+
+	if (handle_fatal_ecc_by_reboot) {
+		/*
+		 * System integrity has been compromised,
+		 * but pausing to allow UART to drain details to console.
+		 * Until we can be sure the ATF secure area is undamaged
+		 * this should ideally be a NoWayOut watchdog start
+		 * rather than an active delay ...
+		 */
+		printf("Fatal ERROR: rebooting\n");
+		mdelay(1000);
+		octeontx_scp_sys_reboot();
+	}
+}
+
 static void ras_check_double_bit02(int mcc, int lmcoe,
 				union cavm_mccx_lmcoex_ras_err00status *status,
 				union cavm_mccx_lmcoex_ras_err00addr *erraddr,
@@ -728,6 +756,7 @@ static int ras_check_ecc_errors(int lmc)
 	union cavm_mccx_lmcoex_ras_err00misc0 misc0;
 	union cavm_mccx_lmcoex_ras_int_ena_w1s ras_int_ena;
 	int report_err;
+	int fatal = 0;
 
 	status.u = 0;
 	erraddr.u = 0;
@@ -761,6 +790,7 @@ static int ras_check_ecc_errors(int lmc)
 		err_type = "double";
 		ras_atomic_add64_nosync(&__ras_dram_ecc_double_bit_errors[lmc],
 					1);
+		fatal++;
 	} else if (ras_int.s.err01 || ras_int.s.err00) {
 		/* check for single bit errors
 		 * else check only when no double bit errs
@@ -879,13 +909,17 @@ static int ras_check_ecc_errors(int lmc)
 	/* print extra info for "normal" errors if enabled */
 	ras_print_extra_ecc_errors_cn9xxx_lmc(lmc, erraddr, status);
 #endif /* PRINT_EXTRA_ECC_ERRORS_CN9XXX */
-	return 0;
+	return fatal;
 }
 
 static void ras_check_ecc_errors_cn9xxx(void)
 {
+	int fatal = 0;
+
 	for (int lmc = 0; lmc < 3; lmc++)
-		ras_check_ecc_errors(lmc);
+		fatal += ras_check_ecc_errors(lmc);
+	if (fatal)
+		handle_fatal();
 }
 
 static void check_cn9xxx_mdc(void)
