@@ -112,7 +112,7 @@
 #define BPHY_PSM_AERR_IRQ_BASE		(BPHY_PSM_DERR_IRQ_BASE + BPHY_PSM_DERR_IRQS)
 #define BPHY_PSM_AERR_IRQ(irq)		((irq) + BPHY_PSM_AERR_IRQ_BASE)
 
-/* range 0x4A - 0x4D */
+/* range 0x4A - 0x4C */
 #define BPHY_PSM_MTO_IRQS		0x3
 #define BPHY_PSM_MTO_IRQ_BASE		(BPHY_PSM_AERR_IRQ_BASE + BPHY_PSM_AERR_IRQS)
 #define BPHY_PSM_MTO_IRQ(irq)		((irq) + BPHY_PSM_MTO_IRQ_BASE)
@@ -120,5 +120,9 @@
 #define END_OF_BPHY_IRQS		(BPHY_PSM_MTO_IRQ_BASE + BPHY_PSM_MTO_IRQS)
 /* End of BPHY PSM interrupts */
 
+/* Default SPI to be used by per-core CWD GTI interrupt (range 0x4d - 0x52 )*/
+#define GTI_CWD_SPI_IRQS		0x6
+#define GTI_CWD_SPI_IRQ_BASE	(END_OF_BPHY_IRQS)
+#define GTI_CWD_SPI_IRQ(irq)	((irq) + GTI_CWD_SPI_IRQ_BASE)
 
 #endif /* __PLATFORM_IRQS_DEF_H__ */

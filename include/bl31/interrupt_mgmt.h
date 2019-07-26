@@ -23,7 +23,7 @@
 #define INTR_ROUTING_MODE_ANY		1
 
 /* Define a Max interrupt sources per type */
-#define MAX_INTRS			32
+#define MAX_INTRS			64
 
 /*
  * Constant passed to the interrupt handler in the 'id' field when the

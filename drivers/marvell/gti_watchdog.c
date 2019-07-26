@@ -267,7 +267,8 @@ int gti_wdog_remove_handler(void)
 	int retval = 1;
 
 	if ((!IS_OCTEONTX_PN(read_midr(), T83PARTNUM)) &&
-		(!IS_OCTEONTX_PN(read_midr(), T96PARTNUM)))
+		(!IS_OCTEONTX_PN(read_midr(), T96PARTNUM)) &&
+		(!IS_OCTEONTX_PN(read_midr(), F95PARTNUM)))
 		return 0;
 
 	gti_watchdog_disable();
@@ -280,7 +281,8 @@ int gti_wdog_install_handler(uint64_t core)
 	int retval = 1;
 
 	if ((!IS_OCTEONTX_PN(read_midr(), T83PARTNUM)) &&
-		(!IS_OCTEONTX_PN(read_midr(), T96PARTNUM)))
+		(!IS_OCTEONTX_PN(read_midr(), T96PARTNUM)) &&
+		(!IS_OCTEONTX_PN(read_midr(), F95PARTNUM)))
 		return 0;
 
 	debug_gti_watchdog("Watchdog: core = %lld, mpidr = 0x%llx\n",
@@ -296,7 +298,8 @@ int gti_wdog_start(uint64_t kernel_wdog_callback, uint64_t watchdog_timeout_ms,
 			 uint64_t cores)
 {
 	if ((!IS_OCTEONTX_PN(read_midr(), T83PARTNUM)) &&
-		(!IS_OCTEONTX_PN(read_midr(), T96PARTNUM)))
+		(!IS_OCTEONTX_PN(read_midr(), T96PARTNUM)) &&
+		(!IS_OCTEONTX_PN(read_midr(), F95PARTNUM)))
 		return 0;
 
 	debug_gti_watchdog("timeout_ms = %lld, ",
@@ -314,7 +317,8 @@ int gti_wdog_start(uint64_t kernel_wdog_callback, uint64_t watchdog_timeout_ms,
 int gti_wdog_restore_wdog_ctxt(void)
 {
 	if ((!IS_OCTEONTX_PN(read_midr(), T83PARTNUM)) &&
-		(!IS_OCTEONTX_PN(read_midr(), T96PARTNUM)))
+		(!IS_OCTEONTX_PN(read_midr(), T96PARTNUM)) &&
+		(!IS_OCTEONTX_PN(read_midr(), F95PARTNUM)))
 		return 0;
 
 	restore_elx_context_and_return();
