@@ -318,7 +318,7 @@ static inline void cn96xx_enable_func(struct ecam_device *dev)
 	cavm_ecamx_domx_rslx_permit_t rsl_permit;
 
 	/* This is workaround for errata ECAM-36251 */
-	if(IS_OCTEONTX_PASS(read_midr(), T96PARTNUM, 1, 0)) {
+	if(IS_OCTEONTX_VAR(read_midr(), T96PARTNUM, 1)) {
 		debug_plat_ecam("enable_func E%d:DOM%d:F%d; not done because of errata ECAM-36251\n",
 						dev->ecam, dev->domain, dev->func);
 		return;
@@ -341,7 +341,7 @@ static inline void cn96xx_disable_func(struct ecam_device *dev)
 	cavm_ecamx_domx_rslx_permit_t rsl_permit;
 
 	/* This is workaround for errata ECAM-36251 */
-	if(IS_OCTEONTX_PASS(read_midr(), T96PARTNUM, 1, 0)) {
+	if(IS_OCTEONTX_VAR(read_midr(), T96PARTNUM, 1)) {
 		debug_plat_ecam("disable_func E%d:DOM%d:F%d; not done because of errata ECAM-36251\n",
 						dev->ecam, dev->domain, dev->func);
 		return;

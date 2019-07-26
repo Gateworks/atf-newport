@@ -416,8 +416,7 @@ static int msix_enable()
 
 		/* This is workaround for errata RVU-36163 */
 		if (IS_OCTEONTX_VAR(read_midr(), T96PARTNUM, 1) ||
-		    IS_OCTEONTX_VAR(read_midr(), F95PARTNUM, 1) ||
-		    IS_OCTEONTX_PASS(read_midr(), T96PARTNUM, 2, 0)) {
+		    IS_OCTEONTX_VAR(read_midr(), F95PARTNUM, 1)) {
 			/* If pf_msix_offset needs alignment */
 			if (msix_offset & RVU_36163_ALIGNMENT_MASK) {
 				msix_offset += RVU_36163_OFFSET_ALIGNMENT;
@@ -435,8 +434,7 @@ static int msix_enable()
 
 			/* This is workaround for errata RVU-36163 */
 			if (IS_OCTEONTX_VAR(read_midr(), T96PARTNUM, 1) ||
-			    IS_OCTEONTX_VAR(read_midr(), F95PARTNUM, 1) ||
-			    IS_OCTEONTX_PASS(read_midr(), T96PARTNUM, 2, 0)) {
+			    IS_OCTEONTX_VAR(read_midr(), F95PARTNUM, 1)) {
 				/* If vf_msix_offset needs alignment */
 				if (msix_offset & RVU_36163_ALIGNMENT_MASK) {
 					msix_offset +=
@@ -683,7 +681,6 @@ void octeontx_rvu_init()
 
 	/* This is workaround for errata RVU-35948 */
 	if (IS_OCTEONTX_VAR(read_midr(), T96PARTNUM, 1) ||
-	    IS_OCTEONTX_PASS(read_midr(), T96PARTNUM, 2, 0) ||
 	    IS_OCTEONTX_PASS(read_midr(), F95PARTNUM, 1, 0))
 		rvu_errata_35948();
 
