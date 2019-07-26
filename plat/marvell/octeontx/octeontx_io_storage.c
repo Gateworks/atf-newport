@@ -372,7 +372,8 @@ int plat_try_next_boot_source(void)
 
 	if (IS_OCTEONTX_PN(midr, T96PARTNUM) ||
 		IS_OCTEONTX_PN(midr, F95PARTNUM) ||
-		IS_OCTEONTX_PN(midr, LOKIPARTNUM)) {
+		IS_OCTEONTX_PN(midr, LOKIPARTNUM) ||
+		IS_OCTEONTX_PN(midr, T98PARTNUM)) {
 
 		switch (plat_octeontx_bcfg->bcfg.boot_dev.boot_type) {
 		case OCTEONTX_BOOT_SPI:

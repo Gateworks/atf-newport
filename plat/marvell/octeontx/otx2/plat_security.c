@@ -112,7 +112,8 @@ void octeontx_security_setup(void)
 
 	if (IS_OCTEONTX_PN(midr, T96PARTNUM)
 	    || IS_OCTEONTX_VAR(midr, F95PARTNUM, 1)
-	    || IS_OCTEONTX_PASS(midr, LOKIPARTNUM, 1, 0))
+	    || IS_OCTEONTX_PASS(midr, LOKIPARTNUM, 1, 0)
+	    || IS_OCTEONTX_PASS(midr, T98PARTNUM, 1, 0))
 		disable_poison();
 
 	/*
