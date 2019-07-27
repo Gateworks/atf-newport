@@ -1363,14 +1363,12 @@ int cgx_sgmii_check_link(int cgx_id, int lmac_id)
 		return 0;
 
 	/* Check if AN is complete for SGMII only */
-	if (lmac->mode == CAVM_CGX_LMAC_TYPES_E_SGMII) {
-		if (lmac->autoneg_dis)
-			return 0; /* Auto Neg disabled */
-
-	if (cgx_poll_for_csr(CAVM_CGXX_GMP_PCS_MRX_STATUS(
-		cgx_id, lmac_id), CGX_GMP_PCS_AN_CPT_MASK, 1, -1)) {
-		debug_cgx("%s: %d:%d SGMII AN not complete 0x%llx\n",
-			__func__, cgx_id, lmac_id,
+	if ((lmac->mode == CAVM_CGX_LMAC_TYPES_E_SGMII) &&
+			(!lmac->autoneg_dis)) {
+		if (cgx_poll_for_csr(CAVM_CGXX_GMP_PCS_MRX_STATUS(
+			cgx_id, lmac_id), CGX_GMP_PCS_AN_CPT_MASK, 1, -1)) {
+			debug_cgx("%s: %d:%d SGMII AN not complete 0x%llx\n",
+				__func__, cgx_id, lmac_id,
 			CSR_READ(CAVM_CGXX_GMP_PCS_MRX_STATUS(
 					cgx_id, lmac_id)));
 			/* Reset AN */
@@ -1382,17 +1380,17 @@ int cgx_sgmii_check_link(int cgx_id, int lmac_id)
 				return -1;
 		}
 	}
-
 	if (cgx_poll_for_csr(CAVM_CGXX_GMP_PCS_MRX_STATUS(
 		cgx_id, lmac_id), CGX_GMP_PCS_LNK_ST_MASK, 1, -1)) {
 		debug_cgx("%s: %d:%d SGMII/QSGMII Link is not up 0x%llx\n",
-				__func__, cgx_id, lmac_id,
-				CSR_READ(CAVM_CGXX_GMP_PCS_MRX_STATUS(
+			__func__, cgx_id, lmac_id,
+		CSR_READ(CAVM_CGXX_GMP_PCS_MRX_STATUS(
 				cgx_id, lmac_id)));
 		/* Reset AN */
-		CAVM_MODIFY_CGX_CSR(cavm_cgxx_gmp_pcs_mrx_control_t,
-			CAVM_CGXX_GMP_PCS_MRX_CONTROL(cgx_id, lmac_id),
-			rst_an, 1);
+		if (!lmac->autoneg_dis)
+			CAVM_MODIFY_CGX_CSR(cavm_cgxx_gmp_pcs_mrx_control_t,
+				CAVM_CGXX_GMP_PCS_MRX_CONTROL(cgx_id, lmac_id),
+				rst_an, 1);
 		cgx_set_error_type(cgx_id, lmac_id, CGX_ERR_PCS_LINK_FAIL);
 		return -1;
 	}

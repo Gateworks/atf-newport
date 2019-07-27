@@ -77,6 +77,20 @@ int phy_get_link_status(int cgx_id, int lmac_id,
 		}
 	}
 
+	/* In case of SGMII/QSGMII/1000 BASE-X, with PHY not present,
+	 * (even loopback module) return the link as UP based on
+	 * MRX_STATUS with default speed as 1G
+	 */
+	if ((lmac->mode == CAVM_CGX_LMAC_TYPES_E_SGMII) ||
+		(lmac->mode == CAVM_CGX_LMAC_TYPES_E_QSGMII)) {
+		if (cgx_sgmii_check_link(cgx_id, lmac_id) != -1) {
+			link->s.link_up = 1;
+			link->s.full_duplex = 1;
+			link->s.speed = CGX_LINK_1G;
+		}
+		return 0;
+	}
+
 	if ((lmac->mode == CAVM_CGX_LMAC_TYPES_E_XAUI) ||
 		(lmac->mode == CAVM_CGX_LMAC_TYPES_E_RXAUI) ||
 		(lmac->mode == CAVM_CGX_LMAC_TYPES_E_TENG_R) ||

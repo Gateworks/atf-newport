@@ -1288,8 +1288,10 @@ static int octeontx2_fill_cgx_struct(int qlm, int lane, int mode_idx)
 		cgx->lmacs_used += lused;
 
 		/* In case of 1000 BASE-X, update the property of LMAC */
-		if (mode_idx == QLM_MODE_1G_X)
+		if (mode_idx == QLM_MODE_1G_X) {
 			lmac->sgmii_1000x_mode = 1;
+			lmac->autoneg_dis = 1;
+		}
 	}
 
 	cgx->enable = 1;
@@ -1373,6 +1375,13 @@ static int octeontx2_cgx_get_phy_info(const void *fdt, int lmac_offset, int cgx_
 			phy->mux_switch = 1;
 		}
 		lmac->phy_present = 1;
+
+		/* Vitesse PHY has AN by default. Even for 1000 BASE-X
+		 * mode, enable AN in this case
+		 */
+		if ((lmac->mode_idx == QLM_MODE_1G_X) &&
+				(phy->type == PHY_VITESSE_8574))
+			lmac->autoneg_dis = 0;
 	}
 	lmac->mdio_bus_dbg = -1;
 	return 0;

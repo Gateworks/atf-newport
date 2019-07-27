@@ -869,6 +869,11 @@ void phy_marvell_5113_config(int cgx_id, int lmac_id)
 	/* Disable AN and enable AN only for appropriate modes */
 	marvell_5113_priv[cgx_id].port[port].use_an = 0;
 	switch (lmac_cfg->mode_idx) {
+	case QLM_MODE_1G_X:
+		host_mode = line_mode = MXD_P1X;
+		mode_str = "1G_X";
+		marvell_5113_priv[cgx_id].port[port].use_an = 0;
+	break;
 	case QLM_MODE_XLAUI:
 	case QLM_MODE_XLAUI_C2M:
 		if (lmac_cfg->fec == CGX_FEC_BASE_R) {
@@ -1222,6 +1227,9 @@ void phy_marvell_5113_get_link_status(int cgx_id, int lmac_id,
 		link->s.full_duplex = 1;
 
 		switch (speed) {
+		case MXD_1GB:
+			link->s.speed = CGX_LINK_1G;
+		break;
 		case MXD_10GB:
 			link->s.speed = CGX_LINK_10G;
 		break;
