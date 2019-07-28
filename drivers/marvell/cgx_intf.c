@@ -1125,6 +1125,60 @@ void cgx_set_error_type(int cgx_id, int lmac_id, uint64_t type)
 	lmac_ctx->s.error_type = type;
 }
 
+void cgx_set_supported_link_modes(int cgx_id, int lmac_id)
+{
+	cgx_lmac_config_t *lmac_cfg;
+
+	lmac_cfg = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
+
+	if (!(lmac_cfg->phy_present) && !(lmac_cfg->sfp_slot)) {
+		/* If PHY not present and not SFP/QSFP slot, return
+		 * default all modes as supported (loopback module
+		 * or internally connected)
+		 */
+		lmac_cfg->supported_link_modes = CGX_ALL_SUPPORTED_MODES;
+	}
+
+	if (lmac_cfg->phy_present)
+		lmac_cfg->supported_link_modes =
+			lmac_cfg->phy_config.supported_link_modes;
+
+	/* If PHY is not present, check whether it is SFP/QSFP slot */
+	if (lmac_cfg->sfp_slot) {
+		if (lmac_cfg->sfp_info.is_sfp) {
+			lmac_cfg->supported_link_modes |=
+				((1 << CGX_MODE_1000_BASEX_BIT) |
+				(1 << CGX_MODE_10G_C2C_BIT) |
+				(1 << CGX_MODE_10G_C2M_BIT) |
+				(1 << CGX_MODE_10G_KR_BIT) |
+				(1 << CGX_MODE_20G_C2C_BIT));
+		} else if (lmac_cfg->sfp_info.is_qsfp) {
+			lmac_cfg->supported_link_modes = CGX_ALL_SUPPORTED_MODES;
+		}
+	}
+	/* FIXME : Restrict speed change only for modes that are
+	 * supported now.Also need to obtain transceiver cap to
+	 * determine the supported modes
+	 */
+	if ((lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_SGMII) ||
+		(lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_TENG_R) ||
+		(lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_TWENTYFIVEG_R))
+		lmac_cfg->supported_link_modes =
+			((1 << CGX_MODE_1000_BASEX_BIT) |
+			(1 << CGX_MODE_10G_C2C_BIT) |
+			(1 << CGX_MODE_10G_C2M_BIT) |
+			(1 << CGX_MODE_10G_KR_BIT) |
+			(1 << CGX_MODE_20G_C2C_BIT));
+	else
+		lmac_cfg->supported_link_modes = 0;
+
+	debug_cgx_intf("%s: %d:%d link_modes 0x%llx\n",
+			__func__, cgx_id, lmac_id,
+			lmac_cfg->supported_link_modes);
+
+	/* Update the supported link modes to SH FW data mem */
+	sh_fwdata_set_supported_link_modes(cgx_id, lmac_id);
+}
 
 /* This function should be called once during boot time */
 void cgx_fw_intf_init(void)
@@ -1162,8 +1216,12 @@ void cgx_fw_intf_init(void)
 					 * the PHY. For ex: to set in
 					 * particular mode
 					 */
-					if (lmac_cfg->phy_config.init)
+					if (lmac_cfg->phy_config.init) {
 						phy_config(cgx, lmac);
+						phy_set_supported_link_modes(
+							cgx, lmac);
+					}
+					cgx_set_supported_link_modes(cgx, lmac);
 				}
 			}
 		} else {

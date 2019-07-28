@@ -65,6 +65,7 @@ typedef struct cgx_lmac_config {
 	uint8_t local_mac_address[6];
 	phy_config_t phy_config;
 	sfp_slot_info_t sfp_info;
+	uint64_t supported_link_modes;	/* cgx_mode_t enum */
 } cgx_lmac_config_t;
 
 typedef struct cgx_config {

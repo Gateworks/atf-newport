@@ -81,5 +81,6 @@ void sh_fwdata_update_eeprom_data(int cgx_id, int lmac_id, uint16_t sff_id);
 void sh_fwdata_clear_eeprom_data(int cgx_id, int lmac_id, uint16_t sff_id);
 void sh_fwdata_update_phy_mod_type(int cgx_id, int lmac_id);
 void sh_fwdata_update_phy_can_change_mod_type(int cgx_id, int lmac_id);
+void sh_fwdata_set_supported_link_modes(int cgx_id, int lmac_id);
 
 #endif

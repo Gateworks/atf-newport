@@ -190,6 +190,19 @@ int phy_set_mod_type(int cgx_id, int lmac_id, phy_mod_type mod_type)
 	return 0;
 }
 
+void phy_set_supported_link_modes(int cgx_id, int lmac_id)
+{
+	phy_config_t *phy;
+
+	debug_nw_mgmt("%s: %d:%d\n", __func__, cgx_id, lmac_id);
+
+	phy = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id].phy_config;
+
+	/* Call PHY specific callback here */
+	if (phy->valid)
+		phy->drv->set_supported_modes(cgx_id, lmac_id);
+}
+
 void phy_lookup(int cgx_id, int lmac_id, int type)
 {
 	cgx_lmac_config_t *lmac;

@@ -116,6 +116,8 @@ typedef struct phy_drv {
 	void (*set_an)(int cgx_id, int lmac_id); /* Function pointer to configure AN */
 	void (*get_link_status)(int cgx_id, int lmac_id, link_state_t *link); /* Function pointer to get link status of PHY */
 	void (*shutdown)(int cgx_id, int lmac_id); /* Function pointer to shutdown PHY */
+	/* Function pointer to obtain supported modes */
+	void (*set_supported_modes)(int cgx_id, int lmac_id);
 } phy_drv_t;
 
 typedef struct phy_config {
@@ -132,6 +134,7 @@ typedef struct phy_config {
 	void *priv;
 	gpio_info_t mux_info; /* Details of switch details if MDIO is muxed */
 	int last_page;	/* Last page selected for Marvell 88E15xx Clause 22 */
+	uint64_t supported_link_modes;
 #ifdef MARVELL_PHY_1548
 	phy_88e1548_media_mode_t marvell_88e1548_mode;
 	phy_88e1548_media_preference_t marvell_88e1548_media_pref;
@@ -149,6 +152,7 @@ int phy_mdio_read(phy_config_t *phy, int mode, int devad, int reg);
 void phy_mdio_write(phy_config_t *phy, int mode, int devad, int reg, int val);
 void phy_set_switch(phy_config_t *phy, int enable);
 int phy_set_mod_type(int cgx_id, int lmac_id, phy_mod_type mod_type);
+void phy_set_supported_link_modes(int cgx_id, int lmac_id);
 
 /* Generic PHY driver APIs to be exposed to other PHY drivers */
 void phy_generic_probe(int cgx_id, int lmac_id);

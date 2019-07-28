@@ -266,6 +266,18 @@ void phy_marvell_1514_get_link_status(int cgx_id, int lmac_id,
 	}
 }
 
+void phy_marvell_1514_supported_modes(int cgx_id, int lmac_id)
+{
+	phy_config_t *phy;
+
+	debug_phy_driver("%s: %d:%d\n", __func__, cgx_id, lmac_id);
+
+	phy = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id].phy_config;
+
+	phy->supported_link_modes = ((1 << CGX_MODE_SGMII_BIT) |
+			(1 << CGX_MODE_1000_BASEX_BIT));
+}
+
 #ifdef MARVELL_PHY_1548
 void phy_marvell_1548_probe(int cgx_id, int lmac_id)
 {
@@ -455,6 +467,19 @@ void phy_marvell_1548_get_link_status(int cgx_id, int lmac_id,
 			}
 		}
 	}
+}
+
+void phy_marvell_1548_supported_modes(int cgx_id, int lmac_id)
+{
+	phy_config_t *phy;
+
+	debug_phy_driver("%s: %d:%d\n", __func__, cgx_id, lmac_id);
+
+	phy = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id].phy_config;
+
+	phy->supported_link_modes = ((1 << CGX_MODE_SGMII_BIT) |
+			(1 << CGX_MODE_1000_BASEX_BIT) |
+			(1 << CGX_MODE_QSGMII_BIT));
 }
 
 void phy_marvell_1548_set_an(int cgx_id, int lmac_id)
@@ -802,6 +827,31 @@ void phy_marvell_5123_get_link_status(int cgx_id, int lmac_id,
 		break;
 		}
 	}
+}
+
+void phy_marvell_5123_supported_modes(int cgx_id, int lmac_id)
+{
+	phy_config_t *phy;
+
+	debug_phy_driver("%s: %d:%d\n", __func__, cgx_id, lmac_id);
+
+	phy = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id].phy_config;
+
+	phy->supported_link_modes = ((1 << CGX_MODE_SGMII_BIT) |
+			(1 << CGX_MODE_1000_BASEX_BIT) |
+			(1 << CGX_MODE_10G_C2C_BIT) |
+			(1 << CGX_MODE_10G_C2M_BIT) |
+			(1 << CGX_MODE_20G_C2C_BIT) |
+			(1 << CGX_MODE_25G_C2C_BIT) |
+			(1 << CGX_MODE_25G_C2M_BIT) |
+			(1 << CGX_MODE_40G_C2C_BIT) |
+			(1 << CGX_MODE_40G_C2M_BIT) |
+			(1 << CGX_MODE_50G_C2C_BIT) |
+			(1 << CGX_MODE_50G_C2M_BIT) |
+			(1 << CGX_MODE_40GAUI_C2C_BIT) |
+			(1 << CGX_MODE_80GAUI_C2C_BIT) |
+			(1 << CGX_MODE_100G_C2C_BIT) |
+			(1 << CGX_MODE_100G_C2M_BIT));
 }
 
 /* One time initialization for the PHY if required */
@@ -1263,6 +1313,29 @@ void phy_marvell_5113_get_link_status(int cgx_id, int lmac_id,
 	}
 }
 
+void phy_marvell_5113_supported_modes(int cgx_id, int lmac_id)
+{
+	phy_config_t *phy;
+
+	debug_phy_driver("%s: %d:%d\n", __func__, cgx_id, lmac_id);
+
+	phy = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id].phy_config;
+
+	/* FIXME : 25/50/100 + CR/KR not tested with 5113 PHY.
+	 * Don't add to the supported modes yet
+	 * will be added with C0
+	 */
+	phy->supported_link_modes = ((1 << CGX_MODE_SGMII_BIT) |
+			(1 << CGX_MODE_1000_BASEX_BIT) |
+			(1 << CGX_MODE_10G_C2C_BIT) |
+			(1 << CGX_MODE_10G_C2M_BIT) |
+			(1 << CGX_MODE_20G_C2C_BIT) |
+			(1 << CGX_MODE_40G_C2C_BIT) |
+			(1 << CGX_MODE_40G_C2M_BIT) |
+			(1 << CGX_MODE_40GAUI_C2C_BIT) |
+			(1 << CGX_MODE_80GAUI_C2C_BIT));
+}
+
 #ifdef MARVELL_PHY_6141
 void phy_marvell_6141_probe(int cgx_id, int lmac_id)
 {
@@ -1483,6 +1556,30 @@ void phy_marvell_6141_get_link_status(int cgx_id, int lmac_id,
 	ERROR("%s: %d:%d mydCheckPCSLinkStatus() failed for lane %hu.\n",
 	      __func__, cgx_id, lmac_id, lane);
 }
+
+void phy_marvell_6141_supported_modes(int cgx_id, int lmac_id)
+{
+	phy_config_t *phy;
+
+	debug_phy_driver("%s: %d:%d\n", __func__, cgx_id, lmac_id);
+
+	phy = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id].phy_config;
+
+	/* FIXME for the modes. Need inputs from LIO3 team */
+	phy->supported_link_modes = ((1 << CGX_MODE_SGMII_BIT) |
+			(1 << CGX_MODE_1000_BASEX_BIT) |
+			(1 << CGX_MODE_10G_C2C_BIT) |
+			(1 << CGX_MODE_10G_C2M_BIT) |
+			(1 << CGX_MODE_10G_KR_BIT) |
+			(1 << CGX_MODE_25G_C2C_BIT) |
+			(1 << CGX_MODE_25G_C2M_BIT) |
+			(1 << CGX_MODE_25G_2_C2C_BIT) |
+			(1 << CGX_MODE_50G_C2C_BIT) |
+			(1 << CGX_MODE_50G_C2M_BIT) |
+			(1 << CGX_MODE_50G_4_C2C_BIT) |
+			(1 << CGX_MODE_80GAUI_C2C_BIT));
+}
+
 #endif /* MARVELL_PHY_6141 */
 
 /* Table of Marvell PHY driver list */
@@ -1496,6 +1593,7 @@ phy_drv_t marvell_drv[] = {
 		.set_an			= phy_generic_set_an,
 		.reset			= phy_generic_reset,
 		.get_link_status	= phy_marvell_1514_get_link_status,
+		.set_supported_modes	= phy_marvell_1514_supported_modes,
 		.shutdown		= phy_generic_shutdown,
 	},
 	{
@@ -1507,6 +1605,7 @@ phy_drv_t marvell_drv[] = {
 		.set_an			= phy_marvell_5123_set_an,
 		.reset			= phy_generic_reset,
 		.get_link_status	= phy_marvell_5123_get_link_status,
+		.set_supported_modes	= phy_marvell_5123_supported_modes,
 		.shutdown		= phy_generic_shutdown,
 	},
 	{
@@ -1518,6 +1617,7 @@ phy_drv_t marvell_drv[] = {
 		.set_an			= phy_marvell_5113_set_an,
 		.reset			= phy_generic_reset,
 		.get_link_status	= phy_marvell_5113_get_link_status,
+		.set_supported_modes	= phy_marvell_5113_supported_modes,
 		.shutdown		= phy_generic_shutdown,
 	},
 
@@ -1530,6 +1630,7 @@ phy_drv_t marvell_drv[] = {
 		.config			= phy_marvell_6141_config,
 		.reset			= phy_generic_reset,
 		.get_link_status	= phy_marvell_6141_get_link_status,
+		.set_supported_modes	= phy_marvell_6141_supported_modes,
 		.shutdown		= phy_generic_shutdown,
 	},
 #endif /* MARVELL_PHY_6141 */
@@ -1542,6 +1643,7 @@ phy_drv_t marvell_drv[] = {
 		.config			= phy_generic_config,
 		.reset			= phy_marvell_1548_reset,
 		.get_link_status	= phy_marvell_1548_get_link_status,
+		.set_supported_modes	= phy_marvell_1548_supported_modes,
 		.shutdown		= phy_marvell_1548_shutdown,
 	}
 #endif

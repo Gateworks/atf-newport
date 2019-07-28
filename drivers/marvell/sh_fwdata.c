@@ -163,6 +163,20 @@ int sh_fwdata_get_supported_fec(int cgx_id, int lmac_id)
 	return fwdata->supported_fec;
 }
 
+void sh_fwdata_set_supported_link_modes(int cgx_id, int lmac_id)
+{
+	struct cgx_lmac_fwdata_s *fwdata;
+	cgx_lmac_config_t *lmac_cfg;
+
+	lmac_cfg = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
+	fwdata = get_sh_cgx_fwdata_ptr(cgx_id, lmac_id);
+
+	fwdata->supported_link_modes = lmac_cfg->supported_link_modes;
+	debug_shmem_mgmt("%s: %d:%d supported link mode 0x%llx\n", __func__,
+			cgx_id, lmac_id,
+			fwdata->supported_link_modes);
+}
+
 void sh_fwdata_update_phy_mod_type(int cgx_id, int lmac_id)
 {
 	struct cgx_lmac_fwdata_s *fwdata;
