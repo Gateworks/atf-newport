@@ -38,6 +38,7 @@ PLAT_BL_COMMON_SOURCES	+=	plat/marvell/octeontx/otx2/t96/plat_t96_setup.c		\
 				drivers/marvell/gsern/gsern_internal.c		\
 				drivers/marvell/qlm.c		\
 				plat/marvell/octeontx/otx2/plat_setup.c		\
+				plat/marvell/octeontx/otx2/plat_svc_mdio.c	\
 
 BL1_SOURCES		+=	plat/marvell/octeontx/otx2/aarch64/plat_octeontx_common.S	\
 				plat/marvell/octeontx/otx2/aarch64/plat_helpers.S	\

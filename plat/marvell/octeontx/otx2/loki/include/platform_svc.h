@@ -34,8 +34,24 @@
 #define PLAT_OCTEONTX_INSTALL_BPHY_PSM_ERRINT	0xc2000803
 #define PLAT_OCTEONTX_REMOVE_BPHY_PSM_ERRINT	0xc2000804
 
+/*
+ * X1 - CGX_LMAC_ID [0:3 LMAC, 4:7 CGX], X2 - CLAUSE MODE, X3 - phy address,
+ * X4 - device address, X5 - register address
+ */
+#define PLAT_OCTEONTX_MDIO_DBG_READ		0xc2000d01
+
+/*
+ * X1 - CGX_LMAC_ID [0:3 LMAC, 4:7 CGX], X2 - CLAUSE MODE, X3 - phy address,
+ * X4 - device address, X5 - register address, X6 - register value
+ */
+#define PLAT_OCTEONTX_MDIO_DBG_WRITE		0xc2000d02
+
 /* Number of platform specific SMCs */
-#define PLAT_OCTEONTX_NUM_SMC_CALLS	6
+#define PLAT_OCTEONTX_NUM_SMC_CALLS	8
 int octeontx2_configure_ooo(int x1);
 
+int mdio_debug_read(int cgxlmac_id, int mode, int phyaddr, int devad,
+		    int regnum);
+int mdio_debug_write(int cgxlmac_id, int mode, int phyaddr, int devad,
+		     int regnum, uint16_t value);
 #endif /* __PLATFORM_SVC_H__ */

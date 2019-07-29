@@ -984,12 +984,14 @@ static int cgx_poll_for_link_cb(int timer)
 	int valid = 0;
 	cgx_lmac_config_t *lmac_cfg;
 	cgx_lmac_context_t *lmac_ctx;
+	phy_config_t *phy_cfg;
 	link_state_t link;
 
 	for (int cgx = 0; cgx < plat_octeontx_scfg->cgx_count; cgx++) {
 		for (int lmac = 0; lmac < MAX_LMAC_PER_CGX; lmac++) {
 			lmac_cfg = &plat_octeontx_bcfg->cgx_cfg[cgx].lmac_cfg[lmac];
 			lmac_ctx = &lmac_context[cgx][lmac];
+			phy_cfg = &lmac_cfg->phy_config;
 
 			link.u64 = 0;
 			valid = 0;
@@ -1001,7 +1003,8 @@ static int cgx_poll_for_link_cb(int timer)
 							lmac);
 
 				/* Get the link status */
-				phy_get_link_status(cgx, lmac, &link);
+				if (lmac_cfg->mdio_bus_dbg != phy_cfg->mdio_bus)
+					phy_get_link_status(cgx, lmac, &link);
 
 				/* If the prev link change is not handled
 				 * wait until it is handled as the reqs

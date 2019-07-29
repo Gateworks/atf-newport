@@ -13,6 +13,7 @@
 #include <stdint.h>
 #include <uuid.h>
 #include <rvu.h>
+#include <plat_board_cfg.h>
 #include <plat_scmi.h>
 
 extern void *scmi_handle;
@@ -27,6 +28,8 @@ uintptr_t plat_octeontx_svc_smc_handler(uint32_t smc_fid,
 					u_register_t flags)
 {
 	uint64_t ret = 0;
+	const gp_regs_t *sregs = get_gpregs_ctx(handle);
+	u_register_t x5, x6;
 
 	switch (smc_fid) {
 	case PLAT_OCTEONTX_DISABLE_RVU_LFS:
@@ -47,6 +50,19 @@ uintptr_t plat_octeontx_svc_smc_handler(uint32_t smc_fid,
 	case PLAT_OCTEONTX_OOO_CONFIG:
 		INFO("SVC OOO CONFIG: x1 = 0x%lx\n", x1);
 		ret = octeontx2_configure_ooo(x1);
+		SMC_RET1(handle, ret);
+		break;
+
+	case PLAT_OCTEONTX_MDIO_DBG_READ:
+		x5 = read_ctx_reg(sregs, CTX_GPREG_X5);
+		ret = mdio_debug_read(x1, x2, x3, x4, x5);
+		SMC_RET1(handle, ret);
+		break;
+
+	case PLAT_OCTEONTX_MDIO_DBG_WRITE:
+		x5 = read_ctx_reg(sregs, CTX_GPREG_X5);
+		x6 = read_ctx_reg(sregs, CTX_GPREG_X6);
+		ret = mdio_debug_write(x1, x2, x3, x4, x5, x6);
 		SMC_RET1(handle, ret);
 		break;
 

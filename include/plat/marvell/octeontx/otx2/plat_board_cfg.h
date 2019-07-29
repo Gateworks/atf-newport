@@ -57,6 +57,7 @@ typedef struct cgx_lmac_config {
 	int phy_mode;		/* MAC or PHY mode for SGMII */
 	int sgmii_1000x_mode;	/* SGMII or 1000x mode for SGMII */
 	int phy_present;
+	volatile int mdio_bus_dbg;
 	int sfp_slot;
 	int autoneg_dis;
 	int fec;

@@ -1356,6 +1356,7 @@ static int octeontx2_cgx_get_phy_info(const void *fdt, int lmac_offset, int cgx_
 		}
 		lmac->phy_present = 1;
 	}
+	lmac->mdio_bus_dbg = -1;
 	return 0;
 }
 
