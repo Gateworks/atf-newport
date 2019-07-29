@@ -33,7 +33,6 @@ uint64_t CAVM_PSM_MSIX_VECX_ADDR(unsigned long a)
 }
 
 static uint64_t msix_addr_save;
-static uint64_t msix_mcc_addr_save;
 
 int plat_octeontx_get_ecams_count(void)
 {
@@ -145,7 +144,7 @@ int plat_octeontx_get_rvu_count(void)
 
 int plat_octeontx_get_mcc_count(void)
 {
-	return MAX_MCC;
+	return 1;
 }
 
 /* Return number of lanes available for different QLMs. */

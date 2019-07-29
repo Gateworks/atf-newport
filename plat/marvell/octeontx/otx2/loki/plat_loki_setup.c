@@ -149,7 +149,7 @@ int plat_octeontx_get_rvu_count(void)
 
 int plat_octeontx_get_mcc_count(void)
 {
-	return MAX_MCC;
+	return 1;
 }
 
 /* Return number of lanes available for different QLMs. */
