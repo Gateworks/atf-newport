@@ -1112,6 +1112,9 @@ static int ras_init_mccs(void)
 int plat_dram_ras_init(void)
 {
 	INFO("%s\n", __func__);
+	if (is_asim())
+		return 0;
+
 	switch (MIDR_PARTNUM(read_midr())) {
 	case T96PARTNUM:
 	case F95PARTNUM:
