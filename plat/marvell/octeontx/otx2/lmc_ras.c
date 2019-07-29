@@ -1003,8 +1003,6 @@ static int ras_init_mcc(int mcc)
 {
 	uint64_t bar2 = CAVM_MCC_BAR_E_MCCX_PF_BAR4(mcc);
 	int irq;
-	union cavm_mccx_config *cfgp = (void *)CAVM_MCCX_CONFIG(mcc);
-	union cavm_mccx_config cfg;
 	union cavm_mccx_lmcoex_ras_int_ena_w1s int_ena;
 	union cavm_mccx_const mc;
 	int lmcoe;
@@ -1059,10 +1057,6 @@ static int ras_init_mcc(int mcc)
 	}
 
 	INFO("%s done\n", __func__);
-	cfg.u = octeontx_read64(cfgp);
-	cfg.s.dis_tadpsn = 0;
-	cfg.s.dis_tadecc = 0;
-	octeontx_write64(cfgp, cfg.u);
 
 	return 0;
 }
