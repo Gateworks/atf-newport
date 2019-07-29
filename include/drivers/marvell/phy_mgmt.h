@@ -135,6 +135,7 @@ typedef struct phy_config {
 	gpio_info_t mux_info; /* Details of switch details if MDIO is muxed */
 	int last_page;	/* Last page selected for Marvell 88E15xx Clause 22 */
 	uint64_t supported_link_modes;
+	int forceconfig;
 #ifdef MARVELL_PHY_1548
 	phy_88e1548_media_mode_t marvell_88e1548_mode;
 	phy_88e1548_media_preference_t marvell_88e1548_media_pref;

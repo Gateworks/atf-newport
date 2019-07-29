@@ -20,6 +20,7 @@
 #include <cgx.h>
 #include <plat_scfg.h>
 #include <sh_fwdata.h>
+#include <gsern/gsern_internal.h>
 
 #ifdef NT_FW_CONFIG
 #include <plat_npc_mcam_profile.h>
@@ -40,6 +41,22 @@ static int cgx_timers[MAX_CGX_TIMERS];
 
 static cgx_lmac_context_t
 		lmac_context[MAX_CGX][MAX_LMAC_PER_CGX];
+
+static const cgx_speed_mode_map speed_mode_map[] = {
+	{CGX_LINK_1G, CAVM_CGX_LMAC_TYPES_E_SGMII, 1, QLM_MODE_SGMII, CGX_FEC_NONE, 1250, (1 << CGX_MODE_SGMII_BIT)},
+	{CGX_LINK_10M, CAVM_CGX_LMAC_TYPES_E_SGMII, 1, QLM_MODE_SGMII, CGX_FEC_NONE, 1250, (1 << CGX_MODE_SGMII_BIT)},
+	{CGX_LINK_100M, CAVM_CGX_LMAC_TYPES_E_SGMII, 1, QLM_MODE_SGMII, CGX_FEC_NONE, 1250, (1 << CGX_MODE_SGMII_BIT)},
+	{CGX_LINK_1G, CAVM_CGX_LMAC_TYPES_E_SGMII, 0, QLM_MODE_1G_X, CGX_FEC_NONE, 1250, (1 << CGX_MODE_1000_BASEX_BIT)},
+	{CGX_LINK_1G, CAVM_CGX_LMAC_TYPES_E_QSGMII, 1, QLM_MODE_QSGMII, CGX_FEC_NONE, 1250, (1 << CGX_MODE_QSGMII_BIT)},
+	{CGX_LINK_10G, CAVM_CGX_LMAC_TYPES_E_TENG_R, 0, QLM_MODE_SFI, CGX_FEC_BASE_R, 10312, (1 << CGX_MODE_10G_C2M_BIT)},
+	{CGX_LINK_10G, CAVM_CGX_LMAC_TYPES_E_TENG_R, 0, QLM_MODE_XFI, CGX_FEC_BASE_R, 10312, (1 << CGX_MODE_10G_C2C_BIT)},
+	{CGX_LINK_10G, CAVM_CGX_LMAC_TYPES_E_TENG_R, 1, QLM_MODE_10G_KR, CGX_FEC_BASE_R, 10312, (1 << CGX_MODE_10G_KR_BIT)},
+	{CGX_LINK_20G, CAVM_CGX_LMAC_TYPES_E_TWENTYFIVEG_R, 0, QLM_MODE_20GAUI_C2C, (CGX_FEC_BASE_R | CGX_FEC_RS), 20625, (1 << CGX_MODE_20G_C2C_BIT)},
+	{CGX_LINK_25G, CAVM_CGX_LMAC_TYPES_E_TWENTYFIVEG_R, 0, QLM_MODE_25GAUI_C2M, (CGX_FEC_BASE_R | CGX_FEC_RS), 25781, (1 << CGX_MODE_25G_2_C2M_BIT)},
+	{CGX_LINK_25G, CAVM_CGX_LMAC_TYPES_E_TWENTYFIVEG_R, 0, QLM_MODE_25GAUI_C2C, (CGX_FEC_BASE_R | CGX_FEC_RS), 25781, (1 << CGX_MODE_25G_2_C2C_BIT)},
+	/* add new modes here */
+	{CGX_LINK_MAX, 0, 0, QLM_MODE_DISABLED, 0, CGX_FEC_NONE},
+};
 
 static int cgx_get_error_type(int cgx_id, int lmac_id)
 {
@@ -266,6 +283,13 @@ static int cgx_link_bringup(int cgx_id, int lmac_id)
 					cgx_id, lmac_id);
 		cgx_lmac_init_link(cgx_id, lmac_id);
 		lmac_ctx->s.init_link = 1;
+
+		/* If PHY re-config is set, change the OP mode */
+		if (lmac_cfg->phy_config.forceconfig) {
+			debug_cgx_intf("%s: %d:%d change the OP mode for PHY\n",
+				__func__, cgx_id, lmac_id);
+			phy_config(cgx_id, lmac_id);
+		}
 	}
 
 	/* Save the current FEC what is configured by the user */
@@ -543,6 +567,323 @@ static int cgx_link_bringdown(int cgx_id, int lmac_id)
 	lmac_ctx->s.init_link = 0;
 
 	return 0;
+}
+
+static int cgx_get_lmac_type_for_speed(int qlm_mode, int speed)
+{
+	int lmac_mode = 0;
+
+	for (int i = 0; i < ARRAY_SIZE(speed_mode_map); i++) {
+		if ((qlm_mode == speed_mode_map[i].qlm_mode) &&
+			(speed == speed_mode_map[i].speed)) {
+			lmac_mode = speed_mode_map[i].mode;
+			break;
+		}
+	}
+	debug_cgx_intf("%s: qlm_mode %d speed %d mode %d\n", __func__,
+			qlm_mode, speed, lmac_mode);
+	return lmac_mode;
+}
+
+static uint64_t cgx_get_mode_bitmask_for_speed(int qlm_mode)
+{
+	uint64_t link_mode = 0;
+
+	for (int i = 0; i < ARRAY_SIZE(speed_mode_map); i++) {
+		if (qlm_mode == speed_mode_map[i].qlm_mode) {
+			link_mode = speed_mode_map[i].mode_bitmask;
+			break;
+		}
+	}
+	debug_cgx_intf("%s: mode %d link_mode 0x%llx\n", __func__,
+			qlm_mode, link_mode);
+	return link_mode;
+}
+
+static int cgx_get_qlm_mode_for_speed(int req_speed, int req_an, int flags)
+{
+	int qlm_mode = 0;
+
+	for (int i = 0; i < ARRAY_SIZE(speed_mode_map); i++) {
+		/* FIXME: need to use additional private flags
+		 * to determine the QLM mode
+		 */
+		if ((req_speed == speed_mode_map[i].speed) &&
+			(req_an == speed_mode_map[i].an)) {
+			qlm_mode = speed_mode_map[i].qlm_mode;
+			break;
+		}
+	}
+	debug_cgx_intf("%s: req_speed %d req_an %d qlm_mode %d\n", __func__,
+			req_speed, req_an, qlm_mode);
+	return qlm_mode;
+}
+
+static int cgx_get_an_cap_for_qlm_mode(int qlm_mode)
+{
+	int an_cap = 0;
+
+	for (int i = 0; i < ARRAY_SIZE(speed_mode_map); i++) {
+		if (qlm_mode == speed_mode_map[i].qlm_mode) {
+			an_cap = speed_mode_map[i].an;
+			break;
+		}
+	}
+	debug_cgx_intf("%s: qlm_mode %d an_cap %d\n", __func__,
+					qlm_mode, an_cap);
+	return an_cap;
+}
+
+static int cgx_get_fec_for_speed(int qlm_mode)
+{
+	int fec = 0;
+
+	for (int i = 0; i < ARRAY_SIZE(speed_mode_map); i++) {
+		if (qlm_mode == speed_mode_map[i].qlm_mode) {
+			fec = speed_mode_map[i].fec_cap;
+			break;
+		}
+	}
+	debug_cgx_intf("%s: qlm_mode %d fec %d\n", __func__, qlm_mode, fec);
+
+	return fec;
+}
+
+static int qlm_get_baud_rate_for_mode(int qlm_mode)
+{
+	int baud_rate = 0;
+
+	for (int i = 0; i < ARRAY_SIZE(speed_mode_map); i++) {
+		if (qlm_mode == speed_mode_map[i].qlm_mode) {
+			baud_rate = speed_mode_map[i].baud_rate;
+			break;
+		}
+	}
+	debug_cgx_intf("%s: qlm_mode %d baud rate %d\n", __func__, qlm_mode,
+					baud_rate);
+
+	return baud_rate;
+}
+
+static int cgx_check_speed_change_allowed(int cgx_id, int lmac_id, int new_mode,
+						uint64_t mode_bitmask)
+{
+	int change = 0;
+	cgx_lmac_config_t *lmac_cfg;
+
+	static int cgx_valid_speed_mode[] = {
+					CAVM_CGX_LMAC_TYPES_E_SGMII,
+					CAVM_CGX_LMAC_TYPES_E_TENG_R,
+					CAVM_CGX_LMAC_TYPES_E_TWENTYFIVEG_R};
+
+
+	debug_cgx_intf("%s: %d:%d\n", __func__, cgx_id, lmac_id);
+	lmac_cfg = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
+
+	/* Check if mode is in the supported link modes */
+	if (!(mode_bitmask & lmac_cfg->supported_link_modes)) {
+		debug_cgx_intf("%s: bitmask 0x%llx link_mode 0x%llx\n",
+			__func__, mode_bitmask,
+			lmac_cfg->supported_link_modes);
+		return 0;
+	}
+	/* FIXME: for now, allow only change speed change between
+	 * 1G, 10G, 20/25G
+	 */
+	for (int i = 0; i < ARRAY_SIZE(cgx_valid_speed_mode); i++) {
+		if (new_mode == cgx_valid_speed_mode[i]) {
+			change = 1;
+			break;
+		}
+	}
+
+	return change;
+}
+
+int cgx_set_link_mode(int cgx_id, int lmac_id, struct cgx_set_mode_args *args)
+{
+	/* FIXME */
+	cgx_set_error_type(cgx_id, lmac_id, 0);
+	return 0;
+}
+
+int cgx_handle_mode_change(int cgx_id, int lmac_id,
+				struct cgx_mode_change_args *args)
+{
+	int req_speed, valid, lmac_type, ret = 0;
+	cgx_lmac_config_t *lmac;
+	cgx_lmac_context_t *lmac_ctx;
+	int qlm_mode = 0, baud_mhz = 0, req_an = 0, flags = 0;
+	int req_duplex = 0;
+	int qlm = 0, lane = 0, an = 0, invalid_req = 0;
+	int an_updated = 0, an_cap = 0;
+	uint64_t mode_bitmask = 0;
+
+	lmac_ctx = &lmac_context[cgx_id][lmac_id];
+	lmac = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
+	req_speed = args->speed;
+	req_an = args->an;
+	flags = args->flags;
+	req_duplex = args->duplex;
+	an = !lmac->autoneg_dis;
+
+	debug_cgx_intf("%s: %d:%d speed %d req_speed %d req_an %d req_duplex %d\n",
+				__func__, cgx_id, lmac_id, lmac_ctx->s.speed,
+					req_speed, req_an, req_duplex);
+
+	if (req_speed == CGX_LINK_NONE) {
+		invalid_req = 1;
+		/* If speed change is not requested, check for
+		 * other parameters
+		 */
+		if ((req_an != 0) && (req_an != 1)) {
+			debug_cgx_intf("%s: %d:%d Invalid AN request\n",
+					 __func__, cgx_id, lmac_id);
+			invalid_req = 1;
+		}
+		if ((req_duplex != 0) && (req_duplex != 1)) {
+			debug_cgx_intf("%s: %d: %d Invalid duplex request\n",
+					 __func__, cgx_id, lmac_id);
+			invalid_req = 1;
+		}
+		if (invalid_req == 1) {
+			debug_cgx_intf("%s: %d: %d Invalid speed/AN request\n",
+					 __func__, cgx_id, lmac_id);
+			cgx_set_error_type(cgx_id, lmac_id,
+					CGX_ERR_SPEED_CHANGE_INVALID);
+			return -1;
+		}
+	}
+
+	debug_cgx_intf("%s: req_an %d an %d\n", __func__, req_an, an);
+	/* If AN change is requested, update the LMAC config structure */
+	if (req_an != an) {
+		lmac->autoneg_dis = !req_an;
+		an_updated = 1;
+	}
+
+	/* User is requesting for a different speed. Check if
+	 * it is valid to change to user requested speed
+	 */
+	if ((lmac_ctx->s.speed != req_speed) || (an_updated)) {
+		qlm_mode = cgx_get_qlm_mode_for_speed(req_speed, req_an, flags);
+
+		/* Check if AN disable/enable is allowed for speed */
+		debug_cgx_intf("%s: %d:%d an_updated %d an %d\n", __func__,
+				cgx_id, lmac_id, an_updated, !lmac->autoneg_dis);
+		an_cap = cgx_get_an_cap_for_qlm_mode(qlm_mode);
+		if (an_cap != !lmac->autoneg_dis) {
+			debug_cgx_intf("%s: %d: %d Invalid AN change request\n", __func__,
+				cgx_id, lmac_id);
+			cgx_set_error_type(cgx_id, lmac_id,
+					CGX_ERR_SPEED_CHANGE_INVALID);
+			ret = -1;
+		}
+
+		/* FIXME: mode_bitmask needs to be determined based on the
+		 * SET_LINK_MODE command previously sent by user (via private
+		 * flag options). From bitmask, determine QLM mode, LMAC type
+		 * and baud rate. Need to fix this after adding support for
+		 * this command.
+		 */
+		mode_bitmask = cgx_get_mode_bitmask_for_speed(qlm_mode);
+		lmac_type = cgx_get_lmac_type_for_speed(qlm_mode, req_speed);
+		valid = cgx_check_speed_change_allowed(cgx_id, lmac_id,
+						lmac_type, mode_bitmask);
+		if (valid) {
+			/* Bring down the CGX link */
+			ret = cgx_link_bringdown(cgx_id, lmac_id);
+
+			baud_mhz = qlm_get_baud_rate_for_mode(qlm_mode);
+
+			/* Update the new mode info to board config structure
+			 */
+			lmac->mode_idx = qlm_mode;
+
+			/* Clear the attributes related to mode and set
+			 * the corresponding attributes for the new mode
+			 */
+			lmac->use_training = 0;
+			lmac->sgmii_1000x_mode = 0;
+
+			/* FIXME. this should not be updated manually, instead
+			 * pick up from the table based on link mode
+			 */
+			/* Update attributes for 1000 BASE-X */
+			if (lmac->mode_idx == QLM_MODE_1G_X) {
+				lmac->sgmii_1000x_mode = 1;
+				lmac->autoneg_dis = 1;
+			}
+			if ((lmac->mode_idx == QLM_MODE_SGMII) ||
+				(lmac->mode_idx == QLM_MODE_QSGMII)) {
+				lmac->autoneg_dis = 0;
+			}
+			/* For all KR modes, enable training. For now,
+			 * consider only 10G-KR. FIXME: should be based
+			 * on flags option in speed_mode_map array
+			 */
+			if (lmac->mode_idx == QLM_MODE_10G_KR) {
+				lmac->autoneg_dis = 0;
+				lmac->use_training = 1;
+			}
+
+			/* Check FEC capability and update FEC for mode.
+			 * If current LMAC's FEC doesn't match the mode's
+			 * capability, disable FEC
+			 */
+			if (!(lmac->fec & cgx_get_fec_for_speed(qlm_mode)))
+				lmac->fec = CGX_FEC_NONE;
+
+			lmac->mode = lmac_type;
+
+			/* For some boards, lanes are swizzled and the lane
+			 * info in LMAC config structure might not have the
+			 * swapped lane info and hence read it from lane_to_sds
+			 */
+			qlm = lmac->qlm;
+			lane = lmac->lane_to_sds & 0x3;
+			/* Special case for EBB9604 for DLM4/5. Lanes are
+			 * swizzled on EBB9604 and hence for DLM 4/5 case,
+			 * even the QLM is different
+			 */
+			if (!strncmp(plat_octeontx_bcfg->bcfg.board_model,
+					"ebb96", 5)) {
+				if (lmac->qlm == 4)
+					qlm = 5;
+				else if (lmac->qlm == 5)
+					qlm = 4;
+			}
+			debug_cgx_intf("%s: Re-configuring serdes for mode %d, baud rate %d, lmac type %d\n",
+						__func__, qlm_mode, baud_mhz,
+						lmac->mode);
+
+			/* Configure SerDes for new QLM mode */
+			qlm_set_mode_gsern(qlm, lane, qlm_mode, baud_mhz, 0);
+
+			/* Wait 5ms before bringing UP the CGX link */
+			mdelay(5);
+
+			if ((lmac->phy_present) && (lmac->phy_config.init))
+				lmac->phy_config.forceconfig = 1;
+
+			/* Bring UP the CGX link */
+			ret = cgx_link_bringup(cgx_id, lmac_id);
+
+			/* Clear any errors set during LINK bring up as the mode
+			 * is changed now successfully and link may come up
+			 * later. In this case, still return SUCCESS for MODE
+			 * change command
+			 */
+			cgx_set_error_type(cgx_id, lmac_id, 0);
+		} else {
+			debug_cgx_intf("%s: %d: %d Invalid speed change request\n", __func__,
+				cgx_id, lmac_id);
+			cgx_set_error_type(cgx_id, lmac_id,
+					CGX_ERR_SPEED_CHANGE_INVALID);
+			ret = -1;
+		}
+	}
+	return ret;
 }
 
 int cgx_set_fec_type(int cgx_id, int lmac_id, int req_fec)
@@ -832,6 +1173,22 @@ static int cgx_process_requests(int cgx_id, int lmac_id)
 						cgx_id, lmac_id, 0),
 						scratchx0.u);
 			break;
+			case CGX_CMD_SET_LINK_MODE:
+				/* Read the command arguments from SCRATCH(1) */
+				scratchx1.u = CSR_READ(CAVM_CGXX_CMRX_SCRATCHX(
+							cgx_id, lmac_id, 1));
+				ret = cgx_set_link_mode(cgx_id, lmac_id,
+						&scratchx1.s.mode_args);
+			break;
+#if defined(PLAT_t96)
+			case CGX_CMD_MODE_CHANGE:
+				/* Read the command arguments from SCRATCH(1) */
+				scratchx1.u = CSR_READ(CAVM_CGXX_CMRX_SCRATCHX(
+							cgx_id, lmac_id, 1));
+				ret = cgx_handle_mode_change(cgx_id, lmac_id,
+						&scratchx1.s.mode_change_args);
+			break;
+#endif
 			/* FIXME: add support for other commands */
 			default:
 				debug_cgx_intf("%s: %d:%d Invalid request %d\n",
@@ -866,7 +1223,8 @@ static int cgx_process_requests(int cgx_id, int lmac_id)
 	scratchx0.s.evt_sts.evt_type = CGX_EVT_CMD_RESP;
 	if ((request_id != CGX_CMD_LINK_BRING_UP) &&
 		(request_id != CGX_CMD_LINK_BRING_DOWN) &&
-		(request_id != CGX_CMD_SET_FEC)) {
+		(request_id != CGX_CMD_SET_FEC) &&
+		(request_id != CGX_CMD_MODE_CHANGE)) {
 		/* in case of LINK_UP/DOWN, error type is updated
 		 * as part of link status struct
 		 */

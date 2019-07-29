@@ -202,6 +202,18 @@ typedef struct cgx_lmac_flash_ctx {
 		uint64_t rsvd3:40;
 	} s;
 } cgx_lmac_flash_ctx_t;
+
+/* Mapping of speed and other parameters to MODE */
+typedef struct cgx_speed_mode_map_s {
+	int speed;	/* cgx_link_speed enum */
+	int mode;
+	int an;
+	int qlm_mode;
+	int fec_cap;
+	int baud_rate;
+	uint64_t mode_bitmask;
+} cgx_speed_mode_map;
+
 extern int spi_config(uint64_t spi_clk, uint32_t mode, int cpol, int cpha,
 		      int spi_con, int cs);
 extern int spi_nor_read(uint8_t *buf, int buf_size, uint32_t addr,

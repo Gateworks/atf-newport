@@ -40,7 +40,8 @@ enum cgx_error_type {
 	CGX_ERR_SET_FEC_INVALID,
 	CGX_ERR_SET_FEC_FAIL,
 	CGX_ERR_MODULE_INVALID,
-	CGX_ERR_MODULE_NOT_PRESENT,	/* = 27 */
+	CGX_ERR_MODULE_NOT_PRESENT,
+	CGX_ERR_SPEED_CHANGE_INVALID,	/* = 28 */
 	/* FIXME : add more error types when adding support for new modes */
 };
 
@@ -345,6 +346,17 @@ struct cgx_mtu_args {
 	uint64_t reserved2:40;
 };
 
+/* command argument to be passed for cmd ID - CGX_CMD_MODE_CHANGE */
+struct cgx_mode_change_args {
+	uint64_t reserved1:8;
+	uint64_t speed:4; /* cgx_link_speed enum */
+	uint64_t duplex:1; /* 0 - full duplex, 1 - half duplex */
+	uint64_t an:1;	/* 0 - disable AN, 1 - enable AN */
+	uint64_t port:8; /* device port */
+	uint64_t flags:8; /* private flags if required */
+	uint64_t reserved2:34;
+};
+
 /* command argument to be passed for cmd ID - CGX_CMD_LINK_CHANGE */
 struct cgx_link_change_args {		/* start from bit 8 */
 	uint64_t reserved1:8;
@@ -357,7 +369,7 @@ struct cgx_link_change_args {		/* start from bit 8 */
 /* command argument to be passed for cmd ID - CGX_CMD_SET_LINK_MODE */
 struct cgx_set_mode_args {
 	uint64_t reserved1:8;
-	uint64_t mode:56;
+	uint64_t mode:56; /* Bitmask of cgx_mode_t enum */
 };
 
 /* command argument to be passed for cmd ID - CGX_CMD_SET_FEC */
@@ -381,6 +393,7 @@ union cgx_cmd_s {
 	struct cgx_mtu_args mtu_size;
 	struct cgx_link_change_args lnk_args;	/* Input to CGX_CMD_LINK_CHANGE */
 	struct cgx_set_mode_args mode_args;
+	struct cgx_mode_change_args mode_change_args;
 	struct cgx_set_fec_args fec_args;
 	struct cgx_set_phy_mod_args phy_mod_args;
 	/* any other arg for command id * like : mtu, dmac filtering control */
