@@ -86,3 +86,6 @@ uefi27_a80x0
 uefi27_a80x0_efuse
 uefi27_a80x0_mcbin
 uefi27_a37xx
+uefi27_cn9130
+uefi27_cn9131
+uefi27_cn9132
