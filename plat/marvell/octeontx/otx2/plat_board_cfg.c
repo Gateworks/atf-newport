@@ -1657,10 +1657,17 @@ static void octeontx2_fill_cgx_network_lane_order(const void *fdt)
 	for (cgx = 0; cgx < MAX_CGX; cgx++) {
 		snprintf(prop, sizeof(prop), "NETWORK-LANE-ORDER.N0.CGX%d",
 				cgx);
-		order = octeontx2_fdtbdk_get_num(fdt, prop, 10);
-		if (order == -1)
-			order = CGX_DEFAULT_NETWORK_LANE_ORDER;
+		order = octeontx2_fdtbdk_get_num(fdt, prop, 16);
+		if (order == -1) {
+			/* Look for generic string */
+			snprintf(prop, sizeof(prop), "NETWORK-LANE-ORDER");
+			order = octeontx2_fdtbdk_get_num(fdt, prop, 16);
+			if (order == -1)
+				order = CGX_DEFAULT_NETWORK_LANE_ORDER;
+		}
 		plat_octeontx_bcfg->cgx_cfg[cgx].network_lane_order = order;
+		debug_dts("%s: cgx %d lane order 0x%x\n", __func__, cgx,
+			plat_octeontx_bcfg->cgx_cfg[cgx].network_lane_order);
 	}
 }
 
