@@ -262,6 +262,8 @@ static int cgx_link_bringup(int cgx_id, int lmac_id)
 	}
 
 	if (!lmac_ctx->s.init_link) {
+		debug_cgx_intf("%s: %d:%d initialize link\n", __func__,
+					cgx_id, lmac_id);
 		cgx_lmac_init_link(cgx_id, lmac_id);
 		lmac_ctx->s.init_link = 1;
 	}
@@ -1242,14 +1244,21 @@ void cgx_fw_intf_shutdown(void)
 			CSR_WRITE(CAVM_CGXX_CMRX_INT(cgx, lmac),
 					cmrx_int.u);
 		}
-		/* Now for each CGX, initialize the link for each LMAC
-		 * if the link was brought down
-		 */
 		for (int lmac = 0; lmac < MAX_LMAC_PER_CGX; lmac++) {
-
 			lmac_ctx = &lmac_context[cgx][lmac];
+			lmac_cfg = &plat_octeontx_bcfg->cgx_cfg[cgx]
+							.lmac_cfg[lmac];
+			/* Now for each CGX, initialize the link for
+			 * each LMAC if the link was brought down
+			 */
 			if (lmac_ctx->s.init_link)
 				cgx_lmac_init_link(cgx, lmac);
+			/* Set init_link = 1 for all enabled LMACs as
+			 * the link is already initialized but never
+			 * brought up/down
+			 */
+			if (lmac_cfg->lmac_enable)
+				lmac_ctx->s.init_link = 1;
 		}
 	}
 }
