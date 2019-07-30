@@ -50,6 +50,7 @@ typedef struct cgx_lmac_config {
 	int mode_idx;		/* helper field for the mode mapping */
 	int qlm;		/* from BDK DT */
 	int lane;		/* from BDK DT */
+	int rev_lane;		/* to handle boards that have lane swizzled */
 	/* NOTE: when this bit is set, it doesn't necessarily
 	 * mean the link is up until the user sends LINK UP command
 	 */

@@ -176,14 +176,15 @@ void plat_octeontx_print_board_variables(void)
 		debug_dts("CGX%d: lmac_count = %d\n", i, cgx->lmac_count);
 		for (j = 0; j < cgx->lmac_count; j++) {
 			lmac = &cgx->lmac_cfg[j];
-			debug_dts("CGX%d.LMAC%d: mode = %s:%d, qlm = %d, lane = %d, lane_to_sds=0x%x\n",
+			debug_dts("CGX%d.LMAC%d: mode = %s:%d, qlm = %d, lane = %d, lane_to_sds=0x%x, rev_lane = %d\n",
 					i,
 					j,
 					qlmmode_strmap[lmac->mode_idx].bdk_str,
 					lmac->mode,
 					lmac->qlm,
 					lmac->lane,
-					lmac->lane_to_sds);
+					lmac->lane_to_sds,
+					lmac->rev_lane);
 			debug_dts("\tnum_rvu_vfs=%d, num_msix_vec=%d, use_training=%d\n",
 					lmac->num_rvu_vfs,
 					lmac->num_msix_vec,
@@ -1201,6 +1202,23 @@ static int octeontx2_fill_cgx_struct(int qlm, int lane, int mode_idx)
 			}
 		} else
 			lmac->lane = lane + i;
+
+		/* Use NETWORK-LANE-ORDER to fill the lane info that are
+		 * reversed
+		 */
+		lmac->rev_lane = (plat_octeontx_bcfg->cgx_cfg[cgx_idx].network_lane_order >> (lmac->lane * 4)) & 3;
+
+		/* For spanning two DLMs, NETWORK-LANE-ORDER should be
+		 * interpreted as below. The first DLM is lane 0
+		 * and 1, the second is lane 2 and 3. For EBB9604,
+		 * the lanes are swizzled and for lane 0 of DLM5,
+		 * reversed lane should be lane 1 of DLM4 not lane 3
+		 * and same for DLM 4.
+		 */
+		if (!strncmp(plat_octeontx_bcfg->bcfg.board_model, "ebb96", 5)) {
+			if ((qlm == 4) || (qlm == 5))
+				lmac->rev_lane -= 2;
+		}
 		switch (mode) {
 		case CAVM_CGX_LMAC_TYPES_E_XAUI:
 		case CAVM_CGX_LMAC_TYPES_E_FORTYG_R:
