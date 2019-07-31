@@ -110,10 +110,10 @@ void octeontx_security_setup(void)
 
 	midr = read_midr();
 
-	if ((IS_OCTEONTX_PN(midr, T96PARTNUM)) ||
-		(IS_OCTEONTX_PN(midr, F95PARTNUM))) {
+	if (IS_OCTEONTX_PN(midr, T96PARTNUM)
+	    || IS_OCTEONTX_VAR(midr, F95PARTNUM, 1)
+	    || IS_OCTEONTX_PASS(midr, LOKIPARTNUM, 1, 0))
 		disable_poison();
-	}
 
 	/*
 	 * BDK has configured CCS ASC REGION 0. We will use the same lmc_mask and
