@@ -242,6 +242,12 @@ void plat_octeontx_cpu_setup(void)
 		set_bit(cvmctl_el1, 54);
 
 	/*
+	 * Disable v8.5 store barrier for better performance on all models.
+	 * cvmctl_el1[61] = DISABLE_STORE_BARRIER_FUNC
+	 */
+	set_bit(cvmctl_el1, 61);
+
+	/*
 	 * Set cvm_ctl_el1[5] to workaround debug state execution in
 	 * incorrect EL
 	 */
