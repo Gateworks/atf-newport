@@ -715,7 +715,7 @@ int cgx_handle_mode_change(int cgx_id, int lmac_id,
 	cgx_lmac_context_t *lmac_ctx;
 	int qlm_mode = 0, baud_mhz = 0, req_an = 0, flags = 0;
 	int req_duplex = 0;
-	int qlm = 0, lane = 0, an = 0, invalid_req = 0;
+	int qlm = 0, an = 0, invalid_req = 0;
 	int an_updated = 0, an_cap = 0;
 	uint64_t mode_bitmask = 0;
 
@@ -841,7 +841,6 @@ int cgx_handle_mode_change(int cgx_id, int lmac_id,
 			 * swapped lane info and hence read it from lane_to_sds
 			 */
 			qlm = lmac->qlm;
-			lane = lmac->lane_to_sds & 0x3;
 			/* Special case for EBB9604 for DLM4/5. Lanes are
 			 * swizzled on EBB9604 and hence for DLM 4/5 case,
 			 * even the QLM is different
@@ -858,7 +857,14 @@ int cgx_handle_mode_change(int cgx_id, int lmac_id,
 						lmac->mode);
 
 			/* Configure SerDes for new QLM mode */
-			qlm_set_mode_gsern(qlm, lane, qlm_mode, baud_mhz, 0);
+			qlm_state_lane_t state = qlm_build_state_gsern(qlm_mode, baud_mhz, flags);
+			qlm_set_mode_gsern(qlm, lmac->rev_lane, qlm_mode, baud_mhz, 0);
+
+			/* Update the SCRATCHX register with the new link info to the
+			 * original lane
+			 */
+			GSERN_CSR_WRITE(CAVM_GSERNX_LANEX_SCRATCHX(qlm, lmac->lane,
+						0), state.u);
 
 			/* Wait 5ms before bringing UP the CGX link */
 			mdelay(5);

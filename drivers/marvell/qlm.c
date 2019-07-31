@@ -1435,7 +1435,6 @@ void qlm_init_gsern()
  */
 int qlm_set_mode_gsern(int qlm, int lane, qlm_modes_t mode, int baud_mhz, qlm_mode_flags_t flags)
 {
-	qlm_state_lane_t state = qlm_build_state_gsern(mode, baud_mhz, flags);
 	int num_lanes = qlm_get_lanes(qlm);
 	enum gsern_mode gsern_mode = GSERN_MODE_DISABLED;
 	enum gsern_flags gsern_flags = GSERN_FLAGS_NONE;
@@ -1541,7 +1540,6 @@ int qlm_set_mode_gsern(int qlm, int lane, qlm_modes_t mode, int baud_mhz, qlm_mo
 			if (gsern_set_mode(qlm, l, gsern_mode, is_first, baud_mhz, gsern_flags))
 				return -1;
 		}
-		GSERN_CSR_WRITE(CAVM_GSERNX_LANEX_SCRATCHX(qlm, l, 0), state.u);
 		qlm_tune_gsern(qlm, l, mode, baud_mhz);
 	}
 
