@@ -109,12 +109,14 @@ void phy_config(int cgx_id, int lmac_id)
 
 int phy_set_mod_type(int cgx_id, int lmac_id, phy_mod_type mod_type)
 {
+	cgx_lmac_config_t *lmac;
 	phy_config_t *phy;
-	int lmac_type;
+	int qlm_mode;
 
 	debug_nw_mgmt("%s: %d:%d\n", __func__, cgx_id, lmac_id);
 
-	phy = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id].phy_config;
+	lmac = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
+	phy = &lmac->phy_config;
 
 	if (phy->mod_type == mod_type)
 		return 0; /* no change in mod_type */
@@ -131,12 +133,34 @@ int phy_set_mod_type(int cgx_id, int lmac_id, phy_mod_type mod_type)
 		return -1;
 	}
 
+	if (mod_type == PHY_MOD_TYPE_PAM4) {
+		qlm_mode = lmac->mode_idx;
+		switch (qlm_mode) {
+		/* For now, only these two QLM modes are permitted to have
+		 * PAM4 modulation on the PHY line side.
+		 */
+		case QLM_MODE_50GAUI_2_C2C:
+		case QLM_MODE_50GAUI_4_C2C:
+			if (lmac->fec != CGX_FEC_RS) {
+				WARN("%s: %d:%d Setting FEC to RS because PAM4 requires it.\n",
+				     __func__, cgx_id, lmac_id);
+				lmac->fec = CGX_FEC_RS;
+				cgx_update_flash_fec_param(cgx_id, lmac_id,
+							   CGX_FEC_RS);
+			}
+			break;
+
+		default:
+			ERROR("%s: %d:%d PAM4 is not supported at current link speed.\n",
+			      __func__, cgx_id, lmac_id);
+			return -1;
+		}
+	}
+
 	phy->mod_type = mod_type;
 	sh_fwdata_update_phy_mod_type(cgx_id, lmac_id);
+	phy_config(cgx_id, lmac_id);
 
-	lmac_type = plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id].mode;
-	if (lmac_type == CAVM_CGX_LMAC_TYPES_E_FIFTYG_R)
-		phy_config(cgx_id, lmac_id);
 	return 0;
 }
 

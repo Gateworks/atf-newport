@@ -1532,6 +1532,24 @@ static void octeontx2_cgx_lmacs_check_linux(const void *fdt,
 				lmac->phy_config.mod_type = PHY_MOD_TYPE_NRZ;
 			}
 		}
+		if (lmac->phy_config.mod_type == PHY_MOD_TYPE_PAM4) {
+			switch (lmac->mode_idx) {
+			/* For now, only these two QLM modes are permitted to
+			 * have PAM4 modulation on the PHY line side.
+			 */
+			case QLM_MODE_50GAUI_2_C2C:
+			case QLM_MODE_50GAUI_4_C2C:
+				/* PAM4 requires RS-FEC */
+				lmac->fec = CGX_FEC_RS;
+				break;
+			default:
+				/* PAM4 on PHY line-side does not apply for
+				 * other QLM modes.  Must use NRZ.
+				 */
+				lmac->phy_config.mod_type = PHY_MOD_TYPE_NRZ;
+				break;
+			}
+		}
 
 		/* Construct the proper node name for error handling */
 		snprintf(node_name, sizeof(node_name), "%s/%s",

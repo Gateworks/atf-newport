@@ -1032,11 +1032,13 @@ int sfp_validate_user_options(int cgx_id, int lmac_id)
 {
 	int speed_conf = 0;
 	cgx_lmac_config_t *lmac_cfg;
+	phy_config_t *phy;
 	sfp_cap_info_t *cap_info = &sfp_cap_info[cgx_id][lmac_id];
 
 	debug_sfp_mgmt("%s: %d:%d\n", __func__, cgx_id, lmac_id);
 
 	lmac_cfg = &(plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id]);
+	phy = &lmac_cfg->phy_config;
 
 	/* Obtain the module capabilities based on transceiver
 	 * type retrieved from EEPROM
@@ -1106,5 +1108,12 @@ int sfp_validate_user_options(int cgx_id, int lmac_id)
 			return 0;
 		}
 	}
+
+	if (lmac_cfg->phy_present && phy->init && phy->valid &&
+	    phy->mod_type == PHY_MOD_TYPE_PAM4 &&
+	    !(cap_info->fec_type & CGX_FEC_RS))
+		WARN("%s: %d:%d PAM4 requires RS-FEC, but transceiver is not RS-FEC capable.\n",
+		     __func__, cgx_id, lmac_id);
+
 	return 1;
 }

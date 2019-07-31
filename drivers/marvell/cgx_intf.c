@@ -936,6 +936,15 @@ int cgx_set_fec_type(int cgx_id, int lmac_id, int req_fec)
 	debug_cgx_intf("%s: %d:%d fec %d request_fec %d\n", __func__, cgx_id,
 				lmac_id, lmac->fec, req_fec);
 
+	if (lmac->phy_present && lmac->phy_config.init &&
+	    lmac->phy_config.mod_type == PHY_MOD_TYPE_PAM4 &&
+	    req_fec != CGX_FEC_RS) {
+		ERROR("%s: %d:%d PAM4 requires RS-FEC.  No other FEC setting is allowed.\n",
+		      __func__, cgx_id, lmac_id);
+		cgx_set_error_type(cgx_id, lmac_id, CGX_ERR_SET_FEC_INVALID);
+		return -1;
+	}
+
 	if ((lmac->mode == CAVM_CGX_LMAC_TYPES_E_SGMII) ||
 			(lmac->mode == CAVM_CGX_LMAC_TYPES_E_QSGMII)) {
 		ERROR("%s: %d: %d FEC is not applicable for this mode %d\n",
@@ -1015,6 +1024,8 @@ static int cgx_set_phy_mod_type(int cgx_id, int lmac_id, int phy_mod_type)
 				debug_cgx_intf("Flash update phymod failed\n");
 				return -1;
 			}
+		} else {
+			return -1; /* phy_set_mod_type() failed */
 		}
 	} else {
 		debug_cgx_intf("phy not present for SET_PHY_MOD\n");

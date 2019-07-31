@@ -256,5 +256,6 @@ void cgx_lmac_init(int cgx_id, int lmac_id);
 void cgx_fw_intf_init(void);
 void cgx_fw_intf_shutdown(void);
 
+int cgx_read_flash_fec(int cgx_id, int lmac_id, int *fec);
 
 #endif

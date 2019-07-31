@@ -116,6 +116,9 @@ void sh_fwdata_update_supported_fec(int cgx_id, int lmac_id)
 	else
 		val = cgx_get_supported_fec_type(cgx_id, lmac_id);
 
+	if (fwdata->phy.mod_type == PHY_MOD_TYPE_PAM4)
+		val = CGX_FEC_RS; /* PAM4 requires RS-FEC */
+
 	fwdata->supported_fec = val;
 	fwdata->rw_valid = 1;
 	debug_shmem_mgmt("%s: %d:%d fwdata->supported_fec %llx\n", __func__,
