@@ -43,7 +43,7 @@ void plat_octeontx_setup(void)
 	/* Workaround for FLR handling on CN9xxx */
 	plat_flr_init();
 
-	//plat_dram_ras_init();
+	plat_dram_ras_init();
 }
 
 /*
