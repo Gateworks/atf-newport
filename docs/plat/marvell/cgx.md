@@ -487,6 +487,35 @@ shared FW data memory
 
 ---
 
+##### 4.2.1.10. MODE CHANGE
+This command supports changing the ethernet port's current speed to
+different speed. Following are the parameters expected:
+
+/* command argument to be passed for cmd ID - CGX_CMD_MODE_CHANGE */
+struct cgx_mode_change_args {
+        uint64_t reserved1:8;
+        uint64_t speed:4; /* cgx_link_speed enum */
+        uint64_t duplex:1; /* 0 - full duplex, 1 - half duplex */
+        uint64_t an:1;  /* 0 - disable AN, 1 - enable AN */
+        uint64_t port:8; /* device port */
+        uint64_t flags:8; /* private flags if required */
+        uint64_t reserved2:34;
+};
+
+For now, speed and autoneg are supported.
+
+ATF generates interrupt as a response to this command,
+  - evt_type : `CGX_EVT_CMD_RESP`
+  - cmd ID : CGX_CMD_MODE_CHANGE
+  - cmd status: Either `CGX_STAT_SUCCESS`/`CGX_STAT_FAIL`
+
+If the command status is successful, ATF updates the link
+status also in the response structure
+
+NOTE: Based on current QLM configuration, ATF decides whether to allow the change.
+
+---
+
 #### 4.2.2. INTERFACE FROM ATF to U-BOOT/UEFI/KERNEL
 
 `CGXX_CMRX_SCRATCHX[cgx][lmac][0]`/`CGXX_CMRX_SCRATCHX[cgx][lmac][1]` reserved
@@ -1075,3 +1104,25 @@ Turning off PAM4 means setting modulation type to NRZ.
 -- Example - set_phymod <ethX> [type]
 -- Set PHY MOD type for any of RVU PF based network interfaces
 	* where type - 0 [NRZ] 1 [PAM4]
+
+### 9.5 Change speed via ethtool
+
+--  command to change the speed to 1000
+
+ > ethtool -s ethX speed 1000
+
+-- command to change the speed to 10000 (changes the mode to SFI)
+
+ > ethtool -s ethX speed 10000
+
+-- command to change the speed to 10000 with KR mode
+
+ > ethtool -s ethX speed 10000 autoneg on
+
+-- command to change the speed to 20000
+
+ > ethtool -s ethX speed 20000
+
+Note : For any other speed settings, it is considered invalid and
+error is returned.
+
