@@ -10,6 +10,7 @@
 #include <platform_def.h>
 #include <platform_dt.h>
 #include <platform_setup.h>
+#include <platform_irqs_def.h>
 #include <octeontx_common.h>
 #include <octeontx_ecam.h>
 #include <gpio_octeontx.h>
@@ -395,9 +396,15 @@ void plat_add_mmio(void)
 	plat_map_cpc_mem();
 
 	device_type_count = plat_octeontx_get_mcc_count();
-	for (i = 0; i < device_type_count; ++i)
+	for (i = 0; i < device_type_count; ++i) {
 		add_map_record(CAVM_MCC_BAR_E_MCCX_PF_BAR0(i),
 			CAVM_MCC_BAR_E_MCCX_PF_BAR0_SIZE, attr);
+		add_map_record(CAVM_MCC_BAR_E_MCCX_PF_BAR4(i),
+			CAVM_MCC_BAR_E_MCCX_PF_BAR4_SIZE, attr);
+	}
+	add_map_record(CAVM_MDC_BAR_E_MDC_PF_BAR4,
+		       CAVM_MDC_BAR_E_MDC_PF_BAR4_SIZE, attr);
+
 	/*
 	 * Shared memory configuration.
 	 * Map additional memory used by RVU/SFP mgmt(shared between AP & MCP).
