@@ -14,6 +14,7 @@
 #include <platform_def.h>
 #include <octeontx_irqs_def.h>
 #include <octeontx_common.h>
+#include <plat_otx2_configuration.h>
 #include <debug.h>
 #include <interrupt_mgmt.h>
 #include <plat_board_cfg.h>
@@ -34,7 +35,6 @@
 
 #define CACHE_LINE_SIZE		128
 #define RAS_MAX_MEM_CHAINS	32
-#define NUM_MCC			2
 
 struct ras_dram_lmc_map {
 	int lmc;
@@ -631,21 +631,26 @@ void ras_dram_address_extract_info(uint64_t address, int *lmc,
 	/* Bus byte is address bits [2:0]. Unused here */
 }
 
-/* NOTE: this copies the result data structure */
-static void ras_dram_get_lmc_map(struct ras_dram_lmc_map *map, int lmc)
+static int ras_dram_get_lmc_map(struct ras_dram_lmc_map *map, int lmc)
 {
 	map->lmc = lmc;
 
-	if (cavm_is_model(OCTEONTX_CN96XX)) {
-		map->mcc = (lmc == 1) ? 0 : 1;
-		map->lmcoe = (lmc == 2) ? 1 : 0;
-	} else if (cavm_is_model(OCTEONTX_CNF95XX)) {
+	switch (plat_octeontx_get_mcc_count()) {
+	case 2:
+		if (lmc > 2)
+			return -1;
+		map->mcc = (lmc != 1);
+		map->lmcoe = (lmc == 2);
+		return 0;
+	case 1:
+		if (lmc > 1)
+			return -1;
 		map->mcc = 0;
-		map->lmcoe = (lmc) ? 1 : 0;
-	} else {
+		map->lmcoe = lmc;
+		return 0;
+	default:
 		ERROR("%s: Error: Unsupported OcteonTX2 model!\n", __func__);
-		map->mcc = 0;
-		map->lmcoe = 0;
+		return -1;
 	}
 }
 
@@ -762,7 +767,9 @@ static int ras_check_ecc_errors(int lmc)
 	erraddr.u = 0;
 	misc0.u = 0;
 
-	ras_dram_get_lmc_map(&lmc_map, lmc);
+	if (ras_dram_get_lmc_map(&lmc_map, lmc) < 0)
+		return 0;
+
 	ras_int.u = CSR_READ(CAVM_MCCX_LMCOEX_RAS_ERRGSR0(lmc_map.mcc,
 							  lmc_map.lmcoe));
 
@@ -974,8 +981,9 @@ static uint64_t tx2_mcc_isr(uint32_t id, uint32_t flags, void *cookie)
 	union cavm_mccx_lmcoex_ras_int lmcoe_ras_int;
 	union cavm_mccx_const mcc_const;
 	int mcc, lmcoe;
+	int num_mccs = plat_octeontx_get_mcc_count();
 
-	for (mcc = 0; mcc < NUM_MCC; mcc++) {
+	for (mcc = 0; mcc < num_mccs; mcc++) {
 		mcc_const.u = CSR_READ(CAVM_MCCX_CONST(mcc));
 		for (lmcoe = 0; lmcoe < mcc_const.s.lmcs ; lmcoe++) {
 			lmcoe_ras_int.u = CSR_READ(CAVM_MCCX_LMCOEX_RAS_INT(mcc,
@@ -999,9 +1007,22 @@ static int edac_poll(int hd)
 }
 #endif
 
+static int lmcoe_ras_int(int lmcoe)
+{
+	if (cavm_is_model(OCTEONTX_CNF95XX))
+		return CAVM_MCC_INT_VEC_E_LMCOEX_RAS_INT_CNF95XX(lmcoe);
+	if (cavm_is_model(OCTEONTX_CN96XX))
+		return CAVM_MCC_INT_VEC_E_LMCOEX_RAS_INT_CN96XX(lmcoe);
+	if (cavm_is_model(OCTEONTX_CN98XX))
+		return CAVM_MCC_INT_VEC_E_LMCOEX_RAS_INT_CN98XX(lmcoe);
+	if (cavm_is_model(OCTEONTX_LOKI))
+		return CAVM_MCC_INT_VEC_E_LMCOEX_RAS_INT_LOKI(lmcoe);
+	return -1;
+};
+
 static int ras_init_mcc(int mcc)
 {
-	uint64_t bar2 = CAVM_MCC_BAR_E_MCCX_PF_BAR4(mcc);
+	uint64_t bar4 = CAVM_MCC_BAR_E_MCCX_PF_BAR4(mcc);
 	int irq;
 	union cavm_mccx_lmcoex_ras_int_ena_w1s int_ena;
 	union cavm_mccx_const mc;
@@ -1019,8 +1040,12 @@ static int ras_init_mcc(int mcc)
 
 	mc.u = CSR_READ(CAVM_MCCX_CONST(mcc));
 	for (lmcoe = 0; lmcoe < mc.s.lmcs; lmcoe++) {
-		vec = lmcoe + 0x4;
-		vaddr = bar2 + 0x10 * (vec);
+		vec = lmcoe_ras_int(lmcoe);
+
+		if (vec < 0)
+			continue;
+
+		vaddr = bar4 + 0x10 * vec;
 		vctl = vaddr + 0x8;
 
 		irq = MCC_SPI_IRQ(vec + mcc * 8);
@@ -1037,8 +1062,6 @@ static int ras_init_mcc(int mcc)
 
 		octeontx_write64(vaddr, CAVM_GICD_SETSPI_SR | 1);
 		octeontx_write64(vctl, irq);
-		octeontx_write64(vaddr + 0x10, CAVM_GICD_CLRSPI_SR | 1);
-		octeontx_write64(vctl + 0x10, irq);
 
 		INFO("addr: 0x%llx, ctl: 0x%llx\n",
 		     octeontx_read64(vaddr), octeontx_read64(vctl));
@@ -1068,7 +1091,7 @@ static int ras_init_mccs(void)
 	int rc = 0;
 	int irq = MDC_SPI_IRQ();
 	int mcc;
-	int num_mccs = cavm_is_model(OCTEONTX_CNF95XX) ? 1 : 2;
+	int num_mccs = plat_octeontx_get_mcc_count();
 
 	INFO("%s: %d MCCs\n", __func__, num_mccs);
 	for (mcc = 0; mcc < num_mccs; mcc++)
@@ -1079,7 +1102,7 @@ static int ras_init_mccs(void)
 	INFO("Registering MCC interrupt handlers\n");
 	rc = register_interrupt_handler(INTR_TYPE_EL3, irq, tx2_mdc_isr);
 	if (rc) {
-		INFO("e?%d tx2_mcc_isr(%x)\n", rc, irq);
+		INFO("e?%d tx2_mdc_isr(%x)\n", rc, irq);
 		return rc;
 	}
 	octeontx_write64(vaddr, ctl);
