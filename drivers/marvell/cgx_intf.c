@@ -718,6 +718,7 @@ int cgx_handle_mode_change(int cgx_id, int lmac_id,
 	int qlm = 0, an = 0, invalid_req = 0;
 	int an_updated = 0, an_cap = 0;
 	uint64_t mode_bitmask = 0;
+	link_state_t link;
 
 	lmac_ctx = &lmac_context[cgx_id][lmac_id];
 	lmac = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
@@ -751,7 +752,7 @@ int cgx_handle_mode_change(int cgx_id, int lmac_id,
 					 __func__, cgx_id, lmac_id);
 			cgx_set_error_type(cgx_id, lmac_id,
 					CGX_ERR_SPEED_CHANGE_INVALID);
-			return -1;
+			goto mode_err;
 		}
 	}
 
@@ -777,7 +778,7 @@ int cgx_handle_mode_change(int cgx_id, int lmac_id,
 				cgx_id, lmac_id);
 			cgx_set_error_type(cgx_id, lmac_id,
 					CGX_ERR_SPEED_CHANGE_INVALID);
-			ret = -1;
+			goto mode_err;
 		}
 
 		/* FIXME: mode_bitmask needs to be determined based on the
@@ -881,15 +882,23 @@ int cgx_handle_mode_change(int cgx_id, int lmac_id,
 			 * change command
 			 */
 			cgx_set_error_type(cgx_id, lmac_id, 0);
+			return ret;
 		} else {
 			debug_cgx_intf("%s: %d: %d Invalid speed change request\n", __func__,
 				cgx_id, lmac_id);
 			cgx_set_error_type(cgx_id, lmac_id,
 					CGX_ERR_SPEED_CHANGE_INVALID);
-			ret = -1;
+			goto mode_err;
 		}
 	}
-	return ret;
+mode_err:
+	link.s.fec = lmac_ctx->s.fec;
+	link.s.link_up = lmac_ctx->s.link_up;
+	link.s.full_duplex = lmac_ctx->s.full_duplex;
+	link.s.speed = lmac_ctx->s.speed;
+	cgx_set_link_state(cgx_id, lmac_id, &link,
+			cgx_get_error_type(cgx_id, lmac_id));
+	return -1;
 }
 
 int cgx_set_fec_type(int cgx_id, int lmac_id, int req_fec)
@@ -1527,7 +1536,7 @@ void cgx_set_supported_link_modes(int cgx_id, int lmac_id)
 	if ((lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_SGMII) ||
 		(lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_TENG_R) ||
 		(lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_TWENTYFIVEG_R))
-		lmac_cfg->supported_link_modes =
+		lmac_cfg->supported_link_modes &=
 			((1 << CGX_MODE_1000_BASEX_BIT) |
 			(1 << CGX_MODE_10G_C2C_BIT) |
 			(1 << CGX_MODE_10G_C2M_BIT) |
