@@ -72,6 +72,7 @@
 #define CGX_GMP_RX_IDLE_MASK		1ULL << 12
 #define CGX_GMP_PCS_RESET_MASK		1ULL << 15
 #define CGX_GMP_PCS_LNK_ST_MASK		1ULL << 2
+#define CGX_GMP_PCS_RXX_SYNC_MASK	1ULL << 1
 #define CGX_GMP_PCS_AN_CPT_MASK		1ULL << 5
 #define CGX_CMRX_RX_FIFO_LEN_MASK	1ULL << 14
 #define CGX_CMRX_TX_IDLE_MASK		1ULL << 14
@@ -244,10 +245,12 @@ void cgx_set_error_type(int cgx_id, int lmac_id, uint64_t type);
 void cgx_get_link_state(int cgx_id, int lmac_id, link_state_t *link);
 void cgx_lmac_init_link(int cgx_id, int lmac_id);
 int cgx_sgmii_check_link(int cgx_id, int lmac_id);
+int cgx_sgmii_check_an_cpt(int cgx_id, int lmac_id);
 int cgx_fec_change(int cgx_id, int lmac_id, int new_fec);
 int cgx_get_supported_fec_type(int cgx_id, int lmac_id);
 int cgx_validate_fec_config(int mode, int req_fec);
 int cgx_get_lane_speed(int cgx_id, int lmac_id);
+void cgx_lmac_init(int cgx_id, int lmac_id);
 
 /* CGX FW interface APIs */
 void cgx_fw_intf_init(void);

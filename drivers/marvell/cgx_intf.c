@@ -317,17 +317,29 @@ static int cgx_link_bringup(int cgx_id, int lmac_id)
 		}
 
 		if (link.s.link_up == 1) {	/* PHY link is up */
-			/* Check for AN complete */
-			if (cgx_sgmii_check_link(cgx_id, lmac_id) != 0) {
+			/* Set up the link for the negotiated speed */
+			if (cgx_sgmii_set_link_speed(cgx_id, lmac_id, &link) != 0) {
+				link.s.link_up = 0;
+				link.s.full_duplex = 0;
+				link.s.speed = CGX_LINK_NONE;
+				goto cgx_err;
+			}
+
+			/* Check for AN CPT */
+			if (cgx_sgmii_check_an_cpt(cgx_id, lmac_id) != 0) {
 				link.s.link_up = 0;
 				link.s.full_duplex = 0;
 				link.s.speed = CGX_LINK_NONE;
 				goto cgx_err;	/* Poll timer to retry */
 			}
 
-			/* Set up the link for the negotiated speed */
-			if (cgx_sgmii_set_link_speed(cgx_id, lmac_id, &link) != 0)
-				goto cgx_err;
+			/* Check for link status */
+			if (cgx_sgmii_check_link(cgx_id, lmac_id) != 0) {
+				link.s.link_up = 0;
+				link.s.full_duplex = 0;
+				link.s.speed = CGX_LINK_NONE;
+				goto cgx_err;	/* Poll timer to retry */
+			}
 
 			/* SUCCESS case : update the link status and indicate
 			 * poll timer to start polling for the link
@@ -872,6 +884,8 @@ int cgx_handle_mode_change(int cgx_id, int lmac_id,
 
 			if ((lmac->phy_present) && (lmac->phy_config.init))
 				lmac->phy_config.forceconfig = 1;
+
+			cgx_lmac_init(cgx_id, lmac_id);
 
 			/* Bring UP the CGX link */
 			ret = cgx_link_bringup(cgx_id, lmac_id);

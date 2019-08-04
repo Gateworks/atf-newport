@@ -316,7 +316,7 @@ static int cgx_get_usxgmii_speed_mbps_from_rate(int rate)
 /* This function initializes the CGX LMAC for
  * a particular mode
  */
-static void cgx_lmac_init(int cgx_id, int lmac_id)
+void cgx_lmac_init(int cgx_id, int lmac_id)
 {
 	cgx_lmac_config_t *lmac;
 	cavm_cgxx_cmrx_config_t cmr_config;
@@ -484,6 +484,36 @@ int cgx_get_lane_speed(int cgx_id, int lmac_id)
 	return speed;
 }
 
+int cgx_sgmii_check_an_cpt(int cgx_id, int lmac_id)
+{
+	cgx_lmac_config_t *lmac;
+
+	debug_cgx("%s %d:%d\n", __func__, cgx_id, lmac_id);
+
+	lmac = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
+
+	/* Check if AN is complete for SGMII only */
+	if ((lmac->mode == CAVM_CGX_LMAC_TYPES_E_SGMII) &&
+			(!lmac->autoneg_dis)) {
+		if (cgx_poll_for_csr(CAVM_CGXX_GMP_PCS_MRX_STATUS(
+			cgx_id, lmac_id), CGX_GMP_PCS_AN_CPT_MASK, 1,
+				CGX_POLL_AN_STATUS)) {
+			debug_cgx("%s: %d:%d SGMII AN not complete 0x%llx\n",
+				__func__, cgx_id, lmac_id,
+			CSR_READ(CAVM_CGXX_GMP_PCS_MRX_STATUS(
+					cgx_id, lmac_id)));
+			/* Reset AN */
+			CAVM_MODIFY_CGX_CSR(cavm_cgxx_gmp_pcs_mrx_control_t,
+				CAVM_CGXX_GMP_PCS_MRX_CONTROL(cgx_id, lmac_id),
+				rst_an, 1);
+			cgx_set_error_type(cgx_id, lmac_id,
+				CGX_ERR_AN_CPT_FAIL);
+				return -1;
+		}
+	}
+	return 0;
+}
+
 /* This API sets the speed for the link based on PHY status */
 int cgx_sgmii_set_link_speed(int cgx_id, int lmac_id,
 			 link_state_t *link)
@@ -594,13 +624,6 @@ int cgx_sgmii_set_link_speed(int cgx_id, int lmac_id,
 	prtx_cfg.u = CSR_READ(
 			CAVM_CGXX_GMP_GMI_PRTX_CFG(cgx_id, lmac_id));
 
-	/* enable Rx/Tx */
-	cmr_config.u = CSR_READ(CAVM_CGXX_CMRX_CONFIG(
-				cgx_id, lmac_id));
-	cmr_config.s.data_pkt_rx_en = 1;
-	cmr_config.s.data_pkt_tx_en = 1;
-	CSR_WRITE(CAVM_CGXX_CMRX_CONFIG(cgx_id, lmac_id),
-				cmr_config.u);
 	return 0;
 }
 
@@ -1352,6 +1375,7 @@ int cgx_sgmii_set_link_up(int cgx_id, int lmac_id)
 
 int cgx_sgmii_check_link(int cgx_id, int lmac_id)
 {
+	cavm_cgxx_cmrx_config_t cmr_config;
 	cgx_lmac_config_t *lmac;
 
 	debug_cgx("%s %d:%d\n", __func__, cgx_id, lmac_id);
@@ -1362,38 +1386,41 @@ int cgx_sgmii_check_link(int cgx_id, int lmac_id)
 		(lmac->mode != CAVM_CGX_LMAC_TYPES_E_QSGMII))
 		return 0;
 
-	/* Check if AN is complete for SGMII only */
-	if ((lmac->mode == CAVM_CGX_LMAC_TYPES_E_SGMII) &&
-			(!lmac->autoneg_dis)) {
+	if (!lmac->autoneg_dis) {
 		if (cgx_poll_for_csr(CAVM_CGXX_GMP_PCS_MRX_STATUS(
-			cgx_id, lmac_id), CGX_GMP_PCS_AN_CPT_MASK, 1, -1)) {
-			debug_cgx("%s: %d:%d SGMII AN not complete 0x%llx\n",
+			cgx_id, lmac_id), CGX_GMP_PCS_LNK_ST_MASK, 1, -1)) {
+			debug_cgx("%s: %d:%d SGMII/QSGMII Link is not up 0x%llx\n",
 				__func__, cgx_id, lmac_id,
 			CSR_READ(CAVM_CGXX_GMP_PCS_MRX_STATUS(
 					cgx_id, lmac_id)));
 			/* Reset AN */
 			CAVM_MODIFY_CGX_CSR(cavm_cgxx_gmp_pcs_mrx_control_t,
-				CAVM_CGXX_GMP_PCS_MRX_CONTROL(cgx_id, lmac_id),
-				rst_an, 1);
+					CAVM_CGXX_GMP_PCS_MRX_CONTROL(cgx_id, lmac_id),
+					rst_an, 1);
 			cgx_set_error_type(cgx_id, lmac_id,
-				CGX_ERR_AN_CPT_FAIL);
-				return -1;
+					CGX_ERR_PCS_LINK_FAIL);
+			return -1;
+		}
+	} else {
+		if (cgx_poll_for_csr(CAVM_CGXX_GMP_PCS_RXX_SYNC(
+			cgx_id, lmac_id), CGX_GMP_PCS_RXX_SYNC_MASK, 1, -1)) {
+			debug_cgx("%s: %d:%d SGMII Link is not up 0x%llx\n",
+				__func__, cgx_id, lmac_id,
+			CSR_READ(CAVM_CGXX_GMP_PCS_RXX_SYNC(
+					cgx_id, lmac_id)));
+			cgx_set_error_type(cgx_id, lmac_id,
+						CGX_ERR_PCS_LINK_FAIL);
+			return -1;
 		}
 	}
-	if (cgx_poll_for_csr(CAVM_CGXX_GMP_PCS_MRX_STATUS(
-		cgx_id, lmac_id), CGX_GMP_PCS_LNK_ST_MASK, 1, -1)) {
-		debug_cgx("%s: %d:%d SGMII/QSGMII Link is not up 0x%llx\n",
-			__func__, cgx_id, lmac_id,
-		CSR_READ(CAVM_CGXX_GMP_PCS_MRX_STATUS(
-				cgx_id, lmac_id)));
-		/* Reset AN */
-		if (!lmac->autoneg_dis)
-			CAVM_MODIFY_CGX_CSR(cavm_cgxx_gmp_pcs_mrx_control_t,
-				CAVM_CGXX_GMP_PCS_MRX_CONTROL(cgx_id, lmac_id),
-				rst_an, 1);
-		cgx_set_error_type(cgx_id, lmac_id, CGX_ERR_PCS_LINK_FAIL);
-		return -1;
-	}
+
+	/* If the link is UP, enable Rx/Tx */
+	cmr_config.u = CSR_READ(CAVM_CGXX_CMRX_CONFIG(
+				cgx_id, lmac_id));
+	cmr_config.s.data_pkt_rx_en = 1;
+	cmr_config.s.data_pkt_tx_en = 1;
+	CSR_WRITE(CAVM_CGXX_CMRX_CONFIG(cgx_id, lmac_id),
+				cmr_config.u);
 
 	return 0;
 }
@@ -1426,6 +1453,11 @@ int cgx_sgmii_set_link_down(int cgx_id, int lmac_id)
 	CAVM_MODIFY_CGX_CSR(cavm_cgxx_cmrx_config_t,
 			CAVM_CGXX_CMRX_CONFIG(cgx_id, lmac_id),
 			data_pkt_tx_en, 0);
+
+	/* disable GMI */
+	CAVM_MODIFY_CGX_CSR(cavm_cgxx_gmp_pcs_miscx_ctl_t,
+			CAVM_CGXX_GMP_PCS_MISCX_CTL(cgx_id, lmac_id),
+			gmxeno, 1);
 
 	/* power down PCS */
 	CAVM_MODIFY_CGX_CSR(cavm_cgxx_gmp_pcs_mrx_control_t,
