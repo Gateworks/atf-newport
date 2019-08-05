@@ -100,7 +100,7 @@ phy_mcd_priv_t marvell_5123_priv;
 phy_mxd_priv_t marvell_5113_priv[MAX_CGX];
 
 #ifdef MARVELL_PHY_6141
-MYD_DEV marvell_6141_priv;
+MYD_DEV marvell_6141_priv[MAX_CGX];
 #endif /* MARVELL_PHY_6141 */
 
 static MCD_STATUS mcd_read_mdio(MCD_DEV_PTR pDev, MCD_U16 mdioPort, MCD_U16 mmd, MCD_U16 reg, MCD_U16 *value)
@@ -1347,9 +1347,9 @@ void phy_marvell_6141_probe(int cgx_id, int lmac_id)
 	debug_phy_driver("%s: %d:%d\n", __func__, cgx_id, lmac_id);
 
 	phy = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id].phy_config;
-	phy->priv = &marvell_6141_priv;
+	phy->priv = &marvell_6141_priv[cgx_id];
 
-	if (marvell_6141_priv.devEnabled)
+	if (((MYD_DEV_PTR)phy->priv)->devEnabled)
 		return;
 
 	x6141_sbus_master_image_size = x6141_sbus_master_image_end -
@@ -1364,7 +1364,7 @@ void phy_marvell_6141_probe(int cgx_id, int lmac_id)
 			       x6141_serdes_image_start,
 			       x6141_serdes_image_size,
 			       phy,
-			       &marvell_6141_priv);
+			       phy->priv);
 	if (status != MYD_OK) {
 		ERROR("%s: %d:%d mydInitDriver() failed\n", __func__, cgx_id,
 		      lmac_id);
@@ -1452,8 +1452,7 @@ void phy_marvell_6141_config(int cgx_id, int lmac_id)
 		break;
 
 	case QLM_MODE_50GAUI_2_C2C:
-		host_mode = MYD_P50MR; /* 50GBASE-R2, RS-FEC, no AN */
-
+	case QLM_MODE_50GAUI_4_C2C:
 		if (phy->mod_type == PHY_MOD_TYPE_PAM4) {
 			line_mode = MYD_P50UP; /* 50GBASE-R, RS-FEC, no AN */
 		} else {
@@ -1470,6 +1469,11 @@ void phy_marvell_6141_config(int cgx_id, int lmac_id)
 				break;
 			}
 		}
+
+		if (lmac_cfg->mode_idx == QLM_MODE_50GAUI_2_C2C)
+			host_mode = MYD_P50MR; /* 50GBASE-R2, RS-FEC, no AN */
+		else
+			host_mode = MYD_P50LN; /* 50GBASE-R4, no FEC, no AN */
 		break;
 
 	default:
@@ -1515,12 +1519,12 @@ void phy_marvell_6141_get_link_status(int cgx_id, int lmac_id,
 	MYD_U16 lane;
 	phy_config_t *phy;
 	cgx_lmac_config_t *lmac_cfg;
-	int lmac_type;
+	MYD_DEV_PTR myd_dev;
+	PMYD_MODE_CONFIG myd_mode_config;
 
 	debug_phy_driver("%s: %d:%d\n", __func__, cgx_id, lmac_id);
 
 	lmac_cfg = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
-	lmac_type = lmac_cfg->mode;
 	lane = lmac_cfg->lane_to_sds & 3;
 	phy = &lmac_cfg->phy_config;
 
@@ -1530,31 +1534,60 @@ void phy_marvell_6141_get_link_status(int cgx_id, int lmac_id,
 	status = mydCheckPCSLinkStatus(phy->priv, phy->addr, lane,
 				       &currentStatus, &latchedStatus,
 				       &statusDetail);
-	if (status == MYD_OK) {
-		if (currentStatus == MYD_LINK_UP) {
-			switch (lmac_type) {
-			case CAVM_CGX_LMAC_TYPES_E_TENG_R:
-				link->s.speed = CGX_LINK_10G;
-				break;
-			case CAVM_CGX_LMAC_TYPES_E_TWENTYFIVEG_R:
-				link->s.speed = CGX_LINK_25G;
-				break;
-			case CAVM_CGX_LMAC_TYPES_E_FIFTYG_R:
-				link->s.speed = CGX_LINK_50G;
-				break;
-			default:
-				ERROR("%s: %d:%d Unexpected lmac_type %d\n",
-				      __func__, cgx_id, lmac_id, lmac_type);
-				return;
-			}
-			link->s.link_up = 1;
-			link->s.full_duplex = 1;
-		}
+	if (status != MYD_OK) {
+		ERROR("%s: %d:%d mydCheckPCSLinkStatus failed for lane %hu.\n",
+		      __func__, cgx_id, lmac_id, lane);
 		return;
 	}
 
-	ERROR("%s: %d:%d mydCheckPCSLinkStatus() failed for lane %hu.\n",
-	      __func__, cgx_id, lmac_id, lane);
+	if (currentStatus != MYD_LINK_UP)
+		return;
+
+	link->s.link_up = 1;
+	link->s.full_duplex = 1;
+
+	myd_dev = phy->priv;
+	myd_mode_config = &myd_dev->lineConfig[0][lane];
+	switch (myd_mode_config->opMode) {
+	case MYD_P10LN:
+		link->s.speed = CGX_LINK_10G;
+		link->s.fec = CGX_FEC_NONE;
+		break;
+	case MYD_P10KF:
+		link->s.speed = CGX_LINK_10G;
+		link->s.fec = CGX_FEC_BASE_R;
+		break;
+	case MYD_P25LN:
+		link->s.speed = CGX_LINK_25G;
+		link->s.fec = CGX_FEC_NONE;
+		break;
+	case MYD_P25LR:
+		link->s.speed = CGX_LINK_25G;
+		link->s.fec = CGX_FEC_RS;
+		break;
+	case MYD_P25LF:
+		link->s.speed = CGX_LINK_25G;
+		link->s.fec = CGX_FEC_BASE_R;
+		break;
+	case MYD_P50MN:
+		link->s.speed = CGX_LINK_50G;
+		link->s.fec = CGX_FEC_NONE;
+		break;
+	case MYD_P50MF:
+		link->s.speed = CGX_LINK_50G;
+		link->s.fec = CGX_FEC_BASE_R;
+		break;
+	case MYD_P50MR:
+	case MYD_P50UP:
+		link->s.speed = CGX_LINK_50G;
+		link->s.fec = CGX_FEC_RS;
+		break;
+	default:
+		ERROR("%s: %d:%d Unexpected line mode %d\n",
+		      __func__, cgx_id, lmac_id,
+		      myd_mode_config->speed);
+		break;
+	}
 }
 
 void phy_marvell_6141_supported_modes(int cgx_id, int lmac_id)
@@ -1565,19 +1598,11 @@ void phy_marvell_6141_supported_modes(int cgx_id, int lmac_id)
 
 	phy = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id].phy_config;
 
-	/* FIXME for the modes. Need inputs from LIO3 team */
-	phy->supported_link_modes = ((1 << CGX_MODE_SGMII_BIT) |
-			(1 << CGX_MODE_1000_BASEX_BIT) |
-			(1 << CGX_MODE_10G_C2C_BIT) |
-			(1 << CGX_MODE_10G_C2M_BIT) |
-			(1 << CGX_MODE_10G_KR_BIT) |
+	phy->supported_link_modes = ((1 << CGX_MODE_10G_KR_BIT) |
 			(1 << CGX_MODE_25G_C2C_BIT) |
-			(1 << CGX_MODE_25G_C2M_BIT) |
 			(1 << CGX_MODE_25G_2_C2C_BIT) |
 			(1 << CGX_MODE_50G_C2C_BIT) |
-			(1 << CGX_MODE_50G_C2M_BIT) |
-			(1 << CGX_MODE_50G_4_C2C_BIT) |
-			(1 << CGX_MODE_80GAUI_C2C_BIT));
+			(1 << CGX_MODE_50G_4_C2C_BIT));
 }
 
 #endif /* MARVELL_PHY_6141 */
