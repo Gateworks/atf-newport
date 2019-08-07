@@ -8,7 +8,9 @@
 #ifndef __TWSI_CORE_H__
 #define __TWSI_CORE_H__
 
-#define PLL_REF_CLK		50000000	/* 50 MHz */
+#define PLL_REF_CLK_CN8XXX	50000000	/* 50 MHz */
+#define PLL_REF_CLK_CN9XXX	100000000	/* 100 MHz */
+
 #define TWSI_RECOVERY_UDELAY	9
 
 enum {

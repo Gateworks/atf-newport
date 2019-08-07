@@ -44,7 +44,7 @@ uint64_t tz_count(uint64_t x)
 uint64_t twsi_write_sw(unsigned int twsi_num,
 			      cavm_mio_twsx_sw_twsi_t sw_twsi)
 {
-	int timeout = 10000;
+	int timeout = 10;
 	sw_twsi.s.r = 0;
 	sw_twsi.s.v = 1;
 
@@ -54,6 +54,7 @@ uint64_t twsi_write_sw(unsigned int twsi_num,
 
 	do {
 		sw_twsi.u = CSR_READ(CAVM_MIO_TWSX_SW_TWSI(twsi_num));
+		udelay(1);
 	} while (timeout-- && (sw_twsi.s.v != 0));
 
 	if (sw_twsi.s.v)
@@ -65,7 +66,7 @@ uint64_t twsi_write_sw(unsigned int twsi_num,
 uint64_t twsi_read_sw(unsigned int twsi_num,
 			     cavm_mio_twsx_sw_twsi_t sw_twsi)
 {
-	int timeout = 10000;
+	int timeout = 10;
 	sw_twsi.s.r = 1;
 	sw_twsi.s.v = 1;
 
@@ -75,6 +76,7 @@ uint64_t twsi_read_sw(unsigned int twsi_num,
 
 	do {
 		sw_twsi.u = CSR_READ(CAVM_MIO_TWSX_SW_TWSI(twsi_num));
+		udelay(1);
 	} while (timeout-- && (sw_twsi.s.v != 0));
 
 	if (sw_twsi.s.v)
@@ -119,12 +121,13 @@ uint8_t twsi_read_ctl(unsigned int twsi_num)
 
 int twsi_wait(unsigned int twsi_num)
 {
-	unsigned int timeout = 500000;
+	unsigned int timeout = 500;
 	uint8_t twsi_ctl;
 
 	do {
 		twsi_ctl = twsi_read_ctl(twsi_num);
 		twsi_ctl &= TWSI_CTL_IFLG;
+		udelay(1);
 	} while (timeout-- && !twsi_ctl);
 
 	return !twsi_ctl;
@@ -233,7 +236,10 @@ void twsi_set_speed(unsigned int twsi_num, unsigned int speed)
 
 	rst_boot.u = CSR_READ(CAVM_RST_BOOT);
 
-	pnr_clk = rst_boot.s.pnr_mul * PLL_REF_CLK;
+	if (cavm_is_model(OCTEONTX_CN8XXX))
+		pnr_clk = rst_boot.s.pnr_mul * PLL_REF_CLK_CN8XXX;
+	else
+		pnr_clk = rst_boot.s.pnr_mul * PLL_REF_CLK_CN9XXX;
 
 	sw_twsi.u = 0;
 	sw_twsi.s.eop_ia = 0x4;
