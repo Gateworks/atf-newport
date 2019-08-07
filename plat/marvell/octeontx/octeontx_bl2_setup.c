@@ -47,6 +47,7 @@
 #include <octeontx_security.h>
 #include <octeontx_ecam.h>
 #include <octeontx_io_storage.h>
+#include <timers_octeontx.h>
 
 #if BL2_AT_EL3
 #include <octeontx_board_cfg_setup.h>
@@ -268,6 +269,7 @@ void bl2_platform_setup(void)
 	octeontx_fill_board_details(1);
 #endif /* BL2_AT_EL3 */
 
+	timers_octeontx_init_delay();
 	/*
 	 * Do initial security configuration to allow DRAM/device access.
 	 */

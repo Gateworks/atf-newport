@@ -21,6 +21,8 @@ PLAT_BL_COMMON_SOURCES	:=	drivers/arm/pl011/aarch64/pl011_console.S	\
 				drivers/marvell/mmc.c		\
 				drivers/marvell/twsi_core.c		\
 				drivers/marvell/twsi.c		\
+				drivers/delay_timer/delay_timer.c		\
+				drivers/marvell/timers_octeontx.c		\
 				${LIBFDT_DIR}/fdt.c				\
 				${LIBFDT_DIR}/fdt_ro.c				\
 				${LIBFDT_DIR}/fdt_rw.c				\
@@ -53,9 +55,7 @@ BL31_SOURCES		+=	drivers/arm/gic/common/gic_common.c		\
 				drivers/arm/gic/v3/gicv3_main.c			\
 				drivers/arm/gic/v3/gicv3_helpers.c		\
 				drivers/marvell/spi.c		\
-				drivers/delay_timer/delay_timer.c		\
 				drivers/marvell/gicv3_setup.c			\
-				drivers/marvell/timers_octeontx.c		\
 				lib/timers/timers.c				\
 				drivers/marvell/gpio_octeontx.c		\
 				drivers/marvell/gti_watchdog.c                  \

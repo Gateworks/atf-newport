@@ -25,6 +25,7 @@
 #include <plat_octeontx.h>
 #include <octeontx_io_storage.h>
 #include <octeontx_helpers.h>
+#include <timers_octeontx.h>
 
 
 /* Data structure which holds the extents of the trusted DRAM for BL1*/
@@ -96,6 +97,8 @@ void bl1_platform_setup(void)
 	bl1_platform_print_chip_id();
 	octeontx_fill_soc_details();
 	octeontx_fill_board_details(1);
+
+	timers_octeontx_init_delay();
 
         /* Initialise the IO layer and register platform IO devices */
         octeontx_io_setup();

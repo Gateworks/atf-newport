@@ -15,6 +15,7 @@
 #include <hw_timers.h>
 #include <delay_timer.h>
 #include <octeontx_irqs_def.h>
+#include <timers_octeontx.h>
 
 #undef DEBUG_TIMERS
 
@@ -173,13 +174,11 @@ static uint32_t plat_get_timer_value(void)
 
 static timer_ops_t plat_timer_ops;
 
-int plat_timers_init(void)
+int timers_octeontx_init_delay(void)
 {
 	uint64_t midr;
 
 	midr = read_midr();
-
-	plat_timer_enable(0);
 
 	plat_timer_ops.get_timer_value	= plat_get_timer_value;
 	plat_timer_ops.clk_mult		= 1;
@@ -196,6 +195,14 @@ int plat_timers_init(void)
 
 	timer_init(&plat_timer_ops);
 
+	return 0;
+}
+
+int plat_timers_init(void)
+{
+	plat_timer_enable(0);
+
+	timers_octeontx_init_delay();
 	/* return number of available hw counters */
 	return 1;
 }
