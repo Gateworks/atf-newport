@@ -19,23 +19,13 @@
 #include <plat_board_cfg.h>
 #include <octeontx_security.h>
 #include <octeontx_utils.h>
+#include <delay_timer.h>
 
 #include <io_mmc.h>
 #include <mmc.h>
 
 static file_state_t mmc_current_file = { 0 };
 static mio_emm_driver_t mmc_drv = { 0 };
-
-/* Wait for delay reference cycles */
-static void wait(uint64_t delay)
-{
-	uint64_t count = CSR_READ(CAVM_RST_REF_CNTR);
-	uint64_t end = count + delay;
-
-	do {
-		count = CSR_READ(CAVM_RST_REF_CNTR);
-	} while (count < end);
-}
 
 static int print_rsp_sts_errors(uint64_t emm_rsp_sts, int suppress_warning)
 {
@@ -500,25 +490,25 @@ static inline void sdmmc_power_cycle(void)
 		CSR_WRITE(CAVM_MIO_EMM_CFG, 0x1 << mmc_drv.bus_id);
 		mio_emm_modex = CSR_READ(CAVM_MIO_EMM_MODEX(mmc_drv.bus_id));
 	}
-	wait(200 * REF_FREQ);
+	mdelay(200);
 
 	// Disable buses and reset device using GPIO8
 	CSR_WRITE(CAVM_MIO_EMM_CFG, 0x0);
 	gpio_bit_cfgx = CSR_READ(CAVM_GPIO_BIT_CFGX(8));
 	gpio_bit_cfgx = GPIO_CFG_TX_OE(gpio_bit_cfgx, 1);
 	CSR_WRITE(CAVM_GPIO_BIT_CFGX(8), gpio_bit_cfgx);
-	wait(1 * REF_FREQ);
+	mdelay(1);
 	CSR_WRITE(CAVM_GPIO_TX_CLR, 0x1 << 8);
-	wait(200 * REF_FREQ);
+	mdelay(200);
 	CSR_WRITE(CAVM_GPIO_TX_SET, 0x1 << 8);
-	wait(2 * REF_FREQ);
+	mdelay(2);
 
 	// Enable bus
 	CSR_WRITE(CAVM_MIO_EMM_CFG, 0x1 << mmc_drv.bus_id);
 
 	// Reset the status mask reg., boot will change it
 	CSR_WRITE(CAVM_MIO_EMM_STS_MASK, DEFAULT_STS_MASK);
-	wait(2 * REF_FREQ);
+	mdelay(2);
 
 	sdmmc_set_watchdog(MMC_WATCHDOG_MS);
 }
@@ -739,12 +729,12 @@ static void sdmmc_switch_clock(int clock_hz)
 	/* apply to slot-0 first */
 	emm_switch = MIO_EMM_SWITCH_SET_BUS_ID(emm_switch, 0);
 	CSR_WRITE(CAVM_MIO_EMM_SWITCH, emm_switch);
-	wait(2 * REF_FREQ);
+	mdelay(2);
 
 	/* apply to target slot */
 	emm_switch = MIO_EMM_SWITCH_SET_BUS_ID(emm_switch, mmc_drv.bus_id);
 	CSR_WRITE(CAVM_MIO_EMM_SWITCH, emm_switch);
-	wait(2 * REF_FREQ);
+	mdelay(2);
 
 	sdmmc_set_watchdog(MMC_WATCHDOG_MS);
 }
