@@ -12,6 +12,7 @@
 #include <string.h>
 #include <libfdt.h>
 #include <debug.h>
+#include <spi.h>
 #include <delay_timer.h>
 #include <platform_def.h>
 #include <platform_dt.h>
@@ -29,10 +30,10 @@
 #define debug_cgx_flash(...) ((void) (0))
 #endif
 
-#define SPI_FREQUENCY	16000000
-#define SPI_ADDR_WIDTH	24
 /* Fixed flash offset for storage of lmac params */
 #define	SPI_NVDATA_OFFSET 0xFD0000
+
+extern uint32_t spi_mode;
 
 static void cgx_fdt_get_spi_bus_cs(int *bus, int *cs)
 {
@@ -75,16 +76,18 @@ static int cgx_read_flash_lmac_params(uint8_t *buf, int buflen)
 	cgx_fdt_get_spi_bus_cs(&spi_con, &cs);
 	if (spi_con == -1 || cs == -1)
 		return -1;
-	err = spi_config(SPI_FREQUENCY, 0, 0, 0, spi_con, cs);
+	err = spi_config(CONFIG_SPI_FREQUENCY, 0, 0, 0, spi_con, cs);
 	if (err < 0) {
 		debug_cgx_flash("Config flash failed for lmac params\n");
 		return -1;
 	}
+	spi_mode |= SPI_FORCE_X1_READ;
 
-	err = spi_nor_read(buf, buflen, SPI_NVDATA_OFFSET, SPI_ADDR_WIDTH,
-			   spi_con, cs);
+	err = spi_nor_read(buf, buflen, SPI_NVDATA_OFFSET,
+			   SPI_ADDRESSING_24BIT, spi_con, cs);
 	if (err < 0)
 		debug_cgx_flash("Read flash failed for lmac params\n");
+	spi_mode &= ~SPI_FORCE_X1_READ;
 	return err;
 }
 
@@ -170,13 +173,14 @@ static int cgx_update_flash_lmac_params(int cgx_id, int lmac_id, int fec,
 		ptr->s.mod_valid = 1;
 	}
 
-	err = spi_nor_erase(SPI_NVDATA_OFFSET, SPI_ADDR_WIDTH, spi_con, cs);
+	err = spi_nor_erase(SPI_NVDATA_OFFSET, SPI_ADDRESSING_24BIT, spi_con,
+			    cs);
 	if (err < 0) {
 		debug_cgx_flash("Erase flash failed for lmac params\n");
 		return -1;
 	}
 	err = spi_nor_write((uint8_t *)fctx, sizeof(fctx), SPI_NVDATA_OFFSET,
-			    SPI_ADDR_WIDTH, spi_con, cs);
+			    SPI_ADDRESSING_24BIT, spi_con, cs);
 	if (err < 0) {
 		debug_cgx_flash("Write flash failed for lmac params\n");
 		return -1;

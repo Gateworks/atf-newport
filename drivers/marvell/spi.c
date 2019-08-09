@@ -21,7 +21,7 @@
 
 static file_state_t current_file = { 0 };
 
-static uint32_t spi_mode;
+uint32_t spi_mode;
 
 static int spi_config_cn8xxx(uint64_t spi_clk, uint32_t mode, int cpol,
 	int cpha, int spi_con, int cs)
