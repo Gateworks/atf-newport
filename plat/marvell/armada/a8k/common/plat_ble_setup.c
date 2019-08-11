@@ -547,9 +547,10 @@ static void ble_plat_svc_config(void)
 				if (perr[0])
 					goto perror;
 				avs_workpoint = svc[0];
-			} else
+			} else {
 				NOTICE("SVC: AVS work point not changed\n");
 				return;
+			}
 			break;
 		}
 	} else if (device_id == MVEBU_3900_DEV_ID) {
