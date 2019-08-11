@@ -548,8 +548,17 @@ static void ble_plat_svc_config(void)
 					goto perror;
 				avs_workpoint = svc[0];
 			} else {
+#if SVC_TEST
+				reg_val = mmio_read_32(AVS_EN_CTRL_REG);
+				avs_workpoint = (reg_val &
+					AVS_VDD_LOW_LIMIT_MASK) >>
+					AVS_LOW_VDD_LIMIT_OFFSET;
+				NOTICE("7040 1600Mhz, avs = 0x%x\n",
+					avs_workpoint);
+#else
 				NOTICE("SVC: AVS work point not changed\n");
 				return;
+#endif
 			}
 			break;
 		}
