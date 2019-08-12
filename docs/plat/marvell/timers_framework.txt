@@ -1,8 +1,5 @@
-CAVIUM
-======
-
-ARM Trusted Firmware timers framework
-=====================================
+Timers framework
+================
 
 Purpose of this document is to describe timers framework in ATF, porting guide
 for this and example of usage. Main part is description of API exposed by timers

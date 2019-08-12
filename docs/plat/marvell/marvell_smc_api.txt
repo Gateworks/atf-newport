@@ -1,8 +1,5 @@
-MARVELL
-======
-
-ARM Trusted Firmware MARVELL SMC interface
-=========================================
+SMC interface
+=============
 
 This document purpose is to describe Marvell-specific SMC runtime services, which
 creates runtime interface for non-secure firmware/OS. Describing standard ARM

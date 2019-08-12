@@ -1,8 +1,5 @@
-CAVIUM
-======
-
-ARM Trusted Firmware interface to BL33 image
-============================================
+ATF interface to BL33 image
+===========================
 
 This document purpose is to describe ATF ABI for BL33 (non-secure Firmware). It
 is necessary to understand in what state platform is left when execution is

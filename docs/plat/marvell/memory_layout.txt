@@ -1,8 +1,5 @@
-CAVIUM
-======
-
-ARM Trusted Firmware memory layout for Cavium's platforms
-=========================================================
+Memory layout for Marvell's OCTEON platforms
+============================================
 
 This document purpose is to describe ATF binaries memory layout - namely base
 addresses and sizes. Described is memory look after loading binaries from

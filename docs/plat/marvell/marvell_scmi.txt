@@ -1,8 +1,5 @@
-CAVIUM
-======
-
-ARM Trusted Firmware SCMI implementation
-=====================================
+SCMI implementation
+===================
 
 Purpose of this document is to describe the ATF's SCMI generic driver port
 to plat/cavium directory.

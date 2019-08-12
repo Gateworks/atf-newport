@@ -1,4 +1,5 @@
-# CGX related support in T9x firmware [Internal Reference]
+CGX related support in T9x firmware
+===================================
 
 ## 1. Overview
 
