@@ -537,6 +537,12 @@ static inline sd_if_cond_t sdmmc_send_if_cond_cmd(void)
 {
 	sd_if_cond_t rsp;
 
+	if (!strncmp(plat_octeontx_bcfg->bcfg.board_model, "emul-", 5)) {
+		/* This always fails on the emulator so save boot time */
+		rsp.rsp_sts = -1;
+		return rsp;
+	}
+
 	rsp.rsp_sts = mio_emm_cmd(SD_CMD_SEND_IF_COND,
 			CMD_READ_DBUF, RESP_R2, SD_IF_COND_ARG);
 	rsp.rsp_lo = CSR_READ(CAVM_MIO_EMM_RSP_LO);
@@ -620,8 +626,14 @@ static inline uint32_t sdmmc_get_ocr(void)
 	ocr = 0;
 	/* Send a ACMD 41 */
 	do {
-		emm_rsp_sts = mio_emm_cmd(SD_CMD_SEND_OP_COND,
-				CMD_NO_DATA, RESP_NONE, 0);
+		if (!strncmp(plat_octeontx_bcfg->bcfg.board_model,
+			"emul-", 5)) {
+			/* This always fails on the emulator so save time */
+			emm_rsp_sts = -1;
+		} else {
+			emm_rsp_sts = mio_emm_cmd(SD_CMD_SEND_OP_COND,
+					CMD_NO_DATA, RESP_NONE, 0);
+		}
 		if (emm_rsp_sts == 0x0) {
 			emm_rsp_sts = mio_emm_cmd(SD_CMD_APP_SEND_OP_COND,
 					CMD_NO_DATA, RESP_R3, OP_COND_ARG);
