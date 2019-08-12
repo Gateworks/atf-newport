@@ -73,7 +73,7 @@ static int print_rsp_sts_errors(uint64_t emm_rsp_sts)
 }
 
 static uint64_t mio_emm_cmd(uint32_t cmd_idx, uint32_t ctype_xor,
-	uint32_t rtype_xor, uint32_t arg)
+	uint32_t rtype_xor, uint32_t arg, int suppress_warning)
 {
 	uint64_t cmd;
 	int cmd_error = 0;
@@ -101,10 +101,12 @@ static uint64_t mio_emm_cmd(uint32_t cmd_idx, uint32_t ctype_xor,
 	} else {
 		if (cmd_idx != MMC_CMD_GO_IDLE_STATE &&
 		    cmd_idx != MMC_CMD_SET_DSR) {
-			ERROR("MMC: No valid response\n"
-				"              cmd     = 0x%016llx\n"
-				"              rsp_sts = 0x%016llx\n",
-				cmd, emm_rsp_sts);
+			if (!suppress_warning) {
+				ERROR("MMC: No valid response\n"
+					"              cmd     = 0x%016llx\n"
+					"              rsp_sts = 0x%016llx\n",
+					cmd, emm_rsp_sts);
+			}
 
 			return emm_rsp_sts;
 		}
@@ -521,12 +523,14 @@ static inline void sdmmc_power_cycle(void)
 
 static inline void reset_card(void)
 {
-	mio_emm_cmd(MMC_CMD_GO_IDLE_STATE, CMD_NO_DATA, RESP_NONE, 0);
+	mio_emm_cmd(MMC_CMD_GO_IDLE_STATE, CMD_NO_DATA, RESP_NONE,
+		0 /* = arg */, 0 /* = suppress_warning */);
 }
 
 static inline uint64_t sdmmc_all_send_cid(void)
 {
-	return mio_emm_cmd(MMC_CMD_ALL_SEND_CID, CMD_NO_DATA, RESP_NONE, 0);
+	return mio_emm_cmd(MMC_CMD_ALL_SEND_CID, CMD_NO_DATA, RESP_NONE,
+			0 /* = arg */, 0 /* = suppress_warning */);
 }
 
 /*
@@ -543,8 +547,8 @@ static inline sd_if_cond_t sdmmc_send_if_cond_cmd(void)
 		return rsp;
 	}
 
-	rsp.rsp_sts = mio_emm_cmd(SD_CMD_SEND_IF_COND,
-			CMD_READ_DBUF, RESP_R2, SD_IF_COND_ARG);
+	rsp.rsp_sts = mio_emm_cmd(SD_CMD_SEND_IF_COND, CMD_READ_DBUF, RESP_R2,
+				SD_IF_COND_ARG, 1 /* = suppress_warning */);
 	rsp.rsp_lo = CSR_READ(CAVM_MIO_EMM_RSP_LO);
 	return rsp;
 }
@@ -567,11 +571,13 @@ static inline uint32_t sd_ver_2_above_get_ocr(sd_if_cond_t sd_if_cond)
 	/* Send a ACMD 41 */
 	do {
 		emm_rsp_sts = mio_emm_cmd(SD_CMD_SEND_OP_COND,
-				CMD_NO_DATA, RESP_NONE, 0);
+				CMD_NO_DATA, RESP_NONE, 0 /* = arg */,
+				0 /* = suppress_warning */);
 
 		if (emm_rsp_sts == 0x0) {
 			emm_rsp_sts = mio_emm_cmd(SD_CMD_APP_SEND_OP_COND,
-					CMD_NO_DATA, RESP_R3, OP_COND_ARG);
+					CMD_NO_DATA, RESP_R3, OP_COND_ARG,
+					0 /* = suppress_warning */);
 			if (emm_rsp_sts) {
 				ERROR("MMC: Failed to recognize card\n");
 				mmc_drv.is_sd = 0;
@@ -604,7 +610,8 @@ static inline uint32_t sdmmc_send_op_cond_cmd(void)
 
 	do {
 		emm_rsp_sts = mio_emm_cmd(MMC_CMD_SEND_OP_COND,
-				CMD_NO_DATA, RESP_NONE, OP_COND_ARG);
+				CMD_NO_DATA, RESP_NONE, OP_COND_ARG,
+				0 /* = suppress_warning */);
 		if (emm_rsp_sts) {
 			ERROR("MMC: Failed to recognize card\n");
 			ocr = 0;
@@ -632,11 +639,13 @@ static inline uint32_t sdmmc_get_ocr(void)
 			emm_rsp_sts = -1;
 		} else {
 			emm_rsp_sts = mio_emm_cmd(SD_CMD_SEND_OP_COND,
-					CMD_NO_DATA, RESP_NONE, 0);
+					CMD_NO_DATA, RESP_NONE, 0 /* = arg */,
+					1 /* = suppress_warning */);
 		}
 		if (emm_rsp_sts == 0x0) {
 			emm_rsp_sts = mio_emm_cmd(SD_CMD_APP_SEND_OP_COND,
-					CMD_NO_DATA, RESP_R3, OP_COND_ARG);
+					CMD_NO_DATA, RESP_R3, OP_COND_ARG,
+					0 /* = suppress_warning */);
 			if (emm_rsp_sts) {
 				/* Have an SD card, version less than 2. */
 				mmc_drv.is_sd = 1;
@@ -671,8 +680,8 @@ static inline int sd_get_rca(void)
 	sts_mask = CSR_READ(CAVM_MIO_EMM_STS_MASK);
 	CSR_WRITE(CAVM_MIO_EMM_STS_MASK, STS_MASK_RESP_R6);
 
-	emm_rsp_sts = mio_emm_cmd(
-			SD_CMD_SEND_RELATIVE_ADDR, CMD_NO_DATA, RESP_R6, 0);
+	emm_rsp_sts = mio_emm_cmd(SD_CMD_SEND_RELATIVE_ADDR, CMD_NO_DATA,
+			RESP_R6, 0 /* = arg */, 0 /* = suppress_warning */);
 	CSR_WRITE(CAVM_MIO_EMM_STS_MASK, sts_mask);
 	if (emm_rsp_sts) {
 		ERROR("MMC: Filed to get rca.\n");
@@ -686,19 +695,19 @@ static inline int sd_get_rca(void)
 static inline uint64_t mmc_set_rca(void)
 {
 	return mio_emm_cmd(MMC_CMD_SET_RELATIVE_ADDR, CMD_NO_DATA, RESP_NONE,
-				RCA_ARG(mmc_drv.rca));
+			RCA_ARG(mmc_drv.rca), 0 /* = suppress_warning */);
 }
 
 static inline uint64_t sdmmc_select_card(void)
 {
 	return mio_emm_cmd(MMC_CMD_SELECT_CARD, CMD_NO_DATA, RESP_NONE,
-				RCA_ARG(mmc_drv.rca));
+			RCA_ARG(mmc_drv.rca), 0 /* = suppress_warning */);
 }
 
 static inline uint64_t sdmmc_send_card_status(void)
 {
 	return mio_emm_cmd(MMC_CMD_SEND_STATUS, CMD_NO_DATA, RESP_NONE,
-				RCA_ARG(mmc_drv.rca));
+			RCA_ARG(mmc_drv.rca), 0 /* = suppress_warning */);
 }
 
 static void sdmmc_switch_clock(int clock_hz)
