@@ -27,6 +27,14 @@
 static file_state_t mmc_current_file = { 0 };
 static mio_emm_driver_t mmc_drv = { 0 };
 
+static void mmc_mdelay(uint64_t ms)
+{
+	if (!strncmp(plat_octeontx_bcfg->bcfg.board_model, "emul-", 5))
+		udelay(ms); /* Speed up 1000x on emulator */
+	else
+		mdelay(ms);
+}
+
 static int print_rsp_sts_errors(uint64_t emm_rsp_sts, int suppress_warning)
 {
 	int error_count = 0;
@@ -490,25 +498,25 @@ static inline void sdmmc_power_cycle(void)
 		CSR_WRITE(CAVM_MIO_EMM_CFG, 0x1 << mmc_drv.bus_id);
 		mio_emm_modex = CSR_READ(CAVM_MIO_EMM_MODEX(mmc_drv.bus_id));
 	}
-	mdelay(200);
+	mmc_mdelay(200);
 
 	// Disable buses and reset device using GPIO8
 	CSR_WRITE(CAVM_MIO_EMM_CFG, 0x0);
 	gpio_bit_cfgx = CSR_READ(CAVM_GPIO_BIT_CFGX(8));
 	gpio_bit_cfgx = GPIO_CFG_TX_OE(gpio_bit_cfgx, 1);
 	CSR_WRITE(CAVM_GPIO_BIT_CFGX(8), gpio_bit_cfgx);
-	mdelay(1);
+	mmc_mdelay(1);
 	CSR_WRITE(CAVM_GPIO_TX_CLR, 0x1 << 8);
-	mdelay(200);
+	mmc_mdelay(200);
 	CSR_WRITE(CAVM_GPIO_TX_SET, 0x1 << 8);
-	mdelay(2);
+	mmc_mdelay(2);
 
 	// Enable bus
 	CSR_WRITE(CAVM_MIO_EMM_CFG, 0x1 << mmc_drv.bus_id);
 
 	// Reset the status mask reg., boot will change it
 	CSR_WRITE(CAVM_MIO_EMM_STS_MASK, DEFAULT_STS_MASK);
-	mdelay(2);
+	mmc_mdelay(2);
 
 	sdmmc_set_watchdog(MMC_WATCHDOG_MS);
 }
@@ -709,16 +717,20 @@ static void sdmmc_switch_clock(int clock_hz)
 	uint64_t emm_switch;
 	uint64_t mio_emm_modex;
 
-	rst_boot = CSR_READ(CAVM_RST_BOOT);
-	clock = RST_BOOT_GET_PNR_MUL(rst_boot) * REF_FREQ * 1000;
-	clock /= clock_hz;
-	clock /= 2; /* half time for hi and half for lo */
+	if (!strncmp(plat_octeontx_bcfg->bcfg.board_model, "emul-", 5)) {
+		clock = 2;
+	} else {
+		rst_boot = CSR_READ(CAVM_RST_BOOT);
+		clock = RST_BOOT_GET_PNR_MUL(rst_boot) * REF_FREQ * 1000;
+		clock /= clock_hz;
+		clock /= 2; /* half time for hi and half for lo */
+	}
 
 	mio_emm_modex = CSR_READ(CAVM_MIO_EMM_MODEX(mmc_drv.bus_id));
 	emm_switch = 0;
 	emm_switch = MIO_EMM_SWITCH_SET_CLK_LO(emm_switch, clock);
 	emm_switch = MIO_EMM_SWITCH_SET_CLK_HI(emm_switch, clock);
-	emm_switch = MIO_EMM_SWITCH_SET_SWITHC_EXE(emm_switch, 0);
+	emm_switch = MIO_EMM_SWITCH_SET_SWITCH_EXE(emm_switch, 0);
 	emm_switch = MIO_EMM_SWITCH_SET_HS_TIMING(emm_switch,
 				MIO_EMM_MODEX_GET_HS_TIMING(mio_emm_modex));
 	emm_switch = MIO_EMM_SWITCH_SET_BUS_WIDTH(emm_switch,
@@ -729,12 +741,21 @@ static void sdmmc_switch_clock(int clock_hz)
 	/* apply to slot-0 first */
 	emm_switch = MIO_EMM_SWITCH_SET_BUS_ID(emm_switch, 0);
 	CSR_WRITE(CAVM_MIO_EMM_SWITCH, emm_switch);
-	mdelay(2);
+	mmc_mdelay(2);
 
 	/* apply to target slot */
 	emm_switch = MIO_EMM_SWITCH_SET_BUS_ID(emm_switch, mmc_drv.bus_id);
 	CSR_WRITE(CAVM_MIO_EMM_SWITCH, emm_switch);
-	mdelay(2);
+	mmc_mdelay(2);
+
+	if (!strncmp(plat_octeontx_bcfg->bcfg.board_model, "emul-", 5)) {
+		emm_switch = MIO_EMM_SWITCH_SET_SWITCH_EXE(emm_switch, 1);
+		/* 8 bit single data rate */
+		emm_switch = MIO_EMM_SWITCH_SET_BUS_WIDTH(emm_switch,
+							BUS_8_BIT);
+		CSR_WRITE(CAVM_MIO_EMM_SWITCH, emm_switch);
+		mmc_mdelay(2);
+	}
 
 	sdmmc_set_watchdog(MMC_WATCHDOG_MS);
 }
