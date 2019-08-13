@@ -14,6 +14,7 @@
 #include <uuid.h>
 #include <rvu.h>
 #include <plat_board_cfg.h>
+#include <plat_ttbr_svc.h>
 #include <plat_scmi.h>
 
 extern void *scmi_handle;
@@ -63,6 +64,11 @@ uintptr_t plat_octeontx_svc_smc_handler(uint32_t smc_fid,
 		x5 = read_ctx_reg(sregs, CTX_GPREG_X5);
 		x6 = read_ctx_reg(sregs, CTX_GPREG_X6);
 		ret = mdio_debug_write(x1, x2, x3, x4, x5, x6);
+		SMC_RET1(handle, ret);
+		break;
+
+	case PLAT_OCTEONTX_SET_TTBR:
+		ret = set_ttbr(x1, x2);
 		SMC_RET1(handle, ret);
 		break;
 
