@@ -21,6 +21,7 @@
 #include <lmc_ras.h>
 #include <plat_octeontx.h>
 #include <octeontx_utils.h>
+#include <sh_fwdata.h>
 
 static int disable_ooo;
 
@@ -33,6 +34,7 @@ static int disable_ooo;
  */
 void plat_octeontx_setup(void)
 {
+	sh_fwdata_init();
 	/* Initialize CGX framework */
 	cgx_fw_intf_init();
 

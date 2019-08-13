@@ -13,7 +13,6 @@
 #include <octeontx_common.h>
 #include <plat_board_cfg.h>
 #include <rvu.h>
-#include <sh_fwdata.h>
 #include <platform.h>
 #include <assert.h>
 #include <debug.h>
@@ -715,6 +714,4 @@ void octeontx_rvu_init()
 
 	mailbox_enable();
 	config_rvu_pci();
-
-	sh_fwdata_init();
 }
