@@ -407,6 +407,13 @@ static int octeontx2_parse_rvu_admin(const void *fdt, int parentoffset,
 					DEFAULT_AF_PF0_VFS, sum_vfs, name);
 	}
 
+	/* Allocate additional VF for AF_PF0 to handle
+	 * workaround for NIX-36681
+	 */
+	if ((IS_OCTEONTX_PASS(read_midr(), T96PARTNUM, 1, 0)) ||
+		(IS_OCTEONTX_VAR(read_midr(), F95PARTNUM, 1)))
+		sw_pf->num_rvu_vfs += 1;
+
 	/* Increment number of allocated HWVFs */
 	*sum_vfs += sw_pf->num_rvu_vfs;
 
