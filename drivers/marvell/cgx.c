@@ -153,6 +153,8 @@ static int cgx_xaui_hw_init(int cgx_id, int lmac_id)
 	cavm_cgxx_cmrx_rx_bp_on_t rx_bp_on;
 	cavm_cgxx_const_t cgx_const;
 	cavm_cgxx_cmr_rx_lmacs_t cmr_rx_lmacs;
+	cavm_cgxx_spux_rx_lpi_timing_t rx_lpi_timing;
+	cavm_cgxx_spux_tx_lpi_timing_t tx_lpi_timing;
 
 	debug_cgx("%s %d:%d\n", __func__, cgx_id, lmac_id);
 
@@ -196,6 +198,21 @@ static int cgx_xaui_hw_init(int cgx_id, int lmac_id)
 	CAVM_MODIFY_CGX_CSR(cavm_cgxx_smux_tx_min_pkt_t,
 			CAVM_CGXX_SMUX_TX_MIN_PKT(cgx_id, lmac_id),
 			min_size, CGX_SMUX_MIN_PACKET_SIZE);
+
+	/* Disable EEE as there is no support in HW */
+	rx_lpi_timing.u = CSR_READ(CAVM_CGXX_SPUX_RX_LPI_TIMING(cgx_id,
+						lmac_id));
+	rx_lpi_timing.s.rx_lpi_en = 0;
+	rx_lpi_timing.s.rx_lpi_fw = 0;
+	CSR_WRITE(CAVM_CGXX_SPUX_RX_LPI_TIMING(cgx_id, lmac_id),
+				rx_lpi_timing.u);
+
+	tx_lpi_timing.u = CSR_READ(CAVM_CGXX_SPUX_TX_LPI_TIMING(cgx_id,
+						lmac_id));
+	tx_lpi_timing.s.tx_lpi_en = 0;
+	tx_lpi_timing.s.tx_lpi_fw = 0;
+	CSR_WRITE(CAVM_CGXX_SPUX_TX_LPI_TIMING(cgx_id, lmac_id),
+				tx_lpi_timing.u);
 
 	/* Program receive backpressure as recommended by HRM
 	 * The recommended value is 1/4th the size of the per-LMAC RX FIFO
