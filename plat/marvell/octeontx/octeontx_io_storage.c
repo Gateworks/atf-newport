@@ -62,7 +62,11 @@ static const io_dev_connector_t *memmap_dev_con;
 static uintptr_t memmap_dev_handle;
 
 static io_block_spec_t fip_block_spec = {
+#ifdef FIP_IMG_FLASH_OFFSET
+	.offset	= FIP_IMG_FLASH_OFFSET,
+#else
 	.offset	= 0x440000,
+#endif
 };
 
 static const io_uuid_spec_t bl2_uuid_spec = {
