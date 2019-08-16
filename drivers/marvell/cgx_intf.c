@@ -52,8 +52,10 @@ static const cgx_speed_mode_map speed_mode_map[] = {
 	{CGX_LINK_10G, CAVM_CGX_LMAC_TYPES_E_TENG_R, 0, QLM_MODE_XFI, CGX_FEC_BASE_R, 10312, (1 << CGX_MODE_10G_C2C_BIT)},
 	{CGX_LINK_10G, CAVM_CGX_LMAC_TYPES_E_TENG_R, 1, QLM_MODE_10G_KR, CGX_FEC_BASE_R, 10312, (1 << CGX_MODE_10G_KR_BIT)},
 	{CGX_LINK_20G, CAVM_CGX_LMAC_TYPES_E_TWENTYFIVEG_R, 0, QLM_MODE_20GAUI_C2C, (CGX_FEC_BASE_R | CGX_FEC_RS), 20625, (1 << CGX_MODE_20G_C2C_BIT)},
+	{CGX_LINK_25G, CAVM_CGX_LMAC_TYPES_E_FIFTYG_R, 0, QLM_MODE_25GAUI_2_C2C, (CGX_FEC_NONE), 12890, (1 << CGX_MODE_25G_2_C2C_BIT)},
 	{CGX_LINK_25G, CAVM_CGX_LMAC_TYPES_E_TWENTYFIVEG_R, 0, QLM_MODE_25GAUI_C2M, (CGX_FEC_BASE_R | CGX_FEC_RS), 25781, (1 << CGX_MODE_25G_2_C2M_BIT)},
 	{CGX_LINK_25G, CAVM_CGX_LMAC_TYPES_E_TWENTYFIVEG_R, 0, QLM_MODE_25GAUI_C2C, (CGX_FEC_BASE_R | CGX_FEC_RS), 25781, (1 << CGX_MODE_25G_2_C2C_BIT)},
+	{CGX_LINK_50G, CAVM_CGX_LMAC_TYPES_E_FORTYG_R, 0, QLM_MODE_50GAUI_4_C2C, (CGX_FEC_NONE), 12890, (1 << CGX_MODE_50G_4_C2C_BIT)},
 	/* add new modes here */
 	{CGX_LINK_MAX, 0, 0, QLM_MODE_DISABLED, 0, CGX_FEC_NONE},
 };
@@ -686,8 +688,9 @@ static int cgx_check_speed_change_allowed(int cgx_id, int lmac_id, int new_mode,
 	static int cgx_valid_speed_mode[] = {
 					CAVM_CGX_LMAC_TYPES_E_SGMII,
 					CAVM_CGX_LMAC_TYPES_E_TENG_R,
-					CAVM_CGX_LMAC_TYPES_E_TWENTYFIVEG_R};
-
+					CAVM_CGX_LMAC_TYPES_E_TWENTYFIVEG_R,
+					CAVM_CGX_LMAC_TYPES_E_FORTYG_R,
+					CAVM_CGX_LMAC_TYPES_E_FIFTYG_R};
 
 	debug_cgx_intf("%s: %d:%d\n", __func__, cgx_id, lmac_id);
 	lmac_cfg = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
@@ -731,6 +734,7 @@ int cgx_handle_mode_change(int cgx_id, int lmac_id,
 	int an_cap = 0;
 	uint64_t mode_bitmask = 0;
 	link_state_t link;
+	int lane;
 
 	lmac_ctx = &lmac_context[cgx_id][lmac_id];
 	lmac = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
@@ -868,7 +872,14 @@ int cgx_handle_mode_change(int cgx_id, int lmac_id,
 
 			/* Configure SerDes for new QLM mode */
 			qlm_state_lane_t state = qlm_build_state(qlm_mode, baud_mhz, flags);
-			qlm_set_mode_gsern(qlm, lmac->rev_lane, qlm_mode, baud_mhz, 0);
+
+			if (qlm_mode == QLM_MODE_50GAUI_4_C2C ||
+			    qlm_mode == QLM_MODE_25GAUI_2_C2C)
+				lane = -1;
+			else
+				lane = lmac->rev_lane;
+
+			qlm_set_mode_gsern(qlm, lane, qlm_mode, baud_mhz, 0);
 
 			/* Update the SCRATCHX register with the new link info to the
 			 * original lane
@@ -1553,6 +1564,16 @@ void cgx_set_supported_link_modes(int cgx_id, int lmac_id)
 			(1 << CGX_MODE_10G_C2M_BIT) |
 			(1 << CGX_MODE_10G_KR_BIT) |
 			(1 << CGX_MODE_20G_C2C_BIT));
+	else if (lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_FIFTYG_R ||
+		 lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_FORTYG_R)
+		lmac_cfg->supported_link_modes &=
+			((1 << CGX_MODE_25G_2_C2C_BIT) |
+			(1 << CGX_MODE_25G_2_C2M_BIT) |
+			(1 << CGX_MODE_50G_4_C2C_BIT) |
+			(1 << CGX_MODE_50G_4_C2M_BIT) |
+			(1 << CGX_MODE_10G_C2C_BIT) |
+			(1 << CGX_MODE_10G_C2M_BIT) |
+			(1 << CGX_MODE_10G_KR_BIT));
 	else
 		lmac_cfg->supported_link_modes = 0;
 
