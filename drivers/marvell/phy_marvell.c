@@ -1396,6 +1396,8 @@ void phy_marvell_6141_config(int cgx_id, int lmac_id)
 	MYD_OP_MODE host_mode, line_mode;
 	MYD_U16 lane;
 	MYD_U32 mode_option;
+	MYD_DEV_PTR myd_dev;
+	PMYD_MODE_CONFIG myd_host_config;
 
 	debug_phy_driver("%s: %d:%d\n", __func__, cgx_id, lmac_id);
 
@@ -1403,15 +1405,23 @@ void phy_marvell_6141_config(int cgx_id, int lmac_id)
 	phy = &lmac_cfg->phy_config;
 
 	switch (lmac_cfg->mode_idx) {
+	case QLM_MODE_XFI:
+	case QLM_MODE_SFI:
 	case QLM_MODE_10G_KR:
 		switch (lmac_cfg->fec) {
 		case CGX_FEC_BASE_R:
-			host_mode = MYD_P10KF;
+			if (lmac_cfg->mode_idx == QLM_MODE_10G_KR)
+				host_mode = MYD_P10KF;
+			else
+				host_mode = MYD_P10LF;
 			line_mode = MYD_P10KF;
 			break;
 		case CGX_FEC_NONE:
 		default:
-			host_mode = MYD_P10KN;
+			if (lmac_cfg->mode_idx == QLM_MODE_10G_KR)
+				host_mode = MYD_P10KN;
+			else
+				host_mode = MYD_P10LN;
 			line_mode = MYD_P10LN;
 			break;
 		}
@@ -1483,6 +1493,13 @@ void phy_marvell_6141_config(int cgx_id, int lmac_id)
 	}
 
 	lane = lmac_cfg->lane_to_sds & 3;
+	myd_dev = phy->priv;
+	myd_host_config = &myd_dev->hostConfig[0][lane];
+	if (myd_host_config->opMode == MYD_P25YN && host_mode != MYD_P25YN) {
+		/* undo the 25GBASE-R2 hack */
+		myd_write_mdio(phy->priv, phy->addr, 4, 0xF06C, 0);
+	}
+
 	mode_option = MYD_MODE_FORCE_RECONFIG;
 	status = mydSetModeSelection(phy->priv, phy->addr, lane, host_mode,
 				     line_mode, mode_option,
@@ -1585,7 +1602,7 @@ void phy_marvell_6141_get_link_status(int cgx_id, int lmac_id,
 	default:
 		ERROR("%s: %d:%d Unexpected line mode %d\n",
 		      __func__, cgx_id, lmac_id,
-		      myd_mode_config->speed);
+		      myd_mode_config->opMode);
 		break;
 	}
 }
@@ -1599,6 +1616,8 @@ void phy_marvell_6141_supported_modes(int cgx_id, int lmac_id)
 	phy = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id].phy_config;
 
 	phy->supported_link_modes = ((1 << CGX_MODE_10G_KR_BIT) |
+			(1 << CGX_MODE_10G_C2C_BIT) |
+			(1 << CGX_MODE_10G_C2M_BIT) |
 			(1 << CGX_MODE_25G_C2C_BIT) |
 			(1 << CGX_MODE_25G_2_C2C_BIT) |
 			(1 << CGX_MODE_50G_C2C_BIT) |
