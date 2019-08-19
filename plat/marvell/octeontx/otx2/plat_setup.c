@@ -261,7 +261,8 @@ void plat_octeontx_cpu_setup(void)
 	set_bit(cvmmemctl1_el1, 5); /* Trap any accesses to nonzero node id */
 	set_bit(cvmmemctl1_el1, 6); /* Enable SSO switch tag */
 
-	if (MIDR_PARTNUM(midr) == F95PARTNUM)
+	if (IS_OCTEONTX_PN(midr, F95PARTNUM)
+	    || IS_OCTEONTX_PN(midr, LOKIPARTNUM))
 		set_bit(cvmmemctl1_el1, 58); /* Enable 128-bit access to BPHY */
 
 	/*
