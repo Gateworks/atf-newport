@@ -14319,8 +14319,8 @@ static inline uint64_t CAVM_NIXX_AF_PQ_LNK_X_DWRR_MSK_DBG(unsigned long a, unsig
 {
     if (cavm_is_model(OCTEONTX_CN96XX_PASS3_X) && ((a<=1) && (b<=13)))
         return 0x840040001100ll + 0x10000000ll * ((a) & 0x1) + 0x10000ll * ((b) & 0xf);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=13)))
-        return 0x840040001100ll + 0x10000000ll * ((a) & 0x1) + 0x10000ll * ((b) & 0xf);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=22)))
+        return 0x840040001100ll + 0x10000000ll * ((a) & 0x1) + 0x10000ll * ((b) & 0x1f);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a<=1) && (b<=13)))
         return 0x840040001100ll + 0x10000000ll * ((a) & 0x1) + 0x10000ll * ((b) & 0xf);
     __cavm_csr_fatal("NIXX_AF_PQ_LNK_X_DWRR_MSK_DBG", 2, a, b, 0, 0, 0, 0);
@@ -14511,11 +14511,12 @@ union cavm_nixx_af_pse_bp_test0
         uint64_t enable                : 6;  /**< [ 63: 58](R/W) Enable test mode. For diagnostic use only.
                                                                  Internal:
                                                                  Once a bit is set, random backpressure is generated
-                                                                 at PQ and Misc level.
-                                                                 \<63\> = When set, backpressure ADD request from child to PQ PE's.
-                                                                 \<62\> = When set, backpressure GET request from PQ_ARB.
-                                                                 \<61\> = When set, backpressure PE to PE request at PQ level.
-                                                                 \<60\> = When set, backpressure Time-Wheel ADD request to PQ PE's.
+                                                                 at PQ and Misc level. Note between bits[63:60], bit[60] if set is going to
+                                                                 backpressure other grants as well and so on.
+                                                                 \<63\> = When set, backpressure ADD request gnt from TW, BP, TL1 other PE.
+                                                                 \<62\> = When set, backpressure ADD request grant to TL1 one of the PE's.
+                                                                 \<61\> = When set, backpressure GET request grant to PQ_ARB.
+                                                                 \<60\> = When set, backpressure PE to PE gnt at PQ level.
                                                                  \<59\> = When set, backpressure Normal Output FIFO.
                                                                  \<58\> = When set, backpressure SDP Output FIFO. */
         uint64_t reserved_56_57        : 2;
@@ -14554,11 +14555,12 @@ union cavm_nixx_af_pse_bp_test0
         uint64_t enable                : 6;  /**< [ 63: 58](R/W) Enable test mode. For diagnostic use only.
                                                                  Internal:
                                                                  Once a bit is set, random backpressure is generated
-                                                                 at PQ and Misc level.
-                                                                 \<63\> = When set, backpressure ADD request from child to PQ PE's.
-                                                                 \<62\> = When set, backpressure GET request from PQ_ARB.
-                                                                 \<61\> = When set, backpressure PE to PE request at PQ level.
-                                                                 \<60\> = When set, backpressure Time-Wheel ADD request to PQ PE's.
+                                                                 at PQ and Misc level. Note between bits[63:60], bit[60] if set is going to
+                                                                 backpressure other grants as well and so on.
+                                                                 \<63\> = When set, backpressure ADD request gnt from TW, BP, TL1 other PE.
+                                                                 \<62\> = When set, backpressure ADD request grant to TL1 one of the PE's.
+                                                                 \<61\> = When set, backpressure GET request grant to PQ_ARB.
+                                                                 \<60\> = When set, backpressure PE to PE gnt at PQ level.
                                                                  \<59\> = When set, backpressure Normal Output FIFO.
                                                                  \<58\> = When set, backpressure SDP Output FIFO. */
 #endif /* Word 0 - End */
@@ -14621,7 +14623,66 @@ union cavm_nixx_af_pse_bp_test0
                                                                  not return FIFO credits and recived packets are not poped from FIFO. */
 #endif /* Word 0 - End */
     } cnf95xxp2;
-    /* struct cavm_nixx_af_pse_bp_test0_cn96xxp3 loki; */
+    struct cavm_nixx_af_pse_bp_test0_loki
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t enable                : 6;  /**< [ 63: 58](R/W) Enable test mode. For diagnostic use only.
+                                                                 Internal:
+                                                                 Once a bit is set, random backpressure is generated
+                                                                  at PQ and Misc level. Note between bits[63:60], bit[60] if set is going to
+                                                                  backpressure other grants as well and so on.
+                                                                  \<63\> = When set, backpressure ADD request gnt from TW, BP, TL1 other PE.
+                                                                  \<62\> = When set, backpressure ADD request grant to TL1 one of the PE's.
+                                                                  \<61\> = When set, backpressure GET request grant to PQ_ARB
+                                                                  \<60\> = When set, backpressure PE to PE gnt at PQ level.
+                                                                  \<59\> = When set, backpressure Normal Output FIFO.
+                                                                  \<58\> = When set, backpressure SDP Output FIFO. */
+        uint64_t reserved_56_57        : 2;
+        uint64_t reserved_32_55        : 24;
+        uint64_t bp_cfg                : 12; /**< [ 31: 20](R/W) Backpressure weight. For diagnostic use only.
+                                                                 Internal:
+                                                                 There are 2 backpressure configuration bits per enable, with the two bits
+                                                                 defined as 0x0=100% of the time, 0x1=75% of the time, 0x2=50% of the time,
+                                                                 0x3=25% of the time.
+                                                                 \<31:30\> = Config for Enable bit [63].
+                                                                 \<29:28\> = Config for Enable bit [62].
+                                                                 \<27:26\> = Config for Enable bit [61].
+                                                                 \<25:24\> = Config for Enable bit [60].
+                                                                 \<23:22\> = Config for Enable bit [59].
+                                                                 \<21:20\> = Config for Enable bit [58]. */
+        uint64_t reserved_16_19        : 4;
+        uint64_t reserved_12_15        : 4;
+        uint64_t lfsr_freq             : 12; /**< [ 11:  0](R/W) Test LFSR update frequency in coprocessor-clocks minus one. */
+#else /* Word 0 - Little Endian */
+        uint64_t lfsr_freq             : 12; /**< [ 11:  0](R/W) Test LFSR update frequency in coprocessor-clocks minus one. */
+        uint64_t reserved_12_15        : 4;
+        uint64_t reserved_16_19        : 4;
+        uint64_t bp_cfg                : 12; /**< [ 31: 20](R/W) Backpressure weight. For diagnostic use only.
+                                                                 Internal:
+                                                                 There are 2 backpressure configuration bits per enable, with the two bits
+                                                                 defined as 0x0=100% of the time, 0x1=75% of the time, 0x2=50% of the time,
+                                                                 0x3=25% of the time.
+                                                                 \<31:30\> = Config for Enable bit [63].
+                                                                 \<29:28\> = Config for Enable bit [62].
+                                                                 \<27:26\> = Config for Enable bit [61].
+                                                                 \<25:24\> = Config for Enable bit [60].
+                                                                 \<23:22\> = Config for Enable bit [59].
+                                                                 \<21:20\> = Config for Enable bit [58]. */
+        uint64_t reserved_32_55        : 24;
+        uint64_t reserved_56_57        : 2;
+        uint64_t enable                : 6;  /**< [ 63: 58](R/W) Enable test mode. For diagnostic use only.
+                                                                 Internal:
+                                                                 Once a bit is set, random backpressure is generated
+                                                                  at PQ and Misc level. Note between bits[63:60], bit[60] if set is going to
+                                                                  backpressure other grants as well and so on.
+                                                                  \<63\> = When set, backpressure ADD request gnt from TW, BP, TL1 other PE.
+                                                                  \<62\> = When set, backpressure ADD request grant to TL1 one of the PE's.
+                                                                  \<61\> = When set, backpressure GET request grant to PQ_ARB
+                                                                  \<60\> = When set, backpressure PE to PE gnt at PQ level.
+                                                                  \<59\> = When set, backpressure Normal Output FIFO.
+                                                                  \<58\> = When set, backpressure SDP Output FIFO. */
+#endif /* Word 0 - End */
+    } loki;
 };
 typedef union cavm_nixx_af_pse_bp_test0 cavm_nixx_af_pse_bp_test0_t;
 
@@ -14738,13 +14799,14 @@ union cavm_nixx_af_pse_bp_test1
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t enable                : 5;  /**< [ 63: 59](R/W) Enable test mode. For diagnostic use only.
                                                                  Internal:
-                                                                 Once a bit is set, random backpressure is generated
-                                                                 at PQ and Misc level.
-                                                                 \<63\> = When set, backpressure ADD request from child to TL1 PE's.
-                                                                 \<62\> = When set, backpressure GET request from PQ PE's to TL1 PE's.
-                                                                 \<61\> = When set, backpressure PE to PE request at TL1 level.
-                                                                 \<60\> = When set, backpressure Time-Wheel ADD request to TL1 PE's.
-                                                                 \<59\> = When set, backpressure BP ADD request to TL1 PE's */
+                                                                 TL1 backpressure on commands: there is a priority order between bits[63:60],
+                                                                 bit[60] has the highest and if set is going to backpressure other grants as well
+                                                                 and so on.
+                                                                 \<63\> = When set, backpressure ADD request gnt from TW, BP, TL2 other PE.
+                                                                 \<62\> = When set, backpressure ADD request grant to TL2 one of the PE's.
+                                                                 \<61\> = When set, backpressure GET request grant to PQ.
+                                                                 \<60\> = When set, backpressure PE to PE gnt at TL1 level.
+                                                                 \<59\> = Unused. */
         uint64_t reserved_56_58        : 3;
         uint64_t reserved_32_55        : 24;
         uint64_t reserved_26_31        : 6;
@@ -14778,13 +14840,14 @@ union cavm_nixx_af_pse_bp_test1
         uint64_t reserved_56_58        : 3;
         uint64_t enable                : 5;  /**< [ 63: 59](R/W) Enable test mode. For diagnostic use only.
                                                                  Internal:
-                                                                 Once a bit is set, random backpressure is generated
-                                                                 at PQ and Misc level.
-                                                                 \<63\> = When set, backpressure ADD request from child to TL1 PE's.
-                                                                 \<62\> = When set, backpressure GET request from PQ PE's to TL1 PE's.
-                                                                 \<61\> = When set, backpressure PE to PE request at TL1 level.
-                                                                 \<60\> = When set, backpressure Time-Wheel ADD request to TL1 PE's.
-                                                                 \<59\> = When set, backpressure BP ADD request to TL1 PE's */
+                                                                 TL1 backpressure on commands: there is a priority order between bits[63:60],
+                                                                 bit[60] has the highest and if set is going to backpressure other grants as well
+                                                                 and so on.
+                                                                 \<63\> = When set, backpressure ADD request gnt from TW, BP, TL2 other PE.
+                                                                 \<62\> = When set, backpressure ADD request grant to TL2 one of the PE's.
+                                                                 \<61\> = When set, backpressure GET request grant to PQ.
+                                                                 \<60\> = When set, backpressure PE to PE gnt at TL1 level.
+                                                                 \<59\> = Unused. */
 #endif /* Word 0 - End */
     } cn96xxp3;
     /* struct cavm_nixx_af_pse_bp_test1_cn96xxp3 cn98xx; */
@@ -14839,7 +14902,62 @@ union cavm_nixx_af_pse_bp_test1
                                                                  \<60\> = When set, enables Normal packet backpressure from PSE to SQM, SQM credits are ignored. */
 #endif /* Word 0 - End */
     } cnf95xxp2;
-    /* struct cavm_nixx_af_pse_bp_test1_cn96xxp3 loki; */
+    struct cavm_nixx_af_pse_bp_test1_loki
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t enable                : 5;  /**< [ 63: 59](R/W) Enable test mode. For diagnostic use only.
+                                                                 Internal:
+                                                                 TL1 backpressure on commands: there is a priority order between bits[63:60],
+                                                                  bit[60] has the highest and if set is going to backpressure other grants as well
+                                                                  and so on.
+                                                                  \<63\> = When set, backpressure ADD request gnt from TW, BP, TL2 other PE.
+                                                                  \<62\> = When set, backpressure ADD request grant to TL2 one of the PE's.
+                                                                  \<61\> = When set, backpressure GET request grant to PQ
+                                                                  \<60\> = When set, backpressure PE to PE gnt at TL1 level.
+                                                                  \<59\> = Unused. */
+        uint64_t reserved_56_58        : 3;
+        uint64_t reserved_32_55        : 24;
+        uint64_t reserved_26_31        : 6;
+        uint64_t bp_cfg                : 10; /**< [ 25: 16](R/W) Backpressure weight. For diagnostic use only.
+                                                                 Internal:
+                                                                 There are 2 backpressure configuration bits per enable, with the two bits
+                                                                 defined as 0x0=100% of the time, 0x1=75% of the time, 0x2=50% of the time,
+                                                                 0x3=25% of the time.
+                                                                 \<25:24\> = Config for Enable bit [63].
+                                                                 \<23:22\> = Config for Enable bit [62].
+                                                                 \<21:20\> = Config for Enable bit [61].
+                                                                 \<19:18\> = Config for Enable bit [60].
+                                                                 \<17:16\> = Config for Enable bit [59]. */
+        uint64_t reserved_12_15        : 4;
+        uint64_t lfsr_freq             : 12; /**< [ 11:  0](R/W) Test LFSR update frequency in coprocessor-clocks minus one. */
+#else /* Word 0 - Little Endian */
+        uint64_t lfsr_freq             : 12; /**< [ 11:  0](R/W) Test LFSR update frequency in coprocessor-clocks minus one. */
+        uint64_t reserved_12_15        : 4;
+        uint64_t bp_cfg                : 10; /**< [ 25: 16](R/W) Backpressure weight. For diagnostic use only.
+                                                                 Internal:
+                                                                 There are 2 backpressure configuration bits per enable, with the two bits
+                                                                 defined as 0x0=100% of the time, 0x1=75% of the time, 0x2=50% of the time,
+                                                                 0x3=25% of the time.
+                                                                 \<25:24\> = Config for Enable bit [63].
+                                                                 \<23:22\> = Config for Enable bit [62].
+                                                                 \<21:20\> = Config for Enable bit [61].
+                                                                 \<19:18\> = Config for Enable bit [60].
+                                                                 \<17:16\> = Config for Enable bit [59]. */
+        uint64_t reserved_26_31        : 6;
+        uint64_t reserved_32_55        : 24;
+        uint64_t reserved_56_58        : 3;
+        uint64_t enable                : 5;  /**< [ 63: 59](R/W) Enable test mode. For diagnostic use only.
+                                                                 Internal:
+                                                                 TL1 backpressure on commands: there is a priority order between bits[63:60],
+                                                                  bit[60] has the highest and if set is going to backpressure other grants as well
+                                                                  and so on.
+                                                                  \<63\> = When set, backpressure ADD request gnt from TW, BP, TL2 other PE.
+                                                                  \<62\> = When set, backpressure ADD request grant to TL2 one of the PE's.
+                                                                  \<61\> = When set, backpressure GET request grant to PQ
+                                                                  \<60\> = When set, backpressure PE to PE gnt at TL1 level.
+                                                                  \<59\> = Unused. */
+#endif /* Word 0 - End */
+    } loki;
 };
 typedef union cavm_nixx_af_pse_bp_test1 cavm_nixx_af_pse_bp_test1_t;
 
@@ -14956,13 +15074,14 @@ union cavm_nixx_af_pse_bp_test2
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t enable                : 5;  /**< [ 63: 59](R/W) Enable test mode. For diagnostic use only.
                                                                  Internal:
-                                                                 Once a bit is set, random backpressure is generated
-                                                                 at TL2 level.
-                                                                 \<63\> = When set, backpressure ADD request from child to TL2 PE's.
-                                                                 \<62\> = When set, backpressure GET request from TL1 PE's to TL2 PE's.
-                                                                 \<61\> = When set, backpressure PE to PE request at TL2 level.
-                                                                 \<60\> = When set, backpressure Time-Wheel ADD request to TL2 PE's.
-                                                                 \<59\> = When set, backpressure BP ADD request to TL2 PE's */
+                                                                 TL2 Backpressure on commands: there is a priority order between bits[63:60],
+                                                                 bit[60] has the highest and if set is going to backpressure other grants as well
+                                                                 and so on.
+                                                                 \<63\> = When set, backpressure ADD request gnt from TW, BP, TL3 other PE.
+                                                                 \<62\> = When set, backpressure ADD request grant to TL3 one of the PE's.
+                                                                 \<61\> = When set, backpressure GET request grant to TL1.
+                                                                 \<60\> = When set, backpressure PE to PE gnt at TL2level.
+                                                                 \<59\> = Unused. */
         uint64_t reserved_56_58        : 3;
         uint64_t reserved_32_55        : 24;
         uint64_t reserved_26_31        : 6;
@@ -14996,13 +15115,14 @@ union cavm_nixx_af_pse_bp_test2
         uint64_t reserved_56_58        : 3;
         uint64_t enable                : 5;  /**< [ 63: 59](R/W) Enable test mode. For diagnostic use only.
                                                                  Internal:
-                                                                 Once a bit is set, random backpressure is generated
-                                                                 at TL2 level.
-                                                                 \<63\> = When set, backpressure ADD request from child to TL2 PE's.
-                                                                 \<62\> = When set, backpressure GET request from TL1 PE's to TL2 PE's.
-                                                                 \<61\> = When set, backpressure PE to PE request at TL2 level.
-                                                                 \<60\> = When set, backpressure Time-Wheel ADD request to TL2 PE's.
-                                                                 \<59\> = When set, backpressure BP ADD request to TL2 PE's */
+                                                                 TL2 Backpressure on commands: there is a priority order between bits[63:60],
+                                                                 bit[60] has the highest and if set is going to backpressure other grants as well
+                                                                 and so on.
+                                                                 \<63\> = When set, backpressure ADD request gnt from TW, BP, TL3 other PE.
+                                                                 \<62\> = When set, backpressure ADD request grant to TL3 one of the PE's.
+                                                                 \<61\> = When set, backpressure GET request grant to TL1.
+                                                                 \<60\> = When set, backpressure PE to PE gnt at TL2level.
+                                                                 \<59\> = Unused. */
 #endif /* Word 0 - End */
     } cn96xxp3;
     /* struct cavm_nixx_af_pse_bp_test2_cn96xxp3 cn98xx; */
@@ -15174,13 +15294,14 @@ union cavm_nixx_af_pse_bp_test3
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t enable                : 5;  /**< [ 63: 59](R/W) Enable test mode. For diagnostic use only.
                                                                  Internal:
-                                                                 Once a bit is set, random backpressure is generated
-                                                                 at TL3 level.
-                                                                 \<63\> = When set, backpressure ADD request from child to TL3 PE's.
-                                                                 \<62\> = When set, backpressure GET request from TL2 PE's to TL3 PE's.
-                                                                 \<61\> = When set, backpressure PE to PE request at TL3 level.
-                                                                 \<60\> = When set, backpressure Time-Wheel ADD request to TL3 PE's.
-                                                                 \<59\> = When set, backpressure BP ADD request to TL3 PE's */
+                                                                 TL3 Backpressure on commands: there is a priority order between bits[63:60],
+                                                                  bit[60] has the highest and if set is going to backpressure other grants as well
+                                                                  and so on.
+                                                                  \<63\> = When set, backpressure ADD request gnt from TW, BP, TL3 other PE.
+                                                                  \<62\> = When set, backpressure ADD request grant to TL3 one of the PE's.
+                                                                  \<61\> = When set, backpressure GET request grant to TL1.
+                                                                  \<60\> = When set, backpressure PE to PE gnt at TL2level.
+                                                                  \<59\> = Unused. */
         uint64_t reserved_56_58        : 3;
         uint64_t reserved_32_55        : 24;
         uint64_t reserved_26_31        : 6;
@@ -15214,13 +15335,14 @@ union cavm_nixx_af_pse_bp_test3
         uint64_t reserved_56_58        : 3;
         uint64_t enable                : 5;  /**< [ 63: 59](R/W) Enable test mode. For diagnostic use only.
                                                                  Internal:
-                                                                 Once a bit is set, random backpressure is generated
-                                                                 at TL3 level.
-                                                                 \<63\> = When set, backpressure ADD request from child to TL3 PE's.
-                                                                 \<62\> = When set, backpressure GET request from TL2 PE's to TL3 PE's.
-                                                                 \<61\> = When set, backpressure PE to PE request at TL3 level.
-                                                                 \<60\> = When set, backpressure Time-Wheel ADD request to TL3 PE's.
-                                                                 \<59\> = When set, backpressure BP ADD request to TL3 PE's */
+                                                                 TL3 Backpressure on commands: there is a priority order between bits[63:60],
+                                                                  bit[60] has the highest and if set is going to backpressure other grants as well
+                                                                  and so on.
+                                                                  \<63\> = When set, backpressure ADD request gnt from TW, BP, TL3 other PE.
+                                                                  \<62\> = When set, backpressure ADD request grant to TL3 one of the PE's.
+                                                                  \<61\> = When set, backpressure GET request grant to TL1.
+                                                                  \<60\> = When set, backpressure PE to PE gnt at TL2level.
+                                                                  \<59\> = Unused. */
 #endif /* Word 0 - End */
     } cn96xxp3;
     /* struct cavm_nixx_af_pse_bp_test3_cn96xxp3 cn98xx; */
@@ -15275,7 +15397,62 @@ union cavm_nixx_af_pse_bp_test3
                                                                  \<60\> = When set, enables PQ TW request backpressure, TW does not requests PKT_ADD to PEx. */
 #endif /* Word 0 - End */
     } cnf95xxp2;
-    /* struct cavm_nixx_af_pse_bp_test3_cn96xxp3 loki; */
+    struct cavm_nixx_af_pse_bp_test3_loki
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t enable                : 5;  /**< [ 63: 59](R/W) Enable test mode. For diagnostic use only.
+                                                                 Internal:
+                                                                 TL3 Backpressure on commands: there is a priority order between bits[63:60],
+                                                                   bit[60] has the highest and if set is going to backpressure other grants as well
+                                                                   and so on.
+                                                                   \<63\> = When set, backpressure ADD request gnt from TW, BP, TL3 other PE.
+                                                                   \<62\> = When set, backpressure ADD request grant to TL3 one of the PE's.
+                                                                   \<61\> = When set, backpressure GET request grant to TL1
+                                                                   \<60\> = When set, backpressure PE to PE gnt at TL2level.
+                                                                   \<59\> = Unused. */
+        uint64_t reserved_56_58        : 3;
+        uint64_t reserved_32_55        : 24;
+        uint64_t reserved_26_31        : 6;
+        uint64_t bp_cfg                : 10; /**< [ 25: 16](R/W) Backpressure weight. For diagnostic use only.
+                                                                 Internal:
+                                                                 There are 2 backpressure configuration bits per enable, with the two bits
+                                                                 defined as 0x0=100% of the time, 0x1=75% of the time, 0x2=50% of the time,
+                                                                 0x3=25% of the time.
+                                                                 \<25:24\> = Config for Enable bit [63].
+                                                                 \<23:22\> = Config for Enable bit [62].
+                                                                 \<21:20\> = Config for Enable bit [61].
+                                                                 \<19:18\> = Config for Enable bit [60].
+                                                                 \<17:16\> = Config for Enable bit [59]. */
+        uint64_t reserved_12_15        : 4;
+        uint64_t lfsr_freq             : 12; /**< [ 11:  0](R/W) Test LFSR update frequency in coprocessor-clocks minus one. */
+#else /* Word 0 - Little Endian */
+        uint64_t lfsr_freq             : 12; /**< [ 11:  0](R/W) Test LFSR update frequency in coprocessor-clocks minus one. */
+        uint64_t reserved_12_15        : 4;
+        uint64_t bp_cfg                : 10; /**< [ 25: 16](R/W) Backpressure weight. For diagnostic use only.
+                                                                 Internal:
+                                                                 There are 2 backpressure configuration bits per enable, with the two bits
+                                                                 defined as 0x0=100% of the time, 0x1=75% of the time, 0x2=50% of the time,
+                                                                 0x3=25% of the time.
+                                                                 \<25:24\> = Config for Enable bit [63].
+                                                                 \<23:22\> = Config for Enable bit [62].
+                                                                 \<21:20\> = Config for Enable bit [61].
+                                                                 \<19:18\> = Config for Enable bit [60].
+                                                                 \<17:16\> = Config for Enable bit [59]. */
+        uint64_t reserved_26_31        : 6;
+        uint64_t reserved_32_55        : 24;
+        uint64_t reserved_56_58        : 3;
+        uint64_t enable                : 5;  /**< [ 63: 59](R/W) Enable test mode. For diagnostic use only.
+                                                                 Internal:
+                                                                 TL3 Backpressure on commands: there is a priority order between bits[63:60],
+                                                                   bit[60] has the highest and if set is going to backpressure other grants as well
+                                                                   and so on.
+                                                                   \<63\> = When set, backpressure ADD request gnt from TW, BP, TL3 other PE.
+                                                                   \<62\> = When set, backpressure ADD request grant to TL3 one of the PE's.
+                                                                   \<61\> = When set, backpressure GET request grant to TL1
+                                                                   \<60\> = When set, backpressure PE to PE gnt at TL2level.
+                                                                   \<59\> = Unused. */
+#endif /* Word 0 - End */
+    } loki;
 };
 typedef union cavm_nixx_af_pse_bp_test3 cavm_nixx_af_pse_bp_test3_t;
 
@@ -15804,12 +15981,13 @@ union cavm_nixx_af_pse_norm_bp_test
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t enable                : 6;  /**< [ 63: 58](R/W) Enable test mode. For diagnostic use only.
                                                                  Internal:
-                                                                 Once a bit is set, random backpressure is generated
-                                                                 at the corresponding point to allow for more frequent backpressure.
-                                                                 \<63\> = When set, backpressure ADD request from child to TL4 PE's.
-                                                                 \<62\> = When set, backpressure GET request from TL3 PE's to TL4 PE's.
-                                                                 \<61\> = When set, backpressure PE to PE request at TL4 level.
-                                                                 \<60\> = When set, backpressure Time-Wheel ADD request to TL4 PE's.
+                                                                 TL4 backpressure on commands: there is a priority order between bits [63:60],
+                                                                 bit[60] has the highest and if set is going to backpressure other grants as
+                                                                 well.
+                                                                 \<63\> = When set, backpressure ADD request gnt from TW, BP.
+                                                                 \<62\> = When set, backpressure ADD request grant to MDQ.
+                                                                 \<61\> = When set, backpressure GET request grant to TL3.
+                                                                 \<60\> = When set, backpressure PE to PE gnt at TL4level.
                                                                  \<59\> = When set, backpressure Popping of Interface FIFO SQM-\>PSE and this would
                                                                  prevent returning Interface credits as well.
                                                                  \<58\> = When set, backpressure Popping of Command FIFO and this would backpressure all MDQs. */
@@ -15844,12 +16022,13 @@ union cavm_nixx_af_pse_norm_bp_test
         uint64_t reserved_28_57        : 30;
         uint64_t enable                : 6;  /**< [ 63: 58](R/W) Enable test mode. For diagnostic use only.
                                                                  Internal:
-                                                                 Once a bit is set, random backpressure is generated
-                                                                 at the corresponding point to allow for more frequent backpressure.
-                                                                 \<63\> = When set, backpressure ADD request from child to TL4 PE's.
-                                                                 \<62\> = When set, backpressure GET request from TL3 PE's to TL4 PE's.
-                                                                 \<61\> = When set, backpressure PE to PE request at TL4 level.
-                                                                 \<60\> = When set, backpressure Time-Wheel ADD request to TL4 PE's.
+                                                                 TL4 backpressure on commands: there is a priority order between bits [63:60],
+                                                                 bit[60] has the highest and if set is going to backpressure other grants as
+                                                                 well.
+                                                                 \<63\> = When set, backpressure ADD request gnt from TW, BP.
+                                                                 \<62\> = When set, backpressure ADD request grant to MDQ.
+                                                                 \<61\> = When set, backpressure GET request grant to TL3.
+                                                                 \<60\> = When set, backpressure PE to PE gnt at TL4level.
                                                                  \<59\> = When set, backpressure Popping of Interface FIFO SQM-\>PSE and this would
                                                                  prevent returning Interface credits as well.
                                                                  \<58\> = When set, backpressure Popping of Command FIFO and this would backpressure all MDQs. */
@@ -21924,7 +22103,49 @@ union cavm_nixx_af_tl1x_md_debug0
                                                                  When set, PMD1 is next to write. */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_nixx_af_tl1x_md_debug0_s cn; */
+    /* struct cavm_nixx_af_tl1x_md_debug0_s cn9; */
+    /* struct cavm_nixx_af_tl1x_md_debug0_s cn96xxp1; */
+    struct cavm_nixx_af_tl1x_md_debug0_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_63           : 1;
+        uint64_t reserved_62           : 1;
+        uint64_t child                 : 10; /**< [ 61: 52](R/W/H) Child index, highest priority child. When [C_CON] of this result is set,
+                                                                 indicating that this result is
+                                                                 connected in a flow that extends through the child result, this is the index of that child
+                                                                 result. */
+        uint64_t reserved_50_51        : 2;
+        uint64_t p_con                 : 1;  /**< [ 49: 49](R/W/H) Parent connected flag. This pick has more picks in front of it. */
+        uint64_t c_con                 : 1;  /**< [ 48: 48](R/W/H) Child connected flag. This pick has more picks behind it. */
+        uint64_t reserved_47           : 1;
+        uint64_t reserved_46           : 1;
+        uint64_t reserved_34_45        : 12;
+        uint64_t reserved_33           : 1;
+        uint64_t pmd0_vld              : 1;  /**< [ 32: 32](R/W/H) Packet meta descriptor 0 valid. */
+        uint64_t reserved_16_31        : 16;
+        uint64_t pmd0_length           : 16; /**< [ 15:  0](R/W/H) Packet meta descriptor 0 packet length. See NIX_AF_MDQ()_MD_DEBUG[PKT_LEN]. */
+#else /* Word 0 - Little Endian */
+        uint64_t pmd0_length           : 16; /**< [ 15:  0](R/W/H) Packet meta descriptor 0 packet length. See NIX_AF_MDQ()_MD_DEBUG[PKT_LEN]. */
+        uint64_t reserved_16_31        : 16;
+        uint64_t pmd0_vld              : 1;  /**< [ 32: 32](R/W/H) Packet meta descriptor 0 valid. */
+        uint64_t reserved_33           : 1;
+        uint64_t reserved_34_45        : 12;
+        uint64_t reserved_46           : 1;
+        uint64_t reserved_47           : 1;
+        uint64_t c_con                 : 1;  /**< [ 48: 48](R/W/H) Child connected flag. This pick has more picks behind it. */
+        uint64_t p_con                 : 1;  /**< [ 49: 49](R/W/H) Parent connected flag. This pick has more picks in front of it. */
+        uint64_t reserved_50_51        : 2;
+        uint64_t child                 : 10; /**< [ 61: 52](R/W/H) Child index, highest priority child. When [C_CON] of this result is set,
+                                                                 indicating that this result is
+                                                                 connected in a flow that extends through the child result, this is the index of that child
+                                                                 result. */
+        uint64_t reserved_62           : 1;
+        uint64_t reserved_63           : 1;
+#endif /* Word 0 - End */
+    } cn96xxp3;
+    /* struct cavm_nixx_af_tl1x_md_debug0_cn96xxp3 cn98xx; */
+    /* struct cavm_nixx_af_tl1x_md_debug0_s cnf95xx; */
+    /* struct cavm_nixx_af_tl1x_md_debug0_cn96xxp3 loki; */
 };
 typedef union cavm_nixx_af_tl1x_md_debug0 cavm_nixx_af_tl1x_md_debug0_t;
 
@@ -21976,6 +22197,67 @@ union cavm_nixx_af_tl1x_md_debug1
         uint64_t pse_pkt_id            : 9;  /**< [ 35: 27](R/W/H) PSE packet ID credits vector, pointer to reserved packet link credits. */
         uint64_t color                 : 2;  /**< [ 26: 25](R/W/H) See NIX_COLORRESULT_E. */
         uint64_t bubble                : 1;  /**< [ 24: 24](R/W/H) This MD is a fake passed forward after a prune. */
+        uint64_t reserved_23           : 1;
+        uint64_t uid                   : 4;  /**< [ 22: 19](R/W/H) Unique ID. 4-bit unique value assigned at the TL4 level, increments for each packet. */
+        uint64_t adjust                : 9;  /**< [ 18: 10](R/W/H) Packet meta descriptor adjust. The NIX_SEND_EXT_S[SHP_CHG] for the packet. */
+        uint64_t pir_dis               : 1;  /**< [  9:  9](R/W/H) PIR disable. Peak shaper disabled. Set when NIX_SEND_EXT_S[SHP_DIS] is set
+                                                                 (i.e. [PIR_DIS]=NIX_SEND_EXT_S[SHP_DIS]). [PIR_DIS] is used by
+                                                                 the TL4 through TL2 shapers, but not used by the TL1 rate limiters.
+                                                                 [PIR_DIS] and [CIR_DIS] will always have the same value. */
+        uint64_t cir_dis               : 1;  /**< [  8:  8](R/W/H) CIR disable. Committed shaper disabled. Set when NIX_SEND_EXT_S[SHP_DIS] is set
+                                                                 (i.e. [CIR_DIS]=NIX_SEND_EXT_S[SHP_DIS]). [CIR_DIS] is used by
+                                                                 the TL4 through TL2 shapers, but not used by the TL1 rate limiters.
+                                                                 [PIR_DIS] and [CIR_DIS] will always have the same value. */
+        uint64_t red_algo_override     : 2;  /**< [  7:  6](R/W/H) NIX_SEND_EXT_S[SHP_RA] from the corresponding packet descriptor. [RED_ALGO_OVERRIDE]
+                                                                 is used by the TL4 through TL2 shapers, but not used by the TL1 rate limiters. */
+        uint64_t reserved_0_5          : 6;
+#else /* Word 0 - Little Endian */
+        uint64_t reserved_0_5          : 6;
+        uint64_t red_algo_override     : 2;  /**< [  7:  6](R/W/H) NIX_SEND_EXT_S[SHP_RA] from the corresponding packet descriptor. [RED_ALGO_OVERRIDE]
+                                                                 is used by the TL4 through TL2 shapers, but not used by the TL1 rate limiters. */
+        uint64_t cir_dis               : 1;  /**< [  8:  8](R/W/H) CIR disable. Committed shaper disabled. Set when NIX_SEND_EXT_S[SHP_DIS] is set
+                                                                 (i.e. [CIR_DIS]=NIX_SEND_EXT_S[SHP_DIS]). [CIR_DIS] is used by
+                                                                 the TL4 through TL2 shapers, but not used by the TL1 rate limiters.
+                                                                 [PIR_DIS] and [CIR_DIS] will always have the same value. */
+        uint64_t pir_dis               : 1;  /**< [  9:  9](R/W/H) PIR disable. Peak shaper disabled. Set when NIX_SEND_EXT_S[SHP_DIS] is set
+                                                                 (i.e. [PIR_DIS]=NIX_SEND_EXT_S[SHP_DIS]). [PIR_DIS] is used by
+                                                                 the TL4 through TL2 shapers, but not used by the TL1 rate limiters.
+                                                                 [PIR_DIS] and [CIR_DIS] will always have the same value. */
+        uint64_t adjust                : 9;  /**< [ 18: 10](R/W/H) Packet meta descriptor adjust. The NIX_SEND_EXT_S[SHP_CHG] for the packet. */
+        uint64_t uid                   : 4;  /**< [ 22: 19](R/W/H) Unique ID. 4-bit unique value assigned at the TL4 level, increments for each packet. */
+        uint64_t reserved_23           : 1;
+        uint64_t bubble                : 1;  /**< [ 24: 24](R/W/H) This MD is a fake passed forward after a prune. */
+        uint64_t color                 : 2;  /**< [ 26: 25](R/W/H) See NIX_COLORRESULT_E. */
+        uint64_t pse_pkt_id            : 9;  /**< [ 35: 27](R/W/H) PSE packet ID credits vector, pointer to reserved packet link credits. */
+        uint64_t reserved_36           : 1;
+        uint64_t tx_pkt_p2x            : 2;  /**< [ 38: 37](R/W/H) Packet type.
+                                                                 0x0 = Reserved, PMD has not cleared link credit request.
+                                                                 0x1 = Normal packet type.
+                                                                 0x2 = Express packet type.
+                                                                 0x3 = SDP packet type. */
+        uint64_t sqm_pkt_id            : 13; /**< [ 51: 39](R/W/H) Packet ID from SQM. */
+        uint64_t mdq_idx               : 10; /**< [ 61: 52](R/W/H) Meta-descriptor queue index, MDQ source of PMD if VLD field is set. */
+        uint64_t reserved_62           : 1;
+        uint64_t vld                   : 1;  /**< [ 63: 63](R/W/H) Packet meta descriptor valid. */
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_nixx_af_tl1x_md_debug1_s cn9; */
+    struct cavm_nixx_af_tl1x_md_debug1_cn96xxp1
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t vld                   : 1;  /**< [ 63: 63](R/W/H) Packet meta descriptor valid. */
+        uint64_t reserved_62           : 1;
+        uint64_t mdq_idx               : 10; /**< [ 61: 52](R/W/H) Meta-descriptor queue index, MDQ source of PMD if VLD field is set. */
+        uint64_t sqm_pkt_id            : 13; /**< [ 51: 39](R/W/H) Packet ID from SQM. */
+        uint64_t tx_pkt_p2x            : 2;  /**< [ 38: 37](R/W/H) Packet type.
+                                                                 0x0 = Reserved, PMD has not cleared link credit request.
+                                                                 0x1 = Normal packet type.
+                                                                 0x2 = Express packet type.
+                                                                 0x3 = SDP packet type. */
+        uint64_t reserved_36           : 1;
+        uint64_t pse_pkt_id            : 9;  /**< [ 35: 27](R/W/H) PSE packet ID credits vector, pointer to reserved packet link credits. */
+        uint64_t color                 : 2;  /**< [ 26: 25](R/W/H) See NIX_COLORRESULT_E. */
+        uint64_t bubble                : 1;  /**< [ 24: 24](R/W/H) This MD is a fake passed forward after a prune. */
         uint64_t drain                 : 1;  /**< [ 23: 23](R/W/H) Reserved. */
         uint64_t uid                   : 4;  /**< [ 22: 19](R/W/H) Unique ID. 4-bit unique value assigned at the TL4 level, increments for each packet. */
         uint64_t adjust                : 9;  /**< [ 18: 10](R/W/H) Packet meta descriptor adjust. The NIX_SEND_EXT_S[SHP_CHG] for the packet. */
@@ -22019,10 +22301,70 @@ union cavm_nixx_af_tl1x_md_debug1
         uint64_t reserved_62           : 1;
         uint64_t vld                   : 1;  /**< [ 63: 63](R/W/H) Packet meta descriptor valid. */
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_nixx_af_tl1x_md_debug1_s cn9; */
-    /* struct cavm_nixx_af_tl1x_md_debug1_s cn96xxp1; */
+    } cn96xxp1;
     struct cavm_nixx_af_tl1x_md_debug1_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t vld                   : 1;  /**< [ 63: 63](R/W/H) Packet meta descriptor valid. */
+        uint64_t reserved_62           : 1;
+        uint64_t mdq_idx               : 10; /**< [ 61: 52](R/W/H) Meta-descriptor queue index, MDQ source of PMD if VLD field is set. */
+        uint64_t sqm_pkt_id            : 13; /**< [ 51: 39](R/W/H) Packet ID from SQM. */
+        uint64_t tx_pkt_p2x            : 2;  /**< [ 38: 37](R/W/H) Packet type.
+                                                                 0x0 = Reserved, PMD has not cleared link credit request.
+                                                                 0x1 = Normal packet type.
+                                                                 0x2 = Reserved (Express packet type).
+                                                                 0x3 = SDP packet type. */
+        uint64_t reserved_36           : 1;
+        uint64_t pse_pkt_id            : 9;  /**< [ 35: 27](R/W/H) PSE packet ID credits vector, pointer to reserved packet link credits. */
+        uint64_t color                 : 2;  /**< [ 26: 25](R/W/H) See NIX_COLORRESULT_E. */
+        uint64_t bubble                : 1;  /**< [ 24: 24](R/W/H) This MD is a fake passed forward after a prune. */
+        uint64_t flush                 : 1;  /**< [ 23: 23](R/W/H) This MD is a flush MD. */
+        uint64_t reserved_19_22        : 4;
+        uint64_t adjust                : 9;  /**< [ 18: 10](R/W/H) Packet meta descriptor adjust. The NIX_SEND_EXT_S[SHP_CHG] for the packet. */
+        uint64_t pir_dis               : 1;  /**< [  9:  9](R/W/H) PIR disable. Peak shaper disabled. Set when NIX_SEND_EXT_S[SHP_DIS] is set
+                                                                 (i.e. [PIR_DIS]=NIX_SEND_EXT_S[SHP_DIS]). [PIR_DIS] is used by
+                                                                 the TL4 through TL2 shapers, but not used by the TL1 rate limiters.
+                                                                 [PIR_DIS] and [CIR_DIS] will always have the same value. */
+        uint64_t cir_dis               : 1;  /**< [  8:  8](R/W/H) CIR disable. Committed shaper disabled. Set when NIX_SEND_EXT_S[SHP_DIS] is set
+                                                                 (i.e. [CIR_DIS]=NIX_SEND_EXT_S[SHP_DIS]). [CIR_DIS] is used by
+                                                                 the TL4 through TL2 shapers, but not used by the TL1 rate limiters.
+                                                                 [PIR_DIS] and [CIR_DIS] will always have the same value. */
+        uint64_t red_algo_override     : 2;  /**< [  7:  6](R/W/H) NIX_SEND_EXT_S[SHP_RA] from the corresponding packet descriptor. [RED_ALGO_OVERRIDE]
+                                                                 is used by the TL4 through TL2 shapers, but not used by the TL1 rate limiters. */
+        uint64_t reserved_0_5          : 6;
+#else /* Word 0 - Little Endian */
+        uint64_t reserved_0_5          : 6;
+        uint64_t red_algo_override     : 2;  /**< [  7:  6](R/W/H) NIX_SEND_EXT_S[SHP_RA] from the corresponding packet descriptor. [RED_ALGO_OVERRIDE]
+                                                                 is used by the TL4 through TL2 shapers, but not used by the TL1 rate limiters. */
+        uint64_t cir_dis               : 1;  /**< [  8:  8](R/W/H) CIR disable. Committed shaper disabled. Set when NIX_SEND_EXT_S[SHP_DIS] is set
+                                                                 (i.e. [CIR_DIS]=NIX_SEND_EXT_S[SHP_DIS]). [CIR_DIS] is used by
+                                                                 the TL4 through TL2 shapers, but not used by the TL1 rate limiters.
+                                                                 [PIR_DIS] and [CIR_DIS] will always have the same value. */
+        uint64_t pir_dis               : 1;  /**< [  9:  9](R/W/H) PIR disable. Peak shaper disabled. Set when NIX_SEND_EXT_S[SHP_DIS] is set
+                                                                 (i.e. [PIR_DIS]=NIX_SEND_EXT_S[SHP_DIS]). [PIR_DIS] is used by
+                                                                 the TL4 through TL2 shapers, but not used by the TL1 rate limiters.
+                                                                 [PIR_DIS] and [CIR_DIS] will always have the same value. */
+        uint64_t adjust                : 9;  /**< [ 18: 10](R/W/H) Packet meta descriptor adjust. The NIX_SEND_EXT_S[SHP_CHG] for the packet. */
+        uint64_t reserved_19_22        : 4;
+        uint64_t flush                 : 1;  /**< [ 23: 23](R/W/H) This MD is a flush MD. */
+        uint64_t bubble                : 1;  /**< [ 24: 24](R/W/H) This MD is a fake passed forward after a prune. */
+        uint64_t color                 : 2;  /**< [ 26: 25](R/W/H) See NIX_COLORRESULT_E. */
+        uint64_t pse_pkt_id            : 9;  /**< [ 35: 27](R/W/H) PSE packet ID credits vector, pointer to reserved packet link credits. */
+        uint64_t reserved_36           : 1;
+        uint64_t tx_pkt_p2x            : 2;  /**< [ 38: 37](R/W/H) Packet type.
+                                                                 0x0 = Reserved, PMD has not cleared link credit request.
+                                                                 0x1 = Normal packet type.
+                                                                 0x2 = Reserved (Express packet type).
+                                                                 0x3 = SDP packet type. */
+        uint64_t sqm_pkt_id            : 13; /**< [ 51: 39](R/W/H) Packet ID from SQM. */
+        uint64_t mdq_idx               : 10; /**< [ 61: 52](R/W/H) Meta-descriptor queue index, MDQ source of PMD if VLD field is set. */
+        uint64_t reserved_62           : 1;
+        uint64_t vld                   : 1;  /**< [ 63: 63](R/W/H) Packet meta descriptor valid. */
+#endif /* Word 0 - End */
+    } cn96xxp3;
+    /* struct cavm_nixx_af_tl1x_md_debug1_cn96xxp3 cn98xx; */
+    /* struct cavm_nixx_af_tl1x_md_debug1_cn96xxp1 cnf95xxp1; */
+    struct cavm_nixx_af_tl1x_md_debug1_cnf95xxp2
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t vld                   : 1;  /**< [ 63: 63](R/W/H) Packet meta descriptor valid. */
@@ -22081,10 +22423,7 @@ union cavm_nixx_af_tl1x_md_debug1
         uint64_t reserved_62           : 1;
         uint64_t vld                   : 1;  /**< [ 63: 63](R/W/H) Packet meta descriptor valid. */
 #endif /* Word 0 - End */
-    } cn96xxp3;
-    /* struct cavm_nixx_af_tl1x_md_debug1_cn96xxp3 cn98xx; */
-    /* struct cavm_nixx_af_tl1x_md_debug1_s cnf95xxp1; */
-    /* struct cavm_nixx_af_tl1x_md_debug1_cn96xxp3 cnf95xxp2; */
+    } cnf95xxp2;
     /* struct cavm_nixx_af_tl1x_md_debug1_cn96xxp3 loki; */
 };
 typedef union cavm_nixx_af_tl1x_md_debug1 cavm_nixx_af_tl1x_md_debug1_t;
@@ -22137,6 +22476,67 @@ union cavm_nixx_af_tl1x_md_debug2
         uint64_t pse_pkt_id            : 9;  /**< [ 35: 27](R/W/H) PSE packet ID credits vector, pointer to reserved packet link credits. */
         uint64_t color                 : 2;  /**< [ 26: 25](R/W/H) See NIX_COLORRESULT_E. */
         uint64_t bubble                : 1;  /**< [ 24: 24](R/W/H) This MD is a fake passed forward after a prune. */
+        uint64_t reserved_23           : 1;
+        uint64_t uid                   : 4;  /**< [ 22: 19](R/W/H) Unique ID. 4-bit unique value assigned at the TL4 level, increments for each packet. */
+        uint64_t adjust                : 9;  /**< [ 18: 10](R/W/H) Packet meta descriptor adjust. The NIX_SEND_EXT_S[SHP_CHG] for the packet. */
+        uint64_t pir_dis               : 1;  /**< [  9:  9](R/W/H) PIR disable. Peak shaper disabled. Set when NIX_SEND_EXT_S[SHP_DIS] is set
+                                                                 (i.e. [PIR_DIS]=NIX_SEND_EXT_S[SHP_DIS]). [PIR_DIS] is used by
+                                                                 the TL4 through TL2 shapers, but not used by the TL1 rate limiters.
+                                                                 [PIR_DIS] and [CIR_DIS] will always have the same value. */
+        uint64_t cir_dis               : 1;  /**< [  8:  8](R/W/H) CIR disable. Committed shaper disabled. Set when NIX_SEND_EXT_S[SHP_DIS] is set
+                                                                 (i.e. [CIR_DIS]=NIX_SEND_EXT_S[SHP_DIS]). [CIR_DIS] is used by
+                                                                 the TL4 through TL2 shapers, but not used by the TL1 rate limiters.
+                                                                 [PIR_DIS] and [CIR_DIS] will always have the same value. */
+        uint64_t red_algo_override     : 2;  /**< [  7:  6](R/W/H) NIX_SEND_EXT_S[SHP_RA] from the corresponding packet descriptor. [RED_ALGO_OVERRIDE]
+                                                                 is used by the TL4 through TL2 shapers, but not used by the TL1 rate limiters. */
+        uint64_t reserved_0_5          : 6;
+#else /* Word 0 - Little Endian */
+        uint64_t reserved_0_5          : 6;
+        uint64_t red_algo_override     : 2;  /**< [  7:  6](R/W/H) NIX_SEND_EXT_S[SHP_RA] from the corresponding packet descriptor. [RED_ALGO_OVERRIDE]
+                                                                 is used by the TL4 through TL2 shapers, but not used by the TL1 rate limiters. */
+        uint64_t cir_dis               : 1;  /**< [  8:  8](R/W/H) CIR disable. Committed shaper disabled. Set when NIX_SEND_EXT_S[SHP_DIS] is set
+                                                                 (i.e. [CIR_DIS]=NIX_SEND_EXT_S[SHP_DIS]). [CIR_DIS] is used by
+                                                                 the TL4 through TL2 shapers, but not used by the TL1 rate limiters.
+                                                                 [PIR_DIS] and [CIR_DIS] will always have the same value. */
+        uint64_t pir_dis               : 1;  /**< [  9:  9](R/W/H) PIR disable. Peak shaper disabled. Set when NIX_SEND_EXT_S[SHP_DIS] is set
+                                                                 (i.e. [PIR_DIS]=NIX_SEND_EXT_S[SHP_DIS]). [PIR_DIS] is used by
+                                                                 the TL4 through TL2 shapers, but not used by the TL1 rate limiters.
+                                                                 [PIR_DIS] and [CIR_DIS] will always have the same value. */
+        uint64_t adjust                : 9;  /**< [ 18: 10](R/W/H) Packet meta descriptor adjust. The NIX_SEND_EXT_S[SHP_CHG] for the packet. */
+        uint64_t uid                   : 4;  /**< [ 22: 19](R/W/H) Unique ID. 4-bit unique value assigned at the TL4 level, increments for each packet. */
+        uint64_t reserved_23           : 1;
+        uint64_t bubble                : 1;  /**< [ 24: 24](R/W/H) This MD is a fake passed forward after a prune. */
+        uint64_t color                 : 2;  /**< [ 26: 25](R/W/H) See NIX_COLORRESULT_E. */
+        uint64_t pse_pkt_id            : 9;  /**< [ 35: 27](R/W/H) PSE packet ID credits vector, pointer to reserved packet link credits. */
+        uint64_t reserved_36           : 1;
+        uint64_t tx_pkt_p2x            : 2;  /**< [ 38: 37](R/W/H) Packet type.
+                                                                 0x0 = Reserved, PMD has not cleared link credit request.
+                                                                 0x1 = Normal packet type.
+                                                                 0x2 = Express packet type.
+                                                                 0x3 = SDP packet type. */
+        uint64_t sqm_pkt_id            : 13; /**< [ 51: 39](R/W/H) Packet ID from SQM. */
+        uint64_t mdq_idx               : 10; /**< [ 61: 52](R/W/H) Meta-descriptor queue index, MDQ source of PMD if VLD field is set. */
+        uint64_t reserved_62           : 1;
+        uint64_t vld                   : 1;  /**< [ 63: 63](R/W/H) Packet meta descriptor valid. */
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_nixx_af_tl1x_md_debug2_s cn9; */
+    struct cavm_nixx_af_tl1x_md_debug2_cn96xxp1
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t vld                   : 1;  /**< [ 63: 63](R/W/H) Packet meta descriptor valid. */
+        uint64_t reserved_62           : 1;
+        uint64_t mdq_idx               : 10; /**< [ 61: 52](R/W/H) Meta-descriptor queue index, MDQ source of PMD if VLD field is set. */
+        uint64_t sqm_pkt_id            : 13; /**< [ 51: 39](R/W/H) Packet ID from SQM. */
+        uint64_t tx_pkt_p2x            : 2;  /**< [ 38: 37](R/W/H) Packet type.
+                                                                 0x0 = Reserved, PMD has not cleared link credit request.
+                                                                 0x1 = Normal packet type.
+                                                                 0x2 = Express packet type.
+                                                                 0x3 = SDP packet type. */
+        uint64_t reserved_36           : 1;
+        uint64_t pse_pkt_id            : 9;  /**< [ 35: 27](R/W/H) PSE packet ID credits vector, pointer to reserved packet link credits. */
+        uint64_t color                 : 2;  /**< [ 26: 25](R/W/H) See NIX_COLORRESULT_E. */
+        uint64_t bubble                : 1;  /**< [ 24: 24](R/W/H) This MD is a fake passed forward after a prune. */
         uint64_t drain                 : 1;  /**< [ 23: 23](R/W/H) Reserved. */
         uint64_t uid                   : 4;  /**< [ 22: 19](R/W/H) Unique ID. 4-bit unique value assigned at the TL4 level, increments for each packet. */
         uint64_t adjust                : 9;  /**< [ 18: 10](R/W/H) Packet meta descriptor adjust. The NIX_SEND_EXT_S[SHP_CHG] for the packet. */
@@ -22180,10 +22580,70 @@ union cavm_nixx_af_tl1x_md_debug2
         uint64_t reserved_62           : 1;
         uint64_t vld                   : 1;  /**< [ 63: 63](R/W/H) Packet meta descriptor valid. */
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_nixx_af_tl1x_md_debug2_s cn9; */
-    /* struct cavm_nixx_af_tl1x_md_debug2_s cn96xxp1; */
+    } cn96xxp1;
     struct cavm_nixx_af_tl1x_md_debug2_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t vld                   : 1;  /**< [ 63: 63](R/W/H) Packet meta descriptor valid. */
+        uint64_t reserved_62           : 1;
+        uint64_t mdq_idx               : 10; /**< [ 61: 52](R/W/H) Meta-descriptor queue index, MDQ source of PMD if VLD field is set. */
+        uint64_t sqm_pkt_id            : 13; /**< [ 51: 39](R/W/H) Packet ID from SQM. */
+        uint64_t tx_pkt_p2x            : 2;  /**< [ 38: 37](R/W/H) Packet type.
+                                                                 0x0 = Reserved, PMD has not cleared link credit request.
+                                                                 0x1 = Normal packet type.
+                                                                 0x2 = Reserved (Express packet type).
+                                                                 0x3 = SDP packet type. */
+        uint64_t reserved_36           : 1;
+        uint64_t pse_pkt_id            : 9;  /**< [ 35: 27](R/W/H) PSE packet ID credits vector, pointer to reserved packet link credits. */
+        uint64_t color                 : 2;  /**< [ 26: 25](R/W/H) See NIX_COLORRESULT_E. */
+        uint64_t bubble                : 1;  /**< [ 24: 24](R/W/H) This MD is a fake passed forward after a prune. */
+        uint64_t flush                 : 1;  /**< [ 23: 23](R/W/H) This MD is a flush MD. */
+        uint64_t reserved_19_22        : 4;
+        uint64_t adjust                : 9;  /**< [ 18: 10](R/W/H) Packet meta descriptor adjust. The NIX_SEND_EXT_S[SHP_CHG] for the packet. */
+        uint64_t pir_dis               : 1;  /**< [  9:  9](R/W/H) PIR disable. Peak shaper disabled. Set when NIX_SEND_EXT_S[SHP_DIS] is set
+                                                                 (i.e. [PIR_DIS]=NIX_SEND_EXT_S[SHP_DIS]). [PIR_DIS] is used by
+                                                                 the TL4 through TL2 shapers, but not used by the TL1 rate limiters.
+                                                                 [PIR_DIS] and [CIR_DIS] will always have the same value. */
+        uint64_t cir_dis               : 1;  /**< [  8:  8](R/W/H) CIR disable. Committed shaper disabled. Set when NIX_SEND_EXT_S[SHP_DIS] is set
+                                                                 (i.e. [CIR_DIS]=NIX_SEND_EXT_S[SHP_DIS]). [CIR_DIS] is used by
+                                                                 the TL4 through TL2 shapers, but not used by the TL1 rate limiters.
+                                                                 [PIR_DIS] and [CIR_DIS] will always have the same value. */
+        uint64_t red_algo_override     : 2;  /**< [  7:  6](R/W/H) NIX_SEND_EXT_S[SHP_RA] from the corresponding packet descriptor. [RED_ALGO_OVERRIDE]
+                                                                 is used by the TL4 through TL2 shapers, but not used by the TL1 rate limiters. */
+        uint64_t reserved_0_5          : 6;
+#else /* Word 0 - Little Endian */
+        uint64_t reserved_0_5          : 6;
+        uint64_t red_algo_override     : 2;  /**< [  7:  6](R/W/H) NIX_SEND_EXT_S[SHP_RA] from the corresponding packet descriptor. [RED_ALGO_OVERRIDE]
+                                                                 is used by the TL4 through TL2 shapers, but not used by the TL1 rate limiters. */
+        uint64_t cir_dis               : 1;  /**< [  8:  8](R/W/H) CIR disable. Committed shaper disabled. Set when NIX_SEND_EXT_S[SHP_DIS] is set
+                                                                 (i.e. [CIR_DIS]=NIX_SEND_EXT_S[SHP_DIS]). [CIR_DIS] is used by
+                                                                 the TL4 through TL2 shapers, but not used by the TL1 rate limiters.
+                                                                 [PIR_DIS] and [CIR_DIS] will always have the same value. */
+        uint64_t pir_dis               : 1;  /**< [  9:  9](R/W/H) PIR disable. Peak shaper disabled. Set when NIX_SEND_EXT_S[SHP_DIS] is set
+                                                                 (i.e. [PIR_DIS]=NIX_SEND_EXT_S[SHP_DIS]). [PIR_DIS] is used by
+                                                                 the TL4 through TL2 shapers, but not used by the TL1 rate limiters.
+                                                                 [PIR_DIS] and [CIR_DIS] will always have the same value. */
+        uint64_t adjust                : 9;  /**< [ 18: 10](R/W/H) Packet meta descriptor adjust. The NIX_SEND_EXT_S[SHP_CHG] for the packet. */
+        uint64_t reserved_19_22        : 4;
+        uint64_t flush                 : 1;  /**< [ 23: 23](R/W/H) This MD is a flush MD. */
+        uint64_t bubble                : 1;  /**< [ 24: 24](R/W/H) This MD is a fake passed forward after a prune. */
+        uint64_t color                 : 2;  /**< [ 26: 25](R/W/H) See NIX_COLORRESULT_E. */
+        uint64_t pse_pkt_id            : 9;  /**< [ 35: 27](R/W/H) PSE packet ID credits vector, pointer to reserved packet link credits. */
+        uint64_t reserved_36           : 1;
+        uint64_t tx_pkt_p2x            : 2;  /**< [ 38: 37](R/W/H) Packet type.
+                                                                 0x0 = Reserved, PMD has not cleared link credit request.
+                                                                 0x1 = Normal packet type.
+                                                                 0x2 = Reserved (Express packet type).
+                                                                 0x3 = SDP packet type. */
+        uint64_t sqm_pkt_id            : 13; /**< [ 51: 39](R/W/H) Packet ID from SQM. */
+        uint64_t mdq_idx               : 10; /**< [ 61: 52](R/W/H) Meta-descriptor queue index, MDQ source of PMD if VLD field is set. */
+        uint64_t reserved_62           : 1;
+        uint64_t vld                   : 1;  /**< [ 63: 63](R/W/H) Packet meta descriptor valid. */
+#endif /* Word 0 - End */
+    } cn96xxp3;
+    /* struct cavm_nixx_af_tl1x_md_debug2_cn96xxp3 cn98xx; */
+    /* struct cavm_nixx_af_tl1x_md_debug2_cn96xxp1 cnf95xxp1; */
+    struct cavm_nixx_af_tl1x_md_debug2_cnf95xxp2
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t vld                   : 1;  /**< [ 63: 63](R/W/H) Packet meta descriptor valid. */
@@ -22242,10 +22702,7 @@ union cavm_nixx_af_tl1x_md_debug2
         uint64_t reserved_62           : 1;
         uint64_t vld                   : 1;  /**< [ 63: 63](R/W/H) Packet meta descriptor valid. */
 #endif /* Word 0 - End */
-    } cn96xxp3;
-    /* struct cavm_nixx_af_tl1x_md_debug2_cn96xxp3 cn98xx; */
-    /* struct cavm_nixx_af_tl1x_md_debug2_s cnf95xxp1; */
-    /* struct cavm_nixx_af_tl1x_md_debug2_cn96xxp3 cnf95xxp2; */
+    } cnf95xxp2;
     /* struct cavm_nixx_af_tl1x_md_debug2_cn96xxp3 loki; */
 };
 typedef union cavm_nixx_af_tl1x_md_debug2 cavm_nixx_af_tl1x_md_debug2_t;
@@ -22311,6 +22768,26 @@ union cavm_nixx_af_tl1x_md_debug3
     struct cavm_nixx_af_tl1x_md_debug3_cn96xxp3
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_63           : 1;
+        uint64_t reserved_62           : 1;
+        uint64_t reserved_52_61        : 10;
+        uint64_t reserved_39_51        : 13;
+        uint64_t reserved_37_38        : 2;
+        uint64_t reserved_0_36         : 37;
+#else /* Word 0 - Little Endian */
+        uint64_t reserved_0_36         : 37;
+        uint64_t reserved_37_38        : 2;
+        uint64_t reserved_39_51        : 13;
+        uint64_t reserved_52_61        : 10;
+        uint64_t reserved_62           : 1;
+        uint64_t reserved_63           : 1;
+#endif /* Word 0 - End */
+    } cn96xxp3;
+    /* struct cavm_nixx_af_tl1x_md_debug3_cn96xxp3 cn98xx; */
+    /* struct cavm_nixx_af_tl1x_md_debug3_s cnf95xxp1; */
+    struct cavm_nixx_af_tl1x_md_debug3_cnf95xxp2
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t vld                   : 1;  /**< [ 63: 63](R/W/H) Flush Packet meta descriptor valid. */
         uint64_t reserved_62           : 1;
         uint64_t mdq_idx               : 10; /**< [ 61: 52](R/W/H) Flush Meta-descriptor queue index, MDQ source of PMD if VLD field is set. */
@@ -22331,10 +22808,7 @@ union cavm_nixx_af_tl1x_md_debug3
         uint64_t reserved_62           : 1;
         uint64_t vld                   : 1;  /**< [ 63: 63](R/W/H) Flush Packet meta descriptor valid. */
 #endif /* Word 0 - End */
-    } cn96xxp3;
-    /* struct cavm_nixx_af_tl1x_md_debug3_cn96xxp3 cn98xx; */
-    /* struct cavm_nixx_af_tl1x_md_debug3_s cnf95xxp1; */
-    /* struct cavm_nixx_af_tl1x_md_debug3_cn96xxp3 cnf95xxp2; */
+    } cnf95xxp2;
     /* struct cavm_nixx_af_tl1x_md_debug3_cn96xxp3 loki; */
 };
 typedef union cavm_nixx_af_tl1x_md_debug3 cavm_nixx_af_tl1x_md_debug3_t;
@@ -23281,7 +23755,49 @@ union cavm_nixx_af_tl2x_md_debug0
                                                                  When set, PMD1 is next to write. */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_nixx_af_tl2x_md_debug0_s cn; */
+    /* struct cavm_nixx_af_tl2x_md_debug0_s cn9; */
+    /* struct cavm_nixx_af_tl2x_md_debug0_s cn96xxp1; */
+    struct cavm_nixx_af_tl2x_md_debug0_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_63           : 1;
+        uint64_t reserved_62           : 1;
+        uint64_t child                 : 10; /**< [ 61: 52](R/W/H) Child index, highest priority child. When [C_CON] of this result is set,
+                                                                 indicating that this result is
+                                                                 connected in a flow that extends through the child result, this is the index of that child
+                                                                 result. */
+        uint64_t reserved_50_51        : 2;
+        uint64_t p_con                 : 1;  /**< [ 49: 49](R/W/H) Parent connected flag. This pick has more picks in front of it. */
+        uint64_t c_con                 : 1;  /**< [ 48: 48](R/W/H) Child connected flag. This pick has more picks behind it. */
+        uint64_t reserved_47           : 1;
+        uint64_t reserved_46           : 1;
+        uint64_t reserved_34_45        : 12;
+        uint64_t reserved_33           : 1;
+        uint64_t pmd0_vld              : 1;  /**< [ 32: 32](R/W/H) Packet meta descriptor 0 valid. */
+        uint64_t reserved_16_31        : 16;
+        uint64_t pmd0_length           : 16; /**< [ 15:  0](R/W/H) Packet meta descriptor 0 packet length. See NIX_AF_MDQ()_MD_DEBUG[PKT_LEN]. */
+#else /* Word 0 - Little Endian */
+        uint64_t pmd0_length           : 16; /**< [ 15:  0](R/W/H) Packet meta descriptor 0 packet length. See NIX_AF_MDQ()_MD_DEBUG[PKT_LEN]. */
+        uint64_t reserved_16_31        : 16;
+        uint64_t pmd0_vld              : 1;  /**< [ 32: 32](R/W/H) Packet meta descriptor 0 valid. */
+        uint64_t reserved_33           : 1;
+        uint64_t reserved_34_45        : 12;
+        uint64_t reserved_46           : 1;
+        uint64_t reserved_47           : 1;
+        uint64_t c_con                 : 1;  /**< [ 48: 48](R/W/H) Child connected flag. This pick has more picks behind it. */
+        uint64_t p_con                 : 1;  /**< [ 49: 49](R/W/H) Parent connected flag. This pick has more picks in front of it. */
+        uint64_t reserved_50_51        : 2;
+        uint64_t child                 : 10; /**< [ 61: 52](R/W/H) Child index, highest priority child. When [C_CON] of this result is set,
+                                                                 indicating that this result is
+                                                                 connected in a flow that extends through the child result, this is the index of that child
+                                                                 result. */
+        uint64_t reserved_62           : 1;
+        uint64_t reserved_63           : 1;
+#endif /* Word 0 - End */
+    } cn96xxp3;
+    /* struct cavm_nixx_af_tl2x_md_debug0_cn96xxp3 cn98xx; */
+    /* struct cavm_nixx_af_tl2x_md_debug0_s cnf95xx; */
+    /* struct cavm_nixx_af_tl2x_md_debug0_cn96xxp3 loki; */
 };
 typedef union cavm_nixx_af_tl2x_md_debug0 cavm_nixx_af_tl2x_md_debug0_t;
 
@@ -23333,6 +23849,67 @@ union cavm_nixx_af_tl2x_md_debug1
         uint64_t pse_pkt_id            : 9;  /**< [ 35: 27](R/W/H) PSE packet ID credits vector, pointer to reserved packet link credits. */
         uint64_t color                 : 2;  /**< [ 26: 25](R/W/H) See NIX_COLORRESULT_E. */
         uint64_t bubble                : 1;  /**< [ 24: 24](R/W/H) This MD is a fake passed forward after a prune. */
+        uint64_t reserved_23           : 1;
+        uint64_t uid                   : 4;  /**< [ 22: 19](R/W/H) Unique ID. 4-bit unique value assigned at the TL4 level, increments for each packet. */
+        uint64_t adjust                : 9;  /**< [ 18: 10](R/W/H) Packet meta descriptor adjust. The NIX_SEND_EXT_S[SHP_CHG] for the packet. */
+        uint64_t pir_dis               : 1;  /**< [  9:  9](R/W/H) PIR disable. Peak shaper disabled. Set when NIX_SEND_EXT_S[SHP_DIS] is set
+                                                                 (i.e. [PIR_DIS]=NIX_SEND_EXT_S[SHP_DIS]). [PIR_DIS] is used by
+                                                                 the TL4 through TL2 shapers, but not used by the TL1 rate limiters.
+                                                                 [PIR_DIS] and [CIR_DIS] will always have the same value. */
+        uint64_t cir_dis               : 1;  /**< [  8:  8](R/W/H) CIR disable. Committed shaper disabled. Set when NIX_SEND_EXT_S[SHP_DIS] is set
+                                                                 (i.e. [CIR_DIS]=NIX_SEND_EXT_S[SHP_DIS]). [CIR_DIS] is used by
+                                                                 the TL4 through TL2 shapers, but not used by the TL1 rate limiters.
+                                                                 [PIR_DIS] and [CIR_DIS] will always have the same value. */
+        uint64_t red_algo_override     : 2;  /**< [  7:  6](R/W/H) NIX_SEND_EXT_S[SHP_RA] from the corresponding packet descriptor. [RED_ALGO_OVERRIDE]
+                                                                 is used by the TL4 through TL2 shapers, but not used by the TL1 rate limiters. */
+        uint64_t reserved_0_5          : 6;
+#else /* Word 0 - Little Endian */
+        uint64_t reserved_0_5          : 6;
+        uint64_t red_algo_override     : 2;  /**< [  7:  6](R/W/H) NIX_SEND_EXT_S[SHP_RA] from the corresponding packet descriptor. [RED_ALGO_OVERRIDE]
+                                                                 is used by the TL4 through TL2 shapers, but not used by the TL1 rate limiters. */
+        uint64_t cir_dis               : 1;  /**< [  8:  8](R/W/H) CIR disable. Committed shaper disabled. Set when NIX_SEND_EXT_S[SHP_DIS] is set
+                                                                 (i.e. [CIR_DIS]=NIX_SEND_EXT_S[SHP_DIS]). [CIR_DIS] is used by
+                                                                 the TL4 through TL2 shapers, but not used by the TL1 rate limiters.
+                                                                 [PIR_DIS] and [CIR_DIS] will always have the same value. */
+        uint64_t pir_dis               : 1;  /**< [  9:  9](R/W/H) PIR disable. Peak shaper disabled. Set when NIX_SEND_EXT_S[SHP_DIS] is set
+                                                                 (i.e. [PIR_DIS]=NIX_SEND_EXT_S[SHP_DIS]). [PIR_DIS] is used by
+                                                                 the TL4 through TL2 shapers, but not used by the TL1 rate limiters.
+                                                                 [PIR_DIS] and [CIR_DIS] will always have the same value. */
+        uint64_t adjust                : 9;  /**< [ 18: 10](R/W/H) Packet meta descriptor adjust. The NIX_SEND_EXT_S[SHP_CHG] for the packet. */
+        uint64_t uid                   : 4;  /**< [ 22: 19](R/W/H) Unique ID. 4-bit unique value assigned at the TL4 level, increments for each packet. */
+        uint64_t reserved_23           : 1;
+        uint64_t bubble                : 1;  /**< [ 24: 24](R/W/H) This MD is a fake passed forward after a prune. */
+        uint64_t color                 : 2;  /**< [ 26: 25](R/W/H) See NIX_COLORRESULT_E. */
+        uint64_t pse_pkt_id            : 9;  /**< [ 35: 27](R/W/H) PSE packet ID credits vector, pointer to reserved packet link credits. */
+        uint64_t reserved_36           : 1;
+        uint64_t tx_pkt_p2x            : 2;  /**< [ 38: 37](R/W/H) Packet type.
+                                                                 0x0 = Reserved, PMD has not cleared link credit request.
+                                                                 0x1 = Normal packet type.
+                                                                 0x2 = Express packet type.
+                                                                 0x3 = SDP packet type. */
+        uint64_t sqm_pkt_id            : 13; /**< [ 51: 39](R/W/H) Packet ID from SQM. */
+        uint64_t mdq_idx               : 10; /**< [ 61: 52](R/W/H) Meta-descriptor queue index, MDQ source of PMD if VLD field is set. */
+        uint64_t reserved_62           : 1;
+        uint64_t vld                   : 1;  /**< [ 63: 63](R/W/H) Packet meta descriptor valid. */
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_nixx_af_tl2x_md_debug1_s cn9; */
+    struct cavm_nixx_af_tl2x_md_debug1_cn96xxp1
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t vld                   : 1;  /**< [ 63: 63](R/W/H) Packet meta descriptor valid. */
+        uint64_t reserved_62           : 1;
+        uint64_t mdq_idx               : 10; /**< [ 61: 52](R/W/H) Meta-descriptor queue index, MDQ source of PMD if VLD field is set. */
+        uint64_t sqm_pkt_id            : 13; /**< [ 51: 39](R/W/H) Packet ID from SQM. */
+        uint64_t tx_pkt_p2x            : 2;  /**< [ 38: 37](R/W/H) Packet type.
+                                                                 0x0 = Reserved, PMD has not cleared link credit request.
+                                                                 0x1 = Normal packet type.
+                                                                 0x2 = Express packet type.
+                                                                 0x3 = SDP packet type. */
+        uint64_t reserved_36           : 1;
+        uint64_t pse_pkt_id            : 9;  /**< [ 35: 27](R/W/H) PSE packet ID credits vector, pointer to reserved packet link credits. */
+        uint64_t color                 : 2;  /**< [ 26: 25](R/W/H) See NIX_COLORRESULT_E. */
+        uint64_t bubble                : 1;  /**< [ 24: 24](R/W/H) This MD is a fake passed forward after a prune. */
         uint64_t drain                 : 1;  /**< [ 23: 23](R/W/H) Reserved. */
         uint64_t uid                   : 4;  /**< [ 22: 19](R/W/H) Unique ID. 4-bit unique value assigned at the TL4 level, increments for each packet. */
         uint64_t adjust                : 9;  /**< [ 18: 10](R/W/H) Packet meta descriptor adjust. The NIX_SEND_EXT_S[SHP_CHG] for the packet. */
@@ -23376,10 +23953,70 @@ union cavm_nixx_af_tl2x_md_debug1
         uint64_t reserved_62           : 1;
         uint64_t vld                   : 1;  /**< [ 63: 63](R/W/H) Packet meta descriptor valid. */
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_nixx_af_tl2x_md_debug1_s cn9; */
-    /* struct cavm_nixx_af_tl2x_md_debug1_s cn96xxp1; */
+    } cn96xxp1;
     struct cavm_nixx_af_tl2x_md_debug1_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t vld                   : 1;  /**< [ 63: 63](R/W/H) Packet meta descriptor valid. */
+        uint64_t reserved_62           : 1;
+        uint64_t mdq_idx               : 10; /**< [ 61: 52](R/W/H) Meta-descriptor queue index, MDQ source of PMD if VLD field is set. */
+        uint64_t sqm_pkt_id            : 13; /**< [ 51: 39](R/W/H) Packet ID from SQM. */
+        uint64_t tx_pkt_p2x            : 2;  /**< [ 38: 37](R/W/H) Packet type.
+                                                                 0x0 = Reserved, PMD has not cleared link credit request.
+                                                                 0x1 = Normal packet type.
+                                                                 0x2 = Reserved (Express packet type).
+                                                                 0x3 = SDP packet type. */
+        uint64_t reserved_36           : 1;
+        uint64_t pse_pkt_id            : 9;  /**< [ 35: 27](R/W/H) PSE packet ID credits vector, pointer to reserved packet link credits. */
+        uint64_t color                 : 2;  /**< [ 26: 25](R/W/H) See NIX_COLORRESULT_E. */
+        uint64_t bubble                : 1;  /**< [ 24: 24](R/W/H) This MD is a fake passed forward after a prune. */
+        uint64_t flush                 : 1;  /**< [ 23: 23](R/W/H) This MD is a flush MD. */
+        uint64_t reserved_19_22        : 4;
+        uint64_t adjust                : 9;  /**< [ 18: 10](R/W/H) Packet meta descriptor adjust. The NIX_SEND_EXT_S[SHP_CHG] for the packet. */
+        uint64_t pir_dis               : 1;  /**< [  9:  9](R/W/H) PIR disable. Peak shaper disabled. Set when NIX_SEND_EXT_S[SHP_DIS] is set
+                                                                 (i.e. [PIR_DIS]=NIX_SEND_EXT_S[SHP_DIS]). [PIR_DIS] is used by
+                                                                 the TL4 through TL2 shapers, but not used by the TL1 rate limiters.
+                                                                 [PIR_DIS] and [CIR_DIS] will always have the same value. */
+        uint64_t cir_dis               : 1;  /**< [  8:  8](R/W/H) CIR disable. Committed shaper disabled. Set when NIX_SEND_EXT_S[SHP_DIS] is set
+                                                                 (i.e. [CIR_DIS]=NIX_SEND_EXT_S[SHP_DIS]). [CIR_DIS] is used by
+                                                                 the TL4 through TL2 shapers, but not used by the TL1 rate limiters.
+                                                                 [PIR_DIS] and [CIR_DIS] will always have the same value. */
+        uint64_t red_algo_override     : 2;  /**< [  7:  6](R/W/H) NIX_SEND_EXT_S[SHP_RA] from the corresponding packet descriptor. [RED_ALGO_OVERRIDE]
+                                                                 is used by the TL4 through TL2 shapers, but not used by the TL1 rate limiters. */
+        uint64_t reserved_0_5          : 6;
+#else /* Word 0 - Little Endian */
+        uint64_t reserved_0_5          : 6;
+        uint64_t red_algo_override     : 2;  /**< [  7:  6](R/W/H) NIX_SEND_EXT_S[SHP_RA] from the corresponding packet descriptor. [RED_ALGO_OVERRIDE]
+                                                                 is used by the TL4 through TL2 shapers, but not used by the TL1 rate limiters. */
+        uint64_t cir_dis               : 1;  /**< [  8:  8](R/W/H) CIR disable. Committed shaper disabled. Set when NIX_SEND_EXT_S[SHP_DIS] is set
+                                                                 (i.e. [CIR_DIS]=NIX_SEND_EXT_S[SHP_DIS]). [CIR_DIS] is used by
+                                                                 the TL4 through TL2 shapers, but not used by the TL1 rate limiters.
+                                                                 [PIR_DIS] and [CIR_DIS] will always have the same value. */
+        uint64_t pir_dis               : 1;  /**< [  9:  9](R/W/H) PIR disable. Peak shaper disabled. Set when NIX_SEND_EXT_S[SHP_DIS] is set
+                                                                 (i.e. [PIR_DIS]=NIX_SEND_EXT_S[SHP_DIS]). [PIR_DIS] is used by
+                                                                 the TL4 through TL2 shapers, but not used by the TL1 rate limiters.
+                                                                 [PIR_DIS] and [CIR_DIS] will always have the same value. */
+        uint64_t adjust                : 9;  /**< [ 18: 10](R/W/H) Packet meta descriptor adjust. The NIX_SEND_EXT_S[SHP_CHG] for the packet. */
+        uint64_t reserved_19_22        : 4;
+        uint64_t flush                 : 1;  /**< [ 23: 23](R/W/H) This MD is a flush MD. */
+        uint64_t bubble                : 1;  /**< [ 24: 24](R/W/H) This MD is a fake passed forward after a prune. */
+        uint64_t color                 : 2;  /**< [ 26: 25](R/W/H) See NIX_COLORRESULT_E. */
+        uint64_t pse_pkt_id            : 9;  /**< [ 35: 27](R/W/H) PSE packet ID credits vector, pointer to reserved packet link credits. */
+        uint64_t reserved_36           : 1;
+        uint64_t tx_pkt_p2x            : 2;  /**< [ 38: 37](R/W/H) Packet type.
+                                                                 0x0 = Reserved, PMD has not cleared link credit request.
+                                                                 0x1 = Normal packet type.
+                                                                 0x2 = Reserved (Express packet type).
+                                                                 0x3 = SDP packet type. */
+        uint64_t sqm_pkt_id            : 13; /**< [ 51: 39](R/W/H) Packet ID from SQM. */
+        uint64_t mdq_idx               : 10; /**< [ 61: 52](R/W/H) Meta-descriptor queue index, MDQ source of PMD if VLD field is set. */
+        uint64_t reserved_62           : 1;
+        uint64_t vld                   : 1;  /**< [ 63: 63](R/W/H) Packet meta descriptor valid. */
+#endif /* Word 0 - End */
+    } cn96xxp3;
+    /* struct cavm_nixx_af_tl2x_md_debug1_cn96xxp3 cn98xx; */
+    /* struct cavm_nixx_af_tl2x_md_debug1_cn96xxp1 cnf95xxp1; */
+    struct cavm_nixx_af_tl2x_md_debug1_cnf95xxp2
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t vld                   : 1;  /**< [ 63: 63](R/W/H) Packet meta descriptor valid. */
@@ -23438,10 +24075,7 @@ union cavm_nixx_af_tl2x_md_debug1
         uint64_t reserved_62           : 1;
         uint64_t vld                   : 1;  /**< [ 63: 63](R/W/H) Packet meta descriptor valid. */
 #endif /* Word 0 - End */
-    } cn96xxp3;
-    /* struct cavm_nixx_af_tl2x_md_debug1_cn96xxp3 cn98xx; */
-    /* struct cavm_nixx_af_tl2x_md_debug1_s cnf95xxp1; */
-    /* struct cavm_nixx_af_tl2x_md_debug1_cn96xxp3 cnf95xxp2; */
+    } cnf95xxp2;
     /* struct cavm_nixx_af_tl2x_md_debug1_cn96xxp3 loki; */
 };
 typedef union cavm_nixx_af_tl2x_md_debug1 cavm_nixx_af_tl2x_md_debug1_t;
@@ -23494,6 +24128,67 @@ union cavm_nixx_af_tl2x_md_debug2
         uint64_t pse_pkt_id            : 9;  /**< [ 35: 27](R/W/H) PSE packet ID credits vector, pointer to reserved packet link credits. */
         uint64_t color                 : 2;  /**< [ 26: 25](R/W/H) See NIX_COLORRESULT_E. */
         uint64_t bubble                : 1;  /**< [ 24: 24](R/W/H) This MD is a fake passed forward after a prune. */
+        uint64_t reserved_23           : 1;
+        uint64_t uid                   : 4;  /**< [ 22: 19](R/W/H) Unique ID. 4-bit unique value assigned at the TL4 level, increments for each packet. */
+        uint64_t adjust                : 9;  /**< [ 18: 10](R/W/H) Packet meta descriptor adjust. The NIX_SEND_EXT_S[SHP_CHG] for the packet. */
+        uint64_t pir_dis               : 1;  /**< [  9:  9](R/W/H) PIR disable. Peak shaper disabled. Set when NIX_SEND_EXT_S[SHP_DIS] is set
+                                                                 (i.e. [PIR_DIS]=NIX_SEND_EXT_S[SHP_DIS]). [PIR_DIS] is used by
+                                                                 the TL4 through TL2 shapers, but not used by the TL1 rate limiters.
+                                                                 [PIR_DIS] and [CIR_DIS] will always have the same value. */
+        uint64_t cir_dis               : 1;  /**< [  8:  8](R/W/H) CIR disable. Committed shaper disabled. Set when NIX_SEND_EXT_S[SHP_DIS] is set
+                                                                 (i.e. [CIR_DIS]=NIX_SEND_EXT_S[SHP_DIS]). [CIR_DIS] is used by
+                                                                 the TL4 through TL2 shapers, but not used by the TL1 rate limiters.
+                                                                 [PIR_DIS] and [CIR_DIS] will always have the same value. */
+        uint64_t red_algo_override     : 2;  /**< [  7:  6](R/W/H) NIX_SEND_EXT_S[SHP_RA] from the corresponding packet descriptor. [RED_ALGO_OVERRIDE]
+                                                                 is used by the TL4 through TL2 shapers, but not used by the TL1 rate limiters. */
+        uint64_t reserved_0_5          : 6;
+#else /* Word 0 - Little Endian */
+        uint64_t reserved_0_5          : 6;
+        uint64_t red_algo_override     : 2;  /**< [  7:  6](R/W/H) NIX_SEND_EXT_S[SHP_RA] from the corresponding packet descriptor. [RED_ALGO_OVERRIDE]
+                                                                 is used by the TL4 through TL2 shapers, but not used by the TL1 rate limiters. */
+        uint64_t cir_dis               : 1;  /**< [  8:  8](R/W/H) CIR disable. Committed shaper disabled. Set when NIX_SEND_EXT_S[SHP_DIS] is set
+                                                                 (i.e. [CIR_DIS]=NIX_SEND_EXT_S[SHP_DIS]). [CIR_DIS] is used by
+                                                                 the TL4 through TL2 shapers, but not used by the TL1 rate limiters.
+                                                                 [PIR_DIS] and [CIR_DIS] will always have the same value. */
+        uint64_t pir_dis               : 1;  /**< [  9:  9](R/W/H) PIR disable. Peak shaper disabled. Set when NIX_SEND_EXT_S[SHP_DIS] is set
+                                                                 (i.e. [PIR_DIS]=NIX_SEND_EXT_S[SHP_DIS]). [PIR_DIS] is used by
+                                                                 the TL4 through TL2 shapers, but not used by the TL1 rate limiters.
+                                                                 [PIR_DIS] and [CIR_DIS] will always have the same value. */
+        uint64_t adjust                : 9;  /**< [ 18: 10](R/W/H) Packet meta descriptor adjust. The NIX_SEND_EXT_S[SHP_CHG] for the packet. */
+        uint64_t uid                   : 4;  /**< [ 22: 19](R/W/H) Unique ID. 4-bit unique value assigned at the TL4 level, increments for each packet. */
+        uint64_t reserved_23           : 1;
+        uint64_t bubble                : 1;  /**< [ 24: 24](R/W/H) This MD is a fake passed forward after a prune. */
+        uint64_t color                 : 2;  /**< [ 26: 25](R/W/H) See NIX_COLORRESULT_E. */
+        uint64_t pse_pkt_id            : 9;  /**< [ 35: 27](R/W/H) PSE packet ID credits vector, pointer to reserved packet link credits. */
+        uint64_t reserved_36           : 1;
+        uint64_t tx_pkt_p2x            : 2;  /**< [ 38: 37](R/W/H) Packet type.
+                                                                 0x0 = Reserved, PMD has not cleared link credit request.
+                                                                 0x1 = Normal packet type.
+                                                                 0x2 = Express packet type.
+                                                                 0x3 = SDP packet type. */
+        uint64_t sqm_pkt_id            : 13; /**< [ 51: 39](R/W/H) Packet ID from SQM. */
+        uint64_t mdq_idx               : 10; /**< [ 61: 52](R/W/H) Meta-descriptor queue index, MDQ source of PMD if VLD field is set. */
+        uint64_t reserved_62           : 1;
+        uint64_t vld                   : 1;  /**< [ 63: 63](R/W/H) Packet meta descriptor valid. */
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_nixx_af_tl2x_md_debug2_s cn9; */
+    struct cavm_nixx_af_tl2x_md_debug2_cn96xxp1
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t vld                   : 1;  /**< [ 63: 63](R/W/H) Packet meta descriptor valid. */
+        uint64_t reserved_62           : 1;
+        uint64_t mdq_idx               : 10; /**< [ 61: 52](R/W/H) Meta-descriptor queue index, MDQ source of PMD if VLD field is set. */
+        uint64_t sqm_pkt_id            : 13; /**< [ 51: 39](R/W/H) Packet ID from SQM. */
+        uint64_t tx_pkt_p2x            : 2;  /**< [ 38: 37](R/W/H) Packet type.
+                                                                 0x0 = Reserved, PMD has not cleared link credit request.
+                                                                 0x1 = Normal packet type.
+                                                                 0x2 = Express packet type.
+                                                                 0x3 = SDP packet type. */
+        uint64_t reserved_36           : 1;
+        uint64_t pse_pkt_id            : 9;  /**< [ 35: 27](R/W/H) PSE packet ID credits vector, pointer to reserved packet link credits. */
+        uint64_t color                 : 2;  /**< [ 26: 25](R/W/H) See NIX_COLORRESULT_E. */
+        uint64_t bubble                : 1;  /**< [ 24: 24](R/W/H) This MD is a fake passed forward after a prune. */
         uint64_t drain                 : 1;  /**< [ 23: 23](R/W/H) Reserved. */
         uint64_t uid                   : 4;  /**< [ 22: 19](R/W/H) Unique ID. 4-bit unique value assigned at the TL4 level, increments for each packet. */
         uint64_t adjust                : 9;  /**< [ 18: 10](R/W/H) Packet meta descriptor adjust. The NIX_SEND_EXT_S[SHP_CHG] for the packet. */
@@ -23537,10 +24232,70 @@ union cavm_nixx_af_tl2x_md_debug2
         uint64_t reserved_62           : 1;
         uint64_t vld                   : 1;  /**< [ 63: 63](R/W/H) Packet meta descriptor valid. */
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_nixx_af_tl2x_md_debug2_s cn9; */
-    /* struct cavm_nixx_af_tl2x_md_debug2_s cn96xxp1; */
+    } cn96xxp1;
     struct cavm_nixx_af_tl2x_md_debug2_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t vld                   : 1;  /**< [ 63: 63](R/W/H) Packet meta descriptor valid. */
+        uint64_t reserved_62           : 1;
+        uint64_t mdq_idx               : 10; /**< [ 61: 52](R/W/H) Meta-descriptor queue index, MDQ source of PMD if VLD field is set. */
+        uint64_t sqm_pkt_id            : 13; /**< [ 51: 39](R/W/H) Packet ID from SQM. */
+        uint64_t tx_pkt_p2x            : 2;  /**< [ 38: 37](R/W/H) Packet type.
+                                                                 0x0 = Reserved, PMD has not cleared link credit request.
+                                                                 0x1 = Normal packet type.
+                                                                 0x2 = Reserved (Express packet type).
+                                                                 0x3 = SDP packet type. */
+        uint64_t reserved_36           : 1;
+        uint64_t pse_pkt_id            : 9;  /**< [ 35: 27](R/W/H) PSE packet ID credits vector, pointer to reserved packet link credits. */
+        uint64_t color                 : 2;  /**< [ 26: 25](R/W/H) See NIX_COLORRESULT_E. */
+        uint64_t bubble                : 1;  /**< [ 24: 24](R/W/H) This MD is a fake passed forward after a prune. */
+        uint64_t flush                 : 1;  /**< [ 23: 23](R/W/H) This MD is a flush MD. */
+        uint64_t reserved_19_22        : 4;
+        uint64_t adjust                : 9;  /**< [ 18: 10](R/W/H) Packet meta descriptor adjust. The NIX_SEND_EXT_S[SHP_CHG] for the packet. */
+        uint64_t pir_dis               : 1;  /**< [  9:  9](R/W/H) PIR disable. Peak shaper disabled. Set when NIX_SEND_EXT_S[SHP_DIS] is set
+                                                                 (i.e. [PIR_DIS]=NIX_SEND_EXT_S[SHP_DIS]). [PIR_DIS] is used by
+                                                                 the TL4 through TL2 shapers, but not used by the TL1 rate limiters.
+                                                                 [PIR_DIS] and [CIR_DIS] will always have the same value. */
+        uint64_t cir_dis               : 1;  /**< [  8:  8](R/W/H) CIR disable. Committed shaper disabled. Set when NIX_SEND_EXT_S[SHP_DIS] is set
+                                                                 (i.e. [CIR_DIS]=NIX_SEND_EXT_S[SHP_DIS]). [CIR_DIS] is used by
+                                                                 the TL4 through TL2 shapers, but not used by the TL1 rate limiters.
+                                                                 [PIR_DIS] and [CIR_DIS] will always have the same value. */
+        uint64_t red_algo_override     : 2;  /**< [  7:  6](R/W/H) NIX_SEND_EXT_S[SHP_RA] from the corresponding packet descriptor. [RED_ALGO_OVERRIDE]
+                                                                 is used by the TL4 through TL2 shapers, but not used by the TL1 rate limiters. */
+        uint64_t reserved_0_5          : 6;
+#else /* Word 0 - Little Endian */
+        uint64_t reserved_0_5          : 6;
+        uint64_t red_algo_override     : 2;  /**< [  7:  6](R/W/H) NIX_SEND_EXT_S[SHP_RA] from the corresponding packet descriptor. [RED_ALGO_OVERRIDE]
+                                                                 is used by the TL4 through TL2 shapers, but not used by the TL1 rate limiters. */
+        uint64_t cir_dis               : 1;  /**< [  8:  8](R/W/H) CIR disable. Committed shaper disabled. Set when NIX_SEND_EXT_S[SHP_DIS] is set
+                                                                 (i.e. [CIR_DIS]=NIX_SEND_EXT_S[SHP_DIS]). [CIR_DIS] is used by
+                                                                 the TL4 through TL2 shapers, but not used by the TL1 rate limiters.
+                                                                 [PIR_DIS] and [CIR_DIS] will always have the same value. */
+        uint64_t pir_dis               : 1;  /**< [  9:  9](R/W/H) PIR disable. Peak shaper disabled. Set when NIX_SEND_EXT_S[SHP_DIS] is set
+                                                                 (i.e. [PIR_DIS]=NIX_SEND_EXT_S[SHP_DIS]). [PIR_DIS] is used by
+                                                                 the TL4 through TL2 shapers, but not used by the TL1 rate limiters.
+                                                                 [PIR_DIS] and [CIR_DIS] will always have the same value. */
+        uint64_t adjust                : 9;  /**< [ 18: 10](R/W/H) Packet meta descriptor adjust. The NIX_SEND_EXT_S[SHP_CHG] for the packet. */
+        uint64_t reserved_19_22        : 4;
+        uint64_t flush                 : 1;  /**< [ 23: 23](R/W/H) This MD is a flush MD. */
+        uint64_t bubble                : 1;  /**< [ 24: 24](R/W/H) This MD is a fake passed forward after a prune. */
+        uint64_t color                 : 2;  /**< [ 26: 25](R/W/H) See NIX_COLORRESULT_E. */
+        uint64_t pse_pkt_id            : 9;  /**< [ 35: 27](R/W/H) PSE packet ID credits vector, pointer to reserved packet link credits. */
+        uint64_t reserved_36           : 1;
+        uint64_t tx_pkt_p2x            : 2;  /**< [ 38: 37](R/W/H) Packet type.
+                                                                 0x0 = Reserved, PMD has not cleared link credit request.
+                                                                 0x1 = Normal packet type.
+                                                                 0x2 = Reserved (Express packet type).
+                                                                 0x3 = SDP packet type. */
+        uint64_t sqm_pkt_id            : 13; /**< [ 51: 39](R/W/H) Packet ID from SQM. */
+        uint64_t mdq_idx               : 10; /**< [ 61: 52](R/W/H) Meta-descriptor queue index, MDQ source of PMD if VLD field is set. */
+        uint64_t reserved_62           : 1;
+        uint64_t vld                   : 1;  /**< [ 63: 63](R/W/H) Packet meta descriptor valid. */
+#endif /* Word 0 - End */
+    } cn96xxp3;
+    /* struct cavm_nixx_af_tl2x_md_debug2_cn96xxp3 cn98xx; */
+    /* struct cavm_nixx_af_tl2x_md_debug2_cn96xxp1 cnf95xxp1; */
+    struct cavm_nixx_af_tl2x_md_debug2_cnf95xxp2
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t vld                   : 1;  /**< [ 63: 63](R/W/H) Packet meta descriptor valid. */
@@ -23599,10 +24354,7 @@ union cavm_nixx_af_tl2x_md_debug2
         uint64_t reserved_62           : 1;
         uint64_t vld                   : 1;  /**< [ 63: 63](R/W/H) Packet meta descriptor valid. */
 #endif /* Word 0 - End */
-    } cn96xxp3;
-    /* struct cavm_nixx_af_tl2x_md_debug2_cn96xxp3 cn98xx; */
-    /* struct cavm_nixx_af_tl2x_md_debug2_s cnf95xxp1; */
-    /* struct cavm_nixx_af_tl2x_md_debug2_cn96xxp3 cnf95xxp2; */
+    } cnf95xxp2;
     /* struct cavm_nixx_af_tl2x_md_debug2_cn96xxp3 loki; */
 };
 typedef union cavm_nixx_af_tl2x_md_debug2 cavm_nixx_af_tl2x_md_debug2_t;
@@ -23668,6 +24420,26 @@ union cavm_nixx_af_tl2x_md_debug3
     struct cavm_nixx_af_tl2x_md_debug3_cn96xxp3
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_63           : 1;
+        uint64_t reserved_62           : 1;
+        uint64_t reserved_52_61        : 10;
+        uint64_t reserved_39_51        : 13;
+        uint64_t reserved_37_38        : 2;
+        uint64_t reserved_0_36         : 37;
+#else /* Word 0 - Little Endian */
+        uint64_t reserved_0_36         : 37;
+        uint64_t reserved_37_38        : 2;
+        uint64_t reserved_39_51        : 13;
+        uint64_t reserved_52_61        : 10;
+        uint64_t reserved_62           : 1;
+        uint64_t reserved_63           : 1;
+#endif /* Word 0 - End */
+    } cn96xxp3;
+    /* struct cavm_nixx_af_tl2x_md_debug3_cn96xxp3 cn98xx; */
+    /* struct cavm_nixx_af_tl2x_md_debug3_s cnf95xxp1; */
+    struct cavm_nixx_af_tl2x_md_debug3_cnf95xxp2
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t vld                   : 1;  /**< [ 63: 63](R/W/H) Flush Packet meta descriptor valid. */
         uint64_t reserved_62           : 1;
         uint64_t mdq_idx               : 10; /**< [ 61: 52](R/W/H) Flush Meta-descriptor queue index, MDQ source of PMD if VLD field is set. */
@@ -23688,10 +24460,7 @@ union cavm_nixx_af_tl2x_md_debug3
         uint64_t reserved_62           : 1;
         uint64_t vld                   : 1;  /**< [ 63: 63](R/W/H) Flush Packet meta descriptor valid. */
 #endif /* Word 0 - End */
-    } cn96xxp3;
-    /* struct cavm_nixx_af_tl2x_md_debug3_cn96xxp3 cn98xx; */
-    /* struct cavm_nixx_af_tl2x_md_debug3_s cnf95xxp1; */
-    /* struct cavm_nixx_af_tl2x_md_debug3_cn96xxp3 cnf95xxp2; */
+    } cnf95xxp2;
     /* struct cavm_nixx_af_tl2x_md_debug3_cn96xxp3 loki; */
 };
 typedef union cavm_nixx_af_tl2x_md_debug3 cavm_nixx_af_tl2x_md_debug3_t;
@@ -24830,7 +25599,49 @@ union cavm_nixx_af_tl3x_md_debug0
                                                                  When set, PMD1 is next to write. */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_nixx_af_tl3x_md_debug0_s cn; */
+    /* struct cavm_nixx_af_tl3x_md_debug0_s cn9; */
+    /* struct cavm_nixx_af_tl3x_md_debug0_s cn96xxp1; */
+    struct cavm_nixx_af_tl3x_md_debug0_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_63           : 1;
+        uint64_t reserved_62           : 1;
+        uint64_t child                 : 10; /**< [ 61: 52](R/W/H) Child index, highest priority child. When [C_CON] of this result is set,
+                                                                 indicating that this result is
+                                                                 connected in a flow that extends through the child result, this is the index of that child
+                                                                 result. */
+        uint64_t reserved_50_51        : 2;
+        uint64_t p_con                 : 1;  /**< [ 49: 49](R/W/H) Parent connected flag. This pick has more picks in front of it. */
+        uint64_t c_con                 : 1;  /**< [ 48: 48](R/W/H) Child connected flag. This pick has more picks behind it. */
+        uint64_t reserved_47           : 1;
+        uint64_t reserved_46           : 1;
+        uint64_t reserved_34_45        : 12;
+        uint64_t reserved_33           : 1;
+        uint64_t pmd0_vld              : 1;  /**< [ 32: 32](R/W/H) Packet meta descriptor 0 valid. */
+        uint64_t reserved_16_31        : 16;
+        uint64_t pmd0_length           : 16; /**< [ 15:  0](R/W/H) Packet meta descriptor 0 packet length. See NIX_AF_MDQ()_MD_DEBUG[PKT_LEN]. */
+#else /* Word 0 - Little Endian */
+        uint64_t pmd0_length           : 16; /**< [ 15:  0](R/W/H) Packet meta descriptor 0 packet length. See NIX_AF_MDQ()_MD_DEBUG[PKT_LEN]. */
+        uint64_t reserved_16_31        : 16;
+        uint64_t pmd0_vld              : 1;  /**< [ 32: 32](R/W/H) Packet meta descriptor 0 valid. */
+        uint64_t reserved_33           : 1;
+        uint64_t reserved_34_45        : 12;
+        uint64_t reserved_46           : 1;
+        uint64_t reserved_47           : 1;
+        uint64_t c_con                 : 1;  /**< [ 48: 48](R/W/H) Child connected flag. This pick has more picks behind it. */
+        uint64_t p_con                 : 1;  /**< [ 49: 49](R/W/H) Parent connected flag. This pick has more picks in front of it. */
+        uint64_t reserved_50_51        : 2;
+        uint64_t child                 : 10; /**< [ 61: 52](R/W/H) Child index, highest priority child. When [C_CON] of this result is set,
+                                                                 indicating that this result is
+                                                                 connected in a flow that extends through the child result, this is the index of that child
+                                                                 result. */
+        uint64_t reserved_62           : 1;
+        uint64_t reserved_63           : 1;
+#endif /* Word 0 - End */
+    } cn96xxp3;
+    /* struct cavm_nixx_af_tl3x_md_debug0_cn96xxp3 cn98xx; */
+    /* struct cavm_nixx_af_tl3x_md_debug0_s cnf95xx; */
+    /* struct cavm_nixx_af_tl3x_md_debug0_cn96xxp3 loki; */
 };
 typedef union cavm_nixx_af_tl3x_md_debug0 cavm_nixx_af_tl3x_md_debug0_t;
 
@@ -24882,6 +25693,67 @@ union cavm_nixx_af_tl3x_md_debug1
         uint64_t pse_pkt_id            : 9;  /**< [ 35: 27](R/W/H) PSE packet ID credits vector, pointer to reserved packet link credits. */
         uint64_t color                 : 2;  /**< [ 26: 25](R/W/H) See NIX_COLORRESULT_E. */
         uint64_t bubble                : 1;  /**< [ 24: 24](R/W/H) This MD is a fake passed forward after a prune. */
+        uint64_t reserved_23           : 1;
+        uint64_t uid                   : 4;  /**< [ 22: 19](R/W/H) Unique ID. 4-bit unique value assigned at the TL4 level, increments for each packet. */
+        uint64_t adjust                : 9;  /**< [ 18: 10](R/W/H) Packet meta descriptor adjust. The NIX_SEND_EXT_S[SHP_CHG] for the packet. */
+        uint64_t pir_dis               : 1;  /**< [  9:  9](R/W/H) PIR disable. Peak shaper disabled. Set when NIX_SEND_EXT_S[SHP_DIS] is set
+                                                                 (i.e. [PIR_DIS]=NIX_SEND_EXT_S[SHP_DIS]). [PIR_DIS] is used by
+                                                                 the TL4 through TL2 shapers, but not used by the TL1 rate limiters.
+                                                                 [PIR_DIS] and [CIR_DIS] will always have the same value. */
+        uint64_t cir_dis               : 1;  /**< [  8:  8](R/W/H) CIR disable. Committed shaper disabled. Set when NIX_SEND_EXT_S[SHP_DIS] is set
+                                                                 (i.e. [CIR_DIS]=NIX_SEND_EXT_S[SHP_DIS]). [CIR_DIS] is used by
+                                                                 the TL4 through TL2 shapers, but not used by the TL1 rate limiters.
+                                                                 [PIR_DIS] and [CIR_DIS] will always have the same value. */
+        uint64_t red_algo_override     : 2;  /**< [  7:  6](R/W/H) NIX_SEND_EXT_S[SHP_RA] from the corresponding packet descriptor. [RED_ALGO_OVERRIDE]
+                                                                 is used by the TL4 through TL2 shapers, but not used by the TL1 rate limiters. */
+        uint64_t reserved_0_5          : 6;
+#else /* Word 0 - Little Endian */
+        uint64_t reserved_0_5          : 6;
+        uint64_t red_algo_override     : 2;  /**< [  7:  6](R/W/H) NIX_SEND_EXT_S[SHP_RA] from the corresponding packet descriptor. [RED_ALGO_OVERRIDE]
+                                                                 is used by the TL4 through TL2 shapers, but not used by the TL1 rate limiters. */
+        uint64_t cir_dis               : 1;  /**< [  8:  8](R/W/H) CIR disable. Committed shaper disabled. Set when NIX_SEND_EXT_S[SHP_DIS] is set
+                                                                 (i.e. [CIR_DIS]=NIX_SEND_EXT_S[SHP_DIS]). [CIR_DIS] is used by
+                                                                 the TL4 through TL2 shapers, but not used by the TL1 rate limiters.
+                                                                 [PIR_DIS] and [CIR_DIS] will always have the same value. */
+        uint64_t pir_dis               : 1;  /**< [  9:  9](R/W/H) PIR disable. Peak shaper disabled. Set when NIX_SEND_EXT_S[SHP_DIS] is set
+                                                                 (i.e. [PIR_DIS]=NIX_SEND_EXT_S[SHP_DIS]). [PIR_DIS] is used by
+                                                                 the TL4 through TL2 shapers, but not used by the TL1 rate limiters.
+                                                                 [PIR_DIS] and [CIR_DIS] will always have the same value. */
+        uint64_t adjust                : 9;  /**< [ 18: 10](R/W/H) Packet meta descriptor adjust. The NIX_SEND_EXT_S[SHP_CHG] for the packet. */
+        uint64_t uid                   : 4;  /**< [ 22: 19](R/W/H) Unique ID. 4-bit unique value assigned at the TL4 level, increments for each packet. */
+        uint64_t reserved_23           : 1;
+        uint64_t bubble                : 1;  /**< [ 24: 24](R/W/H) This MD is a fake passed forward after a prune. */
+        uint64_t color                 : 2;  /**< [ 26: 25](R/W/H) See NIX_COLORRESULT_E. */
+        uint64_t pse_pkt_id            : 9;  /**< [ 35: 27](R/W/H) PSE packet ID credits vector, pointer to reserved packet link credits. */
+        uint64_t reserved_36           : 1;
+        uint64_t tx_pkt_p2x            : 2;  /**< [ 38: 37](R/W/H) Packet type.
+                                                                 0x0 = Reserved, PMD has not cleared link credit request.
+                                                                 0x1 = Normal packet type.
+                                                                 0x2 = Express packet type.
+                                                                 0x3 = SDP packet type. */
+        uint64_t sqm_pkt_id            : 13; /**< [ 51: 39](R/W/H) Packet ID from SQM. */
+        uint64_t mdq_idx               : 10; /**< [ 61: 52](R/W/H) Meta-descriptor queue index, MDQ source of PMD if VLD field is set. */
+        uint64_t reserved_62           : 1;
+        uint64_t vld                   : 1;  /**< [ 63: 63](R/W/H) Packet meta descriptor valid. */
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_nixx_af_tl3x_md_debug1_s cn9; */
+    struct cavm_nixx_af_tl3x_md_debug1_cn96xxp1
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t vld                   : 1;  /**< [ 63: 63](R/W/H) Packet meta descriptor valid. */
+        uint64_t reserved_62           : 1;
+        uint64_t mdq_idx               : 10; /**< [ 61: 52](R/W/H) Meta-descriptor queue index, MDQ source of PMD if VLD field is set. */
+        uint64_t sqm_pkt_id            : 13; /**< [ 51: 39](R/W/H) Packet ID from SQM. */
+        uint64_t tx_pkt_p2x            : 2;  /**< [ 38: 37](R/W/H) Packet type.
+                                                                 0x0 = Reserved, PMD has not cleared link credit request.
+                                                                 0x1 = Normal packet type.
+                                                                 0x2 = Express packet type.
+                                                                 0x3 = SDP packet type. */
+        uint64_t reserved_36           : 1;
+        uint64_t pse_pkt_id            : 9;  /**< [ 35: 27](R/W/H) PSE packet ID credits vector, pointer to reserved packet link credits. */
+        uint64_t color                 : 2;  /**< [ 26: 25](R/W/H) See NIX_COLORRESULT_E. */
+        uint64_t bubble                : 1;  /**< [ 24: 24](R/W/H) This MD is a fake passed forward after a prune. */
         uint64_t drain                 : 1;  /**< [ 23: 23](R/W/H) Reserved. */
         uint64_t uid                   : 4;  /**< [ 22: 19](R/W/H) Unique ID. 4-bit unique value assigned at the TL4 level, increments for each packet. */
         uint64_t adjust                : 9;  /**< [ 18: 10](R/W/H) Packet meta descriptor adjust. The NIX_SEND_EXT_S[SHP_CHG] for the packet. */
@@ -24925,10 +25797,70 @@ union cavm_nixx_af_tl3x_md_debug1
         uint64_t reserved_62           : 1;
         uint64_t vld                   : 1;  /**< [ 63: 63](R/W/H) Packet meta descriptor valid. */
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_nixx_af_tl3x_md_debug1_s cn9; */
-    /* struct cavm_nixx_af_tl3x_md_debug1_s cn96xxp1; */
+    } cn96xxp1;
     struct cavm_nixx_af_tl3x_md_debug1_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t vld                   : 1;  /**< [ 63: 63](R/W/H) Packet meta descriptor valid. */
+        uint64_t reserved_62           : 1;
+        uint64_t mdq_idx               : 10; /**< [ 61: 52](R/W/H) Meta-descriptor queue index, MDQ source of PMD if VLD field is set. */
+        uint64_t sqm_pkt_id            : 13; /**< [ 51: 39](R/W/H) Packet ID from SQM. */
+        uint64_t tx_pkt_p2x            : 2;  /**< [ 38: 37](R/W/H) Packet type.
+                                                                 0x0 = Reserved, PMD has not cleared link credit request.
+                                                                 0x1 = Normal packet type.
+                                                                 0x2 = Reserved (Express packet type).
+                                                                 0x3 = SDP packet type. */
+        uint64_t reserved_36           : 1;
+        uint64_t pse_pkt_id            : 9;  /**< [ 35: 27](R/W/H) PSE packet ID credits vector, pointer to reserved packet link credits. */
+        uint64_t color                 : 2;  /**< [ 26: 25](R/W/H) See NIX_COLORRESULT_E. */
+        uint64_t bubble                : 1;  /**< [ 24: 24](R/W/H) This MD is a fake passed forward after a prune. */
+        uint64_t flush                 : 1;  /**< [ 23: 23](R/W/H) This MD is a flush MD. */
+        uint64_t reserved_19_22        : 4;
+        uint64_t adjust                : 9;  /**< [ 18: 10](R/W/H) Packet meta descriptor adjust. The NIX_SEND_EXT_S[SHP_CHG] for the packet. */
+        uint64_t pir_dis               : 1;  /**< [  9:  9](R/W/H) PIR disable. Peak shaper disabled. Set when NIX_SEND_EXT_S[SHP_DIS] is set
+                                                                 (i.e. [PIR_DIS]=NIX_SEND_EXT_S[SHP_DIS]). [PIR_DIS] is used by
+                                                                 the TL4 through TL2 shapers, but not used by the TL1 rate limiters.
+                                                                 [PIR_DIS] and [CIR_DIS] will always have the same value. */
+        uint64_t cir_dis               : 1;  /**< [  8:  8](R/W/H) CIR disable. Committed shaper disabled. Set when NIX_SEND_EXT_S[SHP_DIS] is set
+                                                                 (i.e. [CIR_DIS]=NIX_SEND_EXT_S[SHP_DIS]). [CIR_DIS] is used by
+                                                                 the TL4 through TL2 shapers, but not used by the TL1 rate limiters.
+                                                                 [PIR_DIS] and [CIR_DIS] will always have the same value. */
+        uint64_t red_algo_override     : 2;  /**< [  7:  6](R/W/H) NIX_SEND_EXT_S[SHP_RA] from the corresponding packet descriptor. [RED_ALGO_OVERRIDE]
+                                                                 is used by the TL4 through TL2 shapers, but not used by the TL1 rate limiters. */
+        uint64_t reserved_0_5          : 6;
+#else /* Word 0 - Little Endian */
+        uint64_t reserved_0_5          : 6;
+        uint64_t red_algo_override     : 2;  /**< [  7:  6](R/W/H) NIX_SEND_EXT_S[SHP_RA] from the corresponding packet descriptor. [RED_ALGO_OVERRIDE]
+                                                                 is used by the TL4 through TL2 shapers, but not used by the TL1 rate limiters. */
+        uint64_t cir_dis               : 1;  /**< [  8:  8](R/W/H) CIR disable. Committed shaper disabled. Set when NIX_SEND_EXT_S[SHP_DIS] is set
+                                                                 (i.e. [CIR_DIS]=NIX_SEND_EXT_S[SHP_DIS]). [CIR_DIS] is used by
+                                                                 the TL4 through TL2 shapers, but not used by the TL1 rate limiters.
+                                                                 [PIR_DIS] and [CIR_DIS] will always have the same value. */
+        uint64_t pir_dis               : 1;  /**< [  9:  9](R/W/H) PIR disable. Peak shaper disabled. Set when NIX_SEND_EXT_S[SHP_DIS] is set
+                                                                 (i.e. [PIR_DIS]=NIX_SEND_EXT_S[SHP_DIS]). [PIR_DIS] is used by
+                                                                 the TL4 through TL2 shapers, but not used by the TL1 rate limiters.
+                                                                 [PIR_DIS] and [CIR_DIS] will always have the same value. */
+        uint64_t adjust                : 9;  /**< [ 18: 10](R/W/H) Packet meta descriptor adjust. The NIX_SEND_EXT_S[SHP_CHG] for the packet. */
+        uint64_t reserved_19_22        : 4;
+        uint64_t flush                 : 1;  /**< [ 23: 23](R/W/H) This MD is a flush MD. */
+        uint64_t bubble                : 1;  /**< [ 24: 24](R/W/H) This MD is a fake passed forward after a prune. */
+        uint64_t color                 : 2;  /**< [ 26: 25](R/W/H) See NIX_COLORRESULT_E. */
+        uint64_t pse_pkt_id            : 9;  /**< [ 35: 27](R/W/H) PSE packet ID credits vector, pointer to reserved packet link credits. */
+        uint64_t reserved_36           : 1;
+        uint64_t tx_pkt_p2x            : 2;  /**< [ 38: 37](R/W/H) Packet type.
+                                                                 0x0 = Reserved, PMD has not cleared link credit request.
+                                                                 0x1 = Normal packet type.
+                                                                 0x2 = Reserved (Express packet type).
+                                                                 0x3 = SDP packet type. */
+        uint64_t sqm_pkt_id            : 13; /**< [ 51: 39](R/W/H) Packet ID from SQM. */
+        uint64_t mdq_idx               : 10; /**< [ 61: 52](R/W/H) Meta-descriptor queue index, MDQ source of PMD if VLD field is set. */
+        uint64_t reserved_62           : 1;
+        uint64_t vld                   : 1;  /**< [ 63: 63](R/W/H) Packet meta descriptor valid. */
+#endif /* Word 0 - End */
+    } cn96xxp3;
+    /* struct cavm_nixx_af_tl3x_md_debug1_cn96xxp3 cn98xx; */
+    /* struct cavm_nixx_af_tl3x_md_debug1_cn96xxp1 cnf95xxp1; */
+    struct cavm_nixx_af_tl3x_md_debug1_cnf95xxp2
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t vld                   : 1;  /**< [ 63: 63](R/W/H) Packet meta descriptor valid. */
@@ -24987,10 +25919,7 @@ union cavm_nixx_af_tl3x_md_debug1
         uint64_t reserved_62           : 1;
         uint64_t vld                   : 1;  /**< [ 63: 63](R/W/H) Packet meta descriptor valid. */
 #endif /* Word 0 - End */
-    } cn96xxp3;
-    /* struct cavm_nixx_af_tl3x_md_debug1_cn96xxp3 cn98xx; */
-    /* struct cavm_nixx_af_tl3x_md_debug1_s cnf95xxp1; */
-    /* struct cavm_nixx_af_tl3x_md_debug1_cn96xxp3 cnf95xxp2; */
+    } cnf95xxp2;
     /* struct cavm_nixx_af_tl3x_md_debug1_cn96xxp3 loki; */
 };
 typedef union cavm_nixx_af_tl3x_md_debug1 cavm_nixx_af_tl3x_md_debug1_t;
@@ -25043,6 +25972,67 @@ union cavm_nixx_af_tl3x_md_debug2
         uint64_t pse_pkt_id            : 9;  /**< [ 35: 27](R/W/H) PSE packet ID credits vector, pointer to reserved packet link credits. */
         uint64_t color                 : 2;  /**< [ 26: 25](R/W/H) See NIX_COLORRESULT_E. */
         uint64_t bubble                : 1;  /**< [ 24: 24](R/W/H) This MD is a fake passed forward after a prune. */
+        uint64_t reserved_23           : 1;
+        uint64_t uid                   : 4;  /**< [ 22: 19](R/W/H) Unique ID. 4-bit unique value assigned at the TL4 level, increments for each packet. */
+        uint64_t adjust                : 9;  /**< [ 18: 10](R/W/H) Packet meta descriptor adjust. The NIX_SEND_EXT_S[SHP_CHG] for the packet. */
+        uint64_t pir_dis               : 1;  /**< [  9:  9](R/W/H) PIR disable. Peak shaper disabled. Set when NIX_SEND_EXT_S[SHP_DIS] is set
+                                                                 (i.e. [PIR_DIS]=NIX_SEND_EXT_S[SHP_DIS]). [PIR_DIS] is used by
+                                                                 the TL4 through TL2 shapers, but not used by the TL1 rate limiters.
+                                                                 [PIR_DIS] and [CIR_DIS] will always have the same value. */
+        uint64_t cir_dis               : 1;  /**< [  8:  8](R/W/H) CIR disable. Committed shaper disabled. Set when NIX_SEND_EXT_S[SHP_DIS] is set
+                                                                 (i.e. [CIR_DIS]=NIX_SEND_EXT_S[SHP_DIS]). [CIR_DIS] is used by
+                                                                 the TL4 through TL2 shapers, but not used by the TL1 rate limiters.
+                                                                 [PIR_DIS] and [CIR_DIS] will always have the same value. */
+        uint64_t red_algo_override     : 2;  /**< [  7:  6](R/W/H) NIX_SEND_EXT_S[SHP_RA] from the corresponding packet descriptor. [RED_ALGO_OVERRIDE]
+                                                                 is used by the TL4 through TL2 shapers, but not used by the TL1 rate limiters. */
+        uint64_t reserved_0_5          : 6;
+#else /* Word 0 - Little Endian */
+        uint64_t reserved_0_5          : 6;
+        uint64_t red_algo_override     : 2;  /**< [  7:  6](R/W/H) NIX_SEND_EXT_S[SHP_RA] from the corresponding packet descriptor. [RED_ALGO_OVERRIDE]
+                                                                 is used by the TL4 through TL2 shapers, but not used by the TL1 rate limiters. */
+        uint64_t cir_dis               : 1;  /**< [  8:  8](R/W/H) CIR disable. Committed shaper disabled. Set when NIX_SEND_EXT_S[SHP_DIS] is set
+                                                                 (i.e. [CIR_DIS]=NIX_SEND_EXT_S[SHP_DIS]). [CIR_DIS] is used by
+                                                                 the TL4 through TL2 shapers, but not used by the TL1 rate limiters.
+                                                                 [PIR_DIS] and [CIR_DIS] will always have the same value. */
+        uint64_t pir_dis               : 1;  /**< [  9:  9](R/W/H) PIR disable. Peak shaper disabled. Set when NIX_SEND_EXT_S[SHP_DIS] is set
+                                                                 (i.e. [PIR_DIS]=NIX_SEND_EXT_S[SHP_DIS]). [PIR_DIS] is used by
+                                                                 the TL4 through TL2 shapers, but not used by the TL1 rate limiters.
+                                                                 [PIR_DIS] and [CIR_DIS] will always have the same value. */
+        uint64_t adjust                : 9;  /**< [ 18: 10](R/W/H) Packet meta descriptor adjust. The NIX_SEND_EXT_S[SHP_CHG] for the packet. */
+        uint64_t uid                   : 4;  /**< [ 22: 19](R/W/H) Unique ID. 4-bit unique value assigned at the TL4 level, increments for each packet. */
+        uint64_t reserved_23           : 1;
+        uint64_t bubble                : 1;  /**< [ 24: 24](R/W/H) This MD is a fake passed forward after a prune. */
+        uint64_t color                 : 2;  /**< [ 26: 25](R/W/H) See NIX_COLORRESULT_E. */
+        uint64_t pse_pkt_id            : 9;  /**< [ 35: 27](R/W/H) PSE packet ID credits vector, pointer to reserved packet link credits. */
+        uint64_t reserved_36           : 1;
+        uint64_t tx_pkt_p2x            : 2;  /**< [ 38: 37](R/W/H) Packet type.
+                                                                 0x0 = Reserved, PMD has not cleared link credit request.
+                                                                 0x1 = Normal packet type.
+                                                                 0x2 = Express packet type.
+                                                                 0x3 = SDP packet type. */
+        uint64_t sqm_pkt_id            : 13; /**< [ 51: 39](R/W/H) Packet ID from SQM. */
+        uint64_t mdq_idx               : 10; /**< [ 61: 52](R/W/H) Meta-descriptor queue index, MDQ source of PMD if VLD field is set. */
+        uint64_t reserved_62           : 1;
+        uint64_t vld                   : 1;  /**< [ 63: 63](R/W/H) Packet meta descriptor valid. */
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_nixx_af_tl3x_md_debug2_s cn9; */
+    struct cavm_nixx_af_tl3x_md_debug2_cn96xxp1
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t vld                   : 1;  /**< [ 63: 63](R/W/H) Packet meta descriptor valid. */
+        uint64_t reserved_62           : 1;
+        uint64_t mdq_idx               : 10; /**< [ 61: 52](R/W/H) Meta-descriptor queue index, MDQ source of PMD if VLD field is set. */
+        uint64_t sqm_pkt_id            : 13; /**< [ 51: 39](R/W/H) Packet ID from SQM. */
+        uint64_t tx_pkt_p2x            : 2;  /**< [ 38: 37](R/W/H) Packet type.
+                                                                 0x0 = Reserved, PMD has not cleared link credit request.
+                                                                 0x1 = Normal packet type.
+                                                                 0x2 = Express packet type.
+                                                                 0x3 = SDP packet type. */
+        uint64_t reserved_36           : 1;
+        uint64_t pse_pkt_id            : 9;  /**< [ 35: 27](R/W/H) PSE packet ID credits vector, pointer to reserved packet link credits. */
+        uint64_t color                 : 2;  /**< [ 26: 25](R/W/H) See NIX_COLORRESULT_E. */
+        uint64_t bubble                : 1;  /**< [ 24: 24](R/W/H) This MD is a fake passed forward after a prune. */
         uint64_t drain                 : 1;  /**< [ 23: 23](R/W/H) Reserved. */
         uint64_t uid                   : 4;  /**< [ 22: 19](R/W/H) Unique ID. 4-bit unique value assigned at the TL4 level, increments for each packet. */
         uint64_t adjust                : 9;  /**< [ 18: 10](R/W/H) Packet meta descriptor adjust. The NIX_SEND_EXT_S[SHP_CHG] for the packet. */
@@ -25086,10 +26076,70 @@ union cavm_nixx_af_tl3x_md_debug2
         uint64_t reserved_62           : 1;
         uint64_t vld                   : 1;  /**< [ 63: 63](R/W/H) Packet meta descriptor valid. */
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_nixx_af_tl3x_md_debug2_s cn9; */
-    /* struct cavm_nixx_af_tl3x_md_debug2_s cn96xxp1; */
+    } cn96xxp1;
     struct cavm_nixx_af_tl3x_md_debug2_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t vld                   : 1;  /**< [ 63: 63](R/W/H) Packet meta descriptor valid. */
+        uint64_t reserved_62           : 1;
+        uint64_t mdq_idx               : 10; /**< [ 61: 52](R/W/H) Meta-descriptor queue index, MDQ source of PMD if VLD field is set. */
+        uint64_t sqm_pkt_id            : 13; /**< [ 51: 39](R/W/H) Packet ID from SQM. */
+        uint64_t tx_pkt_p2x            : 2;  /**< [ 38: 37](R/W/H) Packet type.
+                                                                 0x0 = Reserved, PMD has not cleared link credit request.
+                                                                 0x1 = Normal packet type.
+                                                                 0x2 = Reserved (Express packet type).
+                                                                 0x3 = SDP packet type. */
+        uint64_t reserved_36           : 1;
+        uint64_t pse_pkt_id            : 9;  /**< [ 35: 27](R/W/H) PSE packet ID credits vector, pointer to reserved packet link credits. */
+        uint64_t color                 : 2;  /**< [ 26: 25](R/W/H) See NIX_COLORRESULT_E. */
+        uint64_t bubble                : 1;  /**< [ 24: 24](R/W/H) This MD is a fake passed forward after a prune. */
+        uint64_t flush                 : 1;  /**< [ 23: 23](R/W/H) This MD is a flush MD. */
+        uint64_t reserved_19_22        : 4;
+        uint64_t adjust                : 9;  /**< [ 18: 10](R/W/H) Packet meta descriptor adjust. The NIX_SEND_EXT_S[SHP_CHG] for the packet. */
+        uint64_t pir_dis               : 1;  /**< [  9:  9](R/W/H) PIR disable. Peak shaper disabled. Set when NIX_SEND_EXT_S[SHP_DIS] is set
+                                                                 (i.e. [PIR_DIS]=NIX_SEND_EXT_S[SHP_DIS]). [PIR_DIS] is used by
+                                                                 the TL4 through TL2 shapers, but not used by the TL1 rate limiters.
+                                                                 [PIR_DIS] and [CIR_DIS] will always have the same value. */
+        uint64_t cir_dis               : 1;  /**< [  8:  8](R/W/H) CIR disable. Committed shaper disabled. Set when NIX_SEND_EXT_S[SHP_DIS] is set
+                                                                 (i.e. [CIR_DIS]=NIX_SEND_EXT_S[SHP_DIS]). [CIR_DIS] is used by
+                                                                 the TL4 through TL2 shapers, but not used by the TL1 rate limiters.
+                                                                 [PIR_DIS] and [CIR_DIS] will always have the same value. */
+        uint64_t red_algo_override     : 2;  /**< [  7:  6](R/W/H) NIX_SEND_EXT_S[SHP_RA] from the corresponding packet descriptor. [RED_ALGO_OVERRIDE]
+                                                                 is used by the TL4 through TL2 shapers, but not used by the TL1 rate limiters. */
+        uint64_t reserved_0_5          : 6;
+#else /* Word 0 - Little Endian */
+        uint64_t reserved_0_5          : 6;
+        uint64_t red_algo_override     : 2;  /**< [  7:  6](R/W/H) NIX_SEND_EXT_S[SHP_RA] from the corresponding packet descriptor. [RED_ALGO_OVERRIDE]
+                                                                 is used by the TL4 through TL2 shapers, but not used by the TL1 rate limiters. */
+        uint64_t cir_dis               : 1;  /**< [  8:  8](R/W/H) CIR disable. Committed shaper disabled. Set when NIX_SEND_EXT_S[SHP_DIS] is set
+                                                                 (i.e. [CIR_DIS]=NIX_SEND_EXT_S[SHP_DIS]). [CIR_DIS] is used by
+                                                                 the TL4 through TL2 shapers, but not used by the TL1 rate limiters.
+                                                                 [PIR_DIS] and [CIR_DIS] will always have the same value. */
+        uint64_t pir_dis               : 1;  /**< [  9:  9](R/W/H) PIR disable. Peak shaper disabled. Set when NIX_SEND_EXT_S[SHP_DIS] is set
+                                                                 (i.e. [PIR_DIS]=NIX_SEND_EXT_S[SHP_DIS]). [PIR_DIS] is used by
+                                                                 the TL4 through TL2 shapers, but not used by the TL1 rate limiters.
+                                                                 [PIR_DIS] and [CIR_DIS] will always have the same value. */
+        uint64_t adjust                : 9;  /**< [ 18: 10](R/W/H) Packet meta descriptor adjust. The NIX_SEND_EXT_S[SHP_CHG] for the packet. */
+        uint64_t reserved_19_22        : 4;
+        uint64_t flush                 : 1;  /**< [ 23: 23](R/W/H) This MD is a flush MD. */
+        uint64_t bubble                : 1;  /**< [ 24: 24](R/W/H) This MD is a fake passed forward after a prune. */
+        uint64_t color                 : 2;  /**< [ 26: 25](R/W/H) See NIX_COLORRESULT_E. */
+        uint64_t pse_pkt_id            : 9;  /**< [ 35: 27](R/W/H) PSE packet ID credits vector, pointer to reserved packet link credits. */
+        uint64_t reserved_36           : 1;
+        uint64_t tx_pkt_p2x            : 2;  /**< [ 38: 37](R/W/H) Packet type.
+                                                                 0x0 = Reserved, PMD has not cleared link credit request.
+                                                                 0x1 = Normal packet type.
+                                                                 0x2 = Reserved (Express packet type).
+                                                                 0x3 = SDP packet type. */
+        uint64_t sqm_pkt_id            : 13; /**< [ 51: 39](R/W/H) Packet ID from SQM. */
+        uint64_t mdq_idx               : 10; /**< [ 61: 52](R/W/H) Meta-descriptor queue index, MDQ source of PMD if VLD field is set. */
+        uint64_t reserved_62           : 1;
+        uint64_t vld                   : 1;  /**< [ 63: 63](R/W/H) Packet meta descriptor valid. */
+#endif /* Word 0 - End */
+    } cn96xxp3;
+    /* struct cavm_nixx_af_tl3x_md_debug2_cn96xxp3 cn98xx; */
+    /* struct cavm_nixx_af_tl3x_md_debug2_cn96xxp1 cnf95xxp1; */
+    struct cavm_nixx_af_tl3x_md_debug2_cnf95xxp2
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t vld                   : 1;  /**< [ 63: 63](R/W/H) Packet meta descriptor valid. */
@@ -25148,10 +26198,7 @@ union cavm_nixx_af_tl3x_md_debug2
         uint64_t reserved_62           : 1;
         uint64_t vld                   : 1;  /**< [ 63: 63](R/W/H) Packet meta descriptor valid. */
 #endif /* Word 0 - End */
-    } cn96xxp3;
-    /* struct cavm_nixx_af_tl3x_md_debug2_cn96xxp3 cn98xx; */
-    /* struct cavm_nixx_af_tl3x_md_debug2_s cnf95xxp1; */
-    /* struct cavm_nixx_af_tl3x_md_debug2_cn96xxp3 cnf95xxp2; */
+    } cnf95xxp2;
     /* struct cavm_nixx_af_tl3x_md_debug2_cn96xxp3 loki; */
 };
 typedef union cavm_nixx_af_tl3x_md_debug2 cavm_nixx_af_tl3x_md_debug2_t;
@@ -25217,6 +26264,26 @@ union cavm_nixx_af_tl3x_md_debug3
     struct cavm_nixx_af_tl3x_md_debug3_cn96xxp3
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_63           : 1;
+        uint64_t reserved_62           : 1;
+        uint64_t reserved_52_61        : 10;
+        uint64_t reserved_39_51        : 13;
+        uint64_t reserved_37_38        : 2;
+        uint64_t reserved_0_36         : 37;
+#else /* Word 0 - Little Endian */
+        uint64_t reserved_0_36         : 37;
+        uint64_t reserved_37_38        : 2;
+        uint64_t reserved_39_51        : 13;
+        uint64_t reserved_52_61        : 10;
+        uint64_t reserved_62           : 1;
+        uint64_t reserved_63           : 1;
+#endif /* Word 0 - End */
+    } cn96xxp3;
+    /* struct cavm_nixx_af_tl3x_md_debug3_cn96xxp3 cn98xx; */
+    /* struct cavm_nixx_af_tl3x_md_debug3_s cnf95xxp1; */
+    struct cavm_nixx_af_tl3x_md_debug3_cnf95xxp2
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t vld                   : 1;  /**< [ 63: 63](R/W/H) Flush Packet meta descriptor valid. */
         uint64_t reserved_62           : 1;
         uint64_t mdq_idx               : 10; /**< [ 61: 52](R/W/H) Flush Meta-descriptor queue index, MDQ source of PMD if VLD field is set. */
@@ -25237,10 +26304,7 @@ union cavm_nixx_af_tl3x_md_debug3
         uint64_t reserved_62           : 1;
         uint64_t vld                   : 1;  /**< [ 63: 63](R/W/H) Flush Packet meta descriptor valid. */
 #endif /* Word 0 - End */
-    } cn96xxp3;
-    /* struct cavm_nixx_af_tl3x_md_debug3_cn96xxp3 cn98xx; */
-    /* struct cavm_nixx_af_tl3x_md_debug3_s cnf95xxp1; */
-    /* struct cavm_nixx_af_tl3x_md_debug3_cn96xxp3 cnf95xxp2; */
+    } cnf95xxp2;
     /* struct cavm_nixx_af_tl3x_md_debug3_cn96xxp3 loki; */
 };
 typedef union cavm_nixx_af_tl3x_md_debug3 cavm_nixx_af_tl3x_md_debug3_t;
@@ -26529,7 +27593,49 @@ union cavm_nixx_af_tl4x_md_debug0
                                                                  When set, PMD1 is next to write. */
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_nixx_af_tl4x_md_debug0_s cn; */
+    /* struct cavm_nixx_af_tl4x_md_debug0_s cn9; */
+    /* struct cavm_nixx_af_tl4x_md_debug0_s cn96xxp1; */
+    struct cavm_nixx_af_tl4x_md_debug0_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_63           : 1;
+        uint64_t reserved_62           : 1;
+        uint64_t child                 : 10; /**< [ 61: 52](R/W/H) Child index, highest priority child. When [C_CON] of this result is set,
+                                                                 indicating that this result is
+                                                                 connected in a flow that extends through the child result, this is the index of that child
+                                                                 result. */
+        uint64_t reserved_50_51        : 2;
+        uint64_t p_con                 : 1;  /**< [ 49: 49](R/W/H) Parent connected flag. This pick has more picks in front of it. */
+        uint64_t c_con                 : 1;  /**< [ 48: 48](R/W/H) Child connected flag. This pick has more picks behind it. */
+        uint64_t reserved_47           : 1;
+        uint64_t reserved_46           : 1;
+        uint64_t reserved_34_45        : 12;
+        uint64_t reserved_33           : 1;
+        uint64_t pmd0_vld              : 1;  /**< [ 32: 32](R/W/H) Packet meta descriptor 0 valid. */
+        uint64_t reserved_16_31        : 16;
+        uint64_t pmd0_length           : 16; /**< [ 15:  0](R/W/H) Packet meta descriptor 0 packet length. See NIX_AF_MDQ()_MD_DEBUG[PKT_LEN]. */
+#else /* Word 0 - Little Endian */
+        uint64_t pmd0_length           : 16; /**< [ 15:  0](R/W/H) Packet meta descriptor 0 packet length. See NIX_AF_MDQ()_MD_DEBUG[PKT_LEN]. */
+        uint64_t reserved_16_31        : 16;
+        uint64_t pmd0_vld              : 1;  /**< [ 32: 32](R/W/H) Packet meta descriptor 0 valid. */
+        uint64_t reserved_33           : 1;
+        uint64_t reserved_34_45        : 12;
+        uint64_t reserved_46           : 1;
+        uint64_t reserved_47           : 1;
+        uint64_t c_con                 : 1;  /**< [ 48: 48](R/W/H) Child connected flag. This pick has more picks behind it. */
+        uint64_t p_con                 : 1;  /**< [ 49: 49](R/W/H) Parent connected flag. This pick has more picks in front of it. */
+        uint64_t reserved_50_51        : 2;
+        uint64_t child                 : 10; /**< [ 61: 52](R/W/H) Child index, highest priority child. When [C_CON] of this result is set,
+                                                                 indicating that this result is
+                                                                 connected in a flow that extends through the child result, this is the index of that child
+                                                                 result. */
+        uint64_t reserved_62           : 1;
+        uint64_t reserved_63           : 1;
+#endif /* Word 0 - End */
+    } cn96xxp3;
+    /* struct cavm_nixx_af_tl4x_md_debug0_cn96xxp3 cn98xx; */
+    /* struct cavm_nixx_af_tl4x_md_debug0_s cnf95xx; */
+    /* struct cavm_nixx_af_tl4x_md_debug0_cn96xxp3 loki; */
 };
 typedef union cavm_nixx_af_tl4x_md_debug0 cavm_nixx_af_tl4x_md_debug0_t;
 
@@ -26581,6 +27687,67 @@ union cavm_nixx_af_tl4x_md_debug1
         uint64_t pse_pkt_id            : 9;  /**< [ 35: 27](R/W/H) PSE packet ID credits vector, pointer to reserved packet link credits. */
         uint64_t color                 : 2;  /**< [ 26: 25](R/W/H) See NIX_COLORRESULT_E. */
         uint64_t bubble                : 1;  /**< [ 24: 24](R/W/H) This MD is a fake passed forward after a prune. */
+        uint64_t reserved_23           : 1;
+        uint64_t uid                   : 4;  /**< [ 22: 19](R/W/H) Unique ID. 4-bit unique value assigned at the TL4 level, increments for each packet. */
+        uint64_t adjust                : 9;  /**< [ 18: 10](R/W/H) Packet meta descriptor adjust. The NIX_SEND_EXT_S[SHP_CHG] for the packet. */
+        uint64_t pir_dis               : 1;  /**< [  9:  9](R/W/H) PIR disable. Peak shaper disabled. Set when NIX_SEND_EXT_S[SHP_DIS] is set
+                                                                 (i.e. [PIR_DIS]=NIX_SEND_EXT_S[SHP_DIS]). [PIR_DIS] is used by
+                                                                 the TL4 through TL2 shapers, but not used by the TL1 rate limiters.
+                                                                 [PIR_DIS] and [CIR_DIS] will always have the same value. */
+        uint64_t cir_dis               : 1;  /**< [  8:  8](R/W/H) CIR disable. Committed shaper disabled. Set when NIX_SEND_EXT_S[SHP_DIS] is set
+                                                                 (i.e. [CIR_DIS]=NIX_SEND_EXT_S[SHP_DIS]). [CIR_DIS] is used by
+                                                                 the TL4 through TL2 shapers, but not used by the TL1 rate limiters.
+                                                                 [PIR_DIS] and [CIR_DIS] will always have the same value. */
+        uint64_t red_algo_override     : 2;  /**< [  7:  6](R/W/H) NIX_SEND_EXT_S[SHP_RA] from the corresponding packet descriptor. [RED_ALGO_OVERRIDE]
+                                                                 is used by the TL4 through TL2 shapers, but not used by the TL1 rate limiters. */
+        uint64_t reserved_0_5          : 6;
+#else /* Word 0 - Little Endian */
+        uint64_t reserved_0_5          : 6;
+        uint64_t red_algo_override     : 2;  /**< [  7:  6](R/W/H) NIX_SEND_EXT_S[SHP_RA] from the corresponding packet descriptor. [RED_ALGO_OVERRIDE]
+                                                                 is used by the TL4 through TL2 shapers, but not used by the TL1 rate limiters. */
+        uint64_t cir_dis               : 1;  /**< [  8:  8](R/W/H) CIR disable. Committed shaper disabled. Set when NIX_SEND_EXT_S[SHP_DIS] is set
+                                                                 (i.e. [CIR_DIS]=NIX_SEND_EXT_S[SHP_DIS]). [CIR_DIS] is used by
+                                                                 the TL4 through TL2 shapers, but not used by the TL1 rate limiters.
+                                                                 [PIR_DIS] and [CIR_DIS] will always have the same value. */
+        uint64_t pir_dis               : 1;  /**< [  9:  9](R/W/H) PIR disable. Peak shaper disabled. Set when NIX_SEND_EXT_S[SHP_DIS] is set
+                                                                 (i.e. [PIR_DIS]=NIX_SEND_EXT_S[SHP_DIS]). [PIR_DIS] is used by
+                                                                 the TL4 through TL2 shapers, but not used by the TL1 rate limiters.
+                                                                 [PIR_DIS] and [CIR_DIS] will always have the same value. */
+        uint64_t adjust                : 9;  /**< [ 18: 10](R/W/H) Packet meta descriptor adjust. The NIX_SEND_EXT_S[SHP_CHG] for the packet. */
+        uint64_t uid                   : 4;  /**< [ 22: 19](R/W/H) Unique ID. 4-bit unique value assigned at the TL4 level, increments for each packet. */
+        uint64_t reserved_23           : 1;
+        uint64_t bubble                : 1;  /**< [ 24: 24](R/W/H) This MD is a fake passed forward after a prune. */
+        uint64_t color                 : 2;  /**< [ 26: 25](R/W/H) See NIX_COLORRESULT_E. */
+        uint64_t pse_pkt_id            : 9;  /**< [ 35: 27](R/W/H) PSE packet ID credits vector, pointer to reserved packet link credits. */
+        uint64_t reserved_36           : 1;
+        uint64_t tx_pkt_p2x            : 2;  /**< [ 38: 37](R/W/H) Packet type.
+                                                                 0x0 = Reserved, PMD has not cleared link credit request.
+                                                                 0x1 = Normal packet type.
+                                                                 0x2 = Express packet type.
+                                                                 0x3 = SDP packet type. */
+        uint64_t sqm_pkt_id            : 13; /**< [ 51: 39](R/W/H) Packet ID from SQM. */
+        uint64_t mdq_idx               : 10; /**< [ 61: 52](R/W/H) Meta-descriptor queue index, MDQ source of PMD if VLD field is set. */
+        uint64_t reserved_62           : 1;
+        uint64_t vld                   : 1;  /**< [ 63: 63](R/W/H) Packet meta descriptor valid. */
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_nixx_af_tl4x_md_debug1_s cn9; */
+    struct cavm_nixx_af_tl4x_md_debug1_cn96xxp1
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t vld                   : 1;  /**< [ 63: 63](R/W/H) Packet meta descriptor valid. */
+        uint64_t reserved_62           : 1;
+        uint64_t mdq_idx               : 10; /**< [ 61: 52](R/W/H) Meta-descriptor queue index, MDQ source of PMD if VLD field is set. */
+        uint64_t sqm_pkt_id            : 13; /**< [ 51: 39](R/W/H) Packet ID from SQM. */
+        uint64_t tx_pkt_p2x            : 2;  /**< [ 38: 37](R/W/H) Packet type.
+                                                                 0x0 = Reserved, PMD has not cleared link credit request.
+                                                                 0x1 = Normal packet type.
+                                                                 0x2 = Express packet type.
+                                                                 0x3 = SDP packet type. */
+        uint64_t reserved_36           : 1;
+        uint64_t pse_pkt_id            : 9;  /**< [ 35: 27](R/W/H) PSE packet ID credits vector, pointer to reserved packet link credits. */
+        uint64_t color                 : 2;  /**< [ 26: 25](R/W/H) See NIX_COLORRESULT_E. */
+        uint64_t bubble                : 1;  /**< [ 24: 24](R/W/H) This MD is a fake passed forward after a prune. */
         uint64_t drain                 : 1;  /**< [ 23: 23](R/W/H) Reserved. */
         uint64_t uid                   : 4;  /**< [ 22: 19](R/W/H) Unique ID. 4-bit unique value assigned at the TL4 level, increments for each packet. */
         uint64_t adjust                : 9;  /**< [ 18: 10](R/W/H) Packet meta descriptor adjust. The NIX_SEND_EXT_S[SHP_CHG] for the packet. */
@@ -26624,10 +27791,70 @@ union cavm_nixx_af_tl4x_md_debug1
         uint64_t reserved_62           : 1;
         uint64_t vld                   : 1;  /**< [ 63: 63](R/W/H) Packet meta descriptor valid. */
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_nixx_af_tl4x_md_debug1_s cn9; */
-    /* struct cavm_nixx_af_tl4x_md_debug1_s cn96xxp1; */
+    } cn96xxp1;
     struct cavm_nixx_af_tl4x_md_debug1_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t vld                   : 1;  /**< [ 63: 63](R/W/H) Packet meta descriptor valid. */
+        uint64_t reserved_62           : 1;
+        uint64_t mdq_idx               : 10; /**< [ 61: 52](R/W/H) Meta-descriptor queue index, MDQ source of PMD if VLD field is set. */
+        uint64_t sqm_pkt_id            : 13; /**< [ 51: 39](R/W/H) Packet ID from SQM. */
+        uint64_t tx_pkt_p2x            : 2;  /**< [ 38: 37](R/W/H) Packet type.
+                                                                 0x0 = Reserved, PMD has not cleared link credit request.
+                                                                 0x1 = Normal packet type.
+                                                                 0x2 = Reserved (Express packet type).
+                                                                 0x3 = SDP packet type. */
+        uint64_t reserved_36           : 1;
+        uint64_t pse_pkt_id            : 9;  /**< [ 35: 27](R/W/H) PSE packet ID credits vector, pointer to reserved packet link credits. */
+        uint64_t color                 : 2;  /**< [ 26: 25](R/W/H) See NIX_COLORRESULT_E. */
+        uint64_t bubble                : 1;  /**< [ 24: 24](R/W/H) This MD is a fake passed forward after a prune. */
+        uint64_t flush                 : 1;  /**< [ 23: 23](R/W/H) This MD is a flush MD. */
+        uint64_t reserved_19_22        : 4;
+        uint64_t adjust                : 9;  /**< [ 18: 10](R/W/H) Packet meta descriptor adjust. The NIX_SEND_EXT_S[SHP_CHG] for the packet. */
+        uint64_t pir_dis               : 1;  /**< [  9:  9](R/W/H) PIR disable. Peak shaper disabled. Set when NIX_SEND_EXT_S[SHP_DIS] is set
+                                                                 (i.e. [PIR_DIS]=NIX_SEND_EXT_S[SHP_DIS]). [PIR_DIS] is used by
+                                                                 the TL4 through TL2 shapers, but not used by the TL1 rate limiters.
+                                                                 [PIR_DIS] and [CIR_DIS] will always have the same value. */
+        uint64_t cir_dis               : 1;  /**< [  8:  8](R/W/H) CIR disable. Committed shaper disabled. Set when NIX_SEND_EXT_S[SHP_DIS] is set
+                                                                 (i.e. [CIR_DIS]=NIX_SEND_EXT_S[SHP_DIS]). [CIR_DIS] is used by
+                                                                 the TL4 through TL2 shapers, but not used by the TL1 rate limiters.
+                                                                 [PIR_DIS] and [CIR_DIS] will always have the same value. */
+        uint64_t red_algo_override     : 2;  /**< [  7:  6](R/W/H) NIX_SEND_EXT_S[SHP_RA] from the corresponding packet descriptor. [RED_ALGO_OVERRIDE]
+                                                                 is used by the TL4 through TL2 shapers, but not used by the TL1 rate limiters. */
+        uint64_t reserved_0_5          : 6;
+#else /* Word 0 - Little Endian */
+        uint64_t reserved_0_5          : 6;
+        uint64_t red_algo_override     : 2;  /**< [  7:  6](R/W/H) NIX_SEND_EXT_S[SHP_RA] from the corresponding packet descriptor. [RED_ALGO_OVERRIDE]
+                                                                 is used by the TL4 through TL2 shapers, but not used by the TL1 rate limiters. */
+        uint64_t cir_dis               : 1;  /**< [  8:  8](R/W/H) CIR disable. Committed shaper disabled. Set when NIX_SEND_EXT_S[SHP_DIS] is set
+                                                                 (i.e. [CIR_DIS]=NIX_SEND_EXT_S[SHP_DIS]). [CIR_DIS] is used by
+                                                                 the TL4 through TL2 shapers, but not used by the TL1 rate limiters.
+                                                                 [PIR_DIS] and [CIR_DIS] will always have the same value. */
+        uint64_t pir_dis               : 1;  /**< [  9:  9](R/W/H) PIR disable. Peak shaper disabled. Set when NIX_SEND_EXT_S[SHP_DIS] is set
+                                                                 (i.e. [PIR_DIS]=NIX_SEND_EXT_S[SHP_DIS]). [PIR_DIS] is used by
+                                                                 the TL4 through TL2 shapers, but not used by the TL1 rate limiters.
+                                                                 [PIR_DIS] and [CIR_DIS] will always have the same value. */
+        uint64_t adjust                : 9;  /**< [ 18: 10](R/W/H) Packet meta descriptor adjust. The NIX_SEND_EXT_S[SHP_CHG] for the packet. */
+        uint64_t reserved_19_22        : 4;
+        uint64_t flush                 : 1;  /**< [ 23: 23](R/W/H) This MD is a flush MD. */
+        uint64_t bubble                : 1;  /**< [ 24: 24](R/W/H) This MD is a fake passed forward after a prune. */
+        uint64_t color                 : 2;  /**< [ 26: 25](R/W/H) See NIX_COLORRESULT_E. */
+        uint64_t pse_pkt_id            : 9;  /**< [ 35: 27](R/W/H) PSE packet ID credits vector, pointer to reserved packet link credits. */
+        uint64_t reserved_36           : 1;
+        uint64_t tx_pkt_p2x            : 2;  /**< [ 38: 37](R/W/H) Packet type.
+                                                                 0x0 = Reserved, PMD has not cleared link credit request.
+                                                                 0x1 = Normal packet type.
+                                                                 0x2 = Reserved (Express packet type).
+                                                                 0x3 = SDP packet type. */
+        uint64_t sqm_pkt_id            : 13; /**< [ 51: 39](R/W/H) Packet ID from SQM. */
+        uint64_t mdq_idx               : 10; /**< [ 61: 52](R/W/H) Meta-descriptor queue index, MDQ source of PMD if VLD field is set. */
+        uint64_t reserved_62           : 1;
+        uint64_t vld                   : 1;  /**< [ 63: 63](R/W/H) Packet meta descriptor valid. */
+#endif /* Word 0 - End */
+    } cn96xxp3;
+    /* struct cavm_nixx_af_tl4x_md_debug1_cn96xxp3 cn98xx; */
+    /* struct cavm_nixx_af_tl4x_md_debug1_cn96xxp1 cnf95xxp1; */
+    struct cavm_nixx_af_tl4x_md_debug1_cnf95xxp2
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t vld                   : 1;  /**< [ 63: 63](R/W/H) Packet meta descriptor valid. */
@@ -26686,10 +27913,7 @@ union cavm_nixx_af_tl4x_md_debug1
         uint64_t reserved_62           : 1;
         uint64_t vld                   : 1;  /**< [ 63: 63](R/W/H) Packet meta descriptor valid. */
 #endif /* Word 0 - End */
-    } cn96xxp3;
-    /* struct cavm_nixx_af_tl4x_md_debug1_cn96xxp3 cn98xx; */
-    /* struct cavm_nixx_af_tl4x_md_debug1_s cnf95xxp1; */
-    /* struct cavm_nixx_af_tl4x_md_debug1_cn96xxp3 cnf95xxp2; */
+    } cnf95xxp2;
     /* struct cavm_nixx_af_tl4x_md_debug1_cn96xxp3 loki; */
 };
 typedef union cavm_nixx_af_tl4x_md_debug1 cavm_nixx_af_tl4x_md_debug1_t;
@@ -26742,6 +27966,67 @@ union cavm_nixx_af_tl4x_md_debug2
         uint64_t pse_pkt_id            : 9;  /**< [ 35: 27](R/W/H) PSE packet ID credits vector, pointer to reserved packet link credits. */
         uint64_t color                 : 2;  /**< [ 26: 25](R/W/H) See NIX_COLORRESULT_E. */
         uint64_t bubble                : 1;  /**< [ 24: 24](R/W/H) This MD is a fake passed forward after a prune. */
+        uint64_t reserved_23           : 1;
+        uint64_t uid                   : 4;  /**< [ 22: 19](R/W/H) Unique ID. 4-bit unique value assigned at the TL4 level, increments for each packet. */
+        uint64_t adjust                : 9;  /**< [ 18: 10](R/W/H) Packet meta descriptor adjust. The NIX_SEND_EXT_S[SHP_CHG] for the packet. */
+        uint64_t pir_dis               : 1;  /**< [  9:  9](R/W/H) PIR disable. Peak shaper disabled. Set when NIX_SEND_EXT_S[SHP_DIS] is set
+                                                                 (i.e. [PIR_DIS]=NIX_SEND_EXT_S[SHP_DIS]). [PIR_DIS] is used by
+                                                                 the TL4 through TL2 shapers, but not used by the TL1 rate limiters.
+                                                                 [PIR_DIS] and [CIR_DIS] will always have the same value. */
+        uint64_t cir_dis               : 1;  /**< [  8:  8](R/W/H) CIR disable. Committed shaper disabled. Set when NIX_SEND_EXT_S[SHP_DIS] is set
+                                                                 (i.e. [CIR_DIS]=NIX_SEND_EXT_S[SHP_DIS]). [CIR_DIS] is used by
+                                                                 the TL4 through TL2 shapers, but not used by the TL1 rate limiters.
+                                                                 [PIR_DIS] and [CIR_DIS] will always have the same value. */
+        uint64_t red_algo_override     : 2;  /**< [  7:  6](R/W/H) NIX_SEND_EXT_S[SHP_RA] from the corresponding packet descriptor. [RED_ALGO_OVERRIDE]
+                                                                 is used by the TL4 through TL2 shapers, but not used by the TL1 rate limiters. */
+        uint64_t reserved_0_5          : 6;
+#else /* Word 0 - Little Endian */
+        uint64_t reserved_0_5          : 6;
+        uint64_t red_algo_override     : 2;  /**< [  7:  6](R/W/H) NIX_SEND_EXT_S[SHP_RA] from the corresponding packet descriptor. [RED_ALGO_OVERRIDE]
+                                                                 is used by the TL4 through TL2 shapers, but not used by the TL1 rate limiters. */
+        uint64_t cir_dis               : 1;  /**< [  8:  8](R/W/H) CIR disable. Committed shaper disabled. Set when NIX_SEND_EXT_S[SHP_DIS] is set
+                                                                 (i.e. [CIR_DIS]=NIX_SEND_EXT_S[SHP_DIS]). [CIR_DIS] is used by
+                                                                 the TL4 through TL2 shapers, but not used by the TL1 rate limiters.
+                                                                 [PIR_DIS] and [CIR_DIS] will always have the same value. */
+        uint64_t pir_dis               : 1;  /**< [  9:  9](R/W/H) PIR disable. Peak shaper disabled. Set when NIX_SEND_EXT_S[SHP_DIS] is set
+                                                                 (i.e. [PIR_DIS]=NIX_SEND_EXT_S[SHP_DIS]). [PIR_DIS] is used by
+                                                                 the TL4 through TL2 shapers, but not used by the TL1 rate limiters.
+                                                                 [PIR_DIS] and [CIR_DIS] will always have the same value. */
+        uint64_t adjust                : 9;  /**< [ 18: 10](R/W/H) Packet meta descriptor adjust. The NIX_SEND_EXT_S[SHP_CHG] for the packet. */
+        uint64_t uid                   : 4;  /**< [ 22: 19](R/W/H) Unique ID. 4-bit unique value assigned at the TL4 level, increments for each packet. */
+        uint64_t reserved_23           : 1;
+        uint64_t bubble                : 1;  /**< [ 24: 24](R/W/H) This MD is a fake passed forward after a prune. */
+        uint64_t color                 : 2;  /**< [ 26: 25](R/W/H) See NIX_COLORRESULT_E. */
+        uint64_t pse_pkt_id            : 9;  /**< [ 35: 27](R/W/H) PSE packet ID credits vector, pointer to reserved packet link credits. */
+        uint64_t reserved_36           : 1;
+        uint64_t tx_pkt_p2x            : 2;  /**< [ 38: 37](R/W/H) Packet type.
+                                                                 0x0 = Reserved, PMD has not cleared link credit request.
+                                                                 0x1 = Normal packet type.
+                                                                 0x2 = Express packet type.
+                                                                 0x3 = SDP packet type. */
+        uint64_t sqm_pkt_id            : 13; /**< [ 51: 39](R/W/H) Packet ID from SQM. */
+        uint64_t mdq_idx               : 10; /**< [ 61: 52](R/W/H) Meta-descriptor queue index, MDQ source of PMD if VLD field is set. */
+        uint64_t reserved_62           : 1;
+        uint64_t vld                   : 1;  /**< [ 63: 63](R/W/H) Packet meta descriptor valid. */
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_nixx_af_tl4x_md_debug2_s cn9; */
+    struct cavm_nixx_af_tl4x_md_debug2_cn96xxp1
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t vld                   : 1;  /**< [ 63: 63](R/W/H) Packet meta descriptor valid. */
+        uint64_t reserved_62           : 1;
+        uint64_t mdq_idx               : 10; /**< [ 61: 52](R/W/H) Meta-descriptor queue index, MDQ source of PMD if VLD field is set. */
+        uint64_t sqm_pkt_id            : 13; /**< [ 51: 39](R/W/H) Packet ID from SQM. */
+        uint64_t tx_pkt_p2x            : 2;  /**< [ 38: 37](R/W/H) Packet type.
+                                                                 0x0 = Reserved, PMD has not cleared link credit request.
+                                                                 0x1 = Normal packet type.
+                                                                 0x2 = Express packet type.
+                                                                 0x3 = SDP packet type. */
+        uint64_t reserved_36           : 1;
+        uint64_t pse_pkt_id            : 9;  /**< [ 35: 27](R/W/H) PSE packet ID credits vector, pointer to reserved packet link credits. */
+        uint64_t color                 : 2;  /**< [ 26: 25](R/W/H) See NIX_COLORRESULT_E. */
+        uint64_t bubble                : 1;  /**< [ 24: 24](R/W/H) This MD is a fake passed forward after a prune. */
         uint64_t drain                 : 1;  /**< [ 23: 23](R/W/H) Reserved. */
         uint64_t uid                   : 4;  /**< [ 22: 19](R/W/H) Unique ID. 4-bit unique value assigned at the TL4 level, increments for each packet. */
         uint64_t adjust                : 9;  /**< [ 18: 10](R/W/H) Packet meta descriptor adjust. The NIX_SEND_EXT_S[SHP_CHG] for the packet. */
@@ -26785,10 +28070,70 @@ union cavm_nixx_af_tl4x_md_debug2
         uint64_t reserved_62           : 1;
         uint64_t vld                   : 1;  /**< [ 63: 63](R/W/H) Packet meta descriptor valid. */
 #endif /* Word 0 - End */
-    } s;
-    /* struct cavm_nixx_af_tl4x_md_debug2_s cn9; */
-    /* struct cavm_nixx_af_tl4x_md_debug2_s cn96xxp1; */
+    } cn96xxp1;
     struct cavm_nixx_af_tl4x_md_debug2_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t vld                   : 1;  /**< [ 63: 63](R/W/H) Packet meta descriptor valid. */
+        uint64_t reserved_62           : 1;
+        uint64_t mdq_idx               : 10; /**< [ 61: 52](R/W/H) Meta-descriptor queue index, MDQ source of PMD if VLD field is set. */
+        uint64_t sqm_pkt_id            : 13; /**< [ 51: 39](R/W/H) Packet ID from SQM. */
+        uint64_t tx_pkt_p2x            : 2;  /**< [ 38: 37](R/W/H) Packet type.
+                                                                 0x0 = Reserved, PMD has not cleared link credit request.
+                                                                 0x1 = Normal packet type.
+                                                                 0x2 = Reserved (Express packet type).
+                                                                 0x3 = SDP packet type. */
+        uint64_t reserved_36           : 1;
+        uint64_t pse_pkt_id            : 9;  /**< [ 35: 27](R/W/H) PSE packet ID credits vector, pointer to reserved packet link credits. */
+        uint64_t color                 : 2;  /**< [ 26: 25](R/W/H) See NIX_COLORRESULT_E. */
+        uint64_t bubble                : 1;  /**< [ 24: 24](R/W/H) This MD is a fake passed forward after a prune. */
+        uint64_t flush                 : 1;  /**< [ 23: 23](R/W/H) This MD is a flush MD. */
+        uint64_t reserved_19_22        : 4;
+        uint64_t adjust                : 9;  /**< [ 18: 10](R/W/H) Packet meta descriptor adjust. The NIX_SEND_EXT_S[SHP_CHG] for the packet. */
+        uint64_t pir_dis               : 1;  /**< [  9:  9](R/W/H) PIR disable. Peak shaper disabled. Set when NIX_SEND_EXT_S[SHP_DIS] is set
+                                                                 (i.e. [PIR_DIS]=NIX_SEND_EXT_S[SHP_DIS]). [PIR_DIS] is used by
+                                                                 the TL4 through TL2 shapers, but not used by the TL1 rate limiters.
+                                                                 [PIR_DIS] and [CIR_DIS] will always have the same value. */
+        uint64_t cir_dis               : 1;  /**< [  8:  8](R/W/H) CIR disable. Committed shaper disabled. Set when NIX_SEND_EXT_S[SHP_DIS] is set
+                                                                 (i.e. [CIR_DIS]=NIX_SEND_EXT_S[SHP_DIS]). [CIR_DIS] is used by
+                                                                 the TL4 through TL2 shapers, but not used by the TL1 rate limiters.
+                                                                 [PIR_DIS] and [CIR_DIS] will always have the same value. */
+        uint64_t red_algo_override     : 2;  /**< [  7:  6](R/W/H) NIX_SEND_EXT_S[SHP_RA] from the corresponding packet descriptor. [RED_ALGO_OVERRIDE]
+                                                                 is used by the TL4 through TL2 shapers, but not used by the TL1 rate limiters. */
+        uint64_t reserved_0_5          : 6;
+#else /* Word 0 - Little Endian */
+        uint64_t reserved_0_5          : 6;
+        uint64_t red_algo_override     : 2;  /**< [  7:  6](R/W/H) NIX_SEND_EXT_S[SHP_RA] from the corresponding packet descriptor. [RED_ALGO_OVERRIDE]
+                                                                 is used by the TL4 through TL2 shapers, but not used by the TL1 rate limiters. */
+        uint64_t cir_dis               : 1;  /**< [  8:  8](R/W/H) CIR disable. Committed shaper disabled. Set when NIX_SEND_EXT_S[SHP_DIS] is set
+                                                                 (i.e. [CIR_DIS]=NIX_SEND_EXT_S[SHP_DIS]). [CIR_DIS] is used by
+                                                                 the TL4 through TL2 shapers, but not used by the TL1 rate limiters.
+                                                                 [PIR_DIS] and [CIR_DIS] will always have the same value. */
+        uint64_t pir_dis               : 1;  /**< [  9:  9](R/W/H) PIR disable. Peak shaper disabled. Set when NIX_SEND_EXT_S[SHP_DIS] is set
+                                                                 (i.e. [PIR_DIS]=NIX_SEND_EXT_S[SHP_DIS]). [PIR_DIS] is used by
+                                                                 the TL4 through TL2 shapers, but not used by the TL1 rate limiters.
+                                                                 [PIR_DIS] and [CIR_DIS] will always have the same value. */
+        uint64_t adjust                : 9;  /**< [ 18: 10](R/W/H) Packet meta descriptor adjust. The NIX_SEND_EXT_S[SHP_CHG] for the packet. */
+        uint64_t reserved_19_22        : 4;
+        uint64_t flush                 : 1;  /**< [ 23: 23](R/W/H) This MD is a flush MD. */
+        uint64_t bubble                : 1;  /**< [ 24: 24](R/W/H) This MD is a fake passed forward after a prune. */
+        uint64_t color                 : 2;  /**< [ 26: 25](R/W/H) See NIX_COLORRESULT_E. */
+        uint64_t pse_pkt_id            : 9;  /**< [ 35: 27](R/W/H) PSE packet ID credits vector, pointer to reserved packet link credits. */
+        uint64_t reserved_36           : 1;
+        uint64_t tx_pkt_p2x            : 2;  /**< [ 38: 37](R/W/H) Packet type.
+                                                                 0x0 = Reserved, PMD has not cleared link credit request.
+                                                                 0x1 = Normal packet type.
+                                                                 0x2 = Reserved (Express packet type).
+                                                                 0x3 = SDP packet type. */
+        uint64_t sqm_pkt_id            : 13; /**< [ 51: 39](R/W/H) Packet ID from SQM. */
+        uint64_t mdq_idx               : 10; /**< [ 61: 52](R/W/H) Meta-descriptor queue index, MDQ source of PMD if VLD field is set. */
+        uint64_t reserved_62           : 1;
+        uint64_t vld                   : 1;  /**< [ 63: 63](R/W/H) Packet meta descriptor valid. */
+#endif /* Word 0 - End */
+    } cn96xxp3;
+    /* struct cavm_nixx_af_tl4x_md_debug2_cn96xxp3 cn98xx; */
+    /* struct cavm_nixx_af_tl4x_md_debug2_cn96xxp1 cnf95xxp1; */
+    struct cavm_nixx_af_tl4x_md_debug2_cnf95xxp2
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t vld                   : 1;  /**< [ 63: 63](R/W/H) Packet meta descriptor valid. */
@@ -26847,10 +28192,7 @@ union cavm_nixx_af_tl4x_md_debug2
         uint64_t reserved_62           : 1;
         uint64_t vld                   : 1;  /**< [ 63: 63](R/W/H) Packet meta descriptor valid. */
 #endif /* Word 0 - End */
-    } cn96xxp3;
-    /* struct cavm_nixx_af_tl4x_md_debug2_cn96xxp3 cn98xx; */
-    /* struct cavm_nixx_af_tl4x_md_debug2_s cnf95xxp1; */
-    /* struct cavm_nixx_af_tl4x_md_debug2_cn96xxp3 cnf95xxp2; */
+    } cnf95xxp2;
     /* struct cavm_nixx_af_tl4x_md_debug2_cn96xxp3 loki; */
 };
 typedef union cavm_nixx_af_tl4x_md_debug2 cavm_nixx_af_tl4x_md_debug2_t;
@@ -26916,6 +28258,26 @@ union cavm_nixx_af_tl4x_md_debug3
     struct cavm_nixx_af_tl4x_md_debug3_cn96xxp3
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_63           : 1;
+        uint64_t reserved_62           : 1;
+        uint64_t reserved_52_61        : 10;
+        uint64_t reserved_39_51        : 13;
+        uint64_t reserved_37_38        : 2;
+        uint64_t reserved_0_36         : 37;
+#else /* Word 0 - Little Endian */
+        uint64_t reserved_0_36         : 37;
+        uint64_t reserved_37_38        : 2;
+        uint64_t reserved_39_51        : 13;
+        uint64_t reserved_52_61        : 10;
+        uint64_t reserved_62           : 1;
+        uint64_t reserved_63           : 1;
+#endif /* Word 0 - End */
+    } cn96xxp3;
+    /* struct cavm_nixx_af_tl4x_md_debug3_cn96xxp3 cn98xx; */
+    /* struct cavm_nixx_af_tl4x_md_debug3_s cnf95xxp1; */
+    struct cavm_nixx_af_tl4x_md_debug3_cnf95xxp2
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t vld                   : 1;  /**< [ 63: 63](R/W/H) Flush Packet meta descriptor valid. */
         uint64_t reserved_62           : 1;
         uint64_t mdq_idx               : 10; /**< [ 61: 52](R/W/H) Flush Meta-descriptor queue index, MDQ source of PMD if VLD field is set. */
@@ -26936,10 +28298,7 @@ union cavm_nixx_af_tl4x_md_debug3
         uint64_t reserved_62           : 1;
         uint64_t vld                   : 1;  /**< [ 63: 63](R/W/H) Flush Packet meta descriptor valid. */
 #endif /* Word 0 - End */
-    } cn96xxp3;
-    /* struct cavm_nixx_af_tl4x_md_debug3_cn96xxp3 cn98xx; */
-    /* struct cavm_nixx_af_tl4x_md_debug3_s cnf95xxp1; */
-    /* struct cavm_nixx_af_tl4x_md_debug3_cn96xxp3 cnf95xxp2; */
+    } cnf95xxp2;
     /* struct cavm_nixx_af_tl4x_md_debug3_cn96xxp3 loki; */
 };
 typedef union cavm_nixx_af_tl4x_md_debug3 cavm_nixx_af_tl4x_md_debug3_t;

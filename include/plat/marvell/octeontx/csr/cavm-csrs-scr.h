@@ -170,8 +170,8 @@ union cavm_scr_cmp_and_spin_s
  * Structure scr_dma_check_s
  *
  * ROM Script DMA Checksum Opcode Structure
- * This opcode exits the script if the supplied checksum doesnt match the checksum
- * accumulated duirng the previous SCR_DMA_S transfer.
+ * This opcode exits for the script if the supplied checksum doesn't match the checksum
+ * accumulated during the previous SCR_DMA_S transfer.
  */
 union cavm_scr_dma_check_s
 {
@@ -288,7 +288,7 @@ union cavm_scr_generic_s
 /**
  * Structure scr_move64_s
  *
- * ROM Script 64-bit CSR to CSR Move Opcode Structure
+ * ROM Script 64-bit CSR-to-CSR Move Opcode Structure
  * This opcode copies a 64-bit value from [SRC_ADDR] to [DEST_ADDR].
  */
 union cavm_scr_move64_s
@@ -608,7 +608,7 @@ union cavm_scr_write32_s
                                                                      o PEM()_CFG_TBL_SIZE.
                                                                      o PEM()_S_RST_CTL.
                                                                      o PEM()_RST_SOFT_PERST.
-                                                                     o PEM()_S_RST_MAX.
+                                                                     o PEM()_RST_MAC.
                                                                    \<page\>
                                                                    * PCIEPVF_* config space via PEM()_PF()_VF()_VFCFG() (or legacy PEM()_CFG_WR
                                                                      and PEM()_CFG_RD).
@@ -685,7 +685,7 @@ union cavm_scr_write32_s
                                                                      o PEM()_CFG_TBL_SIZE.
                                                                      o PEM()_S_RST_CTL.
                                                                      o PEM()_RST_SOFT_PERST.
-                                                                     o PEM()_S_RST_MAX.
+                                                                     o PEM()_RST_MAC.
                                                                    \<page\>
                                                                    * PCIEPVF_* config space via PEM()_PF()_VF()_VFCFG() (or legacy PEM()_CFG_WR
                                                                      and PEM()_CFG_RD).

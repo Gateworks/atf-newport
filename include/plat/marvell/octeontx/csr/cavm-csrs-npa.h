@@ -800,7 +800,13 @@ union cavm_npa_aura_s
                                                                  remain stuck at 0 because the following expression may evaluate to 0 due to
                                                                  integer truncation:
                                                                  _ ((256 - adjusted_CON)*shifted_CNT) / 256. */
-        uint64_t pool_way_mask         : 16; /**< [ 83: 68] Way partitioning mask for allocating associated NPA_POOL_HW_S in NDC (1 means do not use).
+        uint64_t pool_way_mask         : 16; /**< [ 83: 68] Way partitioning mask for allocating associated NPA_POOL_HW_S in NDC (1
+                                                                 means do not use).
+
+                                                                 If [POOL_WAY_MASK] is all ones for one of two consecutive NPA_POOL_HW_S
+                                                                 that share the same cache line, it must also be all ones for the other
+                                                                 NPA_POOL_HW_S.
+
                                                                  Internal:
                                                                  Bypass NDC when all ones. */
         uint64_t pool_caching          : 1;  /**< [ 67: 67] Selects the style read for accessing NPA_POOL_HW_S in LLC/DRAM:
@@ -808,7 +814,10 @@ union cavm_npa_aura_s
                                                                  0x1 = NPA_POOL_HW_S reads are allocated into the LLC.
 
                                                                  NPA_POOL_HW_S writes that are not allocated in NDC will always allocate
-                                                                 into LLC. */
+                                                                 into LLC.
+
+                                                                 [POOL_CACHING] must have the same value for two consecutive NPA_POOL_HW_S
+                                                                 that share the same cache line. */
         uint64_t reserved_65_66        : 2;
         uint64_t ena                   : 1;  /**< [ 64: 64] Enable. If clear, any allocations will fail and returns will be dropped. */
 #else /* Word 1 - Little Endian */
@@ -819,8 +828,17 @@ union cavm_npa_aura_s
                                                                  0x1 = NPA_POOL_HW_S reads are allocated into the LLC.
 
                                                                  NPA_POOL_HW_S writes that are not allocated in NDC will always allocate
-                                                                 into LLC. */
-        uint64_t pool_way_mask         : 16; /**< [ 83: 68] Way partitioning mask for allocating associated NPA_POOL_HW_S in NDC (1 means do not use).
+                                                                 into LLC.
+
+                                                                 [POOL_CACHING] must have the same value for two consecutive NPA_POOL_HW_S
+                                                                 that share the same cache line. */
+        uint64_t pool_way_mask         : 16; /**< [ 83: 68] Way partitioning mask for allocating associated NPA_POOL_HW_S in NDC (1
+                                                                 means do not use).
+
+                                                                 If [POOL_WAY_MASK] is all ones for one of two consecutive NPA_POOL_HW_S
+                                                                 that share the same cache line, it must also be all ones for the other
+                                                                 NPA_POOL_HW_S.
+
                                                                  Internal:
                                                                  Bypass NDC when all ones. */
         uint64_t avg_con               : 9;  /**< [ 92: 84] This value controls how much of the present average resource level is used

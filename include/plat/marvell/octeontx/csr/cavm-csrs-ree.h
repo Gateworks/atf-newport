@@ -98,7 +98,7 @@
  * Enumeration ree_rtru_init_mode_e
  *
  * Memory Initialization Mode Enumeration
- * Enumerates REE_AF_RXPR_CTRL.INIT_MODE
+ * Enumerates REE_AF_REEXR_CTRL.INIT_MODE
  * Internal:
  * These encodings must be kept updated with Titan REE IP
  */
@@ -434,7 +434,7 @@ union cavm_ree_inst_s
         uint64_t ggrp                  : 10; /**< [363:354] If [WQ_PTR] is nonzero, the SSO guest-group to use when the REE coprocessor
                                                                  submits work to the SSO. For the SSO to not discard the add-work request, the
                                                                  SSO must map [GGRP] as valid in the PF FUNC specified by the corresponding
-                                                                 queue's REE_AF_QUE()_GMCTL[SSO_PF_FUNC]. */
+                                                                 queue's REE_AF_QUE()_GMCTL[SSO_AF_FUNC]. */
         uint64_t tt                    : 2;  /**< [353:352] If [WQ_PTR] is nonzero, the SSO tag type to use when the REE coprocessor submits work to the SSO. */
         uint64_t tag                   : 32; /**< [351:320] If [WQ_PTR] is nonzero, the SSO tag to use when the REE coprocessor submits work to the SSO. */
 #else /* Word 5 - Little Endian */
@@ -443,12 +443,12 @@ union cavm_ree_inst_s
         uint64_t ggrp                  : 10; /**< [363:354] If [WQ_PTR] is nonzero, the SSO guest-group to use when the REE coprocessor
                                                                  submits work to the SSO. For the SSO to not discard the add-work request, the
                                                                  SSO must map [GGRP] as valid in the PF FUNC specified by the corresponding
-                                                                 queue's REE_AF_QUE()_GMCTL[SSO_PF_FUNC]. */
+                                                                 queue's REE_AF_QUE()_GMCTL[SSO_AF_FUNC]. */
         uint64_t reserved_364_383      : 20;
 #endif /* Word 5 - End */
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 6 - Big Endian */
         uint64_t reserved_447          : 1;
-        uint64_t ree_job_length        : 15; /**< [446:432] Total job length (in bytes). Must be between 1 and 16383 inclusive. */
+        uint64_t ree_job_length        : 15; /**< [446:432] Total job length (in bytes). Must be between 1 and 16384 inclusive. */
         uint64_t ree_job_ctrl          : 16; /**< [431:416] REE job control field (JOB_DESCRIPTOR_TUPLE.CTRL); by REE_JOB_CTRL_S format definition. */
         uint64_t ree_job_id            : 24; /**< [415:392] Job identifier for software use. */
         uint64_t reserved_384_391      : 8;
@@ -456,35 +456,27 @@ union cavm_ree_inst_s
         uint64_t reserved_384_391      : 8;
         uint64_t ree_job_id            : 24; /**< [415:392] Job identifier for software use. */
         uint64_t ree_job_ctrl          : 16; /**< [431:416] REE job control field (JOB_DESCRIPTOR_TUPLE.CTRL); by REE_JOB_CTRL_S format definition. */
-        uint64_t ree_job_length        : 15; /**< [446:432] Total job length (in bytes). Must be between 1 and 16383 inclusive. */
+        uint64_t ree_job_length        : 15; /**< [446:432] Total job length (in bytes). Must be between 1 and 16384 inclusive. */
         uint64_t reserved_447          : 1;
 #endif /* Word 6 - End */
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 7 - Big Endian */
-        uint64_t reserved_508_511      : 4;
-        uint64_t ree_job_subset_id_3   : 12; /**< [507:496] Job rule subset ID 3, see similar [REE_JOB_SUBSET_ID_0]. */
-        uint64_t reserved_492_495      : 4;
-        uint64_t ree_job_subset_id_2   : 12; /**< [491:480] Job rule subset ID 2, see similar [REE_JOB_SUBSET_ID_0]. */
-        uint64_t reserved_476_479      : 4;
-        uint64_t ree_job_subset_id_1   : 12; /**< [475:464] Job rule subset ID 1, see similar [REE_JOB_SUBSET_ID_0]. */
-        uint64_t reserved_460_463      : 4;
-        uint64_t ree_job_subset_id_0   : 12; /**< [459:448] Job rule subset ID 0.
-                                                                 Must be between 1 and 4095 inclusive.
+        uint64_t ree_job_subset_id_3   : 16; /**< [511:496] Job rule subset ID 3, see similar [REE_JOB_SUBSET_ID_0]. */
+        uint64_t ree_job_subset_id_2   : 16; /**< [495:480] Job rule subset ID 2, see similar [REE_JOB_SUBSET_ID_0]. */
+        uint64_t ree_job_subset_id_1   : 16; /**< [479:464] Job rule subset ID 1, see similar [REE_JOB_SUBSET_ID_0]. */
+        uint64_t ree_job_subset_id_0   : 16; /**< [463:448] Job rule subset ID 0.
+                                                                 Upper 4 bits were added for virtualization.
                                                                  Each job must specify all subset ID fields.
                                                                  If job requires fewer than 4 unique subsets,
                                                                  populate unused subset ID fields with the same value as [REE_JOB_SUBSET_ID_0]. */
 #else /* Word 7 - Little Endian */
-        uint64_t ree_job_subset_id_0   : 12; /**< [459:448] Job rule subset ID 0.
-                                                                 Must be between 1 and 4095 inclusive.
+        uint64_t ree_job_subset_id_0   : 16; /**< [463:448] Job rule subset ID 0.
+                                                                 Upper 4 bits were added for virtualization.
                                                                  Each job must specify all subset ID fields.
                                                                  If job requires fewer than 4 unique subsets,
                                                                  populate unused subset ID fields with the same value as [REE_JOB_SUBSET_ID_0]. */
-        uint64_t reserved_460_463      : 4;
-        uint64_t ree_job_subset_id_1   : 12; /**< [475:464] Job rule subset ID 1, see similar [REE_JOB_SUBSET_ID_0]. */
-        uint64_t reserved_476_479      : 4;
-        uint64_t ree_job_subset_id_2   : 12; /**< [491:480] Job rule subset ID 2, see similar [REE_JOB_SUBSET_ID_0]. */
-        uint64_t reserved_492_495      : 4;
-        uint64_t ree_job_subset_id_3   : 12; /**< [507:496] Job rule subset ID 3, see similar [REE_JOB_SUBSET_ID_0]. */
-        uint64_t reserved_508_511      : 4;
+        uint64_t ree_job_subset_id_1   : 16; /**< [479:464] Job rule subset ID 1, see similar [REE_JOB_SUBSET_ID_0]. */
+        uint64_t ree_job_subset_id_2   : 16; /**< [495:480] Job rule subset ID 2, see similar [REE_JOB_SUBSET_ID_0]. */
+        uint64_t ree_job_subset_id_3   : 16; /**< [511:496] Job rule subset ID 3, see similar [REE_JOB_SUBSET_ID_0]. */
 #endif /* Word 7 - End */
     } s;
     struct cavm_ree_inst_s_cn
@@ -663,7 +655,7 @@ union cavm_ree_inst_s
         uint64_t ggrp                  : 10; /**< [363:354] If [WQ_PTR] is nonzero, the SSO guest-group to use when the REE coprocessor
                                                                  submits work to the SSO. For the SSO to not discard the add-work request, the
                                                                  SSO must map [GGRP] as valid in the PF FUNC specified by the corresponding
-                                                                 queue's REE_AF_QUE()_GMCTL[SSO_PF_FUNC]. */
+                                                                 queue's REE_AF_QUE()_GMCTL[SSO_AF_FUNC]. */
         uint64_t tt                    : 2;  /**< [353:352] If [WQ_PTR] is nonzero, the SSO tag type to use when the REE coprocessor submits work to the SSO. */
         uint64_t tag                   : 32; /**< [351:320] If [WQ_PTR] is nonzero, the SSO tag to use when the REE coprocessor submits work to the SSO. */
 #else /* Word 5 - Little Endian */
@@ -672,12 +664,12 @@ union cavm_ree_inst_s
         uint64_t ggrp                  : 10; /**< [363:354] If [WQ_PTR] is nonzero, the SSO guest-group to use when the REE coprocessor
                                                                  submits work to the SSO. For the SSO to not discard the add-work request, the
                                                                  SSO must map [GGRP] as valid in the PF FUNC specified by the corresponding
-                                                                 queue's REE_AF_QUE()_GMCTL[SSO_PF_FUNC]. */
+                                                                 queue's REE_AF_QUE()_GMCTL[SSO_AF_FUNC]. */
         uint64_t reserved_364_383      : 20;
 #endif /* Word 5 - End */
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 6 - Big Endian */
         uint64_t reserved_447          : 1;
-        uint64_t ree_job_length        : 15; /**< [446:432] Total job length (in bytes). Must be between 1 and 16383 inclusive. */
+        uint64_t ree_job_length        : 15; /**< [446:432] Total job length (in bytes). Must be between 1 and 16384 inclusive. */
         uint64_t ree_job_ctrl          : 16; /**< [431:416] REE job control field (JOB_DESCRIPTOR_TUPLE.CTRL); by REE_JOB_CTRL_S format definition. */
         uint64_t ree_job_id            : 24; /**< [415:392] Job identifier for software use. */
         uint64_t reserved_384_391      : 8;
@@ -685,35 +677,27 @@ union cavm_ree_inst_s
         uint64_t reserved_384_391      : 8;
         uint64_t ree_job_id            : 24; /**< [415:392] Job identifier for software use. */
         uint64_t ree_job_ctrl          : 16; /**< [431:416] REE job control field (JOB_DESCRIPTOR_TUPLE.CTRL); by REE_JOB_CTRL_S format definition. */
-        uint64_t ree_job_length        : 15; /**< [446:432] Total job length (in bytes). Must be between 1 and 16383 inclusive. */
+        uint64_t ree_job_length        : 15; /**< [446:432] Total job length (in bytes). Must be between 1 and 16384 inclusive. */
         uint64_t reserved_447          : 1;
 #endif /* Word 6 - End */
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 7 - Big Endian */
-        uint64_t reserved_508_511      : 4;
-        uint64_t ree_job_subset_id_3   : 12; /**< [507:496] Job rule subset ID 3, see similar [REE_JOB_SUBSET_ID_0]. */
-        uint64_t reserved_492_495      : 4;
-        uint64_t ree_job_subset_id_2   : 12; /**< [491:480] Job rule subset ID 2, see similar [REE_JOB_SUBSET_ID_0]. */
-        uint64_t reserved_476_479      : 4;
-        uint64_t ree_job_subset_id_1   : 12; /**< [475:464] Job rule subset ID 1, see similar [REE_JOB_SUBSET_ID_0]. */
-        uint64_t reserved_460_463      : 4;
-        uint64_t ree_job_subset_id_0   : 12; /**< [459:448] Job rule subset ID 0.
-                                                                 Must be between 1 and 4095 inclusive.
+        uint64_t ree_job_subset_id_3   : 16; /**< [511:496] Job rule subset ID 3, see similar [REE_JOB_SUBSET_ID_0]. */
+        uint64_t ree_job_subset_id_2   : 16; /**< [495:480] Job rule subset ID 2, see similar [REE_JOB_SUBSET_ID_0]. */
+        uint64_t ree_job_subset_id_1   : 16; /**< [479:464] Job rule subset ID 1, see similar [REE_JOB_SUBSET_ID_0]. */
+        uint64_t ree_job_subset_id_0   : 16; /**< [463:448] Job rule subset ID 0.
+                                                                 Upper 4 bits were added for virtualization.
                                                                  Each job must specify all subset ID fields.
                                                                  If job requires fewer than 4 unique subsets,
                                                                  populate unused subset ID fields with the same value as [REE_JOB_SUBSET_ID_0]. */
 #else /* Word 7 - Little Endian */
-        uint64_t ree_job_subset_id_0   : 12; /**< [459:448] Job rule subset ID 0.
-                                                                 Must be between 1 and 4095 inclusive.
+        uint64_t ree_job_subset_id_0   : 16; /**< [463:448] Job rule subset ID 0.
+                                                                 Upper 4 bits were added for virtualization.
                                                                  Each job must specify all subset ID fields.
                                                                  If job requires fewer than 4 unique subsets,
                                                                  populate unused subset ID fields with the same value as [REE_JOB_SUBSET_ID_0]. */
-        uint64_t reserved_460_463      : 4;
-        uint64_t ree_job_subset_id_1   : 12; /**< [475:464] Job rule subset ID 1, see similar [REE_JOB_SUBSET_ID_0]. */
-        uint64_t reserved_476_479      : 4;
-        uint64_t ree_job_subset_id_2   : 12; /**< [491:480] Job rule subset ID 2, see similar [REE_JOB_SUBSET_ID_0]. */
-        uint64_t reserved_492_495      : 4;
-        uint64_t ree_job_subset_id_3   : 12; /**< [507:496] Job rule subset ID 3, see similar [REE_JOB_SUBSET_ID_0]. */
-        uint64_t reserved_508_511      : 4;
+        uint64_t ree_job_subset_id_1   : 16; /**< [479:464] Job rule subset ID 1, see similar [REE_JOB_SUBSET_ID_0]. */
+        uint64_t ree_job_subset_id_2   : 16; /**< [495:480] Job rule subset ID 2, see similar [REE_JOB_SUBSET_ID_0]. */
+        uint64_t ree_job_subset_id_3   : 16; /**< [511:496] Job rule subset ID 3, see similar [REE_JOB_SUBSET_ID_0]. */
 #endif /* Word 7 - End */
     } cn;
 };
@@ -722,7 +706,7 @@ union cavm_ree_inst_s
  * Structure ree_job_ctrl_s
  *
  * REE Job Control field Structure
- * This structure is the format of JOB_DESCRIPTOR_TUPLE.CTRL, as described by RXP requirements.
+ * This structure is the format of JOB_DESCRIPTOR_TUPLE.CTRL, as described by REEX requirements.
  */
 union cavm_ree_job_ctrl_s
 {
@@ -807,7 +791,7 @@ union cavm_ree_res_s
                                                                  If the job was submitted with the control flag REE_JOB_CTRL.MODE==HPM,
                                                                  the number of matches returned will be in the range [0:1].
                                                                  Otherwise, the number of matches returned will be in the range [0:max_match].
-                                                                 See REE Register REE_AF_RXPM_MAX_MATCH\<31:0\> for the legal values of max_match. */
+                                                                 See REE Register REE_AF_REEXM_MAX_MATCH\<31:0\> for the legal values of max_match. */
         uint64_t ree_res_dmcnt         : 8;  /**< [ 55: 48] DETECTED_MATCH_COUNT.
                                                                  Number of matches detected in job.
                                                                  This value saturates at 255. */
@@ -830,12 +814,12 @@ union cavm_ree_res_s
                                                                  If the job was submitted with the control flag REE_JOB_CTRL.MODE==HPM,
                                                                  the number of matches returned will be in the range [0:1].
                                                                  Otherwise, the number of matches returned will be in the range [0:max_match].
-                                                                 See REE Register REE_AF_RXPM_MAX_MATCH\<31:0\> for the legal values of max_match. */
+                                                                 See REE Register REE_AF_REEXM_MAX_MATCH\<31:0\> for the legal values of max_match. */
 #endif /* Word 0 - End */
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 1 - Big Endian */
         uint64_t pmi_min_byte_ptr      : 16; /**< [127:112] Minimum BYTE_PTR for threads still active at the end of job. */
         uint64_t ree_meta_lcnt         : 16; /**< [111: 96] LATENCY_COUNT.
-                                                                 How long it took RXP to scan job in multiples of 256 core_clk cycles. */
+                                                                 How long it took REEX to scan job in multiples of 256 core_clk cycles. */
         uint64_t ree_meta_icnt         : 16; /**< [ 95: 80] INSTRUCTION_CONT.
                                                                  The number of REE instructions executed in this job. */
         uint64_t ree_meta_ptcnt        : 16; /**< [ 79: 64] PRIMARY_THREAD_COUNT.
@@ -846,7 +830,7 @@ union cavm_ree_res_s
         uint64_t ree_meta_icnt         : 16; /**< [ 95: 80] INSTRUCTION_CONT.
                                                                  The number of REE instructions executed in this job. */
         uint64_t ree_meta_lcnt         : 16; /**< [111: 96] LATENCY_COUNT.
-                                                                 How long it took RXP to scan job in multiples of 256 core_clk cycles. */
+                                                                 How long it took REEX to scan job in multiples of 256 core_clk cycles. */
         uint64_t pmi_min_byte_ptr      : 16; /**< [127:112] Minimum BYTE_PTR for threads still active at the end of job. */
 #endif /* Word 1 - End */
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 2 - Big Endian */
@@ -903,7 +887,8 @@ union cavm_ree_res_s
  * Structure ree_res_status_s
  *
  * REE Response Status field Structure
- * This structure is the format of RESPONSE_DESCRIPTOR_TUPLE.STATUS, as described by RXP requirements.
+ * This structure is the format of RESPONSE_DESCRIPTOR_TUPLE.STATUS, as described by
+ * REEX requirements.
  */
 union cavm_ree_res_status_s
 {
@@ -974,7 +959,7 @@ union cavm_ree_res_status_s
  * Structure ree_rof_s
  *
  * REE ROF Structure
- * This structure defines the format for one entry of RXP ROF file.
+ * This structure defines the format for one entry of REEX ROF file.
  */
 union cavm_ree_rof_s
 {
@@ -985,9 +970,9 @@ union cavm_ree_rof_s
         uint64_t reserved_40_63        : 24;
         uint64_t typ                   : 8;  /**< [ 39: 32] Type of ROF entry. */
         uint64_t reserved_24_31        : 8;
-        uint64_t addr                  : 24; /**< [ 23:  0] This field contains RXP CSR address or RXP RTU CSR address. */
+        uint64_t addr                  : 24; /**< [ 23:  0] This field contains REEX CSR address or REEX RTU CSR address. */
 #else /* Word 0 - Little Endian */
-        uint64_t addr                  : 24; /**< [ 23:  0] This field contains RXP CSR address or RXP RTU CSR address. */
+        uint64_t addr                  : 24; /**< [ 23:  0] This field contains REEX CSR address or REEX RTU CSR address. */
         uint64_t reserved_24_31        : 8;
         uint64_t typ                   : 8;  /**< [ 39: 32] Type of ROF entry. */
         uint64_t reserved_40_63        : 24;
@@ -1755,7 +1740,7 @@ static inline uint64_t CAVM_REEX_AF_AQ_OUTSTAND_JOB(unsigned long a)
  * Register (RVU_PF_BAR0) ree#_af_aq_pp_wait
  *
  * REE Adminstrative Queue Programing Plane Wait Registers
- * Specifies how long to wait afer RXP programing plane has been written last
+ * Specifies how long to wait afer REEX programing plane has been written last
  * instruction before we increment REE_AF_AQ_DONE[DONE].
  */
 union cavm_reex_af_aq_pp_wait
@@ -1764,27 +1749,27 @@ union cavm_reex_af_aq_pp_wait
     struct cavm_reex_af_aq_pp_wait_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_16_63        : 48;
+        uint64_t reserved_17_63        : 47;
+        uint64_t enable                : 1;  /**< [ 16: 16](R/W) This is enable bit for the DLY_TIME feature. By default it is disabled (0).
+                                                                 Set to 1 (enable) in order to count DLY_TIME microseconds in addition to
+                                                                 the REEX indication, to determine that the programming is over (and interrupt can be asserted).
+                                                                 For the REEX indication we use the pp_rtru_done, after the PP FIFO is empty (after DONE instruction
+                                                                 had been enqueued to REEX PP FIFO). */
         uint64_t dly_time              : 16; /**< [ 15:  0](R/W) When REE_AF_AQ_INST_S[DONEINT] is set in an instruction. REE will
                                                                  wait [DLY_TIME] microseconds after the programing plane FIFO is empty before
                                                                  it increments REE_AF_AQ_DONE[DONE].
-                                                                 The implementation of timer is acurate.
-
-                                                                 Internal:
-                                                                 FIXME - consider removing once we have pp_rtru_done; if not, consider
-                                                                 fixing to unit of clock-cycles (100MHz). Also, review default reset value of
-                                                                 2us. */
+                                                                 The implementation of timer is acurate. */
 #else /* Word 0 - Little Endian */
         uint64_t dly_time              : 16; /**< [ 15:  0](R/W) When REE_AF_AQ_INST_S[DONEINT] is set in an instruction. REE will
                                                                  wait [DLY_TIME] microseconds after the programing plane FIFO is empty before
                                                                  it increments REE_AF_AQ_DONE[DONE].
-                                                                 The implementation of timer is acurate.
-
-                                                                 Internal:
-                                                                 FIXME - consider removing once we have pp_rtru_done; if not, consider
-                                                                 fixing to unit of clock-cycles (100MHz). Also, review default reset value of
-                                                                 2us. */
-        uint64_t reserved_16_63        : 48;
+                                                                 The implementation of timer is acurate. */
+        uint64_t enable                : 1;  /**< [ 16: 16](R/W) This is enable bit for the DLY_TIME feature. By default it is disabled (0).
+                                                                 Set to 1 (enable) in order to count DLY_TIME microseconds in addition to
+                                                                 the REEX indication, to determine that the programming is over (and interrupt can be asserted).
+                                                                 For the REEX indication we use the pp_rtru_done, after the PP FIFO is empty (after DONE instruction
+                                                                 had been enqueued to REEX PP FIFO). */
+        uint64_t reserved_17_63        : 47;
 #endif /* Word 0 - End */
     } s;
     /* struct cavm_reex_af_aq_pp_wait_s cn; */
@@ -1881,11 +1866,11 @@ union cavm_reex_af_aq_sbuf_ctl
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_49_63        : 15;
-        uint64_t size                  : 17; /**< [ 48: 32](R/W) Administrative Instruction buffer size, in units of 128 bytes (8*REE_ROF_S). */
+        uint64_t size                  : 17; /**< [ 48: 32](R/W) Administrative Instruction buffer size, in units of 128 bytes (8*REE_AF_AQ_INST_S). */
         uint64_t reserved_0_31         : 32;
 #else /* Word 0 - Little Endian */
         uint64_t reserved_0_31         : 32;
-        uint64_t size                  : 17; /**< [ 48: 32](R/W) Administrative Instruction buffer size, in units of 128 bytes (8*REE_ROF_S). */
+        uint64_t size                  : 17; /**< [ 48: 32](R/W) Administrative Instruction buffer size, in units of 128 bytes (8*REE_AF_AQ_INST_S). */
         uint64_t reserved_49_63        : 15;
 #endif /* Word 0 - End */
     } s;
@@ -1995,9 +1980,6 @@ static inline uint64_t CAVM_REEX_AF_BAR2_SEL(unsigned long a)
  * REE AF Block Reset Registers
  * Writing a 1 to REE_AF_BLK_RST[RST] resets the REE. After receiving a store to this CSR, the REE
  * must not be sent any other operations for TBD coprocessor-clock cycles.
- *
- * Internal:
- * FIXME - kobiye why wait instead of poll the BUSY bit (63)? if wait, fill in the description.
  */
 union cavm_reex_af_blk_rst
 {
@@ -2058,8 +2040,8 @@ union cavm_reex_af_bp_test
                                                                  \<63\> = Reserved.
                                                                  \<62\> = Reserved.
                                                                  \<61\> = Randomly make REE memory interface (rmif) not ready.
-                                                                 \<60\> = Randomly make RXP response match FIFO (rrmf) empty.
-                                                                 \<59\> = Randomly make RXP response descriptor FIFO (rrdf) empty.
+                                                                 \<60\> = Randomly make REEX response match FIFO (rrmf) empty.
+                                                                 \<59\> = Randomly make REEX response descriptor FIFO (rrdf) empty.
                                                                  \<58\> = Randomly make NCBI match request FIFO (match_req_0) output not valid.
                                                                  \<57\> = Randomly make NCBI rdc request FIFO (rdc_req_fifo) output not valid.
                                                                  \<56\> = Randomly make NCBI rmic request FIFO (rmic_req_fifo) output not valid.
@@ -2131,8 +2113,8 @@ union cavm_reex_af_bp_test
                                                                  \<63\> = Reserved.
                                                                  \<62\> = Reserved.
                                                                  \<61\> = Randomly make REE memory interface (rmif) not ready.
-                                                                 \<60\> = Randomly make RXP response match FIFO (rrmf) empty.
-                                                                 \<59\> = Randomly make RXP response descriptor FIFO (rrdf) empty.
+                                                                 \<60\> = Randomly make REEX response match FIFO (rrmf) empty.
+                                                                 \<59\> = Randomly make REEX response descriptor FIFO (rrdf) empty.
                                                                  \<58\> = Randomly make NCBI match request FIFO (match_req_0) output not valid.
                                                                  \<57\> = Randomly make NCBI rdc request FIFO (rdc_req_fifo) output not valid.
                                                                  \<56\> = Randomly make NCBI rmic request FIFO (rmic_req_fifo) output not valid.
@@ -2178,7 +2160,7 @@ union cavm_reex_af_cmd_ctl
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_3_63         : 61;
-        uint64_t rxp_force_cclk        : 1;  /**< [  2:  2](R/W) When this bit is one, force the RXP conditional clock is always on.
+        uint64_t reex_force_cclk       : 1;  /**< [  2:  2](R/W) When this bit is one, force the REEX conditional clock is always on.
                                                                  For diagnostic use only. */
         uint64_t ree_force_csclk       : 1;  /**< [  1:  1](R/W) When this bit is one, force the REE conditional clock always on.
                                                                  For diagnostic use only. */
@@ -2189,7 +2171,7 @@ union cavm_reex_af_cmd_ctl
                                                                  diagnostic use only. */
         uint64_t ree_force_csclk       : 1;  /**< [  1:  1](R/W) When this bit is one, force the REE conditional clock always on.
                                                                  For diagnostic use only. */
-        uint64_t rxp_force_cclk        : 1;  /**< [  2:  2](R/W) When this bit is one, force the RXP conditional clock is always on.
+        uint64_t reex_force_cclk       : 1;  /**< [  2:  2](R/W) When this bit is one, force the REEX conditional clock is always on.
                                                                  For diagnostic use only. */
         uint64_t reserved_3_63         : 61;
 #endif /* Word 0 - End */
@@ -2265,10 +2247,10 @@ union cavm_reex_af_core_reset
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_1_63         : 63;
-        uint64_t reset                 : 1;  /**< [  0:  0](R/W) When set, the RXP core will be put into reset. When clear, the core is out of
+        uint64_t reset                 : 1;  /**< [  0:  0](R/W) When set, the REEX core will be put into reset. When clear, the core is out of
                                                                  reset. For diagnostic use only. */
 #else /* Word 0 - Little Endian */
-        uint64_t reset                 : 1;  /**< [  0:  0](R/W) When set, the RXP core will be put into reset. When clear, the core is out of
+        uint64_t reset                 : 1;  /**< [  0:  0](R/W) When set, the REEX core will be put into reset. When clear, the core is out of
                                                                  reset. For diagnostic use only. */
         uint64_t reserved_1_63         : 63;
 #endif /* Word 0 - End */
@@ -2347,7 +2329,7 @@ union cavm_reex_af_ctl_cfg
                                                                  serviced before a low priority job is serviced.
                                                                  REE_AF_QUE()_SBUF_CTL[PRI] controls if a given queue is high priority or low priority. */
         uint64_t reserved_19           : 1;
-        uint64_t rl2ld_cmd             : 3;  /**< [ 18: 16](R/W) This field indicates the NCB load command to use for RXP memory requests. This
+        uint64_t rl2ld_cmd             : 3;  /**< [ 18: 16](R/W) This field indicates the NCB load command to use for REEX memory requests. This
                                                                  field is enumerated by REE_L2LD_CMD_E, but REE_L2LD_CMD_E::LDWB and
                                                                  REE_L2LD_CMD_E::LDE must not be used. */
         uint64_t reserved_1_15         : 15;
@@ -2371,7 +2353,7 @@ union cavm_reex_af_ctl_cfg
                                                                  REE_AF_RAS[LD_CMD_PSN], poisons received on a NCB DMA data response are
                                                                  ignored and set interrupt REE_AF_RAS[LD_DAT_PSN]. */
         uint64_t reserved_1_15         : 15;
-        uint64_t rl2ld_cmd             : 3;  /**< [ 18: 16](R/W) This field indicates the NCB load command to use for RXP memory requests. This
+        uint64_t rl2ld_cmd             : 3;  /**< [ 18: 16](R/W) This field indicates the NCB load command to use for REEX memory requests. This
                                                                  field is enumerated by REE_L2LD_CMD_E, but REE_L2LD_CMD_E::LDWB and
                                                                  REE_L2LD_CMD_E::LDE must not be used. */
         uint64_t reserved_19           : 1;
@@ -2487,7 +2469,7 @@ static inline uint64_t CAVM_REEX_AF_ECO(unsigned long a)
  * Register (RVU_PF_BAR0) ree#_af_em_base
  *
  * REE External Memory Base Register
- * This register contains the base address for RXP external memory.
+ * This register contains the base address for REEX external memory.
  */
 union cavm_reex_af_em_base
 {
@@ -2497,10 +2479,10 @@ union cavm_reex_af_em_base
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_53_63        : 11;
         uint64_t base_adr              : 53; /**< [ 52:  0](R/W) IOVA base address for the memory image of regular expressions graphs.
-                                                                 All RXP memory requests will add this base register to the address provided by RXP. */
+                                                                 All REEX memory requests will add this base register to the address provided by REEX. */
 #else /* Word 0 - Little Endian */
         uint64_t base_adr              : 53; /**< [ 52:  0](R/W) IOVA base address for the memory image of regular expressions graphs.
-                                                                 All RXP memory requests will add this base register to the address provided by RXP. */
+                                                                 All REEX memory requests will add this base register to the address provided by REEX. */
         uint64_t reserved_53_63        : 11;
 #endif /* Word 0 - End */
     } s;
@@ -2535,11 +2517,11 @@ union cavm_reex_af_em_pf_func
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_16_63        : 48;
-        uint64_t pf_func               : 16; /**< [ 15:  0](R/W) PF FUNC used to for memory requests made by RXP for fetching graph data.
+        uint64_t pf_func               : 16; /**< [ 15:  0](R/W) PF FUNC used to for memory requests made by REEX for fetching graph data.
 
                                                                  RVU_PF_FUNC_S describes the format of [PF_FUNC]. */
 #else /* Word 0 - Little Endian */
-        uint64_t pf_func               : 16; /**< [ 15:  0](R/W) PF FUNC used to for memory requests made by RXP for fetching graph data.
+        uint64_t pf_func               : 16; /**< [ 15:  0](R/W) PF FUNC used to for memory requests made by REEX for fetching graph data.
 
                                                                  RVU_PF_FUNC_S describes the format of [PF_FUNC]. */
         uint64_t reserved_16_63        : 48;
@@ -2975,7 +2957,7 @@ union cavm_reex_af_ras
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_3_63         : 61;
-        uint64_t ld_rxp_psn            : 1;  /**< [  2:  2](R/W1C/H) Poison received on a RXP response. */
+        uint64_t ld_reex_psn           : 1;  /**< [  2:  2](R/W1C/H) Poison received on a REEX response. */
         uint64_t ld_cmd_psn            : 1;  /**< [  1:  1](R/W1C/H) Poison received on a NCB instruction response, which include AQ instructions ,LF
                                                                  instructions and Gather pointer loads. */
         uint64_t ld_dat_psn            : 1;  /**< [  0:  0](R/W1C/H) Poison received on a NCB data response. */
@@ -2983,7 +2965,7 @@ union cavm_reex_af_ras
         uint64_t ld_dat_psn            : 1;  /**< [  0:  0](R/W1C/H) Poison received on a NCB data response. */
         uint64_t ld_cmd_psn            : 1;  /**< [  1:  1](R/W1C/H) Poison received on a NCB instruction response, which include AQ instructions ,LF
                                                                  instructions and Gather pointer loads. */
-        uint64_t ld_rxp_psn            : 1;  /**< [  2:  2](R/W1C/H) Poison received on a RXP response. */
+        uint64_t ld_reex_psn           : 1;  /**< [  2:  2](R/W1C/H) Poison received on a REEX response. */
         uint64_t reserved_3_63         : 61;
 #endif /* Word 0 - End */
     } s;
@@ -3019,13 +3001,13 @@ union cavm_reex_af_ras_ena_w1c
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_3_63         : 61;
-        uint64_t ld_rxp_psn            : 1;  /**< [  2:  2](R/W1C/H) Reads or clears enable for REE_AF_RAS[LD_RXP_PSN]. */
+        uint64_t ld_reex_psn           : 1;  /**< [  2:  2](R/W1C/H) Reads or clears enable for REE_AF_RAS[LD_REEX_PSN]. */
         uint64_t ld_cmd_psn            : 1;  /**< [  1:  1](R/W1C/H) Reads or clears enable for REE_AF_RAS[LD_CMD_PSN]. */
         uint64_t ld_dat_psn            : 1;  /**< [  0:  0](R/W1C/H) Reads or clears enable for REE_AF_RAS[LD_DAT_PSN]. */
 #else /* Word 0 - Little Endian */
         uint64_t ld_dat_psn            : 1;  /**< [  0:  0](R/W1C/H) Reads or clears enable for REE_AF_RAS[LD_DAT_PSN]. */
         uint64_t ld_cmd_psn            : 1;  /**< [  1:  1](R/W1C/H) Reads or clears enable for REE_AF_RAS[LD_CMD_PSN]. */
-        uint64_t ld_rxp_psn            : 1;  /**< [  2:  2](R/W1C/H) Reads or clears enable for REE_AF_RAS[LD_RXP_PSN]. */
+        uint64_t ld_reex_psn           : 1;  /**< [  2:  2](R/W1C/H) Reads or clears enable for REE_AF_RAS[LD_REEX_PSN]. */
         uint64_t reserved_3_63         : 61;
 #endif /* Word 0 - End */
     } s;
@@ -3061,13 +3043,13 @@ union cavm_reex_af_ras_ena_w1s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_3_63         : 61;
-        uint64_t ld_rxp_psn            : 1;  /**< [  2:  2](R/W1S/H) Reads or sets enable for REE_AF_RAS[LD_RXP_PSN]. */
+        uint64_t ld_reex_psn           : 1;  /**< [  2:  2](R/W1S/H) Reads or sets enable for REE_AF_RAS[LD_REEX_PSN]. */
         uint64_t ld_cmd_psn            : 1;  /**< [  1:  1](R/W1S/H) Reads or sets enable for REE_AF_RAS[LD_CMD_PSN]. */
         uint64_t ld_dat_psn            : 1;  /**< [  0:  0](R/W1S/H) Reads or sets enable for REE_AF_RAS[LD_DAT_PSN]. */
 #else /* Word 0 - Little Endian */
         uint64_t ld_dat_psn            : 1;  /**< [  0:  0](R/W1S/H) Reads or sets enable for REE_AF_RAS[LD_DAT_PSN]. */
         uint64_t ld_cmd_psn            : 1;  /**< [  1:  1](R/W1S/H) Reads or sets enable for REE_AF_RAS[LD_CMD_PSN]. */
-        uint64_t ld_rxp_psn            : 1;  /**< [  2:  2](R/W1S/H) Reads or sets enable for REE_AF_RAS[LD_RXP_PSN]. */
+        uint64_t ld_reex_psn           : 1;  /**< [  2:  2](R/W1S/H) Reads or sets enable for REE_AF_RAS[LD_REEX_PSN]. */
         uint64_t reserved_3_63         : 61;
 #endif /* Word 0 - End */
     } s;
@@ -3103,13 +3085,13 @@ union cavm_reex_af_ras_w1s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_3_63         : 61;
-        uint64_t ld_rxp_psn            : 1;  /**< [  2:  2](R/W1S/H) Reads or sets REE_AF_RAS[LD_RXP_PSN]. */
+        uint64_t ld_reex_psn           : 1;  /**< [  2:  2](R/W1S/H) Reads or sets REE_AF_RAS[LD_REEX_PSN]. */
         uint64_t ld_cmd_psn            : 1;  /**< [  1:  1](R/W1S/H) Reads or sets REE_AF_RAS[LD_CMD_PSN]. */
         uint64_t ld_dat_psn            : 1;  /**< [  0:  0](R/W1S/H) Reads or sets REE_AF_RAS[LD_DAT_PSN]. */
 #else /* Word 0 - Little Endian */
         uint64_t ld_dat_psn            : 1;  /**< [  0:  0](R/W1S/H) Reads or sets REE_AF_RAS[LD_DAT_PSN]. */
         uint64_t ld_cmd_psn            : 1;  /**< [  1:  1](R/W1S/H) Reads or sets REE_AF_RAS[LD_CMD_PSN]. */
-        uint64_t ld_rxp_psn            : 1;  /**< [  2:  2](R/W1S/H) Reads or sets REE_AF_RAS[LD_RXP_PSN]. */
+        uint64_t ld_reex_psn           : 1;  /**< [  2:  2](R/W1S/H) Reads or sets REE_AF_RAS[LD_REEX_PSN]. */
         uint64_t reserved_3_63         : 61;
 #endif /* Word 0 - End */
     } s;
@@ -3205,6 +3187,2377 @@ static inline uint64_t CAVM_REEX_AF_RD_REQ_PC(unsigned long a)
 #define device_bar_CAVM_REEX_AF_RD_REQ_PC(a) 0x0 /* RVU_BAR0 */
 #define busnum_CAVM_REEX_AF_RD_REQ_PC(a) (a)
 #define arguments_CAVM_REEX_AF_RD_REQ_PC(a) (a),-1,-1,-1
+
+/**
+ * Register (RVU_PF_BAR0) ree#_af_reex_active_jobs_pc
+ *
+ * REE AF REEX Active Jobs Counter Register
+ */
+union cavm_reex_af_reex_active_jobs_pc
+{
+    uint64_t u;
+    struct cavm_reex_af_reex_active_jobs_pc_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t count                 : 64; /**< [ 63:  0](R/W/H) Performance counter- Number of active jobs existing in REEX */
+#else /* Word 0 - Little Endian */
+        uint64_t count                 : 64; /**< [ 63:  0](R/W/H) Performance counter- Number of active jobs existing in REEX */
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_reex_af_reex_active_jobs_pc_s cn; */
+};
+typedef union cavm_reex_af_reex_active_jobs_pc cavm_reex_af_reex_active_jobs_pc_t;
+
+static inline uint64_t CAVM_REEX_AF_REEX_ACTIVE_JOBS_PC(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_REEX_AF_REEX_ACTIVE_JOBS_PC(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
+        return 0x840140000490ll + 0x10000000ll * ((a) & 0x1);
+    __cavm_csr_fatal("REEX_AF_REEX_ACTIVE_JOBS_PC", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_REEX_AF_REEX_ACTIVE_JOBS_PC(a) cavm_reex_af_reex_active_jobs_pc_t
+#define bustype_CAVM_REEX_AF_REEX_ACTIVE_JOBS_PC(a) CSR_TYPE_RVU_PF_BAR0
+#define basename_CAVM_REEX_AF_REEX_ACTIVE_JOBS_PC(a) "REEX_AF_REEX_ACTIVE_JOBS_PC"
+#define device_bar_CAVM_REEX_AF_REEX_ACTIVE_JOBS_PC(a) 0x0 /* RVU_BAR0 */
+#define busnum_CAVM_REEX_AF_REEX_ACTIVE_JOBS_PC(a) (a)
+#define arguments_CAVM_REEX_AF_REEX_ACTIVE_JOBS_PC(a) (a),-1,-1,-1
+
+/**
+ * Register (RVU_PF_BAR0) ree#_af_reex_rd_latency_pc
+ *
+ * REE AF REEX Read Latency Counter Register
+ */
+union cavm_reex_af_reex_rd_latency_pc
+{
+    uint64_t u;
+    struct cavm_reex_af_reex_rd_latency_pc_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t count                 : 64; /**< [ 63:  0](R/W/H) Number of cycles waiting for NCB REEX-read returns. Incremented every
+                                                                 coprocessor-clock by the number of REEX read transactions outstanding in that cycle. This
+                                                                 may be divided by REE_AF_REEX_RD_REQ_PC to determine the average read latency. */
+#else /* Word 0 - Little Endian */
+        uint64_t count                 : 64; /**< [ 63:  0](R/W/H) Number of cycles waiting for NCB REEX-read returns. Incremented every
+                                                                 coprocessor-clock by the number of REEX read transactions outstanding in that cycle. This
+                                                                 may be divided by REE_AF_REEX_RD_REQ_PC to determine the average read latency. */
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_reex_af_reex_rd_latency_pc_s cn; */
+};
+typedef union cavm_reex_af_reex_rd_latency_pc cavm_reex_af_reex_rd_latency_pc_t;
+
+static inline uint64_t CAVM_REEX_AF_REEX_RD_LATENCY_PC(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_REEX_AF_REEX_RD_LATENCY_PC(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
+        return 0x840140000470ll + 0x10000000ll * ((a) & 0x1);
+    __cavm_csr_fatal("REEX_AF_REEX_RD_LATENCY_PC", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_REEX_AF_REEX_RD_LATENCY_PC(a) cavm_reex_af_reex_rd_latency_pc_t
+#define bustype_CAVM_REEX_AF_REEX_RD_LATENCY_PC(a) CSR_TYPE_RVU_PF_BAR0
+#define basename_CAVM_REEX_AF_REEX_RD_LATENCY_PC(a) "REEX_AF_REEX_RD_LATENCY_PC"
+#define device_bar_CAVM_REEX_AF_REEX_RD_LATENCY_PC(a) 0x0 /* RVU_BAR0 */
+#define busnum_CAVM_REEX_AF_REEX_RD_LATENCY_PC(a) (a)
+#define arguments_CAVM_REEX_AF_REEX_RD_LATENCY_PC(a) (a),-1,-1,-1
+
+/**
+ * Register (RVU_PF_BAR0) ree#_af_reex_rd_req_pc
+ *
+ * REE AF REEX Read Request Performance Counter Register
+ */
+union cavm_reex_af_reex_rd_req_pc
+{
+    uint64_t u;
+    struct cavm_reex_af_reex_rd_req_pc_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t count                 : 64; /**< [ 63:  0](R/W/H) Number of NCB REEX-read requests issued. */
+#else /* Word 0 - Little Endian */
+        uint64_t count                 : 64; /**< [ 63:  0](R/W/H) Number of NCB REEX-read requests issued. */
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_reex_af_reex_rd_req_pc_s cn; */
+};
+typedef union cavm_reex_af_reex_rd_req_pc cavm_reex_af_reex_rd_req_pc_t;
+
+static inline uint64_t CAVM_REEX_AF_REEX_RD_REQ_PC(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_REEX_AF_REEX_RD_REQ_PC(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
+        return 0x840140000460ll + 0x10000000ll * ((a) & 0x1);
+    __cavm_csr_fatal("REEX_AF_REEX_RD_REQ_PC", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_REEX_AF_REEX_RD_REQ_PC(a) cavm_reex_af_reex_rd_req_pc_t
+#define bustype_CAVM_REEX_AF_REEX_RD_REQ_PC(a) CSR_TYPE_RVU_PF_BAR0
+#define basename_CAVM_REEX_AF_REEX_RD_REQ_PC(a) "REEX_AF_REEX_RD_REQ_PC"
+#define device_bar_CAVM_REEX_AF_REEX_RD_REQ_PC(a) 0x0 /* RVU_BAR0 */
+#define busnum_CAVM_REEX_AF_REEX_RD_REQ_PC(a) (a)
+#define arguments_CAVM_REEX_AF_REEX_RD_REQ_PC(a) (a),-1,-1,-1
+
+/**
+ * Register (RVU_PF_BAR0) ree#_af_reexm_capability_1
+ *
+ * REE AF REEX Main Capability 1 Register
+ * This register contains capablity information about REEX.
+ */
+union cavm_reex_af_reexm_capability_1
+{
+    uint64_t u;
+    struct cavm_reex_af_reexm_capability_1_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_32_63        : 32;
+        uint64_t num_tces              : 8;  /**< [ 31: 24](RO) Number of thread control engines (16 per cluster). */
+        uint64_t num_jces              : 8;  /**< [ 23: 16](RO) Number of job control engines (8 per cluster). */
+        uint64_t num_clusters          : 8;  /**< [ 15:  8](RO) Number of clusters. */
+        uint64_t data_width            : 8;  /**< [  7:  0](RO) Width of job-data buses (In/Out) - log2 of value. Value 0x06 represents 64 bit. */
+#else /* Word 0 - Little Endian */
+        uint64_t data_width            : 8;  /**< [  7:  0](RO) Width of job-data buses (In/Out) - log2 of value. Value 0x06 represents 64 bit. */
+        uint64_t num_clusters          : 8;  /**< [ 15:  8](RO) Number of clusters. */
+        uint64_t num_jces              : 8;  /**< [ 23: 16](RO) Number of job control engines (8 per cluster). */
+        uint64_t num_tces              : 8;  /**< [ 31: 24](RO) Number of thread control engines (16 per cluster). */
+        uint64_t reserved_32_63        : 32;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_reex_af_reexm_capability_1_s cn; */
+};
+typedef union cavm_reex_af_reexm_capability_1 cavm_reex_af_reexm_capability_1_t;
+
+static inline uint64_t CAVM_REEX_AF_REEXM_CAPABILITY_1(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_REEX_AF_REEXM_CAPABILITY_1(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
+        return 0x840140008018ll + 0x10000000ll * ((a) & 0x1);
+    __cavm_csr_fatal("REEX_AF_REEXM_CAPABILITY_1", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_REEX_AF_REEXM_CAPABILITY_1(a) cavm_reex_af_reexm_capability_1_t
+#define bustype_CAVM_REEX_AF_REEXM_CAPABILITY_1(a) CSR_TYPE_RVU_PF_BAR0
+#define basename_CAVM_REEX_AF_REEXM_CAPABILITY_1(a) "REEX_AF_REEXM_CAPABILITY_1"
+#define device_bar_CAVM_REEX_AF_REEXM_CAPABILITY_1(a) 0x0 /* RVU_BAR0 */
+#define busnum_CAVM_REEX_AF_REEXM_CAPABILITY_1(a) (a)
+#define arguments_CAVM_REEX_AF_REEXM_CAPABILITY_1(a) (a),-1,-1,-1
+
+/**
+ * Register (RVU_PF_BAR0) ree#_af_reexm_capability_2
+ *
+ * REE AF REEX Main Capability 2 Register
+ * This register contains capablity information about REEX.
+ */
+union cavm_reex_af_reexm_capability_2
+{
+    uint64_t u;
+    struct cavm_reex_af_reexm_capability_2_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_32_63        : 32;
+        uint64_t pp_if                 : 8;  /**< [ 31: 24](RO) Programming Plane Interface type. Value 0x01 represents Native. */
+        uint64_t emce_if               : 8;  /**< [ 23: 16](RO) External Memory Control Engine Application Interface type.
+                                                                 Value 0x16 means AXI Master Read only. */
+        uint64_t data_plane_if         : 8;  /**< [ 15:  8](RO) Data Plane Interface type. Value 0x01 represents Native. */
+        uint64_t ctrl_plane_if         : 8;  /**< [  7:  0](RO) Control Plane Interface type. Value 0x01 represents Native. */
+#else /* Word 0 - Little Endian */
+        uint64_t ctrl_plane_if         : 8;  /**< [  7:  0](RO) Control Plane Interface type. Value 0x01 represents Native. */
+        uint64_t data_plane_if         : 8;  /**< [ 15:  8](RO) Data Plane Interface type. Value 0x01 represents Native. */
+        uint64_t emce_if               : 8;  /**< [ 23: 16](RO) External Memory Control Engine Application Interface type.
+                                                                 Value 0x16 means AXI Master Read only. */
+        uint64_t pp_if                 : 8;  /**< [ 31: 24](RO) Programming Plane Interface type. Value 0x01 represents Native. */
+        uint64_t reserved_32_63        : 32;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_reex_af_reexm_capability_2_s cn; */
+};
+typedef union cavm_reex_af_reexm_capability_2 cavm_reex_af_reexm_capability_2_t;
+
+static inline uint64_t CAVM_REEX_AF_REEXM_CAPABILITY_2(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_REEX_AF_REEXM_CAPABILITY_2(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
+        return 0x840140008020ll + 0x10000000ll * ((a) & 0x1);
+    __cavm_csr_fatal("REEX_AF_REEXM_CAPABILITY_2", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_REEX_AF_REEXM_CAPABILITY_2(a) cavm_reex_af_reexm_capability_2_t
+#define bustype_CAVM_REEX_AF_REEXM_CAPABILITY_2(a) CSR_TYPE_RVU_PF_BAR0
+#define basename_CAVM_REEX_AF_REEXM_CAPABILITY_2(a) "REEX_AF_REEXM_CAPABILITY_2"
+#define device_bar_CAVM_REEX_AF_REEXM_CAPABILITY_2(a) 0x0 /* RVU_BAR0 */
+#define busnum_CAVM_REEX_AF_REEXM_CAPABILITY_2(a) (a)
+#define arguments_CAVM_REEX_AF_REEXM_CAPABILITY_2(a) (a),-1,-1,-1
+
+/**
+ * Register (RVU_PF_BAR0) ree#_af_reexm_capability_3
+ *
+ * REE AF REEX Main Capability 3 Register
+ * This register contains capablity information about REEX.
+ */
+union cavm_reex_af_reexm_capability_3
+{
+    uint64_t u;
+    struct cavm_reex_af_reexm_capability_3_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_32_63        : 32;
+        uint64_t ppe_instr_ram_1_3     : 4;  /**< [ 31: 28](RO) Address widths for PPE instruction RAM 1_3. */
+        uint64_t ppe_instr_ram_1_2     : 4;  /**< [ 27: 24](RO) Address widths for PPE instruction RAM 1_2. */
+        uint64_t ppe_instr_ram_1_1     : 4;  /**< [ 23: 20](RO) Address widths for PPE instruction RAM 1_1. */
+        uint64_t ppe_instr_ram_1_0     : 4;  /**< [ 19: 16](RO) Address widths for PPE instruction RAM 1_0. */
+        uint64_t vppe_instr_ram_0_1    : 4;  /**< [ 15: 12](RO) Address widths for VPPE instruction RAM 0_1. */
+        uint64_t vppe_instr_ram_0_0    : 4;  /**< [ 11:  8](RO) Address widths for VPPE instruction RAM 0_0. */
+        uint64_t ppe_change_case_ram   : 4;  /**< [  7:  4](RO) Address widths for PPE change Case RAM. */
+        uint64_t ppe_instr_ram_0_0     : 4;  /**< [  3:  0](RO) Address widths for PPE instruction RAM 0_0. */
+#else /* Word 0 - Little Endian */
+        uint64_t ppe_instr_ram_0_0     : 4;  /**< [  3:  0](RO) Address widths for PPE instruction RAM 0_0. */
+        uint64_t ppe_change_case_ram   : 4;  /**< [  7:  4](RO) Address widths for PPE change Case RAM. */
+        uint64_t vppe_instr_ram_0_0    : 4;  /**< [ 11:  8](RO) Address widths for VPPE instruction RAM 0_0. */
+        uint64_t vppe_instr_ram_0_1    : 4;  /**< [ 15: 12](RO) Address widths for VPPE instruction RAM 0_1. */
+        uint64_t ppe_instr_ram_1_0     : 4;  /**< [ 19: 16](RO) Address widths for PPE instruction RAM 1_0. */
+        uint64_t ppe_instr_ram_1_1     : 4;  /**< [ 23: 20](RO) Address widths for PPE instruction RAM 1_1. */
+        uint64_t ppe_instr_ram_1_2     : 4;  /**< [ 27: 24](RO) Address widths for PPE instruction RAM 1_2. */
+        uint64_t ppe_instr_ram_1_3     : 4;  /**< [ 31: 28](RO) Address widths for PPE instruction RAM 1_3. */
+        uint64_t reserved_32_63        : 32;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_reex_af_reexm_capability_3_s cn; */
+};
+typedef union cavm_reex_af_reexm_capability_3 cavm_reex_af_reexm_capability_3_t;
+
+static inline uint64_t CAVM_REEX_AF_REEXM_CAPABILITY_3(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_REEX_AF_REEXM_CAPABILITY_3(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
+        return 0x840140008028ll + 0x10000000ll * ((a) & 0x1);
+    __cavm_csr_fatal("REEX_AF_REEXM_CAPABILITY_3", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_REEX_AF_REEXM_CAPABILITY_3(a) cavm_reex_af_reexm_capability_3_t
+#define bustype_CAVM_REEX_AF_REEXM_CAPABILITY_3(a) CSR_TYPE_RVU_PF_BAR0
+#define basename_CAVM_REEX_AF_REEXM_CAPABILITY_3(a) "REEX_AF_REEXM_CAPABILITY_3"
+#define device_bar_CAVM_REEX_AF_REEXM_CAPABILITY_3(a) 0x0 /* RVU_BAR0 */
+#define busnum_CAVM_REEX_AF_REEXM_CAPABILITY_3(a) (a)
+#define arguments_CAVM_REEX_AF_REEXM_CAPABILITY_3(a) (a),-1,-1,-1
+
+/**
+ * Register (RVU_PF_BAR0) ree#_af_reexm_capability_4
+ *
+ * REE AF REEX Main Capability 4 Register
+ * This register contains capablity information about REEX.
+ */
+union cavm_reex_af_reexm_capability_4
+{
+    uint64_t u;
+    struct cavm_reex_af_reexm_capability_4_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_32_63        : 32;
+        uint64_t ppe_instr_ram_3_3     : 4;  /**< [ 31: 28](RO) Address widths for PPE instruction RAM 3_3. */
+        uint64_t ppe_instr_ram_3_2     : 4;  /**< [ 27: 24](RO) Address widths for PPE instruction RAM 3_2. */
+        uint64_t ppe_instr_ram_3_1     : 4;  /**< [ 23: 20](RO) Address widths for PPE instruction RAM 3_1. */
+        uint64_t ppe_instr_ram_3_0     : 4;  /**< [ 19: 16](RO) Address widths for PPE instruction RAM 3_0. */
+        uint64_t ppe_instr_ram_2_3     : 4;  /**< [ 15: 12](RO) Address widths for PPE instruction RAM 2_3. */
+        uint64_t ppe_instr_ram_2_2     : 4;  /**< [ 11:  8](RO) Address widths for PPE instruction RAM 2_2. */
+        uint64_t ppe_instr_ram_2_1     : 4;  /**< [  7:  4](RO) Address widths for PPE instruction RAM 2_1. */
+        uint64_t ppe_instr_ram_2_0     : 4;  /**< [  3:  0](RO) Address widths for PPE instruction RAM 2_0. */
+#else /* Word 0 - Little Endian */
+        uint64_t ppe_instr_ram_2_0     : 4;  /**< [  3:  0](RO) Address widths for PPE instruction RAM 2_0. */
+        uint64_t ppe_instr_ram_2_1     : 4;  /**< [  7:  4](RO) Address widths for PPE instruction RAM 2_1. */
+        uint64_t ppe_instr_ram_2_2     : 4;  /**< [ 11:  8](RO) Address widths for PPE instruction RAM 2_2. */
+        uint64_t ppe_instr_ram_2_3     : 4;  /**< [ 15: 12](RO) Address widths for PPE instruction RAM 2_3. */
+        uint64_t ppe_instr_ram_3_0     : 4;  /**< [ 19: 16](RO) Address widths for PPE instruction RAM 3_0. */
+        uint64_t ppe_instr_ram_3_1     : 4;  /**< [ 23: 20](RO) Address widths for PPE instruction RAM 3_1. */
+        uint64_t ppe_instr_ram_3_2     : 4;  /**< [ 27: 24](RO) Address widths for PPE instruction RAM 3_2. */
+        uint64_t ppe_instr_ram_3_3     : 4;  /**< [ 31: 28](RO) Address widths for PPE instruction RAM 3_3. */
+        uint64_t reserved_32_63        : 32;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_reex_af_reexm_capability_4_s cn; */
+};
+typedef union cavm_reex_af_reexm_capability_4 cavm_reex_af_reexm_capability_4_t;
+
+static inline uint64_t CAVM_REEX_AF_REEXM_CAPABILITY_4(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_REEX_AF_REEXM_CAPABILITY_4(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
+        return 0x840140008030ll + 0x10000000ll * ((a) & 0x1);
+    __cavm_csr_fatal("REEX_AF_REEXM_CAPABILITY_4", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_REEX_AF_REEXM_CAPABILITY_4(a) cavm_reex_af_reexm_capability_4_t
+#define bustype_CAVM_REEX_AF_REEXM_CAPABILITY_4(a) CSR_TYPE_RVU_PF_BAR0
+#define basename_CAVM_REEX_AF_REEXM_CAPABILITY_4(a) "REEX_AF_REEXM_CAPABILITY_4"
+#define device_bar_CAVM_REEX_AF_REEXM_CAPABILITY_4(a) 0x0 /* RVU_BAR0 */
+#define busnum_CAVM_REEX_AF_REEXM_CAPABILITY_4(a) (a)
+#define arguments_CAVM_REEX_AF_REEXM_CAPABILITY_4(a) (a),-1,-1,-1
+
+/**
+ * Register (RVU_PF_BAR0) ree#_af_reexm_capability_5
+ *
+ * REE AF REEX Main Capability 5 Register
+ * This register contains capablity information about REEX.
+ */
+union cavm_reex_af_reexm_capability_5
+{
+    uint64_t u;
+    struct cavm_reex_af_reexm_capability_5_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_32_63        : 32;
+        uint64_t max_num_match_per_job : 16; /**< [ 31: 16](RO) Maximum Number of Matches returned per job. */
+        uint64_t max_num_pf_per_job    : 16; /**< [ 15:  0](RO) Maximum Number of Prefixes per job. */
+#else /* Word 0 - Little Endian */
+        uint64_t max_num_pf_per_job    : 16; /**< [ 15:  0](RO) Maximum Number of Prefixes per job. */
+        uint64_t max_num_match_per_job : 16; /**< [ 31: 16](RO) Maximum Number of Matches returned per job. */
+        uint64_t reserved_32_63        : 32;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_reex_af_reexm_capability_5_s cn; */
+};
+typedef union cavm_reex_af_reexm_capability_5 cavm_reex_af_reexm_capability_5_t;
+
+static inline uint64_t CAVM_REEX_AF_REEXM_CAPABILITY_5(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_REEX_AF_REEXM_CAPABILITY_5(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
+        return 0x840140008038ll + 0x10000000ll * ((a) & 0x1);
+    __cavm_csr_fatal("REEX_AF_REEXM_CAPABILITY_5", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_REEX_AF_REEXM_CAPABILITY_5(a) cavm_reex_af_reexm_capability_5_t
+#define bustype_CAVM_REEX_AF_REEXM_CAPABILITY_5(a) CSR_TYPE_RVU_PF_BAR0
+#define basename_CAVM_REEX_AF_REEXM_CAPABILITY_5(a) "REEX_AF_REEXM_CAPABILITY_5"
+#define device_bar_CAVM_REEX_AF_REEXM_CAPABILITY_5(a) 0x0 /* RVU_BAR0 */
+#define busnum_CAVM_REEX_AF_REEXM_CAPABILITY_5(a) (a)
+#define arguments_CAVM_REEX_AF_REEXM_CAPABILITY_5(a) (a),-1,-1,-1
+
+/**
+ * Register (RVU_PF_BAR0) ree#_af_reexm_capability_6
+ *
+ * REE AF REEX Main Capability 6 Register
+ * This register contains capablity information about REEX.
+ */
+union cavm_reex_af_reexm_capability_6
+{
+    uint64_t u;
+    struct cavm_reex_af_reexm_capability_6_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_32_63        : 32;
+        uint64_t l2_cache_size_kb      : 16; /**< [ 31: 16](RO) L2 Cache size (KB). */
+        uint64_t l1_cache_size_kb      : 8;  /**< [ 15:  8](RO) L1 Cache size (KB). */
+        uint64_t tcm_size_kb           : 8;  /**< [  7:  0](RO) Tightly Coupled Memory size (KB). */
+#else /* Word 0 - Little Endian */
+        uint64_t tcm_size_kb           : 8;  /**< [  7:  0](RO) Tightly Coupled Memory size (KB). */
+        uint64_t l1_cache_size_kb      : 8;  /**< [ 15:  8](RO) L1 Cache size (KB). */
+        uint64_t l2_cache_size_kb      : 16; /**< [ 31: 16](RO) L2 Cache size (KB). */
+        uint64_t reserved_32_63        : 32;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_reex_af_reexm_capability_6_s cn; */
+};
+typedef union cavm_reex_af_reexm_capability_6 cavm_reex_af_reexm_capability_6_t;
+
+static inline uint64_t CAVM_REEX_AF_REEXM_CAPABILITY_6(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_REEX_AF_REEXM_CAPABILITY_6(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
+        return 0x840140008040ll + 0x10000000ll * ((a) & 0x1);
+    __cavm_csr_fatal("REEX_AF_REEXM_CAPABILITY_6", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_REEX_AF_REEXM_CAPABILITY_6(a) cavm_reex_af_reexm_capability_6_t
+#define bustype_CAVM_REEX_AF_REEXM_CAPABILITY_6(a) CSR_TYPE_RVU_PF_BAR0
+#define basename_CAVM_REEX_AF_REEXM_CAPABILITY_6(a) "REEX_AF_REEXM_CAPABILITY_6"
+#define device_bar_CAVM_REEX_AF_REEXM_CAPABILITY_6(a) 0x0 /* RVU_BAR0 */
+#define busnum_CAVM_REEX_AF_REEXM_CAPABILITY_6(a) (a)
+#define arguments_CAVM_REEX_AF_REEXM_CAPABILITY_6(a) (a),-1,-1,-1
+
+/**
+ * Register (RVU_PF_BAR0) ree#_af_reexm_capability_7
+ *
+ * REE AF REEX Main Capability 7 Register
+ * This register contains capablity information about REEX.
+ */
+union cavm_reex_af_reexm_capability_7
+{
+    uint64_t u;
+    struct cavm_reex_af_reexm_capability_7_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_32_63        : 32;
+        uint64_t unix_time             : 32; /**< [ 31:  0](RO) Unix Timestamp for RTL drop. Value is drop-specific. */
+#else /* Word 0 - Little Endian */
+        uint64_t unix_time             : 32; /**< [ 31:  0](RO) Unix Timestamp for RTL drop. Value is drop-specific. */
+        uint64_t reserved_32_63        : 32;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_reex_af_reexm_capability_7_s cn; */
+};
+typedef union cavm_reex_af_reexm_capability_7 cavm_reex_af_reexm_capability_7_t;
+
+static inline uint64_t CAVM_REEX_AF_REEXM_CAPABILITY_7(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_REEX_AF_REEXM_CAPABILITY_7(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
+        return 0x840140008048ll + 0x10000000ll * ((a) & 0x1);
+    __cavm_csr_fatal("REEX_AF_REEXM_CAPABILITY_7", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_REEX_AF_REEXM_CAPABILITY_7(a) cavm_reex_af_reexm_capability_7_t
+#define bustype_CAVM_REEX_AF_REEXM_CAPABILITY_7(a) CSR_TYPE_RVU_PF_BAR0
+#define basename_CAVM_REEX_AF_REEXM_CAPABILITY_7(a) "REEX_AF_REEXM_CAPABILITY_7"
+#define device_bar_CAVM_REEX_AF_REEXM_CAPABILITY_7(a) 0x0 /* RVU_BAR0 */
+#define busnum_CAVM_REEX_AF_REEXM_CAPABILITY_7(a) (a)
+#define arguments_CAVM_REEX_AF_REEXM_CAPABILITY_7(a) (a),-1,-1,-1
+
+/**
+ * Register (RVU_PF_BAR0) ree#_af_reexm_clstr_mask
+ *
+ * REE AF REEX Main Cluster Mask Register
+ */
+union cavm_reex_af_reexm_clstr_mask
+{
+    uint64_t u;
+    struct cavm_reex_af_reexm_clstr_mask_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_32_63        : 32;
+        uint64_t reex_reserved_1       : 24; /**< [ 31:  8](R/W) Reserved. */
+        uint64_t mask                  : 8;  /**< [  7:  0](R/W) Mask (disable) Clusters. Bit i=0..7 is for disabling Cluster[i]. */
+#else /* Word 0 - Little Endian */
+        uint64_t mask                  : 8;  /**< [  7:  0](R/W) Mask (disable) Clusters. Bit i=0..7 is for disabling Cluster[i]. */
+        uint64_t reex_reserved_1       : 24; /**< [ 31:  8](R/W) Reserved. */
+        uint64_t reserved_32_63        : 32;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_reex_af_reexm_clstr_mask_s cn; */
+};
+typedef union cavm_reex_af_reexm_clstr_mask cavm_reex_af_reexm_clstr_mask_t;
+
+static inline uint64_t CAVM_REEX_AF_REEXM_CLSTR_MASK(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_REEX_AF_REEXM_CLSTR_MASK(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
+        return 0x8401400080f0ll + 0x10000000ll * ((a) & 0x1);
+    __cavm_csr_fatal("REEX_AF_REEXM_CLSTR_MASK", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_REEX_AF_REEXM_CLSTR_MASK(a) cavm_reex_af_reexm_clstr_mask_t
+#define bustype_CAVM_REEX_AF_REEXM_CLSTR_MASK(a) CSR_TYPE_RVU_PF_BAR0
+#define basename_CAVM_REEX_AF_REEXM_CLSTR_MASK(a) "REEX_AF_REEXM_CLSTR_MASK"
+#define device_bar_CAVM_REEX_AF_REEXM_CLSTR_MASK(a) 0x0 /* RVU_BAR0 */
+#define busnum_CAVM_REEX_AF_REEXM_CLSTR_MASK(a) (a)
+#define arguments_CAVM_REEX_AF_REEXM_CLSTR_MASK(a) (a),-1,-1,-1
+
+/**
+ * Register (RVU_PF_BAR0) ree#_af_reexm_core_clk_count
+ *
+ * REE AF REEX Main Core Clock Count Register
+ */
+union cavm_reex_af_reexm_core_clk_count
+{
+    uint64_t u;
+    struct cavm_reex_af_reexm_core_clk_count_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_32_63        : 32;
+        uint64_t count                 : 32; /**< [ 31:  0](RO/H) Number of Core-Clock cycles since initialization triggered. Wraps around. */
+#else /* Word 0 - Little Endian */
+        uint64_t count                 : 32; /**< [ 31:  0](RO/H) Number of Core-Clock cycles since initialization triggered. Wraps around. */
+        uint64_t reserved_32_63        : 32;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_reex_af_reexm_core_clk_count_s cn; */
+};
+typedef union cavm_reex_af_reexm_core_clk_count cavm_reex_af_reexm_core_clk_count_t;
+
+static inline uint64_t CAVM_REEX_AF_REEXM_CORE_CLK_COUNT(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_REEX_AF_REEXM_CORE_CLK_COUNT(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
+        return 0x840140008080ll + 0x10000000ll * ((a) & 0x1);
+    __cavm_csr_fatal("REEX_AF_REEXM_CORE_CLK_COUNT", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_REEX_AF_REEXM_CORE_CLK_COUNT(a) cavm_reex_af_reexm_core_clk_count_t
+#define bustype_CAVM_REEX_AF_REEXM_CORE_CLK_COUNT(a) CSR_TYPE_RVU_PF_BAR0
+#define basename_CAVM_REEX_AF_REEXM_CORE_CLK_COUNT(a) "REEX_AF_REEXM_CORE_CLK_COUNT"
+#define device_bar_CAVM_REEX_AF_REEXM_CORE_CLK_COUNT(a) 0x0 /* RVU_BAR0 */
+#define busnum_CAVM_REEX_AF_REEXM_CORE_CLK_COUNT(a) (a)
+#define arguments_CAVM_REEX_AF_REEXM_CORE_CLK_COUNT(a) (a),-1,-1,-1
+
+/**
+ * Register (RVU_PF_BAR0) ree#_af_reexm_ctrl
+ *
+ * REE AF REEX Main Control Register
+ */
+union cavm_reex_af_reexm_ctrl
+{
+    uint64_t u;
+    struct cavm_reex_af_reexm_ctrl_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_32_63        : 32;
+        uint64_t reex_reserved_1       : 28; /**< [ 31:  4](R/W) Reserved. Must be kept 0.
+                                                                 Internal:
+                                                                 Bits 7,5,4 are disable bits for L2_CACHE, Match-FIFO, Result-Descriptor FIFO,
+                                                                 respcetively, for Titan internal use.
+                                                                 Bits 5,4 must be set to 0, otherwise REEX FIFOs might not be in sync, and REE
+                                                                 might get hung up waiting for Matches or Descriptors. */
+        uint64_t go                    : 1;  /**< [  3:  3](R/W) Set this bit to cause REEX to start scanning jobs for matches. */
+        uint64_t reex_reserved_2       : 2;  /**< [  2:  1](R/W) Reserved, Must be kept 0. */
+        uint64_t init                  : 1;  /**< [  0:  0](R/W) Set to initialize REEX. */
+#else /* Word 0 - Little Endian */
+        uint64_t init                  : 1;  /**< [  0:  0](R/W) Set to initialize REEX. */
+        uint64_t reex_reserved_2       : 2;  /**< [  2:  1](R/W) Reserved, Must be kept 0. */
+        uint64_t go                    : 1;  /**< [  3:  3](R/W) Set this bit to cause REEX to start scanning jobs for matches. */
+        uint64_t reex_reserved_1       : 28; /**< [ 31:  4](R/W) Reserved. Must be kept 0.
+                                                                 Internal:
+                                                                 Bits 7,5,4 are disable bits for L2_CACHE, Match-FIFO, Result-Descriptor FIFO,
+                                                                 respcetively, for Titan internal use.
+                                                                 Bits 5,4 must be set to 0, otherwise REEX FIFOs might not be in sync, and REE
+                                                                 might get hung up waiting for Matches or Descriptors. */
+        uint64_t reserved_32_63        : 32;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_reex_af_reexm_ctrl_s cn; */
+};
+typedef union cavm_reex_af_reexm_ctrl cavm_reex_af_reexm_ctrl_t;
+
+static inline uint64_t CAVM_REEX_AF_REEXM_CTRL(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_REEX_AF_REEXM_CTRL(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
+        return 0x8401400080c0ll + 0x10000000ll * ((a) & 0x1);
+    __cavm_csr_fatal("REEX_AF_REEXM_CTRL", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_REEX_AF_REEXM_CTRL(a) cavm_reex_af_reexm_ctrl_t
+#define bustype_CAVM_REEX_AF_REEXM_CTRL(a) CSR_TYPE_RVU_PF_BAR0
+#define basename_CAVM_REEX_AF_REEXM_CTRL(a) "REEX_AF_REEXM_CTRL"
+#define device_bar_CAVM_REEX_AF_REEXM_CTRL(a) 0x0 /* RVU_BAR0 */
+#define busnum_CAVM_REEX_AF_REEXM_CTRL(a) (a)
+#define arguments_CAVM_REEX_AF_REEXM_CTRL(a) (a),-1,-1,-1
+
+/**
+ * Register (RVU_PF_BAR0) ree#_af_reexm_dos_count
+ *
+ * REE AF REEX Main Max DOS Count Register
+ */
+union cavm_reex_af_reexm_dos_count
+{
+    uint64_t u;
+    struct cavm_reex_af_reexm_dos_count_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_32_63        : 32;
+        uint64_t count                 : 32; /**< [ 31:  0](RO/H) Number of jobs where the number of prefixes detected has reached
+                                                                 MAX_PREFIX_COUNT which can be used to indicate that a DoS attempt has occurred. */
+#else /* Word 0 - Little Endian */
+        uint64_t count                 : 32; /**< [ 31:  0](RO/H) Number of jobs where the number of prefixes detected has reached
+                                                                 MAX_PREFIX_COUNT which can be used to indicate that a DoS attempt has occurred. */
+        uint64_t reserved_32_63        : 32;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_reex_af_reexm_dos_count_s cn; */
+};
+typedef union cavm_reex_af_reexm_dos_count cavm_reex_af_reexm_dos_count_t;
+
+static inline uint64_t CAVM_REEX_AF_REEXM_DOS_COUNT(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_REEX_AF_REEXM_DOS_COUNT(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
+        return 0x840140008068ll + 0x10000000ll * ((a) & 0x1);
+    __cavm_csr_fatal("REEX_AF_REEXM_DOS_COUNT", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_REEX_AF_REEXM_DOS_COUNT(a) cavm_reex_af_reexm_dos_count_t
+#define bustype_CAVM_REEX_AF_REEXM_DOS_COUNT(a) CSR_TYPE_RVU_PF_BAR0
+#define basename_CAVM_REEX_AF_REEXM_DOS_COUNT(a) "REEX_AF_REEXM_DOS_COUNT"
+#define device_bar_CAVM_REEX_AF_REEXM_DOS_COUNT(a) 0x0 /* RVU_BAR0 */
+#define busnum_CAVM_REEX_AF_REEXM_DOS_COUNT(a) (a)
+#define arguments_CAVM_REEX_AF_REEXM_DOS_COUNT(a) (a),-1,-1,-1
+
+/**
+ * Register (RVU_PF_BAR0) ree#_af_reexm_fifo_status_0
+ *
+ * REE AF REEX Job Request FIFOs Status Register
+ */
+union cavm_reex_af_reexm_fifo_status_0
+{
+    uint64_t u;
+    struct cavm_reex_af_reexm_fifo_status_0_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_32_63        : 32;
+        uint64_t jf_num_entries        : 16; /**< [ 31: 16](RO/H) Fill Level of REEX Job FIFO. */
+        uint64_t jdf_num_entries       : 16; /**< [ 15:  0](RO/H) Fill Level of REEX Job Descriptor FIFO. */
+#else /* Word 0 - Little Endian */
+        uint64_t jdf_num_entries       : 16; /**< [ 15:  0](RO/H) Fill Level of REEX Job Descriptor FIFO. */
+        uint64_t jf_num_entries        : 16; /**< [ 31: 16](RO/H) Fill Level of REEX Job FIFO. */
+        uint64_t reserved_32_63        : 32;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_reex_af_reexm_fifo_status_0_s cn; */
+};
+typedef union cavm_reex_af_reexm_fifo_status_0 cavm_reex_af_reexm_fifo_status_0_t;
+
+static inline uint64_t CAVM_REEX_AF_REEXM_FIFO_STATUS_0(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_REEX_AF_REEXM_FIFO_STATUS_0(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
+        return 0x840140008058ll + 0x10000000ll * ((a) & 0x1);
+    __cavm_csr_fatal("REEX_AF_REEXM_FIFO_STATUS_0", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_REEX_AF_REEXM_FIFO_STATUS_0(a) cavm_reex_af_reexm_fifo_status_0_t
+#define bustype_CAVM_REEX_AF_REEXM_FIFO_STATUS_0(a) CSR_TYPE_RVU_PF_BAR0
+#define basename_CAVM_REEX_AF_REEXM_FIFO_STATUS_0(a) "REEX_AF_REEXM_FIFO_STATUS_0"
+#define device_bar_CAVM_REEX_AF_REEXM_FIFO_STATUS_0(a) 0x0 /* RVU_BAR0 */
+#define busnum_CAVM_REEX_AF_REEXM_FIFO_STATUS_0(a) (a)
+#define arguments_CAVM_REEX_AF_REEXM_FIFO_STATUS_0(a) (a),-1,-1,-1
+
+/**
+ * Register (RVU_PF_BAR0) ree#_af_reexm_fifo_status_1
+ *
+ * REE AF REEX Job Response FIFOs Status Register
+ */
+union cavm_reex_af_reexm_fifo_status_1
+{
+    uint64_t u;
+    struct cavm_reex_af_reexm_fifo_status_1_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_32_63        : 32;
+        uint64_t mf_num_entries        : 16; /**< [ 31: 16](RO/H) Fill Level of REEX Match FIFO. */
+        uint64_t rdf_num_entries       : 16; /**< [ 15:  0](RO/H) Fill Level of REEX Response Descriptor FIFO. */
+#else /* Word 0 - Little Endian */
+        uint64_t rdf_num_entries       : 16; /**< [ 15:  0](RO/H) Fill Level of REEX Response Descriptor FIFO. */
+        uint64_t mf_num_entries        : 16; /**< [ 31: 16](RO/H) Fill Level of REEX Match FIFO. */
+        uint64_t reserved_32_63        : 32;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_reex_af_reexm_fifo_status_1_s cn; */
+};
+typedef union cavm_reex_af_reexm_fifo_status_1 cavm_reex_af_reexm_fifo_status_1_t;
+
+static inline uint64_t CAVM_REEX_AF_REEXM_FIFO_STATUS_1(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_REEX_AF_REEXM_FIFO_STATUS_1(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
+        return 0x840140008060ll + 0x10000000ll * ((a) & 0x1);
+    __cavm_csr_fatal("REEX_AF_REEXM_FIFO_STATUS_1", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_REEX_AF_REEXM_FIFO_STATUS_1(a) cavm_reex_af_reexm_fifo_status_1_t
+#define bustype_CAVM_REEX_AF_REEXM_FIFO_STATUS_1(a) CSR_TYPE_RVU_PF_BAR0
+#define basename_CAVM_REEX_AF_REEXM_FIFO_STATUS_1(a) "REEX_AF_REEXM_FIFO_STATUS_1"
+#define device_bar_CAVM_REEX_AF_REEXM_FIFO_STATUS_1(a) 0x0 /* RVU_BAR0 */
+#define busnum_CAVM_REEX_AF_REEXM_FIFO_STATUS_1(a) (a)
+#define arguments_CAVM_REEX_AF_REEXM_FIFO_STATUS_1(a) (a),-1,-1,-1
+
+/**
+ * Register (RVU_PF_BAR0) ree#_af_reexm_identifier
+ *
+ * REE AF REEX Main Identifier Register
+ * This register provides identification information about REEX
+ */
+union cavm_reex_af_reexm_identifier
+{
+    uint64_t u;
+    struct cavm_reex_af_reexm_identifier_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_32_63        : 32;
+        uint64_t minor_ver             : 8;  /**< [ 31: 24](RO) Minor version identifier. */
+        uint64_t major_ver             : 8;  /**< [ 23: 16](RO) Major version identifier. */
+        uint64_t product_id            : 8;  /**< [ 15:  8](RO) Product identifier. Set to 0x52 i.e R for REEX. */
+        uint64_t vendor_id             : 8;  /**< [  7:  0](RO) VendoriIdentifier. */
+#else /* Word 0 - Little Endian */
+        uint64_t vendor_id             : 8;  /**< [  7:  0](RO) VendoriIdentifier. */
+        uint64_t product_id            : 8;  /**< [ 15:  8](RO) Product identifier. Set to 0x52 i.e R for REEX. */
+        uint64_t major_ver             : 8;  /**< [ 23: 16](RO) Major version identifier. */
+        uint64_t minor_ver             : 8;  /**< [ 31: 24](RO) Minor version identifier. */
+        uint64_t reserved_32_63        : 32;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_reex_af_reexm_identifier_s cn; */
+};
+typedef union cavm_reex_af_reexm_identifier cavm_reex_af_reexm_identifier_t;
+
+static inline uint64_t CAVM_REEX_AF_REEXM_IDENTIFIER(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_REEX_AF_REEXM_IDENTIFIER(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
+        return 0x840140008000ll + 0x10000000ll * ((a) & 0x1);
+    __cavm_csr_fatal("REEX_AF_REEXM_IDENTIFIER", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_REEX_AF_REEXM_IDENTIFIER(a) cavm_reex_af_reexm_identifier_t
+#define bustype_CAVM_REEX_AF_REEXM_IDENTIFIER(a) CSR_TYPE_RVU_PF_BAR0
+#define basename_CAVM_REEX_AF_REEXM_IDENTIFIER(a) "REEX_AF_REEXM_IDENTIFIER"
+#define device_bar_CAVM_REEX_AF_REEXM_IDENTIFIER(a) 0x0 /* RVU_BAR0 */
+#define busnum_CAVM_REEX_AF_REEXM_IDENTIFIER(a) (a)
+#define arguments_CAVM_REEX_AF_REEXM_IDENTIFIER(a) (a),-1,-1,-1
+
+/**
+ * Register (RVU_PF_BAR0) ree#_af_reexm_intr_clstr_mask
+ *
+ * REE AF REEX Main Intra Cluster Mask Register
+ * Support masking of JCEs and TCEs, inside all clusters not totally masked by
+ * REE_AF_REEXM_CLSTR_MASK.
+ */
+union cavm_reex_af_reexm_intr_clstr_mask
+{
+    uint64_t u;
+    struct cavm_reex_af_reexm_intr_clstr_mask_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_32_63        : 32;
+        uint64_t tce_mask              : 16; /**< [ 31: 16](R/W) Mask (disable) TCEs in Cluster. */
+        uint64_t reex_reserved_1       : 8;  /**< [ 15:  8](R/W) Reserved. */
+        uint64_t jce_mask              : 8;  /**< [  7:  0](R/W) Mask (disable) JCEs in Cluster. */
+#else /* Word 0 - Little Endian */
+        uint64_t jce_mask              : 8;  /**< [  7:  0](R/W) Mask (disable) JCEs in Cluster. */
+        uint64_t reex_reserved_1       : 8;  /**< [ 15:  8](R/W) Reserved. */
+        uint64_t tce_mask              : 16; /**< [ 31: 16](R/W) Mask (disable) TCEs in Cluster. */
+        uint64_t reserved_32_63        : 32;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_reex_af_reexm_intr_clstr_mask_s cn; */
+};
+typedef union cavm_reex_af_reexm_intr_clstr_mask cavm_reex_af_reexm_intr_clstr_mask_t;
+
+static inline uint64_t CAVM_REEX_AF_REEXM_INTR_CLSTR_MASK(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_REEX_AF_REEXM_INTR_CLSTR_MASK(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
+        return 0x8401400080f8ll + 0x10000000ll * ((a) & 0x1);
+    __cavm_csr_fatal("REEX_AF_REEXM_INTR_CLSTR_MASK", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_REEX_AF_REEXM_INTR_CLSTR_MASK(a) cavm_reex_af_reexm_intr_clstr_mask_t
+#define bustype_CAVM_REEX_AF_REEXM_INTR_CLSTR_MASK(a) CSR_TYPE_RVU_PF_BAR0
+#define basename_CAVM_REEX_AF_REEXM_INTR_CLSTR_MASK(a) "REEX_AF_REEXM_INTR_CLSTR_MASK"
+#define device_bar_CAVM_REEX_AF_REEXM_INTR_CLSTR_MASK(a) 0x0 /* RVU_BAR0 */
+#define busnum_CAVM_REEX_AF_REEXM_INTR_CLSTR_MASK(a) (a)
+#define arguments_CAVM_REEX_AF_REEXM_INTR_CLSTR_MASK(a) (a),-1,-1,-1
+
+/**
+ * Register (RVU_PF_BAR0) ree#_af_reexm_job_byt_count_0
+ *
+ * REE AF REEX Main Job Byte Count LSB Register
+ */
+union cavm_reex_af_reexm_job_byt_count_0
+{
+    uint64_t u;
+    struct cavm_reex_af_reexm_job_byt_count_0_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_32_63        : 32;
+        uint64_t count                 : 32; /**< [ 31:  0](RO/H) Total number of Job Data Bytes parsed, 32 lower bits. Wraps around. */
+#else /* Word 0 - Little Endian */
+        uint64_t count                 : 32; /**< [ 31:  0](RO/H) Total number of Job Data Bytes parsed, 32 lower bits. Wraps around. */
+        uint64_t reserved_32_63        : 32;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_reex_af_reexm_job_byt_count_0_s cn; */
+};
+typedef union cavm_reex_af_reexm_job_byt_count_0 cavm_reex_af_reexm_job_byt_count_0_t;
+
+static inline uint64_t CAVM_REEX_AF_REEXM_JOB_BYT_COUNT_0(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_REEX_AF_REEXM_JOB_BYT_COUNT_0(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
+        return 0x8401400080a0ll + 0x10000000ll * ((a) & 0x1);
+    __cavm_csr_fatal("REEX_AF_REEXM_JOB_BYT_COUNT_0", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_REEX_AF_REEXM_JOB_BYT_COUNT_0(a) cavm_reex_af_reexm_job_byt_count_0_t
+#define bustype_CAVM_REEX_AF_REEXM_JOB_BYT_COUNT_0(a) CSR_TYPE_RVU_PF_BAR0
+#define basename_CAVM_REEX_AF_REEXM_JOB_BYT_COUNT_0(a) "REEX_AF_REEXM_JOB_BYT_COUNT_0"
+#define device_bar_CAVM_REEX_AF_REEXM_JOB_BYT_COUNT_0(a) 0x0 /* RVU_BAR0 */
+#define busnum_CAVM_REEX_AF_REEXM_JOB_BYT_COUNT_0(a) (a)
+#define arguments_CAVM_REEX_AF_REEXM_JOB_BYT_COUNT_0(a) (a),-1,-1,-1
+
+/**
+ * Register (RVU_PF_BAR0) ree#_af_reexm_job_byt_count_1
+ *
+ * REE AF REEX Main Job Byte Count MSB Register
+ */
+union cavm_reex_af_reexm_job_byt_count_1
+{
+    uint64_t u;
+    struct cavm_reex_af_reexm_job_byt_count_1_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_32_63        : 32;
+        uint64_t count                 : 32; /**< [ 31:  0](RO/H) Total number of Job Data Bytes parsed, 32 higher bits.  Wraps around. */
+#else /* Word 0 - Little Endian */
+        uint64_t count                 : 32; /**< [ 31:  0](RO/H) Total number of Job Data Bytes parsed, 32 higher bits.  Wraps around. */
+        uint64_t reserved_32_63        : 32;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_reex_af_reexm_job_byt_count_1_s cn; */
+};
+typedef union cavm_reex_af_reexm_job_byt_count_1 cavm_reex_af_reexm_job_byt_count_1_t;
+
+static inline uint64_t CAVM_REEX_AF_REEXM_JOB_BYT_COUNT_1(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_REEX_AF_REEXM_JOB_BYT_COUNT_1(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
+        return 0x8401400080a8ll + 0x10000000ll * ((a) & 0x1);
+    __cavm_csr_fatal("REEX_AF_REEXM_JOB_BYT_COUNT_1", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_REEX_AF_REEXM_JOB_BYT_COUNT_1(a) cavm_reex_af_reexm_job_byt_count_1_t
+#define bustype_CAVM_REEX_AF_REEXM_JOB_BYT_COUNT_1(a) CSR_TYPE_RVU_PF_BAR0
+#define basename_CAVM_REEX_AF_REEXM_JOB_BYT_COUNT_1(a) "REEX_AF_REEXM_JOB_BYT_COUNT_1"
+#define device_bar_CAVM_REEX_AF_REEXM_JOB_BYT_COUNT_1(a) 0x0 /* RVU_BAR0 */
+#define busnum_CAVM_REEX_AF_REEXM_JOB_BYT_COUNT_1(a) (a)
+#define arguments_CAVM_REEX_AF_REEXM_JOB_BYT_COUNT_1(a) (a),-1,-1,-1
+
+/**
+ * Register (RVU_PF_BAR0) ree#_af_reexm_job_count
+ *
+ * REE AF REEX Main Job Count Register
+ */
+union cavm_reex_af_reexm_job_count
+{
+    uint64_t u;
+    struct cavm_reex_af_reexm_job_count_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_32_63        : 32;
+        uint64_t count                 : 32; /**< [ 31:  0](RO/H) Number of valid Jobs ingressed. Wraps around. */
+#else /* Word 0 - Little Endian */
+        uint64_t count                 : 32; /**< [ 31:  0](RO/H) Number of valid Jobs ingressed. Wraps around. */
+        uint64_t reserved_32_63        : 32;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_reex_af_reexm_job_count_s cn; */
+};
+typedef union cavm_reex_af_reexm_job_count cavm_reex_af_reexm_job_count_t;
+
+static inline uint64_t CAVM_REEX_AF_REEXM_JOB_COUNT(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_REEX_AF_REEXM_JOB_COUNT(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
+        return 0x840140008090ll + 0x10000000ll * ((a) & 0x1);
+    __cavm_csr_fatal("REEX_AF_REEXM_JOB_COUNT", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_REEX_AF_REEXM_JOB_COUNT(a) cavm_reex_af_reexm_job_count_t
+#define bustype_CAVM_REEX_AF_REEXM_JOB_COUNT(a) CSR_TYPE_RVU_PF_BAR0
+#define basename_CAVM_REEX_AF_REEXM_JOB_COUNT(a) "REEX_AF_REEXM_JOB_COUNT"
+#define device_bar_CAVM_REEX_AF_REEXM_JOB_COUNT(a) 0x0 /* RVU_BAR0 */
+#define busnum_CAVM_REEX_AF_REEXM_JOB_COUNT(a) (a)
+#define arguments_CAVM_REEX_AF_REEXM_JOB_COUNT(a) (a),-1,-1,-1
+
+/**
+ * Register (RVU_PF_BAR0) ree#_af_reexm_match_count
+ *
+ * REE AF REEX Main Match Count Register
+ */
+union cavm_reex_af_reexm_match_count
+{
+    uint64_t u;
+    struct cavm_reex_af_reexm_match_count_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_32_63        : 32;
+        uint64_t count                 : 32; /**< [ 31:  0](RO/H) Total number of Matches detected.  Wraps around. */
+#else /* Word 0 - Little Endian */
+        uint64_t count                 : 32; /**< [ 31:  0](RO/H) Total number of Matches detected.  Wraps around. */
+        uint64_t reserved_32_63        : 32;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_reex_af_reexm_match_count_s cn; */
+};
+typedef union cavm_reex_af_reexm_match_count cavm_reex_af_reexm_match_count_t;
+
+static inline uint64_t CAVM_REEX_AF_REEXM_MATCH_COUNT(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_REEX_AF_REEXM_MATCH_COUNT(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
+        return 0x8401400080b8ll + 0x10000000ll * ((a) & 0x1);
+    __cavm_csr_fatal("REEX_AF_REEXM_MATCH_COUNT", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_REEX_AF_REEXM_MATCH_COUNT(a) cavm_reex_af_reexm_match_count_t
+#define bustype_CAVM_REEX_AF_REEXM_MATCH_COUNT(a) CSR_TYPE_RVU_PF_BAR0
+#define basename_CAVM_REEX_AF_REEXM_MATCH_COUNT(a) "REEX_AF_REEXM_MATCH_COUNT"
+#define device_bar_CAVM_REEX_AF_REEXM_MATCH_COUNT(a) 0x0 /* RVU_BAR0 */
+#define busnum_CAVM_REEX_AF_REEXM_MATCH_COUNT(a) (a)
+#define arguments_CAVM_REEX_AF_REEXM_MATCH_COUNT(a) (a),-1,-1,-1
+
+/**
+ * Register (RVU_PF_BAR0) ree#_af_reexm_max_latency_cnt
+ *
+ * REE AF REEX Main Max Latency Count Register
+ */
+union cavm_reex_af_reexm_max_latency_cnt
+{
+    uint64_t u;
+    struct cavm_reex_af_reexm_max_latency_cnt_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_32_63        : 32;
+        uint64_t reex_reserved_1       : 16; /**< [ 31: 16](R/W) Reserved. */
+        uint64_t count                 : 16; /**< [ 15:  0](R/W) Maximum LATENCY_COUNT value per job before primary threads are aborted.
+                                                                 Use this as a proxy for providing an upper bound on Job latency.
+                                                                 This register indicates a target maximum latency, but actual LATENCY_COUNT
+                                                                 value returned for a job can be bigger due to house-keeping overheads.
+                                                                 Range 0 to 65535, value 0 means unlimited.
+                                                                 If maximum has been reached, MAX_LATENCY_COUNT_DETECTED is asserted and further threads aborted. */
+#else /* Word 0 - Little Endian */
+        uint64_t count                 : 16; /**< [ 15:  0](R/W) Maximum LATENCY_COUNT value per job before primary threads are aborted.
+                                                                 Use this as a proxy for providing an upper bound on Job latency.
+                                                                 This register indicates a target maximum latency, but actual LATENCY_COUNT
+                                                                 value returned for a job can be bigger due to house-keeping overheads.
+                                                                 Range 0 to 65535, value 0 means unlimited.
+                                                                 If maximum has been reached, MAX_LATENCY_COUNT_DETECTED is asserted and further threads aborted. */
+        uint64_t reex_reserved_1       : 16; /**< [ 31: 16](R/W) Reserved. */
+        uint64_t reserved_32_63        : 32;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_reex_af_reexm_max_latency_cnt_s cn; */
+};
+typedef union cavm_reex_af_reexm_max_latency_cnt cavm_reex_af_reexm_max_latency_cnt_t;
+
+static inline uint64_t CAVM_REEX_AF_REEXM_MAX_LATENCY_CNT(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_REEX_AF_REEXM_MAX_LATENCY_CNT(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
+        return 0x8401400080e0ll + 0x10000000ll * ((a) & 0x1);
+    __cavm_csr_fatal("REEX_AF_REEXM_MAX_LATENCY_CNT", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_REEX_AF_REEXM_MAX_LATENCY_CNT(a) cavm_reex_af_reexm_max_latency_cnt_t
+#define bustype_CAVM_REEX_AF_REEXM_MAX_LATENCY_CNT(a) CSR_TYPE_RVU_PF_BAR0
+#define basename_CAVM_REEX_AF_REEXM_MAX_LATENCY_CNT(a) "REEX_AF_REEXM_MAX_LATENCY_CNT"
+#define device_bar_CAVM_REEX_AF_REEXM_MAX_LATENCY_CNT(a) 0x0 /* RVU_BAR0 */
+#define busnum_CAVM_REEX_AF_REEXM_MAX_LATENCY_CNT(a) (a)
+#define arguments_CAVM_REEX_AF_REEXM_MAX_LATENCY_CNT(a) (a),-1,-1,-1
+
+/**
+ * Register (RVU_PF_BAR0) ree#_af_reexm_max_match
+ *
+ * REE AF REEX Main Max MATCH Register
+ */
+union cavm_reex_af_reexm_max_match
+{
+    uint64_t u;
+    struct cavm_reex_af_reexm_max_match_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_8_63         : 56;
+        uint64_t max                   : 8;  /**< [  7:  0](R/W) Maximum number of matches to return per job.
+                                                                 Once this number of matches have been found, no further primary threads
+                                                                 are generated for the job (returned matches are not necessarily lowest start_ptr).
+                                                                 Range 0 to 254 (includes saturation logic), value 0 means no matches are returned.
+                                                                 If maximum has been reached, MAX_MATCH_COUNT_DETECTED is asserted and further threads aborted. */
+#else /* Word 0 - Little Endian */
+        uint64_t max                   : 8;  /**< [  7:  0](R/W) Maximum number of matches to return per job.
+                                                                 Once this number of matches have been found, no further primary threads
+                                                                 are generated for the job (returned matches are not necessarily lowest start_ptr).
+                                                                 Range 0 to 254 (includes saturation logic), value 0 means no matches are returned.
+                                                                 If maximum has been reached, MAX_MATCH_COUNT_DETECTED is asserted and further threads aborted. */
+        uint64_t reserved_8_63         : 56;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_reex_af_reexm_max_match_s cn; */
+};
+typedef union cavm_reex_af_reexm_max_match cavm_reex_af_reexm_max_match_t;
+
+static inline uint64_t CAVM_REEX_AF_REEXM_MAX_MATCH(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_REEX_AF_REEXM_MAX_MATCH(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
+        return 0x8401400080c8ll + 0x10000000ll * ((a) & 0x1);
+    __cavm_csr_fatal("REEX_AF_REEXM_MAX_MATCH", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_REEX_AF_REEXM_MAX_MATCH(a) cavm_reex_af_reexm_max_match_t
+#define bustype_CAVM_REEX_AF_REEXM_MAX_MATCH(a) CSR_TYPE_RVU_PF_BAR0
+#define basename_CAVM_REEX_AF_REEXM_MAX_MATCH(a) "REEX_AF_REEXM_MAX_MATCH"
+#define device_bar_CAVM_REEX_AF_REEXM_MAX_MATCH(a) 0x0 /* RVU_BAR0 */
+#define busnum_CAVM_REEX_AF_REEXM_MAX_MATCH(a) (a)
+#define arguments_CAVM_REEX_AF_REEXM_MAX_MATCH(a) (a),-1,-1,-1
+
+/**
+ * Register (RVU_PF_BAR0) ree#_af_reexm_max_pre_cnt
+ *
+ * REE AF REEX Main Max Prefix Count Register
+ */
+union cavm_reex_af_reexm_max_pre_cnt
+{
+    uint64_t u;
+    struct cavm_reex_af_reexm_max_pre_cnt_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_10_63        : 54;
+        uint64_t count                 : 10; /**< [  9:  0](R/W) Maximum number of prefixes detected per job that are converted to thread searches.
+                                                                 Use this as a proxy for denial of service detection.
+                                                                 Range 0 to 1008 (includes saturation logic), value 0 means no matches are returned.
+                                                                 If maximum has been reached, MAX_PREFIX_COUNT_DETECTED is asserted and further threads aborted. */
+#else /* Word 0 - Little Endian */
+        uint64_t count                 : 10; /**< [  9:  0](R/W) Maximum number of prefixes detected per job that are converted to thread searches.
+                                                                 Use this as a proxy for denial of service detection.
+                                                                 Range 0 to 1008 (includes saturation logic), value 0 means no matches are returned.
+                                                                 If maximum has been reached, MAX_PREFIX_COUNT_DETECTED is asserted and further threads aborted. */
+        uint64_t reserved_10_63        : 54;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_reex_af_reexm_max_pre_cnt_s cn; */
+};
+typedef union cavm_reex_af_reexm_max_pre_cnt cavm_reex_af_reexm_max_pre_cnt_t;
+
+static inline uint64_t CAVM_REEX_AF_REEXM_MAX_PRE_CNT(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_REEX_AF_REEXM_MAX_PRE_CNT(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
+        return 0x8401400080d0ll + 0x10000000ll * ((a) & 0x1);
+    __cavm_csr_fatal("REEX_AF_REEXM_MAX_PRE_CNT", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_REEX_AF_REEXM_MAX_PRE_CNT(a) cavm_reex_af_reexm_max_pre_cnt_t
+#define bustype_CAVM_REEX_AF_REEXM_MAX_PRE_CNT(a) CSR_TYPE_RVU_PF_BAR0
+#define basename_CAVM_REEX_AF_REEXM_MAX_PRE_CNT(a) "REEX_AF_REEXM_MAX_PRE_CNT"
+#define device_bar_CAVM_REEX_AF_REEXM_MAX_PRE_CNT(a) 0x0 /* RVU_BAR0 */
+#define busnum_CAVM_REEX_AF_REEXM_MAX_PRE_CNT(a) (a)
+#define arguments_CAVM_REEX_AF_REEXM_MAX_PRE_CNT(a) (a),-1,-1,-1
+
+/**
+ * Register (RVU_PF_BAR0) ree#_af_reexm_max_pthread_cnt
+ *
+ * REE AF REEX Main Max Primary Thread Count Register
+ */
+union cavm_reex_af_reexm_max_pthread_cnt
+{
+    uint64_t u;
+    struct cavm_reex_af_reexm_max_pthread_cnt_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_32_63        : 32;
+        uint64_t reex_reserved_1       : 16; /**< [ 31: 16](R/W) Reserved. */
+        uint64_t count                 : 16; /**< [ 15:  0](R/W) Maximum number of Primary Threads per Job. Range 0 to 65535, value 0 means unlimited.
+                                                                 If maximum has been reached, MAX_PRIMARY_THREAD_COUNT_DETECTED is asserted and
+                                                                 further threads aborted. */
+#else /* Word 0 - Little Endian */
+        uint64_t count                 : 16; /**< [ 15:  0](R/W) Maximum number of Primary Threads per Job. Range 0 to 65535, value 0 means unlimited.
+                                                                 If maximum has been reached, MAX_PRIMARY_THREAD_COUNT_DETECTED is asserted and
+                                                                 further threads aborted. */
+        uint64_t reex_reserved_1       : 16; /**< [ 31: 16](R/W) Reserved. */
+        uint64_t reserved_32_63        : 32;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_reex_af_reexm_max_pthread_cnt_s cn; */
+};
+typedef union cavm_reex_af_reexm_max_pthread_cnt cavm_reex_af_reexm_max_pthread_cnt_t;
+
+static inline uint64_t CAVM_REEX_AF_REEXM_MAX_PTHREAD_CNT(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_REEX_AF_REEXM_MAX_PTHREAD_CNT(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
+        return 0x8401400080d8ll + 0x10000000ll * ((a) & 0x1);
+    __cavm_csr_fatal("REEX_AF_REEXM_MAX_PTHREAD_CNT", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_REEX_AF_REEXM_MAX_PTHREAD_CNT(a) cavm_reex_af_reexm_max_pthread_cnt_t
+#define bustype_CAVM_REEX_AF_REEXM_MAX_PTHREAD_CNT(a) CSR_TYPE_RVU_PF_BAR0
+#define basename_CAVM_REEX_AF_REEXM_MAX_PTHREAD_CNT(a) "REEX_AF_REEXM_MAX_PTHREAD_CNT"
+#define device_bar_CAVM_REEX_AF_REEXM_MAX_PTHREAD_CNT(a) 0x0 /* RVU_BAR0 */
+#define busnum_CAVM_REEX_AF_REEXM_MAX_PTHREAD_CNT(a) (a)
+#define arguments_CAVM_REEX_AF_REEXM_MAX_PTHREAD_CNT(a) (a),-1,-1,-1
+
+/**
+ * Register (RVU_PF_BAR0) ree#_af_reexm_response_count
+ *
+ * REE AF REEX Main Response Descriptor Count Register
+ */
+union cavm_reex_af_reexm_response_count
+{
+    uint64_t u;
+    struct cavm_reex_af_reexm_response_count_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_32_63        : 32;
+        uint64_t count                 : 32; /**< [ 31:  0](RO/H) Total number of Response Descriptors dispatched.  Wraps around. */
+#else /* Word 0 - Little Endian */
+        uint64_t count                 : 32; /**< [ 31:  0](RO/H) Total number of Response Descriptors dispatched.  Wraps around. */
+        uint64_t reserved_32_63        : 32;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_reex_af_reexm_response_count_s cn; */
+};
+typedef union cavm_reex_af_reexm_response_count cavm_reex_af_reexm_response_count_t;
+
+static inline uint64_t CAVM_REEX_AF_REEXM_RESPONSE_COUNT(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_REEX_AF_REEXM_RESPONSE_COUNT(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
+        return 0x8401400080b0ll + 0x10000000ll * ((a) & 0x1);
+    __cavm_csr_fatal("REEX_AF_REEXM_RESPONSE_COUNT", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_REEX_AF_REEXM_RESPONSE_COUNT(a) cavm_reex_af_reexm_response_count_t
+#define bustype_CAVM_REEX_AF_REEXM_RESPONSE_COUNT(a) CSR_TYPE_RVU_PF_BAR0
+#define basename_CAVM_REEX_AF_REEXM_RESPONSE_COUNT(a) "REEX_AF_REEXM_RESPONSE_COUNT"
+#define device_bar_CAVM_REEX_AF_REEXM_RESPONSE_COUNT(a) 0x0 /* RVU_BAR0 */
+#define busnum_CAVM_REEX_AF_REEXM_RESPONSE_COUNT(a) (a)
+#define arguments_CAVM_REEX_AF_REEXM_RESPONSE_COUNT(a) (a),-1,-1,-1
+
+/**
+ * Register (RVU_PF_BAR0) ree#_af_reexm_revision
+ *
+ * REE AF REEX Main Revision Register
+ * This register contains capablity information about REEX.
+ */
+union cavm_reex_af_reexm_revision
+{
+    uint64_t u;
+    struct cavm_reex_af_reexm_revision_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_32_63        : 32;
+        uint64_t rev                   : 32; /**< [ 31:  0](RO) Subversion revision number. Value is drop specific. */
+#else /* Word 0 - Little Endian */
+        uint64_t rev                   : 32; /**< [ 31:  0](RO) Subversion revision number. Value is drop specific. */
+        uint64_t reserved_32_63        : 32;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_reex_af_reexm_revision_s cn; */
+};
+typedef union cavm_reex_af_reexm_revision cavm_reex_af_reexm_revision_t;
+
+static inline uint64_t CAVM_REEX_AF_REEXM_REVISION(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_REEX_AF_REEXM_REVISION(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
+        return 0x840140008008ll + 0x10000000ll * ((a) & 0x1);
+    __cavm_csr_fatal("REEX_AF_REEXM_REVISION", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_REEX_AF_REEXM_REVISION(a) cavm_reex_af_reexm_revision_t
+#define bustype_CAVM_REEX_AF_REEXM_REVISION(a) CSR_TYPE_RVU_PF_BAR0
+#define basename_CAVM_REEX_AF_REEXM_REVISION(a) "REEX_AF_REEXM_REVISION"
+#define device_bar_CAVM_REEX_AF_REEXM_REVISION(a) 0x0 /* RVU_BAR0 */
+#define busnum_CAVM_REEX_AF_REEXM_REVISION(a) (a)
+#define arguments_CAVM_REEX_AF_REEXM_REVISION(a) (a),-1,-1,-1
+
+/**
+ * Register (RVU_PF_BAR0) ree#_af_reexm_scratch
+ *
+ * REE AF REEX Main Scratch Register
+ */
+union cavm_reex_af_reexm_scratch
+{
+    uint64_t u;
+    struct cavm_reex_af_reexm_scratch_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_32_63        : 32;
+        uint64_t scratch               : 32; /**< [ 31:  0](R/W) Scratch register, for SW use only (ignored by REEX). */
+#else /* Word 0 - Little Endian */
+        uint64_t scratch               : 32; /**< [ 31:  0](R/W) Scratch register, for SW use only (ignored by REEX). */
+        uint64_t reserved_32_63        : 32;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_reex_af_reexm_scratch_s cn; */
+};
+typedef union cavm_reex_af_reexm_scratch cavm_reex_af_reexm_scratch_t;
+
+static inline uint64_t CAVM_REEX_AF_REEXM_SCRATCH(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_REEX_AF_REEXM_SCRATCH(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
+        return 0x8401400080e8ll + 0x10000000ll * ((a) & 0x1);
+    __cavm_csr_fatal("REEX_AF_REEXM_SCRATCH", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_REEX_AF_REEXM_SCRATCH(a) cavm_reex_af_reexm_scratch_t
+#define bustype_CAVM_REEX_AF_REEXM_SCRATCH(a) CSR_TYPE_RVU_PF_BAR0
+#define basename_CAVM_REEX_AF_REEXM_SCRATCH(a) "REEX_AF_REEXM_SCRATCH"
+#define device_bar_CAVM_REEX_AF_REEXM_SCRATCH(a) 0x0 /* RVU_BAR0 */
+#define busnum_CAVM_REEX_AF_REEXM_SCRATCH(a) (a)
+#define arguments_CAVM_REEX_AF_REEXM_SCRATCH(a) (a),-1,-1,-1
+
+/**
+ * Register (RVU_PF_BAR0) ree#_af_reexm_status
+ *
+ * REE AF REEX Main Status Register
+ */
+union cavm_reex_af_reexm_status
+{
+    uint64_t u;
+    struct cavm_reex_af_reexm_status_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_7_63         : 57;
+        uint64_t idle                  : 1;  /**< [  6:  6](RO/H) --
+                                                                 Internal:
+                                                                 Indicates that there are no jobs in REEX (for debug) */
+        uint64_t reserved_4_5          : 2;
+        uint64_t going                 : 1;  /**< [  3:  3](RO/H) --
+                                                                 Internal:
+                                                                 Indicates that one or more jobs are in REEX (for debug) */
+        uint64_t reserved_1_2          : 2;
+        uint64_t init_done             : 1;  /**< [  0:  0](RO/H) After software sets and clears REEXM_CTRL[INIT], it must poll [INIT_DONE] until
+                                                                 set, which indicates REEX has been initialized. */
+#else /* Word 0 - Little Endian */
+        uint64_t init_done             : 1;  /**< [  0:  0](RO/H) After software sets and clears REEXM_CTRL[INIT], it must poll [INIT_DONE] until
+                                                                 set, which indicates REEX has been initialized. */
+        uint64_t reserved_1_2          : 2;
+        uint64_t going                 : 1;  /**< [  3:  3](RO/H) --
+                                                                 Internal:
+                                                                 Indicates that one or more jobs are in REEX (for debug) */
+        uint64_t reserved_4_5          : 2;
+        uint64_t idle                  : 1;  /**< [  6:  6](RO/H) --
+                                                                 Internal:
+                                                                 Indicates that there are no jobs in REEX (for debug) */
+        uint64_t reserved_7_63         : 57;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_reex_af_reexm_status_s cn; */
+};
+typedef union cavm_reex_af_reexm_status cavm_reex_af_reexm_status_t;
+
+static inline uint64_t CAVM_REEX_AF_REEXM_STATUS(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_REEX_AF_REEXM_STATUS(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
+        return 0x840140008050ll + 0x10000000ll * ((a) & 0x1);
+    __cavm_csr_fatal("REEX_AF_REEXM_STATUS", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_REEX_AF_REEXM_STATUS(a) cavm_reex_af_reexm_status_t
+#define bustype_CAVM_REEX_AF_REEXM_STATUS(a) CSR_TYPE_RVU_PF_BAR0
+#define basename_CAVM_REEX_AF_REEXM_STATUS(a) "REEX_AF_REEXM_STATUS"
+#define device_bar_CAVM_REEX_AF_REEXM_STATUS(a) 0x0 /* RVU_BAR0 */
+#define busnum_CAVM_REEX_AF_REEXM_STATUS(a) (a)
+#define arguments_CAVM_REEX_AF_REEXM_STATUS(a) (a),-1,-1,-1
+
+/**
+ * Register (RVU_PF_BAR0) ree#_af_reexm_write_count
+ *
+ * REE AF REEX Main Write-CSR Count Register
+ */
+union cavm_reex_af_reexm_write_count
+{
+    uint64_t u;
+    struct cavm_reex_af_reexm_write_count_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_32_63        : 32;
+        uint64_t count                 : 32; /**< [ 31:  0](RO/H) Number of CSR Write transactions. */
+#else /* Word 0 - Little Endian */
+        uint64_t count                 : 32; /**< [ 31:  0](RO/H) Number of CSR Write transactions. */
+        uint64_t reserved_32_63        : 32;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_reex_af_reexm_write_count_s cn; */
+};
+typedef union cavm_reex_af_reexm_write_count cavm_reex_af_reexm_write_count_t;
+
+static inline uint64_t CAVM_REEX_AF_REEXM_WRITE_COUNT(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_REEX_AF_REEXM_WRITE_COUNT(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
+        return 0x840140008088ll + 0x10000000ll * ((a) & 0x1);
+    __cavm_csr_fatal("REEX_AF_REEXM_WRITE_COUNT", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_REEX_AF_REEXM_WRITE_COUNT(a) cavm_reex_af_reexm_write_count_t
+#define bustype_CAVM_REEX_AF_REEXM_WRITE_COUNT(a) CSR_TYPE_RVU_PF_BAR0
+#define basename_CAVM_REEX_AF_REEXM_WRITE_COUNT(a) "REEX_AF_REEXM_WRITE_COUNT"
+#define device_bar_CAVM_REEX_AF_REEXM_WRITE_COUNT(a) 0x0 /* RVU_BAR0 */
+#define busnum_CAVM_REEX_AF_REEXM_WRITE_COUNT(a) (a)
+#define arguments_CAVM_REEX_AF_REEXM_WRITE_COUNT(a) (a),-1,-1,-1
+
+/**
+ * Register (RVU_PF_BAR0) ree#_af_reexr_capability
+ *
+ * REE AF REEX RTRU Capability Register
+ * This register contains capablity information about REEX.
+ */
+union cavm_reex_af_reexr_capability
+{
+    uint64_t u;
+    struct cavm_reex_af_reexr_capability_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_32_63        : 32;
+        uint64_t rtru_fifo_width       : 16; /**< [ 31: 16](RO) RTRU FIFO Data width. */
+        uint64_t rtru_fifo_depth       : 16; /**< [ 15:  0](RO) RTRU FIFO maximum legal number of entries. */
+#else /* Word 0 - Little Endian */
+        uint64_t rtru_fifo_depth       : 16; /**< [ 15:  0](RO) RTRU FIFO maximum legal number of entries. */
+        uint64_t rtru_fifo_width       : 16; /**< [ 31: 16](RO) RTRU FIFO Data width. */
+        uint64_t reserved_32_63        : 32;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_reex_af_reexr_capability_s cn; */
+};
+typedef union cavm_reex_af_reexr_capability cavm_reex_af_reexr_capability_t;
+
+static inline uint64_t CAVM_REEX_AF_REEXR_CAPABILITY(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_REEX_AF_REEXR_CAPABILITY(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
+        return 0x840140008210ll + 0x10000000ll * ((a) & 0x1);
+    __cavm_csr_fatal("REEX_AF_REEXR_CAPABILITY", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_REEX_AF_REEXR_CAPABILITY(a) cavm_reex_af_reexr_capability_t
+#define bustype_CAVM_REEX_AF_REEXR_CAPABILITY(a) CSR_TYPE_RVU_PF_BAR0
+#define basename_CAVM_REEX_AF_REEXR_CAPABILITY(a) "REEX_AF_REEXR_CAPABILITY"
+#define device_bar_CAVM_REEX_AF_REEXR_CAPABILITY(a) 0x0 /* RVU_BAR0 */
+#define busnum_CAVM_REEX_AF_REEXR_CAPABILITY(a) (a)
+#define arguments_CAVM_REEX_AF_REEXR_CAPABILITY(a) (a),-1,-1,-1
+
+/**
+ * Register (RVU_PF_BAR0) ree#_af_reexr_ck_sum_0
+ *
+ * REE AF REEX RTRU Checksum 0 Register
+ * This register contains address checksum value
+ */
+union cavm_reex_af_reexr_ck_sum_0
+{
+    uint64_t u;
+    struct cavm_reex_af_reexr_ck_sum_0_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_32_63        : 32;
+        uint64_t value                 : 32; /**< [ 31:  0](RO/H) RTRU Address checksum value. */
+#else /* Word 0 - Little Endian */
+        uint64_t value                 : 32; /**< [ 31:  0](RO/H) RTRU Address checksum value. */
+        uint64_t reserved_32_63        : 32;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_reex_af_reexr_ck_sum_0_s cn; */
+};
+typedef union cavm_reex_af_reexr_ck_sum_0 cavm_reex_af_reexr_ck_sum_0_t;
+
+static inline uint64_t CAVM_REEX_AF_REEXR_CK_SUM_0(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_REEX_AF_REEXR_CK_SUM_0(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
+        return 0x840140008280ll + 0x10000000ll * ((a) & 0x1);
+    __cavm_csr_fatal("REEX_AF_REEXR_CK_SUM_0", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_REEX_AF_REEXR_CK_SUM_0(a) cavm_reex_af_reexr_ck_sum_0_t
+#define bustype_CAVM_REEX_AF_REEXR_CK_SUM_0(a) CSR_TYPE_RVU_PF_BAR0
+#define basename_CAVM_REEX_AF_REEXR_CK_SUM_0(a) "REEX_AF_REEXR_CK_SUM_0"
+#define device_bar_CAVM_REEX_AF_REEXR_CK_SUM_0(a) 0x0 /* RVU_BAR0 */
+#define busnum_CAVM_REEX_AF_REEXR_CK_SUM_0(a) (a)
+#define arguments_CAVM_REEX_AF_REEXR_CK_SUM_0(a) (a),-1,-1,-1
+
+/**
+ * Register (RVU_PF_BAR0) ree#_af_reexr_ck_sum_1
+ *
+ * REE AF REEX RTRU Checksum 1 Register
+ * This register contains data[31:0] checksum value
+ */
+union cavm_reex_af_reexr_ck_sum_1
+{
+    uint64_t u;
+    struct cavm_reex_af_reexr_ck_sum_1_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_32_63        : 32;
+        uint64_t value                 : 32; /**< [ 31:  0](RO/H) Data\<31:0\> checksum value. */
+#else /* Word 0 - Little Endian */
+        uint64_t value                 : 32; /**< [ 31:  0](RO/H) Data\<31:0\> checksum value. */
+        uint64_t reserved_32_63        : 32;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_reex_af_reexr_ck_sum_1_s cn; */
+};
+typedef union cavm_reex_af_reexr_ck_sum_1 cavm_reex_af_reexr_ck_sum_1_t;
+
+static inline uint64_t CAVM_REEX_AF_REEXR_CK_SUM_1(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_REEX_AF_REEXR_CK_SUM_1(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
+        return 0x840140008288ll + 0x10000000ll * ((a) & 0x1);
+    __cavm_csr_fatal("REEX_AF_REEXR_CK_SUM_1", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_REEX_AF_REEXR_CK_SUM_1(a) cavm_reex_af_reexr_ck_sum_1_t
+#define bustype_CAVM_REEX_AF_REEXR_CK_SUM_1(a) CSR_TYPE_RVU_PF_BAR0
+#define basename_CAVM_REEX_AF_REEXR_CK_SUM_1(a) "REEX_AF_REEXR_CK_SUM_1"
+#define device_bar_CAVM_REEX_AF_REEXR_CK_SUM_1(a) 0x0 /* RVU_BAR0 */
+#define busnum_CAVM_REEX_AF_REEXR_CK_SUM_1(a) (a)
+#define arguments_CAVM_REEX_AF_REEXR_CK_SUM_1(a) (a),-1,-1,-1
+
+/**
+ * Register (RVU_PF_BAR0) ree#_af_reexr_ck_sum_2
+ *
+ * REE AF REEX RTRU Checksum 2 Register
+ * This register contains data[63:32] checksum value
+ */
+union cavm_reex_af_reexr_ck_sum_2
+{
+    uint64_t u;
+    struct cavm_reex_af_reexr_ck_sum_2_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_32_63        : 32;
+        uint64_t value                 : 32; /**< [ 31:  0](RO/H) data[63:32] checksum value. */
+#else /* Word 0 - Little Endian */
+        uint64_t value                 : 32; /**< [ 31:  0](RO/H) data[63:32] checksum value. */
+        uint64_t reserved_32_63        : 32;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_reex_af_reexr_ck_sum_2_s cn; */
+};
+typedef union cavm_reex_af_reexr_ck_sum_2 cavm_reex_af_reexr_ck_sum_2_t;
+
+static inline uint64_t CAVM_REEX_AF_REEXR_CK_SUM_2(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_REEX_AF_REEXR_CK_SUM_2(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
+        return 0x840140008290ll + 0x10000000ll * ((a) & 0x1);
+    __cavm_csr_fatal("REEX_AF_REEXR_CK_SUM_2", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_REEX_AF_REEXR_CK_SUM_2(a) cavm_reex_af_reexr_ck_sum_2_t
+#define bustype_CAVM_REEX_AF_REEXR_CK_SUM_2(a) CSR_TYPE_RVU_PF_BAR0
+#define basename_CAVM_REEX_AF_REEXR_CK_SUM_2(a) "REEX_AF_REEXR_CK_SUM_2"
+#define device_bar_CAVM_REEX_AF_REEXR_CK_SUM_2(a) 0x0 /* RVU_BAR0 */
+#define busnum_CAVM_REEX_AF_REEXR_CK_SUM_2(a) (a)
+#define arguments_CAVM_REEX_AF_REEXR_CK_SUM_2(a) (a),-1,-1,-1
+
+/**
+ * Register (RVU_PF_BAR0) ree#_af_reexr_ctrl
+ *
+ * REE AF REEX RTRU Control Register
+ * This register controls REEX Programming Plane
+ */
+union cavm_reex_af_reexr_ctrl
+{
+    uint64_t u;
+    struct cavm_reex_af_reexr_ctrl_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_32_63        : 32;
+        uint64_t reex_reserved_2       : 26; /**< [ 31:  6](R/W) Reserved, keep 0. */
+        uint64_t init_mode             : 2;  /**< [  5:  4](R/W) Init mode regarding memories.
+                                                                 Internal:
+                                                                 First init value should be 0x1, and change to 0x2 for further inits.
+                                                                 Modes 0x0 and 0x3 are not supported by REE. */
+        uint64_t reex_reserved_1       : 2;  /**< [  3:  2](R/W) Reserved, keep 0. */
+        uint64_t go                    : 1;  /**< [  1:  1](R/W) GO. */
+        uint64_t init                  : 1;  /**< [  0:  0](R/W) Initialize REEX. */
+#else /* Word 0 - Little Endian */
+        uint64_t init                  : 1;  /**< [  0:  0](R/W) Initialize REEX. */
+        uint64_t go                    : 1;  /**< [  1:  1](R/W) GO. */
+        uint64_t reex_reserved_1       : 2;  /**< [  3:  2](R/W) Reserved, keep 0. */
+        uint64_t init_mode             : 2;  /**< [  5:  4](R/W) Init mode regarding memories.
+                                                                 Internal:
+                                                                 First init value should be 0x1, and change to 0x2 for further inits.
+                                                                 Modes 0x0 and 0x3 are not supported by REE. */
+        uint64_t reex_reserved_2       : 26; /**< [ 31:  6](R/W) Reserved, keep 0. */
+        uint64_t reserved_32_63        : 32;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_reex_af_reexr_ctrl_s cn; */
+};
+typedef union cavm_reex_af_reexr_ctrl cavm_reex_af_reexr_ctrl_t;
+
+static inline uint64_t CAVM_REEX_AF_REEXR_CTRL(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_REEX_AF_REEXR_CTRL(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
+        return 0x8401400082c0ll + 0x10000000ll * ((a) & 0x1);
+    __cavm_csr_fatal("REEX_AF_REEXR_CTRL", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_REEX_AF_REEXR_CTRL(a) cavm_reex_af_reexr_ctrl_t
+#define bustype_CAVM_REEX_AF_REEXR_CTRL(a) CSR_TYPE_RVU_PF_BAR0
+#define basename_CAVM_REEX_AF_REEXR_CTRL(a) "REEX_AF_REEXR_CTRL"
+#define device_bar_CAVM_REEX_AF_REEXR_CTRL(a) 0x0 /* RVU_BAR0 */
+#define busnum_CAVM_REEX_AF_REEXR_CTRL(a) (a)
+#define arguments_CAVM_REEX_AF_REEXR_CTRL(a) (a),-1,-1,-1
+
+/**
+ * Register (RVU_PF_BAR0) ree#_af_reexr_dscrd_count
+ *
+ * REE AF REEX RTRU Discarded Entries Count Register
+ * This register contains number of discarded entries read from RTRU_FIFO,
+ * as they targeted EM (write path to EM is not enabled).
+ */
+union cavm_reex_af_reexr_dscrd_count
+{
+    uint64_t u;
+    struct cavm_reex_af_reexr_dscrd_count_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_32_63        : 32;
+        uint64_t count                 : 32; /**< [ 31:  0](RO/H) Discarded RTRU entries count. Saturates at 32'hffffffff. */
+#else /* Word 0 - Little Endian */
+        uint64_t count                 : 32; /**< [ 31:  0](RO/H) Discarded RTRU entries count. Saturates at 32'hffffffff. */
+        uint64_t reserved_32_63        : 32;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_reex_af_reexr_dscrd_count_s cn; */
+};
+typedef union cavm_reex_af_reexr_dscrd_count cavm_reex_af_reexr_dscrd_count_t;
+
+static inline uint64_t CAVM_REEX_AF_REEXR_DSCRD_COUNT(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_REEX_AF_REEXR_DSCRD_COUNT(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
+        return 0x8401400082a0ll + 0x10000000ll * ((a) & 0x1);
+    __cavm_csr_fatal("REEX_AF_REEXR_DSCRD_COUNT", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_REEX_AF_REEXR_DSCRD_COUNT(a) cavm_reex_af_reexr_dscrd_count_t
+#define bustype_CAVM_REEX_AF_REEXR_DSCRD_COUNT(a) CSR_TYPE_RVU_PF_BAR0
+#define basename_CAVM_REEX_AF_REEXR_DSCRD_COUNT(a) "REEX_AF_REEXR_DSCRD_COUNT"
+#define device_bar_CAVM_REEX_AF_REEXR_DSCRD_COUNT(a) 0x0 /* RVU_BAR0 */
+#define busnum_CAVM_REEX_AF_REEXR_DSCRD_COUNT(a) (a)
+#define arguments_CAVM_REEX_AF_REEXR_DSCRD_COUNT(a) (a),-1,-1,-1
+
+/**
+ * Register (RVU_PF_BAR0) ree#_af_reexr_fifo_status
+ *
+ * REE AF REEX RTRU FIFO Status Register
+ * This register contains status information about RTRU
+ */
+union cavm_reex_af_reexr_fifo_status
+{
+    uint64_t u;
+    struct cavm_reex_af_reexr_fifo_status_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_16_63        : 48;
+        uint64_t num_entries           : 16; /**< [ 15:  0](RO/H) Fill level of the RTRU FIFO. */
+#else /* Word 0 - Little Endian */
+        uint64_t num_entries           : 16; /**< [ 15:  0](RO/H) Fill level of the RTRU FIFO. */
+        uint64_t reserved_16_63        : 48;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_reex_af_reexr_fifo_status_s cn; */
+};
+typedef union cavm_reex_af_reexr_fifo_status cavm_reex_af_reexr_fifo_status_t;
+
+static inline uint64_t CAVM_REEX_AF_REEXR_FIFO_STATUS(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_REEX_AF_REEXR_FIFO_STATUS(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
+        return 0x840140008258ll + 0x10000000ll * ((a) & 0x1);
+    __cavm_csr_fatal("REEX_AF_REEXR_FIFO_STATUS", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_REEX_AF_REEXR_FIFO_STATUS(a) cavm_reex_af_reexr_fifo_status_t
+#define bustype_CAVM_REEX_AF_REEXR_FIFO_STATUS(a) CSR_TYPE_RVU_PF_BAR0
+#define basename_CAVM_REEX_AF_REEXR_FIFO_STATUS(a) "REEX_AF_REEXR_FIFO_STATUS"
+#define device_bar_CAVM_REEX_AF_REEXR_FIFO_STATUS(a) 0x0 /* RVU_BAR0 */
+#define busnum_CAVM_REEX_AF_REEXR_FIFO_STATUS(a) (a)
+#define arguments_CAVM_REEX_AF_REEXR_FIFO_STATUS(a) (a),-1,-1,-1
+
+/**
+ * Register (RVU_PF_BAR0) ree#_af_reexr_rof_metadata
+ *
+ * REE AF REEX RTRU Metadata Register
+ * Metadata value
+ */
+union cavm_reex_af_reexr_rof_metadata
+{
+    uint64_t u;
+    struct cavm_reex_af_reexr_rof_metadata_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_32_63        : 32;
+        uint64_t metadata              : 32; /**< [ 31:  0](RO/H) Metadata value embedded in rules memories (T2.0).
+                                                                 This could indicate PTPB, but if PTPB gets deprecated as it is less relevant
+                                                                 for bi-directional walk support, it could be populated with user-specified value.
+                                                                 Value change - same behavior as ROF_REVISION above. */
+#else /* Word 0 - Little Endian */
+        uint64_t metadata              : 32; /**< [ 31:  0](RO/H) Metadata value embedded in rules memories (T2.0).
+                                                                 This could indicate PTPB, but if PTPB gets deprecated as it is less relevant
+                                                                 for bi-directional walk support, it could be populated with user-specified value.
+                                                                 Value change - same behavior as ROF_REVISION above. */
+        uint64_t reserved_32_63        : 32;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_reex_af_reexr_rof_metadata_s cn; */
+};
+typedef union cavm_reex_af_reexr_rof_metadata cavm_reex_af_reexr_rof_metadata_t;
+
+static inline uint64_t CAVM_REEX_AF_REEXR_ROF_METADATA(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_REEX_AF_REEXR_ROF_METADATA(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
+        return 0x8401400082b8ll + 0x10000000ll * ((a) & 0x1);
+    __cavm_csr_fatal("REEX_AF_REEXR_ROF_METADATA", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_REEX_AF_REEXR_ROF_METADATA(a) cavm_reex_af_reexr_rof_metadata_t
+#define bustype_CAVM_REEX_AF_REEXR_ROF_METADATA(a) CSR_TYPE_RVU_PF_BAR0
+#define basename_CAVM_REEX_AF_REEXR_ROF_METADATA(a) "REEX_AF_REEXR_ROF_METADATA"
+#define device_bar_CAVM_REEX_AF_REEXR_ROF_METADATA(a) 0x0 /* RVU_BAR0 */
+#define busnum_CAVM_REEX_AF_REEXR_ROF_METADATA(a) (a)
+#define arguments_CAVM_REEX_AF_REEXR_ROF_METADATA(a) (a),-1,-1,-1
+
+/**
+ * Register (RVU_PF_BAR0) ree#_af_reexr_rof_revision
+ *
+ * REE AF REEX RTRU Revision Register
+ * Revision number
+ */
+union cavm_reex_af_reexr_rof_revision
+{
+    uint64_t u;
+    struct cavm_reex_af_reexr_rof_revision_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_32_63        : 32;
+        uint64_t revision              : 32; /**< [ 31:  0](RO) Revision Value embedded in rules memories.
+                                                                 It can change if there is a non-zero entry for a specific address is inserted in
+                                                                 the ROF file and written to the rules memories */
+#else /* Word 0 - Little Endian */
+        uint64_t revision              : 32; /**< [ 31:  0](RO) Revision Value embedded in rules memories.
+                                                                 It can change if there is a non-zero entry for a specific address is inserted in
+                                                                 the ROF file and written to the rules memories */
+        uint64_t reserved_32_63        : 32;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_reex_af_reexr_rof_revision_s cn; */
+};
+typedef union cavm_reex_af_reexr_rof_revision cavm_reex_af_reexr_rof_revision_t;
+
+static inline uint64_t CAVM_REEX_AF_REEXR_ROF_REVISION(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_REEX_AF_REEXR_ROF_REVISION(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
+        return 0x8401400082b0ll + 0x10000000ll * ((a) & 0x1);
+    __cavm_csr_fatal("REEX_AF_REEXR_ROF_REVISION", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_REEX_AF_REEXR_ROF_REVISION(a) cavm_reex_af_reexr_rof_revision_t
+#define bustype_CAVM_REEX_AF_REEXR_ROF_REVISION(a) CSR_TYPE_RVU_PF_BAR0
+#define basename_CAVM_REEX_AF_REEXR_ROF_REVISION(a) "REEX_AF_REEXR_ROF_REVISION"
+#define device_bar_CAVM_REEX_AF_REEXR_ROF_REVISION(a) 0x0 /* RVU_BAR0 */
+#define busnum_CAVM_REEX_AF_REEXR_ROF_REVISION(a) (a)
+#define arguments_CAVM_REEX_AF_REEXR_ROF_REVISION(a) (a),-1,-1,-1
+
+/**
+ * Register (RVU_PF_BAR0) ree#_af_reexr_rtru_count
+ *
+ * REE AF REEX RTRU Count Register
+ * Number of completed RTRUs
+ */
+union cavm_reex_af_reexr_rtru_count
+{
+    uint64_t u;
+    struct cavm_reex_af_reexr_rtru_count_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_32_63        : 32;
+        uint64_t count                 : 32; /**< [ 31:  0](RO/H) Number of completed RTRUs */
+#else /* Word 0 - Little Endian */
+        uint64_t count                 : 32; /**< [ 31:  0](RO/H) Number of completed RTRUs */
+        uint64_t reserved_32_63        : 32;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_reex_af_reexr_rtru_count_s cn; */
+};
+typedef union cavm_reex_af_reexr_rtru_count cavm_reex_af_reexr_rtru_count_t;
+
+static inline uint64_t CAVM_REEX_AF_REEXR_RTRU_COUNT(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_REEX_AF_REEXR_RTRU_COUNT(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
+        return 0x8401400082a8ll + 0x10000000ll * ((a) & 0x1);
+    __cavm_csr_fatal("REEX_AF_REEXR_RTRU_COUNT", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_REEX_AF_REEXR_RTRU_COUNT(a) cavm_reex_af_reexr_rtru_count_t
+#define bustype_CAVM_REEX_AF_REEXR_RTRU_COUNT(a) CSR_TYPE_RVU_PF_BAR0
+#define basename_CAVM_REEX_AF_REEXR_RTRU_COUNT(a) "REEX_AF_REEXR_RTRU_COUNT"
+#define device_bar_CAVM_REEX_AF_REEXR_RTRU_COUNT(a) 0x0 /* RVU_BAR0 */
+#define busnum_CAVM_REEX_AF_REEXR_RTRU_COUNT(a) (a)
+#define arguments_CAVM_REEX_AF_REEXR_RTRU_COUNT(a) (a),-1,-1,-1
+
+/**
+ * Register (RVU_PF_BAR0) ree#_af_reexr_status
+ *
+ * REE AF REEX RTRU Status Register
+ * This register contains status information about RTRU
+ */
+union cavm_reex_af_reexr_status
+{
+    uint64_t u;
+    struct cavm_reex_af_reexr_status_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_8_63         : 56;
+        uint64_t em_init_done          : 1;  /**< [  7:  7](RO/H) Asserted if External memory intialization is complete. */
+        uint64_t l2_cache_init_done    : 1;  /**< [  6:  6](RO/H) Asserted if REEX L2 cache intialization is complete. */
+        uint64_t l1_cache_init_done    : 1;  /**< [  5:  5](RO/H) Asserted if REEX L1 cache intialization is complete. */
+        uint64_t im_init_done          : 1;  /**< [  4:  4](RO/H) Asserted if REEX Internal memory intialization is complete. */
+        uint64_t reserved_2_3          : 2;
+        uint64_t update_done           : 1;  /**< [  1:  1](RO/H) Asserted if rules update transaction is complete. */
+        uint64_t update_req            : 1;  /**< [  0:  0](RO/H) Update required is asserted if a rules update is required i.e. one or more
+                                                                 values have been written to the RTRU FIFO. */
+#else /* Word 0 - Little Endian */
+        uint64_t update_req            : 1;  /**< [  0:  0](RO/H) Update required is asserted if a rules update is required i.e. one or more
+                                                                 values have been written to the RTRU FIFO. */
+        uint64_t update_done           : 1;  /**< [  1:  1](RO/H) Asserted if rules update transaction is complete. */
+        uint64_t reserved_2_3          : 2;
+        uint64_t im_init_done          : 1;  /**< [  4:  4](RO/H) Asserted if REEX Internal memory intialization is complete. */
+        uint64_t l1_cache_init_done    : 1;  /**< [  5:  5](RO/H) Asserted if REEX L1 cache intialization is complete. */
+        uint64_t l2_cache_init_done    : 1;  /**< [  6:  6](RO/H) Asserted if REEX L2 cache intialization is complete. */
+        uint64_t em_init_done          : 1;  /**< [  7:  7](RO/H) Asserted if External memory intialization is complete. */
+        uint64_t reserved_8_63         : 56;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_reex_af_reexr_status_s cn; */
+};
+typedef union cavm_reex_af_reexr_status cavm_reex_af_reexr_status_t;
+
+static inline uint64_t CAVM_REEX_AF_REEXR_STATUS(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_REEX_AF_REEXR_STATUS(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
+        return 0x840140008250ll + 0x10000000ll * ((a) & 0x1);
+    __cavm_csr_fatal("REEX_AF_REEXR_STATUS", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_REEX_AF_REEXR_STATUS(a) cavm_reex_af_reexr_status_t
+#define bustype_CAVM_REEX_AF_REEXR_STATUS(a) CSR_TYPE_RVU_PF_BAR0
+#define basename_CAVM_REEX_AF_REEXR_STATUS(a) "REEX_AF_REEXR_STATUS"
+#define device_bar_CAVM_REEX_AF_REEXR_STATUS(a) 0x0 /* RVU_BAR0 */
+#define busnum_CAVM_REEX_AF_REEXR_STATUS(a) (a)
+#define arguments_CAVM_REEX_AF_REEXR_STATUS(a) (a),-1,-1,-1
+
+/**
+ * Register (RVU_PF_BAR0) ree#_af_reexs_cluster_0
+ *
+ * REE AF REEX STAT CLUSTER_0 Register
+ * Statistics for REEX cluster 0
+ */
+union cavm_reex_af_reexs_cluster_0
+{
+    uint64_t u;
+    struct cavm_reex_af_reexs_cluster_0_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_32_63        : 32;
+        uint64_t instruction_duty_cycle : 8; /**< [ 31: 24](RO/H) Number of instructions that were executed in the previous
+                                                                 window block of 256 clock cycles. */
+        uint64_t hit_duty_cycle        : 8;  /**< [ 23: 16](RO/H) Number of clock cycles HIT was asserted in the previous
+                                                                 window block of 256 clock cycles. */
+        uint64_t tce_idle_1d           : 8;  /**< [ 15:  8](RO/H) Each bit is asserted if associated TCE(7:0) was idle
+                                                                 for the previous window block of 256 clock cycles.
+
+                                                                 Internal:
+                                                                 FIXME - Titan to fix, there are now 16 TCEs per cluster, but only 8 bits.
+                                                                 Also, reset value might be wrong, Titan to update. */
+        uint64_t jce_idle_1d           : 8;  /**< [  7:  0](RO/H) Each bit is asserted if associated JCE(7:0) was idle
+                                                                 for the previous window block of 256 clock cycles. */
+#else /* Word 0 - Little Endian */
+        uint64_t jce_idle_1d           : 8;  /**< [  7:  0](RO/H) Each bit is asserted if associated JCE(7:0) was idle
+                                                                 for the previous window block of 256 clock cycles. */
+        uint64_t tce_idle_1d           : 8;  /**< [ 15:  8](RO/H) Each bit is asserted if associated TCE(7:0) was idle
+                                                                 for the previous window block of 256 clock cycles.
+
+                                                                 Internal:
+                                                                 FIXME - Titan to fix, there are now 16 TCEs per cluster, but only 8 bits.
+                                                                 Also, reset value might be wrong, Titan to update. */
+        uint64_t hit_duty_cycle        : 8;  /**< [ 23: 16](RO/H) Number of clock cycles HIT was asserted in the previous
+                                                                 window block of 256 clock cycles. */
+        uint64_t instruction_duty_cycle : 8; /**< [ 31: 24](RO/H) Number of instructions that were executed in the previous
+                                                                 window block of 256 clock cycles. */
+        uint64_t reserved_32_63        : 32;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_reex_af_reexs_cluster_0_s cn; */
+};
+typedef union cavm_reex_af_reexs_cluster_0 cavm_reex_af_reexs_cluster_0_t;
+
+static inline uint64_t CAVM_REEX_AF_REEXS_CLUSTER_0(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_REEX_AF_REEXS_CLUSTER_0(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
+        return 0x840140008400ll + 0x10000000ll * ((a) & 0x1);
+    __cavm_csr_fatal("REEX_AF_REEXS_CLUSTER_0", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_REEX_AF_REEXS_CLUSTER_0(a) cavm_reex_af_reexs_cluster_0_t
+#define bustype_CAVM_REEX_AF_REEXS_CLUSTER_0(a) CSR_TYPE_RVU_PF_BAR0
+#define basename_CAVM_REEX_AF_REEXS_CLUSTER_0(a) "REEX_AF_REEXS_CLUSTER_0"
+#define device_bar_CAVM_REEX_AF_REEXS_CLUSTER_0(a) 0x0 /* RVU_BAR0 */
+#define busnum_CAVM_REEX_AF_REEXS_CLUSTER_0(a) (a)
+#define arguments_CAVM_REEX_AF_REEXS_CLUSTER_0(a) (a),-1,-1,-1
+
+/**
+ * Register (RVU_PF_BAR0) ree#_af_reexs_cluster_1
+ *
+ * REE AF REEX STAT CLUSTER_1 Register
+ * Statistics for REEX cluster 1
+ */
+union cavm_reex_af_reexs_cluster_1
+{
+    uint64_t u;
+    struct cavm_reex_af_reexs_cluster_1_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_32_63        : 32;
+        uint64_t instruction_duty_cycle : 8; /**< [ 31: 24](RO/H) Number of instructions that were executed in the previous
+                                                                 window block of 256 clock cycles. */
+        uint64_t hit_duty_cycle        : 8;  /**< [ 23: 16](RO/H) Number of clock cycles HIT was asserted in the previous
+                                                                 window block of 256 clock cycles. */
+        uint64_t tce_idle_1d           : 8;  /**< [ 15:  8](RO/H) Each bit is asserted if associated TCE(7:0) was idle
+                                                                 for the previous window block of 256 clock cycles.
+
+                                                                 Internal:
+                                                                 FIXME - Titan to fix, there are now 16 TCEs per cluster, but only 8 bits.
+                                                                 Also, reset value might be wrong, Titan to update. */
+        uint64_t jce_idle_1d           : 8;  /**< [  7:  0](RO/H) Each bit is asserted if associated JCE(7:0) was idle
+                                                                 for the previous window block of 256 clock cycles. */
+#else /* Word 0 - Little Endian */
+        uint64_t jce_idle_1d           : 8;  /**< [  7:  0](RO/H) Each bit is asserted if associated JCE(7:0) was idle
+                                                                 for the previous window block of 256 clock cycles. */
+        uint64_t tce_idle_1d           : 8;  /**< [ 15:  8](RO/H) Each bit is asserted if associated TCE(7:0) was idle
+                                                                 for the previous window block of 256 clock cycles.
+
+                                                                 Internal:
+                                                                 FIXME - Titan to fix, there are now 16 TCEs per cluster, but only 8 bits.
+                                                                 Also, reset value might be wrong, Titan to update. */
+        uint64_t hit_duty_cycle        : 8;  /**< [ 23: 16](RO/H) Number of clock cycles HIT was asserted in the previous
+                                                                 window block of 256 clock cycles. */
+        uint64_t instruction_duty_cycle : 8; /**< [ 31: 24](RO/H) Number of instructions that were executed in the previous
+                                                                 window block of 256 clock cycles. */
+        uint64_t reserved_32_63        : 32;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_reex_af_reexs_cluster_1_s cn; */
+};
+typedef union cavm_reex_af_reexs_cluster_1 cavm_reex_af_reexs_cluster_1_t;
+
+static inline uint64_t CAVM_REEX_AF_REEXS_CLUSTER_1(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_REEX_AF_REEXS_CLUSTER_1(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
+        return 0x840140008408ll + 0x10000000ll * ((a) & 0x1);
+    __cavm_csr_fatal("REEX_AF_REEXS_CLUSTER_1", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_REEX_AF_REEXS_CLUSTER_1(a) cavm_reex_af_reexs_cluster_1_t
+#define bustype_CAVM_REEX_AF_REEXS_CLUSTER_1(a) CSR_TYPE_RVU_PF_BAR0
+#define basename_CAVM_REEX_AF_REEXS_CLUSTER_1(a) "REEX_AF_REEXS_CLUSTER_1"
+#define device_bar_CAVM_REEX_AF_REEXS_CLUSTER_1(a) 0x0 /* RVU_BAR0 */
+#define busnum_CAVM_REEX_AF_REEXS_CLUSTER_1(a) (a)
+#define arguments_CAVM_REEX_AF_REEXS_CLUSTER_1(a) (a),-1,-1,-1
+
+/**
+ * Register (RVU_PF_BAR0) ree#_af_reexs_cluster_2
+ *
+ * REE AF REEX STAT CLUSTER_2 Register
+ * Statistics for REEX cluster 2
+ */
+union cavm_reex_af_reexs_cluster_2
+{
+    uint64_t u;
+    struct cavm_reex_af_reexs_cluster_2_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_32_63        : 32;
+        uint64_t instruction_duty_cycle : 8; /**< [ 31: 24](RO/H) Number of instructions that were executed in the previous
+                                                                 window block of 256 clock cycles. */
+        uint64_t hit_duty_cycle        : 8;  /**< [ 23: 16](RO/H) Number of clock cycles HIT was asserted in the previous
+                                                                 window block of 256 clock cycles. */
+        uint64_t tce_idle_1d           : 8;  /**< [ 15:  8](RO/H) Each bit is asserted if associated TCE(7:0) was idle
+                                                                 for the previous window block of 256 clock cycles.
+
+                                                                 Internal:
+                                                                 FIXME - Titan to fix, there are now 16 TCEs per cluster, but only 8 bits.
+                                                                 Also, reset value might be wrong, Titan to update. */
+        uint64_t jce_idle_1d           : 8;  /**< [  7:  0](RO/H) Each bit is asserted if associated JCE(7:0) was idle
+                                                                 for the previous window block of 256 clock cycles. */
+#else /* Word 0 - Little Endian */
+        uint64_t jce_idle_1d           : 8;  /**< [  7:  0](RO/H) Each bit is asserted if associated JCE(7:0) was idle
+                                                                 for the previous window block of 256 clock cycles. */
+        uint64_t tce_idle_1d           : 8;  /**< [ 15:  8](RO/H) Each bit is asserted if associated TCE(7:0) was idle
+                                                                 for the previous window block of 256 clock cycles.
+
+                                                                 Internal:
+                                                                 FIXME - Titan to fix, there are now 16 TCEs per cluster, but only 8 bits.
+                                                                 Also, reset value might be wrong, Titan to update. */
+        uint64_t hit_duty_cycle        : 8;  /**< [ 23: 16](RO/H) Number of clock cycles HIT was asserted in the previous
+                                                                 window block of 256 clock cycles. */
+        uint64_t instruction_duty_cycle : 8; /**< [ 31: 24](RO/H) Number of instructions that were executed in the previous
+                                                                 window block of 256 clock cycles. */
+        uint64_t reserved_32_63        : 32;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_reex_af_reexs_cluster_2_s cn; */
+};
+typedef union cavm_reex_af_reexs_cluster_2 cavm_reex_af_reexs_cluster_2_t;
+
+static inline uint64_t CAVM_REEX_AF_REEXS_CLUSTER_2(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_REEX_AF_REEXS_CLUSTER_2(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
+        return 0x840140008410ll + 0x10000000ll * ((a) & 0x1);
+    __cavm_csr_fatal("REEX_AF_REEXS_CLUSTER_2", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_REEX_AF_REEXS_CLUSTER_2(a) cavm_reex_af_reexs_cluster_2_t
+#define bustype_CAVM_REEX_AF_REEXS_CLUSTER_2(a) CSR_TYPE_RVU_PF_BAR0
+#define basename_CAVM_REEX_AF_REEXS_CLUSTER_2(a) "REEX_AF_REEXS_CLUSTER_2"
+#define device_bar_CAVM_REEX_AF_REEXS_CLUSTER_2(a) 0x0 /* RVU_BAR0 */
+#define busnum_CAVM_REEX_AF_REEXS_CLUSTER_2(a) (a)
+#define arguments_CAVM_REEX_AF_REEXS_CLUSTER_2(a) (a),-1,-1,-1
+
+/**
+ * Register (RVU_PF_BAR0) ree#_af_reexs_cluster_3
+ *
+ * REE AF REEX STAT CLUSTER_3 Register
+ * Statistics for REEX cluster 3
+ */
+union cavm_reex_af_reexs_cluster_3
+{
+    uint64_t u;
+    struct cavm_reex_af_reexs_cluster_3_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_32_63        : 32;
+        uint64_t instruction_duty_cycle : 8; /**< [ 31: 24](RO/H) Number of instructions that were executed in the previous
+                                                                 window block of 256 clock cycles. */
+        uint64_t hit_duty_cycle        : 8;  /**< [ 23: 16](RO/H) Number of clock cycles HIT was asserted in the previous
+                                                                 window block of 256 clock cycles. */
+        uint64_t tce_idle_1d           : 8;  /**< [ 15:  8](RO/H) Each bit is asserted if associated TCE(7:0) was idle
+                                                                 for the previous window block of 256 clock cycles.
+
+                                                                 Internal:
+                                                                 FIXME - Titan to fix, there are now 16 TCEs per cluster, but only 8 bits.
+                                                                 Also, reset value might be wrong, Titan to update. */
+        uint64_t jce_idle_1d           : 8;  /**< [  7:  0](RO/H) Each bit is asserted if associated JCE(7:0) was idle
+                                                                 for the previous window block of 256 clock cycles. */
+#else /* Word 0 - Little Endian */
+        uint64_t jce_idle_1d           : 8;  /**< [  7:  0](RO/H) Each bit is asserted if associated JCE(7:0) was idle
+                                                                 for the previous window block of 256 clock cycles. */
+        uint64_t tce_idle_1d           : 8;  /**< [ 15:  8](RO/H) Each bit is asserted if associated TCE(7:0) was idle
+                                                                 for the previous window block of 256 clock cycles.
+
+                                                                 Internal:
+                                                                 FIXME - Titan to fix, there are now 16 TCEs per cluster, but only 8 bits.
+                                                                 Also, reset value might be wrong, Titan to update. */
+        uint64_t hit_duty_cycle        : 8;  /**< [ 23: 16](RO/H) Number of clock cycles HIT was asserted in the previous
+                                                                 window block of 256 clock cycles. */
+        uint64_t instruction_duty_cycle : 8; /**< [ 31: 24](RO/H) Number of instructions that were executed in the previous
+                                                                 window block of 256 clock cycles. */
+        uint64_t reserved_32_63        : 32;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_reex_af_reexs_cluster_3_s cn; */
+};
+typedef union cavm_reex_af_reexs_cluster_3 cavm_reex_af_reexs_cluster_3_t;
+
+static inline uint64_t CAVM_REEX_AF_REEXS_CLUSTER_3(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_REEX_AF_REEXS_CLUSTER_3(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
+        return 0x840140008418ll + 0x10000000ll * ((a) & 0x1);
+    __cavm_csr_fatal("REEX_AF_REEXS_CLUSTER_3", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_REEX_AF_REEXS_CLUSTER_3(a) cavm_reex_af_reexs_cluster_3_t
+#define bustype_CAVM_REEX_AF_REEXS_CLUSTER_3(a) CSR_TYPE_RVU_PF_BAR0
+#define basename_CAVM_REEX_AF_REEXS_CLUSTER_3(a) "REEX_AF_REEXS_CLUSTER_3"
+#define device_bar_CAVM_REEX_AF_REEXS_CLUSTER_3(a) 0x0 /* RVU_BAR0 */
+#define busnum_CAVM_REEX_AF_REEXS_CLUSTER_3(a) (a)
+#define arguments_CAVM_REEX_AF_REEXS_CLUSTER_3(a) (a),-1,-1,-1
+
+/**
+ * Register (RVU_PF_BAR0) ree#_af_reexs_cluster_4
+ *
+ * REE AF REEX STAT CLUSTER_4 Register
+ * Statistics for REEX cluster 4
+ */
+union cavm_reex_af_reexs_cluster_4
+{
+    uint64_t u;
+    struct cavm_reex_af_reexs_cluster_4_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_32_63        : 32;
+        uint64_t instruction_duty_cycle : 8; /**< [ 31: 24](RO/H) Number of instructions that were executed in the previous
+                                                                 window block of 256 clock cycles. */
+        uint64_t hit_duty_cycle        : 8;  /**< [ 23: 16](RO/H) Number of clock cycles HIT was asserted in the previous
+                                                                 window block of 256 clock cycles. */
+        uint64_t tce_idle_1d           : 8;  /**< [ 15:  8](RO/H) Each bit is asserted if associated TCE(7:0) was idle
+                                                                 for the previous window block of 256 clock cycles.
+
+                                                                 Internal:
+                                                                 FIXME - Titan to fix, there are now 16 TCEs per cluster, but only 8 bits.
+                                                                 Also, reset value might be wrong, Titan to update. */
+        uint64_t jce_idle_1d           : 8;  /**< [  7:  0](RO/H) Each bit is asserted if associated JCE(7:0) was idle
+                                                                 for the previous window block of 256 clock cycles. */
+#else /* Word 0 - Little Endian */
+        uint64_t jce_idle_1d           : 8;  /**< [  7:  0](RO/H) Each bit is asserted if associated JCE(7:0) was idle
+                                                                 for the previous window block of 256 clock cycles. */
+        uint64_t tce_idle_1d           : 8;  /**< [ 15:  8](RO/H) Each bit is asserted if associated TCE(7:0) was idle
+                                                                 for the previous window block of 256 clock cycles.
+
+                                                                 Internal:
+                                                                 FIXME - Titan to fix, there are now 16 TCEs per cluster, but only 8 bits.
+                                                                 Also, reset value might be wrong, Titan to update. */
+        uint64_t hit_duty_cycle        : 8;  /**< [ 23: 16](RO/H) Number of clock cycles HIT was asserted in the previous
+                                                                 window block of 256 clock cycles. */
+        uint64_t instruction_duty_cycle : 8; /**< [ 31: 24](RO/H) Number of instructions that were executed in the previous
+                                                                 window block of 256 clock cycles. */
+        uint64_t reserved_32_63        : 32;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_reex_af_reexs_cluster_4_s cn; */
+};
+typedef union cavm_reex_af_reexs_cluster_4 cavm_reex_af_reexs_cluster_4_t;
+
+static inline uint64_t CAVM_REEX_AF_REEXS_CLUSTER_4(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_REEX_AF_REEXS_CLUSTER_4(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
+        return 0x840140008420ll + 0x10000000ll * ((a) & 0x1);
+    __cavm_csr_fatal("REEX_AF_REEXS_CLUSTER_4", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_REEX_AF_REEXS_CLUSTER_4(a) cavm_reex_af_reexs_cluster_4_t
+#define bustype_CAVM_REEX_AF_REEXS_CLUSTER_4(a) CSR_TYPE_RVU_PF_BAR0
+#define basename_CAVM_REEX_AF_REEXS_CLUSTER_4(a) "REEX_AF_REEXS_CLUSTER_4"
+#define device_bar_CAVM_REEX_AF_REEXS_CLUSTER_4(a) 0x0 /* RVU_BAR0 */
+#define busnum_CAVM_REEX_AF_REEXS_CLUSTER_4(a) (a)
+#define arguments_CAVM_REEX_AF_REEXS_CLUSTER_4(a) (a),-1,-1,-1
+
+/**
+ * Register (RVU_PF_BAR0) ree#_af_reexs_cluster_5
+ *
+ * REE AF REEX STAT CLUSTER_5 Register
+ * Statistics for REEX cluster 5
+ */
+union cavm_reex_af_reexs_cluster_5
+{
+    uint64_t u;
+    struct cavm_reex_af_reexs_cluster_5_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_32_63        : 32;
+        uint64_t instruction_duty_cycle : 8; /**< [ 31: 24](RO/H) Number of instructions that were executed in the previous
+                                                                 window block of 256 clock cycles. */
+        uint64_t hit_duty_cycle        : 8;  /**< [ 23: 16](RO/H) Number of clock cycles HIT was asserted in the previous
+                                                                 window block of 256 clock cycles. */
+        uint64_t tce_idle_1d           : 8;  /**< [ 15:  8](RO/H) Each bit is asserted if associated TCE(7:0) was idle
+                                                                 for the previous window block of 256 clock cycles.
+
+                                                                 Internal:
+                                                                 FIXME - Titan to fix, there are now 16 TCEs per cluster, but only 8 bits.
+                                                                 Also, reset value might be wrong, Titan to update. */
+        uint64_t jce_idle_1d           : 8;  /**< [  7:  0](RO/H) Each bit is asserted if associated JCE(7:0) was idle
+                                                                 for the previous window block of 256 clock cycles. */
+#else /* Word 0 - Little Endian */
+        uint64_t jce_idle_1d           : 8;  /**< [  7:  0](RO/H) Each bit is asserted if associated JCE(7:0) was idle
+                                                                 for the previous window block of 256 clock cycles. */
+        uint64_t tce_idle_1d           : 8;  /**< [ 15:  8](RO/H) Each bit is asserted if associated TCE(7:0) was idle
+                                                                 for the previous window block of 256 clock cycles.
+
+                                                                 Internal:
+                                                                 FIXME - Titan to fix, there are now 16 TCEs per cluster, but only 8 bits.
+                                                                 Also, reset value might be wrong, Titan to update. */
+        uint64_t hit_duty_cycle        : 8;  /**< [ 23: 16](RO/H) Number of clock cycles HIT was asserted in the previous
+                                                                 window block of 256 clock cycles. */
+        uint64_t instruction_duty_cycle : 8; /**< [ 31: 24](RO/H) Number of instructions that were executed in the previous
+                                                                 window block of 256 clock cycles. */
+        uint64_t reserved_32_63        : 32;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_reex_af_reexs_cluster_5_s cn; */
+};
+typedef union cavm_reex_af_reexs_cluster_5 cavm_reex_af_reexs_cluster_5_t;
+
+static inline uint64_t CAVM_REEX_AF_REEXS_CLUSTER_5(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_REEX_AF_REEXS_CLUSTER_5(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
+        return 0x840140008428ll + 0x10000000ll * ((a) & 0x1);
+    __cavm_csr_fatal("REEX_AF_REEXS_CLUSTER_5", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_REEX_AF_REEXS_CLUSTER_5(a) cavm_reex_af_reexs_cluster_5_t
+#define bustype_CAVM_REEX_AF_REEXS_CLUSTER_5(a) CSR_TYPE_RVU_PF_BAR0
+#define basename_CAVM_REEX_AF_REEXS_CLUSTER_5(a) "REEX_AF_REEXS_CLUSTER_5"
+#define device_bar_CAVM_REEX_AF_REEXS_CLUSTER_5(a) 0x0 /* RVU_BAR0 */
+#define busnum_CAVM_REEX_AF_REEXS_CLUSTER_5(a) (a)
+#define arguments_CAVM_REEX_AF_REEXS_CLUSTER_5(a) (a),-1,-1,-1
+
+/**
+ * Register (RVU_PF_BAR0) ree#_af_reexs_cluster_6
+ *
+ * REE AF REEX STAT CLUSTER_6 Register
+ * Statistics for REEX cluster 6
+ */
+union cavm_reex_af_reexs_cluster_6
+{
+    uint64_t u;
+    struct cavm_reex_af_reexs_cluster_6_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_32_63        : 32;
+        uint64_t instruction_duty_cycle : 8; /**< [ 31: 24](RO/H) Number of instructions that were executed in the previous
+                                                                 window block of 256 clock cycles. */
+        uint64_t hit_duty_cycle        : 8;  /**< [ 23: 16](RO/H) Number of clock cycles HIT was asserted in the previous
+                                                                 window block of 256 clock cycles. */
+        uint64_t tce_idle_1d           : 8;  /**< [ 15:  8](RO/H) Each bit is asserted if associated TCE(7:0) was idle
+                                                                 for the previous window block of 256 clock cycles.
+
+                                                                 Internal:
+                                                                 FIXME - Titan to fix, there are now 16 TCEs per cluster, but only 8 bits.
+                                                                 Also, reset value might be wrong, Titan to update. */
+        uint64_t jce_idle_1d           : 8;  /**< [  7:  0](RO/H) Each bit is asserted if associated JCE(7:0) was idle
+                                                                 for the previous window block of 256 clock cycles. */
+#else /* Word 0 - Little Endian */
+        uint64_t jce_idle_1d           : 8;  /**< [  7:  0](RO/H) Each bit is asserted if associated JCE(7:0) was idle
+                                                                 for the previous window block of 256 clock cycles. */
+        uint64_t tce_idle_1d           : 8;  /**< [ 15:  8](RO/H) Each bit is asserted if associated TCE(7:0) was idle
+                                                                 for the previous window block of 256 clock cycles.
+
+                                                                 Internal:
+                                                                 FIXME - Titan to fix, there are now 16 TCEs per cluster, but only 8 bits.
+                                                                 Also, reset value might be wrong, Titan to update. */
+        uint64_t hit_duty_cycle        : 8;  /**< [ 23: 16](RO/H) Number of clock cycles HIT was asserted in the previous
+                                                                 window block of 256 clock cycles. */
+        uint64_t instruction_duty_cycle : 8; /**< [ 31: 24](RO/H) Number of instructions that were executed in the previous
+                                                                 window block of 256 clock cycles. */
+        uint64_t reserved_32_63        : 32;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_reex_af_reexs_cluster_6_s cn; */
+};
+typedef union cavm_reex_af_reexs_cluster_6 cavm_reex_af_reexs_cluster_6_t;
+
+static inline uint64_t CAVM_REEX_AF_REEXS_CLUSTER_6(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_REEX_AF_REEXS_CLUSTER_6(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
+        return 0x840140008430ll + 0x10000000ll * ((a) & 0x1);
+    __cavm_csr_fatal("REEX_AF_REEXS_CLUSTER_6", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_REEX_AF_REEXS_CLUSTER_6(a) cavm_reex_af_reexs_cluster_6_t
+#define bustype_CAVM_REEX_AF_REEXS_CLUSTER_6(a) CSR_TYPE_RVU_PF_BAR0
+#define basename_CAVM_REEX_AF_REEXS_CLUSTER_6(a) "REEX_AF_REEXS_CLUSTER_6"
+#define device_bar_CAVM_REEX_AF_REEXS_CLUSTER_6(a) 0x0 /* RVU_BAR0 */
+#define busnum_CAVM_REEX_AF_REEXS_CLUSTER_6(a) (a)
+#define arguments_CAVM_REEX_AF_REEXS_CLUSTER_6(a) (a),-1,-1,-1
+
+/**
+ * Register (RVU_PF_BAR0) ree#_af_reexs_cluster_7
+ *
+ * REE AF REEX STAT CLUSTER_7 Register
+ * Statistics for REEX cluster 7
+ */
+union cavm_reex_af_reexs_cluster_7
+{
+    uint64_t u;
+    struct cavm_reex_af_reexs_cluster_7_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_32_63        : 32;
+        uint64_t instruction_duty_cycle : 8; /**< [ 31: 24](RO/H) Number of instructions that were executed in the previous
+                                                                 window block of 256 clock cycles. */
+        uint64_t hit_duty_cycle        : 8;  /**< [ 23: 16](RO/H) Number of clock cycles HIT was asserted in the previous
+                                                                 window block of 256 clock cycles. */
+        uint64_t tce_idle_1d           : 8;  /**< [ 15:  8](RO/H) Each bit is asserted if associated TCE(7:0) was idle
+                                                                 for the previous window block of 256 clock cycles.
+
+                                                                 Internal:
+                                                                 FIXME - Titan to fix, there are now 16 TCEs per cluster, but only 8 bits.
+                                                                 Also, reset value might be wrong, Titan to update. */
+        uint64_t jce_idle_1d           : 8;  /**< [  7:  0](RO/H) Each bit is asserted if associated JCE(7:0) was idle
+                                                                 for the previous window block of 256 clock cycles. */
+#else /* Word 0 - Little Endian */
+        uint64_t jce_idle_1d           : 8;  /**< [  7:  0](RO/H) Each bit is asserted if associated JCE(7:0) was idle
+                                                                 for the previous window block of 256 clock cycles. */
+        uint64_t tce_idle_1d           : 8;  /**< [ 15:  8](RO/H) Each bit is asserted if associated TCE(7:0) was idle
+                                                                 for the previous window block of 256 clock cycles.
+
+                                                                 Internal:
+                                                                 FIXME - Titan to fix, there are now 16 TCEs per cluster, but only 8 bits.
+                                                                 Also, reset value might be wrong, Titan to update. */
+        uint64_t hit_duty_cycle        : 8;  /**< [ 23: 16](RO/H) Number of clock cycles HIT was asserted in the previous
+                                                                 window block of 256 clock cycles. */
+        uint64_t instruction_duty_cycle : 8; /**< [ 31: 24](RO/H) Number of instructions that were executed in the previous
+                                                                 window block of 256 clock cycles. */
+        uint64_t reserved_32_63        : 32;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_reex_af_reexs_cluster_7_s cn; */
+};
+typedef union cavm_reex_af_reexs_cluster_7 cavm_reex_af_reexs_cluster_7_t;
+
+static inline uint64_t CAVM_REEX_AF_REEXS_CLUSTER_7(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_REEX_AF_REEXS_CLUSTER_7(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
+        return 0x840140008438ll + 0x10000000ll * ((a) & 0x1);
+    __cavm_csr_fatal("REEX_AF_REEXS_CLUSTER_7", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_REEX_AF_REEXS_CLUSTER_7(a) cavm_reex_af_reexs_cluster_7_t
+#define bustype_CAVM_REEX_AF_REEXS_CLUSTER_7(a) CSR_TYPE_RVU_PF_BAR0
+#define basename_CAVM_REEX_AF_REEXS_CLUSTER_7(a) "REEX_AF_REEXS_CLUSTER_7"
+#define device_bar_CAVM_REEX_AF_REEXS_CLUSTER_7(a) 0x0 /* RVU_BAR0 */
+#define busnum_CAVM_REEX_AF_REEXS_CLUSTER_7(a) (a)
+#define arguments_CAVM_REEX_AF_REEXS_CLUSTER_7(a) (a),-1,-1,-1
+
+/**
+ * Register (RVU_PF_BAR0) ree#_af_reexs_dp
+ *
+ * REE AF REEX STAT DP Register
+ * REEX Statistics for Data Plane I/F
+ */
+union cavm_reex_af_reexs_dp
+{
+    uint64_t u;
+    struct cavm_reex_af_reexs_dp_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_32_63        : 32;
+        uint64_t mf_re_duty_cycle      : 8;  /**< [ 31: 24](RO/H) Number of clock cycles the MF was read from
+                                                                 in previous window component of 256 clock cycles. */
+        uint64_t rdf_re_duty_cycle     : 8;  /**< [ 23: 16](RO/H) Number of clock cycles the RDF was read from
+                                                                 in previous window component of 256 clock cycles. */
+        uint64_t jf_we_duty_cycle      : 8;  /**< [ 15:  8](RO/H) Number of clock cycles the JF was written to
+                                                                 in previous window component of 256 clock cycles. */
+        uint64_t jdf_we_duty_cycle     : 8;  /**< [  7:  0](RO/H) Number of clock cycles the JDF was written to
+                                                                 in previous window component of 256 clock cycles. */
+#else /* Word 0 - Little Endian */
+        uint64_t jdf_we_duty_cycle     : 8;  /**< [  7:  0](RO/H) Number of clock cycles the JDF was written to
+                                                                 in previous window component of 256 clock cycles. */
+        uint64_t jf_we_duty_cycle      : 8;  /**< [ 15:  8](RO/H) Number of clock cycles the JF was written to
+                                                                 in previous window component of 256 clock cycles. */
+        uint64_t rdf_re_duty_cycle     : 8;  /**< [ 23: 16](RO/H) Number of clock cycles the RDF was read from
+                                                                 in previous window component of 256 clock cycles. */
+        uint64_t mf_re_duty_cycle      : 8;  /**< [ 31: 24](RO/H) Number of clock cycles the MF was read from
+                                                                 in previous window component of 256 clock cycles. */
+        uint64_t reserved_32_63        : 32;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_reex_af_reexs_dp_s cn; */
+};
+typedef union cavm_reex_af_reexs_dp cavm_reex_af_reexs_dp_t;
+
+static inline uint64_t CAVM_REEX_AF_REEXS_DP(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_REEX_AF_REEXS_DP(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
+        return 0x8401400084f8ll + 0x10000000ll * ((a) & 0x1);
+    __cavm_csr_fatal("REEX_AF_REEXS_DP", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_REEX_AF_REEXS_DP(a) cavm_reex_af_reexs_dp_t
+#define bustype_CAVM_REEX_AF_REEXS_DP(a) CSR_TYPE_RVU_PF_BAR0
+#define basename_CAVM_REEX_AF_REEXS_DP(a) "REEX_AF_REEXS_DP"
+#define device_bar_CAVM_REEX_AF_REEXS_DP(a) 0x0 /* RVU_BAR0 */
+#define busnum_CAVM_REEX_AF_REEXS_DP(a) (a)
+#define arguments_CAVM_REEX_AF_REEXS_DP(a) (a),-1,-1,-1
+
+/**
+ * Register (RVU_PF_BAR0) ree#_af_reexs_l2_cache
+ *
+ * REE AF REEX STAT L2_CACHE Register
+ * Statistics for L2 Cache
+ */
+union cavm_reex_af_reexs_l2_cache
+{
+    uint64_t u;
+    struct cavm_reex_af_reexs_l2_cache_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_32_63        : 32;
+        uint64_t rd_pend_comp_fifo_fill : 8; /**< [ 31: 24](RO/H) Number of entries in the READ_PENDING_COMPLETION_FIFO */
+        uint64_t req_fifo_fill         : 8;  /**< [ 23: 16](RO/H) Number of entries in the REQUEST_FIFO */
+        uint64_t cache_miss_duty_cycle : 8;  /**< [ 15:  8](RO/H) Number of clock cycles in the MPFE detected an L2 cache miss in the
+                                                                 previous window of 256 clock cycles. */
+        uint64_t cache_hit_duty_cycle  : 8;  /**< [  7:  0](RO/H) Number of clock cycles in the MPFE detected an L2 cache hit in the
+                                                                 previous window of 256 clock cycles. */
+#else /* Word 0 - Little Endian */
+        uint64_t cache_hit_duty_cycle  : 8;  /**< [  7:  0](RO/H) Number of clock cycles in the MPFE detected an L2 cache hit in the
+                                                                 previous window of 256 clock cycles. */
+        uint64_t cache_miss_duty_cycle : 8;  /**< [ 15:  8](RO/H) Number of clock cycles in the MPFE detected an L2 cache miss in the
+                                                                 previous window of 256 clock cycles. */
+        uint64_t req_fifo_fill         : 8;  /**< [ 23: 16](RO/H) Number of entries in the REQUEST_FIFO */
+        uint64_t rd_pend_comp_fifo_fill : 8; /**< [ 31: 24](RO/H) Number of entries in the READ_PENDING_COMPLETION_FIFO */
+        uint64_t reserved_32_63        : 32;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_reex_af_reexs_l2_cache_s cn; */
+};
+typedef union cavm_reex_af_reexs_l2_cache cavm_reex_af_reexs_l2_cache_t;
+
+static inline uint64_t CAVM_REEX_AF_REEXS_L2_CACHE(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_REEX_AF_REEXS_L2_CACHE(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
+        return 0x8401400084c0ll + 0x10000000ll * ((a) & 0x1);
+    __cavm_csr_fatal("REEX_AF_REEXS_L2_CACHE", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_REEX_AF_REEXS_L2_CACHE(a) cavm_reex_af_reexs_l2_cache_t
+#define bustype_CAVM_REEX_AF_REEXS_L2_CACHE(a) CSR_TYPE_RVU_PF_BAR0
+#define basename_CAVM_REEX_AF_REEXS_L2_CACHE(a) "REEX_AF_REEXS_L2_CACHE"
+#define device_bar_CAVM_REEX_AF_REEXS_L2_CACHE(a) 0x0 /* RVU_BAR0 */
+#define busnum_CAVM_REEX_AF_REEXS_L2_CACHE(a) (a)
+#define arguments_CAVM_REEX_AF_REEXS_L2_CACHE(a) (a),-1,-1,-1
+
+/**
+ * Register (RVU_PF_BAR0) ree#_af_reexs_pe
+ *
+ * REE AF REEX STAT PE Register
+ * REEX Statistics for PE.
+ */
+union cavm_reex_af_reexs_pe
+{
+    uint64_t u;
+    struct cavm_reex_af_reexs_pe_s
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_16_63        : 48;
+        uint64_t pthread_valid_duty_cycle : 8;/**< [ 15:  8](RO/H) Number of clock cycles the PE dispatched a Primary Thread
+                                                                 in the previous window component of 256 clock cycles. */
+        uint64_t nd_duty_cycle         : 8;  /**< [  7:  0](RO/H) Number of clock cycles the PE received a new data word
+                                                                 in the previous window component of 256 clock cycles. */
+#else /* Word 0 - Little Endian */
+        uint64_t nd_duty_cycle         : 8;  /**< [  7:  0](RO/H) Number of clock cycles the PE received a new data word
+                                                                 in the previous window component of 256 clock cycles. */
+        uint64_t pthread_valid_duty_cycle : 8;/**< [ 15:  8](RO/H) Number of clock cycles the PE dispatched a Primary Thread
+                                                                 in the previous window component of 256 clock cycles. */
+        uint64_t reserved_16_63        : 48;
+#endif /* Word 0 - End */
+    } s;
+    /* struct cavm_reex_af_reexs_pe_s cn; */
+};
+typedef union cavm_reex_af_reexs_pe cavm_reex_af_reexs_pe_t;
+
+static inline uint64_t CAVM_REEX_AF_REEXS_PE(unsigned long a) __attribute__ ((pure, always_inline));
+static inline uint64_t CAVM_REEX_AF_REEXS_PE(unsigned long a)
+{
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
+        return 0x8401400084e0ll + 0x10000000ll * ((a) & 0x1);
+    __cavm_csr_fatal("REEX_AF_REEXS_PE", 1, a, 0, 0, 0, 0, 0);
+}
+
+#define typedef_CAVM_REEX_AF_REEXS_PE(a) cavm_reex_af_reexs_pe_t
+#define bustype_CAVM_REEX_AF_REEXS_PE(a) CSR_TYPE_RVU_PF_BAR0
+#define basename_CAVM_REEX_AF_REEXS_PE(a) "REEX_AF_REEXS_PE"
+#define device_bar_CAVM_REEX_AF_REEXS_PE(a) 0x0 /* RVU_BAR0 */
+#define busnum_CAVM_REEX_AF_REEXS_PE(a) (a)
+#define arguments_CAVM_REEX_AF_REEXS_PE(a) (a),-1,-1,-1
 
 /**
  * Register (RVU_PF_BAR0) ree#_af_rvu_int
@@ -3436,2370 +5789,6 @@ static inline uint64_t CAVM_REEX_AF_RVU_LF_CFG_DEBUG(unsigned long a)
 #define device_bar_CAVM_REEX_AF_RVU_LF_CFG_DEBUG(a) 0x0 /* RVU_BAR0 */
 #define busnum_CAVM_REEX_AF_RVU_LF_CFG_DEBUG(a) (a)
 #define arguments_CAVM_REEX_AF_RVU_LF_CFG_DEBUG(a) (a),-1,-1,-1
-
-/**
- * Register (RVU_PF_BAR0) ree#_af_rxp_active_jobs_pc
- *
- * REE AF RXP Active Jobs Counter Register
- */
-union cavm_reex_af_rxp_active_jobs_pc
-{
-    uint64_t u;
-    struct cavm_reex_af_rxp_active_jobs_pc_s
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t count                 : 64; /**< [ 63:  0](R/W/H) Performance counter- Number of active jobs existing in RXP */
-#else /* Word 0 - Little Endian */
-        uint64_t count                 : 64; /**< [ 63:  0](R/W/H) Performance counter- Number of active jobs existing in RXP */
-#endif /* Word 0 - End */
-    } s;
-    /* struct cavm_reex_af_rxp_active_jobs_pc_s cn; */
-};
-typedef union cavm_reex_af_rxp_active_jobs_pc cavm_reex_af_rxp_active_jobs_pc_t;
-
-static inline uint64_t CAVM_REEX_AF_RXP_ACTIVE_JOBS_PC(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_REEX_AF_RXP_ACTIVE_JOBS_PC(unsigned long a)
-{
-    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
-        return 0x840140000490ll + 0x10000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("REEX_AF_RXP_ACTIVE_JOBS_PC", 1, a, 0, 0, 0, 0, 0);
-}
-
-#define typedef_CAVM_REEX_AF_RXP_ACTIVE_JOBS_PC(a) cavm_reex_af_rxp_active_jobs_pc_t
-#define bustype_CAVM_REEX_AF_RXP_ACTIVE_JOBS_PC(a) CSR_TYPE_RVU_PF_BAR0
-#define basename_CAVM_REEX_AF_RXP_ACTIVE_JOBS_PC(a) "REEX_AF_RXP_ACTIVE_JOBS_PC"
-#define device_bar_CAVM_REEX_AF_RXP_ACTIVE_JOBS_PC(a) 0x0 /* RVU_BAR0 */
-#define busnum_CAVM_REEX_AF_RXP_ACTIVE_JOBS_PC(a) (a)
-#define arguments_CAVM_REEX_AF_RXP_ACTIVE_JOBS_PC(a) (a),-1,-1,-1
-
-/**
- * Register (RVU_PF_BAR0) ree#_af_rxp_rd_latency_pc
- *
- * REE AF RXP Read Latency Counter Register
- */
-union cavm_reex_af_rxp_rd_latency_pc
-{
-    uint64_t u;
-    struct cavm_reex_af_rxp_rd_latency_pc_s
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t count                 : 64; /**< [ 63:  0](R/W/H) Number of cycles waiting for NCB RXP-read returns. Incremented every
-                                                                 coprocessor-clock by the number of RXP read transactions outstanding in that cycle. This
-                                                                 may be divided by REE_AF_RXP_RD_REQ_PC to determine the average read latency. */
-#else /* Word 0 - Little Endian */
-        uint64_t count                 : 64; /**< [ 63:  0](R/W/H) Number of cycles waiting for NCB RXP-read returns. Incremented every
-                                                                 coprocessor-clock by the number of RXP read transactions outstanding in that cycle. This
-                                                                 may be divided by REE_AF_RXP_RD_REQ_PC to determine the average read latency. */
-#endif /* Word 0 - End */
-    } s;
-    /* struct cavm_reex_af_rxp_rd_latency_pc_s cn; */
-};
-typedef union cavm_reex_af_rxp_rd_latency_pc cavm_reex_af_rxp_rd_latency_pc_t;
-
-static inline uint64_t CAVM_REEX_AF_RXP_RD_LATENCY_PC(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_REEX_AF_RXP_RD_LATENCY_PC(unsigned long a)
-{
-    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
-        return 0x840140000470ll + 0x10000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("REEX_AF_RXP_RD_LATENCY_PC", 1, a, 0, 0, 0, 0, 0);
-}
-
-#define typedef_CAVM_REEX_AF_RXP_RD_LATENCY_PC(a) cavm_reex_af_rxp_rd_latency_pc_t
-#define bustype_CAVM_REEX_AF_RXP_RD_LATENCY_PC(a) CSR_TYPE_RVU_PF_BAR0
-#define basename_CAVM_REEX_AF_RXP_RD_LATENCY_PC(a) "REEX_AF_RXP_RD_LATENCY_PC"
-#define device_bar_CAVM_REEX_AF_RXP_RD_LATENCY_PC(a) 0x0 /* RVU_BAR0 */
-#define busnum_CAVM_REEX_AF_RXP_RD_LATENCY_PC(a) (a)
-#define arguments_CAVM_REEX_AF_RXP_RD_LATENCY_PC(a) (a),-1,-1,-1
-
-/**
- * Register (RVU_PF_BAR0) ree#_af_rxp_rd_req_pc
- *
- * REE AF RXP Read Request Performance Counter Register
- */
-union cavm_reex_af_rxp_rd_req_pc
-{
-    uint64_t u;
-    struct cavm_reex_af_rxp_rd_req_pc_s
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t count                 : 64; /**< [ 63:  0](R/W/H) Number of NCB RXP-read requests issued. */
-#else /* Word 0 - Little Endian */
-        uint64_t count                 : 64; /**< [ 63:  0](R/W/H) Number of NCB RXP-read requests issued. */
-#endif /* Word 0 - End */
-    } s;
-    /* struct cavm_reex_af_rxp_rd_req_pc_s cn; */
-};
-typedef union cavm_reex_af_rxp_rd_req_pc cavm_reex_af_rxp_rd_req_pc_t;
-
-static inline uint64_t CAVM_REEX_AF_RXP_RD_REQ_PC(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_REEX_AF_RXP_RD_REQ_PC(unsigned long a)
-{
-    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
-        return 0x840140000460ll + 0x10000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("REEX_AF_RXP_RD_REQ_PC", 1, a, 0, 0, 0, 0, 0);
-}
-
-#define typedef_CAVM_REEX_AF_RXP_RD_REQ_PC(a) cavm_reex_af_rxp_rd_req_pc_t
-#define bustype_CAVM_REEX_AF_RXP_RD_REQ_PC(a) CSR_TYPE_RVU_PF_BAR0
-#define basename_CAVM_REEX_AF_RXP_RD_REQ_PC(a) "REEX_AF_RXP_RD_REQ_PC"
-#define device_bar_CAVM_REEX_AF_RXP_RD_REQ_PC(a) 0x0 /* RVU_BAR0 */
-#define busnum_CAVM_REEX_AF_RXP_RD_REQ_PC(a) (a)
-#define arguments_CAVM_REEX_AF_RXP_RD_REQ_PC(a) (a),-1,-1,-1
-
-/**
- * Register (RVU_PF_BAR0) ree#_af_rxpm_capability_1
- *
- * REE AF RXP Main Capability 1 Register
- * This register contains capablity information about RXP.
- */
-union cavm_reex_af_rxpm_capability_1
-{
-    uint64_t u;
-    struct cavm_reex_af_rxpm_capability_1_s
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_32_63        : 32;
-        uint64_t num_tces              : 8;  /**< [ 31: 24](RO) Number of thread control engines (16 per cluster). */
-        uint64_t num_jces              : 8;  /**< [ 23: 16](RO) Number of job control engines (8 per cluster). */
-        uint64_t num_clusters          : 8;  /**< [ 15:  8](RO) Number of clusters. */
-        uint64_t data_width            : 8;  /**< [  7:  0](RO) Width of job-data buses (In/Out) - log2 of value. Value 0x06 represents 64 bit. */
-#else /* Word 0 - Little Endian */
-        uint64_t data_width            : 8;  /**< [  7:  0](RO) Width of job-data buses (In/Out) - log2 of value. Value 0x06 represents 64 bit. */
-        uint64_t num_clusters          : 8;  /**< [ 15:  8](RO) Number of clusters. */
-        uint64_t num_jces              : 8;  /**< [ 23: 16](RO) Number of job control engines (8 per cluster). */
-        uint64_t num_tces              : 8;  /**< [ 31: 24](RO) Number of thread control engines (16 per cluster). */
-        uint64_t reserved_32_63        : 32;
-#endif /* Word 0 - End */
-    } s;
-    /* struct cavm_reex_af_rxpm_capability_1_s cn; */
-};
-typedef union cavm_reex_af_rxpm_capability_1 cavm_reex_af_rxpm_capability_1_t;
-
-static inline uint64_t CAVM_REEX_AF_RXPM_CAPABILITY_1(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_REEX_AF_RXPM_CAPABILITY_1(unsigned long a)
-{
-    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
-        return 0x840140008018ll + 0x10000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("REEX_AF_RXPM_CAPABILITY_1", 1, a, 0, 0, 0, 0, 0);
-}
-
-#define typedef_CAVM_REEX_AF_RXPM_CAPABILITY_1(a) cavm_reex_af_rxpm_capability_1_t
-#define bustype_CAVM_REEX_AF_RXPM_CAPABILITY_1(a) CSR_TYPE_RVU_PF_BAR0
-#define basename_CAVM_REEX_AF_RXPM_CAPABILITY_1(a) "REEX_AF_RXPM_CAPABILITY_1"
-#define device_bar_CAVM_REEX_AF_RXPM_CAPABILITY_1(a) 0x0 /* RVU_BAR0 */
-#define busnum_CAVM_REEX_AF_RXPM_CAPABILITY_1(a) (a)
-#define arguments_CAVM_REEX_AF_RXPM_CAPABILITY_1(a) (a),-1,-1,-1
-
-/**
- * Register (RVU_PF_BAR0) ree#_af_rxpm_capability_2
- *
- * REE AF RXP Main Capability 2 Register
- * This register contains capablity information about RXP.
- */
-union cavm_reex_af_rxpm_capability_2
-{
-    uint64_t u;
-    struct cavm_reex_af_rxpm_capability_2_s
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_32_63        : 32;
-        uint64_t pp_if                 : 8;  /**< [ 31: 24](RO) Programming Plane Interface type. Value 0x01 represents Native. */
-        uint64_t emce_if               : 8;  /**< [ 23: 16](RO) External Memory Control Engine Application Interface type. Value 0x10 represents AXI. */
-        uint64_t data_plane_if         : 8;  /**< [ 15:  8](RO) Data Plane Interface type. Value 0x01 represents Native. */
-        uint64_t ctrl_plane_if         : 8;  /**< [  7:  0](RO) Control Plane Interface type. Value 0x01 represents Native. */
-#else /* Word 0 - Little Endian */
-        uint64_t ctrl_plane_if         : 8;  /**< [  7:  0](RO) Control Plane Interface type. Value 0x01 represents Native. */
-        uint64_t data_plane_if         : 8;  /**< [ 15:  8](RO) Data Plane Interface type. Value 0x01 represents Native. */
-        uint64_t emce_if               : 8;  /**< [ 23: 16](RO) External Memory Control Engine Application Interface type. Value 0x10 represents AXI. */
-        uint64_t pp_if                 : 8;  /**< [ 31: 24](RO) Programming Plane Interface type. Value 0x01 represents Native. */
-        uint64_t reserved_32_63        : 32;
-#endif /* Word 0 - End */
-    } s;
-    /* struct cavm_reex_af_rxpm_capability_2_s cn; */
-};
-typedef union cavm_reex_af_rxpm_capability_2 cavm_reex_af_rxpm_capability_2_t;
-
-static inline uint64_t CAVM_REEX_AF_RXPM_CAPABILITY_2(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_REEX_AF_RXPM_CAPABILITY_2(unsigned long a)
-{
-    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
-        return 0x840140008020ll + 0x10000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("REEX_AF_RXPM_CAPABILITY_2", 1, a, 0, 0, 0, 0, 0);
-}
-
-#define typedef_CAVM_REEX_AF_RXPM_CAPABILITY_2(a) cavm_reex_af_rxpm_capability_2_t
-#define bustype_CAVM_REEX_AF_RXPM_CAPABILITY_2(a) CSR_TYPE_RVU_PF_BAR0
-#define basename_CAVM_REEX_AF_RXPM_CAPABILITY_2(a) "REEX_AF_RXPM_CAPABILITY_2"
-#define device_bar_CAVM_REEX_AF_RXPM_CAPABILITY_2(a) 0x0 /* RVU_BAR0 */
-#define busnum_CAVM_REEX_AF_RXPM_CAPABILITY_2(a) (a)
-#define arguments_CAVM_REEX_AF_RXPM_CAPABILITY_2(a) (a),-1,-1,-1
-
-/**
- * Register (RVU_PF_BAR0) ree#_af_rxpm_capability_3
- *
- * REE AF RXP Main Capability 3 Register
- * This register contains capablity information about RXP.
- */
-union cavm_reex_af_rxpm_capability_3
-{
-    uint64_t u;
-    struct cavm_reex_af_rxpm_capability_3_s
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_32_63        : 32;
-        uint64_t ppe_instr_ram_1_3     : 4;  /**< [ 31: 28](RO) Address widths for PPE instruction RAM 1_3. */
-        uint64_t ppe_instr_ram_1_2     : 4;  /**< [ 27: 24](RO) Address widths for PPE instruction RAM 1_2. */
-        uint64_t ppe_instr_ram_1_1     : 4;  /**< [ 23: 20](RO) Address widths for PPE instruction RAM 1_1. */
-        uint64_t ppe_instr_ram_1_0     : 4;  /**< [ 19: 16](RO) Address widths for PPE instruction RAM 1_0. */
-        uint64_t vppe_instr_ram_0_1    : 4;  /**< [ 15: 12](RO) Address widths for VPPE instruction RAM 0_1. */
-        uint64_t vppe_instr_ram_0_0    : 4;  /**< [ 11:  8](RO) Address widths for VPPE instruction RAM 0_0. */
-        uint64_t ppe_change_case_ram   : 4;  /**< [  7:  4](RO) Address widths for PPE change Case RAM. */
-        uint64_t ppe_instr_ram_0_0     : 4;  /**< [  3:  0](RO) Address widths for PPE instruction RAM 0_0. */
-#else /* Word 0 - Little Endian */
-        uint64_t ppe_instr_ram_0_0     : 4;  /**< [  3:  0](RO) Address widths for PPE instruction RAM 0_0. */
-        uint64_t ppe_change_case_ram   : 4;  /**< [  7:  4](RO) Address widths for PPE change Case RAM. */
-        uint64_t vppe_instr_ram_0_0    : 4;  /**< [ 11:  8](RO) Address widths for VPPE instruction RAM 0_0. */
-        uint64_t vppe_instr_ram_0_1    : 4;  /**< [ 15: 12](RO) Address widths for VPPE instruction RAM 0_1. */
-        uint64_t ppe_instr_ram_1_0     : 4;  /**< [ 19: 16](RO) Address widths for PPE instruction RAM 1_0. */
-        uint64_t ppe_instr_ram_1_1     : 4;  /**< [ 23: 20](RO) Address widths for PPE instruction RAM 1_1. */
-        uint64_t ppe_instr_ram_1_2     : 4;  /**< [ 27: 24](RO) Address widths for PPE instruction RAM 1_2. */
-        uint64_t ppe_instr_ram_1_3     : 4;  /**< [ 31: 28](RO) Address widths for PPE instruction RAM 1_3. */
-        uint64_t reserved_32_63        : 32;
-#endif /* Word 0 - End */
-    } s;
-    /* struct cavm_reex_af_rxpm_capability_3_s cn; */
-};
-typedef union cavm_reex_af_rxpm_capability_3 cavm_reex_af_rxpm_capability_3_t;
-
-static inline uint64_t CAVM_REEX_AF_RXPM_CAPABILITY_3(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_REEX_AF_RXPM_CAPABILITY_3(unsigned long a)
-{
-    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
-        return 0x840140008028ll + 0x10000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("REEX_AF_RXPM_CAPABILITY_3", 1, a, 0, 0, 0, 0, 0);
-}
-
-#define typedef_CAVM_REEX_AF_RXPM_CAPABILITY_3(a) cavm_reex_af_rxpm_capability_3_t
-#define bustype_CAVM_REEX_AF_RXPM_CAPABILITY_3(a) CSR_TYPE_RVU_PF_BAR0
-#define basename_CAVM_REEX_AF_RXPM_CAPABILITY_3(a) "REEX_AF_RXPM_CAPABILITY_3"
-#define device_bar_CAVM_REEX_AF_RXPM_CAPABILITY_3(a) 0x0 /* RVU_BAR0 */
-#define busnum_CAVM_REEX_AF_RXPM_CAPABILITY_3(a) (a)
-#define arguments_CAVM_REEX_AF_RXPM_CAPABILITY_3(a) (a),-1,-1,-1
-
-/**
- * Register (RVU_PF_BAR0) ree#_af_rxpm_capability_4
- *
- * REE AF RXP Main Capability 4 Register
- * This register contains capablity information about RXP.
- */
-union cavm_reex_af_rxpm_capability_4
-{
-    uint64_t u;
-    struct cavm_reex_af_rxpm_capability_4_s
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_32_63        : 32;
-        uint64_t ppe_instr_ram_3_3     : 4;  /**< [ 31: 28](RO) Address widths for PPE instruction RAM 3_3. */
-        uint64_t ppe_instr_ram_3_2     : 4;  /**< [ 27: 24](RO) Address widths for PPE instruction RAM 3_2. */
-        uint64_t ppe_instr_ram_3_1     : 4;  /**< [ 23: 20](RO) Address widths for PPE instruction RAM 3_1. */
-        uint64_t ppe_instr_ram_3_0     : 4;  /**< [ 19: 16](RO) Address widths for PPE instruction RAM 3_0. */
-        uint64_t ppe_instr_ram_2_3     : 4;  /**< [ 15: 12](RO) Address widths for PPE instruction RAM 2_3. */
-        uint64_t ppe_instr_ram_2_2     : 4;  /**< [ 11:  8](RO) Address widths for PPE instruction RAM 2_2. */
-        uint64_t ppe_instr_ram_2_1     : 4;  /**< [  7:  4](RO) Address widths for PPE instruction RAM 2_1. */
-        uint64_t ppe_instr_ram_2_0     : 4;  /**< [  3:  0](RO) Address widths for PPE instruction RAM 2_0. */
-#else /* Word 0 - Little Endian */
-        uint64_t ppe_instr_ram_2_0     : 4;  /**< [  3:  0](RO) Address widths for PPE instruction RAM 2_0. */
-        uint64_t ppe_instr_ram_2_1     : 4;  /**< [  7:  4](RO) Address widths for PPE instruction RAM 2_1. */
-        uint64_t ppe_instr_ram_2_2     : 4;  /**< [ 11:  8](RO) Address widths for PPE instruction RAM 2_2. */
-        uint64_t ppe_instr_ram_2_3     : 4;  /**< [ 15: 12](RO) Address widths for PPE instruction RAM 2_3. */
-        uint64_t ppe_instr_ram_3_0     : 4;  /**< [ 19: 16](RO) Address widths for PPE instruction RAM 3_0. */
-        uint64_t ppe_instr_ram_3_1     : 4;  /**< [ 23: 20](RO) Address widths for PPE instruction RAM 3_1. */
-        uint64_t ppe_instr_ram_3_2     : 4;  /**< [ 27: 24](RO) Address widths for PPE instruction RAM 3_2. */
-        uint64_t ppe_instr_ram_3_3     : 4;  /**< [ 31: 28](RO) Address widths for PPE instruction RAM 3_3. */
-        uint64_t reserved_32_63        : 32;
-#endif /* Word 0 - End */
-    } s;
-    /* struct cavm_reex_af_rxpm_capability_4_s cn; */
-};
-typedef union cavm_reex_af_rxpm_capability_4 cavm_reex_af_rxpm_capability_4_t;
-
-static inline uint64_t CAVM_REEX_AF_RXPM_CAPABILITY_4(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_REEX_AF_RXPM_CAPABILITY_4(unsigned long a)
-{
-    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
-        return 0x840140008030ll + 0x10000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("REEX_AF_RXPM_CAPABILITY_4", 1, a, 0, 0, 0, 0, 0);
-}
-
-#define typedef_CAVM_REEX_AF_RXPM_CAPABILITY_4(a) cavm_reex_af_rxpm_capability_4_t
-#define bustype_CAVM_REEX_AF_RXPM_CAPABILITY_4(a) CSR_TYPE_RVU_PF_BAR0
-#define basename_CAVM_REEX_AF_RXPM_CAPABILITY_4(a) "REEX_AF_RXPM_CAPABILITY_4"
-#define device_bar_CAVM_REEX_AF_RXPM_CAPABILITY_4(a) 0x0 /* RVU_BAR0 */
-#define busnum_CAVM_REEX_AF_RXPM_CAPABILITY_4(a) (a)
-#define arguments_CAVM_REEX_AF_RXPM_CAPABILITY_4(a) (a),-1,-1,-1
-
-/**
- * Register (RVU_PF_BAR0) ree#_af_rxpm_capability_5
- *
- * REE AF RXP Main Capability 5 Register
- * This register contains capablity information about RXP.
- */
-union cavm_reex_af_rxpm_capability_5
-{
-    uint64_t u;
-    struct cavm_reex_af_rxpm_capability_5_s
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_32_63        : 32;
-        uint64_t max_num_match_per_job : 16; /**< [ 31: 16](RO) Maximum Number of Matches returned per job. */
-        uint64_t max_num_pf_per_job    : 16; /**< [ 15:  0](RO) Maximum Number of Prefixes per job. */
-#else /* Word 0 - Little Endian */
-        uint64_t max_num_pf_per_job    : 16; /**< [ 15:  0](RO) Maximum Number of Prefixes per job. */
-        uint64_t max_num_match_per_job : 16; /**< [ 31: 16](RO) Maximum Number of Matches returned per job. */
-        uint64_t reserved_32_63        : 32;
-#endif /* Word 0 - End */
-    } s;
-    /* struct cavm_reex_af_rxpm_capability_5_s cn; */
-};
-typedef union cavm_reex_af_rxpm_capability_5 cavm_reex_af_rxpm_capability_5_t;
-
-static inline uint64_t CAVM_REEX_AF_RXPM_CAPABILITY_5(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_REEX_AF_RXPM_CAPABILITY_5(unsigned long a)
-{
-    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
-        return 0x840140008038ll + 0x10000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("REEX_AF_RXPM_CAPABILITY_5", 1, a, 0, 0, 0, 0, 0);
-}
-
-#define typedef_CAVM_REEX_AF_RXPM_CAPABILITY_5(a) cavm_reex_af_rxpm_capability_5_t
-#define bustype_CAVM_REEX_AF_RXPM_CAPABILITY_5(a) CSR_TYPE_RVU_PF_BAR0
-#define basename_CAVM_REEX_AF_RXPM_CAPABILITY_5(a) "REEX_AF_RXPM_CAPABILITY_5"
-#define device_bar_CAVM_REEX_AF_RXPM_CAPABILITY_5(a) 0x0 /* RVU_BAR0 */
-#define busnum_CAVM_REEX_AF_RXPM_CAPABILITY_5(a) (a)
-#define arguments_CAVM_REEX_AF_RXPM_CAPABILITY_5(a) (a),-1,-1,-1
-
-/**
- * Register (RVU_PF_BAR0) ree#_af_rxpm_capability_6
- *
- * REE AF RXP Main Capability 6 Register
- * This register contains capablity information about RXP.
- */
-union cavm_reex_af_rxpm_capability_6
-{
-    uint64_t u;
-    struct cavm_reex_af_rxpm_capability_6_s
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_32_63        : 32;
-        uint64_t l2_cache_size_kb      : 16; /**< [ 31: 16](RO) L2 Cache size (KB). */
-        uint64_t l1_cache_size_kb      : 8;  /**< [ 15:  8](RO) L1 Cache size (KB). */
-        uint64_t tcm_size_kb           : 8;  /**< [  7:  0](RO) Tightly Coupled Memory size (KB). */
-#else /* Word 0 - Little Endian */
-        uint64_t tcm_size_kb           : 8;  /**< [  7:  0](RO) Tightly Coupled Memory size (KB). */
-        uint64_t l1_cache_size_kb      : 8;  /**< [ 15:  8](RO) L1 Cache size (KB). */
-        uint64_t l2_cache_size_kb      : 16; /**< [ 31: 16](RO) L2 Cache size (KB). */
-        uint64_t reserved_32_63        : 32;
-#endif /* Word 0 - End */
-    } s;
-    /* struct cavm_reex_af_rxpm_capability_6_s cn; */
-};
-typedef union cavm_reex_af_rxpm_capability_6 cavm_reex_af_rxpm_capability_6_t;
-
-static inline uint64_t CAVM_REEX_AF_RXPM_CAPABILITY_6(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_REEX_AF_RXPM_CAPABILITY_6(unsigned long a)
-{
-    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
-        return 0x840140008040ll + 0x10000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("REEX_AF_RXPM_CAPABILITY_6", 1, a, 0, 0, 0, 0, 0);
-}
-
-#define typedef_CAVM_REEX_AF_RXPM_CAPABILITY_6(a) cavm_reex_af_rxpm_capability_6_t
-#define bustype_CAVM_REEX_AF_RXPM_CAPABILITY_6(a) CSR_TYPE_RVU_PF_BAR0
-#define basename_CAVM_REEX_AF_RXPM_CAPABILITY_6(a) "REEX_AF_RXPM_CAPABILITY_6"
-#define device_bar_CAVM_REEX_AF_RXPM_CAPABILITY_6(a) 0x0 /* RVU_BAR0 */
-#define busnum_CAVM_REEX_AF_RXPM_CAPABILITY_6(a) (a)
-#define arguments_CAVM_REEX_AF_RXPM_CAPABILITY_6(a) (a),-1,-1,-1
-
-/**
- * Register (RVU_PF_BAR0) ree#_af_rxpm_capability_7
- *
- * REE AF RXP Main Capability 7 Register
- * This register contains capablity information about RXP.
- */
-union cavm_reex_af_rxpm_capability_7
-{
-    uint64_t u;
-    struct cavm_reex_af_rxpm_capability_7_s
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_32_63        : 32;
-        uint64_t unix_time             : 32; /**< [ 31:  0](RO) Unix Timestamp for RTL drop. Value is drop-specific. */
-#else /* Word 0 - Little Endian */
-        uint64_t unix_time             : 32; /**< [ 31:  0](RO) Unix Timestamp for RTL drop. Value is drop-specific. */
-        uint64_t reserved_32_63        : 32;
-#endif /* Word 0 - End */
-    } s;
-    /* struct cavm_reex_af_rxpm_capability_7_s cn; */
-};
-typedef union cavm_reex_af_rxpm_capability_7 cavm_reex_af_rxpm_capability_7_t;
-
-static inline uint64_t CAVM_REEX_AF_RXPM_CAPABILITY_7(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_REEX_AF_RXPM_CAPABILITY_7(unsigned long a)
-{
-    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
-        return 0x840140008048ll + 0x10000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("REEX_AF_RXPM_CAPABILITY_7", 1, a, 0, 0, 0, 0, 0);
-}
-
-#define typedef_CAVM_REEX_AF_RXPM_CAPABILITY_7(a) cavm_reex_af_rxpm_capability_7_t
-#define bustype_CAVM_REEX_AF_RXPM_CAPABILITY_7(a) CSR_TYPE_RVU_PF_BAR0
-#define basename_CAVM_REEX_AF_RXPM_CAPABILITY_7(a) "REEX_AF_RXPM_CAPABILITY_7"
-#define device_bar_CAVM_REEX_AF_RXPM_CAPABILITY_7(a) 0x0 /* RVU_BAR0 */
-#define busnum_CAVM_REEX_AF_RXPM_CAPABILITY_7(a) (a)
-#define arguments_CAVM_REEX_AF_RXPM_CAPABILITY_7(a) (a),-1,-1,-1
-
-/**
- * Register (RVU_PF_BAR0) ree#_af_rxpm_clstr_mask
- *
- * REE AF RXP Main Cluster Mask Register
- */
-union cavm_reex_af_rxpm_clstr_mask
-{
-    uint64_t u;
-    struct cavm_reex_af_rxpm_clstr_mask_s
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_32_63        : 32;
-        uint64_t rxp_reserved_1        : 24; /**< [ 31:  8](R/W) Reserved. */
-        uint64_t mask                  : 8;  /**< [  7:  0](R/W) Mask (disable) Clusters. Bit i=0..7 is for disabling Cluster[i]. */
-#else /* Word 0 - Little Endian */
-        uint64_t mask                  : 8;  /**< [  7:  0](R/W) Mask (disable) Clusters. Bit i=0..7 is for disabling Cluster[i]. */
-        uint64_t rxp_reserved_1        : 24; /**< [ 31:  8](R/W) Reserved. */
-        uint64_t reserved_32_63        : 32;
-#endif /* Word 0 - End */
-    } s;
-    /* struct cavm_reex_af_rxpm_clstr_mask_s cn; */
-};
-typedef union cavm_reex_af_rxpm_clstr_mask cavm_reex_af_rxpm_clstr_mask_t;
-
-static inline uint64_t CAVM_REEX_AF_RXPM_CLSTR_MASK(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_REEX_AF_RXPM_CLSTR_MASK(unsigned long a)
-{
-    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
-        return 0x8401400080f0ll + 0x10000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("REEX_AF_RXPM_CLSTR_MASK", 1, a, 0, 0, 0, 0, 0);
-}
-
-#define typedef_CAVM_REEX_AF_RXPM_CLSTR_MASK(a) cavm_reex_af_rxpm_clstr_mask_t
-#define bustype_CAVM_REEX_AF_RXPM_CLSTR_MASK(a) CSR_TYPE_RVU_PF_BAR0
-#define basename_CAVM_REEX_AF_RXPM_CLSTR_MASK(a) "REEX_AF_RXPM_CLSTR_MASK"
-#define device_bar_CAVM_REEX_AF_RXPM_CLSTR_MASK(a) 0x0 /* RVU_BAR0 */
-#define busnum_CAVM_REEX_AF_RXPM_CLSTR_MASK(a) (a)
-#define arguments_CAVM_REEX_AF_RXPM_CLSTR_MASK(a) (a),-1,-1,-1
-
-/**
- * Register (RVU_PF_BAR0) ree#_af_rxpm_core_clk_count
- *
- * REE AF RXP Main Core Clock Count Register
- */
-union cavm_reex_af_rxpm_core_clk_count
-{
-    uint64_t u;
-    struct cavm_reex_af_rxpm_core_clk_count_s
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_32_63        : 32;
-        uint64_t count                 : 32; /**< [ 31:  0](RO/H) Number of Core-Clock cycles since initialization triggered. Wraps around. */
-#else /* Word 0 - Little Endian */
-        uint64_t count                 : 32; /**< [ 31:  0](RO/H) Number of Core-Clock cycles since initialization triggered. Wraps around. */
-        uint64_t reserved_32_63        : 32;
-#endif /* Word 0 - End */
-    } s;
-    /* struct cavm_reex_af_rxpm_core_clk_count_s cn; */
-};
-typedef union cavm_reex_af_rxpm_core_clk_count cavm_reex_af_rxpm_core_clk_count_t;
-
-static inline uint64_t CAVM_REEX_AF_RXPM_CORE_CLK_COUNT(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_REEX_AF_RXPM_CORE_CLK_COUNT(unsigned long a)
-{
-    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
-        return 0x840140008080ll + 0x10000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("REEX_AF_RXPM_CORE_CLK_COUNT", 1, a, 0, 0, 0, 0, 0);
-}
-
-#define typedef_CAVM_REEX_AF_RXPM_CORE_CLK_COUNT(a) cavm_reex_af_rxpm_core_clk_count_t
-#define bustype_CAVM_REEX_AF_RXPM_CORE_CLK_COUNT(a) CSR_TYPE_RVU_PF_BAR0
-#define basename_CAVM_REEX_AF_RXPM_CORE_CLK_COUNT(a) "REEX_AF_RXPM_CORE_CLK_COUNT"
-#define device_bar_CAVM_REEX_AF_RXPM_CORE_CLK_COUNT(a) 0x0 /* RVU_BAR0 */
-#define busnum_CAVM_REEX_AF_RXPM_CORE_CLK_COUNT(a) (a)
-#define arguments_CAVM_REEX_AF_RXPM_CORE_CLK_COUNT(a) (a),-1,-1,-1
-
-/**
- * Register (RVU_PF_BAR0) ree#_af_rxpm_ctrl
- *
- * REE AF RXP Main Control Register
- */
-union cavm_reex_af_rxpm_ctrl
-{
-    uint64_t u;
-    struct cavm_reex_af_rxpm_ctrl_s
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_32_63        : 32;
-        uint64_t rxp_reserved_1        : 28; /**< [ 31:  4](R/W) Reserved. Must be kept 0.
-                                                                 Internal:
-                                                                 Bits 7,5,4 are disable bits for L2_CACHE, Match-FIFO, Result-Descriptor FIFO,
-                                                                 respcetively, for Titan internal use.
-                                                                 Bits 5,4 must be set to 0, otherwise RXP FIFOs might not be in sync, and REE
-                                                                 might get hung up waiting for Matches or Descriptors. */
-        uint64_t go                    : 1;  /**< [  3:  3](R/W) Set this bit to cause RXP to start scanning jobs for matches. */
-        uint64_t rxp_reserved_2        : 2;  /**< [  2:  1](R/W) Reserved, Must be kept 0. */
-        uint64_t init                  : 1;  /**< [  0:  0](R/W) Set to initialize RXP. */
-#else /* Word 0 - Little Endian */
-        uint64_t init                  : 1;  /**< [  0:  0](R/W) Set to initialize RXP. */
-        uint64_t rxp_reserved_2        : 2;  /**< [  2:  1](R/W) Reserved, Must be kept 0. */
-        uint64_t go                    : 1;  /**< [  3:  3](R/W) Set this bit to cause RXP to start scanning jobs for matches. */
-        uint64_t rxp_reserved_1        : 28; /**< [ 31:  4](R/W) Reserved. Must be kept 0.
-                                                                 Internal:
-                                                                 Bits 7,5,4 are disable bits for L2_CACHE, Match-FIFO, Result-Descriptor FIFO,
-                                                                 respcetively, for Titan internal use.
-                                                                 Bits 5,4 must be set to 0, otherwise RXP FIFOs might not be in sync, and REE
-                                                                 might get hung up waiting for Matches or Descriptors. */
-        uint64_t reserved_32_63        : 32;
-#endif /* Word 0 - End */
-    } s;
-    /* struct cavm_reex_af_rxpm_ctrl_s cn; */
-};
-typedef union cavm_reex_af_rxpm_ctrl cavm_reex_af_rxpm_ctrl_t;
-
-static inline uint64_t CAVM_REEX_AF_RXPM_CTRL(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_REEX_AF_RXPM_CTRL(unsigned long a)
-{
-    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
-        return 0x8401400080c0ll + 0x10000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("REEX_AF_RXPM_CTRL", 1, a, 0, 0, 0, 0, 0);
-}
-
-#define typedef_CAVM_REEX_AF_RXPM_CTRL(a) cavm_reex_af_rxpm_ctrl_t
-#define bustype_CAVM_REEX_AF_RXPM_CTRL(a) CSR_TYPE_RVU_PF_BAR0
-#define basename_CAVM_REEX_AF_RXPM_CTRL(a) "REEX_AF_RXPM_CTRL"
-#define device_bar_CAVM_REEX_AF_RXPM_CTRL(a) 0x0 /* RVU_BAR0 */
-#define busnum_CAVM_REEX_AF_RXPM_CTRL(a) (a)
-#define arguments_CAVM_REEX_AF_RXPM_CTRL(a) (a),-1,-1,-1
-
-/**
- * Register (RVU_PF_BAR0) ree#_af_rxpm_dos_count
- *
- * REE AF RXP Main Max DOS Count Register
- */
-union cavm_reex_af_rxpm_dos_count
-{
-    uint64_t u;
-    struct cavm_reex_af_rxpm_dos_count_s
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_32_63        : 32;
-        uint64_t count                 : 32; /**< [ 31:  0](RO/H) Number of jobs where the number of prefixes detected has reached
-                                                                 MAX_PREFIX_COUNT which can be used to indicate that a DoS attempt has occurred. */
-#else /* Word 0 - Little Endian */
-        uint64_t count                 : 32; /**< [ 31:  0](RO/H) Number of jobs where the number of prefixes detected has reached
-                                                                 MAX_PREFIX_COUNT which can be used to indicate that a DoS attempt has occurred. */
-        uint64_t reserved_32_63        : 32;
-#endif /* Word 0 - End */
-    } s;
-    /* struct cavm_reex_af_rxpm_dos_count_s cn; */
-};
-typedef union cavm_reex_af_rxpm_dos_count cavm_reex_af_rxpm_dos_count_t;
-
-static inline uint64_t CAVM_REEX_AF_RXPM_DOS_COUNT(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_REEX_AF_RXPM_DOS_COUNT(unsigned long a)
-{
-    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
-        return 0x840140008068ll + 0x10000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("REEX_AF_RXPM_DOS_COUNT", 1, a, 0, 0, 0, 0, 0);
-}
-
-#define typedef_CAVM_REEX_AF_RXPM_DOS_COUNT(a) cavm_reex_af_rxpm_dos_count_t
-#define bustype_CAVM_REEX_AF_RXPM_DOS_COUNT(a) CSR_TYPE_RVU_PF_BAR0
-#define basename_CAVM_REEX_AF_RXPM_DOS_COUNT(a) "REEX_AF_RXPM_DOS_COUNT"
-#define device_bar_CAVM_REEX_AF_RXPM_DOS_COUNT(a) 0x0 /* RVU_BAR0 */
-#define busnum_CAVM_REEX_AF_RXPM_DOS_COUNT(a) (a)
-#define arguments_CAVM_REEX_AF_RXPM_DOS_COUNT(a) (a),-1,-1,-1
-
-/**
- * Register (RVU_PF_BAR0) ree#_af_rxpm_fifo_status_0
- *
- * REE AF RXP Job Request FIFOs Status Register
- */
-union cavm_reex_af_rxpm_fifo_status_0
-{
-    uint64_t u;
-    struct cavm_reex_af_rxpm_fifo_status_0_s
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_32_63        : 32;
-        uint64_t jf_num_entries        : 16; /**< [ 31: 16](RO/H) Fill Level of RXP Job FIFO. */
-        uint64_t jdf_num_entries       : 16; /**< [ 15:  0](RO/H) Fill Level of RXP Job Descriptor FIFO. */
-#else /* Word 0 - Little Endian */
-        uint64_t jdf_num_entries       : 16; /**< [ 15:  0](RO/H) Fill Level of RXP Job Descriptor FIFO. */
-        uint64_t jf_num_entries        : 16; /**< [ 31: 16](RO/H) Fill Level of RXP Job FIFO. */
-        uint64_t reserved_32_63        : 32;
-#endif /* Word 0 - End */
-    } s;
-    /* struct cavm_reex_af_rxpm_fifo_status_0_s cn; */
-};
-typedef union cavm_reex_af_rxpm_fifo_status_0 cavm_reex_af_rxpm_fifo_status_0_t;
-
-static inline uint64_t CAVM_REEX_AF_RXPM_FIFO_STATUS_0(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_REEX_AF_RXPM_FIFO_STATUS_0(unsigned long a)
-{
-    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
-        return 0x840140008058ll + 0x10000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("REEX_AF_RXPM_FIFO_STATUS_0", 1, a, 0, 0, 0, 0, 0);
-}
-
-#define typedef_CAVM_REEX_AF_RXPM_FIFO_STATUS_0(a) cavm_reex_af_rxpm_fifo_status_0_t
-#define bustype_CAVM_REEX_AF_RXPM_FIFO_STATUS_0(a) CSR_TYPE_RVU_PF_BAR0
-#define basename_CAVM_REEX_AF_RXPM_FIFO_STATUS_0(a) "REEX_AF_RXPM_FIFO_STATUS_0"
-#define device_bar_CAVM_REEX_AF_RXPM_FIFO_STATUS_0(a) 0x0 /* RVU_BAR0 */
-#define busnum_CAVM_REEX_AF_RXPM_FIFO_STATUS_0(a) (a)
-#define arguments_CAVM_REEX_AF_RXPM_FIFO_STATUS_0(a) (a),-1,-1,-1
-
-/**
- * Register (RVU_PF_BAR0) ree#_af_rxpm_fifo_status_1
- *
- * REE AF RXP Job Response FIFOs Status Register
- */
-union cavm_reex_af_rxpm_fifo_status_1
-{
-    uint64_t u;
-    struct cavm_reex_af_rxpm_fifo_status_1_s
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_32_63        : 32;
-        uint64_t mf_num_entries        : 16; /**< [ 31: 16](RO/H) Fill Level of RXP Match FIFO. */
-        uint64_t rdf_num_entries       : 16; /**< [ 15:  0](RO/H) Fill Level of RXP Response Descriptor FIFO. */
-#else /* Word 0 - Little Endian */
-        uint64_t rdf_num_entries       : 16; /**< [ 15:  0](RO/H) Fill Level of RXP Response Descriptor FIFO. */
-        uint64_t mf_num_entries        : 16; /**< [ 31: 16](RO/H) Fill Level of RXP Match FIFO. */
-        uint64_t reserved_32_63        : 32;
-#endif /* Word 0 - End */
-    } s;
-    /* struct cavm_reex_af_rxpm_fifo_status_1_s cn; */
-};
-typedef union cavm_reex_af_rxpm_fifo_status_1 cavm_reex_af_rxpm_fifo_status_1_t;
-
-static inline uint64_t CAVM_REEX_AF_RXPM_FIFO_STATUS_1(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_REEX_AF_RXPM_FIFO_STATUS_1(unsigned long a)
-{
-    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
-        return 0x840140008060ll + 0x10000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("REEX_AF_RXPM_FIFO_STATUS_1", 1, a, 0, 0, 0, 0, 0);
-}
-
-#define typedef_CAVM_REEX_AF_RXPM_FIFO_STATUS_1(a) cavm_reex_af_rxpm_fifo_status_1_t
-#define bustype_CAVM_REEX_AF_RXPM_FIFO_STATUS_1(a) CSR_TYPE_RVU_PF_BAR0
-#define basename_CAVM_REEX_AF_RXPM_FIFO_STATUS_1(a) "REEX_AF_RXPM_FIFO_STATUS_1"
-#define device_bar_CAVM_REEX_AF_RXPM_FIFO_STATUS_1(a) 0x0 /* RVU_BAR0 */
-#define busnum_CAVM_REEX_AF_RXPM_FIFO_STATUS_1(a) (a)
-#define arguments_CAVM_REEX_AF_RXPM_FIFO_STATUS_1(a) (a),-1,-1,-1
-
-/**
- * Register (RVU_PF_BAR0) ree#_af_rxpm_identifier
- *
- * REE AF RXP Main Identifier Register
- * This register provides identification information about RXP
- */
-union cavm_reex_af_rxpm_identifier
-{
-    uint64_t u;
-    struct cavm_reex_af_rxpm_identifier_s
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_32_63        : 32;
-        uint64_t minor_ver             : 8;  /**< [ 31: 24](RO) Minor version identifier. */
-        uint64_t major_ver             : 8;  /**< [ 23: 16](RO) Major version identifier. */
-        uint64_t product_id            : 8;  /**< [ 15:  8](RO) Product identifier.
-                                                                 Internal:
-                                                                 Set to 0x52 i.e R for RXP. */
-        uint64_t vendor_id             : 8;  /**< [  7:  0](RO) Vendor identifier.
-                                                                 Internal:
-                                                                 Set to 0x54 i.e. T for Titan IC. */
-#else /* Word 0 - Little Endian */
-        uint64_t vendor_id             : 8;  /**< [  7:  0](RO) Vendor identifier.
-                                                                 Internal:
-                                                                 Set to 0x54 i.e. T for Titan IC. */
-        uint64_t product_id            : 8;  /**< [ 15:  8](RO) Product identifier.
-                                                                 Internal:
-                                                                 Set to 0x52 i.e R for RXP. */
-        uint64_t major_ver             : 8;  /**< [ 23: 16](RO) Major version identifier. */
-        uint64_t minor_ver             : 8;  /**< [ 31: 24](RO) Minor version identifier. */
-        uint64_t reserved_32_63        : 32;
-#endif /* Word 0 - End */
-    } s;
-    /* struct cavm_reex_af_rxpm_identifier_s cn; */
-};
-typedef union cavm_reex_af_rxpm_identifier cavm_reex_af_rxpm_identifier_t;
-
-static inline uint64_t CAVM_REEX_AF_RXPM_IDENTIFIER(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_REEX_AF_RXPM_IDENTIFIER(unsigned long a)
-{
-    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
-        return 0x840140008000ll + 0x10000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("REEX_AF_RXPM_IDENTIFIER", 1, a, 0, 0, 0, 0, 0);
-}
-
-#define typedef_CAVM_REEX_AF_RXPM_IDENTIFIER(a) cavm_reex_af_rxpm_identifier_t
-#define bustype_CAVM_REEX_AF_RXPM_IDENTIFIER(a) CSR_TYPE_RVU_PF_BAR0
-#define basename_CAVM_REEX_AF_RXPM_IDENTIFIER(a) "REEX_AF_RXPM_IDENTIFIER"
-#define device_bar_CAVM_REEX_AF_RXPM_IDENTIFIER(a) 0x0 /* RVU_BAR0 */
-#define busnum_CAVM_REEX_AF_RXPM_IDENTIFIER(a) (a)
-#define arguments_CAVM_REEX_AF_RXPM_IDENTIFIER(a) (a),-1,-1,-1
-
-/**
- * Register (RVU_PF_BAR0) ree#_af_rxpm_intra_clstr_mask
- *
- * REE AF RXP Main Intra Cluster Mask Register
- * Support masking of JCEs and TCEs, inside all clusters not totally masked by REE_AF_RXPM_CLSTR_MASK.
- */
-union cavm_reex_af_rxpm_intra_clstr_mask
-{
-    uint64_t u;
-    struct cavm_reex_af_rxpm_intra_clstr_mask_s
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_32_63        : 32;
-        uint64_t tce_mask              : 16; /**< [ 31: 16](R/W) Mask (disable) TCEs in Cluster. */
-        uint64_t rxp_reserved_1        : 8;  /**< [ 15:  8](R/W) Reserved. */
-        uint64_t jce_mask              : 8;  /**< [  7:  0](R/W) Mask (disable) JCEs in Cluster. */
-#else /* Word 0 - Little Endian */
-        uint64_t jce_mask              : 8;  /**< [  7:  0](R/W) Mask (disable) JCEs in Cluster. */
-        uint64_t rxp_reserved_1        : 8;  /**< [ 15:  8](R/W) Reserved. */
-        uint64_t tce_mask              : 16; /**< [ 31: 16](R/W) Mask (disable) TCEs in Cluster. */
-        uint64_t reserved_32_63        : 32;
-#endif /* Word 0 - End */
-    } s;
-    /* struct cavm_reex_af_rxpm_intra_clstr_mask_s cn; */
-};
-typedef union cavm_reex_af_rxpm_intra_clstr_mask cavm_reex_af_rxpm_intra_clstr_mask_t;
-
-static inline uint64_t CAVM_REEX_AF_RXPM_INTRA_CLSTR_MASK(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_REEX_AF_RXPM_INTRA_CLSTR_MASK(unsigned long a)
-{
-    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
-        return 0x8401400080f8ll + 0x10000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("REEX_AF_RXPM_INTRA_CLSTR_MASK", 1, a, 0, 0, 0, 0, 0);
-}
-
-#define typedef_CAVM_REEX_AF_RXPM_INTRA_CLSTR_MASK(a) cavm_reex_af_rxpm_intra_clstr_mask_t
-#define bustype_CAVM_REEX_AF_RXPM_INTRA_CLSTR_MASK(a) CSR_TYPE_RVU_PF_BAR0
-#define basename_CAVM_REEX_AF_RXPM_INTRA_CLSTR_MASK(a) "REEX_AF_RXPM_INTRA_CLSTR_MASK"
-#define device_bar_CAVM_REEX_AF_RXPM_INTRA_CLSTR_MASK(a) 0x0 /* RVU_BAR0 */
-#define busnum_CAVM_REEX_AF_RXPM_INTRA_CLSTR_MASK(a) (a)
-#define arguments_CAVM_REEX_AF_RXPM_INTRA_CLSTR_MASK(a) (a),-1,-1,-1
-
-/**
- * Register (RVU_PF_BAR0) ree#_af_rxpm_job_byte_count_0
- *
- * REE AF RXP Main Job Byte Count LSB Register
- */
-union cavm_reex_af_rxpm_job_byte_count_0
-{
-    uint64_t u;
-    struct cavm_reex_af_rxpm_job_byte_count_0_s
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_32_63        : 32;
-        uint64_t count                 : 32; /**< [ 31:  0](RO/H) Total number of Job Data Bytes parsed, 32 lower bits. Wraps around. */
-#else /* Word 0 - Little Endian */
-        uint64_t count                 : 32; /**< [ 31:  0](RO/H) Total number of Job Data Bytes parsed, 32 lower bits. Wraps around. */
-        uint64_t reserved_32_63        : 32;
-#endif /* Word 0 - End */
-    } s;
-    /* struct cavm_reex_af_rxpm_job_byte_count_0_s cn; */
-};
-typedef union cavm_reex_af_rxpm_job_byte_count_0 cavm_reex_af_rxpm_job_byte_count_0_t;
-
-static inline uint64_t CAVM_REEX_AF_RXPM_JOB_BYTE_COUNT_0(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_REEX_AF_RXPM_JOB_BYTE_COUNT_0(unsigned long a)
-{
-    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
-        return 0x8401400080a0ll + 0x10000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("REEX_AF_RXPM_JOB_BYTE_COUNT_0", 1, a, 0, 0, 0, 0, 0);
-}
-
-#define typedef_CAVM_REEX_AF_RXPM_JOB_BYTE_COUNT_0(a) cavm_reex_af_rxpm_job_byte_count_0_t
-#define bustype_CAVM_REEX_AF_RXPM_JOB_BYTE_COUNT_0(a) CSR_TYPE_RVU_PF_BAR0
-#define basename_CAVM_REEX_AF_RXPM_JOB_BYTE_COUNT_0(a) "REEX_AF_RXPM_JOB_BYTE_COUNT_0"
-#define device_bar_CAVM_REEX_AF_RXPM_JOB_BYTE_COUNT_0(a) 0x0 /* RVU_BAR0 */
-#define busnum_CAVM_REEX_AF_RXPM_JOB_BYTE_COUNT_0(a) (a)
-#define arguments_CAVM_REEX_AF_RXPM_JOB_BYTE_COUNT_0(a) (a),-1,-1,-1
-
-/**
- * Register (RVU_PF_BAR0) ree#_af_rxpm_job_byte_count_1
- *
- * REE AF RXP Main Job Byte Count MSB Register
- */
-union cavm_reex_af_rxpm_job_byte_count_1
-{
-    uint64_t u;
-    struct cavm_reex_af_rxpm_job_byte_count_1_s
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_32_63        : 32;
-        uint64_t count                 : 32; /**< [ 31:  0](RO/H) Total number of Job Data Bytes parsed, 32 higher bits.  Wraps around. */
-#else /* Word 0 - Little Endian */
-        uint64_t count                 : 32; /**< [ 31:  0](RO/H) Total number of Job Data Bytes parsed, 32 higher bits.  Wraps around. */
-        uint64_t reserved_32_63        : 32;
-#endif /* Word 0 - End */
-    } s;
-    /* struct cavm_reex_af_rxpm_job_byte_count_1_s cn; */
-};
-typedef union cavm_reex_af_rxpm_job_byte_count_1 cavm_reex_af_rxpm_job_byte_count_1_t;
-
-static inline uint64_t CAVM_REEX_AF_RXPM_JOB_BYTE_COUNT_1(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_REEX_AF_RXPM_JOB_BYTE_COUNT_1(unsigned long a)
-{
-    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
-        return 0x8401400080a8ll + 0x10000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("REEX_AF_RXPM_JOB_BYTE_COUNT_1", 1, a, 0, 0, 0, 0, 0);
-}
-
-#define typedef_CAVM_REEX_AF_RXPM_JOB_BYTE_COUNT_1(a) cavm_reex_af_rxpm_job_byte_count_1_t
-#define bustype_CAVM_REEX_AF_RXPM_JOB_BYTE_COUNT_1(a) CSR_TYPE_RVU_PF_BAR0
-#define basename_CAVM_REEX_AF_RXPM_JOB_BYTE_COUNT_1(a) "REEX_AF_RXPM_JOB_BYTE_COUNT_1"
-#define device_bar_CAVM_REEX_AF_RXPM_JOB_BYTE_COUNT_1(a) 0x0 /* RVU_BAR0 */
-#define busnum_CAVM_REEX_AF_RXPM_JOB_BYTE_COUNT_1(a) (a)
-#define arguments_CAVM_REEX_AF_RXPM_JOB_BYTE_COUNT_1(a) (a),-1,-1,-1
-
-/**
- * Register (RVU_PF_BAR0) ree#_af_rxpm_job_count
- *
- * REE AF RXP Main Job Count Register
- */
-union cavm_reex_af_rxpm_job_count
-{
-    uint64_t u;
-    struct cavm_reex_af_rxpm_job_count_s
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_32_63        : 32;
-        uint64_t count                 : 32; /**< [ 31:  0](RO/H) Number of valid Jobs ingressed. Wraps around. */
-#else /* Word 0 - Little Endian */
-        uint64_t count                 : 32; /**< [ 31:  0](RO/H) Number of valid Jobs ingressed. Wraps around. */
-        uint64_t reserved_32_63        : 32;
-#endif /* Word 0 - End */
-    } s;
-    /* struct cavm_reex_af_rxpm_job_count_s cn; */
-};
-typedef union cavm_reex_af_rxpm_job_count cavm_reex_af_rxpm_job_count_t;
-
-static inline uint64_t CAVM_REEX_AF_RXPM_JOB_COUNT(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_REEX_AF_RXPM_JOB_COUNT(unsigned long a)
-{
-    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
-        return 0x840140008090ll + 0x10000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("REEX_AF_RXPM_JOB_COUNT", 1, a, 0, 0, 0, 0, 0);
-}
-
-#define typedef_CAVM_REEX_AF_RXPM_JOB_COUNT(a) cavm_reex_af_rxpm_job_count_t
-#define bustype_CAVM_REEX_AF_RXPM_JOB_COUNT(a) CSR_TYPE_RVU_PF_BAR0
-#define basename_CAVM_REEX_AF_RXPM_JOB_COUNT(a) "REEX_AF_RXPM_JOB_COUNT"
-#define device_bar_CAVM_REEX_AF_RXPM_JOB_COUNT(a) 0x0 /* RVU_BAR0 */
-#define busnum_CAVM_REEX_AF_RXPM_JOB_COUNT(a) (a)
-#define arguments_CAVM_REEX_AF_RXPM_JOB_COUNT(a) (a),-1,-1,-1
-
-/**
- * Register (RVU_PF_BAR0) ree#_af_rxpm_match_count
- *
- * REE AF RXP Main Match Count Register
- */
-union cavm_reex_af_rxpm_match_count
-{
-    uint64_t u;
-    struct cavm_reex_af_rxpm_match_count_s
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_32_63        : 32;
-        uint64_t count                 : 32; /**< [ 31:  0](RO/H) Total number of Matches detected.  Wraps around. */
-#else /* Word 0 - Little Endian */
-        uint64_t count                 : 32; /**< [ 31:  0](RO/H) Total number of Matches detected.  Wraps around. */
-        uint64_t reserved_32_63        : 32;
-#endif /* Word 0 - End */
-    } s;
-    /* struct cavm_reex_af_rxpm_match_count_s cn; */
-};
-typedef union cavm_reex_af_rxpm_match_count cavm_reex_af_rxpm_match_count_t;
-
-static inline uint64_t CAVM_REEX_AF_RXPM_MATCH_COUNT(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_REEX_AF_RXPM_MATCH_COUNT(unsigned long a)
-{
-    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
-        return 0x8401400080b8ll + 0x10000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("REEX_AF_RXPM_MATCH_COUNT", 1, a, 0, 0, 0, 0, 0);
-}
-
-#define typedef_CAVM_REEX_AF_RXPM_MATCH_COUNT(a) cavm_reex_af_rxpm_match_count_t
-#define bustype_CAVM_REEX_AF_RXPM_MATCH_COUNT(a) CSR_TYPE_RVU_PF_BAR0
-#define basename_CAVM_REEX_AF_RXPM_MATCH_COUNT(a) "REEX_AF_RXPM_MATCH_COUNT"
-#define device_bar_CAVM_REEX_AF_RXPM_MATCH_COUNT(a) 0x0 /* RVU_BAR0 */
-#define busnum_CAVM_REEX_AF_RXPM_MATCH_COUNT(a) (a)
-#define arguments_CAVM_REEX_AF_RXPM_MATCH_COUNT(a) (a),-1,-1,-1
-
-/**
- * Register (RVU_PF_BAR0) ree#_af_rxpm_max_latency_cnt
- *
- * REE AF RXP Main Max Latency Count Register
- */
-union cavm_reex_af_rxpm_max_latency_cnt
-{
-    uint64_t u;
-    struct cavm_reex_af_rxpm_max_latency_cnt_s
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_32_63        : 32;
-        uint64_t rxp_reserved_1        : 16; /**< [ 31: 16](R/W) Reserved. */
-        uint64_t count                 : 16; /**< [ 15:  0](R/W) Maximum LATENCY_COUNT value per job before primary threads are aborted.
-                                                                 Use this as a proxy for providing an upper bound on Job latency.
-                                                                 This register indicates a target maximum latency, but actual LATENCY_COUNT
-                                                                 value returned for a job can be bigger due to house-keeping overheads. Range 0 to 65535. */
-#else /* Word 0 - Little Endian */
-        uint64_t count                 : 16; /**< [ 15:  0](R/W) Maximum LATENCY_COUNT value per job before primary threads are aborted.
-                                                                 Use this as a proxy for providing an upper bound on Job latency.
-                                                                 This register indicates a target maximum latency, but actual LATENCY_COUNT
-                                                                 value returned for a job can be bigger due to house-keeping overheads. Range 0 to 65535. */
-        uint64_t rxp_reserved_1        : 16; /**< [ 31: 16](R/W) Reserved. */
-        uint64_t reserved_32_63        : 32;
-#endif /* Word 0 - End */
-    } s;
-    /* struct cavm_reex_af_rxpm_max_latency_cnt_s cn; */
-};
-typedef union cavm_reex_af_rxpm_max_latency_cnt cavm_reex_af_rxpm_max_latency_cnt_t;
-
-static inline uint64_t CAVM_REEX_AF_RXPM_MAX_LATENCY_CNT(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_REEX_AF_RXPM_MAX_LATENCY_CNT(unsigned long a)
-{
-    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
-        return 0x8401400080e0ll + 0x10000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("REEX_AF_RXPM_MAX_LATENCY_CNT", 1, a, 0, 0, 0, 0, 0);
-}
-
-#define typedef_CAVM_REEX_AF_RXPM_MAX_LATENCY_CNT(a) cavm_reex_af_rxpm_max_latency_cnt_t
-#define bustype_CAVM_REEX_AF_RXPM_MAX_LATENCY_CNT(a) CSR_TYPE_RVU_PF_BAR0
-#define basename_CAVM_REEX_AF_RXPM_MAX_LATENCY_CNT(a) "REEX_AF_RXPM_MAX_LATENCY_CNT"
-#define device_bar_CAVM_REEX_AF_RXPM_MAX_LATENCY_CNT(a) 0x0 /* RVU_BAR0 */
-#define busnum_CAVM_REEX_AF_RXPM_MAX_LATENCY_CNT(a) (a)
-#define arguments_CAVM_REEX_AF_RXPM_MAX_LATENCY_CNT(a) (a),-1,-1,-1
-
-/**
- * Register (RVU_PF_BAR0) ree#_af_rxpm_max_match
- *
- * REE AF RXP Main Max MATCH Register
- */
-union cavm_reex_af_rxpm_max_match
-{
-    uint64_t u;
-    struct cavm_reex_af_rxpm_max_match_s
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_8_63         : 56;
-        uint64_t max                   : 8;  /**< [  7:  0](R/W) Maximum number of matches to return per job.
-                                                                 Once this number of matches have been found, no further primary threads
-                                                                 are generated for the job.
-                                                                 Range 0 to 254 (includes saturation logic). */
-#else /* Word 0 - Little Endian */
-        uint64_t max                   : 8;  /**< [  7:  0](R/W) Maximum number of matches to return per job.
-                                                                 Once this number of matches have been found, no further primary threads
-                                                                 are generated for the job.
-                                                                 Range 0 to 254 (includes saturation logic). */
-        uint64_t reserved_8_63         : 56;
-#endif /* Word 0 - End */
-    } s;
-    /* struct cavm_reex_af_rxpm_max_match_s cn; */
-};
-typedef union cavm_reex_af_rxpm_max_match cavm_reex_af_rxpm_max_match_t;
-
-static inline uint64_t CAVM_REEX_AF_RXPM_MAX_MATCH(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_REEX_AF_RXPM_MAX_MATCH(unsigned long a)
-{
-    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
-        return 0x8401400080c8ll + 0x10000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("REEX_AF_RXPM_MAX_MATCH", 1, a, 0, 0, 0, 0, 0);
-}
-
-#define typedef_CAVM_REEX_AF_RXPM_MAX_MATCH(a) cavm_reex_af_rxpm_max_match_t
-#define bustype_CAVM_REEX_AF_RXPM_MAX_MATCH(a) CSR_TYPE_RVU_PF_BAR0
-#define basename_CAVM_REEX_AF_RXPM_MAX_MATCH(a) "REEX_AF_RXPM_MAX_MATCH"
-#define device_bar_CAVM_REEX_AF_RXPM_MAX_MATCH(a) 0x0 /* RVU_BAR0 */
-#define busnum_CAVM_REEX_AF_RXPM_MAX_MATCH(a) (a)
-#define arguments_CAVM_REEX_AF_RXPM_MAX_MATCH(a) (a),-1,-1,-1
-
-/**
- * Register (RVU_PF_BAR0) ree#_af_rxpm_max_pre_cnt
- *
- * REE AF RXP Main Max Prefix Count Register
- */
-union cavm_reex_af_rxpm_max_pre_cnt
-{
-    uint64_t u;
-    struct cavm_reex_af_rxpm_max_pre_cnt_s
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_10_63        : 54;
-        uint64_t count                 : 10; /**< [  9:  0](R/W) Maximum number of prefixes detected per job that are converted to thread
-                                                                 searches. Use this as a proxy for denial of service detection.
-                                                                 Range 0 to 1008 (includes saturation logic). */
-#else /* Word 0 - Little Endian */
-        uint64_t count                 : 10; /**< [  9:  0](R/W) Maximum number of prefixes detected per job that are converted to thread
-                                                                 searches. Use this as a proxy for denial of service detection.
-                                                                 Range 0 to 1008 (includes saturation logic). */
-        uint64_t reserved_10_63        : 54;
-#endif /* Word 0 - End */
-    } s;
-    /* struct cavm_reex_af_rxpm_max_pre_cnt_s cn; */
-};
-typedef union cavm_reex_af_rxpm_max_pre_cnt cavm_reex_af_rxpm_max_pre_cnt_t;
-
-static inline uint64_t CAVM_REEX_AF_RXPM_MAX_PRE_CNT(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_REEX_AF_RXPM_MAX_PRE_CNT(unsigned long a)
-{
-    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
-        return 0x8401400080d0ll + 0x10000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("REEX_AF_RXPM_MAX_PRE_CNT", 1, a, 0, 0, 0, 0, 0);
-}
-
-#define typedef_CAVM_REEX_AF_RXPM_MAX_PRE_CNT(a) cavm_reex_af_rxpm_max_pre_cnt_t
-#define bustype_CAVM_REEX_AF_RXPM_MAX_PRE_CNT(a) CSR_TYPE_RVU_PF_BAR0
-#define basename_CAVM_REEX_AF_RXPM_MAX_PRE_CNT(a) "REEX_AF_RXPM_MAX_PRE_CNT"
-#define device_bar_CAVM_REEX_AF_RXPM_MAX_PRE_CNT(a) 0x0 /* RVU_BAR0 */
-#define busnum_CAVM_REEX_AF_RXPM_MAX_PRE_CNT(a) (a)
-#define arguments_CAVM_REEX_AF_RXPM_MAX_PRE_CNT(a) (a),-1,-1,-1
-
-/**
- * Register (RVU_PF_BAR0) ree#_af_rxpm_max_pthread_cnt
- *
- * REE AF RXP Main Max Primary Thread Count Register
- */
-union cavm_reex_af_rxpm_max_pthread_cnt
-{
-    uint64_t u;
-    struct cavm_reex_af_rxpm_max_pthread_cnt_s
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_32_63        : 32;
-        uint64_t rxp_reserved_1        : 16; /**< [ 31: 16](R/W) Reserved. */
-        uint64_t count                 : 16; /**< [ 15:  0](R/W) Maximum number of Primary Threads per Job. Range 0 to 65535. */
-#else /* Word 0 - Little Endian */
-        uint64_t count                 : 16; /**< [ 15:  0](R/W) Maximum number of Primary Threads per Job. Range 0 to 65535. */
-        uint64_t rxp_reserved_1        : 16; /**< [ 31: 16](R/W) Reserved. */
-        uint64_t reserved_32_63        : 32;
-#endif /* Word 0 - End */
-    } s;
-    /* struct cavm_reex_af_rxpm_max_pthread_cnt_s cn; */
-};
-typedef union cavm_reex_af_rxpm_max_pthread_cnt cavm_reex_af_rxpm_max_pthread_cnt_t;
-
-static inline uint64_t CAVM_REEX_AF_RXPM_MAX_PTHREAD_CNT(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_REEX_AF_RXPM_MAX_PTHREAD_CNT(unsigned long a)
-{
-    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
-        return 0x8401400080d8ll + 0x10000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("REEX_AF_RXPM_MAX_PTHREAD_CNT", 1, a, 0, 0, 0, 0, 0);
-}
-
-#define typedef_CAVM_REEX_AF_RXPM_MAX_PTHREAD_CNT(a) cavm_reex_af_rxpm_max_pthread_cnt_t
-#define bustype_CAVM_REEX_AF_RXPM_MAX_PTHREAD_CNT(a) CSR_TYPE_RVU_PF_BAR0
-#define basename_CAVM_REEX_AF_RXPM_MAX_PTHREAD_CNT(a) "REEX_AF_RXPM_MAX_PTHREAD_CNT"
-#define device_bar_CAVM_REEX_AF_RXPM_MAX_PTHREAD_CNT(a) 0x0 /* RVU_BAR0 */
-#define busnum_CAVM_REEX_AF_RXPM_MAX_PTHREAD_CNT(a) (a)
-#define arguments_CAVM_REEX_AF_RXPM_MAX_PTHREAD_CNT(a) (a),-1,-1,-1
-
-/**
- * Register (RVU_PF_BAR0) ree#_af_rxpm_response_count
- *
- * REE AF RXP Main Response Descriptor Count Register
- */
-union cavm_reex_af_rxpm_response_count
-{
-    uint64_t u;
-    struct cavm_reex_af_rxpm_response_count_s
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_32_63        : 32;
-        uint64_t count                 : 32; /**< [ 31:  0](RO/H) Total number of Response Descriptors dispatched.  Wraps around. */
-#else /* Word 0 - Little Endian */
-        uint64_t count                 : 32; /**< [ 31:  0](RO/H) Total number of Response Descriptors dispatched.  Wraps around. */
-        uint64_t reserved_32_63        : 32;
-#endif /* Word 0 - End */
-    } s;
-    /* struct cavm_reex_af_rxpm_response_count_s cn; */
-};
-typedef union cavm_reex_af_rxpm_response_count cavm_reex_af_rxpm_response_count_t;
-
-static inline uint64_t CAVM_REEX_AF_RXPM_RESPONSE_COUNT(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_REEX_AF_RXPM_RESPONSE_COUNT(unsigned long a)
-{
-    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
-        return 0x8401400080b0ll + 0x10000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("REEX_AF_RXPM_RESPONSE_COUNT", 1, a, 0, 0, 0, 0, 0);
-}
-
-#define typedef_CAVM_REEX_AF_RXPM_RESPONSE_COUNT(a) cavm_reex_af_rxpm_response_count_t
-#define bustype_CAVM_REEX_AF_RXPM_RESPONSE_COUNT(a) CSR_TYPE_RVU_PF_BAR0
-#define basename_CAVM_REEX_AF_RXPM_RESPONSE_COUNT(a) "REEX_AF_RXPM_RESPONSE_COUNT"
-#define device_bar_CAVM_REEX_AF_RXPM_RESPONSE_COUNT(a) 0x0 /* RVU_BAR0 */
-#define busnum_CAVM_REEX_AF_RXPM_RESPONSE_COUNT(a) (a)
-#define arguments_CAVM_REEX_AF_RXPM_RESPONSE_COUNT(a) (a),-1,-1,-1
-
-/**
- * Register (RVU_PF_BAR0) ree#_af_rxpm_revision
- *
- * REE AF RXP Main Revision Register
- * This register contains capablity information about RXP.
- */
-union cavm_reex_af_rxpm_revision
-{
-    uint64_t u;
-    struct cavm_reex_af_rxpm_revision_s
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_32_63        : 32;
-        uint64_t rev                   : 32; /**< [ 31:  0](RO) Subversion revision number. Value is drop specific. */
-#else /* Word 0 - Little Endian */
-        uint64_t rev                   : 32; /**< [ 31:  0](RO) Subversion revision number. Value is drop specific. */
-        uint64_t reserved_32_63        : 32;
-#endif /* Word 0 - End */
-    } s;
-    /* struct cavm_reex_af_rxpm_revision_s cn; */
-};
-typedef union cavm_reex_af_rxpm_revision cavm_reex_af_rxpm_revision_t;
-
-static inline uint64_t CAVM_REEX_AF_RXPM_REVISION(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_REEX_AF_RXPM_REVISION(unsigned long a)
-{
-    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
-        return 0x840140008008ll + 0x10000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("REEX_AF_RXPM_REVISION", 1, a, 0, 0, 0, 0, 0);
-}
-
-#define typedef_CAVM_REEX_AF_RXPM_REVISION(a) cavm_reex_af_rxpm_revision_t
-#define bustype_CAVM_REEX_AF_RXPM_REVISION(a) CSR_TYPE_RVU_PF_BAR0
-#define basename_CAVM_REEX_AF_RXPM_REVISION(a) "REEX_AF_RXPM_REVISION"
-#define device_bar_CAVM_REEX_AF_RXPM_REVISION(a) 0x0 /* RVU_BAR0 */
-#define busnum_CAVM_REEX_AF_RXPM_REVISION(a) (a)
-#define arguments_CAVM_REEX_AF_RXPM_REVISION(a) (a),-1,-1,-1
-
-/**
- * Register (RVU_PF_BAR0) ree#_af_rxpm_scratch
- *
- * REE AF RXP Main Scratch Register
- */
-union cavm_reex_af_rxpm_scratch
-{
-    uint64_t u;
-    struct cavm_reex_af_rxpm_scratch_s
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_32_63        : 32;
-        uint64_t scratch               : 32; /**< [ 31:  0](R/W) Scratch register. */
-#else /* Word 0 - Little Endian */
-        uint64_t scratch               : 32; /**< [ 31:  0](R/W) Scratch register. */
-        uint64_t reserved_32_63        : 32;
-#endif /* Word 0 - End */
-    } s;
-    /* struct cavm_reex_af_rxpm_scratch_s cn; */
-};
-typedef union cavm_reex_af_rxpm_scratch cavm_reex_af_rxpm_scratch_t;
-
-static inline uint64_t CAVM_REEX_AF_RXPM_SCRATCH(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_REEX_AF_RXPM_SCRATCH(unsigned long a)
-{
-    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
-        return 0x8401400080e8ll + 0x10000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("REEX_AF_RXPM_SCRATCH", 1, a, 0, 0, 0, 0, 0);
-}
-
-#define typedef_CAVM_REEX_AF_RXPM_SCRATCH(a) cavm_reex_af_rxpm_scratch_t
-#define bustype_CAVM_REEX_AF_RXPM_SCRATCH(a) CSR_TYPE_RVU_PF_BAR0
-#define basename_CAVM_REEX_AF_RXPM_SCRATCH(a) "REEX_AF_RXPM_SCRATCH"
-#define device_bar_CAVM_REEX_AF_RXPM_SCRATCH(a) 0x0 /* RVU_BAR0 */
-#define busnum_CAVM_REEX_AF_RXPM_SCRATCH(a) (a)
-#define arguments_CAVM_REEX_AF_RXPM_SCRATCH(a) (a),-1,-1,-1
-
-/**
- * Register (RVU_PF_BAR0) ree#_af_rxpm_status
- *
- * REE AF RXP Main Status Register
- */
-union cavm_reex_af_rxpm_status
-{
-    uint64_t u;
-    struct cavm_reex_af_rxpm_status_s
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_7_63         : 57;
-        uint64_t idle                  : 1;  /**< [  6:  6](RO/H) --
-                                                                 Internal:
-                                                                 Indicates that there are no jobs in RXP (for debug) */
-        uint64_t reserved_4_5          : 2;
-        uint64_t going                 : 1;  /**< [  3:  3](RO/H) --
-                                                                 Internal:
-                                                                 Indicates that one or more jobs are in RXP (for debug) */
-        uint64_t reserved_1_2          : 2;
-        uint64_t init_done             : 1;  /**< [  0:  0](RO/H) After software sets and clears RXPM_CTRL[INIT], it must poll [INIT_DONE] until
-                                                                 set, which indicates RXP has been initialized. */
-#else /* Word 0 - Little Endian */
-        uint64_t init_done             : 1;  /**< [  0:  0](RO/H) After software sets and clears RXPM_CTRL[INIT], it must poll [INIT_DONE] until
-                                                                 set, which indicates RXP has been initialized. */
-        uint64_t reserved_1_2          : 2;
-        uint64_t going                 : 1;  /**< [  3:  3](RO/H) --
-                                                                 Internal:
-                                                                 Indicates that one or more jobs are in RXP (for debug) */
-        uint64_t reserved_4_5          : 2;
-        uint64_t idle                  : 1;  /**< [  6:  6](RO/H) --
-                                                                 Internal:
-                                                                 Indicates that there are no jobs in RXP (for debug) */
-        uint64_t reserved_7_63         : 57;
-#endif /* Word 0 - End */
-    } s;
-    /* struct cavm_reex_af_rxpm_status_s cn; */
-};
-typedef union cavm_reex_af_rxpm_status cavm_reex_af_rxpm_status_t;
-
-static inline uint64_t CAVM_REEX_AF_RXPM_STATUS(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_REEX_AF_RXPM_STATUS(unsigned long a)
-{
-    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
-        return 0x840140008050ll + 0x10000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("REEX_AF_RXPM_STATUS", 1, a, 0, 0, 0, 0, 0);
-}
-
-#define typedef_CAVM_REEX_AF_RXPM_STATUS(a) cavm_reex_af_rxpm_status_t
-#define bustype_CAVM_REEX_AF_RXPM_STATUS(a) CSR_TYPE_RVU_PF_BAR0
-#define basename_CAVM_REEX_AF_RXPM_STATUS(a) "REEX_AF_RXPM_STATUS"
-#define device_bar_CAVM_REEX_AF_RXPM_STATUS(a) 0x0 /* RVU_BAR0 */
-#define busnum_CAVM_REEX_AF_RXPM_STATUS(a) (a)
-#define arguments_CAVM_REEX_AF_RXPM_STATUS(a) (a),-1,-1,-1
-
-/**
- * Register (RVU_PF_BAR0) ree#_af_rxpm_write_count
- *
- * REE AF RXP Main Write-CSR Count Register
- */
-union cavm_reex_af_rxpm_write_count
-{
-    uint64_t u;
-    struct cavm_reex_af_rxpm_write_count_s
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_32_63        : 32;
-        uint64_t count                 : 32; /**< [ 31:  0](RO/H) Number of CSR Write transactions. */
-#else /* Word 0 - Little Endian */
-        uint64_t count                 : 32; /**< [ 31:  0](RO/H) Number of CSR Write transactions. */
-        uint64_t reserved_32_63        : 32;
-#endif /* Word 0 - End */
-    } s;
-    /* struct cavm_reex_af_rxpm_write_count_s cn; */
-};
-typedef union cavm_reex_af_rxpm_write_count cavm_reex_af_rxpm_write_count_t;
-
-static inline uint64_t CAVM_REEX_AF_RXPM_WRITE_COUNT(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_REEX_AF_RXPM_WRITE_COUNT(unsigned long a)
-{
-    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
-        return 0x840140008088ll + 0x10000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("REEX_AF_RXPM_WRITE_COUNT", 1, a, 0, 0, 0, 0, 0);
-}
-
-#define typedef_CAVM_REEX_AF_RXPM_WRITE_COUNT(a) cavm_reex_af_rxpm_write_count_t
-#define bustype_CAVM_REEX_AF_RXPM_WRITE_COUNT(a) CSR_TYPE_RVU_PF_BAR0
-#define basename_CAVM_REEX_AF_RXPM_WRITE_COUNT(a) "REEX_AF_RXPM_WRITE_COUNT"
-#define device_bar_CAVM_REEX_AF_RXPM_WRITE_COUNT(a) 0x0 /* RVU_BAR0 */
-#define busnum_CAVM_REEX_AF_RXPM_WRITE_COUNT(a) (a)
-#define arguments_CAVM_REEX_AF_RXPM_WRITE_COUNT(a) (a),-1,-1,-1
-
-/**
- * Register (RVU_PF_BAR0) ree#_af_rxpr_capability
- *
- * REE AF RXP RTRU Capability Register
- * This register contains capablity information about RXP.
- */
-union cavm_reex_af_rxpr_capability
-{
-    uint64_t u;
-    struct cavm_reex_af_rxpr_capability_s
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_32_63        : 32;
-        uint64_t rtru_fifo_width       : 16; /**< [ 31: 16](RO) RTRU FIFO Data width. */
-        uint64_t rtru_fifo_depth       : 16; /**< [ 15:  0](RO) RTRU FIFO maximum legal number of entries. */
-#else /* Word 0 - Little Endian */
-        uint64_t rtru_fifo_depth       : 16; /**< [ 15:  0](RO) RTRU FIFO maximum legal number of entries. */
-        uint64_t rtru_fifo_width       : 16; /**< [ 31: 16](RO) RTRU FIFO Data width. */
-        uint64_t reserved_32_63        : 32;
-#endif /* Word 0 - End */
-    } s;
-    /* struct cavm_reex_af_rxpr_capability_s cn; */
-};
-typedef union cavm_reex_af_rxpr_capability cavm_reex_af_rxpr_capability_t;
-
-static inline uint64_t CAVM_REEX_AF_RXPR_CAPABILITY(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_REEX_AF_RXPR_CAPABILITY(unsigned long a)
-{
-    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
-        return 0x840140008210ll + 0x10000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("REEX_AF_RXPR_CAPABILITY", 1, a, 0, 0, 0, 0, 0);
-}
-
-#define typedef_CAVM_REEX_AF_RXPR_CAPABILITY(a) cavm_reex_af_rxpr_capability_t
-#define bustype_CAVM_REEX_AF_RXPR_CAPABILITY(a) CSR_TYPE_RVU_PF_BAR0
-#define basename_CAVM_REEX_AF_RXPR_CAPABILITY(a) "REEX_AF_RXPR_CAPABILITY"
-#define device_bar_CAVM_REEX_AF_RXPR_CAPABILITY(a) 0x0 /* RVU_BAR0 */
-#define busnum_CAVM_REEX_AF_RXPR_CAPABILITY(a) (a)
-#define arguments_CAVM_REEX_AF_RXPR_CAPABILITY(a) (a),-1,-1,-1
-
-/**
- * Register (RVU_PF_BAR0) ree#_af_rxpr_ck_sum_0
- *
- * REE AF RXP RTRU Checksum 0 Register
- * This register contains address checksum value
- */
-union cavm_reex_af_rxpr_ck_sum_0
-{
-    uint64_t u;
-    struct cavm_reex_af_rxpr_ck_sum_0_s
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_32_63        : 32;
-        uint64_t value                 : 32; /**< [ 31:  0](RO/H) RTRU Address checksum value. */
-#else /* Word 0 - Little Endian */
-        uint64_t value                 : 32; /**< [ 31:  0](RO/H) RTRU Address checksum value. */
-        uint64_t reserved_32_63        : 32;
-#endif /* Word 0 - End */
-    } s;
-    /* struct cavm_reex_af_rxpr_ck_sum_0_s cn; */
-};
-typedef union cavm_reex_af_rxpr_ck_sum_0 cavm_reex_af_rxpr_ck_sum_0_t;
-
-static inline uint64_t CAVM_REEX_AF_RXPR_CK_SUM_0(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_REEX_AF_RXPR_CK_SUM_0(unsigned long a)
-{
-    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
-        return 0x840140008280ll + 0x10000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("REEX_AF_RXPR_CK_SUM_0", 1, a, 0, 0, 0, 0, 0);
-}
-
-#define typedef_CAVM_REEX_AF_RXPR_CK_SUM_0(a) cavm_reex_af_rxpr_ck_sum_0_t
-#define bustype_CAVM_REEX_AF_RXPR_CK_SUM_0(a) CSR_TYPE_RVU_PF_BAR0
-#define basename_CAVM_REEX_AF_RXPR_CK_SUM_0(a) "REEX_AF_RXPR_CK_SUM_0"
-#define device_bar_CAVM_REEX_AF_RXPR_CK_SUM_0(a) 0x0 /* RVU_BAR0 */
-#define busnum_CAVM_REEX_AF_RXPR_CK_SUM_0(a) (a)
-#define arguments_CAVM_REEX_AF_RXPR_CK_SUM_0(a) (a),-1,-1,-1
-
-/**
- * Register (RVU_PF_BAR0) ree#_af_rxpr_ck_sum_1
- *
- * REE AF RXP RTRU Checksum 1 Register
- * This register contains data[31:0] checksum value
- */
-union cavm_reex_af_rxpr_ck_sum_1
-{
-    uint64_t u;
-    struct cavm_reex_af_rxpr_ck_sum_1_s
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_32_63        : 32;
-        uint64_t value                 : 32; /**< [ 31:  0](RO/H) Data\<31:0\> checksum value. */
-#else /* Word 0 - Little Endian */
-        uint64_t value                 : 32; /**< [ 31:  0](RO/H) Data\<31:0\> checksum value. */
-        uint64_t reserved_32_63        : 32;
-#endif /* Word 0 - End */
-    } s;
-    /* struct cavm_reex_af_rxpr_ck_sum_1_s cn; */
-};
-typedef union cavm_reex_af_rxpr_ck_sum_1 cavm_reex_af_rxpr_ck_sum_1_t;
-
-static inline uint64_t CAVM_REEX_AF_RXPR_CK_SUM_1(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_REEX_AF_RXPR_CK_SUM_1(unsigned long a)
-{
-    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
-        return 0x840140008288ll + 0x10000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("REEX_AF_RXPR_CK_SUM_1", 1, a, 0, 0, 0, 0, 0);
-}
-
-#define typedef_CAVM_REEX_AF_RXPR_CK_SUM_1(a) cavm_reex_af_rxpr_ck_sum_1_t
-#define bustype_CAVM_REEX_AF_RXPR_CK_SUM_1(a) CSR_TYPE_RVU_PF_BAR0
-#define basename_CAVM_REEX_AF_RXPR_CK_SUM_1(a) "REEX_AF_RXPR_CK_SUM_1"
-#define device_bar_CAVM_REEX_AF_RXPR_CK_SUM_1(a) 0x0 /* RVU_BAR0 */
-#define busnum_CAVM_REEX_AF_RXPR_CK_SUM_1(a) (a)
-#define arguments_CAVM_REEX_AF_RXPR_CK_SUM_1(a) (a),-1,-1,-1
-
-/**
- * Register (RVU_PF_BAR0) ree#_af_rxpr_ck_sum_2
- *
- * REE AF RXP RTRU Checksum 2 Register
- * This register contains data[63:32] checksum value
- */
-union cavm_reex_af_rxpr_ck_sum_2
-{
-    uint64_t u;
-    struct cavm_reex_af_rxpr_ck_sum_2_s
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_32_63        : 32;
-        uint64_t value                 : 32; /**< [ 31:  0](RO/H) data[63:32] checksum value. */
-#else /* Word 0 - Little Endian */
-        uint64_t value                 : 32; /**< [ 31:  0](RO/H) data[63:32] checksum value. */
-        uint64_t reserved_32_63        : 32;
-#endif /* Word 0 - End */
-    } s;
-    /* struct cavm_reex_af_rxpr_ck_sum_2_s cn; */
-};
-typedef union cavm_reex_af_rxpr_ck_sum_2 cavm_reex_af_rxpr_ck_sum_2_t;
-
-static inline uint64_t CAVM_REEX_AF_RXPR_CK_SUM_2(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_REEX_AF_RXPR_CK_SUM_2(unsigned long a)
-{
-    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
-        return 0x840140008290ll + 0x10000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("REEX_AF_RXPR_CK_SUM_2", 1, a, 0, 0, 0, 0, 0);
-}
-
-#define typedef_CAVM_REEX_AF_RXPR_CK_SUM_2(a) cavm_reex_af_rxpr_ck_sum_2_t
-#define bustype_CAVM_REEX_AF_RXPR_CK_SUM_2(a) CSR_TYPE_RVU_PF_BAR0
-#define basename_CAVM_REEX_AF_RXPR_CK_SUM_2(a) "REEX_AF_RXPR_CK_SUM_2"
-#define device_bar_CAVM_REEX_AF_RXPR_CK_SUM_2(a) 0x0 /* RVU_BAR0 */
-#define busnum_CAVM_REEX_AF_RXPR_CK_SUM_2(a) (a)
-#define arguments_CAVM_REEX_AF_RXPR_CK_SUM_2(a) (a),-1,-1,-1
-
-/**
- * Register (RVU_PF_BAR0) ree#_af_rxpr_ctrl
- *
- * REE AF RXP RTRU Control Register
- * This register controls RXP Programming Plane
- */
-union cavm_reex_af_rxpr_ctrl
-{
-    uint64_t u;
-    struct cavm_reex_af_rxpr_ctrl_s
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_32_63        : 32;
-        uint64_t rxp_reserved_2        : 26; /**< [ 31:  6](R/W) Reserved, keep 0. */
-        uint64_t init_mode             : 2;  /**< [  5:  4](R/W) Init mode regarding memories.
-                                                                 Internal:
-                                                                 First init value should be 0x1, and change to 0x2 for further inits.
-                                                                 Modes 0x0 and 0x3 are not supported by REE. */
-        uint64_t rxp_reserved_1        : 2;  /**< [  3:  2](R/W) Reserved, keep 0. */
-        uint64_t go                    : 1;  /**< [  1:  1](R/W) GO. */
-        uint64_t init                  : 1;  /**< [  0:  0](R/W) Initialize RXP. */
-#else /* Word 0 - Little Endian */
-        uint64_t init                  : 1;  /**< [  0:  0](R/W) Initialize RXP. */
-        uint64_t go                    : 1;  /**< [  1:  1](R/W) GO. */
-        uint64_t rxp_reserved_1        : 2;  /**< [  3:  2](R/W) Reserved, keep 0. */
-        uint64_t init_mode             : 2;  /**< [  5:  4](R/W) Init mode regarding memories.
-                                                                 Internal:
-                                                                 First init value should be 0x1, and change to 0x2 for further inits.
-                                                                 Modes 0x0 and 0x3 are not supported by REE. */
-        uint64_t rxp_reserved_2        : 26; /**< [ 31:  6](R/W) Reserved, keep 0. */
-        uint64_t reserved_32_63        : 32;
-#endif /* Word 0 - End */
-    } s;
-    /* struct cavm_reex_af_rxpr_ctrl_s cn; */
-};
-typedef union cavm_reex_af_rxpr_ctrl cavm_reex_af_rxpr_ctrl_t;
-
-static inline uint64_t CAVM_REEX_AF_RXPR_CTRL(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_REEX_AF_RXPR_CTRL(unsigned long a)
-{
-    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
-        return 0x8401400082c0ll + 0x10000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("REEX_AF_RXPR_CTRL", 1, a, 0, 0, 0, 0, 0);
-}
-
-#define typedef_CAVM_REEX_AF_RXPR_CTRL(a) cavm_reex_af_rxpr_ctrl_t
-#define bustype_CAVM_REEX_AF_RXPR_CTRL(a) CSR_TYPE_RVU_PF_BAR0
-#define basename_CAVM_REEX_AF_RXPR_CTRL(a) "REEX_AF_RXPR_CTRL"
-#define device_bar_CAVM_REEX_AF_RXPR_CTRL(a) 0x0 /* RVU_BAR0 */
-#define busnum_CAVM_REEX_AF_RXPR_CTRL(a) (a)
-#define arguments_CAVM_REEX_AF_RXPR_CTRL(a) (a),-1,-1,-1
-
-/**
- * Register (RVU_PF_BAR0) ree#_af_rxpr_dscrd_count
- *
- * REE AF RXP RTRU Discarded Entries Count Register
- * This register contains number of discarded entries read from RTRU_FIFO,
- * as they targeted EM (write path to EM is not enabled).
- */
-union cavm_reex_af_rxpr_dscrd_count
-{
-    uint64_t u;
-    struct cavm_reex_af_rxpr_dscrd_count_s
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_32_63        : 32;
-        uint64_t count                 : 32; /**< [ 31:  0](RO/H) Discarded RTRU entries count. Saturates at 32'hffffffff. */
-#else /* Word 0 - Little Endian */
-        uint64_t count                 : 32; /**< [ 31:  0](RO/H) Discarded RTRU entries count. Saturates at 32'hffffffff. */
-        uint64_t reserved_32_63        : 32;
-#endif /* Word 0 - End */
-    } s;
-    /* struct cavm_reex_af_rxpr_dscrd_count_s cn; */
-};
-typedef union cavm_reex_af_rxpr_dscrd_count cavm_reex_af_rxpr_dscrd_count_t;
-
-static inline uint64_t CAVM_REEX_AF_RXPR_DSCRD_COUNT(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_REEX_AF_RXPR_DSCRD_COUNT(unsigned long a)
-{
-    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
-        return 0x8401400082a0ll + 0x10000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("REEX_AF_RXPR_DSCRD_COUNT", 1, a, 0, 0, 0, 0, 0);
-}
-
-#define typedef_CAVM_REEX_AF_RXPR_DSCRD_COUNT(a) cavm_reex_af_rxpr_dscrd_count_t
-#define bustype_CAVM_REEX_AF_RXPR_DSCRD_COUNT(a) CSR_TYPE_RVU_PF_BAR0
-#define basename_CAVM_REEX_AF_RXPR_DSCRD_COUNT(a) "REEX_AF_RXPR_DSCRD_COUNT"
-#define device_bar_CAVM_REEX_AF_RXPR_DSCRD_COUNT(a) 0x0 /* RVU_BAR0 */
-#define busnum_CAVM_REEX_AF_RXPR_DSCRD_COUNT(a) (a)
-#define arguments_CAVM_REEX_AF_RXPR_DSCRD_COUNT(a) (a),-1,-1,-1
-
-/**
- * Register (RVU_PF_BAR0) ree#_af_rxpr_fifo_status
- *
- * REE AF RXP RTRU FIFO Status Register
- * This register contains status information about RTRU
- */
-union cavm_reex_af_rxpr_fifo_status
-{
-    uint64_t u;
-    struct cavm_reex_af_rxpr_fifo_status_s
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_16_63        : 48;
-        uint64_t num_entries           : 16; /**< [ 15:  0](RO/H) Fill level of the RTRU FIFO. */
-#else /* Word 0 - Little Endian */
-        uint64_t num_entries           : 16; /**< [ 15:  0](RO/H) Fill level of the RTRU FIFO. */
-        uint64_t reserved_16_63        : 48;
-#endif /* Word 0 - End */
-    } s;
-    /* struct cavm_reex_af_rxpr_fifo_status_s cn; */
-};
-typedef union cavm_reex_af_rxpr_fifo_status cavm_reex_af_rxpr_fifo_status_t;
-
-static inline uint64_t CAVM_REEX_AF_RXPR_FIFO_STATUS(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_REEX_AF_RXPR_FIFO_STATUS(unsigned long a)
-{
-    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
-        return 0x840140008258ll + 0x10000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("REEX_AF_RXPR_FIFO_STATUS", 1, a, 0, 0, 0, 0, 0);
-}
-
-#define typedef_CAVM_REEX_AF_RXPR_FIFO_STATUS(a) cavm_reex_af_rxpr_fifo_status_t
-#define bustype_CAVM_REEX_AF_RXPR_FIFO_STATUS(a) CSR_TYPE_RVU_PF_BAR0
-#define basename_CAVM_REEX_AF_RXPR_FIFO_STATUS(a) "REEX_AF_RXPR_FIFO_STATUS"
-#define device_bar_CAVM_REEX_AF_RXPR_FIFO_STATUS(a) 0x0 /* RVU_BAR0 */
-#define busnum_CAVM_REEX_AF_RXPR_FIFO_STATUS(a) (a)
-#define arguments_CAVM_REEX_AF_RXPR_FIFO_STATUS(a) (a),-1,-1,-1
-
-/**
- * Register (RVU_PF_BAR0) ree#_af_rxpr_rof_metadata
- *
- * REE AF RXP RTRU Metadata Register
- * Metadata value
- */
-union cavm_reex_af_rxpr_rof_metadata
-{
-    uint64_t u;
-    struct cavm_reex_af_rxpr_rof_metadata_s
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_32_63        : 32;
-        uint64_t metadata              : 32; /**< [ 31:  0](RO/H) Metadata value embedded in rules memories (T2.0).
-                                                                 This could indicate PTPB, but if PTPB gets deprecated as it is less relevant
-                                                                 for bi-directional walk support, it could be populated with user-specified value.
-                                                                 Value change - same behavior as ROF_REVISION above. */
-#else /* Word 0 - Little Endian */
-        uint64_t metadata              : 32; /**< [ 31:  0](RO/H) Metadata value embedded in rules memories (T2.0).
-                                                                 This could indicate PTPB, but if PTPB gets deprecated as it is less relevant
-                                                                 for bi-directional walk support, it could be populated with user-specified value.
-                                                                 Value change - same behavior as ROF_REVISION above. */
-        uint64_t reserved_32_63        : 32;
-#endif /* Word 0 - End */
-    } s;
-    /* struct cavm_reex_af_rxpr_rof_metadata_s cn; */
-};
-typedef union cavm_reex_af_rxpr_rof_metadata cavm_reex_af_rxpr_rof_metadata_t;
-
-static inline uint64_t CAVM_REEX_AF_RXPR_ROF_METADATA(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_REEX_AF_RXPR_ROF_METADATA(unsigned long a)
-{
-    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
-        return 0x8401400082b8ll + 0x10000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("REEX_AF_RXPR_ROF_METADATA", 1, a, 0, 0, 0, 0, 0);
-}
-
-#define typedef_CAVM_REEX_AF_RXPR_ROF_METADATA(a) cavm_reex_af_rxpr_rof_metadata_t
-#define bustype_CAVM_REEX_AF_RXPR_ROF_METADATA(a) CSR_TYPE_RVU_PF_BAR0
-#define basename_CAVM_REEX_AF_RXPR_ROF_METADATA(a) "REEX_AF_RXPR_ROF_METADATA"
-#define device_bar_CAVM_REEX_AF_RXPR_ROF_METADATA(a) 0x0 /* RVU_BAR0 */
-#define busnum_CAVM_REEX_AF_RXPR_ROF_METADATA(a) (a)
-#define arguments_CAVM_REEX_AF_RXPR_ROF_METADATA(a) (a),-1,-1,-1
-
-/**
- * Register (RVU_PF_BAR0) ree#_af_rxpr_rof_revision
- *
- * REE AF RXP RTRU Revision Register
- * Revision number
- */
-union cavm_reex_af_rxpr_rof_revision
-{
-    uint64_t u;
-    struct cavm_reex_af_rxpr_rof_revision_s
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_32_63        : 32;
-        uint64_t revision              : 32; /**< [ 31:  0](RO) Revision Value embedded in rules memories.
-                                                                 It can change if there is a non-zero entry for a specific address is inserted in
-                                                                 the ROF file and written to the rules memories */
-#else /* Word 0 - Little Endian */
-        uint64_t revision              : 32; /**< [ 31:  0](RO) Revision Value embedded in rules memories.
-                                                                 It can change if there is a non-zero entry for a specific address is inserted in
-                                                                 the ROF file and written to the rules memories */
-        uint64_t reserved_32_63        : 32;
-#endif /* Word 0 - End */
-    } s;
-    /* struct cavm_reex_af_rxpr_rof_revision_s cn; */
-};
-typedef union cavm_reex_af_rxpr_rof_revision cavm_reex_af_rxpr_rof_revision_t;
-
-static inline uint64_t CAVM_REEX_AF_RXPR_ROF_REVISION(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_REEX_AF_RXPR_ROF_REVISION(unsigned long a)
-{
-    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
-        return 0x8401400082b0ll + 0x10000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("REEX_AF_RXPR_ROF_REVISION", 1, a, 0, 0, 0, 0, 0);
-}
-
-#define typedef_CAVM_REEX_AF_RXPR_ROF_REVISION(a) cavm_reex_af_rxpr_rof_revision_t
-#define bustype_CAVM_REEX_AF_RXPR_ROF_REVISION(a) CSR_TYPE_RVU_PF_BAR0
-#define basename_CAVM_REEX_AF_RXPR_ROF_REVISION(a) "REEX_AF_RXPR_ROF_REVISION"
-#define device_bar_CAVM_REEX_AF_RXPR_ROF_REVISION(a) 0x0 /* RVU_BAR0 */
-#define busnum_CAVM_REEX_AF_RXPR_ROF_REVISION(a) (a)
-#define arguments_CAVM_REEX_AF_RXPR_ROF_REVISION(a) (a),-1,-1,-1
-
-/**
- * Register (RVU_PF_BAR0) ree#_af_rxpr_rtru_count
- *
- * REE AF RXP RTRU Count Register
- * Number of completed RTRUs
- */
-union cavm_reex_af_rxpr_rtru_count
-{
-    uint64_t u;
-    struct cavm_reex_af_rxpr_rtru_count_s
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_32_63        : 32;
-        uint64_t count                 : 32; /**< [ 31:  0](RO/H) Number of completed RTRUs */
-#else /* Word 0 - Little Endian */
-        uint64_t count                 : 32; /**< [ 31:  0](RO/H) Number of completed RTRUs */
-        uint64_t reserved_32_63        : 32;
-#endif /* Word 0 - End */
-    } s;
-    /* struct cavm_reex_af_rxpr_rtru_count_s cn; */
-};
-typedef union cavm_reex_af_rxpr_rtru_count cavm_reex_af_rxpr_rtru_count_t;
-
-static inline uint64_t CAVM_REEX_AF_RXPR_RTRU_COUNT(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_REEX_AF_RXPR_RTRU_COUNT(unsigned long a)
-{
-    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
-        return 0x8401400082a8ll + 0x10000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("REEX_AF_RXPR_RTRU_COUNT", 1, a, 0, 0, 0, 0, 0);
-}
-
-#define typedef_CAVM_REEX_AF_RXPR_RTRU_COUNT(a) cavm_reex_af_rxpr_rtru_count_t
-#define bustype_CAVM_REEX_AF_RXPR_RTRU_COUNT(a) CSR_TYPE_RVU_PF_BAR0
-#define basename_CAVM_REEX_AF_RXPR_RTRU_COUNT(a) "REEX_AF_RXPR_RTRU_COUNT"
-#define device_bar_CAVM_REEX_AF_RXPR_RTRU_COUNT(a) 0x0 /* RVU_BAR0 */
-#define busnum_CAVM_REEX_AF_RXPR_RTRU_COUNT(a) (a)
-#define arguments_CAVM_REEX_AF_RXPR_RTRU_COUNT(a) (a),-1,-1,-1
-
-/**
- * Register (RVU_PF_BAR0) ree#_af_rxpr_status
- *
- * REE AF RXP RTRU Status Register
- * This register contains status information about RTRU
- */
-union cavm_reex_af_rxpr_status
-{
-    uint64_t u;
-    struct cavm_reex_af_rxpr_status_s
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_8_63         : 56;
-        uint64_t em_init_done          : 1;  /**< [  7:  7](RO/H) Asserted if External memory intialization is complete. */
-        uint64_t l2_cache_init_done    : 1;  /**< [  6:  6](RO/H) Asserted if RXP L2 cache intialization is complete. */
-        uint64_t l1_cache_init_done    : 1;  /**< [  5:  5](RO/H) Asserted if RXP L1 cache intialization is complete. */
-        uint64_t im_init_done          : 1;  /**< [  4:  4](RO/H) Asserted if RXP Internal memory intialization is complete. */
-        uint64_t reserved_2_3          : 2;
-        uint64_t update_done           : 1;  /**< [  1:  1](RO/H) Asserted if rules update transaction is complete. */
-        uint64_t update_req            : 1;  /**< [  0:  0](RO/H) Update required is asserted if a rules update is required i.e. one or more
-                                                                 values have been written to the RTRU FIFO. */
-#else /* Word 0 - Little Endian */
-        uint64_t update_req            : 1;  /**< [  0:  0](RO/H) Update required is asserted if a rules update is required i.e. one or more
-                                                                 values have been written to the RTRU FIFO. */
-        uint64_t update_done           : 1;  /**< [  1:  1](RO/H) Asserted if rules update transaction is complete. */
-        uint64_t reserved_2_3          : 2;
-        uint64_t im_init_done          : 1;  /**< [  4:  4](RO/H) Asserted if RXP Internal memory intialization is complete. */
-        uint64_t l1_cache_init_done    : 1;  /**< [  5:  5](RO/H) Asserted if RXP L1 cache intialization is complete. */
-        uint64_t l2_cache_init_done    : 1;  /**< [  6:  6](RO/H) Asserted if RXP L2 cache intialization is complete. */
-        uint64_t em_init_done          : 1;  /**< [  7:  7](RO/H) Asserted if External memory intialization is complete. */
-        uint64_t reserved_8_63         : 56;
-#endif /* Word 0 - End */
-    } s;
-    /* struct cavm_reex_af_rxpr_status_s cn; */
-};
-typedef union cavm_reex_af_rxpr_status cavm_reex_af_rxpr_status_t;
-
-static inline uint64_t CAVM_REEX_AF_RXPR_STATUS(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_REEX_AF_RXPR_STATUS(unsigned long a)
-{
-    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
-        return 0x840140008250ll + 0x10000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("REEX_AF_RXPR_STATUS", 1, a, 0, 0, 0, 0, 0);
-}
-
-#define typedef_CAVM_REEX_AF_RXPR_STATUS(a) cavm_reex_af_rxpr_status_t
-#define bustype_CAVM_REEX_AF_RXPR_STATUS(a) CSR_TYPE_RVU_PF_BAR0
-#define basename_CAVM_REEX_AF_RXPR_STATUS(a) "REEX_AF_RXPR_STATUS"
-#define device_bar_CAVM_REEX_AF_RXPR_STATUS(a) 0x0 /* RVU_BAR0 */
-#define busnum_CAVM_REEX_AF_RXPR_STATUS(a) (a)
-#define arguments_CAVM_REEX_AF_RXPR_STATUS(a) (a),-1,-1,-1
-
-/**
- * Register (RVU_PF_BAR0) ree#_af_rxps_cluster_0
- *
- * REE AF RXP STAT CLUSTER_0 Register
- * Statistics for RXP cluster 0
- */
-union cavm_reex_af_rxps_cluster_0
-{
-    uint64_t u;
-    struct cavm_reex_af_rxps_cluster_0_s
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_32_63        : 32;
-        uint64_t instruction_duty_cycle : 8; /**< [ 31: 24](RO/H) Number of instructions that were executed in the previous
-                                                                 window block of 256 clock cycles. */
-        uint64_t hit_duty_cycle        : 8;  /**< [ 23: 16](RO/H) Number of clock cycles HIT was asserted in the previous
-                                                                 window block of 256 clock cycles. */
-        uint64_t tce_idle_1d           : 8;  /**< [ 15:  8](RO/H) Each bit is asserted if associated TCE(7:0) was idle
-                                                                 for the previous window block of 256 clock cycles.
-
-                                                                 Internal:
-                                                                 FIXME - Titan to fix, there are now 16 TCEs per cluster, but only 8 bits.
-                                                                 Also, reset value might be wrong, Titan to update. */
-        uint64_t jce_idle_1d           : 8;  /**< [  7:  0](RO/H) Each bit is asserted if associated JCE(7:0) was idle
-                                                                 for the previous window block of 256 clock cycles. */
-#else /* Word 0 - Little Endian */
-        uint64_t jce_idle_1d           : 8;  /**< [  7:  0](RO/H) Each bit is asserted if associated JCE(7:0) was idle
-                                                                 for the previous window block of 256 clock cycles. */
-        uint64_t tce_idle_1d           : 8;  /**< [ 15:  8](RO/H) Each bit is asserted if associated TCE(7:0) was idle
-                                                                 for the previous window block of 256 clock cycles.
-
-                                                                 Internal:
-                                                                 FIXME - Titan to fix, there are now 16 TCEs per cluster, but only 8 bits.
-                                                                 Also, reset value might be wrong, Titan to update. */
-        uint64_t hit_duty_cycle        : 8;  /**< [ 23: 16](RO/H) Number of clock cycles HIT was asserted in the previous
-                                                                 window block of 256 clock cycles. */
-        uint64_t instruction_duty_cycle : 8; /**< [ 31: 24](RO/H) Number of instructions that were executed in the previous
-                                                                 window block of 256 clock cycles. */
-        uint64_t reserved_32_63        : 32;
-#endif /* Word 0 - End */
-    } s;
-    /* struct cavm_reex_af_rxps_cluster_0_s cn; */
-};
-typedef union cavm_reex_af_rxps_cluster_0 cavm_reex_af_rxps_cluster_0_t;
-
-static inline uint64_t CAVM_REEX_AF_RXPS_CLUSTER_0(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_REEX_AF_RXPS_CLUSTER_0(unsigned long a)
-{
-    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
-        return 0x840140008400ll + 0x10000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("REEX_AF_RXPS_CLUSTER_0", 1, a, 0, 0, 0, 0, 0);
-}
-
-#define typedef_CAVM_REEX_AF_RXPS_CLUSTER_0(a) cavm_reex_af_rxps_cluster_0_t
-#define bustype_CAVM_REEX_AF_RXPS_CLUSTER_0(a) CSR_TYPE_RVU_PF_BAR0
-#define basename_CAVM_REEX_AF_RXPS_CLUSTER_0(a) "REEX_AF_RXPS_CLUSTER_0"
-#define device_bar_CAVM_REEX_AF_RXPS_CLUSTER_0(a) 0x0 /* RVU_BAR0 */
-#define busnum_CAVM_REEX_AF_RXPS_CLUSTER_0(a) (a)
-#define arguments_CAVM_REEX_AF_RXPS_CLUSTER_0(a) (a),-1,-1,-1
-
-/**
- * Register (RVU_PF_BAR0) ree#_af_rxps_cluster_1
- *
- * REE AF RXP STAT CLUSTER_1 Register
- * Statistics for RXP cluster 1
- */
-union cavm_reex_af_rxps_cluster_1
-{
-    uint64_t u;
-    struct cavm_reex_af_rxps_cluster_1_s
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_32_63        : 32;
-        uint64_t instruction_duty_cycle : 8; /**< [ 31: 24](RO/H) Number of instructions that were executed in the previous
-                                                                 window block of 256 clock cycles. */
-        uint64_t hit_duty_cycle        : 8;  /**< [ 23: 16](RO/H) Number of clock cycles HIT was asserted in the previous
-                                                                 window block of 256 clock cycles. */
-        uint64_t tce_idle_1d           : 8;  /**< [ 15:  8](RO/H) Each bit is asserted if associated TCE(7:0) was idle
-                                                                 for the previous window block of 256 clock cycles.
-
-                                                                 Internal:
-                                                                 FIXME - Titan to fix, there are now 16 TCEs per cluster, but only 8 bits.
-                                                                 Also, reset value might be wrong, Titan to update. */
-        uint64_t jce_idle_1d           : 8;  /**< [  7:  0](RO/H) Each bit is asserted if associated JCE(7:0) was idle
-                                                                 for the previous window block of 256 clock cycles. */
-#else /* Word 0 - Little Endian */
-        uint64_t jce_idle_1d           : 8;  /**< [  7:  0](RO/H) Each bit is asserted if associated JCE(7:0) was idle
-                                                                 for the previous window block of 256 clock cycles. */
-        uint64_t tce_idle_1d           : 8;  /**< [ 15:  8](RO/H) Each bit is asserted if associated TCE(7:0) was idle
-                                                                 for the previous window block of 256 clock cycles.
-
-                                                                 Internal:
-                                                                 FIXME - Titan to fix, there are now 16 TCEs per cluster, but only 8 bits.
-                                                                 Also, reset value might be wrong, Titan to update. */
-        uint64_t hit_duty_cycle        : 8;  /**< [ 23: 16](RO/H) Number of clock cycles HIT was asserted in the previous
-                                                                 window block of 256 clock cycles. */
-        uint64_t instruction_duty_cycle : 8; /**< [ 31: 24](RO/H) Number of instructions that were executed in the previous
-                                                                 window block of 256 clock cycles. */
-        uint64_t reserved_32_63        : 32;
-#endif /* Word 0 - End */
-    } s;
-    /* struct cavm_reex_af_rxps_cluster_1_s cn; */
-};
-typedef union cavm_reex_af_rxps_cluster_1 cavm_reex_af_rxps_cluster_1_t;
-
-static inline uint64_t CAVM_REEX_AF_RXPS_CLUSTER_1(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_REEX_AF_RXPS_CLUSTER_1(unsigned long a)
-{
-    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
-        return 0x840140008408ll + 0x10000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("REEX_AF_RXPS_CLUSTER_1", 1, a, 0, 0, 0, 0, 0);
-}
-
-#define typedef_CAVM_REEX_AF_RXPS_CLUSTER_1(a) cavm_reex_af_rxps_cluster_1_t
-#define bustype_CAVM_REEX_AF_RXPS_CLUSTER_1(a) CSR_TYPE_RVU_PF_BAR0
-#define basename_CAVM_REEX_AF_RXPS_CLUSTER_1(a) "REEX_AF_RXPS_CLUSTER_1"
-#define device_bar_CAVM_REEX_AF_RXPS_CLUSTER_1(a) 0x0 /* RVU_BAR0 */
-#define busnum_CAVM_REEX_AF_RXPS_CLUSTER_1(a) (a)
-#define arguments_CAVM_REEX_AF_RXPS_CLUSTER_1(a) (a),-1,-1,-1
-
-/**
- * Register (RVU_PF_BAR0) ree#_af_rxps_cluster_2
- *
- * REE AF RXP STAT CLUSTER_2 Register
- * Statistics for RXP cluster 2
- */
-union cavm_reex_af_rxps_cluster_2
-{
-    uint64_t u;
-    struct cavm_reex_af_rxps_cluster_2_s
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_32_63        : 32;
-        uint64_t instruction_duty_cycle : 8; /**< [ 31: 24](RO/H) Number of instructions that were executed in the previous
-                                                                 window block of 256 clock cycles. */
-        uint64_t hit_duty_cycle        : 8;  /**< [ 23: 16](RO/H) Number of clock cycles HIT was asserted in the previous
-                                                                 window block of 256 clock cycles. */
-        uint64_t tce_idle_1d           : 8;  /**< [ 15:  8](RO/H) Each bit is asserted if associated TCE(7:0) was idle
-                                                                 for the previous window block of 256 clock cycles.
-
-                                                                 Internal:
-                                                                 FIXME - Titan to fix, there are now 16 TCEs per cluster, but only 8 bits.
-                                                                 Also, reset value might be wrong, Titan to update. */
-        uint64_t jce_idle_1d           : 8;  /**< [  7:  0](RO/H) Each bit is asserted if associated JCE(7:0) was idle
-                                                                 for the previous window block of 256 clock cycles. */
-#else /* Word 0 - Little Endian */
-        uint64_t jce_idle_1d           : 8;  /**< [  7:  0](RO/H) Each bit is asserted if associated JCE(7:0) was idle
-                                                                 for the previous window block of 256 clock cycles. */
-        uint64_t tce_idle_1d           : 8;  /**< [ 15:  8](RO/H) Each bit is asserted if associated TCE(7:0) was idle
-                                                                 for the previous window block of 256 clock cycles.
-
-                                                                 Internal:
-                                                                 FIXME - Titan to fix, there are now 16 TCEs per cluster, but only 8 bits.
-                                                                 Also, reset value might be wrong, Titan to update. */
-        uint64_t hit_duty_cycle        : 8;  /**< [ 23: 16](RO/H) Number of clock cycles HIT was asserted in the previous
-                                                                 window block of 256 clock cycles. */
-        uint64_t instruction_duty_cycle : 8; /**< [ 31: 24](RO/H) Number of instructions that were executed in the previous
-                                                                 window block of 256 clock cycles. */
-        uint64_t reserved_32_63        : 32;
-#endif /* Word 0 - End */
-    } s;
-    /* struct cavm_reex_af_rxps_cluster_2_s cn; */
-};
-typedef union cavm_reex_af_rxps_cluster_2 cavm_reex_af_rxps_cluster_2_t;
-
-static inline uint64_t CAVM_REEX_AF_RXPS_CLUSTER_2(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_REEX_AF_RXPS_CLUSTER_2(unsigned long a)
-{
-    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
-        return 0x840140008410ll + 0x10000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("REEX_AF_RXPS_CLUSTER_2", 1, a, 0, 0, 0, 0, 0);
-}
-
-#define typedef_CAVM_REEX_AF_RXPS_CLUSTER_2(a) cavm_reex_af_rxps_cluster_2_t
-#define bustype_CAVM_REEX_AF_RXPS_CLUSTER_2(a) CSR_TYPE_RVU_PF_BAR0
-#define basename_CAVM_REEX_AF_RXPS_CLUSTER_2(a) "REEX_AF_RXPS_CLUSTER_2"
-#define device_bar_CAVM_REEX_AF_RXPS_CLUSTER_2(a) 0x0 /* RVU_BAR0 */
-#define busnum_CAVM_REEX_AF_RXPS_CLUSTER_2(a) (a)
-#define arguments_CAVM_REEX_AF_RXPS_CLUSTER_2(a) (a),-1,-1,-1
-
-/**
- * Register (RVU_PF_BAR0) ree#_af_rxps_cluster_3
- *
- * REE AF RXP STAT CLUSTER_3 Register
- * Statistics for RXP cluster 3
- */
-union cavm_reex_af_rxps_cluster_3
-{
-    uint64_t u;
-    struct cavm_reex_af_rxps_cluster_3_s
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_32_63        : 32;
-        uint64_t instruction_duty_cycle : 8; /**< [ 31: 24](RO/H) Number of instructions that were executed in the previous
-                                                                 window block of 256 clock cycles. */
-        uint64_t hit_duty_cycle        : 8;  /**< [ 23: 16](RO/H) Number of clock cycles HIT was asserted in the previous
-                                                                 window block of 256 clock cycles. */
-        uint64_t tce_idle_1d           : 8;  /**< [ 15:  8](RO/H) Each bit is asserted if associated TCE(7:0) was idle
-                                                                 for the previous window block of 256 clock cycles.
-
-                                                                 Internal:
-                                                                 FIXME - Titan to fix, there are now 16 TCEs per cluster, but only 8 bits.
-                                                                 Also, reset value might be wrong, Titan to update. */
-        uint64_t jce_idle_1d           : 8;  /**< [  7:  0](RO/H) Each bit is asserted if associated JCE(7:0) was idle
-                                                                 for the previous window block of 256 clock cycles. */
-#else /* Word 0 - Little Endian */
-        uint64_t jce_idle_1d           : 8;  /**< [  7:  0](RO/H) Each bit is asserted if associated JCE(7:0) was idle
-                                                                 for the previous window block of 256 clock cycles. */
-        uint64_t tce_idle_1d           : 8;  /**< [ 15:  8](RO/H) Each bit is asserted if associated TCE(7:0) was idle
-                                                                 for the previous window block of 256 clock cycles.
-
-                                                                 Internal:
-                                                                 FIXME - Titan to fix, there are now 16 TCEs per cluster, but only 8 bits.
-                                                                 Also, reset value might be wrong, Titan to update. */
-        uint64_t hit_duty_cycle        : 8;  /**< [ 23: 16](RO/H) Number of clock cycles HIT was asserted in the previous
-                                                                 window block of 256 clock cycles. */
-        uint64_t instruction_duty_cycle : 8; /**< [ 31: 24](RO/H) Number of instructions that were executed in the previous
-                                                                 window block of 256 clock cycles. */
-        uint64_t reserved_32_63        : 32;
-#endif /* Word 0 - End */
-    } s;
-    /* struct cavm_reex_af_rxps_cluster_3_s cn; */
-};
-typedef union cavm_reex_af_rxps_cluster_3 cavm_reex_af_rxps_cluster_3_t;
-
-static inline uint64_t CAVM_REEX_AF_RXPS_CLUSTER_3(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_REEX_AF_RXPS_CLUSTER_3(unsigned long a)
-{
-    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
-        return 0x840140008418ll + 0x10000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("REEX_AF_RXPS_CLUSTER_3", 1, a, 0, 0, 0, 0, 0);
-}
-
-#define typedef_CAVM_REEX_AF_RXPS_CLUSTER_3(a) cavm_reex_af_rxps_cluster_3_t
-#define bustype_CAVM_REEX_AF_RXPS_CLUSTER_3(a) CSR_TYPE_RVU_PF_BAR0
-#define basename_CAVM_REEX_AF_RXPS_CLUSTER_3(a) "REEX_AF_RXPS_CLUSTER_3"
-#define device_bar_CAVM_REEX_AF_RXPS_CLUSTER_3(a) 0x0 /* RVU_BAR0 */
-#define busnum_CAVM_REEX_AF_RXPS_CLUSTER_3(a) (a)
-#define arguments_CAVM_REEX_AF_RXPS_CLUSTER_3(a) (a),-1,-1,-1
-
-/**
- * Register (RVU_PF_BAR0) ree#_af_rxps_cluster_4
- *
- * REE AF RXP STAT CLUSTER_4 Register
- * Statistics for RXP cluster 4
- */
-union cavm_reex_af_rxps_cluster_4
-{
-    uint64_t u;
-    struct cavm_reex_af_rxps_cluster_4_s
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_32_63        : 32;
-        uint64_t instruction_duty_cycle : 8; /**< [ 31: 24](RO/H) Number of instructions that were executed in the previous
-                                                                 window block of 256 clock cycles. */
-        uint64_t hit_duty_cycle        : 8;  /**< [ 23: 16](RO/H) Number of clock cycles HIT was asserted in the previous
-                                                                 window block of 256 clock cycles. */
-        uint64_t tce_idle_1d           : 8;  /**< [ 15:  8](RO/H) Each bit is asserted if associated TCE(7:0) was idle
-                                                                 for the previous window block of 256 clock cycles.
-
-                                                                 Internal:
-                                                                 FIXME - Titan to fix, there are now 16 TCEs per cluster, but only 8 bits.
-                                                                 Also, reset value might be wrong, Titan to update. */
-        uint64_t jce_idle_1d           : 8;  /**< [  7:  0](RO/H) Each bit is asserted if associated JCE(7:0) was idle
-                                                                 for the previous window block of 256 clock cycles. */
-#else /* Word 0 - Little Endian */
-        uint64_t jce_idle_1d           : 8;  /**< [  7:  0](RO/H) Each bit is asserted if associated JCE(7:0) was idle
-                                                                 for the previous window block of 256 clock cycles. */
-        uint64_t tce_idle_1d           : 8;  /**< [ 15:  8](RO/H) Each bit is asserted if associated TCE(7:0) was idle
-                                                                 for the previous window block of 256 clock cycles.
-
-                                                                 Internal:
-                                                                 FIXME - Titan to fix, there are now 16 TCEs per cluster, but only 8 bits.
-                                                                 Also, reset value might be wrong, Titan to update. */
-        uint64_t hit_duty_cycle        : 8;  /**< [ 23: 16](RO/H) Number of clock cycles HIT was asserted in the previous
-                                                                 window block of 256 clock cycles. */
-        uint64_t instruction_duty_cycle : 8; /**< [ 31: 24](RO/H) Number of instructions that were executed in the previous
-                                                                 window block of 256 clock cycles. */
-        uint64_t reserved_32_63        : 32;
-#endif /* Word 0 - End */
-    } s;
-    /* struct cavm_reex_af_rxps_cluster_4_s cn; */
-};
-typedef union cavm_reex_af_rxps_cluster_4 cavm_reex_af_rxps_cluster_4_t;
-
-static inline uint64_t CAVM_REEX_AF_RXPS_CLUSTER_4(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_REEX_AF_RXPS_CLUSTER_4(unsigned long a)
-{
-    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
-        return 0x840140008420ll + 0x10000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("REEX_AF_RXPS_CLUSTER_4", 1, a, 0, 0, 0, 0, 0);
-}
-
-#define typedef_CAVM_REEX_AF_RXPS_CLUSTER_4(a) cavm_reex_af_rxps_cluster_4_t
-#define bustype_CAVM_REEX_AF_RXPS_CLUSTER_4(a) CSR_TYPE_RVU_PF_BAR0
-#define basename_CAVM_REEX_AF_RXPS_CLUSTER_4(a) "REEX_AF_RXPS_CLUSTER_4"
-#define device_bar_CAVM_REEX_AF_RXPS_CLUSTER_4(a) 0x0 /* RVU_BAR0 */
-#define busnum_CAVM_REEX_AF_RXPS_CLUSTER_4(a) (a)
-#define arguments_CAVM_REEX_AF_RXPS_CLUSTER_4(a) (a),-1,-1,-1
-
-/**
- * Register (RVU_PF_BAR0) ree#_af_rxps_cluster_5
- *
- * REE AF RXP STAT CLUSTER_5 Register
- * Statistics for RXP cluster 5
- */
-union cavm_reex_af_rxps_cluster_5
-{
-    uint64_t u;
-    struct cavm_reex_af_rxps_cluster_5_s
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_32_63        : 32;
-        uint64_t instruction_duty_cycle : 8; /**< [ 31: 24](RO/H) Number of instructions that were executed in the previous
-                                                                 window block of 256 clock cycles. */
-        uint64_t hit_duty_cycle        : 8;  /**< [ 23: 16](RO/H) Number of clock cycles HIT was asserted in the previous
-                                                                 window block of 256 clock cycles. */
-        uint64_t tce_idle_1d           : 8;  /**< [ 15:  8](RO/H) Each bit is asserted if associated TCE(7:0) was idle
-                                                                 for the previous window block of 256 clock cycles.
-
-                                                                 Internal:
-                                                                 FIXME - Titan to fix, there are now 16 TCEs per cluster, but only 8 bits.
-                                                                 Also, reset value might be wrong, Titan to update. */
-        uint64_t jce_idle_1d           : 8;  /**< [  7:  0](RO/H) Each bit is asserted if associated JCE(7:0) was idle
-                                                                 for the previous window block of 256 clock cycles. */
-#else /* Word 0 - Little Endian */
-        uint64_t jce_idle_1d           : 8;  /**< [  7:  0](RO/H) Each bit is asserted if associated JCE(7:0) was idle
-                                                                 for the previous window block of 256 clock cycles. */
-        uint64_t tce_idle_1d           : 8;  /**< [ 15:  8](RO/H) Each bit is asserted if associated TCE(7:0) was idle
-                                                                 for the previous window block of 256 clock cycles.
-
-                                                                 Internal:
-                                                                 FIXME - Titan to fix, there are now 16 TCEs per cluster, but only 8 bits.
-                                                                 Also, reset value might be wrong, Titan to update. */
-        uint64_t hit_duty_cycle        : 8;  /**< [ 23: 16](RO/H) Number of clock cycles HIT was asserted in the previous
-                                                                 window block of 256 clock cycles. */
-        uint64_t instruction_duty_cycle : 8; /**< [ 31: 24](RO/H) Number of instructions that were executed in the previous
-                                                                 window block of 256 clock cycles. */
-        uint64_t reserved_32_63        : 32;
-#endif /* Word 0 - End */
-    } s;
-    /* struct cavm_reex_af_rxps_cluster_5_s cn; */
-};
-typedef union cavm_reex_af_rxps_cluster_5 cavm_reex_af_rxps_cluster_5_t;
-
-static inline uint64_t CAVM_REEX_AF_RXPS_CLUSTER_5(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_REEX_AF_RXPS_CLUSTER_5(unsigned long a)
-{
-    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
-        return 0x840140008428ll + 0x10000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("REEX_AF_RXPS_CLUSTER_5", 1, a, 0, 0, 0, 0, 0);
-}
-
-#define typedef_CAVM_REEX_AF_RXPS_CLUSTER_5(a) cavm_reex_af_rxps_cluster_5_t
-#define bustype_CAVM_REEX_AF_RXPS_CLUSTER_5(a) CSR_TYPE_RVU_PF_BAR0
-#define basename_CAVM_REEX_AF_RXPS_CLUSTER_5(a) "REEX_AF_RXPS_CLUSTER_5"
-#define device_bar_CAVM_REEX_AF_RXPS_CLUSTER_5(a) 0x0 /* RVU_BAR0 */
-#define busnum_CAVM_REEX_AF_RXPS_CLUSTER_5(a) (a)
-#define arguments_CAVM_REEX_AF_RXPS_CLUSTER_5(a) (a),-1,-1,-1
-
-/**
- * Register (RVU_PF_BAR0) ree#_af_rxps_cluster_6
- *
- * REE AF RXP STAT CLUSTER_6 Register
- * Statistics for RXP cluster 6
- */
-union cavm_reex_af_rxps_cluster_6
-{
-    uint64_t u;
-    struct cavm_reex_af_rxps_cluster_6_s
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_32_63        : 32;
-        uint64_t instruction_duty_cycle : 8; /**< [ 31: 24](RO/H) Number of instructions that were executed in the previous
-                                                                 window block of 256 clock cycles. */
-        uint64_t hit_duty_cycle        : 8;  /**< [ 23: 16](RO/H) Number of clock cycles HIT was asserted in the previous
-                                                                 window block of 256 clock cycles. */
-        uint64_t tce_idle_1d           : 8;  /**< [ 15:  8](RO/H) Each bit is asserted if associated TCE(7:0) was idle
-                                                                 for the previous window block of 256 clock cycles.
-
-                                                                 Internal:
-                                                                 FIXME - Titan to fix, there are now 16 TCEs per cluster, but only 8 bits.
-                                                                 Also, reset value might be wrong, Titan to update. */
-        uint64_t jce_idle_1d           : 8;  /**< [  7:  0](RO/H) Each bit is asserted if associated JCE(7:0) was idle
-                                                                 for the previous window block of 256 clock cycles. */
-#else /* Word 0 - Little Endian */
-        uint64_t jce_idle_1d           : 8;  /**< [  7:  0](RO/H) Each bit is asserted if associated JCE(7:0) was idle
-                                                                 for the previous window block of 256 clock cycles. */
-        uint64_t tce_idle_1d           : 8;  /**< [ 15:  8](RO/H) Each bit is asserted if associated TCE(7:0) was idle
-                                                                 for the previous window block of 256 clock cycles.
-
-                                                                 Internal:
-                                                                 FIXME - Titan to fix, there are now 16 TCEs per cluster, but only 8 bits.
-                                                                 Also, reset value might be wrong, Titan to update. */
-        uint64_t hit_duty_cycle        : 8;  /**< [ 23: 16](RO/H) Number of clock cycles HIT was asserted in the previous
-                                                                 window block of 256 clock cycles. */
-        uint64_t instruction_duty_cycle : 8; /**< [ 31: 24](RO/H) Number of instructions that were executed in the previous
-                                                                 window block of 256 clock cycles. */
-        uint64_t reserved_32_63        : 32;
-#endif /* Word 0 - End */
-    } s;
-    /* struct cavm_reex_af_rxps_cluster_6_s cn; */
-};
-typedef union cavm_reex_af_rxps_cluster_6 cavm_reex_af_rxps_cluster_6_t;
-
-static inline uint64_t CAVM_REEX_AF_RXPS_CLUSTER_6(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_REEX_AF_RXPS_CLUSTER_6(unsigned long a)
-{
-    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
-        return 0x840140008430ll + 0x10000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("REEX_AF_RXPS_CLUSTER_6", 1, a, 0, 0, 0, 0, 0);
-}
-
-#define typedef_CAVM_REEX_AF_RXPS_CLUSTER_6(a) cavm_reex_af_rxps_cluster_6_t
-#define bustype_CAVM_REEX_AF_RXPS_CLUSTER_6(a) CSR_TYPE_RVU_PF_BAR0
-#define basename_CAVM_REEX_AF_RXPS_CLUSTER_6(a) "REEX_AF_RXPS_CLUSTER_6"
-#define device_bar_CAVM_REEX_AF_RXPS_CLUSTER_6(a) 0x0 /* RVU_BAR0 */
-#define busnum_CAVM_REEX_AF_RXPS_CLUSTER_6(a) (a)
-#define arguments_CAVM_REEX_AF_RXPS_CLUSTER_6(a) (a),-1,-1,-1
-
-/**
- * Register (RVU_PF_BAR0) ree#_af_rxps_cluster_7
- *
- * REE AF RXP STAT CLUSTER_7 Register
- * Statistics for RXP cluster 7
- */
-union cavm_reex_af_rxps_cluster_7
-{
-    uint64_t u;
-    struct cavm_reex_af_rxps_cluster_7_s
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_32_63        : 32;
-        uint64_t instruction_duty_cycle : 8; /**< [ 31: 24](RO/H) Number of instructions that were executed in the previous
-                                                                 window block of 256 clock cycles. */
-        uint64_t hit_duty_cycle        : 8;  /**< [ 23: 16](RO/H) Number of clock cycles HIT was asserted in the previous
-                                                                 window block of 256 clock cycles. */
-        uint64_t tce_idle_1d           : 8;  /**< [ 15:  8](RO/H) Each bit is asserted if associated TCE(7:0) was idle
-                                                                 for the previous window block of 256 clock cycles.
-
-                                                                 Internal:
-                                                                 FIXME - Titan to fix, there are now 16 TCEs per cluster, but only 8 bits.
-                                                                 Also, reset value might be wrong, Titan to update. */
-        uint64_t jce_idle_1d           : 8;  /**< [  7:  0](RO/H) Each bit is asserted if associated JCE(7:0) was idle
-                                                                 for the previous window block of 256 clock cycles. */
-#else /* Word 0 - Little Endian */
-        uint64_t jce_idle_1d           : 8;  /**< [  7:  0](RO/H) Each bit is asserted if associated JCE(7:0) was idle
-                                                                 for the previous window block of 256 clock cycles. */
-        uint64_t tce_idle_1d           : 8;  /**< [ 15:  8](RO/H) Each bit is asserted if associated TCE(7:0) was idle
-                                                                 for the previous window block of 256 clock cycles.
-
-                                                                 Internal:
-                                                                 FIXME - Titan to fix, there are now 16 TCEs per cluster, but only 8 bits.
-                                                                 Also, reset value might be wrong, Titan to update. */
-        uint64_t hit_duty_cycle        : 8;  /**< [ 23: 16](RO/H) Number of clock cycles HIT was asserted in the previous
-                                                                 window block of 256 clock cycles. */
-        uint64_t instruction_duty_cycle : 8; /**< [ 31: 24](RO/H) Number of instructions that were executed in the previous
-                                                                 window block of 256 clock cycles. */
-        uint64_t reserved_32_63        : 32;
-#endif /* Word 0 - End */
-    } s;
-    /* struct cavm_reex_af_rxps_cluster_7_s cn; */
-};
-typedef union cavm_reex_af_rxps_cluster_7 cavm_reex_af_rxps_cluster_7_t;
-
-static inline uint64_t CAVM_REEX_AF_RXPS_CLUSTER_7(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_REEX_AF_RXPS_CLUSTER_7(unsigned long a)
-{
-    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
-        return 0x840140008438ll + 0x10000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("REEX_AF_RXPS_CLUSTER_7", 1, a, 0, 0, 0, 0, 0);
-}
-
-#define typedef_CAVM_REEX_AF_RXPS_CLUSTER_7(a) cavm_reex_af_rxps_cluster_7_t
-#define bustype_CAVM_REEX_AF_RXPS_CLUSTER_7(a) CSR_TYPE_RVU_PF_BAR0
-#define basename_CAVM_REEX_AF_RXPS_CLUSTER_7(a) "REEX_AF_RXPS_CLUSTER_7"
-#define device_bar_CAVM_REEX_AF_RXPS_CLUSTER_7(a) 0x0 /* RVU_BAR0 */
-#define busnum_CAVM_REEX_AF_RXPS_CLUSTER_7(a) (a)
-#define arguments_CAVM_REEX_AF_RXPS_CLUSTER_7(a) (a),-1,-1,-1
-
-/**
- * Register (RVU_PF_BAR0) ree#_af_rxps_dp
- *
- * REE AF RXP STAT DP Register
- * RXP Statistics for Data Plane I/F
- */
-union cavm_reex_af_rxps_dp
-{
-    uint64_t u;
-    struct cavm_reex_af_rxps_dp_s
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_32_63        : 32;
-        uint64_t mf_re_duty_cycle      : 8;  /**< [ 31: 24](RO/H) Number of clock cycles the MF was read from
-                                                                 in previous window component of 256 clock cycles. */
-        uint64_t rdf_re_duty_cycle     : 8;  /**< [ 23: 16](RO/H) Number of clock cycles the RDF was read from
-                                                                 in previous window component of 256 clock cycles. */
-        uint64_t jf_we_duty_cycle      : 8;  /**< [ 15:  8](RO/H) Number of clock cycles the JF was written to
-                                                                 in previous window component of 256 clock cycles. */
-        uint64_t jdf_we_duty_cycle     : 8;  /**< [  7:  0](RO/H) Number of clock cycles the JDF was written to
-                                                                 in previous window component of 256 clock cycles. */
-#else /* Word 0 - Little Endian */
-        uint64_t jdf_we_duty_cycle     : 8;  /**< [  7:  0](RO/H) Number of clock cycles the JDF was written to
-                                                                 in previous window component of 256 clock cycles. */
-        uint64_t jf_we_duty_cycle      : 8;  /**< [ 15:  8](RO/H) Number of clock cycles the JF was written to
-                                                                 in previous window component of 256 clock cycles. */
-        uint64_t rdf_re_duty_cycle     : 8;  /**< [ 23: 16](RO/H) Number of clock cycles the RDF was read from
-                                                                 in previous window component of 256 clock cycles. */
-        uint64_t mf_re_duty_cycle      : 8;  /**< [ 31: 24](RO/H) Number of clock cycles the MF was read from
-                                                                 in previous window component of 256 clock cycles. */
-        uint64_t reserved_32_63        : 32;
-#endif /* Word 0 - End */
-    } s;
-    /* struct cavm_reex_af_rxps_dp_s cn; */
-};
-typedef union cavm_reex_af_rxps_dp cavm_reex_af_rxps_dp_t;
-
-static inline uint64_t CAVM_REEX_AF_RXPS_DP(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_REEX_AF_RXPS_DP(unsigned long a)
-{
-    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
-        return 0x8401400084f8ll + 0x10000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("REEX_AF_RXPS_DP", 1, a, 0, 0, 0, 0, 0);
-}
-
-#define typedef_CAVM_REEX_AF_RXPS_DP(a) cavm_reex_af_rxps_dp_t
-#define bustype_CAVM_REEX_AF_RXPS_DP(a) CSR_TYPE_RVU_PF_BAR0
-#define basename_CAVM_REEX_AF_RXPS_DP(a) "REEX_AF_RXPS_DP"
-#define device_bar_CAVM_REEX_AF_RXPS_DP(a) 0x0 /* RVU_BAR0 */
-#define busnum_CAVM_REEX_AF_RXPS_DP(a) (a)
-#define arguments_CAVM_REEX_AF_RXPS_DP(a) (a),-1,-1,-1
-
-/**
- * Register (RVU_PF_BAR0) ree#_af_rxps_l2_cache
- *
- * REE AF RXP STAT L2_CACHE Register
- * Statistics for L2 Cache
- */
-union cavm_reex_af_rxps_l2_cache
-{
-    uint64_t u;
-    struct cavm_reex_af_rxps_l2_cache_s
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_32_63        : 32;
-        uint64_t rd_pend_comp_fifo_fill : 8; /**< [ 31: 24](RO/H) Number of entries in the READ_PENDING_COMPLETION_FIFO */
-        uint64_t req_fifo_fill         : 8;  /**< [ 23: 16](RO/H) Number of entries in the REQUEST_FIFO */
-        uint64_t cache_miss_duty_cycle : 8;  /**< [ 15:  8](RO/H) Number of clock cycles in the MPFE detected an L2 cache miss in the
-                                                                 previous window of 256 clock cycles. */
-        uint64_t cache_hit_duty_cycle  : 8;  /**< [  7:  0](RO/H) Number of clock cycles in the MPFE detected an L2 cache hit in the
-                                                                 previous window of 256 clock cycles. */
-#else /* Word 0 - Little Endian */
-        uint64_t cache_hit_duty_cycle  : 8;  /**< [  7:  0](RO/H) Number of clock cycles in the MPFE detected an L2 cache hit in the
-                                                                 previous window of 256 clock cycles. */
-        uint64_t cache_miss_duty_cycle : 8;  /**< [ 15:  8](RO/H) Number of clock cycles in the MPFE detected an L2 cache miss in the
-                                                                 previous window of 256 clock cycles. */
-        uint64_t req_fifo_fill         : 8;  /**< [ 23: 16](RO/H) Number of entries in the REQUEST_FIFO */
-        uint64_t rd_pend_comp_fifo_fill : 8; /**< [ 31: 24](RO/H) Number of entries in the READ_PENDING_COMPLETION_FIFO */
-        uint64_t reserved_32_63        : 32;
-#endif /* Word 0 - End */
-    } s;
-    /* struct cavm_reex_af_rxps_l2_cache_s cn; */
-};
-typedef union cavm_reex_af_rxps_l2_cache cavm_reex_af_rxps_l2_cache_t;
-
-static inline uint64_t CAVM_REEX_AF_RXPS_L2_CACHE(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_REEX_AF_RXPS_L2_CACHE(unsigned long a)
-{
-    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
-        return 0x8401400084c0ll + 0x10000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("REEX_AF_RXPS_L2_CACHE", 1, a, 0, 0, 0, 0, 0);
-}
-
-#define typedef_CAVM_REEX_AF_RXPS_L2_CACHE(a) cavm_reex_af_rxps_l2_cache_t
-#define bustype_CAVM_REEX_AF_RXPS_L2_CACHE(a) CSR_TYPE_RVU_PF_BAR0
-#define basename_CAVM_REEX_AF_RXPS_L2_CACHE(a) "REEX_AF_RXPS_L2_CACHE"
-#define device_bar_CAVM_REEX_AF_RXPS_L2_CACHE(a) 0x0 /* RVU_BAR0 */
-#define busnum_CAVM_REEX_AF_RXPS_L2_CACHE(a) (a)
-#define arguments_CAVM_REEX_AF_RXPS_L2_CACHE(a) (a),-1,-1,-1
-
-/**
- * Register (RVU_PF_BAR0) ree#_af_rxps_pe
- *
- * REE AF RXP STAT PE Register
- * RXP Statistics for PE.
- */
-union cavm_reex_af_rxps_pe
-{
-    uint64_t u;
-    struct cavm_reex_af_rxps_pe_s
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_16_63        : 48;
-        uint64_t pthread_valid_duty_cycle : 8;/**< [ 15:  8](RO/H) Number of clock cycles the PE dispatched a Primary Thread
-                                                                 in the previous window component of 256 clock cycles. */
-        uint64_t nd_duty_cycle         : 8;  /**< [  7:  0](RO/H) Number of clock cycles the PE received a new data word
-                                                                 in the previous window component of 256 clock cycles. */
-#else /* Word 0 - Little Endian */
-        uint64_t nd_duty_cycle         : 8;  /**< [  7:  0](RO/H) Number of clock cycles the PE received a new data word
-                                                                 in the previous window component of 256 clock cycles. */
-        uint64_t pthread_valid_duty_cycle : 8;/**< [ 15:  8](RO/H) Number of clock cycles the PE dispatched a Primary Thread
-                                                                 in the previous window component of 256 clock cycles. */
-        uint64_t reserved_16_63        : 48;
-#endif /* Word 0 - End */
-    } s;
-    /* struct cavm_reex_af_rxps_pe_s cn; */
-};
-typedef union cavm_reex_af_rxps_pe cavm_reex_af_rxps_pe_t;
-
-static inline uint64_t CAVM_REEX_AF_RXPS_PE(unsigned long a) __attribute__ ((pure, always_inline));
-static inline uint64_t CAVM_REEX_AF_RXPS_PE(unsigned long a)
-{
-    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=1))
-        return 0x8401400084e0ll + 0x10000000ll * ((a) & 0x1);
-    __cavm_csr_fatal("REEX_AF_RXPS_PE", 1, a, 0, 0, 0, 0, 0);
-}
-
-#define typedef_CAVM_REEX_AF_RXPS_PE(a) cavm_reex_af_rxps_pe_t
-#define bustype_CAVM_REEX_AF_RXPS_PE(a) CSR_TYPE_RVU_PF_BAR0
-#define basename_CAVM_REEX_AF_RXPS_PE(a) "REEX_AF_RXPS_PE"
-#define device_bar_CAVM_REEX_AF_RXPS_PE(a) 0x0 /* RVU_BAR0 */
-#define busnum_CAVM_REEX_AF_RXPS_PE(a) (a)
-#define arguments_CAVM_REEX_AF_RXPS_PE(a) (a),-1,-1,-1
 
 /**
  * Register (RVU_PF_BAR0) ree#_af_throttle

@@ -92,33 +92,18 @@
  */
 #define CAVM_RST_DEV_E_AVS (1)
 #define CAVM_RST_DEV_E_CGXX(a) (0x12 + (a))
-#define CAVM_RST_DEV_E_EMMC_CN96XX (0x19)
-#define CAVM_RST_DEV_E_EMMC_CN98XX (0x1a)
-#define CAVM_RST_DEV_E_EMMC_CNF95XX (0x19)
-#define CAVM_RST_DEV_E_EMMC_LOKI (0x19)
+#define CAVM_RST_DEV_E_EMMC (0x19)
 #define CAVM_RST_DEV_E_GSERX(a) (0x1a + (a))
-#define CAVM_RST_DEV_E_GSERRX_CN96XX(a) (0x20 + (a))
-#define CAVM_RST_DEV_E_GSERRX_CN98XX(a) (0x24 + (a))
-#define CAVM_RST_DEV_E_GSERRX_CNF95XX(a) (0x20 + (a))
-#define CAVM_RST_DEV_E_GSERRX_LOKI(a) (0x20 + (a))
+#define CAVM_RST_DEV_E_GSERRX(a) (0x20 + (a))
 #define CAVM_RST_DEV_E_MPIX(a) (2 + (a))
 #define CAVM_RST_DEV_E_NCSI (0)
-#define CAVM_RST_DEV_E_PEMX_CN96XX(a) (0x28 + (a))
-#define CAVM_RST_DEV_E_PEMX_CN98XX(a) (0x29 + (a))
-#define CAVM_RST_DEV_E_PEMX_CNF95XX(a) (0x28 + (a))
-#define CAVM_RST_DEV_E_PEMX_LOKI(a) (0x28 + (a))
+#define CAVM_RST_DEV_E_PEMX(a) (0x28 + (a))
 #define CAVM_RST_DEV_E_RFIFX_CNF95XX(a) (0x26 + (a))
 #define CAVM_RST_DEV_E_RFIFX_LOKI(a) (0x21 + (a))
-#define CAVM_RST_DEV_E_ROC_OCLA_CN96XX (0x18)
-#define CAVM_RST_DEV_E_ROC_OCLA_CN98XX (0x19)
-#define CAVM_RST_DEV_E_ROC_OCLA_CNF95XX (0x18)
-#define CAVM_RST_DEV_E_ROC_OCLA_LOKI (0x18)
-#define CAVM_RST_DEV_E_SGPIO_CN96XX (0x17)
-#define CAVM_RST_DEV_E_SGPIO_CN98XX (0x18)
-#define CAVM_RST_DEV_E_SGPIO_CNF95XX (0x17)
-#define CAVM_RST_DEV_E_SGPIO_LOKI (0x17)
+#define CAVM_RST_DEV_E_ROC_OCLA (0x18)
+#define CAVM_RST_DEV_E_SGPIO (0x17)
 #define CAVM_RST_DEV_E_SMI_CN96XX (0x16)
-#define CAVM_RST_DEV_E_SMI_CN98XX (0x17)
+#define CAVM_RST_DEV_E_SMI_CN98XX (0x1a)
 #define CAVM_RST_DEV_E_SMI_CNF95XX (0x16)
 #define CAVM_RST_DEV_E_SMI_LOKI (0x16)
 #define CAVM_RST_DEV_E_TWSX(a) (4 + (a))
@@ -2867,7 +2852,18 @@ union cavm_rst_const
     } cn96xxp3;
     /* struct cavm_rst_const_cn96xxp3 cn98xx; */
     /* struct cavm_rst_const_s cnf95xx; */
-    /* struct cavm_rst_const_s loki; */
+    struct cavm_rst_const_loki
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_16_63        : 48;
+        uint64_t rst_devs              : 8;  /**< [ 15:  8](RO) Number of RST_DEV_E enumeration values supported, and size of RST_DEV_MAP(). */
+        uint64_t pems                  : 8;  /**< [  7:  0](RO) Number of PEMs supported by RST */
+#else /* Word 0 - Little Endian */
+        uint64_t pems                  : 8;  /**< [  7:  0](RO) Number of PEMs supported by RST */
+        uint64_t rst_devs              : 8;  /**< [ 15:  8](RO) Number of RST_DEV_E enumeration values supported, and size of RST_DEV_MAP(). */
+        uint64_t reserved_16_63        : 48;
+#endif /* Word 0 - End */
+    } loki;
 };
 typedef union cavm_rst_const cavm_rst_const_t;
 
@@ -5220,7 +5216,6 @@ union cavm_rst_ctlx
         uint64_t reserved_14_63        : 50;
 #endif /* Word 0 - End */
     } cnf95xxp2;
-    /* struct cavm_rst_ctlx_cnf95xxp2 loki; */
 };
 typedef union cavm_rst_ctlx cavm_rst_ctlx_t;
 
@@ -5234,8 +5229,6 @@ static inline uint64_t CAVM_RST_CTLX(unsigned long a)
     if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=3))
         return 0x87e006001640ll + 8ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
-        return 0x87e006001640ll + 8ll * ((a) & 0x0);
-    if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x87e006001640ll + 8ll * ((a) & 0x0);
     __cavm_csr_fatal("RST_CTLX", 1, a, 0, 0, 0, 0, 0);
 }
@@ -5313,9 +5306,9 @@ union cavm_rst_debug
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_6_63         : 58;
         uint64_t suspend_rstpwr        : 1;  /**< [  5:  5](R/W) Stop RSTPWR bus.
-                                                                 Setting this field will stop AP Resets from getting to the cores.
+                                                                 Setting this field will stop AP resets from getting to the cores.
                                                                  Clearing this field will restart communication starting with AP0.
-                                                                 This will allow test sequencies to predicte AP resets with much greater accuracy.
+                                                                 This allows test sequences to predict AP resets with much greater accuracy.
                                                                  For diagnostic and test use only.
 
                                                                  This field is always reinitialized on a cold domain reset. */
@@ -5373,9 +5366,9 @@ union cavm_rst_debug
                                                                  Internal:
                                                                  Currently only used in BPHY on f95n */
         uint64_t suspend_rstpwr        : 1;  /**< [  5:  5](R/W) Stop RSTPWR bus.
-                                                                 Setting this field will stop AP Resets from getting to the cores.
+                                                                 Setting this field will stop AP resets from getting to the cores.
                                                                  Clearing this field will restart communication starting with AP0.
-                                                                 This will allow test sequencies to predicte AP resets with much greater accuracy.
+                                                                 This allows test sequences to predict AP resets with much greater accuracy.
                                                                  For diagnostic and test use only.
 
                                                                  This field is always reinitialized on a cold domain reset. */
@@ -5397,9 +5390,9 @@ union cavm_rst_debug
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_6_63         : 58;
         uint64_t suspend_rstpwr        : 1;  /**< [  5:  5](R/W) Stop RSTPWR bus.
-                                                                 Setting this field will stop AP Resets from getting to the cores.
+                                                                 Setting this field will stop AP resets from getting to the cores.
                                                                  Clearing this field will restart communication starting with AP0.
-                                                                 This will allow test sequencies to predicte AP resets with much greater accuracy.
+                                                                 This allows test sequences to predict AP resets with much greater accuracy.
                                                                  For diagnostic and test use only.
 
                                                                  This field is always reinitialized on a cold domain reset. */
@@ -5461,9 +5454,9 @@ union cavm_rst_debug
                                                                  Internal:
                                                                  Currently only used in BPHY on f95n */
         uint64_t suspend_rstpwr        : 1;  /**< [  5:  5](R/W) Stop RSTPWR bus.
-                                                                 Setting this field will stop AP Resets from getting to the cores.
+                                                                 Setting this field will stop AP resets from getting to the cores.
                                                                  Clearing this field will restart communication starting with AP0.
-                                                                 This will allow test sequencies to predicte AP resets with much greater accuracy.
+                                                                 This allows test sequences to predict AP resets with much greater accuracy.
                                                                  For diagnostic and test use only.
 
                                                                  This field is always reinitialized on a cold domain reset. */
@@ -5521,9 +5514,9 @@ union cavm_rst_debug
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_6_63         : 58;
         uint64_t suspend_rstpwr        : 1;  /**< [  5:  5](R/W) Stop RSTPWR bus.
-                                                                 Setting this field will stop AP Resets from getting to the cores.
+                                                                 Setting this field will stop AP resets from getting to the cores.
                                                                  Clearing this field will restart communication starting with AP0.
-                                                                 This will allow test sequencies to predicte AP resets with much greater accuracy.
+                                                                 This allows test sequences to predict AP resets with much greater accuracy.
                                                                  For diagnostic and test use only.
 
                                                                  This field is always reinitialized on a cold domain reset. */
@@ -5569,9 +5562,9 @@ union cavm_rst_debug
                                                                  This field is always reinitialized on a cold domain reset. */
         uint64_t reserved_4            : 1;
         uint64_t suspend_rstpwr        : 1;  /**< [  5:  5](R/W) Stop RSTPWR bus.
-                                                                 Setting this field will stop AP Resets from getting to the cores.
+                                                                 Setting this field will stop AP resets from getting to the cores.
                                                                  Clearing this field will restart communication starting with AP0.
-                                                                 This will allow test sequencies to predicte AP resets with much greater accuracy.
+                                                                 This allows test sequences to predict AP resets with much greater accuracy.
                                                                  For diagnostic and test use only.
 
                                                                  This field is always reinitialized on a cold domain reset. */
@@ -6541,7 +6534,32 @@ union cavm_rst_int
         uint64_t reserved_52_63        : 12;
 #endif /* Word 0 - End */
     } cnf95xx;
-    /* struct cavm_rst_int_cnf95xx loki; */
+    struct cavm_rst_int_loki
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_52_63        : 12;
+        uint64_t bphy_reset            : 1;  /**< [ 51: 51](R/W1C/H) BPHY domain entered reset.
+                                                                 This field is reinitialized with a chip domain reset. */
+        uint64_t scp_reset             : 1;  /**< [ 50: 50](R/W1C/H) SCP domain entered reset.
+                                                                 This field is reinitialized with a chip domain reset. */
+        uint64_t mcp_reset             : 1;  /**< [ 49: 49](R/W1C/H) MCP domain entered reset.
+                                                                 This field is reinitialized with a chip domain reset. */
+        uint64_t core_reset            : 1;  /**< [ 48: 48](R/W1C/H) Core domain entered reset.
+                                                                 This field is reinitialized with a chip domain reset. */
+        uint64_t reserved_0_47         : 48;
+#else /* Word 0 - Little Endian */
+        uint64_t reserved_0_47         : 48;
+        uint64_t core_reset            : 1;  /**< [ 48: 48](R/W1C/H) Core domain entered reset.
+                                                                 This field is reinitialized with a chip domain reset. */
+        uint64_t mcp_reset             : 1;  /**< [ 49: 49](R/W1C/H) MCP domain entered reset.
+                                                                 This field is reinitialized with a chip domain reset. */
+        uint64_t scp_reset             : 1;  /**< [ 50: 50](R/W1C/H) SCP domain entered reset.
+                                                                 This field is reinitialized with a chip domain reset. */
+        uint64_t bphy_reset            : 1;  /**< [ 51: 51](R/W1C/H) BPHY domain entered reset.
+                                                                 This field is reinitialized with a chip domain reset. */
+        uint64_t reserved_52_63        : 12;
+#endif /* Word 0 - End */
+    } loki;
 };
 typedef union cavm_rst_int cavm_rst_int_t;
 
@@ -6720,7 +6738,24 @@ union cavm_rst_int_ena_w1c
         uint64_t reserved_52_63        : 12;
 #endif /* Word 0 - End */
     } cnf95xx;
-    /* struct cavm_rst_int_ena_w1c_cnf95xx loki; */
+    struct cavm_rst_int_ena_w1c_loki
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_52_63        : 12;
+        uint64_t bphy_reset            : 1;  /**< [ 51: 51](R/W1C/H) Reads or clears enable for RST_INT[BPHY_RESET]. */
+        uint64_t scp_reset             : 1;  /**< [ 50: 50](R/W1C/H) Reads or clears enable for RST_INT[SCP_RESET]. */
+        uint64_t mcp_reset             : 1;  /**< [ 49: 49](R/W1C/H) Reads or clears enable for RST_INT[MCP_RESET]. */
+        uint64_t core_reset            : 1;  /**< [ 48: 48](R/W1C/H) Reads or clears enable for RST_INT[CORE_RESET]. */
+        uint64_t reserved_0_47         : 48;
+#else /* Word 0 - Little Endian */
+        uint64_t reserved_0_47         : 48;
+        uint64_t core_reset            : 1;  /**< [ 48: 48](R/W1C/H) Reads or clears enable for RST_INT[CORE_RESET]. */
+        uint64_t mcp_reset             : 1;  /**< [ 49: 49](R/W1C/H) Reads or clears enable for RST_INT[MCP_RESET]. */
+        uint64_t scp_reset             : 1;  /**< [ 50: 50](R/W1C/H) Reads or clears enable for RST_INT[SCP_RESET]. */
+        uint64_t bphy_reset            : 1;  /**< [ 51: 51](R/W1C/H) Reads or clears enable for RST_INT[BPHY_RESET]. */
+        uint64_t reserved_52_63        : 12;
+#endif /* Word 0 - End */
+    } loki;
 };
 typedef union cavm_rst_int_ena_w1c cavm_rst_int_ena_w1c_t;
 
@@ -6899,7 +6934,24 @@ union cavm_rst_int_ena_w1s
         uint64_t reserved_52_63        : 12;
 #endif /* Word 0 - End */
     } cnf95xx;
-    /* struct cavm_rst_int_ena_w1s_cnf95xx loki; */
+    struct cavm_rst_int_ena_w1s_loki
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_52_63        : 12;
+        uint64_t bphy_reset            : 1;  /**< [ 51: 51](R/W1S/H) Reads or sets enable for RST_INT[BPHY_RESET]. */
+        uint64_t scp_reset             : 1;  /**< [ 50: 50](R/W1S/H) Reads or sets enable for RST_INT[SCP_RESET]. */
+        uint64_t mcp_reset             : 1;  /**< [ 49: 49](R/W1S/H) Reads or sets enable for RST_INT[MCP_RESET]. */
+        uint64_t core_reset            : 1;  /**< [ 48: 48](R/W1S/H) Reads or sets enable for RST_INT[CORE_RESET]. */
+        uint64_t reserved_0_47         : 48;
+#else /* Word 0 - Little Endian */
+        uint64_t reserved_0_47         : 48;
+        uint64_t core_reset            : 1;  /**< [ 48: 48](R/W1S/H) Reads or sets enable for RST_INT[CORE_RESET]. */
+        uint64_t mcp_reset             : 1;  /**< [ 49: 49](R/W1S/H) Reads or sets enable for RST_INT[MCP_RESET]. */
+        uint64_t scp_reset             : 1;  /**< [ 50: 50](R/W1S/H) Reads or sets enable for RST_INT[SCP_RESET]. */
+        uint64_t bphy_reset            : 1;  /**< [ 51: 51](R/W1S/H) Reads or sets enable for RST_INT[BPHY_RESET]. */
+        uint64_t reserved_52_63        : 12;
+#endif /* Word 0 - End */
+    } loki;
 };
 typedef union cavm_rst_int_ena_w1s cavm_rst_int_ena_w1s_t;
 
@@ -7078,7 +7130,24 @@ union cavm_rst_int_w1s
         uint64_t reserved_52_63        : 12;
 #endif /* Word 0 - End */
     } cnf95xx;
-    /* struct cavm_rst_int_w1s_cnf95xx loki; */
+    struct cavm_rst_int_w1s_loki
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_52_63        : 12;
+        uint64_t bphy_reset            : 1;  /**< [ 51: 51](R/W1S/H) Reads or sets RST_INT[BPHY_RESET]. */
+        uint64_t scp_reset             : 1;  /**< [ 50: 50](R/W1S/H) Reads or sets RST_INT[SCP_RESET]. */
+        uint64_t mcp_reset             : 1;  /**< [ 49: 49](R/W1S/H) Reads or sets RST_INT[MCP_RESET]. */
+        uint64_t core_reset            : 1;  /**< [ 48: 48](R/W1S/H) Reads or sets RST_INT[CORE_RESET]. */
+        uint64_t reserved_0_47         : 48;
+#else /* Word 0 - Little Endian */
+        uint64_t reserved_0_47         : 48;
+        uint64_t core_reset            : 1;  /**< [ 48: 48](R/W1S/H) Reads or sets RST_INT[CORE_RESET]. */
+        uint64_t mcp_reset             : 1;  /**< [ 49: 49](R/W1S/H) Reads or sets RST_INT[MCP_RESET]. */
+        uint64_t scp_reset             : 1;  /**< [ 50: 50](R/W1S/H) Reads or sets RST_INT[SCP_RESET]. */
+        uint64_t bphy_reset            : 1;  /**< [ 51: 51](R/W1S/H) Reads or sets RST_INT[BPHY_RESET]. */
+        uint64_t reserved_52_63        : 12;
+#endif /* Word 0 - End */
+    } loki;
 };
 typedef union cavm_rst_int_w1s cavm_rst_int_w1s_t;
 
@@ -10361,7 +10430,6 @@ union cavm_rst_soft_prstx
         uint64_t reserved_1_63         : 63;
 #endif /* Word 0 - End */
     } cnf95xxp2;
-    /* struct cavm_rst_soft_prstx_cnf95xxp2 loki; */
 };
 typedef union cavm_rst_soft_prstx cavm_rst_soft_prstx_t;
 
@@ -10375,8 +10443,6 @@ static inline uint64_t CAVM_RST_SOFT_PRSTX(unsigned long a)
     if (cavm_is_model(OCTEONTX_CN96XX_PASS1_X) && (a<=3))
         return 0x87e0060016c0ll + 8ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a==0))
-        return 0x87e0060016c0ll + 8ll * ((a) & 0x0);
-    if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
         return 0x87e0060016c0ll + 8ll * ((a) & 0x0);
     __cavm_csr_fatal("RST_SOFT_PRSTX", 1, a, 0, 0, 0, 0, 0);
 }

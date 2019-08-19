@@ -1525,7 +1525,8 @@ union cavm_bts_pll_ctl
         uint64_t reserved_37_63        : 27;
 #endif /* Word 0 - End */
     } s;
-    struct cavm_bts_pll_ctl_cn
+    /* struct cavm_bts_pll_ctl_s cn9; */
+    struct cavm_bts_pll_ctl_cn96xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_37_63        : 27;
@@ -1606,7 +1607,86 @@ union cavm_bts_pll_ctl
         uint64_t alt_ref_clk_sel       : 2;  /**< [ 36: 35](RAZ) Reserved. */
         uint64_t reserved_37_63        : 27;
 #endif /* Word 0 - End */
-    } cn;
+    } cn96xx;
+    /* struct cavm_bts_pll_ctl_cn96xx cn98xx; */
+    /* struct cavm_bts_pll_ctl_cn96xx cnf95xxp1; */
+    struct cavm_bts_pll_ctl_cnf95xxp2
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_37_63        : 27;
+        uint64_t alt_ref_clk_sel       : 2;  /**< [ 36: 35](RAZ) Reserved. */
+        uint64_t reserved_33_34        : 2;
+        uint64_t pll_bypass            : 1;  /**< [ 32: 32](R/W) Set to 1 to bypass PLL. In PLL bypass mode, the PLL clock out is BTS_BFN_CLK (30.72 MHz). */
+        uint64_t reserved_30_31        : 2;
+        uint64_t ref_clk_sel           : 2;  /**< [ 29: 28](R/W) Reference clock select:
+                                                                 0x0 = Reserved.
+                                                                 0x1 = GPIO clock input. 30.72 MHz (BTS_BFN_CLK).
+                                                                 0x2 = 100 MHz reference clock.
+
+                                                                 Do not change these during operation. */
+        uint64_t reserved_26_27        : 2;
+        uint64_t reserved_21_25        : 5;
+        uint64_t ps_en                 : 3;  /**< [ 20: 18](R/W) PLL postscalar divide ratio. Determines the network clock speed.
+                                                                 0x0 = Divide BTS PLL by 1.
+                                                                 0x1 = Divide BTS PLL by 2.
+                                                                 0x2 = Divide BTS PLL by 4.
+                                                                 0x3 = Divide BTS PLL by 8.
+                                                                 0x4-0x7 = Reserved.
+
+                                                                 See [CLKF] for supported settings.
+
+                                                                 Do not change these during operation. */
+        uint64_t reserved_12_17        : 6;
+        uint64_t en                    : 1;  /**< [ 11: 11](R/W) PLL enable. Rising edge causes a 1 clock ref_clk pulse on pll_update signal. */
+        uint64_t reserved_9_10         : 2;
+        uint64_t clkf                  : 9;  /**< [  8:  0](R/W) PLL multiplier. PLL out frequency = PLL in clk(MHz)/2 * [CLKF] / (1\<\<[PS_EN])
+
+                                                                 To generate a 491 MHz clock from  a 30.72 MHz reference (i.e., when
+                                                                 [REF_CLK_SEL]=0x1), set [CLKF] to 0x20 and [PS_EN] to 0x0. This results in an
+                                                                 overall 16x multplier.
+
+                                                                 To generate a 500 MHz clock from  a 100 MHz reference (i.e., when
+                                                                 [REF_CLK_SEL]=0x2), set [CLKF] to 0x0A and [PS_EN] to 0x0. This results in an
+                                                                 overall 5x multplier. */
+#else /* Word 0 - Little Endian */
+        uint64_t clkf                  : 9;  /**< [  8:  0](R/W) PLL multiplier. PLL out frequency = PLL in clk(MHz)/2 * [CLKF] / (1\<\<[PS_EN])
+
+                                                                 To generate a 491 MHz clock from  a 30.72 MHz reference (i.e., when
+                                                                 [REF_CLK_SEL]=0x1), set [CLKF] to 0x20 and [PS_EN] to 0x0. This results in an
+                                                                 overall 16x multplier.
+
+                                                                 To generate a 500 MHz clock from  a 100 MHz reference (i.e., when
+                                                                 [REF_CLK_SEL]=0x2), set [CLKF] to 0x0A and [PS_EN] to 0x0. This results in an
+                                                                 overall 5x multplier. */
+        uint64_t reserved_9_10         : 2;
+        uint64_t en                    : 1;  /**< [ 11: 11](R/W) PLL enable. Rising edge causes a 1 clock ref_clk pulse on pll_update signal. */
+        uint64_t reserved_12_17        : 6;
+        uint64_t ps_en                 : 3;  /**< [ 20: 18](R/W) PLL postscalar divide ratio. Determines the network clock speed.
+                                                                 0x0 = Divide BTS PLL by 1.
+                                                                 0x1 = Divide BTS PLL by 2.
+                                                                 0x2 = Divide BTS PLL by 4.
+                                                                 0x3 = Divide BTS PLL by 8.
+                                                                 0x4-0x7 = Reserved.
+
+                                                                 See [CLKF] for supported settings.
+
+                                                                 Do not change these during operation. */
+        uint64_t reserved_21_25        : 5;
+        uint64_t reserved_26_27        : 2;
+        uint64_t ref_clk_sel           : 2;  /**< [ 29: 28](R/W) Reference clock select:
+                                                                 0x0 = Reserved.
+                                                                 0x1 = GPIO clock input. 30.72 MHz (BTS_BFN_CLK).
+                                                                 0x2 = 100 MHz reference clock.
+
+                                                                 Do not change these during operation. */
+        uint64_t reserved_30_31        : 2;
+        uint64_t pll_bypass            : 1;  /**< [ 32: 32](R/W) Set to 1 to bypass PLL. In PLL bypass mode, the PLL clock out is BTS_BFN_CLK (30.72 MHz). */
+        uint64_t reserved_33_34        : 2;
+        uint64_t alt_ref_clk_sel       : 2;  /**< [ 36: 35](RAZ) Reserved. */
+        uint64_t reserved_37_63        : 27;
+#endif /* Word 0 - End */
+    } cnf95xxp2;
+    /* struct cavm_bts_pll_ctl_cnf95xxp2 loki; */
 };
 typedef union cavm_bts_pll_ctl cavm_bts_pll_ctl_t;
 

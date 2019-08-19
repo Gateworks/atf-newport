@@ -38,6 +38,7 @@
  * PTP External Sources Select Enumeration
  * Enumerates the different external signal sources for PTP.
  */
+#define CAVM_MIO_PTP_EXT_SEL_E_BCN_MUX_CLK (2)
 #define CAVM_MIO_PTP_EXT_SEL_E_BTS_REF_CLK (1)
 #define CAVM_MIO_PTP_EXT_SEL_E_GPIO (0)
 #define CAVM_MIO_PTP_EXT_SEL_E_QLM_REFX_CN8(a) (0x38 + (a))

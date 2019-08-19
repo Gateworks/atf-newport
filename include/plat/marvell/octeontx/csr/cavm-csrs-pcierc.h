@@ -16945,7 +16945,7 @@ union cavm_pciercx_gen4_lane_margining_1
     } cn96xxp3;
     /* struct cavm_pciercx_gen4_lane_margining_1_cn96xxp3 cn98xx; */
     /* struct cavm_pciercx_gen4_lane_margining_1_s cnf95xx; */
-    /* struct cavm_pciercx_gen4_lane_margining_1_s loki; */
+    /* struct cavm_pciercx_gen4_lane_margining_1_cn96xxp3 loki; */
 };
 typedef union cavm_pciercx_gen4_lane_margining_1 cavm_pciercx_gen4_lane_margining_1_t;
 
@@ -17041,7 +17041,7 @@ union cavm_pciercx_gen4_lane_margining_2
     } cn96xxp3;
     /* struct cavm_pciercx_gen4_lane_margining_2_cn96xxp3 cn98xx; */
     /* struct cavm_pciercx_gen4_lane_margining_2_s cnf95xx; */
-    /* struct cavm_pciercx_gen4_lane_margining_2_s loki; */
+    /* struct cavm_pciercx_gen4_lane_margining_2_cn96xxp3 loki; */
 };
 typedef union cavm_pciercx_gen4_lane_margining_2 cavm_pciercx_gen4_lane_margining_2_t;
 

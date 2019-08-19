@@ -3431,7 +3431,7 @@ union cavm_cptx_af_lfx_ctl
                                                                  queues/lfs in this CPT can have [PF_FUNC_INST]=1: at most one with [NIX_SEL]=0,
                                                                  plus at most one with [NIX_SEL]=1.
 
-                                                                 For t93, [NIX_SEL] must always be set to zero. */
+                                                                 For CNXXXX, [NIX_SEL] must always be set to zero. */
         uint64_t reserved_1_7          : 7;
         uint64_t pri                   : 1;  /**< [  0:  0](R/W) Queue priority.
                                                                  1 = This queue has higher priority. Round-robin between higher priority queues.
@@ -3461,7 +3461,7 @@ union cavm_cptx_af_lfx_ctl
                                                                  queues/lfs in this CPT can have [PF_FUNC_INST]=1: at most one with [NIX_SEL]=0,
                                                                  plus at most one with [NIX_SEL]=1.
 
-                                                                 For t93, [NIX_SEL] must always be set to zero. */
+                                                                 For CNXXXX, [NIX_SEL] must always be set to zero. */
         uint64_t pf_func_inst          : 1;  /**< [  9:  9](R/W) PFVF change allowed on instructions.
 
                                                                  0 = CPT executes all CPT_INST_S's in the queue within the function

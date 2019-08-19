@@ -89,17 +89,15 @@
 /* CN96XX part number is reused in a number of different chips, which are
    handled in the CAVM as alternate packages. These constants represent the
    possible alternate package codes */
+/* These are for CN96XX pass Ax and Bx */
 #define OCTEONTX_ALT_CN96XX          0 /* (A) 50mm pkg, 3 DDR, default */
 #define OCTEONTX_ALT_CN93XX          1 /* (B) 42.5mm pkg, 2 DDR, 4 lanes ethernet */
-#define OCTEONTX_ALT_CN93XXN         2 /* (C) 42.5mm pkg, 2 DDR, 8 lanes ethernet */
+#define OCTEONTX_ALT_CN93XXC         2 /* (C) 42.5mm pkg, 2 DDR, 8 lanes ethernet */
 #define OCTEONTX_ALT_CN95XXE         3 /* (D) 45mm pkg, 2 DDR, CN95XXE */
-#define OCTEONTX_ALT_CN96XXE         4 /* (E) 55mm pkg, Die 0 of CN96XXD */
-#define OCTEONTX_ALT_CN96XXF         5 /* (F) 55mm pkg, Die 1 of CN96XXD */
-#define OCTEONTX_ALT_CN96XXH         7 /* (H) 50mm pkg, Cx compatible */
-#define OCTEONTX_ALT_CN96XXI         (8+0) /* (I) 50mm pkg, Ax compatible */
+#define OCTEONTX_ALT_CN96XXH         7 /* (H) 50mm pkg, Cx compatible for pass A */
+/* These are for CN96XX pass Cx */
 #define OCTEONTX_ALT_CN93XXJ         (8+1) /* (J) 42.5mm pkg, 2 DDR, 4 lanes ethernet */
-#define OCTEONTX_ALT_CN96XXM         (8+4) /* (M) 55mm pkg, Die 0 of CN96XXD */
-#define OCTEONTX_ALT_CN96XXN         (8+5) /* (N) 55mm pkg, Die 1 of CN96XXD */
+#define OCTEONTX_ALT_CN96XXM         (8+4) /* (M) 50mm pkg, Ax compatible */
 #define OCTEONTX_ALT_CN96XXP         (8+7) /* (P) 50mm pkg, 3 DDR, TBD */
 
 static inline uint64_t cavm_get_model() __attribute__ ((pure, always_inline));

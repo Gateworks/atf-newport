@@ -111,34 +111,16 @@
 #define CAVM_DPI_PF_INT_VEC_E_DPI_CCX_INT(a) (0 + (a))
 #define CAVM_DPI_PF_INT_VEC_E_DPI_DBE_INT (0x4a)
 #define CAVM_DPI_PF_INT_VEC_E_DPI_EPFX_DMA_VF_LINTX(a,b) (0x78 + 2 * (a) + (b))
-#define CAVM_DPI_PF_INT_VEC_E_DPI_EPFX_MISC_LINT_CN96XX(a) (0x98 + (a))
-#define CAVM_DPI_PF_INT_VEC_E_DPI_EPFX_MISC_LINT_CN98XX(a) (0x88 + (a))
-#define CAVM_DPI_PF_INT_VEC_E_DPI_EPFX_MISC_LINT_CNF95XX(a) (0x98 + (a))
-#define CAVM_DPI_PF_INT_VEC_E_DPI_EPFX_MISC_LINT_LOKI(a) (0x98 + (a))
-#define CAVM_DPI_PF_INT_VEC_E_DPI_EPFX_PP_VF_LINTX_CN96XX(a,b) (0x58 + 2 * (a) + (b))
-#define CAVM_DPI_PF_INT_VEC_E_DPI_EPFX_PP_VF_LINTX_CN98XX(a,b) (0x68 + 2 * (a) + (b))
-#define CAVM_DPI_PF_INT_VEC_E_DPI_EPFX_PP_VF_LINTX_CNF95XX(a,b) (0x58 + 2 * (a) + (b))
-#define CAVM_DPI_PF_INT_VEC_E_DPI_EPFX_PP_VF_LINTX_LOKI(a,b) (0x58 + 2 * (a) + (b))
+#define CAVM_DPI_PF_INT_VEC_E_DPI_EPFX_MISC_LINT(a) (0x98 + (a))
+#define CAVM_DPI_PF_INT_VEC_E_DPI_EPFX_PP_VF_LINTX(a,b) (0x58 + 2 * (a) + (b))
 #define CAVM_DPI_PF_INT_VEC_E_DPI_INT_REG (0x48)
-#define CAVM_DPI_PF_INT_VEC_E_DPI_PF_RAS_CN96XX (0xa8)
-#define CAVM_DPI_PF_INT_VEC_E_DPI_PF_RAS_CN98XX (0x90)
-#define CAVM_DPI_PF_INT_VEC_E_DPI_PF_RAS_CNF95XX (0xa8)
-#define CAVM_DPI_PF_INT_VEC_E_DPI_PF_RAS_LOKI (0xa8)
+#define CAVM_DPI_PF_INT_VEC_E_DPI_PF_RAS (0xa8)
 #define CAVM_DPI_PF_INT_VEC_E_DPI_REQQX_INT(a) (0x40 + (a))
 #define CAVM_DPI_PF_INT_VEC_E_DPI_SBE_INT (0x49)
 #define CAVM_DPI_PF_INT_VEC_E_SDP_FLR_RING_LINTX(a) (0x48 + (a))
-#define CAVM_DPI_PF_INT_VEC_E_SDP_IRE_LINTX_CN96XX(a) (0x4c + (a))
-#define CAVM_DPI_PF_INT_VEC_E_SDP_IRE_LINTX_CN98XX(a) (0x50 + (a))
-#define CAVM_DPI_PF_INT_VEC_E_SDP_IRE_LINTX_CNF95XX(a) (0x4c + (a))
-#define CAVM_DPI_PF_INT_VEC_E_SDP_IRE_LINTX_LOKI(a) (0x4c + (a))
-#define CAVM_DPI_PF_INT_VEC_E_SDP_ORD_LINTX_CN96XX(a) (0x54 + (a))
-#define CAVM_DPI_PF_INT_VEC_E_SDP_ORD_LINTX_CN98XX(a) (0x60 + (a))
-#define CAVM_DPI_PF_INT_VEC_E_SDP_ORD_LINTX_CNF95XX(a) (0x54 + (a))
-#define CAVM_DPI_PF_INT_VEC_E_SDP_ORD_LINTX_LOKI(a) (0x54 + (a))
-#define CAVM_DPI_PF_INT_VEC_E_SDP_ORE_LINTX_CN96XX(a) (0x50 + (a))
-#define CAVM_DPI_PF_INT_VEC_E_SDP_ORE_LINTX_CN98XX(a) (0x58 + (a))
-#define CAVM_DPI_PF_INT_VEC_E_SDP_ORE_LINTX_CNF95XX(a) (0x50 + (a))
-#define CAVM_DPI_PF_INT_VEC_E_SDP_ORE_LINTX_LOKI(a) (0x50 + (a))
+#define CAVM_DPI_PF_INT_VEC_E_SDP_IRE_LINTX(a) (0x4c + (a))
+#define CAVM_DPI_PF_INT_VEC_E_SDP_ORD_LINTX(a) (0x54 + (a))
+#define CAVM_DPI_PF_INT_VEC_E_SDP_ORE_LINTX(a) (0x50 + (a))
 
 /**
  * Enumeration dpi_vf_int_vec_e
@@ -1808,8 +1790,8 @@ union cavm_dpi_dma_instr_hdr_s
                                                                  When [CA] = 1, DPI updates a selected counter after it completes the DMA
                                                                  DPI_HDR_XTYPE_E::OUTBOUND or DPI_HDR_XTYPE_E::EXTERNAL instruction.
 
-                                                                 _ If [CSEL] = 0, DPI updates SDP(0..1)_EPF(0..7)_DMA_CNT(0)[CNT].
-                                                                 _ If [CSEL] = 1, DPI updates SDP(0..1)_EPF(0..7)_DMA_CNT(1)[CNT].
+                                                                 _ If [CSEL] = 0, DPI updates SDP(0..1)_EPF(0..15)_DMA_CNT(0)[CNT].
+                                                                 _ If [CSEL] = 1, DPI updates SDP(0..1)_EPF(0..15)_DMA_CNT(1)[CNT].
 
                                                                  Note that these updates may indirectly cause
                                                                  SDP()_EPF()_DMA_RINT[DCNT,DTIME] to become set for all MACs
@@ -1962,8 +1944,8 @@ union cavm_dpi_dma_instr_hdr_s
                                                                  When [CA] = 1, DPI updates a selected counter after it completes the DMA
                                                                  DPI_HDR_XTYPE_E::OUTBOUND or DPI_HDR_XTYPE_E::EXTERNAL instruction.
 
-                                                                 _ If [CSEL] = 0, DPI updates SDP(0..1)_EPF(0..7)_DMA_CNT(0)[CNT].
-                                                                 _ If [CSEL] = 1, DPI updates SDP(0..1)_EPF(0..7)_DMA_CNT(1)[CNT].
+                                                                 _ If [CSEL] = 0, DPI updates SDP(0..1)_EPF(0..15)_DMA_CNT(0)[CNT].
+                                                                 _ If [CSEL] = 1, DPI updates SDP(0..1)_EPF(0..15)_DMA_CNT(1)[CNT].
 
                                                                  Note that these updates may indirectly cause
                                                                  SDP()_EPF()_DMA_RINT[DCNT,DTIME] to become set for all MACs
@@ -2436,90 +2418,6 @@ union cavm_dpi_sdp_addr_s
 #endif /* Word 0 - End */
     } s;
     /* struct cavm_dpi_sdp_addr_s_s cn; */
-};
-
-/**
- * Structure dpi_sdp_common_addr_s
- *
- * INTERNAL: DPI/SDP Common space Address Structure
- *
- * Address decoding for DPI/SDP CSR Common space address space.
- */
-union cavm_dpi_sdp_common_addr_s
-{
-    uint64_t u;
-    struct cavm_dpi_sdp_common_addr_s_s
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_36_63        : 28;
-        uint64_t bar0                  : 4;  /**< [ 35: 32] BAR0. */
-        uint64_t sdp                   : 1;  /**< [ 31: 31] 0 = SDP register, 1 = DPI register. */
-        uint64_t ncbonly               : 1;  /**< [ 30: 30] Set for registers that can only be accessed by AP cores. */
-        uint64_t epf                   : 5;  /**< [ 29: 25] EPF targeted by AP cores. */
-        uint64_t reserved_18_24        : 7;
-        uint64_t common                : 1;  /**< [ 17: 17] 0 = MSIX, 1 = Common. */
-        uint64_t space                 : 1;  /**< [ 16: 16] SDP and DPI decode space:
-                                                                 0x0 = SDP commmon space([17]==1)/ MSIX SPACE([17]==0)
-                                                                 0x1 = DPI ring space. */
-        uint64_t offset                : 12; /**< [ 15:  4] Register offset. */
-        uint64_t bit3_0                : 4;  /**< [  3:  0] NA */
-#else /* Word 0 - Little Endian */
-        uint64_t bit3_0                : 4;  /**< [  3:  0] NA */
-        uint64_t offset                : 12; /**< [ 15:  4] Register offset. */
-        uint64_t space                 : 1;  /**< [ 16: 16] SDP and DPI decode space:
-                                                                 0x0 = SDP commmon space([17]==1)/ MSIX SPACE([17]==0)
-                                                                 0x1 = DPI ring space. */
-        uint64_t common                : 1;  /**< [ 17: 17] 0 = MSIX, 1 = Common. */
-        uint64_t reserved_18_24        : 7;
-        uint64_t epf                   : 5;  /**< [ 29: 25] EPF targeted by AP cores. */
-        uint64_t ncbonly               : 1;  /**< [ 30: 30] Set for registers that can only be accessed by AP cores. */
-        uint64_t sdp                   : 1;  /**< [ 31: 31] 0 = SDP register, 1 = DPI register. */
-        uint64_t bar0                  : 4;  /**< [ 35: 32] BAR0. */
-        uint64_t reserved_36_63        : 28;
-#endif /* Word 0 - End */
-    } s;
-    /* struct cavm_dpi_sdp_common_addr_s_s cn; */
-};
-
-/**
- * Structure dpi_sdp_ring_addr_s
- *
- * INTERNAL: DPI/SDP Ring Address Structure
- *
- * Address decoding for DPI/SDP CSR ring address space.
- */
-union cavm_dpi_sdp_ring_addr_s
-{
-    uint64_t u;
-    struct cavm_dpi_sdp_ring_addr_s_s
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_36_63        : 28;
-        uint64_t bar0                  : 4;  /**< [ 35: 32] BAR0. */
-        uint64_t sdp                   : 1;  /**< [ 31: 31] 0 = SDP register, 1 = DPI register. */
-        uint64_t ncbonly               : 1;  /**< [ 30: 30] Set for registers that can only be accessed by AP cores. */
-        uint64_t reserved_26_29        : 4;
-        uint64_t ring                  : 9;  /**< [ 25: 17] SDP packet ring. */
-        uint64_t space                 : 1;  /**< [ 16: 16] SDP and DPI decode space:
-                                                                 0x0 = SDP commmon space ([17]==1)/ MSIX SPACE ([17]==0).
-                                                                 0x1 = DPI ring space. */
-        uint64_t offset                : 12; /**< [ 15:  4] Register offset. */
-        uint64_t bit3_0                : 4;  /**< [  3:  0] NA. */
-#else /* Word 0 - Little Endian */
-        uint64_t bit3_0                : 4;  /**< [  3:  0] NA. */
-        uint64_t offset                : 12; /**< [ 15:  4] Register offset. */
-        uint64_t space                 : 1;  /**< [ 16: 16] SDP and DPI decode space:
-                                                                 0x0 = SDP commmon space ([17]==1)/ MSIX SPACE ([17]==0).
-                                                                 0x1 = DPI ring space. */
-        uint64_t ring                  : 9;  /**< [ 25: 17] SDP packet ring. */
-        uint64_t reserved_26_29        : 4;
-        uint64_t ncbonly               : 1;  /**< [ 30: 30] Set for registers that can only be accessed by AP cores. */
-        uint64_t sdp                   : 1;  /**< [ 31: 31] 0 = SDP register, 1 = DPI register. */
-        uint64_t bar0                  : 4;  /**< [ 35: 32] BAR0. */
-        uint64_t reserved_36_63        : 28;
-#endif /* Word 0 - End */
-    } s;
-    /* struct cavm_dpi_sdp_ring_addr_s_s cn; */
 };
 
 /**
@@ -5529,8 +5427,8 @@ static inline uint64_t CAVM_DPIX_EPFX_DMA_VF_LINTX(unsigned long a, unsigned lon
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=15) && (c<=1)))
         return 0x86e000006800ll + 0x1000000000ll * ((a) & 0x0) + 0x20ll * ((b) & 0xf) + 0x10ll * ((c) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=7) && (c<=1)))
-        return 0x86e000006800ll + 0x1000000000ll * ((a) & 0x1) + 0x20ll * ((b) & 0x7) + 0x10ll * ((c) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=15) && (c<=1)))
+        return 0x86e000006800ll + 0x1000000000ll * ((a) & 0x1) + 0x20ll * ((b) & 0xf) + 0x10ll * ((c) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=15) && (c<=1)))
         return 0x86e000006800ll + 0x1000000000ll * ((a) & 0x0) + 0x20ll * ((b) & 0xf) + 0x10ll * ((c) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=15) && (c<=1)))
@@ -5567,9 +5465,9 @@ union cavm_dpix_epfx_dma_vf_lintx_ena_w1c
     struct cavm_dpix_epfx_dma_vf_lintx_ena_w1c_cn98xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t vf_int                : 64; /**< [ 63:  0](R/W1C/H) Reads or clears enable for DPI(0..1)_EPF(0..7)_DMA_VF_LINT(0..1)[VF_INT]. */
+        uint64_t vf_int                : 64; /**< [ 63:  0](R/W1C/H) Reads or clears enable for DPI(0..1)_EPF(0..15)_DMA_VF_LINT(0..1)[VF_INT]. */
 #else /* Word 0 - Little Endian */
-        uint64_t vf_int                : 64; /**< [ 63:  0](R/W1C/H) Reads or clears enable for DPI(0..1)_EPF(0..7)_DMA_VF_LINT(0..1)[VF_INT]. */
+        uint64_t vf_int                : 64; /**< [ 63:  0](R/W1C/H) Reads or clears enable for DPI(0..1)_EPF(0..15)_DMA_VF_LINT(0..1)[VF_INT]. */
 #endif /* Word 0 - End */
     } cn98xx;
     /* struct cavm_dpix_epfx_dma_vf_lintx_ena_w1c_s cnf95xx; */
@@ -5582,8 +5480,8 @@ static inline uint64_t CAVM_DPIX_EPFX_DMA_VF_LINTX_ENA_W1C(unsigned long a, unsi
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=15) && (c<=1)))
         return 0x86e000006c00ll + 0x1000000000ll * ((a) & 0x0) + 0x20ll * ((b) & 0xf) + 0x10ll * ((c) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=7) && (c<=1)))
-        return 0x86e000006c00ll + 0x1000000000ll * ((a) & 0x1) + 0x20ll * ((b) & 0x7) + 0x10ll * ((c) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=15) && (c<=1)))
+        return 0x86e000006c00ll + 0x1000000000ll * ((a) & 0x1) + 0x20ll * ((b) & 0xf) + 0x10ll * ((c) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=15) && (c<=1)))
         return 0x86e000006c00ll + 0x1000000000ll * ((a) & 0x0) + 0x20ll * ((b) & 0xf) + 0x10ll * ((c) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=15) && (c<=1)))
@@ -5620,9 +5518,9 @@ union cavm_dpix_epfx_dma_vf_lintx_ena_w1s
     struct cavm_dpix_epfx_dma_vf_lintx_ena_w1s_cn98xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t vf_int                : 64; /**< [ 63:  0](R/W1S/H) Reads or sets enable for DPI(0..1)_EPF(0..7)_DMA_VF_LINT(0..1)[VF_INT]. */
+        uint64_t vf_int                : 64; /**< [ 63:  0](R/W1S/H) Reads or sets enable for DPI(0..1)_EPF(0..15)_DMA_VF_LINT(0..1)[VF_INT]. */
 #else /* Word 0 - Little Endian */
-        uint64_t vf_int                : 64; /**< [ 63:  0](R/W1S/H) Reads or sets enable for DPI(0..1)_EPF(0..7)_DMA_VF_LINT(0..1)[VF_INT]. */
+        uint64_t vf_int                : 64; /**< [ 63:  0](R/W1S/H) Reads or sets enable for DPI(0..1)_EPF(0..15)_DMA_VF_LINT(0..1)[VF_INT]. */
 #endif /* Word 0 - End */
     } cn98xx;
     /* struct cavm_dpix_epfx_dma_vf_lintx_ena_w1s_s cnf95xx; */
@@ -5635,8 +5533,8 @@ static inline uint64_t CAVM_DPIX_EPFX_DMA_VF_LINTX_ENA_W1S(unsigned long a, unsi
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=15) && (c<=1)))
         return 0x86e000006e00ll + 0x1000000000ll * ((a) & 0x0) + 0x20ll * ((b) & 0xf) + 0x10ll * ((c) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=7) && (c<=1)))
-        return 0x86e000006e00ll + 0x1000000000ll * ((a) & 0x1) + 0x20ll * ((b) & 0x7) + 0x10ll * ((c) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=15) && (c<=1)))
+        return 0x86e000006e00ll + 0x1000000000ll * ((a) & 0x1) + 0x20ll * ((b) & 0xf) + 0x10ll * ((c) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=15) && (c<=1)))
         return 0x86e000006e00ll + 0x1000000000ll * ((a) & 0x0) + 0x20ll * ((b) & 0xf) + 0x10ll * ((c) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=15) && (c<=1)))
@@ -5673,9 +5571,9 @@ union cavm_dpix_epfx_dma_vf_lintx_w1s
     struct cavm_dpix_epfx_dma_vf_lintx_w1s_cn98xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t vf_int                : 64; /**< [ 63:  0](R/W1S/H) Reads or sets DPI(0..1)_EPF(0..7)_DMA_VF_LINT(0..1)[VF_INT]. */
+        uint64_t vf_int                : 64; /**< [ 63:  0](R/W1S/H) Reads or sets DPI(0..1)_EPF(0..15)_DMA_VF_LINT(0..1)[VF_INT]. */
 #else /* Word 0 - Little Endian */
-        uint64_t vf_int                : 64; /**< [ 63:  0](R/W1S/H) Reads or sets DPI(0..1)_EPF(0..7)_DMA_VF_LINT(0..1)[VF_INT]. */
+        uint64_t vf_int                : 64; /**< [ 63:  0](R/W1S/H) Reads or sets DPI(0..1)_EPF(0..15)_DMA_VF_LINT(0..1)[VF_INT]. */
 #endif /* Word 0 - End */
     } cn98xx;
     /* struct cavm_dpix_epfx_dma_vf_lintx_w1s_s cnf95xx; */
@@ -5688,8 +5586,8 @@ static inline uint64_t CAVM_DPIX_EPFX_DMA_VF_LINTX_W1S(unsigned long a, unsigned
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=15) && (c<=1)))
         return 0x86e000006a00ll + 0x1000000000ll * ((a) & 0x0) + 0x20ll * ((b) & 0xf) + 0x10ll * ((c) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=7) && (c<=1)))
-        return 0x86e000006a00ll + 0x1000000000ll * ((a) & 0x1) + 0x20ll * ((b) & 0x7) + 0x10ll * ((c) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=15) && (c<=1)))
+        return 0x86e000006a00ll + 0x1000000000ll * ((a) & 0x1) + 0x20ll * ((b) & 0xf) + 0x10ll * ((c) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=15) && (c<=1)))
         return 0x86e000006a00ll + 0x1000000000ll * ((a) & 0x0) + 0x20ll * ((b) & 0xf) + 0x10ll * ((c) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=15) && (c<=1)))
@@ -5764,8 +5662,8 @@ static inline uint64_t CAVM_DPIX_EPFX_MISC_LINT(unsigned long a, unsigned long b
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=15)))
         return 0x86e000007000ll + 0x1000000000ll * ((a) & 0x0) + 0x20ll * ((b) & 0xf);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=7)))
-        return 0x86e000007000ll + 0x1000000000ll * ((a) & 0x1) + 0x20ll * ((b) & 0x7);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=15)))
+        return 0x86e000007000ll + 0x1000000000ll * ((a) & 0x1) + 0x20ll * ((b) & 0xf);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=15)))
         return 0x86e000007000ll + 0x1000000000ll * ((a) & 0x0) + 0x20ll * ((b) & 0xf);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=15)))
@@ -5817,21 +5715,21 @@ union cavm_dpix_epfx_misc_lint_ena_w1c
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_7_63         : 57;
-        uint64_t flr                   : 1;  /**< [  6:  6](R/W1C/H) Reads or clears enable for DPI(0..1)_EPF(0..7)_MISC_LINT[FLR]. */
-        uint64_t dmapf_err             : 1;  /**< [  5:  5](R/W1C/H) Reads or clears enable for DPI(0..1)_EPF(0..7)_MISC_LINT[DMAPF_ERR]. */
-        uint64_t pppf_err              : 1;  /**< [  4:  4](R/W1C/H) Reads or clears enable for DPI(0..1)_EPF(0..7)_MISC_LINT[PPPF_ERR]. */
-        uint64_t un_wi                 : 1;  /**< [  3:  3](R/W1C/H) Reads or clears enable for DPI(0..1)_EPF(0..7)_MISC_LINT[UN_WI]. */
-        uint64_t un_b0                 : 1;  /**< [  2:  2](R/W1C/H) Reads or clears enable for DPI(0..1)_EPF(0..7)_MISC_LINT[UN_B0]. */
-        uint64_t up_wi                 : 1;  /**< [  1:  1](R/W1C/H) Reads or clears enable for DPI(0..1)_EPF(0..7)_MISC_LINT[UP_WI]. */
-        uint64_t up_b0                 : 1;  /**< [  0:  0](R/W1C/H) Reads or clears enable for DPI(0..1)_EPF(0..7)_MISC_LINT[UP_B0]. */
+        uint64_t flr                   : 1;  /**< [  6:  6](R/W1C/H) Reads or clears enable for DPI(0..1)_EPF(0..15)_MISC_LINT[FLR]. */
+        uint64_t dmapf_err             : 1;  /**< [  5:  5](R/W1C/H) Reads or clears enable for DPI(0..1)_EPF(0..15)_MISC_LINT[DMAPF_ERR]. */
+        uint64_t pppf_err              : 1;  /**< [  4:  4](R/W1C/H) Reads or clears enable for DPI(0..1)_EPF(0..15)_MISC_LINT[PPPF_ERR]. */
+        uint64_t un_wi                 : 1;  /**< [  3:  3](R/W1C/H) Reads or clears enable for DPI(0..1)_EPF(0..15)_MISC_LINT[UN_WI]. */
+        uint64_t un_b0                 : 1;  /**< [  2:  2](R/W1C/H) Reads or clears enable for DPI(0..1)_EPF(0..15)_MISC_LINT[UN_B0]. */
+        uint64_t up_wi                 : 1;  /**< [  1:  1](R/W1C/H) Reads or clears enable for DPI(0..1)_EPF(0..15)_MISC_LINT[UP_WI]. */
+        uint64_t up_b0                 : 1;  /**< [  0:  0](R/W1C/H) Reads or clears enable for DPI(0..1)_EPF(0..15)_MISC_LINT[UP_B0]. */
 #else /* Word 0 - Little Endian */
-        uint64_t up_b0                 : 1;  /**< [  0:  0](R/W1C/H) Reads or clears enable for DPI(0..1)_EPF(0..7)_MISC_LINT[UP_B0]. */
-        uint64_t up_wi                 : 1;  /**< [  1:  1](R/W1C/H) Reads or clears enable for DPI(0..1)_EPF(0..7)_MISC_LINT[UP_WI]. */
-        uint64_t un_b0                 : 1;  /**< [  2:  2](R/W1C/H) Reads or clears enable for DPI(0..1)_EPF(0..7)_MISC_LINT[UN_B0]. */
-        uint64_t un_wi                 : 1;  /**< [  3:  3](R/W1C/H) Reads or clears enable for DPI(0..1)_EPF(0..7)_MISC_LINT[UN_WI]. */
-        uint64_t pppf_err              : 1;  /**< [  4:  4](R/W1C/H) Reads or clears enable for DPI(0..1)_EPF(0..7)_MISC_LINT[PPPF_ERR]. */
-        uint64_t dmapf_err             : 1;  /**< [  5:  5](R/W1C/H) Reads or clears enable for DPI(0..1)_EPF(0..7)_MISC_LINT[DMAPF_ERR]. */
-        uint64_t flr                   : 1;  /**< [  6:  6](R/W1C/H) Reads or clears enable for DPI(0..1)_EPF(0..7)_MISC_LINT[FLR]. */
+        uint64_t up_b0                 : 1;  /**< [  0:  0](R/W1C/H) Reads or clears enable for DPI(0..1)_EPF(0..15)_MISC_LINT[UP_B0]. */
+        uint64_t up_wi                 : 1;  /**< [  1:  1](R/W1C/H) Reads or clears enable for DPI(0..1)_EPF(0..15)_MISC_LINT[UP_WI]. */
+        uint64_t un_b0                 : 1;  /**< [  2:  2](R/W1C/H) Reads or clears enable for DPI(0..1)_EPF(0..15)_MISC_LINT[UN_B0]. */
+        uint64_t un_wi                 : 1;  /**< [  3:  3](R/W1C/H) Reads or clears enable for DPI(0..1)_EPF(0..15)_MISC_LINT[UN_WI]. */
+        uint64_t pppf_err              : 1;  /**< [  4:  4](R/W1C/H) Reads or clears enable for DPI(0..1)_EPF(0..15)_MISC_LINT[PPPF_ERR]. */
+        uint64_t dmapf_err             : 1;  /**< [  5:  5](R/W1C/H) Reads or clears enable for DPI(0..1)_EPF(0..15)_MISC_LINT[DMAPF_ERR]. */
+        uint64_t flr                   : 1;  /**< [  6:  6](R/W1C/H) Reads or clears enable for DPI(0..1)_EPF(0..15)_MISC_LINT[FLR]. */
         uint64_t reserved_7_63         : 57;
 #endif /* Word 0 - End */
     } cn98xx;
@@ -5845,8 +5743,8 @@ static inline uint64_t CAVM_DPIX_EPFX_MISC_LINT_ENA_W1C(unsigned long a, unsigne
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=15)))
         return 0x86e000007010ll + 0x1000000000ll * ((a) & 0x0) + 0x20ll * ((b) & 0xf);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=7)))
-        return 0x86e000007010ll + 0x1000000000ll * ((a) & 0x1) + 0x20ll * ((b) & 0x7);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=15)))
+        return 0x86e000007010ll + 0x1000000000ll * ((a) & 0x1) + 0x20ll * ((b) & 0xf);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=15)))
         return 0x86e000007010ll + 0x1000000000ll * ((a) & 0x0) + 0x20ll * ((b) & 0xf);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=15)))
@@ -5898,21 +5796,21 @@ union cavm_dpix_epfx_misc_lint_ena_w1s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_7_63         : 57;
-        uint64_t flr                   : 1;  /**< [  6:  6](R/W1S/H) Reads or sets enable for DPI(0..1)_EPF(0..7)_MISC_LINT[FLR]. */
-        uint64_t dmapf_err             : 1;  /**< [  5:  5](R/W1S/H) Reads or sets enable for DPI(0..1)_EPF(0..7)_MISC_LINT[DMAPF_ERR]. */
-        uint64_t pppf_err              : 1;  /**< [  4:  4](R/W1S/H) Reads or sets enable for DPI(0..1)_EPF(0..7)_MISC_LINT[PPPF_ERR]. */
-        uint64_t un_wi                 : 1;  /**< [  3:  3](R/W1S/H) Reads or sets enable for DPI(0..1)_EPF(0..7)_MISC_LINT[UN_WI]. */
-        uint64_t un_b0                 : 1;  /**< [  2:  2](R/W1S/H) Reads or sets enable for DPI(0..1)_EPF(0..7)_MISC_LINT[UN_B0]. */
-        uint64_t up_wi                 : 1;  /**< [  1:  1](R/W1S/H) Reads or sets enable for DPI(0..1)_EPF(0..7)_MISC_LINT[UP_WI]. */
-        uint64_t up_b0                 : 1;  /**< [  0:  0](R/W1S/H) Reads or sets enable for DPI(0..1)_EPF(0..7)_MISC_LINT[UP_B0]. */
+        uint64_t flr                   : 1;  /**< [  6:  6](R/W1S/H) Reads or sets enable for DPI(0..1)_EPF(0..15)_MISC_LINT[FLR]. */
+        uint64_t dmapf_err             : 1;  /**< [  5:  5](R/W1S/H) Reads or sets enable for DPI(0..1)_EPF(0..15)_MISC_LINT[DMAPF_ERR]. */
+        uint64_t pppf_err              : 1;  /**< [  4:  4](R/W1S/H) Reads or sets enable for DPI(0..1)_EPF(0..15)_MISC_LINT[PPPF_ERR]. */
+        uint64_t un_wi                 : 1;  /**< [  3:  3](R/W1S/H) Reads or sets enable for DPI(0..1)_EPF(0..15)_MISC_LINT[UN_WI]. */
+        uint64_t un_b0                 : 1;  /**< [  2:  2](R/W1S/H) Reads or sets enable for DPI(0..1)_EPF(0..15)_MISC_LINT[UN_B0]. */
+        uint64_t up_wi                 : 1;  /**< [  1:  1](R/W1S/H) Reads or sets enable for DPI(0..1)_EPF(0..15)_MISC_LINT[UP_WI]. */
+        uint64_t up_b0                 : 1;  /**< [  0:  0](R/W1S/H) Reads or sets enable for DPI(0..1)_EPF(0..15)_MISC_LINT[UP_B0]. */
 #else /* Word 0 - Little Endian */
-        uint64_t up_b0                 : 1;  /**< [  0:  0](R/W1S/H) Reads or sets enable for DPI(0..1)_EPF(0..7)_MISC_LINT[UP_B0]. */
-        uint64_t up_wi                 : 1;  /**< [  1:  1](R/W1S/H) Reads or sets enable for DPI(0..1)_EPF(0..7)_MISC_LINT[UP_WI]. */
-        uint64_t un_b0                 : 1;  /**< [  2:  2](R/W1S/H) Reads or sets enable for DPI(0..1)_EPF(0..7)_MISC_LINT[UN_B0]. */
-        uint64_t un_wi                 : 1;  /**< [  3:  3](R/W1S/H) Reads or sets enable for DPI(0..1)_EPF(0..7)_MISC_LINT[UN_WI]. */
-        uint64_t pppf_err              : 1;  /**< [  4:  4](R/W1S/H) Reads or sets enable for DPI(0..1)_EPF(0..7)_MISC_LINT[PPPF_ERR]. */
-        uint64_t dmapf_err             : 1;  /**< [  5:  5](R/W1S/H) Reads or sets enable for DPI(0..1)_EPF(0..7)_MISC_LINT[DMAPF_ERR]. */
-        uint64_t flr                   : 1;  /**< [  6:  6](R/W1S/H) Reads or sets enable for DPI(0..1)_EPF(0..7)_MISC_LINT[FLR]. */
+        uint64_t up_b0                 : 1;  /**< [  0:  0](R/W1S/H) Reads or sets enable for DPI(0..1)_EPF(0..15)_MISC_LINT[UP_B0]. */
+        uint64_t up_wi                 : 1;  /**< [  1:  1](R/W1S/H) Reads or sets enable for DPI(0..1)_EPF(0..15)_MISC_LINT[UP_WI]. */
+        uint64_t un_b0                 : 1;  /**< [  2:  2](R/W1S/H) Reads or sets enable for DPI(0..1)_EPF(0..15)_MISC_LINT[UN_B0]. */
+        uint64_t un_wi                 : 1;  /**< [  3:  3](R/W1S/H) Reads or sets enable for DPI(0..1)_EPF(0..15)_MISC_LINT[UN_WI]. */
+        uint64_t pppf_err              : 1;  /**< [  4:  4](R/W1S/H) Reads or sets enable for DPI(0..1)_EPF(0..15)_MISC_LINT[PPPF_ERR]. */
+        uint64_t dmapf_err             : 1;  /**< [  5:  5](R/W1S/H) Reads or sets enable for DPI(0..1)_EPF(0..15)_MISC_LINT[DMAPF_ERR]. */
+        uint64_t flr                   : 1;  /**< [  6:  6](R/W1S/H) Reads or sets enable for DPI(0..1)_EPF(0..15)_MISC_LINT[FLR]. */
         uint64_t reserved_7_63         : 57;
 #endif /* Word 0 - End */
     } cn98xx;
@@ -5926,8 +5824,8 @@ static inline uint64_t CAVM_DPIX_EPFX_MISC_LINT_ENA_W1S(unsigned long a, unsigne
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=15)))
         return 0x86e000007018ll + 0x1000000000ll * ((a) & 0x0) + 0x20ll * ((b) & 0xf);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=7)))
-        return 0x86e000007018ll + 0x1000000000ll * ((a) & 0x1) + 0x20ll * ((b) & 0x7);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=15)))
+        return 0x86e000007018ll + 0x1000000000ll * ((a) & 0x1) + 0x20ll * ((b) & 0xf);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=15)))
         return 0x86e000007018ll + 0x1000000000ll * ((a) & 0x0) + 0x20ll * ((b) & 0xf);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=15)))
@@ -5979,21 +5877,21 @@ union cavm_dpix_epfx_misc_lint_w1s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_7_63         : 57;
-        uint64_t flr                   : 1;  /**< [  6:  6](R/W1S/H) Reads or sets DPI(0..1)_EPF(0..7)_MISC_LINT[FLR]. */
-        uint64_t dmapf_err             : 1;  /**< [  5:  5](R/W1S/H) Reads or sets DPI(0..1)_EPF(0..7)_MISC_LINT[DMAPF_ERR]. */
-        uint64_t pppf_err              : 1;  /**< [  4:  4](R/W1S/H) Reads or sets DPI(0..1)_EPF(0..7)_MISC_LINT[PPPF_ERR]. */
-        uint64_t un_wi                 : 1;  /**< [  3:  3](R/W1S/H) Reads or sets DPI(0..1)_EPF(0..7)_MISC_LINT[UN_WI]. */
-        uint64_t un_b0                 : 1;  /**< [  2:  2](R/W1S/H) Reads or sets DPI(0..1)_EPF(0..7)_MISC_LINT[UN_B0]. */
-        uint64_t up_wi                 : 1;  /**< [  1:  1](R/W1S/H) Reads or sets DPI(0..1)_EPF(0..7)_MISC_LINT[UP_WI]. */
-        uint64_t up_b0                 : 1;  /**< [  0:  0](R/W1S/H) Reads or sets DPI(0..1)_EPF(0..7)_MISC_LINT[UP_B0]. */
+        uint64_t flr                   : 1;  /**< [  6:  6](R/W1S/H) Reads or sets DPI(0..1)_EPF(0..15)_MISC_LINT[FLR]. */
+        uint64_t dmapf_err             : 1;  /**< [  5:  5](R/W1S/H) Reads or sets DPI(0..1)_EPF(0..15)_MISC_LINT[DMAPF_ERR]. */
+        uint64_t pppf_err              : 1;  /**< [  4:  4](R/W1S/H) Reads or sets DPI(0..1)_EPF(0..15)_MISC_LINT[PPPF_ERR]. */
+        uint64_t un_wi                 : 1;  /**< [  3:  3](R/W1S/H) Reads or sets DPI(0..1)_EPF(0..15)_MISC_LINT[UN_WI]. */
+        uint64_t un_b0                 : 1;  /**< [  2:  2](R/W1S/H) Reads or sets DPI(0..1)_EPF(0..15)_MISC_LINT[UN_B0]. */
+        uint64_t up_wi                 : 1;  /**< [  1:  1](R/W1S/H) Reads or sets DPI(0..1)_EPF(0..15)_MISC_LINT[UP_WI]. */
+        uint64_t up_b0                 : 1;  /**< [  0:  0](R/W1S/H) Reads or sets DPI(0..1)_EPF(0..15)_MISC_LINT[UP_B0]. */
 #else /* Word 0 - Little Endian */
-        uint64_t up_b0                 : 1;  /**< [  0:  0](R/W1S/H) Reads or sets DPI(0..1)_EPF(0..7)_MISC_LINT[UP_B0]. */
-        uint64_t up_wi                 : 1;  /**< [  1:  1](R/W1S/H) Reads or sets DPI(0..1)_EPF(0..7)_MISC_LINT[UP_WI]. */
-        uint64_t un_b0                 : 1;  /**< [  2:  2](R/W1S/H) Reads or sets DPI(0..1)_EPF(0..7)_MISC_LINT[UN_B0]. */
-        uint64_t un_wi                 : 1;  /**< [  3:  3](R/W1S/H) Reads or sets DPI(0..1)_EPF(0..7)_MISC_LINT[UN_WI]. */
-        uint64_t pppf_err              : 1;  /**< [  4:  4](R/W1S/H) Reads or sets DPI(0..1)_EPF(0..7)_MISC_LINT[PPPF_ERR]. */
-        uint64_t dmapf_err             : 1;  /**< [  5:  5](R/W1S/H) Reads or sets DPI(0..1)_EPF(0..7)_MISC_LINT[DMAPF_ERR]. */
-        uint64_t flr                   : 1;  /**< [  6:  6](R/W1S/H) Reads or sets DPI(0..1)_EPF(0..7)_MISC_LINT[FLR]. */
+        uint64_t up_b0                 : 1;  /**< [  0:  0](R/W1S/H) Reads or sets DPI(0..1)_EPF(0..15)_MISC_LINT[UP_B0]. */
+        uint64_t up_wi                 : 1;  /**< [  1:  1](R/W1S/H) Reads or sets DPI(0..1)_EPF(0..15)_MISC_LINT[UP_WI]. */
+        uint64_t un_b0                 : 1;  /**< [  2:  2](R/W1S/H) Reads or sets DPI(0..1)_EPF(0..15)_MISC_LINT[UN_B0]. */
+        uint64_t un_wi                 : 1;  /**< [  3:  3](R/W1S/H) Reads or sets DPI(0..1)_EPF(0..15)_MISC_LINT[UN_WI]. */
+        uint64_t pppf_err              : 1;  /**< [  4:  4](R/W1S/H) Reads or sets DPI(0..1)_EPF(0..15)_MISC_LINT[PPPF_ERR]. */
+        uint64_t dmapf_err             : 1;  /**< [  5:  5](R/W1S/H) Reads or sets DPI(0..1)_EPF(0..15)_MISC_LINT[DMAPF_ERR]. */
+        uint64_t flr                   : 1;  /**< [  6:  6](R/W1S/H) Reads or sets DPI(0..1)_EPF(0..15)_MISC_LINT[FLR]. */
         uint64_t reserved_7_63         : 57;
 #endif /* Word 0 - End */
     } cn98xx;
@@ -6007,8 +5905,8 @@ static inline uint64_t CAVM_DPIX_EPFX_MISC_LINT_W1S(unsigned long a, unsigned lo
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=15)))
         return 0x86e000007008ll + 0x1000000000ll * ((a) & 0x0) + 0x20ll * ((b) & 0xf);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=7)))
-        return 0x86e000007008ll + 0x1000000000ll * ((a) & 0x1) + 0x20ll * ((b) & 0x7);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=15)))
+        return 0x86e000007008ll + 0x1000000000ll * ((a) & 0x1) + 0x20ll * ((b) & 0xf);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=15)))
         return 0x86e000007008ll + 0x1000000000ll * ((a) & 0x0) + 0x20ll * ((b) & 0xf);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=15)))
@@ -6056,8 +5954,8 @@ static inline uint64_t CAVM_DPIX_EPFX_PP_VF_LINTX(unsigned long a, unsigned long
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=15) && (c<=1)))
         return 0x86e000007200ll + 0x1000000000ll * ((a) & 0x0) + 0x20ll * ((b) & 0xf) + 0x10ll * ((c) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=7) && (c<=1)))
-        return 0x86e000007200ll + 0x1000000000ll * ((a) & 0x1) + 0x20ll * ((b) & 0x7) + 0x10ll * ((c) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=15) && (c<=1)))
+        return 0x86e000007200ll + 0x1000000000ll * ((a) & 0x1) + 0x20ll * ((b) & 0xf) + 0x10ll * ((c) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=15) && (c<=1)))
         return 0x86e000007200ll + 0x1000000000ll * ((a) & 0x0) + 0x20ll * ((b) & 0xf) + 0x10ll * ((c) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=15) && (c<=1)))
@@ -6094,9 +5992,9 @@ union cavm_dpix_epfx_pp_vf_lintx_ena_w1c
     struct cavm_dpix_epfx_pp_vf_lintx_ena_w1c_cn98xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t vf_int                : 64; /**< [ 63:  0](R/W1C/H) Reads or clears enable for DPI(0..1)_EPF(0..7)_PP_VF_LINT(0..1)[VF_INT]. */
+        uint64_t vf_int                : 64; /**< [ 63:  0](R/W1C/H) Reads or clears enable for DPI(0..1)_EPF(0..15)_PP_VF_LINT(0..1)[VF_INT]. */
 #else /* Word 0 - Little Endian */
-        uint64_t vf_int                : 64; /**< [ 63:  0](R/W1C/H) Reads or clears enable for DPI(0..1)_EPF(0..7)_PP_VF_LINT(0..1)[VF_INT]. */
+        uint64_t vf_int                : 64; /**< [ 63:  0](R/W1C/H) Reads or clears enable for DPI(0..1)_EPF(0..15)_PP_VF_LINT(0..1)[VF_INT]. */
 #endif /* Word 0 - End */
     } cn98xx;
     /* struct cavm_dpix_epfx_pp_vf_lintx_ena_w1c_s cnf95xx; */
@@ -6109,8 +6007,8 @@ static inline uint64_t CAVM_DPIX_EPFX_PP_VF_LINTX_ENA_W1C(unsigned long a, unsig
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=15) && (c<=1)))
         return 0x86e000007600ll + 0x1000000000ll * ((a) & 0x0) + 0x20ll * ((b) & 0xf) + 0x10ll * ((c) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=7) && (c<=1)))
-        return 0x86e000007600ll + 0x1000000000ll * ((a) & 0x1) + 0x20ll * ((b) & 0x7) + 0x10ll * ((c) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=15) && (c<=1)))
+        return 0x86e000007600ll + 0x1000000000ll * ((a) & 0x1) + 0x20ll * ((b) & 0xf) + 0x10ll * ((c) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=15) && (c<=1)))
         return 0x86e000007600ll + 0x1000000000ll * ((a) & 0x0) + 0x20ll * ((b) & 0xf) + 0x10ll * ((c) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=15) && (c<=1)))
@@ -6147,9 +6045,9 @@ union cavm_dpix_epfx_pp_vf_lintx_ena_w1s
     struct cavm_dpix_epfx_pp_vf_lintx_ena_w1s_cn98xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t vf_int                : 64; /**< [ 63:  0](R/W1S/H) Reads or sets enable for DPI(0..1)_EPF(0..7)_PP_VF_LINT(0..1)[VF_INT]. */
+        uint64_t vf_int                : 64; /**< [ 63:  0](R/W1S/H) Reads or sets enable for DPI(0..1)_EPF(0..15)_PP_VF_LINT(0..1)[VF_INT]. */
 #else /* Word 0 - Little Endian */
-        uint64_t vf_int                : 64; /**< [ 63:  0](R/W1S/H) Reads or sets enable for DPI(0..1)_EPF(0..7)_PP_VF_LINT(0..1)[VF_INT]. */
+        uint64_t vf_int                : 64; /**< [ 63:  0](R/W1S/H) Reads or sets enable for DPI(0..1)_EPF(0..15)_PP_VF_LINT(0..1)[VF_INT]. */
 #endif /* Word 0 - End */
     } cn98xx;
     /* struct cavm_dpix_epfx_pp_vf_lintx_ena_w1s_s cnf95xx; */
@@ -6162,8 +6060,8 @@ static inline uint64_t CAVM_DPIX_EPFX_PP_VF_LINTX_ENA_W1S(unsigned long a, unsig
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=15) && (c<=1)))
         return 0x86e000007800ll + 0x1000000000ll * ((a) & 0x0) + 0x20ll * ((b) & 0xf) + 0x10ll * ((c) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=7) && (c<=1)))
-        return 0x86e000007800ll + 0x1000000000ll * ((a) & 0x1) + 0x20ll * ((b) & 0x7) + 0x10ll * ((c) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=15) && (c<=1)))
+        return 0x86e000007800ll + 0x1000000000ll * ((a) & 0x1) + 0x20ll * ((b) & 0xf) + 0x10ll * ((c) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=15) && (c<=1)))
         return 0x86e000007800ll + 0x1000000000ll * ((a) & 0x0) + 0x20ll * ((b) & 0xf) + 0x10ll * ((c) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=15) && (c<=1)))
@@ -6200,9 +6098,9 @@ union cavm_dpix_epfx_pp_vf_lintx_w1s
     struct cavm_dpix_epfx_pp_vf_lintx_w1s_cn98xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t vf_int                : 64; /**< [ 63:  0](R/W1S/H) Reads or sets DPI(0..1)_EPF(0..7)_PP_VF_LINT(0..1)[VF_INT]. */
+        uint64_t vf_int                : 64; /**< [ 63:  0](R/W1S/H) Reads or sets DPI(0..1)_EPF(0..15)_PP_VF_LINT(0..1)[VF_INT]. */
 #else /* Word 0 - Little Endian */
-        uint64_t vf_int                : 64; /**< [ 63:  0](R/W1S/H) Reads or sets DPI(0..1)_EPF(0..7)_PP_VF_LINT(0..1)[VF_INT]. */
+        uint64_t vf_int                : 64; /**< [ 63:  0](R/W1S/H) Reads or sets DPI(0..1)_EPF(0..15)_PP_VF_LINT(0..1)[VF_INT]. */
 #endif /* Word 0 - End */
     } cn98xx;
     /* struct cavm_dpix_epfx_pp_vf_lintx_w1s_s cnf95xx; */
@@ -6215,8 +6113,8 @@ static inline uint64_t CAVM_DPIX_EPFX_PP_VF_LINTX_W1S(unsigned long a, unsigned 
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=15) && (c<=1)))
         return 0x86e000007400ll + 0x1000000000ll * ((a) & 0x0) + 0x20ll * ((b) & 0xf) + 0x10ll * ((c) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=7) && (c<=1)))
-        return 0x86e000007400ll + 0x1000000000ll * ((a) & 0x1) + 0x20ll * ((b) & 0x7) + 0x10ll * ((c) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=15) && (c<=1)))
+        return 0x86e000007400ll + 0x1000000000ll * ((a) & 0x1) + 0x20ll * ((b) & 0xf) + 0x10ll * ((c) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=15) && (c<=1)))
         return 0x86e000007400ll + 0x1000000000ll * ((a) & 0x0) + 0x20ll * ((b) & 0xf) + 0x10ll * ((c) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=15) && (c<=1)))
@@ -6772,7 +6670,7 @@ static inline uint64_t CAVM_DPIX_PF_MSIX_VECX_ADDR(unsigned long a, unsigned lon
         return 0x86e010000000ll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0x7f);
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=168)))
         return 0x86e100000000ll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0xff);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=144)))
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=168)))
         return 0x86e100000000ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0xff);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=168)))
         return 0x86e100000000ll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0xff);
@@ -6834,7 +6732,7 @@ static inline uint64_t CAVM_DPIX_PF_MSIX_VECX_CTL(unsigned long a, unsigned long
         return 0x86e010000008ll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0x7f);
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=168)))
         return 0x86e100000008ll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0xff);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=144)))
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=168)))
         return 0x86e100000008ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0xff);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=168)))
         return 0x86e100000008ll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0xff);
@@ -9398,8 +9296,8 @@ static inline uint64_t CAVM_SDPX_EPFX_DMA_CNTX(unsigned long a, unsigned long b,
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=15) && (c<=1)))
         return 0x86e080020460ll + 0x1000000000ll * ((a) & 0x0) + 0x2000000ll * ((b) & 0xf) + 0x10ll * ((c) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=7) && (c<=1)))
-        return 0x86e080020460ll + 0x1000000000ll * ((a) & 0x1) + 0x2000000ll * ((b) & 0x7) + 0x10ll * ((c) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=15) && (c<=1)))
+        return 0x86e080020460ll + 0x1000000000ll * ((a) & 0x1) + 0x2000000ll * ((b) & 0xf) + 0x10ll * ((c) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=15) && (c<=1)))
         return 0x86e080020460ll + 0x1000000000ll * ((a) & 0x0) + 0x2000000ll * ((b) & 0xf) + 0x10ll * ((c) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=15) && (c<=1)))
@@ -9452,8 +9350,8 @@ static inline uint64_t CAVM_SDPX_EPFX_DMA_INT_LEVELX(unsigned long a, unsigned l
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=15) && (c<=1)))
         return 0x86e080020440ll + 0x1000000000ll * ((a) & 0x0) + 0x2000000ll * ((b) & 0xf) + 0x10ll * ((c) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=7) && (c<=1)))
-        return 0x86e080020440ll + 0x1000000000ll * ((a) & 0x1) + 0x2000000ll * ((b) & 0x7) + 0x10ll * ((c) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=15) && (c<=1)))
+        return 0x86e080020440ll + 0x1000000000ll * ((a) & 0x1) + 0x2000000ll * ((b) & 0xf) + 0x10ll * ((c) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=15) && (c<=1)))
         return 0x86e080020440ll + 0x1000000000ll * ((a) & 0x0) + 0x2000000ll * ((b) & 0xf) + 0x10ll * ((c) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=15) && (c<=1)))
@@ -9524,8 +9422,8 @@ static inline uint64_t CAVM_SDPX_EPFX_DMA_RINT(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=15)))
         return 0x86e080020400ll + 0x1000000000ll * ((a) & 0x0) + 0x2000000ll * ((b) & 0xf);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=7)))
-        return 0x86e080020400ll + 0x1000000000ll * ((a) & 0x1) + 0x2000000ll * ((b) & 0x7);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=15)))
+        return 0x86e080020400ll + 0x1000000000ll * ((a) & 0x1) + 0x2000000ll * ((b) & 0xf);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=15)))
         return 0x86e080020400ll + 0x1000000000ll * ((a) & 0x0) + 0x2000000ll * ((b) & 0xf);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=15)))
@@ -9569,13 +9467,13 @@ union cavm_sdpx_epfx_dma_rint_ena_w1c
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_6_63         : 58;
-        uint64_t dtime                 : 2;  /**< [  5:  4](R/W1C/H) Reads or clears enable for SDP(0..1)_EPF(0..7)_DMA_RINT[DTIME]. */
-        uint64_t dcnt                  : 2;  /**< [  3:  2](R/W1C/H) Reads or clears enable for SDP(0..1)_EPF(0..7)_DMA_RINT[DCNT]. */
-        uint64_t dmafi                 : 2;  /**< [  1:  0](R/W1C/H) Reads or clears enable for SDP(0..1)_EPF(0..7)_DMA_RINT[DMAFI]. */
+        uint64_t dtime                 : 2;  /**< [  5:  4](R/W1C/H) Reads or clears enable for SDP(0..1)_EPF(0..15)_DMA_RINT[DTIME]. */
+        uint64_t dcnt                  : 2;  /**< [  3:  2](R/W1C/H) Reads or clears enable for SDP(0..1)_EPF(0..15)_DMA_RINT[DCNT]. */
+        uint64_t dmafi                 : 2;  /**< [  1:  0](R/W1C/H) Reads or clears enable for SDP(0..1)_EPF(0..15)_DMA_RINT[DMAFI]. */
 #else /* Word 0 - Little Endian */
-        uint64_t dmafi                 : 2;  /**< [  1:  0](R/W1C/H) Reads or clears enable for SDP(0..1)_EPF(0..7)_DMA_RINT[DMAFI]. */
-        uint64_t dcnt                  : 2;  /**< [  3:  2](R/W1C/H) Reads or clears enable for SDP(0..1)_EPF(0..7)_DMA_RINT[DCNT]. */
-        uint64_t dtime                 : 2;  /**< [  5:  4](R/W1C/H) Reads or clears enable for SDP(0..1)_EPF(0..7)_DMA_RINT[DTIME]. */
+        uint64_t dmafi                 : 2;  /**< [  1:  0](R/W1C/H) Reads or clears enable for SDP(0..1)_EPF(0..15)_DMA_RINT[DMAFI]. */
+        uint64_t dcnt                  : 2;  /**< [  3:  2](R/W1C/H) Reads or clears enable for SDP(0..1)_EPF(0..15)_DMA_RINT[DCNT]. */
+        uint64_t dtime                 : 2;  /**< [  5:  4](R/W1C/H) Reads or clears enable for SDP(0..1)_EPF(0..15)_DMA_RINT[DTIME]. */
         uint64_t reserved_6_63         : 58;
 #endif /* Word 0 - End */
     } cn98xx;
@@ -9589,8 +9487,8 @@ static inline uint64_t CAVM_SDPX_EPFX_DMA_RINT_ENA_W1C(unsigned long a, unsigned
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=15)))
         return 0x86e080020420ll + 0x1000000000ll * ((a) & 0x0) + 0x2000000ll * ((b) & 0xf);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=7)))
-        return 0x86e080020420ll + 0x1000000000ll * ((a) & 0x1) + 0x2000000ll * ((b) & 0x7);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=15)))
+        return 0x86e080020420ll + 0x1000000000ll * ((a) & 0x1) + 0x2000000ll * ((b) & 0xf);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=15)))
         return 0x86e080020420ll + 0x1000000000ll * ((a) & 0x0) + 0x2000000ll * ((b) & 0xf);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=15)))
@@ -9634,13 +9532,13 @@ union cavm_sdpx_epfx_dma_rint_ena_w1s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_6_63         : 58;
-        uint64_t dtime                 : 2;  /**< [  5:  4](R/W1S/H) Reads or sets enable for SDP(0..1)_EPF(0..7)_DMA_RINT[DTIME]. */
-        uint64_t dcnt                  : 2;  /**< [  3:  2](R/W1S/H) Reads or sets enable for SDP(0..1)_EPF(0..7)_DMA_RINT[DCNT]. */
-        uint64_t dmafi                 : 2;  /**< [  1:  0](R/W1S/H) Reads or sets enable for SDP(0..1)_EPF(0..7)_DMA_RINT[DMAFI]. */
+        uint64_t dtime                 : 2;  /**< [  5:  4](R/W1S/H) Reads or sets enable for SDP(0..1)_EPF(0..15)_DMA_RINT[DTIME]. */
+        uint64_t dcnt                  : 2;  /**< [  3:  2](R/W1S/H) Reads or sets enable for SDP(0..1)_EPF(0..15)_DMA_RINT[DCNT]. */
+        uint64_t dmafi                 : 2;  /**< [  1:  0](R/W1S/H) Reads or sets enable for SDP(0..1)_EPF(0..15)_DMA_RINT[DMAFI]. */
 #else /* Word 0 - Little Endian */
-        uint64_t dmafi                 : 2;  /**< [  1:  0](R/W1S/H) Reads or sets enable for SDP(0..1)_EPF(0..7)_DMA_RINT[DMAFI]. */
-        uint64_t dcnt                  : 2;  /**< [  3:  2](R/W1S/H) Reads or sets enable for SDP(0..1)_EPF(0..7)_DMA_RINT[DCNT]. */
-        uint64_t dtime                 : 2;  /**< [  5:  4](R/W1S/H) Reads or sets enable for SDP(0..1)_EPF(0..7)_DMA_RINT[DTIME]. */
+        uint64_t dmafi                 : 2;  /**< [  1:  0](R/W1S/H) Reads or sets enable for SDP(0..1)_EPF(0..15)_DMA_RINT[DMAFI]. */
+        uint64_t dcnt                  : 2;  /**< [  3:  2](R/W1S/H) Reads or sets enable for SDP(0..1)_EPF(0..15)_DMA_RINT[DCNT]. */
+        uint64_t dtime                 : 2;  /**< [  5:  4](R/W1S/H) Reads or sets enable for SDP(0..1)_EPF(0..15)_DMA_RINT[DTIME]. */
         uint64_t reserved_6_63         : 58;
 #endif /* Word 0 - End */
     } cn98xx;
@@ -9654,8 +9552,8 @@ static inline uint64_t CAVM_SDPX_EPFX_DMA_RINT_ENA_W1S(unsigned long a, unsigned
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=15)))
         return 0x86e080020430ll + 0x1000000000ll * ((a) & 0x0) + 0x2000000ll * ((b) & 0xf);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=7)))
-        return 0x86e080020430ll + 0x1000000000ll * ((a) & 0x1) + 0x2000000ll * ((b) & 0x7);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=15)))
+        return 0x86e080020430ll + 0x1000000000ll * ((a) & 0x1) + 0x2000000ll * ((b) & 0xf);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=15)))
         return 0x86e080020430ll + 0x1000000000ll * ((a) & 0x0) + 0x2000000ll * ((b) & 0xf);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=15)))
@@ -9699,13 +9597,13 @@ union cavm_sdpx_epfx_dma_rint_w1s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_6_63         : 58;
-        uint64_t dtime                 : 2;  /**< [  5:  4](R/W1S/H) Reads or sets SDP(0..1)_EPF(0..7)_DMA_RINT[DTIME]. */
-        uint64_t dcnt                  : 2;  /**< [  3:  2](R/W1S/H) Reads or sets SDP(0..1)_EPF(0..7)_DMA_RINT[DCNT]. */
-        uint64_t dmafi                 : 2;  /**< [  1:  0](R/W1S/H) Reads or sets SDP(0..1)_EPF(0..7)_DMA_RINT[DMAFI]. */
+        uint64_t dtime                 : 2;  /**< [  5:  4](R/W1S/H) Reads or sets SDP(0..1)_EPF(0..15)_DMA_RINT[DTIME]. */
+        uint64_t dcnt                  : 2;  /**< [  3:  2](R/W1S/H) Reads or sets SDP(0..1)_EPF(0..15)_DMA_RINT[DCNT]. */
+        uint64_t dmafi                 : 2;  /**< [  1:  0](R/W1S/H) Reads or sets SDP(0..1)_EPF(0..15)_DMA_RINT[DMAFI]. */
 #else /* Word 0 - Little Endian */
-        uint64_t dmafi                 : 2;  /**< [  1:  0](R/W1S/H) Reads or sets SDP(0..1)_EPF(0..7)_DMA_RINT[DMAFI]. */
-        uint64_t dcnt                  : 2;  /**< [  3:  2](R/W1S/H) Reads or sets SDP(0..1)_EPF(0..7)_DMA_RINT[DCNT]. */
-        uint64_t dtime                 : 2;  /**< [  5:  4](R/W1S/H) Reads or sets SDP(0..1)_EPF(0..7)_DMA_RINT[DTIME]. */
+        uint64_t dmafi                 : 2;  /**< [  1:  0](R/W1S/H) Reads or sets SDP(0..1)_EPF(0..15)_DMA_RINT[DMAFI]. */
+        uint64_t dcnt                  : 2;  /**< [  3:  2](R/W1S/H) Reads or sets SDP(0..1)_EPF(0..15)_DMA_RINT[DCNT]. */
+        uint64_t dtime                 : 2;  /**< [  5:  4](R/W1S/H) Reads or sets SDP(0..1)_EPF(0..15)_DMA_RINT[DTIME]. */
         uint64_t reserved_6_63         : 58;
 #endif /* Word 0 - End */
     } cn98xx;
@@ -9719,8 +9617,8 @@ static inline uint64_t CAVM_SDPX_EPFX_DMA_RINT_W1S(unsigned long a, unsigned lon
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=15)))
         return 0x86e080020410ll + 0x1000000000ll * ((a) & 0x0) + 0x2000000ll * ((b) & 0xf);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=7)))
-        return 0x86e080020410ll + 0x1000000000ll * ((a) & 0x1) + 0x2000000ll * ((b) & 0x7);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=15)))
+        return 0x86e080020410ll + 0x1000000000ll * ((a) & 0x1) + 0x2000000ll * ((b) & 0xf);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=15)))
         return 0x86e080020410ll + 0x1000000000ll * ((a) & 0x0) + 0x2000000ll * ((b) & 0xf);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=15)))
@@ -9769,8 +9667,8 @@ static inline uint64_t CAVM_SDPX_EPFX_DMA_TIMX(unsigned long a, unsigned long b,
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=15) && (c<=1)))
         return 0x86e080020480ll + 0x1000000000ll * ((a) & 0x0) + 0x2000000ll * ((b) & 0xf) + 0x10ll * ((c) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=7) && (c<=1)))
-        return 0x86e080020480ll + 0x1000000000ll * ((a) & 0x1) + 0x2000000ll * ((b) & 0x7) + 0x10ll * ((c) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=15) && (c<=1)))
+        return 0x86e080020480ll + 0x1000000000ll * ((a) & 0x1) + 0x2000000ll * ((b) & 0xf) + 0x10ll * ((c) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=15) && (c<=1)))
         return 0x86e080020480ll + 0x1000000000ll * ((a) & 0x0) + 0x2000000ll * ((b) & 0xf) + 0x10ll * ((c) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=15) && (c<=1)))
@@ -9821,8 +9719,8 @@ static inline uint64_t CAVM_SDPX_EPFX_DMA_VF_RINTX(unsigned long a, unsigned lon
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=15) && (c<=1)))
         return 0x86e0800204e0ll + 0x1000000000ll * ((a) & 0x0) + 0x2000000ll * ((b) & 0xf) + 0x10ll * ((c) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=7) && (c<=1)))
-        return 0x86e0800204e0ll + 0x1000000000ll * ((a) & 0x1) + 0x2000000ll * ((b) & 0x7) + 0x10ll * ((c) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=15) && (c<=1)))
+        return 0x86e0800204e0ll + 0x1000000000ll * ((a) & 0x1) + 0x2000000ll * ((b) & 0xf) + 0x10ll * ((c) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=15) && (c<=1)))
         return 0x86e0800204e0ll + 0x1000000000ll * ((a) & 0x0) + 0x2000000ll * ((b) & 0xf) + 0x10ll * ((c) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=15) && (c<=1)))
@@ -9859,9 +9757,9 @@ union cavm_sdpx_epfx_dma_vf_rintx_ena_w1c
     struct cavm_sdpx_epfx_dma_vf_rintx_ena_w1c_cn98xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t vf_int                : 64; /**< [ 63:  0](R/W1C/H) Reads or clears enable for SDP(0..1)_EPF(0..7)_DMA_VF_RINT(0..1)[VF_INT]. */
+        uint64_t vf_int                : 64; /**< [ 63:  0](R/W1C/H) Reads or clears enable for SDP(0..1)_EPF(0..15)_DMA_VF_RINT(0..1)[VF_INT]. */
 #else /* Word 0 - Little Endian */
-        uint64_t vf_int                : 64; /**< [ 63:  0](R/W1C/H) Reads or clears enable for SDP(0..1)_EPF(0..7)_DMA_VF_RINT(0..1)[VF_INT]. */
+        uint64_t vf_int                : 64; /**< [ 63:  0](R/W1C/H) Reads or clears enable for SDP(0..1)_EPF(0..15)_DMA_VF_RINT(0..1)[VF_INT]. */
 #endif /* Word 0 - End */
     } cn98xx;
     /* struct cavm_sdpx_epfx_dma_vf_rintx_ena_w1c_s cnf95xx; */
@@ -9874,8 +9772,8 @@ static inline uint64_t CAVM_SDPX_EPFX_DMA_VF_RINTX_ENA_W1C(unsigned long a, unsi
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=15) && (c<=1)))
         return 0x86e080020520ll + 0x1000000000ll * ((a) & 0x0) + 0x2000000ll * ((b) & 0xf) + 0x10ll * ((c) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=7) && (c<=1)))
-        return 0x86e080020520ll + 0x1000000000ll * ((a) & 0x1) + 0x2000000ll * ((b) & 0x7) + 0x10ll * ((c) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=15) && (c<=1)))
+        return 0x86e080020520ll + 0x1000000000ll * ((a) & 0x1) + 0x2000000ll * ((b) & 0xf) + 0x10ll * ((c) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=15) && (c<=1)))
         return 0x86e080020520ll + 0x1000000000ll * ((a) & 0x0) + 0x2000000ll * ((b) & 0xf) + 0x10ll * ((c) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=15) && (c<=1)))
@@ -9912,9 +9810,9 @@ union cavm_sdpx_epfx_dma_vf_rintx_ena_w1s
     struct cavm_sdpx_epfx_dma_vf_rintx_ena_w1s_cn98xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t vf_int                : 64; /**< [ 63:  0](R/W1S/H) Reads or sets enable for SDP(0..1)_EPF(0..7)_DMA_VF_RINT(0..1)[VF_INT]. */
+        uint64_t vf_int                : 64; /**< [ 63:  0](R/W1S/H) Reads or sets enable for SDP(0..1)_EPF(0..15)_DMA_VF_RINT(0..1)[VF_INT]. */
 #else /* Word 0 - Little Endian */
-        uint64_t vf_int                : 64; /**< [ 63:  0](R/W1S/H) Reads or sets enable for SDP(0..1)_EPF(0..7)_DMA_VF_RINT(0..1)[VF_INT]. */
+        uint64_t vf_int                : 64; /**< [ 63:  0](R/W1S/H) Reads or sets enable for SDP(0..1)_EPF(0..15)_DMA_VF_RINT(0..1)[VF_INT]. */
 #endif /* Word 0 - End */
     } cn98xx;
     /* struct cavm_sdpx_epfx_dma_vf_rintx_ena_w1s_s cnf95xx; */
@@ -9927,8 +9825,8 @@ static inline uint64_t CAVM_SDPX_EPFX_DMA_VF_RINTX_ENA_W1S(unsigned long a, unsi
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=15) && (c<=1)))
         return 0x86e080020540ll + 0x1000000000ll * ((a) & 0x0) + 0x2000000ll * ((b) & 0xf) + 0x10ll * ((c) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=7) && (c<=1)))
-        return 0x86e080020540ll + 0x1000000000ll * ((a) & 0x1) + 0x2000000ll * ((b) & 0x7) + 0x10ll * ((c) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=15) && (c<=1)))
+        return 0x86e080020540ll + 0x1000000000ll * ((a) & 0x1) + 0x2000000ll * ((b) & 0xf) + 0x10ll * ((c) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=15) && (c<=1)))
         return 0x86e080020540ll + 0x1000000000ll * ((a) & 0x0) + 0x2000000ll * ((b) & 0xf) + 0x10ll * ((c) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=15) && (c<=1)))
@@ -9965,9 +9863,9 @@ union cavm_sdpx_epfx_dma_vf_rintx_w1s
     struct cavm_sdpx_epfx_dma_vf_rintx_w1s_cn98xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t vf_int                : 64; /**< [ 63:  0](R/W1S/H) Reads or sets SDP(0..1)_EPF(0..7)_DMA_VF_RINT(0..1)[VF_INT]. */
+        uint64_t vf_int                : 64; /**< [ 63:  0](R/W1S/H) Reads or sets SDP(0..1)_EPF(0..15)_DMA_VF_RINT(0..1)[VF_INT]. */
 #else /* Word 0 - Little Endian */
-        uint64_t vf_int                : 64; /**< [ 63:  0](R/W1S/H) Reads or sets SDP(0..1)_EPF(0..7)_DMA_VF_RINT(0..1)[VF_INT]. */
+        uint64_t vf_int                : 64; /**< [ 63:  0](R/W1S/H) Reads or sets SDP(0..1)_EPF(0..15)_DMA_VF_RINT(0..1)[VF_INT]. */
 #endif /* Word 0 - End */
     } cn98xx;
     /* struct cavm_sdpx_epfx_dma_vf_rintx_w1s_s cnf95xx; */
@@ -9980,8 +9878,8 @@ static inline uint64_t CAVM_SDPX_EPFX_DMA_VF_RINTX_W1S(unsigned long a, unsigned
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=15) && (c<=1)))
         return 0x86e080020500ll + 0x1000000000ll * ((a) & 0x0) + 0x2000000ll * ((b) & 0xf) + 0x10ll * ((c) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=7) && (c<=1)))
-        return 0x86e080020500ll + 0x1000000000ll * ((a) & 0x1) + 0x2000000ll * ((b) & 0x7) + 0x10ll * ((c) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=15) && (c<=1)))
+        return 0x86e080020500ll + 0x1000000000ll * ((a) & 0x1) + 0x2000000ll * ((b) & 0xf) + 0x10ll * ((c) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=15) && (c<=1)))
         return 0x86e080020500ll + 0x1000000000ll * ((a) & 0x0) + 0x2000000ll * ((b) & 0xf) + 0x10ll * ((c) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=15) && (c<=1)))
@@ -10024,8 +9922,8 @@ static inline uint64_t CAVM_SDPX_EPFX_IRE_RINT(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=15)))
         return 0x86e080020200ll + 0x1000000000ll * ((a) & 0x0) + 0x2000000ll * ((b) & 0xf);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=7)))
-        return 0x86e080020200ll + 0x1000000000ll * ((a) & 0x1) + 0x2000000ll * ((b) & 0x7);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=15)))
+        return 0x86e080020200ll + 0x1000000000ll * ((a) & 0x1) + 0x2000000ll * ((b) & 0xf);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=15)))
         return 0x86e080020200ll + 0x1000000000ll * ((a) & 0x0) + 0x2000000ll * ((b) & 0xf);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=15)))
@@ -10062,9 +9960,9 @@ union cavm_sdpx_epfx_ire_rint_ena_w1c
     struct cavm_sdpx_epfx_ire_rint_ena_w1c_cn98xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t ring_err              : 64; /**< [ 63:  0](R/W1C/H) Reads or clears enable for SDP(0..1)_EPF(0..7)_IRE_RINT[RING_ERR]. */
+        uint64_t ring_err              : 64; /**< [ 63:  0](R/W1C/H) Reads or clears enable for SDP(0..1)_EPF(0..15)_IRE_RINT[RING_ERR]. */
 #else /* Word 0 - Little Endian */
-        uint64_t ring_err              : 64; /**< [ 63:  0](R/W1C/H) Reads or clears enable for SDP(0..1)_EPF(0..7)_IRE_RINT[RING_ERR]. */
+        uint64_t ring_err              : 64; /**< [ 63:  0](R/W1C/H) Reads or clears enable for SDP(0..1)_EPF(0..15)_IRE_RINT[RING_ERR]. */
 #endif /* Word 0 - End */
     } cn98xx;
     /* struct cavm_sdpx_epfx_ire_rint_ena_w1c_s cnf95xx; */
@@ -10077,8 +9975,8 @@ static inline uint64_t CAVM_SDPX_EPFX_IRE_RINT_ENA_W1C(unsigned long a, unsigned
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=15)))
         return 0x86e080020220ll + 0x1000000000ll * ((a) & 0x0) + 0x2000000ll * ((b) & 0xf);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=7)))
-        return 0x86e080020220ll + 0x1000000000ll * ((a) & 0x1) + 0x2000000ll * ((b) & 0x7);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=15)))
+        return 0x86e080020220ll + 0x1000000000ll * ((a) & 0x1) + 0x2000000ll * ((b) & 0xf);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=15)))
         return 0x86e080020220ll + 0x1000000000ll * ((a) & 0x0) + 0x2000000ll * ((b) & 0xf);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=15)))
@@ -10115,9 +10013,9 @@ union cavm_sdpx_epfx_ire_rint_ena_w1s
     struct cavm_sdpx_epfx_ire_rint_ena_w1s_cn98xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t ring_err              : 64; /**< [ 63:  0](R/W1S/H) Reads or sets enable for SDP(0..1)_EPF(0..7)_IRE_RINT[RING_ERR]. */
+        uint64_t ring_err              : 64; /**< [ 63:  0](R/W1S/H) Reads or sets enable for SDP(0..1)_EPF(0..15)_IRE_RINT[RING_ERR]. */
 #else /* Word 0 - Little Endian */
-        uint64_t ring_err              : 64; /**< [ 63:  0](R/W1S/H) Reads or sets enable for SDP(0..1)_EPF(0..7)_IRE_RINT[RING_ERR]. */
+        uint64_t ring_err              : 64; /**< [ 63:  0](R/W1S/H) Reads or sets enable for SDP(0..1)_EPF(0..15)_IRE_RINT[RING_ERR]. */
 #endif /* Word 0 - End */
     } cn98xx;
     /* struct cavm_sdpx_epfx_ire_rint_ena_w1s_s cnf95xx; */
@@ -10130,8 +10028,8 @@ static inline uint64_t CAVM_SDPX_EPFX_IRE_RINT_ENA_W1S(unsigned long a, unsigned
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=15)))
         return 0x86e080020230ll + 0x1000000000ll * ((a) & 0x0) + 0x2000000ll * ((b) & 0xf);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=7)))
-        return 0x86e080020230ll + 0x1000000000ll * ((a) & 0x1) + 0x2000000ll * ((b) & 0x7);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=15)))
+        return 0x86e080020230ll + 0x1000000000ll * ((a) & 0x1) + 0x2000000ll * ((b) & 0xf);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=15)))
         return 0x86e080020230ll + 0x1000000000ll * ((a) & 0x0) + 0x2000000ll * ((b) & 0xf);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=15)))
@@ -10168,9 +10066,9 @@ union cavm_sdpx_epfx_ire_rint_w1s
     struct cavm_sdpx_epfx_ire_rint_w1s_cn98xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t ring_err              : 64; /**< [ 63:  0](R/W1S/H) Reads or sets SDP(0..1)_EPF(0..7)_IRE_RINT[RING_ERR]. */
+        uint64_t ring_err              : 64; /**< [ 63:  0](R/W1S/H) Reads or sets SDP(0..1)_EPF(0..15)_IRE_RINT[RING_ERR]. */
 #else /* Word 0 - Little Endian */
-        uint64_t ring_err              : 64; /**< [ 63:  0](R/W1S/H) Reads or sets SDP(0..1)_EPF(0..7)_IRE_RINT[RING_ERR]. */
+        uint64_t ring_err              : 64; /**< [ 63:  0](R/W1S/H) Reads or sets SDP(0..1)_EPF(0..15)_IRE_RINT[RING_ERR]. */
 #endif /* Word 0 - End */
     } cn98xx;
     /* struct cavm_sdpx_epfx_ire_rint_w1s_s cnf95xx; */
@@ -10183,8 +10081,8 @@ static inline uint64_t CAVM_SDPX_EPFX_IRE_RINT_W1S(unsigned long a, unsigned lon
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=15)))
         return 0x86e080020210ll + 0x1000000000ll * ((a) & 0x0) + 0x2000000ll * ((b) & 0xf);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=7)))
-        return 0x86e080020210ll + 0x1000000000ll * ((a) & 0x1) + 0x2000000ll * ((b) & 0x7);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=15)))
+        return 0x86e080020210ll + 0x1000000000ll * ((a) & 0x1) + 0x2000000ll * ((b) & 0xf);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=15)))
         return 0x86e080020210ll + 0x1000000000ll * ((a) & 0x0) + 0x2000000ll * ((b) & 0xf);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=15)))
@@ -10232,8 +10130,8 @@ static inline uint64_t CAVM_SDPX_EPFX_ISM_MSIX_RECOVERY(unsigned long a, unsigne
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=15)))
         return 0x86e080020600ll + 0x1000000000ll * ((a) & 0x0) + 0x2000000ll * ((b) & 0xf);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=7)))
-        return 0x86e080020600ll + 0x1000000000ll * ((a) & 0x1) + 0x2000000ll * ((b) & 0x7);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=15)))
+        return 0x86e080020600ll + 0x1000000000ll * ((a) & 0x1) + 0x2000000ll * ((b) & 0xf);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=15)))
         return 0x86e080020600ll + 0x1000000000ll * ((a) & 0x0) + 0x2000000ll * ((b) & 0xf);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=15)))
@@ -10280,8 +10178,8 @@ static inline uint64_t CAVM_SDPX_EPFX_MBOX_RINTX(unsigned long a, unsigned long 
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=15) && (c<=1)))
         return 0x86e080020100ll + 0x1000000000ll * ((a) & 0x0) + 0x2000000ll * ((b) & 0xf) + 0x10ll * ((c) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=7) && (c<=1)))
-        return 0x86e080020100ll + 0x1000000000ll * ((a) & 0x1) + 0x2000000ll * ((b) & 0x7) + 0x10ll * ((c) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=15) && (c<=1)))
+        return 0x86e080020100ll + 0x1000000000ll * ((a) & 0x1) + 0x2000000ll * ((b) & 0xf) + 0x10ll * ((c) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=15) && (c<=1)))
         return 0x86e080020100ll + 0x1000000000ll * ((a) & 0x0) + 0x2000000ll * ((b) & 0xf) + 0x10ll * ((c) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=15) && (c<=1)))
@@ -10318,9 +10216,9 @@ union cavm_sdpx_epfx_mbox_rintx_ena_w1c
     struct cavm_sdpx_epfx_mbox_rintx_ena_w1c_cn98xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t ring_num              : 64; /**< [ 63:  0](R/W1C/H) Reads or clears enable for SDP(0..1)_EPF(0..7)_MBOX_RINT(0..1)[RING_NUM]. */
+        uint64_t ring_num              : 64; /**< [ 63:  0](R/W1C/H) Reads or clears enable for SDP(0..1)_EPF(0..15)_MBOX_RINT(0..1)[RING_NUM]. */
 #else /* Word 0 - Little Endian */
-        uint64_t ring_num              : 64; /**< [ 63:  0](R/W1C/H) Reads or clears enable for SDP(0..1)_EPF(0..7)_MBOX_RINT(0..1)[RING_NUM]. */
+        uint64_t ring_num              : 64; /**< [ 63:  0](R/W1C/H) Reads or clears enable for SDP(0..1)_EPF(0..15)_MBOX_RINT(0..1)[RING_NUM]. */
 #endif /* Word 0 - End */
     } cn98xx;
     /* struct cavm_sdpx_epfx_mbox_rintx_ena_w1c_s cnf95xx; */
@@ -10333,8 +10231,8 @@ static inline uint64_t CAVM_SDPX_EPFX_MBOX_RINTX_ENA_W1C(unsigned long a, unsign
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=15) && (c<=1)))
         return 0x86e080020140ll + 0x1000000000ll * ((a) & 0x0) + 0x2000000ll * ((b) & 0xf) + 0x10ll * ((c) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=7) && (c<=1)))
-        return 0x86e080020140ll + 0x1000000000ll * ((a) & 0x1) + 0x2000000ll * ((b) & 0x7) + 0x10ll * ((c) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=15) && (c<=1)))
+        return 0x86e080020140ll + 0x1000000000ll * ((a) & 0x1) + 0x2000000ll * ((b) & 0xf) + 0x10ll * ((c) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=15) && (c<=1)))
         return 0x86e080020140ll + 0x1000000000ll * ((a) & 0x0) + 0x2000000ll * ((b) & 0xf) + 0x10ll * ((c) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=15) && (c<=1)))
@@ -10371,9 +10269,9 @@ union cavm_sdpx_epfx_mbox_rintx_ena_w1s
     struct cavm_sdpx_epfx_mbox_rintx_ena_w1s_cn98xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t ring_num              : 64; /**< [ 63:  0](R/W1S/H) Reads or sets enable for SDP(0..1)_EPF(0..7)_MBOX_RINT(0..1)[RING_NUM]. */
+        uint64_t ring_num              : 64; /**< [ 63:  0](R/W1S/H) Reads or sets enable for SDP(0..1)_EPF(0..15)_MBOX_RINT(0..1)[RING_NUM]. */
 #else /* Word 0 - Little Endian */
-        uint64_t ring_num              : 64; /**< [ 63:  0](R/W1S/H) Reads or sets enable for SDP(0..1)_EPF(0..7)_MBOX_RINT(0..1)[RING_NUM]. */
+        uint64_t ring_num              : 64; /**< [ 63:  0](R/W1S/H) Reads or sets enable for SDP(0..1)_EPF(0..15)_MBOX_RINT(0..1)[RING_NUM]. */
 #endif /* Word 0 - End */
     } cn98xx;
     /* struct cavm_sdpx_epfx_mbox_rintx_ena_w1s_s cnf95xx; */
@@ -10386,8 +10284,8 @@ static inline uint64_t CAVM_SDPX_EPFX_MBOX_RINTX_ENA_W1S(unsigned long a, unsign
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=15) && (c<=1)))
         return 0x86e080020160ll + 0x1000000000ll * ((a) & 0x0) + 0x2000000ll * ((b) & 0xf) + 0x10ll * ((c) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=7) && (c<=1)))
-        return 0x86e080020160ll + 0x1000000000ll * ((a) & 0x1) + 0x2000000ll * ((b) & 0x7) + 0x10ll * ((c) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=15) && (c<=1)))
+        return 0x86e080020160ll + 0x1000000000ll * ((a) & 0x1) + 0x2000000ll * ((b) & 0xf) + 0x10ll * ((c) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=15) && (c<=1)))
         return 0x86e080020160ll + 0x1000000000ll * ((a) & 0x0) + 0x2000000ll * ((b) & 0xf) + 0x10ll * ((c) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=15) && (c<=1)))
@@ -10424,9 +10322,9 @@ union cavm_sdpx_epfx_mbox_rintx_w1s
     struct cavm_sdpx_epfx_mbox_rintx_w1s_cn98xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t ring_num              : 64; /**< [ 63:  0](R/W1S/H) Reads or sets SDP(0..1)_EPF(0..7)_MBOX_RINT(0..1)[RING_NUM]. */
+        uint64_t ring_num              : 64; /**< [ 63:  0](R/W1S/H) Reads or sets SDP(0..1)_EPF(0..15)_MBOX_RINT(0..1)[RING_NUM]. */
 #else /* Word 0 - Little Endian */
-        uint64_t ring_num              : 64; /**< [ 63:  0](R/W1S/H) Reads or sets SDP(0..1)_EPF(0..7)_MBOX_RINT(0..1)[RING_NUM]. */
+        uint64_t ring_num              : 64; /**< [ 63:  0](R/W1S/H) Reads or sets SDP(0..1)_EPF(0..15)_MBOX_RINT(0..1)[RING_NUM]. */
 #endif /* Word 0 - End */
     } cn98xx;
     /* struct cavm_sdpx_epfx_mbox_rintx_w1s_s cnf95xx; */
@@ -10439,8 +10337,8 @@ static inline uint64_t CAVM_SDPX_EPFX_MBOX_RINTX_W1S(unsigned long a, unsigned l
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=15) && (c<=1)))
         return 0x86e080020120ll + 0x1000000000ll * ((a) & 0x0) + 0x2000000ll * ((b) & 0xf) + 0x10ll * ((c) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=7) && (c<=1)))
-        return 0x86e080020120ll + 0x1000000000ll * ((a) & 0x1) + 0x2000000ll * ((b) & 0x7) + 0x10ll * ((c) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=15) && (c<=1)))
+        return 0x86e080020120ll + 0x1000000000ll * ((a) & 0x1) + 0x2000000ll * ((b) & 0xf) + 0x10ll * ((c) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=15) && (c<=1)))
         return 0x86e080020120ll + 0x1000000000ll * ((a) & 0x0) + 0x2000000ll * ((b) & 0xf) + 0x10ll * ((c) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=15) && (c<=1)))
@@ -10509,8 +10407,8 @@ static inline uint64_t CAVM_SDPX_EPFX_MISC_RINT(unsigned long a, unsigned long b
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=15)))
         return 0x86e0800204a0ll + 0x1000000000ll * ((a) & 0x0) + 0x2000000ll * ((b) & 0xf);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=7)))
-        return 0x86e0800204a0ll + 0x1000000000ll * ((a) & 0x1) + 0x2000000ll * ((b) & 0x7);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=15)))
+        return 0x86e0800204a0ll + 0x1000000000ll * ((a) & 0x1) + 0x2000000ll * ((b) & 0xf);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=15)))
         return 0x86e0800204a0ll + 0x1000000000ll * ((a) & 0x0) + 0x2000000ll * ((b) & 0xf);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=15)))
@@ -10560,19 +10458,19 @@ union cavm_sdpx_epfx_misc_rint_ena_w1c
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_6_63         : 58;
-        uint64_t dmapf_err             : 1;  /**< [  5:  5](R/W1C/H) Reads or clears enable for SDP(0..1)_EPF(0..7)_MISC_RINT[DMAPF_ERR]. */
-        uint64_t pppf_err              : 1;  /**< [  4:  4](R/W1C/H) Reads or clears enable for SDP(0..1)_EPF(0..7)_MISC_RINT[PPPF_ERR]. */
-        uint64_t un_wi                 : 1;  /**< [  3:  3](R/W1C/H) Reads or clears enable for SDP(0..1)_EPF(0..7)_MISC_RINT[UN_WI]. */
-        uint64_t un_b0                 : 1;  /**< [  2:  2](R/W1C/H) Reads or clears enable for SDP(0..1)_EPF(0..7)_MISC_RINT[UN_B0]. */
-        uint64_t up_wi                 : 1;  /**< [  1:  1](R/W1C/H) Reads or clears enable for SDP(0..1)_EPF(0..7)_MISC_RINT[UP_WI]. */
-        uint64_t up_b0                 : 1;  /**< [  0:  0](R/W1C/H) Reads or clears enable for SDP(0..1)_EPF(0..7)_MISC_RINT[UP_B0]. */
+        uint64_t dmapf_err             : 1;  /**< [  5:  5](R/W1C/H) Reads or clears enable for SDP(0..1)_EPF(0..15)_MISC_RINT[DMAPF_ERR]. */
+        uint64_t pppf_err              : 1;  /**< [  4:  4](R/W1C/H) Reads or clears enable for SDP(0..1)_EPF(0..15)_MISC_RINT[PPPF_ERR]. */
+        uint64_t un_wi                 : 1;  /**< [  3:  3](R/W1C/H) Reads or clears enable for SDP(0..1)_EPF(0..15)_MISC_RINT[UN_WI]. */
+        uint64_t un_b0                 : 1;  /**< [  2:  2](R/W1C/H) Reads or clears enable for SDP(0..1)_EPF(0..15)_MISC_RINT[UN_B0]. */
+        uint64_t up_wi                 : 1;  /**< [  1:  1](R/W1C/H) Reads or clears enable for SDP(0..1)_EPF(0..15)_MISC_RINT[UP_WI]. */
+        uint64_t up_b0                 : 1;  /**< [  0:  0](R/W1C/H) Reads or clears enable for SDP(0..1)_EPF(0..15)_MISC_RINT[UP_B0]. */
 #else /* Word 0 - Little Endian */
-        uint64_t up_b0                 : 1;  /**< [  0:  0](R/W1C/H) Reads or clears enable for SDP(0..1)_EPF(0..7)_MISC_RINT[UP_B0]. */
-        uint64_t up_wi                 : 1;  /**< [  1:  1](R/W1C/H) Reads or clears enable for SDP(0..1)_EPF(0..7)_MISC_RINT[UP_WI]. */
-        uint64_t un_b0                 : 1;  /**< [  2:  2](R/W1C/H) Reads or clears enable for SDP(0..1)_EPF(0..7)_MISC_RINT[UN_B0]. */
-        uint64_t un_wi                 : 1;  /**< [  3:  3](R/W1C/H) Reads or clears enable for SDP(0..1)_EPF(0..7)_MISC_RINT[UN_WI]. */
-        uint64_t pppf_err              : 1;  /**< [  4:  4](R/W1C/H) Reads or clears enable for SDP(0..1)_EPF(0..7)_MISC_RINT[PPPF_ERR]. */
-        uint64_t dmapf_err             : 1;  /**< [  5:  5](R/W1C/H) Reads or clears enable for SDP(0..1)_EPF(0..7)_MISC_RINT[DMAPF_ERR]. */
+        uint64_t up_b0                 : 1;  /**< [  0:  0](R/W1C/H) Reads or clears enable for SDP(0..1)_EPF(0..15)_MISC_RINT[UP_B0]. */
+        uint64_t up_wi                 : 1;  /**< [  1:  1](R/W1C/H) Reads or clears enable for SDP(0..1)_EPF(0..15)_MISC_RINT[UP_WI]. */
+        uint64_t un_b0                 : 1;  /**< [  2:  2](R/W1C/H) Reads or clears enable for SDP(0..1)_EPF(0..15)_MISC_RINT[UN_B0]. */
+        uint64_t un_wi                 : 1;  /**< [  3:  3](R/W1C/H) Reads or clears enable for SDP(0..1)_EPF(0..15)_MISC_RINT[UN_WI]. */
+        uint64_t pppf_err              : 1;  /**< [  4:  4](R/W1C/H) Reads or clears enable for SDP(0..1)_EPF(0..15)_MISC_RINT[PPPF_ERR]. */
+        uint64_t dmapf_err             : 1;  /**< [  5:  5](R/W1C/H) Reads or clears enable for SDP(0..1)_EPF(0..15)_MISC_RINT[DMAPF_ERR]. */
         uint64_t reserved_6_63         : 58;
 #endif /* Word 0 - End */
     } cn98xx;
@@ -10586,8 +10484,8 @@ static inline uint64_t CAVM_SDPX_EPFX_MISC_RINT_ENA_W1C(unsigned long a, unsigne
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=15)))
         return 0x86e0800204c0ll + 0x1000000000ll * ((a) & 0x0) + 0x2000000ll * ((b) & 0xf);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=7)))
-        return 0x86e0800204c0ll + 0x1000000000ll * ((a) & 0x1) + 0x2000000ll * ((b) & 0x7);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=15)))
+        return 0x86e0800204c0ll + 0x1000000000ll * ((a) & 0x1) + 0x2000000ll * ((b) & 0xf);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=15)))
         return 0x86e0800204c0ll + 0x1000000000ll * ((a) & 0x0) + 0x2000000ll * ((b) & 0xf);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=15)))
@@ -10637,19 +10535,19 @@ union cavm_sdpx_epfx_misc_rint_ena_w1s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_6_63         : 58;
-        uint64_t dmapf_err             : 1;  /**< [  5:  5](R/W1S/H) Reads or sets enable for SDP(0..1)_EPF(0..7)_MISC_RINT[DMAPF_ERR]. */
-        uint64_t pppf_err              : 1;  /**< [  4:  4](R/W1S/H) Reads or sets enable for SDP(0..1)_EPF(0..7)_MISC_RINT[PPPF_ERR]. */
-        uint64_t un_wi                 : 1;  /**< [  3:  3](R/W1S/H) Reads or sets enable for SDP(0..1)_EPF(0..7)_MISC_RINT[UN_WI]. */
-        uint64_t un_b0                 : 1;  /**< [  2:  2](R/W1S/H) Reads or sets enable for SDP(0..1)_EPF(0..7)_MISC_RINT[UN_B0]. */
-        uint64_t up_wi                 : 1;  /**< [  1:  1](R/W1S/H) Reads or sets enable for SDP(0..1)_EPF(0..7)_MISC_RINT[UP_WI]. */
-        uint64_t up_b0                 : 1;  /**< [  0:  0](R/W1S/H) Reads or sets enable for SDP(0..1)_EPF(0..7)_MISC_RINT[UP_B0]. */
+        uint64_t dmapf_err             : 1;  /**< [  5:  5](R/W1S/H) Reads or sets enable for SDP(0..1)_EPF(0..15)_MISC_RINT[DMAPF_ERR]. */
+        uint64_t pppf_err              : 1;  /**< [  4:  4](R/W1S/H) Reads or sets enable for SDP(0..1)_EPF(0..15)_MISC_RINT[PPPF_ERR]. */
+        uint64_t un_wi                 : 1;  /**< [  3:  3](R/W1S/H) Reads or sets enable for SDP(0..1)_EPF(0..15)_MISC_RINT[UN_WI]. */
+        uint64_t un_b0                 : 1;  /**< [  2:  2](R/W1S/H) Reads or sets enable for SDP(0..1)_EPF(0..15)_MISC_RINT[UN_B0]. */
+        uint64_t up_wi                 : 1;  /**< [  1:  1](R/W1S/H) Reads or sets enable for SDP(0..1)_EPF(0..15)_MISC_RINT[UP_WI]. */
+        uint64_t up_b0                 : 1;  /**< [  0:  0](R/W1S/H) Reads or sets enable for SDP(0..1)_EPF(0..15)_MISC_RINT[UP_B0]. */
 #else /* Word 0 - Little Endian */
-        uint64_t up_b0                 : 1;  /**< [  0:  0](R/W1S/H) Reads or sets enable for SDP(0..1)_EPF(0..7)_MISC_RINT[UP_B0]. */
-        uint64_t up_wi                 : 1;  /**< [  1:  1](R/W1S/H) Reads or sets enable for SDP(0..1)_EPF(0..7)_MISC_RINT[UP_WI]. */
-        uint64_t un_b0                 : 1;  /**< [  2:  2](R/W1S/H) Reads or sets enable for SDP(0..1)_EPF(0..7)_MISC_RINT[UN_B0]. */
-        uint64_t un_wi                 : 1;  /**< [  3:  3](R/W1S/H) Reads or sets enable for SDP(0..1)_EPF(0..7)_MISC_RINT[UN_WI]. */
-        uint64_t pppf_err              : 1;  /**< [  4:  4](R/W1S/H) Reads or sets enable for SDP(0..1)_EPF(0..7)_MISC_RINT[PPPF_ERR]. */
-        uint64_t dmapf_err             : 1;  /**< [  5:  5](R/W1S/H) Reads or sets enable for SDP(0..1)_EPF(0..7)_MISC_RINT[DMAPF_ERR]. */
+        uint64_t up_b0                 : 1;  /**< [  0:  0](R/W1S/H) Reads or sets enable for SDP(0..1)_EPF(0..15)_MISC_RINT[UP_B0]. */
+        uint64_t up_wi                 : 1;  /**< [  1:  1](R/W1S/H) Reads or sets enable for SDP(0..1)_EPF(0..15)_MISC_RINT[UP_WI]. */
+        uint64_t un_b0                 : 1;  /**< [  2:  2](R/W1S/H) Reads or sets enable for SDP(0..1)_EPF(0..15)_MISC_RINT[UN_B0]. */
+        uint64_t un_wi                 : 1;  /**< [  3:  3](R/W1S/H) Reads or sets enable for SDP(0..1)_EPF(0..15)_MISC_RINT[UN_WI]. */
+        uint64_t pppf_err              : 1;  /**< [  4:  4](R/W1S/H) Reads or sets enable for SDP(0..1)_EPF(0..15)_MISC_RINT[PPPF_ERR]. */
+        uint64_t dmapf_err             : 1;  /**< [  5:  5](R/W1S/H) Reads or sets enable for SDP(0..1)_EPF(0..15)_MISC_RINT[DMAPF_ERR]. */
         uint64_t reserved_6_63         : 58;
 #endif /* Word 0 - End */
     } cn98xx;
@@ -10663,8 +10561,8 @@ static inline uint64_t CAVM_SDPX_EPFX_MISC_RINT_ENA_W1S(unsigned long a, unsigne
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=15)))
         return 0x86e0800204d0ll + 0x1000000000ll * ((a) & 0x0) + 0x2000000ll * ((b) & 0xf);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=7)))
-        return 0x86e0800204d0ll + 0x1000000000ll * ((a) & 0x1) + 0x2000000ll * ((b) & 0x7);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=15)))
+        return 0x86e0800204d0ll + 0x1000000000ll * ((a) & 0x1) + 0x2000000ll * ((b) & 0xf);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=15)))
         return 0x86e0800204d0ll + 0x1000000000ll * ((a) & 0x0) + 0x2000000ll * ((b) & 0xf);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=15)))
@@ -10714,19 +10612,19 @@ union cavm_sdpx_epfx_misc_rint_w1s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_6_63         : 58;
-        uint64_t dmapf_err             : 1;  /**< [  5:  5](R/W1S/H) Reads or sets SDP(0..1)_EPF(0..7)_MISC_RINT[DMAPF_ERR]. */
-        uint64_t pppf_err              : 1;  /**< [  4:  4](R/W1S/H) Reads or sets SDP(0..1)_EPF(0..7)_MISC_RINT[PPPF_ERR]. */
-        uint64_t un_wi                 : 1;  /**< [  3:  3](R/W1S/H) Reads or sets SDP(0..1)_EPF(0..7)_MISC_RINT[UN_WI]. */
-        uint64_t un_b0                 : 1;  /**< [  2:  2](R/W1S/H) Reads or sets SDP(0..1)_EPF(0..7)_MISC_RINT[UN_B0]. */
-        uint64_t up_wi                 : 1;  /**< [  1:  1](R/W1S/H) Reads or sets SDP(0..1)_EPF(0..7)_MISC_RINT[UP_WI]. */
-        uint64_t up_b0                 : 1;  /**< [  0:  0](R/W1S/H) Reads or sets SDP(0..1)_EPF(0..7)_MISC_RINT[UP_B0]. */
+        uint64_t dmapf_err             : 1;  /**< [  5:  5](R/W1S/H) Reads or sets SDP(0..1)_EPF(0..15)_MISC_RINT[DMAPF_ERR]. */
+        uint64_t pppf_err              : 1;  /**< [  4:  4](R/W1S/H) Reads or sets SDP(0..1)_EPF(0..15)_MISC_RINT[PPPF_ERR]. */
+        uint64_t un_wi                 : 1;  /**< [  3:  3](R/W1S/H) Reads or sets SDP(0..1)_EPF(0..15)_MISC_RINT[UN_WI]. */
+        uint64_t un_b0                 : 1;  /**< [  2:  2](R/W1S/H) Reads or sets SDP(0..1)_EPF(0..15)_MISC_RINT[UN_B0]. */
+        uint64_t up_wi                 : 1;  /**< [  1:  1](R/W1S/H) Reads or sets SDP(0..1)_EPF(0..15)_MISC_RINT[UP_WI]. */
+        uint64_t up_b0                 : 1;  /**< [  0:  0](R/W1S/H) Reads or sets SDP(0..1)_EPF(0..15)_MISC_RINT[UP_B0]. */
 #else /* Word 0 - Little Endian */
-        uint64_t up_b0                 : 1;  /**< [  0:  0](R/W1S/H) Reads or sets SDP(0..1)_EPF(0..7)_MISC_RINT[UP_B0]. */
-        uint64_t up_wi                 : 1;  /**< [  1:  1](R/W1S/H) Reads or sets SDP(0..1)_EPF(0..7)_MISC_RINT[UP_WI]. */
-        uint64_t un_b0                 : 1;  /**< [  2:  2](R/W1S/H) Reads or sets SDP(0..1)_EPF(0..7)_MISC_RINT[UN_B0]. */
-        uint64_t un_wi                 : 1;  /**< [  3:  3](R/W1S/H) Reads or sets SDP(0..1)_EPF(0..7)_MISC_RINT[UN_WI]. */
-        uint64_t pppf_err              : 1;  /**< [  4:  4](R/W1S/H) Reads or sets SDP(0..1)_EPF(0..7)_MISC_RINT[PPPF_ERR]. */
-        uint64_t dmapf_err             : 1;  /**< [  5:  5](R/W1S/H) Reads or sets SDP(0..1)_EPF(0..7)_MISC_RINT[DMAPF_ERR]. */
+        uint64_t up_b0                 : 1;  /**< [  0:  0](R/W1S/H) Reads or sets SDP(0..1)_EPF(0..15)_MISC_RINT[UP_B0]. */
+        uint64_t up_wi                 : 1;  /**< [  1:  1](R/W1S/H) Reads or sets SDP(0..1)_EPF(0..15)_MISC_RINT[UP_WI]. */
+        uint64_t un_b0                 : 1;  /**< [  2:  2](R/W1S/H) Reads or sets SDP(0..1)_EPF(0..15)_MISC_RINT[UN_B0]. */
+        uint64_t un_wi                 : 1;  /**< [  3:  3](R/W1S/H) Reads or sets SDP(0..1)_EPF(0..15)_MISC_RINT[UN_WI]. */
+        uint64_t pppf_err              : 1;  /**< [  4:  4](R/W1S/H) Reads or sets SDP(0..1)_EPF(0..15)_MISC_RINT[PPPF_ERR]. */
+        uint64_t dmapf_err             : 1;  /**< [  5:  5](R/W1S/H) Reads or sets SDP(0..1)_EPF(0..15)_MISC_RINT[DMAPF_ERR]. */
         uint64_t reserved_6_63         : 58;
 #endif /* Word 0 - End */
     } cn98xx;
@@ -10740,8 +10638,8 @@ static inline uint64_t CAVM_SDPX_EPFX_MISC_RINT_W1S(unsigned long a, unsigned lo
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=15)))
         return 0x86e0800204b0ll + 0x1000000000ll * ((a) & 0x0) + 0x2000000ll * ((b) & 0xf);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=7)))
-        return 0x86e0800204b0ll + 0x1000000000ll * ((a) & 0x1) + 0x2000000ll * ((b) & 0x7);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=15)))
+        return 0x86e0800204b0ll + 0x1000000000ll * ((a) & 0x1) + 0x2000000ll * ((b) & 0xf);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=15)))
         return 0x86e0800204b0ll + 0x1000000000ll * ((a) & 0x0) + 0x2000000ll * ((b) & 0xf);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=15)))
@@ -10787,8 +10685,8 @@ static inline uint64_t CAVM_SDPX_EPFX_OEI_RINT(unsigned long a, unsigned long b)
         return 0x874080020140ll + 0x1000000000ll * ((a) & 0x0) + 0x800000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=15)))
         return 0x86e080020360ll + 0x1000000000ll * ((a) & 0x0) + 0x2000000ll * ((b) & 0xf);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=7)))
-        return 0x86e080020360ll + 0x1000000000ll * ((a) & 0x1) + 0x2000000ll * ((b) & 0x7);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=15)))
+        return 0x86e080020360ll + 0x1000000000ll * ((a) & 0x1) + 0x2000000ll * ((b) & 0xf);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=15)))
         return 0x86e080020360ll + 0x1000000000ll * ((a) & 0x0) + 0x2000000ll * ((b) & 0xf);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=15)))
@@ -10833,9 +10731,9 @@ union cavm_sdpx_epfx_oei_rint_ena_w1c
     struct cavm_sdpx_epfx_oei_rint_ena_w1c_cn98xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t data                  : 64; /**< [ 63:  0](R/W1C/H) Reads or clears enable for SDP(0..1)_EPF(0..7)_OEI_RINT[DATA]. */
+        uint64_t data                  : 64; /**< [ 63:  0](R/W1C/H) Reads or clears enable for SDP(0..1)_EPF(0..15)_OEI_RINT[DATA]. */
 #else /* Word 0 - Little Endian */
-        uint64_t data                  : 64; /**< [ 63:  0](R/W1C/H) Reads or clears enable for SDP(0..1)_EPF(0..7)_OEI_RINT[DATA]. */
+        uint64_t data                  : 64; /**< [ 63:  0](R/W1C/H) Reads or clears enable for SDP(0..1)_EPF(0..15)_OEI_RINT[DATA]. */
 #endif /* Word 0 - End */
     } cn98xx;
     /* struct cavm_sdpx_epfx_oei_rint_ena_w1c_cn9 cnf95xx; */
@@ -10850,8 +10748,8 @@ static inline uint64_t CAVM_SDPX_EPFX_OEI_RINT_ENA_W1C(unsigned long a, unsigned
         return 0x874080020160ll + 0x1000000000ll * ((a) & 0x0) + 0x800000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=15)))
         return 0x86e080020380ll + 0x1000000000ll * ((a) & 0x0) + 0x2000000ll * ((b) & 0xf);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=7)))
-        return 0x86e080020380ll + 0x1000000000ll * ((a) & 0x1) + 0x2000000ll * ((b) & 0x7);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=15)))
+        return 0x86e080020380ll + 0x1000000000ll * ((a) & 0x1) + 0x2000000ll * ((b) & 0xf);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=15)))
         return 0x86e080020380ll + 0x1000000000ll * ((a) & 0x0) + 0x2000000ll * ((b) & 0xf);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=15)))
@@ -10896,9 +10794,9 @@ union cavm_sdpx_epfx_oei_rint_ena_w1s
     struct cavm_sdpx_epfx_oei_rint_ena_w1s_cn98xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t data                  : 64; /**< [ 63:  0](R/W1S/H) Reads or sets enable for SDP(0..1)_EPF(0..7)_OEI_RINT[DATA]. */
+        uint64_t data                  : 64; /**< [ 63:  0](R/W1S/H) Reads or sets enable for SDP(0..1)_EPF(0..15)_OEI_RINT[DATA]. */
 #else /* Word 0 - Little Endian */
-        uint64_t data                  : 64; /**< [ 63:  0](R/W1S/H) Reads or sets enable for SDP(0..1)_EPF(0..7)_OEI_RINT[DATA]. */
+        uint64_t data                  : 64; /**< [ 63:  0](R/W1S/H) Reads or sets enable for SDP(0..1)_EPF(0..15)_OEI_RINT[DATA]. */
 #endif /* Word 0 - End */
     } cn98xx;
     /* struct cavm_sdpx_epfx_oei_rint_ena_w1s_cn9 cnf95xx; */
@@ -10913,8 +10811,8 @@ static inline uint64_t CAVM_SDPX_EPFX_OEI_RINT_ENA_W1S(unsigned long a, unsigned
         return 0x874080020170ll + 0x1000000000ll * ((a) & 0x0) + 0x800000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=15)))
         return 0x86e080020390ll + 0x1000000000ll * ((a) & 0x0) + 0x2000000ll * ((b) & 0xf);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=7)))
-        return 0x86e080020390ll + 0x1000000000ll * ((a) & 0x1) + 0x2000000ll * ((b) & 0x7);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=15)))
+        return 0x86e080020390ll + 0x1000000000ll * ((a) & 0x1) + 0x2000000ll * ((b) & 0xf);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=15)))
         return 0x86e080020390ll + 0x1000000000ll * ((a) & 0x0) + 0x2000000ll * ((b) & 0xf);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=15)))
@@ -10959,9 +10857,9 @@ union cavm_sdpx_epfx_oei_rint_w1s
     struct cavm_sdpx_epfx_oei_rint_w1s_cn98xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t data                  : 64; /**< [ 63:  0](R/W1S/H) Reads or sets SDP(0..1)_EPF(0..7)_OEI_RINT[DATA]. */
+        uint64_t data                  : 64; /**< [ 63:  0](R/W1S/H) Reads or sets SDP(0..1)_EPF(0..15)_OEI_RINT[DATA]. */
 #else /* Word 0 - Little Endian */
-        uint64_t data                  : 64; /**< [ 63:  0](R/W1S/H) Reads or sets SDP(0..1)_EPF(0..7)_OEI_RINT[DATA]. */
+        uint64_t data                  : 64; /**< [ 63:  0](R/W1S/H) Reads or sets SDP(0..1)_EPF(0..15)_OEI_RINT[DATA]. */
 #endif /* Word 0 - End */
     } cn98xx;
     /* struct cavm_sdpx_epfx_oei_rint_w1s_cn9 cnf95xx; */
@@ -10976,8 +10874,8 @@ static inline uint64_t CAVM_SDPX_EPFX_OEI_RINT_W1S(unsigned long a, unsigned lon
         return 0x874080020150ll + 0x1000000000ll * ((a) & 0x0) + 0x800000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=15)))
         return 0x86e080020370ll + 0x1000000000ll * ((a) & 0x0) + 0x2000000ll * ((b) & 0xf);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=7)))
-        return 0x86e080020370ll + 0x1000000000ll * ((a) & 0x1) + 0x2000000ll * ((b) & 0x7);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=15)))
+        return 0x86e080020370ll + 0x1000000000ll * ((a) & 0x1) + 0x2000000ll * ((b) & 0xf);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=15)))
         return 0x86e080020370ll + 0x1000000000ll * ((a) & 0x0) + 0x2000000ll * ((b) & 0xf);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=15)))
@@ -11078,8 +10976,8 @@ static inline uint64_t CAVM_SDPX_EPFX_OEI_TRIG(unsigned long a, unsigned long b)
         return 0x874000800000ll + 0x1000000000ll * ((a) & 0x0) + 0x10000ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=15)))
         return 0x86e0c0000000ll + 0x1000000000ll * ((a) & 0x0) + 0x2000000ll * ((b) & 0xf);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=7)))
-        return 0x86e0c0000000ll + 0x1000000000ll * ((a) & 0x1) + 0x2000000ll * ((b) & 0x7);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=15)))
+        return 0x86e0c0000000ll + 0x1000000000ll * ((a) & 0x1) + 0x2000000ll * ((b) & 0xf);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=15)))
         return 0x86e0c0000000ll + 0x1000000000ll * ((a) & 0x0) + 0x2000000ll * ((b) & 0xf);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=15)))
@@ -11124,8 +11022,8 @@ static inline uint64_t CAVM_SDPX_EPFX_ORE_RINT(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=15)))
         return 0x86e080020320ll + 0x1000000000ll * ((a) & 0x0) + 0x2000000ll * ((b) & 0xf);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=7)))
-        return 0x86e080020320ll + 0x1000000000ll * ((a) & 0x1) + 0x2000000ll * ((b) & 0x7);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=15)))
+        return 0x86e080020320ll + 0x1000000000ll * ((a) & 0x1) + 0x2000000ll * ((b) & 0xf);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=15)))
         return 0x86e080020320ll + 0x1000000000ll * ((a) & 0x0) + 0x2000000ll * ((b) & 0xf);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=15)))
@@ -11162,9 +11060,9 @@ union cavm_sdpx_epfx_ore_rint_ena_w1c
     struct cavm_sdpx_epfx_ore_rint_ena_w1c_cn98xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t ring_err              : 64; /**< [ 63:  0](R/W1C/H) Reads or clears enable for SDP(0..1)_EPF(0..7)_ORE_RINT[RING_ERR]. */
+        uint64_t ring_err              : 64; /**< [ 63:  0](R/W1C/H) Reads or clears enable for SDP(0..1)_EPF(0..15)_ORE_RINT[RING_ERR]. */
 #else /* Word 0 - Little Endian */
-        uint64_t ring_err              : 64; /**< [ 63:  0](R/W1C/H) Reads or clears enable for SDP(0..1)_EPF(0..7)_ORE_RINT[RING_ERR]. */
+        uint64_t ring_err              : 64; /**< [ 63:  0](R/W1C/H) Reads or clears enable for SDP(0..1)_EPF(0..15)_ORE_RINT[RING_ERR]. */
 #endif /* Word 0 - End */
     } cn98xx;
     /* struct cavm_sdpx_epfx_ore_rint_ena_w1c_s cnf95xx; */
@@ -11177,8 +11075,8 @@ static inline uint64_t CAVM_SDPX_EPFX_ORE_RINT_ENA_W1C(unsigned long a, unsigned
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=15)))
         return 0x86e080020340ll + 0x1000000000ll * ((a) & 0x0) + 0x2000000ll * ((b) & 0xf);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=7)))
-        return 0x86e080020340ll + 0x1000000000ll * ((a) & 0x1) + 0x2000000ll * ((b) & 0x7);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=15)))
+        return 0x86e080020340ll + 0x1000000000ll * ((a) & 0x1) + 0x2000000ll * ((b) & 0xf);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=15)))
         return 0x86e080020340ll + 0x1000000000ll * ((a) & 0x0) + 0x2000000ll * ((b) & 0xf);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=15)))
@@ -11215,9 +11113,9 @@ union cavm_sdpx_epfx_ore_rint_ena_w1s
     struct cavm_sdpx_epfx_ore_rint_ena_w1s_cn98xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t ring_err              : 64; /**< [ 63:  0](R/W1S/H) Reads or sets enable for SDP(0..1)_EPF(0..7)_ORE_RINT[RING_ERR]. */
+        uint64_t ring_err              : 64; /**< [ 63:  0](R/W1S/H) Reads or sets enable for SDP(0..1)_EPF(0..15)_ORE_RINT[RING_ERR]. */
 #else /* Word 0 - Little Endian */
-        uint64_t ring_err              : 64; /**< [ 63:  0](R/W1S/H) Reads or sets enable for SDP(0..1)_EPF(0..7)_ORE_RINT[RING_ERR]. */
+        uint64_t ring_err              : 64; /**< [ 63:  0](R/W1S/H) Reads or sets enable for SDP(0..1)_EPF(0..15)_ORE_RINT[RING_ERR]. */
 #endif /* Word 0 - End */
     } cn98xx;
     /* struct cavm_sdpx_epfx_ore_rint_ena_w1s_s cnf95xx; */
@@ -11230,8 +11128,8 @@ static inline uint64_t CAVM_SDPX_EPFX_ORE_RINT_ENA_W1S(unsigned long a, unsigned
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=15)))
         return 0x86e080020350ll + 0x1000000000ll * ((a) & 0x0) + 0x2000000ll * ((b) & 0xf);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=7)))
-        return 0x86e080020350ll + 0x1000000000ll * ((a) & 0x1) + 0x2000000ll * ((b) & 0x7);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=15)))
+        return 0x86e080020350ll + 0x1000000000ll * ((a) & 0x1) + 0x2000000ll * ((b) & 0xf);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=15)))
         return 0x86e080020350ll + 0x1000000000ll * ((a) & 0x0) + 0x2000000ll * ((b) & 0xf);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=15)))
@@ -11268,9 +11166,9 @@ union cavm_sdpx_epfx_ore_rint_w1s
     struct cavm_sdpx_epfx_ore_rint_w1s_cn98xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t ring_err              : 64; /**< [ 63:  0](R/W1S/H) Reads or sets SDP(0..1)_EPF(0..7)_ORE_RINT[RING_ERR]. */
+        uint64_t ring_err              : 64; /**< [ 63:  0](R/W1S/H) Reads or sets SDP(0..1)_EPF(0..15)_ORE_RINT[RING_ERR]. */
 #else /* Word 0 - Little Endian */
-        uint64_t ring_err              : 64; /**< [ 63:  0](R/W1S/H) Reads or sets SDP(0..1)_EPF(0..7)_ORE_RINT[RING_ERR]. */
+        uint64_t ring_err              : 64; /**< [ 63:  0](R/W1S/H) Reads or sets SDP(0..1)_EPF(0..15)_ORE_RINT[RING_ERR]. */
 #endif /* Word 0 - End */
     } cn98xx;
     /* struct cavm_sdpx_epfx_ore_rint_w1s_s cnf95xx; */
@@ -11283,8 +11181,8 @@ static inline uint64_t CAVM_SDPX_EPFX_ORE_RINT_W1S(unsigned long a, unsigned lon
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=15)))
         return 0x86e080020330ll + 0x1000000000ll * ((a) & 0x0) + 0x2000000ll * ((b) & 0xf);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=7)))
-        return 0x86e080020330ll + 0x1000000000ll * ((a) & 0x1) + 0x2000000ll * ((b) & 0x7);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=15)))
+        return 0x86e080020330ll + 0x1000000000ll * ((a) & 0x1) + 0x2000000ll * ((b) & 0xf);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=15)))
         return 0x86e080020330ll + 0x1000000000ll * ((a) & 0x0) + 0x2000000ll * ((b) & 0xf);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=15)))
@@ -11335,8 +11233,8 @@ static inline uint64_t CAVM_SDPX_EPFX_PP_VF_RINTX(unsigned long a, unsigned long
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=15) && (c<=1)))
         return 0x86e080020560ll + 0x1000000000ll * ((a) & 0x0) + 0x2000000ll * ((b) & 0xf) + 0x10ll * ((c) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=7) && (c<=1)))
-        return 0x86e080020560ll + 0x1000000000ll * ((a) & 0x1) + 0x2000000ll * ((b) & 0x7) + 0x10ll * ((c) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=15) && (c<=1)))
+        return 0x86e080020560ll + 0x1000000000ll * ((a) & 0x1) + 0x2000000ll * ((b) & 0xf) + 0x10ll * ((c) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=15) && (c<=1)))
         return 0x86e080020560ll + 0x1000000000ll * ((a) & 0x0) + 0x2000000ll * ((b) & 0xf) + 0x10ll * ((c) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=15) && (c<=1)))
@@ -11373,9 +11271,9 @@ union cavm_sdpx_epfx_pp_vf_rintx_ena_w1c
     struct cavm_sdpx_epfx_pp_vf_rintx_ena_w1c_cn98xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t vf_int                : 64; /**< [ 63:  0](R/W1C/H) Reads or clears enable for SDP(0..1)_EPF(0..7)_PP_VF_RINT(0..1)[VF_INT]. */
+        uint64_t vf_int                : 64; /**< [ 63:  0](R/W1C/H) Reads or clears enable for SDP(0..1)_EPF(0..15)_PP_VF_RINT(0..1)[VF_INT]. */
 #else /* Word 0 - Little Endian */
-        uint64_t vf_int                : 64; /**< [ 63:  0](R/W1C/H) Reads or clears enable for SDP(0..1)_EPF(0..7)_PP_VF_RINT(0..1)[VF_INT]. */
+        uint64_t vf_int                : 64; /**< [ 63:  0](R/W1C/H) Reads or clears enable for SDP(0..1)_EPF(0..15)_PP_VF_RINT(0..1)[VF_INT]. */
 #endif /* Word 0 - End */
     } cn98xx;
     /* struct cavm_sdpx_epfx_pp_vf_rintx_ena_w1c_s cnf95xx; */
@@ -11388,8 +11286,8 @@ static inline uint64_t CAVM_SDPX_EPFX_PP_VF_RINTX_ENA_W1C(unsigned long a, unsig
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=15) && (c<=1)))
         return 0x86e0800205a0ll + 0x1000000000ll * ((a) & 0x0) + 0x2000000ll * ((b) & 0xf) + 0x10ll * ((c) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=7) && (c<=1)))
-        return 0x86e0800205a0ll + 0x1000000000ll * ((a) & 0x1) + 0x2000000ll * ((b) & 0x7) + 0x10ll * ((c) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=15) && (c<=1)))
+        return 0x86e0800205a0ll + 0x1000000000ll * ((a) & 0x1) + 0x2000000ll * ((b) & 0xf) + 0x10ll * ((c) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=15) && (c<=1)))
         return 0x86e0800205a0ll + 0x1000000000ll * ((a) & 0x0) + 0x2000000ll * ((b) & 0xf) + 0x10ll * ((c) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=15) && (c<=1)))
@@ -11426,9 +11324,9 @@ union cavm_sdpx_epfx_pp_vf_rintx_ena_w1s
     struct cavm_sdpx_epfx_pp_vf_rintx_ena_w1s_cn98xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t vf_int                : 64; /**< [ 63:  0](R/W1S/H) Reads or sets enable for SDP(0..1)_EPF(0..7)_PP_VF_RINT(0..1)[VF_INT]. */
+        uint64_t vf_int                : 64; /**< [ 63:  0](R/W1S/H) Reads or sets enable for SDP(0..1)_EPF(0..15)_PP_VF_RINT(0..1)[VF_INT]. */
 #else /* Word 0 - Little Endian */
-        uint64_t vf_int                : 64; /**< [ 63:  0](R/W1S/H) Reads or sets enable for SDP(0..1)_EPF(0..7)_PP_VF_RINT(0..1)[VF_INT]. */
+        uint64_t vf_int                : 64; /**< [ 63:  0](R/W1S/H) Reads or sets enable for SDP(0..1)_EPF(0..15)_PP_VF_RINT(0..1)[VF_INT]. */
 #endif /* Word 0 - End */
     } cn98xx;
     /* struct cavm_sdpx_epfx_pp_vf_rintx_ena_w1s_s cnf95xx; */
@@ -11441,8 +11339,8 @@ static inline uint64_t CAVM_SDPX_EPFX_PP_VF_RINTX_ENA_W1S(unsigned long a, unsig
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=15) && (c<=1)))
         return 0x86e0800205c0ll + 0x1000000000ll * ((a) & 0x0) + 0x2000000ll * ((b) & 0xf) + 0x10ll * ((c) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=7) && (c<=1)))
-        return 0x86e0800205c0ll + 0x1000000000ll * ((a) & 0x1) + 0x2000000ll * ((b) & 0x7) + 0x10ll * ((c) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=15) && (c<=1)))
+        return 0x86e0800205c0ll + 0x1000000000ll * ((a) & 0x1) + 0x2000000ll * ((b) & 0xf) + 0x10ll * ((c) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=15) && (c<=1)))
         return 0x86e0800205c0ll + 0x1000000000ll * ((a) & 0x0) + 0x2000000ll * ((b) & 0xf) + 0x10ll * ((c) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=15) && (c<=1)))
@@ -11479,9 +11377,9 @@ union cavm_sdpx_epfx_pp_vf_rintx_w1s
     struct cavm_sdpx_epfx_pp_vf_rintx_w1s_cn98xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t vf_int                : 64; /**< [ 63:  0](R/W1S/H) Reads or sets SDP(0..1)_EPF(0..7)_PP_VF_RINT(0..1)[VF_INT]. */
+        uint64_t vf_int                : 64; /**< [ 63:  0](R/W1S/H) Reads or sets SDP(0..1)_EPF(0..15)_PP_VF_RINT(0..1)[VF_INT]. */
 #else /* Word 0 - Little Endian */
-        uint64_t vf_int                : 64; /**< [ 63:  0](R/W1S/H) Reads or sets SDP(0..1)_EPF(0..7)_PP_VF_RINT(0..1)[VF_INT]. */
+        uint64_t vf_int                : 64; /**< [ 63:  0](R/W1S/H) Reads or sets SDP(0..1)_EPF(0..15)_PP_VF_RINT(0..1)[VF_INT]. */
 #endif /* Word 0 - End */
     } cn98xx;
     /* struct cavm_sdpx_epfx_pp_vf_rintx_w1s_s cnf95xx; */
@@ -11494,8 +11392,8 @@ static inline uint64_t CAVM_SDPX_EPFX_PP_VF_RINTX_W1S(unsigned long a, unsigned 
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=15) && (c<=1)))
         return 0x86e080020580ll + 0x1000000000ll * ((a) & 0x0) + 0x2000000ll * ((b) & 0xf) + 0x10ll * ((c) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=7) && (c<=1)))
-        return 0x86e080020580ll + 0x1000000000ll * ((a) & 0x1) + 0x2000000ll * ((b) & 0x7) + 0x10ll * ((c) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=15) && (c<=1)))
+        return 0x86e080020580ll + 0x1000000000ll * ((a) & 0x1) + 0x2000000ll * ((b) & 0xf) + 0x10ll * ((c) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=15) && (c<=1)))
         return 0x86e080020580ll + 0x1000000000ll * ((a) & 0x0) + 0x2000000ll * ((b) & 0xf) + 0x10ll * ((c) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=15) && (c<=1)))
@@ -11549,15 +11447,15 @@ union cavm_sdpx_epfx_rinfo
 
                                                                  Internal:
                                                                  This is always 64 for CN83XX. */
-        uint64_t reserved_9_15         : 7;
-        uint64_t srn                   : 9;  /**< [  8:  0](RO) The starting ring number used by the EPF.
+        uint64_t reserved_8_15         : 8;
+        uint64_t srn                   : 8;  /**< [  7:  0](RO) The starting ring number used by the EPF.
                                                                  Internal:
                                                                  This is 0x0 for EPF0, and 64 for EPF1. */
 #else /* Word 0 - Little Endian */
-        uint64_t srn                   : 9;  /**< [  8:  0](RO) The starting ring number used by the EPF.
+        uint64_t srn                   : 8;  /**< [  7:  0](RO) The starting ring number used by the EPF.
                                                                  Internal:
                                                                  This is 0x0 for EPF0, and 64 for EPF1. */
-        uint64_t reserved_9_15         : 7;
+        uint64_t reserved_8_15         : 8;
         uint64_t trs                   : 8;  /**< [ 23: 16](RO) The number of rings assigned to the EPF. This is the same as
                                                                  the SLI()_LMAC_CONST0()[RINGS] field for the MAC/PF
                                                                  corresponding to this EPF.
@@ -11622,11 +11520,15 @@ union cavm_sdpx_epfx_rinfo
         uint64_t reserved_36_47        : 12;
         uint64_t rpvf                  : 4;  /**< [ 35: 32](R/W) The number of rings assigned to a VF for this PF. Legal values are 0 to 8
                                                                  with the requirement of (NVFS * RPVF) \<= TRS. */
-        uint64_t reserved_9_31         : 23;
-        uint64_t srn                   : 9;  /**< [  8:  0](R/W) The starting ring number used by the EPF. */
+        uint64_t reserved_24_31        : 8;
+        uint64_t reserved_16_23        : 8;
+        uint64_t reserved_8_15         : 8;
+        uint64_t srn                   : 8;  /**< [  7:  0](R/W) The starting ring number used by the EPF. */
 #else /* Word 0 - Little Endian */
-        uint64_t srn                   : 9;  /**< [  8:  0](R/W) The starting ring number used by the EPF. */
-        uint64_t reserved_9_31         : 23;
+        uint64_t srn                   : 8;  /**< [  7:  0](R/W) The starting ring number used by the EPF. */
+        uint64_t reserved_8_15         : 8;
+        uint64_t reserved_16_23        : 8;
+        uint64_t reserved_24_31        : 8;
         uint64_t rpvf                  : 4;  /**< [ 35: 32](R/W) The number of rings assigned to a VF for this PF. Legal values are 0 to 8
                                                                  with the requirement of (NVFS * RPVF) \<= TRS. */
         uint64_t reserved_36_47        : 12;
@@ -11635,60 +11537,6 @@ union cavm_sdpx_epfx_rinfo
         uint64_t reserved_56_63        : 8;
 #endif /* Word 0 - End */
     } cn9;
-    struct cavm_sdpx_epfx_rinfo_cn96xx
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_56_63        : 8;
-        uint64_t nvfs                  : 8;  /**< [ 55: 48](R/W) The number of VFs for this PF. This field must not be zero whenever [RPVF] != 0.
-                                                                 Legal values are 0 to 128, with the requirement of (NVFS * RPVF) \<= TRS. */
-        uint64_t reserved_36_47        : 12;
-        uint64_t rpvf                  : 4;  /**< [ 35: 32](R/W) The number of rings assigned to a VF for this PF. Legal values are 0 to 8
-                                                                 with the requirement of (NVFS * RPVF) \<= TRS. */
-        uint64_t reserved_24_31        : 8;
-        uint64_t reserved_16_23        : 8;
-        uint64_t reserved_8_15         : 8;
-        uint64_t srn                   : 8;  /**< [  7:  0](R/W) The starting ring number used by the EPF. */
-#else /* Word 0 - Little Endian */
-        uint64_t srn                   : 8;  /**< [  7:  0](R/W) The starting ring number used by the EPF. */
-        uint64_t reserved_8_15         : 8;
-        uint64_t reserved_16_23        : 8;
-        uint64_t reserved_24_31        : 8;
-        uint64_t rpvf                  : 4;  /**< [ 35: 32](R/W) The number of rings assigned to a VF for this PF. Legal values are 0 to 8
-                                                                 with the requirement of (NVFS * RPVF) \<= TRS. */
-        uint64_t reserved_36_47        : 12;
-        uint64_t nvfs                  : 8;  /**< [ 55: 48](R/W) The number of VFs for this PF. This field must not be zero whenever [RPVF] != 0.
-                                                                 Legal values are 0 to 128, with the requirement of (NVFS * RPVF) \<= TRS. */
-        uint64_t reserved_56_63        : 8;
-#endif /* Word 0 - End */
-    } cn96xx;
-    struct cavm_sdpx_epfx_rinfo_cn98xx
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_56_63        : 8;
-        uint64_t nvfs                  : 8;  /**< [ 55: 48](R/W) The number of VFs for this PF. This field must not be zero whenever [RPVF] != 0.
-                                                                 Legal values are 0 to 128, with the requirement of (NVFS * RPVF) \<= TRS. */
-        uint64_t reserved_36_47        : 12;
-        uint64_t rpvf                  : 4;  /**< [ 35: 32](R/W) The number of rings assigned to a VF for this PF. Legal values are 0 to 8
-                                                                 with the requirement of (NVFS * RPVF) \<= TRS. */
-        uint64_t reserved_24_31        : 8;
-        uint64_t reserved_16_23        : 8;
-        uint64_t reserved_9_15         : 7;
-        uint64_t srn                   : 9;  /**< [  8:  0](R/W) The starting ring number used by the EPF. */
-#else /* Word 0 - Little Endian */
-        uint64_t srn                   : 9;  /**< [  8:  0](R/W) The starting ring number used by the EPF. */
-        uint64_t reserved_9_15         : 7;
-        uint64_t reserved_16_23        : 8;
-        uint64_t reserved_24_31        : 8;
-        uint64_t rpvf                  : 4;  /**< [ 35: 32](R/W) The number of rings assigned to a VF for this PF. Legal values are 0 to 8
-                                                                 with the requirement of (NVFS * RPVF) \<= TRS. */
-        uint64_t reserved_36_47        : 12;
-        uint64_t nvfs                  : 8;  /**< [ 55: 48](R/W) The number of VFs for this PF. This field must not be zero whenever [RPVF] != 0.
-                                                                 Legal values are 0 to 128, with the requirement of (NVFS * RPVF) \<= TRS. */
-        uint64_t reserved_56_63        : 8;
-#endif /* Word 0 - End */
-    } cn98xx;
-    /* struct cavm_sdpx_epfx_rinfo_cn96xx cnf95xx; */
-    /* struct cavm_sdpx_epfx_rinfo_cn96xx loki; */
 };
 typedef union cavm_sdpx_epfx_rinfo cavm_sdpx_epfx_rinfo_t;
 
@@ -11699,8 +11547,8 @@ static inline uint64_t CAVM_SDPX_EPFX_RINFO(unsigned long a, unsigned long b)
         return 0x874080020190ll + 0x1000000000ll * ((a) & 0x0) + 0x800000ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=15)))
         return 0x86e0800205f0ll + 0x1000000000ll * ((a) & 0x0) + 0x2000000ll * ((b) & 0xf);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=7)))
-        return 0x86e0800205f0ll + 0x1000000000ll * ((a) & 0x1) + 0x2000000ll * ((b) & 0x7);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=15)))
+        return 0x86e0800205f0ll + 0x1000000000ll * ((a) & 0x1) + 0x2000000ll * ((b) & 0xf);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=15)))
         return 0x86e0800205f0ll + 0x1000000000ll * ((a) & 0x0) + 0x2000000ll * ((b) & 0xf);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=15)))
@@ -11757,8 +11605,8 @@ static inline uint64_t CAVM_SDPX_EPFX_RMT_MSIX_PBAX(unsigned long a, unsigned lo
         return 0x874080004000ll + 0x1000000000ll * ((a) & 0x0) + 0x800000ll * ((b) & 0x3) + 8ll * ((c) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=15) && (c<=1)))
         return 0x86e080004000ll + 0x1000000000ll * ((a) & 0x0) + 0x2000000ll * ((b) & 0xf) + 8ll * ((c) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=7) && (c<=1)))
-        return 0x86e080004000ll + 0x1000000000ll * ((a) & 0x1) + 0x2000000ll * ((b) & 0x7) + 8ll * ((c) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=15) && (c<=1)))
+        return 0x86e080004000ll + 0x1000000000ll * ((a) & 0x1) + 0x2000000ll * ((b) & 0xf) + 8ll * ((c) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=15) && (c<=1)))
         return 0x86e080004000ll + 0x1000000000ll * ((a) & 0x0) + 0x2000000ll * ((b) & 0xf) + 8ll * ((c) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=15) && (c<=1)))
@@ -11809,8 +11657,8 @@ static inline uint64_t CAVM_SDPX_EPFX_RMT_MSIX_VECX_ADDR(unsigned long a, unsign
         return 0x874080000000ll + 0x1000000000ll * ((a) & 0x0) + 0x800000ll * ((b) & 0x3) + 0x10ll * ((c) & 0x7f);
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=15) && (c<=79)))
         return 0x86e080000000ll + 0x1000000000ll * ((a) & 0x0) + 0x2000000ll * ((b) & 0xf) + 0x10ll * ((c) & 0x7f);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=7) && (c<=79)))
-        return 0x86e080000000ll + 0x1000000000ll * ((a) & 0x1) + 0x2000000ll * ((b) & 0x7) + 0x10ll * ((c) & 0x7f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=15) && (c<=79)))
+        return 0x86e080000000ll + 0x1000000000ll * ((a) & 0x1) + 0x2000000ll * ((b) & 0xf) + 0x10ll * ((c) & 0x7f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=15) && (c<=79)))
         return 0x86e080000000ll + 0x1000000000ll * ((a) & 0x0) + 0x2000000ll * ((b) & 0xf) + 0x10ll * ((c) & 0x7f);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=15) && (c<=79)))
@@ -11888,8 +11736,8 @@ static inline uint64_t CAVM_SDPX_EPFX_RMT_MSIX_VECX_CTL(unsigned long a, unsigne
         return 0x874080000008ll + 0x1000000000ll * ((a) & 0x0) + 0x800000ll * ((b) & 0x3) + 0x10ll * ((c) & 0x7f);
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=15) && (c<=79)))
         return 0x86e080000008ll + 0x1000000000ll * ((a) & 0x0) + 0x2000000ll * ((b) & 0xf) + 0x10ll * ((c) & 0x7f);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=7) && (c<=79)))
-        return 0x86e080000008ll + 0x1000000000ll * ((a) & 0x1) + 0x2000000ll * ((b) & 0x7) + 0x10ll * ((c) & 0x7f);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=15) && (c<=79)))
+        return 0x86e080000008ll + 0x1000000000ll * ((a) & 0x1) + 0x2000000ll * ((b) & 0xf) + 0x10ll * ((c) & 0x7f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=15) && (c<=79)))
         return 0x86e080000008ll + 0x1000000000ll * ((a) & 0x0) + 0x2000000ll * ((b) & 0xf) + 0x10ll * ((c) & 0x7f);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=15) && (c<=79)))
@@ -11930,8 +11778,8 @@ static inline uint64_t CAVM_SDPX_EPFX_SCRATCH(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=15)))
         return 0x86e0800205e0ll + 0x1000000000ll * ((a) & 0x0) + 0x2000000ll * ((b) & 0xf);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=7)))
-        return 0x86e0800205e0ll + 0x1000000000ll * ((a) & 0x1) + 0x2000000ll * ((b) & 0x7);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=15)))
+        return 0x86e0800205e0ll + 0x1000000000ll * ((a) & 0x1) + 0x2000000ll * ((b) & 0xf);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=15)))
         return 0x86e0800205e0ll + 0x1000000000ll * ((a) & 0x0) + 0x2000000ll * ((b) & 0xf);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=15)))
@@ -11979,8 +11827,8 @@ static inline uint64_t CAVM_SDPX_EPFX_VFIRE_RINTX(unsigned long a, unsigned long
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=15) && (c<=1)))
         return 0x86e080020180ll + 0x1000000000ll * ((a) & 0x0) + 0x2000000ll * ((b) & 0xf) + 0x10ll * ((c) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=7) && (c<=1)))
-        return 0x86e080020180ll + 0x1000000000ll * ((a) & 0x1) + 0x2000000ll * ((b) & 0x7) + 0x10ll * ((c) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=15) && (c<=1)))
+        return 0x86e080020180ll + 0x1000000000ll * ((a) & 0x1) + 0x2000000ll * ((b) & 0xf) + 0x10ll * ((c) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=15) && (c<=1)))
         return 0x86e080020180ll + 0x1000000000ll * ((a) & 0x0) + 0x2000000ll * ((b) & 0xf) + 0x10ll * ((c) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=15) && (c<=1)))
@@ -12017,9 +11865,9 @@ union cavm_sdpx_epfx_vfire_rintx_ena_w1c
     struct cavm_sdpx_epfx_vfire_rintx_ena_w1c_cn98xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t ring_err              : 64; /**< [ 63:  0](R/W1C/H) Reads or clears enable for SDP(0..1)_EPF(0..7)_VFIRE_RINT(0..1)[RING_ERR]. */
+        uint64_t ring_err              : 64; /**< [ 63:  0](R/W1C/H) Reads or clears enable for SDP(0..1)_EPF(0..15)_VFIRE_RINT(0..1)[RING_ERR]. */
 #else /* Word 0 - Little Endian */
-        uint64_t ring_err              : 64; /**< [ 63:  0](R/W1C/H) Reads or clears enable for SDP(0..1)_EPF(0..7)_VFIRE_RINT(0..1)[RING_ERR]. */
+        uint64_t ring_err              : 64; /**< [ 63:  0](R/W1C/H) Reads or clears enable for SDP(0..1)_EPF(0..15)_VFIRE_RINT(0..1)[RING_ERR]. */
 #endif /* Word 0 - End */
     } cn98xx;
     /* struct cavm_sdpx_epfx_vfire_rintx_ena_w1c_s cnf95xx; */
@@ -12032,8 +11880,8 @@ static inline uint64_t CAVM_SDPX_EPFX_VFIRE_RINTX_ENA_W1C(unsigned long a, unsig
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=15) && (c<=1)))
         return 0x86e0800201c0ll + 0x1000000000ll * ((a) & 0x0) + 0x2000000ll * ((b) & 0xf) + 0x10ll * ((c) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=7) && (c<=1)))
-        return 0x86e0800201c0ll + 0x1000000000ll * ((a) & 0x1) + 0x2000000ll * ((b) & 0x7) + 0x10ll * ((c) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=15) && (c<=1)))
+        return 0x86e0800201c0ll + 0x1000000000ll * ((a) & 0x1) + 0x2000000ll * ((b) & 0xf) + 0x10ll * ((c) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=15) && (c<=1)))
         return 0x86e0800201c0ll + 0x1000000000ll * ((a) & 0x0) + 0x2000000ll * ((b) & 0xf) + 0x10ll * ((c) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=15) && (c<=1)))
@@ -12070,9 +11918,9 @@ union cavm_sdpx_epfx_vfire_rintx_ena_w1s
     struct cavm_sdpx_epfx_vfire_rintx_ena_w1s_cn98xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t ring_err              : 64; /**< [ 63:  0](R/W1S/H) Reads or sets enable for SDP(0..1)_EPF(0..7)_VFIRE_RINT(0..1)[RING_ERR]. */
+        uint64_t ring_err              : 64; /**< [ 63:  0](R/W1S/H) Reads or sets enable for SDP(0..1)_EPF(0..15)_VFIRE_RINT(0..1)[RING_ERR]. */
 #else /* Word 0 - Little Endian */
-        uint64_t ring_err              : 64; /**< [ 63:  0](R/W1S/H) Reads or sets enable for SDP(0..1)_EPF(0..7)_VFIRE_RINT(0..1)[RING_ERR]. */
+        uint64_t ring_err              : 64; /**< [ 63:  0](R/W1S/H) Reads or sets enable for SDP(0..1)_EPF(0..15)_VFIRE_RINT(0..1)[RING_ERR]. */
 #endif /* Word 0 - End */
     } cn98xx;
     /* struct cavm_sdpx_epfx_vfire_rintx_ena_w1s_s cnf95xx; */
@@ -12085,8 +11933,8 @@ static inline uint64_t CAVM_SDPX_EPFX_VFIRE_RINTX_ENA_W1S(unsigned long a, unsig
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=15) && (c<=1)))
         return 0x86e0800201e0ll + 0x1000000000ll * ((a) & 0x0) + 0x2000000ll * ((b) & 0xf) + 0x10ll * ((c) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=7) && (c<=1)))
-        return 0x86e0800201e0ll + 0x1000000000ll * ((a) & 0x1) + 0x2000000ll * ((b) & 0x7) + 0x10ll * ((c) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=15) && (c<=1)))
+        return 0x86e0800201e0ll + 0x1000000000ll * ((a) & 0x1) + 0x2000000ll * ((b) & 0xf) + 0x10ll * ((c) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=15) && (c<=1)))
         return 0x86e0800201e0ll + 0x1000000000ll * ((a) & 0x0) + 0x2000000ll * ((b) & 0xf) + 0x10ll * ((c) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=15) && (c<=1)))
@@ -12123,9 +11971,9 @@ union cavm_sdpx_epfx_vfire_rintx_w1s
     struct cavm_sdpx_epfx_vfire_rintx_w1s_cn98xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t ring_err              : 64; /**< [ 63:  0](R/W1S/H) Reads or sets SDP(0..1)_EPF(0..7)_VFIRE_RINT(0..1)[RING_ERR]. */
+        uint64_t ring_err              : 64; /**< [ 63:  0](R/W1S/H) Reads or sets SDP(0..1)_EPF(0..15)_VFIRE_RINT(0..1)[RING_ERR]. */
 #else /* Word 0 - Little Endian */
-        uint64_t ring_err              : 64; /**< [ 63:  0](R/W1S/H) Reads or sets SDP(0..1)_EPF(0..7)_VFIRE_RINT(0..1)[RING_ERR]. */
+        uint64_t ring_err              : 64; /**< [ 63:  0](R/W1S/H) Reads or sets SDP(0..1)_EPF(0..15)_VFIRE_RINT(0..1)[RING_ERR]. */
 #endif /* Word 0 - End */
     } cn98xx;
     /* struct cavm_sdpx_epfx_vfire_rintx_w1s_s cnf95xx; */
@@ -12138,8 +11986,8 @@ static inline uint64_t CAVM_SDPX_EPFX_VFIRE_RINTX_W1S(unsigned long a, unsigned 
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=15) && (c<=1)))
         return 0x86e0800201a0ll + 0x1000000000ll * ((a) & 0x0) + 0x2000000ll * ((b) & 0xf) + 0x10ll * ((c) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=7) && (c<=1)))
-        return 0x86e0800201a0ll + 0x1000000000ll * ((a) & 0x1) + 0x2000000ll * ((b) & 0x7) + 0x10ll * ((c) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=15) && (c<=1)))
+        return 0x86e0800201a0ll + 0x1000000000ll * ((a) & 0x1) + 0x2000000ll * ((b) & 0xf) + 0x10ll * ((c) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=15) && (c<=1)))
         return 0x86e0800201a0ll + 0x1000000000ll * ((a) & 0x0) + 0x2000000ll * ((b) & 0xf) + 0x10ll * ((c) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=15) && (c<=1)))
@@ -12187,8 +12035,8 @@ static inline uint64_t CAVM_SDPX_EPFX_VFORE_RINTX(unsigned long a, unsigned long
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=15) && (c<=1)))
         return 0x86e080020240ll + 0x1000000000ll * ((a) & 0x0) + 0x2000000ll * ((b) & 0xf) + 0x10ll * ((c) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=7) && (c<=1)))
-        return 0x86e080020240ll + 0x1000000000ll * ((a) & 0x1) + 0x2000000ll * ((b) & 0x7) + 0x10ll * ((c) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=15) && (c<=1)))
+        return 0x86e080020240ll + 0x1000000000ll * ((a) & 0x1) + 0x2000000ll * ((b) & 0xf) + 0x10ll * ((c) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=15) && (c<=1)))
         return 0x86e080020240ll + 0x1000000000ll * ((a) & 0x0) + 0x2000000ll * ((b) & 0xf) + 0x10ll * ((c) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=15) && (c<=1)))
@@ -12225,9 +12073,9 @@ union cavm_sdpx_epfx_vfore_rintx_ena_w1c
     struct cavm_sdpx_epfx_vfore_rintx_ena_w1c_cn98xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t ring_err              : 64; /**< [ 63:  0](R/W1C/H) Reads or clears enable for SDP(0..1)_EPF(0..7)_VFORE_RINT(0..1)[RING_ERR]. */
+        uint64_t ring_err              : 64; /**< [ 63:  0](R/W1C/H) Reads or clears enable for SDP(0..1)_EPF(0..15)_VFORE_RINT(0..1)[RING_ERR]. */
 #else /* Word 0 - Little Endian */
-        uint64_t ring_err              : 64; /**< [ 63:  0](R/W1C/H) Reads or clears enable for SDP(0..1)_EPF(0..7)_VFORE_RINT(0..1)[RING_ERR]. */
+        uint64_t ring_err              : 64; /**< [ 63:  0](R/W1C/H) Reads or clears enable for SDP(0..1)_EPF(0..15)_VFORE_RINT(0..1)[RING_ERR]. */
 #endif /* Word 0 - End */
     } cn98xx;
     /* struct cavm_sdpx_epfx_vfore_rintx_ena_w1c_s cnf95xx; */
@@ -12240,8 +12088,8 @@ static inline uint64_t CAVM_SDPX_EPFX_VFORE_RINTX_ENA_W1C(unsigned long a, unsig
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=15) && (c<=1)))
         return 0x86e080020280ll + 0x1000000000ll * ((a) & 0x0) + 0x2000000ll * ((b) & 0xf) + 0x10ll * ((c) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=7) && (c<=1)))
-        return 0x86e080020280ll + 0x1000000000ll * ((a) & 0x1) + 0x2000000ll * ((b) & 0x7) + 0x10ll * ((c) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=15) && (c<=1)))
+        return 0x86e080020280ll + 0x1000000000ll * ((a) & 0x1) + 0x2000000ll * ((b) & 0xf) + 0x10ll * ((c) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=15) && (c<=1)))
         return 0x86e080020280ll + 0x1000000000ll * ((a) & 0x0) + 0x2000000ll * ((b) & 0xf) + 0x10ll * ((c) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=15) && (c<=1)))
@@ -12278,9 +12126,9 @@ union cavm_sdpx_epfx_vfore_rintx_ena_w1s
     struct cavm_sdpx_epfx_vfore_rintx_ena_w1s_cn98xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t ring_err              : 64; /**< [ 63:  0](R/W1S/H) Reads or sets enable for SDP(0..1)_EPF(0..7)_VFORE_RINT(0..1)[RING_ERR]. */
+        uint64_t ring_err              : 64; /**< [ 63:  0](R/W1S/H) Reads or sets enable for SDP(0..1)_EPF(0..15)_VFORE_RINT(0..1)[RING_ERR]. */
 #else /* Word 0 - Little Endian */
-        uint64_t ring_err              : 64; /**< [ 63:  0](R/W1S/H) Reads or sets enable for SDP(0..1)_EPF(0..7)_VFORE_RINT(0..1)[RING_ERR]. */
+        uint64_t ring_err              : 64; /**< [ 63:  0](R/W1S/H) Reads or sets enable for SDP(0..1)_EPF(0..15)_VFORE_RINT(0..1)[RING_ERR]. */
 #endif /* Word 0 - End */
     } cn98xx;
     /* struct cavm_sdpx_epfx_vfore_rintx_ena_w1s_s cnf95xx; */
@@ -12293,8 +12141,8 @@ static inline uint64_t CAVM_SDPX_EPFX_VFORE_RINTX_ENA_W1S(unsigned long a, unsig
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=15) && (c<=1)))
         return 0x86e0800202a0ll + 0x1000000000ll * ((a) & 0x0) + 0x2000000ll * ((b) & 0xf) + 0x10ll * ((c) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=7) && (c<=1)))
-        return 0x86e0800202a0ll + 0x1000000000ll * ((a) & 0x1) + 0x2000000ll * ((b) & 0x7) + 0x10ll * ((c) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=15) && (c<=1)))
+        return 0x86e0800202a0ll + 0x1000000000ll * ((a) & 0x1) + 0x2000000ll * ((b) & 0xf) + 0x10ll * ((c) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=15) && (c<=1)))
         return 0x86e0800202a0ll + 0x1000000000ll * ((a) & 0x0) + 0x2000000ll * ((b) & 0xf) + 0x10ll * ((c) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=15) && (c<=1)))
@@ -12331,9 +12179,9 @@ union cavm_sdpx_epfx_vfore_rintx_w1s
     struct cavm_sdpx_epfx_vfore_rintx_w1s_cn98xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t ring_err              : 64; /**< [ 63:  0](R/W1S/H) Reads or sets SDP(0..1)_EPF(0..7)_VFORE_RINT(0..1)[RING_ERR]. */
+        uint64_t ring_err              : 64; /**< [ 63:  0](R/W1S/H) Reads or sets SDP(0..1)_EPF(0..15)_VFORE_RINT(0..1)[RING_ERR]. */
 #else /* Word 0 - Little Endian */
-        uint64_t ring_err              : 64; /**< [ 63:  0](R/W1S/H) Reads or sets SDP(0..1)_EPF(0..7)_VFORE_RINT(0..1)[RING_ERR]. */
+        uint64_t ring_err              : 64; /**< [ 63:  0](R/W1S/H) Reads or sets SDP(0..1)_EPF(0..15)_VFORE_RINT(0..1)[RING_ERR]. */
 #endif /* Word 0 - End */
     } cn98xx;
     /* struct cavm_sdpx_epfx_vfore_rintx_w1s_s cnf95xx; */
@@ -12346,8 +12194,8 @@ static inline uint64_t CAVM_SDPX_EPFX_VFORE_RINTX_W1S(unsigned long a, unsigned 
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=15) && (c<=1)))
         return 0x86e080020260ll + 0x1000000000ll * ((a) & 0x0) + 0x2000000ll * ((b) & 0xf) + 0x10ll * ((c) & 0x1);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=7) && (c<=1)))
-        return 0x86e080020260ll + 0x1000000000ll * ((a) & 0x1) + 0x2000000ll * ((b) & 0x7) + 0x10ll * ((c) & 0x1);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=15) && (c<=1)))
+        return 0x86e080020260ll + 0x1000000000ll * ((a) & 0x1) + 0x2000000ll * ((b) & 0xf) + 0x10ll * ((c) & 0x1);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=15) && (c<=1)))
         return 0x86e080020260ll + 0x1000000000ll * ((a) & 0x0) + 0x2000000ll * ((b) & 0xf) + 0x10ll * ((c) & 0x1);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=15) && (c<=1)))
@@ -12402,8 +12250,8 @@ static inline uint64_t CAVM_SDPX_EPVF_RINGX(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=255)))
         return 0x86e080026000ll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0xff);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=511)))
-        return 0x86e080026000ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x1ff);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=255)))
+        return 0x86e080026000ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0xff);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=255)))
         return 0x86e080026000ll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0xff);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=255)))
@@ -12455,8 +12303,8 @@ static inline uint64_t CAVM_SDPX_FLR_RING_LINTX(unsigned long a, unsigned long b
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=3)))
         return 0x86e0c0081000ll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0x3);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=7)))
-        return 0x86e0c0081000ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x7);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=3)))
+        return 0x86e0c0081000ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=3)))
         return 0x86e0c0081000ll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=3)))
@@ -12493,9 +12341,9 @@ union cavm_sdpx_flr_ring_lint_ena_w1cx
     struct cavm_sdpx_flr_ring_lint_ena_w1cx_cn98xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t ring_int              : 64; /**< [ 63:  0](R/W1C/H) Reads or clears enable for SDP(0..1)_FLR_RING_LINT(0..7)[RING_INT]. */
+        uint64_t ring_int              : 64; /**< [ 63:  0](R/W1C/H) Reads or clears enable for SDP(0..1)_FLR_RING_LINT(0..3)[RING_INT]. */
 #else /* Word 0 - Little Endian */
-        uint64_t ring_int              : 64; /**< [ 63:  0](R/W1C/H) Reads or clears enable for SDP(0..1)_FLR_RING_LINT(0..7)[RING_INT]. */
+        uint64_t ring_int              : 64; /**< [ 63:  0](R/W1C/H) Reads or clears enable for SDP(0..1)_FLR_RING_LINT(0..3)[RING_INT]. */
 #endif /* Word 0 - End */
     } cn98xx;
     /* struct cavm_sdpx_flr_ring_lint_ena_w1cx_s cnf95xx; */
@@ -12508,8 +12356,8 @@ static inline uint64_t CAVM_SDPX_FLR_RING_LINT_ENA_W1CX(unsigned long a, unsigne
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=3)))
         return 0x86e0c0081200ll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0x3);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=7)))
-        return 0x86e0c0081200ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x7);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=3)))
+        return 0x86e0c0081200ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=3)))
         return 0x86e0c0081200ll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=3)))
@@ -12546,9 +12394,9 @@ union cavm_sdpx_flr_ring_lint_ena_w1sx
     struct cavm_sdpx_flr_ring_lint_ena_w1sx_cn98xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t ring_int              : 64; /**< [ 63:  0](R/W1S/H) Reads or sets enable for SDP(0..1)_FLR_RING_LINT(0..7)[RING_INT]. */
+        uint64_t ring_int              : 64; /**< [ 63:  0](R/W1S/H) Reads or sets enable for SDP(0..1)_FLR_RING_LINT(0..3)[RING_INT]. */
 #else /* Word 0 - Little Endian */
-        uint64_t ring_int              : 64; /**< [ 63:  0](R/W1S/H) Reads or sets enable for SDP(0..1)_FLR_RING_LINT(0..7)[RING_INT]. */
+        uint64_t ring_int              : 64; /**< [ 63:  0](R/W1S/H) Reads or sets enable for SDP(0..1)_FLR_RING_LINT(0..3)[RING_INT]. */
 #endif /* Word 0 - End */
     } cn98xx;
     /* struct cavm_sdpx_flr_ring_lint_ena_w1sx_s cnf95xx; */
@@ -12561,8 +12409,8 @@ static inline uint64_t CAVM_SDPX_FLR_RING_LINT_ENA_W1SX(unsigned long a, unsigne
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=3)))
         return 0x86e0c0081300ll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0x3);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=7)))
-        return 0x86e0c0081300ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x7);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=3)))
+        return 0x86e0c0081300ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=3)))
         return 0x86e0c0081300ll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=3)))
@@ -12599,9 +12447,9 @@ union cavm_sdpx_flr_ring_lint_w1sx
     struct cavm_sdpx_flr_ring_lint_w1sx_cn98xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t ring_int              : 64; /**< [ 63:  0](R/W1S/H) Reads or sets SDP(0..1)_FLR_RING_LINT(0..7)[RING_INT]. */
+        uint64_t ring_int              : 64; /**< [ 63:  0](R/W1S/H) Reads or sets SDP(0..1)_FLR_RING_LINT(0..3)[RING_INT]. */
 #else /* Word 0 - Little Endian */
-        uint64_t ring_int              : 64; /**< [ 63:  0](R/W1S/H) Reads or sets SDP(0..1)_FLR_RING_LINT(0..7)[RING_INT]. */
+        uint64_t ring_int              : 64; /**< [ 63:  0](R/W1S/H) Reads or sets SDP(0..1)_FLR_RING_LINT(0..3)[RING_INT]. */
 #endif /* Word 0 - End */
     } cn98xx;
     /* struct cavm_sdpx_flr_ring_lint_w1sx_s cnf95xx; */
@@ -12614,8 +12462,8 @@ static inline uint64_t CAVM_SDPX_FLR_RING_LINT_W1SX(unsigned long a, unsigned lo
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=3)))
         return 0x86e0c0081100ll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0x3);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=7)))
-        return 0x86e0c0081100ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x7);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=3)))
+        return 0x86e0c0081100ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=3)))
         return 0x86e0c0081100ll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=3)))
@@ -12768,8 +12616,8 @@ static inline uint64_t CAVM_SDPX_IN_RATE_LIMITX(unsigned long a, unsigned long b
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=255)))
         return 0x86e08002a000ll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0xff);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=511)))
-        return 0x86e08002a000ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x1ff);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=255)))
+        return 0x86e08002a000ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0xff);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=255)))
         return 0x86e08002a000ll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0xff);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=255)))
@@ -12807,38 +12655,16 @@ union cavm_sdpx_in_ring_tb_mapx
     struct cavm_sdpx_in_ring_tb_mapx_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_0_63         : 64;
+        uint64_t reserved_9_63         : 55;
+        uint64_t enable                : 1;  /**< [  8:  8](R/W) Enable token bucket mapping for ring. */
+        uint64_t tb                    : 8;  /**< [  7:  0](R/W) Maps ring to one of 256 token bucket programmed by SDP()_IN_RATE_LIMIT(). */
 #else /* Word 0 - Little Endian */
-        uint64_t reserved_0_63         : 64;
+        uint64_t tb                    : 8;  /**< [  7:  0](R/W) Maps ring to one of 256 token bucket programmed by SDP()_IN_RATE_LIMIT(). */
+        uint64_t enable                : 1;  /**< [  8:  8](R/W) Enable token bucket mapping for ring. */
+        uint64_t reserved_9_63         : 55;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_sdpx_in_ring_tb_mapx_s cn9; */
-    struct cavm_sdpx_in_ring_tb_mapx_cn96xx
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_9_63         : 55;
-        uint64_t enable                : 1;  /**< [  8:  8](R/W) Enable token bucket mapping for ring. */
-        uint64_t tb                    : 8;  /**< [  7:  0](R/W) Maps ring to one of 256 token bucket programmed by SDP()_IN_RATE_LIMIT(). */
-#else /* Word 0 - Little Endian */
-        uint64_t tb                    : 8;  /**< [  7:  0](R/W) Maps ring to one of 256 token bucket programmed by SDP()_IN_RATE_LIMIT(). */
-        uint64_t enable                : 1;  /**< [  8:  8](R/W) Enable token bucket mapping for ring. */
-        uint64_t reserved_9_63         : 55;
-#endif /* Word 0 - End */
-    } cn96xx;
-    struct cavm_sdpx_in_ring_tb_mapx_cn98xx
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_10_63        : 54;
-        uint64_t enable                : 1;  /**< [  9:  9](R/W) Enable token bucket mapping for ring. */
-        uint64_t tb                    : 9;  /**< [  8:  0](R/W) Maps ring to one of 512 token bucket programmed by SDP()_IN_RATE_LIMIT(). */
-#else /* Word 0 - Little Endian */
-        uint64_t tb                    : 9;  /**< [  8:  0](R/W) Maps ring to one of 512 token bucket programmed by SDP()_IN_RATE_LIMIT(). */
-        uint64_t enable                : 1;  /**< [  9:  9](R/W) Enable token bucket mapping for ring. */
-        uint64_t reserved_10_63        : 54;
-#endif /* Word 0 - End */
-    } cn98xx;
-    /* struct cavm_sdpx_in_ring_tb_mapx_cn96xx cnf95xx; */
-    /* struct cavm_sdpx_in_ring_tb_mapx_cn96xx loki; */
+    /* struct cavm_sdpx_in_ring_tb_mapx_s cn; */
 };
 typedef union cavm_sdpx_in_ring_tb_mapx cavm_sdpx_in_ring_tb_mapx_t;
 
@@ -12847,8 +12673,8 @@ static inline uint64_t CAVM_SDPX_IN_RING_TB_MAPX(unsigned long a, unsigned long 
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=255)))
         return 0x86e080028000ll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0xff);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=511)))
-        return 0x86e080028000ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x1ff);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=255)))
+        return 0x86e080028000ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0xff);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=255)))
         return 0x86e080028000ll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0xff);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=255)))
@@ -12895,8 +12721,8 @@ static inline uint64_t CAVM_SDPX_IRE_LINTX(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=3)))
         return 0x86e0c0080400ll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0x3);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=7)))
-        return 0x86e0c0080400ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x7);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=3)))
+        return 0x86e0c0080400ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=3)))
         return 0x86e0c0080400ll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=3)))
@@ -12933,9 +12759,9 @@ union cavm_sdpx_ire_lint_ena_w1cx
     struct cavm_sdpx_ire_lint_ena_w1cx_cn98xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t ring_err              : 64; /**< [ 63:  0](R/W1C/H) Reads or clears enable for SDP(0..1)_IRE_LINT(0..7)[RING_ERR]. */
+        uint64_t ring_err              : 64; /**< [ 63:  0](R/W1C/H) Reads or clears enable for SDP(0..1)_IRE_LINT(0..3)[RING_ERR]. */
 #else /* Word 0 - Little Endian */
-        uint64_t ring_err              : 64; /**< [ 63:  0](R/W1C/H) Reads or clears enable for SDP(0..1)_IRE_LINT(0..7)[RING_ERR]. */
+        uint64_t ring_err              : 64; /**< [ 63:  0](R/W1C/H) Reads or clears enable for SDP(0..1)_IRE_LINT(0..3)[RING_ERR]. */
 #endif /* Word 0 - End */
     } cn98xx;
     /* struct cavm_sdpx_ire_lint_ena_w1cx_s cnf95xx; */
@@ -12948,8 +12774,8 @@ static inline uint64_t CAVM_SDPX_IRE_LINT_ENA_W1CX(unsigned long a, unsigned lon
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=3)))
         return 0x86e0c0080600ll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0x3);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=7)))
-        return 0x86e0c0080600ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x7);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=3)))
+        return 0x86e0c0080600ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=3)))
         return 0x86e0c0080600ll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=3)))
@@ -12986,9 +12812,9 @@ union cavm_sdpx_ire_lint_ena_w1sx
     struct cavm_sdpx_ire_lint_ena_w1sx_cn98xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t ring_err              : 64; /**< [ 63:  0](R/W1S/H) Reads or sets enable for SDP(0..1)_IRE_LINT(0..7)[RING_ERR]. */
+        uint64_t ring_err              : 64; /**< [ 63:  0](R/W1S/H) Reads or sets enable for SDP(0..1)_IRE_LINT(0..3)[RING_ERR]. */
 #else /* Word 0 - Little Endian */
-        uint64_t ring_err              : 64; /**< [ 63:  0](R/W1S/H) Reads or sets enable for SDP(0..1)_IRE_LINT(0..7)[RING_ERR]. */
+        uint64_t ring_err              : 64; /**< [ 63:  0](R/W1S/H) Reads or sets enable for SDP(0..1)_IRE_LINT(0..3)[RING_ERR]. */
 #endif /* Word 0 - End */
     } cn98xx;
     /* struct cavm_sdpx_ire_lint_ena_w1sx_s cnf95xx; */
@@ -13001,8 +12827,8 @@ static inline uint64_t CAVM_SDPX_IRE_LINT_ENA_W1SX(unsigned long a, unsigned lon
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=3)))
         return 0x86e0c0080700ll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0x3);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=7)))
-        return 0x86e0c0080700ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x7);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=3)))
+        return 0x86e0c0080700ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=3)))
         return 0x86e0c0080700ll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=3)))
@@ -13039,9 +12865,9 @@ union cavm_sdpx_ire_lint_w1sx
     struct cavm_sdpx_ire_lint_w1sx_cn98xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t ring_err              : 64; /**< [ 63:  0](R/W1S/H) Reads or sets SDP(0..1)_IRE_LINT(0..7)[RING_ERR]. */
+        uint64_t ring_err              : 64; /**< [ 63:  0](R/W1S/H) Reads or sets SDP(0..1)_IRE_LINT(0..3)[RING_ERR]. */
 #else /* Word 0 - Little Endian */
-        uint64_t ring_err              : 64; /**< [ 63:  0](R/W1S/H) Reads or sets SDP(0..1)_IRE_LINT(0..7)[RING_ERR]. */
+        uint64_t ring_err              : 64; /**< [ 63:  0](R/W1S/H) Reads or sets SDP(0..1)_IRE_LINT(0..3)[RING_ERR]. */
 #endif /* Word 0 - End */
     } cn98xx;
     /* struct cavm_sdpx_ire_lint_w1sx_s cnf95xx; */
@@ -13054,8 +12880,8 @@ static inline uint64_t CAVM_SDPX_IRE_LINT_W1SX(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=3)))
         return 0x86e0c0080500ll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0x3);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=7)))
-        return 0x86e0c0080500ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x7);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=3)))
+        return 0x86e0c0080500ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=3)))
         return 0x86e0c0080500ll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=3)))
@@ -13301,11 +13127,11 @@ union cavm_sdpx_macx_pf_ring_ctl
         uint64_t npfs                  : 4;  /**< [ 51: 48](R/W) Number of PFs for this MAC. Legal values are 0 to 8. */
         uint64_t reserved_38_47        : 10;
         uint64_t rppf                  : 6;  /**< [ 37: 32](R/W) Rings per PF. Legal values are 0 to 63. */
-        uint64_t reserved_9_31         : 23;
-        uint64_t srn                   : 9;  /**< [  8:  0](R/W) Starting ring number of PF rings. */
+        uint64_t reserved_8_31         : 24;
+        uint64_t srn                   : 8;  /**< [  7:  0](R/W) Starting ring number of PF rings. */
 #else /* Word 0 - Little Endian */
-        uint64_t srn                   : 9;  /**< [  8:  0](R/W) Starting ring number of PF rings. */
-        uint64_t reserved_9_31         : 23;
+        uint64_t srn                   : 8;  /**< [  7:  0](R/W) Starting ring number of PF rings. */
+        uint64_t reserved_8_31         : 24;
         uint64_t rppf                  : 6;  /**< [ 37: 32](R/W) Rings per PF. Legal values are 0 to 63. */
         uint64_t reserved_38_47        : 10;
         uint64_t npfs                  : 4;  /**< [ 51: 48](R/W) Number of PFs for this MAC. Legal values are 0 to 8. */
@@ -13444,8 +13270,8 @@ static inline uint64_t CAVM_SDPX_MBOX_PF_VF_DATAX(unsigned long a, unsigned long
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=255)))
         return 0x86e080022000ll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0xff);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=511)))
-        return 0x86e080022000ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x1ff);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=255)))
+        return 0x86e080022000ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0xff);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=255)))
         return 0x86e080022000ll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0xff);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=255)))
@@ -13493,8 +13319,8 @@ static inline uint64_t CAVM_SDPX_MBOX_VF_PF_DATAX(unsigned long a, unsigned long
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=255)))
         return 0x86e080024000ll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0xff);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=511)))
-        return 0x86e080024000ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x1ff);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=255)))
+        return 0x86e080024000ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0xff);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=255)))
         return 0x86e080024000ll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0xff);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=255)))
@@ -13522,8 +13348,8 @@ union cavm_sdpx_mcast_tablex
     struct cavm_sdpx_mcast_tablex_s
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_20_63        : 44;
-        uint64_t ring                  : 9;  /**< [ 19: 11](R/W) Indicates a SDP output ring in multicast chain. */
+        uint64_t reserved_19_63        : 45;
+        uint64_t ring                  : 8;  /**< [ 18: 11](R/W) Indicates a SDP output ring in multicast chain. */
         uint64_t nxt_ptr               : 11; /**< [ 10:  0](R/W) Points to the next pointer index in SDP()_MCAST_TABLE().  The next pointer
                                                                  index follows multicast chain of rings.  If 0x7FF is written to [NXT_PTR],
                                                                  indicates last this is the last ring in the multicast chain of rings. */
@@ -13531,30 +13357,11 @@ union cavm_sdpx_mcast_tablex
         uint64_t nxt_ptr               : 11; /**< [ 10:  0](R/W) Points to the next pointer index in SDP()_MCAST_TABLE().  The next pointer
                                                                  index follows multicast chain of rings.  If 0x7FF is written to [NXT_PTR],
                                                                  indicates last this is the last ring in the multicast chain of rings. */
-        uint64_t ring                  : 9;  /**< [ 19: 11](R/W) Indicates a SDP output ring in multicast chain. */
-        uint64_t reserved_20_63        : 44;
+        uint64_t ring                  : 8;  /**< [ 18: 11](R/W) Indicates a SDP output ring in multicast chain. */
+        uint64_t reserved_19_63        : 45;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_sdpx_mcast_tablex_s cn9; */
-    struct cavm_sdpx_mcast_tablex_cn96xx
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_19_63        : 45;
-        uint64_t ring                  : 8;  /**< [ 18: 11](R/W) Indicates a SDP output ring in multicast chain. */
-        uint64_t nxt_ptr               : 11; /**< [ 10:  0](R/W) Points to the next pointer index in SDP()_MCAST_TABLE().  The next pointer
-                                                                 index follows multicast chain of rings.  If 0x7FF is written to [NXT_PTR],
-                                                                 indicates last this is the last ring in the multicast chain of rings. */
-#else /* Word 0 - Little Endian */
-        uint64_t nxt_ptr               : 11; /**< [ 10:  0](R/W) Points to the next pointer index in SDP()_MCAST_TABLE().  The next pointer
-                                                                 index follows multicast chain of rings.  If 0x7FF is written to [NXT_PTR],
-                                                                 indicates last this is the last ring in the multicast chain of rings. */
-        uint64_t ring                  : 8;  /**< [ 18: 11](R/W) Indicates a SDP output ring in multicast chain. */
-        uint64_t reserved_19_63        : 45;
-#endif /* Word 0 - End */
-    } cn96xx;
-    /* struct cavm_sdpx_mcast_tablex_s cn98xx; */
-    /* struct cavm_sdpx_mcast_tablex_cn96xx cnf95xx; */
-    /* struct cavm_sdpx_mcast_tablex_cn96xx loki; */
+    /* struct cavm_sdpx_mcast_tablex_s cn; */
 };
 typedef union cavm_sdpx_mcast_tablex cavm_sdpx_mcast_tablex_t;
 
@@ -13612,8 +13419,8 @@ static inline uint64_t CAVM_SDPX_ORD_LINTX(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=3)))
         return 0x86e0c0080c00ll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0x3);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=7)))
-        return 0x86e0c0080c00ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x7);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=3)))
+        return 0x86e0c0080c00ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=3)))
         return 0x86e0c0080c00ll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=3)))
@@ -13650,9 +13457,9 @@ union cavm_sdpx_ord_lint_ena_w1cx
     struct cavm_sdpx_ord_lint_ena_w1cx_cn98xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t ring_drop_state       : 64; /**< [ 63:  0](R/W1C/H) Reads or clears enable for SDP(0..1)_ORD_LINT(0..7)[RING_DROP_STATE]. */
+        uint64_t ring_drop_state       : 64; /**< [ 63:  0](R/W1C/H) Reads or clears enable for SDP(0..1)_ORD_LINT(0..3)[RING_DROP_STATE]. */
 #else /* Word 0 - Little Endian */
-        uint64_t ring_drop_state       : 64; /**< [ 63:  0](R/W1C/H) Reads or clears enable for SDP(0..1)_ORD_LINT(0..7)[RING_DROP_STATE]. */
+        uint64_t ring_drop_state       : 64; /**< [ 63:  0](R/W1C/H) Reads or clears enable for SDP(0..1)_ORD_LINT(0..3)[RING_DROP_STATE]. */
 #endif /* Word 0 - End */
     } cn98xx;
     /* struct cavm_sdpx_ord_lint_ena_w1cx_s cnf95xx; */
@@ -13665,8 +13472,8 @@ static inline uint64_t CAVM_SDPX_ORD_LINT_ENA_W1CX(unsigned long a, unsigned lon
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=3)))
         return 0x86e0c0080e00ll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0x3);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=7)))
-        return 0x86e0c0080e00ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x7);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=3)))
+        return 0x86e0c0080e00ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=3)))
         return 0x86e0c0080e00ll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=3)))
@@ -13703,9 +13510,9 @@ union cavm_sdpx_ord_lint_ena_w1sx
     struct cavm_sdpx_ord_lint_ena_w1sx_cn98xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t ring_drop_state       : 64; /**< [ 63:  0](R/W1S/H) Reads or sets enable for SDP(0..1)_ORD_LINT(0..7)[RING_DROP_STATE]. */
+        uint64_t ring_drop_state       : 64; /**< [ 63:  0](R/W1S/H) Reads or sets enable for SDP(0..1)_ORD_LINT(0..3)[RING_DROP_STATE]. */
 #else /* Word 0 - Little Endian */
-        uint64_t ring_drop_state       : 64; /**< [ 63:  0](R/W1S/H) Reads or sets enable for SDP(0..1)_ORD_LINT(0..7)[RING_DROP_STATE]. */
+        uint64_t ring_drop_state       : 64; /**< [ 63:  0](R/W1S/H) Reads or sets enable for SDP(0..1)_ORD_LINT(0..3)[RING_DROP_STATE]. */
 #endif /* Word 0 - End */
     } cn98xx;
     /* struct cavm_sdpx_ord_lint_ena_w1sx_s cnf95xx; */
@@ -13718,8 +13525,8 @@ static inline uint64_t CAVM_SDPX_ORD_LINT_ENA_W1SX(unsigned long a, unsigned lon
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=3)))
         return 0x86e0c0080f00ll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0x3);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=7)))
-        return 0x86e0c0080f00ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x7);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=3)))
+        return 0x86e0c0080f00ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=3)))
         return 0x86e0c0080f00ll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=3)))
@@ -13756,9 +13563,9 @@ union cavm_sdpx_ord_lint_w1sx
     struct cavm_sdpx_ord_lint_w1sx_cn98xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t ring_drop_state       : 64; /**< [ 63:  0](R/W1S/H) Reads or sets SDP(0..1)_ORD_LINT(0..7)[RING_DROP_STATE]. */
+        uint64_t ring_drop_state       : 64; /**< [ 63:  0](R/W1S/H) Reads or sets SDP(0..1)_ORD_LINT(0..3)[RING_DROP_STATE]. */
 #else /* Word 0 - Little Endian */
-        uint64_t ring_drop_state       : 64; /**< [ 63:  0](R/W1S/H) Reads or sets SDP(0..1)_ORD_LINT(0..7)[RING_DROP_STATE]. */
+        uint64_t ring_drop_state       : 64; /**< [ 63:  0](R/W1S/H) Reads or sets SDP(0..1)_ORD_LINT(0..3)[RING_DROP_STATE]. */
 #endif /* Word 0 - End */
     } cn98xx;
     /* struct cavm_sdpx_ord_lint_w1sx_s cnf95xx; */
@@ -13771,8 +13578,8 @@ static inline uint64_t CAVM_SDPX_ORD_LINT_W1SX(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=3)))
         return 0x86e0c0080d00ll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0x3);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=7)))
-        return 0x86e0c0080d00ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x7);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=3)))
+        return 0x86e0c0080d00ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=3)))
         return 0x86e0c0080d00ll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=3)))
@@ -13819,8 +13626,8 @@ static inline uint64_t CAVM_SDPX_ORE_LINTX(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=3)))
         return 0x86e0c0080800ll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0x3);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=7)))
-        return 0x86e0c0080800ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x7);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=3)))
+        return 0x86e0c0080800ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=3)))
         return 0x86e0c0080800ll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=3)))
@@ -13857,9 +13664,9 @@ union cavm_sdpx_ore_lint_ena_w1cx
     struct cavm_sdpx_ore_lint_ena_w1cx_cn98xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t ring_err              : 64; /**< [ 63:  0](R/W1C/H) Reads or clears enable for SDP(0..1)_ORE_LINT(0..7)[RING_ERR]. */
+        uint64_t ring_err              : 64; /**< [ 63:  0](R/W1C/H) Reads or clears enable for SDP(0..1)_ORE_LINT(0..3)[RING_ERR]. */
 #else /* Word 0 - Little Endian */
-        uint64_t ring_err              : 64; /**< [ 63:  0](R/W1C/H) Reads or clears enable for SDP(0..1)_ORE_LINT(0..7)[RING_ERR]. */
+        uint64_t ring_err              : 64; /**< [ 63:  0](R/W1C/H) Reads or clears enable for SDP(0..1)_ORE_LINT(0..3)[RING_ERR]. */
 #endif /* Word 0 - End */
     } cn98xx;
     /* struct cavm_sdpx_ore_lint_ena_w1cx_s cnf95xx; */
@@ -13872,8 +13679,8 @@ static inline uint64_t CAVM_SDPX_ORE_LINT_ENA_W1CX(unsigned long a, unsigned lon
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=3)))
         return 0x86e0c0080a00ll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0x3);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=7)))
-        return 0x86e0c0080a00ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x7);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=3)))
+        return 0x86e0c0080a00ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=3)))
         return 0x86e0c0080a00ll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=3)))
@@ -13910,9 +13717,9 @@ union cavm_sdpx_ore_lint_ena_w1sx
     struct cavm_sdpx_ore_lint_ena_w1sx_cn98xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t ring_err              : 64; /**< [ 63:  0](R/W1S/H) Reads or sets enable for SDP(0..1)_ORE_LINT(0..7)[RING_ERR]. */
+        uint64_t ring_err              : 64; /**< [ 63:  0](R/W1S/H) Reads or sets enable for SDP(0..1)_ORE_LINT(0..3)[RING_ERR]. */
 #else /* Word 0 - Little Endian */
-        uint64_t ring_err              : 64; /**< [ 63:  0](R/W1S/H) Reads or sets enable for SDP(0..1)_ORE_LINT(0..7)[RING_ERR]. */
+        uint64_t ring_err              : 64; /**< [ 63:  0](R/W1S/H) Reads or sets enable for SDP(0..1)_ORE_LINT(0..3)[RING_ERR]. */
 #endif /* Word 0 - End */
     } cn98xx;
     /* struct cavm_sdpx_ore_lint_ena_w1sx_s cnf95xx; */
@@ -13925,8 +13732,8 @@ static inline uint64_t CAVM_SDPX_ORE_LINT_ENA_W1SX(unsigned long a, unsigned lon
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=3)))
         return 0x86e0c0080b00ll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0x3);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=7)))
-        return 0x86e0c0080b00ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x7);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=3)))
+        return 0x86e0c0080b00ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=3)))
         return 0x86e0c0080b00ll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=3)))
@@ -13963,9 +13770,9 @@ union cavm_sdpx_ore_lint_w1sx
     struct cavm_sdpx_ore_lint_w1sx_cn98xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t ring_err              : 64; /**< [ 63:  0](R/W1S/H) Reads or sets SDP(0..1)_ORE_LINT(0..7)[RING_ERR]. */
+        uint64_t ring_err              : 64; /**< [ 63:  0](R/W1S/H) Reads or sets SDP(0..1)_ORE_LINT(0..3)[RING_ERR]. */
 #else /* Word 0 - Little Endian */
-        uint64_t ring_err              : 64; /**< [ 63:  0](R/W1S/H) Reads or sets SDP(0..1)_ORE_LINT(0..7)[RING_ERR]. */
+        uint64_t ring_err              : 64; /**< [ 63:  0](R/W1S/H) Reads or sets SDP(0..1)_ORE_LINT(0..3)[RING_ERR]. */
 #endif /* Word 0 - End */
     } cn98xx;
     /* struct cavm_sdpx_ore_lint_w1sx_s cnf95xx; */
@@ -13978,8 +13785,8 @@ static inline uint64_t CAVM_SDPX_ORE_LINT_W1SX(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=3)))
         return 0x86e0c0080900ll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0x3);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=7)))
-        return 0x86e0c0080900ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x7);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=3)))
+        return 0x86e0c0080900ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=3)))
         return 0x86e0c0080900ll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=3)))
@@ -14046,8 +13853,8 @@ static inline uint64_t CAVM_SDPX_OUT_BP_ENX_W1C(unsigned long a, unsigned long b
         return 0x874000880220ll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=3)))
         return 0x86e0c0080240ll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0x3);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=7)))
-        return 0x86e0c0080240ll + 0x1000000000ll * ((a) & 0x1) + 8ll * ((b) & 0x7);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=3)))
+        return 0x86e0c0080240ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=3)))
         return 0x86e0c0080240ll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=3)))
@@ -14092,9 +13899,9 @@ union cavm_sdpx_out_bp_enx_w1s
     struct cavm_sdpx_out_bp_enx_w1s_cn98xx
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t enb                   : 64; /**< [ 63:  0](R/W1S/H) Reads or sets SDP(0..1)_OUT_BP_EN(0..7)_W1C[ENB]. */
+        uint64_t enb                   : 64; /**< [ 63:  0](R/W1S/H) Reads or sets SDP(0..1)_OUT_BP_EN(0..3)_W1C[ENB]. */
 #else /* Word 0 - Little Endian */
-        uint64_t enb                   : 64; /**< [ 63:  0](R/W1S/H) Reads or sets SDP(0..1)_OUT_BP_EN(0..7)_W1C[ENB]. */
+        uint64_t enb                   : 64; /**< [ 63:  0](R/W1S/H) Reads or sets SDP(0..1)_OUT_BP_EN(0..3)_W1C[ENB]. */
 #endif /* Word 0 - End */
     } cn98xx;
     /* struct cavm_sdpx_out_bp_enx_w1s_cn9 cnf95xx; */
@@ -14109,8 +13916,8 @@ static inline uint64_t CAVM_SDPX_OUT_BP_ENX_W1S(unsigned long a, unsigned long b
         return 0x874000880240ll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0x1);
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=3)))
         return 0x86e0c0080280ll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0x3);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=7)))
-        return 0x86e0c0080280ll + 0x1000000000ll * ((a) & 0x1) + 8ll * ((b) & 0x7);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=3)))
+        return 0x86e0c0080280ll + 0x1000000000ll * ((a) & 0x1) + 0x10ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=3)))
         return 0x86e0c0080280ll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=3)))
@@ -14176,8 +13983,8 @@ static inline uint64_t CAVM_SDPX_OUT_BP_TIMERX(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=255)))
         return 0x86e0c0061000ll + 0x1000000000ll * ((a) & 0x0) + 8ll * ((b) & 0xff);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=511)))
-        return 0x86e0c0061000ll + 0x1000000000ll * ((a) & 0x1) + 8ll * ((b) & 0x1ff);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=255)))
+        return 0x86e0c0061000ll + 0x1000000000ll * ((a) & 0x1) + 8ll * ((b) & 0xff);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=255)))
         return 0x86e0c0061000ll + 0x1000000000ll * ((a) & 0x0) + 8ll * ((b) & 0xff);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=255)))
@@ -14294,8 +14101,8 @@ static inline uint64_t CAVM_SDPX_OUT_DROP_STATEX(unsigned long a, unsigned long 
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=3)))
         return 0x86e0c0060020ll + 0x1000000000ll * ((a) & 0x0) + 8ll * ((b) & 0x3);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=7)))
-        return 0x86e0c0060080ll + 0x1000000000ll * ((a) & 0x1) + 8ll * ((b) & 0x7);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=3)))
+        return 0x86e0c0060020ll + 0x1000000000ll * ((a) & 0x1) + 8ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=3)))
         return 0x86e0c0060020ll + 0x1000000000ll * ((a) & 0x0) + 8ll * ((b) & 0x3);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=3)))
@@ -14560,8 +14367,8 @@ static inline uint64_t CAVM_SDPX_RX_ERR_TYPE(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=255)))
         return 0x86e080010400ll + 0x1000000000ll * ((a) & 0x0) + 0x20000ll * ((b) & 0xff);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=511)))
-        return 0x86e080010400ll + 0x1000000000ll * ((a) & 0x1) + 0x20000ll * ((b) & 0x1ff);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=255)))
+        return 0x86e080010400ll + 0x1000000000ll * ((a) & 0x1) + 0x20000ll * ((b) & 0xff);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=255)))
         return 0x86e080010400ll + 0x1000000000ll * ((a) & 0x0) + 0x20000ll * ((b) & 0xff);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=255)))
@@ -14614,8 +14421,8 @@ static inline uint64_t CAVM_SDPX_RX_IN_BYTE_CNT(unsigned long a, unsigned long b
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=255)))
         return 0x86e080010090ll + 0x1000000000ll * ((a) & 0x0) + 0x20000ll * ((b) & 0xff);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=511)))
-        return 0x86e080010090ll + 0x1000000000ll * ((a) & 0x1) + 0x20000ll * ((b) & 0x1ff);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=255)))
+        return 0x86e080010090ll + 0x1000000000ll * ((a) & 0x1) + 0x20000ll * ((b) & 0xff);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=255)))
         return 0x86e080010090ll + 0x1000000000ll * ((a) & 0x0) + 0x20000ll * ((b) & 0xff);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=255)))
@@ -14800,8 +14607,8 @@ static inline uint64_t CAVM_SDPX_RX_IN_CNTS(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=255)))
         return 0x86e080010050ll + 0x1000000000ll * ((a) & 0x0) + 0x20000ll * ((b) & 0xff);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=511)))
-        return 0x86e080010050ll + 0x1000000000ll * ((a) & 0x1) + 0x20000ll * ((b) & 0x1ff);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=255)))
+        return 0x86e080010050ll + 0x1000000000ll * ((a) & 0x1) + 0x20000ll * ((b) & 0xff);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=255)))
         return 0x86e080010050ll + 0x1000000000ll * ((a) & 0x0) + 0x20000ll * ((b) & 0xff);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=255)))
@@ -14864,8 +14671,8 @@ static inline uint64_t CAVM_SDPX_RX_IN_CNTS_ISM(unsigned long a, unsigned long b
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=255)))
         return 0x86e080010520ll + 0x1000000000ll * ((a) & 0x0) + 0x20000ll * ((b) & 0xff);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=511)))
-        return 0x86e080010520ll + 0x1000000000ll * ((a) & 0x1) + 0x20000ll * ((b) & 0x1ff);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=255)))
+        return 0x86e080010520ll + 0x1000000000ll * ((a) & 0x1) + 0x20000ll * ((b) & 0xff);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=255)))
         return 0x86e080010520ll + 0x1000000000ll * ((a) & 0x0) + 0x20000ll * ((b) & 0xff);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=255)))
@@ -14979,8 +14786,8 @@ static inline uint64_t CAVM_SDPX_RX_IN_CONTROL(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=255)))
         return 0x86e080010000ll + 0x1000000000ll * ((a) & 0x0) + 0x20000ll * ((b) & 0xff);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=511)))
-        return 0x86e080010000ll + 0x1000000000ll * ((a) & 0x1) + 0x20000ll * ((b) & 0x1ff);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=255)))
+        return 0x86e080010000ll + 0x1000000000ll * ((a) & 0x1) + 0x20000ll * ((b) & 0xff);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=255)))
         return 0x86e080010000ll + 0x1000000000ll * ((a) & 0x0) + 0x20000ll * ((b) & 0xff);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=255)))
@@ -15033,8 +14840,8 @@ static inline uint64_t CAVM_SDPX_RX_IN_ENABLE(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=255)))
         return 0x86e080010010ll + 0x1000000000ll * ((a) & 0x0) + 0x20000ll * ((b) & 0xff);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=511)))
-        return 0x86e080010010ll + 0x1000000000ll * ((a) & 0x1) + 0x20000ll * ((b) & 0x1ff);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=255)))
+        return 0x86e080010010ll + 0x1000000000ll * ((a) & 0x1) + 0x20000ll * ((b) & 0xff);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=255)))
         return 0x86e080010010ll + 0x1000000000ll * ((a) & 0x0) + 0x20000ll * ((b) & 0xff);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=255)))
@@ -15088,8 +14895,8 @@ static inline uint64_t CAVM_SDPX_RX_IN_INSTR_BADDR(unsigned long a, unsigned lon
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=255)))
         return 0x86e080010020ll + 0x1000000000ll * ((a) & 0x0) + 0x20000ll * ((b) & 0xff);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=511)))
-        return 0x86e080010020ll + 0x1000000000ll * ((a) & 0x1) + 0x20000ll * ((b) & 0x1ff);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=255)))
+        return 0x86e080010020ll + 0x1000000000ll * ((a) & 0x1) + 0x20000ll * ((b) & 0xff);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=255)))
         return 0x86e080010020ll + 0x1000000000ll * ((a) & 0x0) + 0x20000ll * ((b) & 0xff);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=255)))
@@ -15150,8 +14957,8 @@ static inline uint64_t CAVM_SDPX_RX_IN_INSTR_DBELL(unsigned long a, unsigned lon
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=255)))
         return 0x86e080010040ll + 0x1000000000ll * ((a) & 0x0) + 0x20000ll * ((b) & 0xff);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=511)))
-        return 0x86e080010040ll + 0x1000000000ll * ((a) & 0x1) + 0x20000ll * ((b) & 0x1ff);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=255)))
+        return 0x86e080010040ll + 0x1000000000ll * ((a) & 0x1) + 0x20000ll * ((b) & 0xff);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=255)))
         return 0x86e080010040ll + 0x1000000000ll * ((a) & 0x0) + 0x20000ll * ((b) & 0xff);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=255)))
@@ -15205,8 +15012,8 @@ static inline uint64_t CAVM_SDPX_RX_IN_INSTR_RSIZE(unsigned long a, unsigned lon
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=255)))
         return 0x86e080010030ll + 0x1000000000ll * ((a) & 0x0) + 0x20000ll * ((b) & 0xff);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=511)))
-        return 0x86e080010030ll + 0x1000000000ll * ((a) & 0x1) + 0x20000ll * ((b) & 0x1ff);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=255)))
+        return 0x86e080010030ll + 0x1000000000ll * ((a) & 0x1) + 0x20000ll * ((b) & 0xff);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=255)))
         return 0x86e080010030ll + 0x1000000000ll * ((a) & 0x0) + 0x20000ll * ((b) & 0xff);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=255)))
@@ -15293,8 +15100,8 @@ static inline uint64_t CAVM_SDPX_RX_IN_INT_LEVELS(unsigned long a, unsigned long
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=255)))
         return 0x86e080010060ll + 0x1000000000ll * ((a) & 0x0) + 0x20000ll * ((b) & 0xff);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=511)))
-        return 0x86e080010060ll + 0x1000000000ll * ((a) & 0x1) + 0x20000ll * ((b) & 0x1ff);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=255)))
+        return 0x86e080010060ll + 0x1000000000ll * ((a) & 0x1) + 0x20000ll * ((b) & 0xff);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=255)))
         return 0x86e080010060ll + 0x1000000000ll * ((a) & 0x0) + 0x20000ll * ((b) & 0xff);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=255)))
@@ -15348,8 +15155,8 @@ static inline uint64_t CAVM_SDPX_RX_IN_INT_MDRT_CTL0(unsigned long a, unsigned l
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=255)))
         return 0x86e080010280ll + 0x1000000000ll * ((a) & 0x0) + 0x20000ll * ((b) & 0xff);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=511)))
-        return 0x86e080010280ll + 0x1000000000ll * ((a) & 0x1) + 0x20000ll * ((b) & 0x1ff);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=255)))
+        return 0x86e080010280ll + 0x1000000000ll * ((a) & 0x1) + 0x20000ll * ((b) & 0xff);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=255)))
         return 0x86e080010280ll + 0x1000000000ll * ((a) & 0x0) + 0x20000ll * ((b) & 0xff);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=255)))
@@ -15450,8 +15257,8 @@ static inline uint64_t CAVM_SDPX_RX_IN_INT_MDRT_CTL1(unsigned long a, unsigned l
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=255)))
         return 0x86e0800102a0ll + 0x1000000000ll * ((a) & 0x0) + 0x20000ll * ((b) & 0xff);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=511)))
-        return 0x86e0800102a0ll + 0x1000000000ll * ((a) & 0x1) + 0x20000ll * ((b) & 0x1ff);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=255)))
+        return 0x86e0800102a0ll + 0x1000000000ll * ((a) & 0x1) + 0x20000ll * ((b) & 0xff);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=255)))
         return 0x86e0800102a0ll + 0x1000000000ll * ((a) & 0x0) + 0x20000ll * ((b) & 0xff);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=255)))
@@ -15501,8 +15308,8 @@ static inline uint64_t CAVM_SDPX_RX_IN_INT_MDRT_DBG(unsigned long a, unsigned lo
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=255)))
         return 0x86e0800102c0ll + 0x1000000000ll * ((a) & 0x0) + 0x20000ll * ((b) & 0xff);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=511)))
-        return 0x86e0800102c0ll + 0x1000000000ll * ((a) & 0x1) + 0x20000ll * ((b) & 0x1ff);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=255)))
+        return 0x86e0800102c0ll + 0x1000000000ll * ((a) & 0x1) + 0x20000ll * ((b) & 0xff);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=255)))
         return 0x86e0800102c0ll + 0x1000000000ll * ((a) & 0x0) + 0x20000ll * ((b) & 0xff);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=255)))
@@ -15557,8 +15364,8 @@ static inline uint64_t CAVM_SDPX_RX_IN_PKT_CNT(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=255)))
         return 0x86e080010080ll + 0x1000000000ll * ((a) & 0x0) + 0x20000ll * ((b) & 0xff);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=511)))
-        return 0x86e080010080ll + 0x1000000000ll * ((a) & 0x1) + 0x20000ll * ((b) & 0x1ff);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=255)))
+        return 0x86e080010080ll + 0x1000000000ll * ((a) & 0x1) + 0x20000ll * ((b) & 0xff);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=255)))
         return 0x86e080010080ll + 0x1000000000ll * ((a) & 0x0) + 0x20000ll * ((b) & 0xff);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=255)))
@@ -15621,8 +15428,8 @@ static inline uint64_t CAVM_SDPX_RX_MBOX_ISM(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=255)))
         return 0x86e080010500ll + 0x1000000000ll * ((a) & 0x0) + 0x20000ll * ((b) & 0xff);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=511)))
-        return 0x86e080010500ll + 0x1000000000ll * ((a) & 0x1) + 0x20000ll * ((b) & 0x1ff);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=255)))
+        return 0x86e080010500ll + 0x1000000000ll * ((a) & 0x1) + 0x20000ll * ((b) & 0xff);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=255)))
         return 0x86e080010500ll + 0x1000000000ll * ((a) & 0x0) + 0x20000ll * ((b) & 0xff);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=255)))
@@ -15673,8 +15480,8 @@ static inline uint64_t CAVM_SDPX_RX_MBOX_PF_VF_DATA(unsigned long a, unsigned lo
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=255)))
         return 0x86e080010210ll + 0x1000000000ll * ((a) & 0x0) + 0x20000ll * ((b) & 0xff);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=511)))
-        return 0x86e080010210ll + 0x1000000000ll * ((a) & 0x1) + 0x20000ll * ((b) & 0x1ff);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=255)))
+        return 0x86e080010210ll + 0x1000000000ll * ((a) & 0x1) + 0x20000ll * ((b) & 0xff);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=255)))
         return 0x86e080010210ll + 0x1000000000ll * ((a) & 0x0) + 0x20000ll * ((b) & 0xff);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=255)))
@@ -15731,8 +15538,8 @@ static inline uint64_t CAVM_SDPX_RX_MBOX_PF_VF_INT(unsigned long a, unsigned lon
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=255)))
         return 0x86e080010220ll + 0x1000000000ll * ((a) & 0x0) + 0x20000ll * ((b) & 0xff);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=511)))
-        return 0x86e080010220ll + 0x1000000000ll * ((a) & 0x1) + 0x20000ll * ((b) & 0x1ff);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=255)))
+        return 0x86e080010220ll + 0x1000000000ll * ((a) & 0x1) + 0x20000ll * ((b) & 0xff);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=255)))
         return 0x86e080010220ll + 0x1000000000ll * ((a) & 0x0) + 0x20000ll * ((b) & 0xff);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=255)))
@@ -15783,8 +15590,8 @@ static inline uint64_t CAVM_SDPX_RX_MBOX_VF_PF_DATA(unsigned long a, unsigned lo
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=255)))
         return 0x86e080010230ll + 0x1000000000ll * ((a) & 0x0) + 0x20000ll * ((b) & 0xff);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=511)))
-        return 0x86e080010230ll + 0x1000000000ll * ((a) & 0x1) + 0x20000ll * ((b) & 0x1ff);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=255)))
+        return 0x86e080010230ll + 0x1000000000ll * ((a) & 0x1) + 0x20000ll * ((b) & 0xff);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=255)))
         return 0x86e080010230ll + 0x1000000000ll * ((a) & 0x0) + 0x20000ll * ((b) & 0xff);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=255)))
@@ -15837,8 +15644,8 @@ static inline uint64_t CAVM_SDPX_RX_OUT_BYTE_CNT(unsigned long a, unsigned long 
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=255)))
         return 0x86e080010190ll + 0x1000000000ll * ((a) & 0x0) + 0x20000ll * ((b) & 0xff);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=511)))
-        return 0x86e080010190ll + 0x1000000000ll * ((a) & 0x1) + 0x20000ll * ((b) & 0x1ff);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=255)))
+        return 0x86e080010190ll + 0x1000000000ll * ((a) & 0x1) + 0x20000ll * ((b) & 0xff);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=255)))
         return 0x86e080010190ll + 0x1000000000ll * ((a) & 0x0) + 0x20000ll * ((b) & 0xff);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=255)))
@@ -16029,8 +15836,8 @@ static inline uint64_t CAVM_SDPX_RX_OUT_CNTS(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=255)))
         return 0x86e080010100ll + 0x1000000000ll * ((a) & 0x0) + 0x20000ll * ((b) & 0xff);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=511)))
-        return 0x86e080010100ll + 0x1000000000ll * ((a) & 0x1) + 0x20000ll * ((b) & 0x1ff);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=255)))
+        return 0x86e080010100ll + 0x1000000000ll * ((a) & 0x1) + 0x20000ll * ((b) & 0xff);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=255)))
         return 0x86e080010100ll + 0x1000000000ll * ((a) & 0x0) + 0x20000ll * ((b) & 0xff);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=255)))
@@ -16093,8 +15900,8 @@ static inline uint64_t CAVM_SDPX_RX_OUT_CNTS_ISM(unsigned long a, unsigned long 
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=255)))
         return 0x86e080010510ll + 0x1000000000ll * ((a) & 0x0) + 0x20000ll * ((b) & 0xff);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=511)))
-        return 0x86e080010510ll + 0x1000000000ll * ((a) & 0x1) + 0x20000ll * ((b) & 0x1ff);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=255)))
+        return 0x86e080010510ll + 0x1000000000ll * ((a) & 0x1) + 0x20000ll * ((b) & 0xff);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=255)))
         return 0x86e080010510ll + 0x1000000000ll * ((a) & 0x0) + 0x20000ll * ((b) & 0xff);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=255)))
@@ -16363,8 +16170,8 @@ static inline uint64_t CAVM_SDPX_RX_OUT_CONTROL(unsigned long a, unsigned long b
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=255)))
         return 0x86e080010150ll + 0x1000000000ll * ((a) & 0x0) + 0x20000ll * ((b) & 0xff);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=511)))
-        return 0x86e080010150ll + 0x1000000000ll * ((a) & 0x1) + 0x20000ll * ((b) & 0x1ff);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=255)))
+        return 0x86e080010150ll + 0x1000000000ll * ((a) & 0x1) + 0x20000ll * ((b) & 0xff);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=255)))
         return 0x86e080010150ll + 0x1000000000ll * ((a) & 0x0) + 0x20000ll * ((b) & 0xff);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=255)))
@@ -16417,8 +16224,8 @@ static inline uint64_t CAVM_SDPX_RX_OUT_ENABLE(unsigned long a, unsigned long b)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=255)))
         return 0x86e080010160ll + 0x1000000000ll * ((a) & 0x0) + 0x20000ll * ((b) & 0xff);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=511)))
-        return 0x86e080010160ll + 0x1000000000ll * ((a) & 0x1) + 0x20000ll * ((b) & 0x1ff);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=255)))
+        return 0x86e080010160ll + 0x1000000000ll * ((a) & 0x1) + 0x20000ll * ((b) & 0xff);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=255)))
         return 0x86e080010160ll + 0x1000000000ll * ((a) & 0x0) + 0x20000ll * ((b) & 0xff);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=255)))
@@ -16505,8 +16312,8 @@ static inline uint64_t CAVM_SDPX_RX_OUT_INT_LEVELS(unsigned long a, unsigned lon
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=255)))
         return 0x86e080010110ll + 0x1000000000ll * ((a) & 0x0) + 0x20000ll * ((b) & 0xff);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=511)))
-        return 0x86e080010110ll + 0x1000000000ll * ((a) & 0x1) + 0x20000ll * ((b) & 0x1ff);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=255)))
+        return 0x86e080010110ll + 0x1000000000ll * ((a) & 0x1) + 0x20000ll * ((b) & 0xff);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=255)))
         return 0x86e080010110ll + 0x1000000000ll * ((a) & 0x0) + 0x20000ll * ((b) & 0xff);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=255)))
@@ -16552,8 +16359,8 @@ static inline uint64_t CAVM_SDPX_RX_OUT_INT_MDRT_CTL0(unsigned long a, unsigned 
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=255)))
         return 0x86e080010380ll + 0x1000000000ll * ((a) & 0x0) + 0x20000ll * ((b) & 0xff);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=511)))
-        return 0x86e080010380ll + 0x1000000000ll * ((a) & 0x1) + 0x20000ll * ((b) & 0x1ff);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=255)))
+        return 0x86e080010380ll + 0x1000000000ll * ((a) & 0x1) + 0x20000ll * ((b) & 0xff);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=255)))
         return 0x86e080010380ll + 0x1000000000ll * ((a) & 0x0) + 0x20000ll * ((b) & 0xff);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=255)))
@@ -16631,8 +16438,8 @@ static inline uint64_t CAVM_SDPX_RX_OUT_INT_MDRT_CTL1(unsigned long a, unsigned 
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=255)))
         return 0x86e0800103a0ll + 0x1000000000ll * ((a) & 0x0) + 0x20000ll * ((b) & 0xff);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=511)))
-        return 0x86e0800103a0ll + 0x1000000000ll * ((a) & 0x1) + 0x20000ll * ((b) & 0x1ff);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=255)))
+        return 0x86e0800103a0ll + 0x1000000000ll * ((a) & 0x1) + 0x20000ll * ((b) & 0xff);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=255)))
         return 0x86e0800103a0ll + 0x1000000000ll * ((a) & 0x0) + 0x20000ll * ((b) & 0xff);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=255)))
@@ -16674,8 +16481,8 @@ static inline uint64_t CAVM_SDPX_RX_OUT_INT_MDRT_DBG(unsigned long a, unsigned l
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=255)))
         return 0x86e0800103c0ll + 0x1000000000ll * ((a) & 0x0) + 0x20000ll * ((b) & 0xff);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=511)))
-        return 0x86e0800103c0ll + 0x1000000000ll * ((a) & 0x1) + 0x20000ll * ((b) & 0x1ff);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=255)))
+        return 0x86e0800103c0ll + 0x1000000000ll * ((a) & 0x1) + 0x20000ll * ((b) & 0xff);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=255)))
         return 0x86e0800103c0ll + 0x1000000000ll * ((a) & 0x0) + 0x20000ll * ((b) & 0xff);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=255)))
@@ -16730,8 +16537,8 @@ static inline uint64_t CAVM_SDPX_RX_OUT_PKT_CNT(unsigned long a, unsigned long b
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=255)))
         return 0x86e080010180ll + 0x1000000000ll * ((a) & 0x0) + 0x20000ll * ((b) & 0xff);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=511)))
-        return 0x86e080010180ll + 0x1000000000ll * ((a) & 0x1) + 0x20000ll * ((b) & 0x1ff);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=255)))
+        return 0x86e080010180ll + 0x1000000000ll * ((a) & 0x1) + 0x20000ll * ((b) & 0xff);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=255)))
         return 0x86e080010180ll + 0x1000000000ll * ((a) & 0x0) + 0x20000ll * ((b) & 0xff);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=255)))
@@ -16795,8 +16602,8 @@ static inline uint64_t CAVM_SDPX_RX_OUT_SLIST_BADDR(unsigned long a, unsigned lo
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=255)))
         return 0x86e080010120ll + 0x1000000000ll * ((a) & 0x0) + 0x20000ll * ((b) & 0xff);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=511)))
-        return 0x86e080010120ll + 0x1000000000ll * ((a) & 0x1) + 0x20000ll * ((b) & 0x1ff);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=255)))
+        return 0x86e080010120ll + 0x1000000000ll * ((a) & 0x1) + 0x20000ll * ((b) & 0xff);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=255)))
         return 0x86e080010120ll + 0x1000000000ll * ((a) & 0x0) + 0x20000ll * ((b) & 0xff);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=255)))
@@ -16859,8 +16666,8 @@ static inline uint64_t CAVM_SDPX_RX_OUT_SLIST_DBELL(unsigned long a, unsigned lo
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=255)))
         return 0x86e080010140ll + 0x1000000000ll * ((a) & 0x0) + 0x20000ll * ((b) & 0xff);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=511)))
-        return 0x86e080010140ll + 0x1000000000ll * ((a) & 0x1) + 0x20000ll * ((b) & 0x1ff);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=255)))
+        return 0x86e080010140ll + 0x1000000000ll * ((a) & 0x1) + 0x20000ll * ((b) & 0xff);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=255)))
         return 0x86e080010140ll + 0x1000000000ll * ((a) & 0x0) + 0x20000ll * ((b) & 0xff);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=255)))
@@ -16918,8 +16725,8 @@ static inline uint64_t CAVM_SDPX_RX_OUT_SLIST_RSIZE(unsigned long a, unsigned lo
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && ((a==0) && (b<=255)))
         return 0x86e080010130ll + 0x1000000000ll * ((a) & 0x0) + 0x20000ll * ((b) & 0xff);
-    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=511)))
-        return 0x86e080010130ll + 0x1000000000ll * ((a) & 0x1) + 0x20000ll * ((b) & 0x1ff);
+    if (cavm_is_model(OCTEONTX_CN98XX) && ((a<=1) && (b<=255)))
+        return 0x86e080010130ll + 0x1000000000ll * ((a) & 0x1) + 0x20000ll * ((b) & 0xff);
     if (cavm_is_model(OCTEONTX_CNF95XX) && ((a==0) && (b<=255)))
         return 0x86e080010130ll + 0x1000000000ll * ((a) & 0x0) + 0x20000ll * ((b) & 0xff);
     if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=255)))

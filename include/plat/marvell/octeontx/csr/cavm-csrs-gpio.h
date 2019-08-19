@@ -594,7 +594,7 @@ static inline uint64_t CAVM_GPIO_BIT_CFGX(unsigned long a)
         return 0x803000000400ll + 8ll * ((a) & 0x7f);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=63))
         return 0x803000000400ll + 8ll * ((a) & 0x3f);
-    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=95))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=83))
         return 0x803000000400ll + 8ll * ((a) & 0x7f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=63))
         return 0x803000000400ll + 8ll * ((a) & 0x3f);
@@ -654,7 +654,7 @@ static inline uint64_t CAVM_GPIO_BIT_PERMITX(unsigned long a)
 {
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=63))
         return 0x803000002000ll + 8ll * ((a) & 0x3f);
-    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=95))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=83))
         return 0x803000002000ll + 8ll * ((a) & 0x7f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=63))
         return 0x803000002000ll + 8ll * ((a) & 0x3f);
@@ -1407,7 +1407,7 @@ static inline uint64_t CAVM_GPIO_INTRX(unsigned long a)
         return 0x803000000800ll + 8ll * ((a) & 0x7f);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=63))
         return 0x803000000800ll + 8ll * ((a) & 0x3f);
-    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=95))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=83))
         return 0x803000000800ll + 8ll * ((a) & 0x7f);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=63))
         return 0x803000000800ll + 8ll * ((a) & 0x3f);
@@ -2160,7 +2160,7 @@ union cavm_gpio_misc_supply
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t reserved_24_63        : 40;
-        uint64_t vdet_gpio72           : 2;  /**< [ 23: 22](RO/H) Sensed I/O power supply setting for GPIO72..95.
+        uint64_t vdet_gpio66           : 2;  /**< [ 23: 22](RO/H) Sensed I/O power supply setting for GPIO66..83.
                                                                  0x0 = 3.3 V.
                                                                  0x1 = 2.5 V.
                                                                  0x2/0x3 = 1.8 V.
@@ -2276,7 +2276,7 @@ union cavm_gpio_misc_supply
                                                                  0x1 = 2.5 V.
                                                                  0x2/0x3 = 1.8 V.
                                                                  _ All other values reserved. */
-        uint64_t vdet_gpio72           : 2;  /**< [ 23: 22](RO/H) Sensed I/O power supply setting for GPIO72..95.
+        uint64_t vdet_gpio66           : 2;  /**< [ 23: 22](RO/H) Sensed I/O power supply setting for GPIO66..83.
                                                                  0x0 = 3.3 V.
                                                                  0x1 = 2.5 V.
                                                                  0x2/0x3 = 1.8 V.
@@ -2636,7 +2636,7 @@ static inline uint64_t CAVM_GPIO_MSIX_VECX_ADDR(unsigned long a)
         return 0x803000f00000ll + 0x10ll * ((a) & 0xff);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=181))
         return 0x803000f00000ll + 0x10ll * ((a) & 0xff);
-    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=227))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=203))
         return 0x803000f00000ll + 0x10ll * ((a) & 0xff);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=133))
         return 0x803000f00000ll + 0x10ll * ((a) & 0xff);
@@ -2702,7 +2702,7 @@ static inline uint64_t CAVM_GPIO_MSIX_VECX_CTL(unsigned long a)
         return 0x803000f00008ll + 0x10ll * ((a) & 0xff);
     if (cavm_is_model(OCTEONTX_CN96XX) && (a<=181))
         return 0x803000f00008ll + 0x10ll * ((a) & 0xff);
-    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=227))
+    if (cavm_is_model(OCTEONTX_CN98XX) && (a<=203))
         return 0x803000f00008ll + 0x10ll * ((a) & 0xff);
     if (cavm_is_model(OCTEONTX_CNF95XX) && (a<=133))
         return 0x803000f00008ll + 0x10ll * ((a) & 0xff);
@@ -2939,7 +2939,7 @@ union cavm_gpio_pkg_ver
                                                                  0x3 = SKU package D = 45 x 45mm package, up to 2 DDR channels, for CN95xxE.
 
                                                                  If FUS_FUSE_NUM_E::CHIP_ID() fuses indicate pass C or later:
-                                                                 0x0 = SKU package I = 50 x 50mm package, up to 3 DDR channels,
+                                                                 0x4 = SKU package M = 50 x 50mm package, up to 3 DDR channels,
                                                                                        backwards A0 board-compatible.
                                                                  0x7 = SKU package P = 50 x 50mm package, up to 3 DDR channels.
 
@@ -2960,7 +2960,7 @@ union cavm_gpio_pkg_ver
                                                                  0x3 = SKU package D = 45 x 45mm package, up to 2 DDR channels, for CN95xxE.
 
                                                                  If FUS_FUSE_NUM_E::CHIP_ID() fuses indicate pass C or later:
-                                                                 0x0 = SKU package I = 50 x 50mm package, up to 3 DDR channels,
+                                                                 0x4 = SKU package M = 50 x 50mm package, up to 3 DDR channels,
                                                                                        backwards A0 board-compatible.
                                                                  0x7 = SKU package P = 50 x 50mm package, up to 3 DDR channels.
 
@@ -3352,6 +3352,19 @@ union cavm_gpio_strap1
         uint64_t reserved_32_63        : 32;
 #endif /* Word 0 - End */
     } cn9;
+    /* struct cavm_gpio_strap1_cn9 cn96xx; */
+    struct cavm_gpio_strap1_cn98xx
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_20_63        : 44;
+        uint64_t strap                 : 20; /**< [ 19:  0](RO/H) GPIO strap data of GPIO pins 64 and above. Unimplemented pins bits read as 0. */
+#else /* Word 0 - Little Endian */
+        uint64_t strap                 : 20; /**< [ 19:  0](RO/H) GPIO strap data of GPIO pins 64 and above. Unimplemented pins bits read as 0. */
+        uint64_t reserved_20_63        : 44;
+#endif /* Word 0 - End */
+    } cn98xx;
+    /* struct cavm_gpio_strap1_cn9 cnf95xx; */
+    /* struct cavm_gpio_strap1_cn9 loki; */
 };
 typedef union cavm_gpio_strap1 cavm_gpio_strap1_t;
 

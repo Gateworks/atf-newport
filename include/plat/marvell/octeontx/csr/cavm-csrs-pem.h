@@ -2375,9 +2375,80 @@ union cavm_pemx_cfg
         uint64_t reserved_9_63         : 55;
 #endif /* Word 0 - End */
     } cn96xxp3;
-    /* struct cavm_pemx_cfg_cn9 cn98xx; */
+    /* struct cavm_pemx_cfg_cn96xxp3 cn98xx; */
     /* struct cavm_pemx_cfg_cn9 cnf95xx; */
-    /* struct cavm_pemx_cfg_cn9 loki; */
+    struct cavm_pemx_cfg_loki
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_9_63         : 55;
+        uint64_t auto_dp_clr           : 1;  /**< [  8:  8](R/W/H) Auto disable-port clearing of PEM()_DIS_PORT[DIS_PORT] when link LTSSM
+                                                                 state reaches L0 after a MAC reset.
+
+                                                                 0 = Do not auto-clear PEM()_DIS_PORT[DIS_PORT], which will require software to
+                                                                 clear PEM()_DIS_PORT[DIS_PORT] after the link is reset.  Typical setting when in
+                                                                 EP mode (PEM()_CFG[HOSTMD] = 0).
+
+                                                                 1 = Auto-clear PEM()_DIS_PORT[DIS_PORT], which will typically allow outbound
+                                                                 traffic to resume after reset is complete. Typical setting when in RC mode
+                                                                 (PEM()_CFG[HOSTMD] = 1).
+
+                                                                 Resets to 0 when strapped as an endpoint (GPIO_STRAP_PIN_E::PCIEn_EP_MODE is
+                                                                 strapped high), otherwise 1. */
+        uint64_t pipe_grp_ptr          : 3;  /**< [  7:  5](R/W) Configures the PEM to point to the RX Pipe quad containing
+                                                                 Lane 0.
+                                                                 0x0 = grp0 (lane 0).
+                                                                 0x1 - 0x7 = Reserved. */
+        uint64_t pipe                  : 2;  /**< [  4:  3](R/W) Configures the PEM pipe sources.
+                                                                 0x0 = Pipe 0.
+                                                                 0x1 - 0x3 = Reserved. */
+        uint64_t lanes                 : 2;  /**< [  2:  1](R/W/H) Ties off RX Pipe for unused lanes.
+                                                                 0x0 = Reserved.
+                                                                 0x1 = 4 lanes.
+                                                                 0x2 = Reserved.
+                                                                 0x3 = Reserved.
+
+                                                                 PCIERC_PORT_CTL[LME]/PCIEEP_PORT_CTL[LME] is required to be
+                                                                 set to a value which is greater then or equal to [LANES]. */
+        uint64_t hostmd                : 1;  /**< [  0:  0](R/W/H) Host mode.
+                                                                 0 = PEM is configured to be an end point (EP mode).
+                                                                 1 = PEM is configured to be a root complex (RC mode).
+                                                                 The reset value for this bit is controlled by a strapping pin. */
+#else /* Word 0 - Little Endian */
+        uint64_t hostmd                : 1;  /**< [  0:  0](R/W/H) Host mode.
+                                                                 0 = PEM is configured to be an end point (EP mode).
+                                                                 1 = PEM is configured to be a root complex (RC mode).
+                                                                 The reset value for this bit is controlled by a strapping pin. */
+        uint64_t lanes                 : 2;  /**< [  2:  1](R/W/H) Ties off RX Pipe for unused lanes.
+                                                                 0x0 = Reserved.
+                                                                 0x1 = 4 lanes.
+                                                                 0x2 = Reserved.
+                                                                 0x3 = Reserved.
+
+                                                                 PCIERC_PORT_CTL[LME]/PCIEEP_PORT_CTL[LME] is required to be
+                                                                 set to a value which is greater then or equal to [LANES]. */
+        uint64_t pipe                  : 2;  /**< [  4:  3](R/W) Configures the PEM pipe sources.
+                                                                 0x0 = Pipe 0.
+                                                                 0x1 - 0x3 = Reserved. */
+        uint64_t pipe_grp_ptr          : 3;  /**< [  7:  5](R/W) Configures the PEM to point to the RX Pipe quad containing
+                                                                 Lane 0.
+                                                                 0x0 = grp0 (lane 0).
+                                                                 0x1 - 0x7 = Reserved. */
+        uint64_t auto_dp_clr           : 1;  /**< [  8:  8](R/W/H) Auto disable-port clearing of PEM()_DIS_PORT[DIS_PORT] when link LTSSM
+                                                                 state reaches L0 after a MAC reset.
+
+                                                                 0 = Do not auto-clear PEM()_DIS_PORT[DIS_PORT], which will require software to
+                                                                 clear PEM()_DIS_PORT[DIS_PORT] after the link is reset.  Typical setting when in
+                                                                 EP mode (PEM()_CFG[HOSTMD] = 0).
+
+                                                                 1 = Auto-clear PEM()_DIS_PORT[DIS_PORT], which will typically allow outbound
+                                                                 traffic to resume after reset is complete. Typical setting when in RC mode
+                                                                 (PEM()_CFG[HOSTMD] = 1).
+
+                                                                 Resets to 0 when strapped as an endpoint (GPIO_STRAP_PIN_E::PCIEn_EP_MODE is
+                                                                 strapped high), otherwise 1. */
+        uint64_t reserved_9_63         : 55;
+#endif /* Word 0 - End */
+    } loki;
 };
 typedef union cavm_pemx_cfg cavm_pemx_cfg_t;
 
@@ -3044,6 +3115,91 @@ union cavm_pemx_clk_en
         uint64_t reserved_5_63         : 59;
 #endif /* Word 0 - End */
     } cn9;
+    /* struct cavm_pemx_clk_en_cn9 cn96xxp1; */
+    struct cavm_pemx_clk_en_cn96xxp3
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_5_63         : 59;
+        uint64_t pem_mdh_dis           : 1;  /**< [  4:  4](R/W) When set, the memory and diagnostic hubs inside PEM are disabled and
+                                                                 will not respond commands from the MDC. If this PEM is not in use, this
+                                                                 bit should be set to save power. */
+        uint64_t pemc_macclk_force     : 1;  /**< [  3:  3](R/W) Force MAC clock. For diagnostic use only.
+                                                                 0 = Aux_clk & radm_clk can be gated by the PEM core MAC.
+                                                                 1 = Aux_clk & radm_clk are forced on at all times to the PEM core MAC. */
+        uint64_t pceclk_gate           : 1;  /**< [  2:  2](R/W) Pipe clock gate.
+                                                                 0 = PCE_CLK (pipe clock) is enabled in PEM core.
+                                                                 1 = PCE_CLK (pipe clock) is gated off in PEM core.
+
+                                                                 It is illegal to gate off PCE_CLK in a already active PEM. */
+        uint64_t pemc_csclk_gate       : 1;  /**< [  1:  1](R/W) Conditional SCLK gate.
+                                                                 0 = SCLK is enabled in PEM core.
+                                                                 1 = SCLK is gated off in PEM core.
+
+                                                                 It is illegal to gate off SCLK in a already active PEM. */
+        uint64_t pemm_csclk_force      : 1;  /**< [  0:  0](R/W) Conditional SCLK force. For diagnostic use only.
+                                                                 0 = CSCLK gating in PEM main is controlled by hardware.
+                                                                 1 = CSCLK is forced on at all times in PEM main. */
+#else /* Word 0 - Little Endian */
+        uint64_t pemm_csclk_force      : 1;  /**< [  0:  0](R/W) Conditional SCLK force. For diagnostic use only.
+                                                                 0 = CSCLK gating in PEM main is controlled by hardware.
+                                                                 1 = CSCLK is forced on at all times in PEM main. */
+        uint64_t pemc_csclk_gate       : 1;  /**< [  1:  1](R/W) Conditional SCLK gate.
+                                                                 0 = SCLK is enabled in PEM core.
+                                                                 1 = SCLK is gated off in PEM core.
+
+                                                                 It is illegal to gate off SCLK in a already active PEM. */
+        uint64_t pceclk_gate           : 1;  /**< [  2:  2](R/W) Pipe clock gate.
+                                                                 0 = PCE_CLK (pipe clock) is enabled in PEM core.
+                                                                 1 = PCE_CLK (pipe clock) is gated off in PEM core.
+
+                                                                 It is illegal to gate off PCE_CLK in a already active PEM. */
+        uint64_t pemc_macclk_force     : 1;  /**< [  3:  3](R/W) Force MAC clock. For diagnostic use only.
+                                                                 0 = Aux_clk & radm_clk can be gated by the PEM core MAC.
+                                                                 1 = Aux_clk & radm_clk are forced on at all times to the PEM core MAC. */
+        uint64_t pem_mdh_dis           : 1;  /**< [  4:  4](R/W) When set, the memory and diagnostic hubs inside PEM are disabled and
+                                                                 will not respond commands from the MDC. If this PEM is not in use, this
+                                                                 bit should be set to save power. */
+        uint64_t reserved_5_63         : 59;
+#endif /* Word 0 - End */
+    } cn96xxp3;
+    /* struct cavm_pemx_clk_en_cn96xxp3 cn98xx; */
+    /* struct cavm_pemx_clk_en_cn9 cnf95xx; */
+    struct cavm_pemx_clk_en_loki
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_5_63         : 59;
+        uint64_t pem_mdh_dis           : 1;  /**< [  4:  4](R/W) When set, the memory and diagnostic hubs inside PEM are disabled and
+                                                                 will not respond commands from the MDC. If this PEM is not in use, this
+                                                                 bit should be set to save power. */
+        uint64_t pemc_macclk_force     : 1;  /**< [  3:  3](R/W) Force MAC clock. For diagnostic use only.
+                                                                 0 = Aux_clk & radm_clk can be gated by the PEM core MAC.
+                                                                 1 = Aux_clk & radm_clk are forced on at all times to the PEM core MAC. */
+        uint64_t pceclk_gate           : 1;  /**< [  2:  2](R/W) When set, PCE_CLK is gated off in PEM core.
+                                                                 When clear, PCE_CLK is enabled in PEM core. */
+        uint64_t pemc_csclk_gate       : 1;  /**< [  1:  1](R/W) Conditional SCLK gate.
+                                                                 0 = SCLK is enabled in PEM core.
+                                                                 1 = SCLK is gated off in PEM core. */
+        uint64_t pemm_csclk_force      : 1;  /**< [  0:  0](R/W) Conditional SCLK force. For diagnostic use only.
+                                                                 0 = CSCLK gating in PEM main is controlled by hardware.
+                                                                 1 = CSCLK is forced on at all times in PEM main. */
+#else /* Word 0 - Little Endian */
+        uint64_t pemm_csclk_force      : 1;  /**< [  0:  0](R/W) Conditional SCLK force. For diagnostic use only.
+                                                                 0 = CSCLK gating in PEM main is controlled by hardware.
+                                                                 1 = CSCLK is forced on at all times in PEM main. */
+        uint64_t pemc_csclk_gate       : 1;  /**< [  1:  1](R/W) Conditional SCLK gate.
+                                                                 0 = SCLK is enabled in PEM core.
+                                                                 1 = SCLK is gated off in PEM core. */
+        uint64_t pceclk_gate           : 1;  /**< [  2:  2](R/W) When set, PCE_CLK is gated off in PEM core.
+                                                                 When clear, PCE_CLK is enabled in PEM core. */
+        uint64_t pemc_macclk_force     : 1;  /**< [  3:  3](R/W) Force MAC clock. For diagnostic use only.
+                                                                 0 = Aux_clk & radm_clk can be gated by the PEM core MAC.
+                                                                 1 = Aux_clk & radm_clk are forced on at all times to the PEM core MAC. */
+        uint64_t pem_mdh_dis           : 1;  /**< [  4:  4](R/W) When set, the memory and diagnostic hubs inside PEM are disabled and
+                                                                 will not respond commands from the MDC. If this PEM is not in use, this
+                                                                 bit should be set to save power. */
+        uint64_t reserved_5_63         : 59;
+#endif /* Word 0 - End */
+    } loki;
 };
 typedef union cavm_pemx_clk_en cavm_pemx_clk_en_t;
 
@@ -6946,7 +7102,7 @@ union cavm_pemx_dbg_info
         uint64_t reserved_50_63        : 14;
 #endif /* Word 0 - End */
     } cnf95xx;
-    /* struct cavm_pemx_dbg_info_cnf95xx loki; */
+    /* struct cavm_pemx_dbg_info_cn9 loki; */
 };
 typedef union cavm_pemx_dbg_info cavm_pemx_dbg_info_t;
 
@@ -12122,7 +12278,7 @@ static inline uint64_t CAVM_PEMX_MSIX_VECX_ADDR(unsigned long a, unsigned long b
         return 0x8e0f00000000ll + 0x1000000000ll * ((a) & 0x7) + 0x10ll * ((b) & 0xf);
     if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && ((a==0) && (b<=8)))
         return 0x8e0f00000000ll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0xf);
-    if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=8)))
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=9)))
         return 0x8e0f00000000ll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0xf);
     __cavm_csr_fatal("PEMX_MSIX_VECX_ADDR", 2, a, b, 0, 0, 0, 0);
 }
@@ -12192,7 +12348,7 @@ static inline uint64_t CAVM_PEMX_MSIX_VECX_CTL(unsigned long a, unsigned long b)
         return 0x8e0f00000008ll + 0x1000000000ll * ((a) & 0x7) + 0x10ll * ((b) & 0xf);
     if (cavm_is_model(OCTEONTX_CNF95XX_PASS1_X) && ((a==0) && (b<=8)))
         return 0x8e0f00000008ll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0xf);
-    if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=8)))
+    if (cavm_is_model(OCTEONTX_LOKI) && ((a==0) && (b<=9)))
         return 0x8e0f00000008ll + 0x1000000000ll * ((a) & 0x0) + 0x10ll * ((b) & 0xf);
     __cavm_csr_fatal("PEMX_MSIX_VECX_CTL", 2, a, b, 0, 0, 0, 0);
 }
@@ -14530,7 +14686,7 @@ static inline uint64_t CAVM_PEMX_RMERGE_RECEIVED_PC(unsigned long a)
  * Register (NCB) pem#_rst_cold_state_w1c
  *
  * PEM Interrupt Summary Register
- * This register contains the state of PEM(0..4)_RST_INT through core domain reset.
+ * This register contains the state of PEM()_RST_INT through core domain reset.
  *
  * This register is not accessible through ROM scripts; see SCR_WRITE32_S[ADDR].
  *
@@ -14576,6 +14732,8 @@ static inline uint64_t CAVM_PEMX_RST_COLD_STATE_W1C(unsigned long a)
         return 0x8e0000000320ll + 0x1000000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
         return 0x8e0000000320ll + 0x1000000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
+        return 0x8e0000000320ll + 0x1000000000ll * ((a) & 0x0);
     __cavm_csr_fatal("PEMX_RST_COLD_STATE_W1C", 1, a, 0, 0, 0, 0, 0);
 }
 
@@ -14631,6 +14789,8 @@ static inline uint64_t CAVM_PEMX_RST_COLD_STATE_W1S(unsigned long a)
         return 0x8e0000000328ll + 0x1000000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
         return 0x8e0000000328ll + 0x1000000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
+        return 0x8e0000000328ll + 0x1000000000ll * ((a) & 0x0);
     __cavm_csr_fatal("PEMX_RST_COLD_STATE_W1S", 1, a, 0, 0, 0, 0, 0);
 }
 
@@ -14703,6 +14863,8 @@ static inline uint64_t CAVM_PEMX_RST_INT(unsigned long a)
         return 0x8e0000000300ll + 0x1000000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
         return 0x8e0000000300ll + 0x1000000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
+        return 0x8e0000000300ll + 0x1000000000ll * ((a) & 0x0);
     __cavm_csr_fatal("PEMX_RST_INT", 1, a, 0, 0, 0, 0, 0);
 }
 
@@ -14752,6 +14914,20 @@ union cavm_pemx_rst_int_ena_w1c
         uint64_t reserved_3_63         : 61;
 #endif /* Word 0 - End */
     } cn98xx;
+    struct cavm_pemx_rst_int_ena_w1c_loki
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_3_63         : 61;
+        uint64_t l2                    : 1;  /**< [  2:  2](R/W1C/H) Reads or clears enable for PEM(0)_RST_INT[L2]. */
+        uint64_t linkdown              : 1;  /**< [  1:  1](R/W1C/H) Reads or clears enable for PEM(0)_RST_INT[LINKDOWN]. */
+        uint64_t perst                 : 1;  /**< [  0:  0](R/W1C/H) Reads or clears enable for PEM(0)_RST_INT[PERST]. */
+#else /* Word 0 - Little Endian */
+        uint64_t perst                 : 1;  /**< [  0:  0](R/W1C/H) Reads or clears enable for PEM(0)_RST_INT[PERST]. */
+        uint64_t linkdown              : 1;  /**< [  1:  1](R/W1C/H) Reads or clears enable for PEM(0)_RST_INT[LINKDOWN]. */
+        uint64_t l2                    : 1;  /**< [  2:  2](R/W1C/H) Reads or clears enable for PEM(0)_RST_INT[L2]. */
+        uint64_t reserved_3_63         : 61;
+#endif /* Word 0 - End */
+    } loki;
 };
 typedef union cavm_pemx_rst_int_ena_w1c cavm_pemx_rst_int_ena_w1c_t;
 
@@ -14762,6 +14938,8 @@ static inline uint64_t CAVM_PEMX_RST_INT_ENA_W1C(unsigned long a)
         return 0x8e0000000310ll + 0x1000000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
         return 0x8e0000000310ll + 0x1000000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
+        return 0x8e0000000310ll + 0x1000000000ll * ((a) & 0x0);
     __cavm_csr_fatal("PEMX_RST_INT_ENA_W1C", 1, a, 0, 0, 0, 0, 0);
 }
 
@@ -14811,6 +14989,20 @@ union cavm_pemx_rst_int_ena_w1s
         uint64_t reserved_3_63         : 61;
 #endif /* Word 0 - End */
     } cn98xx;
+    struct cavm_pemx_rst_int_ena_w1s_loki
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_3_63         : 61;
+        uint64_t l2                    : 1;  /**< [  2:  2](R/W1S/H) Reads or sets enable for PEM(0)_RST_INT[L2]. */
+        uint64_t linkdown              : 1;  /**< [  1:  1](R/W1S/H) Reads or sets enable for PEM(0)_RST_INT[LINKDOWN]. */
+        uint64_t perst                 : 1;  /**< [  0:  0](R/W1S/H) Reads or sets enable for PEM(0)_RST_INT[PERST]. */
+#else /* Word 0 - Little Endian */
+        uint64_t perst                 : 1;  /**< [  0:  0](R/W1S/H) Reads or sets enable for PEM(0)_RST_INT[PERST]. */
+        uint64_t linkdown              : 1;  /**< [  1:  1](R/W1S/H) Reads or sets enable for PEM(0)_RST_INT[LINKDOWN]. */
+        uint64_t l2                    : 1;  /**< [  2:  2](R/W1S/H) Reads or sets enable for PEM(0)_RST_INT[L2]. */
+        uint64_t reserved_3_63         : 61;
+#endif /* Word 0 - End */
+    } loki;
 };
 typedef union cavm_pemx_rst_int_ena_w1s cavm_pemx_rst_int_ena_w1s_t;
 
@@ -14821,6 +15013,8 @@ static inline uint64_t CAVM_PEMX_RST_INT_ENA_W1S(unsigned long a)
         return 0x8e0000000318ll + 0x1000000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
         return 0x8e0000000318ll + 0x1000000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
+        return 0x8e0000000318ll + 0x1000000000ll * ((a) & 0x0);
     __cavm_csr_fatal("PEMX_RST_INT_ENA_W1S", 1, a, 0, 0, 0, 0, 0);
 }
 
@@ -14870,6 +15064,20 @@ union cavm_pemx_rst_int_w1s
         uint64_t reserved_3_63         : 61;
 #endif /* Word 0 - End */
     } cn98xx;
+    struct cavm_pemx_rst_int_w1s_loki
+    {
+#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
+        uint64_t reserved_3_63         : 61;
+        uint64_t l2                    : 1;  /**< [  2:  2](R/W1S/H) Reads or sets PEM(0)_RST_INT[L2]. */
+        uint64_t linkdown              : 1;  /**< [  1:  1](R/W1S/H) Reads or sets PEM(0)_RST_INT[LINKDOWN]. */
+        uint64_t perst                 : 1;  /**< [  0:  0](R/W1S/H) Reads or sets PEM(0)_RST_INT[PERST]. */
+#else /* Word 0 - Little Endian */
+        uint64_t perst                 : 1;  /**< [  0:  0](R/W1S/H) Reads or sets PEM(0)_RST_INT[PERST]. */
+        uint64_t linkdown              : 1;  /**< [  1:  1](R/W1S/H) Reads or sets PEM(0)_RST_INT[LINKDOWN]. */
+        uint64_t l2                    : 1;  /**< [  2:  2](R/W1S/H) Reads or sets PEM(0)_RST_INT[L2]. */
+        uint64_t reserved_3_63         : 61;
+#endif /* Word 0 - End */
+    } loki;
 };
 typedef union cavm_pemx_rst_int_w1s cavm_pemx_rst_int_w1s_t;
 
@@ -14880,6 +15088,8 @@ static inline uint64_t CAVM_PEMX_RST_INT_W1S(unsigned long a)
         return 0x8e0000000308ll + 0x1000000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
         return 0x8e0000000308ll + 0x1000000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
+        return 0x8e0000000308ll + 0x1000000000ll * ((a) & 0x0);
     __cavm_csr_fatal("PEMX_RST_INT_W1S", 1, a, 0, 0, 0, 0, 0);
 }
 
@@ -14928,6 +15138,8 @@ static inline uint64_t CAVM_PEMX_RST_LBOOT(unsigned long a)
         return 0x8e0000000280ll + 0x1000000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
         return 0x8e0000000280ll + 0x1000000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
+        return 0x8e0000000280ll + 0x1000000000ll * ((a) & 0x0);
     __cavm_csr_fatal("PEMX_RST_LBOOT", 1, a, 0, 0, 0, 0, 0);
 }
 
@@ -14944,7 +15156,7 @@ static inline uint64_t CAVM_PEMX_RST_LBOOT(unsigned long a)
  * PEM Reset Mac Register
  * This register provides a mechanism to reset the Mac.
  *
- * This register is not accessible through ROM scripts; see SCR_WRITE32_S[ADDR].
+ * This register is accessible through ROM scripts; see SCR_WRITE32_S[ADDR].
  *
  * This register is reset on cold reset.
  */
@@ -14978,6 +15190,8 @@ static inline uint64_t CAVM_PEMX_RST_MAC(unsigned long a)
         return 0x8e0000000290ll + 0x1000000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
         return 0x8e0000000290ll + 0x1000000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
+        return 0x8e0000000290ll + 0x1000000000ll * ((a) & 0x0);
     __cavm_csr_fatal("PEMX_RST_MAC", 1, a, 0, 0, 0, 0, 0);
 }
 
@@ -14994,7 +15208,7 @@ static inline uint64_t CAVM_PEMX_RST_MAC(unsigned long a)
  * PEM Reset Software PERST Register
  * This register provides a mechanism to drive the PCIe PERSTN pin.
  *
- * This register is not accessible through ROM scripts; see SCR_WRITE32_S[ADDR].
+ * This register is accessible through ROM scripts; see SCR_WRITE32_S[ADDR].
  */
 union cavm_pemx_rst_soft_perst
 {
@@ -15068,6 +15282,8 @@ static inline uint64_t CAVM_PEMX_RST_SOFT_PERST(unsigned long a)
         return 0x8e0000000298ll + 0x1000000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
         return 0x8e0000000298ll + 0x1000000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
+        return 0x8e0000000298ll + 0x1000000000ll * ((a) & 0x0);
     __cavm_csr_fatal("PEMX_RST_SOFT_PERST", 1, a, 0, 0, 0, 0, 0);
 }
 
@@ -15325,242 +15541,7 @@ union cavm_pemx_s_rst_ctl
         uint64_t reserved_14_63        : 50;
 #endif /* Word 0 - End */
     } s;
-    /* struct cavm_pemx_s_rst_ctl_s cn9; */
-    /* struct cavm_pemx_s_rst_ctl_s cn96xx; */
-    struct cavm_pemx_s_rst_ctl_cn98xx
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_14_63        : 50;
-        uint64_t reset_type            : 1;  /**< [ 13: 13](SR/W) Type of reset generated internally by PCI MAC PF FLR, link down/hot reset, Powerdown  or
-                                                                 PERST events. See [PF_FLR_CHIP], [RST_LNKDWN], [RST_L2] and [RST_PERST].
-
-                                                                 0 = Chip and core domain reset. (A chip domain reset always also causes a core
-                                                                 domain reset.)
-                                                                 1 = Core domain reset.
-
-                                                                 On cold reset, this field is initialized as follows:
-                                                                 _ 0 when PEM()_CFG[HOSTD] = 0.
-                                                                 _ 1 when PEM()_CFG[HOSTD] = 1. */
-        uint64_t rst_l2                : 1;  /**< [ 12: 12](SR/W) Powerdown event internal reset enable.
-                                                                 0 = PEM going into powerdown (L2) does not cause an internal reset.
-                                                                 1 = PEM going into powerdown (L2) causes the internal reset
-                                                                 specified by [RESET_TYPE].
-
-                                                                 On a cold reset, the field is initialized as follows:
-                                                                 _ 0 when PEM()_CFG.HOSTMD is set.
-                                                                 _ 1 when PEM()_CFG.HOSTMD is cleared.
-
-                                                                 1 = Upon a Powerdown event no L2 interrupt will occur, Regardless of RST_INT_ENA_W1S[RST_L2]
-                                                                 0 = Upon a Powerdown event RST_COLD_STATE_W1S[RST_L2] will be set.
-
-                                                                 Note that a powerdown event can never cause a domain reset when the
-                                                                 Mac is already in reset (i.e. when PEM()_ON[PEMOOR] is clear). */
-        uint64_t prst_l2               : 1;  /**< [ 11: 11](SR/W) PEM reset on power down.
-                                                                 0 = PEM entering L2/P2 power state will set PEM()_RST_INT[RST_L2] for the
-                                                                 corresponding controller, and (provided properly configured) the link should
-                                                                 come back up automatically.
-                                                                 1 = PEM entering L2/P2 power state will set PEM()_RST_INT[RST_L2] for
-                                                                 the corresponding controller and set PEM()_RST_SOFT_PERST[SOFT_PERST]. This will
-                                                                 hold the link in reset until software clears PEM()_RST_SOFT_PERST[SOFT_PERST].
-
-                                                                 A core/chip reset does not change this field. On cold reset, this field is
-                                                                 initialized to 0. */
-        uint64_t rst_pfflr             : 1;  /**< [ 10: 10](SR/W) PF FLR internal reset enable.
-                                                                 0 = PF FLR events will not cause an internal reset.
-                                                                 1 = A PF FLR event received by the PCIe logic causes the internal reset
-                                                                 specified by [RESET_TYPE].
-
-                                                                 On cold reset, this field is initialized as follows:
-                                                                 _ 0 when PEM()_CFG[HOSTMD] = 1.
-                                                                 _ 1 when PEM()_CFG[HOSTMD] = 0. */
-        uint64_t rst_lnkdwn            : 1;  /**< [  9:  9](SR/W) Link down / hot reset event internal reset enable.
-                                                                 0 = Link down or hot reset do not cause an internal reset.
-                                                                 1 = A link-down or hot-reset event on the PCIe interface causes the internal
-                                                                 reset specified by [RESET_TYPE].
-
-                                                                 On a cold reset, the field is initialized as follows:
-                                                                 _ 0 when PEM()_CFG.HOSTMD is set.
-                                                                 _ 1 when PEM()_CFG.HOSTMD is cleared.
-
-                                                                 1 = Upon a Linkdown event no LINKDWN interrupt will occur, Regardless of
-                                                                 RST_INT_ENA_W1S[RST_LINKDWN]
-                                                                 0 = Upon a Linkdown event RST_COLD_STATE_W1S[RST_LINKDWN] will be set.
-
-                                                                 Note that a link-down event can never cause a domain reset when the
-                                                                 Mac is already in reset (i.e. when PEM()_ON[PEMOOR] is clear). */
-        uint64_t prst_lnkdwn           : 1;  /**< [  8:  8](SR/W) PEM reset on link down.
-                                                                 0 = Link-down or hot-reset will set PEM()_RST_INT[RST_LNKDWN] for the corresponding
-                                                                 controller, and (provided properly configured) the link should come back up
-                                                                 automatically.
-                                                                 1 = Link-down or hot-reset will set PEM()_RST_INT[RST_LNKDWN] for the corresponding
-                                                                 controller, and set PEM()_RST_SOFT_PERST[SOFT_PERST]. This will hold the link in reset
-                                                                 until software clears PEM()_RST_SOFT_PERST[SOFT_PERST].
-
-                                                                 A core/chip reset does not change this field. On cold reset, this field is
-                                                                 initialized to 0. */
-        uint64_t rst_perst             : 1;  /**< [  7:  7](SR/W) PERST internal reset enable. When set along with [EN_PERST_RCV],
-                                                                 logic will generate an internal reset specified by [RESET_TYPE]
-                                                                 when the corresponding PERST_L pin is asserted.  When cleared or
-                                                                 when [EN_PERST_RCV] is cleared, the PERST_L does not cause an internal reset.
-
-                                                                 1 = Upon a PERST event no PERST interrupt will occur, Regardless of RST_INT_ENA_W1S[RST_PERST]
-                                                                 0 = Upon aPERST event RST_COLD_STATE_W1S[RST_PERST] will be set.
-
-                                                                 If this bit is written while PERST_L pin is asserted and [EN_PERST_RCV]=1 then an
-                                                                 internal reset can occur unexpectedly.
-
-                                                                 During a cold domain reset this field is initialized to zero. */
-        uint64_t reserved_3_6          : 4;
-        uint64_t en_perst_drv          : 1;  /**< [  2:  2](SR/W) Controls whether PERST_L is driven.
-                                                                 This field is always reinitialized on a cold domain reset.
-                                                                 The field is initialized as follows:
-                                                                 _ 0 when PEM()_CFG.HOSTMD is cleared.
-                                                                 _ 1 when PEM()_CFG.HOSTMD is set.
-
-                                                                 This bit must not be changed in the same write that sets [EN_PERST_RCV]=1; separate
-                                                                 writes to PEM()_S_RST_CTL are required to clear one bit and then set the other. */
-        uint64_t en_perst_rcv          : 1;  /**< [  1:  1](SR/W) Reset received. Controls whether PERST_L is received.
-                                                                 This field is always reinitialized on a cold domain reset.
-                                                                 The field is initialized as follows:
-                                                                 _ 0 when PEM()_CFG.HOSTMD is set.
-                                                                 _ 1 when PEM()_CFG.HOSTMD is cleared.
-
-                                                                 When [EN_PERST_RCV] = 1, the PERST_L value is received and can be used to reset the
-                                                                 controller and (optionally, based on [RST_PERST]) cause a domain reset.
-
-                                                                 When [EN_PERST_RCV] = 1 (and [RST_PERST] = 0), PEM()_RST_INT[PERST] gets set when the PERST_L
-                                                                 pin asserts. (This interrupt can alert software whenever the external reset pin initiates
-                                                                 a controller reset sequence.)
-
-                                                                 [PERST_PIN] gives the PERST_L pin value when [EN_PERST_RCV] = 1.
-
-                                                                 When [EN_PERST_RCV] = 0, the PERST_L pin value is ignored and always returns a 1.
-
-                                                                 This bit must not be changed in the same write that sets [EN_PERST_DRV]=1; separate
-                                                                 writes to PEM()_S_RST_CTL are required to clear one bit and then set the other.
-                                                                 If this bit is written while PERST_L pin is de-asserted then the MAC can come
-                                                                 out of reset unexpectedly. */
-        uint64_t perst_pin             : 1;  /**< [  0:  0](SRO/H) Read-only access to PERST (inverted PERST_L). Unpredictable when [EN_PERST_RCV] = 0.
-
-                                                                 Reads as 1 when [EN_PERST_RCV] = 1 and the PERST_L pin is asserted.
-                                                                 Reads as 0 when [EN_PERST_RCV] = 1 and the PERST_L pin is not asserted. */
-#else /* Word 0 - Little Endian */
-        uint64_t perst_pin             : 1;  /**< [  0:  0](SRO/H) Read-only access to PERST (inverted PERST_L). Unpredictable when [EN_PERST_RCV] = 0.
-
-                                                                 Reads as 1 when [EN_PERST_RCV] = 1 and the PERST_L pin is asserted.
-                                                                 Reads as 0 when [EN_PERST_RCV] = 1 and the PERST_L pin is not asserted. */
-        uint64_t en_perst_rcv          : 1;  /**< [  1:  1](SR/W) Reset received. Controls whether PERST_L is received.
-                                                                 This field is always reinitialized on a cold domain reset.
-                                                                 The field is initialized as follows:
-                                                                 _ 0 when PEM()_CFG.HOSTMD is set.
-                                                                 _ 1 when PEM()_CFG.HOSTMD is cleared.
-
-                                                                 When [EN_PERST_RCV] = 1, the PERST_L value is received and can be used to reset the
-                                                                 controller and (optionally, based on [RST_PERST]) cause a domain reset.
-
-                                                                 When [EN_PERST_RCV] = 1 (and [RST_PERST] = 0), PEM()_RST_INT[PERST] gets set when the PERST_L
-                                                                 pin asserts. (This interrupt can alert software whenever the external reset pin initiates
-                                                                 a controller reset sequence.)
-
-                                                                 [PERST_PIN] gives the PERST_L pin value when [EN_PERST_RCV] = 1.
-
-                                                                 When [EN_PERST_RCV] = 0, the PERST_L pin value is ignored and always returns a 1.
-
-                                                                 This bit must not be changed in the same write that sets [EN_PERST_DRV]=1; separate
-                                                                 writes to PEM()_S_RST_CTL are required to clear one bit and then set the other.
-                                                                 If this bit is written while PERST_L pin is de-asserted then the MAC can come
-                                                                 out of reset unexpectedly. */
-        uint64_t en_perst_drv          : 1;  /**< [  2:  2](SR/W) Controls whether PERST_L is driven.
-                                                                 This field is always reinitialized on a cold domain reset.
-                                                                 The field is initialized as follows:
-                                                                 _ 0 when PEM()_CFG.HOSTMD is cleared.
-                                                                 _ 1 when PEM()_CFG.HOSTMD is set.
-
-                                                                 This bit must not be changed in the same write that sets [EN_PERST_RCV]=1; separate
-                                                                 writes to PEM()_S_RST_CTL are required to clear one bit and then set the other. */
-        uint64_t reserved_3_6          : 4;
-        uint64_t rst_perst             : 1;  /**< [  7:  7](SR/W) PERST internal reset enable. When set along with [EN_PERST_RCV],
-                                                                 logic will generate an internal reset specified by [RESET_TYPE]
-                                                                 when the corresponding PERST_L pin is asserted.  When cleared or
-                                                                 when [EN_PERST_RCV] is cleared, the PERST_L does not cause an internal reset.
-
-                                                                 1 = Upon a PERST event no PERST interrupt will occur, Regardless of RST_INT_ENA_W1S[RST_PERST]
-                                                                 0 = Upon aPERST event RST_COLD_STATE_W1S[RST_PERST] will be set.
-
-                                                                 If this bit is written while PERST_L pin is asserted and [EN_PERST_RCV]=1 then an
-                                                                 internal reset can occur unexpectedly.
-
-                                                                 During a cold domain reset this field is initialized to zero. */
-        uint64_t prst_lnkdwn           : 1;  /**< [  8:  8](SR/W) PEM reset on link down.
-                                                                 0 = Link-down or hot-reset will set PEM()_RST_INT[RST_LNKDWN] for the corresponding
-                                                                 controller, and (provided properly configured) the link should come back up
-                                                                 automatically.
-                                                                 1 = Link-down or hot-reset will set PEM()_RST_INT[RST_LNKDWN] for the corresponding
-                                                                 controller, and set PEM()_RST_SOFT_PERST[SOFT_PERST]. This will hold the link in reset
-                                                                 until software clears PEM()_RST_SOFT_PERST[SOFT_PERST].
-
-                                                                 A core/chip reset does not change this field. On cold reset, this field is
-                                                                 initialized to 0. */
-        uint64_t rst_lnkdwn            : 1;  /**< [  9:  9](SR/W) Link down / hot reset event internal reset enable.
-                                                                 0 = Link down or hot reset do not cause an internal reset.
-                                                                 1 = A link-down or hot-reset event on the PCIe interface causes the internal
-                                                                 reset specified by [RESET_TYPE].
-
-                                                                 On a cold reset, the field is initialized as follows:
-                                                                 _ 0 when PEM()_CFG.HOSTMD is set.
-                                                                 _ 1 when PEM()_CFG.HOSTMD is cleared.
-
-                                                                 1 = Upon a Linkdown event no LINKDWN interrupt will occur, Regardless of
-                                                                 RST_INT_ENA_W1S[RST_LINKDWN]
-                                                                 0 = Upon a Linkdown event RST_COLD_STATE_W1S[RST_LINKDWN] will be set.
-
-                                                                 Note that a link-down event can never cause a domain reset when the
-                                                                 Mac is already in reset (i.e. when PEM()_ON[PEMOOR] is clear). */
-        uint64_t rst_pfflr             : 1;  /**< [ 10: 10](SR/W) PF FLR internal reset enable.
-                                                                 0 = PF FLR events will not cause an internal reset.
-                                                                 1 = A PF FLR event received by the PCIe logic causes the internal reset
-                                                                 specified by [RESET_TYPE].
-
-                                                                 On cold reset, this field is initialized as follows:
-                                                                 _ 0 when PEM()_CFG[HOSTMD] = 1.
-                                                                 _ 1 when PEM()_CFG[HOSTMD] = 0. */
-        uint64_t prst_l2               : 1;  /**< [ 11: 11](SR/W) PEM reset on power down.
-                                                                 0 = PEM entering L2/P2 power state will set PEM()_RST_INT[RST_L2] for the
-                                                                 corresponding controller, and (provided properly configured) the link should
-                                                                 come back up automatically.
-                                                                 1 = PEM entering L2/P2 power state will set PEM()_RST_INT[RST_L2] for
-                                                                 the corresponding controller and set PEM()_RST_SOFT_PERST[SOFT_PERST]. This will
-                                                                 hold the link in reset until software clears PEM()_RST_SOFT_PERST[SOFT_PERST].
-
-                                                                 A core/chip reset does not change this field. On cold reset, this field is
-                                                                 initialized to 0. */
-        uint64_t rst_l2                : 1;  /**< [ 12: 12](SR/W) Powerdown event internal reset enable.
-                                                                 0 = PEM going into powerdown (L2) does not cause an internal reset.
-                                                                 1 = PEM going into powerdown (L2) causes the internal reset
-                                                                 specified by [RESET_TYPE].
-
-                                                                 On a cold reset, the field is initialized as follows:
-                                                                 _ 0 when PEM()_CFG.HOSTMD is set.
-                                                                 _ 1 when PEM()_CFG.HOSTMD is cleared.
-
-                                                                 1 = Upon a Powerdown event no L2 interrupt will occur, Regardless of RST_INT_ENA_W1S[RST_L2]
-                                                                 0 = Upon a Powerdown event RST_COLD_STATE_W1S[RST_L2] will be set.
-
-                                                                 Note that a powerdown event can never cause a domain reset when the
-                                                                 Mac is already in reset (i.e. when PEM()_ON[PEMOOR] is clear). */
-        uint64_t reset_type            : 1;  /**< [ 13: 13](SR/W) Type of reset generated internally by PCI MAC PF FLR, link down/hot reset, Powerdown  or
-                                                                 PERST events. See [PF_FLR_CHIP], [RST_LNKDWN], [RST_L2] and [RST_PERST].
-
-                                                                 0 = Chip and core domain reset. (A chip domain reset always also causes a core
-                                                                 domain reset.)
-                                                                 1 = Core domain reset.
-
-                                                                 On cold reset, this field is initialized as follows:
-                                                                 _ 0 when PEM()_CFG[HOSTD] = 0.
-                                                                 _ 1 when PEM()_CFG[HOSTD] = 1. */
-        uint64_t reserved_14_63        : 50;
-#endif /* Word 0 - End */
-    } cn98xx;
+    /* struct cavm_pemx_s_rst_ctl_s cn; */
 };
 typedef union cavm_pemx_s_rst_ctl cavm_pemx_s_rst_ctl_t;
 
@@ -15571,6 +15552,8 @@ static inline uint64_t CAVM_PEMX_S_RST_CTL(unsigned long a)
         return 0x8e0000000288ll + 0x1000000000ll * ((a) & 0x3);
     if (cavm_is_model(OCTEONTX_CN98XX) && (a<=4))
         return 0x8e0000000288ll + 0x1000000000ll * ((a) & 0x7);
+    if (cavm_is_model(OCTEONTX_LOKI) && (a==0))
+        return 0x8e0000000288ll + 0x1000000000ll * ((a) & 0x0);
     __cavm_csr_fatal("PEMX_S_RST_CTL", 1, a, 0, 0, 0, 0, 0);
 }
 

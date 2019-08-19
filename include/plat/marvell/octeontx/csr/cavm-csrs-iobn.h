@@ -1017,9 +1017,10 @@ union cavm_iobnx_arbidx_ctl
                                                                  only use the widget when the VA address CAM detects and promotes two
                                                                  transactions to the same memory cacheline.
 
-                                                                 Additionally, [SOW_DIS]\<MAX_ARBID\> may be able to improve WR-FLID retire latency
-                                                                 by returning a WR-FLID over the relwrflid interface sooner.  This mode has risks
-                                                                 as it has not been rigorously tested. */
+                                                                 For designs with bug35584 resolved (SOW virtual channel separation),
+                                                                 [SOW_DIS]\<MAX_ARBID\> may be able to improve WR-FLID retire latency by returning
+                                                                 a WR-FLID over the relwrflid interface sooner.  This mode has risks as it has
+                                                                 not been rigorously tested. */
         uint64_t crppr_ena             : 2;  /**< [  7:  6](R/W) For Inbound ordering controls the ability of CRs to pass PRs for PEMs.
                                                                  All CRs can pass PRs for Non-PEMs. For Outbound impacts the cycle-type
                                                                  the CR will have to the NCB device:
@@ -1115,9 +1116,10 @@ union cavm_iobnx_arbidx_ctl
                                                                  only use the widget when the VA address CAM detects and promotes two
                                                                  transactions to the same memory cacheline.
 
-                                                                 Additionally, [SOW_DIS]\<MAX_ARBID\> may be able to improve WR-FLID retire latency
-                                                                 by returning a WR-FLID over the relwrflid interface sooner.  This mode has risks
-                                                                 as it has not been rigorously tested. */
+                                                                 For designs with bug35584 resolved (SOW virtual channel separation),
+                                                                 [SOW_DIS]\<MAX_ARBID\> may be able to improve WR-FLID retire latency by returning
+                                                                 a WR-FLID over the relwrflid interface sooner.  This mode has risks as it has
+                                                                 not been rigorously tested. */
         uint64_t fast_ord              : 1;  /**< [  9:  9](R/W) Fast order mode. Should only be set for non-PEM ARBIDs.
                                                                  0 = The inbound scheduler requires the PR to be visible in memory for ordering
                                                                  which can have an adverse effect on PR-to-NPR performance.
@@ -1137,158 +1139,7 @@ union cavm_iobnx_arbidx_ctl
     } cn96xxp3;
     /* struct cavm_iobnx_arbidx_ctl_cn96xxp3 cn98xx; */
     /* struct cavm_iobnx_arbidx_ctl_s cnf95xxp1; */
-    struct cavm_iobnx_arbidx_ctl_cnf95xxp2
-    {
-#if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
-        uint64_t reserved_10_63        : 54;
-        uint64_t fast_ord              : 1;  /**< [  9:  9](R/W) Fast order mode. Should only be set for non-PEM ARBIDs.
-                                                                 0 = The inbound scheduler requires the PR to be visible in memory for ordering
-                                                                 which can have an adverse effect on PR-to-NPR performance.
-                                                                 1 = The inbound scheduler can accelerate transaction scheduling by considering
-                                                                 PRs ordered when the transaction is scheduled to the memory interface.
-                                                                 [SOW_DIS] should be set when [FAST_ORD] is set for a given ARBID.
-
-                                                                 Reset value represents the typical usage.  Set for all non-PEM ARBIDs.
-
-                                                                 Internal:
-                                                                 Normally, IOW considers an inbound transaction ordered when it receives the
-                                                                 ack.cmt from mesh via the relwrflid.rel/flid interface. The mesh interface will
-                                                                 inform IOW when a transaction has been slotted to the mesh interface via the
-                                                                 relwrflid.ord/flid fields. */
-        uint64_t sow_dis               : 1;  /**< [  8:  8](R/W) Disables the PCIe store widget for memory store performance. Does not affect
-                                                                 observable ordering. No impact on IO stores.  For diagnostic use only.
-                                                                 Must be set for non-PEM ARBIDs.
-                                                                 0 = Performance optimization on. Issue prefetches on stores to improve
-                                                                 store-store ordering.
-                                                                 1 = Performance optimization off. No prefetches.
-                                                                 [SOW_DIS] should be set when [FAST_ORD] is set for a given ARBID.
-
-                                                                 Reset value represents the typical usage; clear for all PEM ARBIDs, otherwise
-                                                                 set.
-
-                                                                 Internal:
-                                                                 The SOW is intended to be used to increase the performance of PCIe
-                                                                 strictly-ordered store commands by prefetching cachelines to minimize
-                                                                 latency. Explicitly disabling the SOW by setting [SOW_DIS] will result in an
-                                                                 ordering model that is faithful to the PCIe strict-order semantics but will
-                                                                 suffer in performance by single threading store commands. PCIe devices that can
-                                                                 take advantage of PCIe RelaxOrdering do not suffer the same performance issue.
-
-                                                                 The SOW is only available on the NCB2/256b devices which include PEMs, CPT,
-                                                                 DPI. The expectation is that CPT and DPI use the RelaxOrder bit so they will
-                                                                 only use the widget when the VA address CAM detects and promotes two
-                                                                 transactions to the same memory cacheline. */
-        uint64_t crppr_ena             : 2;  /**< [  7:  6](R/W) For Inbound ordering controls the ability of CRs to pass PRs for PEMs.
-                                                                 All CRs can pass PRs for Non-PEMs. For Outbound impacts the cycle-type
-                                                                 the CR will have to the NCB device:
-                                                                 0x0 = For Outbound CR use the NCB device's relaxed order request that the CR is
-                                                                 associated to (from the inbound NCB bus). For Inbound CR, use relaxed order.
-                                                                 0x1 = Reserved.
-                                                                 0x2 = Force 0.
-                                                                 0x3 = Force 1. */
-        uint64_t prefetch_dis          : 1;  /**< [  5:  5](R/W) Disables mesh prefetches. For diagnostic use only.
-                                                                 0 = Store-store ordered transactions will issue prefetches before the second
-                                                                 store to improve performance.
-                                                                 1 = No prefetches. */
-        uint64_t pr_iova_dis           : 1;  /**< [  4:  4](R/W) PR queue IOVA comparison disable. For diagnostic use only.
-                                                                 0 = PR will not pass a younger PR with the same IOVA.
-                                                                 1 = PR may pass a younger PR with the same IOVA, if the relaxed ordering request
-                                                                 and [RO_DIS] bit allow it.
-
-                                                                 Reset value represents the typical usage.  Clear for all non-PEM ARBIDs. */
-        uint64_t ro_dis                : 1;  /**< [  3:  3](R/W) Disable relaxed ordering. For diagnostic use only.
-                                                                 0 = Relaxed ordering is performed if the NCB device requests it.
-                                                                 1 = IOB ignores the relaxed ordering request bit and treats all requests as
-                                                                 strictly ordered. */
-        uint64_t st_ld_ord             : 1;  /**< [  2:  2](R/W) NPRs and PRs are sent in order they are received on the NCBI.
-                                                                 [LD_LD_ORD] and [ST_ST_ORD] must also be set or unpredictable results will occur.
-                                                                 For the 256-bit NCBI this does NOT imply the order a
-                                                                 NCB device makes request to use the NCBI will be the order sent to the memory/IO
-                                                                 space because the NGNT allows grants for PRs to pass grants for NPRs.
-                                                                 For diagnostic use only. */
-        uint64_t st_st_ord             : 1;  /**< [  1:  1](R/W) PRs are sent in order they are received on the NCBI (RO ignored).
-                                                                 For diagnostic use only. */
-        uint64_t ld_ld_ord             : 1;  /**< [  0:  0](R/W) Load-load ordering. For diagnostic use only.
-                                                                 0 = NPR may pass NPR under some cases. The ordering is based on SMMU completion
-                                                                 ordering.
-                                                                 1 = NPR never passes NPR; the NPR ordering is based strictly on NCB arrival order.
-                                                                 This may harm performance. */
-#else /* Word 0 - Little Endian */
-        uint64_t ld_ld_ord             : 1;  /**< [  0:  0](R/W) Load-load ordering. For diagnostic use only.
-                                                                 0 = NPR may pass NPR under some cases. The ordering is based on SMMU completion
-                                                                 ordering.
-                                                                 1 = NPR never passes NPR; the NPR ordering is based strictly on NCB arrival order.
-                                                                 This may harm performance. */
-        uint64_t st_st_ord             : 1;  /**< [  1:  1](R/W) PRs are sent in order they are received on the NCBI (RO ignored).
-                                                                 For diagnostic use only. */
-        uint64_t st_ld_ord             : 1;  /**< [  2:  2](R/W) NPRs and PRs are sent in order they are received on the NCBI.
-                                                                 [LD_LD_ORD] and [ST_ST_ORD] must also be set or unpredictable results will occur.
-                                                                 For the 256-bit NCBI this does NOT imply the order a
-                                                                 NCB device makes request to use the NCBI will be the order sent to the memory/IO
-                                                                 space because the NGNT allows grants for PRs to pass grants for NPRs.
-                                                                 For diagnostic use only. */
-        uint64_t ro_dis                : 1;  /**< [  3:  3](R/W) Disable relaxed ordering. For diagnostic use only.
-                                                                 0 = Relaxed ordering is performed if the NCB device requests it.
-                                                                 1 = IOB ignores the relaxed ordering request bit and treats all requests as
-                                                                 strictly ordered. */
-        uint64_t pr_iova_dis           : 1;  /**< [  4:  4](R/W) PR queue IOVA comparison disable. For diagnostic use only.
-                                                                 0 = PR will not pass a younger PR with the same IOVA.
-                                                                 1 = PR may pass a younger PR with the same IOVA, if the relaxed ordering request
-                                                                 and [RO_DIS] bit allow it.
-
-                                                                 Reset value represents the typical usage.  Clear for all non-PEM ARBIDs. */
-        uint64_t prefetch_dis          : 1;  /**< [  5:  5](R/W) Disables mesh prefetches. For diagnostic use only.
-                                                                 0 = Store-store ordered transactions will issue prefetches before the second
-                                                                 store to improve performance.
-                                                                 1 = No prefetches. */
-        uint64_t crppr_ena             : 2;  /**< [  7:  6](R/W) For Inbound ordering controls the ability of CRs to pass PRs for PEMs.
-                                                                 All CRs can pass PRs for Non-PEMs. For Outbound impacts the cycle-type
-                                                                 the CR will have to the NCB device:
-                                                                 0x0 = For Outbound CR use the NCB device's relaxed order request that the CR is
-                                                                 associated to (from the inbound NCB bus). For Inbound CR, use relaxed order.
-                                                                 0x1 = Reserved.
-                                                                 0x2 = Force 0.
-                                                                 0x3 = Force 1. */
-        uint64_t sow_dis               : 1;  /**< [  8:  8](R/W) Disables the PCIe store widget for memory store performance. Does not affect
-                                                                 observable ordering. No impact on IO stores.  For diagnostic use only.
-                                                                 Must be set for non-PEM ARBIDs.
-                                                                 0 = Performance optimization on. Issue prefetches on stores to improve
-                                                                 store-store ordering.
-                                                                 1 = Performance optimization off. No prefetches.
-                                                                 [SOW_DIS] should be set when [FAST_ORD] is set for a given ARBID.
-
-                                                                 Reset value represents the typical usage; clear for all PEM ARBIDs, otherwise
-                                                                 set.
-
-                                                                 Internal:
-                                                                 The SOW is intended to be used to increase the performance of PCIe
-                                                                 strictly-ordered store commands by prefetching cachelines to minimize
-                                                                 latency. Explicitly disabling the SOW by setting [SOW_DIS] will result in an
-                                                                 ordering model that is faithful to the PCIe strict-order semantics but will
-                                                                 suffer in performance by single threading store commands. PCIe devices that can
-                                                                 take advantage of PCIe RelaxOrdering do not suffer the same performance issue.
-
-                                                                 The SOW is only available on the NCB2/256b devices which include PEMs, CPT,
-                                                                 DPI. The expectation is that CPT and DPI use the RelaxOrder bit so they will
-                                                                 only use the widget when the VA address CAM detects and promotes two
-                                                                 transactions to the same memory cacheline. */
-        uint64_t fast_ord              : 1;  /**< [  9:  9](R/W) Fast order mode. Should only be set for non-PEM ARBIDs.
-                                                                 0 = The inbound scheduler requires the PR to be visible in memory for ordering
-                                                                 which can have an adverse effect on PR-to-NPR performance.
-                                                                 1 = The inbound scheduler can accelerate transaction scheduling by considering
-                                                                 PRs ordered when the transaction is scheduled to the memory interface.
-                                                                 [SOW_DIS] should be set when [FAST_ORD] is set for a given ARBID.
-
-                                                                 Reset value represents the typical usage.  Set for all non-PEM ARBIDs.
-
-                                                                 Internal:
-                                                                 Normally, IOW considers an inbound transaction ordered when it receives the
-                                                                 ack.cmt from mesh via the relwrflid.rel/flid interface. The mesh interface will
-                                                                 inform IOW when a transaction has been slotted to the mesh interface via the
-                                                                 relwrflid.ord/flid fields. */
-        uint64_t reserved_10_63        : 54;
-#endif /* Word 0 - End */
-    } cnf95xxp2;
+    /* struct cavm_iobnx_arbidx_ctl_cn96xxp3 cnf95xxp2; */
     /* struct cavm_iobnx_arbidx_ctl_cn96xxp3 loki; */
 };
 typedef union cavm_iobnx_arbidx_ctl cavm_iobnx_arbidx_ctl_t;
@@ -1838,6 +1689,9 @@ union cavm_iobnx_bp_testx
                                                                  \<57\> = VCC - CMD (VIC).
                                                                  \<56\> = VCC - CMD (REQ/RQH).
 
+                                                                 \<61\> is only present in designs with bug35584 resolved (SOW virtual channel
+                                                                 separation).
+
                                                                  \<page\>
                                                                  IOBN()_BP_TEST(4) - INRF: Defined by iobn_defs::inrm_bp_test_t.
                                                                  \<63\> = TBD.
@@ -1848,6 +1702,12 @@ union cavm_iobnx_bp_testx
                                                                  \<58\> = REQ - FWD.
                                                                  \<57\> = REQ - SOWR.
                                                                  \<56\> = REQ - IOW.
+
+                                                                 \<59\> is only present in designs with bug35584 resolved (SOW virtual channel
+                                                                 separation).
+
+                                                                 \<57\> represents SOWR in designs with bug35584 resolved (SOW virtual channel
+                                                                 separation).  Otherwise, it maps to unified SOW.
 
                                                                  \<page\>
                                                                  IOBN()_BP_TEST(5) - INRF: Defined by iobn_defs::iow_ill_bp_test_t. See
@@ -1941,6 +1801,9 @@ union cavm_iobnx_bp_testx
                                                                  \<57\> = VCC - CMD (VIC).
                                                                  \<56\> = VCC - CMD (REQ/RQH).
 
+                                                                 \<61\> is only present in designs with bug35584 resolved (SOW virtual channel
+                                                                 separation).
+
                                                                  \<page\>
                                                                  IOBN()_BP_TEST(4) - INRF: Defined by iobn_defs::inrm_bp_test_t.
                                                                  \<63\> = TBD.
@@ -1951,6 +1814,12 @@ union cavm_iobnx_bp_testx
                                                                  \<58\> = REQ - FWD.
                                                                  \<57\> = REQ - SOWR.
                                                                  \<56\> = REQ - IOW.
+
+                                                                 \<59\> is only present in designs with bug35584 resolved (SOW virtual channel
+                                                                 separation).
+
+                                                                 \<57\> represents SOWR in designs with bug35584 resolved (SOW virtual channel
+                                                                 separation).  Otherwise, it maps to unified SOW.
 
                                                                  \<page\>
                                                                  IOBN()_BP_TEST(5) - INRF: Defined by iobn_defs::iow_ill_bp_test_t. See
@@ -2016,6 +1885,9 @@ union cavm_iobnx_bp_testx
                                                                  \<57\> = VCC - CMD (VIC).
                                                                  \<56\> = VCC - CMD (REQ/RQH).
 
+                                                                 \<61\> is only present in designs with bug35584 resolved (SOW virtual channel
+                                                                 separation).
+
                                                                  \<page\>
                                                                  IOBN()_BP_TEST(4) - INRF: Defined by iobn_defs::inrm_bp_test_t.
                                                                  \<63\> = TBD.
@@ -2026,6 +1898,12 @@ union cavm_iobnx_bp_testx
                                                                  \<58\> = REQ - FWD.
                                                                  \<57\> = REQ - SOWR.
                                                                  \<56\> = REQ - IOW.
+
+                                                                 \<59\> is only present in designs with bug35584 resolved (SOW virtual channel
+                                                                 separation).
+
+                                                                 \<57\> represents SOWR in designs with bug35584 resolved (SOW virtual channel
+                                                                 separation).  Otherwise, it maps to unified SOW.
 
                                                                  \<page\>
                                                                  IOBN()_BP_TEST(5) - INRF: Defined by iobn_defs::iow_ill_bp_test_t. See
@@ -2119,6 +1997,9 @@ union cavm_iobnx_bp_testx
                                                                  \<57\> = VCC - CMD (VIC).
                                                                  \<56\> = VCC - CMD (REQ/RQH).
 
+                                                                 \<61\> is only present in designs with bug35584 resolved (SOW virtual channel
+                                                                 separation).
+
                                                                  \<page\>
                                                                  IOBN()_BP_TEST(4) - INRF: Defined by iobn_defs::inrm_bp_test_t.
                                                                  \<63\> = TBD.
@@ -2129,6 +2010,12 @@ union cavm_iobnx_bp_testx
                                                                  \<58\> = REQ - FWD.
                                                                  \<57\> = REQ - SOWR.
                                                                  \<56\> = REQ - IOW.
+
+                                                                 \<59\> is only present in designs with bug35584 resolved (SOW virtual channel
+                                                                 separation).
+
+                                                                 \<57\> represents SOWR in designs with bug35584 resolved (SOW virtual channel
+                                                                 separation).  Otherwise, it maps to unified SOW.
 
                                                                  \<page\>
                                                                  IOBN()_BP_TEST(5) - INRF: Defined by iobn_defs::iow_ill_bp_test_t. See
@@ -2143,7 +2030,7 @@ union cavm_iobnx_bp_testx
                                                                  \<56\> = irf__ill_rtn_crd1.ps. */
 #endif /* Word 0 - End */
     } cn98xx;
-    struct cavm_iobnx_bp_testx_cnf95xx
+    struct cavm_iobnx_bp_testx_cnf95xxp1
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t enable                : 8;  /**< [ 63: 56](R/W) Enable test mode. For diagnostic use only.
@@ -2320,8 +2207,8 @@ union cavm_iobnx_bp_testx
                                                                  \<57\> = irf__ill_rtn_crd1.pr.
                                                                  \<56\> = irf__ill_rtn_crd1.ps. */
 #endif /* Word 0 - End */
-    } cnf95xx;
-    struct cavm_iobnx_bp_testx_loki
+    } cnf95xxp1;
+    struct cavm_iobnx_bp_testx_cnf95xxp2
     {
 #if __BYTE_ORDER == __BIG_ENDIAN /* Word 0 - Big Endian */
         uint64_t enable                : 8;  /**< [ 63: 56](R/W) Enable test mode. For diagnostic use only.
@@ -2372,6 +2259,9 @@ union cavm_iobnx_bp_testx
                                                                  \<57\> = VCC - CMD (VIC).
                                                                  \<56\> = VCC - CMD (REQ/RQH).
 
+                                                                 \<61\> is only present in designs with bug35584 resolved (SOW virtual channel
+                                                                 separation).
+
                                                                  \<page\>
                                                                  IOBN()_BP_TEST(4) - INRF: Defined by iobn_defs::inrm_bp_test_t.
                                                                  \<63\> = TBD.
@@ -2382,6 +2272,12 @@ union cavm_iobnx_bp_testx
                                                                  \<58\> = REQ - FWD.
                                                                  \<57\> = REQ - SOWR.
                                                                  \<56\> = REQ - IOW.
+
+                                                                 \<59\> is only present in designs with bug35584 resolved (SOW virtual channel
+                                                                 separation).
+
+                                                                 \<57\> represents SOWR in designs with bug35584 resolved (SOW virtual channel
+                                                                 separation).  Otherwise, it maps to unified SOW.
 
                                                                  \<page\>
                                                                  IOBN()_BP_TEST(5) - INRF: Defined by iobn_defs::iow_ill_bp_test_t. See
@@ -2475,6 +2371,9 @@ union cavm_iobnx_bp_testx
                                                                  \<57\> = VCC - CMD (VIC).
                                                                  \<56\> = VCC - CMD (REQ/RQH).
 
+                                                                 \<61\> is only present in designs with bug35584 resolved (SOW virtual channel
+                                                                 separation).
+
                                                                  \<page\>
                                                                  IOBN()_BP_TEST(4) - INRF: Defined by iobn_defs::inrm_bp_test_t.
                                                                  \<63\> = TBD.
@@ -2485,6 +2384,12 @@ union cavm_iobnx_bp_testx
                                                                  \<58\> = REQ - FWD.
                                                                  \<57\> = REQ - SOWR.
                                                                  \<56\> = REQ - IOW.
+
+                                                                 \<59\> is only present in designs with bug35584 resolved (SOW virtual channel
+                                                                 separation).
+
+                                                                 \<57\> represents SOWR in designs with bug35584 resolved (SOW virtual channel
+                                                                 separation).  Otherwise, it maps to unified SOW.
 
                                                                  \<page\>
                                                                  IOBN()_BP_TEST(5) - INRF: Defined by iobn_defs::iow_ill_bp_test_t. See
@@ -2498,7 +2403,8 @@ union cavm_iobnx_bp_testx
                                                                  \<57\> = irf__ill_rtn_crd1.pr.
                                                                  \<56\> = irf__ill_rtn_crd1.ps. */
 #endif /* Word 0 - End */
-    } loki;
+    } cnf95xxp2;
+    /* struct cavm_iobnx_bp_testx_cnf95xxp2 loki; */
 };
 typedef union cavm_iobnx_bp_testx cavm_iobnx_bp_testx_t;
 

@@ -7882,8 +7882,8 @@ union cavm_gserx_refclk_sel
                                                                  PCIE0/2_REFCLK_125 at cold reset and indicates a 125 MHz reference clock when set. For
                                                                  non-bootable PCIe links, this bit is set to zero at cold reset and indicates a 100 MHz
                                                                  reference clock. It is not used for non-PCIe links. */
-        uint64_t com_clk_sel           : 1;  /**< [  1:  1](R/W/H) When set, the reference clock is sourced from the external clock mux. For bootable PCIe
-                                                                 links, this bit is loaded with the PCIEn_COM0_CLK_EN pin at cold reset.
+        uint64_t com_clk_sel           : 1;  /**< [  1:  1](R/W/H) When set, the reference clock is sourced from the external clock mux.
+                                                                 Resets to zero.
 
                                                                  For CN80XX, this field must be set. */
         uint64_t use_com1              : 1;  /**< [  0:  0](R/W) This bit controls the external mux select. When set, DLMC_REF_CLK1_N/P
@@ -7893,8 +7893,8 @@ union cavm_gserx_refclk_sel
         uint64_t use_com1              : 1;  /**< [  0:  0](R/W) This bit controls the external mux select. When set, DLMC_REF_CLK1_N/P
                                                                  are selected as the reference clock. When clear, DLMC_REF_CLK0_N/P are selected as the
                                                                  reference clock. */
-        uint64_t com_clk_sel           : 1;  /**< [  1:  1](R/W/H) When set, the reference clock is sourced from the external clock mux. For bootable PCIe
-                                                                 links, this bit is loaded with the PCIEn_COM0_CLK_EN pin at cold reset.
+        uint64_t com_clk_sel           : 1;  /**< [  1:  1](R/W/H) When set, the reference clock is sourced from the external clock mux.
+                                                                 Resets to zero.
 
                                                                  For CN80XX, this field must be set. */
         uint64_t pcie_refclk125        : 1;  /**< [  2:  2](R/W/H) For bootable PCIe links, this is loaded with
@@ -7914,8 +7914,8 @@ union cavm_gserx_refclk_sel
                                                                  PCIE0/2_REFCLK_125 at cold reset and indicates a 125 MHz reference clock when set. For
                                                                  non-bootable PCIe links, this bit is set to zero at cold reset and indicates a 100 MHz
                                                                  reference clock. It is not used for non-PCIe links. */
-        uint64_t com_clk_sel           : 1;  /**< [  1:  1](R/W/H) When set, the reference clock is sourced from the external clock mux. For bootable PCIe
-                                                                 links, this bit is loaded with the PCIEn_COM0_CLK_EN pin at cold reset. */
+        uint64_t com_clk_sel           : 1;  /**< [  1:  1](R/W/H) When set, the reference clock is sourced from the external clock mux.
+                                                                 Resets to zero. */
         uint64_t use_com1              : 1;  /**< [  0:  0](R/W) This bit controls the external mux select. When set, QLMC_REF_CLK1_N/P
                                                                  are selected as the reference clock. When clear, QLMC_REF_CLK0_N/P are selected as the
                                                                  reference clock. */
@@ -7923,8 +7923,8 @@ union cavm_gserx_refclk_sel
         uint64_t use_com1              : 1;  /**< [  0:  0](R/W) This bit controls the external mux select. When set, QLMC_REF_CLK1_N/P
                                                                  are selected as the reference clock. When clear, QLMC_REF_CLK0_N/P are selected as the
                                                                  reference clock. */
-        uint64_t com_clk_sel           : 1;  /**< [  1:  1](R/W/H) When set, the reference clock is sourced from the external clock mux. For bootable PCIe
-                                                                 links, this bit is loaded with the PCIEn_COM0_CLK_EN pin at cold reset. */
+        uint64_t com_clk_sel           : 1;  /**< [  1:  1](R/W/H) When set, the reference clock is sourced from the external clock mux.
+                                                                 Resets to zero. */
         uint64_t pcie_refclk125        : 1;  /**< [  2:  2](R/W/H) For bootable PCIe links, this is loaded with
                                                                  PCIE0/2_REFCLK_125 at cold reset and indicates a 125 MHz reference clock when set. For
                                                                  non-bootable PCIe links, this bit is set to zero at cold reset and indicates a 100 MHz
