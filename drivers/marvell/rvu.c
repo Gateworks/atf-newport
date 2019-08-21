@@ -136,15 +136,18 @@ static int octeontx_init_rvu_from_fdt(void)
 		return -1;
 	}
 
-	/* Firstly, initialize fixed setup (PF0, PF13, PF14, PF15) */
+	/*
+	 * Firstly, initialize fixed setup
+	 *     (PF0, PF(last-2), PF(last-1), PF(last))
+	 */
 	/* Init RVU0 - AF (PF0) */
 	octeontx_init_rvu_af(&current_hwvf);
 
-	/* Init RVU13 - SSO_TIM (PF13) */
+	/* Init RVU(last-2) - SSO_TIM (PF(last-2)) */
 	octeontx_init_rvu_fixed(&current_hwvf, RVU_SSO_TIM,
 				SW_RVU_SSO_TIM_PF, TRUE);
 
-	/* Init RVU14 - NPA (PF14) */
+	/* Init RVU(last-1) - NPA (PF(last-1)) */
 	octeontx_init_rvu_fixed(&current_hwvf, RVU_NPA,
 				SW_RVU_NPA_PF, TRUE);
 

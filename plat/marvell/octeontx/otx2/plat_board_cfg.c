@@ -18,6 +18,7 @@
 #include <plat_otx2_configuration.h>
 #include <octeontx_utils.h>
 #include <qlm.h>
+#include <rvu.h>
 
 /* define DEBUG_ATF_DTS to enable debug logs */
 #undef DEBUG_ATF_DTS
@@ -505,7 +506,7 @@ static void octeontx2_parse_rvu_config(const void *fdt, int *fdt_vfs)
 	/* Fill rvu_admin_pf_t structure */
 	rc = octeontx2_parse_rvu_admin(fdt, offset, RVU_ADMIN_FDT_NODE, fdt_vfs);
 	if (rc < 0) {
-		WARN("RVU: Unable to fill PF0-ADMIN structure\n");
+		WARN("RVU: Unable to fill PF%d-ADMIN structure\n", RVU_AF);
 		return;
 	}
 
@@ -513,7 +514,8 @@ static void octeontx2_parse_rvu_config(const void *fdt, int *fdt_vfs)
 	rc = octeontx2_parse_sw_rvu(fdt, offset, RVU_SSO_TIM_FDT_NODE,
 				    SW_RVU_SSO_TIM_PF, fdt_vfs);
 	if (rc < 0) {
-		WARN("RVU: Unable to fill PF13-SSO_TIM structure\n");
+		WARN("RVU: Unable to fill PF%d-SSO_TIM structure\n",
+			RVU_SSO_TIM);
 		return;
 	}
 
@@ -521,7 +523,7 @@ static void octeontx2_parse_rvu_config(const void *fdt, int *fdt_vfs)
 	rc = octeontx2_parse_sw_rvu(fdt, offset, RVU_NPA_FDT_NODE,
 				    SW_RVU_NPA_PF, fdt_vfs);
 	if (rc < 0) {
-		WARN("RVU: Unable to fill PF14-NPA structure\n");
+		WARN("RVU: Unable to fill PF%d-NPA structure\n", RVU_NPA);
 		return;
 	}
 
@@ -539,7 +541,7 @@ static void octeontx2_parse_rvu_config(const void *fdt, int *fdt_vfs)
 		rc = octeontx2_parse_sw_rvu(fdt, offset, RVU_CPT_FDT_NODE,
 					    SW_RVU_CPT_PF, fdt_vfs);
 		if (rc < 0) {
-			WARN("RVU: Unable to fill PF15 structure\n");
+			WARN("RVU: Unable to fill PF%d structure\n", RVU_LAST);
 			return;
 		}
 	} else { /* CPT not available */

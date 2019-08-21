@@ -52,7 +52,7 @@ void plat_octeontx_setup(void)
  * Program REVID for PCIe devices.
  * Bits 0..1: minor pass
  * Bits 3..2: major pass
- * Bits 7..4: midr id, 0:96, 1:95, 2:loki, f:unknown
+ * Bits 7..4: midr id, 0:96, 1:95, 2:loki, 3:98, f:unknown
  */
 unsigned int plat_configure_rid(void)
 {
@@ -74,6 +74,10 @@ unsigned int plat_configure_rid(void)
 
 	case LOKIPARTNUM:
 		midr_id = 2;
+		break;
+
+	case T98PARTNUM:
+		midr_id = 3;
 		break;
 
 	default:

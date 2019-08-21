@@ -183,10 +183,10 @@ static int cn98xx_is_bus_disabled(struct ecam_device *dev)
 {
 	int rc = 0;
 
-	/* Below buses does not exist in internal T96 topology */
+	/* Below buses does not exist in internal T98 topology */
 	if (((dev->domain == 0) && (dev->bus > 12)) ||
 	    ((dev->domain == 1) && ((dev->bus > 1) && (dev->bus != 4)))  ||
-	    ((dev->domain == 2) && (dev->bus > 16)))
+	    ((dev->domain == 2) && (dev->bus > 24)))
 		rc = 1;
 
 	return rc;
@@ -377,7 +377,7 @@ struct ecam_init_callback *cn98xx_get_init_callbacks(void)
 }
 
 const struct ecam_platform_defs plat_ops = {
-	.soc_type = T96PARTNUM,
+	.soc_type = T98PARTNUM,
 	.get_ecam_count = cn98xx_get_ecam_count,
 	.get_domain_count = cn98xx_get_domain_count,
 	.is_domain_present = cn98xx_is_domain_present,
