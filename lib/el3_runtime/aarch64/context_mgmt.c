@@ -20,9 +20,6 @@
 #include <string.h>
 #include <sve.h>
 #include <utils.h>
-#if defined(PLAT_t96) || defined(PLAT_f95)
-#include <octeontx_common.h>
-#endif
 
 
 /*******************************************************************************
@@ -366,9 +363,6 @@ void cm_prepare_el3_exit(uint32_t security_state)
 				~((VTTBR_VMID_MASK << VTTBR_VMID_SHIFT)
 				| (VTTBR_BADDR_MASK << VTTBR_BADDR_SHIFT)));
 
-#if defined(PLAT_t96) || defined(PLAT_f95)
-			write_cvm_evattid_el1(0);
-#endif
 			/*
 			 * Initialise MDCR_EL2, setting all fields rather than
 			 * relying on hw. Some fields are architecturally
@@ -468,9 +462,6 @@ void cm_el1_sysregs_context_restore(uint32_t security_state)
 	assert(ctx);
 
 	el1_sysregs_context_restore(get_sysregs_ctx(ctx));
-#if defined(PLAT_t96) || defined(PLAT_f95)
-	write_cvm_evattid_el1(0);
-#endif
 
 #if IMAGE_BL31
 	if (security_state == SECURE)
