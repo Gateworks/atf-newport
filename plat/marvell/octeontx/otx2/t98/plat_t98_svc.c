@@ -13,7 +13,6 @@
 #include <stdint.h>
 #include <uuid.h>
 #include <rvu.h>
-#include <plat_ttbr_svc.h>
 
 uintptr_t plat_octeontx_svc_smc_handler(uint32_t smc_fid,
 					u_register_t x1,
@@ -35,11 +34,6 @@ uintptr_t plat_octeontx_svc_smc_handler(uint32_t smc_fid,
 	case PLAT_OCTEONTX_OOO_CONFIG:
 		INFO("SVC OOO CONFIG: x1 = 0x%lx\n", x1);
 		ret = octeontx2_configure_ooo(x1);
-		SMC_RET1(handle, ret);
-		break;
-
-	case PLAT_OCTEONTX_SET_TTBR:
-		ret = set_ttbr(x1, x2);
 		SMC_RET1(handle, ret);
 		break;
 

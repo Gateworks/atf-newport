@@ -73,7 +73,6 @@ BL31_SOURCES		+=	plat/marvell/octeontx/otx2/aarch64/plat_octeontx_common.S	\
 				plat/marvell/octeontx/otx2/plat_legacy_pm_ops.c		\
 				plat/marvell/octeontx/otx2/f95/plat_f95_svc.c  \
 				plat/marvell/octeontx/otx2/lmc_ras.c \
-				plat/marvell/octeontx/otx2/plat_ttbr_svc.c	\
 
 ifeq (${BL2_AT_EL3},1)
     BL2_SOURCES		+=	plat/marvell/octeontx/otx2/aarch64/plat_octeontx_common.S	\

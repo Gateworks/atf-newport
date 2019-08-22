@@ -14,7 +14,6 @@
 #include <uuid.h>
 #include <bphy.h>
 #include <rvu.h>
-#include <plat_ttbr_svc.h>
 #include <plat_scmi.h>
 
 extern void *scmi_handle;
@@ -78,10 +77,6 @@ uintptr_t plat_octeontx_svc_smc_handler(uint32_t smc_fid,
 		SMC_RET1(handle, ret);
 		break;
 
-	case PLAT_OCTEONTX_SET_TTBR:
-		ret = set_ttbr(x1, x2);
-		SMC_RET1(handle, ret);
-		break;
 
 	default:
 		WARN("Unimplemented OcteonTX Service Call: 0x%x\n", smc_fid);
