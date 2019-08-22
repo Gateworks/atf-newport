@@ -177,6 +177,25 @@ void phy_set_supported_link_modes(int cgx_id, int lmac_id)
 		phy->drv->set_supported_modes(cgx_id, lmac_id);
 }
 
+void phy_reset(int cgx_id, int lmac_id)
+{
+	phy_config_t *phy;
+
+	debug_nw_mgmt("%s: %d:%d\n", __func__, cgx_id, lmac_id);
+
+	phy = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id].phy_config;
+
+	if (phy->mux_switch)
+		smi_set_switch(phy, 1); /* Enable the switch */
+
+	/* Call PHY specific config callback here */
+	if (phy->valid)
+		phy->drv->reset(cgx_id, lmac_id);
+
+	if (phy->mux_switch)
+		smi_set_switch(phy, 0); /* Disable the switch */
+}
+
 void phy_lookup(int cgx_id, int lmac_id, int type)
 {
 	cgx_lmac_config_t *lmac;

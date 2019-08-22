@@ -154,6 +154,7 @@ void phy_mdio_write(phy_config_t *phy, int mode, int devad, int reg, int val);
 void phy_set_switch(phy_config_t *phy, int enable);
 int phy_set_mod_type(int cgx_id, int lmac_id, phy_mod_type mod_type);
 void phy_set_supported_link_modes(int cgx_id, int lmac_id);
+void phy_reset(int cgx_id, int lmac_id);
 
 /* Generic PHY driver APIs to be exposed to other PHY drivers */
 void phy_generic_probe(int cgx_id, int lmac_id);
