@@ -1769,12 +1769,23 @@ MXD_STATUS mxdGetRealtimeStatus
     OUT MXD_U16 *rtStatusFlags2 /* only valid for 100GBR */
 );
 
+/*******************************************************************
+ * MXD_STATUS mxdResetLaneBaudRate
+ *   Reset lane baud rate to default
+ ********************************************************************/
+MXD_STATUS mxdResetLaneBaudRate
+(
+    IN MXD_DEV_PTR pDev,
+    IN MXD_U16 mdioPort,
+    IN MXD_U16 host_or_line,
+    IN MXD_U16 laneOffset
+);
+
 #if C_LINKAGE
 #if defined __cplusplus
 }
 #endif
 #endif
-
 
 #endif /* defined MXD_API_H */
 
