@@ -2059,7 +2059,7 @@ int cgx_xaui_get_link(int cgx_id, int lmac_id,
 		result->s.link_up = 0;
 		result->s.full_duplex = 0;
 		result->s.speed = 0;
-		return cgx_xaui_set_link_up(cgx_id, lmac_id);
+		return -1;
 	}
 
 	return 0;

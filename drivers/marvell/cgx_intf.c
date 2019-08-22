@@ -1375,20 +1375,103 @@ static int cgx_check_sfp_mod_stat(int cgx_id, int lmac_id)
 	return 0;
 }
 
+static int cgx_get_link_status(int cgx_id, int lmac_id,
+				link_state_t *link)
+{
+	cgx_lmac_config_t *lmac = NULL;
+	phy_config_t *phy = NULL;
+	int ret = 0;
+
+	debug_cgx_intf("%s: %d:%d\n", __func__, cgx_id, lmac_id);
+
+	/* Get the LMAC type for each LMAC */
+	lmac = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
+	phy = &lmac->phy_config;
+
+	debug_cgx_intf("%s: mode %d\n", __func__, lmac->mode);
+
+	/* Append the current FEC to new link status */
+	link->s.fec = lmac->fec;
+
+	if (lmac->phy_present) {
+		/* Get the PHY link status */
+		if (lmac->mdio_bus_dbg != phy->mdio_bus) {
+			if (phy_get_link_status(cgx_id, lmac_id, link) == -1) {
+				debug_cgx_intf("%s: %d:%d phy_get_link_status failed\n",
+					__func__, cgx_id, lmac_id);
+				return -1;
+			}
+		}
+		/* For non-SGMII cases, still continue to read the
+		 * CGX registers to know the link status if the
+		 * link is UP
+		 */
+		if ((!link->s.link_up) ||
+			((lmac->mode == CAVM_CGX_LMAC_TYPES_E_SGMII) ||
+			(lmac->mode == CAVM_CGX_LMAC_TYPES_E_QSGMII))) {
+			debug_cgx_intf("%s %d:%d link %d speed %d duplex %d\n",
+					__func__, cgx_id, lmac_id,
+					link->s.link_up, link->s.speed,
+					link->s.full_duplex);
+			return 0;
+		}
+	}
+
+	/* In case of SGMII/QSGMII/1000 BASE-X, with PHY not present,
+	 * (even loopback module) return the link as UP based on
+	 * PCS_RXX_SYNC with default speed as 1G
+	 */
+	if ((lmac->mode == CAVM_CGX_LMAC_TYPES_E_SGMII) ||
+		(lmac->mode == CAVM_CGX_LMAC_TYPES_E_QSGMII)) {
+		if (cgx_sgmii_check_link(cgx_id, lmac_id) != -1) {
+			link->s.link_up = 1;
+			link->s.full_duplex = 1;
+			link->s.speed = CGX_LINK_1G;
+		}
+		return 0;
+	}
+
+	if ((lmac->mode == CAVM_CGX_LMAC_TYPES_E_XAUI) ||
+		(lmac->mode == CAVM_CGX_LMAC_TYPES_E_RXAUI) ||
+		(lmac->mode == CAVM_CGX_LMAC_TYPES_E_TENG_R) ||
+		(lmac->mode == CAVM_CGX_LMAC_TYPES_E_TWENTYFIVEG_R) ||
+		(lmac->mode == CAVM_CGX_LMAC_TYPES_E_FORTYG_R) ||
+		(lmac->mode == CAVM_CGX_LMAC_TYPES_E_FIFTYG_R) ||
+		(lmac->mode == CAVM_CGX_LMAC_TYPES_E_HUNDREDG_R) ||
+		(lmac->mode == CAVM_CGX_LMAC_TYPES_E_USXGMII)) {
+		/* Obtain the link status from CGX CSRs */
+		if (cgx_xaui_get_link(cgx_id, lmac_id, link) == -1) {
+			/* When the link is down, try to re-initialize
+			 * CGX link
+			 */
+			debug_cgx_intf("%s: %d:%d link down, re-initialize link\n",
+					__func__, cgx_id, lmac_id);
+			ret = cgx_xaui_set_link_up(cgx_id, lmac_id);
+		}
+		debug_cgx_intf("%s: %d:%d link %d speed %d duplex %d\n",
+			__func__, cgx_id, lmac_id,
+			link->s.link_up,
+			link->s.speed, link->s.full_duplex);
+		return ret;
+	}
+
+	/* Other cases should not reach here */
+	ERROR("%s: %d:%d Invalid reach\n", __func__, cgx_id, lmac_id);
+	return -1;
+}
+
 /* Timer callback to periodically poll for link */
 static int cgx_poll_for_link_cb(int timer)
 {
 	int valid = 0;
 	cgx_lmac_config_t *lmac_cfg;
 	cgx_lmac_context_t *lmac_ctx;
-	phy_config_t *phy_cfg;
 	link_state_t link;
 
 	for (int cgx = 0; cgx < plat_octeontx_scfg->cgx_count; cgx++) {
 		for (int lmac = 0; lmac < MAX_LMAC_PER_CGX; lmac++) {
 			lmac_cfg = &plat_octeontx_bcfg->cgx_cfg[cgx].lmac_cfg[lmac];
 			lmac_ctx = &lmac_context[cgx][lmac];
-			phy_cfg = &lmac_cfg->phy_config;
 
 			link.u64 = 0;
 			valid = 0;
@@ -1400,8 +1483,7 @@ static int cgx_poll_for_link_cb(int timer)
 							lmac);
 
 				/* Get the link status */
-				if (lmac_cfg->mdio_bus_dbg != phy_cfg->mdio_bus)
-					phy_get_link_status(cgx, lmac, &link);
+				cgx_get_link_status(cgx, lmac, &link);
 
 				/* If the prev link change is not handled
 				 * wait until it is handled as the reqs

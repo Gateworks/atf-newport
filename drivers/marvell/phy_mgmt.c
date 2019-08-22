@@ -37,7 +37,6 @@ int phy_get_link_status(int cgx_id, int lmac_id,
 {
 	cgx_lmac_config_t *lmac = NULL;
 	phy_config_t *phy = NULL;
-	int ret = 0;
 
 	debug_nw_mgmt("%s: %d:%d\n", __func__, cgx_id, lmac_id);
 
@@ -47,70 +46,21 @@ int phy_get_link_status(int cgx_id, int lmac_id,
 
 	debug_nw_mgmt("%s: mode %d\n", __func__, lmac->mode);
 
-	if (lmac->phy_present) {
-		if (phy->mux_switch)
-			smi_set_switch(phy, 1); /* Enable the switch */
+	if (!lmac->phy_present)
+		return -1;
 
-		/* Call PHY specific probe callback here */
-		if (phy->valid)
-			lmac->phy_config.drv->get_link_status(cgx_id,
-					lmac_id, link);
+	if (phy->mux_switch)
+		smi_set_switch(phy, 1); /* Enable the switch */
 
-		if (phy->mux_switch)
-			smi_set_switch(phy, 0); /* Disable the switch */
+	/* Call PHY specific probe callback here */
+	if (phy->valid)
+		lmac->phy_config.drv->get_link_status(cgx_id,
+				lmac_id, link);
 
-		/* Append the current FEC to new link status */
-		link->s.fec = lmac->fec;
+	if (phy->mux_switch)
+		smi_set_switch(phy, 0); /* Disable the switch */
 
-		/* For non-SGMII cases, still continue to read the
-		 * CGX registers to know the link status if the
-		 * link is UP
-		 */
-		if ((!link->s.link_up) ||
-			((lmac->mode == CAVM_CGX_LMAC_TYPES_E_SGMII) ||
-			(lmac->mode == CAVM_CGX_LMAC_TYPES_E_QSGMII))) {
-			debug_nw_mgmt("%s %d:%d link %d speed %d duplex %d\n",
-				__func__, cgx_id, lmac_id,
-				link->s.link_up, link->s.speed,
-				link->s.full_duplex);
-			return ret;
-		}
-	}
-
-	/* In case of SGMII/QSGMII/1000 BASE-X, with PHY not present,
-	 * (even loopback module) return the link as UP based on
-	 * MRX_STATUS with default speed as 1G
-	 */
-	if ((lmac->mode == CAVM_CGX_LMAC_TYPES_E_SGMII) ||
-		(lmac->mode == CAVM_CGX_LMAC_TYPES_E_QSGMII)) {
-		if (cgx_sgmii_check_link(cgx_id, lmac_id) != -1) {
-			link->s.link_up = 1;
-			link->s.full_duplex = 1;
-			link->s.speed = CGX_LINK_1G;
-		}
-		return 0;
-	}
-
-	if ((lmac->mode == CAVM_CGX_LMAC_TYPES_E_XAUI) ||
-		(lmac->mode == CAVM_CGX_LMAC_TYPES_E_RXAUI) ||
-		(lmac->mode == CAVM_CGX_LMAC_TYPES_E_TENG_R) ||
-		(lmac->mode == CAVM_CGX_LMAC_TYPES_E_TWENTYFIVEG_R) ||
-		(lmac->mode == CAVM_CGX_LMAC_TYPES_E_FORTYG_R) ||
-		(lmac->mode == CAVM_CGX_LMAC_TYPES_E_FIFTYG_R) ||
-		(lmac->mode == CAVM_CGX_LMAC_TYPES_E_HUNDREDG_R) ||
-		(lmac->mode == CAVM_CGX_LMAC_TYPES_E_USXGMII)) {
-		/* Obtain the link status from CGX CSRs */
-		cgx_xaui_get_link(cgx_id, lmac_id, link);
-		debug_nw_mgmt("%s: %d:%d link %d speed %d duplex %d\n",
-			__func__, cgx_id, lmac_id,
-			link->s.link_up,
-			link->s.speed, link->s.full_duplex);
-		return ret;
-	}
-
-	/* Other cases should not reach here */
-	ERROR("%s: %d:%d Invalid reach\n", __func__, cgx_id, lmac_id);
-	return -1;
+	return 0;
 }
 
 void phy_probe(int cgx_id, int lmac_id)
