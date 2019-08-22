@@ -728,7 +728,7 @@ int cgx_handle_mode_change(int cgx_id, int lmac_id,
 	int qlm_mode = 0, baud_mhz = 0, req_an = 0, flags = 0;
 	int req_duplex = 0;
 	int qlm = 0, an = 0, invalid_req = 0;
-	int an_updated = 0, an_cap = 0;
+	int an_cap = 0;
 	uint64_t mode_bitmask = 0;
 	link_state_t link;
 
@@ -769,30 +769,25 @@ int cgx_handle_mode_change(int cgx_id, int lmac_id,
 	}
 
 	debug_cgx_intf("%s: req_an %d an %d\n", __func__, req_an, an);
-	/* If AN change is requested, update the LMAC config structure */
-	if (req_an != an) {
-		lmac->autoneg_dis = !req_an;
-		an_updated = 1;
-	}
 
 	/* User is requesting for a different speed. Check if
 	 * it is valid to change to user requested speed
 	 */
-	if ((lmac_ctx->s.speed != req_speed) || (an_updated)) {
+	if ((lmac_ctx->s.speed != req_speed) || (req_an != an)) {
 		qlm_mode = cgx_get_qlm_mode_for_speed(req_speed, req_an, flags);
 
 		/* Check if AN disable/enable is allowed for speed */
-		debug_cgx_intf("%s: %d:%d an_updated %d an %d\n", __func__,
-				cgx_id, lmac_id, an_updated, !lmac->autoneg_dis);
+		debug_cgx_intf("%s: %d:%d an %d\n", __func__,
+				cgx_id, lmac_id, req_an);
 		an_cap = cgx_get_an_cap_for_qlm_mode(qlm_mode);
-		if (an_cap != !lmac->autoneg_dis) {
-			debug_cgx_intf("%s: %d: %d Invalid AN change request\n", __func__,
+		if (an_cap != req_an) {
+			debug_cgx_intf("%s: %d: %d Invalid AN change request\n",
+				 __func__,
 				cgx_id, lmac_id);
 			cgx_set_error_type(cgx_id, lmac_id,
 					CGX_ERR_SPEED_CHANGE_INVALID);
 			goto mode_err;
 		}
-
 		/* FIXME: mode_bitmask needs to be determined based on the
 		 * SET_LINK_MODE command previously sent by user (via private
 		 * flag options). From bitmask, determine QLM mode, LMAC type
@@ -811,6 +806,8 @@ int cgx_handle_mode_change(int cgx_id, int lmac_id,
 
 			/* Update the new mode info to board config structure
 			 */
+			lmac->autoneg_dis = !req_an;
+
 			lmac->mode_idx = qlm_mode;
 
 			/* Clear the attributes related to mode and set
