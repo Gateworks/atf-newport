@@ -37,7 +37,7 @@ static void wait(uint64_t delay)
 	} while (count < end);
 }
 
-static int print_rsp_sts_errors(uint64_t emm_rsp_sts)
+static int print_rsp_sts_errors(uint64_t emm_rsp_sts, int suppress_warning)
 {
 	int error_count = 0;
 
@@ -53,7 +53,8 @@ static int print_rsp_sts_errors(uint64_t emm_rsp_sts)
 	}
 	if (RSP_STS_GET_RSP_TIMEOUT(emm_rsp_sts) ||
 	    RSP_STS_GET_STP_TIMEOUT(emm_rsp_sts)) {
-		ERROR("MMC: Response timeout error.\n");
+		if (!suppress_warning)
+			ERROR("MMC: Response timeout error.\n");
 		error_count++;
 	}
 	if (RSP_STS_GET_BLK_CRC_ERR(emm_rsp_sts)) {
@@ -95,7 +96,8 @@ static uint64_t mio_emm_cmd(uint32_t cmd_idx, uint32_t ctype_xor,
 
 	if (RSP_STS_GET_RSP_VAL(emm_rsp_sts) ||
 	    RSP_STS_GET_STP_VAL(emm_rsp_sts)) {
-		cmd_error = print_rsp_sts_errors(emm_rsp_sts);
+		cmd_error = print_rsp_sts_errors(emm_rsp_sts,
+			suppress_warning);
 		if (cmd_error)
 			return emm_rsp_sts;
 	} else {
@@ -189,7 +191,7 @@ static int sdmmc_rw_block(int write, uint64_t addr, uint32_t blk_cnt,
 				dma_retry_count, emm_rsp_sts,
 				(unsigned long long)CSR_READ(
 							CAVM_MIO_EMM_RSP_LO));
-			print_rsp_sts_errors(emm_rsp_sts);
+			print_rsp_sts_errors(emm_rsp_sts, 0);
 			mio_emm_dma = CSR_READ(CAVM_MIO_EMM_DMA);
 			mio_emm_dma = MIO_EMM_DMA_SET_DMA_VAL(mio_emm_dma);
 			CSR_WRITE(CAVM_MIO_EMM_DMA, mio_emm_dma);
