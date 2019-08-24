@@ -735,8 +735,14 @@ static void sdmmc_switch_clock(int clock_hz)
 				MIO_EMM_MODEX_GET_BUS_WIDTH(mio_emm_modex));
 	emm_switch = MIO_EMM_SWITCH_SET_POWER_CLASS(emm_switch,
 				MIO_EMM_MODEX_GET_POWER_CLASS(mio_emm_modex));
-	emm_switch = MIO_EMM_SWITCH_SET_BUS_ID(emm_switch, mmc_drv.bus_id);
 
+	/* apply to slot-0 first */
+	emm_switch = MIO_EMM_SWITCH_SET_BUS_ID(emm_switch, 0);
+	CSR_WRITE(CAVM_MIO_EMM_SWITCH, emm_switch);
+	wait(2 * REF_FREQ);
+
+	/* apply to target slot */
+	emm_switch = MIO_EMM_SWITCH_SET_BUS_ID(emm_switch, mmc_drv.bus_id);
 	CSR_WRITE(CAVM_MIO_EMM_SWITCH, emm_switch);
 	wait(2 * REF_FREQ);
 
