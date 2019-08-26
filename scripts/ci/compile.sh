@@ -90,6 +90,7 @@ case $build_name in
 	*_a70x0_pcap )   platform="a70x0_pcac"; ;;
 	*_a70x0* )       platform="a70x0"; ;;
 	*_a7020_amc )    platform="a70x0_amc"; ;;
+	*_a7020_comexp )    platform="a70x0_amc"; ;;
 	*_a80x0_mcbin* ) platform="a80x0_mcbin"; ;;
 	*_a80x0_ucpe* ) platform="a80x0_mcbin"; ;;
 	*_a80x0* )       platform="a80x0"; ;;
@@ -104,7 +105,7 @@ esac
 case $build_name in
 	uefi* )       build_flags="USE_COHERENT_MEM=0 LOG_LEVEL=20 WORKAROUND_CVE_2018_3639=0"; ;;
 	*_a70x0* )    build_flags="DEBUG=0 USE_COHERENT_MEM=0 LOG_LEVEL=20 WORKAROUND_CVE_2018_3639=0"; ;;
-	*_a7020_amc ) build_flags="DEBUG=0 USE_COHERENT_MEM=0 LOG_LEVEL=20 WORKAROUND_CVE_2018_3639=0"; ;;
+	*_a7020* )    build_flags="DEBUG=0 USE_COHERENT_MEM=0 LOG_LEVEL=20 WORKAROUND_CVE_2018_3639=0"; ;;
 	*_a80x0_mcbin_cve_2018_3639) build_flags="DEBUG=0 USE_COHERENT_MEM=0 LOG_LEVEL=20"; ;;
 	*_a80x0_ucpe) build_flags="DEBUG=0 USE_COHERENT_MEM=0 LOG_LEVEL=20"; ;;
 	*_a80x0_ddr32* )    build_flags="DEBUG=0 USE_COHERENT_MEM=0 LOG_LEVEL=20 WORKAROUND_CVE_2018_3639=0 DDR32=1"; ;;

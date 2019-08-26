@@ -10,6 +10,7 @@ uboot_2018_a70x0_D
 uboot_2018_a70x0_E
 uboot_2018_a70x0_pcac
 uboot_2018_a7020_amc
+uboot_2018_a7020_comexp
 uboot_2018_a70x0_kr
 
 uboot_2018_a80x0
