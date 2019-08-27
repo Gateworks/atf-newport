@@ -571,16 +571,10 @@ static void ble_plat_svc_config(void)
 				goto perror;
 			avs_workpoint = svc[0];
 			break;
-		case CPU_1300_DDR_800_RCLK_800:
-			if (perr[1])
-				goto perror;
-			avs_workpoint = svc[1];
-			break;
 		default:
-			if (perr[0])
-				goto perror;
-			avs_workpoint = svc[0];
-			break;
+			ERROR("SVC: Unsupported Frequency 0x%x\n",
+				freq_pidi_mode);
+			return;
 		}
 	} else if (device_id == MVEBU_CN9130_DEV_ID) {
 		NOTICE("SVC: DEV ID: %s, FREQ Mode: 0x%x\n",
