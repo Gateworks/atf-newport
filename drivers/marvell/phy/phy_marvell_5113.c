@@ -41,6 +41,7 @@ typedef struct {
 		int cmain_line;
 		int cpre_line;
 		int cpost_line;
+		int use_20G;
 	} port[4];
 } phy_mxd_priv_t;
 
@@ -113,9 +114,6 @@ void phy_marvell_5113_config(int cgx_id, int lmac_id)
 	MXD_BOOL forceReConfig = MXD_FALSE;
 	MXD_STATUS status;
 	MXD_U16 swReset = 1;
-	MXD_16 preCursor;
-	MXD_16 attenuation;
-	MXD_16 postCursor;
 
 	debug_phy_driver("%s: %d:%d\n", __func__, cgx_id, lmac_id);
 
@@ -126,9 +124,38 @@ void phy_marvell_5113_config(int cgx_id, int lmac_id)
 	debug_phy_driver("%s: port %d AN %d QLM mode %d\n", __func__, port,
 			!lmac_cfg->autoneg_dis, lmac_cfg->mode_idx);
 
-	/* Disable AN and enable AN only for appropriate modes */
+	/* If previously 20G clock was configured and current mode
+	 * is not 20G, Overwrite the clock modified to support 20G
+	 * with default value
+	 */
+	if ((lmac_cfg->mode_idx != QLM_MODE_20GAUI_C2C) &&
+			marvell_5113_priv[cgx_id].port[port].use_20G) {
+		debug_phy_driver("%s: Prev mode was 20G, change the clock to default\n",
+						__func__);
+		mxdResetLaneBaudRate(&marvell_5113_priv[cgx_id].mxddev,
+				phy->addr, MXD_HOST_SIDE, port);
+		mxdResetLaneBaudRate(&marvell_5113_priv[cgx_id].mxddev,
+				phy->addr, MXD_LINE_SIDE, port);
+		status = mxdLaneSoftReset(&marvell_5113_priv[cgx_id].mxddev,
+				phy->addr, MXD_HOST_SIDE, port, 1000);
+		status = mxdLaneSoftReset(&marvell_5113_priv[cgx_id].mxddev,
+				phy->addr, MXD_LINE_SIDE, port, 1000);
+	}
+	/* Disable AN/20G flags for all and enable it only
+	 * for appropriate modes
+	 */
 	marvell_5113_priv[cgx_id].port[port].use_an = 0;
+	marvell_5113_priv[cgx_id].port[port].use_20G = 0;
+	marvell_5113_priv[cgx_id].mxddev.use20G = 0;
+	marvell_5113_priv[cgx_id].port[port].completed_an = 0;
+
 	switch (lmac_cfg->mode_idx) {
+	case QLM_MODE_SGMII:
+		host_mode = MXD_P1S;
+		line_mode = MXD_P1P;
+		mode_str = "SGMII";
+		marvell_5113_priv[cgx_id].port[port].use_an = 1;
+	break;
 	case QLM_MODE_1G_X:
 		host_mode = line_mode = MXD_P1X;
 		mode_str = "1G_X";
@@ -189,6 +216,7 @@ void phy_marvell_5113_config(int cgx_id, int lmac_id)
 		}
 		marvell_5113_priv[cgx_id].port[port].use_an = 0;
 		marvell_5113_priv[cgx_id].mxddev.use20G = 1;
+		marvell_5113_priv[cgx_id].port[port].use_20G = 1;
 	break;
 	case QLM_MODE_25GAUI_C2C:
 	case QLM_MODE_25GAUI_C2M:
@@ -231,6 +259,7 @@ void phy_marvell_5113_config(int cgx_id, int lmac_id)
 		}
 		marvell_5113_priv[cgx_id].port[port].use_an = 0;
 		marvell_5113_priv[cgx_id].mxddev.use20G = 1;
+		marvell_5113_priv[cgx_id].port[port].use_20G = 1;
 	break;
 	case QLM_MODE_50GAUI_2_C2C:
 	case QLM_MODE_50GAUI_2_C2M:
@@ -276,6 +305,7 @@ void phy_marvell_5113_config(int cgx_id, int lmac_id)
 		}
 		marvell_5113_priv[cgx_id].port[port].use_an = 0;
 		marvell_5113_priv[cgx_id].mxddev.use20G = 1;
+		marvell_5113_priv[cgx_id].port[port].use_20G = 1;
 	break;
 	case QLM_MODE_CAUI_4_C2C:
 	case QLM_MODE_CAUI_4_C2M:
@@ -334,88 +364,76 @@ void phy_marvell_5113_config(int cgx_id, int lmac_id)
 		 * line-side output lanes 3 and 2
 		 * Invert host-side output lane 2
 		 */
-		for (int lane = 0; lane < 4; lane++) {
-			status = mxdSetRxPolarity(
-					&marvell_5113_priv[cgx_id].mxddev,
-					phy->addr,
-					MXD_HOST_SIDE, lane,
-					HostRxPolarities[lane],
-					swReset);
-			if (status != MXD_OK) {
-				ERROR("%s: mxdSetRxPolarity() host lane %d\t"
-					" failed\n", __func__, lane);
-				return;
-			}
-			status = mxdSetTxPolarity(
-					&marvell_5113_priv[cgx_id].mxddev,
-					phy->addr,
-					MXD_HOST_SIDE, lane,
-					HostTxPolarities[lane],
-					swReset);
+		status = mxdSetRxPolarity(
+				&marvell_5113_priv[cgx_id].mxddev,
+				phy->addr,
+				MXD_HOST_SIDE, port,
+				HostRxPolarities[port],
+				swReset);
+		if (status != MXD_OK) {
+			ERROR("%s: mxdSetRxPolarity() host lane %d\t"
+				" failed\n", __func__, port);
+			return;
+		}
+		status = mxdSetTxPolarity(
+				&marvell_5113_priv[cgx_id].mxddev,
+				phy->addr,
+				MXD_HOST_SIDE, port,
+				HostTxPolarities[port],
+				swReset);
 
-			if (status != MXD_OK) {
-				ERROR("%s: mxdSetTxPolarity() host lane %d\t"
-					"failed\n", __func__, lane);
-				return;
-			}
-			status = mxdSetRxPolarity(
-					&marvell_5113_priv[cgx_id].mxddev,
-					phy->addr,
-					MXD_LINE_SIDE, lane,
-					LineRxPolarities[lane],
-					swReset);
-			if (status != MXD_OK) {
-				ERROR("%s: mxdSetRxPolarity() line lane %d\t"
-					"failed\n", __func__, lane);
-				return;
-			}
-			status = mxdSetTxPolarity(
-					&marvell_5113_priv[cgx_id].mxddev,
-					phy->addr,
-					MXD_LINE_SIDE, lane,
-					LineTxPolarities[lane],
-					swReset);
-			if (status != MXD_OK) {
-				ERROR("%s: mxdSetTxPolarity() host lane %d\t"
-					"failed\n", __func__, lane);
-				return;
-			}
+		if (status != MXD_OK) {
+			ERROR("%s: mxdSetTxPolarity() host lane %d\t"
+				"failed\n", __func__, port);
+			return;
+		}
+		status = mxdSetRxPolarity(
+				&marvell_5113_priv[cgx_id].mxddev,
+				phy->addr,
+				MXD_LINE_SIDE, port,
+				LineRxPolarities[port],
+				swReset);
+		if (status != MXD_OK) {
+			ERROR("%s: mxdSetRxPolarity() line lane %d\t"
+				"failed\n", __func__, port);
+			return;
+		}
+		status = mxdSetTxPolarity(
+				&marvell_5113_priv[cgx_id].mxddev,
+				phy->addr,
+				MXD_LINE_SIDE, port,
+				LineTxPolarities[port],
+				swReset);
+		if (status != MXD_OK) {
+			ERROR("%s: mxdSetTxPolarity() host lane %d\t"
+				"failed\n", __func__, port);
+			return;
 		}
 	}
+}
 
-	/* Patch : for 25G Serdes Tuning */
-	if (marvell_5113_priv[cgx_id].mxddev.use20G) {
-		debug_phy_driver("%s(%d): 20G serdes tuning\n", __func__, port);
-		preCursor = 6;
-		attenuation = 31;
-		postCursor = 4;
-		/* FIXME : QLM 6 needs different tuning */
-		if (lmac_cfg->qlm == 6) {
-			preCursor = 10;
-			attenuation = 31;
-			postCursor = 6;
-		}
-		status = mxdSetTxFFE(&marvell_5113_priv[cgx_id].mxddev,
-					phy->addr,
-					MXD_LINE_SIDE, port,
-					preCursor, attenuation,
-					postCursor, 1);
-		if (status != MXD_OK) {
-			ERROR("%s(%d): mxdSetTxFFE failed\n", __func__, port);
-			return;
-		}
-		status = mxdGetTxFFE(&marvell_5113_priv[cgx_id].mxddev,
-					phy->addr,
-					MXD_LINE_SIDE, port,
-					&preCursor, &attenuation,
-					&postCursor);
-		if (status != MXD_OK) {
-			ERROR("%s(%d): mxdGetTxFFE failed\n", __func__, port);
-			return;
-		}
-		debug_phy_driver("%s(%d): FFE preCursor.%d attenuation.%d\t"
-				"postCursor.%d\n", __func__, port, preCursor,
-				attenuation, postCursor);
+/* To SW reset PHY */
+void phy_marvell_5113_reset(int cgx_id, int lmac_id)
+{
+	MXD_STATUS status;
+	int port;
+	cgx_lmac_config_t *lmac_cfg;
+	phy_config_t *phy;
+
+	lmac_cfg = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
+	phy = &lmac_cfg->phy_config;
+	port = phy->port;
+
+	printf("%s: %d:%d port %d\n", __func__, cgx_id, lmac_id, port);
+
+	status = mxdLaneSoftReset(&marvell_5113_priv[cgx_id].mxddev,
+			phy->addr, MXD_HOST_SIDE, port, 1000);
+	status = mxdLaneSoftReset(&marvell_5113_priv[cgx_id].mxddev,
+			phy->addr, MXD_LINE_SIDE, port, 1000);
+
+	if (status != MXD_OK) {
+		printf("%s: %d:%d Reset of PHY 88x5113 failed\n", __func__,
+			cgx_id, lmac_id);
 	}
 }
 
@@ -440,7 +458,9 @@ void phy_marvell_5113_get_link_status(int cgx_id, int lmac_id,
 	int port;
 	cgx_lmac_config_t *lmac_cfg;
 	phy_config_t *phy;
-	int phy_side;
+	int phy_side, host_side;
+	MXD_U8 autoNegComplete = -1;
+	static MXD_U16 speed_bits;
 
 	lmac_cfg = &plat_octeontx_bcfg->cgx_cfg[cgx_id].lmac_cfg[lmac_id];
 	phy = &lmac_cfg->phy_config;
@@ -448,15 +468,89 @@ void phy_marvell_5113_get_link_status(int cgx_id, int lmac_id,
 
 	link->u64 = 0;
 
-	if (!strncmp(plat_octeontx_bcfg->bcfg.board_model, "ebb9", 4))
+	if (!strncmp(plat_octeontx_bcfg->bcfg.board_model, "ebb9", 4)) {
 		phy_side = MXD_HOST_SIDE;
-	else
+		host_side = MXD_LINE_SIDE;
+	} else {
 		phy_side = MXD_LINE_SIDE;
+		host_side = MXD_HOST_SIDE;
+	}
 
 	debug_phy_driver("%s: %d:%d phy side %d\n", __func__, cgx_id, lmac_id,
 					phy_side);
 	if (marvell_5113_priv[cgx_id].port[port].use_an) {
-		/* FIXME */
+		/* Do nothing if AN already completed */
+		if (!marvell_5113_priv[cgx_id].port[port].completed_an) {
+			status = mxdAutoNegCheckComplete(
+					&marvell_5113_priv[cgx_id].mxddev,
+					phy->addr,
+					host_side, port,
+					&autoNegComplete);
+			if (status != MXD_OK) {
+				ERROR("%s(%d): mxdAutoNegCheckComplete() failed\n",
+						__func__, port);
+				return;
+			}
+			if (!autoNegComplete)	{
+				debug_phy_driver("%s(%d): 88X5113 PHY AN not complete\n",
+							__func__, port);
+				return;
+			}
+
+			status = mxdGetAutoNegResolution(
+					&marvell_5113_priv[cgx_id].mxddev,
+						phy->addr, host_side, port,
+						&speed_bits);
+			if (status != MXD_OK) {
+				ERROR("%s(%d): mxdGetAutoNegResolution() failed",
+							__func__, port);
+				return;
+			}
+		} else
+			debug_phy_driver("%s: port %d completed_an\n",
+						__func__, port);
+
+		status =  mxdCheckLinkStatus(&marvell_5113_priv[cgx_id].mxddev,
+						phy->addr, port, MXD_TRUE,
+						&currentStatus, &latchedStatus,
+						&detailedStatus);
+		if (status != MXD_OK)
+			ERROR("%s: mxdCheckLinkStatus failed %ld\n",
+				__func__, status);
+
+		debug_phy_driver("%s(%d): 88X5113 PHY link is %d, speed 0x%x\n",
+				__func__, port, currentStatus, speed);
+
+		if (currentStatus == MXD_LINK_UP)
+			link->s.link_up = 1;
+		else
+			link->s.link_up = 0;
+
+		debug_phy_driver("%s(%d): 88X5113 PHY returned speed_bits 0x%x\n",
+						__func__, port, speed_bits);
+
+		/* No macros defined by PHY SDK */
+		if (speed_bits & 0x0008) {
+			/* 10GB-KR = 0x0008 */
+			link->s.full_duplex = 1;
+			link->s.speed = CGX_LINK_10G;
+		} else if (speed_bits & 0x0060) {
+			/* 40GB-KR4 = 0x0020 */
+			/* 40GB-CR4 = 0x0040 */
+			link->s.full_duplex = 1;
+			link->s.speed = CGX_LINK_40G;
+		} else if (speed_bits & 0x0c00) {
+			/* 100GB-KR4 = 0x0400 */
+			/* 100GB-CR4 = 0x0800 */
+			link->s.full_duplex = 1;
+			link->s.speed = CGX_LINK_100G;
+		} else if (speed_bits & 0x3000) {
+			/* 25GB-KR-S/CR-S = 0x1000 */
+			/* 25GB-KR/CR     = 0x2000 */
+			link->s.full_duplex = 1;
+			link->s.speed = CGX_LINK_25G;
+		} else
+			link->s.link_up = 0;
 	} else {
 		status =  mxdCheckLinkStatus(&marvell_5113_priv[cgx_id].mxddev,
 						phy->addr, port, MXD_TRUE,
@@ -539,6 +633,7 @@ void phy_marvell_5113_supported_modes(int cgx_id, int lmac_id)
 			(1 << CGX_MODE_1000_BASEX_BIT) |
 			(1 << CGX_MODE_10G_C2C_BIT) |
 			(1 << CGX_MODE_10G_C2M_BIT) |
+			(1 << CGX_MODE_10G_KR_BIT) |
 			(1 << CGX_MODE_20G_C2C_BIT) |
 			(1 << CGX_MODE_40G_C2C_BIT) |
 			(1 << CGX_MODE_40G_C2M_BIT) |
@@ -770,7 +865,7 @@ phy_drv_t marvell_5113_drv = {
 		.probe			= phy_marvell_5113_probe,
 		.config			= phy_marvell_5113_config,
 		.set_an			= phy_marvell_5113_set_an,
-		.reset			= phy_generic_reset,
+		.reset			= phy_marvell_5113_reset,
 		.get_link_status	= phy_marvell_5113_get_link_status,
 		.set_supported_modes	= phy_marvell_5113_supported_modes,
 		.shutdown		= phy_generic_shutdown,
