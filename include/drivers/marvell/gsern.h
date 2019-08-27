@@ -80,10 +80,12 @@ int gsern_set_mode(int qlm, int qlm_lane, enum gsern_mode mode, int is_first,
  * @param node	 Node to access
  * @param qlm	  QLM to access
  * @param lane	 Lane to access
+ * @param show_data Set to non-zero to have the eye capture dump the raw eye data as
+ *				  it is captured
  * @param eye_data Location where the eye data will be stored
  *
  * @return Zero on success, negative on failure
  */
-int gsern_eye_capture(int qlm, int lane, gsern_qlm_eye_t *eye_data);
+int gsern_eye_capture(int qlm, int lane, int show_data, gsern_qlm_eye_t *eye_data);
 
 #endif /* _GSERN_H_ */

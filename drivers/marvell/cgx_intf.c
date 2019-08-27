@@ -1219,7 +1219,7 @@ static int do_eye(int qlm, int qlm_lane)
 	int eye_height = 0;
 	char color_str[] = "\33[40m"; /* Note: This is modified, not constant */
 
-	if (gsern_eye_capture(qlm, qlm_lane, &eye))
+	if (gsern_eye_capture(qlm, qlm_lane, 1 /* = show_data */, &eye))
 		return -1;
 
 	/* Calculate the max eye width */

@@ -90,6 +90,7 @@
 #define gsern_is_model			cavm_is_model
 #define gsern_clock_get_count(...)	read_cntpct_el0()
 #define gsern_clock_get_rate(...)	GTI_RATE
+#define gsern_extracts			octeontx_bit_extract
 
 static inline int64_t gsern_extract_smag(uint64_t v, int lsb, int msb)
 {

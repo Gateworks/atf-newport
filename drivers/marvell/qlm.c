@@ -759,6 +759,15 @@ void qlm_display_settings_gsern(int qlm, int qlm_lane, bool show_tx, bool show_r
 			rx_5a_bsts.s.ctlez_adapt_status, rx_6_bsts.s.ctlelte_adapt_status, rx_5_bsts.s.ctle_adapt_status);
 		printf("	VGA_ADAPT_STATUS=%d, AFEOS_ADAPT_STATUS=%d, DFE_ADAPT_STATUS=%d\n",
 			   rx_5_bsts.s.vga_adapt_status, rx_8_bsts.s.afeos_adapt_status, rx_5_bsts.s.dfe_adapt_status);
+		int sensor = gsern_is_model(OCTEONTX_CNF95XX) ? 2 : 9;
+		GSERN_CSR_INIT(temp_conv_result, CAVM_TSNX_TS_TEMP_CONV_RESULT(sensor));
+		if (temp_conv_result.s.temp_valid)
+		{
+			int temp_x4 = gsern_extracts(temp_conv_result.s.temp_corrected, 0, 11);
+			printf("	TEMPERATURE=%d.%02dC\n", temp_x4 >> 2, (temp_x4 & 3) * 25);
+		}
+		else
+			printf("	TEMPERATURE=Unavailable\n");
 	}
 	if (show_tx)
 	{
@@ -1607,6 +1616,11 @@ int qlm_set_mode_gsern(int qlm, int lane, qlm_modes_t mode, int baud_mhz, qlm_mo
 			is_network = true;
 			break;
 		case QLM_MODE_RXAUI:
+			gsern_mode = GSERN_MODE_CGX;
+			/* RXAUI requires synchonization between the lanes, need DUAL flag */
+			gsern_flags = GSERN_FLAGS_DUAL;
+			is_network = true;
+			break;
 		case QLM_MODE_25GAUI_2_C2C:
 		case QLM_MODE_40GAUI_2_C2C:
 		case QLM_MODE_50GAUI_2_C2C:
@@ -1614,10 +1628,15 @@ int qlm_set_mode_gsern(int qlm, int lane, qlm_modes_t mode, int baud_mhz, qlm_mo
 		case QLM_MODE_50G_CR2:
 		case QLM_MODE_50G_KR2:
 			gsern_mode = GSERN_MODE_CGX;
-			gsern_flags = GSERN_FLAGS_DUAL;
+			/* Although dual lane these modes don't need the DUAL flag */
 			is_network = true;
 			break;
 		case QLM_MODE_XAUI:
+			gsern_mode = GSERN_MODE_CGX;
+			/* XAUI requires synchonization between the lanes, need QUAD flag */
+			gsern_flags = GSERN_FLAGS_QUAD;
+			is_network = true;
+			break;
 		case QLM_MODE_XLAUI:
 		case QLM_MODE_XLAUI_C2M:
 		case QLM_MODE_40G_CR4:
@@ -1629,7 +1648,7 @@ int qlm_set_mode_gsern(int qlm, int lane, qlm_modes_t mode, int baud_mhz, qlm_mo
 		case QLM_MODE_100G_CR4:
 		case QLM_MODE_100G_KR4:
 			gsern_mode = GSERN_MODE_CGX;
-			gsern_flags = GSERN_FLAGS_QUAD;
+			/* Although quad lane these modes don't need the QUAD flag */
 			is_network = true;
 			break;
 		case QLM_MODE_SATA:
