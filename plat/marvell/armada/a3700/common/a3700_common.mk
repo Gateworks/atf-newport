@@ -14,6 +14,9 @@ PLAT_COMMON_BASE		:= $(PLAT_FAMILY_BASE)/common
 MARVELL_DRV_BASE		:= drivers/marvell
 MARVELL_COMMON_BASE		:= $(MARVELL_PLAT_BASE)/common
 
+# Enable version2 of image loading
+LOAD_IMAGE_V2		:= 1
+
 include plat/marvell/marvell.mk
 
 #*********** A3700 *************
