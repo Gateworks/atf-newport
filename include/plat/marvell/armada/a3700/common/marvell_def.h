@@ -181,4 +181,8 @@
 #define BL32_BASE		PLAT_MARVELL_TRUSTED_RAM_BASE
 #define BL32_LIMIT		(BL32_BASE + PLAT_MARVELL_TRUSTED_RAM_SIZE)
 
+#ifdef SPD_none
+#undef BL32_BASE
+#endif /* SPD_none */
+
 #endif /* MARVELL_DEF_H */
