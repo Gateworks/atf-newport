@@ -438,6 +438,7 @@ retry_link:
 				link.s.link_up = 0;
 				link.s.full_duplex = 0;
 				link.s.speed = CGX_LINK_NONE;
+				link.s.fec = lmac_cfg->fec;
 				count = 0; /* reset the counter */
 				goto cgx_err; /* To poll for the link */
 			}
