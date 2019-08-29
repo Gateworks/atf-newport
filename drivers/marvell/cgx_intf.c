@@ -386,11 +386,7 @@ retry_mod_stat:
 				if (trans_type == SFP_TRANS_TYPE_NONE) {
 					cgx_set_error_type(cgx_id, lmac_id,
 						CGX_ERR_MODULE_INVALID);
-					/* set link_req to 1 to indicate
-					 * poll timer
-					 */
-					lmac_ctx->s.link_req = 1;
-					return -1;
+					goto sfp_err;
 				}
 				/* Save the new mod status */
 				lmac_ctx->s.mod_stats = mod_status;
@@ -406,8 +402,9 @@ retry_mod_stat:
 					ERROR("%s: %d:%d User config\t"
 						"doesn't match EEPROM\n",
 						__func__, cgx_id, lmac_id);
-						lmac_ctx->s.link_req = 1;
-					return -1;
+					cgx_set_error_type(cgx_id, lmac_id,
+						CGX_ERR_MODULE_INVALID);
+					goto sfp_err;
 				}
 			} else {
 				if (sfp_count++ < 5) {
@@ -417,12 +414,18 @@ retry_mod_stat:
 
 				debug_cgx_intf("%s: %d:%d Module not present\n",
 					__func__, cgx_id, lmac_id);
-				lmac_ctx->s.link_req = 1;
 				cgx_set_error_type(cgx_id, lmac_id,
 						CGX_ERR_MODULE_NOT_PRESENT);
-				return -1;
+				goto sfp_err;
 			}
+sfp_err:
+			/* set link_req to 1 to indicate poll timer */
+			lmac_ctx->s.link_req = 1;
+			cgx_set_link_state(cgx_id, lmac_id, &link,
+					cgx_get_error_type(cgx_id, lmac_id));
+			return -1;
 		}
+
 retry_link:
 		if (lmac_cfg->phy_present) {
 			/* Get the link status */
