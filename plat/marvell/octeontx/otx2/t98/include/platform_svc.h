@@ -21,7 +21,7 @@
  *	0x0 -- Success
  *	0x2 -- Fail
  */
-#define PLAT_OCTEONTX_OOO_CONFIG	0xc2000b07
+#define PLAT_OCTEONTX_OOO_CONFIG	0xc2000b04
 
 /* Number of platform specific SMCs */
 #define PLAT_OCTEONTX_NUM_SMC_CALLS	4
