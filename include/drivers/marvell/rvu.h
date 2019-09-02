@@ -11,13 +11,14 @@
 #include <cassert.h>
 
 /*
- * Total 40MB of memory is reserved for mailbox, msix table
- * and firwmare data
+ * Total 40MB of memory is reserved for mailbox, msix table,
+ * firwmare data and s/w attestation info
  *   - 34MB is for mailbox(32 PFs + 512 VFs * 64KB mailbox size)
  *   - 2MB for MSI-X table (must be greater or equeals to hardware limit):
  *     - 128KB for PFs msix (32 PFs * 256(MSIX entries) * entry * size).
  *     - 1MB for VFs msix  (512 VFs * 128 * MSIX entry size).
  *   - fwdata @ offset 38M
+ *   - s/w attestation info at offset (40M - 4K)
  * 96xx has 16 PFs and 256 VFs whereas 98xx has 32 PFs and 512 VFs.
  */
 #define PF_MBOX_BASE		RVU_MEM_BASE
@@ -29,8 +30,15 @@
 /* The last 2M reserved for shared firmware data */
 #define SH_FWDATA_OFFSET	0x2600000
 #define SH_FWDATA_BASE		(RVU_MEM_BASE + SH_FWDATA_OFFSET)
-#define SH_FWDATA_SIZE		0x200000
-#define RVU_MEM_END		(RVU_MEM_SIZE + RVU_MEM_BASE)
+#define SH_FWDATA_SIZE		(0x200000 - SW_ATTEST_INFO_SIZE)
+#define SH_FWDATA_LIMIT		(SH_FWDATA_BASE + SH_FWDATA_SIZE)
+#if ENABLE_ATTESTATION_SERVICE
+#define SW_ATTEST_INFO_BASE	SH_FWDATA_LIMIT
+#define SW_ATTEST_INFO_SIZE	0x1000
+#define SW_ATTEST_INFO_LIMIT	(SW_ATTEST_INFO_BASE + SW_ATTEST_INFO_SIZE)
+#else
+#define SW_ATTEST_INFO_SIZE	0
+#endif
 
 CASSERT(MSIX_TABLE_BASE + MSIX_TABLE_SIZE <= SH_FWDATA_BASE,
 	sh_fwdate_overlaps_with_msix_table);

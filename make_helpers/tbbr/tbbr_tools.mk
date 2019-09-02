@@ -97,3 +97,7 @@ ifneq (${BL33},)
     $(eval $(call TOOL_ADD_PAYLOAD,${BUILD_PLAT}/nt_fw_content.crt,--nt-fw-cert))
     $(eval $(call TOOL_ADD_PAYLOAD,${BUILD_PLAT}/nt_fw_key.crt,--nt-fw-key-cert))
 endif
+
+$(eval $(call CERT_ADD_CMD_OPT,--print-cert,--save-keys))
+$(eval $(call CERT_ADD_CMD_OPT,soc-fw-key.priv,--soc-fw-key))
+

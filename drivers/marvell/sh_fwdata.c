@@ -58,12 +58,12 @@ void sh_fwdata_init(void)
 	uint64_t pf_mac;
 
 	fwdata = (struct sh_fwdata *)get_sh_fwdata_base();
-	if (get_sh_fwdata_base() + sizeof(struct sh_fwdata) > RVU_MEM_END) {
+	if (get_sh_fwdata_base() + sizeof(struct sh_fwdata) > SH_FWDATA_LIMIT) {
 		fwdata->header_magic = 0x0;
 		ERROR("SHARED FWDATA size misconfiguration\n");
 		return;
 	}
-	 memset(fwdata, 0, sizeof(fwdata));
+	memset(fwdata, 0, sizeof(fwdata));
 	fwdata->header_magic = SH_FWDATA_HEADER_MAGIC;
 	fwdata->version = SH_FWDATA_VERSION;
 

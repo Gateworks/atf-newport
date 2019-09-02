@@ -51,9 +51,23 @@
 #include <octeontx_security.h>
 #include <octeontx_dram.h>
 #include <octeontx_helpers.h>
-
+#if ENABLE_ATTESTATION_SERVICE
+#include <octeontx_attestation.h>
+#endif
 
 static entry_point_info_t bl33_image_ep_info, bl32_image_ep_info;
+
+#if ENABLE_ATTESTATION_SERVICE
+/*
+ * This holds the BL31 platform data (which includes s/w attestation info).
+ * Upon entry to BL31, the contents are copied from the args passed by BL2.
+ * Later, the contents are adjusted to reflect images which have been
+ * loaded by BL31.
+ * Finally, at run-time, the contents are used by the S/W attestation info
+ * service.
+ */
+octeontx_bl_platform_args_t octeontx_bl31_plat_args;
+#endif
 
 /* Data structure for console initialization */
 static console_pl011_t console;
@@ -119,7 +133,14 @@ void bl31_early_platform_setup(bl31_params_t *from_bl2,
 	assert(params_from_bl2->h.type == PARAM_BL_PARAMS);
 	assert(params_from_bl2->h.version >= VERSION_2);
 
+#if ENABLE_ATTESTATION_SERVICE
+	/* copy the platform parameters passed to us */
+	octeontx_bl31_plat_args =
+		*((octeontx_bl_platform_args_t *)plat_params_from_bl2);
+	fdt_ptr = octeontx_bl31_plat_args.fdt;
+#else
 	fdt_ptr = plat_params_from_bl2;
+#endif
 	bl_params_node_t *bl_params = params_from_bl2->head;
 
 	/*

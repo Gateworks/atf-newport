@@ -109,3 +109,20 @@ ifdef MARVELL_PHY_1548
     TF_CFLAGS_aarch64 += -DMARVELL_PHY_1548
     BL31_SOURCES      += drivers/marvell/phy/phy_marvell_1548.c
 endif
+
+ifeq (${ENABLE_ATTESTATION_SERVICE},1)
+BL31_SOURCES            +=      plat/marvell/octeontx/otx2/octeontx_attestation.c \
+                                ${MBEDTLS_COMMON_SOURCES}               \
+                                ${MBEDTLS_CRYPTO_SOURCES}               \
+                                ${MBEDTLS_X509_SOURCES}                 \
+                                $(addprefix ${MBEDTLS_DIR}/library/,    \
+                                  entropy.c                             \
+                                  entropy_poll.c                        \
+                                  ctr_drbg.c                            \
+                                  aes.c                                 \
+                                 )
+CPPFLAGS                +=      -Wno-error=cpp
+$(eval $(call add_define,ENABLE_ATTESTATION_SERVICE))
+$(eval $(call assert_boolean,ENABLE_ATTESTATION_SERVICE))
+endif
+

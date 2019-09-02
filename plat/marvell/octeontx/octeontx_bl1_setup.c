@@ -27,12 +27,72 @@
 #include <octeontx_helpers.h>
 #include <timers_octeontx.h>
 
+#if ENABLE_ATTESTATION_SERVICE
+#include <octeontx_attestation.h>
+#include <auth/auth_mod.h>
+#include <plat_octeontx.h>
+#include <tbbr_oid.h>
+#endif
 
 /* Data structure which holds the extents of the trusted DRAM for BL1*/
 static meminfo_t bl1_tzram_layout;
 
 /* Data structure for console initialization */
 static console_pl011_t console;
+
+#if ENABLE_ATTESTATION_SERVICE
+/*
+ * This holds the BL1 platform data (which includes s/w attestation info).
+ * Upon exit, the contents of this structure are passed to BL2.
+ *
+ * See also BL2 variable 'octeontx_bl2_plat_args'.
+ */
+static octeontx_bl_platform_args_t octeontx_bl1_plat_args;
+
+/*
+ * This populates the platform argument pointer that is passed to BL2
+ * as 'arg0' - see also 'bl2_early_platform_setup2()'.
+ */
+static octeontx_bl_platform_args_t *populate_platform_args_for_bl2(void)
+{
+	const auth_img_desc_t *img_desc_ptr;
+	const auth_param_desc_t *auth_param;
+	int img_id;
+
+	octeontx_bl1_plat_args.fdt = fdt_ptr;
+
+	img_id = BL2_IMAGE_ID;
+	if (!(auth_img_flags[img_id] & IMG_FLAG_AUTHENTICATED)) {
+		ERROR("Image ID %u is not authenticated\n", img_id);
+	} else {
+		img_desc_ptr = &cot_desc_ptr[img_id];
+		assert(img_desc_ptr->parent);
+
+		/* parent image has authentication signature stored within */
+		img_desc_ptr = &cot_desc_ptr[img_desc_ptr->parent->img_id];
+
+		auth_param = &img_desc_ptr->authenticated_data[0];
+		assert(!strcmp(auth_param->type_desc->cookie,
+			       TRUSTED_BOOT_FW_HASH_OID));
+		assert(auth_param->data.len ==
+		       sizeof(octeontx_bl1_plat_args.atf_bl2_enc_sig));
+
+		/*
+		 * Implementation note: BL1 doesn't contain TLS support for
+		 * decoding the [BL2 image] hash; so, we store the encoded
+		 * hash and let BL2 decode it later (BL2 DOES contain TLS
+		 * support for decoding hashes).
+		 * This removes the requirement of adding [more] TLS support
+		 * to BL1.
+		 */
+		memcpy(octeontx_bl1_plat_args.atf_bl2_enc_sig,
+		       auth_param->data.ptr,
+		       sizeof(octeontx_bl1_plat_args.atf_bl2_enc_sig));
+	}
+
+	return &octeontx_bl1_plat_args;
+}
+#endif
 
 meminfo_t *bl1_plat_sec_mem_layout(void)
 {
@@ -138,7 +198,11 @@ void bl1_early_platform_setup(void)
 void bl1_plat_set_ep_info(unsigned int image_id,
 		entry_point_info_t *ep_info)
 {
-	ep_info->args.arg0 = (unsigned long)fdt_ptr;
+#if ENABLE_ATTESTATION_SERVICE
+	ep_info->args.arg0 = (u_register_t)populate_platform_args_for_bl2();
+#else
+	ep_info->args.arg0 = (u_register_t)fdt_ptr;
+#endif
 
 }
 

@@ -99,6 +99,21 @@
 /* Memory buffer allocator options */
 #define MBEDTLS_MEMORY_ALIGN_MULTIPLE        8
 
+/* Enable the platform-specific entropy code. */
+#define MBEDTLS_ENTROPY_C
+
+/* --- TODO: update these once platform entropy support is integrated --- */
+#define MBEDTLS_NO_DEFAULT_ENTROPY_SOURCES
+#define MBEDTLS_TEST_NULL_ENTROPY
+#define MBEDTLS_NO_PLATFORM_ENTROPY
+/* --- TODO: --- */
+
+/* prerequesite to 'MBEDTLS_CTR_DRBG_C' */
+#define MBEDTLS_AES_C
+
+/* Enable the CTR_DRBG AES-256-based random generator. */
+#define MBEDTLS_CTR_DRBG_C
+
 #ifndef __ASSEMBLY__
 /* System headers required to build mbed TLS with the current configuration */
 #include <stdlib.h>

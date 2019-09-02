@@ -56,6 +56,18 @@
 #include <octeontx_helpers.h>
 #endif
 
+#if ENABLE_ATTESTATION_SERVICE
+#include <octeontx_attestation.h>
+#include <auth/auth_mod.h>
+#include <plat_octeontx.h>
+#include <tbbr_oid.h>
+#include <octeontx_utils.h>
+#include <octeontx_io_storage.h>
+/* these are required for 'decode_hash_digest()' */
+#include <mbedtls/asn1.h>
+#include <mbedtls/md.h>
+#include <mbedtls/oid.h>
+#endif
 
 /* Pointer to memory visible to both BL2 and BL31 for passing data */
 extern unsigned char **bl2_el_change_mem_ptr;
@@ -67,6 +79,291 @@ static meminfo_t bl2_tzram_layout __aligned(CACHE_WRITEBACK_GRANULE)
 /* Data structure for console initialization */
 static console_pl011_t console;
 
+#if ENABLE_ATTESTATION_SERVICE
+/*
+ * This holds the BL2 platform data (which includes s/w attestation info).
+ * Upon entry to BL2, the contents are copied from the args passed by BL1.
+ * Later, the contents are adjusted to reflect images which have been
+ * loaded by BL2.
+ * Finally, upon exit, the contents of this structure are passed to BL31.
+ *
+ * See also BL31 variable 'octeontx_bl31_plat_args'.
+ */
+static octeontx_bl_platform_args_t octeontx_bl2_plat_args;
+
+/*
+ * This is used to retrieve the hash value from a [DER] encoded hash digest.
+ *
+ * returns,
+ *   0 if success (hash & len returned via 'hash' and 'hash_len')
+ *  -1 if error
+ */
+static
+int decode_hash_digest(void *digest_info_ptr, unsigned int digest_info_len,
+		       unsigned char **hash, size_t *hash_len)
+{
+	mbedtls_asn1_buf hash_oid, params;
+	mbedtls_md_type_t md_alg;
+	const mbedtls_md_info_t *md_info;
+	unsigned char *p, *end;
+	size_t len;
+	int rc;
+
+	/* Digest info should be an MBEDTLS_ASN1_SEQUENCE */
+	p = (unsigned char *)digest_info_ptr;
+	end = p + digest_info_len;
+	rc = mbedtls_asn1_get_tag(&p, end, &len, MBEDTLS_ASN1_CONSTRUCTED |
+				  MBEDTLS_ASN1_SEQUENCE);
+	if (rc != 0)
+		return -1;
+
+	/* Get the hash algorithm */
+	rc = mbedtls_asn1_get_alg(&p, end, &hash_oid, &params);
+	if (rc != 0)
+		return -1;
+
+	rc = mbedtls_oid_get_md_alg(&hash_oid, &md_alg);
+	if (rc != 0)
+		return -1;
+
+	md_info = mbedtls_md_info_from_type(md_alg);
+	if (md_info == NULL)
+		return -1;
+
+	/* Hash should be octet string type */
+	rc = mbedtls_asn1_get_tag(&p, end, &len, MBEDTLS_ASN1_OCTET_STRING);
+	if (rc != 0)
+		return -1;
+
+	/* Length of hash must match the algorithm's size */
+	if (len != mbedtls_md_get_size(md_info))
+		return -1;
+
+	*hash = p;
+	*hash_len = len;
+
+	return 0;
+}
+
+/*
+ * This populates the platform argument pointer that is passed to BL31
+ * as 'arg1' - see also 'bl31_early_platform_setup2()'.
+ *
+ * It adds to the platform argument structure that was received from BL1.
+ */
+static void populate_platform_args_for_bl31(void)
+{
+#define MAX_COMP_ID_STR_LEN   256
+/* 32-byte hash == 64 ASCII characters */
+#define SHA256_ASCII_HASH_LEN 64
+/* BDK has 64 char limit (+ ".dtb") */
+#define MAX_BOARD_NAME_LEN    (64 + 4)
+/* BDK has 64 char limit (+ "-linux.dtb") */
+#define MAX_BOARD_NAME_LINUX_LEN (MAX_BOARD_NAME_LEN + 10)
+	const auth_img_desc_t *img_desc_ptr;
+	const auth_param_desc_t *auth_param;
+	int img_id, fdt_off, prop_len;
+	uint8_t *dst, *hash, digit, byteval;
+	char comp_str_buf[MAX_COMP_ID_STR_LEN], *comp_str, *separator;
+	char board_dt[MAX_BOARD_NAME_LEN];
+	char board_linux_dt[MAX_BOARD_NAME_LINUX_LEN];
+	const void *fdt;
+	const void *prop, *end;
+	size_t idx, hash_len;
+
+	octeontx_bl2_plat_args.fdt = fdt_ptr;
+
+#if !BL2_AT_EL3
+	/*
+	 * BL1 saved an ENCODED BL2 image hash - here we decode it and store
+	 * it into attestation info struct.
+	 *
+	 * See notes in 'populate_platform_args_for_bl2()' in BL1.
+	 */
+	img_id = BL2_IMAGE_ID;
+	INFO("Decoding saved image ID %u attestation signature (from BL1).\n",
+	     img_id);
+	if ((decode_hash_digest(octeontx_bl2_plat_args.atf_bl2_enc_sig,
+				sizeof(octeontx_bl2_plat_args.atf_bl2_enc_sig),
+				&hash, &hash_len) == 0) &&
+	    (hash_len == sizeof(octeontx_bl2_plat_args.atf_bl2_sig))) {
+		memcpy(octeontx_bl2_plat_args.atf_bl2_sig, hash, hash_len);
+	} else
+		ERROR("Error deocding attestation signature for image ID %u\n",
+		      img_id);
+#endif /* !BL2_AT_EL3 */
+
+	/* copy BL31 saved authentication signature for s/w attestation info */
+	img_id = BL31_IMAGE_ID;
+	if (!(auth_img_flags[img_id] & IMG_FLAG_AUTHENTICATED)) {
+		ERROR("Image ID %u is not authenticated\n", img_id);
+	} else {
+		img_desc_ptr = &cot_desc_ptr[img_id];
+		assert(img_desc_ptr->parent);
+
+		/* parent image has authentication signature stored within */
+		img_desc_ptr = &cot_desc_ptr[img_desc_ptr->parent->img_id];
+
+		auth_param = &img_desc_ptr->authenticated_data[0];
+		assert(!strcmp(auth_param->type_desc->cookie,
+			       SOC_AP_FW_HASH_OID));
+
+		if ((decode_hash_digest(auth_param->data.ptr,
+					auth_param->data.len,
+					&hash, &hash_len) == 0) &&
+		    (hash_len == sizeof(octeontx_bl2_plat_args.atf_bl31_sig))) {
+			memcpy(octeontx_bl2_plat_args.atf_bl31_sig, hash,
+			       hash_len);
+		} else
+			ERROR("Error saving attestation info for image ID %u\n",
+			      img_id);
+	}
+
+	/* copy BL33 saved authentication signature for s/w attestation info */
+	img_id = BL33_IMAGE_ID;
+	if (!(auth_img_flags[img_id] & IMG_FLAG_AUTHENTICATED)) {
+		ERROR("Image ID %u is not authenticated\n", img_id);
+	} else {
+		img_desc_ptr = &cot_desc_ptr[img_id];
+		assert(img_desc_ptr->parent);
+
+		/* parent image has authentication signature stored within */
+		img_desc_ptr = &cot_desc_ptr[img_desc_ptr->parent->img_id];
+
+		auth_param = &img_desc_ptr->authenticated_data[0];
+		assert(!strcmp(auth_param->type_desc->cookie,
+			       NON_TRUSTED_WORLD_BOOTLOADER_HASH_OID));
+
+		if ((decode_hash_digest(auth_param->data.ptr,
+					auth_param->data.len,
+					&hash, &hash_len) == 0) &&
+		    (hash_len == sizeof(octeontx_bl2_plat_args.atf_bl33_sig))) {
+			memcpy(octeontx_bl2_plat_args.atf_bl33_sig, hash,
+			       hash_len);
+		} else
+			ERROR("Error saving attestation info for image ID %u\n",
+			      img_id);
+	}
+
+	/* Some of the required version info is passed in the FDT (from BDK) */
+	fdt = fdt_ptr;
+
+	/* locate board name property & save board name in local buffer */
+	board_dt[0] = board_linux_dt[0] = 0;
+	prop = NULL;
+	if (fdt_check_header(fdt) == 0) {
+		fdt_off = fdt_path_offset(fdt, "/cavium,bdk");
+		if (fdt_off > 0)
+			prop = fdt_getprop(fdt, fdt_off, "BOARD-MODEL",
+					   &prop_len);
+		if (prop) {
+			snprintf(board_dt, sizeof(board_dt), "%s.dtb",
+				 (char *)prop);
+			snprintf(board_linux_dt, sizeof(board_linux_dt),
+				 "%s-linux.dtb", (char *)prop);
+		}
+	}
+
+	/* locate property containing list of images and their IDs */
+	prop = NULL;
+	if (fdt_check_header(fdt) == 0) {
+		fdt_off = fdt_path_offset(fdt, "/cavium,bdk");
+		if (fdt_off > 0)
+			prop = fdt_getprop(fdt, fdt_off,
+					   "ATTESTATION-IMAGE-LIST",
+					   &prop_len);
+	}
+
+	if (prop == NULL) {
+		ERROR("Error locating image list property\n");
+		return;
+	}
+
+	end = prop + prop_len;
+	/* this is a list of strings; search for individual component strings */
+	while (prop < end) {
+
+		/* each string has the following format:
+		 *    <name>:<ascii_hash_id>
+		 * where:
+		 *    <name> = component path name (see BDK code)
+		 *    <ascii_hash_id> = ASCII SHA-256 HASH (64 chars)
+		 */
+		comp_str = comp_str_buf;
+		comp_str[MAX_COMP_ID_STR_LEN - 1] = 0;
+		strncpy(comp_str, (char *)prop, MAX_COMP_ID_STR_LEN - 1);
+		separator = strchr(comp_str, ':');
+		if (separator == NULL) {
+			ERROR("Invalid image list property\n");
+			break;
+		}
+		*separator = 0;
+
+		/* exclude any path from string name search */
+		while (strchr(comp_str, '/') != NULL)
+			comp_str = strchr(comp_str, '/') + 1;
+
+		dst = NULL;
+		if (strncmp(comp_str, "BOOT.BIN", 8) == 0)
+			dst = octeontx_bl2_plat_args.ap_tbl1fw_sig;
+		else if (strncmp(comp_str, "init.bin", 8) == 0)
+			dst = octeontx_bl2_plat_args.init_bin_sig;
+		else if (strncmp(comp_str, "bl1.bin", 7) == 0)
+			dst = octeontx_bl2_plat_args.atf_bl1_sig;
+#if BL2_AT_EL3
+		/* Here, BL2 was loaded by BDK, not BL1 */
+		else if (strncmp(comp_str, "bl2.bin", 7) == 0)
+			dst = octeontx_bl2_plat_args.atf_bl2_sig;
+#endif /* BL2_AT_EL3 */
+		else if (strncmp(comp_str, board_dt, strlen(board_dt)) == 0)
+			dst = octeontx_bl2_plat_args.board_dt_sig;
+		else if (strncmp(comp_str, board_linux_dt,
+				 strlen(board_linux_dt)) == 0)
+			dst = octeontx_bl2_plat_args.linux_dt_sig;
+		else {
+			/* point to next string in list */
+			prop += strlen((char *)prop) + 1;
+			continue;
+		}
+
+		/* set comp_str to point to ASCII hash id (see format above) */
+		comp_str = separator + 1;
+		if (strlen(comp_str) != SHA256_ASCII_HASH_LEN) {
+			ERROR("Invalid hash ID for %s\n", (char *)prop);
+			break;
+		}
+
+		/* convert ASCII hash ID to binary and store in 'dst' */
+		for (idx = 0; (idx < SHA256_ASCII_HASH_LEN); idx += 2) {
+			/* force lowercase hex; doesn't affect decimal digits */
+			*comp_str |= 'a' - 'A';
+
+			/* convert ASCII decimal digit to binary */
+			digit = *comp_str++ - '0';
+			/* account for 'a'-'f' hex digits */
+			if (digit > 9)
+				digit -= ('a' - '9' - 1);
+			byteval = digit << 4; /* i.e. digit * 0x10 */
+
+			/* force lowercase hex; doesn't affect decimal digits */
+			*comp_str |= 'a' - 'A';
+
+			/* convert ASCII decimal digit to binary */
+			digit = *comp_str++ - '0';
+			/* account for 'a'-'f' hex digits */
+			if (digit > 9)
+				digit -= ('a' - '9' - 1);
+			byteval |= digit;
+
+			*dst++ = byteval;
+		}
+
+		/* point to next string in list */
+		prop += strlen((char *)prop) + 1;
+	}
+}
+#endif
+
 #if LOAD_IMAGE_V2
 
 int bl2_plat_handle_post_image_load(unsigned int image_id)
@@ -76,6 +373,10 @@ int bl2_plat_handle_post_image_load(unsigned int image_id)
 	unsigned int mode;
 	uintptr_t bl33_fdt_address;
 	bl_mem_params_node_t *bl_mem_params = get_bl_mem_params_node(image_id);
+#if ENABLE_ATTESTATION_SERVICE
+	bl_load_info_t *bl2_load_info;
+	const bl_load_info_node_t *bl2_node_info;
+#endif
 #ifdef NT_FW_CONFIG
 	uint64_t nt_fw_config_size;
 #endif
@@ -83,7 +384,13 @@ int bl2_plat_handle_post_image_load(unsigned int image_id)
 
 	switch (image_id) {
 	case BL31_IMAGE_ID:
+#if ENABLE_ATTESTATION_SERVICE
+		/* set argument pointer but don't populate yet - see below */
+		bl_mem_params->ep_info.args.arg1 =
+				(u_register_t)&octeontx_bl2_plat_args;
+#else
 		bl_mem_params->ep_info.args.arg1 = (unsigned long)fdt_ptr;
+#endif
 		break;
 #ifdef AARCH64
 	case BL32_IMAGE_ID:
@@ -146,6 +453,29 @@ int bl2_plat_handle_post_image_load(unsigned int image_id)
 		break;
 #endif
 	}
+
+#if ENABLE_ATTESTATION_SERVICE
+	/*
+	 * The s/w attestation information can only be populated after
+	 * the last image has been loaded (and authenticated).  Here, check
+	 * if this is the last image and, if so, populate the platform
+	 * arguments (s/w attestation info).
+	 */
+	bl2_load_info = plat_get_bl_image_load_info();
+	bl2_node_info = bl2_load_info->head;
+	while (bl2_node_info) {
+		if (image_id == bl2_node_info->image_id) {
+			/*
+			 * If this image is the last to be loaded, populate the
+			 * s/w attestion info in the platform arguments.
+			 */
+			if (bl2_node_info->next_load_info == NULL)
+				populate_platform_args_for_bl31();
+			break;
+		}
+		bl2_node_info = bl2_node_info->next_load_info;
+	}
+#endif
 
 	return err;
 }
@@ -246,7 +576,14 @@ void bl2_early_platform_setup(meminfo_t *mem_layout,
 	/* Setup the BL2 memory layout */
 	bl2_tzram_layout = *mem_layout;
 
+#if ENABLE_ATTESTATION_SERVICE
+	/* copy the platform parameters passed to us */
+	octeontx_bl2_plat_args =
+		*((octeontx_bl_platform_args_t *)plat_params_from_bl1);
+	fdt_ptr = octeontx_bl2_plat_args.fdt;
+#else
 	fdt_ptr = plat_params_from_bl1;
+#endif
 }
 
 void bl2_early_platform_setup2(u_register_t arg0, u_register_t arg1,

@@ -15,6 +15,9 @@
 #include <rvu.h>
 #include <plat_board_cfg.h>
 #include <plat_scmi.h>
+#if ENABLE_ATTESTATION_SERVICE
+#include <octeontx_attestation.h>
+#endif
 
 extern void *scmi_handle;
 
@@ -65,6 +68,19 @@ uintptr_t plat_octeontx_svc_smc_handler(uint32_t smc_fid,
 		ret = mdio_debug_write(x1, x2, x3, x4, x5, x6);
 		SMC_RET1(handle, ret);
 		break;
+
+#if ENABLE_ATTESTATION_SERVICE
+	case OCTEONTX_ATTESTATION_QUERY:
+		/* x1: <= 0 - query for buffer ptr
+		 *      > 0 - nonce len
+		 */
+		if ((register_t)x1 <= 0)
+			ret = (uintptr_t)attestation_info_base();
+		else
+			ret = generate_attestation_info(x1);
+		SMC_RET1(handle, ret);
+		break;
+#endif
 
 	default:
 		WARN("Unimplemented OcteonTX Service Call: 0x%x\n", smc_fid);
