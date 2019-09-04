@@ -207,9 +207,8 @@ typedef struct cgx_lmac_flash_ctx {
 
 /* Mapping of speed and other parameters to MODE */
 typedef struct cgx_speed_mode_map_s {
-	int speed;	/* cgx_link_speed enum */
-	int mode;
-	int an;
+	int lmac_mode;
+	int train_en;
 	int qlm_mode;
 	int fec_cap;
 	int baud_rate;

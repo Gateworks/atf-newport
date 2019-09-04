@@ -137,7 +137,6 @@ typedef enum {
 	CGX_MODE_25G_C2C_BIT,
 	CGX_MODE_25G_C2M_BIT,
 	CGX_MODE_25G_2_C2C_BIT,
-	CGX_MODE_25G_2_C2M_BIT,
 	CGX_MODE_25G_CR_BIT,
 	CGX_MODE_25G_KR_BIT,
 	CGX_MODE_40G_C2C_BIT,
@@ -148,7 +147,6 @@ typedef enum {
 	CGX_MODE_50G_C2C_BIT,
 	CGX_MODE_50G_C2M_BIT,
 	CGX_MODE_50G_4_C2C_BIT,
-	CGX_MODE_50G_4_C2M_BIT,
 	CGX_MODE_50G_CR_BIT,
 	CGX_MODE_50G_KR_BIT,
 	CGX_MODE_80GAUI_C2C_BIT,
@@ -359,8 +357,7 @@ struct cgx_mode_change_args {
 	uint64_t duplex:1; /* 0 - full duplex, 1 - half duplex */
 	uint64_t an:1;	/* 0 - disable AN, 1 - enable AN */
 	uint64_t port:8; /* device port */
-	uint64_t flags:8; /* private flags if required */
-	uint64_t reserved2:34;
+	uint64_t mode:42;
 };
 
 /* command argument to be passed for cmd ID - CGX_CMD_LINK_CHANGE */
