@@ -206,11 +206,22 @@ static int cgx_link_change_req(int cgx_id, int lmac_id)
 
 	if (link.s.link_up) {
 		if ((lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_SGMII) ||
-			(lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_QSGMII))
-			ret = cgx_sgmii_set_link_speed(cgx_id, lmac_id, &link);
+			(lmac_cfg->mode == CAVM_CGX_LMAC_TYPES_E_QSGMII)) {
+			if (cgx_sgmii_set_link_speed(cgx_id, lmac_id, &link) != 0)
+				ret = -1;
+			/* Check for AN CPT */
+			if (cgx_sgmii_check_an_cpt(cgx_id, lmac_id) != 0)
+				ret = -1;
+			/* Check for link status */
+			if (cgx_sgmii_check_link(cgx_id, lmac_id) != 0)
+				ret = -1;
+		}
 	}
 
 	if (ret == -1) {
+		link.s.link_up = 0;
+		link.s.full_duplex = 0;
+		link.s.speed = CGX_LINK_NONE;
 		err_type = cgx_get_error_type(cgx_id, lmac_id);
 		debug_cgx_intf("%s: %d:%d CGX error %d\n", __func__,
 					cgx_id, lmac_id, err_type);
