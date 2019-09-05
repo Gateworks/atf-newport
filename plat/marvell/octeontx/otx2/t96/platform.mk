@@ -86,6 +86,7 @@ endif
 
 MARVELL_PHY_5123 := 1
 ifdef MARVELL_PHY_5123
+    TF_CFLAGS_aarch64 += -DMARVELL_PHY_5123
     PLAT_INCLUDES     +=	-Ilib/libphy/marvell_88x5123/include				\
 				-Ilib/libphy/marvell_88x5123/serdes/include			\
 				-Ilib/libphy/marvell_88x5123/serdes/marvell			\
