@@ -284,6 +284,8 @@ int spi_nor_read(uint8_t *buf, int buf_size, uint32_t addr,
 		mpi_cfg.u = CSR_READ(CAVM_MPIX_CFG(spi_con));
 		mpi_cfg.s.iomode = CAVM_MPI_IOMODE_E_X4_BIDIR;
 		CSR_WRITE(CAVM_MPIX_CFG(spi_con), mpi_cfg.u);
+		/* Wait after configuration */
+		udelay(10);
 
 		if (spi_xfer(NULL, buf, buf_size, spi_con, cs, 1))
 			return -1;
@@ -291,6 +293,8 @@ int spi_nor_read(uint8_t *buf, int buf_size, uint32_t addr,
 		/* Set X1 mode back */
 		mpi_cfg.s.iomode = CAVM_MPI_IOMODE_E_X1_UNIDIR;
 		CSR_WRITE(CAVM_MPIX_CFG(spi_con), mpi_cfg.u);
+		/* Wait after configuration */
+		udelay(10);
 	} else {
 		cmd[0] = SPI_NOR_CMD_READ;
 		if (spi_xfer(cmd, NULL, len, spi_con, cs, 0))
